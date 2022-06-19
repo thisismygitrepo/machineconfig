@@ -51,13 +51,15 @@ cd ~ || exit
 mkdir code
 cd ~/code || exit
 git clone https://github.com/thisismygitrepo/crocodile.git
-git clone https://github.com/thisismygitrepo/dotfiles.git
-cd ~/crocodile || exit
+git clone https://github.com/thisismygitrepo/machineconfig.git
+cd ~/code/crocodile || exit
 pip install -e .
 pip install -r requirements.txt
+cd ~/code/machineconfig || exit
+pip install -e .
 cd ~ || exit
 
-python -m fire ~/code/dotfiles/create_symlinks.py link_scripts
+python -m fire ~/code/machineconfig/src/machineconfig/create_symlinks.py link_scripts
 sudo chmod 600 ~/.ssh/*
 sudo chmod 700 ~/.ssh
 cat .ssh/id_rsa.pub > .ssh/authorized_keys

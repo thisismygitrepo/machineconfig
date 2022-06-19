@@ -14,7 +14,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/thisismygitrepo/dofiles",
     project_urls={
-        "Bug Tracker": "https://github.com/thisismygitrepo/dofiles/issues",
+        "Bug Tracker": "https://github.com/thisismygitrepo/machineconfig/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",

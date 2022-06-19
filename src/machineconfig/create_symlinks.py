@@ -7,7 +7,7 @@ import crocodile.toolbox as tb
 from crocodile.environment import DotFiles, get_shell_profiles, system, AppData, exe
 
 
-dotfiles = tb.P.home().joinpath(f"code/dotfiles/src/pyconfig")
+repo_root = tb.P.home().joinpath(f"code/machineconfig/src/machineconfig")
 
 
 def symlink(this: tb.P, to_this: tb.P, overwrite=True):
@@ -73,20 +73,20 @@ def link_ipython(overwrite=True):
 
 def link_autostart(overwrite=True):
     file = AppData.joinpath("Microsoft/Windows/Start Menu/Programs/Startup").joinpath("startup_file.cmd")
-    symlink(file, dotfiles.joinpath(f"jobs/windows/startup_file.cmd").expanduser(), overwrite=overwrite)
+    symlink(file, repo_root.joinpath(f"jobs/windows/startup_file.cmd").expanduser(), overwrite=overwrite)
 
 
 folder = {"Windows": "windows", "Linux": "linux"}[system]
 
 
 def link_scripts(overwrite=True):
-    symlink(tb.P.home().joinpath("scripts"), dotfiles.joinpath(f"scripts/{folder}"), overwrite=overwrite)
+    symlink(tb.P.home().joinpath("scripts"), repo_root.joinpath(f"scripts/{folder}"), overwrite=overwrite)
 
 
 def add_scripts_to_path():  # options to make croshell available: define in terminal profile, add to Path, or add to some folder that is already in path, e.g. env.WindowsApps or Scripts folder where python.exe resides.
     assert system == "Windows"
-    dotfiles.joinpath(f"scripts/{folder}/croshell.ps1").symlink_from(folder=exe.parent)  # thus, whenever ve is activated, croshell is available.
-    addition = f'\n$env:Path += ";{dotfiles.joinpath("scripts/windows")}"'
+    repo_root.joinpath(f"scripts/{folder}/croshell.ps1").symlink_from(folder=exe.parent)  # thus, whenever ve is activated, croshell is available.
+    addition = f'\n$env:Path += ";{repo_root.joinpath("scripts/windows")}"'
     tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(addition, addition, notfound_append=True)
 
 

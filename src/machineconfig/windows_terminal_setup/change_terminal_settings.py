@@ -70,7 +70,7 @@ class TerminalSettings(object):
         croshell = dict(name="croshell",
                         guid="{" + str(uuid4()) + "}",
                         # commandline=f"powershell.exe -Command \"{activate} ipython -i -c 'from crocodile.toolbox import *'\"",
-                        commandline=f'powershell.exe -Command "~/code/dotfiles/scripts/windows/croshell.ps1"',
+                        commandline=f'powershell.exe -Command "~/code/machineconfig/src/machineconfig/scripts/windows/croshell.ps1"',
                         startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
                         )
         # startingDirectory = None means: inheret from parent process, which will is the default, which point to /System32
