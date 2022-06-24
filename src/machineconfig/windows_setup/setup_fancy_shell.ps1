@@ -14,4 +14,4 @@ python -m fire "windows_terminal_setup/change_terminal_settings.py" main
 python -m fire "windows_terminal_setup/fancy_prompt_themes.py" install
 python -m fire "windows_terminal_setup/fancy_prompt_themes.py" choose
 
-croshell -c "P(r'https://download.sysinternals.com/files/ZoomIt.zip').download(P.home().joinpath('Downloads')).unzip(inplace=True).joinpath('ZoomIt.exe').move(folder=P.env().WindowsApps)"
+croshell -c "P(r'https://download.sysinternals.com/files/ZoomIt.zip').download(P.home().joinpath('Downloads')).unzip(inplace=True).joinpath('ZoomIt.exe').move(folder=get_env().WindowsApps)"

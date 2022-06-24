@@ -76,17 +76,15 @@ def link_autostart(overwrite=True):
     symlink(file, repo_root.joinpath(f"jobs/windows/startup_file.cmd").expanduser(), overwrite=overwrite)
 
 
-folder = {"Windows": "windows", "Linux": "linux"}[system]
-
-
 def link_scripts(overwrite=True):
-    symlink(tb.P.home().joinpath("scripts"), repo_root.joinpath(f"scripts/{folder}"), overwrite=overwrite)
+    symlink(tb.P.home().joinpath("scripts"), repo_root.joinpath(f"scripts/{system.lower()}"), overwrite=overwrite)
 
 
 def add_scripts_to_path():  # options to make croshell available: define in terminal profile, add to Path, or add to some folder that is already in path, e.g. env.WindowsApps or Scripts folder where python.exe resides.
     assert system == "Windows"
-    repo_root.joinpath(f"scripts/{folder}/croshell.ps1").symlink_from(folder=exe.parent)  # thus, whenever ve is activated, croshell is available.
-    addition = f'\n$env:Path += ";{repo_root.joinpath("scripts/windows")}"'
+    repo_root.joinpath(f"scripts/{system.lower()}/croshell.ps1").symlink_from(folder=exe.parent)  # thus, whenever ve is activated, croshell is available.
+    # addition = f'\n$env:Path += ";{repo_root.joinpath("scripts/windows")}"'  # don't add scripts path to Path
+    addition = f'\n$env:Path += ";{tb.P.home().joinpath("scripts")}"'  # add
     tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(addition, addition, notfound_append=True)
 
 

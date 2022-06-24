@@ -6,8 +6,10 @@ $ErrorActionPreference = "Stop"
 winget install --name "Google Chrome" --Id "Google.Chrome" --source winget --accept-package-agreements --accept-source-agreements
 #winget install --name "Chrome Remote Desktop Host" --Id "Google.ChromeRemoteDesktop" --source winget
 #winget search "Microsoft Teams" --Id "Microsoft.Teams" --Source winget
+winget install --name Zoom --Id Zoom.Zoom --source winget
 
 # productivity
+winget install --name "Adobe Acrobat Reader DC" --source winget
 winget install --name "7-zip" --Id "7zip.7zip" --source winget --accept-package-agreements --accept-source-agreements
 winget install --name "Mozilla Firefox" --accept-package-agreements --accept-source-agreements
 winget install --name "Mozilla Thunderbird" --accept-package-agreements --accept-source-agreements
