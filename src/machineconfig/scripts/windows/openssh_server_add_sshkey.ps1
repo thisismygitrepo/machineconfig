@@ -1,4 +1,6 @@
 
+$ErrorActionPreference = "Stop"
+
 # run this script only after having public ssh key in place (~/.ssh/id_rsa.pub)
 $sshd_dir = "$env:ProgramData\ssh"
 $sshfile = "$env:USERPROFILE\.ssh\id_rsa.pub"  # this directory is for normal users, not admins.
