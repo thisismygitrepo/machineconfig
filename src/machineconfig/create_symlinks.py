@@ -61,7 +61,7 @@ def link_powershell(overwrite=True):
 def link_windows_powershell(overwrite=True):
     if system == "Linux": return None
     for profile_name, profile_path in get_shell_profiles(shell="powershell").items():
-        target = DotFiles.joinpath(f"shells/powershell/{profile_name}/{profile_path.name}")
+        target = DotFiles.joinpath(f"shells/windows_powershell/{profile_name}/{profile_path.name}")
         symlink(profile_path, target, overwrite=overwrite)
 
 
@@ -82,7 +82,7 @@ def link_scripts(overwrite=True):
 
 def add_scripts_to_path():  # options to make croshell available: define in terminal profile, add to Path, or add to some folder that is already in path, e.g. env.WindowsApps or Scripts folder where python.exe resides.
     assert system == "Windows"
-    repo_root.joinpath(f"scripts/{system.lower()}/croshell.ps1").symlink_from(folder=exe.parent)  # thus, whenever ve is activated, croshell is available.
+    # repo_root.joinpath(f"scripts/{system.lower()}/croshell.ps1").symlink_from(folder=exe.parent)  # thus, whenever ve is activated, croshell is available.
     # addition = f'\n$env:Path += ";{repo_root.joinpath("scripts/windows")}"'  # don't add scripts path to Path
     addition = f'\n$env:Path += ";{tb.P.home().joinpath("scripts")}"'  # add
     tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(addition, addition, notfound_append=True)

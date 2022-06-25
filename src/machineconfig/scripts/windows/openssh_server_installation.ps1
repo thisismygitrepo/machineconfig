@@ -1,9 +1,10 @@
 
-# Install SSH-Server on a windows machine.
+# Install SSH-Server on a windows machine. see this other way as well: https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH
 # ALL of the following require admin priviliages:
 # PowerShell.exe -ExecutionPolicy Bypass -File "C:\bypass\prompt\standard.ps1" 2>&1>$null
 
 Add-WindowsCapability -Online -Name OpenSSH.Server
+Add-WindowsCapability -Online -Name OpenSSH.Client
 #New-NetFirewallRule -Name sshd -DisplayName 'OpenSSH SSH Server' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22 -Program "%WINDIR%\System32\OpenSSH\sshd.exe"
 
 #Must Enable ssh-agent before starting
