@@ -1,6 +1,6 @@
 
-$ve_name = 've'
-$py_version = 39
+$ve_name='ve'
+$py_version=39
 
 mkdir ~/venvs
 cd ~

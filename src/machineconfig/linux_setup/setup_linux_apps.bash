@@ -38,29 +38,3 @@ sudo snap install powershell --classic
 #source .bashrc  # reload to activate conda
 ## notice that on linux, the default is that miniconda will be added to PATH unlike windows where this is not recommended
 
-sudo apt install python3.9  # ignore system level one. launched with `python39`, as opposed to `python`
-sudo apt install python3.9-venv
-mkdir ~/venvs/
-cd ~/venvs/ || exit
-python3.9 -m venv ve
-cd ~ || exit
-source ~/venvs/ve/bin/activate || exit
-
-
-cd ~ || exit
-mkdir code
-cd ~/code || exit
-git clone https://github.com/thisismygitrepo/crocodile.git
-git clone https://github.com/thisismygitrepo/machineconfig.git
-cd ~/code/crocodile || exit
-pip install -e .
-pip install -r requirements.txt
-cd ~/code/machineconfig || exit
-pip install -e .
-cd ~ || exit
-
-python -m fire ~/code/machineconfig/src/machineconfig/create_symlinks.py link_scripts
-sudo chmod 600 ~/.ssh/*
-sudo chmod 700 ~/.ssh
-cat .ssh/id_rsa.pub > .ssh/authorized_keys
-echo "All Done!"

@@ -88,6 +88,16 @@ def add_scripts_to_path():  # options to make croshell available: define in term
     tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(addition, addition, notfound_append=True)
 
 
+def link_wsl_path_to_windows_path(linux_user, windows_user=None, links=None, run_in_wsl=True):
+    links = links or ["data", "dotfiles"]
+    windows_user = windows_user or linux_user
+    wsl_home = tb.P(fr"\\wsl$\Ubuntu\home\{linux_user}")  # used to reach wsl home from windows shell
+    win_home = tb.P(f"/mnt/c/Users/{windows_user}")  # used to read windows home from wsl shell.
+    for link in links:
+        if run_in_wsl: symlink(this=tb.P.home.joinpath(link), to_this=win_home.joinpath(link))
+        else: symlink(this=wsl_home.joinpath(f"{link}"), to_this=tb.P.home.joinpath(link))
+
+
 def main():
     """create symlinks in default locations to `dotfiles` contents"""
     overwrite = True
