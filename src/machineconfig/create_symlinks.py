@@ -81,11 +81,16 @@ def link_scripts(overwrite=True):
 
 
 def add_scripts_to_path():  # options to make croshell available: define in terminal profile, add to Path, or add to some folder that is already in path, e.g. env.WindowsApps or Scripts folder where python.exe resides.
-    assert system == "Windows"
-    # repo_root.joinpath(f"scripts/{system.lower()}/croshell.ps1").symlink_from(folder=exe.parent)  # thus, whenever ve is activated, croshell is available.
-    # addition = f'\n$env:Path += ";{repo_root.joinpath("scripts/windows")}"'  # don't add scripts path to Path
-    addition = f'\n$env:Path += ";{tb.P.home().joinpath("scripts")}"'  # add
-    tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(addition, addition, notfound_append=True)
+    if system == "Windows":
+        # repo_root.joinpath(f"scripts/{system.lower()}/croshell.ps1").symlink_from(folder=exe.parent)  # thus, whenever ve is activated, croshell is available.
+        addition = f'\n$env:Path += ";{repo_root.joinpath(f"scripts/{system.lower()}")}"'  # don't add scripts path to Path
+        # addition = f'\n$env:Path += ";{tb.P.home().joinpath("scripts")}"'  # add
+        tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(addition, addition, notfound_append=True)
+    elif system == "Linux":
+        addition = f'export PATH={repo_root.joinpath(f"scripts/{system.lower()}")}:$PATH'
+        tb.P("~/.bashrc").expanduser().modify_text(addition, addition, notfound_append=True)
+        tb.Terminal().run(f'chmod +x {repo_root.joinpath(f"scripts/{system.lower()}")} -R')
+    else: raise ValueError
 
 
 def link_wsl_path_to_windows_path(linux_user, windows_user=None, links=None, run_in_wsl=True):
