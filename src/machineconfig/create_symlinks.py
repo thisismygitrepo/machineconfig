@@ -4,7 +4,7 @@ This script Takes away all config files from the computer, place them in one dir
 `dotfiles`, and create symlinks to those files from thier original locations.
 """
 import crocodile.toolbox as tb
-from crocodile.environment import DotFiles, get_shell_profiles, system, AppData, exe
+from crocodile.environment import DotFiles, get_shell_profiles, system, AppData  # , exe
 
 
 repo_root = tb.P.home().joinpath(f"code/machineconfig/src/machineconfig")
@@ -99,8 +99,8 @@ def link_wsl_path_to_windows_path(linux_user, windows_user=None, links=None, run
     wsl_home = tb.P(fr"\\wsl$\Ubuntu\home\{linux_user}")  # used to reach wsl home from windows shell
     win_home = tb.P(f"/mnt/c/Users/{windows_user}")  # used to read windows home from wsl shell.
     for link in links:
-        if run_in_wsl: symlink(this=tb.P.home.joinpath(link), to_this=win_home.joinpath(link))
-        else: symlink(this=wsl_home.joinpath(f"{link}"), to_this=tb.P.home.joinpath(link))
+        if run_in_wsl: symlink(this=tb.P.home().joinpath(link), to_this=win_home.joinpath(link))
+        else: symlink(this=wsl_home.joinpath(f"{link}"), to_this=tb.P.home().joinpath(link))
 
 
 def main():

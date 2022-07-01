@@ -18,16 +18,16 @@ sudo apt install cmatrix
 sudo apt install tmux  # allows multiple terminals that are persistent.
 
 # install chrome:
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-sudo dpkg -i google-chrome-stable_current_amd64.deb
+# wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+# sudo dpkg -i google-chrome-stable_current_amd64.deb
 # install snap store
-sudo mv /etc/apt/preferences.d/nosnap.pref ~/Documents/nosnap.backup
-sudo apt update
-sudo apt install snapd
+# sudo mv /etc/apt/preferences.d/nosnap.pref ~/Documents/nosnap.backup
+# sudo apt update
+# sudo apt install snapd
 # install development apps:
-sudo snap install pycharm-community --classic
-sudo snap install code --classic
-sudo snap install powershell --classic
+# sudo snap install pycharm-community --classic
+# sudo snap install code --classic
+# sudo snap install powershell --classic
 
 # conda
 #apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
