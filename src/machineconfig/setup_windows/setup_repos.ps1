@@ -1,6 +1,6 @@
 
 cd ~
-mkdir code
+mkdir code -ErrorAction SilentlyContinue
 cd ~/code
 git clone https://github.com/thisismygitrepo/crocodile.git --depth 4
 git clone https://github.com/thisismygitrepo/machineconfig --depth 4  # Choose browser-based authentication.

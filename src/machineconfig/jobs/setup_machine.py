@@ -1,5 +1,6 @@
 
 import crocodile.toolbox as tb
+from machineconfig import create_symlinks
 
 
 def setup_env(system, env_name="ve", py_version="310"):
@@ -25,6 +26,7 @@ def setup_locally():
     ssh.run(setup_env(system, env_name=env, py_version="310"))
     env_cmd = f"""& ("~/venvs/" + {env} + "/Scripts/Activate.ps1")""" if system == 'Windows' else f"""source ~/venvs/{env}/bin/activate"""
     ssh.run(env_cmd + "; " + get_repos_install_script(system))
+    create_symlinks.main()
 
 
 def setup_remotely():
@@ -33,6 +35,7 @@ def setup_remotely():
     system = ssh.remote_machine
     ssh.run(setup_env(system=system, env_name=ve, py_version="310"))
     ssh.run(ssh.remote_env_cmd + "; " + get_repos_install_script(system))
+    ssh.run(ssh.remote_env_cmd + "; " + "python -m fire machineconfig.create_symlink main")
 
 
 if __name__ == '__main__':

@@ -1,8 +1,6 @@
 
 
 import crocodile.toolbox as tb
-
-
 tm = tb.Terminal()
 
 

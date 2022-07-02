@@ -2,7 +2,7 @@
 $ve_name='ve'
 $py_version=39
 
-mkdir ~/venvs
+mkdir ~/venvs -ErrorAction SilentlyContinue
 cd ~
 
 set mypy ($env:LOCALAPPDATA + "\Programs\Python\Python$py_version\python.exe")
