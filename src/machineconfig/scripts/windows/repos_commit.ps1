@@ -1,4 +1,5 @@
 
 ~/venvs/ve/Scripts/Activate.ps1
 cd ~
-python -m fire .\code\dotfiles\jobs\repos.py commit_all
+cd ~/code/machineconfig/src/machineconfig
+python -m fire ./jobs/repos.py commit_all

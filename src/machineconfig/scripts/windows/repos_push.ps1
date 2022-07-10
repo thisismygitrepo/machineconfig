@@ -1,4 +1,5 @@
 
 ~/venvs/ve/Scripts/Activate.ps1
 cd ~
-python -m fire .\code\dotfiles\jobs\repos.py push_all
+cd ~/code/machineconfig/src/machineconfig
+python -m fire ./jobs/repos.py push_all
