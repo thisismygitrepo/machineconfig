@@ -22,7 +22,7 @@ def install():
 
     # Step 4: change the profile of the terminal such that nerd font is chosen for your shell
     shell = {"powershell": "pwsh.exe", "Windows Powershell": "powershell.exe"}["powershell"].split(".exe")[0]
-    from machine_setup.windows_terminal_setup.change_terminal_settings import TerminalSettings
+    from machineconfig.setup_windows_terminal.change_terminal_settings import TerminalSettings
     if shell == "pwsh":
         ts = TerminalSettings()
         ts.customize_powershell(nerd_font=True)
@@ -49,7 +49,9 @@ def choose(name=""):
     """
     import os
     themes_path = tb.P(os.environ["POSH_THEMES_PATH"])
-    current_theme = tb.P(os.environ["POSH_THEME"]).trunk
+    # current_theme = tb.P(os.environ["POSH_THEME"]).trunk
+    profile = tb.Terminal().run("$profile", shell="pwsh").as_path
+    current_theme = tb.P(tb.L(profile.read_text().split(" ")).filter(lambda x: ".omp.json" in x)[0]).expanduser().absolute().trunk
 
     if name == "manual":
         tb.P("https://ohmyposh.dev/docs/themes").start()  # replace ~/jan... with full path to theme. use: start $profile
@@ -60,7 +62,7 @@ def choose(name=""):
     if name == "": name = themes_path.search().apply(lambda x: x.trunk).sample()[0]
     print("Current Theme:", current_theme)
     print("New theme: ", name)
-    tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(txt=current_theme, alt=name, newline=False)
+    profile.modify_text(txt=current_theme, alt=name, newline=False)
 
 
 if __name__ == '__main__':
