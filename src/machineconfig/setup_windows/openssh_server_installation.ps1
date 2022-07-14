@@ -1,7 +1,8 @@
 
 $ErrorActionPreference = "Stop"
 
-# Install SSH-Server on a windows machine. see this other way as well: https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH
+# Install SSH-Server on a windows machine. see this one below if this one didn't work:
+# https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH
 # ALL of the following require admin priviliages:
 # PowerShell.exe -ExecutionPolicy Bypass -File "C:\bypass\prompt\standard.ps1" 2>&1>$null
 

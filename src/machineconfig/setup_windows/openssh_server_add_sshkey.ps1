@@ -8,6 +8,7 @@ $sshfile = "$env:USERPROFILE\.ssh\id_rsa.pub"  # this directory is for normal us
 
 type $sshfile >> "$sshd_dir\administrators_authorized_keys"
 # set appropirate persmissions for this file
+cd $sshd_dir
 icacls administrators_authorized_keys /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
 
 # Lastly, enabling public key authentication.
