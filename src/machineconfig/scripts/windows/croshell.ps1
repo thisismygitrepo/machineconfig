@@ -1,18 +1,33 @@
 
-param ($c="")
+
+param ($f="", $c="", $r="")
 #paarm ($python="")
+
+$ErrorActionPreference = "Stop"
+# Write-Host "$args"
+
 
 ~/venvs/ve/Scripts/Activate.ps1
 #$py = "C:\Users\Alex\venvs\ve\Scripts\python.exe"
 #$ipy = "C:\Users\Alex\venvs\ve\Scripts\ipython.exe"
 
+if ($r -eq "") {}
+else {
+    $cmd = "print('''dat=P(r'$r').readit()'''); dat=P(r'$r').readit()"
+    ipython -i --no-banner --term-title CROSHELL -c ("from crocodile.toolbox import *; import crocodile.environment as env;" + $cmd)
+    # python -m crocodile.run $args
+    break
+}
+
+
 if ($c -eq "") {
-    clear
+    # Clear-Host
 #    python -i -m crocodile.croshell
     ipython -i --no-banner --term-title CROSHELL -m crocodile.croshell
-
 }
+
 else {
+    # ipython -i --no-banner -m {crocodile.croshell --cmd $c}
     python -c ("from crocodile.toolbox import *; import crocodile.environment as env;" + $c)
 }
 
