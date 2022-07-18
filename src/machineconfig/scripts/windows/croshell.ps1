@@ -1,6 +1,6 @@
 
 
-param ($f="", $c="", $r="")
+param ($f="", $c="", $r="", $run="")
 #paarm ($python="")
 
 $ErrorActionPreference = "Stop"
@@ -13,21 +13,25 @@ $ErrorActionPreference = "Stop"
 
 if ($r -eq "") {}
 else {
-    $cmd = "print('''dat=P(r'$r').readit()'''); dat=P(r'$r').readit()"
-    ipython -i --no-banner --term-title CROSHELL -c ("from crocodile.toolbox import *; import crocodile.environment as env;" + $cmd)
-    # python -m crocodile.run $args
+    ipython -i --no-banner -m crocodile.croshell -- --cmd "dat=P(r'$r').readit(); print(D.get_repr(dat))"
+    # python -m crocodile.run $args  # --term-title CROSHELL
     break
 }
 
+# if ($run -eq "") {}
+# else {
+#     ipython -i --no-banner -m crocodile.run -- $args
+#     break
+# }
 
 if ($c -eq "") {
     # Clear-Host
 #    python -i -m crocodile.croshell
-    ipython -i --no-banner --term-title CROSHELL -m crocodile.croshell
+    ipython -i --no-banner -m crocodile.croshell
+#  --term-title CROSHELL
 }
 
 else {
-    # ipython -i --no-banner -m {crocodile.croshell --cmd $c}
     python -c ("from crocodile.toolbox import *; import crocodile.environment as env;" + $c)
 }
 
