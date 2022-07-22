@@ -5,7 +5,9 @@ cd ~/code || exit
 git clone https://github.com/thisismygitrepo/crocodile.git --depth 4
 git clone https://github.com/thisismygitrepo/machineconfig.git  --depth 4
 
-# assumes ve is activated.
+
+ve_name='latest'
+source ~/venvs/$ve_name/bin/activate || exit
 cd ~/code/crocodile || exit
 pip install -e .
 pip install -r requirements.txt

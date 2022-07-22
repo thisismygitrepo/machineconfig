@@ -4,8 +4,7 @@
 # when there is a !! sign, means the command before it requires input, putting another command behind it
 # will cause it to fail
 
-sudo apt update
-sudo apt upgrade
+sudo apt-get update && sudo apt-get -y upgrade
 sudo apt install wget
 sudo apt install git
 sudo apt install sl
