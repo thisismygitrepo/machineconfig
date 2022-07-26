@@ -1,10 +1,6 @@
 
-# allow ssh to linux:
-
-# on the linux machine:
-sudo apt install openssh-server
-
-# locally
+# allow ssh to remote linux without password
+# if local machine is linux, then use: ssh-copy-id, else if it is windows:
 sftp username@hostname  # put in password for once
 # !!
 mkdir .ssh

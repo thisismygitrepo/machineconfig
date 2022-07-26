@@ -1,5 +1,5 @@
 
-ve_name='latest'
+ve_name='ve'
 py_version=3.9
 mypy=python$py_version
 

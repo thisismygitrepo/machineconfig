@@ -25,6 +25,8 @@ winget install --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudi
 # winget install --name "PyCharm Professional Edition" --accept-package-agreements --accept-source-agreements
 winget install --name "PyCharm Community Edition" --Id "JetBrains.PyCharm.Community" --source winget --accept-package-agreements --accept-source-agreements
 #winget install spyder
+winget install --name "DB Browser for SQLite" --accept-package-agreements --accept-source-agreements
+#winget install --name "sql server management studio" --Id "Microsoft.SQLServerManagementStudi" --source winget --accept-package-agreements --accept-source-agreements
 
 # ================================================== Shells ===========================================
 $ErrorActionPreference = "Stop"  # if there is any error in any command, stop there instead of proceeding to the next.
@@ -34,20 +36,20 @@ winget install Python.Python.3 --source winget  # installs the latest.
 
 winget install --name "Git" --Id "Git.Git" --source winget --accept-package-agreements --accept-source-agreements
 # a terminal restart of terminal is required to for git to work, or the one can update the path
-$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
+# DONT use this line in combination with activated virtual enviroment.
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+
 #git config credential.helper store  # makes git remember credentials, or just link to pre-configured git config file.
 
 # winget install --name "AWS Command Line Interface"
 # winget install --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W 11
 winget install --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
 
-winget install --name "DB Browser for SQLite" --accept-package-agreements --accept-source-agreements
-#winget install --name "sql server management studio" --Id "Microsoft.SQLServerManagementStudi" --source winget --accept-package-agreements --accept-source-agreements
-
 # winget install --name "Node.js" --accept-package-agreements --accept-source-agreements
 winget install --name "julia" --Id "Julialang.Julia" --source winget --accept-package-agreements --accept-source-agreements
 # winget install --Id Rustlang.Rust.MSVC --source winget
 # https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
-wsl --install -d Ubuntu --accept-package-agreements --accept-source-agreements
+wsl --install -d Ubuntu  #--accept-package-agreements --accept-source-agreements
 
 # iex ((New-Object System.Net.WebClient).DownloadString('https://git.io/JJ8R4'))  # tune machine to minimal

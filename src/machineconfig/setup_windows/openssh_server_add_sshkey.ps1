@@ -1,7 +1,7 @@
 
-$ErrorActionPreference = "Stop"
-
 # run this script only after having public ssh key in place (~/.ssh/id_rsa.pub)
+
+$ErrorActionPreference = "Stop"
 $sshd_dir = "$env:ProgramData\ssh"
 $sshfile = "$env:USERPROFILE\.ssh\id_rsa.pub"  # this directory is for normal users, not admins.
 # Once they are populated, we can create administrators_authorized_keys
@@ -23,4 +23,3 @@ Restart-Service sshd -Force
 
 #Write-Host "Use this to Login/test Now"
 #write-host ssh $env:UserName@localhost
-

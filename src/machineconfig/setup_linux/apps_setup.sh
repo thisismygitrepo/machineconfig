@@ -5,20 +5,15 @@
 # will cause it to fail
 
 sudo apt-get update && sudo apt-get -y upgrade
-sudo apt install wget
-sudo apt install git
-sudo apt install sl
-sudo apt install cmatrix
-# the equivalent of Windows Terminal: TMUX
-# From here: https://github.com/dhaneshsivasamy07/tmux_tweaks/blob/master/.tmux.conf
-#curl -s https://raw.githubusercontent.com/dhaneshsivasamy07/tmux_tweaks/master/install.sh | sudo bash
-#cd ~ || exit
-#curl -s https://raw.githubusercontent.com/dhaneshsivasamy07/tmux_tweaks/master/tmux.conf > .tmux.conf
-sudo apt install tmux  # allows multiple terminals that are persistent.
+sudo apt install wget -y
+sudo apt install git -y
+sudo apt install sl -y
+sudo apt install cmatrix -y
+sudo apt install tmux -y # allows multiple terminals that are persistent.
 
 # install chrome:
-# wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-# sudo dpkg -i google-chrome-stable_current_amd64.deb
+ wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+ sudo dpkg -i google-chrome-stable_current_amd64.deb
 # install snap store
 # sudo mv /etc/apt/preferences.d/nosnap.pref ~/Documents/nosnap.backup
 # sudo apt update
