@@ -6,13 +6,13 @@ $ErrorActionPreference = "Stop"
 winget install --name "Google Chrome" --Id "Google.Chrome" --source winget --accept-package-agreements --accept-source-agreements
 #winget install --name "Chrome Remote Desktop Host" --Id "Google.ChromeRemoteDesktop" --source winget
 #winget search "Microsoft Teams" --Id "Microsoft.Teams" --Source winget
-winget install --name Zoom --Id Zoom.Zoom --source winget
+#winget install --name Zoom --Id Zoom.Zoom --source winget
 
 # productivity
-winget install --name "Adobe Acrobat Reader DC" --source winget
+#winget install --name "Adobe Acrobat Reader DC" --source winget
 winget install --name "7-zip" --Id "7zip.7zip" --source winget --accept-package-agreements --accept-source-agreements
-winget install --name "Mozilla Firefox" --accept-package-agreements --accept-source-agreements
-winget install --name "Mozilla Thunderbird" --accept-package-agreements --accept-source-agreements
+#winget install --name "Mozilla Firefox" --accept-package-agreements --accept-source-agreements
+#winget install --name "Mozilla Thunderbird" --accept-package-agreements --accept-source-agreements
 winget install --name "Microsoft Garage Mouse without Borders" --accept-package-agreements --accept-source-agreements
 #winget install --name "StreamlabsOBS" --Id "Streamlabs.StreamlabsOBS" --source "winget" --accept-package-agreements --accept-source-agreements
 #winget install --name "MiKTeX" --Id "ChristianSchenk.MiKTeX"  --source winget  # library / lanugage
@@ -23,7 +23,7 @@ winget install --name "Microsoft Garage Mouse without Borders" --accept-package-
 winget install --name "notepad++" --source winget --accept-package-agreements --accept-source-agreements
 winget install --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --accept-package-agreements --accept-source-agreements
 # winget install --name "PyCharm Professional Edition" --accept-package-agreements --accept-source-agreements
-winget install --name "PyCharm Community Edition" --Id "JetBrains.PyCharm.Community" --source winget --accept-package-agreements --accept-source-agreements
+# winget install --name "PyCharm Community Edition" --Id "JetBrains.PyCharm.Community" --source winget --accept-package-agreements --accept-source-agreements
 #winget install spyder
 winget install --name "DB Browser for SQLite" --accept-package-agreements --accept-source-agreements
 #winget install --name "sql server management studio" --Id "Microsoft.SQLServerManagementStudi" --source winget --accept-package-agreements --accept-source-agreements
@@ -47,7 +47,7 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";
 winget install --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
 
 # winget install --name "Node.js" --accept-package-agreements --accept-source-agreements
-winget install --name "julia" --Id "Julialang.Julia" --source winget --accept-package-agreements --accept-source-agreements
+#winget install --name "julia" --Id "Julialang.Julia" --source winget --accept-package-agreements --accept-source-agreements
 # winget install --Id Rustlang.Rust.MSVC --source winget
 # https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
 wsl --install -d Ubuntu  #--accept-package-agreements --accept-source-agreements

@@ -1,5 +1,7 @@
 
 # run this script only after having public ssh key in place (~/.ssh/id_rsa.pub)
+# https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_keymanagement
+# http://woshub.com/using-ssh-key-based-authentication-on-windows/
 
 $ErrorActionPreference = "Stop"
 $sshd_dir = "$env:ProgramData\ssh"

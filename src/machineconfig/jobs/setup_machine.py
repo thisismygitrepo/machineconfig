@@ -2,6 +2,7 @@
 """This module provides convenience functions to setup a remote machine,
 irrespective of whether the local is Windows or Linux, the remote is Windows or Linux.
 """
+
 import clipboard
 import crocodile.toolbox as tb
 from machineconfig import create_symlinks

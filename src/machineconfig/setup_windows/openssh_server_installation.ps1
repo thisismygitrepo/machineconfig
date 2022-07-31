@@ -9,7 +9,7 @@ Set-ExecutionPolicy Bypass
 # to install: winget install --Id Microsoft.OpenSSH
 # the result is installed in C:\Program Files\OpenSSH as opposed to C:\Windows\System32\OpenSSH which is the case if openssh is added as a feature/capability to windows
 # However, notice the new path is not in PATH as is the cases with system variant, so it needs to be added manually.
-# finally, ssh confif files are always @ "$env:ProgramData\ssh" irrespective of installation method.
+# finally, ssh config files are always @ "$env:ProgramData\ssh" irrespective of installation method.
 
 Add-WindowsCapability -Online -Name OpenSSH.Server
 Add-WindowsCapability -Online -Name OpenSSH.Client
@@ -17,7 +17,10 @@ Add-WindowsCapability -Online -Name OpenSSH.Client
 
 # Must Enable ssh-agent before starting. But even before that, one need to update path so that same shell has access to the NEWLY added ssh program
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
 Set-Service -Name sshd -StartupType Automatic
+#Get-Service -Name ssh-agent | Set-Service -StartupType Automatic
+
 #Set-Service -Name ssh-agent -StartupType Automatic
 #Start-Service ssh-agent
 # Starting the service for the first time will populate the directory with config files.

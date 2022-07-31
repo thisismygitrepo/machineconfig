@@ -14,7 +14,7 @@ def symlink(this: tb.P, to_this: tb.P, overwrite=True):
     """helper function. creates a symlink from `this` to `to_this`.
     What can go wrong?
     depending on this and to_this existence, one will be prioretized depending on overwrite value.
-    True means this will potentially be overwritten
+    True means this will potentially be overwritten (depending on whether to_this exists or not)
     False means to_this will potentially be overwittten."""
     if this.is_symlink(): this.delete(sure=True)  # delete if it exists as symblic link, not a concrete path.
     if this.exists():  # this is a problem. It will be resolved via `overwrite`
@@ -44,7 +44,7 @@ def link_aws(overwrite=True):
 
 
 def link_gitconfig(overwrite=True):
-    for config in [".gitconfig"]: symlink(tb.P.home().joinpath(config), DotFiles.joinpath(f"settings/{config}"), overwrite=overwrite)
+    for config in [".gitconfig", ".git-credentials"]: symlink(tb.P.home().joinpath(config), DotFiles.joinpath(f"settings/{config}"), overwrite=overwrite)
 
 
 def link_pypi_creds(overwrite=True):
