@@ -5,7 +5,7 @@ irrespective of whether the local is Windows or Linux, the remote is Windows or 
 
 import clipboard
 import crocodile.toolbox as tb
-from machineconfig import create_symlinks
+# from machineconfig import create_symlinks
 
 
 def apps_setup(system):
