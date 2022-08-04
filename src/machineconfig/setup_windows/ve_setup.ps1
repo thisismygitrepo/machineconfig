@@ -1,6 +1,6 @@
 
-$ve_name='ve'
-$py_version=39
+$ve_name = 've'
+$py_version = 390
 
 mkdir ~/venvs -ErrorAction SilentlyContinue
 cd ~
@@ -10,3 +10,4 @@ set mypy ($env:LOCALAPPDATA + "\Programs\Python\Python$py_version\python.exe")
 # activate
 & ~/venvs/$ve_name/Scripts/Activate.ps1
 &$mypy -m pip install --upgrade pip  # upgrades the pip that is within the environment.
+echo "Finished setting up virtual environment."

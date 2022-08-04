@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="machineconfig",
-    version="0.1",
+    version="0.2",
     author="Alex Al-Saffar",
     author_email="programmer@usa.com",
     description="Dotfiles management package",

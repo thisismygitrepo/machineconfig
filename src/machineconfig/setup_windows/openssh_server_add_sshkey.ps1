@@ -8,9 +8,9 @@ $sshd_dir = "$env:ProgramData\ssh"
 $sshfile = "$env:USERPROFILE\.ssh\id_rsa.pub"  # this directory is for normal users, not admins.
 # Once they are populated, we can create administrators_authorized_keys
 
-type $sshfile >> "$sshd_dir\administrators_authorized_keys"
+Get-Content $sshfile >> "$sshd_dir\administrators_authorized_keys"
 # set appropirate persmissions for this file
-cd $sshd_dir
+Set-Location $sshd_dir
 icacls administrators_authorized_keys /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
 
 # Lastly, enabling public key authentication.
@@ -25,3 +25,6 @@ Restart-Service sshd -Force
 
 #Write-Host "Use this to Login/test Now"
 #write-host ssh $env:UserName@localhost
+
+# debug tip: use nano editor to inspect files above, if unreadable max-text format is used, ssh won't work.
+

@@ -53,3 +53,4 @@ winget install --name "Powershell" --Id "Microsoft.PowerShell" --source winget  
 wsl --install -d Ubuntu  #--accept-package-agreements --accept-source-agreements
 
 # iex ((New-Object System.Net.WebClient).DownloadString('https://git.io/JJ8R4'))  # tune machine to minimal
+echo "Finished installing apps"

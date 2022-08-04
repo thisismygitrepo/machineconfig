@@ -9,7 +9,7 @@ sudo apt install wget -y
 sudo apt install git -y
 sudo apt install sl -y
 sudo apt install cmatrix -y
-sudo apt install neofetch
+sudo apt install neofetch -y
 neofetch
 sudo apt install tmux -y # allows multiple terminals that are persistent.
 

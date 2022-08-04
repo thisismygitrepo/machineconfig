@@ -8,5 +8,5 @@
 # Idea from: https://www.chrisjhart.com/Windows-10-ssh-copy-id/
 
 $key_value = cat ($env:USERPROFILE + "\.ssh\id_rsa.pub")
-ssh $args[0] "powershell.exe -Command echo $key_value >> .ssh/authorized_keys"
+ssh $args[0] "powershell.exe -Command type $key_value >> .ssh/authorized_keys"
 

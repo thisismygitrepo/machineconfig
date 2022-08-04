@@ -116,6 +116,9 @@ def main():
     link_ssh(overwrite=overwrite)
     # link_autostart(overwrite=overwrite)
 
+    if system == "Linux":
+        add_scripts_to_path()  # decide on whether shell profile is synced to dotfiles or updated on the fly. For linux, its updated
+
 
 if __name__ == '__main__':
     pass

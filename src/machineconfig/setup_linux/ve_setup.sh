@@ -1,6 +1,7 @@
 
-ve_name='ve'
-py_version=3.9
+ve_name = 've'
+py_version = 3.9
+
 mypy=python$py_version
 
 sudo apt install -y $mypy  # ignore system level one. launched with `python39`, as opposed to `python`
