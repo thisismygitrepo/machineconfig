@@ -14,3 +14,4 @@ pip install -r requirements.txt  # not installed automatically by corocdile.
 cd ~/code/machineconfig
 pip install -e .
 echo "Finished setting up repos"
+
