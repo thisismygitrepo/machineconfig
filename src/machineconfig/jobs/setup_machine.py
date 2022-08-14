@@ -13,14 +13,13 @@ def apps_setup(system):
     return script
 def ve_setup(system, env_name="ve", dotted_py_version="3.10"):
     scripts = tb.P.cwd().parent.joinpath(f"setup_{system.lower()}/ve_setup.{'ps1' if system == 'Windows' else 'sh'}").read_text()
-    scripts = scripts.replace("ve_name = 've'", f"ve_name = '{env_name}'")
-    if system == "Windows": scripts = scripts.replace("py_version = 39", f"py_version = '{dotted_py_version.replace('.', '')}'")
-    elif system == "Linux": scripts = scripts.replace("py_version = 3.9", f"py_version = '{dotted_py_version}'")
-    else: raise ValueError
+    scripts = tb.modify_text(raw=scripts, txt="ve_name =", alt=f"ve_name = '{env_name}'", newline=True)
+    scripts = tb.modify_text(raw=scripts, txt="py_version =", alt=f"py_version = '{dotted_py_version.replace('.', '') if system == 'Windows' else dotted_py_version}'", newline=True)
     return scripts
+
 # those functions assume an activated virtual enviroment in shell.
-def repos_setup(system, ve): return tb.P.cwd().parent.joinpath(f"setup_{system.lower()}/repos_setup.{'ps1' if system == 'Windows' else 'sh'}").read_text().replace("ve_name = 've'", f"ve_name = '{ve}'")
-def symlinks_setup(system, ve): return tb.P.cwd().parent.joinpath(f"setup_{system.lower()}/semlinks_setup.{'ps1' if system == 'Windows' else 'sh'}").read_text().replace("ve_name = 've'", f"ve_name = '{ve}'")
+def repos_setup(system, ve): return tb.modify_text(raw=tb.P.cwd().parent.joinpath(f"setup_{system.lower()}/repos_setup.{'ps1' if system == 'Windows' else 'sh'}").read_text(), txt="ve_name = ", alt=f"ve_name = '{ve}'", newline=True)
+def symlinks_setup(system, ve): return tb.modify_text(raw=tb.P.cwd().parent.joinpath(f"setup_{system.lower()}/semlinks_setup.{'ps1' if system == 'Windows' else 'sh'}").read_text(), txt="ve_name = ", alt=f"ve_name = '{ve}'", newline=True)
 def ssh_keys_setup(system): return tb.P.cwd().parent.joinpath(f"setup_{system.lower()}/openssh_server_add_sshkey.{'ps1' if system == 'Windows' else 'sh'}").read_text()
 
 # unused functions:
