@@ -4,30 +4,11 @@ This script Takes away all config files from the computer, place them in one dir
 `dotfiles`, and create symlinks to those files from thier original locations.
 """
 import crocodile.toolbox as tb
-from crocodile.environment import DotFiles, get_shell_profiles, system, AppData, ProgramFiles, WindowsApps  # , exe
+from crocodile.environment import DotFiles, get_shell_profiles, system, AppData  # ProgramFiles, WindowsApps  # , exe
+from utils.utils import symlink
 
 
 repo_root = tb.P.home().joinpath(f"code/machineconfig/src/machineconfig")
-
-
-def symlink(this: tb.P, to_this: tb.P, overwrite=True):
-    """helper function. creates a symlink from `this` to `to_this`.
-    What can go wrong?
-    depending on this and to_this existence, one will be prioretized depending on overwrite value.
-    True means this will potentially be overwritten (depending on whether to_this exists or not)
-    False means to_this will potentially be overwittten."""
-    if this.is_symlink(): this.delete(sure=True)  # delete if it exists as symblic link, not a concrete path.
-    if this.exists():  # this is a problem. It will be resolved via `overwrite`
-        if overwrite is True:  # it *can* be deleted, but let's look at target first.
-            if to_this.exists(): this.delete(sure=True)  # this exists, to_this as well. to_this is prioritized.
-            else: this.move(path=to_this)  # this exists, to_this doesn't. to_this is prioritized.
-        elif overwrite is False:  # don't sacrefice this, sacrefice to_this.
-            if to_this.exists(): this.move(path=to_this, overwrite=True)  # this exists, to_this as well, this is prioritized.   # now we are readly to make the link
-            else: this.move(path=to_this)  # this exists, to_this doesn't, this is prioritized.
-    else:  # this doesn't exist.
-        if not to_this.exists(): to_this.touch()  # we have to touch it (file) or create it (folder)
-    try: tb.P(this).symlink_to(to_this, verbose=True, overwrite=True)
-    except Exception as ex: print(f"Failed at linking {this} ==> {to_this}.\nReason: {ex}")
 
 
 def link_ssh(overwrite=True):
@@ -83,11 +64,10 @@ def link_scripts(overwrite=True):
 def add_scripts_to_path():  # options to make croshell available: define in terminal profile, add to Path, or add to some folder that is already in path, e.g. env.WindowsApps or Scripts folder where python.exe resides.
     if system == "Windows":
         # repo_root.joinpath(f"scripts/{system.lower()}/croshell.ps1").symlink_from(folder=exe.parent)  # thus, whenever ve is activated, croshell is available.
-        addition = f'\n$env:Path += ";{repo_root.joinpath(f"scripts/{system.lower()}")}"'  # don't add scripts path to Path
-        # addition = f'\n$env:Path += ";{tb.P.home().joinpath("scripts")}"'  # add
-        tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(addition, addition, notfound_append=True)
+        addition = f'$env:Path += ";{repo_root.joinpath(f"scripts/{system.lower()}").collapseuser()}"'
+        tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(addition, addition, newline=False, notfound_append=True)
     elif system == "Linux":
-        addition = f'export PATH={repo_root.joinpath(f"scripts/{system.lower()}")}:$PATH'
+        addition = f'export PATH={repo_root.joinpath(f"scripts/{system.lower()}").collapseuser()}:$PATH'
         tb.P("~/.bashrc").expanduser().modify_text(addition, addition, notfound_append=True)
         tb.Terminal().run(f'chmod +x {repo_root.joinpath(f"scripts/{system.lower()}")} -R')
     else: raise ValueError
@@ -116,8 +96,9 @@ def main():
     link_ssh(overwrite=overwrite)
     # link_autostart(overwrite=overwrite)
 
-    if system == "Linux":
-        add_scripts_to_path()  # decide on whether shell profile is synced to dotfiles or updated on the fly. For linux, its updated
+    # The following is not a symlink creation, but modification of shell profile.
+    # Shell profile is either in dotfiles and is synced (as in Windows), hence no need for update, or is updated on the fly (for Linux)
+    add_scripts_to_path()  # for windows it won't change the profile, if the profile was modified already e.g. due to syncing.
 
 
 if __name__ == '__main__':

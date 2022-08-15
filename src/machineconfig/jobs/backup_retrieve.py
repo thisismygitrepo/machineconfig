@@ -1,13 +1,18 @@
 
 
 import crocodile.environment as env
-from machineconfig.jobs.utils import retrieve as retrieve_func, backup as backup_func
+from machineconfig.utils.utils import retrieve_from_onedrive, backup_to_onedrive
 
 
-def backup_dotfiles(): backup_func("~/dotfiles")
-def retrieve_dotfiles(): retrieve_func(source_file="dotfiles_encrypted.zip", target_folder="~")
-def backup_thunderbird(): backup_func(env.AppData / "Thunderbird" / "Profiles" / "h7omvr4i.default-release")
-def retrieve_thunderbird(): retrieve_func(source_file="thunderbird_encrypted.zip", target_folder=env.AppData / "Thunderbird" / "Profiles")
+def backup_dotfiles(): backup_to_onedrive("~/dotfiles")
+def retrieve_dotfiles(): retrieve_from_onedrive("~/dotfiles")
+
+
+THUNDERBIRD = env.AppData / "Thunderbird" / "Profiles"
+
+
+def backup_thunderbird(): THUNDERBIRD.search().apply(lambda item: backup_to_onedrive(item))
+def retrieve_thunderbird(): THUNDERBIRD.search().apply(lambda item: retrieve_from_onedrive(item))
 
 
 if __name__ == '__main__':

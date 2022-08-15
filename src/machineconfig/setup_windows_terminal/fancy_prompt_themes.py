@@ -1,5 +1,7 @@
 
 import crocodile.toolbox as tb
+import crocodile.environment as env
+from machineconfig.utils.utils import get_latest_release
 
 """
 setup file for each shell can be found in $profile. The settings.json is the config file for Terminal.
@@ -7,10 +9,9 @@ setup file for each shell can be found in $profile. The settings.json is the con
 
 
 def install():
-    import crocodile.environment as env
 
     # Step 1: download the required fonts that has all the glyphs and install them.
-    folder = tb.P("https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/CascadiaCode.zip").download().unzip(inplace=True)
+    folder = tb.P(get_latest_release("https://github.com/ryanoasis/nerd-fonts") + "/CascadiaCode.zip").download().unzip(inplace=True)
     file = tb.P.tmpfile(suffix=".ps1").write_text(tb.P(__file__).with_name("install_fonts.ps1").read_text().replace(r".\fonts-to-be-installed", str(folder)))
     tb.subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {file.str}")
 
@@ -34,14 +35,16 @@ def install():
     theme_path = env.LocalAppData.joinpath(r"Programs\oh-my-posh\themes").collapseuser()
     # makes the profile work on any machine.
     txt = f"oh-my-posh --init --shell pwsh --config {theme_path}\\jandedobbeleer.omp.json | Invoke-Expression"
-    profile_path.modify_text(txt="oh-my-posh", alt=txt, newline=True)
-    profile_path.modify_text(txt="Import-Module -Name Terminal-Icons", alt="Import-Module -Name Terminal-Icons", newline=True)
+    profile_path.modify_text(txt="oh-my-posh", alt=txt, newline=True, notfound_append=True)
+    profile_path.modify_text(txt="Import-Module -Name Terminal-Icons", alt="Import-Module -Name Terminal-Icons", newline=True, notfound_append=True)
+
+    # Step 6: Add arrow keys history functionality to the terminal.
     txt = """
 # Shows navigable menu of all options when hitting Tab
 Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward"""
-    profile_path.modify_text(txt=txt, alt=txt, newline=True)
+    profile_path.modify_text(txt=txt, alt=txt, newline=True, notfound_append=True)
 
 
 def choose(name=""):
