@@ -5,7 +5,7 @@ This script Takes away all config files from the computer, place them in one dir
 """
 import crocodile.toolbox as tb
 from crocodile.environment import DotFiles, get_shell_profiles, system, AppData  # ProgramFiles, WindowsApps  # , exe
-from utils.utils import symlink
+from machineconfig.utils.utils import symlink
 
 
 repo_root = tb.P.home().joinpath(f"code/machineconfig/src/machineconfig")

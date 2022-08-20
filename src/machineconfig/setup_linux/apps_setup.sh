@@ -13,12 +13,18 @@ sudo nala update && sudo nala -y upgrade
 
 
 sudo nala install wget -y
+sudo nala install curl -y
+sudo apt install net-tools  # gives ifconfig
+
 sudo nala install git -y
 sudo nala install sl -y
 sudo nala install cmatrix -y
 sudo nala install neofetch -y
 neofetch
 sudo nala install tmux -y # allows multiple terminals that are persistent.
+
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+
 
 # install chrome:
 # wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb

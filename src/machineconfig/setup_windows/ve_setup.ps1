@@ -1,6 +1,6 @@
 
-$ve_name = 'latest'
-$py_version = 310
+$ve_name='latest'
+$py_version=310
 
 mkdir ~/venvs -ErrorAction SilentlyContinue
 cd ~

@@ -13,8 +13,8 @@ def apps_setup(system):
     return script
 def ve_setup(system, env_name="ve", dotted_py_version="3.10"):
     scripts = tb.P.cwd().parent.joinpath(f"setup_{system.lower()}/ve_setup.{'ps1' if system == 'Windows' else 'sh'}").read_text()
-    scripts = tb.modify_text(raw=scripts, txt="ve_name =", alt=f"ve_name = '{env_name}'", newline=True)
-    scripts = tb.modify_text(raw=scripts, txt="py_version =", alt=f"py_version = '{dotted_py_version.replace('.', '') if system == 'Windows' else dotted_py_version}'", newline=True)
+    scripts = tb.modify_text(raw=scripts, txt="ve_name=", alt=f"ve_name='{env_name}'", newline=True)
+    scripts = tb.modify_text(raw=scripts, txt="py_version=", alt=f"py_version='{dotted_py_version.replace('.', '') if system == 'Windows' else dotted_py_version}'", newline=True)
     return scripts
 
 # those functions assume an activated virtual enviroment in shell.
