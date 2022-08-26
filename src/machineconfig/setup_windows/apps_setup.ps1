@@ -35,6 +35,7 @@ winget install Python.Python.3 --source winget  # installs the latest.
 # OR: winget install --name "Python 3" --source winget  # gives the latest python
 
 winget install --name "Git" --Id "Git.Git" --source winget --accept-package-agreements --accept-source-agreements
+winget install onefetch
 # a terminal restart of terminal is required to for git to work, or the one can update the path
 
 # DONT use this line in combination with activated virtual enviroment.

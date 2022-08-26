@@ -1,12 +1,13 @@
 
 import setuptools
+from machineconfig import version
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="machineconfig",
-    version="0.2",
+    version=version,
     author="Alex Al-Saffar",
     author_email="programmer@usa.com",
     description="Dotfiles management package",
