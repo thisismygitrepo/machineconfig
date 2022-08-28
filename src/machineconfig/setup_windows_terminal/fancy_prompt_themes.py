@@ -10,7 +10,7 @@ setup file for each shell can be found in $profile. The settings.json is the con
 
 def install():
     # Step 1: download the required fonts that has all the glyphs and install them.
-    folder = tb.P(get_latest_release("https://github.com/ryanoasis/nerd-fonts") + "/CascadiaCode.zip").download().unzip(inplace=True)
+    folder = tb.P(get_latest_release("https://github.com/ryanoasis/nerd-fonts")).joinpath("CascadiaCode.zip").download().unzip(inplace=True)
     file = tb.P.tmpfile(suffix=".ps1").write_text(tb.P(__file__).with_name("install_fonts.ps1").read_text().replace(r".\fonts-to-be-installed", str(folder)))
     tb.subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {file.str}")
 
@@ -18,7 +18,7 @@ def install():
     tb.Terminal().run("Install-Module -Name Terminal-Icons -Repository PSGallery", shell="powershell")
 
     # Step 3: install oh-my-posh
-    tb.Terminal().run('winget install --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh --source winget', shell="powershell")
+    tb.Terminal().run('winget install --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" --source winget', shell="powershell").op.print()
 
     # Step 4: change the profile of the terminal such that nerd font is chosen for your shell
     shell = {"powershell": "pwsh.exe", "Windows Powershell": "powershell.exe"}["powershell"].split(".exe")[0]
