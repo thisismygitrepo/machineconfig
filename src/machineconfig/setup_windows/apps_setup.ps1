@@ -30,8 +30,8 @@ winget install --name "DB Browser for SQLite" --accept-package-agreements --acce
 
 # ================================================== Shells ===========================================
 $ErrorActionPreference = "Stop"  # if there is any error in any command, stop there instead of proceeding to the next.
-winget install -e --id "Python.Python.3" -v "3.9.7150.0" --source winget  # from https:\\winget.run
-winget install Python.Python.3 --source winget  # installs the latest.
+winget install --id "Python.Python.3.9" --source winget  # from https:\\winget.run  Python.Python.3.9
+winget install Python.Python.3.10 --source winget
 # OR: winget install --name "Python 3" --source winget  # gives the latest python
 
 winget install --name "Git" --Id "Git.Git" --source winget --accept-package-agreements --accept-source-agreements
