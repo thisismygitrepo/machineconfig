@@ -34,6 +34,7 @@ winget install --id "Python.Python.3.9" --source winget  # from https:\\winget.r
 winget install Python.Python.3.10 --source winget
 # OR: winget install --name "Python 3" --source winget  # gives the latest python
 
+winget install --Id Clement.bottom --source winget
 winget install --name "Git" --Id "Git.Git" --source winget --accept-package-agreements --accept-source-agreements
 winget install onefetch
 # a terminal restart of terminal is required to for git to work, or the one can update the path

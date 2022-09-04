@@ -4,7 +4,7 @@ This script Takes away all config files from the computer, place them in one dir
 `dotfiles`, and create symlinks to those files from thier original locations.
 """
 import crocodile.toolbox as tb
-from crocodile.environment import DotFiles, get_shell_profiles, system, AppData  # ProgramFiles, WindowsApps  # , exe
+from crocodile.environment import sep, DotFiles, get_shell_profiles, system, AppData  # ProgramFiles, WindowsApps  # , exe
 from machineconfig.utils.utils import symlink
 
 
@@ -61,13 +61,14 @@ def link_scripts(overwrite=True):
     symlink(tb.P.home().joinpath("scripts"), repo_root.joinpath(f"scripts/{system.lower()}"), overwrite=overwrite)
 
 
-def add_scripts_to_path():  # options to make croshell available: define in terminal profile, add to Path, or add to some folder that is already in path, e.g. env.WindowsApps or Scripts folder where python.exe resides.
+def add_to_shell_profile_path(dirs):
+    # options to make croshell available: define in terminal profile, add to Path, or add to some folder that is already in path, e.g. env.WindowsApps or Scripts folder where python.exe resides.
+    # repo_root.joinpath(f"scripts/{system.lower()}/croshell.ps1").symlink_from(folder=exe.parent)  # thus, whenever ve is activated, croshell is available.
     if system == "Windows":
-        # repo_root.joinpath(f"scripts/{system.lower()}/croshell.ps1").symlink_from(folder=exe.parent)  # thus, whenever ve is activated, croshell is available.
-        addition = f'$env:Path += ";{repo_root.joinpath(f"scripts/{system.lower()}").collapseuser()}"'
+        addition = f'$env:Path += ";{sep.join(dirs)}"'
         tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(addition, addition, newline=False, notfound_append=True)
     elif system == "Linux":
-        addition = f'export PATH={repo_root.joinpath(f"scripts/{system.lower()}").collapseuser()}:$PATH'
+        addition = f'export PATH={sep.join(dirs)}:$PATH'
         tb.P("~/.bashrc").expanduser().modify_text(addition, addition, notfound_append=True)
         tb.Terminal().run(f'chmod +x {repo_root.joinpath(f"scripts/{system.lower()}")} -R')
     else: raise ValueError
@@ -98,7 +99,9 @@ def main():
 
     # The following is not a symlink creation, but modification of shell profile.
     # Shell profile is either in dotfiles and is synced (as in Windows), hence no need for update, or is updated on the fly (for Linux)
-    add_scripts_to_path()  # for windows it won't change the profile, if the profile was modified already e.g. due to syncing.
+    paths = [repo_root.joinpath(f"scripts/{system.lower()}").collapseuser()]
+    if system == "Windows": paths += [r"C:\Program Files\bottom\bin"]
+    add_to_shell_profile_path(paths)  # for windows it won't change the profile, if the profile was modified already e.g. due to syncing.
 
 
 if __name__ == '__main__':

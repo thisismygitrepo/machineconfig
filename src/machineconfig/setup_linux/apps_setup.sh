@@ -7,22 +7,35 @@
 echo "deb https://deb.volian.org/volian/ scar main" | sudo tee /etc/apt/sources.list.d/volian-archive-scar-unstable.list
 wget -qO - https://deb.volian.org/volian/scar.key | sudo tee /etc/apt/trusted.gpg.d/volian-archive-scar-unstable.gpg > /dev/null
 
-sudo apt update && sudo apt install nala -y
-sudo nala update && sudo nala -y upgrade
+sudo apt update && sudo apt install nala -y  # nala is a command line tool for managing your Linux system
+sudo nala update && sudo nala -y upgrade  # this is suprior to apt
 
 
-sudo nala install wget -y
-sudo nala install curl -y
+sudo nala install wget -y  # for downloading files
+sudo nala install curl -y  # for handling http requests
 sudo apt install net-tools  # gives ifconfig
+sudo nala install git -y  # for version control
 
-sudo nala install git -y
-sudo nala install sl -y
-sudo nala install cmatrix -y
-sudo nala install neofetch -y
+sudo nala install sl -y  # for fun
+sudo nala install cmatrix -y  # for fun
+sudo nala install hollywood -y  # for fun
+
+sudo nala install neofetch -y  # for system info
 neofetch
 sudo nala install tmux -y # allows multiple terminals that are persistent.
 
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+
+# ranger terminal-based file explorer.
+# midnight commander, similar
+# ncdu disk usage analyzer.
+# Asciiquarium
+# https://github.com/bartobri/no-more-secrets
+# boxes
+# lolcat
+# bottom  # rust-based alternative to htop
+# micro # terminal-based text editor, alternative to nano
+# https://www.youtube.com/watch?v=2OHrTQVlRMg
 
 
 # install chrome:
