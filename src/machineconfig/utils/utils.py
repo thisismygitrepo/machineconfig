@@ -1,6 +1,7 @@
 
 from crocodile.environment import OneDriveConsumer, DotFiles
 import crocodile.toolbox as tb
+# import crocodile.environment as env
 
 
 def symlink(this: tb.P, to_this: tb.P, overwrite=True):
@@ -51,10 +52,10 @@ def retrieve_from_onedrive(target_file):
     print(f"RETRIEVED {repr(source_file)} {'>' * 10} TO {'>' * 10} {repr(target_file)}")
 
 
-def get_latest_release(url):
+def get_latest_release(repo_url):
     import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
-    latest_version = requests.get(url + "/releases/latest").url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
-    return url + "/releases/download/" + latest_version
+    latest_version = requests.get(repo_url + "/releases/latest").url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
+    return repo_url + "/releases/download/" + latest_version
 
 
 if __name__ == '__main__':

@@ -23,10 +23,11 @@ sudo nala install hollywood -y  # for fun
 sudo nala install neofetch -y  # for system info
 neofetch
 sudo nala install tmux -y # allows multiple terminals that are persistent.
+sudo apt install bat  # cat with colors.
 
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
-# ranger terminal-based file explorer.
+sudo nala install ranger   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
 # midnight commander, similar
 # ncdu disk usage analyzer.
 # Asciiquarium
