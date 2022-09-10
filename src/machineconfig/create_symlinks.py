@@ -3,9 +3,10 @@
 This script Takes away all config files from the computer, place them in one directory
 `dotfiles`, and create symlinks to those files from thier original locations.
 """
+
 import crocodile.toolbox as tb
 from crocodile.environment import DotFiles, get_shell_profiles, system, AppData, PathVar  # ProgramFiles, WindowsApps  # , exe
-from src import symlink
+from machineconfig.utils.utils import symlink
 
 
 repo_root = tb.P.home().joinpath(f"code/machineconfig/src/machineconfig")

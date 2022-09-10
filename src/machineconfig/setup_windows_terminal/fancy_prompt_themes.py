@@ -1,7 +1,7 @@
 
 import crocodile.toolbox as tb
 import crocodile.environment as env
-from src import get_latest_release
+from machineconfig import get_latest_release
 
 """
 setup file for each shell can be found in $profile. The settings.json is the config file for Terminal.
@@ -22,7 +22,7 @@ def install():
 
     # Step 4: change the profile of the terminal such that nerd font is chosen for your shell
     shell = {"powershell": "pwsh.exe", "Windows Powershell": "powershell.exe"}["powershell"].split(".exe")[0]
-    from src import TerminalSettings
+    from machineconfig import TerminalSettings
     if shell == "pwsh":
         ts = TerminalSettings()
         ts.customize_powershell(nerd_font=True)
