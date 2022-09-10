@@ -16,18 +16,21 @@ sudo nala install curl -y  # for handling http requests
 sudo apt install net-tools  # gives ifconfig
 sudo nala install git -y  # for version control
 
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 sudo nala install sl -y  # for fun
 sudo nala install cmatrix -y  # for fun
 sudo nala install hollywood -y  # for fun
-
 sudo nala install neofetch -y  # for system info
 neofetch
+
 sudo nala install tmux -y # allows multiple terminals that are persistent.
-sudo apt install bat  # cat with colors.
-
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
-
 sudo nala install ranger   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
+sudo nala install bat  # cat with colors.
+sudo nala install neovim -y  # nvim
+sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'  # plugin manager for nvim
+sudo nala install exuberant-ctags -y  # for tagbar
+
+
 # midnight commander, similar
 # ncdu disk usage analyzer.
 # Asciiquarium

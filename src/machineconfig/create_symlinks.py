@@ -71,6 +71,14 @@ def add_to_shell_profile_path(dirs: list):
     else: raise ValueError
 
 
+def link_lf_n_nvim(overwrite=True):
+    if system == "Windows":
+        for item in ['lfrc', 'icons', 'colors']:
+            symlink(this=AppData.joinpath(f"Local/lf/{item}"), to_this=DotFiles.joinpath(f"settings/lf/{item}"), overwrite=overwrite)
+        symlink(this=AppData.joinpath(f"Local/nvim/init.vim"), to_this=DotFiles.joinpath(f"settings/nvim/init.vim"), overwrite=overwrite)
+    else: raise NotImplementedError
+
+
 def link_wsl_path_to_windows_path(linux_user, windows_user=None, links=None, run_in_wsl=True):
     links = links or ["data", "dotfiles"]
     windows_user = windows_user or linux_user
@@ -91,6 +99,7 @@ def main():
     link_windows_powershell(overwrite=overwrite)
     link_aws(overwrite=overwrite)
     link_ssh(overwrite=overwrite)
+    link_lf_n_nvim(overwrite=overwrite)
     # link_autostart(overwrite=overwrite)
 
     link_scripts(overwrite=overwrite)

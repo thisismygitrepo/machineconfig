@@ -35,6 +35,8 @@ winget install Python.Python.3.10 --source winget
 # OR: winget install --name "Python 3" --source winget  # gives the latest python
 
 winget install --Id Clement.bottom --source winget
+winget install --Id Neovim.Neovim --source winget
+iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim | ni "$(@($env:XDG_DATA_HOME, $env:LOCALAPPDATA)[$null -eq $env:XDG_DATA_HOME])/nvim-data/site/autoload/plug.vim" -Force
 winget install --name "Git" --Id "Git.Git" --source winget --accept-package-agreements --accept-source-agreements
 winget install onefetch
 # a terminal restart of terminal is required to for git to work, or the one can update the path
