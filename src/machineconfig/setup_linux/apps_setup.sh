@@ -4,19 +4,22 @@
 # when there is a !! sign, means the command before it requires input, putting another command behind it will cause it to fail
 
 # https://gitlab.com/volian/nala/-/wikis/Installation  # https://gitlab.com/volian/nala
-echo "deb https://deb.volian.org/volian/ scar main" | sudo tee /etc/apt/sources.list.d/volian-archive-scar-unstable.list
-wget -qO - https://deb.volian.org/volian/scar.key | sudo tee /etc/apt/trusted.gpg.d/volian-archive-scar-unstable.gpg > /dev/null
+#echo "deb https://deb.volian.org/volian/ scar main" | sudo tee /etc/apt/sources.list.d/volian-archive-scar-unstable.list
+#wget -qO - https://deb.volian.org/volian/scar.key | sudo tee /etc/apt/trusted.gpg.d/volian-archive-scar-unstable.gpg > /dev/null
 
 sudo apt update && sudo apt install nala -y  # nala is a command line tool for managing your Linux system
-sudo nala update && sudo nala -y upgrade  # this is suprior to apt
+sudo nala update && sudo nala upgrade -y  # this is suprior to apt
+
 sudo nala install nodejs -y  # for nvim plugins
+#curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
+sudo nala install npm -y  # for nvim plugins
 
 sudo nala install wget -y  # for downloading files
 sudo nala install curl -y  # for handling http requests
 sudo nala install net-tools  # gives ifconfig
 sudo nala install git -y  # for version control
 
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)" -y
 sudo nala install sl -y  # for fun
 sudo nala install cmatrix -y  # for fun
 sudo nala install hollywood -y  # for fun
@@ -24,8 +27,8 @@ sudo nala install neofetch -y  # for system info
 neofetch
 
 sudo nala install tmux -y # allows multiple terminals that are persistent.
-sudo nala install ranger   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
-sudo nala install bat  # cat with colors.
+sudo nala install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
+sudo nala install bat -y  # cat with colors.
 sudo nala install neovim -y  # nvim
 sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'  # plugin manager for nvim
 sudo nala install exuberant-ctags -y  # for tagbar

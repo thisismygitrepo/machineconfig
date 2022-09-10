@@ -1,7 +1,7 @@
 
 
 import crocodile.environment as env
-from machineconfig.utils.utils import retrieve_from_onedrive, backup_to_onedrive
+from src import retrieve_from_onedrive, backup_to_onedrive
 
 
 def backup_dotfiles(): backup_to_onedrive("~/dotfiles")

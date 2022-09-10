@@ -4,9 +4,10 @@ py_version=3.9
 
 mypy=python$py_version
 
-sudo apt install -y $mypy  # ignore system level one. launched with `python39`, as opposed to `python`
-sudo apt install -y $mypy-venv
-sudo apt install -y python3-pip
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo nala install -y $mypy  # ignore system level one. launched with `python39`, as opposed to `python`
+sudo nala install -y $mypy-venv
+sudo nala install -y python3-pip
 
 mkdir ~/venvs/
 cd ~/venvs/ || exit
