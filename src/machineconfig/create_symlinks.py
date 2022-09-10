@@ -76,7 +76,10 @@ def link_lf_n_nvim(overwrite=True):
         for item in ['lfrc', 'icons', 'colors']:
             symlink(this=AppData.joinpath(f"Local/lf/{item}"), to_this=DotFiles.joinpath(f"settings/lf/{item}"), overwrite=overwrite)
         symlink(this=AppData.joinpath(f"Local/nvim/init.vim"), to_this=DotFiles.joinpath(f"settings/nvim/init.vim"), overwrite=overwrite)
-    else: raise NotImplementedError
+    else:
+        for item in ['lfrc', 'icons', 'colors']:
+            symlink(this=tb.P.home().joinpath(f".config/lf/{item}"), to_this=DotFiles.joinpath(f"settings/lf_linux/{item}"), overwrite=overwrite)
+        symlink(this=tb.P.home().joinpath(f".config/nvim/init.vim"), to_this=DotFiles.joinpath(f"settings/nvim/init.vim"), overwrite=overwrite)
 
 
 def link_wsl_path_to_windows_path(linux_user, windows_user=None, links=None, run_in_wsl=True):
@@ -107,6 +110,7 @@ def main():
     # Shell profile is either in dotfiles and is synced (as in Windows), hence no need for update, or is updated on the fly (for Linux)
     paths = [repo_root.joinpath(f"scripts/{system.lower()}").collapseuser()]
     add_to_shell_profile_path(paths)  # for windows it won't change the profile, if the profile was modified already e.g. due to syncing.
+    # this is ambiguous, with which shell is this happening?
 
 
 if __name__ == '__main__':

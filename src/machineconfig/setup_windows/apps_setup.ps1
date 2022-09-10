@@ -50,7 +50,7 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";
 # winget install --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W 11
 winget install --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
 
-# winget install --name "Node.js" --accept-package-agreements --accept-source-agreements
+winget install --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements  # ncessary for nvim plugins.
 #winget install --name "julia" --Id "Julialang.Julia" --source winget --accept-package-agreements --accept-source-agreements
 # winget install --Id Rustlang.Rust.MSVC --source winget
 # https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe

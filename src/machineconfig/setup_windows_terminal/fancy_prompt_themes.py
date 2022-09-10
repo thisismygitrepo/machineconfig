@@ -18,7 +18,7 @@ def install():
     tb.Terminal().run("Install-Module -Name Terminal-Icons -Repository PSGallery", shell="powershell")
 
     # Step 3: install oh-my-posh
-    tb.Terminal().run('winget install --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" --source winget', shell="powershell").op.print()
+    tb.Terminal().run('winget install --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" --source winget', shell="powershell").print()
 
     # Step 4: change the profile of the terminal such that nerd font is chosen for your shell
     shell = {"powershell": "pwsh.exe", "Windows Powershell": "powershell.exe"}["powershell"].split(".exe")[0]
