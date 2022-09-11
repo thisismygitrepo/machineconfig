@@ -4,7 +4,9 @@ py_version=3.9
 
 mypy=python$py_version
 
-sudo add-apt-repository ppa:deadsnakes/ppa
+sudo add-apt-repository ppa:deadsnakes/ppa  # without this repo, 3.9 is not available.
+sudo apt update
+
 sudo nala install -y $mypy  # ignore system level one. launched with `python39`, as opposed to `python`
 sudo nala install -y $mypy-venv
 sudo nala install -y python3-pip

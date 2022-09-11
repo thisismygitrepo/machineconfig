@@ -19,7 +19,7 @@ def ve_setup(system, env_name="ve", dotted_py_version="3.10"):
 
 # those functions assume an activated virtual enviroment in shell.
 def repos_setup(system, ve): return tb.modify_text(raw=tb.P.cwd().parent.joinpath(f"setup_{system.lower()}/repos_setup.{'ps1' if system == 'Windows' else 'sh'}").read_text(), txt="ve_name = ", alt=f"ve_name = '{ve}'", newline=True)
-def symlinks_setup(system, ve): return tb.modify_text(raw=tb.P.cwd().parent.joinpath(f"setup_{system.lower()}/semlinks_setup.{'ps1' if system == 'Windows' else 'sh'}").read_text(), txt="ve_name = ", alt=f"ve_name = '{ve}'", newline=True)
+def symlinks_setup(system, ve): return tb.modify_text(raw=tb.P.cwd().parent.joinpath(f"setup_{system.lower()}/symlinks_setup.{'ps1' if system == 'Windows' else 'sh'}").read_text(), txt="ve_name = ", alt=f"ve_name = '{ve}'", newline=True)
 def ssh_keys_setup(system): return tb.P.cwd().parent.joinpath(f"setup_{system.lower()}/openssh_server_add_sshkey.{'ps1' if system == 'Windows' else 'sh'}").read_text()
 
 # unused functions:
@@ -31,7 +31,6 @@ def install_repos_locally(*repos): return "; ".join([f'cd ~/code/{repo}; pip ins
 def setup():
     # step one is install openshh-server on remote machine, see [setup_windows/setup_linux]/openssh_server_installation.[ps1/.sh]
     ssh = tb.SSH(username="username", hostname="hostname", pwd=None, env=(ve := "ve"))  # use pwd for the first time connection.
-
     system = ssh.remote_machine
     ssh.open_console(terminal="wt")  # keep this window for emergency.
     apps_script = apps_setup(system=system)
@@ -43,7 +42,10 @@ def setup():
     assert ssh.run_py("tb.P.home()"), "Install repos first before proceeding."
 
     ssh.copy_from_here("~/.ssh/id_rsa.pub")
+    ssh.print_summary()
     ssh.copy_from_here("~/dotfiles", zip_first=True)
+    ssh.print_summary()
+
     # OR: if it is local setup:
     # cd ~/code/machineconfig/src/machineconfig
     # python -m fire ./jobs/backup_retrieve.py retrieve_dotfiles  # assuming key.zip is in Downloads folder.

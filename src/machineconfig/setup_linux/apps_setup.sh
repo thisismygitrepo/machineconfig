@@ -10,13 +10,14 @@
 sudo apt update && sudo apt install nala -y  # nala is a command line tool for managing your Linux system
 sudo nala update && sudo nala upgrade -y  # this is suprior to apt
 
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -  # The NodeSource repository
 sudo nala install nodejs -y  # for nvim plugins
 #curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
 sudo nala install npm -y  # for nvim plugins
 
 sudo nala install wget -y  # for downloading files
 sudo nala install curl -y  # for handling http requests
-sudo nala install net-tools  # gives ifconfig
+sudo nala install net-tools -y  # gives ifconfig
 sudo nala install git -y  # for version control
 
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)" -y
