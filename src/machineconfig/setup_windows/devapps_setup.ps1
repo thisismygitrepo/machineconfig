@@ -2,7 +2,8 @@
 
 $ve_name='ve'
 & ~/venvs/$ve_name/Scripts/Activate.ps1
-cd ~/code/machineconfig/src/machineconfig/script/windows
+
+cd ~/code/machineconfig/src/machineconfig/scripts/windows
 
 # ZoomIt
 ./croshell.ps1 -c "P(r'https://download.sysinternals.com/files/ZoomIt.zip').download(P.home().joinpath('Downloads')).unzip(inplace=True).joinpath('ZoomIt.exe').move(folder=get_env().WindowsApps)"
