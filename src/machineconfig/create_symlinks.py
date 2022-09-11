@@ -5,7 +5,7 @@ This script Takes away all config files from the computer, place them in one dir
 """
 
 import crocodile.toolbox as tb
-from crocodile.environment import DotFiles, get_shell_profiles, system, AppData, PathVar  # ProgramFiles, WindowsApps  # , exe
+from crocodile.environment import DotFiles, get_shell_profiles, system, LocalAppData, AppData, PathVar  # ProgramFiles, WindowsApps  # , exe
 from machineconfig.utils.utils import symlink
 
 
@@ -75,8 +75,8 @@ def add_to_shell_profile_path(dirs: list):
 def link_lf_n_nvim(overwrite=True):
     if system == "Windows":
         for item in ['lfrc', 'icons', 'colors']:
-            symlink(this=AppData.joinpath(f"Local/lf/{item}"), to_this=DotFiles.joinpath(f"settings/lf/{item}"), overwrite=overwrite)
-        symlink(this=AppData.joinpath(f"Local/nvim/init.vim"), to_this=DotFiles.joinpath(f"settings/nvim/init.vim"), overwrite=overwrite)
+            symlink(this=LocalAppData.joinpath(f"Local/lf/{item}"), to_this=DotFiles.joinpath(f"settings/lf/{item}"), overwrite=overwrite)
+        symlink(this=LocalAppData.joinpath(f"Local/nvim/init.vim"), to_this=DotFiles.joinpath(f"settings/nvim/init.vim"), overwrite=overwrite)
     else:
         for item in ['lfrc', 'icons', 'colors']:
             symlink(this=tb.P.home().joinpath(f".config/lf/{item}"), to_this=DotFiles.joinpath(f"settings/lf_linux/{item}"), overwrite=overwrite)
