@@ -75,8 +75,8 @@ def add_to_shell_profile_path(dirs: list):
 def link_lf_n_nvim(overwrite=True):
     if system == "Windows":
         for item in ['lfrc', 'icons', 'colors']:
-            symlink(this=LocalAppData.joinpath(f"Local/lf/{item}"), to_this=DotFiles.joinpath(f"settings/lf/{item}"), overwrite=overwrite)
-        symlink(this=LocalAppData.joinpath(f"Local/nvim/init.vim"), to_this=DotFiles.joinpath(f"settings/nvim/init.vim"), overwrite=overwrite)
+            symlink(this=LocalAppData.joinpath(f"lf/{item}"), to_this=DotFiles.joinpath(f"settings/lf/{item}"), overwrite=overwrite)
+        symlink(this=LocalAppData.joinpath(f"nvim/init.vim"), to_this=DotFiles.joinpath(f"settings/nvim/init.vim"), overwrite=overwrite)
     else:
         for item in ['lfrc', 'icons', 'colors']:
             symlink(this=tb.P.home().joinpath(f".config/lf/{item}"), to_this=DotFiles.joinpath(f"settings/lf_linux/{item}"), overwrite=overwrite)
