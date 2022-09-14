@@ -10,6 +10,7 @@ from machineconfig.utils.utils import symlink
 
 
 repo_root = tb.P.home().joinpath(f"code/machineconfig/src/machineconfig")
+M_CONFIG = tb.P.home().joinpath("code/machineconfig/settings")
 
 
 def link_ssh(overwrite=True):
@@ -72,15 +73,15 @@ def add_to_shell_profile_path(dirs: list):
     else: raise ValueError
 
 
-def link_lf_n_nvim(overwrite=True):
+def link_lf_n_lvim(overwrite=True):
     if system == "Windows":
         for item in ['lfrc', 'icons', 'colors']:
-            symlink(this=LocalAppData.joinpath(f"lf/{item}"), to_this=DotFiles.joinpath(f"settings/lf/{item}"), overwrite=overwrite)
-        symlink(this=LocalAppData.joinpath(f"nvim/init.vim"), to_this=DotFiles.joinpath(f"settings/nvim/init.vim"), overwrite=overwrite)
+            symlink(this=LocalAppData.joinpath(f"lf/{item}"), to_this=M_CONFIG.joinpath(f"lf/{item}"), overwrite=overwrite)
+        symlink(this=LocalAppData.joinpath(f"nvim/init.vim"), to_this=M_CONFIG.joinpath(f"nvim/init.vim"), overwrite=overwrite)
     else:
         for item in ['lfrc', 'icons', 'colors']:
-            symlink(this=tb.P.home().joinpath(f".config/lf/{item}"), to_this=DotFiles.joinpath(f"settings/lf_linux/{item}"), overwrite=overwrite)
-        symlink(this=tb.P.home().joinpath(f".config/nvim/init.vim"), to_this=DotFiles.joinpath(f"settings/nvim/init.vim"), overwrite=overwrite)
+            symlink(this=tb.P.home().joinpath(f".config/lf/{item}"), to_this=M_CONFIG.joinpath(f"lf_linux/{item}"), overwrite=overwrite)
+        symlink(this=tb.P.home().joinpath(f".config/nvim/init.vim"), to_this=M_CONFIG.joinpath(f"nvim/init.vim"), overwrite=overwrite)
 
 
 def link_wsl_path_to_windows_path(linux_user, windows_user=None, links=None, run_in_wsl=True):
@@ -103,13 +104,13 @@ def main():
     link_windows_powershell(overwrite=overwrite)
     link_aws(overwrite=overwrite)
     link_ssh(overwrite=overwrite)
-    link_lf_n_nvim(overwrite=overwrite)
+    link_lf_n_lvim(overwrite=overwrite)
     # link_autostart(overwrite=overwrite)
 
     link_scripts(overwrite=overwrite)
     # The following is not a symlink creation, but modification of shell profile.
     # Shell profile is either in dotfiles and is synced (as in Windows), hence no need for update, or is updated on the fly (for Linux)
-    paths = [repo_root.joinpath(f"scripts/{system.lower()}").collapseuser()]
+    paths = [repo_root.joinpath(f"scripts/{system.lower()}").collapseuser()] + ([r"C:\Program Files (x86)\GnuWin32\bin", r"C:\Program Files\CodeBlocks\MinGW\bin"] if system == "Windows" else [])  # make and gcc are already available on linux
     add_to_shell_profile_path(paths)  # for windows it won't change the profile, if the profile was modified already e.g. due to syncing.
     # this is ambiguous, with which shell is this happening?
 

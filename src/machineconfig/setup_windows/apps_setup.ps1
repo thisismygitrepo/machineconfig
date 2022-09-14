@@ -34,12 +34,10 @@ winget install --id "Python.Python.3.9" --source winget  # from https:\\winget.r
 winget install Python.Python.3.10 --source winget
 # OR: winget install --name "Python 3" --source winget  # gives the latest python
 
-winget install --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
-winget install --Id Neovim.Neovim --source winget --accept-package-agreements --accept-source-agreements
 # the two above require Restart-Computer -Force before they are available in PATH.
-iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim | ni "$(@($env:XDG_DATA_HOME, $env:LOCALAPPDATA)[$null -eq $env:XDG_DATA_HOME])/nvim-data/site/autoload/plug.vim" -Force
+# iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim | ni "$(@($env:XDG_DATA_HOME, $env:LOCALAPPDATA)[$null -eq $env:XDG_DATA_HOME])/nvim-data/site/autoload/plug.vim" -Force
+
 winget install --name "Git" --Id "Git.Git" --source winget --accept-package-agreements --accept-source-agreements
-winget install onefetch
 # a terminal restart of terminal is required to for git to work, or the one can update the path
 
 # DONT use this line in combination with activated virtual enviroment.
@@ -50,12 +48,27 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";
 # winget install --name "AWS Command Line Interface"
 # winget install --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W 11
 winget install --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
-
 winget install --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements  # ncessary for nvim plugins.
-#winget install --name "julia" --Id "Julialang.Julia" --source winget --accept-package-agreements --accept-source-agreements
-# winget install --Id Rustlang.Rust.MSVC --source winget
+winget install --Id Rustlang.Rust.MSVC --source winget
 # https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
-wsl --install -d Ubuntu  #--accept-package-agreements --accept-source-agreements
 
+#winget install --name "julia" --Id "Julialang.Julia" --source winget --accept-package-agreements --accept-source-agreements
+winget install --Id Codeblocks.Codeblocks --source winget  # gives gcc compiler
+winget install --Id GnuWin32.Make --source winget  # make command
+cargo install ripgrep  # rg command
+cargo install fd-find  # fd command
+cargo install bat  # colored version of cat.
+cargo install bottom  # terminal-based htop, winget install --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
+cargo install onefetch  # repo-version of system neofetch. winget install onefetch,
+cargo install tokei  # counts lines of code in every language.
+
+# ======================= Terminal-based editors =================================
+winget install --Id Neovim.Neovim --source winget --accept-package-agreements --accept-source-agreements
+# https://github.com/LunarVim/LunarVim
+Invoke-WebRequest https://raw.githubusercontent.com/LunarVim/LunarVim/master/utils/installer/install.ps1 -UseBasicParsing | Invoke-Expression
+Invoke-WebRequest "https://spacevim.org/install.cmd" -OutFile "~/Downloads/spacevim_installer.cmd"
+~/Downloads/spacevim_installer.cmd
+
+wsl --install -d Ubuntu  #--accept-package-agreements --accept-source-agreements
 # iex ((New-Object System.Net.WebClient).DownloadString('https://git.io/JJ8R4'))  # tune machine to minimal
 echo "Finished installing apps"

@@ -11,6 +11,7 @@ sudo apt update && sudo apt install nala -y  # nala is a command line tool for m
 sudo nala update && sudo nala upgrade -y  # this is suprior to apt
 
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -  # The NodeSource repository
+sudo nala update
 sudo nala install nodejs -y  # for nvim plugins
 #curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
 sudo nala install npm -y  # for nvim plugins
@@ -30,10 +31,17 @@ neofetch
 sudo nala install tmux -y # allows multiple terminals that are persistent.
 sudo nala install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
 sudo nala install bat -y  # cat with colors.
-sudo nala install neovim -y  # nvim
-sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'  # plugin manager for nvim
-sudo nala install exuberant-ctags -y  # for tagbar
+sudo nala install fzf -y  # fuzzy finder
+sudo nala install fd-find -y  # find alternative
 
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+#sudo nala install neovim -y  # nvim, but not latest release
+bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/rolling/utils/installer/install-neovim-from-release)
+# https://github.com/LunarVim/LunarVim
+bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
+curl -sLf https://spacevim.org/install.sh | bash
+
+# curl https://sh.rustup.rs -sSf | sh
 
 # midnight commander, similar
 # ncdu disk usage analyzer.
@@ -41,9 +49,7 @@ sudo nala install exuberant-ctags -y  # for tagbar
 # https://github.com/bartobri/no-more-secrets
 # boxes
 # lolcat
-# bottom  # rust-based alternative to htop
 # micro # terminal-based text editor, alternative to nano
-# https://www.youtube.com/watch?v=2OHrTQVlRMg
 
 
 # install chrome:

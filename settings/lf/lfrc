@@ -1,0 +1,95 @@
+
+# set previewer ~/dotfiles/settings/lf/leftpane_previewer.ps1
+# set previewer ~\AppData\Local\Microsoft\WindowsApps\bat.exe  --color=always --theme=base16
+# also see pistol file previewer.
+set preview true
+set shell powershell
+# set shell pwsh
+# set previewer ~/dotfiles/settings/lf/leftpane_previewer.ps1
+# set ignorecase true
+set colors
+
+# windows defaults
+#           %OPENER%  start
+#           %EDITOR%  notepad
+#           %PAGER%   more
+#           %SHELL%   cmd
+# Unix-like defaults
+#           $OPENER  open      # macos
+#           $OPENER  xdg-open  # others
+#           $EDITOR  vi
+#           $PAGER   less
+#           $SHELL   sh
+
+
+set scrolloff 10      # space on top and bottom of screen
+set icons on          # show icons next to files
+set period 1          # interval to check for directory updates
+set hidden on         # show hidden files by default
+set incsearch o       # jump to first match after each keystroke in search
+set dircounts on      # show number of items in directory instead of sie
+set info "size"       # list directory information on the right
+set sortby "natural"  # don't sort files in any special way
+set preview on        # preview file on the right pane
+set drawbox on        # draw a border around all panes
+# set ratios '1:2:3'    # ratio of pane widths
+# set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"
+# see more at https://git.lmburns.com/dotfiles-mac/file/.config/lf/lfrc.html
+
+# ============================ KEY BINDINGS ============================================
+# avoid using confusing keys that are already bound to other functions by other programs, e.g. the console itself, like ctrl+c
+
+cmd doc $lf -doc | bat
+
+# e edit
+map o $start $env:f
+map <enter> open
+map e  # edit modal key.
+map en $~/scripts/nano $env:f
+map el $lvim $env:f
+map es $nvim $env:f
+map ev $code $env:f
+map ep $pycharm
+
+map w
+map ws $powershell
+map wp $pwsh
+map wcr $~/scripts/croshell.ps1
+map wcm $cmd
+map i $~/dotfiles/settings/lf/previewer.ps1 $env:f
+map R $~/scripts/croshell.ps1 -r $env:f
+
+
+# cmd on-cd &{{$onefetch}}
+# on-quit $~/dotfiles/settings/lf/lfcd.ps1
+
+# key bindings
+map v
+map p
+map x
+map c
+map v
+
+# f file/folder
+map fx cut
+map fv paste
+map fc copy
+map fp $Set-Clipboard -Value $env:f
+map c clear
+map fr rename
+map <delete> delete
+map ff reload
+
+# j jump
+map jd cd ~/Downloads
+map jc cd ~/code
+
+# m make
+map m
+map md $~/dotfiles/settings/lf/mkdir.ps1 
+map mf $~/dotfiles/settings/lf/mkfile.ps1
+#map M mark-save
+
+# cmd on-quit $~/dotfiles/settings/lf/lfcd.ps1
+# map Q $~/dotfiles/settings/lf/lfcd.ps1 quit
+
