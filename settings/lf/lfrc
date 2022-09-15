@@ -9,7 +9,7 @@ set colors
 # set previewer ~\AppData\Local\Microsoft\WindowsApps\bat.exe  --color=always --theme=base16
 # also see pistol file previewer.
 # set shell pwsh
-# set previewer ~/dotfiles/settings/lf/leftpane_previewer.ps1
+# set previewer ~/code/machineconfig/settings/lf/leftpane_previewer.ps1
 # set ignorecase true
 
 # windows defaults
@@ -35,12 +35,23 @@ set info "size"       # list directory information on the right
 set sortby "natural"  # don't sort files in any special way
 set preview on        # preview file on the right pane
 set drawbox on        # draw a border around all panes
+set globsearch off
+set mouse on
+set number on
+
 # set ratios '1:2:3'    # ratio of pane widths
 # set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"
 # see more at https://git.lmburns.com/dotfiles-mac/file/.config/lf/lfrc.html
 
 # ============================ KEY BINDINGS ============================================
 # avoid using confusing keys that are already bound to other functions by other programs, e.g. the console itself, like ctrl+c
+# default reference: https://pkg.go.dev/github.com/gokcehan/lf
+
+map q quit  # default
+
+# remove defaults
+map k  # default up
+map <c-u>  # half-up
 
 
 # e edit
@@ -58,7 +69,7 @@ map ws $powershell
 map wp $pwsh
 map wcr $~/scripts/croshell.ps1
 map wcm $cmd
-map i $~/dotfiles/settings/lf/previewer.ps1 $env:f
+map i $~/code/machineconfig/settings/lf/previewer.ps1 $env:f
 map R $~/scripts/croshell.ps1 -r $env:f
 
 # key bindings
@@ -88,6 +99,8 @@ map md $~/dotfiles/settings/lf/mkdir.ps1
 map mf $~/dotfiles/settings/lf/mkfile.ps1
 
 map s mark-save
+map l mark-load
+map S mark-remove
 
 # =================== JUNK ======================
 cmd doc $lf -doc | bat
@@ -95,3 +108,4 @@ cmd doc $lf -doc | bat
 # map Q $~/dotfiles/settings/lf/lfcd.ps1 quit
 # cmd on-cd &{{$onefetch}}
 # on-quit $~/dotfiles/settings/lf/lfcd.ps1
+

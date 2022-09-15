@@ -1,4 +1,3 @@
 
-~\AppData\Local\Microsoft\WindowsApps\bat.exe  --color=always --theme=base16  $args
-
+bat --color=always --theme=base16 --style=numbers,grid,header --line-range=300 $args
 
