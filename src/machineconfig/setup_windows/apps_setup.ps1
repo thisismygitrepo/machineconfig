@@ -49,18 +49,26 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";
 # winget install --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W 11
 winget install --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
 winget install --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements  # ncessary for nvim plugins.
-winget install --Id Rustlang.Rust.MSVC --source winget
+
 # https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
+# installing via winget as opposoed to the installer above, causes ignoring the requirements, and not adding ~/.carog/bin to PATH.
+# installing requirements first (as per the installer instructions)
+winget install -e --id "Microsoft.VC++2015-2022Redist-x64"
+winget install -e --id "Microsoft.VisualStudio.2022.BuildTools"
+winget install --Id Rustlang.Rust.MSVC --source winget
 
 #winget install --name "julia" --Id "Julialang.Julia" --source winget --accept-package-agreements --accept-source-agreements
-winget install --Id Codeblocks.Codeblocks --source winget  # gives gcc compiler
-winget install --Id GnuWin32.Make --source winget  # make command
-cargo install ripgrep  # rg command
-cargo install fd-find  # fd command
-cargo install bat  # colored version of cat.
-cargo install bottom  # terminal-based htop, winget install --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
-cargo install onefetch  # repo-version of system neofetch. winget install onefetch,
+winget install --Id Codeblocks.Codeblocks --source winget  # gives gcc compiler  # could also be provided by MSCV Build Tools
+winget install --Id GnuWin32.Make --source winget  # make command  # can be provided by mscv build tools.
 cargo install tokei  # counts lines of code in every language.
+# use release download with croshell for each of the following rust programs since compiling is very slow.
+#cargo install ripgrep  # rg command
+#cargo install fd-find  # fd command
+#cargo install bat  # colored version of cat.
+winget install --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
+# cargo install bottom  # terminal-based htop,
+winget install onefetch
+# cargo install onefetch  # repo-version of system neofetch
 
 # ======================= Terminal-based editors =================================
 winget install --Id Neovim.Neovim --source winget --accept-package-agreements --accept-source-agreements

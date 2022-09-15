@@ -1,13 +1,16 @@
 
+
+set preview true
+set shell powershell
+set colors
+
+
 # set previewer ~/dotfiles/settings/lf/leftpane_previewer.ps1
 # set previewer ~\AppData\Local\Microsoft\WindowsApps\bat.exe  --color=always --theme=base16
 # also see pistol file previewer.
-set preview true
-set shell powershell
 # set shell pwsh
 # set previewer ~/dotfiles/settings/lf/leftpane_previewer.ps1
 # set ignorecase true
-set colors
 
 # windows defaults
 #           %OPENER%  start
@@ -39,17 +42,16 @@ set drawbox on        # draw a border around all panes
 # ============================ KEY BINDINGS ============================================
 # avoid using confusing keys that are already bound to other functions by other programs, e.g. the console itself, like ctrl+c
 
-cmd doc $lf -doc | bat
 
 # e edit
-map o $start $env:f
-map <enter> open
 map e  # edit modal key.
 map en $~/scripts/nano $env:f
 map el $lvim $env:f
 map es $nvim $env:f
 map ev $code $env:f
 map ep $pycharm
+map o $start $env:f
+map <enter> open
 
 map w
 map ws $powershell
@@ -58,10 +60,6 @@ map wcr $~/scripts/croshell.ps1
 map wcm $cmd
 map i $~/dotfiles/settings/lf/previewer.ps1 $env:f
 map R $~/scripts/croshell.ps1 -r $env:f
-
-
-# cmd on-cd &{{$onefetch}}
-# on-quit $~/dotfiles/settings/lf/lfcd.ps1
 
 # key bindings
 map v
@@ -88,8 +86,12 @@ map jc cd ~/code
 map m
 map md $~/dotfiles/settings/lf/mkdir.ps1 
 map mf $~/dotfiles/settings/lf/mkfile.ps1
-#map M mark-save
 
+map s mark-save
+
+# =================== JUNK ======================
+cmd doc $lf -doc | bat
 # cmd on-quit $~/dotfiles/settings/lf/lfcd.ps1
 # map Q $~/dotfiles/settings/lf/lfcd.ps1 quit
-
+# cmd on-cd &{{$onefetch}}
+# on-quit $~/dotfiles/settings/lf/lfcd.ps1
