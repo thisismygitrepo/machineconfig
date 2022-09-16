@@ -2,7 +2,7 @@
 # source activate_ve.sh
 source ~/venvs/ve/bin/activate
 
-ipython -i --no-banner  -m crocodile.croshell
+ipython -i --no-banner -m crocodile.croshell
 
 # --term-title CROSHELL
 

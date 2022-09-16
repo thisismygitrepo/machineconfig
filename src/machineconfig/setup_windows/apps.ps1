@@ -75,4 +75,5 @@ Invoke-WebRequest "https://spacevim.org/install.cmd" -OutFile "~/Downloads/space
 
 wsl --install -d Ubuntu  #--accept-package-agreements --accept-source-agreements
 # iex ((New-Object System.Net.WebClient).DownloadString('https://git.io/JJ8R4'))  # tune machine to minimal
+Install-Module -Name PSFzf  #  -RequiredVersion 2.5.10
 Write-Output "Finished installing apps"

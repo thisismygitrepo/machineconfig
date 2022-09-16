@@ -48,7 +48,8 @@ set number on
 # default reference: https://pkg.go.dev/github.com/gokcehan/lf
 
 cmd fzf $nano $(fd $args[0] | fzf)
-map F push :fzf<space>
+#map F push :fzf<space>
+map F $~/code/machineconfig/settings/lf/fzf_integration.ps1
 
 map q quit  # default
 

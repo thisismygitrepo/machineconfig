@@ -48,7 +48,10 @@ def change_shell_profile():
 # Shows navigable menu of all options when hitting Tab
 Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
-Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward"""
+Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
+Set-PSReadlineOption -PredictionViewStyle History
+# see dynamic help with prerelease.
+"""
     profile_path.modify_text(txt=txt, alt=txt, newline=True, notfound_append=True)
 
 

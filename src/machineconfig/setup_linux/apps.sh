@@ -27,6 +27,7 @@ sudo nala install bat -y  # cat with colors.
 sudo nala install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
 sudo nala install fzf -y  # fuzzy finder
 sudo nala install fd-find -y  # find alternative
+sudo nala install ripgrep -y  # rg command, rust-based, blazingly fast grep.
 sudo nala install ugrep -y  # just as good as grep, but consistent with windows
 
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)" -y
