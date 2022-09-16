@@ -106,9 +106,9 @@ def main():
     link_ssh(overwrite=overwrite)
     link_lf_n_lvim(overwrite=overwrite)
     # link_autostart(overwrite=overwrite)
-
     link_scripts(overwrite=overwrite)
-    # The following is not a symlink creation, but modification of shell profile.
+
+    # The following is not a symlink creation, but modification of shell profile by additing dirs to PATH
     # Shell profile is either in dotfiles and is synced (as in Windows), hence no need for update, or is updated on the fly (for Linux)
     paths = [repo_root.joinpath(f"scripts/{system.lower()}").collapseuser()] + ([r"C:\Program Files (x86)\GnuWin32\bin", r"C:\Program Files\CodeBlocks\MinGW\bin"] if system == "Windows" else [])  # make and gcc are already available on linux
     add_to_shell_profile_path(paths)  # for windows it won't change the profile, if the profile was modified already e.g. due to syncing.

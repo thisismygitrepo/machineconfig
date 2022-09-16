@@ -11,6 +11,9 @@ setup file for each shell can be found in $profile. The settings.json is the con
 def install():
     # Step 1: download the required fonts that has all the glyphs and install them.
     folder = get_latest_release("https://github.com/ryanoasis/nerd-fonts").joinpath("CascadiaCode.zip").download().unzip(inplace=True)
+    folder.search("*Windows*").delete(sure=True)
+    folder.search("*readme*").delete(sure=True)
+    folder.search("*LICENSE*").delete(sure=True)
     file = tb.P.tmpfile(suffix=".ps1").write_text(tb.P(__file__).with_name("install_fonts.ps1").read_text().replace(r".\fonts-to-be-installed", str(folder)))
     tb.subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {file.str}")
 

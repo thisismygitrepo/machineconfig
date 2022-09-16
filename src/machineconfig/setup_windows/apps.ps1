@@ -30,26 +30,24 @@ winget install --name "DB Browser for SQLite" --accept-package-agreements --acce
 
 # ================================================== Shells ===========================================
 $ErrorActionPreference = "Stop"  # if there is any error in any command, stop there instead of proceeding to the next.
-winget install --id "Python.Python.3.9" --source winget  # from https:\\winget.run  Python.Python.3.9
+winget install --id Python.Python.3.9 --source winget  # from https:\\winget.run  Python.Python.3.9
 winget install Python.Python.3.10 --source winget
-# OR: winget install --name "Python 3" --source winget  # gives the latest python
-
 # the two above require Restart-Computer -Force before they are available in PATH.
-# iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim | ni "$(@($env:XDG_DATA_HOME, $env:LOCALAPPDATA)[$null -eq $env:XDG_DATA_HOME])/nvim-data/site/autoload/plug.vim" -Force
 
 winget install --name "Git" --Id "Git.Git" --source winget --accept-package-agreements --accept-source-agreements
+#git config credential.helper store  # makes git remember credentials, or just link to pre-configured git config file.
 # a terminal restart of terminal is required to for git to work, or the one can update the path
 
 # DONT use this line in combination with activated virtual enviroment.
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
-#git config credential.helper store  # makes git remember credentials, or just link to pre-configured git config file.
-
 # winget install --name "AWS Command Line Interface"
 # winget install --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W 11
 winget install --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
-winget install --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements  # ncessary for nvim plugins.
 
+
+# ======================== DEV TOOLS =================================
+winget install --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements  # ncessary for nvim plugins.
 # https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
 # installing via winget as opposoed to the installer above, causes ignoring the requirements, and not adding ~/.carog/bin to PATH.
 # installing requirements first (as per the installer instructions)
@@ -67,7 +65,7 @@ cargo install tokei  # counts lines of code in every language.
 #cargo install bat  # colored version of cat.
 winget install --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
 # cargo install bottom  # terminal-based htop,
-winget install onefetch
+winget install --Name onefetch --Id o2sh.onefech --source winget
 # cargo install onefetch  # repo-version of system neofetch
 
 # ======================= Terminal-based editors =================================
@@ -79,4 +77,4 @@ Invoke-WebRequest "https://spacevim.org/install.cmd" -OutFile "~/Downloads/space
 
 wsl --install -d Ubuntu  #--accept-package-agreements --accept-source-agreements
 # iex ((New-Object System.Net.WebClient).DownloadString('https://git.io/JJ8R4'))  # tune machine to minimal
-echo "Finished installing apps"
+Write-Output "Finished installing apps"

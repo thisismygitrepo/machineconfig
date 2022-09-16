@@ -20,36 +20,40 @@ sudo nala install wget -y  # for downloading files
 sudo nala install curl -y  # for handling http requests
 sudo nala install net-tools -y  # gives ifconfig
 sudo nala install git -y  # for version control
+sudp nala install ncdu   # disk usage analyzer.
+
+sudo nala install tmux -y # allows multiple terminals that are persistent.
+sudo nala install bat -y  # cat with colors.
+sudo nala install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
+sudo nala install fzf -y  # fuzzy finder
+sudo nala install fd-find -y  # find alternative
+sudo nala install ugrep -y  # just as good as grep, but consistent with windows
 
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)" -y
 sudo nala install sl -y  # for fun
 sudo nala install cmatrix -y  # for fun
 sudo nala install hollywood -y  # for fun
 sudo nala install neofetch -y  # for system info
+sudo nala install boxes -y  # for ascii banners
+sudo nala install toilet -y  # large ascii text
+sudo nala install figlet -y  # large ascii text
 neofetch
 
-sudo nala install tmux -y # allows multiple terminals that are persistent.
-sudo nala install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
-sudo nala install bat -y  # cat with colors.
-sudo nala install fzf -y  # fuzzy finder
-sudo nala install fd-find -y  # find alternative
-
+# ------------------------------ EDITORS -----------------------------
+# curl https://sh.rustup.rs -sSf | sh
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 #sudo nala install neovim -y  # nvim, but not latest release
 bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/rolling/utils/installer/install-neovim-from-release)
 # https://github.com/LunarVim/LunarVim
 bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
+# https://spacevim.org/quick-start-guide/#linux-and-macos
 curl -sLf https://spacevim.org/install.sh | bash
 
-# curl https://sh.rustup.rs -sSf | sh
 
 # midnight commander, similar
-# ncdu disk usage analyzer.
 # Asciiquarium
 # https://github.com/bartobri/no-more-secrets
-# boxes
 # lolcat
-# micro # terminal-based text editor, alternative to nano
 
 
 # install chrome:
