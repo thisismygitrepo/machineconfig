@@ -8,6 +8,7 @@ Dotfiles include, but are not limited to:
 * `~/.aws`
 * `~/.bash_profile`
 * `~/.bashrc`
+* `~/.config`
 * `$profile` in Windows Powershell
 * etc
 
@@ -15,3 +16,7 @@ Additionally, files that contain data, sensitive information that should not be 
 
 Additionally, scripts to perform setup of new machines and perform mundane tasks are maintained here in `scripts`. The repo uses Python to perform the tasks.
 
+## Install Croshell Terminal
+```ps1
+Invoke-WebRequest https://github.com/thisismygitrepo/machineconfig/src/machineconfig/setup_windows/croshell.ps1 | Invoke-Expression
+```

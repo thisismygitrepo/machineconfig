@@ -1,6 +1,4 @@
 
-# Invoke-WebRequest https://github.com/thisismygitrepo/machineconfig/src/machineconfig/setup_windows/croshell.ps1 | Invoke-Expression
-
 $ve_name='ve'
 $py_version=310
 

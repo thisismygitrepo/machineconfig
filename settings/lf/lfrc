@@ -47,6 +47,9 @@ set number on
 # avoid using confusing keys that are already bound to other functions by other programs, e.g. the console itself, like ctrl+c
 # default reference: https://pkg.go.dev/github.com/gokcehan/lf
 
+cmd fzf $nano $(fd $args[0] | fzf)
+map F push :fzf<space>
+
 map q quit  # default
 
 # remove defaults
@@ -70,6 +73,7 @@ map wp $pwsh
 map wcr $~/scripts/croshell.ps1
 map wcm $cmd
 map i $~/code/machineconfig/settings/lf/previewer.ps1 $env:f
+map I $QuickLook %f%
 map R $~/scripts/croshell.ps1 -r $env:f
 
 # key bindings
@@ -88,6 +92,9 @@ map c clear
 map fr rename
 map <delete> delete
 map ff reload
+
+cmd extract $env:LOCALAPPDATA/lf/extract.cmd %f%
+map fX extract
 
 # j jump
 map jd cd ~/Downloads

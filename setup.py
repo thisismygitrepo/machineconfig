@@ -13,7 +13,7 @@ setuptools.setup(
     description="Dotfiles management package",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/thisismygitrepo/dofiles",
+    url="https://github.com/thisismygitrepo/machineconfig",
     project_urls={
         "Bug Tracker": "https://github.com/thisismygitrepo/machineconfig/issues",
     },

@@ -38,9 +38,6 @@ winget install --name "Git" --Id "Git.Git" --source winget --accept-package-agre
 #git config credential.helper store  # makes git remember credentials, or just link to pre-configured git config file.
 # a terminal restart of terminal is required to for git to work, or the one can update the path
 
-# DONT use this line in combination with activated virtual enviroment.
-$env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
-
 # winget install --name "AWS Command Line Interface"
 # winget install --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W 11
 winget install --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
@@ -67,6 +64,7 @@ winget install --Id Clement.bottom --source winget --accept-package-agreements -
 # cargo install bottom  # terminal-based htop,
 winget install --Name onefetch --Id o2sh.onefech --source winget
 # cargo install onefetch  # repo-version of system neofetch
+# winget install --Name QuickLook --Id QL-Win.QuickLook --source winget  # shitty bat alternative
 
 # ======================= Terminal-based editors =================================
 winget install --Id Neovim.Neovim --source winget --accept-package-agreements --accept-source-agreements
