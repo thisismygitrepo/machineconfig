@@ -1,0 +1,117 @@
+
+
+set scrolloff 10      # space on top and bottom of screen
+set icons on          # show icons next to files
+set period 1          # interval to check for directory updates
+set hidden on         # show hidden files by default
+set incsearch o       # jump to first match after each keystroke in search
+set dircounts on      # show number of items in directory instead of sie
+set info "size"       # list directory information on the right
+set sortby "natural"  # don't sort files in any special way
+set preview on        # preview file on the right pane
+set drawbox on        # draw a border around all panes
+set globsearch off
+set mouse on
+set number on
+set preview true
+set shell powershell
+set colors
+set ratios '1:2:3'    # ratio of pane widths
+# set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"
+# see more at https://git.lmburns.com/dotfiles-mac/file/.config/lf/lfrc.html
+
+# set previewer ~/dotfiles/settings/lf/leftpane_previewer.ps1
+# set previewer ~\AppData\Local\Microsoft\WindowsApps\bat.exe  --color=always --theme=base16
+# also see pistol file previewer.
+# set shell pwsh
+# set previewer ~/code/machineconfig/settings/lf/leftpane_previewer.ps1
+# set ignorecase true
+# see:
+# https://github.com/gokcehan/lf/wiki/Integrations#ripgrep
+# https://github.com/gokcehan/lf/wiki/Integrations#fzf
+# https://github.com/junegunn/fzf/blob/master/ADVANCED.md#ripgrep-integration
+
+# Unix-like defaults
+#           $OPENER  open      # macos
+#           $OPENER  xdg-open  # others
+#           $EDITOR  vi
+#           $PAGER   less
+#           $SHELL   sh
+
+
+
+
+# ============================ KEY BINDINGS ============================================
+# avoid using confusing keys that are already bound to other functions by other programs, e.g. the console itself, like ctrl+c
+# default reference: https://pkg.go.dev/github.com/gokcehan/lf
+
+cmd fzfg $(~/scripts/fzfg.ps1 $args[1])
+map F $~/code/machineconfig/settings/lf/fzf_nano.ps1
+map J
+map J push :fzfg<space>
+
+map q quit  # default
+# remove defaults
+map k  # default up
+map <c-u>  # half-up
+
+
+# e edit
+map e  # edit modal key.
+map en $~/scripts/nano $env:f
+map el $lvim $env:f
+map es $nvim $env:f
+map ev $code $env:f
+map ep $pycharm
+map o $start $env:f
+map <enter> open
+
+# w shells
+map w
+map ws bash
+map wp $bash
+map wcr $~/scripts/croshell.sh
+map i $batcat $env:f
+map R $~/scripts/croshell.sh -r $env:f
+
+# key bindings
+map v
+map p
+map x
+map c
+map v
+
+# f file/folder
+map fx cut
+map fv paste
+map fc copy
+map fp $Set-Clipboard -Value $env:f
+map c clear
+map fr rename
+map <delete> delete
+map ff reload
+
+cmd extract $env:LOCALAPPDATA/lf/extract.cmd %f%
+map fX extract
+
+# j jump
+map j
+map jd cd ~/downloads
+map jc cd ~/code
+
+# m make
+map m
+map md $~/dotfiles/settings/lf/mkdir.ps1 
+map mf $~/dotfiles/settings/lf/mkfile.ps1
+
+map s mark-save
+map l mark-load
+map S mark-remove
+
+# =================== JUNK ======================
+cmd doc $lf -doc | bat
+# cmd on-quit $~/dotfiles/settings/lf/lfcd.ps1
+# map Q $~/dotfiles/settings/lf/lfcd.ps1 quit
+# cmd on-cd &{{$onefetch}}
+# on-quit $~/dotfiles/settings/lf/lfcd.ps1
+

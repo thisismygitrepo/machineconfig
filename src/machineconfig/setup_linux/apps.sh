@@ -24,7 +24,11 @@ sudp nala install ncdu   # disk usage analyzer.
 
 sudo nala install tmux -y # allows multiple terminals that are persistent.
 sudo nala install bat -y  # cat with colors.
+
 sudo nala install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
+# ranger is good, but for consistency with Windows, use lf:
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/tools/lf.sh | sh
+
 sudo nala install fzf -y  # fuzzy finder
 sudo nala install fd-find -y  # find alternative
 sudo nala install ripgrep -y  # rg command, rust-based, blazingly fast grep.
