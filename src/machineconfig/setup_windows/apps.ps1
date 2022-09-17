@@ -13,7 +13,7 @@ winget install --name "Google Chrome" --Id "Google.Chrome" --source winget --acc
 winget install --name "7-zip" --Id "7zip.7zip" --source winget --accept-package-agreements --accept-source-agreements
 #winget install --name "Mozilla Firefox" --accept-package-agreements --accept-source-agreements
 #winget install --name "Mozilla Thunderbird" --accept-package-agreements --accept-source-agreements
-winget install --name "Microsoft Garage Mouse without Borders" --accept-package-agreements --accept-source-agreements
+#winget install --name "Microsoft Garage Mouse without Borders" --accept-package-agreements --accept-source-agreements
 #winget install --name "StreamlabsOBS" --Id "Streamlabs.StreamlabsOBS" --source "winget" --accept-package-agreements --accept-source-agreements
 #winget install --name "MiKTeX" --Id "ChristianSchenk.MiKTeX"  --source winget  # library / lanugage
 #winget install --name "TexMaker" --Id "Texmaker.Texmaker" --source winget  # IDE better than simple TexWorks shipped with MikTex. IDE is basically GUI for cmd interface of Tex
@@ -61,6 +61,8 @@ cargo install tokei  # counts lines of code in every language.
 #cargo install fd-find  # fd command
 #cargo install bat  # colored version of cat.
 winget install --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
+# winget install gsass1.NTop  # another system monitoring tool.
+
 # cargo install bottom  # terminal-based htop,
 winget install --Name onefetch --Id o2sh.onefech --source winget
 # cargo install onefetch  # repo-version of system neofetch

@@ -8,6 +8,7 @@ $sshd_dir = "$env:ProgramData\ssh"
 $sshfile = "$env:USERPROFILE\.ssh\id_rsa.pub"  # this directory is for normal users, not admins.
 # Once they are populated, we can create administrators_authorized_keys
 
+
 Get-Content $sshfile >> "$sshd_dir\administrators_authorized_keys"
 # set appropirate persmissions for this file
 Set-Location $sshd_dir

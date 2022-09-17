@@ -1,4 +1,4 @@
-
+# CroShellFTP 1.0
 param ($username1="", $hostname1="", $file1="")
 
 croshell -c "
