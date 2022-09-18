@@ -53,7 +53,7 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
 # repos
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
-# symlinks and pwsh profile
+# symlinks and pwsh profile: locally, run: `ftpsx username hostname ~/dotfiles`, then, on the remote:
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 # no devapps. apps is sufficient in linux.
 ```

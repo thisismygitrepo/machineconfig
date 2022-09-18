@@ -17,6 +17,7 @@ def link_ssh(overwrite=True):
     path = tb.P.home().joinpath(".ssh")
     target = DotFiles.joinpath(".ssh")
     for item in target.search("*"):
+        if "authorized_keys" in item: continue
         symlink(path.joinpath(item.name), item, overwrite=overwrite)
 
 
