@@ -53,7 +53,7 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
 # repos
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
-# symlinks
+# symlinks and pwsh profile
 ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 # devapps:
 ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh
