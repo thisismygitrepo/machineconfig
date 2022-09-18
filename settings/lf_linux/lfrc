@@ -47,7 +47,7 @@ set ratios '1:2:3'    # ratio of pane widths
 # default reference: https://pkg.go.dev/github.com/gokcehan/lf
 
 cmd fzf2g $(~/scripts/fzf2g.sh $args[1])
-map F $~/code/machineconfig/settings/lf/nano.sh
+map F $nano fzf2g $args[1]
 map J
 map J push :fzfg<space>
 
@@ -59,7 +59,7 @@ map <c-u>  # half-up
 
 # e edit
 map e  # edit modal key.
-map en $~/scripts/nano $env:f
+map en $nano $env:f
 map el $lvim $env:f
 map es $nvim $env:f
 map ev $code $env:f
