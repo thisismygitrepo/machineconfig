@@ -11,8 +11,8 @@
 #npm install .
 #nvim --headless -c 'CocInstall coc-pyright' -c 'qall'
 
-cd ~/code
-git clone https://github.com/neovide/neovide
-cd neovide
-cargo build --release
-croshell.sh -c "P(r'~/code/neovide/target/release/neovide.exe').move(folder=get_env().WindowsApps)"
+#cd ~/code
+#git clone https://github.com/neovide/neovide
+#cd neovide
+#cargo build --release
+#croshell.sh -c "P(r'~/code/neovide/target/release/neovide.exe').move(folder=get_env().WindowsApps)"

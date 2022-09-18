@@ -32,11 +32,6 @@ set ratios '1:2:3'    # ratio of pane widths
 # https://github.com/junegunn/fzf/blob/master/ADVANCED.md#ripgrep-integration
 
 
-# windows defaults
-#           %OPENER%  start
-#           %EDITOR%  notepad
-#           %PAGER%   more
-#           %SHELL%   cmd
 # Unix-like defaults
 #           $OPENER  open      # macos
 #           $OPENER  xdg-open  # others
@@ -51,8 +46,8 @@ set ratios '1:2:3'    # ratio of pane widths
 # avoid using confusing keys that are already bound to other functions by other programs, e.g. the console itself, like ctrl+c
 # default reference: https://pkg.go.dev/github.com/gokcehan/lf
 
-cmd fzfg $(~/scripts/fzfg.ps1 $args[1])
-map F $~/code/machineconfig/settings/lf/fzf_nano.ps1
+cmd fzf2g $(~/scripts/fzf2g.sh $args[1])
+map F $~/code/machineconfig/settings/lf/nano.sh
 map J
 map J push :fzfg<space>
 
@@ -76,10 +71,10 @@ map <enter> open
 map w
 map ws $powershell
 map wp $pwsh
-map wcr $~/scripts/croshell.ps1
+map wcr $~/scripts/croshell.sh
 map wcm $cmd
-map i $~/code/machineconfig/settings/lf/previewer.ps1 $env:f
-map R $~/scripts/croshell.ps1 -r $env:f
+map i $~/code/machineconfig/settings/lf_rc/previewer.sh $env:f
+map R $~/scripts/croshell.sh -r $env:f
 
 # key bindings
 map v
@@ -99,8 +94,8 @@ map or rename
 map <delete> delete
 map of reload
 
-cmd extract $env:LOCALAPPDATA/lf/extract.cmd %f%
-map fX extract
+# cmd extract $env:LOCALAPPDATA/lf/extract.cmd %f%
+# map fX extract
 
 # j jump
 map j
@@ -109,17 +104,10 @@ map jc cd ~/code
 
 # m make
 map m
-map md $~/code/machineconfig/settings/lf/mkdir.ps1 
-map mf $~/code/machineconfig/lf/mkfile.ps1
+map md $~/code/machineconfig/settings/lf_linux/mkdir.sh
+map mf $~/code/machineconfig/lf_linux/mkfile.sh
 
 map s mark-save
 map l mark-load
 map S mark-remove
-
-# =================== JUNK ======================
-cmd doc $lf -doc | bat
-# cmd on-quit $~/dotfiles/settings/lf/lfcd.ps1
-# map Q $~/dotfiles/settings/lf/lfcd.ps1 quit
-# cmd on-cd &{{$onefetch}}
-# on-quit $~/dotfiles/settings/lf/lfcd.ps1
 
