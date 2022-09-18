@@ -31,3 +31,6 @@ Start-Service sshd
 $shell = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"  # "C:\Windows\System32\wsl.exe"
 New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value $shell -PropertyType String -Force
 New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShellCommandOption -Value "/c" -PropertyType String -Force
+
+cd ~
+mkdir .ssh

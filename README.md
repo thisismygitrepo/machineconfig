@@ -1,7 +1,6 @@
 
 # Welcome to machineconfig
 Machineconfig is a package for managing configuration files (aka dotfiles). The idea is to collect those critical, time-consuming-files-to-setup in one directory and reference them via symbolic links from their original locations. Thus, when a new machine is to be setup, all that is required is to clone the repo in that machine and create the symbolic links.
-
 Dotfiles include, but are not limited to:
 * `~/.gitconfig`
 * `~/.ssh`
@@ -13,18 +12,22 @@ Dotfiles include, but are not limited to:
 * etc
 
 Additionally, files that contain data, sensitive information that should not be pushed to a repository are contained in a directory `~/dotfiles`. The files therein are encrypted before backedup.
-
 Additionally, scripts to perform setup of new machines and perform mundane tasks are maintained here in `scripts`. The repo uses Python to perform the tasks.
+
+# Shortcuts
+* `bit.ly/machienconfig` is a shortcut to this repo.
+* Use `curl bit.ly/readconfig -L | bat -l md` to get the readme file.
+
 
 ## Windows Setup
 With elevated `PowerShell`, run the following:
 ```ps1
 # apps
-Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/blob/main/src/machineconfig/setup_windows/apps.ps1 | Invoke-Expression
+Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1 | Invoke-Expression
 # virtual enviornment
-Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/blob/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
+Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
 # repos
-Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/blob/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
+Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
 # symlinks
 ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
 # devapps:
@@ -33,7 +36,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 
 ###### Setup SSH connection (CHANGE APPROPRIATELY):
 ```ps1
-Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/blob/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression
+Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression
 ```
 
 ###### Install Croshell Terminal Directly,
@@ -42,3 +45,21 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 ```
 
 # Linux Setup
+With `sudo` access, run the following:
+```bash
+# apps
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/apps.sh | bash
+# virtual enviornment
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
+# repos
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
+# symlinks
+~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
+# devapps:
+~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh
+```
+###### Setup SSH connection (CHANGE APPROPRIATELY):
+```bash
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | bash
+```
+
