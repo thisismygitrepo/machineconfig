@@ -88,15 +88,16 @@ map x
 map c
 map v
 
-# f file/folder
-map fx cut
-map fv paste
-map fc copy
-map fp $Set-Clipboard -Value $env:f
+# o file/folder Operations
+map o
+map ox cut
+map ov paste
+map oc copy
+map op $Set-Clipboard -Value $env:f
 map c clear
-map fr rename
+map or rename
 map <delete> delete
-map ff reload
+map of reload
 
 cmd extract $env:LOCALAPPDATA/lf/extract.cmd %f%
 map fX extract
@@ -108,8 +109,8 @@ map jc cd ~/code
 
 # m make
 map m
-map md $~/dotfiles/settings/lf/mkdir.ps1 
-map mf $~/dotfiles/settings/lf/mkfile.ps1
+map md $~/code/machineconfig/settings/lf/mkdir.ps1 
+map mf $~/code/machineconfig/settings/lf/mkfile.ps1
 
 map s mark-save
 map l mark-load
