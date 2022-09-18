@@ -23,6 +23,7 @@ sudo nala install git -y  # for version control
 sudp nala install ncdu   # disk usage analyzer.
 
 sudo nala install tmux -y # allows multiple terminals that are persistent.
+# sudo nala install tmate -y  # remote tmux, see https://tmate.io
 sudo nala install bat -y  # cat with colors.
 
 sudo nala install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc

@@ -24,26 +24,21 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 # virtual enviornment
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/blob/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
 # repos
-Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/blob/main/src/machineconfig/symlinks/repos.ps1 | Invoke-Expression
+Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/blob/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
 # symlinks
 ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
 # devapps:
 ~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
 ```
 
+###### Setup SSH connection (CHANGE APPROPRIATELY):
+```ps1
+Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/blob/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression
+```
+
 ###### Install Croshell Terminal Directly,
 ```ps1
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/src/machineconfig/setup_windows/croshell.ps1 | Invoke-Expression
-```
-
-###### Setup SSH connection:
-```ps1
-# Remotely without connection:
-Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/blob/main/src/machineconfig/setup_windows/openssh-server.ps1 | Invoke-Expression
-# Locally:
-~/machineconfig/src/machineconfig/setup_windows/openssh-server_copy-ssh-id.ps1 | Invoke-Expression
-# On the remote via password-based connection:
-Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/blob/main/src/machineconfig/setup_windows/openssh-server_add-sshkey.ps1 | Invoke-Expression
 ```
 
 # Linux Setup
