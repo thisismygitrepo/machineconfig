@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 $tmp = pwd
 
 if ($args[0] -eq $null) {

@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 
 
 $ve_name = Read-Host "Enviroment name (ve)"

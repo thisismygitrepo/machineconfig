@@ -15,7 +15,7 @@ Additionally, files that contain data, sensitive information that should not be 
 Additionally, scripts to perform setup of new machines and perform mundane tasks are maintained here in `scripts`. The repo uses Python to perform the tasks.
 
 # Shortcuts
-* `bit.ly/machienconfig` is a shortcut to this repo.
+* `bit.ly/machineconfig` is a shortcut to this repo.
 * Use `curl bit.ly/readconfig -L | bat -l md` to get the readme file.
 
 

@@ -1,2 +1,2 @@
-
+#!/usr/bin/env bash
 source ~/venvs/ve/bin/activate

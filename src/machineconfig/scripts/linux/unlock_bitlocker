@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 $drive = Read-Host "DriveLetter (default D:)"
 
 if ( $drive -eq "" )
