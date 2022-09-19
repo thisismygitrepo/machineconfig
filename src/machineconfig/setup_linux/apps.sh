@@ -46,7 +46,6 @@ sudo nala install figlet -y  # large ascii text
 neofetch
 
 
-
 # ------------------------------ EDITORS -----------------------------
 # curl https://sh.rustup.rs -sSf | sh
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh

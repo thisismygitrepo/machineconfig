@@ -36,10 +36,12 @@ def link_pypi_creds(overwrite=True):
 
 
 def link_powershell(overwrite=True):
-    if system == "Linux": return None
-    for profile_name, profile_path in get_shell_profiles(shell="pwsh").items():
-        target = DotFiles.joinpath(f"shells/powershell/{profile_name}/{profile_path.name}")
-        symlink(profile_path, target, overwrite=overwrite)
+    if system == "Linux":
+        symlink(this=tb.P.home().joinpath(".inputrc"), to_this=DotFiles.joinpath("shells/bash/.inputrc"), overwrite=overwrite)
+    elif system == "Windows":
+        for profile_name, profile_path in get_shell_profiles(shell="pwsh").items():
+            target = DotFiles.joinpath(f"shells/powershell/{profile_name}/{profile_path.name}")
+            symlink(profile_path, target, overwrite=overwrite)
 
 
 def link_windows_powershell(overwrite=True):

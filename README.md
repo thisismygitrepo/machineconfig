@@ -21,26 +21,26 @@ Additionally, scripts to perform setup of new machines and perform mundane tasks
 
 ## Windows Setup
 With elevated `PowerShell`, run the following:
-```ps1
+```powershell
 # apps
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1 | Invoke-Expression
 # virtual enviornment
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
 # repos
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
-# symlinks
+# symlinks and pwsh profile: locally, run: `ftpsx username hostname ~/dotfiles`, then, on the remote:
 ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
 # devapps:
 ~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
 ```
 
 ###### Setup SSH connection (CHANGE APPROPRIATELY):
-```ps1
+```powershell
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression
 ```
 
 ###### Install Croshell Terminal Directly,
-```ps1
+```powershell
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/src/machineconfig/setup_windows/croshell.ps1 | Invoke-Expression
 ```
 
@@ -53,7 +53,7 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
 # repos
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
-# symlinks and pwsh profile: locally, run: `ftpsx username hostname ~/dotfiles`, then, on the remote:
+# symlinks and bash profile: locally, run: `ftpsx username hostname ~/dotfiles`, then, on the remote:
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 # no devapps. apps is sufficient in linux.
 ```
