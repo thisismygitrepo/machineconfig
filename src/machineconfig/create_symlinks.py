@@ -80,11 +80,10 @@ def link_lf_n_lvim(overwrite=True):
     if system == "Windows":
         for item in ['lfrc', 'icons', 'colors']:
             symlink(this=LocalAppData.joinpath(f"lf/{item}"), to_this=M_CONFIG.joinpath(f"lf/{item}"), overwrite=overwrite)
-        # symlink(this=LocalAppData.joinpath(f"nvim/init.vim"), to_this=M_CONFIG.joinpath(f"nvim/init.vim"), overwrite=overwrite)
-    else:
-        for item in ['lfrc', 'icons', 'colors']:
-            symlink(this=tb.P.home().joinpath(f".config/lf/{item}"), to_this=M_CONFIG.joinpath(f"lf_linux/{item}"), overwrite=overwrite)
-        # symlink(this=tb.P.home().joinpath(f".config/nvim/init.vim"), to_this=M_CONFIG.joinpath(f"nvim/init.vim"), overwrite=overwrite)
+        return None
+    for item in ['lfrc', 'icons', 'colors']:
+        symlink(this=tb.P.home().joinpath(f".config/lf/{item}"), to_this=M_CONFIG.joinpath(f"lf_linux/{item}"), overwrite=overwrite)
+    symlink(this=tb.P.home().joinpath(f".tmux.config"), to_this=M_CONFIG.joinpath(f".tmux.config"), overwrite=overwrite)
 
 
 def link_wsl_path_to_windows_path(linux_user, windows_user=None, links=None, run_in_wsl=True):
