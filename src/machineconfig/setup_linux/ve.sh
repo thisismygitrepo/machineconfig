@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 
 ve_name='ve'
 py_version=3.9

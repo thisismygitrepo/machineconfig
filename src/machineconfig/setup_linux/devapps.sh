@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 
 
 ## from: https://astronvim.github.io/

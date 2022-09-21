@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 
 
 # The following can run with no prerequisites:

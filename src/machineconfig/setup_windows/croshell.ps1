@@ -1,13 +1,13 @@
 
 $ve_name='ve'
-$py_version=310
+$py_version=39
 
 mkdir ~/venvs -ErrorAction SilentlyContinue
 cd ~
 
 winget install --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W 11
 winget install --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
-winget install Python.Python.3.10 --source winget
+winget install --Id "Python.Python.3.9" --source winget
 
 set mypy ($env:LOCALAPPDATA + "\Programs\Python\Python$py_version\python.exe")
 &$mypy  -m venv "./venvs/$ve_name"  # ve will have same python version as `python`, where it.

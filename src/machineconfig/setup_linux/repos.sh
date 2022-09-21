@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 
 cd ~ || exit
 mkdir code

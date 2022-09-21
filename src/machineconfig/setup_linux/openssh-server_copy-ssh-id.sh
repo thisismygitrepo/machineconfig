@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 
 # allow ssh to remote linux without password
 # if local machine is linux, then use: ssh-copy-id, else if it is windows:

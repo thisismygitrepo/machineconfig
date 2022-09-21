@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 croshell -c "
 print(r'$username1', r'$hostname1', r'$file1')

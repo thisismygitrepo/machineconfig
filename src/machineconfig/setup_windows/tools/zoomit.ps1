@@ -1,2 +1,2 @@
 
-croshell -c "from machineconfig.utils.utils import get_latest_release; get_latest_release('https://github.com/junegunn/fzf', suffix='windows_amd64', download_n_extract=True)"
+croshell -c "P(r'https://download.sysinternals.com/files/ZoomIt.zip').download(P.home().joinpath('Downloads')).unzip(inplace=True).joinpath('ZoomIt.exe').move(folder=get_env().WindowsApps)"

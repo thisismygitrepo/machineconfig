@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+sess_name=croshell -c "print(P('~/dotfiles/creds/tmate/creds.ini').readit()['sessions_names']['$1'])"
+api_key=croshell -c "print(P('~/dotfiles/creds/tmate/creds.ini').readit()['keys']['api_key'])"
+tmate -a ~/.ssh/authorized_keys -k $api_key -n $sess_name -F
+
+# use sslh and shellinthebox to cirumvent the need for port forwarding

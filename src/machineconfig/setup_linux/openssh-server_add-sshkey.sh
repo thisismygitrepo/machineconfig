@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 
 #python -m fire ~/code/machineconfig/src/machineconfig/create_symlinks.py link_scripts
 sudo chmod 600 ~/.ssh/*
