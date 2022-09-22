@@ -1,12 +1,14 @@
 
 # https://gist.github.com/daehahn/497fa04c0156b1a762c70ff3f9f7edae?WT.mc_id=-blog-scottha
 # https://www.hanselman.com/blog/how-to-ssh-into-wsl2-on-windows-10-from-an-external-machine
-
+# https://learn.microsoft.com/en-us/windows/wsl/networking#accessing-a-wsl-2-distribution-from-your-local-area-network-lan
 
 # WSL2 network port forwarding script v1
 #   for enable script, 'Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser' in Powershell,
 #   for delete exist rules and ports use 'delete' as parameter, for show ports use 'list' as parameter.
 #   written by Daehyuk Ahn, Aug-1-2020
+
+wsl.exe -u root service ssh status  # added by me, to ensure sshd is fired.
 
 # Display all portproxy information
 If ($Args[0] -eq "list") {
