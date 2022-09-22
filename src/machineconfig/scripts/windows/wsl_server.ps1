@@ -1,7 +1,7 @@
 
+# https://gist.github.com/daehahn/497fa04c0156b1a762c70ff3f9f7edae?WT.mc_id=-blog-scottha
+# https://www.hanselman.com/blog/how-to-ssh-into-wsl2-on-windows-10-from-an-external-machine
 
-# Start SSH Service.
-wsl sudo service ssh start
 
 # WSL2 network port forwarding script v1
 #   for enable script, 'Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser' in Powershell,
@@ -12,7 +12,7 @@ wsl sudo service ssh start
 If ($Args[0] -eq "list") {
     netsh interface portproxy show v4tov4;
     exit;
-} 
+}
 
 # If elevation needed, start new process
 If (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
@@ -22,8 +22,8 @@ If (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
   exit
 }
 
-# You should modify '$Ports' for your applications 
-$Ports = (2222,80,443,8080)
+# You should modify '$Ports' for your applications
+$Ports = (2222)  # (22,80,443,8080)
 
 # Check WSL ip address
 wsl hostname -I | Set-Variable -Name "WSL"

@@ -19,3 +19,4 @@ network:
 sed -i 's/dhcp4: true/dhcp4: false/g' /etc/netplan/01-netcfg.yaml
 
 # see sed and awk
+# https://unix.stackexchange.com/questions/642578/command-line-for-editing-a-configuration-file-value-without-an-interactive-edito

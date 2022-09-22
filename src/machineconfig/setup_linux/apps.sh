@@ -37,15 +37,19 @@ sudo nala install fd-find -y  # find alternative
 sudo nala install ripgrep -y  # rg command, rust-based, blazingly fast grep.
 sudo nala install ugrep -y  # just as good as grep, but consistent with windows
 
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)" -y
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 sudo nala install sl -y  # for fun
 sudo nala install cmatrix -y  # for fun
 sudo nala install hollywood -y  # for fun
 sudo nala install neofetch -y  # for system info
-sudo nala install boxes -y  # for ascii banners
-sudo nala install toilet -y  # large ascii text
-sudo nala install figlet -y  # large ascii text
 neofetch
+sudo nala install fortune -y  # generate random text in the form of piece of wisdom
+sudo nala install boxes -y  # for ascii banners
+sudo nala install cowsay -y  # animals saying things. Different figures with -f. Full list: cowsay -l
+sudo nala install lolcat -y  # for coloring text in terminal.
+sudo nala install toilet -y  # large ascii text
+sudo nala install figlet -y  # large ascii text. See: showfigfonts for full list of fonts. use -f to change font.
+# see more here: https://linoxide.com/linux-fun-terminal-crazy-output/
 
 
 # ------------------------------ EDITORS -----------------------------

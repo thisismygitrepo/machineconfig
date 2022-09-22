@@ -58,6 +58,7 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 # no devapps. apps is sufficient in linux.
 ```
+
 ###### Setup SSH connection (CHANGE APPROPRIATELY):
 ```bash
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | bash
