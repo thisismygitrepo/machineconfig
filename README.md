@@ -28,7 +28,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
 # repos
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
-# symlinks and pwsh profile: locally, run: `ftpsx username hostname ~/dotfiles`, then, on the remote:
+# symlinks and pwsh profile: locally, run: `ftpsx username@hostname[:port] ~/dotfiles`, then, on the remote:
 ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
 # devapps:
 ~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
@@ -53,7 +53,7 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
 # repos
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
-# symlinks and bash profile: locally, run: `ftpsx username hostname ~/dotfiles`, then, on the remote:
+# symlinks and bash profile: locally, run: `ftpsx username@hostname[:port] ~/dotfiles`, then, on the remote:
 # windows WSL: source ~/code/machineconfig/src/machineconfig/scripts/linux/croshell -c "get_env().WIN_FROM_WSL.joinpath(f'{get_env().UserName}/dotfiles').symlink_from(folder='~')"
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 # no devapps. apps is sufficient in linux.
@@ -62,5 +62,7 @@ source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 ###### Setup SSH connection (CHANGE APPROPRIATELY):
 ```bash
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | bash
+# For WSL only, also run the following:
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | bash
 ```
 
