@@ -19,6 +19,7 @@ sudo nala install npm -y  # for nvim plugins
 
 sudo nala install wget -y  # for downloading files
 sudo nala install curl -y  # for handling http requests
+sudo nala install make -y  # lvim and spacevim require it.
 sudo nala install net-tools -y  # gives ifconfig
 sudo nala install git -y  # for version control
 sudp nala install ncdu   # disk usage analyzer.
