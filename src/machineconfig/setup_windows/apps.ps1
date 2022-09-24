@@ -75,7 +75,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/LunarVim/LunarVim/master/uti
 Invoke-WebRequest "https://spacevim.org/install.cmd" -OutFile "~/Downloads/spacevim_installer.cmd"
 ~/Downloads/spacevim_installer.cmd
 
-wsl --install -d Ubuntu  #--accept-package-agreements --accept-source-agreements
+winget install --Id "Canonical.Ubuntu.2204" --accept-package-agreements --accept-source-agreements
 # iex ((New-Object System.Net.WebClient).DownloadString('https://git.io/JJ8R4'))  # tune machine to minimal
 Install-Module -Name PSFzf  -SkipPublisherCheck -AcceptLicense -PassThru -Confirm  #  -RequiredVersion 2.5.10
 Write-Output "Finished installing apps"

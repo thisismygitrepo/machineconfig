@@ -8,9 +8,11 @@ mypy=python$py_version
 sudo add-apt-repository ppa:deadsnakes/ppa  # without this repo, 3.9 is not available.
 sudo apt update
 
-sudo nala install -y $mypy  # ignore system level one. launched with `python39`, as opposed to `python`
-sudo nala install -y $mypy-venv
-sudo nala install -y python3-pip
+# -------------------------------  nala
+sudo apt install -y $mypy  # ignore system level one. launched with `python39`, as opposed to `python`
+sudo apt install -y $mypy-venv
+sudo apt install -y python3-pip
+# ---------------------------------------
 
 mkdir ~/venvs/
 cd ~/venvs/ || exit
