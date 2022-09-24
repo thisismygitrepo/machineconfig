@@ -5,4 +5,6 @@
 #sess_name=echo ~/dotfiles/creds/tmate/$1
 #ssh $username/$sess_name@sgp1.tmate.io
 
-python3 $0/../python/tmate_conn.py $@
+pyfile=readlink $0/../python/tmate_conn.py
+python3 $pyfile $@
+
