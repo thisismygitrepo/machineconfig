@@ -27,8 +27,6 @@ setuptools.setup(
     python_requires=">=3.9",
 )
 
-# python setup.py sdist bdist_wheel
-# twine upload dist/*
 
 # the root directory belongs to gitrepo, it can have any name.
 # the package name is dictated by 'name' field in setup.py file.

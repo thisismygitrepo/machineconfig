@@ -53,7 +53,9 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
 # repos
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
-# symlinks and bash profile: locally, run: `ftpsx username@hostname[:port] ~/dotfiles`, then, on the remote:
+# symlinks and bash profile.
+# locally, run: `ftpsx username@hostname[:port] ~/dotfiles`, then, on the remote:
+# for wsl: ftpsx $env:USERNAME@localhost:2222 ~/dotfiles
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 # no devapps. apps is sufficient in linux.
 ```
