@@ -15,7 +15,7 @@ Additionally, files that contain data, sensitive information that should not be 
 Additionally, scripts to perform setup of new machines and perform mundane tasks are maintained here in `scripts`. The repo uses Python to perform the tasks.
 
 # Shortcuts
-* `bit.ly/machineconfig` is a shortcut to this repo.
+* `bit.ly/configroot` is a shortcut to this repo.
 * Use `curl bit.ly/readconfig -L | bat -l md` to get the readme file.
 
 
@@ -28,7 +28,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
 # repos
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
-# symlinks and pwsh profile: locally, run: `ftpsx username@hostname[:port] ~/dotfiles`, then, on the remote:
+# symlinks and pwsh profile: locally, run: `ftpsx username@hostname[:port] ~/dotfiles -z`, then, on the remote:
 ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
 # devapps:
 ~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
@@ -54,7 +54,7 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 # repos
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
 # symlinks and bash profile.
-# locally, run: `ftpsx username@hostname[:port] ~/dotfiles`, then, on the remote:
+# locally, run: `ftpsx username@hostname[:port] ~/dotfiles -z`, then, on the remote:
 # for wsl: wsl_server; ftpsx $env:USERNAME@localhost:2222 ~/dotfiles 
 # OR: ln -s /mnt/c/Users/$(whoami)/dotfiles ~/dotfiles
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh

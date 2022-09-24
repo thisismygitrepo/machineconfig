@@ -65,7 +65,7 @@ map <c-u>  # half-up
 # e edit
 map e  # edit modal key.
 map en $~/scripts/nano $env:f
-map el $lvim $env:f
+map el $~\.local\bin\lvim.ps1 $env:f
 map es $nvim $env:f
 map ev $code $env:f
 map ep $pycharm
@@ -106,6 +106,10 @@ map fX extract
 map j
 map jd cd ~/Downloads
 map jc cd ~/code
+map jm cd ~/code/machineconfig/src/machineconfig
+map jh cd ~
+map jD cd ~/dotfiles
+
 
 # m make
 map m

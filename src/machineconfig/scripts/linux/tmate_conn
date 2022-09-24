@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # https://tmate.io/
-api_key=echo ~/dotfiles/creds/tmate/api_key
-sess_name=echo ~/dotfiles/creds/tmate/$1
+#api_key=echo ~/dotfiles/creds/tmate/api_key
+#sess_name=echo ~/dotfiles/creds/tmate/$1
+#ssh $username/$sess_name@sgp1.tmate.io
 
-var=$1
-ssh $username/$sess_name@sgp1.tmate.io
+python3 $0/../python/tmate_conn.py $@
