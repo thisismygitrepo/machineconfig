@@ -54,7 +54,6 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 # repos
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
 # symlinks and bash profile: locally, run: `ftpsx username@hostname[:port] ~/dotfiles`, then, on the remote:
-# windows WSL: source ~/code/machineconfig/src/machineconfig/scripts/linux/croshell -c "get_env().WIN_FROM_WSL.joinpath(f'{get_env().UserName}/dotfiles').symlink_from(folder='~')"
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 # no devapps. apps is sufficient in linux.
 ```

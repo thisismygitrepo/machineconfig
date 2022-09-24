@@ -41,7 +41,7 @@ sudo nala install hollywood -y  # for fun
 sudo nala install neofetch -y  # for system info
 neofetch
 sudo nala install fortune -y  # generate random text in the form of piece of wisdom
-sudo nala install boxes -y  # for ascii banners
+sudo nala install boxes -y  # for ascii banners. boxes -l for list of boxes.
 sudo nala install cowsay -y  # animals saying things. Different figures with -f. Full list: cowsay -l
 sudo nala install lolcat -y  # for coloring text in terminal.
 sudo nala install toilet -y  # large ascii text
