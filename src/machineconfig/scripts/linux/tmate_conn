@@ -5,6 +5,7 @@
 #sess_name=echo ~/dotfiles/creds/tmate/$1
 #ssh $username/$sess_name@sgp1.tmate.io
 
-pyfile=readlink $0/../python/tmate_conn.py
-python3 $pyfile $@
+pyfile=~/code/machineconfig/src/machineconfig/scripts/python/tmate_conn.py
+# TODO make this path relevant to current file ($0)
+python3 $pyfile $1
 

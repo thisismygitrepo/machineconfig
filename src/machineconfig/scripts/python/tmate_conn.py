@@ -16,8 +16,8 @@ def main():
 
     args = parser.parse_args()
     sess_name = creds['sessions_names'][args.sess_name]
-    api_key = creds['keys']['api_key']
-    res = f"tmate -a ~/.ssh/authorized_keys -k {api_key} -n {sess_name} -F"
+    user_name = creds['keys']['username']
+    res = f"ssh {user_name}/{sess_name}@sgp1.tmate.io"
     os.system(res)
 
 
