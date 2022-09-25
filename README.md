@@ -57,8 +57,8 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 # locally, run: `ftpsx username@hostname[:port] ~/dotfiles -z`, then, on the remote:
 # for wsl: wsl_server; ftpsx $env:USERNAME@localhost:2222 ~/dotfiles 
 # OR: ln -s /mnt/c/Users/$(whoami)/dotfiles ~/dotfiles
+# permissions of ~/dotfiles/.ssh should be adjusted: sudo chmod 600 ~/dotfiles/.ssh/*
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
-# no devapps. apps is sufficient in linux.
 ```
 
 ###### Setup SSH connection (CHANGE APPROPRIATELY):

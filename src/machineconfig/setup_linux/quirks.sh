@@ -22,3 +22,6 @@ sed -i 's/dhcp4: true/dhcp4: false/g' /etc/netplan/01-netcfg.yaml
 # https://unix.stackexchange.com/questions/642578/command-line-for-editing-a-configuration-file-value-without-an-interactive-edito
 # file format
 # https://askubuntu.com/questions/304999/not-able-to-execute-a-sh-file-bin-bashm-bad-interpreter
+# plocate:
+# https://unix.stackexchange.com/questions/113670/can-i-just-disable-updatedb/113681#113681
+# https://askubuntu.com/questions/1251484/why-does-it-take-so-much-time-to-initialize-mlocate-database
