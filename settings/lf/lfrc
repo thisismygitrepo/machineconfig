@@ -65,11 +65,11 @@ map <c-u>  # half-up
 # e edit
 map e  # edit modal key.
 map en $~/scripts/nano $env:f
-map el $~\.local\bin\lvim.ps1 $env:f
-map es $nvim $env:f
-map ev $code $env:f
+map el $pwsh -File ~\.local\bin\lvim.ps1 $env:f
+map ev $nvim $env:f
+map ec $code $env:f
 map ep $pycharm
-map o $start $env:f
+map o  $start $env:f
 map <enter> open
 
 # w shells
@@ -90,14 +90,18 @@ map v
 
 # o file/folder Operations
 map o
-map ox cut
-map ov paste
-map oc copy
-map op $Set-Clipboard -Value $env:f
+map od cut
+map op paste
+map oy copy
+map oc $Set-Clipboard -Value $env:f
 map c clear
 map or rename
 map <delete> delete
 map of reload
+map os mark-save
+map ol mark-load
+map oR mark-remove
+
 
 cmd extract $env:LOCALAPPDATA/lf/extract.cmd %f%
 map fX extract
@@ -115,10 +119,6 @@ map jD cd ~/dotfiles
 map m
 map md $~/code/machineconfig/settings/lf/mkdir.ps1 
 map mf $~/code/machineconfig/settings/lf/mkfile.ps1
-
-map s mark-save
-map l mark-load
-map S mark-remove
 
 # =================== JUNK ======================
 cmd doc $lf -doc | bat

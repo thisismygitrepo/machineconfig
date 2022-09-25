@@ -32,6 +32,10 @@ sudo apt install fzf -y  # fuzzy finder
 sudo apt install fd-find -y  # find alternative
 sudo apt install ripgrep -y  # rg command, rust-based, blazingly fast grep.
 sudo apt install ugrep -y  # just as good as grep, but consistent with windows
+cd ~
+wget https://dystroy.org/broot/download/x86_64-linux/broot  # broot is an fzf variant. It's excellent for viewing folder structure and layered search.
+chmod +x broot
+sudo mv ./broot /usr/local/bin/
 
 # ---------------------------- text style ------------------------------------
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
