@@ -23,7 +23,6 @@ set ratios '1:2:3'    # ratio of pane widths
 # set previewer ~/dotfiles/settings/lf/leftpane_previewer.ps1
 # set previewer ~\AppData\Local\Microsoft\WindowsApps\bat.exe  --color=always --theme=base16
 # also see pistol file previewer.
-# set shell pwsh
 # set previewer ~/code/machineconfig/settings/lf/leftpane_previewer.ps1
 # set ignorecase true
 # see:
@@ -40,16 +39,18 @@ set ratios '1:2:3'    # ratio of pane widths
 #           $SHELL   sh
 
 
-
-
 # ============================ KEY BINDINGS ============================================
 # avoid using confusing keys that are already bound to other functions by other programs, e.g. the console itself, like ctrl+c
 # default reference: https://pkg.go.dev/github.com/gokcehan/lf
 
-cmd fzf2g $(~/scripts/fzf2g.sh $args[1])
-# map F $nano fzf2g $args[1]
-map J
-# map J push :fzfg<space>
+
+# key bindings
+map v
+map p
+map x
+map c
+map v
+
 
 map q quit  # default
 # remove defaults
@@ -67,6 +68,7 @@ map ep $pycharm
 map o $start $env:f
 map <enter> open
 
+
 # w shells
 map w
 map ws $powershell
@@ -76,12 +78,6 @@ map wcm $cmd
 map i $~/code/machineconfig/settings/lf_rc/previewer.sh $env:f
 map R $~/scripts/croshell.sh -r $env:f
 
-# key bindings
-map v
-map p
-map x
-map c
-map v
 
 # o file/folder Operations
 map o
@@ -95,16 +91,61 @@ map <delete> delete
 map of reload
 map fu unarchive
 
-# from https://github.com/BrodieRobertson/dotfiles/blob/master/config/lf/lfrc 
+
+# j jump
+map j
+map jd cd ~/Downloads
+map jc cd ~/code
+map J
+# map J push :fzfg<space>
+
+# m make
+map m
+map md mkdir
+map mf mkfile
+map mF sudomkfile
+
+map s mark-save
+map l mark-load
+map S mark-remove
+
+map <c-f> :fzf_jump
+map gs :fzf_search
+map J broot_jump
+map F fzf_jump
+
+
+
+# from https://github.com/gokcehan/lf/wiki/Integrations#fzf
 cmd fzf_jump ${{
-  res="$(find . -maxdepth 3 | fzf --reverse --header='Jump to location')"
-  if [ -f "$res" ]; then
-    cmd="select"
-  elif [ -d "$res" ]; then
-    cmd="cd"
-  fi
-  lf -remote "send $id $cmd \"$res\""
+    res="$(find . -maxdepth 1 | fzf --reverse --header='Jump to location' | sed 's/\\/\\\\/g;s/"/\\"/g')"
+    if [ -d "$res" ] ; then
+        cmd="cd"
+    elif [ -f "$res" ] ; then
+        cmd="select"
+    else
+        exit 0
+    fi
+    lf -remote "send $id $cmd \"$res\""
 }}
+
+
+cmd fzf2g $(~/scripts/fzf2g.sh $args[1])
+# map F $nano fzf2g $args[1]
+
+
+cmd fzf_search ${{
+    res="$( \
+        RG_PREFIX="rg --column --line-number --no-heading --color=always \
+            --smart-case "
+        FZF_DEFAULT_COMMAND="$RG_PREFIX ''" \
+            fzf --bind "change:reload:$RG_PREFIX {q} || true" \
+            --ansi --layout=reverse --header 'Search in files' \
+            | cut -d':' -f1
+    )"
+    [ ! -z "$res" ] && lf -remote "send $id select \"$res\""
+}}
+
 
 cmd broot_jump ${{
   f=$(mktemp)
@@ -118,9 +159,6 @@ cmd broot_jump ${{
   lf -remote "send $id $cmd \"$res\""
 }}
 
-map J broot_jump
-map F fzf_jump
-
 
 cmd unarchive ${{
   case "$f" in
@@ -133,11 +171,6 @@ cmd unarchive ${{
   esac
 }}
 
-
-# j jump
-map j
-map jd cd ~/Downloads
-map jc cd ~/code
 
 
 cmd mkdir ${{
@@ -170,16 +203,4 @@ cmd chmod ${{
 
   lf -remote 'send reload'
 }}
-
-
-# m make
-map m
-map md mkdir
-map mf mkfile
-map mF sudomkfile
-
-
-map s mark-save
-map l mark-load
-map S mark-remove
 

@@ -16,7 +16,7 @@ set number on
 set preview true
 set shell powershell
 set colors
-set ratios '1:2:3'    # ratio of pane widths
+set ratios '1:2:3'  # ratio of pane widths
 # set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"
 # see more at https://git.lmburns.com/dotfiles-mac/file/.config/lf/lfrc.html
 
@@ -37,38 +37,25 @@ set ratios '1:2:3'    # ratio of pane widths
 #           %EDITOR%  notepad
 #           %PAGER%   more
 #           %SHELL%   cmd
-# Unix-like defaults
-#           $OPENER  open      # macos
-#           $OPENER  xdg-open  # others
-#           $EDITOR  vi
-#           $PAGER   less
-#           $SHELL   sh
-
-
-
 
 # ============================ KEY BINDINGS ============================================
 # avoid using confusing keys that are already bound to other functions by other programs, e.g. the console itself, like ctrl+c
 # default reference: https://pkg.go.dev/github.com/gokcehan/lf
 
-cmd fzfg $(~/scripts/fzfg.ps1 $args[1])
-map F $~/code/machineconfig/settings/lf/fzf_nano.ps1
-map J
-map J push :fzfg<space>
-
-map q quit  # default
-# remove defaults
-map k  # default up
-map <c-u>  # half-up
-
+# key bindings
+map v
+map p
+map x
+map c
+map v
 
 # e edit
 map e  # edit modal key.
 map en $~/scripts/nano $env:f
-map el $pwsh -File ~\.local\bin\lvim.ps1 $env:f
+map el $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- $env:f
 map ev $nvim $env:f
 map ec $code $env:f
-map ep $pycharm
+map ep $& 'C:\Program Files (x86)\JetBrains\PyCharm Community Edition 2022.2\bin\pycharm.exe' $f
 map o  $start $env:f
 map <enter> open
 
@@ -80,13 +67,6 @@ map wcr $~/scripts/croshell.ps1
 map wcm $cmd
 map i $~/code/machineconfig/settings/lf/previewer.ps1 $env:f
 map R $~/scripts/croshell.ps1 -r $env:f
-
-# key bindings
-map v
-map p
-map x
-map c
-map v
 
 # o file/folder Operations
 map o
@@ -101,10 +81,9 @@ map of reload
 map os mark-save
 map ol mark-load
 map oR mark-remove
+map ox extract
+cmd extract $cmd $env:USERPROFILE\code\machineconfig\settings\lf\extract.cmd -- $f
 
-
-cmd extract $env:LOCALAPPDATA/lf/extract.cmd %f%
-map fX extract
 
 # j jump
 map j
@@ -113,16 +92,22 @@ map jc cd ~/code
 map jm cd ~/code/machineconfig/src/machineconfig
 map jh cd ~
 map jD cd ~/dotfiles
-
+map jj $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- ~/code/machineconfig/settings/lf/lfrc
 
 # m make
 map m
 map md $~/code/machineconfig/settings/lf/mkdir.ps1 
 map mf $~/code/machineconfig/settings/lf/mkfile.ps1
 
+
+
 # =================== JUNK ======================
+# Find and Jump
+cmd fzfg $~/scripts/fzfg.ps1 $args[0]
+map J push :fzfg<space>
+map F $~/code/machineconfig/settings/lf/fzf_nano.ps1
 cmd doc $lf -doc | bat
-# cmd on-quit $~/dotfiles/settings/lf/lfcd.ps1
+cmd on-quit ~/code/machineconfig/settings/lf/lfcd.ps1
 # map Q $~/dotfiles/settings/lf/lfcd.ps1 quit
 # cmd on-cd &{{$onefetch}}
 # on-quit $~/dotfiles/settings/lf/lfcd.ps1
