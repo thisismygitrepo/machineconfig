@@ -94,6 +94,7 @@ map jh cd ~
 map jD cd ~/dotfiles
 map jj $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- ~/code/machineconfig/settings/lf/lfrc
 
+
 # m make
 map m
 map md $~/code/machineconfig/settings/lf/mkdir.ps1 

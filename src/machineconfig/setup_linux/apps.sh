@@ -20,6 +20,9 @@ sudo apt install git -y  # for version control
 sudp apt install ncdu   # disk usage analyzer.
 sudo apt install tmux -y # allows multiple terminals that are persistent.
 # sudo apt install tmate -y  # remote tmux, see https://tmate.io
+# https://github.com/leonwind/cli2cloud
+# https://github.com/sorenisanerd/gotty
+# https://devsession.is/
 
 
 # ------------------- File Managers ---------------------------
@@ -32,10 +35,64 @@ sudo apt install fzf -y  # fuzzy finder
 sudo apt install fd-find -y  # find alternative
 sudo apt install ripgrep -y  # rg command, rust-based, blazingly fast grep.
 sudo apt install ugrep -y  # just as good as grep, but consistent with windows
+sudo apt install exa  # replacement for ls. no ner fonts, unlike lsd
+
 cd ~
 wget https://dystroy.org/broot/download/x86_64-linux/broot  # broot is an fzf variant. It's excellent for viewing folder structure and layered search.
 chmod +x broot
 sudo mv ./broot /usr/local/bin/
+
+
+cd ~
+mkdir "tmp_asdf"
+cd tmp_asdf
+wget https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz
+tar -xvzf *
+chmod +x ./zellij
+sudo mv ./zellij /usr/local/bin/
+cd ~
+rm -rdf tmp_asdf
+
+
+cd ~
+mkdir "tmp_asdf"
+cd tmp_asdf
+wget https://github.com/tbillington/kondo/releases/latest/download/kondo-x86_64-unknown-linux-gnu.tar.gz
+tar -xvzf *
+chmod +x ./kondo
+sudo mv ./kondo /usr/local/bin/
+cd ~
+rm -rdf tmp_asdf
+
+
+cd ~
+mkdir "tmp_asdf"
+cd tmp_asdf
+get_latest_release() {
+  curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub api
+    grep '"tag_name":' |                                            # Get tag line
+    sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
+}
+latest=$(get_latest_release "nushell/nushell")
+wget https://github.com/nushell/nushell/releases/download/$latest/nu-$latest-x86_64-unknown-linux-gnu.tar.gz
+tar -xvzf *
+chmod +x ./nu
+sudo mv ./nu /usr/local/bin/
+cd ~
+rm -rdf tmp_asdf
+
+
+
+#cd ~
+#mkdir "tmp_asdf"
+#cd tmp_asdf
+#wget https://github.com/Peltoche/lsd/releases/latest/download/lsd-0.23.1-x86_64-unknown-linux-gnu.tar.gz
+#tar -xvzf *
+#chmod +x ./lsd
+#sudo mv ./lsd /usr/local/bin/
+#cd ~
+#rm -rdf tmp_asdf
+
 
 # ---------------------------- text style ------------------------------------
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
@@ -52,6 +109,8 @@ sudo apt install toilet -y  # large ascii text
 sudo apt install figlet -y  # large ascii text. See: showfigfonts for full list of fonts. use -f to change font.
 # see more here: https://linoxide.com/linux-fun-terminal-crazy-output/
 # midnight commander, similarv# Asciiquarium# https://github.com/bartobri/no-more-secrets
+# https://www.youtube.com/watch?v=haitmoSyTls
+
 
 # ------------------------------ EDITORS -----------------------------
 # curl https://sh.rustup.rs -sSf | sh

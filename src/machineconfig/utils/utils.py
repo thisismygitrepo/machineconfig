@@ -52,18 +52,21 @@ def retrieve_from_onedrive(target_file):
     print(f"RETRIEVED {repr(source_file)} {'>' * 10} TO {'>' * 10} {repr(target_file)}")
 
 
-def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", name=None):
+def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", name=None, tool_name=None):
     import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
     latest_version = requests.get(repo_url + "/releases/latest").url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
     download_link = tb.P(repo_url + "/releases/download/" + latest_version)
     if download_n_extract:
         if name is None:
-            tool_name = tb.P(repo_url)[-1]
+            tool = tool_name or tb.P(repo_url)[-1]
             version = download_link[-1]
-            name = f'{tool_name}-{version}-{suffix}.zip'
-        exe = download_link.joinpath(name).download().unzip(inplace=True).search()[0]
+            name = f'{tool}-{version}-{suffix}.zip'
+            print("Downloading", download_link.joinpath(name))
+        exe = download_link.joinpath(name).download().unzip(inplace=True, overwrite=True)
+
         if exe.is_file(): pass
-        else: exe = exe.search("*.exe")[0]
+        else: exe = exe.search("*.exe", r=True)[0] if tool_name is None else exe.search(f"{tool_name}.exe", r=True)[0]
+
         return exe.move(folder=tb.P.get_env().WindowsApps, overwrite=True)
     return download_link
 
