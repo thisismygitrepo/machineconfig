@@ -2,7 +2,8 @@
 cd ~/code/machineconfig/
 git reset --hard
 git pull origin
-cd ~
-chmod +x scripts -R
+chmod +x ~/scripts -R
+chmod +x ~/code/machineconfig/settings/lf_linux/exe - R
 cd ~/code/crocodile
 git pull origin
+cd ~

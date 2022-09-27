@@ -1,5 +1,3 @@
 
-cd ~/code/crocodile
-git pull origin
-cd ~/code/machineconfig
-git pull origin
+git pull origin --git-dir=$env:USERPROFILE/code/crocodile/.git
+git pull origin --git-dir=$env:USERPROFILE/code/machineconfig/.git

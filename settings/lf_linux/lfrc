@@ -74,7 +74,7 @@ map ww bash
 map wp $powershell
 map wr $~/scripts/croshell.sh
 map wm $cmd
-map i $~/code/machineconfig/settings/lf_linux/previewer.sh $env:f
+map i $~/code/machineconfig/settings/lf_linux/exe/previewer.sh $env:f
 map R $~/scripts/croshell.sh -r $env:f
 
 
