@@ -59,12 +59,12 @@ map <c-u>  # half-up
 
 # e edit
 map e  # edit modal key.
-map en $nano $env:f
-map el $lvim $env:f
-map ev $nvim $env:f
-map ec $code $env:f
+map en $nano $f
+map el $lvim $f
+map ev $nvim $f
+map ec $code $f
 map ep $pycharm
-map o $start $env:f
+map o $start $f
 map <enter> open
 
 
@@ -74,8 +74,8 @@ map ww bash
 map wp $powershell
 map wr $~/scripts/croshell.sh
 map wm $cmd
-map i $~/code/machineconfig/settings/lf_linux/exe/previewer.sh $env:f
-map R $~/scripts/croshell.sh -r $env:f
+map i $~/code/machineconfig/settings/lf_linux/exe/previewer.sh $f
+map R $~/scripts/croshell.sh -r $f
 
 
 # o file/folder Operations
