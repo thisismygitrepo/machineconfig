@@ -17,9 +17,7 @@ sudo apt install curl -y  # for handling http requests
 sudo apt install make -y  # lvim and spacevim require it.
 sudo apt install net-tools -y  # gives ifconfig
 sudo apt install git -y  # for version control
-sudp apt install ncdu   # disk usage analyzer.
-sudo apt install tmux -y # allows multiple terminals that are persistent.
-# sudo apt install tmate -y  # remote tmux, see https://tmate.io
+
 # https://github.com/leonwind/cli2cloud
 # https://github.com/sorenisanerd/gotty
 # https://devsession.is/
@@ -36,13 +34,55 @@ sudo apt install fd-find -y  # find alternative
 sudo apt install ripgrep -y  # rg command, rust-based, blazingly fast grep.
 sudo apt install ugrep -y  # just as good as grep, but consistent with windows
 sudo apt install exa  # replacement for ls. no ner fonts, unlike lsd
+#cd ~
+#mkdir "tmp_asdf"
+#cd tmp_asdf
+#wget https://github.com/Peltoche/lsd/releases/latest/download/lsd-0.23.1-x86_64-unknown-linux-gnu.tar.gz
+#tar -xvzf *
+#chmod +x ./lsd
+#sudo mv ./lsd /usr/local/bin/
+#cd ~
+#rm -rdf tmp_asdf
 
 cd ~
 wget https://dystroy.org/broot/download/x86_64-linux/broot  # broot is an fzf variant. It's excellent for viewing folder structure and layered search.
 chmod +x broot
 sudo mv ./broot /usr/local/bin/
 
+sudp apt install ncdu   # disk usage analyzer.
+# ---------------------- kondo, a smart and automatic disk cleaner ------------------------
+cd ~
+mkdir "tmp_asdf"
+cd tmp_asdf
+wget https://github.com/tbillington/kondo/releases/latest/download/kondo-x86_64-unknown-linux-gnu.tar.gz
+tar -xvzf *
+chmod +x ./kondo
+sudo mv ./kondo /usr/local/bin/
+cd ~
+rm -rdf tmp_asdf
 
+# ---------------------- diskonaut, a disk usage analyzer ------------------------
+cd ~; mkdir tmp_asdf; cd tmp_asdf
+latest=$(get_latest_release "imsnif/diskonaut")
+wget https://github.com/imsnif/diskonaut/releases/download/$latest/diskonaut-$latest-unknown-linux-musl.tar.gz
+tar -xvzf *
+chmod +x ./diskonaut
+sudo mv ./diskonaut /usr/local/bin/
+cd ~; rm -rdf tmp_asdf
+
+
+# -------------------- banchwich, a network usage monitor
+cd ~; mkdir tmp_asdf; cd tmp_asdf
+latest=$(get_latest_release "imsnif/bandwhich")
+wget https://github.com/imsnif/bandwhich/releases/download/$latest/bandwhich-v$latest-x86_64-unknown-linux-musl.tar.gz
+tar -xvzf *
+chmod +x ./bandwhich
+sudo mv ./bandwhich /usr/local/bin/
+cd ~; rm -rdf tmp_asdf
+
+sudo apt install tmux -y # allows multiple terminals that are persistent.
+# sudo apt install tmate -y  # remote tmux, see https://tmate.io
+# ------------ zellij, a terminal multiplexer ------------
 cd ~
 mkdir "tmp_asdf"
 cd tmp_asdf
@@ -54,20 +94,8 @@ cd ~
 rm -rdf tmp_asdf
 
 
-cd ~
-mkdir "tmp_asdf"
-cd tmp_asdf
-wget https://github.com/tbillington/kondo/releases/latest/download/kondo-x86_64-unknown-linux-gnu.tar.gz
-tar -xvzf *
-chmod +x ./kondo
-sudo mv ./kondo /usr/local/bin/
-cd ~
-rm -rdf tmp_asdf
-
-
-cd ~
-mkdir "tmp_asdf"
-cd tmp_asdf
+# ------------------- nushell, structured data shell -------------------
+cd ~; mkdir "tmp_asdf"; cd tmp_asdf
 get_latest_release() {
   curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub api
     grep '"tag_name":' |                                            # Get tag line
@@ -78,20 +106,8 @@ wget https://github.com/nushell/nushell/releases/download/$latest/nu-$latest-x86
 tar -xvzf *
 chmod +x ./nu
 sudo mv ./nu /usr/local/bin/
-cd ~
-rm -rdf tmp_asdf
+cd ~; rm -rdf tmp_asdf
 
-
-
-#cd ~
-#mkdir "tmp_asdf"
-#cd tmp_asdf
-#wget https://github.com/Peltoche/lsd/releases/latest/download/lsd-0.23.1-x86_64-unknown-linux-gnu.tar.gz
-#tar -xvzf *
-#chmod +x ./lsd
-#sudo mv ./lsd /usr/local/bin/
-#cd ~
-#rm -rdf tmp_asdf
 
 
 # ---------------------------- text style ------------------------------------
@@ -134,12 +150,3 @@ curl -sLf https://spacevim.org/install.sh | bash
 # sudo snap install pycharm-community --classic
 # sudo snap install code --classic
 # sudo snap install powershell --classic
-
-# conda
-#apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
-# miniconda
-#wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh
-#bash Miniconda3-py39_4.10.3-Linux-x86_64.sh -y
-#source .bashrc  # reload to activate conda
-## notice that on linux, the default is that miniconda will be added to PATH unlike windows where this is not recommended
-
