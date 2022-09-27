@@ -1,5 +1,4 @@
 
-
 set scrolloff 10      # space on top and bottom of screen
 set icons on          # show icons next to files
 set period 1          # interval to check for directory updates
@@ -61,10 +60,10 @@ map <enter> open
 
 # w shells
 map w
-map ws $powershell
+map ww $powershell
 map wp $pwsh
-map wcr $~/scripts/croshell.ps1
-map wcm $cmd
+map wc $~/scripts/croshell.ps1
+map wm $cmd
 map i $~/code/machineconfig/settings/lf/previewer.ps1 $env:f
 map R $~/scripts/croshell.ps1 -r $env:f
 
@@ -92,6 +91,8 @@ map jc cd ~/code
 map jm cd ~/code/machineconfig/src/machineconfig
 map jh cd ~
 map jD cd ~/dotfiles
+map ja cd $env:LOCALAPPDATA
+map jA cd $env:APPDATA
 map jj $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- ~/code/machineconfig/settings/lf/lfrc
 
 

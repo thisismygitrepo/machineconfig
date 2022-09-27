@@ -1,5 +1,4 @@
 
-
 set scrolloff 10      # space on top and bottom of screen
 set icons on          # show icons next to files
 set period 1          # interval to check for directory updates
@@ -16,7 +15,7 @@ set number on
 set preview true
 # set shell powershell
 set colors
-set ratios '1:2:3'    # ratio of pane widths
+set ratios '1:2:3'  # ratio of pane widths
 # set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"
 # see more at https://git.lmburns.com/dotfiles-mac/file/.config/lf/lfrc.html
 
@@ -62,8 +61,8 @@ map <c-u>  # half-up
 map e  # edit modal key.
 map en $nano $env:f
 map el $lvim $env:f
-map es $nvim $env:f
-map ev $code $env:f
+map ev $nvim $env:f
+map ec $code $env:f
 map ep $pycharm
 map o $start $env:f
 map <enter> open
@@ -71,44 +70,51 @@ map <enter> open
 
 # w shells
 map w
-map ws $powershell
-map wp $pwsh
-map wcr $~/scripts/croshell.sh
-map wcm $cmd
-map i $~/code/machineconfig/settings/lf_rc/previewer.sh $env:f
+map ww bash
+map wp $powershell
+map wr $~/scripts/croshell.sh
+map wm $cmd
+map i $~/code/machineconfig/settings/lf_linux/previewer.sh $env:f
 map R $~/scripts/croshell.sh -r $env:f
 
 
 # o file/folder Operations
 map o
-map ox cut
-map ov paste
-map oc copy
-map op $Set-Clipboard -Value $env:f
+map od cut
+map op paste
+map oy copy
+map oc $Set-Clipboard -Value $env:f
 map c clear
 map or rename
 map <delete> delete
 map of reload
-map fu unarchive
+map os mark-save
+map ol mark-load
+map oR mark-remove
+map ou unarchive  # map ox extract
+cmd extract $cmd $env:USERPROFILE\code\machineconfig\settings\lf\extract.cmd -- $f
+
 
 
 # j jump
 map j
 map jd cd ~/Downloads
 map jc cd ~/code
-map J
-# map J push :fzfg<space>
+map jm cd ~/code/machineconfig/src/machineconfig
+map jh cd ~
+map jD cd ~/dotfiles
+map jj $lvim ~/code/machineconfig/settings/lf/lfrc
+
 
 # m make
 map m
 map md mkdir
 map mf mkfile
 map mF sudomkfile
+map mp chmod
 
-map s mark-save
-map l mark-load
-map S mark-remove
 
+# =============== JUNK =================
 map <c-f> :fzf_jump
 map gs :fzf_search
 map J broot_jump
