@@ -2,6 +2,7 @@
 
 
 # ----------------- package manager -----------------
+do-release-upgrade # /etc/update-manager/release-upgrades
 sudo apt update && sudo apt install nala -y  # nala is a command line tool for managing your Linux system
 sudo nala update && sudo nala upgrade -y  # this is suprior to apt
 
@@ -44,6 +45,7 @@ sudo apt install exa  # replacement for ls. no ner fonts, unlike lsd
 #cd ~
 #rm -rdf tmp_asdf
 
+
 cd ~
 wget https://dystroy.org/broot/download/x86_64-linux/broot  # broot is an fzf variant. It's excellent for viewing folder structure and layered search.
 chmod +x broot
@@ -60,6 +62,13 @@ chmod +x ./kondo
 sudo mv ./kondo /usr/local/bin/
 cd ~
 rm -rdf tmp_asdf
+
+
+get_latest_release() {
+  curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub api
+    grep '"tag_name":' |                                            # Get tag line
+    sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
+}
 
 # ---------------------- diskonaut, a disk usage analyzer ------------------------
 cd ~; mkdir tmp_asdf; cd tmp_asdf
@@ -83,35 +92,31 @@ cd ~; rm -rdf tmp_asdf
 sudo apt install tmux -y # allows multiple terminals that are persistent.
 # sudo apt install tmate -y  # remote tmux, see https://tmate.io
 # ------------ zellij, a terminal multiplexer ------------
-cd ~
-mkdir "tmp_asdf"
-cd tmp_asdf
+cd ~; mkdir "tmp_asdf"; cd tmp_asdf
 wget https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz
-tar -xvzf *
-chmod +x ./zellij
-sudo mv ./zellij /usr/local/bin/
-cd ~
-rm -rdf tmp_asdf
+tar -xvzf *; chmod +x ./zellij; sudo mv ./zellij /usr/local/bin/; cd ~; rm -rdf tmp_asdf
 
 
 # ------------------- nushell, structured data shell -------------------
 cd ~; mkdir "tmp_asdf"; cd tmp_asdf
-get_latest_release() {
-  curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub api
-    grep '"tag_name":' |                                            # Get tag line
-    sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
-}
 latest=$(get_latest_release "nushell/nushell")
 wget https://github.com/nushell/nushell/releases/download/$latest/nu-$latest-x86_64-unknown-linux-gnu.tar.gz
-tar -xvzf *
-chmod +x ./nu
-sudo mv ./nu /usr/local/bin/
-cd ~; rm -rdf tmp_asdf
-
+tar -xvzf *; chmod +x ./nu; sudo mv ./nu /usr/local/bin/; cd ~; rm -rdf tmp_asdf
 
 
 # ---------------------------- text style ------------------------------------
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+
+# zsh
+#sudo apt install zsh
+# sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# sudo apt install zsh-syntax-highlighting -y
+# sudo apt install zsh-autosuggestions -y
+# sudo apt install zsh-theme-powerlevel10k -y
+# sudo apt install zsh-completions -y
+# sudo apt install zsh-history-substring-search -y
+
+
 sudo apt install sl -y  # for fun
 sudo apt install cmatrix -y  # for fun
 sudo apt install hollywood -y  # for fun
@@ -129,6 +134,7 @@ sudo apt install figlet -y  # large ascii text. See: showfigfonts for full list 
 
 
 # ------------------------------ EDITORS -----------------------------
+# consider using helix editor,
 # curl https://sh.rustup.rs -sSf | sh
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 #sudo apt install neovim -y  # nvim, but not latest release
@@ -150,3 +156,4 @@ curl -sLf https://spacevim.org/install.sh | bash
 # sudo snap install pycharm-community --classic
 # sudo snap install code --classic
 # sudo snap install powershell --classic
+

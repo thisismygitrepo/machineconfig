@@ -1,7 +1,4 @@
 
 clear
 batcat --color=always --theme=base16 $1
-
-#Write-Host -NoNewLine 'Press any key to continue...';
-#$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
-
+read -n 1 -s -r -p "Press any key to continue"

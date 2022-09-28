@@ -9,4 +9,3 @@ sudo apt-get install tmate  # remote ssh from anywhere.
 # tunnels: https://www.youtube.com/watch?v=Wp7boqm3Xts
 cd ~
 mkdir -p .ssh
-
