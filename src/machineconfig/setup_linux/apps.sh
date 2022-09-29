@@ -2,8 +2,10 @@
 
 
 # ----------------- package manager -----------------
-do-release-upgrade # /etc/update-manager/release-upgrades
-sudo apt update && sudo apt install nala -y  # nala is a command line tool for managing your Linux system
+sudo apt update -y
+sudo apt upgrade -y
+# do-release-upgrade # /etc/update-manager/release-upgrades
+sudo apt install nala -y  # nala is a command line tool for managing your Linux system
 sudo nala update && sudo nala upgrade -y  # this is suprior to apt
 
 # -------------------- Utilities --------------------
