@@ -8,6 +8,8 @@ sudo apt upgrade -y
 sudo apt install nala -y  # nala is a command line tool for managing your Linux system
 sudo nala update && sudo nala upgrade -y  # this is suprior to apt
 
+sudo apt remove mlocate  # solves wsl2 slow Initializing plocate database; this may take some time..
+
 # -------------------- Utilities --------------------
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -  # The NodeSource repository, must add to get latest node
 # consider asdf tool for managing versions of python, node, etc.

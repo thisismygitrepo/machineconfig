@@ -7,6 +7,7 @@ This script Takes away all config files from the computer, place them in one dir
 import crocodile.toolbox as tb
 from crocodile.environment import DotFiles, get_shell_profiles, system, LocalAppData, AppData, PathVar  # ProgramFiles, WindowsApps  # , exe
 from machineconfig.utils.utils import symlink
+import os
 
 
 repo_root = tb.P.home().joinpath(f"code/machineconfig/src/machineconfig")
@@ -19,6 +20,9 @@ def link_ssh(overwrite=True):
     for item in target.search("*"):
         if "authorized_keys" in item: continue
         symlink(path.joinpath(item.name), item, overwrite=overwrite)
+    if system == "Linux":  # permissions of ~/dotfiles/.ssh should be adjusted
+        os.system("chmod 700 ~/.ssh")  # may require sudo
+        os.system("chmod 600 ~/dotfiles/.ssh/*")
 
 
 def link_aws(overwrite=True):

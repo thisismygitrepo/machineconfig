@@ -48,23 +48,22 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 With `sudo` access, run the following:
 ```bash
 # apps
+sudo -s
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/apps.sh | bash
 # virtual enviornment
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
 # repos
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
 # symlinks and bash profile.
-# locally, run: `ftpsx username@hostname[:port] ~/dotfiles -z`, then, on the remote:
-# for wsl: wsl_server; ftpsx $env:USERNAME@localhost:2222 ~/dotfiles 
-# OR: ln -s /mnt/c/Users/$(whoami)/dotfiles ~/dotfiles
-# permissions of ~/dotfiles/.ssh should be adjusted: sudo chmod 600 ~/dotfiles/.ssh/*
-source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
+# locally, run: `ftpsx username@hostname[:port] ~/dotfiles -z`
+# for wsl: wsl_server.ps1; ftpsx $env:USERNAME@localhost:2222 ~/dotfiles -z # OR: ln -s /mnt/c/Users/$(whoami)/dotfiles ~/dotfiles
+source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh  # requires sudo since it invloves chmod of dotfiles/.ssh, however sudo doesn't work with source. best to have sudo -s earlier.
 ```
 
 ###### Setup SSH connection (CHANGE APPROPRIATELY):
 ```bash
-curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | bash
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash
 # For WSL only, also run the following:
-curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | bash
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash
 ```
 
