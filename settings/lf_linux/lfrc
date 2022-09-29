@@ -95,14 +95,14 @@ map ou unarchive  # map ox extract
 cmd extract $cmd $env:USERPROFILE\code\machineconfig\settings\lf\extract.cmd -- $f
 
 
-
 # j jump
 map j
-map jd cd ~/Downloads
 map jc cd ~/code
+map jd cd ~/data
+map jD cd ~/Downloads
+map jx cd ~/dotfiles
 map jm cd ~/code/machineconfig/src/machineconfig
 map jh cd ~
-map jD cd ~/dotfiles
 map jj $lvim ~/code/machineconfig/settings/lf/lfrc
 
 
@@ -119,7 +119,6 @@ map <c-f> :fzf_jump
 map gs :fzf_search
 map J broot_jump
 map F fzf_jump
-
 
 
 # from https://github.com/gokcehan/lf/wiki/Integrations#fzf

@@ -86,11 +86,12 @@ cmd extract $cmd $env:USERPROFILE\code\machineconfig\settings\lf\extract.cmd -- 
 
 # j jump
 map j
-map jd cd ~/Downloads
 map jc cd ~/code
+map jd cd ~/data
+map jD cd ~/Downloads
+map jx cd ~/dotfiles
 map jm cd ~/code/machineconfig/src/machineconfig
 map jh cd ~
-map jD cd ~/dotfiles
 map ja cd $env:LOCALAPPDATA
 map jA cd $env:APPDATA
 map jj $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- ~/code/machineconfig/settings/lf/lfrc
