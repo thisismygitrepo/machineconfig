@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 . ~/scripts/activate_ve
-python $0/../python/ftprx.py $@
+python $0/../../python/ftprx.py $@
 
