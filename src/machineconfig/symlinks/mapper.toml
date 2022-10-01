@@ -1,0 +1,78 @@
+
+[git]
+gitconfig = {this = '~/.gitconfig', to_this = '~/dotfiles/settings/.gitconfig'}
+gitcred = {this = '~/.git-credentials', to_this = '~/dotfiles/settings/.git-credentials'}
+
+
+[pypi]
+creds = {this = '~/.pypirc', to_this = '~/dotfiles/creds/.pypirc'}
+
+[powershell_windows]
+CurrentUserCurrentHost = {this = '~/Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserCurrentHost/Microsoft.PowerShell_profile.ps1'}
+CurrentUserAllHosts = {this = '~/Documents\WindowsPowerShell\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserAllHosts/profile.ps1'}
+AllUsersCurrentHost = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersCurrentHost/Microsoft.PowerShell_profile.ps1'}
+AllUsersAllHosts = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/AllUsersAllHosts/profile.ps1'}
+
+[pwsh_windows]
+CurrentUserCurrentHost = {this = '~/Documents\PowerShell\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/powershell/CurrentUserCurrentHost/Microsoft.PowerShell_profile.ps1'}
+CurrentUserAllHosts = {this = '~/Documents\PowerShell\profile.ps1', to_this = '~/dotfiles/shells/powershell/CurrentUserAllHosts/profile.ps1'}
+AllUsersCurrentHost = {this = 'C:\Program Files\PowerShell\7\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersCurrentHost/Microsoft.PowerShell_profile.ps1'}
+AllUsersAllHosts = {this = 'C:\Program Files\PowerShell\7\profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersAllHosts/profile.ps1'}
+
+
+[bash_linux]
+bashrc = {this = '~/.inputrc', to_this = '~/dotfiles/shells/bash/.inputrc'}
+
+[nushell_windows]
+config = {this = '~/AppData/Roaming/nushell/config.nu', to_this = '~/code/machineconfig/settings/shells/nushell/config.nu'}
+env = {this = '~/AppData/Roaming/nushell/env.nu', to_this = '~/code/machineconfig/settings/shells/nushell/env.nu'}
+
+
+[ipython]
+config = {this = '~/.ipython/profile_default/ipython_config.py', to_this = '~/dotfiles/shells/ipython/.ipython/ipython_config.py'}
+
+
+[autostart_windows]
+startup = {this = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/startup_file.cmd', to_this = '~/code/machineconfig/src/machineconfig/jobs/windows/startup_file.cmd'}
+
+
+[scripts_linux]
+public = {this = '~/scripts', to_this = '~/code/machineconfig/src/machineconfig/scripts/linux'}
+
+
+[scripts_windows]
+public = {this = '~/scripts', to_this = '~/code/machineconfig/src/machineconfig/scripts/windows'}
+
+
+[lf_windows]
+config = {this = '~/AppData/Local/lf/lfrc', to_this = '~/code/machineconfig/settings/lf/lfrc'}
+colors = {this = '~/AppData/Local/lf/colors', to_this = '~/code/machineconfig/settings/lf/colors'}
+icons = {this = '~/AppData/Local/lf/icons', to_this = '~/code/machineconfig/settings/lf/icons'}
+
+
+[lf_linux]
+colors = {this = '~/.config/lf/colors', to_this = '~/code/machineconfig/settings/lf_linux/colors'}
+config = {this = '~/.config/lf/lfrc', to_this = '~/code/machineconfig/settings/lf_linux/lfrc'}
+icons = {this = '~/.config/lf/icons', to_this = '~/code/machineconfig/settings/lf_linux/icons'}
+
+
+[tmux_linux]
+config = {this = '~/.tmux.conf', to_this = '~/code/machineconfig/settings/tmux/.tmux.conf'}
+
+[wsl_windows]
+home = {this = '~/wsl', to_this = '\\wsl.localhost\Ubuntu-22.04\home\username'}
+
+[wsl_linux]
+home = {this = '~/win', to_this = '/mnt/c/Users/username'}
+
+
+[vim_linux]
+
+
+[vim_windows]
+
+
+[windows_apps]
+notepadpp = {this = '~\AppData\Local\Microsoft\WindowsApps\notepad++.exe', to_this = 'C:\Program Files\Notepad++\notepad++.exe'}
+
+

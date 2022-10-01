@@ -1,0 +1,14 @@
+
+[path_windows]
+extension = ['~/code/machineconfig/src/machineconfig/scripts/windows',
+           '~/dotfiles/exe/linux',
+           '~/dotfiles/exe/windows',
+           'C:\Program Files (x86)\GnuWin32\bin',
+           'C:\Program Files\CodeBlocks\MinGW\bin',
+           'C:\Program Files\nu\bin']
+
+
+[path_linux]
+extension = ['~/code/machineconfig/src/machineconfig/scripts/windows/',
+           '~/dotfiles/exe/linux',
+    ]

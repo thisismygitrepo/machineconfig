@@ -2,5 +2,5 @@
 
 ve_name='ve'
 source ~/venvs/$ve_name/bin/activate || exit
-python -m fire machineconfig.create_symlinks main
+python -m fire machineconfig.symlinks.create main
 

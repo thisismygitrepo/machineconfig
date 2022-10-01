@@ -39,7 +39,8 @@ winget install --name "Git" --Id "Git.Git" --source winget --accept-package-agre
 # a terminal restart of terminal is required to for git to work, or the one can update the path
 
 # winget install --name "AWS Command Line Interface"
-# winget install --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W 11
+# winget install --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W11
+winget install nushell  # add to userpath C:\Program Files\nu\bin, done in symlinks
 winget install --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
 
 

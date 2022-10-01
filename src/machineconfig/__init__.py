@@ -1,6 +1,6 @@
 
 
-version = "0.4"
+version = "0.5"
 release_notes = """
-added WSL support for SSH
+created toml file for symlinks
 """
