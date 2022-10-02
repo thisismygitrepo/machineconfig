@@ -9,6 +9,6 @@ extension = ['~/code/machineconfig/src/machineconfig/scripts/windows',
 
 
 [path_linux]
-extension = ['~/code/machineconfig/src/machineconfig/scripts/windows/',
+extension = ['~/code/machineconfig/src/machineconfig/scripts/linux/',
            '~/dotfiles/exe/linux',
     ]
