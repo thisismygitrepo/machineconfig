@@ -10,6 +10,9 @@ from machineconfig.utils.utils import symlink
 import os
 
 
+ERROR_LIST = []
+
+
 repo_root = tb.P.home().joinpath(f"code/machineconfig/src/machineconfig")
 M_CONFIG = tb.P.home().joinpath("code/machineconfig/settings")
 
@@ -28,8 +31,10 @@ def link_ssh(overwrite=True):
         if "authorized_keys" in item: continue
         symlink(path.joinpath(item.name), item, overwrite=overwrite)
     if system == "Linux":  # permissions of ~/dotfiles/.ssh should be adjusted
-        os.system("chmod 700 ~/dotfiles/.ssh")  # may require sudo
-        os.system("chmod 600 ~/dotfiles/.ssh/*")
+        try:
+            os.system("chmod 700 ~/dotfiles/.ssh")  # may require sudo
+            os.system("chmod 600 ~/dotfiles/.ssh/*")
+        except Exception as e: print(e)
 
 
 def link_aws(overwrite=True):
