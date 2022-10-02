@@ -9,6 +9,8 @@ def symlink(this: tb.P, to_this: tb.P, overwrite=True):
     depending on this and to_this existence, one will be prioretized depending on overwrite value.
     True means this will potentially be overwritten (depending on whether to_this exists or not)
     False means to_this will potentially be overwittten."""
+    this = tb.P(this).expanduser().absolute()
+    to_this = tb.P(to_this).expanduser().absolute()
     if this.is_symlink(): this.delete(sure=True)  # delete if it exists as symblic link, not a concrete path.
     if this.exists():  # this is a problem. It will be resolved via `overwrite`
         if overwrite is True:  # it *can* be deleted, but let's look at target first.
