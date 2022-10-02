@@ -5,6 +5,17 @@ from crocodile.file_management import *
 import argparse
 
 
+def process_file(args):
+    file = args.file
+    if args.zip_first: file = P(file).zip()
+    if args.encrypt_first:
+        tmp = file
+        file = P(tmp).encrypt(key=args.key, pwd=args.pwd)
+        if args.zip_first: tmp.delete(sure=True)
+    # path = path.zip_n_encrypt(key=None, inplace=False, verbose=True, content=False)
+    return file
+
+
 def main():
     parser = argparse.ArgumentParser(description='FTP client')
 
@@ -25,13 +36,7 @@ def main():
 
     args = parser.parse_args()
 
-    file = args.file
-    if args.zip_first: file = P(file).zip()
-    if args.encrypt_first:
-        tmp = file
-        file = P(tmp).encrypt(key=args.key, pwd=args.pwd)
-        if args.zip_first: tmp.delete(sure=True)
-
+    file = process_file(args)
     api = GDriveAPI(account=args.google_account, project=args.project)
     res = api.upload(local_path=file, remote_dir=args.remote_dir)  # , args.recursive, args.zipFirst)
 
