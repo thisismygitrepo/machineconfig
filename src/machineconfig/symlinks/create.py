@@ -48,11 +48,11 @@ def add_to_shell_profile_path(dirs: list):
 def main():
     overwrite = True
     exclude = ["startup_windows"]
-    for key in mapper.keys():
-        if key in exclude or f"_{system.lower()}" in key: continue
-        try:
-            symlink(this=mapper[key]['this'], to_this=mapper[key]['to_this'], overwrite=overwrite)
-        except KeyError: print("Config error: ", key, "missing keys 'this ==> to_this'.")
+    for program_key in mapper.keys():
+        if program_key in exclude or f"_{system.lower()}" in program_key: continue
+        for file_key, file_map in mapper[program_key].items():
+            try: symlink(this=file_map['this'], to_this=file_map['to_this'], overwrite=overwrite)
+            except KeyError: print("Config error: ", program_key, file_key, "missing keys 'this ==> to_this'.")
 
     link_aws(overwrite=overwrite)
     link_ssh(overwrite=overwrite)
