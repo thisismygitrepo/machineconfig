@@ -50,7 +50,9 @@ def main():
     exclude = ["startup_windows"]
     for key in mapper.keys():
         if key in exclude or f"_{system.lower()}" in key: continue
-        symlink(this=mapper[key]['this'], to_this=mapper[key]['to_this'], overwrite=overwrite)
+        try:
+            symlink(this=mapper[key]['this'], to_this=mapper[key]['to_this'], overwrite=overwrite)
+        except KeyError: print("Config error: ", key, "missing keys 'this ==> to_this'.")
 
     link_aws(overwrite=overwrite)
     link_ssh(overwrite=overwrite)
