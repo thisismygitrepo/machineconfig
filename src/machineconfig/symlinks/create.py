@@ -49,7 +49,7 @@ def main():
     overwrite = True
     exclude = ["startup_windows"]
     for program_key in mapper.keys():
-        if program_key in exclude or f"_{system.lower()}" in program_key: continue
+        if program_key in exclude or f"{system.lower()}" not in program_key: continue
         for file_key, file_map in mapper[program_key].items():
             try: symlink(this=file_map['this'], to_this=file_map['to_this'], overwrite=overwrite)
             except KeyError: print("Config error: ", program_key, file_key, "missing keys 'this ==> to_this'.")
