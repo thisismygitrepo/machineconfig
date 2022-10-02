@@ -8,9 +8,10 @@ import crocodile.toolbox as tb
 from crocodile.environment import DotFiles, system, PathVar, UserName  # ProgramFiles, WindowsApps  # , exe
 from machineconfig.utils.utils import symlink
 import os
+import subprocess
 
 
-ERROR_LIST = []
+ERROR_LIST = []  # append to this after every exception captured.
 
 
 repo_root = tb.P.home().joinpath(f"code/machineconfig/src/machineconfig")
@@ -32,9 +33,11 @@ def link_ssh(overwrite=True):
         symlink(path.joinpath(item.name), item, overwrite=overwrite)
     if system == "Linux":  # permissions of ~/dotfiles/.ssh should be adjusted
         try:
-            os.system("chmod 700 ~/dotfiles/.ssh")  # may require sudo
-            os.system("chmod 600 ~/dotfiles/.ssh/*")
-        except Exception as e: print(e)
+            subprocess.run("chmod 700 ~/dotfiles/.ssh")  # may require sudo
+            subprocess.run("chmod 600 ~/dotfiles/.ssh/*")
+        except Exception as e:
+            ERROR_LIST.append(e)
+            print("Caught error", e)
 
 
 def link_aws(overwrite=True):
