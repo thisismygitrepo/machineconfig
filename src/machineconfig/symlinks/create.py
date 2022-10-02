@@ -47,7 +47,7 @@ def add_to_shell_profile_path(dirs: list):
 
 def main():
     overwrite = True
-    exclude = ["startup_windows"]
+    exclude = ["startup_windows", "wsl_linux", "wsl_windows"]
     for program_key in mapper.keys():
         if program_key in exclude or f"{system.lower()}" not in program_key: continue
         for file_key, file_map in mapper[program_key].items():
