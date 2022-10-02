@@ -7,6 +7,8 @@ gitcred = {this = '~/.git-credentials', to_this = '~/dotfiles/settings/.git-cred
 [pypi]
 creds = {this = '~/.pypirc', to_this = '~/dotfiles/creds/.pypirc'}
 
+
+# Shells profiles
 [powershell_windows]
 CurrentUserCurrentHost = {this = '~/Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserCurrentHost/Microsoft.PowerShell_profile.ps1'}
 CurrentUserAllHosts = {this = '~/Documents\WindowsPowerShell\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserAllHosts/profile.ps1'}
@@ -18,7 +20,6 @@ CurrentUserCurrentHost = {this = '~/Documents\PowerShell\Microsoft.PowerShell_pr
 CurrentUserAllHosts = {this = '~/Documents\PowerShell\profile.ps1', to_this = '~/dotfiles/shells/powershell/CurrentUserAllHosts/profile.ps1'}
 AllUsersCurrentHost = {this = 'C:\Program Files\PowerShell\7\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersCurrentHost/Microsoft.PowerShell_profile.ps1'}
 AllUsersAllHosts = {this = 'C:\Program Files\PowerShell\7\profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersAllHosts/profile.ps1'}
-
 
 [bash_linux]
 bashrc = {this = '~/.inputrc', to_this = '~/dotfiles/shells/bash/.inputrc'}

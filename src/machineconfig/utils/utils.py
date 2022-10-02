@@ -1,5 +1,4 @@
 
-from crocodile.environment import OneDriveConsumer, DotFiles
 import crocodile.toolbox as tb
 # import crocodile.environment as env
 
@@ -22,34 +21,6 @@ def symlink(this: tb.P, to_this: tb.P, overwrite=True):
         if not to_this.exists(): to_this.touch()  # we have to touch it (file) or create it (folder)
     try: tb.P(this).symlink_to(to_this, verbose=True, overwrite=True)
     except Exception as ex: print(f"Failed at linking {this} ==> {to_this}.\nReason: {ex}")
-
-
-def backup_to_onedrive(path):
-    """Zips, encrypts and saves a copy of `path` to OneDrive's AppData folder"""
-    key = DotFiles.joinpath("creds/encrypted_files_key.bytes")
-    downloaded_key_from_lastpass = False
-    if not key.exists():
-        key = tb.P.home().joinpath("Downloads/key.zip").unzip(inplace=False, verbose=True).find()
-        downloaded_key_from_lastpass = True
-    path = tb.P(path).expanduser().absolute()
-    res_path = path.zip_n_encrypt(key=key, inplace=False, verbose=True, content=False)
-    res_path = res_path.move(path=OneDriveConsumer.joinpath(f"AppData/{res_path.rel2home()}"), overwrite=True)
-    if downloaded_key_from_lastpass: key.delete(sure=True)
-    print(f"BACKEDUP {repr(path)} {'>' * 10} TO {'>' * 10} {repr(res_path)}")
-    OneDriveConsumer()  # push to OneDrive
-
-
-def retrieve_from_onedrive(target_file):
-    """Decrypts and brings a copy of `path` from OneDrive"""
-    OneDriveConsumer()  # load latest from OneDrive.
-    key = DotFiles.joinpath("creds/encrypted_files_key.bytes")
-    if not key.exists(): key = tb.P(input(f"path to key (DONT'T use quotation marks nor raw prefix):")).unzip(inplace=False, verbose=True).find()
-    target_file = tb.P(target_file).expanduser().absolute()
-    source_file = OneDriveConsumer.joinpath(f"AppData/{target_file.rel2home()}" + "_encrypted.zip")
-    tmp_file = source_file.copy(folder=target_file.parent)
-    # make sure to avoid doing decryption in the storage site.
-    target_file = tmp_file.decrypt(key=key, inplace=True).unzip(inplace=True, verbose=True, overwrite=True, content=True)
-    print(f"RETRIEVED {repr(source_file)} {'>' * 10} TO {'>' * 10} {repr(target_file)}")
 
 
 def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", name=None, tool_name=None):
