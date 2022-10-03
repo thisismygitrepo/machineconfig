@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 . ~/scripts/activate_ve
 cd ~/code/dotfiles
-python -m fire ./jobs/backup_onedrive_sx.py backup_dotfiles
+python -m fire ./jobs/bu_onedrive_sx.py $@
+
