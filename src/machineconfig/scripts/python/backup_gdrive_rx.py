@@ -12,6 +12,7 @@ def main():
     parser.add_argument("file", help="file/folder path.", default="")
     # FLAGS
     # parser.add_argument("--recursive", "-r", help="Send recursively.", action="store_true")  # default is False
+    parser.add_argument("--relative_to_home", "-R", help="Download to a directory to make it relative to home.", action="store_true")  # default is False
 
     # optional argument
     parser.add_argument("--local_dir", "-d", help="Remote directory to send to.", default="")
@@ -23,7 +24,7 @@ def main():
     args = parser.parse_args()
 
     api = GDriveAPI(account=args.google_account, project=args.project)
-    res = api.download(fpath=args.file, local_dir=args.local_dir)
+    res = api.download(fpath=args.file, local_dir=args.local_dir, rel2home=args.relative_to_home)  # , args.recursive, args.zipFirst)
     _ = res
 
 
