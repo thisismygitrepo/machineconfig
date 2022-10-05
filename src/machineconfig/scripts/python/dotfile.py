@@ -22,7 +22,7 @@ def main():
     print("nano ~/code/machineconfig/src/machineconfig/symlinks/mapper.toml")
     print(f"""
 [{new_path.parent.name}]
-{orig_path.trunk} = {{ this = '{orig_path.collapseuser()}', to_this = '{new_path.collapseuser()}' }}
+{orig_path.trunk} = {{ this = '{orig_path.collapseuser().as_posix()}', to_this = '{new_path.collapseuser().as_posix()}' }}
 """)
 
 

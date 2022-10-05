@@ -56,15 +56,16 @@ colors = {this = '~/.config/lf/colors', to_this = '~/code/machineconfig/settings
 config = {this = '~/.config/lf/lfrc', to_this = '~/code/machineconfig/settings/lf_linux/lfrc'}
 icons = {this = '~/.config/lf/icons', to_this = '~/code/machineconfig/settings/lf_linux/icons'}
 
-[broot]
-config = { this = '~\AppData\Roaming\dystroy\config', to_this = '~\code\machineconfig\settings\broot\config' }
+
+#[broot_windows]
+#config = { this = '~/AppData/Roaming/dystroy/config', to_this = '~/code/machineconfig/settings/broot/config' }
 
 
 [tmux_linux]
 config = {this = '~/.tmux.conf', to_this = '~/code/machineconfig/settings/tmux/.tmux.conf'}
 
 [zellij_linux]
-config = { this = '~\.config\zellij\config.yaml', to_this = '~\code\machineconfig\settings\zellij\config.yaml' }
+config = { this = '~/.config/zellij/config.yaml', to_this = '~/code/machineconfig/settings/zellij/config.yaml' }
 
 
 [wsl_windows]
