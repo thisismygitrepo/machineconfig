@@ -1,7 +1,7 @@
 
 import argparse
 import crocodile.toolbox as tb
-from machineconfig.symlinks.create import symlink
+from machineconfig.profile.create import symlink
 
 
 def main():

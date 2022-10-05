@@ -63,6 +63,10 @@ config = { this = '~\AppData\Roaming\dystroy\config', to_this = '~\code\machinec
 [tmux_linux]
 config = {this = '~/.tmux.conf', to_this = '~/code/machineconfig/settings/tmux/.tmux.conf'}
 
+[zellij_linux]
+config = { this = '~\.config\zellij\config.yaml', to_this = '~\code\machineconfig\settings\zellij\config.yaml' }
+
+
 [wsl_windows]
 home = {this = '~/wsl', to_this = '\\wsl.localhost\Ubuntu-22.04\home\username'}
 
