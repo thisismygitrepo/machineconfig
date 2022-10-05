@@ -18,10 +18,10 @@ def main():
     path = P(args.path).expanduser().absolute()
 
     if system == "Windows":  # move files over to WSL
-        path.copy(path=WSL_FROM_WIN.joinpath(UserName).joinpath(path.rel2home()), overwrite=True)
+        # the following works for files and folders alike.
+        path.copy(folder=WSL_FROM_WIN.joinpath(UserName).joinpath(path.rel2home().parent), overwrite=True)
     else:  # move files from WSL to win
-        path.copy(path=WIN_FROM_WSL.joinpath(UserName).joinpath(path.rel2home()), overwrite=True)
-
+        path.copy(folder=WIN_FROM_WSL.joinpath(UserName).joinpath(path.rel2home().parent), overwrite=True)
 
 
 if __name__ == '__main__':
