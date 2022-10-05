@@ -40,7 +40,7 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
         if exe.is_file(): pass
         else: exe = exe.search("*.exe", r=True)[0] if tool_name is None else exe.search(f"{tool_name}.exe", r=True)[0]
 
-        return exe.move(folder=tb.P.get_env().WindowsApps, overwrite=True)
+        return exe.move(folder=tb.P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
     return download_link
 
 

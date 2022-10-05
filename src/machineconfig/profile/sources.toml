@@ -1,0 +1,6 @@
+
+[windows]
+files = ['~/code/machineconfig/settings/broot/brootcd.ps1']  # defines br command which wraps broot.exe
+
+[linux]
+files = []

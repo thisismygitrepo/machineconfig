@@ -42,7 +42,8 @@ set ratios '1:2:3'  # ratio of pane widths
 # default reference: https://pkg.go.dev/github.com/gokcehan/lf
 
 # key bindings
-map v
+map v  # default is invert
+map V invert
 map p
 map x
 map c

@@ -44,7 +44,8 @@ set ratios '1:2:3'  # ratio of pane widths
 
 
 # key bindings
-map v
+map vmap v  # default is invert
+map V invert
 map p
 map x
 map c
@@ -55,7 +56,6 @@ map q quit  # default
 # remove defaults
 map k  # default up
 map <c-u>  # half-up
-
 
 # e edit
 map e  # edit modal key.
