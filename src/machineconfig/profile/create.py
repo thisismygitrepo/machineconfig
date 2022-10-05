@@ -73,9 +73,18 @@ def main_env_path():
     add_to_shell_profile_path(env_path[f'path_{system.lower()}']['extension'])
 
 
+def main_patch_shell_profile():
+    sources = tb.P("~/code/machineconfig/src/machineconfig/profile/sources.toml").readit()
+    for file in sources[system.lower()]['files']:
+        if system == "Windows": tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(f". {file}", f". {file}", newline=True, notfound_append=True)
+        elif system == "Linux": tb.P("~/.bashrc").expanduser().modify_text(f"source {file}", f"source {file}", notfound_append=True)
+        else: raise ValueError
+
+
 def main():
     main_symlinks()
     main_env_path()
+    main_patch_shell_profile()
 
 
 if __name__ == '__main__':
