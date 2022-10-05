@@ -22,8 +22,8 @@ def main():
     target_file = tb.P(args.path).expanduser().absolute()
     source_file = onedrive.joinpath(f"myhome/{target_file.rel2home()}")  # + "_encrypted.zip"
     tmp_file = source_file.copy(folder=target_file.parent)  # make sure to avoid doing decryption in the storage site.
-    target_file = tmp_file.decrypt(key=None, inplace=True).unzip(inplace=True, verbose=True, overwrite=True, content=True)
-    print(f"RETRIEVED {repr(source_file)} {'>' * 10} TO {'>' * 10} {repr(target_file)}")
+    # _ = tmp_file.decrypt(key=None, inplace=True).unzip(inplace=True, verbose=True, overwrite=True, content=True)
+    # print(f"RETRIEVED {repr(source_file)} {'>' * 10} TO {'>' * 10} {repr(target_file)}")
 
 
 if __name__ == "__main__":

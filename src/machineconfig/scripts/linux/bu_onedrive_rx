@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
 . ~/scripts/activate_ve
-cd ~/code/dotfiles
-python -m fire ./jobs/bu_onedrive_rx.py $@
+python -m machineconfig.scripts.python.bu_onedrive_rx $@
 

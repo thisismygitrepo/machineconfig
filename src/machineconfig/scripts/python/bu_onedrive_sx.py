@@ -1,7 +1,7 @@
 
 from crocodile.environment import OneDriveConsumer, OneDriveCommercial
 from machineconfig.scripts.python.bu_gdrive_sx import process_file
-import crocodile.toolbox as tb
+# import crocodile.toolbox as tb
 import argparse
 
 
@@ -23,8 +23,8 @@ def main():
 
     onedrive = OneDriveCommercial if args.commercial else OneDriveConsumer
     file = process_file(args)
-    path = file.move(path=onedrive.joinpath(f"myhome/{file.rel2home()}"), overwrite=True)
-    print(f"BACKEDUP {repr(path)} {'>' * 10} TO {'>' * 10} {repr(path)}")
+    path = file.copy(path=onedrive.joinpath(f"myhome/{file.rel2home()}"), overwrite=True)
+    # print(f"BACKEDUP {repr(path)} {'>' * 10} TO {'>' * 10} {repr(path)}")
     onedrive()  # push to OneDrive
 
 
