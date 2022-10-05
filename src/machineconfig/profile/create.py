@@ -66,7 +66,7 @@ def main_symlinks():
 
 
 def main_env_path():
-    env_path = tb.P("~/code/machineconfig/src/machineconfig/symlinks/env_path.toml").readit()
+    env_path = tb.P("~/code/machineconfig/src/machineconfig/profile/env_path.toml").readit()
     # The following is not a symlink creation, but modification of shell profile by additing dirs to PATH
     # Shell profile is either in dotfiles and is synced (as in Windows), hence no need for update, or is updated on the fly (for Linux)
     # for windows it won't change the profile, if the profile was modified already e.g. due to syncing
