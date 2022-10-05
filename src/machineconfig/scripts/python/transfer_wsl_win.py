@@ -8,9 +8,7 @@ def main():
     parser = argparse.ArgumentParser(description="Move and copy files across from WSL to windows")
 
     # positional argument
-    parser.add_argument("path", help="path to convert")
-    parser.add_argument("path", help="path to convert")
-
+    parser.add_argument("path", help="path of file/folder to transfer over.")
     # FLAGS
     parser.add_argument("--move", "-m", help="Move file.", action="store_true")  # default is False
     # optional argument
