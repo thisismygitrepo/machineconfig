@@ -6,7 +6,7 @@ import argparse
 
 
 def process_file(args):
-    file = args.file
+    file = P(args.file).expanduser().absolute()
     if args.zip_first: file = P(file).zip()
     if args.encrypt_first:
         tmp = file
