@@ -48,7 +48,7 @@ def add_to_shell_profile_path(dirs: list):
 
 
 def main_symlinks():
-    symlink_mapper = tb.P("~/code/machineconfig/src/machineconfig/symlinks/mapper.toml").readit()
+    symlink_mapper = tb.P("~/code/machineconfig/src/machineconfig/profile/mapper.toml").readit()
     symlink_mapper['wsl_windows']['home']["to_this"] = symlink_mapper['wsl_windows']['home']["to_this"].replace("username", UserName)
     symlink_mapper['wsl_linux']['home']["to_this"] = symlink_mapper['wsl_linux']['home']["to_this"].replace("username", UserName)
 
