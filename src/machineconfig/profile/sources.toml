@@ -3,4 +3,8 @@
 files = ['~/code/machineconfig/settings/broot/brootcd.ps1']  # defines br command which wraps broot.exe
 
 [linux]
-files = []
+files = ['~/code/machineconfig/settings/broot/br.sh',
+         '~/code/machineconfig/settings/lf_linux/exe/lfcd.sh',
+]
+
+# see broot --install  to reinstall and see config files locations.

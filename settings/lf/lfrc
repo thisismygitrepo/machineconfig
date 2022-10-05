@@ -8,7 +8,7 @@ set dircounts on      # show number of items in directory instead of sie
 set info "size"       # list directory information on the right
 set sortby "natural"  # don't sort files in any special way
 set preview on        # preview file on the right pane
-set drawbox on        # draw a border around all panes
+# set drawbox on        # draw a border around all panes
 set globsearch off
 set mouse on
 set number on
@@ -18,12 +18,13 @@ set colors
 set ratios '1:2:3'  # ratio of pane widths
 # set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"
 # see more at https://git.lmburns.com/dotfiles-mac/file/.config/lf/lfrc.html
+# see this: https://github.com/ahrm/dotfiles/tree/main/lf-windows/lf_scripts
+# https://github.com/NikitaIvanovV/ctpv
 
-# set previewer ~/dotfiles/settings/lf/leftpane_previewer.ps1
+# set previewer ~/code/machineconfig/settings/lf/leftpane_previewer.ps1
 # set previewer ~\AppData\Local\Microsoft\WindowsApps\bat.exe  --color=always --theme=base16
 # also see pistol file previewer.
-# set shell pwsh
-# set previewer ~/code/machineconfig/settings/lf/leftpane_previewer.ps1
+# set shell pwsh  # too slow.
 # set ignorecase true
 # see:
 # https://github.com/gokcehan/lf/wiki/Integrations#ripgrep

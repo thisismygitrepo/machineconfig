@@ -34,10 +34,20 @@ sudo apt install ranger -y   # terminal-based file explorer, alternative: lf (Go
 # ranger is good, but for consistency with Windows, use lf:
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/tools/lf.sh | sh
 
-sudo apt install fzf -y  # fuzzy finder
+sudo apt install fzf -y  # fuzzy finder: searches contents of all files, including .git
 sudo apt install fd-find -y  # find alternative
 sudo apt install ripgrep -y  # rg command, rust-based, blazingly fast grep.
 sudo apt install ugrep -y  # just as good as grep, but consistent with windows
+
+cd ~
+wget https://dystroy.org/broot/download/x86_64-linux/broot
+# broot is an fzf variant. It's excellent for viewing folder structure and layered search.
+# broot doesn't search aribtrarily deep and it also avoids git folders.
+chmod +x broot
+sudo mv ./broot /usr/local/bin/
+sudp apt install ncdu   # disk usage analyzer.
+
+
 sudo apt install exa  # replacement for ls. no ner fonts, unlike lsd
 #cd ~
 #mkdir "tmp_asdf"
@@ -49,13 +59,6 @@ sudo apt install exa  # replacement for ls. no ner fonts, unlike lsd
 #cd ~
 #rm -rdf tmp_asdf
 
-
-cd ~
-wget https://dystroy.org/broot/download/x86_64-linux/broot  # broot is an fzf variant. It's excellent for viewing folder structure and layered search.
-chmod +x broot
-sudo mv ./broot /usr/local/bin/
-
-sudp apt install ncdu   # disk usage analyzer.
 # ---------------------- kondo, a smart and automatic disk cleaner ------------------------
 cd ~
 mkdir "tmp_asdf"

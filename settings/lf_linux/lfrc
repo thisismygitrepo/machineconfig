@@ -123,7 +123,7 @@ map F fzf_jump
 
 # from https://github.com/gokcehan/lf/wiki/Integrations#fzf
 cmd fzf_jump ${{
-    res="$(find . -maxdepth 1 | fzf --reverse --header='Jump to location' | sed 's/\\/\\\\/g;s/"/\\"/g')"
+    res="$(find . -maxdepth 100 | fzf --reverse --header='Jump to location' | sed 's/\\/\\\\/g;s/"/\\"/g')"
     if [ -d "$res" ] ; then
         cmd="cd"
     elif [ -f "$res" ] ; then
@@ -177,7 +177,7 @@ cmd unarchive ${{
 }}
 
 
-
+# cmd % echo "hi from bottom line of lf"  # this function acts in the bottom line, unlike this full-blown acting in its own screen:
 cmd mkdir ${{
   printf "Directory Name: "
   read ans
