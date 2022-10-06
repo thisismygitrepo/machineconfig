@@ -8,7 +8,7 @@ set dircounts on      # show number of items in directory instead of sie
 set info "size"       # list directory information on the right
 set sortby "natural"  # don't sort files in any special way
 set preview on        # preview file on the right pane
-set drawbox on        # draw a border around all panes
+# set drawbox on        # draw a border around all panes
 set globsearch off
 set mouse on
 set number on
