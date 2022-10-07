@@ -1,18 +1,7 @@
 
 from crocodile.comms.gdrive import GDriveAPI
-from crocodile.file_management import *
+from crocodile.file_management import P
 import argparse
-
-
-def process_file(args):
-    file = P(args.file).expanduser().absolute()
-    if args.zip_first: file = P(file).zip()
-    if args.encrypt_first:
-        tmp = file
-        file = P(tmp).encrypt(key=args.key, pwd=args.pwd)
-        if args.zip_first: tmp.delete(sure=True)
-    # path = path.zip_n_encrypt(key=None, inplace=False, verbose=True, content=False)
-    return file
 
 
 def main():
@@ -36,12 +25,11 @@ def main():
     args = parser.parse_args()
     api = GDriveAPI(account=args.google_account, project=args.project)
 
-    file = process_file(args)
-    if args.share: res = api.upload_and_share(file)
-    else: res = api.upload(local_path=file, remote_dir=args.remote_dir, rel2home=args.relative_to_home)  # , args.recursive, args.zipFirst)
+    if args.share: res = api.upload_and_share(args.file)
+    else: res = api.upload(local_path=args.file, remote_dir=args.remote_dir, rel2home=args.relative_to_home,
+                           zip_first=args.zip_first, encrypt_first=args.encrypt_first, key=args.key, pwd=args.pwd)  # , args.recursive, args.zipFirst)
 
     if args.zip_first or args.encrypt_first:
-        P(file).delete(sure=True)
         res['url'] = P(rf'https://drive.google.com/file/d/{res["fid"]}')
     print(res)
 

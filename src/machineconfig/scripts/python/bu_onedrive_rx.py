@@ -2,7 +2,7 @@
 from crocodile.environment import OneDriveConsumer, OneDriveCommercial
 import crocodile.toolbox as tb
 import argparse
-from machineconfig.scripts.python.bu_gdrive_rx import process_retrieved_file
+from crocodile.comms.gdrive import process_retrieved_file
 
 
 def main():
@@ -28,7 +28,7 @@ def main():
     if args.unzip and args.decrypt: source_file = source_file + ".zip.enc"
 
     tmp_file = source_file.copy(folder=target_file.parent)  # make sure to avoid doing decryption in the storage site.
-    process_retrieved_file(args, tmp_file)
+    process_retrieved_file(tmp_file, decrypt=args.decrypt, unzip=args.unzip, key=args.key, pwd=args.pwd)
 
 
 if __name__ == "__main__":

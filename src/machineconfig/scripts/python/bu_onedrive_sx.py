@@ -1,6 +1,6 @@
 
 from crocodile.environment import OneDriveConsumer, OneDriveCommercial
-from machineconfig.scripts.python.bu_gdrive_sx import process_file
+from crocodile.comms.gdrive import process_sent_file
 from crocodile.file_management import P
 import argparse
 
@@ -23,12 +23,10 @@ def main():
     args = parser.parse_args()
     onedrive = OneDriveCommercial if args.commercial else OneDriveConsumer
 
-    file = process_file(args)
+    file = process_sent_file(file=args.file, zip_first=args.zip_first, encrypt_first=args.encrypt_first, key=args.key, pwd=args.pwd)
     remote_dir = onedrive.joinpath(f"myhome/{file.rel2home().parent}")
-
     path = file.copy(folder=remote_dir, overwrite=True)
-    if args.zip_first or args.encrypt_first:
-        P(file).delete(sure=True)
+    if args.zip_first or args.encrypt_first: P(file).delete(sure=True)
     onedrive()  # push to OneDrive
 
 
