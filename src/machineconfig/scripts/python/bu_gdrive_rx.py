@@ -34,7 +34,7 @@ def main():
     if "http" in args.file: path = api.download(furl=args.file, local_dir=args.local_dir, rel2home=args.relative_to_home)  # , args.recursive, args.zipFirst)
     else:
         file = P(args.file).expanduser().absolute()
-        if args.unzip and args.decrypt: file = file.parent / (file.trunk + "_encrypted" + "".join(file.suffixes) + ".zip")
+        if args.unzip and args.decrypt: file = file + ".zip.enc"
         path = api.download(fpath=file, local_dir=args.local_dir, rel2home=args.relative_to_home)  # , args.recursive, args.zipFirst)
     path = process_retrieved_file(args, path)
     print(path)

@@ -25,8 +25,7 @@ def main():
 
     target_file = tb.P(args.file).expanduser().absolute()
     source_file = onedrive.joinpath(f"myhome/{target_file.rel2home()}")
-    if args.unzip and args.decrypt:
-        source_file = source_file.parent / (source_file.trunk + "_encrypted" + "".join(source_file.suffixes) + ".zip")
+    if args.unzip and args.decrypt: source_file = source_file + ".zip.enc"
 
     tmp_file = source_file.copy(folder=target_file.parent)  # make sure to avoid doing decryption in the storage site.
     process_retrieved_file(args, tmp_file)
