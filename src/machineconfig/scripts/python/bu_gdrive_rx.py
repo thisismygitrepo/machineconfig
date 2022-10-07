@@ -1,7 +1,7 @@
 
 
 from crocodile.comms.gdrive import GDriveAPI
-# from crocodile.file_management import *
+from crocodile.file_management import *
 import argparse
 
 
@@ -37,7 +37,14 @@ def main():
 
     api = GDriveAPI(account=args.google_account, project=args.project)
     if "http" in args.file: path = api.download(furl=args.file, local_dir=args.local_dir, rel2home=args.relative_to_home)  # , args.recursive, args.zipFirst)
-    else: path = api.download(fpath=args.file, local_dir=args.local_dir, rel2home=args.relative_to_home)  # , args.recursive, args.zipFirst)
+    else:
+        if args.relative_to_home:
+            file = "myhome/" + P(args.file).expanduser().absolute().rel2home().as_posix()
+            if args.unzip and args.decrypt:
+                file = P(file)
+                file = file.parent / (file.trunk + "_encrypted" + "".join(file.suffixes) + ".zip")
+        else: file = args.file
+        path = api.download(fpath=file, local_dir=args.local_dir, rel2home=args.relative_to_home)  # , args.recursive, args.zipFirst)
     path = process_file(args, path)
     print(path)
 

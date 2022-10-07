@@ -43,10 +43,10 @@ def main():
         res = api.upload_and_share(file)
     else:
         res = api.upload(local_path=file, remote_dir=args.remote_dir)  # , args.recursive, args.zipFirst)
-
     if args.zip_first or args.encrypt_first:
         P(file).delete(sure=True)
-    print(res.as_url_str())
+        res['url'] = P(rf'https://drive.google.com/file/d/{res["fid"]}')
+    print(res)
 
 
 if __name__ == "__main__":
