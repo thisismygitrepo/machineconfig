@@ -37,11 +37,8 @@ def main():
     api = GDriveAPI(account=args.google_account, project=args.project)
 
     file = process_file(args)
-    remote_dir = args.remote_dir
-    if args.relative_to_home: remote_dir = "myhome/" + file.rel2home().parent
-
     if args.share: res = api.upload_and_share(file)
-    else: res = api.upload(local_path=file, remote_dir=remote_dir)  # , args.recursive, args.zipFirst)
+    else: res = api.upload(local_path=file, remote_dir=args.remote_dir, rel2home=args.relative_to_home)  # , args.recursive, args.zipFirst)
 
     if args.zip_first or args.encrypt_first:
         P(file).delete(sure=True)
