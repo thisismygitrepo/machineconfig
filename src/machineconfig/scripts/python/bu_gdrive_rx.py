@@ -6,10 +6,8 @@ import argparse
 
 
 def process_retrieved_file(args, path):
-    if args.decrypt:
-        path = path.decrypt(key=args.key, pwd=args.pwd, inplace=True)
-    if args.unzip:
-        path = path.unzip(inplace=True, verbose=True, overwrite=True, content=True)
+    if args.decrypt: path = path.decrypt(key=args.key, pwd=args.pwd, inplace=True)
+    if args.unzip: path = path.unzip(inplace=True, verbose=True, overwrite=True, content=True)
     return path
 
 
@@ -35,9 +33,8 @@ def main():
 
     if "http" in args.file: path = api.download(furl=args.file, local_dir=args.local_dir, rel2home=args.relative_to_home)  # , args.recursive, args.zipFirst)
     else:
-        file = P(args.file)
-        if args.unzip and args.decrypt:
-            file = file.parent / (file.trunk + "_encrypted" + "".join(file.suffixes) + ".zip")
+        file = P(args.file).expanduser().absolute()
+        if args.unzip and args.decrypt: file = file.parent / (file.trunk + "_encrypted" + "".join(file.suffixes) + ".zip")
         path = api.download(fpath=file, local_dir=args.local_dir, rel2home=args.relative_to_home)  # , args.recursive, args.zipFirst)
     path = process_retrieved_file(args, path)
     print(path)
