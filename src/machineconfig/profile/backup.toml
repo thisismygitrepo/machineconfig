@@ -1,0 +1,12 @@
+
+# locations to be backed up to the cloud.
+
+[thunderbird]
+path = '~/AppData/Roaming/Thunderbird/Profiles'
+encrypt = 'True'
+
+
+[dotfiles]
+path = '~/dotfiles'
+encrypt = 'True'
+

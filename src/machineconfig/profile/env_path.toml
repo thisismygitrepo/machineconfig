@@ -1,4 +1,6 @@
 
+# directories to be added to PATH within shell profile.
+
 [path_windows]
 extension = ['~/code/machineconfig/src/machineconfig/scripts/windows',
            '~/dotfiles/exe/linux',

@@ -1,4 +1,6 @@
 
+# files to be sources in shell profile
+
 [windows]
 files = ['~/code/machineconfig/settings/broot/brootcd.ps1']  # defines br command which wraps broot.exe
 

@@ -1,7 +1,7 @@
 
 from crocodile.environment import OneDriveConsumer, OneDriveCommercial
 from machineconfig.scripts.python.bu_gdrive_sx import process_file
-# import crocodile.toolbox as tb
+from crocodile.file_management import P
 import argparse
 
 
@@ -15,16 +15,20 @@ def main():
     parser.add_argument("--zip_first", "-z", help="Send recursively.", action="store_true")  # default is False
     parser.add_argument("--encrypt_first", "-e", help="Send recursively.", action="store_true")  # default is False
     parser.add_argument("--commercial", "-c", help="Use onedrive commercial.", action="store_true")  # default is False
-
     # optional argument
     parser.add_argument("--remote_dir", "-d", help="Remote directory to send to.", default="")
+    parser.add_argument("--key", "-k", help="Key for encryption", default=None)
+    parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
     args = parser.parse_args()
-
     onedrive = OneDriveCommercial if args.commercial else OneDriveConsumer
+
     file = process_file(args)
-    path = file.copy(path=onedrive.joinpath(f"myhome/{file.rel2home()}"), overwrite=True)
-    # print(f"BACKEDUP {repr(path)} {'>' * 10} TO {'>' * 10} {repr(path)}")
+    remote_dir = onedrive.joinpath(f"myhome/{file.rel2home().parent}")
+
+    path = file.copy(folder=remote_dir, overwrite=True)
+    if args.zip_first or args.encrypt_first:
+        P(file).delete(sure=True)
     onedrive()  # push to OneDrive
 
 

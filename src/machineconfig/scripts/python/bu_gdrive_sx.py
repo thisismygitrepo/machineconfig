@@ -1,5 +1,4 @@
 
-
 from crocodile.comms.gdrive import GDriveAPI
 from crocodile.file_management import *
 import argparse
@@ -27,7 +26,6 @@ def main():
     parser.add_argument("--encrypt_first", "-e", help="Encrypt before sending.", action="store_true")  # default is False
     parser.add_argument("--relative_to_home", "-R", help="Zip before sending.", action="store_true")  # default is False
     parser.add_argument("--share", "-s", help="Share file.", action="store_true")
-
     # optional argument
     parser.add_argument("--remote_dir", "-d", help="Remote directory to send to.", default="")
     parser.add_argument("--google_account", "-a", help="Google Account.", default=None)
@@ -36,13 +34,15 @@ def main():
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
     args = parser.parse_args()
+    api = GDriveAPI(account=args.google_account, project=args.project)
 
     file = process_file(args)
-    api = GDriveAPI(account=args.google_account, project=args.project)
-    if args.share:
-        res = api.upload_and_share(file)
-    else:
-        res = api.upload(local_path=file, remote_dir=args.remote_dir)  # , args.recursive, args.zipFirst)
+    remote_dir = args.remote_dir
+    if args.relative_to_home: remote_dir = "myhome/" + file.rel2home().parent
+
+    if args.share: res = api.upload_and_share(file)
+    else: res = api.upload(local_path=file, remote_dir=remote_dir)  # , args.recursive, args.zipFirst)
+
     if args.zip_first or args.encrypt_first:
         P(file).delete(sure=True)
         res['url'] = P(rf'https://drive.google.com/file/d/{res["fid"]}')
