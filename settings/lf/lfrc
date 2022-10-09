@@ -110,7 +110,7 @@ map mf $~/code/machineconfig/settings/lf/mkfile.ps1
 # Find and Jump
 cmd fzfg $~/scripts/fzfg.ps1 $args[0]
 map J push :fzfg<space>
-map F $~/code/machineconfig/settings/lf/fzf_nano.ps1
+map F $~/code/machineconfig/settings/lf/fzf_edit.ps1
 cmd doc $lf -doc | bat
 cmd on-quit ~/code/machineconfig/settings/lf/lfcd.ps1
 # map Q $~/dotfiles/settings/lf/lfcd.ps1 quit
