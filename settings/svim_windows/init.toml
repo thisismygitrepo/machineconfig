@@ -39,3 +39,10 @@ default_height = 30
   name = "lang#python"
   python_interpreter = 'C:/Users/alex/venvs/ve/Scripts/python.exe'
 
+[[layers]]
+  name = "colorscheme"
+
+[[layers]]
+  name = "ui"
+  enable_scrollbar = true
+

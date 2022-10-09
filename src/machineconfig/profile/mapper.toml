@@ -103,7 +103,7 @@ config = { this = '~/.config/lvim/config.lua', to_this = '~/code/machineconfig/s
 init = { this = '~/.SpaceVim.d/init.toml', to_this = '~/code/machineconfig/settings/svim_windows/init.toml' }
 
 [svim_linux]
-init = { this = '~/.config/spacevim/init.toml', to_this = '~/code/machineconfig/settings/svim_linux/init.toml' }
+init = { this = '~/.SpaceVim.d/init.toml', to_this = '~/code/machineconfig/settings/svim_linux/init.toml' }
 
 [windows_apps]
 notepadpp = {this = '~\AppData\Local\Microsoft\WindowsApps\notepad++.exe', to_this = 'C:\Program Files\Notepad++\notepad++.exe'}

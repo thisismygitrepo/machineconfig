@@ -185,7 +185,7 @@ lvim.plugins = {
   -- cmd = "TroubleToggle",
   -- },
   "mfussenegger/nvim-dap-python",
-  "michaelb/sniprun",
+  "akinsho/toggleterm.nvim",
 }
 
 require('dap-python').setup('~/venvs/ve/Scripts/python.exe')
