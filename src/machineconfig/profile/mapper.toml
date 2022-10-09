@@ -94,10 +94,10 @@ config = { this = '~/.config/helix/config.toml', to_this = '~/code/machineconfig
 
 
 [lvim_windows]
-config = { this = '~/AppData/Local/lvim/config.lua', to_this = '~/code/machineconfig/settings/lvim/config.lua' }
+config = { this = '~/AppData/Local/lvim/config.lua', to_this = '~/code/machineconfig/settings/lvim_windows/config.lua' }
 
 [lvim_linux]
-config = { this = '~/.config/lvim/config.lua', to_this = '~/code/machineconfig/settings/lvim/config.lua' }
+config = { this = '~/.config/lvim/config.lua', to_this = '~/code/machineconfig/settings/lvim_linux/config.lua' }
 
 [svim_windows]
 init = { this = '~/.SpaceVim.d/init.toml', to_this = '~/code/machineconfig/settings/svim_windows/init.toml' }

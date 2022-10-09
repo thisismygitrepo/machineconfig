@@ -187,7 +187,8 @@ lvim.plugins = {
   "mfussenegger/nvim-dap-python",
   "michaelb/sniprun",
 }
-require('dap-python').setup('~/venvs/ve/Scripts/python')
+
+require('dap-python').setup('~/venvs/ve/Scripts/python.exe')
 table.insert(require('dap').configurations.python, {
   type = 'python',
   request = 'launch',
