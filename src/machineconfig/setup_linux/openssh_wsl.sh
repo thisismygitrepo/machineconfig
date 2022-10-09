@@ -14,7 +14,7 @@ sudo sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' /etc/ssh/ss
 #  sshd: no hostkeys available -- exiting.
 sudo service ssh start
 sudo ssh-keygen -A  # without this, ssh gives this error:
-sudo service ssh --full-restart  # use systemctl if this doesn't work.
+sudo service ssh --full-restart  # use systemctl if this doesn't work. sudo systemctl status ssh
 sudo service ssh status
 
 # https://superuser.com/questions/1701853/how-to-enable-a-service-to-start-with-wsl2

@@ -73,6 +73,7 @@ config = { this = '~/.config/zellij/config.yaml', to_this = '~/code/machineconfi
 [wsl_windows]
 home = {this = '~/wsl', to_this = '\\wsl.localhost\Ubuntu-22.04\home\username'}
 
+
 [wsl_linux]
 home = {this = '~/win', to_this = '/mnt/c/Users/username'}
 
@@ -82,6 +83,27 @@ home = {this = '~/win', to_this = '/mnt/c/Users/username'}
 
 [vim_windows]
 
+
+[helix_windows]
+languages = { this = '~/AppData/Roaming/helix/languages.toml', to_this = '~/code/machineconfig/settings/helix/languages.toml' }
+config = { this = '~/AppData/Roaming/helix/config.toml', to_this = '~/code/machineconfig/settings/helix/config.toml' }
+
+[helix_linux]
+languages = { this = '~/.config/helix/languages.toml', to_this = '~/code/machineconfig/settings/helix/languages.toml' }
+config = { this = '~/.config/helix/config.toml', to_this = '~/code/machineconfig/settings/helix/config.toml' }
+
+
+[lvim_windows]
+config = { this = '~/AppData/Local/lvim/config.lua', to_this = '~/code/machineconfig/settings/lvim/config.lua' }
+
+[lvim_linux]
+config = { this = '~/.config/config.lua', to_this = '~/code/machineconfig/settings/lvim/config.lua' }
+
+[svim_windows]
+init = { this = '~/.SpaceVim.d/init.toml', to_this = '~/code/machineconfig/settings/svim_windows/init.toml' }
+
+[svim_linux]
+init = { this = '~/.config/spacevim/init.toml', to_this = '~/code/machineconfig/settings/svim_linux/init.toml' }
 
 [windows_apps]
 notepadpp = {this = '~\AppData\Local\Microsoft\WindowsApps\notepad++.exe', to_this = 'C:\Program Files\Notepad++\notepad++.exe'}

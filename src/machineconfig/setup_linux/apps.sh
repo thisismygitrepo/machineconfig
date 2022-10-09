@@ -141,7 +141,6 @@ sudo apt install figlet -y  # large ascii text. See: showfigfonts for full list 
 
 
 # ------------------------------ EDITORS -----------------------------
-# consider using helix editor,
 # curl https://sh.rustup.rs -sSf | sh
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 #sudo apt install neovim -y  # nvim, but not latest release
@@ -150,6 +149,12 @@ bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/rolling/utils
 bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
 # https://spacevim.org/quick-start-guide/#linux-and-macos
 curl -sLf https://spacevim.org/install.sh | bash
+
+
+#cd ~; mkdir "tmp_asdf"; cd tmp_asdf
+#latest=$(get_latest_release "helix-editor/helix")
+#wget https://github.com/helix-editor/helix/releases/download/$latest/helix-$latest-x86_64-linux.tar.xz
+#tar -xf *; chmod +x ./nu; sudo mv ./nu /usr/local/bin/; cd ~; rm -rdf tmp_asdf
 
 
 # install chrome:

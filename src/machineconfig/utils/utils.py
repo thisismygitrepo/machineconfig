@@ -36,11 +36,10 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
             name = f'{tool}-{version}-{suffix}.zip'
             print("Downloading", download_link.joinpath(name))
         exe = download_link.joinpath(name).download().unzip(inplace=True, overwrite=True)
-
         if exe.is_file(): pass
         else: exe = exe.search("*.exe", r=True)[0] if tool_name is None else exe.search(f"{tool_name}.exe", r=True)[0]
-
-        return exe.move(folder=tb.P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
+        exe.move(folder=tb.P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
+        return exe
     return download_link
 
 
