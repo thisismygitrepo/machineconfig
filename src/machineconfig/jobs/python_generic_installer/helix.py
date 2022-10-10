@@ -19,7 +19,8 @@ else:
     name = f'{repo_url[-1]}-{exe[-1]}-{suffix}.tar.xz'
     exe = exe.joinpath(name).download().unxz_untar(inplace=True)
     exe = exe.search()[0].joinpath("hx")
-    exe.chmod(0o777).move(folder=r"/usr/local/bin")
+    exe.chmod(0o777)
+    exe.move(folder=r"/usr/local/bin")
 
 
 exe.parent.joinpath("runtime").move(folder=target.joinpath("helix"), overwrite=True)
