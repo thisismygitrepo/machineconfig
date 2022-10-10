@@ -4,9 +4,9 @@
 [thunderbird]
 path = '~/AppData/Roaming/Thunderbird/Profiles'
 encrypt = 'True'
-
+zip = 'True'
 
 [dotfiles]
 path = '~/dotfiles'
 encrypt = 'True'
-
+zip = 'True'

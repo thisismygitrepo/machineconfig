@@ -4,6 +4,8 @@
 # In order to troubleshoot your configuration try using the following command:
 # `zellij setup --check`
 # It should show current config locations and features that are enabled.
+# zellij -l compact, to hide bars
+
 
 keybinds:
     unbind: true

@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 
 
+croshell -f "~/code/machineconfig/src/machineconfig/jobs/python_generic_installer/helix.py"
 ## from: https://astronvim.github.io/
 #mv ~/.config/nvim ~/.config/nvim.bak
 #mv ~/.local/share/nvim/site ~/.local/share/nvim/site.bak

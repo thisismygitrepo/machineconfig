@@ -25,7 +25,7 @@ def symlink(this: tb.P, to_this: tb.P, overwrite=True):
     except Exception as ex: print(f"Failed at linking {this} ==> {to_this}.\nReason: {ex}")
 
 
-def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", name=None, tool_name=None):
+def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", name=None, tool_name=None, delete=True):
     import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
     latest_version = requests.get(repo_url + "/releases/latest").url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
     download_link = tb.P(repo_url + "/releases/download/" + latest_version)
@@ -35,10 +35,11 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
             version = download_link[-1]
             name = f'{tool}-{version}-{suffix}.zip'
             print("Downloading", download_link.joinpath(name))
-        exe = download_link.joinpath(name).download().unzip(inplace=True, overwrite=True)
-        if exe.is_file(): pass
-        else: exe = exe.search("*.exe", r=True)[0] if tool_name is None else exe.search(f"{tool_name}.exe", r=True)[0]
+        downloaded = download_link.joinpath(name).download().unzip(inplace=True, overwrite=True)
+        if downloaded.is_file(): exe = downloaded
+        else: exe = downloaded.search("*.exe", r=True)[0] if tool_name is None else exe.search(f"{tool_name}.exe", r=True)[0]
         exe.move(folder=tb.P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
+        if delete: downloaded.delete(sure=True)
         return exe
     return download_link
 

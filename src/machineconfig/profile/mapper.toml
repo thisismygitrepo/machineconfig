@@ -68,6 +68,8 @@ config = {this = '~/.tmux.conf', to_this = '~/code/machineconfig/settings/tmux/.
 
 [zellij_linux]
 config = { this = '~/.config/zellij/config.yaml', to_this = '~/code/machineconfig/settings/zellij/config.yaml' }
+# themes = { this = '~/.config/zellij/themes', to_this = '~/code/machineconfig/settings/zellij/themes' }
+layouts = { this = '~/.config/zellij/layouts/default.yaml', to_this = '~/code/machineconfig/settings/zellij/layouts/default.yaml' }
 
 
 [wsl_windows]
@@ -91,7 +93,6 @@ config = { this = '~/AppData/Roaming/helix/config.toml', to_this = '~/code/machi
 [helix_linux]
 languages = { this = '~/.config/helix/languages.toml', to_this = '~/code/machineconfig/settings/helix/languages.toml' }
 config = { this = '~/.config/helix/config.toml', to_this = '~/code/machineconfig/settings/helix/config.toml' }
-
 
 [lvim_windows]
 config = { this = '~/AppData/Local/lvim/config.lua', to_this = '~/code/machineconfig/settings/lvim_windows/config.lua' }

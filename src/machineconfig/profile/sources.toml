@@ -2,11 +2,13 @@
 # files to be sources in shell profile
 
 [windows]
-files = ['~/code/machineconfig/settings/broot/brootcd.ps1']  # defines br command which wraps broot.exe
+files = ['~/code/machineconfig/settings/broot/brootcd.ps1',  # defines br command which wraps broot.exe
+         '~/code/machineconfig/settings/lf/lfcd.ps1',
+         ]
 
 [linux]
 files = ['~/code/machineconfig/settings/broot/br.sh',
          '~/code/machineconfig/settings/lf_linux/exe/lfcd.sh',
-]
+         ]
 
 # see broot --install  to reinstall and see config files locations.
