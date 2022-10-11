@@ -9,5 +9,5 @@ path = release.joinpath(f"xplr-linux.tar.gz").download().ungz_untar(inplace=True
 exe = path.joinpath("xplr")
 exe.chmod(0o777)
 # exe.move(folder=r"/usr/local/bin", overwrite=False)
-tb.Terminal().run(f"mv {exe} /usr/local/bin/").print()
+tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print()
 

@@ -18,5 +18,5 @@ else:
     exe = path.unzip(inplace=True).joinpath("tere")
     exe.chmod(0o777)
     # exe.move(folder=r"/usr/local/bin", overwrite=False)
-    tb.Terminal().run(f"mv {exe} /usr/local/bin/").print()
+    tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print()
 
