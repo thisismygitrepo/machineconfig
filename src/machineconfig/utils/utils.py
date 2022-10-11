@@ -25,7 +25,7 @@ def symlink(this: tb.P, to_this: tb.P, overwrite=True):
     except Exception as ex: print(f"Failed at linking {this} ==> {to_this}.\nReason: {ex}")
 
 
-def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", name=None, tool_name=None, delete=True):
+def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", name=None, tool_name=None, delete=True, strip_v=False):
     import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
     latest_version = requests.get(repo_url + "/releases/latest").url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
     download_link = tb.P(repo_url + "/releases/download/" + latest_version)
@@ -33,6 +33,7 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
         if name is None:
             tool = tool_name or tb.P(repo_url)[-1]
             version = download_link[-1]
+            if strip_v: version = str(version).replace("v", "")
             name = f'{tool}-{version}-{suffix}.zip'
             print("Downloading", download_link.joinpath(name))
         downloaded = download_link.joinpath(name).download().unzip(inplace=True, overwrite=True)

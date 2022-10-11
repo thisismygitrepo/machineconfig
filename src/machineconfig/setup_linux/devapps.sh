@@ -1,7 +1,8 @@
 #!/usr/bin/bash
 
 # use this: source <(sudo cat ./devapps.sh)
-croshell -f "~/code/machineconfig/src/machineconfig/jobs/python_generic_installer/helix.py"
+croshell -f ~/code/machineconfig/src/machineconfig/jobs/python/python_linux_installers_all.py
+
 ## from: https://astronvim.github.io/
 #mv ~/.config/nvim ~/.config/nvim.bak
 #mv ~/.local/share/nvim/site ~/.local/share/nvim/site.bak
