@@ -166,7 +166,8 @@ lvim.plugins = {
   -- "folke/trouble.nvim",
   -- cmd = "TroubleToggle",
   -- },
---   "mfussenegger/nvim-dap-python",
+   "mfussenegger/nvim-dap",
+   "mfussenegger/nvim-dap-python",
    "akinsho/toggleterm.nvim",
    { "michaelb/sniprun", run = "bash ./install.sh" },
 }

@@ -45,7 +45,7 @@ wget https://dystroy.org/broot/download/x86_64-linux/broot
 # broot doesn't search aribtrarily deep and it also avoids git folders.
 chmod +x broot
 sudo mv ./broot /usr/local/bin/
-sudp apt install ncdu   # disk usage analyzer.
+sudo apt install ncdu   # disk usage analyzer.
 
 
 sudo apt install exa  # replacement for ls. no ner fonts, unlike lsd

@@ -49,6 +49,11 @@ map p
 map x
 map c
 map v
+map r
+map D $diskonaut $env:f
+map K $kondo $env:f
+map r reload
+
 
 # e edit
 map e  # edit modal key.

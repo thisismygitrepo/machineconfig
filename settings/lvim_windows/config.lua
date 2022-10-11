@@ -36,6 +36,15 @@ lvim.colorscheme = "torte"
 lvim.leader = "space"
 -- add your own keymapping
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
+
+-- from github comments
+-- lvim.builtin.nvimtree.setup.view.mappings.list = {
+--   { key = { "<CR>", "<Right>" }, action = "edit", mode = "n" },
+--   { key = "<Up>", action = "dir_up" },
+--   { key = "<Left>", action = "close_node" },
+--   { key = "v", action = "vsplit" },
+-- }
+
 -- lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 -- lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 -- unmap a default keymapping

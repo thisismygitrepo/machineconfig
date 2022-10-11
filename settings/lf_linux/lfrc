@@ -48,6 +48,8 @@ map p
 map x
 map c
 map v
+map D $diskonaut $env:f
+map K $kondo $env:f
 
 
 map q quit  # default
