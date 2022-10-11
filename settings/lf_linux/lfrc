@@ -48,7 +48,8 @@ map p
 map x
 map c
 map v
-map D $diskonaut $env:f
+# map D
+map D $diskonaut
 map K $kondo $env:f
 
 

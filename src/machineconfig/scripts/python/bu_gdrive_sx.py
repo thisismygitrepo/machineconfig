@@ -25,12 +25,10 @@ def main():
     args = parser.parse_args()
     api = GDriveAPI(account=args.google_account, project=args.project)
 
-    if args.share: res = api.upload_and_share(args.file)
+    if args.share: res = api.upload_and_share(local_path=args.file, rel2home=args.relative_to_home,
+                                              zip_first=args.zip_first, encrypt_first=args.encrypt_first, key=args.key, pwd=args.pwd)
     else: res = api.upload(local_path=args.file, remote_dir=args.remote_dir, rel2home=args.relative_to_home,
                            zip_first=args.zip_first, encrypt_first=args.encrypt_first, key=args.key, pwd=args.pwd)  # , args.recursive, args.zipFirst)
-
-    if args.zip_first or args.encrypt_first:
-        res['url'] = P(rf'https://drive.google.com/file/d/{res["fid"]}')
     print(res)
 
 
