@@ -20,7 +20,8 @@ else:
     exe = exe.joinpath(name).download().unxz_untar(inplace=True)
     exe = exe.search()[0].joinpath("hx")
     exe.chmod(0o777)
-    exe.copy(folder=r"/usr/local/bin", overwrite=True)
+    # exe.move(folder=r"/usr/local/bin", overwrite=True)
+    tb.Terminal().run(f"mv {exe} /usr/local/bin/").print()
 
 
 exe.parent.joinpath("runtime").move(folder=target.joinpath("helix"), overwrite=True)

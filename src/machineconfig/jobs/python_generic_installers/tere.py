@@ -15,5 +15,8 @@ if system() == 'Windows':
 else:
     release = get_latest_release(repo_url.as_url_str())
     path = release.joinpath(f"tere-{str(release[-1]).replace('v', '')}-x86_64-unknown-linux-gnu.zip").download()
-    exe = path.unzip(inplace=True).joinpath("tere").move(folder=r"/usr/local/bin", overwrite=True)
+    exe = path.unzip(inplace=True).joinpath("tere")
+    exe.chmod(0o777)
+    # exe.move(folder=r"/usr/local/bin", overwrite=False)
+    tb.Terminal().run(f"mv {exe} /usr/local/bin/").print()
 
