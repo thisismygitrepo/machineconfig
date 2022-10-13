@@ -4,11 +4,11 @@
 [windows]
 files = ['~/code/machineconfig/settings/broot/brootcd.ps1',  # defines br command which wraps broot.exe
          '~/code/machineconfig/settings/lf/lfcd.ps1',
-         ]
+         '~/code/machineconfig/settings/tere/terecd.ps1']
 
 [linux]
 files = ['~/code/machineconfig/settings/broot/br.sh',
          '~/code/machineconfig/settings/lf_linux/exe/lfcd.sh',
-         ]
+         '~/code/machineconfig/settings/tere/terecd.sh']
 
 # see broot --install  to reinstall and see config files locations.

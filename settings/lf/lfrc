@@ -16,6 +16,7 @@ set preview true
 set shell powershell
 set colors
 set ratios '1:2:3'  # ratio of pane widths
+set ifs "\n"
 # set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"
 # see more at https://git.lmburns.com/dotfiles-mac/file/.config/lf/lfrc.html
 # see this: https://github.com/ahrm/dotfiles/tree/main/lf-windows/lf_scripts
@@ -65,6 +66,7 @@ map ep $& 'C:\Program Files (x86)\JetBrains\PyCharm Community Edition 2022.2\bin
 map o  $start $env:f
 map <enter> open
 
+
 # w shells
 map w
 map ww $powershell
@@ -82,7 +84,10 @@ map oy copy
 map oc $Set-Clipboard -Value $env:f
 map c clear
 map or rename
-map <delete> delete
+map <delete> :{{
+	delete
+	echo 'FINISHED DELETEING'
+}}
 map of reload
 map os mark-save
 map ol mark-load
@@ -113,12 +118,14 @@ map mf $~/code/machineconfig/settings/lf/mkfile.ps1
 
 # =================== JUNK ======================
 # Find and Jump
-cmd fzfg $~/scripts/fzfg.ps1 $args[0]
-map J push :fzfg<space>
+#cmd fzfg $~/scripts/fzfg.ps1 $args[0]
+map J push :$~/scripts/fzfg<space>
 map F $~/code/machineconfig/settings/lf/fzf_edit.ps1
+map S cd $~/code/machineconfig/settings/lf/tst.ps1
+map T !tere
 cmd doc $lf -doc | bat
-cmd on-quit ~/code/machineconfig/settings/lf/lfcd.ps1
-# map Q $~/dotfiles/settings/lf/lfcd.ps1 quit
-# cmd on-cd &{{$onefetch}}
-# on-quit $~/dotfiles/settings/lf/lfcd.ps1
+
+# cmd pre-cd $~/code/machineconfig/settings/lf/precd.ps1
+# cmd on-cd $~/code/machineconfig/settings/lf/oncd.ps1
+# cmd on-quit ~/code/machineconfig/settings/lf/onquit.ps1
 
