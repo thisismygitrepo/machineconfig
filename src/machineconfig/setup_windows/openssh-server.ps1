@@ -33,4 +33,4 @@ New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value $shell
 New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShellCommandOption -Value "/c" -PropertyType String -Force
 
 cd ~
-mkdir .ssh
+mkdir .ssh -ErrorAction SilentlyContinue

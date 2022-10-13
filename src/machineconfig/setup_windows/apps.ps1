@@ -57,17 +57,8 @@ winget install --Id Rustlang.Rust.MSVC --source winget
 winget install --Id Codeblocks.Codeblocks --source winget  # gives gcc compiler  # could also be provided by MSCV Build Tools
 winget install --Id GnuWin32.Make --source winget  # make command  # can be provided by mscv build tools.
 cargo install tokei  # counts lines of code in every language.
-# use release download with croshell for each of the following rust programs since compiling is very slow.
-#cargo install ripgrep  # rg command
-#cargo install fd-find  # fd command
-#cargo install bat  # colored version of cat.
 winget install --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
-# winget install gsass1.NTop  # another system monitoring tool.
-
-# cargo install bottom  # terminal-based htop,
-winget install --Name onefetch --Id o2sh.onefech --source winget
-# cargo install onefetch  # repo-version of system neofetch
-# winget install --Name QuickLook --Id QL-Win.QuickLook --source winget  # shitty bat alternative
+winget install --Name onefetch --Id o2sh.onefech --source winget  # repo-version of system neofetch, see also tokei
 
 # ======================= Terminal-based editors =================================
 winget install --Id Neovim.Neovim --source winget --accept-package-agreements --accept-source-agreements

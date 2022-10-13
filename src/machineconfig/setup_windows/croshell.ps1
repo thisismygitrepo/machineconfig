@@ -18,5 +18,5 @@ pip install --upgrade pip  # upgrades the pip that is within the environment.
 pip install crocodile
 pip install machineconfig
 
-python -m fire machineconfig.create_symlinks main
-python -m fire machinconfig.setup_windows_terminal.set_settings main
+python -m fire machineconfig.profile.create main
+python -m fire machineconfig.setup_windows_terminal.set_settings main
