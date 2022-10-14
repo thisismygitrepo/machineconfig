@@ -17,7 +17,7 @@
 
 function lfcd {
     $tmp = [System.IO.Path]::GetTempFileName()
-    lf -last-dir-path="$tmp" $args
+    ~\AppData\Local\Microsoft\WindowsApps\lf.exe -last-dir-path="$tmp" $args
     if (Test-Path -PathType Leaf "$tmp")
     {
         $dir = Get-Content "$tmp"
@@ -31,3 +31,5 @@ function lfcd {
         }
     }
 }
+
+Set-Alias lf lfcd

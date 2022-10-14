@@ -9,11 +9,11 @@ from crocodile.environment import DotFiles, system, PathVar, UserName  # Program
 from machineconfig.utils.utils import symlink
 # import os
 import subprocess
-
+import machineconfig
 
 ERROR_LIST = []  # append to this after every exception captured.
-REPO_ROOT = tb.P.home().joinpath(f"code/machineconfig/src/machineconfig")
-CONFIG_ROOT = tb.P.home().joinpath("code/machineconfig/settings")
+LIBRARY_ROOT = tb.P(machineconfig.__file__).parent
+CONFIG_ROOT = LIBRARY_ROOT.parent.parent.joinpath("settings")
 
 
 # =================== SYMLINKS ====================================
@@ -48,7 +48,7 @@ def add_to_shell_profile_path(dirs: list):
 
 
 def main_symlinks():
-    symlink_mapper = tb.P("~/code/machineconfig/src/machineconfig/profile/mapper.toml").readit()
+    symlink_mapper = LIBRARY_ROOT.joinpath("profile/mapper.toml").readit()
     symlink_mapper['wsl_windows']['home']["to_this"] = symlink_mapper['wsl_windows']['home']["to_this"].replace("username", UserName)
     symlink_mapper['wsl_linux']['home']["to_this"] = symlink_mapper['wsl_linux']['home']["to_this"].replace("username", UserName)
 
@@ -62,11 +62,11 @@ def main_symlinks():
 
     link_aws(overwrite=overwrite)
     link_ssh(overwrite=overwrite)
-    if system == "Linux": tb.Terminal().run(f'chmod +x {REPO_ROOT.joinpath(f"scripts/{system.lower()}")} -R')
+    if system == "Linux": tb.Terminal().run(f'chmod +x {LIBRARY_ROOT.joinpath(f"scripts/{system.lower()}")} -R')
 
 
 def main_env_path():
-    env_path = tb.P("~/code/machineconfig/src/machineconfig/profile/env_path.toml").readit()
+    env_path = LIBRARY_ROOT.joinpath("profile/env_path.toml").readit()
     # The following is not a symlink creation, but modification of shell profile by additing dirs to PATH
     # Shell profile is either in dotfiles and is synced (as in Windows), hence no need for update, or is updated on the fly (for Linux)
     # for windows it won't change the profile, if the profile was modified already e.g. due to syncing
@@ -74,7 +74,7 @@ def main_env_path():
 
 
 def main_patch_shell_profile():
-    sources = tb.P("~/code/machineconfig/src/machineconfig/profile/sources.toml").readit()
+    sources = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()
     for file in sources[system.lower()]['files']:
         if system == "Windows": tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(f". {file}", f". {file}", newline=True, notfound_append=True)
         elif system == "Linux": tb.P("~/.bashrc").expanduser().modify_text(f"source {file}", f"source {file}", notfound_append=True)

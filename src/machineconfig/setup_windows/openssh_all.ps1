@@ -1,5 +1,5 @@
 
-$my_keys='https://github.com/thisismygitrepo.keys'
+$my_keys=$args[0]
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh-server.ps1 | Invoke-Expression
 cd ~
 (Invoke-WebRequest $my_keys).Content >> .ssh/authorized_keys

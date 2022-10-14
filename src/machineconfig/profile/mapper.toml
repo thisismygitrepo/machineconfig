@@ -106,7 +106,8 @@ init = { this = '~/.SpaceVim.d/init.toml', to_this = '~/code/machineconfig/setti
 [svim_linux]
 init = { this = '~/.SpaceVim.d/init.toml', to_this = '~/code/machineconfig/settings/svim_linux/init.toml' }
 
-[windows_apps]
-notepadpp = {this = '~\AppData\Local\Microsoft\WindowsApps\notepad++.exe', to_this = 'C:\Program Files\Notepad++\notepad++.exe'}
+[apps_windows]
+notepadpp = {this = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', to_this = 'C:/Program Files/Notepad++/notepad++.exe'}
 
-
+[wt_windows]
+settings = { this = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', to_this = '~/code/machineconfig/settings/shells/wt/settings.json' }

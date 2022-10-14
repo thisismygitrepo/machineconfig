@@ -36,7 +36,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 
 ###### Setup SSH connection (CHANGE APPROPRIATELY):
 ```powershell
-Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression
+Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression https://github.com/thisismygitrepo.keys
 ```
 
 ###### Install Croshell Terminal Directly,
@@ -64,8 +64,8 @@ source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
 
 ###### Setup SSH connection (CHANGE APPROPRIATELY):
 ```bash
-curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash https://github.com/thisismygitrepo.keys
 # For WSL only, also run the following:
-curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash https://github.com/thisismygitrepo.keys
 ```
 

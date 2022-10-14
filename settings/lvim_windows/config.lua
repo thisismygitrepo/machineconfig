@@ -1,6 +1,6 @@
 --[[
  THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
- `lvim` is the global options object
+ `lvim` is the global options object.
 ]]
 
 -- Enable powershell as your default shell
@@ -35,15 +35,16 @@ lvim.colorscheme = "torte"
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
 -- add your own keymapping
-lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
+lvim.keys.normal_mode["<C-s>"] = ":w<cr>" -- check it out
+
 
 -- from github comments
--- lvim.builtin.nvimtree.setup.view.mappings.list = {
---   { key = { "<CR>", "<Right>" }, action = "edit", mode = "n" },
---   { key = "<Up>", action = "dir_up" },
---   { key = "<Left>", action = "close_node" },
---   { key = "v", action = "vsplit" },
--- }
+lvim.builtin.nvimtree.setup.view.mappings.list = {
+  { key = { "<CR>", "<Right>" }, action = "edit", mode = "n" },
+  --  { key = "<Up>", action = "dir_up" },
+  { key = "<Left>", action = "close_node" },
+  --  { key = "v", action = "vsplit" },
+}
 
 -- lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 -- lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
@@ -198,13 +199,13 @@ lvim.plugins = {
 }
 
 require('dap-python').setup('~/venvs/ve/Scripts/python.exe')
-table.insert(require('dap').configurations.python, {
-  type = 'python',
-  request = 'launch',
-  name = 'My custom launch configuration',
-  program = '${file}',
-  -- ... more options, see https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings
-})
+-- table.insert(require('dap').configurations.python, {
+--  type = 'python',
+--  request = 'launch',
+--  name = 'My custom launch configuration',
+--  program = '${file}',
+-- ... more options, see https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings
+-- })
 
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
