@@ -25,9 +25,38 @@ def symlink(this: tb.P, to_this: tb.P, overwrite=True):
     except Exception as ex: print(f"Failed at linking {this} ==> {to_this}.\nReason: {ex}")
 
 
-def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", name=None, tool_name=None, delete=True, strip_v=False, linux=False):
+def find_move_delete_windows(downloaded, tool_name=None, delete=True):
+    if downloaded.is_file():
+        exe = downloaded
+    else:
+        exe = downloaded.search("*.exe", r=True)[0] if tool_name is None else downloaded.search(f"{tool_name}.exe", r=True)[0]
+    exe.move(folder=tb.P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
+    if delete: downloaded.delete(sure=True)
+    return exe
+
+
+def find_move_delete_linux(downloaded, tool_name):
+    if downloaded.is_file():
+        exe = downloaded
+    else:
+        res = downloaded.search()
+        if len(res) == 1:
+            if res[0].is_file():
+                exe = res[0]
+            else:
+                res = res[0].search()
+                exe = res[0] if len(res) == 1 else res[0].parent.joinpath(tool_name)
+        else:
+            exe = res.joinpath(tool_name)
+    print(f"Moving file {repr(exe)}")
+    exe.chmod(0o777)
+    # exe.move(folder=r"/usr/local/bin", overwrite=False)
+    tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print()
+
+
+def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", name=None, tool_name=None, delete=True, strip_v=False, linux=False, compression=None):
     import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
-    latest_version = requests.get(repo_url + "/releases/latest").url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
+    latest_version = requests.get(str(repo_url) + "/releases/latest").url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
     download_link = tb.P(repo_url + "/releases/download/" + latest_version)
 
     version = download_link[-1]
@@ -36,32 +65,15 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
 
     if download_n_extract and not linux:
         if name is None:
-            name = f'{tool}-{version}-{suffix}.zip'
+            name = f'{tool}-{version}-{suffix}.{compression or "zip"}'
             print("Downloading", download_link.joinpath(name))
         downloaded = download_link.joinpath(name).download().unzip(inplace=True, overwrite=True)
-
-        if downloaded.is_file(): exe = downloaded
-        else:
-            exe = downloaded.search("*.exe", r=True)[0] if tool_name is None else downloaded.search(f"{tool_name}.exe", r=True)[0]
-        exe.move(folder=tb.P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
-        if delete: downloaded.delete(sure=True)
-        return exe
-
+        return find_move_delete_windows(downloaded, tool_name, delete)
     elif download_n_extract and linux:
-        url = download_link.joinpath(f'{tool}-{version}-{suffix}.tar.gz').download().ungz_untar(inplace=True)
-        if url.isfile(): exe = url
-        else:
-            res = url.search()
-            if len(res) == 1:
-                if res[0].is_file(): exe = res[0]
-                else:
-                    res = res[0].search()
-                    exe = res[0] if len(res) == 1 else res[0].parent.joinpath(tool)
-            else: exe = res.joinpath(tool)
-        exe.chmod(0o777)
-        # exe.move(folder=r"/usr/local/bin", overwrite=False)
-        tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print()
-
+        download_link = download_link.joinpath(f'{tool}-{version}-{suffix}.{compression or "tar.gz"}')
+        print("Downloading", download_link)
+        downloaded = download_link.download().ungz_untar(inplace=True)
+        find_move_delete_linux(downloaded, tool_name)
     return download_link
 
 

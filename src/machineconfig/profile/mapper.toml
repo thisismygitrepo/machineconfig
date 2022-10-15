@@ -108,6 +108,8 @@ init = { this = '~/.SpaceVim.d/init.toml', to_this = '~/code/machineconfig/setti
 
 [apps_windows]
 notepadpp = {this = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', to_this = 'C:/Program Files/Notepad++/notepad++.exe'}
+# tesseract = {this = '~/AppData/Local/Microsoft/WindowsApps/tesseract.exe', to_this = '~/AppData/Local/Tesseract-OCR/tesseract.exe'}  # doesn't work without whole installation dir is on PATH.
+
 
 [wt_windows]
 settings = { this = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', to_this = '~/code/machineconfig/settings/shells/wt/settings.json' }

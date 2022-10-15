@@ -27,6 +27,9 @@ winget install --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudi
 #winget install spyder
 winget install --name "DB Browser for SQLite" --accept-package-agreements --accept-source-agreements
 #winget install --name "sql server management studio" --Id "Microsoft.SQLServerManagementStudi" --source winget --accept-package-agreements --accept-source-agreements
+winget install --Id UB-Mannheim.TesseractOCR
+# sudo apt install tesseract-ocr
+
 
 # ================================================== Shells ===========================================
 $ErrorActionPreference = "Stop"  # if there is any error in any command, stop there instead of proceeding to the next.
