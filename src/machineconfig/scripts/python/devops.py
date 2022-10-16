@@ -58,11 +58,11 @@ def main():
         if idx == 0: pass  # i.e. use the program
         else:
             installers[int(idx)].readit()  # finish the task
-            program = ""  # write an empty program
+            program = "~/.bashrc"  # write an empty program
 
     # print(f"Executing {program}")
     if system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
-    else: PROGRAM_PATH.create(parents_only=True).write_text(f"source {program}")
+    else: PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
 
 
 if __name__ == "__main__":
