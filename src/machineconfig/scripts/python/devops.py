@@ -12,7 +12,7 @@ if system() == 'Windows':
     }
 else:
     mydict = {
-        "update essential repos": "~/code/machineconfig/src/machineconfig/jobs/linux/update_essentials.sh",
+        "update essential repos": "~/code/machineconfig/src/machineconfig/jobs/linux/update_essentials",
         "install devapps": "source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)",
         "create symlinks": "~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh ",
     }
