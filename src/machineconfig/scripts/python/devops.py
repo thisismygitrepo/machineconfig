@@ -4,7 +4,7 @@ from platform import system
 import crocodile.toolbox as tb
 
 
-PROGRAM_PATH = tb.P.tmp().joinpath("shells/python_return_command") + ".ps1" if system() == "Windows" else ".sh"
+PROGRAM_PATH = tb.P.tmp().joinpath("shells/python_return_command") + (".ps1" if system() == "Windows" else ".sh")
 
 
 if system() == 'Windows':
