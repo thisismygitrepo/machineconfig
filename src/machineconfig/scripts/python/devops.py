@@ -25,7 +25,10 @@ def main():
     program = mydict[list(mydict.keys())[int(choice)]]
     print(f"Executing {program}")
     import crocodile.toolbox as tb
-    tb.P.tmp().joinpath("shells/python_return_command.ps1").create(parents_only=True).write_text(program)
+    if system() == 'Windows':
+        tb.P.tmp().joinpath("shells/python_return_command.ps1").create(parents_only=True).write_text(program)
+    else:
+        tb.P.tmp().joinpath("shells/python_return_command.sh").create(parents_only=True).write_text(program)
 
 
 if __name__ == "__main__":

@@ -3,3 +3,4 @@
 # source activate_ve.sh
 source ~/venvs/ve/bin/activate
 python -m machineconfig.scripts.python.devops $@
+~/tmp_results/shells/python_return_command.sh
