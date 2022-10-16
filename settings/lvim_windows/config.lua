@@ -2,6 +2,8 @@
  THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
  `lvim` is the global options object.
 ]]
+-- package.path = package.path .. "~/code/machineconfig/settings/lvim_windows/lua_files"
+-- require('file')  -- without .lua
 
 -- Enable powershell as your default shell
 vim.opt.shell = "pwsh.exe -NoLogo"
@@ -43,7 +45,7 @@ lvim.builtin.nvimtree.setup.view.mappings.list = {
   { key = { "<CR>", "<Right>" }, action = "edit", mode = "n" },
   --  { key = "<Up>", action = "dir_up" },
   { key = "<Left>", action = "close_node" },
-  --  { key = "v", action = "vsplit" },
+  --{ key = "v", action = "vsplit" }
 }
 
 -- lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
@@ -198,16 +200,16 @@ lvim.plugins = {
   "akinsho/toggleterm.nvim",
 }
 
-require('dap-python').setup('~/venvs/ve/Scripts/python.exe')
--- table.insert(require('dap').configurations.python, {
---  type = 'python',
---  request = 'launch',
---  name = 'My custom launch configuration',
---  program = '${file}',
--- ... more options, see https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings
--- })
-
-
+-- require('dap-python').setup('~/venvs/ve/Scripts/python.exe')
+require('dap').configurations.python = { {
+  type = 'python',
+  request = 'launch',
+  args = { "-i" },
+  name = 'My custom launch configuration',
+  program = '${file}',
+  -- ... more options, see https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings
+}
+}
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 -- vim.api.nvim_create_autocmd("BufEnter", {
 --   pattern = { "*.json", "*.jsonc" },

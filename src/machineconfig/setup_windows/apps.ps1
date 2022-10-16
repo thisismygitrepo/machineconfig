@@ -38,6 +38,8 @@ winget install Python.Python.3.10 --source winget
 # the two above require Restart-Computer -Force before they are available in PATH.
 
 winget install --name "Git" --Id "Git.Git" --source winget --accept-package-agreements --accept-source-agreements
+winget install gitui
+
 #git config credential.helper store  # makes git remember credentials, or just link to pre-configured git config file.
 # a terminal restart of terminal is required to for git to work, or the one can update the path
 
