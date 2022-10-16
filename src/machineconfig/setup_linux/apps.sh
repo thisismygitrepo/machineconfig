@@ -26,7 +26,7 @@ sudo apt install git -y  # for version control
 # https://github.com/leonwind/cli2cloud
 # https://github.com/sorenisanerd/gotty
 # https://devsession.is/
-
+# https://github.com/rothgar/awesome-tuis
 
 # ------------------- File Managers ---------------------------
 sudo apt install bat -y  # cat with colors.

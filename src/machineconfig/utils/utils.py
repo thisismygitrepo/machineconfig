@@ -35,7 +35,7 @@ def find_move_delete_windows(downloaded, tool_name=None, delete=True):
     return exe
 
 
-def find_move_delete_linux(downloaded, tool_name):
+def find_move_delete_linux(downloaded, tool_name, delete=True):
     if downloaded.is_file():
         exe = downloaded
     else:
@@ -52,29 +52,33 @@ def find_move_delete_linux(downloaded, tool_name):
     exe.chmod(0o777)
     # exe.move(folder=r"/usr/local/bin", overwrite=False)
     tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print()
+    if delete: downloaded.delete(sure=True)
 
 
-def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", name=None, tool_name=None, delete=True, strip_v=False, linux=False, compression=None):
+def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", file_name=None, tool_name=None, exe_name=None, delete=True, strip_v=False, linux=False, compression=None):
     import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
     latest_version = requests.get(str(repo_url) + "/releases/latest").url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
     download_link = tb.P(repo_url + "/releases/download/" + latest_version)
 
     version = download_link[-1]
-    if strip_v: version = str(version).replace("v", "")
-    tool = tool_name or tb.P(repo_url)[-1]
+    version = str(version).replace("v", "") if strip_v else version
+    tool_name = tool_name or tb.P(repo_url)[-1]
 
+    if not download_n_extract: return download_link
+    print("\n\n\n")
+    print(f"Installing {tool_name} version {version}".center(100, "-"))
     if download_n_extract and not linux:
-        if name is None:
-            name = f'{tool}-{version}-{suffix}.{compression or "zip"}'
-            print("Downloading", download_link.joinpath(name))
-        downloaded = download_link.joinpath(name).download().unzip(inplace=True, overwrite=True)
-        return find_move_delete_windows(downloaded, tool_name, delete)
+        if file_name is None:  # it is not constant, so we compile it from parts as follows:
+            file_name = f'{tool_name}-{version}-{suffix}.{compression or "zip"}'
+            print("Downloading", download_link.joinpath(file_name))
+        downloaded = download_link.joinpath(file_name).download().unzip(inplace=True, overwrite=True)
+        return find_move_delete_windows(downloaded, exe_name or tool_name, delete)
     elif download_n_extract and linux:
-        download_link = download_link.joinpath(f'{tool}-{version}-{suffix}.{compression or "tar.gz"}')
+        download_link = download_link.joinpath(f'{tool_name}-{version}-{suffix}.{compression or "tar.gz"}')
         print("Downloading", download_link)
         downloaded = download_link.download().ungz_untar(inplace=True)
-        find_move_delete_linux(downloaded, tool_name)
-    return download_link
+        find_move_delete_linux(downloaded, exe_name or tool_name, delete)
+    print(f"Completed Installation".center(100, "-"))
 
 
 if __name__ == '__main__':

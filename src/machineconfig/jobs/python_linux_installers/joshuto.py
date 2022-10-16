@@ -3,7 +3,7 @@
 """
 Rust version of lf (GO)
 """
-from machineconfig.utils.utils import get_latest_release
+from machineconfig.utils.utils import get_latest_release, find_move_delete_linux
 import crocodile.toolbox as tb
 
 # repo_url = tb.P(r"https://github.com/kamiyaa/joshuto")
@@ -15,6 +15,7 @@ path = tb.P(r'https://github.com/kamiyaa/joshuto/releases/download/v0.9.4/joshut
 path = path.download().ungz_untar(inplace=True)
 exe = path.search()[0].joinpath("joshuto")
 exe.chmod(0o777)
-# exe.move(folder=r"/usr/local/bin/", overwrite=False)
 tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print()
 
+# after first release:
+# url = get_latest_release("https://github.com/kamiyaa/joshuto", suffix="x86_64-unknown-linux-gnu", compression="tar.gz", download_n_extract=True)
