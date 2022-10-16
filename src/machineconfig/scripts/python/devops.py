@@ -48,6 +48,17 @@ def main():
     elif choice_key == "commit all repos":
         from machineconfig.jobs.python.repos import commit_all
         program = commit_all()
+    elif choice_key == "install devapps":
+        if system() == "Windows": from machineconfig.jobs.python.python_windows_installers_all import get_installers
+        else: from machineconfig.jobs.python.python_linux_installers_all import get_installers
+        installers = get_installers()
+        installers.list.insert(0, tb.P("all"))
+        installers.print(styler=lambda x: x.stem)
+        idx = input("\nChoose a program: ")
+        if idx == 0: pass  # i.e. use the program
+        else:
+            installers[int(idx)].readit()  # finish the task
+            program = ""  # write an empty program
 
     # print(f"Executing {program}")
     if system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
