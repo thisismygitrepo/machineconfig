@@ -30,4 +30,8 @@ lfcd () {
     fi
 }
 
+# create alias for lfcd
+alias lf="lfcd"
+
+
 
