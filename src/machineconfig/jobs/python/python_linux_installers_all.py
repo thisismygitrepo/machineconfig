@@ -5,7 +5,7 @@ import machineconfig.jobs.python_generic_installers as gens
 
 
 def get_installers():
-    return tb.P(inst.__file__).parent.search("*.py") + tb.P(gens.__file__).parent.search("*.py")
+    return tb.P(inst.__file__).parent.search("*.py", filters=[lambda x: "__init__" not in str(x)]) + tb.P(gens.__file__).parent.search("*.py", filters=[lambda x: "__init__" not in str(x)])
 
 
 def main():

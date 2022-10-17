@@ -55,7 +55,10 @@ def main():
         installers.list.insert(0, tb.P("all"))
         installers.print(styler=lambda x: x.stem)
         idx = int(input("\nChoose a program: "))
-        if idx == 0: pass  # i.e. use the program
+        if idx == 0:
+            program1 = "~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh"
+            program2 = "~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1"
+            program = program1 if system() == "Linux" else program2
         else:
             installers[idx].readit()  # finish the task
             program = "~/.bashrc"  # write an empty program
