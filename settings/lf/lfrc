@@ -18,7 +18,7 @@ set colors
 set ratios '1:2:3'  # ratio of pane widths
 set ifs "\n"
 # set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"
-# see more at https://git.lmburns.com/dotfiles-mac/file/.config/lf/lfrc.html
+# see more at https://git.lmburns.com/dotfiles-mac/file/.config/lf/lC:\Users\alex\AppData\Roaming\npmC:\Users\alex\AppData\Roaming\npmC:\Users\alex\AppData\Roaming\npmC:\Users\alex\AppData\Roaming\npmC:\Users\alex\AppData\Roaming\npmC:\Users\alex\AppData\Roaming\npmfrc.html
 # see this: https://github.com/ahrm/dotfiles/tree/main/lf-windows/lf_scripts
 # https://github.com/NikitaIvanovV/ctpv
 
@@ -106,7 +106,7 @@ map jm cd ~/code/machineconfig/src/machineconfig
 map jh cd ~
 map ja cd $env:LOCALAPPDATA
 map jA cd $env:APPDATA
-map jj $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- ~/code/machineconfig/settings/lf/lfrc
+map jj $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- $env:USERPROFILE/code/machineconfig/settings/lf/lfrc
 
 
 # m make

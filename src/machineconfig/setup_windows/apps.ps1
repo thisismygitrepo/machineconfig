@@ -51,6 +51,8 @@ winget install --name "Powershell" --Id "Microsoft.PowerShell" --source winget  
 
 # ======================== DEV TOOLS =================================
 winget install --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements  # ncessary for nvim plugins.
+npm i sharewifi -g
+
 # https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
 # installing via winget as opposoed to the installer above, causes ignoring the requirements, and not adding ~/.carog/bin to PATH.
 # installing requirements first (as per the installer instructions)

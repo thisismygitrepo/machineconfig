@@ -16,17 +16,14 @@ curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -  # The NodeSou
 sudo apt update
 sudo apt install nodejs -y  # for nvim plugins
 sudo apt install npm -y  # for nvim plugins
+npm i sharewifi -g
+
 #curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
 sudo apt install wget -y  # for downloading files
 sudo apt install curl -y  # for handling http requests
 sudo apt install make -y  # lvim and spacevim require it.
 sudo apt install net-tools -y  # gives ifconfig
 sudo apt install git -y  # for version control
-
-# https://github.com/leonwind/cli2cloud
-# https://github.com/sorenisanerd/gotty
-# https://devsession.is/
-# https://github.com/rothgar/awesome-tuis
 
 # ------------------- File Managers ---------------------------
 sudo apt install bat -y  # cat with colors.
