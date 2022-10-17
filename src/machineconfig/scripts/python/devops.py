@@ -16,9 +16,9 @@ if system() == 'Windows':
     }
 else:
     mydict = {
-        "update essential repos": "~/code/machineconfig/src/machineconfig/jobs/linux/update_essentials",
+        "update essential repos": "source ~/code/machineconfig/src/machineconfig/jobs/linux/update_essentials",
         "install devapps": "source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)",
-        "create symlinks": "~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh ",
+        "create symlinks": "source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh ",
     }
 
 mydict.update({
@@ -56,7 +56,7 @@ def main():
         installers.print(styler=lambda x: x.stem)
         idx = int(input("\nChoose a program: "))
         if idx == 0:
-            program1 = "~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh"
+            program1 = "source ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh"
             program2 = "~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1"
             program = program1 if system() == "Linux" else program2
         else:
