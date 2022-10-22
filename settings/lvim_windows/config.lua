@@ -198,6 +198,7 @@ lvim.plugins = {
   -- },
   "mfussenegger/nvim-dap-python",
   "akinsho/toggleterm.nvim",
+  "stevearc/overseer.nvim",
 }
 
 -- require('dap-python').setup('~/venvs/ve/Scripts/python.exe')
@@ -210,6 +211,12 @@ require('dap').configurations.python = { {
   -- ... more options, see https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings
 }
 }
+
+
+
+require('overseer').setup()
+
+
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 -- vim.api.nvim_create_autocmd("BufEnter", {
 --   pattern = { "*.json", "*.jsonc" },

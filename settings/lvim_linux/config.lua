@@ -169,8 +169,11 @@ lvim.plugins = {
    "mfussenegger/nvim-dap",
    "mfussenegger/nvim-dap-python",
    "akinsho/toggleterm.nvim",
-   { "michaelb/sniprun", run = "bash ./install.sh" },
+  "stevearc/overseer.nvim",
+--    { "michaelb/sniprun", run = "bash ./install.sh" },
 }
+
+require('overseer').setup()
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 -- vim.api.nvim_create_autocmd("BufEnter", {

@@ -19,7 +19,9 @@ def main():
     parser = argparse.ArgumentParser(description='Tmate launcher')
     parser.add_argument("sess_name", help=f"session name", default=random.choices(list(string.digits + string.ascii_letters), k=20))
     args = parser.parse_args()
-    os.system(f"ssh {get_conn_string(args.sess_name)}")
+    conn_string = get_conn_string(args.sess_name)
+    print(f"ssh {conn_string}")
+    os.system(f"ssh {conn_string}")
 
 
 if __name__ == '__main__':
