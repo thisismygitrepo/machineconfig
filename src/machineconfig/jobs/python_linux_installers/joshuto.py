@@ -3,6 +3,7 @@
 """
 Rust version of lf (GO)
 """
+
 from machineconfig.utils.utils import get_latest_release, find_move_delete_linux
 import crocodile.toolbox as tb
 
@@ -16,6 +17,7 @@ path = path.download().ungz_untar(inplace=True)
 exe = path.search()[0].joinpath("joshuto")
 exe.chmod(0o777)
 tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print()
-
+path.delete(sure=True)
 # after first release:
 # url = get_latest_release("https://github.com/kamiyaa/joshuto", suffix="x86_64-unknown-linux-gnu", compression="tar.gz", download_n_extract=True)
+

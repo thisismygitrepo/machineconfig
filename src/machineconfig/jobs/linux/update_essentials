@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+
+orig_path=$(cd -- "." && pwd)
 cd ~/code/machineconfig/
 git reset --hard
 git pull origin
@@ -7,4 +9,5 @@ chmod +x ~/code/machineconfig/src/machineconfig/jobs/linux -R
 chmod +x ~/code/machineconfig/settings/lf_linux/exe -R
 cd ~/code/crocodile
 git pull origin
-cd ~
+cd $orig_path
+

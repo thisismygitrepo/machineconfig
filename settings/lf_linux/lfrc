@@ -73,10 +73,10 @@ map <enter> open
 map w
 map ww bash
 map wp $powershell
-map wr $~/scripts/croshell.sh
+map wr $~/scripts/croshell
 map wm $cmd
 map i $~/code/machineconfig/settings/lf_linux/exe/previewer.sh $f
-map R $~/scripts/croshell.sh -r $f
+map R $~/scripts/croshell -r $f
 
 
 # o file/folder Operations

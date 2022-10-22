@@ -5,12 +5,22 @@ from crocodile.comms.gdrive import GDriveAPI
 # app_name = "something"
 # tb.T().run(f"cargo install {app_name}")
 
-url = r"https://github.com/lunaryorn/mdcat"
-link = tb.P(url)
-res = f"""
-git clone {url}
-cd {url.split('/')[-1]}
-cargo install --path .
-mv .cargo/bin/{url.split('/')[-1]}.exe {tb.get_env().WindowsApps}/
-bu_gdrive_sx res_path -zR
-"""
+def get_shell_script(url=r"https://github.com/atanunq/viu"):
+    repo = url.split('/')[-1]
+    exe = f".cargo/bin/{repo}.exe"
+    res = f"""
+    cd ~
+    git clone {url}
+    cd {repo}
+    cargo install --path .
+    bu_gdrive_sx {exe} -zR
+    mv {exe} {tb.get_env().WindowsApps.as_posix()}/
+    """
+    # tb.P(repo).delete(sure=True)
+    print(res)
+
+
+# after cargo install diskonaut
+# then mv ~/.cargo/bin/diskonaut.exe ~/AppData/Local/Microsoft/WindowsApps/
+# then bu_gdrive_sx.ps1 .\diskonaut.exe -sRz  # zipping is vital to avoid security layers and keep file metadata.
+

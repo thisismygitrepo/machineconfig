@@ -20,8 +20,10 @@ https://github.com/Geektrovert/AwsTerm
 * one time share https://github.com/sniptt-official/ots
 * https://github.com/gopasspw/gopass
 * image https://github.com/atanunq/viu/releases/tag/v1.4.0
-* https://github.com/simonhaenisch/md-to-pdf
-* https://github.com/BlueHatbRit/mdpdf
+
+* https://github.com/simonhaenisch/md-to-pdf  -- use this instead
+* https://github.com/BlueHatbRit/mdpdf -- security volunarability.
+
 # search
 * https://github.com/phiresky/ripgrep-all
 * 

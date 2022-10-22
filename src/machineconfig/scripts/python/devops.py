@@ -25,7 +25,8 @@ mydict.update({
     "pull all repos": "",
     "commit all repos": "",
     "push all repos": "",
-
+    "setup ssh": "",
+    "setup ssh wsl": "",
 })
 
 
@@ -56,12 +57,19 @@ def main():
         installers.print(styler=lambda x: x.stem)
         idx = int(input("\nChoose a program: "))
         if idx == 0:
-            program1 = "source ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh"
-            program2 = "~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1"
-            program = program1 if system() == "Linux" else program2
+            program_linux = "source ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh"
+            program_windows = "~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1"
+            program = program_linux if system() == "Linux" else program_windows
         else:
             installers[idx].readit()  # finish the task
             program = "~/.bashrc"  # write an empty program
+    elif choice_key == "setup ssh":
+        program_windows = f"""Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""
+        program_linux = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash  # https://github.com/thisismygitrepo.keys"""
+        program = program_linux if system() == "Linux" else program_windows
+    elif choice_key == "setup ssh wsl":
+        program = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
+    else: raise ValueError(f"Unknown choice. {choice_key}")
 
     # print(f"Executing {program}")
     if system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)

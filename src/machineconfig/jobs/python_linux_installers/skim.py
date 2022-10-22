@@ -12,4 +12,5 @@ exe = path.joinpath("sk")
 exe.chmod(0o777)
 # exe.move(folder=r"/usr/local/bin", overwrite=False)
 tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print()
+path.delete(sure=True)
 
