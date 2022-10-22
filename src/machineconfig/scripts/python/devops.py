@@ -36,9 +36,10 @@ def main():
     for idx, (key, value) in enumerate(mydict.items()):
         print(idx, key, value)
     choice_idx = input("Enter your choice: ")
-    choice_key = list(mydict.keys())[int(choice_idx)]
-    print(choice_key)
-    program = mydict[choice_key]
+    try: choice_key = list(mydict.keys())[int(choice_idx)]
+    except IndexError: raise ValueError(f"Unknown choice. {choice_idx}")
+
+    print(f"{choice_key}".center(50, "-"))
 
     if choice_key == "pull all repos":
         from machineconfig.jobs.python.repos import pull_all
@@ -69,7 +70,8 @@ def main():
         program = program_linux if system() == "Linux" else program_windows
     elif choice_key == "setup ssh wsl":
         program = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
-    else: raise ValueError(f"Unknown choice. {choice_key}")
+    else:
+        program = mydict[choice_key]
 
     # print(f"Executing {program}")
     if system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
