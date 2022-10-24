@@ -1,5 +1,6 @@
 
-activate_ve
+#activate_ve
+. $PSScriptRoot/activate_ve.ps1
 $orig_path = $pwd
 
 mkdir 'C:\temp' -ErrorAction SilentlyContinue
@@ -21,5 +22,6 @@ else  {$target_path = Resolve-Path $args[0]}
 cd ~/AppData/Local/Tesseract-OCR/
 pytesseract.exe $target_path | Set-Clipboard
 echo $(Get-Clipboard)
+
 deactivate
 cd $orig_path

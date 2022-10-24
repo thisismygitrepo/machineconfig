@@ -7,8 +7,10 @@ import crocodile.toolbox as tb
 
 url = 'https://github.com/junegunn/fzf'
 
-
-if __name__ == '__main__':
+def main():
     tb.Terminal().run("nu -c 'ps | where name == fzf.exe | each { |it| kill $it.pid --force}'", shell="pwsh").print()
     get_latest_release(url, suffix='windows_amd64', download_n_extract=True)
 
+
+if __name__ == '__main__':
+    pass

@@ -53,7 +53,7 @@ def main_symlinks():
     symlink_mapper['wsl_linux']['home']["to_this"] = symlink_mapper['wsl_linux']['home']["to_this"].replace("username", UserName)
 
     overwrite = True
-    exclude = ["startup_windows", "wsl_linux", "wsl_windows"]
+    exclude = ["autostart_windows"]  # "wsl_linux", "wsl_windows"
     for program_key in symlink_mapper.keys():
         if program_key in exclude or f"{system.lower()}" not in program_key: continue
         for file_key, file_map in symlink_mapper[program_key].items():

@@ -5,7 +5,9 @@ import argparse
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Move and copy files across from WSL to windows")
+    parser = argparse.ArgumentParser(description="""Move and copy files across between WSL & Windows."
+The direction is automatically determined by sensing the execution environment.
+Otherwise, a flag must be raised to indicate the direction.""")
 
     # positional argument
     parser.add_argument("path", help="path of file/folder to transfer over.")

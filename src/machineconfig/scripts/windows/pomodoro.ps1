@@ -1,5 +1,5 @@
 
 #~/venvs/ve/Scripts/Activate.ps1
 . $PSScriptRoot/activate_ve.ps1
-python $PSScriptRoot/../python/bu_gdrive_sx.py $args
+python -m fire $PSScriptRoot/../python/pomodoro.py pomodoro $args
 deactivate

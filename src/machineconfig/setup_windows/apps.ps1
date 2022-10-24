@@ -58,12 +58,12 @@ npm i sharewifi -g
 # installing requirements first (as per the installer instructions)
 winget install -e --id "Microsoft.VC++2015-2022Redist-x64"
 winget install -e --id "Microsoft.VisualStudio.2022.BuildTools"
-winget install --Id Rustlang.Rust.MSVC --source winget
+winget install --Id Rustlang.Rustup --source winget
 
 #winget install --name "julia" --Id "Julialang.Julia" --source winget --accept-package-agreements --accept-source-agreements
 winget install --Id Codeblocks.Codeblocks --source winget  # gives gcc compiler  # could also be provided by MSCV Build Tools
 winget install --Id GnuWin32.Make --source winget  # make command  # can be provided by mscv build tools.
-cargo install tokei  # counts lines of code in every language.
+# cargo install tokei  # counts lines of code in every language.
 winget install --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
 winget install --Name onefetch --Id o2sh.onefech --source winget  # repo-version of system neofetch, see also tokei
 

@@ -5,7 +5,10 @@
 
 url = 'https://github.com/sharkdp/fd'
 
-
-if __name__ == '__main__':
+def main():
     from machineconfig.utils.utils import get_latest_release
     get_latest_release(url, download_n_extract=True)
+
+
+if __name__ == '__main__':
+    main()
