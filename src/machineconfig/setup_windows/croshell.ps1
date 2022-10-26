@@ -14,6 +14,8 @@ set mypy ($env:LOCALAPPDATA + "\Programs\Python\Python$py_version\python.exe")
 
 & ~/venvs/$ve_name/Scripts/Activate.ps1  # activate, now use python instead of $mypy
 
+#mkdir ~/code -ErrorAction SilentlyContinue
+#cd code
 pip install --upgrade pip  # upgrades the pip that is within the environment.
 pip install crocodile
 pip install machineconfig

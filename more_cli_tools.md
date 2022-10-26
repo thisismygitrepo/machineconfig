@@ -6,6 +6,7 @@
 
 https://github.com/k4m4/terminals-are-sexy
 https://github.com/agarrharr/awesome-cli-apps
+https://github.com/rust-unofficial/awesome-rust
 
 https://github.com/learn-anything/command-line-tools
 https://github.com/toolleeo/cli-apps
@@ -26,4 +27,9 @@ https://github.com/Geektrovert/AwsTerm
 
 # search
 * https://github.com/phiresky/ripgrep-all
-* 
+
+
+# https://github.com/vinta/awesome-python
+* https://github.com/datafolklabs/cement
+* https://github.com/pallets/click fire alternative
+* https://github.com/JaidedAI/EasyOCR
