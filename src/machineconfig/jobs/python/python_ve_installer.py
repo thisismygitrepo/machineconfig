@@ -11,7 +11,7 @@ lib_root = tb.P(machineconfig.__file__).parent
 def ve_setup():
     dotted_py_version = input("Enter python version (e.g. 3.11): ")
     env_name = input("Enter virtual environment name: ")
-    repos = input("Install essential repos? ([y]/n)") or "y"
+    repos = input("Install essential repos? ([y]/n): ") or "y"
 
     env_path = tb.P.home().joinpath(env_name)
     if env_path.exists(): env_path.delete(sure=True)
@@ -25,6 +25,10 @@ def ve_setup():
         text = tb.modify_text(raw=text, txt="ve_name=", alt=f"$ve_name='{env_name}'", newline=True)
         scripts += text
 
+    print("Scrupt to create virtual environment...".center(50, "-"))
+    print(scripts)
+    print("".center(50, "-"))
+    
     return scripts
 
 
