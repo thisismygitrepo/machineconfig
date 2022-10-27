@@ -7,6 +7,7 @@ extension = ['~/code/machineconfig/src/machineconfig/scripts/windows',
              'C:\Program Files (x86)\GnuWin32\bin',
              'C:\Program Files\CodeBlocks\MinGW\bin',
              'C:\Program Files\nu\bin',
+             'C:\Program Files\Graphviz\bin',  # required by .viz_object_hirarchy()
              ]
 
 

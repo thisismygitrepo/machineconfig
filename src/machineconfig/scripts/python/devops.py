@@ -22,6 +22,7 @@ else:
     }
 
 mydict.update({
+    "install ve": "",
     "pull all repos": "",
     "commit all repos": "",
     "push all repos": "",
@@ -44,12 +45,19 @@ def main():
     if choice_key == "pull all repos":
         from machineconfig.jobs.python.repos import pull_all
         program = pull_all()
+
     elif choice_key == "push all repos":
         from machineconfig.jobs.python.repos import push_all
         program = push_all()
+
     elif choice_key == "commit all repos":
         from machineconfig.jobs.python.repos import commit_all
         program = commit_all()
+
+    elif choice_key == "install ve":
+        from machineconfig.jobs.python.python_ve_installer import ve_setup
+        program = ve_setup()
+
     elif choice_key == "install devapps":
         if system() == "Windows": from machineconfig.jobs.python.python_windows_installers_all import get_installers
         else: from machineconfig.jobs.python.python_linux_installers_all import get_installers
