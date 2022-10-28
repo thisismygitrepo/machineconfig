@@ -1,2 +1,15 @@
 #!/usr/bin/env bash
-source ~/venvs/ve/bin/activate
+
+name=$0
+if [ -z "$0" ]; then
+
+if [ -z "$VENV_NAME" ]
+then
+    name=$VENV_NAME
+else
+    name="ve"
+fi
+
+fi
+
+source ~/venvs/$name/bin/activate

@@ -1,13 +1,7 @@
 #!/usr/bin/env bash
 $tmp = pwd
 
-if ($args[0] -eq $null) {
-    $name = ""
-}
-else {
-    $name = $args[0]
-}
-
+. ~/scripts/activate_ve
 python -m fire ./windows_terminal_setup/fancy_prompt_themes.py choose $args[0]
 .$profile  # reload the profile
 

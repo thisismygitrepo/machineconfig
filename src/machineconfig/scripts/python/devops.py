@@ -10,6 +10,7 @@ options = ['update essential repos',
            'install ve',
            'create symlinks',
            'add ssh key',
+           'send ssh key',
            'setup ssh',
            'setup ssh wsl',
            'pull all repos',
@@ -83,10 +84,15 @@ def main():
         program_linux = "source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh"
         program = program_linux if system() == "Linux" else program_windows
     elif choice_key == "add ssh key":
-        program_windows = "~/code/machineconfig/src/machineconfig/jobs/windows/openssh-server_add_key.ps1"
-        program_windows = tb.P(program_windows).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{input("Path to ssh key: ")}"')
-        program_linux = "source ~/code/machineconfig/src/machineconfig/setup_linux/ssh_add.sh"
-        program = program_linux if system() == "Linux" else program_windows
+        path_to_key = input("Path to ssh key: ")
+        if system() == "Linux":
+            program = f"cat {path_to_key} >> ~/.ssh/authorized_keys"
+        else: # Windows
+            program_windows = "~/code/machineconfig/src/machineconfig/jobs/windows/openssh-server_add_key.ps1"
+            program_windows = tb.P(program_windows).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
+            program = program_windows
+    elif choice_key == "send ssh key":
+        pass
     else:
         raise ValueError(f"Unimplemented choice: {choice_key}")
 
