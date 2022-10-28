@@ -3,42 +3,30 @@ from platform import system
 # import subprocess
 import crocodile.toolbox as tb
 
-
 PROGRAM_PATH = tb.P.tmp().joinpath("shells/python_return_command") + (".ps1" if system() == "Windows" else ".sh")
 
-
-if system() == 'Windows':
-    mydict = {
-        "update essential repos": "~/code/machineconfig/src/machineconfig/jobs/windows/update_essentials.ps1",
-        "install devapps": "~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1",
-        "create symlinks": "~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1",
-
-    }
-else:
-    mydict = {
-        "update essential repos": "source ~/code/machineconfig/src/machineconfig/jobs/linux/update_essentials",
-        "install devapps": "source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)",
-        "create symlinks": "source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh ",
-    }
-
-mydict.update({
-    "install ve": "",
-    "pull all repos": "",
-    "commit all repos": "",
-    "push all repos": "",
-    "setup ssh": "",
-    "setup ssh wsl": "",
-})
+options = ['update essential repos',
+           'install devapps',
+           'install ve',
+           'create symlinks',
+           'add ssh key',
+           'setup ssh',
+           'setup ssh wsl',
+           'pull all repos',
+           'commit all repos',
+           'push all repos']
 
 
 def main():
     PROGRAM_PATH.delete(sure=True, verbose=False)
 
-    for idx, (key, value) in enumerate(mydict.items()):
-        print(idx, key, value)
+    for idx, key in enumerate(options):
+        print(idx, key)
     choice_idx = input("Enter your choice: ")
-    try: choice_key = list(mydict.keys())[int(choice_idx)]
-    except IndexError: raise ValueError(f"Unknown choice. {choice_idx}")
+    try:
+        choice_key = options[int(choice_idx)]
+    except IndexError:
+        raise ValueError(f"Unknown choice. {choice_idx}")
 
     print(f"{choice_key}".center(50, "-"))
 
@@ -59,8 +47,10 @@ def main():
         program = ve_setup()
 
     elif choice_key == "install devapps":
-        if system() == "Windows": from machineconfig.jobs.python.python_windows_installers_all import get_installers
-        else: from machineconfig.jobs.python.python_linux_installers_all import get_installers
+        if system() == "Windows":
+            from machineconfig.jobs.python.python_windows_installers_all import get_installers
+        else:
+            from machineconfig.jobs.python.python_linux_installers_all import get_installers
         installers = get_installers()
         installers.list.insert(0, tb.P("all"))
         installers.print(styler=lambda x: x.stem)
@@ -78,12 +68,31 @@ def main():
         program = program_linux if system() == "Linux" else program_windows
     elif choice_key == "setup ssh wsl":
         program = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
+    elif choice_key == "update essential repos":
+        program_windows = "~/code/machineconfig/src/machineconfig/jobs/windows/update_essentials.ps1"
+        program_linux = "source ~/code/machineconfig/src/machineconfig/jobs/linux/update_essentials"
+        program = program_linux if system() == "Linux" else program_windows
+    elif choice_key == "install devapps":
+        program_windows = "~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1"
+        program_linux = "source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)"
+        program = program_linux if system() == "Linux" else program_windows
+    elif choice_key == "create symlinks":
+        program_windows = "~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1"
+        program_linux = "source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh"
+        program = program_linux if system() == "Linux" else program_windows
+    elif choice_key == "add ssh key":
+        program_windows = "~/code/machineconfig/src/machineconfig/jobs/windows/openssh-server_add_key.ps1"
+        program_windows = tb.P(program_windows).read_text().replace('$sshfile=""', f'$sshfile="{input("Path to ssh key: ")}"')
+        program_linux = "source ~/code/machineconfig/src/machineconfig/setup_linux/ssh_add.sh"
+        program = program_linux if system() == "Linux" else program_windows
     else:
-        program = mydict[choice_key]
+        raise ValueError(f"Unimplemented choice: {choice_key}")
 
-    # print(f"Executing {program}")
-    if system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
-    else: PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
+    print(f"Executing {PROGRAM_PATH}")
+    if system() == 'Windows':
+        PROGRAM_PATH.create(parents_only=True).write_text(program)
+    else:
+        PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
 
 
 if __name__ == "__main__":
