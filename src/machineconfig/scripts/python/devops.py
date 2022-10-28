@@ -20,14 +20,16 @@ options = ['update essential repos',
 def main():
     PROGRAM_PATH.delete(sure=True, verbose=False)
 
+    print("\n")
+    print(f"DEVOPS".center(50, "-"))
     for idx, key in enumerate(options):
         print(idx, key)
-    choice_idx = input("Enter your choice: ")
+    print("\n")
+    choice_idx = input("Enter a number: ")
     try:
         choice_key = options[int(choice_idx)]
     except IndexError:
         raise ValueError(f"Unknown choice. {choice_idx}")
-
     print(f"{choice_key}".center(50, "-"))
 
     if choice_key == "pull all repos":
@@ -82,7 +84,7 @@ def main():
         program = program_linux if system() == "Linux" else program_windows
     elif choice_key == "add ssh key":
         program_windows = "~/code/machineconfig/src/machineconfig/jobs/windows/openssh-server_add_key.ps1"
-        program_windows = tb.P(program_windows).read_text().replace('$sshfile=""', f'$sshfile="{input("Path to ssh key: ")}"')
+        program_windows = tb.P(program_windows).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{input("Path to ssh key: ")}"')
         program_linux = "source ~/code/machineconfig/src/machineconfig/setup_linux/ssh_add.sh"
         program = program_linux if system() == "Linux" else program_windows
     else:
