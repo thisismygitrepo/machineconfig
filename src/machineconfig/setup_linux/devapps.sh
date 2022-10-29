@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 # use this: source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
-croshell -pN -f ~/code/machineconfig/src/machineconfig/jobs/python/python_linux_installers_all.py
+croshell -pN --file=~/code/machineconfig/src/machineconfig/jobs/python/python_linux_installers_all.py
 
 ## from: https://astronvim.github.io/
 #mv ~/.config/nvim ~/.config/nvim.bak

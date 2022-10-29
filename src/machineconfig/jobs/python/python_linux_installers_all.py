@@ -9,7 +9,7 @@ def get_installers():
 
 
 def main():
-    get_installers().apply(tb.Read.py)
+    get_installers().apply(lambda py_file: tb.Read.py(py_file)["main"]())
 
 
 if __name__ == '__main__':
