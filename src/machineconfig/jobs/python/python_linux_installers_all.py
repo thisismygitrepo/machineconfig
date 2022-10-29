@@ -9,11 +9,15 @@ def get_installers():
 
 
 def main():
+    fail = []
     for py_file in get_installers():
         try:
             tb.Read.py(py_file)["main"]()
         except Exception as ex:
             print(ex)
+            fail.append(py_file)
+    print(f"Failed: {fail}")
+    print("Completed Installation".center(100, "-"))
 
 
 if __name__ == '__main__':

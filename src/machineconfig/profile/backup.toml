@@ -1,7 +1,7 @@
 
 # locations to be backed up to the cloud.
 
-[thunderbird]
+[thunderbird_windows]
 path = '~/AppData/Roaming/Thunderbird/Profiles'
 encrypt = 'True'
 zip = 'True'

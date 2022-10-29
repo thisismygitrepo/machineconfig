@@ -21,4 +21,3 @@ pip install crocodile
 pip install machineconfig
 
 python -m fire machineconfig.profile.create main
-python -m fire machineconfig.setup_windows_terminal.set_settings main

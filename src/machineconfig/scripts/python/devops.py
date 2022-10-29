@@ -15,7 +15,8 @@ options = ['update essential repos',
            'setup ssh wsl',
            'pull all repos',
            'commit all repos',
-           'push all repos']
+           'push all repos',
+           'backup']
 
 
 def main():
@@ -92,7 +93,19 @@ def main():
             program_windows = tb.P(program_windows).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
             program = program_windows
     elif choice_key == "send ssh key":
-        pass
+        raise NotImplementedError
+    elif choice_key == "backup":
+        import machineconfig
+        library_root = tb.P(machineconfig.__file__).parent.joinpath("profile/backup.toml").readit()
+        for item_name, item in library_root.items():
+            if system() == "Linux" and "windows" in item_name: continue
+            if system() == "Windows" and "linux" in item_name: continue
+            file = tb.P(item['path']).expanduser()
+            remote_dir = onedrive.joinpath(f"myhome/{file.rel2home().parent}")
+            if item['zip']: file = file.zip()
+            if item['encrypt']: file = file.encrypt()
+            file.move(folder=remote_dir)
+        program =""
     else:
         raise ValueError(f"Unimplemented choice: {choice_key}")
 

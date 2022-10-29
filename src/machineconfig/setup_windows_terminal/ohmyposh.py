@@ -37,7 +37,7 @@ def change_shell_profile():
     # Step 5: customize powershell profile such that it loads oh-my-posh and the terminal icons automatically.
     shell = {"powershell": "pwsh.exe", "Windows Powershell": "powershell.exe"}["powershell"].split(".exe")[0]
     profile_path = tb.Terminal().run("$profile", shell=shell).as_path
-    theme_path = env.LocalAppData.joinpath(r"Programs\oh-my-posh\themes").collapseuser().replace("~", "$env:USERPROFILE")  # organization machiens with homeshare confuse H: with ~.
+    theme_path = env.LocalAppData.joinpath(r"Programs\oh-my-posh\themes").collapseuser().as_posix().replace("~", "$env:USERPROFILE")  # organization machiens with homeshare confuse H: with ~.
     # makes the profile work on any machine.
     txt = f"oh-my-posh --init --shell pwsh --config {theme_path}\\jandedobbeleer.omp.json | Invoke-Expression"
     profile_path.modify_text(txt="oh-my-posh", alt=txt, newline=True, notfound_append=True)
