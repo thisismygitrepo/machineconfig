@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # source activate_ve.sh
-. ~/scripts/activate_ve
+. ~/scripts/activate_ve ''
 python -m machineconfig.scripts.python.devops $@
 chmod +x ~/tmp_results/shells/python_return_command.sh
 source ~/tmp_results/shells/python_return_command.sh

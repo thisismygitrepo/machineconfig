@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-. ~/scripts/activate_ve
+. ~/scripts/activate_ve ''
 python -m crocodile.run $@
