@@ -9,7 +9,11 @@ def get_installers():
 
 
 def main():
-    get_installers().apply(lambda py_file: tb.Read.py(py_file)["main"]())
+    for py_file in get_installers():
+        try:
+            tb.Read.py(py_file)["main"]()
+        except Exception as ex:
+            print(ex)
 
 
 if __name__ == '__main__':
