@@ -65,6 +65,8 @@ icons = {this = '~/.config/lf/icons', to_this = '~/code/machineconfig/settings/l
 
 [tmux_linux]
 config = {this = '~/.tmux.conf', to_this = '~/code/machineconfig/settings/tmux/.tmux.conf'}
+tmate = {this = '~/.tmate.conf', to_this = '~/code/machineconfig/settings/tmux/.tmate.conf'}
+
 
 [zellij_linux]
 config = { this = '~/.config/zellij/config.kdl', to_this = '~/code/machineconfig/settings/zellij/config.kdl' }
