@@ -43,70 +43,12 @@ wget https://dystroy.org/broot/download/x86_64-linux/broot
 # broot doesn't search aribtrarily deep and it also avoids git folders.
 chmod +x broot
 sudo mv ./broot /usr/local/bin/
+
 sudo apt install ncdu   # disk usage analyzer.
-
-
 sudo apt install exa  # replacement for ls. no ner fonts, unlike lsd
-#cd ~
-#mkdir "tmp_asdf"
-#cd tmp_asdf
-#wget https://github.com/Peltoche/lsd/releases/latest/download/lsd-0.23.1-x86_64-unknown-linux-gnu.tar.gz
-#tar -xvzf *
-#chmod +x ./lsd
-#sudo mv ./lsd /usr/local/bin/
-#cd ~
-#rm -rdf tmp_asdf
-
-# ---------------------- kondo, a smart and automatic disk cleaner ------------------------
-cd ~ || exit
-mkdir "tmp_asdf"
-cd tmp_asdf || exit
-wget https://github.com/tbillington/kondo/releases/latest/download/kondo-x86_64-unknown-linux-gnu.tar.gz
-tar -xvzf *
-chmod +x ./kondo
-sudo mv ./kondo /usr/local/bin/
-cd ~ || exit
-rm -rdf tmp_asdf
-
-
-get_latest_release() {
-  curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub api
-    grep '"tag_name":' |                                            # Get tag line
-    sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
-}
-
-# ---------------------- diskonaut, a disk usage analyzer ------------------------
-cd ~; mkdir tmp_asdf; cd tmp_asdf
-latest=$(get_latest_release "imsnif/diskonaut")
-wget https://github.com/imsnif/diskonaut/releases/download/$latest/diskonaut-$latest-unknown-linux-musl.tar.gz
-tar -xvzf *
-chmod +x ./diskonaut
-sudo mv ./diskonaut /usr/local/bin/
-cd ~; rm -rdf tmp_asdf
-
-
-# -------------------- banchwich, a network usage monitor
-cd ~; mkdir tmp_asdf; cd tmp_asdf
-latest=$(get_latest_release "imsnif/bandwhich")
-wget https://github.com/imsnif/bandwhich/releases/download/$latest/bandwhich-v$latest-x86_64-unknown-linux-musl.tar.gz
-tar -xvzf *
-chmod +x ./bandwhich
-sudo mv ./bandwhich /usr/local/bin/
-cd ~; rm -rdf tmp_asdf
 
 sudo apt install tmux -y # allows multiple terminals that are persistent.
 # sudo apt install tmate -y  # remote tmux, see https://tmate.io
-# ------------ zellij, a terminal multiplexer ------------
-cd ~; mkdir "tmp_asdf"; cd tmp_asdf
-wget https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz
-tar -xvzf *; chmod +x ./zellij; sudo mv ./zellij /usr/local/bin/; cd ~; rm -rdf tmp_asdf
-
-
-# ------------------- nushell, structured data shell -------------------
-cd ~; mkdir "tmp_asdf"; cd tmp_asdf
-latest=$(get_latest_release "nushell/nushell")
-wget https://github.com/nushell/nushell/releases/download/$latest/nu-$latest-x86_64-unknown-linux-gnu.tar.gz
-tar -xvzf *; chmod +x ./nu; sudo mv ./nu /usr/local/bin/; cd ~; rm -rdf tmp_asdf
 
 
 # ---------------------------- text style ------------------------------------
