@@ -3,6 +3,7 @@ import crocodile.toolbox as tb
 import crocodile.environment as env
 from uuid import uuid4
 
+
 """
 Not to be confused:
 * Windows Terminal & Windows Terminal Preview: The latter is the night release version of WT.
@@ -20,7 +21,7 @@ class TerminalSettings(object):
     def __init__(self):
         # Grabbing Terminal Settings file:
         self.path = env.LocalAppData.joinpath(r"Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json")
-        self.path.copy(append=".orig." + tb.randstr())
+        self.path.copy(append=".orig_" + tb.randstr())
         self.dat = self.path.readit()
         self.profs = tb.L(self.dat["profiles"]["list"])
 

@@ -3,7 +3,7 @@
 
 [path_windows]
 extension = ['~/code/machineconfig/src/machineconfig/scripts/windows',
-             '~/dotfiles/exe/windows',
+             '~/dotfiles/scripts/windows',
              'C:\Program Files (x86)\GnuWin32\bin',
              'C:\Program Files\CodeBlocks\MinGW\bin',
              'C:\Program Files\nu\bin',
@@ -12,6 +12,6 @@ extension = ['~/code/machineconfig/src/machineconfig/scripts/windows',
 
 
 [path_linux]
-extension = ['~/code/machineconfig/src/machineconfig/scripts/linux/',
-             '~/dotfiles/exe/linux',
+extension = ['~/code/machineconfig/src/machineconfig/scripts/linux',
+             '~/dotfiles/scripts/linux',
              ]

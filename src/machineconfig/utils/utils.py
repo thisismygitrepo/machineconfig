@@ -14,7 +14,9 @@ def symlink(this: tb.P, to_this: tb.P, overwrite=True):
     if this.is_symlink(): this.delete(sure=True)  # delete if it exists as symblic link, not a concrete path.
     if this.exists():  # this is a problem. It will be resolved via `overwrite`
         if overwrite is True:  # it *can* be deleted, but let's look at target first.
-            if to_this.exists(): this.delete(sure=True)  # this exists, to_this as well. to_this is prioritized.
+            if to_this.exists():
+                # this.delete(sure=True)  # this exists, to_this as well. to_this is prioritized.
+                this.append(f".orig_{tb.randstr()}", inplace=True)  # rename is better than deletion
             else: this.move(path=to_this)  # this exists, to_this doesn't. to_this is prioritized.
         elif overwrite is False:  # don't sacrefice this, sacrefice to_this.
             if to_this.exists(): this.move(path=to_this, overwrite=True)  # this exists, to_this as well, this is prioritized.   # now we are readly to make the link

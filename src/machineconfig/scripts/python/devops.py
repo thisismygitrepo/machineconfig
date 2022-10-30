@@ -88,7 +88,7 @@ def main():
         path_to_key = input("Path to ssh key: ")
         if system() == "Linux":
             program = f"cat {path_to_key} >> ~/.ssh/authorized_keys"
-        else: # Windows
+        else:  # Windows
             program_windows = "~/code/machineconfig/src/machineconfig/jobs/windows/openssh-server_add_key.ps1"
             program_windows = tb.P(program_windows).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
             program = program_windows
@@ -101,11 +101,13 @@ def main():
             if system() == "Linux" and "windows" in item_name: continue
             if system() == "Windows" and "linux" in item_name: continue
             file = tb.P(item['path']).expanduser()
-            remote_dir = onedrive.joinpath(f"myhome/{file.rel2home().parent}")
+            onedrive = tb.P.home().joinpath("dotfiles/settings/paths.toml").readit()['onedrive']
+            onedrive_name = onedrive[onedrive['default']]
+            remote_dir = tb.P.home().joinpath(onedrive_name, f"myhome/{file.rel2home().parent}")
             if item['zip']: file = file.zip()
             if item['encrypt']: file = file.encrypt()
             file.move(folder=remote_dir)
-        program =""
+        program = ""
     else:
         raise ValueError(f"Unimplemented choice: {choice_key}")
 

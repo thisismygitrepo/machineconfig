@@ -18,6 +18,7 @@ CONFIG_ROOT = LIBRARY_ROOT.parent.parent.joinpath("settings")
 
 # =================== SYMLINKS ====================================
 
+
 def link_ssh(overwrite=True):
     """The function can link aribtrary number of files without linking the directory itself (which is not doable in toml config file)"""
     path = tb.P.home().joinpath(".ssh")
@@ -40,13 +41,6 @@ def link_aws(overwrite=True):
     for item in target.search("*"): symlink(path.joinpath(item.name), item, overwrite=overwrite)
 
 
-def add_to_shell_profile_path(dirs: list):
-    addition = PathVar.append_temporarily(dirs=dirs)
-    if system == "Windows": tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(addition, addition, newline=False, notfound_append=True)
-    elif system == "Linux": tb.P("~/.bashrc").expanduser().modify_text(addition, addition, notfound_append=True)
-    else: raise ValueError
-
-
 def main_symlinks():
     symlink_mapper = LIBRARY_ROOT.joinpath("profile/mapper.toml").readit()
     symlink_mapper['wsl_windows']['home']["to_this"] = symlink_mapper['wsl_windows']['home']["to_this"].replace("username", UserName)
@@ -63,6 +57,15 @@ def main_symlinks():
     link_aws(overwrite=overwrite)
     link_ssh(overwrite=overwrite)
     if system == "Linux": tb.Terminal().run(f'chmod +x {LIBRARY_ROOT.joinpath(f"scripts/{system.lower()}")} -R')
+
+
+def add_to_shell_profile_path(dirs: list):
+    addition = PathVar.append_temporarily(dirs=dirs)
+    if system == "Windows": file = tb.Terminal().run("$profile", shell="pwsh").as_path
+    elif system == "Linux": file = tb.P("~/.bashrc").expanduser()
+    else: raise ValueError
+    file.copy(append=".orig")  # _" + tb.randstr()
+    file.modify_text(addition, addition, newline=False, notfound_append=True)
 
 
 def main_env_path():
