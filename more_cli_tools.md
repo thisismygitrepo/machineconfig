@@ -33,3 +33,7 @@ https://github.com/Geektrovert/AwsTerm
 * https://github.com/datafolklabs/cement
 * https://github.com/pallets/click fire alternative
 * https://github.com/JaidedAI/EasyOCR
+
+
+# Recommended
+* git grapth (rust) https://github.com/mlange-42/git-graph

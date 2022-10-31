@@ -95,9 +95,7 @@ def main():
     elif choice_key == "send ssh key":
         raise NotImplementedError
     elif choice_key == "backup":
-        import machineconfig
-        library_root = tb.P(machineconfig.__file__).parent.joinpath("profile/backup.toml").readit()
-        for item_name, item in library_root.items():
+        for item_name, item in get_res().items():
             if system() == "Linux" and "windows" in item_name: continue
             if system() == "Windows" and "linux" in item_name: continue
             file = tb.P(item['path']).expanduser()
@@ -106,8 +104,21 @@ def main():
             remote_dir = tb.P.home().joinpath(onedrive_name, f"myhome/{file.rel2home().parent}")
             if item['zip']: file = file.zip()
             if item['encrypt']: file = file.encrypt()
-            file.move(folder=remote_dir)
-        program = ""
+            file.move(folder=remote_dir, overwrite=True)
+        program = "echo 'Finished Backing up.'"
+    elif choice_key == "retrieve":
+        for item_name, item in get_res().items():
+            if system() == "Linux" and "windows" in item_name: continue
+            if system() == "Windows" and "linux" in item_name: continue
+            file = tb.P(item['path']).expanduser()
+            onedrive = tb.P.home().joinpath("dotfiles/settings/paths.toml").readit()['onedrive']
+            onedrive_name = onedrive[onedrive['default']]
+            remote_dir = tb.P.home().joinpath(onedrive_name, f"myhome/{file.rel2home()}")
+            file = remote_dir.move(folder=file.parent, overwrite=True)
+            if item['encrypt']: file = file.decrypt()
+            if item['zip']: file = file.unzip()
+            _ = file
+        program = "echo 'Finished retrieving up.'"
     else:
         raise ValueError(f"Unimplemented choice: {choice_key}")
 
@@ -116,6 +127,20 @@ def main():
         PROGRAM_PATH.create(parents_only=True).write_text(program)
     else:
         PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
+
+
+def get_res():
+    import machineconfig
+    library_root = tb.P(machineconfig.__file__).parent.joinpath("profile/backup.toml").readit()
+    choices_list = ['all'] + tb.L(library_root.keys())
+    choices_list.print()
+    choice_number = int(input("Choose a backup: "))
+    if choice_number == 0:
+        res = library_root
+    else:
+        choice_entry = tb.L(library_root.keys())[choice_number]
+        res = {choice_entry: library_root[choice_entry]}
+    return res
 
 
 if __name__ == "__main__":
