@@ -32,14 +32,14 @@ def main():
 # as per https://github.com/helix-editor/helix/wiki/How-to-install-the-default-language-servers
 # and https://spacevim.org/use-vim-as-a-python-ide/
 
-""" 
-pip install python-lsp-server
-
-pip install --user pylint
-pip install --user yapf
-pip install --user isort
 
 """
+#cd ~; mkdir "tmp_asdf"; cd tmp_asdf
+#latest=$(get_latest_release "helix-editor/helix")
+#wget https://github.com/helix-editor/helix/releases/download/$latest/helix-$latest-x86_64-linux.tar.xz
+#tar -xf *; chmod +x ./nu; sudo mv ./nu /usr/local/bin/; cd ~; rm -rdf tmp_asdf
+"""
+
 
 if __name__ == '__main__':
     main()

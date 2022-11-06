@@ -1,3 +1,9 @@
 
 you-get  # download content from internet with CLI
 pydot  # additionally required by tensorflow to plot a model
+
+
+# pip install python-lsp-server
+# pip install --user pylint
+# pip install --user yapf
+# pip install --user isort

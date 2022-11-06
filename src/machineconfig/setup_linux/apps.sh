@@ -46,18 +46,6 @@ sudo apt install tmux -y # allows multiple terminals that are persistent.
 
 
 # ---------------------------- text style ------------------------------------
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
-
-# zsh
-#sudo apt install zsh
-# sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-# sudo apt install zsh-syntax-highlighting -y
-# sudo apt install zsh-autosuggestions -y
-# sudo apt install zsh-theme-powerlevel10k -y
-# sudo apt install zsh-completions -y
-# sudo apt install zsh-history-substring-search -y
-
-
 sudo apt install sl -y  # for fun
 sudo apt install cmatrix -y  # for fun
 sudo apt install hollywood -y  # for fun
@@ -84,22 +72,15 @@ bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/
 # https://spacevim.org/quick-start-guide/#linux-and-macos
 curl -sLf https://spacevim.org/install.sh | bash
 
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
-#cd ~; mkdir "tmp_asdf"; cd tmp_asdf
-#latest=$(get_latest_release "helix-editor/helix")
-#wget https://github.com/helix-editor/helix/releases/download/$latest/helix-$latest-x86_64-linux.tar.xz
-#tar -xf *; chmod +x ./nu; sudo mv ./nu /usr/local/bin/; cd ~; rm -rdf tmp_asdf
+# zsh
+#sudo apt install zsh
+# sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# sudo apt install zsh-syntax-highlighting -y
+# sudo apt install zsh-autosuggestions -y
+# sudo apt install zsh-theme-powerlevel10k -y
+# sudo apt install zsh-completions -y
+# sudo apt install zsh-history-substring-search -y
 
-
-# install chrome:
-# wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-# sudo dpkg -i google-chrome-stable_current_amd64.deb
-# install snap store
-# sudo mv /etc/apt/preferences.d/nosnap.pref ~/Documents/nosnap.backup
-# sudo apt update
-# sudo apt install snapd
-# install development apps:
-# sudo snap install pycharm-community --classic
-# sudo snap install code --classic
-# sudo snap install powershell --classic
 

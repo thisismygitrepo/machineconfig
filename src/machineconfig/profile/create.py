@@ -64,7 +64,7 @@ def add_to_shell_profile_path(dirs: list):
     if system == "Windows": file = tb.Terminal().run("$profile", shell="pwsh").as_path
     elif system == "Linux": file = tb.P("~/.bashrc").expanduser()
     else: raise ValueError
-    file.copy(append=".orig")  # _" + tb.randstr()
+    file.copy(append=f".orig_" + tb.randstr())
     file.modify_text(addition, addition, newline=False, notfound_append=True)
 
 
