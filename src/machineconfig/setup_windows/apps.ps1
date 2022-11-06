@@ -73,6 +73,7 @@ winget install --Name onefetch --Id o2sh.onefech --source winget  # repo-version
 winget install --Id Neovim.Neovim --source winget --accept-package-agreements --accept-source-agreements
 # https://github.com/LunarVim/LunarVim
 Invoke-WebRequest https://raw.githubusercontent.com/LunarVim/LunarVim/master/utils/installer/install.ps1 -UseBasicParsing | Invoke-Expression
+# uninstall": Invoke-WebResquest https://github.com/LunarVim/LunarVim/blob/master/utils/installer/uninstall.ps1 -UseBasicParsing | Invoke-Expression
 Invoke-WebRequest "https://spacevim.org/install.cmd" -OutFile "~/Downloads/spacevim_installer.cmd"
 ~/Downloads/spacevim_installer.cmd
 
