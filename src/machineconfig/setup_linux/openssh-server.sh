@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
-sudo apt install openssh-server
-sudo apt-get install tmate  # remote ssh from anywhere.
+sudo apt install openssh-server -y
+sudo apt-get install tmate -y  # remote ssh from anywhere.
 
 # sudo service ssh status
 # sudo nano /etc/ssh/sshd_config

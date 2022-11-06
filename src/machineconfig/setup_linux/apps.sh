@@ -27,6 +27,7 @@ sudo apt install net-tools -y  # gives ifconfig
 sudo apt install git -y  # for version control
 
 # ------------------- File Managers ---------------------------
+
 sudo apt install bat -y  # cat with colors.
 sudo apt install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
 # ranger is good, but for consistency with Windows, use lf:
@@ -36,13 +37,6 @@ sudo apt install fzf -y  # fuzzy finder: searches contents of all files, includi
 sudo apt install fd-find -y  # find alternative
 sudo apt install ripgrep -y  # rg command, rust-based, blazingly fast grep.
 sudo apt install ugrep -y  # just as good as grep, but consistent with windows
-
-cd ~
-wget https://dystroy.org/broot/download/x86_64-linux/broot
-# broot is an fzf variant. It's excellent for viewing folder structure and layered search.
-# broot doesn't search aribtrarily deep and it also avoids git folders.
-chmod +x broot
-sudo mv ./broot /usr/local/bin/
 
 sudo apt install ncdu   # disk usage analyzer.
 sudo apt install exa  # replacement for ls. no ner fonts, unlike lsd
