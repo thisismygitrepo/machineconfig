@@ -6,13 +6,14 @@ Set-ExecutionPolicy Bypass
 
 # Install SSH-Server on a windows machine. see this one below if this one didn't work:
 # https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH
-# to install: winget install --Id Microsoft.OpenSSH
+# to install: winget install --Id Microsoft.OpenSSH.Beta
 # the result is installed in C:\Program Files\OpenSSH as opposed to C:\Windows\System32\OpenSSH which is the case if openssh is added as a feature/capability to windows
 # However, notice the new path is not in PATH as is the cases with system variant, so it needs to be added manually.
 # finally, ssh config files are always @ "$env:ProgramData\ssh" irrespective of installation method.
 
 Add-WindowsCapability -Online -Name OpenSSH.Server
 Add-WindowsCapability -Online -Name OpenSSH.Client
+
 #New-NetFirewallRule -Name sshd -DisplayName 'OpenSSH SSH Server' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22 -Program "%WINDIR%\System32\OpenSSH\sshd.exe"
 
 # Must Enable ssh-agent before starting. But even before that, one need to update path so that same shell has access to the NEWLY added ssh program
