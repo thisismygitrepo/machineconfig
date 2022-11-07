@@ -17,7 +17,7 @@ sudo nala update
 sudo nala install nodejs -y  # for nvim plugins
 sudo nala install npm -y  # for nvim plugins
 npm i sharewifi -g
-sudo nala install graphviz
+sudo nala install graphviz -y
 
 #curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
 sudo nala install wget -y  # for downloading files
@@ -38,8 +38,8 @@ sudo nala install fd-find -y  # find alternative
 sudo nala install ripgrep -y  # rg command, rust-based, blazingly fast grep.
 sudo nala install ugrep -y  # just as good as grep, but consistent with windows
 
-sudo nala install ncdu   # disk usage analyzer.
-sudo nala install exa  # replacement for ls. no ner fonts, unlike lsd
+sudo nala install ncdu -y   # disk usage analyzer.
+sudo nala install exa -y  # replacement for ls. no ner fonts, unlike lsd
 
 sudo nala install tmux -y # allows multiple terminals that are persistent.
 # sudo nala install tmate -y  # remote tmux, see https://tmate.io
