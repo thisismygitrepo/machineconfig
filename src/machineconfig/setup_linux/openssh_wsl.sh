@@ -16,6 +16,7 @@ sudo service ssh start
 sudo ssh-keygen -A  # without this, ssh gives this error:
 sudo service ssh --full-restart  # use systemctl if this doesn't work. sudo systemctl status ssh
 sudo service ssh status
+echo "FINISHED configuring SSH in WSL2."
 
 # https://superuser.com/questions/1701853/how-to-enable-a-service-to-start-with-wsl2
 # another way: https://gist.github.com/dentechy/de2be62b55cfd234681921d5a8b6be11

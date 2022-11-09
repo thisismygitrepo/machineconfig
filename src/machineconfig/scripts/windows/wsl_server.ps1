@@ -8,7 +8,8 @@
 #   for delete exist rules and ports use 'delete' as parameter, for show ports use 'list' as parameter.
 #   written by Daehyuk Ahn, Aug-1-2020
 
-wsl.exe -u root service ssh status  # added by me, to ensure sshd is fired.
+wsl.exe -u root service ssh start  # added by me, to ensure sshd is fired.
+
 
 # Display all portproxy information
 If ($Args[0] -eq "list") {
