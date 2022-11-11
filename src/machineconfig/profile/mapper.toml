@@ -70,8 +70,8 @@ tmate = {this = '~/.tmate.conf', to_this = '~/code/machineconfig/settings/tmux/.
 
 [zellij_linux]
 config = { this = '~/.config/zellij/config.kdl', to_this = '~/code/machineconfig/settings/zellij/config.kdl' }
-# themes = { this = '~/.config/zellij/themes', to_this = '~/code/machineconfig/settings/zellij/themes' }
-#layouts = { this = '~/.config/zellij/layouts/default.yaml', to_this = '~/code/machineconfig/settings/zellij/layouts/default.yaml' }
+themes = { this = '~/.config/zellij/themes', to_this = '~/code/machineconfig/settings/zellij/themes' }
+layouts = { this = '~/.config/zellij/layouts', to_this = '~/code/machineconfig/settings/zellij/layouts' }
 
 
 [wsl_windows]
