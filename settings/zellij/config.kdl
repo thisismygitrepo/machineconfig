@@ -184,7 +184,7 @@ plugins {
 //    - true
 //    - false (Default)
 //
-// simplified_ui true
+simplified_ui false
 
 // Choose the path to the default shell that zellij will use for opening new panes
 // Default: $SHELL
@@ -226,7 +226,7 @@ pane_frames false
 // The name of the default layout to load on startup
 // Default: "default"
 //
-// default_layout "compact"
+default_layout "default"
 
 // Choose the mode that zellij uses when starting up.
 // Default: normal
@@ -267,7 +267,7 @@ mouse_mode true
 //   - system (default)
 //   - primary
 //
-// copy_clipboard "primary"
+copy_clipboard "primary"
 
 // Enable or disable automatic copy (and clear) of selection when releasing mouse
 // Default: true
@@ -284,7 +284,7 @@ copy_on_select true
 // or should each user have their own cursor (false)
 // Default: false
 //
-// mirror_session true
+mirror_session false
 
 // The folder in which Zellij will look for layouts
 //
