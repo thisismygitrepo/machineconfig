@@ -1,11 +1,10 @@
 
 layout {
-    pane {
-        command "ls"
+    pane
+    pane split_direction="vertical" {
+        command "ls" start_suspended=true
         cwd "~"
 	}
-    pane split_direction="vertical" {
-        command "htop"
-    }
+
 }
 
