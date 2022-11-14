@@ -13,8 +13,8 @@ sudo sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' /etc/ssh/ss
 #  * Starting OpenBSD Secure Shell server sshd
 #  sshd: no hostkeys available -- exiting.
 sudo service ssh start
-sudo ssh-keygen -A  # without this, ssh gives this error:
-sudo service ssh --full-restart  # use systemctl if this doesn't work. sudo systemctl status ssh
+sudo ssh-keygen -A  # without this, ssh gives this error: use systemctl if this doesn't work. sudo systemctl status ssh
+sudo service ssh --full-restart
 sudo service ssh status
 echo "FINISHED configuring SSH in WSL2."
 

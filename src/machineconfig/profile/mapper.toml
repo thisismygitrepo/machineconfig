@@ -96,11 +96,13 @@ config = { this = '~/AppData/Roaming/helix/config.toml', to_this = '~/code/machi
 languages = { this = '~/.config/helix/languages.toml', to_this = '~/code/machineconfig/settings/helix/languages.toml' }
 config = { this = '~/.config/helix/config.toml', to_this = '~/code/machineconfig/settings/helix/config.toml' }
 
-[lvim_windows]
-config = { this = '~/AppData/Local/lvim/config.lua', to_this = '~/code/machineconfig/settings/lvim_windows/config.lua' }
-
-[lvim_linux]
-config = { this = '~/.config/lvim/config.lua', to_this = '~/code/machineconfig/settings/lvim_linux/config.lua' }
+# because lvim is under high maintinance, its best to get latest config and modify it on the fly instead of using a static config
+# this proces is done at the end of the setup
+#[lvim_windows]
+#config = { this = '~/AppData/Local/lvim/config.lua', to_this = '~/code/machineconfig/settings/lvim_windows/config.lua' }
+#
+#[lvim_linux]
+#config = { this = '~/.config/lvim/config.lua', to_this = '~/code/machineconfig/settings/lvim_linux/config.lua' }
 
 [svim_windows]
 init = { this = '~/.SpaceVim.d/init.toml', to_this = '~/code/machineconfig/settings/svim_windows/init.toml' }

@@ -66,8 +66,6 @@ sudo nala install figlet -y  # large ascii text. See: showfigfonts for full list
 # curl https://sh.rustup.rs -sSf | sh
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 #sudo nala install neovim -y  # nvim, but not latest release
-bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/rolling/utils/installer/install-neovim-from-release)
-# https://github.com/LunarVim/LunarVim
 bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
 # https://spacevim.org/quick-start-guide/#linux-and-macos
 curl -sLf https://spacevim.org/install.sh | bash

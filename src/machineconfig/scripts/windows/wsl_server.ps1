@@ -9,7 +9,7 @@
 #   written by Daehyuk Ahn, Aug-1-2020
 
 wsl.exe -u root service ssh start  # added by me, to ensure sshd is fired.
-
+wsl.exe -u root service ssh status
 
 # Display all portproxy information
 If ($Args[0] -eq "list") {

@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 # https://askubuntu.com/questions/265982/unable-to-start-sshd
-sudo apt-get purge openssh-server
+sudo apt-get purge openssh-server -y
 sudo apt-get install openssh-server -y
 
 sudo apt-get install tmate -y  # remote ssh from anywhere.
