@@ -5,18 +5,18 @@ import crocodile.toolbox as tb
 
 PROGRAM_PATH = tb.P.tmp().joinpath("shells/python_return_command") + (".ps1" if system() == "Windows" else ".sh")
 
-options = ['update essential repos',
-           'install devapps',
-           'install ve',
-           'create symlinks',
-           'add ssh key',
-           'send ssh key',
-           'setup ssh',
-           'setup ssh wsl',
-           'pull all repos',
-           'commit all repos',
-           'push all repos',
-           'backup']
+options = ['UPDATE essential repos',
+           'DEVAPPS install',
+           'VE install',
+           'SYMLINKS creation',
+           'SSH add key',
+           'SSH send key',
+           'SSH setup',
+           'SSH setup wsl',
+           'REPOS pull all',
+           'REPOS commit all',
+           'REPOS push all',
+           'BACKUP']
 
 
 def main():
@@ -34,23 +34,23 @@ def main():
         raise ValueError(f"Unknown choice. {choice_idx}")
     print(f"{choice_key}".center(50, "-"))
 
-    if choice_key == "pull all repos":
+    if choice_key == "REPOS pull all":
         from machineconfig.jobs.python.repos import pull_all
         program = pull_all()
 
-    elif choice_key == "push all repos":
+    elif choice_key == "REPOS push all":
         from machineconfig.jobs.python.repos import push_all
         program = push_all()
 
-    elif choice_key == "commit all repos":
+    elif choice_key == "REPOS commit all":
         from machineconfig.jobs.python.repos import commit_all
         program = commit_all()
 
-    elif choice_key == "install ve":
+    elif choice_key == "VE install":
         from machineconfig.jobs.python.python_ve_installer import ve_setup
         program = ve_setup()
 
-    elif choice_key == "install devapps":
+    elif choice_key == "DEVAPPS install":
         if system() == "Windows":
             from machineconfig.jobs.python.python_windows_installers_all import get_installers
         else:
@@ -66,25 +66,25 @@ def main():
         else:
             program = installers[idx].readit()['main']()  # finish the task
             if program is None: program = "echo 'Finished Installation'"  # write an empty program
-    elif choice_key == "setup ssh":
+    elif choice_key == "SSH setup":
         program_windows = f"""Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""
         program_linux = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash  # https://github.com/thisismygitrepo.keys"""
         program = program_linux if system() == "Linux" else program_windows
-    elif choice_key == "setup ssh wsl":
+    elif choice_key == "SSH setup wsl":
         program = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
-    elif choice_key == "update essential repos":
+    elif choice_key == "UPDATE essential repos":
         program_windows = "~/code/machineconfig/src/machineconfig/jobs/windows/update_essentials.ps1"
         program_linux = "source ~/code/machineconfig/src/machineconfig/jobs/linux/update_essentials"
         program = program_linux if system() == "Linux" else program_windows
-    elif choice_key == "install devapps":
+    elif choice_key == "DEVAPPS install":
         program_windows = "~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1"
         program_linux = "source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)"
         program = program_linux if system() == "Linux" else program_windows
-    elif choice_key == "create symlinks":
+    elif choice_key == "SYMLINKS creation":
         program_windows = "~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1"
         program_linux = "source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh"
         program = program_linux if system() == "Linux" else program_windows
-    elif choice_key == "add ssh key":
+    elif choice_key == "SSH add key":
         path_to_key = input("Path to ssh key: ")
         if system() == "Linux":
             program = f"cat {path_to_key} >> ~/.ssh/authorized_keys"
@@ -92,9 +92,9 @@ def main():
             program_windows = "~/code/machineconfig/src/machineconfig/jobs/windows/openssh-server_add_key.ps1"
             program_windows = tb.P(program_windows).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
             program = program_windows
-    elif choice_key == "send ssh key":
+    elif choice_key == "SSH send key":
         raise NotImplementedError
-    elif choice_key == "backup":
+    elif choice_key == "BACKUP":
         for item_name, item in get_res().items():
             if system() == "Linux" and "windows" in item_name: continue
             if system() == "Windows" and "linux" in item_name: continue
