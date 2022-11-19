@@ -17,8 +17,9 @@ def main():
     else:
         tb.P("~/.config/lvim").delete(sure=True)
         install_script = r"bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/rolling/utils/installer/install-neovim-from-release)"
-        script = install_script
-        tb.T().run(script, shell="pwsh")
+        # script = install_script
+        # tb.T().run(script, shell="pwsh")
+        return install_script
 
 
 if __name__ == '__main__':

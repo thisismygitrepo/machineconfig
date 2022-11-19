@@ -17,7 +17,8 @@ def main():
     print("Installing Broot".center(100, "-"))
     p = tb.P(url).download()
     p.chmod(0o777)
-    p.move(folder=r'/usr/local/bin/', overwrite=True)
+    # p.move(folder=r'/usr/local/bin/', overwrite=True) Permission Error
+    tb.Terminal().run(f"sudo mv {p} /usr/local/bin/").print()
     print("Completed Installation".center(100, "-"))
 
 
