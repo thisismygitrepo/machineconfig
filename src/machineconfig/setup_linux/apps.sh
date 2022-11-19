@@ -29,9 +29,10 @@ sudo apt install git -y  # for version control
 # ------------------- File Managers ---------------------------
 
 sudo apt install bat -y  # cat with colors.
-sudo apt install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
+# sudo apt install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
 # ranger is good, but for consistency with Windows, use lf:
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/tools/lf.sh | sh
+sudo apt install zoxide
 
 sudo apt install fzf -y  # fuzzy finder: searches contents of all files, including .git
 sudo apt install fd-find -y  # find alternative

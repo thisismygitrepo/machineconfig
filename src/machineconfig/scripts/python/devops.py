@@ -58,7 +58,7 @@ def main():
         installers = get_installers()
         installers.list.insert(0, tb.P("all"))
         installers.print(styler=lambda x: x.stem)
-        idx = int(input("\nChoose a program: "))
+        idx = int(input("\nChoose a program by index: "))
         if idx == 0:
             program_linux = "source ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh"
             program_windows = "~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1"

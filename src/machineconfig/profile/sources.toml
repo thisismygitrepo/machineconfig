@@ -11,4 +11,4 @@ files = ['~/code/machineconfig/settings/broot/br.sh',
          '~/code/machineconfig/settings/lf_linux/exe/lfcd.sh',
          '~/code/machineconfig/settings/tere/terecd.sh']
 
-# see broot --install  to reinstall and see config files locations.
+# see broot --install to reinstall and see config files locations.

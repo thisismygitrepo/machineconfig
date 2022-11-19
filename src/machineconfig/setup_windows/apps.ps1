@@ -39,6 +39,7 @@ winget install Python.Python.3.10 --source winget
 
 winget install --name "Git" --Id "Git.Git" --source winget --accept-package-agreements --accept-source-agreements
 winget install gitui
+curl.exe -A "MS" https://webinstall.dev/zoxide | powershell
 
 #git config credential.helper store  # makes git remember credentials, or just link to pre-configured git config file.
 # a terminal restart of terminal is required to for git to work, or the one can update the path
