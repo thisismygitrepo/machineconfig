@@ -1,9 +1,9 @@
 #!/usr/bin/bash
 
-curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh-server.sh | bash
-cd ~
-mkdir -p .ssh
+mkdir -p ~/.ssh
 curl --silent 'https://github.com/thisismygitrepo.keys' >> ~/.ssh/authorized_keys  # consider adding this after curl: | head -n 1 >> author...
-curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh-server_add-sshkey.sh | bash
+# cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh-server_chmod.sh | bash
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh-server.sh | bash
 #echo "FINISHED installing openssh-server and tmate."
 

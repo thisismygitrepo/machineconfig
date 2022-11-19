@@ -52,7 +52,7 @@ def main_symlinks():
         if program_key in exclude or f"{system.lower()}" not in program_key: continue
         for file_key, file_map in symlink_mapper[program_key].items():
             try: symlink(this=file_map['this'], to_this=file_map['to_this'], overwrite=overwrite)
-            except KeyError: print("Config error: ", program_key, file_key, "missing keys 'this ==> to_this'.")
+            except Exception as ex: print("Config error: ", program_key, file_key, "missing keys 'this ==> to_this'.", ex)
 
     link_aws(overwrite=overwrite)
     link_ssh(overwrite=overwrite)
