@@ -17,6 +17,11 @@ If ($Args[0] -eq "list") {
     exit;
 }
 
+If ($Args[0] -eq $null) {
+    $port_num = 2222;
+    exit;
+}
+
 # If elevation needed, start new process
 If (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 {
@@ -26,7 +31,7 @@ If (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 }
 
 # You should modify '$Ports' for your applications
-$Ports = (2222)  # (22,80,443,8080)
+$Ports = ($port_num)  # (22,80,443,8080)
 
 # Check WSL ip address
 wsl hostname -I | Set-Variable -Name "WSL"
