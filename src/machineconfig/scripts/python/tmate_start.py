@@ -12,7 +12,7 @@ def main():
     creds.read(Path.home().joinpath('dotfiles/creds/tmate/creds.ini'))
 
     parser = argparse.ArgumentParser(description='Tmate launcher')
-    parser.add_argument("sess_name", help=f"session name", default=random.choices(list(string.digits + string.ascii_letters), k=20))
+    parser.add_argument("sess_name", help=f"session name (new only with random string will be chosen if not passed)", default=random.choices(list(string.digits + string.ascii_letters), k=20))
 
     args = parser.parse_args()
     sess_name = creds['sessions_names'][args.sess_name]

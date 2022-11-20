@@ -19,6 +19,8 @@ sudo apt install npm -y  # for nvim plugins
 npm i sharewifi -g
 sudo apt install graphviz -y
 
+sudo apt install tmux -y # allows multiple terminals that are persistent.
+
 #curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
 sudo apt install wget -y  # for downloading files
 sudo apt install curl -y  # for handling http requests
@@ -41,10 +43,6 @@ sudo apt install ugrep -y  # just as good as grep, but consistent with windows
 
 sudo apt install ncdu -y   # disk usage analyzer.
 sudo apt install exa -y  # replacement for ls. no ner fonts, unlike lsd
-
-sudo apt install tmux -y # allows multiple terminals that are persistent.
-# sudo apt install tmate -y  # remote tmux, see https://tmate.io
-
 
 # ---------------------------- text style ------------------------------------
 sudo apt install sl -y  # for fun
@@ -81,5 +79,4 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/mast
 # sudo apt install zsh-theme-powerlevel10k -y
 # sudo apt install zsh-completions -y
 # sudo apt install zsh-history-substring-search -y
-
 

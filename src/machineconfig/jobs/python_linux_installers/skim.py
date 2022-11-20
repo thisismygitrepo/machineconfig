@@ -2,6 +2,7 @@
 """
 Rust version of FZF (GO)
 """
+
 from machineconfig.utils.utils import get_latest_release
 import crocodile.toolbox as tb
 

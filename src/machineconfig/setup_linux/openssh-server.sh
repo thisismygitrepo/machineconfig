@@ -4,6 +4,7 @@
 sudo apt-get purge openssh-server -y
 sudo apt-get install openssh-server -y
 
+# sudo apt install tmate -y  # remote tmux, see https://tmate.io see https://devsession.is/
 sudo apt-get install tmate -y  # remote ssh from anywhere.
 
 # sudo service ssh status

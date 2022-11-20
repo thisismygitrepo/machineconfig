@@ -14,7 +14,7 @@ import machineconfig
 ERROR_LIST = []  # append to this after every exception captured.
 LIBRARY_ROOT = tb.P(machineconfig.__file__).parent
 CONFIG_ROOT = LIBRARY_ROOT.parent.parent.joinpath("settings")
-
+OTHER_SYSTEM = "windows" if system == "Linux" else "linux"
 
 # =================== SYMLINKS ====================================
 
@@ -49,7 +49,9 @@ def main_symlinks():
     overwrite = True
     exclude = ["autostart_windows"]  # "wsl_linux", "wsl_windows"
     for program_key in symlink_mapper.keys():
-        if program_key in exclude or f"{system.lower()}" not in program_key: continue
+        if program_key in exclude or OTHER_SYSTEM in program_key:
+            print(f"Skipping {program_key} for {system}")
+            continue
         for file_key, file_map in symlink_mapper[program_key].items():
             try: symlink(this=file_map['this'], to_this=file_map['to_this'], overwrite=overwrite)
             except Exception as ex: print("Config error: ", program_key, file_key, "missing keys 'this ==> to_this'.", ex)
