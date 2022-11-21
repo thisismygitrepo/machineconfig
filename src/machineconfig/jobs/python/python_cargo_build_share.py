@@ -7,22 +7,24 @@ import platform
 
 
 def get_shell_script(url=r"https://github.com/atanunq/viu"):
-    repo = url.split('/')[-1]
+    tool_name = url.split('/')[-1]
 
-    exe = f".cargo/bin/{repo}"
-    move_command = f"mv {exe}.exe {tb.get_env().WindowsApps.as_posix()}/" if platform.platform() == "Windows" else f"sudo mv {exe} /usr/local/bin/"
+    exe = f".cargo/bin/{tool_name}" + (".exe" if platform.system() == "Windows" else "")
 
-    res = f"""
+    # move command is not required since tool will go to .cargo/bin which is in PATH by default.
+    # move_command = f"mv {exe} {tb.get_env().WindowsApps.as_posix()}/" if platform.platform() == "Windows" else f"sudo mv {exe} /usr/local/bin/"
+    # {move_command}
+
+    script = f"""
     cd ~
     git clone --depth 1 {url} 
-    cd {repo}
+    cd {tool_name}
     cargo install --path .
-    rm -rdf ~/{repo}
     bu_gdrive_sx {exe} -zR
-    {move_command}
     """
-    # tb.P(repo).delete(sure=True)
-    print(res)
+    print(f"Executing {script}")
+    tb.Terminal().run(script, shell="pwsh")
+    tb.P.home().joinpath(tool_name).delete(sure=True)
 
 
 # after cargo install diskonaut

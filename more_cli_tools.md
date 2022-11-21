@@ -37,3 +37,4 @@ https://github.com/Geektrovert/AwsTerm
 
 # Recommended
 * git grapth (rust) https://github.com/mlange-42/git-graph
+* https://github.com/cortex/ripasso rust password manager equivalent of gopass
