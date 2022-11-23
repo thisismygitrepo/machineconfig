@@ -46,10 +46,9 @@ def displayAvailableNetworks():
     os.system(command)
 
 
-
 def main():
     creds = configparser.ConfigParser()
-    creds.read(Path.home().joinpath('dotfiles/creds/wifi.ini'))
+    creds.read(Path.home().joinpath('dotfiles/creds/msc/wifi.ini'))
 
     parser = argparse.ArgumentParser(description='Wifi Connector')
     parser.add_argument('-n', "--ssid", help=f"SSID of Wifi", default='MyPhoneHotSpot')
