@@ -55,7 +55,7 @@ Set-PSReadlineOption -PredictionViewStyle History
     profile_path.modify_text(txt=txt, alt=txt, newline=True, notfound_append=True)
 
 
-def choose(name=""):
+def choose(name=None):
     """run this function to interactively choose a style. Optionally, inpsect the themes of oh my posh and select one:
     """
     import os
@@ -70,7 +70,12 @@ def choose(name=""):
     if name == "show":
         __import__("os").system("Write-Host Get-PoshThemes")
         return ""
-    if name == "": name = themes_path.search().apply(lambda x: x.trunk).sample()[0]
+    if name is None:
+        themes = themes_path.search().apply(lambda x: x.trunk)
+        themes.print()
+        theme_num = input(f"Choose a theme number from the list above: [suprise me] ")
+        if theme_num == "": name = themes.sample()[0]
+        else: name = themes[int(theme_num)]
     print("Current Theme:", current_theme)
     print("New theme: ", name)
     profile.modify_text(txt=current_theme, alt=name, newline=False)

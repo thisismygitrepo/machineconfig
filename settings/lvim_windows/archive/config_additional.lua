@@ -9,19 +9,31 @@ lvim.plugins = {
   -- cmd = "TroubleToggle",
   -- },
   "mfussenegger/nvim-dap-python",
-  "akinsho/toggleterm.nvim",
+--   "akinsho/toggleterm.nvim",
   "stevearc/overseer.nvim",
 }
 
--- require('dap-python').setup('~/venvs/ve/Scripts/python.exe')
+require('overseer').setup()
+
+
 require('dap').configurations.python = { {
   type = 'python',
   request = 'launch',
   args = { "-i" },
   name = 'My custom launch configuration',
   program = '${file}',
+  pythonPath = function()
+    return "${env:VIRTUAL_ENV}/Scripts/python.exe"
+  end;
   -- ... more options, see https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings
-}
+},
 }
 
-require('overseer').setup()
+
+local dap = require('dap')
+dap.adapters.python = {
+  type = 'executable';
+  command = "C:/Users/alex/venvs/ve/Scripts/python.exe";
+  args = {"-i" };
+}
+

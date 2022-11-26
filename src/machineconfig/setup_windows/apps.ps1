@@ -9,12 +9,13 @@ winget install --name "Google Chrome" --Id "Google.Chrome" --source winget --acc
 #winget install --name Zoom --Id Zoom.Zoom --source winget
 
 # productivity
-#winget install --name "Adobe Acrobat Reader DC" --source winget
 winget install --name "7-zip" --Id "7zip.7zip" --source winget --accept-package-agreements --accept-source-agreements
+#winget install --name "Adobe Acrobat Reader DC" --source winget
 #winget install --name "Mozilla Firefox" --accept-package-agreements --accept-source-agreements
 #winget install --name "Mozilla Thunderbird" --accept-package-agreements --accept-source-agreements
 #winget install --name "Microsoft Garage Mouse without Borders" --accept-package-agreements --accept-source-agreements
-#winget install --name "StreamlabsOBS" --Id "Streamlabs.StreamlabsOBS" --source "winget" --accept-package-agreements --accept-source-agreements
+#winget install --Id "Streamlabs.StreamlabsOBS" --source "winget" --accept-package-agreements --accept-source-agreements
+#winget install --Id "OBSProject.OBSStudio" --source "winget" --accept-package-agreements --accept-source-agreements
 #winget install --name "MiKTeX" --Id "ChristianSchenk.MiKTeX"  --source winget  # library / lanugage
 #winget install --name "TexMaker" --Id "Texmaker.Texmaker" --source winget  # IDE better than simple TexWorks shipped with MikTex. IDE is basically GUI for cmd interface of Tex
 
@@ -62,15 +63,17 @@ winget install Graphviz.Graphviz  # required by pygraphviz. Used in Base.viz_obj
 winget install -e --id "Microsoft.VC++2015-2022Redist-x64"
 winget install -e --id "Microsoft.VisualStudio.2022.BuildTools"
 winget install --Id Rustlang.Rustup --source winget
+winget install --name "julia" --Id "Julialang.Julia" --source winget --accept-package-agreements --accept-source-agreements
 
-#winget install --name "julia" --Id "Julialang.Julia" --source winget --accept-package-agreements --accept-source-agreements
 winget install --Id Codeblocks.Codeblocks --source winget  # gives gcc compiler  # could also be provided by MSCV Build Tools
 winget install --Id GnuWin32.Make --source winget  # make command  # can be provided by mscv build tools.
-# cargo install tokei  # counts lines of code in every language.
+winget install GnuPG.GnuPG
+
 winget install --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
 winget install --Name onefetch --Id o2sh.onefech --source winget  # repo-version of system neofetch, see also tokei
 
 # ======================= Terminal-based editors =================================
+winget install --Id Lapce.Lapce  # app variant of helix
 winget install --Id Neovim.Neovim --source winget --accept-package-agreements --accept-source-agreements
 Invoke-WebRequest "https://spacevim.org/install.cmd" -OutFile "~/Downloads/spacevim_installer.cmd"
 ~/Downloads/spacevim_installer.cmd
