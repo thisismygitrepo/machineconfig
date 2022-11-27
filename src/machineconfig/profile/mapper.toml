@@ -76,6 +76,7 @@ config = { this = '~/.config/zellij', to_this = '~/code/machineconfig/settings/z
 
 [wsl_windows]
 home = {this = '~/wsl', to_this = '\\wsl.localhost\Ubuntu-22.04\home\username'}
+# see \\wsl$ and ~\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState
 
 
 [wsl_linux]

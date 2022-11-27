@@ -72,11 +72,13 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
     if download_n_extract and not linux:
         if file_name is None:  # it is not constant, so we compile it from parts as follows:
             file_name = f'{tool_name}-{version}-{suffix}.{compression or "zip"}'
-            print("Downloading", download_link.joinpath(file_name))
+        print("Downloading", download_link.joinpath(file_name))
         downloaded = download_link.joinpath(file_name).download().unzip(inplace=True, overwrite=True)
         return find_move_delete_windows(downloaded, exe_name or tool_name, delete)
     elif download_n_extract and linux:
-        download_link = download_link.joinpath(f'{tool_name}-{version}-{suffix}.{compression or "tar.gz"}')
+        if file_name is None:  # it is not constant, so we compile it from parts as follows:
+            file_name = f'{tool_name}-{version}-{suffix}.{compression or "tar.gz"}'
+        download_link = download_link.joinpath(file_name)
         print("Downloading", download_link)
         downloaded = download_link.download().ungz_untar(inplace=True)
         find_move_delete_linux(downloaded, exe_name or tool_name, delete)
