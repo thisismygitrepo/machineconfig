@@ -3,7 +3,7 @@
 import crocodile.toolbox as tb
 import argparse
 from crocodile.comms.helper_funcs import process_retrieved_file
-
+import os
 
 def main():
     parser = argparse.ArgumentParser(description='OneDrive Backup')
@@ -22,8 +22,11 @@ def main():
 
     args = parser.parse_args()
 
-    onedrive = tb.P.home().joinpath("dotfiles/settings/paths.toml").readit()['onedrive']
-    onedrive = tb.P.home().joinpath(onedrive[onedrive[args.which]])
+    if (onedrive_settings_path := tb.P.home().joinpath("dotfiles/settings/paths.toml")).exists():
+        onedrive = onedrive_settings_path.readit()['onedrive']
+        onedrive = tb.P.home().joinpath(onedrive[onedrive[args.which]])
+    else:
+        onedrive = tb.P.home().joinpath(os.environ["OneDrive"])
 
     target_file = tb.P(args.file).expanduser().absolute()
     source_file = onedrive.joinpath(f"myhome/{target_file.rel2home()}")

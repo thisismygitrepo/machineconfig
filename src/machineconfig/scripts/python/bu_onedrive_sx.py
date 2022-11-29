@@ -3,6 +3,7 @@
 from crocodile.comms.helper_funcs import process_sent_file
 from crocodile.file_management import P
 import argparse
+import os
 
 
 def main():
@@ -22,8 +23,11 @@ def main():
 
     args = parser.parse_args()
 
-    onedrive = P.home().joinpath("dotfiles/settings/paths.toml").readit()['onedrive']
-    onedrive = P.home().joinpath(onedrive[onedrive[args.which]])
+    if (onedrive_settings_path := P.home().joinpath("dotfiles/settings/paths.toml")).exists():
+        onedrive = onedrive_settings_path.readit()['onedrive']
+        onedrive = P.home().joinpath(onedrive[onedrive[args.which]])
+    else:
+        onedrive = P.home().joinpath(os.environ["OneDrive"])
 
     file = process_sent_file(file=args.file, zip_first=args.zip_first, encrypt_first=args.encrypt_first, key=args.key, pwd=args.pwd)
     remote_dir = onedrive.joinpath(f"myhome/{file.rel2home().parent}")
