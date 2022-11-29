@@ -9,8 +9,8 @@ options = ['UPDATE essential repos',
            'DEVAPPS install',
            'VE install',
            'SYMLINKS creation',
-           'SSH add key',
-           'SSH send key',
+           'SSH add pub key to this machine',
+           'SSH send pub key to a machine',
            'SSH setup',
            'SSH setup wsl',
            'REPOS pull all',
@@ -87,15 +87,16 @@ def main():
         program_windows = "~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1"
         program_linux = "source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh"
         program = program_linux if system() == "Linux" else program_windows
-    elif choice_key == "SSH add key":
+    elif choice_key == "SSH add pub key to this machine":
         path_to_key = input("Path to ssh key: ")
         if system() == "Linux":
             program = f"cat {path_to_key} >> ~/.ssh/authorized_keys"
         else:  # Windows
             program_windows = "~/code/machineconfig/src/machineconfig/jobs/windows/openssh-server_add_key.ps1"
-            program_windows = tb.P(program_windows).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
+            program_windows = tb.P(program_windows).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{tb.P(path_to_key).expanduser().absolute()}"')
             program = program_windows
-    elif choice_key == "SSH send key":
+        print(program)
+    elif choice_key == "SSH send pub key to a machine":
         raise NotImplementedError
     elif choice_key == "BACKUP":
         for item_name, item in get_res().items():
