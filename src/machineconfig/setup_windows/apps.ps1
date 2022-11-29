@@ -16,7 +16,7 @@ winget install --name "7-zip" --Id "7zip.7zip" --source winget --accept-package-
 #winget install --name "Microsoft Garage Mouse without Borders" --accept-package-agreements --accept-source-agreements
 #winget install --Id "Streamlabs.StreamlabsOBS" --source "winget" --accept-package-agreements --accept-source-agreements
 #winget install --Id "OBSProject.OBSStudio" --source "winget" --accept-package-agreements --accept-source-agreements
-#winget install --name "MiKTeX" --Id "ChristianSchenk.MiKTeX"  --source winget  # library / lanugage
+#winget install --name "MiKTeX --Id "MiKTeX.MiKTeX"  --source winget  # library / lanugage
 #winget install --name "TexMaker" --Id "Texmaker.Texmaker" --source winget  # IDE better than simple TexWorks shipped with MikTex. IDE is basically GUI for cmd interface of Tex
 
 #winget install --name "anaconda3"

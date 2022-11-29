@@ -75,7 +75,10 @@ def main():
     elif choice_key == "UPDATE essential repos":
         program_windows = "~/code/machineconfig/src/machineconfig/jobs/windows/update_essentials.ps1"
         program_linux = "source ~/code/machineconfig/src/machineconfig/jobs/linux/update_essentials"
-        program = program_linux if system() == "Linux" else program_windows
+        if tb.P.home().joinpath("code/crocodile").expanduser().exists():
+            program = program_linux if system() == "Linux" else program_windows
+        else:
+            program = "pip install --upgrade crocodile; pip install --upgrade machineconfig"
     elif choice_key == "DEVAPPS install":
         program_windows = "~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1"
         program_linux = "source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)"
