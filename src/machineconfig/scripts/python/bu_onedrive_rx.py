@@ -2,7 +2,7 @@
 # from crocodile.environment import OneDriveConsumer, OneDriveCommercial
 import crocodile.toolbox as tb
 import argparse
-from crocodile.comms.gdrive import process_retrieved_file
+from crocodile.comms.helper_funcs import process_retrieved_file
 
 
 def main():

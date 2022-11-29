@@ -1,6 +1,6 @@
 
 # from crocodile.environment import OneDriveConsumer, OneDriveCommercial
-from crocodile.comms.gdrive import process_sent_file
+from crocodile.comms.helper_funcs import process_sent_file
 from crocodile.file_management import P
 import argparse
 

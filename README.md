@@ -26,7 +26,7 @@ With elevated `PowerShell`, run the following:
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1 | Invoke-Expression
 # virtual enviornment
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
-# repos
+# dev repos
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
 # symlinks and pwsh profile: locally, run: `ftpsx username@hostname[:port] ~/dotfiles -z`, then, on the remote:
 ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
