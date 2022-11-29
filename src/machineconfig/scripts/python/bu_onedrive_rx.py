@@ -14,6 +14,7 @@ def main():
     parser.add_argument("--recursive", "-r", help="Send recursively.", action="store_true")  # default is False
     parser.add_argument("--decrypt", "-e", help="Decrypt after receiving.", action="store_true")  # default is False
     parser.add_argument("--unzip", "-z", help="unzip after receiving.", action="store_true")  # default is False
+    parser.add_argument("--overwrite", "-o", help="Overwrite existing file.", action="store_true")  # default is False
     # optional argument
     parser.add_argument("--which", "-w", help="Which onedrive to use? see: cat: ~/dotfiles/settings/paths.toml", default="default")
     parser.add_argument("--remote_dir", "-d", help="Remote directory to send to.", default="")
@@ -32,7 +33,7 @@ def main():
     source_file = onedrive.joinpath(f"myhome/{target_file.rel2home()}")
     if args.unzip and args.decrypt: source_file = source_file + ".zip.enc"
 
-    tmp_file = source_file.copy(folder=target_file.parent)  # make sure to avoid doing decryption in the storage site.
+    tmp_file = source_file.copy(folder=target_file.parent, overwrite=args.overwrite)  # make sure to avoid doing decryption in the storage site.
     process_retrieved_file(tmp_file, decrypt=args.decrypt, unzip=args.unzip, key=args.key, pwd=args.pwd)
 
 
