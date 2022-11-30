@@ -2,8 +2,11 @@
 from platform import system
 # import subprocess
 import crocodile.toolbox as tb
+from machineconfig.utils.utils import LIBRARY_ROOT
+
 
 PROGRAM_PATH = tb.P.tmp().joinpath("shells/python_return_command") + (".ps1" if system() == "Windows" else ".sh")
+
 
 options = ['UPDATE essential repos',
            'DEVAPPS install',
@@ -11,6 +14,7 @@ options = ['UPDATE essential repos',
            'SYMLINKS creation',
            'SSH add pub key to this machine',
            'SSH send pub key to a machine',
+           'SSH add identity to this machine',
            'SSH setup',
            'SSH setup wsl',
            'REPOS pull all',
@@ -85,6 +89,31 @@ def main():
         program_linux = "source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh"
         program = program_linux if system() == "Linux" else program_windows
 
+    elif choice_key == "SSH add pub key to this machine":
+
+        from machineconfig.scripts.python.devops_add_ssh_key import get_add_ssh_key_script
+        path_to_key = input("Path to public key or paste public key or press enter to add all .pub keys in ~/.ssh : ")
+        if path_to_key == "":
+            programs = tb.P.home().joinpath(".ssh").search("*.pub")
+            print(f"Adding the keys\n {programs.print()}")
+            program = "\n\n\n".join(programs.apply(get_add_ssh_key_script))
+        else:
+            tmp = tb.P(path_to_key).expanduser().absolute()
+            if tmp.exists(): path_to_key = tmp
+            else: path_to_key = tb.P.home().joinpath(".ssh/my_pasted_key.pub").write_text(path_to_key)
+            program = get_add_ssh_key_script(path_to_key)
+
+    elif choice_key == "SSH send pub key to a machine":
+        raise NotImplementedError
+
+    elif choice_key == 'SSH add identity (private key) to this machine':
+        path_to_key = input("Path to private key to be used when ssh'ing: ")
+        path_to_key = tb.P(path_to_key).expanduser().absolute()
+        if system() == 'Windows':
+            program = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add_identity.ps1").read_text()
+            program = program.replace(r'$sshfile = "$env:USERPROFILE\.ssh\id_rsa"', f'$sshfile = "{path_to_key}"')
+        else: raise NotImplementedError
+
     elif choice_key == "SSH setup":
         program_windows = f"""Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""
         program_linux = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash  # https://github.com/thisismygitrepo.keys"""
@@ -93,21 +122,6 @@ def main():
     elif choice_key == "SSH setup wsl":
         program = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
 
-    elif choice_key == "SSH add pub key to this machine":
-
-        from machineconfig.scripts.python.devops_add_ssh_key import get_add_ssh_key_script
-        path_to_key = input("Path to public key or paste public key or press enter to add all .pub keys in ~/.ssh : ")
-        if path_to_key == "":
-            programs = tb.P.home().joinpath(".ssh").search("*.pub").apply(get_add_ssh_key_script)
-            program = "\n\n\n".join(programs)
-        else:
-            path_to_key = tb.P(path_to_key).expanduser().absolute()
-            if path_to_key.exists(): pass
-            else: path_to_key = tb.P.home().joinpath(".ssh/my_pasted_key.pub").write_text(path_to_key.str)
-            program = get_add_ssh_key_script(path_to_key)
-
-    elif choice_key == "SSH send pub key to a machine":
-        raise NotImplementedError
     elif choice_key == "BACKUP":
         for item_name, item in get_res().items():
             if system() == "Linux" and "windows" in item_name: continue
@@ -120,6 +134,7 @@ def main():
             if item['encrypt']: file = file.encrypt()
             file.move(folder=remote_dir, overwrite=True)
         program = "echo 'Finished Backing up.'"
+
     elif choice_key == "retrieve":
         for item_name, item in get_res().items():
             if system() == "Linux" and "windows" in item_name: continue

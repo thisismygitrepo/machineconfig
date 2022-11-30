@@ -6,13 +6,12 @@ This script Takes away all config files from the computer, place them in one dir
 
 import crocodile.toolbox as tb
 from crocodile.environment import DotFiles, system, PathVar, UserName  # ProgramFiles, WindowsApps  # , exe
-from machineconfig.utils.utils import symlink
+from machineconfig.utils.utils import symlink, LIBRARY_ROOT
 # import os
 import subprocess
-import machineconfig
+
 
 ERROR_LIST = []  # append to this after every exception captured.
-LIBRARY_ROOT = tb.P(machineconfig.__file__).parent
 CONFIG_ROOT = LIBRARY_ROOT.parent.parent.joinpath("settings")
 OTHER_SYSTEM = "windows" if system == "Linux" else "linux"
 

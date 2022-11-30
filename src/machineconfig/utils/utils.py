@@ -1,6 +1,11 @@
 
 import crocodile.toolbox as tb
 # import crocodile.environment as env
+import machineconfig
+
+
+LIBRARY_ROOT = tb.P(machineconfig.__file__).parent
+REPO_ROOT = LIBRARY_ROOT.parent.parent
 
 
 def symlink(this: tb.P, to_this: tb.P, overwrite=True):
