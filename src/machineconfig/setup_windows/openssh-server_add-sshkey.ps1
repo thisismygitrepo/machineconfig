@@ -1,5 +1,7 @@
 
-# run this script only after having public ssh key in place (~/.ssh/id_rsa.pub)
+# This script adds a public key to the authorized_keys file for the sshd service
+# as a result, a remote can connet to the machine if they got the corresponding private key (identity).
+
 # https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_keymanagement
 # http://woshub.com/using-ssh-key-based-authentication-on-windows/
 
@@ -26,4 +28,3 @@ Restart-Service sshd -Force
 #Write-Host "Use this to Login/test Now"
 #write-host ssh $env:UserName@localhost
 # debug tip: use nano editor to inspect files above, if unreadable max-text format is used, ssh won't work.
-

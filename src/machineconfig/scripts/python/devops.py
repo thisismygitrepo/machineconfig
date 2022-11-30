@@ -66,12 +66,7 @@ def main():
         else:
             program = installers[idx].readit()['main']()  # finish the task
             if program is None: program = "echo 'Finished Installation'"  # write an empty program
-    elif choice_key == "SSH setup":
-        program_windows = f"""Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""
-        program_linux = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash  # https://github.com/thisismygitrepo.keys"""
-        program = program_linux if system() == "Linux" else program_windows
-    elif choice_key == "SSH setup wsl":
-        program = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
+
     elif choice_key == "UPDATE essential repos":
         program_windows = "~/code/machineconfig/src/machineconfig/jobs/windows/update_essentials.ps1"
         program_linux = "source ~/code/machineconfig/src/machineconfig/jobs/linux/update_essentials"
@@ -79,23 +74,38 @@ def main():
             program = program_linux if system() == "Linux" else program_windows
         else:
             program = "pip install --upgrade crocodile; pip install --upgrade machineconfig"
+
     elif choice_key == "DEVAPPS install":
         program_windows = "~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1"
         program_linux = "source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)"
         program = program_linux if system() == "Linux" else program_windows
+
     elif choice_key == "SYMLINKS creation":
         program_windows = "~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1"
         program_linux = "source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh"
         program = program_linux if system() == "Linux" else program_windows
+
+    elif choice_key == "SSH setup":
+        program_windows = f"""Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""
+        program_linux = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash  # https://github.com/thisismygitrepo.keys"""
+        program = program_linux if system() == "Linux" else program_windows
+
+    elif choice_key == "SSH setup wsl":
+        program = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
+
     elif choice_key == "SSH add pub key to this machine":
-        path_to_key = input("Path to ssh key: ")
-        if system() == "Linux":
-            program = f"cat {path_to_key} >> ~/.ssh/authorized_keys"
-        else:  # Windows
-            program_windows = "~/code/machineconfig/src/machineconfig/jobs/windows/openssh-server_add_key.ps1"
-            program_windows = tb.P(program_windows).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{tb.P(path_to_key).expanduser().absolute()}"')
-            program = program_windows
-        print(program)
+
+        from machineconfig.scripts.python.devops_add_ssh_key import get_add_ssh_key_script
+        path_to_key = input("Path to public key or paste public key or press enter to add all .pub keys in ~/.ssh : ")
+        if path_to_key == "":
+            programs = tb.P.home().joinpath(".ssh").search("*.pub").apply(get_add_ssh_key_script)
+            program = "\n\n\n".join(programs)
+        else:
+            path_to_key = tb.P(path_to_key).expanduser().absolute()
+            if path_to_key.exists(): pass
+            else: path_to_key = tb.P.home().joinpath(".ssh/my_pasted_key.pub").write_text(path_to_key.str)
+            program = get_add_ssh_key_script(path_to_key)
+
     elif choice_key == "SSH send pub key to a machine":
         raise NotImplementedError
     elif choice_key == "BACKUP":
