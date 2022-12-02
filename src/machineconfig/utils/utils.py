@@ -21,8 +21,7 @@ def display_options(msg, options, header="", default=None):
     for idx, key in enumerate(options):
         print(f"{idx:2d}", key, default_msg if default is not None and default == key else "")
 
-    print("\n")
-
+    # print("\n")
     choice_idx = input(f"Enter the number of the option: ")
     if choice_idx == "":
         assert default is not None, f"Default option no available!"
@@ -32,7 +31,7 @@ def display_options(msg, options, header="", default=None):
         choice_key = options[int(choice_idx)]
     except IndexError:
         raise ValueError(f"Unknown choice. {choice_idx}")
-    print(f"CHOICE: {choice_idx}: {choice_key}", "<<", "=" * 50)
+    print(f"{choice_idx}: {choice_key}", f"<<<<-------- CHOICE MADE")
     return choice_key
 
 

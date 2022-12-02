@@ -26,7 +26,7 @@ def arg_parser():
     parser.add_argument("--decrypt", "-e", help="decrypt file.", action="store_true")  # default is False
     parser.add_argument("--unzip", "-z", help="unzip file.", action="store_true")  # default is False
     # optional argument
-    parser.add_argument("--local_dir", "-d", help="Remote directory to send to.", default="")
+    parser.add_argument("--local_dir", "-d", help="Local directory to put the file in.", default="")
     parser.add_argument("--google_account", "-a", help="Google Account.", default=None)
     parser.add_argument("--project", "-P", help="Project Name", default=None)
     parser.add_argument("--key", "-k", help="Key for decryption", default=None)
