@@ -2,6 +2,7 @@
 import argparse
 import crocodile.toolbox as tb
 from machineconfig.profile.create import symlink
+from machineconfig.utils.utils import LIBRARY_ROOT, REPO_ROOT
 
 
 def main():
@@ -20,13 +21,13 @@ def main():
         elif "Roaming" in orig_path: junction = orig_path.split(at="Roaming", sep=-1)[1]
         elif ".config" in orig_path: junction = orig_path.split(at=".config", sep=-1)[1]
         else: junction = orig_path.rel2home()
-        new_path = tb.P.home().joinpath("code/machineconfig/settings", junction)
+        new_path = REPO_ROOT.joinpath("settings", junction)
     else: new_path = tb.P(args.dest).expanduser().absolute().create().joinpath(orig_path.name)
 
     symlink(this=orig_path, to_this=new_path, overwrite=args.overwrite)
 
     print(f"Map completed. To enshrine this mapping, add the following line to the mapper.toml file:")
-    print("nano ~/code/machineconfig/src/machineconfig/symlinks/mapper.toml")
+    print(f"nano {LIBRARY_ROOT}/symlinks/mapper.toml")
     print(f"""
 [{new_path.parent.name}]
 {orig_path.trunk} = {{ this = '{orig_path.collapseuser().as_posix()}', to_this = '{new_path.collapseuser().as_posix()}' }}

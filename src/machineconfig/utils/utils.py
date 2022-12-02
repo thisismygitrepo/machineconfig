@@ -24,7 +24,7 @@ def display_options(msg, options, header="", default=None):
     # print("\n")
     choice_idx = input(f"Enter the number of the option: ")
     if choice_idx == "":
-        assert default is not None, f"Default option no available!"
+        assert default is not None, f"Default option not available!"
         choice_idx = options.index(default)
 
     try:

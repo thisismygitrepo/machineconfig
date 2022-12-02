@@ -14,7 +14,7 @@ options = ['UPDATE essential repos',
            'SYMLINKS creation',
            'SSH add pub key to this machine',
            'SSH send pub key to a machine',
-           'SSH add identity to this machine',
+           'SSH add identity (private key) to this machine',
            'SSH setup',
            'SSH setup wsl',
            'REPOS pull all',
@@ -52,51 +52,49 @@ def main():
         installers.list.insert(0, tb.P("all"))
         idx = display_options(msg="", options=installers.stem, header="CHOOSE DEV APP")
         if idx == 0:
-            program_linux = "source ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh"
-            program_windows = "~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1"
+            program_linux = f"source {LIBRARY_ROOT}/setup_linux/devapps.sh"
+            program_windows = f"{LIBRARY_ROOT}/setup_windows/devapps.ps1"
             program = program_linux if system() == "Linux" else program_windows
         else:
             program = installers[idx].readit()['main']()  # finish the task
             if program is None: program = "echo 'Finished Installation'"  # write an empty program
 
     elif choice_key == "UPDATE essential repos":
-        program_windows = "~/code/machineconfig/src/machineconfig/jobs/windows/update_essentials.ps1"
-        program_linux = "source ~/code/machineconfig/src/machineconfig/jobs/linux/update_essentials"
+        program_windows = f"{LIBRARY_ROOT}/jobs/windows/update_essentials.ps1"
+        program_linux = f"source {LIBRARY_ROOT}/jobs/linux/update_essentials"
         if tb.P.home().joinpath("code/crocodile").expanduser().exists():
             program = program_linux if system() == "Linux" else program_windows
         else:
             program = "pip install --upgrade crocodile; pip install --upgrade machineconfig"
 
     elif choice_key == "DEVAPPS install":
-        program_windows = "~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1"
-        program_linux = "source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)"
+        program_windows = f"{LIBRARY_ROOT}/setup_windows/devapps.ps1"
+        program_linux = f"source <(sudo cat {LIBRARY_ROOT}/setup_linux/devapps.sh)"
         program = program_linux if system() == "Linux" else program_windows
 
     elif choice_key == "SYMLINKS creation":
-        program_windows = "~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1"
-        program_linux = "source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh"
+        program_windows = f"{LIBRARY_ROOT}/setup_windows/symlinks.ps1"
+        program_linux = f"source {LIBRARY_ROOT}/setup_linux/symlinks.sh"
         program = program_linux if system() == "Linux" else program_windows
 
     elif choice_key == "SSH add pub key to this machine":
-
         from machineconfig.scripts.python.devops_add_ssh_key import get_add_ssh_key_script
-        path_to_key = input("Path to public key or paste public key or press enter to add all .pub keys in ~/.ssh : ")
-        if path_to_key == "":
-            programs = tb.P.home().joinpath(".ssh").search("*.pub")
-            print(f"Adding the keys\n {programs.print()}")
-            program = "\n\n\n".join(programs.apply(get_add_ssh_key_script))
-        else:
-            tmp = tb.P(path_to_key).expanduser().absolute()
-            if tmp.exists(): path_to_key = tmp
-            else: path_to_key = tb.P.home().joinpath(".ssh/my_pasted_key.pub").write_text(path_to_key)
-            program = get_add_ssh_key_script(path_to_key)
+        pub_keys = tb.P.home().joinpath(".ssh").search("*.pub")
+        res = display_options("Which public key to add? ", options=pub_keys.list + ["all", "I have a path", "I want to paste it"])
+        if res == "all": program = "\n\n\n".join(pub_keys.apply(get_add_ssh_key_script))
+        elif res == "I have a path": program = get_add_ssh_key_script(tb.P(input("Path: ")).expanduser().absolute())
+        elif res == "I want to paste it": program = get_add_ssh_key_script(tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key.pub): ') or 'my_pasted_key.pub'}").write_text(input("Paste the pub key here: ")))
+        else: program = get_add_ssh_key_script(tb.P(res))
 
     elif choice_key == "SSH send pub key to a machine":
         raise NotImplementedError
 
-    elif choice_key == 'SSH add identity (private key) to this machine':
-        path_to_key = input("Path to private key to be used when ssh'ing: ")
-        path_to_key = tb.P(path_to_key).expanduser().absolute()
+    elif choice_key == 'SSH add identity (private key) to this machine':  # so that you can SSH directly withuot pointing to identity key.
+        private_keys = tb.P.home().joinpath(".ssh").search("*.pub").apply(lambda x: x.with_name(x.stem)).filter(lambda x: x.exists())
+        choice = display_options(msg="Path to private key to be used when ssh'ing: ", options=private_keys.list + ["I have a path.", "I want to paste it"])
+        if choice == "I have a path.": path_to_key = tb.P(input("Input path here: ")).expanduser().absolute()
+        elif choice == "I want to paste it": path_to_key = tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key): ') or 'my_pasted_key'}").write_text(input("Paste the private key here: "))
+        else: path_to_key = tb.P(choice)
         if system() == 'Windows':
             program = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add_identity.ps1").read_text()
             program = program.replace(r'$sshfile = "$env:USERPROFILE\.ssh\id_rsa"', f'$sshfile = "{path_to_key}"')
