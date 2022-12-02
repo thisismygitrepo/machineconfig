@@ -6,7 +6,21 @@ import argparse
 import os
 
 
-def main():
+def main(which, file, zip_first, encrypt_first, key, pwd):
+    if (onedrive_settings_path := P.home().joinpath("dotfiles/settings/paths.toml")).exists():
+        onedrive = onedrive_settings_path.readit()['onedrive']
+        onedrive = P.home().joinpath(onedrive[onedrive[which]])
+    else:
+        onedrive = P.home().joinpath(os.environ["OneDrive"])
+
+    file = process_sent_file(file=file, zip_first=zip_first, encrypt_first=encrypt_first, key=key, pwd=pwd)
+    remote_dir = onedrive.joinpath(f"myhome/{file.rel2home().parent}")
+    path = file.copy(folder=remote_dir, overwrite=True)
+    if zip_first or encrypt_first: P(file).delete(sure=True)
+    onedrive()  # push to OneDrive
+
+
+def arg_parser():
     parser = argparse.ArgumentParser(description='OneDrive Backup')
 
     # positional argument
@@ -22,19 +36,8 @@ def main():
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
     args = parser.parse_args()
-
-    if (onedrive_settings_path := P.home().joinpath("dotfiles/settings/paths.toml")).exists():
-        onedrive = onedrive_settings_path.readit()['onedrive']
-        onedrive = P.home().joinpath(onedrive[onedrive[args.which]])
-    else:
-        onedrive = P.home().joinpath(os.environ["OneDrive"])
-
-    file = process_sent_file(file=args.file, zip_first=args.zip_first, encrypt_first=args.encrypt_first, key=args.key, pwd=args.pwd)
-    remote_dir = onedrive.joinpath(f"myhome/{file.rel2home().parent}")
-    path = file.copy(folder=remote_dir, overwrite=True)
-    if args.zip_first or args.encrypt_first: P(file).delete(sure=True)
-    onedrive()  # push to OneDrive
+    main(which=args.which, file=args.file, zip_first=args.zip_first, encrypt_first=args.encrypt_first, pwd=args.pwd, key=args.key)
 
 
 if __name__ == "__main__":
-    main()
+    arg_parser()

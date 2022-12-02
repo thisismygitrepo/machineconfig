@@ -8,6 +8,34 @@ LIBRARY_ROOT = tb.P(machineconfig.__file__).parent
 REPO_ROOT = LIBRARY_ROOT.parent.parent
 
 
+def display_options(msg, options, header="", default=None):
+    print("\n")
+    print(header.center(50, "-"))
+    print(msg)
+
+    if default is not None:
+        assert default in options, f"Default `{default}` option not in options."
+        default_msg = f"<<<<-------- DEFAULT"
+    else: default_msg = ""
+
+    for idx, key in enumerate(options):
+        print(f"{idx:2d}", key, default_msg if default is not None and default == key else "")
+
+    print("\n")
+
+    choice_idx = input(f"Enter the number of the option: ")
+    if choice_idx == "":
+        assert default is not None, f"Default option no available!"
+        choice_idx = options.index(default)
+
+    try:
+        choice_key = options[int(choice_idx)]
+    except IndexError:
+        raise ValueError(f"Unknown choice. {choice_idx}")
+    print(f"CHOICE: {choice_idx}: {choice_key}", "<<", "=" * 50)
+    return choice_key
+
+
 def symlink(this: tb.P, to_this: tb.P, overwrite=True):
     """helper function. creates a symlink from `this` to `to_this`.
     What can go wrong?

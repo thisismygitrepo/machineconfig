@@ -1,11 +1,21 @@
 
 
 from crocodile.comms.gdrive import GDriveAPI
-from crocodile.file_management import P
+# from crocodile.file_management import P
 import argparse
 
 
-def main():
+def main(google_account, project, file, unzip, relative_to_home, decrypt, key, pwd, local_dir):
+    api = GDriveAPI(account=google_account, project=project)
+
+    if "http" in file: path = api.download(furl=file, local_dir=local_dir, rel2home=relative_to_home)  # , recursive, zipFirst)
+    else:
+        file = file
+        path = api.download(fpath=file, local_dir=local_dir, rel2home=relative_to_home, decrypt=decrypt, unzip=unzip, key=key, pwd=pwd)  # , recursive, zipFirst)
+    print(path)
+
+
+def arg_parser():
     parser = argparse.ArgumentParser(description='FTP client')
 
     # positional argument
@@ -23,14 +33,9 @@ def main():
     parser.add_argument("--pwd", "-p", help="Password for decryption", default=None)
 
     args = parser.parse_args()
-    api = GDriveAPI(account=args.google_account, project=args.project)
-
-    if "http" in args.file: path = api.download(furl=args.file, local_dir=args.local_dir, rel2home=args.relative_to_home)  # , args.recursive, args.zipFirst)
-    else:
-        file = args.file
-        path = api.download(fpath=file, local_dir=args.local_dir, rel2home=args.relative_to_home, decrypt=args.decrypt, unzip=args.unzip, key=args.key, pwd=args.pwd)  # , args.recursive, args.zipFirst)
-    print(path)
+    main(google_account=args.google_account, project=args.project, file=args.file,
+         unzip=args.unzip, relative_to_home=args.relative_to_home, decrypt=args.decrypt, key=args.key, pwd=args.pwd, local_dir=args.local_dir)
 
 
 if __name__ == "__main__":
-    main()
+    arg_parser()

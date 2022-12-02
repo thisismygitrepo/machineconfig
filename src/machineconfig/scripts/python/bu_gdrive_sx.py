@@ -1,10 +1,20 @@
 
 from crocodile.comms.gdrive import GDriveAPI
-from crocodile.file_management import P
+# from crocodile.file_management import P
 import argparse
 
 
-def main():
+def main(google_account, project, file, encrypt_first, zip_first, relative_to_home, remote_dir, share, key, pwd):
+    api = GDriveAPI(account=google_account, project=project)
+
+    if share: res = api.upload_and_share(local_path=file, rel2home=relative_to_home,
+                                         zip_first=zip_first, encrypt_first=encrypt_first, key=key, pwd=pwd)
+    else: res = api.upload(local_path=file, remote_dir=remote_dir, rel2home=relative_to_home,
+                           zip_first=zip_first, encrypt_first=encrypt_first, key=key, pwd=pwd)  # , recursive, zipFirst)
+    print(res)
+
+
+def args_parser():
     parser = argparse.ArgumentParser(description='FTP client')
 
     # positional argument
@@ -23,14 +33,8 @@ def main():
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
     args = parser.parse_args()
-    api = GDriveAPI(account=args.google_account, project=args.project)
-
-    if args.share: res = api.upload_and_share(local_path=args.file, rel2home=args.relative_to_home,
-                                              zip_first=args.zip_first, encrypt_first=args.encrypt_first, key=args.key, pwd=args.pwd)
-    else: res = api.upload(local_path=args.file, remote_dir=args.remote_dir, rel2home=args.relative_to_home,
-                           zip_first=args.zip_first, encrypt_first=args.encrypt_first, key=args.key, pwd=args.pwd)  # , args.recursive, args.zipFirst)
-    print(res)
+    main(google_account=args.google_account, project=args.project, file=args.file, zip_first=args.zip_first, relative_to_home=args.relative_to_home, remote_dir=args.remote_dir, share=args.share, key=args.key, pwd=args.pwd, encrypt_first=args.encrypt_first)
 
 
 if __name__ == "__main__":
-    main()
+    args_parser()

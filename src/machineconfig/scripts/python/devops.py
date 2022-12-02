@@ -2,7 +2,7 @@
 from platform import system
 # import subprocess
 import crocodile.toolbox as tb
-from machineconfig.utils.utils import LIBRARY_ROOT
+from machineconfig.utils.utils import LIBRARY_ROOT, display_options
 
 
 PROGRAM_PATH = tb.P.tmp().joinpath("shells/python_return_command") + (".ps1" if system() == "Windows" else ".sh")
@@ -20,23 +20,13 @@ options = ['UPDATE essential repos',
            'REPOS pull all',
            'REPOS commit all',
            'REPOS push all',
-           'BACKUP']
+           'BACKUP & RETRIEVE']
 
 
 def main():
     PROGRAM_PATH.delete(sure=True, verbose=False)
 
-    print("\n")
-    print(f"DEVOPS".center(50, "-"))
-    for idx, key in enumerate(options):
-        print(idx, key)
-    print("\n")
-    choice_idx = input("Enter a number: ")
-    try:
-        choice_key = options[int(choice_idx)]
-    except IndexError:
-        raise ValueError(f"Unknown choice. {choice_idx}")
-    print(f"{choice_key}".center(50, "-"))
+    choice_key = display_options(msg="", options=options, header="DEVOPS")
 
     if choice_key == "REPOS pull all":
         from machineconfig.jobs.python.repos import pull_all
@@ -61,8 +51,7 @@ def main():
             from machineconfig.jobs.python.python_linux_installers_all import get_installers
         installers = get_installers()
         installers.list.insert(0, tb.P("all"))
-        installers.print(styler=lambda x: x.stem)
-        idx = int(input("\nChoose a program by index: "))
+        idx = display_options(msg="", options=installers.stem, header="CHOOSE DEV APP")
         if idx == 0:
             program_linux = "source ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh"
             program_windows = "~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1"
@@ -122,32 +111,31 @@ def main():
     elif choice_key == "SSH setup wsl":
         program = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
 
-    elif choice_key == "BACKUP":
-        for item_name, item in get_res().items():
-            if system() == "Linux" and "windows" in item_name: continue
-            if system() == "Windows" and "linux" in item_name: continue
-            file = tb.P(item['path']).expanduser()
-            onedrive = tb.P.home().joinpath("dotfiles/settings/paths.toml").readit()['onedrive']
-            onedrive_name = onedrive[onedrive['default']]
-            remote_dir = tb.P.home().joinpath(onedrive_name, f"myhome/{file.rel2home().parent}")
-            if item['zip']: file = file.zip()
-            if item['encrypt']: file = file.encrypt()
-            file.move(folder=remote_dir, overwrite=True)
-        program = "echo 'Finished Backing up.'"
+    elif choice_key == "BACKUP & RETRIEVE":
+        direction = display_options(msg="BACKUP OR RETRIEVE?", options=["BACKUP", "RETRIEVE"], default="BACKUP")
+        drive = display_options(msg="WHICH CLOUD?", options=["GDrive", "OneDrive"], default="OneDrive")
 
-    elif choice_key == "retrieve":
-        for item_name, item in get_res().items():
-            if system() == "Linux" and "windows" in item_name: continue
-            if system() == "Windows" and "linux" in item_name: continue
-            file = tb.P(item['path']).expanduser()
-            onedrive = tb.P.home().joinpath("dotfiles/settings/paths.toml").readit()['onedrive']
-            onedrive_name = onedrive[onedrive['default']]
-            remote_dir = tb.P.home().joinpath(onedrive_name, f"myhome/{file.rel2home()}")
-            file = remote_dir.move(folder=file.parent, overwrite=True)
-            if item['encrypt']: file = file.decrypt()
-            if item['zip']: file = file.unzip()
-            _ = file
-        program = "echo 'Finished retrieving up.'"
+        bu_file = LIBRARY_ROOT.joinpath("profile/backup.toml").readit()
+        if system() == "Linux": bu_file = {key: val for key, val in bu_file.items() if "windows" not in key}
+        elif system() == "Windows": bu_file = {key: val for key, val in bu_file.items() if "linux" not in key}
+        choice_key = display_options(msg="WHICH FILE of the following do you want to back up?", options=['all'] + tb.L(bu_file.keys()))
+
+        if direction == "BACKUP" and drive == "OneDrive": from machineconfig.scripts.python.bu_onedrive_sx import main
+        elif direction == "RETRIEVE" and drive == "OneDrive": from machineconfig.scripts.python.bu_onedrive_rx import main
+        elif direction == "BACKUP" and drive == "GDrive": from machineconfig.scripts.python.bu_gdrive_sx import main
+        elif direction == "RETRIEVE" and drive == "GDrive": from machineconfig.scripts.python.bu_gdrive_sx import main
+        else: raise ValueError
+
+        if choice_key == "all":
+            for item_name, item in bu_file.items():
+                file = tb.P(item['path']).expanduser()
+                onedrive = tb.P.home().joinpath("dotfiles/settings/paths.toml").readit()['onedrive']
+                onedrive_name = onedrive[onedrive['default']]
+                remote_dir = tb.P.home().joinpath(onedrive_name, f"myhome/{file.rel2home().parent}")
+                main(zip_first=item['zip'], encrypt_first=item['encrypt'], remote_dir=remote_dir, onedrive_name=onedrive, file=file)
+        else: pass
+
+        program = "echo 'Finished Backing up.'"
     else:
         raise ValueError(f"Unimplemented choice: {choice_key}")
 
@@ -156,20 +144,6 @@ def main():
         PROGRAM_PATH.create(parents_only=True).write_text(program)
     else:
         PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
-
-
-def get_res():
-    import machineconfig
-    library_root = tb.P(machineconfig.__file__).parent.joinpath("profile/backup.toml").readit()
-    choices_list = ['all'] + tb.L(library_root.keys())
-    choices_list.print()
-    choice_number = int(input("Choose a backup: "))
-    if choice_number == 0:
-        res = library_root
-    else:
-        choice_entry = tb.L(library_root.keys())[choice_number]
-        res = {choice_entry: library_root[choice_entry]}
-    return res
 
 
 if __name__ == "__main__":

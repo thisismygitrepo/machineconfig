@@ -5,7 +5,23 @@ import argparse
 from crocodile.comms.helper_funcs import process_retrieved_file
 import os
 
-def main():
+
+def main(file, unzip, decrypt, which, overwrite, key, pwd):
+    if (onedrive_settings_path := tb.P.home().joinpath("dotfiles/settings/paths.toml")).exists():
+        onedrive = onedrive_settings_path.readit()['onedrive']
+        onedrive = tb.P.home().joinpath(onedrive[onedrive[which]])
+    else:
+        onedrive = tb.P.home().joinpath(os.environ["OneDrive"])
+
+    target_file = tb.P(file).expanduser().absolute()
+    source_file = onedrive.joinpath(f"myhome/{target_file.rel2home()}")
+    if unzip and decrypt: source_file = source_file + ".zip.enc"
+
+    tmp_file = source_file.copy(folder=target_file.parent, overwrite=overwrite)  # make sure to avoid doing decryption in the storage site.
+    process_retrieved_file(tmp_file, decrypt=decrypt, unzip=unzip, key=key, pwd=pwd)
+
+
+def arg_parser():
     parser = argparse.ArgumentParser(description='OneDrive Backup')
 
     # positional argument
@@ -22,20 +38,8 @@ def main():
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
     args = parser.parse_args()
-
-    if (onedrive_settings_path := tb.P.home().joinpath("dotfiles/settings/paths.toml")).exists():
-        onedrive = onedrive_settings_path.readit()['onedrive']
-        onedrive = tb.P.home().joinpath(onedrive[onedrive[args.which]])
-    else:
-        onedrive = tb.P.home().joinpath(os.environ["OneDrive"])
-
-    target_file = tb.P(args.file).expanduser().absolute()
-    source_file = onedrive.joinpath(f"myhome/{target_file.rel2home()}")
-    if args.unzip and args.decrypt: source_file = source_file + ".zip.enc"
-
-    tmp_file = source_file.copy(folder=target_file.parent, overwrite=args.overwrite)  # make sure to avoid doing decryption in the storage site.
-    process_retrieved_file(tmp_file, decrypt=args.decrypt, unzip=args.unzip, key=args.key, pwd=args.pwd)
+    main(file=args.file, unzip=args.unzip, decrypt=args.decrypt, which=args.which, overwrite=args.overwrite, pwd=args.pwd, key=args.key)
 
 
 if __name__ == "__main__":
-    main()
+    arg_parser()
