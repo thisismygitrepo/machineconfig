@@ -95,10 +95,10 @@ def main():
         if choice == "I have a path.": path_to_key = tb.P(input("Input path here: ")).expanduser().absolute()
         elif choice == "I want to paste it": path_to_key = tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key): ') or 'my_pasted_key'}").write_text(input("Paste the private key here: "))
         else: path_to_key = tb.P(choice)
-        if system() == 'Windows':
-            program = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add_identity.ps1").read_text()
-            program = program.replace(r'$sshfile = "$env:USERPROFILE\.ssh\id_rsa"', f'$sshfile = "{path_to_key}"')
-        else: raise NotImplementedError
+        txt = f"IdentityFile {path_to_key}"  # adds this id for all connections, no host specified.
+        config_path = tb.P.home().joinpath(".ssh/config")
+        if config_path.exists(): config_path.modify_text(txt=txt, alt=txt, newline=True, notfound_append=True)
+        else: config_path.write_text(txt)
 
     elif choice_key == "SSH setup":
         program_windows = f"""Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""
