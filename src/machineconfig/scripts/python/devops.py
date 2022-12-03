@@ -80,10 +80,10 @@ def main():
     elif choice_key == "SSH add pub key to this machine":
         from machineconfig.scripts.python.devops_add_ssh_key import get_add_ssh_key_script
         pub_keys = tb.P.home().joinpath(".ssh").search("*.pub")
-        res = display_options("Which public key to add? ", options=pub_keys.list + ["all", "I have a path", "I want to paste it"])
+        res = display_options("Which public key to add? ", options=pub_keys.list + ["all", "I have the path to the key file", "I want to paste the key itself"])
         if res == "all": program = "\n\n\n".join(pub_keys.apply(get_add_ssh_key_script))
-        elif res == "I have a path": program = get_add_ssh_key_script(tb.P(input("Path: ")).expanduser().absolute())
-        elif res == "I want to paste it": program = get_add_ssh_key_script(tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key.pub): ') or 'my_pasted_key.pub'}").write_text(input("Paste the pub key here: ")))
+        elif res == "I have the path to the key file": program = get_add_ssh_key_script(tb.P(input("Path: ")).expanduser().absolute())
+        elif res == "I want to paste the key itself": program = get_add_ssh_key_script(tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key.pub): ') or 'my_pasted_key.pub'}").write_text(input("Paste the pub key here: ")))
         else: program = get_add_ssh_key_script(tb.P(res))
 
     elif choice_key == "SSH send pub key to a machine":
@@ -91,14 +91,15 @@ def main():
 
     elif choice_key == 'SSH add identity (private key) to this machine':  # so that you can SSH directly withuot pointing to identity key.
         private_keys = tb.P.home().joinpath(".ssh").search("*.pub").apply(lambda x: x.with_name(x.stem)).filter(lambda x: x.exists())
-        choice = display_options(msg="Path to private key to be used when ssh'ing: ", options=private_keys.list + ["I have a path.", "I want to paste it"])
-        if choice == "I have a path.": path_to_key = tb.P(input("Input path here: ")).expanduser().absolute()
-        elif choice == "I want to paste it": path_to_key = tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key): ') or 'my_pasted_key'}").write_text(input("Paste the private key here: "))
+        choice = display_options(msg="Path to private key to be used when ssh'ing: ", options=private_keys.list + ["I have the path to the key file", "I want to paste the key itself"])
+        if choice == "I have the path to the key file": path_to_key = tb.P(input("Input path here: ")).expanduser().absolute()
+        elif choice == "I want to paste the key itself": path_to_key = tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key): ') or 'my_pasted_key'}").write_text(input("Paste the private key here: "))
         else: path_to_key = tb.P(choice)
-        txt = f"IdentityFile {path_to_key}"  # adds this id for all connections, no host specified.
+        txt = f"IdentityFile {path_to_key.collapseuser().as_posix()}"  # adds this id for all connections, no host specified.
         config_path = tb.P.home().joinpath(".ssh/config")
-        if config_path.exists(): config_path.modify_text(txt=txt, alt=txt, newline=True, notfound_append=True)
+        if config_path.exists(): config_path.modify_text(txt=txt, alt=txt, newline=True, notfound_append=True, prepend=True)  # note that Identity line must come on top of config file otherwise it won't work, hence `prepend=True`
         else: config_path.write_text(txt)
+        program = f"echo 'Finished adding identity to ssh config file. {'*'*50} Consider reloading config file.'"
 
     elif choice_key == "SSH setup":
         program_windows = f"""Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""

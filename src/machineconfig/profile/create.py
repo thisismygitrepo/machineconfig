@@ -52,7 +52,7 @@ def main_symlinks():
             print(f"Skipping {program_key} for {system}")
             continue
         for file_key, file_map in symlink_mapper[program_key].items():
-            try: symlink(this=file_map['this'], to_this=file_map['to_this'].replace("REPO_ROOT", REPO_ROOT).replace("LIBRARY_ROOT", LIBRARY_ROOT), overwrite=overwrite)
+            try: symlink(this=file_map['this'], to_this=file_map['to_this'].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()), overwrite=overwrite)
             except Exception as ex: print("Config error: ", program_key, file_key, "missing keys 'this ==> to_this'.", ex)
 
     link_aws(overwrite=overwrite)
@@ -80,7 +80,7 @@ def main_env_path():
 def main_patch_shell_profile():
     sources = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()
     for file in sources[system.lower()]['files']:
-        file = file.replace("REPO_ROOT", REPO_ROOT).replace("LIBRARY_ROOT", LIBRARY_ROOT)
+        file = file.replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix())
         if system == "Windows": tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(f". {file}", f". {file}", newline=True, notfound_append=True)
         elif system == "Linux": tb.P("~/.bashrc").expanduser().modify_text(f"source {file}", f"source {file}", notfound_append=True)
         else: raise ValueError

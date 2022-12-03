@@ -34,6 +34,7 @@ def arg_parser():
     # optional argument
     parser.add_argument("--which", "-w", help="Which onedrive to use? see: cat: ~/dotfiles/settings/paths.toml", default="default")
     parser.add_argument("--remote_dir", "-d", help="Remote directory to send to.", default="")
+    parser.add_argument("--relative_to_home", "-R", help="Relative to `myhome` folder", action="store_true")  # default is False
     parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
