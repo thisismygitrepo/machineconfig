@@ -13,8 +13,8 @@ options = ['UPDATE essential repos',
            'VE install',
            'SYMLINKS creation',
            'SSH add pub key to this machine',
-           'SSH send pub key to a machine',
            'SSH add identity (private key) to this machine',
+           'SSH use key pair to connect two machines',
            'SSH setup',
            'SSH setup wsl',
            'REPOS pull all',
@@ -86,7 +86,7 @@ def main():
         elif res == "I want to paste the key itself": program = get_add_ssh_key_script(tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key.pub): ') or 'my_pasted_key.pub'}").write_text(input("Paste the pub key here: ")))
         else: program = get_add_ssh_key_script(tb.P(res))
 
-    elif choice_key == "SSH send pub key to a machine":
+    elif choice_key == "SSH use key pair to connect two machines":
         raise NotImplementedError
 
     elif choice_key == 'SSH add identity (private key) to this machine':  # so that you can SSH directly withuot pointing to identity key.
