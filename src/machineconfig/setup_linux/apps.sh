@@ -20,22 +20,35 @@ sudo sed -i 's/PRUNEPATHS="/PRUNEPATHS="\/mnt\/c /g' /etc/updatedb.conf
 
 
 # -------------------- Utilities --------------------
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -  # The NodeSource repository, must add to get latest node
-# consider asdf tool for managing versions of python, node, etc.
-sudo apt update
-sudo apt install nodejs -y  # for nvim plugins
-sudo apt install npm -y  # for nvim plugins
-npm i sharewifi -g
-sudo apt install graphviz -y
 
-sudo apt install tmux -y # allows multiple terminals that are persistent.
-
-#curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
 sudo apt install wget -y  # for downloading files
 sudo apt install curl -y  # for handling http requests
+
+# consider asdf tool for managing versions of python, node, etc.
+# https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
+# https://github.com/nodesource/distributions/blob/master/README.md
+#curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -  # The NodeSource repository, must add to get latest node
+#curl -fsSL https://deb.nodesource.com/setup_19.x | sudo -E bash - &&\
+#sudo apt update
+#sudo apt install -y nodejs
+#sudo apt install npm -y  # for nvim plugins
+
+# according to: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm its best to use nvm manager
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
+# shellcheck disable=SC2155
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+nvm install node
+npm install -g npm
+
+npm i sharewifi -g
+sudo apt install graphviz -y
+sudo apt install tmux -y # allows multiple terminals that are persistent.
 sudo apt install make -y  # lvim and spacevim require it.
 sudo apt install net-tools -y  # gives ifconfig
 sudo apt install git -y  # for version control
+#curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
+
 
 # ------------------- File Managers ---------------------------
 
@@ -50,8 +63,14 @@ sudo apt install fd-find -y  # find alternative
 sudo apt install ripgrep -y  # rg command, rust-based, blazingly fast grep.
 sudo apt install ugrep -y  # just as good as grep, but consistent with windows
 
-sudo apt install ncdu -y   # disk usage analyzer.
+sudo apt install ncdu -y   # disk usage analyzer, like diskonaut
+# https://github.com/bootandy/dust
+# https://github.com/dalance/procs#installation
 sudo apt install exa -y  # replacement for ls. no ner fonts, unlike lsd
+
+#wget https://github.com/sharkdp/hyperfine/releases/download/v1.15.0/hyperfine_1.15.0_amd64.deb
+#sudo dpkg -i hyperfine_1.15.0_amd64.deb
+#rm hyperfine_1.15.0_amd64.deb
 
 # ---------------------------- text style ------------------------------------
 sudo apt install sl -y  # for fun

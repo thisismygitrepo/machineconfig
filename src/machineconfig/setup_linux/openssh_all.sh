@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-# most common ssh oitfalls: config files written in wrong LF/CLRF for this system (not readable), and, network problems, usually choose different port (2222 -> 2223)
+# most common ssh oitfalls: config files written in wrong LF/CLRF for this system (not readable), and, network problems, usually choose different port (2222 -> 2223) dot that from wsl and windows_server side.
 mkdir -p ~/.ssh
 curl --silent 'https://github.com/thisismygitrepo.keys' >> ~/.ssh/authorized_keys  # consider adding this after curl: | head -n 1 >> author...
 # cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
