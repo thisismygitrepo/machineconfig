@@ -8,19 +8,24 @@
 #   for delete exist rules and ports use 'delete' as parameter, for show ports use 'list' as parameter.
 #   written by Daehyuk Ahn, Aug-1-2020
 
-wsl.exe -u root service ssh start  # added by me, to ensure sshd is fired.
-wsl.exe -u root service ssh status
-
+Param($p = 2222)
+$port_num = $p
+#If ($Args[0] -eq $null) {
+#    $port_num = 2222;
+#    exit;
+#}
+#else {
+#    $port_num = $Args[0];
+#}
 # Display all portproxy information
 If ($Args[0] -eq "list") {
     netsh interface portproxy show v4tov4;
     exit;
 }
 
-If ($Args[0] -eq $null) {
-    $port_num = 2222;
-    exit;
-}
+wsl.exe -u root service ssh start  # added by me, to ensure sshd is fired.
+wsl.exe -u root service ssh status
+
 
 # If elevation needed, start new process
 If (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
