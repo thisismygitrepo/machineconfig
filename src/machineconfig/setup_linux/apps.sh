@@ -94,10 +94,13 @@ sudo apt install figlet -y  # large ascii text. See: showfigfonts for full list 
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 # sudo apt install neovim -y  # nvim, but not latest release
 # download neovim from release page
+# sudo apt remove neovim
+# sudo rm ~/.local/bin/nvim || true
 cd ~
 wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.deb
 sudo apt install ./nvim-linux64.deb
 rm nvim-linux64.deb
+
 
 # from https://www.lunarvim.org/docs/installation
 LV_BRANCH='release-1.2/neovim-0.8' bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
