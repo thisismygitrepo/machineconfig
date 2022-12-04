@@ -21,7 +21,7 @@ def main():
         elif "Roaming" in orig_path: junction = orig_path.split(at="Roaming", sep=-1)[1]
         elif ".config" in orig_path: junction = orig_path.split(at=".config", sep=-1)[1]
         else: junction = orig_path.rel2home()
-        new_path = REPO_ROOT.joinpath("settings", junction)
+        new_path = REPO_ROOT.joinpath(junction)
     else: new_path = tb.P(args.dest).expanduser().absolute().create().joinpath(orig_path.name)
 
     symlink(this=orig_path, to_this=new_path, overwrite=args.overwrite)

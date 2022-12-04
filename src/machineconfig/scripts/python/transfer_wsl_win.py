@@ -18,7 +18,8 @@ Otherwise, a flag must be raised to indicate the direction.""")
     # parser.add_argument("--destination", "-d", help="New path.", default="")
     parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
     parser.add_argument("--sshkey", "-i", help="path to ssh private key", default=None)
-    parser.add_argument("--port", "-p", help="port number", default=2222)
+    parser.add_argument("--port", "-p", help="port number", default=None)
+    parser.add_argument("--zip_first", "-z", help="Zip before transferring.", action="store_true")  # default is False
 
     args = parser.parse_args()
     path = P(args.path).expanduser().absolute()
@@ -30,8 +31,8 @@ Otherwise, a flag must be raised to indicate the direction.""")
             path.copy(folder=WIN_FROM_WSL.joinpath(UserName).joinpath(path.rel2home().parent), overwrite=True)
     else:
         from crocodile.meta import SSH
-        ssh = SSH(port=args.port, sshkey=args.sshkey)
-        ssh.copy_from_here(source=path)
+        ssh = SSH(port=args.port or (2222 if system == "Windows" else 22), sshkey=args.sshkey)
+        ssh.copy_from_here(source=path, zip_first=args.zip_first)
 
 
 if __name__ == '__main__':

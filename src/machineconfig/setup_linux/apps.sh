@@ -8,7 +8,16 @@ sudo apt upgrade -y
 sudo apt install nala -y  # nala is a command line tool for managing your Linux system
 sudo apt update && sudo apt upgrade -y  # this is suprior to apt
 
-sudo apt remove mlocate  # solves wsl2 slow Initializing plocate database; this may take some time..
+# sudo apt remove mlocate && plocate # solves wsl2 slow Initializing plocate database; this may take some time..
+# ignoring indexing of windows files: https://askubuntu.com/questions/1251484/why-does-it-take-so-much-time-to-initialize-mlocate-database
+sudo cp /etc/updatedb.conf /etc/updatedb.conf.bak
+# add /mnt/c to PRUNEPATHS of /etc/updatedb.conf using sed
+sudo sed -i 's/PRUNEPATHS="/PRUNEPATHS="\/mnt\/c /g' /etc/updatedb.conf
+
+
+# PRUNEPATHS /mnt /etc/updatedb.conf
+# sudo sed -i "s/^ *PRUNEFS *= *[\"']/&drvfs 9p /" /etc/updatedb.conf /etc/cron.daily/locate
+
 
 # -------------------- Utilities --------------------
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -  # The NodeSource repository, must add to get latest node
@@ -64,8 +73,15 @@ sudo apt install figlet -y  # large ascii text. See: showfigfonts for full list 
 # ------------------------------ EDITORS -----------------------------
 # curl https://sh.rustup.rs -sSf | sh
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-#sudo apt install neovim -y  # nvim, but not latest release
-bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
+# sudo apt install neovim -y  # nvim, but not latest release
+# download neovim from release page
+cd ~
+wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.deb
+sudo apt install ./nvim-linux64.deb
+rm nvim-linux64.deb
+
+# from https://www.lunarvim.org/docs/installation
+LV_BRANCH='release-1.2/neovim-0.8' bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
 # https://spacevim.org/quick-start-guide/#linux-and-macos
 curl -sLf https://spacevim.org/install.sh | bash
 
