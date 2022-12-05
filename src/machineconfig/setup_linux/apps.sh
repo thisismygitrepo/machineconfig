@@ -12,6 +12,7 @@ sudo apt update && sudo apt upgrade -y  # this is suprior to apt
 # ignoring indexing of windows files: https://askubuntu.com/questions/1251484/why-does-it-take-so-much-time-to-initialize-mlocate-database
 sudo cp /etc/updatedb.conf /etc/updatedb.conf.bak
 # add /mnt/c to PRUNEPATHS of /etc/updatedb.conf using sed
+
 sudo sed -i 's/PRUNEPATHS="/PRUNEPATHS="\/mnt\/c /g' /etc/updatedb.conf
 
 
@@ -57,6 +58,7 @@ sudo apt install bat -y  # cat with colors.
 # ranger is good, but for consistency with Windows, use lf:
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/tools/lf.sh | sh
 sudo apt install zoxide
+echo 'eval "$(zoxide init bash)"' >> ~/.bashrc
 
 sudo apt install fzf -y  # fuzzy finder: searches contents of all files, including .git
 sudo apt install fd-find -y  # find alternative

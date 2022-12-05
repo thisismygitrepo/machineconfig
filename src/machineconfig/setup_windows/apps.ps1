@@ -40,10 +40,15 @@ winget install --name "Git" --Id "Git.Git" --source winget --accept-package-agre
 # the two above require Restart-Computer -Force before they are available in PATH, OR:
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 winget install gitui
-curl.exe -A "MS" https://webinstall.dev/zoxide | powershell
 
-#git config credential.helper store  # makes git remember credentials, or just link to pre-configured git config file.
-# a terminal restart of terminal is required to for git to work, or the one can update the path
+
+# github.com/ajeetdsouza/zoxide#installation
+curl.exe -A "MS" https://webinstall.dev/zoxide | powershell
+Invoke-Expression (& {
+    $hook = if ($PSVersionTable.PSVersion.Major -lt 6) { 'prompt' } else { 'pwd' }
+    (zoxide init --hook $hook powershell | Out-String)
+})
+
 
 # winget install --name "AWS Command Line Interface"
 # winget install --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W11
