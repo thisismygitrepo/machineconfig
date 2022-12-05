@@ -17,6 +17,7 @@ def main(file, unzip, decrypt, which, overwrite, key, pwd):
     source_file = onedrive.joinpath(f"myhome/{target_file.rel2home()}")
     if unzip and decrypt: source_file = source_file + ".zip.enc"
 
+    print(f"Retriveing `{source_file}` \nTo `{target_file.parent}` folder.")
     tmp_file = source_file.copy(folder=target_file.parent, overwrite=overwrite)  # make sure to avoid doing decryption in the storage site.
     process_retrieved_file(tmp_file, decrypt=decrypt, unzip=unzip, key=key, pwd=pwd)
 
