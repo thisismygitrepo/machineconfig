@@ -40,8 +40,8 @@ def change_shell_profile():
     theme_path = env.LocalAppData.joinpath(r"Programs\oh-my-posh\themes").collapseuser().as_posix().replace("~", "$env:USERPROFILE")  # organization machiens with homeshare confuse H: with ~.
     # makes the profile work on any machine.
     txt = f"oh-my-posh --init --shell pwsh --config {theme_path}\\jandedobbeleer.omp.json | Invoke-Expression"
-    profile_path.modify_text(txt="oh-my-posh", alt=txt, newline=True, notfound_append=True)
-    profile_path.modify_text(txt="Import-Module -Name Terminal-Icons", alt="Import-Module -Name Terminal-Icons", newline=True, notfound_append=True)
+    profile_path.modify_text(txt_search="oh-my-posh", txt_alt=txt, replace_line=True, notfound_append=True)
+    profile_path.modify_text(txt_search="Import-Module -Name Terminal-Icons", txt_alt="Import-Module -Name Terminal-Icons", replace_line=True, notfound_append=True)
 
     # Step 6: Add arrow keys history functionality to the terminal.
     txt = """
@@ -52,7 +52,7 @@ Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 Set-PSReadlineOption -PredictionViewStyle History
 # see dynamic help with prerelease.
 """
-    profile_path.modify_text(txt=txt, alt=txt, newline=True, notfound_append=True)
+    profile_path.modify_text(txt_search=txt, txt_alt=txt, replace_line=True, notfound_append=True)
 
 
 def choose(name=None):
@@ -78,7 +78,7 @@ def choose(name=None):
         else: name = themes[int(theme_num)]
     print("Current Theme:", current_theme)
     print("New theme: ", name)
-    profile.modify_text(txt=current_theme, alt=name, newline=False)
+    profile.modify_text(txt_search=current_theme, txt_alt=name, replace_line=False)
 
 
 if __name__ == '__main__':

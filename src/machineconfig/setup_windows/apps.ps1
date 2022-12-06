@@ -43,12 +43,8 @@ winget install gitui
 
 
 # github.com/ajeetdsouza/zoxide#installation
+echo "Installing zoxide must be done with non-admin privliage"
 curl.exe -A "MS" https://webinstall.dev/zoxide | powershell
-Invoke-Expression (& {
-    $hook = if ($PSVersionTable.PSVersion.Major -lt 6) { 'prompt' } else { 'pwd' }
-    (zoxide init --hook $hook powershell | Out-String)
-})
-
 
 # winget install --name "AWS Command Line Interface"
 # winget install --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W11

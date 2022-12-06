@@ -83,10 +83,13 @@ home = {this = '~/wsl', to_this = '\\wsl.localhost\Ubuntu-22.04\home\username'}
 home = {this = '~/win', to_this = '/mnt/c/Users/username'}
 
 
-[vim_linux]
+[nvim_linux]
 
 
-[vim_windows]
+[nvim_windows]
+
+[nvim]
+flake8 = {this = '~/.flake8', to_this = 'REPO_ROOT/settings/lvim/plugins_config/.flake8'}
 
 
 [helix_windows]

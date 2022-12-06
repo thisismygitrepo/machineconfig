@@ -8,7 +8,7 @@ LIBRARY_ROOT = tb.P(machineconfig.__file__).parent
 REPO_ROOT = LIBRARY_ROOT.parent.parent
 
 
-def display_options(msg, options, header="", default=None):
+def display_options(msg, options: list, header="", default=None):
     print("\n")
     print(header.center(50, "-"))
     print(msg)

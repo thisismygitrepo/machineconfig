@@ -6,7 +6,7 @@ This script Takes away all config files from the computer, place them in one dir
 
 import crocodile.toolbox as tb
 from crocodile.environment import DotFiles, system, PathVar, UserName  # ProgramFiles, WindowsApps  # , exe
-from machineconfig.utils.utils import symlink, LIBRARY_ROOT, REPO_ROOT
+from machineconfig.utils.utils import symlink, LIBRARY_ROOT, REPO_ROOT, display_options
 # import os
 import subprocess
 
@@ -47,7 +47,13 @@ def main_symlinks():
 
     overwrite = True
     exclude = ["autostart_windows"]  # "wsl_linux", "wsl_windows"
-    for program_key in symlink_mapper.keys():
+
+    program_keys = list(symlink_mapper.keys())
+    choice = display_options(msg="Which symlink to create?", options=program_keys + ["all"], default="all")
+    if str(choice) == "all": pass
+    else: program_keys = [choice]
+
+    for program_key in program_keys:
         if program_key in exclude or OTHER_SYSTEM in program_key:
             print(f"Skipping {program_key} for {system}")
             continue
@@ -66,7 +72,7 @@ def add_to_shell_profile_path(dirs: list):
     elif system == "Linux": file = tb.P("~/.bashrc").expanduser()
     else: raise ValueError
     file.copy(name=file.name + f".orig_" + tb.randstr())
-    file.modify_text(addition, addition, newline=False, notfound_append=True)
+    file.modify_text(addition, addition, replace_line=False, notfound_append=True)
 
 
 def main_env_path():
@@ -77,19 +83,48 @@ def main_env_path():
     add_to_shell_profile_path(env_path[f'path_{system.lower()}']['extension'])
 
 
-def main_patch_shell_profile():
+def main_add_sources_to_shell_profile():
     sources = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()
     for file in sources[system.lower()]['files']:
         file = file.replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix())
-        if system == "Windows": tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(f". {file}", f". {file}", newline=True, notfound_append=True)
+        if system == "Windows": tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(f". {file}", f". {file}", replace_line=True, notfound_append=True)
         elif system == "Linux": tb.P("~/.bashrc").expanduser().modify_text(f"source {file}", f"source {file}", notfound_append=True)
         else: raise ValueError
 
 
+def main_add_patches_to_shell_profile():
+    patches = LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search()
+
+    choice = display_options(msg="Which patch to add?", options=patches.list + ["all"], default="all")
+    if str(choice) == "all": patches = patches
+    else: patches = [choice]
+
+    if system == "Windows":
+        profile_path = tb.Terminal().run("$profile", shell="pwsh").as_path
+    elif system == "Linux": profile_path = tb.P("~/.bashrc")
+    else: raise ValueError
+    profile = profile_path.read_text()
+
+    for patch_path in patches:
+        patch = patch_path.read_text()
+        if patch in profile: print(f"Skipping `{patch_path.name}`; patch already in profile")
+        else: profile += "\n" + patch
+    profile_path.write_text(profile)
+
+
 def main():
+    print("\n")
+    print(f"CREATING SYMLINKS".center(80, "-"))
     main_symlinks()
+    print("\n")
+    print(f"ADDING ENV PATH".center(80, "-"))
     main_env_path()
-    main_patch_shell_profile()
+    print("\n")
+    print(f"ADDING SOURCES TO SHELL PROFILE".center(80, "-"))
+    main_add_sources_to_shell_profile()
+    print("\n")
+    print(f"ADDING PATCHES TO SHELL PROFILE".center(80, "-"))
+    main_add_patches_to_shell_profile()
 
 
 if __name__ == '__main__':

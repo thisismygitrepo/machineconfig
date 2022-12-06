@@ -98,7 +98,7 @@ def main():
         else: path_to_key = tb.P(choice)
         txt = f"IdentityFile {path_to_key.collapseuser().as_posix()}"  # adds this id for all connections, no host specified.
         config_path = tb.P.home().joinpath(".ssh/config")
-        if config_path.exists(): config_path.modify_text(txt=txt, alt=txt, newline=True, notfound_append=True, prepend=True)  # note that Identity line must come on top of config file otherwise it won't work, hence `prepend=True`
+        if config_path.exists(): config_path.modify_text(txt_search=txt, txt_alt=txt, replace_line=True, notfound_append=True, prepend=True)  # note that Identity line must come on top of config file otherwise it won't work, hence `prepend=True`
         else: config_path.write_text(txt)
         program = f"echo 'Finished adding identity to ssh config file. {'*'*50} Consider reloading config file.'"
 
