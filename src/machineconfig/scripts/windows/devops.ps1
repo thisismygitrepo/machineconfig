@@ -6,6 +6,8 @@ if (Test-Path $op_script ) {
 
 . $PSScriptRoot/activate_ve.ps1 $Args[0]
 #~/venvs/ve/Scripts/Activate.ps1
-python $PSScriptRoot/../python/devops.py $args
+echo "Using virtual enviroment: $env:VIRTUAL_ENV"
+$script_root = (Get-Item $PSScriptRoot).Target
+python $script_root/../python/devops.py $args
 . $op_script
 #deactivate
