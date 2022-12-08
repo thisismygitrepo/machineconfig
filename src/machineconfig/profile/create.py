@@ -87,6 +87,7 @@ def main_add_sources_to_shell_profile():
     sources = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()
     for file in sources[system.lower()]['files']:
         file = file.replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix())
+        file = tb.P(file).collapseuser().as_posix()  # this makes the shell profile interuseable across machines.
         if system == "Windows": tb.Terminal().run("$profile", shell="pwsh").as_path.modify_text(f". {file}", f". {file}", replace_line=True, notfound_append=True)
         elif system == "Linux": tb.P("~/.bashrc").expanduser().modify_text(f"source {file}", f"source {file}", notfound_append=True)
         else: raise ValueError
