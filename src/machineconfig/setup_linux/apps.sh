@@ -110,6 +110,8 @@ LV_BRANCH='release-1.2/neovim-0.8' bash <(curl -s https://raw.githubusercontent.
 curl -sLf https://spacevim.org/install.sh | bash
 
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+# replace OSH_THEME="font" with OSH_THEME="random" in ~/.bashrc
+sed -i 's/OSH_THEME="font"/OSH_THEME="random"/' ~/.bashrc
 
 # zsh
 #sudo apt install zsh

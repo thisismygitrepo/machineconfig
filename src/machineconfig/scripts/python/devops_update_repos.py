@@ -11,8 +11,8 @@ def main():
         repo_package_list = repos.sections()
     else:
         repos = {
-            "crocodile": dict(name="crocodile", url="http://github.com/thisismygitrepo/crocodile", py_package=True),
-            "machineconfig": dict(name="machineconfig", url="http://github.com/thisismygitrepo/machineconfig", py_package=True)
+            "crocodile": dict(name="crocodile", url="http://github.com/thisismygitrepo/crocodile", py_package="True", path=""),
+            "machineconfig": dict(name="machineconfig", url="http://github.com/thisismygitrepo/machineconfig", py_package="True", path="")
                 }
         repo_package_list = repos.keys()
 
@@ -22,7 +22,7 @@ def main():
         try:
             a_package_path = tb.P(__import__(a_package).__file__) if repos[a_package]["py_package"] == "True" else tb.P(repos[a_package]["path"]).expanduser().absolute()
             if not a_package_path.exists():
-                print(f"Couldn't find {a_package} repo. Cloning from remote ... ")
+                print(f"Couldn't find {a_package} repo. Cloning from remote {repos[a_package]['url']} to ~/code/{a_package} ...")
                 tb.Terminal().run(f"cd ~/code; git clone {repos[a_package]['url']}")
             repo = tb.install_n_import("git", "gitpython").Repo(str(a_package_path), search_parent_directories=True)
             local_install_repos.append(repo)
