@@ -44,65 +44,12 @@ def main():
         program = ve_setup()
 
     elif choice_key == "DEVAPPS install":
-        if system() == "Windows":
-            from machineconfig.jobs.python.python_windows_installers_all import get_installers
-        else:
-            from machineconfig.jobs.python.python_linux_installers_all import get_installers
-        installers = get_installers()
-        installers.list.insert(0, tb.P("all"))
-        program_name = display_options(msg="", options=installers.stem, header="CHOOSE DEV APP")
-        if program_name == "all":
-            program_linux = f"source {LIBRARY_ROOT}/setup_linux/devapps.sh"
-            program_windows = f"{LIBRARY_ROOT}/setup_windows/devapps.ps1"
-            program = program_linux if system() == "Linux" else program_windows
-        else:
-            idx = installers.stem.list.index(program_name)
-            program = installers[idx].readit()['main']()  # finish the task
-            if program is None: program = "echo 'Finished Installation'"  # write an empty program
+        from machineconfig.scripts.python.devops_devapps_install import main
+        program = main()
 
     elif choice_key == "UPDATE essential repos":
-        repos = tb.P.home().joinpath("dotfiles/config/repos.ini")
-        local_install_repos = []
-        global_packages = []
-
-        if repos.exists():
-            repos = repos.readit()
-            repo_package_list = list(repos.keys())
-            repo_package_list.remove("DEFAULT")
-        else: repo_package_list = ["crocodile", "machineconfig"]
-
-        for a_package in repo_package_list:
-            try:
-                repo = tb.install_n_import("git", "gitpython").Repo(__import__(a_package).__file__, search_parent_directories=True)
-                local_install_repos.append(repo)
-            except:
-                global_packages.append(a_package)
-
-        sep = "\n"
-        if system() == "Linux":
-            program = tb.P(f"{LIBRARY_ROOT}/jobs/linux/update_essentials").read_text()
-            additions = []
-            for a_repo in local_install_repos:
-                if "machineconfig" in a_repo.working_dir:
-                    an_addition = f"""
-cd "{a_repo.working_dir}"
-git reset --hard
-git pull origin
-chmod +x ~/scripts -R
-chmod +x ~/code/machineconfig/src/machineconfig/jobs/linux -R
-chmod +x ~/code/machineconfig/settings/lf_linux/exe -R
-"""
-                    additions.append(an_addition)
-                else:
-                    additions.append(f"""cd "{a_repo.working_dir}"; {sep.join([f'git pull {remote.name}' for remote in a_repo.remotes])}""")
-            addition = "\n".join(additions)
-        elif system() == "Windows":
-            program = tb.P(f"{LIBRARY_ROOT}/jobs/windows/update_essentials.ps1").read_text()
-            addition = "\n".join([f"""cd "{a_repo.working_dir}"; {sep.join([f'git pull {remote.name}' for remote in a_repo.remotes])}""" for a_repo in local_install_repos])
-        else: raise NotImplementedError(f"System {system()} not supported")
-
-        program = program.split("# updateBegins")[0] + addition + program.split("# updateEnds")[1]
-        program += f"\npip install --upgrade {' '.join(global_packages)}\n"
+        import machineconfig.scripts.python.devops_update_repos as helper
+        program = helper.main()
 
     elif choice_key == "DEVAPPS install":
         program_windows = f"{LIBRARY_ROOT}/setup_windows/devapps.ps1"
@@ -115,28 +62,15 @@ chmod +x ~/code/machineconfig/settings/lf_linux/exe -R
         program = program_linux if system() == "Linux" else program_windows
 
     elif choice_key == "SSH add pub key to this machine":
-        from machineconfig.scripts.python.devops_add_ssh_key import get_add_ssh_key_script
-        pub_keys = tb.P.home().joinpath(".ssh").search("*.pub")
-        res = display_options("Which public key to add? ", options=pub_keys.list + ["all", "I have the path to the key file", "I want to paste the key itself"])
-        if res == "all": program = "\n\n\n".join(pub_keys.apply(get_add_ssh_key_script))
-        elif res == "I have the path to the key file": program = get_add_ssh_key_script(tb.P(input("Path: ")).expanduser().absolute())
-        elif res == "I want to paste the key itself": program = get_add_ssh_key_script(tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key.pub): ') or 'my_pasted_key.pub'}").write_text(input("Paste the pub key here: ")))
-        else: program = get_add_ssh_key_script(tb.P(res))
+        from machineconfig.scripts.python.devops_add_ssh_key import main
+        program = main()
 
     elif choice_key == "SSH use key pair to connect two machines":
         raise NotImplementedError
 
     elif choice_key == 'SSH add identity (private key) to this machine':  # so that you can SSH directly withuot pointing to identity key.
-        private_keys = tb.P.home().joinpath(".ssh").search("*.pub").apply(lambda x: x.with_name(x.stem)).filter(lambda x: x.exists())
-        choice = display_options(msg="Path to private key to be used when ssh'ing: ", options=private_keys.list + ["I have the path to the key file", "I want to paste the key itself"])
-        if choice == "I have the path to the key file": path_to_key = tb.P(input("Input path here: ")).expanduser().absolute()
-        elif choice == "I want to paste the key itself": path_to_key = tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key): ') or 'my_pasted_key'}").write_text(input("Paste the private key here: "))
-        else: path_to_key = tb.P(choice)
-        txt = f"IdentityFile {path_to_key.collapseuser().as_posix()}"  # adds this id for all connections, no host specified.
-        config_path = tb.P.home().joinpath(".ssh/config")
-        if config_path.exists(): config_path.modify_text(txt_search=txt, txt_alt=txt, replace_line=True, notfound_append=True, prepend=True)  # note that Identity line must come on top of config file otherwise it won't work, hence `prepend=True`
-        else: config_path.write_text(txt)
-        program = f"echo 'Finished adding identity to ssh config file. {'*'*50} Consider reloading config file.'"
+        from machineconfig.scripts.python.devops_add_identity import main
+        program = main()
 
     elif choice_key == "SSH setup":
         program_windows = f"""Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""
@@ -147,29 +81,8 @@ chmod +x ~/code/machineconfig/settings/lf_linux/exe -R
         program = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
 
     elif choice_key == "BACKUP & RETRIEVE":
-        direction = display_options(msg="BACKUP OR RETRIEVE?", options=["BACKUP", "RETRIEVE"], default="BACKUP")
-        drive = display_options(msg="WHICH CLOUD?", options=["GDrive", "OneDrive"], default="OneDrive")
-        bu_file = LIBRARY_ROOT.joinpath("profile/backup.toml").readit()
-        if system() == "Linux": bu_file = {key: val for key, val in bu_file.items() if "windows" not in key}
-        elif system() == "Windows": bu_file = {key: val for key, val in bu_file.items() if "linux" not in key}
-        choice_key = display_options(msg="WHICH FILE of the following do you want to back up?", options=['all'] + list(bu_file.keys()), default="dotfiles")
-        if choice_key == "all": items = list(bu_file.values())
-        else: items = [bu_file[choice_key]]
-
-        if direction == "BACKUP" and drive == "OneDrive":
-            from machineconfig.scripts.python.bu_onedrive_sx import main
-            for item in items: main(which="default", zip_first=item['zip'], encrypt_first=item['encrypt'], file=tb.P(item['path']).expanduser(), key=None, pwd=None, overwrite=True)
-        elif direction == "RETRIEVE" and drive == "OneDrive":
-            from machineconfig.scripts.python.bu_onedrive_rx import main
-            for item in items: main(which="default", unzip=item['zip'], decrypt=item['encrypt'], file=tb.P(item['path']).expanduser(), overwrite=True, key=None, pwd=None)
-        elif direction == "BACKUP" and drive == "GDrive":
-            from machineconfig.scripts.python.bu_gdrive_sx import main
-            for item in items: main(google_account=None, project=None, zip_first=item['zip'], encrypt_first=item['encrypt'], file=tb.P(item['path']).expanduser(), relative_to_home=True, remote_dir="", share=False, key=None, pwd=None)
-        elif direction == "RETRIEVE" and drive == "GDrive":
-            from machineconfig.scripts.python.bu_gdrive_rx import main
-            for item in items: main(google_account=None, project=None, unzip=item['zip'], decrypt=item['encrypt'], file=tb.P(item['path']).expanduser(), relative_to_home=True, local_dir="", key=None, pwd=None)
-        else: raise ValueError
-        program = f"echo 'Finished backing up {items}.'"
+        from machineconfig.scripts.python.devops_backup_retrieve import main
+        program = main()
     else:
         raise ValueError(f"Unimplemented choice: {choice_key}")
 

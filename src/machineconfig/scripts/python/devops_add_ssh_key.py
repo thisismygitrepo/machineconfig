@@ -1,7 +1,7 @@
 
 import crocodile.toolbox as tb
 from platform import system
-from machineconfig.utils.utils import LIBRARY_ROOT
+from machineconfig.utils.utils import LIBRARY_ROOT, display_options
 
 
 def get_add_ssh_key_script(path_to_key):
@@ -30,3 +30,16 @@ def get_add_ssh_key_script(path_to_key):
             program = tb.P(program).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
     return program
 
+
+def main():
+    pub_keys = tb.P.home().joinpath(".ssh").search("*.pub")
+    res = display_options("Which public key to add? ", options=pub_keys.list + ["all", "I have the path to the key file", "I want to paste the key itself"])
+    if res == "all": program = "\n\n\n".join(pub_keys.apply(get_add_ssh_key_script))
+    elif res == "I have the path to the key file": program = get_add_ssh_key_script(tb.P(input("Path: ")).expanduser().absolute())
+    elif res == "I want to paste the key itself": program = get_add_ssh_key_script(tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key.pub): ') or 'my_pasted_key.pub'}").write_text(input("Paste the pub key here: ")))
+    else: program = get_add_ssh_key_script(tb.P(res))
+    return program
+
+
+if __name__ == '__main__':
+    pass
