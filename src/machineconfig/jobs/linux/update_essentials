@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 orig_path=$(cd -- "." && pwd)
-cd ~/code/machineconfig/
-git reset --hard
-git pull origin
-chmod +x ~/scripts -R
-chmod +x ~/code/machineconfig/src/machineconfig/jobs/linux -R
-chmod +x ~/code/machineconfig/settings/lf_linux/exe -R
+
+# updateBegins
+
 cd ~/code/crocodile
 git pull origin
+
+# updateEnds
+
 cd $orig_path
 
