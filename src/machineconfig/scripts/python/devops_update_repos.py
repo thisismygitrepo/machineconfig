@@ -20,10 +20,15 @@ def main():
     global_packages = []
     for a_package in repo_package_list:
         try:
-            a_package_path = __import__(a_package).__file__ if repos[a_package]["py_package"] == "True" else tb.P(repos[a_package]["path"]).expanduser().absolute().__str__()
-            repo = tb.install_n_import("git", "gitpython").Repo(a_package_path, search_parent_directories=True)
+            a_package_path = tb.P(__import__(a_package).__file__) if repos[a_package]["py_package"] == "True" else tb.P(repos[a_package]["path"]).expanduser().absolute()
+            if not a_package_path.exists():
+                print(f"Couldn't find {a_package} repo. Cloning from remote ... ")
+                tb.Terminal().run(f"cd ~/code; git clone {repos[a_package]['url']}")
+            repo = tb.install_n_import("git", "gitpython").Repo(str(a_package_path), search_parent_directories=True)
             local_install_repos.append(repo)
         except:
+            if repos[a_package]["py_package"] == "False":
+                continue
             global_packages.append(a_package)
 
     sep = "\n"
