@@ -11,6 +11,7 @@ PROGRAM_PATH = tb.P.tmp().joinpath("shells/python_return_command") + (".ps1" if 
 options = ['UPDATE essential repos',
            'DEVAPPS install',
            'VE install',
+           'SYMLINKS new',
            'SYMLINKS creation',
            'SSH add pub key to this machine',
            'SSH add identity (private key) to this machine',
@@ -42,6 +43,10 @@ def main():
     elif choice_key == "VE install":
         from machineconfig.jobs.python.python_ve_installer import ve_setup
         program = ve_setup()
+
+    elif choice_key == "SYMLINKS new":
+        from machineconfig.jobs.python.python_ve_symlink import main
+        program = main()
 
     elif choice_key == "DEVAPPS install":
         from machineconfig.scripts.python.devops_devapps_install import main
