@@ -82,7 +82,7 @@ def find_move_delete_linux(downloaded, tool_name, delete=True):
                 exe = res[0] if len(res) == 1 else res[0].parent.joinpath(tool_name)
         else:
             exe = downloaded.joinpath(tool_name)
-    print(f"Moving file {repr(exe)}")
+    print(f"MOVING file `{repr(exe)}` to '/usr/local/bin'")
     exe.chmod(0o777)
     # exe.move(folder=r"/usr/local/bin", overwrite=False)
     tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print()
