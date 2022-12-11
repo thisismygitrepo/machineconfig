@@ -33,6 +33,11 @@ winget install --Id UB-Mannheim.TesseractOCR
 
 
 # ================================================== Shells ===========================================
+# Install icons
+Install-Module -Name Terminal-Icons -Repository PSGallery
+# Install oh-my-posh
+winget install --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" --source winget
+
 $ErrorActionPreference = "Stop"  # if there is any error in any command, stop there instead of proceeding to the next.
 winget install --id Python.Python.3.9  --source winget  # from https:\\winget.run  Python.Python.3.9
 winget install --id Python.Python.3.10 --source winget

@@ -10,7 +10,7 @@ else {
 
 #~/venvs/ve/Scripts/Activate.ps1
 . $PSScriptRoot/activate_ve.ps1
-python -m fire machineconfig.setup_windows_terminal.ohmyposh choose $args[0]
+python -m fire machineconfig.scripts.python.choose_ohmyposh_theme main $args[0]
 .$profile  # reload the profile
 
 cd $tmp

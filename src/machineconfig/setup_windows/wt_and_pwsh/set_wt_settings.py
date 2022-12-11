@@ -110,15 +110,19 @@ class TerminalSettings(object):
 
 
 def main():
-    ts = TerminalSettings()
-    ts.update_default_settings()
-    ts.customize_powershell()
-    ts.make_powershell_default_profile()
-    ts.add_croshell()
-    ts.add_ubuntu()
-    ts.standardize_profiles_order()
-    ts.dat['actions'].append({'command': 'togglePaneZoom', 'keys': 'ctrl+shift+z'})
-    ts.save_terminal_settings()
+    shell = {"powershell": "pwsh.exe", "Windows Powershell": "powershell.exe"}["powershell"].split(".exe")[0]
+    if shell == "pwsh":
+        ts = TerminalSettings()
+        ts.update_default_settings()
+        ts.customize_powershell(nerd_font=True)
+
+        ts.make_powershell_default_profile()
+        ts.add_croshell()
+        ts.add_ubuntu()
+        ts.standardize_profiles_order()
+        ts.dat['actions'].append({'command': 'togglePaneZoom', 'keys': 'ctrl+shift+z'})
+        ts.save_terminal_settings()
+    else: raise NotImplementedError
 
 
 if __name__ == '__main__':
