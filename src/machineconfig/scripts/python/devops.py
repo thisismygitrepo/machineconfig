@@ -28,38 +28,21 @@ def main():
     PROGRAM_PATH.delete(sure=True, verbose=False)
     choice_key = display_options(msg="", options=options, header="DEVOPS", default=options[0])
 
-    if choice_key == "REPOS pull all":
-        from machineconfig.jobs.python.repos import pull_all
-        program = pull_all()
-
-    elif choice_key == "REPOS push all":
-        from machineconfig.jobs.python.repos import push_all
-        program = push_all()
-
-    elif choice_key == "REPOS commit all":
-        from machineconfig.jobs.python.repos import commit_all
-        program = commit_all()
+    if choice_key == "UPDATE essential repos":
+        import machineconfig.scripts.python.devops_update_repos as helper
+        program = helper.main()
 
     elif choice_key == "VE install":
         from machineconfig.jobs.python.python_ve_installer import ve_setup
         program = ve_setup()
 
-    elif choice_key == "SYMLINKS new":
-        from machineconfig.jobs.python.python_ve_symlink import main
-        program = main()
-
     elif choice_key == "DEVAPPS install":
         from machineconfig.scripts.python.devops_devapps_install import main
         program = main()
 
-    elif choice_key == "UPDATE essential repos":
-        import machineconfig.scripts.python.devops_update_repos as helper
-        program = helper.main()
-
-    elif choice_key == "DEVAPPS install":
-        program_windows = f"{LIBRARY_ROOT}/setup_windows/devapps.ps1"
-        program_linux = f"source <(sudo cat {LIBRARY_ROOT}/setup_linux/devapps.sh)"
-        program = program_linux if system() == "Linux" else program_windows
+    elif choice_key == "SYMLINKS new":
+        from machineconfig.jobs.python.python_ve_symlink import main
+        program = main()
 
     elif choice_key == "SYMLINKS creation":
         program_windows = f"{LIBRARY_ROOT}/setup_windows/symlinks.ps1"
@@ -88,6 +71,19 @@ def main():
     elif choice_key == "BACKUP & RETRIEVE":
         from machineconfig.scripts.python.devops_backup_retrieve import main
         program = main()
+
+    elif choice_key == "REPOS pull all":
+        from machineconfig.jobs.python.repos import pull_all
+        program = pull_all()
+
+    elif choice_key == "REPOS push all":
+        from machineconfig.jobs.python.repos import push_all
+        program = push_all()
+
+    elif choice_key == "REPOS commit all":
+        from machineconfig.jobs.python.repos import commit_all
+        program = commit_all()
+
     else:
         raise ValueError(f"Unimplemented choice: {choice_key}")
 

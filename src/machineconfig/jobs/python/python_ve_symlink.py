@@ -10,7 +10,7 @@ def main():
     # tb.P('.gitignore').modify_text('venv', 'venv', replace_line=True)"
 
     source.symlink_to(target, overwrite=True)
-    return "Finished creating symlink."
+    return "echo 'Finished creating symlink.'"
 
 
 if __name__ == '__main__':

@@ -117,13 +117,14 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
     print(f"Completed Installation".center(100, "-"))
 
 
-def get_shell_script_executing_pyscript(python_file, func=None, system=None):
+def get_shell_script_executing_pyscript(python_file, func=None, system=None, ve_name="ve"):
     return f"""
-~/venvs/ve/Scripts/activate.ps1
+~/venvs/{ve_name}/Scripts/activate.ps1
 python {python_file} {func if func is not None else ""}
 """ if system == "Windows" else f"""
-. ~/venvs/ve/bin/activate
+. ~/venvs/{ve_name}/bin/activate
 python {python_file} {func if func is not None else ""}
+deactivate
 """
 
 
