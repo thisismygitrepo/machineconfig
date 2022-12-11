@@ -6,6 +6,7 @@ import argparse
 from crocodile.comms.helper_funcs import process_retrieved_file
 import os
 import time
+import platform
 
 
 def main(file, unzip, decrypt, which, overwrite, key, pwd):
@@ -16,7 +17,7 @@ def main(file, unzip, decrypt, which, overwrite, key, pwd):
         onedrive = tb.P.home().joinpath(os.environ["OneDrive"])
 
     target_file = tb.P(file).expanduser().absolute()
-    source_file = onedrive.joinpath(f"myhome/{target_file.rel2home()}")
+    source_file = onedrive.joinpath(tb.get_env().myhome, target_file.rel2home())
     if unzip and decrypt: source_file = source_file + ".zip.enc"
 
     print(f"Retriveing `{source_file}` \nTo `{target_file.parent}` folder.")

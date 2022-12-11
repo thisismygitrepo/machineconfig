@@ -1,5 +1,5 @@
 
-from crocodile.environment import OneDriveExe
+from crocodile.environment import OneDriveExe, myhome
 from crocodile.comms.helper_funcs import process_sent_file
 from crocodile.file_management import P
 import argparse
@@ -14,7 +14,7 @@ def main(which, file, zip_first, encrypt_first, key, pwd, overwrite):
         onedrive = P.home().joinpath(os.environ["OneDrive"])
 
     file = process_sent_file(file=file, zip_first=zip_first, encrypt_first=encrypt_first, key=key, pwd=pwd)
-    remote_dir = onedrive.joinpath(f"myhome/{file.rel2home().parent}")
+    remote_dir = onedrive.joinpath(myhome, file.rel2home().parent)
     path = file.copy(folder=remote_dir, overwrite=overwrite)
     if zip_first or encrypt_first: P(file).delete(sure=True)
     OneDriveExe()  # push to OneDrive
