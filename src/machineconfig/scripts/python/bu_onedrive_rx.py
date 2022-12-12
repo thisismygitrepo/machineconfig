@@ -6,7 +6,6 @@ import argparse
 from crocodile.comms.helper_funcs import process_retrieved_file
 import os
 import time
-import platform
 
 
 def main(file, unzip, decrypt, which, overwrite, key, pwd):

@@ -19,7 +19,6 @@ sudo sed -i 's/PRUNEPATHS="/PRUNEPATHS="\/mnt\/c /g' /etc/updatedb.conf
 # PRUNEPATHS /mnt /etc/updatedb.conf
 # sudo sed -i "s/^ *PRUNEFS *= *[\"']/&drvfs 9p /" /etc/updatedb.conf /etc/cron.daily/locate
 
-
 # -------------------- Utilities --------------------
 
 sudo apt install wget -y  # for downloading files
@@ -49,7 +48,8 @@ sudo apt install make -y  # lvim and spacevim require it.
 sudo apt install net-tools -y  # gives ifconfig
 sudo apt install git -y  # for version control
 #curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
-
+curl https://rclone.org/install.sh | sudo bash  # onedrive equivalent.
+sudo apt install lynx  # tex browser, just like w3m
 
 # ------------------- File Managers ---------------------------
 
