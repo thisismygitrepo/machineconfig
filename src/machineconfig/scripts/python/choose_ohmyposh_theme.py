@@ -16,7 +16,7 @@ def main(new_theme=None):
 
     if new_theme == "manual":
         tb.P("https://ohmyposh.dev/docs/themes").start()  # replace ~/jan... with full path to theme. use: start $profile
-        name = input(f"A chrome tab with styles is opened, choose one and put its name here: [jandedobbeleer] ")
+        new_theme = input(f"A chrome tab with styles is opened, choose one and put its name here: [jandedobbeleer] ")
     if new_theme == "show":
         __import__("os").system("Write-Host Get-PoshThemes")
         return ""
