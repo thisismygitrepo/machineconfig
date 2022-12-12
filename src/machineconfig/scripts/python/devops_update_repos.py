@@ -39,7 +39,7 @@ def main():
             if "machineconfig" in a_repo.working_dir:
                 an_addition = f"""
 cd "{a_repo.working_dir}"
-echo "{("Pulling " + str(a_repo)).center(80, "-")}"
+echo "{("Pulling " + str(a_repo.working_dir)).center(80, "-")}"
 git reset --hard
 git pull origin
 chmod +x ~/scripts -R
@@ -50,7 +50,7 @@ chmod +x ~/code/machineconfig/settings/lf_linux/exe -R
             else:
                 additions.append(f"""
 cd "{a_repo.working_dir}"
-echo "{("Pulling " + str(a_repo)).center(80, "-")}"
+echo "{("Pulling " + str(a_repo.working_dir)).center(80, "-")}"
 {sep.join([f'git pull {remote.name}' for remote in a_repo.remotes])}
 """)
         addition = "\n".join(additions)
@@ -58,7 +58,7 @@ echo "{("Pulling " + str(a_repo)).center(80, "-")}"
         program = tb.P(f"{LIBRARY_ROOT}/jobs/windows/update_essentials.ps1").read_text()
         addition = "\n".join([f"""
 cd "{a_repo.working_dir}"
-echo "{("Pulling " + str(a_repo)).center(80, "-")}"
+echo "{("Pulling " + str(a_repo.working_dir)).center(80, "-")}"
 {sep.join([f'git pull {remote.name}' for remote in a_repo.remotes])}
 """ for a_repo in local_install_repos])
     else: raise NotImplementedError(f"System {system()} not supported")
