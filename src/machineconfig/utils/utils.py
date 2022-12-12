@@ -21,16 +21,20 @@ def display_options(msg, options: list, header="", default=None):
     for idx, key in enumerate(options):
         print(f"{idx:2d}", key, default_msg if default is not None and default == key else "")
 
-    # print("\n")
-    choice_idx = input(f"Enter the number of the option: ")
-    if choice_idx == "":
-        assert default is not None, f"Default option not available!"
-        choice_idx = options.index(default)
+    choice_idx = input(f"Enter option *number* (or option name starting with space): ")
+    if choice_idx.startswith(" "):
+        choice_key = choice_idx.strip()
+        assert choice_key in options, f"Choice `{choice_key}` not in options."
+        choice_idx = options.index(choice_key)
+    else:
+        if choice_idx == "":
+            assert default is not None, f"Default option not available!"
+            choice_idx = options.index(default)
+        try:
+            choice_key = options[int(choice_idx)]
+        except IndexError:
+            raise ValueError(f"Unknown choice. {choice_idx}")
 
-    try:
-        choice_key = options[int(choice_idx)]
-    except IndexError:
-        raise ValueError(f"Unknown choice. {choice_idx}")
     print(f"{choice_idx}: {choice_key}", f"<<<<-------- CHOICE MADE")
     return choice_key
 
