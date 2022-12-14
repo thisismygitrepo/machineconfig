@@ -12,9 +12,11 @@ def main():
     parser.add_argument("--recursive", "-r", help="Send recursively.", action="store_true")  # default is False
     parser.add_argument("--zipFirst", "-z", help="Zip before sending.", action="store_true")  # default is False
 
+    parser.add_argument("-d", "--destination", help=f"destination folder", default=None)
+
     args = parser.parse_args()
     ssh = SSH(rf'{args.machine}')
-    ssh.copy_to_here(args.file, zip_first=args.zipFirst, r=args.recursive)
+    ssh.copy_to_here(source=args.file, target=args.destination, zip_first=args.zipFirst, r=args.recursive)
     ssh.print_summary()
 
 

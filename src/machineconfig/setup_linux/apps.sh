@@ -48,7 +48,7 @@ sudo apt install make -y  # lvim and spacevim require it.
 sudo apt install net-tools -y  # gives ifconfig
 sudo apt install git -y  # for version control
 #curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
-curl https://rclone.org/install.sh | sudo bash  # onedrive equivalent.
+#curl https://rclone.org/install.sh | sudo bash  # onedrive equivalent.
 sudo apt install lynx  # tex browser, just like w3m
 
 # ------------------- File Managers ---------------------------

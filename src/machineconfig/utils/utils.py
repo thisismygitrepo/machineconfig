@@ -116,7 +116,8 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
             file_name = f'{tool_name}-{version}-{suffix}.{compression or "tar.gz"}'
         download_link = download_link.joinpath(file_name)
         print("Downloading", download_link)
-        downloaded = download_link.download().ungz_untar(inplace=True)
+        downloaded = download_link.download()
+        downloaded = download_link.ungz_untar(inplace=True) if "tar.gz" in download_link else downloaded.unzip(inplace=True)
         find_move_delete_linux(downloaded, exe_name or tool_name, delete)
     print(f"Completed Installation".center(100, "-"))
 
