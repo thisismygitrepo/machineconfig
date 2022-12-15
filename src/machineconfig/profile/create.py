@@ -105,8 +105,8 @@ def main_add_sources_to_shell_profile(profile_path=None):
         file = file.replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix())
         file = tb.P(file).collapseuser().as_posix()  # this makes the shell profile interuseable across machines.
         if file in profile:
-            if system == "Windows": profile += f". {file}"
-            elif system == "Linux": profile += f"source {file}"
+            if system == "Windows": profile += f"\n. {file}"
+            elif system == "Linux": profile += f"\nsource {file}"
             else: raise ValueError(f"Not implemented for this system {system}")
         else: print(f"SKIPPING source `{file}`, it is already sourced in shell profile.")
     profile_path.write_text(profile)
