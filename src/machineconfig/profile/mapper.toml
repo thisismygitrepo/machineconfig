@@ -10,6 +10,10 @@ gitcred = {this = '~/.git-credentials', to_this = '~/dotfiles/settings/.git-cred
 creds = {this = '~/.pypirc', to_this = '~/dotfiles/creds/msc/.pypirc'}
 
 
+[rclone]
+config = {this = '~/.config/rclone/rclone.conf', to_this = '~/dotfiles/creds/rclone/rclone.conf'}
+
+
 # Shells profiles
 [powershell_windows]
 CurrentUserCurrentHost = {this = '~/Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserCurrentHost/Microsoft.PowerShell_profile.ps1'}
