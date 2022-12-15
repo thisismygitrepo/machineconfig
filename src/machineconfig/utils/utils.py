@@ -4,7 +4,8 @@ import crocodile.toolbox as tb
 import machineconfig
 
 
-LIBRARY_ROOT = tb.P(machineconfig.__file__).parent
+LIBRARY_ROOT = machineconfig.__file__.replace(tb.P.home().str.lower(), tb.P.home().str)
+LIBRARY_ROOT = tb.P(LIBRARY_ROOT).parent
 REPO_ROOT = LIBRARY_ROOT.parent.parent
 
 
