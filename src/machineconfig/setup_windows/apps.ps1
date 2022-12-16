@@ -58,6 +58,7 @@ winget install --name "Powershell" --Id "Microsoft.PowerShell" --source winget  
 
 
 # ======================== DEV TOOLS =================================
+winget isntall WinFsp.WinFsp  # required by rclone
 winget install --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements  # ncessary for nvim plugins.
 npm i sharewifi -g
 winget install Graphviz.Graphviz  # required by pygraphviz. Used in Base.viz_object_hirarchy and Model.plot_model()
