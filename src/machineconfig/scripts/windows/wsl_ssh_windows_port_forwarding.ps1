@@ -49,8 +49,8 @@ if (-not $found) {
 # Remove and Create NetFireWallRule
 Remove-NetFireWallRule -DisplayName 'WSL 2 Firewall Unlock';
 if ($Args[0] -ne "delete") {
-  New-NetFireWallRule -DisplayName 'WSL 2 Firewall Unlock' -Direction Outbound -LocalPort $Ports -Action Allow -Protocol TCP;
-  New-NetFireWallRule -DisplayName 'WSL 2 Firewall Unlock' -Direction Inbound -LocalPort $Ports -Action Allow -Protocol TCP;
+  New-NetFirewallRule -DisplayName 'WSL 2 Firewall Unlock' -Direction Outbound -LocalPort $Ports -Action Allow -Protocol TCP;
+  New-NetFirewallRule -DisplayName 'WSL 2 Firewall Unlock' -Direction Inbound -LocalPort $Ports -Action Allow -Protocol TCP;
 }
 
 # Add each port into portproxy
