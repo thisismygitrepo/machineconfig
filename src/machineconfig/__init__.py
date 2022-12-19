@@ -1,6 +1,6 @@
 
 
-version = "0.5"
+version = "0.7"
 release_notes = """
-created toml file for symlinks
+added symlink
 """
