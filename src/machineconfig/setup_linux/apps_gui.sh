@@ -1,5 +1,4 @@
 
-
 # --------------------------- libs ---------------------------------
 # sudo apt install nautilus -y  # graphical file manager
 # sudo apt install x11-apps  # few graphical test apps like xeyes
@@ -10,7 +9,6 @@ sudo apt install xrdp -y  # remote desktop protocol
 
 sudo apt install xfce4 -y  # xfce4 desktop environment
 sudo apt install xfce4-goodies -y  # xfce4 desktop environment
-
 
 # --------------- setup ----------------------------------
 sudo cp /etc/xrdp/xrdp.ini /etc/xrdp/xrdp.ini.bak
