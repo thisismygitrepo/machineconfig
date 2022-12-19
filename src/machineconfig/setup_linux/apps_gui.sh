@@ -37,10 +37,3 @@ sudo /etc/init.d/xrdp start
 # alternative if systemctl is not available:
 # sudo service xrdp restart
 
-
-# ------------------# gui apps ---------------------------
-sudo apt install gnome-session -y  # gnome 0.3GB
-sudo apt install ubuntu-gnome-desktop -y  # 1.2GB
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb  # chrome 0.3GB
-sudo apt install ./google-chrome-stable_current_amd64.deb
-wget https://download-cdn.jetbrains.com/python/pycharm-community-2022.3.tar.gz

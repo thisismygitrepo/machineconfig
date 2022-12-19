@@ -13,4 +13,8 @@ sudo apt install snapd
 sudo snap install pycharm-community --classic
 sudo snap install code --classic
 sudo snap install powershell --classic
+# wget https://download-cdn.jetbrains.com/python/pycharm-community-2022.3.tar.gz
 
+# desktop enviroments.
+sudo apt install gnome-session -y  # gnome 0.3GB
+sudo apt install ubuntu-gnome-desktop -y  # 1.2GB

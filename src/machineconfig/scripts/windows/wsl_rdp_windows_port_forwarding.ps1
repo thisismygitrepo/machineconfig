@@ -20,6 +20,7 @@ if (-not $found) {
   exit;
 }
 
+
 # Remove and Create NetFireWallRule
 Remove-NetFireWallRule -DisplayName 'WSL 2 Firewall Unlock';
 if ($Args[0] -ne "delete") {
