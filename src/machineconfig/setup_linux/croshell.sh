@@ -1,11 +1,17 @@
 
 
+apt install python3.9-venv
 cd ~
 mkdir ~/venvs
-apt install python3.9-venv
 python -m venv "./venvs/ve"  # ve will have same python version as `python`, where it.
-& ~/venvs/ve/bin/activate  # activate, now use python instead of $mypy
-pip install crocodile
-pip install machineconfig
-python -m fire machineconfig.profile.create main
 
+. ~/venvs/ve/bin/activate  # activate, now use python instead of $mypy
+
+
+mkdir ~/code
+cd ~/code
+git clone https://github.com/thisismygitrepo/machineconfig.git
+git clone https://github.com/thisismygitrepo/crocodile.git
+pip install -e ./machineconfig
+pip install -e ./crocodile
+python -m fire machineconfig.profile.create main
