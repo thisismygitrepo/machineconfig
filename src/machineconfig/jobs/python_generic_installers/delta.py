@@ -5,7 +5,7 @@ import crocodile.toolbox as tb
 
 repo_url = tb.P(r"https://github.com/dandavison/delta")
 # from https://github.com/dandavison/delta#configuration
-config = """
+config_patch = """
 [core]
     pager = delta
 
@@ -34,9 +34,15 @@ def main():
         path = release.joinpath(f"delta-{str(release[-1]).replace('v', '')}-x86_64-unknown-linux-gnu.tar.gz").download()
         downloaded = path.ungz_untar(inplace=True)
         _ = find_move_delete_linux(downloaded, "delta", delete=True)
-    txt = tb.P("~/.gitconfig").read_text()
-    if config in text: pass
-    else: tb.P("~/.gitconfig").write_text(txt + "\n" + config)
+
+    config_path = tb.P.home().joinpath(".gitconfig")
+    if config_path.exists():
+        config = config_path.read_text()
+        if config_path in config: pass
+        else: config_path.write_text(config + "\n" + config_path)
+    else:
+        config_path.delete(sure=True)  # delete a bad symlink if any
+        config_path.write_text(config_patch)
 
 
 if __name__ == '__main__':
