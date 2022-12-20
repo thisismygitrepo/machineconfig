@@ -13,7 +13,7 @@ def main():
         from machineconfig.jobs.python.python_linux_installers_all import get_installers
     installers = get_installers()
     installers.list.insert(0, tb.P("all"))
-    program_name = display_options(msg="", options=installers.stem, header="CHOOSE DEV APP")
+    program_name = display_options(msg="", options=installers.stem, header="CHOOSE DEV APP", default="all")
     if program_name == "all":
         program_linux = f"source {LIBRARY_ROOT}/setup_linux/devapps.sh"
         program_windows = f"{LIBRARY_ROOT}/setup_windows/devapps.ps1"

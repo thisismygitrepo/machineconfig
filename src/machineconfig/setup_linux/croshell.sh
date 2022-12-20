@@ -1,4 +1,5 @@
 
+# curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/croshell.sh | bash
 
 apt install python3.9-venv
 cd ~
@@ -15,3 +16,4 @@ git clone https://github.com/thisismygitrepo/crocodile.git
 pip install -e ./machineconfig
 pip install -e ./crocodile
 python -m fire machineconfig.profile.create main
+. ~/.bashrc
