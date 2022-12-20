@@ -30,6 +30,7 @@ Start-Service sshd
 # Next up, change default shell to powershell, becuse CMD is lame
 # following: https://github.com/PowerShell/Win32-OpenSSH/wiki/DefaultShell
 $shell = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"  # "C:\Windows\System32\wsl.exe"
+# $shell = "C:\Program Files\PowerShell\7\pwsh.exe"
 New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value $shell -PropertyType String -Force
 New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShellCommandOption -Value "/c" -PropertyType String -Force
 

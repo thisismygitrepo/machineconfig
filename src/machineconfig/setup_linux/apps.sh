@@ -20,7 +20,6 @@ sudo sed -i 's/PRUNEPATHS="/PRUNEPATHS="\/mnt\/c /g' /etc/updatedb.conf
 # sudo sed -i "s/^ *PRUNEFS *= *[\"']/&drvfs 9p /" /etc/updatedb.conf /etc/cron.daily/locate
 
 # -------------------- Utilities --------------------
-
 sudo apt install wget -y  # for downloading files
 sudo apt install curl -y  # for handling http requests
 
