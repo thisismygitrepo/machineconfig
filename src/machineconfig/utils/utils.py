@@ -13,18 +13,12 @@ def display_options(msg, options: list, header="", default=None):
     from rich.text import Text
     from rich.console import Console
     from rich.panel import Panel
-
     console = Console()
-    print("\n")
-    # print(header.center(50, "-"))
-    # print(msg)
-
     if default is not None:
-        assert default in options, f"Default `{default}` option not in options."
+        assert default in options, f"Default `{default}` option not in options `{list(options)}`"
         default_msg = Text(f" <<<<-------- DEFAULT", style="bold red")
     else: default_msg = ""
-
-    txt = Text(msg + "\n")
+    txt = Text("\n" + msg + "\n")
     for idx, key in enumerate(options):
         txt = txt + Text(f"{idx:2d} ", style="bold blue") + str(key) + (default_msg if default is not None and default == key else "") + "\n"
     txt = Panel(txt, title=header, border_style="bold red")
@@ -33,7 +27,7 @@ def display_options(msg, options: list, header="", default=None):
     choice_idx = input(f"Enter option *number* (or option name starting with space): ")
     if choice_idx.startswith(" "):
         choice_key = choice_idx.strip()
-        assert choice_key in options, f"Choice `{choice_key}` not in options."
+        assert choice_key in options, f"Choice `{choice_key}` not in options `{options}`"
         choice_idx = options.index(choice_key)
     else:
         if choice_idx == "":

@@ -14,7 +14,7 @@ def main():
     installers = get_installers()
     default = tb.P("all")
     installers.list.insert(0, default)
-    program_name = display_options(msg="", options=installers.stem, header="CHOOSE DEV APP", default=default)
+    program_name = display_options(msg="", options=list(installers.stem), header="CHOOSE DEV APP", default=str(default))
     if program_name == "all":
         program_linux = f"source {LIBRARY_ROOT}/setup_linux/devapps.sh"
         program_windows = f"{LIBRARY_ROOT}/setup_windows/devapps.ps1"
