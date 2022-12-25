@@ -10,17 +10,25 @@ REPO_ROOT = LIBRARY_ROOT.parent.parent
 
 
 def display_options(msg, options: list, header="", default=None):
+    from rich.text import Text
+    from rich.console import Console
+    from rich.panel import Panel
+
+    console = Console()
     print("\n")
-    print(header.center(50, "-"))
-    print(msg)
+    # print(header.center(50, "-"))
+    # print(msg)
 
     if default is not None:
         assert default in options, f"Default `{default}` option not in options."
-        default_msg = f"<<<<-------- DEFAULT"
+        default_msg = Text(f" <<<<-------- DEFAULT", style="bold red")
     else: default_msg = ""
 
+    txt = Text(msg + "\n")
     for idx, key in enumerate(options):
-        print(f"{idx:2d}", key, default_msg if default is not None and default == key else "")
+        txt = txt + Text(f"{idx:2d} ", style="bold blue") + str(key) + (default_msg if default is not None and default == key else "") + "\n"
+    txt = Panel(txt, title=header, border_style="bold red")
+    console.print(txt)
 
     choice_idx = input(f"Enter option *number* (or option name starting with space): ")
     if choice_idx.startswith(" "):
@@ -31,10 +39,8 @@ def display_options(msg, options: list, header="", default=None):
         if choice_idx == "":
             assert default is not None, f"Default option not available!"
             choice_idx = options.index(default)
-        try:
-            choice_key = options[int(choice_idx)]
-        except IndexError:
-            raise ValueError(f"Unknown choice. {choice_idx}")
+        try: choice_key = options[int(choice_idx)]
+        except IndexError: raise ValueError(f"Unknown choice. {choice_idx}")
 
     print(f"{choice_idx}: {choice_key}", f"<<<<-------- CHOICE MADE")
     return choice_key
