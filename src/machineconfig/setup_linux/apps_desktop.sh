@@ -18,3 +18,4 @@ sudo snap install powershell --classic
 # desktop enviroments.
 sudo apt install gnome-session -y  # gnome 0.3GB
 sudo apt install ubuntu-gnome-desktop -y  # 1.2GB
+
