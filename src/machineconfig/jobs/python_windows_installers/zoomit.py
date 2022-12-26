@@ -1,16 +1,18 @@
 
 import crocodile.toolbox as tb
+from rich.console import Console
 
 url = r'https://download.sysinternals.com/files/ZoomIt.zip'
 
 
 def main():
     print("\n\n\n")
-    print("Installing ZoomIt".center(100, "-"))
+    console = Console()
+    console.rule("Installing ZoomIt")
     folder = tb.P(url).download(tb.P.home().joinpath('Downloads')).unzip(inplace=True)
     folder.joinpath('ZoomIt.exe').move(folder=tb.get_env().WindowsApps, overwrite=True)
     folder.delete(sure=True)
-    print("Completed Installation".center(100, "-"))
+    console.rule("Completed Installation")
 
 
 if __name__ == '__main__':

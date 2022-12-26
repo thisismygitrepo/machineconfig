@@ -2,6 +2,9 @@
 import crocodile.toolbox as tb
 # import crocodile.environment as env
 import machineconfig
+from rich.text import Text
+from rich.console import Console
+from rich.panel import Panel
 
 
 LIBRARY_ROOT = machineconfig.__file__.replace(tb.P.home().str.lower(), tb.P.home().str)
@@ -10,9 +13,6 @@ REPO_ROOT = LIBRARY_ROOT.parent.parent
 
 
 def display_options(msg, options: list, header="", default=None):
-    from rich.text import Text
-    from rich.console import Console
-    from rich.panel import Panel
     console = Console()
     if default is not None:
         assert default in options, f"Default `{default}` option not in options `{list(options)}`"
@@ -92,35 +92,40 @@ def find_move_delete_linux(downloaded, tool_name, delete=True):
     # exe.move(folder=r"/usr/local/bin", overwrite=False)
     tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print()
     if delete: downloaded.delete(sure=True)
+    return None
 
 
 def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", file_name=None, tool_name=None, exe_name=None, delete=True, strip_v=False, linux=False, compression=None):
-    import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
-    latest_version = requests.get(str(repo_url) + "/releases/latest").url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
-    download_link = tb.P(repo_url + "/releases/download/" + latest_version)
-
-    version = download_link[-1]
-    version = str(version).replace("v", "") if strip_v else version
-    tool_name = tool_name or tb.P(repo_url)[-1]
-
-    if not download_n_extract: return download_link
+    console = Console()
     print("\n\n\n")
-    print(f"Installing {tool_name} version {version}".center(100, "-"))
-    if download_n_extract and not linux:
-        if file_name is None:  # it is not constant, so we compile it from parts as follows:
-            file_name = f'{tool_name}-{version}-{suffix}.{compression or "zip"}'
-        print("Downloading", download_link.joinpath(file_name))
-        downloaded = download_link.joinpath(file_name).download().unzip(inplace=True, overwrite=True)
-        return find_move_delete_windows(downloaded, exe_name or tool_name, delete)
-    elif download_n_extract and linux:
-        if file_name is None:  # it is not constant, so we compile it from parts as follows:
-            file_name = f'{tool_name}-{version}-{suffix}.{compression or "tar.gz"}'
-        download_link = download_link.joinpath(file_name)
-        print("Downloading", download_link)
-        downloaded = download_link.download()
-        downloaded = downloaded.ungz_untar(inplace=True) if "tar.gz" in download_link else downloaded.unzip(inplace=True)
-        find_move_delete_linux(downloaded, exe_name or tool_name, delete)
-    print(f"Completed Installation".center(100, "-"))
+    with console.status("Installing..."):
+
+        import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
+        latest_version = requests.get(str(repo_url) + "/releases/latest").url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
+        download_link = tb.P(repo_url + "/releases/download/" + latest_version)
+
+        version = download_link[-1]
+        version = str(version).replace("v", "") if strip_v else version
+        tool_name = tool_name or tb.P(repo_url)[-1]
+        console.rule(f"Installing {tool_name} version {version}")
+
+        if not download_n_extract: return download_link
+        if download_n_extract and not linux:
+            if file_name is None:  # it is not constant, so we compile it from parts as follows:
+                file_name = f'{tool_name}-{version}-{suffix}.{compression or "zip"}'
+            print("Downloading", download_link.joinpath(file_name))
+            downloaded = download_link.joinpath(file_name).download().unzip(inplace=True, overwrite=True)
+            return find_move_delete_windows(downloaded, exe_name or tool_name, delete)
+        elif download_n_extract and linux:
+            if file_name is None:  # it is not constant, so we compile it from parts as follows:
+                file_name = f'{tool_name}-{version}-{suffix}.{compression or "tar.gz"}'
+            download_link = download_link.joinpath(file_name)
+            print("Downloading", download_link)
+            downloaded = download_link.download()
+            downloaded = downloaded.ungz_untar(inplace=True) if "tar.gz" in download_link else downloaded.unzip(inplace=True)
+            return find_move_delete_linux(downloaded, exe_name or tool_name, delete)
+    # console.rule(f"Completed Installation")
+    # return res
 
 
 def get_shell_script_executing_pyscript(python_file, func=None, system=None, ve_name="ve"):

@@ -7,6 +7,7 @@
 # sudo mv ./broot /usr/local/bin/
 
 import crocodile.toolbox as tb
+from rich.console import Console
 
 
 url = r'https://dystroy.org/broot/download/x86_64-linux/broot'
@@ -14,12 +15,13 @@ url = r'https://dystroy.org/broot/download/x86_64-linux/broot'
 
 def main():
     print("\n\n\n")
-    print("Installing Broot".center(100, "-"))
+    console = Console()
+    console.rule("Installing Broot")
     p = tb.P(url).download()
     p.chmod(0o777)
     # p.move(folder=r'/usr/local/bin/', overwrite=True) Permission Error
     tb.Terminal().run(f"sudo mv {p} /usr/local/bin/").print()
-    print("Completed Installation".center(100, "-"))
+    console.rule("Completed Installation")
 
 
 if __name__ == '__main__':
