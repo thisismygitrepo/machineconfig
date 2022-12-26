@@ -10,17 +10,23 @@ config_patch = """
     pager = delta
 
 [interactive]
-    diffFilter = delta --color-only
+    diffFilter = delta --color-only --features=interactive
 
 [delta]
-    navigate = true    # use n and N to move between diff sections
-    light = false      # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
+    features = decorations
+    side-by-side = true
 
-[merge]
-    conflictstyle = diff3
+[delta "interactive"]
+    keep-plus-minus-markers = false
 
-[diff]
-    colorMoved = default
+[delta "decorations"]
+    commit-decoration-style = blue ol
+    commit-style = raw
+    file-style = omit
+    hunk-header-decoration-style = blue box
+    hunk-header-file-style = red
+    hunk-header-line-number-style = "#067a00"
+    hunk-header-style = file line-number syntax
 """
 
 def main():
@@ -38,8 +44,8 @@ def main():
     config_path = tb.P.home().joinpath(".gitconfig")
     if config_path.exists():
         config = config_path.read_text()
-        if config_path in config: pass
-        else: config_path.write_text(config + "\n" + config_path)
+        if config_patch in config: pass
+        else: config_path.write_text(config + "\n" + config_patch)
     else:
         config_path.delete(sure=True)  # delete a bad symlink if any
         config_path.write_text(config_patch)

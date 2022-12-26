@@ -15,7 +15,6 @@ def main():
         get_latest_release(url, file_name='lf-windows-amd64.zip', download_n_extract=True)
     elif platform.system() == 'Linux':
         tb.Terminal().run("killall lf")
-
         get_latest_release(url, file_name='lf-linux-amd64.tar.gz', download_n_extract=True, linux=True, compression="tar.gz")
     else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
 
