@@ -112,7 +112,11 @@ cmd zi ${{
     lf -remote "send ${id} cd '${result}'"
 }}
 map Z zi
-map T !tere
+cmd ter ${{
+    result="$(tere query -i -- "$@")"
+    lf -remote "send ${id} cd '${result}'"
+}}
+map T ter #!tere
 
 # m make
 map m
