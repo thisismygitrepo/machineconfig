@@ -3,18 +3,24 @@
 import crocodile.toolbox as tb
 import platform
 import machineconfig
+from rich.panel import Panel
+from rich.console import Console
+from rich.text import Text
 
 system = platform.system()
 lib_root = tb.P(machineconfig.__file__).parent
 
 
 def ve_setup():
+    console = Console()
     print("\n\n")
-    print("Existing Python versions:\n=========================")
+    console.rule("Existing Python versions", style="bold red")
     tb.P.get_env().Path.search("python.exe").reduce()[1:].print()
-    print(f"\nExisting virtual environments are:")
+    print("\n\n")
+    console.rule(f"Existing virtual environments")
     ves = tb.P.home().joinpath("venvs").search("*", files=False).apply(lambda a_ve: (a_ve.name, a_ve.joinpath("pyvenv.cfg").read_text()))
-    ves.apply(lambda a_ve: print(f"{a_ve[0]}\n{'-' * 10}\n{a_ve[1]}\n"))
+    ves.apply(lambda a_ve: console.print(Panel(a_ve[1], title=a_ve[0], style="bold blue")))
+
     dotted_py_version = input("Enter python version (3.11): ") or "3.11"
     env_name = input("Enter virtual environment name (latest): ") or "latest"
     repos = input("Install essential repos? ([y]/n): ") or "y"
