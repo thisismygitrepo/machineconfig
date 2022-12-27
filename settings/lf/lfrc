@@ -109,12 +109,11 @@ map jA cd $env:APPDATA
 map jj $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- $env:USERPROFILE/code/machineconfig/settings/lf/lfrc
 
 
+
 # m make
 map m
 map md $~/code/machineconfig/settings/lf/mkdir.ps1 
 map mf $~/code/machineconfig/settings/lf/mkfile.ps1
-
-
 
 # =================== JUNK ======================
 # Find and Jump
@@ -123,6 +122,8 @@ map J push :$~/scripts/fzfg<space>
 map F $~/code/machineconfig/settings/lf/fzf_edit.ps1
 map S cd $~/code/machineconfig/settings/lf/tst.ps1
 map T !tere
+map Z $~/code/machineconfig/settings/lf/cd_zoxide2.ps1
+
 cmd doc $lf -doc | bat
 
 # cmd pre-cd $~/code/machineconfig/settings/lf/precd.ps1
