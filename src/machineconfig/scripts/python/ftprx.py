@@ -1,6 +1,7 @@
 
 import argparse
 from crocodile.toolbox import SSH
+import crocodile.toolbox as tb
 
 
 def main():
@@ -18,6 +19,8 @@ def main():
     ssh = SSH(rf'{args.machine}')
     ssh.copy_to_here(source=args.file, target=args.destination, zip_first=args.zipFirst, r=args.recursive)
     ssh.print_summary()
+    if tb.P(args.file).is_dir(): print(f"Use: cd {repr(tb.P(args.file).expanduser())}")
+    else: print(f"Received: {repr(tb.P(args.file).parent.expanduser())}")
 
 
 if __name__ == '__main__':
