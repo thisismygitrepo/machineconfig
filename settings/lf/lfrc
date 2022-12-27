@@ -14,7 +14,7 @@ set mouse on
 set number on
 set preview true
 set shell powershell
-set colors
+set colors on
 set ratios '1:2:3'  # ratio of pane widths
 set ifs "\n"
 # set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"

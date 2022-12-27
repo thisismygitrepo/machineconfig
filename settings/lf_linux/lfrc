@@ -105,12 +105,14 @@ map jx cd ~/dotfiles
 map jm cd ~/code/machineconfig/src/machineconfig
 map jh cd ~
 map jj $lvim ~/code/machineconfig/settings/lf/lfrc
+
+# from https://github.com/gokcehan/lf/wiki/Integrations#zoxide
 cmd zi ${{
     result="$(zoxide query -i -- "$@")"
     lf -remote "send ${id} cd '${result}'"
 }}
 map Z zi
-
+map T !tere
 
 # m make
 map m
