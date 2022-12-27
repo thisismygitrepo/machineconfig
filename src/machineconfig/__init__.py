@@ -1,6 +1,6 @@
 
 
-version = "0.7"
+version = "0.8"
 release_notes = """
-added symlink
+added rich lib
 """
