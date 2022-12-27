@@ -5,7 +5,8 @@ import platform
 import machineconfig
 from rich.panel import Panel
 from rich.console import Console
-from rich.text import Text
+# from rich.text import Text
+from rich.syntax import Syntax
 
 system = platform.system()
 lib_root = tb.P(machineconfig.__file__).parent
@@ -41,9 +42,8 @@ def ve_setup():
         text = tb.modify_text(txt_raw=text, txt_search="ve_name=", txt_alt=f"{variable_prefix}ve_name='{env_name}'", replace_line=True)
         scripts += text
 
-    print("Script to create virtual environment...".center(80, "-"))
-    print(scripts)
-    print("".center(80, "-"))
+    print("\n\n")
+    console.print(Panel(Syntax(scripts, lexer="ps1" if system == "Windows" else "sh"), title="Script to create virtual environment..."), style="bold red")
 
     return scripts
 
