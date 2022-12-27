@@ -42,7 +42,7 @@ def ve_setup():
         text = tb.modify_text(txt_raw=text, txt_search="ve_name=", txt_alt=f"{variable_prefix}ve_name='{env_name}'", replace_line=True)
         scripts += text
 
-    print("\n\n")
+    print("\n")
     console.print(Panel(Syntax(scripts, lexer="ps1" if system == "Windows" else "sh"), title="Script to create virtual environment..."), style="bold red")
 
     return scripts
