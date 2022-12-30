@@ -12,7 +12,7 @@ system = platform.system()
 lib_root = tb.P(machineconfig.__file__).parent
 
 
-def ve_setup():
+def main():
     console = Console()
     print("\n\n")
     console.rule("Existing Python versions", style="bold red")

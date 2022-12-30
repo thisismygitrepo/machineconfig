@@ -33,8 +33,8 @@ def main():
         program = helper.main()
 
     elif choice_key == "VE install":
-        from machineconfig.jobs.python.python_ve_installer import ve_setup
-        program = ve_setup()
+        from machineconfig.jobs.python.python_ve_installer import main
+        program = main()
 
     elif choice_key == "DEVAPPS install":
         from machineconfig.scripts.python.devops_devapps_install import main
