@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
-# source activate_ve.sh
-. ~/scripts/activate_ve ''
+# check below if VIRTUAL_ENV is set
+if [ -z "$VIRTUAL_ENV" ]; then
+  source ~/scripts/activate_ve ''
+fi
+
 python -m machineconfig.scripts.python.devops $@
 chmod +x ~/tmp_results/shells/python_return_command.sh
 source ~/tmp_results/shells/python_return_command.sh
+deactivate
