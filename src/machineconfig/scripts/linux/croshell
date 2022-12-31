@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
 
-. ~/scripts/activate_ve ''
+# check below if VIRTUAL_ENV is set
+if [ -z "$VIRTUAL_ENV" ]; then
+  source ~/scripts/activate_ve ''
+fi
+
 python -m crocodile.run $@
+
+# check below if VIRTUAL_ENV enviroment variable exist, then deactivate it, other wise skip
+if [ -n "$VIRTUAL_ENV" ]; then
+  deactivate
+fi
+
