@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# from https://github.com/lotabout/skim#interactive-mode
+sk --ansi -i -c 'rg --color=always --line-number "{}"'
