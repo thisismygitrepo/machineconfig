@@ -17,10 +17,10 @@ def main():
 
     args = parser.parse_args()
     ssh = SSH(rf'{args.machine}')
-    ssh.copy_to_here(source=args.file, target=args.destination, zip_first=args.zipFirst, r=args.recursive)
+    received_file = ssh.copy_to_here(source=args.file, target=args.destination, zip_first=args.zipFirst, r=args.recursive)
     ssh.print_summary()
     if tb.P(args.file).is_dir(): print(f"Use: cd {repr(tb.P(args.file).expanduser())}")
-    else: print(f"Received: {repr(tb.P(args.file).parent.expanduser())}")
+    else: print(f"Received: {repr(received_file.parent), repr(received_file)}")
 
 
 if __name__ == '__main__':

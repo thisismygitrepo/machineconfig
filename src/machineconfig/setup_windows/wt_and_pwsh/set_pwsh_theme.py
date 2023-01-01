@@ -23,7 +23,7 @@ def change_shell_profile():
     # Add arrow keys history functionality to the terminal.
 
     shell = {"powershell": "pwsh.exe", "Windows Powershell": "powershell.exe"}["powershell"].split(".exe")[0]
-    profile_path = tb.Terminal().run("$profile", shell=shell).as_path
+    profile_path = tb.Terminal().run("$profile", shell=shell).op2path()
     theme_path = env.LocalAppData.joinpath(r"Programs\oh-my-posh\themes").collapseuser().as_posix().replace("~", "$env:USERPROFILE")  # organization machine with homeshare confuse H: with ~.
     txt = f"""
 oh-my-posh --init --shell pwsh --config {theme_path}\\jandedobbeleer.omp.json | Invoke-Expression
