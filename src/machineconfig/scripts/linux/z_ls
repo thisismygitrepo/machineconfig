@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
 # adopted from https://zellij.dev/documentation/integration.html
-
 ZJ_SESSIONS=$(zellij list-sessions)
 NO_SESSIONS=$(echo "${ZJ_SESSIONS}" | wc -l)
 
 if [ "${NO_SESSIONS}" -ge 2 ]; then
-    zellij attach "$(echo "${ZJ_SESSIONS}" | fzf)"
+    zellij attach "$(echo "${ZJ_SESSIONS}" | fzf)"  options --mirror-session false
 else
-   zellij attach -c
+   zellij attach -c options --mirror-session false
 fi
