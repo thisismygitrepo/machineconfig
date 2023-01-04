@@ -12,7 +12,7 @@ LIBRARY_ROOT = tb.P(LIBRARY_ROOT).parent
 REPO_ROOT = LIBRARY_ROOT.parent.parent
 
 
-def display_options(msg, options: list, header="", default=None):
+def display_options(msg, options: list, header="", tail="", default=None):
     console = Console()
     if default is not None:
         assert default in options, f"Default `{default}` option not in options `{list(options)}`"
@@ -21,7 +21,7 @@ def display_options(msg, options: list, header="", default=None):
     txt = Text("\n" + msg + "\n")
     for idx, key in enumerate(options):
         txt = txt + Text(f"{idx:2d} ", style="bold blue") + str(key) + (default_msg if default is not None and default == key else "") + "\n"
-    txt = Panel(txt, title=header, border_style="bold red")
+    txt = Panel(txt, title=header, subtitle=tail, border_style="bold red")
     console.print(txt)
 
     choice_idx = input(f"Enter option *number* (or option name starting with space): ")
