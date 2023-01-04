@@ -1,23 +1,16 @@
 
-$ve_name='ve'
-$py_version=39
+# with admin prviliage, run this:
 
-mkdir ~/venvs -ErrorAction SilentlyContinue
-cd ~
-
+# apps
 winget install --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W 11
 winget install --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
 winget install --Id "Python.Python.3.9" --source winget
 
-set mypy ($env:LOCALAPPDATA + "\Programs\Python\Python$py_version\python.exe")
-&$mypy  -m venv "./venvs/$ve_name"  # ve will have same python version as `python`, where it.
+# virtual enviornment
+Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
 
-& ~/venvs/$ve_name/Scripts/Activate.ps1  # activate, now use python instead of $mypy
+# dev repos
+Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
 
-#mkdir ~/code -ErrorAction SilentlyContinue
-#cd code
-pip install --upgrade pip  # upgrades the pip that is within the environment.
-pip install crocodile
-pip install machineconfig
-
-python -m fire machineconfig.profile.create main
+# symlinks
+. ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
