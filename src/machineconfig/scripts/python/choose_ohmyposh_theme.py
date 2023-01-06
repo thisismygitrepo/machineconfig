@@ -22,7 +22,8 @@ def main(new_theme=None):
         return ""
     if new_theme is None:
         themes = themes_path.search().apply(lambda x: x.trunk)
-        new_theme = display_options(msg=f"Choose a theme number from the list above: ", tail=current_theme, options=list(themes) + ["suprise me"], default="suprise me")
+        tail = "Recomm: markbull, peru, mojada, festivetech, sorin, agnosterplus, blueish, thecyberden, plague, kali, fish"
+        new_theme = display_options(msg=f"Choose a theme number from the list above: ", tail=tail, options=list(themes) + ["suprise me"], default="suprise me")
         if new_theme == "suprise me": new_theme = themes.sample()[0]
     print("Current Theme:", current_theme)
     print("New theme: ", new_theme)

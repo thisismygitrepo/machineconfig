@@ -70,3 +70,6 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 # For WSL only, also run the following:
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash  # "https://github.com/thisismygitrepo.keys"
 ```
+
+# Author
+Alex Al-Saffar. [email](mailto:programmer@usa.com)
