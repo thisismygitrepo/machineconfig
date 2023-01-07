@@ -7,8 +7,9 @@ def main(new_theme=None):
     profile = tb.P.home().joinpath(".bashrc")
     current_theme = tb.L(profile.read_text().splitlines()).filter(lambda x: "OSH_THEME=" in x)[0].split("=")[1]
     themes = tb.P.home().joinpath(".oh-my-bash/themes").search("*", not_in=["THEMES.md"]).apply(lambda x: x.trunk)
+    themes.list.sort()
     if new_theme is None:
-        tail = "Recomm: cupcake, doubletime, zork, slick, dos"
+        tail = "Recomm: cupcake, doubletime, zork, slick"
         new_theme = display_options(msg=f"Choose a theme number from the list above: ", options=list(themes) + ["random", "surprise me"], default="surprise me", tail=tail)
     if new_theme == "surprise me": new_theme = themes.sample()[0]
     print("Current Theme:", current_theme)
