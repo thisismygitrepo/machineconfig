@@ -33,8 +33,19 @@ def display_options(msg, options: list, header="", tail="", default=None):
         if choice_idx == "":
             assert default is not None, f"Default option not available!"
             choice_idx = options.index(default)
-        try: choice_key = options[int(choice_idx)]
-        except IndexError: raise ValueError(f"Unknown choice. {choice_idx}")
+        try:
+            try:
+                choice_idx = int(choice_idx)
+            except ValueError:  # parsing error
+                raise IndexError
+            choice_key = options[choice_idx]
+        except IndexError:
+            # many be user forgotten to start with a dash
+            if choice_idx in options:
+                choice_key = choice_idx
+                choice_idx = options.index(choice_idx)
+            else:
+                raise ValueError(f"Unknown choice. {choice_idx}")
 
     print(f"{choice_idx}: {choice_key}", f"<<<<-------- CHOICE MADE")
     return choice_key

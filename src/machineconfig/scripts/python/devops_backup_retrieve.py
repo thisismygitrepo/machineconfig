@@ -17,13 +17,13 @@ def main():
 
     if direction == "BACKUP" and drive == "OneDrive":
         from machineconfig.scripts.python.bu_onedrive_sx import main
-        for item in items: main(which="default", zip_first=item['zip'], encrypt_first=item['encrypt'], file=tb.P(item['path']).expanduser(), key=None, pwd=None, overwrite=True)
+        for item in items: main(which="default", z=item['zip'], encrypt_first=item['encrypt'], file=tb.P(item['path']).expanduser(), key=None, pwd=None, overwrite=True)
     elif direction == "RETRIEVE" and drive == "OneDrive":
         from machineconfig.scripts.python.bu_onedrive_rx import main
         for item in items: main(which="default", unzip=item['zip'], decrypt=item['encrypt'], file=tb.P(item['path']).expanduser(), overwrite=True, key=None, pwd=None)
     elif direction == "BACKUP" and drive == "GDrive":
         from machineconfig.scripts.python.bu_gdrive_sx import main
-        for item in items: main(google_account=None, project=None, zip_first=item['zip'], encrypt_first=item['encrypt'], file=tb.P(item['path']).expanduser(), relative_to_home=True, remote_dir="", share=False, key=None, pwd=None)
+        for item in items: main(google_account=None, project=None, z=item['zip'], encrypt_first=item['encrypt'], file=tb.P(item['path']).expanduser(), relative_to_home=True, remote_dir="", share=False, key=None, pwd=None)
     elif direction == "RETRIEVE" and drive == "GDrive":
         from machineconfig.scripts.python.bu_gdrive_rx import main
         for item in items: main(google_account=None, project=None, unzip=item['zip'], decrypt=item['encrypt'], file=tb.P(item['path']).expanduser(), relative_to_home=True, local_dir="", key=None, pwd=None)

@@ -32,7 +32,7 @@ Otherwise, a flag must be raised to indicate the direction.""")
     else:
         from crocodile.meta import SSH
         ssh = SSH(port=args.port or (2222 if system == "Windows" else 22), sshkey=args.sshkey)
-        ssh.copy_from_here(source=path, zip_first=args.zip_first)
+        ssh.copy_from_here(source=path, z=args.zip_first)
 
 
 if __name__ == '__main__':

@@ -4,13 +4,13 @@ from crocodile.comms.gdrive import GDriveAPI
 import argparse
 
 
-def main(google_account, project, file, encrypt_first, zip_first, relative_to_home, remote_dir, share, key, pwd):
+def main(google_account, project, file, encrypt_first, z, relative_to_home, remote_dir, share, key, pwd):
     api = GDriveAPI(account=google_account, project=project)
 
     if share: res = api.upload_and_share(local_path=file, rel2home=relative_to_home,
-                                         zip_first=zip_first, encrypt_first=encrypt_first, key=key, pwd=pwd)
+                                         zip_first=z, encrypt_first=encrypt_first, key=key, pwd=pwd)
     else: res = api.upload(local_path=file, remote_dir=remote_dir, rel2home=relative_to_home,
-                           zip_first=zip_first, encrypt_first=encrypt_first, key=key, pwd=pwd)  # , recursive, zipFirst)
+                           zip_first=z, encrypt_first=encrypt_first, key=key, pwd=pwd)  # , recursive, zipFirst)
     print(res)
 
 
@@ -33,7 +33,7 @@ def args_parser():
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
     args = parser.parse_args()
-    main(google_account=args.google_account, project=args.project, file=args.file, zip_first=args.zip_first, relative_to_home=args.relative_to_home, remote_dir=args.remote_dir, share=args.share, key=args.key, pwd=args.pwd, encrypt_first=args.encrypt_first)
+    main(google_account=args.google_account, project=args.project, file=args.file, z=args.zip_first, relative_to_home=args.relative_to_home, remote_dir=args.remote_dir, share=args.share, key=args.key, pwd=args.pwd, encrypt_first=args.encrypt_first)
 
 
 if __name__ == "__main__":

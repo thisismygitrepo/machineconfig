@@ -68,7 +68,10 @@
                 // "colorScheme" : "Retro",
                 // "experimental.retroTerminalEffect": true,
                 "source": "Windows.Terminal.PowershellCore",
-                "startingDirectory": "%USERPROFILE%"
+                "startingDirectory": "%USERPROFILE%",
+                "backgroundImageOpacity": 0.5,
+                "opacity": 90
+
             },
             {
                 "commandline": "powershell.exe -Command \"~/code/machineconfig/src/machineconfig/scripts/windows/croshell.ps1\"",

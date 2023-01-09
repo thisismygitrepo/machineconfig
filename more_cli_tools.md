@@ -19,8 +19,8 @@ https://github.com/Geektrovert/AwsTerm
 * send and recieve over local network https://github.com/SpatiumPortae/portal
 * torrent https://github.com/transmission/transmission/releases/tag/3.00
 * one time share https://github.com/sniptt-official/ots
+* https://github.com/magic-wormhole/magic-wormhole
 * https://github.com/gopasspw/gopass
-* image https://github.com/atanunq/viu/releases/tag/v1.4.0
 
 * https://github.com/simonhaenisch/md-to-pdf  -- use this instead
 * https://github.com/BlueHatbRit/mdpdf -- security volunarability.

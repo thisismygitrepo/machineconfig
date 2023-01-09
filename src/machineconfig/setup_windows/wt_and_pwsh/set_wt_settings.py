@@ -46,6 +46,7 @@ class TerminalSettings(object):
         pwsh = dict(name="PowerShell",
                     commandline="pwsh",
                     hidden=False,
+                    opacity=87,
                     # guid="{" + str(uuid4()) + "}",  # WT doesn't accept any GUID to identify pwsh
                     startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
                     )
