@@ -17,8 +17,7 @@ https://github.com/Geektrovert/AwsTerm
 # Files
 * send and recieve over internet. https://github.com/timvisee/ffsend
 * send and recieve over local network https://github.com/SpatiumPortae/portal
-* torrent https://github.com/transmission/transmission/releases/tag/3.00
-* one time share https://github.com/sniptt-official/ots
+* torrent https://github.com/transmission/transmission/
 * https://github.com/magic-wormhole/magic-wormhole
 * https://github.com/gopasspw/gopass
 
