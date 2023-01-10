@@ -6,7 +6,7 @@ import crocodile.toolbox as tb
 from machineconfig.utils.utils import LIBRARY_ROOT, display_options
 
 
-def main():
+def main(program_name=None):
     if system() == "Windows":
         from machineconfig.jobs.python.python_windows_installers_all import get_installers
     else:
@@ -16,7 +16,10 @@ def main():
     installers.list.insert(0, default)
     options = list(installers.stem)
     options.sort()
-    program_name = display_options(msg="", options=options, header="CHOOSE DEV APP", default=str(default))
+
+    if program_name is None:
+        program_name = display_options(msg="", options=options, header="CHOOSE DEV APP", default=str(default))
+
     if program_name == "all":
         program_linux = f"source {LIBRARY_ROOT}/setup_linux/devapps.sh"
         program_windows = f"{LIBRARY_ROOT}/setup_windows/devapps.ps1"

@@ -12,7 +12,7 @@ mypy=python$py_version
 sudo apt install -y $mypy  # ignore system level one. launched with `python39`, as opposed to `python`
 sudo apt install -y $mypy-venv
 sudo apt install -y python3-pip
-sudo apt install python$py_version-tk  # without this, plt.show() will return UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+sudo apt install -y python$py_version-tk  # without this, plt.show() will return UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
 # if inside wsl, you also need xming to be installed and running. otherwise, plt.show returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running. xserver?
 
 mkdir ~/venvs/

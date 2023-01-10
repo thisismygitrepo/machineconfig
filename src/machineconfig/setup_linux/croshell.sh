@@ -1,19 +1,18 @@
 
 # curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/croshell.sh | bash
 
-apt install python3.9-venv
-cd ~
-mkdir ~/venvs
-python -m venv "./venvs/ve"  # ve will have same python version as `python`, where it.
+# virtual enviornment
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
 
-. ~/venvs/ve/bin/activate  # activate, now use python instead of $mypy
+# repos
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
 
+# symlinks
+source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh  # requires sudo since it invloves chmod of dotfiles/.ssh, however sudo doesn't work with source. best to have sudo -s earlier.
 
-mkdir ~/code
-cd ~/code
-git clone https://github.com/thisismygitrepo/machineconfig.git
-git clone https://github.com/thisismygitrepo/crocodile.git
-pip install -e ./machineconfig
-pip install -e ./crocodile
-python -m fire machineconfig.profile.create main
+# devaps
+source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
+
+. activate_ve
+python -m fire machineconfig.scripts.python.devops_devapps_installer main --program_name all
 . ~/.bashrc
