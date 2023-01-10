@@ -4,7 +4,7 @@ import crocodile.toolbox as tb
 from machineconfig.utils.utils import LIBRARY_ROOT
 
 
-def main():
+def main(verbose=True):
     repos = tb.P.home().joinpath("dotfiles/config/repos.ini")
     if repos.exists():
         repos = repos.readit()
@@ -31,7 +31,7 @@ def main():
                 continue
             global_packages.append(a_package)
 
-    print(f"Local install repos: {local_install_repos}. Global packages: {global_packages}")
+    if verbose: print(f"Local install repos: {local_install_repos}. \nGlobal packages: {global_packages}")
     sep = "\n"
     if system() == "Linux":
         program = tb.P(f"{LIBRARY_ROOT}/jobs/linux/update_essentials").read_text()

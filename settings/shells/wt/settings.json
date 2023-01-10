@@ -69,12 +69,15 @@
                 // "experimental.retroTerminalEffect": true,
                 "source": "Windows.Terminal.PowershellCore",
                 "startingDirectory": "%USERPROFILE%",
-                "backgroundImageOpacity": 0.5,
+                // "backgroundImage": "C:/Users/alex/pwsh1.png",
+                // "backgroundImageOpacity": 0.5,
+                // "backgroundImageStretchMode": "none",
+                // "backgroundImageAlignment": "bottomRight",
                 "opacity": 90
 
             },
             {
-                "commandline": "powershell.exe -Command \"~/code/machineconfig/src/machineconfig/scripts/windows/croshell.ps1\"",
+                "commandline": "powershell.exe -Command \"~/scripts/croshell.ps1\"",
                 "guid": "{0eaed5df-2ed8-4125-b296-b3f7c9441187}",
                 "name": "croshell",
                 "startingDirectory": "%USERPROFILE%"
