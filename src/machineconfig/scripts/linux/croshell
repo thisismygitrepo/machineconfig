@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
-# check below if VIRTUAL_ENV is set
-if [ -z "$VIRTUAL_ENV" ]; then
-  source ~/scripts/activate_ve ''
-fi
+
+source ~/scripts/activate_ve ''
 
 python -m crocodile.run $@
 

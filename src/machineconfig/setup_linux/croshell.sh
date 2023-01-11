@@ -12,7 +12,6 @@ source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh  # require
 
 # devaps
 source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
+#source /home/alex/code/machineconfig/src/machineconfig/setup_linux/devapps.sh
 
-. activate_ve
-python -m fire machineconfig.scripts.python.devops_devapps_installer main --program_name all
 . ~/.bashrc

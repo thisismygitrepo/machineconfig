@@ -1,15 +1,12 @@
 #!/usr/bin/env bash
 
-if [ -z "$1" ]; then
 
-if [ -z "$VENV_NAME" ]; then
+# check below if VIRTUAL_ENV is set
+if [ -z "$VIRTUAL_ENV" ]; then
+  if [ -z "$1" ]; then
     name="ve"
-else
-    name=$VENV_NAME
+  else
+    name=$1
+  fi
+  source ~/venvs/$name/bin/activate
 fi
-
-else
-  name=$1
-fi
-
-source ~/venvs/$name/bin/activate

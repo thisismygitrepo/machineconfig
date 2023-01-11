@@ -9,9 +9,7 @@ if ( $script_root -eq $null) {  # this does happen if a virtual enviroment is ac
 $script_root = $PSScriptRoot
 }
 
-if ( $env:VIRTUAL_ENV -eq $null) {
 . $script_root/activate_ve.ps1  # dynamic ve
-}
 
 python -m crocodile.run $args
 deactivate
