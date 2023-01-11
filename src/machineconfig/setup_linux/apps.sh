@@ -82,6 +82,7 @@ sudo apt install figlet -y || true  # large ascii text. See: showfigfonts for fu
 
 
 # ------------------------------ EDITORS -----------------------------
+sudo apt install nano -y || true  # for editing files
 # curl https://sh.rustup.rs -sSf | sh
 (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
 # sudo apt install neovim -y  # nvim, but not latest release
