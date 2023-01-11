@@ -9,4 +9,9 @@ if [ -z "$VIRTUAL_ENV" ]; then
     name=$1
   fi
   source ~/venvs/$name/bin/activate
+  echo "Activated virtual environment $name"
+
+else
+  echo "Virtual environment $VIRTUAL_ENV already activated"
 fi
+

@@ -15,7 +15,12 @@ if ( $env:VIRTUAL_ENV -eq $null)
     #write-host $name
 
     & ("~/venvs/" + $name + "/Scripts/Activate.ps1")
+    echo "Activated virtual environment ` $name ` " 
+}
+else
 
+{
+    echo "Virtual environment already activated ` $env:VIRTUAL_ENV ` "
 }
 
 #function Activate-VirtualEnv{

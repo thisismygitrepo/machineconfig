@@ -8,7 +8,6 @@ if (Test-Path $op_script ) {
 
 # choose ve to use
 . $PSScriptRoot/activate_ve.ps1 $Args[0]
-echo "Using virtual enviroment: $env:VIRTUAL_ENV"
 
 # Locate the python script to run relative to the current directory (which might be a symlink)
 $script_root = (Get-Item $PSScriptRoot).Target  # resolves symlink if any
