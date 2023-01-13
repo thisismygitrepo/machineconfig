@@ -40,7 +40,7 @@ def link_aws(overwrite=True):
     for item in target.search("*"): symlink(path.joinpath(item.name), item, overwrite=overwrite)
 
 
-def main_symlinks():
+def main_symlinks(choice=None):
     symlink_mapper = LIBRARY_ROOT.joinpath("profile/mapper.toml").readit()
     symlink_mapper['wsl_windows']['home']["to_this"] = symlink_mapper['wsl_windows']['home']["to_this"].replace("username", UserName)
     symlink_mapper['wsl_linux']['home']["to_this"] = symlink_mapper['wsl_linux']['home']["to_this"].replace("username", UserName)
@@ -49,7 +49,10 @@ def main_symlinks():
     exclude = ["autostart_windows"]  # "wsl_linux", "wsl_windows"
 
     program_keys = list(symlink_mapper.keys()) + ["aws", "ssh"]
-    choice = display_options(msg="Which symlink to create?", options=program_keys + ["all"], default="all")
+
+    if choice is None:
+        choice = display_options(msg="Which symlink to create?", options=program_keys + ["all"], default="all")
+
     if str(choice) == "all":
         if system == "Windows" and not tb.Terminal.is_user_admin():
             print("*" * 200)
@@ -113,10 +116,11 @@ def main_add_sources_to_shell_profile(profile_path=None):
     profile_path.write_text(profile)
 
 
-def main_add_patches_to_shell_profile(profile_path=None):
+def main_add_patches_to_shell_profile(profile_path=None, choice=None):
     patches = LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search()
 
-    choice = display_options(msg="Which patch to add?", options=patches.list + ["all"], default="all")
+    if choice is None:
+        choice = display_options(msg="Which patch to add?", options=patches.list + ["all"], default="all")
     if str(choice) == "all": patches = patches
     else: patches = [choice]
 
@@ -130,10 +134,10 @@ def main_add_patches_to_shell_profile(profile_path=None):
     profile_path.write_text(profile)
 
 
-def main():
+def main(choice=None):
     print("\n")
     print(f"CREATING SYMLINKS".center(80, "-"))
-    main_symlinks()
+    main_symlinks(choice=choice)
     print("\n")
     print(f"ADDING ENV PATH".center(80, "-"))
     main_env_path()
@@ -142,7 +146,7 @@ def main():
     main_add_sources_to_shell_profile()
     print("\n")
     print(f"ADDING PATCHES TO SHELL PROFILE".center(80, "-"))
-    main_add_patches_to_shell_profile()
+    main_add_patches_to_shell_profile(choice=choice)
 
 
 if __name__ == '__main__':

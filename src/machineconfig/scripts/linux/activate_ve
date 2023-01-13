@@ -2,7 +2,7 @@
 
 
 # check below if VIRTUAL_ENV is set
-if [ -z "$VIRTUAL_ENV" ]; then  # no activate ve ==> activate one.
+if [ -z "$VIRTUAL_ENV" ]; then  # no active ve ==> activate one.
   if [ -z "$1" ]; then  # nothing passed, activate default
     if [ -f ~/.machineconfig/default_ve ]; then  # check if there is a default ve stored in ~/.machineconfog/default_ve
       name=$(cat ~/.machineconfig/default_ve)  # if yes, use it
@@ -22,6 +22,7 @@ else
   echo "Virtual environment $VIRTUAL_ENV already activated"
   # check if default is not defined, if so, define it as $VIRTUAL_ENV
   if [ ! -f ~/.machineconfig/default_ve ]; then
+    mkdir ~/.machineconfig || true
     echo $VIRTUAL_ENV > ~/.machineconfig/default_ve
   fi
 fi
