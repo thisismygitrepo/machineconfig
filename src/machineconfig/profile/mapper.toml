@@ -31,8 +31,8 @@ AllUsersAllHosts = {this = 'C:\Program Files\PowerShell\7\profile.ps1', to_this 
 bashrc = {this = '~/.inputrc', to_this = '~/dotfiles/shells/bash/.inputrc'}
 
 [nushell_windows]
-config = {this = '~/AppData/Roaming/nushell/config.nu', to_this = 'REPO_ROOT/settings/shells/nushell/config.nu'}
-env = {this = '~/AppData/Roaming/nushell/env.nu', to_this = 'REPO_ROOT/settings/shells/nushell/env.nu'}
+config = {this = '~/AppData/Roaming/nushell/config.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/config.nu'}
+env = {this = '~/AppData/Roaming/nushell/env.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/env.nu'}
 
 
 [ipython]
@@ -52,30 +52,30 @@ public = {this = '~/scripts', to_this = 'LIBRARY_ROOT/scripts/windows'}
 
 
 [lf_windows]
-config = {this = '~/AppData/Local/lf/lfrc', to_this = 'REPO_ROOT/settings/lf/lfrc'}
-colors = {this = '~/AppData/Local/lf/colors', to_this = 'REPO_ROOT/settings/lf/colors'}
-icons = {this = '~/AppData/Local/lf/icons', to_this = 'REPO_ROOT/settings/lf/icons'}
+config = {this = '~/AppData/Local/lf/lfrc', to_this = 'LIBRARY_ROOT/settings/lf/lfrc'}
+colors = {this = '~/AppData/Local/lf/colors', to_this = 'LIBRARY_ROOT/settings/lf/colors'}
+icons = {this = '~/AppData/Local/lf/icons', to_this = 'LIBRARY_ROOT/settings/lf/icons'}
 
 
 [lf_linux]
-colors = {this = '~/.config/lf/colors', to_this = 'REPO_ROOT/settings/lf_linux/colors'}
-config = {this = '~/.config/lf/lfrc', to_this = 'REPO_ROOT/settings/lf_linux/lfrc'}
-icons = {this = '~/.config/lf/icons', to_this = 'REPO_ROOT/settings/lf_linux/icons'}
+colors = {this = '~/.config/lf/colors', to_this = 'LIBRARY_ROOT/settings/lf_linux/colors'}
+config = {this = '~/.config/lf/lfrc', to_this = 'LIBRARY_ROOT/settings/lf_linux/lfrc'}
+icons = {this = '~/.config/lf/icons', to_this = 'LIBRARY_ROOT/settings/lf_linux/icons'}
 
 
 #[broot_windows]
-#config = { this = '~/AppData/Roaming/dystroy/config', to_this = 'REPO_ROOT/settings/broot/config' }
+#config = { this = '~/AppData/Roaming/dystroy/config', to_this = 'LIBRARY_ROOT/settings/broot/config' }
 
 
 [tmux_linux]
-config = {this = '~/.tmux.conf', to_this = 'REPO_ROOT/settings/tmux/.tmux.conf'}
-tmate = {this = '~/.tmate.conf', to_this = 'REPO_ROOT/settings/tmux/.tmate.conf'}
+config = {this = '~/.tmux.conf', to_this = 'LIBRARY_ROOT/settings/tmux/.tmux.conf'}
+tmate = {this = '~/.tmate.conf', to_this = 'LIBRARY_ROOT/settings/tmux/.tmate.conf'}
 
 
 [zellij_linux]
-config = { this = '~/.config/zellij', to_this = 'REPO_ROOT/settings/zellij' }
-#themes = { this = '~/.config/zellij/themes', to_this = 'REPO_ROOT/settings/zellij/themes' }
-#layouts = { this = '~/.config/zellij/layouts', to_this = 'REPO_ROOT/settings/zellij/layouts' }
+config = { this = '~/.config/zellij', to_this = 'LIBRARY_ROOT/settings/zellij' }
+#themes = { this = '~/.config/zellij/themes', to_this = 'LIBRARY_ROOT/settings/zellij/themes' }
+#layouts = { this = '~/.config/zellij/layouts', to_this = 'LIBRARY_ROOT/settings/zellij/layouts' }
 
 
 [wsl_windows]
@@ -93,30 +93,30 @@ home = {this = '~/win', to_this = '/mnt/c/Users/username'}
 [nvim_windows]
 
 [nvim]
-flake8 = {this = '~/.flake8', to_this = 'REPO_ROOT/settings/lvim/plugins_config/.flake8'}
+flake8 = {this = '~/.flake8', to_this = 'LIBRARY_ROOT/settings/lvim/plugins_config/.flake8'}
 
 
 [helix_windows]
-languages = { this = '~/AppData/Roaming/helix/languages.toml', to_this = 'REPO_ROOT/settings/helix/languages.toml' }
-config = { this = '~/AppData/Roaming/helix/config.toml', to_this = 'REPO_ROOT/settings/helix/config.toml' }
+languages = { this = '~/AppData/Roaming/helix/languages.toml', to_this = 'LIBRARY_ROOT/settings/helix/languages.toml' }
+config = { this = '~/AppData/Roaming/helix/config.toml', to_this = 'LIBRARY_ROOT/settings/helix/config.toml' }
 
 [helix_linux]
-languages = { this = '~/.config/helix/languages.toml', to_this = 'REPO_ROOT/settings/helix/languages.toml' }
-config = { this = '~/.config/helix/config.toml', to_this = 'REPO_ROOT/settings/helix/config.toml' }
+languages = { this = '~/.config/helix/languages.toml', to_this = 'LIBRARY_ROOT/settings/helix/languages.toml' }
+config = { this = '~/.config/helix/config.toml', to_this = 'LIBRARY_ROOT/settings/helix/config.toml' }
 
 # because lvim is under high maintinance, its best to get latest config and modify it on the fly instead of using a static config
 # this proces is done at the end of the setup
 #[lvim_windows]
-#config = { this = '~/AppData/Local/lvim/config.lua', to_this = 'REPO_ROOT/settings/lvim_windows/config.lua' }
+#config = { this = '~/AppData/Local/lvim/config.lua', to_this = 'LIBRARY_ROOT/settings/lvim_windows/config.lua' }
 #
 #[lvim_linux]
-#config = { this = '~/.config/lvim/config.lua', to_this = 'REPO_ROOT/settings/lvim_linux/config.lua' }
+#config = { this = '~/.config/lvim/config.lua', to_this = 'LIBRARY_ROOT/settings/lvim_linux/config.lua' }
 
 [svim_windows]
-init = { this = '~/.SpaceVim.d/init.toml', to_this = 'REPO_ROOT/settings/svim_windows/init.toml' }
+init = { this = '~/.SpaceVim.d/init.toml', to_this = 'LIBRARY_ROOT/settings/svim_windows/init.toml' }
 
 [svim_linux]
-init = { this = '~/.SpaceVim.d/init.toml', to_this = 'REPO_ROOT/settings/svim_linux/init.toml' }
+init = { this = '~/.SpaceVim.d/init.toml', to_this = 'LIBRARY_ROOT/settings/svim_linux/init.toml' }
 
 [apps_windows]
 notepadpp = {this = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', to_this = 'C:/Program Files/Notepad++/notepad++.exe'}
@@ -124,4 +124,4 @@ notepadpp = {this = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', to_th
 
 
 [wt_windows]
-settings = { this = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', to_this = 'REPO_ROOT/settings/shells/wt/settings.json' }
+settings = { this = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', to_this = 'LIBRARY_ROOT/settings/shells/wt/settings.json' }

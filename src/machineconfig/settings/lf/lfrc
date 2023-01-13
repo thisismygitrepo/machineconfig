@@ -22,7 +22,7 @@ set ifs "\n"
 # see this: https://github.com/ahrm/dotfiles/tree/main/lf-windows/lf_scripts
 # https://github.com/NikitaIvanovV/ctpv
 
-# set previewer ~/code/machineconfig/settings/lf/leftpane_previewer.ps1
+# set previewer ~/code/machineconfig/src/machineconfig/settings/lf/leftpane_previewer.ps1
 # set previewer ~\AppData\Local\Microsoft\WindowsApps\bat.exe  --color=always --theme=base16
 # also see pistol file previewer.
 # set shell pwsh  # too slow.
@@ -73,7 +73,7 @@ map ww $powershell
 map wp $pwsh
 map wc $~/scripts/croshell.ps1
 map wm $cmd
-map i $~/code/machineconfig/settings/lf/previewer.ps1 $env:f
+map i $~/code/machineconfig/src/machineconfig/settings/lf/previewer.ps1 $env:f
 map R $~/scripts/croshell.ps1 -r $env:f
 
 # o file/folder Operations
@@ -93,7 +93,7 @@ map os mark-save
 map ol mark-load
 map oR mark-remove
 map ox extract
-cmd extract $cmd $env:USERPROFILE\code\machineconfig\settings\lf\extract.cmd -- $f
+cmd extract $cmd $env:USERPROFILE/code/machineconfig/src/machineconfig/settings/lf/extract.cmd -- $f
 
 
 # j jump
@@ -106,27 +106,27 @@ map jm cd ~/code/machineconfig/src/machineconfig
 map jh cd ~
 map ja cd $env:LOCALAPPDATA
 map jA cd $env:APPDATA
-map jj $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- $env:USERPROFILE/code/machineconfig/settings/lf/lfrc
+map jj $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- $env:USERPROFILE/code/machineconfig/src/machineconfig/settings/lf/lfrc
 
 
 
 # m make
 map m
-map md $~/code/machineconfig/settings/lf/mkdir.ps1 
-map mf $~/code/machineconfig/settings/lf/mkfile.ps1
+map md $~/code/machineconfig/src/machineconfig/settings/lf/mkdir.ps1
+map mf $~/code/machineconfig/src/machineconfig/settings/lf/mkfile.ps1
 
 # =================== JUNK ======================
 # Find and Jump
 #cmd fzfg $~/scripts/fzfg.ps1 $args[0]
 map J push :$~/scripts/fzfg<space>
-map F $~/code/machineconfig/settings/lf/fzf_edit.ps1
-map S cd $~/code/machineconfig/settings/lf/tst.ps1
-map T $~/code/machineconfig/settings/lf/cd_tere.ps1
-map Z $~/code/machineconfig/settings/lf/cd_zoxide2.ps1
+map F $~/code/machineconfig/src/machineconfig/settings/lf/fzf_edit.ps1
+map S cd $~/code/machineconfig/src/machineconfig/settings/lf/tst.ps1
+map T $~/code/machineconfig/src/machineconfig/settings/lf/cd_tere.ps1
+map Z $~/code/machineconfig/src/machineconfig/settings/lf/cd_zoxide2.ps1
 
 cmd doc $lf -doc | bat
 
-# cmd pre-cd $~/code/machineconfig/settings/lf/precd.ps1
-# cmd on-cd $~/code/machineconfig/settings/lf/oncd.ps1
-# cmd on-quit ~/code/machineconfig/settings/lf/onquit.ps1
+# cmd pre-cd $~/code/machineconfig/src/machineconfig/settings/lf/precd.ps1
+# cmd on-cd $~/code/machineconfig/src/machineconfig/settings/lf/oncd.ps1
+# cmd on-quit ~/code/machineconfig/src/machineconfig/settings/lf/onquit.ps1
 

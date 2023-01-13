@@ -1,6 +1,6 @@
 
 
-version = "0.8"
+__version__ = "0.9"
 release_notes = """
-added rich lib
+relocated settings to be within the library root as opposed to repo root.
 """

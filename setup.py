@@ -1,13 +1,13 @@
 
 import setuptools
-from src.machineconfig import version
+from src.machineconfig import __version__
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="machineconfig",
-    version=version,
+    version=__version__,
     author="Alex Al-Saffar",
     author_email="programmer@usa.com",
     description="Dotfiles management package",
@@ -26,9 +26,3 @@ setuptools.setup(
     packages=setuptools.find_packages(where="src"),
     python_requires=">=3.9",
 )
-
-
-# the root directory belongs to gitrepo, it can have any name.
-# the package name is dictated by 'name' field in setup.py file.
-# the modules that are avilable after installation are the names under src directory, which can be different again.
-# it is however good practice to unify all of the above.
