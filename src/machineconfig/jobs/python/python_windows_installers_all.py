@@ -9,13 +9,20 @@ def get_installers():
 
 
 def main():
-    fail = []
-    for py_file in get_installers():
+    installers = tb.L(get_installers())
+
+    def install_logic(py_file):
         try:
             tb.Read.py(py_file)["main"]()
+            return None
         except Exception as ex:
             print(ex)
-            fail.append(py_file)
+            return py_file
+
+    fail = installers.apply(install_logic, jobs=10)
+    fail = fail.filter(lambda x: x is not None)
+
+    print("\n" * 2)
     print(f"Failed: {fail}")
     print("Completed Installation".center(100, "-"))
 
