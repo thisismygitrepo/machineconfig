@@ -64,22 +64,6 @@ sudo apt install exa -y || true  # replacement for ls. no ner fonts, unlike lsd
 #sudo dpkg -i hyperfine_1.15.0_amd64.deb
 #rm hyperfine_1.15.0_amd64.deb
 
-# ---------------------------- text style ------------------------------------
-sudo apt install sl -y || true  # for fun
-sudo apt install hollywood -y || true  # for fun
-sudo apt install neofetch -y || true  # for system info
-neofetch || true
-sudo apt install cmatrix -y || true  # for fun
-sudo apt install fortune -y || true  # generate random text in the form of piece of wisdom
-sudo apt install boxes -y || true  # for ascii banners. boxes -l for list of boxes.
-sudo apt install cowsay -y || true  # animals saying things. Different figures with -f. Full list: cowsay -l
-sudo apt install lolcat -y || true  # for coloring text in terminal.
-sudo apt install toilet -y || true  # large ascii text
-sudo apt install figlet -y || true  # large ascii text. See: showfigfonts for full list of fonts. use -f to change font.
-# see more here: https://linoxide.com/linux-fun-terminal-crazy-output/
-# midnight commander, similarv# Asciiquarium# https://github.com/bartobri/no-more-secrets
-# https://www.youtube.com/watch?v=haitmoSyTls
-
 
 # ------------------------------ EDITORS -----------------------------
 sudo apt install nano -y || true  # for editing files
@@ -94,7 +78,6 @@ wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.deb 
 sudo apt install ./nvim-linux64.deb || true
 rm nvim-linux64.deb || true
 
-
 # from https://www.lunarvim.org/docs/installation
 LV_BRANCH='release-1.2/neovim-0.8' bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
 # https://spacevim.org/quick-start-guide/#linux-and-macos
@@ -104,3 +87,19 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/mast
 # replace OSH_THEME="font" with OSH_THEME="random" in ~/.bashrc
 (sed -i 's/OSH_THEME="font"/OSH_THEME="random"/' ~/.bashrc) || true
 
+# ---------------------------- text style ------------------------------------
+sudo apt install fortune -y || true  # generate random text in the form of piece of wisdom
+sudo apt install boxes -y || true  # for ascii banners. boxes -l for list of boxes.
+sudo apt install cowsay -y || true  # animals saying things. Different figures with -f. Full list: cowsay -l
+sudo apt install lolcat -y || true  # for coloring text in terminal.
+sudo apt install toilet -y || true  # large ascii text
+sudo apt install figlet -y || true  # large ascii text. See: showfigfonts for full list of fonts. use -f to change font.
+# see more here: https://linoxide.com/linux-fun-terminal-crazy-output/
+# midnight commander, similarv# Asciiquarium# https://github.com/bartobri/no-more-secrets
+# https://www.youtube.com/watch?v=haitmoSyTls
+
+sudo apt install neofetch -y || true  # for system info
+neofetch || true
+sudo apt install sl -y || true  # for fun
+sudo apt install hollywood -y || true  # for fun
+sudo apt install cmatrix -y || true  # for fun
