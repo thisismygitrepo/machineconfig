@@ -9,6 +9,7 @@ if (!$env:VIRTUAL_ENV) {  # no ve activated ==> activate one.
         else {  # no default file.  >> use default name
             $name = "ve"
             & "$env:USERPROFILE/venvs/$name/Scripts/Activate.ps1"
+            mkdir $env:USERPROFILE/.machineconfig -ErrorAction SilentlyContinue
             New-Item -ItemType File -Path "$env:USERPROFILE/.machineconfig/default_ve" -Value $env:VIRTUAL_ENV
             }
         }
