@@ -66,10 +66,10 @@ sudo apt install exa -y || true  # replacement for ls. no ner fonts, unlike lsd
 
 # ---------------------------- text style ------------------------------------
 sudo apt install sl -y || true  # for fun
-sudo apt install cmatrix -y || true  # for fun
 sudo apt install hollywood -y || true  # for fun
 sudo apt install neofetch -y || true  # for system info
 neofetch || true
+sudo apt install cmatrix -y || true  # for fun
 sudo apt install fortune -y || true  # generate random text in the form of piece of wisdom
 sudo apt install boxes -y || true  # for ascii banners. boxes -l for list of boxes.
 sudo apt install cowsay -y || true  # animals saying things. Different figures with -f. Full list: cowsay -l

@@ -24,7 +24,7 @@ def main():
     fail = fail.filter(lambda x: x is not None)
 
     print("\n" * 2)
-    print(f"Failed: {fail}")
+    print(f"Failed: \n{fail.print()}")
     print("\n")
     print("Completed Installation".center(100, "-"))
     print("\n" * 2)
