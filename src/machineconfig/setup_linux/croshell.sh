@@ -1,7 +1,7 @@
 
 # curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/croshell.sh | bash
 
-# virtual enviornment
+# python & virtual enviornment
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
 
 # repos

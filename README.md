@@ -71,5 +71,10 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash  # "https://github.com/thisismygitrepo.keys"
 ```
 
+###### Install Croshell Terminal Directly,
+```bash
+curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/croshell.sh | sudo bash
+```
+
 # Author
 Alex Al-Saffar. [email](mailto:programmer@usa.com)

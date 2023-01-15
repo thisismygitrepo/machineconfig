@@ -20,7 +20,7 @@ def main():
             return py_file
 
     install_logic(installers[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
-    fail = installers.apply(install_logic[1:], jobs=10)
+    fail = installers[1:].apply(install_logic, jobs=10)
     fail = fail.filter(lambda x: x is not None)
 
     print("\n" * 2)
