@@ -13,10 +13,11 @@ sudo apt install nala -y || true  # nala is a command line tool for managing you
 # ignoring indexing of windows files: https://askubuntu.com/questions/1251484/why-does-it-take-so-much-time-to-initialize-mlocate-database
 sudo cp /etc/updatedb.conf /etc/updatedb.conf.bak || true
 # add /mnt/c to PRUNEPATHS of /etc/updatedb.conf using sed
-sudo sed -i 's/PRUNEPATHS="/PRUNEPATHS="\/mnt\/c /g' /etc/updatedb.conf || true
-
+sudo sed -i 's/PRUNEPATHS="/PRUNEPATHS="\/mnt /g' /etc/updatedb.conf || true
 # PRUNEPATHS /mnt /etc/updatedb.conf
 # sudo sed -i "s/^ *PRUNEFS *= *[\"']/&drvfs 9p /" /etc/updatedb.conf /etc/cron.daily/locate
+
+
 
 # -------------------- Utilities --------------------
 
@@ -53,8 +54,9 @@ sudo apt install git -y || true  # for version control
 yes '' | sed 3q; echo "----------------------------- installing lynx ----------------------------"; yes '' | sed 3q
 sudo apt install lynx -y || true  # tex browser, just like w3m
 
-# ------------------- File Managers ---------------------------
 
+
+# ------------------- File Managers ---------------------------
 yes '' | sed 3q; echo "----------------------------- installing bat ----------------------------"; yes '' | sed 3q
 sudo apt install bat -y || true  # cat with colors.
 #sudo apt install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
@@ -83,6 +85,7 @@ sudo apt install exa -y || true  # replacement for ls. no ner fonts, unlike lsd
 #rm hyperfine_1.15.0_amd64.deb
 
 
+
 # ---------------------------- text style ------------------------------------
 yes '' | sed 3q; echo "----------------------------- installing fortune ----------------------------"; yes '' | sed 3q
 sudo apt install fortune -y || true  # generate random text in the form of piece of wisdom
@@ -104,7 +107,9 @@ yes '' | sed 3q; echo "----------------------------- installing neofetch -------
 sudo apt install neofetch -y || true  # for system info
 neofetch || true
 
-# ------------------------------ EDITORS -----------------------------
+
+
+# -========================================= EDITORS =========================================
 yes '' | sed 3q; echo "----------------------------- installing nano ----------------------------"; yes '' | sed 3q
 sudo apt install nano -y || true  # for editing files
 
@@ -130,15 +135,20 @@ yes '' | sed 3q; echo "----------------------------- installing lunarvim -------
 # from https://www.lunarvim.org/docs/installation
 LV_BRANCH='release-1.2/neovim-0.8' bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
 
+
+
 # ---------------------------- Programming Languages ------------------------------------
 yes '' | sed 3q; echo "----------------------------- installing rust ----------------------------"; yes '' | sed 3q
 # curl https://sh.rustup.rs -sSf | sh
 (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
 
+
+
 # ---------------------------- Fun ------------------------------------
 yes '' | sed 3q; echo "----------------------------- installing sl ----------------------------"; yes '' | sed 3q
 sudo apt install sl -y || true  # for fun
-yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
-sudo apt install hollywood -y || true  # for fun
 yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
 sudo apt install cmatrix -y || true  # for fun
+yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
+sudo apt install hollywood -y || true  # for fun
+

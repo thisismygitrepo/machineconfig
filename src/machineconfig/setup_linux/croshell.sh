@@ -1,6 +1,4 @@
 
-# curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/croshell.sh | bash
-
 # python & virtual enviornment
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
 
@@ -13,5 +11,4 @@ source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh  # require
 
 # devaps
 source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
-#source /home/alex/code/machineconfig/src/machineconfig/setup_linux/devapps.sh
 
