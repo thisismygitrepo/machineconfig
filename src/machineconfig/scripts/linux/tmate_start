@@ -7,3 +7,4 @@
 pyfile=~/code/machineconfig/src/machineconfig/scripts/python/tmate_start.py
 # TODO make this path relevant to current file ($0)
 python3 $pyfile $1
+deactivate || true

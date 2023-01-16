@@ -18,4 +18,4 @@ $script_root = $PSScriptRoot
 python $script_root/../python/devops.py $args
 . $op_script
 
-deactivate
+deactivate -ErrorAction SilentlyContinue

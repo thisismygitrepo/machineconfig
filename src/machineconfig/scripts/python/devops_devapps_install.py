@@ -21,9 +21,18 @@ def main(program_name=None):
         program_name = display_options(msg="", options=options, header="CHOOSE DEV APP", default=str(default))
 
     if program_name == "all":
-        program_linux = f"source {LIBRARY_ROOT}/setup_linux/devapps.sh"
-        program_windows = f"{LIBRARY_ROOT}/setup_windows/devapps.ps1"
-        program = program_linux if system() == "Linux" else program_windows
+        # program_linux = f"source {LIBRARY_ROOT}/setup_linux/devapps.sh"
+        # program_windows = f"{LIBRARY_ROOT}/setup_windows/devapps.ps1"
+        if system() == "Linux":
+            from machineconfig.jobs.python.python_linux_installers_all import main
+            main()
+        elif system() == "Windows":
+            from machineconfig.jobs.python.python_linux_installers_all import main
+            main()
+        else:
+            raise NotImplementedError(f"System {system()} not supported")
+        program = ""
+
     else:
         idx = installers.stem.list.index(program_name)
         program = installers[idx].readit()['main']()  # finish the task

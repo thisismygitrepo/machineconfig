@@ -4,5 +4,5 @@ echo $pyparser
 #activate_ve
 . $PSScriptRoot/activate_ve.ps1
 python $pyparser $args
-deactivate
+deactivate -ErrorAction SilentlyContinue
 

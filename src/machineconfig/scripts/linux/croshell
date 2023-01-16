@@ -5,8 +5,8 @@ source ~/scripts/activate_ve ''
 
 python -m crocodile.run $@
 
-# check below if VIRTUAL_ENV enviroment variable exist, then deactivate it, other wise skip
+# check below if VIRTUAL_ENV enviroment variable exist, then deactivate it, otherwise skip
 if [ -n "$VIRTUAL_ENV" ]; then
-  deactivate
+  deactivate || true
 fi
 

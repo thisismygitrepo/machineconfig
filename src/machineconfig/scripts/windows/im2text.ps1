@@ -23,5 +23,5 @@ cd ~/AppData/Local/Tesseract-OCR/
 pytesseract.exe $target_path | Set-Clipboard
 echo $(Get-Clipboard)
 
-deactivate
+deactivate -ErrorAction SilentlyContinue
 cd $orig_path

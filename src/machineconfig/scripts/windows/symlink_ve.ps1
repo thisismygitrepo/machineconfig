@@ -9,4 +9,4 @@ $to = "~/venvs/" + $ve_name
 #~/scripts/activate_ve.ps1
 . $PSScriptRoot/activate_ve.ps1
 python -c "import crocodile.toolbox as tb; tb.P(r'$pwd').joinpath('venv').symlink_to(r'$to'); tb.P('.gitignore').modify_text('venv', 'venv', replace_line=True)"
-deactivate
+deactivate -ErrorAction SilentlyContinue

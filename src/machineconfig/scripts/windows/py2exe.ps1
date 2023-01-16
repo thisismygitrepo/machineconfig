@@ -8,4 +8,4 @@ pyinstaller $args[0] --onefile --workpath=$destination
 cd $destination
 echo $destination
 
-deactivate
+deactivate -ErrorAction SilentlyContinue

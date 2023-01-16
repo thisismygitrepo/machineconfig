@@ -2,4 +2,4 @@
 
 . ~/scripts/activate_ve ''
 python -m machineconfig.scripts.python.bu_onedrive_sx $@
-
+deactivate || true

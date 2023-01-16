@@ -2,4 +2,4 @@
 
 . ~/scripts/activate_ve ''
 python $(dirname $(dirname $0))/python/bu_gdrive_rx.py $@
-deactivate
+deactivate || true

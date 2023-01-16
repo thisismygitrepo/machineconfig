@@ -2,5 +2,5 @@
 
 . ~/scripts/activate_ve ''
 python $(dirname $(dirname $0))/python/ftpsx.py $@
-
+deactivate || true
 
