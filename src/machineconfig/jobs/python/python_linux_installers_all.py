@@ -8,8 +8,8 @@ def get_installers():
     return tb.P(inst.__file__).parent.search("*.py", filters=[lambda x: "__init__" not in str(x)]) + tb.P(gens.__file__).parent.search("*.py", filters=[lambda x: "__init__" not in str(x)])
 
 
-def main():
-    installers = tb.L(get_installers())
+def main(installers=None):
+    installers = installers if installers is not None else tb.L(get_installers())
 
     def install_logic(py_file):
         try:
