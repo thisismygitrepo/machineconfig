@@ -27,7 +27,7 @@ def main(program_name=None):
             from machineconfig.jobs.python.python_linux_installers_all import main
             main()
         elif system() == "Windows":
-            from machineconfig.jobs.python.python_linux_installers_all import main
+            from machineconfig.jobs.python.python_windows_installers_all import main
             main()
         else:
             raise NotImplementedError(f"System {system()} not supported")

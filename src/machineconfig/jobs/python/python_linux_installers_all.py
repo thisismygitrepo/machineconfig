@@ -8,21 +8,22 @@ def get_installers():
     return tb.P(inst.__file__).parent.search("*.py", filters=[lambda x: "__init__" not in str(x)]) + tb.P(gens.__file__).parent.search("*.py", filters=[lambda x: "__init__" not in str(x)])
 
 
+def install_logic(py_file):
+    try:
+        old_version = tb.Terminal().run(f"{py_file.stem} --version", shell="powershell").op[:-1]
+        tb.Read.py(py_file)["main"]()
+        new_version = tb.Terminal().run(f"{py_file.stem} --version", shell="powershell").op[:-1]
+        if old_version == new_version:
+            return f"😑 {py_file.stem} ==> same version: {old_version}"
+        else:
+            return f"🤩 {py_file.stem} ====> updated from {old_version} to {new_version}"
+    except Exception as ex:
+        print(ex)
+        return f"Failed at {py_file.stem} with {ex}"
+
+
 def main(installers=None):
     installers = installers if installers is not None else tb.L(get_installers())
-
-    def install_logic(py_file):
-        try:
-            old_version = tb.Terminal().run(f"{py_file.stem} --version", shell="powershell").op[:-1]
-            tb.Read.py(py_file)["main"]()
-            new_version = tb.Terminal().run(f"{py_file.stem} --version", shell="powershell").op[:-1]
-            if old_version == new_version:
-                return f"😑 {py_file.stem} ==> same version: {old_version}"
-            else:
-                return f"🤩 {py_file.stem} ====> updated from {old_version} to {new_version}"
-        except Exception as ex:
-            print(ex)
-            return f"Failed at {py_file.stem} with {ex}"
 
     install_logic(installers[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
     res = installers[1:].apply(install_logic, jobs=10)
