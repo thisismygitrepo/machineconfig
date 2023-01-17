@@ -16,7 +16,9 @@ sudo cp /etc/updatedb.conf /etc/updatedb.conf.bak || true
 sudo sed -i 's/PRUNEPATHS="/PRUNEPATHS="\/mnt /g' /etc/updatedb.conf || true
 # PRUNEPATHS /mnt /etc/updatedb.conf
 # sudo sed -i "s/^ *PRUNEFS *= *[\"']/&drvfs 9p /" /etc/updatedb.conf /etc/cron.daily/locate
-
+#exclude_dirs="/mnt /tmp /var/tmp"
+#updatedb --prunepaths="$exclude_dirs"  # update the mlocate database
+#updatedb --prunefs="NFS,smbfs,cifs"
 
 
 # -------------------- Utilities --------------------
@@ -128,13 +130,14 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/mast
 # replace OSH_THEME="font" with OSH_THEME="random" in ~/.bashrc
 (sed -i 's/OSH_THEME="font"/OSH_THEME="random"/' ~/.bashrc) || true
 
-yes '' | sed 3q; echo "----------------------------- installing spacevim ----------------------------"; yes '' | sed 3q
-# https://spacevim.org/quick-start-guide/#linux-and-macos
-(curl -sLf https://spacevim.org/install.sh | bash) || true
+
 yes '' | sed 3q; echo "----------------------------- installing lunarvim ----------------------------"; yes '' | sed 3q
 # from https://www.lunarvim.org/docs/installation
 LV_BRANCH='release-1.2/neovim-0.8' bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
 
+yes '' | sed 3q; echo "----------------------------- installing spacevim ----------------------------"; yes '' | sed 3q
+# https://spacevim.org/quick-start-guide/#linux-and-macos
+(curl -sLf https://spacevim.org/install.sh | bash) || true
 
 
 # ---------------------------- Programming Languages ------------------------------------
@@ -147,8 +150,7 @@ yes '' | sed 3q; echo "----------------------------- installing rust -----------
 # ---------------------------- Fun ------------------------------------
 yes '' | sed 3q; echo "----------------------------- installing sl ----------------------------"; yes '' | sed 3q
 sudo apt install sl -y || true  # for fun
-yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
-sudo apt install cmatrix -y || true  # for fun
 yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
 sudo apt install hollywood -y || true  # for fun
-
+yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
+sudo apt install cmatrix -y || true  # for fun
