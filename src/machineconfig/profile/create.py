@@ -131,6 +131,12 @@ def main_add_patches_to_shell_profile(profile_path=None, choice=None):
         patch = patch_path.read_text()
         if patch in profile: print(f"Skipping `{patch_path.name}`; patch already in profile")
         else: profile += "\n" + patch
+
+    if system == "Linux":
+        res = tb.Terminal().run("cat /proc/version").op
+        if "microsoft" in res.lower() or "wsl" in res.lower():
+            profile += "\ncd ~"  # this is to make sure that the current dir is not in the windows file system, which is terribly slow and its a bad idea to be there anyway.
+
     profile_path.write_text(profile)
 
 

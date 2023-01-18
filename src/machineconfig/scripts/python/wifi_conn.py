@@ -3,8 +3,8 @@
 import argparse
 import configparser
 from pathlib import Path
-import random
-import string
+# import random
+# import string
 import os
 
 
@@ -38,9 +38,13 @@ def createNewConnection(name, SSID, password):
     with open(name+".xml", 'w') as file:
         file.write(config)
     os.system(command)
+
+
 def connect(name, SSID):
     command = "netsh wlan connect name=\""+name+"\" ssid=\""+SSID+"\" interface=Wi-Fi"
     os.system(command)
+
+
 def displayAvailableNetworks():
     command = "netsh wlan show networks interface=Wi-Fi"
     os.system(command)

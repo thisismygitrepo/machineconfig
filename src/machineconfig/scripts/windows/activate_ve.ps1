@@ -22,7 +22,19 @@ if (!$env:VIRTUAL_ENV) {  # no ve activated ==> activate one.
 
 }
 else {
-    Write-Host "Virtual environment $env:VIRTUAL_ENV already activated"
+
+    # if $args[0] is passed, it's a new ve to activate
+    if ($args[0]) {
+        echo "Deactivating virtual environment $env:VIRTUAL_ENV "
+        deactivate -ErrorAction SilentlyContinue
+        $name = $args[0]
+        & "$env:USERPROFILE/venvs/$name/Scripts/Activate.ps1"
+        Write-Host "Activated virtual environment $env:VIRTUAL_ENV "
+    }
+    else {
+        Write-Host "Virtual environment $env:VIRTUAL_ENV already activate"
+    }
+
     if (!(Test-Path $env:USERPROFILE/.machineconfig/default_ve)) {
         New-Item -ItemType Directory -Path "$env:USERPROFILE/.machineconfig" -ErrorAction SilentlyContinue
         New-Item -ItemType File -Path "$env:USERPROFILE/.machineconfig/default_ve" -Value $env:VIRTUAL_ENV

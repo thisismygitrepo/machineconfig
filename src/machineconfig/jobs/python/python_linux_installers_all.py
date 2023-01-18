@@ -10,13 +10,13 @@ def get_installers():
 
 def install_logic(py_file):
     try:
-        old_version = tb.Terminal().run(f"{py_file.stem} --version", shell="powershell").op[:-1]
+        old_version = tb.Terminal().run(f"{py_file.stem} --version", shell="powershell").op.replace("\n", "")
         tb.Read.py(py_file)["main"]()
-        new_version = tb.Terminal().run(f"{py_file.stem} --version", shell="powershell").op[:-1]
+        new_version = tb.Terminal().run(f"{py_file.stem} --version", shell="powershell").op.replace("\n", "")
         if old_version == new_version:
-            return f"😑 {py_file.stem} ==> same version: {old_version}"
+            return f"😑 {py_file.stem}, same version: {old_version}"
         else:
-            return f"🤩 {py_file.stem} ====> updated from {old_version} to {new_version}"
+            return f"🤩 {py_file.stem} updated from {old_version} ===to===> {new_version}"
     except Exception as ex:
         print(ex)
         return f"Failed at {py_file.stem} with {ex}"
@@ -38,9 +38,10 @@ def main(installers=None):
     console.rule("Updated apps")
     print(f"{res.filter(lambda x: 'updated from' in x).print()}")
     print("\n")
-    print(f"{res.filter(lambda x: 'Failed at' in x).print()}")
-    print("\n")
     console.rule("Failed apps")
+    print(f"{res.filter(lambda x: 'Failed at' in x).print()}")
+
+    print("\n")
     print("Completed Installation".center(100, "-"))
     print("\n" * 2)
 
