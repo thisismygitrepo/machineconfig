@@ -76,6 +76,7 @@ def symlink(this: tb.P, to_this: tb.P, overwrite=True):
 
 
 def find_move_delete_windows(downloaded, tool_name=None, delete=True):
+    if tool_name is not None and ".exe" in tool_name: tool_name = tool_name.replace(".exe", "")
     if downloaded.is_file():
         exe = downloaded
     else:
