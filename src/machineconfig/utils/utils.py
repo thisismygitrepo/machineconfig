@@ -107,7 +107,7 @@ def find_move_delete_linux(downloaded, tool_name, delete=True):
     return None
 
 
-def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", file_name=None, tool_name=None, exe_name=None, delete=True, strip_v=False, linux=False, compression=None):
+def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", file_name=None, tool_name=None, exe_name=None, delete=True, strip_v=False, linux=False, compression=None, sep="-"):
     console = Console()
     print("\n\n\n")
     with console.status("Installing..."):
@@ -124,7 +124,7 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
         if not download_n_extract: return download_link
         if download_n_extract and not linux:
             if file_name is None:  # it is not constant, so we compile it from parts as follows:
-                file_name = f'{tool_name}-{version}-{suffix}.{compression or "zip"}'
+                file_name = f'{tool_name}{sep}{version}{sep}{suffix}.{compression or "zip"}'
             print("Downloading", download_link.joinpath(file_name))
             downloaded = download_link.joinpath(file_name).download().unzip(inplace=True, overwrite=True)
             return find_move_delete_windows(downloaded, exe_name or tool_name, delete)
