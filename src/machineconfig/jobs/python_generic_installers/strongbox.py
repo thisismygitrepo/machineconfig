@@ -21,6 +21,7 @@ def main():
 
     else:
         raise NotImplementedError(f"System {system()} not supported")
+    tb.Terminal().run("strongbox -git-config", shell="powershell").print()
 
 
 if __name__ == '__main__':

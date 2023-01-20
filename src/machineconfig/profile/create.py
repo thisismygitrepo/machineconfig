@@ -21,7 +21,7 @@ OTHER_SYSTEM = "windows" if system == "Linux" else "linux"
 def link_ssh(overwrite=True):
     """The function can link aribtrary number of files without linking the directory itself (which is not doable in toml config file)"""
     path = tb.P.home().joinpath(".ssh")
-    target = DotFiles.joinpath(".ssh")
+    target = DotFiles.joinpath("creds/.ssh")
     for item in target.search("*"):
         # if "authorized_keys" in item: continue
         symlink(path.joinpath(item.name), item, overwrite=overwrite)

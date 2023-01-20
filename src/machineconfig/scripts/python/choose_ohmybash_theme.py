@@ -2,6 +2,8 @@
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import display_options
 
+descriptive_themes = ["cupcake", "doubletime", "zork", "slick"]
+
 
 def main(new_theme=None):
     profile = tb.P.home().joinpath(".bashrc")
@@ -9,8 +11,9 @@ def main(new_theme=None):
     themes = tb.P.home().joinpath(".oh-my-bash/themes").search("*", not_in=["THEMES.md"]).apply(lambda x: x.trunk)
     themes.list.sort()
     if new_theme is None:
-        tail = "Recomm: cupcake, doubletime, zork, slick, random"
-        new_theme = display_options(msg=f"Choose a theme number from the list above: ", options=list(themes) + ["slick", "surprise me"], default="surprise me", tail=tail)
+        tail = "Recomm: "
+        new_theme = display_options(msg=f"Choose a theme number from the list above: ", options=list(themes) + ["slick", "surprise me"], default="surprise me", tail=tail,
+                                    prompt=f"Recommended descriptive ones are {descriptive_themes}")
     if new_theme == "surprise me": new_theme = themes.sample()[0]
     print("Current Theme:", current_theme)
     print("New theme: ", f'"{new_theme}"')  #
