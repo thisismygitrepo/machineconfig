@@ -11,7 +11,7 @@ client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read
 
 def scan(path):
     print(f"Scanning {path}")
-    with open(path, "rb") as f:
+    with open(str(path), "rb") as f:
         analysis = client.scan_file(f)
 
     while True:
@@ -40,6 +40,8 @@ def main():
         apps = tb.P(r"/usr/local/bin").search("*")
     else:
         raise NotImplementedError("Not implemented for this OS")
+
+    apps = tb.L([app for app in apps if app.size("kb") > 0.1])  # no symlinks like paint and wsl and bash
 
     flags = []
     for app in apps:
