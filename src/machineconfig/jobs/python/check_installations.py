@@ -4,33 +4,37 @@ import crocodile.toolbox as tb
 import time
 import pandas as pd
 import platform
+from rich.console import Console
+from rich.progress import track
 
 
 client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
+console = Console()
 
 
 def scan(path):
-    print(f"Scanning {path}")
+    console.rule(f"Scanning {path}")
     with open(str(path), "rb") as f:
         analysis = client.scan_file(f)
 
     while True:
-        anal = client.get_object("/analyses/{}", analysis.id)
-        print(anal.status)
-        if anal.status == "completed": break
-        else: print(f"waiting for scan of {path} ... ")
-        time.sleep(30)
+        with console.status(f"waiting for scan of {path} ... "):
+            anal = client.get_object("/analyses/{}", analysis.id)
+            # print(anal.status)
+            if anal.status == "completed": break
+            time.sleep(30)
 
     df = pd.DataFrame(anal.results).T
-    safe_flag = True
+    malicious = []
     for idx, row in df.iterrows():
-        print(f"{idx} - {row['positives']} / {row['total']}")
-        if row.result is None and row.category in ["undetected", "type-unsupported"]: continue
+        if row.result is None and row.category in ["undetected", "type-unsupported", "failure", "timeout"]: continue
         else:
-            print(f"Found {row}")
-            safe_flag = False
-        print(f"{idx} - {row['positives']} / {row['total']}")
-    return safe_flag
+            tb.Struct(row.to_dict()).print(as_config=True, title=f"Found Category {row.category}")
+            malicious.append(row)
+
+    positive_ratio = len(malicious) / len(df) * 100
+    print(f"positive_ratio = {positive_ratio:.1f} %")
+    return positive_ratio
 
 
 def main():
@@ -44,6 +48,7 @@ def main():
     apps = tb.L([app for app in apps if app.size("kb") > 0.1])  # no symlinks like paint and wsl and bash
 
     flags = []
+    # for app in track(apps, description="App apps scanning..."):
     for app in apps:
         try:
             res = scan(app)
@@ -52,7 +57,7 @@ def main():
             res = None
         flags.append(res)
 
-    res_df = pd.DataFrame({"app": apps.apply(lambda x: x.stem), "safe": flags})
+    res_df = pd.DataFrame({"app": apps.apply(lambda x: x.stem), "positive_ratio": flags})
     print(res_df)
 
 
