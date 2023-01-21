@@ -6,7 +6,7 @@ import pandas as pd
 import platform
 
 
-client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text())
+client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
 
 
 def scan(path):
@@ -45,7 +45,11 @@ def main():
 
     flags = []
     for app in apps:
-        res = scan(app)
+        try:
+            res = scan(app)
+        except ValueError as ve:
+            print(ve)
+            res = None
         flags.append(res)
 
     res_df = pd.DataFrame({"app": apps.apply(lambda x: x.stem), "safe": flags})
