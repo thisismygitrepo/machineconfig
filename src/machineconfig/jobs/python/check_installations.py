@@ -27,7 +27,7 @@ def scan(path):
     df = pd.DataFrame(anal.results).T
     malicious = []
     for idx, row in df.iterrows():
-        if row.result is None and row.category in ["undetected", "type-unsupported", "failure", "timeout"]: continue
+        if row.result is None and row.category in ["undetected", "type-unsupported", "failure", "timeout", "confirmed-timeout"]: continue
         else:
             tb.Struct(row.to_dict()).print(as_config=True, title=f"Found Category {row.category}")
             malicious.append(row)

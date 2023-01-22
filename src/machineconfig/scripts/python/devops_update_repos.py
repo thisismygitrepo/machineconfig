@@ -22,7 +22,7 @@ def main(verbose=True):
         try:
             a_package_path = tb.P(__import__(a_package).__file__) if repos[a_package]["py_package"] == "True" else tb.P(repos[a_package]["path"]).expanduser().absolute()
             if not a_package_path.exists():
-                print(f"Couldn't find {a_package} repo. Cloning from remote {repos[a_package]['url']} to ~/code/{a_package} ...")
+                if verbose: print(f"Couldn't find {a_package} repo. Cloning from remote {repos[a_package]['url']} to ~/code/{a_package} ...")
                 tb.Terminal().run(f"cd ~/code; git clone {repos[a_package]['url']}")
             repo = tb.install_n_import("git", "gitpython").Repo(str(a_package_path), search_parent_directories=True)
             local_install_repos.append(repo)
@@ -31,7 +31,7 @@ def main(verbose=True):
                 continue
             global_packages.append(a_package)
 
-    if verbose: print(f"Local install repos: {local_install_repos}. \nGlobal packages: {global_packages}")
+    if verbose: print(f"Local install repos: \n{tb.L(local_install_repos).print()}. \nGlobal packages: {tb.L(global_packages).print()}")
     sep = "\n"
     if system() == "Linux":
         program = tb.P(f"{LIBRARY_ROOT}/jobs/linux/update_essentials").read_text()
