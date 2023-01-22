@@ -2,7 +2,8 @@
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import display_options
 
-descriptive_themes = ["cupcake", "doubletime", "zork", "slick"]
+
+descriptive_themes = ["cupcake", "doubletime", "zork", "slick", "powerline-multiline", "font"]
 
 
 def main(new_theme=None):
