@@ -20,7 +20,7 @@ def main():
     args = parser.parse_args()
     ssh = SSH(rf'{args.machine}')
     ssh.copy_from_here(source=args.file, target=args.destination, z=args.zipFirst, r=args.recursive)
-    ssh.print_summary()
+    # ssh.print_summary()
 
 
 if __name__ == '__main__':
