@@ -3,7 +3,7 @@ import vt
 import crocodile.toolbox as tb
 import time
 import pandas as pd
-# import platform
+import platform
 from rich.console import Console
 # from rich.progress import track
 from machineconfig.utils.utils import LIBRARY_ROOT
@@ -12,6 +12,7 @@ from machineconfig.jobs.python.python_linux_installers_all import get_installed_
 
 client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
 console = Console()
+res_path = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps.csv")
 
 
 def scan(path):
@@ -72,8 +73,13 @@ def main():
         flags.append(res)
 
     res_df = pd.DataFrame({"app": apps_filtered.stem, "version": app_versions.values(), "positive_pct": flags})
-    res_df.to_csv(tb.P.home().joinpath(f"tmp_results/cli_tools_installers/safe_cli_apps.csv"))
-    res_df.to_csv(LIBRARY_ROOT.joinpath(f"profile/records/safe_cli_apps.csv"))
+
+    apps_safe_df = res_df.query("positive_pct < 5")
+    apps_safe = apps_raw.filter(lambda x: x.stem in list(apps_safe_df.app))
+    apps_safe_url = apps_safe.apply(lambda a_safe_app: a_safe_app.to_cloud("gdpo", remotepath=f"myshare/{platform.system().lower()}" / tb.P(a_safe_app.rel2home()), share=True), verbose=True, jobs=10)
+    res_df["url"] = apps_safe_url.apply(lambda x: x.as_posix() if type(x) == tb.P else None)
+
+    res_df.to_csv(res_path)
     print(res_df)
 
 
