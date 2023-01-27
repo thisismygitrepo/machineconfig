@@ -5,7 +5,8 @@ from rich.console import Console
 url = r'https://download.sysinternals.com/files/ZoomIt.zip'
 
 
-def main():
+def main(version=None):
+    _ = version
     print("\n\n\n")
     console = Console()
     console.rule("Installing ZoomIt")

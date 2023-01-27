@@ -2,7 +2,8 @@
 import crocodile.toolbox as tb
 
 
-def main():
+def main(version=None):
+    _ = version
     pass
 
 

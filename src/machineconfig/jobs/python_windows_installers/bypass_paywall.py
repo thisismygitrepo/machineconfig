@@ -5,7 +5,8 @@ import crocodile.toolbox as tb
 from platform import system
 
 
-def main():
+def main(version=None):
+    _ = version
     # see remove paywalls and enhance YT experience by Chris Titus
     folder = r"C:\\"
     tb.P("https://github.com/iamadamdev/bypass-paywalls-chrome/archive/master.zip").download().unzip(folder=folder, content=True)

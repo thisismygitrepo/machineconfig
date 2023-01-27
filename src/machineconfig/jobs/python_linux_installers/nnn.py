@@ -4,7 +4,8 @@ from machineconfig.utils.utils import get_latest_release, find_move_delete_linux
 import crocodile.toolbox as tb
 
 
-def main():
+def main(version=None):
+    _ = version
     # repo_url = tb.P(r"https://github.com/jarun/nnn")
     # release = get_latest_release(repo_url.as_url_str())
     # downloaded = release.joinpath(f"nnn-{release.name}.tar.gz").download().ungz_untar(inplace=True)

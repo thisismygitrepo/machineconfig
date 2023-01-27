@@ -8,10 +8,10 @@ def get_installers():
     return tb.P(inst.__file__).parent.search("*.py", filters=[lambda x: "__init__" not in str(x)]) + tb.P(gens.__file__).parent.search("*.py", filters=[lambda x: "__init__" not in str(x)])
 
 
-def install_logic(py_file):
+def install_logic(py_file, version=None):
     try:
         old_version = tb.Terminal().run(f"{py_file.stem} --version", shell="powershell").op.replace("\n", "")
-        tb.Read.py(py_file)["main"]()
+        tb.Read.py(py_file)["main"](version=version)
         new_version = tb.Terminal().run(f"{py_file.stem} --version", shell="powershell").op.replace("\n", "")
         if old_version == new_version:
             return f"😑 {py_file.stem}, same version: {old_version}"
