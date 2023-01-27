@@ -2,10 +2,18 @@
 import crocodile.toolbox as tb
 import machineconfig.jobs.python_linux_installers as inst
 import machineconfig.jobs.python_generic_installers as gens
+import platform
 
-
-def get_installers():
+def get_cli_py_installers():
     return tb.P(inst.__file__).parent.search("*.py", filters=[lambda x: "__init__" not in str(x)]) + tb.P(gens.__file__).parent.search("*.py", filters=[lambda x: "__init__" not in str(x)])
+
+
+def get_installed_cli_apps():
+    if platform.system() == "Windows": apps = tb.P.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad"])
+    elif platform.system() == "Linux": apps = tb.P(r"/usr/local/bin").search("*")
+    else: raise NotImplementedError("Not implemented for this OS")
+    apps = tb.L([app for app in apps if app.size("kb") > 0.1])  # no symlinks like paint and wsl and bash
+    return apps
 
 
 def install_logic(py_file, version=None):
@@ -13,17 +21,15 @@ def install_logic(py_file, version=None):
         old_version = tb.Terminal().run(f"{py_file.stem} --version", shell="powershell").op.replace("\n", "")
         tb.Read.py(py_file)["main"](version=version)
         new_version = tb.Terminal().run(f"{py_file.stem} --version", shell="powershell").op.replace("\n", "")
-        if old_version == new_version:
-            return f"😑 {py_file.stem}, same version: {old_version}"
-        else:
-            return f"🤩 {py_file.stem} updated from {old_version} === to ===> {new_version}"
+        if old_version == new_version: return f"😑 {py_file.stem}, same version: {old_version}"
+        else: return f"🤩 {py_file.stem} updated from {old_version} === to ===> {new_version}"
     except Exception as ex:
         print(ex)
         return f"Failed at {py_file.stem} with {ex}"
 
 
 def main(installers=None):
-    installers = installers if installers is not None else tb.L(get_installers())
+    installers = installers if installers is not None else tb.L(get_cli_py_installers())
 
     install_logic(installers[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
 

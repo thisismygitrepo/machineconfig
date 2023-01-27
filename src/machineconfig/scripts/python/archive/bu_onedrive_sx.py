@@ -1,6 +1,5 @@
 
 from crocodile.environment import OneDriveExe, myhome
-from crocodile.comms.helper_funcs import process_sent_file
 from crocodile.file_management import P
 import argparse
 import os

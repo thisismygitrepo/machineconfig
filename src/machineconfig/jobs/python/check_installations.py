@@ -3,26 +3,15 @@ import vt
 import crocodile.toolbox as tb
 import time
 import pandas as pd
-import platform
+# import platform
 from rich.console import Console
-from rich.progress import track
-
+# from rich.progress import track
 from machineconfig.utils.utils import LIBRARY_ROOT
+from machineconfig.jobs.python.python_linux_installers_all import get_installed_cli_apps
 
 
 client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
 console = Console()
-
-
-def get_cli_apps():
-    if platform.system() == "Windows":
-        apps = tb.P.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad", "ZoomIt"])
-    elif platform.system() == "Linux":
-        apps = tb.P(r"/usr/local/bin").search("*")
-    else:
-        raise NotImplementedError("Not implemented for this OS")
-    apps = tb.L([app for app in apps if app.size("kb") > 0.1])  # no symlinks like paint and wsl and bash
-    return apps
 
 
 def scan(path):
@@ -54,13 +43,13 @@ def scan(path):
             tb.Struct(row.to_dict()).print(as_config=True, title=f"Found Category {row.category}")
             malicious.append(row)
 
-    positive_ratio = len(malicious) / len(df) * 100
-    print(f"positive_ratio = {positive_ratio:.1f} %")
-    return positive_ratio
+    positive_pct = len(malicious) / len(df) * 100
+    print(f"positive_ratio = {positive_pct:.1f} %")
+    return positive_pct
 
 
 def main():
-    apps_raw = get_cli_apps()
+    apps_raw = get_installed_cli_apps()
 
     versions = tb.P.home().joinpath(f"tmp_results/cli_tools_installers/versions").search()
     app_versions = tb.S()
@@ -82,26 +71,10 @@ def main():
             res = None
         flags.append(res)
 
-    res_df = pd.DataFrame({"app": apps_filtered.stem, "version": app_versions.values(), "positive_ratio": flags})
+    res_df = pd.DataFrame({"app": apps_filtered.stem, "version": app_versions.values(), "positive_pct": flags})
     res_df.to_csv(tb.P.home().joinpath(f"tmp_results/cli_tools_installers/safe_cli_apps.csv"))
-    res_df.to_csv(LIBRARY_ROOT.joinpath(f"jobs/python/archive/safe_cli_apps.csv"))
+    res_df.to_csv(LIBRARY_ROOT.joinpath(f"profile/records/safe_cli_apps.csv"))
     print(res_df)
-
-
-def get_version(app):
-    res = tb.Terminal().run(f"{app} --version", shell="powershell").op
-    if res == "":
-        return None
-    else:
-        return res.replace("\n", " ")
-
-
-def export_safe_versions():
-    apps = get_cli_apps()
-    versions = apps.apply(get_version, verbose=True).list
-    df = pd.DataFrame({"app": apps.stem, "version": versions})
-    # tb.P.home().joinpath("dotfiles/creds/tokens/safe_apps").write_text("\n".join(safe_apps))
-    return df
 
 
 if __name__ == '__main__':
