@@ -10,8 +10,8 @@ VSCode and Pycharm have their own extensions from marketplace, but for other edi
 repo_url = tb.P(r"https://github.com/rust-lang/rust-analyzer")
 
 
-def main():
-    url = get_latest_release(repo_url.as_url_str(), download_n_extract=False)
+def main(version=None):
+    url = get_latest_release(repo_url.as_url_str(), download_n_extract=False, version=version)
     if system() == "Windows":
         url.joinpath(f"rust-analyzer-x86_64-pc-windows-msvc.gz").download().ungz(inplace=True).with_name("rust-analyzer.exe", inplace=True).move(folder="~/.cargo/bin", overwrite=True)
     else:

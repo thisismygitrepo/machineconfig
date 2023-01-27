@@ -15,7 +15,7 @@ Otherwise, a flag must be raised to indicate the direction.""")
     # this is dangerous and no gaurantee on no corruption.
     parser.add_argument("--same_file_system", "-s", help="Move file.", action="store_true")  # default is False
     # optional argument
-    # parser.add_argument("--destination", "-d", help="New path.", default="")
+    parser.add_argument("--destination", "-d", help="New path.", default="")
     parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
     parser.add_argument("--sshkey", "-i", help="path to ssh private key", default=None)
     parser.add_argument("--port", "-p", help="port number", default=None)
@@ -32,7 +32,7 @@ Otherwise, a flag must be raised to indicate the direction.""")
     else:
         from crocodile.meta import SSH
         ssh = SSH(port=args.port or (2222 if system == "Windows" else 22), sshkey=args.sshkey)
-        ssh.copy_from_here(source=path, z=args.zip_first)
+        ssh.copy_from_here(source=path, target=args.destination, z=args.zip_first)
 
 
 if __name__ == '__main__':

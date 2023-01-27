@@ -7,11 +7,11 @@ import platform
 url = "https://github.com/dalance/procs/"
 
 
-def main():
+def main(version=None):
     if platform.system() == "Windows":
-        get_latest_release(url, suffix="x86_64-windows", download_n_extract=True)
+        get_latest_release(url, suffix="x86_64-windows", download_n_extract=True, version=version)
     elif platform.system() == "Linux":
-        get_latest_release(url, suffix="x86_64-linux", download_n_extract=True, linux=True, compression="zip")
+        get_latest_release(url, suffix="x86_64-linux", download_n_extract=True, linux=True, compression="zip", version=version)
     else:
         raise NotImplementedError(f"Platform {platform.system()} not supported.")
 

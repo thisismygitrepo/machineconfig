@@ -1,4 +1,10 @@
 
+
+"""
+Not used because it is not mature enough.
+--version doesn't work
+"""
+
 from machineconfig.utils.utils import get_latest_release, tb
 
 

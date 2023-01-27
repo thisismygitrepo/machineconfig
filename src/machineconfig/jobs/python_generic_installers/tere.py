@@ -7,14 +7,14 @@ import crocodile.toolbox as tb
 repo_url = tb.P(r"https://github.com/mgunyho/tere")
 
 
-def main():
+def main(version=None):
     if system() == 'Windows':
         from crocodile.environment import AppData
         target = AppData
         suffix = "x86_64-pc-windows-gnu"
-        exe = get_latest_release(repo_url.as_url_str(), suffix=suffix, download_n_extract=True, delete=False, strip_v=True)
+        exe = get_latest_release(repo_url.as_url_str(), suffix=suffix, download_n_extract=True, delete=False, strip_v=True, version=version)
     else:
-        release = get_latest_release(repo_url.as_url_str())
+        release = get_latest_release(repo_url.as_url_str(), version=version)
         path = release.joinpath(f"tere-{str(release[-1]).replace('v', '')}-x86_64-unknown-linux-gnu.zip").download()
         exe = path.unzip(inplace=True).joinpath("tere")
         exe.chmod(0o777)

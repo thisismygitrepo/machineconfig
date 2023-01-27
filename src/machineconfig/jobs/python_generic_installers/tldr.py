@@ -8,12 +8,12 @@ from platform import system
 url = r'https://github.com/dbrgn/tealdeer'
 
 
-def main():
+def main(version=None):
     if system() == 'Windows':
-        f = get_latest_release(url).joinpath('tealdeer-windows-x86_64-msvc.exe').download().rename('tldr.exe')
+        f = get_latest_release(url, version=version).joinpath('tealdeer-windows-x86_64-msvc.exe').download().rename('tldr.exe')
         f.move(folder=f.get_env().WindowsApps, overwrite=True)
     elif system() == 'Linux':
-        f = get_latest_release(url).joinpath('tealdeer-linux-x86_64-musl').download().rename('tldr')
+        f = get_latest_release(url, version=version).joinpath('tealdeer-linux-x86_64-musl').download().rename('tldr')
         find_move_delete_linux(f, 'tldr', delete=True)
         tb.Terminal().run("tldr --update")
     else:

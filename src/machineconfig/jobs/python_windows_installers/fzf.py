@@ -7,9 +7,9 @@ import crocodile.toolbox as tb
 
 url = 'https://github.com/junegunn/fzf'
 
-def main():
+def main(version=None):
     tb.Terminal().run("nu -c 'ps | where name == fzf.exe | each { |it| kill $it.pid --force}'", shell="pwsh").print()
-    get_latest_release(url, suffix='windows_amd64', download_n_extract=True)
+    get_latest_release(url, suffix='windows_amd64', download_n_extract=True, version=version)
 
 
 if __name__ == '__main__':

@@ -9,6 +9,8 @@
 import crocodile.toolbox as tb
 from rich.console import Console
 from platform import system
+from machineconfig.utils.utils import get_latest_release
+
 
 if system() == 'Linux':
     url = r'https://dystroy.org/broot/download/x86_64-linux/broot'
@@ -18,10 +20,11 @@ else:
     raise Exception(f"Unsupported OS: {system()}")
 
 
-def main():
+def main(version=None):
     print("\n\n\n")
     console = Console()
     console.rule("Installing Broot")
+    _ = get_latest_release("https://github.com/Canop/broot", version=version)
 
     if system() == "Windows":
         p = tb.P(url).download()

@@ -11,7 +11,7 @@ eval "$(zellij setup --generate-auto-start bash)"
 """
 
 def main():
-    # url = get_latest_release("https://github.com/zellij-org/zellij")
+    _ = get_latest_release("https://github.com/zellij-org/zellij", download_n_extract=False, linux=True)
     download = tb.P(f"https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz").download().ungz_untar(inplace=True)
     find_move_delete_linux(downloaded=download, tool_name="zellij")
 

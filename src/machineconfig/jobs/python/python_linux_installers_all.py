@@ -16,7 +16,7 @@ def install_logic(py_file):
         if old_version == new_version:
             return f"😑 {py_file.stem}, same version: {old_version}"
         else:
-            return f"🤩 {py_file.stem} updated from {old_version} ===to===> {new_version}"
+            return f"🤩 {py_file.stem} updated from {old_version} === to ===> {new_version}"
     except Exception as ex:
         print(ex)
         return f"Failed at {py_file.stem} with {ex}"
@@ -26,11 +26,11 @@ def main(installers=None):
     installers = installers if installers is not None else tb.L(get_installers())
 
     install_logic(installers[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
-    res = installers[1:].apply(install_logic, jobs=10)
 
+    # summarize results
+    res = installers[1:].apply(install_logic, jobs=10)
     from rich.console import Console
     console = Console()
-
     print("\n")
     console.rule("Same version apps")
     print(f"{res.filter(lambda x: 'same version' in x).print()}")

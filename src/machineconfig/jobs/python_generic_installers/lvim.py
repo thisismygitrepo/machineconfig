@@ -6,7 +6,7 @@ import machineconfig
 # https://github.com/LunarVim/LunarVim
 
 
-def main():
+def main(version=None):
     if system() == "Windows":
         tb.P(r"AppData/Local/lvim").delete(sure=True)
         install_script = "$LV_BRANCH='release-1.2/neovim-0.8'; Invoke-WebRequest https://raw.githubusercontent.com/LunarVim/LunarVim/master/utils/installer/install.ps1 -UseBasicParsing | Invoke-Expression"

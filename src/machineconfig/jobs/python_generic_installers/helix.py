@@ -6,18 +6,18 @@ import crocodile.toolbox as tb
 repo_url = tb.P(r"https://github.com/helix-editor/helix")
 
 
-def main():
+def main(version=None):
     if system() == 'Windows':
         from crocodile.environment import AppData
         target = AppData
         suffix = "x86_64-windows"
         compression = "zip"
-        exe = get_latest_release(repo_url.as_url_str(), download_n_extract=True, suffix=suffix, delete=False, exe_name="hx")
+        exe = get_latest_release(repo_url.as_url_str(), download_n_extract=True, suffix=suffix, delete=False, exe_name="hx", version=version)
     else:
         target = tb.P.home().joinpath(".config")
         suffix = "x86_64-linux"
         compression = 'tar.xz'
-        exe = get_latest_release(repo_url.as_url_str(), download_n_extract=False, suffix=suffix)
+        exe = get_latest_release(repo_url.as_url_str(), download_n_extract=False, suffix=suffix, version=version)
         name = f'{repo_url[-1]}-{exe[-1]}-{suffix}.tar.xz'
         exe = exe.joinpath(name).download().unxz_untar(inplace=True)
         exe = exe.search()[0].joinpath("hx")

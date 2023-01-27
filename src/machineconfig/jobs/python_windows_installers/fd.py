@@ -5,9 +5,9 @@
 
 url = 'https://github.com/sharkdp/fd'
 
-def main():
+def main(version=None):
     from machineconfig.utils.utils import get_latest_release
-    get_latest_release(url, download_n_extract=True)
+    get_latest_release(url, download_n_extract=True, version=version)
 
 
 if __name__ == '__main__':

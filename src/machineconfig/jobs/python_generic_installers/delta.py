@@ -29,14 +29,14 @@ config_patch = """
     hunk-header-style = file line-number syntax
 """
 
-def main():
+def main(version=None):
     if system() == 'Windows':
         # from crocodile.environment import AppData
         # target = AppData
         suffix = "x86_64-pc-windows-msvc"
-        _ = get_latest_release(repo_url.as_url_str(), suffix=suffix, download_n_extract=True, delete=True, strip_v=True)
+        _ = get_latest_release(repo_url.as_url_str(), suffix=suffix, download_n_extract=True, delete=True, strip_v=True, version=version)
     else:
-        release = get_latest_release(repo_url.as_url_str())
+        release = get_latest_release(repo_url.as_url_str(), version=version)
         path = release.joinpath(f"delta-{str(release[-1]).replace('v', '')}-x86_64-unknown-linux-gnu.tar.gz").download()
         downloaded = path.ungz_untar(inplace=True)
         _ = find_move_delete_linux(downloaded, "delta", delete=True)
