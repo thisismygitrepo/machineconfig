@@ -11,8 +11,8 @@ def args_parser():
     parser.add_argument("cloud", help="rclone cloud profile name.")
     parser.add_argument("file", help="file/folder path.")
     # FLAGS
-    parser.add_argument("--zip_first", "-z", help="Zip before sending.", action="store_true")  # default is False
-    parser.add_argument("--encrypt_first", "-e", help="Encrypt before sending.", action="store_true")  # default is False
+    parser.add_argument("--zip", "-z", help="Zip before sending.", action="store_true")  # default is False
+    parser.add_argument("--encrypt", "-e", help="Encrypt before sending.", action="store_true")  # default is False
     parser.add_argument("--relative_to_home", "-r", help="set remote path as home relative local path.", action="store_true")  # default is False
     parser.add_argument("--share", "-s", help="Share file.", action="store_true")
     # optional argument
@@ -21,8 +21,8 @@ def args_parser():
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
     args = parser.parse_args()
-    tb.P(args.file).to_cloud(cloud=args.cloud, z=args.zip_first, r2h=args.relative_to_home,
-                             share=args.share, key=args.key, pwd=args.pwd, e=args.encrypt_first)
+    tb.P(args.file).to_cloud(cloud=args.cloud, zip=args.zip_first, r2h=args.relative_to_home,
+                             share=args.share, key=args.key, pwd=args.pwd, encrypt=args.encrypt_first)
 
 
 if __name__ == "__main__":
