@@ -4,6 +4,7 @@ import machineconfig.jobs.python_linux_installers as inst
 import machineconfig.jobs.python_generic_installers as gens
 import platform
 
+
 def get_cli_py_installers():
     return tb.P(inst.__file__).parent.search("*.py", filters=[lambda x: "__init__" not in str(x)]) + tb.P(gens.__file__).parent.search("*.py", filters=[lambda x: "__init__" not in str(x)])
 
@@ -28,7 +29,18 @@ def install_logic(py_file, version=None):
         return f"Failed at {py_file.stem} with {ex}"
 
 
-def main(installers=None):
+def main(installers=None, safe=False):
+    if safe:
+        from machineconfig.jobs.python.check_installations import remote_safe_apps
+        apps_dir = remote_safe_apps.download(name="safe_cli_apps.zip").unzip(inplace=True)
+        if platform.system().lower() == "windows":
+             apps_dir.search("*").apply(lambda app: app.move(folder=tb.P.get_env().WindowsApps))
+        elif platform.system().lower() == "linux":
+            tb.Terminal().run(f"sudo mv {apps_dir.as_posix()}/* /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
+        else: raise NotImplementedError(f"I don't know this system {platform.system()}")
+        apps_dir.delete(sure=True)
+        return None
+
     installers = installers if installers is not None else tb.L(get_cli_py_installers())
 
     install_logic(installers[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
