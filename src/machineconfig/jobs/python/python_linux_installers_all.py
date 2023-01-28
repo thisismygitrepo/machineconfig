@@ -31,8 +31,8 @@ def install_logic(py_file, version=None):
 
 def main(installers=None, safe=False):
     if safe:
-        from machineconfig.jobs.python.check_installations import remote_safe_apps
-        apps_dir = remote_safe_apps.download(name="safe_cli_apps.zip").unzip(inplace=True)
+        from machineconfig.jobs.python.check_installations import safe_apps_remote
+        apps_dir = safe_apps_remote.download(name="safe_cli_apps.zip").unzip(inplace=True)
         if platform.system().lower() == "windows":
              apps_dir.search("*").apply(lambda app: app.move(folder=tb.P.get_env().WindowsApps))
         elif platform.system().lower() == "linux":

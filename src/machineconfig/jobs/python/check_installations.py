@@ -12,9 +12,9 @@ from machineconfig.jobs.python.python_linux_installers_all import get_installed_
 
 client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
 console = Console()
-res_path = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps.csv")
-remote_safe_apps = tb.P(f"myshare/{platform.system().lower()}/cli_apps.zip")
-
+safe_apps_records = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps.csv")
+safe_apps_url = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps_url.txt")
+safe_apps_remote = tb.P(f"myshare/{platform.system().lower()}/safe_cli_apps.zip")
 
 def scan(path, pct=0.0):
     console.rule(f"Scanning {path}. {pct:.2f}% done")
@@ -81,10 +81,11 @@ def main():
     # res_df["url"] = apps_safe_url.apply(lambda x: x.as_posix() if type(x) == tb.P else None)
     tmp = tb.P.tmpdir()
     apps_safe.apply(lambda x: x.copy(folder=tmp))
-    tmp = tmp.zip()
-    tmp.to_cloud("gdpo", remotepath=remote_safe_apps, share=True)
-
-    res_df.to_csv(res_path.create(parents_only=True), index=False)
+    zipped = tmp.zip(content=True, name=safe_apps_remote.name)
+    share_path = zipped.to_cloud("odg1", remotepath=safe_apps_remote, share=True)  # gdrive is suspicious of exe files.
+    safe_apps_url.write_text(share_path.as_url_str())
+    tmp.delete(sure=True)
+    res_df.to_csv(safe_apps_records.create(parents_only=True), index=False)
     print(res_df)
 
 

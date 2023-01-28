@@ -17,12 +17,13 @@ def main():
     if choice_key == "all": items = list(bu_file.values())
     else: items = [bu_file[choice_key]]
 
-    if direction == "BACKUP":
-        for item in items: tb.P(item['path']).to_cloud(cloud=cloud, zip=item['zip'], encrypt=item['encrypt'], key=None, pwd=None)
-    elif direction == "RETRIEVE":
-        for item in items: tb.P(item['path']).from_cloud(cloud=cloud, unzip=item['zip'], decrypt=item['encrypt'], r2h=True, localpath=None, key=None, pwd=None)
-    else: raise ValueError
-    program = f"echo 'Finished backing up {items}.'"
+    for item in items:
+        tb.S(item).print(as_config=True, title=direction)
+        if direction == "BACKUP": tb.P(item['path']).to_cloud(cloud=cloud, zip=item['zip'], r2h=True, encrypt=item['encrypt'], key=None, pwd=None)
+        elif direction == "RETRIEVE": tb.P(item['path']).from_cloud(cloud=cloud, unzip=item['zip'], r2h=True, decrypt=item['encrypt'], localpath=None, key=None, pwd=None)
+        else: raise ValueError
+
+    program = f"echo 'Finished backup.'"
 
     return program
 
