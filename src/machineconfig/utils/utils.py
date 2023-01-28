@@ -92,7 +92,7 @@ def find_move_delete_linux(downloaded, tool_name, delete=True):
     else:
         res = downloaded.search(f"*{tool_name}*", folders=False, r=True)
         if len(res) == 1: exe = res[0]
-        else: exe = downloaded.joinpath(tool_name)
+        else: exe = downloaded.search(tool_name, folders=False, r=True)[0]
     print(f"MOVING file `{repr(exe)}` to '/usr/local/bin'")
     exe.chmod(0o777)
     # exe.move(folder=r"/usr/local/bin", overwrite=False)
