@@ -72,14 +72,16 @@ def main():
             res = None
         flags.append(res)
 
-    res_df = pd.DataFrame({"app": apps_filtered.stem, "version": app_versions.values(), "positive_pct": flags})
+    res_df = pd.DataFrame({"app": apps_filtered.stem.list, "version": app_versions.values().list, "positive_pct": flags})
 
     apps_safe_df = res_df.query("positive_pct < 5")
     apps_safe = apps_raw.filter(lambda x: x.stem in list(apps_safe_df.app))
-    apps_safe_url = apps_safe.apply(lambda a_safe_app: a_safe_app.to_cloud("gdpo", remotepath=f"myshare/{platform.system().lower()}" / tb.P(a_safe_app.rel2home()), share=True), verbose=True, jobs=10)
-    res_df["url"] = apps_safe_url.apply(lambda x: x.as_posix() if type(x) == tb.P else None)
-
-    res_df.to_csv(res_path)
+    # apps_safe_url = apps_safe.apply(lambda a_safe_app: a_safe_app.to_cloud("gdpo", remotepath=f"myshare/{platform.system().lower()}" / tb.P(a_safe_app.rel2home()), share=True), verbose=True, jobs=10)
+    # res_df["url"] = apps_safe_url.apply(lambda x: x.as_posix() if type(x) == tb.P else None)
+    tmp = tb.P.tmpdir()
+    apps_safe.apply(lambda x: x.copy(folder=tmp))
+    tmp
+    res_df.to_csv(res_path.create(parents_only=True), index=False)
     print(res_df)
 
 
