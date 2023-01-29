@@ -5,10 +5,10 @@
 path = '~/AppData/Roaming/Thunderbird/Profiles'
 encrypt = 'True'
 zip = 'True'
-r2h = 'True'
+rel2home = 'True'
 
 [dotfiles]
 path = '~/dotfiles'
 encrypt = 'True'
 zip = 'True'
-r2h = 'True'
+rel2home = 'True'
