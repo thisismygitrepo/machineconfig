@@ -11,12 +11,13 @@ from machineconfig.jobs.python.python_linux_installers_all import get_installed_
 
 
 client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
-console = Console()
 safe_apps_records = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps.csv")
 safe_apps_url = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps_url.txt")
 safe_apps_remote = tb.P(f"myshare/{platform.system().lower()}/safe_cli_apps.zip")
 
+
 def scan(path, pct=0.0):
+    console = Console()
     console.rule(f"Scanning {path}. {pct:.2f}% done")
     with open(str(path), "rb") as f:
         analysis = client.scan_file(f)

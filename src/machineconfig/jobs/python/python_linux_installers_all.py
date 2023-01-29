@@ -31,10 +31,10 @@ def install_logic(py_file, version=None):
 
 def main(installers=None, safe=False):
     if safe:
-        from machineconfig.jobs.python.check_installations import safe_apps_remote
-        apps_dir = safe_apps_remote.download(name="safe_cli_apps.zip").unzip(inplace=True)
+        from machineconfig.jobs.python.check_installations import safe_apps_url
+        apps_dir = tb.P(safe_apps_url.read_text()).download().unzip(inplace=True)
         if platform.system().lower() == "windows":
-             apps_dir.search("*").apply(lambda app: app.move(folder=tb.P.get_env().WindowsApps))
+            apps_dir.search("*").apply(lambda app: app.move(folder=tb.P.get_env().WindowsApps))
         elif platform.system().lower() == "linux":
             tb.Terminal().run(f"sudo mv {apps_dir.as_posix()}/* /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
         else: raise NotImplementedError(f"I don't know this system {platform.system()}")

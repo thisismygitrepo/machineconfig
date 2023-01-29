@@ -61,7 +61,8 @@ winget install --name "Powershell" --Id "Microsoft.PowerShell" --source winget  
 winget install xming.xming  # X11 server. you need this while using wsl with gui, otherwise plt.show() returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running
 winget isntall WinFsp.WinFsp  # required by rclone
 winget install --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements  # ncessary for nvim plugins.
-npm i sharewifi -g
+npm install sharewifi -g
+npm install -g easy-sharing
 winget install Graphviz.Graphviz  # required by pygraphviz. Used in Base.viz_object_hirarchy and Model.plot_model()
 
 

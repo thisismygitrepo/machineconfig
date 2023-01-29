@@ -40,7 +40,10 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 #npm install -g npm || true
 
 yes '' | sed 3q; echo "----------------------------- installing sharewifi ----------------------------"; yes '' | sed 3q
-npm i sharewifi -g || true
+npm install sharewifi -g || true
+yes '' | sed 3q; echo "----------------------------- installing easy-sharing ----------------------------"; yes '' | sed 3q
+npm install -g easy-sharing
+
 yes '' | sed 3q; echo "----------------------------- installing graphviz ----------------------------"; yes '' | sed 3q
 sudo apt install graphviz -y || true
 yes '' | sed 3q; echo "----------------------------- installing tmux ----------------------------"; yes '' | sed 3q

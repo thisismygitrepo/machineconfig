@@ -15,14 +15,13 @@ https://github.com/Geektrovert/AwsTerm
 
 
 # Files
-* send and recieve over internet. https://github.com/timvisee/ffsend
+* send and recieve over internet by sending file to temproary hosting server. https://github.com/timvisee/ffsend  # better option is transfer_sh which requires zero installation.
 * send and recieve over local network https://github.com/SpatiumPortae/portal
 * torrent https://github.com/transmission/transmission/
 * https://github.com/magic-wormhole/magic-wormhole
 * https://github.com/gopasspw/gopass
 
-* https://github.com/simonhaenisch/md-to-pdf  -- use this instead
-* https://github.com/BlueHatbRit/mdpdf -- security volunarability.
+* https://github.com/BlueHatbRit/mdpdf -- security volunarability. https://github.com/simonhaenisch/md-to-pdf  -- use this instead
 
 # search
 * https://github.com/phiresky/ripgrep-all
