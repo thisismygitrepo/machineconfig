@@ -8,6 +8,7 @@ sudo apt upgrade -y || true
 # do-release-upgrade # /etc/update-manager/release-upgrades
 sudo apt install nala -y || true  # nala is a command line tool for managing your Linux system
 (sudo apt update && sudo apt upgrade -y) || true  # this is suprior to apt
+curl -L https://nixos.org/nix/install | sh
 
 # sudo apt remove mlocate && plocate # solves wsl2 slow Initializing plocate database; this may take some time..
 # ignoring indexing of windows files: https://askubuntu.com/questions/1251484/why-does-it-take-so-much-time-to-initialize-mlocate-database
@@ -24,7 +25,7 @@ sudo sed -i 's/PRUNEPATHS="/PRUNEPATHS="\/mnt /g' /etc/updatedb.conf || true
 # -------------------- Utilities --------------------
 
 yes '' | sed 3q; echo "------------------------------ installing wget --------------------------------"; yes '' | sed 3q
-yes '' | sed 3q; sudo apt install wget -y || true  # for downloading files
+sudo apt install wget -y || true  # for downloading files
 yes '' | sed 3q; echo "------------------------------- installing curl -------------------------------"; yes '' | sed 3q
 sudo apt install curl -y || true  # for handling http requests
 # consider asdf tool for managing versions of python, node, etc.
@@ -153,7 +154,12 @@ yes '' | sed 3q; echo "----------------------------- installing rust -----------
 # ---------------------------- Fun ------------------------------------
 yes '' | sed 3q; echo "----------------------------- installing sl ----------------------------"; yes '' | sed 3q
 sudo apt install sl -y || true  # for fun
+# nix-shell -p sl
 yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
 sudo apt install hollywood -y || true  # for fun
+# nix-shell -p hollywood
 yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
 sudo apt install cmatrix -y || true  # for fun
+# nix-env -iA nixpkgs.cmatrix
+
+

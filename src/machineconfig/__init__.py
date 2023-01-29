@@ -1,6 +1,6 @@
 
 
-__version__ = "0.9"
+__version__ = "1.0"
 release_notes = """
-relocated settings to be within the library root as opposed to repo root.
+added test for cli apps and nix package manager.
 """
