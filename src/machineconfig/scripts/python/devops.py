@@ -45,9 +45,9 @@ def main():
         program = main()
 
     elif choice_key == "SYMLINKS creation":
-        program_windows = f"{LIBRARY_ROOT}/setup_windows/symlinks.ps1"
-        program_linux = f"source {LIBRARY_ROOT}/setup_linux/symlinks.sh"
-        program = program_linux if system() == "Linux" else program_windows
+        from machineconfig.profile.create import main
+        main()
+        program = "echo 'done with symlinks'"
 
     elif choice_key == "SSH add pub key to this machine":
         from machineconfig.scripts.python.devops_add_ssh_key import main

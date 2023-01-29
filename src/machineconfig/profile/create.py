@@ -9,6 +9,7 @@ from crocodile.environment import DotFiles, system, PathVar, UserName  # Program
 from machineconfig.utils.utils import symlink, LIBRARY_ROOT, REPO_ROOT, display_options
 # import os
 import subprocess
+from rich.console import Console
 
 
 ERROR_LIST = []  # append to this after every exception captured.
@@ -48,10 +49,12 @@ def main_symlinks(choice=None):
     overwrite = True
     exclude = ["autostart_windows"]  # "wsl_linux", "wsl_windows"
 
-    program_keys = list(symlink_mapper.keys()) + ["aws", "ssh"]
+    program_keys = list(symlink_mapper.keys()) + ["aws", "ssh", "all"]
+    program_keys.sort()
 
     if choice is None:
-        choice = display_options(msg="Which symlink to create?", options=program_keys + ["all"], default="all")
+        choice = display_options(msg="Which symlink to create?", options=program_keys, default="all")
+        overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
 
     if str(choice) == "all":
         if system == "Windows" and not tb.Terminal.is_user_admin():
@@ -141,17 +144,18 @@ def main_add_patches_to_shell_profile(profile_path=None, choice=None):
 
 
 def main(choice=None):
+    console = Console()
     print("\n")
-    print(f"CREATING SYMLINKS".center(80, "-"))
+    console.rule(f"CREATING SYMLINKS")
     main_symlinks(choice=choice)
     print("\n")
-    print(f"ADDING ENV PATH".center(80, "-"))
+    console.rule(f"ADDING ENV PATH")
     main_env_path()
     print("\n")
-    print(f"ADDING SOURCES TO SHELL PROFILE".center(80, "-"))
+    console.rule(f"ADDING SOURCES TO SHELL PROFILE")
     main_add_sources_to_shell_profile()
     print("\n")
-    print(f"ADDING PATCHES TO SHELL PROFILE".center(80, "-"))
+    console.rule(f"ADDING PATCHES TO SHELL PROFILE")
     main_add_patches_to_shell_profile(choice=choice)
 
 
