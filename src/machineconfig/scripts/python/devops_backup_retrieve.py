@@ -19,8 +19,8 @@ def main():
 
     for item in items:
         tb.S(item).print(as_config=True, title=direction)
-        if direction == "BACKUP": tb.P(item['path']).to_cloud(cloud=cloud, zip=item['zip'], r2h=True, encrypt=item['encrypt'], key=None, pwd=None)
-        elif direction == "RETRIEVE": tb.P(item['path']).from_cloud(cloud=cloud, unzip=item['zip'], r2h=True, decrypt=item['encrypt'], localpath=None, key=None, pwd=None)
+        if direction == "BACKUP": tb.P(item['path']).to_cloud(cloud=cloud, zip=item['zip'], rel2home=True, encrypt=item['encrypt'], key=None, pwd=None)
+        elif direction == "RETRIEVE": tb.P(item['path']).from_cloud(cloud=cloud, unzip=item['zip'], rel2home=True, decrypt=item['encrypt'], localpath=None, key=None, pwd=None)
         else: raise ValueError
 
     program = f"echo 'Finished backup.'"
