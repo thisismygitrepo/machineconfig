@@ -11,8 +11,8 @@ PROGRAM_PATH = tb.P.tmp().joinpath("shells/python_return_command") + (".ps1" if 
 options = ['UPDATE essential repos',
            'DEVAPPS install',
            'VE install',
+           'SYMLINKS, PATH & SHELL PROFILE',
            'SYMLINKS new',
-           'SYMLINKS creation',
            'SSH add pub key to this machine',
            'SSH add identity (private key) to this machine',
            'SSH use key pair to connect two machines',
@@ -44,7 +44,7 @@ def main():
         from machineconfig.jobs.python.python_ve_symlink import main
         program = main()
 
-    elif choice_key == "SYMLINKS creation":
+    elif choice_key == "SYMLINKS, PATH & SHELL PROFILE":
         from machineconfig.profile.create import main
         main()
         program = "echo 'done with symlinks'"

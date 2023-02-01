@@ -6,6 +6,15 @@ mkdir ~/venvs -ErrorAction SilentlyContinue
 cd ~
 
 set mypy ($env:LOCALAPPDATA + "\Programs\Python\Python$py_version\python.exe")
+
+# TODO, dynamically install if not installed.
+#if (Test-Path $mypy) {
+#    Write-Host "$mypy exists."
+#} else {
+#    Write-Host "$mypy does not exis, trying to install it."
+#    winget install --id Python.Python.3.9 --source winget
+#}
+
 &$mypy  -m venv "./venvs/$ve_name"  # ve will have same python version as `python`, where it.
 
 # activate

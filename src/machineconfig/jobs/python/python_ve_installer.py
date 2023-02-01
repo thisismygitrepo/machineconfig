@@ -27,7 +27,7 @@ def main():
 
     dotted_py_version = input("Enter python version (3.11): ") or "3.11"
     env_name = input("Enter virtual environment name (latest): ") or "latest"
-    repos = input("Install essential repos? ([y]/n): ") or "y"
+    repos = input("Install essential repos? (y/[n]): ") or "n"
 
     env_path = tb.P.home().joinpath("venvs", env_name)
     if env_path.exists(): env_path.delete(sure=True)

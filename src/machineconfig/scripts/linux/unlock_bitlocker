@@ -9,6 +9,8 @@ lsblk
 read -p "Enter device name (default: sdb1): " device
 # if user input is empty, set device to sdb1
 device=${device:-sdb1}
+read -p "Enter mount name (default: mymnt): " mnt_name
+mnt_name=${mnt_name:-mymnt}
 
 # Make sure to create the mounting directory.  # Mkdir /media/mymnt
 sudo mkdir -p /media/bitlocker
@@ -24,5 +26,5 @@ sudo dislocker /dev/$device -u -- /media/bitlocker # Will be prompted for passwo
 # sudo mount -o loop /media/bitlocker/dislocker-file /media/bitlockermount
 # Modified from here to fix permissions: https://askubuntu.com/questions/1045057/i-cant-write-only-read-on-usb-device-encrypted-with-bitlocker
 # sudo mount --source /dev/sdb1 --target /media/bitlocker
-sudo mount -o loop,rw,uid=1000,gid=1000 /media/bitlocker/dislocker-file /media/mymnt
+sudo mount -o loop,rw,uid=1000,gid=1000 /media/bitlocker/dislocker-file /media/$mnt_name
 

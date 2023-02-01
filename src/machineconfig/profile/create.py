@@ -49,11 +49,19 @@ def main_symlinks(choice=None):
     overwrite = True
     exclude = ["autostart_windows"]  # "wsl_linux", "wsl_windows"
 
-    program_keys = list(symlink_mapper.keys()) + ["aws", "ssh", "all"]
+    program_keys_raw = list(symlink_mapper.keys()) + ["aws", "ssh", "all", "none"]
+    program_keys = []
+    for program_key in program_keys_raw:
+        if program_key in exclude or OTHER_SYSTEM in program_key:
+            # print(f"Skipping {program_key} for {system}")
+            continue
+        else: program_keys.append(program_key)
+
     program_keys.sort()
 
     if choice is None:
-        choice = display_options(msg="Which symlink to create?", options=program_keys, default="all")
+        choice = display_options(msg="Which symlink to create?", options=program_keys, default="none")
+        if str(choice) == "none": return
         overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
 
     if str(choice) == "all":
@@ -68,9 +76,6 @@ def main_symlinks(choice=None):
             continue
         elif program_key == "ssh":
             link_ssh(overwrite=overwrite)
-            continue
-        if program_key in exclude or OTHER_SYSTEM in program_key:
-            print(f"Skipping {program_key} for {system}")
             continue
         for file_key, file_map in symlink_mapper[program_key].items():
             try: symlink(this=file_map['this'], to_this=file_map['to_this'].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()), overwrite=overwrite)
@@ -93,22 +98,36 @@ def get_shell_profile_path():
     return profile_path
 
 
-def main_env_path(profile_path=None):
+def main_env_path(choice=None, profile_path=None):
     env_path = LIBRARY_ROOT.joinpath("profile/env_path.toml").readit()
     dirs = env_path[f'path_{system.lower()}']['extension']
+
+    print(f"Current PATH: ", "\n============")
+    tb.get_env().PATH.print()
+
+    if choice is None:
+        choice = display_options(msg="Which patch to add?", options=dirs + ["all", "none"], default="none")
+        if str(choice) != "all": dirs = [choice]
+    if choice == "none": return
+
     addition = PathVar.append_temporarily(dirs=dirs)
     profile_path = profile_path or get_shell_profile_path()
     profile_path.copy(name=profile_path.name + f".orig_" + tb.randstr())
     profile_path.modify_text(addition, addition, replace_line=False, notfound_append=True)
 
 
-def main_add_sources_to_shell_profile(profile_path=None):
-    sources = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()
+def main_add_sources_to_shell_profile(profile_path=None, choice=None):
+    sources = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()[system.lower()]['files']
+
+    if choice is None:
+        choice = display_options(msg="Which patch to add?", options=sources + ["all", "none"], default="none")
+        if str(choice) != "all": sources = [choice]
+    if choice == "none": return
 
     profile_path = profile_path or get_shell_profile_path()
     profile = profile_path.read_text()
 
-    for a_file in sources[system.lower()]['files']:
+    for a_file in sources:
         file = a_file.replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix())
         file = tb.P(file).collapseuser().as_posix()  # this makes the shell profile interuseable across machines.
         if file not in profile:
@@ -123,7 +142,8 @@ def main_add_patches_to_shell_profile(profile_path=None, choice=None):
     patches = LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search()
 
     if choice is None:
-        choice = display_options(msg="Which patch to add?", options=patches.list + ["all"], default="all")
+        choice = display_options(msg="Which patch to add?", options=patches.list + ["all", "none"], default="none")
+    if choice == "none": return
     if str(choice) == "all": patches = patches
     else: patches = [choice]
 
@@ -147,13 +167,15 @@ def main(choice=None):
     console = Console()
     print("\n")
     console.rule(f"CREATING SYMLINKS")
+
+    # the only common choice among all programs below is "all".
     main_symlinks(choice=choice)
     print("\n")
     console.rule(f"ADDING ENV PATH")
-    main_env_path()
+    main_env_path(choice=choice)
     print("\n")
     console.rule(f"ADDING SOURCES TO SHELL PROFILE")
-    main_add_sources_to_shell_profile()
+    main_add_sources_to_shell_profile(choice=choice)
     print("\n")
     console.rule(f"ADDING PATCHES TO SHELL PROFILE")
     main_add_patches_to_shell_profile(choice=choice)
