@@ -25,8 +25,8 @@ def main():
     ves = tb.P.home().joinpath("venvs").search("*", files=False).apply(lambda a_ve: (a_ve.name, a_ve.joinpath("pyvenv.cfg").read_text()))
     ves.apply(lambda a_ve: console.print(Panel(a_ve[1], title=a_ve[0], style="bold blue")))
 
-    dotted_py_version = input("Enter python version (3.11): ") or "3.11"
-    env_name = input("Enter virtual environment name (latest): ") or "latest"
+    dotted_py_version = input("Enter python version (3.11): ") or "3.9"
+    env_name = input("Enter virtual environment name (latest): ") or "tst"
     repos = input("Install essential repos? (y/[n]): ") or "n"
 
     env_path = tb.P.home().joinpath("venvs", env_name)
