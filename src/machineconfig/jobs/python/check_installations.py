@@ -35,7 +35,6 @@ def scan(path, pct=0.0):
                 if repeat_counter > 2:
                     raise ValueError(f"Error in scanning {path}")
                 print(f"Error in scanning, trying again.")
-
             time.sleep(30)
 
     df = pd.DataFrame(anal.results).T
@@ -67,8 +66,7 @@ def main():
     flags = []
     # for app in track(apps, description="App apps scanning..."):
     for idx, app in enumerate(apps_filtered):
-        try:
-            res = scan(app, idx/len(apps_filtered)*100)
+        try: res = scan(app, idx/len(apps_filtered)*100)
         except ValueError as ve:
             print(ve)
             res = None

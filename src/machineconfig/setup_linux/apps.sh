@@ -1,6 +1,5 @@
 #!/usr/bin/bash
 
-
 # ----------------- package manager -----------------
 yes '' | sed 3q; echo "----------------------------- upgrading and updating apt ----------------------------"; yes '' | sed 3q
 sudo apt update -y || true
@@ -43,7 +42,8 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 yes '' | sed 3q; echo "----------------------------- installing sharewifi ----------------------------"; yes '' | sed 3q
 npm install sharewifi -g || true
 yes '' | sed 3q; echo "----------------------------- installing easy-sharing ----------------------------"; yes '' | sed 3q
-npm install -g easy-sharing
+npm install -g easy-sharing  # https://github.com/parvardegr/sharing
+# https://github.com/mifi/ezshare
 
 yes '' | sed 3q; echo "----------------------------- installing graphviz ----------------------------"; yes '' | sed 3q
 sudo apt install graphviz -y || true

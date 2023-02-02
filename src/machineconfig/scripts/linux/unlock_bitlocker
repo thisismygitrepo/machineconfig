@@ -2,7 +2,6 @@
 
 # Mount on linux
 # Lsblk
-# sudo apt install dislocker
 
 lsblk
 # read device name from user input and choose default value of sdb1
@@ -11,20 +10,25 @@ read -p "Enter device name (default: sdb1): " device
 device=${device:-sdb1}
 read -p "Enter mount name (default: mymnt): " mnt_name
 mnt_name=${mnt_name:-mymnt}
+sudo mkdir -p /media/$mnt_name  # Make sure to create the mounting directory.
 
-# Make sure to create the mounting directory.  # Mkdir /media/mymnt
-sudo mkdir -p /media/bitlocker
-sudo mkdir -p /media/mymnt
+# check if drive is bitlocker encrypted then print encryption type else print not encrypted
+if ! command -v dislocker &> /dev/null
+then
+    echo "dislocker could not be found"
+    echo "Installing dislocker"
+    sudo apt install dislocker
+fi
 
-# check if drive is bitlocker
-#sudo dislocker -V /dev/$device
-
-# If drive is bitlocker , following: https://www.linuxuprising.com/2019/04/how-to-mount-bitlocker-encrypted.html
-sudo dislocker /dev/$device -u -- /media/bitlocker # Will be prompted for password (-u)
-
-
-# sudo mount -o loop /media/bitlocker/dislocker-file /media/bitlockermount
-# Modified from here to fix permissions: https://askubuntu.com/questions/1045057/i-cant-write-only-read-on-usb-device-encrypted-with-bitlocker
-# sudo mount --source /dev/sdb1 --target /media/bitlocker
-sudo mount -o loop,rw,uid=1000,gid=1000 /media/bitlocker/dislocker-file /media/$mnt_name
-
+if sudo dislocker -V /dev/$device; then
+    echo "Drive is bitlocker encrypted"
+    # If drive is bitlocker , following: https://www.linuxuprising.com/2019/04/how-to-mount-bitlocker-encrypted.html
+    sudo mkdir -p /media/$mnt_name"_bitlocker"
+    sudo dislocker /dev/$device -u -- /media/bitlocker # Will be prompted for password (-u)
+    # sudo mount -o loop /media/bitlocker/dislocker-file /media/bitlockermount
+    # Modified from here to fix permissions: https://askubuntu.com/questions/1045057/i-cant-write-only-read-on-usb-device-encrypted-with-bitlocker
+    sudo mount -o loop,rw,uid=1000,gid=1000 /media/bitlocker/dislocker-file /media/$mnt_name
+else
+    echo "Drive is not encrypted"
+    sudo mount --source /dev/$device --target /media/$mnt_name
+fi

@@ -1,8 +1,14 @@
 #!/usr/bin/bash
 
-ve_name='ve'
+# this script is for setting up a virtual environment for python3.9
+# the virtual environment is called 've' and is located in ~/venvs/
+
+if [ -z "$ve_name" ]; then  # check if variable ve_name is set, if not, set it to 've'
+  ve_name="ve"
+fi
 py_version=3.9
 mypy=python$py_version
+
 
 # check if python3.9 is installed
 if ! command -v $mypy &> /dev/null
