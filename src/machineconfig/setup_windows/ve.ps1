@@ -2,10 +2,9 @@
 # this script is for setting up a virtual environment for python3.9
 # the virtual environment is called 've' and is located in ~/venvs/
 
-# check if variable ve_name is defined in global scope, else set it to 've'
-if (-not (Test-Path variable:ve_name)) {
-    $ve_name='ve'
-}
+if (-not (Test-Path variable:ve_name)) {$ve_name = 've'}
+else { Write-Host "ve_name is already defined as $ve_name" }
+
 $py_version=39
 
 mkdir ~/venvs -ErrorAction SilentlyContinue
