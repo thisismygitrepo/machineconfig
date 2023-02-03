@@ -49,7 +49,7 @@ def main_symlinks(choice=None):
     overwrite = True
     exclude = ["autostart_windows"]  # "wsl_linux", "wsl_windows"
 
-    program_keys_raw = list(symlink_mapper.keys()) + ["aws", "ssh", "all", "none"]
+    program_keys_raw = list(symlink_mapper.keys()) + ["aws", "ssh"]
     program_keys = []
     for program_key in program_keys_raw:
         if program_key in exclude or OTHER_SYSTEM in program_key:
@@ -58,16 +58,16 @@ def main_symlinks(choice=None):
         else: program_keys.append(program_key)
 
     program_keys.sort()
-
     if choice is None:
-        choice = display_options(msg="Which symlink to create?", options=program_keys, default="none")
+        choice = display_options(msg="Which symlink to create?", options=program_keys + ["all", "none"], default="none")
         if str(choice) == "none": return
+
         overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
 
-    if str(choice) == "all":
-        if system == "Windows" and not tb.Terminal.is_user_admin():
-            print("*" * 200)
-            raise RuntimeError(f"Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
+    if str(choice) == "all" and system == "Windows" and not tb.Terminal.is_user_admin():
+        print("*" * 200)
+        raise RuntimeError(f"Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
+    elif choice == "all": program_keys = program_keys
     else: program_keys = [choice]
 
     for program_key in program_keys:
