@@ -65,7 +65,7 @@ npm install sharewifi -g
 npm install -g easy-sharing
 winget install --no-upgrade Graphviz.Graphviz  # required by pygraphviz. Used in Base.viz_object_hirarchy and Model.plot_model()
 winget install --no-upgrade WinFsp.WinFsp  # mount remote filesystems
-winget install --no-upgrade SSHFS-Win.SSHFS-Win  # mount remote filesystems
+winget install --no-upgrade SSHFS-Win.SSHFS-Win  # mount remote filesystems  # as per https://github.com/winfsp/sshfs-win   
 
 # https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
 # installing via winget as opposoed to the installer above, causes ignoring the requirements, and not adding ~/.carog/bin to PATH.

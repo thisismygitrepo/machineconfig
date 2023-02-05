@@ -46,6 +46,8 @@ npm install -g easy-sharing  # https://github.com/parvardegr/sharing
 # https://github.com/mifi/ezshare
 yes '' | sed 3q; echo "----------------------------- installing sshfs ----------------------------"; yes '' | sed 3q
 sudo apt install sshfs  # mount remote filesystems over ssh
+yes '' | sed 3q; echo "----------------------------- installing samba ----------------------------"; yes '' | sed 3q
+#sudo apt install samba  # LAN-based file sharing
 
 yes '' | sed 3q; echo "----------------------------- installing graphviz ----------------------------"; yes '' | sed 3q
 sudo apt install graphviz -y || true

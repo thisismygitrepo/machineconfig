@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+orig_path=$(cd -- "." && pwd)
+
+# updateBegins
+
+cd ~/code/crocodile
+git pull origin
+
+# updateEnds
+
+cd "$orig_path" || exit

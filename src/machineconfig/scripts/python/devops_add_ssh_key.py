@@ -33,7 +33,7 @@ def get_add_ssh_key_script(path_to_key):
 
 def main():
     pub_keys = tb.P.home().joinpath(".ssh").search("*.pub")
-    res = display_options("Which public key to add? ", options=pub_keys.list + ["all", "I have the path to the key file", "I want to paste the key itself"])
+    res = display_options("Which public key to add? ", options=pub_keys.list + [f"all pub keys available ({len(pub_keys)})", "I have the path to the key file", "I want to paste the key itself"])
     if res == "all": program = "\n\n\n".join(pub_keys.apply(get_add_ssh_key_script))
     elif res == "I have the path to the key file": program = get_add_ssh_key_script(tb.P(input("Path: ")).expanduser().absolute())
     elif res == "I want to paste the key itself": program = get_add_ssh_key_script(tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key.pub): ') or 'my_pasted_key.pub'}").write_text(input("Paste the pub key here: ")))

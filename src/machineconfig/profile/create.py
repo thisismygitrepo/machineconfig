@@ -28,6 +28,7 @@ def link_ssh(overwrite=True):
         symlink(path.joinpath(item.name), item, overwrite=overwrite)
     if system == "Linux":  # permissions of ~/dotfiles/.ssh should be adjusted
         try:
+            subprocess.run(f"chmod 700 ~/.ssh/")
             subprocess.run(f"chmod 700 {target.collapseuser().as_posix()}/")  # may require sudo
             subprocess.run(f"chmod 600 {target.collapseuser().as_posix()}/*")
         except Exception as e:
