@@ -124,7 +124,7 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
         if file_name is None:  # it is not constant, so we compile it from parts as follows:
             file_name = f'{tool_name}{sep}{version}{sep}{suffix}.{compression or "zip"}'
         print("Downloading", download_link.joinpath(file_name))
-        downloaded = download_link.joinpath(file_name).download().unzip(inplace=True, overwrite=True)
+        downloaded = download_link.joinpath(file_name).download(folder=tb.P.tmp(folder="tmp_installers")).unzip(inplace=True, overwrite=True)
         return find_move_delete_windows(downloaded, exe_name or tool_name, delete)
     elif download_n_extract and linux:
         if file_name is None:  # it is not constant, so we compile it from parts as follows:
