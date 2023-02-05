@@ -8,7 +8,7 @@ from machineconfig.utils.utils import LIBRARY_ROOT, display_options
 
 def main(program_name=None):
     if system() == "Windows":
-        from machineconfig.jobs.python.python_windows_installers_all import get_installers
+        from machineconfig.jobs.python.python_windows_installers_all import get_cli_py_installers
     else:
         from machineconfig.jobs.python.python_linux_installers_all import get_cli_py_installers
     installers = get_cli_py_installers()
