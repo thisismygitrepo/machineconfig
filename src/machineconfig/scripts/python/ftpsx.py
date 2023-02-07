@@ -26,7 +26,7 @@ def main():
         print(f"Caution: Ensure that username is passed appropriately as this exception only handles password.")
         import getpass
         pwd = getpass.getpass()
-        ssh = SSH(rf'{args.machine}', password=pwd)
+        ssh = SSH(rf'{args.machine}', pwd=pwd)
 
     ssh.copy_from_here(source=args.file, target=args.destination, z=args.zipFirst, r=args.recursive)
     # ssh.print_summary()
