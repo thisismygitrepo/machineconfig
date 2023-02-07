@@ -10,6 +10,7 @@ from rich.panel import Panel
 LIBRARY_ROOT = machineconfig.__file__.replace(tb.P.home().str.lower(), tb.P.home().str)
 LIBRARY_ROOT = tb.P(LIBRARY_ROOT).parent
 REPO_ROOT = LIBRARY_ROOT.parent.parent
+tmp_install_dir = tb.P.tmp(folder="tmp_installers")
 
 
 def display_options(msg, options: list, header="", tail="", prompt="", default=None):
@@ -124,14 +125,14 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
         if file_name is None:  # it is not constant, so we compile it from parts as follows:
             file_name = f'{tool_name}{sep}{version}{sep}{suffix}.{compression or "zip"}'
         print("Downloading", download_link.joinpath(file_name))
-        downloaded = download_link.joinpath(file_name).download(folder=tb.P.tmp(folder="tmp_installers")).unzip(inplace=True, overwrite=True)
+        downloaded = download_link.joinpath(file_name).download(folder=tmp_install_dir).unzip(inplace=True, overwrite=True)
         return find_move_delete_windows(downloaded, exe_name or tool_name, delete)
     elif download_n_extract and linux:
         if file_name is None:  # it is not constant, so we compile it from parts as follows:
             file_name = f'{tool_name}-{version}-{suffix}.{compression or "tar.gz"}'
         download_link = download_link.joinpath(file_name)
         print("Downloading", download_link)
-        downloaded = download_link.download()
+        downloaded = download_link.download(folder=tmp_install_dir)
         if "tar.gz" in download_link: downloaded = downloaded.ungz_untar(inplace=True)
         elif "zip" in download_link: downloaded = downloaded.unzip(inplace=True)
         elif "tar.xz" in download_link: downloaded = downloaded.unxz_untar(inplace=True)
