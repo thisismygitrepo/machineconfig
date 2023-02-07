@@ -44,7 +44,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 
 ###### Install Croshell Terminal Directly,
 ```powershell
-Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/croshell.ps1 | Invoke-Expression
+Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/web_shortcuts/croshell.ps1 | Invoke-Expression
 ```
 
 # Linux Setup
