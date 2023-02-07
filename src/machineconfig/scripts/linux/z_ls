@@ -3,17 +3,28 @@
 # adopted from https://zellij.dev/documentation/integration.html
 ZJ_SESSIONS=$(zellij list-sessions)
 NO_SESSIONS=$(echo "${ZJ_SESSIONS}" | wc -l)
+# if ZJ_SESSIONS is empty, then set NO_SESSIONS to 0
+if [ -z "${ZJ_SESSIONS}" ]; then
+    NO_SESSIONS=0
+fi
 
 # check whether the string "(current)" is in ZJ_SESSIONS
 if [[ "${ZJ_SESSIONS}" == *"(current)"* ]]; then
     # if so, then we are in a zellij session
     echo "already inside a session, existing."
-else
-    # if not, then we are not in a zellij session
-
+else # ==> we are not in a zellij session
   if [ "${NO_SESSIONS}" -ge 1 ]; then  # sessions do exist
-      zellij attach "$(echo "${ZJ_SESSIONS}" | fzf)"  options --mirror-session false
-  else  # no sessions, create one
+      ZJ_SESSIONS="$ZJ_SESSIONS\nnew_session"
+      res="$(echo -e "${ZJ_SESSIONS}" | fzf)"
+
+      # if res is "new_session", exit the program
+      if [ "${res}" = "new_session" ]; then
+        zellij
+      else
+        zellij attach $res options --mirror-session false
+      fi
+
+  else  # no sessions, create one called main
      zellij attach main -c options --mirror-session false
   fi
 

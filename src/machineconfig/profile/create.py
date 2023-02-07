@@ -107,7 +107,7 @@ def main_env_path(choice=None, profile_path=None):
     tb.get_env().PATH.print()
 
     if choice is None:
-        choice = display_options(msg="Which patch to add?", options=dirs + ["all", "none"], default="none")
+        choice = display_options(msg="Which directory to add?", options=dirs + ["all", "none"], default="none")
         if str(choice) != "all": dirs = [choice]
     if choice == "none": return
 

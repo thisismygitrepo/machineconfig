@@ -15,13 +15,17 @@ Additionally, files that contain data, sensitive information that should not be 
 Additionally, scripts to perform setup of new machines and perform mundane tasks are maintained here in `scripts`. The repo uses Python to perform the tasks.
 
 # Shortcuts
-* `bit.ly/configroot` is a shortcut to this repo.
-* Use `curl bit.ly/readconfig -L | bat -l md` to get the readme file.
+* `bit.ly/cfgroot` is a shortcut to this repo.
+* `curl bit.ly/cfgread -L | bat -l md` to get the readme file.
+* `curl bit.ly/cfgcroshelllinux -L | bash` to install croshell terminal directly on Linux.
+* `curl bit.ly/cfgcroshellwindows -L | iex` to install croshell terminal directly on windows.
+* `curl bit.ly/cfgallwindows -L | iex` to install all apps on windows.
+* `curl bit.ly/cfgalllinux -L | bash` to install all apps on Linux.
 
 
 ## Windows Setup
-With elevated `PowerShell`, run the following:
-```powershell
+With elevated `PowerShell`, run the following: (short ``)
+```shell
 # apps
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1 | Invoke-Expression
 # virtual enviornment
@@ -37,13 +41,13 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 ```
 
 ###### Setup SSH connection:
-```powershell
+```shell
 $pubkey_url='https://github.com/thisismygitrepo.keys'  # (CHANGE APPROPRIATELY)
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression
 ```
 
 ###### Install Croshell Terminal Directly,
-```powershell
+```shell
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/web_shortcuts/croshell.ps1 | Invoke-Expression
 ```
 
