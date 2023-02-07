@@ -16,16 +16,15 @@ def main():
     parser.add_argument("-d", "--destination", help=f"destination folder", default=None)
 
     args = parser.parse_args()
-
-    args = parser.parse_args()
     import paramiko
     try:
         ssh = SSH(rf'{args.machine}')
     except paramiko.ssh_exception.AuthenticationException:
         print("Authentication failed, trying manually:")
-        username = input("Username: ")
-        pwd = input("Password: ")
-        ssh = SSH(rf'{args.machine}', username=username, password=pwd)
+        print(f"Caution: Ensure that username is passed appropriately as this exception only handles password.")
+        import getpass
+        pwd = getpass.getpass()
+        ssh = SSH(rf'{args.machine}', password=pwd)
 
     received_file = ssh.copy_to_here(source=args.file, target=args.destination, z=args.zipFirst, r=args.recursive)
     # ssh.print_summary()
