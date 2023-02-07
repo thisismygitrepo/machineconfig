@@ -1,9 +1,0 @@
-
-// from https://zellij.dev/documentation/layouts.html
-layout {
-    pane
-    pane split_direction="vertical" {
-        pane
-        pane command="htop"
-    }
-}

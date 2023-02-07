@@ -1,6 +1,25 @@
 
 layout {
-    pane size=1 borderless=false {
-        plugin location="zellij:compact-bar"
+    default_tab_template {
+        // the default zellij tab-bar and status bar plugins
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        children
+        pane size=2 borderless=true {
+           plugin location="zellij:status-bar"
+        }
     }
+    tab name="main" // the default_tab_template
+    tab name="lf" {
+        pane name="fpane" {
+        command "lf"
+        }
+}
+    tab name="btm" split_direction="vertical" { // the default_tab_template with three vertical panes between the plugins
+        pane name="fpane" {
+        command "btm"
+}
+        }
+
 }

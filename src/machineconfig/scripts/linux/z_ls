@@ -17,13 +17,11 @@ else # ==> we are not in a zellij session
       ZJ_SESSIONS="$ZJ_SESSIONS\nnew_session"
       res="$(echo -e "${ZJ_SESSIONS}" | fzf)"
 
-      # if res is "new_session", exit the program
       if [ "${res}" = "new_session" ]; then
         zellij
       else
         zellij attach $res options --mirror-session false
       fi
-
   else  # no sessions, create one called main
      zellij attach main -c options --mirror-session false
   fi
