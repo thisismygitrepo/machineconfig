@@ -15,12 +15,19 @@ mypy=python$py_version
 # check if python3.9 is installed
 if ! command -v $mypy &> /dev/null
 then
+    echo "$mypy could not be found, installing ..."
     sudo add-apt-repository ppa:deadsnakes/ppa
     # you need to press enter at this point to continue. # without this repo, 3.9 is not available.
     sudo apt update
 
-    echo "$mypy could not be found"
     sudo apt install -y $mypy  # ignore system level one. launched with `python39`, as opposed to `python`
+fi
+
+
+# check if $mypy-venv is installed
+if ! command -v $mypy-venv &> /dev/null
+then
+    echo "$mypy-venv could not be found, installing ..."
     sudo apt install -y $mypy-venv
 fi
 
