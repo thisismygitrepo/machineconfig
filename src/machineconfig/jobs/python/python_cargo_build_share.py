@@ -19,11 +19,28 @@ cd {tool_name}
 cargo install --path .
 """
     print(f"Executing {script}")
-    tb.Terminal().run(script, shell="pwsh")
-    tb.P.home().joinpath(tool_name).delete(sure=True)
+    if platform.system() == "Windows":
+        tb.Terminal(stdout=None).run(f". {tb.P.tmpfile(suffix='.ps1').write_text(script)}", shell="pwsh").print()
+    else:
+        tb.Terminal(stdout=None).run(script, shell="pwsh")
 
     exe = tb.P.home().joinpath(f".cargo/bin/{tool_name}" + (".exe" if platform.system() == "Windows" else ""))
-    # exe.to_cloud()
+
+    try:
+        tb.P.home().joinpath(tool_name).delete(sure=True)
+    except PermissionError:
+        print(f"PermissionError, couldn't delete: {tb.P.home().joinpath(tool_name)}")
+
+    if platform.system() == "Windows":
+        exe = exe.move(folder=tb.get_env().WindowsApps)
+        share_link = exe.to_cloud("odg1", share=True)
+        return share_link
+    elif platform.system() == "Linux":
+        tb.Terminal().run(f"sudo mv {exe} /usr/local/bin")
+        exe = tb.P(r"/usr/local/bin").joinpath(exe.name)
+        exe.to_cloud("odg1", share=True)
+    else:
+        raise NotImplementedError(f"Platform {platform.system()} not supported.")
 
 
 # after cargo install diskonaut

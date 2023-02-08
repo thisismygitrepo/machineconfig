@@ -14,11 +14,15 @@ if [[ "${ZJ_SESSIONS}" == *"(current)"* ]]; then
     echo "already inside a session, existing."
 else # ==> we are not in a zellij session
   if [ "${NO_SESSIONS}" -ge 1 ]; then  # sessions do exist
-      ZJ_SESSIONS="$ZJ_SESSIONS\nnew_session"
+      ZJ_SESSIONS="$ZJ_SESSIONS\nnew_session\nkill_all_and_create_fresh_one"
+
       res="$(echo -e "${ZJ_SESSIONS}" | fzf)"
 
       if [ "${res}" = "new_session" ]; then
         zellij
+      elif [ "${res}" = "kill_all_and_create_fresh_one" ]; then
+        zellij ka -y
+        zellij attach main -c options --mirror-session false
       else
         zellij attach $res options --mirror-session false
       fi
