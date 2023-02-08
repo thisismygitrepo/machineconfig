@@ -7,13 +7,25 @@ from rich.console import Console
 # from rich.progress import track
 from machineconfig.utils.utils import LIBRARY_ROOT
 from machineconfig.jobs.python.python_linux_installers_all import get_installed_cli_apps
+from tqdm import tqdm
 
 
 vt = tb.install_n_import(package="vt", name="vt-py")
 client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
 safe_apps_records = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps.json")
 safe_apps_url = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps_url.txt")
-safe_apps_remote = tb.P(f"myshare/{platform.system().lower()}/safe_cli_apps.zip")
+# safe_apps_remote = tb.P(f"myshare/{platform.system().lower()}/safe_cli_apps.zip")
+cloud = "gdpo"
+
+
+def read_safe_apps_records(from_cloud=True):
+    if from_cloud:
+        file = tb.P(safe_apps_url.read_text()).download(name="safe_cli_apps.json")
+    else:
+        file = safe_apps_records
+    tmp = file.readit()
+    df = pd.DataFrame(tmp['data'], columns=tmp['columns'])
+    return df
 
 
 def scan(path, pct=0.0):
@@ -71,16 +83,28 @@ def main():
                            "app_path": apps_paths_raw.apply(lambda x: x.collapseuser().as_posix()).list})
 
     apps_safe_df = res_df.query("positive_pct < 5")
+
     app_url = []
-    for idx, row in apps_safe_df.iterrows():
-        apps_safe_url = tb.P(row["app_path"]).expanduser().to_cloud("odg1", rel2home=True, share=True)
+    for idx, row in tqdm(apps_safe_df.iterrows(), total=apps_safe_df.shape[0]):
+        apps_safe_url = upload(tb.P(row["app_path"]).expanduser())
         app_url.append(apps_safe_url.as_posix() if type(apps_safe_url) == tb.P else apps_safe_url)
     res_df["safe_app_url"] = app_url
 
-    res_df.to_json(safe_apps_records.create(parents_only=True), index=False)
-    share_url = safe_apps_records.to_cloud("odg1", rel2home=True, share=True)
+    res_df.to_json(safe_apps_records.create(parents_only=True), index=False, orient='split')
+    share_url = safe_apps_records.to_cloud(cloud, rel2home=True, share=True)
     safe_apps_url.write_text(share_url.as_posix())
     print(res_df)
+
+
+def upload(path):
+    tb.install_n_import("call_function_with_timeout")
+    from call_function_with_timeout import SetTimeout
+    def func():
+        return path.to_cloud(cloud, rel2home=True, share=True)
+    func_with_timeout = SetTimeout(func, timeout=120)
+    is_done, is_timeout, erro_message, results = func_with_timeout()
+    if is_done: return results
+    else: return None
 
 
 if __name__ == '__main__':

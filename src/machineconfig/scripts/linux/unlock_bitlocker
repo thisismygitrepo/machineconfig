@@ -20,8 +20,12 @@ then
     sudo apt install dislocker
 fi
 
-if sudo dislocker -V /dev/$device; then
-    echo "Drive is bitlocker encrypted"
+
+bitlocker_status=$(sudo bash -c "ls /sys/class/block/$(basename $device)/holders/ | grep -o bitlocker")
+# or: bitlocker_status=$(lsblk -o FSTYPE "$device" | grep -o bitlocker)
+
+if [ "$bitlocker_status" = "bitlocker" ];  then
+    echo ">>>>>> Drive is bitlocker encrypted, therefore, bitlocker is needded"
     # If drive is bitlocker , following: https://www.linuxuprising.com/2019/04/how-to-mount-bitlocker-encrypted.html
     sudo mkdir -p /media/$mnt_name"_bitlocker"
     sudo dislocker /dev/$device -u -- /media/bitlocker # Will be prompted for password (-u)
@@ -32,3 +36,4 @@ else
     echo "Drive is not encrypted"
     sudo mount --source /dev/$device --target /media/$mnt_name
 fi
+://askubuntu.com/questions/1059228/how-to-mount-a-usb-drive-in-ubuntu-18-04
