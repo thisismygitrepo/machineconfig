@@ -5,7 +5,8 @@
 if (-not (Test-Path variable:ve_name)) {$ve_name = 've'}
 else { Write-Host "ve_name is already defined as $ve_name" }
 
-$py_version=39
+if (-not (Test-Path variable:py_vesrion)) {$py_version = 39}
+else { Write-Host "py_version is already defined as $py_version" }
 
 mkdir ~/venvs -ErrorAction SilentlyContinue
 cd ~

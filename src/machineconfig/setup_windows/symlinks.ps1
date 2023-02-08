@@ -1,6 +1,4 @@
 
-#$ve_name='ve'
-#& ~/venvs/$ve_name/Scripts/Activate.ps1
-. ~/code/machineconfig/src/machineconfig/scripts/windows/activate_ve.ps1
+~/scripts/activate_ve
 python -m fire machineconfig.profile.create main --choice=all
 deactivate

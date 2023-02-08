@@ -146,11 +146,11 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
 def get_shell_script_executing_pyscript(python_file, func=None, system=None, ve_name="ve"):
     if system == "Windows":
         return f"""
-~/venvs/{ve_name}/Scripts/activate.ps1
+~/scripts/activate_ve
 python {python_file} {func if func is not None else ""}
 """
     else: return f"""
-. ~/venvs/{ve_name}/bin/activate
+source ~/scripts/activate_ve
 python {python_file} {func if func is not None else ""}
 deactivate
 """
