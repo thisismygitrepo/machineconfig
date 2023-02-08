@@ -11,12 +11,12 @@ layout {
         }
     }
     tab name="term" focus=true // the default_tab_template
-    tab name="lf" {
+    tab name="lf" focus=false {
         pane name="fpane" {
         command "lf"
         }
 }
-    tab name="btm" split_direction="vertical" { // the default_tab_template with three vertical panes between the plugins
+    tab name="btm" focus=false { // the default_tab_template with three vertical panes between the plugins
         pane name="fpane" {
         command "btm"
 }
