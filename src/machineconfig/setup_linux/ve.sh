@@ -15,7 +15,11 @@ mypy=python$py_version
 # check if python3.9 is installed
 if ! command -v $mypy &> /dev/null
 then
+    echo ''
+    echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo "$mypy could not be found, installing ..."
+    echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    echo ''
     sudo add-apt-repository ppa:deadsnakes/ppa
     # you need to press enter at this point to continue. # without this repo, 3.9 is not available.
     sudo apt update
@@ -27,20 +31,34 @@ fi
 # check if $mypy-venv is installed
 if ! command -v $mypy-venv &> /dev/null
 then
+    echo ''
+    echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo "$mypy-venv could not be found, installing ..."
+    echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    echo ''
+
     sudo apt install -y $mypy-venv
 fi
 
 # check if python3-pip is installed
 if ! command -v pip &> /dev/null
 then
+    echo ''
+    echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo "pip could not be found"
     sudo apt install -y python3-pip
 fi
+
+
 # check if python3-tk is installed
 if ! command -v python3-tk &> /dev/null
 then
+    echo ''
+    echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo "python3-tk could not be found"
+    echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    echo ''
+
     sudo apt install -y python$py_version-tk  # without this, plt.show() will return UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
 fi
 
