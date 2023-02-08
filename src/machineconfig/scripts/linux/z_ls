@@ -22,12 +22,12 @@ else # ==> we are not in a zellij session
         zellij
       elif [ "${res}" = "kill_all_and_create_fresh_one" ]; then
         zellij ka -y
-        zellij attach main -c options --mirror-session false
+        zellij attach main -c options --mirror-session false --layout st
       else
         zellij attach $res options --mirror-session false
       fi
   else  # no sessions, create one called main
-     zellij attach main -c options --mirror-session false
+     zellij attach main -c options --mirror-session false --layout st
   fi
 
 fi
