@@ -31,6 +31,9 @@ def read_safe_apps_records(from_cloud=True):
 def scan(path, pct=0.0):
     console = Console()
     console.rule(f"Scanning {path}. {pct:.2f}% done")
+    if path.is_dir():
+        print(f"Skipping {path} as it is a directory.")
+        return None
     with open(str(path), "rb") as f:
         analysis = client.scan_file(f)
 
@@ -88,7 +91,7 @@ def main():
     for idx, row in tqdm(apps_safe_df.iterrows(), total=apps_safe_df.shape[0]):
         apps_safe_url = upload(tb.P(row["app_path"]).expanduser())
         app_url.append(apps_safe_url.as_posix() if type(apps_safe_url) == tb.P else apps_safe_url)
-    res_df["safe_app_url"] = app_url
+    res_df["app_url"] = app_url
 
     res_df.to_json(safe_apps_records.create(parents_only=True), index=False, orient='split')
     share_url = safe_apps_records.to_cloud(cloud, rel2home=True, share=True)

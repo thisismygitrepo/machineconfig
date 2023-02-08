@@ -10,7 +10,6 @@ layout {
            plugin location="zellij:status-bar"
         }
     }
-    tab name="term" focus=true // the default_tab_template
     tab name="lf" focus=false {
         pane name="fpane" {
         command "lf"
@@ -21,5 +20,7 @@ layout {
         command "btm"
 }
         }
+    tab name="term" focus=true // the default_tab_template
+
 
 }
