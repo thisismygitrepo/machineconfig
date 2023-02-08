@@ -19,7 +19,7 @@ else # ==> we are not in a zellij session
       res="$(echo -e "${ZJ_SESSIONS}" | fzf)"
 
       if [ "${res}" = "new_session" ]; then
-        zellij --session main --layout st
+        zellij --layout st  # can't specify name here. I can call it "main" only if it is the first, otherwise name conflict! also, can't use attach -c syntax because layout can't be specified.
       elif [ "${res}" = "kill_all_and_create_fresh_one" ]; then
         zellij ka -y
         zellij --session main --layout st
