@@ -127,15 +127,19 @@ def download_safe_apps():
         from machineconfig.jobs.python.python_linux_installers_all import get_cli_py_installers
         cli_installers = get_cli_py_installers()
     else: raise NotImplementedError(f"Platform {platform.system().lower()} is not supported yet.")
-    for idx, row in df.iterrows():
+
+    def install_cli_apps(row):
         if row["app_url"] is None:
             print(f"{row['app_name']} url is not available, trying to download from its sources:")
             version = row["version"]
             if version is None:
                 print(f"Version is not available, either, I can't trust the latest version. Skipping installation of this program.")
+                return False
             else:
                 tmp = cli_installers.filter(lambda x: x.stem == row["app_name"].replace(".exe", ""))
-                if len(tmp) == 0: print(f"Can't find the installer for {row['app_name']}, skipping installation of this program.")
+                if len(tmp) == 0:
+                    print(f"Can't find the installer for {row['app_name']}, skipping installation of this program.")
+                    return False
                 else: tb.Read.py(tmp[0])["main"](version=version)
         else:
             name = row["app_name"]
@@ -145,7 +149,15 @@ def download_safe_apps():
                 tb.Terminal().run(f"chmod +x {exe}")
                 tb.Terminal().run(f"mv {exe} /usr/local/bin/")
             elif platform.system().lower() == "windows":
-                exe.move(folder=tb.P.home().joinpath("AppData/Local/Microsoft/WindowsApps"))
+                exe.move(folder=tb.P.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
+        return True
+
+    res = tb.L(df.iterrows()).apply(lambda x: install_cli_apps(x[1]), jobs=10)
+
+    print("\n"*3)
+    for item_flag, item_name in zip(res, df["app_name"]):
+        if item_flag: pass  # print(f"{item_name} is installed.")
+        else: print(f"❌ {item_name} failed to install for reasons explained in the log above, try manually.")
 
 
 if __name__ == '__main__':
