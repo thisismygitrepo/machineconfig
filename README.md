@@ -11,8 +11,8 @@ Dotfiles include, but are not limited to:
 * `$profile` in Windows Powershell
 * etc
 
+
 Additionally, files that contain data, sensitive information that should not be pushed to a repository are contained in a directory `~/dotfiles`. The files therein are encrypted before backedup.
-Additionally, scripts to perform setup of new machines and perform mundane tasks are maintained here in `scripts`. The repo uses Python to perform the tasks.
 
 # Shortcuts
 * `bit.ly/cfgroot` is a shortcut to this repo.
@@ -21,6 +21,7 @@ Additionally, scripts to perform setup of new machines and perform mundane tasks
 * `curl bit.ly/cfgcroshellwindows -L | iex` to install croshell terminal directly on windows.
 * `curl bit.ly/cfgallwindows -L | iex` to install all apps on windows.
 * `curl bit.ly/cfgalllinux -L | bash` to install all apps on Linux.
+* `curl bit.ly/cfgsshwindows -L | iex` to establish ssh connection on Windows.
 
 
 ## Windows Setup
@@ -43,6 +44,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 ###### Setup SSH connection:
 ```shell
 $pubkey_url='https://github.com/thisismygitrepo.keys'  # (CHANGE APPROPRIATELY)
+$pubkey_string=(Invoke-WebRequest $pubkey_url).Content
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression
 ```
 
@@ -72,6 +74,7 @@ source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
 ###### Setup SSH connection:
 ```bash
 export $pubkey_url='https://github.com/thisismygitrepo.keys'  # (CHANGE APPROPRIATELY)
+pubkey_string=$(curl --silent $pubkey_url)
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash
 # For WSL only, also run the following:
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash  

@@ -10,8 +10,6 @@ from machineconfig.jobs.python.python_linux_installers_all import get_installed_
 from tqdm import tqdm
 
 
-vt = tb.install_n_import(package="vt", name="vt-py")
-client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
 safe_apps_records = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps.json")
 safe_apps_url = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps_url.txt")
 # safe_apps_remote = tb.P(f"myshare/{platform.system().lower()}/safe_cli_apps.zip")
@@ -19,6 +17,8 @@ cloud = "gdpo"
 
 
 def scan(path, pct=0.0):
+    vt = tb.install_n_import(package="vt", name="vt-py")
+    client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
     console = Console()
     console.rule(f"Scanning {path}. {pct:.2f}% done")
     if path.is_dir():
@@ -152,11 +152,11 @@ def download_safe_apps():
                 exe.move(folder=tb.P.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
         return True
 
-    res = tb.L(df.iterrows()).apply(lambda x: install_cli_apps(x[1]), jobs=10)
+    res = tb.L(df.iterrows()).apply(lambda x: install_cli_apps(x[1]), jobs=20)
 
     print("\n"*3)
     for item_flag, item_name in zip(res, df["app_name"]):
-        if item_flag: pass  # print(f"{item_name} is installed.")
+        if item_flag: print(f"✅ {item_name} is installed. 😁")
         else: print(f"❌ {item_name} failed to install for reasons explained in the log above, try manually.")
 
 
