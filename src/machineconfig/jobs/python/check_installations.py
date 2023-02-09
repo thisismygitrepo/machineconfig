@@ -12,7 +12,6 @@ from tqdm import tqdm
 
 safe_apps_records = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps.json")
 safe_apps_url = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps_url.txt")
-# safe_apps_remote = tb.P(f"myshare/{platform.system().lower()}/safe_cli_apps.zip")
 cloud = "gdpo"
 
 

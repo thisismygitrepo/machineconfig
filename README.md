@@ -1,5 +1,10 @@
 
 # Welcome to machineconfig
+
+# Shortcuts
+* `bit.ly/cfgroot` is a shortcut to this repo.
+* `curl bit.ly/cfgread -L | bat -l md --style="header"` to get the readme file.
+
 Machineconfig is a package for managing configuration files (aka dotfiles). The idea is to collect those critical, time-consuming-files-to-setup in one directory and reference them via symbolic links from their original locations. Thus, when a new machine is to be setup, all that is required is to clone the repo in that machine and create the symbolic links.
 Dotfiles include, but are not limited to:
 * `~/.gitconfig`
@@ -13,15 +18,6 @@ Dotfiles include, but are not limited to:
 
 
 Additionally, files that contain data, sensitive information that should not be pushed to a repository are contained in a directory `~/dotfiles`. The files therein are encrypted before backedup.
-
-# Shortcuts
-* `bit.ly/cfgroot` is a shortcut to this repo.
-* `curl bit.ly/cfgread -L | bat -l md` to get the readme file.
-* `curl bit.ly/cfgcroshelllinux -L | bash` to install croshell terminal directly on Linux.
-* `curl bit.ly/cfgcroshellwindows -L | iex` to install croshell terminal directly on windows.
-* `curl bit.ly/cfgallwindows -L | iex` to install all apps on windows.
-* `curl bit.ly/cfgalllinux -L | bash` to install all apps on Linux.
-* `curl bit.ly/cfgsshwindows -L | iex` to establish ssh connection on Windows.
 
 
 ## Windows Setup
@@ -40,6 +36,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 # devapps:
 ~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
 ```
+short `curl bit.ly/cfgallwindows -L | iex`
 
 ###### Setup SSH connection:
 ```shell
@@ -47,11 +44,13 @@ $pubkey_url='https://github.com/thisismygitrepo.keys'  # (CHANGE APPROPRIATELY)
 $pubkey_string=(Invoke-WebRequest $pubkey_url).Content
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression
 ```
+short `curl bit.ly/cfgsshwindows -L | iex`
 
 ###### Install Croshell Terminal Directly,
 ```shell
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/web_shortcuts/croshell.ps1 | Invoke-Expression
 ```
+short: `curl bit.ly/cfgcroshellwindows -L | iex`
 
 # Linux Setup
 With `sudo` access, run the following:
@@ -70,6 +69,7 @@ source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh  # require
 # devapps
 source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
 ```
+short `curl bit.ly/cfgalllinux -L | bash`
 
 ###### Setup SSH connection:
 ```bash
@@ -80,10 +80,12 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash  
 ```
 
-###### Install Croshell Terminal Directly,
+###### Install Croshell Terminal Directly
 ```bash
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/web_shortcuts/croshell.sh | sudo bash
 ```
+short `curl bit.ly/cfgcroshelllinux -L | bash`
+
 
 # Author
 Alex Al-Saffar. [email](mailto:programmer@usa.com)
