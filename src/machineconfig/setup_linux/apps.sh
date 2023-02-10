@@ -7,7 +7,7 @@ sudo apt upgrade -y || true
 # do-release-upgrade # /etc/update-manager/release-upgrades
 sudo apt install nala -y || true  # nala is a command line tool for managing your Linux system
 (sudo apt update && sudo apt upgrade -y) || true  # this is suprior to apt
-curl -L https://nixos.org/nix/install | sh
+curl -L https://nixos.org/nix/install | sh  # cross *nix platforms.
 
 # sudo apt remove mlocate && plocate # solves wsl2 slow Initializing plocate database; this may take some time..
 # ignoring indexing of windows files: https://askubuntu.com/questions/1251484/why-does-it-take-so-much-time-to-initialize-mlocate-database

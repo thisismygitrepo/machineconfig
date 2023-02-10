@@ -23,7 +23,7 @@ def main(version=None):
         exe = exe.search()[0].joinpath("hx")
         exe.chmod(0o777)
         # exe.move(folder=r"/usr/local/bin", overwrite=True)
-        tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print()
+        tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
 
     exe.parent.joinpath("runtime").move(folder=target.joinpath("helix"), overwrite=True)
     exe.parent.joinpath("contrib").move(folder=target.joinpath("helix"), overwrite=True)

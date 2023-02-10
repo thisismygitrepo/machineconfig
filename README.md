@@ -53,7 +53,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 short: `curl bit.ly/cfgcroshellwindows -L | iex`
 
 # Linux Setup
-With `sudo` access, run the following:
+With `sudo` access, run the following: (short `curl bit.ly/cfgalllinux -L | bash`)
 ```bash
 # apps  # short: `curl bit.ly/cfgappslinux -L | bash`
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/apps.sh | bash
@@ -68,7 +68,6 @@ source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh  # require
 # devapps
 source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
 ```
-short `curl bit.ly/cfgalllinux -L | bash`
 
 ###### Setup SSH connection:
 ```bash
