@@ -11,6 +11,7 @@ if [ -z "$py_version" ]; then  # check if variable py_version is set, if not, se
 py_version=3.9
 fi
 mypy=python$py_version
+py_version_no_dot=$(echo $py_version | tr -d '.')
 
 
 # check if python3.9 is installed
@@ -21,11 +22,11 @@ then
     echo "$mypy could not be found, installing ..."
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
-    sudo add-apt-repository ppa:deadsnakes/ppa
+#    sudo add-apt-repository ppa:deadsnakes/ppa
     # you need to press enter at this point to continue. # without this repo, 3.9 is not available.
-    sudo apt update
-
-    sudo apt install -y $mypy  # ignore system level one. launched with `python39`, as opposed to `python`
+#    sudo apt update
+#    sudo apt install -y $mypy  # ignore system level one. launched with `python39`, as opposed to `python`
+    nix-env -iA "nixpkgs.python$py_version_no_dot"
 fi
 
 

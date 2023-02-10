@@ -45,7 +45,7 @@ winget install --no-upgrade --name "Git" --Id "Git.Git" --source winget --accept
 # the two above require Restart-Computer -Force before they are available in PATH, OR:
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 winget install --no-upgrade gitui
-
+winget install sharkdp.hyperfine  # benchmarking tool
 
 # github.com/ajeetdsouza/zoxide#installation
 echo "Installing zoxide must be done with non-admin privliage"

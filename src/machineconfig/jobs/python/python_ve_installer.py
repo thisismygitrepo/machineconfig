@@ -23,6 +23,7 @@ def main():
     console.rule(f"Existing virtual environments")
     ves = tb.P.home().joinpath("venvs").search("*", files=False).apply(lambda a_ve: (a_ve.name, a_ve.joinpath("pyvenv.cfg").read_text()))
     ves.apply(lambda a_ve: console.print(Panel(a_ve[1], title=a_ve[0], style="bold blue")))
+    # ves.apply(lambda a_ve: tb.S(a_ve[1]).print(as_config=True, title=a_ve[0]))
 
     dotted_py_version = input("Enter python version (3.9): ") or "3.9"
     env_name = input("Enter virtual environment name (tst): ") or "tst"

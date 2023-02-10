@@ -23,7 +23,7 @@ Additionally, files that contain data, sensitive information that should not be 
 ## Windows Setup
 With elevated `PowerShell`, run the following: (short ``)
 ```shell
-# apps
+# apps  # short: `(iwr bit.ly/cfgappswindows).Content | iex`
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1 | Invoke-Expression
 # virtual enviornment  # short `curl bit.ly/cfgvewindows -L | iex`
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
@@ -55,8 +55,7 @@ short: `curl bit.ly/cfgcroshellwindows -L | iex`
 # Linux Setup
 With `sudo` access, run the following:
 ```bash
-# apps
-# sudo -s
+# apps  # short: `curl bit.ly/cfgappslinux -L | bash`
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/apps.sh | bash
 # virtual enviornment  # short `curl bit.ly/cfgvelinux -L | bash`
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
