@@ -32,7 +32,7 @@ def main(version=None):
     else:
         p = tb.P(url).download()
         p.chmod(0o777)  # p.move(folder=r'/usr/local/bin/', overwrite=True) Permission Error
-        tb.Terminal().run(f"sudo mv {p} /usr/local/bin/").print()
+        tb.Terminal().run(f"sudo mv {p} /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
 
     console.rule("Completed Installation")
 
