@@ -77,6 +77,8 @@ sudo apt install zoxide || true
 
 yes '' | sed 3q; echo "----------------------------- installing fzf ----------------------------"; yes '' | sed 3q
 sudo apt install fzf -y || true  # fuzzy finder: searches contents of all files, including .git
+yes '' | sed 3q; echo "----------------------------- installing skim ----------------------------"; yes '' | sed 3q
+nix-env -iA nixpkgs.skim  # https://search.nixos.org/packages?channel=22.11&show=skim&from=0&size=50&sort=relevance&type=packages&query=skim
 yes '' | sed 3q; echo "----------------------------- installing fd-find ----------------------------"; yes '' | sed 3q
 sudo apt install fd-find -y || true  # find alternative
 yes '' | sed 3q; echo "----------------------------- installing ripgrep ----------------------------"; yes '' | sed 3q

@@ -2,10 +2,14 @@
 # this script is for setting up a virtual environment for python3.9
 # the virtual environment is called 've' and is located in ~/venvs/
 
-if (-not (Test-Path variable:ve_name)) {$ve_name = 've'}
+if (-not (Test-Path variable:ve_name)) {
+$ve_name='ve'
+}
 else { Write-Host "ve_name is already defined as $ve_name" }
 
-if (-not (Test-Path variable:py_vesrion)) {$py_version = 39}
+if (-not (Test-Path variable:py_vesrion)) {
+$py_version=39
+}
 else { Write-Host "py_version is already defined as $py_version" }
 
 mkdir ~/venvs -ErrorAction SilentlyContinue

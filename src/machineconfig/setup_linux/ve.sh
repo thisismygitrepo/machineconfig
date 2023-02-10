@@ -4,10 +4,10 @@
 # the virtual environment is called 've' and is located in ~/venvs/
 
 if [ -z "$ve_name" ]; then  # check if variable ve_name is set, if not, set it to 've'
-  ve_name="ve"
+ve_name="ve"
 fi
 if [ -z "$py_version" ]; then  # check if variable py_version is set, if not, set it to '3.9'
-  py_version=3.9
+py_version=3.9
 fi
 mypy=python$py_version
 

@@ -33,8 +33,8 @@ def main():
 
     scripts = lib_root.joinpath(f"setup_{system.lower()}/ve.{'ps1' if system == 'Windows' else 'sh'}").read_text()
     variable_prefix = "$" if system == "Windows" else ""
-    scripts = tb.modify_text(txt_raw=scripts, txt_search="ve_name=", txt_alt=f"{variable_prefix}ve_name='{env_name}'", replace_line=True)
-    scripts = tb.modify_text(txt_raw=scripts, txt_search="py_version=", txt_alt=f"{variable_prefix}py_version='{dotted_py_version.replace('.', '') if system == 'Windows' else dotted_py_version}'", replace_line=True)
+    scripts = tb.modify_text(txt_raw=scripts, txt_search="ve_name=", txt_alt=f"{variable_prefix}ve_name='{env_name}'", replace_line=True, strict=True)
+    scripts = tb.modify_text(txt_raw=scripts, txt_search="py_version=", txt_alt=f"{variable_prefix}py_version='{dotted_py_version.replace('.', '') if system == 'Windows' else dotted_py_version}'", replace_line=True, strict=True)
 
     if repos == "y":
         text = lib_root.joinpath(f"setup_{system.lower()}/repos.{'ps1' if system == 'Windows' else 'sh'}").read_text()
