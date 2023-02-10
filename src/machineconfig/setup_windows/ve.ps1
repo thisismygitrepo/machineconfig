@@ -1,6 +1,7 @@
 
-# this script is for setting up a virtual environment for python3.9
-# the virtual environment is called 've' and is located in ~/venvs/
+# this script is for setting up a virtual environment for python (default 3.9)
+# default virual enviroment nanme is `ve` and is located in ~/venvs/
+# CAUTION: python ve installer does text manipulation on this file and make many hidden assumptions, exercie caution with development.
 
 if (-not (Test-Path variable:ve_name)) {
 $ve_name='ve'

@@ -25,7 +25,7 @@ With elevated `PowerShell`, run the following: (short ``)
 ```shell
 # apps
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1 | Invoke-Expression
-# virtual enviornment
+# virtual enviornment  # short `curl bit.ly/cfgvewindows -L | iex`
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
 # dev repos
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
@@ -58,7 +58,7 @@ With `sudo` access, run the following:
 # apps
 # sudo -s
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/apps.sh | bash
-# virtual enviornment
+# virtual enviornment  # short `curl bit.ly/cfgvelinux -L | bash`
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
 # repos
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
