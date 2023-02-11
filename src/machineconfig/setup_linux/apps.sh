@@ -26,10 +26,10 @@ curl -L https://nixos.org/nix/install | sh  # cross *nix platforms.
 
 yes '' | sed 3q; echo "------------------------------ installing wget --------------------------------"; yes '' | sed 3q
 #sudo apt install wget -y || true  # for downloading files
-nix-env -iA nixpkgs.wget
+nix-env -iA nixpkgs.wget || true
 yes '' | sed 3q; echo "------------------------------- installing curl -------------------------------"; yes '' | sed 3q
 sudo apt install curl -y || true  # for handling http requests
-nix-env -iA nixpkgs.curl
+nix-env -iA nixpkgs.curl || true
 # consider asdf tool for managing versions of python, node, etc.
 
 yes '' | sed 3q; echo "--------------------------- installing nvm of nodejs --------------------------"; yes '' | sed 3q
@@ -49,96 +49,107 @@ npm install -g easy-sharing  # https://github.com/parvardegr/sharing
 # https://github.com/mifi/ezshare
 yes '' | sed 3q; echo "----------------------------- installing sshfs ----------------------------"; yes '' | sed 3q
 #sudo apt install sshfs  # mount remote filesystems over ssh
-nix-env -iA nixpkgs.sshfs
+nix-env -iA nixpkgs.sshfs || true
 yes '' | sed 3q; echo "----------------------------- installing samba ----------------------------"; yes '' | sed 3q
 #sudo apt install samba  # LAN-based file sharing
 
 yes '' | sed 3q; echo "----------------------------- installing graphviz ----------------------------"; yes '' | sed 3q
 #sudo apt install graphviz -y || true
-nix-env -iA nixpkgs.graphviz
+nix-env -iA nixpkgs.graphviz || true
 yes '' | sed 3q; echo "----------------------------- installing make ----------------------------"; yes '' | sed 3q
 sudo apt install make -y || true  # lvim and spacevim require it.
 yes '' | sed 3q; echo "----------------------------- installing net-tools ----------------------------"; yes '' | sed 3q
 #sudo apt install net-tools -y || true  # gives ifconfig
-nix-env -iA nixpkgs.nettools
+nix-env -iA nixpkgs.nettools || true
 yes '' | sed 3q; echo "----------------------------- installing git ----------------------------"; yes '' | sed 3q
 #sudo apt install git -y || true  # for version control
-nix-env -iA nixpkgs.git
+nix-env -iA nixpkgs.git || true
 #curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
 #curl https://rclone.org/install.sh | sudo bash  # onedrive equivalent.
 yes '' | sed 3q; echo "----------------------------- installing lynx ----------------------------"; yes '' | sed 3q
 #sudo apt install lynx -y || true  # tex browser, just like w3m
-nix-env -iA nixpkgs.lynx
+nix-env -iA nixpkgs.lynx || true
 
 
 # ------------------- File Managers ---------------------------
 yes '' | sed 3q; echo "----------------------------- installing bat ----------------------------"; yes '' | sed 3q
 #sudo apt install bat -y || true  # cat with colors.
-nix-env -iA nixpkgs.bat
+nix-env -iA nixpkgs.bat || true
 #sudo apt install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
 
 yes '' | sed 3q; echo "----------------------------- installing zoxide ----------------------------"; yes '' | sed 3q
-nix-env -iA nixpkgs.zoxide
+nix-env -iA nixpkgs.zoxide || true
 #sudo apt install zoxide || true
 (echo 'eval "$(zoxide init bash)"' >> ~/.bashrc) || true
 
 yes '' | sed 3q; echo "----------------------------- installing skim ----------------------------"; yes '' | sed 3q
-nix-env -iA nixpkgs.skim  # https://search.nixos.org/packages?channel=22.11&show=skim&from=0&size=50&sort=relevance&type=packages&query=skim
+nix-env -iA nixpkgs.skim  # https://search.nixos.org/packages?channel=22.11&show=skim&from=0&size=50&sort=relevance&type=packages&query=skim || true
 yes '' | sed 3q; echo "----------------------------- installing hyperfine ----------------------------"; yes '' | sed 3q
-nix-env -iA nixpkgs.hyperfine  # benchamrking
+nix-env -iA nixpkgs.hyperfine  # benchamrking || true
 
 yes '' | sed 3q; echo "----------------------------- installing fzf ----------------------------"; yes '' | sed 3q
 #sudo apt install fzf -y || true  # fuzzy finder: searches contents of all files, including .git
-nix-env -iA nixpkgs.fzf
+nix-env -iA nixpkgs.fzf || true
 yes '' | sed 3q; echo "----------------------------- installing fd-find ----------------------------"; yes '' | sed 3q
 #sudo apt install fd-find -y || true  # find alternative
-nix-env -iA nixpkgs.fd
+nix-env -iA nixpkgs.fd || true
 yes '' | sed 3q; echo "----------------------------- installing ripgrep ----------------------------"; yes '' | sed 3q
 #sudo apt install ripgrep -y || true  # rg command, rust-based, blazingly fast grep.
-nix-env -iA nixpkgs.ripgrep
+nix-env -iA nixpkgs.ripgrep || true
 yes '' | sed 3q; echo "----------------------------- installing ugrep ----------------------------"; yes '' | sed 3q
 #sudo apt install ugrep -y || true  # just as good as grep, but consistent with windows
-nix-env -iA nixpkgs.ugrep
+nix-env -iA nixpkgs.ugrep || true
 yes '' | sed 3q; echo "----------------------------- installing ncdu ----------------------------"; yes '' | sed 3q
 #sudo apt install ncdu -y || true   # disk usage analyzer, like diskonaut
-nix-env -iA nixpkgs.ncdu
+nix-env -iA nixpkgs.ncdu || true
 # https://github.com/bootandy/dust
 # https://github.com/dalance/procs#installation
 yes '' | sed 3q; echo "----------------------------- installing exa ----------------------------"; yes '' | sed 3q
 #sudo apt install exa -y || true  # replacement for ls. no ner fonts, unlike lsd
-nix-env -iA nixpkgs.exa
+nix-env -iA nixpkgs.exa || true
 
 
 
 # ---------------------------- text style ------------------------------------
 yes '' | sed 3q; echo "----------------------------- installing fortune ----------------------------"; yes '' | sed 3q
 #sudo apt install fortune -y || true  # generate random text in the form of piece of wisdom
-nix-env -iA nixpkgs.fortune
+nix-env -iA nixpkgs.fortune || true
 yes '' | sed 3q; echo "----------------------------- installing boxes ----------------------------"; yes '' | sed 3q
 #sudo apt install boxes -y || true  # for ascii banners. boxes -l for list of boxes.
-nix-env -iA nixpkgs.boxes
+nix-env -iA nixpkgs.boxes || true
 yes '' | sed 3q; echo "----------------------------- installing cowsay ----------------------------"; yes '' | sed 3q
 #sudo apt install cowsay -y || true  # animals saying things. Different figures with -f. Full list: cowsay -l
-nix-env -iA nixpkgs.neo-cowsay
-nix-env -iA nixpkgs.cowsay
+nix-env -iA nixpkgs.neo-cowsay || true
+nix-env -iA nixpkgs.cowsay || true
 yes '' | sed 3q; echo "----------------------------- installing lolcat ----------------------------"; yes '' | sed 3q
 #sudo apt install lolcat -y || true  # for coloring text in terminal.
-nix-env -iA nixpkgs.lolcat
+nix-env -iA nixpkgs.lolcat || true
 yes '' | sed 3q; echo "----------------------------- installing toilet ----------------------------"; yes '' | sed 3q
 #sudo apt install toilet -y || true  # large ascii text
-nix-env -iA nixpkgs.toilet
+nix-env -iA nixpkgs.toilet || true
 yes '' | sed 3q; echo "----------------------------- installing figlet ----------------------------"; yes '' | sed 3q
 #sudo apt install figlet -y || true  # large ascii text. See: showfigfonts for full list of fonts. use -f to change font.
-nix-env -iA nixpkgs.figlet
+nix-env -iA nixpkgs.figlet || true
 # see more here: https://linoxide.com/linux-fun-terminal-crazy-output/
 # midnight commander, similarv# Asciiquarium# https://github.com/bartobri/no-more-secrets
 # https://www.youtube.com/watch?v=haitmoSyTls
 
 yes '' | sed 3q; echo "----------------------------- installing neofetch ----------------------------"; yes '' | sed 3q
 #sudo apt install neofetch -y || true  # for system info
-nix-env -iA nixpkgs.neofetch
+nix-env -iA nixpkgs.neofetch || true
 neofetch || true
 
+
+# ---------------------------- Fun ------------------------------------
+yes '' | sed 3q; echo "----------------------------- installing sl ----------------------------"; yes '' | sed 3q
+#sudo apt install sl -y || true  # for fun
+nix-env -iA nixpkgs.sl || true
+yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
+#sudo apt install hollywood -y || true  # for fun
+nix-env -iA nixpkgs.hollywood || true
+yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
+#sudo apt install cmatrix -y || true  # for fun
+nix-env -iA nixpkgs.cmatrix || true
 
 
 # -========================================= EDITORS =========================================
@@ -155,11 +166,6 @@ wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.deb 
 sudo apt install ./nvim-linux64.deb || true
 rm nvim-linux64.deb || true
 
-yes '' | sed 3q; echo "----------------------------- installing ohmybash ----------------------------"; yes '' | sed 3q
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
-# replace OSH_THEME="font" with OSH_THEME="random" in ~/.bashrc
-(sed -i 's/OSH_THEME="font"/OSH_THEME="random"/' ~/.bashrc) || true
-
 
 yes '' | sed 3q; echo "----------------------------- installing lunarvim ----------------------------"; yes '' | sed 3q
 # from https://www.lunarvim.org/docs/installation
@@ -175,14 +181,8 @@ yes '' | sed 3q; echo "----------------------------- installing rust -----------
 # curl https://sh.rustup.rs -sSf | sh
 (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
 
-
-# ---------------------------- Fun ------------------------------------
-yes '' | sed 3q; echo "----------------------------- installing sl ----------------------------"; yes '' | sed 3q
-#sudo apt install sl -y || true  # for fun
-nix-env -iA nixpkgs.sl
-yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
-#sudo apt install hollywood -y || true  # for fun
-nix-env -iA nixpkgs.hollywood
-yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
-#sudo apt install cmatrix -y || true  # for fun
-nix-env -iA nixpkgs.cmatrix
+yes '' | sed 3q; echo "----------------------------- installing ohmybash ----------------------------"; yes '' | sed 3q
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+# replace OSH_THEME="font" with OSH_THEME="random" in ~/.bashrc
+(sed -i 's/OSH_THEME="font"/OSH_THEME="random"/' ~/.bashrc) || true
+# this starts a new shell process and stops execution at this point!
