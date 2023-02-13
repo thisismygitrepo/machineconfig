@@ -14,7 +14,7 @@ py_version_no_dot=$(echo $py_version | tr -d '.')
 # CAUTION: python ve installer does text manipulation on this file and make many hidden assumptions, exercie caution with development.
 
 
-# check if python3.9 is installed
+# check if $mypy is installed
 if ! command -v $mypy &> /dev/null
 then
     echo ''
@@ -29,7 +29,7 @@ then
 fi
 
 
- check if $mypy-venv is installed
+# check if $mypy-venv is installed
 if ! command -v $mypy-venv &> /dev/null
 then
     echo ''
@@ -40,7 +40,7 @@ then
     sudo apt install -y $mypy-venv
 fi
 
- check if python3-pip is installed
+# check if python3-pip is installed
 if ! command -v pip &> /dev/null
 then
     echo ''

@@ -36,4 +36,5 @@ else
     echo "Drive is not encrypted"
     sudo mount --source /dev/$device --target /media/$mnt_name
 fi
-://askubuntu.com/questions/1059228/how-to-mount-a-usb-drive-in-ubuntu-18-04
+
+# https://askubuntu.com/questions/1059228/how-to-mount-a-usb-drive-in-ubuntu-18-04
