@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 . ~/scripts/activate_ve ''
-python $(dirname $(dirname $0))/python/bu_gdrive_rx.py $@
+python -m machineconfig.scripts.python.cloud_sx $@
 deactivate || true
