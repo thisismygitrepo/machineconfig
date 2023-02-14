@@ -21,8 +21,8 @@ def args_parser():
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
     args = parser.parse_args()
-    tb.P(args.file).to_cloud(cloud=args.cloud, zip=args.zip_first, rel2home=args.relative_to_home,
-                             share=args.share, key=args.key, pwd=args.pwd, encrypt=args.encrypt_first)
+    tb.P(args.file).to_cloud(cloud=args.cloud, zip=args.zip, rel2home=args.relative_to_home,
+                             share=args.share, key=args.key, pwd=args.pwd, encrypt=args.encrypt)
 
 
 if __name__ == "__main__":
