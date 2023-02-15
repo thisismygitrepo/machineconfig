@@ -29,7 +29,6 @@ fi
 
 
 if dpkg -s $mypy-venv > /dev/null 2>&1; then  # python-venv is not a command, but a module of python.
-then
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo "$mypy-venv could not be found, installing ..."
@@ -48,7 +47,6 @@ fi
 
 
 if dpkg -s $mypy-tk > /dev/null 2>&1; then
-then
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo "python3-tk could not be found, installing ..."
