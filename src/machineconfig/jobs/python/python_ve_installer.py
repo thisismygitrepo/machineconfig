@@ -36,8 +36,28 @@ def main():
 
     scripts = lib_root.joinpath(f"setup_{system.lower()}/ve.{'ps1' if system == 'Windows' else 'sh'}").read_text()
     variable_prefix = "$" if system == "Windows" else ""
-    scripts = tb.modify_text(txt_raw=scripts, txt_search="ve_name=", txt_alt=f"{variable_prefix}ve_name='{env_name}'", replace_line=True, strict=True)
-    scripts = tb.modify_text(txt_raw=scripts, txt_search="py_version=", txt_alt=f"{variable_prefix}py_version='{dotted_py_version.replace('.', '') if system == 'Windows' else dotted_py_version}'", replace_line=True, strict=True)
+    line1 = f"{variable_prefix}ve_name='{env_name}'"
+    line2 = f"{variable_prefix}py_version='{dotted_py_version.replace('.', '') if system == 'Windows' else dotted_py_version}'"
+    lines = f"{line1}\n{line2}\n"
+    predef_script = """
+if (-not (Test-Path variable:ve_name)) {
+    $ve_name='ve'
+} else { Write-Host "ve_name is already defined as $ve_name" }
+
+if (-not (Test-Path variable:py_vesrion)) {
+    $py_version=39
+} else { Write-Host "py_version is already defined as $py_version" }
+""" if system == "Windows" else f"""
+if [ -z "$ve_name" ]; then
+    ve_name="ve"
+fi
+
+if [ -z "$py_version" ]; then
+    py_version=3.9
+fi
+"""
+    assert predef_script in scripts
+    scripts = scripts.replace(predef_script, lines)
 
     if repos == "y":
         text = lib_root.joinpath(f"setup_{system.lower()}/repos.{'ps1' if system == 'Windows' else 'sh'}").read_text()

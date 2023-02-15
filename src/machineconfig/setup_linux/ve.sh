@@ -2,6 +2,7 @@
 
 # this script is for setting up a virtual environment for python
 
+
 if [ -z "$ve_name" ]; then
     ve_name="ve"
 fi
@@ -9,6 +10,7 @@ fi
 if [ -z "$py_version" ]; then
     py_version=3.9
 fi
+
 
 mypy=python$py_version
 py_version_no_dot=$(echo $py_version | tr -d '.')
@@ -69,3 +71,4 @@ $mypy -m pip install --upgrade pip
 pip install --upgrade pip
 
 echo "finished installing virtual environment"
+echo "Use this to activate: source ~/venvs/$ve_name/bin/activate"
