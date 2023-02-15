@@ -31,6 +31,7 @@ def main():
 
     env_path = tb.P.home().joinpath("venvs", env_name)
     if env_path.exists():
+        console.rule(f"Deleting existing enviroment with similar name")
         env_path.delete(sure=True)
 
     scripts = lib_root.joinpath(f"setup_{system.lower()}/ve.{'ps1' if system == 'Windows' else 'sh'}").read_text()
