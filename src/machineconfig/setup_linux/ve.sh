@@ -15,8 +15,7 @@ py_version_no_dot=$(echo $py_version | tr -d '.')
 
 
 # check if $mypy is installed
-if ! command -v $mypy &> /dev/null
-then
+if ! command -v $mypy &> /dev/null; then
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo "$mypy could not be found, installing ..."
@@ -40,8 +39,7 @@ then
 fi
 
 
-if ! command -v pip &> /dev/null
-then
+if ! command -v pip &> /dev/null; then
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo "pip could not be found"
@@ -56,11 +54,10 @@ then
     echo "python3-tk could not be found, installing ..."
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
-
     sudo apt install -y $mypy-tk  # without this, plt.show() will return UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
 fi
 
-# if inside wsl, you also need xming to be installed and running. otherwise, plt.show returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running. xserver?
+# TOOD: if inside wsl, you also need xming to be installed and running. otherwise, plt.show returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running. xserver?
 
 mkdir ~/venvs/
 cd ~/venvs/ || exit
