@@ -28,7 +28,7 @@ if ! command -v $mypy &> /dev/null; then
 fi
 
 
-if dpkg -s $mypy-venv > /dev/null 2>&1; then  # python-venv is not a command, but a module of python.
+if ! dpkg -s $mypy-venv > /dev/null 2>&1; then  # python-venv is not a command, but a module of python.
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo "$mypy-venv could not be found, installing ..."
@@ -48,7 +48,7 @@ if ! command -v pip &> /dev/null; then
 fi
 
 
-if dpkg -s $mypy-tk > /dev/null 2>&1; then
+if ! dpkg -s $mypy-tk > /dev/null 2>&1; then
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo "python3-tk could not be found, installing ..."
