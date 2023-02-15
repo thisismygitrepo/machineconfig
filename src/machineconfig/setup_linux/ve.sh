@@ -42,6 +42,8 @@ if ! command -v pip &> /dev/null; then
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo "pip could not be found"
+    echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    echo ''
     sudo apt install -y python3-pip
 fi
 
