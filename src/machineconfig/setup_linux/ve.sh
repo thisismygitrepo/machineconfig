@@ -29,8 +29,7 @@ then
 fi
 
 
-# check if $mypy-venv is installed
-if ! command -v $mypy-venv &> /dev/null
+if dpkg -s $mypy-venv > /dev/null 2>&1; then  # python-venv is not a command, but a module of python.
 then
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
@@ -40,7 +39,7 @@ then
     sudo apt install -y $mypy-venv
 fi
 
-# check if python3-pip is installed
+
 if ! command -v pip &> /dev/null
 then
     echo ''
@@ -50,16 +49,15 @@ then
 fi
 
 
-# check if python3-tk is installed
-if ! command -v python3-tk &> /dev/null
+if dpkg -s $mypy-tk > /dev/null 2>&1; then
 then
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-    echo "python3-tk could not be found"
+    echo "python3-tk could not be found, installing ..."
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
 
-    sudo apt install -y python$py_version-tk  # without this, plt.show() will return UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    sudo apt install -y $mypy-tk  # without this, plt.show() will return UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
 fi
 
 # if inside wsl, you also need xming to be installed and running. otherwise, plt.show returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running. xserver?
