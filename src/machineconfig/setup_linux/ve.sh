@@ -48,13 +48,13 @@ if ! command -v pip &> /dev/null; then
 fi
 
 
-if ! dpkg -s $mypy-tk > /dev/null 2>&1; then
+if ! dpkg -s python3-tk > /dev/null 2>&1; then
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo "python3-tk could not be found, installing ..."
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
-    sudo apt install -y $mypy-tk  # without this, plt.show() will return UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    sudo apt install -y python3-tk  # without this, plt.show() will return UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
 fi
 
 # TOOD: if inside wsl, you also need xming to be installed and running. otherwise, plt.show returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running. xserver?
