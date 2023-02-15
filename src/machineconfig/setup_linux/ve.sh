@@ -2,15 +2,16 @@
 
 # this script is for setting up a virtual environment for python
 
-if [ -z "$ve_name" ]; then  # check if variable ve_name is set, if not, set it to 've'
-ve_name="ve"
+if [ -z "$ve_name" ]; then
+    ve_name="ve"
 fi
-if [ -z "$py_version" ]; then  # check if variable py_version is set, if not, set it to '3.9'
-py_version=3.9
+
+if [ -z "$py_version" ]; then
+    py_version=3.9
 fi
+
 mypy=python$py_version
 py_version_no_dot=$(echo $py_version | tr -d '.')
-# CAUTION: python ve installer does text manipulation on this file and make many hidden assumptions, exercie caution with development.
 
 
 # check if $mypy is installed
@@ -24,7 +25,7 @@ then
     sudo add-apt-repository ppa:deadsnakes/ppa  # you need to press enter at this point to continue. # without this repo, 3.9 is not available.
     sudo apt update
     sudo apt install -y $mypy  # ignore system level one. launched with `python39`, as opposed to `python`
-#    nix-env -iA "nixpkgs.python$py_version_no_dot"
+    #    nix-env -iA "nixpkgs.python$py_version_no_dot"
 fi
 
 

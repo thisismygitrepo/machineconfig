@@ -20,6 +20,10 @@
             "keys": "ctrl+c"
         },
         {
+            "command": "unbound",
+            "keys": "ctrl+alt+down"
+        },
+        {
             "command": 
             {
                 "action": "splitPane",
@@ -31,14 +35,6 @@
         {
             "command": "togglePaneZoom",
             "keys": "ctrl+shift+z"
-        },
-        {
-            "command": "swapPaneDown",
-            "keys": "alt+ctrl+downArrow"
-        },
-        {
-            "command": "swapPaneLeft",
-            "keys": "alt+ctrl+down"
         }
     ],
     "copyFormatting": "none",
@@ -60,21 +56,13 @@
                 "font": 
                 {
                     "face": "CaskaydiaCove Nerd Font"
-                    // "fontFace": "PxPlus IBM VGA8"
                 },
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
                 "hidden": false,
                 "name": "PowerShell",
-                // "colorScheme" : "Retro",
-                // "experimental.retroTerminalEffect": true,
+                "opacity": 90,
                 "source": "Windows.Terminal.PowershellCore",
-                "startingDirectory": "%USERPROFILE%",
-                // "backgroundImage": "C:/Users/alex/pwsh1.png",
-                // "backgroundImageOpacity": 0.5,
-                // "backgroundImageStretchMode": "none",
-                // "backgroundImageAlignment": "bottomRight",
-                "opacity": 90
-
+                "startingDirectory": "%USERPROFILE%"
             },
             {
                 "commandline": "powershell.exe -Command \"~/scripts/croshell.ps1\"",
@@ -126,38 +114,15 @@
                 "source": "Windows.Terminal.VisualStudio"
             },
             {
-                "guid": "{f9ceaf27-504c-58d7-927c-d1d6a7ac7d3c}",
+                "guid": "{d7b20cea-47a9-518c-95a4-c8bd91e2e1c6}",
                 "hidden": false,
-                "name": "Ubuntu 22.04.1 LTS",
+                "name": "Ubuntu 22.04.2 LTS",
                 "source": "CanonicalGroupLimited.Ubuntu22.04LTS_79rhkp1fndgsc"
             }
         ]
     },
     "schemes": 
     [
-
-        {
-            "name": "Retro",
-            "background": "#000000",
-            "black": "#00ff00",
-            "blue": "#00ff00",
-            "brightBlack": "#00ff00",
-            "brightBlue": "#00ff00",
-            "brightCyan": "#00ff00",
-            "brightGreen": "#00ff00",
-            "brightPurple": "#00ff00",
-            "brightRed": "#00ff00",
-            "brightWhite": "#00ff00",
-            "brightYellow": "#00ff00",
-            "cyan": "#00ff00",
-            "foreground": "#00ff00",
-            "green": "#00ff00",
-            "purple": "#00ff00",
-            "red": "#00ff00",
-            "white": "#00ff00",
-            "yellow": "#00ff00"
-        },
-
         {
             "background": "#000000",
             "black": "#000000",
@@ -249,6 +214,29 @@
             "selectionBackground": "#FFFFFF",
             "white": "#FAFAFA",
             "yellow": "#C18301"
+        },
+        {
+            "background": "#000000",
+            "black": "#00FF00",
+            "blue": "#00FF00",
+            "brightBlack": "#00FF00",
+            "brightBlue": "#00FF00",
+            "brightCyan": "#00FF00",
+            "brightGreen": "#00FF00",
+            "brightPurple": "#00FF00",
+            "brightRed": "#00FF00",
+            "brightWhite": "#00FF00",
+            "brightYellow": "#00FF00",
+            "cursorColor": "#FFFFFF",
+            "cyan": "#00FF00",
+            "foreground": "#00FF00",
+            "green": "#00FF00",
+            "name": "Retro",
+            "purple": "#00FF00",
+            "red": "#00FF00",
+            "selectionBackground": "#FFFFFF",
+            "white": "#00FF00",
+            "yellow": "#00FF00"
         },
         {
             "background": "#002B36",
@@ -390,5 +378,6 @@
         }
     ],
     "startOnUserLogin": true,
-    "theme": "dark"
+    "theme": "dark",
+    "themes": []
 }

@@ -89,6 +89,7 @@ winget install --no-upgrade --Id Lapce.Lapce  # app variant of helix
 winget install --no-upgrade --Id Neovim.Neovim --source winget --accept-package-agreements --accept-source-agreements
 Invoke-WebRequest "https://spacevim.org/install.cmd" -OutFile "~/Downloads/spacevim_installer.cmd"
 ~/Downloads/spacevim_installer.cmd
+# https://nvchad.com/quickstart/install
 
 winget install --no-upgrade --Id "Canonical.Ubuntu.2204" --accept-package-agreements --accept-source-agreements
 # iex ((New-Object System.Net.WebClient).DownloadString('https://git.io/JJ8R4'))  # tune machine to minimal
