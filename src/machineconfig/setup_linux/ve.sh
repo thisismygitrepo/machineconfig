@@ -43,7 +43,7 @@ fi
 if ! command -v pip &> /dev/null; then
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-    echo "pip could not be found"
+    echo "pip could not be found, installing ..."
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
     sudo apt install -y python3-pip
@@ -70,5 +70,5 @@ source ~/venvs/$ve_name/bin/activate || exit
 $mypy -m pip install --upgrade pip
 pip install --upgrade pip
 
-echo "finished installing virtual environment"
+echo "Finished installing virtual environment"
 echo "Use this to activate: source ~/venvs/$ve_name/bin/activate"

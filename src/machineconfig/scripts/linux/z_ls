@@ -24,7 +24,7 @@ else # ==> we are not in a zellij session
         zellij ka -y
         zellij --session main --layout st
       else
-        zellij attach $res options --mirror-session false
+        zellij attach $res # options --mirror-session false
       fi
   else  # no sessions, create one called main
      zellij --session main --layout st
