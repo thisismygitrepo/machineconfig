@@ -37,9 +37,10 @@ def main(verbose=True) -> str:
         program = tb.P(f"{LIBRARY_ROOT}/jobs/linux/update_essentials").read_text()
         additions = []
         for a_repo in local_install_repos:
-            if "machineconfig" in a_repo.working_dir:
+            if "machineconfig" in a_repo.working_dir:  # special treatment because of executables.
                 an_addition = f"""
 cd "{a_repo.working_dir}"
+echo ""
 echo "{("Pulling " + str(a_repo.working_dir)).center(80, "-")}"
 git reset --hard
 git pull origin
@@ -49,12 +50,14 @@ chmod +x ~/code/machineconfig/src/machineconfig/settings/lf_linux/exe -R
 """
                 additions.append(an_addition)
             else:
+#                 if a_repo.is_dirty() and input(f"Repository {a_repo} is not clean, hard-reset it? y/[n]"): a_repo.git.reset('--hard')
                 additions.append(f"""
 cd "{a_repo.working_dir}"
 echo "{("Pulling " + str(a_repo.working_dir)).center(80, "-")}"
 {sep.join([f'git pull {remote.name}' for remote in a_repo.remotes])}
 """)
         addition = "\n".join(additions)
+
     elif system() == "Windows":
         program = tb.P(f"{LIBRARY_ROOT}/jobs/windows/update_essentials.ps1").read_text()
         addition = "\n".join([f"""
