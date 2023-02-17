@@ -14,7 +14,7 @@ def args_parser():
     parser.add_argument("--zip", "-z", help="Zip before sending.", action="store_true")  # default is False
     parser.add_argument("--encrypt", "-e", help="Encrypt before sending.", action="store_true")  # default is False
     parser.add_argument("--relative_to_home", "-r", help="set remote path as home relative local path.", action="store_true")  # default is False
-    parser.add_argument("--os_specific", "-S", help="OS specific path (relevant only when relative flag is raised as well.", action="store_true")
+    parser.add_argument("--os_specific", "-o", help="OS specific path (relevant only when relative flag is raised as well.", action="store_true")
     parser.add_argument("--share", "-s", help="Share file.", action="store_true")
     # optional argument
     parser.add_argument("--remote_dir", "-d", help="Remote directory to send to.", default="")
