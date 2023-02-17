@@ -18,7 +18,7 @@ def main(version=None):
     path = path.download().ungz_untar(inplace=True)
     exe = path.search()[0].joinpath("joshuto")
     exe.chmod(0o777)
-    tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print()
+    tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
     path.delete(sure=True)
     # after first release:
     # url = get_latest_release("https://github.com/kamiyaa/joshuto", suffix="x86_64-unknown-linux-gnu", compression="tar.gz", download_n_extract=True)
