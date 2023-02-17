@@ -22,7 +22,8 @@ def arg_parser():
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
     args = parser.parse_args()
-    tb.P(args.file).from_cloud(cloud=args.cloud, unzip=args.unzip, decrypt=args.decrypt, overwrite=args.overwrite, pwd=args.pwd, key=args.key,
+    tb.P(args.file).from_cloud(cloud=args.cloud, unzip=args.unzip, decrypt=args.decrypt, overwrite=args.overwrite,
+                               pwd=args.pwd, key=args.key,
                                rel2home=args.relative_to_home, generic_os=args.generic_os,)
 
 
