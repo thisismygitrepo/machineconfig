@@ -71,7 +71,7 @@ source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
 
 ###### Setup SSH connection:
 ```bash
-export $pubkey_url='https://github.com/thisismygitrepo.keys'  # (CHANGE APPROPRIATELY)
+export pubkey_url='https://github.com/thisismygitrepo.keys'  # (CHANGE APPROPRIATELY)
 pubkey_string=$(curl --silent $pubkey_url)
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash
 # For WSL only, also run the following:
