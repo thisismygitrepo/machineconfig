@@ -21,17 +21,17 @@ then
 fi
 
 
-bitlocker_status=$(sudo bash -c "ls /sys/class/block/$(basename $device)/holders/ | grep -o bitlocker")
-# or: bitlocker_status=$(lsblk -o FSTYPE "$device" | grep -o bitlocker)
+# bitlocker_status=$(sudo bash -c "ls /sys/class/block/$(basename $device)/holders/ | grep -o bitlocker")
+bitlocker_status=$(lsblk -o FSTYPE "/dev/$device" | grep -o BitLocker)
 
-if [ "$bitlocker_status" = "bitlocker" ];  then
+if [ "$bitlocker_status" = "BitLocker" ];  then
     echo ">>>>>> Drive is bitlocker encrypted, therefore, bitlocker is needded"
     # If drive is bitlocker , following: https://www.linuxuprising.com/2019/04/how-to-mount-bitlocker-encrypted.html
     sudo mkdir -p /media/$mnt_name"_bitlocker"
-    sudo dislocker /dev/$device -u -- /media/bitlocker # Will be prompted for password (-u)
+    sudo dislocker /dev/$device -u -- /media/$mnt_name"_bitlocker" # Will be prompted for password (-u)
     # sudo mount -o loop /media/bitlocker/dislocker-file /media/bitlockermount
     # Modified from here to fix permissions: https://askubuntu.com/questions/1045057/i-cant-write-only-read-on-usb-device-encrypted-with-bitlocker
-    sudo mount -o loop,rw,uid=1000,gid=1000 /media/bitlocker/dislocker-file /media/$mnt_name
+    sudo mount -o loop,rw,uid=1000,gid=1000 /media/$mnt_name"_bitlocker"/dislocker-file /media/$mnt_name
 else
     echo "Drive is not encrypted"
     sudo mount --source /dev/$device --target /media/$mnt_name
