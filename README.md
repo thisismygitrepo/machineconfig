@@ -76,8 +76,11 @@ pubkey_url='https://github.com/thisismygitrepo.keys'  # (CHANGE APPROPRIATELY)
 export pubkey_string=$(curl --silent $pubkey_url)
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash
 # For WSL only, also run the following:
+export port=2222
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash  
 ```
+short `curl bit.ly/cfgsshlinux -L | bash`
+
 
 ###### Install Croshell Terminal Directly
 ```bash

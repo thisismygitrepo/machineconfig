@@ -2,6 +2,8 @@
 # The purpose of this file is to config SSH in WSL2 so that it is accessible from LAN.
 # before running this script, WSL2 can only be SSHed from the same machine, given WSL2 address.
 # after running this setup, user from within windows must run wsl_server.ps1 to activate port forwarding.
+# the most common pitfall here is sshd fails to start as evidenced by `sudo service ssh status` because the sshd_config file is not readable or has wrong line endings or wrong configuration.
+# Thus, you see that it works when installed, but after modifying sshd_config it fails. Try different port never used before.
 
 if [[ $(uname -a) == *"icrosoft"* ]]; then
   echo "Running inside WSL"
@@ -10,11 +12,21 @@ else
   exit 0
 fi
 
+if [ -z "$port" ]; then
+#  port=$(shuf -i 10000-50000 -n 1)
+  port=2222
+  echo "port variable not defined, setting it to $port"
+fi
+
+sudo sed -i 's/#Port 22/Port '$port'/g' /etc/ssh/sshd_config
+
+
+
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
 sudo sed -i 's/#Port 22/Port 2222/g' /etc/ssh/sshd_config
 sudo sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g' /etc/ssh/sshd_config
 sudo sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' /etc/ssh/sshd_config
-# sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 
 # The following is to encounter this error:
 #  * Starting OpenBSD Secure Shell server sshd
