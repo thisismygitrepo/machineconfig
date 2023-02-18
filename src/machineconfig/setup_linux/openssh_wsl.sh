@@ -3,6 +3,13 @@
 # before running this script, WSL2 can only be SSHed from the same machine, given WSL2 address.
 # after running this setup, user from within windows must run wsl_server.ps1 to activate port forwarding.
 
+if [[ $(uname -a) == *"icrosoft"* ]]; then
+  echo "Running inside WSL"
+else
+  echo "Not running inside WSL, no need for this script"
+  exit 0
+fi
+
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
 sudo sed -i 's/#Port 22/Port 2222/g' /etc/ssh/sshd_config
 sudo sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g' /etc/ssh/sshd_config

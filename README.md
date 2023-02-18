@@ -21,7 +21,7 @@ Additionally, files that contain data, sensitive information that should not be 
 
 
 ## Windows Setup
-With elevated `PowerShell`, run the following: (short ``)
+With elevated `PowerShell`, run the following: (short `curl bit.ly/cfgallwindows -L | iex`)
 ```shell
 # apps  # short: `(iwr bit.ly/cfgappswindows).Content | iex`
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1 | Invoke-Expression
@@ -35,8 +35,8 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 # ~/code/machineconfig/src/machineconfig/setup_windows/wt_and_pwsh.ps1  # experimental
 # devapps:
 ~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
+
 ```
-short `curl bit.ly/cfgallwindows -L | iex`
 
 ###### Setup SSH connection:
 ```shell
@@ -67,12 +67,13 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh  # requires sudo since it invloves chmod of dotfiles/.ssh, however sudo doesn't work with source. best to have sudo -s earlier.
 # devapps
 source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
+
 ```
 
 ###### Setup SSH connection:
 ```bash
-export pubkey_url='https://github.com/thisismygitrepo.keys'  # (CHANGE APPROPRIATELY)
-pubkey_string=$(curl --silent $pubkey_url)
+pubkey_url='https://github.com/thisismygitrepo.keys'  # (CHANGE APPROPRIATELY)
+export pubkey_string=$(curl --silent $pubkey_url)
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash
 # For WSL only, also run the following:
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash  

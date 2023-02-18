@@ -8,7 +8,7 @@
 #   for delete exist rules and ports use 'delete' as parameter, for show ports use 'list' as parameter.
 #   written by Daehyuk Ahn, Aug-1-2020
 
-Param($p = 2222)
+Param($p = 2223)
 $port_num = $p
 #If ($Args[0] -eq $null) {
 #    $port_num = 2222;
@@ -67,6 +67,6 @@ netsh interface portproxy show v4tov4;
 
 # Give user to chance to see above list when relaunched start
 If ($Args[0] -eq "runas" -Or $Args[1] -eq "runas") {
-  Write-Host -NoNewLine 'Press any key to close! ';
-  $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+    Write-Host -NoNewLine 'Press any key to close! ';
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 }

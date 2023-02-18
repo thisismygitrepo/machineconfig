@@ -1,6 +1,6 @@
 
 # repeat for for nix package "figlet"
-if [ ! -f "$HOME/.nix-profile/bin/nix-env" ]; then
+if [ -f "$HOME/.nix-profile/bin/nix-env" ]; then
   echo "----------------------------- installing nix ----------------------------"
   ~/.nix-profile/bin/nix-env -iA nixpkgs.cowsay || true
   ~/.nix-profile/bin/nix-env -iA nixpkgs.lolcat || true
