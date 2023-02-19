@@ -23,17 +23,15 @@ def main():
     else: items = {choice_key: bu_file[choice_key]}
 
     for item_name, item in items.items():
-        if system().lower() in item_name: generic_os = False
-        else: generic_os = True
+        os_specific = True if system().lower() in item_name else False
 
         tb.S(item).print(as_config=True, title=direction)
         path = tb.P(item['path'])
         if direction == "BACKUP":
-            path.to_cloud(cloud=cloud, zip=item['zip'], rel2home=True, encrypt=item['encrypt'], key=None, pwd=None, generic_os=generic_os)
+            path.to_cloud(cloud=cloud, zip=item['zip'], rel2home=True, encrypt=item['encrypt'], key=None, pwd=None, os_specific=os_specific)
         elif direction == "RETRIEVE":
-            if item['zip']: path += ".zip"
-            if item['encrypt']: path += ".enc"
-            path.from_cloud(cloud=cloud, unzip=item['zip'], rel2home=True, decrypt=item['encrypt'], localpath=None, key=None, pwd=None, generic_os=generic_os)
+            path.from_cloud(cloud=cloud, unzip=item['zip'], rel2home=True, decrypt=item['encrypt'], localpath=None, key=None, pwd=None, os_specific=os_specific)
+            if item_name == "dotfiles": tb.Terminal().run("chmod 700 ~/.ssh/*")
         else: raise ValueError
 
     program = f"echo 'Finished backup.'"
