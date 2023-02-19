@@ -1,11 +1,9 @@
 
 import crocodile.toolbox as tb
 import platform
-# app_name = "something"
-# tb.T().run(f"cargo install {app_name}")
 
 
-def get_shell_script(url=r"https://github.com/atanunq/viu"):
+def build_rust_executable(url=r"https://github.com/atanunq/viu"):
     tool_name = url.split('/')[-1]
 
     # move command is not required since tool will go to .cargo/bin which is in PATH by default.
@@ -33,14 +31,13 @@ cargo install --path .
 
     if platform.system() == "Windows":
         exe = exe.move(folder=tb.get_env().WindowsApps)
-        share_link = exe.to_cloud("odg1", share=True)
-        return share_link
     elif platform.system() == "Linux":
         tb.Terminal().run(f"sudo mv {exe} /usr/local/bin")
         exe = tb.P(r"/usr/local/bin").joinpath(exe.name)
-        exe.to_cloud("odg1", share=True)
     else:
         raise NotImplementedError(f"Platform {platform.system()} not supported.")
+    share_link = exe.to_cloud("gdpo", share=True)
+    return share_link
 
 
 # after cargo install diskonaut
