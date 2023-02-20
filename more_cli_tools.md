@@ -4,6 +4,7 @@
 # https://github.com/sorenisanerd/gotty
 # https://devsession.is/
 # https://github.com/rothgar/awesome-tuis
+# https://github.com/nschloe/github-trends
 
 https://github.com/k4m4/terminals-are-sexy
 https://github.com/agarrharr/awesome-cli-apps
