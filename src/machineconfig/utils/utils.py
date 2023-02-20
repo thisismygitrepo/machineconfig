@@ -1,5 +1,6 @@
 
-import crocodile.toolbox as tb
+from crocodile.file_management import P, randstr
+from crocodile.meta import Terminal
 # import crocodile.environment as env
 import machineconfig
 from rich.text import Text
@@ -7,10 +8,10 @@ from rich.console import Console
 from rich.panel import Panel
 
 
-LIBRARY_ROOT = machineconfig.__file__.replace(tb.P.home().str.lower(), tb.P.home().str)
-LIBRARY_ROOT = tb.P(LIBRARY_ROOT).parent
+LIBRARY_ROOT = machineconfig.__file__.replace(P.home().str.lower(), P.home().str)
+LIBRARY_ROOT = P(LIBRARY_ROOT).parent
 REPO_ROOT = LIBRARY_ROOT.parent.parent
-tmp_install_dir = tb.P.tmp(folder="tmp_installers")
+tmp_install_dir = P.tmp(folder="tmp_installers")
 
 
 def display_options(msg, options: list, header="", tail="", prompt="", default=None):
@@ -52,26 +53,26 @@ def display_options(msg, options: list, header="", tail="", prompt="", default=N
     return choice_key
 
 
-def symlink(this: tb.P, to_this: tb.P, overwrite=True):
+def symlink(this: P, to_this: P, overwrite=True):
     """helper function. creates a symlink from `this` to `to_this`.
     What can go wrong?
     depending on this and to_this existence, one will be prioretized depending on overwrite value.
     True means this will potentially be overwritten (depending on whether to_this exists or not)
     False means to_this will potentially be overwittten."""
-    this = tb.P(this).expanduser().absolute()
-    to_this = tb.P(to_this).expanduser().absolute()
+    this = P(this).expanduser().absolute()
+    to_this = P(to_this).expanduser().absolute()
     if this.is_symlink(): this.delete(sure=True)  # delete if it exists as symblic link, not a concrete path.
     if this.exists():  # this is a problem. It will be resolved via `overwrite`
         if overwrite is True:  # it *can* be deleted, but let's look at target first.
             if to_this.exists():  # this exists, to_this as well. to_this is prioritized.
-                this.append(f".orig_{tb.randstr()}", inplace=True)  # rename is better than deletion
+                this.append(f".orig_{randstr()}", inplace=True)  # rename is better than deletion
             else: this.move(path=to_this)  # this exists, to_this doesn't. to_this is prioritized.
         elif overwrite is False:  # don't sacrefice this, sacrefice to_this.
             if to_this.exists(): this.move(path=to_this, overwrite=True)  # this exists, to_this as well, this is prioritized.   # now we are readly to make the link
             else: this.move(path=to_this)  # this exists, to_this doesn't, this is prioritized.
     else:  # this doesn't exist.
         if not to_this.exists(): to_this.touch()  # we have to touch it (file) or create it (folder)
-    try: tb.P(this).symlink_to(to_this, verbose=True, overwrite=True)
+    try: P(this).symlink_to(to_this, verbose=True, overwrite=True)
     except Exception as ex: print(f"Failed at linking {this} ==> {to_this}.\nReason: {ex}")
 
 
@@ -81,7 +82,7 @@ def find_move_delete_windows(downloaded, tool_name=None, delete=True):
         exe = downloaded
     else:
         exe = downloaded.search("*.exe", r=True)[0] if tool_name is None else downloaded.search(f"{tool_name}.exe", r=True)[0]
-    exe.move(folder=tb.P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
+    exe.move(folder=P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
     if delete: downloaded.delete(sure=True)
     return exe
 
@@ -96,7 +97,7 @@ def find_move_delete_linux(downloaded, tool_name, delete=True):
     print(f"MOVING file `{repr(exe)}` to '/usr/local/bin'")
     exe.chmod(0o777)
     # exe.move(folder=r"/usr/local/bin", overwrite=False)
-    tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
+    Terminal().run(f"sudo mv {exe} /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
     if delete: downloaded.delete(sure=True)
     return None
 
@@ -112,13 +113,13 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
         latest_version = requests.get(str(repo_url) + "/releases/latest").url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
     else: latest_version = version
 
-    download_link = tb.P(repo_url + "/releases/download/" + latest_version)
+    download_link = P(repo_url + "/releases/download/" + latest_version)
 
     version = download_link[-1]
     version = str(version).replace("v", "") if strip_v else str(version)
-    tool_name = tool_name or tb.P(repo_url)[-1]
+    tool_name = tool_name or P(repo_url)[-1]
     console.rule(f"Installing {tool_name} version {version}")
-    tb.P.home().joinpath(f"tmp_results/cli_tools_installers/versions/{tool_name}").create(parents_only=True).write_text(version)
+    P.home().joinpath(f"tmp_results/cli_tools_installers/versions/{tool_name}").create(parents_only=True).write_text(version)
 
     if not download_n_extract: return download_link
     if download_n_extract and not linux:

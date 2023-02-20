@@ -1,6 +1,8 @@
 
 you-get  # download content from internet with CLI
 pydot  # additionally required by tensorflow to plot a model
+pyinstaller
+glance
 
 
 # pip install python-lsp-server
