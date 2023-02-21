@@ -24,7 +24,7 @@ def main():
         new_path = REPO_ROOT.joinpath(junction)
     else: new_path = tb.P(args.dest).expanduser().absolute().create().joinpath(orig_path.name)
 
-    symlink(this=orig_path, to_this=new_path, overwrite=args.overwrite)
+    symlink(this=orig_path, to_this=new_path, prioritize_to_this=args.overwrite)
 
     print(f"Map completed. To enshrine this mapping, add the following line to the mapper.toml file:")
     print(f"nano {LIBRARY_ROOT}/symlinks/mapper.toml")

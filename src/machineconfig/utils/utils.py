@@ -36,8 +36,7 @@ def display_options(msg, options: list, header="", tail="", prompt="", default=N
             assert default is not None, f"Default option not available!"
             choice_idx = options.index(default)
         try:
-            try:
-                choice_idx = int(choice_idx)
+            try: choice_idx = int(choice_idx)
             except ValueError:  # parsing error
                 raise IndexError
             choice_key = options[choice_idx]
@@ -46,14 +45,13 @@ def display_options(msg, options: list, header="", tail="", prompt="", default=N
             if choice_idx in options:
                 choice_key = choice_idx
                 choice_idx = options.index(choice_idx)
-            else:
-                raise ValueError(f"Unknown choice. {choice_idx}")
+            else: raise ValueError(f"Unknown choice. {choice_idx}")
 
     print(f"{choice_idx}: {choice_key}", f"<<<<-------- CHOICE MADE")
     return choice_key
 
 
-def symlink(this: P, to_this: P, overwrite=True):
+def symlink(this: P, to_this: P, prioritize_to_this=True):
     """helper function. creates a symlink from `this` to `to_this`.
     What can go wrong?
     depending on this and to_this existence, one will be prioretized depending on overwrite value.
@@ -63,11 +61,11 @@ def symlink(this: P, to_this: P, overwrite=True):
     to_this = P(to_this).expanduser().absolute()
     if this.is_symlink(): this.delete(sure=True)  # delete if it exists as symblic link, not a concrete path.
     if this.exists():  # this is a problem. It will be resolved via `overwrite`
-        if overwrite is True:  # it *can* be deleted, but let's look at target first.
+        if prioritize_to_this is True:  # it *can* be deleted, but let's look at target first.
             if to_this.exists():  # this exists, to_this as well. to_this is prioritized.
                 this.append(f".orig_{randstr()}", inplace=True)  # rename is better than deletion
             else: this.move(path=to_this)  # this exists, to_this doesn't. to_this is prioritized.
-        elif overwrite is False:  # don't sacrefice this, sacrefice to_this.
+        elif prioritize_to_this is False:  # don't sacrefice this, sacrefice to_this.
             if to_this.exists(): this.move(path=to_this, overwrite=True)  # this exists, to_this as well, this is prioritized.   # now we are readly to make the link
             else: this.move(path=to_this)  # this exists, to_this doesn't, this is prioritized.
     else:  # this doesn't exist.

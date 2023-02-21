@@ -25,7 +25,7 @@ def link_ssh(overwrite=True):
     target = DotFiles.joinpath("creds/.ssh")
     for item in target.search("*"):
         # if "authorized_keys" in item: continue
-        symlink(path.joinpath(item.name), item, overwrite=overwrite)
+        symlink(path.joinpath(item.name), item, prioritize_to_this=overwrite)
     if system == "Linux":  # permissions of ~/dotfiles/.ssh should be adjusted
         try:
             subprocess.run(f"chmod 700 ~/.ssh/")
@@ -39,7 +39,7 @@ def link_ssh(overwrite=True):
 def link_aws(overwrite=True):
     path = tb.P.home().joinpath(".aws")
     target = DotFiles.joinpath("aws/.aws")
-    for item in target.search("*"): symlink(path.joinpath(item.name), item, overwrite=overwrite)
+    for item in target.search("*"): symlink(path.joinpath(item.name), item, prioritize_to_this=overwrite)
 
 
 def main_symlinks(choice=None):
@@ -79,7 +79,7 @@ def main_symlinks(choice=None):
             link_ssh(overwrite=overwrite)
             continue
         for file_key, file_map in symlink_mapper[program_key].items():
-            try: symlink(this=file_map['this'], to_this=file_map['to_this'].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()), overwrite=overwrite)
+            try: symlink(this=file_map['this'], to_this=file_map['to_this'].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()), prioritize_to_this=overwrite)
             except Exception as ex: print("Config error: ", program_key, file_key, "missing keys 'this ==> to_this'.", ex)
 
     if system == "Linux": tb.Terminal().run(f'chmod +x {LIBRARY_ROOT.joinpath(f"scripts/{system.lower()}")} -R')
