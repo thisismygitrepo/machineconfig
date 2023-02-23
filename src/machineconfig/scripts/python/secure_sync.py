@@ -17,8 +17,7 @@ def args_parser():
 
     args = parser.parse_args()
 
-    if args.cloud is None:
-        cloud = tb.P.home().joinpath("dotfiles/config/setup/rclone_remote").read_text().replace("\n", "")
+    if args.cloud is None: cloud = tb.P.home().joinpath("dotfiles/config/setup/rclone_remote").read_text().replace("\n", "")
     else: cloud = args.cloud
 
     if args.repo is None:
