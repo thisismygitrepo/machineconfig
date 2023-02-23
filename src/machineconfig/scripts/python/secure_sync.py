@@ -17,8 +17,14 @@ def args_parser():
 
     args = parser.parse_args()
 
-    if args.cloud is None: cloud = tb.P.home().joinpath("dotfiles/config/setup/rclone_remote").read_text().replace("\n", "")
+    if args.cloud is None:
+        _path = tb.P.home().joinpath("dotfiles/config/setup/rclone_remote")
+        try: cloud = _path.read_text().replace("\n", "")
+        except FileNotFoundError:
+            print(f"No cloud profile found @ {_path}, please set one up or provide one via the --cloud flag.")
+            return ""
     else: cloud = args.cloud
+
 
     if args.repo is None:
         repo_root = tb.P(".").absolute()

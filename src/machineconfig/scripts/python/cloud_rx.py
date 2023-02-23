@@ -23,7 +23,17 @@ def arg_parser():
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
     args = parser.parse_args()
-    tb.P(args.file).from_cloud(cloud=args.cloud, localpath=args.localpath,
+
+    if args.cloud is None:
+        _path = tb.P.home().joinpath("dotfiles/config/setup/rclone_remote")
+        try: cloud = _path.read_text().replace("\n", "")
+        except FileNotFoundError:
+            print(f"No cloud profile found @ {_path}, please set one up or provide one via the --cloud flag.")
+            return ""
+    else: cloud = args.cloud
+
+
+    tb.P(args.file).from_cloud(cloud=cloud, localpath=args.localpath,
                                unzip=args.unzip, decrypt=args.decrypt, overwrite=args.overwrite,
                                pwd=args.pwd, key=args.key,
                                rel2home=args.relative_to_home, os_specific=args.os_specific,)
