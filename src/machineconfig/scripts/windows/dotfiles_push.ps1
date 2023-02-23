@@ -1,4 +1,17 @@
 
+# Parse command-line arguments
+$params = @{
+    Message = "a new version"
+}
+#$args | ForEach-Object {
+#    switch -Regex ($_ -split '=') {
+#        '--message' { $params.Message = $_.Split('=')[1] }
+#        '-m' { $params.Message = $_.Split('=')[1] }
+#        default { Write-Warning "Unknown parameter: $_" }
+#    }
+#}
+
+
 $dir_orig = pwd
 if (!(Test-Path $HOME/dotfiles/config/setup/rclone_remote)) {
     echo "Path $HOME/dotfiles/config/setup/rclone_remote does not exist. Aborting"
@@ -11,7 +24,7 @@ echo "=============================== Committing Local Changes =================
 cd ~/dotfiles
 git status
 git add .
-git commit -am "a new version"
+git commit -am $params.Message
 
 
 echo ""

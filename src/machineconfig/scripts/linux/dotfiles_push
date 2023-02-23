@@ -8,12 +8,41 @@ fi
 
 rclone_remote=$(cat "$HOME/dotfiles/config/setup/rclone_remote")
 
+## Parse command-line arguments
+#while getopts "m:-:" opt; do
+#  case $opt in
+#    m)
+#      commit_message="$OPTARG"
+#      ;;
+#    -)
+#      case "${OPTARG}" in
+#        message=*)
+#          commit_message="${OPTARG#*=}"
+#          ;;
+#        *)
+#          echo "Invalid option: --${OPTARG}" >&2
+#          exit 1
+#          ;;
+#      esac
+#      ;;
+#    \?)
+#      echo "Invalid option: -$OPTARG" >&2
+#      exit 1
+#      ;;
+#  esac
+#done
+
+# Set default commit message if not specified
+if [ -z "$commit_message" ]; then
+  commit_message="a new version"
+fi
+
 echo ""
 echo "=============================== Committing Local Changes ==================================="
 cd ~/dotfiles || exit 1
 git status
 git add .
-git commit -am "a new version"
+git commit -am $commit_message
 
 
 echo ""
