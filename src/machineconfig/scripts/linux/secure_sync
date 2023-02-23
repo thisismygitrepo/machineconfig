@@ -1,0 +1,7 @@
+
+#!/usr/bin/env bash
+
+. ~/scripts/activate_ve ''
+python $(dirname $(dirname $0))/python/secure_sync.py $@
+deactivate || true
+

@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# Parse command-line arguments
+MESSAGE="a new version"
+
+#while [[ $# -gt 0 ]]; do
+#    case "$1" in
+#        --message|-m)
+#            MESSAGE=$2
+#            shift 2
+#            ;;
+#        *)
+#            echo "Unknown parameter: $1"
+#            shift
+#            ;;
+#    esac
+#done
+
+dir_orig=$(pwd)
+if test -e "$HOME/dotfiles/config/setup/rclone_remote"; then
+    echo "Path $HOME/dotfiles/config/setup/rclone_remote does not exist. Aborting"
+#    exit 1
+fi
+rclone_remote=$(cat "$HOME/dotfiles/config/setup/rclone_remote")
+
+if [[ -d "$repo_root" ]]; then
+    repo_root="$HOME/dotfiles"
+fi
+
+repo_root=$(realpath $repo_root)
+repo_root_rel2home=$(realpath --relative-to=$HOME $repo_root)
+
+echo ""
+echo "=============================== Committing Local Changes ==================================="
+cd "$repo_root" || exit
+git status
+git add .
+git commit -am "$MESSAGE"
+
+
+echo ""
+echo ""
+echo "=============================== Downloading Remote Repo ===================================="
+mkdir -p "$HOME/.machineconfig/remote"
+rm -rfd "$HOME/.machineconfig/remote/$repo_root_rel2home"
+cloud_rx "$rclone_remote" "myhome/generic_os/$repo_root_rel2home" -zew -l "$HOME/.machineconfig/remote/$repo_root_rel2home" # overwrite, zip and encrypt
+
+if [[ ! -d "$HOME/.machineconfig/remote/$repo_root_rel2home" ]]; then
+    echo ""
+    echo "Remote doesn't exist, creating it and exiting ... "
+    cloud_sx "$rclone_remote" "$repo_root" -zer
+    exit
+fi
+
+echo ""
+echo ""
+echo "=============================== Pulling Latest From Remote ================================"
+cd "$repo_root" || exit
+git remote remove originEnc
+git remote add originEnc "$HOME/.machineconfig/remote/$repo_root_rel2home"
+
+share=$(git pull originEnc master)
+
+if [[ "$?" -eq 0 ]]; then
+   echo ""
+   echo "Pull succeeded, removing originEnc, the local copy of remote & pushing merged repo to remote ... "
+   git remote remove originEnc
+   rm -rf "$HOME/.machineconfig/remote/$repo_root_rel2home"/*
+   echo ""
+   echo ""
+   echo "===================================== Pushing new repository to remote ======================================="
+   cloud_sx "$rclone_remote" "$repo_root" -zer
+
+else
+   echo ""
+   echo "Pull failed. Check the remote @ ~/.machineconfig/remote/$repo_root_rel2home"
+fi
+
+# confirmation=""
+# read -p "Did the pull from originEnc merge correctly? [y/n]: " confirmation
+# if [[ "$confirmation" == 'y' ]]; then
+
+cd "$dir_orig" || exit

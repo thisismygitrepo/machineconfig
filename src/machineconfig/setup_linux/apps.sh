@@ -213,6 +213,7 @@ fi
 yes '' | sed 3q; echo "----------------------------- installing figlet ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install figlet -y || true  # large ascii text. See: showfigfonts for full list of fonts. use -f to change font.
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.nms || true
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.figlet || true
 fi
@@ -223,8 +224,10 @@ fi
 yes '' | sed 3q; echo "----------------------------- installing neofetch ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install neofetch -y || true  # for system info
+
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.neofetch || true
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.cpufetch || true
 fi
 neofetch || true
 
