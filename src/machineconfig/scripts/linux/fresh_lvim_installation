@@ -1,4 +1,4 @@
-
+#!/bin/bash
 
 # uninstall then install latest stable release:
 # from https://www.lunarvim.org/docs/installation
