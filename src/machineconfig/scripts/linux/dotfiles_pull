@@ -2,7 +2,7 @@
 
 dir_orig=$(pwd)
 
-if [ ! -d "$HOME/dotfiles/config/setup/rclone_remote" ]; then
+if [ -d "$HOME/dotfiles/config/setup/rclone_remote" ]; then
     echo "Path $HOME/dotfiles/config/setup/rclone_remote does not exist. Aborting"
     exit 1
 fi
