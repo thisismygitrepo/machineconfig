@@ -10,6 +10,7 @@
 
 Param($p = 2223)
 $port_num = $p
+
 #If ($Args[0] -eq $null) {
 #    $port_num = 2222;
 #    exit;
@@ -18,6 +19,8 @@ $port_num = $p
 #    $port_num = $Args[0];
 #}
 # Display all portproxy information
+
+
 If ($Args[0] -eq "list") {
     netsh interface portproxy show v4tov4;
     exit;

@@ -28,6 +28,16 @@ def get_add_ssh_key_script(path_to_key):
         else:
             program = LIBRARY_ROOT.joinpath("jobs/windows/openssh-server_add_key.ps1")
             program = tb.P(program).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
+
+    if system() == "Linux" and 2 > 1: program += f"""
+
+sudo chmod 700 ~/.ssh
+sudo chmod 644 ~/.ssh/authorized_keys
+sudo chmod 644 ~/.ssh/*.pub
+sudo service ssh --full-restart
+# from superuser.com/questions/215504/permissions-on-private-key-in-ssh-folder
+
+"""
     return program
 
 
