@@ -8,7 +8,7 @@ import argparse
 def args_parser():
     parser = argparse.ArgumentParser(description="Secure Repo CLI.")
 
-    parser.add_argument("--repo_root", "-r", help="repo root", default=None)
+    parser.add_argument("--repo", "-r", help="repo root", default=None)
     parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
     parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {tb.randstr()}")
     parser.add_argument("--key", "-k", help="Key for encryption", default=None)
@@ -21,10 +21,10 @@ def args_parser():
         cloud = tb.P.home().joinpath("dotfiles/config/setup/rclone_remote").read_text().replace("\n", "")
     else: cloud = args.cloud
 
-    if args.repo_root is None:
+    if args.repo is None:
         repo_root = tb.P(".").absolute()
     else:
-        repo_root = tb.P(args.repo_root).expanduser().absolute()
+        repo_root = tb.P(args.repo).expanduser().absolute()
 
     repo = tb.install_n_import("git", "gitpython").Repo(repo_root)
     tb.P.home().joinpath(".machineconfig/remote").create()
