@@ -168,6 +168,13 @@ if [ "$package_manager" = "apt" ]; then
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.exa || true
 fi
+yes '' | sed 3q; echo "----------------------------- installing navi ----------------------------"; yes '' | sed 3q
+if [ "$package_manager" = "apt" ]; then
+#  sudo apt install exa -y || true  # replacement for ls. no ner fonts, unlike lsd
+  echo "no apt installer for navi, skipping"
+else
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.navi || true
+fi
 
 
 

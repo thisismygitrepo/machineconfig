@@ -9,11 +9,11 @@ $rclone_remote = cat $HOME/dotfiles/config/setup/rclone_remote
 echo ""
 echo ""
 echo "=============================== Downloading Remote Repo ===================================="
-mkdir ~/.machineconfig -ErrorAction SilentlyContinue
-rm ~/.machineconfig/sync_dotfiles/* -r -force -ErrorAction SilentlyContinue
-rm ~/.machineconfig/sync_dotfiles -r -force -ErrorAction SilentlyContinue
-cloud_rx $rclone_remote myhome/generic_os/dotfiles -zew -l ~/.machineconfig/sync_dotfiles  # overwrite, zip and encrypt
-mv ~/.machineconfig/dotfiles ~/.machineconfig/sync_dotfiles
+mkdir ~/.machineconfig/remote -ErrorAction SilentlyContinue
+rm ~/.machineconfig/remote/dotfiles/* -r -force -ErrorAction SilentlyContinue
+rm ~/.machineconfig/remote/dotfiles -r -force -ErrorAction SilentlyContinue
+cloud_rx $rclone_remote myhome/generic_os/dotfiles -zew -l ~/.machineconfig/remote/dotfiles  # overwrite, zip and encrypt
+mv ~/.machineconfig/dotfiles ~/.machineconfig/remote/dotfiles
 
 
 echo ""
@@ -21,7 +21,7 @@ echo ""
 echo "=============================== Pulling Remote Repo ===================================="
 cd ~/dotfiles
 git remote remove origin
-git remote add origin $HOME/.machineconfig/sync_dotfiles
+git remote add origin $HOME/.machineconfig/remote/dotfiles
 
 
 
@@ -31,13 +31,13 @@ if($?)
 {
    echo ""
    echo "Pull succeeded, removing local copy of remote ... "
-   rm ~/.machineconfig/sync_dotfiles/* -r -force -ErrorAction SilentlyContinue
-   rm ~/.machineconfig/sync_dotfiles -r -force -ErrorAction SilentlyContinue
+   rm ~/.machineconfig/remote/dotfiles/* -r -force -ErrorAction SilentlyContinue
+   rm ~/.machineconfig/remote/dotfiles -r -force -ErrorAction SilentlyContinue
 }
 else
 {
    echo ""
-   echo "Pull failed. Check the remote @ ~/.machineconfig/sync_dotfiles"
+   echo "Pull failed. Check the remote @ ~/.machineconfig/remote/dotfiles"
 }
 
 cd $dir_orig

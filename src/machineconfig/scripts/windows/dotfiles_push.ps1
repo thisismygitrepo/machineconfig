@@ -31,10 +31,10 @@ echo ""
 echo ""
 echo "=============================== Downloading Remote Repo ===================================="
 mkdir ~/.machineconfig -ErrorAction SilentlyContinue
-rm ~/.machineconfig/sync_dotfiles/* -r -force -ErrorAction SilentlyContinue
-rm ~/.machineconfig/sync_dotfiles -r -force -ErrorAction SilentlyContinue
-cloud_rx $rclone_remote myhome/generic_os/dotfiles -zew -l ~/.machineconfig/sync_dotfiles  # overwrite, zip and encrypt
-mv ~/.machineconfig/dotfiles ~/.machineconfig/sync_dotfiles
+rm ~/.machineconfig/remote/dotfiles/* -r -force -ErrorAction SilentlyContinue
+rm ~/.machineconfig/remote/dotfiles -r -force -ErrorAction SilentlyContinue
+cloud_rx $rclone_remote myhome/generic_os/dotfiles -zew -l ~/.machineconfig/remote/dotfiles  # overwrite, zip and encrypt
+mv ~/.machineconfig/dotfiles ~/.machineconfig/remote/dotfiles
 
 # if remote doesn't exist
 # rclone lsf odg1:myhome/generic_os/dotfiles.zip.encf
@@ -45,7 +45,7 @@ echo ""
 echo "=============================== Pulling Latest From Remote ================================"
 cd ~/dotfiles
 git remote remove origin
-git remote add origin $HOME/.machineconfig/sync_dotfiles
+git remote add origin $HOME/.machineconfig/remote/dotfiles
 git pull origin master
 
 
@@ -55,8 +55,8 @@ if($?)
 {
    echo ""
    echo "Pull succeeded, removing local copy of remote & pushing merged repo to remote ... "
-   rm ~/.machineconfig/sync_dotfiles/* -r -force -ErrorAction SilentlyContinue
-   rm ~/.machineconfig/sync_dotfiles -r -force -ErrorAction SilentlyContinue
+   rm ~/.machineconfig/remote/dotfiles/* -r -force -ErrorAction SilentlyContinue
+   rm ~/.machineconfig/remote/dotfiles -r -force -ErrorAction SilentlyContinue
    echo ""
    echo ""
    echo "===================================== Pushing new repository to remote ======================================="
@@ -66,7 +66,7 @@ if($?)
 else
 {
    echo ""
-   echo "Pull failed. Check the remote @ ~/.machineconfig/sync_dotfiles"
+   echo "Pull failed. Check the remote @ ~/.machineconfig/remote/dotfiles"
 }
 
 # $confirmation = Read-Host "Did the pull from origin merge correctly? [y/n]"

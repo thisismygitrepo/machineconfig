@@ -15,5 +15,6 @@ extension = ['~/code/machineconfig/src/machineconfig/scripts/windows',
 extension = ['~/.local/bin',  # many apps, like rust-analyzer and lunarvim place their binaries here which is not in PATH by default
              '~/code/machineconfig/src/machineconfig/scripts/linux',
              '~/dotfiles/scripts/linux',
+             '~/.nix-profile/bin',
              '/usr/games'
              ]
