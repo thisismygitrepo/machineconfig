@@ -7,7 +7,6 @@ def arg_parser():
     parser = argparse.ArgumentParser(description='Cloud Download CLI.')
 
     # positional argument
-    parser.add_argument("cloud", help="rclone cloud profile name.")
     parser.add_argument("file", help="file/folder path to be received.", default="")
     # FLAGS
     # parser.add_argument("--recursive", "-r", help="Send recursively.", action="store_true")  # default is False
@@ -15,6 +14,7 @@ def arg_parser():
     parser.add_argument("--unzip", "-z", help="unzip after receiving.", action="store_true")  # default is False
     parser.add_argument("--overwrite", "-w", help="Overwrite existing file.", action="store_true")  # default is False
     # optional argument
+    parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
     parser.add_argument("--localpath", "-l", help="Local path to save to.", default=None)
     parser.add_argument("--remote_dir", "-d", help="Remote directory to send to.", default="")
     parser.add_argument("--relative_to_home", "-r", help="Relative to `myhome` folder", action="store_true")  # default is False
