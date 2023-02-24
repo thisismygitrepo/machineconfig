@@ -1,6 +1,6 @@
 
 
-__version__ = "1.1"
+__version__ = "1.2"
 release_notes = """
-used nix maanger
+introduced secure_sync
 """
