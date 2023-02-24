@@ -44,3 +44,6 @@ https://github.com/bootandy/dust
 
 lazygit
 alterenative for gitui
+
+asdf alternative in rust
+https://github.com/jdxcode/rtx#apt
