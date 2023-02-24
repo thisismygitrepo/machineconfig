@@ -32,7 +32,6 @@ def arg_parser():
             return ""
     else: cloud = args.cloud
 
-
     tb.P(args.file).from_cloud(cloud=cloud, localpath=args.localpath,
                                unzip=args.unzip, decrypt=args.decrypt, overwrite=args.overwrite,
                                pwd=args.pwd, key=args.key,

@@ -122,6 +122,7 @@ if [ "$package_manager" = "apt" ]; then
   sudo apt install curl
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.skim  # https://search.nixos.org/packages?channel=22.11&show=skim&from=0&size=50&sort=relevance&type=packages&query=skim || true
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.btop
 fi
 yes '' | sed 3q; echo "----------------------------- installing hyperfine ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
@@ -217,6 +218,7 @@ if [ "$package_manager" = "apt" ]; then
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.figlet || true
 fi
+
 # see more here: https://linoxide.com/linux-fun-terminal-crazy-output/
 # midnight commander, similarv# Asciiquarium# https://github.com/bartobri/no-more-secrets
 # https://www.youtube.com/watch?v=haitmoSyTls
@@ -224,7 +226,6 @@ fi
 yes '' | sed 3q; echo "----------------------------- installing neofetch ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install neofetch -y || true  # for system info
-
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.neofetch || true
   ~/.nix-profile/bin/nix-env -iA nixpkgs.cpufetch || true
