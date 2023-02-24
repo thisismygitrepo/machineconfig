@@ -79,7 +79,11 @@ def find_move_delete_windows(downloaded, tool_name=None, delete=True):
     if downloaded.is_file():
         exe = downloaded
     else:
-        exe = downloaded.search("*.exe", r=True)[0] if tool_name is None else downloaded.search(f"{tool_name}.exe", r=True)[0]
+        if tool_name is None: exe = downloaded.search("*.exe", r=True)[0]
+        else:
+            tmp = downloaded.search(f"{tool_name}.exe", r=True)
+            if len(tmp) == 1: exe = tmp[0]
+            else: exe = downloaded.search("*.exe", r=True)[0]
     exe.move(folder=P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
     if delete: downloaded.delete(sure=True)
     return exe
@@ -112,7 +116,7 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
     else: latest_version = version
 
     download_link = P(repo_url + "/releases/download/" + latest_version)
-
+    compression = compression or ("zip" if not linux else "tar.gz")
     version = download_link[-1]
     version = str(version).replace("v", "") if strip_v else str(version)
     tool_name = tool_name or P(repo_url)[-1]
@@ -120,23 +124,19 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
     P.home().joinpath(f"tmp_results/cli_tools_installers/versions/{tool_name}").create(parents_only=True).write_text(version)
 
     if not download_n_extract: return download_link
-    if download_n_extract and not linux:
-        if file_name is None:  # it is not constant, so we compile it from parts as follows:
-            file_name = f'{tool_name}{sep}{version}{sep}{suffix}.{compression or "zip"}'
-        print("Downloading", download_link.joinpath(file_name))
-        downloaded = download_link.joinpath(file_name).download(folder=tmp_install_dir).unzip(inplace=True, overwrite=True)
-        return find_move_delete_windows(downloaded, exe_name or tool_name, delete)
-    elif download_n_extract and linux:
-        if file_name is None:  # it is not constant, so we compile it from parts as follows:
-            file_name = f'{tool_name}-{version}-{suffix}.{compression or "tar.gz"}'
-        download_link = download_link.joinpath(file_name)
-        print("Downloading", download_link)
-        downloaded = download_link.download(folder=tmp_install_dir)
-        if "tar.gz" in download_link: downloaded = downloaded.ungz_untar(inplace=True)
-        elif "zip" in download_link: downloaded = downloaded.unzip(inplace=True)
-        elif "tar.xz" in download_link: downloaded = downloaded.unxz_untar(inplace=True)
-        else: pass  # no compression.
-        return find_move_delete_linux(downloaded, exe_name or tool_name, delete)
+    if file_name is None:  # it is not constant, so we compile it from parts as follows:
+        file_name = f'{tool_name}{sep}{version}{sep}{suffix}.{compression}'
+    download_link = download_link.joinpath(file_name)
+    print("Downloading", download_link.as_url_str())
+    downloaded = download_link.download(folder=tmp_install_dir)
+
+    if "tar.gz" in download_link: downloaded = downloaded.ungz_untar(inplace=True)
+    elif "zip" in download_link: downloaded = downloaded.unzip(inplace=True, overwrite=True)
+    elif "tar.xz" in download_link: downloaded = downloaded.unxz_untar(inplace=True)
+    else: pass  # no compression.
+
+    if download_n_extract and not linux: return find_move_delete_windows(downloaded, exe_name or tool_name, delete)
+    elif download_n_extract and linux: return find_move_delete_linux(downloaded, exe_name or tool_name, delete)
 
     # console.rule(f"Completed Installation")
     # return res
