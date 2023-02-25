@@ -1,12 +1,11 @@
 
 from platform import system
 # import subprocess
-import crocodile.toolbox as tb
-from machineconfig.utils.utils import display_options
+# import crocodile.toolbox as tb
+from machineconfig.utils.utils import display_options, PROGRAM_PATH
 from enum import Enum
 
 
-PROGRAM_PATH = tb.P.tmp().joinpath("shells/python_return_command") + (".ps1" if system() == "Windows" else ".sh")
 # needs to be synced with devops.sh and devops.ps1
 
 
@@ -16,7 +15,7 @@ class Options(Enum):
     ve             = 'VE install'
     sym_path_shell = 'SYMLINKS, PATH & SHELL PROFILE'
     sym_new        = 'SYMLINKS new'
-    ssh_add_pubkey  = 'SSH add pub key to this machine'
+    ssh_add_pubkey = 'SSH add pub key to this machine'
     ssh_add_id     = 'SSH add identity (private key) to this machine'
     ssh_use_pair   = 'SSH use key pair to connect two machines'
     ssh_setup      = 'SSH setup'

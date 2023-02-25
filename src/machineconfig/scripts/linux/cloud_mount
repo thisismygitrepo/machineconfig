@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# check below if VIRTUAL_ENV is set
+if [ -z "$VIRTUAL_ENV" ]; then
+  source ~/scripts/activate_ve ''
+fi
+
+op_script=$HOME/tmp_results/shells/python_return_command.sh
+if [ -f "$op_script" ]; then
+  rm $op_script
+fi
+
+python -m machineconfig.scripts.python.cloud_mount $@
+chmod +x ~/tmp_results/shells/python_return_command.sh
+source ~/tmp_results/shells/python_return_command.sh
+
+# check below if VIRTUAL_ENV enviroment variable exist, then deactivate it, other wise skip
+if [ -n "$VIRTUAL_ENV" ]; then
+  deactivate
+fi
