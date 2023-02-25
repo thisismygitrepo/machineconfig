@@ -40,8 +40,8 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 
 ###### Setup SSH connection:
 ```shell
-$pubkey_url='https://github.com/thisismygitrepo.keys'  # (CHANGE APPROPRIATELY)
-$pubkey_string=(Invoke-WebRequest $pubkey_url).Content
+# CHANGE pubkey_string APPROPRIATELY
+$pubkey_string=(Invoke-WebRequest 'https://github.com/thisismygitrepo.keys').Content
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression
 ```
 short `curl bit.ly/cfgsshwindows -L | iex`

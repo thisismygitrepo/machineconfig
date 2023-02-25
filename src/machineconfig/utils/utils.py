@@ -143,14 +143,11 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
 
 
 def get_shell_script_executing_pyscript(python_file, func=None, system=None, ve_name="ve"):
-    if system == "Windows":
-        return f"""
-~/scripts/activate_ve
-python {python_file} {func if func is not None else ""}
-"""
-    else: return f"""
-source ~/scripts/activate_ve
-python {python_file} {func if func is not None else ""}
+    if func is None: exec_line = f"""python {python_file}"""
+    else: exec_line = f"""python -m fire {python_file} {func}"""
+    return f"""
+. ~/scripts/activate_ve {ve_name}
+{exec_line}
 deactivate
 """
 
