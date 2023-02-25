@@ -31,12 +31,12 @@ mkdir mounts -ErrorAction SilentlyContinue
 mprocs "powershell {sub_text_path}" "{mount_cmd}" "btm" "timeout 2 & cd {mount_loc} & lf" "timeout 2 & cd {mount_loc} & pwsh" "pwsh" --names "info,service,monitor,explorer,main,terminal"
 """
     else:
+        mount_cmd = f"rclone mount {cloud}: mounts/{cloud} --vfs-cache-mode full --file-perms=0777"
         txt = f"""
 cd ~
 mkdir mounts -p
 mkdir mounts/{cloud} -p
-
-mprocs "echo 'see ~/mounts/{cloud} for the mounted cloud'; rclone about {cloud}:" "rclone mount {cloud}: mounts/{cloud} --vfs-cache-mode full"
+mprocs "echo 'see ~/mounts/{cloud} for the mounted cloud'; rclone about {cloud}:" "{mount_cmd}" "btm" "lf" "bash" "bash" --name "about,service,monitor,explorer,main,shell"
 """
 
     PROGRAM_PATH.write_text(txt)
