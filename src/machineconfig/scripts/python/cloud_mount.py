@@ -35,9 +35,8 @@ mprocs "powershell {sub_text_path}" "{mount_cmd}" "btm" "timeout 2 & cd {mount_l
 cd ~
 mkdir mounts -p
 mkdir mounts/{cloud} -p
-echo "see ~/mounts/{cloud} for the mounted cloud"
-rclone about {cloud}:
-rclone mount {cloud}: mounts/{cloud} --vfs-cache-mode full
+
+mprocs "echo 'see ~/mounts/{cloud} for the mounted cloud'; rclone about {cloud}:" "rclone mount {cloud}: mounts/{cloud} --vfs-cache-mode full"
 """
 
     PROGRAM_PATH.write_text(txt)

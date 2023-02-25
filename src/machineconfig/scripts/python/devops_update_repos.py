@@ -46,7 +46,7 @@ git reset --hard
 git pull origin
 chmod +x ~/scripts -R
 chmod +x ~/code/machineconfig/src/machineconfig/jobs/linux -R
-chmod +x ~/code/machineconfig/src/machineconfig/settings/lf_linux/exe -R
+chmod +x ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe -R
 """
                 additions.append(an_addition)
             else:
