@@ -4,18 +4,8 @@ from machineconfig.utils.utils import PROGRAM_PATH, display_options
 import crocodile.toolbox as tb
 
 
-def main(cloud=None, network=None):
-    config = tb.Read.ini(tb.P.home().joinpath(".config/rclone/rclone.conf"))
-    # default = tb.P.home().joinpath(".machineconfig/
-    if cloud is None:
-        cloud = display_options(msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
-    cloud_brand = config[cloud]["type"]
+def get_mprocs_mount_txt(cloud, cloud_brand, rclone_cmd, localpath):
     if platform.system() == "Windows":
-        if network is None:
-            mount_loc = tb.P.home().joinpath(f"mounts/{cloud}")
-        else:
-            mount_loc = "X: --network-mode"
-        mount_cmd = f"rclone mount {cloud}: {mount_loc} --vfs-cache-mode full --file-perms=0777"
         sub_text_path = tb.P.tmpfile(suffix=".ps1").write_text(f"""
 echo "Cloud brand: {cloud_brand}"
 iex 'rclone about {cloud}:'
@@ -28,17 +18,31 @@ cd ~
 mkdir mounts -ErrorAction SilentlyContinue
 # mkdir mounts/{cloud}  # this is not needed on windows
 
-mprocs "powershell {sub_text_path}" "{mount_cmd}" "btm" "timeout 2 & cd {mount_loc} & lf" "timeout 2 & cd {mount_loc} & pwsh" "pwsh" --names "info,service,monitor,explorer,main,terminal"
+mprocs "powershell {sub_text_path}" "{rclone_cmd}" "btm" "timeout 2 & cd {localpath} & lf" "timeout 2 & cd {localpath} & pwsh" "pwsh" --names "info,service,monitor,explorer,main,terminal"
 """
     else:
-        mount_cmd = f"rclone mount {cloud}: mounts/{cloud} --vfs-cache-mode full --file-perms=0777"
         txt = f"""
 cd ~
 mkdir mounts -p
-mkdir mounts/{cloud} -p
-mprocs "echo 'see ~/mounts/{cloud} for the mounted cloud'; rclone about {cloud}:" "{mount_cmd}" "btm" "lf" "bash" "bash" --names "about,service,monitor,explorer,main,shell"
+mkdir {localpath}-p
+mprocs "echo 'see ~/mounts/{cloud} for the mounted cloud'; rclone about {cloud}:" "{rclone_cmd}" "btm" "lf" "bash" "bash" --names "about,service,monitor,explorer,main,shell"
 """
+    return txt
 
+def main(cloud=None, network=None):
+    config = tb.Read.ini(tb.P.home().joinpath(".config/rclone/rclone.conf"))
+    # default = tb.P.home().joinpath(".machineconfig/
+    if cloud is None:
+        cloud = display_options(msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
+    cloud_brand = config[cloud]["type"]
+
+    if network is None: mount_loc = tb.P.home().joinpath(f"mounts/{cloud}")
+    elif network and platform.system() == "Windows": mount_loc = "X: --network-mode"
+    else: raise ValueError("network mount only supported on windows")
+
+    mount_cmd = f"rclone mount {cloud}: {mount_loc} --vfs-cache-mode full --file-perms=0777"
+
+    txt = get_mprocs_mount_txt(cloud, cloud_brand, mount_cmd, mount_loc)
     PROGRAM_PATH.write_text(txt)
 
 

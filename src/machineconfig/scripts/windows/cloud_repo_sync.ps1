@@ -1,4 +1,4 @@
 
 . $PSScriptRoot/activate_ve.ps1
-python $PSScriptRoot/../python/secure_sync.py $args
+python $PSScriptRoot/../python/cloud_repo_sync.py $args
 deactivate -ErrorAction SilentlyContinue

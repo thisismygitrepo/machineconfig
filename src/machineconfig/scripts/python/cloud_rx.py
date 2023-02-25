@@ -7,7 +7,7 @@ def arg_parser():
     parser = argparse.ArgumentParser(description='Cloud Download CLI.')
 
     # positional argument
-    parser.add_argument("file", help="file/folder path to be received.", default="")
+    parser.add_argument("file", help="file/folder path to be received.")
     # FLAGS
     # parser.add_argument("--recursive", "-r", help="Send recursively.", action="store_true")  # default is False
     parser.add_argument("--decrypt", "-e", help="Decrypt after receiving.", action="store_true")  # default is False

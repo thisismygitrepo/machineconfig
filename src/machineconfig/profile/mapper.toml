@@ -79,7 +79,7 @@ config = { this = '~/.config/zellij', to_this = 'LIBRARY_ROOT/settings/zellij' }
 #layouts = { this = '~/.config/zellij/layouts', to_this = 'LIBRARY_ROOT/settings/zellij/layouts' }
 
 [mprocs_windows]
-config = {this = '~/AppData/Roaming/mprocs/mprocs.yaml', to_this = 'LIBRARY_ROOT/settings/mprocs/windows/mprocs.yaml'}
+config = {this = '~/mprocs.yaml', to_this = 'LIBRARY_ROOT/settings/mprocs/windows/mprocs.yaml'}
 
 
 [wsl_windows]
