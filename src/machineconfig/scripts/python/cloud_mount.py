@@ -36,7 +36,7 @@ mprocs "powershell {sub_text_path}" "{mount_cmd}" "btm" "timeout 2 & cd {mount_l
 cd ~
 mkdir mounts -p
 mkdir mounts/{cloud} -p
-mprocs "echo 'see ~/mounts/{cloud} for the mounted cloud'; rclone about {cloud}:" "{mount_cmd}" "btm" "lf" "bash" "bash" --name "about,service,monitor,explorer,main,shell"
+mprocs "echo 'see ~/mounts/{cloud} for the mounted cloud'; rclone about {cloud}:" "{mount_cmd}" "btm" "lf" "bash" "bash" --names "about,service,monitor,explorer,main,shell"
 """
 
     PROGRAM_PATH.write_text(txt)
