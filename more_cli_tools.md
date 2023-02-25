@@ -47,3 +47,8 @@ alterenative for gitui
 
 asdf alternative in rust
 https://github.com/jdxcode/rtx#apt
+
+terminal emulators
+https://github.com/cmderdev/cmder
+https://github.com/sedwards2009/extraterm
+starship and alacrity.

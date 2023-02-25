@@ -1,0 +1,53 @@
+
+procs:
+  explorer:
+    shell:
+      $select: os
+      windows: "lf"
+      $else: "lf"
+    env:
+      TEXT:
+        $select: os
+        windows: Windows
+        linux: Linux
+        macos: Macos
+        freebsd: FreeBSD
+
+  monitor:
+    shell:
+      $select: os
+      windows: "btm"
+      $else: "btop"
+    env:
+      TEXT:
+        $select: os
+        windows: Windows
+        linux: Linux
+        macos: Macos
+        freebsd: FreeBSD
+
+  main:
+    shell:
+      $select: os
+      windows: "pwsh"
+      $else: "bash"
+    env:
+      TEXT:
+        $select: os
+        windows: Windows
+        linux: Linux
+        macos: Macos
+        freebsd: FreeBSD
+
+  shell:
+    shell:
+      $select: os
+      windows: "pwsh"
+      $else: "bash"
+    env:
+      TEXT:
+        $select: os
+        windows: Windows
+        linux: Linux
+        macos: Macos
+        freebsd: FreeBSD

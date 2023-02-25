@@ -53,15 +53,15 @@ public = {this = '~/scripts', to_this = 'LIBRARY_ROOT/scripts/windows'}
 
 
 [lf_windows]
-config = {this = '~/AppData/Local/lf/lfrc', to_this = 'LIBRARY_ROOT/settings/lf/lfrc'}
-colors = {this = '~/AppData/Local/lf/colors', to_this = 'LIBRARY_ROOT/settings/lf/colors'}
-icons = {this = '~/AppData/Local/lf/icons', to_this = 'LIBRARY_ROOT/settings/lf/icons'}
+config = {this = '~/AppData/Local/lf/lfrc', to_this = 'LIBRARY_ROOT/settings/lf/windows/lfrc'}
+colors = {this = '~/AppData/Local/lf/colors', to_this = 'LIBRARY_ROOT/settings/lf/windows/colors'}
+icons = {this = '~/AppData/Local/lf/icons', to_this = 'LIBRARY_ROOT/settings/lf/windows/icons'}
 
 
 [lf_linux]
-colors = {this = '~/.config/lf/colors', to_this = 'LIBRARY_ROOT/settings/lf_linux/colors'}
-config = {this = '~/.config/lf/lfrc', to_this = 'LIBRARY_ROOT/settings/lf_linux/lfrc'}
-icons = {this = '~/.config/lf/icons', to_this = 'LIBRARY_ROOT/settings/lf_linux/icons'}
+colors = {this = '~/.config/lf/colors', to_this = 'LIBRARY_ROOT/settings/lf/linux/colors'}
+config = {this = '~/.config/lf/lfrc', to_this = 'LIBRARY_ROOT/settings/lf/linux/lfrc'}
+icons = {this = '~/.config/lf/icons', to_this = 'LIBRARY_ROOT/settings/lf/linux/icons'}
 
 
 #[broot_windows]
@@ -77,6 +77,9 @@ tmate = {this = '~/.tmate.conf', to_this = 'LIBRARY_ROOT/settings/tmux/.tmate.co
 config = { this = '~/.config/zellij', to_this = 'LIBRARY_ROOT/settings/zellij' }
 #themes = { this = '~/.config/zellij/themes', to_this = 'LIBRARY_ROOT/settings/zellij/themes' }
 #layouts = { this = '~/.config/zellij/layouts', to_this = 'LIBRARY_ROOT/settings/zellij/layouts' }
+
+[mprocs_windows]
+config = {this = '~/AppData/Roaming/mprocs/mprocs.yaml', to_this = 'LIBRARY_ROOT/settings/mprocs/windows/mprocs.yaml'}
 
 
 [wsl_windows]
@@ -94,7 +97,7 @@ home = {this = '~/win', to_this = '/mnt/c/Users/username'}
 [nvim_windows]
 
 [nvim]
-flake8 = {this = '~/.flake8', to_this = 'LIBRARY_ROOT/settings/lvim/plugins_config/.flake8'}
+flake8 = {this = '~/.flake8', to_this = 'LIBRARY_ROOT/settings/lvim/generic/plugins_config/.flake8'}
 
 
 [helix_windows]
@@ -114,10 +117,10 @@ config = { this = '~/.config/helix/config.toml', to_this = 'LIBRARY_ROOT/setting
 #config = { this = '~/.config/lvim/config.lua', to_this = 'LIBRARY_ROOT/settings/lvim_linux/config.lua' }
 
 [svim_windows]
-init = { this = '~/.SpaceVim.d/init.toml', to_this = 'LIBRARY_ROOT/settings/svim_windows/init.toml' }
+init = { this = '~/.SpaceVim.d/init.toml', to_this = 'LIBRARY_ROOT/settings/svim/windows/init.toml' }
 
 [svim_linux]
-init = { this = '~/.SpaceVim.d/init.toml', to_this = 'LIBRARY_ROOT/settings/svim_linux/init.toml' }
+init = { this = '~/.SpaceVim.d/init.toml', to_this = 'LIBRARY_ROOT/settings/svim/linux/init.toml' }
 
 [apps_windows]
 notepadpp = {this = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', to_this = 'C:/Program Files/Notepad++/notepad++.exe'}
