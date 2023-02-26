@@ -30,10 +30,10 @@ def args_parser():
     remote = "myhome/generic_os" / local.rel2home()
     print(f"Syncing {local} to {args.cloud}:{remote} | using strategy `{strategy}`")
 
-    if args.upload: rclone_cmd = f"""rclone sync {local} {args.cloud}:{remote}"""
-    elif args.download: rclone_cmd = f"""rclone sync {args.cloud}:{remote} {local}"""
-    elif args.bisync: rclone_cmd = f"""rclone bisync {local} {args.cloud}:{remote} --resync"""
-    else: rclone_cmd = f"""rclone bisync {local} {args.cloud}:{remote} --resync"""
+    if args.upload: rclone_cmd = f"""rclone sync {local} {args.cloud}:{remote} --progress"""
+    elif args.download: rclone_cmd = f"""rclone sync {args.cloud}:{remote} {local} --progress"""
+    elif args.bisync: rclone_cmd = f"""rclone bisync {local} {args.cloud}:{remote} --resync --progress"""
+    else: rclone_cmd = f"""rclone bisync {local} {args.cloud}:{remote} --resync --progress"""
 
     if args.verbose: txt = get_mprocs_mount_txt(cloud=args.cloud, cloud_brand="unknown", rclone_cmd=rclone_cmd, localpath=local)
     else: txt = f"""cd ~\n{rclone_cmd}"""

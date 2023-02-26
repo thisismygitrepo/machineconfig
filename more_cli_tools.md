@@ -5,6 +5,7 @@
 # https://devsession.is/
 # https://github.com/rothgar/awesome-tuis
 # https://github.com/nschloe/github-trends
+# https://github.com/EvanLi/Github-Ranking#go
 
 https://github.com/k4m4/terminals-are-sexy
 https://github.com/agarrharr/awesome-cli-apps
@@ -48,7 +49,17 @@ alterenative for gitui
 asdf alternative in rust
 https://github.com/jdxcode/rtx#apt
 
+# Terminals
 terminal emulators
 https://github.com/cmderdev/cmder
 https://github.com/sedwards2009/extraterm
 starship and alacrity.
+
+# Remote
+https://github.com/rustdesk/rustdesk/releases
+parsec rdp
+
+# recorder
+pecpeck
+clipchamp
+https://github.com/ShareX/ShareX
