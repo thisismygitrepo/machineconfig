@@ -8,7 +8,7 @@ files = ['LIBRARY_ROOT/settings/broot/brootcd.ps1',  # defines br command which 
 
 [linux]
 files = ['LIBRARY_ROOT/settings/broot/br.sh',
-         'LIBRARY_ROOT/settings/lf_linux/exe/lfcd.sh',
+         'LIBRARY_ROOT/settings/lf/linux/exe/lfcd.sh',
          'LIBRARY_ROOT/settings/tere/terecd.sh']
 
 # see broot --install to reinstall and see config files locations.
