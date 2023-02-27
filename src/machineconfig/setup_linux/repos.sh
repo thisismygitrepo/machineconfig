@@ -16,7 +16,7 @@ git clone https://github.com/thisismygitrepo/machineconfig.git  --depth 4
 
 cd ~/code/crocodile || exit
 pip install -e .
-pip install -r requirements.txt
+# pip install -r requirements.txt
 cd ~/code/machineconfig || exit
 pip install -e .
 cd ~ || exit
