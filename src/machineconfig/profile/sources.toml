@@ -3,7 +3,7 @@
 
 [windows]
 files = ['LIBRARY_ROOT/settings/broot/brootcd.ps1',  # defines br command which wraps broot.exe
-         'LIBRARY_ROOT/settings/lf/lfcd.ps1',
+         'LIBRARY_ROOT/settings/lf/windows/lfcd.ps1',
          'LIBRARY_ROOT/settings/tere/terecd.ps1']
 
 [linux]
