@@ -9,7 +9,7 @@ def args_parser():
     parser = argparse.ArgumentParser(description="Secure Repo CLI.")
 
     parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
-    parser.add_argument("--localpath", "-l", help="rclone cloud profile name.", default=None)
+    parser.add_argument("--localpath", "-p", help="rclone cloud profile name.", default=None)
     parser.add_argument("--transfers", "-t", help="Number of threads in syncing.", default=10)  # default is False
     # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     # parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
@@ -22,7 +22,7 @@ def args_parser():
 
     args = parser.parse_args()
 
-    local = P(args.path).expanduser().absolute()
+    local = P(args.localpath).expanduser().absolute()
     if ":" not in args.cloud:  # usee did not specify remotepath, so it will be inferred here:
         remote = "myhome/generic_os" / local.rel2home()
         remote_exp = f"{args.cloud}:{remote}"
