@@ -1,5 +1,5 @@
 
-from crocodile.file_management import P
+from crocodile.file_management import P, Read
 from machineconfig.utils.utils import PROGRAM_PATH
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse
@@ -8,13 +8,12 @@ import argparse
 def args_parser():
     parser = argparse.ArgumentParser(description="Secure Repo CLI.")
 
-    parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
-    parser.add_argument("--localpath", "-p", help="rclone cloud profile name.", default=None)
+    parser.add_argument("source", help="source", default=None)
+    parser.add_argument("target", help="target", default=None)
+
     parser.add_argument("--transfers", "-t", help="Number of threads in syncing.", default=10)  # default is False
     # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     # parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
-    parser.add_argument("--upload", "-u", help="Upload direction, local is unchanged.", action="store_true")  # default is False
-    parser.add_argument("--download", "-d", help="Download direction, local is unchanged.", action="store_true")  # default is False
     parser.add_argument("--bisync", "-b", help="Bidirectional sync.", action="store_true")  # default is False
     parser.add_argument("--delete", "-D", help="Delete files in remote that are not in local.", action="store_true")  # default is False
 
@@ -22,27 +21,48 @@ def args_parser():
 
     args = parser.parse_args()
 
-    local = P(args.localpath).expanduser().absolute()
-    if ":" not in args.cloud:  # usee did not specify remotepath, so it will be inferred here:
-        remote = "myhome/generic_os" / local.rel2home()
-        remote_exp = f"{args.cloud}:{remote}"
-    else: remote_exp = args.cloud
+    if ":" in args.source:
+        source = args.source
+        target = P(args.target).expanduser().absolute()
+        cloud = source.split(":")[0]
+        localpath = target
+    elif ":" in args.target:
+        source = args.target  # unchanged
+        target = P(args.source).expanduser().absolute()
+        cloud = source.split(":")[0]
+        localpath = target
+    else:  # user did not specify remotepath, so it will be inferred here
+        # but first we need to know whether the cloud is source or target
+        remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
+        for a_remote in remotes:
+            if args.source == a_remote:
+                target = P(args.target).expanduser().absolute()
+                source = f"{args.source}:{'myhome/generic_os' / target.rel2home()}"
+                cloud = args.source
+                localpath = target
+                break
+            if args.target == a_remote:
+                source = P(args.source).expanduser().absolute()
+                target = f"{args.target}:{'myhome/generic_os' / source.rel2home()}"
+                cloud = args.target
+                localpath = source
+                break
+        else:
+            print(f"Could not find a remote in {remotes} that matches {args.source} or {args.target}.")
+            raise ValueError
 
     # map short flags to long flags (-u -> --upload), for easier use in the script
-    if args.upload: _strategy = "upload"; print(f"Syncing {local} {'>' * 30} {remote_exp}`")
-    elif args.download: _strategy = "download"; print(f"Syncing {local} {'<' * 30} {remote_exp}`")
-    else: _strategy = "bisync"; print(f"Syncing {local} {'<>' * 15} {remote_exp}`")
+    if args.bisync: print(f"Syncing {source} {'<>' * 7} {target}`")
+    else: print(f"Syncing {source} {'>' * 15} {target}`")
 
-    if args.upload: rclone_cmd = f"""rclone sync {local} {remote_exp}"""
-    elif args.download: rclone_cmd = f"""rclone sync {remote_exp} {local}"""
-    elif args.bisync: rclone_cmd = f"""rclone bisync {local} {remote_exp}"""
-    else: rclone_cmd = f"""rclone bisync {local} {remote_exp}"""
-    rclone_cmd += f" --progress --transfers={args.transfers}"
+    if args.bisync: rclone_cmd = f"""rclone bisync {source} {target}"""
+    else: rclone_cmd = f"""rclone sync {source} {target}"""
+
+    rclone_cmd += f" --progress --transfers={args.transfers} --verbose"
     if args.bisync: rclone_cmd += " --resync"
     if args.delete: rclone_cmd += " --delete-during"
-    # if args.verbose: rclone_cmd += " --verbose"
 
-    if args.verbose: txt = get_mprocs_mount_txt(cloud=args.cloud, cloud_brand="unknown", rclone_cmd=rclone_cmd, localpath=local)
+    if args.verbose: txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd, localpath=localpath)
     else: txt = f"""cd ~\n{rclone_cmd}"""
     print(r'running command'.center(100, '-'))
     print(txt)

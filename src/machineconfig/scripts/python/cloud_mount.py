@@ -4,10 +4,13 @@ from machineconfig.utils.utils import PROGRAM_PATH, display_options
 import crocodile.toolbox as tb
 
 
-def get_mprocs_mount_txt(cloud, cloud_brand, rclone_cmd, localpath):
+def get_mprocs_mount_txt(cloud, rclone_cmd, localpath):
+    config = tb.Read.ini(tb.P.home().joinpath(".config/rclone/rclone.conf"))
+    cloud_brand = config[cloud]["type"]
+    header = f"{' ' + cloud + ' | ' + cloud_brand + ' '}".center(50, "=")
     if platform.system() == "Windows":
         sub_text_path = tb.P.tmpfile(suffix=".ps1").write_text(f"""
-echo "Cloud brand: {cloud_brand}"
+echo "{header}"
 iex 'rclone about {cloud}:'
 echo 'See ~/mounts/{cloud} for the mounted cloud'
 
@@ -34,7 +37,6 @@ def main(cloud=None, network=None):
     # default = tb.P.home().joinpath(".machineconfig/
     if cloud is None:
         cloud = display_options(msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
-    cloud_brand = config[cloud]["type"]
 
     if network is None: mount_loc = tb.P.home().joinpath(f"mounts/{cloud}")
     elif network and platform.system() == "Windows": mount_loc = "X: --network-mode"
@@ -42,7 +44,7 @@ def main(cloud=None, network=None):
 
     mount_cmd = f"rclone mount {cloud}: {mount_loc} --vfs-cache-mode full --file-perms=0777"
 
-    txt = get_mprocs_mount_txt(cloud, cloud_brand, mount_cmd, mount_loc)
+    txt = get_mprocs_mount_txt(cloud, mount_cmd, mount_loc)
     PROGRAM_PATH.write_text(txt)
 
 
