@@ -44,6 +44,8 @@ def args_parser():
 
     if args.verbose: txt = get_mprocs_mount_txt(cloud=args.cloud, cloud_brand="unknown", rclone_cmd=rclone_cmd, localpath=local)
     else: txt = f"""cd ~\n{rclone_cmd}"""
+    print(r'running command'.center(100, '-'))
+    print(txt)
     PROGRAM_PATH.write_text(txt)
 
 

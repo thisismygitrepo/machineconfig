@@ -20,7 +20,7 @@ set ratios '1:2:3'  # ratio of pane widths
 # see more at https://git.lmburns.com/dotfiles-mac/file/.config/lf/lfrc.html
 
 # also see pistol file previewer.
-# set previewer ~/code/machineconfig/src/machineconfig/settings/lf_linux/exe/leftpane_previewer.sh
+# set previewer ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/leftpane_previewer.sh
 # set ignorecase true
 # see:
 # https://github.com/gokcehan/lf/wiki/Integrations#ripgrep
@@ -75,7 +75,7 @@ map ww bash
 map wp $powershell
 map wr $~/scripts/croshell
 map wm $cmd
-map i $~/code/machineconfig/src/machineconfig/settings/lf_linux/exe/previewer.sh $f
+map i $~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh $f
 map R $~/scripts/croshell -r $f
 
 
