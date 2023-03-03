@@ -9,15 +9,18 @@ if [ -z "$VIRTUAL_ENV" ]; then  # no active ve ==> activate one.
       source $name/bin/activate
     else  # no default ve found, using ve and setting it as default
       name="ve"
-      source ~/venvs/$name/bin/activate
       mkdir ~/.machineconfig || true
       echo $VIRTUAL_ENV > ~/.machineconfig/default_ve
+      source ~/venvs/$name/bin/activate
     fi
   else
     name=$1
     source ~/venvs/$name/bin/activate
   fi
-  echo "Activated virtual environment $VIRTUAL_ENV "
+
+  if [ $? -eq 0 ]; then
+    echo "✅ Activated virtual environment $VIRTUAL_ENV "
+  fi
 
 else
   # check if $1 is passed, if yes, activate it
@@ -26,7 +29,11 @@ else
     deactivate
     name=$1
     source ~/venvs/$name/bin/activate
-    echo "Activated virtual environment $VIRTUAL_ENV "
+
+    if [ $? -eq 0 ]; then
+      echo "✅ Activated virtual environment $VIRTUAL_ENV "
+    fi
+
   else
     echo "Virtual environment $VIRTUAL_ENV already active"
   fi

@@ -62,11 +62,7 @@
                 "name": "PowerShell",
                 "opacity": 85,
                 "source": "Windows.Terminal.PowershellCore",
-                "startingDirectory": "%USERPROFILE%",
-                // "backgroundImage": "C:/Users/alex/Documents/Downloads/universe.png",
-                // "backgroundImageAlignment": "bottomRight",
-                // "backgroundImageOpacity": 0.2,
-                // "backgroundImageStretchMode": "fill"
+                "startingDirectory": "%USERPROFILE%"
             },
             {
                 "commandline": "powershell.exe -Command \"~/scripts/croshell.ps1\"",

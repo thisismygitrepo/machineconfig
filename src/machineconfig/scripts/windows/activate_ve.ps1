@@ -8,9 +8,9 @@ if (!$env:VIRTUAL_ENV) {  # no ve activated ==> activate one.
         }
         else {  # no default file.  >> use default name
             $name = "ve"
-            & "$env:USERPROFILE/venvs/$name/Scripts/Activate.ps1"
             mkdir $env:USERPROFILE/.machineconfig -ErrorAction SilentlyContinue
             New-Item -ItemType File -Path "$env:USERPROFILE/.machineconfig/default_ve" -Value $env:VIRTUAL_ENV
+            & "$env:USERPROFILE/venvs/$name/Scripts/Activate.ps1"
             }
         }
     else {
@@ -18,7 +18,7 @@ if (!$env:VIRTUAL_ENV) {  # no ve activated ==> activate one.
           & "$env:USERPROFILE/venvs/$name/Scripts/Activate.ps1"
          }
 
-    Write-Host "Activated virtual environment $env:VIRTUAL_ENV"
+    if ($?) { Write-Host "✅ Activated virtual environment $env:VIRTUAL_ENV" }
 
 }
 else {
@@ -29,10 +29,10 @@ else {
         deactivate -ErrorAction SilentlyContinue
         $name = $args[0]
         & "$env:USERPROFILE/venvs/$name/Scripts/Activate.ps1"
-        Write-Host "Activated virtual environment $env:VIRTUAL_ENV "
+        if ($?) { Write-Host "✅ Activated virtual environment $env:VIRTUAL_ENV" }
     }
     else {
-        Write-Host "Virtual environment $env:VIRTUAL_ENV already activate"
+        Write-Host "🤔 Virtual environment $env:VIRTUAL_ENV already activate"
     }
 
     if (!(Test-Path $env:USERPROFILE/.machineconfig/default_ve)) {
