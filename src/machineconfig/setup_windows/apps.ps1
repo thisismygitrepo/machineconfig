@@ -3,7 +3,8 @@
 $ErrorActionPreference = "Stop"
 
 # ================================= APPS ================================================
-winget install --no-upgrade --name "Google Chrome" --Id "Google.Chrome" --source winget --accept-package-agreements --accept-source-agreements
+# winget install --no-upgrade --name "Google Chrome" --Id "Google.Chrome" --source winget --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --Id Brave.Brave --source winget
 #winget install --no-upgrade --name "Chrome Remote Desktop Host" --Id "Google.ChromeRemoteDesktop" --source winget
 #winget search "Microsoft Teams" --Id "Microsoft.Teams" --Source winget
 #winget install --no-upgrade --name Zoom --Id Zoom.Zoom --source winget
