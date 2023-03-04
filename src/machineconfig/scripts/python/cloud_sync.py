@@ -5,6 +5,9 @@ from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse
 
 
+# TODO add  --vfs-cache-mode full
+
+
 def args_parser():
     parser = argparse.ArgumentParser(description="Secure Repo CLI.")
 
