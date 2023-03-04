@@ -4,12 +4,14 @@ from machineconfig.utils.utils import PROGRAM_PATH
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse
 
+"""
 
+"""
 # TODO add  --vfs-cache-mode full
 
 
 def args_parser():
-    parser = argparse.ArgumentParser(description="Secure Repo CLI.")
+    parser = argparse.ArgumentParser(description="""A wrapper for rclone sync and rclone bisync, with some extra features.""")
 
     parser.add_argument("source", help="source", default=None)
     parser.add_argument("target", help="target", default=None)

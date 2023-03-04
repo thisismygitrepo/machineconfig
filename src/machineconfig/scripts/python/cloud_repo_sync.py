@@ -1,6 +1,7 @@
 
 import crocodile.toolbox as tb
 import argparse
+import platform
 # import sys
 # import subprocess
 
@@ -60,7 +61,8 @@ git remote add originEnc {repo_sync}
 git pull originEnc master
 
 """
-    res = tb.Terminal().run(f". {tb.P.tmpfile(suffix='.ps1').write_text(script)}", shell="powershell").capture().print()
+    suffix = '.ps1' if platform.system() == 'Windows' else '.sh'
+    res = tb.Terminal().run(f". {tb.P.tmpfile(suffix=suffix).write_text(script)}", shell="powershell").capture().print()
     if res.is_successful(strict_err=False, strict_returcode=True):
         print("\n", "Pull succeeded, removing originEnc, the local copy of remote & pushing merged repo_root to remote ... ")
         repo_sync.delete(sure=True)
