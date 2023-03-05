@@ -9,8 +9,8 @@ from rich.console import Console
 from rich.panel import Panel
 import platform
 
-LIBRARY_ROOT = machineconfig.__file__.replace(P.home().str.lower(), P.home().str)
-LIBRARY_ROOT = P(LIBRARY_ROOT).parent
+
+LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
 REPO_ROOT = LIBRARY_ROOT.parent.parent
 PROGRAM_PATH = P.tmp().joinpath("shells/python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh")
 tmp_install_dir = P.tmp(folder="tmp_installers")

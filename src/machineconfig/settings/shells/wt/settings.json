@@ -20,6 +20,10 @@
             "keys": "ctrl+c"
         },
         {
+            "command": "unbound",
+            "keys": "ctrl+alt+down"
+        },
+        {
             "command": 
             {
                 "action": "splitPane",
@@ -27,10 +31,6 @@
                 "splitMode": "duplicate"
             },
             "keys": "alt+shift+d"
-        },
-        {
-            "command": "unbound",
-            "keys": "ctrl+alt+down"
         },
         {
             "command": "togglePaneZoom",
@@ -108,9 +108,9 @@
                 "source": "Windows.Terminal.VisualStudio"
             },
             {
-                "guid": "{60c3e313-8e1a-58f6-8175-3650c2bd2b26}",
+                "guid": "{d7b20cea-47a9-518c-95a4-c8bd91e2e1c6}",
                 "hidden": false,
-                "name": "Ubuntu 22.04 LTS",
+                "name": "Ubuntu 22.04.2 LTS",
                 "source": "CanonicalGroupLimited.Ubuntu22.04LTS_79rhkp1fndgsc"
             }
         ]
