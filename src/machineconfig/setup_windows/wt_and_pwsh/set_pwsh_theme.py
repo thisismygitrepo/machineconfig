@@ -1,7 +1,7 @@
 
 import crocodile.toolbox as tb
 import crocodile.environment as env
-from machineconfig.utils.utils import get_latest_release
+from machineconfig.utils.utils import get_latest_release, LIBRARY_ROOT
 
 """
 setup file for each shell can be found in $profile. The settings.json is the config file for Terminal.
@@ -14,7 +14,7 @@ def install_nerd_fonts():
     folder.search("*Windows*").delete(sure=True)
     folder.search("*readme*").delete(sure=True)
     folder.search("*LICENSE*").delete(sure=True)
-    file = tb.P.tmpfile(suffix=".ps1").write_text(tb.P(__file__).with_name("install_fonts.ps1").read_text().replace(r".\fonts-to-be-installed", str(folder)))
+    file = tb.P.tmpfile(suffix=".ps1").write_text(LIBRARY_ROOT.joinpath("setup_windows/wt_and_pwsh/install_fonts.ps1").read_text().replace(r".\fonts-to-be-installed", str(folder)))
     tb.subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {file.str}")
 
 

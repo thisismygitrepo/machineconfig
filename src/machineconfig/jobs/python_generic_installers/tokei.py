@@ -1,6 +1,7 @@
 
 from platform import system
-from machineconfig.utils.utils import get_latest_release, tb
+from machineconfig.utils.utils import get_latest_release
+import crocodile.toolbox as tb
 
 
 def main(version=None):

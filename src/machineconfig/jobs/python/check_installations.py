@@ -89,74 +89,74 @@ def main():
 
 
 def upload(path):
-    tb.install_n_import("call_function_with_timeout")
-    from call_function_with_timeout import SetTimeout
+    set_time_out = tb.install_n_import("call_function_with_timeout").SetTimeout
     def func():
         return path.to_cloud(cloud, rel2home=True, share=True)
-    func_with_timeout = SetTimeout(func, timeout=180)
+    func_with_timeout = set_time_out(func, timeout=180)
     is_done, is_timeout, erro_message, results = func_with_timeout()
     if is_done: return results
     else: return None
 
 
-def download_rclone_links(url, name=None):
-    if "drive.google.com" in str(url):
-        url = str(url).replace("open?", "uc?")
-    else: raise NotImplementedError("Only google drive is supported for now.")
-    return tb.P(url).download(name=name)
+class PrecompliedInstaller:
+    @staticmethod
+    def download_rclone_links(url, name=None):
+        if "drive.google.com" in str(url): url = str(url).replace("open?", "uc?")
+        else: raise NotImplementedError("Only google drive is supported for now.")
+        return tb.P(url).download(name=name)
 
+    def __init__(self, from_cloud=True):
+        if from_cloud:  file = PrecompliedInstaller.download_rclone_links(safe_apps_url.read_text(), name=safe_apps_records.name)
+        else: file = safe_apps_records
+        tmp = file.readit()
+        self.df = pd.DataFrame(tmp['data'], columns=tmp['columns'])
 
-def read_safe_apps_records(from_cloud=True):
-    if from_cloud:
-        file = download_rclone_links(safe_apps_url.read_text(), name=safe_apps_records.name)
-    else:
-        file = safe_apps_records
-    tmp = file.readit()
-    df = pd.DataFrame(tmp['data'], columns=tmp['columns'])
-    return df
+    def install(self, name):
+        res = self.df.query(f"app == '{name}'")
+        if len(res) == 0 or len(res) > 1:
+            print(f"Couldn't find unique result when searching safe_apps_records @ {self.safe_apps_records}")
+            return None
+        tb.P(res.app_url).download()
 
+    def download_safe_apps(self):
+        if platform.system().lower() == "windows":
+            from machineconfig.jobs.python.python_windows_installers_all import get_cli_py_installers
+            cli_installers = get_cli_py_installers()
+        elif platform.system().lower() == "linux":
+            from machineconfig.jobs.python.python_linux_installers_all import get_cli_py_installers
+            cli_installers = get_cli_py_installers()
+        else: raise NotImplementedError(f"Platform {platform.system().lower()} is not supported yet.")
 
-def download_safe_apps():
-    df = read_safe_apps_records(from_cloud=True)
-
-    if platform.system().lower() == "windows":
-        from machineconfig.jobs.python.python_windows_installers_all import get_cli_py_installers
-        cli_installers = get_cli_py_installers()
-    elif platform.system().lower() == "linux":
-        from machineconfig.jobs.python.python_linux_installers_all import get_cli_py_installers
-        cli_installers = get_cli_py_installers()
-    else: raise NotImplementedError(f"Platform {platform.system().lower()} is not supported yet.")
-
-    def install_cli_apps(row):
-        if row["app_url"] is None:
-            print(f"{row['app_name']} url is not available, trying to download from its sources:")
-            version = row["version"]
-            if version is None:
-                print(f"Version is not available, either, I can't trust the latest version. Skipping installation of this program.")
-                return False
-            else:
-                tmp = cli_installers.filter(lambda x: x.stem == row["app_name"].replace(".exe", ""))
-                if len(tmp) == 0:
-                    print(f"Can't find the installer for {row['app_name']}, skipping installation of this program.")
+        def install_cli_apps(row):
+            if row["app_url"] is None:
+                print(f"{row['app_name']} url is not available, trying to download from its sources:")
+                version = row["version"]
+                if version is None:
+                    print(f"Version is not available, either, I can't trust the latest version. Skipping installation of this program.")
                     return False
-                else: tb.Read.py(tmp[0])["main"](version=version)
-        else:
-            name = row["app_name"]
-            if platform.system().lower() == "windows" and not name.endswith(".exe"): name += ".exe"
-            exe = download_rclone_links(row["app_url"], name=name)
-            if platform.system().lower() == "linux":
-                tb.Terminal().run(f"chmod +x {exe}")
-                tb.Terminal().run(f"mv {exe} /usr/local/bin/")
-            elif platform.system().lower() == "windows":
-                exe.move(folder=tb.P.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
-        return True
+                else:
+                    tmp = cli_installers.filter(lambda x: x.stem == row["app_name"].replace(".exe", ""))
+                    if len(tmp) == 0:
+                        print(f"Can't find the installer for {row['app_name']}, skipping installation of this program.")
+                        return False
+                    else: tb.Read.py(tmp[0])["main"](version=version)
+            else:
+                name = row["app_name"]
+                if platform.system().lower() == "windows" and not name.endswith(".exe"): name += ".exe"
+                exe = self.download_rclone_links(row["app_url"], name=name)
+                if platform.system().lower() == "linux":
+                    tb.Terminal().run(f"chmod +x {exe}")
+                    tb.Terminal().run(f"mv {exe} /usr/local/bin/")
+                elif platform.system().lower() == "windows":
+                    exe.move(folder=tb.P.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
+            return True
 
-    res = tb.L(df.iterrows()).apply(lambda x: install_cli_apps(x[1]), jobs=20)
+        res = tb.L(self.df.iterrows()).apply(lambda x: install_cli_apps(x[1]), jobs=20)
 
-    print("\n"*3)
-    for item_flag, item_name in zip(res, df["app_name"]):
-        if item_flag: print(f"✅ {item_name} is installed. 😁")
-        else: print(f"❌ {item_name} failed to install for reasons explained in the log above, try manually.")
+        print("\n"*3)
+        for item_flag, item_name in zip(res, self.df["app_name"]):
+            if item_flag: print(f"✅ {item_name} is installed. 😁")
+            else: print(f"❌ {item_name} failed to install for reasons explained in the log above, try manually.")
 
 
 if __name__ == '__main__':

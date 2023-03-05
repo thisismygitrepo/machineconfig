@@ -33,7 +33,7 @@ else {
         if ($?) { Write-Host "✅ Activated virtual environment $env:VIRTUAL_ENV" }
     }
     else {
-        Write-Host "🤔 Virtual environment $env:VIRTUAL_ENV already activate"
+        Write-Host "🤔 Virtual environment $env:VIRTUAL_ENV already activated"
     }
 
     if (!(Test-Path $env:USERPROFILE/.machineconfig/default_ve)) {

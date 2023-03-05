@@ -108,7 +108,7 @@ def find_move_delete_linux(downloaded, tool_name, delete=True):
 def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", file_name=None, tool_name=None, exe_name=None, delete=True, strip_v=False, linux=False, compression=None, sep="-", version=None):
     console = Console()
     print("\n\n\n")
-    print("Installing...")
+    print(f"Inspecting latest release @ {repo_url}   ...")
     # with console.status("Installing..."):  # makes troubles on linux when prompt asks for password to move file to /usr/bin
 
     if version is None:
@@ -121,10 +121,10 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
     version = download_link[-1]
     version = str(version).replace("v", "") if strip_v else str(version)
     tool_name = tool_name or P(repo_url)[-1]
-    console.rule(f"Installing {tool_name} version {version}")
     P.home().joinpath(f"tmp_results/cli_tools_installers/versions/{tool_name}").create(parents_only=True).write_text(version)
 
     if not download_n_extract: return download_link
+    console.rule(f"Installing {tool_name} version {version}")
     if file_name is None:  # it is not constant, so we compile it from parts as follows:
         file_name = f'{tool_name}{sep}{version}{sep}{suffix}.{compression}'
     download_link = download_link.joinpath(file_name)

@@ -35,6 +35,8 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 # ~/code/machineconfig/src/machineconfig/setup_windows/wt_and_pwsh.ps1  # experimental
 # devapps:
 ~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
+# pwsh and wt settings:
+iwr https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/wt_and_pwsh.ps1 | iex
 
 ```
 

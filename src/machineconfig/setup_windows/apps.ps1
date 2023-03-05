@@ -24,8 +24,8 @@ winget install --no-upgrade --name "7-zip" --Id "7zip.7zip" --source winget --ac
 #winget install --no-upgrade --name miniconda3
 winget install --no-upgrade --name "notepad++" --source winget --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --accept-package-agreements --accept-source-agreements
-# winget install --no-upgrade --name "PyCharm Professional Edition" --accept-package-agreements --accept-source-agreements
-# winget install --no-upgrade --name "PyCharm Community Edition" --Id "JetBrains.PyCharm.Community" --source winget --accept-package-agreements --accept-source-agreements
+#winget install --no-upgrade --name "PyCharm Professional Edition" --accept-package-agreements --accept-source-agreements
+#winget install --no-upgrade --name "PyCharm Community Edition" --Id "JetBrains.PyCharm.Community" --source winget --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade spyder
 winget install --no-upgrade --name "DB Browser for SQLite" --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "sql server management studio" --Id "Microsoft.SQLServerManagementStudi" --source winget --accept-package-agreements --accept-source-agreements
@@ -48,10 +48,6 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 winget install --no-upgrade gitui
 winget install sharkdp.hyperfine  # benchmarking tool
 
-# github.com/ajeetdsouza/zoxide#installation
-echo "Installing zoxide must be done with non-admin privliage"
-curl.exe -A "MS" https://webinstall.dev/zoxide | powershell
-
 # winget install --no-upgrade --name "AWS Command Line Interface"
 # winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W11
 winget install --no-upgrade nushell  # add to userpath C:\Program Files\nu\bin, done in symlinks
@@ -60,7 +56,7 @@ winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --so
 
 # ======================== DEV TOOLS =================================
 winget install --no-upgrade xming.xming  # X11 server. you need this while using wsl with gui, otherwise plt.show() returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running
-winget isntall WinFsp.WinFsp  # required by rclone
+winget install WinFsp.WinFsp  # required by rclone
 winget install --no-upgrade --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements  # ncessary for nvim plugins.
 npm install sharewifi -g
 npm install -g easy-sharing
