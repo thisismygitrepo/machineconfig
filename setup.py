@@ -25,6 +25,10 @@ setuptools.setup(
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     python_requires=">=3.9",
+    install_requires=[
+    "rich",
+    ],
+    
 )
 
 # todo create a link to where this setup is. in .machoneconfig

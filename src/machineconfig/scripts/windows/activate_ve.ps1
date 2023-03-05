@@ -2,15 +2,16 @@
 
 if (!$env:VIRTUAL_ENV) {  # no ve activated ==> activate one.
     if (!$args[0]) {  # nothing passed.  >> use defaults
-        if (Test-Path "$env:USERPROFILE//.machineconfig/default_ve") {
+        if (Test-Path "$env:USERPROFILE/.machineconfig/default_ve") {
             $name = Get-Content "$env:USERPROFILE//.machineconfig/default_ve"  # use default file it exists
             & "$name/Scripts/Activate.ps1"
         }
         else {  # no default file.  >> use default name
             $name = "ve"
             mkdir $env:USERPROFILE/.machineconfig -ErrorAction SilentlyContinue
-            New-Item -ItemType File -Path "$env:USERPROFILE/.machineconfig/default_ve" -Value $env:VIRTUAL_ENV
-            & "$env:USERPROFILE/venvs/$name/Scripts/Activate.ps1"
+            # New-Item -ItemType File -Path "$env:USERPROFILE/.machineconfig/default_ve" -Value $env:VIRTUAL_ENV
+            "$env:USERPROFILE/venvs/$name" > $env:USERPROFILE/.machineconfig/default_ve
+	    & "$env:USERPROFILE/venvs/$name/Scripts/Activate.ps1"
             }
         }
     else {
@@ -41,37 +42,3 @@ else {
     }
 }
 
-#if ( $env:VIRTUAL_ENV -eq $null)
-#{
-#    if ($args[0] -eq $null)
-#    {
-#        $name = "ve"
-#    }
-#    else
-#    {
-#        $name = $args[0]
-#    }
-#    #write-host $name
-#    & ("$env:USERPROFILE/venvs/" + $name + "/Scripts/Activate.ps1")
-#    echo "Activated virtual environment ` $name ` "
-#}
-#else
-#{
-#    echo "Virtual environment already activated ` $env:VIRTUAL_ENV ` "
-#}
-
-
-#function Activate-VirtualEnv{
-#    [CmdletBinding()]
-#    param (
-#        [String] $VirtualEnvName = "ve"
-#    )
-#    & ("$env:USERPROFILE/venvs/" + $VirtualEnvName + "/Scripts/Activate.ps1")
-#}
-
-#$drive = Read-Host "Enviroment name (ve)"
-#if ( $drive -eq "" )
-#{
-#    $drive = "ve"
-#}
-#& ("$env:USERPROFILE/venvs/" + $drive + "/Scripts/Activate.ps1")
