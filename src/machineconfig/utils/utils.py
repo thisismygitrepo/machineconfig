@@ -48,7 +48,6 @@ def display_options(msg, options: list, header="", tail="", prompt="", default=N
                 choice_key = choice_idx
                 choice_idx = options.index(choice_idx)
             else: raise ValueError(f"Unknown choice. {choice_idx}")
-
     print(f"{choice_idx}: {choice_key}", f"<<<<-------- CHOICE MADE")
     return choice_key
 

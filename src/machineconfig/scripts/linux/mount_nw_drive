@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+#write an extremely verbose bash script to mount a windows network drive in wsl.
+#1) The user is prompted for inputs, and is given examples and defaults if enter was pressed.
+#2) Before every command is executed, echo what are you doing and what command is used to achieve that
+#3)  echo long '-----------' between steps
+#4) Make the code very robust so it can catch all errors and execute gracefully if anything went wrong.
+#5) prompt the user whether he wants the process to be done automatically, in which case add settings to fstab file and refresh it.
+#6) if username and password not passed, don't pass them to mount command
+
+echo "Welcome to the Windows Network Drive Mounting Script"
+
+# Prompt user for the network drive location
+read -p "Enter the network drive location (ex: //192.168.1.100/Share): " drive_location
+drive_location=${drive_location:-//192.168.1.100/Share}
+echo "The network drive location is set to $drive_location"
+
+# Prompt user for the mount point directory
+read -p "Enter the mount point directory (ex: /mnt/network): " mount_point
+mount_point=${mount_point:-/mnt/network}
+echo "The mount point directory is set to $mount_point"
+
+# Prompt user for the username and password
+read -p "Enter the username (leave blank for no username): " username
+read -sp "Enter the password (leave blank for no password): " password
+
+# Check if mount point directory exists, create if not
+if [ ! -d "$mount_point" ]; then
+echo "The mount point directory does not exist, creating it now..."
+mkdir -p "$mount_point"
+fi
+
+# Mount the network drive
+echo "Mounting the network drive at $mount_point using the following command:"
+mount_command="sudo mount -t drvfs "$drive_location" "$mount_point""
+if [[ ! -z $username ]]; then
+mount_command="$mount_command -o username=$username"
+fi
+if [[ ! -z $password ]]; then
+mount_command="$mount_command,password=$password"
+fi
+echo "$mount_command"
+$mount_command
+
+# Check if mount was successful
+if [ $? -eq 0 ]; then
+echo "The network drive has been successfully mounted at $mount_point."
+echo "--------------------------------------"
+else
+echo "There was an error while mounting the network drive. Please check your input and try again."
+exit 1
+fi
+
+# Prompt user if they want to add the mount to fstab
+read -p "Do you want to automatically mount this network drive on system startup? (y/n): " auto_mount
+
+if [[ $auto_mount == "y" ]]; then
+echo "Adding mount point to fstab..."
+fstab_entry="$drive_location $mount_point drvfs defaults,uid=$(id -u),gid=$(id -g),metadata"
+echo "$fstab_entry" | sudo tee -a /etc/fstab
+echo "Refreshing fstab..."
+sudo mount -a
+echo "The network drive has been added to fstab and will automatically mount on system startup."
+fi
+
+exit 0

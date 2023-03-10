@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+
+# write a bash script to do automount of nfs share:
+# prompt user for remote server and nfs shares folder in format name:/path
+# prompt user for mounting location, if user pressed enter as a skip, then share should be mounted at a similar corresponding location in the local machine.
+# add a line to fstab file to ensure autmount.
+# add as much checkpoints as you can to ensure extremely rigorous code that works under all circumstances, e.g. before changing fstab file, ensure that the line to be added is not there already etc.
+# Also be extremely verbose to delineate what you are doing by echoing to the terminal
+
+# Prompt user for remote server and NFS share folder in format name:/path
+read -p "Enter remote server and NFS share folder (format: name:/path): " share_info
+
+# Parse the user input to extract remote server and share folder path
+IFS=':' read -ra share <<< "$share_info"
+remote_server="${share[0]}"
+share_path="${share[1]}"
+
+# Check if remote server is reachable and share folder exists
+if ! ping -c 1 "$remote_server" &> /dev/null; then
+  echo "Error: Remote server $remote_server is not reachable."
+  exit 1
+fi
+if ! showmount -e "$remote_server" | grep -q "$share_path"; then
+  echo "Error: NFS share folder $share_path is not available on $remote_server."
+  exit 1
+fi
+
+# Check if the share is already mounted
+if mount | grep -q ":$share_path on "; then
+  echo "The NFS share $share_info is already mounted."
+  exit 0
+fi
+
+# Mount the share at a corresponding location in the local machine
+local_mount_point="/mnt/nfs/$remote_server/${share_path#/}"
+if [ ! -d "$local_mount_point" ]; then
+  echo "Creating local mount point directory $local_mount_point"
+  sudo mkdir -p "$local_mount_point"
+  sudo chown "$(id -u):$(id -g)" "$local_mount_point"
+fi
+
+echo "Mounting NFS share $share_info at $local_mount_point"
+sudo mount -t nfs "$share_info" "$local_mount_point"
+
+# Add a line to fstab file to ensure automount
+fstab_line="$remote_server:$share_path $local_mount_point nfs defaults 0 0"
+if grep -qF "$fstab_line" /etc/fstab; then
+  echo "The following line already exists in /etc/fstab:"
+  echo "$fstab_line"
+else
+  echo "Adding the following line to /etc/fstab:"
+  echo "$fstab_line"
+  echo "$fstab_line" | sudo tee -a /etc/fstab > /dev/null
+fi
