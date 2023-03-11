@@ -9,13 +9,13 @@ if [ -z "$VIRTUAL_ENV" ]; then  # no active ve ==> activate one.
       source $name/bin/activate
     else  # no default ve found, using ve and setting it as default
       name="ve"
+      source ~/venvs/$name/bin/activate
       mkdir ~/.machineconfig || true
       if [ -n "$VIRTUAL_ENV" ]; then
         echo $VIRTUAL_ENV > ~/.machineconfig/default_ve
      else
         echo "No virtual environment active, cant echo it to ~/.machineconfig/default_ve"
       fi
-      source ~/venvs/$name/bin/activate
     fi
   else
     name=$1
