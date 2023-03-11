@@ -5,9 +5,6 @@ yes '' | sed 3q; echo "----------------------------- upgrading and updating apt 
 sudo apt update -y || true
 sudo apt upgrade -y || true
 
-sudo apt install nala -y || true  # nala is a command line tool for managing your Linux system
-(sudo apt update && sudo apt upgrade -y) || true  # this is suprior to apt
-
 # see if variable package_manager is defined, if not, define it as "nix"
 if [ -z "$package_manager" ]; then
   package_manager="nix"
@@ -16,6 +13,9 @@ fi
 if [ "$package_manager" = "nix" ]; then
   curl -L https://nixos.org/nix/install | sh  # cross *nix platforms.
   . ~/.nix-profile/etc/profile.d/nix.sh
+else
+  sudo apt install nala -y || true  # nala is a command line tool for managing your Linux system
+  (sudo apt update && sudo apt upgrade -y) || true  # this is suprior to apt
 fi
 
 # sudo apt remove mlocate && plocate # solves wsl2 slow Initializing plocate database; this may take some time..

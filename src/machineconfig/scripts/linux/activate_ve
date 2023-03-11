@@ -10,7 +10,11 @@ if [ -z "$VIRTUAL_ENV" ]; then  # no active ve ==> activate one.
     else  # no default ve found, using ve and setting it as default
       name="ve"
       mkdir ~/.machineconfig || true
-      echo $VIRTUAL_ENV > ~/.machineconfig/default_ve
+      if [ -n "$VIRTUAL_ENV" ]; then
+        echo $VIRTUAL_ENV > ~/.machineconfig/default_ve
+     else
+        echo "No virtual environment active, cant echo it to ~/.machineconfig/default_ve"
+      fi
       source ~/venvs/$name/bin/activate
     fi
   else
@@ -41,7 +45,11 @@ else
   # check if default is not defined, if so, define it as $VIRTUAL_ENV
   if [ ! -f ~/.machineconfig/default_ve ]; then
     mkdir ~/.machineconfig || true
-    echo $VIRTUAL_ENV > ~/.machineconfig/default_ve
+    if [ -n "$VIRTUAL_ENV" ]; then
+      echo $VIRTUAL_ENV > ~/.machineconfig/default_ve
+    else
+      echo "No virtual environment active, cannot echo it to ~/.machineconfig/default_ve"
+    fi
   fi
 fi
 
