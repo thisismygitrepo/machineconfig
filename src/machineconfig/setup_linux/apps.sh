@@ -99,6 +99,17 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.lynx || true
 fi
 
+yes '' | sed 3q; echo "----------------------------- installing redis ----------------------------"; yes '' | sed 3q
+if [ "$package_manager" = "apt" ]; then
+  # installation for ubuntu as per https://redis.io/docs/getting-started/installation/install-redis-on-linux/
+  curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+  echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+  sudo apt-get update
+  sudo apt-get install redis -y
+else
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.redis || true
+fi
+
 
 # ------------------- File Managers ---------------------------
 yes '' | sed 3q; echo "----------------------------- installing bat ----------------------------"; yes '' | sed 3q
