@@ -14,6 +14,7 @@ def main(program_name=None):
     installers = get_cli_py_installers()
     default = tb.P("all")
     installers.list.insert(0, default)
+    installers.list.insert(0, tb.P("Other"))
     options = list(installers.stem)
     options.sort()
 
@@ -32,12 +33,23 @@ def main(program_name=None):
         else:
             raise NotImplementedError(f"System {system()} not supported")
         program = ""
+    elif program_name == "Other":
+        if system() == "Windows":
+            options_more = parse_apps_installer(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text())
+        elif system() == "Linux":
+            options_more = parse_apps_installer(LIBRARY_ROOT.joinpath("setup_linux/apps.sh").read_text())
+        program = ""
 
     else:
         idx = installers.stem.list.index(program_name)
         program = installers[idx].readit()['main']()  # finish the task
         if program is None: program = "echo 'Finished Installation'"  # write an empty program
     return program
+
+
+def parse_apps_installer(txt):
+    txt = txt.split("""yes '' | sed 3q; echo "----------------------------- installing """)
+    return tb.Struct.from_keys_values_pairs(tb.L(txt).apply(lambda tmp:  (tmp.split('----')[0].rstrip().lstrip(), "\n".join(tmp.split("\n")[1:])))[1:])
 
 
 if __name__ == '__main__':

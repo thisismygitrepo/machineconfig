@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 # ----------------- package manager -----------------
-yes '' | sed 3q; echo "----------------------------- upgrading and updating apt ----------------------------"; yes '' | sed 3q
+yes '' | sed 3q; echo "----------------------------- installing upgrading and updating apt ----------------------------"; yes '' | sed 3q
 sudo apt update -y || true
 sudo apt upgrade -y || true
 
@@ -32,13 +32,13 @@ fi
 
 # -------------------- Utilities --------------------
 
-yes '' | sed 3q; echo "------------------------------ installing wget --------------------------------"; yes '' | sed 3q
+yes '' | sed 3q; echo "----------------------------- installing wget --------------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install wget -y || true  # for downloading files
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.wget || true
 fi
-yes '' | sed 3q; echo "------------------------------- installing curl -------------------------------"; yes '' | sed 3q
+yes '' | sed 3q; echo "----------------------------- installing curl -------------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install curl -y || true  # for handling http requests
 else
@@ -46,7 +46,7 @@ else
 fi
 # consider asdf tool for managing versions of python, node, etc.
 
-yes '' | sed 3q; echo "--------------------------- installing nvm of nodejs --------------------------"; yes '' | sed 3q
+yes '' | sed 3q; echo "----------------------------- installing nvm of nodejs --------------------------"; yes '' | sed 3q
 # according to: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm its best to use nvm manager
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 # shellcheck disable=SC2155
@@ -120,8 +120,9 @@ else
 fi
 #sudo apt install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
 
+yes '' | sed 3q; echo "----------------------------- installing zoxide ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
-  es '' | sed 3q; echo "----------------------------- installing zoxide ----------------------------"; yes '' | sed 3q
+  sudo apt install zoxide -y || true
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.zoxide || true
 fi
