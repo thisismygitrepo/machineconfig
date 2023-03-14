@@ -104,7 +104,7 @@ map jD cd ~/Downloads
 map jx cd ~/dotfiles
 map jm cd ~/code/machineconfig/src/machineconfig
 map jh cd ~
-map jj $lvim ~/code/machineconfig/src/machineconfig/settings/lf/lfrc
+map jj $lvim ~/code/machineconfig/src/machineconfig/settings/lf/linux/lfrc
 
 # from https://github.com/gokcehan/lf/wiki/Integrations#zoxide
 cmd zi ${{
