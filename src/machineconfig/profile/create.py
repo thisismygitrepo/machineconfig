@@ -172,15 +172,27 @@ def main(choice=None):
 
     # the only common choice among all programs below is "all".
     main_symlinks(choice=choice)
-    print("\n")
-    console.rule(f"ADDING ENV PATH")
-    main_env_path(choice=choice)
-    print("\n")
-    console.rule(f"ADDING SOURCES TO SHELL PROFILE")
-    main_add_sources_to_shell_profile(choice=choice)
-    print("\n")
-    console.rule(f"ADDING PATCHES TO SHELL PROFILE")
-    main_add_patches_to_shell_profile(choice=choice)
+
+    # print("\n")
+    # console.rule(f"ADDING ENV PATH")
+    # main_env_path(choice=choice)
+    # print("\n")
+    # console.rule(f"ADDING SOURCES TO SHELL PROFILE")
+    # main_add_sources_to_shell_profile(choice=choice)
+    # print("\n")
+    # console.rule(f"ADDING PATCHES TO SHELL PROFILE")
+    # main_add_patches_to_shell_profile(choice=choice)
+
+    profile_path = get_shell_profile_path()
+    profile = profile_path.read_text()
+    patch = f". {REPO_ROOT.joinpath('settings/shells/pwsh/init.ps1')}" if system == "Windows" else f"source {REPO_ROOT.joinpath('settings/shells/bash/init.sh')}"
+    if patch in profile: print(f"Skipping sourcing init script; already in profile")
+    else:
+        if system == "Linux":
+            res = tb.Terminal().run("cat /proc/version").op
+            if "microsoft" in res.lower() or "wsl" in res.lower():
+                profile += "\ncd ~"  # this is to make sure that the current dir is not in the windows file system, which is terribly slow and its a bad idea to be there anyway.
+        profile_path.write_text(profile)
 
 
 if __name__ == '__main__':
