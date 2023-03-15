@@ -185,9 +185,10 @@ def main(choice=None):
 
     profile_path = get_shell_profile_path()
     profile = profile_path.read_text()
-    patch = f". {REPO_ROOT.joinpath('settings/shells/pwsh/init.ps1')}" if system == "Windows" else f"source {REPO_ROOT.joinpath('settings/shells/bash/init.sh')}"
-    if patch in profile: print(f"Skipping sourcing init script; already in profile")
+    source = f". {REPO_ROOT.joinpath('settings/shells/pwsh/init.ps1')}" if system == "Windows" else f"source {REPO_ROOT.joinpath('settings/shells/bash/init.sh')}"
+    if source in profile: print(f"Skipping sourcing init script; already in profile")
     else:
+        profile += "\n" + source + "\n"
         if system == "Linux":
             res = tb.Terminal().run("cat /proc/version").op
             if "microsoft" in res.lower() or "wsl" in res.lower():
