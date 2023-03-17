@@ -1,20 +1,19 @@
 
-# https://github.com/anderspitman/awesome-tunneling
-# https://github.com/leonwind/cli2cloud
-# https://github.com/sorenisanerd/gotty
-# https://devsession.is/
-# https://github.com/rothgar/awesome-tuis
-# https://github.com/nschloe/github-trends
-# https://github.com/EvanLi/Github-Ranking#go
-
-https://github.com/k4m4/terminals-are-sexy
-https://github.com/agarrharr/awesome-cli-apps
-https://github.com/rust-unofficial/awesome-rust
-
-https://github.com/learn-anything/command-line-tools
-https://github.com/toolleeo/cli-apps
-https://github.com/alebcay/awesome-shell
-https://github.com/Geektrovert/AwsTerm
+# Sources:
+* https://github.com/anderspitman/awesome-tunneling
+* https://github.com/leonwind/cli2cloud
+* https://github.com/sorenisanerd/gotty
+* https://devsession.is/
+* https://github.com/rothgar/awesome-tuis
+* https://github.com/nschloe/github-trends
+* https://github.com/EvanLi/Github-Ranking#go
+* https://github.com/k4m4/terminals-are-sexy
+* https://github.com/agarrharr/awesome-cli-apps
+* https://github.com/rust-unofficial/awesome-rust
+* https://github.com/learn-anything/command-line-tools
+* https://github.com/toolleeo/cli-apps
+* https://github.com/alebcay/awesome-shell
+* https://github.com/Geektrovert/AwsTerm
 
 
 # Files
@@ -26,7 +25,7 @@ https://github.com/Geektrovert/AwsTerm
 
 * https://github.com/BlueHatbRit/mdpdf -- security volunarability. https://github.com/simonhaenisch/md-to-pdf  -- use this instead
 
-# search
+# Search
 * https://github.com/phiresky/ripgrep-all
 
 
@@ -36,30 +35,28 @@ https://github.com/Geektrovert/AwsTerm
 * https://github.com/JaidedAI/EasyOCR
 
 
-# Recommended
+# Alternatives
 * git grapth (rust) https://github.com/mlange-42/git-graph
 * https://github.com/cortex/ripasso rust password manager equivalent of gopass
+* https://github.com/nnethercote/counts
+* https://github.com/ellie/atuin#install (mcfly alternative)
+* https://github.com/bootandy/dust (dua alternative)
+* lazygit  alterenative for gitui
+* asdf alternative in rust https://github.com/jdxcode/rtx#apt
 
-dua alternative
-https://github.com/bootandy/dust
+# terminal emulators
+* https://github.com/cmderdev/cmder
+* https://github.com/sedwards2009/extraterm
+* starship and alacrity.
 
-lazygit
-alterenative for gitui
-
-asdf alternative in rust
-https://github.com/jdxcode/rtx#apt
-
-# Terminals
-terminal emulators
-https://github.com/cmderdev/cmder
-https://github.com/sedwards2009/extraterm
-starship and alacrity.
 
 # Remote
 https://github.com/rustdesk/rustdesk/releases
 parsec rdp
 
 # recorder
-pecpeck
-clipchamp
-https://github.com/ShareX/ShareX
+* pecpeck
+* https://github.com/ShareX/ShareX
+* Snipping tool of Windows
+* clipchamp video editor of windows
+* Xbox Game Bar of windows

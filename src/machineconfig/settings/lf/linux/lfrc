@@ -92,9 +92,8 @@ map of reload
 map os mark-save
 map ol mark-load
 map oR mark-remove
-map ou unarchive  # map ox extract
-cmd extract $cmd $env:USERPROFILE\code\machineconfig\src/machineconfig/settings\lf\extract.cmd -- $f
-
+map oD $ouch d $f
+map oC $ouch c $f
 
 # j jump
 map j
@@ -174,18 +173,6 @@ cmd broot_jump ${{
     cmd="cd"
   fi
   lf -remote "send $id $cmd \"$res\""
-}}
-
-
-cmd unarchive ${{
-  case "$f" in
-    *.zip) unzip "$f" ;;
-    *.tar.gz) tar -xzvf "$f" ;;
-    *.tar.bz2) tar -xjvf "$f" ;;
-    *.tar.x) tar -xJvf "$f" ;;
-    *.tar) tar -xvf "$f" ;;
-    *) echo "Unsupported format" ;;
-  esac
 }}
 
 

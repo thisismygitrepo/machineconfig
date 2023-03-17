@@ -19,7 +19,7 @@ if (!$env:VIRTUAL_ENV) {  # no ve activated ==> activate one.
           & "$env:USERPROFILE/venvs/$name/Scripts/Activate.ps1"
          }
 
-    if ($?) { Write-Host "✅ Activated virtual environment $env:VIRTUAL_ENV" }
+    if ($?) { Write-Host "`u{2705} Activated virtual environment $env:VIRTUAL_ENV" }
 
 }
 else {
@@ -30,10 +30,10 @@ else {
         deactivate -ErrorAction SilentlyContinue
         $name = $args[0]
         & "$env:USERPROFILE/venvs/$name/Scripts/Activate.ps1"
-        if ($?) { Write-Host "✅ Activated virtual environment $env:VIRTUAL_ENV" }
+        if ($?) { Write-Host "`u{2705} Activated virtual environment $env:VIRTUAL_ENV" }
     }
     else {
-        Write-Host "🤔 Virtual environment $env:VIRTUAL_ENV already activated"
+        Write-Host "Virtual environment $env:VIRTUAL_ENV already activated"
     }
 
     if (!(Test-Path $env:USERPROFILE/.machineconfig/default_ve)) {

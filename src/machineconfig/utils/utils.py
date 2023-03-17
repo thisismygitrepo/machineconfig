@@ -155,5 +155,19 @@ deactivate
 """
 
 
+def get_latest_version(url):
+    # not yet used, consider, using it.
+    import requests
+    import json
+    url = f"https://api.github.com/repos/{url.split('github.com/')[1]}/releases/latest"
+    # Replace {owner} and {repo} with the actual owner and repository name
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = json.loads(response.text)
+        latest_version = data["tag_name"]
+        print("Latest release version:", latest_version)
+    else: print("Error:", response.status_code)
+
+
 if __name__ == '__main__':
     pass

@@ -74,7 +74,7 @@ map wp $pwsh
 map wc $~/scripts/croshell.ps1
 map wm $cmd
 map i $~/code/machineconfig/src/machineconfig/settings/lf/windows/previewer.ps1 $env:f
-map R $pwsh $env:USERPROFILE/scripts/croshell.ps1 -r $env:f
+map R $powershell $env:USERPROFILE/scripts/croshell.ps1 -r $env:f
 
 # o file/folder Operations
 map o
@@ -92,9 +92,8 @@ map of reload
 map os mark-save
 map ol mark-load
 map oR mark-remove
-map ox extract
-cmd extract $cmd $env:USERPROFILE/code/machineconfig/src/machineconfig/settings/lf/windows/extract.cmd -- $f
-
+map oD !ouch d $env:f
+map oC !ouch c $env:f '$env:f'.zip
 
 # j jump
 map j
