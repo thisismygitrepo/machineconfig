@@ -74,7 +74,7 @@ map wp $pwsh
 map wc $~/scripts/croshell.ps1
 map wm $cmd
 map i $~/code/machineconfig/src/machineconfig/settings/lf/windows/previewer.ps1 $env:f
-map R $~/scripts/croshell.ps1 -r $env:f
+map R $pwsh $env:USERPROFILE/scripts/croshell.ps1 -r $env:f
 
 # o file/folder Operations
 map o

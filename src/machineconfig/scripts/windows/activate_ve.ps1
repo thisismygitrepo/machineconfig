@@ -26,7 +26,7 @@ else {
 
     # if $args[0] is passed, it's a new ve to activate
     if ($args[0]) {
-        echo "Deactivating virtual environment $env:VIRTUAL_ENV "
+        echo "Deactivating virtual environment $env:VIRTUAL_ENV"
         deactivate -ErrorAction SilentlyContinue
         $name = $args[0]
         & "$env:USERPROFILE/venvs/$name/Scripts/Activate.ps1"
@@ -38,7 +38,8 @@ else {
 
     if (!(Test-Path $env:USERPROFILE/.machineconfig/default_ve)) {
         New-Item -ItemType Directory -Path "$env:USERPROFILE/.machineconfig" -ErrorAction SilentlyContinue
-        New-Item -ItemType File -Path "$env:USERPROFILE/.machineconfig/default_ve" -Value $env:VIRTUAL_ENV
+#         New-Item -ItemType File -Path "$env:USERPROFILE/.machineconfig/default_ve" -Value $env:VIRTUAL_ENV
+        echo "$env:VIRTUAL_ENV" > "$env:USERPROFILE/.machineconfig/default_ve"
     }
 }
 
