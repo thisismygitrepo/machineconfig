@@ -1,6 +1,6 @@
 
 
-__version__ = "1.2"
+__version__ = "1.3"
 release_notes = """
-introduced secure_sync
+introduced repos script
 """
