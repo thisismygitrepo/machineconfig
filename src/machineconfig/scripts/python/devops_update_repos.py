@@ -50,7 +50,7 @@ chmod +x ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe -R
 """
                 additions.append(an_addition)
             else:
-#                 if a_repo.is_dirty() and input(f"Repository {a_repo} is not clean, hard-reset it? y/[n]"): a_repo.git.reset('--hard')
+                # if a_repo.is_dirty() and input(f"Repository {a_repo} is not clean, hard-reset it? y/[n]"): a_repo.git.reset('--hard')
                 additions.append(f"""
 cd "{a_repo.working_dir}"
 echo "{("Pulling " + str(a_repo.working_dir)).center(80, "-")}"

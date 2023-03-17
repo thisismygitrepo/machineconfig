@@ -20,9 +20,9 @@ class Options(Enum):
     ssh_use_pair   = 'SSH use key pair to connect two machines'
     ssh_setup      = 'SSH setup'
     ssh_setup_wsl  = 'SSH setup wsl'
-    repos_pull     = 'REPOS pull all'
-    repos_commit   = 'REPOS commit all'
-    repos_push     = 'REPOS push all'
+    # repos_pull     = 'REPOS pull all'
+    # repos_commit   = 'REPOS commit all'
+    # repos_push     = 'REPOS push all'
     backup         = 'BACKUP & RETRIEVE'
 
 
@@ -74,18 +74,6 @@ def main():
     elif choice_key == Options.backup.value:
         from machineconfig.scripts.python.devops_backup_retrieve import main
         program = main()
-
-    elif choice_key == Options.repos_pull.value:
-        from machineconfig.jobs.python.repos import pull_all
-        program = pull_all()
-
-    elif choice_key == Options.repos_push.value:
-        from machineconfig.jobs.python.repos import push_all
-        program = push_all()
-
-    elif choice_key == Options.repos_commit.value:
-        from machineconfig.jobs.python.repos import commit_all
-        program = commit_all()
 
     else:
         raise ValueError(f"Unimplemented choice: {choice_key}")
