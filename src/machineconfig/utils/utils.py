@@ -71,7 +71,7 @@ def symlink(this: P, to_this: P, prioritize_to_this=True):
             else: this.move(path=to_this)  # this exists, to_this doesn't, this is prioritized.
     else:  # this doesn't exist.
         if not to_this.exists(): to_this.touch()  # we have to touch it (file) or create it (folder)
-    if platform.system() == "Windows": _ = install_n_import("pywin32")  # this is crucial for windows to pop up the concent window in case python was not run as admin.
+    if platform.system() == "Windows": _ = install_n_import("win32api", "pywin32")  # this is crucial for windows to pop up the concent window in case python was not run as admin.
     try:
         P(this).symlink_to(to_this, verbose=True, overwrite=True)
     except Exception as ex: print(f"Failed at linking {this} ==> {to_this}.\nReason: {ex}")

@@ -6,14 +6,14 @@
 gitconfig = {this = '~/.gitconfig', to_this = '~/dotfiles/settings/.gitconfig'}
 gitcred = {this = '~/.git-credentials', to_this = '~/dotfiles/settings/.git-credentials'}
 
-
 [pypi]
 creds = {this = '~/.pypirc', to_this = '~/dotfiles/creds/msc/.pypirc'}
-
 
 [rclone]
 config = {this = '~/.config/rclone/rclone.conf', to_this = '~/dotfiles/creds/rclone/rclone.conf'}
 
+[rclone_windows]
+config = {this = '~/AppData/Roaming/rclone/rclone.conf', to_this = '~/dotfiles/creds/rclone/rclone.conf'}
 
 # Shells profiles
 [powershell_windows]
@@ -85,7 +85,7 @@ config = {this = '~/mprocs.yaml', to_this = 'LIBRARY_ROOT/settings/mprocs/window
 [wsl_windows]
 home = {this = '~/wsl', to_this = '\\wsl.localhost\Ubuntu-22.04\home\username'}
 # see \\wsl$ and ~\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState
-
+config = {this = '~/.wslconfig', to_this = 'LIBRARY_ROOT/settings/wsl/.wslconfig'}
 
 [wsl_linux]
 home = {this = '~/win', to_this = '/mnt/c/Users/username'}

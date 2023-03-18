@@ -4,25 +4,25 @@
 # default values from dircolors
 # (entries with a leading # are not implemented in lf)
 #no     00              # NORMAL
-fi      00              # FILE
+fi      00;37;40              # FILE
 #rs     0               # RESET
-di      01;80           # DIR
-ln      01;36           # LINK
+di      01;31;42           # DIR
+ln      02;32;45           # LINK
 #mh     00              # MULTIHARDLINK
-pi      40;33           # FIFO
-so      01;35           # SOCK
+pi      03;33;40           # FIFO
+so      04;34;43           # SOCK
 #do     01;35           # DOOR
-bd      40;33;01        # BLK
-cd      40;33;01        # CHR
-or      40;31;01        # ORPHAN
+bd      05;35;44        # BLK
+cd      06;36;45        # CHR
+or      07;37;46        # ORPHAN
 #mi     00              # MISSING
-su      37;41           # SETUID
-sg      30;43           # SETGID
+su      08;31;47           # SETUID
+sg      09;32;40           # SETGID
 #ca     30;41           # CAPABILITY
-tw      30;42           # STICKY_OTHER_WRITABLE
-ow      34;42           # OTHER_WRITABLE
-st      37;44           # STICKY
-ex      01;32           # EXEC
+tw      01;33;41           # STICKY_OTHER_WRITABLE
+ow      02;36;40           # OTHER_WRITABLE
+st      03;35;43           # STICKY
+ex      04;36;44           # EXEC
 
 
 # file types (with matching order)
