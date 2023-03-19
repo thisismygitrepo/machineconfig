@@ -75,14 +75,11 @@ def main():
         from machineconfig.scripts.python.devops_backup_retrieve import main
         program = main()
 
-    else:
-        raise ValueError(f"Unimplemented choice: {choice_key}")
+    else: raise ValueError(f"Unimplemented choice: {choice_key}")
 
     print(f"Executing {PROGRAM_PATH}")
-    if system() == 'Windows':
-        PROGRAM_PATH.create(parents_only=True).write_text(program)
-    else:
-        PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
+    if system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
+    else: PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
 
 
 if __name__ == "__main__":

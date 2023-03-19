@@ -12,7 +12,7 @@ tm = tb.Terminal()
 def commit_one(path, mess="auto_commit_" + tb.randstr()):
     return f'''
 echo "{("Committing " + str(path)).center(80, "-")}"
-cd {path}; git add .; git commit -am "{mess}"'
+cd {path}; git add .; git commit -am "{mess}"
 echo ""
 echo ""
 '''
