@@ -26,5 +26,5 @@ Invoke-Expression (& {
     (zoxide init --hook $hook powershell | Out-String)
 })
 
-Set-Alias lvim 'C:\Users\alex\.local\bin\lvim.ps1'
+Set-Alias lvim '~/.local/bin/lvim.ps1'
 # function fuck {     $history = (Get-History -Count 1).CommandLine;     if (-not [string]::IsNullOrWhiteSpace($history)) {         $f>
