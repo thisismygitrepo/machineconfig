@@ -59,11 +59,11 @@ def main():
 
     program = ""
     for a_path in path.search("*"):
-        program += f"""echo "{("Handling " + str(path)).center(80, "-")}" """
-        if args.pull or args.all: program += f"""echo 'Pulling'\n""" + pull_one(a_path) + "\n"
-        elif args.commit or args.all: program += f"""echo 'Committing'\n""" + commit_one(a_path) + "\n"
-        elif args.push or args.all: program += f"""echo 'Pushing'\n""" + push_one(a_path) + "\n"
-        else:
+        program += f"""echo "{("Handling " + str(a_path)).center(80, "-")}" """
+        if args.pull or args.all: program += f"""\necho '>>>>>>>>> Pulling'\n""" + pull_one(a_path) + "\n"
+        if args.commit or args.all: program += f"""\necho '>>>>>>>>> Committing'\n""" + commit_one(a_path) + "\n"
+        if args.push or args.all: program += f"""\necho '>>>>>>>>> Pushing'\n""" + push_one(a_path) + "\n"
+        if not args.all and not args.commit and not args.pull and not args.push:
             program = "echo 'no action specified, try to pass --push, --pull, --commit or --all'"
             break
 
