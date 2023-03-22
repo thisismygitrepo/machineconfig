@@ -27,7 +27,7 @@ mprocs "powershell {sub_text_path}" "{rclone_cmd}" "btm" "timeout 2 & cd mounts 
         txt = f"""
 cd ~
 mkdir mounts -p
-mkdir {localpath}-p
+mkdir {localpath} -p
 mprocs "echo 'see ~/mounts/{cloud} for the mounted cloud'; rclone about {cloud}:" "{rclone_cmd}" "btm" "cd ~/mounts; lf" "bash" "bash" --names "about,service,monitor,explorer,main,shell"
 """
     return txt
