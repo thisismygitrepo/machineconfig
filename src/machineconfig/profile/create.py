@@ -185,7 +185,7 @@ def main(choice=None):
 
     profile_path = get_shell_profile_path()
     profile = profile_path.read_text()
-    source = f". {LIBRARY_ROOT.joinpath('settings/shells/pwsh/init.ps1').collapseuser()}" if system == "Windows" else f"source {REPO_ROOT.joinpath('settings/shells/bash/init.sh')}"
+    source = f". {LIBRARY_ROOT.joinpath('settings/shells/pwsh/init.ps1').collapseuser()}" if system == "Windows" else f"source {LIBRARY_ROOT.joinpath('settings/shells/bash/init.sh')}"
     if source in profile: print(f"Skipping sourcing init script; already in profile")
     else:
         profile += "\n" + source + "\n"
