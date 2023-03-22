@@ -292,6 +292,9 @@ yes '' | sed 3q; echo "----------------------------- installing spacevim -------
 
 
 # ---------------------------- Programming Languages ------------------------------------
+yes '' | sed 3q; echo "----------------------------- installing codon ----------------------------"; yes '' | sed 3q
+/bin/bash -c "$(curl -fsSL https://exaloop.io/install.sh)"
+
 yes '' | sed 3q; echo "----------------------------- installing rust ----------------------------"; yes '' | sed 3q
 # curl https://sh.rustup.rs -sSf | sh
 (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
