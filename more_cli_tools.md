@@ -1,8 +1,8 @@
 
 # Sources:
 * https://github.com/anderspitman/awesome-tunneling
+* https://www.softwaretestinghelp.com/ngrok-alternatives/
 * https://github.com/leonwind/cli2cloud
-* https://github.com/sorenisanerd/gotty
 * https://devsession.is/
 * https://github.com/rothgar/awesome-tuis
 * https://github.com/nschloe/github-trends
