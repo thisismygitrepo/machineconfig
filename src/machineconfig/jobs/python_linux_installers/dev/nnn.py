@@ -4,6 +4,9 @@ from machineconfig.utils.utils import get_latest_release, find_move_delete_linux
 import crocodile.toolbox as tb
 
 
+__doc__ = """A terminal-based file manager"""
+
+
 def main(version=None):
     _ = version
     # repo_url = tb.P(r"https://github.com/jarun/nnn")

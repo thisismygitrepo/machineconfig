@@ -6,7 +6,7 @@ import crocodile.toolbox as tb
 
 
 url = 'https://github.com/junegunn/fzf'
-__doc__ = """fzf is a general-purpose command-line fuzzy finder. It's a fuzzy finder that can be used with any list."""
+__doc__ = """a general-purpose cli fuzzy finder."""
 
 
 def main(version=None):

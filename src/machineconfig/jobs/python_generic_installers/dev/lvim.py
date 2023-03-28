@@ -4,6 +4,7 @@ from platform import system
 import machineconfig
 
 # https://github.com/LunarVim/LunarVim
+__doc__ = "Terminal text editor based on neovim"
 
 
 def main(version=None):

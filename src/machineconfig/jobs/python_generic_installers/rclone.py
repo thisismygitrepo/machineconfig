@@ -6,7 +6,7 @@ import platform
 
 
 url = r"https://github.com/rclone/rclone"
-__doc__ = """Rclone is a command line program to sync files and directories to and from different cloud storage providers."""
+__doc__ = """cli to sync to cloud storage providers."""
 
 def main(version=None):
     if platform.system() == "Windows":

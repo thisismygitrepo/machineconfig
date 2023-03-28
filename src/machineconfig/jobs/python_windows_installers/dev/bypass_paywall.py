@@ -5,6 +5,9 @@ import crocodile.toolbox as tb
 from platform import system
 
 
+__doc__ = """Plugin for chrome to bypass paywalls"""
+
+
 def main(version=None):
     _ = version
     # see remove paywalls and enhance YT experience by Chris Titus

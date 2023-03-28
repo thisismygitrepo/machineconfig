@@ -7,7 +7,7 @@ import crocodile.toolbox as tb
 
 
 repo_url = tb.P(r"https://github.com/veeso/termscp")
-
+__doc__ = """A TUI like winscp"""
 
 def main(version=None):
     if system() == 'Windows':

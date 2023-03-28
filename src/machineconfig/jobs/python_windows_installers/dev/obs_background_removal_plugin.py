@@ -6,6 +6,7 @@ import crocodile.toolbox as tb
 
 
 url = "https://github.com/royshil/obs-backgroundremoval"
+__doc__ = """A plugin for OBS Studio to remove background from a video"""
 
 
 def main(version=None):

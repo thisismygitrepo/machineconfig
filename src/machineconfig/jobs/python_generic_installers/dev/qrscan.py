@@ -3,6 +3,8 @@ from platform import system
 from machineconfig.utils.utils import get_latest_release, find_move_delete_linux, find_move_delete_windows
 import crocodile.toolbox as tb
 
+__doc__ = """qr code scanner"""
+
 
 def main(version=None):
     # =================================================== Rust's qrscan to allow computers to scan qr code from webcam.

@@ -4,6 +4,9 @@ from machineconfig.utils.utils import get_latest_release, find_move_delete_linux
 import crocodile.toolbox as tb
 
 
+__doc__ = """qr code file transfer"""
+
+
 def main(version=None):
     # =================================================== python's qr code to create qrcode on terminal from simple text.
     tb.Terminal().run("pip install qrcode", shell="pwsh")

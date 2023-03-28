@@ -6,6 +6,7 @@ from platform import system
 
 
 url = r'https://github.com/dbrgn/tealdeer'
+__doc__ = "Too long, didn't read, but for cli tools."
 
 
 def main(version=None):

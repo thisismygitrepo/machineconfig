@@ -7,6 +7,7 @@ from crocodile.meta import Terminal
 
 url = r"https://github.com/koute/bytehound"
 fname = r"bytehound-x86_64-unknown-linux-gnu.tgz"
+__doc__ = """Inspecting the memory usage of a running process"""
 
 
 def main(version=None):

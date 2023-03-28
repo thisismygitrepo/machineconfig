@@ -6,7 +6,7 @@ from platform import system
 from machineconfig.utils.utils import get_latest_release
 
 
-__doc__ = """broot is an fzf variant for folder structure and layered search. It doesn't search aribtrarily deep and avoids git folders."""
+__doc__ = """broot is an fzf variant for folder structure and layered search."""
 
 
 if system() == 'Linux':

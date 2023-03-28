@@ -4,6 +4,9 @@ from machineconfig.utils.utils import get_latest_release
 import crocodile.toolbox as tb
 
 
+__doc__ = """Counts the number of lines of code, comments, and blanks in a project."""
+
+
 def main(version=None):
     url = get_latest_release('https://github.com/XAMPPRocky/tokei', download_n_extract=False, version=version)
 

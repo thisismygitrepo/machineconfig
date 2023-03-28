@@ -6,6 +6,9 @@ from rich.console import Console
 from platform import system
 
 
+__doc__ = """Bitwarden (password manager) cli"""
+
+
 def main(version=None):
     _ = version
     if system() == "Windows":

@@ -4,6 +4,7 @@ from platform import system
 
 
 url = 'https://github.com/tbillington/kondo'
+__doc__ = """cleans projects from litter files."""
 
 
 def main(version=None):

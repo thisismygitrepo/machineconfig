@@ -4,7 +4,7 @@ from platform import system
 import crocodile.toolbox as tb
 
 
-__doc__ = """delta is a viewer for git and diff output. It aims to be faster and more feature-rich than git-diff and similar tools."""
+__doc__ = """delta is a viewer for git and diff output"""
 repo_url = tb.P(r"https://github.com/dandavison/delta")
 # from https://github.com/dandavison/delta#configuration
 config_patch = """
