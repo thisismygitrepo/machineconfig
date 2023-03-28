@@ -5,7 +5,7 @@ import platform
 
 
 url = "https://github.com/dalance/procs/"
-
+__doc__ = """procs is a modern replacement for ps written in Rust."""
 
 def main(version=None):
     if platform.system() == "Windows":

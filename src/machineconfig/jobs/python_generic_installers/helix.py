@@ -4,7 +4,7 @@ from platform import system
 import crocodile.toolbox as tb
 
 repo_url = tb.P(r"https://github.com/helix-editor/helix")
-
+__doc__ = f"""Rust-based TUI editor"""
 
 def main(version=None):
     if system() == 'Windows':

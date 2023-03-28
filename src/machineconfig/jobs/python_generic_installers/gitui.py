@@ -5,6 +5,8 @@ from machineconfig.utils.utils import get_latest_release, find_move_delete_linux
 import platform
 
 
+__doc__ = """gitui is a terminal ui for git written in rust."""
+
 def main(version=None):
     url = get_latest_release("https://github.com/extrawurst/gitui", version=version)
     if platform.system() == "Linux":

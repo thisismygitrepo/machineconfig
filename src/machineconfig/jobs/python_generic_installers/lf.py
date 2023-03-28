@@ -5,7 +5,7 @@ import crocodile.toolbox as tb
 import platform
 
 url = 'https://github.com/gokcehan/lf'
-
+__doc__ = """lf is a terminal file manager written in go."""
 
 def main(version=None):
 

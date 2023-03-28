@@ -7,7 +7,7 @@ from machineconfig.utils.utils import get_latest_release
 
 
 url = 'https://github.com/sharkdp/fd'
-
+__doc__ = """fd is a simple, fast and user-friendly alternative to find."""
 
 def main(version=None):
     get_latest_release(url, download_n_extract=True, version=version)

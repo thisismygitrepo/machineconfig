@@ -1,15 +1,12 @@
 
 
-# wget https://dystroy.org/broot/download/x86_64-linux/broot
-# # broot is an fzf variant. It's excellent for viewing folder structure and layered search.
-# # broot doesn't search aribtrarily deep and it also avoids git folders.
-# chmod +x broot
-# sudo mv ./broot /usr/local/bin/
-
 import crocodile.toolbox as tb
 from rich.console import Console
 from platform import system
 from machineconfig.utils.utils import get_latest_release
+
+
+__doc__ = """broot is an fzf variant for folder structure and layered search. It doesn't search aribtrarily deep and avoids git folders."""
 
 
 if system() == 'Linux':

@@ -5,7 +5,7 @@ import platform
 
 
 url = "https://github.com/pvolok/mprocs"
-
+__doc__ = """Windows/Linux poorman's zellij"""
 
 def main(version=None):
     if platform.system() == "Windows":

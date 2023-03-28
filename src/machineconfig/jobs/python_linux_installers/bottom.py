@@ -4,6 +4,7 @@ import crocodile.toolbox as tb
 
 url = r'https://github.com/ClementTsang/bottom'
 fname = 'bottom_x86_64-unknown-linux-gnu.tar.gz'
+__doc__ = """bottom is a cross-platform graphical process/system monitor with a customizable interface and a multitude of features."""
 
 
 def main(version=None):

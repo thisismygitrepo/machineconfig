@@ -6,6 +6,7 @@ import platform
 
 
 url = "https://github.com/sniptt-official/ots"
+__doc__ = """A command line tool for generating and verifying one-time secrets."""
 
 
 def main(version=None):

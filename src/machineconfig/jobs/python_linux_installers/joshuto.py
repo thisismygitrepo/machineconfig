@@ -6,7 +6,7 @@ Rust version of lf (GO)
 
 from machineconfig.utils.utils import get_latest_release, find_move_delete_linux
 import crocodile.toolbox as tb
-
+__doc__ = """A terminal file manager written in Rust."""
 # repo_url = tb.P(r"https://github.com/kamiyaa/joshuto")
 # release = get_latest_release(repo_url.as_url_str())
 # path = release.joinpath(f"joshuto-{release[-1]}-x86_64-unknown-linux-gnu.tar.gz")

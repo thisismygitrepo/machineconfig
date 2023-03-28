@@ -3,6 +3,8 @@ from machineconfig.utils.utils import get_latest_release, find_move_delete_linux
 from platform import system
 import crocodile.toolbox as tb
 
+
+__doc__ = """delta is a viewer for git and diff output. It aims to be faster and more feature-rich than git-diff and similar tools."""
 repo_url = tb.P(r"https://github.com/dandavison/delta")
 # from https://github.com/dandavison/delta#configuration
 config_patch = """

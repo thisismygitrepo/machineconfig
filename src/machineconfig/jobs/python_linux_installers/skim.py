@@ -5,6 +5,8 @@ Rust version of FZF (GO)
 
 from machineconfig.utils.utils import get_latest_release
 import crocodile.toolbox as tb
+__doc__ =  """skim is a fuzzy finder in rust!"""
+
 
 def main(version=None):
     _ = version

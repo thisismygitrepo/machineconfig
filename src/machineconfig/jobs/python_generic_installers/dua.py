@@ -5,7 +5,7 @@ from platform import system
 
 
 url = "https://github.com/Byron/dua-cli"
-
+__doc__ = """Rust-based cli tool to get a quick overview of disk usage."""
 
 def main(version=None):
     if system() == 'Windows':

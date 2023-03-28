@@ -5,7 +5,7 @@ import crocodile.toolbox as tb
 # search for files/folder names only. Result can be fed to fzf for further filtering. For that use: fd | fzf. one can also make fd the searcher in fzf
 
 url = 'https://github.com/ascii-boxes/boxes'
-
+__doc__ = """Boxes is a program that draws boxes around text. It is useful for drawing ASCII art boxes around text."""
 
 def main(version=None):
     from machineconfig.utils.utils import get_latest_release, tmp_install_dir

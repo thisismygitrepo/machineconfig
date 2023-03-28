@@ -4,6 +4,7 @@
 # colored bat
 from machineconfig.utils.utils import get_latest_release
 
+__doc__ = """A cat(1) clone with wings."""
 
 url = 'https://github.com/sharkdp/bat'
 

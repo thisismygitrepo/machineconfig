@@ -6,6 +6,8 @@ import crocodile.toolbox as tb
 
 
 url = 'https://github.com/junegunn/fzf'
+__doc__ = """fzf is a general-purpose command-line fuzzy finder. It's a fuzzy finder that can be used with any list."""
+
 
 def main(version=None):
     # tb.Terminal().run("nu -c 'ps | where name == fzf.exe | each { |it| kill $it.pid --force}'", shell="pwsh").print()

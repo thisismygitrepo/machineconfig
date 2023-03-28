@@ -5,7 +5,7 @@ import crocodile.toolbox as tb
 
 url = r'https://github.com/aristocratos/btop'
 fname = 'btop-x86_64-linux-musl.tbz'
-
+__doc__ = """btop is a resource monitor for Linux, FreeBSD and MacOS."""
 
 def main(version=None):
     release = get_latest_release(url, version=version)

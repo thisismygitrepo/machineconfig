@@ -6,6 +6,7 @@ import platform
 
 
 url = "https://github.com/ouch-org/ouch"
+__doc__ = """A cli for extracting and creating archives in unified way."""
 
 
 def main(version=None):

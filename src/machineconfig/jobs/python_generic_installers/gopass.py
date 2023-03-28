@@ -5,7 +5,7 @@ from platform import system
 
 
 url = r"https://github.com/gopasspw/gopass"
-
+__doc__ = """cli password manager"""
 
 def main(version=None):
     if system() == "Windows":

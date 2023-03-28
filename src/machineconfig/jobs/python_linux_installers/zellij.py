@@ -12,6 +12,8 @@ import crocodile.toolbox as tb
 # """  # MOVED TO PATCHES
 
 
+__doc__ = """Zellij is a terminal workspace with support for multiple plugins, such as a terminal, status bar, tabs, splits, etc."""
+
 def main(version=None):
     _ = version
     _ = get_latest_release("https://github.com/zellij-org/zellij", download_n_extract=False, linux=True)

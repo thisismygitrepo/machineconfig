@@ -5,6 +5,8 @@ from rich.console import Console
 from platform import system
 
 
+__doc__ = """diskonaut is a terminal disk space navigator. It helps you understand where your disk space is going and which files are taking it up."""
+
 def main(version=None):
     if system() == "Windows":
         console = Console()

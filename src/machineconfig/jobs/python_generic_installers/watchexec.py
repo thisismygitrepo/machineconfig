@@ -5,7 +5,7 @@ from platform import system
 
 
 url = "https://github.com/watchexec/watchexec"
-
+__doc__ = """Executes commands in response to file modifications."""
 
 def main(version=None):
     if system() == 'Windows':

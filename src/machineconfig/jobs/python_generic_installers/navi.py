@@ -4,6 +4,7 @@ import platform
 
 
 url = "https://github.com/denisidoro/navi"
+__doc__ = """Interactive cheatsheet tool for the command-line"""
 
 
 def main(version=None):

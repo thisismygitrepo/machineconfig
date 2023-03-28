@@ -15,7 +15,7 @@ def main(program_name=None):
     default = tb.P("all")
     installers.list.insert(0, default)
     installers.list.insert(0, tb.P("Other"))
-    options = list(installers.stem)
+    options = list(installers.apply(lambda x: x.stem + ((' -- ' + str(x.readit().__doc__)) if x.exists() else '')))
     options.sort()
 
     if program_name is None:

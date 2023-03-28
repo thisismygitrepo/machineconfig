@@ -5,6 +5,7 @@ from platform import system
 
 
 url = "https://github.com/evcxr/evcxr"
+__doc__ = """An evaluation context for Rust."""
 
 
 def main(version=None):

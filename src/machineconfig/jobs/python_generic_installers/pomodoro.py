@@ -4,7 +4,7 @@ import platform
 
 
 url = "https://github.com/open-pomodoro/openpomodoro-cli"
-
+__doc__ = """Pomodoro timer for the command-line"""
 
 def main(version=None):
     if platform.system() == "Windows":
