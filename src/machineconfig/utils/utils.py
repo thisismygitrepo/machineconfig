@@ -16,19 +16,27 @@ PROGRAM_PATH = P.tmp().joinpath("shells/python_return_command") + (".ps1" if pla
 tmp_install_dir = P.tmp(folder="tmp_installers")
 
 
-def display_options(msg, options: list, header="", tail="", prompt="", default=None):
-    console = Console()
-    if default is not None:
-        assert default in options, f"Default `{default}` option not in options `{list(options)}`"
-        default_msg = Text(f" <<<<-------- DEFAULT", style="bold red")
-    else: default_msg = ""
-    txt = Text("\n" + msg + "\n")
-    for idx, key in enumerate(options):
-        txt = txt + Text(f"{idx:2d} ", style="bold blue") + str(key) + (default_msg if default is not None and default == key else "") + "\n"
-    txt = Panel(txt, title=header, subtitle=tail, border_style="bold red")
-    console.print(txt)
+def display_options(msg, options: list, header="", tail="", prompt="", default=None, fzf=False):
 
-    choice_idx = input(f"{prompt}\nEnter option *number* (or option name starting with space): ")
+    if fzf:
+        install_n_import("pyfzf")
+        from pyfzf.pyfzf import FzfPrompt
+        fzf = FzfPrompt()
+        choice_idx = fzf.prompt(options)
+        if type(choice_idx) is list and len(choice_idx) == 1: choice_idx = choice_idx[0]
+    else:
+        console = Console()
+        if default is not None:
+            assert default in options, f"Default `{default}` option not in options `{list(options)}`"
+            default_msg = Text(f" <<<<-------- DEFAULT", style="bold red")
+        else: default_msg = ""
+        txt = Text("\n" + msg + "\n")
+        for idx, key in enumerate(options):
+            txt = txt + Text(f"{idx:2d} ", style="bold blue") + str(key) + (default_msg if default is not None and default == key else "") + "\n"
+        txt = Panel(txt, title=header, subtitle=tail, border_style="bold red")
+        console.print(txt)
+        choice_idx = input(f"{prompt}\nEnter option *number* (or option name starting with space): ")
+
     if choice_idx.startswith(" "):
         choice_key = choice_idx.strip()
         assert choice_key in options, f"Choice `{choice_key}` not in options `{options}`"

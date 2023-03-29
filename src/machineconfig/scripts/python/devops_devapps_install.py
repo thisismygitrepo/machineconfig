@@ -19,7 +19,7 @@ def main(program_name=None):
     options.sort()
 
     if program_name is None:
-        program_name = display_options(msg="", options=options, header="CHOOSE DEV APP", default=str(default))
+        program_name = display_options(msg="", options=options, header="CHOOSE DEV APP", default=str(default), fzf=True)
 
     if program_name == "all":
         if system() == "Linux": from machineconfig.jobs.python.python_linux_installers_all import main
@@ -33,13 +33,16 @@ def main(program_name=None):
         if system() == "Windows": options_more = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text())
         elif system() == "Linux": options_more = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps.sh").read_text())
         else: raise NotImplementedError(f"System {system()} not supported")
-        program_name = display_options(msg="", options=list(options_more.keys()), header="CHOOSE DEV APP")
+        program_name = display_options(msg="", options=list(options_more.keys()), header="CHOOSE DEV APP", fzf=True)
         program = options_more[program_name]
+        if program.startswith("#"): program = program[1:]
+        print(f"Running:\n{program}")
     elif program_name == "Other dev apps":
         installers = get_cli_py_installers(dev=True)
         options = list(installers.apply(lambda x: x.stem + ((' -- ' + str(x.readit().__doc__)) if x.exists() else '')))
-        program_name = display_options(msg="", options=options, header="CHOOSE DEV APP")
-        idx = installers.stem.list.index(program_name)
+        options.sort()
+        program_name = display_options(msg="", options=options, header="CHOOSE DEV APP", fzf=True)
+        idx = options.index(program_name)
         program = installers[idx].readit()['main']()  # finish the task
         if program is None: program = "echo 'Finished Installation'"  # write an empty program
     else:
