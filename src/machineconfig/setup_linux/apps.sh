@@ -38,6 +38,7 @@ if [ "$package_manager" = "apt" ]; then
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.wget || true
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing curl -------------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install curl -y || true  # for handling http requests
@@ -58,15 +59,18 @@ nvm install node || true
 
 yes '' | sed 3q; echo "----------------------------- installing sharewifi ----------------------------"; yes '' | sed 3q
 npm install sharewifi -g || true
+
 yes '' | sed 3q; echo "----------------------------- installing easy-sharing ----------------------------"; yes '' | sed 3q
 npm install -g easy-sharing  # https://github.com/parvardegr/sharing
 # https://github.com/mifi/ezshare
+
 yes '' | sed 3q; echo "----------------------------- installing sshfs ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install sshfs  # mount remote filesystems over ssh
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.sshfs || true
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing samba ----------------------------"; yes '' | sed 3q
 #sudo apt install samba  # LAN-based file sharing
 
@@ -76,22 +80,27 @@ if [ "$package_manager" = "apt" ]; then
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.graphviz || true
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing make ----------------------------"; yes '' | sed 3q
 sudo apt install make -y || true  # lvim and spacevim require it.
+
 yes '' | sed 3q; echo "----------------------------- installing net-tools ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install net-tools -y || true  # gives ifconfig
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.nettools || true
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing git ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install git -y || true  # for version control
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.git || true
 fi
+
 #curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
 #curl https://rclone.org/install.sh | sudo bash  # onedrive equivalent.
+
 yes '' | sed 3q; echo "----------------------------- installing lynx ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install lynx -y || true  # tex browser, just like w3m
@@ -136,6 +145,7 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.skim  # https://search.nixos.org/packages?channel=22.11&show=skim&from=0&size=50&sort=relevance&type=packages&query=skim || true
   ~/.nix-profile/bin/nix-env -iA nixpkgs.btop
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing hyperfine ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install curl
@@ -149,18 +159,21 @@ if [ "$package_manager" = "apt" ]; then
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.fzf || true
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing fd-find ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install fd-find -y || true  # find alternative
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.fd || true
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing ripgrep ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install ripgrep -y || true  # rg command, rust-based, blazingly fast grep.
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.ripgrep || true
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing ugrep ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install ugrep -y || true  # just as good as grep, but consistent with windows
@@ -173,14 +186,17 @@ if [ "$package_manager" = "apt" ]; then
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.ncdu || true
 fi
+
 # https://github.com/bootandy/dust
 # https://github.com/dalance/procs#installation
+
 yes '' | sed 3q; echo "----------------------------- installing exa ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install exa -y || true  # replacement for ls. no ner fonts, unlike lsd
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.exa || true
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing navi ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
 #  sudo apt install exa -y || true  # replacement for ls. no ner fonts, unlike lsd
@@ -198,12 +214,14 @@ if [ "$package_manager" = "apt" ]; then
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.fortune || true
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing boxes ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install boxes -y || true  # for ascii banners. boxes -l for list of boxes.
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.boxes || true
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing cowsay ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install cowsay -y || true  # animals saying things. Different figures with -f. Full list: cowsay -l
@@ -211,18 +229,21 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.neo-cowsay || true
   ~/.nix-profile/bin/nix-env -iA nixpkgs.cowsay || true
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing lolcat ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install lolcat -y || true  # for coloring text in terminal.
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.lolcat || true
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing toilet ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install toilet -y || true  # large ascii text
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.toilet || true
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing figlet ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install figlet -y || true  # large ascii text. See: showfigfonts for full list of fonts. use -f to change font.
@@ -252,14 +273,15 @@ if [ "$package_manager" = "apt" ]; then
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.sl || true
 fi
+
 yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install hollywood -y || true  # for fun
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
 fi
-yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
 
+yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install cmatrix -y || true  # for fun
 else

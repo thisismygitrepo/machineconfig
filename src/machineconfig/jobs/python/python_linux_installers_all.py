@@ -46,7 +46,7 @@ def main(installers=None, safe=False):
         apps_dir.delete(sure=True)
         return None
 
-    installers = installers if installers is not None else tb.L(get_cli_py_installers())
+    installers = installers if installers is not None else tb.L(get_cli_py_installers(dev=False))
 
     install_logic(installers[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
 
