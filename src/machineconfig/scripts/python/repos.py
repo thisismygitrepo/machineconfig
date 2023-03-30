@@ -111,7 +111,7 @@ def install_repos(path, cloud=None):
         path = path.from_cloud(rel2home=True, cloud=cloud)
     repos = tb.Read.pickle(path)
     for repo in repos:
-        for remote_name, remote_url in repo["remotes"].items:
+        for remote_name, remote_url in repo["remotes"].items():
             parent_dir = tb.P(repo["parent_dir"]).expanduser().absolute().create()
             program += f"\ncd {parent_dir}; git clone {remote_url} --origin {remote_name}\n"
     return program
