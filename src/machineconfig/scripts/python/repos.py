@@ -104,11 +104,12 @@ def record_repos(path) -> list[dict]:
     return res
 
 
-def install_repos(path, cloud=None):
+def install_repos(path=None, cloud=None):
     program = ""
-    path = tb.P(path).expanduser().absolute()
     if cloud is not None:
         path = path.from_cloud(rel2home=True, cloud=cloud)
+    else:
+        path = tb.P(path).expanduser().absolute()
     repos = tb.Read.pickle(path)
     for repo in repos:
         for idx, (remote_name, remote_url) in enumerate(repo["remotes"].items()):
@@ -117,6 +118,7 @@ def install_repos(path, cloud=None):
                 program += f"\ncd {parent_dir}; git clone {remote_url} --origin {remote_name}\n"
             else:
                 program += f"\ncd {parent_dir}; git remote add {remote_name} {remote_url}\n"
+    print(program)
     return program
 
 
