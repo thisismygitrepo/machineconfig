@@ -74,9 +74,10 @@ git pull originEnc master
         print(f"Failed to pull, keeping local copy of remote at {repo_sync} ... ")
         print(f"""When finished manually merging, run:
 repo_sync = tb.P(r'{repo_sync}')
-repo = tb.P(r'{repo_root}')
+repo_root = tb.P(r'{repo_root}')
 repo_sync.delete(sure=True)
 from git.remote import Remote
+repo = tb.install_n_import("git", "gitpython").Repo(repo_root)
 Remote.remove(repo, "originEnc")
 repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
 """)
