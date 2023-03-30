@@ -63,7 +63,7 @@ git pull originEnc master
 """
     suffix = '.ps1' if platform.system() == 'Windows' else '.sh'
     res = tb.Terminal().run(f". {tb.P.tmpfile(suffix=suffix).write_text(script)}", shell="powershell").capture().print()
-    if res.is_successful(strict_err=False, strict_returcode=True):
+    if res.is_successful(strict_err=True, strict_returcode=True):
         print("\n", "Pull succeeded, removing originEnc, the local copy of remote & pushing merged repo_root to remote ... ")
         repo_sync.delete(sure=True)
         from git.remote import Remote
@@ -72,6 +72,14 @@ git pull originEnc master
             repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)
     else:
         print(f"Failed to pull, keeping local copy of remote at {repo_sync} ... ")
+        print(f"""When finished manually merging, run:
+repo_sync = tb.P(r'{repo_sync}')
+repo = tb.P(r'{repo_root}')
+repo_sync.delete(sure=True)
+from git.remote import Remote
+Remote.remove(repo, "originEnc")
+repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
+""")
 
 
 if __name__ == "__main__":
