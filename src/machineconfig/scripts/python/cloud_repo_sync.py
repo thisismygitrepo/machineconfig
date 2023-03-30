@@ -77,8 +77,9 @@ repo_sync = tb.P(r'{repo_sync}')
 repo_root = tb.P(r'{repo_root}')
 repo_sync.delete(sure=True)
 from git.remote import Remote
-repo = tb.install_n_import("git", "gitpython").Repo(repo_root)
-Remote.remove(repo, "originEnc")
+from git import Repo
+try: Remote.remove(Repo(repo_root), "originEnc")
+except: pass
 repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
 """)
 
