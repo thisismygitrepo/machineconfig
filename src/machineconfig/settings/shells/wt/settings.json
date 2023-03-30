@@ -65,7 +65,7 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "powershell.exe -Command \"c:/users/alex/code/machineconfig/src/machineconfig/scripts/windows/croshell.ps1\"",
+                "commandline": "powershell.exe -Command \"~/scripts/croshell.ps1\"",
                 "guid": "{1e951406-6597-48c7-8137-b967bed19572}",
                 "name": "croshell",
                 "startingDirectory": "%USERPROFILE%"
