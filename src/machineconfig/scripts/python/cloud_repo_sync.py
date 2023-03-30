@@ -55,9 +55,11 @@ echo ""
 echo ""
 echo "=============================== Pulling Latest From Remote ================================"
 cd {repo_root}
+echo 'trying to removing originEnc remote if it exists.'
 git remote remove originEnc
+echo 'adding originEnc remote.'
 git remote add originEnc {repo_sync}
-
+echo 'fetching originEnc remote.'
 git pull originEnc master
 
 """
@@ -72,7 +74,7 @@ git pull originEnc master
             repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)
     else:
         print(f"Failed to pull, keeping local copy of remote at {repo_sync} ... ")
-        print(f"""When finished manually merging, run:
+        print(f"""Abstaining from running the following autmomatically:
 repo_sync = tb.P(r'{repo_sync}')
 repo_root = tb.P(r'{repo_root}')
 repo_sync.delete(sure=True)
@@ -80,8 +82,16 @@ from git.remote import Remote
 from git import Repo
 try: Remote.remove(Repo(repo_root), "originEnc")
 except: pass
-repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
+repo_root.to_cloud(cloud={cloud}, zip=True, encrypt=True, rel2home=True, os_specific=False)
 """)
+        resp = input("Would you like to run the above commands? [y]/n ") or "y"
+        if resp.lower() == "y":
+            repo_sync.delete(sure=True)
+            from git.remote import Remote
+            from git import Repo
+            try: Remote.remove(Repo(repo_root), "originEnc")
+            except: pass
+            repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
 
 
 if __name__ == "__main__":

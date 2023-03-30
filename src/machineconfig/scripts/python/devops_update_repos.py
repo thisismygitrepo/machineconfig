@@ -2,10 +2,14 @@
 from platform import system
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import LIBRARY_ROOT
+from rich.panel import Panel
+from rich.console import Console
+# from rich.text import Text
+from rich.syntax import Syntax
 
 
 def main(verbose=True) -> str:
-    repos = tb.P.home().joinpath("dotfiles/config/repos.ini")
+    repos = tb.P.home().joinpath("dotfiles/config/reposXXX.ini")
     if repos.exists():
         repos = repos.readit()
         repo_package_list = repos.sections()
@@ -68,7 +72,9 @@ echo "{("Pulling " + str(a_repo.working_dir)).center(80, "-")}"
     else: raise NotImplementedError(f"System {system()} not supported")
 
     program = program.split("# updateBegins")[0] + addition + program.split("# updateEnds")[1]
-    program += f"\npip install --upgrade {' '.join(global_packages)}\n" if len(global_packages) else ""
+#    program += f"\npip install --upgrade {' '.join(global_packages)}\n" if len(global_packages) else ""
+    console = Console()
+    console.print(Panel(Syntax(program, lexer="ps1" if system == "Windows" else "sh"), title="Script to create virtual environment..."), style="bold red")
     return program
 
 
