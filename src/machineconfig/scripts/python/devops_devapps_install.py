@@ -16,7 +16,7 @@ def main(program_name=None):
     installers.list.insert(0, tb.P("System Installers"))
     installers.list.insert(0, tb.P("Other dev apps"))
     options = list(installers.apply(lambda x: x.stem + ((' -- ' + str(x.readit().__doc__)) if x.exists() else '')))
-    options.sort()
+    # options.sort()  # throws off sync between installers and options
 
     if program_name is None:
         program_name = display_options(msg="", options=options, header="CHOOSE DEV APP", default=str(default), fzf=True)
