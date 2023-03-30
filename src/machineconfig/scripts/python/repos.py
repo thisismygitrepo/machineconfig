@@ -117,7 +117,7 @@ def install_repos(path=None, cloud=None):
             if idx == 0:
                 program += f"\ncd {parent_dir}; git clone {remote_url} --origin {remote_name}\n"
             else:
-                program += f"\ncd {parent_dir}; git remote add {remote_name} {remote_url}\n"
+                program += f"\ncd {parent_dir}/{tb.P(remote_name)[-1].stem}; git remote add {remote_name} {remote_url}\n"
     print(program)
     return program
 
