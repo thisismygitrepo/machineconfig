@@ -31,8 +31,7 @@ def main(verbose=True) -> str:
             repo = tb.install_n_import("git", "gitpython").Repo(str(a_package_path), search_parent_directories=True)
             local_install_repos.append(repo)
         except:
-            if repos[a_package]["py_package"] == "False":
-                continue
+            if repos[a_package]["py_package"] == "False": continue
             global_packages.append(a_package)
 
     if verbose: print(f"Local install repos:"); tb.L(local_install_repos).print(); print("Global packages:"); tb.L(global_packages).print()

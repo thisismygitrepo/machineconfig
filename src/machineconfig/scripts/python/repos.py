@@ -5,14 +5,17 @@ import argparse
 from machineconfig.utils.utils import PROGRAM_PATH
 from platform import system
 from rich import print
-
+from rich.panel import Panel
+from rich.console import Console
+# from rich.text import Text
+from rich.syntax import Syntax
 
 tm = tb.Terminal()
 
 
 def commit_one(path, mess="auto_commit_" + tb.randstr()):
     return f'''
-cd {path}; git add .; git commit -am "{mess}"
+cd '{path}'; git add .; git commit -am "{mess}"
 echo ""
 echo ""
 '''
@@ -23,11 +26,10 @@ def push_one(path):
     cmds = []
     join = '\n'
     for remote in remotes:
-        if remote != "": cmds.append(f'cd {path}; git push {remote}')
+        if remote != "": cmds.append(f'cd "{path}"; git push {remote}')
     return f"""
 {join.join(cmds)}
-echo ""
-echo ""
+echo ""; echo ""
 """
 
 
@@ -36,11 +38,10 @@ def pull_one(path):
     cmds = []
     join = '\n'
     for remote in remotes:
-        if remote != "": cmds.append(f'cd {path}; git pull {remote}')
+        if remote != "": cmds.append(f'cd "{path}"; git pull {remote}')
     return f"""
 {join.join(cmds)}
-echo ""
-echo ""
+echo ""; echo ""
 """
 
 
@@ -78,11 +79,13 @@ def main():
             if args.pull or args.all: program += f"""\necho '>>>>>>>>> Pulling'\n""" + pull_one(a_path) + "\n"
             if args.commit or args.all: program += f"""\necho '>>>>>>>>> Committing'\n""" + commit_one(a_path) + "\n"
             if args.push or args.all: program += f"""\necho '>>>>>>>>> Pushing'\n""" + push_one(a_path) + "\n"
-    else:
-        program = "echo 'no action specified, try to pass --push, --pull, --commit or --all'"
+    else: program = "echo 'no action specified, try to pass --push, --pull, --commit or --all'"
 
     program = "$orig_path = $pwd\n" + program + "\ncd $orig_path"
     print(f"Executing {PROGRAM_PATH}")
+    console = Console()
+    console.print(Panel(Syntax(program, lexer="ps1" if system == "Windows" else "sh"), title="Script to create virtual environment..."), style="bold red")
+
     if system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
     else: PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
 
