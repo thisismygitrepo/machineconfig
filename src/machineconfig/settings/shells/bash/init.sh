@@ -2,9 +2,10 @@
 
 export PATH="~/.local/bin:~/code/machineconfig/src/machineconfig/scripts/linux:~/dotfiles/scripts/linux:~/.nix-profile/bin:/usr/games:$PATH"
 
-source ~/code/machineconfig/src/machineconfig/settings/broot/br.sh
-source ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/lfcd.sh
-source ~/code/machineconfig/src/machineconfig/settings/tere/terecd.sh
+$machineconfig_path = (python -c "print(__import__('machineconfig').__file__[:-12])")
+source $machineconfig_path/settings/broot/br.sh
+source $machineconfig_path/settings/lf/linux/exe/lfcd.sh
+source $machineconfig_path/settings/tere/terecd.sh
 
 # from https://github.com/cantino/mcfly
 eval "$(mcfly init bash)"

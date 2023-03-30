@@ -69,7 +69,6 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh  # requires sudo since it invloves chmod of dotfiles/.ssh, however sudo doesn't work with source. best to have sudo -s earlier.
 # devapps
 source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
-
 ```
 
 ###### Setup SSH connection:
