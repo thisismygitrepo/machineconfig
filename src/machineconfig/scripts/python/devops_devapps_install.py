@@ -47,6 +47,7 @@ def main(program_name=None):
         if program is None: program = "echo 'Finished Installation'"  # write an empty program
     else:
         idx = options.index(program_name)
+        print(installers[idx])
         program = installers[idx].readit()['main']()  # finish the task
         if program is None: program = "echo 'Finished Installation'"  # write an empty program
     return program
