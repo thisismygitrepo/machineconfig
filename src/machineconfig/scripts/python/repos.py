@@ -2,13 +2,9 @@
 
 import crocodile.toolbox as tb
 import argparse
-from machineconfig.utils.utils import PROGRAM_PATH
-from platform import system
+from machineconfig.utils.utils import write_shell_script
 from rich import print
-from rich.panel import Panel
-from rich.console import Console
-# from rich.text import Text
-from rich.syntax import Syntax
+
 
 tm = tb.Terminal()
 
@@ -80,14 +76,7 @@ def main():
             if args.commit or args.all: program += f"""\necho '>>>>>>>>> Committing'\n""" + commit_one(a_path) + "\n"
             if args.push or args.all: program += f"""\necho '>>>>>>>>> Pushing'\n""" + push_one(a_path) + "\n"
     else: program = "echo 'no action specified, try to pass --push, --pull, --commit or --all'"
-
-    program = "$orig_path = $pwd\n" + program + "\ncd $orig_path"
-    print(f"Executing {PROGRAM_PATH}")
-    console = Console()
-    console.print(Panel(Syntax(program, lexer="ps1" if system == "Windows" else "sh"), title="Script to create virtual environment..."), style="bold red")
-
-    if system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
-    else: PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
+    write_shell_script(program, "Script to update repos")
 
 
 def record_repos(path) -> list[dict]:

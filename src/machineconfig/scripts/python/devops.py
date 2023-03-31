@@ -2,7 +2,7 @@
 from platform import system
 # import subprocess
 # import crocodile.toolbox as tb
-from machineconfig.utils.utils import display_options, PROGRAM_PATH
+from machineconfig.utils.utils import display_options, PROGRAM_PATH, write_shell_script
 from enum import Enum
 
 
@@ -76,10 +76,7 @@ def main():
         program = main()
 
     else: raise ValueError(f"Unimplemented choice: {choice_key}")
-
-    print(f"Executing {PROGRAM_PATH}")
-    if system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
-    else: PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
+    if program: write_shell_script(program)
 
 
 if __name__ == "__main__":

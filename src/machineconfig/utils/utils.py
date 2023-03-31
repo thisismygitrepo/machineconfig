@@ -5,8 +5,9 @@ from crocodile.core import install_n_import
 # import crocodile.environment as env
 import machineconfig
 from rich.text import Text
-from rich.console import Console
 from rich.panel import Panel
+from rich.console import Console
+from rich.syntax import Syntax
 import platform
 
 
@@ -161,6 +162,21 @@ def get_shell_script_executing_pyscript(python_file, func=None, system=None, ve_
 {exec_line}
 deactivate
 """
+
+
+def write_shell_script(program, desc=""):
+    print(f"Executing {PROGRAM_PATH}")
+    console = Console()
+    if platform.system() == "Windows":
+        lexer = "ps1"
+        program = "$orig_path = $pwd\n" + program + "\ncd $orig_path"
+    else:
+        lexer = "sh"
+        program = 'orig_path=$(cd -- "." && pwd)\n' + program + '\ncd "$orig_path" || exit'
+    console.print(Panel(Syntax(program, lexer=lexer), title=desc), style="bold red")
+    if platform.system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
+    else: PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
+    return None
 
 
 def get_latest_version(url):

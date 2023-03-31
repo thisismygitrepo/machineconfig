@@ -1,11 +1,7 @@
 
 from platform import system
 import crocodile.toolbox as tb
-from machineconfig.utils.utils import LIBRARY_ROOT
-from rich.panel import Panel
-from rich.console import Console
-# from rich.text import Text
-from rich.syntax import Syntax
+from machineconfig.utils.utils import LIBRARY_ROOT, write_shell_script
 
 
 def main(verbose=True) -> str:
@@ -59,22 +55,17 @@ cd "{a_repo.working_dir}"
 echo "{("Pulling " + str(a_repo.working_dir)).center(80, "-")}"
 {sep.join([f'git pull {remote.name}' for remote in a_repo.remotes])}
 """)
-        addition = "\n".join(additions)
+        program = "\n".join(additions)
 
     elif system() == "Windows":
-        program = tb.P(f"{LIBRARY_ROOT}/jobs/windows/update_essentials.ps1").read_text()
-        addition = "\n".join([f"""
+        program = "\n".join([f"""
 cd "{a_repo.working_dir}"
 echo "{("Pulling " + str(a_repo.working_dir)).center(80, "-")}"
 {sep.join([f'git pull {remote.name}' for remote in a_repo.remotes])}
 """ for a_repo in local_install_repos])
     else: raise NotImplementedError(f"System {system()} not supported")
-
-    program = program.split("# updateBegins")[0] + addition + program.split("# updateEnds")[1]
-#    program += f"\npip install --upgrade {' '.join(global_packages)}\n" if len(global_packages) else ""
-    console = Console()
-    console.print(Panel(Syntax(program, lexer="ps1" if system == "Windows" else "sh"), title="Script to create virtual environment..."), style="bold red")
-    return program
+    write_shell_script(program, desc="Script to update repos")
+    return ""
 
 
 if __name__ == '__main__':

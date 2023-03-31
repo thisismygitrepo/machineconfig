@@ -2,10 +2,10 @@
 import crocodile.toolbox as tb
 import platform
 import machineconfig
+from machineconfig.utils.utils import write_shell_script
 from rich.panel import Panel
 from rich.console import Console
 # from rich.text import Text
-from rich.syntax import Syntax
 
 system = platform.system()
 lib_root = tb.P(machineconfig.__file__).parent
@@ -64,10 +64,8 @@ fi
         text = tb.modify_text(txt_raw=text, txt_search="ve_name=", txt_alt=f"{variable_prefix}ve_name='{env_name}'", replace_line=True)
         scripts += text
 
-    print("\n")
-    console.print(Panel(Syntax(scripts, lexer="ps1" if system == "Windows" else "sh"), title="Script to create virtual environment..."), style="bold red")
-
-    return scripts
+    write_shell_script(scripts, desc="Script to create ve environment")
+    return None
 
 
 if __name__ == '__main__':
