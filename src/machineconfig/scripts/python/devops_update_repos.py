@@ -14,12 +14,12 @@ def main(verbose=True) -> str:
         repos = repos.readit()
         repo_package_list = repos.sections()
     else:
-        repos = ["~/code/crocodile", "~/code/machineconfig",]
+        repos = ["~/code/crocodile", "~/code/machineconfig", ]
         repo_package_list = repos
     repos_objs = []
     for a_package_path in repo_package_list:
         try:
-            repo = tb.install_n_import("git", "gitpython").Repo(str(a_package_path), search_parent_directories=True)
+            repo = tb.install_n_import("git", "gitpython").Repo(str(tb.P(a_package_path).expanduser()), search_parent_directories=True)
             repos_objs.append(repo)
         except Exception as ex:
             print(ex)
