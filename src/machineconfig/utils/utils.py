@@ -19,7 +19,8 @@ tmp_install_dir = P.tmp(folder="tmp_installers")
 
 
 def display_options(msg, options: list, header="", tail="", prompt="", default=None, fzf=False):
-    if fzf and check_tool_exists("fzf"):
+    tool_name = "fzf"
+    if fzf and check_tool_exists(tool_name):
         install_n_import("pyfzf")
         from pyfzf.pyfzf import FzfPrompt
         fzf = FzfPrompt()
@@ -200,11 +201,15 @@ def get_latest_version(url):
 
 
 def check_tool_exists(tool_name):
+    if platform.system() == "Windows": tool_name = tool_name + ".exe"
+    if platform.system() == "Windows": cmd = "where.exe"
+    elif platform.system() == "Linux": cmd = "which"
+    else: raise NotImplementedError(f"platform {platform.system()} not implemented")
     import subprocess
     try:
-        subprocess.check_output(["which", tool_name])
+        subprocess.check_output([cmd, tool_name])
         return True
-    except subprocess.CalledProcessError:
+    except (subprocess.CalledProcessError, FileNotFoundError):
         return False
 
 

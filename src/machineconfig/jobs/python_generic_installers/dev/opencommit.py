@@ -6,14 +6,12 @@ import crocodile.toolbox as tb
 def main(version=None):
     _ = version
     token = input("Enter your OpenAI API key: ")
-
     program = f"""
     # as per: https://github.com/di-sukharev/opencommit
     npm install -g opencommit
     cd ~
     echo "OPENAI_API_KEY={token}" > .opencommit
     """
-
     tb.Terminal().run(program, shell="powershell")
 
 
