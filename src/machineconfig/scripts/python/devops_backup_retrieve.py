@@ -9,6 +9,7 @@ def main():
     direction = display_options(msg="BACKUP OR RETRIEVE?", options=["BACKUP", "RETRIEVE"], default="BACKUP", fzf=True)
     tool = "cloud_sx" if direction == "BACKUP" else "cloud_rx"
 
+    print(f"Listing Remotes ... ")
     remotes = tb.L(tb.Terminal().run("rclone listremotes", shell="pwsh").op_if_successfull_or_default("").splitlines()).apply(lambda x: x.replace(":", ""))
     if len(remotes) == 0:
         raise RuntimeError(f"You don't have remotes. Configure your rclone first to get cloud services access.")
@@ -20,7 +21,6 @@ def main():
     elif system() == "Windows": bu_file = {key: val for key, val in bu_file.items() if "linux" not in key}
 
     # choice_key = display_options(msg="WHICH FILE of the following do you want to back up?", options=['all'] + list(bu_file.keys()), default="dotfiles")
-    #
     # if choice_key == "all": items = bu_file
     # else: items = {choice_key: bu_file[choice_key]}
     items = bu_file
@@ -39,6 +39,7 @@ def main():
         if item_name == "dotfiles" and system() == "Linux": program += f"""\nchmod 700 ~/.ssh/*\n"""
     print_programming_script(program, lexer="shell", desc=f"{direction} script")
     print(program)
+    return ""
 
 
 if __name__ == "__main__":

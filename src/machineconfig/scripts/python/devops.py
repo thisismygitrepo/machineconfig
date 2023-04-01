@@ -76,7 +76,8 @@ def main():
         program = main()
 
     else: raise ValueError(f"Unimplemented choice: {choice_key}")
-    if program: write_shell_script(program)
+    if program: write_shell_script(program,)
+    else: write_shell_script("echo 'Done.'", display=False, )  # Python did not return any script to run.
 
 
 if __name__ == "__main__":

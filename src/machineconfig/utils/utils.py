@@ -165,13 +165,15 @@ deactivate
 """
 
 
-def write_shell_script(program, desc=""):
-    print(f"Executing {PROGRAM_PATH}")
-    if platform.system() == "Windows":
-        program = "$orig_path = $pwd\n" + program + "\ncd $orig_path"
-    else:
-        program = 'orig_path=$(cd -- "." && pwd)\n' + program + '\ncd "$orig_path" || exit'
-    print_programming_script(program=program, lexer="shell", desc=desc)
+def write_shell_script(program, desc="", preserve_cwd=True, display=True):
+    if preserve_cwd:
+        if platform.system() == "Windows":
+            program = "$orig_path = $pwd\n" + program + "\ncd $orig_path"
+        else:
+            program = 'orig_path=$(cd -- "." && pwd)\n' + program + '\ncd "$orig_path" || exit'
+    if display:
+        print(f"Executing {PROGRAM_PATH}")
+        print_programming_script(program=program, lexer="shell", desc=desc)
     if platform.system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
     else: PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
     return None
