@@ -54,8 +54,9 @@ cd "{a_repo.working_dir}"
 {sep.join([f'git pull {remote.name}' for remote in a_repo.remotes])}
 """ for a_repo in repos_objs])
     else: raise NotImplementedError(f"System {system()} not supported")
-    write_shell_script(program, desc="Script to update repos")
-    return ""
+    # write_shell_script(program, desc="Script to update repos")
+    # return ""
+    return program
 
 
 if __name__ == '__main__':

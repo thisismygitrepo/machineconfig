@@ -76,7 +76,7 @@ def main():
         program = main()
 
     else: raise ValueError(f"Unimplemented choice: {choice_key}")
-    if program: write_shell_script(program,)
+    if program: write_shell_script(program, display=True, preserve_cwd=True, desc="Shell script prepared by Python.")
     else: write_shell_script("echo 'Done.'", display=False, )  # Python did not return any script to run.
 
 
