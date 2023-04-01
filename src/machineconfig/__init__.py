@@ -1,6 +1,6 @@
 
-
-__version__ = "1.3"
+__version__ = "1.4"
 release_notes = """
-introduced repos script
+Introduced fzf in options.
+canonicalized the path to the config file.
 """
