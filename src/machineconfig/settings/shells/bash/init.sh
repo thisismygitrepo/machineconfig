@@ -2,9 +2,9 @@
 
 export PATH="~/.local/bin:~/code/machineconfig/src/machineconfig/scripts/linux:~/dotfiles/scripts/linux:~/.nix-profile/bin:/usr/games:$PATH"
 
-machineconfig_path='$HOME/code/machineconfig/src/machineconfig'
-source $machineconfig_path/settings/broot/br.sh
-source $machineconfig_path/settings/lf/linux/exe/lfcd.sh
+machineconfig_path=$HOME/code/machineconfig/src/machineconfig
+. $machineconfig_path/settings/broot/br.sh
+. $machineconfig_path/settings/lf/linux/exe/lfcd.sh
 source $machineconfig_path/settings/tere/terecd.sh
 
 # from https://github.com/cantino/mcfly

@@ -1,5 +1,4 @@
 
-
 import crocodile.toolbox as tb
 import argparse
 from machineconfig.utils.utils import write_shell_script, CONFIG_PATH

@@ -2,7 +2,7 @@
 import crocodile.toolbox as tb
 import argparse
 import platform
-from machineconfig.utils.utils import print_programming_script
+from machineconfig.utils.utils import print_programming_script, CONFIG_PATH
 # import sys
 # import subprocess
 
@@ -27,16 +27,13 @@ def args_parser():
             print(f"No cloud profile found @ {_path}, please set one up or provide one via the --cloud flag.")
             return ""
     else: cloud = args.cloud
-
     # if args.repo is None:
     #     repo_root = tb.P(".").absolute()
     # else:
     repo_root = tb.P(args.repo).expanduser().absolute()
-
     repo = tb.install_n_import("git", "gitpython").Repo(repo_root)
-    tb.P.home().joinpath(".machineconfig/remote").create()
-    repo_sync = tb.P.home().joinpath(".machineconfig/remote", repo_root.rel2home())
-
+    CONFIG_PATH.joinpath("remote").create()
+    repo_sync = CONFIG_PATH.joinpath("remote", repo_root.rel2home())
     try:
         print("\n", "=============================== Downloading Remote Repo ====================================")
         repo_root.from_cloud(cloud=cloud, localpath=repo_sync, unzip=True, decrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)
@@ -44,7 +41,6 @@ def args_parser():
         print("Remote does not exist, creating it and exiting ... ")
         repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)
         return ""
-
     script = f"""
 echo ""
 echo "=============================== Committing Local Changes ==================================="

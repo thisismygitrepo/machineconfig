@@ -1,20 +1,21 @@
 #!/usr/bin/env bash
 
+CONFIG_PATH=$HOME/.config/machineconfig/default_ve
 
 # check below if VIRTUAL_ENV is set
 if [ -z "$VIRTUAL_ENV" ]; then  # no active ve ==> activate one.
   if [ -z "$1" ]; then  # nothing passed, activate default
-    if [ -f ~/.machineconfig/default_ve ]; then  # check if there is a default ve stored in ~/.machineconfog/default_ve
-      name=$(cat ~/.machineconfig/default_ve)  # if yes, use it
+    if [ -f $CONFIG_PATH ]; then  # check if there is a default ve stored in ~/.machineconfog/default_ve
+      name=$(cat $CONFIG_PATH)  # if yes, use it
       source $name/bin/activate
     else  # no default ve found, using ve and setting it as default
       name="ve"
       source ~/venvs/$name/bin/activate
-      mkdir ~/.machineconfig || true
+      mkdir ~/.config/machineconfig || true
       if [ -n "$VIRTUAL_ENV" ]; then
-        echo $VIRTUAL_ENV > ~/.machineconfig/default_ve
+        echo $VIRTUAL_ENV > $CONFIG_PATH
      else
-        echo "No virtual environment active, cant echo it to ~/.machineconfig/default_ve"
+        echo "No virtual environment active, cant echo it to $CONFIG_PATH"
       fi
     fi
   else
@@ -43,12 +44,12 @@ else
   fi
 
   # check if default is not defined, if so, define it as $VIRTUAL_ENV
-  if [ ! -f ~/.machineconfig/default_ve ]; then
-    mkdir ~/.machineconfig || true
+  if [ ! -f $CONFIG_PATH ]; then
+    mkdir ~/.config/machineconfig || true
     if [ -n "$VIRTUAL_ENV" ]; then
-      echo $VIRTUAL_ENV > ~/.machineconfig/default_ve
+      echo $VIRTUAL_ENV > $CONFIG_PATH
     else
-      echo "No virtual environment active, cannot echo it to ~/.machineconfig/default_ve"
+      echo "No virtual environment active, cannot echo it to $CONFIG_PATH"
     fi
   fi
 fi
