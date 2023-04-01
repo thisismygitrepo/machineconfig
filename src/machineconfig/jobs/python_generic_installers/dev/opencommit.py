@@ -16,4 +16,4 @@ def main(version=None):
 
 
 if __name__ == '__main__':
-    main()
+    pass
