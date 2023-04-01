@@ -25,9 +25,7 @@ def main():
     # else: items = {choice_key: bu_file[choice_key]}
     items = bu_file
 
-    program = f"""
-$cloud="{cloud}"
-"""
+    program = f"""$cloud = "{cloud}" \n """ if system() == "Windows" else f"""cloud="{cloud}" \n """
     for item_name, item in items.items():
         path = tb.P(item['path'])
         os_specific = True if system().lower() in item_name else False
