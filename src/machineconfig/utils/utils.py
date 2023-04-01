@@ -18,14 +18,13 @@ CONFIG_PATH = P.home().joinpath(".config/machineconfig")
 tmp_install_dir = P.tmp(folder="tmp_installers")
 
 
-def display_options(msg, options: list, header="", tail="", prompt="", default=None, fzf=False):
+def display_options(msg, options: list, header="", tail="", prompt="", default=None, fzf=False, multi=False) -> str or list:
     tool_name = "fzf"
     if fzf and check_tool_exists(tool_name):
         install_n_import("pyfzf")
         from pyfzf.pyfzf import FzfPrompt
         fzf = FzfPrompt()
-        choice_idx = fzf.prompt(options)
-        if type(choice_idx) is list and len(choice_idx) == 1: choice_idx = choice_idx[0]
+        choice_idx = fzf.prompt(options, fzf_options="--multi" if multi else "")
     else:
         console = Console()
         if default is not None:
@@ -39,26 +38,33 @@ def display_options(msg, options: list, header="", tail="", prompt="", default=N
         console.print(txt)
         choice_idx = input(f"{prompt}\nEnter option *number* (or option name starting with space): ")
 
-    if choice_idx.startswith(" "):
-        choice_key = choice_idx.strip()
-        assert choice_key in options, f"Choice `{choice_key}` not in options `{options}`"
-        choice_idx = options.index(choice_key)
+    if not fzf:
+        if choice_idx.startswith(" "):
+            choice_key = choice_idx.strip()
+            assert choice_key in options, f"Choice `{choice_key}` not in options `{options}`"
+            choice_idx = options.index(choice_key)
+        else:
+            if choice_idx == "":
+                assert default is not None, f"Default option not available!"
+                choice_idx = options.index(default)
+            try:
+                try: choice_idx = int(choice_idx)
+                except ValueError:  # parsing error
+                    raise IndexError
+                choice_key = options[choice_idx]
+            except IndexError:
+                # many be user forgotten to start with a dash
+                if choice_idx in options:
+                    choice_key = choice_idx
+                    choice_idx = options.index(choice_idx)
+                else: raise ValueError(f"Unknown choice. {choice_idx}")
+            except TypeError:
+                raise TypeError(f"Unknown choice. {choice_idx}")
+                # pass
+        print(f"{choice_idx}: {choice_key}", f"<<<<-------- CHOICE MADE")
     else:
-        if choice_idx == "":
-            assert default is not None, f"Default option not available!"
-            choice_idx = options.index(default)
-        try:
-            try: choice_idx = int(choice_idx)
-            except ValueError:  # parsing error
-                raise IndexError
-            choice_key = options[choice_idx]
-        except IndexError:
-            # many be user forgotten to start with a dash
-            if choice_idx in options:
-                choice_key = choice_idx
-                choice_idx = options.index(choice_idx)
-            else: raise ValueError(f"Unknown choice. {choice_idx}")
-    print(f"{choice_idx}: {choice_key}", f"<<<<-------- CHOICE MADE")
+        if not multi and type(choice_idx) is list and len(choice_idx) == 1: choice_idx = choice_idx[0]
+        choice_key = choice_idx
     return choice_key
 
 

@@ -46,7 +46,7 @@ winget install --no-upgrade --name "hyperfine" --Id sharkdp.hyperfine  # benchma
 
 #winget install --no-upgrade --name "AWS Command Line Interface"
 #winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W11
-winget install --no-upgrade --name "nu" --Id "Nushell.Nushell"  # add to userpath C:\Program Files\nu\bin, done in symlinks
+winget install --no-upgrade --name "nu" --Id "Nushell.Nushell" --source winget  # add to userpath C:\Program Files\nu\bin, done in symlinks
 winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
 
 
@@ -74,7 +74,7 @@ winget install --no-upgrade --name "GnuWin32" --Id GnuWin32.Make --source winget
 winget install --no-upgrade --name "GnuPG" GnuPG.GnuPG
 
 winget install --no-upgrade --name "bottom" --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name onefetch --Id o2sh.onefech --source winget  # repo-version of system neofetch, see also tokei
+winget install --no-upgrade --name onefetch --Id o2sh.onefetch --source winget  # repo-version of system neofetch, see also tokei
 
 # ======================= Terminal-based editors =================================
 winget install --no-upgrade --name "Lapce" --Id Lapce.Lapce  # app variant of helix
