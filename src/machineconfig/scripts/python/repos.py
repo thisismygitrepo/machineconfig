@@ -4,41 +4,46 @@ import crocodile.toolbox as tb
 import argparse
 from machineconfig.utils.utils import write_shell_script
 from rich import print
+# from dataclasses import dataclass
+from enum import Enum
+# tm = tb.Terminal()
 
 
-tm = tb.Terminal()
+class GitAction(Enum):
+    commit = "commit"
+    push = "push"
+    pull = "pull"
 
 
-def commit_one(path, mess="auto_commit_" + tb.randstr()):
-    return f'''
-cd '{path}'; git add .; git commit -am "{mess}"
-echo ""
-echo ""
+def git_action(path: tb.P, action: GitAction, mess: str or None = None, r=False) -> str:
+    import git
+    try:
+        repo = git.Repo(str(path), search_parent_directories=False)
+    except git.exc.InvalidGitRepositoryError:
+        print(f"Skipping {path} because it is not a git repository.")
+        if r:
+            prgs = [git_action(path=sub_path, action=action, mess=mess, r=r) for sub_path in path.search()]
+            return "\n".join(prgs)
+        else: return "\necho 'skipped because not a git repo'\n\n"
+
+    program = f'''
+echo '>>>>>>>>> {action}'
+cd '{path}'
 '''
-
-
-def push_one(path):
-    remotes = tm.run(f"cd {path}; git remote", shell="powershell").op.split("\n")
-    cmds = []
-    join = '\n'
-    for remote in remotes:
-        if remote != "": cmds.append(f'cd "{path}"; git push {remote}')
-    return f"""
-{join.join(cmds)}
+    if action == GitAction.commit:
+        if mess is None: mess = "auto_commit_" + tb.randstr()
+        program += f'''
+git add .; git commit -am "{mess}"
+'''
+    if action == GitAction.push or action == GitAction.pull:
+        # remotes = tm.run(f"cd {path}; git remote", shell="powershell").op.split("\n")
+        action_name = "pull" if action == GitAction.pull else "push"
+        cmds = [f'echo "pulling from {remote.url}" ; git {action_name} {remote.name}' for remote in repo.remotes]
+        program += '\n' + '\n'.join(cmds) + '\n'
+    program = program + f'''
 echo ""; echo ""
-"""
-
-
-def pull_one(path):
-    remotes = tm.run(f"cd {path}; git remote", shell="powershell").op.split("\n")
-    cmds = []
-    join = '\n'
-    for remote in remotes:
-        if remote != "": cmds.append(f'cd "{path}"; git pull {remote}')
-    return f"""
-{join.join(cmds)}
-echo ""; echo ""
-"""
+'''
+    return program
 
 
 def main():
@@ -52,17 +57,19 @@ def main():
     parser.add_argument("--all", help=f"pull, commit and push", action="store_true")
     parser.add_argument("--record", help=f"record respos", action="store_true")
     parser.add_argument("--clone", help=f"clone repos from record", action="store_true")
+    parser.add_argument("--recursive", "-r", help=f"recursive flag", action="store_true")
     # OPTIONAL
     parser.add_argument("--cloud", "-c", help=f"cloud", default=None)
 
     args = parser.parse_args()
     if args.directory == "": path = tb.P.home().joinpath("code")
     else: path = tb.P(args.directory).expanduser().absolute()
+    _ = tb.install_n_import("git", "gitpython")
 
     program = ""
     if args.record:
         res = record_repos(path=path)
-        print(res)
+        print(f"Recorded repositories:\n", res)
         save_path = tb.Save.pickle(obj=res, path=path.joinpath("repos.pkl"))
         if args.cloud is not None: tb.P(save_path).to_cloud(rel2home=True, cloud=args.cloud)
         program += f"""\necho '>>>>>>>>> Finished Recording'\n"""
@@ -72,15 +79,15 @@ def main():
     elif args.all or args.commit or args.pull or args.push:
         for a_path in path.search("*"):
             program += f"""echo "{("Handling " + str(a_path)).center(80, "-")}" """
-            if args.pull or args.all: program += f"""\necho '>>>>>>>>> Pulling'\n""" + pull_one(a_path) + "\n"
-            if args.commit or args.all: program += f"""\necho '>>>>>>>>> Committing'\n""" + commit_one(a_path) + "\n"
-            if args.push or args.all: program += f"""\necho '>>>>>>>>> Pushing'\n""" + push_one(a_path) + "\n"
+            if args.pull or args.all: program += git_action(path=a_path, action=GitAction.pull, r=args.recursive)
+            if args.commit or args.all: program += git_action(a_path, action=GitAction.commit, r=args.recursive)
+            if args.push or args.all: program += git_action(a_path, action=GitAction.push, r=args.recursive)
     else: program = "echo 'no action specified, try to pass --push, --pull, --commit or --all'"
     write_shell_script(program, "Script to update repos")
 
 
-def record_repos(path) -> list[dict]:
-    git = tb.install_n_import("git", "gitpython")
+def record_repos(path, r=True) -> list[dict]:
+    import git
     path = tb.P(path).expanduser().absolute()
     if path.is_file(): return []
     search_res = path.search("*", files=False)
@@ -92,7 +99,7 @@ def record_repos(path) -> list[dict]:
             remotes = {remote.name: remote.url for remote in repo.remotes}
             res.append({"parent_dir": a_search_res.parent.collapseuser().as_posix(), "remotes": remotes})
         else:
-            res += record_repos(a_search_res)
+            if r: res += record_repos(a_search_res, r=r)
     return res
 
 
