@@ -2,6 +2,7 @@
 import crocodile.toolbox as tb
 import argparse
 import platform
+from machineconfig.utils.utils import print_programming_script
 # import sys
 # import subprocess
 
@@ -74,7 +75,8 @@ git pull originEnc master
             repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)
     else:
         print(f"Failed to pull, keeping local copy of remote at {repo_sync} ... ")
-        print(f"""Abstaining from running the following autmomatically:
+        program = f"""
+# Finalizing syncing of `{repo_root}` to `{cloud}` by pushing local changes to remote and deleting local copy of remote.
 repo_sync = tb.P(r'{repo_sync}')
 repo_root = tb.P(r'{repo_root}')
 repo_sync.delete(sure=True)
@@ -83,7 +85,8 @@ from git import Repo
 try: Remote.remove(Repo(repo_root), "originEnc")
 except: pass
 repo_root.to_cloud(cloud={cloud}, zip=True, encrypt=True, rel2home=True, os_specific=False)
-""")
+"""
+        print_programming_script(program, lexer="py", desc="Abstaining from running the following autmomatically:")
         resp = input("Would you like to run the above commands? [y]/n ") or "y"
         if resp.lower() == "y":
             repo_sync.delete(sure=True)
@@ -92,6 +95,8 @@ repo_root.to_cloud(cloud={cloud}, zip=True, encrypt=True, rel2home=True, os_spec
             try: Remote.remove(Repo(repo_root), "originEnc")
             except: pass
             repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
+        else:
+            print(f"When ready, use this snippet: \n{program}")
 
 
 if __name__ == "__main__":

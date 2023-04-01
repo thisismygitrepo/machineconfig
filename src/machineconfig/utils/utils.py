@@ -14,12 +14,12 @@ import platform
 LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
 REPO_ROOT = LIBRARY_ROOT.parent.parent
 PROGRAM_PATH = P.tmp().joinpath("shells/python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh")
+CONFIG_PATH = P.home().joinpath(".config/machineconfig")
 tmp_install_dir = P.tmp(folder="tmp_installers")
 
 
 def display_options(msg, options: list, header="", tail="", prompt="", default=None, fzf=False):
-
-    if fzf:
+    if fzf and check_tool_exists("fzf"):
         install_n_import("pyfzf")
         from pyfzf.pyfzf import FzfPrompt
         fzf = FzfPrompt()
@@ -166,17 +166,23 @@ deactivate
 
 def write_shell_script(program, desc=""):
     print(f"Executing {PROGRAM_PATH}")
-    console = Console()
     if platform.system() == "Windows":
-        lexer = "ps1"
         program = "$orig_path = $pwd\n" + program + "\ncd $orig_path"
     else:
-        lexer = "sh"
         program = 'orig_path=$(cd -- "." && pwd)\n' + program + '\ncd "$orig_path" || exit'
-    console.print(Panel(Syntax(program, lexer=lexer), title=desc), style="bold red")
+    print_programming_script(program=program, lexer="shell", desc=desc)
     if platform.system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
     else: PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
     return None
+
+
+def print_programming_script(program: str, lexer: str, desc=""):
+    if lexer == "shell":
+        if platform.system() == "Windows": lexer = "powershell"
+        elif platform.system() == "Linux": lexer = "sh"
+        else: raise NotImplementedError(f"lexer {lexer} not implemented for system {platform.system()}")
+    console = Console()
+    console.print(Panel(Syntax(program, lexer=lexer), title=desc), style="bold red")
 
 
 def get_latest_version(url):
@@ -191,6 +197,15 @@ def get_latest_version(url):
         latest_version = data["tag_name"]
         print("Latest release version:", latest_version)
     else: print("Error:", response.status_code)
+
+
+def check_tool_exists(tool_name):
+    import subprocess
+    try:
+        subprocess.check_output(["which", tool_name])
+        return True
+    except subprocess.CalledProcessError:
+        return False
 
 
 if __name__ == '__main__':

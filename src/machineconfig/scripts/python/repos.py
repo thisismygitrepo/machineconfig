@@ -2,7 +2,7 @@
 
 import crocodile.toolbox as tb
 import argparse
-from machineconfig.utils.utils import write_shell_script
+from machineconfig.utils.utils import write_shell_script, CONFIG_PATH
 from rich import print
 # from dataclasses import dataclass
 from enum import Enum
@@ -70,11 +70,15 @@ def main():
     if args.record:
         res = record_repos(path=path)
         print(f"Recorded repositories:\n", res)
-        save_path = tb.Save.pickle(obj=res, path=path.joinpath("repos.pkl"))
+        save_path = tb.Save.pickle(obj=res, path=CONFIG_PATH.joinpath("repos").joinpath(path.rel2home()).joinpath("repos.pkl"))
+        print(f"Result pickled at {tb.P(save_path)}")
         if args.cloud is not None: tb.P(save_path).to_cloud(rel2home=True, cloud=args.cloud)
         program += f"""\necho '>>>>>>>>> Finished Recording'\n"""
     elif args.clone:
         program += f"""\necho '>>>>>>>>> Cloning Repos'\n"""
+        if not path.exists():  # user didn't pass absolute path to pickle file, but rather expected it to be in the default save location
+            path = CONFIG_PATH.joinpath("repos").joinpath(path.rel2home()).joinpath("repos.pkl")
+        assert (path.exists() and path.stem == 'repos.pkl') or args.cloud is not None, f"Path {path} does not exist and cloud was not passed. You can't clone without one of them."
         program += install_repos(path=path, cloud=args.cloud)
     elif args.all or args.commit or args.pull or args.push:
         for a_path in path.search("*"):
