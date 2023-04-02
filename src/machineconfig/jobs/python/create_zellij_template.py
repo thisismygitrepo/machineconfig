@@ -54,7 +54,7 @@ def launch_from_ssh_config():
     choices = list(c.get_hostnames())
     hosts = display_options(msg="", options=choices, multi=True, fzf=True)
     res = build_template(hosts)
-    # write_shell_script(res, execute=False, desc="zellij launch script")
+    write_shell_script(res, execute=False, desc="zellij launch script")
     return None
 
 
