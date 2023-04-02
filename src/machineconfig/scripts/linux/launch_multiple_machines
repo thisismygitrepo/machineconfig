@@ -2,7 +2,8 @@
 #!/usr/bin/env bash
 
 . ~/scripts/activate_ve ''
-python -m fire machineconfig.jobs.python.create_zellij_template launch_from_ssh_config $@
+python -m fire machineconfig.jobs.python.create_zellij_template launch_from_ssh_config
+zellij --layout $HOME/tmp_files/templates/zellij_template.kdl
 
 deactivate || true
 

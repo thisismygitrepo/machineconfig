@@ -42,7 +42,7 @@ def build_template(tabs: list):
     for t in tabs:
         res += tab.replace("TABNAME", t).replace("TABCOMMAND", f"ssh").replace("TABARGS", t)
     res += suffix.replace("THISMACHINE", socket.gethostname())
-    file = tb.P.tmp().joinpath(f"tmp_files/templates/{tb.randstr()}.kdl").create(parents_only=True).write_text(res)
+    file = tb.P.tmp().joinpath(f"tmp_files/templates/zellij_template.kdl").create(parents_only=True).write_text(res)
     res = f"zellij --layout {file}"
     return res
 
@@ -54,7 +54,7 @@ def launch_from_ssh_config():
     choices = list(c.get_hostnames())
     hosts = display_options(msg="", options=choices, multi=True, fzf=True)
     res = build_template(hosts)
-    write_shell_script(res, execute=True, desc="zellij launch script")
+    # write_shell_script(res, execute=False, desc="zellij launch script")
     return c
 
 
