@@ -10,6 +10,7 @@ Set-ExecutionPolicy Bypass
 # the result is installed in C:\Program Files\OpenSSH as opposed to C:\Windows\System32\OpenSSH which is the case if openssh is added as a feature/capability to windows
 # However, notice the new path is not in PATH as is the cases with system variant, so it needs to be added manually.
 # finally, ssh config files are always @ "$env:ProgramData\ssh" irrespective of installation method.
+# if ssh key is created on windows, it doesn't work on linux and gives a cryptlib error. It must be read again and saved in non DOS format.
 
 Add-WindowsCapability -Online -Name OpenSSH.Server
 Add-WindowsCapability -Online -Name OpenSSH.Client

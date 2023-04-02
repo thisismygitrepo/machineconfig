@@ -9,7 +9,7 @@ layout {
         pane size=2 borderless=true {
            plugin location="zellij:status-bar"
         }
-    }
+}
     tab name="lf" focus=false {
         pane name="fpane" {
         command "lf"
@@ -18,8 +18,9 @@ layout {
     tab name="btop" focus=false { // the default_tab_template with three vertical panes between the plugins
         pane name="fpane" {
         command "btop"
-}
         }
+}
+
     tab name="term" focus=true // the default_tab_template
 
 
