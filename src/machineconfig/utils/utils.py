@@ -171,7 +171,7 @@ deactivate
 """
 
 
-def write_shell_script(program, desc="", preserve_cwd=True, display=True):
+def write_shell_script(program, desc="", preserve_cwd=True, display=True, execute=False):
     if preserve_cwd:
         if platform.system() == "Windows":
             program = "$orig_path = $pwd\n" + program + "\ncd $orig_path"
@@ -182,6 +182,8 @@ def write_shell_script(program, desc="", preserve_cwd=True, display=True):
         print_programming_script(program=program, lexer="shell", desc=desc)
     if platform.system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
     else: PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
+
+    if execute: tb.Terminal().run(f". {PROGRAM_PATH}", shell="powershell").print_if_unsuccessful(desc="Executing shell script", strict_err=True, strict_returncode=True)
     return None
 
 
