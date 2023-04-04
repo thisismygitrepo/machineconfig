@@ -1,8 +1,7 @@
 
 from platform import system
 import crocodile.toolbox as tb
-from machineconfig.utils.utils import write_shell_script
-
+# from machineconfig.utils.utils import write_shell_script
 
 sep = "\n"
 

@@ -7,7 +7,7 @@ if (Test-Path $op_script ) {
 
 
 # choose ve to use
-. $PSScriptRoot/activate_ve.ps1 $Args[0]
+. $PSScriptRoot/activate_ve.ps1
 
 # Locate the python script to run relative to the current directory (which might be a symlink)
 $script_root = (Get-Item $PSScriptRoot).Target  # resolves symlink if any
@@ -16,6 +16,14 @@ $script_root = $PSScriptRoot
 }
 
 python $script_root/../python/devops.py $args
-. $op_script
+
+if (Test-Path $op_script ) {
+  . $op_script
+}
+else
+{
+    Write-Host "No output script to be executed @ $op_script"
+}
+
 
 deactivate -ErrorAction SilentlyContinue

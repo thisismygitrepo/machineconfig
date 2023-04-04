@@ -26,10 +26,19 @@ class Options(Enum):
     backup         = 'BACKUP & RETRIEVE'
 
 
-def main():
+def args_parser():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-w", "--which", help="which option to run", type=str, default=None)  # , choices=[op.value for op in Options]
+    args = parser.parse_args()
+    main(which=args.which)
+
+
+def main(which=None):
     PROGRAM_PATH.delete(sure=True, verbose=False)
     options = [op.value for op in Options]
-    choice_key = display_options(msg="", options=options, header="DEVOPS", default=options[0])
+    if which is None: choice_key = display_options(msg="", options=options, header="DEVOPS", default=options[0])
+    else: choice_key = Options[which].value
 
     if choice_key == Options.update.value:
         import machineconfig.scripts.python.devops_update_repos as helper
@@ -76,9 +85,9 @@ def main():
         program = main()
 
     else: raise ValueError(f"Unimplemented choice: {choice_key}")
-    if program: write_shell_script(program, display=True, preserve_cwd=True, desc="Shell script prepared by Python.")
+    if program: write_shell_script(program, display=True, preserve_cwd=True, desc="Shell script prepared by Python.", execute=True if which is not None else False)
     else: write_shell_script("echo 'Done.'", display=False, )  # Python did not return any script to run.
 
 
 if __name__ == "__main__":
-    main()
+    args_parser()
