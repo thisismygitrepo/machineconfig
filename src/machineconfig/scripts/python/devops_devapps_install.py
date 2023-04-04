@@ -5,6 +5,7 @@ from platform import system
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import LIBRARY_ROOT, display_options
 
+
 if system() == "Windows": from machineconfig.jobs.python.python_windows_installers_all import get_cli_py_installers
 elif system() == "Linux": from machineconfig.jobs.python.python_linux_installers_all import get_cli_py_installers
 else: raise NotImplementedError(f"System {system()} not supported")
