@@ -15,7 +15,7 @@ class ProcessManager:
         df = pd.DataFrame(process_info)
         df.columns = ['pid', 'name', 'username', 'cpu_percent', 'memory_usage_mb', 'status', 'create_time']
         df['create_time'] = pd.to_datetime(df['create_time'], unit='s', utc=True).apply(lambda x: x.tz_convert(timezone('Australia/Adelaide')))
-        df = df.sort_values(by='memory_usage_mb', ascending=False)
+        df = df.sort_values(by='memory_usage_mb', ascending=False).reset_index(drop=True)
         self.df = df
 
     def filter_and_kill(self, name):
