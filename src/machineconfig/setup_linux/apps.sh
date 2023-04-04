@@ -205,6 +205,12 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.navi || true
 fi
 
+yes '' | sed 3q; echo "----------------------------- installing just ----------------------------"; yes '' | sed 3q
+if [ "$package_manager" = "apt" ]; then
+  sudo apt install just -y || true  # replacement for make
+else
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.just || true
+fi
 
 
 # ---------------------------- text style ------------------------------------

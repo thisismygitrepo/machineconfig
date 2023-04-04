@@ -74,7 +74,8 @@ winget install --no-upgrade --name "GnuWin32" --Id GnuWin32.Make --source winget
 winget install --no-upgrade --name "GnuPG" GnuPG.GnuPG
 
 winget install --no-upgrade --name "bottom" --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name onefetch --Id o2sh.onefetch --source winget  # repo-version of system neofetch, see also tokei
+winget install --no-upgrade --name "onefetch" --Id o2sh.onefetch --source winget  # repo-version of system neofetch, see also tokei
+winget install --no-upgrade --name "Just" --Id Casey.Just --source winget  # cat replacement
 
 # ======================= Terminal-based editors =================================
 winget install --no-upgrade --name "Lapce" --Id Lapce.Lapce  # app variant of helix
