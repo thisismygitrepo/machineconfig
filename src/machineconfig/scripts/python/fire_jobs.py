@@ -16,7 +16,7 @@ def main():
     parser.add_argument("--debug", "-d", action="store_true", help="debug")
     # add debugger option
     args = parser.parse_args()
-    get_command(args.jobs_dir)
+    get_command(jobs_dir=args.jobs_dir, interactive=args.interactive, debug=args.debug)
 
 
 def get_command(jobs_dir, interactive=False, debug=False):
