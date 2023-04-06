@@ -80,7 +80,7 @@ from git.remote import Remote
 from git import Repo
 try: Remote.remove(Repo(repo_root), "originEnc")
 except: pass
-repo_root.to_cloud(cloud={cloud}, zip=True, encrypt=True, rel2home=True, os_specific=False)
+repo_root.to_cloud(cloud='{cloud}', zip=True, encrypt=True, rel2home=True, os_specific=False)
 """
         print_programming_script(program, lexer="py", desc="Abstaining from running the following autmomatically:")
         resp = input("Would you like to run the above commands? [y]/n ") or "y"
