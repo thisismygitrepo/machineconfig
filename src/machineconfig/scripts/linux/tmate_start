@@ -4,7 +4,7 @@
 #api_key=$(cat ~/dotfiles/creds/tmate/api_key)
 #tmate -a ~/.ssh/authorized_keys -k $api_key -n $sess_name -F
 # use sslh and shellinthebox to cirumvent the need for port forwarding
-$machineconfig_path=python -c "print(__import__('machineconfig').__file__[:-12])"
+machineconfig_path=python -c "print(__import__('machineconfig').__file__[:-12])"
 pyfile=$machineconfig_path/scripts/python/tmate_start.py
 # TODO make this path relevant to current file ($0)
 python3 $pyfile $1
