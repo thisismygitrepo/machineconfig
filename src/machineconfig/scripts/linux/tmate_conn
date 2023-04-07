@@ -5,6 +5,7 @@
 #sess_name=echo ~/dotfiles/creds/tmate/$1
 #ssh $username/$sess_name@sgp1.tmate.io
 
+. ~/scripts/activate_ve ''
 machineconfig_path=python -c "print(__import__('machineconfig').__file__[:-12])"
 pyfile=$machineconfig_path/scripts/python/tmate_conn.py
 # TODO make this path relevant to current file ($0)
