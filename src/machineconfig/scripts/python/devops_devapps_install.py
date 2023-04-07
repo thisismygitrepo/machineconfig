@@ -56,7 +56,11 @@ def get_program(program_name, options, installers):
         program = ""
         for name in program_names:
             idx = options.index(name)
-            sub_program = installers[idx].readit()['main']()  # finish the task
+            try:
+                sub_program = installers[idx].readit()['main']()  # finish the task
+            except KeyError:
+                print(f"KeyError: could not find 'main' in {installers[idx]}")
+                raise KeyError
             if sub_program is None: sub_program = "echo 'Finished Installation'"  # write an empty program
             program += "\n" + sub_program
     else:
