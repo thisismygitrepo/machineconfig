@@ -3,7 +3,6 @@ import crocodile.toolbox as tb
 from machineconfig.utils.utils import display_options, PROGRAM_PATH
 # https://github.com/pallets/click combine with fire. Consider
 # https://github.com/ceccopierangiolieugenio/pyTermTk for display_options build TUI
-# consider https://github.com/casey/just for recipes
 import inspect
 
 

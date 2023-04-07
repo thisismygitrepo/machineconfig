@@ -60,7 +60,7 @@
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
                 "hidden": false,
                 "name": "PowerShell",
-                "opacity": 87,
+                "opacity": 97,
                 "source": "Windows.Terminal.PowershellCore",
                 "startingDirectory": "%USERPROFILE%"
             },

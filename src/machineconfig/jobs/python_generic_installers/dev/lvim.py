@@ -15,19 +15,24 @@ def main(version=None):
         install_script = "$LV_BRANCH='release-1.2/neovim-0.8'; Invoke-WebRequest https://raw.githubusercontent.com/LunarVim/LunarVim/master/utils/installer/install.ps1 -UseBasicParsing | Invoke-Expression"
         # install_script = "Invoke-WebRequest    https://raw.githubusercontent.com/LunarVim/LunarVim/master/utils/installer/install.ps1 -UseBasicParsing | Invoke-Expression"
         uninstall_script = "Invoke-WebRequest https://raw.githubusercontent.com/LunarVim/LunarVim/master/utils/installer/uninstall.ps1 -UseBasicParsing | Invoke-Expression"
-        script = f"""{uninstall_script} ; {install_script}
+        script = f"""
+# uninstall then install latest stable release as per https://www.lunarvim.org/docs/installation
+{uninstall_script}
+{install_script}        
 cd ~/AppData/Local
+rm lvim -Force  # kill bad symlinks there
 git clone https://github.com/ChristianChiarulli/lvim
+pip install pynvim
+pip install flake8
+pip install black
 """
-        # tb.T().run(script, shell="pwsh")
         # tb.P(r"AppData/Local/lvim").joinpath("config.lua").append_text(tb.P(machineconfig.__file__).joinpath("src/machineconfig/settings/lvim_windows/config_additional.lua").read_text())
         return script
     else:
         tb.P.home().joinpath(".config/lvim").delete(sure=True)
-        install_script = "LV_BRANCH='release-1.2/neovim-0.8' bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)"
-        # install_script = r"bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/rolling/utils/installer/install-neovim-from-release)"
-        # script = install_script
-        # tb.T().run(script, shell="pwsh")
+        install_script = f"""
+LV_BRANCH='release-1.2/neovim-0.8' bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
+"""
         return install_script
 
 
