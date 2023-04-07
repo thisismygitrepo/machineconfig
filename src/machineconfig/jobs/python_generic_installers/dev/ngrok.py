@@ -18,6 +18,8 @@ ngrok config add-authtoken {auth_token}
 """
     elif platform.system() == 'Linux':
         program = f"""
+# get the latest from here: https://ngrok.com/download
+curl https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz --output ~/Downloads/ngrok-v3-stable-linux-amd64.tgz
 sudo tar xvzf ~/Downloads/ngrok-v3-stable-linux-amd64.tgz -C /usr/local/bin
 ngrok config add-authtoken {auth_token}
 """
