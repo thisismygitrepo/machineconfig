@@ -7,14 +7,11 @@ prefix = """
 
 layout {
     default_tab_template {
-        // the default zellij tab-bar and status bar plugins
         pane size=1 borderless=true {
-            plugin location="zellij:tab-bar"
+            plugin location="zellij:compact-bar"
         }
         children
-        pane size=2 borderless=true {
-           plugin location="zellij:status-bar"
-        }
+
 }
     
 """
