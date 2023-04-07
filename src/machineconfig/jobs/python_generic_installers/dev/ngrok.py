@@ -3,6 +3,9 @@ import platform
 import crocodile.toolbox as tb
 
 
+__doc__ = """expose a local server behind a NAT or firewall to the internet"""
+
+
 def main(version=None):
     file = tb.P.home().joinpath("dotfiles/creds/tokens/ngrok")
     if file.exists():

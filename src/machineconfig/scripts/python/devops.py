@@ -6,9 +6,6 @@ from machineconfig.utils.utils import display_options, PROGRAM_PATH, write_shell
 from enum import Enum
 
 
-# needs to be synced with devops.sh and devops.ps1
-
-
 class Options(Enum):
     update         = 'UPDATE essential repos'
     devaps         = 'DEVAPPS install'
