@@ -49,7 +49,7 @@ def get_command(jobs_dir, interactive=False, debug=False):
             command = f"{exe} -m fire {choice_file} {choice_function} " + " ".join([f"--{k} {v}" for k, v in kgs1.items()])
         else:
             command = f"{exe} {choice_file} "
-    print(command)
+    print("\n", command, "\n\n\n")
     PROGRAM_PATH.write_text(command)
 
 
