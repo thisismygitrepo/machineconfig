@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 
 . ~/scripts/activate_ve ''
+
+op_script=$HOME/tmp_results/shells/python_return_command.sh
+if [ -f "$op_script" ]; then
+  rm $op_script
+fi
+
 python $(dirname $(dirname $0))/python/fire_jobs.py $@
+
+chmod +x $op_script
+source $op_script
+
 deactivate || true
 
