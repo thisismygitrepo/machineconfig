@@ -19,8 +19,9 @@ def main():
 
 
 def get_command(jobs_dir, interactive=False, debug=False):
+    jobs_dir = tb.P(jobs_dir).expanduser().absolute()
     print(f"Seaching recursively for all python file in directory `{jobs_dir}`")
-    py_files = tb.P(jobs_dir).search("*.py", not_in=["__init__.py"], r=True).to_list()
+    py_files = jobs_dir.search("*.py", not_in=["__init__.py"], r=True).to_list()
     choice_file = display_options(msg="Choose a file to run", options=py_files, fzf=True, multi=False)
     print(f"Loading {choice_file} ...")
     module = tb.P(choice_file).readit()
