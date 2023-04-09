@@ -1,7 +1,7 @@
 
 import crocodile.toolbox as tb
 import socket
-from machineconfig.utils.utils import display_options, write_shell_script
+from machineconfig.utils.utils import choose_ssh_host, write_shell_script
 
 prefix = """
 
@@ -45,14 +45,11 @@ def build_template(tabs: list):
 
 
 def launch_from_ssh_config():
-    from paramiko import SSHConfig
-    c = SSHConfig()
-    c.parse(open(tb.P.home().joinpath(".ssh/config").str))
-    choices = list(c.get_hostnames())
-    hosts = display_options(msg="", options=choices, multi=True, fzf=True)
+    hosts = choose_ssh_host()
     res = build_template(hosts)
     write_shell_script(res, execute=False, desc="zellij launch script")
     return None
+
 
 
 if __name__ == '__main__':
