@@ -40,8 +40,7 @@ def main():
         else:
             command = f"{exe} {choice_file} "
         if args.remote: return run_on_remote(choice_file, args=args)
-
-    print(command)
+    print("\n", command, "\n\n\n")
     PROGRAM_PATH.write_text(command)
 
 
