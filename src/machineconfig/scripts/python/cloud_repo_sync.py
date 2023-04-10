@@ -7,8 +7,10 @@ from machineconfig.utils.utils import print_programming_script, CONFIG_PATH, wri
 # import subprocess
 
 
-def get_wt_cmd(wd1: tb.P, wd2: tb.P):
-    return f"""wt --window 521 new-tab --profile pwsh --title "gitdiff" --tabColor `#3b04d1 --startingDirectory {wd1} `  --colorScheme "Solarized Dark" `; split-pane --horizontal --profile pwsh --startingDirectory {wd2} --size 0.5 --title "remoteRepo"  --colorScheme "Tango Dark" -- pwsh -Interactive"""
+def get_wt_cmd(wd1: tb.P, wd2: tb.P) -> str: return f"""wt --window 0 new-tab --profile pwsh --title "gitdiff" --tabColor `#3b04d1 --startingDirectory {wd1} `  --colorScheme "Solarized Dark" `; split-pane --horizontal --profile pwsh --startingDirectory {wd2} --size 0.5 --colorScheme "Tango Dark" -- pwsh -Interactive"""
+
+
+def get_zellij_cmd(wd1: tb.P, wd2: tb.P) -> str: return f""" zellij action new-tab --name gitdiff; zellij action new-pane --direction down --name local --cwd ./data; zellij action write-chars "cd '{wd1}'; git status";  zellij action move-focus up; zellij action close-pane; zellij action new-pane --direction down --name remote --cwd code; zellij action write-chars "cd '{wd2}'; git status" """
 
 
 def args_parser():
@@ -21,9 +23,7 @@ def args_parser():
     parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
     parser.add_argument("--push", "-u", help="Zip before sending.", action="store_true")  # default is False
-
     args = parser.parse_args()
-
     if args.cloud is None:
         _path = tb.P.home().joinpath("dotfiles/config/setup/rclone_remote")
         try: cloud = _path.read_text().replace("\n", "")
@@ -105,6 +105,11 @@ repo_root.to_cloud(cloud='{cloud}', zip=True, encrypt=True, rel2home=True, os_sp
                 program = get_wt_cmd(wd1=repo_root, wd2=repo_sync)
                 write_shell_script(program=program, execute=True)
                 return None
+            elif platform.system() == "Linux":
+                program = get_zellij_cmd(wd1=repo_root, wd2=repo_sync)
+                write_shell_script(program=program, execute=True)
+                return None
+            else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
 
 
 if __name__ == "__main__":
