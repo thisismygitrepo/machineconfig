@@ -2,9 +2,13 @@
 import crocodile.toolbox as tb
 import argparse
 import platform
-from machineconfig.utils.utils import print_programming_script, CONFIG_PATH
+from machineconfig.utils.utils import print_programming_script, CONFIG_PATH, write_shell_script
 # import sys
 # import subprocess
+
+
+def get_wt_cmd(wd1: tb.P, wd2: tb.P):
+    return f"""wt --window 521 new-tab --profile pwsh --title "gitdiff" --tabColor `#3b04d1 --startingDirectory {wd1} `  --colorScheme "Solarized Dark" `; split-pane --horizontal --profile pwsh --startingDirectory {wd2} --size 0.5 --title "remoteRepo"  --colorScheme "Tango Dark" -- pwsh -Interactive"""
 
 
 def args_parser():
@@ -41,6 +45,10 @@ def args_parser():
         print("Remote does not exist, creating it and exiting ... ")
         repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)
         return ""
+    repo_sync_obj = tb.install_n_import("git", "gitpython").Repo(repo_sync)
+    if repo_sync_obj.is_dirty():
+        print("=" * 50, '\n', f"WRANING: the remote `{repo_sync}` is dirty, please commit or stash changes before proceeding.", '\n', "=" * 50)
+
     script = f"""
 echo ""
 echo "=============================== Committing Local Changes ==================================="
@@ -52,11 +60,11 @@ echo ""
 echo ""
 echo "=============================== Pulling Latest From Remote ================================"
 cd {repo_root}
-echo 'trying to removing originEnc remote if it exists.'
+echo '-> Trying to removing originEnc remote from local repo if it exists.'
 git remote remove originEnc
-echo 'adding originEnc remote.'
+echo '-> Adding originEnc remote to local repo'
 git remote add originEnc {repo_sync}
-echo 'fetching originEnc remote.'
+echo '-> Fetching originEnc remote.'
 git pull originEnc master
 
 """
@@ -83,7 +91,7 @@ except: pass
 repo_root.to_cloud(cloud='{cloud}', zip=True, encrypt=True, rel2home=True, os_specific=False)
 """
         print_programming_script(program, lexer="py", desc="Abstaining from running the following autmomatically:")
-        resp = input("Would you like to run the above commands? [y]/n ") or "y"
+        resp = input("Would you like to run the above commands? y/[n] ") or "n"
         if resp.lower() == "y":
             repo_sync.delete(sure=True)
             from git.remote import Remote
@@ -93,7 +101,12 @@ repo_root.to_cloud(cloud='{cloud}', zip=True, encrypt=True, rel2home=True, os_sp
             repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
         else:
             print(f"When ready, use this snippet: \n{program}")
+            if platform.system() == "Windows":
+                program = get_wt_cmd(wd1=repo_root, wd2=repo_sync)
+                write_shell_script(program=program, execute=True)
+                return None
 
 
 if __name__ == "__main__":
     args_parser()
+
