@@ -17,9 +17,6 @@ class Options(Enum):
     ssh_use_pair   = 'SSH use key pair to connect two machines'
     ssh_setup      = 'SSH setup'
     ssh_setup_wsl  = 'SSH setup wsl'
-    # repos_pull     = 'REPOS pull all'
-    # repos_commit   = 'REPOS commit all'
-    # repos_push     = 'REPOS push all'
     backup         = 'BACKUP & RETRIEVE'
 
 
@@ -88,3 +85,4 @@ def main(which=None):
 
 if __name__ == "__main__":
     args_parser()
+

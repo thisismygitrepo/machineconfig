@@ -64,9 +64,10 @@ fi
         text = tb.modify_text(txt_raw=text, txt_search="ve_name=", txt_alt=f"{variable_prefix}ve_name='{env_name}'", replace_line=True)
         scripts += text
 
-    write_shell_script(scripts, desc="Script to create ve environment")
-    return None
+#    write_shell_script(scripts, desc="Script to create ve environment")
+    return scripts
 
 
 if __name__ == '__main__':
     pass
+
