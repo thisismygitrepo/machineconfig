@@ -27,7 +27,7 @@ winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsof
 #winget install --no-upgrade --name "PyCharm Community Edition" --Id "JetBrains.PyCharm.Community" --source winget --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "DB Browser for SQLite" --Id "DBBrowserForSQLite.DBBrowserForSQLite" --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "sql server management studio" --Id "Microsoft.SQLServerManagementStudi" --source winget --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "TesseractOCR" --Id UB-Mannheim.TesseractOCR
+#winget install --no-upgrade --name "TesseractOCR" --Id UB-Mannheim.TesseractOCR
 
 # ================================================== Shells ===========================================
 # Install icons
@@ -67,7 +67,7 @@ winget install --no-upgrade --name "SSHFS-win" --Id SSHFS-Win.SSHFS-Win  # mount
 winget install --no-upgrade --name "VSRedistrib" --Id "Microsoft.VC++2015-2022Redist-x64" -e
 winget install --no-upgrade --name "VSBuildTools" --Id "Microsoft.VisualStudio.2022.BuildTools" -e
 winget install --no-upgrade --name "Rustup" --Id Rustlang.Rustup --source winget
-winget install --no-upgrade --name "julia" --Id "Julialang.Julia" --source winget --accept-package-agreements --accept-source-agreements
+# winget install --no-upgrade --name "julia" --Id "Julialang.Julia" --source winget --accept-package-agreements --accept-source-agreements
 
 winget install --no-upgrade --name "Codeblocks" --Id Codeblocks.Codeblocks --source winget  # gives gcc compiler  # could also be provided by MSCV Build Tools
 winget install --no-upgrade --name "GnuWin32" --Id GnuWin32.Make --source winget  # make command  # can be provided by mscv build tools.

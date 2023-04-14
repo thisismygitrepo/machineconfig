@@ -10,6 +10,4 @@
 # H404: multi line docstring should start without a leading new line
 # H405: multi line docstring summary not separated with an empty line
 # H501: Do not use self.__dict__ for string formatting
-extend-ignore = E301,E302,E501,E701,E702
-
-
+extend-ignore = E301,E302,E501,E701,E702,E225

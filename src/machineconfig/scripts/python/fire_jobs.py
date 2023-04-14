@@ -15,6 +15,7 @@ def main():
     parser.add_argument("--interactive", "-i", action="store_true", help="Whether to run the job interactively")
     parser.add_argument("--debug", "-d", action="store_true", help="debug")
     parser.add_argument("--remote", "-r", action="store_true", help="launch on a remote machine")
+    parser.add_argument("--main", "-m", action="store_true", help="launch the main file")
     args = parser.parse_args()
     jobs_dir = args.path
     jobs_dir = tb.P(jobs_dir).expanduser().absolute()
@@ -30,15 +31,14 @@ def main():
     except NotImplementedError:
         print(f"Failed to detect virtual enviroment name.")
         pass
-    if args.debug:
-        command = f"{exe} -m pudb {choice_file} "  # TODO: functions not supported yet in debug mode.
+    if args.debug: command = f"{exe} -m pudb {choice_file} "  # TODO: functions not supported yet in debug mode.
+    elif args.main: command = f"{exe} {choice_file}"
     else:
         module, choice_function = choose_function(choice_file)
         if choice_function != "RUN AS MAIN":
             kgs1, kgs2 = interactively_run_function(module[choice_function])
             command = f"{exe} -m fire {choice_file} {choice_function} " + " ".join([f"--{k} {v}" for k, v in kgs1.items()])
-        else:
-            command = f"{exe} {choice_file} "
+        else: command = f"{exe} {choice_file} "
         if args.remote: return run_on_remote(choice_file, args=args)
     print("\n", command, "\n\n\n")
     PROGRAM_PATH.write_text(command)
@@ -95,3 +95,4 @@ def run_on_remote(func, args):
 
 if __name__ == '__main__':
     main()
+
