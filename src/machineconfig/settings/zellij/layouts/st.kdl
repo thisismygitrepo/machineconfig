@@ -7,18 +7,18 @@ layout {
         }
         children
 }
-    tab name="lf" focus=false {
+    tab name="📂" focus=false {
         pane name="fpane" {
         command "lf"
         }
 }
-    tab name="btop" focus=false { // the default_tab_template with three vertical panes between the plugins
+    tab name="🔍" focus=false { // the default_tab_template with three vertical panes between the plugins
         pane name="fpane" {
         command "btop"
         }
 }
 
-    tab name="term" focus=true // the default_tab_template
+    tab name="🖥️" focus=true // the default_tab_template
 
 
 }
