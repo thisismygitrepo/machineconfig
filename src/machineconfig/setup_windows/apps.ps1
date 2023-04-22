@@ -57,6 +57,7 @@ npm install sharewifi -g
 npm install -g easy-sharing
 npm install -g lolcatjs
 npm install -g figlet-cli
+npm install -g @githubnext/github-copilot-cli
 winget install --no-upgrade --name "graphviz" --Id Graphviz.Graphviz  # required by pygraphviz. Used in Base.viz_object_hirarchy and Model.plot_model()
 winget install --no-upgrade --name "WinFsp" --Id WinFsp.WinFsp  # mount remote filesystems and required by rclone
 winget install --no-upgrade --name "SSHFS-win" --Id SSHFS-Win.SSHFS-Win  # mount remote filesystems  # as per https://github.com/winfsp/sshfs-win
