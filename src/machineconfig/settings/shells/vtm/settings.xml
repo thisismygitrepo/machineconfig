@@ -38,8 +38,9 @@
             </config>
         </item>
         <item id=PowerShell label="PowerShell" type=DirectVT title="PowerShell"                  param="$0 -r term powershell" fgc=15 bgc=0xFF562401 notes=" run PowerShell "/>
-        <item id=pwsh       label="pwsh"       type=DirectVT title="pwsh"                        param="$0 -r term pwsh"       fgc=15 bgc=0xFF562401 notes=" run pwsh "/>
+        <item id=pwsh       label="pwsh"       type=DirectVT title="pwsh"                        param="$0 -r term pwsh"       fgc=15 bgc=0x00000000 notes=" run pwsh "/>
         <item id=WSL        label="WSL"        type=DirectVT title="Windows Subsystem for Linux" param="$0 -r term wsl"                              notes=" run default WSL profile "/>
+        <item id=croshell   label="croshell"   type=DirectVT title="croshell"                    param="$0 -r term pwsh -File '$HOME\scripts\croshell.ps1' "                    notes=" run croshell "/>
    <!-- <item id=Far        label="Far"        type=SHELL    title="Far Manager"                 param="far"                                         notes=" run Far Manager in its own window "/> -->
    <!-- <item id=mc         label="mc"         type=SHELL    title="Midnight Commander"    param="mc"               notes=" run Midnight Commander in its own window "/> -->
         <item id=Tile       label="Tile"       type=Group    title="Tiling Window Manager" param="h1:1(Term, Term)" notes=" run Tiling Window Manager with two terminals attached "/>
@@ -53,7 +54,7 @@
    <!-- <item id=Test       label="Test"       type=DirectVT title="Test Title"            param="$0 -r test"       notes=" Test Page "/> -->
    <!-- <item id=Truecolor  label="Truecolor"  type=DirectVT title="True Title"            param="$0 -r truecolor"  notes=" Truecolor Test "/> -->
         <autorun item*>  <!-- Autorun of specified menu items -->
-            <!--  <item* id=Term winsize=80,25 />               -->
+            <item id=pwsh winsize=80,25 focused/>               -->
             <!--  <item wincoor=8,4 winsize=164,25 focused />   -->
             <!--  <item wincoor=92,31 />                        -->
             <!--  <item wincoor=8,31 focused />                 -->
@@ -70,7 +71,7 @@
     </hotkeys>
     <appearance>
         <defaults>
-            <fps      = 60   />
+            <fps      = 30   />
             <bordersz = 1,1  />
             <lucidity = 0xff /> <!-- not implemented -->
             <brighter   fgc=purewhite bgc=purewhite alpha=60 /> <!-- Highlighter. -->
