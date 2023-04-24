@@ -59,7 +59,7 @@
 # copy from windows lfrc instead of the above
 fi      00;37;40              # FILE
 #rs     0               # RESET
-di      07;30;46           # DIR
+di      01;34;46           # DIR
 ln      03;33;48           # LINK
 #mh     00              # MULTIHARDLINK
 pi      03;33;40           # FIFO
