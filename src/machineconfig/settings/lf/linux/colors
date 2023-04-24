@@ -59,23 +59,23 @@
 # copy from windows lfrc instead of the above
 fi      00;37;40              # FILE
 #rs     0               # RESET
-di      04;30;46           # DIR
-ln      02;32;45           # LINK
+di      07;30;46           # DIR
+ln      03;33;48           # LINK
 #mh     00              # MULTIHARDLINK
 pi      03;33;40           # FIFO
 so      04;34;43           # SOCK
 #do     01;35           # DOOR
-bd      05;35;44        # BLK
-cd      06;36;45        # CHR
-or      07;37;46        # ORPHAN
+bd      05;35;40        # BLK
+cd      06;38;45        # CHR
+or      07;37;45        # ORPHAN
 #mi     00              # MISSING
-su      08;31;47           # SETUID
+su      08;32;47           # SETUID
 sg      09;32;40           # SETGID
 #ca     30;41           # CAPABILITY
 tw      01;33;41           # STICKY_OTHER_WRITABLE
 ow      02;36;40           # OTHER_WRITABLE
-st      03;35;43           # STICKY
-ex      04;36;44           # EXEC
+st      03;37;40           # STICKY
+ex      03;38;44           # EXEC
 
 
 # archives or compressed (dircolors defaults)
