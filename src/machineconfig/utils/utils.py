@@ -25,7 +25,7 @@ def display_options(msg, options: list, header="", tail="", prompt="", default=N
         from pyfzf.pyfzf import FzfPrompt
         fzf = FzfPrompt()
         nl = "\n"
-        choice_idx = fzf.prompt(options, fzf_options=("--multi" if multi else "") + f" --prompt={prompt.replace(nl, ' ')} --border=rounded --border-label={msg.replace(nl, ' ')}")
+        choice_idx = fzf.prompt(options, fzf_options=("--multi" if multi else "") + f" --prompt={prompt.replace(nl, ' ')} --border=rounded") # --border-label={msg.replace(nl, ' ')}")
     else:
         console = Console()
         if default is not None:
