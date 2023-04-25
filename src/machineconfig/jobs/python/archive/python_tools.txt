@@ -1,4 +1,5 @@
 
+revChatGPT  # talk to gpt from terminal
 you-get  # download content from internet with CLI
 pydot  # additionally required by tensorflow to plot a model
 pyinstaller
