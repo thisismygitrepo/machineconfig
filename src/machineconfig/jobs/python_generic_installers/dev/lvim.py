@@ -12,7 +12,7 @@ def main(version=None):
     if system() == "Windows":
         tb.P.home().joinpath(r"AppData/Local/lvim").delete(sure=True)
         # tb.P.home().joinpath("AppData/Roaming/lunarvim").delete(sure=True)
-        install_script = "$LV_BRANCH='release-1.2/neovim-0.8'; Invoke-WebRequest https://raw.githubusercontent.com/LunarVim/LunarVim/master/utils/installer/install.ps1 -UseBasicParsing | Invoke-Expression"
+        install_script = """pwsh -c "`$LV_BRANCH='release-1.3/neovim-0.9'; iwr https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.ps1 -UseBasicParsing | iex" """
         # install_script = "Invoke-WebRequest    https://raw.githubusercontent.com/LunarVim/LunarVim/master/utils/installer/install.ps1 -UseBasicParsing | Invoke-Expression"
         uninstall_script = "Invoke-WebRequest https://raw.githubusercontent.com/LunarVim/LunarVim/master/utils/installer/uninstall.ps1 -UseBasicParsing | Invoke-Expression"
         script = f"""
@@ -36,7 +36,7 @@ pip install black
 # from https://www.lunarvim.org/docs/installation
 bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/uninstall.sh)
 sudo rm -rdf ~/.config/lvim || true  # kill bad symlinks there
-LV_BRANCH='release-1.2/neovim-0.8' bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
+LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
 export lvim="$HOME/.local/bin/lvim"
 
 # config from Chris

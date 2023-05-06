@@ -66,6 +66,12 @@ yes '' | sed 3q; echo "----------------------------- installing easy-sharing ---
 npm install -g easy-sharing  # https://github.com/parvardegr/sharing
 # https://github.com/mifi/ezshare
 
+
+yes '' | sed 3q; echo "----------------------------- installing cloudflared -------------------------------"; yes '' | sed 3q
+# install as per instructions. Advantage of avoiding a package manager is getting: cloudflared update command.
+wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb && dpkg -i cloudflared-linux-amd64.deb
+
+
 yes '' | sed 3q; echo "----------------------------- installing sshfs ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install sshfs  # mount remote filesystems over ssh

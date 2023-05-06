@@ -1,11 +1,15 @@
 
-activate_ve latest
 
-# read api key from hhere
-$ini_file = "$HOME\dotfiles\creds\tokens\openai_api.txt"
-$api_key = Get-Content -Path $ini_file
-# remove trailing empty space or new line
-$api_key = $api_key.Trim()
-python -m revChatGPT.V3 --api_key $api_key $args
+activate_ve
+$op_script = "~/tmp_results/shells/python_return_command.ps1"
+if (Test-Path $op_script ) {
+  Remove-Item $op_script
+}
+
+
+python -m machineconfig.scripts.python.chatgpt $args
+cat $op_script
+. $op_script
+
 
 deactivate
