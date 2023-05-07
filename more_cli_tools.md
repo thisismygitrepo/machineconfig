@@ -1,4 +1,11 @@
 
+# Profilers
+* https://github.com/plasma-umass/scalene
+* https://github.com/benfred/py-spy
+* https://github.com/joerick/pyinstrument
+* https://github.com/bloomberg/memray
+
+
 # Sources:
 * https://github.com/sindresorhus/awesome
 * https://github.com/anderspitman/awesome-tunneling
