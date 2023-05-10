@@ -33,7 +33,7 @@ class ProcessManager:
 
     def filter_and_kill(self, name=None):
         df_sub = self.df.query(f"name == '{name}' ").sort_values(by='create_time', ascending=True)
-        self.kill(pids=sdf_sub.pid)
+        self.kill(pids=df_sub.pid)
 
     def kill(self, names: list or None = None, pids: list or None = None):
         if names is None and pids is None:
