@@ -37,7 +37,7 @@ git add .; git commit -am "{mess}"
     if action == GitAction.push or action == GitAction.pull:
         # remotes = tm.run(f"cd {path}; git remote", shell="powershell").op.split("\n")
         action_name = "pull" if action == GitAction.pull else "push"
-        cmds = [f'echo "pulling from {remote.url}" ; git {action_name} {remote.name}' for remote in repo.remotes]
+        cmds = [f'echo "pulling from {remote.url}" ; git {action_name} {remote.name} {repo.active_branch.name}' for remote in repo.remotes]
         program += '\n' + '\n'.join(cmds) + '\n'
     program = program + f'''
 echo ""; echo ""
