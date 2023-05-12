@@ -39,32 +39,32 @@ def main(which=None):
         program = helper.main()
 
     elif choice_key == Options.ve.value:
-        from machineconfig.jobs.python.python_ve_installer import main
-        program = main()
+        import machineconfig.jobs.python.python_ve_installer as helper
+        program = helper.main()
 
     elif choice_key == Options.devaps.value:
-        from machineconfig.scripts.python.devops_devapps_install import main
-        program = main()
+        import machineconfig.scripts.python.devops_devapps_install as helper
+        program = helper.main()
 
     elif choice_key == Options.sym_new.value:
-        from machineconfig.jobs.python.python_ve_symlink import main
-        program = main()
+        import machineconfig.jobs.python.python_ve_symlink as helper
+        program = helper.main()
 
     elif choice_key == Options.sym_path_shell.value:
-        from machineconfig.profile.create import main
-        main()
+        import machineconfig.profile.create as helper
+        helper.main()
         program = "echo 'done with symlinks'"
 
     elif choice_key == Options.ssh_add_pubkey.value:
-        from machineconfig.scripts.python.devops_add_ssh_key import main
-        program = main()
+        import machineconfig.scripts.python.devops_add_ssh_key as helper
+        program = helper.main()
 
     elif choice_key == Options.ssh_use_pair.value:
         raise NotImplementedError
 
     elif choice_key == Options.ssh_add_id.value:  # so that you can SSH directly withuot pointing to identity key.
-        from machineconfig.scripts.python.devops_add_identity import main
-        program = main()
+        import machineconfig.scripts.python.devops_add_identity as helper
+        program = helper.main()
 
     elif choice_key == Options.ssh_setup.value:
         program_windows = f"""Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""

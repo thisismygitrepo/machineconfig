@@ -42,7 +42,7 @@ chmod +x ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe -R
                 additions.append(f"""
 echo "{("Pulling " + str(a_repo.working_dir)).center(80, "-")}"
 cd "{a_repo.working_dir}"
-{sep.join([f'git pull {remote.name}' for remote in a_repo.remotes])}
+{sep.join([f'git pull {remote.name} {a_repo.active_branch.name}' for remote in a_repo.remotes])}
 """)
         program = "\n".join(additions)
 
@@ -50,12 +50,18 @@ cd "{a_repo.working_dir}"
         program = "\n".join([f"""
 echo "{("Pulling " + str(a_repo.working_dir)).center(80, "-")}"
 cd "{a_repo.working_dir}"
-{sep.join([f'git pull {remote.name}' for remote in a_repo.remotes])}
+{sep.join([f'git pull {remote.name} {a_repo.active_branch.name}' for remote in a_repo.remotes])}
 """ for a_repo in repos_objs])
     else: raise NotImplementedError(f"System {system()} not supported")
     # write_shell_script(program, desc="Script to update repos")
     # return ""
     return program
+
+
+# def get_pulls(remote):
+#     if len(remote.branches) == 0: return ""
+#     elif len(remote.branches) == 1: return f'git pull {remote.name} {remote.branches[0].name}'
+#     else: return f'git pull {remote.name} {remote.active_branch.name}'
 
 
 if __name__ == '__main__':
