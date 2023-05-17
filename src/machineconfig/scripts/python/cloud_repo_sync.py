@@ -16,7 +16,7 @@ def get_zellij_cmd(wd1: tb.P, wd2: tb.P) -> str: return f""" zellij action new-t
 def args_parser():
     parser = argparse.ArgumentParser(description="Secure Repo CLI.")
 
-    parser.add_argument("repo", help="repo root")
+    # parser.add_argument("cmd", help="command to run", choices=["pull", "push"])
 
     parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
     parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {tb.randstr()}")
@@ -31,23 +31,21 @@ def args_parser():
             print(f"No cloud profile found @ {_path}, please set one up or provide one via the --cloud flag.")
             return ""
     else: cloud = args.cloud
-    # if args.repo is None:
-    #     repo_root = tb.P(".").absolute()
-    # else:
-    repo_root = tb.P(args.repo).expanduser().absolute()
-    repo = tb.install_n_import("git", "gitpython").Repo(repo_root)
+    # repo_root = tb.P(args.repo).expanduser().absolute()
+    repo_root = tb.P.cwd()
+    repo_obj = tb.install_n_import("git", "gitpython").Repo(repo_root)
     CONFIG_PATH.joinpath("remote").create()
-    repo_sync = CONFIG_PATH.joinpath("remote", repo_root.rel2home())
+    repo_sync_root = CONFIG_PATH.joinpath("remote", repo_root.rel2home())  # .delete(sure=True)
     try:
         print("\n", "=============================== Downloading Remote Repo ====================================")
-        repo_root.from_cloud(cloud=cloud, localpath=repo_sync, unzip=True, decrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)
+        repo_root.from_cloud(cloud=cloud, localpath=repo_sync_root, unzip=True, decrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)
     except AssertionError:
         print("Remote does not exist, creating it and exiting ... ")
         repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)
         return ""
-    repo_sync_obj = tb.install_n_import("git", "gitpython").Repo(repo_sync)
+    repo_sync_obj = tb.install_n_import("git", "gitpython").Repo(repo_sync_root)
     if repo_sync_obj.is_dirty():
-        print("=" * 50, '\n', f"WRANING: the remote `{repo_sync}` is dirty, please commit or stash changes before proceeding.", '\n', "=" * 50)
+        print("=" * 50, '\n', f"WRANING: the remote `{repo_sync_root}` is dirty, please commit or stash changes before proceeding.", '\n', "=" * 50)
 
     script = f"""
 echo ""
@@ -63,7 +61,7 @@ cd {repo_root}
 echo '-> Trying to removing originEnc remote from local repo if it exists.'
 git remote remove originEnc
 echo '-> Adding originEnc remote to local repo'
-git remote add originEnc {repo_sync}
+git remote add originEnc {repo_sync_root}
 echo '-> Fetching originEnc remote.'
 git pull originEnc master
 
@@ -72,16 +70,16 @@ git pull originEnc master
     res = tb.Terminal().run(f". {tb.P.tmpfile(suffix=suffix).write_text(script)}", shell="powershell").capture().print()
     if res.is_successful(strict_err=True, strict_returcode=True):
         print("\n", "Pull succeeded, removing originEnc, the local copy of remote & pushing merged repo_root to remote ... ")
-        repo_sync.delete(sure=True)
+        repo_sync_root.delete(sure=True)
         from git.remote import Remote
-        Remote.remove(repo, "originEnc")
+        Remote.remove(repo_obj, "originEnc")
         if args.push:
             repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)
     else:
-        print(f"Failed to pull, keeping local copy of remote at {repo_sync} ... ")
+        print(f"Failed to pull, keeping local copy of remote at {repo_sync_root} ... ")
         program = f"""
 # Finalizing syncing of `{repo_root}` to `{cloud}` by pushing local changes to remote and deleting local copy of remote.
-repo_sync = tb.P(r'{repo_sync}')
+repo_sync = tb.P(r'{repo_sync_root}')
 repo_root = tb.P(r'{repo_root}')
 repo_sync.delete(sure=True)
 from git.remote import Remote
@@ -93,7 +91,7 @@ repo_root.to_cloud(cloud='{cloud}', zip=True, encrypt=True, rel2home=True, os_sp
         print_programming_script(program, lexer="py", desc="Abstaining from running the following autmomatically:")
         resp = input("Would you like to run the above commands? y/[n] ") or "n"
         if resp.lower() == "y":
-            repo_sync.delete(sure=True)
+            repo_sync_root.delete(sure=True)
             from git.remote import Remote
             from git import Repo
             try: Remote.remove(Repo(repo_root), "originEnc")
@@ -102,11 +100,11 @@ repo_root.to_cloud(cloud='{cloud}', zip=True, encrypt=True, rel2home=True, os_sp
         else:
             print(f"When ready, use this snippet: \n{program}")
             if platform.system() == "Windows":
-                program = get_wt_cmd(wd1=repo_root, wd2=repo_sync)
+                program = get_wt_cmd(wd1=repo_root, wd2=repo_sync_root)
                 write_shell_script(program=program, execute=True)
                 return None
             elif platform.system() == "Linux":
-                program = get_zellij_cmd(wd1=repo_root, wd2=repo_sync)
+                program = get_zellij_cmd(wd1=repo_root, wd2=repo_sync_root)
                 write_shell_script(program=program, execute=True)
                 return None
             else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
@@ -114,4 +112,3 @@ repo_root.to_cloud(cloud='{cloud}', zip=True, encrypt=True, rel2home=True, os_sp
 
 if __name__ == "__main__":
     args_parser()
-
