@@ -5,6 +5,8 @@
 * https://github.com/joerick/pyinstrument
 * https://github.com/bloomberg/memray
 
+# Browsers:
+* carbonel. See READM for comparison
 
 # Sources:
 * https://github.com/sindresorhus/awesome
