@@ -31,4 +31,3 @@ setuptools.setup(
     
 )
 
-# todo create a link to where this setup is. in .machoneconfig

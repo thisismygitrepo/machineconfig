@@ -16,11 +16,10 @@ def main():
         print(base_txt)
         cmd = f"""
 $base = $(cat {base_txt})
-python -m revChatGPT.V3 --api_key {api_key} --base_prompt $base
+chatgpt --base_prompt $base
     """
     else:
         cmd = f"""
-python -m revChatGPT.V3 --api_key {api_key}
 """
     PROGRAM_PATH.write_text(cmd)
 
