@@ -2,6 +2,9 @@
 [[language]]
 name = "python"
 auto-format = true
+file-types = ["py"]
+language-server = { command = "python-language-server"}
+config = {} 
 
 [[language]]
 name = "rust"

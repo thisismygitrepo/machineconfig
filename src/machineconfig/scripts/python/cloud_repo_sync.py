@@ -33,7 +33,7 @@ def args_parser():
     else: cloud = args.cloud
     # repo_root = tb.P(args.repo).expanduser().absolute()
     repo_root = tb.P.cwd()
-    repo_obj = tb.install_n_import("git", "gitpython").Repo(repo_root)
+    repo_obj = tb.install_n_import("git", "gitpython").Repo(repo_root, search_parent_directories=True)
     CONFIG_PATH.joinpath("remote").create()
     repo_sync_root = CONFIG_PATH.joinpath("remote", repo_root.rel2home())  # .delete(sure=True)
     try:
