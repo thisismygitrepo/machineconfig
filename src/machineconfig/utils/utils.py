@@ -25,6 +25,9 @@ def display_options(msg, options: list, header="", tail="", prompt="", default=N
         from pyfzf.pyfzf import FzfPrompt
         fzf = FzfPrompt()
         nl = "\n"
+        if default is not None:
+            # default_str = "Default option"
+            options.append(str(default))
         choice_idx = fzf.prompt(options, fzf_options=("--multi" if multi else "") + f" --prompt={prompt.replace(nl, ' ')} --border=rounded") # --border-label={msg.replace(nl, ' ')}")
     else:
         console = Console()
@@ -38,7 +41,6 @@ def display_options(msg, options: list, header="", tail="", prompt="", default=N
         txt = Panel(txt, title=header, subtitle=tail, border_style="bold red")
         console.print(txt)
         choice_idx = input(f"{prompt}\nEnter option *number* (or option name starting with space): ")
-
     if not fzf:
         if choice_idx.startswith(" "):
             choice_key = choice_idx.strip()
