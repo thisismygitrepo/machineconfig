@@ -25,7 +25,7 @@ def args_parser():
     parser.add_argument("--push", "-u", help="Zip before sending.", action="store_true")  # default is False
     args = parser.parse_args()
     if args.cloud is None:
-        _path = tb.P.home().joinpath("dotfiles/config/setup/rclone_remote")
+        _path = tb.P.home().joinpath("dotfiles/machineconfig/setup/rclone_remote")
         try: cloud = _path.read_text().replace("\n", "")
         except FileNotFoundError:
             print(f"No cloud profile found @ {_path}, please set one up or provide one via the --cloud flag.")
