@@ -32,6 +32,7 @@ class ProcessManager:
         self.kill(pids=sub_df.pid) if input("Confirm kill? y/[n] ").lower() == "y" else print("Not killing")
 
     def filter_and_kill(self, name=None):
+        _ = 20
         df_sub = self.df.query(f"name == '{name}' ").sort_values(by='create_time', ascending=True)
         self.kill(pids=df_sub.pid)
 
