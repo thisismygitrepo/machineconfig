@@ -12,7 +12,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--path", type=str, help="The directory containing the jobs", default=".")
     # optional flag for interactivity
-    parser.add_argument("--interactive", "-i", action="store_true", help="Whether to run the job interactively")
+    parser.add_argument("--interactive", "-i", action="store_true", help="Whether to run the job interactively using IPython")
     parser.add_argument("--debug", "-d", action="store_true", help="debug")
     parser.add_argument("--remote", "-r", action="store_true", help="launch on a remote machine")
     parser.add_argument("--main", "-m", action="store_true", help="launch the main file")
