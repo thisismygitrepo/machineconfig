@@ -34,10 +34,8 @@ restart_nfs_server() {
 
 # Prompt the user to enter the directory path for sharing
 read -p "Enter the directory path you want to share: " share_path
-
 # Validate the directory path
 validate_directory "$share_path"
-
 # Validate the /etc/exports file
 validate_file "/etc/exports"
 
@@ -47,7 +45,6 @@ export_line="$share_path *(rw,sync,fsid=0,no_subtree_check,crossmnt,no_root_squa
 # Add the export line to the /etc/exports file
 echo "$export_line" | sudo tee -a /etc/exports >/dev/null
 
-# Restart NFS server
 restart_nfs_server
 
 echo "NFS sharing configured successfully!"
