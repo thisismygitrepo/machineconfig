@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+# write extremely rigorous and verbose bash script to interactively talk to use to enter a path
+# and share it using nfs by adding appropriate lines as follows
+# on /etc/exports file:
+# /home/alex/data/local *(rw,sync,fsid=0,no_subtree_check,crossmnt,no_root_squash)
+# for wsl, remember to add insecure option to /etc/exportfs file on server side
+
+# Function to display an error message and exit the script
+exit_with_error() {
+    echo "Error: $1"
+    exit 1
+}
+
+# Function to validate if the given directory path exists
+validate_directory() {
+    if [[ ! -d "$1" ]]; then
+        exit_with_error "Directory '$1' does not exist."
+    fi
+}
+
+# Function to validate if the given file exists
+validate_file() {
+    if [[ ! -f "$1" ]]; then
+        exit_with_error "File '$1' does not exist."
+    fi
+}
+
+# Function to restart NFS server
+restart_nfs_server() {
+    sudo service nfs-server restart
+    sudo exportfs -ra
+}
+
+# Prompt the user to enter the directory path for sharing
+read -p "Enter the directory path you want to share: " share_path
+
+# Validate the directory path
+validate_directory "$share_path"
+
+# Validate the /etc/exports file
+validate_file "/etc/exports"
+
+# Generate the NFS export line with default options
+export_line="$share_path *(rw,sync,fsid=0,no_subtree_check,crossmnt,no_root_squash)"
+
+# Add the export line to the /etc/exports file
+echo "$export_line" | sudo tee -a /etc/exports >/dev/null
+
+# Restart NFS server
+restart_nfs_server
+
+echo "NFS sharing configured successfully!"
+

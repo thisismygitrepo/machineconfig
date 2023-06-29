@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# mount shared windows folder on linux
+# sudo mount -t drvfs '\\SAH0229234\t7share' /mnt/t7share
+# or sudo mount  -t drvfs 'M:' /mnt/t7share
+
 #write an extremely verbose bash script to mount a windows network drive in wsl.
 #1) The user is prompted for inputs, and is given examples and defaults if enter was pressed.
 #2) Before every command is executed, echo what are you doing and what command is used to achieve that

@@ -8,6 +8,12 @@
 # add as much checkpoints as you can to ensure extremely rigorous code that works under all circumstances, e.g. before changing fstab file, ensure that the line to be added is not there already etc.
 # Also be extremely verbose to delineate what you are doing by echoing to the terminal
 
+# mount nfs share on linux
+# sudo apt install nfs-common
+# mkdir ~/data/local
+# sudo mount -o nolock,noatime,nodiratime,proto=tcp,timeo=600,retrans=2,noac alex-p51s-5:/home/alex/data/local ./data/local
+
+
 # Prompt user for remote server and NFS share folder in format name:/path
 read -p "Enter remote server and NFS share folder (format: name:/path): " share_info
 

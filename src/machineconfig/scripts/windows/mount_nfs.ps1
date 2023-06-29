@@ -1,4 +1,11 @@
 
+# mount nfs share on windows
+# Enable-WindowsOptionalFeature -FeatureName ServicesForNFS-ClientOnly, ClientForNFS-Infrastructure -Online -NoRestart
+# New-PSDrive -Name "z" -Root "\\alex-p51s-5/home/alex/dbhdd" -Persist -PSProvider "FileSystem"
+# notice there is not : separation between host and path
+# mount.exe -o anon,nolock,rw,hard,intr,noatime,proto=tcp,no_root_squash alex-p51s-5:/home/alex/dbhdd X:
+
+
 # Install NFS client
 Write-Host "Installing NFS client..."
 Install-WindowsFeature ClientForNFS-Infrastructure -IncludeManagementTools

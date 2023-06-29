@@ -33,6 +33,7 @@ def main():
         pass
     if args.debug: command = f"{exe} -m pudb {choice_file} "  # TODO: functions not supported yet in debug mode.
     elif args.main: command = f"{exe} {choice_file}"
+    elif args.interactive: command = f"{exe} {choice_file} "
     else:
         module, choice_function = choose_function(choice_file)
         if choice_function != "RUN AS MAIN":
