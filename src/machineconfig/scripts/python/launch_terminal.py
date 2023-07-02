@@ -1,6 +1,6 @@
 
 
-from machineconfig.utils.utils import PROGRAM_PATH, choose_ssh_host, install_n_import
+from machineconfig.utils.utils import PROGRAM_PATH, choose_ssh_host, install_n_import, get_ssh_hosts
 
 
 def main_windows_and_wsl(hosts: list[str], orientation="vertical", mprocs=False):
@@ -13,6 +13,7 @@ def main_windows_and_wsl(hosts: list[str], orientation="vertical", mprocs=False)
     ssh_cmd = f"-t 'mprocs'" if mprocs else ''  # 'wsl_ssh_windows_port_forwarding.ps1'
     split_per_machine = 1 / len(hosts)
     size = 0.3
+    known_hosts = get_ssh_hosts()
     if len(hosts) == 1:
         cmd = f"""
 wt --window {window} --title {hosts[0]}Windows powershell -Command "ssh {hosts[0]} {ssh_cmd}" `; split-pane --{orientation} --title {hosts[0]}wsl --size 0.5 powershell -Command "ssh {hosts[0]}wsl"
@@ -22,6 +23,7 @@ wt --window {window} --title {hosts[0]}Windows powershell -Command "ssh {hosts[0
         for a_host in hosts[1:]:
             cmd += f"""{sep} split-pane --{orientation_oposite} --title {a_host}Windows --size {split_per_machine} powershell -Command "ssh {a_host} {ssh_cmd}"  """
         for idx, a_host in enumerate(hosts[::-1]):
+            if f"{a_host}wsl" not in known_hosts: continue
             tmp = f"move-focus {orientation_opposite_move_focus}" if idx == 0 else ""
             cmd += f"""{sep} {tmp} split-pane --{orientation} --title {a_host}wsl --size {size} powershell -Command "ssh {a_host}wsl" """
             cmd += f"""{sep} swap-pane {orientation_swap} """

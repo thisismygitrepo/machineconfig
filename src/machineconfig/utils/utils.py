@@ -236,13 +236,14 @@ def get_current_ve():
         # return path.parent.parent.stem
 
 
-def choose_ssh_host(multi=True):
+def get_ssh_hosts():
     from paramiko import SSHConfig
     c = SSHConfig()
     c.parse(open(P.home().joinpath(".ssh/config").str))
-    choices = list(c.get_hostnames())
-    hosts = display_options(msg="", options=choices, multi=multi, fzf=True)
-    return hosts
+    return list(c.get_hostnames())
+
+
+def choose_ssh_host(multi=True): return display_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
 
 
 if __name__ == '__main__':

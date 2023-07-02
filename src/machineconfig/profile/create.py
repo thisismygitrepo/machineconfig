@@ -16,6 +16,7 @@ ERROR_LIST = []  # append to this after every exception captured.
 CONFIG_ROOT = LIBRARY_ROOT.parent.parent.joinpath("settings")
 OTHER_SYSTEM = "windows" if system == "Linux" else "linux"
 
+
 # =================== SYMLINKS ====================================
 
 
@@ -104,7 +105,7 @@ def main_env_path(choice=None, profile_path=None):
     dirs = env_path[f'path_{system.lower()}']['extension']
 
     print(f"Current PATH: ", "\n============")
-    tb.get_env().PATH.print()
+    tb.P.get_env().PATH.print()
 
     if choice is None:
         choice = display_options(msg="Which directory to add?", options=dirs + ["all", "none"], default="none")
