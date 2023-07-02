@@ -44,7 +44,7 @@ IFS='/' read -ra parts <<< "$share_path"  # Split the path by '/'
 length=${#parts[@]}  # Get the length of the array
 if [ $length -ge 3 ]; then  # Check if the path has at least 3 parts
   tmp="${parts[@]:2}"    # Extract all parts after the first two
-  local_mount_point2=$(IFS='/' ; echo "${tmp[*]}")
+  local_mount_point2=${tmp// /\/}
 else
   local_mount_point2='mnt/share'
 fi
