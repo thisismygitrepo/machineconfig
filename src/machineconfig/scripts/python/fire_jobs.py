@@ -16,6 +16,7 @@ def main():
     parser.add_argument("--debug", "-d", action="store_true", help="debug")
     parser.add_argument("--remote", "-r", action="store_true", help="launch on a remote machine")
     parser.add_argument("--main", "-m", action="store_true", help="launch the main file")
+    parser.add_argument("--history", "-H", action="store_true", help="choose from history")
     args = parser.parse_args()
     jobs_dir = args.path
     jobs_dir = tb.P(jobs_dir).expanduser().absolute()
@@ -41,7 +42,11 @@ def main():
             command = f"{exe} -m fire {choice_file} {choice_function} " + " ".join([f"--{k} {v}" for k, v in kgs1.items()])
         else: command = f"{exe} {choice_file} "
         if args.remote: return run_on_remote(choice_file, args=args)
+    tb.install_n_import("pyperclip").copy(command)
+    # CONFIG_PATH
+    # TODO: send this command to terminal history. In powershell & bash there is no way to do it with a command other than goiing to history file. In Mcfly there is a way but its linux only tool.
     print("\n", command, "\n\n\n")
+    # CONFIG_PATH
     PROGRAM_PATH.write_text(command)
 
 

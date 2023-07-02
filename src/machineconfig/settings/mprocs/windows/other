@@ -1,0 +1,12 @@
+  wslSSH:
+    shell:
+      $select: os
+      windows: "wsl_ssh_windows_port_forwarding.ps1"
+      $else: "wsl_ssh_windows_port_forwarding.ps1"
+    env:
+      TEXT:
+        $select: os
+        windows: Windows
+        linux: Linux
+        macos: Macos
+        freebsd: FreeBSD
