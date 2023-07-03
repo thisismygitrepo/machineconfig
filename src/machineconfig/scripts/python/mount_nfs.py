@@ -23,6 +23,7 @@ def main():
     share_path={share_path}
     local_mount_point={local_mount_point}
     """)
+    print(PROGRAM_PATH.read_text())
 
 
 if __name__ == '__main__':

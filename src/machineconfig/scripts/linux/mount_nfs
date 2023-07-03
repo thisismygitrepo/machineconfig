@@ -44,7 +44,7 @@ if [ ! -d "$local_mount_point" ]; then
 fi
 
 sudo service rpcbind start
-sudp service nfs-common start
+sudo service nfs-common start
 # without the two above, on wsl, you get error: https://superuser.com/questions/657071/mount-nfs-rpc-statd-is-not-running-but-is-required-for-remote-locking
 
 echo "Mounting NFS share $share_info at $local_mount_point using command:"
