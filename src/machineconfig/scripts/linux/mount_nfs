@@ -42,10 +42,12 @@ if [ ! -d "$local_mount_point" ]; then
   sudo chown "$(id -u):$(id -g)" "$local_mount_point"
 fi
 
-echo "Mounting NFS share $share_info at $local_mount_point"
 sudo service rpcbind start
 sudp service nfs-common start
 # without the two above, on wsl, you get error: https://superuser.com/questions/657071/mount-nfs-rpc-statd-is-not-running-but-is-required-for-remote-locking
+
+echo "Mounting NFS share $share_info at $local_mount_point using command:"
+echo "sudo mount -t nfs $share_info $local_mount_point"
 sudo mount -t nfs "$share_info" "$local_mount_point"
 
 # Add a line to fstab file to ensure automount
