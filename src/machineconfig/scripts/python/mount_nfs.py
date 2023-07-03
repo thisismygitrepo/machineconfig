@@ -9,8 +9,8 @@ def main():
         ssh = tb.SSH(choose_ssh_host())
         share_path = display_options("Choose a share path: ", options=tb.L(ssh.run("cat /etc/exports").op.split("\n")).filter(lambda x: not x.startswith("#")).apply(lambda x: f"{ssh.hostname}:{x.split(' ')[0]}").list)
 
-    share_path = share_path.split(":")[1]
     remote_server = share_path.split(":")[0]
+    share_path = share_path.split(":")[1]
     mount_path_1 = tb.P(share_path)
 
     mount_path_2 = tb.P.home().joinpath(f"mounts/{remote_server}").joinpath(mount_path_1)
