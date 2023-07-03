@@ -15,7 +15,7 @@
 
 
 . activate_ve
-python -m machineconfig.scripts.python.mount_nfs.py
+python -m machineconfig.scripts.python.mount_nfs
 source $HOME/tmp_results/shells/python_return_command.sh
 
 
