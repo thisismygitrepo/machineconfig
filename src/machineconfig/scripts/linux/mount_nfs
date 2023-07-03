@@ -39,7 +39,7 @@ if mount | grep -q ":$share_path on "; then
 fi
 
 # Mount the share at a corresponding location in the local machine
-local_mount_point1="/mnt/nfs/$remote_server/${share_path#/}"
+local_mount_point="/mnt/nfs/$remote_server/${share_path#/}"
 
 
 if [ ! -d "$local_mount_point" ]; then
