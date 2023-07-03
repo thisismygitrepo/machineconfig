@@ -17,8 +17,7 @@ def main():
     else:
         mount_path_3 = tb.P.home().joinpath(f"mounts/{remote_server}/{mount_path_1.name}")
 
-    local_mount_point = display_options(msg="mount path", options=[mount_path_1, mount_path_2, mount_path_3, "enter custom path"], default=mount_path_3)
-    if local_mount_point == "enter custom path": local_mount_point = input("enter custom path = ")
+    local_mount_point = display_options(msg="choose mount path OR input custom one", options=[mount_path_1, mount_path_2, mount_path_3], default=mount_path_3, custom_input=True)
     PROGRAM_PATH.write_text(f"""
     remote_server={remote_server}
     share_path={share_path}

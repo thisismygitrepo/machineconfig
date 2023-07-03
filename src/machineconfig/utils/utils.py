@@ -18,7 +18,7 @@ CONFIG_PATH = P.home().joinpath(".config/machineconfig")
 tmp_install_dir = P.tmp(folder="tmp_installers")
 
 
-def display_options(msg, options: list, header="", tail="", prompt="", default=None, fzf=False, multi=False) -> str or list:
+def display_options(msg, options: list, header="", tail="", prompt="", default=None, fzf=False, multi=False, custom_input=False) -> str or list:
     tool_name = "fzf"
     if fzf and check_tool_exists(tool_name):
         install_n_import("pyfzf")
@@ -56,14 +56,16 @@ def display_options(msg, options: list, header="", tail="", prompt="", default=N
                     raise IndexError
                 choice_key = options[choice_idx]
             except IndexError:
-                # many be user forgotten to start with a dash
+                # maybe user forgotten to start with a dash
                 if choice_idx in options:
                     choice_key = choice_idx
                     choice_idx = options.index(choice_idx)
-                else: raise ValueError(f"Unknown choice. {choice_idx}")
+                else:
+                    if custom_input: return choice_idx
+                    raise ValueError(f"Unknown choice. {choice_idx}")
             except TypeError:
+                if custom_input: return choice_idx
                 raise TypeError(f"Unknown choice. {choice_idx}")
-                # pass
         print(f"{choice_idx}: {choice_key}", f"<<<<-------- CHOICE MADE")
     else:
         if not multi and type(choice_idx) is list and len(choice_idx) == 1: choice_idx = choice_idx[0]

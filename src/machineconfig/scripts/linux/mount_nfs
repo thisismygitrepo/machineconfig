@@ -24,10 +24,11 @@ if ! ping -c 1 "$remote_server" &> /dev/null; then
   echo "Error: Remote server $remote_server is not reachable."
   exit 1
 fi
-if ! showmount -e "$remote_server" | grep -q "$share_path"; then
-  echo "Error: NFS share folder $share_path is not available on $remote_server."
-  exit 1
-fi
+
+#if ! showmount -e "$remote_server" | grep -q "$share_path"; then
+#  echo "Error: NFS share folder $share_path is not available on $remote_server."
+#  exit 1
+#fi
 
 # Check if the share is already mounted
 if mount | grep -q ":$share_path on "; then
