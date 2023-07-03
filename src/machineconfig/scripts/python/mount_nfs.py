@@ -4,13 +4,13 @@ from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_
 
 
 def main():
-    share_path = input("share path? (e.g. machine:/home/alex) [press enter for interactive choice] = ")
-    if share_path == "":
+    share_info = input("share path? (e.g. machine:/home/alex) [press enter for interactive choice] = ")
+    if share_info == "":
         ssh = tb.SSH(choose_ssh_host())
-        share_path = display_options("Choose a share path: ", options=tb.L(ssh.run("cat /etc/exports").op.split("\n")).filter(lambda x: not x.startswith("#")).apply(lambda x: f"{ssh.hostname}:{x.split(' ')[0]}").list)
+        share_info = display_options("Choose a share path: ", options=tb.L(ssh.run("cat /etc/exports").op.split("\n")).filter(lambda x: not x.startswith("#")).apply(lambda x: f"{ssh.hostname}:{x.split(' ')[0]}").list)
 
-    remote_server = share_path.split(":")[0]
-    share_path = share_path.split(":")[1]
+    remote_server = share_info.split(":")[0]
+    share_path = share_info.split(":")[1]
     mount_path_1 = tb.P(share_path)
 
     mount_path_2 = tb.P.home().joinpath(f"mounts/{remote_server}").joinpath(mount_path_1)
@@ -21,9 +21,10 @@ def main():
 
     local_mount_point = display_options(msg="choose mount path OR input custom one", options=[mount_path_1, mount_path_2, mount_path_3], default=mount_path_3, custom_input=True)
     PROGRAM_PATH.write_text(f"""
-    remote_server={remote_server}
-    share_path={share_path}
-    local_mount_point={local_mount_point}
+share_info={share_info}
+remote_server={remote_server}
+share_path={share_path}
+local_mount_point={local_mount_point}
     """)
     print(PROGRAM_PATH.read_text())
 
