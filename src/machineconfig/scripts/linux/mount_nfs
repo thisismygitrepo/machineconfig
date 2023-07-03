@@ -14,13 +14,10 @@
 # sudo mount -o nolock,noatime,nodiratime,proto=tcp,timeo=600,retrans=2,noac alex-p51s-5:/home/alex/data/local ./data/local
 
 
-# Prompt user for remote server and NFS share folder in format name:/path
-read -p "Enter remote server and NFS share folder (format: name:/path): " share_info
+. activate_ve
+python -m machineconfig.scripts.python.mount_nfs.py
+source $HOME/tmp_results/shells/python_return_command.sh
 
-# Parse the user input to extract remote server and share folder path
-IFS=':' read -ra share <<< "$share_info"
-remote_server="${share[0]}"
-share_path="${share[1]}"
 
 # Check if remote server is reachable and share folder exists
 if ! ping -c 1 "$remote_server" &> /dev/null; then
@@ -38,9 +35,6 @@ if mount | grep -q ":$share_path on "; then
   exit 0
 fi
 
-# Mount the share at a corresponding location in the local machine
-local_mount_point="/mnt/nfs/$remote_server/${share_path#/}"
-
 
 if [ ! -d "$local_mount_point" ]; then
   echo "Creating local mount point directory $local_mount_point"
@@ -49,6 +43,9 @@ if [ ! -d "$local_mount_point" ]; then
 fi
 
 echo "Mounting NFS share $share_info at $local_mount_point"
+sudo service rpcbind start
+sudp service nfs-common start
+# without the two above, on wsl, you get error: https://superuser.com/questions/657071/mount-nfs-rpc-statd-is-not-running-but-is-required-for-remote-locking
 sudo mount -t nfs "$share_info" "$local_mount_point"
 
 # Add a line to fstab file to ensure automount
