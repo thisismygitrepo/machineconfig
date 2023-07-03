@@ -40,36 +40,6 @@ fi
 
 # Mount the share at a corresponding location in the local machine
 local_mount_point1="/mnt/nfs/$remote_server/${share_path#/}"
-IFS='/' read -ra parts <<< "$share_path"  # Split the path by '/'
-length=${#parts[@]}  # Get the length of the array
-if [ $length -ge 3 ]; then  # Check if the path has at least 3 parts
-  tmp="${parts[@]:3}"    # Extract all parts after the first two
-  local_mount_point2=${tmp// /\/}
-  local_mount_point2="$HOME/$local_mount_point2"
-else
-  local_mount_point2='mnt/share'
-fi
-
-echo "Choose an option:"
-echo "1. Mount at $local_mount_point1"
-echo "2. Mount at $local_mount_point2"
-echo "3. Mount at custom location to be entered"
-read -p "Enter your choice (1, 2 or 3): " choice
-case $choice in
-  1)
-    local_mount_point="$local_mount_point1"
-    ;;
-  2)
-    local_mount_point="$local_mount_point2"
-    ;;
-  3)
-    read -p "Enter local mount point: " local_mount_point
-    ;;
-  *)
-    echo "Invalid choice. Exiting..."
-    exit 1
-    ;;
-esac
 
 
 if [ ! -d "$local_mount_point" ]; then
