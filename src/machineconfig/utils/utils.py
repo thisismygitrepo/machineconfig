@@ -238,7 +238,7 @@ def get_current_ve():
         # return path.parent.parent.stem
 
 
-def get_ssh_hosts():
+def get_ssh_hosts() -> list:
     from paramiko import SSHConfig
     c = SSHConfig()
     c.parse(open(P.home().joinpath(".ssh/config").str))
