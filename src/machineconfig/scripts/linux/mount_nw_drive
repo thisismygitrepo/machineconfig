@@ -21,7 +21,7 @@ echo "The network drive location is set to $drive_location"
 
 # Prompt user for the mount point directory
 read -p "Enter the mount point directory (ex: /mnt/network): " mount_point
-mount_point=${mount_point:-/mnt/network}
+mount_point=${mount_point:-$HOME/data/mount_nw/network}
 echo "The mount point directory is set to $mount_point"
 
 # Prompt user for the username and password

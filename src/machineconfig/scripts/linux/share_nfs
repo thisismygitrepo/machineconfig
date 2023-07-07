@@ -33,10 +33,9 @@ restart_nfs_server() {
 }
 
 # Prompt the user to enter the directory path for sharing
-read -p "Enter the directory path you want to share: " share_path
-# Validate the directory path
+read -p "Enter the directory path you want to share [default: ~/data/share_nfs] : " share_path
+share_path=${share_path:-$HOME/data/share_nfs}
 validate_directory "$share_path"
-# Validate the /etc/exports file
 validate_file "/etc/exports"
 
 # Generate the NFS export line with default options

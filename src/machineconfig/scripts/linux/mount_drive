@@ -10,7 +10,7 @@ read -p "Enter device name (default: sdb1): " device
 device=${device:-sdb1}
 read -p "Enter mount name (default: mymnt): " mnt_name
 mnt_name=${mnt_name:-mymnt}
-sudo mkdir -p /media/$mnt_name  # Make sure to create the mounting directory.
+sudo mkdir -p $HOME/data/mount_drive/$mnt_name  # Make sure to create the mounting directory.
 
 # check if drive is bitlocker encrypted then print encryption type else print not encrypted
 if ! command -v dislocker &> /dev/null
