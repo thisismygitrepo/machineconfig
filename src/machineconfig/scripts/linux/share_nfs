@@ -32,7 +32,7 @@ restart_nfs_server() {
     sudo exportfs -ra
 }
 
-# Prompt the user to enter the directory path for sharing
+mkdir -p "$HOME/data/share_nfs"
 read -p "Enter the directory path you want to share [default: ~/data/share_nfs] : " share_path
 share_path=${share_path:-$HOME/data/share_nfs}
 validate_directory "$share_path"
