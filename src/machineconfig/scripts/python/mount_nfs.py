@@ -15,11 +15,12 @@ def main():
     share_path = share_info.split(":")[1]
     mount_path_1 = tb.P(share_path)
 
-    mount_path_2 = tb.P.home().joinpath(f"mounts/{remote_server}").joinpath(mount_path_1)
+    print(remote_server)
+    mount_path_2 = tb.P.home().joinpath(f"data/mount_nfs/{remote_server}")
     if str(mount_path_1).startswith("/home"): mount_path_3 = tb.P.home().joinpath(*mount_path_1.parts[3:])
-    else: mount_path_3 = tb.P.home().joinpath(f"data/mount_nfs/{remote_server}")
+    else: mount_path_3 = mount_path_2
 
-    local_mount_point = display_options(msg="choose mount path OR input custom one", options=[mount_path_1, mount_path_2, mount_path_3], default=mount_path_3, custom_input=True)
+    local_mount_point = display_options(msg="choose mount path OR input custom one", options=[mount_path_1, mount_path_2, mount_path_3], default=mount_path_2, custom_input=True)
     PROGRAM_PATH.write_text(f"""
 share_info={share_info}
 remote_server={remote_server}
