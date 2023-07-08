@@ -35,7 +35,7 @@ local_mount_point={local_mount_point}
         PROGRAM_PATH.write_text(f"""
 $server = "{remote_server}"
 $sharePath = "{share_path}"
-$driverLetter = "{driver_letter}"
+$driveLetter = "{driver_letter}"
 """)
     # tb.P.home().joinpath(f"data/mount_nfs/{remote_server}").symlink_to(target="")  # can't be created until the mount is finished
     print(PROGRAM_PATH.read_text())
