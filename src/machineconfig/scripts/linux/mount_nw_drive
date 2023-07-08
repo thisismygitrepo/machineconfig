@@ -12,14 +12,16 @@
 #5) prompt the user whether he wants the process to be done automatically, in which case add settings to fstab file and refresh it.
 #6) if username and password not passed, don't pass them to mount command
 
-. activate_ve
-python -m machineconfig.scripts.python.mount_nw_drive
-source $HOME/tmp_results/shells/python_return_command.sh
 
 drive_location=''
 mount_point=''
 username=''
 password=''
+
+. activate_ve
+python -m machineconfig.scripts.python.mount_nw_drive
+source $HOME/tmp_results/shells/python_return_command.sh
+
 
 # Check if mount point directory exists, create if not
 if [ ! -d "$mount_point" ]; then
