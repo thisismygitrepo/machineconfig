@@ -12,21 +12,14 @@
 #5) prompt the user whether he wants the process to be done automatically, in which case add settings to fstab file and refresh it.
 #6) if username and password not passed, don't pass them to mount command
 
-echo "Welcome to the Windows Network Drive Mounting Script"
+. activate_ve
+python -m machineconfig.scripts.python.mount_nw_drive
+source $HOME/tmp_results/shells/python_return_command.sh
 
-# Prompt user for the network drive location
-read -p "Enter the network drive location (ex: //192.168.1.100/Share): " drive_location
-drive_location=${drive_location:-//192.168.1.100/Share}
-echo "The network drive location is set to $drive_location"
-
-# Prompt user for the mount point directory
-read -p "Enter the mount point directory (ex: /mnt/network): " mount_point
-mount_point=${mount_point:-$HOME/data/mount_nw/network}
-echo "The mount point directory is set to $mount_point"
-
-# Prompt user for the username and password
-read -p "Enter the username (leave blank for no username): " username
-read -sp "Enter the password (leave blank for no password): " password
+drive_location=''
+mount_point=''
+username=''
+password=''
 
 # Check if mount point directory exists, create if not
 if [ ! -d "$mount_point" ]; then
