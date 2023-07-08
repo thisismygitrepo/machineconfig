@@ -31,7 +31,7 @@ fi
 
 # Mount the network drive
 echo "Mounting the network drive at $mount_point using the following command:"
-mount_command="sudo mount -t drvfs "$drive_location" "$mount_point""
+mount_command="sudo mount -t drvfs '$drive_location' '$mount_point' "
 if [[ ! -z $username ]]; then
 mount_command="$mount_command -o username=$username"
 fi
