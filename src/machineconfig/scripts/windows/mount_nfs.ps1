@@ -27,7 +27,7 @@ python -m machineconfig.scripts.python.mount_nfs
 #Invoke-Expression $nfsServerCommand
 #Write-Host "NFS server configured successfully."
 
-$mountCommand = "mount.exe $server" + ":$sharePath $driveLetter" + " -o rw,hard,intr,noatime,proto=tcp,no_root_squash"
+$mountCommand = "mount.exe $server" + ":$sharePath $driveLetter" # + " -o rw,hard,intr,noatime,proto=tcp,no_root_squash"
 #.exe is crucial, mount is nothing but alias for New-PSDrive
 # New-PSDrive -Name "Y" -Root "\\host/path" -Persist -PSProvider "FileSystem" -Credential $cred
 # see this: https://superuser.com/questions/1677820/powershell-mount-nfs-with-options
