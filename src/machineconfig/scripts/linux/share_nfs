@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-# write extremely rigorous and verbose bash script to interactively talk to use to enter a path
-# and share it using nfs by adding appropriate lines as follows
-# on /etc/exports file:
-# /home/alex/data/local *(rw,sync,fsid=0,no_subtree_check,crossmnt,no_root_squash)
-# for wsl, remember to add insecure option to /etc/exportfs file on server side
-
 # Function to display an error message and exit the script
 exit_with_error() {
     echo "Error: $1"
@@ -39,7 +33,8 @@ validate_directory "$share_path"
 validate_file "/etc/exports"
 
 # Generate the NFS export line with default options
-export_line="$share_path *(rw,sync,fsid=0,no_subtree_check,crossmnt,no_root_squash)"
+export_line="$share_path *(rw,sync,fsid=0,no_subtree_check,crossmnt,no_root_squash,insecure)"
+# for wsl, remember to add insecure option to /etc/exportfs file on server side
 
 # Add the export line to the /etc/exports file
 echo "$export_line" | sudo tee -a /etc/exports >/dev/null

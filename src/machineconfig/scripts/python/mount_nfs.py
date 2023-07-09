@@ -22,6 +22,7 @@ def main():
     else: mount_path_3 = mount_path_2
 
     local_mount_point = display_options(msg="choose mount path OR input custom one", options=[mount_path_1, mount_path_2, mount_path_3], default=mount_path_2, custom_input=True)
+    local_mount_point = tb.P(local_mount_point).expanduser()
     if platform.system() == "Linux":
         PROGRAM_PATH.write_text(f"""
 share_info={share_info}
