@@ -7,7 +7,7 @@ if (Test-Path $op_script ) {
 
 
 activate_ve
-python -m machineconfig.scripts.python.launch_terminal $args
+python -m machineconfig.scripts.python.start_terminals $args
 
 
 if (Test-Path $op_script ) {

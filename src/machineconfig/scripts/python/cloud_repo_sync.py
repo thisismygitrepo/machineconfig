@@ -34,6 +34,7 @@ def args_parser():
     # repo_root = tb.P(args.repo).expanduser().absolute()
     repo_root = tb.P.cwd()
     repo_obj = tb.install_n_import("git", "gitpython").Repo(repo_root, search_parent_directories=True)
+    repo_root = tb.P(repo_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
     CONFIG_PATH.joinpath("remote").create()
     repo_sync_root = CONFIG_PATH.joinpath("remote", repo_root.rel2home())  # .delete(sure=True)
     try:
