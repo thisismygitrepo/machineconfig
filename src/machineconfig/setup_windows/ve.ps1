@@ -22,7 +22,7 @@ if (Test-Path $mypy) {
 } else {
     Write-Host "$mypy does not exis, trying to install it."
     $version_dotted = $py_version.ToString().Insert(1, '.')
-    winget install --id Python.Python.$version_dotted --source winget
+    winget install --id Python.Python.$version_dotted --source winget --accept-package-agreements --accept-source-agreements
 }
 
 &$mypy  -m venv "./venvs/$ve_name"  # ve will have same python version as `python`, where it.

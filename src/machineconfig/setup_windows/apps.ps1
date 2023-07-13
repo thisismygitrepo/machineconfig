@@ -1,5 +1,6 @@
 
 # to get exact version of an app in winget, head to: https://winget.run
+# on older windows, use this to get winget for first time: Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe as per https://learn.microsoft.com/en-us/windows/package-manager/winget/
 $ErrorActionPreference = "Stop"
 
 # ================================= APPS ================================================
