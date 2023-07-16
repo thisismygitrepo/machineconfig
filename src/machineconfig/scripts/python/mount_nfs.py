@@ -32,7 +32,7 @@ local_mount_point={local_mount_point}
     """)
     elif platform.system() == "Windows":
         print(tb.Terminal().run("Get-PSDrive -PSProvider 'FileSystem'", shell="powershell").op)
-        driver_letter = input(r"Choose driver letter (e.g. Z:\) (avoid the ones already used) : ")
+        driver_letter = input(r"Choose driver letter (e.g. Z:\) (avoid the ones already used) : ") or "Z:\\"
         PROGRAM_PATH.write_text(f"""
 $server = "{remote_server}"
 $sharePath = "{share_path}"
