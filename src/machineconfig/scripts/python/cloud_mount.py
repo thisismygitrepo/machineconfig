@@ -47,7 +47,7 @@ def main(cloud=None, network=None):
 
     # txt = get_mprocs_mount_txt(cloud, mount_cmd)
     txt = f"""
-wt --window 0 --startingDirectory "$HOME/data/rclone" `; split-pane --horizontal --size 0.1 pwsh -Command "{mount_cmd}"
+wt --window 0 --profile "Windows PowerShell" --startingDirectory "$HOME/data/rclone" `; split-pane --horizontal  --profile "Command Prompt" --size 0.1 powershell -Command "{mount_cmd}"
 """
     PROGRAM_PATH.write_text(txt)
 

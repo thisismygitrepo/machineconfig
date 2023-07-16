@@ -58,17 +58,18 @@ def args_parser():
             raise ValueError
 
     # map short flags to long flags (-u -> --upload), for easier use in the script
-    if args.bisync: print(f"Syncing {source} {'<>' * 7} {target}`")
-    else: print(f"Syncing {source} {'>' * 15} {target}`")
-
-    if args.bisync: rclone_cmd = f"""rclone bisync {source} {target}"""
-    else: rclone_cmd = f"""rclone sync {source} {target}"""
+    if args.bisync:
+        print(f"Syncing {source} {'<>' * 7} {target}`")
+        rclone_cmd = f"""rclone bisync {source} {target}"""
+    else:
+        print(f"Syncing {source} {'>' * 15} {target}`")
+        rclone_cmd = f"""rclone sync {source} {target}"""
 
     rclone_cmd += f" --progress --transfers={args.transfers} --verbose"
     if args.bisync: rclone_cmd += " --resync"
     if args.delete: rclone_cmd += " --delete-during"
 
-    if args.verbose: txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd, localpath=localpath)
+    if args.verbose: txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd)
     else: txt = f"""cd ~\n{rclone_cmd}"""
     print(r'running command'.center(100, '-'))
     print(txt)

@@ -1,17 +1,17 @@
 
 set scrolloff 10      # space on top and bottom of screen
-set icons on          # show icons next to files
+set icons true          # show icons next to files
 set period 1          # interval to check for directory updates
-set hidden on         # show hidden files by default
+set hidden true         # show hidden files by default
 set incsearch o       # jump to first match after each keystroke in search
-set dircounts on      # show number of items in directory instead of sie
+set dircounts true      # show number of items in directory instead of sie
 set info "size"       # list directory information on the right
 set sortby "natural"  # don't sort files in any special way
-set preview on        # preview file on the right pane
-# set drawbox on        # draw a border around all panes
-set globsearch off
-set mouse on
-set number on
+set preview true        # preview file on the right pane
+# set drawbox true        # draw a border around all panes
+set globsearch false
+set mouse true
+set number true
 set preview true
 # set shell powershell
 # set colors

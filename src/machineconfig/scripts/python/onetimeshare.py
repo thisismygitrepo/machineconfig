@@ -12,6 +12,7 @@ from Crypto.Cipher import AES
 from Crypto.Hash import MD5
 import base64
 
+
 def encrypt(key, pwd):
     pwd = pwd.encode("utf-8")
     hash_object = MD5.new(key.encode("utf-8"))
