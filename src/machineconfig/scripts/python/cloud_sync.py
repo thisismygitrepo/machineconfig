@@ -31,27 +31,21 @@ def args_parser():
         source = args.source
         target = P(args.target).expanduser().absolute()
         cloud = source.split(":")[0]
-        localpath = target
     elif ":" in args.target:
         source = args.target  # unchanged
         target = P(args.source).expanduser().absolute()
         cloud = source.split(":")[0]
-        localpath = target
     else:  # user did not specify remotepath, so it will be inferred here
         # but first we need to know whether the cloud is source or target
         remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
-        for a_remote in remotes:
-            if args.source == a_remote:
+        for cloud in remotes:
+            if args.source == cloud:
                 target = P(args.target).expanduser().absolute()
-                source = f"{args.source}:{'myhome/generic_os' / target.rel2home()}"
-                cloud = args.source
-                localpath = target
+                source = f"{cloud}:{target._get_remote_path()}"
                 break
-            if args.target == a_remote:
+            if args.target == cloud:
                 source = P(args.source).expanduser().absolute()
-                target = f"{args.target}:{'myhome/generic_os' / source.rel2home()}"
-                cloud = args.target
-                localpath = source
+                target = f"{cloud}:{source._get_remote_path()}"
                 break
         else:
             print(f"Could not find a remote in {remotes} that matches {args.source} or {args.target}.")
@@ -59,14 +53,13 @@ def args_parser():
 
     # map short flags to long flags (-u -> --upload), for easier use in the script
     if args.bisync:
-        print(f"Syncing {source} {'<>' * 7} {target}`")
-        rclone_cmd = f"""rclone bisync {source} {target}"""
+        print(f"SYNCING 🔄️ {source} {'<>' * 7} {target}`")
+        rclone_cmd = f"""rclone bisync '{source}' '{target}' --resync"""
     else:
-        print(f"Syncing {source} {'>' * 15} {target}`")
-        rclone_cmd = f"""rclone sync {source} {target}"""
+        print(f"SYNCING {source} {'>' * 15} {target}`")
+        rclone_cmd = f"""rclone sync '{source}' '{target}' """
 
     rclone_cmd += f" --progress --transfers={args.transfers} --verbose"
-    if args.bisync: rclone_cmd += " --resync"
     if args.delete: rclone_cmd += " --delete-during"
 
     if args.verbose: txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd)
