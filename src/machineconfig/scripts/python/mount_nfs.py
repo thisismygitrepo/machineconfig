@@ -6,7 +6,7 @@ import platform
 
 def main():
     print(f"Mounting NFS Share ... ")
-    share_info = input("share path? (e.g. machine:/home/alex/data/share_nfs) [press enter for interactive choice] = ")
+    share_info = input("share path? (e.g. machine:~/data/share_nfs) [press enter for interactive choice] = ")
     if share_info == "":
         ssh = tb.SSH(choose_ssh_host(multi=False))
         default = f"{ssh.hostname}:{ssh.run('echo $HOME').op}/data/share_nfs"
