@@ -36,5 +36,6 @@ Write-Host "Mounting NFS share..."
 Write-Host "Running command: $mountCommand"
 Invoke-Expression $mountCommand
 # create symlink to the mounted drive from ~/data/mount_nfs/{remote_server}
+Write-Host "Executing this following command: New-Item -ItemType SymbolicLink -Path $HOME/data/mount_nfs/$server -Target $driveLetter -Force"
 New-Item -ItemType SymbolicLink -Path "$HOME/data/mount_nfs/$server" -Target "$driveLetter" -Force
 Write-Host "NFS share mounted successfully."

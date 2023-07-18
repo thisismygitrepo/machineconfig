@@ -27,7 +27,7 @@ sshfs alex@:/media/dbhdd /media/dbhdd\
         txt = fr"""
 net use {driver_letter} {share_info}
 fusermount -u /mnt/dbhdd
-        """
+"""
     else: raise ValueError(f"Not implemented for this system {system()}")
     PROGRAM_PATH.write_text(txt)
 

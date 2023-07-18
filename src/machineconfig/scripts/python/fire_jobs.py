@@ -1,5 +1,6 @@
 
 import crocodile.toolbox as tb
+import platform
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, get_current_ve, choose_ssh_host
 # https://github.com/pallets/click combine with fire. Consider
 # https://github.com/ceccopierangiolieugenio/pyTermTk for display_options build TUI
@@ -43,12 +44,11 @@ def main():
         else: command = f"{exe} {choice_file} "
         if args.remote: return run_on_remote(choice_file, args=args)
     try: tb.install_n_import("clipboard").copy(command)
-    except Exception as ex:
-        print(f"Failed to copy command to clipboard. {ex}")
+    except Exception as ex: print(f"Failed to copy command to clipboard. {ex}")
     # CONFIG_PATH
     # TODO: send this command to terminal history. In powershell & bash there is no way to do it with a command other than goiing to history file. In Mcfly there is a way but its linux only tool.
     print("\n", command, "\n\n\n")
-    # CONFIG_PATH
+    # if platform.system() == "Windows": command = f" ({command}) | Add-History  -PassThru "
     PROGRAM_PATH.write_text(command)
 
 
@@ -103,4 +103,3 @@ def run_on_remote(func, args):
 
 if __name__ == '__main__':
     main()
-
