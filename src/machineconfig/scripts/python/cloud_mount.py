@@ -51,6 +51,18 @@ wt --window 0 --profile "Windows PowerShell" --startingDirectory "$HOME/data/rcl
 """
     elif platform.system() == "Linux": txt = f"""
 cd $HOME/data/rclone; zellij run --direction down --name rclone -- {mount_cmd}
+sleep 1; zellij action resize decrease down
+sleep 0.2; zellij action resize decrease up
+sleep 0.2; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+zellij run --direction right --name about -- rclone about {cloud}
+zellij action move-focus up
 """
     else: raise ValueError("unsupported platform")
     print(f"running command: \n{txt}")
