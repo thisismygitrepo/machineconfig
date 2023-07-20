@@ -49,6 +49,7 @@ def main(cloud=None, network=None):
     txt = f"""
 wt --window 0 --profile "Windows PowerShell" --startingDirectory "$HOME/data/rclone" `; split-pane --horizontal  --profile "Command Prompt" --size 0.1 powershell -Command "{mount_cmd}"
 """
+    print(f"running command: \n{txt}")
     PROGRAM_PATH.write_text(txt)
 
 

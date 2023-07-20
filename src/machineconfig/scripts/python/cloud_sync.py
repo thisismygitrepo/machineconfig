@@ -8,8 +8,6 @@ import argparse
 
 """
 
-# TODO add  --vfs-cache-mode full
-
 
 def args_parser():
     parser = argparse.ArgumentParser(description="""A wrapper for rclone sync and rclone bisync, with some extra features.""")
@@ -59,7 +57,7 @@ def args_parser():
         print(f"SYNCING {source} {'>' * 15} {target}`")
         rclone_cmd = f"""rclone sync '{source}' '{target}' """
 
-    rclone_cmd += f" --progress --transfers={args.transfers} --verbose"
+    rclone_cmd += f" --progress --transfers={args.transfers} --verbose --vfs-cache-mode full"
     if args.delete: rclone_cmd += " --delete-during"
 
     if args.verbose: txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd)

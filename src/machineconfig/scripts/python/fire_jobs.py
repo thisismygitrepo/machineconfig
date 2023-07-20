@@ -12,6 +12,7 @@ def main():
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--path", type=str, help="The directory containing the jobs", default=".")
+    parser.add_argument("-v", "--ve", type=str, help="virtual enviroment name", default=None)
     # optional flag for interactivity
     parser.add_argument("--interactive", "-i", action="store_true", help="Whether to run the job interactively using IPython")
     parser.add_argument("--debug", "-d", action="store_true", help="debug")
@@ -43,6 +44,8 @@ def main():
             command = f"{exe} -m fire {choice_file} {choice_function} " + " ".join([f"--{k} {v}" for k, v in kgs1.items()])
         else: command = f"{exe} {choice_file} "
         if args.remote: return run_on_remote(choice_file, args=args)
+    if args.ve is not None: command = f"deactivate;. activate_ve {args.ve}; {command}"
+
     try: tb.install_n_import("clipboard").copy(command)
     except Exception as ex: print(f"Failed to copy command to clipboard. {ex}")
     # CONFIG_PATH
