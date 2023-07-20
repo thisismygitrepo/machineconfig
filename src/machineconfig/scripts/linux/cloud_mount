@@ -11,6 +11,7 @@ if [ -f "$op_script" ]; then
 fi
 
 python -m machineconfig.scripts.python.cloud_mount $@
+
 chmod +x ~/tmp_results/shells/python_return_command.sh
 source ~/tmp_results/shells/python_return_command.sh
 

@@ -46,9 +46,13 @@ def main(cloud=None, network=None):
     mount_cmd = f"rclone mount {cloud}: {mount_loc} --vfs-cache-mode full --file-perms=0777"
 
     # txt = get_mprocs_mount_txt(cloud, mount_cmd)
-    txt = f"""
-wt --window 0 --profile "Windows PowerShell" --startingDirectory "$HOME/data/rclone" `; split-pane --horizontal  --profile "Command Prompt" --size 0.1 powershell -Command "{mount_cmd}"
+    if platform.system() == "Windows": txt = f"""
+wt --window 0 --profile "Windows PowerShell" --startingDirectory "$HOME/data/rclone" `; split-pane --horizontal  --profile "Command Prompt" --size 0.1 powershell -Command "{mount_cmd}" `; move-focus up
 """
+    elif platform.system() == "Linux": txt = f"""
+cd $HOME/data/rclone; zellij run --direction down --name rclone -- {mount_cmd}
+"""
+    else: raise ValueError("unsupported platform")
     print(f"running command: \n{txt}")
     PROGRAM_PATH.write_text(txt)
 

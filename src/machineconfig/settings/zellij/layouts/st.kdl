@@ -19,6 +19,4 @@ layout {
 }
 
     tab name="🖥️" focus=true // the default_tab_template
-
-
 }
