@@ -21,6 +21,7 @@ def arg_parser():
     parser.add_argument("--os_specific", "-o", help="OS specific path (relevant only when relative flag is raised as well.", action="store_true")
     parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
+    parser.add_argument("--root", "-r", help="Remote root.", default="myhome")  # default is False
 
     args = parser.parse_args()
 

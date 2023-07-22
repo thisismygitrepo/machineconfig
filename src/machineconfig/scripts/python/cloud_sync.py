@@ -16,6 +16,8 @@ def args_parser():
     parser.add_argument("target", help="target", default=None)
 
     parser.add_argument("--transfers", "-t", help="Number of threads in syncing.", default=10)  # default is False
+    parser.add_argument("--root", "-r", help="Remote root.", default="myhome")  # default is False
+
     # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     # parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
     parser.add_argument("--bisync", "-b", help="Bidirectional sync.", action="store_true")  # default is False
@@ -39,11 +41,11 @@ def args_parser():
         for cloud in remotes:
             if args.source == cloud:
                 target = P(args.target).expanduser().absolute()
-                source = f"{cloud}:{target._get_remote_path()}"
+                source = f"{cloud}:{target._get_remote_path(root=args.root)}"
                 break
             if args.target == cloud:
                 source = P(args.source).expanduser().absolute()
-                target = f"{cloud}:{source._get_remote_path()}"
+                target = f"{cloud}:{source._get_remote_path(root=args.root)}"
                 break
         else:
             print(f"Could not find a remote in {remotes} that matches {args.source} or {args.target}.")
@@ -57,7 +59,8 @@ def args_parser():
         print(f"SYNCING {source} {'>' * 15} {target}`")
         rclone_cmd = f"""rclone sync '{source}' '{target}' """
 
-    rclone_cmd += f" --progress --transfers={args.transfers} --verbose --vfs-cache-mode full"
+    rclone_cmd += f" --progress --transfers={args.transfers} --verbose"
+    # rclone_cmd += f"  --vfs-cache-mode full"
     if args.delete: rclone_cmd += " --delete-during"
 
     if args.verbose: txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd)

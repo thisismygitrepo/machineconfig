@@ -1,2 +1,3 @@
+#!/usr/bin/env bash
 
 sudo mount -t cifs //<vpsa_ip_address>/<export_share> /mnt/<local_share>

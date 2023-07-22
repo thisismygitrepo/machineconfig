@@ -9,8 +9,11 @@ fi
 
 python $(dirname $(dirname $0))/python/fire_jobs.py $@
 
-chmod +x $op_script
-source $op_script
+if [ -f "$op_script" ]; then
+  chmod +x $op_script
+  source $op_script
+fi
+
 
 deactivate || true
 

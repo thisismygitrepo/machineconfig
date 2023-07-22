@@ -15,6 +15,8 @@ def args_parser():
     parser.add_argument("--relative_to_home", "-r", help="set remote path as home relative local path.", action="store_true")  # default is False
     parser.add_argument("--os_specific", "-o", help="OS specific path (relevant only when relative flag is raised as well.", action="store_true")
     parser.add_argument("--share", "-s", help="Share file.", action="store_true")
+    parser.add_argument("--root", "-r", help="Remote root.", default="myhome")  # default is False
+
     # optional argument
     parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
     parser.add_argument("--remote_dir", "-d", help="Remote directory to send to.", default="")
@@ -32,7 +34,7 @@ def args_parser():
             return ""
     else: cloud = args.cloud
 
-    remotepath = f"{args.remote_parent}/{tb.P(args.file)._get_remote_path(os_specific=args.os_specific).as_posix()}" if args.remote_parent is not None else None
+    remotepath = f"{args.remote_parent}/{tb.P(args.file)._get_remote_path(root=args.root, os_specific=args.os_specific).as_posix()}" if args.remote_parent is not None else None
     res = tb.P(args.file).to_cloud(cloud=cloud, zip=args.zip, rel2home=args.relative_to_home, remotepath=remotepath,
                                    share=args.share, key=args.key, pwd=args.pwd, encrypt=args.encrypt, os_specific=args.os_specific,)
     if args.share: print(res.as_url_str())
