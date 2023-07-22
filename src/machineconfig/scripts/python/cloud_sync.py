@@ -22,30 +22,29 @@ def args_parser():
     # parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
     parser.add_argument("--bisync", "-b", help="Bidirectional sync.", action="store_true")  # default is False
     parser.add_argument("--delete", "-D", help="Delete files in remote that are not in local.", action="store_true")  # default is False
-
     parser.add_argument("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.", action="store_true")  # default is False
 
     args = parser.parse_args()
 
     if ":" in args.source:
-        source = args.source
+        cloud = args.source.split(":")[0]
         target = P(args.target).expanduser().absolute()
-        cloud = source.split(":")[0]
+        source = f"{cloud}:{target._get_remote_path(os_specific=False, root=args.root).as_posix()}"
     elif ":" in args.target:
-        source = args.target  # unchanged
-        target = P(args.source).expanduser().absolute()
-        cloud = source.split(":")[0]
+        cloud = args.target.split(":")[0]
+        source = P(args.source).expanduser().absolute()
+        target = f"{cloud}:{source._get_remote_path(os_specific=False, root=args.root).as_posix()}"
     else:  # user did not specify remotepath, so it will be inferred here
         # but first we need to know whether the cloud is source or target
         remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
         for cloud in remotes:
             if args.source == cloud:
                 target = P(args.target).expanduser().absolute()
-                source = f"{cloud}:{target._get_remote_path(root=args.root)}"
+                source = f"{cloud}:{target._get_remote_path(os_specific=False, root=args.root).as_posix()}"
                 break
             if args.target == cloud:
                 source = P(args.source).expanduser().absolute()
-                target = f"{cloud}:{source._get_remote_path(root=args.root)}"
+                target = f"{cloud}:{source._get_remote_path(os_specific=False, root=args.root).as_posix()}"
                 break
         else:
             print(f"Could not find a remote in {remotes} that matches {args.source} or {args.target}.")
