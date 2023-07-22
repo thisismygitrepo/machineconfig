@@ -61,8 +61,18 @@ fi
 
 # TOOD: if inside wsl, you also need xming to be installed and running. otherwise, plt.show returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running. xserver?
 
-mkdir ~/venvs/
+mkdir ~/venvs/ || true
 cd ~/venvs/ || exit
+# delete ~/venvs/$ve_name and its contents if it exists
+if [ -d "$ve_name" ]; then
+    echo ''
+    echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    echo "$ve_name already exists, deleting ..."
+    echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    echo ''
+    rm -rfd $ve_name
+fi
+
 $mypy -m venv $ve_name
 cd ~ || exit
 source ~/venvs/$ve_name/bin/activate || exit
