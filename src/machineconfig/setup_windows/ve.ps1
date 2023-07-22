@@ -25,6 +25,11 @@ if (Test-Path $mypy) {
     winget install --id Python.Python.$version_dotted --source winget --accept-package-agreements --accept-source-agreements
 }
 
+# delete folder and its contents: "./venvs/$ve_name"
+if (Test-Path "./venvs/$ve_name") {
+    Write-Host "Deleting existing virtual environment at ./venvs/$ve_name"
+    Remove-Item -Recurse -Force "./venvs/$ve_name"
+}
 &$mypy  -m venv "./venvs/$ve_name"  # ve will have same python version as `python`, where it.
 
 # activate
