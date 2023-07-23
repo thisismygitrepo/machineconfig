@@ -36,7 +36,7 @@ def arg_parser():
     tb.P(args.file).from_cloud(cloud=cloud, localpath=args.localpath,
                                unzip=args.unzip, decrypt=args.decrypt, overwrite=args.overwrite,
                                pwd=args.pwd, key=args.key,
-                               rel2home=args.relative_to_home, os_specific=args.os_specific,)
+                               rel2home=args.relative_to_home, os_specific=args.os_specific, root=args.root)
 
 
 if __name__ == "__main__":
