@@ -10,7 +10,7 @@ if [ -f "$op_script" ]; then
   rm $op_script
 fi
 
-python -m machineconfig.scripts.python.devops $@
+python -m machineconfig.scripts.python.devops "$@"
 if [ -f "$op_script" ]; then
   chmod +x $op_script
   source $op_script

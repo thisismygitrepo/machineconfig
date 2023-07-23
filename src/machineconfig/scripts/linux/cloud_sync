@@ -10,7 +10,7 @@ if [ -f "$op_script" ]; then
   rm $op_script
 fi
 
-python -m machineconfig.scripts.python.cloud_sync $@
+python -m machineconfig.scripts.python.cloud_sync "$@"
 
 if [ -f "$op_script" ]; then
   chmod +x $op_script

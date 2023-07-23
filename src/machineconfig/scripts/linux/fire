@@ -7,7 +7,7 @@ if [ -f "$op_script" ]; then
   rm $op_script
 fi
 
-python $(dirname $(dirname $0))/python/fire_jobs.py $@
+python $(dirname $(dirname $0))/python/fire_jobs.py "$@"
 
 if [ -f "$op_script" ]; then
   chmod +x $op_script

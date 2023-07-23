@@ -10,7 +10,7 @@ if [ -f "$op_script" ]; then
   rm $op_script
 fi
 
-python -m machineconfig.scripts.python.cloud_mount $@
+python -m machineconfig.scripts.python.cloud_mount "$@"
 
 if [ -f "$op_script" ]; then
   chmod +x $op_script
