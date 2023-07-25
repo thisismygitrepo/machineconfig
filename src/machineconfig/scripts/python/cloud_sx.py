@@ -15,7 +15,7 @@ def args_parser():
     parser.add_argument("--relative_to_home", "-r", help="set remote path as home relative local path.", action="store_true")  # default is False
     parser.add_argument("--os_specific", "-o", help="OS specific path (relevant only when relative flag is raised as well.", action="store_true")
     parser.add_argument("--share", "-s", help="Share file.", action="store_true")
-    parser.add_argument("--root", "-r", help="Remote root.", default="myhome")  # default is False
+    parser.add_argument("--root", "-R", help="Remote root.", default="myhome")  # default is False
 
     # optional argument
     parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
