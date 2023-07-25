@@ -15,6 +15,7 @@ from rich.console import Console
 ERROR_LIST = []  # append to this after every exception captured.
 CONFIG_ROOT = LIBRARY_ROOT.parent.parent.joinpath("settings")
 OTHER_SYSTEM = "windows" if system == "Linux" else "linux"
+SYSTEM = system.lower()
 
 
 # =================== SYMLINKS ====================================
