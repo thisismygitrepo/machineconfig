@@ -14,10 +14,17 @@
 # sudo mount -o nolock,noatime,nodiratime,proto=tcp,timeo=600,retrans=2,noac alex-p51s-5:/home/alex/data/local ./data/local
 
 
+op_script=$HOME/tmp_results/shells/python_return_command.sh
+if [ -f "$op_script" ]; then
+  rm $op_script
+fi
 . activate_ve
 python -m machineconfig.scripts.python.mount_nfs
-source $HOME/tmp_results/shells/python_return_command.sh
-
+#source $HOME/tmp_results/shells/python_return_command.sh
+if [ -f "$op_script" ]; then
+  chmod +x $op_script
+  source $op_script
+fi
 
 # Check if remote server is reachable and share folder exists
 if ! ping -c 1 "$remote_server" &> /dev/null; then

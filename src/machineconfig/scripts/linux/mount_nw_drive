@@ -18,10 +18,17 @@ mount_point=''
 username=''
 password=''
 
+op_script=$HOME/tmp_results/shells/python_return_command.sh
+if [ -f "$op_script" ]; then
+  rm $op_script
+fi
 . activate_ve
 python -m machineconfig.scripts.python.mount_nw_drive
-source $HOME/tmp_results/shells/python_return_command.sh
-
+#source $HOME/tmp_results/shells/python_return_command.sh
+if [ -f "$op_script" ]; then
+  chmod +x $op_script
+  source $op_script
+fi
 
 # Check if mount point directory exists, create if not
 if [ ! -d "$mount_point" ]; then

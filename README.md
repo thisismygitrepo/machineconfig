@@ -77,8 +77,9 @@ pubkey_url='https://github.com/thisismygitrepo.keys'  # (CHANGE APPROPRIATELY)
 export pubkey_string=$(curl --silent $pubkey_url)
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash
 # For WSL only, also run the following:
-export port=2222
+export port=2223
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash  
+# don't forget to run `wsl_ssh_windows_port_forwarding -p 2223` from Windows using the designated port with 
 ```
 short `curl bit.ly/cfgsshlinux -L | bash`
 
