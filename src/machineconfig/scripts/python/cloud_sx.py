@@ -20,7 +20,7 @@ def args_parser():
     # optional argument
     parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
     parser.add_argument("--remote_dir", "-d", help="Remote directory to send to.", default="")
-    parser.add_argument("--remote_parent", "-P", help="Local path to save to.", default=None)
+    # parser.add_argument("--remote_parent", "-P", help="Local path to save to.", default=None)
     parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
@@ -34,8 +34,7 @@ def args_parser():
             return ""
     else: cloud = args.cloud
 
-    remotepath = f"{args.remote_parent}/{tb.P(args.file)._get_remote_path(root=args.root, os_specific=args.os_specific).as_posix()}" if args.remote_parent is not None else None
-    res = tb.P(args.file).to_cloud(cloud=cloud, zip=args.zip, rel2home=args.relative_to_home, remotepath=remotepath,
+    res = tb.P(args.file).to_cloud(cloud=cloud, zip=args.zip, rel2home=args.relative_to_home, root=args.root,
                                    share=args.share, key=args.key, pwd=args.pwd, encrypt=args.encrypt, os_specific=args.os_specific,)
     if args.share: print(res.as_url_str())
 
