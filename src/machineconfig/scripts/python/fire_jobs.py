@@ -1,6 +1,6 @@
 
 import crocodile.toolbox as tb
-import platform
+# import platform
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, get_current_ve, choose_ssh_host
 # https://github.com/pallets/click combine with fire. Consider
 # https://github.com/ceccopierangiolieugenio/pyTermTk for display_options build TUI
@@ -16,14 +16,15 @@ def main():
     # optional flag for interactivity
     parser.add_argument("--interactive", "-i", action="store_true", help="Whether to run the job interactively using IPython")
     parser.add_argument("--debug", "-d", action="store_true", help="debug")
+    parser.add_argument("--choose_function", "-c", action="store_true", help="debug")
     parser.add_argument("--remote", "-r", action="store_true", help="launch on a remote machine")
-    parser.add_argument("--main", "-m", action="store_true", help="launch the main file")
+    parser.add_argument("--module", "-m", action="store_true", help="launch the main file")
     parser.add_argument("--history", "-H", action="store_true", help="choose from history")
     args = parser.parse_args()
     jobs_dir = args.path
     jobs_dir = tb.P(jobs_dir).expanduser().absolute()
     print(f"Seaching recursively for all python file in directory `{jobs_dir}`")
-    py_files = jobs_dir.search("*.py", not_in=["__init__.py"], r=True).to_list()
+    py_files = jobs_dir.search(pattern="*.py", not_in=["__init__.py"], r=True).to_list()
     choice_file = display_options(msg="Choose a file to run", options=py_files, fzf=True, multi=False)
 
     if args.interactive is False: exe = "python"
@@ -34,16 +35,26 @@ def main():
     except NotImplementedError:
         print(f"Failed to detect virtual enviroment name.")
         pass
+
     if args.debug: command = f"{exe} -m pudb {choice_file} "  # TODO: functions not supported yet in debug mode.
-    elif args.main: command = f"{exe} {choice_file}"
+    elif args.module:
+        txt = f"""
+import sys
+sys.path.append(r'{tb.P(choice_file).parent}')
+from {tb.P(choice_file).stem} import *
+
+"""
+        command = f"{exe} {tb.P.tmp().joinpath(f'tmp_scripts/python/{tb.randstr()}.py').create(parents_only=True).write_text(txt)} "
     elif args.interactive: command = f"{exe} {choice_file} "
-    else:
+    elif args.choose_function:
         module, choice_function = choose_function(choice_file)
         if choice_function != "RUN AS MAIN":
             kgs1, kgs2 = interactively_run_function(module[choice_function])
             command = f"{exe} -m fire {choice_file} {choice_function} " + " ".join([f"--{k} {v}" for k, v in kgs1.items()])
         else: command = f"{exe} {choice_file} "
         if args.remote: return run_on_remote(choice_file, args=args)
+    else:
+        command = f"{exe} {choice_file}"
     if args.ve is not None: command = f"deactivate;. activate_ve {args.ve}; {command}"
 
     try: tb.install_n_import("clipboard").copy(command)
