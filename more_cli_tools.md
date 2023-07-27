@@ -24,6 +24,7 @@
 * https://github.com/toolleeo/cli-apps
 * https://github.com/alebcay/awesome-shell
 * https://github.com/Geektrovert/AwsTerm
+# https://github.com/vinta/awesome-python
 
 
 # Files
@@ -39,7 +40,6 @@
 * https://github.com/phiresky/ripgrep-all
 
 
-# https://github.com/vinta/awesome-python
 * https://github.com/datafolklabs/cement
 * https://github.com/pallets/click fire alternative
 * https://github.com/JaidedAI/EasyOCR
