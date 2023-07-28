@@ -28,7 +28,7 @@ def display_options(msg, options: list, header="", tail="", prompt="", default=N
         if default is not None:
             # default_str = "Default option"
             options.append(str(default))
-        choice_idx = fzf.prompt(options, fzf_options=("--multi" if multi else "") + f" --prompt={prompt.replace(nl, ' ')} --border=rounded") # --border-label={msg.replace(nl, ' ')}")
+        choice_idx = fzf.prompt(options, fzf_options=("--multi" if multi else "") + f" --prompt={prompt.replace(nl, ' ')} --border=rounded")  # --border-label={msg.replace(nl, ' ')}")
     else:
         console = Console()
         if default is not None:
@@ -95,7 +95,7 @@ def symlink(this: P, to_this: P, prioritize_to_this=True):
     if platform.system() == "Windows": _ = install_n_import("win32api", "pywin32")  # this is crucial for windows to pop up the concent window in case python was not run as admin.
     try:
         P(this).symlink_to(to_this, verbose=True, overwrite=True)
-    except Exception as ex: print(f"Failed at linking {this} ==> {to_this}.\nReason: {ex}")
+    except Exception as ex: print(f"Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
 
 
 def find_move_delete_windows(downloaded, tool_name=None, delete=True):
