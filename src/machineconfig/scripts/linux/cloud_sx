@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-. ~/scripts/activate_ve ''
-python -m machineconfig.scripts.python.cloud_sx "$@"
-deactivate || true

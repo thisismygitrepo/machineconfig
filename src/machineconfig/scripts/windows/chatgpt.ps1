@@ -9,7 +9,13 @@ if (Test-Path $op_script ) {
 
 python -m machineconfig.scripts.python.chatgpt $args
 cat $op_script
-. $op_script
+if (Test-Path $op_script ) {
+  . $op_script
+}
+else
+{
+    Write-Host "No output script to be executed @ $op_script"
+}
 
 
 deactivate

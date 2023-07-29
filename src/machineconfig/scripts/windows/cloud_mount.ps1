@@ -13,6 +13,12 @@ $script_root = $PSScriptRoot
 }
 
 python -m fire $script_root/../python/cloud_mount.py main   $args
-. $op_script
+if (Test-Path $op_script ) {
+  . $op_script
+}
+else
+{
+    Write-Host "No output script to be executed @ $op_script"
+}
 
 deactivate -ErrorAction SilentlyContinue

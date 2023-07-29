@@ -8,6 +8,12 @@ if (Test-Path $op_script ) {
 . $PSScriptRoot/activate_ve.ps1
 python $PSScriptRoot/../python/cloud_sync.py $args
 
-. $op_script
+if (Test-Path $op_script ) {
+  . $op_script
+}
+else
+{
+    Write-Host "No output script to be executed @ $op_script"
+}
 
 deactivate -ErrorAction SilentlyContinue

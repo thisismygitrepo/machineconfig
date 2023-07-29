@@ -8,24 +8,7 @@ import argparse
 
 """
 
-
-def args_parser():
-    parser = argparse.ArgumentParser(description="""A wrapper for rclone sync and rclone bisync, with some extra features.""")
-
-    parser.add_argument("source", help="source", default=None)
-    parser.add_argument("target", help="target", default=None)
-
-    parser.add_argument("--transfers", "-t", help="Number of threads in syncing.", default=10)  # default is False
-    parser.add_argument("--root", "-r", help="Remote root.", default="myhome")  # default is False
-
-    # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
-    # parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
-    parser.add_argument("--bisync", "-b", help="Bidirectional sync.", action="store_true")  # default is False
-    parser.add_argument("--delete", "-D", help="Delete files in remote that are not in local.", action="store_true")  # default is False
-    parser.add_argument("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.", action="store_true")  # default is False
-
-    args = parser.parse_args()
-
+def parse_cloud_source_target(args):
     if ":" in args.source:
         cloud = args.source.split(":")[0]
         target = P(args.target).expanduser().absolute()
@@ -49,7 +32,27 @@ def args_parser():
         else:
             print(f"Could not find a remote in {remotes} that matches {args.source} or {args.target}.")
             raise ValueError
+    return cloud, source, target
 
+
+def args_parser():
+    parser = argparse.ArgumentParser(description="""A wrapper for rclone sync and rclone bisync, with some extra features.""")
+
+    parser.add_argument("source", help="source", default=None)
+    parser.add_argument("target", help="target", default=None)
+
+    parser.add_argument("--transfers", "-t", help="Number of threads in syncing.", default=10)  # default is False
+    parser.add_argument("--root", "-R", help="Remote root.", default="myhome")  # default is False
+
+    # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
+    # parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
+    parser.add_argument("--bisync", "-b", help="Bidirectional sync.", action="store_true")  # default is False
+    parser.add_argument("--delete", "-D", help="Delete files in remote that are not in local.", action="store_true")  # default is False
+    parser.add_argument("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.", action="store_true")  # default is False
+
+    args = parser.parse_args()
+
+    cloud, source, target = parse_cloud_source_target(args)
     # map short flags to long flags (-u -> --upload), for easier use in the script
     if args.bisync:
         print(f"SYNCING 🔄️ {source} {'<>' * 7} {target}`")
