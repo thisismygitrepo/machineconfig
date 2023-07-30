@@ -26,9 +26,10 @@ setuptools.setup(
     packages=setuptools.find_packages(where="src"),
     python_requires=">=3.9",
     install_requires=[
-        "rich",
-        "paramiko",
-        "gitpython",
+        "rich",  # required for pretty printing of many scripts.
+        "paramiko",  # required by SSH
+        "gitpython",  # required by repo commands
+        "pudb",  # required by fire command
 
     ],
     
