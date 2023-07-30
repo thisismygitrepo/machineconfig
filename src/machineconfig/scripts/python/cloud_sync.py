@@ -9,6 +9,8 @@ import argparse
 """
 
 def parse_cloud_source_target(args):
+    if args.source == ":": args.source = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote").read_text().rstrip() + ":"
+    if args.target == ":": args.target = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote").read_text().rstrip() + ":"
     if ":" in args.source:
         cloud = args.source.split(":")[0]
         target = P(args.target).expanduser().absolute()

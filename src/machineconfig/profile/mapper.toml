@@ -15,7 +15,7 @@ config = {this = '~/.config/rclone/rclone.conf', to_this = '~/dotfiles/creds/rcl
 [rclone_windows]
 config = {this = '~/AppData/Roaming/rclone/rclone.conf', to_this = '~/dotfiles/creds/rclone/rclone.conf'}
 
-# Shells profiles
+# shells profiles
 [powershell_windows]
 CurrentUserCurrentHost = {this = '~/Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserCurrentHost/Microsoft.PowerShell_profile.ps1'}
 CurrentUserAllHosts = {this = '~/Documents\WindowsPowerShell\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserAllHosts/profile.ps1'}
@@ -131,3 +131,7 @@ notepadpp = {this = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', to_th
 
 [wt_windows]
 settings = { this = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', to_this = 'LIBRARY_ROOT/settings/shells/wt/settings.json' }
+
+[chatgpt]
+config = { this = '~/.config/chatgpt/config.json', to_this = '~/dotfiles/creds/tokens/openai_chatgpt_config.json' }
+

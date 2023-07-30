@@ -8,8 +8,9 @@ if (Test-Path $op_script ) {
 
 
 python -m machineconfig.scripts.python.chatgpt $args
-cat $op_script
+
 if (Test-Path $op_script ) {
+    cat $op_script
   . $op_script
 }
 else

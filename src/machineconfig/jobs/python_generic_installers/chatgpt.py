@@ -16,7 +16,7 @@ def main(version=None):
         find_move_delete_windows(downloaded=downloaded)
     elif system() == "Linux":
         downloaded = latest.joinpath("chatgpt_Linux_x86_64.tar.gz").download().ungz_untar()
-        find_move_delete_linux(downloaded=downloaded)
+        find_move_delete_linux(downloaded=downloaded, tool_name="chatgpt")
 
 
 if __name__ == "__main__":
