@@ -27,7 +27,7 @@ With elevated `PowerShell`, run the following: (short `curl bit.ly/cfgallwindows
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1 | Invoke-Expression
 # virtual enviornment  # short `curl bit.ly/cfgvewindows -L | iex`
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
-# dev repos
+# dev repos  # short `curl bit.ly/cfgreposwindows -L | iex`
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
 # symlinks: locally, run: `ftpsx username@hostname[:port] ~/dotfiles -z`, then, on the remote:
 . ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
@@ -61,7 +61,7 @@ With `sudo` access, run the following: (short `curl bit.ly/cfgalllinux -L | bash
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/apps.sh | bash
 # virtual enviornment  # short `curl bit.ly/cfgvelinux -L | bash`
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
-# repos
+# repos  # short `curl bit.ly/cfgreposlinux -L | bash`
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
 # symlinks and bash profile.
 # locally, run: `ftpsx username@hostname[:port] ~/dotfiles -z`
