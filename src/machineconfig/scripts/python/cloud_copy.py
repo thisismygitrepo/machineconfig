@@ -41,7 +41,7 @@ def arg_parser():
                                 rel2home=args.relative_to_home, os_specific=args.os_specific, root=args.root)
     elif cloud in target:
         res = tb.P(source).to_cloud(cloud=cloud, zip=args.zip, rel2home=args.relative_to_home, root=args.root,
-                                       share=args.share, key=args.key, pwd=args.pwd, encrypt=args.encrypt, os_specific=args.os_specific,)
+                                        share=args.share, key=args.key, pwd=args.pwd, encrypt=args.encrypt, os_specific=args.os_specific,)
         if args.share: print(res.as_url_str())
     else:
         raise ValueError(f"Cloud `{cloud}` not found in source or target.")
