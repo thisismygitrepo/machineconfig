@@ -10,6 +10,7 @@ __doc__ = """gotty is a simple command line tool that turns your CLI tools into 
 
 def main(version=None):
     release = get_latest_release(url, suffix=suffix, version=version, download_n_extract=True, linux=True, compression="tar.gz", sep="_")
+    return release
 
 
 if __name__ == '__main__':
