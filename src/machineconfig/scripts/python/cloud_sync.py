@@ -8,9 +8,32 @@ import argparse
 
 """
 
+
 def parse_cloud_source_target(args):
-    if args.source == ":": args.source = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote").read_text().rstrip() + ":"
-    if args.target == ":": args.target = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote").read_text().rstrip() + ":"
+    if args.source == ":":
+        path = P(args.target).expanduser().absolute()
+        for i in range(len(path.parts)):
+            if path.joinpath("cloud.json").exists():
+                tmp = path.joinpath("cloud.json").readit()
+                args.source = f"{tmp['cloud']}:"
+                args.root = tmp["root"]
+                args.relative_to_home = tmp['rel2home']
+                break
+            path = path.parent
+        else:
+            args.source = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote").read_text().rstrip() + ":"
+    if args.target == ":":
+        path = P(args.source).expanduser().absolute()
+        for i in range(len(path.parts)):
+            if path.joinpath("cloud.json").exists():
+                tmp = path.joinpath("cloud.json").readit()
+                args.target = f"{tmp['cloud']}:"
+                args.root = tmp["root"]
+                args.relative_to_home = tmp['rel2home']
+                break
+            path = path.parent
+        else: args.target = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote").read_text().rstrip() + ":"
+
     if ":" in args.source:
         cloud = args.source.split(":")[0]
         target = P(args.target).expanduser().absolute()
