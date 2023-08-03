@@ -37,8 +37,8 @@ class ProcessManager:
         self.kill(pids=df_sub.pid)
 
     def kill(self, names: list or None = None, pids: list or None = None, commands: list or None = None):
-        if names is None and pids is None:
-            raise ValueError('names and pids cannot both be None')
+        if names is None and pids is None and commands is None:
+            raise ValueError('names, pids and commands cannot all be None')
         if names is None: names = []
         if pids is None: pids = []
         if commands is None: commands = []
