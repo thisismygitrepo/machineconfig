@@ -14,7 +14,7 @@ winget install --no-upgrade --name "7-zip" --Id "7zip.7zip" --source winget --ac
 #winget install --no-upgrade --name "Adobe Acrobat Reader DC" --Id "dobe.Acrobat.Reader.64-bit" --source winget
 #winget install --no-upgrade --name "Mozilla Firefox" --Id "Mozilla.Firefox" --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "Mozilla Thunderbird" --Id "Mozilla.Thunderbird" --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "Microsoft Garage Mouse without Borders" --Id "Borders Microsoft.MouseWithoutBorders" --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Microsoft Garage Mouse without Borders" --Id "Microsoft.MouseWithoutBorders" --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "StreamlabsOBS" --Id "Streamlabs.StreamlabsOBS" --source "winget" --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "OBSStudio" --Id "OBSProject.OBSStudio" --source "winget" --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "MiKTeX --Id "MiKTeX.MiKTeX"  --source winget  # library / lanugage
@@ -50,20 +50,19 @@ winget install --no-upgrade --name "hyperfine" --Id sharkdp.hyperfine  # benchma
 winget install --no-upgrade --name "nu" --Id "Nushell.Nushell" --source winget  # add to userpath C:\Program Files\nu\bin, done in symlinks
 winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
 
+# ======================= Terminal-based editors =================================
+winget install --no-upgrade --name "Lapce" --Id Lapce.Lapce  # app variant of helix
+winget install --no-upgrade --name "Neovim" --Id Neovim.Neovim --source winget --accept-package-agreements --accept-source-agreements
+Invoke-WebRequest "https://spacevim.org/install.cmd" -OutFile "~/Downloads/spacevim_installer.cmd"
+~/Downloads/spacevim_installer.cmd
+# https://nvchad.com/quickstart/install
+
+Install-Module -Name PSFzf  -SkipPublisherCheck -AcceptLicense -PassThru -Confirm  #  -RequiredVersion 2.5.10
+winget install --no-upgrade --name "Ubuntu" --Id "Canonical.Ubuntu.2204" --accept-package-agreements --accept-source-agreements
+# iex ((New-Object System.Net.WebClient).DownloadString('https://git.io/JJ8R4'))  # tune machine to minimal
+
 
 # ======================== DEV TOOLS =================================
-winget install --no-upgrade --name "xming" --Id xming.xming  # X11 server. you need this while using wsl with gui, otherwise plt.show() returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running
-winget install --no-upgrade --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements  # ncessary for nvim plugins.
-npm install sharewifi -g
-npm install -g easy-sharing
-npm install -g lolcatjs
-npm install -g figlet-cli
-npm install -g @githubnext/github-copilot-cli
-winget install --no-upgrade --name "graphviz" --Id Graphviz.Graphviz  # required by pygraphviz. Used in Base.viz_object_hirarchy and Model.plot_model()
-winget install --no-upgrade --name "WinFsp" --Id WinFsp.WinFsp  # mount remote filesystems and required by rclone
-winget install --no-upgrade --name "SSHFS-win" --Id SSHFS-Win.SSHFS-Win  # mount remote filesystems  # as per https://github.com/winfsp/sshfs-win
-
-
 # https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
 # installing via winget as opposoed to the installer above, causes ignoring the requirements, and not adding ~/.carog/bin to PATH.
 # installing requirements first (as per the installer instructions)
@@ -80,15 +79,20 @@ winget install --no-upgrade --name "bottom" --Id Clement.bottom --source winget 
 winget install --no-upgrade --name "onefetch" --Id o2sh.onefetch --source winget  # repo-version of system neofetch, see also tokei
 winget install --no-upgrade --name "Just" --Id Casey.Just --source winget  # cat replacement
 
-# ======================= Terminal-based editors =================================
-winget install --no-upgrade --name "Lapce" --Id Lapce.Lapce  # app variant of helix
-winget install --no-upgrade --name "Neovim" --Id Neovim.Neovim --source winget --accept-package-agreements --accept-source-agreements
-Invoke-WebRequest "https://spacevim.org/install.cmd" -OutFile "~/Downloads/spacevim_installer.cmd"
-~/Downloads/spacevim_installer.cmd
-# https://nvchad.com/quickstart/install
+winget install --no-upgrade --name "graphviz" --Id Graphviz.Graphviz  # required by pygraphviz. Used in Base.viz_object_hirarchy and Model.plot_model()
+winget install --no-upgrade --name "WinFsp" --Id WinFsp.WinFsp  # mount remote filesystems and required by rclone
+winget install --no-upgrade --name "SSHFS-win" --Id SSHFS-Win.SSHFS-Win  # mount remote filesystems  # as per https://github.com/winfsp/sshfs-win
 
-winget install --no-upgrade --name "Ubuntu" --Id "Canonical.Ubuntu.2204" --accept-package-agreements --accept-source-agreements
-# iex ((New-Object System.Net.WebClient).DownloadString('https://git.io/JJ8R4'))  # tune machine to minimal
-Install-Module -Name PSFzf  -SkipPublisherCheck -AcceptLicense -PassThru -Confirm  #  -RequiredVersion 2.5.10
+
+winget install --no-upgrade --name "xming" --Id xming.xming  # X11 server. you need this while using wsl with gui, otherwise plt.show() returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running
+winget install --no-upgrade --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements  # ncessary for nvim plugins.
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+npm install sharewifi -g
+npm install -g easy-sharing
+npm install -g lolcatjs
+npm install -g figlet-cli
+npm install -g @githubnext/github-copilot-cli
+
+
 Write-Output "Finished installing apps"
 
