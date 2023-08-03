@@ -7,9 +7,3 @@ encrypt = 'True'
 zip = 'True'
 rel2home = 'True'
 
-
-[dotfiles]
-path = '~/dotfiles'
-encrypt = 'True'
-zip = 'True'
-rel2home = 'True'

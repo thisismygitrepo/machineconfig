@@ -14,7 +14,7 @@ def main(version=None):
         console.rule("Installing diskonaut")
         url = r'https://drive.google.com/uc?id=1MsDaW6JXmS1LVyfThtUuJy4WRxODEjZB&export=download'
         dir_ = tb.P(url).download(name='diskonaut.zip').unzip(inplace=True)
-        dir_.search()[0].move(folder=tb.get_env().WindowsApps, overwrite=True)
+        dir_.search()[0].move(folder=tb.P.get_env().WindowsApps, overwrite=True)
         dir_.delete(sure=True)
         console.rule("Completed Installation")
     else:

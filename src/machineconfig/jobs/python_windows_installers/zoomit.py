@@ -11,7 +11,7 @@ def main(version=None):
     console = Console()
     console.rule("Installing ZoomIt")
     folder = tb.P(url).download(tb.P.home().joinpath('Downloads')).unzip(inplace=True)
-    folder.joinpath('ZoomIt.exe').move(folder=tb.get_env().WindowsApps, overwrite=True)
+    folder.joinpath('ZoomIt.exe').move(folder=tb.P.get_env().WindowsApps, overwrite=True)
     folder.delete(sure=True)
     console.rule("Completed Installation")
 

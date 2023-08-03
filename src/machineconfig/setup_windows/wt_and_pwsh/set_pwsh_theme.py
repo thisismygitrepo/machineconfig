@@ -26,7 +26,7 @@ def change_shell_profile():
     profile_path = tb.Terminal().run("$profile", shell=shell).op2path()
     theme_path = env.LocalAppData.joinpath(r"Programs\oh-my-posh\themes").collapseuser().as_posix().replace("~", "$env:USERPROFILE")  # organization machine with homeshare confuse H: with ~.
     txt = f"""
-oh-my-posh --init --shell pwsh --config {theme_path}\\jandedobbeleer.omp.json | Invoke-Expression
+oh-my-posh --init --shell pwsh --config {theme_path}/jandedobbeleer.omp.json | Invoke-Expression
 Import-Module -Name Terminal-Icons
 
 # Shows navigable menu of all options when hitting Tab

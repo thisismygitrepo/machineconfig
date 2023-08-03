@@ -25,7 +25,7 @@ def main(version=None):
 
     if system() == "Windows":
         p = tb.P(url).download()
-        p.move(folder=tb.get_env().WindowsApps, overwrite=True)
+        p.move(folder=tb.P.get_env().WindowsApps, overwrite=True)
     else:
         p = tb.P(url).download()
         p.chmod(0o777)  # p.move(folder=r'/usr/local/bin/', overwrite=True) Permission Error

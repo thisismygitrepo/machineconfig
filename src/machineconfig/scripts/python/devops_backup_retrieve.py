@@ -7,7 +7,6 @@ from machineconfig.utils.utils import LIBRARY_ROOT, display_options, print_progr
 
 def main():
     direction = display_options(msg="BACKUP OR RETRIEVE?", options=["BACKUP", "RETRIEVE"], default="BACKUP", fzf=True)
-    tool = "cloud_sx" if direction == "BACKUP" else "cloud_rx"
 
     print(f"Listing Remotes ... ")
     remotes = tb.L(tb.Terminal().run("rclone listremotes", shell="pwsh").op_if_successfull_or_default("").splitlines()).apply(lambda x: x.replace(":", ""))
@@ -25,7 +24,7 @@ def main():
     # else: items = {choice_key: bu_file[choice_key]}
     items = bu_file
 
-    program = f"""$cloud = "{cloud}" \n """ if system() == "Windows" else f"""cloud="{cloud}" \n """
+    program = f"""$cloud = "{cloud}:" \n """ if system() == "Windows" else f"""cloud="{cloud}:" \n """
     for item_name, item in items.items():
         path = tb.P(item['path'])
         os_specific = True if system().lower() in item_name else False
@@ -35,8 +34,13 @@ def main():
         flags += 'r'
         flags += 'o' if os_specific else ''
         if flags: flags = f"-{flags}"
-        program += f"""\n{tool} "{path.as_posix()}" --cloud $cloud {flags}\n"""
+        if direction == "BACKUP":
+            program += f"""\ncloud_copy "{path.as_posix()}" $cloud {flags}\n"""
+        elif direction == "RETRIEVE":
+            program += f"""\ncloud_copy $cloud "{path.as_posix()}" {flags}\n"""
+        else: raise RuntimeError(f"Unknown direction: {direction}")
         if item_name == "dotfiles" and system() == "Linux": program += f"""\nchmod 700 ~/.ssh/*\n"""
+    program += f"""\ncd ~/dotfiles; cloud_repo_sync --cloud {cloud}\n"""
     print_programming_script(program, lexer="shell", desc=f"{direction} script")
     print(program)
     return ""
