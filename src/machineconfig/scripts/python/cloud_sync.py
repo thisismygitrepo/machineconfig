@@ -17,11 +17,10 @@ def parse_cloud_source_target(args):
                 tmp = path.joinpath("cloud.json").readit()
                 args.source = f"{tmp['cloud']}:"
                 args.root = tmp["root"]
-                args.relative_to_home = tmp['rel2home']
+                args.rel2home = tmp['rel2home']
                 break
             path = path.parent
-        else:
-            args.source = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote").read_text().rstrip() + ":"
+        else: args.source = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote").read_text().rstrip() + ":"
     if args.target == ":":
         path = P(args.source).expanduser().absolute()
         for i in range(len(path.parts)):
@@ -29,7 +28,7 @@ def parse_cloud_source_target(args):
                 tmp = path.joinpath("cloud.json").readit()
                 args.target = f"{tmp['cloud']}:"
                 args.root = tmp["root"]
-                args.relative_to_home = tmp['rel2home']
+                args.rel2home = tmp['rel2home']
                 break
             path = path.parent
         else: args.target = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote").read_text().rstrip() + ":"
