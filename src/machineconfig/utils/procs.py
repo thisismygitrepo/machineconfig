@@ -45,36 +45,37 @@ class ProcessManager:
         for name in names:
             rows = self.df[self.df['name'] == name]
             if len(rows) > 0:
-                for pid in rows['pid'].values:
-                    psutil.Process(pid).kill()
-                    age = pd.Timestamp.now(tz="Australia/Adeliade") - pd.to_datetime(rows["create_time"].values[0], unit="s", utc=True).tz_convert(timezone("Australia/Adelaide"))
-                    print(f'Killed process {name} with pid {pid}. It lived {age}.')
+                for idx, a_row in rows.iterrows():
+                    psutil.Process(a_row.pid).kill()
+                    print(f'Killed process {name} with pid {a_row.pid}. It lived {get_age(a_row.create_time)}.')
             else:
                 print(f'No process named {name} found')
         for pid in pids:
             try:
                 proc = psutil.Process(pid)
                 proc.kill()
-                try:
-                    age = pd.Timestamp.now(tz="Australia/Adelaide") - pd.to_datetime(proc.create_time(), unit="s", utc=True).tz_convert(timezone("Australia/Adelaide"))
-                except Exception as e:
-                    try:
-                        age = pd.Timestamp.now() - pd.to_datetime(proc.create_time(), unit="s", utc=True).tz_localize()
-                    except Exception as e:
-                        age = f"unknown due to {e}"
-                    
-                print(f'Killed process with pid {pid} and name {proc.name()}.  It lived {age}.')
+                print(f'Killed process with pid {pid} and name {proc.name()}.  It lived {get_age(proc.create_time())}.')
             except psutil.NoSuchProcess:
                 print(f'No process with pid {pid} found')
         for command in commands:
             rows = self.df[self.df['command'].str.contains(command)]
             if len(rows) > 0:
-                for pid in rows['pid'].values:
-                    psutil.Process(pid).kill()
-                    age = pd.Timestamp.now(tz="Australia/Adeliade") - pd.to_datetime(rows["create_time"].values[0], unit="s", utc=True).tz_convert(timezone("Australia/Adelaide"))
-                    print(f'Killed process with `{command}` in its command & pid = {pid}. It lived {age}.')
+                for idx, a_row in rows.iterrows():
+                    psutil.Process(a_row.pid).kill()
+                    print(f'Killed process with `{command}` in its command & pid = {a_row.pid}. It lived {get_age(a_row.create_time)}.')
             else:
                 print(f'No process has `{command}` in its command.')
+
+
+def get_age(create_time):
+    try:
+        age = pd.Timestamp.now(tz="Australia/Adelaide") - pd.to_datetime(create_time, unit="s", utc=True).tz_convert(timezone("Australia/Adelaide"))
+    except Exception as e:
+        try:
+            age = pd.Timestamp.now() - pd.to_datetime(create_time, unit="s", utc=True).tz_localize()
+        except Exception as e:
+            age = f"unknown due to {e}"
+    return age
 
 
 if __name__ == '__main__':
