@@ -55,7 +55,14 @@ class ProcessManager:
             try:
                 proc = psutil.Process(pid)
                 proc.kill()
-                age = pd.Timestamp.now(tz="Australia/Adelaide") - pd.to_datetime(proc.create_time(), unit="s", utc=True).tz_convert(timezone("Australia/Adelaide"))
+                try:
+                    age = pd.Timestamp.now(tz="Australia/Adelaide") - pd.to_datetime(proc.create_time(), unit="s", utc=True).tz_convert(timezone("Australia/Adelaide"))
+                except Exception as e:
+                    try:
+                        age = pd.Timestamp.now() - pd.to_datetime(proc.create_time(), unit="s", utc=True).tz_localize()
+                    except Exception as e:
+                        age = f"unknown due to {e}"
+                    
                 print(f'Killed process with pid {pid} and name {proc.name()}.  It lived {age}.')
             except psutil.NoSuchProcess:
                 print(f'No process with pid {pid} found')
