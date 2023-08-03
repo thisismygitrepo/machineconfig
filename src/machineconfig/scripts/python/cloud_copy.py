@@ -17,7 +17,7 @@ def arg_parser():
     parser.add_argument("--overwrite", "-w", help="Overwrite existing file.", action="store_true")  # default is False
     parser.add_argument("--share", "-s", help="Share file / directory", action="store_true")  # default is False
     # optional argument
-    parser.add_argument("--relative_to_home", "-r", help="Relative to `myhome` folder", action="store_true")  # default is False
+    parser.add_argument("--rel2home", "-r", help="Relative to `myhome` folder", action="store_true")  # default is False
     parser.add_argument("--root", "-R", help="Remote root.", default="myhome")  # default is False
     parser.add_argument("--os_specific", "-o", help="OS specific path (relevant only when relative flag is raised as well.", action="store_true")
 
@@ -37,13 +37,12 @@ def arg_parser():
         tb.P(target).from_cloud(cloud=cloud,
                                 unzip=args.zip, decrypt=args.encrypt, overwrite=args.overwrite,
                                 pwd=args.pwd, key=args.key,
-                                rel2home=args.relative_to_home, os_specific=args.os_specific, root=args.root)
+                                rel2home=args.rel2home, os_specific=args.os_specific, root=args.root)
     elif cloud in target:
-        res = tb.P(source).to_cloud(cloud=cloud, zip=args.zip, rel2home=args.relative_to_home, root=args.root,
+        res = tb.P(source).to_cloud(cloud=cloud, zip=args.zip, rel2home=args.rel2home, root=args.root,
                                     share=args.share, key=args.key, pwd=args.pwd, encrypt=args.encrypt, os_specific=args.os_specific,)
         if args.share: print(res.as_url_str())
-    else:
-        raise ValueError(f"Cloud `{cloud}` not found in source or target.")
+    else:  raise ValueError(f"Cloud `{cloud}` not found in source or target.")
 
 
 if __name__ == "__main__":

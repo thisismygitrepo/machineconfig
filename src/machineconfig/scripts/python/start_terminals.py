@@ -1,7 +1,9 @@
 
-
 from machineconfig.utils.utils import PROGRAM_PATH, display_options, install_n_import, get_ssh_hosts
+
+
 THIS_MACHINE = "THIS_MACHINE"
+
 
 def main_windows_and_wsl(hosts: list[str], orientation="vertical", mprocs=False):
     orientation_oposite = "horizontal" if orientation == "vertical" else "vertical"
