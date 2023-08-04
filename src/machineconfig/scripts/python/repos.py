@@ -59,8 +59,8 @@ def main():
     parser.add_argument("--recursive", "-r", help=f"recursive flag", action="store_true")
     # OPTIONAL
     parser.add_argument("--cloud", "-c", help=f"cloud", default=None)
-
     args = parser.parse_args()
+
     if args.directory == "": path = tb.P.home().joinpath("code")
     else: path = tb.P(args.directory).expanduser().absolute()
     _ = tb.install_n_import("git", "gitpython")
@@ -75,10 +75,11 @@ def main():
         program += f"""\necho '>>>>>>>>> Finished Recording'\n"""
     elif args.clone:
         program += f"""\necho '>>>>>>>>> Cloning Repos'\n"""
-        if not path.exists():  # user didn't pass absolute path to pickle file, but rather expected it to be in the default save location
+        if not path.exists() or path.stem != 'repos.pkl':  # user didn't pass absolute path to pickle file, but rather expected it to be in the default save location
             path = CONFIG_PATH.joinpath("repos").joinpath(path.rel2home()).joinpath("repos.pkl")
+            if not path.exists(): path.from_cloud(cloud=args.cloud, rel2home=True)
         assert (path.exists() and path.stem == 'repos.pkl') or args.cloud is not None, f"Path {path} does not exist and cloud was not passed. You can't clone without one of them."
-        program += install_repos(path=path, cloud=args.cloud)
+        program += install_repos(path=path)
     elif args.all or args.commit or args.pull or args.push:
         for a_path in path.search("*"):
             program += f"""echo "{("Handling " + str(a_path)).center(80, "-")}" """
@@ -86,6 +87,7 @@ def main():
             if args.commit or args.all: program += git_action(a_path, action=GitAction.commit, r=args.recursive)
             if args.push or args.all: program += git_action(a_path, action=GitAction.push, r=args.recursive)
     else: program = "echo 'no action specified, try to pass --push, --pull, --commit or --all'"
+    # print(program)
     write_shell_script(program, "Script to update repos")
 
 
@@ -106,12 +108,9 @@ def record_repos(path, r=True) -> list[dict]:
     return res
 
 
-def install_repos(path=None, cloud=None):
+def install_repos(path):
     program = ""
-    if cloud is not None:
-        path = path.from_cloud(rel2home=True, cloud=cloud)
-    else:
-        path = tb.P(path).expanduser().absolute()
+    path = tb.P(path).expanduser().absolute()
     repos = tb.Read.pickle(path)
     for repo in repos:
         for idx, (remote_name, remote_url) in enumerate(repo["remotes"].items()):

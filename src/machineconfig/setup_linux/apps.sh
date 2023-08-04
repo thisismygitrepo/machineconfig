@@ -305,7 +305,11 @@ fi
 
 # -========================================= EDITORS =========================================
 yes '' | sed 3q; echo "----------------------------- installing nano ----------------------------"; yes '' | sed 3q
-sudo apt install nano -y || true  # for editing files
+if [ "$package_manager" = "apt" ]; then
+  sudo apt install nano -y || true  # for editing files
+else
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.nano || true
+fi
 
 # sudo apt install neovim -y  # nvim, but not latest release
 # download neovim from release page
