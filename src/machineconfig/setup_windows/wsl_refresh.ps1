@@ -9,3 +9,4 @@ wsl --install -d Ubuntu-22.04
 # then launch from Ubutnu.exe
 sudo apt update -y
 sudo apt upgrade -y
+

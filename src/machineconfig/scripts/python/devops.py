@@ -75,8 +75,8 @@ def main(which=None):
         program = f"""curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
 
     elif choice_key == Options.backup.value:
-        from machineconfig.scripts.python.devops_backup_retrieve import main
-        program = main()
+        from machineconfig.scripts.python.devops_backup_retrieve import main as helper
+        program = helper()
 
     else: raise ValueError(f"Unimplemented choice: {choice_key}")
     if program: write_shell_script(program, display=True, preserve_cwd=True, desc="Shell script prepared by Python.", execute=True if which is not None else False)

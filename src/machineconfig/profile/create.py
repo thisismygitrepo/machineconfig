@@ -62,16 +62,19 @@ def main_symlinks(choice=None):
 
     program_keys.sort()
     if choice is None:
-        choice = display_options(msg="Which symlink to create?", options=program_keys + ["all", "none"], default="none")
+        choice = display_options(msg="Which symlink to create?", options=program_keys + ["all", "none"], default="none", fzf=True, multi=True)
         if str(choice) == "none": return
 
         overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
 
-    if str(choice) == "all" and system == "Windows" and not tb.Terminal.is_user_admin():
-        print("*" * 200)
-        raise RuntimeError(f"Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
-    elif choice == "all": program_keys = program_keys
-    else: program_keys = [choice]
+    if isinstance(choice, str):
+        if str(choice) == "all" and system == "Windows" and not tb.Terminal.is_user_admin():
+            print("*" * 200)
+            raise RuntimeError(f"Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
+        elif choice == "all": pass  # i.e. program_keys = program_keys
+        else: program_keys = [choice]
+    elif isinstance(choice, list): program_keys = choice
+    else: raise ValueError(f"Choice must be a string or a list of strings, not {type(choice)}")
 
     for program_key in program_keys:
         if program_key == "aws":
@@ -143,13 +146,14 @@ def main_add_sources_to_shell_profile(profile_path=None, choice=None):
 
 
 def main_add_patches_to_shell_profile(profile_path=None, choice=None):
-    patches = LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search()
+    patches: list[tb.P] = list(LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search())
 
     if choice is None:
-        choice = display_options(msg="Which patch to add?", options=patches.list + ["all", "none"], default="none")
-    if choice == "none": return
-    if str(choice) == "all": patches = patches
-    else: patches = [choice]
+        choice = display_options(msg="Which patch to add?", options=list(patches) + ["all", "none"], default="none")
+    if choice == "none": return None
+    elif str(choice) == "all": pass  # i.e. patches = patches
+    elif isinstance(choice, (str, tb.P)): patches = [tb.P(choice)]
+    else: raise ValueError(f"Choice must be a string or a list of strings, not {type(choice)}")
 
     profile_path = profile_path or get_shell_profile_path()
     profile = profile_path.read_text()

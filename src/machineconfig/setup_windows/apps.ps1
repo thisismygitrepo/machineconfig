@@ -72,7 +72,7 @@ winget install --no-upgrade --name "Rustup" --Id Rustlang.Rustup --source winget
 # winget install --no-upgrade --name "julia" --Id "Julialang.Julia" --source winget --accept-package-agreements --accept-source-agreements
 
 winget install --no-upgrade --name "Codeblocks" --Id Codeblocks.Codeblocks --source winget  # gives gcc compiler  # could also be provided by MSCV Build Tools
-winget install --no-upgrade --name "GnuWin32" --Id GnuWin32.Make --source winget  # make command  # can be provided by mscv build tools.
+winget install --no-upgrade --name "GnuWin32: Make" --Id GnuWin32.Make --source winget  # make command  # can be provided by mscv build tools.
 winget install --no-upgrade --name "GnuPG" GnuPG.GnuPG
 
 winget install --no-upgrade --name "bottom" --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
