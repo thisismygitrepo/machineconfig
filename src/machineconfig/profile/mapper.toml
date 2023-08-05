@@ -1,7 +1,6 @@
 
 # symlinks to be created.
 
-
 [git]
 gitconfig = {this = '~/.gitconfig', to_this = '~/dotfiles/settings/.gitconfig'}
 gitcred = {this = '~/.git-credentials', to_this = '~/dotfiles/settings/.git-credentials'}

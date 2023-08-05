@@ -10,7 +10,6 @@ from rich.console import Console
 from rich.syntax import Syntax
 import platform
 
-
 LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
 REPO_ROOT = LIBRARY_ROOT.parent.parent
 PROGRAM_PATH = P.tmp().joinpath("shells/python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh")
@@ -18,7 +17,7 @@ CONFIG_PATH = P.home().joinpath(".config/machineconfig")
 tmp_install_dir = P.tmp(folder="tmp_installers")
 
 
-def display_options(msg, options: list, header="", tail="", prompt="", default=None, fzf=False, multi=False, custom_input=False) -> str or list:
+def display_options(msg: str, options: list, header: str = "", tail: str = "", prompt: str = "", default=None, fzf=False, multi=False, custom_input=False) -> str or list:
     tool_name = "fzf"
     if fzf and check_tool_exists(tool_name):
         install_n_import("pyfzf")
