@@ -113,12 +113,13 @@ def install_repos(path):
     path = tb.P(path).expanduser().absolute()
     repos = tb.Read.pickle(path)
     for repo in repos:
+        parent_dir = tb.P(repo["parent_dir"]).expanduser().absolute().create()
         for idx, (remote_name, remote_url) in enumerate(repo["remotes"].items()):
-            parent_dir = tb.P(repo["parent_dir"]).expanduser().absolute().create()
-            if idx == 0:
-                program += f"\ncd {parent_dir}; git clone {remote_url} --origin {remote_name}\n"
-            else:
-                program += f"\ncd {parent_dir.as_posix()}/{tb.P(remote_url)[-1].stem}; git remote add {remote_name} {remote_url}\n"
+            if idx == 0:  # clone
+                program += f"\ncd {parent_dir.as_posix()}; git clone {remote_url} --origin {remote_name}\n"
+                program += f"\ncd {parent_dir.as_posix()}/{tb.P(remote_url)[-1].stem}; git remote set-url {remote_name} {remote_url}\n"
+                # the new url-setting to ensure that account name before `@` was not lost (git clone ignores it): https://thisismygitrepo@github.com/thisismygitrepo/crocodile.git
+            program += f"\ncd {parent_dir.as_posix()}/{tb.P(remote_url)[-1].stem}; git remote add {remote_name} {remote_url}\n"
     print(program)
     return program
 
