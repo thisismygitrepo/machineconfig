@@ -1,4 +1,8 @@
 
+"""
+fire
+"""
+
 import crocodile.toolbox as tb
 # import platform
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, get_current_ve, choose_ssh_host
@@ -26,6 +30,7 @@ def main():
     print(f"Seaching recursively for all python file in directory `{jobs_dir}`")
     py_files = jobs_dir.search(pattern="*.py", not_in=["__init__.py"], r=True).to_list()
     choice_file = display_options(msg="Choose a file to run", options=py_files, fzf=True, multi=False)
+    assert isinstance(choice_file, str), f"choice_file must be a string. Got {type(choice_file)}"
 
     if args.interactive is False: exe = "python"
     else: exe = "ipython -i"
@@ -38,18 +43,21 @@ def main():
 
     if args.debug: command = f"{exe} -m pudb {choice_file} "  # TODO: functions not supported yet in debug mode.
     elif args.module:
-        txt = f"""
+        txt: str = f"""
 import sys
 sys.path.append(r'{tb.P(choice_file).parent}')
 from {tb.P(choice_file).stem} import *
-
 """
-        command = f"{exe} {tb.P.tmp().joinpath(f'tmp_scripts/python/{tb.randstr()}.py').create(parents_only=True).write_text(txt)} "
+        txt = txt + f"""
+from machineconfig.utils.utils import print_programming_script
+print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
+"""
+        command: str = f"{exe} {tb.P.tmp().joinpath(f'tmp_scripts/python/{tb.randstr()}.py').create(parents_only=True).write_text(txt)} "
     elif args.interactive: command = f"{exe} {choice_file} "
     elif args.choose_function:
         module, choice_function = choose_function(choice_file)
         if choice_function != "RUN AS MAIN":
-            kgs1, kgs2 = interactively_run_function(module[choice_function])
+            kgs1, _ = interactively_run_function(module[choice_function])
             command = f"{exe} -m fire {choice_file} {choice_function} " + " ".join([f"--{k} {v}" for k, v in kgs1.items()])
         else: command = f"{exe} {choice_file} "
         if args.remote: return run_on_remote(choice_file, args=args)
@@ -76,6 +84,7 @@ def choose_function(file_path):
     main_option = f"RUN AS MAIN -- {tb.Display.get_repr(module.__doc__, limit=150) if module.__doc__ is not None else 'No docs for this.'}"
     options.append(main_option)
     choice_function = display_options(msg="Choose a function to run", options=options, fzf=True, multi=False)
+    assert isinstance(choice_function, str), f"choice_function must be a string. Got {type(choice_function)}"
     choice_function = choice_function.split(' -- ')[0]
     return module, choice_function
 

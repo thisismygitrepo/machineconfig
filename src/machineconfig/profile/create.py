@@ -97,7 +97,7 @@ def main_symlinks(choice=None):
 
 
 def get_shell_profile_path():
-    if system == "Windows": 
+    if system == "Windows":
         res = tb.Terminal().run("$profile", shell="pwsh").op2path()
         if isinstance(res, tb.P): profile_path = res
         else: raise ValueError(f"Could not get profile path for Windows. Got {res}")
@@ -126,11 +126,14 @@ def main_env_path(choice=None, profile_path=None):
 
 
 def main_add_sources_to_shell_profile(profile_path=None, choice=None):
-    sources = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()[system.lower()]['files']
+    sources: list[str] = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()[system.lower()]['files']
 
     if choice is None:
-        choice = display_options(msg="Which patch to add?", options=sources + ["all", "none"], default="none")
-        if str(choice) != "all": sources = [choice]
+        choice = display_options(msg="Which patch to add?", options=sources + ["all", "none"], default="none", multi=True)
+        if str(choice) != "all":
+            if isinstance(choice, str): sources = [choice]
+            elif isinstance(choice, list): sources = choice
+            else: raise ValueError(f"Choice must be a string or a list of strings, not {type(choice)}")
     if choice == "none": return
 
     profile_path = profile_path or get_shell_profile_path()
@@ -149,19 +152,20 @@ def main_add_sources_to_shell_profile(profile_path=None, choice=None):
 
 
 def main_add_patches_to_shell_profile(profile_path=None, choice=None):
-    patches: list[tb.P] = list(LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search())
-
+    patches: list[str] = list(LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search().apply(lambda x: x.as_posix()))
     if choice is None:
         choice = display_options(msg="Which patch to add?", options=list(patches) + ["all", "none"], default="none")
+        assert isinstance(choice, str), f"Choice must be a string or a list of strings, not {type(choice)}"
     if choice == "none": return None
     elif str(choice) == "all": pass  # i.e. patches = patches
-    elif isinstance(choice, (str, tb.P)): patches = [tb.P(choice)]
+    elif isinstance(choice, (str, tb.P)): patches = [choice]
     else: raise ValueError(f"Choice must be a string or a list of strings, not {type(choice)}")
 
     profile_path = profile_path or get_shell_profile_path()
     profile = profile_path.read_text()
 
     for patch_path in patches:
+        patch_path = tb.P(patch_path)
         patch = patch_path.read_text()
         if patch in profile: print(f"Skipping `{patch_path.name}`; patch already in profile")
         else: profile += "\n" + patch
