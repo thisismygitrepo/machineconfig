@@ -1,4 +1,8 @@
 
+"""
+Utils
+"""
+
 from crocodile.file_management import P, randstr
 from crocodile.meta import Terminal
 from crocodile.core import install_n_import
@@ -9,6 +13,8 @@ from rich.panel import Panel
 from rich.console import Console
 from rich.syntax import Syntax
 import platform
+from typing import Optional, Union
+
 
 LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
 REPO_ROOT = LIBRARY_ROOT.parent.parent
@@ -17,17 +23,17 @@ CONFIG_PATH = P.home().joinpath(".config/machineconfig")
 tmp_install_dir = P.tmp(folder="tmp_installers")
 
 
-def display_options(msg: str, options: list, header: str = "", tail: str = "", prompt: str = "", default=None, fzf=False, multi=False, custom_input=False) -> str or list:
+def display_options(msg: str, options: list[str], header: str = "", tail: str = "", prompt: str = "", default: Optional[str] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[str, list[str]]:
     tool_name = "fzf"
     if fzf and check_tool_exists(tool_name):
         install_n_import("pyfzf")
         from pyfzf.pyfzf import FzfPrompt
-        fzf = FzfPrompt()
+        fzf_prompt = FzfPrompt()
         nl = "\n"
         if default is not None:
             # default_str = "Default option"
             options.append(str(default))
-        choice_idx = fzf.prompt(options, fzf_options=("--multi" if multi else "") + f" --prompt={prompt.replace(nl, ' ')} --border=rounded")  # --border-label={msg.replace(nl, ' ')}")
+        choice_idx = fzf_prompt.prompt(options, fzf_options=("--multi" if multi else "") + f" --prompt={prompt.replace(nl, ' ')} --border=rounded")  # --border-label={msg.replace(nl, ' ')}")
     else:
         console = Console()
         if default is not None:
@@ -40,7 +46,7 @@ def display_options(msg: str, options: list, header: str = "", tail: str = "", p
         txt = Panel(txt, title=header, subtitle=tail, border_style="bold red")
         console.print(txt)
         choice_idx = input(f"{prompt}\nEnter option *number* (or option name starting with space): ")
-    if not fzf:
+    if not fzf and type(choice_idx) is str:
         if choice_idx.startswith(" "):
             choice_key = choice_idx.strip()
             assert choice_key in options, f"Choice `{choice_key}` not in options `{options}`"
@@ -51,20 +57,20 @@ def display_options(msg: str, options: list, header: str = "", tail: str = "", p
                 choice_idx = options.index(default)
             try:
                 try: choice_idx = int(choice_idx)
-                except ValueError:  # parsing error
-                    raise IndexError
+                except ValueError as ve:  # parsing error
+                    raise IndexError from ve
                 choice_key = options[choice_idx]
-            except IndexError:
+            except IndexError as ie:
                 # maybe user forgotten to start with a dash
                 if choice_idx in options:
                     choice_key = choice_idx
                     choice_idx = options.index(choice_idx)
                 else:
-                    if custom_input: return choice_idx
-                    raise ValueError(f"Unknown choice. {choice_idx}")
-            except TypeError:
-                if custom_input: return choice_idx
-                raise TypeError(f"Unknown choice. {choice_idx}")
+                    if custom_input: return str(choice_idx)
+                    raise ValueError(f"Unknown choice. {choice_idx}") from ie
+            except TypeError as te:
+                if custom_input: return str(choice_idx)
+                raise TypeError(f"Unknown choice. {choice_idx}") from te
         print(f"{choice_idx}: {choice_key}", f"<<<<-------- CHOICE MADE")
     else:
         if not multi and type(choice_idx) is list and len(choice_idx) == 1: choice_idx = choice_idx[0]
@@ -112,7 +118,7 @@ def find_move_delete_windows(downloaded, tool_name=None, delete=True):
     return exe
 
 
-def find_move_delete_linux(downloaded, tool_name, delete=True):
+def find_move_delete_linux(downloaded, tool_name, delete=True) -> None:
     if downloaded.is_file():
         exe = downloaded
     else:
@@ -135,7 +141,7 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
 
     if version is None:
         import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
-        latest_version = requests.get(str(repo_url) + "/releases/latest").url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
+        latest_version = requests.get(str(repo_url) + "/releases/latest", timeout=10).url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
     else: latest_version = version
 
     download_link = P(repo_url + "/releases/download/" + latest_version)
@@ -165,7 +171,7 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
     # return res
 
 
-def get_shell_script_executing_pyscript(python_file, func=None, system=None, ve_name="ve"):
+def get_shell_script_executing_pyscript(python_file, func=None, ve_name="ve"):
     if func is None: exec_line = f"""python {python_file}"""
     else: exec_line = f"""python -m fire {python_file} {func}"""
     return f"""
@@ -206,7 +212,7 @@ def get_latest_version(url):
     import json
     url = f"https://api.github.com/repos/{url.split('github.com/')[1]}/releases/latest"
     # Replace {owner} and {repo} with the actual owner and repository name
-    response = requests.get(url)
+    response = requests.get(url, timeout=10)
     if response.status_code == 200:
         data = json.loads(response.text)
         latest_version = data["tag_name"]
@@ -240,7 +246,7 @@ def get_current_ve():
 def get_ssh_hosts() -> list:
     from paramiko import SSHConfig
     c = SSHConfig()
-    c.parse(open(P.home().joinpath(".ssh/config").str))
+    c.parse(open(P.home().joinpath(".ssh/config").str, encoding="utf-8"))
     return list(c.get_hostnames())
 
 

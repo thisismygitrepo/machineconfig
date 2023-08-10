@@ -97,7 +97,10 @@ def main_symlinks(choice=None):
 
 
 def get_shell_profile_path():
-    if system == "Windows": profile_path = tb.Terminal().run("$profile", shell="pwsh").op2path()
+    if system == "Windows": 
+        res = tb.Terminal().run("$profile", shell="pwsh").op2path()
+        if isinstance(res, tb.P): profile_path = res
+        else: raise ValueError(f"Could not get profile path for Windows. Got {res}")
     elif system == "Linux": profile_path = tb.P("~/.bashrc").expanduser()
     else: raise ValueError(f"Not implemented for this system {system}")
     print(f"Working on shell profile `{profile_path}`")
