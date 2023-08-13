@@ -8,7 +8,7 @@ if [ -z "$ve_name" ]; then
 fi
 
 if [ -z "$py_version" ]; then
-    py_version=3.9
+    py_version=3.11
 fi
 
 
