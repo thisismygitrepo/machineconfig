@@ -25,7 +25,7 @@ def main():
     ves.apply(lambda a_ve: console.print(Panel(a_ve[1], title=a_ve[0], style="bold blue")))
     # ves.apply(lambda a_ve: tb.S(a_ve[1]).print(as_config=True, title=a_ve[0]))
 
-    dotted_py_version = input("Enter python version (3.9): ") or "3.9"
+    dotted_py_version = input("Enter python version (3.11): ") or "3.11"
     env_name = input("Enter virtual environment name (tst): ") or "tst"
     repos = input("Install essential repos? (y/[n]): ") or "n"
 
@@ -70,4 +70,3 @@ fi
 
 if __name__ == '__main__':
     pass
-
