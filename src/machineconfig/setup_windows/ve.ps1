@@ -7,7 +7,7 @@ if (-not (Test-Path variable:ve_name)) {
     $ve_name='ve'
 } else { Write-Host "ve_name is already defined as $ve_name" }
 
-if (-not (Test-Path variable:py_vesrion)) {
+if (-not (Test-Path variable:py_version)) {
     $py_version=311
 } else { Write-Host "py_version is already defined as $py_version" }
 
