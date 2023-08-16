@@ -5,7 +5,11 @@ CONFIG_PATH=$HOME/.config/machineconfig/default_ve
 # check below if VIRTUAL_ENV is set
 if [ -z "$VIRTUAL_ENV" ]; then  # no active ve ==> activate one.
   if [ -z "$1" ]; then  # nothing passed, activate default
-    if [ -f $CONFIG_PATH ]; then  # check if there is a default ve stored in ~/.machineconfog/default_ve
+
+    if [ -f ./.ve_path ]; then  # check if there is a .ve_path file in the current directory
+      name=$(cat ./.ve_path)  # if yes, use it
+      source $name/bin/activate
+    elif [ -f $CONFIG_PATH ]; then  # check if there is a default ve stored in ~/.machineconfog/default_ve
       name=$(cat $CONFIG_PATH)  # if yes, use it
       source $name/bin/activate
     else  # no default ve found, using ve and setting it as default
@@ -18,6 +22,7 @@ if [ -z "$VIRTUAL_ENV" ]; then  # no active ve ==> activate one.
         echo "No virtual environment active, cant echo it to $CONFIG_PATH"
       fi
     fi
+
   else
     name=$1
     source ~/venvs/$name/bin/activate

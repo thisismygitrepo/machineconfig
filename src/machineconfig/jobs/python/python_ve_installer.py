@@ -1,4 +1,7 @@
 
+"""ve installer
+"""
+
 import crocodile.toolbox as tb
 import platform
 import machineconfig
@@ -7,7 +10,7 @@ from rich.panel import Panel
 from rich.console import Console
 # from rich.text import Text
 
-system = platform.system()
+system: str = platform.system()
 lib_root = tb.P(machineconfig.__file__).parent
 
 
