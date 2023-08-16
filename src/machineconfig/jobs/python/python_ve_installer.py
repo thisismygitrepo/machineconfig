@@ -2,7 +2,7 @@
 import crocodile.toolbox as tb
 import platform
 import machineconfig
-from machineconfig.utils.utils import write_shell_script
+# from machineconfig.utils.utils import write_shell_script
 from rich.panel import Panel
 from rich.console import Console
 # from rich.text import Text
@@ -39,25 +39,10 @@ def main():
     line1 = f"{variable_prefix}ve_name='{env_name}'"
     line2 = f"{variable_prefix}py_version='{dotted_py_version.replace('.', '') if system == 'Windows' else dotted_py_version}'"
     lines = f"{line1}\n{line2}\n"
-    predef_script = """
-if (-not (Test-Path variable:ve_name)) {
-    $ve_name='ve'
-} else { Write-Host "ve_name is already defined as $ve_name" }
-
-if (-not (Test-Path variable:py_vesrion)) {
-    $py_version=39
-} else { Write-Host "py_version is already defined as $py_version" }
-""" if system == "Windows" else f"""
-if [ -z "$ve_name" ]; then
-    ve_name="ve"
-fi
-
-if [ -z "$py_version" ]; then
-    py_version=3.9
-fi
-"""
-    assert predef_script in scripts
-    scripts = scripts.replace(predef_script, lines)
+    line_start = "# --- Define ve name and python version here ---"
+    line_end = "# --- End of user defined variables ---"
+    assert line_start in scripts and line_end in scripts, "Script template was mutated beyond recognition."
+    scripts = scripts.split(line_start)[0] + line_start + "\n" + lines + line_end + scripts.split(line_end)[1]
 
     if repos == "y":
         text = lib_root.joinpath(f"setup_{system.lower()}/repos.{'ps1' if system == 'Windows' else 'sh'}").read_text()

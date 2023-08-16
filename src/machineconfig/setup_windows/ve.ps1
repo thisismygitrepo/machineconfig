@@ -1,8 +1,8 @@
 
-# this script is for setting up a virtual environment for python (default 3.9)
+# this script is for setting up a virtual environment for python
 # default virual enviroment nanme is `ve` and is located in ~/venvs/
 
-
+# --- Define ve name and python version here ---
 if (-not (Test-Path variable:ve_name)) {
     $ve_name='ve'
 } else { Write-Host "ve_name is already defined as $ve_name" }
@@ -10,6 +10,7 @@ if (-not (Test-Path variable:ve_name)) {
 if (-not (Test-Path variable:py_version)) {
     $py_version=311
 } else { Write-Host "py_version is already defined as $py_version" }
+# --- End of user defined variables ---
 
 
 mkdir ~/venvs -ErrorAction SilentlyContinue

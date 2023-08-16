@@ -3,6 +3,7 @@
 # this script is for setting up a virtual environment for python
 
 
+# --- Define ve name and python version here ---
 if [ -z "$ve_name" ]; then
     ve_name="ve"
 fi
@@ -10,6 +11,7 @@ fi
 if [ -z "$py_version" ]; then
     py_version=3.11
 fi
+# --- End of user defined variables ---
 
 
 mypy=python$py_version
