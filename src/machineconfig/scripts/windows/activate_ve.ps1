@@ -6,7 +6,7 @@ if (!$env:VIRTUAL_ENV)
     if (!$args[0]) {  # nothing passed.  >> use defaults
 
         if (Test-Path "./.ve_path") {
-            $name = Get-Content "./.ve_name"  # use default file it exists
+            $name = Get-Content "./.ve_path"  # use default file it exists
             & "$name/Scripts/Activate.ps1"
         }
         elseif (Test-Path $CONFIG_PATH) {
