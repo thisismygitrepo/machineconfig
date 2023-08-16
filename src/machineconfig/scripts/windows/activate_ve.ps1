@@ -5,7 +5,7 @@ if (!$env:VIRTUAL_ENV)
     {  # no ve activated ==> activate one.
     if (!$args[0]) {  # nothing passed.  >> use defaults
 
-        if (Test-Path "./.ve_name") {
+        if (Test-Path "./.ve_path") {
             $name = Get-Content "./.ve_name"  # use default file it exists
             & "$name/Scripts/Activate.ps1"
         }
