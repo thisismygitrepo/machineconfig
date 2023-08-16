@@ -4,7 +4,12 @@ $CONFIG_PATH = "$env:USERPROFILE\.config\machineconfig\default_ve"
 if (!$env:VIRTUAL_ENV)
     {  # no ve activated ==> activate one.
     if (!$args[0]) {  # nothing passed.  >> use defaults
-        if (Test-Path $CONFIG_PATH) {
+
+        if (Test-Path "./.ve_name") {
+            $name = Get-Content "./.ve_name"  # use default file it exists
+            & "$name/Scripts/Activate.ps1"
+        }
+        elseif (Test-Path $CONFIG_PATH) {
             $name = Get-Content $CONFIG_PATH  # use default file it exists
             & "$name/Scripts/Activate.ps1"
         }
@@ -14,6 +19,7 @@ if (!$env:VIRTUAL_ENV)
             "$env:USERPROFILE/venvs/$name" > $CONFIG_PATH
 	    & "$env:USERPROFILE/venvs/$name/Scripts/Activate.ps1"
             }
+
         }
     else {
           $name = $args[0]
