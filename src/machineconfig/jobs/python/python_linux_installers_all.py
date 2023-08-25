@@ -1,11 +1,14 @@
 
+"""all
+"""
 import crocodile.toolbox as tb
 import machineconfig.jobs.python_linux_installers as inst
 import machineconfig.jobs.python_generic_installers as gens
 import platform
+from typing import Optional
 
 
-def get_cli_py_installers(dev=False):
+def get_cli_py_installers(dev: bool = False):
     path = tb.P(inst.__file__).parent
     gens_path = tb.P(gens.__file__).parent
     if dev:
@@ -22,7 +25,7 @@ def get_installed_cli_apps():
     return apps
 
 
-def install_logic(py_file, version=None):
+def install_logic(py_file: tb.P, version: Optional[str] = None):
     try:
         old_version = tb.Terminal().run(f"{py_file.stem} --version", shell="powershell").op.replace("\n", "")
         tb.Read.py(py_file)["main"](version=version)

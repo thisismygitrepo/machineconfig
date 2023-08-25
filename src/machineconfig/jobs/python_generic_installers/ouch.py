@@ -15,6 +15,9 @@ __doc__ = """A cli for extracting and creating archives in unified way."""
 
 def main(version: Optional[str] = None) -> None:
     dl = get_latest_release(url, download_n_extract=False, version=version)
+    if not isinstance(dl, tb.P):
+        print(f"Could not find browsh release for version {version}")
+        return None
     if platform.system() == "Windows":
         res = dl.joinpath(f"ouch-x86_64-pc-windows-msvc.zip").download().unzip(inplace=True)
         find_move_delete_windows(downloaded=res, tool_name="ouch", delete=True)

@@ -11,6 +11,7 @@ from typing import Optional
 url = "https://github.com/pvolok/mprocs"
 __doc__ = """Windows/Linux poorman's zellij"""
 
+
 def main(version: Optional[str] = None) -> None:
     if platform.system() == "Windows":
         get_latest_release(url, suffix="win64", download_n_extract=True, version=version, strip_v=True)

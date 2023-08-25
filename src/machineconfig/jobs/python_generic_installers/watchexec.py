@@ -17,7 +17,7 @@ def main(version: Optional[str] = None) -> None:
     else:
         suffix = "x86_64-unknown-linux-musl"
         _ = get_latest_release(url, download_n_extract=True, delete=True, suffix=suffix, compression="tar.xz", linux=True, version=version)
-    return ""
+    return None
 
 
 if __name__ == '__main__':

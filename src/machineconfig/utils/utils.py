@@ -182,7 +182,7 @@ deactivate
 """
 
 
-def write_shell_script(program: str ,  desc: str = "", preserve_cwd: bool = True, display: bool = True, execute: bool = False):
+def write_shell_script(program: str, desc: str = "", preserve_cwd: bool = True, display: bool = True, execute: bool = False):
     if preserve_cwd:
         if platform.system() == "Windows":
             program = "$orig_path = $pwd\n" + program + "\ncd $orig_path"
@@ -198,7 +198,7 @@ def write_shell_script(program: str ,  desc: str = "", preserve_cwd: bool = True
     return None
 
 
-def print_programming_script(program: str, lexer: str, desc=""):
+def print_programming_script(program: str, lexer: str, desc: str = ""):
     if lexer == "shell":
         if platform.system() == "Windows": lexer = "powershell"
         elif platform.system() == "Linux": lexer = "sh"
@@ -207,7 +207,7 @@ def print_programming_script(program: str, lexer: str, desc=""):
     console.print(Panel(Syntax(program, lexer=lexer), title=desc), style="bold red")
 
 
-def get_latest_version(url):
+def get_latest_version(url: str) -> None:
     # not yet used, consider, using it.
     import requests
     import json
@@ -221,7 +221,7 @@ def get_latest_version(url):
     else: print("Error:", response.status_code)
 
 
-def check_tool_exists(tool_name):
+def check_tool_exists(tool_name: str) -> bool:
     if platform.system() == "Windows": tool_name = tool_name + ".exe"
     if platform.system() == "Windows": cmd = "where.exe"
     elif platform.system() == "Linux": cmd = "which"
@@ -244,14 +244,14 @@ def get_current_ve():
         # return path.parent.parent.stem
 
 
-def get_ssh_hosts() -> list:
+def get_ssh_hosts() -> list[str]:
     from paramiko import SSHConfig
     c = SSHConfig()
     c.parse(open(P.home().joinpath(".ssh/config").str, encoding="utf-8"))
     return list(c.get_hostnames())
 
 
-def choose_ssh_host(multi=True): return display_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
+def choose_ssh_host(multi: bool = True): return display_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
 
 
 if __name__ == '__main__':

@@ -16,12 +16,15 @@ def main(version: Optional[str] = None) -> None:
         target = AppData
         suffix = "x86_64-windows"
         compression = "zip"
-        exe = get_latest_release(repo_url.as_url_str(), download_n_extract=True, suffix=suffix, delete=False, exe_name="hx", version=version)
+        exe = get_latest_release(repo_url.as_url_str(), download_n_extract=True, suffix=suffix, delete=False, exe_name="hx", version=version, compression=compression)
     else:
         target = tb.P.home().joinpath(".config")
         suffix = "x86_64-linux"
         compression = 'tar.xz'
-        exe = get_latest_release(repo_url.as_url_str(), download_n_extract=False, suffix=suffix, version=version)
+        exe = get_latest_release(repo_url.as_url_str(), download_n_extract=False, suffix=suffix, version=version, compression=compression)
+        if not isinstance(exe, tb.P):
+            print(f"Could not find browsh release for version {version}")
+            return None
         name = f'{repo_url[-1]}-{exe[-1]}-{suffix}.tar.xz'
         exe = exe.joinpath(name).download().unxz_untar(inplace=True)
         exe = exe.search()[0].joinpath("hx")
@@ -29,6 +32,9 @@ def main(version: Optional[str] = None) -> None:
         # exe.move(folder=r"/usr/local/bin", overwrite=True)
         tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
 
+    if not isinstance(exe, tb.P) or not isinstance(target, tb.P):
+        print(f"Could not find helix release for version {version}")
+        return None
     exe.parent.joinpath("runtime").move(folder=target.joinpath("helix"), overwrite=True)
     exe.parent.joinpath("contrib").move(folder=target.joinpath("helix"), overwrite=True)
     exe.parent.parent.delete(sure=True)

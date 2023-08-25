@@ -17,10 +17,14 @@ def main(version: Optional[str] = None) -> None:
     if system() == 'Windows':
         from crocodile.environment import AppData
         target = AppData
+        assert isinstance(target, tb.P)
         suffix = "x86_64-pc-windows-gnu"
         exe = get_latest_release(repo_url.as_url_str(), suffix=suffix, download_n_extract=True, delete=False, strip_v=True, version=version)
     else:
         release = get_latest_release(repo_url.as_url_str(), version=version)
+        if not isinstance(release, tb.P):
+            print(f"Could not find browsh release for version {version}")
+            return None
         path = release.joinpath(f"tere-{str(release[-1]).replace('v', '')}-x86_64-unknown-linux-gnu.zip").download()
         exe = path.unzip(inplace=True).joinpath("tere")
         exe.chmod(0o777)

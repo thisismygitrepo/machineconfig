@@ -3,7 +3,7 @@ import crocodile.toolbox as tb
 import platform
 
 
-def build_rust_executable(url=r"https://github.com/atanunq/viu"):
+def build_rust_executable(url: str = r"https://github.com/atanunq/viu"):
     tool_name = url.split('/')[-1]
 
     # move command is not required since tool will go to .cargo/bin which is in PATH by default.

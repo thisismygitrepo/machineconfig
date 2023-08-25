@@ -11,6 +11,7 @@ from typing import Optional
 url = 'https://github.com/gokcehan/lf'
 __doc__ = """lf is a terminal file manager written in go."""
 
+
 def main(version: Optional[str] = None) -> None:
 
     if platform.system() == 'Windows':

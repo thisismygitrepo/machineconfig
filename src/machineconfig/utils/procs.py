@@ -1,9 +1,11 @@
 
+"""Procs
+"""
 import psutil
 import pandas as pd
 from pytz import timezone
 from machineconfig.utils.utils import display_options
-
+from typing import Optional
 
 pd.options.display.max_rows = 10000
 
@@ -29,14 +31,14 @@ class ProcessManager:
         sub_df = self.df.iloc[indices]
         print(self.df)
         print(sub_df)
-        self.kill(pids=sub_df.pid) if input("Confirm kill? y/[n] ").lower() == "y" else print("Not killing")
+        _ = self.kill(pids=sub_df.pid.to_list()) if input("Confirm kill? y/[n] ").lower() == "y" else print("Not killing")
 
-    def filter_and_kill(self, name=None):
+    def filter_and_kill(self, name: Optional[str] = None):
         _ = 20
         df_sub = self.df.query(f"name == '{name}' ").sort_values(by='create_time', ascending=True)
-        self.kill(pids=df_sub.pid)
+        self.kill(pids=df_sub.pid.to_list())
 
-    def kill(self, names: list or None = None, pids: list or None = None, commands: list or None = None):
+    def kill(self, names: Optional[list[str]] = None, pids: Optional[list[int]] = None, commands: Optional[list[str]] = None):
         if names is None and pids is None and commands is None:
             raise ValueError('names, pids and commands cannot all be None')
         if names is None: names = []
@@ -45,7 +47,7 @@ class ProcessManager:
         for name in names:
             rows = self.df[self.df['name'] == name]
             if len(rows) > 0:
-                for idx, a_row in rows.iterrows():
+                for _idx, a_row in rows.iterrows():
                     psutil.Process(a_row.pid).kill()
                     print(f'Killed process {name} with pid {a_row.pid}. It lived {get_age(a_row.create_time)}.')
             else: print(f'No process named {name} found')
@@ -58,17 +60,18 @@ class ProcessManager:
         for command in commands:
             rows = self.df[self.df['command'].str.contains(command)]
             if len(rows) > 0:
-                for idx, a_row in rows.iterrows():
+                for _idx, a_row in rows.iterrows():
                     psutil.Process(a_row.pid).kill()
                     print(f'Killed process with `{command}` in its command & pid = {a_row.pid}. It lived {get_age(a_row.create_time)}.')
             else: print(f'No process has `{command}` in its command.')
 
 
-def get_age(create_time):
+def get_age(create_time: int):
     try: age = pd.Timestamp.now(tz="Australia/Adelaide") - pd.to_datetime(create_time, unit="s", utc=True).tz_convert(timezone("Australia/Adelaide"))
     except Exception as e:
         try: age = pd.Timestamp.now() - pd.to_datetime(create_time, unit="s", utc=True).tz_localize()
-        except Exception as e: age = f"unknown due to {e}"
+        except Exception as e:  # type: ignore
+            age = f"unknown due to {e}"
     return age
 
 
