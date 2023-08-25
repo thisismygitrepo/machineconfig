@@ -40,4 +40,3 @@ def main(version: Optional[str] = None) -> None:
 
 if __name__ == '__main__':
     main()
-

@@ -10,6 +10,7 @@ from machineconfig.utils.utils import symlink, LIBRARY_ROOT, REPO_ROOT, display_
 # import os
 import subprocess
 from rich.console import Console
+from typing import Optional
 
 
 ERROR_LIST = []  # append to this after every exception captured.
@@ -21,7 +22,7 @@ SYSTEM = system.lower()
 # =================== SYMLINKS ====================================
 
 
-def link_ssh(overwrite=True):
+def link_ssh(overwrite: bool = True):
     """The function can link aribtrary number of files without linking the directory itself (which is not doable in toml config file)"""
     path = tb.P.home().joinpath(".ssh")
     target = DotFiles.joinpath("creds/.ssh")
@@ -38,13 +39,13 @@ def link_ssh(overwrite=True):
             print("Caught error", e)
 
 
-def link_aws(overwrite=True):
+def link_aws(overwrite: bool = True):
     path = tb.P.home().joinpath(".aws")
     target = DotFiles.joinpath("aws/.aws")
     for item in target.search("*"): symlink(path.joinpath(item.name), item, prioritize_to_this=overwrite)
 
 
-def main_symlinks(choice=None):
+def main_symlinks(choice: Optional[str] = None):
     symlink_mapper = LIBRARY_ROOT.joinpath("profile/mapper.toml").readit()
     symlink_mapper['wsl_windows']['home']["to_this"] = symlink_mapper['wsl_windows']['home']["to_this"].replace("username", UserName)
     symlink_mapper['wsl_linux']['home']["to_this"] = symlink_mapper['wsl_linux']['home']["to_this"].replace("username", UserName)
@@ -62,19 +63,18 @@ def main_symlinks(choice=None):
 
     program_keys.sort()
     if choice is None:
-        choice = display_options(msg="Which symlink to create?", options=program_keys + ["all", "none"], default="none", fzf=True, multi=True)
-        if str(choice) == "none": return
-
+        choice_selected = display_options(msg="Which symlink to create?", options=program_keys + ["all", "none"], default="none", fzf=True, multi=True)
+        if str(choice_selected) == "none": return
         overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
+    else: choice_selected = choice
 
-    if isinstance(choice, str):
-        if str(choice) == "all" and system == "Windows" and not tb.Terminal.is_user_admin():
+    if isinstance(choice_selected, str):
+        if str(choice_selected) == "all" and system == "Windows" and not tb.Terminal.is_user_admin():
             print("*" * 200)
             raise RuntimeError(f"Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
-        elif choice == "all": pass  # i.e. program_keys = program_keys
-        else: program_keys = [choice]
-    elif isinstance(choice, list): program_keys = choice
-    else: raise ValueError(f"Choice must be a string or a list of strings, not {type(choice)}")
+        elif choice_selected == "all": pass  # i.e. program_keys = program_keys
+        else: program_keys = [choice_selected]
+    else: program_keys = choice_selected
 
     for program_key in program_keys:
         if program_key == "aws":
@@ -107,7 +107,7 @@ def get_shell_profile_path():
     return profile_path
 
 
-def main_env_path(choice=None, profile_path=None):
+def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = None):
     env_path = LIBRARY_ROOT.joinpath("profile/env_path.toml").readit()
     dirs = env_path[f'path_{system.lower()}']['extension']
 
@@ -125,7 +125,7 @@ def main_env_path(choice=None, profile_path=None):
     profile_path.modify_text(addition, addition, replace_line=False, notfound_append=True)
 
 
-def main_add_sources_to_shell_profile(profile_path=None, choice=None):
+def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice: Optional[str] = None):
     sources: list[str] = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()[system.lower()]['files']
 
     if choice is None:
@@ -151,7 +151,7 @@ def main_add_sources_to_shell_profile(profile_path=None, choice=None):
     profile_path.write_text(profile)
 
 
-def main_add_patches_to_shell_profile(profile_path=None, choice=None):
+def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice: Optional[str] = None):
     patches: list[str] = list(LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search().apply(lambda x: x.as_posix()))
     if choice is None:
         choice = display_options(msg="Which patch to add?", options=list(patches) + ["all", "none"], default="none")
@@ -178,7 +178,7 @@ def main_add_patches_to_shell_profile(profile_path=None, choice=None):
     profile_path.write_text(profile)
 
 
-def main(choice=None):
+def main(choice: Optional[str] = None):
     console = Console()
     print("\n")
     console.rule(f"CREATING SYMLINKS")
