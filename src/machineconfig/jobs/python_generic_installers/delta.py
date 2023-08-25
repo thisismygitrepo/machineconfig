@@ -1,7 +1,11 @@
 
+""" installer
+"""
+
 from machineconfig.utils.utils import get_latest_release, find_move_delete_linux
 from platform import system
 import crocodile.toolbox as tb
+from typing import Optional
 
 
 __doc__ = """delta is a viewer for git and diff output"""
@@ -31,7 +35,7 @@ config_patch = """
     hunk-header-style = file line-number syntax
 """
 
-def main(version=None):
+def main(version: Optional[str] = None):
     if system() == 'Windows':
         # from crocodile.environment import AppData
         # target = AppData

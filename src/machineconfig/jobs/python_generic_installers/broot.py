@@ -1,9 +1,13 @@
 
 
+""" installer
+"""
+
 import crocodile.toolbox as tb
 from rich.console import Console
 from platform import system
 from machineconfig.utils.utils import get_latest_release
+from typing import Optional
 
 
 __doc__ = """broot is an fzf variant for folder structure and layered search."""
@@ -17,7 +21,7 @@ else:
     raise Exception(f"Unsupported OS: {system()}")
 
 
-def main(version=None):
+def main(version: Optional[str] = None) -> None:
     print("\n\n\n")
     console = Console()
     console.rule("Installing Broot")

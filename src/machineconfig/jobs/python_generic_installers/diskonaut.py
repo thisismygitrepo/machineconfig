@@ -1,14 +1,18 @@
 
+""" installer
+"""
+
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import get_latest_release
 from rich.console import Console
 from platform import system
+from typing import Optional
 
 
 __doc__ = """diskonaut is a terminal disk space navigator."""
 
 
-def main(version=None):
+def main(version: Optional[str] = None) -> None:
     if system() == "Windows":
         console = Console()
         console.rule("Installing diskonaut")

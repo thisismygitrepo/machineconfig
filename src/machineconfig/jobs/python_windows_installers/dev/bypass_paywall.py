@@ -3,12 +3,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import crocodile.toolbox as tb
 from platform import system
+from typing import Optional
 
 
 __doc__ = """Plugin for chrome to bypass paywalls"""
 
 
-def main(version=None):
+def main(version: Optional[str] = None):
     _ = version
     # see remove paywalls and enhance YT experience by Chris Titus
     folder = r"C:\\"

@@ -1,5 +1,6 @@
 
 from machineconfig.utils.utils import get_latest_release
+from typing import Optional
 
 # fd (rust)
 # cargo install fd-find
@@ -9,7 +10,7 @@ from machineconfig.utils.utils import get_latest_release
 url = 'https://github.com/sharkdp/fd'
 __doc__ = """fd is a simple, fast and user-friendly alternative to find."""
 
-def main(version=None):
+def main(version: Optional[str] = None):
     get_latest_release(url, download_n_extract=True, version=version)
 
 

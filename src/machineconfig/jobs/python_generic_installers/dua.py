@@ -1,13 +1,17 @@
 
 
+""" installer
+"""
+
 from machineconfig.utils.utils import get_latest_release
 from platform import system
+from typing import Optional
 
 
 url = "https://github.com/Byron/dua-cli"
 __doc__ = """Rust-based cli tool to get a quick overview of disk usage."""
 
-def main(version=None):
+def main(version: Optional[str] = None) -> None:
     if system() == 'Windows':
         suffix = "x86_64-pc-windows-msvc"
         _ = get_latest_release(url, tool_name="dua", suffix=suffix, download_n_extract=True, delete=False, strip_v=False, compression="zip", version=version)

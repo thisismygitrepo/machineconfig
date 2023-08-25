@@ -1,15 +1,19 @@
 
 
+""" installer
+"""
+
 from machineconfig.utils.utils import get_latest_release
 from platform import system
 import crocodile.toolbox as tb
+from typing import Optional
 
 
 repo_url = tb.P(r"https://github.com/mgunyho/tere")
 __doc__ = """Tere is a terminal file explorer written in Rust. No more ls + cd"""
 
 
-def main(version=None):
+def main(version: Optional[str] = None) -> None:
     if system() == 'Windows':
         from crocodile.environment import AppData
         target = AppData

@@ -1,5 +1,8 @@
 
-from machineconfig.utils.utils import get_latest_release, find_move_delete_linux
+""" installer
+"""
+
+from machineconfig.utils.utils import get_latest_release
 from platform import system
 import crocodile.toolbox as tb
 

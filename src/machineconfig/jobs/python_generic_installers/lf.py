@@ -1,13 +1,17 @@
 
+""" installer
+"""
+
 # LF (golang)
 from machineconfig.utils.utils import get_latest_release
 import crocodile.toolbox as tb
 import platform
+from typing import Optional
 
 url = 'https://github.com/gokcehan/lf'
 __doc__ = """lf is a terminal file manager written in go."""
 
-def main(version=None):
+def main(version: Optional[str] = None) -> None:
 
     if platform.system() == 'Windows':
         # tb.Terminal().run("nu -c 'ps | where name == lf.exe | each { |it| kill $it.pid --force}'", shell="pwsh").print()

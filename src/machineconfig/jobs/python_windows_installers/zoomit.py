@@ -1,11 +1,12 @@
 
 import crocodile.toolbox as tb
 from rich.console import Console
+from typing import Optional
 
 url = r'https://download.sysinternals.com/files/ZoomIt.zip'
 __doc__ = """A screen zoom and annotation tool for presentations"""
 
-def main(version=None):
+def main(version: Optional[str] = None):
     _ = version
     print("\n\n\n")
     console = Console()

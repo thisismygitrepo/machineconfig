@@ -3,13 +3,14 @@
 
 from machineconfig.utils.utils import get_latest_release
 import crocodile.toolbox as tb
+from typing import Optional
 
 
 url = "https://github.com/royshil/obs-backgroundremoval"
 __doc__ = """A plugin for OBS Studio to remove background from a video"""
 
 
-def main(version=None):
+def main(version: Optional[str] = None):
     link = get_latest_release(url, download_n_extract=False, version=version)
     link = link.joinpath(f"obs-backgroundremoval-{link.parts[-1][1:]}-win64.zip").download()
     # link.search(r=True, folders=False).apply(lambda file: file.move(tb.P(fr"C:/Program Files/obs-studio").joinpath(file.relative_to(link)), overwrite=True))

@@ -13,7 +13,7 @@ from rich.panel import Panel
 from rich.console import Console
 from rich.syntax import Syntax
 import platform
-from typing import Optional, Union
+from typing import Optional, Union, AnyStr
 
 
 LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
@@ -23,7 +23,7 @@ CONFIG_PATH = P.home().joinpath(".config/machineconfig")
 tmp_install_dir = P.tmp(folder="tmp_installers")
 
 
-def display_options(msg: str, options: list[str], header: str = "", tail: str = "", prompt: str = "", default: Optional[str] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[str, list[str]]:
+def display_options(msg: str, options: list[AnyStr], header: str = "", tail: str = "", prompt: str = "", default: Optional[AnyStr] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[str, list[str]]:
     tool_name = "fzf"
     if fzf and check_tool_exists(tool_name):
         install_n_import("pyfzf")
@@ -78,7 +78,7 @@ def display_options(msg: str, options: list[str], header: str = "", tail: str = 
     return choice_key
 
 
-def symlink(this: P, to_this: P, prioritize_to_this=True):
+def symlink(this: P, to_this: P, prioritize_to_this: bool = True):
     """helper function. creates a symlink from `this` to `to_this`.
     What can go wrong?
     depending on this and to_this existence, one will be prioretized depending on overwrite value.
@@ -103,7 +103,7 @@ def symlink(this: P, to_this: P, prioritize_to_this=True):
     except Exception as ex: print(f"Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
 
 
-def find_move_delete_windows(downloaded, tool_name=None, delete=True):
+def find_move_delete_windows(downloaded: P, tool_name: Optional[str] = None, delete: bool = True):
     if tool_name is not None and ".exe" in tool_name: tool_name = tool_name.replace(".exe", "")
     if downloaded.is_file():
         exe = downloaded
@@ -118,7 +118,7 @@ def find_move_delete_windows(downloaded, tool_name=None, delete=True):
     return exe
 
 
-def find_move_delete_linux(downloaded, tool_name, delete=True) -> None:
+def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool] = True) -> None:
     if downloaded.is_file():
         exe = downloaded
     else:
@@ -133,7 +133,8 @@ def find_move_delete_linux(downloaded, tool_name, delete=True) -> None:
     return None
 
 
-def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-windows-msvc", file_name=None, tool_name=None, exe_name=None, delete=True, strip_v=False, linux=False, compression=None, sep="-", version=None):
+def get_latest_release(repo_url: str, download_n_extract: bool = False, suffix: Optional[str] = "x86_64-pc-windows-msvc", 
+                       file_name: Optional[str] = None, tool_name: Optional[str] = None, exe_name: Optional[str] = None, delete: bool = True, strip_v: bool = False, linux: bool = False, compression: Optional[str] = None, sep: Optional[str] = "-", version: Optional[str] = None):
     console = Console()
     print("\n\n\n")
     print(f"Inspecting latest release @ {repo_url}   ...")
@@ -171,7 +172,7 @@ def get_latest_release(repo_url, download_n_extract=False, suffix="x86_64-pc-win
     # return res
 
 
-def get_shell_script_executing_pyscript(python_file, func=None, ve_name="ve"):
+def get_shell_script_executing_pyscript(python_file: str, func: Optional[str] = None, ve_name: str = "ve"):
     if func is None: exec_line = f"""python {python_file}"""
     else: exec_line = f"""python -m fire {python_file} {func}"""
     return f"""
@@ -181,7 +182,7 @@ deactivate
 """
 
 
-def write_shell_script(program, desc="", preserve_cwd=True, display=True, execute=False):
+def write_shell_script(program: str ,  desc: str = "", preserve_cwd: bool = True, display: bool = True, execute: bool = False):
     if preserve_cwd:
         if platform.system() == "Windows":
             program = "$orig_path = $pwd\n" + program + "\ncd $orig_path"

@@ -1,13 +1,17 @@
 
 
+""" installer
+"""
+
 from machineconfig.utils.utils import get_latest_release, find_move_delete_linux, find_move_delete_windows
 # import crocodile.toolbox as tb
 import platform
+from typing import Optional
 
 
 __doc__ = """cpufetch is a small yet fancy CPU architecture fetching tool, like neofetch but for CPUs."""
 
-def main(version=None):
+def main(version: Optional[str] = None) -> None:
     url = get_latest_release("https://github.com/browsh-org/browsh", version=version)
     if platform.system() == "Linux":
         download = url.joinpath(f"browsh_{str(url[-1]).replace('v', '')}_linux_amd64").download().with_name("cpufetch", inplace=True, overwrite=True)

@@ -4,16 +4,17 @@ fire
 """
 
 import crocodile.toolbox as tb
-# import platform
+import platform
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, get_current_ve, choose_ssh_host
 # https://github.com/pallets/click combine with fire. Consider
 # https://github.com/ceccopierangiolieugenio/pyTermTk for display_options build TUI
 # https://github.com/chriskiehl/Gooey build commandline interface
 import inspect
+from typing import Callable, Any
+import argparse
 
 
 def main():
-    import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--path", type=str, help="The directory containing the jobs", default=".")
     parser.add_argument("-v", "--ve", type=str, help="virtual enviroment name", default=None)
@@ -41,7 +42,12 @@ def main():
         print(f"Failed to detect virtual enviroment name.")
         pass
 
-    if args.debug: command = f"{exe} -m pudb {choice_file} "  # TODO: functions not supported yet in debug mode.
+    if args.debug:
+        if platform.system() == "Windows":
+            command = f"{exe} -m pdb {choice_file} "  # pudb is not available on windows machines, use poor man's debugger instead.
+        elif platform.system() in ["Linux", "Darwin"]:
+            command = f"{exe} -m pudb {choice_file} "  # TODO: functions not supported yet in debug mode.
+        else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
     elif args.module:
         txt: str = f"""
 import sys
@@ -74,7 +80,7 @@ print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
     PROGRAM_PATH.write_text(command)
 
 
-def choose_function(file_path):
+def choose_function(file_path: str):
     print(f"Loading {file_path} ...")
     module = tb.P(file_path).readit()
     module: tb.Struct
@@ -89,7 +95,7 @@ def choose_function(file_path):
     return module, choice_function
 
 
-def interactively_run_function(func):
+def interactively_run_function(func: Callable[[Any], Any]):
     sig = inspect.signature(func)
     params = list(sig.parameters.values())
     args = []
@@ -104,14 +110,15 @@ def interactively_run_function(func):
         else: value = input(f"Please enter a value for argument `{param.name}` (type = {hint}) : ")
         try:
             if param.annotation is not inspect.Parameter.empty: value = param.annotation(value)
-        except (TypeError, ValueError): raise ValueError(f"Invalid input: {value} is not of type {param.annotation}")
+        except (TypeError, ValueError) as err:
+            raise ValueError(f"Invalid input: {value} is not of type {param.annotation}") from err
         if param.kind == inspect.Parameter.KEYWORD_ONLY: kwargs[param.name] = value
         else: args.append((param.name, value))
     args_to_kwargs = dict(args)
     return args_to_kwargs, kwargs
 
 
-def run_on_remote(func, args):
+def run_on_remote(func_file: str, args: argparse.Namespace):
     host = choose_ssh_host(multi=False)
     from crocodile.cluster.remote_machine import RemoteMachine, RemoteMachineConfig
     config = RemoteMachineConfig(copy_repo=True, update_repo=False, update_essential_repos=True,
@@ -120,7 +127,7 @@ def run_on_remote(func, args):
                                  data=[],
                                  ipython=False, interactive=args.interactive, pdb=False, pudb=args.debug, wrap_in_try_except=False,
                                  transfer_method="sftp")
-    m = RemoteMachine(func=func, func_kwargs=None, config=config)
+    m = RemoteMachine(func=func_file, func_kwargs=None, config=config)
     m.run()
 
 

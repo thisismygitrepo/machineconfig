@@ -1,5 +1,9 @@
 
+"""Cloud mount script
+"""
+
 import platform
+from typing import Optional
 from machineconfig.utils.utils import PROGRAM_PATH, display_options
 import crocodile.toolbox as tb
 
@@ -7,9 +11,8 @@ import crocodile.toolbox as tb
 DEFAULT_MOUNT = "~/data/rclone"
 
 
-def get_mprocs_mount_txt(cloud, rclone_cmd):
-    config = tb.Read.ini(tb.P.home().joinpath(".config/rclone/rclone.conf"))
-    cloud_brand = config[cloud]["type"]
+def get_mprocs_mount_txt(cloud: str, rclone_cmd: str, cloud_brand: str):  # cloud_brand = config[cloud]["type"]
+    # config = tb.Read.ini(tb.P.home().joinpath(".config/rclone/rclone.conf"))
     header = f"{' ' + cloud + ' | ' + cloud_brand + ' '}".center(50, "=")
     if platform.system() == "Windows":
         sub_text_path = tb.P.tmpfile(suffix=".ps1").write_text(f"""
@@ -29,19 +32,23 @@ mprocs "echo 'see {DEFAULT_MOUNT}/{cloud} for the mounted cloud'; rclone about {
     return txt
 
 
-def main(cloud=None, network=None):
-    config = tb.Read.ini(tb.P.home().joinpath(".config/rclone/rclone.conf"))
+def main(cloud: Optional[str] = None, network: Optional[str] = None) -> None:
+    if platform.system() == "Windows": config = tb.Read.ini(tb.P.home().joinpath("AppData/Roaming/rclone/rclone.conf"))
+    elif platform.system() == "Linux": config = tb.Read.ini(tb.P.home().joinpath(".config/rclone/rclone.conf"))
+    else: raise ValueError("unsupported platform")
     # default = tb.P.home().joinpath(".machineconfig/
     if cloud is None:
-        cloud = display_options(msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
-
-    if network is None: mount_loc = tb.P(DEFAULT_MOUNT).expanduser().joinpath(cloud)
+        res = display_options(msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
+        if type(res) is str: cloud = res
+        else: raise ValueError("no cloud selected")
+    # assert isinstance(cloud, str)
+    if network is None:
+        mount_loc = tb.P(DEFAULT_MOUNT).expanduser().joinpath(cloud)
+        if platform.system() == "Windows": mount_loc.parent.create()
+        elif platform.system() == "Linux": mount_loc.create()
+        else: raise ValueError("unsupported platform")
     elif network and platform.system() == "Windows": mount_loc = "X: --network-mode"
     else: raise ValueError("network mount only supported on windows")
-
-    if platform.system() == "Windows": mount_loc.parent.create()
-    elif platform.system() == "Linux": mount_loc.create()
-    # else: raise ValueError("unsupported platform")
 
     mount_cmd = f"rclone mount {cloud}: {mount_loc} --vfs-cache-mode full --file-perms=0777"
 

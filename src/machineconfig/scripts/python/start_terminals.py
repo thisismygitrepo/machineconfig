@@ -5,7 +5,7 @@ from machineconfig.utils.utils import PROGRAM_PATH, display_options, install_n_i
 THIS_MACHINE = "THIS_MACHINE"
 
 
-def main_windows_and_wsl(hosts: list[str], orientation="vertical", mprocs=False):
+def main_windows_and_wsl(hosts: list[str], orientation: str = "vertical", mprocs: bool = False):
     orientation_oposite = "horizontal" if orientation == "vertical" else "vertical"
     orientation_swap                = "up" if orientation         == "horizontal" else "left"
     orientation_opposite_move_focus = "up" if orientation_oposite == "horizontal" else "left"
