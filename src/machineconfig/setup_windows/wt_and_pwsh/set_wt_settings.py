@@ -22,7 +22,8 @@ class TerminalSettings(object):
     def __init__(self):
         # Grabbing Terminal Settings file:
         tmp = os.getenv("LOCALAPPDATA")
-        if isinstance(tmp, None): raise ValueError("Could not find LOCALAPPDATA environment variable.")
+        if not isinstance(tmp, str):
+            raise ValueError("Could not find LOCALAPPDATA environment variable.")
         self.path = tb.P(tmp).joinpath(r"Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json")
         self.path.copy(append=".orig_" + tb.randstr())
         self.dat = self.path.readit()

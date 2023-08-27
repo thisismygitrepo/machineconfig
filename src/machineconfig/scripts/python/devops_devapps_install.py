@@ -59,9 +59,9 @@ def get_program(program_name, options, installers):
             idx = options.index(name)
             try:
                 sub_program = installers[idx].readit()['main']()  # finish the task
-            except KeyError:
+            except KeyError as ke:
                 print(f"KeyError: could not find 'main' in {installers[idx]}")
-                raise KeyError
+                raise KeyError from ke
             if sub_program is None: sub_program = "echo 'Finished Installation'"  # write an empty program
             program += "\n" + sub_program
     else:
@@ -73,8 +73,8 @@ def get_program(program_name, options, installers):
 
 
 def parse_apps_installer_linux(txt: str):
-    txt = txt.split("""yes '' | sed 3q; echo "----------------------------- installing """)
-    return tb.Struct.from_keys_values_pairs(tb.L(txt).apply(lambda tmp:  (tmp.split('----')[0].rstrip().lstrip(), "\n".join(tmp.split("\n")[1:])))[1:])
+    txts = txt.split("""yes '' | sed 3q; echo "----------------------------- installing """)
+    return tb.Struct.from_keys_values_pairs(tb.L(txts).apply(lambda tmp:  (tmp.split('----')[0].rstrip().lstrip(), "\n".join(tmp.split("\n")[1:])))[1:])
 
 
 def parse_apps_installer_windows(txt: str) -> dict[str, Any]:

@@ -13,6 +13,7 @@ def main(version: Optional[str] = None):
 
     # =================================================== Go's qrcp to allow file transfer between computer and phone.
     url = get_latest_release("https://github.com/claudiodangelis/qrcp", download_n_extract=False, version=version)
+    if not isinstance(url, tb.P): raise ValueError(f"Expected a pathlib.Path object, got {type(url)}")
     if system() == "Windows":
         downloaded = url.joinpath(f"qrcp_{url[-1].str.replace('v', '')}_Windows_x86_64.tar.gz").download().ungz_untar(inplace=True)
         find_move_delete_windows(downloaded, "qrcp")
