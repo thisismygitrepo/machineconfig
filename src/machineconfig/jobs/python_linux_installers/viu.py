@@ -2,6 +2,7 @@
 
 from machineconfig.utils.utils import get_latest_release
 import crocodile.toolbox as tb
+from typing import Optional
 
 
 __doc__ = """A cli image viewer for the terminal"""

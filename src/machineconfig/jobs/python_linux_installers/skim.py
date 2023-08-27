@@ -3,8 +3,10 @@
 Rust version of FZF (GO)
 """
 
-from machineconfig.utils.utils import get_latest_release
-import crocodile.toolbox as tb
+# from machineconfig.utils.utils import get_latest_release
+# import crocodile.toolbox as tb
+from typing import Optional
+
 __doc__ =  """skim is a fuzzy finder in rust!"""
 
 

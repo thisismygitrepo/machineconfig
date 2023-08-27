@@ -12,7 +12,7 @@ base_dir = P.home().joinpath("dotfiles/gpt/prompts")
 def main():
     api_key = P.home().joinpath("dotfiles/creds/tokens/openai_api.txt").read_text().lstrip().rstrip()
     parser = argparse.ArgumentParser()
-    args = parser.parse_args()
+    _args = parser.parse_args()
 
     # config = P.home().joinpath(".config/chatgpt/config.json")
     # if args.base is not None: base_txt = base_dir.joinpath(args.base)

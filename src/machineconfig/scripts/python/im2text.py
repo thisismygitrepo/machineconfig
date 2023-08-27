@@ -1,6 +1,6 @@
 
 import crocodile.toolbox as tb
-import sys
+# import sys
 from crocodile.msc.odds import capture_from_webcam
 
 img_path = capture_from_webcam(show=False, wait=False, save=True)

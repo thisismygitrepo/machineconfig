@@ -12,7 +12,7 @@ import argparse
 def parse_cloud_source_target(args):
     if args.source == ":":
         path = P(args.target).expanduser().absolute()
-        for i in range(len(path.parts)):
+        for _i in range(len(path.parts)):
             if path.joinpath("cloud.json").exists():
                 tmp = path.joinpath("cloud.json").readit()
                 args.source = f"{tmp['cloud']}:"
@@ -23,7 +23,7 @@ def parse_cloud_source_target(args):
         else: args.source = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote").read_text().rstrip() + ":"
     if args.target == ":":
         path = P(args.source).expanduser().absolute()
-        for i in range(len(path.parts)):
+        for _i in range(len(path.parts)):
             if path.joinpath("cloud.json").exists():
                 tmp = path.joinpath("cloud.json").readit()
                 args.target = f"{tmp['cloud']}:"

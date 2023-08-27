@@ -2,6 +2,7 @@
 
 from machineconfig.utils.utils import get_latest_release, find_move_delete_linux
 import crocodile.toolbox as tb
+from typing import Optional
 
 # bash_integration = """
 #
@@ -13,6 +14,7 @@ import crocodile.toolbox as tb
 
 
 __doc__ = """Zellij is a terminal workspace with support for multiple plugins, such as a terminal, status bar, tabs, splits, etc."""
+
 
 def main(version: Optional[str] = None):
     _ = version

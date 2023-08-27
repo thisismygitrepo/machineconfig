@@ -3,6 +3,7 @@
 from machineconfig.utils.utils import get_latest_release
 import crocodile.toolbox as tb
 from crocodile.meta import Terminal
+from typing import Optional
 
 
 url = r"https://github.com/koute/bytehound"

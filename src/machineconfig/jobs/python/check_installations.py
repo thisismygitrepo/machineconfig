@@ -43,7 +43,7 @@ def scan(path, pct=0.0):
 
     df = pd.DataFrame(anal.results).T
     malicious = []
-    for idx, row in df.iterrows():
+    for _idx, row in df.iterrows():
         if row.result is None and row.category in ["undetected", "type-unsupported", "failure", "timeout", "confirmed-timeout"]: continue
         else:
             tb.Struct(row.to_dict()).print(as_config=True, title=f"Found Category {row.category}")
@@ -94,7 +94,7 @@ def upload(path):
     def func():
         return path.to_cloud(cloud, rel2home=True, share=True)
     func_with_timeout = set_time_out(func, timeout=180)
-    is_done, is_timeout, erro_message, results = func_with_timeout()
+    is_done, _is_timeout, _erro_message, results = func_with_timeout()
     if is_done: return results
     else: return None
 

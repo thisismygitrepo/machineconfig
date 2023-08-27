@@ -2,7 +2,7 @@
 # this is a plugin for OBS Studio to remove background from a video
 
 from machineconfig.utils.utils import get_latest_release
-import crocodile.toolbox as tb
+# import crocodile.toolbox as tb
 from typing import Optional
 
 
