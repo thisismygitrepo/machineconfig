@@ -2,12 +2,13 @@
 from platform import system
 from machineconfig.utils.utils import get_latest_release
 import crocodile.toolbox as tb
+from typing import Optional
 
 
 __doc__ = """Counts the number of lines of code, comments, and blanks in a project."""
 
 
-def main(version=None):
+def main(version: Optional[str] = None):
     url = get_latest_release('https://github.com/XAMPPRocky/tokei', download_n_extract=False, version=version)
     assert url is not None, "Could not find a release for tokei"
     if system() == 'Windows':

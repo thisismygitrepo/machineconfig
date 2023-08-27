@@ -13,7 +13,7 @@ from Crypto.Hash import MD5
 import base64
 
 
-def encrypt(key, pwd):
+def encrypt(key: str, pwd: bytes):
     pwd = pwd.encode("utf-8")
     hash_object = MD5.new(key.encode("utf-8"))
     key = hash_object.digest()
@@ -49,4 +49,3 @@ if response.status_code == 201:
 else:
     print("Request failed")
     raise RuntimeError(response.text)
-

@@ -1,12 +1,12 @@
 
+"""expose a local server behind a NAT or firewall to the internet"""
+
 import platform
 import crocodile.toolbox as tb
+from typing import Optional
 
 
-__doc__ = """expose a local server behind a NAT or firewall to the internet"""
-
-
-def main(version=None):
+def main(version: Optional[str] = None):
     file = tb.P.home().joinpath("dotfiles/creds/tokens/ngrok")
     if file.exists():
         auth_token = file.read_text()

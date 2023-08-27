@@ -3,13 +3,14 @@
 from machineconfig.utils.utils import get_latest_release, find_move_delete_linux
 import crocodile.toolbox as tb
 from platform import system
+from typing import Optional
 
 
 url = r'https://github.com/dbrgn/tealdeer'
 __doc__ = "Too long, didn't read, but for cli tools."
 
 
-def main(version=None):
+def main(version: Optional[str] = None):
     if system() == 'Windows':
         f = get_latest_release(url, version=version).joinpath('tealdeer-windows-x86_64-msvc.exe').download().rename('tldr.exe')
         f.move(folder=f.get_env().WindowsApps, overwrite=True)

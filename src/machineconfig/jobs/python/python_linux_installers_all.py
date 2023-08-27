@@ -5,7 +5,7 @@ import crocodile.toolbox as tb
 import machineconfig.jobs.python_linux_installers as inst
 import machineconfig.jobs.python_generic_installers as gens
 import platform
-from typing import Optional
+from typing import Optional, Any
 
 
 def get_cli_py_installers(dev: bool = False):
@@ -37,7 +37,7 @@ def install_logic(py_file: tb.P, version: Optional[str] = None):
         return f"Failed at {py_file.stem} with {ex}"
 
 
-def main(installers=None, safe=False):
+def main(installers: list[Any] = None, safe: bool = False):
     if safe:
         from machineconfig.jobs.python.check_installations import safe_apps_url
         apps_dir = tb.P(safe_apps_url.read_text()).download().unzip(inplace=True)

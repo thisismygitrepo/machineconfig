@@ -2,6 +2,8 @@
 from machineconfig.utils.utils import get_latest_release
 from platform import system
 import crocodile.toolbox as tb
+from typing import Optional
+
 
 """
 VSCode and Pycharm have their own extensions from marketplace, but for other editors, we need to install this LSP manually.
@@ -10,7 +12,7 @@ VSCode and Pycharm have their own extensions from marketplace, but for other edi
 repo_url = tb.P(r"https://github.com/rust-lang/rust-analyzer")
 __doc__ = f"""Rust Language Server (LSP)"""
 
-def main(version=None):
+def main(version: Optional[str] = None):
     url = get_latest_release(repo_url.as_url_str(), download_n_extract=False, version=version)
     if system() == "Windows":
         url.joinpath(f"rust-analyzer-x86_64-pc-windows-msvc.gz").download().ungz(inplace=True).with_name("rust-analyzer.exe", inplace=True).move(folder="~/.cargo/bin", overwrite=True)

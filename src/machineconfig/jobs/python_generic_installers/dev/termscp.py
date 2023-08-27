@@ -4,12 +4,13 @@
 from machineconfig.utils.utils import get_latest_release
 from platform import system
 import crocodile.toolbox as tb
+from typing import Optional
 
 
 repo_url = tb.P(r"https://github.com/veeso/termscp")
 __doc__ = """A TUI like winscp"""
 
-def main(version=None):
+def main(version: Optional[str] = None):
     if system() == 'Windows':
         suffix = "x86_64-pc-windows-msvc"
         exe = get_latest_release(repo_url.as_url_str(), suffix=suffix, download_n_extract=True, delete=False, version=version)

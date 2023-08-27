@@ -2,6 +2,7 @@
 import crocodile.toolbox as tb
 import crocodile.environment as env
 from uuid import uuid4
+import os
 
 
 """
@@ -20,7 +21,9 @@ assert env.system == 'Windows', 'This script is only for Windows.'
 class TerminalSettings(object):
     def __init__(self):
         # Grabbing Terminal Settings file:
-        self.path = env.LocalAppData.joinpath(r"Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json")
+        tmp = os.getenv("LOCALAPPDATA")
+        if isinstance(tmp, None): raise ValueError("Could not find LOCALAPPDATA environment variable.")
+        self.path = tb.P(tmp).joinpath(r"Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json")
         self.path.copy(append=".orig_" + tb.randstr())
         self.dat = self.path.readit()
         self.profs = tb.L(self.dat["profiles"]["list"])

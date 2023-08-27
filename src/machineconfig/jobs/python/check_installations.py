@@ -8,6 +8,7 @@ from rich.console import Console
 from machineconfig.utils.utils import LIBRARY_ROOT
 from machineconfig.jobs.python.python_linux_installers_all import get_installed_cli_apps
 from tqdm import tqdm
+from typing import Optional, Any
 
 
 safe_apps_records = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps.json")
@@ -100,18 +101,18 @@ def upload(path):
 
 class PrecompliedInstaller:
     @staticmethod
-    def download_rclone_links(url, name=None):
+    def download_rclone_links(url: str, name: Optional[str] = None):
         if "drive.google.com" in str(url): url = str(url).replace("open?", "uc?")
         else: raise NotImplementedError("Only google drive is supported for now.")
         return tb.P(url).download(name=name)
 
-    def __init__(self, from_cloud=True):
-        if from_cloud:  file = PrecompliedInstaller.download_rclone_links(safe_apps_url.read_text(), name=safe_apps_records.name)
+    def __init__(self, from_cloud: bool = True):
+        if from_cloud: file = PrecompliedInstaller.download_rclone_links(safe_apps_url.read_text(), name=safe_apps_records.name)
         else: file = safe_apps_records
         tmp = file.readit()
         self.df = pd.DataFrame(tmp['data'], columns=tmp['columns'])
 
-    def install(self, name):
+    def install(self, name: str):
         res = self.df.query(f"app == '{name}'")
         if len(res) == 0 or len(res) > 1:
             print(f"Couldn't find unique result when searching safe_apps_records @ {self.safe_apps_records}")
@@ -127,7 +128,7 @@ class PrecompliedInstaller:
             cli_installers = get_cli_py_installers()
         else: raise NotImplementedError(f"Platform {platform.system().lower()} is not supported yet.")
 
-        def install_cli_apps(row):
+        def install_cli_apps(row: dict[str, Any]):
             if row["app_url"] is None:
                 print(f"{row['app_name']} url is not available, trying to download from its sources:")
                 version = row["version"]

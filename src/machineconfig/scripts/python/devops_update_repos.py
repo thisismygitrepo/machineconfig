@@ -6,7 +6,7 @@ import crocodile.toolbox as tb
 sep = "\n"
 
 
-def main(verbose=True) -> str:
+def main(verbose: bool = True) -> str:
     _ = verbose
     repos = tb.P.home().joinpath("dotfiles/config/reposXXX.ini")
     if repos.exists():

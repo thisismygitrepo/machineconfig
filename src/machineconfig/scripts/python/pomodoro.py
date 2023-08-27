@@ -4,17 +4,17 @@ import time
 from datetime import datetime
 
 
-def pomodoro(work=25, rest=5, repeats=4):
+def pomodoro(work: int = 25, rest: int = 5, repeats: int = 4):
     logger = Log(name="pomodoro", file=False, stream=True)
     def loop(sched):
         speak("Alright, time to start working..."); start = datetime.now(); _ = sched
         while (diff := work - ((datetime.now() - start).seconds / 60)) > 0: logger.debug(f"Keep working. Time Left: {round(diff)} minutes"); time.sleep(60 * 1)
         speak("Now, its time to take a break."); start = datetime.now()
         while (diff := rest - ((datetime.now() - start).seconds / 60)) > 0: logger.critical(f"Keep Resting. Time Left: {round(diff)} minutes"); time.sleep(60 * 1)
-    def speak(txt):
+    def speak(txt: str):
         install_n_import("gtts").gTTS(txt, lang='en', tld='com.au').save(tmp := P.tmpfile(suffix=".mp3")); time.sleep(0.5)
         pyglet = install_n_import("pyglet"); pyglet.resource.path = [tmp.parent.str]; pyglet.resource.reindex(); pyglet.resource.media(tmp.name).play()
-    def beep(duration=1, frequency=3000):
+    def beep(duration: int = 1, frequency: int = 3000):
         try: import winsound
         except ImportError: __import__("os").system('beep -f %s -l %s' % (frequency, 1000 * duration))
         else: winsound.Beep(frequency, 1000 * duration)

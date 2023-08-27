@@ -2,12 +2,13 @@
 
 from machineconfig.utils.utils import get_latest_release
 import crocodile.toolbox as tb
+from typing import Optional
 
 
 __doc__ = """A terminal file explorer with vi keybindings"""
 
 
-def main(version=None):
+def main(version: Optional[str] = None):
     repo_url = tb.P(r"https://github.com/sayanarijit/xplr")
     release = get_latest_release(repo_url.as_url_str(), version=version)
     path = release.joinpath(f"xplr-linux.tar.gz").download().ungz_untar(inplace=True)

@@ -1,4 +1,7 @@
 
+"""NFS mounting script
+"""
+
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_host
 import platform
@@ -11,6 +14,7 @@ def main():
         ssh = tb.SSH(choose_ssh_host(multi=False))
         default = f"{ssh.hostname}:{ssh.run('echo $HOME').op}/data/share_nfs"
         share_info = display_options("Choose a share path: ", options=tb.L(ssh.run("cat /etc/exports").op.split("\n")).filter(lambda x: not x.startswith("#")).apply(lambda x: f"{ssh.hostname}:{x.split(' ')[0]}").list + [default], default=default)
+        assert isinstance(share_info, str), f"share_info must be a string. Got {type(share_info)}"
     remote_server = share_info.split(":")[0]
     share_path = share_info.split(":")[1]
 
@@ -21,6 +25,7 @@ def main():
         if str(mount_path_1).startswith("/home"): mount_path_3 = tb.P.home().joinpath(*mount_path_1.parts[3:])
         else: mount_path_3 = mount_path_2
         local_mount_point = display_options(msg="choose mount path OR input custom one", options=[mount_path_1, mount_path_2, mount_path_3], default=mount_path_2, custom_input=True)
+        assert isinstance(local_mount_point, tb.P), f"local_mount_point must be a pathlib.Path. Got {type(local_mount_point)}"
         local_mount_point = tb.P(local_mount_point).expanduser()
         PROGRAM_PATH.write_text(f"""
 share_info={share_info}

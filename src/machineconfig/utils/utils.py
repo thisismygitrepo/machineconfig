@@ -13,7 +13,7 @@ from rich.panel import Panel
 from rich.console import Console
 from rich.syntax import Syntax
 import platform
-from typing import Optional, Union, AnyStr
+from typing import Optional, Union, Any
 
 
 LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
@@ -23,7 +23,8 @@ CONFIG_PATH = P.home().joinpath(".config/machineconfig")
 tmp_install_dir = P.tmp(folder="tmp_installers")
 
 
-def display_options(msg: str, options: list[AnyStr], header: str = "", tail: str = "", prompt: str = "", default: Optional[AnyStr] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[str, list[str]]:
+def display_options(msg: str, options: list[Any], header: str = "", tail: str = "", prompt: str = "",
+                    default: Optional[Any] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[Any, list[Any]]:
     tool_name = "fzf"
     if fzf and check_tool_exists(tool_name):
         install_n_import("pyfzf")
@@ -33,7 +34,8 @@ def display_options(msg: str, options: list[AnyStr], header: str = "", tail: str
         if default is not None:
             # default_str = "Default option"
             options.append(str(default))
-        choice_idx = fzf_prompt.prompt(options, fzf_options=("--multi" if multi else "") + f" --prompt={prompt.replace(nl, ' ')} --border=rounded")  # --border-label={msg.replace(nl, ' ')}")
+        choice_key = fzf_prompt.prompt(options, fzf_options=("--multi" if multi else "") + f" --prompt={prompt.replace(nl, ' ')} --border=rounded")  # --border-label={msg.replace(nl, ' ')}")
+        if not multi: choice_key = choice_key[0]
     else:
         console = Console()
         if default is not None:
@@ -45,36 +47,28 @@ def display_options(msg: str, options: list[AnyStr], header: str = "", tail: str
             txt = txt + Text(f"{idx:2d} ", style="bold blue") + str(key) + (default_msg if default is not None and default == key else "") + "\n"
         txt = Panel(txt, title=header, subtitle=tail, border_style="bold red")
         console.print(txt)
-        choice_idx = input(f"{prompt}\nEnter option *number* (or option name starting with space): ")
-    if not fzf and type(choice_idx) is str:
-        if choice_idx.startswith(" "):
-            choice_key = choice_idx.strip()
-            assert choice_key in options, f"Choice `{choice_key}` not in options `{options}`"
-            choice_idx = options.index(choice_key)
+        choice_string = input(f"{prompt}\nEnter option *number* or hit enter for default choice: ")
+        if choice_string == "":
+            assert default is not None, f"Default option not available!"
+            choice_idx = options.index(default)
+            choice_key = default
         else:
-            if choice_idx == "":
-                assert default is not None, f"Default option not available!"
-                choice_idx = options.index(default)
             try:
-                try: choice_idx = int(choice_idx)
-                except ValueError as ve:  # parsing error
-                    raise IndexError from ve
+                choice_idx = int(choice_string)
                 choice_key = options[choice_idx]
-            except IndexError as ie:
-                # maybe user forgotten to start with a dash
-                if choice_idx in options:
-                    choice_key = choice_idx
-                    choice_idx = options.index(choice_idx)
-                else:
-                    if custom_input: return str(choice_idx)
-                    raise ValueError(f"Unknown choice. {choice_idx}") from ie
-            except TypeError as te:
-                if custom_input: return str(choice_idx)
-                raise TypeError(f"Unknown choice. {choice_idx}") from te
+            except IndexError as ie:  # i.e. converting to integer was successful but indexing failed.
+                if choice_string in options:  # string input
+                    choice_key = choice_string
+                    choice_idx = options.index(choice_key)
+                elif custom_input: return str(choice_string)
+                else: raise ValueError(f"Unknown choice. {choice_string}") from ie
+            except TypeError as te:  # int(choice_string) failed due to # either the number is invalid, or the input is custom.
+                if choice_string in options:  # string input
+                    choice_key = choice_string
+                    choice_idx = options.index(choice_key)
+                elif custom_input: return str(choice_string)
+                else: raise ValueError(f"Unknown choice. {choice_string}") from te
         print(f"{choice_idx}: {choice_key}", f"<<<<-------- CHOICE MADE")
-    else:
-        if not multi and type(choice_idx) is list and len(choice_idx) == 1: choice_idx = choice_idx[0]
-        choice_key = choice_idx
     return choice_key
 
 
@@ -133,8 +127,10 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
     return None
 
 
-def get_latest_release(repo_url: str, download_n_extract: bool = False, suffix: Optional[str] = "x86_64-pc-windows-msvc", 
-                       file_name: Optional[str] = None, tool_name: Optional[str] = None, exe_name: Optional[str] = None, delete: bool = True, strip_v: bool = False, linux: bool = False, compression: Optional[str] = None, sep: Optional[str] = "-", version: Optional[str] = None):
+def get_latest_release(repo_url: str, download_n_extract: bool = False, suffix: Optional[str] = "x86_64-pc-windows-msvc",
+                       file_name: Optional[str] = None, tool_name: Optional[str] = None, exe_name: Optional[str] = None,
+                       delete: bool = True, strip_v: bool = False, linux: bool = False, compression: Optional[str] = None,
+                       sep: Optional[str] = "-", version: Optional[str] = None):
     console = Console()
     print("\n\n\n")
     print(f"Inspecting latest release @ {repo_url}   ...")

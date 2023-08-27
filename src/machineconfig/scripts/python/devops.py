@@ -7,6 +7,7 @@ from platform import system
 # import crocodile.toolbox as tb
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, write_shell_script
 from enum import Enum
+from typing import Optional
 
 
 class Options(Enum):
@@ -31,7 +32,7 @@ def args_parser():
     main(which=args.which)
 
 
-def main(which=None):
+def main(which: Optional[str] = None):
     PROGRAM_PATH.delete(sure=True, verbose=False)
     options = [op.value for op in Options]
     if which is None: choice_key = display_options(msg="", options=options, header="DEVOPS", default=options[0])

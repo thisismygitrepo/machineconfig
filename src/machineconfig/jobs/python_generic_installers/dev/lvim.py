@@ -1,13 +1,15 @@
 
+"Terminal text editor based on neovim"
+
 import crocodile.toolbox as tb
 from platform import system
-import machineconfig
+# import machineconfig
+from typing import Optional
 
 # https://github.com/LunarVim/LunarVim
-__doc__ = "Terminal text editor based on neovim"
 
 
-def main(version=None):
+def main(version: Optional[str] = None):
     _ = version
     if system() == "Windows":
         tb.P.home().joinpath(r"AppData/Local/lvim").delete(sure=True)
@@ -18,7 +20,7 @@ def main(version=None):
         script = f"""
 # uninstall then install latest stable release as per https://www.lunarvim.org/docs/installation
 {uninstall_script}
-{install_script}        
+{install_script}
 cd ~/AppData/Local
 rm lvim -Force  # kill bad symlinks there
 git clone https://github.com/ChristianChiarulli/lvim

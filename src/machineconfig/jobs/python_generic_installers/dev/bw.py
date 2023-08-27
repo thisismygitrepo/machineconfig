@@ -1,22 +1,23 @@
 
+"""Bitwarden (password manager) cli"""
 
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import find_move_delete_linux
 from rich.console import Console
 from platform import system
+from typing import Optional
 
 
-__doc__ = """Bitwarden (password manager) cli"""
-
-
-def main(version=None):
+def main(version: Optional[str] = None):
     _ = version
     if system() == "Windows":
         console = Console()
         console.rule("Installing bitwarden")
         url = r'https://vault.bitwarden.com/download/?app=cli&platform=windows'
         dir_ = tb.P(url).download(name="file.zip").unzip(inplace=True)
-        dir_.search(f"bw.exe", r=True)[0].move(folder=tb.get_env().WindowsApps, overwrite=True)
+        # if isinstance(dir_, tb.P):
+        tmp = list(dir_.search(f"bw.exe", r=True))
+        tmp[0].move(folder=tb.P.get_env().WindowsApps, overwrite=True)
         dir_.delete(sure=True)
         console.rule("Completed Installation")
     else:

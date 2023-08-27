@@ -8,7 +8,7 @@ from pathlib import Path
 import os
 
 
-def create_new_connection(name, ssid, password):
+def create_new_connection(name: str, ssid: str, password: str):
     config = """<?xml version=\"1.0\"?>
 <WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
     <name>""" + name + """</name>
@@ -40,7 +40,7 @@ def create_new_connection(name, ssid, password):
     os.system(command)
 
 
-def connect(name, ssid):
+def connect(name: str, ssid: str):
     command = "netsh wlan connect name=\"" + name + "\" ssid=\""+ssid+"\" interface=Wi-Fi"
     os.system(command)
 
@@ -59,7 +59,7 @@ def main():
 
     args = parser.parse_args()
     ssid = creds[args.ssid]['SSID']
-    pwd = creds[args.ssid]['pwd']
+    # pwd = creds[args.ssid]['pwd']
 
     # displayAvailableNetworks()
     # createNewConnection(name, name, password)

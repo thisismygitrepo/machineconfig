@@ -8,7 +8,7 @@ import crocodile.toolbox as tb
 __doc__ =  """skim is a fuzzy finder in rust!"""
 
 
-def main(version=None):
+def main(version: Optional[str] = None):
     _ = version
     # repo_url = tb.P(r"https://github.com/lotabout/skim")
     # release = get_latest_release(repo_url.as_url_str(), suffix='x86_64-unknown-linux-musl', compression='tar.gz', linux=True, strip_v=True, download_n_extract=True)

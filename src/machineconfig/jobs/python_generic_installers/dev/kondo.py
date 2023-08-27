@@ -1,13 +1,14 @@
 
+"""cleans projects from litter files."""
+
 from machineconfig.utils.utils import get_latest_release, find_move_delete_linux
 from platform import system
-
+from typing import Optional
 
 url = 'https://github.com/tbillington/kondo'
-__doc__ = """cleans projects from litter files."""
 
 
-def main(version=None):
+def main(version: Optional[str] = None):
     if system() == 'Windows':
         get_latest_release(url, download_n_extract=True, file_name='kondo-x86_64-pc-windows-msvc.zip', version=version)
     elif system() == 'Linux':

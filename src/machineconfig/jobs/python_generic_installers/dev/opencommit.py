@@ -5,7 +5,7 @@
 __doc__ = """OpenCommit is a tool for writing better commit messages using GPT-3"""
 
 
-def main(version=None):
+def main(version: Optional[str] = None):
     _ = version
     # token = input("Enter your OpenAI API key: ")
     token = 1

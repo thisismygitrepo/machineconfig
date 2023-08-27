@@ -1,6 +1,6 @@
 
 import crocodile.toolbox as tb
-from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_host
+from machineconfig.utils.utils import PROGRAM_PATH
 import platform
 
 

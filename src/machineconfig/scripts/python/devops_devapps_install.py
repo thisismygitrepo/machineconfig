@@ -4,6 +4,7 @@ from platform import system
 # import subprocess
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import LIBRARY_ROOT, display_options
+from typing import Any, Optional
 
 
 if system() == "Windows": from machineconfig.jobs.python.python_windows_installers_all import get_cli_py_installers
@@ -11,7 +12,7 @@ elif system() == "Linux": from machineconfig.jobs.python.python_linux_installers
 else: raise NotImplementedError(f"System {system()} not supported")
 
 
-def main(program_name=None):
+def main(program_name: Optional[str] = None):
     installers = get_cli_py_installers()
     default = tb.P("all")
     installers.list.insert(0, default)
@@ -71,12 +72,12 @@ def get_program(program_name, options, installers):
     return program
 
 
-def parse_apps_installer_linux(txt):
+def parse_apps_installer_linux(txt: str):
     txt = txt.split("""yes '' | sed 3q; echo "----------------------------- installing """)
     return tb.Struct.from_keys_values_pairs(tb.L(txt).apply(lambda tmp:  (tmp.split('----')[0].rstrip().lstrip(), "\n".join(tmp.split("\n")[1:])))[1:])
 
 
-def parse_apps_installer_windows(txt) -> dict:
+def parse_apps_installer_windows(txt: str) -> dict[str, Any]:
     progs = tb.L(txt.splitlines()).filter(lambda x: x.startswith("winget ") or x.startswith("#winget"))
     res = {}
     for line in progs:

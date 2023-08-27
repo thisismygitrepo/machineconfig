@@ -6,7 +6,7 @@ import crocodile.toolbox as tb
 
 __doc__ = """A cli image viewer for the terminal"""
 
-def main(version=None):
+def main(version: Optional[str] = None):
     repo_url = tb.P(r"https://github.com/atanunq/viu")
     release = get_latest_release(repo_url.as_url_str(), version=version)
     exe = release.joinpath(f"viu").download()

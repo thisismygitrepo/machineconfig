@@ -30,7 +30,7 @@ def main():
     # ssh.print_summary()
 
     if tb.P(args.file).is_dir(): print(f"Use: cd {repr(tb.P(args.file).expanduser())}")
-    elif received_file is not None: print(f"Received: {repr(received_file.parent), repr(received_file)}")
+    print(f"Received: {repr(received_file.parent), repr(received_file)}")
 
 
 if __name__ == '__main__':
