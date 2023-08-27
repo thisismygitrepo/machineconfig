@@ -10,7 +10,8 @@ def main():
     choice = display_options(msg="Path to private key to be used when ssh'ing: ", options=private_keys.list + ["I have the path to the key file", "I want to paste the key itself"])
     if choice == "I have the path to the key file": path_to_key = tb.P(input("Input path here: ")).expanduser().absolute()
     elif choice == "I want to paste the key itself": path_to_key = tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key): ') or 'my_pasted_key'}").write_text(input("Paste the private key here: "))
-    else: path_to_key = tb.P(choice)
+    elif isinstance(choice, str): path_to_key = tb.P(choice)
+    else: raise NotImplementedError(f"Choice {choice} not supported")
     txt = f"IdentityFile {path_to_key.collapseuser().as_posix()}"  # adds this id for all connections, no host specified.
     config_path = tb.P.home().joinpath(".ssh/config")
     if config_path.exists(): config_path.modify_text(txt_search=txt, txt_alt=txt, replace_line=True, notfound_append=True, prepend=True)  # note that Identity line must come on top of config file otherwise it won't work, hence `prepend=True`

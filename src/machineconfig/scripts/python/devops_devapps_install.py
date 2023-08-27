@@ -33,10 +33,12 @@ def main(program_name: Optional[str] = None):
 
 def get_program(program_name, options, installers):
     if program_name == "all":
-        if system() == "Linux": from machineconfig.jobs.python.python_linux_installers_all import main
-        elif system() == "Windows": from machineconfig.jobs.python.python_windows_installers_all import main
+        if system() == "Linux":
+            from machineconfig.jobs.python.python_linux_installers_all import main as main2
+        elif system() == "Windows":
+            from machineconfig.jobs.python.python_windows_installers_all import main as main2
         else: raise NotImplementedError(f"System {system()} not supported")
-        main()
+        main2()
         # program_linux = f"source {LIBRARY_ROOT}/setup_linux/devapps.sh"
         # program_windows = f"{LIBRARY_ROOT}/setup_windows/devapps.ps1"
         program = ""
