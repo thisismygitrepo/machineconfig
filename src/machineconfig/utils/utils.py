@@ -13,7 +13,7 @@ from rich.panel import Panel
 from rich.console import Console
 from rich.syntax import Syntax
 import platform
-from typing import Optional, Union, Any, TypeVar
+from typing import Optional, Union, TypeVar
 
 
 LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
@@ -34,7 +34,7 @@ def display_options(msg: str, options: list[T], header: str = "", tail: str = ""
         nl = "\n"
         if default is not None:
             # default_str = "Default option"
-            options.append(str(default))
+            options.append(default)
         choice_key = fzf_prompt.prompt(options, fzf_options=("--multi" if multi else "") + f" --prompt={prompt.replace(nl, ' ')} --border=rounded")  # --border-label={msg.replace(nl, ' ')}")
         if not multi: choice_key = choice_key[0]
     else:

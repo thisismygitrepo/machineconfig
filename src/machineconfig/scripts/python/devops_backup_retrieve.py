@@ -12,7 +12,10 @@ def main():
     direction = display_options(msg="BACKUP OR RETRIEVE?", options=["BACKUP", "RETRIEVE"], default="BACKUP", fzf=True)
 
     print(f"Listing Remotes ... ")
-    remotes = tb.L(tb.Terminal().run("rclone listremotes", shell="pwsh").op_if_successfull_or_default(strict_returcode=False).splitlines()).apply(lambda x: x.replace(":", ""))
+    tmp = tb.Terminal().run("rclone listremotes", shell="pwsh").op_if_successfull_or_default(strict_returcode=False)
+    if isinstance(tmp, str):
+        remotes = tb.L(tmp.splitlines()).apply(lambda x: x.replace(":", ""))
+    else: raise ValueError(f"Got {tmp} from rclone listremotes")
     if len(remotes) == 0:
         raise RuntimeError(f"You don't have remotes. Configure your rclone first to get cloud services access.")
     cloud = display_options(msg="WHICH CLOUD?", options=list(remotes), default=remotes[0], fzf=True)

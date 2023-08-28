@@ -54,6 +54,5 @@ def launch_from_ssh_config():
     return None
 
 
-
 if __name__ == '__main__':
     launch_from_ssh_config()

@@ -1,4 +1,7 @@
 
+""" Setup file for machineconfig package.
+"""
+
 import setuptools
 from src.machineconfig import __version__
 # this is a comment
@@ -32,6 +35,4 @@ setuptools.setup(
         "pudb",  # required by fire command
 
     ],
-    
 )
-

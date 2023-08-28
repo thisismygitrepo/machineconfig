@@ -5,6 +5,7 @@ import crocodile.toolbox as tb
 import crocodile.environment as env
 from uuid import uuid4
 import os
+from typing import Any
 
 
 """
@@ -49,13 +50,13 @@ class TerminalSettings(object):
     # 1- Customizing Powershell========================================================
     # as opposed to Windows Powershell
     def customize_powershell(self, nerd_font: bool = True):
-        pwsh = dict(name="PowerShell",
-                    commandline="pwsh",
-                    hidden=False,
-                    opacity=87,
-                    # guid="{" + str(uuid4()) + "}",  # WT doesn't accept any GUID to identify pwsh
-                    startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
-                    )
+        pwsh: dict[str, Any] = dict(name="PowerShell",
+                                    commandline="pwsh",
+                                    hidden=False,
+                                    opacity=87,
+                                    # guid="{" + str(uuid4()) + "}",  # WT doesn't accept any GUID to identify pwsh
+                                    startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
+                                    )
         if nerd_font: pwsh["font"] = dict(face="CaskaydiaCove Nerd Font")  # because oh-my-posh uses glyphs from this font.
         for idx, item in enumerate(self.profs):
             if item["name"] == "PowerShell":

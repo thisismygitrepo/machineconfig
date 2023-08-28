@@ -136,7 +136,7 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice
             if choice_obj == "all": choice = choice_obj
             elif choice_obj == "none": return
             else: sources = [choice_obj]
-        elif isinstance(choice_obj, list):
+        else:  # isinstance(choice_obj, list):
             sources = choice_obj
     elif choice == "none": return
 

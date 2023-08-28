@@ -32,9 +32,11 @@ def main(new_theme: Optional[str] = None):
         themes = themes_path.search().apply(lambda x: x.trunk)
         themes.list.sort()
         tail = ""
-        new_theme = display_options(msg=f"Choose a theme number from the list above: ", tail=tail, options=list(themes) + ["suprise me"], default="suprise me",
+        tmp = display_options(msg=f"Choose a theme number from the list above: ", tail=tail, options=list(themes) + ["suprise me"], default="suprise me",
                                     prompt=f"Recommended descriptive ones are {descriptive_themes}")
-        if new_theme == "suprise me": new_theme = themes.sample()[0]
+        if isinstance(tmp, str): new_theme = tmp
+        else: raise ValueError(f"Got {tmp} from display_options")
+        if new_theme == "suprise me": new_theme = themes.sample().list[0]
     print("Current Theme:", current_theme)
     print("New theme: ", new_theme)
     profile.modify_text(txt_search=current_theme, txt_alt=new_theme, replace_line=False)

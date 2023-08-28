@@ -52,6 +52,7 @@ def main():
     args = parser.parse_args()
 
     hosts = display_options(msg="", options=get_ssh_hosts() + [THIS_MACHINE], multi=True, fzf=True)
+    assert isinstance(hosts, list)
     cmd = main_windows_and_wsl(hosts=hosts, orientation="vertical" if args.vertical else "horizontal")
     print(cmd)
     install_n_import("clipboard").copy(cmd)
