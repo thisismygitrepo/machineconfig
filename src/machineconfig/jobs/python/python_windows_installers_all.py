@@ -16,7 +16,7 @@ def get_cli_py_installers(dev: bool = False):
 
 def main(dev: bool = False):
     installers = tb.L(get_cli_py_installers(dev=dev))
-    linux_main(installers=installers)
+    linux_main(installers=list(installers))
 
 
 if __name__ == '__main__':

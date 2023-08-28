@@ -19,7 +19,7 @@ cloud = "gdpo"
 
 
 def scan(path: tb.P, pct: float = 0.0):
-    vt = tb.install_n_import(package="vt", name="vt-py")
+    vt = tb.install_n_import(library="vt", name="vt-py")
     client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
     console = Console()
     console.rule(f"Scanning {path}. {pct:.2f}% done")
@@ -119,7 +119,7 @@ class PrecompliedInstaller:
         if len(res) == 0 or len(res) > 1:
             print(f"Couldn't find unique result when searching safe_apps_records @ {self.safe_apps_records}")
             return None
-        tb.P(res.app_url).download()
+        tb.P(str(res['app_url'])).download()
 
     def download_safe_apps(self):
         if platform.system().lower() == "windows":

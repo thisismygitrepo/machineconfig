@@ -100,11 +100,6 @@ config = {this = '~/.wslconfig', to_this = 'LIBRARY_ROOT/settings/wsl/.wslconfig
 home = {this = '~/win', to_this = '/mnt/c/Users/username'}
 
 
-[nvim_linux]
-
-
-[nvim_windows]
-
 [linters]
 flake8 = {this = '~/.flake8', to_this = 'LIBRARY_ROOT/settings/linters/.flake8'}
 mypy = {this = '~/.mypy.ini', to_this = 'LIBRARY_ROOT/settings/linters/.mypy.ini'}

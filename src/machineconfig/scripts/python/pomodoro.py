@@ -1,4 +1,7 @@
 
+"""Pomodoro
+"""
+
 from crocodile.toolbox import Log, install_n_import, Scheduler, P
 import time
 from datetime import datetime
@@ -16,8 +19,9 @@ def pomodoro(work: int = 25, rest: int = 5, repeats: int = 4):
         pyglet = install_n_import("pyglet"); pyglet.resource.path = [tmp.parent.str]; pyglet.resource.reindex(); pyglet.resource.media(tmp.name).play()
     def beep(duration: int = 1, frequency: int = 3000):
         try: import winsound
-        except ImportError: __import__("os").system('beep -f %s -l %s' % (frequency, 1000 * duration))
+        except ImportError: __import__("os").system(f'beep -f {frequency} -l {1000 * duration}')
         else: winsound.Beep(frequency, 1000 * duration)
+    _ = beep
     return Scheduler(routine=loop, max_cycles=repeats, logger=logger, wait="0.1m").run()
 
 

@@ -17,6 +17,7 @@ def main(new_theme: Optional[str] = None):
     themes_path = tb.P(os.environ["POSH_THEMES_PATH"])
     # current_theme = tb.P(os.environ["POSH_THEME"]).trunk
     profile = tb.Terminal().run("$profile", shell="pwsh").op2path()
+    if not isinstance(profile, tb.P): raise ValueError(f"Could not find profile file. Got {profile}")
     current_theme = tb.P(tb.L(profile.read_text().split(" ")).filter(lambda x: ".omp.json" in x)[0]).expanduser().absolute().trunk
 
     if new_theme == "manual":

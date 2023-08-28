@@ -1,4 +1,6 @@
 
+"""ZT
+"""
 import crocodile.toolbox as tb
 import socket
 from machineconfig.utils.utils import choose_ssh_host, write_shell_script
@@ -13,11 +15,11 @@ layout {
         children
 
 }
-    
+
 """
 
 suffix = """
- 
+
     tab name="THISMACHINE" focus=true // the default_tab_template
 }
 """
@@ -34,7 +36,7 @@ tab = """
 """
 
 
-def build_template(tabs: list):
+def build_template(tabs: list[str]):
     res = prefix
     for t in tabs:
         res += tab.replace("TABNAME", t).replace("TABCOMMAND", f"ssh").replace("TABARGS", t)

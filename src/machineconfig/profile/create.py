@@ -122,24 +122,28 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
     if choice == "none": return
 
     addition = PathVar.append_temporarily(dirs=dirs)
-    profile_path = profile_path or get_shell_profile_path()
-    profile_path.copy(name=profile_path.name + f".orig_" + tb.randstr())
-    profile_path.modify_text(addition, addition, replace_line=False, notfound_append=True)
+    profile_path_obj = tb.P(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
+    profile_path_obj.copy(name=profile_path_obj.name + f".orig_" + tb.randstr())
+    profile_path_obj.modify_text(addition, addition, replace_line=False, notfound_append=True)
 
 
 def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice: Optional[str] = None):
     sources: list[str] = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()[system.lower()]['files']
 
     if choice is None:
-        choice = display_options(msg="Which patch to add?", options=sources + ["all", "none"], default="none", multi=True)
-        if str(choice) != "all":
-            if isinstance(choice, str): sources = [choice]
-            elif isinstance(choice, list): sources = choice
-            else: raise ValueError(f"Choice must be a string or a list of strings, not {type(choice)}")
-    if choice == "none": return
+        choice_obj = display_options(msg="Which patch to add?", options=sources + ["all", "none"], default="none", multi=True)
+        if isinstance(choice_obj, str):
+            if choice_obj == "all": choice = choice_obj
+            elif choice_obj == "none": return
+            else: sources = [choice_obj]
+        elif isinstance(choice_obj, list):
+            sources = choice_obj
+    elif choice == "none": return
 
-    profile_path = profile_path or get_shell_profile_path()
-    profile = profile_path.read_text()
+    if isinstance(profile_path, str):
+        profile_path_obj = tb.P(profile_path)
+    else: profile_path_obj = get_shell_profile_path()
+    profile = profile_path_obj.read_text()
 
     for a_file in sources:
         file = a_file.replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix())
@@ -150,7 +154,7 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice
             elif system == "Linux": profile += f"\nsource {file}"
             else: raise ValueError(f"Not implemented for this system {system}")
         else: print(f"SKIPPED source `{file}`, it is already sourced in shell profile.")
-    profile_path.write_text(profile)
+    profile_path_obj.write_text(profile)
 
 
 def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice: Optional[str] = None):
