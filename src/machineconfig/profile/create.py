@@ -115,7 +115,9 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
     tb.P.get_env().PATH.print()
 
     if choice is None:
-        choice = display_options(msg="Which directory to add?", options=dirs + ["all", "none"], default="none")
+        tmp = display_options(msg="Which directory to add?", options=dirs + ["all", "none"], default="none")
+        assert isinstance(tmp, str), f"Choice must be a string or a list of strings, not {type(choice)}"
+        choice = tmp
         if str(choice) != "all": dirs = [choice]
     if choice == "none": return
 

@@ -17,8 +17,10 @@ def main(new_theme: Optional[str] = None):
     themes.list.sort()
     if new_theme is None:
         tail = "Recomm: "
-        new_theme = display_options(msg=f"Choose a theme number from the list above: ", options=list(themes) + ["slick", "surprise me"], default="surprise me", tail=tail,
+        tmp = display_options(msg=f"Choose a theme number from the list above: ", options=list(themes) + ["slick", "surprise me"], default="surprise me", tail=tail,
                                     prompt=f"Recommended descriptive ones are {descriptive_themes}")
+        if isinstance(tmp, str): new_theme = tmp
+        else: raise NotImplementedError(f"new_theme is not a string: {new_theme}")
     if new_theme == "surprise me": new_theme = themes.sample()[0]
     print("Current Theme:", current_theme)
     print("New theme: ", f'"{new_theme}"')  #

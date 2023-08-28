@@ -23,7 +23,7 @@ def main(version: Optional[str] = None) -> None:
     else:
         downloaded = link.joinpath("vtm_linux_amd64.tar.gz").download().ungz_untar(inplace=True)
         find_move_delete_linux(downloaded, tool_name="vtm")
-    return ""
+    return None
 
 
 if __name__ == '__main__':

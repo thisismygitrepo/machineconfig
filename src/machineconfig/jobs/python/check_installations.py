@@ -1,4 +1,6 @@
 
+"""CI
+"""
 import crocodile.toolbox as tb
 import time
 import pandas as pd
@@ -16,7 +18,7 @@ safe_apps_url = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower
 cloud = "gdpo"
 
 
-def scan(path: tb.P, pct=0.0):
+def scan(path: tb.P, pct: float = 0.0):
     vt = tb.install_n_import(package="vt", name="vt-py")
     client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
     console = Console()

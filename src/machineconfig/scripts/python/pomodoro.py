@@ -6,7 +6,7 @@ from datetime import datetime
 
 def pomodoro(work: int = 25, rest: int = 5, repeats: int = 4):
     logger = Log(name="pomodoro", file=False, stream=True)
-    def loop(sched):
+    def loop(sched: Scheduler):
         speak("Alright, time to start working..."); start = datetime.now(); _ = sched
         while (diff := work - ((datetime.now() - start).seconds / 60)) > 0: logger.debug(f"Keep working. Time Left: {round(diff)} minutes"); time.sleep(60 * 1)
         speak("Now, its time to take a break."); start = datetime.now()

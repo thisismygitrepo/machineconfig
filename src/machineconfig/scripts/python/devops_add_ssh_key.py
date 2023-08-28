@@ -4,7 +4,7 @@ from platform import system
 from machineconfig.utils.utils import LIBRARY_ROOT, display_options
 
 
-def get_add_ssh_key_script(path_to_key):
+def get_add_ssh_key_script(path_to_key: tb.P):
     if system() == "Linux": authorized_keys = tb.P.home().joinpath(".ssh/authorized_keys")
     elif system() == "Windows": authorized_keys = tb.P("C:/ProgramData/ssh/administrators_authorized_keys")
     else: raise NotImplementedError

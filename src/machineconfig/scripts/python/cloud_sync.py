@@ -9,7 +9,7 @@ import argparse
 """
 
 
-def parse_cloud_source_target(args):
+def parse_cloud_source_target(args: argparse.Namespace):
     if args.source == ":":
         path = P(args.target).expanduser().absolute()
         for _i in range(len(path.parts)):
@@ -36,22 +36,22 @@ def parse_cloud_source_target(args):
     if ":" in args.source:
         cloud = args.source.split(":")[0]
         target = P(args.target).expanduser().absolute()
-        source = f"{cloud}:{target._get_remote_path(os_specific=False, root=args.root).as_posix()}"
+        source = f"{cloud}:{target.get_remote_path(os_specific=False, root=args.root).as_posix()}"
     elif ":" in args.target:
         cloud = args.target.split(":")[0]
         source = P(args.source).expanduser().absolute()
-        target = f"{cloud}:{source._get_remote_path(os_specific=False, root=args.root).as_posix()}"
+        target = f"{cloud}:{source.get_remote_path(os_specific=False, root=args.root).as_posix()}"
     else:  # user did not specify remotepath, so it will be inferred here
         # but first we need to know whether the cloud is source or target
         remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
         for cloud in remotes:
             if args.source == cloud:
                 target = P(args.target).expanduser().absolute()
-                source = f"{cloud}:{target._get_remote_path(os_specific=False, root=args.root).as_posix()}"
+                source = f"{cloud}:{target.get_remote_path(os_specific=False, root=args.root).as_posix()}"
                 break
             if args.target == cloud:
                 source = P(args.source).expanduser().absolute()
-                target = f"{cloud}:{source._get_remote_path(os_specific=False, root=args.root).as_posix()}"
+                target = f"{cloud}:{source.get_remote_path(os_specific=False, root=args.root).as_posix()}"
                 break
         else:
             print(f"Could not find a remote in {remotes} that matches {args.source} or {args.target}.")

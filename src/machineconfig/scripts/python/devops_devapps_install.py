@@ -1,4 +1,6 @@
 
+"""Devops Devapps Install
+"""
 
 from platform import system
 # import subprocess
@@ -25,9 +27,10 @@ def main(program_name: Optional[str] = None):
         program_names = display_options(msg="", options=options, header="CHOOSE DEV APP", default=str(default), fzf=True, multi=True)
         total_program = ""
         for program_name in program_names:
-            total_program += "\n" + get_program(program_name, options, installers)
+            assert isinstance(program_name, str), f"program_name is not a string: {program_name}"
+            total_program += "\n" + get_program(program_name=program_name, options=options, installers=list(installers))
     else:
-        total_program = get_program(program_name, options, installers)
+        total_program = get_program(program_name=program_name, options=options, installers=list(installers))
     return total_program
 
 
