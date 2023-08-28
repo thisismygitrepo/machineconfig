@@ -23,7 +23,7 @@ def main(version: Optional[str] = None) -> None:
         get_latest_release(url, file_name='lf-linux-amd64.tar.gz', download_n_extract=True, linux=True, compression="tar.gz", version=version)
     else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
 
-    return f""
+    return None
 
 
 if __name__ == '__main__':

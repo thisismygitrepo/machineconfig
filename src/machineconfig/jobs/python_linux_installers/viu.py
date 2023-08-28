@@ -10,6 +10,7 @@ __doc__ = """A cli image viewer for the terminal"""
 def main(version: Optional[str] = None):
     repo_url = tb.P(r"https://github.com/atanunq/viu")
     release = get_latest_release(repo_url.as_url_str(), version=version)
+    if not isinstance(release, tb.P): raise ValueError(f"Failed to get latest release. Expected a Path object, got {release}")
     exe = release.joinpath(f"viu").download()
     exe.chmod(0o777)
     # exe.move(folder=r"/usr/local/bin", overwrite=False)

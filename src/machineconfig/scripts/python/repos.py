@@ -1,10 +1,14 @@
 
+"""Repos
+"""
+
 import crocodile.toolbox as tb
 import argparse
 from machineconfig.utils.utils import write_shell_script, CONFIG_PATH
-from rich import print
+from rich import print as pprint
 # from dataclasses import dataclass
 from enum import Enum
+from typing import Optional, Any
 # tm = tb.Terminal()
 
 
@@ -14,12 +18,12 @@ class GitAction(Enum):
     pull = "pull"
 
 
-def git_action(path: tb.P, action: GitAction, mess: str or None = None, r=False) -> str:
+def git_action(path: tb.P, action: GitAction, mess: Optional[str] = None, r: bool = False) -> str:
     import git
     try:
         repo = git.Repo(str(path), search_parent_directories=False)
     except git.exc.InvalidGitRepositoryError:
-        print(f"Skipping {path} because it is not a git repository.")
+        pprint(f"Skipping {path} because it is not a git repository.")
         if r:
             prgs = [git_action(path=sub_path, action=action, mess=mess, r=r) for sub_path in path.search()]
             return "\n".join(prgs)
@@ -68,9 +72,9 @@ def main():
     program = ""
     if args.record:
         res = record_repos(path=path)
-        print(f"Recorded repositories:\n", res)
+        pprint(f"Recorded repositories:\n", res)
         save_path = tb.Save.pickle(obj=res, path=CONFIG_PATH.joinpath("repos").joinpath(path.rel2home()).joinpath("repos.pkl"))
-        print(f"Result pickled at {tb.P(save_path)}")
+        pprint(f"Result pickled at {tb.P(save_path)}")
         if args.cloud is not None: tb.P(save_path).to_cloud(rel2home=True, cloud=args.cloud)
         program += f"""\necho '>>>>>>>>> Finished Recording'\n"""
     elif args.clone:
@@ -87,15 +91,15 @@ def main():
             if args.commit or args.all: program += git_action(a_path, action=GitAction.commit, r=args.recursive)
             if args.push or args.all: program += git_action(a_path, action=GitAction.push, r=args.recursive)
     else: program = "echo 'no action specified, try to pass --push, --pull, --commit or --all'"
-    # print(program)
+    # pprint(program)
     write_shell_script(program, "Script to update repos")
 
 
-def record_repos(path, r=True) -> list[dict]:
+def record_repos(path: str, r: bool = True) -> list[dict[str, Any]]:
     import git
-    path = tb.P(path).expanduser().absolute()
-    if path.is_file(): return []
-    search_res = path.search("*", files=False)
+    path_obj = tb.P(path).expanduser().absolute()
+    if path_obj.is_file(): return []
+    search_res = path_obj.search("*", files=False)
     res = []
     for a_search_res in search_res:
         if a_search_res.joinpath(".git").exists():
@@ -108,10 +112,10 @@ def record_repos(path, r=True) -> list[dict]:
     return res
 
 
-def install_repos(path):
+def install_repos(path: str):
     program = ""
-    path = tb.P(path).expanduser().absolute()
-    repos = tb.Read.pickle(path)
+    path_obj = tb.P(path).expanduser().absolute()
+    repos = tb.Read.pickle(path_obj)
     for repo in repos:
         parent_dir = tb.P(repo["parent_dir"]).expanduser().absolute().create()
         for idx, (remote_name, remote_url) in enumerate(repo["remotes"].items()):
@@ -120,7 +124,7 @@ def install_repos(path):
                 program += f"\ncd {parent_dir.as_posix()}/{tb.P(remote_url)[-1].stem}; git remote set-url {remote_name} {remote_url}\n"
                 # the new url-setting to ensure that account name before `@` was not lost (git clone ignores it): https://thisismygitrepo@github.com/thisismygitrepo/crocodile.git
             program += f"\ncd {parent_dir.as_posix()}/{tb.P(remote_url)[-1].stem}; git remote add {remote_name} {remote_url}\n"
-    print(program)
+    pprint(program)
     return program
 
 

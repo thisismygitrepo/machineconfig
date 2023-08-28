@@ -11,7 +11,9 @@ import os
 
 def install_nerd_fonts():
     # Step 1: download the required fonts that has all the glyphs and install them.
-    folder = get_latest_release("https://github.com/ryanoasis/nerd-fonts").joinpath("CascadiaCode.zip").download().unzip(inplace=True)
+    folder = get_latest_release("https://github.com/ryanoasis/nerd-fonts")
+    if not isinstance(folder, tb.P): raise ValueError(f"Failed to get latest release. Expected a Path object, got {folder}")
+    folder = folder.joinpath("CascadiaCode.zip").download().unzip(inplace=True)
     folder.search("*Windows*").delete(sure=True)
     folder.search("*readme*").delete(sure=True)
     folder.search("*LICENSE*").delete(sure=True)

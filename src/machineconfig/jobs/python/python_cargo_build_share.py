@@ -12,7 +12,7 @@ def build_rust_executable(url: str = r"https://github.com/atanunq/viu"):
 
     script = f"""
 cd ~
-git clone --depth 1 {url} 
+git clone --depth 1 {url}
 cd {tool_name}
 cargo install --path .
 """
@@ -30,7 +30,7 @@ cargo install --path .
         print(f"PermissionError, couldn't delete: {tb.P.home().joinpath(tool_name)}")
 
     if platform.system() == "Windows":
-        exe = exe.move(folder=tb.get_env().WindowsApps)
+        exe = exe.move(folder=tb.P.get_env().WindowsApps)
     elif platform.system() == "Linux":
         tb.Terminal().run(f"sudo mv {exe} /usr/local/bin")
         exe = tb.P(r"/usr/local/bin").joinpath(exe.name)

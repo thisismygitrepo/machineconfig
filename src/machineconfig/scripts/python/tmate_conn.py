@@ -7,7 +7,7 @@ import string
 import os
 
 
-def get_conn_string(sess_name):
+def get_conn_string(sess_name: str) -> str:
     creds = configparser.ConfigParser()
     creds.read(Path.home().joinpath('dotfiles/creds/tmate/creds.ini'))
     sess_name = creds['sessions_names'][sess_name]

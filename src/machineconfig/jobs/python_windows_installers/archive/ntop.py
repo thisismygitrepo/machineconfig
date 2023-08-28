@@ -5,7 +5,7 @@ Not used because it is not mature enough.
 --version doesn't work
 """
 
-from machineconfig.utils.utils import get_latest_release, tb
+from machineconfig.utils.utils import get_latest_release, P
 
 
 url = 'https://github.com/gsass1/NTop'
@@ -13,7 +13,8 @@ url = 'https://github.com/gsass1/NTop'
 
 def main():
     link = get_latest_release(url, download_n_extract=False)
-    link.joinpath('ntop.exe').download().move(folder=tb.get_env().WindowsApps, name="htop.exe", overwrite=True)
+    if not isinstance(link, P): raise ValueError(f"Failed to get latest release. Expected a Path object, got {url}")
+    link.joinpath('ntop.exe').download().move(folder=P.get_env().WindowsApps, name="htop.exe", overwrite=True)
 
 
 if __name__ == '__main__':

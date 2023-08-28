@@ -31,7 +31,7 @@ def main(program_name: Optional[str] = None):
     return total_program
 
 
-def get_program(program_name, options, installers):
+def get_program(program_name: str, options: list[Any], installers: list[Any]):
     if program_name == "all":
         if system() == "Linux":
             from machineconfig.jobs.python.python_linux_installers_all import main as main2

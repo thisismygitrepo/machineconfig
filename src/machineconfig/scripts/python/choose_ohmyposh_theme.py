@@ -2,13 +2,14 @@
 
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import display_options
+from typing import Optional
 
 
 descriptive_themes = ["markbull", "peru", "mojada", "festivetech", "sorin", "agnosterplus", "blueish",
                       "thecyberden", "plague", "kali", "fish", "ys", "slim", "paradox", "aliens", "atomicBit"]
 
 
-def main(new_theme=None):
+def main(new_theme: Optional[str] = None):
     """This is a helper for a powershell script.
     run this function to interactively choose a style. Optionally, inpsect the themes of oh my posh and select one:
     """

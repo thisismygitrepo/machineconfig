@@ -11,11 +11,13 @@ __doc__ = "Too long, didn't read, but for cli tools."
 
 
 def main(version: Optional[str] = None):
+    release = get_latest_release(url, version=version)
+    if not isinstance(release, tb.P): raise ValueError(f"Failed to get latest release. Expected a Path object, got {url}")
     if system() == 'Windows':
-        f = get_latest_release(url, version=version).joinpath('tealdeer-windows-x86_64-msvc.exe').download().rename('tldr.exe')
+        f = release.joinpath('tealdeer-windows-x86_64-msvc.exe').download().rename('tldr.exe')
         f.move(folder=f.get_env().WindowsApps, overwrite=True)
     elif system() == 'Linux':
-        f = get_latest_release(url, version=version).joinpath('tealdeer-linux-x86_64-musl').download().rename('tldr')
+        f = release.joinpath('tealdeer-linux-x86_64-musl').download().rename('tldr')
         find_move_delete_linux(f, 'tldr', delete=True)
         tb.Terminal().run("tldr --update")
     else:

@@ -31,9 +31,9 @@ def link_ssh(overwrite: bool = True):
         symlink(path.joinpath(item.name), item, prioritize_to_this=overwrite)
     if system == "Linux":  # permissions of ~/dotfiles/.ssh should be adjusted
         try:
-            subprocess.run(f"chmod 700 ~/.ssh/")
-            subprocess.run(f"chmod 700 {target.collapseuser().as_posix()}/")  # may require sudo
-            subprocess.run(f"chmod 600 {target.collapseuser().as_posix()}/*")
+            subprocess.run(f"chmod 700 ~/.ssh/", check=True)
+            subprocess.run(f"chmod 700 {target.collapseuser().as_posix()}/", check=True)  # may require sudo
+            subprocess.run(f"chmod 600 {target.collapseuser().as_posix()}/*", check=True)
         except Exception as e:
             ERROR_LIST.append(e)
             print("Caught error", e)
@@ -154,8 +154,9 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice
 def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice: Optional[str] = None):
     patches: list[str] = list(LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search().apply(lambda x: x.as_posix()))
     if choice is None:
-        choice = display_options(msg="Which patch to add?", options=list(patches) + ["all", "none"], default="none")
+        choice_chosen = display_options(msg="Which patch to add?", options=list(patches) + ["all", "none"], default="none", multi=False)
         assert isinstance(choice, str), f"Choice must be a string or a list of strings, not {type(choice)}"
+        choice = choice_chosen
     if choice == "none": return None
     elif str(choice) == "all": pass  # i.e. patches = patches
     elif isinstance(choice, (str, tb.P)): patches = [choice]

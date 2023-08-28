@@ -11,6 +11,7 @@ __doc__ = """A terminal file explorer with vi keybindings"""
 def main(version: Optional[str] = None):
     repo_url = tb.P(r"https://github.com/sayanarijit/xplr")
     release = get_latest_release(repo_url.as_url_str(), version=version)
+    if not isinstance(release, tb.P): raise ValueError(f"Failed to get latest release. Expected a Path object, got {release}")
     path = release.joinpath(f"xplr-linux.tar.gz").download().ungz_untar(inplace=True)
     exe = path.joinpath("xplr")
     exe.chmod(0o777)

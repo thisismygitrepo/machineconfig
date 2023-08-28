@@ -16,7 +16,7 @@ safe_apps_url = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower
 cloud = "gdpo"
 
 
-def scan(path, pct=0.0):
+def scan(path: tb.P, pct=0.0):
     vt = tb.install_n_import(package="vt", name="vt-py")
     client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
     console = Console()
@@ -66,7 +66,7 @@ def main():
     positive_pct = []
     # for app in track(apps, description="App apps scanning..."):
     for idx, app in enumerate(apps_paths_raw):
-        try: res = scan(app, idx/len(apps_paths_raw)*100)
+        try: res = scan(path=app, pct=idx / len(apps_paths_raw) * 100)
         except ValueError as ve:
             print(ve)
             res = None
@@ -89,7 +89,7 @@ def main():
     print(res_df)
 
 
-def upload(path):
+def upload(path: tb.P):
     set_time_out = tb.install_n_import("call_function_with_timeout").SetTimeout
     def func():
         return path.to_cloud(cloud, rel2home=True, share=True)
