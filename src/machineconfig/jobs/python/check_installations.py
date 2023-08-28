@@ -36,10 +36,10 @@ def scan(path: tb.P, pct: float = 0.0):
                 anal = client.get_object("/analyses/{}", analysis.id)
                 # print(anal.status)
                 if anal.status == "completed": break
-            except:
+            except Exception as ex:  # type: ignore
                 repeat_counter += 1
                 if repeat_counter > 2:
-                    raise ValueError(f"Error in scanning {path}")
+                    raise ValueError(f"Error in scanning {path}") from ex
                 print(f"Error in scanning, trying again.")
             time.sleep(30)
 
@@ -154,9 +154,9 @@ class PrecompliedInstaller:
                     exe.move(folder=tb.P.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
             return True
 
-        res = tb.L(self.df.iterrows()).apply(lambda x: install_cli_apps(x[1]), jobs=20)
+        res = tb.L(self.df.iterrows()).apply(lambda x: install_cli_apps(x[1].to_dict()), jobs=20)
 
-        print("\n"*3)
+        print("\n" * 3)
         for item_flag, item_name in zip(res, self.df["app_name"]):
             if item_flag: print(f"✅ {item_name} is installed. 😁")
             else: print(f"❌ {item_name} failed to install for reasons explained in the log above, try manually.")
