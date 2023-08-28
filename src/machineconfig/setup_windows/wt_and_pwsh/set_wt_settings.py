@@ -113,7 +113,7 @@ class TerminalSettings(object):
             elif name == "Command Prompt": cmd = profile
             elif name == "Azure Cloud Shell": azure = profile
             else: others.append(profile)
-        self.profs = [item for item in [pwsh, croshell, ubuntu, wpwsh, cmd, azure] + others if item is not None]
+        self.profs = tb.L([item for item in [pwsh, croshell, ubuntu, wpwsh, cmd, azure] + others if item is not None])
 
 
 def main():

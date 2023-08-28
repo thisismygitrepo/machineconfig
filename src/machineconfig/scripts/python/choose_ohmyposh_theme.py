@@ -20,7 +20,7 @@ def main(new_theme: Optional[str] = None):
     # current_theme = tb.P(os.environ["POSH_THEME"]).trunk
     profile = tb.Terminal().run("$profile", shell="pwsh").op2path()
     if not isinstance(profile, tb.P): raise ValueError(f"Could not find profile file. Got {profile}")
-    current_theme = tb.P(tb.L(profile.read_text().split(" ")).filter(lambda x: ".omp.json" in x)[0]).expanduser().absolute().trunk
+    current_theme = tb.P(tb.L(profile.read_text().split(" ")).filter(lambda x: ".omp.json" in x).list[0]).expanduser().absolute().trunk
 
     if new_theme == "manual":
         tb.P("https://ohmyposh.dev/docs/themes").start()  # replace ~/jan... with full path to theme. use: start $profile

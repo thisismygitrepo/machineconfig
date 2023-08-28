@@ -6,7 +6,7 @@ from crocodile.core import List
 import machineconfig.jobs.python_linux_installers as inst
 import machineconfig.jobs.python_generic_installers as gens
 import platform
-from typing import Optional, Any
+from typing import Optional
 
 
 def get_cli_py_installers(dev: bool = False):

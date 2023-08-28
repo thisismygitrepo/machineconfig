@@ -47,7 +47,8 @@ def build_template(tabs: list[str]):
 
 
 def launch_from_ssh_config():
-    hosts = choose_ssh_host()
+    hosts = choose_ssh_host(multi=True)
+    assert isinstance(hosts, list)
     res = build_template(hosts)
     write_shell_script(res, execute=False, desc="zellij launch script")
     return None

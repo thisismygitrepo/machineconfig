@@ -117,7 +117,7 @@ class PrecompliedInstaller:
     def install(self, name: str):
         res = self.df.query(f"app == '{name}'")
         if len(res) == 0 or len(res) > 1:
-            print(f"Couldn't find unique result when searching safe_apps_records @ {self.safe_apps_records}")
+            print(f"Couldn't find unique result when searching safe_apps_records @ {safe_apps_records}")
             return None
         tb.P(str(res['app_url'])).download()
 

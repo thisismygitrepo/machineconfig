@@ -13,7 +13,7 @@ from rich.panel import Panel
 from rich.console import Console
 from rich.syntax import Syntax
 import platform
-from typing import Optional, Union, Any
+from typing import Optional, Union, Any, TypeVar
 
 
 LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
@@ -22,9 +22,10 @@ PROGRAM_PATH = P.tmp().joinpath("shells/python_return_command") + (".ps1" if pla
 CONFIG_PATH = P.home().joinpath(".config/machineconfig")
 tmp_install_dir = P.tmp(folder="tmp_installers")
 
+T = TypeVar("T")
 
-def display_options(msg: str, options: list[Any], header: str = "", tail: str = "", prompt: str = "",
-                    default: Optional[Any] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[Any, list[Any]]:
+def display_options(msg: str, options: list[T], header: str = "", tail: str = "", prompt: str = "",
+                    default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[T, list[T]]:
     tool_name = "fzf"
     if fzf and check_tool_exists(tool_name):
         install_n_import("pyfzf")
@@ -117,8 +118,8 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
         exe = downloaded
     else:
         res = downloaded.search(f"*{tool_name}*", folders=False, r=True)
-        if len(res) == 1: exe = res[0]
-        else: exe = downloaded.search(tool_name, folders=False, r=True)[0]
+        if len(res) == 1: exe = res.list[0]
+        else: exe = downloaded.search(tool_name, folders=False, r=True).list[0]
     print(f"MOVING file `{repr(exe)}` to '/usr/local/bin'")
     exe.chmod(0o777)
     # exe.move(folder=r"/usr/local/bin", overwrite=False)
