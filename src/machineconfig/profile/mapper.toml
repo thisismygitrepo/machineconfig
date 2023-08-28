@@ -105,9 +105,9 @@ home = {this = '~/win', to_this = '/mnt/c/Users/username'}
 
 [nvim_windows]
 
-[nvim]
-flake8 = {this = '~/.flake8', to_this = 'LIBRARY_ROOT/settings/lvim/generic/plugins_config/.flake8'}
-
+[linters]
+flake8 = {this = '~/.flake8', to_this = 'LIBRARY_ROOT/settings/linters/.flake8'}
+mypy = {this = '~/.mypy.ini', to_this = 'LIBRARY_ROOT/settings/linters/.mypy.ini'}
 
 [helix_windows]
 languages = { this = '~/AppData/Roaming/helix/languages.toml', to_this = 'LIBRARY_ROOT/settings/helix/languages.toml' }

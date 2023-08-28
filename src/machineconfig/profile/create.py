@@ -157,15 +157,14 @@ def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice
     patches: list[str] = list(LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search().apply(lambda x: x.as_posix()))
     if choice is None:
         choice_chosen = display_options(msg="Which patch to add?", options=list(patches) + ["all", "none"], default="none", multi=False)
-        assert isinstance(choice, str), f"Choice must be a string or a list of strings, not {type(choice)}"
+        assert isinstance(choice_chosen, str), f"Choice must be a string or a list of strings, not {type(choice)}"
         choice = choice_chosen
     if choice == "none": return None
     elif str(choice) == "all": pass  # i.e. patches = patches
-    elif isinstance(choice, (str, tb.P)): patches = [choice]
-    else: raise ValueError(f"Choice must be a string or a list of strings, not {type(choice)}")
+    else: patches = [choice]
 
-    profile_path = profile_path or get_shell_profile_path()
-    profile = profile_path.read_text()
+    profile_path_obj = tb.P(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
+    profile = profile_path_obj.read_text()
 
     for patch_path in patches:
         patch_path = tb.P(patch_path)
@@ -178,7 +177,7 @@ def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice
         if "microsoft" in res.lower() or "wsl" in res.lower():
             profile += "\ncd ~"  # this is to make sure that the current dir is not in the windows file system, which is terribly slow and its a bad idea to be there anyway.
 
-    profile_path.write_text(profile)
+    profile_path_obj.write_text(profile)
 
 
 def main(choice: Optional[str] = None):

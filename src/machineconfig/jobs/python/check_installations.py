@@ -56,7 +56,7 @@ def scan(path: tb.P, pct: float = 0.0):
     return positive_pct
 
 
-def main():
+def main() -> None:
     apps_paths_raw = get_installed_cli_apps()
 
     app_versions = []
@@ -75,7 +75,7 @@ def main():
         positive_pct.append(res)
 
     res_df = pd.DataFrame({"app_name": apps_paths_raw.stem.list, "version": app_versions, "positive_pct": positive_pct,
-                           "app_path": apps_paths_raw.apply(lambda x: x.collapseuser(strict=False).as_posix()).list})
+                                "app_path": apps_paths_raw.apply(lambda x: x.collapseuser(strict=False).as_posix()).list})
 
     apps_safe_df = res_df.query("positive_pct < 5")
 

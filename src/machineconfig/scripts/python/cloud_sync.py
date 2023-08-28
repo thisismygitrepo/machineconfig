@@ -1,12 +1,12 @@
 
+"""CS
+"""
+
 from crocodile.file_management import P, Read
 from machineconfig.utils.utils import PROGRAM_PATH
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse
 
-"""
-
-"""
 
 
 def parse_cloud_source_target(args: argparse.Namespace):
@@ -89,7 +89,7 @@ def args_parser():
     # rclone_cmd += f"  --vfs-cache-mode full"
     if args.delete: rclone_cmd += " --delete-during"
 
-    if args.verbose: txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd)
+    if args.verbose: txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd, cloud_brand="Unknown")
     else: txt = f"""cd ~\n{rclone_cmd}"""
     print(r'running command'.center(100, '-'))
     print(txt)
