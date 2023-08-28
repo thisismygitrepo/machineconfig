@@ -27,7 +27,9 @@ def main(version: Optional[str] = None) -> None:
             return None
         name = f'{repo_url[-1]}-{exe[-1]}-{suffix}.tar.xz'
         exe = exe.joinpath(name).download().unxz_untar(inplace=True)
-        exe = exe.search()[0].joinpath("hx")
+        search_res = exe.search()
+        tmp = search_res.list[0]
+        exe = tmp.joinpath("hx")
         exe.chmod(0o777)
         # exe.move(folder=r"/usr/local/bin", overwrite=True)
         tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)

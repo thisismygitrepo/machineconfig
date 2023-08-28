@@ -66,7 +66,7 @@ class ProcessManager:
             else: print(f'No process has `{command}` in its command.')
 
 
-def get_age(create_time: int):
+def get_age(create_time: float):
     try: age = pd.Timestamp.now(tz="Australia/Adelaide") - pd.to_datetime(create_time, unit="s", utc=True).tz_convert(timezone("Australia/Adelaide"))
     except Exception as e:
         try: age = pd.Timestamp.now() - pd.to_datetime(create_time, unit="s", utc=True).tz_localize(tz=None)

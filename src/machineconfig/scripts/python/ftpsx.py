@@ -1,4 +1,7 @@
 
+"""Sx
+"""
+
 import argparse
 from crocodile.toolbox import SSH
 
@@ -18,10 +21,11 @@ def main():
     # parser.add_argument("-d", "--destination", help=f"destination folder", default=None)
 
     args = parser.parse_args()
-    import paramiko
+    # import paramiko
+    from paramiko.ssh_exception import AuthenticationException
     try:
         ssh = SSH(rf'{args.machine}')
-    except paramiko.ssh_exception.AuthenticationException:
+    except AuthenticationException:
         print("Authentication failed, trying manually:")
         print(f"Caution: Ensure that username is passed appropriately as this exception only handles password.")
         import getpass

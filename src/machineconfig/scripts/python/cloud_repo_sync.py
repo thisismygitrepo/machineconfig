@@ -1,4 +1,6 @@
 
+"""utils"""
+
 import crocodile.toolbox as tb
 import argparse
 import platform
@@ -94,9 +96,9 @@ repo_root.to_cloud(cloud='{cloud}', zip=True, encrypt=True, rel2home=True, os_sp
         if resp.lower() == "y":
             repo_sync_root.delete(sure=True)
             from git.remote import Remote
-            from git import Repo
+            from git.repo import Repo
             try: Remote.remove(Repo(repo_root), "originEnc")
-            except: pass
+            except Exception: pass  # type: ignore
             repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
         else:
             print(f"When ready, use this snippet: \n{program}")

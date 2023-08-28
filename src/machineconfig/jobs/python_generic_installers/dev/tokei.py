@@ -10,7 +10,7 @@ __doc__ = """Counts the number of lines of code, comments, and blanks in a proje
 
 def main(version: Optional[str] = None):
     url = get_latest_release('https://github.com/XAMPPRocky/tokei', download_n_extract=False, version=version)
-    assert url is not None, "Could not find a release for tokei"
+    assert isinstance(url, tb.P), f"Expected a Path object, got {type(url)} instead."
     if system() == 'Windows':
         url.joinpath('tokei-x86_64-pc-windows-msvc.exe').download().move(folder=tb.P.get_env().WindowsApps, name='tokei.exe', overwrite=True)
     else:

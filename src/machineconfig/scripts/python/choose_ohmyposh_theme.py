@@ -1,4 +1,6 @@
 
+"""Oh my posh theme chooser
+"""
 
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import display_options

@@ -34,7 +34,7 @@ def main(program_name: Optional[str] = None):
     return total_program
 
 
-def get_program(program_name: str, options: list[Any], installers: list[Any]):
+def get_program(program_name: str, options: list[Any], installers: list[tb.P]):
     if program_name == "all":
         if system() == "Linux":
             from machineconfig.jobs.python.python_linux_installers_all import main as main2
@@ -56,8 +56,8 @@ def get_program(program_name: str, options: list[Any], installers: list[Any]):
             if sub_program.startswith("#winget"): sub_program = sub_program[1:]
             program += "\n" + sub_program
     elif program_name == "Other dev apps":
-        installers = get_cli_py_installers(dev=True)
-        options = list(installers.apply(lambda x: x.stem + ((' -- ' + str(x.readit().__doc__)) if x.exists() else '')))
+        installers = get_cli_py_installers(dev=True).list
+        options = tb.L(installers).apply(lambda x: x.stem + ((' -- ' + str(x.readit().__doc__)) if x.exists() else '')).list
         program_names = display_options(msg="", options=sorted(options), header="CHOOSE DEV APP", fzf=True, multi=True)
         program = ""
         for name in program_names:
@@ -79,7 +79,7 @@ def get_program(program_name: str, options: list[Any], installers: list[Any]):
 
 def parse_apps_installer_linux(txt: str):
     txts = txt.split("""yes '' | sed 3q; echo "----------------------------- installing """)
-    return tb.Struct.from_keys_values_pairs(tb.L(txts).apply(lambda tmp:  (tmp.split('----')[0].rstrip().lstrip(), "\n".join(tmp.split("\n")[1:])))[1:])
+    return tb.Struct.from_keys_values_pairs(tb.L(txts).apply(lambda tmp: (tmp.split('----')[0].rstrip().lstrip(), "\n".join(tmp.split("\n")[1:])))[1:])
 
 
 def parse_apps_installer_windows(txt: str) -> dict[str, Any]:

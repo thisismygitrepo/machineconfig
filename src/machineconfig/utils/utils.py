@@ -102,11 +102,11 @@ def find_move_delete_windows(downloaded: P, tool_name: Optional[str] = None, del
     if downloaded.is_file():
         exe = downloaded
     else:
-        if tool_name is None: exe = downloaded.search("*.exe", r=True)[0]
+        if tool_name is None: exe = downloaded.search("*.exe", r=True).list[0]
         else:
             tmp = downloaded.search(f"{tool_name}.exe", r=True)
-            if len(tmp) == 1: exe = tmp[0]
-            else: exe = downloaded.search("*.exe", r=True)[0]
+            if len(tmp) == 1: exe = tmp.list[0]
+            else: exe = downloaded.search("*.exe", r=True).list[0]
     exe.move(folder=P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
     if delete: downloaded.delete(sure=True)
     return exe
@@ -143,9 +143,8 @@ def get_latest_release(repo_url: str, download_n_extract: bool = False, suffix: 
 
     download_link = P(repo_url + "/releases/download/" + latest_version)
     compression = compression or ("zip" if not linux else "tar.gz")
-    version = download_link[-1]
-    version = str(version).replace("v", "") if strip_v else str(version)
-    tool_name = tool_name or P(repo_url)[-1]
+    version = str(download_link[-1]).replace("v", "") if strip_v else str(download_link[-1])
+    tool_name = tool_name or str(P(repo_url)[-1])
     P.home().joinpath(f"tmp_results/cli_tools_installers/versions/{tool_name}").create(parents_only=True).write_text(version)
 
     if not download_n_extract: return download_link

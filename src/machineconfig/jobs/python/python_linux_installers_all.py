@@ -2,6 +2,7 @@
 """all
 """
 import crocodile.toolbox as tb
+from crocodile.core import List
 import machineconfig.jobs.python_linux_installers as inst
 import machineconfig.jobs.python_generic_installers as gens
 import platform
@@ -37,7 +38,7 @@ def install_logic(py_file: tb.P, version: Optional[str] = None):
         return f"Failed at {py_file.stem} with {ex}"
 
 
-def main(installers: Optional[list[Any]] = None, safe: bool = False):
+def main(installers: Optional[list[tb.P]] = None, safe: bool = False):
     if safe:
         from machineconfig.jobs.python.check_installations import safe_apps_url
         apps_dir = tb.P(safe_apps_url.read_text()).download().unzip(inplace=True)
@@ -49,12 +50,16 @@ def main(installers: Optional[list[Any]] = None, safe: bool = False):
         apps_dir.delete(sure=True)
         return None
 
-    installers = installers if installers is not None else tb.L(get_cli_py_installers(dev=False))
+    if not isinstance(installers, list):
+        installers_concrete = get_cli_py_installers(dev=False)
+    else:
+        installers_concrete: List[tb.P] = List(installers)
+        # res = installers_concrete[:4]
 
-    install_logic(installers[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
+    install_logic(installers_concrete.list[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
 
     # summarize results
-    res = installers[1:].apply(install_logic, jobs=10)
+    res = installers_concrete.slice(start=1).apply(install_logic, jobs=10)
     from rich.console import Console
     console = Console()
     print("\n")

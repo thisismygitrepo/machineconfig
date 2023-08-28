@@ -1,4 +1,7 @@
 
+"""Py installers.
+"""
+
 import crocodile.toolbox as tb
 import machineconfig.jobs.python_windows_installers as inst
 import machineconfig.jobs.python_generic_installers as gens
@@ -15,7 +18,7 @@ def get_cli_py_installers(dev: bool = False):
 
 
 def main(dev: bool = False):
-    installers = tb.L(get_cli_py_installers(dev=dev))
+    installers = get_cli_py_installers(dev=dev)
     linux_main(installers=list(installers))
 
 

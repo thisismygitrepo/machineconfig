@@ -19,7 +19,7 @@ def main(version: Optional[str] = None):
     # pre-release
     path = tb.P(r'https://github.com/kamiyaa/joshuto/releases/download/v0.9.4/joshuto-v0.9.4-x86_64-unknown-linux-gnu.tar.gz')
     path = path.download().ungz_untar(inplace=True)
-    exe = path.search()[0].joinpath("joshuto")
+    exe = path.search().list[0].joinpath("joshuto")
     exe.chmod(0o777)
     tb.Terminal().run(f"sudo mv {exe} /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
     path.delete(sure=True)

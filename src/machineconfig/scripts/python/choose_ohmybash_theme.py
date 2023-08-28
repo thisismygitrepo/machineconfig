@@ -21,7 +21,7 @@ def main(new_theme: Optional[str] = None):
                                     prompt=f"Recommended descriptive ones are {descriptive_themes}")
         if isinstance(tmp, str): new_theme = tmp
         else: raise NotImplementedError(f"new_theme is not a string: {new_theme}")
-    if new_theme == "surprise me": new_theme = themes.sample()[0]
+    if new_theme == "surprise me": new_theme = themes.sample().list[0]
     print("Current Theme:", current_theme)
     print("New theme: ", f'"{new_theme}"')  #
     profile.modify_text(txt_search=current_theme, txt_alt=f'"{new_theme}"', replace_line=False)

@@ -19,10 +19,11 @@ class GitAction(Enum):
 
 
 def git_action(path: tb.P, action: GitAction, mess: Optional[str] = None, r: bool = False) -> str:
-    import git
+    from git.exc import InvalidGitRepositoryError
+    from git.repo import Repo
     try:
-        repo = git.Repo(str(path), search_parent_directories=False)
-    except git.exc.InvalidGitRepositoryError:
+        repo = Repo(str(path), search_parent_directories=False)
+    except InvalidGitRepositoryError:
         pprint(f"Skipping {path} because it is not a git repository.")
         if r:
             prgs = [git_action(path=sub_path, action=action, mess=mess, r=r) for sub_path in path.search()]
@@ -71,9 +72,10 @@ def main():
 
     program = ""
     if args.record:
-        res = record_repos(path=path)
+        res = record_repos(path=str(path))
         pprint(f"Recorded repositories:\n", res)
-        save_path = tb.Save.pickle(obj=res, path=CONFIG_PATH.joinpath("repos").joinpath(path.rel2home()).joinpath("repos.pkl"))
+        save_path = CONFIG_PATH.joinpath("repos").joinpath(path.rel2home()).joinpath("repos.pkl")
+        tb.Save.pickle(obj=res, path=save_path)
         pprint(f"Result pickled at {tb.P(save_path)}")
         if args.cloud is not None: tb.P(save_path).to_cloud(rel2home=True, cloud=args.cloud)
         program += f"""\necho '>>>>>>>>> Finished Recording'\n"""
@@ -83,7 +85,7 @@ def main():
             path = CONFIG_PATH.joinpath("repos").joinpath(path.rel2home()).joinpath("repos.pkl")
             if not path.exists(): path.from_cloud(cloud=args.cloud, rel2home=True)
         assert (path.exists() and path.stem == 'repos.pkl') or args.cloud is not None, f"Path {path} does not exist and cloud was not passed. You can't clone without one of them."
-        program += install_repos(path=path)
+        program += install_repos(path=str(path))
     elif args.all or args.commit or args.pull or args.push:
         for a_path in path.search("*"):
             program += f"""echo "{("Handling " + str(a_path)).center(80, "-")}" """
@@ -96,7 +98,7 @@ def main():
 
 
 def record_repos(path: str, r: bool = True) -> list[dict[str, Any]]:
-    import git
+    from git.repo import Repo
     path_obj = tb.P(path).expanduser().absolute()
     if path_obj.is_file(): return []
     search_res = path_obj.search("*", files=False)
@@ -104,11 +106,11 @@ def record_repos(path: str, r: bool = True) -> list[dict[str, Any]]:
     for a_search_res in search_res:
         if a_search_res.joinpath(".git").exists():
             # get list of remotes using git python
-            repo = git.Repo(a_search_res)
+            repo = Repo(a_search_res)
             remotes = {remote.name: remote.url for remote in repo.remotes}
             res.append({"parent_dir": a_search_res.parent.collapseuser().as_posix(), "remotes": remotes})
         else:
-            if r: res += record_repos(a_search_res, r=r)
+            if r: res += record_repos(str(a_search_res), r=r)
     return res
 
 

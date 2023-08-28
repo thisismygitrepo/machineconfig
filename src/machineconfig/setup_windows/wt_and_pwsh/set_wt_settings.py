@@ -1,4 +1,6 @@
 
+"""Set Windows Terminal Settings
+"""
 import crocodile.toolbox as tb
 import crocodile.environment as env
 from uuid import uuid4
