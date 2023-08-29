@@ -53,7 +53,7 @@ def main(installers: Optional[list[tb.P]] = None, safe: bool = False):
     if not isinstance(installers, list):
         installers_concrete = get_cli_py_installers(dev=False)
     else:
-        installers_concrete: List[tb.P] = List(installers)
+        installers_concrete = List(installers)
         # res = installers_concrete[:4]
 
     install_logic(installers_concrete.list[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.

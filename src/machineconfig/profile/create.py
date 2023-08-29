@@ -10,10 +10,10 @@ from machineconfig.utils.utils import symlink, LIBRARY_ROOT, REPO_ROOT, display_
 # import os
 import subprocess
 from rich.console import Console
-from typing import Optional
+from typing import Optional, Any
 
 
-ERROR_LIST = []  # append to this after every exception captured.
+ERROR_LIST: list[Any] = []  # append to this after every exception captured.
 CONFIG_ROOT = LIBRARY_ROOT.parent.parent.joinpath("settings")
 OTHER_SYSTEM = "windows" if system == "Linux" else "linux"
 SYSTEM = system.lower()
@@ -146,8 +146,8 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice
     profile = profile_path_obj.read_text()
 
     for a_file in sources:
-        file = a_file.replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix())
-        file = tb.P(file).collapseuser()  # this makes the shell profile interuseable across machines.
+        tmp = a_file.replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix())
+        file = tb.P(tmp).collapseuser()  # this makes the shell profile interuseable across machines.
         file = file.as_posix() if system == "Linux" else str(file)
         if file not in profile:
             if system == "Windows": profile += f"\n. {file}"
@@ -171,9 +171,9 @@ def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice
     profile = profile_path_obj.read_text()
 
     for patch_path in patches:
-        patch_path = tb.P(patch_path)
-        patch = patch_path.read_text()
-        if patch in profile: print(f"Skipping `{patch_path.name}`; patch already in profile")
+        patch_path_obj = tb.P(patch_path)
+        patch = patch_path_obj.read_text()
+        if patch in profile: print(f"Skipping `{patch_path_obj.name}`; patch already in profile")
         else: profile += "\n" + patch
 
     if system == "Linux":

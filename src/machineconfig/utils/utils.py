@@ -7,7 +7,7 @@ from crocodile.file_management import P, randstr
 from crocodile.meta import Terminal
 from crocodile.core import install_n_import
 # import crocodile.environment as env
-import machineconfig
+import src
 from rich.text import Text
 from rich.panel import Panel
 from rich.console import Console
@@ -16,7 +16,7 @@ import platform
 from typing import Optional, Union, TypeVar
 
 
-LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
+LIBRARY_ROOT = P(src.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
 REPO_ROOT = LIBRARY_ROOT.parent.parent
 PROGRAM_PATH = P.tmp().joinpath("shells/python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh")
 CONFIG_PATH = P.home().joinpath(".config/machineconfig")
@@ -42,12 +42,12 @@ def display_options(msg: str, options: list[T], header: str = "", tail: str = ""
         if default is not None:
             assert default in options, f"Default `{default}` option not in options `{list(options)}`"
             default_msg = Text(f" <<<<-------- DEFAULT", style="bold red")
-        else: default_msg = ""
+        else: default_msg = Text("")
         txt = Text("\n" + msg + "\n")
         for idx, key in enumerate(options):
             txt = txt + Text(f"{idx:2d} ", style="bold blue") + str(key) + (default_msg if default is not None and default == key else "") + "\n"
-        txt = Panel(txt, title=header, subtitle=tail, border_style="bold red")
-        console.print(txt)
+        txt_panel = Panel(txt, title=header, subtitle=tail, border_style="bold red")
+        console.print(txt_panel)
         choice_string = input(f"{prompt}\nEnter option *number* or hit enter for default choice: ")
         if choice_string == "":
             assert default is not None, f"Default option not available!"
@@ -59,15 +59,15 @@ def display_options(msg: str, options: list[T], header: str = "", tail: str = ""
                 choice_key = options[choice_idx]
             except IndexError as ie:  # i.e. converting to integer was successful but indexing failed.
                 if choice_string in options:  # string input
-                    choice_key = choice_string
-                    choice_idx = options.index(choice_key)
-                elif custom_input: return str(choice_string)
+                    choice_idx = options.index(choice_key)  # type: ignore #TODO: fix this
+                    choice_key = options[choice_idx]
+                elif custom_input: return str(choice_string)  # type: ignore #TODO: fix this
                 else: raise ValueError(f"Unknown choice. {choice_string}") from ie
             except TypeError as te:  # int(choice_string) failed due to # either the number is invalid, or the input is custom.
                 if choice_string in options:  # string input
-                    choice_key = choice_string
-                    choice_idx = options.index(choice_key)
-                elif custom_input: return str(choice_string)
+                    choice_idx = options.index(choice_key)  # type: ignore #TODO: fix this
+                    choice_key = options[choice_idx]
+                elif custom_input: return str(choice_string)  # type: ignore #TODO: fix this
                 else: raise ValueError(f"Unknown choice. {choice_string}") from te
         print(f"{choice_idx}: {choice_key}", f"<<<<-------- CHOICE MADE")
     return choice_key

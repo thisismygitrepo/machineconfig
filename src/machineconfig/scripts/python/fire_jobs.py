@@ -58,7 +58,7 @@ from {tb.P(choice_file).stem} import *
 from machineconfig.utils.utils import print_programming_script
 print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
 """
-        command: str = f"{exe} {tb.P.tmp().joinpath(f'tmp_scripts/python/{tb.randstr()}.py').create(parents_only=True).write_text(txt)} "
+        command = f"{exe} {tb.P.tmp().joinpath(f'tmp_scripts/python/{tb.randstr()}.py').create(parents_only=True).write_text(txt)} "
     elif args.interactive: command = f"{exe} {choice_file} "
     elif args.choose_function:
         module, choice_function = choose_function(choice_file)
@@ -82,8 +82,7 @@ print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
 
 def choose_function(file_path: str):
     print(f"Loading {file_path} ...")
-    module = tb.P(file_path).readit()
-    module: tb.Struct
+    module: tb.Struct = tb.P(file_path).readit()
     module = module.filter(lambda k, v: "function" in str(type(v)))
     module.print()
     options = module.apply(lambda k, v: f"{k} -- {type(v)} {tb.Display.get_repr(v.__doc__, limit=150) if v.__doc__ is not None else 'No docs for this.'}").to_list()

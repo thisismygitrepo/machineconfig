@@ -117,7 +117,7 @@ def record_repos(path: str, r: bool = True) -> list[dict[str, Any]]:
 def install_repos(path: str):
     program = ""
     path_obj = tb.P(path).expanduser().absolute()
-    repos = tb.Read.pickle(path_obj)
+    repos: list[dict[str, Any]] = tb.Read.pickle(path_obj)
     for repo in repos:
         parent_dir = tb.P(repo["parent_dir"]).expanduser().absolute().create()
         for idx, (remote_name, remote_url) in enumerate(repo["remotes"].items()):

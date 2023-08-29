@@ -19,7 +19,7 @@ class ProcessManager:
                 process_info.append([proc.pid, proc.name(), proc.username(), proc.cpu_percent(), mem_usage_mb, proc.status(), proc.create_time(), " ".join(proc.cmdline())])
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess): pass
         df = pd.DataFrame(process_info)
-        df.columns = ['pid', 'name', 'username', 'cpu_percent', 'memory_usage_mb', 'status', 'create_time', 'command']
+        df.columns = pd.Index(['pid', 'name', 'username', 'cpu_percent', 'memory_usage_mb', 'status', 'create_time', 'command'])
         df['create_time'] = pd.to_datetime(df['create_time'], unit='s', utc=True).apply(lambda x: x.tz_convert(timezone('Australia/Adelaide')))
         df = df.sort_values(by='memory_usage_mb', ascending=False).reset_index(drop=True)
         self.df = df
@@ -71,7 +71,7 @@ def get_age(create_time: float):
     except Exception as e:
         try: age = pd.Timestamp.now() - pd.to_datetime(create_time, unit="s", utc=True).tz_localize(tz=None)
         except Exception as ee:  # type: ignore
-            age = f"unknown due to {ee} and {e}"
+            return f"unknown due to {ee} and {e}"
     return age
 
 

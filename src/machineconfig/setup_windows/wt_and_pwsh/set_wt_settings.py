@@ -60,7 +60,7 @@ class TerminalSettings(object):
         if nerd_font: pwsh["font"] = dict(face="CaskaydiaCove Nerd Font")  # because oh-my-posh uses glyphs from this font.
         for idx, item in enumerate(self.profs):
             if item["name"] == "PowerShell":
-                self.profs[idx].update(pwsh)
+                self.profs.list[idx].update(pwsh)
                 break
         else: print(f"Couldn't customize powershell because profile not found, try to install it first.")
 
@@ -75,8 +75,8 @@ class TerminalSettings(object):
     def add_croshell(self):
         # Adding croshell if it is not there.
         # py_pr = tb.copy.deepcopy(pr)  # use it as a template for the new profile.
-        import machineconfig
-        lib_root = tb.P(machineconfig.__file__).parent.collapseuser().as_posix()
+        import src
+        lib_root = tb.P(src.__file__).parent.collapseuser().as_posix()
         croshell = dict(name="croshell",
                         guid="{" + str(uuid4()) + "}",
                         # commandline=f"powershell.exe -Command \"{activate} ipython -i -c 'from crocodile.toolbox import *'\"",
@@ -118,7 +118,7 @@ class TerminalSettings(object):
 
 
 def main():
-    shell = {"powershell": "pwsh.exe", "Windows Powershell": "powershell.exe"}["powershell"].split(".exe")[0]
+    shell = {"powershell": "pwsh.exe", "Windows Powershell": "powershell.exe"}["powershell"].split(".exe", maxsplit=1)[0]
     if shell == "pwsh":
         ts = TerminalSettings()
         ts.update_default_settings()

@@ -8,7 +8,6 @@ from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse
 
 
-
 def parse_cloud_source_target(args: argparse.Namespace):
     if args.source == ":":
         path = P(args.target).expanduser().absolute()
@@ -36,27 +35,27 @@ def parse_cloud_source_target(args: argparse.Namespace):
     if ":" in args.source:
         cloud = args.source.split(":")[0]
         target = P(args.target).expanduser().absolute()
-        source = f"{cloud}:{target.get_remote_path(os_specific=False, root=args.root).as_posix()}"
+        source = P(f"{cloud}:{target.get_remote_path(os_specific=False, root=args.root).as_posix()}")
     elif ":" in args.target:
         cloud = args.target.split(":")[0]
         source = P(args.source).expanduser().absolute()
-        target = f"{cloud}:{source.get_remote_path(os_specific=False, root=args.root).as_posix()}"
+        target = P(f"{cloud}:{source.get_remote_path(os_specific=False, root=args.root).as_posix()}")
     else:  # user did not specify remotepath, so it will be inferred here
         # but first we need to know whether the cloud is source or target
         remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
         for cloud in remotes:
-            if args.source == cloud:
+            if str(args.source) == cloud:
                 target = P(args.target).expanduser().absolute()
-                source = f"{cloud}:{target.get_remote_path(os_specific=False, root=args.root).as_posix()}"
+                source = P(f"{cloud}:{target.get_remote_path(os_specific=False, root=args.root).as_posix()}")
                 break
-            if args.target == cloud:
+            if str(args.target) == cloud:
                 source = P(args.source).expanduser().absolute()
-                target = f"{cloud}:{source.get_remote_path(os_specific=False, root=args.root).as_posix()}"
+                target = P(f"{cloud}:{source.get_remote_path(os_specific=False, root=args.root).as_posix()}")
                 break
         else:
             print(f"Could not find a remote in {remotes} that matches {args.source} or {args.target}.")
             raise ValueError
-    return cloud, source, target
+    return cloud, str(source), str(target)
 
 
 def args_parser():
