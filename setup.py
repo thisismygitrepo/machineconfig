@@ -3,7 +3,7 @@
 """
 
 import setuptools
-from src import __version__
+from src.machineconfig import __version__
 # this is a comment
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
