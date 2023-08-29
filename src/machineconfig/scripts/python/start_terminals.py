@@ -1,4 +1,7 @@
 
+"""Script to start terminals on windows and wsl
+"""
+
 from machineconfig.utils.utils import PROGRAM_PATH, display_options, install_n_import, get_ssh_hosts
 
 
@@ -18,9 +21,16 @@ def main_windows_and_wsl(hosts: list[str], orientation: str = "vertical", mprocs
     size = 0.3
     known_hosts = get_ssh_hosts()
     if len(hosts) == 1:
-        cmd = f"""
-wt --window {window} --title {hosts[0]}Windows powershell -Command "ssh {hosts[0]} {ssh_cmd}" `; split-pane --{orientation} --title {hosts[0]}wsl --size 0.5 powershell -Command "ssh {hosts[0]}wsl"
+
+        if "wsl" in hosts[0] or f"{hosts[0]}wsl" in known_hosts:  # its a windows machine with wsl
+            host_wind = hosts[0] if "wsl" not in hosts[0] else hosts[0].split("wsl")[0]
+            host_linux = f"{host_wind}wsl"
+            cmd = f"""
+wt --window {window} --title {hosts[0]}Windows powershell -Command "ssh {host_linux} {ssh_cmd}" `; split-pane --{orientation} --title {hosts[0]}wsl --size 0.5 powershell -Command "ssh {host_wind} `; split-pane --{orientation_oposite} --size 0.5 powershell "
 """
+        else:  # its a windows machine without wsl
+            cmd = f"""wt --window {window} --title {hosts[0]}Windows powershell -Command "ssh {hosts[0]} {ssh_cmd}" `; split-pane --{orientation} --title {hosts[0]}wsl --size 0.1 powershell """
+
     elif len(hosts) > 1:
         pane_cmd = f'powershell -Command "ssh {hosts[0]} {ssh_cmd}" ' if hosts[0] != THIS_MACHINE else ''
         cmd = f"""wt --window {window} --title {hosts[0]}_Windows {pane_cmd} """
