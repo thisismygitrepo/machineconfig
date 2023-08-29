@@ -1,6 +1,8 @@
 
 """
 setup file for each shell can be found in $profile. The settings.json is the config file for Terminal.
+https://glitchbone.github.io/vscode-base16-term/#/3024
+
 """
 
 import crocodile.toolbox as tb

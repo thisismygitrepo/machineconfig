@@ -21,7 +21,6 @@ def main_windows_and_wsl(hosts: list[str], orientation: str = "vertical", mprocs
     size = 0.3
     known_hosts = get_ssh_hosts()
     if len(hosts) == 1:
-
         if "wsl" in hosts[0] or f"{hosts[0]}wsl" in known_hosts:  # its a windows machine with wsl
             host_wind = hosts[0] if "wsl" not in hosts[0] else hosts[0].split("wsl")[0]
             host_linux = f"{host_wind}wsl"
