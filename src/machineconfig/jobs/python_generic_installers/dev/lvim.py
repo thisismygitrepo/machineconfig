@@ -28,7 +28,6 @@ pip install pynvim
 pip install flake8
 pip install black
 """
-        # tb.P(r"AppData/Local/lvim").joinpath("config.lua").append_text(tb.P(machineconfig.__file__).joinpath("src/machineconfig/settings/lvim_windows/config_additional.lua").read_text())
         return script
     else:
         tb.P.home().joinpath(".config/lvim").delete(sure=True)

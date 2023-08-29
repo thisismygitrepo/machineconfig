@@ -75,8 +75,8 @@ class TerminalSettings(object):
     def add_croshell(self):
         # Adding croshell if it is not there.
         # py_pr = tb.copy.deepcopy(pr)  # use it as a template for the new profile.
-        import src
-        lib_root = tb.P(src.__file__).parent.collapseuser().as_posix()
+        import machineconfig
+        lib_root = tb.P(machineconfig.__file__).parent.collapseuser().as_posix()
         croshell = dict(name="croshell",
                         guid="{" + str(uuid4()) + "}",
                         # commandline=f"powershell.exe -Command \"{activate} ipython -i -c 'from crocodile.toolbox import *'\"",

@@ -7,7 +7,7 @@ from crocodile.file_management import P, randstr
 from crocodile.meta import Terminal
 from crocodile.core import install_n_import
 # import crocodile.environment as env
-import src
+import machineconfig
 from rich.text import Text
 from rich.panel import Panel
 from rich.console import Console
@@ -16,7 +16,7 @@ import platform
 from typing import Optional, Union, TypeVar
 
 
-LIBRARY_ROOT = P(src.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
+LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
 REPO_ROOT = LIBRARY_ROOT.parent.parent
 PROGRAM_PATH = P.tmp().joinpath("shells/python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh")
 CONFIG_PATH = P.home().joinpath(".config/machineconfig")

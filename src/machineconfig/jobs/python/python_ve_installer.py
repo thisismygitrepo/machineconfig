@@ -4,14 +4,13 @@
 
 import crocodile.toolbox as tb
 import platform
-import src
-# from machineconfig.utils.utils import write_shell_script
+# import machineconfig
+from machineconfig.utils.utils import LIBRARY_ROOT as lib_root
 from rich.panel import Panel
 from rich.console import Console
 # from rich.text import Text
 
 system: str = platform.system()
-lib_root = tb.P(src.__file__).parent
 
 
 def main():
