@@ -8,6 +8,7 @@ $ErrorActionPreference = "Stop"
 winget install --no-upgrade --name "Brave" --Id Brave.Brave --source winget
 #winget install --no-upgrade --name "Chrome Remote Desktop Host" --Id "Google.ChromeRemoteDesktop" --source winget
 #winget install --no-upgrade --name Zoom --Id Zoom.Zoom --source winget
+#winget install --no-upgrade --Id Cloudflare.cloudflared --source winget
 
 # productivity
 winget install --no-upgrade --name "7-zip" --Id "7zip.7zip" --source winget --accept-package-agreements --accept-source-agreements

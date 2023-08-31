@@ -1,4 +1,7 @@
 
+"""Mount a remote SSHFS share on a local directory
+"""
+
 import crocodile.toolbox as tb
 from platform import system
 from machineconfig.utils.utils import PROGRAM_PATH, choose_ssh_host
@@ -9,7 +12,9 @@ def main():
     print(f"Mounting SSHFS ... ")
     share_info = input("share path? (e.g. user@host:/path) [press enter for interactive choice] = ")
     if share_info == "":
-        ssh = tb.SSH(choose_ssh_host(multi=False))
+        tmp = choose_ssh_host(multi=False)
+        assert isinstance(tmp, str)
+        ssh = tb.SSH(host=tmp)
         share_info = f"{ssh.username}@{ssh.hostname}:{ssh.run('echo $HOME').op}/data/share_ssh"
     else:
         ssh = tb.SSH(share_info.split(":")[0])

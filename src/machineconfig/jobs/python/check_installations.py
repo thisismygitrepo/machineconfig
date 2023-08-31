@@ -142,7 +142,8 @@ class PrecompliedInstaller:
                     if len(tmp) == 0:
                         print(f"Can't find the installer for {row['app_name']}, skipping installation of this program.")
                         return False
-                    else: tb.Read.py(tmp[0])["main"](version=version)
+                    elif len(tmp) == 1: tb.Read.py(tmp.list[0])["main"](version=version)
+                    else: raise ValueError(f"Found multiple installers for {row['app_name']}, skipping installation of this program.")
             else:
                 name = row["app_name"]
                 if platform.system().lower() == "windows" and not name.endswith(".exe"): name += ".exe"

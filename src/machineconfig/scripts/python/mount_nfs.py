@@ -11,7 +11,9 @@ def main():
     print(f"Mounting NFS Share ... ")
     share_info = input("share path? (e.g. machine:~/data/share_nfs) [press enter for interactive choice] = ")
     if share_info == "":
-        ssh = tb.SSH(choose_ssh_host(multi=False))
+        tmp = choose_ssh_host(multi=False)
+        assert isinstance(tmp, str)
+        ssh = tb.SSH(tmp)
         default = f"{ssh.hostname}:{ssh.run('echo $HOME').op}/data/share_nfs"
         share_info = display_options("Choose a share path: ", options=tb.L(ssh.run("cat /etc/exports").op.split("\n")).filter(lambda x: not x.startswith("#")).apply(lambda x: f"{ssh.hostname}:{x.split(' ')[0]}").list + [default], default=default)
         assert isinstance(share_info, str), f"share_info must be a string. Got {type(share_info)}"
