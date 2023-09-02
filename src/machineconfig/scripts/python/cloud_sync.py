@@ -11,7 +11,7 @@ import argparse
 DEFAULT_CLOUD = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote")
 
 
-def parse_cloud_source_target(args: argparse.Namespace):
+def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
     if args.source == ":":
         path = P(args.target).expanduser().absolute()
         for _i in range(len(path.parts)):
@@ -36,7 +36,7 @@ def parse_cloud_source_target(args: argparse.Namespace):
         else: args.target = DEFAULT_CLOUD.read_text().rstrip() + ":"
 
     if ":" in args.source:
-        cloud = args.source.split(":")[0]
+        cloud: str = args.source.split(":")[0]
         target = P(args.target).expanduser().absolute()
         source = P(f"{cloud}:{target.get_remote_path(os_specific=False, root=args.root).as_posix()}")
     elif ":" in args.target:
