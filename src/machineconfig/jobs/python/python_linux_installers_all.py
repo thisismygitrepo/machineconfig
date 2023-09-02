@@ -59,7 +59,7 @@ def main(installers: Optional[list[tb.P]] = None, safe: bool = False):
     install_logic(installers_concrete.list[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
 
     # summarize results
-    res = installers_concrete.slice(start=1).apply(install_logic, jobs=10)
+    res: tb.List[str] = installers_concrete.slice(start=1).apply(install_logic, jobs=10)
     from rich.console import Console
     console = Console()
     print("\n")

@@ -36,7 +36,7 @@ else {
     # echo "$env:USERPROFILE\venvs\$args"
     
     if ($args[0] -and "$env:VIRTUAL_ENV" -ne "$env:USERPROFILE\venvs\$args") {
-        echo "Deactivating virtual environment $env:VIRTUAL_ENV"
+        Write-Output "Deactivating virtual environment $env:VIRTUAL_ENV"
         deactivate -ErrorAction SilentlyContinue
         $name = $args[0]
         & "$env:USERPROFILE/venvs/$name/Scripts/Activate.ps1"

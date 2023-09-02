@@ -8,6 +8,9 @@ from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse
 
 
+DEFAULT_CLOUD = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote")
+
+
 def parse_cloud_source_target(args: argparse.Namespace):
     if args.source == ":":
         path = P(args.target).expanduser().absolute()
@@ -19,7 +22,7 @@ def parse_cloud_source_target(args: argparse.Namespace):
                 args.rel2home = tmp['rel2home']
                 break
             path = path.parent
-        else: args.source = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote").read_text().rstrip() + ":"
+        else: args.source = DEFAULT_CLOUD.read_text().rstrip() + ":"
     if args.target == ":":
         path = P(args.source).expanduser().absolute()
         for _i in range(len(path.parts)):
@@ -30,7 +33,7 @@ def parse_cloud_source_target(args: argparse.Namespace):
                 args.rel2home = tmp['rel2home']
                 break
             path = path.parent
-        else: args.target = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote").read_text().rstrip() + ":"
+        else: args.target = DEFAULT_CLOUD.read_text().rstrip() + ":"
 
     if ":" in args.source:
         cloud = args.source.split(":")[0]

@@ -1,4 +1,7 @@
 
+"""CC
+"""
+
 import crocodile.toolbox as tb
 import argparse
 from machineconfig.scripts.python.cloud_sync import parse_cloud_source_target
@@ -42,7 +45,7 @@ def arg_parser():
         res = tb.P(source).to_cloud(cloud=cloud, zip=args.zip, rel2home=args.rel2home, root=args.root,
                                     share=args.share, key=args.key, pwd=args.pwd, encrypt=args.encrypt, os_specific=args.os_specific,)
         if args.share: print(res.as_url_str())
-    else:  raise ValueError(f"Cloud `{cloud}` not found in source or target.")
+    else: raise ValueError(f"Cloud `{cloud}` not found in source or target.")
 
 
 if __name__ == "__main__":

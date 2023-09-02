@@ -1,4 +1,7 @@
 
+"""Update
+"""
+
 from platform import system
 import crocodile.toolbox as tb
 # from machineconfig.utils.utils import write_shell_script
@@ -8,20 +11,20 @@ sep = "\n"
 
 def main(verbose: bool = True) -> str:
     _ = verbose
-    repos = tb.P.home().joinpath("dotfiles/config/reposXXX.ini")
-    if repos.exists():
-        repos = repos.readit()
-        repo_package_list = repos.sections()
-    else:
-        repos = ["~/code/crocodile", "~/code/machineconfig", ]
-        repo_package_list = repos
+    repos_file = tb.P.home().joinpath("dotfiles/machineconfig/setup/repos")
+
+    repos: list[str] = ["~/code/crocodile", "~/code/machineconfig", ]
+    if repos_file.exists():
+        repos += [item.rstrip() for item in repos_file.read_text().split(",")]
+
     repos_objs = []
-    for a_package_path in repo_package_list:
+    for a_package_path in repos:
         try:
             repo = tb.install_n_import("git", "gitpython").Repo(str(tb.P(a_package_path).expanduser()), search_parent_directories=True)
             repos_objs.append(repo)
         except Exception as ex:
             print(ex)
+
     if system() == "Linux":
         additions = []
         for a_repo in repos_objs:
