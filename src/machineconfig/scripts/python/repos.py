@@ -61,12 +61,13 @@ def main():
     parser.add_argument("--all", help=f"pull, commit and push", action="store_true")
     parser.add_argument("--record", help=f"record respos", action="store_true")
     parser.add_argument("--clone", help=f"clone repos from record", action="store_true")
+    parser.add_argument("--version", help=f"After cloning, checkout to the specific commits as per records (instead of latest commits)", action="store_true")
     parser.add_argument("--recursive", "-r", help=f"recursive flag", action="store_true")
     # OPTIONAL
     parser.add_argument("--cloud", "-c", help=f"cloud", default=None)
     args = parser.parse_args()
 
-    if args.directory == "": path = tb.P.home().joinpath("code")
+    if args.directory == "": path = tb.P.home().joinpath("code")  # it is a positional argument, can never be empty.
     else: path = tb.P(args.directory).expanduser().absolute()
     _ = tb.install_n_import("git", "gitpython")
 
@@ -85,7 +86,7 @@ def main():
             path = CONFIG_PATH.joinpath("repos").joinpath(path.rel2home()).joinpath("repos.pkl")
             if not path.exists(): path.from_cloud(cloud=args.cloud, rel2home=True)
         assert (path.exists() and path.stem == 'repos.pkl') or args.cloud is not None, f"Path {path} does not exist and cloud was not passed. You can't clone without one of them."
-        program += install_repos(path=str(path))
+        program += install_repos(path=str(path), checkout_to_recorded_commit=args.version)
     elif args.all or args.commit or args.pull or args.push:
         for a_path in path.search("*"):
             program += f"""echo "{("Handling " + str(a_path)).center(80, "-")}" """
@@ -105,16 +106,20 @@ def record_repos(path: str, r: bool = True) -> list[dict[str, Any]]:
     res = []
     for a_search_res in search_res:
         if a_search_res.joinpath(".git").exists():
-            # get list of remotes using git python
-            repo = Repo(a_search_res)
+            repo = Repo(a_search_res)  # get list of remotes using git python
             remotes = {remote.name: remote.url for remote in repo.remotes}
-            res.append({"parent_dir": a_search_res.parent.collapseuser().as_posix(), "remotes": remotes})
+            try: commit = repo.head.commit.hexsha
+            except ValueError:  # look at https://github.com/gitpython-developers/GitPython/issues/1016
+                print(f"Failed to get latest commit of {repo}")
+                # cmd = "git config --global -add safe.directory"
+                commit = None
+            res.append({"parent_dir": a_search_res.parent.collapseuser().as_posix(), "remotes": remotes, "version": {"branch": repo.head.reference.name, "commit": commit}})
         else:
             if r: res += record_repos(str(a_search_res), r=r)
     return res
 
 
-def install_repos(path: str):
+def install_repos(path: str, checkout_to_recorded_commit: bool = False):
     program = ""
     path_obj = tb.P(path).expanduser().absolute()
     repos: list[dict[str, Any]] = tb.Read.pickle(path_obj)
@@ -126,6 +131,9 @@ def install_repos(path: str):
                 program += f"\ncd {parent_dir.as_posix()}/{tb.P(remote_url)[-1].stem}; git remote set-url {remote_name} {remote_url}\n"
                 # the new url-setting to ensure that account name before `@` was not lost (git clone ignores it): https://thisismygitrepo@github.com/thisismygitrepo/crocodile.git
             program += f"\ncd {parent_dir.as_posix()}/{tb.P(remote_url)[-1].stem}; git remote add {remote_name} {remote_url}\n"
+            if checkout_to_recorded_commit:
+                commit = repo['version']['commit']
+                if isinstance(commit, str): program += f"\n git checkout {commit}"
     pprint(program)
     return program
 
