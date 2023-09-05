@@ -5,7 +5,7 @@ fire
 
 import crocodile.toolbox as tb
 import platform
-from machineconfig.utils.utils import display_options, PROGRAM_PATH, get_current_ve, choose_ssh_host
+from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_host
 # https://github.com/pallets/click combine with fire. Consider
 # https://github.com/ceccopierangiolieugenio/pyTermTk for display_options build TUI
 # https://github.com/chriskiehl/Gooey build commandline interface
@@ -17,7 +17,7 @@ import argparse
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--path", type=str, help="The directory containing the jobs", default=".")
-    parser.add_argument("-v", "--ve", type=str, help="virtual enviroment name", default=None)
+    parser.add_argument("-v", "--ve", type=str, help="virtual enviroment name", default="")
     # optional flag for interactivity
     parser.add_argument("--interactive", "-i", action="store_true", help="Whether to run the job interactively using IPython")
     parser.add_argument("--debug", "-d", action="store_true", help="debug")
@@ -25,52 +25,65 @@ def main():
     parser.add_argument("--remote", "-r", action="store_true", help="launch on a remote machine")
     parser.add_argument("--module", "-m", action="store_true", help="launch the main file")
     parser.add_argument("--history", "-H", action="store_true", help="choose from history")
+
     args = parser.parse_args()
-    jobs_dir = args.path
-    jobs_dir = tb.P(jobs_dir).expanduser().absolute()
+
+    jobs_dir = tb.P(args.path).expanduser().absolute()
+
     print(f"Seaching recursively for all python file in directory `{jobs_dir}`")
     py_files = jobs_dir.search(pattern="*.py", not_in=["__init__.py"], r=True).to_list()
     choice_file = display_options(msg="Choose a file to run", options=py_files, fzf=True, multi=False)
     assert isinstance(choice_file, str), f"choice_file must be a string. Got {type(choice_file)}"
 
+    if args.choose_function:
+        assert isinstance(choice_file, str), f"choice_file must be a string. Got {type(choice_file)}"
+        _module, choice_function = choose_function(choice_file)
+        # if choice_function != "RUN AS MAIN":
+            # kgs1, _ = interactively_run_function(module[choice_function])
+            # " ".join([f"--{k} {v}" for k, v in kgs1.items()])
+    else:
+        choice_function = None
+
+    if args.module:
+        txt: str = f"""
+import sys
+sys.path.append(r'{tb.P(choice_file).parent}')
+from {tb.P(choice_file).stem} import *
+"""
+        if choice_function is not None:
+            txt = txt + f"""
+{choice_function}()
+"""
+        txt = txt + f"""
+from machineconfig.utils.utils import print_programming_script
+print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
+"""
+        choice_file = tb.P.tmp().joinpath(f'tmp_scripts/python/{tb.randstr()}.py').create(parents_only=True).write_text(txt)
+
     if args.interactive is False: exe = "python"
     else: exe = "ipython -i"
-    try:
-        ve_name = get_current_ve()
-        exe = f". activate_ve {ve_name}; {exe}"
-    except NotImplementedError:
-        print(f"Failed to detect virtual enviroment name.")
-        pass
 
+    # determining basic command structure: putting together exe & choice_file & choice_function & pdb
     if args.debug:
         if platform.system() == "Windows":
             command = f"{exe} -m pdb {choice_file} "  # pudb is not available on windows machines, use poor man's debugger instead.
         elif platform.system() in ["Linux", "Darwin"]:
             command = f"{exe} -m pudb {choice_file} "  # TODO: functions not supported yet in debug mode.
         else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
-    elif args.module:
-        txt: str = f"""
-import sys
-sys.path.append(r'{tb.P(choice_file).parent}')
-from {tb.P(choice_file).stem} import *
-"""
-        txt = txt + f"""
-from machineconfig.utils.utils import print_programming_script
-print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
-"""
-        command = f"{exe} {tb.P.tmp().joinpath(f'tmp_scripts/python/{tb.randstr()}.py').create(parents_only=True).write_text(txt)} "
-    elif args.interactive: command = f"{exe} {choice_file} "
-    elif args.choose_function:
-        module, choice_function = choose_function(choice_file)
-        if choice_function != "RUN AS MAIN":
-            kgs1, _ = interactively_run_function(module[choice_function])
-            command = f"{exe} -m fire {choice_file} {choice_function} " + " ".join([f"--{k} {v}" for k, v in kgs1.items()])
-        else: command = f"{exe} {choice_file} "
-        if args.remote: return run_on_remote(choice_file, args=args)
+    elif choice_function is not None:
+        command = f"{exe} -m fire {choice_file} {choice_function} "
     else:
-        command = f"{exe} {choice_file}"
-    if args.ve is not None: command = f"deactivate;. activate_ve {args.ve}; {command}"
+        command = f"{exe} {choice_file} "
 
+    # try:
+    #     ve_name = get_current_ve()
+    #     exe = f". activate_ve {ve_name}; {exe}"
+    # except NotImplementedError:
+    #     print(f"Failed to detect virtual enviroment name.")
+    #     pass
+    command = f"deactivate;. activate_ve {args.ve}; {command}"
+
+    # if args.remote: return run_on_remote(choice_file, args=args)
     try: tb.install_n_import("clipboard").copy(command)
     except Exception as ex: print(f"Failed to copy command to clipboard. {ex}")
     # CONFIG_PATH
