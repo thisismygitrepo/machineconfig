@@ -38,13 +38,14 @@ def main():
     if args.choose_function:
         assert isinstance(choice_file, str), f"choice_file must be a string. Got {type(choice_file)}"
         _module, choice_function = choose_function(choice_file)
+        if choice_function == "RUN AS MAIN": choice_function = None
         # if choice_function != "RUN AS MAIN":
             # kgs1, _ = interactively_run_function(module[choice_function])
             # " ".join([f"--{k} {v}" for k, v in kgs1.items()])
     else:
         choice_function = None
 
-    if args.module:
+    if args.module or args.debug:  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         txt: str = f"""
 import sys
 sys.path.append(r'{tb.P(choice_file).parent}')
