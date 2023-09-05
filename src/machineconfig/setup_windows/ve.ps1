@@ -16,7 +16,7 @@ if (-not (Test-Path variable:py_version)) {
 mkdir ~/venvs -ErrorAction SilentlyContinue
 cd ~
 
-set mypy ($env:LOCALAPPDATA + "\Programs\Python\Python$py_version\python.exe")
+Set-Variable mypy ($env:LOCALAPPDATA + "\Programs\Python\Python$py_version\python.exe")
 
 if (Test-Path $mypy) {
     Write-Host "$mypy exists."
@@ -36,7 +36,7 @@ if (Test-Path "./venvs/$ve_name") {
 # activate
 & ~/venvs/$ve_name/Scripts/Activate.ps1
 &$mypy -m pip install --upgrade pip  # upgrades the pip from Python location/lib/site-pacakges/pip
-pip install --upgrade pip  # upgrades the pip that is within the environment.
+&$HOME/venvs/$ve_name/Scripts/python.exe -m pip install --upgrade pip  # upgrades the pip that is within the environment.
 
-echo "Finished setting up virtual environment."
-echo "Use this to activate: & ~/venvs/$ve_name/Scripts/Activate.ps1"
+Write-Output "Finished setting up virtual environment."
+Write-Output "Use this to activate: & ~/venvs/$ve_name/Scripts/Activate.ps1"

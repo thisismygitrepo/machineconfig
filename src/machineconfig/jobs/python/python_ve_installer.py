@@ -18,9 +18,10 @@ def main():
     print("\n\n")
     console.rule("Existing Python versions", style="bold red")
     if system == "Windows":
-        tb.P.get_env().Path.search("python.exe").reduce()[1:].print()
+        tmp = tb.P.get_env().PATH.search("python.exe").reduce().list[1:]
+        tb.L(tmp).print()
     else:
-        tb.L(set(tb.P.get_env().Path.search("python3*").reduce().filter(lambda x: not x.is_symlink() and "-" not in x))).print()
+        tb.L(set(tb.L(tb.P.get_env().PATH.search("python3*").reduce()).filter(lambda x: not x.is_symlink() and "-" not in x))).print()
     print("\n\n")
     console.rule(f"Existing virtual environments")
     ves = tb.P.home().joinpath("venvs").search("*", files=False).apply(lambda a_ve: (a_ve.name, a_ve.joinpath("pyvenv.cfg").read_text()))
