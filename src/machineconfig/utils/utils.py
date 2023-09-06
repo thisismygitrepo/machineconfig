@@ -233,7 +233,7 @@ def check_tool_exists(tool_name: str) -> bool:
 def get_current_ve():
     import sys
     path = P(sys.executable)  # something like ~\\venvs\\ve\\Scripts\\python.exe'
-    if P.home().joinpath("ve") in path:
+    if P.home().joinpath("venvs") in path:
         return path.parent.parent.stem
     else:
         raise NotImplementedError("Not a kind of virtual enviroment that I expected.")
