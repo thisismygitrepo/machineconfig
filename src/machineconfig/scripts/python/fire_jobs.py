@@ -55,10 +55,10 @@ from {tb.P(choice_file).stem} import *
             txt = txt + f"""
 {choice_function}()
 """
-        txt = txt + f"""
+        txt = f"""
 from machineconfig.utils.utils import print_programming_script
 print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
-"""
+""" + txt
         choice_file = tb.P.tmp().joinpath(f'tmp_scripts/python/{tb.randstr()}.py').create(parents_only=True).write_text(txt)
 
     if args.interactive is False: exe = "python"
@@ -67,7 +67,7 @@ print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
     # determining basic command structure: putting together exe & choice_file & choice_function & pdb
     if args.debug:
         if platform.system() == "Windows":
-            command = f"{exe} -m pdb {choice_file} "  # pudb is not available on windows machines, use poor man's debugger instead.
+            command = f"{exe} -m ipdb {choice_file} "  # pudb is not available on windows machines, use poor man's debugger instead.
         elif platform.system() in ["Linux", "Darwin"]:
             command = f"{exe} -m pudb {choice_file} "  # TODO: functions not supported yet in debug mode.
         else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
@@ -82,6 +82,8 @@ print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
     # except NotImplementedError:
     #     print(f"Failed to detect virtual enviroment name.")
     #     pass
+    if "ipdb" in command: tb.install_n_import("ipdb")
+    if "pudb" in command: tb.install_n_import("pudb")
     command = f"deactivate;. activate_ve {args.ve}; {command}"
 
     # if args.remote: return run_on_remote(choice_file, args=args)
