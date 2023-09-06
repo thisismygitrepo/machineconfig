@@ -84,7 +84,7 @@ print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
     #     pass
     if "ipdb" in command: tb.install_n_import("ipdb")
     if "pudb" in command: tb.install_n_import("pudb")
-    command = f"deactivate;. activate_ve {args.ve}; {command}"
+    command = f". activate_ve {args.ve}; {command}"
 
     # if args.remote: return run_on_remote(choice_file, args=args)
     try: tb.install_n_import("clipboard").copy(command)
