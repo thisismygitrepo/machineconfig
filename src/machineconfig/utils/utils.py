@@ -148,6 +148,14 @@ def get_latest_release(repo_url: str, download_n_extract: bool = False, suffix: 
     tool_name = tool_name or str(P(repo_url)[-1])
     P.home().joinpath(f"tmp_results/cli_tools_installers/versions/{tool_name}").create(parents_only=True).write_text(version)
 
+    existing_version = Terminal().run(f"{tool_name} --version", shell="powershell").op_if_successfull_or_default(strict_err=True, strict_returcode=True)
+    if existing_version is not None:
+        if existing_version.rstrip().replace("v", "") == version.replace("v", ""):
+            print(f"{tool_name} already installed at version {version}")
+            return
+        else:
+            print(f"{tool_name} installed at version {existing_version.rstrip()} --> Installing version {version} ")
+
     if not download_n_extract: return download_link
     console.rule(f"Installing {tool_name} version {version}")
     if file_name is None:  # it is not constant, so we compile it from parts as follows:
