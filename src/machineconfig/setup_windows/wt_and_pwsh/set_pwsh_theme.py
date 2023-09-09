@@ -26,8 +26,7 @@ def install_nerd_fonts():
 def change_shell_profile():
     # Customize powershell profile such that it loads oh-my-posh and the terminal icons automatically.
     # Add arrow keys history functionality to the terminal.
-
-    shell = {"powershell": "pwsh.exe", "Windows Powershell": "powershell.exe"}["powershell"].split(".exe", maxsplit=1)[0]
+    shell = "pwsh"
     profile_path = tb.Terminal().run("$profile", shell=shell).op2path()
     assert isinstance(profile_path, tb.P), f"Could not find profile path for {shell}."
     local_app_data = os.getenv("LOCALAPPDATA")

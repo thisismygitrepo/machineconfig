@@ -11,7 +11,8 @@ python $(dirname $(dirname $0))/python/fire_jobs.py "$@"
 
 if [ -f "$op_script" ]; then
   chmod +x $op_script
-  source $op_script
+  set --  # clear all positional parameters
+  source $op_script  # sourcing the script means the args passed to the this script are passed to the sourced script which cofuses the sources script as it contains activate_ve and it doesn't understand first.sh arguments.
 fi
 
 

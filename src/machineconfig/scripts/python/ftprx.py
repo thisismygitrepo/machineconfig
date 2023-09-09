@@ -11,6 +11,7 @@ def main():
 
     parser.add_argument("machine", help=f"machine ssh address", default="")
     parser.add_argument("file", help="file/folder path.", default="")
+    # parser.add_argument("--local", "-l", help="local file/folder path.", default=None)
     # FLAGS
     parser.add_argument("--recursive", "-r", help="Send recursively.", action="store_true")  # default is False
     parser.add_argument("--zipFirst", "-z", help="Zip before sending.", action="store_true")  # default is False
