@@ -45,7 +45,7 @@ def main():
     else:
         choice_function = None
 
-    if args.module or args.debug:  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
+    if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         txt: str = f"""
 import sys
 sys.path.append(r'{tb.P(choice_file).parent}')
