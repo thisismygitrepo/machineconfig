@@ -92,7 +92,7 @@ def args_parser():
     if args.delete: rclone_cmd += " --delete-during"
 
     if args.verbose: txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd, cloud_brand="Unknown")
-    else: txt = f"""cd ~\n{rclone_cmd}"""
+    else: txt = f"""{rclone_cmd}"""
     print(r'running command'.center(100, '-'))
     print(txt)
     PROGRAM_PATH.write_text(txt)
