@@ -1,6 +1,5 @@
 
-""" installer
-"""
+""" Chatgpt installer   """
 
 # from crocodile.meta import sys
 from machineconfig.utils.utils import get_latest_release, find_move_delete_linux, find_move_delete_windows
@@ -12,6 +11,7 @@ import crocodile.toolbox as tb
 url = "https://github.com/j178/chatgpt"
 # see also: https://github.com/marcolardera/chatgpt-cli & https://github.com/kharvd/gpt-cli
 # https://github.com/acheong08/ChatGPT
+
 
 def main(version: Optional[str] = None) -> None:
     _ = version

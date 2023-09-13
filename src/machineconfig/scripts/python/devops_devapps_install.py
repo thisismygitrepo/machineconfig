@@ -18,9 +18,9 @@ def main(program_name: Optional[str] = None):
     installers = get_cli_py_installers()
     default = tb.P("all")
     installers.list.insert(0, default)
-    installers.list.insert(0, tb.P("System Installers"))
-    installers.list.insert(0, tb.P("Other dev apps"))
-    options = list(installers.apply(lambda x: x.stem + ((' -- ' + str(x.readit().__doc__)) if x.exists() else '')))
+    installers.list.insert(0, tb.P("SystemInstallers"))
+    installers.list.insert(0, tb.P("OtherDevApps"))
+    options: list[str] = installers.apply(lambda x: x.stem + (' -- ' + x.readit().__doc__.lstrip()) if x.exists() else x.stem).to_list()
     # options.sort()  # throws off sync between installers and options
 
     if program_name is None:
@@ -28,6 +28,9 @@ def main(program_name: Optional[str] = None):
         total_program = ""
         for program_name in program_names:
             assert isinstance(program_name, str), f"program_name is not a string: {program_name}"
+            # print(program_name)
+            # tb.L(options).print()
+            # installers.print()
             total_program += "\n" + get_program(program_name=program_name, options=options, installers=list(installers))
     else:
         total_program = get_program(program_name=program_name, options=options, installers=list(installers))
@@ -45,7 +48,7 @@ def get_program(program_name: str, options: list[Any], installers: list[tb.P]):
         # program_linux = f"source {LIBRARY_ROOT}/setup_linux/devapps.sh"
         # program_windows = f"{LIBRARY_ROOT}/setup_windows/devapps.ps1"
         program = ""
-    elif program_name == "System Installers":
+    elif program_name == "SystemInstallers":
         if system() == "Windows": options_more = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text())
         elif system() == "Linux": options_more = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps.sh").read_text())
         else: raise NotImplementedError(f"System {system()} not supported")
@@ -55,7 +58,7 @@ def get_program(program_name: str, options: list[Any], installers: list[tb.P]):
             sub_program = options_more[name]
             if sub_program.startswith("#winget"): sub_program = sub_program[1:]
             program += "\n" + sub_program
-    elif program_name == "Other dev apps":
+    elif program_name == "OtherDevApps":
         installers = get_cli_py_installers(dev=True).list
         options = tb.L(installers).apply(lambda x: x.stem + ((' -- ' + str(x.readit().__doc__)) if x.exists() else '')).list
         program_names = display_options(msg="", options=sorted(options), header="CHOOSE DEV APP", fzf=True, multi=True)

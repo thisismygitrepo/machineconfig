@@ -52,7 +52,7 @@ winget install --no-upgrade --name "nu" --Id "Nushell.Nushell" --source winget  
 winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
 
 # ======================= Terminal-based editors =================================
-winget install --no-upgrade --name "Lapce" --Id Lapce.Lapce  # app variant of helix
+# winget install --no-upgrade --name "Lapce" --Id Lapce.Lapce  # app variant of helix
 winget install --no-upgrade --name "Neovim" --Id Neovim.Neovim --source winget --accept-package-agreements --accept-source-agreements
 Invoke-WebRequest "https://spacevim.org/install.cmd" -OutFile "~/Downloads/spacevim_installer.cmd"
 ~/Downloads/spacevim_installer.cmd
@@ -78,7 +78,7 @@ winget install --no-upgrade --name "GnuPG" GnuPG.GnuPG
 
 winget install --no-upgrade --name "bottom" --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "onefetch" --Id o2sh.onefetch --source winget  # repo-version of system neofetch, see also tokei
-winget install --no-upgrade --name "Just" --Id Casey.Just --source winget  # cat replacement
+winget install --no-upgrade --name "Just" --Id Casey.Just --source winget  # commandline runner
 
 winget install --no-upgrade --name "graphviz" --Id Graphviz.Graphviz  # required by pygraphviz. Used in Base.viz_object_hirarchy and Model.plot_model()
 winget install --no-upgrade --name "WinFsp" --Id WinFsp.WinFsp  # mount remote filesystems and required by rclone
