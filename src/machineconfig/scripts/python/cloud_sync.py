@@ -3,12 +3,9 @@
 """
 
 from crocodile.file_management import P, Read
-from machineconfig.utils.utils import PROGRAM_PATH
+from machineconfig.utils.utils import PROGRAM_PATH, DEFAULTS_PATH
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse
-
-
-DEFAULT_CLOUD = P.home().joinpath(r"dotfiles/machineconfig/setup/rclone_remote")
 
 
 def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
@@ -22,7 +19,9 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
                 args.rel2home = tmp['rel2home']
                 break
             path = path.parent
-        else: args.source = DEFAULT_CLOUD.read_text().rstrip() + ":"
+        else:
+            DEFAULT_CLOUD: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            args.source = DEFAULT_CLOUD + ":"
     if args.target == ":":
         path = P(args.source).expanduser().absolute()
         for _i in range(len(path.parts)):
@@ -33,7 +32,9 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
                 args.rel2home = tmp['rel2home']
                 break
             path = path.parent
-        else: args.target = DEFAULT_CLOUD.read_text().rstrip() + ":"
+        else:
+            DEFAULTCLOUD: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            args.target = DEFAULTCLOUD + ":"
 
     if ":" in args.source:
         cloud: str = args.source.split(":")[0]

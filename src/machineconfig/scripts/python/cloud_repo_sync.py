@@ -4,7 +4,7 @@
 import crocodile.toolbox as tb
 import argparse
 import platform
-from machineconfig.utils.utils import print_programming_script, CONFIG_PATH, write_shell_script
+from machineconfig.utils.utils import print_programming_script, CONFIG_PATH, DEFAULTS_PATH, write_shell_script
 # import sys
 # import subprocess
 
@@ -27,10 +27,9 @@ def args_parser():
     parser.add_argument("--push", "-u", help="Zip before sending.", action="store_true")  # default is False
     args = parser.parse_args()
     if args.cloud is None:
-        _path = tb.P.home().joinpath("dotfiles/machineconfig/setup/rclone_remote")
-        try: cloud = _path.read_text().replace("\n", "")
+        try: cloud = tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
         except FileNotFoundError:
-            print(f"No cloud profile found @ {_path}, please set one up or provide one via the --cloud flag.")
+            print(f"No cloud profile found @ {DEFAULTS_PATH}, please set one up or provide one via the --cloud flag.")
             return ""
     else: cloud = args.cloud
     # repo_root = tb.P(args.repo).expanduser().absolute()

@@ -7,7 +7,7 @@ import argparse
 from machineconfig.scripts.python.cloud_sync import parse_cloud_source_target
 
 
-def arg_parser():
+def arg_parser() -> None:
     parser = argparse.ArgumentParser(description='Cloud Download CLI.')
 
     # positional argument
@@ -29,13 +29,6 @@ def arg_parser():
 
     args = parser.parse_args()
     cloud, source, target = parse_cloud_source_target(args)
-    # if args.cloud is None:
-    #     _path = tb.P.home().joinpath("dotfiles/machineconfig/setup/rclone_remote")
-    #     try: cloud = _path.read_text().replace("\n", "")
-    #     except FileNotFoundError:
-    #         print(f"No cloud profile found @ {_path}, please set one up or provide one via the --cloud flag.")
-    #         return ""
-    # else: cloud = args.cloud
     if cloud in source:
         tb.P(target).from_cloud(cloud=cloud,
                                 unzip=args.zip, decrypt=args.encrypt, overwrite=args.overwrite,

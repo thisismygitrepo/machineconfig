@@ -22,12 +22,12 @@ def main():
     parser.add_argument("--interactive", "-i", action="store_true", help="Whether to run the job interactively using IPython")
     parser.add_argument("--debug", "-d", action="store_true", help="debug")
     parser.add_argument("--choose_function", "-c", action="store_true", help="debug")
+    parser.add_argument("--submit_to_cloud", "-C", action="store_true", help="submit to cloud compute")
     parser.add_argument("--remote", "-r", action="store_true", help="launch on a remote machine")
     parser.add_argument("--module", "-m", action="store_true", help="launch the main file")
     parser.add_argument("--history", "-H", action="store_true", help="choose from history")
 
     args = parser.parse_args()
-
     jobs_dir = tb.P(args.path).expanduser().absolute()
 
     print(f"Seaching recursively for all python file in directory `{jobs_dir}`")
@@ -35,7 +35,7 @@ def main():
     choice_file = display_options(msg="Choose a file to run", options=py_files, fzf=True, multi=False)
     assert isinstance(choice_file, str), f"choice_file must be a string. Got {type(choice_file)}"
 
-    if args.choose_function:
+    if args.choose_function or args.submit_to_cloud:
         assert isinstance(choice_file, str), f"choice_file must be a string. Got {type(choice_file)}"
         _module, choice_function = choose_function(choice_file)
         if choice_function == "RUN AS MAIN": choice_function = None
@@ -44,6 +44,10 @@ def main():
             # " ".join([f"--{k} {v}" for k, v in kgs1.items()])
     else:
         choice_function = None
+
+    if args.submit_to_cloud:
+        submit_to_cloud(func=choice_function if choice_function is not None else choice_file)
+        return
 
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         txt: str = f"""
@@ -134,27 +138,12 @@ def interactively_run_function(func: Callable[[Any], Any]):
 
 
 def submit_to_cloud(func: Any):
-    from crocodile.cluster.remote_machine import RemoteMachine, RemoteMachineConfig, CloudManager
-    from crocodile.file_management import P
-    from crocodile.cluster.self_ssh import SelfSSH
-    data: list[P] = []
-    config = RemoteMachineConfig(
-        # connection
-        ssh_obj=SelfSSH(),  # overrides ssh_params
-        description="Description of running an expensive function",  # job_id=, base_dir="",
-        # data
-        copy_repo=False, update_repo=True, install_repo=False, update_essential_repos=True, data=data, transfer_method="cloud", cloud_name="oduq1",
-        # remote machine behaviour
-        open_console=True, notify_upon_completion=True, to_email='random@email.com', email_config_name='zoho',
-        kill_on_completion=False,
-        launch_method="cloud_manager",
-        # execution behaviour
-        ipython=False, interactive=False, pdb=False, pudb=False, wrap_in_try_except=True,
-        workload_params=None,  # to be added later per sub-job.
-        # resources
-        lock_resources=False, max_simulataneous_jobs=2, parallelize=False, )
+    from crocodile.cluster.template_gooey import main as main_config
+    from crocodile.cluster.remote_machine import RemoteMachine, CloudManager, RemoteMachineConfig
+    config: RemoteMachineConfig = main_config()
+    assert config.cloud_name is not None, f"config.cloud_name must be a string. Got {type(config.cloud_name)}"
     m = RemoteMachine(func=func, func_kwargs=None, config=config)
-    _res = m.submit_to_cloud(split=30, cm=CloudManager())
+    _res = m.submit_to_cloud(split=30, cm=CloudManager(cloud=config.cloud_name))
 
 
 def run_on_remote(func_file: str, args: argparse.Namespace):

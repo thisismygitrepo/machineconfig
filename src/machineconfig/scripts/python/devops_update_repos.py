@@ -4,18 +4,18 @@
 
 from platform import system
 import crocodile.toolbox as tb
-# from machineconfig.utils.utils import write_shell_script
+from machineconfig.utils.utils import DEFAULTS_PATH
 
 sep = "\n"
 
 
 def main(verbose: bool = True) -> str:
     _ = verbose
-    repos_file = tb.P.home().joinpath("dotfiles/machineconfig/setup/repos")
-
     repos: list[str] = ["~/code/crocodile", "~/code/machineconfig", ]
-    if repos_file.exists():
-        repos += [item.rstrip() for item in repos_file.read_text().split(",")]
+    try:
+        repos += tb.Read.ini(DEFAULTS_PATH)['general']['repos'].split(",")
+    except (FileNotFoundError, KeyError, IndexError):
+        pass
 
     repos_objs = []
     for a_package_path in repos:

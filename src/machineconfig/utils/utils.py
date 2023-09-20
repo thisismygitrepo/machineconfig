@@ -20,10 +20,12 @@ LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().s
 REPO_ROOT = LIBRARY_ROOT.parent.parent
 PROGRAM_PATH = (P.tmp().joinpath("shells/python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh")).create(parents_only=True)
 CONFIG_PATH = P.home().joinpath(".config/machineconfig")
-# DEFAULTS
+DEFAULTS_PATH = P.home().joinpath("dotfiles/machineconfig/defaults.ini")
 tmp_install_dir = P.tmp(folder="tmp_installers")
 
+
 T = TypeVar("T")
+
 
 def display_options(msg: str, options: list[T], header: str = "", tail: str = "", prompt: str = "",
                     default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[T, list[T]]:
@@ -198,7 +200,6 @@ def write_shell_script(program: str, desc: str = "", preserve_cwd: bool = True, 
         print_programming_script(program=program, lexer="shell", desc=desc)
     if platform.system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
     else: PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
-
     if execute: Terminal().run(f". {PROGRAM_PATH}", shell="powershell").print_if_unsuccessful(desc="Executing shell script", strict_err=True, strict_returncode=True)
     return None
 
