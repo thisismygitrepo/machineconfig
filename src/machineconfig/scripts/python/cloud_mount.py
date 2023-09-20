@@ -11,6 +11,13 @@ import crocodile.toolbox as tb
 DEFAULT_MOUNT = "~/data/rclone"
 
 
+def get_rclone_config():
+    if platform.system() == "Windows": config = tb.Read.ini(tb.P.home().joinpath("AppData/Roaming/rclone/rclone.conf"))
+    elif platform.system() == "Linux": config = tb.Read.ini(tb.P.home().joinpath(".config/rclone/rclone.conf"))
+    else: raise ValueError("unsupported platform")
+    return config
+
+
 def get_mprocs_mount_txt(cloud: str, rclone_cmd: str, cloud_brand: str):  # cloud_brand = config[cloud]["type"]
     # config = tb.Read.ini(tb.P.home().joinpath(".config/rclone/rclone.conf"))
     header = f"{' ' + cloud + ' | ' + cloud_brand + ' '}".center(50, "=")
@@ -33,10 +40,8 @@ mprocs "echo 'see {DEFAULT_MOUNT}/{cloud} for the mounted cloud'; rclone about {
 
 
 def main(cloud: Optional[str] = None, network: Optional[str] = None) -> None:
-    if platform.system() == "Windows": config = tb.Read.ini(tb.P.home().joinpath("AppData/Roaming/rclone/rclone.conf"))
-    elif platform.system() == "Linux": config = tb.Read.ini(tb.P.home().joinpath(".config/rclone/rclone.conf"))
-    else: raise ValueError("unsupported platform")
-    # default = tb.P.home().joinpath(".machineconfig/
+
+    config = get_rclone_config()
     if cloud is None:
         res = display_options(msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
         if type(res) is str: cloud = res
