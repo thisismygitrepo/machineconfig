@@ -59,7 +59,7 @@ from {tb.P(choice_file).stem} import *
 from machineconfig.utils.utils import print_programming_script
 print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
 """ + txt
-        choice_file = tb.P.tmp().joinpath(f'tmp_scripts/python/{tb.randstr()}.py').create(parents_only=True).write_text(txt)
+        choice_file = tb.P.tmp().joinpath(f'tmp_scripts/python/{tb.P(choice_file).parent.name}_{tb.P(choice_file).stem}_{tb.randstr()}.py').create(parents_only=True).write_text(txt)
 
     if args.interactive is False: exe = "python"
     else: exe = "ipython -i"
