@@ -133,6 +133,30 @@ def interactively_run_function(func: Callable[[Any], Any]):
     return args_to_kwargs, kwargs
 
 
+def submit_to_cloud(func: Any):
+    from crocodile.cluster.remote_machine import RemoteMachine, RemoteMachineConfig, CloudManager
+    from crocodile.file_management import P
+    from crocodile.cluster.self_ssh import SelfSSH
+    data: list[P] = []
+    config = RemoteMachineConfig(
+        # connection
+        ssh_obj=SelfSSH(),  # overrides ssh_params
+        description="Description of running an expensive function",  # job_id=, base_dir="",
+        # data
+        copy_repo=False, update_repo=True, install_repo=False, update_essential_repos=True, data=data, transfer_method="cloud", cloud_name="oduq1",
+        # remote machine behaviour
+        open_console=True, notify_upon_completion=True, to_email='random@email.com', email_config_name='zoho',
+        kill_on_completion=False,
+        launch_method="cloud_manager",
+        # execution behaviour
+        ipython=False, interactive=False, pdb=False, pudb=False, wrap_in_try_except=True,
+        workload_params=None,  # to be added later per sub-job.
+        # resources
+        lock_resources=False, max_simulataneous_jobs=2, parallelize=False, )
+    m = RemoteMachine(func=func, func_kwargs=None, config=config)
+    _res = m.submit_to_cloud(split=30, cm=CloudManager())
+
+
 def run_on_remote(func_file: str, args: argparse.Namespace):
     host = choose_ssh_host(multi=False)
     assert isinstance(host, str), f"host must be a string. Got {type(host)}"
