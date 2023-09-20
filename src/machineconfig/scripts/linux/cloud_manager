@@ -1,0 +1,5 @@
+
+. ~/scripts/activate_ve ''
+python -i -m crocodile.scripts.python.cloud_manager "$@"
+deactivate || true
+
