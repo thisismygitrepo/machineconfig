@@ -10,7 +10,6 @@ import crocodile.toolbox as tb
 
 url = "https://github.com/j178/chatgpt"
 # see also: https://github.com/marcolardera/chatgpt-cli & https://github.com/kharvd/gpt-cli
-# https://github.com/acheong08/ChatGPT
 
 
 def main(version: Optional[str] = None) -> None:

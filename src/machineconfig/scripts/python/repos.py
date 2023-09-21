@@ -53,7 +53,7 @@ echo ""; echo ""
 def main():
     parser = argparse.ArgumentParser(description='REPO MANAGER')
     # POSITIONAL
-    parser.add_argument("directory", help="folder containing repos.", default="")
+    parser.add_argument("directory", help="folder containing repos to record a json out of OR a specs json file to follow.", default="")
     # FLAGS
     parser.add_argument("--push", help=f"push", action="store_true")
     parser.add_argument("--pull", help=f"pull", action="store_true")
@@ -61,49 +61,51 @@ def main():
     parser.add_argument("--all", help=f"pull, commit and push", action="store_true")
     parser.add_argument("--record", help=f"record respos", action="store_true")
     parser.add_argument("--clone", help=f"clone repos from record", action="store_true")
-    parser.add_argument("--version", help=f"After cloning, checkout to the specific commits as per records (instead of latest commits)", action="store_true")
+    parser.add_argument("--checkout", help=f"Check out to versions prvided in this json file", action="store_true")
     parser.add_argument("--recursive", "-r", help=f"recursive flag", action="store_true")
     # OPTIONAL
     parser.add_argument("--cloud", "-c", help=f"cloud", default=None)
     args = parser.parse_args()
 
-    if args.directory == "": path = tb.P.home().joinpath("code")  # it is a positional argument, can never be empty.
-    else: path = tb.P(args.directory).expanduser().absolute()
+    if args.directory == "": repos_root = tb.P.home().joinpath("code")  # it is a positional argument, can never be empty.
+    else: repos_root = tb.P(args.directory).expanduser().absolute()
     _ = tb.install_n_import("git", "gitpython")
 
     program = ""
     if args.record:
-        res = record_repos(path=str(path))
+        res = record_repos(repos_root=str(repos_root))
         pprint(f"Recorded repositories:\n", res)
-        save_path = CONFIG_PATH.joinpath("repos").joinpath(path.rel2home()).joinpath("repos.pkl")
-        tb.Save.pickle(obj=res, path=save_path)
+        save_path = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
+        # tb.Save.pickle(obj=res, path=save_path)
+        tb.Save.json(obj=res, path=save_path)
         pprint(f"Result pickled at {tb.P(save_path)}")
         if args.cloud is not None: tb.P(save_path).to_cloud(rel2home=True, cloud=args.cloud)
         program += f"""\necho '>>>>>>>>> Finished Recording'\n"""
-    elif args.clone:
+    elif args.clone or args.checkout:
         program += f"""\necho '>>>>>>>>> Cloning Repos'\n"""
-        if not path.exists() or path.stem != 'repos.pkl':  # user didn't pass absolute path to pickle file, but rather expected it to be in the default save location
-            path = CONFIG_PATH.joinpath("repos").joinpath(path.rel2home()).joinpath("repos.pkl")
-            if not path.exists(): path.from_cloud(cloud=args.cloud, rel2home=True)
-        assert (path.exists() and path.stem == 'repos.pkl') or args.cloud is not None, f"Path {path} does not exist and cloud was not passed. You can't clone without one of them."
-        program += install_repos(path=str(path), checkout_to_recorded_commit=args.version)
+        if not repos_root.exists() or repos_root.stem != 'repos.json':  # user didn't pass absolute path to pickle file, but rather expected it to be in the default save location
+            repos_root = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
+            if not repos_root.exists() and args.cloud is not None: repos_root.from_cloud(cloud=args.cloud, rel2home=True)
+        assert (repos_root.exists() and repos_root.name == 'repos.json') or args.cloud is not None, f"Path {repos_root} does not exist and cloud was not passed. You can't clone without one of them."
+        program += install_repos(specs_path=str(repos_root), clone=args.clone, checkout_to_recorded_commit=args.checkout)
+    # elif args.checkout is not None:
+
     elif args.all or args.commit or args.pull or args.push:
-        for a_path in path.search("*"):
+        for a_path in repos_root.search("*"):
             program += f"""echo "{("Handling " + str(a_path)).center(80, "-")}" """
             if args.pull or args.all: program += git_action(path=a_path, action=GitAction.pull, r=args.recursive)
             if args.commit or args.all: program += git_action(a_path, action=GitAction.commit, r=args.recursive)
             if args.push or args.all: program += git_action(a_path, action=GitAction.push, r=args.recursive)
     else: program = "echo 'no action specified, try to pass --push, --pull, --commit or --all'"
-    # pprint(program)
     write_shell_script(program, "Script to update repos")
 
 
-def record_repos(path: str, r: bool = True) -> list[dict[str, Any]]:
+def record_repos(repos_root: str, r: bool = True) -> list[dict[str, Any]]:
     from git.repo import Repo
-    path_obj = tb.P(path).expanduser().absolute()
+    path_obj = tb.P(repos_root).expanduser().absolute()
     if path_obj.is_file(): return []
     search_res = path_obj.search("*", files=False)
-    res = []
+    res: list[dict[str, Any]] = []
     for a_search_res in search_res:
         if a_search_res.joinpath(".git").exists():
             repo = Repo(a_search_res)  # get list of remotes using git python
@@ -113,27 +115,29 @@ def record_repos(path: str, r: bool = True) -> list[dict[str, Any]]:
                 print(f"Failed to get latest commit of {repo}")
                 # cmd = "git config --global -add safe.directory"
                 commit = None
-            res.append({"parent_dir": a_search_res.parent.collapseuser().as_posix(), "remotes": remotes, "version": {"branch": repo.head.reference.name, "commit": commit}})
+            res.append({"name": a_search_res.name, "parent_dir": a_search_res.parent.collapseuser().as_posix(), "remotes": remotes, "version": {"branch": repo.head.reference.name, "commit": commit}})
         else:
             if r: res += record_repos(str(a_search_res), r=r)
     return res
 
 
-def install_repos(path: str, checkout_to_recorded_commit: bool = False):
+def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_commit: bool = False):
     program = ""
-    path_obj = tb.P(path).expanduser().absolute()
-    repos: list[dict[str, Any]] = tb.Read.pickle(path_obj)
+    path_obj = tb.P(specs_path).expanduser().absolute()
+    repos: list[dict[str, Any]] = tb.Read.json(path_obj)
     for repo in repos:
         parent_dir = tb.P(repo["parent_dir"]).expanduser().absolute().create()
         for idx, (remote_name, remote_url) in enumerate(repo["remotes"].items()):
-            if idx == 0:  # clone
-                program += f"\ncd {parent_dir.as_posix()}; git clone {remote_url} --origin {remote_name}\n"
-                program += f"\ncd {parent_dir.as_posix()}/{tb.P(remote_url)[-1].stem}; git remote set-url {remote_name} {remote_url}\n"
-                # the new url-setting to ensure that account name before `@` was not lost (git clone ignores it): https://thisismygitrepo@github.com/thisismygitrepo/crocodile.git
-            program += f"\ncd {parent_dir.as_posix()}/{tb.P(remote_url)[-1].stem}; git remote add {remote_name} {remote_url}\n"
+            if clone:
+                if idx == 0:  # clone
+                    program += f"\ncd {parent_dir.as_posix()}; git clone {remote_url} --origin {remote_name}\n"
+                    program += f"\ncd {parent_dir.as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}\n"
+                    # the new url-setting to ensure that account name before `@` was not lost (git clone ignores it): https://thisismygitrepo@github.com/thisismygitrepo/crocodile.git
+                program += f"\ncd {parent_dir.as_posix()}/{repo['name']}; git remote add {remote_name} {remote_url}\n"
             if checkout_to_recorded_commit:
                 commit = repo['version']['commit']
-                if isinstance(commit, str): program += f"\n git checkout {commit}"
+                if isinstance(commit, str): program += f"\n cd {parent_dir.as_posix()}/{repo['name']}; git checkout {commit}"
+                else: print(f"Skipping {repo['parent_dir']} because it doesn't have a commit recorded. Found {commit}")
     pprint(program)
     return program
 
