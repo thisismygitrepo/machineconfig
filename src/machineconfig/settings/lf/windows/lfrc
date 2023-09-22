@@ -12,11 +12,13 @@ set preview true        # preview file on the right pane
 set globsearch false
 set mouse true
 set number true
+set incsearch true
 set preview true
 set shell powershell
 # set colors on
 set ratios '1:2:3'  # ratio of pane widths
 set ifs "\n"
+
 # set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"
 # see more at https://git.lmburns.com/dotfiles-mac/file/.config/lf/lC:\Users\alex\AppData\Roaming\npmC:\Users\alex\AppData\Roaming\npmC:\Users\alex\AppData\Roaming\npmC:\Users\alex\AppData\Roaming\npmC:\Users\alex\AppData\Roaming\npmC:\Users\alex\AppData\Roaming\npmfrc.html
 # see this: https://github.com/ahrm/dotfiles/tree/main/lf-windows/lf_scripts

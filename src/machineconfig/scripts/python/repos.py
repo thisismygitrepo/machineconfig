@@ -62,6 +62,7 @@ def main():
     parser.add_argument("--record", help=f"record respos", action="store_true")
     parser.add_argument("--clone", help=f"clone repos from record", action="store_true")
     parser.add_argument("--checkout", help=f"Check out to versions prvided in this json file", action="store_true")
+    parser.add_argument("--checkout_to_branch", help="Checkout to the main branch", action="store_true")
     parser.add_argument("--recursive", "-r", help=f"recursive flag", action="store_true")
     # OPTIONAL
     parser.add_argument("--cloud", "-c", help=f"cloud", default=None)
@@ -81,13 +82,13 @@ def main():
         pprint(f"Result pickled at {tb.P(save_path)}")
         if args.cloud is not None: tb.P(save_path).to_cloud(rel2home=True, cloud=args.cloud)
         program += f"""\necho '>>>>>>>>> Finished Recording'\n"""
-    elif args.clone or args.checkout:
+    elif args.clone or args.checkout or args.checkout_to_branch:
         program += f"""\necho '>>>>>>>>> Cloning Repos'\n"""
         if not repos_root.exists() or repos_root.stem != 'repos.json':  # user didn't pass absolute path to pickle file, but rather expected it to be in the default save location
             repos_root = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
             if not repos_root.exists() and args.cloud is not None: repos_root.from_cloud(cloud=args.cloud, rel2home=True)
         assert (repos_root.exists() and repos_root.name == 'repos.json') or args.cloud is not None, f"Path {repos_root} does not exist and cloud was not passed. You can't clone without one of them."
-        program += install_repos(specs_path=str(repos_root), clone=args.clone, checkout_to_recorded_commit=args.checkout)
+        program += install_repos(specs_path=str(repos_root), clone=args.clone, checkout_to_recorded_commit=args.checkout, checkout_to_branch=args.checkout_to_branch)
     # elif args.checkout is not None:
 
     elif args.all or args.commit or args.pull or args.push:
@@ -115,13 +116,15 @@ def record_repos(repos_root: str, r: bool = True) -> list[dict[str, Any]]:
                 print(f"Failed to get latest commit of {repo}")
                 # cmd = "git config --global -add safe.directory"
                 commit = None
-            res.append({"name": a_search_res.name, "parent_dir": a_search_res.parent.collapseuser().as_posix(), "remotes": remotes, "version": {"branch": repo.head.reference.name, "commit": commit}})
+            res.append({"name": a_search_res.name, "parent_dir": a_search_res.parent.collapseuser().as_posix(),
+                "current_branch": repo.head.reference.name,
+                "remotes": remotes, "version": {"branch": repo.head.reference.name, "commit": commit}})
         else:
             if r: res += record_repos(str(a_search_res), r=r)
     return res
 
 
-def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_commit: bool = False):
+def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_commit: bool = False, checkout_to_branch: bool = False):
     program = ""
     path_obj = tb.P(specs_path).expanduser().absolute()
     repos: list[dict[str, Any]] = tb.Read.json(path_obj)
@@ -130,14 +133,18 @@ def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_comm
         for idx, (remote_name, remote_url) in enumerate(repo["remotes"].items()):
             if clone:
                 if idx == 0:  # clone
-                    program += f"\ncd {parent_dir.as_posix()}; git clone {remote_url} --origin {remote_name}\n"
-                    program += f"\ncd {parent_dir.as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}\n"
+                    program += f"\ncd{parent_dir.as_posix()}; git clone {remote_url} --origin {remote_name}\n"
+                    program += f"\ncd{parent_dir.as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}\n"
                     # the new url-setting to ensure that account name before `@` was not lost (git clone ignores it): https://thisismygitrepo@github.com/thisismygitrepo/crocodile.git
                 program += f"\ncd {parent_dir.as_posix()}/{repo['name']}; git remote add {remote_name} {remote_url}\n"
             if checkout_to_recorded_commit:
                 commit = repo['version']['commit']
-                if isinstance(commit, str): program += f"\n cd {parent_dir.as_posix()}/{repo['name']}; git checkout {commit}"
+                if isinstance(commit, str): program += f"\ncd {parent_dir.as_posix()}/{repo['name']}; git checkout {commit}"
                 else: print(f"Skipping {repo['parent_dir']} because it doesn't have a commit recorded. Found {commit}")
+                break  # you need to checkout only once, no need to repeat for other remotes.
+            if checkout_to_branch:
+                program += f"\ncd {parent_dir.as_posix()}/{repo['name']}; git checkout {repo['current_branch']}"
+                break
     pprint(program)
     return program
 
