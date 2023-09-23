@@ -143,7 +143,7 @@ def submit_to_cloud(func: Any):
     config: RemoteMachineConfig = main_config()
     assert config.cloud_name is not None, f"config.cloud_name must be a string. Got {type(config.cloud_name)}"
     m = RemoteMachine(func=func, func_kwargs=None, config=config)
-    _res = m.submit_to_cloud(split=30, cm=CloudManager(max_jobs=1, cloud=config.cloud_name))
+    _res = m.submit_to_cloud(split=int(input("Number of job splits: ")), cm=CloudManager(max_jobs=1, cloud=config.cloud_name))
 
 
 def run_on_remote(func_file: str, args: argparse.Namespace):
