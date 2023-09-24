@@ -14,7 +14,7 @@ if (-not (Test-Path variable:py_version)) {
 
 
 mkdir ~/venvs -ErrorAction SilentlyContinue
-cd ~
+Set-Location $HOME
 
 Set-Variable mypy ($env:LOCALAPPDATA + "\Programs\Python\Python$py_version\python.exe")
 
