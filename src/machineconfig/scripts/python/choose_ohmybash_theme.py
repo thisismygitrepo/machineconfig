@@ -18,7 +18,7 @@ def main(new_theme: Optional[str] = None):
     if new_theme is None:
         tail = "Recomm: "
         tmp = display_options(msg=f"Choose a theme number from the list above: ", options=list(themes) + ["slick", "surprise me"], default="surprise me", tail=tail,
-                                    prompt=f"Recommended descriptive ones are {descriptive_themes}")
+                                    prompt=f"Recommended descriptive ones are {descriptive_themes}", fzf=True)
         if isinstance(tmp, str): new_theme = tmp
         else: raise NotImplementedError(f"new_theme is not a string: {new_theme}")
     if new_theme == "surprise me": new_theme = themes.sample().list[0]

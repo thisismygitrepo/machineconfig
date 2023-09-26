@@ -33,7 +33,7 @@ def main(new_theme: Optional[str] = None):
         themes.list.sort()
         tail = ""
         tmp = display_options(msg=f"Choose a theme number from the list above: ", tail=tail, options=list(themes) + ["suprise me"], default="suprise me",
-                                    prompt=f"Recommended descriptive ones are {descriptive_themes}")
+                                    prompt=f"Recommended descriptive ones are {descriptive_themes}", fzf=True)
         if isinstance(tmp, str): new_theme = tmp
         else: raise ValueError(f"Got {tmp} from display_options")
         if new_theme == "suprise me": new_theme = themes.sample().list[0]

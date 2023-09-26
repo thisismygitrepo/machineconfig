@@ -16,7 +16,7 @@ import argparse
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--path", type=str, help="The directory containing the jobs", default=".")
+    parser.add_argument("path", nargs='?', type=str, help="The directory containing the jobs", default=".")
     parser.add_argument("-v", "--ve", type=str, help="virtual enviroment name", default="")
     # optional flag for interactivity
     parser.add_argument("--interactive", "-i", action="store_true", help="Whether to run the job interactively using IPython")
@@ -28,12 +28,23 @@ def main():
     parser.add_argument("--history", "-H", action="store_true", help="choose from history")
 
     args = parser.parse_args()
-    jobs_dir = tb.P(args.path).expanduser().absolute()
+    path_obj = tb.P(args.path).expanduser().absolute()
 
-    print(f"Seaching recursively for all python file in directory `{jobs_dir}`")
-    py_files = jobs_dir.search(pattern="*.py", not_in=["__init__.py"], r=True).to_list()
-    choice_file = display_options(msg="Choose a file to run", options=py_files, fzf=True, multi=False)
-    assert isinstance(choice_file, str), f"choice_file must be a string. Got {type(choice_file)}"
+    if path_obj.is_dir():
+        print(f"Seaching recursively for all python file in directory `{path_obj}`")
+        py_files = path_obj.search(pattern="*.py", not_in=["__init__.py"], r=True).to_list()
+        choice_file = display_options(msg="Choose a file to run", options=py_files, fzf=True, multi=False)
+        assert isinstance(choice_file, str), f"choice_file must be a string. Got {type(choice_file)}"
+    else:
+        choice_file = path_obj
+        # if file name is passed explicitly, then, user probably launched it from cwd different to repo root, so activate_ve can't infer ve from .ve_path, so we attempt to do that manually here
+        if args.ve == "":
+            tmp = choice_file
+            for _ in choice_file.parents:
+                tmp = tmp.parent
+                if tmp.joinpath(".ve_path").exists():
+                    args.ve = tmp.joinpath(".ve_path").read_text()
+                    break
 
     if args.choose_function or args.submit_to_cloud:
         assert isinstance(choice_file, str), f"choice_file must be a string. Got {type(choice_file)}"
