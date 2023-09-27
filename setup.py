@@ -33,6 +33,8 @@ setuptools.setup(
         "paramiko",  # required by SSH
         "gitpython",  # required by repo commands
         "pudb",  # required by fire command
+        "pyfzf",
+        "clipboard",
 
     ],
 )

@@ -9,14 +9,13 @@
 
 import requests
 import crocodile.file_management as fm
-
-
-from Crypto.Cipher import AES
-from Crypto.Hash import MD5
 import base64
 
 
 def encrypt(key: str, pwd: str):
+    # pycryptodome
+    from Crypto.Cipher import AES
+    from Crypto.Hash import MD5
     pwd_enc = pwd.encode("utf-8")
     hash_object = MD5.new(key.encode("utf-8"))
     key_digest = hash_object.digest()

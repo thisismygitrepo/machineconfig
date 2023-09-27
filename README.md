@@ -25,9 +25,9 @@ With elevated `PowerShell`, run the following: (short `curl bit.ly/cfgallwindows
 ```shell
 # apps  # short: `(iwr bit.ly/cfgappswindows).Content | iex`
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1 | Invoke-Expression
-# virtual enviornment  # short `curl bit.ly/cfgvewindows -L | iex`
+# virtual enviornment  # short (iwr bit.ly/cfgvewindows).Content | iex OR `curl bit.ly/cfgvewindows -L | iex`
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
-# dev repos  # short `curl bit.ly/cfgreposwindows -L | iex`
+# dev repos  # short `(iwr bit.ly/cfgreposwindows).Content | iex`` OR `curl bit.ly/cfgreposwindows -L | iex`
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
 # symlinks: locally, run: `ftpsx username@hostname[:port] ~/dotfiles -z`, then, on the remote:
 . ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
