@@ -6,6 +6,7 @@ from platform import system
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import DEFAULTS_PATH
 
+
 sep = "\n"
 
 
@@ -15,7 +16,14 @@ def main(verbose: bool = True) -> str:
     try:
         repos += tb.Read.ini(DEFAULTS_PATH)['general']['repos'].split(",")
     except (FileNotFoundError, KeyError, IndexError):
-        pass
+        print(f"Missing {DEFAULTS_PATH} or section [general] or key repos. Using default repos.")
+        print(f"""It should look like this:
+[general]
+repos = ~/code/repo1,~/code/repo2
+rclone_config_name = 1driveWork
+email_config_name = Yahoo3
+to_email = myemail@email.com
+""")
 
     repos_objs = []
     for a_package_path in repos:
