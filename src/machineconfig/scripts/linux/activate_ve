@@ -8,6 +8,8 @@ if [ -z "$VIRTUAL_ENV" ]; then  # no active ve ==> activate one.
 
     if [ -f ./.ve_path ]; then  # check if there is a .ve_path file in the current directory
       name=$(cat ./.ve_path)  # if yes, use it
+      # replace ~ with $HOME
+      name="${name/#\~/$HOME}"
       source "$name/bin/activate"
     elif [ -f $CONFIG_PATH ]; then  # check if there is a default ve stored in ~/.machineconfog/default_ve
       name=$(cat $CONFIG_PATH)  # if yes, use it
