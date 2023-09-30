@@ -43,7 +43,7 @@ def main():
             for _ in choice_file.parents:
                 tmp = tmp.parent
                 if tmp.joinpath(".ve_path").exists():
-                    args.ve = tmp.joinpath(".ve_path").read_text()
+                    args.ve = tb.P(tmp.joinpath(".ve_path").read_text()).name
                     break
 
     if args.choose_function or args.submit_to_cloud:
