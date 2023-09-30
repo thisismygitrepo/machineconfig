@@ -113,12 +113,16 @@ def record_repos(repos_root: str, r: bool = True) -> list[dict[str, Any]]:
             remotes = {remote.name: remote.url for remote in repo.remotes}
             try: commit = repo.head.commit.hexsha
             except ValueError:  # look at https://github.com/gitpython-developers/GitPython/issues/1016
-                print(f"Failed to get latest commit of {repo}")
+                print(f"⚠️ Failed to get latest commit of {repo}")
                 # cmd = "git config --global -add safe.directory"
                 commit = None
+            try: current_branch = repo.head.reference.name  # same as repo.active_branch.name
+            except TypeError:
+                print(f"⁉️ Failed to get current branch of {repo}. It is probably in a detached state.")
+                current_branch = None
             res.append({"name": a_search_res.name, "parent_dir": a_search_res.parent.collapseuser().as_posix(),
-                "current_branch": repo.head.reference.name,
-                "remotes": remotes, "version": {"branch": repo.head.reference.name, "commit": commit}})
+                                 "current_branch": current_branch,
+                                 "remotes": remotes, "version": {"branch": current_branch, "commit": commit}})
         else:
             if r: res += record_repos(str(a_search_res), r=r)
     return res
