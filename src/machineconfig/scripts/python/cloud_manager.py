@@ -24,7 +24,7 @@ def main():
     elif args.rerun_jobs:
         cm.rerun_jobs()
     else:
-        cm.run()
+        cm.serve()
 
 
 if __name__ == '__main__':

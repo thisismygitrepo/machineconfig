@@ -6,7 +6,7 @@
 * https://github.com/bloomberg/memray
 
 # Browsers:
-* carbonel. See READM for comparison
+* https://github.com/fathyb/carbonyl . See README for comparison
 
 # Sources:
 * https://github.com/sindresorhus/awesome

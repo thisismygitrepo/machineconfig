@@ -53,8 +53,7 @@ def main():
         # if choice_function != "RUN AS MAIN":
             # kgs1, _ = interactively_run_function(module[choice_function])
             # " ".join([f"--{k} {v}" for k, v in kgs1.items()])
-    else:
-        choice_function = None
+    else: choice_function = None
 
     if args.submit_to_cloud:
         submit_to_cloud(func=choice_function if choice_function is not None else choice_file)
