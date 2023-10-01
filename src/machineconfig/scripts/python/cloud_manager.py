@@ -24,8 +24,8 @@ def main():
         cm.rerun_jobs()
     if args.monitor_cloud:
         cm.run_monitor()
-    if args.serve:
-        cm.run()
+    else:
+        cm.serve()
 
 
 if __name__ == '__main__':
