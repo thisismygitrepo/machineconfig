@@ -7,14 +7,15 @@ import pandas as pd
 import platform
 from rich.console import Console
 # from rich.progress import track
-from machineconfig.utils.utils import LIBRARY_ROOT, DEFAULTS_PATH
+from machineconfig.utils.utils import LIBRARY_ROOT
 from machineconfig.jobs.python.python_linux_installers_all import get_installed_cli_apps
 from tqdm import tqdm
 from typing import Optional, Any
 
 
 apps_summary_path = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
-cloud = tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+cloud = "gdw"  # tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+# my onedrive doesn't allow sharing.
 
 
 def scan(path: tb.P, pct: float = 0.0):
