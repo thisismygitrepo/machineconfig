@@ -1,9 +1,5 @@
 
-# with admin prviliage, run this:
-
-# apps
-winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W 11
-winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
+# with admin prviliage, run this in order to minimally install croshell.
 
 # virtual enviornment
 # Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
@@ -15,3 +11,6 @@ winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --so
 
 # symlinks
 . ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
+
+# windows terminal and powershell
+(iwr bit.ly/cfwt).Content | iex

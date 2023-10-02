@@ -35,7 +35,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 # ~/code/machineconfig/src/machineconfig/setup_windows/wt_and_pwsh.ps1  # experimental
 # devapps:
 ~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
-# pwsh and wt settings:
+# pwsh and wt settings: (iwr bit.ly/cfwt).Content | iex
 iwr https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/wt_and_pwsh.ps1 | iex
 
 ```
@@ -52,7 +52,8 @@ short `(iwr bit.ly/cfgsshwindows).Content | iex` OR `curl bit.ly/cfgsshwindows -
 ```shell
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/web_shortcuts/croshell.ps1 | Invoke-Expression
 ```
-short: `curl bit.ly/cfgcroshellwindows -L | iex`
+short: `curl bit.ly/cfgcroshellwindows -L | iex` OR `(iwr bit.ly/cfgcroshellwindows).Content | iex`
+
 
 # Linux Setup
 With `sudo` access, run the following: (short `curl bit.ly/cfgalllinux -L | bash`)
