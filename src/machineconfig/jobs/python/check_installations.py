@@ -59,7 +59,10 @@ def main() -> None:
     for an_app in apps_paths_raw:
         if an_app.stem in versions.stem:
             app_versions.append(versions.filter(lambda x: x.stem == an_app.stem.replace(".exe", "")).list[0].read_text())
-        else: app_versions.append(None)
+        else:
+            tmp = tb.Terminal().run(f"{an_app.stem} --version", shell="powershell").capture().op_if_successfull_or_default(strict_err=False, strict_returcode=False)
+            if tmp is not None: tmp = tmp.split("\n")[0]
+            app_versions.append(None)
 
     positive_pct: list[Optional[float]] = []
     detailed_results: list[dict[str, Optional[pd.DataFrame]]] = []
@@ -86,14 +89,13 @@ def main() -> None:
         app_url.append(apps_safe_url.as_posix() if type(apps_safe_url) == tb.P else apps_safe_url)
     res_df["app_url"] = app_url
     res_df.to_csv(apps_summary_path.with_suffix(".csv").create(parents_only=True), index=False)
+    apps_summary_path.with_suffix(".md").write_text(res_df.to_markdown())
     print(res_df)
 
 
 def upload(path: tb.P):
     set_time_out = tb.install_n_import("call_function_with_timeout").SetTimeout
-    def func():
-        return path.to_cloud(cloud, rel2home=True, share=True)
-    func_with_timeout = set_time_out(func, timeout=180)
+    func_with_timeout = set_time_out(lambda: path.to_cloud(cloud, rel2home=True, share=True, os_specific=True), timeout=180)
     is_done, _is_timeout, _erro_message, results = func_with_timeout()
     if is_done: return results
     else: return None

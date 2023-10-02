@@ -40,7 +40,7 @@ echo "=============================== Downloading Remote Repo ==================
 mkdir ~/.machineconfig -ErrorAction SilentlyContinue
 rm ~/.machineconfig/remote/$repo_root_rel2home/* -r -force -ErrorAction SilentlyContinue
 rm ~/.machineconfig/remote/$repo_root_rel2home -r -force -ErrorAction SilentlyContinue
-cloud_rx $rclone_remote myhome/generic_os/$repo_root_rel2home -zew -l $HOME/.machineconfig/remote/$repo_root_rel2home  # overwrite, zip and encrypt
+cloud_rx $rclone_remote myhome/os_specific/$repo_root_rel2home -zew -l $HOME/.machineconfig/remote/$repo_root_rel2home  # overwrite, zip and encrypt
 
 
 if (!(Test-Path $HOME/.machineconfig/remote/$repo_root_rel2home)) {
