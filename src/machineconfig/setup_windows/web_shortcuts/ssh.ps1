@@ -1,4 +1,3 @@
-
 # NOT INTENDED FOR PUBLIC USE. 
 $pubkey_url='https://github.com/thisismygitrepo.keys'  # (CHANGE APPROPRIATELY)
 $pubkey_string=(Invoke-WebRequest $pubkey_url).Content
