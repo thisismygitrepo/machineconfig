@@ -77,9 +77,9 @@ database = {this = '~/.local/share/zoxide/db.zo', to_this = '~/dotfiles/settings
 #config = { this = '~/AppData/Roaming/dystroy/config', to_this = 'LIBRARY_ROOT/settings/broot/config' }
 
 
-[tmux_linux]
-config = {this = '~/.tmux.conf', to_this = 'LIBRARY_ROOT/settings/tmux/.tmux.conf'}
-tmate = {this = '~/.tmate.conf', to_this = 'LIBRARY_ROOT/settings/tmux/.tmate.conf'}
+# [tmux_linux]
+# config = {this = '~/.tmux.conf', to_this = 'LIBRARY_ROOT/settings/tmux/.tmux.conf'}
+# tmate = {this = '~/.tmate.conf', to_this = 'LIBRARY_ROOT/settings/tmux/.tmate.conf'}
 
 
 [zellij_linux]
