@@ -27,7 +27,7 @@ With elevated `PowerShell`, run the following: (short `curl bit.ly/cfgallwindows
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1 | Invoke-Expression
 # virtual enviornment  # short (iwr bit.ly/cfgvewindows).Content | iex OR `curl bit.ly/cfgvewindows -L | iex`
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
-# dev repos  # short `(iwr bit.ly/cfgreposwindows).Content | iex`` OR `curl bit.ly/cfgreposwindows -L | iex`
+# dev repos  # short `(iwr bit.ly/cfgreposwindows).Content | iex` OR `curl bit.ly/cfgreposwindows -L | iex`
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
 # symlinks: locally, run: `ftpsx username@hostname[:port] ~/dotfiles -z`, then, on the remote:
 . ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
@@ -46,7 +46,7 @@ iwr https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/mac
 $pubkey_string=(Invoke-WebRequest 'https://github.com/thisismygitrepo.keys').Content
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression
 ```
-short `curl bit.ly/cfgsshwindows -L | iex`
+short `(iwr bit.ly/cfgsshwindows).Content | iex` OR `curl bit.ly/cfgsshwindows -L | iex`
 
 ###### Install Croshell Terminal Directly,
 ```shell
