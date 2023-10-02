@@ -1,5 +1,5 @@
 
-""" installer
+""" Pomodoro timer for the command-line, written in Go.
 """
 
 from machineconfig.utils.utils import get_latest_release
@@ -9,6 +9,7 @@ from typing import Optional
 
 url = "https://github.com/open-pomodoro/openpomodoro-cli"
 __doc__ = """Pomodoro timer for the command-line"""
+
 
 def main(version: Optional[str] = None) -> None:
     if platform.system() == "Windows":

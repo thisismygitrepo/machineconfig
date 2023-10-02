@@ -1,6 +1,5 @@
 
-""" installer
-"""
+
 
 from machineconfig.utils.utils import get_latest_release
 from platform import system

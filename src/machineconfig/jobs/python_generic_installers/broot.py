@@ -1,7 +1,6 @@
 
 
-""" installer
-"""
+
 
 import crocodile.toolbox as tb
 from rich.console import Console

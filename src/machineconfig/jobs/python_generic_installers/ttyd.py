@@ -1,8 +1,5 @@
 
 
-""" installer
-"""
-
 from machineconfig.utils.utils import get_latest_release, find_move_delete_linux, find_move_delete_windows
 import platform
 from typing import Optional
@@ -31,4 +28,3 @@ def main(version: Optional[str] = None) -> None:
 
 if __name__ == '__main__':
     main()
-

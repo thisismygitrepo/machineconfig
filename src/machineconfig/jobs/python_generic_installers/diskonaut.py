@@ -1,7 +1,4 @@
 
-""" installer
-"""
-
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import get_latest_release
 from rich.console import Console

@@ -7,19 +7,18 @@ import pandas as pd
 import platform
 from rich.console import Console
 # from rich.progress import track
-from machineconfig.utils.utils import LIBRARY_ROOT
+from machineconfig.utils.utils import LIBRARY_ROOT, DEFAULTS_PATH
 from machineconfig.jobs.python.python_linux_installers_all import get_installed_cli_apps
 from tqdm import tqdm
 from typing import Optional, Any
 
 
-safe_apps_records = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps.json")
-safe_apps_url = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/safe_cli_apps_url.txt")
-cloud = "gdpo"
+apps_summary_path = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
+cloud = tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
 
 
 def scan(path: tb.P, pct: float = 0.0):
-    vt = tb.install_n_import(library="vt", name="vt-py")
+    vt = tb.install_n_import(library="vt", package="vt-py")
     client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
     console = Console()
     console.rule(f"Scanning {path}. {pct:.2f}% done")
@@ -28,7 +27,6 @@ def scan(path: tb.P, pct: float = 0.0):
         return None
     with open(str(path), "rb") as f:
         analysis = client.scan_file(f)
-
     repeat_counter = 0
     while True:
         with console.status(f"waiting for scan of {path} ... "):
@@ -42,7 +40,6 @@ def scan(path: tb.P, pct: float = 0.0):
                     raise ValueError(f"Error in scanning {path}") from ex
                 print(f"Error in scanning, trying again.")
             time.sleep(30)
-
     df = pd.DataFrame(anal.results).T
     malicious = []
     for _idx, row in df.iterrows():
@@ -50,44 +47,45 @@ def scan(path: tb.P, pct: float = 0.0):
         else:
             tb.Struct(row.to_dict()).print(as_config=True, title=f"Found Category {row.category}")
             malicious.append(row)
-
     positive_pct = len(malicious) / len(df) * 100
     print(f"positive_ratio = {positive_pct:.1f} %")
-    return positive_pct
+    return positive_pct, df
 
 
 def main() -> None:
-    apps_paths_raw = get_installed_cli_apps()
-
-    app_versions = []
-    versions = tb.P.home().joinpath(f"tmp_results/cli_tools_installers/versions").search()
+    apps_paths_raw: tb.List[tb.P] = get_installed_cli_apps()
+    app_versions: list[Optional[str]] = []
+    versions: tb.L[tb.P] = tb.P.home().joinpath(f"tmp_results/cli_tools_installers/versions").search()
     for an_app in apps_paths_raw:
-        if an_app.stem in versions.stem: app_versions.append(versions.filter(lambda x: x.stem == an_app.stem.replace(".exe", ""))[0].read_text())
+        if an_app.stem in versions.stem:
+            app_versions.append(versions.filter(lambda x: x.stem == an_app.stem.replace(".exe", "")).list[0].read_text())
         else: app_versions.append(None)
 
-    positive_pct = []
-    # for app in track(apps, description="App apps scanning..."):
+    positive_pct: list[Optional[float]] = []
+    detailed_results: list[dict[str, Optional[pd.DataFrame]]] = []
     for idx, app in enumerate(apps_paths_raw):
         try: res = scan(path=app, pct=idx / len(apps_paths_raw) * 100)
         except ValueError as ve:
             print(ve)
             res = None
-        positive_pct.append(res)
+        if res is None:
+            positive_pct.append(None)
+            detailed_results.append({app.stem: None})
+        else:
+            ppct, df = res
+            positive_pct.append(ppct)
+            detailed_results.append({app.stem: df})
 
     res_df = pd.DataFrame({"app_name": apps_paths_raw.stem.list, "version": app_versions, "positive_pct": positive_pct,
                                 "app_path": apps_paths_raw.apply(lambda x: x.collapseuser(strict=False).as_posix()).list})
 
-    apps_safe_df = res_df.query("positive_pct < 5")
-
-    app_url = []
-    for idx, row in tqdm(apps_safe_df.iterrows(), total=apps_safe_df.shape[0]):
+    # apps_safe_df = res_df.query("positive_pct < 5")
+    app_url: list[Optional[str]] = []
+    for idx, row in tqdm(res_df.iterrows(), total=res_df.shape[0]):
         apps_safe_url = upload(tb.P(row["app_path"]).expanduser())
         app_url.append(apps_safe_url.as_posix() if type(apps_safe_url) == tb.P else apps_safe_url)
     res_df["app_url"] = app_url
-
-    res_df.to_json(safe_apps_records.create(parents_only=True), index=False, orient='split')
-    share_url = safe_apps_records.to_cloud(cloud, rel2home=True, share=True)
-    safe_apps_url.write_text(share_url.as_posix())
+    res_df.to_csv(apps_summary_path.with_suffix(".csv").create(parents_only=True), index=False)
     print(res_df)
 
 
@@ -109,17 +107,17 @@ class PrecompliedInstaller:
         return tb.P(url).download(name=name)
 
     def __init__(self, from_cloud: bool = True):
-        if from_cloud: file = PrecompliedInstaller.download_rclone_links(safe_apps_url.read_text(), name=safe_apps_records.name)
-        else: file = safe_apps_records
+        _ = from_cloud
+        file = apps_summary_path
         tmp = file.readit()
         self.df = pd.DataFrame(tmp['data'], columns=tmp['columns'])
 
     def install(self, name: str):
         res = self.df.query(f"app == '{name}'")
         if len(res) == 0 or len(res) > 1:
-            print(f"Couldn't find unique result when searching safe_apps_records @ {safe_apps_records}")
+            print(f"Couldn't find unique result when searching safe_apps_records @ {apps_summary_path}")
             return None
-        tb.P(str(res['app_url'])).download()
+        tb.P(str(res.iloc[0]['app_url'])).download()
 
     def download_safe_apps(self):
         if platform.system().lower() == "windows":

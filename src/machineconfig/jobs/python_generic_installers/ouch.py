@@ -1,8 +1,5 @@
 
 
-""" installer
-"""
-
 from machineconfig.utils.utils import get_latest_release, find_move_delete_windows, find_move_delete_linux
 import crocodile.toolbox as tb
 import platform
@@ -23,7 +20,7 @@ def main(version: Optional[str] = None) -> None:
         find_move_delete_windows(downloaded=res, tool_name="ouch", delete=True)
     elif platform.system() == "Linux":
         res = dl.joinpath("ouch-x86_64-unknown-linux-gnu.tar.gz").download().ungz_untar(inplace=True)
-        find_move_delete_linux(downloaded=res, tool_name="ouch",  delete=True)
+        find_move_delete_linux(downloaded=res, tool_name="ouch", delete=True)
     else:
         raise NotImplementedError(f"Platform {platform.system()} not supported.")
 
