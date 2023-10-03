@@ -6,6 +6,7 @@ from typing import Optional
 url = r'https://download.sysinternals.com/files/ZoomIt.zip'
 __doc__ = """A screen zoom and annotation tool for presentations"""
 
+
 def main(version: Optional[str] = None):
     _ = version
     print("\n\n\n")

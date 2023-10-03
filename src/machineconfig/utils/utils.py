@@ -21,6 +21,7 @@ REPO_ROOT = LIBRARY_ROOT.parent.parent
 PROGRAM_PATH = (P.tmp().joinpath("shells/python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh")).create(parents_only=True)
 CONFIG_PATH = P.home().joinpath(".config/machineconfig")
 DEFAULTS_PATH = P.home().joinpath("dotfiles/machineconfig/defaults.ini")
+APP_VERSION_ROOT = P.home().joinpath(f"tmp_results/cli_tools_installers/versions")
 tmp_install_dir = P.tmp(folder="tmp_installers")
 
 
@@ -133,7 +134,9 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
 
 
 def get_latest_release(repo_url: str, download_n_extract: bool = False, suffix: Optional[str] = "x86_64-pc-windows-msvc",
-                       file_name: Optional[str] = None, tool_name: Optional[str] = None, exe_name: Optional[str] = None,
+                       file_name: Optional[str] = None,
+                       tool_name: Optional[str] = None,
+                       exe_name: Optional[str] = None,
                        delete: bool = True, strip_v: bool = False, linux: bool = False, compression: Optional[str] = None,
                        sep: Optional[str] = "-", version: Optional[str] = None):
     console = Console()
@@ -150,7 +153,8 @@ def get_latest_release(repo_url: str, download_n_extract: bool = False, suffix: 
     compression = compression or ("zip" if not linux else "tar.gz")
     version = str(download_link[-1]).replace("v", "") if strip_v else str(download_link[-1])
     tool_name = tool_name or str(P(repo_url)[-1])
-    P.home().joinpath(f"tmp_results/cli_tools_installers/versions/{tool_name}").create(parents_only=True).write_text(version)
+    tmp_path = APP_VERSION_ROOT.joinpath(exe_name or tool_name).create(parents_only=True).write_text(version)
+    print(f"Latest version is {version}, logged at {tmp_path}")
 
     existing_version = Terminal().run(f"{tool_name} --version", shell="powershell").op_if_successfull_or_default(strict_err=True, strict_returcode=True)
     if existing_version is not None:

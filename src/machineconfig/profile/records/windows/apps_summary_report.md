@@ -20,7 +20,7 @@
 | 17 | kondo       |           |        1.31579 | ~/AppData/Local/Microsoft/WindowsApps/kondo.exe       |           |
 | 18 | lf          | r31       |        2.63158 | ~/AppData/Local/Microsoft/WindowsApps/lf.exe          |           |
 | 19 | mprocs      | 0.6.4     |        1.31579 | ~/AppData/Local/Microsoft/WindowsApps/mprocs.exe      |           |
-| 20 | navi        | v2.22.1   |       10.6667  | ~/AppData/Local/Microsoft/WindowsApps/navi.exe        |           |
+| 20 | navi        | v2.22.1   |        10.6667 | ~/AppData/Local/Microsoft/WindowsApps/navi.exe        |           |
 | 21 | ots         | v0.2.0    |        3.94737 | ~/AppData/Local/Microsoft/WindowsApps/ots.exe         |           |
 | 22 | ouch        | 0.4.2     |        1.31579 | ~/AppData/Local/Microsoft/WindowsApps/ouch.exe        |           |
 | 23 | pomodoro    |           |        1.31579 | ~/AppData/Local/Microsoft/WindowsApps/pomodoro.exe    |           |

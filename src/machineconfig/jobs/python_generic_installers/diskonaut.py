@@ -1,6 +1,6 @@
 
 import crocodile.toolbox as tb
-from machineconfig.utils.utils import get_latest_release
+from machineconfig.utils.utils import get_latest_release, APP_VERSION_ROOT
 from rich.console import Console
 from platform import system
 from typing import Optional
@@ -17,6 +17,7 @@ def main(version: Optional[str] = None) -> None:
         dir_ = tb.P(url).download(name='diskonaut.zip').unzip(inplace=True)
         dir_.search().list[0].move(folder=tb.P.get_env().WindowsApps, overwrite=True)
         dir_.delete(sure=True)
+        APP_VERSION_ROOT.create().joinpath("diskonaut").write_text(data="v0.11.0")
         console.rule("Completed Installation")
     else:
         url = r'https://github.com/imsnif/diskonaut'
