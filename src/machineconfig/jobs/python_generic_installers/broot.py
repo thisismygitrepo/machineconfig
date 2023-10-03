@@ -1,7 +1,5 @@
 
 
-
-
 import crocodile.toolbox as tb
 from rich.console import Console
 from platform import system
@@ -17,7 +15,7 @@ if system() == 'Linux':
 elif system() == 'Windows':
     url = r'https://dystroy.org/broot/download/x86_64-pc-windows-gnu/broot.exe'
 else:
-    raise Exception(f"Unsupported OS: {system()}")
+    raise NotImplementedError(f"Unsupported OS: {system()}")
 
 
 def main(version: Optional[str] = None) -> None:
