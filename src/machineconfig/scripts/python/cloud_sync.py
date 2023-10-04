@@ -9,7 +9,7 @@ import argparse
 
 
 def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
-    if args.source == ":":
+    if args.source == ":":  # default cloud name is omitted cloud_name:
         path = P(args.target).expanduser().absolute()
         for _i in range(len(path.parts)):
             if path.joinpath("cloud.json").exists():
@@ -22,7 +22,7 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
         else:
             DEFAULT_CLOUD: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             args.source = DEFAULT_CLOUD + ":"
-    if args.target == ":":
+    if args.target == ":":  # default cloud name is omitted cloud_name:
         path = P(args.source).expanduser().absolute()
         for _i in range(len(path.parts)):
             if path.joinpath("cloud.json").exists():
@@ -36,25 +36,26 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
             DEFAULTCLOUD: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             args.target = DEFAULTCLOUD + ":"
 
-    if ":" in args.source:
+    if ":" in args.source and (":" != args.source[1] if len(args.source) > 1 else True):  # avoid the case of "C:/"
         cloud: str = args.source.split(":")[0]
         target = P(args.target).expanduser().absolute()
-        source = P(f"{cloud}:{target.get_remote_path(os_specific=False, root=args.root).as_posix()}")
-    elif ":" in args.target:
+        source = P(f"{cloud}:{target.get_remote_path(os_specific=args.os_specific, root=args.root).as_posix() if args.rel2home else target.as_posix()}")  # todo: add support for no rel2home and os_specifc exist and root exsits.
+    elif ":" in args.target and (":" != args.target[1] if len(args.target) > 1 else True):  # avoid the case of "C:/"
         cloud = args.target.split(":")[0]
         source = P(args.source).expanduser().absolute()
-        target = P(f"{cloud}:{source.get_remote_path(os_specific=False, root=args.root).as_posix()}")
-    else:  # user did not specify remotepath, so it will be inferred here
+        target = P(f"{cloud}:{source.get_remote_path(os_specific=args.os_specific, root=args.root).as_posix() if args.rel2home else source.as_posix()}")  # todo: add support for no rel2home and os_specifc exist and root exsits.
+    else:
+        # user, being slacky and did not indicate the remotepath with ":", so it will be inferred here
         # but first we need to know whether the cloud is source or target
         remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
         for cloud in remotes:
             if str(args.source) == cloud:
                 target = P(args.target).expanduser().absolute()
-                source = P(f"{cloud}:{target.get_remote_path(os_specific=False, root=args.root).as_posix()}")
+                source = P(f"{cloud}:{target.get_remote_path(os_specific=args.os_specific, root=args.root).as_posix() if args.rel2home else target.as_posix()}")  # todo: add support for no rel2home and os_specifc exist and root exsits.
                 break
             if str(args.target) == cloud:
                 source = P(args.source).expanduser().absolute()
-                target = P(f"{cloud}:{source.get_remote_path(os_specific=False, root=args.root).as_posix()}")
+                target = P(f"{cloud}:{source.get_remote_path(os_specific=args.os_specific, root=args.root).as_posix() if args.rel2home else source.as_posix()}")  # todo: add support for no rel2home and os_specifc exist and root exsits.
                 break
         else:
             print(f"Could not find a remote in {remotes} that matches {args.source} or {args.target}.")
@@ -78,6 +79,8 @@ def args_parser():
     parser.add_argument("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.", action="store_true")  # default is False
 
     args = parser.parse_args()
+    args.os_specific = False
+    args.rel2home = True
 
     cloud, source, target = parse_cloud_source_target(args)
     # map short flags to long flags (-u -> --upload), for easier use in the script
