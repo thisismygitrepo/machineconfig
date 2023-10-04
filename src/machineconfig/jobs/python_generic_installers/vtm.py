@@ -18,7 +18,7 @@ def main(version: Optional[str] = None) -> None:
         print(f"Could not find browsh release for version {version}")
         return None
     if system() == 'Windows':
-        downloaded = link.joinpath("vtm_windows_amd64.zip").download().unzip(inplace=True)
+        downloaded = link.joinpath("vtm_windows_x86_64.zip").download().unzip(inplace=True)
         find_move_delete_windows(downloaded, "vtm", delete=True)
     else:
         downloaded = link.joinpath("vtm_linux_amd64.tar.gz").download().ungz_untar(inplace=True)

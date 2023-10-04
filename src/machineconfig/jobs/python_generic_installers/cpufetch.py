@@ -16,7 +16,7 @@ def main(version: Optional[str] = None):
         download = url.joinpath(f"cpufetch_x86_linux").download().rename("cpufetch")
         find_move_delete_linux(downloaded=download, tool_name="cpufetch")
     elif platform.system() == "Windows":
-        download = url.joinpath(f"cpufetch_x86-64_windows.exe").download().rename("cpufetch.exe")
+        download = url.joinpath(f"cpufetch.exe").download().rename("cpufetch.exe")
         find_move_delete_windows(downloaded=download, tool_name="cpufetch.exe")
     else:
         raise NotImplementedError(f"Not supported OS for gitui {platform.system()}")

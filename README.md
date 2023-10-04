@@ -31,13 +31,20 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
 # symlinks: locally, run: `ftpsx username@hostname[:port] ~/dotfiles -z`, then, on the remote:
 . ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
-# pwsh profile
-# ~/code/machineconfig/src/machineconfig/setup_windows/wt_and_pwsh.ps1  # experimental
 # devapps:
 ~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
-# pwsh and wt settings: (iwr bit.ly/cfwt).Content | iex
+# pwsh and wt settings: (iwr bit.ly/cfgwt).Content | iex
 iwr https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/wt_and_pwsh.ps1 | iex
 
+```
+
+```shell
+(iwr bit.ly/cfgappswindows).Content | iex
+(iwr bit.ly/cfgvewindows).Content | iex
+(iwr bit.ly/cfgreposwindows).Content | iex
+. ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
+~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
+(iwr bit.ly/cfwt).Content | iex
 ```
 
 ###### Setup SSH connection:

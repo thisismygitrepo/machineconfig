@@ -54,11 +54,12 @@ winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --so
 # ======================= Terminal-based editors =================================
 # winget install --no-upgrade --name "Lapce" --Id Lapce.Lapce  # app variant of helix
 winget install --no-upgrade --name "Neovim" --Id Neovim.Neovim --source winget --accept-package-agreements --accept-source-agreements
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 Invoke-WebRequest "https://spacevim.org/install.cmd" -OutFile "~/Downloads/spacevim_installer.cmd"
 ~/Downloads/spacevim_installer.cmd
 # https://nvchad.com/quickstart/install
 
-Install-Module -Name PSFzf  -SkipPublisherCheck -AcceptLicense -PassThru -Confirm  #  -RequiredVersion 2.5.10
+Install-Module -Name PSFzf  -SkipPublisherCheck  # -AcceptLicense -PassThru -Confirm  #  -RequiredVersion 2.5.10
 winget install --no-upgrade --name "Ubuntu" --Id "Canonical.Ubuntu.2204" --accept-package-agreements --accept-source-agreements
 # iex ((New-Object System.Net.WebClient).DownloadString('https://git.io/JJ8R4'))  # tune machine to minimal
 
@@ -84,7 +85,6 @@ winget install --no-upgrade --name "graphviz" --Id Graphviz.Graphviz  # required
 winget install --no-upgrade --name "WinFsp" --Id WinFsp.WinFsp  # mount remote filesystems and required by rclone
 winget install --no-upgrade --name "SSHFS-win" --Id SSHFS-Win.SSHFS-Win  # mount remote filesystems  # as per https://github.com/winfsp/sshfs-win
 
-
 winget install --no-upgrade --name "xming" --Id xming.xming  # X11 server. you need this while using wsl with gui, otherwise plt.show() returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running
 winget install --no-upgrade --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements  # ncessary for nvim plugins.
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
@@ -94,6 +94,4 @@ npm install -g lolcatjs
 npm install -g figlet-cli
 npm install -g @githubnext/github-copilot-cli
 
-
 Write-Output "Finished installing apps"
-

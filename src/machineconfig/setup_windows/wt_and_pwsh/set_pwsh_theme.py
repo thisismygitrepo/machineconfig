@@ -21,6 +21,7 @@ def install_nerd_fonts():
     folder.search("*LICENSE*").apply(lambda p: p.delete(sure=True))
     file = tb.P.tmpfile(suffix=".ps1").write_text(LIBRARY_ROOT.joinpath("setup_windows/wt_and_pwsh/install_fonts.ps1").read_text().replace(r".\fonts-to-be-installed", str(folder)))
     tb.subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {file.str}", check=True)
+    folder.delete(sure=True)
 
 
 def change_shell_profile():
