@@ -25,8 +25,9 @@ def get_add_ssh_key_script(path_to_key: tb.P):
             elif system() == "Windows":
                 program_path = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add-sshkey.ps1")
                 program = program_path.expanduser().read_text()
-                assert "$sshfile=" in program, f"This section performs string manipulation on the script {program_path} to add the key to the authorized_keys file. The script has changed and the string '$sshfile=' is not found."
-                program = program.replace('$sshfile = ""', f'$sshfile = "{path_to_key}"')
+                place_holder = '$sshfile = ""'
+                assert "$sshfile = " in program, f"This section performs string manipulation on the script {program_path} to add the key to the authorized_keys file. The script has changed and the string {place_holder} is not found."
+                program = program.replace(place_holder, f'$sshfile = "{path_to_key}"')
             else: raise NotImplementedError
     else:
         if system() == "Linux":
