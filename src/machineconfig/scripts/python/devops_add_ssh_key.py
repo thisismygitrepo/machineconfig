@@ -28,6 +28,7 @@ def get_add_ssh_key_script(path_to_key: tb.P):
                 place_holder = '$sshfile = ""'
                 assert "$sshfile = " in program, f"This section performs string manipulation on the script {program_path} to add the key to the authorized_keys file. The script has changed and the string {place_holder} is not found."
                 program = program.replace(place_holder, f'$sshfile = "{path_to_key}"')
+                print(f"Replaced {place_holder} with {path_to_key} in {program_path}.")
             else: raise NotImplementedError
     else:
         if system() == "Linux":
