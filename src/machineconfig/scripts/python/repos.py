@@ -137,8 +137,8 @@ def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_comm
         for idx, (remote_name, remote_url) in enumerate(repo["remotes"].items()):
             if clone:
                 if idx == 0:  # clone
-                    program += f"\ncd{parent_dir.as_posix()}; git clone {remote_url} --origin {remote_name}\n"
-                    program += f"\ncd{parent_dir.as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}\n"
+                    program += f"\ncd {parent_dir.as_posix()}; git clone {remote_url} --origin {remote_name}\n"
+                    program += f"\ncd {parent_dir.as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}\n"
                     # the new url-setting to ensure that account name before `@` was not lost (git clone ignores it): https://thisismygitrepo@github.com/thisismygitrepo/crocodile.git
                 program += f"\ncd {parent_dir.as_posix()}/{repo['name']}; git remote add {remote_name} {remote_url}\n"
             if checkout_to_recorded_commit:
