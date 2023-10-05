@@ -21,8 +21,8 @@ Set-Variable mypy ($env:LOCALAPPDATA + "\Programs\Python\Python$py_version\pytho
 if (Test-Path $mypy) {
     Write-Host "$mypy exists."
 } else {
-    Write-Host "$mypy does not exis, trying to install it."
     $version_dotted = $py_version.ToString().Insert(1, '.')
+    Write-Host "$mypy does not exist, trying to install it ($version_dotted)"
     winget install --id Python.Python.$version_dotted --source winget --accept-package-agreements --accept-source-agreements
 }
 
