@@ -35,6 +35,6 @@ setuptools.setup(
         "pudb",  # required by fire command
         "pyfzf",
         "clipboard",
-
+        "psutil",
     ],
 )

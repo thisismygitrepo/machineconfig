@@ -13,6 +13,11 @@ def main(version: Optional[str] = None):
     console = Console()
     console.rule("Installing ZoomIt")
     folder = tb.P(url).download(tb.P.home().joinpath('Downloads')).unzip(inplace=True)
+
+    import psutil
+    for proc in psutil.process_iter():
+        if proc.name() == "ZoomIt.exe":
+            proc.kill()
     folder.joinpath('ZoomIt.exe').move(folder=tb.P.get_env().WindowsApps, overwrite=True)
     folder.delete(sure=True)
     console.rule("Completed Installation")

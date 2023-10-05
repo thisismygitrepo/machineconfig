@@ -10,17 +10,23 @@ from typing import Optional
 pd.options.display.max_rows = 10000
 
 
-# import time
+def get_files_accessed_by_processes():
+    res: dict[int, list[str]] = {}
+    from tqdm import tqdm
+    for proc in tqdm(psutil.process_iter()):
+        try:
+            files = proc.open_files()
+        except psutil.AccessDenied:
+            continue
+        res[proc.pid] = [file.path for file in files]
+    df = pd.DataFrame(res.items(), columns=['pid', 'files'])
+    return df
 
-# import psutil
-# res = []
-# for proc in psutil.process_iter():
-#     try:
-#         files = proc.open_files()
-#     except psutil.AccessDenied:
-#         continue
-#     for file in files:
-#         res.append(file.path)
+
+def kill_process(name: str):
+    for proc in psutil.process_iter():
+        if proc.name() == name:
+            proc.kill()
 
 
 class ProcessManager:
