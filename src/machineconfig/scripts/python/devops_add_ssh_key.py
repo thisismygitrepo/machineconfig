@@ -22,14 +22,14 @@ def get_add_ssh_key_script(path_to_key: tb.P):
             if system() == "Linux":
                 program = f"cat {path_to_key} >> ~/.ssh/authorized_keys"
             else:
-                program = LIBRARY_ROOT.joinpath("jobs/windows/openssh-server_add_sshkey.ps1")
+                program = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add_sshkey.ps1")
                 program = tb.P(program).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
 
     else:
         if system() == "Linux":
             program = f"cat {path_to_key} > ~/.ssh/authorized_keys"
         else:
-            program = LIBRARY_ROOT.joinpath("jobs/windows/openssh-server_add_sshkey.ps1")
+            program = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add_sshkey.ps1")
             program = tb.P(program).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
 
     if system() == "Linux" and 2 > 1: program += f"""
