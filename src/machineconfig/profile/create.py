@@ -72,7 +72,9 @@ def main_symlinks(choice: Optional[str] = None):
         if str(choice_selected) == "all" and system == "Windows" and not tb.Terminal.is_user_admin():
             print("*" * 200)
             raise RuntimeError(f"Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
-        elif choice_selected == "all": pass  # i.e. program_keys = program_keys
+        elif choice_selected == "all":
+            print(f"{program_keys=}")
+            pass  # i.e. program_keys = program_keys
         else: program_keys = [choice_selected]
     else: program_keys = choice_selected
 

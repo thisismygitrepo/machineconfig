@@ -30,9 +30,10 @@ def main(new_theme: Optional[str] = None):
         return ""
     if new_theme is None:
         themes = themes_path.search().apply(lambda x: x.trunk)
+        # print(themes)
         themes.list.sort()
         tail = ""
-        tmp = display_options(msg=f"Choose a theme number from the list above: ", tail=tail, options=list(themes) + ["suprise me"], default="suprise me",
+        tmp = display_options(msg=f"Choose a theme number from the list above: ", tail=tail, options=themes.list + ["surprise me"], default="surprise me",
                                     prompt=f"Recommended descriptive ones are {descriptive_themes}", fzf=True)
         if isinstance(tmp, str): new_theme = tmp
         else: raise ValueError(f"Got {tmp} from display_options")
