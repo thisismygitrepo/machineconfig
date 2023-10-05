@@ -25,8 +25,8 @@ def get_add_ssh_key_script(path_to_key: tb.P):
             elif system() == "Windows":
                 program_path = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add-sshkey.ps1")
                 program = program_path.expanduser().read_text()
-                place_holder = '$sshfile = ""'
-                assert "$sshfile = " in program, f"This section performs string manipulation on the script {program_path} to add the key to the authorized_keys file. The script has changed and the string {place_holder} is not found."
+                place_holder = r'$sshfile = "$env:USERPROFILE\.ssh\pubkey.pub"'
+                assert place_holder in program, f"This section performs string manipulation on the script {program_path} to add the key to the authorized_keys file. The script has changed and the string {place_holder} is not found."
                 program = program.replace(place_holder, f'$sshfile = "{path_to_key}"')
                 print(f"Replaced {place_holder} with {path_to_key} in {program_path}.")
             else: raise NotImplementedError
@@ -37,7 +37,7 @@ def get_add_ssh_key_script(path_to_key: tb.P):
             program = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add-sshkey.ps1")
             program = tb.P(program).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
 
-    if system() == "Linux" and 2 > 1: program += f"""
+    if system() == "Linux": program += f"""
 
 sudo chmod 700 ~/.ssh
 sudo chmod 644 ~/.ssh/authorized_keys
@@ -61,6 +61,7 @@ def main():
     elif res == i_paste_option: program = get_add_ssh_key_script(tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key.pub): ') or 'my_pasted_key.pub'}").write_text(input("Paste the pub key here: ")))
     else:
         program = get_add_ssh_key_script(tb.P(res))
+        print(program)
     return program
 
 
