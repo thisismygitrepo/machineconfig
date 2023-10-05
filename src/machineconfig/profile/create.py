@@ -64,7 +64,9 @@ def main_symlinks(choice: Optional[str] = None):
     program_keys.sort()
     if choice is None:
         choice_selected = display_options(msg="Which symlink to create?", options=program_keys + ["all", "none"], default="none", fzf=True, multi=True)
-        if str(choice_selected) == "none": return
+        assert isinstance(choice_selected, list)
+        if len(choice_selected) == 1 and choice_selected[0] == "none": return  # terminate function.
+        elif len(choice_selected) == 1 and choice_selected[0] == "all": choice_selected = "all"  # i.e. program_keys = program_keys
         overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
     else: choice_selected = choice
 
