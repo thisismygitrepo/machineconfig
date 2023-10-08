@@ -7,6 +7,7 @@ from typing import Optional
 
 repo_url = tb.P(r"https://github.com/helix-editor/helix")
 __doc__ = f"""Rust-based TUI editor"""
+EXE = "hx"
 
 
 def main(version: Optional[str] = None) -> None:
@@ -15,7 +16,7 @@ def main(version: Optional[str] = None) -> None:
         target = AppData
         suffix = "x86_64-windows"
         compression = "zip"
-        exe = get_latest_release(repo_url.as_url_str(), download_n_extract=True, suffix=suffix, delete=False, exe_name="hx", version=version, compression=compression)
+        exe = get_latest_release(repo_url.as_url_str(), download_n_extract=True, suffix=suffix, delete=False, exe_name=EXE, version=version, compression=compression)
     else:
         target = tb.P.home().joinpath(".config")
         suffix = "x86_64-linux"

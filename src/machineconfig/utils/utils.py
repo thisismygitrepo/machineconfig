@@ -153,16 +153,20 @@ def get_latest_release(repo_url: str, download_n_extract: bool = False, suffix: 
     compression = compression or ("zip" if not linux else "tar.gz")
     version = str(download_link[-1]).replace("v", "") if strip_v else str(download_link[-1])
     tool_name = tool_name or str(P(repo_url)[-1])
-    tmp_path = APP_VERSION_ROOT.joinpath(exe_name or tool_name).create(parents_only=True).write_text(version)
-    print(f"Latest version is {version}, logged at {tmp_path}")
 
-    existing_version = Terminal().run(f"{exe_name or tool_name} --version", shell="powershell").op_if_successfull_or_default(strict_err=True, strict_returcode=True)
+    # existing_version_cli = Terminal().run(f"{exe_name or tool_name} --version", shell="powershell").op_if_successfull_or_default(strict_err=True, strict_returcode=True)
+    tmp_path = APP_VERSION_ROOT.joinpath(exe_name or tool_name).create(parents_only=True)
+    if tmp_path.exists(): existing_version = tmp_path.read_text().rstrip()
+    else: existing_version = None
+
     if existing_version is not None:
-        if existing_version.rstrip().replace("v", "") == version.replace("v", ""):
+        if existing_version == version:
             print(f"⚠️ {tool_name} already installed at version {version}")
             return
         else:
+            # print(f"Latest version is {version}, logged at {tmp_path}")
             print(f"⬆️ {tool_name} installed at version {existing_version.rstrip()} --> Installing version {version} ")
+            tmp_path.write_text(version)
 
     if not download_n_extract: return download_link
     console.rule(f"Installing {tool_name} version {version}")
@@ -177,9 +181,8 @@ def get_latest_release(repo_url: str, download_n_extract: bool = False, suffix: 
     elif "tar.xz" in download_link: downloaded = downloaded.unxz_untar(inplace=True)
     else: pass  # no compression.
 
-    if download_n_extract and not linux: return find_move_delete_windows(downloaded, exe_name or tool_name, delete)
-    elif download_n_extract and linux: return find_move_delete_linux(downloaded, exe_name or tool_name, delete)
-
+    if not linux: return find_move_delete_windows(downloaded, exe_name or tool_name, delete)
+    return find_move_delete_linux(downloaded, exe_name or tool_name, delete)
     # console.rule(f"Completed Installation")
     # return res
 
@@ -233,7 +236,7 @@ def get_latest_version(url: str) -> None:
 
 
 def check_tool_exists(tool_name: str) -> bool:
-    if platform.system() == "Windows": tool_name = tool_name + ".exe"
+    if platform.system() == "Windows": tool_name = tool_name.replace(".exe", "") + ".exe"
     if platform.system() == "Windows": cmd = "where.exe"
     elif platform.system() == "Linux": cmd = "which"
     else: raise NotImplementedError(f"platform {platform.system()} not implemented")
@@ -241,27 +244,19 @@ def check_tool_exists(tool_name: str) -> bool:
     try:
         subprocess.check_output([cmd, tool_name])
         return True
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return False
+    except (subprocess.CalledProcessError, FileNotFoundError): return False
 
 
 def get_current_ve():
     import sys
     path = P(sys.executable)  # something like ~\\venvs\\ve\\Scripts\\python.exe'
-    if P.home().joinpath("venvs") in path:
-        return path.parent.parent.stem
-    else:
-        raise NotImplementedError("Not a kind of virtual enviroment that I expected.")
-        # return path.parent.parent.stem
-
-
+    if P.home().joinpath("venvs") in path: return path.parent.parent.stem
+    else: raise NotImplementedError("Not a kind of virtual enviroment that I expected.")
 def get_ssh_hosts() -> list[str]:
     from paramiko import SSHConfig
     c = SSHConfig()
     c.parse(open(P.home().joinpath(".ssh/config").str, encoding="utf-8"))
     return list(c.get_hostnames())
-
-
 def choose_ssh_host(multi: bool = True): return display_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
 
 
