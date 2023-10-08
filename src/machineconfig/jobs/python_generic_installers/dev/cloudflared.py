@@ -2,7 +2,7 @@
 
 """ Cloudflared installer. Should only be installed at main computer and servers of tunnels."""
 # sudo rm /etc/systemd/system/cloudfl*; before uninstall command if you want to uninstall
-# you can't ssh and serve cloudflared on the same machine, make sure not to do that.
+# you can't ssh and serve cloudflared tunnel on the same machine, make sure not to do that.
 
 # from crocodile.meta import sys
 from machineconfig.utils.utils import get_latest_release, find_move_delete_linux, find_move_delete_windows

@@ -17,8 +17,8 @@ import argparse
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("path", nargs='?', type=str, help="The directory containing the jobs", default=".")
+    parser.add_argument("--function", "-f", type=str, help="The function to run", default="")
     parser.add_argument("-v", "--ve", type=str, help="virtual enviroment name", default="")
-    # optional flag for interactivity
     parser.add_argument("--interactive", "-i", action="store_true", help="Whether to run the job interactively using IPython")
     parser.add_argument("--debug", "-d", action="store_true", help="debug")
     parser.add_argument("--choose_function", "-c", action="store_true", help="debug")
@@ -53,7 +53,10 @@ def main():
         # if choice_function != "RUN AS MAIN":
             # kgs1, _ = interactively_run_function(module[choice_function])
             # " ".join([f"--{k} {v}" for k, v in kgs1.items()])
-    else: choice_function = None
+    elif args.function != "":
+        choice_function = args.function
+    else:
+        choice_function = None
 
     if args.submit_to_cloud:
         submit_to_cloud(func=choice_function if choice_function is not None else choice_file)
