@@ -67,11 +67,12 @@ colors = {this = '~/.config/lf/colors', to_this = 'LIBRARY_ROOT/settings/lf/linu
 config = {this = '~/.config/lf/lfrc', to_this = 'LIBRARY_ROOT/settings/lf/linux/lfrc'}
 icons = {this = '~/.config/lf/icons', to_this = 'LIBRARY_ROOT/settings/lf/linux/icons'}
 
-[zoxide_windows]
-database = {this = '~/AppData/Local/zoxide/db.zo', to_this = '~/dotfiles/settings/zoxide_windows/db.zo'}
+# zoxide can't read symlink files
+# [zoxide_windows]
+# database = {this = '~/AppData/Local/zoxide/db.zo', to_this = '~/dotfiles/settings/zoxide_windows/db.zo'}
 
-[zoxide_linux]
-database = {this = '~/.local/share/zoxide/db.zo', to_this = '~/dotfiles/settings/zoxide_linux/db.zo'}
+# [zoxide_linux]
+# database = {this = '~/.local/share/zoxide/db.zo', to_this = '~/dotfiles/settings/zoxide_linux/db.zo'}
 
 #[broot_windows]
 #config = { this = '~/AppData/Roaming/dystroy/config', to_this = 'LIBRARY_ROOT/settings/broot/config' }
