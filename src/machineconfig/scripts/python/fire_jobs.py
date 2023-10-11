@@ -26,9 +26,26 @@ def main():
     parser.add_argument("--remote", "-r", action="store_true", help="launch on a remote machine")
     parser.add_argument("--module", "-m", action="store_true", help="launch the main file")
     parser.add_argument("--history", "-H", action="store_true", help="choose from history")
+    parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ...")
 
     args = parser.parse_args()
+    if args.kw is not None:
+        assert len(args.kw) % 2 == 0, f"args.kw must be a list of even length. Got {len(args.kw)}"
+        kwargs = dict(zip(args.kw[::2], args.kw[1::2]))
+        # print(f"kwargs = {kwargs}")
+    else:
+        kwargs = {}
+
     path_obj = tb.P(args.path).expanduser().absolute()
+    if not path_obj.exists():
+        search_results = tb.P.cwd().absolute().search(f"*{args.path}*.py", r=True)
+        if len(search_results) == 1:
+            path_obj = search_results[0]
+        else:
+            print(search_results)
+            print(f"💥 Path {path_obj} does not exist. Search results are ambiguous or non-existent\n")
+            search_results.print()
+            raise FileNotFoundError
 
     if path_obj.is_dir():
         print(f"Seaching recursively for all python file in directory `{path_obj}`")
@@ -70,7 +87,7 @@ from {tb.P(choice_file).stem} import *
 """
         if choice_function is not None:
             txt = txt + f"""
-{choice_function}()
+{choice_function}({('**' + str(kwargs)) if kwargs else ''})
 """
         txt = f"""
 from machineconfig.utils.utils import print_programming_script
@@ -89,7 +106,9 @@ print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
             command = f"{exe} -m pudb {choice_file} "  # TODO: functions not supported yet in debug mode.
         else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
     elif choice_function is not None:
-        command = f"{exe} -m fire {choice_file} {choice_function} "
+        # https://google.github.io/python-fire/guide/
+        tmp = f"'{kwargs}'" if kwargs else ''
+        command = f"{exe} -m fire {choice_file} {choice_function} {tmp}"
     else:
         command = f"{exe} {choice_file} "
 

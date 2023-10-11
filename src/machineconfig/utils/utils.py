@@ -36,11 +36,7 @@ def display_options(msg: str, options: list[T], header: str = "", tail: str = ""
         from pyfzf.pyfzf import FzfPrompt
         fzf_prompt = FzfPrompt()
         nl = "\n"
-        # if default is not None:
-        #     # default_str = "Default option"
-        #     options.append(default)
-        # print(options)
-        choice_key = fzf_prompt.prompt(options, fzf_options=("--multi" if multi else "") + f" --prompt={prompt.replace(nl, ' ')} --border=rounded")  # --border-label={msg.replace(nl, ' ')}")
+        choice_key = fzf_prompt.prompt(choices=options, fzf_options=("--multi" if multi else "") + f" --prompt={prompt.replace(nl, ' ')} --border=rounded")  # --border-label={msg.replace(nl, ' ')}")
         if not multi: choice_key = choice_key[0]
     else:
         console = Console()
