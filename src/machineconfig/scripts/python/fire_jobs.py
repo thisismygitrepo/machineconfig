@@ -40,7 +40,7 @@ def main():
     if not path_obj.exists():
         search_results = tb.P.cwd().absolute().search(f"*{args.path}*.py", r=True)
         if len(search_results) == 1:
-            path_obj = search_results[0]
+            path_obj = search_results.list[0]
         else:
             print(search_results)
             print(f"💥 Path {path_obj} does not exist. Search results are ambiguous or non-existent\n")
