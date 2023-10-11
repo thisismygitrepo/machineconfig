@@ -86,7 +86,7 @@ def main() -> None:
     app_url: list[Optional[str]] = []
     for idx, row in tqdm(res_df.iterrows(), total=res_df.shape[0]):
         apps_safe_url = upload(tb.P(row["app_path"]).expanduser())
-        app_url.append(apps_safe_url.as_posix() if type(apps_safe_url) == tb.P else apps_safe_url)
+        app_url.append(apps_safe_url.as_posix() if type(apps_safe_url) is tb.P else apps_safe_url)
     res_df["app_url"] = app_url
     res_df.to_csv(apps_summary_path.with_suffix(".csv").create(parents_only=True), index=False)
     apps_summary_path.with_suffix(".md").write_text(res_df.to_markdown())
@@ -103,15 +103,15 @@ def upload(path: tb.P):
 
 class PrecompliedInstaller:
     @staticmethod
-    def download_rclone_links(url: str, name: Optional[str] = None):
+    def download_google_links(url: str, name: Optional[str] = None):
+        # todo: use gdown
         if "drive.google.com" in str(url): url = str(url).replace("open?", "uc?")
         else: raise NotImplementedError("Only google drive is supported for now.")
         return tb.P(url).download(name=name)
 
     def __init__(self, from_cloud: bool = True):
         _ = from_cloud
-        file = apps_summary_path
-        tmp = file.readit()
+        tmp = pd.read_csv(apps_summary_path)
         self.df = pd.DataFrame(tmp['data'], columns=tmp['columns'])
 
     def install(self, name: str):
@@ -119,7 +119,9 @@ class PrecompliedInstaller:
         if len(res) == 0 or len(res) > 1:
             print(f"Couldn't find unique result when searching safe_apps_records @ {apps_summary_path}")
             return None
-        tb.P(str(res.iloc[0]['app_url'])).download()
+        path = tb.P(str(res.iloc[0]['app_url'])).download(name=res.iloc[0]['app_name'] + (".exe" if platform.system().lower() == "windows" else ""))
+        assert isinstance(path, tb.P)
+        path.move(path=res.iloc[0]['app_path'])
 
     def download_safe_apps(self):
         if platform.system().lower() == "windows":
@@ -147,7 +149,7 @@ class PrecompliedInstaller:
             else:
                 name = row["app_name"]
                 if platform.system().lower() == "windows" and not name.endswith(".exe"): name += ".exe"
-                exe = self.download_rclone_links(row["app_url"], name=name)
+                exe = self.download_google_links(row["app_url"], name=name)
                 if platform.system().lower() == "linux":
                     tb.Terminal().run(f"chmod +x {exe}")
                     tb.Terminal().run(f"mv {exe} /usr/local/bin/")

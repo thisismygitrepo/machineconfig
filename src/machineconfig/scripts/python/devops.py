@@ -12,7 +12,7 @@ from typing import Optional
 
 class Options(Enum):
     update         = 'UPDATE essential repos'
-    devaps         = 'DEVAPPS install'
+    cli_install    = 'DEVAPPS install'
     ve             = 'VE install'
     sym_path_shell = 'SYMLINKS, PATH & SHELL PROFILE'
     sym_new        = 'SYMLINKS new'
@@ -46,7 +46,7 @@ def main(which: Optional[str] = None):
         import machineconfig.jobs.python.python_ve_installer as helper
         program = helper.main()
 
-    elif choice_key == Options.devaps.value:
+    elif choice_key == Options.cli_install.value:
         import machineconfig.scripts.python.devops_devapps_install as helper
         program = helper.main()
 
