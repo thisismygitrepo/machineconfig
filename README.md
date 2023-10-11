@@ -1,4 +1,13 @@
 
+<p align="center">
+
+<a href="https://github.com/thisismygitrepo/machineconfig/commits">
+<img src="https://img.shields.io/github/commit-activity/m/thisismygitrepo/machineconfig" />
+</a>
+
+</p>
+
+
 # Welcome to machineconfig
 
 # Shortcuts

@@ -15,7 +15,7 @@ def main(version: Optional[str] = None) -> None:
         print(f"Could not find browsh release for version {version}")
         return None
     if platform.system() == "Linux":
-        download = url.joinpath(f"browsh_{str(url[-1]).replace('v', '')}_linux_amd64").download()
+        download = url.joinpath(f"browsh_{str(url[-1]).replace('v', '')}_linux_amd64").download().with_name("browsh", inplace=True, overwrite=True)
         find_move_delete_linux(downloaded=download, tool_name="cpufetch")
     elif platform.system() == "Windows":
         url = url.joinpath(f"browsh_{str(url[-1]).replace('v', '')}_windows_amd64.exe")

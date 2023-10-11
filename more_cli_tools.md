@@ -61,9 +61,10 @@
 
 # Terminal Sharing: https://gist.github.com/miguelmota/04245255f9dc9a862ac2bd682bdbab06
 
-# Remote
-https://github.com/rustdesk/rustdesk/releases
-parsec rdp
+# Networking
+* https://github.com/rustdesk/rustdesk/releases
+* parsec rdp
+* https://github.com/axetroy/forward-cli forward proxy server
 
 # recorder
 * pecpeck
