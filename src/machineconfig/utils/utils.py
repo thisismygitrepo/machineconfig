@@ -22,7 +22,7 @@ PROGRAM_PATH = (P.tmp().joinpath("shells/python_return_command") + (".ps1" if pl
 CONFIG_PATH = P.home().joinpath(".config/machineconfig")
 DEFAULTS_PATH = P.home().joinpath("dotfiles/machineconfig/defaults.ini")
 APP_VERSION_ROOT = P.home().joinpath(f"tmp_results/cli_tools_installers/versions")
-tmp_install_dir = P.tmp(folder="tmp_installers")
+TMP_INSTALL_DIR = P.tmp(folder="tmp_installers")
 
 
 T = TypeVar("T")
@@ -170,7 +170,7 @@ def get_latest_release(repo_url: str, download_n_extract: bool = False, suffix: 
         file_name = f'{tool_name}{sep}{version}{sep}{suffix}.{compression}'
     download_link = download_link.joinpath(file_name)
     print("Downloading", download_link.as_url_str())
-    downloaded = download_link.download(folder=tmp_install_dir)
+    downloaded = download_link.download(folder=TMP_INSTALL_DIR)
 
     if "tar.gz" in download_link: downloaded = downloaded.ungz_untar(inplace=True)
     elif "zip" in download_link: downloaded = downloaded.unzip(inplace=True, overwrite=True)
