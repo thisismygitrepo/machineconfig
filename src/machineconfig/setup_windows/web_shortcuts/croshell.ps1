@@ -3,11 +3,11 @@
 
 # virtual enviornment
 # Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
-(iwr bit.ly/cfgvewindows).Content
+(iwr bit.ly/cfgvewindows).Content | iex
 
 # dev repos
 # Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
-(iwr bit.ly/cfgreposwindows).Content
+(iwr bit.ly/cfgreposwindows).Content | iex
 
 # symlinks
 . ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1

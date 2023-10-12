@@ -12,7 +12,6 @@ from machineconfig.jobs.python.python_linux_installers_all import get_installed_
 from tqdm import tqdm
 from typing import Optional, Any
 
-
 apps_summary_path = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
 cloud = "gdw"  # tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
 # my onedrive doesn't allow sharing.
@@ -61,8 +60,10 @@ def main() -> None:
         if an_app.stem in versions.stem:
             app_versions.append(versions.filter(lambda x: x.stem == an_app.stem.replace(".exe", "")).list[0].read_text())
         else:
+            print(f"🤔 Cloud not find a documented version for installation of {an_app.stem}, trying to get it from the app itself.")
             tmp = tb.Terminal().run(f"{an_app.stem} --version", shell="powershell").capture().op_if_successfull_or_default(strict_err=False, strict_returcode=False)
             if tmp is not None: tmp = tmp.split("\n")[0]
+            print(f"➡️ Found version `{tmp}` for {an_app.stem}.")
             app_versions.append(None)
 
     positive_pct: list[Optional[float]] = []
