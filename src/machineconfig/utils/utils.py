@@ -163,6 +163,9 @@ def get_latest_release(repo_url: str, download_n_extract: bool = False, suffix: 
             # print(f"Latest version is {version}, logged at {tmp_path}")
             print(f"⬆️ {tool_name} installed at version {existing_version.rstrip()} --> Installing version {version} ")
             tmp_path.write_text(version)
+    else:
+        print(f"{exe_name or tool_name} has no known version. Installing version `{version}` ")
+        tmp_path.write_text(version)
 
     if not download_n_extract: return download_link
     console.rule(f"Installing {tool_name} version {version}")

@@ -72,3 +72,6 @@
 * Snipping tool of Windows
 * clipchamp video editor of windows
 * Xbox Game Bar of windows
+
+# https://www.youtube.com/watch?v=3i6db5zX3Rw
+# https://github.com/ml-tooling/best-of-jupyter
