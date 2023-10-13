@@ -198,8 +198,7 @@ def get_latest_release(repo_url: str, exe_name: str,
     else: pass  # no compression.
 
     if not linux: return find_move_delete_windows(downloaded=downloaded, tool_name=exe_name, delete=delete)
-    return find_move_delete_linux(downloaded=downloaded,
-                                  tool_name=exe_name, delete=delete)
+    return find_move_delete_linux(downloaded=downloaded, tool_name=exe_name, delete=delete)
     # console.rule(f"Completed Installation")
     # return res
 
