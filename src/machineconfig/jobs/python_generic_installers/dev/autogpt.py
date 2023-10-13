@@ -1,6 +1,4 @@
 
-"""GPT
-"""
 
 # from machineconfig.utils.utils import get_latest_release
 import crocodile.toolbox as tb
@@ -8,6 +6,7 @@ from typing import Optional
 
 
 url = "https://github.com/Significant-Gravitas/Auto-GPT"
+__doc__ = """GPT """
 
 
 def main(version: Optional[str] = None):

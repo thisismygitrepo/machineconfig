@@ -37,8 +37,12 @@ def display_options(msg: str, options: list[T], header: str = "", tail: str = ""
         from pyfzf.pyfzf import FzfPrompt
         fzf_prompt = FzfPrompt()
         nl = "\n"
-        choice_key = fzf_prompt.prompt(choices=options, fzf_options=("--multi" if multi else "") + f" --prompt={prompt.replace(nl, ' ')} --border=rounded")  # --border-label={msg.replace(nl, ' ')}")
-        if not multi: choice_key = choice_key[0]
+        choice_key = fzf_prompt.prompt(choices=options, fzf_options=("--multi" if multi else "") + f' --prompt "{prompt.replace(nl, " ")}" --border=rounded')  # --border-label={msg.replace(nl, ' ')}")
+        if not multi:
+            try: choice_key = choice_key[0]
+            except IndexError as ie:
+                print(choice_key)
+                raise ie
     else:
         console = Console()
         if default is not None:

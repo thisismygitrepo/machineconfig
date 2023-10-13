@@ -8,7 +8,6 @@ $ErrorActionPreference = "Stop"
 winget install --no-upgrade --name "Brave" --Id Brave.Brave --source winget
 #winget install --no-upgrade --name "Chrome Remote Desktop Host" --Id "Google.ChromeRemoteDesktop" --source winget
 #winget install --no-upgrade --name Zoom --Id Zoom.Zoom --source winget
-#winget install --no-upgrade --Id Cloudflare.cloudflared --source winget
 
 # productivity
 winget install --no-upgrade --name "7-zip" --Id "7zip.7zip" --source winget --accept-package-agreements --accept-source-agreements
@@ -84,6 +83,7 @@ winget install --no-upgrade --name "Just" --Id Casey.Just --source winget  # com
 winget install --no-upgrade --name "graphviz" --Id Graphviz.Graphviz  # required by pygraphviz. Used in Base.viz_object_hirarchy and Model.plot_model()
 winget install --no-upgrade --name "WinFsp" --Id WinFsp.WinFsp  # mount remote filesystems and required by rclone
 winget install --no-upgrade --name "SSHFS-win" --Id SSHFS-Win.SSHFS-Win  # mount remote filesystems  # as per https://github.com/winfsp/sshfs-win
+#winget install --no-upgrade --name Cloudflare --Id Cloudflare.cloudflared --source winget
 
 winget install --no-upgrade --name "xming" --Id xming.xming  # X11 server. you need this while using wsl with gui, otherwise plt.show() returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running
 winget install --no-upgrade --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements  # ncessary for nvim plugins.
