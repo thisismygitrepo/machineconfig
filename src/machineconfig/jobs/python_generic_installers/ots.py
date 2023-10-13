@@ -24,8 +24,8 @@ def main(version: Optional[str] = None) -> None:
         if not isinstance(latest, tb.P):
             print(f"Could not find ots release for version {version}")
             return None
-        # downloaded = latest.joinpath(f'ots_{latest[-1].str.replace("v", "")}_linux_amd64.tar.gz').download()
-        # find_move_delete_linux(downloaded=downloaded.ungz_untar(inplace=True), tool_name="ots", delete=True)
+        downloaded = latest.download()
+        find_move_delete_linux(downloaded=downloaded.ungz_untar(inplace=True), tool_name="ots", delete=True, rename_to="ots")
     else:
         raise NotImplementedError(f"Platform {platform.system()} not supported.")
 

@@ -115,13 +115,14 @@ def find_move_delete_windows(downloaded: P, tool_name: Optional[str] = None, del
     return exe
 
 
-def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool] = True) -> None:
+def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool] = True, rename_to: Optional[str] = None) -> None:
     if downloaded.is_file():
         exe = downloaded
     else:
         res = downloaded.search(f"*{tool_name}*", folders=False, r=True)
         if len(res) == 1: exe = res.list[0]
         else: exe = downloaded.search(tool_name, folders=False, r=True).list[0]
+    if rename_to: exe = exe.with_name(name=rename_to, inplace=True)
     print(f"MOVING file `{repr(exe)}` to '/usr/local/bin'")
     exe.chmod(0o777)
     # exe.move(folder=r"/usr/local/bin", overwrite=False)
