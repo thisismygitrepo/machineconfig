@@ -12,7 +12,7 @@ url = r'https://github.com/uw-labs/strongbox'
 
 
 def main():
-    d_url = get_latest_release(url)
+    d_url = get_latest_release(url, exe_name="strongbox")
     if isinstance(d_url, tb.P):
         v = d_url.name.replace("v", "")
         if system() == 'Linux':

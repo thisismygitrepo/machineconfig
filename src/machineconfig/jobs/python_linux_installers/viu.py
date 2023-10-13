@@ -7,9 +7,10 @@ from typing import Optional
 
 __doc__ = """A cli image viewer for the terminal"""
 
+
 def main(version: Optional[str] = None):
     repo_url = tb.P(r"https://github.com/atanunq/viu")
-    release = get_latest_release(repo_url.as_url_str(), version=version)
+    release = get_latest_release(repo_url=repo_url.as_url_str(), exe_name="viu", version=version)
     if isinstance(release, tb.P):
         exe = release.joinpath(f"viu").download()
         exe.chmod(0o777)

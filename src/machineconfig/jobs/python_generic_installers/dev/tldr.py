@@ -11,7 +11,7 @@ __doc__ = "Too long, didn't read, but for cli tools."
 
 
 def main(version: Optional[str] = None):
-    release = get_latest_release(url, version=version)
+    release = get_latest_release(repo_url=url, exe_name="tealdeer", version=version)
     if not isinstance(release, tb.P): raise ValueError(f"Failed to get latest release. Expected a Path object, got {url}")
     if system() == 'Windows':
         f = release.joinpath('tealdeer-windows-x86_64-msvc.exe').download().rename('tldr.exe')

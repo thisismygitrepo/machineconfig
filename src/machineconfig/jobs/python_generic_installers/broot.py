@@ -22,7 +22,7 @@ def main(version: Optional[str] = None) -> None:
     print("\n\n\n")
     console = Console()
     console.rule("Installing Broot")
-    _ = get_latest_release("https://github.com/Canop/broot", version=version)
+    _ = get_latest_release("https://github.com/Canop/broot", exe_name="broot", version=version)
 
     if system() == "Windows":
         p = tb.P(url).download()

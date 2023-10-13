@@ -11,7 +11,7 @@ url = 'https://github.com/sharkdp/fd'
 __doc__ = """fd is a simple, fast and user-friendly alternative to find."""
 
 def main(version: Optional[str] = None):
-    get_latest_release(url, download_n_extract=True, version=version)
+    get_latest_release(repo_url=url, exe_name="fd", download_n_extract=True, version=version)
 
 
 if __name__ == '__main__':

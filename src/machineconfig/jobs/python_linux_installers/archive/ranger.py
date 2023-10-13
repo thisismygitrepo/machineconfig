@@ -9,7 +9,7 @@ from typing import Optional
 
 
 def main(version: Optional[str] = None):
-    _ = get_latest_release(r"https://github.com/ranger/ranger", linux=True, download_n_extract=False, version=version)
+    _ = get_latest_release(repo_url=r"https://github.com/ranger/ranger", exe_name="ranger", linux=True, download_n_extract=False, version=version)
     find_move_delete_linux(downloaded=tb.P("https://ranger.github.io/ranger-stable.tar.gz").download().ungz_untar(), tool_name="ranger")
 
     return ""

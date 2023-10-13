@@ -10,7 +10,7 @@ __doc__ = """btop is a resource monitor for Linux, FreeBSD and MacOS."""
 
 
 def main(version: Optional[str] = None):
-    release = get_latest_release(url, version=version)
+    release = get_latest_release(repo_url=url, exe_name="btop", version=version)
     if not isinstance(release, tb.P): raise ValueError(f"Failed to get latest release. Expected a Path object, got {release}")
     downloaded = tb.P(release).joinpath(fname).download().unbz(name="btop.tar", inplace=True).untar(inplace=True)
     find_move_delete_linux(downloaded, 'btop', delete=True)

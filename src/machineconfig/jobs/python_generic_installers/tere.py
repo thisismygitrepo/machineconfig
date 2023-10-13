@@ -16,9 +16,9 @@ def main(version: Optional[str] = None) -> None:
         target = AppData
         assert isinstance(target, tb.P)
         suffix = "x86_64-pc-windows-gnu"
-        exe = get_latest_release(repo_url.as_url_str(), suffix=suffix, download_n_extract=True, delete=False, strip_v=True, version=version)
+        exe = get_latest_release(repo_url=repo_url.as_url_str(), exe_name="tere", suffix=suffix, download_n_extract=True, delete=False, strip_v=True, version=version)
     else:
-        release = get_latest_release(repo_url.as_url_str(), version=version)
+        release = get_latest_release(repo_url=repo_url.as_url_str(), exe_name="tere", version=version)
         if not isinstance(release, tb.P):
             print(f"Could not find browsh release for version {version}")
             return None

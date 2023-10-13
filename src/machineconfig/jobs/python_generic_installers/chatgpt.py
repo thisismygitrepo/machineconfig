@@ -14,7 +14,7 @@ url = "https://github.com/j178/chatgpt"
 
 def main(version: Optional[str] = None) -> None:
     _ = version
-    latest = get_latest_release(url, download_n_extract=False)
+    latest = get_latest_release(repo_url=url, exe_name="chatgpt", download_n_extract=False)
     if not isinstance(latest, tb.P):
         print(f"Could not find browsh release for version {version}")
         return None

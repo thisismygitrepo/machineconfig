@@ -12,7 +12,7 @@ __doc__ = """Inspecting the memory usage of a running process"""
 
 
 def main(version: Optional[str] = None):
-    release = get_latest_release(url, version=version)
+    release = get_latest_release(repo_url=url, exe_name="bytehound", version=version)
     if not isinstance(release, tb.P): raise ValueError(f"Failed to get latest release. Expected a Path object, got {release}")
     downloaded = tb.P(release).joinpath(fname).download().ungz_untar(inplace=True)
     Terminal().run(f"sudo mv {downloaded}/* /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)

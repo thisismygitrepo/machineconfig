@@ -1,4 +1,7 @@
 
+"""hx
+"""
+
 from machineconfig.utils.utils import get_latest_release
 from platform import system
 import crocodile.toolbox as tb
@@ -21,7 +24,7 @@ def main(version: Optional[str] = None) -> None:
         target = tb.P.home().joinpath(".config")
         suffix = "x86_64-linux"
         compression = 'tar.xz'
-        exe = get_latest_release(repo_url.as_url_str(), download_n_extract=False, suffix=suffix, version=version, compression=compression)
+        exe = get_latest_release(repo_url=repo_url.as_url_str(), exe_name="hx", download_n_extract=False, suffix=suffix, version=version, compression=compression)
         if not isinstance(exe, tb.P):
             print(f"Could not find browsh release for version {version}")
             return None

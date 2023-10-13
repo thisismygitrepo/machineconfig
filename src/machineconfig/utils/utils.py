@@ -14,6 +14,7 @@ from rich.console import Console
 from rich.syntax import Syntax
 import platform
 from typing import Optional, Union, TypeVar
+from dataclasses import dataclass
 
 
 LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
@@ -131,10 +132,17 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
     return None
 
 
-def get_latest_release(repo_url: str, download_n_extract: bool = False, suffix: Optional[str] = "x86_64-pc-windows-msvc",
+@dataclass
+class Release:
+    version: Optional[str]
+    release_url: P
+    download_url: P
+
+
+def get_latest_release(repo_url: str, exe_name: str,
+                       download_n_extract: bool = False, suffix: Optional[str] = "x86_64-pc-windows-msvc",
                        file_name: Optional[str] = None,  # e.g. windows_x86_64.zip
                        tool_name: Optional[str] = None,
-                       exe_name: Optional[str] = None,
                        delete: bool = True, strip_v: bool = False, linux: bool = False, compression: Optional[str] = None,
                        sep: Optional[str] = "-", version: Optional[str] = None):
     """Arguments help form last part of URL  `filename = f'{tool_name}{sep}{version}{sep}{suffix}.{compression}'`
@@ -147,46 +155,51 @@ def get_latest_release(repo_url: str, download_n_extract: bool = False, suffix: 
 
     if version is None:
         import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
-        latest_version = requests.get(str(repo_url) + "/releases/latest", timeout=10).url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
-    else: latest_version = version
+        _latest_version = requests.get(str(repo_url) + "/releases/latest", timeout=10).url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
+        version_to_be_installed = _latest_version
+    else:
+        version_to_be_installed = version
 
-    download_link = P(repo_url + "/releases/download/" + latest_version)
-    compression = compression or ("zip" if not linux else "tar.gz")
-    version = str(download_link[-1]).replace("v", "") if strip_v else str(download_link[-1])
-    tool_name = tool_name or str(P(repo_url)[-1])
+    release_url = P(repo_url + "/releases/download/" + version_to_be_installed)
 
     # existing_version_cli = Terminal().run(f"{exe_name or tool_name} --version", shell="powershell").op_if_successfull_or_default(strict_err=True, strict_returcode=True)
-    tmp_path = APP_VERSION_ROOT.joinpath(exe_name or tool_name).create(parents_only=True)
+    tmp_path = APP_VERSION_ROOT.joinpath(exe_name).create(parents_only=True)
     if tmp_path.exists(): existing_version = tmp_path.read_text().rstrip()
     else: existing_version = None
 
     if existing_version is not None:
-        if existing_version == version:
-            print(f"⚠️ {tool_name} already installed at version {version}")
+        if existing_version == version_to_be_installed:
+            print(f"⚠️ {exe_name} already installed at version {version_to_be_installed}")
             return
         else:
             # print(f"Latest version is {version}, logged at {tmp_path}")
-            print(f"⬆️ {tool_name} installed at version {existing_version.rstrip()} --> Installing version {version} ")
-            tmp_path.write_text(version)
+            print(f"⬆️ {exe_name} installed at version {existing_version.rstrip()} --> Installing version {version_to_be_installed} ")
+            tmp_path.write_text(version_to_be_installed)
     else:
-        print(f"{exe_name or tool_name} has no known version. Installing version `{version}` ")
-        tmp_path.write_text(version)
+        print(f"{exe_name} has no known version. Installing version `{version_to_be_installed}` ")
+        tmp_path.write_text(version_to_be_installed)
 
-    if not download_n_extract: return download_link
-    console.rule(f"Installing {tool_name} version {version}")
+    if not download_n_extract: return release_url
+
+    console.rule(f"Installing {exe_name} version {version_to_be_installed}")
+
     if file_name is None:  # it is not constant, so we compile it from parts as follows:
-        file_name = f'{tool_name}{sep}{version}{sep}{suffix}.{compression}'
-    download_link = download_link.joinpath(file_name)
+        version_in_filename = version_to_be_installed.replace("v", "") if strip_v else version_to_be_installed
+        compression = compression or ("zip" if not linux else "tar.gz")
+        tool_name = tool_name or str(P(repo_url)[-1])
+        file_name = f'{tool_name}{sep}{version_in_filename}{sep}{suffix}.{compression}'
+    download_link = release_url.joinpath(file_name)
+
     print("Downloading", download_link.as_url_str())
     downloaded = download_link.download(folder=TMP_INSTALL_DIR)
-
     if "tar.gz" in download_link: downloaded = downloaded.ungz_untar(inplace=True)
     elif "zip" in download_link: downloaded = downloaded.unzip(inplace=True, overwrite=True)
     elif "tar.xz" in download_link: downloaded = downloaded.unxz_untar(inplace=True)
     else: pass  # no compression.
 
-    if not linux: return find_move_delete_windows(downloaded, exe_name or tool_name, delete)
-    return find_move_delete_linux(downloaded, exe_name or tool_name, delete)
+    if not linux: return find_move_delete_windows(downloaded=downloaded, tool_name=exe_name, delete=delete)
+    return find_move_delete_linux(downloaded=downloaded,
+                                  tool_name=exe_name, delete=delete)
     # console.rule(f"Completed Installation")
     # return res
 

@@ -13,7 +13,7 @@ repo_url = tb.P(r"https://github.com/rust-lang/rust-analyzer")
 __doc__ = f"""Rust Language Server (LSP)"""
 
 def main(version: Optional[str] = None):
-    url = get_latest_release(repo_url.as_url_str(), download_n_extract=False, version=version)
+    url = get_latest_release(repo_url=repo_url.as_url_str(), exe_name="rust-analyzer", download_n_extract=False, version=version)
     if not isinstance(url, tb.P): raise ValueError(f"Failed to get latest release. Expected a Path object, got {url}")
     if system() == "Windows":
         url.joinpath(f"rust-analyzer-x86_64-pc-windows-msvc.gz").download().ungz(inplace=True).with_name("rust-analyzer.exe", inplace=True).move(folder="~/.cargo/bin", overwrite=True)

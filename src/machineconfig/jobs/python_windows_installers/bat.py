@@ -12,7 +12,7 @@ url = 'https://github.com/sharkdp/bat'
 
 
 def main(version: Optional[str] = None) -> None:
-    get_latest_release(repo_url=url, download_n_extract=True, version=version)
+    get_latest_release(repo_url=url, exe_name="bat", download_n_extract=True, version=version)
 
 
 if __name__ == '__main__':

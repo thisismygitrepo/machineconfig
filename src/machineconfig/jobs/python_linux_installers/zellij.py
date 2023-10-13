@@ -18,7 +18,7 @@ __doc__ = """Zellij is a terminal workspace with support for multiple plugins, s
 
 def main(version: Optional[str] = None):
     _ = version
-    _ = get_latest_release("https://github.com/zellij-org/zellij", download_n_extract=False, linux=True)
+    _ = get_latest_release(repo_url="https://github.com/zellij-org/zellij", exe_name="zellij", download_n_extract=False, linux=True)
     download = tb.P(f"https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz").download().ungz_untar(inplace=True)
     find_move_delete_linux(downloaded=download, tool_name="zellij")
 

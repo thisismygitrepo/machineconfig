@@ -37,9 +37,9 @@ def main(version: Optional[str] = None):
         # from crocodile.environment import AppData
         # target = AppData
         suffix = "x86_64-pc-windows-msvc"
-        _ = get_latest_release(repo_url.as_url_str(), suffix=suffix, download_n_extract=True, delete=True, strip_v=True, version=version)
+        _ = get_latest_release(repo_url=repo_url.as_url_str(), exe_name="delta", suffix=suffix, download_n_extract=True, delete=True, strip_v=True, version=version)
     else:
-        release = get_latest_release(repo_url.as_url_str(), version=version)
+        release = get_latest_release(repo_url=repo_url.as_url_str(), exe_name="delta", version=version)
         if isinstance(release, tb.P):
             path = release.joinpath(f"delta-{str(release[-1]).replace('v', '')}-x86_64-unknown-linux-gnu.tar.gz").download()
             downloaded = path.ungz_untar(inplace=True)

@@ -10,7 +10,7 @@ __doc__ = """cpufetch is a small yet fancy CPU architecture fetching tool, like 
 
 
 def main(version: Optional[str] = None) -> None:
-    url = get_latest_release("https://github.com/browsh-org/browsh", version=version)
+    url = get_latest_release("https://github.com/browsh-org/browsh", exe_name="browsh", version=version)
     if not isinstance(url, tb.P):
         print(f"Could not find browsh release for version {version}")
         return None

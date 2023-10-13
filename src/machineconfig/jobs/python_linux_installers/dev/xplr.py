@@ -10,7 +10,7 @@ __doc__ = """A terminal file explorer with vi keybindings"""
 
 def main(version: Optional[str] = None):
     repo_url = tb.P(r"https://github.com/sayanarijit/xplr")
-    release = get_latest_release(repo_url.as_url_str(), version=version)
+    release = get_latest_release(repo_url=repo_url.as_url_str(), exe_name="xplr", version=version)
     if isinstance(release, tb.P):
         path = release.joinpath(f"xplr-linux.tar.gz").download().ungz_untar(inplace=True)
         exe = path.joinpath("xplr")

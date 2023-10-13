@@ -13,7 +13,7 @@ url = "https://github.com/netxs-group/vtm"
 
 def main(version: Optional[str] = None) -> None:
     _ = version
-    link = get_latest_release(url, download_n_extract=False)
+    link = get_latest_release(repo_url=url, exe_name="vtm", download_n_extract=False)
     if not isinstance(link, P):
         print(f"Could not find browsh release for version {version}")
         return None

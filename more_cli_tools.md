@@ -73,5 +73,6 @@
 * clipchamp video editor of windows
 * Xbox Game Bar of windows
 
+# IPython
 # https://www.youtube.com/watch?v=3i6db5zX3Rw
 # https://github.com/ml-tooling/best-of-jupyter

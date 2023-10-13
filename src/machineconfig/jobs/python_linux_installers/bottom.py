@@ -12,7 +12,7 @@ __doc__ = """bottom is a cross-platform graphical process/system monitor with a 
 
 
 def main(version: Optional[str] = None):
-    release = get_latest_release(url, version=version)
+    release = get_latest_release(repo_url=url, exe_name="btm", version=version)
     assert isinstance(release, tb.P)
     downloaded = tb.P(release).joinpath(fname).download().ungz_untar(inplace=True)
     find_move_delete_linux(downloaded, 'btm', delete=True)
