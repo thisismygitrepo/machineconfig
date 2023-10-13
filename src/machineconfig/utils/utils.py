@@ -99,7 +99,7 @@ def symlink(this: P, to_this: P, prioritize_to_this: bool = True):
     except Exception as ex: print(f"Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
 
 
-def find_move_delete_windows(downloaded: P, tool_name: Optional[str] = None, delete: bool = True):
+def find_move_delete_windows(downloaded: P, tool_name: Optional[str] = None, delete: bool = True, rename_to: Optional[str] = None):
     if tool_name is not None and ".exe" in tool_name: tool_name = tool_name.replace(".exe", "")
     if downloaded.is_file():
         exe = downloaded
@@ -109,6 +109,7 @@ def find_move_delete_windows(downloaded: P, tool_name: Optional[str] = None, del
             tmp = downloaded.search(f"{tool_name}.exe", r=True)
             if len(tmp) == 1: exe = tmp.list[0]
             else: exe = downloaded.search("*.exe", r=True).list[0]
+    if rename_to: exe = exe.with_name(name=rename_to, inplace=True)
     exe.move(folder=P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
     if delete: downloaded.delete(sure=True)
     return exe
