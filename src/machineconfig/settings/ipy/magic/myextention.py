@@ -2,7 +2,7 @@
 """G
 """
 
-from crocodile.core import Display
+# from crocodile.core import Display
 from IPython.core.magic import register_line_magic
 import pandas as pd
  

@@ -135,6 +135,9 @@ def get_latest_release(repo_url: str, download_n_extract: bool = False, suffix: 
                        exe_name: Optional[str] = None,
                        delete: bool = True, strip_v: bool = False, linux: bool = False, compression: Optional[str] = None,
                        sep: Optional[str] = "-", version: Optional[str] = None):
+    """Arguments help form last part of URL  `filename = f'{tool_name}{sep}{version}{sep}{suffix}.{compression}'`
+     Unless `file_name` is passed directly,  in which case it is used as is and parameters above are ignored.
+    """
     console = Console()
     print("\n\n\n")
     print(f"Inspecting latest release @ {repo_url}   ...")
