@@ -21,7 +21,8 @@ class Options(Enum):
     ssh_use_pair   = 'SSH use key pair to connect two machines'
     ssh_setup      = 'SSH setup'
     ssh_setup_wsl  = 'SSH setup wsl'
-    backup         = 'BACKUP & RETRIEVE'
+    backup         = 'BACKUP'
+    retreive       = 'RETRIEVE'
 
 
 def args_parser():
@@ -80,7 +81,10 @@ def main(which: Optional[str] = None):
 
     elif choice_key == Options.backup.value:
         from machineconfig.scripts.python.devops_backup_retrieve import main as helper
-        program = helper()
+        program = helper(direction="BACKUP")
+    elif choice_key == Options.retreive.value:
+        from machineconfig.scripts.python.devops_backup_retrieve import main as helper
+        program = helper(direction="RETRIEVE")
 
     else: raise ValueError(f"Unimplemented choice: {choice_key}")
     if program: write_shell_script(program, display=True, preserve_cwd=True, desc="Shell script prepared by Python.", execute=True if which is not None else False)

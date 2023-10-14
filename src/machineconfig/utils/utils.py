@@ -29,6 +29,22 @@ TMP_INSTALL_DIR = P.tmp(folder="tmp_installers")
 T = TypeVar("T")
 
 
+def choose_cloud_interactively() -> str:
+    from crocodile.core import List as L
+    print(f"Listing Remotes ... ")
+    tmp = Terminal().run("rclone listremotes").op_if_successfull_or_default(strict_returcode=False)
+    # consider this: remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
+    if isinstance(tmp, str):
+        remotes = L(tmp.splitlines()).apply(lambda x: x.replace(":", ""))
+
+    else: raise ValueError(f"Got {tmp} from rclone listremotes")
+    if len(remotes) == 0:
+        raise RuntimeError(f"You don't have remotes. Configure your rclone first to get cloud services access.")
+    cloud = display_options(msg="WHICH CLOUD?", options=list(remotes), default=remotes[0], fzf=True)
+    assert isinstance(cloud, str)
+    return cloud
+
+
 def display_options(msg: str, options: list[T], header: str = "", tail: str = "", prompt: str = "",
                     default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[T, list[T]]:
     tool_name = "fzf"
