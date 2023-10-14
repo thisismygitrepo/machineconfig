@@ -1,7 +1,8 @@
 
 # this is a plugin for OBS Studio to remove background from a video
 
-from machineconfig.utils.utils import get_latest_release, P
+from machineconfig.utils.utils import P
+from machineconfig.utils.installer import get_latest_release
 from typing import Optional
 
 

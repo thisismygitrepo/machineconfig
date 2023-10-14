@@ -1,7 +1,7 @@
 
 # a TUI like winscp
 
-from machineconfig.utils.utils import get_latest_release
+from machineconfig.utils.installer import get_latest_release
 from platform import system
 import crocodile.toolbox as tb
 from typing import Optional

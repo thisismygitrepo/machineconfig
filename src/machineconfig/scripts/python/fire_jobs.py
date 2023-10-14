@@ -65,11 +65,11 @@ def main():
         return
 
     if args.ve == "":
-        from crocodile.run import get_ve_profile  # if file name is passed explicitly, then, user probably launched it from cwd different to repo root, so activate_ve can't infer ve from .ve_path, so we attempt to do that manually here
+        from machineconfig.utils.ve import get_ve_profile  # if file name is passed explicitly, then, user probably launched it from cwd different to repo root, so activate_ve can't infer ve from .ve_path, so we attempt to do that manually here
         args.ve = get_ve_profile(choice_file)
     if args.interactive is False: exe = "python"
     else:
-        from crocodile.run import get_ipython_profile
+        from machineconfig.utils.ve import get_ipython_profile
         exe = f"ipython -i --no-banner --profile {get_ipython_profile(choice_file)} "
 
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.

@@ -8,22 +8,22 @@ if (-not (Test-Path variable:ve_name)) {
 } else { Write-Host "ve_name is already defined as $ve_name" }
 
 if (-not (Test-Path variable:py_version)) {
-    $py_version=311
+    $py_version=3.11
 } else { Write-Host "py_version is already defined as $py_version" }
 # --- End of user defined variables ---
 
+$version_no_dot = $py_version -replace '\.', ''
 
 mkdir ~/venvs -ErrorAction SilentlyContinue
 Set-Location $HOME
 
-Set-Variable mypy ($env:LOCALAPPDATA + "\Programs\Python\Python$py_version\python.exe")
+Set-Variable mypy ($env:LOCALAPPDATA + "\Programs\Python\Python$version_no_dot\python.exe")
 
 if (Test-Path $mypy) {
     Write-Host "$mypy exists."
 } else {
-    $version_dotted = $py_version.ToString().Insert(1, '.')
-    Write-Host "$mypy does not exist, trying to install it ($version_dotted)"
-    winget install --id Python.Python.$version_dotted --source winget --accept-package-agreements --accept-source-agreements
+    Write-Host "$mypy does not exist, trying to install it ($py_version)"
+    winget install --id Python.Python.$py_version --source winget --accept-package-agreements --accept-source-agreements
 }
 
 # delete folder and its contents: "./venvs/$ve_name"

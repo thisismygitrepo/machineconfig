@@ -2,11 +2,8 @@
 """G
 """
 
-# from crocodile.core import Display
 from IPython.core.magic import register_line_magic
-# from IPython import get_ipython
 
-# get_ipython()
 
 @register_line_magic("play")  # type: ignore
 def run_python_file_in_this_namespace(a_path: str, module: bool = False):
@@ -25,9 +22,7 @@ def run_python_file_in_this_namespace(a_path: str, module: bool = False):
             print(f"\n{'--' * 50}\n🔗 Mapped `{a_path}` ➡️ `{path}`\n{'--' * 50}\n")
         else:
             path = match_file_name(a_path)
-
     from IPython import get_ipython  # type: ignore  # this gets the same instance, its in the namespace anyway even if not imported.
-
     if module:
         code = f"""
 import sys

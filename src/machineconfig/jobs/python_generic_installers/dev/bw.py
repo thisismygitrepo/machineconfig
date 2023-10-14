@@ -2,7 +2,7 @@
 """Bitwarden (password manager) cli"""
 
 import crocodile.toolbox as tb
-from machineconfig.utils.utils import find_move_delete_linux
+from machineconfig.utils.installer import find_move_delete_linux
 from rich.console import Console
 from platform import system
 from typing import Optional

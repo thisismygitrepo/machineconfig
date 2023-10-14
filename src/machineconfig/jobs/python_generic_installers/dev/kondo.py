@@ -1,7 +1,7 @@
 
 """cleans projects from litter files."""
 
-from machineconfig.utils.utils import get_latest_release, find_move_delete_linux
+from machineconfig.utils.installer import find_move_delete_linux, get_latest_release
 from platform import system
 from typing import Optional
 import crocodile.toolbox as tb
