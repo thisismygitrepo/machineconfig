@@ -1,4 +1,7 @@
 
+"""Convert image to text.
+"""
+
 import crocodile.toolbox as tb
 # import sys
 from crocodile.msc.odds import capture_from_webcam

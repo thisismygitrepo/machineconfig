@@ -50,11 +50,13 @@ def match_file_name(sub_string: str):
     search_results = P.cwd().absolute().search(f"*{sub_string}*.py", r=True)
     if len(search_results) == 1:
         path_obj = search_results.list[0]
+    elif len(search_results) > 1:
+        choice = display_options(msg=f"Search results are ambiguous or non-existent", options=search_results.list, fzf=True, multi=False)
+        assert not isinstance(choice, list)
+        path_obj = P(choice)
     else:
-        print(search_results)
-        print(f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. Search results are ambiguous or non-existent\n{'--' * 50}\n")
-        search_results.print()
-        raise FileNotFoundError
+        msg = f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. No search results\n{'--' * 50}\n"
+        raise FileNotFoundError(msg)
     print(f"\n{'--' * 50}\n🔗 Mapped `{sub_string}` ➡️ `{path_obj}`\n{'--' * 50}\n")
     return path_obj
 
