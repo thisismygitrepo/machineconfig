@@ -45,6 +45,20 @@ def choose_cloud_interactively() -> str:
     return cloud
 
 
+def match_file_name(sub_string: str):
+    """Look up current directory for file name that matches the passed substring."""
+    search_results = P.cwd().absolute().search(f"*{sub_string}*.py", r=True)
+    if len(search_results) == 1:
+        path_obj = search_results.list[0]
+    else:
+        print(search_results)
+        print(f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. Search results are ambiguous or non-existent\n{'--' * 50}\n")
+        search_results.print()
+        raise FileNotFoundError
+    print(f"\n{'--' * 50}\n🔗 Mapped `{sub_string}` ➡️ `{path_obj}`\n{'--' * 50}\n")
+    return path_obj
+
+
 def display_options(msg: str, options: list[T], header: str = "", tail: str = "", prompt: str = "",
                     default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[T, list[T]]:
     tool_name = "fzf"
