@@ -139,7 +139,7 @@ def get_shell_script_executing_pyscript(python_file: str, func: Optional[str] = 
     if func is None: exec_line = f"""python {python_file}"""
     else: exec_line = f"""python -m fire {python_file} {func}"""
     return f"""
-. ~/scripts/activate_ve {ve_name}
+. $HOME/scripts/activate_ve {ve_name}
 {exec_line}
 deactivate
 """
