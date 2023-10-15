@@ -12,6 +12,9 @@ descriptive_themes = ["markbull", "peru", "mojada", "festivetech", "sorin", "agn
                       "thecyberden", "plague", "kali", "fish", "ys", "slim", "paradox", "aliens", "atomicBit"]
 
 
+print(f"{descriptive_themes=}")
+
+
 def main(new_theme: Optional[str] = None):
     """This is a helper for a powershell script.
     run this function to interactively choose a style. Optionally, inpsect the themes of oh my posh and select one:
