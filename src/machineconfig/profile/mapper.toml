@@ -42,7 +42,7 @@ settings = {this = '~/.config/vtm/settings.xml', to_this = 'LIBRARY_ROOT/setting
 
 [ipython_default_config]
 # config = {this = '~/.ipython/profile_default/ipython_config.py', to_this = 'LIBRARY_ROOT/settings/shells/ipy/profiles/default/ipython_config.py'}
-play_extension = {this = '~/.ipython/profile_default/playext.py', to_this = 'LIBRARY_ROOT/settings/shells/ipy/profiles/default/startup/playext.py'}
+play_extension = {this = '~/.ipython/profile_default/startup/playext.py', to_this = 'LIBRARY_ROOT/settings/shells/ipy/profiles/default/startup/playext.py'}
 
 
 [autostart_windows]
