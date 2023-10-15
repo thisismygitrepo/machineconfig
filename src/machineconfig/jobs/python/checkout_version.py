@@ -49,7 +49,10 @@ def checkout_version(version: str, repo_root: P):
         repo_root.joinpath("versions", version).create().joinpath("install.sh").write_text(tmplate_bash)
     else: raise NotImplementedError
     target_dir = repo_root.expanduser().absolute().joinpath(f"versions/{version}").as_posix()
-    Terminal().run(f"cd '{target_dir}'; activate_ve {ve_name}; pip freeze > requirements_{platform.system().lower()}.txt", shell="pwsh").print()
+    Terminal().run_script(f"""
+cd '{target_dir}'
+. activate_ve {ve_name}
+pip freeze > requirements_{platform.system().lower()}.txt""", shell="pwsh").print()
     print(f"✅ Installed requirements for version {version}.")
 
 
