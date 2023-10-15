@@ -2,7 +2,7 @@
 """ Chatgpt installer   """
 
 # from crocodile.meta import sys
-from machineconfig.utils.utils import get_latest_release, find_move_delete_linux, find_move_delete_windows
+from machineconfig.utils.installer import find_move_delete_windows, find_move_delete_linux, get_latest_release
 from platform import system
 from typing import Optional
 import crocodile.toolbox as tb

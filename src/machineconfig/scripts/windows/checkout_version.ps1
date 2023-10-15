@@ -1,0 +1,4 @@
+
+. activate_ve ve
+python -m fire machineconfig.jobs.python.checkout_version main
+deactivate

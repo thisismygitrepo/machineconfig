@@ -5,8 +5,8 @@ Not used because it is not mature enough.
 --version doesn't work
 """
 
-from machineconfig.utils.utils import get_latest_release, P
-
+from machineconfig.utils.utils import P
+from machineconfig.utils.installer import get_latest_release
 
 url = 'https://github.com/gsass1/NTop'
 

@@ -4,11 +4,15 @@
 
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import display_options
+from rich import progress
 from typing import Optional
 
 
 descriptive_themes = ["markbull", "peru", "mojada", "festivetech", "sorin", "agnosterplus", "blueish",
                       "thecyberden", "plague", "kali", "fish", "ys", "slim", "paradox", "aliens", "atomicBit"]
+
+
+print(f"{descriptive_themes=}")
 
 
 def main(new_theme: Optional[str] = None):
@@ -18,7 +22,10 @@ def main(new_theme: Optional[str] = None):
     import os
     themes_path = tb.P(os.environ["POSH_THEMES_PATH"])
     # current_theme = tb.P(os.environ["POSH_THEME"]).trunk
-    profile = tb.Terminal().run("$profile", shell="pwsh").op2path()
+    with progress.Progress() as prog:
+        prog.add_task("Asking pwsh about its profile path ... ", total=None)
+        profile = tb.Terminal().run("$profile", shell="pwsh").op2path()
+
     if not isinstance(profile, tb.P): raise ValueError(f"Could not find profile file. Got {profile}")
     current_theme = tb.P(tb.L(profile.read_text().split(" ")).filter(lambda x: ".omp.json" in x).list[0]).expanduser().absolute().trunk
 
@@ -35,7 +42,9 @@ def main(new_theme: Optional[str] = None):
         tail = ""
         tmp = display_options(msg=f"Choose a theme number from the list above: ", tail=tail,
                               options=themes.list + ["surprise me"], default="surprise me",
-                                    prompt=f"Recommended descriptive ones are {descriptive_themes}", fzf=True)
+                              prompt=f"Recommended descriptive ones are {descriptive_themes}",
+                              #   prompt="Choose A theme: ",
+                              fzf=True)
         if isinstance(tmp, str): new_theme = tmp
         else: raise ValueError(f"Got {tmp} from display_options")
         if new_theme == "suprise me": new_theme = themes.sample().list[0]

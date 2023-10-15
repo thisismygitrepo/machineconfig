@@ -1,5 +1,4 @@
-
-from machineconfig.utils.utils import get_latest_release
+from machineconfig.utils.installer import get_latest_release
 from typing import Optional
 
 # fd (rust)

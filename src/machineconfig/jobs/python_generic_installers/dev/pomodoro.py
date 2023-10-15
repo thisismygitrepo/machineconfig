@@ -2,7 +2,7 @@
 """ Pomodoro timer for the command-line, written in Go.
 """
 
-from machineconfig.utils.utils import get_latest_release
+from machineconfig.utils.installer import get_latest_release
 import platform
 from typing import Optional
 

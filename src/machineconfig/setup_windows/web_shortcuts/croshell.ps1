@@ -13,4 +13,4 @@
 . ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
 
 # windows terminal and powershell
-(iwr bit.ly/cfwt).Content | iex
+(iwr bit.ly/cfgwt).Content | iex

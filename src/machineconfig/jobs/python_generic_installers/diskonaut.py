@@ -1,6 +1,7 @@
 
 import crocodile.toolbox as tb
-from machineconfig.utils.utils import get_latest_release, APP_VERSION_ROOT
+from machineconfig.utils.utils import APP_VERSION_ROOT
+from machineconfig.utils.installer import get_latest_release
 from rich.console import Console
 from platform import system
 from typing import Optional

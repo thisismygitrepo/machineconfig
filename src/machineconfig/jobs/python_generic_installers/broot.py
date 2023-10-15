@@ -3,7 +3,7 @@
 import crocodile.toolbox as tb
 from rich.console import Console
 from platform import system
-from machineconfig.utils.utils import get_latest_release
+from machineconfig.utils.installer import get_latest_release
 from typing import Optional
 
 

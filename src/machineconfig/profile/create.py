@@ -63,9 +63,9 @@ def main_symlinks(choice: Optional[str] = None):
 
     program_keys.sort()
     if choice is None:
-        choice_selected = display_options(msg="Which symlink to create?", options=program_keys + ["all", "none"], default="none", fzf=True, multi=True)
+        choice_selected = display_options(msg="Which symlink to create?", options=program_keys + ["all", "none(EXIT)"], default="none(EXIT)", fzf=True, multi=True)
         assert isinstance(choice_selected, list)
-        if len(choice_selected) == 1 and choice_selected[0] == "none": return  # terminate function.
+        if len(choice_selected) == 1 and choice_selected[0] == "none(EXIT)": return  # terminate function.
         elif len(choice_selected) == 1 and choice_selected[0] == "all": choice_selected = "all"  # i.e. program_keys = program_keys
         overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
     else: choice_selected = choice
@@ -119,11 +119,11 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
     tb.P.get_env().PATH.print()
 
     if choice is None:
-        tmp = display_options(msg="Which directory to add?", options=dirs + ["all", "none"], default="none")
+        tmp = display_options(msg="Which directory to add?", options=dirs + ["all", "none(EXIT)"], default="none(EXIT)")
         assert isinstance(tmp, str), f"Choice must be a string or a list of strings, not {type(choice)}"
         choice = tmp
         if str(choice) != "all": dirs = [choice]
-    if choice == "none": return
+    if choice == "none(EXIT)": return
 
     addition = PathVar.append_temporarily(dirs=dirs)
     profile_path_obj = tb.P(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
@@ -135,14 +135,14 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice
     sources: list[str] = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()[system.lower()]['files']
 
     if choice is None:
-        choice_obj = display_options(msg="Which patch to add?", options=sources + ["all", "none"], default="none", multi=True)
+        choice_obj = display_options(msg="Which patch to add?", options=sources + ["all", "none(EXIT)"], default="none(EXIT)", multi=True)
         if isinstance(choice_obj, str):
             if choice_obj == "all": choice = choice_obj
-            elif choice_obj == "none": return
+            elif choice_obj == "none(EXIT)": return
             else: sources = [choice_obj]
         else:  # isinstance(choice_obj, list):
             sources = choice_obj
-    elif choice == "none": return
+    elif choice == "none(EXIT)": return
 
     if isinstance(profile_path, str):
         profile_path_obj = tb.P(profile_path)
@@ -164,10 +164,10 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice
 def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice: Optional[str] = None):
     patches: list[str] = list(LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search().apply(lambda x: x.as_posix()))
     if choice is None:
-        choice_chosen = display_options(msg="Which patch to add?", options=list(patches) + ["all", "none"], default="none", multi=False)
+        choice_chosen = display_options(msg="Which patch to add?", options=list(patches) + ["all", "none(EXIT)"], default="none(EXIT)", multi=False)
         assert isinstance(choice_chosen, str), f"Choice must be a string or a list of strings, not {type(choice)}"
         choice = choice_chosen
-    if choice == "none": return None
+    if choice == "none(EXIT)": return None
     elif str(choice) == "all": pass  # i.e. patches = patches
     else: patches = [choice]
 

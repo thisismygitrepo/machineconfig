@@ -1,6 +1,6 @@
 
 from platform import system
-from machineconfig.utils.utils import get_latest_release  # , find_move_delete_linux, find_move_delete_windows
+from machineconfig.utils.installer import get_latest_release
 # import crocodile.toolbox as tb
 from typing import Optional
 

@@ -1,6 +1,7 @@
 
 # search for words in files.
-from machineconfig.utils.utils import get_latest_release, P
+from machineconfig.utils.utils import P
+from machineconfig.utils.installer import get_latest_release
 from typing import Optional
 
 url = r'https://github.com/Genivia/ugrep'

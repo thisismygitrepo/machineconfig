@@ -20,7 +20,7 @@ def main(program_name: Optional[str] = None):
     installers.list.insert(0, default)
     installers.list.insert(0, tb.P("SystemInstallers"))
     installers.list.insert(0, tb.P("OtherDevApps"))
-    options: list[str] = installers.apply(lambda x: x.stem + (' -- ' + x.readit().__doc__.lstrip()) if x.exists() else x.stem).to_list()
+    options: list[str] = installers.apply(lambda x: x.stem + (' -- ' + x.readit().__doc__.lstrip().rstrip()) if x.exists() else x.stem).to_list()
     # options.sort()  # throws off sync between installers and options
 
     if program_name is None:
@@ -60,7 +60,7 @@ def get_program(program_name: str, options: list[Any], installers: list[tb.P]):
             program += "\n" + sub_program
     elif program_name == "OtherDevApps":
         installers = get_cli_py_installers(dev=True).list
-        options = tb.L(installers).apply(lambda x: x.stem + ((' -- ' + str(x.readit().__doc__)) if x.exists() else '')).list
+        options = tb.L(installers).apply(lambda x: x.stem + ((' -- ' + str(x.readit().__doc__).rstrip()) if x.exists() else '')).list
         program_names = display_options(msg="", options=sorted(options), header="CHOOSE DEV APP", fzf=True, multi=True)
         program = ""
         for name in program_names:

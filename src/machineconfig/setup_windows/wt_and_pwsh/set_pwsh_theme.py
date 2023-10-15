@@ -7,7 +7,8 @@ https://glitchbone.github.io/vscode-base16-term/#/3024
 
 import crocodile.toolbox as tb
 # import crocodile.environment as env
-from machineconfig.utils.utils import get_latest_release, LIBRARY_ROOT
+from machineconfig.utils.utils import LIBRARY_ROOT
+from machineconfig.utils.installer import get_latest_release
 import os
 
 
