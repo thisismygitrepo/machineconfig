@@ -7,7 +7,7 @@ from machineconfig.utils.ve import get_ve_specs, get_installed_interpreters
 import platform
 # import machineconfig
 from machineconfig.utils.utils import LIBRARY_ROOT as lib_root
-from rich.panel import Panel
+# from rich.panel import Panel
 from rich.console import Console
 # from rich.text import Text
 # from typing import Any
@@ -26,7 +26,8 @@ def main():
     console.rule(f"Existing virtual environments")
     for ve_path in tb.P.home().joinpath("venvs").search("*", files=False):
         ve_specs = get_ve_specs(ve_path)
-        console.print(Panel(str(ve_specs), title=ve_path.stem, style="bold blue"))
+        # console.print(Panel(str(ve_specs), title=ve_path.stem, style="bold blue"))
+        tb.Struct(ve_specs).print(title=ve_path.stem, as_config=True)
 
     dotted_py_version = input("Enter python version (3.11): ") or "3.11"
     env_name = input("Enter virtual environment name (tst): ") or "tst"

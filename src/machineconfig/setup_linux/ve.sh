@@ -82,5 +82,5 @@ source ~/venvs/$ve_name/bin/activate || exit
 $mypy -m pip install --upgrade pip
 pip install --upgrade pip
 
-echo "Finished installing virtual environment"
-echo "Use this to activate: source ~/venvs/$ve_name/bin/activate"
+echo "✅ Finished installing virtual environment"
+echo "💡 Use this to activate: source ~/venvs/$ve_name/bin/activate"
