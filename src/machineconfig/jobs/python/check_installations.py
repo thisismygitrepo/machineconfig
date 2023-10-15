@@ -10,7 +10,7 @@ from rich.console import Console
 from machineconfig.utils.utils import LIBRARY_ROOT, APP_VERSION_ROOT
 from machineconfig.jobs.python.python_linux_installers_all import get_installed_cli_apps
 from tqdm import tqdm
-from typing import Optional, Any
+from typing import Optional
 
 apps_summary_path = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
 cloud = "gdw"  # tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
@@ -104,66 +104,57 @@ def upload(path: tb.P):
 
 class PrecompliedInstaller:
     @staticmethod
-    def download_google_links(url: str, name: Optional[str] = None):
-        # todo: use gdown
-        if "drive.google.com" in str(url): url = str(url).replace("open?", "uc?")
-        else: raise NotImplementedError("Only google drive is supported for now.")
-        return tb.P(url).download(name=name)
+    def download_google_links(url: str):
+        # if "drive.google.com" in str(url): url = str(url).replace("open?", "uc?")
+        # else: raise NotImplementedError("Only google drive is supported for now.")
+        # return tb.P(url).download(name=name)
+        gdrive_id = tb.P(url).parts[-1].split("id=")[1]
+        gdown = tb.install_n_import("gdown")
+        result = tb.P(gdown.download(id=gdrive_id)).absolute()
+        return result
+
+    @staticmethod
+    def install_cli_apps(app_url: str):
+        # if row["app_url"] is None:
+        # print(f"{row['app_name']} url is not available, trying to download from its sources:")
+        # version = row["version"]
+        # tmp = cli_installers.filter(lambda x: x.stem == row["app_name"].replace(".exe", ""))
+        # if len(tmp) == 0:
+        #     print(f"Can't find the installer for {row['app_name']}, skipping installation of this program.")
+        #     return False
+        # elif len(tmp) == 1: tb.Read.py(tmp.list[0])["main"](version=version)
+        # else: raise ValueError(f"Found multiple installers for {row['app_name']}, skipping installation of this program.")
+        # else:
+        # name = row["app_name"]
+        # if platform.system().lower() == "windows" and not name.endswith(".exe"): name += ".exe"
+        exe = PrecompliedInstaller.download_google_links(app_url)
+        if platform.system().lower() == "linux":
+            tb.Terminal().run(f"chmod +x {exe}")
+            tb.Terminal().run(f"mv {exe} /usr/local/bin/")
+        elif platform.system().lower() == "windows":
+            exe.move(folder=tb.P.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
+        return True
 
     def __init__(self, from_cloud: bool = True):
         _ = from_cloud
         tmp = pd.read_csv(apps_summary_path)
         self.df = pd.DataFrame(tmp['data'], columns=tmp['columns'])
 
-    def install(self, name: str):
-        res = self.df.query(f"app == '{name}'")
-        if len(res) == 0 or len(res) > 1:
-            print(f"Couldn't find unique result when searching safe_apps_records @ {apps_summary_path}")
-            return None
-        path = tb.P(str(res.iloc[0]['app_url'])).download(name=res.iloc[0]['app_name'] + (".exe" if platform.system().lower() == "windows" else ""))
-        assert isinstance(path, tb.P)
-        path.move(path=res.iloc[0]['app_path'])
-
     def download_safe_apps(self):
-        if platform.system().lower() == "windows":
-            from machineconfig.jobs.python.python_windows_installers_all import get_cli_py_installers
-            cli_installers = get_cli_py_installers()
-        elif platform.system().lower() == "linux":
-            from machineconfig.jobs.python.python_linux_installers_all import get_cli_py_installers
-            cli_installers = get_cli_py_installers()
-        else: raise NotImplementedError(f"Platform {platform.system().lower()} is not supported yet.")
+        # if platform.system().lower() == "windows":
+        #     from machineconfig.jobs.python.python_windows_installers_all import get_cli_py_installers
+        #     cli_installers = get_cli_py_installers()
+        # elif platform.system().lower() == "linux":
+        #     from machineconfig.jobs.python.python_linux_installers_all import get_cli_py_installers
+        #     cli_installers = get_cli_py_installers()
+        # else: raise NotImplementedError(f"Platform {platform.system().lower()} is not supported yet.")
 
-        def install_cli_apps(row: dict[str, Any]):
-            if row["app_url"] is None:
-                print(f"{row['app_name']} url is not available, trying to download from its sources:")
-                version = row["version"]
-                if version is None:
-                    print(f"Version is not available, either, I can't trust the latest version. Skipping installation of this program.")
-                    return False
-                else:
-                    tmp = cli_installers.filter(lambda x: x.stem == row["app_name"].replace(".exe", ""))
-                    if len(tmp) == 0:
-                        print(f"Can't find the installer for {row['app_name']}, skipping installation of this program.")
-                        return False
-                    elif len(tmp) == 1: tb.Read.py(tmp.list[0])["main"](version=version)
-                    else: raise ValueError(f"Found multiple installers for {row['app_name']}, skipping installation of this program.")
-            else:
-                name = row["app_name"]
-                if platform.system().lower() == "windows" and not name.endswith(".exe"): name += ".exe"
-                exe = self.download_google_links(row["app_url"], name=name)
-                if platform.system().lower() == "linux":
-                    tb.Terminal().run(f"chmod +x {exe}")
-                    tb.Terminal().run(f"mv {exe} /usr/local/bin/")
-                elif platform.system().lower() == "windows":
-                    exe.move(folder=tb.P.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
-            return True
+        _res = tb.L(self.df.app_url).apply(lambda x: self.install_cli_apps(x), jobs=20)
 
-        res = tb.L(self.df.iterrows()).apply(lambda x: install_cli_apps(x[1].to_dict()), jobs=20)
-
-        print("\n" * 3)
-        for item_flag, item_name in zip(res, self.df["app_name"]):
-            if item_flag: print(f"✅ {item_name} is installed. 😁")
-            else: print(f"❌ {item_name} failed to install for reasons explained in the log above, try manually.")
+        # print("\n" * 3)
+        # for item_flag, item_name in zip(res, self.df["app_name"]):
+        #     if item_flag: print(f"✅ {item_name} is installed. 😁")
+        #     else: print(f"❌ {item_name} failed to install for reasons explained in the log above, try manually.")
 
 
 if __name__ == '__main__':
