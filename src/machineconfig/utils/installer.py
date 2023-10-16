@@ -101,7 +101,7 @@ def get_latest_release(repo_url: str, exe_name: str,
 
     print("Downloading", download_link.as_url_str())
     downloaded = download_link.download(folder=TMP_INSTALL_DIR)
-    if "tar.gz" in download_link: downloaded = downloaded.ungz_untar(inplace=True)
+    if "tar.gz" in download_link or "tgz" in download_link: downloaded = downloaded.ungz_untar(inplace=True)
     elif "zip" in download_link: downloaded = downloaded.unzip(inplace=True, overwrite=True)
     elif "tar.xz" in download_link: downloaded = downloaded.unxz_untar(inplace=True)
     else: pass  # no compression.
