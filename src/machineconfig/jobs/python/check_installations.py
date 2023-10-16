@@ -102,7 +102,11 @@ def upload(path: tb.P):
     else: return None
 
 
-class PrecompliedInstaller:
+class PrecheckedCloudInstaller:
+    def __init__(self):
+        tb.install_n_import("gdown")
+        self.df = pd.read_csv(apps_summary_path)
+
     @staticmethod
     def download_google_links(url: str):
         # if "drive.google.com" in str(url): url = str(url).replace("open?", "uc?")
@@ -115,19 +119,11 @@ class PrecompliedInstaller:
 
     @staticmethod
     def install_cli_apps(app_url: str):
-        # if row["app_url"] is None:
-        # print(f"{row['app_name']} url is not available, trying to download from its sources:")
-        # version = row["version"]
-        # tmp = cli_installers.filter(lambda x: x.stem == row["app_name"].replace(".exe", ""))
-        # if len(tmp) == 0:
-        #     print(f"Can't find the installer for {row['app_name']}, skipping installation of this program.")
-        #     return False
-        # elif len(tmp) == 1: tb.Read.py(tmp.list[0])["main"](version=version)
-        # else: raise ValueError(f"Found multiple installers for {row['app_name']}, skipping installation of this program.")
-        # else:
-        # name = row["app_name"]
-        # if platform.system().lower() == "windows" and not name.endswith(".exe"): name += ".exe"
-        exe = PrecompliedInstaller.download_google_links(app_url)
+        try:
+            exe = PrecheckedCloudInstaller.download_google_links(app_url)
+        except Exception as ex:  # type: ignore
+            print(f"Error in downloading {app_url} {ex}")
+            return None
         if platform.system().lower() == "linux":
             tb.Terminal().run(f"chmod +x {exe}")
             tb.Terminal().run(f"mv {exe} /usr/local/bin/")
@@ -135,12 +131,7 @@ class PrecompliedInstaller:
             exe.move(folder=tb.P.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
         return True
 
-    def __init__(self, from_cloud: bool = True):
-        _ = from_cloud
-        tmp = pd.read_csv(apps_summary_path)
-        self.df = pd.DataFrame(tmp['data'], columns=tmp['columns'])
-
-    def download_safe_apps(self):
+    def download_safe_apps(self, name: str = "all"):
         # if platform.system().lower() == "windows":
         #     from machineconfig.jobs.python.python_windows_installers_all import get_cli_py_installers
         #     cli_installers = get_cli_py_installers()
@@ -149,7 +140,13 @@ class PrecompliedInstaller:
         #     cli_installers = get_cli_py_installers()
         # else: raise NotImplementedError(f"Platform {platform.system().lower()} is not supported yet.")
 
-        _res = tb.L(self.df.app_url).apply(PrecompliedInstaller.install_cli_apps, jobs=20)
+        if name == "all":
+            print(f"Downloading {self.df.shape[0]} apps ...")
+            print(self.df)
+            _res = tb.L(self.df.app_url).apply(PrecheckedCloudInstaller.install_cli_apps, jobs=20)
+        else:
+            app_url = self.df[self.df.app_name == name].iloc[0].app_url
+            _res = PrecheckedCloudInstaller.install_cli_apps(app_url=app_url)
 
         # print("\n" * 3)
         # for item_flag, item_name in zip(res, self.df["app_name"]):
