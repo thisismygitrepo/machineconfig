@@ -149,7 +149,7 @@ class PrecompliedInstaller:
         #     cli_installers = get_cli_py_installers()
         # else: raise NotImplementedError(f"Platform {platform.system().lower()} is not supported yet.")
 
-        _res = tb.L(self.df.app_url).apply(lambda x: self.install_cli_apps(x), jobs=20)
+        _res = tb.L(self.df.app_url).apply(PrecompliedInstaller.install_cli_apps, jobs=20)
 
         # print("\n" * 3)
         # for item_flag, item_name in zip(res, self.df["app_name"]):

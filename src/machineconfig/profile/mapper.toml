@@ -45,10 +45,6 @@ settings = {this = '~/.config/vtm/settings.xml', to_this = 'LIBRARY_ROOT/setting
 play_extension = {this = '~/.ipython/profile_default/startup/playext.py', to_this = 'LIBRARY_ROOT/settings/shells/ipy/profiles/default/startup/playext.py'}
 
 
-[autostart_windows]
-startup = {this = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/startup_file.cmd', to_this = 'LIBRARY_ROOT/jobs/windows/startup_file.cmd'}
-
-
 [scripts_linux]
 public = {this = '~/scripts', to_this = 'LIBRARY_ROOT/scripts/linux'}
 

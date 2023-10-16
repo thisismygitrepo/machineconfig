@@ -2,6 +2,10 @@
 """
 This script Takes away all config files from the computer, place them in one directory
 `dotfiles`, and create symlinks to those files from thier original locations.
+
+[autostart_windows]
+startup = {this = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/startup_file.cmd', to_this = 'LIBRARY_ROOT/jobs/windows/startup_file.cmd'}
+
 """
 
 import crocodile.toolbox as tb
@@ -51,10 +55,10 @@ def main_symlinks(choice: Optional[str] = None):
     symlink_mapper['wsl_linux']['home']["to_this"] = symlink_mapper['wsl_linux']['home']["to_this"].replace("username", UserName)
 
     overwrite = True
-    exclude = ["autostart_windows"]  # "wsl_linux", "wsl_windows"
+    exclude: list[str] = []  # "wsl_linux", "wsl_windows"
 
-    program_keys_raw = list(symlink_mapper.keys()) + ["aws", "ssh"]
-    program_keys = []
+    program_keys_raw: list[str] = list(symlink_mapper.keys()) + ["aws", "ssh"]
+    program_keys: list[str] = []
     for program_key in program_keys_raw:
         if program_key in exclude or OTHER_SYSTEM in program_key:
             # print(f"Skipping {program_key} for {system}")
