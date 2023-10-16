@@ -53,18 +53,23 @@ def scan(path: tb.P, pct: float = 0.0):
 
 
 def main() -> None:
-    apps_paths_raw: tb.List[tb.P] = get_installed_cli_apps()
+    apps_paths_tmp: tb.List[tb.P] = get_installed_cli_apps()
+    versions_files_paths: tb.L[tb.P] = APP_VERSION_ROOT.search()
     app_versions: list[Optional[str]] = []
-    versions: tb.L[tb.P] = APP_VERSION_ROOT.search()
-    for an_app in apps_paths_raw:
-        if an_app.stem in versions.stem:
-            app_versions.append(versions.filter(lambda x: x.stem == an_app.stem.replace(".exe", "")).list[0].read_text())
-        else:
-            print(f"🤔 Cloud not find a documented version for installation of {an_app.stem}, trying to get it from the app itself.")
-            tmp = tb.Terminal().run(f"{an_app.stem} --version", shell="powershell").capture().op_if_successfull_or_default(strict_err=False, strict_returcode=False)
-            if tmp is not None: tmp = tmp.split("\n")[0]
-            print(f"➡️ Found version `{tmp}` for {an_app.stem}.")
-            app_versions.append(None)
+    apps_paths_raw: list[tb.P] = []
+    for an_app in versions_files_paths:
+        exe_path = apps_paths_tmp.filter(lambda x: x.stem == an_app.stem.replace(".exe", ""))
+        if len(exe_path) == 1:
+            app_versions.append(an_app.read_text())
+            apps_paths_raw.append(exe_path.list[0])
+        # if an_app.stem in versions_files_paths.stem:
+        #     app_versions.append(versions_files_paths.filter(lambda x: x.stem == an_app.stem.replace(".exe", "")).list[0].read_text())
+        # else:
+        #     print(f"🤔 Cloud not find a documented version for installation of {an_app.stem}, trying to get it from the app itself.")
+        #     tmp = tb.Terminal().run(f"{an_app.stem} --version", shell="powershell").capture().op_if_successfull_or_default(strict_err=False, strict_returcode=False)
+        #     if tmp is not None: tmp = tmp.split("\n")[0]
+        #     print(f"➡️ Found version `{tmp}` for {an_app.stem}.")
+        #     app_versions.append(None)
 
     positive_pct: list[Optional[float]] = []
     detailed_results: list[dict[str, Optional[pd.DataFrame]]] = []
