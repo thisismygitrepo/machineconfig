@@ -78,7 +78,7 @@ def get_latest_release(repo_url: str, exe_name: str,
 
     if existing_version is not None:
         if existing_version == version_to_be_installed:
-            print(f"⚠️ {exe_name} already installed at version {version_to_be_installed}")
+            print(f"⚠️ {exe_name} already installed at version {version_to_be_installed}. See {APP_VERSION_ROOT}")
             return
         else:
             # print(f"Latest version is {version}, logged at {tmp_path}")

@@ -58,7 +58,7 @@ def main(which: Optional[str] = None):
     elif choice_key == Options.sym_path_shell.value:
         import machineconfig.profile.create as helper
         helper.main()
-        program = "echo 'done with symlinks'"
+        program = "echo '✅ done with symlinks'"
 
     elif choice_key == Options.ssh_add_pubkey.value:
         import machineconfig.scripts.python.devops_add_ssh_key as helper

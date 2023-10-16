@@ -21,7 +21,7 @@ def main(version: Optional[str] = None):
         if proc.name() == "ZoomIt.exe":
             proc.kill()
     folder.joinpath('ZoomIt.exe').move(folder=tb.P.get_env().WindowsApps, overwrite=True)
-    APP_VERSION_ROOT.joinpath('zoomit').write_text("latest")
+    APP_VERSION_ROOT.joinpath('ZoomIt').write_text("latest")
     folder.delete(sure=True)
     console.rule("Completed Installation")
 

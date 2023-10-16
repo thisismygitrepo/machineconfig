@@ -25,6 +25,7 @@ def main():
     parser.add_argument("--submit_to_cloud", "-C", action="store_true", help="submit to cloud compute")
     parser.add_argument("--remote", "-r", action="store_true", help="launch on a remote machine")
     parser.add_argument("--module", "-m", action="store_true", help="launch the main file")
+    parser.add_argument("--streamlit", "-S", action="store_true", help="run as streamlit app")
     parser.add_argument("--history", "-H", action="store_true", help="choose from history")
     parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ...")
 
@@ -67,7 +68,9 @@ def main():
     if args.ve == "":
         from machineconfig.utils.ve import get_ve_profile  # if file name is passed explicitly, then, user probably launched it from cwd different to repo root, so activate_ve can't infer ve from .ve_path, so we attempt to do that manually here
         args.ve = get_ve_profile(choice_file)
-    if args.interactive is False: exe = "python"
+
+    if args.streamlit: exe = "streamlit run"
+    elif args.interactive is False: exe = "python"
     else:
         from machineconfig.utils.ve import get_ipython_profile
         exe = f"ipython -i --no-banner --profile {get_ipython_profile(choice_file)} "
@@ -100,7 +103,11 @@ print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
         tmp = f"'{kwargs}'" if kwargs else ''
         command = f"{exe} -m fire {choice_file} {choice_function} {tmp}"
     else:
-        command = f"{exe} {choice_file} "
+        if not args.streamlit:
+            command = f"{exe} {choice_file} "
+        else:
+            # for .streamlit config to work, it needs to be in the current directory.
+            command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {tb.P.cwd()}"
 
     # try:
     #     ve_name = get_current_ve()

@@ -14,13 +14,15 @@ def main(verbose: bool = True) -> str:
     _ = verbose
     repos: list[str] = ["~/code/crocodile", "~/code/machineconfig", ]
     try:
-        repos += tb.Read.ini(DEFAULTS_PATH)['general']['repos'].split(",")
+        tmp = tb.Read.ini(DEFAULTS_PATH)['general']['repos'].split(",")
+        if tmp[-1] == "": tmp = tmp[:-1]
+        repos += tmp
     except (FileNotFoundError, KeyError, IndexError):
         print(f"Missing {DEFAULTS_PATH} or section [general] or key repos. Using default repos.")
         print(f"""It should look like this:
 [general]
 repos = ~/code/repo1,~/code/repo2
-rclone_config_name = 1driveWork
+rclone_config_name = onedriveWork
 email_config_name = Yahoo3
 to_email = myemail@email.com
 """)

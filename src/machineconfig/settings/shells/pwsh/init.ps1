@@ -11,7 +11,7 @@ Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 
 
 # PATH extension =====================================================
-$env:Path += ";~\code\machineconfig\src\machineconfig\scripts\windows;~\dotfiles\scripts\windows;C:\Program Files (x86)\GnuWin32\bin;C:\Program Files\CodeBlocks\MinGW\bin;C:\Program Files\nu\bin;C:\Program Files\Graphviz\bin"
+$env:Path += ";$HOME\code\machineconfig\src\machineconfig\scripts\windows;$HOME\dotfiles\scripts\windows;C:\Program Files (x86)\GnuWin32\bin;C:\Program Files\CodeBlocks\MinGW\bin;C:\Program Files\nu\bin;C:\Program Files\Graphviz\bin"
 # $machineconfig_path = (python -c "print(__import__('machineconfig').__file__[:-12])")
 #C:\Program Files\Git\bin
 
@@ -29,5 +29,5 @@ Invoke-Expression (& {
     (zoxide init --hook $hook powershell | Out-String)
 })
 
-Set-Alias lvim '~/.local/bin/lvim.ps1'
+# Set-Alias lvim '~/.local/bin/lvim.ps1'
 # function fuck {     $history = (Get-History -Count 1).CommandLine;     if (-not [string]::IsNullOrWhiteSpace($history)) {         $f>

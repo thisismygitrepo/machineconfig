@@ -15,11 +15,13 @@ else: raise NotImplementedError(f"System {system()} not supported")
 
 
 def main(program_name: Optional[str] = None):
+
     installers = get_cli_py_installers()
     default = tb.P("all")
     installers.list.insert(0, default)
     installers.list.insert(0, tb.P("SystemInstallers"))
     installers.list.insert(0, tb.P("OtherDevApps"))
+    installers.list.insert(0, tb.P("PrecheckedCloudInstaller"))
     options: list[str] = installers.apply(lambda x: x.stem + (' -- ' + x.readit().__doc__.lstrip().rstrip()) if x.exists() else x.stem).to_list()
     # options.sort()  # throws off sync between installers and options
 
@@ -72,6 +74,11 @@ def get_program(program_name: str, options: list[Any], installers: list[tb.P]):
                 raise KeyError from ke
             if sub_program is None: sub_program = "echo 'Finished Installation'"  # write an empty program
             program += "\n" + sub_program
+    elif program_name == "PrecheckedCloudInstaller":
+        from machineconfig.jobs.python.check_installations import PrecheckedCloudInstaller
+        ci = PrecheckedCloudInstaller()
+        ci.download_safe_apps(name="all")
+        program = ""
     else:
         idx = options.index(program_name)
         print(installers[idx])

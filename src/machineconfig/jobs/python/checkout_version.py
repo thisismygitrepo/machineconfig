@@ -16,7 +16,7 @@ $ve_name = '{repo_root.name}-{version}-prod'
 $py_version = {py_version}  # type: ignore
 (Invoke-WebRequest bit.ly/cfgvewindows).Content | Invoke-Expression
 activate_ve $ve_name
-cd '{repo_root.collapseuser().joinpath(f"versions/{version}").as_posix()}'
+cd {repo_root.collapseuser().joinpath(f"versions/{version}").as_posix()}
 pip install -r requirements_{platform.system().lower()}.txt
 """
     return template
@@ -27,8 +27,8 @@ def get_bash_install_template(version: str, repo_root: P, py_version: str = "3.1
 export ve_name='{repo_root.name}-{version}-prod'
 export py_version={py_version}  # type: ignore
 curl -L bit.ly/cfgvelinux | bash
-activate_ve $ve_name
-cd '{repo_root.collapseuser().joinpath(f"versions/{version}").as_posix()}'
+. activate_ve $ve_name
+cd {repo_root.collapseuser().joinpath(f"versions/{version}").as_posix()}
 pip install -r requirements_{platform.system().lower()}.txt
 """
     return template
@@ -52,7 +52,7 @@ def checkout_version(version: str, repo_root: P):
     Terminal().run_script(f"""
 cd '{target_dir}'
 . $HOME/scripts/activate_ve {ve_name}
-pip freeze > requirements_{platform.system().lower()}.txt""").print()
+pip freeze > requirements_{platform.system().lower()}.txt""", verbose=True).print()
     print(f"✅ Installed requirements for version {version}.")
 
 
