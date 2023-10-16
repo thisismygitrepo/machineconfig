@@ -3,9 +3,6 @@
 This script Takes away all config files from the computer, place them in one directory
 `dotfiles`, and create symlinks to those files from thier original locations.
 
-[autostart_windows]
-startup = {this = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/startup_file.cmd', to_this = 'LIBRARY_ROOT/jobs/windows/startup_file.cmd'}
-
 """
 
 import crocodile.toolbox as tb
@@ -24,6 +21,14 @@ SYSTEM = system.lower()
 
 
 # =================== SYMLINKS ====================================
+
+
+def link_startup_files(overwrite: bool = True):
+    if system == "Linux": return
+    targets = DotFiles.joinpath("scripts/windows_startup").search("*")
+    source_dir = tb.P('~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup').expanduser()
+    for a_target in targets:
+        symlink(this=source_dir.joinpath(a_target.name), to_this=a_target, prioritize_to_this=overwrite)
 
 
 def link_ssh(overwrite: bool = True):
@@ -57,7 +62,7 @@ def main_symlinks(choice: Optional[str] = None):
     overwrite = True
     exclude: list[str] = []  # "wsl_linux", "wsl_windows"
 
-    program_keys_raw: list[str] = list(symlink_mapper.keys()) + ["aws", "ssh"]
+    program_keys_raw: list[str] = list(symlink_mapper.keys()) + ["aws", "ssh", "startup"]
     program_keys: list[str] = []
     for program_key in program_keys_raw:
         if program_key in exclude or OTHER_SYSTEM in program_key:
@@ -90,6 +95,9 @@ def main_symlinks(choice: Optional[str] = None):
             continue
         elif program_key == "ssh":
             link_ssh(overwrite=overwrite)
+            continue
+        elif program_key == "startup":
+            link_startup_files(overwrite=overwrite)
             continue
         for file_key, file_map in symlink_mapper[program_key].items():
             try: symlink(this=file_map['this'], to_this=file_map['to_this'].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()), prioritize_to_this=overwrite)

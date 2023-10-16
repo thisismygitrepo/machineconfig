@@ -103,7 +103,11 @@ print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
         tmp = f"'{kwargs}'" if kwargs else ''
         command = f"{exe} -m fire {choice_file} {choice_function} {tmp}"
     else:
-        command = f"{exe} {choice_file} "
+        if not args.streamlit:
+            command = f"{exe} {choice_file} "
+        else:
+            # for .streamlit config to work, it needs to be in the current directory.
+            command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {tb.P.cwd()}"
 
     # try:
     #     ve_name = get_current_ve()
