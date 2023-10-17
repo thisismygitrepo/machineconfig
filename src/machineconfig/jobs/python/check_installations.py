@@ -58,7 +58,7 @@ def main() -> None:
     app_versions: list[Optional[str]] = []
     apps_paths_raw: list[tb.P] = []
     for an_app in versions_files_paths:
-        exe_path = apps_paths_tmp.filter(lambda x: x.stem == an_app.stem.replace(".exe", ""))
+        exe_path = apps_paths_tmp.filter(lambda x: x.stem == an_app.stem)
         if len(exe_path) == 1:
             app_versions.append(an_app.read_text())
             apps_paths_raw.append(exe_path.list[0])
@@ -70,7 +70,6 @@ def main() -> None:
         #     if tmp is not None: tmp = tmp.split("\n")[0]
         #     print(f"➡️ Found version `{tmp}` for {an_app.stem}.")
         #     app_versions.append(None)
-
     positive_pct: list[Optional[float]] = []
     detailed_results: list[dict[str, Optional[pd.DataFrame]]] = []
     for idx, app in enumerate(apps_paths_raw):
