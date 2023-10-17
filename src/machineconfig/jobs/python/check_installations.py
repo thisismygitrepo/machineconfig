@@ -1,6 +1,7 @@
 
 """CI
 """
+
 import crocodile.toolbox as tb
 import time
 import pandas as pd
@@ -70,6 +71,8 @@ def main() -> None:
         #     if tmp is not None: tmp = tmp.split("\n")[0]
         #     print(f"➡️ Found version `{tmp}` for {an_app.stem}.")
         #     app_versions.append(None)
+    print(f"Checking those tools:")
+    apps_paths_raw.print()
     positive_pct: list[Optional[float]] = []
     detailed_results: list[dict[str, Optional[pd.DataFrame]]] = []
     for idx, app in enumerate(apps_paths_raw):
