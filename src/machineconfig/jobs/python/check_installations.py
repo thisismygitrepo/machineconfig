@@ -56,7 +56,7 @@ def main() -> None:
     apps_paths_tmp: tb.List[tb.P] = get_installed_cli_apps()
     versions_files_paths: tb.L[tb.P] = APP_VERSION_ROOT.search()
     app_versions: list[Optional[str]] = []
-    apps_paths_raw: list[tb.P] = []
+    apps_paths_raw: tb.L[tb.P] = tb.L([])
     for an_app in versions_files_paths:
         exe_path = apps_paths_tmp.filter(lambda x: x.stem == an_app.stem)
         if len(exe_path) == 1:
@@ -85,7 +85,7 @@ def main() -> None:
             positive_pct.append(ppct)
             detailed_results.append({app.stem: df})
 
-    res_df = pd.DataFrame({"app_name": apps_paths_raw.stem.list, "version": app_versions, "positive_pct": positive_pct,
+    res_df = pd.DataFrame({"app_name": apps_paths_raw.apply(lambda x: x.stem).list, "version": app_versions, "positive_pct": positive_pct,
                                 "app_path": apps_paths_raw.apply(lambda x: x.collapseuser(strict=False).as_posix()).list})
 
     app_url: list[Optional[str]] = []

@@ -53,7 +53,7 @@ iwr https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/mac
 (iwr bit.ly/cfgreposwindows).Content | iex
 . ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
 ~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
-(iwr bit.ly/cfwt).Content | iex
+(iwr bit.ly/cfgwt).Content | iex
 ```
 
 ###### Setup SSH connection:
