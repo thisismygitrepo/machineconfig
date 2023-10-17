@@ -13,8 +13,8 @@ from machineconfig.jobs.python.python_linux_installers_all import get_installed_
 from tqdm import tqdm
 from typing import Optional
 
-apps_summary_path = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
-cloud = "gdw"  # tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
+CLOUD = "gdw"  # tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
 # my onedrive doesn't allow sharing.
 
 
@@ -96,14 +96,14 @@ def main() -> None:
         apps_safe_url = upload(tb.P(row["app_path"]).expanduser())
         app_url.append(apps_safe_url.as_posix() if type(apps_safe_url) is tb.P else apps_safe_url)
     res_df["app_url"] = app_url
-    res_df.to_csv(apps_summary_path.with_suffix(".csv").create(parents_only=True), index=False)
-    apps_summary_path.with_suffix(".md").write_text(res_df.to_markdown())
+    res_df.to_csv(APP_SUMMARY_PATH.with_suffix(".csv").create(parents_only=True), index=False)
+    APP_SUMMARY_PATH.with_suffix(".md").write_text(res_df.to_markdown())
     print(res_df)
 
 
 def upload(path: tb.P):
     set_time_out = tb.install_n_import("call_function_with_timeout").SetTimeout
-    func_with_timeout = set_time_out(lambda: path.to_cloud(cloud, rel2home=True, share=True, os_specific=True), timeout=180)
+    func_with_timeout = set_time_out(lambda: path.to_cloud(CLOUD, rel2home=True, share=True, os_specific=True), timeout=180)
     is_done, _is_timeout, _erro_message, results = func_with_timeout()
     if is_done: return results
     else: return None
@@ -112,7 +112,7 @@ def upload(path: tb.P):
 class PrecheckedCloudInstaller:
     def __init__(self):
         tb.install_n_import("gdown")
-        self.df = pd.read_csv(apps_summary_path)
+        self.df = pd.read_csv(APP_SUMMARY_PATH)
 
     @staticmethod
     def download_google_links(url: str):

@@ -10,7 +10,7 @@ from typing import Optional
 pd.options.display.max_rows = 10000
 
 
-def get_files_accessed_by_processes(path: str):
+def get_processes_accessing_file(path: str):
     res: dict[int, list[str]] = {}
     from tqdm import tqdm
     for proc in tqdm(psutil.process_iter()):

@@ -17,7 +17,7 @@
 
 function lfcd {
     $tmp = [System.IO.Path]::GetTempFileName()
-    $HOME\AppData\Local\Microsoft\WindowsApps\lf.exe -last-dir-path="$tmp" $args
+    ~\AppData\Local\Microsoft\WindowsApps\lf.exe -last-dir-path="$tmp" $args
     if (Test-Path -PathType Leaf "$tmp")
     {
         $dir = Get-Content "$tmp"
@@ -26,7 +26,7 @@ function lfcd {
         {
             if ("$dir" -ne "$pwd")
             {
-                cd "$dir"
+                Set-Location "$dir"
             }
         }
     }
