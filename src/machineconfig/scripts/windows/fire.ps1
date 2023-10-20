@@ -5,7 +5,7 @@ if (Test-Path $op_script ) {
 }
 
 
-activate_ve
+$HOME\scripts.ps1 activate_ve ve
 python -m machineconfig.scripts.python.fire_jobs $args
 
 
