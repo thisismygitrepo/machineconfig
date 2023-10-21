@@ -10,7 +10,7 @@ from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_
 # https://github.com/ceccopierangiolieugenio/pyTermTk for display_options build TUI
 # https://github.com/chriskiehl/Gooey build commandline interface
 import inspect
-from typing import Callable, Any
+from typing import Callable, Any, Optional
 import argparse
 
 
@@ -50,9 +50,15 @@ def main():
         choice_file = path_obj
 
     if args.choose_function or args.submit_to_cloud:
-        assert isinstance(choice_file, str), f"choice_file must be a string. Got {type(choice_file)}"
-        _module, choice_function = choose_function(choice_file)
+        # assert isinstance(choice_file, tb.P), f"choice_file must be a string. Got {type(choice_file)}"
+        choice_function, choice_function_args = choose_function(str(choice_file))
         if choice_function == "RUN AS MAIN": choice_function = None
+        if len(choice_function_args) > 0 and len(kwargs) == 0:
+            for item in choice_function_args:
+                kwargs[item.name] = input(f"Please enter a value for argument `{item.name}` (type = {item.type}) (default = {item.default}) : ") or item.default
+        # else:
+        #     print(f"{kwargs=}")
+        #     print(f"{choice_function_args=}")
         # if choice_function != "RUN AS MAIN":
             # kgs1, _ = interactively_run_function(module[choice_function])
             # " ".join([f"--{k} {v}" for k, v in kgs1.items()])
@@ -108,7 +114,6 @@ print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
         else:
             # for .streamlit config to work, it needs to be in the current directory.
             command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {tb.P.cwd()}"
-
     # try:
     #     ve_name = get_current_ve()
     #     exe = f". activate_ve {ve_name}; {exe}"
@@ -128,18 +133,54 @@ print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
     PROGRAM_PATH.write_text(command)
 
 
-def choose_function(file_path: str):
+def choose_function(file_path: str, use_ast: bool = True):
     print(f"Loading {file_path} ...")
-    module: tb.Struct = tb.P(file_path).readit()
-    module = module.filter(lambda k, v: "function" in str(type(v)))
-    module.print()
-    options = module.apply(lambda k, v: f"{k} -- {type(v)} {tb.Display.get_repr(v.__doc__, limit=150) if v.__doc__ is not None else 'No docs for this.'}").to_list()
-    main_option = f"RUN AS MAIN -- {tb.Display.get_repr(module.__doc__, limit=150) if module.__doc__ is not None else 'No docs for this.'}"
-    options.append(main_option)
+    from typing import NamedTuple
+    args_spec = NamedTuple("args_spec", [("name", str), ("type", type), ("default", Optional[Any])])
+    func_args: list[list[args_spec]] = [[]]  # this firt prepopulated dict is for the option 'RUN AS MAIN' which has no args
+    options = []
+
+    if not use_ast:
+        module: tb.Struct = tb.P(file_path).readit()
+        module = module.filter(lambda k, v: "function" in str(type(v)))
+
+        main_option = f"RUN AS MAIN -- {tb.Display.get_repr(module.__doc__, limit=150) if module.__doc__ is not None else 'No docs for this.'}"
+        options.append(main_option)
+
+        module.print()
+        tmp = module.apply(lambda k, v: f"{k} -- {type(v)} {tb.Display.get_repr(v.__doc__, limit=150) if v.__doc__ is not None else 'No docs for this.'}").to_list()
+        options += tmp
+
+    else:
+        import ast
+        parsed_ast = ast.parse(tb.P(file_path).read_text(encoding='utf-8'))
+        functions = [
+            node
+            for node in ast.walk(parsed_ast)
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        ]
+
+        module__doc__ = ast.get_docstring(parsed_ast)
+        main_option = f"RUN AS MAIN -- {tb.Display.get_repr(module__doc__, limit=150) if module__doc__ is not None else 'No docs for this.'}"
+        options: list[str] = [main_option]
+
+        for function in functions:
+            print(f"Function name: {function.name}")
+            print(f"Args: {', '.join([arg.arg for arg in function.args.args])}")
+            print(f"Docstring: {ast.get_docstring(function)}")
+            options.append(f"{function.name} -- {', '.join([arg.arg for arg in function.args.args])} -- {ast.get_docstring(function)}")
+            tmp = []
+            for idx, arg in enumerate(function.args.args):
+                tmp.append(args_spec(name=arg.arg, type=arg.annotation.__dict__['id'], default=function.args.defaults[idx] if idx < len(function.args.defaults) else None))
+
+            func_args.append(tmp)
+
     choice_function = display_options(msg="Choose a function to run", options=options, fzf=True, multi=False)
     assert isinstance(choice_function, str), f"choice_function must be a string. Got {type(choice_function)}"
+    choice_index = options.index(choice_function)
     choice_function = choice_function.split(' -- ')[0]
-    return module, choice_function
+    choice_function_args = func_args[choice_index]
+    return choice_function, choice_function_args
 
 
 def interactively_run_function(func: Callable[[Any], Any]):
