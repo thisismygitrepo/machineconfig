@@ -5,7 +5,7 @@ fire
 
 import crocodile.toolbox as tb
 import platform
-from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_host, match_file_name
+from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_host, match_file_name, sanitize_path
 # https://github.com/pallets/click combine with fire. Consider
 # https://github.com/ceccopierangiolieugenio/pyTermTk for display_options build TUI
 # https://github.com/chriskiehl/Gooey build commandline interface
@@ -37,7 +37,7 @@ def main():
     else:
         kwargs = {}
 
-    path_obj = tb.P(args.path).expanduser().absolute()
+    path_obj = sanitize_path(tb.P(args.path))
     if not path_obj.exists(): path_obj = match_file_name(args.path)
 
     if path_obj.is_dir():
