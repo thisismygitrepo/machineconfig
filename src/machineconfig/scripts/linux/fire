@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-. ~/scripts/activate_ve ''
+. ~/scripts/activate_ve 've'
 
 op_script=$HOME/tmp_results/shells/python_return_command.sh
 if [ -f "$op_script" ]; then
