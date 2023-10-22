@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 
-# Mount on linux
-# Lsblk
+# REFRENCE: https://www.linuxuprising.com/2019/04/how-to-mount-bitlocker-encrypted.html
 
+
+sudo fdisk -l
+echo "--------------------------------------"
 lsblk
+echo "--------------------------------------"
+
+
 # read device name from user input and choose default value of sdb1
 read -p "Enter device name (default: sdb1): " device
 # if user input is empty, set device to sdb1
@@ -32,7 +37,7 @@ if [ "$bitlocker_status" = "BitLocker" ];  then
     # if not, prompt user for password and store it in the file.
     if [ -f "$HOME/dotfiles/creds/data/bitlocker_pwd" ]; then
         echo "🔑 Bitlocker Password file detected at default location $HOME/dotfiles/creds/data/bitlocker_pwd"
-        echo $HOME/dotfiles/creds/data/bitlocker_pwd
+        cat $HOME/dotfiles/creds/data/bitlocker_pwd
         bitlocker_pwd=$(cat $HOME/dotfiles/creds/data/bitlocker_pwd)
     else
         echo "🤔🔑 Password file does not exist"
@@ -40,9 +45,10 @@ if [ "$bitlocker_status" = "BitLocker" ];  then
         echo $bitlocker_pwd > $HOME/dotfiles/creds/data/bitlocker_pwd
     fi
 
-
     sudo mkdir -p /media/$mnt_name"_bitlocker"
-    sudo dislocker /dev/$device -u -- /media/$mnt_name"_bitlocker" # Will be prompted for password (-u)
+    sudo dislocker /dev/$device "-u$bitlocker_pwd" -- /media/$mnt_name"_bitlocker" # Will be prompted for password (-u)
+    # ❌💥 change the above to single quotes and make sure interpolation works.
+    # -u with a space after it will prompt for password
     # sudo mount -o loop /media/bitlocker/dislocker-file /media/bitlockermount
     # Modified from here to fix permissions: https://askubuntu.com/questions/1045057/i-cant-write-only-read-on-usb-device-encrypted-with-bitlocker
     sudo mount -o loop,rw,uid=1000,gid=1000 /media/$mnt_name"_bitlocker"/dislocker-file /media/$mnt_name
@@ -56,6 +62,8 @@ fi
 # ask if the user wants to add the drive to fstab
 read -p "Do you want to add the drive to fstab? (y/n): " add_fstab
 if [ "$add_fstab" = "y" ]; then
+    lsblk -f
+    blkid
     # get the UUID of the drive
     drive_uuid=$(sudo blkid -s UUID -o value /dev/$device)
     # get the drive type

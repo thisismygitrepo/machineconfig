@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# REFERENCES:
+# https://help.ubuntu.com/community/NFSv4Howto
+# https://www.ibm.com/docs/en/ftmfm/4.0.5?topic=offering-network-file-system-nfs-version-4
+
 # Function to display an error message and exit the script
 exit_with_error() {
     echo "Error: $1"
