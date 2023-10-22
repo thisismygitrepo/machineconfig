@@ -20,8 +20,8 @@ sudo mkdir -p $HOME/data/mount_drive/$mnt_name  # Make sure to create the mounti
 # check if drive is bitlocker encrypted then print encryption type else print not encrypted
 if ! command -v dislocker &> /dev/null
 then
-    echo "dislocker could not be found"
-    echo "Installing dislocker"
+    echo "⚠️ dislocker could not be found"
+    echo "💡 Installing dislocker"
     sudo apt install dislocker
 fi
 

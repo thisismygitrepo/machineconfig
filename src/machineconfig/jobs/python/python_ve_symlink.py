@@ -12,7 +12,7 @@ def main():
     # ve_path = display_options(msg="symlin link? ", options=tb.P.home().joinpath("ve").starget.symlink_toimport crocodile.toolbox as tb; tb.P(r'$pwd').joinpath('venv').symlink_to(r'$to'); tb.P('.gitignore').modify_text('venv', 'venv', replace_line=True)"(target.symlink_to(
     # tb.P('.gitignore').modify_text('venv', 'venv', replace_line=True)"
     source.symlink_to(target, overwrite=True)
-    return "echo 'Finished creating symlink.'"
+    return "echo '😁 Finished creating symlink.'"
 
 
 if __name__ == '__main__':

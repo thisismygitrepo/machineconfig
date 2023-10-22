@@ -21,7 +21,7 @@ if [ -z "$VIRTUAL_ENV" ]; then  # no active ve ==> activate one.
       if [ -n "$VIRTUAL_ENV" ]; then
         echo $VIRTUAL_ENV > $CONFIG_PATH
      else
-        echo "No virtual environment active, cant echo it to $CONFIG_PATH"
+        echo "❌ No virtual environment active, cant echo it to $CONFIG_PATH"
       fi
     fi
 
@@ -37,7 +37,7 @@ if [ -z "$VIRTUAL_ENV" ]; then  # no active ve ==> activate one.
 else
   # check if $1 is passed, if yes, activate it
   if [ -n "$1" ]; then
-    echo "Deactivating virtual environment $VIRTUAL_ENV "
+    echo "🔻 Deactivating virtual environment $VIRTUAL_ENV "
     deactivate
     name=$1
     source ~/venvs/$name/bin/activate
@@ -47,7 +47,7 @@ else
     fi
 
   else
-    echo "Virtual environment $VIRTUAL_ENV already active"
+    echo "⚠️ Virtual environment $VIRTUAL_ENV already active"
   fi
 
   # check if default is not defined, if so, define it as $VIRTUAL_ENV
@@ -56,7 +56,7 @@ else
     if [ -n "$VIRTUAL_ENV" ]; then
       echo $VIRTUAL_ENV > $CONFIG_PATH
     else
-      echo "No virtual environment active, cannot echo it to $CONFIG_PATH"
+      echo "❌ No virtual environment active, cannot echo it to $CONFIG_PATH"
     fi
   fi
 fi
