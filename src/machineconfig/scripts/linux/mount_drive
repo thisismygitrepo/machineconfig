@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 
-# Mount on linux
-# Lsblk
+# REFRENCE: https://www.linuxuprising.com/2019/04/how-to-mount-bitlocker-encrypted.html
 
+
+sudo fdisk -l
+echo "--------------------------------------"
 lsblk
+echo "--------------------------------------"
+
+
 # read device name from user input and choose default value of sdb1
 read -p "Enter device name (default: sdb1): " device
 # if user input is empty, set device to sdb1
@@ -15,8 +20,8 @@ sudo mkdir -p $HOME/data/mount_drive/$mnt_name  # Make sure to create the mounti
 # check if drive is bitlocker encrypted then print encryption type else print not encrypted
 if ! command -v dislocker &> /dev/null
 then
-    echo "dislocker could not be found"
-    echo "Installing dislocker"
+    echo "⚠️ dislocker could not be found"
+    echo "💡 Installing dislocker"
     sudo apt install dislocker
 fi
 
@@ -25,29 +30,67 @@ fi
 bitlocker_status=$(lsblk -o FSTYPE "/dev/$device" | grep -o BitLocker)
 
 if [ "$bitlocker_status" = "BitLocker" ];  then
-    echo ">>>>>> Drive is bitlocker encrypted, therefore, bitlocker is needded"
+    echo "🔒 Drive is bitlocker encrypted, therefore, bitlocker is needded"
     # If drive is bitlocker , following: https://www.linuxuprising.com/2019/04/how-to-mount-bitlocker-encrypted.html
 
     # check if password is stored here: $HOME/dotfiles/creds/data/bitlocker_pwd if so, read it.
     # if not, prompt user for password and store it in the file.
     if [ -f "$HOME/dotfiles/creds/data/bitlocker_pwd" ]; then
-        echo ">>>>>> Bitlocker Password file detected at default location $HOME/dotfiles/creds/data/bitlocker_pwd"
+        echo "🔑 Bitlocker Password file detected at default location $HOME/dotfiles/creds/data/bitlocker_pwd"
+        cat $HOME/dotfiles/creds/data/bitlocker_pwd
         bitlocker_pwd=$(cat $HOME/dotfiles/creds/data/bitlocker_pwd)
     else
-        echo ">>>>>> Password file does not exist"
+        echo "🤔🔑 Password file does not exist"
         read -p "Enter bitlocker password: " bitlocker_pwd
         echo $bitlocker_pwd > $HOME/dotfiles/creds/data/bitlocker_pwd
     fi
 
-
     sudo mkdir -p /media/$mnt_name"_bitlocker"
-    sudo dislocker /dev/$device -u -- /media/$mnt_name"_bitlocker" # Will be prompted for password (-u)
+    sudo dislocker /dev/$device "-u$bitlocker_pwd" -- /media/$mnt_name"_bitlocker" # Will be prompted for password (-u)
+    # ❌💥 change the above to single quotes and make sure interpolation works.
+    # -u with a space after it will prompt for password
     # sudo mount -o loop /media/bitlocker/dislocker-file /media/bitlockermount
     # Modified from here to fix permissions: https://askubuntu.com/questions/1045057/i-cant-write-only-read-on-usb-device-encrypted-with-bitlocker
     sudo mount -o loop,rw,uid=1000,gid=1000 /media/$mnt_name"_bitlocker"/dislocker-file /media/$mnt_name
 else
     echo "Drive is not encrypted"
     sudo mount --source /dev/$device --target /media/$mnt_name
+fi
+
+# TODO: add two cases: one for bitlocker and one for non-bitlocker
+# https://www.linuxuprising.com/2019/04/how-to-mount-bitlocker-encrypted.html
+# ask if the user wants to add the drive to fstab
+read -p "Do you want to add the drive to fstab? (y/n): " add_fstab
+if [ "$add_fstab" = "y" ]; then
+    lsblk -f
+    blkid
+    # get the UUID of the drive
+    drive_uuid=$(sudo blkid -s UUID -o value /dev/$device)
+    # get the drive type
+    drive_type=$(lsblk -o FSTYPE "/dev/$device" | grep -o ntfs)
+    # get the drive mount point
+    drive_mount_point=$(sudo mount | grep "/dev/$device" | awk '{print $3}')
+    # get the drive mount options
+    drive_mount_options=$(sudo mount | grep "/dev/$device" | awk '{print $4}')
+    # get the drive dump option
+    drive_dump=$(sudo mount | grep "/dev/$device" | awk '{print $5}')
+    # get the drive pass option
+    drive_pass=$(sudo mount | grep "/dev/$device" | awk '{print $6}')
+
+    # check if the drive is ntfs
+    if [ "$drive_type" = "ntfs" ]; then
+        # if drive is ntfs, add ntfs-3g to the mount options
+        drive_mount_options="$drive_mount_options,ntfs-3g"
+    fi
+
+    # check if the drive is already in fstab
+    if [ -z "$drive_mount_point" ]; then
+        # if drive is not in fstab, add it
+        echo "UUID=$drive_uuid $drive_mount_point $drive_type $drive_mount_options $drive_dump $drive_pass" | sudo tee -a /etc/fstab
+    else
+        # if drive is in fstab, replace it
+        sudo sed -i "s/UUID=$drive_uuid.*/UUID=$drive_uuid $drive_mount_point $drive_type $drive_mount_options $drive_dump $drive_pass/g" /etc/fstab
+    fi
 fi
 
 # echo a success message if mount was successful (last command) else print error message

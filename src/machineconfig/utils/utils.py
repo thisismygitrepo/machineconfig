@@ -44,8 +44,22 @@ def choose_cloud_interactively() -> str:
     return cloud
 
 
+def sanitize_path(a_path: P):
+    path = P(a_path)
+    if path.as_posix().startswith("/home") and platform.system() == "Windows":  # path copied from Linux
+        path = P.home().joinpath(*path.parts[2:])  # exlcude /home/username
+        assert path.exists(), f"File not found: {path}"
+        print(f"\n{'--' * 50}\n🔗 Mapped `{a_path}` ➡️ `{path}`\n{'--' * 50}\n")
+    elif path.as_posix().startswith("C:") and platform.system() == "Linux":  # path copied from Windows
+        path = P.home().joinpath(*path.parts[3:])  # exlcude C:\Users\username
+        assert path.exists(), f"File not found: {path}"
+        print(f"\n{'--' * 50}\n🔗 Mapped `{a_path}` ➡️ `{path}`\n{'--' * 50}\n")
+    return path.expanduser().absolute()
+
+
 def match_file_name(sub_string: str):
     """Look up current directory for file name that matches the passed substring."""
+    print(f"Searching for {sub_string} in {P.cwd()}")
     search_results = P.cwd().absolute().search(f"*{sub_string}*.py", r=True)
     if len(search_results) == 1:
         path_obj = search_results.list[0]

@@ -45,7 +45,7 @@ cloud_rx $rclone_remote myhome/os_specific/$repo_root_rel2home -zew -l $HOME/.ma
 
 if (!(Test-Path $HOME/.machineconfig/remote/$repo_root_rel2home)) {
     echo ""
-    echo "Remote doesn't exist, creating it and exiting ... "
+    echo "💥 Remote doesn't exist, creating it and exiting ... "
     cloud_sx $rclone_remote $repo_root -zer
     exit
 }
