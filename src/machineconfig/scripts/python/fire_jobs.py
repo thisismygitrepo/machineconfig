@@ -18,7 +18,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("path", nargs='?', type=str, help="The directory containing the jobs", default=".")
     parser.add_argument("--function", "-f", type=str, help="The function to run", default="")
-    parser.add_argument("-v", "--ve", type=str, help="virtual enviroment name", default="")
+    parser.add_argument("--ve", "-v", type=str, help="virtual enviroment name", default="")
+    parser.add_argument("--cmd", "-B", action="store_true", help="Create a cmd fire command to launch the the job asynchronously.")
     parser.add_argument("--interactive", "-i", action="store_true", help="Whether to run the job interactively using IPython")
     parser.add_argument("--debug", "-d", action="store_true", help="debug")
     parser.add_argument("--choose_function", "-c", action="store_true", help="debug")
@@ -50,8 +51,8 @@ def main():
         choice_file = path_obj
 
     if args.choose_function or args.submit_to_cloud:
-        assert isinstance(choice_file, str), f"choice_file must be a string. Got {type(choice_file)}"
-        _module, choice_function = choose_function(choice_file)
+        # assert isinstance(choice_file, str), f"choice_file must be a string. Got {type(choice_file)}"
+        _module, choice_function = choose_function(str(choice_file))
         if choice_function == "RUN AS MAIN": choice_function = None
         # if choice_function != "RUN AS MAIN":
             # kgs1, _ = interactively_run_function(module[choice_function])
@@ -106,18 +107,23 @@ print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
         if not args.streamlit:
             command = f"{exe} {choice_file} "
         else:
-            # for .streamlit config to work, it needs to be in the current directory.
-            command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {tb.P.cwd()}"
+            if not args.cmd:
+                # for .streamlit config to work, it needs to be in the current directory.
+                command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {tb.P.cwd()}"
+            else:
+                command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
 
-    # try:
-    #     ve_name = get_current_ve()
-    #     exe = f". activate_ve {ve_name}; {exe}"
-    # except NotImplementedError:
-    #     print(f"Failed to detect virtual enviroment name.")
-    #     pass
     if "ipdb" in command: tb.install_n_import("ipdb")
     if "pudb" in command: tb.install_n_import("pudb")
-    command = f". activate_ve {args.ve}; {command}"
+
+    if not args.cmd:
+        command = f". activate_ve {args.ve}; {command}"
+    else:
+        # this works from powershell
+        command = fr"""start cmd -Argument "/k %USERPROFILE%\venvs\{args.ve}\Scripts\activate.bat & {command} " """
+        # this works from cmd
+        # command = fr""" start cmd /k "%USERPROFILE%\venvs\{args.ve}\Scripts\activate.bat & {command} " """
+        # because start in cmd is different from start in powershell (in powershell it is short for Start-Process)
 
     # if args.remote: return run_on_remote(choice_file, args=args)
     try: tb.install_n_import("clipboard").copy(command)
