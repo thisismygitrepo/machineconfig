@@ -11,6 +11,7 @@ import requests
 import crocodile.file_management as fm
 from crocodile.core import install_n_import
 import base64
+from typing import Optional
 
 
 def encrypt(key: str, pwd: str):
@@ -30,27 +31,30 @@ def encrypt(key: str, pwd: str):
     return base64.b64encode(encrypted_password).decode("utf-8")
 
 
-secret = input("Secret: ")
-password = input("Password: ") or None
+def share(secret: str, password: Optional[str]):
+    if password is not None: encoded_secret = encrypt(password, secret)
+    else: encoded_secret = secret
+
+    url = "https://ots.fyi/api/create"
+
+    payload = {"secret": encoded_secret}
+    headers = {'Content-Type': 'application/json'}
+
+    response = requests.post(url, json=payload, headers=headers, timeout=10)
+
+    if response.status_code == 201:
+        res = response.json()
+        print(res)
+        assert res["success"] is True, "Request have failed"
+        share_url = fm.P(f"https://ots.fyi/#{res['secret_id']}") + (f"|{password}" if password is not None else "")
+        print(repr(share_url))
+        return share_url
+    else:
+        print("Request failed")
+        raise RuntimeError(response.text)
 
 
-if password is not None: encoded_secret = encrypt(password, secret)
-else: encoded_secret = secret
-
-
-url = "https://ots.fyi/api/create"
-
-payload = {"secret": encoded_secret}
-headers = {'Content-Type': 'application/json'}
-
-response = requests.post(url, json=payload, headers=headers, timeout=10)
-
-if response.status_code == 201:
-    res = response.json()
-    print(res)
-    assert res["success"] is True, "Request have failed"
-    share_url = fm.P(f"https://ots.fyi/#{res['secret_id']}") + (f"|{password}" if password is not None else "")
-    print(repr(share_url))
-else:
-    print("Request failed")
-    raise RuntimeError(response.text)
+if __name__ == "__main__":
+    sc = input("Secret: ")
+    pwdd = input("Password: ") or None
+    share(secret=sc, password=pwdd)

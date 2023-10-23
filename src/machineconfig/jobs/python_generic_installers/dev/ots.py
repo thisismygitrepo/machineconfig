@@ -16,14 +16,14 @@ def main(version: Optional[str] = None) -> None:
             print(f"Could not find ots release for version {version}")
             return None
         downloaded = latest.joinpath("ots_windows_amd64.zip").download()
-        find_move_delete_windows(downloaded=downloaded.unzip(inplace=True), tool_name="ots", delete=True, rename_to="ots.exe")
+        find_move_delete_windows(downloaded=downloaded.unzip(inplace=True), tool_name="ots", delete=True)
     elif platform.system() == "Linux":
         latest = get_latest_release(repo_url=url, exe_name="ots", file_name="ots_linux_amd64.tgz", download_n_extract=False, linux=True, version=version)
         if not isinstance(latest, tb.P):
             print(f"Could not find ots release for version {version}")
             return None
-        downloaded = latest.joinpath("ots_linux_amd64.tar.gz").download()
-        find_move_delete_linux(downloaded=downloaded.ungz_untar(inplace=True), tool_name="ots", delete=True, rename_to="ots")
+        downloaded = latest.joinpath("ots_linux_amd64.tgz").download()
+        find_move_delete_linux(downloaded=downloaded.ungz_untar(inplace=True), tool_name="ots", delete=True)
     else:
         raise NotImplementedError(f"Platform {platform.system()} not supported.")
 
