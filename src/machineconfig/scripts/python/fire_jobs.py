@@ -175,7 +175,7 @@ def choose_function(file_path: str, use_ast: bool = True):
 
         module__doc__ = ast.get_docstring(parsed_ast)
         main_option = f"RUN AS MAIN -- {tb.Display.get_repr(module__doc__, limit=150) if module__doc__ is not None else 'No docs for this.'}"
-        options= [main_option]
+        options = [main_option]
 
         for function in functions:
             print(f"Function name: {function.name}")
@@ -184,7 +184,9 @@ def choose_function(file_path: str, use_ast: bool = True):
             options.append(f"{function.name} -- {', '.join([arg.arg for arg in function.args.args])} -- {ast.get_docstring(function)}")
             tmp = []
             for idx, arg in enumerate(function.args.args):
-                tmp.append(args_spec(name=arg.arg, type=arg.annotation.__dict__['id'], default=function.args.defaults[idx] if idx < len(function.args.defaults) else None))
+                if arg.annotation is not None: type_ = arg.annotation.__dict__['id']
+                else: type_ = type
+                tmp.append(args_spec(name=arg.arg, type=type_, default=function.args.defaults[idx] if idx < len(function.args.defaults) else None))
 
             func_args.append(tmp)
 
