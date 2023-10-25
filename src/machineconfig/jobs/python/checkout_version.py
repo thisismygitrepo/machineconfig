@@ -93,7 +93,7 @@ pip list --editable > {file}""", verbose=True).print()
     tmp3 = file.read_text(encoding='utf-16').splitlines()[2:]
     for a_pkg in tmp3:
         tmp = P(a_pkg.split(" ")[-1].rstrip())
-        tmp1 = record_a_repo(tmp)
+        tmp1 = record_a_repo(tmp, search_parent_directories=True)  # pip list --editable returns path to package or repo in a way not yet understood.
         res.append(tmp1)
     return res
 

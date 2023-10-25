@@ -114,9 +114,9 @@ def record_repos(repos_root: str, r: bool = True) -> list[dict[str, Any]]:
     return res
 
 
-def record_a_repo(path: tb.P):
+def record_a_repo(path: tb.P, search_parent_directories: bool = False):
     from git.repo import Repo
-    repo = Repo(path)  # get list of remotes using git python
+    repo = Repo(path, search_parent_directories=search_parent_directories)  # get list of remotes using git python
     remotes = {remote.name: remote.url for remote in repo.remotes}
     try: commit = repo.head.commit.hexsha
     except ValueError:  # look at https://github.com/gitpython-developers/GitPython/issues/1016
