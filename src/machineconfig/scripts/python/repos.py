@@ -133,7 +133,7 @@ def record_a_repo(path: tb.P, search_parent_directories: bool = False):
     return res
 
 
-def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_commit: bool = False, checkout_to_branch: bool = False):
+def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_commit: bool = False, checkout_to_branch: bool = False, editable_install: bool = False):
     program = ""
     path_obj = tb.P(specs_path).expanduser().absolute()
     repos: list[dict[str, Any]] = tb.Read.json(path_obj)
@@ -142,10 +142,10 @@ def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_comm
         for idx, (remote_name, remote_url) in enumerate(repo["remotes"].items()):
             if clone:
                 if idx == 0:  # clone
-                    program += f"\ncd {parent_dir.collapseuser().as_posix()}; git clone {remote_url} --origin {remote_name}\n"
-                    program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}\n"
+                    program += f"\ncd {parent_dir.collapseuser().as_posix()}; git clone {remote_url} --origin {remote_name}"
+                    program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}"
                     # the new url-setting to ensure that account name before `@` was not lost (git clone ignores it): https://thisismygitrepo@github.com/thisismygitrepo/crocodile.git
-                program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote add {remote_name} {remote_url}\n"
+                program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote add {remote_name} {remote_url}"
             if checkout_to_recorded_commit:
                 commit = repo['version']['commit']
                 if isinstance(commit, str): program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git checkout {commit}"
@@ -154,6 +154,9 @@ def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_comm
             if checkout_to_branch:
                 program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git checkout {repo['current_branch']}"
                 break
+            if editable_install:
+                program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; pip install -e ."
+        program += "\n"
     pprint(program)
     return program
 

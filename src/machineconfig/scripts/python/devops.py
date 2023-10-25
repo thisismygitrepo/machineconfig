@@ -44,8 +44,8 @@ def main(which: Optional[str] = None):
         program = helper.main()
 
     elif choice_key == Options.ve.value:
-        import machineconfig.jobs.python.python_ve_installer as helper
-        program = helper.main()
+        from machineconfig.utils.ve import get_ve_install_script
+        program = get_ve_install_script()
 
     elif choice_key == Options.cli_install.value:
         import machineconfig.scripts.python.devops_devapps_install as helper

@@ -2,7 +2,10 @@
 """python and ve installation related utils
 """
 
-from crocodile.file_management import P
+from crocodile.file_management import P, Struct, modify_text, List
+from machineconfig.utils.utils import LIBRARY_ROOT
+import platform
+from typing import Optional
 
 
 def get_ipython_profile(init_path: P):
@@ -60,3 +63,70 @@ def get_ve_specs(ve_path: P) -> dict[str, str]:
     res = dict(config['mysection'])
     res['version_major_minor'] = ".".join(res['version'].split(".")[0:2])
     return res
+
+
+def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[str] = None, install_crocodile_and_machineconfig: Optional[bool] = None):
+    from rich.console import Console
+    system: str = platform.system()
+    console = Console()
+    print("\n\n")
+    console.rule("Existing Python versions", style="bold red")
+    res = get_installed_interpreters()
+    List(res).print()
+    print("\n\n")
+
+    console.rule(f"Existing virtual environments")
+    for ve_path in P.home().joinpath("venvs").search("*", files=False):
+        ve_specs = get_ve_specs(ve_path)
+        # console.print(Panel(str(ve_specs), title=ve_path.stem, style="bold blue"))
+        Struct(ve_specs).print(title=ve_path.stem, as_config=True)
+
+    if py_version is None: dotted_py_version = input("Enter python version (3.11): ") or "3.11"
+    else: dotted_py_version = py_version
+    if ve_name is None: ve_name = input("Enter virtual environment name (tst): ") or "tst"
+    if install_crocodile_and_machineconfig is None: install_croco_and_machineconfig = input("Install essential repos? (y/[n]): ") == "y"
+    else: install_croco_and_machineconfig = install_crocodile_and_machineconfig
+
+    env_path = P.home().joinpath("venvs", ve_name)
+    if env_path.exists():
+        console.rule(f"Deleting existing enviroment with similar name")
+        env_path.delete(sure=True)
+
+    scripts = LIBRARY_ROOT.joinpath(f"setup_{system.lower()}/ve.{'ps1' if system == 'Windows' else 'sh'}").read_text()
+
+    variable_prefix = "$" if system == "Windows" else ""
+    line1 = f"{variable_prefix}ve_name='{ve_name}'"
+    line2 = f"{variable_prefix}py_version='{dotted_py_version}'"
+    lines = f"{line1}\n{line2}\n"
+    line_start = "# --- Define ve name and python version here ---"
+    line_end = "# --- End of user defined variables ---"
+    assert line_start in scripts and line_end in scripts, "Script template was mutated beyond recognition."
+    scripts = scripts.split(line_start)[0] + line_start + "\n" + lines + line_end + scripts.split(line_end)[1]
+
+    if install_croco_and_machineconfig:  # TODO make this more robust by removing sections of the script as opposed to word placeholders.
+        text = LIBRARY_ROOT.joinpath(f"setup_{system.lower()}/repos.{'ps1' if system == 'Windows' else 'sh'}").read_text()
+        text = modify_text(txt_raw=text, txt_search="ve_name=", txt_alt=f"{variable_prefix}ve_name='{ve_name}'", replace_line=True)
+        scripts += text
+    return scripts
+
+
+def get_ps1_install_template(ve_name: str, req_root: str, py_version: str):
+    template = f"""
+$ve_name = '{ve_name}'
+$py_version = '{py_version}'  # type: ignore
+(Invoke-WebRequest bit.ly/cfgvewindows).Content | Invoke-Expression
+. $HOME/scripts/activate_ve $ve_name
+cd {req_root}
+pip install -r requirements_{platform.system().lower()}.txt
+"""
+    return template
+def get_bash_install_template(ve_name: str, req_root: str, py_version: str = "3.11"):
+    template = f"""
+export ve_name='{ve_name}'
+export py_version='{py_version}'  # type: ignore
+curl -L bit.ly/cfgvelinux | bash
+. activate_ve $ve_name
+cd {req_root}
+pip install -r requirements_{platform.system().lower()}.txt
+"""
+    return template
