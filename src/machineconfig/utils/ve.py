@@ -24,7 +24,7 @@ def get_ve_profile(init_path: P, strict: bool = False):
     tmp = init_path
     for _ in init_path.parents:
         if tmp.joinpath(".ve_path").exists():
-            ve = P(tmp.joinpath(".ve_path").read_text()).name
+            ve = P(tmp.joinpath(".ve_path").read_text().rstrip().replace("\n", "")).name
             print(f"✅ Using Virtual Environment: {ve}")
             break
         tmp = tmp.parent
