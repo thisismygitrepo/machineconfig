@@ -102,29 +102,34 @@ def main():
 
 
 def record_repos(repos_root: str, r: bool = True) -> list[dict[str, Any]]:
-    from git.repo import Repo
     path_obj = tb.P(repos_root).expanduser().absolute()
     if path_obj.is_file(): return []
     search_res = path_obj.search("*", files=False)
     res: list[dict[str, Any]] = []
     for a_search_res in search_res:
         if a_search_res.joinpath(".git").exists():
-            repo = Repo(a_search_res)  # get list of remotes using git python
-            remotes = {remote.name: remote.url for remote in repo.remotes}
-            try: commit = repo.head.commit.hexsha
-            except ValueError:  # look at https://github.com/gitpython-developers/GitPython/issues/1016
-                print(f"⚠️ Failed to get latest commit of {repo}")
-                # cmd = "git config --global -add safe.directory"
-                commit = None
-            try: current_branch = repo.head.reference.name  # same as repo.active_branch.name
-            except TypeError:
-                print(f"⁉️ Failed to get current branch of {repo}. It is probably in a detached state.")
-                current_branch = None
-            res.append({"name": a_search_res.name, "parent_dir": a_search_res.parent.collapseuser().as_posix(),
-                                 "current_branch": current_branch,
-                                 "remotes": remotes, "version": {"branch": current_branch, "commit": commit}})
+            res.append(record_a_repo(a_search_res))
         else:
             if r: res += record_repos(str(a_search_res), r=r)
+    return res
+
+
+def record_a_repo(path: tb.P):
+    from git.repo import Repo
+    repo = Repo(path)  # get list of remotes using git python
+    remotes = {remote.name: remote.url for remote in repo.remotes}
+    try: commit = repo.head.commit.hexsha
+    except ValueError:  # look at https://github.com/gitpython-developers/GitPython/issues/1016
+        print(f"⚠️ Failed to get latest commit of {repo}")
+        # cmd = "git config --global -add safe.directory"
+        commit = None
+    try: current_branch = repo.head.reference.name  # same as repo.active_branch.name
+    except TypeError:
+        print(f"⁉️ Failed to get current branch of {repo}. It is probably in a detached state.")
+        current_branch = None
+    res = {"name": path.name, "parent_dir": path.parent.collapseuser().as_posix(),
+                            "current_branch": current_branch,
+                            "remotes": remotes, "version": {"branch": current_branch, "commit": commit}}
     return res
 
 
@@ -137,17 +142,17 @@ def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_comm
         for idx, (remote_name, remote_url) in enumerate(repo["remotes"].items()):
             if clone:
                 if idx == 0:  # clone
-                    program += f"\ncd {parent_dir.as_posix()}; git clone {remote_url} --origin {remote_name}\n"
-                    program += f"\ncd {parent_dir.as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}\n"
+                    program += f"\ncd {parent_dir.collapseuser().as_posix()}; git clone {remote_url} --origin {remote_name}\n"
+                    program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}\n"
                     # the new url-setting to ensure that account name before `@` was not lost (git clone ignores it): https://thisismygitrepo@github.com/thisismygitrepo/crocodile.git
-                program += f"\ncd {parent_dir.as_posix()}/{repo['name']}; git remote add {remote_name} {remote_url}\n"
+                program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote add {remote_name} {remote_url}\n"
             if checkout_to_recorded_commit:
                 commit = repo['version']['commit']
-                if isinstance(commit, str): program += f"\ncd {parent_dir.as_posix()}/{repo['name']}; git checkout {commit}"
+                if isinstance(commit, str): program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git checkout {commit}"
                 else: print(f"Skipping {repo['parent_dir']} because it doesn't have a commit recorded. Found {commit}")
                 break  # you need to checkout only once, no need to repeat for other remotes.
             if checkout_to_branch:
-                program += f"\ncd {parent_dir.as_posix()}/{repo['name']}; git checkout {repo['current_branch']}"
+                program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git checkout {repo['current_branch']}"
                 break
     pprint(program)
     return program
