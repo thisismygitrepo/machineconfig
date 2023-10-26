@@ -75,33 +75,35 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
     List(res).print()
     print("\n\n")
 
-    console.rule(f"Existing virtual environments")
-    for ve_path in P.home().joinpath("venvs").search("*", files=False):
-        ve_specs = get_ve_specs(ve_path)
-        # console.print(Panel(str(ve_specs), title=ve_path.stem, style="bold blue"))
-        Struct(ve_specs).print(title=ve_path.stem, as_config=True)
-
     if py_version is None: dotted_py_version = input("Enter python version (3.11): ") or "3.11"
     else: dotted_py_version = py_version
-    if ve_name is None: ve_name = input("Enter virtual environment name (tst): ") or "tst"
+
+    if ve_name is None:
+        console.rule(f"Existing virtual environments")
+        for ve_path in P.home().joinpath("venvs").search("*", files=False):
+            ve_specs = get_ve_specs(ve_path)
+            # console.print(Panel(str(ve_specs), title=ve_path.stem, style="bold blue"))
+            Struct(ve_specs).print(title=ve_path.stem, as_config=True)
+        ve_name = input("Enter virtual environment name (tst): ") or "tst"
+
     if install_crocodile_and_machineconfig is None: install_croco_and_machineconfig = input("Install essential repos? (y/[n]): ") == "y"
     else: install_croco_and_machineconfig = install_crocodile_and_machineconfig
 
     env_path = P.home().joinpath("venvs", ve_name)
     if env_path.exists():
+        sure = input(f"An existing environment found. Are you sure you want to delete {env_path} before making new one? (y/[n]): ") == "y"
         console.rule(f"Deleting existing enviroment with similar name")
-        env_path.delete(sure=True)
+        env_path.delete(sure=sure)
 
     scripts = LIBRARY_ROOT.joinpath(f"setup_{system.lower()}/ve.{'ps1' if system == 'Windows' else 'sh'}").read_text()
 
     variable_prefix = "$" if system == "Windows" else ""
     line1 = f"{variable_prefix}ve_name='{ve_name}'"
     line2 = f"{variable_prefix}py_version='{dotted_py_version}'"
-    lines = f"{line1}\n{line2}\n"
     line_start = "# --- Define ve name and python version here ---"
     line_end = "# --- End of user defined variables ---"
     assert line_start in scripts and line_end in scripts, "Script template was mutated beyond recognition."
-    scripts = scripts.split(line_start)[0] + line_start + "\n" + lines + line_end + scripts.split(line_end)[1]
+    scripts = scripts.split(line_start)[0] + "\n".join([line_start, line1, line2, line_end]) + scripts.split(line_end)[1]
 
     if install_croco_and_machineconfig:  # TODO make this more robust by removing sections of the script as opposed to word placeholders.
         text = LIBRARY_ROOT.joinpath(f"setup_{system.lower()}/repos.{'ps1' if system == 'Windows' else 'sh'}").read_text()
