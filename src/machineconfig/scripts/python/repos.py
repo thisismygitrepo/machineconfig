@@ -154,7 +154,7 @@ def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_comm
             if checkout_to_branch:
                 program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git checkout {repo['current_branch']}"
                 break
-            if editable_install:
+            if editable_install and idx == 0:
                 program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; pip install -e ."
         program += "\n"
     pprint(program)

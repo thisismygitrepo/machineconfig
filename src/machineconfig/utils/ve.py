@@ -69,13 +69,14 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
     from rich.console import Console
     system: str = platform.system()
     console = Console()
-    print("\n\n")
-    console.rule("Existing Python versions", style="bold red")
-    res = get_installed_interpreters()
-    List(res).print()
-    print("\n\n")
 
-    if py_version is None: dotted_py_version = input("Enter python version (3.11): ") or "3.11"
+    if py_version is None:
+        print("\n\n")
+        console.rule("Existing Python versions", style="bold red")
+        res = get_installed_interpreters()
+        List(res).print()
+        print("\n\n")
+        dotted_py_version = input("Enter python version (3.11): ") or "3.11"
     else: dotted_py_version = py_version
 
     if ve_name is None:

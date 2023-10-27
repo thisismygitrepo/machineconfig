@@ -3,6 +3,7 @@
 """
 import psutil
 import pandas as pd
+from tqdm import tqdm
 from pytz import timezone
 from machineconfig.utils.utils import display_options
 from typing import Optional
@@ -12,7 +13,6 @@ pd.options.display.max_rows = 10000
 
 def get_processes_accessing_file(path: str):
     res: dict[int, list[str]] = {}
-    from tqdm import tqdm
     for proc in tqdm(psutil.process_iter()):
         try:
             files = proc.open_files()
@@ -34,7 +34,7 @@ def kill_process(name: str):
 class ProcessManager:
     def __init__(self):
         process_info = []
-        for proc in psutil.process_iter():
+        for proc in tqdm(psutil.process_iter(), desc="Reading Processes"):
             try:
                 mem_usage_mb = proc.memory_info().rss / (1024 * 1024)
                 process_info.append([proc.pid, proc.name(), proc.username(), proc.cpu_percent(), mem_usage_mb, proc.status(), proc.create_time(), " ".join(proc.cmdline())])
@@ -52,7 +52,21 @@ class ProcessManager:
         sub_df = self.df.iloc[indices]
         print(self.df)
         print(sub_df)
-        _ = self.kill(pids=sub_df.pid.to_list()) if input("Confirm kill? y/[n] ").lower() == "y" else print("Not killing")
+        from crocodile.core import Struct
+        for idx, (_, row) in enumerate(sub_df.iterrows()):
+            Struct(row.to_dict()).print(as_config=True, title=f"Process {idx}")
+        kill_all = input("🔪 Confirm killing ALL? y/[n] ").lower() == "y"
+        if kill_all:
+            self.kill(pids=sub_df.pid.to_list())
+            return
+        kill_by_index = input("🔫 Kill by index? 1 4 ... /[n] ")
+        if kill_by_index != "":
+            indices = [int(val) for val in kill_by_index.split(" ")]
+            sub_sub_df = sub_df.iloc[indices]
+            for idx, row in sub_sub_df.iterrows():
+                Struct(row.to_dict()).print(as_config=True, title=f"Process {idx}")
+            _ = self.kill(pids=sub_sub_df.pid.to_list()) if input("Confirm kill? y/[n] ").lower() == "y" else None
+        print("🫠 Not killing any process.")
 
     def filter_and_kill(self, name: Optional[str] = None):
         _ = 20

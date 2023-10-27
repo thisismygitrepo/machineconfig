@@ -14,7 +14,7 @@ from tqdm import tqdm
 from typing import Optional
 
 APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
-CLOUD = "gdw"  # tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+CLOUD: str = "gdw"  # tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
 # my onedrive doesn't allow sharing.
 
 

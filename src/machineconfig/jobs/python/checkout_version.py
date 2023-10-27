@@ -37,8 +37,9 @@ def checkout_version(version: str, repo_root: P, exclude_editable: bool = False)
 . $HOME/scripts/activate_ve $ve_name
 cd {req_root}
 pip install -r requirements_{sys}.txt
+{extra_program}
 """
-    P(req_root).expanduser().create().joinpath("install" + (".ps1" if sys == "windows" else ".sh")).write_text(template + "\n" + extra_program)
+    P(req_root).expanduser().create().joinpath("install" + (".ps1" if sys == "windows" else ".sh")).write_text(template)
     Terminal().run_script(f"""
 cd '{target_dir}'
 . $HOME/scripts/activate_ve {ve_name}
