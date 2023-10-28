@@ -6,49 +6,37 @@ from platform import system
 # import subprocess
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import LIBRARY_ROOT, display_options
-from typing import Any, Optional
+from machineconfig.utils.installer import get_cli_py_installers
+from typing import Any, Optional, Literal, TypeAlias
 
 
-if system() == "Windows": from machineconfig.jobs.python.python_windows_installers_all import get_cli_py_installers
-elif system() == "Linux": from machineconfig.jobs.python.python_linux_installers_all import get_cli_py_installers
-else: raise NotImplementedError(f"System {system()} not supported")
+WHICH: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstallers", "OtherDevApps", "PrecheckedCloudInstaller"]
 
 
-def main(program_name: Optional[str] = None):
+def main(which: Optional[str] = None):
+    if which is not None: return get_program(program_name=which, options=options, installers=list(installers))
 
-    installers = get_cli_py_installers()
-    default = tb.P("all")
+    installers = get_cli_py_installers(dev=False)
+    default = tb.P("AllEssentials")
     installers.list.insert(0, default)
     installers.list.insert(0, tb.P("SystemInstallers"))
     installers.list.insert(0, tb.P("OtherDevApps"))
     installers.list.insert(0, tb.P("PrecheckedCloudInstaller"))
     options: list[str] = installers.apply(lambda x: x.stem + (' -- ' + x.readit().__doc__.lstrip().rstrip()) if x.exists() else x.stem).to_list()
     # options.sort()  # throws off sync between installers and options
-
-    if program_name is None:
-        program_names = display_options(msg="", options=options, header="CHOOSE DEV APP", default=str(default), fzf=True, multi=True)
-        total_program = ""
-        for program_name in program_names:
-            assert isinstance(program_name, str), f"program_name is not a string: {program_name}"
-            # print(program_name)
-            # tb.L(options).print()
-            # installers.print()
-            total_program += "\n" + get_program(program_name=program_name, options=options, installers=list(installers))
-    else:
-        total_program = get_program(program_name=program_name, options=options, installers=list(installers))
+    program_names = display_options(msg="", options=options, header="CHOOSE DEV APP", default=str(default), fzf=True, multi=True)
+    total_program = ""
+    for which in program_names:
+        assert isinstance(which, str), f"program_name is not a string: {which}"
+        total_program += "\n" + get_program(program_name=which, options=options, installers=list(installers))
     return total_program
 
 
 def get_program(program_name: str, options: list[Any], installers: list[tb.P]):
-    if program_name == "all":
-        if system() == "Linux":
-            from machineconfig.jobs.python.python_linux_installers_all import main as main2
-        elif system() == "Windows":
-            from machineconfig.jobs.python.python_windows_installers_all import main as main2
-        else: raise NotImplementedError(f"System {system()} not supported")
-        main2()
-        # program_linux = f"source {LIBRARY_ROOT}/setup_linux/devapps.sh"
-        # program_windows = f"{LIBRARY_ROOT}/setup_windows/devapps.ps1"
+    if program_name == "AllEssentials" or program_name == "EssentialsAndOthers":
+        from machineconfig.utils.installer import install_all
+        install_all(dev=False)
+        if program_name == "EssentialsAndOthers": install_all(dev=True)
         program = ""
     elif program_name == "SystemInstallers":
         if system() == "Windows": options_more = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text())
@@ -77,7 +65,7 @@ def get_program(program_name: str, options: list[Any], installers: list[tb.P]):
     elif program_name == "PrecheckedCloudInstaller":
         from machineconfig.jobs.python.check_installations import PrecheckedCloudInstaller
         ci = PrecheckedCloudInstaller()
-        ci.download_safe_apps(name="all")
+        ci.download_safe_apps(name="AllEssentials")
         program = ""
     else:
         idx = options.index(program_name)

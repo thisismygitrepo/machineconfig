@@ -22,7 +22,7 @@ py_version_no_dot=$(echo $py_version | tr -d '.')
 if ! command -v $mypy &> /dev/null; then
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-    echo "$mypy could not be found, installing ..."
+    echo "🤔 $mypy could not be found, installing ..."
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
     sudo add-apt-repository ppa:deadsnakes/ppa -y  # you need to press enter at this point to continue. # without this repo, 3.9 is not available.
@@ -35,7 +35,7 @@ fi
 if ! dpkg -s $mypy-venv > /dev/null 2>&1; then  # python-venv is not a command, but a module of python.
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-    echo "$mypy-venv could not be found, installing ..."
+    echo "🤔 $mypy-venv could not be found, installing ..."
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
     sudo apt install -y $mypy-venv
@@ -45,7 +45,7 @@ fi
 if ! command -v pip &> /dev/null; then
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-    echo "pip could not be found, installing ..."
+    echo "🤔 pip could not be found, installing ..."
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
     sudo apt install -y python3-pip
@@ -55,7 +55,7 @@ fi
 if ! dpkg -s python3-tk > /dev/null 2>&1; then
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-    echo "python3-tk could not be found, installing ..."
+    echo "🤔 python3-tk could not be found, installing ..."
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
     sudo apt install -y python3-tk  # without this, plt.show() will return UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
@@ -69,7 +69,7 @@ cd ~/venvs/ || exit
 if [ -d "$ve_name" ]; then
     echo ''
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-    echo "$ve_name already exists, deleting ..."
+    echo "🗑️ $ve_name already exists, deleting ..."
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
     rm -rfd $ve_name

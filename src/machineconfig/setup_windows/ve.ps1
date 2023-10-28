@@ -33,6 +33,7 @@ if (Test-Path "./venvs/$ve_name") {
     Write-Host "🚮 Deleting existing virtual environment at ./venvs/$ve_name"
     Remove-Item -Recurse -Force "./venvs/$ve_name"
 }
+
 &$mypy  -m venv "./venvs/$ve_name"  # ve will have same python version as `python`, where it.
 
 # activate
