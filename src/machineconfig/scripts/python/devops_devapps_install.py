@@ -20,6 +20,7 @@ def main(which: Optional[str] = None):
     installers.list.insert(0, default)
     installers.list.insert(0, tb.P("SystemInstallers"))
     installers.list.insert(0, tb.P("OtherDevApps"))
+    installers.list.insert(0, tb.P("EssentialsAndOthers"))
     installers.list.insert(0, tb.P("PrecheckedCloudInstaller"))
     options: list[str] = installers.apply(lambda x: x.stem + (' -- ' + x.readit().__doc__.lstrip().rstrip()) if x.exists() else x.stem).to_list()
 
@@ -41,13 +42,13 @@ def get_program(program_name: str, options: list[Any], installers: list[tb.P]):
         if program_name == "EssentialsAndOthers": install_all(dev=True)
         program = ""
     elif program_name == "SystemInstallers":
-        if system() == "Windows": options_more = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text())
-        elif system() == "Linux": options_more = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps.sh").read_text())
+        if system() == "Windows": options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text())
+        elif system() == "Linux": options_system = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps.sh").read_text())
         else: raise NotImplementedError(f"System {system()} not supported")
-        program_names = display_options(msg="", options=sorted(list(options_more.keys())), header="CHOOSE DEV APP", fzf=True, multi=True)
+        program_names = display_options(msg="", options=sorted(list(options_system.keys())), header="CHOOSE DEV APP", fzf=True, multi=True)
         program = ""
         for name in program_names:
-            sub_program = options_more[name]
+            sub_program = options_system[name]
             if sub_program.startswith("#winget"): sub_program = sub_program[1:]
             program += "\n" + sub_program
     elif program_name == "OtherDevApps":

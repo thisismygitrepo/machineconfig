@@ -148,7 +148,8 @@ def run_python_installer(py_file: P, version: Optional[str] = None):
         return f"Failed at {py_file.stem} with {ex}"
 
 
-def install_all(installers: Optional[list[P]] = None, safe: bool = False, dev: bool = False, jobs: int = 10):
+def install_all(installers: Optional[list[P]] = None, safe: bool = False, dev: bool = False, jobs: int = 10, fresh: bool = False):
+    if fresh: APP_VERSION_ROOT.delete(sure=True)
     if safe:
         from machineconfig.jobs.python.check_installations import APP_SUMMARY_PATH
         apps_dir = APP_SUMMARY_PATH.readit()

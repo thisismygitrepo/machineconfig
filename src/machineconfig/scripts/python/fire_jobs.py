@@ -229,6 +229,7 @@ def submit_to_cloud(func: Any):
     m = RemoteMachine(func=func, func_kwargs=None, config=config)
     _res = m.submit_to_cloud(split=int(input("Number of job splits: ")), cm=CloudManager(max_jobs=1, cloud=config.cloud_name))
 
+
 def run_on_remote(func_file: str, args: argparse.Namespace):
     host = choose_ssh_host(multi=False)
     assert isinstance(host, str), f"host must be a string. Got {type(host)}"

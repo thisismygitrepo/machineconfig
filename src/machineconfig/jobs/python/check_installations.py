@@ -138,7 +138,7 @@ class PrecheckedCloudInstaller:
             exe.move(folder=tb.P.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
         return True
 
-    def download_safe_apps(self, name: str = "all"):
+    def download_safe_apps(self, name: str = "AllEssentials"):
         # if platform.system().lower() == "windows":
         #     from machineconfig.jobs.python.python_windows_installers_all import get_cli_py_installers
         #     cli_installers = get_cli_py_installers()
@@ -147,7 +147,7 @@ class PrecheckedCloudInstaller:
         #     cli_installers = get_cli_py_installers()
         # else: raise NotImplementedError(f"Platform {platform.system().lower()} is not supported yet.")
 
-        if name == "all":
+        if name == "AllEssentials":
             print(f"Downloading {self.df.shape[0]} apps ...")
             print(self.df)
             _res = tb.L(self.df.app_url).apply(PrecheckedCloudInstaller.install_cli_apps, jobs=20)
