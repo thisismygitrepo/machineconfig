@@ -19,6 +19,7 @@ def args_parser():
     parser = argparse.ArgumentParser(description="Secure Repo CLI.")
 
     # parser.add_argument("cmd", help="command to run", choices=["pull", "push"])
+    parser.add_argument("path", nargs='?', type=str, help="Repository path, defaults to cwd.", default=None)
 
     parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
     parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {tb.randstr()}")
@@ -33,7 +34,7 @@ def args_parser():
             return ""
     else: cloud = args.cloud
     # repo_root = tb.P(args.repo).expanduser().absolute()
-    repo_root = tb.P.cwd()
+    repo_root = tb.P.cwd() if args.path is None else tb.P(args.path).expanduser().absolute()
     repo_obj = tb.install_n_import("git", "gitpython").Repo(repo_root, search_parent_directories=True)
     repo_root = tb.P(repo_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
     CONFIG_PATH.joinpath("remote").create()

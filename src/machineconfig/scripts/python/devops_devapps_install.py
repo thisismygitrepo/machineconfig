@@ -14,7 +14,6 @@ WHICH: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstal
 
 
 def main(which: Optional[str] = None):
-    if which is not None: return get_program(program_name=which, options=options, installers=list(installers))
 
     installers = get_cli_py_installers(dev=False)
     default = tb.P("AllEssentials")
@@ -23,7 +22,10 @@ def main(which: Optional[str] = None):
     installers.list.insert(0, tb.P("OtherDevApps"))
     installers.list.insert(0, tb.P("PrecheckedCloudInstaller"))
     options: list[str] = installers.apply(lambda x: x.stem + (' -- ' + x.readit().__doc__.lstrip().rstrip()) if x.exists() else x.stem).to_list()
-    # options.sort()  # throws off sync between installers and options
+
+    if which is not None:
+        return get_program(program_name=which, options=options, installers=list(installers))
+
     program_names = display_options(msg="", options=options, header="CHOOSE DEV APP", default=str(default), fzf=True, multi=True)
     total_program = ""
     for which in program_names:

@@ -9,7 +9,7 @@ import platform
 from rich.console import Console
 # from rich.progress import track
 from machineconfig.utils.utils import LIBRARY_ROOT, APP_VERSION_ROOT
-from machineconfig.jobs.python.python_linux_installers_all import get_installed_cli_apps
+from machineconfig.utils.installer import get_installed_cli_apps
 from tqdm import tqdm
 from typing import Optional
 

@@ -1,4 +1,6 @@
 
+"""package manager
+"""
 from rich.console import Console
 
 from crocodile.file_management import P, List as L, Read
@@ -134,7 +136,7 @@ def get_installed_cli_apps():
     return apps
 
 
-def install_logic(py_file: P, version: Optional[str] = None):
+def run_python_installer(py_file: P, version: Optional[str] = None):
     try:
         old_version = Terminal().run(f"{py_file.stem} --version", shell="powershell").op.replace("\n", "")
         Read.py(py_file)["main"](version=version)
@@ -146,26 +148,25 @@ def install_logic(py_file: P, version: Optional[str] = None):
         return f"Failed at {py_file.stem} with {ex}"
 
 
-def install_all(installers: Optional[list[tb.P]] = None, safe: bool = False, dev: bool = False):
+def install_all(installers: Optional[list[P]] = None, safe: bool = False, dev: bool = False, jobs: int = 10):
     if safe:
         from machineconfig.jobs.python.check_installations import APP_SUMMARY_PATH
         apps_dir = APP_SUMMARY_PATH.readit()
         if platform.system().lower() == "windows":
-            apps_dir.search("*").apply(lambda app: app.move(folder=tb.P.get_env().WindowsApps))
+            apps_dir.search("*").apply(lambda app: app.move(folder=P.get_env().WindowsApps))
         elif platform.system().lower() == "linux":
-            tb.Terminal().run(f"sudo mv {apps_dir.as_posix()}/* /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
+            Terminal().run(f"sudo mv {apps_dir.as_posix()}/* /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
         else: raise NotImplementedError(f"I don't know this system {platform.system()}")
         apps_dir.delete(sure=True)
         return None
 
     if not isinstance(installers, list): installers_concrete = get_cli_py_installers(dev=dev)
-    else: installers_concrete = List(installers)
+    else: installers_concrete = L(installers)
 
-    install_logic(installers_concrete.list[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
+    run_python_installer(installers_concrete.list[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
 
     # summarize results
-    res: tb.List[str] = installers_concrete.slice(start=1).apply(install_logic, jobs=10)
-    from rich.console import Console
+    res: L[str] = installers_concrete.slice(start=1).apply(run_python_installer, jobs=jobs)
     console = Console()
     print("\n")
     console.rule("Same version apps")
