@@ -48,17 +48,17 @@ pip freeze {'--exclude-editable' if exclude_editable else ''} > requirements_{pl
 
 
 def main():
-    version = input("Enter version: ")
-    exclude_editable = input("Exclude editable packages? (y/[n]): ") == "y"
-    repo_root = P.cwd()
     from git.repo import Repo
     from git.exc import InvalidGitRepositoryError
     try:
-        repo = Repo(repo_root, search_parent_directories=False)
+        repo = Repo(P.cwd(), search_parent_directories=True)
         print(f"✅ Found repo at {repo.working_dir}")
     except InvalidGitRepositoryError as err:
-        print(f"❌ No repo found at {repo_root}.")
+        print(f"❌ No repo found at {P.cwd()} or its parents.")
         raise err
+    version = input("Enter version: ")
+    exclude_editable = input("Exclude editable packages? (y/[n]): ") == "y"
+    repo_root = P(repo.working_dir)
     checkout_version(version, repo_root, exclude_editable=exclude_editable)
 
 
