@@ -43,7 +43,6 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
     if ":" in args.source and (":" != args.source[1] if len(args.source) > 1 else True):  # avoid the case of "C:/"
         cloud: str = args.source.split(":")[0]
         target = P(args.target).expanduser().absolute()
-        print("h1")
         remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
         source = P(f"{cloud}:{remote_path.as_posix()}")
     elif ":" in args.target and (":" != args.target[1] if len(args.target) > 1 else True):  # avoid the case of "C:/"
@@ -51,6 +50,7 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
         print("h2")
         source = P(args.source).expanduser().absolute()
         remote_path = source.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
+        print(f"remote_path: {remote_path}, root: {args.root}, rel2home: {args.rel2home}, os_specific: {args.os_specific}, strict: {False}")
         target = P(f"{cloud}:{remote_path.as_posix()}")
     else:
         # user, being slacky and did not indicate the remotepath with ":", so it will be inferred here
@@ -59,11 +59,13 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
         for cloud in remotes:
             if str(args.source) == cloud:
                 target = P(args.target).expanduser().absolute()
-                source = P(f"{cloud}:{target.get_remote_path(os_specific=args.os_specific, root=args.root).as_posix() if args.rel2home else target.as_posix()}")  # todo: add support for no rel2home and os_specifc exist and root exsits.
+                remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home)
+                source = P(f"{cloud}:{remote_path.as_posix()}")
                 break
             if str(args.target) == cloud:
                 source = P(args.source).expanduser().absolute()
-                target = P(f"{cloud}:{source.get_remote_path(os_specific=args.os_specific, root=args.root).as_posix() if args.rel2home else source.as_posix()}")  # todo: add support for no rel2home and os_specifc exist and root exsits.
+                remote_path = source.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home)
+                target = P(f"{cloud}:{remote_path.as_posix()}")
                 break
         else:
             print(f"Could not find a remote in {remotes} that matches {args.source} or {args.target}.")
