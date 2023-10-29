@@ -84,20 +84,20 @@ class ProcessManager:
             if len(rows) > 0:
                 for _idx, a_row in rows.iterrows():
                     psutil.Process(a_row.pid).kill()
-                    print(f'Killed process {name} with pid {a_row.pid}. It lived {get_age(a_row.create_time)}.')
+                    print(f'💀 Killed process {name} with pid {a_row.pid}. It lived {get_age(a_row.create_time)}.')
             else: print(f'No process named {name} found')
         for pid in pids:
             try:
                 proc = psutil.Process(pid)
                 proc.kill()
-                print(f'Killed process with pid {pid} and name {proc.name()}.  It lived {get_age(proc.create_time())}.')
+                print(f'💀 Killed process with pid {pid} and name {proc.name()}.  It lived {get_age(proc.create_time())}.')
             except psutil.NoSuchProcess: print(f'No process with pid {pid} found')
         for command in commands:
             rows = self.df[self.df['command'].str.contains(command)]
             if len(rows) > 0:
                 for _idx, a_row in rows.iterrows():
                     psutil.Process(a_row.pid).kill()
-                    print(f'Killed process with `{command}` in its command & pid = {a_row.pid}. It lived {get_age(a_row.create_time)}.')
+                    print(f'💀 Killed process with `{command}` in its command & pid = {a_row.pid}. It lived {get_age(a_row.create_time)}.')
             else: print(f'No process has `{command}` in its command.')
 
 
