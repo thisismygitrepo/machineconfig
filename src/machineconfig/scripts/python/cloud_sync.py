@@ -17,7 +17,7 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
                 args.source = f"{tmp['cloud']}:"
                 args.root = tmp["root"]
                 args.rel2home = tmp['rel2home']
-                print(f"⚠️ Using default cloud config: cloud={args.source}, root={args.root}, rel2home={args.rel2home}")
+                print(f"⚠️ Using default cloud config: cloud={tmp['cloud']}, root={args.root}, rel2home={args.rel2home}")
                 break
             path = path.parent
         else:
@@ -32,25 +32,24 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
                 args.target = f"{tmp['cloud']}:"
                 args.root = tmp["root"]
                 args.rel2home = tmp['rel2home']
-                print(f"⚠️ Using default cloud config: cloud={args.source}, root={args.root}, rel2home={args.rel2home}")
+                print(f"⚠️ Using default cloud config: cloud={tmp['cloud']}, root={args.root}, rel2home={args.rel2home}")
                 break
             path = path.parent
         else:
             DEFAULTCLOUD: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
-            print(f"⚠️ Using default cloud: {DEFAULT_CLOUD}")
+            print(f"⚠️ Using default cloud: {DEFAULTCLOUD}")
             args.target = DEFAULTCLOUD + ":"
 
     if ":" in args.source and (":" != args.source[1] if len(args.source) > 1 else True):  # avoid the case of "C:/"
         cloud: str = args.source.split(":")[0]
         target = P(args.target).expanduser().absolute()
-        if args.rel2home:
-            remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, strict=False).as_posix()
-        else: remote_path = target.as_posix()
-        source = P(f"{cloud}:{remote_path}")  # todo: add support for no rel2home and os_specifc exist and root exsits.
+        remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
+        source = P(f"{cloud}:{remote_path.as_posix()}")
     elif ":" in args.target and (":" != args.target[1] if len(args.target) > 1 else True):  # avoid the case of "C:/"
         cloud = args.target.split(":")[0]
         source = P(args.source).expanduser().absolute()
-        target = P(f"{cloud}:{source.get_remote_path(os_specific=args.os_specific, root=args.root, strict=False).as_posix() if args.rel2home else source.as_posix()}")  # todo: add support for no rel2home and os_specifc exist and root exsits.
+        remote_path = source.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
+        target = P(f"{cloud}:{remote_path.as_posix()}")
     else:
         # user, being slacky and did not indicate the remotepath with ":", so it will be inferred here
         # but first we need to know whether the cloud is source or target
