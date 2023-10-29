@@ -32,10 +32,12 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
                 args.target = f"{tmp['cloud']}:"
                 args.root = tmp["root"]
                 args.rel2home = tmp['rel2home']
+                print(f"⚠️ Using default cloud config: cloud={args.source}, root={args.root}, rel2home={args.rel2home}")
                 break
             path = path.parent
         else:
             DEFAULTCLOUD: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            print(f"⚠️ Using default cloud: {DEFAULT_CLOUD}")
             args.target = DEFAULTCLOUD + ":"
 
     if ":" in args.source and (":" != args.source[1] if len(args.source) > 1 else True):  # avoid the case of "C:/"
