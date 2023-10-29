@@ -2,7 +2,7 @@
 """CS
 """
 
-from crocodile.file_management import P, Read
+from crocodile.file_management import P, Read, Struct
 from machineconfig.utils.utils import PROGRAM_PATH, DEFAULTS_PATH
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse
@@ -21,9 +21,9 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
                 break
             path = path.parent
         else:
-            DEFAULT_CLOUD: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
-            print(f"⚠️ Using default cloud: {DEFAULT_CLOUD}")
-            args.source = DEFAULT_CLOUD + ":"
+            default_cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            print(f"⚠️ Using default cloud: {default_cloud}")
+            args.source = default_cloud + ":"
     if args.target == ":":  # default cloud name is omitted cloud_name:
         path = P(args.source).expanduser().absolute()
         for _i in range(len(path.parts)):
@@ -32,21 +32,23 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
                 args.target = f"{tmp['cloud']}:"
                 args.root = tmp["root"]
                 args.rel2home = tmp['rel2home']
-                print(f"⚠️ Using default cloud config: cloud={tmp['cloud']}, root={args.root}, rel2home={args.rel2home}")
+                Struct(tmp).print(as_config=True, title=f"Cloud Config @ {path.joinpath('cloud.json')}")
                 break
             path = path.parent
         else:
-            DEFAULTCLOUD: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
-            print(f"⚠️ Using default cloud: {DEFAULTCLOUD}")
-            args.target = DEFAULTCLOUD + ":"
+            default_cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            print(f"⚠️ Using default cloud: {default_cloud}")
+            args.target = default_cloud + ":"
 
     if ":" in args.source and (":" != args.source[1] if len(args.source) > 1 else True):  # avoid the case of "C:/"
         cloud: str = args.source.split(":")[0]
         target = P(args.target).expanduser().absolute()
+        print("h1")
         remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
         source = P(f"{cloud}:{remote_path.as_posix()}")
     elif ":" in args.target and (":" != args.target[1] if len(args.target) > 1 else True):  # avoid the case of "C:/"
         cloud = args.target.split(":")[0]
+        print("h2")
         source = P(args.source).expanduser().absolute()
         remote_path = source.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
         target = P(f"{cloud}:{remote_path.as_posix()}")
