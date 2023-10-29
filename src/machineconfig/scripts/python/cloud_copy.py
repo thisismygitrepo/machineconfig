@@ -29,14 +29,15 @@ def arg_parser() -> None:
 
     args = parser.parse_args()
     cloud, source, target = parse_cloud_source_target(args)
+    tb.Struct({"cloud": cloud, "source": source, "target": target}).print(as_config=True, title="CLI Resolution")
     if cloud in source:
         tb.P(target).from_cloud(cloud=cloud,
                                 unzip=args.zip, decrypt=args.encrypt, overwrite=args.overwrite, pwd=args.pwd, key=args.key,
-                                # rel2home=args.rel2home, os_specific=args.os_specific, root=args.root
+                                rel2home=args.rel2home, os_specific=args.os_specific, root=args.root
                                 )
     elif cloud in target:
         res = tb.P(source).to_cloud(cloud=cloud, zip=args.zip,
-                                    # rel2home=args.rel2home, root=args.root, os_specific=args.os_specific,
+                                    rel2home=args.rel2home, root=args.root, os_specific=args.os_specific,
                                     share=args.share, key=args.key, pwd=args.pwd, encrypt=args.encrypt)
         if args.share: print(res.as_url_str())
     else: raise ValueError(f"Cloud `{cloud}` not found in source or target.")
