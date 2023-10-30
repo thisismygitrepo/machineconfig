@@ -5,7 +5,7 @@ if (Test-Path $op_script ) {
   Remove-Item $op_script
 }
 
-. $PSScriptRoot/activate_ve.ps1
+. $PSScriptRoot/activate_ve.ps1 ve
 python $PSScriptRoot/../python/cloud_sync.py $args
 
 if (Test-Path $op_script ) {

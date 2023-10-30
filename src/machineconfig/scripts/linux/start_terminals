@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-. ~/scripts/activate_ve ''
+. ~/scripts/activate_ve 've'
 
 python -m machineconfig.jobs.python.create_zellij_template
 

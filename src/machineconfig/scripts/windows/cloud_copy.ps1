@@ -5,9 +5,9 @@
 # deactivate -ErrorAction SilentlyContinue
 try {
     if (Test-Path "$PSScriptRoot/activate_ve.ps1") {
-        . "$PSScriptRoot/activate_ve.ps1"
+        . "$PSScriptRoot/activate_ve.ps1" ve
     } else {
-        . "$HOME/activate_ve.ps1"
+        . "$HOME/activate_ve.ps1" ve
     }
     python -m machineconfig.scripts.python.cloud_copy $args
 } catch {

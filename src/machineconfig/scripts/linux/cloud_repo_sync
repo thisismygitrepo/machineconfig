@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-. ~/scripts/activate_ve ''
+. ~/scripts/activate_ve 've'
 python $(dirname $(dirname $0))/python/cloud_repo_sync.py "$@"
 deactivate || true
 

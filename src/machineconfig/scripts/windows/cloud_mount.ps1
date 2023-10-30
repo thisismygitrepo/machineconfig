@@ -6,7 +6,7 @@ if (Test-Path $op_script ) {
   Remove-Item $op_script
 }
 
-. $PSScriptRoot/activate_ve.ps1
+. $PSScriptRoot/activate_ve.ps1 ve
 $script_root = (Get-Item $PSScriptRoot).Target  # resolves symlink if any
 if ( $script_root -eq $null) {  # this does happen if a virtual enviroment is activated before running this script (don't know why)
 $script_root = $PSScriptRoot

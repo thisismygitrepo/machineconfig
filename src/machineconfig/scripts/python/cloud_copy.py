@@ -21,14 +21,17 @@ def arg_parser() -> None:
     parser.add_argument("--share", "-s", help="Share file / directory", action="store_true")  # default is False
     # optional argument
     parser.add_argument("--rel2home", "-r", help="Relative to `myhome` folder", action="store_true")  # default is False
-    parser.add_argument("--root", "-R", help="Remote root.", default="myhome")  # default is False
+    parser.add_argument("--root", "-R", help="Remote root.", default="myhome")  # default is only meaningful when rel2home is True
     parser.add_argument("--os_specific", "-o", help="OS specific path (relevant only when relative flag is raised as well.", action="store_true")
 
     parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
     args = parser.parse_args()
+    if not args.rel2home: args.root = None
+
     cloud, source, target = parse_cloud_source_target(args)
+    print(f"{args.rel2home=}, {args.root=}, {args.os_specific=}")
     tb.Struct({"cloud": cloud, "source": source, "target": target}).print(as_config=True, title="CLI Resolution")
     if cloud in source:
         tb.P(target).from_cloud(cloud=cloud,

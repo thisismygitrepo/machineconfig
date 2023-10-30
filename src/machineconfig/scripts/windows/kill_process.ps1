@@ -1,5 +1,5 @@
 
-. activate_ve
+. activate_ve ve
 python -c "from machineconfig.utils.procs import ProcessManager; ProcessManager().choose_and_kill()"
 deactivate
 

@@ -28,7 +28,7 @@ fi
 
 # Check if remote server is reachable and share folder exists
 if ! ping -c 1 "$remote_server" &> /dev/null; then
-  echo "Error: Remote server $remote_server is not reachable."
+  echo "💥 Error: Remote server $remote_server is not reachable."
   exit 1
 fi
 
@@ -39,13 +39,13 @@ fi
 
 # Check if the share is already mounted
 if mount | grep -q ":$share_path on "; then
-  echo "The NFS share $share_info is already mounted."
+  echo "⚠️ The NFS share $share_info is already mounted."
   exit 0
 fi
 
 
 if [ ! -d "$local_mount_point" ]; then
-  echo "Creating local mount point directory $local_mount_point"
+  echo "➡️ Creating local mount point directory $local_mount_point"
   sudo mkdir -p "$local_mount_point"
   sudo chown "$(id -u):$(id -g)" "$local_mount_point"
 fi
@@ -54,17 +54,17 @@ sudo service rpcbind start
 sudo service nfs-common start
 # without the two above, on wsl, you get error: https://superuser.com/questions/657071/mount-nfs-rpc-statd-is-not-running-but-is-required-for-remote-locking
 
-echo "Mounting NFS share $share_info at $local_mount_point using command:"
+echo "💡 Mounting NFS share $share_info at $local_mount_point using command:"
 echo "sudo mount -t nfs $share_info $local_mount_point"
 sudo mount -t nfs "$share_info" "$local_mount_point"
 
 # Add a line to fstab file to ensure automount
 fstab_line="$remote_server:$share_path $local_mount_point nfs defaults 0 0"
 if grep -qF "$fstab_line" /etc/fstab; then
-  echo "The following line already exists in /etc/fstab:"
+  echo "🤷‍♂️ The following line already exists in /etc/fstab:"
   echo "$fstab_line"
 else
-  echo "Adding the following line to /etc/fstab:"
+  echo "➡️ Adding the following line to /etc/fstab:"
   echo "$fstab_line"
   echo "$fstab_line" | sudo tee -a /etc/fstab > /dev/null
 fi
