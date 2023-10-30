@@ -93,7 +93,7 @@ def main() -> None:
 
     app_url: list[Optional[str]] = []
     for idx, row in tqdm(res_df.iterrows(), total=res_df.shape[0]):
-        apps_safe_url = upload(tb.P(row["app_path"]).expanduser())
+        apps_safe_url = upload(tb.P(str(row["app_path"])).expanduser())
         app_url.append(apps_safe_url.as_posix() if type(apps_safe_url) is tb.P else apps_safe_url)
     res_df["app_url"] = app_url
     res_df.to_csv(APP_SUMMARY_PATH.with_suffix(".csv").create(parents_only=True), index=False)
