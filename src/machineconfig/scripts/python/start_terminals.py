@@ -3,17 +3,25 @@
 """
 
 from machineconfig.utils.utils import PROGRAM_PATH, display_options, install_n_import, get_ssh_hosts, platform
-from typing import Literal, TypeAlias
+from itertools import cycle
+from typing import Literal
 
+
+COLOR_SCHEMES = ["Campbell", "Campbell Powershell", "Solarized Dark", "Ubuntu-ColorScheme", "Retro"]
+THEMES_ITER = cycle(COLOR_SCHEMES)
+INIT_COMMANDS = ["ls", "lf", "cpufetch", "neofetch", "btm"]
+INIT_COMMANDS_ITER = cycle(INIT_COMMANDS)
+ORIENTATION = ["vertical", "horizontal"]
+ORIENTATION_ITER = cycle(ORIENTATION)
+ORIENTATION_TYPE = Literal["vertical", "horizontal"]
 
 THIS_MACHINE = "this"
 THIS_MACHINE_WSL = "thiswsl"
 THIS_MACHINE_HOSTNAME = platform.node()
 THIS_MACHINE_HOSTNAME_WSL = f"{THIS_MACHINE_HOSTNAME}wsl"
-ORIENTATION: TypeAlias = Literal["vertical", "horizontal"]
 
 
-def main_windows_and_wsl(window: int, hosts: list[str], orientation: ORIENTATION = "vertical", mprocs: bool = False):
+def main_windows_and_wsl(window: int, hosts: list[str], orientation: ORIENTATION_TYPE = "vertical", mprocs: bool = False):
     orientation_oposite = "horizontal" if orientation == "vertical" else "vertical"
     orientation_swap                = "up" if orientation         == "horizontal" else "left"
     orientation_opposite_move_focus = "up" if orientation_oposite == "horizontal" else "left"
@@ -55,17 +63,30 @@ wt --window {window} --title {hosts[0]} powershell -Command "ssh {host_linux} {s
 def main():
     import argparse
     parser = argparse.ArgumentParser()
+    parser.add_argument("--panes", "-p", type=int, help="The number of panes to open", default=4)
     parser.add_argument("--vertical", "-V", action="store_true", help="Switch orientation to vertical from default horizontal")
     parser.add_argument("--window", "-w", type=int, help="The window id to use", default=0)  # 0 refers to this window.
     parser.add_argument("--hosts", "-H", type=str, nargs="*", help="The hosts to connect to", default=None)
     args = parser.parse_args()
 
-    if args.hosts is None: hosts = display_options(msg="", options=get_ssh_hosts() + [THIS_MACHINE], multi=True, fzf=True)
+    if args.panes:
+        cmd = f"wt --window {args.window} --colorScheme '{next(THEMES_ITER)}' pwsh -NoExit -Command '{next(INIT_COMMANDS_ITER)}' "
+        for idx in range(args.panes):
+            if idx % 2 == 0:
+                cmd += f" `; move-focus down split-pane --horizontal --colorScheme '{next(THEMES_ITER)}'  pwsh -NoExit -Command '{next(INIT_COMMANDS_ITER)}' "
+            else:
+                cmd += f" `; move-focus up split-pane --vertical --colorScheme '{next(THEMES_ITER)}' pwsh -NoExit -Command '{next(INIT_COMMANDS_ITER)}' "
+        cmd += f" `; new-tab --colorScheme '{next(THEMES_ITER)}' --profile pwsh --title 't2' --tabColor '#f59218' "
+        cmd += f" `; new-tab --colorScheme '{next(THEMES_ITER)}' --profile pwsh --title 't3' --tabColor '#009999' "
+
     else:
-        print("Using provided hosts", args.hosts)
-        hosts = args.hosts
-    assert isinstance(hosts, list)
-    cmd = main_windows_and_wsl(window=args.window, hosts=hosts, orientation="vertical" if args.vertical else "horizontal")
+        if args.hosts is None: hosts = display_options(msg="", options=get_ssh_hosts() + [THIS_MACHINE], multi=True, fzf=True)
+        else:
+            print("Using provided hosts", args.hosts)
+            hosts = args.hosts
+        assert isinstance(hosts, list)
+        cmd = main_windows_and_wsl(window=args.window, hosts=hosts, orientation="vertical" if args.vertical else "horizontal")
+
     print(cmd)
     install_n_import("clipboard").copy(cmd)
     PROGRAM_PATH.write_text(cmd)
