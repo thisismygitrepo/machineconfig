@@ -47,10 +47,10 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
         source = P(f"{cloud}:{remote_path.as_posix()}")
     elif ":" in args.target and (":" != args.target[1] if len(args.target) > 1 else True):  # avoid the case of "C:/"
         cloud = args.target.split(":")[0]
-        print("h2")
+        # print("h2")
         source = P(args.source).expanduser().absolute()
         remote_path = source.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
-        print(f"remote_path: {remote_path}, root: {args.root}, rel2home: {args.rel2home}, os_specific: {args.os_specific}, strict: {False}")
+        # print(f"remote_path: {remote_path}, root: {args.root}, rel2home: {args.rel2home}, os_specific: {args.os_specific}, strict: {False}")
         target = P(f"{cloud}:{remote_path.as_posix()}")
     else:
         # user, being slacky and did not indicate the remotepath with ":", so it will be inferred here
