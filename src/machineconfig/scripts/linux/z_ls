@@ -14,7 +14,7 @@ if [[ "${ZJ_SESSIONS}" == *"(current)"* ]]; then
     echo "already inside a session, existing."
 else # ==> we are not in a zellij session
   if [ "${NO_SESSIONS}" -ge 1 ]; then  # sessions do exist
-      ZJ_SESSIONS="$ZJ_SESSIONS\nnew_session\nkill_all_and_create_fresh_one\nexit_zellij\nstandard_panes"
+      ZJ_SESSIONS="$ZJ_SESSIONS\nnew_session\nkill_all_and_create_fresh_one\nexit_zellij"
 
       res="$(echo -e "${ZJ_SESSIONS}" | fzf)"
 
@@ -22,11 +22,13 @@ else # ==> we are not in a zellij session
           echo "existing zellij."
       elif [ "${res}" = "new_session" ]; then
         zellij --layout st  # can't specify name here. I can call it "main" only if it is the first, otherwise name conflict! also, can't use attach -c syntax because layout can't be specified.
+        . $HOME/code/machineconfig/src/machineconfig/settings/zellij/commands/standard_panes
       elif [ "${res}" = "kill_all_and_create_fresh_one" ]; then
         zellij ka -y
         zellij --session main --layout st
-      elif [ "${res}" = "standard_panes" ]; then
-        . $HOME/code/machineconfig/src/machineconfig/scripts/settings/zellij/commands/standard_panes
+        . $HOME/code/machineconfig/src/machineconfig/settings/zellij/commands/standard_panes
+      # elif [ "${res}" = "standard_panes" ]; then
+      #   . $HOME/code/machineconfig/src/machineconfig/settings/zellij/commands/standard_panes
       else
         zellij attach $res # options --mirror-session false
       fi
