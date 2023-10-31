@@ -1,0 +1,31 @@
+
+
+interval=0.2
+zellij action new-pane --direction down -- lf
+zellij action resize - down
+sleep $interval
+zellij action resize - down
+sleep $interval
+zellij action resize - down
+sleep $interval
+zellij action resize - down
+sleep $interval
+zellij action new-pane --direction left -- btm
+zellij action move-focus up
+zellij action new-pane --direction left -- btop
+sleep $interval
+zellij action resize + down
+sleep $interval
+zellij action resize + down
+sleep $interval
+zellij action resize + down
+sleep $interval
+zellij action resize + down
+sleep $interval
+zellij action move-focus left
+sleep $interval
+zellij action write-chars cpufetch
+sleep $interval
+zellij action resize - right
+
+# zellij action resize - right
