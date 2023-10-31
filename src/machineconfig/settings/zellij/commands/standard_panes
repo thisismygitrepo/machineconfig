@@ -1,10 +1,7 @@
 
 
 interval=0.2
-# check if $z_sess variable is defined, if not define it as main
-if [ -z "$z_sess" ]; then
-  z_sess=main
-fi
+z_sess=$ZELLIJ_SESSION_NAME
 
 zellij --session $z_sess action new-pane --direction down -- lf
 zellij --session $z_sess action resize - down
