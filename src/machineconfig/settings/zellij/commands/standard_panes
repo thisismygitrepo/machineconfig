@@ -1,31 +1,36 @@
 
 
 interval=0.2
-zellij action new-pane --direction down -- lf
-zellij action resize - down
-sleep $interval
-zellij action resize - down
-sleep $interval
-zellij action resize - down
-sleep $interval
-zellij action resize - down
-sleep $interval
-zellij action new-pane --direction left -- btm
-zellij action move-focus up
-zellij action new-pane --direction left -- btop
-sleep $interval
-zellij action resize + down
-sleep $interval
-zellij action resize + down
-sleep $interval
-zellij action resize + down
-sleep $interval
-zellij action resize + down
-sleep $interval
-zellij action move-focus left
-sleep $interval
-zellij action write-chars cpufetch
-sleep $interval
-zellij action resize - right
+# check if $z_sess variable is defined, if not define it as main
+if [ -z "$z_sess" ]; then
+  z_sess=main
+fi
 
-# zellij action resize - right
+zellij --session $z_sess action new-pane --direction down -- lf
+zellij --session $z_sess action resize - down
+sleep $interval
+zellij --session $z_sess action resize - down
+sleep $interval
+zellij --session $z_sess action resize - down
+sleep $interval
+zellij --session $z_sess action resize - down
+sleep $interval
+zellij --session $z_sess action new-pane --direction left -- btm
+zellij --session $z_sess action move-focus up
+zellij --session $z_sess action new-pane --direction left -- btop
+sleep $interval
+zellij --session $z_sess action resize + down
+sleep $interval
+zellij --session $z_sess action resize + down
+sleep $interval
+zellij --session $z_sess action resize + down
+sleep $interval
+zellij --session $z_sess action resize + down
+sleep $interval
+zellij --session $z_sess action move-focus left
+sleep $interval
+zellij --session $z_sess action write-chars cpufetch
+sleep $interval
+zellij --session $z_sess action resize - right
+
+# zellij --session $z_sess action resize - right

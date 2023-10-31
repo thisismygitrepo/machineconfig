@@ -22,12 +22,10 @@ else # ==> we are not in a zellij session
           echo "existing zellij."
       elif [ "${res}" = "new_session" ]; then
         zellij --layout st  # can't specify name here. I can call it "main" only if it is the first, otherwise name conflict! also, can't use attach -c syntax because layout can't be specified.
-        sleep 1.1
         . $HOME/code/machineconfig/src/machineconfig/settings/zellij/commands/standard_panes
       elif [ "${res}" = "kill_all_and_create_fresh_one" ]; then
         zellij ka -y
         zellij --session main --layout st
-        sleep 1.1
         . $HOME/code/machineconfig/src/machineconfig/settings/zellij/commands/standard_panes
       # elif [ "${res}" = "standard_panes" ]; then
       #   . $HOME/code/machineconfig/src/machineconfig/settings/zellij/commands/standard_panes
