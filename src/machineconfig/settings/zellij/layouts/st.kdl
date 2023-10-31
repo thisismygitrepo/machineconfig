@@ -8,13 +8,12 @@ layout {
         children
 }
     tab name="📂" focus=false {
-        pane name="fpane" {
+        pane name="lfpane" {
         command "lf"
         }
 }
     tab name="🔍" focus=false { // the default_tab_template with three vertical panes between the plugins
-        pane name="fpane" {
-        command "btop"
+        pane name="tpane" {
         }
 }
 
