@@ -8,8 +8,6 @@ from machineconfig.utils.utils import print_programming_script, CONFIG_PATH, DEF
 # import sys
 # import subprocess
 
-COLOR_SCHEMES = ["Campbell", "Campbell Powershell", "Retro", "Solarized Dark", "Ubuntu-ColorScheme"]
-
 
 def get_wt_cmd(wd1: tb.P, wd2: tb.P) -> str: return f"""wt --window 0 new-tab --profile pwsh --title "gitdiff" --tabColor `#3b04d1 --startingDirectory {wd1} `  --colorScheme "Solarized Dark" `; split-pane --horizontal --profile pwsh --startingDirectory {wd2} --size 0.5 --colorScheme "Tango Dark" -- pwsh -Interactive"""
 

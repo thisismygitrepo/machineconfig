@@ -1,0 +1,33 @@
+
+
+interval=0.2
+z_sess=$ZELLIJ_SESSION_NAME
+
+zellij --session $z_sess action new-pane --direction down -- lf
+zellij --session $z_sess action resize - down
+sleep $interval
+zellij --session $z_sess action resize - down
+sleep $interval
+zellij --session $z_sess action resize - down
+sleep $interval
+zellij --session $z_sess action resize - down
+sleep $interval
+zellij --session $z_sess action new-pane --direction left -- btm
+zellij --session $z_sess action move-focus up
+zellij --session $z_sess action new-pane --direction left -- btop
+sleep $interval
+zellij --session $z_sess action resize + down
+sleep $interval
+zellij --session $z_sess action resize + down
+sleep $interval
+zellij --session $z_sess action resize + down
+sleep $interval
+zellij --session $z_sess action resize + down
+sleep $interval
+zellij --session $z_sess action move-focus left
+sleep $interval
+zellij --session $z_sess action write-chars cpufetch
+sleep $interval
+zellij --session $z_sess action resize - right
+
+# zellij --session $z_sess action resize - right
