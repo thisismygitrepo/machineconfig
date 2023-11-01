@@ -1,0 +1,27 @@
+
+layout {
+    
+    tab name="🧑‍💻" {
+        pane name="bar1" size=1 borderless=true {
+        plugin location="zellij:compact-bar"
+        }
+        pane
+    }
+
+    tab name="💻" split_direction="horizontal" {
+        pane name="bar1" size=1 borderless=true {
+        plugin location="zellij:compact-bar"
+        }
+
+        pane name="2Right" split_direction="vertical" {
+            pane name="topRight"
+            pane name="bottomRight"
+        }
+        
+        pane name="2Left" split_direction="vertical" {
+            pane name="topRight"
+            pane name="bottomRight"
+        }
+}
+
+}

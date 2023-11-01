@@ -1,0 +1,11 @@
+
+layout {
+    pane stacked=true {
+        pane
+        pane expand=true
+        pane command="ls"
+        pane command="htop"
+        pane command="btop"
+    }
+}
+

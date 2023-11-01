@@ -1,0 +1,20 @@
+
+layout {
+    pane {
+        size "10%"
+        borderless true
+}// panes can be bare
+    pane split_direction="vertical" {
+        pane
+        pane
+    } // panes can have arguments on the same line
+    pane {
+        // panes can have arguments inside child-braces
+        command "exa"
+        cwd "/"
+    }
+    pane command="ls" { // or a mixture of same-line and child-braces arguments
+        cwd "/"
+    }
+}
+
