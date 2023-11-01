@@ -8,20 +8,38 @@ layout {
         pane
     }
 
-    tab name="💻" split_direction="horizontal" {
-        pane name="bar1" size=1 borderless=true {
+    tab name="💻" split_direction="horizontal" focus=true {
+        pane name="bar2" size=1 borderless=true {
         plugin location="zellij:compact-bar"
         }
 
-        pane name="2Right" split_direction="vertical" {
-            pane name="topRight"
-            pane name="bottomRight"
+        pane name="2Right" split_direction="vertical" size="35%" {
+            pane name="topRight" size="70%" {
+                command "htop"
+            }
+            pane name="bottomRight" size="30%" {
+                command "btm"
+            }
         }
         
-        pane name="2Left" split_direction="vertical" {
-            pane name="topRight"
-            pane name="bottomRight"
+        pane name="2Left" split_direction="vertical" size="65%" {
+            pane name="topRight" size="30%" {
+                focus true
+            }
+            pane name="topRight" size="55%" {
+                command "lf"
+            }
+            pane name="bottomRight" size="15%" {
+                command "cmatrix"
+            }
         }
 }
+
+    tab name="🖥️" {
+        pane name="bar1" size=1 borderless=true {
+        plugin location="zellij:compact-bar"
+        }
+        pane
+    }
 
 }
