@@ -76,3 +76,5 @@
 # IPython
 # https://www.youtube.com/watch?v=3i6db5zX3Rw
 # https://github.com/ml-tooling/best-of-jupyter
+
+* "pylint.ignorePatterns", "mypy-type-checker.ignorePatterns" and "flake8.ignorePatterns".
