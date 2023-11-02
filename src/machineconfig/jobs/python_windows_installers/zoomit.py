@@ -5,7 +5,7 @@ from typing import Optional
 from machineconfig.utils.utils import APP_VERSION_ROOT
 
 
-url = r'https://download.sysinternals.com/files/ZoomIt.zip'
+repo_url = r'https://download.sysinternals.com/files/ZoomIt.zip'
 __doc__ = """A screen zoom and annotation tool for presentations"""
 
 
@@ -14,7 +14,7 @@ def main(version: Optional[str] = None):
     print("\n\n\n")
     console = Console()
     console.rule("Installing ZoomIt")
-    folder = tb.P(url).download(tb.P.home().joinpath('Downloads')).unzip(inplace=True)
+    folder = tb.P(repo_url).download(tb.P.home().joinpath('Downloads')).unzip(inplace=True)
 
     import psutil
     for proc in psutil.process_iter():

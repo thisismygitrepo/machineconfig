@@ -4,12 +4,12 @@ import platform
 from typing import Optional
 
 
-url = "https://github.com/ouch-org/ouch"
+repo_url = "https://github.com/ouch-org/ouch"
 __doc__ = """A cli for extracting and creating archives in unified way."""
 
 
 def main(version: Optional[str] = None) -> None:
-    dl = get_latest_release(repo_url=url, exe_name="ouch", download_n_extract=False, version=version)
+    dl = get_latest_release(repo_url=repo_url, exe_name="ouch", download_n_extract=False, version=version)
     if not isinstance(dl, tb.P):
         print(f"Could not find browsh release for version {version}")
         return None

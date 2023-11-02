@@ -11,9 +11,9 @@ __doc__ = """broot is an fzf variant for folder structure and layered search."""
 
 
 if system() == 'Linux':
-    url = r'https://dystroy.org/broot/download/x86_64-linux/broot'
+    repo_url = r'https://dystroy.org/broot/download/x86_64-linux/broot'
 elif system() == 'Windows':
-    url = r'https://dystroy.org/broot/download/x86_64-pc-windows-gnu/broot.exe'
+    repo_url = r'https://dystroy.org/broot/download/x86_64-pc-windows-gnu/broot.exe'
 else:
     raise NotImplementedError(f"Unsupported OS: {system()}")
 
@@ -25,10 +25,10 @@ def main(version: Optional[str] = None) -> None:
     _ = get_latest_release("https://github.com/Canop/broot", exe_name="broot", version=version)
 
     if system() == "Windows":
-        p = tb.P(url).download()
+        p = tb.P(repo_url).download()
         p.move(folder=tb.P.get_env().WindowsApps, overwrite=True)
     else:
-        p = tb.P(url).download()
+        p = tb.P(repo_url).download()
         p.chmod(0o777)  # p.move(folder=r'/usr/local/bin/', overwrite=True) Permission Error
         tb.Terminal().run(f"sudo mv {p} /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
 

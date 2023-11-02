@@ -8,11 +8,11 @@ from typing import Optional
 
 __doc__ = """A cat(1) clone with wings."""
 
-url = 'https://github.com/sharkdp/bat'
+repo_url = 'https://github.com/sharkdp/bat'
 
 
 def main(version: Optional[str] = None) -> None:
-    get_latest_release(repo_url=url, exe_name="bat", download_n_extract=True, version=version)
+    get_latest_release(repo_url=repo_url, exe_name="bat", download_n_extract=True, version=version)
 
 
 if __name__ == '__main__':

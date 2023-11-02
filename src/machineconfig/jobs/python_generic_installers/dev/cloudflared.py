@@ -11,12 +11,12 @@ from typing import Optional
 import crocodile.toolbox as tb
 
 
-url = "https://github.com/cloudflare/cloudflared"
+repo_url = "https://github.com/cloudflare/cloudflared"
 
 
 def main(version: Optional[str] = None) -> None:
     _ = version
-    latest = get_latest_release(repo_url=url, exe_name="cloudflared", download_n_extract=False)
+    latest = get_latest_release(repo_url=repo_url, exe_name="cloudflared", download_n_extract=False)
     if not isinstance(latest, tb.P):
         print(f"Could not find cloudflared release for version {version}")
         return None

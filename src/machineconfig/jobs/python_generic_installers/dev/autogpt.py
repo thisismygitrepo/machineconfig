@@ -5,7 +5,7 @@ import crocodile.toolbox as tb
 from typing import Optional
 
 
-url = "https://github.com/Significant-Gravitas/Auto-GPT"
+repo_url = "https://github.com/Significant-Gravitas/Auto-GPT"
 __doc__ = """GPT """
 
 
