@@ -1,17 +1,18 @@
 
 layout {
+    default_tab_template {
+        // the default zellij tab-bar and status bar plugins
+        pane size=1 borderless=true {
+            plugin location="zellij:compact-bar"
+        }
+        children
+    }
 
     tab name="🧑‍💻" {
-        pane name="bar1" size=1 borderless=true {
-        plugin location="zellij:compact-bar"
-        }
         pane
     }
 
     tab name="💻" split_direction="horizontal" focus=true {
-        pane name="bar2" size=1 borderless=true {
-        plugin location="zellij:compact-bar"
-        }
 
         pane name="2Right" split_direction="vertical" size="35%" {
             pane name="topLeft" size="70%" {
@@ -34,9 +35,7 @@ layout {
 }
 
     tab name="🖥️" {
-        pane name="bar1" size=1 borderless=true {
-        plugin location="zellij:compact-bar"
-        }
+
         pane
     }
 
