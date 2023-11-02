@@ -36,7 +36,7 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
                 break
             path = path.parent
         else:
-            default_cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            default_cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             print(f"⚠️ Using default cloud: {default_cloud}")
             args.target = default_cloud + ":"
 

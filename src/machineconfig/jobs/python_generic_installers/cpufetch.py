@@ -5,9 +5,11 @@ from typing import Optional
 
 
 __doc__ = """cpufetch is a small yet fancy CPU architecture fetching tool, like neofetch but for CPUs."""
+repo_url = "https://github.com/Dr-Noob/cpufetch"
+
 
 def main(version: Optional[str] = None):
-    url = get_latest_release("https://github.com/Dr-Noob/cpufetch", exe_name="cpufetch", version=version)
+    url = get_latest_release(repo_url=repo_url, exe_name="cpufetch", version=version)
     if not isinstance(url, tb.P):
         print(f"Could not find browsh release for version {version}")
         return None

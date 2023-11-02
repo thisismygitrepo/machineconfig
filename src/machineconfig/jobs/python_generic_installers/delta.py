@@ -6,6 +6,8 @@ from typing import Optional
 
 __doc__ = """delta is a viewer for git and diff output"""
 repo_url = tb.P(r"https://github.com/dandavison/delta")
+
+
 # from https://github.com/dandavison/delta#configuration
 config_patch = """
 [core]

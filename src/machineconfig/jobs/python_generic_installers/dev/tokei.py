@@ -6,10 +6,11 @@ from typing import Optional
 
 
 __doc__ = """Counts the number of lines of code, comments, and blanks in a project."""
+repo_url = 'https://github.com/XAMPPRocky/tokei'
 
 
 def main(version: Optional[str] = None):
-    url = get_latest_release(repo_url='https://github.com/XAMPPRocky/tokei', exe_name="tokei", download_n_extract=False, version=version)
+    url = get_latest_release(repo_url=repo_url, exe_name="tokei", download_n_extract=False, version=version)
     assert isinstance(url, tb.P), f"Expected a Path object, got {type(url)} instead."
     if system() == 'Windows':
         url.joinpath('tokei-x86_64-pc-windows-msvc.exe').download().move(folder=tb.P.get_env().WindowsApps, name='tokei.exe', overwrite=True)

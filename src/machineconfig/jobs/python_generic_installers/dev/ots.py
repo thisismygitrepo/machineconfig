@@ -1,3 +1,6 @@
+
+"""One-time secrets installer."""
+
 from machineconfig.utils.installer import find_move_delete_windows, find_move_delete_linux, get_latest_release
 import crocodile.toolbox as tb
 import platform

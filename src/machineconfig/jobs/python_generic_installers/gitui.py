@@ -5,9 +5,11 @@ from typing import Optional
 
 
 __doc__ = """gitui is a terminal ui for git written in rust."""
+repo_url = "https://github.com/extrawurst/gitui"
+
 
 def main(version: Optional[str] = None) -> None:
-    url = get_latest_release(repo_url="https://github.com/extrawurst/gitui", exe_name="gitui", version=version)
+    url = get_latest_release(repo_url=repo_url, exe_name="gitui", version=version)
     if not isinstance(url, tb.P):
         print(f"Could not find browsh release for version {version}")
         return None

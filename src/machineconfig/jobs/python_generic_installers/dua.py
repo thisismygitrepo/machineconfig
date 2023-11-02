@@ -3,16 +3,17 @@ from platform import system
 from typing import Optional
 
 
-url = "https://github.com/Byron/dua-cli"
+repo_url = "https://github.com/Byron/dua-cli"
 __doc__ = """Rust-based cli tool to get a quick overview of disk usage."""
+
 
 def main(version: Optional[str] = None) -> None:
     if system() == 'Windows':
         suffix = "x86_64-pc-windows-msvc"
-        _ = get_latest_release(url, exe_name="dua", tool_name="dua", suffix=suffix, download_n_extract=True, delete=False, strip_v=False, compression="zip", version=version)
+        _ = get_latest_release(repo_url, exe_name="dua", tool_name="dua", suffix=suffix, download_n_extract=True, delete=False, strip_v=False, compression="zip", version=version)
     else:
         suffix = "x86_64-unknown-linux-musl"
-        _ = get_latest_release(url, exe_name="dua", tool_name="dua", download_n_extract=True, delete=True, suffix=suffix, compression="tar.gz", linux=True, version=version)
+        _ = get_latest_release(repo_url, exe_name="dua", tool_name="dua", download_n_extract=True, delete=True, suffix=suffix, compression="tar.gz", linux=True, version=version)
     return None
 
 

@@ -4,6 +4,7 @@
 from typing import Optional
 
 __doc__ = """OpenCommit is a tool for writing better commit messages using GPT-3"""
+repo_url = "https://github.com/di-sukharev/opencommit"
 
 
 def main(version: Optional[str] = None):
@@ -11,7 +12,7 @@ def main(version: Optional[str] = None):
     # token = input("Enter your OpenAI API key: ")
     token = 1
     program = f"""
-# as per: https://github.com/di-sukharev/opencommit
+# as per: {repo_url}
 npm install -g opencommit
 cd ~
 # echo "OPENAI_API_KEY={token}" > .opencommit
