@@ -1,3 +1,7 @@
+
+"""i
+"""
+
 from machineconfig.utils.installer import get_latest_release
 from platform import system
 from typing import Optional
@@ -5,6 +9,7 @@ from typing import Optional
 
 repo_url = "https://github.com/watchexec/watchexec"
 __doc__ = """Executes commands in response to file modifications."""
+
 
 def main(version: Optional[str] = None) -> None:
     if system() == 'Windows':

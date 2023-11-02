@@ -3,8 +3,9 @@ from machineconfig.utils.installer import get_latest_release
 import platform
 from typing import Optional
 
-repo_url = r"https://github.com/rclone/rclone"
 __doc__ = """cli to sync to cloud storage providers."""
+repo_url = r"https://github.com/rclone/rclone"
+
 
 def main(version: Optional[str] = None) -> None:
     if platform.system() == "Windows":

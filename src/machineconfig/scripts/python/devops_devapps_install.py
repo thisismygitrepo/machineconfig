@@ -22,7 +22,7 @@ def main(which: Optional[str] = None):
     installers.list.insert(0, tb.P("OtherDevApps"))
     installers.list.insert(0, tb.P("EssentialsAndOthers"))
     installers.list.insert(0, tb.P("PrecheckedCloudInstaller"))
-    options: list[str] = installers.apply(lambda x: x.stem + (' -- ' + x.readit().__doc__.lstrip().rstrip()) if x.exists() else x.stem).to_list()
+    options: list[str] = installers.apply(lambda x: x.stem + (' -- ' + x.readit()['__doc__'].lstrip().rstrip()) if x.exists() else x.stem).to_list()
 
     if which is not None:
         return get_program(program_name=which, options=options, installers=list(installers))
