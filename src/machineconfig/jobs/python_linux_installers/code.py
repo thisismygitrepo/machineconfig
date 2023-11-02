@@ -20,7 +20,7 @@ sudo apt install code # or code-insiders
 
 """
 
-def main(version: Optional[str]):
+def main(version: Optional[str] = None):
     _ = version
     return code
 
