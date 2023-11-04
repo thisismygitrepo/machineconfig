@@ -52,18 +52,18 @@ def main():
         choice_file = path_obj
 
     if args.choose_function or args.submit_to_cloud:
-        # assert isinstance(choice_file, tb.P), f"choice_file must be a string. Got {type(choice_file)}"
-        choice_function, choice_function_args = choose_function(str(choice_file))
+
+        options, func_args = parse_pyfile(file_path=str(choice_file))
+        choice_function_tmp = display_options(msg="Choose a function to run", options=options, fzf=True, multi=False)
+        assert isinstance(choice_function_tmp, str), f"choice_function must be a string. Got {type(choice_function_tmp)}"
+        choice_index = options.index(choice_function_tmp)
+        choice_function: Optional[str] = choice_function_tmp.split(' -- ')[0]
+        choice_function_args = func_args[choice_index]
+
         if choice_function == "RUN AS MAIN": choice_function = None
         if len(choice_function_args) > 0 and len(kwargs) == 0:
             for item in choice_function_args:
                 kwargs[item.name] = input(f"Please enter a value for argument `{item.name}` (type = {item.type}) (default = {item.default}) : ") or item.default
-        # else:
-        #     print(f"{kwargs=}")
-        #     print(f"{choice_function_args=}")
-        # if choice_function != "RUN AS MAIN":
-            # kgs1, _ = interactively_run_function(module[choice_function])
-            # " ".join([f"--{k} {v}" for k, v in kgs1.items()])
     else: choice_function = args.function
 
     if args.ve == "":
@@ -99,10 +99,16 @@ print_programming_script(r'''{txt}''', lexer='python', desc='Imported Script')
         elif platform.system() in ["Linux", "Darwin"]:
             command = f"{exe} -m pudb {choice_file} "  # TODO: functions not supported yet in debug mode.
         else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
-    elif choice_function is not None:
+    elif choice_function is not None and not args.module:  # if args.module, then kwargs are handled in the impot script, no need to pass them in fire command.
         # https://google.github.io/python-fire/guide/
         tmp = f"'{kwargs}'" if kwargs else ''
         command = f"{exe} -m fire {choice_file} {choice_function} {tmp}"
+        # else:
+        #     print(f"{kwargs=}")
+        #     print(f"{choice_function_args=}")
+        # if choice_function != "RUN AS MAIN":
+            # kgs1, _ = interactively_run_function(module[choice_function])
+            # " ".join([f"--{k} {v}" for k, v in kgs1.items()])
     else:
         if not args.streamlit:
             command = f"{exe} {choice_file} "
@@ -135,63 +141,49 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
     PROGRAM_PATH.write_text(command)
 
 
-def choose_function(file_path: str, use_ast: bool = True):
+def parse_pyfile(file_path: str):
     print(f"Loading {file_path} ...")
     from typing import NamedTuple
-    args_spec = NamedTuple("args_spec", [("name", str), ("type", type), ("default", Optional[Any])])
+    args_spec = NamedTuple("args_spec", [("name", str), ("type", str), ("default", Optional[str])])
     func_args: list[list[args_spec]] = [[]]  # this firt prepopulated dict is for the option 'RUN AS MAIN' which has no args
-    options: list[str] = []
-    if not use_ast:
-        module: tb.Struct = tb.P(file_path).readit()
-        module = module.filter(lambda k, v: "function" in str(type(v)))
 
-        main_option = f"RUN AS MAIN -- {tb.Display.get_repr(module.__doc__, limit=150) if module.__doc__ is not None else 'No docs for this.'}"
-        options.append(main_option)
-
-        module.print()
-        tmp = module.apply(lambda k, v: f"{k} -- {type(v)} {tb.Display.get_repr(v.__doc__, limit=150) if v.__doc__ is not None else 'No docs for this.'}").to_list()
-        options += tmp
-
-    else:
-        import ast
-        parsed_ast = ast.parse(tb.P(file_path).read_text(encoding='utf-8'))
-        functions = [
-            node
-            for node in ast.walk(parsed_ast)
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-        ]
-        module__doc__ = ast.get_docstring(parsed_ast)
-        main_option = f"RUN AS MAIN -- {tb.Display.get_repr(module__doc__, limit=150) if module__doc__ is not None else 'No docs for this.'}"
-        options = [main_option]
-        for function in functions:
-            if function.name.startswith('__') and function.name.endswith('__'): continue
-            if any(arg.arg == 'self' for arg in function.args.args): continue
-            # print(f"Function name: {function.name}")
-            # print(f"Args: {', '.join([arg.arg for arg in function.args.args])}")
-            # print(f"Docstring: {ast.get_docstring(function)}")
-            newline = '\n'
-            options.append(f"{function.name} -- {', '.join([arg.arg for arg in function.args.args])} -- {str(ast.get_docstring(function)).replace(newline, ' ')}")
-            tmp = []
-            for idx, arg in enumerate(function.args.args):
-                if arg.annotation is not None:
-                    try: type_ = arg.annotation.__dict__['id']
-                    except KeyError as ke:
-                        # type_ = arg.annotation.__name__
-                        # print(f"Failed to get type for {arg.annotation}. {ke}")
-                        # tb.Struct(get_attrs(arg.annotation)).print(as_yaml=True)
-                        type_ = Any  # e.g. a callable object
-                        _ = ke
-                        # raise ke
-                else: type_ = type
-                tmp.append(args_spec(name=arg.arg, type=type_, default=function.args.defaults[idx] if idx < len(function.args.defaults) else None))
-            func_args.append(tmp)
-
-    choice_function = display_options(msg="Choose a function to run", options=options, fzf=True, multi=False)
-    assert isinstance(choice_function, str), f"choice_function must be a string. Got {type(choice_function)}"
-    choice_index = options.index(choice_function)
-    choice_function = choice_function.split(' -- ')[0]
-    choice_function_args = func_args[choice_index]
-    return choice_function, choice_function_args
+    import ast
+    parsed_ast = ast.parse(tb.P(file_path).read_text(encoding='utf-8'))
+    functions = [
+        node
+        for node in ast.walk(parsed_ast)
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    ]
+    module__doc__ = ast.get_docstring(parsed_ast)
+    main_option = f"RUN AS MAIN -- {tb.Display.get_repr(module__doc__, limit=150) if module__doc__ is not None else 'NoDocs'}"
+    options = [main_option]
+    for function in functions:
+        if function.name.startswith('__') and function.name.endswith('__'): continue
+        if any(arg.arg == 'self' for arg in function.args.args): continue
+        doc_string_tmp: str | None = ast.get_docstring(function)
+        if doc_string_tmp is None: doc_string = "NoDocs"
+        else: doc_string = doc_string_tmp.replace('\n', ' ')
+        options.append(f"{function.name} -- {', '.join([arg.arg for arg in function.args.args])} -- {doc_string}")
+        tmp = []
+        for idx, arg in enumerate(function.args.args):
+            if arg.annotation is not None:
+                try: type_ = arg.annotation.__dict__['id']
+                except KeyError as ke:
+                    # type_ = arg.annotation.__name__
+                    # print(f"Failed to get type for {arg.annotation}. {ke}")
+                    # tb.Struct(get_attrs(arg.annotation)).print(as_yaml=True)
+                    type_ = "Any"  # e.g. a callable object
+                    _ = ke
+                    # raise ke
+            else: type_ = "Any"
+            default_tmp = function.args.defaults[idx] if idx < len(function.args.defaults) else None
+            if default_tmp is None: default = None
+            else:
+                if hasattr(default_tmp, "__dict__"): default = default_tmp.__dict__.get("value", None)
+                else: default = None
+            tmp.append(args_spec(name=arg.arg, type=type_, default=default))
+        func_args.append(tmp)
+    return options, func_args
 
 
 def get_attrs(obj: Any):
@@ -247,4 +239,5 @@ def run_on_remote(func_file: str, args: argparse.Namespace):
 
 
 if __name__ == '__main__':
+    # options, func_args = parse_pyfile(file_path="C:/Users/aalsaf01/code/crocodile/myresources/crocodile/core.py")
     main()

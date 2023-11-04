@@ -53,7 +53,7 @@ def get_program(program_name: str, options: list[Any], installers: list[tb.P]):
             program += "\n" + sub_program
     elif program_name == "OtherDevApps":
         installers = get_cli_py_installers(dev=True).list
-        options = tb.L(installers).apply(lambda x: x.stem + ((' -- ' + str(x.readit().__doc__).rstrip()) if x.exists() else '')).list
+        options = tb.L(installers).apply(lambda x: x.stem + ((' -- ' + str(x.readit()['__doc__']).rstrip()) if x.exists() else '')).list
         program_names = display_options(msg="", options=sorted(options), header="CHOOSE DEV APP", fzf=True, multi=True)
         program = ""
         for name in program_names:
