@@ -11,7 +11,7 @@ from typing import Any
 def print_dir():
     """Pretty print and categorize dir() output."""
     res: dict[str, list[str]] = {}
-    for item in dir():
+    for item in globals().keys():
         if item.startswith("_"): continue
         type_ = repr(type(eval(item)))  # type: ignore  # pylint: disable=eval-used
         if "typing." in type_: continue
@@ -21,10 +21,11 @@ def print_dir():
 
 
 @register_line_magic("code")  # type: ignore
-def code(obj: Any):
+def print_code(obj_str: str):
     """Inspect the code of an object."""
     from rich.syntax import Syntax
     import inspect
+    obj = eval(obj_str)  # type: ignore  # pylint: disable=eval-used
     q: str = inspect.getsource(obj)
     print(Syntax(code=q, lexer="python"))
 
