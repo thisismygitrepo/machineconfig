@@ -11,5 +11,5 @@ $script_root = $PSScriptRoot
 
 . $script_root/activate_ve.ps1  # dynamic ve
 
-python -m crocodile.run $args
+ipython -m crocodile.run $args
 deactivate -ErrorAction SilentlyContinue

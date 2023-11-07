@@ -11,6 +11,7 @@ COLOR_SCHEMES = ["Campbell", "Campbell Powershell", "Solarized Dark", "Ubuntu-Co
 THEMES_ITER = cycle(COLOR_SCHEMES)
 INIT_COMMANDS = ["ls", "lf", "cpufetch", "neofetch", "btm"]
 INIT_COMMANDS_ITER = cycle(INIT_COMMANDS)
+SIZE_ITER = cycle([0.6, 0.4, 0.3])
 ORIENTATION = ["vertical", "horizontal"]
 ORIENTATION_ITER = cycle(ORIENTATION)
 ORIENTATION_TYPE = Literal["vertical", "horizontal"]
@@ -71,13 +72,13 @@ def main():
 
     if args.panes:
         cmd = f"wt --window {args.window} --colorScheme '{next(THEMES_ITER)}' pwsh -NoExit -Command '{next(INIT_COMMANDS_ITER)}' "
-        for idx in range(args.panes):
-            if idx % 2 == 0:
-                cmd += f" `; move-focus down split-pane --horizontal --colorScheme '{next(THEMES_ITER)}'  pwsh -NoExit -Command '{next(INIT_COMMANDS_ITER)}' "
-            else:
-                cmd += f" `; move-focus up split-pane --vertical --colorScheme '{next(THEMES_ITER)}' pwsh -NoExit -Command '{next(INIT_COMMANDS_ITER)}' "
         cmd += f" `; new-tab --colorScheme '{next(THEMES_ITER)}' --profile pwsh --title 't2' --tabColor '#f59218' "
         cmd += f" `; new-tab --colorScheme '{next(THEMES_ITER)}' --profile pwsh --title 't3' --tabColor '#009999' "
+        for idx in range(args.panes):
+            if idx % 2 == 0:
+                cmd += f" `; move-focus down split-pane --horizontal --size {next(SIZE_ITER)} --colorScheme '{next(THEMES_ITER)}'  pwsh -NoExit -Command '{next(INIT_COMMANDS_ITER)}' "
+            else:
+                cmd += f" `; move-focus up split-pane --vertical --size {next(SIZE_ITER)} --colorScheme '{next(THEMES_ITER)}' pwsh -NoExit -Command '{next(INIT_COMMANDS_ITER)}' "
 
     else:
         if args.hosts is None: hosts = display_options(msg="", options=get_ssh_hosts() + [THIS_MACHINE], multi=True, fzf=True)

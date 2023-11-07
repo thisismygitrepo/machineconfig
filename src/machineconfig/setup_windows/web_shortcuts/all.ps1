@@ -7,7 +7,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
 
 # pwsh profile
-$machineconfig = (python -c "print(__import__('machineconfig').__file__[:-12])")
+$machineconfig = (& "$HOME/venvs/ve/Scripts/python.exe" -c "print(__import__('machineconfig').__file__[:-12])")
 . $machineconfig/setup_windows/wt_and_pwsh.ps1  # experimental
 # OR: python -c "from machineconfig.setup_windows.wt_and_pwsh.setup_pwsh_theme import install_nerd_fonts; install_nerd_fonts()"
 

@@ -6,7 +6,7 @@ if (Test-Path $op_script ) {
 }
 
 
-activate_ve
+. $HOME/scripts/activate_ve.ps1
 python -m machineconfig.scripts.python.start_terminals $args
 
 

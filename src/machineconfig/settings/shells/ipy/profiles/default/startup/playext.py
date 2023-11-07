@@ -4,7 +4,7 @@
 
 from IPython.core.magic import register_line_magic
 from crocodile.file_management import P, randstr, Struct
-from typing import Any
+# from typing import Any
 
 
 @register_line_magic("print_dir")  # type: ignore
@@ -25,9 +25,10 @@ def print_code(obj_str: str):
     """Inspect the code of an object."""
     from rich.syntax import Syntax
     import inspect
-    obj = eval(obj_str)  # type: ignore  # pylint: disable=eval-used
+    obj = eval(obj_str, globals(), locals())  # type: ignore  # pylint: disable=eval-used
     q: str = inspect.getsource(obj)
-    print(Syntax(code=q, lexer="python"))
+    from rich import console
+    console.Console().print(Syntax(code=q, lexer="python"))
 
 
 @register_line_magic("play")  # type: ignore

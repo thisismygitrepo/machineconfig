@@ -10,7 +10,7 @@ from typing import Optional
 
 def get_ipython_profile(init_path: P):
     a_path = init_path
-    ipy_profile: str = "profile_default"
+    ipy_profile: str = "default"
     idx = len(a_path.parts)
     while idx >= 0:
         if a_path.joinpath(".ipy_profile").exists():
@@ -19,6 +19,8 @@ def get_ipython_profile(init_path: P):
             break
         idx -= 1
         a_path = a_path.parent
+    else:
+        print(f"⚠️ Using default IPython: {ipy_profile}")
     return ipy_profile
 
 
@@ -43,9 +45,7 @@ def get_current_ve():
 
 
 def get_installed_interpreters() -> list[P]:
-    import platform
     system = platform.system()
-    from crocodile.file_management import List
     if system == "Windows":
         tmp: list[P] = P.get_env().PATH.search("python.exe").reduce().list[1:]
         List(tmp).print()
