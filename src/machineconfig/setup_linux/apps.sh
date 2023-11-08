@@ -302,6 +302,9 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.cmatrix || true
 fi
 
+yes '' | sed 3q; echo "----------------------------- installing aafire ----------------------------"; yes '' | sed 3q
+sudo apt-get install libaa-bin
+
 
 # -========================================= EDITORS =========================================
 yes '' | sed 3q; echo "----------------------------- installing nano ----------------------------"; yes '' | sed 3q
