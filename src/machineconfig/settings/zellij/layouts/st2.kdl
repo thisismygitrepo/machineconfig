@@ -25,15 +25,26 @@ layout {
 
         pane name="2Left" split_direction="vertical" size="65%" {
             pane name="bottomLeft" size="30%" {
-                focus true
+
+                pane name="bottomleft1" size="40%" {
+                    focus true
+                }            
+                
+                pane name="bottomleft2" size="60%" {
+                    command "timeout"
+                    args "3s" "aafire"
+                    close_on_exit true
+                }
+                
             }
             pane name="bottomMiddle" size="70%" {
-                pane name="bottomMiddleLeft" size="50%" {
+                pane name="bottomMiddle1" size="30%" {
                     command "lf"
                 }
-                pane name="bottomMiddleRight" size="50%" {
-                    command "bash"
-                    args  "timeout" "3s" "aafire"
+            pane name="bottomMiddle2" size="70%" {
+                    command "timeout"
+                    args "3s" "cmatrix"
+                    close_on_exit true
                 }
             }
 
