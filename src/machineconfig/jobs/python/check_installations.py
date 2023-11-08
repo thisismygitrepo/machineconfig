@@ -13,6 +13,7 @@ from machineconfig.utils.installer import get_installed_cli_apps
 from tqdm import tqdm
 from typing import Optional
 
+
 APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
 CLOUD: str = "gdw"  # tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
 # my onedrive doesn't allow sharing.
