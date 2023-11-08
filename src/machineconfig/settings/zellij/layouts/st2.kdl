@@ -28,7 +28,12 @@ layout {
                 focus true
             }
             pane name="bottomMiddle" size="70%" {
-                command "lf"
+                pane name="bottomMiddleLeft" size="50%" {
+                    command "lf"
+                }
+                pane name="bottomMiddleRight" size="50%" {
+                    command "timeout 3s aafire"
+                }
             }
 
         }
