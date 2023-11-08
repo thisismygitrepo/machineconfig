@@ -32,7 +32,8 @@ layout {
                     command "lf"
                 }
                 pane name="bottomMiddleRight" size="50%" {
-                    command "timeout 3s aafire"
+                    command "bash"
+                    args  "timeout" "3s" "aafire"
                 }
             }
 
