@@ -78,9 +78,18 @@ def get_program(program_name: str, options: list[Any], installers: list[tb.P]):
     return program
 
 
-def parse_apps_installer_linux(txt: str):
+def parse_apps_installer_linux(txt: str) -> dict[str, Any]:
     txts = txt.split("""yes '' | sed 3q; echo "----------------------------- installing """)
-    return tb.Struct.from_keys_values_pairs(tb.L(txts).apply(lambda tmp: (tmp.split('----')[0].rstrip().lstrip(), "\n".join(tmp.split("\n")[1:]))).list[1:])
+    res = {}
+    for chunk in txts[1:]:
+        try:
+            k = chunk.split('----')[0].rstrip().lstrip()
+            v = "\n".join(chunk.split("\n")[1:])
+            res[k] = v
+        except IndexError as e:
+            print(chunk)
+            raise e
+    return res
 
 
 def parse_apps_installer_windows(txt: str) -> dict[str, Any]:
