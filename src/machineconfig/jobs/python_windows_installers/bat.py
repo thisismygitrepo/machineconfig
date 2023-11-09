@@ -7,7 +7,6 @@ from typing import Optional
 
 
 __doc__ = """A cat(1) clone with wings."""
-
 repo_url = 'https://github.com/sharkdp/bat'
 
 

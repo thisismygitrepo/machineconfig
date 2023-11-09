@@ -146,6 +146,7 @@ fi
 #sudo apt install zoxide || true
 (echo 'eval "$(zoxide init bash)"' >> ~/.bashrc) || true
 
+
 yes '' | sed 3q; echo "----------------------------- installing skim ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install curl
