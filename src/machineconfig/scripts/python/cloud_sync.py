@@ -40,18 +40,25 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
             print(f"⚠️ Using default cloud: {default_cloud}")
             args.target = default_cloud + ":"
 
-    if ":" in args.source and (":" != args.source[1] if len(args.source) > 1 else True):  # avoid the case of "C:/"
+    if ":" in args.source and (args.source[1] != ":" if len(args.source) > 1 else True):  # avoid the case of "C:/"
         cloud: str = args.source.split(":")[0]
         target = P(args.target).expanduser().absolute()
-        remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
-        source = P(f"{cloud}:{remote_path.as_posix()}")
-    elif ":" in args.target and (":" != args.target[1] if len(args.target) > 1 else True):  # avoid the case of "C:/"
+        if len(args.source) == 1:  # full path is not given.
+            remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
+            source = P(f"{cloud}:{remote_path.as_posix()}")
+        else:  # full path is given
+            source = str(args.source)
+        print(source)
+        print(target)
+
+    elif ":" in args.target and (args.target[1] != ":" if len(args.target) > 1 else True):  # avoid the case of "C:/"
         cloud = args.target.split(":")[0]
-        # print("h2")
         source = P(args.source).expanduser().absolute()
-        remote_path = source.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
-        # print(f"remote_path: {remote_path}, root: {args.root}, rel2home: {args.rel2home}, os_specific: {args.os_specific}, strict: {False}")
-        target = P(f"{cloud}:{remote_path.as_posix()}")
+        if len(args.target) == 1:  # full path is not given.
+            remote_path = source.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
+            target = P(f"{cloud}:{remote_path.as_posix()}")
+        else:
+            target = str(args.target)
     else:
         # user, being slacky and did not indicate the remotepath with ":", so it will be inferred here
         # but first we need to know whether the cloud is source or target
@@ -70,6 +77,7 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
         else:
             print(f"Could not find a remote in {remotes} that matches {args.source} or {args.target}.")
             raise ValueError
+    Struct({"cloud": cloud, "source": source, "target": target}).print(as_config=True, title="CLI Resolution")
     return cloud, str(source), str(target)
 
 

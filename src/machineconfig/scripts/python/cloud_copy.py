@@ -31,8 +31,7 @@ def arg_parser() -> None:
     if not args.rel2home: args.root = None
 
     cloud, source, target = parse_cloud_source_target(args)
-    print(f"{args.rel2home=}, {args.root=}, {args.os_specific=}")
-    tb.Struct({"cloud": cloud, "source": source, "target": target}).print(as_config=True, title="CLI Resolution")
+    # print(f"Inputs: {args.rel2home=}, {args.root=}, {args.os_specific=}")
     if cloud in source:
         tb.P(target).from_cloud(cloud=cloud,
                                 unzip=args.zip, decrypt=args.encrypt, overwrite=args.overwrite, pwd=args.pwd, key=args.key,
