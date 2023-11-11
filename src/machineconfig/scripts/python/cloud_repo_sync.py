@@ -41,7 +41,7 @@ def args_parser():
     repo_sync_root = CONFIG_PATH.joinpath("remote", repo_root.rel2home())  # .delete(sure=True)
     try:
         print("\n", "=============================== Downloading Remote Repo ====================================")
-        repo_root.from_cloud(cloud=cloud, localpath=repo_sync_root, unzip=True, decrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)
+        repo_root.from_cloud(cloud=cloud, remotepath=repo_sync_root, unzip=True, decrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)
     except AssertionError:
         print("Remote does not exist, creating it and exiting ... ")
         repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)

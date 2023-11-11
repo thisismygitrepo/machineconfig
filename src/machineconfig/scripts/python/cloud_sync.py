@@ -9,12 +9,13 @@ import argparse
 
 
 def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
-    if args.source == ":":  # default cloud name is omitted cloud_name:
+    if args.source.startswith(":"):  # default cloud name is omitted cloud_name:
+        assert "$" not in args.target, f"Not Implemented here yet."
         path = P(args.target).expanduser().absolute()
         for _i in range(len(path.parts)):
             if path.joinpath("cloud.json").exists():
                 tmp = path.joinpath("cloud.json").readit()
-                args.source = f"{tmp['cloud']}:"
+                args.source = f"{tmp['cloud']}:" + args.source[1:]
                 args.root = tmp["root"]
                 args.rel2home = tmp['rel2home']
                 print(f"⚠️ Using default cloud config: cloud={tmp['cloud']}, root={args.root}, rel2home={args.rel2home}")
@@ -23,13 +24,15 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
         else:
             default_cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             print(f"⚠️ Using default cloud: {default_cloud}")
-            args.source = default_cloud + ":"
-    if args.target == ":":  # default cloud name is omitted cloud_name:
+            args.source = default_cloud + ":" + args.source[1:]
+
+    if args.target.startswith(":"):  # default cloud name is omitted cloud_name:
+        assert "$" not in args.source, f"Not Implemented here yet."
         path = P(args.source).expanduser().absolute()
         for _i in range(len(path.parts)):
             if path.joinpath("cloud.json").exists():
                 tmp = path.joinpath("cloud.json").readit()
-                args.target = f"{tmp['cloud']}:"
+                args.target = f"{tmp['cloud']}:" + args.target[1:]
                 args.root = tmp["root"]
                 args.rel2home = tmp['rel2home']
                 Struct(tmp).print(as_config=True, title=f"Cloud Config @ {path.joinpath('cloud.json')}")
@@ -38,46 +41,64 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
         else:
             default_cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             print(f"⚠️ Using default cloud: {default_cloud}")
-            args.target = default_cloud + ":"
+            args.target = default_cloud + ":" + args.target[1:]
 
-    if ":" in args.source and (args.source[1] != ":" if len(args.source) > 1 else True):  # avoid the case of "C:/"
-        cloud: str = args.source.split(":")[0]
-        target = P(args.target).expanduser().absolute()
-        if len(args.source) == 1:  # full path is not given.
+    if ":" in args.source and (args.source[1] != ":" if len(args.source) > 1 else True):  # avoid the deceptive case of "C:/"
+        source_parts: str = args.source.split(":")
+        cloud = source_parts[0]
+
+        if len(source_parts) > 1 and source_parts[1] == "$":  # the source path is to be inferred from target.
+            assert "$" not in args.target, f"You can't use $ in both source and target. Cyclical inference dependency arised."
+            target = P(args.target).expanduser().absolute()
             remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
             source = P(f"{cloud}:{remote_path.as_posix()}")
-        else:  # full path is given
+
+        else:  # source path is mentioned, target? maybe.
             source = str(args.source)
-        print(source)
-        print(target)
+            if args.target == "$":  # target path is to be inferred from source.
+                raise NotImplementedError(f"There is no .get_local_path method yet")
+            else:
+                target = P(args.target).expanduser().absolute()
 
     elif ":" in args.target and (args.target[1] != ":" if len(args.target) > 1 else True):  # avoid the case of "C:/"
+        target_parts: str = args.target.split(":")
         cloud = args.target.split(":")[0]
-        source = P(args.source).expanduser().absolute()
-        if len(args.target) == 1:  # full path is not given.
+
+        if len(target_parts) > 1 and target_parts[1] == "$":  # the target path is to be inferred from source.
+            assert "$" not in args.source, f"You can't use $ in both source and target. Cyclical inference dependency arised."
+            source = P(args.source).expanduser().absolute()
             remote_path = source.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
             target = P(f"{cloud}:{remote_path.as_posix()}")
-        else:
+        else:  # target path is mentioned, source? maybe.
             target = str(args.target)
+            if args.source == "$":
+                raise NotImplementedError(f"There is no .get_local_path method yet")
+            else:
+                source = P(args.source).expanduser().absolute()
+
+        if args.zip and ".zip" not in source: source += ".zip"
+        if args.encrypt and ".enc" not in target: target += ".enc"
+
     else:
+        raise ValueError("Either source or target must be a remote path (i.e. machine:path)")
         # user, being slacky and did not indicate the remotepath with ":", so it will be inferred here
         # but first we need to know whether the cloud is source or target
-        remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
-        for cloud in remotes:
-            if str(args.source) == cloud:
-                target = P(args.target).expanduser().absolute()
-                remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home)
-                source = P(f"{cloud}:{remote_path.as_posix()}")
-                break
-            if str(args.target) == cloud:
-                source = P(args.source).expanduser().absolute()
-                remote_path = source.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home)
-                target = P(f"{cloud}:{remote_path.as_posix()}")
-                break
-        else:
-            print(f"Could not find a remote in {remotes} that matches {args.source} or {args.target}.")
-            raise ValueError
-    Struct({"cloud": cloud, "source": source, "target": target}).print(as_config=True, title="CLI Resolution")
+        # remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
+        # for cloud in remotes:
+        #     if str(args.source) == cloud:
+        #         target = P(args.target).expanduser().absolute()
+        #         remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home)
+        #         source = P(f"{cloud}:{remote_path.as_posix()}")
+        #         break
+        #     if str(args.target) == cloud:
+        #         source = P(args.source).expanduser().absolute()
+        #         remote_path = source.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home)
+        #         target = P(f"{cloud}:{remote_path.as_posix()}")
+        #         break
+        # else:
+        #     print(f"Could not find a remote in {remotes} that matches {args.source} or {args.target}.")
+        #     raise ValueError
+    Struct({"cloud": cloud, "source": str(source), "target": str(target)}).print(as_config=True, title="CLI Resolution")
     return cloud, str(source), str(target)
 
 

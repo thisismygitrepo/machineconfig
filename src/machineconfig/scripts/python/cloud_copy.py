@@ -31,16 +31,18 @@ def arg_parser() -> None:
     if not args.rel2home: args.root = None
 
     cloud, source, target = parse_cloud_source_target(args)
-    # print(f"Inputs: {args.rel2home=}, {args.root=}, {args.os_specific=}")
     if cloud in source:
-        tb.P(target).from_cloud(cloud=cloud,
-                                unzip=args.zip, decrypt=args.encrypt, overwrite=args.overwrite, pwd=args.pwd, key=args.key,
+        # print(f"Downloading from {source} to {target}")
+        tb.P(target).from_cloud(cloud=cloud, remotepath=source.replace(cloud + ":", ""),
+                                unzip=args.zip, decrypt=args.encrypt,
+                                overwrite=args.overwrite, pwd=args.pwd, key=args.key,
                                 rel2home=args.rel2home, os_specific=args.os_specific, root=args.root, strict=False,
                                 )
     elif cloud in target:
-        res = tb.P(source).to_cloud(cloud=cloud, zip=args.zip,
+        res = tb.P(source).to_cloud(cloud=cloud, remotepath=target.replace(cloud + ":", ""),
+                                    zip=args.zip, encrypt=args.encrypt,
                                     rel2home=args.rel2home, root=args.root, os_specific=args.os_specific, strict=False,
-                                    share=args.share, key=args.key, pwd=args.pwd, encrypt=args.encrypt)
+                                    share=args.share, key=args.key, pwd=args.pwd)
         if args.share: print(res.as_url_str())
     else: raise ValueError(f"Cloud `{cloud}` not found in source or target.")
 

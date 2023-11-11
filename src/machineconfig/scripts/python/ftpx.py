@@ -3,7 +3,7 @@
 """
 
 import argparse
-from crocodile.toolbox import SSH, P
+from crocodile.meta import SSH, P, Struct
 
 
 def main():
@@ -19,18 +19,43 @@ def main():
     args = parser.parse_args()
 
     if ":" in args.source and (args.source[1] != ":" if len(args.source) > 1 else True):  # avoid the case of "C:/":
-        machine = args.source.split(":")[0]
-        source = args.source.split(":")[1]
-        target = P(args.target).expanduser().absolute()
         source_is_remote = True
+
+        # calculating source:
+        source_parts = args.source.split(":")
+        machine = source_parts[0]
+        if len(source_parts) > 1 and source_parts[1] == "$":  # the source path is to be inferred from target.
+            if args.target == "$":
+                raise ValueError("You can't use $ in both source and target. Cyclical inference dependency arised.")
+            else:
+                target = P(args.target).expanduser().absolute()
+            source = target.collapseuser().as_posix()
+        else:
+            source = ":".join(args.source.split(":")[1:])
+            if args.target == "$":
+                target = None
+            else: target = P(args.target).expanduser().absolute().as_posix()
+
     elif ":" in args.target and (args.target[1] != ":" if len(args.target) > 1 else True):  # avoid the case of "C:/":
-        machine = args.target.split(":")[0]
-        target = args.target.split(":")[1]
-        source = P(args.source).expanduser().absolute()
         source_is_remote = False
+        target_parts = args.target.split(":")
+        machine = target_parts[0]
+        if len(target_parts) > 1 and target_parts[1] == "$":
+            if args.source == "$":
+                raise ValueError("You can't use $ in both source and target. Cyclical inference dependency arised.")
+            else:
+                source = args.source
+            target = None
+        else:
+            target = ":".join(args.target.split(":")[1:])
+            if args.source == "$":
+                source = None
+            else: source = P(args.source).expanduser().absolute()
+
     else:
         raise ValueError("Either source or target must be a remote path (i.e. machine:path)")
 
+    Struct({"source": str(source), "target": str(target), "machine": machine}).print(as_config=True, title="CLI Resolution")
     from paramiko.ssh_exception import AuthenticationException  # type: ignore
     try:
         ssh = SSH(rf'{machine}')
@@ -42,8 +67,10 @@ def main():
         ssh = SSH(rf'{machine}', pwd=pwd)
 
     if source_is_remote:
+        print(f"Running: received_file = ssh.copy_to_here(source={source}, target={target}, z={args.zipFirst}, r={args.recursive})")
         received_file = ssh.copy_to_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
     else:
+        print(f"Running: received_file = ssh.copy_from_here(source={source}, target={target}, z={args.zipFirst}, r={args.recursive})")
         received_file = ssh.copy_from_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
     # ssh.print_summary()
     # if P(args.file).is_dir(): print(f"Use: cd {repr(P(args.file).expanduser())}")
