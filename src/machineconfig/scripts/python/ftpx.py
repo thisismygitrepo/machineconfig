@@ -67,9 +67,11 @@ def main():
         ssh = SSH(rf'{machine}', pwd=pwd)
 
     if source_is_remote:
+        assert source is not None, "source must be a remote path (i.e. machine:path)"
         print(f"Running: received_file = ssh.copy_to_here(source={source}, target={target}, z={args.zipFirst}, r={args.recursive})")
         received_file = ssh.copy_to_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
     else:
+        assert source is not None, "target must be a remote path (i.e. machine:path)"
         print(f"Running: received_file = ssh.copy_from_here(source={source}, target={target}, z={args.zipFirst}, r={args.recursive})")
         received_file = ssh.copy_from_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
     # ssh.print_summary()
