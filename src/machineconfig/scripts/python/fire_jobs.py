@@ -45,11 +45,19 @@ def main():
     if path_obj.is_dir():
         print(f"Seaching recursively for all python file in directory `{path_obj}`")
         py_files = path_obj.search(pattern="*.py", not_in=["__init__.py"], r=True).list
-        choice_file = display_options(msg="Choose a file to run", options=py_files, fzf=True, multi=False)
+        ps_files = path_obj.search(pattern="*.ps1", r=True).list
+        sh_files = path_obj.search(pattern="*.sh", r=True).list
+        files = py_files + ps_files + sh_files
+
+        choice_file = display_options(msg="Choose a file to run", options=files, fzf=True, multi=False)
         assert not isinstance(choice_file, list), f"choice_file must be a string. Got {type(choice_file)}"
         choice_file = tb.P(choice_file)
     else:
         choice_file = path_obj
+
+    if choice_file.suffix in [".ps1", ".sh"]:
+        PROGRAM_PATH.write_text(f". {choice_file}")
+        return
 
     if args.choose_function or args.submit_to_cloud:
 

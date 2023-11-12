@@ -11,4 +11,14 @@
 # H404: multi line docstring should start without a leading new line
 # H405: multi line docstring summary not separated with an empty line
 # H501: Do not use self.__dict__ for string formatting
-extend-ignore = E301,E302,E501,E701,E702,E225
+
+# E301: Expected 1 blank line, found 0 - This error occurs when there is no blank line between two different logical blocks of code.
+# E302: Expected 2 blank lines, found 1 - This error occurs when there is only one blank line between two different logical blocks of code, instead of the expected two.
+# E501: Line too long - This error occurs when a line of code exceeds the maximum line length specified in the Flake8 configuration. By default, the maximum line length is set to 79 characters.
+# E701: Multiple statements on one line (colon) - This error occurs when multiple statements are written on a single line, separated by a colon. It is recommended to write each statement on a separate line.
+# E702: Multiple statements on one line (semicolon) - This error occurs when multiple statements are written on a single line, separated by a semicolon. It is recommended to write each statement on a separate line.
+# E225: Missing whitespace around operator - This error occurs when there is no whitespace before or after an operator, such as +, -, *, /, etc. It is recommended to add whitespace for better readability.
+# E265: Block comment should start with '# ' - This error occurs when a block comment does not start with a space after the hash symbol (#). It is recommended to add a space after the hash symbol for consistency.
+
+extend-ignore = E301,E302,E501,E701,E702,E225,E265
+
