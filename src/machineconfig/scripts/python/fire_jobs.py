@@ -6,6 +6,7 @@ fire
 import crocodile.toolbox as tb
 import platform
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_host, match_file_name, sanitize_path
+# from crocodile.run import *
 # https://github.com/pallets/click combine with fire. Consider
 # https://github.com/ceccopierangiolieugenio/pyTermTk for display_options build TUI
 # https://github.com/chriskiehl/Gooey build commandline interface
