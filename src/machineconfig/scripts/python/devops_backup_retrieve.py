@@ -30,8 +30,9 @@ def main(direction: OPTIONS, which: Optional[str] = None):
     if choice_key == "all": items = bu_file
     else: items = {choice_key: bu_file[choice_key]}
 
-    program = f"""$cloud = "{cloud}:" \n """ if system() == "Windows" else f"""cloud="{cloud}:" \n """
+    program = f"""$cloud = "{cloud}:$" \n """ if system() == "Windows" else f"""cloud="{cloud}:$" \n """
     for item_name, item in items.items():
+        # P.home().joinpath(".ipython").to_cloud(cloud="oduq1", zip=True, encrypt=True, rel2home=True, os_specific=False)
         flags = ''
         flags += 'z' if item['zip'] == 'True' else ''
         flags += 'e' if item['encrypt'] == 'True' else ''

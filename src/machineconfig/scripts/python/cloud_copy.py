@@ -31,6 +31,8 @@ def arg_parser() -> None:
     if not args.rel2home: args.root = None
 
     cloud, source, target = parse_cloud_source_target(args)
+    print(f"{cloud=}, {source=}, {target=}")
+
     if cloud in source:
         # print(f"Downloading from {source} to {target}")
         tb.P(target).from_cloud(cloud=cloud, remotepath=source.replace(cloud + ":", ""),

@@ -76,7 +76,9 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
             else:
                 source = P(args.source).expanduser().absolute()
 
-        if args.zip and ".zip" not in source: source += ".zip"
+        # if args.zip and ".zip" not in source: source += ".zip"
+        # if args.encrypt and ".enc" not in source: source += ".enc"
+        if args.zip and ".zip" not in target: target += ".zip"
         if args.encrypt and ".enc" not in target: target += ".enc"
 
     else:
