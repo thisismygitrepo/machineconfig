@@ -59,6 +59,8 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
                 raise NotImplementedError(f"There is no .get_local_path method yet")
             else:
                 target = P(args.target).expanduser().absolute()
+        if args.zip and ".zip" not in source: source += ".zip"
+        if args.encrypt and ".enc" not in source: source += ".enc"
 
     elif ":" in args.target and (args.target[1] != ":" if len(args.target) > 1 else True):  # avoid the case of "C:/"
         target_parts: str = args.target.split(":")
@@ -76,8 +78,6 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
             else:
                 source = P(args.source).expanduser().absolute()
 
-        # if args.zip and ".zip" not in source: source += ".zip"
-        # if args.encrypt and ".enc" not in source: source += ".enc"
         if args.zip and ".zip" not in target: target += ".zip"
         if args.encrypt and ".enc" not in target: target += ".enc"
 
