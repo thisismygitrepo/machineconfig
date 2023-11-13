@@ -51,7 +51,8 @@ def sanitize_path(a_path: P):
         assert path.exists(), f"File not found: {path}"
         print(f"\n{'--' * 50}\n🔗 Mapped `{a_path}` ➡️ `{path}`\n{'--' * 50}\n")
     elif path.as_posix().startswith("C:") and platform.system() == "Linux":  # path copied from Windows
-        path = P.home().joinpath(*path.parts[3:])  # exlcude C:\Users\username
+        xx = str(a_path).replace(r"\\", "/")
+        path = P.home().joinpath(*P(xx).parts[3:])  # exlcude C:\Users\username
         assert path.exists(), f"File not found: {path}"
         print(f"\n{'--' * 50}\n🔗 Mapped `{a_path}` ➡️ `{path}`\n{'--' * 50}\n")
     return path.expanduser().absolute()

@@ -1,27 +1,7 @@
 
 
 """
-This file is meant to be run by croshell.sh / croshell.ps1 and offers commandline arguments. The latter files not to be confused with croshell.py which is, just the python shell.
-
-Argument Parsing:
-* Script level.
-    * This is system dependent and is hard in bash.
-    * It remains a necessity because at system level one can dictate the enviroment, the interpretor, etc.
-* Python level:
-    * system agnostic.
-    * Benign syntax, but predetermines to a great extent what is being executed (which python, enviroment).
-* python library `fire`:
-    * this is good for passing arguments to specfic python functions from commandline without writing specific argparsing for those functions.
-
-The best approach is to use python and fire to pass process args of script and:
-   * return a string to the script file to execute it.
-   * or, execute it via terminal from within python.
-
-Choices made by default:
-* ipython over python
-* interactive is the default
-* importing the file to be run (as opposed to running it as main) is the default. The advantage of running it as an imported module is having reference to the file from which classes came. This is vital for pickling.
-
+croshell
 """
 
 import argparse
@@ -110,8 +90,9 @@ def build_parser():
         program = textwrap.dedent(args.cmd)
 
     elif args.fzf:
-        options = P.cwd().search("*.py", r=True)
+        options = P.cwd().search("*.py", r=True).apply(str).list
         file = display_options(msg="Choose a python file to run", options=options, fzf=True, multi=False, )
+        assert isinstance(file, str)
         if profile is None: profile = profile = get_ipython_profile(P(file))
         program = P(file).read_text(encoding='utf-8')
 
@@ -123,7 +104,7 @@ def build_parser():
     elif args.read != "":
         file = P(str(args.read).lstrip()).expanduser().absolute()
         if profile is None: profile = profile = get_ipython_profile(P(file))
-        program = get_read_data_pycode(file)
+        program = get_read_data_pycode(str(file))
 
     else:  # just run croshell.py interactively
         program = ""
@@ -145,19 +126,18 @@ print_logo(logo="crocodile")
     if args.read != "": title = "Reading Data"
     elif args.file != "": title = "Running Python File"
     else: title = "Executed code"
-    total_program = preprogram + add_print_header_pycode(pyfile, title=title) + program
+    total_program = preprogram + add_print_header_pycode(str(pyfile), title=title) + program
 
     pyfile.write_text(total_program, encoding='utf-8')
     if profile is None: profile = "default"
 
-    ve = get_ve_profile(file) if args.venv is None else str(args.ve)
+    ve = get_ve_profile(P(file)) if args.venv is None else str(args.ve)
     final_program = f"""
-
 # deactivate
 . activate_ve {ve}
-{interpreter} {interactivity} --profile {profile} --no-banner {pyfile} ""
-
-"""
+{interpreter} """
+    if interpreter == "ipython": final_program += f"{interactivity} --profile {profile} --no-banner"
+    final_program += f" {str(pyfile)}"
     print(f"🔥 sourcing  ... {pyfile}\n\n")
     PROGRAM_PATH.write_text(final_program)
 
