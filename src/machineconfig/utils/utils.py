@@ -20,9 +20,10 @@ LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().s
 REPO_ROOT = LIBRARY_ROOT.parent.parent
 PROGRAM_PATH = (P.tmp().joinpath("shells/python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh")).create(parents_only=True)
 CONFIG_PATH = P.home().joinpath(".config/machineconfig")
+INSTALL_VERSION_ROOT = CONFIG_PATH.joinpath("cli_tools_installers/versions")
+INSTALL_TMP_DIR = P.tmp(folder="tmp_installers")
+
 DEFAULTS_PATH = P.home().joinpath("dotfiles/machineconfig/defaults.ini")
-APP_VERSION_ROOT = P.home().joinpath(f"tmp_results/cli_tools_installers/versions")
-TMP_INSTALL_DIR = P.tmp(folder="tmp_installers")
 
 
 T = TypeVar("T")

@@ -2,7 +2,7 @@
 import crocodile.toolbox as tb
 from rich.console import Console
 from typing import Optional
-from machineconfig.utils.utils import APP_VERSION_ROOT
+from machineconfig.utils.utils import INSTALL_VERSION_ROOT
 
 
 repo_url = r'https://download.sysinternals.com/files/ZoomIt.zip'
@@ -21,7 +21,7 @@ def main(version: Optional[str] = None):
         if proc.name() == "ZoomIt.exe":
             proc.kill()
     folder.joinpath('ZoomIt.exe').move(folder=tb.P.get_env().WindowsApps, overwrite=True)
-    APP_VERSION_ROOT.joinpath('ZoomIt').write_text("latest")
+    INSTALL_VERSION_ROOT.joinpath('ZoomIt').write_text("latest")
     folder.delete(sure=True)
     console.rule("Completed Installation")
 

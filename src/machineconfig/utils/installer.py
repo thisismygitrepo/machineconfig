@@ -5,7 +5,7 @@ from rich.console import Console
 
 from crocodile.file_management import P, List as L, Read
 from crocodile.meta import Terminal
-from machineconfig.utils.utils import APP_VERSION_ROOT, TMP_INSTALL_DIR
+from machineconfig.utils.utils import INSTALL_VERSION_ROOT, INSTALL_TMP_DIR
 
 from dataclasses import dataclass
 from typing import Optional, Literal
@@ -75,13 +75,13 @@ def get_latest_release(repo_url: str, exe_name: str,
     release_url = P(repo_url + "/releases/download/" + version_to_be_installed)
 
     # existing_version_cli = Terminal().run(f"{exe_name or tool_name} --version", shell="powershell").op_if_successfull_or_default(strict_err=True, strict_returcode=True)
-    tmp_path = APP_VERSION_ROOT.joinpath(exe_name).create(parents_only=True)
+    tmp_path = INSTALL_VERSION_ROOT.joinpath(exe_name).create(parents_only=True)
     if tmp_path.exists(): existing_version = tmp_path.read_text().rstrip()
     else: existing_version = None
 
     if existing_version is not None:
         if existing_version == version_to_be_installed:
-            print(f"⚠️ {exe_name} already installed at version {version_to_be_installed}. See {APP_VERSION_ROOT}")
+            print(f"⚠️ {exe_name} already installed at version {version_to_be_installed}. See {INSTALL_VERSION_ROOT}")
             return
         else:
             # print(f"Latest version is {version}, logged at {tmp_path}")
@@ -103,7 +103,7 @@ def get_latest_release(repo_url: str, exe_name: str,
     download_link = release_url.joinpath(file_name)
 
     print("Downloading", download_link.as_url_str())
-    downloaded = download_link.download(folder=TMP_INSTALL_DIR)
+    downloaded = download_link.download(folder=INSTALL_TMP_DIR)
     if "tar.gz" in download_link or "tgz" in download_link: downloaded = downloaded.ungz_untar(inplace=True)
     elif "zip" in download_link: downloaded = downloaded.unzip(inplace=True, overwrite=True)
     elif "tar.xz" in download_link: downloaded = downloaded.unxz_untar(inplace=True)
@@ -149,7 +149,7 @@ def run_python_installer(py_file: P, version: Optional[str] = None):
 
 
 def install_all(installers: Optional[list[P]] = None, safe: bool = False, dev: bool = False, jobs: int = 10, fresh: bool = False):
-    if fresh: APP_VERSION_ROOT.delete(sure=True)
+    if fresh: INSTALL_VERSION_ROOT.delete(sure=True)
     if safe:
         from machineconfig.jobs.python.check_installations import APP_SUMMARY_PATH
         apps_dir = APP_SUMMARY_PATH.readit()

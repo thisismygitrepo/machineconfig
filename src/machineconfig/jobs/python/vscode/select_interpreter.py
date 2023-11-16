@@ -1,4 +1,7 @@
 
+"""VScode task to set interpreter
+"""
+
 import os
 import json
 from pathlib import Path
@@ -7,12 +10,14 @@ import argparse
 
 def select_interpreter(workspace_root: str):
     path = Path(workspace_root).joinpath('.ve_path')
-    with open(path, 'r') as f:
+    with open(path, 'r', encoding='utf-8') as f:
         python_path = Path(f.read().strip().replace("~", str(Path.home())))
 
-    settings_path = os.path.join(os.getenv('APPDATA'), 'Code', 'User', 'settings.json')
+    tmp = os.getenv('APPDATA')
+    assert tmp is not None
+    settings_path = Path(tmp).joinpath('Code', 'User', 'settings.json')
 
-    with open(settings_path, 'r+') as f:
+    with open(settings_path, 'r+', encoding='utf-8') as f:
         settings = json.load(f)
         settings['python.pythonPath'] = python_path
         f.seek(0)

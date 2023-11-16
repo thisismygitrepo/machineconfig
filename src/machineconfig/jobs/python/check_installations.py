@@ -8,7 +8,7 @@ import pandas as pd
 import platform
 from rich.console import Console
 # from rich.progress import track
-from machineconfig.utils.utils import LIBRARY_ROOT, APP_VERSION_ROOT
+from machineconfig.utils.utils import LIBRARY_ROOT, INSTALL_VERSION_ROOT
 from machineconfig.utils.installer import get_installed_cli_apps
 from tqdm import tqdm
 from typing import Optional
@@ -56,7 +56,7 @@ def scan(path: tb.P, pct: float = 0.0):
 
 def main() -> None:
     apps_paths_tmp: tb.List[tb.P] = get_installed_cli_apps()
-    versions_files_paths: tb.L[tb.P] = APP_VERSION_ROOT.search()
+    versions_files_paths: tb.L[tb.P] = INSTALL_VERSION_ROOT.search()
     app_versions: list[Optional[str]] = []
     apps_paths_raw: tb.L[tb.P] = tb.L([])
     for an_app in versions_files_paths:
