@@ -15,8 +15,9 @@ eval "$(zoxide init bash)"
 
 # export DISPLAY=localhost:0.0  # xming server
 
+# gh extension install github/gh-copilot
 # from https://www.npmjs.com/package/@githubnext/github-copilot-cli
-eval "$(github-copilot-cli alias -- "$0")"  # gives ??, git?, gh? aliases to github-clopilot-cli
+# eval "$(github-copilot-cli alias -- "$0")"  # gives ??, git?, gh? aliases to github-clopilot-cli
 
 # the patch is caleld zzzzzzellij.sh to make sure it is the last one to be sourced at the end of the .bashrc
 # adopted from https://zellij.dev/documentation/integration.html

@@ -60,7 +60,9 @@ yes '' | sed 3q; echo "----------------------------- installing sharewifi ------
 npm install sharewifi -g || true
 
 yes '' | sed 3q; echo "----------------------------- installing github-copilot-cli ----------------------------"; yes '' | sed 3q
-npm install -g @githubnext/github-copilot-cli
+nix-env -iA nixpkgs.gh
+# as per https://docs.github.com/en/copilot/github-copilot-in-the-cli/using-github-copilot-in-the-cli
+# gh extension install github/gh-copilot
 
 yes '' | sed 3q; echo "----------------------------- installing easy-sharing ----------------------------"; yes '' | sed 3q
 npm install -g easy-sharing  # https://github.com/parvardegr/sharing
