@@ -109,7 +109,6 @@ def main_symlinks(choice: Optional[str] = None):
 
 def main(choice: Optional[str] = None):
     console = Console()
-
     print("\n")
     console.rule(f"CREATING SYMLINKS")
     main_symlinks(choice=choice)

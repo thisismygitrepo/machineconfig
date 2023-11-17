@@ -117,3 +117,7 @@ def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice
             profile += "\ncd ~"  # this is to make sure that the current dir is not in the windows file system, which is terribly slow and its a bad idea to be there anyway.
 
     profile_path_obj.write_text(profile)
+
+
+if __name__ == '__main__':
+    pass
