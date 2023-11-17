@@ -88,6 +88,7 @@ def display_options(msg: str, options: list[T], header: str = "", tail: str = ""
         if not multi:
             try: choice_key = choice_key[0]
             except IndexError as ie:
+                print(f"{options=}, {choice_key=}")
                 print(choice_key)
                 raise ie
     else:

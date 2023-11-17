@@ -6,7 +6,7 @@ import crocodile.toolbox as tb
 import argparse
 from machineconfig.utils.utils import write_shell_script, CONFIG_PATH
 from rich import print as pprint
-# from dataclasses import dataclass
+from dataclasses import dataclass
 from enum import Enum
 from typing import Optional, Any
 # tm = tb.Terminal()
@@ -16,6 +16,14 @@ class GitAction(Enum):
     commit = "commit"
     push = "push"
     pull = "pull"
+
+
+@dataclass
+class RepoRecord:
+    name: str
+    parent_dir: str
+    remotes: list[str]
+    version: dict[str, str]
 
 
 def git_action(path: tb.P, action: GitAction, mess: Optional[str] = None, r: bool = False) -> str:
@@ -127,7 +135,7 @@ def record_a_repo(path: tb.P, search_parent_directories: bool = False):
     except TypeError:
         print(f"⁉️ Failed to get current branch of {repo}. It is probably in a detached state.")
         current_branch = None
-    res = {"name": path.name, "parent_dir": path.parent.collapseuser().as_posix(),
+    res: dict[str, Any] = {"name": path.name, "parent_dir": path.parent.collapseuser().as_posix(),
                             "current_branch": current_branch,
                             "remotes": remotes, "version": {"branch": current_branch, "commit": commit}}
     return res
