@@ -2,10 +2,11 @@
 """Cloud mount script
 """
 
-import platform
-from typing import Optional
-from machineconfig.utils.utils import PROGRAM_PATH, display_options
 import crocodile.toolbox as tb
+from machineconfig.utils.utils import PROGRAM_PATH, display_options
+import platform
+import argparse
+from typing import Optional
 
 
 DEFAULT_MOUNT = "~/data/rclone"
@@ -39,7 +40,7 @@ mprocs "echo 'see {DEFAULT_MOUNT}/{cloud} for the mounted cloud'; rclone about {
     return txt
 
 
-def main(cloud: Optional[str] = None, network: Optional[str] = None) -> None:
+def mount(cloud: Optional[str] = None, network: Optional[str] = None) -> None:
 
     config = get_rclone_config()
     if cloud is None:
@@ -79,6 +80,14 @@ zellij action move-focus up; cd $HOME/data/rclone
     else: raise ValueError("unsupported platform")
     print(f"running command: \n{txt}")
     PROGRAM_PATH.write_text(txt)
+
+
+def main():
+    parser = argparse.ArgumentParser(description='mount cloud')
+    parser.add_argument('cloud', nargs='?', type=str, default=None, help='cloud to mount')
+    parser.add_argument('--network', type=str, default=None, help='mount network drive')
+    args = parser.parse_args()
+    mount(args.cloud, args.network)
 
 
 if __name__ == '__main__':
