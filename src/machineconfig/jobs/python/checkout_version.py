@@ -2,7 +2,7 @@
 """checkout_version.py
 """
 
-from crocodile.file_management import P, Save
+from crocodile.file_management import P, Save, randstr
 from crocodile.meta import Terminal
 from machineconfig.utils.ve import get_ve_profile, get_ve_specs, get_ve_install_script
 from machineconfig.scripts.python.repos import record_a_repo, install_repos
@@ -63,7 +63,7 @@ def main():
 
 
 def get_editable_packages(ve_name: str):
-    file = P.tmp().joinpath("tmp_files/editable_requirements.txt")
+    file = P.tmp().joinpath(f"tmp_files/editable_requirements_{randstr()}.txt")
     Terminal().run_script(f"""
 . $HOME/scripts/activate_ve {ve_name}
 pip list --editable > {file}""", verbose=True).print()
