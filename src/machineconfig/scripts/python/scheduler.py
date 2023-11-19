@@ -3,12 +3,40 @@
 """
 
 from crocodile.file_management import P, Read, str2timedelta, Save
+# from crocodile.meta import Terminal
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+import platform
+import subprocess
 # from crocodile.meta import Scheduler
 
 
 ROOT = P.home().joinpath("dotfiles/config/scheduler/tasks.ini")
+
+
+def run_shell_script(path: str) -> bool:
+    try:
+        if platform.system() == 'Windows':
+            if not path.endswith('.ps1'):
+                print(f"Error: The file {path} is not a PowerShell script.")
+                return False
+            subprocess.run(['powershell', '-ExecutionPolicy', 'Unrestricted', path], check=True)
+        elif platform.system() == 'Linux':
+            if not path.endswith('.sh'):
+                print(f"Error: The file {path} is not a Bash script.")
+                return False
+            subprocess.run(['bash', path], check=True)
+        else:
+            print(f"Error: Unsupported platform {platform.system()}.")
+            return False
+        return True
+    except subprocess.CalledProcessError:
+        print(f"Error: The script {path} failed to run.")
+        return False
+    except Exception as e:
+        print(f"Error: An unexpected error occurred while running the script {path}: {e}")
+        return False
+
 
 
 @dataclass
@@ -27,17 +55,21 @@ class Task:
 class Report:
     start: datetime
     end: datetime
+    status: bool
+
     @classmethod
     def from_path(cls, path: P):
         ini = Read.ini(path)['report']
         return cls(
             start=datetime.fromisoformat(ini["start"]),
             end=datetime.fromisoformat(ini["end"]),
+            status=ini["status"] == "True",
         )
     def to_path(self, path: P):
         Save.ini(path=path, obj={'report': {
             'start': self.start.isoformat(),
             'end': self.end.isoformat(),
+            'status': str(self.status),
         }})
 
 
@@ -48,10 +80,17 @@ def run_task(task: Task):
     if not min_diff < 60:
         print(f"⌚ Time now is not suitable for running task {task.name} (Ideally, it should be run at {suitable_run_time})")
         return
+    start_time = datetime.now()
+    # res = Terminal().run(task.script_path.str)
+    res = run_shell_script(task.script_path.str)
+    end_time = datetime.now()
+    report = Report(start=start_time, end=end_time, status=res)
+    report.to_path(task.report_path)
 
 
 def main():
     tasks = Read.ini(ROOT)
+    system = platform.system()
 
     for a_section in tasks.sections():
         a_task_section = tasks[a_section]
@@ -62,6 +101,13 @@ def main():
             start=datetime.fromisoformat(a_task_section["start"]),
             output_dir=P(a_task_section["output_dir"]).expanduser().absolute(),
         )
+
+        if system == "Windows" and a_task.script_path.suffix != ".ps1":
+            print(f"⚠️  Task {a_task.name} is not a powershell script, skipping...")
+            continue
+        elif system == "Linux" and a_task.script_path.suffix != ".sh":
+            print(f"⚠️  Task {a_task.name} is not a bash script, skipping...")
+            continue
 
         if not a_task.report_path.exists(): run_task(a_task)
         else:
