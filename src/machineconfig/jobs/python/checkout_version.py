@@ -24,7 +24,7 @@ def checkout_version(version: str, repo_root: P, exclude_editable: bool = False)
     if exclude_editable:
         editable_json = get_editable_packages(ve_name=ve_name)
         specs_path = P(target_dir).expanduser().joinpath("editable_packages.json")
-        Save.json(obj=editable_json, path=specs_path)
+        Save.json(obj=editable_json, path=specs_path, indent=4)
         extra_program = install_repos(specs_path=str(specs_path), editable_install=True)
     else: extra_program = ""
 
