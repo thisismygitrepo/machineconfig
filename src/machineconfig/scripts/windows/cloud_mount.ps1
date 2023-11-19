@@ -12,7 +12,8 @@ if ( $script_root -eq $null) {  # this does happen if a virtual enviroment is ac
 $script_root = $PSScriptRoot
 }
 
-python -m fire $script_root/../python/cloud_mount.py main $args
+# python -m fire $script_root/../python/cloud_mount.py $args
+python -m machineconfig.scripts.python.cloud_mount $args
 if (Test-Path $op_script ) {
   . $op_script
 }

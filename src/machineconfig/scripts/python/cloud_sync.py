@@ -9,7 +9,7 @@ import argparse
 
 
 def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
-    if args.source.startswith(":"):  # default cloud name is omitted cloud_name:
+    if args.source.startswith(":") or "$" in args.source:  # default cloud name is omitted cloud_name:
         assert "$" not in args.target, f"Not Implemented here yet."
         path = P(args.target).expanduser().absolute()
         for _i in range(len(path.parts)):
@@ -26,7 +26,7 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
             print(f"⚠️ Using default cloud: {default_cloud}")
             args.source = default_cloud + ":" + args.source[1:]
 
-    if args.target.startswith(":"):  # default cloud name is omitted cloud_name:
+    if args.target.startswith(":") or "$" in args.target:  # default cloud name is omitted cloud_name:
         assert "$" not in args.source, f"Not Implemented here yet."
         path = P(args.source).expanduser().absolute()
         for _i in range(len(path.parts)):

@@ -87,7 +87,7 @@ def main():
     parser.add_argument('cloud', nargs='?', type=str, default=None, help='cloud to mount')
     parser.add_argument('--network', type=str, default=None, help='mount network drive')
     args = parser.parse_args()
-    mount(args.cloud, args.network)
+    mount(cloud=args.cloud, network=args.network)
 
 
 if __name__ == '__main__':
