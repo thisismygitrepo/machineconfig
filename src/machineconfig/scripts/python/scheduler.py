@@ -73,11 +73,11 @@ class Report:
         }})
 
 
-def run_task(task: Task):
+def run_task(task: Task, tolerance_mins: int = 60):
     suitable_run_time = task.start.time()
     time_now = datetime.now().time()
     min_diff = abs(suitable_run_time.hour - time_now.hour) * 60 + abs(suitable_run_time.minute - time_now.minute)
-    if not min_diff < 60:
+    if not min_diff < tolerance_mins:
         print(f"⌚ Time now is not suitable for running task {task.name} (Ideally, it should be run at {suitable_run_time})")
         return
     start_time = datetime.now()
@@ -101,6 +101,7 @@ def main():
             start=datetime.fromisoformat(a_task_section["start"]),
             output_dir=P(a_task_section["output_dir"]).expanduser().absolute(),
         )
+        # break
 
         if system == "Windows" and a_task.script_path.suffix != ".ps1":
             print(f"⚠️  Task {a_task.name} is not a powershell script, skipping...")
