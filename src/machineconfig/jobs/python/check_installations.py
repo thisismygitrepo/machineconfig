@@ -72,7 +72,7 @@ def main() -> None:
         #     if tmp is not None: tmp = tmp.split("\n")[0]
         #     print(f"➡️ Found version `{tmp}` for {an_app.stem}.")
         #     app_versions.append(None)
-    print(f"Checking those tools:")
+    print(f"Checking tools collected from `{INSTALL_VERSION_ROOT}`:")
     apps_paths_raw.print()
     positive_pct: list[Optional[float]] = []
     detailed_results: list[dict[str, Optional[pd.DataFrame]]] = []
@@ -99,6 +99,7 @@ def main() -> None:
     res_df["app_url"] = app_url
     res_df.to_csv(APP_SUMMARY_PATH.with_suffix(".csv").create(parents_only=True), index=False)
     APP_SUMMARY_PATH.with_suffix(".md").write_text(res_df.to_markdown())
+    print(f"Safety Report:")
     print(res_df)
 
 

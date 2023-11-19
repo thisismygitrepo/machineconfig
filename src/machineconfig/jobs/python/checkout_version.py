@@ -67,13 +67,10 @@ def get_editable_packages(ve_name: str):
     Terminal().run_script(f"""
 . $HOME/scripts/activate_ve {ve_name}
 pip list --editable > {file}""", verbose=True).print()
+    try: tmp3 = file.read_text(encoding='utf-16').splitlines()[2:]
+    except UnicodeError: tmp3 = file.read_text().splitlines()[2:]
 
     res = []
-    # print(file)
-    try:
-        tmp3 = file.read_text(encoding='utf-16').splitlines()[2:]
-    except UnicodeError:
-        tmp3 = file.read_text().splitlines()[2:]
     for a_pkg in tmp3:
         tmp = P(a_pkg.split(" ")[-1].rstrip())
         tmp1 = record_a_repo(tmp, search_parent_directories=True)  # pip list --editable returns path to package or repo in a way not yet understood.
