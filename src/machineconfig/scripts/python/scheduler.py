@@ -43,6 +43,7 @@ class Task:
 
 @dataclass
 class Report:
+    name: str
     start: datetime
     end: datetime
     status: str
@@ -51,12 +52,14 @@ class Report:
     def from_path(cls, path: P):
         ini = Read.ini(path)['report']
         return cls(
+            name=ini["name"],
             start=datetime.fromisoformat(ini["start"]),
             end=datetime.fromisoformat(ini["end"]),
             status=ini["status"],
         )
     def to_path(self, path: P):
         Save.ini(path=path, obj={'report': {
+            'name': self.name,
             'start': self.start.isoformat(),
             'end': self.end.isoformat(),
             'status': str(self.status),
@@ -69,13 +72,13 @@ def run_task(task: Task, tolerance_mins: int = 60):
     min_diff = abs(suitable_run_time.hour - time_now.hour) * 60 + abs(suitable_run_time.minute - time_now.minute)
     if not min_diff < tolerance_mins:
         status = f"⌚ Time now is not suitable for running task {task.name} (Ideally, it should be run at {suitable_run_time})"
-        report = Report(start=datetime.now(), end=datetime.now(), status=status)
+        report = Report(name=task.name, start=datetime.now(), end=datetime.now(), status=status)
         return report
     start_time = datetime.now()
     # res = Terminal().run(task.script_path.str)
     res = run_shell_script(task.script_path.str)
     end_time = datetime.now()
-    report = Report(start=start_time, end=end_time, status=res.replace('\n', '_NL_').strip().replace('=', '_eq_'))
+    report = Report(name=task.name, start=start_time, end=end_time, status=res.replace('\n', '_NL_').strip().replace('=', '_eq_'))
     report.to_path(task.report_path)
     return report
 
@@ -98,13 +101,13 @@ def main():
         if system == "Windows" and a_task.script_path.suffix != ".ps1":
             status = f"⚠️ Task {a_task.name} is not a powershell script, skipping..."
             print(status)
-            report = Report(start=datetime.now(), end=datetime.now(), status=status)
+            report = Report(name=a_task.name, start=datetime.now(), end=datetime.now(), status=status)
             result.append(report)
             continue
         elif system == "Linux" and a_task.script_path.suffix != ".sh":
             status = f"⚠️ Task {a_task.name} is not a bash script, skipping..."
             print(status)
-            report = Report(start=datetime.now(), end=datetime.now(), status=status)
+            report = Report(name=a_task.name, start=datetime.now(), end=datetime.now(), status=status)
             result.append(report)
             continue
 

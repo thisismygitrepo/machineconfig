@@ -23,6 +23,7 @@ def args_parser():
 
     parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
     parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {tb.randstr()}")
+    parser.add_argument("--skip_confirmation", "-s", help="Skip confirmation.", action="store_true")
     parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
     parser.add_argument("--push", "-u", help="Zip before sending.", action="store_true")  # default is False
@@ -94,7 +95,8 @@ except: pass
 repo_root.to_cloud(cloud='{cloud}', zip=True, encrypt=True, rel2home=True, os_specific=False)
 """
         print_programming_script(program, lexer="py", desc="Abstaining from running the following autmomatically:")
-        resp = input("Would you like to run the above commands? y/[n] ") or "n"
+        if args.skip_confirmation: resp = input("Would you like to run the above commands? y/[n] ") or "n"
+        else: resp = "y"
         if resp.lower() == "y":
             repo_sync_root.delete(sure=True)
             from git.remote import Remote
