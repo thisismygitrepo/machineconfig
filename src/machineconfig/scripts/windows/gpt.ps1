@@ -1,6 +1,7 @@
 
 
-activate_ve
+. activate_ve ve
+
 $op_script = "~/tmp_results/shells/python_return_command.ps1"
 if (Test-Path $op_script ) {
   Remove-Item $op_script

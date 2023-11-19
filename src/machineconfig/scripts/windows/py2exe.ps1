@@ -1,6 +1,7 @@
 
 #activate_ve
-. $PSScriptRoot/activate_ve.ps1
+# . $PSScriptRoot/activate_ve.ps1
+. $HOME/venvs/ve/Scripts/activate.ps1
 
 croshell -c "import_n_install('pyinstaller')"
 $destination = $(croshell -c "print(P.tmpdir())")

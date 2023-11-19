@@ -2,11 +2,14 @@
 
 winget install WinFsp.WinFsp; winget install SSHFS-Win.SSHFS-Win
 
-$host=''
-$user=''
-$sharePath=''
-$driveLetter=''
-. activate_ve
+$host = ''
+$user = ''
+$sharePath = ''
+$driveLetter = ''
+
+# . activate_ve
+. $HOME/venvs/ve/Scripts/activate.ps1
+
 python -m machineconfig.scripts.python.mount_ssh
 . $HOME/tmp_results/shells/python_return_command.ps1
 
