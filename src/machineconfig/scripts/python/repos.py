@@ -125,6 +125,7 @@ def record_repos(repos_root: str, r: bool = True) -> list[dict[str, Any]]:
 def record_a_repo(path: tb.P, search_parent_directories: bool = False):
     from git.repo import Repo
     repo = Repo(path, search_parent_directories=search_parent_directories)  # get list of remotes using git python
+    repo_root = tb.P(repo.working_dir).absolute()
     remotes = {remote.name: remote.url for remote in repo.remotes}
     try: commit = repo.head.commit.hexsha
     except ValueError:  # look at https://github.com/gitpython-developers/GitPython/issues/1016
@@ -135,7 +136,7 @@ def record_a_repo(path: tb.P, search_parent_directories: bool = False):
     except TypeError:
         print(f"⁉️ Failed to get current branch of {repo}. It is probably in a detached state.")
         current_branch = None
-    res: dict[str, Any] = {"name": path.name, "parent_dir": path.parent.collapseuser().as_posix(),
+    res: dict[str, Any] = {"name": repo_root.name, "parent_dir": repo_root.parent.collapseuser().as_posix(),
                             "current_branch": current_branch,
                             "remotes": remotes, "version": {"branch": current_branch, "commit": commit}}
     return res
