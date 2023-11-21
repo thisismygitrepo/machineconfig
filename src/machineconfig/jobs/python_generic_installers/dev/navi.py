@@ -4,6 +4,7 @@ from typing import Optional
 
 
 repo_url = "https://github.com/denisidoro/navi"
+
 __doc__ = """Interactive cheatsheet tool for the command-line"""
 
 

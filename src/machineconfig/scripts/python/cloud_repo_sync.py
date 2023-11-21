@@ -23,7 +23,7 @@ def args_parser():
 
     parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
     parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {tb.randstr()}")
-    parser.add_argument("--skip_confirmation", "-s", help="Skip confirmation.", action="store_true")
+    parser.add_argument("--skip_confirmation", "-s", help="Skip confirmation.", action="store_true", default=False)
     parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
     parser.add_argument("--push", "-u", help="Zip before sending.", action="store_true")  # default is False
