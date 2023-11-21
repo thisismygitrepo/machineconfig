@@ -102,11 +102,13 @@ else
 fi
 
 yes '' | sed 3q; echo "----------------------------- installing git ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install git -y || true  # for version control
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.git || true
-fi
+# if [ "$package_manager" = "apt" ]; then
+#   sudo apt install git -y || true  # for version control
+# else
+#   ~/.nix-profile/bin/nix-env -iA nixpkgs.git || true
+# fi
+sudo apt install git -y || true  # for version control
+
 
 #curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
 #curl https://rclone.org/install.sh | sudo bash  # onedrive equivalent.
@@ -315,6 +317,7 @@ if [ "$package_manager" = "apt" ]; then
   sudo apt install nano -y || true  # for editing files
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.nano || true
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.vscode || true
 fi
 
 # sudo apt install neovim -y  # nvim, but not latest release

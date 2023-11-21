@@ -2,10 +2,11 @@
 """VScode task to set interpreter
 """
 
-import os
+# import os
 import json
 from pathlib import Path
 import argparse
+import platform
 
 
 def select_interpreter(workspace_root: str):
@@ -13,13 +14,23 @@ def select_interpreter(workspace_root: str):
     with open(path, 'r', encoding='utf-8') as f:
         python_path = Path(f.read().strip().replace("~", str(Path.home())))
 
-    tmp = os.getenv('APPDATA')
-    assert tmp is not None
-    settings_path = Path(tmp).joinpath('Code', 'User', 'settings.json')
+    if platform.system() == 'Windows':
+        python_path = python_path.joinpath('Scripts', 'python.exe')
+    elif platform.system() == 'Linux':
+        python_path = python_path.joinpath('bin', 'python')
+    elif platform.system() == 'Darwin':
+        python_path = python_path.joinpath('bin', 'python')
+    else:
+        raise NotImplementedError(f"Unsupported platform: {platform.system()}")
 
-    with open(settings_path, 'r+', encoding='utf-8') as f:
+    # tmp = os.getenv('APPDATA')
+    # assert tmp is not None
+    # settings_path = Path(tmp).joinpath('Code', 'User', 'settings.json')
+    work_space_settings = Path(workspace_root).joinpath('.vscode', 'settings.json')
+
+    with open(work_space_settings, 'r+', encoding='utf-8') as f:
         settings = json.load(f)
-        settings['python.pythonPath'] = python_path
+        settings['python.defaultInterpreterPath'] = str(python_path)
         f.seek(0)
         json.dump(settings, f, indent=4)
         f.truncate()

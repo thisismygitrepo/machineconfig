@@ -1,14 +1,13 @@
 #!/usr/bin/bash
 
-# no assumptions on which ve is activate is used for installation, this is dictated by activate_ve.
-# this only solves the matter of where to find activate_ve script
-
 cd ~ || exit
 mkdir code
 cd ~/code || exit
 git clone https://github.com/thisismygitrepo/crocodile.git --depth 4
 git clone https://github.com/thisismygitrepo/machineconfig.git  --depth 4
 
+
+source ~/venvs/ve/bin/activate || exit
 
 cd ~/code/crocodile || exit
 
