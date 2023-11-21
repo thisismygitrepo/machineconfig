@@ -6,6 +6,7 @@ from platform import system
 # import subprocess
 import crocodile.toolbox as tb
 from machineconfig.utils.utils import LIBRARY_ROOT, DEFAULTS_PATH, print_programming_script, choose_cloud_interactively, display_options
+from machineconfig.scripts.python.cloud_sync import ES
 from typing import Any, Literal, Optional
 
 
@@ -30,7 +31,7 @@ def main(direction: OPTIONS, which: Optional[str] = None):
     if choice_key == "all": items = bu_file
     else: items = {choice_key: bu_file[choice_key]}
 
-    program = f"""$cloud = "{cloud}:$" \n """ if system() == "Windows" else f"""cloud="{cloud}:$" \n """
+    program = f"""$cloud = "{cloud}:{ES}" \n """ if system() == "Windows" else f"""cloud="{cloud}:{ES}" \n """
     for item_name, item in items.items():
         # P.home().joinpath(".ipython").to_cloud(cloud="oduq1", zip=True, encrypt=True, rel2home=True, os_specific=False)
         flags = ''

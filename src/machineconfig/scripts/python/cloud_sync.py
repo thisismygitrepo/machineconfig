@@ -7,10 +7,12 @@ from machineconfig.utils.utils import PROGRAM_PATH, DEFAULTS_PATH
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse
 
+ES = "^"  # chosen carefully to not mean anything on any shell. `$` was a bad choice.
+
 
 def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
-    if args.source.startswith(":") or "$" in args.source:  # default cloud name is omitted cloud_name:
-        assert "$" not in args.target, f"Not Implemented here yet."
+    if args.source.startswith(":") or ES in args.source:  # default cloud name is omitted cloud_name:
+        assert ES not in args.target, f"Not Implemented here yet."
         path = P(args.target).expanduser().absolute()
         for _i in range(len(path.parts)):
             if path.joinpath("cloud.json").exists():
@@ -26,8 +28,8 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
             print(f"⚠️ Using default cloud: {default_cloud}")
             args.source = default_cloud + ":" + args.source[1:]
 
-    if args.target.startswith(":") or "$" in args.target:  # default cloud name is omitted cloud_name:
-        assert "$" not in args.source, f"Not Implemented here yet."
+    if args.target.startswith(":") or ES in args.target:  # default cloud name is omitted cloud_name:
+        assert ES not in args.source, f"Not Implemented here yet."
         path = P(args.source).expanduser().absolute()
         for _i in range(len(path.parts)):
             if path.joinpath("cloud.json").exists():
@@ -47,15 +49,15 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
         source_parts: str = args.source.split(":")
         cloud = source_parts[0]
 
-        if len(source_parts) > 1 and source_parts[1] == "$":  # the source path is to be inferred from target.
-            assert "$" not in args.target, f"You can't use $ in both source and target. Cyclical inference dependency arised."
+        if len(source_parts) > 1 and source_parts[1] == ES:  # the source path is to be inferred from target.
+            assert ES not in args.target, f"You can't use $ in both source and target. Cyclical inference dependency arised."
             target = P(args.target).expanduser().absolute()
             remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
             source = P(f"{cloud}:{remote_path.as_posix()}")
 
         else:  # source path is mentioned, target? maybe.
             source = str(args.source)
-            if args.target == "$":  # target path is to be inferred from source.
+            if args.target == ES:  # target path is to be inferred from source.
                 raise NotImplementedError(f"There is no .get_local_path method yet")
             else:
                 target = P(args.target).expanduser().absolute()
@@ -66,14 +68,14 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
         target_parts: str = args.target.split(":")
         cloud = args.target.split(":")[0]
 
-        if len(target_parts) > 1 and target_parts[1] == "$":  # the target path is to be inferred from source.
-            assert "$" not in args.source, f"You can't use $ in both source and target. Cyclical inference dependency arised."
+        if len(target_parts) > 1 and target_parts[1] == ES:  # the target path is to be inferred from source.
+            assert ES not in args.source, f"You can't use $ in both source and target. Cyclical inference dependency arised."
             source = P(args.source).expanduser().absolute()
             remote_path = source.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
             target = P(f"{cloud}:{remote_path.as_posix()}")
         else:  # target path is mentioned, source? maybe.
             target = str(args.target)
-            if args.source == "$":
+            if args.source == ES:
                 raise NotImplementedError(f"There is no .get_local_path method yet")
             else:
                 source = P(args.source).expanduser().absolute()
