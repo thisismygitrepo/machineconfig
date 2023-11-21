@@ -118,6 +118,7 @@ if [ "$package_manager" = "apt" ]; then
   sudo apt install lynx -y || true  # tex browser, just like w3m
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.lynx || true
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.brave
 fi
 
 yes '' | sed 3q; echo "----------------------------- installing redis ----------------------------"; yes '' | sed 3q

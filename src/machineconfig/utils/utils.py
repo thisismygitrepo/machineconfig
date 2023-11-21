@@ -124,6 +124,7 @@ def display_options(msg: str, options: list[T], header: str = "", tail: str = ""
                 elif custom_input: return str(choice_string)  # type: ignore #TODO: fix this
                 else: raise ValueError(f"Unknown choice. {choice_string}") from te
         print(f"{choice_idx}: {choice_key}", f"<<<<-------- CHOICE MADE")
+        if multi: choice_key = [choice_key]
     return choice_key
 
 
