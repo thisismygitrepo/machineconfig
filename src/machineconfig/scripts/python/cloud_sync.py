@@ -11,7 +11,7 @@ ES = "^"  # chosen carefully to not mean anything on any shell. `$` was a bad ch
 
 
 def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
-    if args.source.startswith(":") or ES in args.source:  # default cloud name is omitted cloud_name:
+    if args.source.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in args.source
         assert ES not in args.target, f"Not Implemented here yet."
         path = P(args.target).expanduser().absolute()
         for _i in range(len(path.parts)):
@@ -28,7 +28,7 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
             print(f"⚠️ Using default cloud: {default_cloud}")
             args.source = default_cloud + ":" + args.source[1:]
 
-    if args.target.startswith(":") or ES in args.target:  # default cloud name is omitted cloud_name:
+    if args.target.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in args.target
         assert ES not in args.source, f"Not Implemented here yet."
         path = P(args.source).expanduser().absolute()
         for _i in range(len(path.parts)):
@@ -50,7 +50,7 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
         cloud = source_parts[0]
 
         if len(source_parts) > 1 and source_parts[1] == ES:  # the source path is to be inferred from target.
-            assert ES not in args.target, f"You can't use $ in both source and target. Cyclical inference dependency arised."
+            assert ES not in args.target, f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised."
             target = P(args.target).expanduser().absolute()
             remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
             source = P(f"{cloud}:{remote_path.as_posix()}")
