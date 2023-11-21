@@ -1,6 +1,23 @@
 
 
-export PATH="~/.local/bin:~/code/machineconfig/src/machineconfig/scripts/linux:~/dotfiles/scripts/linux:~/.nix-profile/bin:/usr/games:$PATH"
+# export PATH="~/.local/bin:~/code/machineconfig/src/machineconfig/scripts/linux:~/dotfiles/scripts/linux:~/.nix-profile/bin:/usr/games:$PATH"
+
+add_to_path_if_not_already() {
+    for dir in "$@"; do
+        if [[ ! $PATH =~ (^|:)"${dir}"(:|$) ]]; then
+            export PATH="${dir}:$PATH"
+        fi
+    done
+}
+
+add_to_path_if_not_already \
+    "$HOME/.local/bin" \
+    "$HOME/code/machineconfig/src/machineconfig/scripts/linux" \
+    "$HOME/dotfiles/scripts/linux" \
+    "$HOME/.nix-profile/bin" \
+    "/usr/games"
+# this way, if the script was run multiple times, e.g. due to nested shells in zellij, there will be no duplicates in the path
+
 
 machineconfig_path=$HOME/code/machineconfig/src/machineconfig
 . $machineconfig_path/settings/broot/br.sh

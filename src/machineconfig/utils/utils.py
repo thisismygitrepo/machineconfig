@@ -171,20 +171,20 @@ def write_shell_script(program: str, desc: str = "", preserve_cwd: bool = True, 
             program = 'orig_path=$(cd -- "." && pwd)\n' + program + '\ncd "$orig_path" || exit'
     if display:
         print(f"Executing {PROGRAM_PATH}")
-        print_programming_script(program=program, lexer="shell", desc=desc)
+        print_code(code=program, lexer="shell", desc=desc)
     if platform.system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
     else: PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
     if execute: Terminal().run(f". {PROGRAM_PATH}", shell="powershell").print_if_unsuccessful(desc="Executing shell script", strict_err=True, strict_returncode=True)
     return None
 
 
-def print_programming_script(program: str, lexer: str, desc: str = ""):
+def print_code(code: str, lexer: str, desc: str = ""):
     if lexer == "shell":
         if platform.system() == "Windows": lexer = "powershell"
         elif platform.system() == "Linux": lexer = "sh"
         else: raise NotImplementedError(f"lexer {lexer} not implemented for system {platform.system()}")
     console = Console()
-    console.print(Panel(Syntax(program, lexer=lexer), title=desc), style="bold red")
+    console.print(Panel(Syntax(code=code, lexer=lexer), title=desc), style="bold red")
 
 
 def get_latest_version(url: str) -> None:

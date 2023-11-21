@@ -4,7 +4,7 @@
 import crocodile.toolbox as tb
 import argparse
 import platform
-from machineconfig.utils.utils import print_programming_script, CONFIG_PATH, DEFAULTS_PATH, write_shell_script
+from machineconfig.utils.utils import print_code, CONFIG_PATH, DEFAULTS_PATH, write_shell_script
 # import sys
 # import subprocess
 
@@ -94,7 +94,7 @@ try: Remote.remove(Repo(repo_root), "originEnc")
 except: pass
 repo_root.to_cloud(cloud='{cloud}', zip=True, encrypt=True, rel2home=True, os_specific=False)
 """
-        print_programming_script(program, lexer="py", desc="Abstaining from running the following autmomatically:")
+        print_code(program, lexer="py", desc="Abstaining from running the following autmomatically:")
         if args.skip_confirmation: resp = input("Would you like to run the above commands? y/[n] ") or "n"
         else: resp = "y"
         if resp.lower() == "y":

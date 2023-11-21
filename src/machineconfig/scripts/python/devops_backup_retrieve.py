@@ -5,7 +5,7 @@
 from platform import system
 # import subprocess
 import crocodile.toolbox as tb
-from machineconfig.utils.utils import LIBRARY_ROOT, DEFAULTS_PATH, print_programming_script, choose_cloud_interactively, display_options
+from machineconfig.utils.utils import LIBRARY_ROOT, DEFAULTS_PATH, print_code, choose_cloud_interactively, display_options
 from machineconfig.scripts.python.cloud_sync import ES
 from typing import Any, Literal, Optional
 
@@ -44,7 +44,7 @@ def main(direction: OPTIONS, which: Optional[str] = None):
         elif direction == "RETRIEVE": program += f"""\ncloud_copy $cloud "{tb.P(item['path']).as_posix()}" {flags}\n"""
         else: raise RuntimeError(f"Unknown direction: {direction}")
         if item_name == "dotfiles" and system() == "Linux": program += f"""\nchmod 700 ~/.ssh/*\n"""
-    print_programming_script(program, lexer="shell", desc=f"{direction} script")
+    print_code(program, lexer="shell", desc=f"{direction} script")
     return program
 
 
