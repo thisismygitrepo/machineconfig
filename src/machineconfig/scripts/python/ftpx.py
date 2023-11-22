@@ -1,9 +1,13 @@
 
 """Sx & Rx
+
+TODO: add support for cases in which source or target has non 22 default port number and is defineda as user@host:port:path which makes 2 colons in the string.
+Currently, the only way to work around this is to predifine the host in ~/.ssh/config and use the alias in the source or target which is inconvenient when dealing with newly setup machines.
 """
 
 import argparse
 from crocodile.meta import SSH, P, Struct
+from machineconfig.scripts.python.cloud_sync import ES
 
 
 def main():
@@ -24,15 +28,15 @@ def main():
         # calculating source:
         source_parts = args.source.split(":")
         machine = source_parts[0]
-        if len(source_parts) > 1 and source_parts[1] == "$":  # the source path is to be inferred from target.
-            if args.target == "$":
-                raise ValueError("You can't use $ in both source and target. Cyclical inference dependency arised.")
+        if len(source_parts) > 1 and source_parts[1] == ES:  # the source path is to be inferred from target.
+            if args.target == ES:
+                raise ValueError(f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised.")
             else:
                 target = P(args.target).expanduser().absolute()
             source = target.collapseuser().as_posix()
         else:
             source = ":".join(args.source.split(":")[1:])
-            if args.target == "$":
+            if args.target == ES:
                 target = None
             else: target = P(args.target).expanduser().absolute().as_posix()
 
@@ -40,15 +44,15 @@ def main():
         source_is_remote = False
         target_parts = args.target.split(":")
         machine = target_parts[0]
-        if len(target_parts) > 1 and target_parts[1] == "$":
-            if args.source == "$":
-                raise ValueError("You can't use $ in both source and target. Cyclical inference dependency arised.")
+        if len(target_parts) > 1 and target_parts[1] == ES:
+            if args.source == ES:
+                raise ValueError(f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised.")
             else:
                 source = args.source
             target = None
         else:
             target = ":".join(args.target.split(":")[1:])
-            if args.source == "$":
+            if args.source == ES:
                 source = None
             else: source = P(args.source).expanduser().absolute()
 
