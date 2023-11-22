@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+zellij action new-tab --name resources
+zellij action go-to-tab-name resources
+zellij run -- btm
+zellij run -- htop
+zellij action move-focus left
+zellij action close-pane
+zellij run -- btop

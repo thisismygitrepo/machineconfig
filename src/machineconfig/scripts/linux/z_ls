@@ -2,6 +2,8 @@
 
 # adopted from https://zellij.dev/documentation/integration.html
 ZJ_SESSIONS=$(zellij list-sessions)
+# echo "$ZJ_SESSIONS"
+
 NO_SESSIONS=$(echo "${ZJ_SESSIONS}" | wc -l)
 # if ZJ_SESSIONS is empty, then set NO_SESSIONS to 0
 if [ -z "${ZJ_SESSIONS}" ]; then
@@ -12,16 +14,20 @@ fi
 if [[ "${ZJ_SESSIONS}" == *"(current)"* ]]; then
     # if so, then we are in a zellij session
     echo "already inside a session, existing."
-    # . $HOME/code/machineconfig/src/machineconfig/settings/zellij/commands/standard_panes
+    COMMANDS=$(ls $HOME/code/machineconfig/src/machineconfig/settings/zellij/commands)
+    # fzf the results
+    res="$(echo -e "${COMMANDS}" | fzf --ansi)"
+    # run the bash file chosen
+    bash $HOME/code/machineconfig/src/machineconfig/settings/zellij/commands/$res
 
 else # ==> we are not in a zellij session
   if [ "${NO_SESSIONS}" -ge 1 ]; then  # sessions do exist
       ZJ_SESSIONS="$ZJ_SESSIONS\nnew_session\nkill_all_and_create_fresh_one\nexit_zellij"
-      res="$(echo -e "${ZJ_SESSIONS}" | fzf)"
+      res="$(echo -e "${ZJ_SESSIONS}" | fzf --ansi)"
       if [ "${res}" = "exit_zellij" ]; then
           echo "existing zellij."
       elif [ "${res}" = "new_session" ]; then
-        zellij --layout st  # can't specify name here. I can call it "main" only if it is the first, otherwise name conflict! also, can't use attach -c syntax because layout can't be specified.
+        zellij --layout st2  # can't specify name here. I can call it "main" only if it is the first, otherwise name conflict! also, can't use attach -c syntax because layout can't be specified.
       elif [ "${res}" = "kill_all_and_create_fresh_one" ]; then
         zellij ka -y
         zellij --session main --layout st2

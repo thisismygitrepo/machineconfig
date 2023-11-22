@@ -21,7 +21,7 @@ def print_dir():
 
 
 @register_line_magic("code")  # type: ignore
-def print_code(obj_str: str):
+def print_program(obj_str: str):
     """Inspect the code of an object."""
     from rich.syntax import Syntax
     import inspect
