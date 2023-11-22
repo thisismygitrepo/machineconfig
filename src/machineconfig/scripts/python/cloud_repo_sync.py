@@ -95,8 +95,8 @@ except: pass
 repo_root.to_cloud(cloud='{cloud}', zip=True, encrypt=True, rel2home=True, os_specific=False)
 """
         print_code(program, lexer="py", desc="Abstaining from running the following autmomatically:")
-        if args.skip_confirmation: resp = input("Would you like to run the above commands? y/[n] ") or "n"
-        else: resp = "y"
+        if args.skip_confirmation: resp = "y"
+        else: resp = input("Would you like to run the above commands? y/[n] ") or "n"
         if resp.lower() == "y":
             repo_sync_root.delete(sure=True)
             from git.remote import Remote
