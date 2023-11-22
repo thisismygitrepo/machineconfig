@@ -57,7 +57,10 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 nvm install node || true
 
 yes '' | sed 3q; echo "----------------------------- installing sharewifi ----------------------------"; yes '' | sed 3q
-npm install sharewifi -g || true
+# npm install sharewifi -g || true
+# flatpak install flathub org.mozilla.Thunderbird
+# flatpak install flathub com.brave.Browser
+# ln -s /home/$USER/.nix-profile/share/applications/* /home/$USER/.local/share/applications/
 
 yes '' | sed 3q; echo "----------------------------- installing github-copilot-cli ----------------------------"; yes '' | sed 3q
 nix-env -iA nixpkgs.gh
@@ -242,13 +245,15 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.boxes || true
 fi
 
-yes '' | sed 3q; echo "----------------------------- installing cowsay ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install cowsay -y || true  # animals saying things. Different figures with -f. Full list: cowsay -l
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.neo-cowsay || true
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.cowsay || true
-fi
+# yes '' | sed 3q; echo "----------------------------- installing cowsay ----------------------------"; yes '' | sed 3q
+# if [ "$package_manager" = "apt" ]; then
+#   sudo apt install cowsay -y || true  # animals saying things. Different figures with -f. Full list: cowsay -l
+# else
+#   # ~/.nix-profile/bin/nix-env -iA nixpkgs.neo-cowsay || true
+#   # ~/.nix-profile/bin/nix-env -iA nixpkgs.cowsay || true
+# fi
+sudo apt install cowsay -y || true  # animals saying things. This installer gives different figures to nix installer. Sticking to this one to avoid errors.
+
 
 yes '' | sed 3q; echo "----------------------------- installing lolcat ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
