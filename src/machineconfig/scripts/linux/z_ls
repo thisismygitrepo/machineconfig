@@ -24,6 +24,8 @@ else # ==> we are not in a zellij session
   if [ "${NO_SESSIONS}" -ge 1 ]; then  # sessions do exist
       ZJ_SESSIONS="$ZJ_SESSIONS\nnew_session\nkill_all_and_create_fresh_one\nexit_zellij"
       res="$(echo -e "${ZJ_SESSIONS}" | fzf --ansi)"
+      # split `res` at the first space, and take the first element
+      res=$(echo $res | cut -d' ' -f1)
       if [ "${res}" = "exit_zellij" ]; then
           echo "existing zellij."
       elif [ "${res}" = "new_session" ]; then
