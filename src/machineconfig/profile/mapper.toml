@@ -5,6 +5,9 @@
 gitconfig = {this = '~/.gitconfig', to_this = '~/dotfiles/settings/.gitconfig'}
 gitcred = {this = '~/.git-credentials', to_this = '~/dotfiles/settings/.git-credentials'}
 
+[github_cli_token]
+token = {this = '~/.copilot-cli-access-token', to_this = '~/dotfiles/creds/git/.copilot-cli-access-token'}
+
 [opencommit]
 opencommit = {this = '~/.opencommit', to_this = '~/dotfiles/settings/.opencommit'}
 
