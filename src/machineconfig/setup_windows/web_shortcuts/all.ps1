@@ -13,6 +13,3 @@ $machineconfig = (& "$HOME/venvs/ve/Scripts/python.exe" -c "print(__import__('ma
 
 # devapps:
 . "$machineconfig/setup_windows/devapps.ps1"
-
-# symlinks: locally, run: `ftpsx username@hostname[:port] ~/dotfiles -z`, then, on the remote:
-#. "$machineconfig/setup_windows/symlinks.ps1"  # one cane either do this with devops utility any time.
