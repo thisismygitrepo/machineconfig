@@ -111,6 +111,7 @@ yes '' | sed 3q; echo "----------------------------- installing git ------------
 #   ~/.nix-profile/bin/nix-env -iA nixpkgs.git || true
 # fi
 sudo apt install git -y || true  # for version control
+sudo apt install htop -y || true  # for monitoring system resources
 
 
 #curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
