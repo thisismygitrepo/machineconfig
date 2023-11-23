@@ -35,13 +35,13 @@ winget install --no-upgrade --name "DB Browser for SQLite" --Id "DBBrowserForSQL
 Install-Module -Name Terminal-Icons -Repository PSGallery
 # Install oh-my-posh
 winget install --no-upgrade --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" --source winget
+winget install --no-upgrade --name  "Chafa" --Id hpjansson.Chafa --source winget --accept-package-agreements --accept-source-agreements
 
 $ErrorActionPreference = "Stop"  # if there is any error in any command, stop there instead of proceeding to the next.
 winget install --no-upgrade --name "Python" --Id Python.Python.3.9 --source winget  # from https:\\winget.run  Python.Python.3.9
 winget install --no-upgrade --name "Python" --Id Python.Python.3.10 --source winget
 winget install --no-upgrade --name "Git" --Id Git.Git --source winget --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "GitHub CLI" --Id GitHub.cli --source winget --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name  "Chafa" --Id hpjansson.Chafa --source winget --accept-package-agreements --accept-source-agreements
 
 # the two above require Restart-Computer -Force before they are available in PATH, OR:
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
