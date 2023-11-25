@@ -5,6 +5,16 @@ if (Test-Path $op_script ) {
 }
 
 
+try {
+  # $null = & chafa --version
+  # & chafa "$HOME\code\machineconfig\assets\aafire.webp" --speed 2 --duration 1
+  Chafa.exe "$HOME\code\machineconfig\assets\aafire.webp" --speed 2 --duration 1
+
+} catch {
+  # Write-Host "Chafa not found, skipping."
+}
+
+
 . "$HOME\scripts\activate_ve.ps1" ve
 python -m machineconfig.scripts.python.fire_jobs $args
 
