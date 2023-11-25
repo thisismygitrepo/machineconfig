@@ -147,6 +147,8 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
     except Exception as ex: print(f"Failed to copy command to clipboard. {ex}")
     # TODO: send this command to terminal history. In powershell & bash there is no way to do it with a command other than goiing to history file. In Mcfly there is a way but its linux only tool. # if platform.system() == "Windows": command = f" ({command}) | Add-History  -PassThru "
     print(f"🔥 command:\n{command}\n\n")
+    # if platform.system() == "Linux":
+    #     command = "timeout 1s aafire -driver slang\nclear\n" + command
     PROGRAM_PATH.write_text(command)
 
 

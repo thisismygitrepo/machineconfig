@@ -32,7 +32,7 @@ layout {
                 
                 pane name="bottomleft2" size="60%" {
                     command "timeout"
-                    args "3s" "aafire"
+                    args "3s" "aafire" "-driver" "slang"
                     close_on_exit true
                 }
                 

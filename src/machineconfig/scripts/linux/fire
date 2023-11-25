@@ -7,6 +7,9 @@ if [ -f "$op_script" ]; then
   rm $op_script
 fi
 
+timeout 0.5s aafire  #  -driver slang
+clear
+
 python $(dirname $(dirname $0))/python/fire_jobs.py "$@"
 
 if [ -f "$op_script" ]; then
