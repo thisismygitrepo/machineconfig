@@ -78,3 +78,7 @@
 # https://github.com/ml-tooling/best-of-jupyter
 
 * "pylint.ignorePatterns", "mypy-type-checker.ignorePatterns" and "flake8.ignorePatterns".
+
+# Others
+* https://github.com/yt-dlp/yt-dlp/
+* https://github.com/Siriusmart/youtube-tui

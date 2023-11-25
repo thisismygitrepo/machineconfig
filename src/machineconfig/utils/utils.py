@@ -47,15 +47,25 @@ def choose_cloud_interactively() -> str:
 
 def sanitize_path(a_path: P):
     path = P(a_path)
-    if path.as_posix().startswith("/home") and platform.system() == "Windows":  # path copied from Linux
-        path = P.home().joinpath(*path.parts[2:])  # exlcude /home/username
-        assert path.exists(), f"File not found: {path}"
-        print(f"\n{'--' * 50}\n🔗 Mapped `{a_path}` ➡️ `{path}`\n{'--' * 50}\n")
-    elif path.as_posix().startswith("C:") and platform.system() == "Linux":  # path copied from Windows
-        xx = str(a_path).replace("\\", "/")
-        path = P.home().joinpath(*P(xx).parts[3:])  # exlcude C:\Users\username
-        assert path.exists(), f"File not found: {path}"
-        print(f"\n{'--' * 50}\n🔗 Mapped `{a_path}` ➡️ `{path}`\n{'--' * 50}\n")
+    if path.as_posix().startswith("/home"):
+        if platform.system() == "Windows":  # path copied from Linux to Windows
+            path = P.home().joinpath(*path.parts[2:])  # exlcude /home/username
+            assert path.exists(), f"File not found: {path}"
+            print(f"\n{'--' * 50}\n🔗 Mapped `{a_path}` ➡️ `{path}`\n{'--' * 50}\n")
+        elif platform.system() == "Linux" and P.home().as_posix() not in path.as_posix():  # copied from Linux to Linux with different username
+            path = P.home().joinpath(*path.parts[2:])  # exlcude /home/username
+            assert path.exists(), f"File not found: {path}"
+            print(f"\n{'--' * 50}\n🔗 Mapped `{a_path}` ➡️ `{path}`\n{'--' * 50}\n")
+    elif path.as_posix().startswith("C:"):
+        if platform.system() == "Linux":  # path copied from Windows to Linux
+            xx = str(a_path).replace("\\", "/")
+            path = P.home().joinpath(*P(xx).parts[3:])  # exlcude C:\Users\username
+            assert path.exists(), f"File not found: {path}"
+            print(f"\n{'--' * 50}\n🔗 Mapped `{a_path}` ➡️ `{path}`\n{'--' * 50}\n")
+        elif platform.system() == "Windows" and P.home().as_posix() not in path.as_posix():  # copied from Windows to Windows with different username
+            path = P.home().joinpath(*path.parts[2:])
+            assert path.exists(), f"File not found: {path}"
+            print(f"\n{'--' * 50}\n🔗 Mapped `{a_path}` ➡️ `{path}`\n{'--' * 50}\n")
     return path.expanduser().absolute()
 
 
