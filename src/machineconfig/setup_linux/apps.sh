@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+# This scripts is meant to keep going even if some commands fail.
+
 # ----------------- package manager -----------------
 yes '' | sed 3q; echo "----------------------------- installing upgrading and updating apt ----------------------------"; yes '' | sed 3q
 sudo apt update -y || true
@@ -28,6 +30,8 @@ fi
 #exclude_dirs="/mnt /tmp /var/tmp"
 #updatedb --prunepaths="$exclude_dirs"  # update the mlocate database
 #updatedb --prunefs="NFS,smbfs,cifs"
+
+# sudo apt install remmina remmina-plugin-rdp -y
 
 
 # -------------------- Utilities --------------------
@@ -65,6 +69,7 @@ yes '' | sed 3q; echo "----------------------------- installing sharewifi ------
 yes '' | sed 3q; echo "----------------------------- installing github-copilot-cli ----------------------------"; yes '' | sed 3q
 nix-env -iA nixpkgs.gh
 # as per https://docs.github.com/en/copilot/github-copilot-in-the-cli/using-github-copilot-in-the-cli
+# gh auth login
 # gh extension install github/gh-copilot
 
 yes '' | sed 3q; echo "----------------------------- installing easy-sharing ----------------------------"; yes '' | sed 3q
@@ -332,10 +337,12 @@ fi
 # sudo apt remove neovim
 # sudo rm ~/.local/bin/nvim || true
 yes '' | sed 3q; echo "----------------------------- installing nvim ----------------------------"; yes '' | sed 3q
-cd ~ || true
-wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.deb || true
-sudo apt install ./nvim-linux64.deb || true
-rm nvim-linux64.deb || true
+# cd ~ || true
+# wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.deb || true
+# sudo apt install ./nvim-linux64.deb || true
+# rm nvim-linux64.deb || true
+~/.nix-profile/bin/nix-env -iA nixpkgs.neovim
+
 
 
 yes '' | sed 3q; echo "----------------------------- installing lunarvim ----------------------------"; yes '' | sed 3q
