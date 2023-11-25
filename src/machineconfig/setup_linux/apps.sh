@@ -312,6 +312,10 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
 fi
 
+yes '' | sed 3q; echo "----------------------------- installing chafa ----------------------------"; yes '' | sed 3q
+sudo apt install chafa -y  # like viu, one can ascii-ize images.
+
+
 yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install cmatrix -y || true  # for fun

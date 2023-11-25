@@ -9,7 +9,7 @@ if (-not (Test-Path variable:ve_name)) {
 } else { Write-Host "➡️ ve_name = $ve_name" }
 
 if (-not (Test-Path variable:py_version)) {
-    $py_version=3.11
+    $py_version=3.12
     Write-Host "⚠️ Using default py_version $py_version" 
 } else { Write-Host "➡️ py_version = $py_version" }
 # --- End of user defined variables ---
