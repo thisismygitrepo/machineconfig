@@ -31,19 +31,22 @@ def checkout_version(version: str, repo_root: P, exclude_editable: bool = False)
     req_root = repo_root.collapseuser().joinpath(f"versions/{version}").as_posix()
     checkout_ve = f"{repo_root.name}-{version}-prod" if not exclude_editable else ve_name
     checkout_ve = input(f"Name of the ve to create (default: {checkout_ve}): ") or checkout_ve
-
-    template = get_ve_install_script(ve_name=checkout_ve, py_version=py_version)
-    template += f"""
+    # print("dfs"*100)
+    ve_template = get_ve_install_script(ve_name=checkout_ve, py_version=py_version)
+    ve_template += f"""
 . $HOME/scripts/activate_ve $ve_name
 cd {req_root}
 pip install -r requirements_{sys}.txt
 {extra_program}
 """
-    P(req_root).expanduser().create().joinpath("install" + (".ps1" if sys == "windows" else ".sh")).write_text(template)
-    Terminal().run_script(f"""
+    P(req_root).expanduser().create().joinpath("install" + (".ps1" if sys == "windows" else ".sh")).write_text(ve_template)
+    pip_freeze_script = f"""
 cd '{target_dir}'
-. $HOME/scripts/activate_ve {ve_name}
-pip freeze {'--exclude-editable' if exclude_editable else ''} > requirements_{platform.system().lower()}.txt""", verbose=True).print()
+deactivate
+bash "$HOME/scripts/activate_ve" {ve_name}
+python -m pip freeze {'--exclude-editable' if exclude_editable else ''} > requirements_{platform.system().lower()}.txt
+"""
+    Terminal().run_script(pip_freeze_script, verbose=True).print()
     print(f"✅ Installed requirements for version {version}.")
 
 
