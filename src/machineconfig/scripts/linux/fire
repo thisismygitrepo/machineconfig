@@ -8,7 +8,7 @@ if [ -f "$op_script" ]; then
 fi
 
 
-timeout 0.5 chafa "$HOME/code/machineconfig/assets/aafire.webp"
+timeout 1 chafa "$HOME/code/machineconfig/assets/aafire.webp"
 # timeout 0.5s aafire  #  -driver slang
 # clear
 

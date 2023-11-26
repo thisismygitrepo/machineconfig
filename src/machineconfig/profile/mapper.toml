@@ -20,6 +20,7 @@ config = {this = '~/.config/rclone/rclone.conf', to_this = '~/dotfiles/creds/rcl
 [rclone_windows]
 config = {this = '~/AppData/Roaming/rclone/rclone.conf', to_this = '~/dotfiles/creds/rclone/rclone.conf'}
 
+
 # shells profiles
 [powershell_windows]
 CurrentUserCurrentHost = {this = '~/Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserCurrentHost/Microsoft.PowerShell_profile.ps1'}
@@ -39,6 +40,11 @@ bashrc = {this = '~/.inputrc', to_this = '~/dotfiles/shells/bash/.inputrc'}
 [nushell_windows]
 config = {this = '~/AppData/Roaming/nushell/config.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/config.nu'}
 env = {this = '~/AppData/Roaming/nushell/env.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/env.nu'}
+
+
+[kitty_linux]
+config = {this = '~/.config/kitty/kitty.conf', to_this = 'LIBRARY_ROOT/settings/shells/kitty/kitty.conf'}
+
 
 [vtm_windows]
 settings = {this = '~/.config/vtm/settings.xml', to_this = 'LIBRARY_ROOT/settings/shells/vtm/settings.xml'}
