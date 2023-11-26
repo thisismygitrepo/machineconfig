@@ -1,0 +1,35 @@
+
+
+# https://github.com/tmcdonell/config-alacritty/blob/master/alacritty.yml
+# https://github.com/alacritty/alacritty/blob/master/extra/man/alacritty.5.scd
+
+window:
+  startup_mode: "Fullscreen"
+  decorations: None
+  padding:
+    x: 0
+    y: 0
+
+
+# Colors
+colors:
+
+  # Tomorrow (https://github.com/aarowill/base16-alacritty/blob/master/colors/base16-tomorrow.yml)
+  # Default colors
+  primary:
+    background: '0x000000'
+
+font:
+  size: 14.0
+
+
+selection:
+  semantic_escape_chars: ",│`|:\"' ()[]{}<>"
+  save_to_clipboard: false
+
+key_bindings:
+  - { key: V,        mods: Command,       action: Paste                        }
+  - { key: C,        mods: Command,       action: Copy                         }
+  - { key: Q,        mods: Command,       action: Quit                         }
+  - { key: N,        mods: Command,       action: SpawnNewInstance             }
+  - { key: Return,   mods: Command,       action: ToggleFullscreen             }

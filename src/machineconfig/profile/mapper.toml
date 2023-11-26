@@ -45,6 +45,15 @@ env = {this = '~/AppData/Roaming/nushell/env.nu', to_this = 'LIBRARY_ROOT/settin
 [kitty_linux]
 config = {this = '~/.config/kitty/kitty.conf', to_this = 'LIBRARY_ROOT/settings/shells/kitty/kitty.conf'}
 
+[alacritty_linux]
+config = {this = '~/.config/alacritty/alacritty.toml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.toml'}
+config_yaml = {this = '~/.config/alacritty/alacritty.yml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.yml'}
+
+
+[alacritty_windows]
+config = {this = '~/AppData/Roaming/alacritty/alacritty.toml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.toml'}
+config_yaml = {this = '~/AppData/Roaming/alacritty/alacritty.yml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.yml'}
+
 
 [vtm_windows]
 settings = {this = '~/.config/vtm/settings.xml', to_this = 'LIBRARY_ROOT/settings/shells/vtm/settings.xml'}
