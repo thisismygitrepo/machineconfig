@@ -31,10 +31,22 @@ fi
 #updatedb --prunepaths="$exclude_dirs"  # update the mlocate database
 #updatedb --prunefs="NFS,smbfs,cifs"
 
-# sudo apt install remmina remmina-plugin-rdp -y
-
-
 # -------------------- Utilities --------------------
+
+
+yes '' | sed 3q; echo "----------------------------- installing cloudflared Warp --------------------------------"; yes '' | sed 3q
+# as per Ubuntu of https://pkg.cloudflareclient.com/
+curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ jammy main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
+sudo apt-get update && sudo apt-get install cloudflare-warp
+# yes '' | sed 3q; echo "----------------------------- installing cloudflared -------------------------------"; yes '' | sed 3q
+# # install as per instructions. Advantage of avoiding a package manager is getting: cloudflared update command.
+# wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb && sudo dpkg -i cloudflared-linux-amd64.deb
+
+
+yes '' | sed 3q; echo "----------------------------- installing remmina--------------------------------"; yes '' | sed 3q
+sudo apt install remmina remmina-plugin-rdp -y
+
 
 yes '' | sed 3q; echo "----------------------------- installing wget --------------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
@@ -75,11 +87,6 @@ nix-env -iA nixpkgs.gh
 yes '' | sed 3q; echo "----------------------------- installing easy-sharing ----------------------------"; yes '' | sed 3q
 npm install -g easy-sharing  # https://github.com/parvardegr/sharing
 # https://github.com/mifi/ezshare
-
-
-# yes '' | sed 3q; echo "----------------------------- installing cloudflared -------------------------------"; yes '' | sed 3q
-# # install as per instructions. Advantage of avoiding a package manager is getting: cloudflared update command.
-# wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb && sudo dpkg -i cloudflared-linux-amd64.deb
 
 
 yes '' | sed 3q; echo "----------------------------- installing sshfs ----------------------------"; yes '' | sed 3q
