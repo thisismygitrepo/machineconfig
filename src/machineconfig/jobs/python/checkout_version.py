@@ -42,11 +42,10 @@ pip install -r requirements_{sys}.txt
     P(req_root).expanduser().create().joinpath("install" + (".ps1" if sys == "windows" else ".sh")).write_text(ve_template)
     pip_freeze_script = f"""
 cd '{target_dir}'
-deactivate
-bash "$HOME/scripts/activate_ve" {ve_name}
+. "$HOME/scripts/activate_ve" {ve_name}
 python -m pip freeze {'--exclude-editable' if exclude_editable else ''} > requirements_{platform.system().lower()}.txt
 """
-    Terminal().run_script(pip_freeze_script, verbose=True).print()
+    Terminal().run_script(pip_freeze_script, verbose=True, shell="default").print()
     print(f"✅ Installed requirements for version {version}.")
 
 
@@ -67,9 +66,11 @@ def main():
 
 def get_editable_packages(ve_name: str):
     file = P.tmp().joinpath(f"tmp_files/editable_requirements_{randstr()}.txt")
-    Terminal().run_script(f"""
+    editable_packages_script = f"""
 . $HOME/scripts/activate_ve {ve_name}
-pip list --editable > {file}""", verbose=True).print()
+pip list --editable > {file}
+"""
+    Terminal().run_script(editable_packages_script, verbose=True, shell="default").print()
     try: tmp3 = file.read_text(encoding='utf-16').splitlines()[2:]
     except UnicodeError: tmp3 = file.read_text().splitlines()[2:]
 

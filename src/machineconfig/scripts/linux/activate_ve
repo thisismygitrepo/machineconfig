@@ -47,8 +47,8 @@ else
     fi
 
   else
-    echo $0
-    echo $1
+    # echo $0
+    # echo $1
     echo "⚠️ Virtual environment $VIRTUAL_ENV already active"
   fi
 
