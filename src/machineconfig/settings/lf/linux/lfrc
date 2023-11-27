@@ -80,14 +80,15 @@ map R $~/scripts/croshell -r $f
 
 
 # o file/folder Operations
+map c clear
+map <delete> delete
+
 map o
 map od cut
 map op paste
 map oy copy
 map oc $Set-Clipboard -Value $env:f
-map c clear
 map or rename
-map <delete> delete
 map of reload
 map os mark-save
 map ol mark-load

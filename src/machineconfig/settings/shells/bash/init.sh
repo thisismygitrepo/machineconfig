@@ -45,3 +45,4 @@ eval "$(zoxide init bash)"
 # # until programmatic detach functionality is implemented in zellij, this script will continue to not do anything if run inside a session.
 # fi
 
+# TERM=xterm
