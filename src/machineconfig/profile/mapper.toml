@@ -86,6 +86,9 @@ colors = {this = '~/.config/lf/colors', to_this = 'LIBRARY_ROOT/settings/lf/linu
 config = {this = '~/.config/lf/lfrc', to_this = 'LIBRARY_ROOT/settings/lf/linux/lfrc'}
 icons = {this = '~/.config/lf/icons', to_this = 'LIBRARY_ROOT/settings/lf/linux/icons'}
 
+[gromit_linux]
+config = {this = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg', to_this = 'LIBRARY_ROOT/settings/gromit-mpx/gromit-mpx.cfg'}
+
 # zoxide can't read symlink files
 # [zoxide_windows]
 # database = {this = '~/AppData/Local/zoxide/db.zo', to_this = '~/dotfiles/settings/zoxide_windows/db.zo'}
