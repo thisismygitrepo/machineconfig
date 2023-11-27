@@ -86,7 +86,7 @@ def match_file_name(sub_string: str):
     return path_obj
 
 
-def choose_one_option(options: list[T], header: str = "", tail: str = "", prompt: str = "", msg="",
+def choose_one_option(options: list[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "",
                       default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> T:
     choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt,
                                  default=default, fzf=fzf, multi=multi, custom_input=custom_input)
@@ -94,7 +94,7 @@ def choose_one_option(options: list[T], header: str = "", tail: str = "", prompt
     return choice_key
 
 
-def choose_multiple_options(options: list[T], header: str = "", tail: str = "", prompt: str = "", msg="",
+def choose_multiple_options(options: list[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "",
                             default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> list[T]:
     choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt,
                                  default=default, fzf=fzf, multi=multi, custom_input=custom_input)

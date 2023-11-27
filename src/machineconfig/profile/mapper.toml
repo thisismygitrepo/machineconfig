@@ -5,6 +5,10 @@
 gitconfig = {this = '~/.gitconfig', to_this = '~/dotfiles/settings/.gitconfig'}
 gitcred = {this = '~/.git-credentials', to_this = '~/dotfiles/settings/.git-credentials'}
 
+[ssh]
+keys = {this = '~/.ssh', to_this = '~/dotfiles/creds/.ssh', contents = 'True'}
+
+
 [github_cli_token]
 token = {this = '~/.copilot-cli-access-token', to_this = '~/dotfiles/creds/git/.copilot-cli-access-token'}
 
@@ -146,6 +150,14 @@ init = { this = '~/.SpaceVim.d/init.toml', to_this = 'LIBRARY_ROOT/settings/svim
 notepadpp = {this = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', to_this = 'C:/Program Files/Notepad++/notepad++.exe'}
 # tesseract = {this = '~/AppData/Local/Microsoft/WindowsApps/tesseract.exe', to_this = '~/AppData/Local/Tesseract-OCR/tesseract.exe'}  # doesn't work without whole installation dir is on PATH.
 
+[webapp_linux]
+brave = {this = '~/.local/share/applications', to_this = 'LIBRARY_ROOT/profile/webapps/linux/brave', contents = 'True'}
+
+[startup_windows]
+startup = {this = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup', to_this = '~/dotfiles/scripts/windows_startup', contents = 'True'}
+
+[aws]
+config = {this = '~/.aws/config', to_this = '~/dotfiles/aws/.aws', contents = 'True'}
 
 [wt_windows]
 settings = { this = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', to_this = 'LIBRARY_ROOT/settings/shells/wt/settings.json' }
