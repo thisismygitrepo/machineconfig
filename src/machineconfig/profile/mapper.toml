@@ -151,7 +151,7 @@ notepadpp = {this = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', to_th
 # tesseract = {this = '~/AppData/Local/Microsoft/WindowsApps/tesseract.exe', to_this = '~/AppData/Local/Tesseract-OCR/tesseract.exe'}  # doesn't work without whole installation dir is on PATH.
 
 [webapp_linux]
-brave = {this = '~/.local/share/applications', to_this = 'LIBRARY_ROOT/profile/webapps/linux/brave', contents = 'True'}
+brave = {this = '~/.local/share/applications', to_this = '~/dotfiles/config/webapps/linux/brave', contents = 'True'}
 
 [startup_windows]
 startup = {this = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup', to_this = '~/dotfiles/scripts/windows_startup', contents = 'True'}
