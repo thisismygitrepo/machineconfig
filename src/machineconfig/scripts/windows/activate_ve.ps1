@@ -35,7 +35,7 @@ else {
     # if $args[0] is passed, it's a new ve to activate
     # echo "$env:USERPROFILE\venvs\$args"
     
-    if ($args[0] -and "$env:VIRTUAL_ENV" -ne "$env:USERPROFILE\venvs\$args") {
+    if ($args[0] -and "$env:VIRTUAL_ENV" -ne "$env:USERPROFILE\venvs\$args[0]") {
         Write-Output "`u{1F53B} Deactivating virtual environment $env:VIRTUAL_ENV"
         deactivate -ErrorAction SilentlyContinue
         $name = $args[0]

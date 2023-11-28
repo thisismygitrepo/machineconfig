@@ -36,7 +36,7 @@ if [ -z "$VIRTUAL_ENV" ]; then  # no active ve ==> activate one.
 
 else
   # check if $1 is passed, if yes, activate it
-  if [ -n "$1" ]; then
+  if [ -n "$1" ] && [ "$HOME/venvs/$1" != "$VIRTUAL_ENV" ]; then
     echo "🔻 Deactivating virtual environment $VIRTUAL_ENV "
     deactivate
     name=$1
@@ -47,8 +47,6 @@ else
     fi
 
   else
-    # echo $0
-    # echo $1
     echo "⚠️ Virtual environment $VIRTUAL_ENV already active"
   fi
 

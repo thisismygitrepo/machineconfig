@@ -138,7 +138,7 @@ print_logo(logo="crocodile")
 {interpreter} """
     if interpreter == "ipython": final_program += f"{interactivity} --profile {profile} --no-banner"
     final_program += f" {str(pyfile)}"
-    print(f"🔥 sourcing  ... {pyfile}\n\n")
+    print(f"🔥 sourcing  ... {pyfile}")
     PROGRAM_PATH.write_text(final_program)
 
     # if platform.system() == "Windows":
