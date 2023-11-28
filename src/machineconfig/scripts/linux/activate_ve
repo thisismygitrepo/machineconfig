@@ -31,7 +31,7 @@ if [ -z "$VIRTUAL_ENV" ]; then  # no active ve ==> activate one.
   fi
 
   if [ $? -eq 0 ]; then
-    echo "✅ Activated virtual environment $VIRTUAL_ENV "
+    echo "✅ Activated Virtual Environment $VIRTUAL_ENV "
   fi
 
 else

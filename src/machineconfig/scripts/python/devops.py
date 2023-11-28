@@ -23,6 +23,7 @@ class Options(Enum):
     ssh_setup_wsl  = 'SSH setup wsl'
     backup         = 'BACKUP'
     retreive       = 'RETRIEVE'
+    scheduler      = 'SCHEDULER'
 
 
 def args_parser():
@@ -85,6 +86,10 @@ def main(which: Optional[str] = None):
     elif choice_key == Options.retreive.value:
         from machineconfig.scripts.python.devops_backup_retrieve import main as helper
         program = helper(direction="RETRIEVE")
+
+    elif choice_key == Options.scheduler.value:
+        from machineconfig.scripts.python.scheduler import main as helper
+        program = helper()
 
     else: raise ValueError(f"Unimplemented choice: {choice_key}")
     if program: write_shell_script(program, display=True, preserve_cwd=True, desc="Shell script prepared by Python.", execute=True if which is not None else False)

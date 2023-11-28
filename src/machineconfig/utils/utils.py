@@ -87,19 +87,20 @@ def match_file_name(sub_string: str):
 
 
 def choose_one_option(options: list[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "",
-                      default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> T:
+                      default: Optional[T] = None, fzf: bool = False, custom_input: bool = False) -> T:
     choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt,
-                                 default=default, fzf=fzf, multi=multi, custom_input=custom_input)
+                                 default=default, fzf=fzf, multi=False, custom_input=custom_input)
     assert not isinstance(choice_key, list)
     return choice_key
 
 
 def choose_multiple_options(options: list[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "",
-                            default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> list[T]:
+                            default: Optional[T] = None, custom_input: bool = False) -> list[T]:
     choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt,
-                                 default=default, fzf=fzf, multi=multi, custom_input=custom_input)
-    assert isinstance(choice_key, list)
-    return choice_key
+                                 default=default, fzf=True, multi=True,
+                                 custom_input=custom_input)
+    if isinstance(choice_key, list): return choice_key
+    return [choice_key]
 
 
 def display_options(msg: str, options: list[T], header: str = "", tail: str = "", prompt: str = "",

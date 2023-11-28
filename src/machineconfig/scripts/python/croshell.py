@@ -132,6 +132,7 @@ print_logo(logo="crocodile")
     if profile is None: profile = "default"
 
     ve = get_ve_profile(P(file)) if args.venv is None else str(args.ve)
+
     final_program = f"""
 # deactivate
 . activate_ve {ve}
