@@ -34,13 +34,13 @@ else {
 
     # if $args[0] is passed, it's a new ve to activate
     # echo "$env:USERPROFILE\venvs\$args"
-    
-    if ($args[0] -and "$env:VIRTUAL_ENV" -ne "$env:USERPROFILE\venvs\$args[0]") {
+    $ve_name = $args[0]
+    if ($args[0] -and "$env:VIRTUAL_ENV" -ne "$env:USERPROFILE\venvs\$ve_name") {
         Write-Output "`u{1F53B} Deactivating virtual environment $env:VIRTUAL_ENV"
         deactivate -ErrorAction SilentlyContinue
         $name = $args[0]
         & "$env:USERPROFILE/venvs/$name/Scripts/Activate.ps1"
-        if ($?) { Write-Host " `u{2705} Activated virtual environment $env:VIRTUAL_ENV " }
+        if ($?) { Write-Host "`u{2705} Activated virtual environment $env:VIRTUAL_ENV " }
     }
     else {
         Write-Host "`u{26A0} Virtual environment '$env:VIRTUAL_ENV' is already activated "

@@ -27,7 +27,7 @@ path = '~/dotfiles'
 encrypt = 'True'
 zip = 'True'
 rel2home = 'True'
-os_specific = 'False'
+os_specific = 'True'
 
 [ipython]
 path = '~/.ipython'

@@ -2,9 +2,10 @@
 """utils"""
 
 import crocodile.toolbox as tb
+from machineconfig.utils.utils import print_code, CONFIG_PATH, DEFAULTS_PATH, write_shell_script
 import argparse
 import platform
-from machineconfig.utils.utils import print_code, CONFIG_PATH, DEFAULTS_PATH, write_shell_script
+from typing import Optional
 # import sys
 # import subprocess
 
@@ -24,30 +25,33 @@ def args_parser():
     parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
     parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {tb.randstr()}")
     parser.add_argument("--skip_confirmation", "-s", help="Skip confirmation.", action="store_true", default=False)
-    parser.add_argument("--key", "-k", help="Key for encryption", default=None)
+    # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
     parser.add_argument("--push", "-u", help="Zip before sending.", action="store_true")  # default is False
     args = parser.parse_args()
-    if args.cloud is None:
-        try: cloud = tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+    main(cloud=args.cloud, path=args.path, message=args.message, skip_confirmation=args.skip_confirmation, pwd=args.pwd, push=args.push)
+
+
+def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optional[str] = None, skip_confirmation: bool = False, pwd: Optional[str] = None, push: bool = False):
+    if cloud is None:
+        try: cloud_resolved = tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
         except FileNotFoundError:
             print(f"No cloud profile found @ {DEFAULTS_PATH}, please set one up or provide one via the --cloud flag.")
             return ""
-    else: cloud = args.cloud
+    else: cloud_resolved = cloud
     # repo_root = tb.P(args.repo).expanduser().absolute()
-    repo_root = tb.P.cwd() if args.path is None else tb.P(args.path).expanduser().absolute()
+    repo_root = tb.P.cwd() if path is None else tb.P(path).expanduser().absolute()
     repo_obj = tb.install_n_import("git", "gitpython").Repo(repo_root, search_parent_directories=True)
     repo_root = tb.P(repo_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
     CONFIG_PATH.joinpath("remote").create()
     repo_sync_root = CONFIG_PATH.joinpath("remote", repo_root.rel2home())  # .delete(sure=True)
     try:
         print("\n", "=============================== Downloading Remote Repo ====================================")
-        # repo_root.from_cloud(cloud=cloud, remotepath=repo_sync_root, unzip=True, decrypt=True, rel2home=True, os_specific=False, key=args.key, pwd=args.pwd)
         remote_path = repo_root.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
-        repo_sync_root.from_cloud(remotepath=remote_path, cloud=cloud, unzip=True, decrypt=True, rel2home=True, os_specific=False, key=args.key, pwd=args.pwd)
+        repo_sync_root.from_cloud(remotepath=remote_path, cloud=cloud_resolved, unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=pwd)
     except AssertionError:
         print("Remote does not exist, creating it and exiting ... ")
-        repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)
+        repo_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
         return ""
     repo_sync_obj = tb.install_n_import("git", "gitpython").Repo(repo_sync_root)
     if repo_sync_obj.is_dirty():
@@ -59,7 +63,7 @@ echo "=============================== Committing Local Changes =================
 cd {repo_root}
 git status
 git add .
-git commit -am "{args.message}"
+git commit -am "{message}"
 echo ""
 echo ""
 echo "=============================== Pulling Latest From Remote ================================"
@@ -79,12 +83,12 @@ git pull originEnc master
         repo_sync_root.delete(sure=True)
         from git.remote import Remote
         Remote.remove(repo_obj, "originEnc")
-        if args.push:
-            repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, key=args.key, pwd=args.pwd, os_specific=False)
+        if push:
+            repo_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
     else:
         print(f"Failed to pull, keeping local copy of remote at {repo_sync_root} ... ")
         program = f"""
-# Finalizing syncing of `{repo_root}` to `{cloud}` by pushing local changes to remote and deleting local copy of remote.
+# Finalizing syncing of `{repo_root}` to `{cloud_resolved}` by pushing local changes to remote and deleting local copy of remote.
 repo_sync = tb.P(r'{repo_sync_root}')
 repo_root = tb.P(r'{repo_root}')
 repo_sync.delete(sure=True)
@@ -92,10 +96,10 @@ from git.remote import Remote
 from git import Repo
 try: Remote.remove(Repo(repo_root), "originEnc")
 except: pass
-repo_root.to_cloud(cloud='{cloud}', zip=True, encrypt=True, rel2home=True, os_specific=False)
+repo_root.to_cloud(cloud='{cloud_resolved}', zip=True, encrypt=True, rel2home=True, os_specific=False)
 """
         print_code(program, lexer="py", desc="Abstaining from running the following autmomatically:")
-        if args.skip_confirmation: resp = "y"
+        if skip_confirmation: resp = "y"
         else: resp = input("Would you like to run the above commands? y/[n] ") or "n"
         if resp.lower() == "y":
             repo_sync_root.delete(sure=True)
@@ -103,7 +107,7 @@ repo_root.to_cloud(cloud='{cloud}', zip=True, encrypt=True, rel2home=True, os_sp
             from git.repo import Repo
             try: Remote.remove(Repo(repo_root), "originEnc")
             except Exception: pass  # type: ignore
-            repo_root.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
+            repo_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, os_specific=False)
         else:
             print(f"When ready, use this snippet: \n{program}")
             if platform.system() == "Windows":

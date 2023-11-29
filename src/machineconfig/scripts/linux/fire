@@ -8,7 +8,12 @@ if [ -f "$op_script" ]; then
 fi
 
 
-chafa "$HOME/code/machineconfig/assets/aafire.webp" --speed 1 --duration 1
+{
+  chafa "$HOME/code/machineconfig/assets/aafire.webp" --speed 1 --duration 1 --symbols ascii
+} || {
+  echo "An error occurred while executing the script."
+}
+
 # timeout 0.5s aafire  #  -driver slang
 # clear
 
