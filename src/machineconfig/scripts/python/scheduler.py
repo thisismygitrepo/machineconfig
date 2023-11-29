@@ -13,7 +13,7 @@ from typing import Optional
 # from crocodile.meta import Scheduler
 
 
-SCHEDULER_DEFAULT_ROOT = P.home().joinpath("dotfiles/.scheduler")
+SCHEDULER_DEFAULT_ROOT = P.home().joinpath("dotfiles/scripts/.scheduler")
 SUCCESS = "success"
 
 
@@ -155,7 +155,7 @@ def run_task(task: Task) -> Report:
 def main_parse():
     import argparse
     parser = argparse.ArgumentParser(description='Run tasks.')
-    parser.add_argument('--root', '-r', type=str, default=None, help='Root directory of tasks.')
+    parser.add_argument('root', type=str, default=None, help='Root directory of tasks.')
     parser.add_argument('--ignore_conditions', "-i", action='store_true', help='Ignore conditions for running tasks.', default=False)
     parser.add_argument('--report', "-R", action='store_true', help='Print report.', default=False)
     print(parser)
@@ -177,4 +177,4 @@ def main_parse():
 
 
 if __name__ == "__main__":
-    pass
+    main_parse()

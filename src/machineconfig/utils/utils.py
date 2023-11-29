@@ -82,7 +82,7 @@ def match_file_name(sub_string: str):
     else:
         msg = f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. No search results\n{'--' * 50}\n"
         raise FileNotFoundError(msg)
-    print(f"\n{'--' * 50}\n🔗 Mapped `{sub_string}` ➡️ `{path_obj}`\n{'--' * 50}\n")
+    print(f"\n{'--' * 50}\n🔗 Matched `{sub_string}` ➡️ `{path_obj}`\n{'--' * 50}\n")
     return path_obj
 
 
@@ -180,20 +180,33 @@ def symlink(this: P, to_this: P, prioritize_to_this: bool = True):
     except Exception as ex: print(f"Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
 
 
-def get_shell_script_executing_python_file(python_file: str, func: Optional[str] = None, ve_name: str = "ve"):
+def get_shell_script_executing_python_file(python_file: str, func: Optional[str] = None, ve_name: str = "ve", strict_execution: bool = True):
     if func is None: exec_line = f"""python {python_file}"""
     else: exec_line = f"""python -m fire {python_file} {func}"""
     shell_script = f"""
 . $HOME/scripts/activate_ve {ve_name}
+echo "Executing {exec_line}"
 {exec_line}
-deactivate
+deactivate || true
 """
-    if platform.system() == "Linux": shell_script = "#!/bin/bash" + "\n" + shell_script
-    if platform.system() == "Windows": shell_script = """$ErrorActionPreference = "Stop" """ + "\n" + shell_script
+
+    if strict_execution:
+        if platform.system() == "Windows": shell_script = """$ErrorActionPreference = "Stop" """ + "\n" + shell_script
+        if platform.system() == "Windows": shell_script = "set -e" + "\n" + shell_script
+
+    if platform.system() == "Linux": shell_script = "#!/bin/bash" + "\n" + shell_script  # vs #!/usr/bin/env bash
     return shell_script
 
 
-def get_shell_file_executing_python_script(python_script: str, ve_name: str = "ve"):
+def get_shell_file_executing_python_script(python_script: str, ve_name: str = "ve", verbose: bool = True):
+    if verbose:
+        python_script = f"""
+code = r'''{python_script}'''
+try:
+    from machineconfig.utils.utils import print_code
+    print_code(code=code, lexer="python", desc="Python Script")
+except ImportError: print(code)
+"""
     python_file = P.tmp().joinpath("tmp_scripts", "python", randstr() + ".py").create(parents_only=True).write_text(python_script)
     shell_script = get_shell_script_executing_python_file(python_file=python_file.str, ve_name=ve_name)
     if platform.system() == "Linux": suffix = ".sh"
