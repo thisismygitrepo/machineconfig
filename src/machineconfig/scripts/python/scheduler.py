@@ -13,7 +13,7 @@ from typing import Optional
 # from crocodile.meta import Scheduler
 
 
-SCHEDULER_DEFAULT_ROOT = P.home().joinpath("dotfiles/scripts/tasks")
+SCHEDULER_DEFAULT_ROOT = P.home().joinpath("dotfiles/.scheduler")
 SUCCESS = "success"
 
 
@@ -71,7 +71,7 @@ def read_task_from_dir(path: P):
     return task
 
 
-def main(root: Optional[str] = None):
+def main(root: Optional[str] = None, ignore_conditions: bool = True):
     if root is None: root_resolved = SCHEDULER_DEFAULT_ROOT
     else: root_resolved = P(root).expanduser().absolute()
     tasks_dirs = root_resolved.search(files=False, folders=True).filter(lambda x: x.joinpath("task.py").exists())
@@ -89,7 +89,11 @@ def main(root: Optional[str] = None):
 
     result: list[Report] = []
     for a_task in tasks_chosen:
-        answer, report = should_task_run(a_task)
+        if not ignore_conditions:
+            answer, report = should_task_run(a_task)
+        else:
+            answer, report = True, None
+
         if answer: report = run_task(a_task)
         else:
             assert report is not None
@@ -112,7 +116,7 @@ def should_task_run(task: Task, tolerance_mins: int = 1440) -> tuple[bool, Optio
     elif old_report.status != SUCCESS:
         print(f"⚠️ Task {task.name} last run failed, running now if time is okay ...")
     else:
-        print(f"Task {task.name} was run successfully {time_since_execution} ago, skipping...")
+        print(f"Task `{task.name}` was run successfully {time_since_execution} ago, skipping...")
         return False, old_report
 
     suitable_run_time = task.start.time()
@@ -146,6 +150,30 @@ def run_task(task: Task) -> Report:
     report = Report(name=task.name, start=start_time, end=end_time, status=res.replace('\n', '_NL_').strip().replace('=', '_eq_'))
     report.to_path(task.report_path)
     return report
+
+
+def main_parse():
+    import argparse
+    parser = argparse.ArgumentParser(description='Run tasks.')
+    parser.add_argument('--root', '-r', type=str, default=None, help='Root directory of tasks.')
+    parser.add_argument('--ignore_conditions', "-i", action='store_true', help='Ignore conditions for running tasks.', default=False)
+    parser.add_argument('--report', "-R", action='store_true', help='Print report.', default=False)
+    print(parser)
+    args = parser.parse_args()
+
+    if P(args.root).search(files=False, folders=True)[0].joinpath("task.py").exists():
+        root = str(args.root)
+    elif P(args.root).joinpath(".scheduler").search(files=False, folders=True)[0].joinpath("task.py").exists():
+        root = P(args.root).joinpath(".scheduler").str
+    else:
+        raise ValueError(f"Could not find a task.py in {args.root} or {P(args.root).joinpath('.scheduler')}")
+
+    if args.report:
+        report = P(root).joinpath("task_report.md").read_text(encoding="utf-8")
+        print(report)
+        return None
+
+    main(root=root, ignore_conditions=args.ignore_conditions)
 
 
 if __name__ == "__main__":
