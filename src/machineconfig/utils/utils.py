@@ -192,7 +192,7 @@ deactivate || true
 
     if strict_execution:
         if platform.system() == "Windows": shell_script = """$ErrorActionPreference = "Stop" """ + "\n" + shell_script
-        if platform.system() == "Windows": shell_script = "set -e" + "\n" + shell_script
+        if platform.system() == "Linux": shell_script = "set -e" + "\n" + shell_script
 
     if platform.system() == "Linux": shell_script = "#!/bin/bash" + "\n" + shell_script  # vs #!/usr/bin/env bash
     return shell_script
@@ -206,7 +206,7 @@ try:
     from machineconfig.utils.utils import print_code
     print_code(code=code, lexer="python", desc="Python Script")
 except ImportError: print(code)
-"""
+""" + python_script
     python_file = P.tmp().joinpath("tmp_scripts", "python", randstr() + ".py").create(parents_only=True).write_text(python_script)
     shell_script = get_shell_script_executing_python_file(python_file=python_file.str, ve_name=ve_name)
     if platform.system() == "Linux": suffix = ".sh"
