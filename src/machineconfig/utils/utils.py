@@ -180,14 +180,27 @@ def symlink(this: P, to_this: P, prioritize_to_this: bool = True):
     except Exception as ex: print(f"Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
 
 
-def get_shell_script_executing_pyscript(python_file: str, func: Optional[str] = None, ve_name: str = "ve"):
+def get_shell_script_executing_python_file(python_file: str, func: Optional[str] = None, ve_name: str = "ve"):
     if func is None: exec_line = f"""python {python_file}"""
     else: exec_line = f"""python -m fire {python_file} {func}"""
-    return f"""
+    shell_script = f"""
 . $HOME/scripts/activate_ve {ve_name}
 {exec_line}
 deactivate
 """
+    if platform.system() == "Linux": shell_script = "#!/bin/bash" + "\n" + shell_script
+    if platform.system() == "Windows": shell_script = """$ErrorActionPreference = "Stop" """ + "\n" + shell_script
+    return shell_script
+
+
+def get_shell_file_executing_python_script(python_script: str, ve_name: str = "ve"):
+    python_file = P.tmp().joinpath("tmp_scripts", "python", randstr() + ".py").create(parents_only=True).write_text(python_script)
+    shell_script = get_shell_script_executing_python_file(python_file=python_file.str, ve_name=ve_name)
+    if platform.system() == "Linux": suffix = ".sh"
+    elif platform.system() == "Windows": suffix = ".ps1"
+    else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
+    shell_file = P.tmp().joinpath("tmp_scripts", "shell", randstr() + suffix).create(parents_only=True).write_text(shell_script)
+    return shell_file
 
 
 def write_shell_script(program: str, desc: str = "", preserve_cwd: bool = True, display: bool = True, execute: bool = False):

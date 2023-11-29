@@ -2,7 +2,7 @@
 """utils"""
 
 import crocodile.toolbox as tb
-from machineconfig.utils.utils import print_code, CONFIG_PATH, DEFAULTS_PATH, write_shell_script
+from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, write_shell_script, get_shell_file_executing_python_script
 import argparse
 import platform
 from typing import Optional
@@ -87,29 +87,18 @@ git pull originEnc master
             repo_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
     else:
         print(f"Failed to pull, keeping local copy of remote at {repo_sync_root} ... ")
-        program = f"""
-# Finalizing syncing of `{repo_root}` to `{cloud_resolved}` by pushing local changes to remote and deleting local copy of remote.
-repo_sync = tb.P(r'{repo_sync_root}')
-repo_root = tb.P(r'{repo_root}')
-repo_sync.delete(sure=True)
-from git.remote import Remote
-from git import Repo
-try: Remote.remove(Repo(repo_root), "originEnc")
-except: pass
-repo_root.to_cloud(cloud='{cloud_resolved}', zip=True, encrypt=True, rel2home=True, os_specific=False)
-"""
-        print_code(program, lexer="py", desc="Abstaining from running the following autmomatically:")
+
         if skip_confirmation: resp = "y"
-        else: resp = input("Would you like to run the above commands? y/[n] ") or "n"
+        else: resp = input(f"Would you like to proceed syncing `{repo_root}` to `{cloud_resolved}` by pushing local changes to remote and deleting local copy of remote? y/[n] ") or "n"
         if resp.lower() == "y":
-            repo_sync_root.delete(sure=True)
-            from git.remote import Remote
-            from git.repo import Repo
-            try: Remote.remove(Repo(repo_root), "originEnc")
-            except Exception: pass  # type: ignore
-            repo_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, os_specific=False)
+            delete_remote_repo_copy_and_push_local(remote_repo=repo_sync_root.str, local_repo=repo_root.str, cloud=cloud_resolved)
         else:
-            print(f"When ready, use this snippet: \n{program}")
+            program = f"""
+from machineconfig.scripts.python.cloud_repo_sync import delete_remote_repo_copy_and_push_local as func
+func(remote_repo=r'{repo_sync_root.str}', local_repo=r'{repo_root.str}', cloud=r'{cloud_resolved}')
+"""
+            shell_file = get_shell_file_executing_python_script(python_script=program)
+            print(f"When ready, use this snippet: \n. {shell_file}")
             if platform.system() == "Windows":
                 program = get_wt_cmd(wd1=repo_root, wd2=repo_sync_root)
                 write_shell_script(program=program, execute=True)
@@ -119,6 +108,17 @@ repo_root.to_cloud(cloud='{cloud_resolved}', zip=True, encrypt=True, rel2home=Tr
                 write_shell_script(program=program, execute=True)
                 return None
             else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
+
+
+def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cloud: str):
+    repo_sync_root = tb.P(remote_repo).expanduser().absolute()
+    repo_root_path = tb.P(local_repo).expanduser().absolute()
+    repo_sync_root.delete(sure=True)
+    from git.remote import Remote
+    from git.repo import Repo
+    try: Remote.remove(Repo(repo_root_path), "originEnc")
+    except Exception: pass  # type: ignore
+    repo_root_path.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
 
 
 if __name__ == "__main__":

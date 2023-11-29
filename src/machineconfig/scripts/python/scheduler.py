@@ -4,7 +4,7 @@
 
 from crocodile.file_management import P, Read, str2timedelta, Save
 # from crocodile.meta import Terminal
-from machineconfig.utils.utils import CONFIG_PATH
+from machineconfig.utils.utils import CONFIG_PATH, get_shell_script_executing_python_file
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 import platform
@@ -89,67 +89,63 @@ def main(root: Optional[str] = None):
 
     result: list[Report] = []
     for a_task in tasks_chosen:
-        if not a_task.report_path.exists():
-            print(f"Task {a_task.name} has no record of being run before, running now...")
-            report = run_task(a_task)
-            result.append(report)
+        answer, report = should_task_run(a_task)
+        if answer: report = run_task(a_task)
         else:
-            old_report = Report.from_path(a_task.report_path)
-            time_since_execution = datetime.now() - old_report.end
-            if time_since_execution > a_task.frequency:
-                print(f"⚠️ Task {a_task.name} has not been run for {time_since_execution}, It is mean to run every {a_task.frequency}. running now...")
-                report = run_task(a_task)
-                result.append(report)
-            elif old_report.status != SUCCESS:
-                print(f"⚠️ Task {a_task.name} last run failed, running now...")
-                report = run_task(a_task)
-                result.append(report)
+            assert report is not None
+        result.append(report)
+
     df_res = pd.DataFrame([r.__dict__ for r in result])
     print(df_res)
     root_resolved.joinpath("task_report.md").write_text(df_res.to_markdown(), encoding="utf-8")
     return ""
 
 
-def run_task(task: Task, tolerance_mins: int = 1440):
+def should_task_run(task: Task, tolerance_mins: int = 1440) -> tuple[bool, Optional[Report]]:
+    if not task.report_path.exists():
+        print(f"Task {task.name} has no record of being run before, running now...")
+        return True, None
+    old_report = Report.from_path(task.report_path)
+    time_since_execution = datetime.now() - old_report.end
+    if time_since_execution > task.frequency:
+        print(f"⚠️ Task {task.name} has not been run for {time_since_execution}, It is mean to run every {task.frequency}. running now if time is okay ...")
+    elif old_report.status != SUCCESS:
+        print(f"⚠️ Task {task.name} last run failed, running now if time is okay ...")
+    else:
+        print(f"Task {task.name} was run successfully {time_since_execution} ago, skipping...")
+        return False, old_report
+
     suitable_run_time = task.start.time()
     time_now = datetime.now().time()
     min_diff = abs(suitable_run_time.hour - time_now.hour) * 60 + abs(suitable_run_time.minute - time_now.minute)
     if not min_diff < tolerance_mins:
         status = f"⌚ Time now is not suitable for running task {task.name} (Ideally, it should be run at {suitable_run_time})"
         print(status)
-        report = Report(name=task.name, start=datetime.now(), end=datetime.now(), status=status)
-        return report
+        return False, old_report
+    return True, old_report
+
+
+def run_task(task: Task) -> Report:
     start_time = datetime.now()
-    # res = Terminal().run(task.script_path.str)
-    res = run_shell_script(task)
+
+    shell_script = get_shell_script_executing_python_file(python_file=task.task_root.joinpath("task.py").str, ve_name=task.venv)
+    shell_script_root = P.tmp().joinpath(f"tmp_scripts/scheduler/{task.name}").create()
+    try:
+        if platform.system() == 'Windows':
+            shell_script = shell_script_root.joinpath("run.ps1").write_text(shell_script)
+            subprocess.run(['powershell', '-ExecutionPolicy', 'Unrestricted', shell_script], check=True)
+        elif platform.system() == 'Linux':
+            shell_script = shell_script_root.joinpath("run.sh").write_text(shell_script)
+            subprocess.run(['bash', shell_script], check=True)
+        else: res = f"Error: Unsupported platform {platform.system()}."
+        res = SUCCESS
+    except subprocess.CalledProcessError: res = f"Error: The script {shell_script_root} failed to run."
+    except Exception as e: res = f"Error: An unexpected error occurred while running the script {shell_script_root}: {e}"
+
     end_time = datetime.now()
     report = Report(name=task.name, start=start_time, end=end_time, status=res.replace('\n', '_NL_').strip().replace('=', '_eq_'))
     report.to_path(task.report_path)
     return report
-
-
-def run_shell_script(task: Task) -> str:
-    script_root = P.tmp().joinpath(f"tmp_scripts/scheduler/{task.name}").create()
-    try:
-        if platform.system() == 'Windows':
-            script = script_root.joinpath("run.ps1").write_text(f"""
-$ErrorActionPreference = "Stop"
-. $HOME/scripts/activate_ve {task.venv}
-python {task.task_root.joinpath("task.py")}
-""")
-            subprocess.run(['powershell', '-ExecutionPolicy', 'Unrestricted', script], check=True)
-        elif platform.system() == 'Linux':
-            script = script_root.joinpath("run.sh").write_text(f"""
-#!/bin/bash
-set -e
-. $HOME/scripts/activate_ve {task.venv}
-python {task.task_root.joinpath("task.py")}
-""")
-            subprocess.run(['bash', script], check=True)
-        else: return f"Error: Unsupported platform {platform.system()}."
-        return SUCCESS
-    except subprocess.CalledProcessError: return f"Error: The script {script_root} failed to run."
-    except Exception as e: return f"Error: An unexpected error occurred while running the script {script_root}: {e}"
 
 
 if __name__ == "__main__":

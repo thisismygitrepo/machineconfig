@@ -22,12 +22,14 @@ zip = 'False'
 rel2home = 'True'
 os_specific = 'True'
 
+
 [dotfiles]
 path = '~/dotfiles'
 encrypt = 'True'
 zip = 'True'
 rel2home = 'True'
 os_specific = 'True'
+
 
 [ipython]
 path = '~/.ipython'
