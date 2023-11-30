@@ -154,7 +154,7 @@ def main_parse():
     parser.add_argument('root', type=str, default=None, help='Root directory of tasks.')
     parser.add_argument('--ignore_conditions', "-i", action='store_true', help='Ignore conditions for running tasks.', default=False)
     parser.add_argument('--report', "-R", action='store_true', help='Print report.', default=False)
-    print(parser)
+    # print(parser)
     args = parser.parse_args()
 
     if P(args.root).search(files=False, folders=True)[0].joinpath("task.py").exists():
@@ -163,14 +163,16 @@ def main_parse():
         root = P(args.root).joinpath(".scheduler").expanduser().absolute()
     else:
         raise ValueError(f"Could not find a task.py in {args.root} or {P(args.root).joinpath('.scheduler')}")
+    print(f"✅ Running tasks in {root}")
 
     if args.report:
-        reports: list[Report] = P(root).search("report.ini", r=True).apply(Report.from_path).list
+        reports: list[Report] = P(root).search("*").filter(lambda path: path.joinpath("task.py").exists()).apply(lambda x: Report.from_path(read_task_from_dir(x).report_path))  # type: ignore
         import pandas as pd
+        print(reports)
         df_res = pd.DataFrame([r.__dict__ for r in reports])
-        print(df_res)
         root.joinpath("task_report.md").write_text(df_res.to_markdown(), encoding="utf-8")
-        print(df_res)
+        print(df_res.to_markdown())
+        # df_res.to_
         return None
 
     main(root=root.str, ignore_conditions=args.ignore_conditions)
