@@ -15,6 +15,14 @@ from typing import Optional
 
 SCHEDULER_DEFAULT_ROOT = P.home().joinpath("dotfiles/scripts/.scheduler")
 SUCCESS = "success"
+DEFAULT_CONFIG = """
+[specs]
+frequency = 30d
+start = 2023-11-01 01:00
+
+[runtime]
+venv = ve
+"""
 
 
 @dataclass
@@ -89,7 +97,6 @@ def main(root: Optional[str] = None, ignore_conditions: bool = True):
             answer, report = should_task_run(a_task)
         else:
             answer, report = True, None
-
         if answer: report = run_task(a_task)
         else:
             assert report is not None
@@ -154,6 +161,7 @@ def main_parse():
     parser.add_argument('root', type=str, default=None, help='Root directory of tasks.')
     parser.add_argument('--ignore_conditions', "-i", action='store_true', help='Ignore conditions for running tasks.', default=False)
     parser.add_argument('--report', "-R", action='store_true', help='Print report.', default=False)
+    parser.add_argument('--create_task', "-c", action='store_true', help='Add default config.', default=False)
     # print(parser)
     args = parser.parse_args()
 
@@ -166,13 +174,24 @@ def main_parse():
     print(f"✅ Running tasks in {root}")
 
     if args.report:
-        reports: list[Report] = P(root).search("*").filter(lambda path: path.joinpath("task.py").exists()).apply(lambda x: Report.from_path(read_task_from_dir(x).report_path))  # type: ignore
+        reports: list[Report] = [Report.from_path(read_task_from_dir(x).report_path) for x in P(root).search("*").filter(lambda path: path.joinpath("task.py").exists())]
         import pandas as pd
         print(reports)
         df_res = pd.DataFrame([r.__dict__ for r in reports])
         root.joinpath("task_report.md").write_text(df_res.to_markdown(), encoding="utf-8")
         print(df_res.to_markdown())
         # df_res.to_
+        return None
+
+    if args.create_task:
+        task_name = input("Enter task name: ")
+        task_root = root.joinpath(task_name).create(exist_ok=False)
+        # assert not root.joinpath("config.ini").exists(), f"Config file already exists in {root}"
+        task_root.joinpath("config.ini").write_text(DEFAULT_CONFIG, encoding="utf-8")
+        task_root.joinpath("task.py").write_text(f"""
+# Scheduler Task.
+""")
+        print(f"✅ Task {task_name} created in {task_root}. Head there and edit the config.ini file & task.py file.")
         return None
 
     main(root=root.str, ignore_conditions=args.ignore_conditions)
