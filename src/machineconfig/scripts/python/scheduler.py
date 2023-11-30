@@ -165,18 +165,19 @@ def main_parse():
     # print(parser)
     args = parser.parse_args()
 
-    if P(args.root).search(files=False, folders=True)[0].joinpath("task.py").exists():
-        root = P(args.root).expanduser().absolute()
-    elif P(args.root).joinpath(".scheduler").search(files=False, folders=True)[0].joinpath("task.py").exists():
-        root = P(args.root).joinpath(".scheduler").expanduser().absolute()
+    tmp = P(args.root).expanduser().absolute()
+    if P(args.root).joinpath(".scheduler").exists():  # .search(files=False, folders=True)[0].joinpath("task.py").exists():
+        root = P(args.root).joinpath(".scheduler")
+    if tmp.name == ".scheduler":
+        root = tmp
     else:
-        raise ValueError(f"Could not find a task.py in {args.root} or {P(args.root).joinpath('.scheduler')}")
+        root = tmp.joinpath(".scheduler").create()
+        # raise ValueError(f"Could not find a task.py in {args.root} or {P(args.root).joinpath('.scheduler')}")
     print(f"✅ Running tasks in {root}")
 
     if args.report:
         reports: list[Report] = [Report.from_path(read_task_from_dir(x).report_path) for x in P(root).search("*").filter(lambda path: path.joinpath("task.py").exists())]
         import pandas as pd
-        print(reports)
         df_res = pd.DataFrame([r.__dict__ for r in reports])
         root.joinpath("task_report.md").write_text(df_res.to_markdown(), encoding="utf-8")
         print(df_res.to_markdown())
