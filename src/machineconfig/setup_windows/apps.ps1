@@ -87,6 +87,7 @@ winget install --no-upgrade --name "graphviz" --Id Graphviz.Graphviz --source wi
 winget install --no-upgrade --name "WinFsp" --Id WinFsp.WinFsp --source winget  # mount remote filesystems and required by rclone
 winget install --no-upgrade --name "SSHFS-win" --Id SSHFS-Win.SSHFS-Win --source winget  # mount remote filesystems  # as per https://github.com/winfsp/sshfs-win
 #winget install --no-upgrade --name Cloudflare --Id Cloudflare.cloudflared --source winget
+#winget install --no-upgrade --name "Cloudflare WARP" --Id "Cloudflare.Warp" --accept-package-agreements --accept-source-agreements --source winget
 
 winget install --no-upgrade --name "xming" --Id xming.xming --source winget  # X11 server. you need this while using wsl with gui, otherwise plt.show() returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running
 winget install --no-upgrade --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements --source winget  # ncessary for nvim plugins.

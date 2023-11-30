@@ -40,9 +40,9 @@ Add-ToPathIfNotAlready -Directories @(
 
 
 # sources  ================================================================
-. ~/code/machineconfig/src/machineconfig/settings/broot/brootcd.ps1
-. ~/code/machineconfig/src/machineconfig/settings/lf/windows/lfcd.ps1
-. ~/code/machineconfig/src/machineconfig/settings/tere/terecd.ps1
+. $HOME/code/machineconfig/src/machineconfig/settings/broot/brootcd.ps1
+. $HOME/code/machineconfig/src/machineconfig/settings/lf/windows/lfcd.ps1
+. $HOME/code/machineconfig/src/machineconfig/settings/tere/terecd.ps1
 
 
 # patches ===========================================================
