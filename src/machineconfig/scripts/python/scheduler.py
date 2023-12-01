@@ -104,7 +104,7 @@ def main(root: Optional[str] = None, ignore_conditions: bool = True):
 
     df_res = pd.DataFrame([r.__dict__ for r in result])
     print(df_res)
-    root_resolved.joinpath("task_report.md").write_text(df_res.to_markdown(), encoding="utf-8")
+    # root_resolved.joinpath("task_report.md").write_text(df_res.to_markdown(), encoding="utf-8")
     return ""
 
 
@@ -179,7 +179,7 @@ def main_parse():
         reports: list[Report] = [Report.from_path(read_task_from_dir(x).report_path) for x in P(root).search("*").filter(lambda path: path.joinpath("task.py").exists())]
         import pandas as pd
         df_res = pd.DataFrame([r.__dict__ for r in reports])
-        root.joinpath("task_report.md").write_text(df_res.to_markdown(), encoding="utf-8")
+        # root.joinpath("task_report.md").write_text(df_res.to_markdown(), encoding="utf-8")
         print(df_res.to_markdown())
         # df_res.to_
         return None
