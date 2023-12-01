@@ -4,6 +4,15 @@
     "actions": 
     [
         {
+            "command": 
+            {
+                "action": "splitPane",
+                "split": "auto",
+                "splitMode": "duplicate"
+            },
+            "keys": "alt+shift+d"
+        },
+        {
             "command": "find",
             "keys": "ctrl+shift+f"
         },
@@ -24,17 +33,12 @@
             "keys": "ctrl+alt+down"
         },
         {
-            "command": 
-            {
-                "action": "splitPane",
-                "split": "auto",
-                "splitMode": "duplicate"
-            },
-            "keys": "alt+shift+d"
-        },
-        {
             "command": "togglePaneZoom",
             "keys": "ctrl+shift+z"
+        },
+        {
+            "command": "toggleSplitOrientation",
+            "keys": "ctrl+shift+l"
         }
     ],
     "copyFormatting": "none",
@@ -59,6 +63,8 @@
         [
             {
                 "commandline": "pwsh",
+                "cursorColor": "#d4d8e1",
+                "cursorShape": "filledBox",
                 "font": 
                 {
                     "face": "CaskaydiaCove Nerd Font"
@@ -134,6 +140,12 @@
                 "hidden": true,
                 "name": "Ubuntu-22.04",
                 "source": "Windows.Terminal.Wsl"
+            },
+            {
+                "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
+                "hidden": true,
+                "name": "Ubuntu",
+                "source": "Windows.Terminal.Wsl"
             }
         ]
     },
@@ -162,31 +174,6 @@
             "white": "#CCCCCC",
             "yellow": "#C19C00"
         },
-        {"background": "#011627","black": "#011627","blue": "#82AAFF","brightBlack": "#575656","brightBlue": "#82AAFF","brightCyan": "#7FDBCA","brightGreen": "#22DA6E","brightPurple": "#C792EA","brightRed": "#EF5350","brightWhite": "#FFFFFF","brightYellow": "#FFEB95","cyan": "#21C7A8","foreground": "#D6DEEB","green": "#22DA6E","name": "Night Owl","purple": "#C792EA","red": "#EF5350","white": "#FFFFFF","yellow": "#ADDB67"},
-        {"background": "#FBFBFB","black": "#403F53","blue": "#288ED7","brightBlack": "#403F53","brightBlue": "#288ED7","brightCyan": "#2AA298","brightGreen": "#08916A","brightPurple": "#D6438A","brightRed": "#DE3D3B","brightWhite": "#979797","brightYellow": "#DAAA01","cyan": "#2AA298","foreground": "#403F53","green": "#08916A","name": "Light Owl","purple": "#D6438A","red": "#DE3D3B","white": "#F0F0F0","yellow": "#E0AF02"},
-        {
-        "name": "coolnight",
-        "black": "#0B3B61",
-        "red": "#FF3A3A",
-        "green": "#52FFD0",
-        "yellow": "#FFF383",
-        "blue": "#1376F9",
-        "purple": "#C792EA",
-        "cyan": "#FF5ED4",
-        "white": "#16FDA2",
-        "brightBlack": "#63686D",
-        "brightRed": "#FF54B0",
-        "brightGreen": "#74FFD8",
-        "brightYellow": "#FCF5AE",
-        "brightBlue": "#388EFF",
-        "brightPurple": "#AE81FF",
-        "brightCyan": "#FF6AD7",
-        "brightWhite": "#60FBBF",
-        "background": "#010C18",
-        "foreground": "#ECDEF4",
-        "selectionBackground": "#38FF9C",
-        "cursorColor": "#38FF9D"
-        },
         {
             "background": "#012456",
             "black": "#0C0C0C",
@@ -209,6 +196,52 @@
             "selectionBackground": "#FFFFFF",
             "white": "#CCCCCC",
             "yellow": "#C19C00"
+        },
+        {
+            "background": "#FBFBFB",
+            "black": "#403F53",
+            "blue": "#288ED7",
+            "brightBlack": "#403F53",
+            "brightBlue": "#288ED7",
+            "brightCyan": "#2AA298",
+            "brightGreen": "#08916A",
+            "brightPurple": "#D6438A",
+            "brightRed": "#DE3D3B",
+            "brightWhite": "#979797",
+            "brightYellow": "#DAAA01",
+            "cursorColor": "#FFFFFF",
+            "cyan": "#2AA298",
+            "foreground": "#403F53",
+            "green": "#08916A",
+            "name": "Light Owl",
+            "purple": "#D6438A",
+            "red": "#DE3D3B",
+            "selectionBackground": "#FFFFFF",
+            "white": "#F0F0F0",
+            "yellow": "#E0AF02"
+        },
+        {
+            "background": "#011627",
+            "black": "#011627",
+            "blue": "#82AAFF",
+            "brightBlack": "#575656",
+            "brightBlue": "#82AAFF",
+            "brightCyan": "#7FDBCA",
+            "brightGreen": "#22DA6E",
+            "brightPurple": "#C792EA",
+            "brightRed": "#EF5350",
+            "brightWhite": "#FFFFFF",
+            "brightYellow": "#FFEB95",
+            "cursorColor": "#FFFFFF",
+            "cyan": "#21C7A8",
+            "foreground": "#D6DEEB",
+            "green": "#22DA6E",
+            "name": "Night Owl",
+            "purple": "#C792EA",
+            "red": "#EF5350",
+            "selectionBackground": "#FFFFFF",
+            "white": "#FFFFFF",
+            "yellow": "#ADDB67"
         },
         {
             "background": "#282C34",
@@ -439,53 +472,32 @@
             "selectionBackground": "#FFFFFF",
             "white": "#C0C0C0",
             "yellow": "#808000"
+        },
+        {
+            "background": "#010C18",
+            "black": "#0B3B61",
+            "blue": "#1376F9",
+            "brightBlack": "#63686D",
+            "brightBlue": "#388EFF",
+            "brightCyan": "#FF6AD7",
+            "brightGreen": "#74FFD8",
+            "brightPurple": "#AE81FF",
+            "brightRed": "#FF54B0",
+            "brightWhite": "#60FBBF",
+            "brightYellow": "#FCF5AE",
+            "cursorColor": "#38FF9D",
+            "cyan": "#FF5ED4",
+            "foreground": "#ECDEF4",
+            "green": "#52FFD0",
+            "name": "coolnight",
+            "purple": "#C792EA",
+            "red": "#FF3A3A",
+            "selectionBackground": "#38FF9C",
+            "white": "#16FDA2",
+            "yellow": "#FFF383"
         }
     ],
     "startOnUserLogin": true,
     "theme": "dark",
-    "themes": 
-    [
-        {
-            "name": "legacyDark",
-            "tab": 
-            {
-                "background": null,
-                "showCloseButton": "always",
-                "unfocusedBackground": null
-            },
-            "window": 
-            {
-                "applicationTheme": "dark",
-                "useMica": false
-            }
-        },
-        {
-            "name": "legacyLight",
-            "tab": 
-            {
-                "background": null,
-                "showCloseButton": "always",
-                "unfocusedBackground": null
-            },
-            "window": 
-            {
-                "applicationTheme": "light",
-                "useMica": false
-            }
-        },
-        {
-            "name": "legacySystem",
-            "tab": 
-            {
-                "background": null,
-                "showCloseButton": "always",
-                "unfocusedBackground": null
-            },
-            "window": 
-            {
-                "applicationTheme": "system",
-                "useMica": false
-            }
-        }
-    ]
+    "themes": []
 }
