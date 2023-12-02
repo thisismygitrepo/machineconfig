@@ -46,12 +46,21 @@ else # ==> we are not in a zellij session
       # remove sessions that have 'EXITED' in them
       ZJ_SESSIONS=$(echo -e "${ZJ_SESSIONS}" | grep -v "EXITED")
 
+      echo "zj_sessions:$ZJ_SESSIONS:end of zj_sessions"
+
       # if the result has only 1 line in it and $attach is raised, then attach to it and exit the if statement and the script
       NO_SESSIONS=$(echo "${ZJ_SESSIONS}" | wc -l)
+
+      echo "NO_SESSIONS: $NO_SESSIONS"
+
       # if ZJ_SESSIONS is empty, then set NO_SESSIONS to 0
       if [ -z "${ZJ_SESSIONS}" ]; then
           NO_SESSIONS=0
+          zellij --layout st2
+          exit 0
       fi
+      echo "NO_SESSIONS: $NO_SESSIONS"
+
       if [ "${NO_SESSIONS}" -eq 1 ] && $attach; then
         chosen_session=$(echo -e "${ZJ_SESSIONS}" | cut -d' ' -f1)
         # remove the ansi colors from chosen_session
@@ -62,7 +71,12 @@ else # ==> we are not in a zellij session
       fi
 
       # add my options to the list of sessions
-      ZJ_SESSIONS="$ZJ_SESSIONS\nnew_session\nkill_all_and_create_fresh_one\nexit_zellij"
+      # if number of sessions is zero, then exclude ZJ_SESSIONS from the fzf options
+      if [ "${NO_SESSIONS}" -eq 0 ]; then
+          ZJ_SESSIONS="new_session\nkill_all_and_create_fresh_one\nexit_zellij"
+        else
+          ZJ_SESSIONS="$ZJ_SESSIONS\nnew_session\nkill_all_and_create_fresh_one\nexit_zellij"
+      fi
 
       res="$(echo -e "${ZJ_SESSIONS}" | fzf --ansi)"
       # split `res` at the first space, and take the first element
