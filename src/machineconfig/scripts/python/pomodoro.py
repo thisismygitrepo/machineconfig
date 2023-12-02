@@ -20,7 +20,7 @@ def pomodoro(work: int = 25, rest: int = 5, repeats: int = 4):
     def beep(duration: int = 1, frequency: int = 3000):
         try: import winsound
         except ImportError: __import__("os").system(f'beep -f {frequency} -l {1000 * duration}')
-        else: winsound.Beep(frequency, 1000 * duration)
+        else: winsound.Beep(frequency, 1000 * duration)  # type: ignore
     _ = beep
     return Scheduler(routine=loop, max_cycles=repeats, logger=logger, wait="0.1m").run()
 
