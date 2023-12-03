@@ -51,17 +51,19 @@ fi
 
 yes '' | sed 3q; echo "----------------------------- installing nvm of nodejs --------------------------"; yes '' | sed 3q
 # according to: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm its best to use nvm manager
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
 # shellcheck disable=SC2155
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
 nvm install node || true
 
-yes '' | sed 3q; echo "----------------------------- installing sharewifi ----------------------------"; yes '' | sed 3q
+# yes '' | sed 3q; echo "----------------------------- installing sharewifi ----------------------------"; yes '' | sed 3q
 # npm install sharewifi -g || true
-# flatpak install flathub org.mozilla.Thunderbird
-# flatpak install flathub com.brave.Browser
+
+yes '' | sed 3q; echo "----------------------------- installing Thunderbird & Brave ----------------------------"; yes '' | sed 3q
+#flatpak install flathub org.mozilla.Thunderbird
+#flatpak install flathub com.brave.Browser
 # ln -s /home/$USER/.nix-profile/share/applications/* /home/$USER/.local/share/applications/
 
 yes '' | sed 3q; echo "----------------------------- installing github-copilot-cli ----------------------------"; yes '' | sed 3q

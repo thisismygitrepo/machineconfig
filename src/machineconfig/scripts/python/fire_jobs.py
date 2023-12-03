@@ -25,6 +25,7 @@ def main():
     parser.add_argument("--interactive", "-i", action="store_true", help="Whether to run the job interactively using IPython")
     parser.add_argument("--debug", "-d", action="store_true", help="debug")
     parser.add_argument("--choose_function", "-c", action="store_true", help="debug")
+    parser.add_argument("--loop", "-l", action="store_true", help="infinite recusion (runs again after completion)")
     parser.add_argument("--submit_to_cloud", "-C", action="store_true", help="submit to cloud compute")
     parser.add_argument("--remote", "-r", action="store_true", help="launch on a remote machine")
     parser.add_argument("--module", "-m", action="store_true", help="launch the main file")
@@ -145,6 +146,10 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
         if choice_function is not None: command += f"--function {choice_function} "
     try: tb.install_n_import("clipboard").copy(command)
     except Exception as ex: print(f"Failed to copy command to clipboard. {ex}")
+
+    if args.loop:
+        command = command + f"\n" + f". {PROGRAM_PATH}"
+
     # TODO: send this command to terminal history. In powershell & bash there is no way to do it with a command other than goiing to history file. In Mcfly there is a way but its linux only tool. # if platform.system() == "Windows": command = f" ({command}) | Add-History  -PassThru "
     print(f"🔥 command:\n{command}\n\n")
     # if platform.system() == "Linux":

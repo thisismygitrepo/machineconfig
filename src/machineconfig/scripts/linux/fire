@@ -17,7 +17,8 @@ fi
 # timeout 0.5s aafire  #  -driver slang
 # clear
 
-python $(dirname $(dirname $0))/python/fire_jobs.py "$@"
+# python $(dirname $(dirname $0))/python/fire_jobs.py "$@"
+python -m machineconfig.scripts.python.fire_jobs "$@"
 
 if [ -f "$op_script" ]; then
   chmod +x $op_script

@@ -7,20 +7,26 @@ set incsearch o       # jump to first match after each keystroke in search
 set dircounts true      # show number of items in directory instead of sie
 set info "size"       # list directory information on the right
 set sortby "natural"  # don't sort files in any special way
-set preview true        # preview file on the right pane
 # set drawbox true        # draw a border around all panes
-set globsearch false
-set mouse true
-set number true
-set preview true
-# set shell powershell
-# set colors
+set globsearch false  # don't use glob patterns in search
+set mouse true  # enable mouse support
+set number true  # show line numbers
+
+set preview true        # preview file on the right pane
+# set sixel true
+# set previewer chafa --format sixel --work 9 --optimize 9 --stretch --zoom --size 140x80
+# also see pistol file previewer.
+set previewer ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh
+# set previewer pistol
+
+set SHELL bash
+set EDITOR code 
+# set colors true
 set ratios '1:2:3'  # ratio of pane widths
 # set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"
 # see more at https://git.lmburns.com/dotfiles-mac/file/.config/lf/lfrc.html
 
-# also see pistol file previewer.
-# set previewer ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/leftpane_previewer.sh
+
 # set ignorecase true
 # see:
 # https://github.com/gokcehan/lf/wiki/Integrations#ripgrep
@@ -31,7 +37,7 @@ set ratios '1:2:3'  # ratio of pane widths
 # Unix-like defaults
 #           $OPENER  open      # macos
 #           $OPENER  xdg-open  # others
-#           $EDITOR  vi
+          # $EDITOR  code  # not vi
 #           $PAGER   less
 #           $SHELL   sh
 
@@ -50,7 +56,7 @@ map c
 map v
 # map D
 map D $diskonaut
-map K $kondo $env:f
+map K $kondo $f
 
 
 map q quit  # default
@@ -64,7 +70,7 @@ map en $nano $f
 map el $lvim $f
 map ev $nvim $f
 map ec $code $f
-map ep $pycharm
+# map ep $pycharm
 map o $start $f
 map <enter> open
 
@@ -72,10 +78,10 @@ map <enter> open
 # w shells
 map w
 map ww bash
-map wp $powershell
+# map wp $powershell
 map wr $~/scripts/croshell
-map wm $cmd
-map i $~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh $f
+# map wm $cmd
+map i !~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh $f
 map R $~/scripts/croshell -r $f
 
 
@@ -87,7 +93,7 @@ map o
 map od cut
 map op paste
 map oy copy
-map oc $Set-Clipboard -Value $env:f
+map oc $echo $f | xclip
 map or rename
 map of reload
 map os mark-save
