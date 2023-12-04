@@ -3,8 +3,8 @@
 """
 
 # import os
-import json
-from pathlib import Path
+# import json
+from crocodile.file_management import P as Path, Read, Save
 import argparse
 import platform
 
@@ -26,14 +26,13 @@ def select_interpreter(workspace_root: str):
     # tmp = os.getenv('APPDATA')
     # assert tmp is not None
     # settings_path = Path(tmp).joinpath('Code', 'User', 'settings.json')
-    work_space_settings = Path(workspace_root).joinpath('.vscode', 'settings.json')
-
-    with open(work_space_settings, 'r+', encoding='utf-8') as f:
-        settings = json.load(f)
-        settings['python.defaultInterpreterPath'] = str(python_path)
-        f.seek(0)
-        json.dump(settings, f, indent=4)
-        f.truncate()
+    work_space_settings = Path(workspace_root).joinpath('.vscode', 'settings.json').create(parents_only=True)
+    if not work_space_settings.exists():
+        work_space_settings.touch()
+        work_space_settings.write_text("{}")
+    settings = Read.json(work_space_settings)
+    settings['python.defaultInterpreterPath'] = str(python_path)
+    Save.json(obj=settings, path=work_space_settings, indent=4)
 
 
 def main():
