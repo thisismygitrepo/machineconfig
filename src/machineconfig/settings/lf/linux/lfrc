@@ -9,7 +9,7 @@ set info "size"       # list directory information on the right
 set sortby "natural"  # don't sort files in any special way
 # set drawbox true        # draw a border around all panes
 set globsearch false  # don't use glob patterns in search
-set mouse true  # enable mouse support
+set mouse false  # enable mouse support
 set number true  # show line numbers
 
 set preview true        # preview file on the right pane
