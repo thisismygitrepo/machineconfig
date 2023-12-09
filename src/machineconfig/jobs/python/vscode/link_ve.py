@@ -13,7 +13,7 @@ def select_interpreter(workspace_root: str):
     path = Path(workspace_root).joinpath('.ve_path')
     with open(path, 'r', encoding='utf-8') as f:
         ve_path = Path(f.read().strip().replace("~", str(Path.home())))
-    Path(workspace_root).joinpath(".ve").symlink_to(ve_path.expanduser().absolute())
+    Path(workspace_root).joinpath(".venv").symlink_to(ve_path.expanduser().absolute())
 
 
 def main():

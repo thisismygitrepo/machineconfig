@@ -38,10 +38,12 @@ winget install --no-upgrade --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" -
 winget install --no-upgrade --name "Chafa" --Id hpjansson.Chafa --source winget --accept-package-agreements --accept-source-agreements
 
 $ErrorActionPreference = "Stop"  # if there is any error in any command, stop there instead of proceeding to the next.
-winget install --no-upgrade --name "Python" --Id Python.Python.3.9 --source winget  # from https:\\winget.run  Python.Python.3.9
-winget install --no-upgrade --name "Python" --Id Python.Python.3.10 --source winget
+winget install --no-upgrade --name "Python" --Id Python.Python.3.11 --source winget  # from https:\\winget.run  Python.Python.3.9
 winget install --no-upgrade --name "Git" --Id Git.Git --source winget --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "GitHub CLI" --Id GitHub.cli --source winget --accept-package-agreements --accept-source-agreements
+# winget install --no-upgrade --name "GitHub CLI" --Id GitHub.cli --source winget --accept-package-agreements --accept-source-agreements
+# as per https://docs.github.com/en/copilot/github-copilot-in-the-cli/using-github-copilot-in-the-cli
+# & 'C:\Program Files\GitHub CLI\gh.exe' extension install github/gh-copilot auth login
+# & 'C:\Program Files\GitHub CLI\gh.exe' extension install github/gh-copilot
 
 # the two above require Restart-Computer -Force before they are available in PATH, OR:
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
@@ -80,6 +82,8 @@ winget install --no-upgrade --name "GnuWin32: Make" --Id GnuWin32.Make --source 
 winget install --no-upgrade --name "GnuPG" GnuPG.GnuPG
 
 winget install --no-upgrade --name "bottom" --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
+Move-Item 'C:\Program Files\bottom\bin\btm.exe' $HOME\AppData\Local\Microsoft\WindowsApps\btm.exe  # move to userpath
+
 winget install --no-upgrade --name "onefetch" --Id o2sh.onefetch --source winget  # repo-version of system neofetch, see also tokei
 winget install --no-upgrade --name "Just" --Id Casey.Just --source winget  # commandline runner
 
@@ -96,7 +100,6 @@ npm install sharewifi -g
 npm install -g easy-sharing
 npm install -g lolcatjs
 npm install -g figlet-cli
-# as per https://docs.github.com/en/copilot/github-copilot-in-the-cli/using-github-copilot-in-the-cli
-# gh extension install github/gh-copilot
+
 
 Write-Output "Finished installing apps"

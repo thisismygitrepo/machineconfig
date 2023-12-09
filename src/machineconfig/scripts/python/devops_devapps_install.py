@@ -93,13 +93,28 @@ def parse_apps_installer_linux(txt: str) -> dict[str, Any]:
 
 
 def parse_apps_installer_windows(txt: str) -> dict[str, Any]:
-    progs = tb.L(txt.splitlines()).filter(lambda x: x.startswith("winget ") or x.startswith("#winget"))
-    res = {}
-    for line in progs:
-        try: res[line.split('--name ')[1].split(' --Id ')[0].strip('"').strip('"')] = line
+    chunks: list[str] = []
+    for idx, item in enumerate(txt.split(sep="winget install")):
+        if idx == 0: continue
+        if idx == 1: chunks.append(item)
+        else: chunks.append("winget install" + item)
+    # progs = tb.L(txt.splitlines()).filter(lambda x: x.startswith("winget ") or x.startswith("#winget"))
+    res: dict[str, str] = {}
+    for a_chunk in chunks:
+        try:
+            name = a_chunk.split('--name ')[1]
+            if "--Id" not in name:
+                print(f"Warning: {name} does not have an Id, skipping")
+                continue
+            name = name.split(' --Id ', maxsplit=1)[0].strip('"').strip('"')
+            res[name] = a_chunk
         except IndexError as e:
-            print(line)
+            print(a_chunk)
             raise e
+    # tb.Struct(res).print(as_config=True)
+    # tb.L(chunks).print(sep="-----------------------------------------------------------------------\n\n")
+    # import time
+    # time.sleep(10)
     return res
 
 
