@@ -63,10 +63,10 @@ class ProcessManager:
         if kill_by_index != "":
             indices = [int(val) for val in kill_by_index.split(" ")]
             sub_sub_df = sub_df.iloc[indices]
-            for idx, row in sub_sub_df.iterrows():
-                Struct(row.to_dict()).print(as_config=True, title=f"Process {idx}")
+            for idx2, row in sub_sub_df.iterrows():
+                Struct(row.to_dict()).print(as_config=True, title=f"Process {idx2}")
             _ = self.kill(pids=sub_sub_df.pid.to_list()) if input("Confirm kill? y/[n] ").lower() == "y" else None
-        print("🫠 Not killing any process.")
+        print("🫠🐔 Not killing any process.")
 
     def filter_and_kill(self, name: Optional[str] = None):
         _ = 20
