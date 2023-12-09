@@ -36,7 +36,7 @@ def select_interpreter(workspace_root: str):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Select Python interpreter.')
+    parser = argparse.ArgumentParser(description='Set Python Interpretor in VSCode settings.')
     parser.add_argument('workspace_path', type=str, help='The workspace path')
 
     args = parser.parse_args()
