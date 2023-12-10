@@ -126,6 +126,8 @@ home = {this = '~/win', to_this = '/mnt/c/Users/username'}
 [linters]
 flake8 = {this = '~/.flake8', to_this = 'LIBRARY_ROOT/settings/linters/.flake8'}
 mypy = {this = '~/.mypy.ini', to_this = 'LIBRARY_ROOT/settings/linters/.mypy.ini'}
+ruff = {this = '~/.ruff.toml', to_this = 'LIBRARY_ROOT/settings/linters/.ruff.toml'}
+
 
 [helix_windows]
 languages = { this = '~/AppData/Roaming/helix/languages.toml', to_this = 'LIBRARY_ROOT/settings/helix/languages.toml' }
