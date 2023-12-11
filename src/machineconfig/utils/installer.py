@@ -46,22 +46,41 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
 
 @dataclass
 class Release:
-    version: Optional[str]
+    repo_url: P
+    version: str
     release_url: P
-    download_url: P
+    # download_url: P
+    def check_if_installed_already(self, exe_name: str):
+        version_to_be_installed = self.version
+        # existing_version_cli = Terminal().run(f"{exe_name or tool_name} --version", shell="powershell").op_if_successfull_or_default(strict_err=True, strict_returcode=True)
+        tmp_path = INSTALL_VERSION_ROOT.joinpath(exe_name).create(parents_only=True)
+        if tmp_path.exists(): existing_version = tmp_path.read_text().rstrip()
+        else: existing_version = None
+
+        if existing_version is not None:
+            if existing_version == version_to_be_installed:
+                print(f"⚠️ {exe_name} already installed at version {version_to_be_installed}. See {INSTALL_VERSION_ROOT}")
+                return True
+            else:
+                # print(f"Latest version is {version}, logged at {tmp_path}")
+                print(f"⬆️ {exe_name} installed at version {existing_version.rstrip()} --> Installing version {version_to_be_installed} ")
+                tmp_path.write_text(version_to_be_installed)
+        else:
+            print(f"{exe_name} has no known version. Installing version `{version_to_be_installed}` ")
+            tmp_path.write_text(version_to_be_installed)
+        return False
+
+    def compose_download_link(self, file_name: Optional[str] = None, tool_name: Optional[str] = None, suffix: Optional[str] = "x86_64-pc-windows-msvc", strip_v: bool = False, sep: Optional[str] = "-", compression: Optional[str] = None):
+        if file_name is None:  # it is not constant, so we compile it from parts as follows:
+            version_in_filename = self.version.replace("v", "") if strip_v else self.version
+            compression = compression or ("zip" if not platform.system() == "Linux" else "tar.gz")
+            tool_name = tool_name or str(P(self.repo_url)[-1])
+            file_name = f'{tool_name}{sep}{version_in_filename}{sep}{suffix}.{compression}'
+        download_link = self.release_url.joinpath(file_name)
+        return download_link
 
 
-def get_latest_release(repo_url: str, exe_name: str,
-                       download_n_extract: bool = False,
-                       suffix: Optional[str] = "x86_64-pc-windows-msvc",
-                       file_name: Optional[str] = None,  # e.g. windows_x86_64.zip
-                       tool_name: Optional[str] = None,
-                       delete: bool = True, strip_v: bool = False, linux: bool = False, compression: Optional[str] = None,
-                       sep: Optional[str] = "-", version: Optional[str] = None):
-    """Arguments help form last part of URL  `filename = f'{tool_name}{sep}{version}{sep}{suffix}.{compression}'`
-     Unless `file_name` is passed directly,  in which case it is used as is and parameters above are ignored.
-    """
-    console = Console()
+def get_github_release(repo_url: str, version: Optional[str]):
     print("\n\n\n")
     print(f"Inspecting latest release @ {repo_url}   ...")
     # with console.status("Installing..."):  # makes troubles on linux when prompt asks for password to move file to /usr/bin
@@ -72,45 +91,37 @@ def get_latest_release(repo_url: str, exe_name: str,
         version_to_be_installed = _latest_version
     else:
         version_to_be_installed = version
-
     release_url = P(repo_url + "/releases/download/" + version_to_be_installed)
+    return Release(repo_url=P(repo_url), version=version_to_be_installed, release_url=release_url)
 
-    # existing_version_cli = Terminal().run(f"{exe_name or tool_name} --version", shell="powershell").op_if_successfull_or_default(strict_err=True, strict_returcode=True)
-    tmp_path = INSTALL_VERSION_ROOT.joinpath(exe_name).create(parents_only=True)
-    if tmp_path.exists(): existing_version = tmp_path.read_text().rstrip()
-    else: existing_version = None
 
-    if existing_version is not None:
-        if existing_version == version_to_be_installed:
-            print(f"⚠️ {exe_name} already installed at version {version_to_be_installed}. See {INSTALL_VERSION_ROOT}")
-            return
-        else:
-            # print(f"Latest version is {version}, logged at {tmp_path}")
-            print(f"⬆️ {exe_name} installed at version {existing_version.rstrip()} --> Installing version {version_to_be_installed} ")
-            tmp_path.write_text(version_to_be_installed)
-    else:
-        print(f"{exe_name} has no known version. Installing version `{version_to_be_installed}` ")
-        tmp_path.write_text(version_to_be_installed)
 
-    if not download_n_extract: return release_url
+def get_latest_release(repo_url: str, exe_name: str,
+                       download_n_extract: bool = False,
+                       suffix: Optional[str] = "x86_64-pc-windows-msvc",
+                       file_name: Optional[str] = None,  # e.g. windows_x86_64.zip
+                       tool_name: Optional[str] = None,
+                       delete: bool = True, strip_v: bool = False,
+                       compression: Optional[str] = None,
+                       sep: Optional[str] = "-", version: Optional[str] = None):
+    """Arguments help form last part of URL  `filename = f'{tool_name}{sep}{version}{sep}{suffix}.{compression}'`
+     Unless `file_name` is passed directly,  in which case it is used as is and parameters above are ignored.
+    """
+
+    console = Console()
+    gh_release = get_github_release(repo_url=repo_url, version=version)
+    installed_already = gh_release.check_if_installed_already(exe_name=exe_name)
+
+    if installed_already: return None
+    if not download_n_extract: return gh_release.release_url
+    version_to_be_installed = gh_release.version
 
     console.rule(f"Installing {exe_name} version {version_to_be_installed}")
-
-    if file_name is None:  # it is not constant, so we compile it from parts as follows:
-        version_in_filename = version_to_be_installed.replace("v", "") if strip_v else version_to_be_installed
-        compression = compression or ("zip" if not linux else "tar.gz")
-        tool_name = tool_name or str(P(repo_url)[-1])
-        file_name = f'{tool_name}{sep}{version_in_filename}{sep}{suffix}.{compression}'
-    download_link = release_url.joinpath(file_name)
+    download_link = gh_release.compose_download_link(file_name=file_name, tool_name=tool_name, suffix=suffix, strip_v=strip_v, sep=sep, compression=compression)
 
     print("Downloading", download_link.as_url_str())
-    downloaded = download_link.download(folder=INSTALL_TMP_DIR)
-    if "tar.gz" in download_link or "tgz" in download_link: downloaded = downloaded.ungz_untar(inplace=True)
-    elif "zip" in download_link: downloaded = downloaded.unzip(inplace=True, overwrite=True)
-    elif "tar.xz" in download_link: downloaded = downloaded.unxz_untar(inplace=True)
-    else: pass  # no compression.
-
-    if not linux: return find_move_delete_windows(downloaded=downloaded, tool_name=exe_name, delete=delete)
+    downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
+    if not platform.system() == "Linux": return find_move_delete_windows(downloaded=downloaded, tool_name=exe_name, delete=delete)
     return find_move_delete_linux(downloaded=downloaded, tool_name=exe_name, delete=delete)
     # console.rule(f"Completed Installation")
     # return res

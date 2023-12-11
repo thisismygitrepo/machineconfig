@@ -17,7 +17,7 @@ def main(version: Optional[str] = None):
         _exe = get_latest_release(repo_url=repo_url.as_url_str(), exe_name="termscp", suffix=suffix, download_n_extract=True, delete=False, version=version)
     else:
         suffix = "x86_64-unknown-linux-gnu"
-        _release = get_latest_release(repo_url=repo_url.as_url_str(), exe_name="termscp", download_n_extract=True, delete=True, suffix=suffix, compression="tar.gz", linux=True, version=version)
+        _release = get_latest_release(repo_url=repo_url.as_url_str(), exe_name="termscp", download_n_extract=True, delete=True, suffix=suffix, compression="tar.gz", version=version)
     return ""
 
 

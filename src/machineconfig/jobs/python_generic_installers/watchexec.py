@@ -18,7 +18,7 @@ def main(version: Optional[str] = None) -> None:
     else:
         suffix = "x86_64-unknown-linux-musl"
         # suffix = "watchexec-1.23.0-x86_64-unknown-linux-gnu.tar.xz"
-        _ = get_latest_release(repo_url=repo_url, exe_name="watchexec", download_n_extract=True, delete=True, suffix=suffix, compression="tar.xz", linux=True, version=version, strip_v=True)
+        _ = get_latest_release(repo_url=repo_url, exe_name="watchexec", download_n_extract=True, delete=True, suffix=suffix, compression="tar.xz", version=version, strip_v=True)
     return None
 
 

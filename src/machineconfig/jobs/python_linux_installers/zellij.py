@@ -17,7 +17,7 @@ repo_url = "https://github.com/zellij-org/zellij"
 
 def main(version: Optional[str] = None):
     _ = version
-    _ = get_latest_release(repo_url=repo_url, exe_name="zellij", download_n_extract=False, linux=True)
+    _ = get_latest_release(repo_url=repo_url, exe_name="zellij", download_n_extract=False)
     download = tb.P(f"https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz").download().ungz_untar(inplace=True)
     find_move_delete_linux(downloaded=download, tool_name="zellij")
 

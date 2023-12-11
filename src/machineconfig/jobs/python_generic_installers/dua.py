@@ -13,7 +13,7 @@ def main(version: Optional[str] = None) -> None:
         _ = get_latest_release(repo_url, exe_name="dua", tool_name="dua", suffix=suffix, download_n_extract=True, delete=False, strip_v=False, compression="zip", version=version)
     else:
         suffix = "x86_64-unknown-linux-musl"
-        _ = get_latest_release(repo_url, exe_name="dua", tool_name="dua", download_n_extract=True, delete=True, suffix=suffix, compression="tar.gz", linux=True, version=version)
+        _ = get_latest_release(repo_url, exe_name="dua", tool_name="dua", download_n_extract=True, delete=True, suffix=suffix, compression="tar.gz", version=version)
     return None
 
 

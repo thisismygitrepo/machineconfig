@@ -22,7 +22,7 @@ def main(version: Optional[str] = None) -> None:
         console.rule("Completed Installation")
     else:
         url = r'https://github.com/imsnif/diskonaut'
-        url = get_latest_release(repo_url=url, exe_name="diskonaut", download_n_extract=True, suffix="unknown-linux-musl", compression="tar.gz", linux=True, version=version)
+        url = get_latest_release(repo_url=url, exe_name="diskonaut", download_n_extract=True, suffix="unknown-linux-musl", compression="tar.gz", version=version)
 
 
 # share on cloud: cloud_copy ~\AppData\Local\Microsoft\WindowsApps\diskonaut.exe odg1:  -rs

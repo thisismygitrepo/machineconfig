@@ -8,7 +8,7 @@ repo_url = tb.P(r"https://github.com/topgrade-rs/topgrade")
 
 
 def main(version: Optional[str] = None):
-    _ = get_latest_release(repo_url=repo_url.as_url_str(), exe_name="topgrade", suffix='x86_64-unknown-linux-gnu', compression='tar.gz', linux=True, strip_v=False, download_n_extract=True, version=version)
+    _ = get_latest_release(repo_url=repo_url.as_url_str(), exe_name="topgrade", suffix='x86_64-unknown-linux-gnu', compression='tar.gz', strip_v=False, download_n_extract=True, version=version)
 
 
 if __name__ == '__main__':

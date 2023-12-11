@@ -1,11 +1,13 @@
 
-"""Bitwarden (password manager) cli"""
-
 import crocodile.toolbox as tb
 from machineconfig.utils.installer import find_move_delete_linux
 from rich.console import Console
 from platform import system
 from typing import Optional
+
+
+__doc__ = """Bitwarden (password manager) cli"""
+repo_url = "https://github.com/bitwarden/clients"
 
 
 def main(version: Optional[str] = None):

@@ -15,7 +15,7 @@ def main(version: Optional[str] = None):
         _ = get_latest_release(repo_url=repo_url, tool_name="evcxr", exe_name="evcxr", suffix=suffix, download_n_extract=True, delete=True, strip_v=False, compression="zip", version=version)
     else:
         suffix = "x86_64-unknown-linux-gnu"
-        _ = get_latest_release(repo_url=repo_url, tool_name="evcxr", exe_name="evcxr", download_n_extract=True, delete=True, suffix=suffix, compression="tar.gz", linux=True, version=version)
+        _ = get_latest_release(repo_url=repo_url, tool_name="evcxr", exe_name="evcxr", download_n_extract=True, delete=True, suffix=suffix, compression="tar.gz", version=version)
     return ""
 
 
