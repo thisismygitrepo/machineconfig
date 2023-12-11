@@ -52,7 +52,8 @@ class Release:
 
 
 def get_latest_release(repo_url: str, exe_name: str,
-                       download_n_extract: bool = False, suffix: Optional[str] = "x86_64-pc-windows-msvc",
+                       download_n_extract: bool = False,
+                       suffix: Optional[str] = "x86_64-pc-windows-msvc",
                        file_name: Optional[str] = None,  # e.g. windows_x86_64.zip
                        tool_name: Optional[str] = None,
                        delete: bool = True, strip_v: bool = False, linux: bool = False, compression: Optional[str] = None,
