@@ -121,7 +121,7 @@ print_header()
 print_logo(logo="crocodile")
 """
 
-    pyfile = P.tmpdir().joinpath(f"tmp_scripts/python/croshell/{randstr()}.py").create(parents_only=True)
+    pyfile = P.tmp().joinpath(f"tmp_scripts/python/croshell/{randstr()}.py").create(parents_only=True)
 
     if args.read != "": title = "Reading Data"
     elif args.file != "": title = "Running Python File"
