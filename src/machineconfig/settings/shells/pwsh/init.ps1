@@ -1,14 +1,19 @@
 
-Import-Module -Name Terminal-Icons
 
-# Shows navigable menu of all options when hitting Tab
-Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
-Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
-Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
-# Set-PSReadlineOption -PredictionSource History
-# Set-PSReadlineOption -PredictionViewStyle History
-# see how to get dynamic help with prerelease
+try {
+    Import-Module -Name Terminal-Icons
 
+    # Shows navigable menu of all options when hitting Tab
+    Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+    Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
+    Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
+    # Set-PSReadlineOption -PredictionSource History
+    # Set-PSReadlineOption -PredictionViewStyle History
+    # see how to get dynamic help with prerelease
+}
+catch {
+    # Do nothing
+}
 
 # PATH extension =====================================================
 # $env:Path += ";$HOME\code\machineconfig\src\machineconfig\scripts\windows;$HOME\dotfiles\scripts\windows;C:\Program Files (x86)\GnuWin32\bin;C:\Program Files\CodeBlocks\MinGW\bin;C:\Program Files\nu\bin;C:\Program Files\Graphviz\bin"
@@ -46,11 +51,17 @@ Add-ToPathIfNotAlready -Directories @(
 
 
 # patches ===========================================================
-# patched by machineconfig from https://github.com/ajeetdsouza/zoxide
-Invoke-Expression (& {
-    $hook = if ($PSVersionTable.PSVersion.Major -lt 6) { 'prompt' } else { 'pwd' }
-    (zoxide init --hook $hook powershell | Out-String)
-})
+
+try {
+    # patched by machineconfig from https://github.com/ajeetdsouza/zoxide
+    Invoke-Expression (& {
+        $hook = if ($PSVersionTable.PSVersion.Major -lt 6) { 'prompt' } else { 'pwd' }
+        (zoxide init --hook $hook powershell | Out-String)
+    })
+}
+catch {
+    # Do nothing
+}
 
 # Set-Alias lvim '~/.local/bin/lvim.ps1'
 # function fuck {     $history = (Get-History -Count 1).CommandLine;     if (-not [string]::IsNullOrWhiteSpace($history)) {         $f>
