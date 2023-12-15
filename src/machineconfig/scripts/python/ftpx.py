@@ -29,15 +29,12 @@ def main():
         source_parts = args.source.split(":")
         machine = source_parts[0]
         if len(source_parts) > 1 and source_parts[1] == ES:  # the source path is to be inferred from target.
-            if args.target == ES:
-                raise ValueError(f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised.")
-            else:
-                target = P(args.target).expanduser().absolute()
+            if args.target == ES: raise ValueError(f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised.")
+            else: target = P(args.target).expanduser().absolute()
             source = target.collapseuser().as_posix()
         else:
             source = ":".join(args.source.split(":")[1:])
-            if args.target == ES:
-                target = None
+            if args.target == ES: target = None
             else: target = P(args.target).expanduser().absolute().as_posix()
 
     elif ":" in args.target and (args.target[1] != ":" if len(args.target) > 1 else True):  # avoid the case of "C:/":
@@ -45,15 +42,12 @@ def main():
         target_parts = args.target.split(":")
         machine = target_parts[0]
         if len(target_parts) > 1 and target_parts[1] == ES:
-            if args.source == ES:
-                raise ValueError(f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised.")
-            else:
-                source = args.source
+            if args.source == ES: raise ValueError(f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised.")
+            else: source = args.source
             target = None
         else:
             target = ":".join(args.target.split(":")[1:])
-            if args.source == ES:
-                source = None
+            if args.source == ES: source = None
             else: source = P(args.source).expanduser().absolute()
 
     else:

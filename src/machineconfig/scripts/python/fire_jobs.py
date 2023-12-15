@@ -120,14 +120,12 @@ print_code(code=r'''{txt}''', lexer='python', desc='Imported Script')
             # kgs1, _ = interactively_run_function(module[choice_function])
             # " ".join([f"--{k} {v}" for k, v in kgs1.items()])
     else:
-        if not args.streamlit:
-            command = f"{exe} {choice_file} "
+        if not args.streamlit: command = f"{exe} {choice_file} "
         else:
             if not args.cmd:
                 # for .streamlit config to work, it needs to be in the current directory.
                 command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {tb.P.cwd()}"
-            else:
-                command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
+            else: command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
             # command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {tb.P.cwd()}"
 
     if "ipdb" in command: tb.install_n_import("ipdb")
@@ -208,12 +206,6 @@ def get_attrs(obj: Any):
         for k, v in obj.__dict__.items():
             res[k] = get_attrs(v)
         return res
-    # check if iterable
-    # elif hasattr(obj, '__iter__'):
-    #     res = []
-    #     for item in obj:
-    #         res.append(get_attrs(item))
-    #     return res
     return obj
 
 

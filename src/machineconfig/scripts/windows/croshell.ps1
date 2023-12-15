@@ -18,9 +18,9 @@ $ErrorActionPreference = "Stop"
 # }
 
 $script_root = $MyInvocation.MyCommand.Path
-# . "$HOME\scripts\activate_ve.ps1" ve
+. "$HOME\scripts\activate_ve.ps1" ve
 
-. "$script_root\..\activate_ve.ps1"  # dynamic ve
+#. "$script_root\..\activate_ve.ps1"  # dynamic v
 
 python -m machineconfig.scripts.python.croshell $args
 # python -m machineconfig.scripts.python.fire_jobs $args

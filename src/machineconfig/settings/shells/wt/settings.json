@@ -77,7 +77,7 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "powershell.exe -Command \"~/scripts/croshell.ps1\"",
+                "commandline": "powershell.exe -Command \"$HOME/scripts/croshell.ps1\"",
                 "guid": "{1e951406-6597-48c7-8137-b967bed19572}",
                 "name": "croshell",
                 "startingDirectory": "%USERPROFILE%"
@@ -196,6 +196,29 @@
             "selectionBackground": "#FFFFFF",
             "white": "#CCCCCC",
             "yellow": "#C19C00"
+        },
+        {
+            "name": "deep",
+            "black": "#000000",
+            "red": "#d70005",
+            "green": "#1cd915",
+            "yellow": "#d9bd26",
+            "blue": "#5665ff",
+            "purple": "#b052da",
+            "cyan": "#50d2da",
+            "white": "#e0e0e0",
+            "brightBlack": "#535353",
+            "brightRed": "#fb0007",
+            "brightGreen": "#22ff18",
+            "brightYellow": "#fedc2b",
+            "brightBlue": "#9fa9ff",
+            "brightPurple": "#e09aff",
+            "brightCyan": "#8df9ff",
+            "brightWhite": "#ffffff",
+            "background": "#090909",
+            "foreground": "#cdcdcd",
+            "selectionBackground": "#780002",
+            "cursorColor": "#d0d0d0"
         },
         {
             "background": "#FBFBFB",
