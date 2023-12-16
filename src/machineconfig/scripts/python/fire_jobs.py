@@ -4,13 +4,14 @@ fire
 """
 
 import crocodile.toolbox as tb
-import platform
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_host, match_file_name, sanitize_path
 # from crocodile.run import *
 # https://github.com/pallets/click combine with fire. Consider
 # https://github.com/ceccopierangiolieugenio/pyTermTk for display_options build TUI
 # https://github.com/chriskiehl/Gooey build commandline interface
 import inspect
+import platform
+import os
 from typing import Callable, Any, Optional
 import argparse
 
@@ -88,9 +89,15 @@ def main():
 
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         txt: str = f"""
-import sys
-sys.path.append(r'{tb.P(choice_file).parent}')
-from {tb.P(choice_file).stem} import *
+try:
+    {get_import_module_code(str(choice_file))}
+except (ImportError, ModuleNotFoundError) as ex:
+    print(fr"Failed to import {choice_file} the proper way. {{ex}} ")
+    print(fr"The way below is rather hacky and can cause issues in pickling.")
+    import sys
+    sys.path.append(r'{tb.P(choice_file).parent}')
+    from {tb.P(choice_file).stem} import *
+
 """
         if choice_function is not None:
             txt = txt + f"""
@@ -244,6 +251,28 @@ def run_on_remote(func_file: str, args: argparse.Namespace):
                                  transfer_method="sftp")
     m = RemoteMachine(func=func_file, func_kwargs=None, config=config)
     m.run()
+
+
+def find_root_path(start_path: str):
+    root_files = ['setup.py', 'pyproject.toml', '.git']
+    path = start_path
+    while path != '/':
+        for root_file in root_files:
+            if os.path.exists(os.path.join(path, root_file)):
+                return path
+        path = os.path.dirname(path)
+    return None
+
+
+def get_import_module_code(module_path: str):
+    root_path = find_root_path(module_path)
+    if root_path is None:  # just make a desperate attempt to import it
+        module_name = module_path.lstrip(os.sep).replace(os.sep, '.').replace('.py', '')
+        return f"from {module_path} import *"
+    relative_path = module_path.replace(root_path, '')
+    module_name = relative_path.lstrip(os.sep).replace(os.sep, '.').replace('.py', '')
+    module_name = module_name.replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("resources.", "").replace("source.", "")
+    return f"from {module_name} import *"
 
 
 if __name__ == '__main__':
