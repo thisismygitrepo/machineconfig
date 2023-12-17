@@ -78,8 +78,9 @@ zellij run --direction right --name about -- rclone about {cloud}:
 zellij action move-focus up
 # zellij action write-chars "cd $HOME/data/rclone/{cloud}; sleep 0.1; ls"
 zellij run --direction left --cwd $HOME/data/rclone/{cloud} -- lf
+zellij run --direction up -- btm --default_widget_type net --expanded
 zellij run --in-place --cwd $HOME/data/rclone/{cloud} -- bash
-
+zellij action move-focus up
 """
     else: raise ValueError("unsupported platform")
     # print(f"running command: \n{txt}")

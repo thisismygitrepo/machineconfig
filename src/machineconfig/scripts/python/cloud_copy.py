@@ -7,6 +7,10 @@ import argparse
 from machineconfig.scripts.python.cloud_sync import parse_cloud_source_target
 
 
+# class ArgsDefaults:
+#     rel2home = False
+
+
 def arg_parser() -> None:
     parser = argparse.ArgumentParser(description='Cloud CLI. It wraps rclone with sane defaults for optimum type time.')
 

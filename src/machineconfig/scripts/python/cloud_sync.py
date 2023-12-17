@@ -12,6 +12,8 @@ ES = "^"  # chosen carefully to not mean anything on any shell. `$` was a bad ch
 
 def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
     if args.source.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in args.source
+        # At the moment, this cloud.json defaults overrides the args and is activated only when source or target are just ":"
+        # consider activating it by a flag, and also not not overriding explicitly passed args options.
         assert ES not in args.target, f"Not Implemented here yet."
         path = P(args.target).expanduser().absolute()
         for _i in range(len(path.parts)):
