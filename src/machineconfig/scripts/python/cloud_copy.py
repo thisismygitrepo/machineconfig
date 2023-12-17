@@ -7,8 +7,16 @@ import argparse
 from machineconfig.scripts.python.cloud_sync import parse_cloud_source_target
 
 
-# class ArgsDefaults:
-#     rel2home = False
+class ArgsDefaults:
+    encrypt: bool = False
+    zip_: bool = False
+    overwrite: bool = False
+    share: bool = False
+    rel2home = False
+    root = None
+    os_specific = False
+    key = None
+    pwd = None
 
 
 def arg_parser() -> None:
@@ -32,7 +40,7 @@ def arg_parser() -> None:
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
     args = parser.parse_args()
-    if args.rel2home and args.root is None: args.root = "myhome"
+    if args.rel2home is True and args.root is None: args.root = "myhome"
 
     cloud, source, target = parse_cloud_source_target(args)
     print(f"{cloud=}, {source=}, {target=}")

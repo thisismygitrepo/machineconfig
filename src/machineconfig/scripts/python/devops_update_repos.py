@@ -43,7 +43,7 @@ to_email = myemail@email.com
 echo ""
 echo "{("Pulling " + str(a_repo.working_dir)).center(80, "-")}"
 cd "{a_repo.working_dir}"
-git reset --hard
+# git reset --hard
 git pull origin
 chmod +x ~/scripts -R
 chmod +x ~/code/machineconfig/src/machineconfig/jobs/linux -R
