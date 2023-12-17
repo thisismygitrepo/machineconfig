@@ -105,6 +105,7 @@ def choose_multiple_options(options: list[T], header: str = "", tail: str = "", 
 
 def display_options(msg: str, options: list[T], header: str = "", tail: str = "", prompt: str = "",
                     default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[T, list[T]]:
+    # TODO: replace with https://github.com/tmbo/questionary  # also see https://github.com/charmbracelet/gum
     tool_name = "fzf"
     if fzf and check_tool_exists(tool_name):
         install_n_import("pyfzf")

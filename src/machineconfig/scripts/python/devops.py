@@ -37,7 +37,10 @@ def args_parser():
 def main(which: Optional[str] = None):
     PROGRAM_PATH.delete(sure=True, verbose=False)
     options = [op.value for op in Options]
-    if which is None: choice_key = display_options(msg="", options=options, header="DEVOPS", default=options[0])
+    if which is None:
+        # import questionary
+        # choice_key = questionary.autocomplete(message="Which option to run?", choices=options, default=options[0]).ask()
+        choice_key = display_options(msg="", options=options, header="DEVOPS", default=options[0])
     else: choice_key = Options[which].value
 
     if choice_key == Options.update.value:
