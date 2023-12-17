@@ -75,10 +75,14 @@ sleep 0.1; zellij action resize decrease up
 sleep 0.1; zellij action resize decrease up
 sleep 0.1; zellij action resize decrease up
 zellij run --direction right --name about -- rclone about {cloud}:
-zellij action move-focus up; cd $HOME/data/rclone
+zellij action move-focus up
+# zellij action write-chars "cd $HOME/data/rclone/{cloud}; sleep 0.1; ls"
+zellij run --direction left --cwd $HOME/data/rclone/{cloud} -- lf
+zellij run --in-place --cwd $HOME/data/rclone/{cloud} -- bash
+
 """
     else: raise ValueError("unsupported platform")
-    print(f"running command: \n{txt}")
+    # print(f"running command: \n{txt}")
     PROGRAM_PATH.write_text(txt)
 
 

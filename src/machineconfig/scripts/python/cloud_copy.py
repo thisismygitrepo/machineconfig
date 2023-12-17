@@ -8,7 +8,7 @@ from machineconfig.scripts.python.cloud_sync import parse_cloud_source_target
 
 
 def arg_parser() -> None:
-    parser = argparse.ArgumentParser(description='Cloud Download CLI.')
+    parser = argparse.ArgumentParser(description='Cloud CLI. It wraps rclone with sane defaults for optimum type time.')
 
     # positional argument
     parser.add_argument("source", help="file/folder path to be taken from here.", default=None)
@@ -21,14 +21,14 @@ def arg_parser() -> None:
     parser.add_argument("--share", "-s", help="Share file / directory", action="store_true")  # default is False
     # optional argument
     parser.add_argument("--rel2home", "-r", help="Relative to `myhome` folder", action="store_true")  # default is False
-    parser.add_argument("--root", "-R", help="Remote root.", default="myhome")  # default is only meaningful when rel2home is True
+    parser.add_argument("--root", "-R", help="Remote root. None is the default, unless rel2home is raied, making the default `myhome`.", default=None)  # default is only meaningful when rel2home is True
     parser.add_argument("--os_specific", "-o", help="OS specific path (relevant only when relative flag is raised as well.", action="store_true")
 
     parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
 
     args = parser.parse_args()
-    if not args.rel2home: args.root = None
+    if args.rel2home and args.root is None: args.root = "myhome"
 
     cloud, source, target = parse_cloud_source_target(args)
     print(f"{cloud=}, {source=}, {target=}")
