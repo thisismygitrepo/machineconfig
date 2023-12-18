@@ -10,12 +10,21 @@ import argparse
 ES = "^"  # chosen carefully to not mean anything on any shell. `$` was a bad choice.
 
 
+def absolute(path: str) -> P:
+    obj = P(path).expanduser()
+    if obj.exists(): return obj
+    try_absing =  P.cwd().joinpath(path)
+    if try_absing.exists(): return try_absing
+    print(f"Warning: {path} was not resolved to absolute one, trying out resolving symlinks (This may result in unintended paths)")
+    return obj.absolute()
+
+
 def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
     if args.source.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in args.source
         # At the moment, this cloud.json defaults overrides the args and is activated only when source or target are just ":"
         # consider activating it by a flag, and also not not overriding explicitly passed args options.
         assert ES not in args.target, f"Not Implemented here yet."
-        path = P(args.target).expanduser().absolute()
+        path = absolute(args.target)
         for _i in range(len(path.parts)):
             if path.joinpath("cloud.json").exists():
                 tmp = path.joinpath("cloud.json").readit()
@@ -32,7 +41,7 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
 
     if args.target.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in args.target
         assert ES not in args.source, f"Not Implemented here yet."
-        path = P(args.source).expanduser().absolute()
+        path = absolute(args.source)
         for _i in range(len(path.parts)):
             if path.joinpath("cloud.json").exists():
                 tmp = path.joinpath("cloud.json").readit()
@@ -53,7 +62,7 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
 
         if len(source_parts) > 1 and source_parts[1] == ES:  # the source path is to be inferred from target.
             assert ES not in args.target, f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised."
-            target = P(args.target).expanduser().absolute()
+            target = absolute(args.target)
             remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
             source = P(f"{cloud}:{remote_path.as_posix()}")
 
@@ -62,7 +71,7 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
             if args.target == ES:  # target path is to be inferred from source.
                 raise NotImplementedError(f"There is no .get_local_path method yet")
             else:
-                target = P(args.target).expanduser().absolute()
+                target = absolute(args.target)
         if args.zip and ".zip" not in source: source += ".zip"
         if args.encrypt and ".enc" not in source: source += ".enc"
 
@@ -72,7 +81,7 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
 
         if len(target_parts) > 1 and target_parts[1] == ES:  # the target path is to be inferred from source.
             assert ES not in args.source, f"You can't use $ in both source and target. Cyclical inference dependency arised."
-            source = P(args.source).expanduser().absolute()
+            source = absolute(args.source)
             remote_path = source.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
             target = P(f"{cloud}:{remote_path.as_posix()}")
         else:  # target path is mentioned, source? maybe.
@@ -80,11 +89,10 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
             if args.source == ES:
                 raise NotImplementedError(f"There is no .get_local_path method yet")
             else:
-                source = P(args.source).expanduser().absolute()
+                source = absolute(args.source)
 
         if args.zip and ".zip" not in target: target += ".zip"
         if args.encrypt and ".enc" not in target: target += ".enc"
-
     else:
         raise ValueError("Either source or target must be a remote path (i.e. machine:path)")
         # user, being slacky and did not indicate the remotepath with ":", so it will be inferred here

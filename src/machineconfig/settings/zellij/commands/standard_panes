@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 
 interval=0.2
 z_sess=$ZELLIJ_SESSION_NAME

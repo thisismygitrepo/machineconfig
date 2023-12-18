@@ -58,7 +58,7 @@ def main():
     except InvalidGitRepositoryError as err:
         print(f"❌ No repo found at {P.cwd()} or its parents.")
         raise err
-    version = input("Enter version: ")
+    version = input("Enter version name: ")
     exclude_editable = input("Exclude editable packages? (y/[n]): ") == "y"
     repo_root = P(repo.working_dir)
     checkout_version(version, repo_root, exclude_editable=exclude_editable)
