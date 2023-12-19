@@ -16,8 +16,8 @@ if [ "$package_manager" = "nix" ]; then
   curl -L https://nixos.org/nix/install | sh  # cross *nix platforms.
   . ~/.nix-profile/etc/profile.d/nix.sh
 else
-  sudo apt install nala -y || true  # nala is a command line tool for managing your Linux system
   (sudo apt update && sudo apt upgrade -y) || true  # this is suprior to apt
+  sudo apt install nala -y || true  # nala is a command line tool for managing your Linux system
 fi
 
 # sudo apt remove mlocate && plocate # solves wsl2 slow Initializing plocate database; this may take some time..
@@ -238,9 +238,4 @@ if [ "$package_manager" = "apt" ]; then
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.cmatrix || true
 fi
-
-yes '' | sed 3q; echo "----------------------------- installing aafire ----------------------------"; yes '' | sed 3q
-sudo apt-get install libaa-bin
-
-
 

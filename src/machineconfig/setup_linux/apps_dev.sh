@@ -153,3 +153,5 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
 fi
 
+yes '' | sed 3q; echo "----------------------------- installing aafire ----------------------------"; yes '' | sed 3q
+sudo apt-get install libaa-bin
