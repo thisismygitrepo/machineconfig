@@ -145,3 +145,11 @@ yes '' | sed 3q; echo "----------------------------- installing codon ----------
 yes '' | sed 3q; echo "----------------------------- installing rust ----------------------------"; yes '' | sed 3q
 # curl https://sh.rustup.rs -sSf | sh
 (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
+
+yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
+if [ "$package_manager" = "apt" ]; then
+  sudo apt install hollywood -y || true  # for fun
+else
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
+fi
+

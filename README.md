@@ -74,6 +74,9 @@ short: `curl bit.ly/cfgcroshellwindows -L | iex` OR `(iwr bit.ly/cfgcroshellwind
 # Linux Setup
 With `sudo` access, run the following: (short `curl bit.ly/cfgalllinux -L | bash`)
 ```bash
+# export package_manager="apt"
+# export package_manager="nix"
+
 # apps  # short: `curl bit.ly/cfgappslinux -L | bash`
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/apps.sh | bash
 # virtual enviornment  # short `curl bit.ly/cfgvelinux -L | bash`

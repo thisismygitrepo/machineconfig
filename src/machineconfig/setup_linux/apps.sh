@@ -200,6 +200,25 @@ fi
 neofetch || true
 
 
+
+# ========================================= EDITORS =========================================
+yes '' | sed 3q; echo "----------------------------- installing nano ----------------------------"; yes '' | sed 3q
+if [ "$package_manager" = "apt" ]; then
+  sudo apt install nano -y || true  # for editing files
+else
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.nano || true
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.vscode || true
+fi
+
+
+
+yes '' | sed 3q; echo "----------------------------- installing ohmybash ----------------------------"; yes '' | sed 3q
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+# replace OSH_THEME="font" with OSH_THEME="cupcake" in ~/.bashrc
+(sed -i 's/OSH_THEME="font"/OSH_THEME="cupcake"/' ~/.bashrc) || true
+# this starts a new shell process and stops execution at this point!
+
+
 # ---------------------------- Fun ------------------------------------
 yes '' | sed 3q; echo "----------------------------- installing sl ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
@@ -208,12 +227,6 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.sl || true
 fi
 
-yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install hollywood -y || true  # for fun
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
-fi
 
 yes '' | sed 3q; echo "----------------------------- installing chafa ----------------------------"; yes '' | sed 3q
 sudo apt install chafa -y  # like viu, one can ascii-ize images.
@@ -230,19 +243,4 @@ yes '' | sed 3q; echo "----------------------------- installing aafire ---------
 sudo apt-get install libaa-bin
 
 
-# -========================================= EDITORS =========================================
-yes '' | sed 3q; echo "----------------------------- installing nano ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install nano -y || true  # for editing files
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.nano || true
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.vscode || true
-fi
 
-
-
-yes '' | sed 3q; echo "----------------------------- installing ohmybash ----------------------------"; yes '' | sed 3q
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
-# replace OSH_THEME="font" with OSH_THEME="cupcake" in ~/.bashrc
-(sed -i 's/OSH_THEME="font"/OSH_THEME="cupcake"/' ~/.bashrc) || true
-# this starts a new shell process and stops execution at this point!
