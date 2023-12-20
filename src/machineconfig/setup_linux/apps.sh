@@ -5,7 +5,7 @@
 # ----------------- package manager -----------------
 yes '' | sed 3q; echo "----------------------------- installing upgrading and updating apt ----------------------------"; yes '' | sed 3q
 sudo apt update -y || true
-sudo apt upgrade -y || true
+# sudo apt upgrade -y || true
 
 # see if variable package_manager is defined, if not, define it as "nix"
 if [ -z "$package_manager" ]; then
