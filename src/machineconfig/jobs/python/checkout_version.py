@@ -59,7 +59,9 @@ def main():
         print(f"❌ No repo found at {P.cwd()} or its parents.")
         raise err
     version = input("Enter version name: ")
-    exclude_editable = input("Exclude editable packages? (y/[n]): ") == "y"
+    from rich.prompt import Confirm
+    exclude_editable = Confirm.ask("Exclude editable packages?", default=False)
+
     repo_root = P(repo.working_dir)
     checkout_version(version, repo_root, exclude_editable=exclude_editable)
 

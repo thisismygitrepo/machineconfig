@@ -91,6 +91,7 @@ def main():
         if args.cloud is not None: tb.P(save_path).to_cloud(rel2home=True, cloud=args.cloud)
         program += f"""\necho '>>>>>>>>> Finished Recording'\n"""
     elif args.clone or args.checkout or args.checkout_to_branch:
+        # preferred_remote = input("Enter preferred remote to use (default: None): ") or ""
         program += f"""\necho '>>>>>>>>> Cloning Repos'\n"""
         if not repos_root.exists() or repos_root.stem != 'repos.json':  # user didn't pass absolute path to pickle file, but rather expected it to be in the default save location
             repos_root = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
@@ -122,11 +123,16 @@ def record_repos(repos_root: str, r: bool = True) -> list[dict[str, Any]]:
     return res
 
 
-def record_a_repo(path: tb.P, search_parent_directories: bool = False):
+def record_a_repo(path: tb.P, search_parent_directories: bool = False, preferred_remote: Optional[str] = None):
     from git.repo import Repo
     repo = Repo(path, search_parent_directories=search_parent_directories)  # get list of remotes using git python
     repo_root = tb.P(repo.working_dir).absolute()
     remotes = {remote.name: remote.url for remote in repo.remotes}
+    if preferred_remote is not None:
+        if preferred_remote in remotes: remotes = {preferred_remote: remotes[preferred_remote]}
+        else:
+            print(f"⚠️ `{preferred_remote=}` not found in {remotes}.")
+            preferred_remote = None
     try: commit = repo.head.commit.hexsha
     except ValueError:  # look at https://github.com/gitpython-developers/GitPython/issues/1016
         print(f"⚠️ Failed to get latest commit of {repo}")
@@ -142,7 +148,7 @@ def record_a_repo(path: tb.P, search_parent_directories: bool = False):
     return res
 
 
-def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_commit: bool = False, checkout_to_branch: bool = False, editable_install: bool = False):
+def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_commit: bool = False, checkout_to_branch: bool = False, editable_install: bool = False, preferred_remote: Optional[str] = None):
     program = ""
     path_obj = tb.P(specs_path).expanduser().absolute()
     repos: list[dict[str, Any]] = tb.Read.json(path_obj)
@@ -151,6 +157,13 @@ def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_comm
         for idx, (remote_name, remote_url) in enumerate(repo["remotes"].items()):
             if clone:
                 if idx == 0:  # clone
+                    if preferred_remote is not None:
+                        if preferred_remote in repo["remotes"]:
+                            remote_name = preferred_remote
+                            remote_url: str = repo["remotes"][preferred_remote]
+                        else:
+                            print(f"⚠️ `{preferred_remote=}` not found in {repo['remotes']}.")
+                            # preferred_remote = None
                     program += f"\ncd {parent_dir.collapseuser().as_posix()}; git clone {remote_url} --origin {remote_name}"
                     program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}"
                     # the new url-setting to ensure that account name before `@` was not lost (git clone ignores it): https://thisismygitrepo@github.com/thisismygitrepo/crocodile.git
