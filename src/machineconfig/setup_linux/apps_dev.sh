@@ -1,5 +1,10 @@
 
 
+if [ -z "$package_manager" ]; then
+  package_manager="nix"  # see if variable package_manager is defined, if not, define it as "nix"
+fi
+
+
 # ---------------------------- text style ------------------------------------
 yes '' | sed 3q; echo "----------------------------- installing fortune ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
