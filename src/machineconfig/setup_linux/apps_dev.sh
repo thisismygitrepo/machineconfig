@@ -81,11 +81,6 @@ sudo apt-get install libaa-bin
 # yes '' | sed 3q; echo "----------------------------- installing sharewifi ----------------------------"; yes '' | sed 3q
 # npm install sharewifi -g || true
 
-yes '' | sed 3q; echo "----------------------------- installing Thunderbird & Brave ----------------------------"; yes '' | sed 3q
-#flatpak install flathub org.mozilla.Thunderbird
-#flatpak install flathub com.brave.Browser
-# ln -s /home/$USER/.nix-profile/share/applications/* /home/$USER/.local/share/applications/
-
 yes '' | sed 3q; echo "----------------------------- installing github-copilot-cli ----------------------------"; yes '' | sed 3q
 nix-env -iA nixpkgs.gh
 # as per https://docs.github.com/en/copilot/github-copilot-in-the-cli/using-github-copilot-in-the-cli
@@ -118,9 +113,6 @@ yes '' | sed 3q; echo "----------------------------- installing cloudflared ----
 # install as per instructions. Advantage of avoiding a package manager is getting: cloudflared update command.
 wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb && sudo dpkg -i cloudflared-linux-amd64.deb
 
-
-yes '' | sed 3q; echo "----------------------------- installing remmina--------------------------------"; yes '' | sed 3q
-sudo apt install remmina remmina-plugin-rdp -y
 
 
 yes '' | sed 3q; echo "----------------------------- installing graphviz ----------------------------"; yes '' | sed 3q
