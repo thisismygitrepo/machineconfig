@@ -112,7 +112,8 @@ def display_options(msg: str, options: list[T], header: str = "", tail: str = ""
         from pyfzf.pyfzf import FzfPrompt
         fzf_prompt = FzfPrompt()
         nl = "\n"
-        choice_key = fzf_prompt.prompt(choices=options, fzf_options=("--multi" if multi else "") + f' --prompt "{prompt.replace(nl, " ")}" --border=rounded')  # --border-label={msg.replace(nl, ' ')}")
+        choice_key = fzf_prompt.prompt(choices=options, fzf_options=("--multi" if multi else "") + f' --prompt "{prompt.replace(nl, " ")}" ')  # --border-label={msg.replace(nl, ' ')}")
+        # --border=rounded doens't work on older versions of fzf installed at Ubuntu 20.04
         if not multi:
             try: choice_key = choice_key[0]
             except IndexError as ie:
