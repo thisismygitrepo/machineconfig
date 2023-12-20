@@ -13,7 +13,7 @@ ES = "^"  # chosen carefully to not mean anything on any shell. `$` was a bad ch
 
 def absolute(path: str) -> P:
     obj = P(path).expanduser()
-    if obj.exists(): return obj
+    if not path.startswith(".") and  obj.exists(): return obj
     try_absing =  P.cwd().joinpath(path)
     if try_absing.exists(): return try_absing
     print(f"Warning: {path} was not resolved to absolute one, trying out resolving symlinks (This may result in unintended paths)")
@@ -43,7 +43,7 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
     if args.target.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in args.target
         assert ES not in args.source, f"Not Implemented here yet."
         path = absolute(args.source)
-        print(path)
+        # print(path)
         for _i in range(len(path.parts)):
             if path.joinpath("cloud.json").exists():
                 tmp = path.joinpath("cloud.json").readit()
