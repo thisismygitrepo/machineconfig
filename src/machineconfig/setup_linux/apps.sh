@@ -4,7 +4,7 @@
 
 # ----------------- package manager -----------------
 yes '' | sed 3q; echo "----------------------------- installing upgrading and updating apt ----------------------------"; yes '' | sed 3q
-sudo apt update -y || true
+# sudo apt update -y || true
 # sudo apt upgrade -y || true
 
 # see if variable package_manager is defined, if not, define it as "nix"
@@ -16,7 +16,8 @@ if [ "$package_manager" = "nix" ]; then
   curl -L https://nixos.org/nix/install | sh  # cross *nix platforms.
   . ~/.nix-profile/etc/profile.d/nix.sh
 else
-  (sudo apt update && sudo apt upgrade -y) || true  # this is suprior to apt
+  sudo apt update || true 
+  # sudo apt upgrade -y || true
   sudo apt install nala -y || true  # nala is a command line tool for managing your Linux system
 fi
 
