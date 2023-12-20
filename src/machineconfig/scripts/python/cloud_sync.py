@@ -7,6 +7,7 @@ from machineconfig.utils.utils import PROGRAM_PATH, DEFAULTS_PATH
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse
 
+
 ES = "^"  # chosen carefully to not mean anything on any shell. `$` was a bad choice.
 
 
@@ -42,6 +43,7 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
     if args.target.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in args.target
         assert ES not in args.source, f"Not Implemented here yet."
         path = absolute(args.source)
+        print(path)
         for _i in range(len(path.parts)):
             if path.joinpath("cloud.json").exists():
                 tmp = path.joinpath("cloud.json").readit()
