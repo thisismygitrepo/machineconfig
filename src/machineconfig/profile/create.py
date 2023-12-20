@@ -51,7 +51,10 @@ def main_symlinks(choice: Optional[str] = None):
         assert isinstance(choice_selected, list)
         if len(choice_selected) == 1 and choice_selected[0] == "none(EXIT)": return  # terminate function.
         elif len(choice_selected) == 1 and choice_selected[0] == "all": choice_selected = "all"  # i.e. program_keys = program_keys
-        overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
+        # overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
+        from rich.prompt import Confirm
+        overwrite = Confirm.ask("Overwrite existing source file?", default=True)
+
     else: choice_selected = choice
 
     if isinstance(choice_selected, str):
