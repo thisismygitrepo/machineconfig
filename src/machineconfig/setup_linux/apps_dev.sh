@@ -67,7 +67,7 @@ fi
 
 
 yes '' | sed 3q; echo "----------------------------- installing aafire ----------------------------"; yes '' | sed 3q
-sudo apt-get install libaa-bin
+sudo apt-get install libaa-bin -y
 
 
 # yes '' | sed 3q; echo "----------------------------- installing sharewifi ----------------------------"; yes '' | sed 3q
