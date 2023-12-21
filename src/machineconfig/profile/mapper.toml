@@ -89,7 +89,7 @@ icons = {this = '~/.config/lf/icons', to_this = 'LIBRARY_ROOT/settings/lf/linux/
 [gromit_linux]
 config = {this = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg', to_this = 'LIBRARY_ROOT/settings/gromit-mpx/gromit-mpx.cfg'}
 
-# zoxide can't read symlink files
+# zoxide can't read symlink files see: https://github.com/ajeetdsouza/zoxide/issues?q=is%3Aissue+is%3Aopen+symlink
 # [zoxide_windows]
 # database = {this = '~/AppData/Local/zoxide/db.zo', to_this = '~/dotfiles/settings/zoxide_windows/db.zo'}
 

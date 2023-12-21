@@ -173,7 +173,7 @@ fi
 
 yes '' | sed 3q; echo "----------------------------- installing hyperfine ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
-  sudo apt install curl
+  sudo apt install curl -y
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.hyperfine  || true  # benchamrking
 fi
