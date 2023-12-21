@@ -65,19 +65,6 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.sl || true
 fi
 
-yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install cmatrix -y || true  # for fun
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.cmatrix || true
-fi
-
-yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install hollywood -y || true  # for fun
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
-fi
 
 yes '' | sed 3q; echo "----------------------------- installing aafire ----------------------------"; yes '' | sed 3q
 sudo apt-get install libaa-bin
@@ -221,3 +208,17 @@ yes '' | sed 3q; echo "----------------------------- installing rust -----------
 # curl https://sh.rustup.rs -sSf | sh
 (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
 
+
+yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
+if [ "$package_manager" = "apt" ]; then
+  sudo apt install cmatrix -y || true  # for fun
+else
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.cmatrix || true
+fi
+
+yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
+if [ "$package_manager" = "apt" ]; then
+  sudo apt install hollywood -y || true  # for fun
+else
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
+fi
