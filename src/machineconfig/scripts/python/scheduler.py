@@ -25,6 +25,31 @@ venv = ve
 """
 
 
+class Register:
+    def __init__(self, root: str):
+        self.root = P(root).expanduser().absolute()
+
+    def register_runtime(self, frequency_months: int = 1):
+        start, end = self.get_report_start_end_datetimes(frequency_months=frequency_months)
+        report = Report(name="runtime", start=start, end=end, status="success")
+        report.to_path(self.root.joinpath("runtime.ini"))
+
+    def read_runtime(self):
+        return Report.from_path(self.root.joinpath("runtime.ini"))
+
+    @staticmethod
+    def get_report_start_end_datetimes(frequency_months: int):
+        now = datetime.now()
+        import numpy as np
+        chunks = np.arange(start=1, stop=12, step=frequency_months)
+        chunk_now_start = chunks[chunks < now.month][-1]
+        previous_chunk_end = chunk_now_start
+        previous_chunk_start = previous_chunk_end - frequency_months
+        start = datetime(year=now.year, month=previous_chunk_start, day=1)
+        end = datetime(year=now.year, month=previous_chunk_end, day=1)
+        return start, end
+
+
 @dataclass
 class Report:
     name: str
