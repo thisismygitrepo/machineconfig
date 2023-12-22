@@ -6,8 +6,10 @@ cd ~/code || exit
 git clone https://github.com/thisismygitrepo/crocodile.git --depth 4
 git clone https://github.com/thisismygitrepo/machineconfig.git  --depth 4
 
-
-source ~/venvs/ve/bin/activate || exit
+# check if $VIRTUAL_ENV is set
+if [ -z "$VIRTUAL_ENV" ]; then
+  source ~/venvs/ve/bin/activate || exit
+fi
 
 cd ~/code/crocodile || exit
 
