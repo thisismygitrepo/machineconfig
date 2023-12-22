@@ -25,21 +25,23 @@ def checkout_version(version: str, repo_root: P, exclude_editable: bool = False)
         editable_json = get_editable_packages(ve_name=ve_name)
         specs_path = P(target_dir).expanduser().joinpath("editable_packages.json")
         Save.json(obj=editable_json, path=specs_path, indent=4)
-        extra_program = install_repos(specs_path=str(specs_path), editable_install=True)
-    else: extra_program = ""
+        install_editable_packages = install_repos(specs_path=str(specs_path), editable_install=True)
+    else: install_editable_packages = ""
 
-    req_root = repo_root.collapseuser().joinpath(f"versions/{version}").as_posix()
+    version_root = repo_root.collapseuser().joinpath(f"versions/{version}").as_posix()
     checkout_ve = f"{repo_root.name}-{version}-prod" if not exclude_editable else ve_name
     checkout_ve = input(f"Name of the ve to create (default: {checkout_ve}): ") or checkout_ve
     # print("dfs"*100)
     ve_template = get_ve_install_script(ve_name=checkout_ve, py_version=py_version)
-    ve_template += f"""
+    install_requirements = f"""
 . $HOME/scripts/activate_ve $ve_name
-cd {req_root}
+cd {version_root}
 pip install -r requirements_{sys}.txt
-{extra_program}
+{install_editable_packages}
 """
-    P(req_root).expanduser().create().joinpath("install" + (".ps1" if sys == "windows" else ".sh")).write_text(ve_template)
+    P(version_root).expanduser().create().joinpath("install_ve" + (".ps1" if sys == "windows" else ".sh")).write_text(ve_template)
+    P(version_root).expanduser().create().joinpath("install_requirements" + (".ps1" if sys == "windows" else ".sh")).write_text(install_requirements)
+
     pip_freeze_script = f"""
 cd '{target_dir}'
 . "$HOME/scripts/activate_ve" {ve_name}
