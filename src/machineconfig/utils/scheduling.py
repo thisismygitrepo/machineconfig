@@ -34,6 +34,7 @@ class Register:
         start, end = self.get_report_start_end_datetimes(frequency_months=frequency_months)
         report = Report(name="runtime", start=start, end=end, status="success")
         report.to_path(self.root.joinpath("runtime.ini"))
+        return report
 
     def read_runtime(self):
         return Report.from_path(self.root.joinpath("runtime.ini"))
@@ -59,8 +60,12 @@ class Report:
     status: str
 
     @classmethod
-    def from_path(cls, path: P):
-        if not path.exists(): return Report(name=path.parent.name, start=datetime(year=2000, month=1, day=1), end=datetime(year=2000, month=1, day=1), status="NA")
+    def from_path(cls, path: P, return_default_if_not_found: bool = False):
+        if not path.exists():
+            if return_default_if_not_found:
+                return Report(name=path.parent.name, start=datetime(year=2000, month=1, day=1), end=datetime(year=2000, month=1, day=1), status="NA")
+            else:
+                raise ValueError(f"Could not find report at {path}")
         ini = Read.ini(path)['report']
         return cls(
             name=ini["name"],

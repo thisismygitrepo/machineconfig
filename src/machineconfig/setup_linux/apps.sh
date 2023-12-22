@@ -91,14 +91,14 @@ else
 fi
 #sudo apt install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
 
-yes '' | sed 3q; echo "----------------------------- installing zoxide ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install zoxide -y || true
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.zoxide || true
-fi
-#sudo apt install zoxide || true
-(echo 'eval "$(zoxide init bash)"' >> ~/.bashrc) || true
+# yes '' | sed 3q; echo "----------------------------- installing zoxide ----------------------------"; yes '' | sed 3q
+# if [ "$package_manager" = "apt" ]; then
+#   sudo apt install zoxide -y || true
+# else
+#   ~/.nix-profile/bin/nix-env -iA nixpkgs.zoxide || true
+# fi
+# #sudo apt install zoxide || true
+# (echo 'eval "$(zoxide init bash)"' >> ~/.bashrc) || true
 
 
 yes '' | sed 3q; echo "----------------------------- installing skim ----------------------------"; yes '' | sed 3q
