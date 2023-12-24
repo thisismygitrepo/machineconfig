@@ -11,10 +11,10 @@ then
     export DOTFILES_URL=$DOTFILES_URL
 fi
 
-if [ -z "$DOTFILES_URL" ]
+if [ -z "$DECRYPTION_PASSWORD" ]
 then
-    read -s -p "Enter DOTFILES_URL: " DOTFILES_URL
-    export DOTFILES_URL=$DOTFILES_URL
+    read -s -p "Enter DECRYPTION_PASSWORD: " DECRYPTION_PASSWORD
+    export DECRYPTION_PASSWORD=$DECRYPTION_PASSWORD
 fi
 
 # essentials
