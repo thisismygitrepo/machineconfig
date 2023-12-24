@@ -18,7 +18,7 @@ def main(version: Optional[str] = None) -> None:
         find_move_delete_linux(downloaded=download, tool_name="gitui")
     elif platform.system() == "Windows":
         download = url.joinpath(f"gitui-win.tar.gz").download().ungz_untar(inplace=True)
-        find_move_delete_windows(downloaded=download, tool_name="gitui.exe")
+        find_move_delete_windows(downloaded_file_path=download, exe_name="gitui.exe")
     else:
         raise NotImplementedError(f"Not supported OS for gitui {platform.system()}")
 

@@ -22,7 +22,7 @@ def main(version: Optional[str] = None) -> None:
         return None
     if system() == "Windows":
         downloaded = latest.joinpath("cloudflared-windows-amd64.exe").download().with_name("cloudflared.exe", inplace=True)
-        find_move_delete_windows(downloaded=downloaded)
+        find_move_delete_windows(downloaded_file_path=downloaded)
     elif system() == "Linux":
         downloaded = latest.joinpath("cloudflared-linux-amd64").download().with_name("cloudflared", inplace=True)
         find_move_delete_linux(downloaded=downloaded, tool_name="cloudflared")

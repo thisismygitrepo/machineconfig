@@ -6,6 +6,8 @@
 yes '' | sed 3q; echo "----------------------------- installing upgrading and updating apt ----------------------------"; yes '' | sed 3q
 sudo apt update -y || true
 # sudo apt upgrade -y || true
+sudo apt install curl -y || true  # for handling http requests
+
 
 if [ -z "$package_manager" ]; then
   package_manager="nix"  # see if variable package_manager is defined, if not, define it as "nix"
@@ -41,13 +43,6 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.wget || true
 fi
 
-yes '' | sed 3q; echo "----------------------------- installing curl -------------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install curl -y || true  # for handling http requests
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.curl || true
-fi
-# consider asdf tool for managing versions of python, node, etc.
 
 yes '' | sed 3q; echo "----------------------------- installing nvm of nodejs --------------------------"; yes '' | sed 3q
 # according to: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm its best to use nvm manager

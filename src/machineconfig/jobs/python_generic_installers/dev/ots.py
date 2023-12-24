@@ -19,7 +19,7 @@ def main(version: Optional[str] = None) -> None:
             print(f"Could not find ots release for version {version}")
             return None
         downloaded = latest.joinpath("ots_windows_amd64.zip").download()
-        find_move_delete_windows(downloaded=downloaded.unzip(inplace=True), tool_name="ots", delete=True)
+        find_move_delete_windows(downloaded_file_path=downloaded.unzip(inplace=True), exe_name="ots", delete=True)
     elif platform.system() == "Linux":
         latest = get_latest_release(repo_url=repo_url, exe_name="ots", file_name="ots_linux_amd64.tgz", download_n_extract=False, version=version)
         if not isinstance(latest, tb.P):

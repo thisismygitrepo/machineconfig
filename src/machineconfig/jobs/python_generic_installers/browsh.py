@@ -20,7 +20,7 @@ def main(version: Optional[str] = None) -> None:
         url = url.joinpath(f"browsh_{str(url[-1]).replace('v', '')}_windows_amd64.exe")
         print(f"Downloading {url}")
         downloaded = url.download().with_name("browsh.exe", overwrite=True, inplace=True)
-        find_move_delete_windows(downloaded=downloaded, tool_name="browsh.exe")
+        find_move_delete_windows(downloaded_file_path=downloaded, exe_name="browsh.exe")
     else:
         raise NotImplementedError(f"Not supported OS for gitui {platform.system()}")
 

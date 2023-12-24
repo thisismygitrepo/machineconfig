@@ -8,23 +8,23 @@ from crocodile.meta import Terminal
 from machineconfig.utils.utils import INSTALL_VERSION_ROOT, INSTALL_TMP_DIR
 
 from dataclasses import dataclass
-from typing import Optional, Literal
+from typing import Optional, Literal, Any
 import platform
 
 
-def find_move_delete_windows(downloaded: P, tool_name: Optional[str] = None, delete: bool = True, rename_to: Optional[str] = None):
-    if tool_name is not None and ".exe" in tool_name: tool_name = tool_name.replace(".exe", "")
-    if downloaded.is_file():
-        exe = downloaded
+def find_move_delete_windows(downloaded_file_path: P, exe_name: Optional[str] = None, delete: bool = True, rename_to: Optional[str] = None):
+    if exe_name is not None and ".exe" in exe_name: exe_name = exe_name.replace(".exe", "")
+    if downloaded_file_path.is_file():
+        exe = downloaded_file_path
     else:
-        if tool_name is None: exe = downloaded.search("*.exe", r=True).list[0]
+        if exe_name is None: exe = downloaded_file_path.search("*.exe", r=True).list[0]
         else:
-            tmp = downloaded.search(f"{tool_name}.exe", r=True)
+            tmp = downloaded_file_path.search(f"{exe_name}.exe", r=True)
             if len(tmp) == 1: exe = tmp.list[0]
-            else: exe = downloaded.search("*.exe", r=True).list[0]
+            else: exe = downloaded_file_path.search("*.exe", r=True).list[0]
     if rename_to: exe = exe.with_name(name=rename_to, inplace=True)
     exe.move(folder=P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
-    if delete: downloaded.delete(sure=True)
+    if delete: downloaded_file_path.delete(sure=True)
     return exe
 
 
@@ -45,13 +45,89 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
 
 
 @dataclass
-class Release:
-    repo_url: P
-    version: str
-    release_url: P
-    # download_url: P
-    def check_if_installed_already(self, exe_name: str):
-        version_to_be_installed = self.version
+class ReleaseFileNameStructure:
+    repo_url: str
+    fixed_file_name: Optional[str]  # the release has a fixed file name, so no need to compose it
+    tool_name: str  # as it appears in the release file name
+    exe_name: str  # as it is called from the terminal, i.e. the name of the executable file
+    suffix_window_amd_64: Optional[str]
+    suffix_linux_amd_64: Optional[str]
+    compression_windows: Optional[str]
+    compression_linux: Optional[str]
+    sep: str = "-"
+    strip_v: bool = False
+
+    def to_dict(self):
+        return self.__dict__
+
+    @staticmethod
+    def from_dict(d: dict[str, Any]):
+        return ReleaseFileNameStructure(**d)
+
+    @staticmethod
+    def construct_by_prompting_user() -> "ReleaseFileNameStructure":
+        repo_url = input("Enter repo url: ")
+        latest_release = ReleaseFileNameStructure.get_github_release(repo_url=repo_url, version=None)[0]
+        latest_release()
+        print(f"""
+Follow the prompt to help construct filename structure for {repo_url} releases.
+It is expeted to be in the format `toolname-separator-version-separator-suffix.compression`
+""")
+        fixed_file_name_input = input("If the release file has fixed name and doesn't follow the expected format, insert it now, otherwise leave empty (default): ")
+        if fixed_file_name_input == "": fixed_file_name = None
+        else: fixed_file_name = fixed_file_name_input
+        tool_name = input("Enter tool name as it appears in the release file name: ")
+        exe_name = input(f"Enter tool name as it is called from the terminal, i.e. the name of the executable file (default: {tool_name}): ") or tool_name
+        suffix_window_amd_64 = input("Enter suffix for windows amd64 (defaults to nonexisting for this OS): ") or None
+        suffix_linux_amd_64 = input("Enter suffix for linux amd64 (defaults to nonexisting for this OS): ") or None
+        compression_windows = input("Enter compression for windows (defaults to no compression): ") or None
+        compression_linux = input("Enter compression for linux (defaults to no compression): ") or None
+        sep = input("Enter separator (defaults to '-'): ") or "-"
+        strip_v = bool(input("Strip 'v' from version ? (defaults to False): "))
+        return ReleaseFileNameStructure(repo_url=repo_url, fixed_file_name=fixed_file_name, tool_name=tool_name, exe_name=exe_name, suffix_window_amd_64=suffix_window_amd_64, suffix_linux_amd_64=suffix_linux_amd_64, compression_windows=compression_windows, compression_linux=compression_linux, sep=sep, strip_v=strip_v)
+
+    def compose_filename(self, version: Optional[str]) -> str:
+        if self.fixed_file_name is not None:
+            return self.fixed_file_name
+        assert version is not None, f"Version must be passed if fixed_file_name is None"
+        version_in_filename = version.replace("v", "") if self.strip_v else version
+        if platform.system() == "Windows":
+            compression = self.compression_windows
+            suffix = self.suffix_window_amd_64
+            assert suffix is not None, f"No binaries for windows found for {self.tool_name}"
+        elif platform.system() == "Linux":
+            compression = self.compression_linux
+            suffix = self.suffix_linux_amd_64
+            assert suffix is not None, f"No binaries for linux found for {self.tool_name}"
+        else: raise NotImplementedError(f"System {platform.system()} not implemented")
+        file_name = f'{self.tool_name}{self.sep}{version_in_filename}{self.sep}{suffix}'
+        if compression is not None: file_name += f".{compression}"
+        return file_name
+
+    def compose_download_link(self, version: Optional[str]):
+        release_url, version_to_be_installed = self.get_github_release(repo_url=self.repo_url, version=version)
+        file_name = self.compose_filename(version=version_to_be_installed)
+        download_link = release_url.joinpath(file_name)
+        return download_link
+
+    @staticmethod
+    def get_github_release(repo_url: str, version: Optional[str] = None):
+        print("\n\n\n")
+        print(f"Inspecting latest release @ {repo_url}   ...")
+        # with console.status("Installing..."):  # makes troubles on linux when prompt asks for password to move file to /usr/bin
+
+        if version is None:
+            import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
+            _latest_version = requests.get(str(repo_url) + "/releases/latest", timeout=10).url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
+            version_to_be_installed = _latest_version
+        else:
+            version_to_be_installed = version
+        release_url = P(repo_url + "/releases/download/" + version_to_be_installed)
+        return release_url, version_to_be_installed
+
+    @staticmethod
+    def check_if_installed_already(exe_name: str, version: str):
+        version_to_be_installed = version
         # existing_version_cli = Terminal().run(f"{exe_name or tool_name} --version", shell="powershell").op_if_successfull_or_default(strict_err=True, strict_returcode=True)
         tmp_path = INSTALL_VERSION_ROOT.joinpath(exe_name).create(parents_only=True)
         if tmp_path.exists(): existing_version = tmp_path.read_text().rstrip()
@@ -70,31 +146,6 @@ class Release:
             tmp_path.write_text(version_to_be_installed)
         return False
 
-    def compose_download_link(self, file_name: Optional[str] = None, tool_name: Optional[str] = None, suffix: Optional[str] = "x86_64-pc-windows-msvc", strip_v: bool = False, sep: Optional[str] = "-", compression: Optional[str] = None):
-        if file_name is None:  # it is not constant, so we compile it from parts as follows:
-            version_in_filename = self.version.replace("v", "") if strip_v else self.version
-            compression = compression or ("zip" if not platform.system() == "Linux" else "tar.gz")
-            tool_name = tool_name or str(P(self.repo_url)[-1])
-            file_name = f'{tool_name}{sep}{version_in_filename}{sep}{suffix}.{compression}'
-        download_link = self.release_url.joinpath(file_name)
-        return download_link
-
-
-def get_github_release(repo_url: str, version: Optional[str]):
-    print("\n\n\n")
-    print(f"Inspecting latest release @ {repo_url}   ...")
-    # with console.status("Installing..."):  # makes troubles on linux when prompt asks for password to move file to /usr/bin
-
-    if version is None:
-        import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
-        _latest_version = requests.get(str(repo_url) + "/releases/latest", timeout=10).url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
-        version_to_be_installed = _latest_version
-    else:
-        version_to_be_installed = version
-    release_url = P(repo_url + "/releases/download/" + version_to_be_installed)
-    return Release(repo_url=P(repo_url), version=version_to_be_installed, release_url=release_url)
-
-
 
 def get_latest_release(repo_url: str, exe_name: str,
                        download_n_extract: bool = False,
@@ -103,25 +154,28 @@ def get_latest_release(repo_url: str, exe_name: str,
                        tool_name: Optional[str] = None,
                        delete: bool = True, strip_v: bool = False,
                        compression: Optional[str] = None,
-                       sep: Optional[str] = "-", version: Optional[str] = None):
+                       sep: str = "-", version: Optional[str] = None):
     """Arguments help form last part of URL  `filename = f'{tool_name}{sep}{version}{sep}{suffix}.{compression}'`
      Unless `file_name` is passed directly,  in which case it is used as is and parameters above are ignored.
     """
 
     console = Console()
-    gh_release = get_github_release(repo_url=repo_url, version=version)
-    installed_already = gh_release.check_if_installed_already(exe_name=exe_name)
+    gh_release = ReleaseFileNameStructure(repo_url=repo_url, fixed_file_name=file_name, tool_name=tool_name or exe_name, exe_name=exe_name, suffix_window_amd_64=suffix, suffix_linux_amd_64=suffix, compression_windows=compression, compression_linux=compression, sep=sep, strip_v=strip_v)
+
+    release_url, version_to_be_installed = gh_release.get_github_release(repo_url=gh_release.repo_url, version=version)
+
+    installed_already = gh_release.check_if_installed_already(exe_name=exe_name, version=version_to_be_installed)
 
     if installed_already: return None
-    if not download_n_extract: return gh_release.release_url
-    version_to_be_installed = gh_release.version
+    if not download_n_extract: return release_url
 
     console.rule(f"Installing {exe_name} version {version_to_be_installed}")
-    download_link = gh_release.compose_download_link(file_name=file_name, tool_name=tool_name, suffix=suffix, strip_v=strip_v, sep=sep, compression=compression)
+    file_name = gh_release.compose_filename(version=version_to_be_installed)
+    download_link = release_url.joinpath(file_name)
 
     print("Downloading", download_link.as_url_str())
     downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
-    if not platform.system() == "Linux": return find_move_delete_windows(downloaded=downloaded, tool_name=exe_name, delete=delete)
+    if not platform.system() == "Linux": return find_move_delete_windows(downloaded_file_path=downloaded, exe_name=exe_name, delete=delete)
     return find_move_delete_linux(downloaded=downloaded, tool_name=exe_name, delete=delete)
     # console.rule(f"Completed Installation")
     # return res

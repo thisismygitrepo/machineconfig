@@ -20,7 +20,7 @@ def main(version: Optional[str] = None) -> None:
         return None
     if system() == "Windows":
         downloaded = latest.joinpath("chatgpt_Windows_x86_64.zip").download().unzip(inplace=True)
-        find_move_delete_windows(downloaded=downloaded)
+        find_move_delete_windows(downloaded_file_path=downloaded)
     elif system() == "Linux":
         downloaded = latest.joinpath("chatgpt_Linux_x86_64.tar.gz").download().ungz_untar(inplace=True)
         find_move_delete_linux(downloaded=downloaded, tool_name="chatgpt")

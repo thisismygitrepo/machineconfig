@@ -14,7 +14,7 @@ def main(version: Optional[str] = None) -> None:
         if not isinstance(release, P):
             print(f"Could not find browsh release for version {version}")
             return None
-        find_move_delete_windows(downloaded=release.joinpath("ttyd.win32.exe").download().with_name("ttyd.exe", inplace=True), tool_name="ttyd.exe")
+        find_move_delete_windows(downloaded_file_path=release.joinpath("ttyd.win32.exe").download().with_name("ttyd.exe", inplace=True), exe_name="ttyd.exe")
     elif platform.system() == "Linux":
         release = get_latest_release(repo_url=repo_url, exe_name="ttyd", version=version, download_n_extract=False)
         if not isinstance(release, P):
