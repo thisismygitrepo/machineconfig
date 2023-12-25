@@ -5,7 +5,7 @@
 from crocodile.file_management import P, Struct, modify_text, List
 from machineconfig.utils.utils import LIBRARY_ROOT
 import platform
-from typing import Optional
+from typing import Optional, Literal
 
 
 def get_ipython_profile(init_path: P):
@@ -65,9 +65,12 @@ def get_ve_specs(ve_path: P) -> dict[str, str]:
     return res
 
 
-def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[str] = None, install_crocodile_and_machineconfig: Optional[bool] = None):
+def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[str] = None, install_crocodile_and_machineconfig: Optional[bool] = None,
+                          system: Optional[Literal["Windows", "Linux"]] = None):
     from rich.console import Console
-    system: str = platform.system()
+    if system is None:
+        system_: str = platform.system()
+    else: system_ = system
     console = Console()
 
     if py_version is None:
@@ -96,9 +99,9 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
         console.rule(f"Deleting existing enviroment with similar name")
         env_path.delete(sure=sure)
 
-    scripts = LIBRARY_ROOT.joinpath(f"setup_{system.lower()}/ve.{'ps1' if system == 'Windows' else 'sh'}").read_text()
+    scripts = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/ve.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
 
-    variable_prefix = "$" if system == "Windows" else ""
+    variable_prefix = "$" if system_ == "Windows" else ""
     line1 = f"{variable_prefix}ve_name='{ve_name}'"
     line2 = f"{variable_prefix}py_version='{dotted_py_version}'"
     line_start = "# --- Define ve name and python version here ---"
@@ -107,7 +110,7 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
     scripts = scripts.split(line_start)[0] + "\n".join([line_start, line1, line2, line_end]) + scripts.split(line_end)[1]
 
     if install_croco_and_machineconfig:  # TODO make this more robust by removing sections of the script as opposed to word placeholders.
-        text = LIBRARY_ROOT.joinpath(f"setup_{system.lower()}/repos.{'ps1' if system == 'Windows' else 'sh'}").read_text()
+        text = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/repos.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
         text = modify_text(txt_raw=text, txt_search="ve_name=", txt_alt=f"{variable_prefix}ve_name='{ve_name}'", replace_line=True)
         scripts += text
     return scripts
