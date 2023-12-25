@@ -1,0 +1,15 @@
+
+defaults:
+  themes: terminal-dark
+  footer:
+    style: progress_bar
+
+    # Optional!
+    character: 🚀
+
+options:
+  footer:
+    style: progress_bar
+
+    # Optional!
+    character: 🚀

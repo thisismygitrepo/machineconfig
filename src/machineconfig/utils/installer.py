@@ -59,11 +59,13 @@ class Installer:
         return Installer(**d)
     @staticmethod
     def choose_and_install():
-        config: dict[str, Any] = Read.json(LIBRARY_ROOT.joinpath("jobs/python_generic_installers/config.json"))
         from machineconfig.utils.utils import choose_one_option
-        binary = choose_one_option(options=list(config.keys()), fzf=True)
-        installer = Installer.from_dict(config[binary])
-        installer.install(version=None)
+        path = choose_one_option(options=LIBRARY_ROOT.joinpath("jobs").search("config.json", r=True).list)
+        config: dict[str, Any] = Read.json(path)  # /python_generic_installers/config.json"))
+        # binary = choose_one_option(options=list(config.keys()), fzf=True)
+        for binary in list(config.keys()):
+            installer = Installer.from_dict(config[binary])
+            installer.install(version=None)
 
     def install(self, version: Optional[str]):
         release_url, version_to_be_installed = ReleaseFileNameStructure.get_github_release(repo_url=self.repo_url, version=version)

@@ -49,14 +49,6 @@
         "strip_v": true,
         "exe_name": "delta"
     },
-    "diskonaut": {
-        "repo_url": "https://github.com/imsnif/diskonaut",
-        "doc": "diskonaut is a terminal disk space navigator.",
-        "filename_template_windows_amd_64": "diskonaut.exe",
-        "filename_template_linux_amd_64": "diskonaut_unknown-linux-musl.tar.gz",
-        "strip_v": false,
-        "exe_name": "diskonaut"
-    },
     "dua": {
         "repo_url": "https://github.com/Byron/dua-cli",
         "doc": "Rust-based cli tool to get a quick overview of disk usage.",
@@ -144,5 +136,13 @@
         "filename_template_linux_amd_64": "watchexec-{}-x86_64-unknown-linux-musl.tar.xz",
         "strip_v": true,
         "exe_name": "watchexec"
+    },
+    "diskonaut": {
+        "repo_url": "https://github.com/imsnif/diskonaut",
+        "doc": "diskonaut is a terminal disk space navigator.",
+        "filename_template_windows_amd_64": "diskonaut.exe",
+        "filename_template_linux_amd_64": "diskonaut_unknown-linux-musl.tar.gz",
+        "strip_v": false,
+        "exe_name": "diskonaut"
     }
 }

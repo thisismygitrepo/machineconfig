@@ -1,0 +1,154 @@
+{
+    "presenterm": {
+        "repo_url": "https://github.com/mfontanini/presenterm",
+        "doc": "present from temrinal",
+        "filename_template_windows_amd_64": "presenterm-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "presenterm-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": true,
+        "exe_name": "presenterm"
+    },
+    "Auto-GPT": {
+        "repo_url": "https://github.com/Significant-Gravitas/Auto-GPT",
+        "doc": "GPT ",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": ""
+    },
+    "Bitwarden": {
+        "repo_url": "https://github.com/bitwarden/clients",
+        "doc": "Bitwarden (password manager) cli",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "bw"
+    },
+    "Cloudflared": {
+        "repo_url": "https://github.com/cloudflare/cloudflared",
+        "doc": "Cloudflared installer. Should only be installed at main computer and servers of tunnels.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": ""
+    },
+    "Evcxr": {
+        "repo_url": "https://github.com/evcxr/evcxr",
+        "doc": "An evaluation context for Rust.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "evxcr"
+    },
+    "Forward-cli": {
+        "repo_url": "https://github.com/axetroy/forward-cli",
+        "doc": "Reverse Proxy port forwarding cli tool",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "forward"
+    },
+    "Frp": {
+        "repo_url": "https://github.com/fatedier/frp",
+        "doc": "Rust-based cli tool to get a quick overview of disk usage.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "frp"
+    },
+    "Kondo": {
+        "repo_url": "https://github.com/tbillington/kondo",
+        "doc": "cleans projects from litter files.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "kondo"
+    },
+    "LunarVim": {
+        "doc": "Terminal text editor based on neovim",
+        "repo_url": "",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "lvim"
+    },
+    "Ngrok": {
+        "doc": "expose a local server behind a NAT or firewall to the internet",
+        "repo_url": "",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "ngrok"
+    },
+    "ots": {
+        "repo_url": "https://github.com/Luzifer/ots",
+        "doc": "A command line tool for generating and verifying one-time secrets.",
+        "filename_template_windows_amd_64": "ots_windows_amd64.zip",
+        "filename_template_linux_amd_64": "ots_linux_amd64.tgz",
+        "strip_v": false,
+        "exe_name": "ots"
+    },
+    "openpomodoro-cli": {
+        "repo_url": "https://github.com/open-pomodoro/openpomodoro-cli",
+        "doc": "Pomodoro timer for the command-line",
+        "filename_template_windows_amd_64": "pomodoro_windows_amd64.tar.gz",
+        "filename_template_linux_amd_64": "pomodoro_linux_amd64.tar.gz",
+        "strip_v": true,
+        "exe_name": "pomodoro"
+    },
+    "qrcp": {
+        "repo_url": "https://github.com/claudiodangelis/qrcp",
+        "doc": "qr code file transfer",
+        "filename_template_windows_amd_64": "qrcp_v{version}_Windows_x86_64.tar.gz",
+        "filename_template_linux_amd_64": "qrcp_v{version}_linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "qrcp"
+    },
+    "qrscan": {
+        "repo_url": "https://github.com/sayanarijit/qrscan",
+        "doc": "qr code scanner",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": true,
+        "exe_name": "qrscan"
+    },
+    "rust-analyzer": {
+        "repo_url": "https://github.com/rust-lang/rust-analyzer",
+        "doc": "Rust Language Server (LSP)",
+        "filename_template_windows_amd_64": "rust-analyzer-x86_64-pc-windows-msvc.gz",
+        "filename_template_linux_amd_64": "rust-analyzer-x86_64-unknown-linux-gnu.gz",
+        "strip_v": false,
+        "exe_name": "rust-analyzer"
+    },
+    "termscp": {
+        "repo_url": "https://github.com/veeso/termscp",
+        "doc": "A TUI like winscp",
+        "filename_template_windows_amd_64": "termscp_x86_64-pc-windows-msvc.tar.gz",
+        "filename_template_linux_amd_64": "termscp_x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "termscp"
+    },
+    "tealdeer": {
+        "repo_url": "https://github.com/dbrgn/tealdeer",
+        "doc": "Too long, didn't read, but for cli tools.",
+        "filename_template_windows_amd_64": "tealdeer-windows-x86_64-msvc.exe",
+        "filename_template_linux_amd_64": "tealdeer-linux-x86_64-musl",
+        "strip_v": false,
+        "exe_name": "tealdeer"
+    },
+    "tokei": {
+        "repo_url": "https://github.com/XAMPPRocky/tokei",
+        "doc": "Counts the number of lines of code, comments, and blanks in a project.",
+        "filename_template_windows_amd_64": "tokei-x86_64-pc-windows-msvc.exe",
+        "filename_template_linux_amd_64": "tokei-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "tokei"
+    },
+    "vtm": {
+        "repo_url": "https://github.com/netxs-group/vtm",
+        "doc": "Text-based desktop environment inside your terminal*",
+        "filename_template_windows_amd_64": "vtm_windows_x86_64.zip",
+        "filename_template_linux_amd_64": "vtm_linux_x86_64.tar.gz",
+        "strip_v": false,
+        "exe_name": "vtm"
+    }
+}
