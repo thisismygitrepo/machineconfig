@@ -60,8 +60,8 @@
     "dua": {
         "repo_url": "https://github.com/Byron/dua-cli",
         "doc": "Rust-based cli tool to get a quick overview of disk usage.",
-        "filename_template_windows_amd_64": "dua_x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "dua_x86_64-unknown-linux-musl.tar.gz",
+        "filename_template_windows_amd_64": "dua-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "dua-{}-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": false,
         "exe_name": "dua"
     },
@@ -76,8 +76,8 @@
     "helix": {
         "repo_url": "https://github.com/helix-editor/helix",
         "doc": "Helix is a post-modern modal text editor.",
-        "filename_template_windows_amd_64": "helix_Windows_x86_64.zip",
-        "filename_template_linux_amd_64": "helix-x86_64-linux.tar.xz",
+        "filename_template_windows_amd_64": "helix-{}-x86_64-windows.zip",
+        "filename_template_linux_amd_64": "helix-{}-x86_64-linux.tar.xz",
         "strip_v": false,
         "exe_name": "hx"
     },
@@ -92,8 +92,8 @@
     "mprocs": {
         "repo_url": "https://github.com/pvolok/mprocs",
         "doc": "Windows/Linux poorman's zellij",
-        "filename_template_windows_amd_64": "mprocs_win64.zip",
-        "filename_template_linux_amd_64": "mprocs_linux64.tar.gz",
+        "filename_template_windows_amd_64": "mprocs-{}-win64.zip",
+        "filename_template_linux_amd_64": "mprocs-{}-linux64.tar.gz",
         "strip_v": true,
         "exe_name": "mprocs"
     },
