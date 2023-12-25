@@ -5,7 +5,7 @@ from rich.console import Console
 
 from crocodile.file_management import P, List as L, Read
 from crocodile.meta import Terminal
-from machineconfig.utils.utils import INSTALL_VERSION_ROOT, INSTALL_TMP_DIR
+from machineconfig.utils.utils import INSTALL_VERSION_ROOT, INSTALL_TMP_DIR, LIBRARY_ROOT
 
 from dataclasses import dataclass
 from typing import Optional, Literal, Any
@@ -44,10 +44,47 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
     return None
 
 
+class Installer:
+    def __init__(self, repo_url: str, doc: str, filename_template_windows_amd_64: str, filename_template_linux_amd_64: str, strip_v: bool, exe_name: str):
+        self.repo_url = repo_url
+        self.doc = doc
+        self.filename_template_windows_amd_64 = filename_template_windows_amd_64
+        self.filename_template_linux_amd_64 = filename_template_linux_amd_64
+        self.strip_v = strip_v
+        self.exe_name = exe_name
+    def to_dict(self):
+        return self.__dict__
+    @staticmethod
+    def from_dict(d: dict[str, Any]):
+        return Installer(**d)
+    @staticmethod
+    def choose_and_install():
+        config: dict[str, Any] = Read.json(LIBRARY_ROOT.joinpath("jobs/python_generic_installers/config.json"))
+        from machineconfig.utils.utils import choose_one_option
+        binary = choose_one_option(options=list(config.keys()), fzf=True)
+        installer = Installer.from_dict(config[binary])
+        installer.install(version=None)
+
+    def install(self, version: Optional[str]):
+        release_url, version_to_be_installed = ReleaseFileNameStructure.get_github_release(repo_url=self.repo_url, version=version)
+        version_to_be_installed_stripped = version_to_be_installed.replace("v", "") if self.strip_v else version_to_be_installed
+        if platform.system() == "Windows":
+            file_name = self.filename_template_windows_amd_64.format(version_to_be_installed_stripped)
+        elif platform.system() == "Linux":
+            file_name = self.filename_template_linux_amd_64.format(version_to_be_installed_stripped)
+        else: raise NotImplementedError(f"System {platform.system()} not implemented")
+        download_link = release_url.joinpath(file_name)
+        print("Downloading", download_link.as_url_str())
+        downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
+        if not platform.system() == "Linux": return find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True)
+        return find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True)
+
+
 @dataclass
 class ReleaseFileNameStructure:
     repo_url: str
-    fixed_file_name: Optional[str]  # the release has a fixed file name, so no need to compose it
+    fixed_file_name_windows_amd_64: Optional[str]  # the release has a fixed file name, so no need to compose it
+    fixed_file_name_linux_amd_64: Optional[str]  # the release has a fixed file name, so no need to compose it
     tool_name: str  # as it appears in the release file name
     exe_name: str  # as it is called from the terminal, i.e. the name of the executable file
     suffix_window_amd_64: Optional[str]
@@ -56,6 +93,7 @@ class ReleaseFileNameStructure:
     compression_linux: Optional[str]
     sep: str = "-"
     strip_v: bool = False
+    doc: str = ""
 
     def to_dict(self):
         return self.__dict__
@@ -64,31 +102,11 @@ class ReleaseFileNameStructure:
     def from_dict(d: dict[str, Any]):
         return ReleaseFileNameStructure(**d)
 
-    @staticmethod
-    def construct_by_prompting_user() -> "ReleaseFileNameStructure":
-        repo_url = input("Enter repo url: ")
-        latest_release = ReleaseFileNameStructure.get_github_release(repo_url=repo_url, version=None)[0]
-        latest_release()
-        print(f"""
-Follow the prompt to help construct filename structure for {repo_url} releases.
-It is expeted to be in the format `toolname-separator-version-separator-suffix.compression`
-""")
-        fixed_file_name_input = input("If the release file has fixed name and doesn't follow the expected format, insert it now, otherwise leave empty (default): ")
-        if fixed_file_name_input == "": fixed_file_name = None
-        else: fixed_file_name = fixed_file_name_input
-        tool_name = input("Enter tool name as it appears in the release file name: ")
-        exe_name = input(f"Enter tool name as it is called from the terminal, i.e. the name of the executable file (default: {tool_name}): ") or tool_name
-        suffix_window_amd_64 = input("Enter suffix for windows amd64 (defaults to nonexisting for this OS): ") or None
-        suffix_linux_amd_64 = input("Enter suffix for linux amd64 (defaults to nonexisting for this OS): ") or None
-        compression_windows = input("Enter compression for windows (defaults to no compression): ") or None
-        compression_linux = input("Enter compression for linux (defaults to no compression): ") or None
-        sep = input("Enter separator (defaults to '-'): ") or "-"
-        strip_v = bool(input("Strip 'v' from version ? (defaults to False): "))
-        return ReleaseFileNameStructure(repo_url=repo_url, fixed_file_name=fixed_file_name, tool_name=tool_name, exe_name=exe_name, suffix_window_amd_64=suffix_window_amd_64, suffix_linux_amd_64=suffix_linux_amd_64, compression_windows=compression_windows, compression_linux=compression_linux, sep=sep, strip_v=strip_v)
-
     def compose_filename(self, version: Optional[str]) -> str:
-        if self.fixed_file_name is not None:
-            return self.fixed_file_name
+        if platform.system() == "Windows": fixed_file_name = self.fixed_file_name_windows_amd_64
+        elif platform.system() == "Linux": fixed_file_name = self.fixed_file_name_linux_amd_64
+        else: raise NotImplementedError(f"System {platform.system()} not implemented")
+        if fixed_file_name is not None: return fixed_file_name
         assert version is not None, f"Version must be passed if fixed_file_name is None"
         version_in_filename = version.replace("v", "") if self.strip_v else version
         if platform.system() == "Windows":
@@ -109,6 +127,23 @@ It is expeted to be in the format `toolname-separator-version-separator-suffix.c
         file_name = self.compose_filename(version=version_to_be_installed)
         download_link = release_url.joinpath(file_name)
         return download_link
+
+    def install(self, version: Optional[str] = None):
+        gh_release = self
+        release_url, version_to_be_installed = gh_release.get_github_release(repo_url=gh_release.repo_url, version=version)
+        installed_already = gh_release.check_if_installed_already(exe_name=gh_release.exe_name, version=version_to_be_installed)
+
+        if installed_already: return None
+        # if not download_n_extract: return release_url
+        console = Console()
+        console.rule(f"Installing {gh_release.exe_name} version {version_to_be_installed}")
+        file_name = gh_release.compose_filename(version=version_to_be_installed)
+        download_link = release_url.joinpath(file_name)
+
+        print("Downloading", download_link.as_url_str())
+        downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
+        if not platform.system() == "Linux": return find_move_delete_windows(downloaded_file_path=downloaded, exe_name=gh_release.exe_name, delete=True)
+        return find_move_delete_linux(downloaded=downloaded, tool_name=gh_release.exe_name, delete=True)
 
     @staticmethod
     def get_github_release(repo_url: str, version: Optional[str] = None):
@@ -160,10 +195,15 @@ def get_latest_release(repo_url: str, exe_name: str,
     """
 
     console = Console()
-    gh_release = ReleaseFileNameStructure(repo_url=repo_url, fixed_file_name=file_name, tool_name=tool_name or exe_name, exe_name=exe_name, suffix_window_amd_64=suffix, suffix_linux_amd_64=suffix, compression_windows=compression, compression_linux=compression, sep=sep, strip_v=strip_v)
+    if platform.system() == "Windows":
+        gh_release = ReleaseFileNameStructure(repo_url=repo_url, fixed_file_name_linux_amd_64=None, fixed_file_name_windows_amd_64=file_name,
+                                              tool_name=tool_name or exe_name, exe_name=exe_name,
+                                              suffix_window_amd_64=suffix, suffix_linux_amd_64=suffix, compression_windows=compression, compression_linux=compression, sep=sep, strip_v=strip_v)
+    elif platform.system() == "Linux":
+        gh_release = ReleaseFileNameStructure(repo_url=repo_url, fixed_file_name_windows_amd_64=None, fixed_file_name_linux_amd_64=file_name, tool_name=tool_name or exe_name, exe_name=exe_name, suffix_window_amd_64=suffix, suffix_linux_amd_64=suffix, compression_windows=compression, compression_linux=compression, sep=sep, strip_v=strip_v)
+    else: raise NotImplementedError(f"System {platform.system()} not implemented")
 
     release_url, version_to_be_installed = gh_release.get_github_release(repo_url=gh_release.repo_url, version=version)
-
     installed_already = gh_release.check_if_installed_already(exe_name=exe_name, version=version_to_be_installed)
 
     if installed_already: return None

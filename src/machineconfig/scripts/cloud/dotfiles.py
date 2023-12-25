@@ -1,4 +1,8 @@
 
+"""
+share dotfiles.
+"""
+
 import crocodile.toolbox as tb
 import os
 

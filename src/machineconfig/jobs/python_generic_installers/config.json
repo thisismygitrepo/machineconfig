@@ -1,6 +1,148 @@
 
 {
-    "gh": {"repo_url": ""
-    }
+    "gum": {
+        "repo_url": "https://github.com/charmbracelet/gum",
+        "doc": "Prompt user to select from options, written in golang.",
+        "filename_template_windows_amd_64": "gum_{}_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "gum_{}_Linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "gum"
+    },
 
+    "broot": {
+        "repo_url": "https://github.com/Canop/broot",
+        "doc": "broot is an fzf variant for folder structure and layered search.",
+        "filename_template_windows_amd_64": "https://dystroy.org/broot/download/x86_64-pc-windows-gnu/broot.exe",
+        "filename_template_linux_amd_64": "https://dystroy.org/broot/download/x86_64-linux/broot",
+        "strip_v": false,
+        "exe_name": "broot"
+},
+    "browsh": {
+        "repo_url": "https://github.com/browsh-org/browsh",
+        "doc": "cpufetch is a small yet fancy CPU architecture fetching tool, like neofetch but for CPUs.",
+        "filename_template_windows_amd_64": "browsh_{}_windows_amd64.exe",
+        "filename_template_linux_amd_64": "browsh_{}_linux_amd64",
+        "strip_v": true,
+        "exe_name": "browsh"
+    },
+    "chatgpt": {
+        "repo_url": "https://github.com/j178/chatgpt",
+        "doc": "chagpt cli",
+        "filename_template_windows_amd_64": "chatgpt_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "chatgpt_Linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "chatgpt"
+    },
+    "cpufetch": {
+        "repo_url": "https://github.com/Dr-Noob/cpufetch",
+        "doc": "cpufetch is a small yet fancy CPU architecture fetching tool, like neofetch but for CPUs.",
+        "filename_template_windows_amd_64": "cpufetch.exe",
+        "filename_template_linux_amd_64": "cpufetch_x86_linux",
+        "strip_v": false,
+        "exe_name": "cpufetch"
+    },
+    "delta": {
+        "repo_url": "https://github.com/dandavison/delta",
+        "doc": "A viewer for git and diff output",
+        "filename_template_windows_amd_64": "delta-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "delta-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": true,
+        "exe_name": "delta"
+    },
+    "diskonaut": {
+        "repo_url": "https://github.com/imsnif/diskonaut",
+        "doc": "diskonaut is a terminal disk space navigator.",
+        "filename_template_windows_amd_64": "diskonaut.exe",
+        "filename_template_linux_amd_64": "diskonaut_unknown-linux-musl.tar.gz",
+        "strip_v": false,
+        "exe_name": "diskonaut"
+    },
+    "dua": {
+        "repo_url": "https://github.com/Byron/dua-cli",
+        "doc": "Rust-based cli tool to get a quick overview of disk usage.",
+        "filename_template_windows_amd_64": "dua_x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "dua_x86_64-unknown-linux-musl.tar.gz",
+        "strip_v": false,
+        "exe_name": "dua"
+    },
+    "gitui": {
+        "repo_url": "https://github.com/extrawurst/gitui",
+        "doc": "gitui is a terminal ui for git written in rust.",
+        "filename_template_windows_amd_64": "gitui-win.tar.gz",
+        "filename_template_linux_amd_64": "gitui-linux-musl.tar.gz",
+        "strip_v": false,
+        "exe_name": "gitui"
+    },
+    "helix": {
+        "repo_url": "https://github.com/helix-editor/helix",
+        "doc": "Helix is a post-modern modal text editor.",
+        "filename_template_windows_amd_64": "helix_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "helix-x86_64-linux.tar.xz",
+        "strip_v": false,
+        "exe_name": "hx"
+    },
+    "lf": {
+        "repo_url": "https://github.com/gokcehan/lf",
+        "doc": "lf is a terminal file manager written in go.",
+        "filename_template_windows_amd_64": "lf-windows-amd64.zip",
+        "filename_template_linux_amd_64": "lf-linux-amd64.tar.gz",
+        "strip_v": false,
+        "exe_name": "lf"
+    },
+    "mprocs": {
+        "repo_url": "https://github.com/pvolok/mprocs",
+        "doc": "Windows/Linux poorman's zellij",
+        "filename_template_windows_amd_64": "mprocs_win64.zip",
+        "filename_template_linux_amd_64": "mprocs_linux64.tar.gz",
+        "strip_v": true,
+        "exe_name": "mprocs"
+    },
+    "ouch": {
+        "repo_url": "https://github.com/ouch-org/ouch",
+        "doc": "A cli for extracting and creating archives in unified way.",
+        "filename_template_windows_amd_64": "ouch-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "ouch-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "ouch"
+    },
+    "procs": {
+        "repo_url": "https://github.com/dalance/procs/",
+        "doc": "procs is a modern replacement for ps written in Rust.",
+        "filename_template_windows_amd_64": "procs-{}-x86_64-windows.zip",
+        "filename_template_linux_amd_64": "procs-{}-x86_64-linux.zip",
+        "strip_v": false,
+        "exe_name": "procs"
+    },
+    "rclone": {
+        "repo_url": "https://github.com/rclone/rclone",
+        "doc": "cli to sync to cloud storage providers.",
+        "filename_template_windows_amd_64": "rclone-{}-windows-amd64.zip",
+        "filename_template_linux_amd_64": "rclone-{}-linux-amd64.zip",
+        "strip_v": false,
+        "exe_name": "rclone"
+    },
+    "tere": {
+        "repo_url": "https://github.com/mgunyho/tere",
+        "doc": "Tere is a terminal file explorer written in Rust. No more ls + cd",
+        "filename_template_windows_amd_64": "tere-{}-x86_64-pc-windows-gnu.zip",
+        "filename_template_linux_amd_64": "tere-{}-x86_64-unknown-linux-gnu.zip",
+        "strip_v": true,
+        "exe_name": "tere"
+    },
+    "ttyd": {
+        "repo_url": "https://github.com/tsl0922/ttyd",
+        "doc": "ttyd shares your terminal on the web.",
+        "filename_template_windows_amd_64": "ttyd.win32.exe",
+        "filename_template_linux_amd_64": "ttyd.x86_64",
+        "strip_v": true,
+        "exe_name": "ttyd"
+    },
+    "watchexec": {
+        "repo_url": "https://github.com/watchexec/watchexec",
+        "doc": "Executes commands in response to file modifications.",
+        "filename_template_windows_amd_64": "watchexec-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "watchexec-{}-x86_64-unknown-linux-musl.tar.xz",
+        "strip_v": true,
+        "exe_name": "watchexec"
+    }
 }

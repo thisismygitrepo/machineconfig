@@ -1,0 +1,66 @@
+{
+    "bat": {
+        "repo_url": "https://github.com/sharkdp/bat",
+        "doc": "A cat(1) clone with wings.",
+        "filename_template_windows_amd_64": "bat_{}_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "bat_{}_Linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "bat"
+    },
+    "boxes": {
+        "repo_url": "https://github.com/ascii-boxes/boxes",
+        "doc": "ASCI draws boxes around text.",
+        "filename_template_windows_amd_64": "boxes_{}_intel-win32.zip",
+        "filename_template_linux_amd_64": "boxes_{}_Linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "boxes"
+    },
+    "fd": {
+        "repo_url": "https://github.com/sharkdp/fd",
+        "doc": "fd is a simple, fast and user-friendly alternative to find.",
+        "filename_template_windows_amd_64": "fd_{}_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "fd_{}_Linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "fd"
+    },
+    "fzf": {
+        "repo_url": "https://github.com/junegunn/fzf",
+        "doc": "a general-purpose cli fuzzy finder.",
+        "filename_template_windows_amd_64": "fzf_{}_windows_amd64.zip",
+        "filename_template_linux_amd_64": "fzf_{}_Linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "fzf"
+    },
+    "rg": {
+        "repo_url": "https://github.com/BurntSushi/ripgrep",
+        "doc": "recursively searches directories for a regex pattern while respecting your gitignore rules",
+        "filename_template_windows_amd_64": "ripgrep_{}_x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "ripgrep_{}_x86_64-unknown-linux-musl.tar.gz",
+        "strip_v": true,
+        "exe_name": "rg"
+    },
+    "ugrep": {
+        "repo_url": "https://github.com/Genivia/ugrep",
+        "doc": "A fast, portable, feature-rich command-line search tool",
+        "filename_template_windows_amd_64": "ugrep_{}_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "ugrep_{}_Linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "ugrep"
+    },
+    "zoomit": {
+        "repo_url": "https://download.sysinternals.com/files/ZoomIt.zip",
+        "doc": "A screen zoom and annotation tool for presentations",
+        "filename_template_windows_amd_64": "ZoomIt.zip",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "ZoomIt.exe"
+    },
+    "zoxide": {
+        "repo_url": "https://github.com/ajeetdsouza/zoxide",
+        "doc": "A cd command that learns - easily navigate directories from the command-line",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "zoxide"
+    }
+}
