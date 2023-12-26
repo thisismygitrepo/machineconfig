@@ -131,7 +131,9 @@ def display_options(msg: str, options: list[T], header: str = "", tail: str = ""
             txt = txt + Text(f"{idx:2d} ", style="bold blue") + str(key) + (default_msg if default is not None and default == key else "") + "\n"
         txt_panel = Panel(txt, title=header, subtitle=tail, border_style="bold red")
         console.print(txt_panel)
-        choice_string = input(f"{prompt}\nEnter option *number* or hit enter for default choice: ")
+        if default is not None:
+            choice_string = input(f"{prompt}\nEnter option number or hit enter for default choice: ")
+        else: choice_string = input(f"{prompt}\nEnter option number: ")
         if choice_string == "":
             assert default is not None, f"Default option not available!"
             choice_idx = options.index(default)
@@ -274,6 +276,24 @@ def get_ssh_hosts() -> list[str]:
     c.parse(open(P.home().joinpath(".ssh/config").str, encoding="utf-8"))
     return list(c.get_hostnames())
 def choose_ssh_host(multi: bool = True): return display_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
+
+
+
+def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool = False):
+    dotfiles_path = str(P.home().joinpath("dotfiles"))
+    from git import Repo
+    repo = Repo(path=dotfiles_path)
+    last_commit = repo.head.commit
+    dtm = last_commit.committed_datetime
+    # make it tz unaware
+    from datetime import datetime
+    dtm = datetime(dtm.year, dtm.month, dtm.day, dtm.hour, dtm.minute, dtm.second)
+    res =  dtm > datetime.fromisoformat(commit_dtm)
+    if res is False and update is True:
+        print(f"Updating dotfiles because {dtm} < {datetime.fromisoformat(commit_dtm)}")
+        from machineconfig.scripts.python.cloud_repo_sync import main
+        main(cloud=None, path=dotfiles_path, push=False)
+    return res
 
 
 if __name__ == '__main__':

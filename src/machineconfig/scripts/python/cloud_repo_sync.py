@@ -29,17 +29,17 @@ def args_parser():
     parser.add_argument("--skip_confirmation", "-s", help="Skip confirmation.", action="store_true", default=False)
     # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
-    parser.add_argument("--push", "-u", help="Zip before sending.", action="store_true")  # default is False
+    parser.add_argument("--no_push", "-u", help="push to reomte.", action="store_true")  # default is False
     args = parser.parse_args()
 
     if args.share:
         from machineconfig.scripts.cloud.dotfiles import put
         put()
         return None
-    main(cloud=args.cloud, path=args.path, message=args.message, skip_confirmation=args.skip_confirmation, pwd=args.pwd, push=args.push)
+    main(cloud=args.cloud, path=args.path, message=args.message, skip_confirmation=args.skip_confirmation, pwd=args.pwd, push=not args.no_push)
 
 
-def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optional[str] = None, skip_confirmation: bool = False, pwd: Optional[str] = None, push: bool = False):
+def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optional[str] = None, skip_confirmation: bool = False, pwd: Optional[str] = None, push: bool = True):
     if cloud is None:
         try: cloud_resolved = tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
         except FileNotFoundError:
@@ -85,6 +85,7 @@ git pull originEnc master
 """
     suffix = '.ps1' if platform.system() == 'Windows' else '.sh'
     res = tb.Terminal().run(f". {tb.P.tmpfile(suffix=suffix).write_text(script)}", shell="powershell").capture().print()
+
     if res.is_successful(strict_err=True, strict_returcode=True):
         print("\n", "Pull succeeded, removing originEnc, the local copy of remote & pushing merged repo_root to remote ... ")
         repo_sync_root.delete(sure=True)
@@ -95,8 +96,11 @@ git pull originEnc master
     else:
         print(f"Failed to pull, keeping local copy of remote at {repo_sync_root} ... ")
 
-        if skip_confirmation: resp = "y"
-        else: resp = input(f"Would you like to proceed syncing `{repo_root}` to `{cloud_resolved}` by pushing local changes to remote and deleting local copy of remote? y/[n] ") or "n"
+        if push:
+            if skip_confirmation: resp = "y"
+            else: resp = input(f"Would you like to proceed syncing `{repo_root}` to `{cloud_resolved}` by pushing local changes to remote and deleting local copy of remote? y/[n] ") or "n"
+        else: resp = "n"
+
         if resp.lower() == "y":
             delete_remote_repo_copy_and_push_local(remote_repo=repo_sync_root.str, local_repo=repo_root.str, cloud=cloud_resolved)
         else:
