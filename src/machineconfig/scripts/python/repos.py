@@ -4,7 +4,7 @@
 
 import crocodile.toolbox as tb
 import argparse
-from machineconfig.utils.utils import write_shell_script, CONFIG_PATH
+from machineconfig.utils.utils import write_shell_script, CONFIG_PATH, DEFAULTS_PATH
 from rich import print as pprint
 from dataclasses import dataclass
 from enum import Enum
@@ -95,7 +95,14 @@ def main():
         program += f"""\necho '>>>>>>>>> Cloning Repos'\n"""
         if not repos_root.exists() or repos_root.stem != 'repos.json':  # user didn't pass absolute path to pickle file, but rather expected it to be in the default save location
             repos_root = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
-            if not repos_root.exists() and args.cloud is not None: repos_root.from_cloud(cloud=args.cloud, rel2home=True)
+            if not repos_root.exists():
+                if args.cloud is None:
+                    cloud: str = tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+                    print(f"⚠️ Using default cloud: {cloud}")
+                else:
+                    cloud = args.cloud
+                    assert cloud is not None, f"Path {repos_root} does not exist and cloud was not passed. You can't clone without one of them."
+                repos_root.from_cloud(cloud=cloud, rel2home=True)
         assert (repos_root.exists() and repos_root.name == 'repos.json') or args.cloud is not None, f"Path {repos_root} does not exist and cloud was not passed. You can't clone without one of them."
         program += install_repos(specs_path=str(repos_root), clone=args.clone, checkout_to_recorded_commit=args.checkout, checkout_to_branch=args.checkout_to_branch)
     # elif args.checkout is not None:

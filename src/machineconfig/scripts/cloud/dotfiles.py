@@ -10,11 +10,6 @@ import os
 def put():
     pwd: str = tb.P.home().joinpath("dotfiles/creds/passwords/quick_password").read_text().strip()
 
-    # from crocodile.file_management import Read
-    # from machineconfig.utils.utils import DEFAULTS_PATH
-    # cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
-    # print(f"⚠️ Using default cloud: {cloud}")
-
     if os.environ.get("CLOUD_NAME") is not None:
         cloud = os.environ.get("CLOUD_NAME")
         assert cloud is not None

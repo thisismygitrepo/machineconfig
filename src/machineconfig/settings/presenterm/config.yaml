@@ -13,3 +13,9 @@ options:
 
     # Optional!
     character: 🚀
+
+# footer:
+#   style: progress_bar
+
+#   # Optional!
+#   character: 🚀
