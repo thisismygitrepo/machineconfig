@@ -4,8 +4,10 @@ share dotfiles.
 """
 
 import crocodile.toolbox as tb
+from crocodile.meta import RepeatUntilNoException
 from machineconfig.utils.utils import DEFAULTS_PATH
 import os
+import getpass
 
 
 def put():
@@ -23,14 +25,16 @@ def put():
 
     res = tb.P.home().joinpath("dotfiles").zip().encrypt(pwd=pwd).move(folder=tb.P.home().joinpath("tmp_results"), overwrite=True).with_name("dotfiles_share.zip.enc", inplace=True, overwrite=True)
     url_ = res.to_cloud(cloud=cloud, share=True, rel2home=True)
-    print(url_)
+    print(url_.as_url_obj())
+    print(url_.as_url_str())
 
 
+@RepeatUntilNoException()
 def get():
     if os.environ.get("DECRYPTION_PASSWORD") is not None:
         pwd = os.environ.get("DECRYPTION_PASSWORD")
     else:
-        pwd = input("Enter dotfiles decryption password: ")
+        pwd = getpass.getpass("Enter decryption password: ")
 
 
     if os.environ.get("DOTFILES_URL") is not None:
