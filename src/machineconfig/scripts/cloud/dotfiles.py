@@ -4,6 +4,7 @@ share dotfiles.
 """
 
 import crocodile.toolbox as tb
+from machineconfig.utils.utils import DEFAULTS_PATH
 import os
 
 
@@ -14,7 +15,11 @@ def put():
         cloud = os.environ.get("CLOUD_NAME")
         assert cloud is not None
     else:
-        cloud = input("Enter cloud name: ")
+        try:
+            default_cloud: str = tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+        except Exception:
+            default_cloud = 'No default cloud found.'
+        cloud = input(f"Enter cloud name (default {default_cloud}): ") or default_cloud
 
     res = tb.P.home().joinpath("dotfiles").zip().encrypt(pwd=pwd).move(folder=tb.P.home().joinpath("tmp_results"), overwrite=True).with_name("dotfiles_share.zip.enc", inplace=True, overwrite=True)
     url_ = res.to_cloud(cloud=cloud, share=True, rel2home=True)
