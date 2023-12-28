@@ -38,7 +38,11 @@ else
   # check if $1 is passed, if yes, activate it
   if [ -n "$1" ] && [ "$HOME/venvs/$1" != "$VIRTUAL_ENV" ]; then
     echo "🔻 Deactivating virtual environment $VIRTUAL_ENV "
-    deactivate
+
+    if command -v deactivate >/dev/null 2>&1; then
+        deactivate
+    fi
+    
     name=$1
     source ~/venvs/$name/bin/activate
 

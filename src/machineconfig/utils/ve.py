@@ -66,6 +66,7 @@ def get_ve_specs(ve_path: P) -> dict[str, str]:
 
 
 def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[str] = None, install_crocodile_and_machineconfig: Optional[bool] = None,
+                          delete_if_exists: bool = True,
                           system: Optional[Literal["Windows", "Linux"]] = None):
     from rich.console import Console
     if system is None:
@@ -90,11 +91,11 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
             Struct(ve_specs).print(title=ve_path.stem, as_config=True)
         ve_name = input("Enter virtual environment name (tst): ") or "tst"
 
-    if install_crocodile_and_machineconfig is None: install_croco_and_machineconfig = input("Install essential repos? (y/[n]): ") == "y"
-    else: install_croco_and_machineconfig = install_crocodile_and_machineconfig
+    if install_crocodile_and_machineconfig is None: croco_mac = input("Install essential repos? (y/[n]): ") == "y"
+    else: croco_mac = install_crocodile_and_machineconfig
 
     env_path = P.home().joinpath("venvs", ve_name)
-    if env_path.exists():
+    if delete_if_exists and env_path.exists():
         sure = input(f"An existing environment found. Are you sure you want to delete {env_path} before making new one? (y/[n]): ") == "y"
         console.rule(f"Deleting existing enviroment with similar name")
         env_path.delete(sure=sure)
@@ -109,7 +110,7 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
     assert line_start in scripts and line_end in scripts, "Script template was mutated beyond recognition."
     scripts = scripts.split(line_start)[0] + "\n".join([line_start, line1, line2, line_end]) + scripts.split(line_end)[1]
 
-    if install_croco_and_machineconfig:  # TODO make this more robust by removing sections of the script as opposed to word placeholders.
+    if croco_mac:  # TODO make this more robust by removing sections of the script as opposed to word placeholders.
         text = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/repos.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
         text = modify_text(txt_raw=text, txt_search="ve_name=", txt_alt=f"{variable_prefix}ve_name='{ve_name}'", replace_line=True)
         scripts += text
