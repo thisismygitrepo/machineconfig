@@ -8,7 +8,7 @@ from crocodile.meta import Terminal
 from machineconfig.utils.utils import INSTALL_VERSION_ROOT, INSTALL_TMP_DIR, LIBRARY_ROOT
 
 from dataclasses import dataclass
-from typing import Optional, Literal, Any
+from typing import Optional, Any
 import platform
 
 
@@ -68,20 +68,58 @@ class Installer:
             installer.install(version=None)
 
     def install(self, version: Optional[str]):
-        release_url, version_to_be_installed = ReleaseFileNameStructure.get_github_release(repo_url=self.repo_url, version=version)
-        version_to_be_installed_stripped = version_to_be_installed.replace("v", "") if self.strip_v else version_to_be_installed
-        if platform.system() == "Windows":
-            file_name = self.filename_template_windows_amd_64.format(version_to_be_installed_stripped)
-        elif platform.system() == "Linux":
-            file_name = self.filename_template_linux_amd_64.format(version_to_be_installed_stripped)
-        else: raise NotImplementedError(f"System {platform.system()} not implemented")
-        download_link = release_url.joinpath(file_name)
+        if "github" not in self.repo_url: download_link = P(self.repo_url)
+        else:
+            release_url, version_to_be_installed = self.get_github_release(repo_url=self.repo_url, version=version)
+            version_to_be_installed_stripped = version_to_be_installed.replace("v", "") if self.strip_v else version_to_be_installed
+            if platform.system() == "Windows":
+                file_name = self.filename_template_windows_amd_64.format(version_to_be_installed_stripped)
+            elif platform.system() == "Linux":
+                file_name = self.filename_template_linux_amd_64.format(version_to_be_installed_stripped)
+            else: raise NotImplementedError(f"System {platform.system()} not implemented")
+            download_link = release_url.joinpath(file_name)
         print("Downloading", download_link.as_url_str())
         downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
         if not platform.system() == "Linux": return find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True)
         return find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True)
 
+    @staticmethod
+    def get_github_release(repo_url: str, version: Optional[str] = None):
+        print("\n\n\n")
+        print(f"Inspecting latest release @ {repo_url}   ...")
+        # with console.status("Installing..."):  # makes troubles on linux when prompt asks for password to move file to /usr/bin
+        if version is None:
+            import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
+            _latest_version = requests.get(str(repo_url) + "/releases/latest", timeout=10).url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
+            version_to_be_installed = _latest_version
+        else:
+            version_to_be_installed = version
+        release_url = P(repo_url + "/releases/download/" + version_to_be_installed)
+        return release_url, version_to_be_installed
 
+    @staticmethod
+    def check_if_installed_already(exe_name: str, version: str):
+        version_to_be_installed = version
+        # existing_version_cli = Terminal().run(f"{exe_name or tool_name} --version", shell="powershell").op_if_successfull_or_default(strict_err=True, strict_returcode=True)
+        tmp_path = INSTALL_VERSION_ROOT.joinpath(exe_name).create(parents_only=True)
+        if tmp_path.exists(): existing_version = tmp_path.read_text().rstrip()
+        else: existing_version = None
+
+        if existing_version is not None:
+            if existing_version == version_to_be_installed:
+                print(f"⚠️ {exe_name} already installed at version {version_to_be_installed}. See {INSTALL_VERSION_ROOT}")
+                return True
+            else:
+                # print(f"Latest version is {version}, logged at {tmp_path}")
+                print(f"⬆️ {exe_name} installed at version {existing_version.rstrip()} --> Installing version {version_to_be_installed} ")
+                tmp_path.write_text(version_to_be_installed)
+        else:
+            print(f"{exe_name} has no known version. Installing version `{version_to_be_installed}` ")
+            tmp_path.write_text(version_to_be_installed)
+        return False
+
+
+# ------------------------ ARCHIVE ------------------------
 @dataclass
 class ReleaseFileNameStructure:
     repo_url: str
@@ -125,15 +163,15 @@ class ReleaseFileNameStructure:
         return file_name
 
     def compose_download_link(self, version: Optional[str]):
-        release_url, version_to_be_installed = self.get_github_release(repo_url=self.repo_url, version=version)
+        release_url, version_to_be_installed = Installer.get_github_release(repo_url=self.repo_url, version=version)
         file_name = self.compose_filename(version=version_to_be_installed)
         download_link = release_url.joinpath(file_name)
         return download_link
 
     def install(self, version: Optional[str] = None):
         gh_release = self
-        release_url, version_to_be_installed = gh_release.get_github_release(repo_url=gh_release.repo_url, version=version)
-        installed_already = gh_release.check_if_installed_already(exe_name=gh_release.exe_name, version=version_to_be_installed)
+        release_url, version_to_be_installed = Installer.get_github_release(repo_url=gh_release.repo_url, version=version)
+        installed_already = Installer.check_if_installed_already(exe_name=gh_release.exe_name, version=version_to_be_installed)
 
         if installed_already: return None
         # if not download_n_extract: return release_url
@@ -146,42 +184,6 @@ class ReleaseFileNameStructure:
         downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
         if not platform.system() == "Linux": return find_move_delete_windows(downloaded_file_path=downloaded, exe_name=gh_release.exe_name, delete=True)
         return find_move_delete_linux(downloaded=downloaded, tool_name=gh_release.exe_name, delete=True)
-
-    @staticmethod
-    def get_github_release(repo_url: str, version: Optional[str] = None):
-        print("\n\n\n")
-        print(f"Inspecting latest release @ {repo_url}   ...")
-        # with console.status("Installing..."):  # makes troubles on linux when prompt asks for password to move file to /usr/bin
-
-        if version is None:
-            import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
-            _latest_version = requests.get(str(repo_url) + "/releases/latest", timeout=10).url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
-            version_to_be_installed = _latest_version
-        else:
-            version_to_be_installed = version
-        release_url = P(repo_url + "/releases/download/" + version_to_be_installed)
-        return release_url, version_to_be_installed
-
-    @staticmethod
-    def check_if_installed_already(exe_name: str, version: str):
-        version_to_be_installed = version
-        # existing_version_cli = Terminal().run(f"{exe_name or tool_name} --version", shell="powershell").op_if_successfull_or_default(strict_err=True, strict_returcode=True)
-        tmp_path = INSTALL_VERSION_ROOT.joinpath(exe_name).create(parents_only=True)
-        if tmp_path.exists(): existing_version = tmp_path.read_text().rstrip()
-        else: existing_version = None
-
-        if existing_version is not None:
-            if existing_version == version_to_be_installed:
-                print(f"⚠️ {exe_name} already installed at version {version_to_be_installed}. See {INSTALL_VERSION_ROOT}")
-                return True
-            else:
-                # print(f"Latest version is {version}, logged at {tmp_path}")
-                print(f"⬆️ {exe_name} installed at version {existing_version.rstrip()} --> Installing version {version_to_be_installed} ")
-                tmp_path.write_text(version_to_be_installed)
-        else:
-            print(f"{exe_name} has no known version. Installing version `{version_to_be_installed}` ")
-            tmp_path.write_text(version_to_be_installed)
-        return False
 
 
 def get_latest_release(repo_url: str, exe_name: str,
@@ -205,8 +207,8 @@ def get_latest_release(repo_url: str, exe_name: str,
         gh_release = ReleaseFileNameStructure(repo_url=repo_url, fixed_file_name_windows_amd_64=None, fixed_file_name_linux_amd_64=file_name, tool_name=tool_name or exe_name, exe_name=exe_name, suffix_window_amd_64=suffix, suffix_linux_amd_64=suffix, compression_windows=compression, compression_linux=compression, sep=sep, strip_v=strip_v)
     else: raise NotImplementedError(f"System {platform.system()} not implemented")
 
-    release_url, version_to_be_installed = gh_release.get_github_release(repo_url=gh_release.repo_url, version=version)
-    installed_already = gh_release.check_if_installed_already(exe_name=exe_name, version=version_to_be_installed)
+    release_url, version_to_be_installed = Installer.get_github_release(repo_url=gh_release.repo_url, version=version)
+    installed_already = Installer.check_if_installed_already(exe_name=exe_name, version=version_to_be_installed)
 
     if installed_already: return None
     if not download_n_extract: return release_url
@@ -223,27 +225,6 @@ def get_latest_release(repo_url: str, exe_name: str,
     # return res
 
 
-def get_cli_py_installers(dev: bool = False, system: Optional[Literal['Windows', "Linux"]] = None):
-    system_ = platform.system() if system is None else system
-    if system_ == "Windows": import machineconfig.jobs.python_windows_installers as inst
-    else: import machineconfig.jobs.python_linux_installers as inst
-    import machineconfig.jobs.python_generic_installers as gens
-    path = P(inst.__file__).parent
-    gens_path = P(gens.__file__).parent
-    if dev:
-        path = path.joinpath("dev")
-        gens_path = gens_path.joinpath("dev")
-    return path.search("*.py", filters=[lambda x: "__init__" not in str(x)]) + gens_path.search("*.py", filters=[lambda x: "__init__" not in str(x)])
-
-
-def get_installed_cli_apps():
-    if platform.system() == "Windows": apps = P.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad"])
-    elif platform.system() == "Linux": apps = P(r"/usr/local/bin").search("*")
-    else: raise NotImplementedError("Not implemented for this OS")
-    apps = L([app for app in apps if app.size("kb") > 0.1 and not app.is_symlink()])  # no symlinks like paint and wsl and bash
-    return apps
-
-
 def run_python_installer(py_file: P, version: Optional[str] = None):
     try:
         old_version = Terminal().run(f"{py_file.stem} --version", shell="powershell").op.replace("\n", "")
@@ -255,8 +236,31 @@ def run_python_installer(py_file: P, version: Optional[str] = None):
         print(ex)
         return f"Failed at {py_file.stem} with {ex}"
 
+# ------------------------ ARCHIVE ------------------------
 
-def install_all(installers: Optional[list[P]] = None, safe: bool = False, dev: bool = False, jobs: int = 10, fresh: bool = False):
+
+def get_installed_cli_apps():
+    if platform.system() == "Windows": apps = P.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad"])
+    elif platform.system() == "Linux": apps = P(r"/usr/local/bin").search("*")
+    else: raise NotImplementedError("Not implemented for this OS")
+    apps = L([app for app in apps if app.size("kb") > 0.1 and not app.is_symlink()])  # no symlinks like paint and wsl and bash
+    return apps
+
+
+def get_cli_py_installers(system: str, dev: bool, use_config: bool = False):
+    if system == "Windows": import machineconfig.jobs.python_windows_installers as inst
+    else: import machineconfig.jobs.python_linux_installers as inst
+    import machineconfig.jobs.python_generic_installers as gens
+    path = P(inst.__file__).parent
+    gens_path = P(gens.__file__).parent
+    if dev:
+        path = path.joinpath("dev")
+        gens_path = gens_path.joinpath("dev")
+    if use_config: return L([path.joinpath("config.json"), gens_path.joinpath("config.json")])
+    return path.search("*.py", filters=[lambda x: "__init__" not in str(x)]) + gens_path.search("*.py", filters=[lambda x: "__init__" not in str(x)])
+
+
+def install_all(installers: L[P], safe: bool = False, jobs: int = 10, fresh: bool = False):
     if fresh: INSTALL_VERSION_ROOT.delete(sure=True)
     if safe:
         from machineconfig.jobs.python.check_installations import APP_SUMMARY_PATH
@@ -269,13 +273,9 @@ def install_all(installers: Optional[list[P]] = None, safe: bool = False, dev: b
         apps_dir.delete(sure=True)
         return None
 
-    if not isinstance(installers, list): installers_concrete = get_cli_py_installers(dev=dev)
-    else: installers_concrete = L(installers)
-
-    run_python_installer(installers_concrete.list[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
-
+    run_python_installer(installers.list[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
     # summarize results
-    res: L[str] = installers_concrete.slice(start=1).apply(run_python_installer, jobs=jobs)
+    res: L[str] = installers.slice(start=1).apply(run_python_installer, jobs=jobs)
     console = Console()
     print("\n")
     console.rule("Same version apps")

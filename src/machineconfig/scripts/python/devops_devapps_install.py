@@ -14,8 +14,8 @@ WHICH: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstal
 
 
 def main(which: Optional[str] = None):
-
-    installers = get_cli_py_installers(dev=False)
+    sys = system()
+    installers = get_cli_py_installers(dev=False, system=sys)
     default = tb.P("AllEssentials")
     installers.list.insert(0, default)
     installers.list.insert(0, tb.P("SystemInstallers"))
@@ -38,8 +38,10 @@ def main(which: Optional[str] = None):
 def get_program(program_name: str, options: list[Any], installers: list[tb.P]):
     if program_name == "AllEssentials" or program_name == "EssentialsAndOthers":
         from machineconfig.utils.installer import install_all
-        install_all(dev=False)
-        if program_name == "EssentialsAndOthers": install_all(dev=True)
+        installers_ = get_cli_py_installers(dev=False, system=system())
+        if program_name == "EssentialsAndOthers":
+            installers_ += get_cli_py_installers(dev=True, system=system())
+        install_all(installers=tb.L(set(installers_)))
         program = ""
     elif program_name == "SystemInstallers":
         if system() == "Windows": options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text())
@@ -52,7 +54,7 @@ def get_program(program_name: str, options: list[Any], installers: list[tb.P]):
             if sub_program.startswith("#winget"): sub_program = sub_program[1:]
             program += "\n" + sub_program
     elif program_name == "OtherDevApps":
-        installers = get_cli_py_installers(dev=True).list
+        installers = get_cli_py_installers(dev=True, system=system()).list
         options = tb.L(installers).apply(lambda x: x.stem + ((' -- ' + str(x.readit()['__doc__']).rstrip()) if x.exists() else '')).list
         program_names = display_options(msg="", options=sorted(options), header="CHOOSE DEV APP", fzf=True, multi=True)
         program = ""
