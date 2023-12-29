@@ -40,6 +40,9 @@ class Register:
         return Report.from_path(self.root.joinpath("runtime.ini"))
 
     @staticmethod
+    def format_date(date: datetime):
+        return str(date.year)[2:] + "-" + str(date.month).zfill(2)
+    @staticmethod
     def get_report_start_end_datetimes(frequency_months: int):
         now = datetime.now()
         import numpy as np
