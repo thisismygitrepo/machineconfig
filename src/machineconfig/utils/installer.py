@@ -3,7 +3,7 @@
 """
 from rich.console import Console
 
-from crocodile.file_management import P, List as L, Read
+from crocodile.file_management import P, List as L, Read, Struct
 from crocodile.meta import Terminal
 from machineconfig.utils.utils import INSTALL_VERSION_ROOT, INSTALL_TMP_DIR, LIBRARY_ROOT
 
@@ -52,11 +52,16 @@ class Installer:
         self.filename_template_linux_amd_64 = filename_template_linux_amd_64
         self.strip_v = strip_v
         self.exe_name = exe_name
+    def __repr__(self) -> str: return f"Installer of {self.repo_url}"
+    def get_description(self): return f"{self.exe_name} -- {self.doc}"
     def to_dict(self):
         return self.__dict__
     @staticmethod
     def from_dict(d: dict[str, Any]):
-        return Installer(**d)
+        try: return Installer(**d)
+        except Exception as ex:
+            Struct(d).print(as_config=True)
+            raise ex
     @staticmethod
     def choose_and_install():
         from machineconfig.utils.utils import choose_one_option
@@ -67,8 +72,21 @@ class Installer:
             installer = Installer.from_dict(config[binary])
             installer.install(version=None)
 
+    def install_robust(self, version: Optional[str]):
+        try:
+            old_version = Terminal().run(f"{self.exe_name} --version", shell="powershell").op.replace("\n", "")
+            self.install(version=version)
+            new_version = Terminal().run(f"{self.exe_name} --version", shell="powershell").op.replace("\n", "")
+            if old_version == new_version: return f"😑 {self.exe_name}, same version: {old_version}"
+            else: return f"🤩 {self.exe_name} updated from {old_version} === to ===> {new_version}"
+        except Exception as ex:
+            print(ex)
+            return f"Failed at {self.exe_name} with {ex}"
+
+
     def install(self, version: Optional[str]):
-        if "github" not in self.repo_url: download_link = P(self.repo_url)
+        if "github" not in self.repo_url or ".zip" in self.repo_url or ".tar.gz" in self.repo_url:
+            download_link = P(self.repo_url)
         else:
             release_url, version_to_be_installed = self.get_github_release(repo_url=self.repo_url, version=version)
             version_to_be_installed_stripped = version_to_be_installed.replace("v", "") if self.strip_v else version_to_be_installed
@@ -236,17 +254,6 @@ def run_python_installer(py_file: P, version: Optional[str] = None):
         print(ex)
         return f"Failed at {py_file.stem} with {ex}"
 
-# ------------------------ ARCHIVE ------------------------
-
-
-def get_installed_cli_apps():
-    if platform.system() == "Windows": apps = P.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad"])
-    elif platform.system() == "Linux": apps = P(r"/usr/local/bin").search("*")
-    else: raise NotImplementedError("Not implemented for this OS")
-    apps = L([app for app in apps if app.size("kb") > 0.1 and not app.is_symlink()])  # no symlinks like paint and wsl and bash
-    return apps
-
-
 def get_cli_py_installers(system: str, dev: bool, use_config: bool = False):
     if system == "Windows": import machineconfig.jobs.python_windows_installers as inst
     else: import machineconfig.jobs.python_linux_installers as inst
@@ -258,7 +265,6 @@ def get_cli_py_installers(system: str, dev: bool, use_config: bool = False):
         gens_path = gens_path.joinpath("dev")
     if use_config: return L([path.joinpath("config.json"), gens_path.joinpath("config.json")])
     return path.search("*.py", filters=[lambda x: "__init__" not in str(x)]) + gens_path.search("*.py", filters=[lambda x: "__init__" not in str(x)])
-
 
 def install_all(installers: L[P], safe: bool = False, jobs: int = 10, fresh: bool = False):
     if fresh: INSTALL_VERSION_ROOT.delete(sure=True)
@@ -276,6 +282,61 @@ def install_all(installers: L[P], safe: bool = False, jobs: int = 10, fresh: boo
     run_python_installer(installers.list[0])  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
     # summarize results
     res: L[str] = installers.slice(start=1).apply(run_python_installer, jobs=jobs)
+    console = Console()
+    print("\n")
+    console.rule("Same version apps")
+    print(f"{res.filter(lambda x: 'same version' in x).print()}")
+    print("\n")
+    console.rule("Updated apps")
+    print(f"{res.filter(lambda x: 'updated from' in x).print()}")
+    print("\n")
+    console.rule("Failed apps")
+    print(f"{res.filter(lambda x: 'Failed at' in x).print()}")
+
+    print("\n")
+    print("Completed Installation".center(100, "-"))
+    print("\n" * 2)
+
+# ------------------------ ARCHIVE ------------------------
+
+
+def get_installed_cli_apps():
+    if platform.system() == "Windows": apps = P.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad"])
+    elif platform.system() == "Linux": apps = P(r"/usr/local/bin").search("*")
+    else: raise NotImplementedError("Not implemented for this OS")
+    apps = L([app for app in apps if app.size("kb") > 0.1 and not app.is_symlink()])  # no symlinks like paint and wsl and bash
+    return apps
+
+
+def get_cli_py_installers_v2(system: str, dev: bool) -> list[Installer]:
+    if system == "Windows": import machineconfig.jobs.python_windows_installers as inst
+    else: import machineconfig.jobs.python_linux_installers as inst
+    import machineconfig.jobs.python_generic_installers as gens
+    path = P(inst.__file__).parent
+    gens_path = P(gens.__file__).parent
+    if dev:
+        path = path.joinpath("dev")
+        gens_path = gens_path.joinpath("dev")
+    res1: dict[str, Any] = Read.json(path=path.joinpath("config.json"))
+    res2: dict[str, Any] = Read.json(path=gens_path.joinpath("config.json"))
+    res2.update(res1)
+    return [Installer.from_dict(d) for d in res2.values()]
+
+
+def install_all_v2(installers: L[Installer], safe: bool = False, jobs: int = 10, fresh: bool = False):
+    if fresh: INSTALL_VERSION_ROOT.delete(sure=True)
+    if safe:
+        from machineconfig.jobs.python.check_installations import APP_SUMMARY_PATH
+        apps_dir = APP_SUMMARY_PATH.readit()
+        if platform.system().lower() == "windows":
+            apps_dir.search("*").apply(lambda app: app.move(folder=P.get_env().WindowsApps))
+        elif platform.system().lower() == "linux":
+            Terminal().run(f"sudo mv {apps_dir.as_posix()}/* /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
+        else: raise NotImplementedError(f"I don't know this system {platform.system()}")
+        apps_dir.delete(sure=True)
+        return None
+    installers.list[0].install(version=None)
+    res = installers.slice(start=1).apply(lambda x: x.install_robust(version=None), jobs=jobs)  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
     console = Console()
     print("\n")
     console.rule("Same version apps")

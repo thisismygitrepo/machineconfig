@@ -1,5 +1,29 @@
 
 {
+    "topgrade": {
+        "repo_url": "https://github.com/topgrade-rs/topgrade",
+        "doc": "Keeping your system up to date usually involves invoking multiple package managers.",
+        "filename_template_linux_amd_64": "topgrade-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_windows_amd_64": "topgrade-{}-x86_64-pc-windows-msvc.zip",
+        "strip_v": false,
+        "exe_name": "topgrade"
+      },  
+    "viu": {
+        "repo_url": "https://github.com/atanunq/viu",
+        "doc": "A cli image viewer for the terminal",
+        "filename_template_linux_amd_64": "viu-x86_64-unknown-linux-musl",
+        "filename_template_windows_amd_64": "viu-x86_64-pc-windows-msvc.exe",
+        "strip_v": false,
+        "exe_name": "viu"
+      },  
+    "btm": {
+        "repo_url": "https://github.com/ClementTsang/bottom",
+        "doc": "bottom is a cross-platform graphical process/system monitor with a customizable interface and a multitude of features.",
+        "filename_template_linux_amd_64": "bottom_x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_windows_amd_64": "bottom_x86_64-pc-windows-msvc.zip",
+        "strip_v": true,
+        "exe_name": "btm"
+      },  
     "gum": {
         "repo_url": "https://github.com/charmbracelet/gum",
         "doc": "Prompt user to select from options, written in golang.",
@@ -137,12 +161,12 @@
         "strip_v": true,
         "exe_name": "watchexec"
     },
-    "diskonaut": {
-        "repo_url": "https://github.com/imsnif/diskonaut",
-        "doc": "diskonaut is a terminal disk space navigator.",
-        "filename_template_windows_amd_64": "diskonaut.exe",
-        "filename_template_linux_amd_64": "diskonaut_unknown-linux-musl.tar.gz",
-        "strip_v": false,
-        "exe_name": "diskonaut"
+    "zoxide": {
+        "repo_url": "https://github.com/ajeetdsouza/zoxide",
+        "doc": "A cd command that learns - easily navigate directories from the command-line",
+        "filename_template_windows_amd_64": "zoxide-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "zoxide-{}-x86_64-unknown-linux-musl.tar.gz",
+        "strip_v": true,
+        "exe_name": "zoxide"
     }
 }

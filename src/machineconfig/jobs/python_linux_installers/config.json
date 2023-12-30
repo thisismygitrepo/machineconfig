@@ -1,4 +1,13 @@
 {
+  "diskonaut": {
+    "repo_url": "https://github.com/imsnif/diskonaut",
+    "doc": "diskonaut is a terminal disk space navigator.",
+    "filename_template_windows_amd_64": "",
+    "filename_template_linux_amd_64": "diskonaut-{}-unknown-linux-musl.tar.gz",
+    "strip_v": true,
+    "exe_name": "diskonaut"
+  },
+
     "xplr": {
       "repo_url": "https://github.com/sayanarijit/xplr",
       "doc": "A terminal file explorer with vi keybindings",
@@ -7,74 +16,44 @@
       "strip_v": false,
       "exe_name": "xplr"
   },
-    "BTM": {
-      "repo_url": "https://github.com/ClementTsang/bottom",
-      "doc": "bottom is a cross-platform graphical process/system monitor with a customizable interface and a multitude of features.",
-      "filename_template_linux_amd_64": "bottom_x86_64-unknown-linux-gnu.tar.gz",
-      "strip_v": true,
-      "exe_name": "btm"
-    },
-    "BTop": {
+    "btop": {
       "repo_url": "https://github.com/aristocratos/btop",
       "doc": "btop is a resource monitor for Linux, FreeBSD and MacOS.",
       "filename_template_linux_amd_64": "btop-x86_64-linux-musl.tbz",
+      "filename_template_windows_amd_64": "",
       "strip_v": false,
       "exe_name": "btop"
     },
-    "VSCodeInstaller": {
-      "doc": "vs code installer as per https://code.visualstudio.com/docs/setup/linux"
-    },
-    "Gotty": {
+    "gotty": {
       "repo_url": "https://github.com/sorenisanerd/gotty",
       "doc": "gotty is a simple command line tool that turns your CLI tools into web applications.",
-      "filename_template_linux_amd_64": "gotty_linux_amd64.tar.gz",
+      "filename_template_linux_amd_64": "gotty_{}_linux_amd64.tar.gz",
+      "filename_template_windows_amd_64": "",
       "strip_v": false,
       "exe_name": "gotty"
     },
-    "Joshuto": {
+    "joshuto": {
+      "repo_url": "https://github.com/kamiyaa/joshuto/releases/download/v0.9.4/joshuto-v0.9.4-x86_64-unknown-linux-gnu.tar.gz",
       "doc": "A terminal file manager written in Rust.",
       "filename_template_linux_amd_64": "https://github.com/kamiyaa/joshuto/releases/download/v0.9.4/joshuto-v0.9.4-x86_64-unknown-linux-gnu.tar.gz",
+      "filename_template_windows_amd_64": "",
       "strip_v": false,
       "exe_name": "joshuto"
     },
-    "Mcfly": {
+    "mcfly": {
       "repo_url": "https://github.com/cantino/mcfly",
       "doc": "Fly through your shell history. Great Scott!",
-      "filename_template_linux_amd_64": "mcfly_x86_64-unknown-linux-musl.tar.gz",
+      "filename_template_linux_amd_64": "mcfly-{}-x86_64-unknown-linux-musl.tar.gz",
+      "filename_template_windows_amd_64": "",
       "strip_v": false,
       "exe_name": "mcfly"
     },
-    "Skim": {
-      "doc": "skim is a fuzzy finder in rust!",
-      "repo_url": "https://github.com/lotabout/skim"
-    },
-    "Topgrade": {
-      "repo_url": "https://github.com/topgrade-rs/topgrade",
-      "doc": "Keeping your system up to date usually involves invoking multiple package managers.",
-      "filename_template_linux_amd_64": "topgrade_x86_64-unknown-linux-gnu.tar.gz",
-      "strip_v": true,
-      "exe_name": "topgrade"
-    },
-    "Viu": {
-      "repo_url": "https://github.com/atanunq/viu",
-      "doc": "A cli image viewer for the terminal",
-      "filename_template_linux_amd_64": "viu_x86_64-unknown-linux-gnu.tar.gz",
-      "strip_v": false,
-      "exe_name": "viu"
-    },
-    "Zellij": {
+    "zellij": {
       "repo_url": "https://github.com/zellij-org/zellij",
       "doc": "Zellij is a terminal workspace with support for multiple plugins, such as a terminal, status bar, tabs, splits, etc.",
-      "filename_template_linux_amd_64": "zellij_x86_64-unknown-linux-musl.tar.gz",
+      "filename_template_linux_amd_64": "zellij-x86_64-unknown-linux-musl.tar.gz",
+      "filename_template_windows_amd_64": "",
       "strip_v": false,
       "exe_name": "zellij"
-    },
-    "Zoxide": {
-      "repo_url": "https://github.com/ajeetdsouza/zoxide/",
-      "doc": "forget about cd ls",
-      "filename_template_linux_amd_64": "zoxide-x86_64-unknown-linux-musl.tar.gz",
-      "strip_v": false,
-      "exe_name": "zoxide"
     }
 }
-  

@@ -5,8 +5,8 @@
 from platform import system
 # import subprocess
 import crocodile.toolbox as tb
-from machineconfig.utils.utils import LIBRARY_ROOT, display_options
-from machineconfig.utils.installer import get_cli_py_installers
+from machineconfig.utils.utils import LIBRARY_ROOT, choose_multiple_options
+from machineconfig.utils.installer import get_cli_py_installers_v2, Installer, install_all_v2
 from typing import Any, Optional, Literal, TypeAlias
 
 
@@ -15,19 +15,16 @@ WHICH: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstal
 
 def main(which: Optional[str] = None):
     sys = system()
-    installers = get_cli_py_installers(dev=False, system=sys)
-    default = tb.P("AllEssentials")
-    installers.list.insert(0, default)
-    installers.list.insert(0, tb.P("SystemInstallers"))
-    installers.list.insert(0, tb.P("OtherDevApps"))
-    installers.list.insert(0, tb.P("EssentialsAndOthers"))
-    installers.list.insert(0, tb.P("PrecheckedCloudInstaller"))
-    options: list[str] = installers.apply(lambda x: x.stem + (' -- ' + x.readit()['__doc__'].lstrip().rstrip()) if x.exists() else x.stem).to_list()
+    installers = get_cli_py_installers_v2(dev=False, system=sys)
+    default = "AllEssentials"
+    options = ["SystemInstallers", "OtherDevApps", "EssentialsAndOthers", "PrecheckedCloudInstaller"]
+    options = [default] + options
+    options = [x.get_description() for x in installers] + options
 
     if which is not None:
         return get_program(program_name=which, options=options, installers=list(installers))
 
-    program_names = display_options(msg="", options=options, header="CHOOSE DEV APP", default=str(default), fzf=True, multi=True)
+    program_names = choose_multiple_options(msg="", options=options, header="CHOOSE DEV APP", default=str(default))
     total_program = ""
     for which in program_names:
         assert isinstance(which, str), f"program_name is not a string: {which}"
@@ -35,38 +32,33 @@ def main(which: Optional[str] = None):
     return total_program
 
 
-def get_program(program_name: str, options: list[Any], installers: list[tb.P]):
+def get_program(program_name: str, options: list[str], installers: list[Installer]):
     if program_name == "AllEssentials" or program_name == "EssentialsAndOthers":
-        from machineconfig.utils.installer import install_all
-        installers_ = get_cli_py_installers(dev=False, system=system())
+        installers_ = get_cli_py_installers_v2(dev=False, system=system())
         if program_name == "EssentialsAndOthers":
-            installers_ += get_cli_py_installers(dev=True, system=system())
-        install_all(installers=tb.L(set(installers_)))
+            installers_ += get_cli_py_installers_v2(dev=True, system=system())
+        install_all_v2(installers=tb.L(installers))
         program = ""
     elif program_name == "SystemInstallers":
         if system() == "Windows": options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text())
         elif system() == "Linux": options_system = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps.sh").read_text())
         else: raise NotImplementedError(f"System {system()} not supported")
-        program_names = display_options(msg="", options=sorted(list(options_system.keys())), header="CHOOSE DEV APP", fzf=True, multi=True)
+        program_names = choose_multiple_options(msg="", options=sorted(list(options_system.keys())), header="CHOOSE DEV APP")
         program = ""
         for name in program_names:
             sub_program = options_system[name]
             if sub_program.startswith("#winget"): sub_program = sub_program[1:]
             program += "\n" + sub_program
     elif program_name == "OtherDevApps":
-        installers = get_cli_py_installers(dev=True, system=system()).list
-        options = tb.L(installers).apply(lambda x: x.stem + ((' -- ' + str(x.readit()['__doc__']).rstrip()) if x.exists() else '')).list
-        program_names = display_options(msg="", options=sorted(options), header="CHOOSE DEV APP", fzf=True, multi=True)
+        installers = get_cli_py_installers_v2(dev=True, system=system())
+        options__: list[str] = [x.get_description() for x in installers]
+        program_names = choose_multiple_options(msg="", options=sorted(options__), header="CHOOSE DEV APP")
         program = ""
         for name in program_names:
             idx = options.index(name)
-            try:
-                sub_program = installers[idx].readit()['main']()  # finish the task
-            except KeyError as ke:
-                print(f"KeyError: could not find 'main' in {installers[idx]}")
-                raise KeyError from ke
-            if sub_program is None: sub_program = "echo 'Finished Installation'"  # write an empty program
-            program += "\n" + sub_program
+            sub_program = installers[idx].install_robust(version=None)  # finish the task
+            # sub_program = "echo 'Finished Installation'"  # write an empty program
+            # program += "\n" + ""sub_program
     elif program_name == "PrecheckedCloudInstaller":
         from machineconfig.jobs.python.check_installations import PrecheckedCloudInstaller
         ci = PrecheckedCloudInstaller()
@@ -75,8 +67,8 @@ def get_program(program_name: str, options: list[Any], installers: list[tb.P]):
     else:
         idx = options.index(program_name)
         print(installers[idx])
-        program = installers[idx].readit()['main']()  # finish the task
-        if program is None: program = "echo 'Finished Installation'"  # write an empty program
+        program = installers[idx].install_robust(version=None)  # finish the task
+        program = "echo 'Finished Installation'"  # write an empty program
     return program
 
 
