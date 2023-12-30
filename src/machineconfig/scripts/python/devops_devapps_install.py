@@ -55,7 +55,12 @@ def get_program(program_name: str, options: list[str], installers: list[Installe
         program_names = choose_multiple_options(msg="", options=sorted(options__), header="CHOOSE DEV APP")
         program = ""
         for name in program_names:
-            idx = options.index(name)
+            try:
+                idx = options__.index(name)
+            except ValueError as ve:
+                print(f"{name=}")
+                print(f"{options__=}")
+                raise ve
             sub_program = installers[idx].install_robust(version=None)  # finish the task
             # sub_program = "echo 'Finished Installation'"  # write an empty program
             # program += "\n" + ""sub_program

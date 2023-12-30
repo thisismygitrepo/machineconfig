@@ -7,15 +7,15 @@
         "strip_v": true,
         "exe_name": "presenterm"
     },
-    "Auto-GPT": {
+    "auto-GPT": {
         "repo_url": "https://github.com/Significant-Gravitas/Auto-GPT",
         "doc": "GPT ",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "",
         "strip_v": false,
-        "exe_name": ""
+        "exe_name": "autogpt"
     },
-    "Bitwarden": {
+    "bitwarden": {
         "repo_url": "https://github.com/bitwarden/clients",
         "doc": "Bitwarden (password manager) cli",
         "filename_template_windows_amd_64": "",
@@ -23,15 +23,15 @@
         "strip_v": false,
         "exe_name": "bw"
     },
-    "Cloudflared": {
+    "cloudflared": {
         "repo_url": "https://github.com/cloudflare/cloudflared",
         "doc": "Cloudflared installer. Should only be installed at main computer and servers of tunnels.",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "",
         "strip_v": false,
-        "exe_name": ""
+        "exe_name": "cloudflared"
     },
-    "Evcxr": {
+    "evcxr": {
         "repo_url": "https://github.com/evcxr/evcxr",
         "doc": "An evaluation context for Rust.",
         "filename_template_windows_amd_64": "",
@@ -39,7 +39,7 @@
         "strip_v": false,
         "exe_name": "evxcr"
     },
-    "Forward-cli": {
+    "forward-cli": {
         "repo_url": "https://github.com/axetroy/forward-cli",
         "doc": "Reverse Proxy port forwarding cli tool",
         "filename_template_windows_amd_64": "",
@@ -47,7 +47,7 @@
         "strip_v": false,
         "exe_name": "forward"
     },
-    "Frp": {
+    "frp": {
         "repo_url": "https://github.com/fatedier/frp",
         "doc": "Rust-based cli tool to get a quick overview of disk usage.",
         "filename_template_windows_amd_64": "",
@@ -55,7 +55,7 @@
         "strip_v": false,
         "exe_name": "frp"
     },
-    "Kondo": {
+    "kondo": {
         "repo_url": "https://github.com/tbillington/kondo",
         "doc": "cleans projects from litter files.",
         "filename_template_windows_amd_64": "",
@@ -63,7 +63,7 @@
         "strip_v": false,
         "exe_name": "kondo"
     },
-    "LunarVim": {
+    "lunarVim": {
         "doc": "Terminal text editor based on neovim",
         "repo_url": "",
         "filename_template_windows_amd_64": "",
@@ -71,7 +71,7 @@
         "strip_v": false,
         "exe_name": "lvim"
     },
-    "Ngrok": {
+    "ngrok": {
         "doc": "expose a local server behind a NAT or firewall to the internet",
         "repo_url": "",
         "filename_template_windows_amd_64": "",
@@ -90,8 +90,8 @@
     "openpomodoro-cli": {
         "repo_url": "https://github.com/open-pomodoro/openpomodoro-cli",
         "doc": "Pomodoro timer for the command-line",
-        "filename_template_windows_amd_64": "pomodoro_windows_amd64.tar.gz",
-        "filename_template_linux_amd_64": "pomodoro_linux_amd64.tar.gz",
+        "filename_template_windows_amd_64": "openpomodoro-cli_{}_windows_amd64.tar.gz",
+        "filename_template_linux_amd_64": "openpomodoro-cli_{}_darwin_amd64.tar.gz",
         "strip_v": true,
         "exe_name": "pomodoro"
     },
@@ -122,8 +122,8 @@
     "termscp": {
         "repo_url": "https://github.com/veeso/termscp",
         "doc": "A TUI like winscp",
-        "filename_template_windows_amd_64": "termscp_x86_64-pc-windows-msvc.tar.gz",
-        "filename_template_linux_amd_64": "termscp_x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_windows_amd_64": "termscp-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "termscp-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
         "exe_name": "termscp"
     },
@@ -145,7 +145,7 @@
     },
     "vtm": {
         "repo_url": "https://github.com/netxs-group/vtm",
-        "doc": "Text-based desktop environment inside your terminal*",
+        "doc": "Text-based desktop environment inside your terminal",
         "filename_template_windows_amd_64": "vtm_windows_x86_64.zip",
         "filename_template_linux_amd_64": "vtm_linux_x86_64.tar.gz",
         "strip_v": false,

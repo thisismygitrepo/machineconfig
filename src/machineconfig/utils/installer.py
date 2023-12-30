@@ -28,7 +28,7 @@ def find_move_delete_windows(downloaded_file_path: P, exe_name: Optional[str] = 
     return exe
 
 
-def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool] = True, rename_to: Optional[str] = None) -> None:
+def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool] = True, rename_to: Optional[str] = None):
     if downloaded.is_file():
         exe = downloaded
     else:
@@ -41,7 +41,7 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
     # exe.move(folder=r"/usr/local/bin", overwrite=False)
     Terminal().run(f"sudo mv {exe} /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
     if delete: downloaded.delete(sure=True)
-    return None
+    return exe
 
 
 class Installer:
@@ -98,8 +98,13 @@ class Installer:
             download_link = release_url.joinpath(file_name)
         print("Downloading", download_link.as_url_str())
         downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
-        if not platform.system() == "Linux": return find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True)
-        return find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True)
+        if platform.system() == "Windows": exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True)
+        elif platform.system() == "Linux": exe = find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True)
+        else: raise NotImplementedError(f"System {platform.system()} not implemented")
+        if exe.name.replace(".exe", "") != self.exe_name:
+            from rich import print as pprint
+            from rich.panel import Panel
+            pprint(Panel(f"Expected exe name, [red]{self.exe_name}! Attained name: {exe.name}", title="exe mismatch", subtitle=self.repo_url))
 
     @staticmethod
     def get_github_release(repo_url: str, version: Optional[str] = None):

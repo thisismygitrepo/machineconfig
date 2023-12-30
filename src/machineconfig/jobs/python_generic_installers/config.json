@@ -1,5 +1,37 @@
 
 {
+    "rg": {
+        "repo_url": "https://github.com/BurntSushi/ripgrep",
+        "doc": "recursively searches directories for a regex pattern while respecting your gitignore rules",
+        "filename_template_windows_amd_64": "ripgrep-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "ripgrep-{}-x86_64-unknown-linux-musl.tar.gz",
+        "strip_v": true,
+        "exe_name": "rg"
+    },
+    "fzf": {
+        "repo_url": "https://github.com/junegunn/fzf",
+        "doc": "a general-purpose cli fuzzy finder.",
+        "filename_template_windows_amd_64": "fzf-{}-windows_amd64.zip",
+        "filename_template_linux_amd_64": "fzf-{}-linux_amd64.tar.gz",
+        "strip_v": true,
+        "exe_name": "fzf"
+    },
+    "fd": {
+        "repo_url": "https://github.com/sharkdp/fd",
+        "doc": "fd is a simple, fast and user-friendly alternative to find.",
+        "filename_template_windows_amd_64": "fd-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "fd-v9.0.0-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "fd"
+    },
+    "bat": {
+        "repo_url": "https://github.com/sharkdp/bat",
+        "doc": "A cat(1) clone with wings.",
+        "filename_template_windows_amd_64": "bat-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "bat-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "bat"
+    },
     "topgrade": {
         "repo_url": "https://github.com/topgrade-rs/topgrade",
         "doc": "Keeping your system up to date usually involves invoking multiple package managers.",
