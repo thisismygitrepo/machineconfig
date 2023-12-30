@@ -22,7 +22,8 @@ def find_move_delete_windows(downloaded_file_path: P, exe_name: Optional[str] = 
             tmp = downloaded_file_path.search(f"{exe_name}.exe", r=True)
             if len(tmp) == 1: exe = tmp.list[0]
             else: exe = downloaded_file_path.search("*.exe", r=True).list[0]
-    if rename_to: exe = exe.with_name(name=rename_to, inplace=True)
+        if rename_to and exe.name != rename_to:
+            exe = exe.with_name(name=rename_to, inplace=True)
     exe.move(folder=P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
     if delete: downloaded_file_path.delete(sure=True)
     return exe
@@ -35,7 +36,8 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
         res = downloaded.search(f"*{tool_name}*", folders=False, r=True)
         if len(res) == 1: exe = res.list[0]
         else: exe = downloaded.search(tool_name, folders=False, r=True).list[0]
-    if rename_to: exe = exe.with_name(name=rename_to, inplace=True)
+    if rename_to and exe.name != rename_to:
+        exe = exe.with_name(name=rename_to, inplace=True)
     print(f"MOVING file `{repr(exe)}` to '/usr/local/bin'")
     exe.chmod(0o777)
     # exe.move(folder=r"/usr/local/bin", overwrite=False)
@@ -54,8 +56,7 @@ class Installer:
         self.exe_name = exe_name
     def __repr__(self) -> str: return f"Installer of {self.repo_url}"
     def get_description(self): return f"{self.exe_name} -- {self.doc}"
-    def to_dict(self):
-        return self.__dict__
+    def to_dict(self): return self.__dict__
     @staticmethod
     def from_dict(d: dict[str, Any]):
         try: return Installer(**d)
@@ -98,8 +99,8 @@ class Installer:
             download_link = release_url.joinpath(file_name)
         print("Downloading", download_link.as_url_str())
         downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
-        if platform.system() == "Windows": exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True)
-        elif platform.system() == "Linux": exe = find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True)
+        if platform.system() == "Windows": exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True, rename_to=self.exe_name + ".exe")
+        elif platform.system() == "Linux": exe = find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True, rename_to=self.exe_name)
         else: raise NotImplementedError(f"System {platform.system()} not implemented")
         if exe.name.replace(".exe", "") != self.exe_name:
             from rich import print as pprint
