@@ -1,4 +1,7 @@
 
+# IDE
+* https://github.com/ldelossa/nvim-ide?tab=readme-ov-file
+
 # Profilers
 * https://github.com/plasma-umass/scalene
 * https://github.com/benfred/py-spy
