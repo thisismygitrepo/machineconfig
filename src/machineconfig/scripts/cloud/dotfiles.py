@@ -43,6 +43,13 @@ def get():
     else:
         url = input("Enter dotfiles url: ")
 
-    url_obj = tb.P(url).download(name="dotfiles.zip.enc")
-    res = url_obj.decrypt(pwd=pwd).unzip(inplace=True).joinpath("dotfiles")
-    res = res.move(folder=tb.P.home(), overwrite=True)
+    from rich.progress import Progress
+    with Progress(transient=True) as progress:
+        _task = progress.add_task("Downloading ... ", total=None)
+        url_obj = tb.P(url).download(name="dotfiles.zip.enc")
+    with Progress(transient=True) as progress:
+        _task = progress.add_task("Decrypting ... ", total=None)
+        res = url_obj.decrypt(pwd=pwd).unzip(inplace=True).joinpath("dotfiles")
+    with Progress(transient=True) as progress:
+        _task = progress.add_task("Moving ... ", total=None)
+        res = res.move(folder=tb.P.home(), overwrite=True)
