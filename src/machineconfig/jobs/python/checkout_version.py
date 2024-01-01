@@ -58,6 +58,23 @@ cd '{target_dir}'
 python -m pip freeze {'--exclude-editable' if exclude_editable else ''} > requirements_{sys}.txt
 """
     Terminal().run_script(pip_freeze_script, verbose=True, shell="default").print()
+
+    install_all_script = r"""
+#!/usr/bin/bash
+
+CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+. $CUR_DIR/install_ve.sh
+. $CUR_DIR/install_requirements.sh
+"""
+    version_root_obj.joinpath("install.sh").write_text(install_all_script)
+    install_all_script = r"""
+
+$CUR_DIR = Split-Path $MyInvocation.MyCommand.Path -Parent
+. $CUR_DIR/install_ve.ps1
+. $CUR_DIR/install_requirements.ps1
+
+"""
+    version_root_obj.joinpath("install.ps1").write_text(install_all_script)
     print(f"✅ Installed requirements for version {version}.")
 
 

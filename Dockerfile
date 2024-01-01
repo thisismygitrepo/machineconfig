@@ -13,10 +13,11 @@ ENV package_manager="apt"
 RUN /bin/bash /app/setup_linux/apps.sh
 RUN /bin/bash /app/setup_linux/apps_dev.sh
 RUN /bin/bash /app/setup_linux/ve.sh
-# ENV CROCODILE_EXRA="full"
+ENV CROCODILE_EXRA="full"
 RUN /bin/bash /app/setup_linux/repos.sh
 RUN /bin/bash /app/setup_linux/symlinks.sh
 RUN /bin/bash /app/setup_linux/devapps.sh
 
 # RUN $HOME/scripts/
 # docker build -t machineconfig .
+# CMD ["/bin/bash"]
