@@ -78,12 +78,12 @@ sudo apt install htop -y || true  # for monitoring system resources
 
 
 # ------------------- File Managers ---------------------------
-yes '' | sed 3q; echo "----------------------------- installing bat ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install bat -y || true  # cat with colors.
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.bat || true
-fi
+# yes '' | sed 3q; echo "----------------------------- installing bat ----------------------------"; yes '' | sed 3q
+# if [ "$package_manager" = "apt" ]; then
+#   sudo apt install bat -y || true  # cat with colors.
+# else
+#   ~/.nix-profile/bin/nix-env -iA nixpkgs.bat || true
+# fi
 #sudo apt install ranger -y   # terminal-based file explorer, alternative: lf (Go-based), tere (Rust-based), nnn (C-based), vifm (C-based), mc (C-based), etc
 
 # yes '' | sed 3q; echo "----------------------------- installing zoxide ----------------------------"; yes '' | sed 3q
@@ -105,26 +105,26 @@ else
 fi
 
 
-yes '' | sed 3q; echo "----------------------------- installing fzf ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install fzf -y || true  # fuzzy finder: searches contents of all files, including .git
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.fzf || true
-fi
+# yes '' | sed 3q; echo "----------------------------- installing fzf ----------------------------"; yes '' | sed 3q
+# if [ "$package_manager" = "apt" ]; then
+#   sudo apt install fzf -y || true  # fuzzy finder: searches contents of all files, including .git
+# else
+#   ~/.nix-profile/bin/nix-env -iA nixpkgs.fzf || true
+# fi
 
-yes '' | sed 3q; echo "----------------------------- installing fd-find ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install fd-find -y || true  # find alternative
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.fd || true
-fi
+# yes '' | sed 3q; echo "----------------------------- installing fd-find ----------------------------"; yes '' | sed 3q
+# if [ "$package_manager" = "apt" ]; then
+#   sudo apt install fd-find -y || true  # find alternative
+# else
+#   ~/.nix-profile/bin/nix-env -iA nixpkgs.fd || true
+# fi
 
-yes '' | sed 3q; echo "----------------------------- installing ripgrep ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install ripgrep -y || true  # rg command, rust-based, blazingly fast grep.
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.ripgrep || true
-fi
+# yes '' | sed 3q; echo "----------------------------- installing ripgrep ----------------------------"; yes '' | sed 3q
+# if [ "$package_manager" = "apt" ]; then
+#   sudo apt install ripgrep -y || true  # rg command, rust-based, blazingly fast grep.
+# else
+#   ~/.nix-profile/bin/nix-env -iA nixpkgs.ripgrep || true
+# fi
 
 yes '' | sed 3q; echo "----------------------------- installing ugrep ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then

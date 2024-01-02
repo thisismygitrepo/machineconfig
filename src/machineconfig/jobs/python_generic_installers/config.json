@@ -20,7 +20,7 @@
         "repo_url": "https://github.com/sharkdp/fd",
         "doc": "fd is a simple, fast and user-friendly alternative to find.",
         "filename_template_windows_amd_64": "fd-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "fd-v9.0.0-x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_linux_amd_64": "fd-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
         "exe_name": "fd"
     },
