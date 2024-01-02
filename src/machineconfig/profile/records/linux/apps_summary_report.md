@@ -1,29 +1,3 @@
-|    | app_name    | version   |   positive_pct | app_path                   | app_url   |
-|---:|:------------|:----------|---------------:|:---------------------------|:----------|
-|  0 | topgrade    | v13.0.0   |        0       | /usr/local/bin/topgrade    |           |
-|  1 | hx          | 23.10     |        1.31579 | /usr/local/bin/hx          |           |
-|  2 | kondo       | v0.7      |        1.31579 | /usr/local/bin/kondo       |           |
-|  3 | ttyd        | 1.7.4     |        1.31579 | /usr/local/bin/ttyd        |           |
-|  4 | mcfly       | v0.8.1    |        1.31579 | /usr/local/bin/mcfly       |           |
-|  5 | gotty       | v1.5.0    |        1.31579 | /usr/local/bin/gotty       |           |
-|  6 | diskonaut   | 0.11.0    |        1.31579 | /usr/local/bin/diskonaut   |           |
-|  7 | chatgpt     | v1.3.1    |        2.63158 | /usr/local/bin/chatgpt     |           |
-|  8 | mprocs      | v0.6.4    |        1.31579 | /usr/local/bin/mprocs      |           |
-|  9 | broot       | v1.28.1   |        0       | /usr/local/bin/broot       |           |
-| 10 | delta       | 0.16.5    |        1.31579 | /usr/local/bin/delta       |           |
-| 11 | cloudflared | 2023.10.0 |        0       | /usr/local/bin/cloudflared |           |
-| 12 | browsh      | v1.8.2    |        1.31579 | /usr/local/bin/browsh      |           |
-| 13 | zellij      | v0.39.1   |        0       | /usr/local/bin/zellij      |           |
-| 14 | rclone      | v1.64.2   |        0       | /usr/local/bin/rclone      |           |
-| 15 | lf          | r31       |        1.31579 | /usr/local/bin/lf          |           |
-| 16 | gitui       | v0.24.3   |        1.31579 | /usr/local/bin/gitui       |           |
-| 17 | cpufetch    | v1.04     |        1.31579 | /usr/local/bin/cpufetch    |           |
-| 18 | tere        | v1.5.1    |        1.31579 | /usr/local/bin/tere        |           |
-| 19 | btm         | 0.9.6     |        1.31579 | /usr/local/bin/btm         |           |
-| 20 | dua         | v2.20.3   |        0       | /usr/local/bin/dua         |           |
-| 21 | procs       | v0.14.3   |        0       | /usr/local/bin/procs       |           |
-| 22 | watchexec   | v1.23.0   |        1.31579 | /usr/local/bin/watchexec   |           |
-| 23 | btop        | v1.2.13   |        1.31579 | /usr/local/bin/btop        |           |
-| 24 | xplr        | v0.21.3   |        2.63158 | /usr/local/bin/xplr        |           |
-| 25 | ouch        | 0.4.2     |        1.31579 | /usr/local/bin/ouch        |           |
-| 26 | viu         | v1.4.0    |        1.31579 | /usr/local/bin/viu         |           |
+|    | app_name   | version   |   positive_pct | app_path              | app_url   |
+|---:|:-----------|:----------|---------------:|:----------------------|:----------|
+|  0 | zoxide     | v0.9.2    |              0 | /usr/local/bin/zoxide |           |
