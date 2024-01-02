@@ -25,8 +25,8 @@ def put():
 
     res = tb.P.home().joinpath("dotfiles").zip().encrypt(pwd=pwd).move(folder=tb.P.home().joinpath("tmp_results"), overwrite=True).with_name("dotfiles_share.zip.enc", inplace=True, overwrite=True)
     url_ = res.to_cloud(cloud=cloud, share=True, rel2home=True)
-    print(url_.as_url_obj())
     print(url_.as_url_str())
+    # print(url_.as_url_obj())
 
 
 @RepeatUntilNoException()
