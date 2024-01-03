@@ -1,22 +1,30 @@
+#!/bin/sh
 
-# https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+### BEGIN INIT INFO
+# Provides:          docker
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start daemon at boot time
+# Description:       Enable service provided by daemon.
+### END INIT INFO
+# this file must be placed @ /etc/init.d/docker
 
-# Add Docker's official GPG key:
-sudo apt-get update
-sudo apt-get install ca-certificates curl gnupg -y
-sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
+case "$1" in
+  start)
+    echo "Starting Docker..."
+    /usr/bin/dockerd &
+    ;;
+  stop)
+    echo "Stopping Docker..."
+    killall dockerd
+    ;;
+  *)
+    echo "Usage: /etc/init.d/docker {start|stop}"
+    exit 1
+    ;;
+esac
 
-# Add the repository to Apt sources:
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
+exit 0
 
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-
-# sudo dockerd &
-# sudo usermod -aG docker root
-sudo docker run hello-world

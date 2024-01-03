@@ -1,11 +1,15 @@
 
 """CS
+TODO: use tap typed-argument-parser to parse args
+TODO: use typer to make clis
 """
 
 from crocodile.file_management import P, Read, Struct
 from machineconfig.utils.utils import PROGRAM_PATH, DEFAULTS_PATH
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse
+# from dataclasses import dataclass
+# from tap import Tap
 
 
 ES = "^"  # chosen carefully to not mean anything on any shell. `$` was a bad choice.
@@ -18,6 +22,20 @@ def absolute(path: str) -> P:
     if try_absing.exists(): return try_absing
     print(f"Warning: {path} was not resolved to absolute one, trying out resolving symlinks (This may result in unintended paths)")
     return obj.absolute()
+
+
+# class Args(Tap):
+#     source: str
+#     target: str
+#     os_specific: bool = False
+#     rel2home: bool = True
+#     root: str = "myhome"
+#     zip: bool = False
+#     encrypt: bool = False
+#     verbose: bool = False
+#     delete: bool = False
+#     bisync: bool = False
+#     transfers: int = 10
 
 
 def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
@@ -92,28 +110,10 @@ def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
                 raise NotImplementedError(f"There is no .get_local_path method yet")
             else:
                 source = absolute(args.source)
-
         if args.zip and ".zip" not in target: target += ".zip"
         if args.encrypt and ".enc" not in target: target += ".enc"
     else:
         raise ValueError("Either source or target must be a remote path (i.e. machine:path)")
-        # user, being slacky and did not indicate the remotepath with ":", so it will be inferred here
-        # but first we need to know whether the cloud is source or target
-        # remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
-        # for cloud in remotes:
-        #     if str(args.source) == cloud:
-        #         target = P(args.target).expanduser().absolute()
-        #         remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home)
-        #         source = P(f"{cloud}:{remote_path.as_posix()}")
-        #         break
-        #     if str(args.target) == cloud:
-        #         source = P(args.source).expanduser().absolute()
-        #         remote_path = source.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home)
-        #         target = P(f"{cloud}:{remote_path.as_posix()}")
-        #         break
-        # else:
-        #     print(f"Could not find a remote in {remotes} that matches {args.source} or {args.target}.")
-        #     raise ValueError
     Struct({"cloud": cloud, "source": str(source), "target": str(target)}).print(as_config=True, title="CLI Resolution")
     return cloud, str(source), str(target)
 
@@ -129,6 +129,9 @@ def args_parser():
 
     # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     # parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
+    parser.add_argument("--encrypt", "-e", help="Decrypt after receiving.", action="store_true")  # default is False
+    parser.add_argument("--zip", "-z", help="unzip after receiving.", action="store_true")  # default is False
+
     parser.add_argument("--bisync", "-b", help="Bidirectional sync.", action="store_true")  # default is False
     parser.add_argument("--delete", "-D", help="Delete files in remote that are not in local.", action="store_true")  # default is False
     parser.add_argument("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.", action="store_true")  # default is False
