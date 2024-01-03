@@ -25,8 +25,8 @@ def put():
 
     res = tb.P.home().joinpath("dotfiles").zip().encrypt(pwd=pwd).move(folder=tb.P.home().joinpath("tmp_results"), overwrite=True).with_name("dotfiles_share.zip.enc", inplace=True, overwrite=True)
     url_ = res.to_cloud(cloud=cloud, share=True, rel2home=True)
-    print(url_.as_url_obj())
     print(url_.as_url_str())
+    # print(url_.as_url_obj())
 
 
 @RepeatUntilNoException()
@@ -43,6 +43,13 @@ def get():
     else:
         url = input("Enter dotfiles url: ")
 
-    url_obj = tb.P(url).download(name="dotfiles.zip.enc")
-    res = url_obj.decrypt(pwd=pwd).unzip(inplace=True).joinpath("dotfiles")
-    res = res.move(folder=tb.P.home(), overwrite=True)
+    from rich.progress import Progress
+    with Progress(transient=True) as progress:
+        _task = progress.add_task("Downloading ... ", total=None)
+        url_obj = tb.P(url).download(name="dotfiles.zip.enc")
+    with Progress(transient=True) as progress:
+        _task = progress.add_task("Decrypting ... ", total=None)
+        res = url_obj.decrypt(pwd=pwd).unzip(inplace=True).joinpath("dotfiles")
+    with Progress(transient=True) as progress:
+        _task = progress.add_task("Moving ... ", total=None)
+        res = res.move(folder=tb.P.home(), overwrite=True)
