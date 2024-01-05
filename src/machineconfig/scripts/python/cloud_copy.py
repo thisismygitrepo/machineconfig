@@ -72,7 +72,8 @@ def arg_parser() -> None:
 
     args = parser.parse_args()
 
-    if args.config == "ss" and str(args.source).startswith("http"): return get_shared_file(folder=args.target)
+    tmp = str(args.source)
+    if args.config == "ss" and (tmp.startswith("http") or tmp.startswith("bit.ly")): return get_shared_file(url=args.source, folder=args.target)
 
     if args.rel2home is True and args.root is None: args.root = "myhome"
 
