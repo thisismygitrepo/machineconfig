@@ -63,28 +63,29 @@ def arg_parser() -> None:
     args = parser.parse_args()
     args_dict = vars(args)
     source: str = args_dict.pop("source")
-    target = args_dict.pop("target")
+    target: str = args_dict.pop("target")
     args_obj = Args(**args_dict)
 
-    if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")): return get_shared_file(url=args.source, folder=args.target)
-    if args_obj.rel2home is True and args.root is None: args_obj.root = "myhome"
+    if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")): return get_shared_file(url=source, folder=target)
+    if args_obj.rel2home is True and args_obj.root is None: args_obj.root = "myhome"
 
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
     # print(f"{cloud=}, {source=}, {target=}")
 
+    assert args_obj.key is None, f"Key is not supported yet."
     if cloud in source:
         # print(f"Downloading from {source} to {target}")
         P(target).from_cloud(cloud=cloud, remotepath=source.replace(cloud + ":", ""),
-                                unzip=args.zip, decrypt=args.encrypt, pwd=args.pwd, key=args.key,
-                                overwrite=args.overwrite,
-                                rel2home=args.rel2home, os_specific=args.os_specific, root=args.root, strict=False,
+                                unzip=args_obj.zip_, decrypt=args_obj.encrypt, pwd=args_obj.pwd,
+                                overwrite=args_obj.overwrite,
+                                rel2home=args_obj.rel2home, os_specific=args_obj.os_specific, root=args_obj.root, strict=False,
                                 )
     elif cloud in target:
         res = P(source).to_cloud(cloud=cloud, remotepath=target.replace(cloud + ":", ""),
-                                    zip=args.zip, encrypt=args.encrypt, key=args.key, pwd=args.pwd,
-                                    rel2home=args.rel2home, root=args.root, os_specific=args.os_specific, strict=False,
-                                    share=args.share)
-        if args.share: print(res.as_url_str())
+                                    zip=args_obj.zip_, encrypt=args_obj.encrypt, pwd=args_obj.pwd,
+                                    rel2home=args_obj.rel2home, root=args_obj.root, os_specific=args_obj.os_specific, strict=False,
+                                    share=args_obj.share)
+        if args_obj.share: print(res.as_url_str())
     else: raise ValueError(f"Cloud `{cloud}` not found in source or target.")
 
 

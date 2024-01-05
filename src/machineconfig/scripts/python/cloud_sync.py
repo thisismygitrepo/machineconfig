@@ -97,11 +97,12 @@ def get_secure_share_cloud_config(interactive: bool = True) -> Args:
         pwd = ""
         default_message = "no default password found"
     pwd = input(f"Enter encryption password ({default_message}): ") or pwd
-    return Args(
-        cloud=cloud,
-        pwd=pwd, encrypt=True,
-        zip_=True, overwrite=True, share=True,
-        rel2home=True, root="myhome", os_specific=False,)
+    res = Args(cloud=cloud,
+               pwd=pwd, encrypt=True,
+               zip_=True, overwrite=True, share=True,
+               rel2home=True, root="myhome", os_specific=False,)
+    Struct(res.__dict__).print(as_config=True, title=f"⚠️ Using SecureShare cloud config")
+    return res
 
 
 def find_cloud_config(path: P):
