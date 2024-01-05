@@ -44,7 +44,7 @@ def get_shared_file(url: Optional[str] = None, folder: Optional[str] = None):
         url_obj = P(url).download(folder=folder)
     with Progress(transient=True) as progress:
         _task = progress.add_task("Decrypting ... ", total=None)
-        res = url_obj.decrypt(pwd=pwd).unzip(inplace=True)
+        res = url_obj.decrypt(pwd=pwd, inplace=True).unzip(inplace=True)
         print(f"Decrypted to {res}")
 
 
