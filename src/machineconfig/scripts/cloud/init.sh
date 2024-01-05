@@ -18,6 +18,7 @@ then
 fi
 
 # essentials
+# TODO: https://askubuntu.com/questions/1367139/apt-get-upgrade-auto-restart-services
 export package_manager="apt"
 curl bit.ly/cfgappslinux -L | bash
 curl bit.ly/cfgvelinux -L | bash
@@ -28,7 +29,7 @@ sudo apt install fuse3 -y  # required by rclone. Available by default on other d
 # dotfiles
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 sleep 1
-~/scripts/fire $HOME/code/machineconfig/src/machineconfig/scripts/cloud/dotfiles.py get
+~/scripts/cloud_copy $SHARE_URL . --config ss
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 . ~/.bashrc
 

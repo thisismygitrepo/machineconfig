@@ -36,5 +36,6 @@ setuptools.setup(
         "pyfzf",
         "clipboard",
         "psutil",
+        "pydantic"
     ],
 )

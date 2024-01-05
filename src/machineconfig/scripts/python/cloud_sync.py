@@ -5,16 +5,65 @@ TODO: use typer to make clis
 """
 
 from crocodile.file_management import P, Read, Struct
+from crocodile.core import install_n_import
 from machineconfig.utils.utils import PROGRAM_PATH, DEFAULTS_PATH
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse
 import os
-from typing import Union, Optional
+from typing import Optional
 # from dataclasses import dataclass
 # from tap import Tap
 
 
 ES = "^"  # chosen carefully to not mean anything on any shell. `$` was a bad choice.
+
+
+class ArgsDefaults:
+    # source: str = None
+    # target: str = None
+    encrypt: bool = False
+    zip_: bool = False
+    overwrite: bool = False
+    share: bool = False
+    rel2home = False
+    root = None
+    os_specific = False
+    key = None
+    pwd = None
+
+
+install_n_import("pydantic")
+from pydantic.dataclasses import dataclass  # type: ignore # ruffle: ignore
+
+
+@dataclass
+class Args():
+    # model_config = ConfigDict(extra="forbid", frozen=True)
+
+    # source: str
+    # target: str
+    cloud: Optional[str] = None
+
+    zip_: bool = ArgsDefaults.zip_
+    overwrite: bool = ArgsDefaults.overwrite
+    share: bool = ArgsDefaults.share
+
+    root: Optional[str] = ArgsDefaults.root
+    os_specific: bool = ArgsDefaults.os_specific
+    rel2home: bool = ArgsDefaults.rel2home
+
+    encrypt: bool = ArgsDefaults.encrypt
+    key: Optional[str] = ArgsDefaults.key
+    pwd: Optional[str] = ArgsDefaults.pwd
+
+    config: Optional[str] = None
+
+    @staticmethod
+    def from_config(config_path: P):
+        # from crocodile.core import install_n_import
+        # install_n_import("pydantic")
+        # from pydantic import BaseModel, ConfigDict
+        return Args(**Read.json(config_path))
 
 
 def absolute(path: str) -> P:
@@ -26,7 +75,7 @@ def absolute(path: str) -> P:
     return obj.absolute()
 
 
-def get_secure_share_cloud_config(interactive: bool = True):
+def get_secure_share_cloud_config(interactive: bool = True) -> Args:
     if os.environ.get("CLOUD_CONFIG_NAME") is not None:
         default_cloud = os.environ.get("CLOUD_CONFIG_NAME")
         assert default_cloud is not None
@@ -48,128 +97,108 @@ def get_secure_share_cloud_config(interactive: bool = True):
         pwd = ""
         default_message = "no default password found"
     pwd = input(f"Enter encryption password ({default_message}): ") or pwd
-    return {
-    "cloud": cloud,
-    "pwd": pwd,
-    "encrypt": True,
-    "zip": True,
-    "overwrite": True,
-    "share": True,
-    "rel2home": True,
-    "root": "myhome",
-    "os_specific": False,
-}
-
-# class Args(Tap):
-#     source: str
-#     target: str
-#     os_specific: bool = False
-#     rel2home: bool = True
-#     root: str = "myhome"
-#     zip: bool = False
-#     encrypt: bool = False
-#     verbose: bool = False
-#     delete: bool = False
-#     bisync: bool = False
-#     transfers: int = 10
+    return Args(
+        cloud=cloud,
+        pwd=pwd, encrypt=True,
+        zip_=True, overwrite=True, share=True,
+        rel2home=True, root="myhome", os_specific=False,)
 
 
 def find_cloud_config(path: P):
     for _i in range(len(path.parts)):
         if path.joinpath("cloud.json").exists():
-            res: dict[str, Union[str, bool]] =  path.joinpath("cloud.json").readit()
-            Struct(res).print(as_config=True, title=f"⚠️ Using default cloud config @ {path.joinpath('cloud.json')} ")
+            res =  Args.from_config(path.joinpath("cloud.json"))
+            Struct(res.__dict__).print(as_config=True, title=f"⚠️ Using default cloud config @ {path.joinpath('cloud.json')} ")
             return res
         path = path.parent
     return None
 
 
-def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
-    if args.source.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in args.source
+def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str, str, str]:
+    if source.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in source
         # At the moment, this cloud.json defaults overrides the args and is activated only when source or target are just ":"
         # consider activating it by a flag, and also not not overriding explicitly passed args options.
-        assert ES not in args.target, f"Not Implemented here yet."
-        path = absolute(args.target)
+        assert ES not in target, f"Not Implemented here yet."
+        path = absolute(target)
         if args.config is None:
-            maybe_config = find_cloud_config(path=path)
+            maybe_config: Optional[Args] = find_cloud_config(path=path)
         else:
             if args.config == "ss": maybe_config = get_secure_share_cloud_config()
-            else: maybe_config: Optional[dict[str, Union[str, bool]]] = Read.json(absolute(args.config))
+            else: maybe_config = Args.from_config(absolute(args.config))
 
         if maybe_config is None:
             default_cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             print(f"⚠️ Using default cloud: {default_cloud}")
-            args.source = default_cloud + ":" + args.source[1:]
+            source = default_cloud + ":" + source[1:]
         else:
             tmp = maybe_config
-            args.source = f"{tmp['cloud']}:" + args.source[1:]
-            args.root = str(tmp["root"])
-            tmp__: bool = bool(tmp['rel2home'])
-            args.rel2home = tmp__
-            args.pwd = tmp['pwd']
-            args.encrypt = tmp['encrypt']
-            args.zip = tmp['zip']
-            args.share = tmp['share']
+            source = f"{tmp.cloud}:" + source[1:]
+            args.root = tmp.root
+            args.rel2home = tmp.rel2home
+            args.pwd = tmp.pwd
+            args.encrypt = tmp.encrypt
+            args.zip_ = tmp.zip_
+            args.share = tmp.share
+            # args.jh = 22
 
-    if args.target.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in args.target
-        assert ES not in args.source, f"Not Implemented here yet."
-        path = absolute(args.source)
+    if target.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in target
+        assert ES not in source, f"Not Implemented here yet."
+        path = absolute(source)
         if args.config is None:
             maybe_config = find_cloud_config(path)
         else:
             if args.config == "ss": maybe_config = get_secure_share_cloud_config()
-            else: maybe_config: Optional[dict[str, Union[str, bool]]] = Read.json(absolute(args.config))
+            else: maybe_config = Args.from_config(absolute(args.config))
 
         if maybe_config is not None:
             tmp = maybe_config
-            args.target = f"{tmp['cloud']}:" + args.target[1:]
-            args.root = str(tmp["root"])
-            args.rel2home = bool(tmp['rel2home'])
-            args.pwd = tmp['pwd']
-            args.encrypt = tmp['encrypt']
-            args.zip = tmp['zip']
-            args.share = tmp['share']
+            target = f"{tmp.cloud}:" + target[1:]
+            args.root = tmp.root
+            args.rel2home = tmp.rel2home
+            args.pwd = tmp.pwd
+            args.encrypt = tmp.encrypt
+            args.zip_ = tmp.zip_
+            args.share = tmp.share
 
         else:
             default_cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             print(f"⚠️ Using default cloud: {default_cloud}")
-            args.target = default_cloud + ":" + args.target[1:]
+            target = default_cloud + ":" + target[1:]
 
-    if ":" in args.source and (args.source[1] != ":" if len(args.source) > 1 else True):  # avoid the deceptive case of "C:/"
-        source_parts: str = args.source.split(":")
+    if ":" in source and (source[1] != ":" if len(source) > 1 else True):  # avoid the deceptive case of "C:/"
+        source_parts: list[str] = source.split(":")
         cloud = source_parts[0]
 
         if len(source_parts) > 1 and source_parts[1] == ES:  # the source path is to be inferred from target.
-            assert ES not in args.target, f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised."
-            target = absolute(args.target)
-            remote_path = target.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
-            source = P(f"{cloud}:{remote_path.as_posix()}")
+            assert ES not in target, f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised."
+            target_obj = absolute(target)
+            remote_path = target_obj.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
+            source = f"{cloud}:{remote_path.as_posix()}"
 
         else:  # source path is mentioned, target? maybe.
-            source = str(args.source)
-            if args.target == ES:  # target path is to be inferred from source.
+            if target == ES:  # target path is to be inferred from source.
                 raise NotImplementedError(f"There is no .get_local_path method yet")
             else:
-                target = absolute(args.target)
-        if args.zip and ".zip" not in source: source += ".zip"
+                target_obj = absolute(target)
+        if args.zip_ and ".zip" not in source: source += ".zip"
         if args.encrypt and ".enc" not in source: source += ".enc"
 
-    elif ":" in args.target and (args.target[1] != ":" if len(args.target) > 1 else True):  # avoid the case of "C:/"
-        target_parts: str = args.target.split(":")
-        cloud = args.target.split(":")[0]
+    elif ":" in target and (target[1] != ":" if len(target) > 1 else True):  # avoid the case of "C:/"
+        target_parts: list[str] = target.split(":")
+        cloud = target.split(":")[0]
 
         if len(target_parts) > 1 and target_parts[1] == ES:  # the target path is to be inferred from source.
-            assert ES not in args.source, f"You can't use $ in both source and target. Cyclical inference dependency arised."
-            source = absolute(args.source)
-            remote_path = source.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
-            target = P(f"{cloud}:{remote_path.as_posix()}")
+            assert ES not in source, f"You can't use $ in both source and target. Cyclical inference dependency arised."
+            source_obj = absolute(source)
+            remote_path = source_obj.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
+            target = f"{cloud}:{remote_path.as_posix()}"
         else:  # target path is mentioned, source? maybe.
-            target = str(args.target)
-            if args.source == ES:
+            target = str(target)
+            if source == ES:
                 raise NotImplementedError(f"There is no .get_local_path method yet")
             else:
-                source = absolute(args.source)
-        if args.zip and ".zip" not in target: target += ".zip"
+                source_obj = absolute(source)
+        if args.zip_ and ".zip" not in target: target += ".zip"
         if args.encrypt and ".enc" not in target: target += ".enc"
     else:
         raise ValueError("Either source or target must be a remote path (i.e. machine:path)")
@@ -196,23 +225,32 @@ def args_parser():
     parser.add_argument("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.", action="store_true")  # default is False
 
     args = parser.parse_args()
-    args.os_specific = False
-    args.rel2home = True
+    args_dict = vars(args)
+    source: str = args_dict.pop("source")
+    target: str = args_dict.pop("target")
+    verbose: bool = args_dict.pop("verbose")
+    delete: bool = args_dict.pop("delete")
+    bisync: bool = args_dict.pop("bisync")
+    transfers: int = args_dict.pop("transfers")
+    args_obj = Args(**args_dict)
 
-    cloud, source, target = parse_cloud_source_target(args)
+    args_obj.os_specific = False
+    args_obj.rel2home = True
+
+    cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
     # map short flags to long flags (-u -> --upload), for easier use in the script
-    if args.bisync:
+    if bisync:
         print(f"SYNCING 🔄️ {source} {'<>' * 7} {target}`")
         rclone_cmd = f"""rclone bisync '{source}' '{target}' --resync"""
     else:
         print(f"SYNCING {source} {'>' * 15} {target}`")
         rclone_cmd = f"""rclone sync '{source}' '{target}' """
 
-    rclone_cmd += f" --progress --transfers={args.transfers} --verbose"
+    rclone_cmd += f" --progress --transfers={transfers} --verbose"
     # rclone_cmd += f"  --vfs-cache-mode full"
-    if args.delete: rclone_cmd += " --delete-during"
+    if delete: rclone_cmd += " --delete-during"
 
-    if args.verbose: txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd, cloud_brand="Unknown")
+    if verbose: txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd, cloud_brand="Unknown")
     else: txt = f"""{rclone_cmd}"""
     print(r'running command'.center(100, '-'))
     print(txt)

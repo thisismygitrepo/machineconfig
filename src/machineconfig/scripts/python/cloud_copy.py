@@ -5,22 +5,12 @@
 from crocodile.file_management import P
 from crocodile.meta import RepeatUntilNoException
 import getpass
-from machineconfig.scripts.python.cloud_sync import parse_cloud_source_target
+from machineconfig.scripts.python.cloud_sync import parse_cloud_source_target, ArgsDefaults, Args
 import argparse
 import os
+# from dataclasses import dataclass
+# from pydantic import BaseModel
 from typing import Optional
-
-
-class ArgsDefaults:
-    encrypt: bool = False
-    zip_: bool = False
-    overwrite: bool = False
-    share: bool = False
-    rel2home = False
-    root = None
-    os_specific = False
-    key = None
-    pwd = None
 
 
 @RepeatUntilNoException()
@@ -44,7 +34,7 @@ def get_shared_file(url: Optional[str] = None, folder: Optional[str] = None):
         url_obj = P(url).download(folder=folder)
     with Progress(transient=True) as progress:
         _task = progress.add_task("Decrypting ... ", total=None)
-        res = url_obj.decrypt(pwd=pwd, inplace=True).unzip(inplace=True)
+        res = url_obj.decrypt(pwd=pwd, inplace=True).unzip(inplace=True, merge=True)
         print(f"Decrypted to {res}")
 
 
@@ -52,33 +42,35 @@ def arg_parser() -> None:
     parser = argparse.ArgumentParser(description='Cloud CLI. It wraps rclone with sane defaults for optimum type time.')
 
     # positional argument
-    parser.add_argument("source", help="file/folder path to be taken from here.", default=None)
-    parser.add_argument("target", help="file/folder path to be be sent to here.", default=None)
+    parser.add_argument("source", help="file/folder path to be taken from here.")
+    parser.add_argument("target", help="file/folder path to be be sent to here.")
     # FLAGS
     # parser.add_argument("--recursive", "-r", help="Send recursively.", action="store_true")  # default is False
-    parser.add_argument("--encrypt", "-e", help="Decrypt after receiving.", action="store_true")  # default is False
-    parser.add_argument("--zip", "-z", help="unzip after receiving.", action="store_true")  # default is False
-    parser.add_argument("--overwrite", "-w", help="Overwrite existing file.", action="store_true")  # default is False
-    parser.add_argument("--share", "-s", help="Share file / directory", action="store_true")  # default is False
+    parser.add_argument("--encrypt", "-e", help="Decrypt after receiving.", action="store_true", default=ArgsDefaults.encrypt)
+    parser.add_argument("--zip", "-z", help="unzip after receiving.", action="store_true", default=ArgsDefaults.zip_)
+    parser.add_argument("--overwrite", "-w", help="Overwrite existing file.", action="store_true", default=ArgsDefaults.overwrite)
+    parser.add_argument("--share", "-s", help="Share file / directory", action="store_true", default=ArgsDefaults.share)
     # optional argument
-    parser.add_argument("--rel2home", "-r", help="Relative to `myhome` folder", action="store_true")  # default is False
-    parser.add_argument("--root", "-R", help="Remote root. None is the default, unless rel2home is raied, making the default `myhome`.", default=None)  # default is only meaningful when rel2home is True
-    parser.add_argument("--os_specific", "-o", help="OS specific path (relevant only when relative flag is raised as well.", action="store_true")
+    parser.add_argument("--rel2home", "-r", help="Relative to `myhome` folder", action="store_true", default=ArgsDefaults.rel2home)
+    parser.add_argument("--root", "-R", help="Remote root. None is the default, unless rel2home is raied, making the default `myhome`.", default=ArgsDefaults.root)
+    parser.add_argument("--os_specific", "-o", help="OS specific path (relevant only when relative flag is raised as well.", action="store_true", default=ArgsDefaults.os_specific)
 
-    parser.add_argument("--key", "-k", help="Key for encryption", default=None)
-    parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
+    parser.add_argument("--key", "-k", help="Key for encryption", type=str, default=ArgsDefaults.key)
+    parser.add_argument("--pwd", "-p", help="Password for encryption", type=str, default=ArgsDefaults.pwd)
 
     parser.add_argument("--config", "-c",  help="path to cloud.json file.", default=None)
 
     args = parser.parse_args()
+    args_dict = vars(args)
+    source: str = args_dict.pop("source")
+    target = args_dict.pop("target")
+    args_obj = Args(**args_dict)
 
-    tmp = str(args.source)
-    if args.config == "ss" and (tmp.startswith("http") or tmp.startswith("bit.ly")): return get_shared_file(url=args.source, folder=args.target)
+    if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")): return get_shared_file(url=args.source, folder=args.target)
+    if args_obj.rel2home is True and args.root is None: args_obj.root = "myhome"
 
-    if args.rel2home is True and args.root is None: args.root = "myhome"
-
-    cloud, source, target = parse_cloud_source_target(args)
-    print(f"{cloud=}, {source=}, {target=}")
+    cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
+    # print(f"{cloud=}, {source=}, {target=}")
 
     if cloud in source:
         # print(f"Downloading from {source} to {target}")
