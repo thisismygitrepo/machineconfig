@@ -18,8 +18,8 @@ sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
 # sudo dockerd &
-# sudo usermod -aG docker root
-sudo docker run hello-world
+sudo usermod -aG docker $USER
+docker run hello-world
 
 # in older wsl, following installation, docker run hello-world will fail with error:
 # https://stackoverflow.com/questions/44678725/cannot-connect-to-the-docker-daemon-at-unix-var-run-docker-sock-is-the-docker
@@ -31,4 +31,7 @@ sudo docker run hello-world
 # lastly, to avoid cases where sudo is needed for every docker command
 # sudo usermod -a -G docker $USER  # then reboot
 # this is as per: https://stackoverflow.com/questions/47854463/docker-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socke
+
+# databricks only:
+# sudo apt-get install fuse-overlayfs
 

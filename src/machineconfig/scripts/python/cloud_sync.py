@@ -8,6 +8,8 @@ from crocodile.file_management import P, Read, Struct
 from machineconfig.utils.utils import PROGRAM_PATH, DEFAULTS_PATH
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse
+import os
+from typing import Union, Optional
 # from dataclasses import dataclass
 # from tap import Tap
 
@@ -24,6 +26,40 @@ def absolute(path: str) -> P:
     return obj.absolute()
 
 
+def get_secure_share_cloud_config(interactive: bool = True):
+    if os.environ.get("CLOUD_CONFIG_NAME") is not None:
+        default_cloud = os.environ.get("CLOUD_CONFIG_NAME")
+        assert default_cloud is not None
+        cloud = default_cloud
+    else:
+        try:
+            default_cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+        except Exception:
+            default_cloud = 'No default cloud found.'
+        if default_cloud == 'No default cloud found.' or interactive:
+            cloud = input(f"Enter cloud name (default {default_cloud}): ") or default_cloud
+        else: cloud = default_cloud
+
+    default_password_path = P.home().joinpath("dotfiles/creds/passwords/quick_password")
+    if default_password_path.exists():
+        pwd = default_password_path.read_text().strip()
+        default_message = "defaults to quick_password"
+    else:
+        pwd = ""
+        default_message = "no default password found"
+    pwd = input(f"Enter encryption password ({default_message}): ") or pwd
+    return {
+    "cloud": cloud,
+    "pwd": pwd,
+    "encrypt": True,
+    "zip": True,
+    "overwrite": True,
+    "share": True,
+    "rel2home": True,
+    "root": "myhome",
+    "os_specific": False,
+}
+
 # class Args(Tap):
 #     source: str
 #     target: str
@@ -38,39 +74,62 @@ def absolute(path: str) -> P:
 #     transfers: int = 10
 
 
+def find_cloud_config(path: P):
+    for _i in range(len(path.parts)):
+        if path.joinpath("cloud.json").exists():
+            res: dict[str, Union[str, bool]] =  path.joinpath("cloud.json").readit()
+            Struct(res).print(as_config=True, title=f"⚠️ Using default cloud config @ {path.joinpath('cloud.json')} ")
+            return res
+        path = path.parent
+    return None
+
+
 def parse_cloud_source_target(args: argparse.Namespace) -> tuple[str, str, str]:
     if args.source.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in args.source
         # At the moment, this cloud.json defaults overrides the args and is activated only when source or target are just ":"
         # consider activating it by a flag, and also not not overriding explicitly passed args options.
         assert ES not in args.target, f"Not Implemented here yet."
         path = absolute(args.target)
-        for _i in range(len(path.parts)):
-            if path.joinpath("cloud.json").exists():
-                tmp = path.joinpath("cloud.json").readit()
-                args.source = f"{tmp['cloud']}:" + args.source[1:]
-                args.root = tmp["root"]
-                args.rel2home = tmp['rel2home']
-                print(f"⚠️ Using default cloud config: cloud={tmp['cloud']}, root={args.root}, rel2home={args.rel2home}")
-                break
-            path = path.parent
+        if args.config is None:
+            maybe_config = find_cloud_config(path=path)
         else:
+            if args.config == "ss": maybe_config = get_secure_share_cloud_config()
+            else: maybe_config: Optional[dict[str, Union[str, bool]]] = Read.json(absolute(args.config))
+
+        if maybe_config is None:
             default_cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             print(f"⚠️ Using default cloud: {default_cloud}")
             args.source = default_cloud + ":" + args.source[1:]
+        else:
+            tmp = maybe_config
+            args.source = f"{tmp['cloud']}:" + args.source[1:]
+            args.root = str(tmp["root"])
+            tmp__: bool = bool(tmp['rel2home'])
+            args.rel2home = tmp__
+            args.pwd = tmp['pwd']
+            args.encrypt = tmp['encrypt']
+            args.zip = tmp['zip']
+            args.share = tmp['share']
 
     if args.target.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in args.target
         assert ES not in args.source, f"Not Implemented here yet."
         path = absolute(args.source)
-        # print(path)
-        for _i in range(len(path.parts)):
-            if path.joinpath("cloud.json").exists():
-                tmp = path.joinpath("cloud.json").readit()
-                args.target = f"{tmp['cloud']}:" + args.target[1:]
-                args.root = tmp["root"]
-                args.rel2home = tmp['rel2home']
-                Struct(tmp).print(as_config=True, title=f"Cloud Config @ {path.joinpath('cloud.json')}")
-                break
-            path = path.parent
+        if args.config is None:
+            maybe_config = find_cloud_config(path)
+        else:
+            if args.config == "ss": maybe_config = get_secure_share_cloud_config()
+            else: maybe_config: Optional[dict[str, Union[str, bool]]] = Read.json(absolute(args.config))
+
+        if maybe_config is not None:
+            tmp = maybe_config
+            args.target = f"{tmp['cloud']}:" + args.target[1:]
+            args.root = str(tmp["root"])
+            args.rel2home = bool(tmp['rel2home'])
+            args.pwd = tmp['pwd']
+            args.encrypt = tmp['encrypt']
+            args.zip = tmp['zip']
+            args.share = tmp['share']
+
         else:
             default_cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             print(f"⚠️ Using default cloud: {default_cloud}")
@@ -128,7 +187,7 @@ def args_parser():
     parser.add_argument("--root", "-R", help="Remote root.", default="myhome")  # default is False
 
     # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
-    # parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
+    parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
     parser.add_argument("--encrypt", "-e", help="Decrypt after receiving.", action="store_true")  # default is False
     parser.add_argument("--zip", "-z", help="unzip after receiving.", action="store_true")  # default is False
 

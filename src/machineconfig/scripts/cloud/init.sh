@@ -5,10 +5,10 @@ then
     export CLOUD_CONFIG_NAME=$CLOUD_CONFIG_NAME
 fi
 
-if [ -z "$DOTFILES_URL" ]
+if [ -z "$SHARE_URL" ]
 then
-    read -s -p "Enter DOTFILES_URL: " DOTFILES_URL
-    export DOTFILES_URL=$DOTFILES_URL
+    read -s -p "Enter SHARE_URL: " SHARE_URL
+    export SHARE_URL=$SHARE_URL
 fi
 
 if [ -z "$DECRYPTION_PASSWORD" ]

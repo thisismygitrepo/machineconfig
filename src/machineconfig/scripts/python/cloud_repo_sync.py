@@ -22,7 +22,7 @@ def args_parser():
     # parser.add_argument("cmd", help="command to run", choices=["pull", "push"])
     parser.add_argument("path", nargs='?', type=str, help="Repository path, defaults to cwd.", default=None)
 
-    parser.add_argument("--share", help="Repository path, defaults to cwd.", action="store_true", default=False)
+    # parser.add_argument("--share", help="Repository path, defaults to cwd.", action="store_true", default=False)
 
     parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
     parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {tb.randstr()}")
@@ -32,10 +32,10 @@ def args_parser():
     parser.add_argument("--no_push", "-u", help="push to reomte.", action="store_true")  # default is False
     args = parser.parse_args()
 
-    if args.share:
-        from machineconfig.scripts.cloud.dotfiles import put
-        put()
-        return None
+    # if args.share:
+    #     from machineconfig.scripts.cloud.dotfiles import put
+    #     put()
+    #     return None
     main(cloud=args.cloud, path=args.path, message=args.message, skip_confirmation=args.skip_confirmation, pwd=args.pwd, push=not args.no_push)
 
 
