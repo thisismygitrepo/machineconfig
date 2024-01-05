@@ -34,17 +34,16 @@ class ArgsDefaults:
 
 install_n_import("pydantic")
 from pydantic.dataclasses import dataclass  # type: ignore # ruffle: ignore
+from pydantic import ConfigDict
 
 
-@dataclass
+@dataclass(config=ConfigDict(extra="forbid", frozen=True))
 class Args():
-    # model_config = ConfigDict(extra="forbid", frozen=True)
-
     # source: str
     # target: str
     cloud: Optional[str] = None
 
-    zip_: bool = ArgsDefaults.zip_
+    zip: bool = ArgsDefaults.zip_
     overwrite: bool = ArgsDefaults.overwrite
     share: bool = ArgsDefaults.share
 
@@ -99,7 +98,7 @@ def get_secure_share_cloud_config(interactive: bool = True) -> Args:
     pwd = input(f"Enter encryption password ({default_message}): ") or pwd
     res = Args(cloud=cloud,
                pwd=pwd, encrypt=True,
-               zip_=True, overwrite=True, share=True,
+               zip=True, overwrite=True, share=True,
                rel2home=True, root="myhome", os_specific=False,)
     Struct(res.__dict__).print(as_config=True, title=f"⚠️ Using SecureShare cloud config")
     return res
@@ -138,7 +137,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
             args.rel2home = tmp.rel2home
             args.pwd = tmp.pwd
             args.encrypt = tmp.encrypt
-            args.zip_ = tmp.zip_
+            args.zip = tmp.zip
             args.share = tmp.share
             # args.jh = 22
 
@@ -158,7 +157,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
             args.rel2home = tmp.rel2home
             args.pwd = tmp.pwd
             args.encrypt = tmp.encrypt
-            args.zip_ = tmp.zip_
+            args.zip = tmp.zip
             args.share = tmp.share
 
         else:
@@ -181,7 +180,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
                 raise NotImplementedError(f"There is no .get_local_path method yet")
             else:
                 target_obj = absolute(target)
-        if args.zip_ and ".zip" not in source: source += ".zip"
+        if args.zip and ".zip" not in source: source += ".zip"
         if args.encrypt and ".enc" not in source: source += ".enc"
 
     elif ":" in target and (target[1] != ":" if len(target) > 1 else True):  # avoid the case of "C:/"
@@ -199,7 +198,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
                 raise NotImplementedError(f"There is no .get_local_path method yet")
             else:
                 source_obj = absolute(source)
-        if args.zip_ and ".zip" not in target: target += ".zip"
+        if args.zip and ".zip" not in target: target += ".zip"
         if args.encrypt and ".enc" not in target: target += ".enc"
     else:
         raise ValueError("Either source or target must be a remote path (i.e. machine:path)")

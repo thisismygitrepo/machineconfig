@@ -47,13 +47,11 @@ class Register:
         now = datetime.now()
         import numpy as np
         chunks = np.arange(start=1, stop=12, step=frequency_months)
-        chunk_now_start: int = chunks[chunks <= now.month][-1]
-        chunk_now_index: int = np.where(chunks == chunk_now_start)[0][0]
-        previous_chunk_end: int = chunk_now_start
-        previous_chunk_start: int = chunks[chunk_now_index - 1]
-        start = datetime(year=now.year, month=previous_chunk_start, day=1)
-        end = datetime(year=now.year, month=previous_chunk_end, day=1)
-        return start, end
+        chunk_now_start_month: int = chunks[chunks <= now.month][-1]
+        chunk_now_start = datetime(year=now.year, month=chunk_now_start_month, day=1)
+        from dateutil.relativedelta import relativedelta
+        previous_chunk_start = chunk_now_start - relativedelta(months=frequency_months)
+        return previous_chunk_start, chunk_now_start
 
 
 @dataclass

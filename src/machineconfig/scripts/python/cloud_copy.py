@@ -2,7 +2,7 @@
 """CC
 """
 
-from crocodile.file_management import P
+from crocodile.file_management import P, Struct
 from crocodile.meta import RepeatUntilNoException
 import getpass
 from machineconfig.scripts.python.cloud_sync import parse_cloud_source_target, ArgsDefaults, Args
@@ -65,24 +65,23 @@ def arg_parser() -> None:
     source: str = args_dict.pop("source")
     target: str = args_dict.pop("target")
     args_obj = Args(**args_dict)
+    Struct(args_obj.__dict__).print(as_config=True, title=f"CLI config")
 
     if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")): return get_shared_file(url=source, folder=target)
     if args_obj.rel2home is True and args_obj.root is None: args_obj.root = "myhome"
 
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
-    # print(f"{cloud=}, {source=}, {target=}")
 
     assert args_obj.key is None, f"Key is not supported yet."
     if cloud in source:
-        # print(f"Downloading from {source} to {target}")
         P(target).from_cloud(cloud=cloud, remotepath=source.replace(cloud + ":", ""),
-                                unzip=args_obj.zip_, decrypt=args_obj.encrypt, pwd=args_obj.pwd,
+                                unzip=args_obj.zip, decrypt=args_obj.encrypt, pwd=args_obj.pwd,
                                 overwrite=args_obj.overwrite,
                                 rel2home=args_obj.rel2home, os_specific=args_obj.os_specific, root=args_obj.root, strict=False,
                                 )
     elif cloud in target:
         res = P(source).to_cloud(cloud=cloud, remotepath=target.replace(cloud + ":", ""),
-                                    zip=args_obj.zip_, encrypt=args_obj.encrypt, pwd=args_obj.pwd,
+                                    zip=args_obj.zip, encrypt=args_obj.encrypt, pwd=args_obj.pwd,
                                     rel2home=args_obj.rel2home, root=args_obj.root, os_specific=args_obj.os_specific, strict=False,
                                     share=args_obj.share)
         if args_obj.share: print(res.as_url_str())
