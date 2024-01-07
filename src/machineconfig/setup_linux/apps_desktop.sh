@@ -26,6 +26,15 @@ flatpak install flathub org.mozilla.Thunderbird
 flatpak install flathub com.brave.Browser
 ln -s /home/$USER/.nix-profile/share/applications/* /home/$USER/.local/share/applications/
 
+
+# as per https://brave.com/linux/
+# sudo apt install curl
+# sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+# echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+# sudo apt update
+# sudo apt install brave-browser
+
+
 yes '' | sed 3q; echo "----------------------------- installing remmina--------------------------------"; yes '' | sed 3q
 sudo apt install remmina remmina-plugin-rdp -y
 

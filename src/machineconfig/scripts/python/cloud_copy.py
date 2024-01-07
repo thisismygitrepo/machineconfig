@@ -15,6 +15,7 @@ from typing import Optional
 
 @RepeatUntilNoException()
 def get_shared_file(url: Optional[str] = None, folder: Optional[str] = None):
+    folder_obj = P.cwd() if folder is None else P(folder)
 
     if os.environ.get("DECRYPTION_PASSWORD") is not None:
         pwd = os.environ.get("DECRYPTION_PASSWORD")
@@ -31,10 +32,12 @@ def get_shared_file(url: Optional[str] = None, folder: Optional[str] = None):
     from rich.progress import Progress
     with Progress(transient=True) as progress:
         _task = progress.add_task("Downloading ... ", total=None)
-        url_obj = P(url).download(folder=folder)
+        url_obj = P(url).download(folder=folder_obj)
     with Progress(transient=True) as progress:
         _task = progress.add_task("Decrypting ... ", total=None)
-        res = url_obj.decrypt(pwd=pwd, inplace=True).unzip(inplace=True, merge=True)
+        tmp_folder = P.tmpdir(prefix="tmp_unzip")
+        res = url_obj.decrypt(pwd=pwd, inplace=True).unzip(inplace=True, folder=tmp_folder)
+        tmp_folder.search("*").apply(lambda x: x.move(folder=folder_obj, overwrite=True))
         print(f"Decrypted to {res}")
 
 
