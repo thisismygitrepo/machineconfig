@@ -37,7 +37,7 @@ def get_shared_file(url: Optional[str] = None, folder: Optional[str] = None):
         _task = progress.add_task("Decrypting ... ", total=None)
         tmp_folder = P.tmpdir(prefix="tmp_unzip")
         res = url_obj.decrypt(pwd=pwd, inplace=True).unzip(inplace=True, folder=tmp_folder)
-        tmp_folder.search("*").apply(lambda x: x.move(folder=folder_obj, overwrite=True))
+        res.search("*").apply(lambda x: x.move(folder=folder_obj, overwrite=True))
         print(f"Decrypted to {res}")
 
 
