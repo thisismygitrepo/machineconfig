@@ -135,12 +135,18 @@ print_code(code=r'''{txt}''', lexer='python', desc='Imported Script')
             else: command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
             # command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {tb.P.cwd()}"
 
-    if "ipdb" in command: tb.install_n_import("ipdb")
-    if "pudb" in command: tb.install_n_import("pudb")
+    # this installs in ve env, which is not execution env
+    # if "ipdb" in command: tb.install_n_import("ipdb")
+    # if "pudb" in command: tb.install_n_import("pudb")
 
     if not args.cmd:
+        if "ipdb" in command: command = f"pip install ipdb; {command}"
+        if "pudb" in command: command = f"pip install pudb; {command}"
         command = f". activate_ve {args.ve}; {command}"
     else:
+        # CMD equivalent
+        if "ipdb" in command: command = f"pip install ipdb & {command}"
+        if "pudb" in command: command = f"pip install pudb & {command}"
         command = fr"""start cmd -Argument "/k %USERPROFILE%\venvs\{args.ve}\Scripts\activate.bat & {command} " """  # this works from powershell
         # this works from cmd  # command = fr""" start cmd /k "%USERPROFILE%\venvs\{args.ve}\Scripts\activate.bat & {command} " """ # because start in cmd is different from start in powershell (in powershell it is short for Start-Process)
 
