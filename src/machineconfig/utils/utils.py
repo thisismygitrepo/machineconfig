@@ -285,8 +285,7 @@ def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool = False):
     repo = Repo(path=dotfiles_path)
     last_commit = repo.head.commit
     dtm = last_commit.committed_datetime
-    # make it tz unaware
-    from datetime import datetime
+    from datetime import datetime  # make it tz unaware
     dtm = datetime(dtm.year, dtm.month, dtm.day, dtm.hour, dtm.minute, dtm.second)
     res =  dtm > datetime.fromisoformat(commit_dtm)
     if res is False and update is True:
