@@ -75,7 +75,7 @@
 },
     "browsh": {
         "repo_url": "https://github.com/browsh-org/browsh",
-        "doc": "cpufetch is a small yet fancy CPU architecture fetching tool, like neofetch but for CPUs.",
+        "doc": "browser in the shell",
         "filename_template_windows_amd_64": "browsh_{}_windows_amd64.exe",
         "filename_template_linux_amd_64": "browsh_{}_linux_amd64",
         "strip_v": true,

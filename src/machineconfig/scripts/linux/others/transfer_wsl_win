@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+. ~/scripts/activate_ve 've'
+python $(dirname $(dirname $0))/python/transfer_wsl_win.py "$@"
+deactivate || true

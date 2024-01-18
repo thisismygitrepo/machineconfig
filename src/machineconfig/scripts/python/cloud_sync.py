@@ -81,12 +81,14 @@ def get_secure_share_cloud_config(interactive: bool = True) -> Args:
         cloud = default_cloud
     else:
         try:
-            default_cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            default_cloud__ = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
         except Exception:
-            default_cloud = 'No default cloud found.'
-        if default_cloud == 'No default cloud found.' or interactive:
-            cloud = input(f"Enter cloud name (default {default_cloud}): ") or default_cloud
-        else: cloud = default_cloud
+            default_cloud__ = 'No default cloud found.'
+        if default_cloud__ == 'No default cloud found.' or interactive:
+            # assert default_cloud is not None
+            cloud = input(f"Enter cloud name (default {default_cloud__}): ") or default_cloud__
+        else:
+            cloud = default_cloud__
 
     default_password_path = P.home().joinpath("dotfiles/creds/passwords/quick_password")
     if default_password_path.exists():
@@ -99,7 +101,7 @@ def get_secure_share_cloud_config(interactive: bool = True) -> Args:
     res = Args(cloud=cloud,
                pwd=pwd, encrypt=True,
                zip=True, overwrite=True, share=True,
-               rel2home=True, root="myhome", os_specific=False,)
+               rel2home=True, root="myshare", os_specific=False,)
     Struct(res.__dict__).print(as_config=True, title=f"⚠️ Using SecureShare cloud config")
     return res
 

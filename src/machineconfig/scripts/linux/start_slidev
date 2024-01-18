@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+. ~/scripts/activate_ve 've'
+
+op_script=$HOME/tmp_results/shells/python_return_command.sh
+if [ -f "$op_script" ]; then
+  rm $op_script
+fi
+
+
+python -m machineconfig.scripts.python.start_slidev "$@"
+
+if [ -f "$op_script" ]; then
+  chmod +x $op_script
+  set --  # clear all positional parameters
+  source $op_script  # sourcing the script means the args passed to the this script are passed to the sourced script which cofuses the sources script as it contains activate_ve and it doesn't understand first.sh arguments.
+fi
+
+
+deactivate || true

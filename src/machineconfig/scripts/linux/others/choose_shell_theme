@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+. ~/scripts/activate_ve 've'
+python -m fire machineconfig.scripts.python.choose_ohmybash_theme main
+source ~/.bashrc  # reload the profile
+deactivate || true
