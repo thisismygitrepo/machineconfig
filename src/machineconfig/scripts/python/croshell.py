@@ -67,7 +67,7 @@ def build_parser():
     parser.add_argument("--fzf", "-F", help="search with fuzzy finder for python scripts and run them", action="store_true", default=False)
 
     # OPTIONAL KEYWORD
-    parser.add_argument("--venv", "-v", help="virtual enviroment to use, defaults to activated ve, if existed, else ve.", default=None)
+    parser.add_argument("--ve", "-v", help="virtual enviroment to use, defaults to activated ve, if existed, else ve.", default=None)
     parser.add_argument("--profile", "-P", help="ipython profile to use, defaults to default profile.", default=None)
     parser.add_argument("--read", "-r", dest="read", help="read a binary file.", default="")
     parser.add_argument("--file", "-f", dest="file", help="python file path to interpret", default="")
@@ -131,7 +131,7 @@ print_logo(logo="crocodile")
     pyfile.write_text(total_program, encoding='utf-8')
     if profile is None: profile = "default"
 
-    ve = get_ve_profile(P(file)) if args.venv is None else str(args.ve)
+    ve = get_ve_profile(P(file)) if args.ve is None else str(args.ve)
 
     final_program = f"""
 # deactivate
