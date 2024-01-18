@@ -1,4 +1,12 @@
 {
+    "OBS Background removal": {
+        "repo_url": "https://github.com/royshil/obs-backgroundremoval",
+        "doc": "A plugin for OBS Studio to remove background from a video",
+        "filename_template_windows_amd_64": "obs-backgroundremoval-{}-windows-x64.zip",
+        "filename_template_linux_amd_64": "obs-backgroundremoval-{}-x86_64-linux-gnu.deb",
+        "strip_v": true,
+        "exe_name": "obs-backgroundremoval"
+    },
     "presenterm": {
         "repo_url": "https://github.com/mfontanini/presenterm",
         "doc": "present from temrinal",
@@ -18,48 +26,48 @@
     "bitwarden": {
         "repo_url": "https://github.com/bitwarden/clients",
         "doc": "Bitwarden (password manager) cli",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
+        "filename_template_windows_amd_64": "bw-windows-2024.1.0.zip",
+        "filename_template_linux_amd_64": "bw-linux-2024.1.0.zip",
         "strip_v": false,
         "exe_name": "bw"
     },
     "cloudflared": {
         "repo_url": "https://github.com/cloudflare/cloudflared",
         "doc": "Cloudflared installer. Should only be installed at main computer and servers of tunnels.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
+        "filename_template_windows_amd_64": "cloudflared-windows-amd64.exe",
+        "filename_template_linux_amd_64": "cloudflared-linux-amd64",
         "strip_v": false,
         "exe_name": "cloudflared"
     },
     "evcxr": {
         "repo_url": "https://github.com/evcxr/evcxr",
         "doc": "An evaluation context for Rust.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
+        "filename_template_windows_amd_64": "evcxr-v0.17.0-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "evcxr-v0.17.0-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
         "exe_name": "evxcr"
     },
     "forward-cli": {
         "repo_url": "https://github.com/axetroy/forward-cli",
         "doc": "Reverse Proxy port forwarding cli tool",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
+        "filename_template_windows_amd_64": "forward_windows_amd64.tar.gz",
+        "filename_template_linux_amd_64": "forward_linux_amd64.tar.gz",
         "strip_v": false,
         "exe_name": "forward"
     },
     "frp": {
         "repo_url": "https://github.com/fatedier/frp",
-        "doc": "Rust-based cli tool to get a quick overview of disk usage.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
-        "strip_v": false,
+        "doc": "fast reverse proxy that allows you to expose a local server located behind a NAT or firewall to the Internet.",
+        "filename_template_windows_amd_64": "frp_{}_windows_amd64.zip",
+        "filename_template_linux_amd_64": "frp_{}_linux_amd64.tar.gz",
+        "strip_v": true,
         "exe_name": "frp"
     },
     "kondo": {
         "repo_url": "https://github.com/tbillington/kondo",
         "doc": "cleans projects from litter files.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
+        "filename_template_windows_amd_64": "kondo-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "kondo-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
         "exe_name": "kondo"
     },
@@ -106,8 +114,8 @@
     "qrscan": {
         "repo_url": "https://github.com/sayanarijit/qrscan",
         "doc": "qr code scanner",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
+        "filename_template_windows_amd_64": "qrscan-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "qrscan-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": true,
         "exe_name": "qrscan"
     },

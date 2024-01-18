@@ -1,3 +1,19 @@
 {
+    "nnn": {
+        "repo_url": "https://github.com/jarun/nnn",
+        "doc": "A terminal-based file manager.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "nnn-{}.tar.gz",
+        "strip_v": false,
+        "exe_name": "nnn"
+      },
+    "bytehound": {
+        "repo_url": "https://github.com/koute/bytehound",
+        "doc": "Inspecting the memory usage of a running process",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "bytehound-x86_64-unknown-linux-gnu.tgz",
+        "strip_v": false,
+        "exe_name": "bytehound"
+      }
 
 }

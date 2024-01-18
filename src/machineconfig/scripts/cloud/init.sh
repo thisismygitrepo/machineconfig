@@ -29,7 +29,7 @@ sudo apt install fuse3 -y  # required by rclone. Available by default on other d
 # dotfiles
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 sleep 1
-~/scripts/cloud_copy $SHARE_URL . --config ss
+~/scripts/cloud_copy $SHARE_URL $HOME --config ss
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 . ~/.bashrc
 

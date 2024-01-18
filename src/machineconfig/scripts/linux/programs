@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# Save the current directory
+original_dir=$(pwd)
+
+# Navigate to the directory
+cd ~/code/machineconfig/src/machineconfig/scripts/linux/others
+
+# List all files and pipe the output to fzf for user selection
+selected_file=$(ls | fzf)
+
+# Check if a file was selected
+if [ -n "$selected_file" ]; then
+    # Source the selected file
+    source "$selected_file"
+else
+    echo "No file selected."
+fi
+
+# Change back to the original directory
+cd "$original_dir"

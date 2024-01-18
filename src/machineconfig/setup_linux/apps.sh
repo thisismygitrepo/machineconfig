@@ -104,28 +104,6 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.btop
 fi
 
-
-# yes '' | sed 3q; echo "----------------------------- installing fzf ----------------------------"; yes '' | sed 3q
-# if [ "$package_manager" = "apt" ]; then
-#   sudo apt install fzf -y || true  # fuzzy finder: searches contents of all files, including .git
-# else
-#   ~/.nix-profile/bin/nix-env -iA nixpkgs.fzf || true
-# fi
-
-# yes '' | sed 3q; echo "----------------------------- installing fd-find ----------------------------"; yes '' | sed 3q
-# if [ "$package_manager" = "apt" ]; then
-#   sudo apt install fd-find -y || true  # find alternative
-# else
-#   ~/.nix-profile/bin/nix-env -iA nixpkgs.fd || true
-# fi
-
-# yes '' | sed 3q; echo "----------------------------- installing ripgrep ----------------------------"; yes '' | sed 3q
-# if [ "$package_manager" = "apt" ]; then
-#   sudo apt install ripgrep -y || true  # rg command, rust-based, blazingly fast grep.
-# else
-#   ~/.nix-profile/bin/nix-env -iA nixpkgs.ripgrep || true
-# fi
-
 yes '' | sed 3q; echo "----------------------------- installing ugrep ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install ugrep -y || true  # just as good as grep, but consistent with windows

@@ -3,7 +3,7 @@
 """
 
 import crocodile.toolbox as tb
-from machineconfig.utils.utils import PROGRAM_PATH, display_options
+from machineconfig.utils.utils import PROGRAM_PATH, choose_one_option
 import platform
 import argparse
 from typing import Optional
@@ -40,19 +40,23 @@ mprocs "echo 'see {DEFAULT_MOUNT}/{cloud} for the mounted cloud'; rclone about {
     return txt
 
 
-def mount(cloud: Optional[str] = None, network: Optional[str] = None) -> None:
+def mount(cloud: Optional[str], network: Optional[str], destination: Optional[str]) -> None:
 
     config = get_rclone_config()
     if cloud is None:
-        res = display_options(msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
+        res = choose_one_option(msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
         if type(res) is str: cloud = res
         else: raise ValueError("no cloud selected")
-    # assert isinstance(cloud, str)
+
+
     if network is None:
-        mount_loc = tb.P(DEFAULT_MOUNT).expanduser().joinpath(cloud)
+        if destination is None: mount_loc = tb.P(DEFAULT_MOUNT).expanduser().joinpath(cloud)
+        else: mount_loc = tb.P(destination)
+
         if platform.system() == "Windows": mount_loc.parent.create()
         elif platform.system() == "Linux": mount_loc.create()
         else: raise ValueError("unsupported platform")
+
     elif network and platform.system() == "Windows": mount_loc = "X: --network-mode"
     else: raise ValueError("network mount only supported on windows")
 
@@ -90,9 +94,10 @@ zellij action move-focus up
 def main():
     parser = argparse.ArgumentParser(description='mount cloud')
     parser.add_argument('cloud', nargs='?', type=str, default=None, help='cloud to mount')
+    parser.add_argument('destination', nargs='?', type=str, default=None, help='destination to mount')
     parser.add_argument('--network', type=str, default=None, help='mount network drive')
     args = parser.parse_args()
-    mount(cloud=args.cloud, network=args.network)
+    mount(cloud=args.cloud, network=args.network, destination=args.destination)
 
 
 if __name__ == '__main__':
