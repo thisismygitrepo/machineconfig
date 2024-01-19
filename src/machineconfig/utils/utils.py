@@ -258,16 +258,23 @@ def get_latest_version(url: str) -> None:
     else: print("Error:", response.status_code)
 
 
-def check_tool_exists(tool_name: str) -> bool:
+def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> bool:
+    """This is the CLI equivalent of `install_n_import` function of crocodile. """
     if platform.system() == "Windows": tool_name = tool_name.replace(".exe", "") + ".exe"
     if platform.system() == "Windows": cmd = "where.exe"
     elif platform.system() == "Linux": cmd = "which"
     else: raise NotImplementedError(f"platform {platform.system()} not implemented")
     import subprocess
     try:
-        subprocess.check_output([cmd, tool_name])
-        return True
-    except (subprocess.CalledProcessError, FileNotFoundError): return False
+        _tmp = subprocess.check_output([cmd, tool_name])
+        res: bool = True
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        res = False
+    if res is False and install_script is not None:
+        print(f"Installing {tool_name} ...")
+        Terminal().run(install_script, shell="powershell").print()
+        return check_tool_exists(tool_name=tool_name, install_script=None)
+    return res
 
 
 def get_ssh_hosts() -> list[str]:
