@@ -13,7 +13,7 @@ from rich.panel import Panel
 from rich.console import Console
 from rich.syntax import Syntax
 import platform
-from typing import Optional, Union, TypeVar
+from typing import Optional, Union, TypeVar, Iterable
 
 
 LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
@@ -86,7 +86,7 @@ def match_file_name(sub_string: str):
     return path_obj
 
 
-def choose_one_option(options: list[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "",
+def choose_one_option(options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "",
                       default: Optional[T] = None, fzf: bool = False, custom_input: bool = False) -> T:
     choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt,
                                  default=default, fzf=fzf, multi=False, custom_input=custom_input)
@@ -94,7 +94,7 @@ def choose_one_option(options: list[T], header: str = "", tail: str = "", prompt
     return choice_key
 
 
-def choose_multiple_options(options: list[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "",
+def choose_multiple_options(options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "",
                             default: Optional[T] = None, custom_input: bool = False) -> list[T]:
     choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt,
                                  default=default, fzf=True, multi=True,
@@ -103,23 +103,30 @@ def choose_multiple_options(options: list[T], header: str = "", tail: str = "", 
     return [choice_key]
 
 
-def display_options(msg: str, options: list[T], header: str = "", tail: str = "", prompt: str = "",
+def display_options(msg: str, options: Iterable[T], header: str = "", tail: str = "", prompt: str = "",
                     default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[T, list[T]]:
     # TODO: replace with https://github.com/tmbo/questionary  # also see https://github.com/charmbracelet/gum
     tool_name = "fzf"
+    options_strings = [str(x) for x in options]
+    default_string = str(default) if default is not None else None
     if fzf and check_tool_exists(tool_name):
         install_n_import("pyfzf")
         from pyfzf.pyfzf import FzfPrompt
         fzf_prompt = FzfPrompt()
         nl = "\n"
-        choice_key = fzf_prompt.prompt(choices=options, fzf_options=("--multi" if multi else "") + f' --prompt "{prompt.replace(nl, " ")}" ')  # --border-label={msg.replace(nl, ' ')}")
+        choice_string_multi: list[str] = fzf_prompt.prompt(choices=options_strings, fzf_options=("--multi" if multi else "") + f' --prompt "{prompt.replace(nl, " ")}" ')  # --border-label={msg.replace(nl, ' ')}")
         # --border=rounded doens't work on older versions of fzf installed at Ubuntu 20.04
         if not multi:
-            try: choice_key = choice_key[0]
+            try:
+                choice_one_string = choice_string_multi[0]
+                choice_idx = options_strings.index(choice_one_string)
+                return list(options)[choice_idx]
             except IndexError as ie:
-                print(f"{options=}, {choice_key=}")
-                print(choice_key)
+                print(f"{options=}, {choice_string_multi=}")
+                print(choice_string_multi)
                 raise ie
+        choice_idx_s = [options_strings.index(x) for x in choice_string_multi]
+        return [list(options)[x] for x in choice_idx_s]
     else:
         console = Console()
         if default is not None:
@@ -134,29 +141,31 @@ def display_options(msg: str, options: list[T], header: str = "", tail: str = ""
         if default is not None:
             choice_string = input(f"{prompt}\nEnter option number or hit enter for default choice: ")
         else: choice_string = input(f"{prompt}\nEnter option number: ")
+
         if choice_string == "":
+            assert default_string is not None, f"Default option not available!"
+            choice_idx = options_strings.index(default_string)
             assert default is not None, f"Default option not available!"
-            choice_idx = options.index(default)
-            choice_key = default
+            choice_one: T = default
         else:
             try:
                 choice_idx = int(choice_string)
-                choice_key = options[choice_idx]
+                choice_one = list(options)[choice_idx]
             except IndexError as ie:  # i.e. converting to integer was successful but indexing failed.
-                if choice_string in options:  # string input
-                    choice_idx = options.index(choice_key)  # type: ignore #TODO: fix this
-                    choice_key = options[choice_idx]
+                if choice_string in options_strings:  # string input
+                    choice_idx = options_strings.index(choice_one)  # type: ignore #TODO: fix this
+                    choice_one = list(options)[choice_idx]
                 elif custom_input: return str(choice_string)  # type: ignore #TODO: fix this
                 else: raise ValueError(f"Unknown choice. {choice_string}") from ie
             except TypeError as te:  # int(choice_string) failed due to # either the number is invalid, or the input is custom.
-                if choice_string in options:  # string input
-                    choice_idx = options.index(choice_key)  # type: ignore #TODO: fix this
-                    choice_key = options[choice_idx]
+                if choice_string in options_strings:  # string input
+                    choice_idx = options_strings.index(choice_one)  # type: ignore #TODO: fix this
+                    choice_one = list(options)[choice_idx]
                 elif custom_input: return str(choice_string)  # type: ignore #TODO: fix this
                 else: raise ValueError(f"Unknown choice. {choice_string}") from te
-        print(f"{choice_idx}: {choice_key}", f"<<<<-------- CHOICE MADE")
-        if multi: choice_key = [choice_key]
-    return choice_key
+        print(f"{choice_idx}: {choice_one}", f"<<<<-------- CHOICE MADE")
+        if multi: return [choice_one]
+    return choice_one
 
 
 def symlink(this: P, to_this: P, prioritize_to_this: bool = True):

@@ -18,9 +18,9 @@ if not root.joinpath("components").exists():
     Terminal(stderr=subprocess.PIPE, stdin=subprocess.PIPE, stdout=subprocess.PIPE).run(f"cd {root.parent};npm init slidev")
 
 
-def main():
+def main() -> None:
     import argparse
-    parser = argparse.ArgumentParser()  
+    parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--directory", default=None, help="Directory of the report")
     parser.add_argument("--port", default=PORT_DEFAULT, help=f"Port to serve the report, default to {PORT_DEFAULT}")
     args = parser.parse_args()

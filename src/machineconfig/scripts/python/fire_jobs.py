@@ -105,7 +105,7 @@ except (ImportError, ModuleNotFoundError) as ex:
 """
         txt = f"""
 from machineconfig.utils.utils import print_code
-print_code(code=r'''{txt}''', lexer='python', desc='Imported Script')
+print_code(code=r'''{txt}''', lexer='python', desc='Import Script')
 """ + txt
         choice_file = tb.P.tmp().joinpath(f'tmp_scripts/python/{tb.P(choice_file).parent.name}_{tb.P(choice_file).stem}_{tb.randstr()}.py').create(parents_only=True).write_text(txt)
 
