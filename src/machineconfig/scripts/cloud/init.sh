@@ -24,7 +24,6 @@ curl bit.ly/cfgappslinux -L | bash
 curl bit.ly/cfgvelinux -L | bash
 . $HOME/venvs/ve/bin/activate
 curl bit.ly/cfgreposlinux -L | bash
-sudo apt install fuse3 -y  # required by rclone. Available by default on other distros
 
 # dotfiles
 source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
