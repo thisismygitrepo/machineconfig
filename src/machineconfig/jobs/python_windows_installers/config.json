@@ -22,5 +22,13 @@
         "filename_template_linux_amd_64": "",
         "strip_v": false,
         "exe_name": "ZoomIt.exe"
+    },
+    "ntop": {
+        "repo_url": "https://github.com/gsass1/NTop",
+        "doc": "Like htop, for Windows",
+        "filename_template_windows_amd_64": "ntop.exe",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "ntop.exe"
     }
 }

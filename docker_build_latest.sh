@@ -1,5 +1,8 @@
 
-docker build -t alim:latest .
+set -e
+
+docker build --no-cache -t alim:latest .
+# building with no cache since docker is unaware of changes in clode due to dynamic code like curl URL | bash etc.
 
 DATE=$(date +%y-%m)
 echo $DATE

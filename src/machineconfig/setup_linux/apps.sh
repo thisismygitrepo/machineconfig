@@ -35,6 +35,9 @@ fi
 
 # -------------------- Utilities --------------------
 
+yes '' | sed 3q; echo "----------------------------- installing fusemount3 --------------------------------"; yes '' | sed 3q
+sudo apt install fuse3 -y || true  # for rclone.
+
 
 yes '' | sed 3q; echo "----------------------------- installing wget --------------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
