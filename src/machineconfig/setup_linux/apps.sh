@@ -37,6 +37,7 @@ fi
 
 yes '' | sed 3q; echo "----------------------------- installing fusemount3 --------------------------------"; yes '' | sed 3q
 sudo apt install fuse3 -y || true  # for rclone.
+sudo apt install nfs-common -y || true  # for mounting nfs shares. Missing fom Ubuntu server by default.
 
 
 yes '' | sed 3q; echo "----------------------------- installing wget --------------------------------"; yes '' | sed 3q

@@ -90,7 +90,7 @@ def arg_parser() -> None:
         if args_obj.share:
             print(res.as_url_str())
             if P(source).is_dir() and args_obj.config == "ss":
-                P(source).joinpath(".secure_share_url").write_text(res.as_url_str())
+                P(source).joinpath(".secure_share_copy").write_text(f"cloud_copy '{res.as_url_str()}' $HOME --config ss")
     else: raise ValueError(f"Cloud `{cloud}` not found in source or target.")
 
 
