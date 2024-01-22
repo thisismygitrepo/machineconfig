@@ -1,15 +1,16 @@
 
 set -e
 
-docker build --no-cache -t alim-slim:latest .
+IMAGE_NAME="alim-slim"
+docker build --no-cache --progress=plain -t $IMAGE_NAME:latest .
 # building with no cache since docker is unaware of changes in clode due to dynamic code like curl URL | bash etc.
 
 DATE=$(date +%y-%m)
 echo $DATE
 
-docker tag alim-slim:latest "statistician/alim-slim:$DATE"
+docker tag $IMAGE_NAME:latest "statistician/$IMAGE_NAME:$DATE"
 
 # docker login --username statistician --password <password>
-docker push "statistician/alim-slim:$DATE"
+docker push "statistician/$IMAGE_NAME:$DATE"
 
-# try it out
+# try it out: docker run -it $IMAGE_NAME:latest

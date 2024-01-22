@@ -18,12 +18,11 @@ if [ -z "$port" ]; then
   echo "port variable not defined, setting it to $port"
 fi
 
-sudo sed -i 's/#Port 22/Port '$port'/g' /etc/ssh/sshd_config
-
-
-
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
-sudo sed -i 's/#Port 22/Port 2222/g' /etc/ssh/sshd_config
+
+sudo sed -i 's/#Port 22/Port '$port'/g' /etc/ssh/sshd_config
+# sudo sed -i 's/#Port 22/Port 2222/g' /etc/ssh/sshd_config
+
 sudo sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g' /etc/ssh/sshd_config
 sudo sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' /etc/ssh/sshd_config
 sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
