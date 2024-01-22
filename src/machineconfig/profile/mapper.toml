@@ -58,7 +58,6 @@ config_yaml = {this = '~/.config/alacritty/alacritty.yml', to_this = 'LIBRARY_RO
 
 [alacritty_windows]
 config = {this = '~/AppData/Roaming/alacritty/alacritty.toml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.toml'}
-config_yaml = {this = '~/AppData/Roaming/alacritty/alacritty.yml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.yml'}
 
 
 [vtm_windows]

@@ -10,10 +10,23 @@ from typing import Optional
 # import subprocess
 
 
-def get_wt_cmd(wd1: tb.P, wd2: tb.P) -> str: return f"""wt --window 0 new-tab --profile pwsh --title "gitdiff" --tabColor `#3b04d1 --startingDirectory {wd1} `  --colorScheme "Solarized Dark" `; split-pane --horizontal --profile pwsh --startingDirectory {wd2} --size 0.5 --colorScheme "Tango Dark" -- pwsh -Interactive"""
+def get_wt_cmd(wd1: tb.P, wd2: tb.P) -> str:
+    lines = [
+        f"""wt --window 0 new-tab --profile pwsh --title "gitdiff" --tabColor `#3b04d1 --startingDirectory {wd1} ` --colorScheme "Solarized Dark" """,
+        f"""split-pane --horizontal --profile pwsh --startingDirectory {wd2} --size 0.5 --colorScheme "Tango Dark" -- pwsh -Interactive """
+    ]
+    return " `; ".join(lines)
 
-
-def get_zellij_cmd(wd1: tb.P, wd2: tb.P) -> str: return f""" zellij action new-tab --name gitdiff; zellij action new-pane --direction down --name local --cwd ./data; zellij action write-chars "cd '{wd1}'; git status";  zellij action move-focus up; zellij action close-pane; zellij action new-pane --direction down --name remote --cwd code; zellij action write-chars "cd '{wd2}'; git status" """
+def get_zellij_cmd(wd1: tb.P, wd2: tb.P) -> str:
+    lines = [f""" zellij action new-tab --name gitdiff""",
+             f"""zellij action new-pane --direction down --name local --cwd ./data """,
+             f"""zellij action write-chars "cd '{wd1}'; git status" """,
+             f"""zellij action move-focus up; zellij action close-pane """,
+             f"""zellij action new-pane --direction down --name remote --cwd code """,
+             f"""zellij action write-chars "cd '{wd2}' """,
+             f"""git status" """
+    ]
+    return "; ".join(lines)
 
 
 def args_parser():
@@ -41,7 +54,9 @@ def args_parser():
 
 def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optional[str] = None, skip_confirmation: bool = False, pwd: Optional[str] = None, push: bool = True):
     if cloud is None:
-        try: cloud_resolved = tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+        try:
+            cloud_resolved = tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            print(f"⚠️ Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH} ⚠️")
         except FileNotFoundError:
             print(f"No cloud profile found @ {DEFAULTS_PATH}, please set one up or provide one via the --cloud flag.")
             return ""

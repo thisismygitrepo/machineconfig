@@ -67,6 +67,15 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
 wt --window 0 --profile "Windows PowerShell" --startingDirectory "$HOME/data/rclone" `; split-pane --horizontal  --profile "Command Prompt" --size 0.2 powershell -Command "{mount_cmd}" `; split-pane --vertical --profile "Windows PowerShell" --size 0.2 powershell -NoExit -Command "rclone about {cloud}:"  `; move-focus up
 """
     elif platform.system() == "Linux": txt = f"""
+
+ZJ_SESSIONS=$(zellij list-sessions)
+
+if [[ "${{ZJ_SESSIONS}}" != *"(current)"* ]]; then
+    echo "Not inside a zellij session ..."
+    echo '{mount_cmd}'
+    exit 1
+fi
+
 zellij run --direction down --name rclone -- {mount_cmd}
 sleep 1; zellij action resize decrease down
 sleep 0.2; zellij action resize decrease up
