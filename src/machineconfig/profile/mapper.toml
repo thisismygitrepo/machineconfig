@@ -55,9 +55,14 @@ config = {this = '~/.config/kitty/kitty.conf', to_this = 'LIBRARY_ROOT/settings/
 config = {this = '~/.config/alacritty/alacritty.toml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.toml'}
 config_yaml = {this = '~/.config/alacritty/alacritty.yml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.yml'}
 
-
 [alacritty_windows]
 config = {this = '~/AppData/Roaming/alacritty/alacritty.toml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.toml'}
+
+[hyper_terminal]
+config = {this = '~/.hyper.js', to_this = 'LIBRARY_ROOT/settings/shells/hyper/.hyper.js'}
+
+[wezterminal]
+config = {this = '~/.config/wezterm/wezterm.lua', to_this = 'LIBRARY_ROOT/settings/shells/wezterm/wezterm.lua'}
 
 
 [vtm_windows]

@@ -20,7 +20,7 @@ def get_shared_file(url: Optional[str] = None, folder: Optional[str] = None):
     if os.environ.get("DECRYPTION_PASSWORD") is not None:
         pwd = os.environ.get("DECRYPTION_PASSWORD")
     else:
-        pwd = getpass.getpass("Enter decryption password: ")
+        pwd = getpass.getpass(prompt="Enter decryption password: ")
 
     if url is None:
         if os.environ.get("SHARE_URL") is not None:
@@ -90,7 +90,7 @@ def arg_parser() -> None:
         if args_obj.share:
             print(res.as_url_str())
             if P(source).is_dir() and args_obj.config == "ss":
-                P(source).joinpath(".secure_share_copy").write_text(f"cloud_copy '{res.as_url_str()}' $HOME --config ss")
+                P(source).joinpath(".secure_share_copy").write_text(f"{res.as_url_str()}")
     else: raise ValueError(f"Cloud `{cloud}` not found in source or target.")
 
 

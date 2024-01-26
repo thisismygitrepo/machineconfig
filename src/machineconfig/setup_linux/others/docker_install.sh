@@ -28,6 +28,9 @@ docker run hello-world
 # one way to get around it https://askubuntu.com/questions/1379425/system-has-not-been-booted-with-systemd-as-init-system-pid-1-cant-operate
 # is adding the script docker.sh to /etc/init.d/dockerd
 
+# no internet in wsl docker instance: add /etc/docker/daemon.json
+# https://github.com/MicrosoftDocs/WSL/issues/422
+
 # lastly, to avoid cases where sudo is needed for every docker command
 # sudo usermod -a -G docker $USER  # then reboot
 # this is as per: https://stackoverflow.com/questions/47854463/docker-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socke
