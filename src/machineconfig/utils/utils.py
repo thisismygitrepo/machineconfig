@@ -149,7 +149,7 @@ def display_options(msg: str, options: Iterable[T], header: str = "", tail: str 
             choice_one: T = default
         else:
             try:
-                choice_idx = int(choice_string)
+                choice_idx = int(choice_string, base=10)
                 choice_one = list(options)[choice_idx]
             except IndexError as ie:  # i.e. converting to integer was successful but indexing failed.
                 if choice_string in options_strings:  # string input

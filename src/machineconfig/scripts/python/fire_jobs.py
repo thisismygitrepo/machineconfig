@@ -16,7 +16,7 @@ from typing import Callable, Any, Optional
 import argparse
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("path", nargs='?', type=str, help="The directory containing the jobs", default=".")
     parser.add_argument("function", nargs='?', type=str, help="Fuction to run", default=None)
@@ -27,6 +27,7 @@ def main():
     parser.add_argument("--debug", "-d", action="store_true", help="debug")
     parser.add_argument("--choose_function", "-c", action="store_true", help="debug")
     parser.add_argument("--loop", "-l", action="store_true", help="infinite recusion (runs again after completion)")
+    parser.add_argument("--jupyter", "-j", action="store_true", help="open in a jupyter notebook")
     parser.add_argument("--submit_to_cloud", "-C", action="store_true", help="submit to cloud compute")
     parser.add_argument("--remote", "-r", action="store_true", help="launch on a remote machine")
     parser.add_argument("--module", "-m", action="store_true", help="launch the main file")
@@ -81,8 +82,9 @@ def main():
         from machineconfig.utils.ve import get_ve_profile  # if file name is passed explicitly, then, user probably launched it from cwd different to repo root, so activate_ve can't infer ve from .ve_path, so we attempt to do that manually here
         args.ve = get_ve_profile(choice_file)
 
-    if args.streamlit: exe = "streamlit run"
+    if args.streamlit: exe = "streamlit run --server.address 0.0.0.0 "
     elif args.interactive is False: exe = "python"
+    elif args.jupyter: exe = "jupyter-lab"
     else:
         from machineconfig.utils.ve import get_ipython_profile
         exe = f"ipython -i --no-banner --profile {get_ipython_profile(choice_file)} "
@@ -132,7 +134,8 @@ print_code(code=r'''{txt}''', lexer='python', desc='Import Script')
             if not args.cmd:
                 # for .streamlit config to work, it needs to be in the current directory.
                 command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {tb.P.cwd()}"
-            else: command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
+            else:
+                command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
             # command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {tb.P.cwd()}"
 
     # this installs in ve env, which is not execution env
@@ -279,6 +282,49 @@ def get_import_module_code(module_path: str):
     module_name = relative_path.lstrip(os.sep).replace(os.sep, '.').replace('.py', '')
     module_name = module_name.replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("resources.", "").replace("source.", "")
     return f"from {module_name} import *"
+
+
+def get_jupyter_notebook(python_code: str):
+    template = """
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "7412902a-3074-475b-9820-71b82e670a2a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\n",
+    "import math"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
+"""
+    template.replace('"import math"', python_code)
+    return template
 
 
 if __name__ == '__main__':

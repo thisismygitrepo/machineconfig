@@ -39,8 +39,6 @@ from pydantic import ConfigDict
 
 @dataclass(config=ConfigDict(extra="forbid", frozen=True))
 class Args():
-    # source: str
-    # target: str
     cloud: Optional[str] = None
 
     zip: bool = ArgsDefaults.zip_
@@ -217,7 +215,7 @@ def args_parser():
     parser.add_argument("--transfers", "-t", help="Number of threads in syncing.", default=10)  # default is False
     parser.add_argument("--root", "-R", help="Remote root.", default="myhome")  # default is False
 
-    # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
+    parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
     parser.add_argument("--encrypt", "-e", help="Decrypt after receiving.", action="store_true")  # default is False
     parser.add_argument("--zip", "-z", help="unzip after receiving.", action="store_true")  # default is False

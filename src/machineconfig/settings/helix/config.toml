@@ -1,9 +1,12 @@
 
-theme = "autumn_night"
+theme = "onedark"
 
 [editor]
 line-number = "relative"
-mouse = false
+mouse = true
+#gutters	= "spacer"
+true-color = true
+
 
 [editor.cursor-shape]
 insert = "bar"
@@ -12,3 +15,12 @@ select = "underline"
 
 [editor.file-picker]
 hidden = false
+
+[editor.gutters]
+layout = ["diff", "diagnostics", "line-numbers", "spacer"]
+
+[editor.soft-wrap]
+enable = true
+max-wrap = 25 # increase value to reduce forced mid-word wrapping
+max-indent-retain = 0
+wrap-indicator = ""  # set wrap-indicator to "" to hide it

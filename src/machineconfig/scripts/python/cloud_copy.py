@@ -47,19 +47,16 @@ def arg_parser() -> None:
     # positional argument
     parser.add_argument("source", help="file/folder path to be taken from here.")
     parser.add_argument("target", help="file/folder path to be be sent to here.")
-    # FLAGS
-    # parser.add_argument("--recursive", "-r", help="Send recursively.", action="store_true")  # default is False
-    parser.add_argument("--encrypt", "-e", help="Decrypt after receiving.", action="store_true", default=ArgsDefaults.encrypt)
-    parser.add_argument("--zip", "-z", help="unzip after receiving.", action="store_true", default=ArgsDefaults.zip_)
+
     parser.add_argument("--overwrite", "-w", help="Overwrite existing file.", action="store_true", default=ArgsDefaults.overwrite)
     parser.add_argument("--share", "-s", help="Share file / directory", action="store_true", default=ArgsDefaults.share)
-    # optional argument
     parser.add_argument("--rel2home", "-r", help="Relative to `myhome` folder", action="store_true", default=ArgsDefaults.rel2home)
     parser.add_argument("--root", "-R", help="Remote root. None is the default, unless rel2home is raied, making the default `myhome`.", default=ArgsDefaults.root)
-    parser.add_argument("--os_specific", "-o", help="OS specific path (relevant only when relative flag is raised as well.", action="store_true", default=ArgsDefaults.os_specific)
 
     parser.add_argument("--key", "-k", help="Key for encryption", type=str, default=ArgsDefaults.key)
     parser.add_argument("--pwd", "-p", help="Password for encryption", type=str, default=ArgsDefaults.pwd)
+    parser.add_argument("--encrypt", "-e", help="Decrypt after receiving.", action="store_true", default=ArgsDefaults.encrypt)
+    parser.add_argument("--zip", "-z", help="unzip after receiving.", action="store_true", default=ArgsDefaults.zip_)
 
     parser.add_argument("--config", "-c",  help="path to cloud.json file.", default=None)
 

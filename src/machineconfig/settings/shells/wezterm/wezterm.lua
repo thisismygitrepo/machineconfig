@@ -91,9 +91,7 @@ config.keys = {
 
 
 
--- config.color_scheme = 'Derp (terminal.sexy)'
-config.color_scheme = 'Dissonance (Gogh)'
--- config.color_scheme = 'DWM rob (terminal.sexy)'
+config.color_scheme = 'Builtin Dark'
 
 -- config.window_background_image = '/path/to/wallpaper.jpg'
 -- config.window_background_image_hsb = {

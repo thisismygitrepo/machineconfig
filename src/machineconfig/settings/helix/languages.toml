@@ -1,23 +1,17 @@
 
 [[language]]
 name = "python"
+language-servers = ["pylsp"]
+roots = [".git"]
+workspace-lsp-roots = ["src/updater"]
 auto-format = true
-file-types = ["py"]
-language-server = { command = "python-language-server"}
-config = {} 
 
-[[language]]
-name = "rust"
-scope = "source.rust"
-injection-regex = "rust"
-file-types = ["rs"]
-roots = ["Cargo.toml", "Cargo.lock"]
-auto-format = true
-comment-token = "//"
-language-server = { command = "rust-analyzer" }
-indent = { tab-width = 4, unit = "    " }
-
-
-
-
-
+[language-server.pylsp.config.pylsp.plugins]
+flake8 = {enabled = false, ignore = ["E501"]}
+autopep8 = {enabled = true}
+mccabe = {enabled = true}
+pycodestyle = {enabled = true}
+pyflakes = {enabled = true}
+pylint = {enabled = true}
+yapf = {enabled = false}
+ruff = { enabled = true}
