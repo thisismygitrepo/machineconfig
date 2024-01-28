@@ -3,12 +3,14 @@
 fire
 """
 
-import crocodile.toolbox as tb
+
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_host, match_file_name, sanitize_path
 # from crocodile.run import *
 # https://github.com/pallets/click combine with fire. Consider
 # https://github.com/ceccopierangiolieugenio/pyTermTk for display_options build TUI
 # https://github.com/chriskiehl/Gooey build commandline interface
+from crocodile.file_management import P, install_n_import
+from crocodile.core import Display, randstr
 import inspect
 import platform
 import os
@@ -43,7 +45,7 @@ def main() -> None:
     else:
         kwargs = {}
 
-    path_obj = sanitize_path(tb.P(args.path))
+    path_obj = sanitize_path(P(args.path))
     if not path_obj.exists(): path_obj = match_file_name(args.path)
 
     if path_obj.is_dir():
@@ -55,7 +57,7 @@ def main() -> None:
 
         choice_file = display_options(msg="Choose a file to run", options=files, fzf=True, multi=False)
         assert not isinstance(choice_file, list), f"choice_file must be a string. Got {type(choice_file)}"
-        choice_file = tb.P(choice_file)
+        choice_file = P(choice_file)
     else:
         choice_file = path_obj
 
@@ -97,8 +99,8 @@ except (ImportError, ModuleNotFoundError) as ex:
     print(fr"Failed to import {choice_file} the proper way. {{ex}} ")
     print(fr"The way below is rather hacky and can cause issues in pickling.")
     import sys
-    sys.path.append(r'{tb.P(choice_file).parent}')
-    from {tb.P(choice_file).stem} import *
+    sys.path.append(r'{P(choice_file).parent}')
+    from {P(choice_file).stem} import *
 
 """
         if choice_function is not None:
@@ -109,7 +111,7 @@ except (ImportError, ModuleNotFoundError) as ex:
 from machineconfig.utils.utils import print_code
 print_code(code=r'''{txt}''', lexer='python', desc='Import Script')
 """ + txt
-        choice_file = tb.P.tmp().joinpath(f'tmp_scripts/python/{tb.P(choice_file).parent.name}_{tb.P(choice_file).stem}_{tb.randstr()}.py').create(parents_only=True).write_text(txt)
+        choice_file = P.tmp().joinpath(f'tmp_scripts/python/{P(choice_file).parent.name}_{P(choice_file).stem}_{randstr()}.py').create(parents_only=True).write_text(txt)
 
     # determining basic command structure: putting together exe & choice_file & choice_function & pdb
     if args.debug:
@@ -133,14 +135,14 @@ print_code(code=r'''{txt}''', lexer='python', desc='Import Script')
         else:
             if not args.cmd:
                 # for .streamlit config to work, it needs to be in the current directory.
-                command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {tb.P.cwd()}"
+                command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {P.cwd()}"
             else:
                 command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
-            # command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {tb.P.cwd()}"
+            # command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {P.cwd()}"
 
     # this installs in ve env, which is not execution env
-    # if "ipdb" in command: tb.install_n_import("ipdb")
-    # if "pudb" in command: tb.install_n_import("pudb")
+    # if "ipdb" in command: install_n_import("ipdb")
+    # if "pudb" in command: install_n_import("pudb")
 
     if not args.cmd:
         if "ipdb" in command: command = f"pip install ipdb; {command}"
@@ -158,7 +160,7 @@ print_code(code=r'''{txt}''', lexer='python', desc='Import Script')
 . activate_ve {args.ve}
 python -m crocodile.cluster.templates.cli_click --file {choice_file} """
         if choice_function is not None: command += f"--function {choice_function} "
-    try: tb.install_n_import("clipboard").copy(command)
+    try: install_n_import("clipboard").copy(command)
     except Exception as ex: print(f"Failed to copy command to clipboard. {ex}")
 
     if args.loop:
@@ -178,14 +180,14 @@ def parse_pyfile(file_path: str):
     func_args: list[list[args_spec]] = [[]]  # this firt prepopulated dict is for the option 'RUN AS MAIN' which has no args
 
     import ast
-    parsed_ast = ast.parse(tb.P(file_path).read_text(encoding='utf-8'))
+    parsed_ast = ast.parse(P(file_path).read_text(encoding='utf-8'))
     functions = [
         node
         for node in ast.walk(parsed_ast)
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
     ]
     module__doc__ = ast.get_docstring(parsed_ast)
-    main_option = f"RUN AS MAIN -- {tb.Display.get_repr(module__doc__, limit=150) if module__doc__ is not None else 'NoDocs'}"
+    main_option = f"RUN AS MAIN -- {Display.get_repr(module__doc__, limit=150) if module__doc__ is not None else 'NoDocs'}"
     options = [main_option]
     for function in functions:
         if function.name.startswith('__') and function.name.endswith('__'): continue
@@ -201,7 +203,7 @@ def parse_pyfile(file_path: str):
                 except KeyError as ke:
                     # type_ = arg.annotation.__name__
                     # print(f"Failed to get type for {arg.annotation}. {ke}")
-                    # tb.Struct(get_attrs(arg.annotation)).print(as_yaml=True)
+                    # Struct(get_attrs(arg.annotation)).print(as_yaml=True)
                     type_ = "Any"  # e.g. a callable object
                     _ = ke
                     # raise ke

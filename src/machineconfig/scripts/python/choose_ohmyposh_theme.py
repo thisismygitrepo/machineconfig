@@ -2,7 +2,9 @@
 """Oh my posh theme chooser
 """
 
-import crocodile.toolbox as tb
+from crocodile.file_management import P
+from crocodile.core import List as L
+from crocodile.meta import Terminal
 from machineconfig.utils.utils import display_options
 from rich import progress
 from typing import Optional
@@ -20,17 +22,17 @@ def main(new_theme: Optional[str] = None):
     run this function to interactively choose a style. Optionally, inpsect the themes of oh my posh and select one:
     """
     import os
-    themes_path = tb.P(os.environ["POSH_THEMES_PATH"])
-    # current_theme = tb.P(os.environ["POSH_THEME"]).trunk
+    themes_path = P(os.environ["POSH_THEMES_PATH"])
+    # current_theme = P(os.environ["POSH_THEME"]).trunk
     with progress.Progress() as prog:
         prog.add_task("Asking pwsh about its profile path ... ", total=None)
-        profile = tb.Terminal().run("$profile", shell="pwsh").op2path()
+        profile = Terminal().run("$profile", shell="pwsh").op2path()
 
-    if not isinstance(profile, tb.P): raise ValueError(f"Could not find profile file. Got {profile}")
-    current_theme = tb.P(tb.L(profile.read_text().split(" ")).filter(lambda x: ".omp.json" in x).list[0]).expanduser().absolute().trunk
+    if not isinstance(profile, P): raise ValueError(f"Could not find profile file. Got {profile}")
+    current_theme = P(L(profile.read_text().split(" ")).filter(lambda x: ".omp.json" in x).list[0]).expanduser().absolute().trunk
 
     if new_theme == "manual":
-        tb.P("https://ohmyposh.dev/docs/themes").start()  # replace ~/jan... with full path to theme. use: start $profile
+        P("https://ohmyposh.dev/docs/themes").start()  # replace ~/jan... with full path to theme. use: start $profile
         new_theme = input(f"A chrome tab with styles is opened, choose one and put its name here: [jandedobbeleer] ")
     if new_theme == "show":
         __import__("os").system("Write-Host Get-PoshThemes")

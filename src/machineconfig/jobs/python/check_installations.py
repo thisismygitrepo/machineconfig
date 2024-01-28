@@ -2,7 +2,7 @@
 """CI
 """
 
-import crocodile.toolbox as tb
+
 import time
 import pandas as pd
 import platform
@@ -10,18 +10,21 @@ from rich.console import Console
 # from rich.progress import track
 from machineconfig.utils.utils import LIBRARY_ROOT, INSTALL_VERSION_ROOT
 from machineconfig.utils.installer import get_installed_cli_apps
+from crocodile.core import List as L, install_n_import, Struct
+from crocodile.file_management import P
+from crocodile.meta import Terminal
 from tqdm import tqdm
 from typing import Optional
 
 
 APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
-CLOUD: str = "gdw"  # tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+CLOUD: str = "gdw"  # Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
 # my onedrive doesn't allow sharing.
 
 
-def scan(path: tb.P, pct: float = 0.0):
-    vt = tb.install_n_import(library="vt", package="vt-py")
-    client = vt.Client(tb.P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
+def scan(path: P, pct: float = 0.0):
+    vt = install_n_import(library="vt", package="vt-py")
+    client = vt.Client(P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
     console = Console()
     console.rule(f"Scanning {path}. {pct:.2f}% done")
     if path.is_dir():
@@ -47,7 +50,7 @@ def scan(path: tb.P, pct: float = 0.0):
     for _idx, row in df.iterrows():
         if row.result is None and row.category in ["undetected", "type-unsupported", "failure", "timeout", "confirmed-timeout"]: continue
         else:
-            tb.Struct(row.to_dict()).print(as_config=True, title=f"Found Category {row.category}")
+            Struct(row.to_dict()).print(as_config=True, title=f"Found Category {row.category}")
             malicious.append(row)
     positive_pct = round(len(malicious) / len(df) * 100, 1)
     print(f"positive_ratio = {positive_pct:.1f} %")
@@ -55,10 +58,10 @@ def scan(path: tb.P, pct: float = 0.0):
 
 
 def main() -> None:
-    apps_paths_tmp: tb.List[tb.P] = get_installed_cli_apps()
-    versions_files_paths: tb.L[tb.P] = INSTALL_VERSION_ROOT.search()
+    apps_paths_tmp: L[P] = get_installed_cli_apps()
+    versions_files_paths: L[P] = INSTALL_VERSION_ROOT.search()
     app_versions: list[Optional[str]] = []
-    apps_paths_raw: tb.L[tb.P] = tb.L([])
+    apps_paths_raw: L[P] = L([])
     for an_app in versions_files_paths:
         exe_path = apps_paths_tmp.filter(lambda x: x.stem == an_app.stem)
         if len(exe_path) == 1:
@@ -68,7 +71,7 @@ def main() -> None:
         #     app_versions.append(versions_files_paths.filter(lambda x: x.stem == an_app.stem.replace(".exe", "")).list[0].read_text())
         # else:
         #     print(f"🤔 Cloud not find a documented version for installation of {an_app.stem}, trying to get it from the app itself.")
-        #     tmp = tb.Terminal().run(f"{an_app.stem} --version", shell="powershell").capture().op_if_successfull_or_default(strict_err=False, strict_returcode=False)
+        #     tmp = Terminal().run(f"{an_app.stem} --version", shell="powershell").capture().op_if_successfull_or_default(strict_err=False, strict_returcode=False)
         #     if tmp is not None: tmp = tmp.split("\n")[0]
         #     print(f"➡️ Found version `{tmp}` for {an_app.stem}.")
         #     app_versions.append(None)
@@ -94,8 +97,8 @@ def main() -> None:
 
     app_url: list[Optional[str]] = []
     for idx, row in tqdm(res_df.iterrows(), total=res_df.shape[0]):
-        apps_safe_url = upload(tb.P(str(row["app_path"])).expanduser())
-        app_url.append(apps_safe_url.as_posix() if type(apps_safe_url) is tb.P else apps_safe_url)
+        apps_safe_url = upload(P(str(row["app_path"])).expanduser())
+        app_url.append(apps_safe_url.as_posix() if type(apps_safe_url) is P else apps_safe_url)
     res_df["app_url"] = app_url
     res_df.to_csv(APP_SUMMARY_PATH.with_suffix(".csv").create(parents_only=True), index=False)
     APP_SUMMARY_PATH.with_suffix(".md").write_text(res_df.to_markdown())
@@ -103,8 +106,8 @@ def main() -> None:
     print(res_df)
 
 
-def upload(path: tb.P):
-    set_time_out = tb.install_n_import("call_function_with_timeout").SetTimeout
+def upload(path: P):
+    set_time_out = install_n_import("call_function_with_timeout").SetTimeout
     func_with_timeout = set_time_out(lambda: path.to_cloud(CLOUD, rel2home=True, share=True, os_specific=True), timeout=180)
     is_done, _is_timeout, _erro_message, results = func_with_timeout()
     if is_done: return results
@@ -113,17 +116,17 @@ def upload(path: tb.P):
 
 class PrecheckedCloudInstaller:
     def __init__(self):
-        tb.install_n_import("gdown")
+        install_n_import("gdown")
         self.df = pd.read_csv(APP_SUMMARY_PATH)
 
     @staticmethod
     def download_google_links(url: str):
         # if "drive.google.com" in str(url): url = str(url).replace("open?", "uc?")
         # else: raise NotImplementedError("Only google drive is supported for now.")
-        # return tb.P(url).download(name=name)
-        gdrive_id = tb.P(url).parts[-1].split("id=")[1]
-        gdown = tb.install_n_import("gdown")
-        result = tb.P(gdown.download(id=gdrive_id)).absolute()
+        # return P(url).download(name=name)
+        gdrive_id = P(url).parts[-1].split("id=")[1]
+        gdown = install_n_import("gdown")
+        result = P(gdown.download(id=gdrive_id)).absolute()
         return result
 
     @staticmethod
@@ -134,10 +137,10 @@ class PrecheckedCloudInstaller:
             print(f"Error in downloading {app_url} {ex}")
             return None
         if platform.system().lower() == "linux":
-            tb.Terminal().run(f"chmod +x {exe}")
-            tb.Terminal().run(f"mv {exe} /usr/local/bin/")
+            Terminal().run(f"chmod +x {exe}")
+            Terminal().run(f"mv {exe} /usr/local/bin/")
         elif platform.system().lower() == "windows":
-            exe.move(folder=tb.P.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
+            exe.move(folder=P.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
         return True
 
     def download_safe_apps(self, name: str = "AllEssentials"):
@@ -152,7 +155,7 @@ class PrecheckedCloudInstaller:
         if name == "AllEssentials":
             print(f"Downloading {self.df.shape[0]} apps ...")
             print(self.df)
-            _res = tb.L(self.df.app_url).apply(PrecheckedCloudInstaller.install_cli_apps, jobs=20)
+            _res = L(self.df.app_url).apply(PrecheckedCloudInstaller.install_cli_apps, jobs=20)
         else:
             app_url = self.df[self.df.app_name == name].iloc[0].app_url
             _res = PrecheckedCloudInstaller.install_cli_apps(app_url=app_url)

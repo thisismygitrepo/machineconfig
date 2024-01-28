@@ -1,7 +1,9 @@
 
 """Set Windows Terminal Settings
 """
-import crocodile.toolbox as tb
+
+from crocodile.core import randstr, List as L
+from crocodile.file_management import P
 import crocodile.environment as env
 from uuid import uuid4
 import os
@@ -27,10 +29,10 @@ class TerminalSettings(object):
         tmp = os.getenv("LOCALAPPDATA")
         if not isinstance(tmp, str):
             raise ValueError("Could not find LOCALAPPDATA environment variable.")
-        self.path = tb.P(tmp).joinpath(r"Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json")
-        self.path.copy(append=".orig_" + tb.randstr())
+        self.path = P(tmp).joinpath(r"Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json")
+        self.path.copy(append=".orig_" + randstr())
         self.dat = self.path.readit()
-        self.profs = tb.L(self.dat["profiles"]["list"])
+        self.profs = L(self.dat["profiles"]["list"])
 
     def save_terminal_settings(self):
         self.dat["profiles"]["list"] = list(self.profs)
@@ -76,7 +78,7 @@ class TerminalSettings(object):
         # Adding croshell if it is not there.
         # py_pr = tb.copy.deepcopy(pr)  # use it as a template for the new profile.
         import machineconfig
-        lib_root = tb.P(machineconfig.__file__).parent.collapseuser().as_posix()
+        lib_root = P(machineconfig.__file__).parent.collapseuser().as_posix()
         croshell = dict(name="croshell",
                         guid="{" + str(uuid4()) + "}",
                         # commandline=f"powershell.exe -Command \"{activate} ipython -i -c 'from crocodile.toolbox import *'\"",
@@ -114,7 +116,7 @@ class TerminalSettings(object):
             elif name == "Command Prompt": cmd = profile
             elif name == "Azure Cloud Shell": azure = profile
             else: others.append(profile)
-        self.profs = tb.L([item for item in [pwsh, croshell, ubuntu, wpwsh, cmd, azure] + others if item is not None])
+        self.profs = L([item for item in [pwsh, croshell, ubuntu, wpwsh, cmd, azure] + others if item is not None])
 
 
 def main():

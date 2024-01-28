@@ -1,5 +1,10 @@
 
-import crocodile.toolbox as tb
+"""
+cargo install
+"""
+
+from crocodile.meta import Terminal
+from crocodile.file_management import P
 import platform
 
 
@@ -18,22 +23,22 @@ cargo install --path .
 """
     print(f"Executing {script}")
     if platform.system() == "Windows":
-        tb.Terminal(stdout=None).run(f". {tb.P.tmpfile(suffix='.ps1').write_text(script)}", shell="pwsh").print()
+        Terminal(stdout=None).run(f". {P.tmpfile(suffix='.ps1').write_text(script)}", shell="pwsh").print()
     else:
-        tb.Terminal(stdout=None).run(script, shell="pwsh")
+        Terminal(stdout=None).run(script, shell="pwsh")
 
-    exe = tb.P.home().joinpath(f".cargo/bin/{tool_name}" + (".exe" if platform.system() == "Windows" else ""))
+    exe = P.home().joinpath(f".cargo/bin/{tool_name}" + (".exe" if platform.system() == "Windows" else ""))
 
     try:
-        tb.P.home().joinpath(tool_name).delete(sure=True)
+        P.home().joinpath(tool_name).delete(sure=True)
     except PermissionError:
-        print(f"PermissionError, couldn't delete: {tb.P.home().joinpath(tool_name)}")
+        print(f"PermissionError, couldn't delete: {P.home().joinpath(tool_name)}")
 
     if platform.system() == "Windows":
-        exe = exe.move(folder=tb.P.get_env().WindowsApps)
+        exe = exe.move(folder=P.get_env().WindowsApps)
     elif platform.system() == "Linux":
-        tb.Terminal().run(f"sudo mv {exe} /usr/local/bin")
-        exe = tb.P(r"/usr/local/bin").joinpath(exe.name)
+        Terminal().run(f"sudo mv {exe} /usr/local/bin")
+        exe = P(r"/usr/local/bin").joinpath(exe.name)
     else:
         raise NotImplementedError(f"Platform {platform.system()} not supported.")
     share_link = exe.to_cloud("gdpo", share=True)

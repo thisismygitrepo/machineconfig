@@ -1,8 +1,8 @@
 
-import argparse
-import crocodile.toolbox as tb
+from crocodile.file_management import P
 from machineconfig.profile.create import symlink
 from machineconfig.utils.utils import LIBRARY_ROOT, REPO_ROOT
+import argparse
 
 
 def main():
@@ -15,14 +15,14 @@ def main():
     parser.add_argument("-d", "--dest", help=f"destination folder", default="")
 
     args = parser.parse_args()
-    orig_path = tb.P(args.file).expanduser().absolute()
+    orig_path = P(args.file).expanduser().absolute()
     if args.dest == "":
         if "Local" in orig_path: junction = orig_path.split(at="Local", sep=-1)[1]
         elif "Roaming" in orig_path: junction = orig_path.split(at="Roaming", sep=-1)[1]
         elif ".config" in orig_path: junction = orig_path.split(at=".config", sep=-1)[1]
         else: junction = orig_path.rel2home()
         new_path = REPO_ROOT.joinpath(junction)
-    else: new_path = tb.P(args.dest).expanduser().absolute().create().joinpath(orig_path.name)
+    else: new_path = P(args.dest).expanduser().absolute().create().joinpath(orig_path.name)
 
     symlink(this=orig_path, to_this=new_path, prioritize_to_this=args.overwrite)
 

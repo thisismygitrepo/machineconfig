@@ -2,8 +2,10 @@
 """Cloud mount script
 """
 
-import crocodile.toolbox as tb
+
 from machineconfig.utils.utils import PROGRAM_PATH, choose_one_option
+from crocodile.file_management import P, Read
+
 import platform
 import argparse
 from typing import Optional
@@ -13,17 +15,17 @@ DEFAULT_MOUNT = "~/data/rclone"
 
 
 def get_rclone_config():
-    if platform.system() == "Windows": config = tb.Read.ini(tb.P.home().joinpath("AppData/Roaming/rclone/rclone.conf"))
-    elif platform.system() == "Linux": config = tb.Read.ini(tb.P.home().joinpath(".config/rclone/rclone.conf"))
+    if platform.system() == "Windows": config = Read.ini(P.home().joinpath("AppData/Roaming/rclone/rclone.conf"))
+    elif platform.system() == "Linux": config = Read.ini(P.home().joinpath(".config/rclone/rclone.conf"))
     else: raise ValueError("unsupported platform")
     return config
 
 
 def get_mprocs_mount_txt(cloud: str, rclone_cmd: str, cloud_brand: str):  # cloud_brand = config[cloud]["type"]
-    # config = tb.Read.ini(tb.P.home().joinpath(".config/rclone/rclone.conf"))
+    # config = Read.ini(P.home().joinpath(".config/rclone/rclone.conf"))
     header = f"{' ' + cloud + ' | ' + cloud_brand + ' '}".center(50, "=")
     if platform.system() == "Windows":
-        sub_text_path = tb.P.tmpfile(suffix=".ps1").write_text(f"""
+        sub_text_path = P.tmpfile(suffix=".ps1").write_text(f"""
 echo "{header}"
 iex 'rclone about {cloud}:'
 echo 'See {DEFAULT_MOUNT}/{cloud} for the mounted cloud'
@@ -50,8 +52,8 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
 
 
     if network is None:
-        if destination is None: mount_loc = tb.P(DEFAULT_MOUNT).expanduser().joinpath(cloud)
-        else: mount_loc = tb.P(destination)
+        if destination is None: mount_loc = P(DEFAULT_MOUNT).expanduser().joinpath(cloud)
+        else: mount_loc = P(destination)
 
         if platform.system() == "Windows": mount_loc.parent.create()
         elif platform.system() == "Linux": mount_loc.create()

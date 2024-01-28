@@ -1,7 +1,7 @@
 
-# import crocodile.toolbox as tb
+# 
 
-# pi = tb.install_n_import("pyinstaller")
-# target = tb.P.tmpdir()
+# pi = install_n_import("pyinstaller")
+# target = P.tmpdir()
 
-# tb.Terminal().run(f"pyinstaller --onefile {tb.P(__file__).abspath()} --distpath {target.abspath()}")
+# Terminal().run(f"pyinstaller --onefile {P(__file__).abspath()} --distpath {target.abspath()}")

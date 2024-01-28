@@ -2,9 +2,10 @@
 """Update
 """
 
-from platform import system
-import crocodile.toolbox as tb
+from crocodile.file_management import P, Read
+from crocodile.core import install_n_import
 from machineconfig.utils.utils import DEFAULTS_PATH
+from platform import system
 
 
 sep = "\n"
@@ -14,7 +15,7 @@ def main(verbose: bool = True) -> str:
     _ = verbose
     repos: list[str] = ["~/code/crocodile", "~/code/machineconfig", ]
     try:
-        tmp = tb.Read.ini(DEFAULTS_PATH)['general']['repos'].split(",")
+        tmp = Read.ini(DEFAULTS_PATH)['general']['repos'].split(",")
         if tmp[-1] == "": tmp = tmp[:-1]
         repos += tmp
     except (FileNotFoundError, KeyError, IndexError):
@@ -30,7 +31,7 @@ to_email = myemail@email.com
     repos_objs = []
     for a_package_path in repos:
         try:
-            repo = tb.install_n_import("git", "gitpython").Repo(str(tb.P(a_package_path).expanduser()), search_parent_directories=True)
+            repo = install_n_import("git", "gitpython").Repo(str(P(a_package_path).expanduser()), search_parent_directories=True)
             repos_objs.append(repo)
         except Exception as ex:
             print(ex)

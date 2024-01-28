@@ -2,14 +2,15 @@
 """Repos
 """
 
-import crocodile.toolbox as tb
-import argparse
-from machineconfig.utils.utils import write_shell_script, CONFIG_PATH, DEFAULTS_PATH
 from rich import print as pprint
+from machineconfig.utils.utils import write_shell_script, CONFIG_PATH, DEFAULTS_PATH
+from crocodile.file_management import P, install_n_import, Read, Save
+from crocodile.core import randstr
+import argparse
 from dataclasses import dataclass
 from enum import Enum
 from typing import Optional, Any
-# tm = tb.Terminal()
+# tm = Terminal()
 
 
 class GitAction(Enum):
@@ -26,7 +27,7 @@ class RepoRecord:
     version: dict[str, str]
 
 
-def git_action(path: tb.P, action: GitAction, mess: Optional[str] = None, r: bool = False) -> str:
+def git_action(path: P, action: GitAction, mess: Optional[str] = None, r: bool = False) -> str:
     from git.exc import InvalidGitRepositoryError
     from git.repo import Repo
     try:
@@ -43,7 +44,7 @@ echo '>>>>>>>>> {action}'
 cd '{path}'
 '''
     if action == GitAction.commit:
-        if mess is None: mess = "auto_commit_" + tb.randstr()
+        if mess is None: mess = "auto_commit_" + randstr()
         program += f'''
 git add .; git commit -am "{mess}"
 '''
@@ -76,19 +77,19 @@ def main():
     parser.add_argument("--cloud", "-c", help=f"cloud", default=None)
     args = parser.parse_args()
 
-    if args.directory == "": repos_root = tb.P.home().joinpath("code")  # it is a positional argument, can never be empty.
-    else: repos_root = tb.P(args.directory).expanduser().absolute()
-    _ = tb.install_n_import("git", "gitpython")
+    if args.directory == "": repos_root = P.home().joinpath("code")  # it is a positional argument, can never be empty.
+    else: repos_root = P(args.directory).expanduser().absolute()
+    _ = install_n_import("git", "gitpython")
 
     program = ""
     if args.record:
         res = record_repos(repos_root=str(repos_root))
         pprint(f"Recorded repositories:\n", res)
         save_path = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
-        # tb.Save.pickle(obj=res, path=save_path)
-        tb.Save.json(obj=res, path=save_path)
-        pprint(f"Result pickled at {tb.P(save_path)}")
-        if args.cloud is not None: tb.P(save_path).to_cloud(rel2home=True, cloud=args.cloud)
+        # Save.pickle(obj=res, path=save_path)
+        Save.json(obj=res, path=save_path)
+        pprint(f"Result pickled at {P(save_path)}")
+        if args.cloud is not None: P(save_path).to_cloud(rel2home=True, cloud=args.cloud)
         program += f"""\necho '>>>>>>>>> Finished Recording'\n"""
     elif args.clone or args.checkout or args.checkout_to_branch:
         # preferred_remote = input("Enter preferred remote to use (default: None): ") or ""
@@ -97,7 +98,7 @@ def main():
             repos_root = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
             if not repos_root.exists():
                 if args.cloud is None:
-                    cloud: str = tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+                    cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
                     print(f"⚠️ Using default cloud: {cloud}")
                 else:
                     cloud = args.cloud
@@ -118,7 +119,7 @@ def main():
 
 
 def record_repos(repos_root: str, r: bool = True) -> list[dict[str, Any]]:
-    path_obj = tb.P(repos_root).expanduser().absolute()
+    path_obj = P(repos_root).expanduser().absolute()
     if path_obj.is_file(): return []
     search_res = path_obj.search("*", files=False)
     res: list[dict[str, Any]] = []
@@ -130,10 +131,10 @@ def record_repos(repos_root: str, r: bool = True) -> list[dict[str, Any]]:
     return res
 
 
-def record_a_repo(path: tb.P, search_parent_directories: bool = False, preferred_remote: Optional[str] = None):
+def record_a_repo(path: P, search_parent_directories: bool = False, preferred_remote: Optional[str] = None):
     from git.repo import Repo
     repo = Repo(path, search_parent_directories=search_parent_directories)  # get list of remotes using git python
-    repo_root = tb.P(repo.working_dir).absolute()
+    repo_root = P(repo.working_dir).absolute()
     remotes = {remote.name: remote.url for remote in repo.remotes}
     if preferred_remote is not None:
         if preferred_remote in remotes: remotes = {preferred_remote: remotes[preferred_remote]}
@@ -157,10 +158,10 @@ def record_a_repo(path: tb.P, search_parent_directories: bool = False, preferred
 
 def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_commit: bool = False, checkout_to_branch: bool = False, editable_install: bool = False, preferred_remote: Optional[str] = None):
     program = ""
-    path_obj = tb.P(specs_path).expanduser().absolute()
-    repos: list[dict[str, Any]] = tb.Read.json(path_obj)
+    path_obj = P(specs_path).expanduser().absolute()
+    repos: list[dict[str, Any]] = Read.json(path_obj)
     for repo in repos:
-        parent_dir = tb.P(repo["parent_dir"]).expanduser().absolute().create()
+        parent_dir = P(repo["parent_dir"]).expanduser().absolute().create()
         for idx, (remote_name, remote_url) in enumerate(repo["remotes"].items()):
             if clone:
                 if idx == 0:  # clone

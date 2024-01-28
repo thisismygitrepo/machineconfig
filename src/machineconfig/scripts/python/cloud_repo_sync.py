@@ -1,8 +1,11 @@
 
 """utils"""
 
-import crocodile.toolbox as tb
+
 from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, write_shell_script, get_shell_file_executing_python_script
+from crocodile.file_management import P, Read, install_n_import
+from crocodile.core import randstr
+from crocodile.meta import Terminal
 import argparse
 import platform
 from typing import Optional
@@ -10,14 +13,14 @@ from typing import Optional
 # import subprocess
 
 
-def get_wt_cmd(wd1: tb.P, wd2: tb.P) -> str:
+def get_wt_cmd(wd1: P, wd2: P) -> str:
     lines = [
         f"""wt --window 0 new-tab --profile pwsh --title "gitdiff" --tabColor `#3b04d1 --startingDirectory {wd1} ` --colorScheme "Solarized Dark" """,
         f"""split-pane --horizontal --profile pwsh --startingDirectory {wd2} --size 0.5 --colorScheme "Tango Dark" -- pwsh -Interactive """
     ]
     return " `; ".join(lines)
 
-def get_zellij_cmd(wd1: tb.P, wd2: tb.P) -> str:
+def get_zellij_cmd(wd1: P, wd2: P) -> str:
     lines = [f""" zellij action new-tab --name gitdiff""",
              f"""zellij action new-pane --direction down --name local --cwd ./data """,
              f"""zellij action write-chars "cd '{wd1}'; git status" """,
@@ -38,7 +41,7 @@ def args_parser():
     # parser.add_argument("--share", help="Repository path, defaults to cwd.", action="store_true", default=False)
 
     parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
-    parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {tb.randstr()}")
+    parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {randstr()}")
     parser.add_argument("--skip_confirmation", "-s", help="Skip confirmation.", action="store_true", default=False)
     # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
@@ -55,16 +58,16 @@ def args_parser():
 def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optional[str] = None, skip_confirmation: bool = False, pwd: Optional[str] = None, push: bool = True):
     if cloud is None:
         try:
-            cloud_resolved = tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            cloud_resolved = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             print(f"⚠️ Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH} ⚠️")
         except FileNotFoundError:
             print(f"No cloud profile found @ {DEFAULTS_PATH}, please set one up or provide one via the --cloud flag.")
             return ""
     else: cloud_resolved = cloud
-    # repo_root = tb.P(args.repo).expanduser().absolute()
-    repo_root = tb.P.cwd() if path is None else tb.P(path).expanduser().absolute()
-    repo_obj = tb.install_n_import("git", "gitpython").Repo(repo_root, search_parent_directories=True)
-    repo_root = tb.P(repo_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
+    # repo_root = P(args.repo).expanduser().absolute()
+    repo_root = P.cwd() if path is None else P(path).expanduser().absolute()
+    repo_obj = install_n_import("git", "gitpython").Repo(repo_root, search_parent_directories=True)
+    repo_root = P(repo_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
     CONFIG_PATH.joinpath("remote").create()
     repo_sync_root = CONFIG_PATH.joinpath("remote", repo_root.rel2home())  # .delete(sure=True)
     try:
@@ -75,7 +78,7 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
         print("Remote does not exist, creating it and exiting ... ")
         repo_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
         return ""
-    repo_sync_obj = tb.install_n_import("git", "gitpython").Repo(repo_sync_root)
+    repo_sync_obj = install_n_import("git", "gitpython").Repo(repo_sync_root)
     if repo_sync_obj.is_dirty():
         print("=" * 50, '\n', f"WRANING: the remote `{repo_sync_root}` is dirty, please commit or stash changes before proceeding.", '\n', "=" * 50)
 
@@ -99,7 +102,7 @@ git pull originEnc master
 
 """
     suffix = '.ps1' if platform.system() == 'Windows' else '.sh'
-    res = tb.Terminal().run(f". {tb.P.tmpfile(suffix=suffix).write_text(script)}", shell="powershell").capture().print()
+    res = Terminal().run(f". {P.tmpfile(suffix=suffix).write_text(script)}", shell="powershell").capture().print()
 
     if res.is_successful(strict_err=True, strict_returcode=True):
         print("\n", "Pull succeeded, removing originEnc, the local copy of remote & pushing merged repo_root to remote ... ")
@@ -137,8 +140,8 @@ func(remote_repo=r'{repo_sync_root.str}', local_repo=r'{repo_root.str}', cloud=r
 
 
 def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cloud: str):
-    repo_sync_root = tb.P(remote_repo).expanduser().absolute()
-    repo_root_path = tb.P(local_repo).expanduser().absolute()
+    repo_sync_root = P(remote_repo).expanduser().absolute()
+    repo_root_path = P(local_repo).expanduser().absolute()
     repo_sync_root.delete(sure=True)
     from git.remote import Remote
     from git.repo import Repo

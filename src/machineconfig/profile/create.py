@@ -5,8 +5,10 @@ This script Takes away all config files from the computer, place them in one dir
 
 """
 
-import crocodile.toolbox as tb
+
 from crocodile.environment import system, UserName  # ProgramFiles, WindowsApps  # , exe
+from crocodile.meta import Terminal
+from crocodile.file_management import P
 from machineconfig.utils.utils import symlink, LIBRARY_ROOT, REPO_ROOT, display_options
 from machineconfig.profile.shell import create_default_shell_profile
 # import os
@@ -24,7 +26,7 @@ SYSTEM = system.lower()
 # =================== SYMLINKS ====================================
 
 
-def symlink_contents(source_dir: tb.P, target_dir: tb.P, overwrite: bool = True):
+def symlink_contents(source_dir: P, target_dir: P, overwrite: bool = True):
     for a_target in target_dir.expanduser().search("*"):
         symlink(this=source_dir.joinpath(a_target.name), to_this=a_target, prioritize_to_this=overwrite)
 
@@ -58,7 +60,7 @@ def main_symlinks(choice: Optional[str] = None):
     else: choice_selected = choice
 
     if isinstance(choice_selected, str):
-        if str(choice_selected) == "all" and system == "Windows" and not tb.Terminal.is_user_admin():
+        if str(choice_selected) == "all" and system == "Windows" and not Terminal.is_user_admin():
             print("*" * 200)
             raise RuntimeError(f"Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
         elif choice_selected == "all":
@@ -69,8 +71,8 @@ def main_symlinks(choice: Optional[str] = None):
 
     for program_key in program_keys:
         for file_key, file_map in symlink_mapper[program_key].items():
-            this = tb.P(file_map['this'])
-            to_this = tb.P(file_map['to_this'].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()))
+            this = P(file_map['this'])
+            to_this = P(file_map['to_this'].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()))
             if "contents" in file_map:
                 try: symlink_contents(source_dir=this, target_dir=to_this, overwrite=overwrite)
                 except Exception as ex: print("Config error: ", program_key, file_key, "missing keys 'this ==> to_this'.", ex)
@@ -87,7 +89,7 @@ def main_symlinks(choice: Optional[str] = None):
                     ERROR_LIST.append(e)
                     print("Caught error", e)
 
-    if system == "Linux": tb.Terminal().run(f'chmod +x {LIBRARY_ROOT.joinpath(f"scripts/{system.lower()}")} -R')
+    if system == "Linux": Terminal().run(f'chmod +x {LIBRARY_ROOT.joinpath(f"scripts/{system.lower()}")} -R')
 
 
 def main(choice: Optional[str] = None):

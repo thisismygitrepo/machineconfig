@@ -1,6 +1,6 @@
 
 from crocodile.msc.odds import capture_from_webcam
-import crocodile.toolbox as tb
+from crocodile.meta import Terminal
 import argparse
 
 
@@ -11,7 +11,7 @@ def main():
 
     img_path = capture_from_webcam(show=False, wait=False, save=True)
     if args.to_text:
-        q = tb.Terminal().run(f"cd ~/AppData/Local/Tesseract-OCR; pytesseract '{img_path}'", shell="pwsh").capture().op
+        q = Terminal().run(f"cd ~/AppData/Local/Tesseract-OCR; pytesseract '{img_path}'", shell="pwsh").capture().op
         print(q)
     else:
         print(img_path)

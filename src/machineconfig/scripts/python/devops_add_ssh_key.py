@@ -2,14 +2,15 @@
 """SSH
 """
 
-import crocodile.toolbox as tb
+
 from platform import system
 from machineconfig.utils.utils import LIBRARY_ROOT, display_options
+from crocodile.file_management import P
 
 
-def get_add_ssh_key_script(path_to_key: tb.P):
-    if system() == "Linux": authorized_keys = tb.P.home().joinpath(".ssh/authorized_keys")
-    elif system() == "Windows": authorized_keys = tb.P("C:/ProgramData/ssh/administrators_authorized_keys")
+def get_add_ssh_key_script(path_to_key: P):
+    if system() == "Linux": authorized_keys = P.home().joinpath(".ssh/authorized_keys")
+    elif system() == "Windows": authorized_keys = P("C:/ProgramData/ssh/administrators_authorized_keys")
     else: raise NotImplementedError
 
     if authorized_keys.exists():
@@ -35,7 +36,7 @@ def get_add_ssh_key_script(path_to_key: tb.P):
             program = f"cat {path_to_key} > ~/.ssh/authorized_keys"
         else:
             program = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add-sshkey.ps1")
-            program = tb.P(program).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
+            program = P(program).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
 
     if system() == "Linux": program += f"""
 
@@ -50,17 +51,17 @@ sudo service ssh --full-restart
 
 
 def main():
-    pub_keys = tb.P.home().joinpath(".ssh").search("*.pub")
+    pub_keys = P.home().joinpath(".ssh").search("*.pub")
     all_keys_option = f"all pub keys available ({len(pub_keys)})"
     i_have_path_option = "I have the path to the key file"
     i_paste_option = "I want to paste the key itself"
     res = display_options("Which public key to add? ", options=pub_keys.apply(str).list + [all_keys_option, i_have_path_option, i_paste_option])
     assert isinstance(res, str), f"Got {res} of type {type(res)} instead of str."
     if res == all_keys_option: program = "\n\n\n".join(pub_keys.apply(get_add_ssh_key_script))
-    elif res == i_have_path_option: program = get_add_ssh_key_script(tb.P(input("Path: ")).expanduser().absolute())
-    elif res == i_paste_option: program = get_add_ssh_key_script(tb.P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key.pub): ') or 'my_pasted_key.pub'}").write_text(input("Paste the pub key here: ")))
+    elif res == i_have_path_option: program = get_add_ssh_key_script(P(input("Path: ")).expanduser().absolute())
+    elif res == i_paste_option: program = get_add_ssh_key_script(P.home().joinpath(f".ssh/{input('file name (default: my_pasted_key.pub): ') or 'my_pasted_key.pub'}").write_text(input("Paste the pub key here: ")))
     else:
-        program = get_add_ssh_key_script(tb.P(res))
+        program = get_add_ssh_key_script(P(res))
         print(program)
     return program
 

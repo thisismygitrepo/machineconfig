@@ -2,7 +2,8 @@
 """Theme
 """
 
-import crocodile.toolbox as tb
+from crocodile.file_management import P
+from crocodile.core import List as L
 from machineconfig.utils.utils import display_options
 from typing import Optional
 
@@ -11,9 +12,9 @@ descriptive_themes = ["cupcake", "doubletime", "zork", "slick", "powerline-multi
 
 
 def main(new_theme: Optional[str] = None):
-    profile = tb.P.home().joinpath(".bashrc")
-    current_theme = tb.L(profile.read_text().splitlines()).filter(lambda x: "OSH_THEME=" in x).list[0].split("=")[1]
-    themes = tb.P.home().joinpath(".oh-my-bash/themes").search("*", not_in=["THEMES.md"]).apply(lambda x: x.trunk)
+    profile = P.home().joinpath(".bashrc")
+    current_theme = L(profile.read_text().splitlines()).filter(lambda x: "OSH_THEME=" in x).list[0].split("=")[1]
+    themes = P.home().joinpath(".oh-my-bash/themes").search("*", not_in=["THEMES.md"]).apply(lambda x: x.trunk)
     themes.list.sort()
     if new_theme is None:
         tail = "Recomm: "

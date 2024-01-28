@@ -2,11 +2,11 @@
 """BR: Backup and Retrieve
 """
 
-from platform import system
 # import subprocess
-import crocodile.toolbox as tb
+from crocodile.file_management import Read, P
 from machineconfig.utils.utils import LIBRARY_ROOT, DEFAULTS_PATH, print_code, choose_cloud_interactively, display_options
 from machineconfig.scripts.python.cloud_sync import ES
+from platform import system
 from typing import Any, Literal, Optional
 
 
@@ -15,7 +15,7 @@ OPTIONS = Literal["BACKUP", "RETRIEVE"]
 
 def main(direction: OPTIONS, which: Optional[str] = None):
     try:
-        cloud: str = tb.Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+        cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
         print(f"\n{'--' *  50}\n ⚠️ Using default cloud: `{cloud}` ⚠️\n{'--' *  50}\n")
     except (FileNotFoundError, KeyError, IndexError): cloud = choose_cloud_interactively()
 
@@ -40,8 +40,8 @@ def main(direction: OPTIONS, which: Optional[str] = None):
         flags += 'r' if item['rel2home'] == 'True' else ''
         flags += 'o' if system().lower() in item_name else ''
         if flags: flags = "-" + flags
-        if direction == "BACKUP": program += f"""\ncloud_copy "{tb.P(item['path']).as_posix()}" $cloud {flags}\n"""
-        elif direction == "RETRIEVE": program += f"""\ncloud_copy $cloud "{tb.P(item['path']).as_posix()}" {flags}\n"""
+        if direction == "BACKUP": program += f"""\ncloud_copy "{P(item['path']).as_posix()}" $cloud {flags}\n"""
+        elif direction == "RETRIEVE": program += f"""\ncloud_copy $cloud "{P(item['path']).as_posix()}" {flags}\n"""
         else: raise RuntimeError(f"Unknown direction: {direction}")
         if item_name == "dotfiles" and system() == "Linux": program += f"""\nchmod 700 ~/.ssh/*\n"""
     print_code(program, lexer="shell", desc=f"{direction} script")

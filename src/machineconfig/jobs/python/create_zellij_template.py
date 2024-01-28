@@ -1,9 +1,10 @@
 
 """ZT
 """
-import crocodile.toolbox as tb
+
 import socket
 from machineconfig.utils.utils import choose_ssh_host, write_shell_script
+from crocodile.file_management import P
 
 prefix = """
 
@@ -41,7 +42,7 @@ def build_template(tabs: list[str]):
     for t in tabs:
         res += tab.replace("TABNAME", t).replace("TABCOMMAND", f"ssh").replace("TABARGS", t)
     res += suffix.replace("THISMACHINE", socket.gethostname())
-    file = tb.P.tmp().joinpath(f"tmp_files/templates/zellij_template.kdl").create(parents_only=True).write_text(res)
+    file = P.tmp().joinpath(f"tmp_files/templates/zellij_template.kdl").create(parents_only=True).write_text(res)
     res = f"zellij --layout {file}"
     return res
 

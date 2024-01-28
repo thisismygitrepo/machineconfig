@@ -1,6 +1,7 @@
 
-import crocodile.toolbox as tb
+
 from machineconfig.utils.utils import PROGRAM_PATH
+from crocodile.file_management import P
 import platform
 
 
@@ -9,8 +10,8 @@ def main():
     drive_location = input("Enter the network drive location (ex: //192.168.1.100/Share): ")
     machine_name = drive_location.split("//")[1].split("/")[0]
     mount_point = input(f"Enter the mount point directory (ex: /mnt/network) [default: ~/data/mount_nw/{machine_name}]: ")
-    if mount_point == "": mount_point = tb.P.home().joinpath(fr"data/mount_nw/{machine_name}")
-    else: mount_point = tb.P(mount_point).expanduser()
+    if mount_point == "": mount_point = P.home().joinpath(fr"data/mount_nw/{machine_name}")
+    else: mount_point = P(mount_point).expanduser()
 
     username = input(f"Enter the username: ")
     password = input(f"Enter the password: ")

@@ -34,7 +34,7 @@ def get_read_data_pycode(path: str):
 p = P(r\'{path}\').absolute()
 try:
     dat = p.readit()
-    if type(dat) == tb.Struct: dat.print(as_config=True, title=p.name)
+    if type(dat) == Struct: dat.print(as_config=True, title=p.name)
     else: print(f"Succcesfully read the file {{p.name}}")
 except Exception as e:
     print(e)

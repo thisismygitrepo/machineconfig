@@ -2,11 +2,11 @@
 """Devops Devapps Install
 """
 
-from platform import system
 # import subprocess
-import crocodile.toolbox as tb
+from crocodile.core import List as L
 from machineconfig.utils.utils import LIBRARY_ROOT, choose_multiple_options
 from machineconfig.utils.installer import get_cli_py_installers_v2, Installer, install_all_v2
+from platform import system
 from typing import Any, Optional, Literal, TypeAlias
 
 
@@ -37,7 +37,7 @@ def get_program(program_name: str, options: list[str], installers: list[Installe
         installers_ = get_cli_py_installers_v2(dev=False, system=system())
         if program_name == "EssentialsAndOthers":
             installers_ += get_cli_py_installers_v2(dev=True, system=system())
-        install_all_v2(installers=tb.L(installers))
+        install_all_v2(installers=L(installers))
         program = ""
     elif program_name == "SystemInstallers":
         if system() == "Windows": options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text())
@@ -97,7 +97,7 @@ def parse_apps_installer_windows(txt: str) -> dict[str, Any]:
         if idx == 0: continue
         if idx == 1: chunks.append(item)
         else: chunks.append("winget install" + item)
-    # progs = tb.L(txt.splitlines()).filter(lambda x: x.startswith("winget ") or x.startswith("#winget"))
+    # progs = L(txt.splitlines()).filter(lambda x: x.startswith("winget ") or x.startswith("#winget"))
     res: dict[str, str] = {}
     for a_chunk in chunks:
         try:
@@ -110,8 +110,8 @@ def parse_apps_installer_windows(txt: str) -> dict[str, Any]:
         except IndexError as e:
             print(a_chunk)
             raise e
-    # tb.Struct(res).print(as_config=True)
-    # tb.L(chunks).print(sep="-----------------------------------------------------------------------\n\n")
+    # Struct(res).print(as_config=True)
+    # L(chunks).print(sep="-----------------------------------------------------------------------\n\n")
     # import time
     # time.sleep(10)
     return res
