@@ -62,11 +62,11 @@ def main() -> None:
     versions_files_paths: L[P] = INSTALL_VERSION_ROOT.search()
     app_versions: list[Optional[str]] = []
     apps_paths_raw: L[P] = L([])
-    for an_app in versions_files_paths:
-        exe_path = apps_paths_tmp.filter(lambda x: x.stem == an_app.stem)
-        if len(exe_path) == 1:
-            app_versions.append(an_app.read_text())
-            apps_paths_raw.append(exe_path.list[0])
+    for an_app in apps_paths_tmp:
+        version_path = versions_files_paths.filter(lambda x: x.stem == an_app.stem)
+        if len(version_path) == 1:
+            app_versions.append(version_path.list[0].read_text())
+            apps_paths_raw.append(an_app)
         # if an_app.stem in versions_files_paths.stem:
         #     app_versions.append(versions_files_paths.filter(lambda x: x.stem == an_app.stem.replace(".exe", "")).list[0].read_text())
         # else:
