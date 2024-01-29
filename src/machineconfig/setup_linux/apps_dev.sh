@@ -210,15 +210,15 @@ LV_BRANCH='release-1.2/neovim-0.8' bash <(curl -s https://raw.githubusercontent.
 
 
 yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  timeout 120 sudo apt install cmatrix -y || true  # for fun
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.cmatrix || true
-fi
+# if [ "$package_manager" = "apt" ]; then
+#   timeout 120 sudo apt install cmatrix -y || true  # for fun
+# else
+~/.nix-profile/bin/nix-env -iA nixpkgs.cmatrix || true
+# fi
 
 yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  timeout 120 sudo apt install hollywood -y || true  # for fun
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
-fi
+# if [ "$package_manager" = "apt" ]; then
+#   timeout 120 sudo apt install hollywood -y || true  # for fun
+# else
+~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
+# fi
