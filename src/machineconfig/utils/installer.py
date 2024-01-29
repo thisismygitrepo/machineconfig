@@ -75,15 +75,14 @@ class Installer:
 
     def install_robust(self, version: Optional[str]):
         try:
-            old_version = Terminal().run(f"{self.exe_name} --version", shell="powershell").op.replace("\n", "")
+            old_version_cli = Terminal().run(f"{self.exe_name} --version", shell="powershell").op.replace("\n", "")
             self.install(version=version)
-            new_version = Terminal().run(f"{self.exe_name} --version", shell="powershell").op.replace("\n", "")
-            if old_version == new_version: return f"😑 {self.exe_name}, same version: {old_version}"
-            else: return f"🤩 {self.exe_name} updated from {old_version} === to ===> {new_version}"
+            new_version_cli = Terminal().run(f"{self.exe_name} --version", shell="powershell").op.replace("\n", "")
+            if old_version_cli == new_version_cli: return f"😑 {self.exe_name}, same version: {old_version_cli}"
+            else: return f"🤩 {self.exe_name} updated from {old_version_cli} === to ===> {new_version_cli}"
         except Exception as ex:
             print(ex)
             return f"Failed at {self.exe_name} with {ex}"
-
 
     def install(self, version: Optional[str]):
         if "github" not in self.repo_url or ".zip" in self.repo_url or ".tar.gz" in self.repo_url:

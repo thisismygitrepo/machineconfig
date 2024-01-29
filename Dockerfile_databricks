@@ -1,0 +1,31 @@
+
+# TODO: use a non-bloated os like alpine and remove the venv
+# FROM python:3.11.7-alpine3.19
+FROM databricksruntime/standard
+
+# FROM python:3.11.7-bookworm
+# FROM ubuntu:22.04
+
+# Set bash as default shell
+# as per https://github.com/moby/moby/issues/7281
+# COPY Dockerfile_databricks /Dockerfile_databricks
+
+SHELL ["/bin/bash", "-c"]
+ENV SHELL=/bin/bash
+CMD ["/bin/bash"]
+
+RUN apt-get update && apt-get install -y bash sudo xz-utils
+
+WORKDIR /app
+
+COPY ./src/machineconfig/setup_linux /app/setup_linux
+RUN chmod +x /app/setup_linux/*
+
+ENV package_manager="apt"
+RUN /bin/bash /app/setup_linux/apps.sh
+RUN /bin/bash /app/setup_linux/apps_dev.sh
+RUN /bin/bash /app/setup_linux/ve.sh
+# ENV CROCODILE_EXRA="full"
+RUN /bin/bash /app/setup_linux/repos.sh
+RUN /bin/bash /app/setup_linux/symlinks.sh
+RUN /bin/bash /app/setup_linux/devapps.sh

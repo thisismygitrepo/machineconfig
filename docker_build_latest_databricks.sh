@@ -1,8 +1,8 @@
 
 set -e
 
-IMAGE_NAME="alim-slim"
-docker build --no-cache --file ./Dockerfile --progress=plain -t $IMAGE_NAME:latest .
+IMAGE_NAME="alim-databricks"
+docker build --no-cache --file=./Dockerfile_databricks --progress=plain -t $IMAGE_NAME:latest .
 # building with no cache since docker is unaware of changes in clode due to dynamic code like curl URL | bash etc.
 
 DATE=$(date +%y-%m)
