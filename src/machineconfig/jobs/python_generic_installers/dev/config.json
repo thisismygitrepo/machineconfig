@@ -79,14 +79,6 @@
         "strip_v": false,
         "exe_name": "lvim"
     },
-    "ngrok": {
-        "doc": "expose a local server behind a NAT or firewall to the internet",
-        "repo_url": "",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
-        "strip_v": false,
-        "exe_name": "ngrok"
-    },
     "ots": {
         "repo_url": "https://github.com/Luzifer/ots",
         "doc": "A command line tool for generating and verifying one-time secrets.",

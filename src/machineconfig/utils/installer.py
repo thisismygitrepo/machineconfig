@@ -84,7 +84,7 @@ class Installer:
             print(ex)
             return f"Failed at {self.exe_name} with {ex}"
 
-    def install(self, version: Optional[str]):
+    def download(self, version: Optional[str]):
         if "github" not in self.repo_url or ".zip" in self.repo_url or ".tar.gz" in self.repo_url:
             download_link = P(self.repo_url)
             version_to_be_installed = "predefined_url"
@@ -99,6 +99,10 @@ class Installer:
             download_link = release_url.joinpath(file_name)
         print("Downloading", download_link.as_url_str())
         downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
+        return downloaded, version_to_be_installed
+
+    def install(self, version: Optional[str]):
+        downloaded, version_to_be_installed = self.download(version=version)
         if platform.system() == "Windows": exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True, rename_to=self.exe_name + ".exe")
         elif platform.system() == "Linux": exe = find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True, rename_to=self.exe_name)
         else: raise NotImplementedError(f"System {platform.system()} not implemented")
