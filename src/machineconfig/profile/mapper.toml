@@ -116,6 +116,9 @@ config = { this = '~/.config/zellij', to_this = 'LIBRARY_ROOT/settings/zellij' }
 #themes = { this = '~/.config/zellij/themes', to_this = 'LIBRARY_ROOT/settings/zellij/themes' }
 #layouts = { this = '~/.config/zellij/layouts', to_this = 'LIBRARY_ROOT/settings/zellij/layouts' }
 
+# [starship]
+# config = {this = '~/.config/starship.toml', to_this = 'LIBRARY_ROOT/settings/shells/starship/starship.toml'}
+
 [mprocs_windows]
 config = {this = '~/mprocs.yaml', to_this = 'LIBRARY_ROOT/settings/mprocs/windows/mprocs.yaml'}
 
@@ -169,8 +172,8 @@ brave = {this = '~/.local/share/applications', to_this = '~/dotfiles/config/weba
 [startup_windows]
 startup = {this = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup', to_this = '~/dotfiles/scripts/windows_startup', contents = 'True'}
 
-[aws]
-config = {this = '~/.aws/config', to_this = '~/dotfiles/aws/.aws', contents = 'True'}
+# [aws]
+# config = {this = '~/.aws/config', to_this = '~/dotfiles/aws/.aws', contents = 'True'}
 
 [wt_windows]
 settings = { this = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', to_this = 'LIBRARY_ROOT/settings/shells/wt/settings.json' }
