@@ -46,11 +46,13 @@ fi
 
 yes '' | sed 3q; echo "----------------------------- installing nvm of nodejs --------------------------"; yes '' | sed 3q
 # according to: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm its best to use nvm manager
+# https://github.com/nvm-sh/nvm?tab=readme-ov-file#install--update-script
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 # shellcheck disable=SC2155
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-source ~/.bashrc
+# this code below allows to use nvm straight away without having to restart the terminal
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 nvm install node || true
 
@@ -136,6 +138,7 @@ fi
 
 
 yes '' | sed 3q; echo "----------------------------- installing ohmybash ----------------------------"; yes '' | sed 3q
+# curl -sS https://starship.rs/install.sh | sh  # cross-platform shell prompt
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 # replace OSH_THEME="font" with OSH_THEME="cupcake" in ~/.bashrc
 (sed -i 's/OSH_THEME="font"/OSH_THEME="cupcake"/' ~/.bashrc) || true

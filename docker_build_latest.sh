@@ -1,5 +1,5 @@
 
-set -e
+# set -e
 
 IMAGE_NAME="alim-slim"
 docker build --no-cache --file ./Dockerfile --progress=plain -t $IMAGE_NAME:latest .

@@ -80,6 +80,9 @@ nix-env -iA nixpkgs.gh
 # gh extension install github/gh-copilot
 
 yes '' | sed 3q; echo "----------------------------- installing easy-sharing ----------------------------"; yes '' | sed 3q
+# Making sure npm is available in the terminal
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 npm install -g easy-sharing  # https://github.com/parvardegr/sharing
 # https://github.com/mifi/ezshare
 
@@ -191,9 +194,9 @@ yes '' | sed 3q; echo "----------------------------- installing nvim -----------
 
 
 
-yes '' | sed 3q; echo "----------------------------- installing lunarvim ----------------------------"; yes '' | sed 3q
-# from https://www.lunarvim.org/docs/installation
-LV_BRANCH='release-1.2/neovim-0.8' bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
+# yes '' | sed 3q; echo "----------------------------- installing lunarvim ----------------------------"; yes '' | sed 3q
+# # from https://www.lunarvim.org/docs/installation
+# LV_BRANCH='release-1.2/neovim-0.8' bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
 
 # yes '' | sed 3q; echo "----------------------------- installing spacevim ----------------------------"; yes '' | sed 3q
 # # https://spacevim.org/quick-start-guide/#linux-and-macos

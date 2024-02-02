@@ -30,6 +30,9 @@ eval "$(mcfly init bash)"
 # from https://github.com/ajeetdsouza/zoxide
 eval "$(zoxide init bash)"
 
+# from https://github.com/starship/starship
+eval "$(starship init bash)"
+
 # export DISPLAY=localhost:0.0  # xming server
 
 # gh extension install github/gh-copilot

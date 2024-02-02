@@ -1,5 +1,13 @@
 
 {
+    "starship": {
+        "repo_url": "https://github.com/starship/starship",
+        "doc": "a cross-platform prompt for your shell",
+        "filename_template_windows_amd_64": "starship-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "starship-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "starship"
+    },
     "rg": {
         "repo_url": "https://github.com/BurntSushi/ripgrep",
         "doc": "recursively searches directories for a regex pattern while respecting your gitignore rules",

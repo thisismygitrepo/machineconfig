@@ -34,7 +34,8 @@ winget install --no-upgrade --name "DB Browser for SQLite" --Id "DBBrowserForSQL
 # Install icons
 Install-Module -Name Terminal-Icons -Repository PSGallery
 # Install oh-my-posh
-winget install --no-upgrade --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" --source winget
+# winget install --no-upgrade --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" --source winget
+winget install --no-upgrade --name "Starship" --Id Starship.Starship --source winget
 winget install --no-upgrade --name "Chafa" --Id hpjansson.Chafa --source winget --accept-package-agreements --accept-source-agreements
 
 $ErrorActionPreference = "Stop"  # if there is any error in any command, stop there instead of proceeding to the next.
