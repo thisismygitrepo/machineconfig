@@ -43,7 +43,7 @@ Windows = "🪟 "
 
 [os]
 format = "🖥️ [$symbol$name $version $codename $edition]($style)"
-style = "bg:blue fg:bright-green"
+style = "bold italic bg:blue fg:bright-green"
 disabled = false
 
 [python]
