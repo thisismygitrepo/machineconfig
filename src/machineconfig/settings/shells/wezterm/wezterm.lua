@@ -124,5 +124,11 @@ config.cursor_blink_ease_in = "Constant"
 config.cursor_blink_ease_out = "Constant"
 -- c.force_reverse_video_cursor = true
 
+-- from https://wezfurlong.org/wezterm/config/launch.html#the-launcher-menu
+if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
+  config.default_prog = { 'pwsh', '-NoLogo' }
+end
+
+
 -- and finally, return the configuration to wezterm
 return config
