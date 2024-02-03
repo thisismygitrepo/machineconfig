@@ -1,89 +1,51 @@
-# ~/.config/starship.toml
 
-[battery]
-full_symbol = "🔋"
-charging_symbol = "🔌"
-discharging_symbol = "⚡"
+"$schema" = 'https://starship.rs/config-schema.json'
 
-[[battery.display]]
-threshold = 30
-style = "bold red"
+add_newline = true
 
-[character]
-error_symbol = "[✖](bold red) "
+# Replace the '❯' symbol in the prompt with '➜'
+[character] # The name of the module we are configuring is 'character'
+success_symbol = '[➜](bold green)' # The 'success_symbol' segment is being set to '➜' with the color 'bold green'
 
-[cmd_duration]
-min_time = 10_000  # Show command duration over 10,000 milliseconds (=10 sec)
-format = " took [$duration]($style)"
-
-[directory]
-truncation_length = 5
-format = "[$path]($style)[$lock_symbol]($lock_style) "
-
-[git_branch]
-format = " [$symbol$branch]($style) "
-symbol = "🍣 "
-style = "bold yellow"
-
-[git_commit]
-commit_hash_length = 8
-style = "bold white"
-
-[git_state]
-format = '[\($state( $progress_current of $progress_total)\)]($style) '
-
-[git_status]
-conflicted = "⚔️ "
-ahead = "🏎️ 💨 ×${count}"
-behind = "🐢 ×${count}"
-diverged = "🔱 🏎️ 💨 ×${ahead_count} 🐢 ×${behind_count}"
-untracked = "🛤️  ×${count}"
-stashed = "📦 "
-modified = "📝 ×${count}"
-staged = "🗃️  ×${count}"
-renamed = "📛 ×${count}"
-deleted = "🗑️  ×${count}"
-style = "bright-white"
-format = "$all_status$ahead_behind"
-
-[hostname]
-ssh_only = false
-format = "<[$hostname]($style)>"
-trim_at = "-"
-style = "bold dimmed white"
-disabled = true
-
-[julia]
-format = "[$symbol$version]($style) "
-symbol = "ஃ "
-style = "bold green"
-
-[memory_usage]
-format = "$symbol[${ram}( | ${swap})]($style) "
-threshold = 70
-style = "bold dimmed white"
-disabled = false
-
-[package]
-disabled = true
-
-[python]
-format = "[$symbol$version]($style) "
-style = "bold green"
-
-[rust]
-format = "[$symbol$version]($style) "
-style = "bold green"
-
-[time]
-time_format = "%T"
-format = "🕙 $time($style) "
-style = "bright-white"
-disabled = false
 
 [username]
-style_user = "bold dimmed blue"
-show_always = false
+style_user = 'red bold'
+style_root = 'black bold'
+format = '💁‍♂️[$user]($style) '
+disabled = false
+show_always = true
 
-[nodejs]
-format = "via [🤖 $version](bold green) "
+
+[hostname]
+# see https://starship.rs/config/#hostname
+ssh_only = false
+format = '[$ssh_symbol](bold blue) @ [$hostname](bold blue) '
+trim_at = '.companyname.com'
+disabled = false
+
+
+[os.symbols]
+# https://starship.rs/config/#os
+Alpine = "🏔️ "
+Amazon = "🙂 "
+Android = "🤖 "
+Arch = "🎗️ "
+CentOS = "💠 "
+Debian = "🌀 "
+Fedora = "🎩 "
+Linux = "🐧 "
+Macos = "🍎 "
+Manjaro = "🥭 "
+Mint = "🏸 "
+NixOS = "❄️ "
+Ubuntu = "🎯 "
+Windows = "🪟 "
+
+[os]
+format = "on [($name )]($style)"
+style = "bold blue"
+disabled = false
+
+[python]
+symbol = '🐍 '
+pyenv_version_name = false

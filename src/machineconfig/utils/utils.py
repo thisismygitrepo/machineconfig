@@ -69,7 +69,7 @@ def sanitize_path(a_path: P):
     return path.expanduser().absolute()
 
 
-def match_file_name(sub_string: str):
+def match_file_name(sub_string: str) -> P:
     """Look up current directory for file name that matches the passed substring."""
     print(f"Searching for {sub_string} in {P.cwd()}")
     search_results = P.cwd().absolute().search(f"*{sub_string}*.py", r=True)
@@ -80,6 +80,10 @@ def match_file_name(sub_string: str):
         assert not isinstance(choice, list)
         path_obj = P(choice)
     else:
+        # let's do a final retry with sub_string.small()
+        sub_string_small = sub_string.lower()
+        if sub_string_small != sub_string:
+            return match_file_name(sub_string=sub_string_small)
         msg = f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. No search results\n{'--' * 50}\n"
         raise FileNotFoundError(msg)
     print(f"\n{'--' * 50}\n🔗 Matched `{sub_string}` ➡️ `{path_obj}`\n{'--' * 50}\n")

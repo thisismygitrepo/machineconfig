@@ -116,8 +116,8 @@ config = { this = '~/.config/zellij', to_this = 'LIBRARY_ROOT/settings/zellij' }
 #themes = { this = '~/.config/zellij/themes', to_this = 'LIBRARY_ROOT/settings/zellij/themes' }
 #layouts = { this = '~/.config/zellij/layouts', to_this = 'LIBRARY_ROOT/settings/zellij/layouts' }
 
-# [starship]
-# config = {this = '~/.config/starship.toml', to_this = 'LIBRARY_ROOT/settings/shells/starship/starship.toml'}
+[starship]
+config = {this = '~/.config/starship.toml', to_this = 'LIBRARY_ROOT/settings/shells/starship/starship.toml'}
 
 [mprocs_windows]
 config = {this = '~/mprocs.yaml', to_this = 'LIBRARY_ROOT/settings/mprocs/windows/mprocs.yaml'}
