@@ -17,6 +17,7 @@ curl -L https://nixos.org/nix/install | sh  # cross *nix platforms.
 . ~/.nix-profile/etc/profile.d/nix.sh
 
 sudo apt install nala -y || true  # nala is a command line tool for managing your Linux system
+sudo apt-get install software-properties-common  # gives add-apt-repository command
 
 # sudo apt remove mlocate && plocate # solves wsl2 slow Initializing plocate database; this may take some time..
 # ignoring indexing of windows files: https://askubuntu.com/questions/1251484/why-does-it-take-so-much-time-to-initialize-mlocate-database
@@ -137,11 +138,11 @@ fi
 
 
 
-yes '' | sed 3q; echo "----------------------------- installing ohmybash ----------------------------"; yes '' | sed 3q
+# yes '' | sed 3q; echo "----------------------------- installing ohmybash ----------------------------"; yes '' | sed 3q
 # curl -sS https://starship.rs/install.sh | sh  # cross-platform shell prompt
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+# bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 # replace OSH_THEME="font" with OSH_THEME="cupcake" in ~/.bashrc
-(sed -i 's/OSH_THEME="font"/OSH_THEME="cupcake"/' ~/.bashrc) || true
+# (sed -i 's/OSH_THEME="font"/OSH_THEME="cupcake"/' ~/.bashrc) || true
 # this starts a new shell process and stops execution at this point!
 
 
