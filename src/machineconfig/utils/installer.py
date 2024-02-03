@@ -35,7 +35,13 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
     else:
         res = downloaded.search(f"*{tool_name}*", folders=False, r=True)
         if len(res) == 1: exe = res.list[0]
-        else: exe = downloaded.search(tool_name, folders=False, r=True).list[0]
+        else:
+            exe_search_res = downloaded.search(tool_name, folders=False, r=True)
+            if len(exe_search_res) == 0:
+                print(f"No search results for `{tool_name}` in `{downloaded}`")
+                raise IndexError(f"No executable found in {downloaded}")
+            else:
+                exe = exe_search_res.list[0]
     if rename_to and exe.name != rename_to:
         exe = exe.with_name(name=rename_to, inplace=True)
     print(f"MOVING file `{repr(exe)}` to '/usr/local/bin'")

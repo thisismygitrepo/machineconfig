@@ -6,7 +6,7 @@
         "filename_template_windows_amd_64": "nu-{}-x86_64-windows-msvc-full.zip",
         "filename_template_linux_amd_64": "nu-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": true,
-        "exe_name": "nushell"
+        "exe_name": "nu"
     },
     "starship": {
         "repo_url": "https://github.com/starship/starship",
