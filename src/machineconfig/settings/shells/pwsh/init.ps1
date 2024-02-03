@@ -63,5 +63,12 @@ catch {
     # Do nothing
 }
 
+
+try {
+    Invoke-Expression (&starship init powershell)
+}
+catch {
+    # Do nothing
+}
 # Set-Alias lvim '~/.local/bin/lvim.ps1'
 # function fuck {     $history = (Get-History -Count 1).CommandLine;     if (-not [string]::IsNullOrWhiteSpace($history)) {         $f>
