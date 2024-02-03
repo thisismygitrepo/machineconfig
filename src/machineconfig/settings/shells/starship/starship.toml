@@ -42,10 +42,11 @@ Ubuntu = "🎯 "
 Windows = "🪟 "
 
 [os]
-format = "on [($name )]($style)"
-style = "bold blue"
+format = "🖥️ [$symbol$name $version $codename $edition]($style)"
+style = "bg:blue fg:bright-green"
 disabled = false
 
 [python]
-symbol = '🐍 '
+symbol = '🐍'
 pyenv_version_name = false
+format ="[((\\($virtualenv\\) ${version})) ${symbol} ${pyenv_prefix}]($style)"
