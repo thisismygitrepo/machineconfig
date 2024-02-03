@@ -53,6 +53,7 @@ winget install --no-upgrade --name "hyperfine" --Id sharkdp.hyperfine --source w
 
 #winget install --no-upgrade --name "AWS Command Line Interface"
 #winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W11
+winget install --no-upgrade --name "wezterm" --Id "wez.wezterm" --source winget
 winget install --no-upgrade --name "nu" --Id "Nushell.Nushell" --source winget  # add to userpath C:\Program Files\nu\bin, done in symlinks
 winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
 

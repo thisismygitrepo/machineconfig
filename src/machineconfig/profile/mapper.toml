@@ -47,6 +47,10 @@ bashrc = {this = '~/.inputrc', to_this = '~/dotfiles/shells/bash/.inputrc'}
 config = {this = '~/AppData/Roaming/nushell/config.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/config.nu'}
 env = {this = '~/AppData/Roaming/nushell/env.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/env.nu'}
 
+[nushell_linux]
+config = {this = '~/.config/nushell/config.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/config.nu'}
+env = {this = '~/.config/nushell/env.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/env.nu'}
+
 
 [kitty_linux]
 config = {this = '~/.config/kitty/kitty.conf', to_this = 'LIBRARY_ROOT/settings/shells/kitty/kitty.conf'}

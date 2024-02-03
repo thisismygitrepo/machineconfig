@@ -1,5 +1,7 @@
 
 
+# oh-my-posh --init --shell pwsh --config {theme_path}/jandedobbeleer.omp.json | Invoke-Expression
+
 try {
     Import-Module -Name Terminal-Icons
 

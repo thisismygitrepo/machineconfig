@@ -3,8 +3,9 @@
 """
 
 from crocodile.core import randstr, List as L
-from crocodile.file_management import P
+from crocodile.file_management import P, Read, Save
 import crocodile.environment as env
+from machineconfig.utils.utils import LIBRARY_ROOT
 from uuid import uuid4
 import os
 from typing import Any
@@ -31,12 +32,12 @@ class TerminalSettings(object):
             raise ValueError("Could not find LOCALAPPDATA environment variable.")
         self.path = P(tmp).joinpath(r"Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json")
         self.path.copy(append=".orig_" + randstr())
-        self.dat = self.path.readit()
+        self.dat: dict[str, Any] = Read.json(self.path)
         self.profs = L(self.dat["profiles"]["list"])
 
     def save_terminal_settings(self):
         self.dat["profiles"]["list"] = list(self.profs)
-        self.dat.save_json(self.path, indent=5)
+        Save.json(obj=self.dat, path=self.path, indent=5)
 
     # ========================= Terminal Settings =========================================
     def update_default_settings(self):
@@ -75,14 +76,10 @@ class TerminalSettings(object):
         else: print("Powershell profile was not found in the list of profile and therefore was not made the deafult.")
 
     def add_croshell(self):
-        # Adding croshell if it is not there.
-        # py_pr = tb.copy.deepcopy(pr)  # use it as a template for the new profile.
-        import machineconfig
-        lib_root = P(machineconfig.__file__).parent.collapseuser().as_posix()
         croshell = dict(name="croshell",
                         guid="{" + str(uuid4()) + "}",
                         # commandline=f"powershell.exe -Command \"{activate} ipython -i -c 'from crocodile.toolbox import *'\"",
-                        commandline=f'powershell.exe -Command "{lib_root}/scripts/windows/croshell.ps1"',
+                        commandline=f'powershell.exe -Command "{LIBRARY_ROOT.as_posix()}/scripts/windows/croshell.ps1"',
                         startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
                         )
         # startingDirectory = None means: inheret from parent process, which will is the default, which point to /System32

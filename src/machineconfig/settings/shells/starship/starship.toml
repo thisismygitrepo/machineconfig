@@ -1,12 +1,11 @@
 
 "$schema" = 'https://starship.rs/config-schema.json'
+# see https://starship.rs/config/#hostname
 
 add_newline = true
 
-# Replace the '❯' symbol in the prompt with '➜'
-[character] # The name of the module we are configuring is 'character'
-success_symbol = '[➜](bold green)' # The 'success_symbol' segment is being set to '➜' with the color 'bold green'
-
+[character]
+success_symbol = '[➜](bold green)'
 
 [username]
 style_user = 'red bold'
@@ -15,13 +14,16 @@ format = '💁‍♂️[$user]($style) '
 disabled = false
 show_always = true
 
-
 [hostname]
-# see https://starship.rs/config/#hostname
 ssh_only = false
 format = '[$ssh_symbol](bold blue) @ [$hostname](bold blue) '
-trim_at = '.companyname.com'
 disabled = false
+
+[os]
+format = "🖥️ [$symbol$name $version $codename $edition]($style)"
+style = "bold italic bg:dark-blue fg:bright-green"
+disabled = false
+
 
 
 [os.symbols]
@@ -41,12 +43,17 @@ NixOS = "❄️ "
 Ubuntu = "🎯 "
 Windows = "🪟 "
 
-[os]
-format = "🖥️ [$symbol$name $version $codename $edition]($style)"
-style = "bold italic bg:blue fg:bright-green"
-disabled = false
-
 [python]
 symbol = '🐍'
 pyenv_version_name = false
 format ="[((\\($virtualenv\\) ${version})) ${symbol} ${pyenv_prefix}]($style)"
+
+[shell]
+bash_indicator = '💲'
+powershell_indicator = '>>_'
+pwsh_indicator = '>_'
+cmd_indicator = '🪟'
+nu_indicator = '🐘'
+unknown_indicator = 'mystery shell'
+style = 'cyan bold'
+disabled = false

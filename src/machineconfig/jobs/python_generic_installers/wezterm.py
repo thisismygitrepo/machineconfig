@@ -1,4 +1,7 @@
 
+"""wezterm installer
+"""
+
 from machineconfig.utils.installer import Installer
 from typing import Optional
 import platform
@@ -29,4 +32,6 @@ def main(version: Optional[str]):
         """
     else:
         raise NotImplementedError("unsupported platform")
+    from crocodile.meta import Terminal
+    Terminal().run(program, shell="powershell")
     return program

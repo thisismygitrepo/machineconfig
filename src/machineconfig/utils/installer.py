@@ -64,7 +64,7 @@ class Installer:
             Struct(d).print(as_config=True)
             raise ex
     @staticmethod
-    def choose_and_install():
+    def choose_app_and_install():
         from machineconfig.utils.utils import choose_one_option
         path = choose_one_option(options=LIBRARY_ROOT.joinpath("jobs").search("config.json", r=True).list)
         config: dict[str, Any] = Read.json(path)  # /python_generic_installers/config.json"))
