@@ -9,7 +9,6 @@ FROM python:3.11-slim
 # as per https://github.com/moby/moby/issues/7281
 SHELL ["/bin/bash", "-c"]
 ENV SHELL=/bin/bash
-CMD ["/bin/bash"]
 
 RUN apt-get update && apt-get install -y bash sudo xz-utils
 
@@ -19,10 +18,12 @@ COPY ./src/machineconfig/setup_linux /app/setup_linux
 RUN chmod +x /app/setup_linux/*
 
 ENV package_manager="apt"
-RUN /bin/bash /app/setup_linux/apps.sh
-RUN /bin/bash /app/setup_linux/apps_dev.sh
+RUN /app/setup_linux/apps.sh
+RUN /app/setup_linux/apps_dev.sh
 RUN /bin/bash /app/setup_linux/ve.sh
 # ENV CROCODILE_EXRA="full"
-RUN /bin/bash /app/setup_linux/repos.sh
-RUN /bin/bash /app/setup_linux/symlinks.sh
-RUN /bin/bash /app/setup_linux/devapps.sh
+RUN /app/setup_linux/repos.sh
+RUN /app/setup_linux/symlinks.sh
+RUN /app/setup_linux/devapps.sh
+
+CMD ["/bin/bash"]
