@@ -106,8 +106,11 @@ sudo apt-get update && sudo apt-get install cloudflare-warp -y
 
 yes '' | sed 3q; echo "----------------------------- installing cloudflared -------------------------------"; yes '' | sed 3q
 # install as per instructions. Advantage of avoiding a package manager is getting: cloudflared update command.
+mkdir $HOME/tmp_install -p || true
+cd $HOME/tmp_install || true
 wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb && sudo dpkg -i cloudflared-linux-amd64.deb
-
+rm -rfd $HOME/tmp_install || true
+cd $HOME || true
 
 
 yes '' | sed 3q; echo "----------------------------- installing graphviz ----------------------------"; yes '' | sed 3q
