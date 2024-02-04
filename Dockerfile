@@ -20,7 +20,7 @@ RUN chmod +x /app/setup_linux/*
 ENV package_manager="apt"
 RUN /app/setup_linux/apps.sh
 RUN /app/setup_linux/apps_dev.sh
-RUN /bin/bash /app/setup_linux/ve.sh
+RUN /app/setup_linux/ve.sh
 # ENV CROCODILE_EXRA="full"
 RUN /app/setup_linux/repos.sh
 RUN /app/setup_linux/symlinks.sh

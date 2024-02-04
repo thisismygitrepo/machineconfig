@@ -22,8 +22,8 @@ COPY ./src/machineconfig/setup_linux /app/setup_linux
 RUN chmod +x /app/setup_linux/*
 
 ENV package_manager="apt"
-RUN /bin/bash /app/setup_linux/apps.sh
-RUN /bin/bash /app/setup_linux/apps_dev.sh
+RUN /app/setup_linux/apps.sh
+RUN /app/setup_linux/apps_dev.sh
 # RUN /bin/bash /app/setup_linux/ve.sh
 # ENV CROCODILE_EXRA="full"
 # RUN /bin/bash /app/setup_linux/repos.sh
