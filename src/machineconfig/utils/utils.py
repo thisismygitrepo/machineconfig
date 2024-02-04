@@ -147,9 +147,11 @@ def display_options(msg: str, options: Iterable[T], header: str = "", tail: str 
         else: choice_string = input(f"{prompt}\nEnter option number: ")
 
         if choice_string == "":
-            assert default_string is not None, f"Default option not available!"
+            if default_string is None:
+                print(f"Default option not available!")
+                return display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
             choice_idx = options_strings.index(default_string)
-            assert default is not None, f"Default option not available!"
+            assert default is not None, f"🧨 Default option not available!"
             choice_one: T = default
         else:
             try:
