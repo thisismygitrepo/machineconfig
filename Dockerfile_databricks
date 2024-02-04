@@ -12,7 +12,6 @@ FROM databricksruntime/standard
 
 SHELL ["/bin/bash", "-c"]
 ENV SHELL=/bin/bash
-CMD ["/bin/bash"]
 
 RUN apt-get update && apt-get install -y bash sudo xz-utils
 
@@ -24,8 +23,8 @@ RUN chmod +x /app/setup_linux/*
 ENV package_manager="apt"
 RUN /app/setup_linux/apps.sh
 RUN /app/setup_linux/apps_dev.sh
-# RUN /bin/bash /app/setup_linux/ve.sh
+RUN /bin/bash /app/setup_linux/ve.sh
 # ENV CROCODILE_EXRA="full"
-# RUN /bin/bash /app/setup_linux/repos.sh
-# RUN /bin/bash /app/setup_linux/symlinks.sh
-# RUN /bin/bash /app/setup_linux/devapps.sh
+RUN /bin/bash /app/setup_linux/repos.sh
+RUN /bin/bash /app/setup_linux/symlinks.sh
+RUN /bin/bash /app/setup_linux/devapps.sh
