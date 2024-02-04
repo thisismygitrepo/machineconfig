@@ -1,5 +1,5 @@
 
-set -e
+# set -e
 
 IMAGE_NAME="alim-databricks"
 docker build --no-cache --file=./Dockerfile_databricks --progress=plain -t $IMAGE_NAME:latest .
