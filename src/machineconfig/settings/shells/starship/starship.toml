@@ -20,28 +20,26 @@ format = '[$ssh_symbol](bold blue) @ [$hostname](bold blue) '
 disabled = false
 
 [os]
-format = "🖥️ [$symbol$name $version $codename $edition]($style)"
+format = "🖥️ [$symbol $version $codename $edition]($style)"
 style = "bold italic bg:dark-blue fg:bright-green"
 disabled = false
-
+# $name
 
 
 [os.symbols]
 # https://starship.rs/config/#os
-Alpine = "🏔️ "
-Amazon = "🙂 "
-Android = "🤖 "
-Arch = "🎗️ "
-CentOS = "💠 "
-Debian = "🌀 "
-Fedora = "🎩 "
-Linux = "🐧 "
-Macos = "🍎 "
-Manjaro = "🥭 "
-Mint = "🏸 "
+Android = ""
+Arch = "󰣇"
+CentOS = ""
+Debian = "󰣚"
+Fedora = "󰣛"
+Macos = "󰀵"
+Manjaro = ""
+Linux = "󰌽"
+Mint = "󰣭"
 NixOS = "❄️ "
-Ubuntu = "🎯 "
-Windows = "🪟 "
+Windows = "󰍲"
+Ubuntu = "󰕈"
 
 [python]
 symbol = '🐍'
