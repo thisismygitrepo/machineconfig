@@ -186,17 +186,22 @@ fi
 # sudo apt remove neovim
 # sudo rm ~/.local/bin/nvim || true
 yes '' | sed 3q; echo "----------------------------- installing nvim ----------------------------"; yes '' | sed 3q
-# cd ~ || true
-# wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.deb || true
-# sudo apt install ./nvim-linux64.deb || true
-# rm nvim-linux64.deb || true
-~/.nix-profile/bin/nix-env -iA nixpkgs.neovim
-
+if [ "$package_manager" = "apt" ]; then
+  mkdir $HOME/tmp_install -p || true
+  mkdir $HOME/.local/share -p || true
+  cd $HOME/tmp_install || true
+  wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz || true
+  tar -xvf nvim-linux64.tar.gz  -C $HOME/.local/share/ || true
+  sudo cp ~/.local/share/nvim-linux64/bin/nvim /usr/local/bin/nvim || true
+else
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.neovim
+fi
 
 
 # yes '' | sed 3q; echo "----------------------------- installing lunarvim ----------------------------"; yes '' | sed 3q
 # # from https://www.lunarvim.org/docs/installation
-# LV_BRANCH='release-1.2/neovim-0.8' bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
+# LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
+
 
 # yes '' | sed 3q; echo "----------------------------- installing spacevim ----------------------------"; yes '' | sed 3q
 # # https://spacevim.org/quick-start-guide/#linux-and-macos
@@ -213,15 +218,17 @@ yes '' | sed 3q; echo "----------------------------- installing nvim -----------
 
 
 yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
-# if [ "$package_manager" = "apt" ]; then
-#   timeout 120 sudo apt install cmatrix -y || true  # for fun
-# else
-~/.nix-profile/bin/nix-env -iA nixpkgs.cmatrix || true
-# fi
+if [ "$package_manager" = "apt" ]; then
+  echo 'keyboard-configuration keyboard-configuration/layout select US English' | sudo debconf-set-selections
+  echo 'keyboard-configuration keyboard-configuration/layoutcode string us' | sudo debconf-set-selections
+  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y cmatrix
+else
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.cmatrix || true
+fi
 
 yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
-# if [ "$package_manager" = "apt" ]; then
-#   timeout 120 sudo apt install hollywood -y || true  # for fun
-# else
+if [ "$package_manager" = "apt" ]; then
+  sudo apt install hollywood -y || true  # for fun
+else
 ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
-# fi
+fi

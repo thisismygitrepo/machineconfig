@@ -17,29 +17,26 @@ add_to_path_if_not_already \
     "$HOME/.nix-profile/bin" \
     "/usr/games"
 # this way, if the script was run multiple times, e.g. due to nested shells in zellij, there will be no duplicates in the path
+# export DISPLAY=localhost:0.0  # xming server
 
 
-echo "Sourcing scripts ..."
+# echo "Sourcing scripts ..."
 machineconfig_path=$HOME/code/machineconfig/src/machineconfig
 . $machineconfig_path/settings/broot/br.sh
 . $machineconfig_path/settings/lf/linux/exe/lfcd.sh
 . $machineconfig_path/settings/tere/terecd.sh
 
-echo "Initing zoxide ..."
+# echo "Initing zoxide ..."
 # from https://github.com/ajeetdsouza/zoxide
 eval "$(zoxide init bash)"
 
 # from https://github.com/starship/starship
 eval "$(starship init bash)"
 
+
+
+
+
+# LEVE THIS IN THE END TO AVOID EXECUTION FAILURE OF THE REST OF THE SCRIPT
 # from https://github.com/cantino/mcfly
 eval "$(mcfly init bash)"
-
-# export DISPLAY=localhost:0.0  # xming server
-
-# gh extension install github/gh-copilot
-# from https://www.npmjs.com/package/@githubnext/github-copilot-cli
-# eval "$(github-copilot-cli alias -- "$0")"  # gives ??, git?, gh? aliases to github-clopilot-cli
-
-
-# TERM=xterm

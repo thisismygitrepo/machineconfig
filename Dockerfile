@@ -26,4 +26,7 @@ RUN /app/setup_linux/repos.sh
 RUN /app/setup_linux/symlinks.sh
 RUN /app/setup_linux/devapps.sh
 
+RUN touch /root/.bash_history  # McFly complains about missing history file
+
+
 CMD ["/bin/bash"]
