@@ -47,11 +47,12 @@ pyenv_version_name = false
 format ="[((\\($virtualenv\\) ${version})) ${symbol} ${pyenv_prefix}]($style)"
 
 [shell]
-bash_indicator = '💲'
-powershell_indicator = '>>_'
-pwsh_indicator = '>_'
-cmd_indicator = '🪟'
-nu_indicator = '🐘'
+# https://www.nerdfonts.com/cheat-sheet
+bash_indicator = '󱆃'
+powershell_indicator = ''
+pwsh_indicator = ''
+cmd_indicator = ''
+nu_indicator = '󰟆'
 unknown_indicator = 'mystery shell'
 style = 'cyan bold'
 disabled = false

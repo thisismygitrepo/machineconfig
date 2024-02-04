@@ -17,4 +17,6 @@ sudo apt update && sudo apt install ngrok
 """
     else:
         raise NotImplementedError("unsupported platform")
+    from crocodile.meta import Terminal
+    Terminal().run(program, shell="powershell")
     return program

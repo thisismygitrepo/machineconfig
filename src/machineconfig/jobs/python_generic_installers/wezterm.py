@@ -27,11 +27,15 @@ def main(version: Optional[str]):
     elif platform.system() == "Linux":
         # as per https://wezfurlong.org/wezterm/install/linux.html#installing-on-ubuntu-and-debian-based-systems
         program = f"""
-    sudo apt install -y {downloaded}
-    rm {downloaded}
-        """
+sudo apt install -y {downloaded}
+rm {downloaded}
+"""
     else:
         raise NotImplementedError("unsupported platform")
     from crocodile.meta import Terminal
     Terminal().run(program, shell="powershell")
     return program
+
+
+if __name__ == "__main__":
+    main(version=None)

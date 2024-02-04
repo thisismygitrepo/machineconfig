@@ -127,6 +127,7 @@ class Installer:
             import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
             _latest_version = requests.get(str(repo_url) + "/releases/latest", timeout=10).url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
             version_to_be_installed = _latest_version
+            # print(version_to_be_installed)
         else:
             version_to_be_installed = version
         release_url = P(repo_url + "/releases/download/" + version_to_be_installed)

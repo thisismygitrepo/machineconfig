@@ -75,7 +75,7 @@ def main() -> None:
 
         if choice_function == "RUN AS MAIN": choice_function = None
         if len(choice_function_args) > 0 and len(kwargs) == 0:
-            for item in choice_function_args:
+            for item in choice_function_args:   
                 kwargs[item.name] = input(f"Please enter a value for argument `{item.name}` (type = {item.type}) (default = {item.default}) : ") or item.default
     else: choice_function = args.function
 
@@ -121,7 +121,8 @@ print_code(code=r'''{txt}''', lexer='python', desc='Import Script')
         else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
     elif choice_function is not None and not args.module:  # if args.module, then kwargs are handled in the impot script, no need to pass them in fire command.
         # https://google.github.io/python-fire/guide/
-        tmp = f"'{kwargs}'" if kwargs else ''
+        # https://github.com/google/python-fire/blob/master/docs/guide.md#argument-parsing
+        tmp = ("{" + ", ".join([f'{k}:{v}' for k, v in kwargs.items()]) + "}") if kwargs else ''
         command = f"{exe} -m fire {choice_file} {choice_function} {tmp}"
         # else:
         #     print(f"{kwargs=}")
