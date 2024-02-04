@@ -9,8 +9,7 @@ DATE=$(date +%y-%m)
 echo $DATE
 
 docker tag $IMAGE_NAME:latest "statistician/$IMAGE_NAME:$DATE"
+echo "try it out: docker run -it $IMAGE_NAME:$DATE"
 
 # docker login --username statistician --password <password>
 docker push "statistician/$IMAGE_NAME:$DATE"
-
-# try it out: docker run -it $IMAGE_NAME:latest

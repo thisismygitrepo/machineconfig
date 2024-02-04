@@ -23,6 +23,11 @@ RUN chmod +x /app/setup_linux/*
 ENV package_manager="apt"
 RUN /app/setup_linux/apps.sh
 RUN /app/setup_linux/apps_dev.sh
+
+RUN apt install software-properties-common -y
+# sudo apt-get install software-properties-common -y  # gives add-apt-repository command
+# this is required to add deadsnakes ppa repository
+
 RUN /bin/bash /app/setup_linux/ve.sh
 # ENV CROCODILE_EXRA="full"
 RUN /bin/bash /app/setup_linux/repos.sh

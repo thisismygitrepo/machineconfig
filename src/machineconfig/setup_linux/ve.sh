@@ -25,9 +25,9 @@ if ! command -v $mypy &> /dev/null; then
     echo "🤔 $mypy could not be found, installing ..."
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
-    sudo add-apt-repository ppa:deadsnakes/ppa -y  # you need to press enter at this point to continue. # without this repo, 3.9 is not available.
+    sudo add-apt-repository ppa:deadsnakes/ppa -y
     sudo apt update
-    sudo apt install -y $mypy  # ignore system level one. launched with `python39`, as opposed to `python`
+    sudo apt install -y $mypy
     #    nix-env -iA "nixpkgs.python$py_version_no_dot"
 fi
 

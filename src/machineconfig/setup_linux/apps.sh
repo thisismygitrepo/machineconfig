@@ -17,7 +17,6 @@ curl -L https://nixos.org/nix/install | sh  # cross *nix platforms.
 . ~/.nix-profile/etc/profile.d/nix.sh
 
 sudo apt install nala -y || true  # nala is a command line tool for managing your Linux system
-sudo apt-get install software-properties-common  # gives add-apt-repository command
 
 # sudo apt remove mlocate && plocate # solves wsl2 slow Initializing plocate database; this may take some time..
 # ignoring indexing of windows files: https://askubuntu.com/questions/1251484/why-does-it-take-so-much-time-to-initialize-mlocate-database
