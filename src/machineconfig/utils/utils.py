@@ -69,21 +69,30 @@ def sanitize_path(a_path: P):
     return path.expanduser().absolute()
 
 
-def match_file_name(sub_string: str) -> P:
+def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
     """Look up current directory for file name that matches the passed substring."""
-    print(f"Searching for {sub_string} in {P.cwd()}")
-    search_results = P.cwd().absolute().search(f"*{sub_string}*.py", r=True)
+    root = search_root if search_root is not None else P.cwd()
+    print(f"Searching for {sub_string} in {root}")
+    search_results = root.absolute().search(f"*{sub_string}*.py", r=True)
     if len(search_results) == 1:
         path_obj = search_results.list[0]
     elif len(search_results) > 1:
-        choice = display_options(msg=f"Search results are ambiguous or non-existent", options=search_results.list, fzf=True, multi=False)
-        assert not isinstance(choice, list)
+        choice = choose_one_option(msg=f"Search results are ambiguous or non-existent", options=search_results.list, fzf=True)
         path_obj = P(choice)
     else:
         # let's do a final retry with sub_string.small()
         sub_string_small = sub_string.lower()
         if sub_string_small != sub_string:
             return match_file_name(sub_string=sub_string_small)
+        from git.repo import Repo
+        from git.exc import InvalidGitRepositoryError
+        try:
+            repo = Repo(root, search_parent_directories=True)
+            repo_root_dir = P(repo.working_dir)
+            if repo_root_dir != root:  # may be user is in a subdirectory of the repo root, try with root dir.
+                return match_file_name(sub_string=sub_string, search_root=repo_root_dir)
+        except InvalidGitRepositoryError:
+            pass
         msg = f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. No search results\n{'--' * 50}\n"
         raise FileNotFoundError(msg)
     print(f"\n{'--' * 50}\n🔗 Matched `{sub_string}` ➡️ `{path_obj}`\n{'--' * 50}\n")

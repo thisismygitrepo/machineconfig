@@ -4,7 +4,7 @@ fire
 """
 
 
-from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_host, match_file_name, sanitize_path
+from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, choose_ssh_host, match_file_name, sanitize_path
 # from crocodile.run import *
 # https://github.com/pallets/click combine with fire. Consider
 # https://github.com/ceccopierangiolieugenio/pyTermTk for display_options build TUI
@@ -55,8 +55,7 @@ def main() -> None:
         sh_files = path_obj.search(pattern="*.sh", r=True).list
         files = py_files + ps_files + sh_files
 
-        choice_file = display_options(msg="Choose a file to run", options=files, fzf=True, multi=False)
-        assert not isinstance(choice_file, list), f"choice_file must be a string. Got {type(choice_file)}"
+        choice_file = choose_one_option(options=files, fzf=True)
         choice_file = P(choice_file)
     else:
         choice_file = path_obj
