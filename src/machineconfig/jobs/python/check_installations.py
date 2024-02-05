@@ -37,7 +37,6 @@ def scan(path: P, pct: float = 0.0):
         with console.status(f"waiting for scan of {path} ... "):
             try:
                 anal = client.get_object("/analyses/{}", analysis.id)
-                # print(anal.status)
                 if anal.status == "completed": break
             except Exception as ex:  # type: ignore
                 repeat_counter += 1
@@ -45,13 +44,13 @@ def scan(path: P, pct: float = 0.0):
                     raise ValueError(f"Error in scanning {path}") from ex
                 print(f"Error in scanning, trying again.")
             time.sleep(30)
-    df = pd.DataFrame(anal.results).T
+    df = pd.DataFrame(anal.results.values())
     malicious = []
     for _idx, row in df.iterrows():
-        try:
-            print(row.result)
-        except Exception as ex:  # type: ignore
-            print(row)
+        # try:
+        #     print(row.result)
+        # except Exception as ex:  # type: ignore
+        #     print(row)
         if row.result is None and row.category in ["undetected", "type-unsupported", "failure", "timeout", "confirmed-timeout"]: continue
         else:
             Struct(row.to_dict()).print(as_config=True, title=f"Found Category {row.category}")
