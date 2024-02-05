@@ -55,7 +55,7 @@ def scan(path: P, pct: float = 0.0):
         else:
             Struct(row.to_dict()).print(as_config=True, title=f"Found Category {row.category}")
             malicious.append(row)
-    positive_pct = round(len(malicious) / len(df) * 100, 1)
+    positive_pct: float = round(number=len(malicious) / len(df) * 100, ndigits=1)
     print(f"positive_ratio = {positive_pct:.1f} %")
     return positive_pct, df
 

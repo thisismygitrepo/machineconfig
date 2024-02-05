@@ -13,8 +13,12 @@ try {
     # Set-PSReadlineOption -PredictionViewStyle History
     # see how to get dynamic help with prerelease
 }
+catch [System.Management.Automation.CommandNotFoundException] {
+    # Suppresses the "module not found" error
+}
 catch {
-    # Do nothing
+    # Handles other types of errors
+    Write-Output $_.Exception.Message
 }
 
 # PATH extension =====================================================
