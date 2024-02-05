@@ -102,7 +102,7 @@ class Installer:
             elif platform.system() == "Linux":
                 download_link = P(self.filename_template_linux_amd_64)
             else: raise NotImplementedError(f"System {platform.system()} not implemented")
-            version_to_be_installed = "predefined_url"            
+            version_to_be_installed = "predefined_url"
         else:
             release_url, version_to_be_installed = self.get_github_release(repo_url=self.repo_url, version=version)
             version_to_be_installed_stripped = version_to_be_installed.replace("v", "") if self.strip_v else version_to_be_installed
@@ -118,13 +118,18 @@ class Installer:
 
     def install(self, version: Optional[str]):
         downloaded, version_to_be_installed = self.download(version=version)
-        if platform.system() == "Windows": exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True, rename_to=self.exe_name + ".exe")
-        elif platform.system() == "Linux": exe = find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True, rename_to=self.exe_name)
-        else: raise NotImplementedError(f"System {platform.system()} not implemented")
-        if exe.name.replace(".exe", "") != self.exe_name:
-            from rich import print as pprint
-            from rich.panel import Panel
-            pprint(Panel(f"Expected exe name, [red]{self.exe_name}! Attained name: {exe.name}", title="exe mismatch", subtitle=self.repo_url))
+        if downloaded.str.endswith(".deb"):
+            assert platform.system() == "Linux"
+            Terminal().run(f"sudo apt install -y {downloaded}").print_if_unsuccessful(desc="Installing .deb", strict_err=True, strict_returncode=True)
+            downloaded.delete(sure=True)
+        else:
+            if platform.system() == "Windows": exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True, rename_to=self.exe_name + ".exe")
+            elif platform.system() == "Linux": exe = find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True, rename_to=self.exe_name)
+            else: raise NotImplementedError(f"System {platform.system()} not implemented")
+            if exe.name.replace(".exe", "") != self.exe_name:
+                from rich import print as pprint
+                from rich.panel import Panel
+                pprint(Panel(f"Expected exe name, [red]{self.exe_name}! Attained name: {exe.name}", title="exe mismatch", subtitle=self.repo_url))
         INSTALL_VERSION_ROOT.joinpath(self.exe_name).create(parents_only=True).write_text(version_to_be_installed)
 
     @staticmethod
