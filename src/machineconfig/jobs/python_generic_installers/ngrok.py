@@ -1,4 +1,7 @@
 
+"""ngrok
+"""
+
 import platform
 
 
@@ -20,3 +23,7 @@ sudo apt update && sudo apt install ngrok
     from crocodile.meta import Terminal
     Terminal().run(program, shell="powershell")
     return program
+
+
+if __name__ == "__main__":
+    main()

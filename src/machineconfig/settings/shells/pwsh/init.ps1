@@ -71,6 +71,9 @@ try {
 }
 catch {
     # Do nothing
+# oh-my-posh --init --shell pwsh --config $env:USERPROFILE/AppData/Local/Programs/oh-my-posh/themes/atomicBit.omp.json | Invoke-Expression
 }
+
 # Set-Alias lvim '~/.local/bin/lvim.ps1'
 # function fuck {     $history = (Get-History -Count 1).CommandLine;     if (-not [string]::IsNullOrWhiteSpace($history)) {         $f>
+

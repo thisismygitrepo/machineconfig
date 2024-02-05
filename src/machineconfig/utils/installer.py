@@ -91,9 +91,18 @@ class Installer:
             return f"Failed at {self.exe_name} with {ex}"
 
     def download(self, version: Optional[str]):
+        print(self.repo_url, type(self.repo_url))
         if "github" not in self.repo_url or ".zip" in self.repo_url or ".tar.gz" in self.repo_url:
             download_link = P(self.repo_url)
             version_to_be_installed = "predefined_url"
+            print(version_to_be_installed)
+        elif "http" in self.filename_template_linux_amd_64 or "http" in self.filename_template_windows_amd_64:
+            if platform.system() == "Windows":
+                download_link = P(self.filename_template_windows_amd_64)
+            elif platform.system() == "Linux":
+                download_link = P(self.filename_template_linux_amd_64)
+            else: raise NotImplementedError(f"System {platform.system()} not implemented")
+            version_to_be_installed = "predefined_url"            
         else:
             release_url, version_to_be_installed = self.get_github_release(repo_url=self.repo_url, version=version)
             version_to_be_installed_stripped = version_to_be_installed.replace("v", "") if self.strip_v else version_to_be_installed

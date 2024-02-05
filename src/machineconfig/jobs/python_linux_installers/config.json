@@ -33,7 +33,7 @@
       "exe_name": "gotty"
     },
     "joshuto": {
-      "repo_url": "https://github.com/kamiyaa/joshuto/releases/download/v0.9.4/joshuto-v0.9.4-x86_64-unknown-linux-gnu.tar.gz",
+      "repo_url": "https://github.com/kamiyaa/joshuto",
       "doc": "A terminal file manager written in Rust.",
       "filename_template_linux_amd_64": "https://github.com/kamiyaa/joshuto/releases/download/v0.9.4/joshuto-v0.9.4-x86_64-unknown-linux-gnu.tar.gz",
       "filename_template_windows_amd_64": "",

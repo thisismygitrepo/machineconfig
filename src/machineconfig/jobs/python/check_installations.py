@@ -48,6 +48,10 @@ def scan(path: P, pct: float = 0.0):
     df = pd.DataFrame(anal.results).T
     malicious = []
     for _idx, row in df.iterrows():
+        try:
+            print(row.result)
+        except Exception as ex:  # type: ignore
+            print(row)
         if row.result is None and row.category in ["undetected", "type-unsupported", "failure", "timeout", "confirmed-timeout"]: continue
         else:
             Struct(row.to_dict()).print(as_config=True, title=f"Found Category {row.category}")
