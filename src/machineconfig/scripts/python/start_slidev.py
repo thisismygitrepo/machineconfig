@@ -38,7 +38,7 @@ def jupyter_to_markdown(file: P):
 
     op_file = op_dir.joinpath("slides_raw.md")
     slide_separator =  '\n\n---\n\n'
-    md = op_file.read_text().replace('\n\n\n', slide_separator)
+    md = op_file.read_text().replace('\n\n\n\n', slide_separator)
     md = slide_separator.join([item for item in md.split(slide_separator) if bool(item.strip())])  # remove empty slides.
     op_file.with_name("slides.md").write_text(md)
     return op_dir
