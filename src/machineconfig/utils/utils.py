@@ -284,10 +284,13 @@ def get_latest_version(url: str) -> None:
 
 def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> bool:
     """This is the CLI equivalent of `install_n_import` function of crocodile. """
-    if platform.system() == "Windows": tool_name = tool_name.replace(".exe", "") + ".exe"
+    if platform.system() == "Windows":
+        tool_name = tool_name.replace(".exe", "") + ".exe"
+
     if platform.system() == "Windows": cmd = "where.exe"
     elif platform.system() == "Linux": cmd = "which"
     else: raise NotImplementedError(f"platform {platform.system()} not implemented")
+
     import subprocess
     try:
         _tmp = subprocess.check_output([cmd, tool_name])

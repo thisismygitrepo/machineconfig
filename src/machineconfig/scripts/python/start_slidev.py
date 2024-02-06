@@ -3,7 +3,7 @@
 slidev
 """
 
-from machineconfig.utils.utils import CONFIG_PATH, PROGRAM_PATH
+from machineconfig.utils.utils import CONFIG_PATH, PROGRAM_PATH, print_code
 from crocodile.meta import Terminal, P
 import subprocess
 import platform
@@ -36,12 +36,14 @@ def main() -> None:
     assert report_dir.joinpath("slides.md").exists(), f"slides.md not found in {report_dir}"
     report_dir.search().apply(lambda x: x.copy(folder=root, overwrite=True))
 
-    from machineconfig.utils.utils import check_tool_exists
-    check_tool_exists(tool_name="slidev", install_script="npm i -g @slidev/cli")
+    # from machineconfig.utils.utils import check_tool_exists
+    # check_tool_exists(tool_name="slidev", install_script="npm i -g @slidev/cli")
 
     print(f"Presentation is served at http://{platform.node()}:{port}")
     program: str = f"cd {root}; slidev --port {port} --remote 0.0.0.0"
     PROGRAM_PATH.write_text(program)
+    print_code(program, lexer="bash")
+
 
 
 if __name__ == '__main__':
