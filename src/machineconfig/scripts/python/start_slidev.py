@@ -18,19 +18,42 @@ if not root.joinpath("components").exists():
     Terminal(stderr=subprocess.PIPE, stdin=subprocess.PIPE, stdout=subprocess.PIPE).run(f"cd {root.parent};npm init slidev")
 
 
+def jupyter_to_markdown(file: P):
+    # from nbconvert.exporters.markdown import MarkdownExporter
+    # e = MarkdownExporter()
+    # e.export_from_notebook()
+
+    op_dir = file.parent.joinpath("presentation")
+    cmd = f"jupyter nbconvert --to markdown --no-prompt --no-input --output-dir {op_dir} --output slides_raw.md {file}"
+    Terminal().run(cmd).print()
+    op_file = op_dir.joinpath("slides_raw.md")
+    slide_separator =  '\n\n---\n\n'
+    md = op_file.read_text().replace('\n\n\n', slide_separator)
+    md = "".join([item for item in md.split(slide_separator) if bool(item.strip())])  # remove empty slides.
+    op_file.with_name("slides.md").write_text(md)
+    return op_dir
+
+
 def main() -> None:
     import argparse
+
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--directory", default=None, help="Directory of the report")
+    parser.add_argument("-j", "--jupyter-file", default=None, help="Jupyter notebook file to convert to slides. If not provided, slides.md is used.")
     parser.add_argument("--port", default=PORT_DEFAULT, help=f"Port to serve the report, default to {PORT_DEFAULT}")
     args = parser.parse_args()
 
     port = args.port
 
-    if args.directory is None:
-        report_dir = P.cwd()
+    if args.jupyter_file is not None:
+        report_dir = jupyter_to_markdown(P(args.jupyter_file))
     else:
-        report_dir = P(args.directory)
+        if args.directory is None:
+            report_dir = P.cwd()
+        else:
+            report_dir = P(args.directory)
+
     assert report_dir.exists(), f"{report_dir} does not exist"
     assert report_dir.is_dir(), f"{report_dir} is not a directory"
     assert report_dir.joinpath("slides.md").exists(), f"slides.md not found in {report_dir}"
