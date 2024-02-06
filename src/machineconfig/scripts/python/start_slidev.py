@@ -19,17 +19,27 @@ if not root.joinpath("components").exists():
 
 
 def jupyter_to_markdown(file: P):
-    # from nbconvert.exporters.markdown import MarkdownExporter
-    # e = MarkdownExporter()
-    # e.export_from_notebook()
-
     op_dir = file.parent.joinpath("presentation")
+
+    # https://nbconvert.readthedocs.io/en/latest/nbconvert_library.html
+    # from nbconvert.exporters.markdown import MarkdownExporter
+    # import nbformat    
+    # nb = nbformat.read(file, as_version=4)
+    # assert isinstance(nb, nbformat.notebooknode.NotebookNode), f"{file} is not a notebook"
+    # e = MarkdownExporter(exclude_input=True, exclude_input_prompt=True, exclude_output_prompt=True)
+    # body, resources = e.from_notebook_node(nb=nb)
+    # op_dir.joinpath("slides_raw.md").write_text(body)
+    # for key, value in resources['outputs'].items():
+
+
     cmd = f"jupyter nbconvert --to markdown --no-prompt --no-input --output-dir {op_dir} --output slides_raw.md {file}"
-    Terminal().run(cmd).print()
+    Terminal().run(cmd, shell="powershell").print()
+
+
     op_file = op_dir.joinpath("slides_raw.md")
     slide_separator =  '\n\n---\n\n'
     md = op_file.read_text().replace('\n\n\n', slide_separator)
-    md = "".join([item for item in md.split(slide_separator) if bool(item.strip())])  # remove empty slides.
+    md = slide_separator.join([item for item in md.split(slide_separator) if bool(item.strip())])  # remove empty slides.
     op_file.with_name("slides.md").write_text(md)
     return op_dir
 
