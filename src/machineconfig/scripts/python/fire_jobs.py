@@ -122,7 +122,7 @@ print_code(code=r'''{txt}''', lexer='python', desc='Import Script')
     elif choice_function is not None and not args.module:  # if args.module, then kwargs are handled in the impot script, no need to pass them in fire command.
         # https://google.github.io/python-fire/guide/
         # https://github.com/google/python-fire/blob/master/docs/guide.md#argument-parsing
-        tmp = ("{" + ", ".join([f'{k}:{v}' for k, v in kwargs.items()]) + "}") if kwargs else ''
+        tmp = ("'{" + ", ".join([f'"{k}": "{v}"' for k, v in kwargs.items()]) + "}'") if kwargs else ''
         command = f"{exe} -m fire {choice_file} {choice_function} {tmp}"
         # else:
         #     print(f"{kwargs=}")
