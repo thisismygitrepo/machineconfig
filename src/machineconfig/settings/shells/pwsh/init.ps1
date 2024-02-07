@@ -69,7 +69,7 @@ catch {
 }
 
 
-oh-my-posh --init --shell pwsh --config {theme_path}/jandedobbeleer.omp.json | Invoke-Expression
+oh-my-posh --init --shell pwsh --config $env:USERPROFILE/AppData/Local/Programs/oh-my-posh/themes/atomicBit.omp.json | Invoke-Expression
 
 # try {
 #     Invoke-Expression (&starship init powershell)
