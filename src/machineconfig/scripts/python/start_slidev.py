@@ -23,7 +23,7 @@ def jupyter_to_markdown(file: P):
 
     # https://nbconvert.readthedocs.io/en/latest/nbconvert_library.html
     # from nbconvert.exporters.markdown import MarkdownExporter
-    # import nbformat    
+    # import nbformat
     # nb = nbformat.read(file, as_version=4)
     # assert isinstance(nb, nbformat.notebooknode.NotebookNode), f"{file} is not a notebook"
     # e = MarkdownExporter(exclude_input=True, exclude_input_prompt=True, exclude_output_prompt=True)
@@ -31,9 +31,12 @@ def jupyter_to_markdown(file: P):
     # op_dir.joinpath("slides_raw.md").write_text(body)
     # for key, value in resources['outputs'].items():
 
-
     cmd = f"jupyter nbconvert --to markdown --no-prompt --no-input --output-dir {op_dir} --output slides_raw.md {file}"
     Terminal().run(cmd, shell="powershell").print()
+    cmd = f"jupyter nbconvert --to html --no-prompt --no-input --output-dir {op_dir} {file}"
+    Terminal().run(cmd, shell="powershell").print()
+    # cmd = f"jupyter nbconvert --to pdf --no-prompt --no-input --output-dir {op_dir} {file}"
+    # Terminal().run(cmd, shell="powershell").print()
 
 
     op_file = op_dir.joinpath("slides_raw.md")
