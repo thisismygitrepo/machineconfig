@@ -1,5 +1,37 @@
 
 {
+    "chatgpt": {
+        "repo_url": "https://github.com/j178/chatgpt",
+        "doc": "chagpt cli",
+        "filename_template_windows_amd_64": "chatgpt_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "chatgpt_Linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "chatgpt"
+    },
+    "mods": {
+        "repo_url": "https://github.com/charmbracelet/mods/",
+        "doc": "AI for the command line, built for pipelines",
+        "filename_template_windows_amd_64": "mods_{}_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "mods_{}_Linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "mods"
+    },
+    "glow": {
+        "repo_url": "https://github.com/charmbracelet/glow/",
+        "doc": "Render markdown on the CLI, with pizzazz!",
+        "filename_template_windows_amd_64": "glow_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "glow_Linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "glow"
+    },
+    "gum": {
+        "repo_url": "https://github.com/charmbracelet/gum",
+        "doc": "Prompt user to select from options, written in golang.",
+        "filename_template_windows_amd_64": "gum_{}_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "gum_{}_Linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "gum"
+    },
     "nushell": {
         "repo_url": "https://github.com/nushell/nushell",
         "doc": "A cross-platform shell in Rust.",
@@ -72,15 +104,6 @@
         "strip_v": true,
         "exe_name": "btm"
       },  
-    "gum": {
-        "repo_url": "https://github.com/charmbracelet/gum",
-        "doc": "Prompt user to select from options, written in golang.",
-        "filename_template_windows_amd_64": "gum_{}_Windows_x86_64.zip",
-        "filename_template_linux_amd_64": "gum_{}_Linux_x86_64.tar.gz",
-        "strip_v": true,
-        "exe_name": "gum"
-    },
-
     "broot": {
         "repo_url": "https://github.com/Canop/broot",
         "doc": "broot is an fzf variant for folder structure and layered search.",
@@ -96,14 +119,6 @@
         "filename_template_linux_amd_64": "browsh_{}_linux_amd64",
         "strip_v": true,
         "exe_name": "browsh"
-    },
-    "chatgpt": {
-        "repo_url": "https://github.com/j178/chatgpt",
-        "doc": "chagpt cli",
-        "filename_template_windows_amd_64": "chatgpt_Windows_x86_64.zip",
-        "filename_template_linux_amd_64": "chatgpt_Linux_x86_64.tar.gz",
-        "strip_v": true,
-        "exe_name": "chatgpt"
     },
     "cpufetch": {
         "repo_url": "https://github.com/Dr-Noob/cpufetch",

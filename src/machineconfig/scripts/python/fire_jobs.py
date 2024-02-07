@@ -75,7 +75,7 @@ def main() -> None:
 
         if choice_function == "RUN AS MAIN": choice_function = None
         if len(choice_function_args) > 0 and len(kwargs) == 0:
-            for item in choice_function_args:   
+            for item in choice_function_args:
                 kwargs[item.name] = input(f"Please enter a value for argument `{item.name}` (type = {item.type}) (default = {item.default}) : ") or item.default
     else: choice_function = args.function
 
