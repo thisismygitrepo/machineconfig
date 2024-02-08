@@ -100,6 +100,7 @@ winget install --no-upgrade --name "Node.js" --Id "OpenJS.NodeJS" --accept-packa
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 npm install sharewifi -g
 npm install -g easy-sharing
+npm install -g @pnp/cli-microsoft365
 npm install -g lolcatjs
 npm install -g figlet-cli
 

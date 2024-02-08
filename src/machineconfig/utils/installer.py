@@ -150,7 +150,6 @@ class Installer:
     @staticmethod
     def check_if_installed_already(exe_name: str, version: str):
         version_to_be_installed = version
-        # existing_version_cli = Terminal().run(f"{exe_name or tool_name} --version", shell="powershell").op_if_successfull_or_default(strict_err=True, strict_returcode=True)
         tmp_path = INSTALL_VERSION_ROOT.joinpath(exe_name).create(parents_only=True)
         if tmp_path.exists(): existing_version = tmp_path.read_text().rstrip()
         else: existing_version = None
@@ -177,19 +176,33 @@ def get_installed_cli_apps():
     return apps
 
 
-def get_cli_py_installers(system: str, dev: bool) -> list[Installer]:
-    if system == "Windows": import machineconfig.jobs.python_windows_installers as inst
-    else: import machineconfig.jobs.python_linux_installers as inst
-    import machineconfig.jobs.python_generic_installers as gens
-    path = P(inst.__file__).parent
-    gens_path = P(gens.__file__).parent
+def get_installers(system: str, dev: bool) -> list[Installer]:
+    if system == "Windows": import machineconfig.jobs.python_windows_installers as os_specific_installer
+    else: import machineconfig.jobs.python_linux_installers as os_specific_installer
+    import machineconfig.jobs.python_generic_installers as generic_installer
+    path = P(os_specific_installer.__file__).parent
+    gens_path = P(generic_installer.__file__).parent
     if dev:
         path = path.joinpath("dev")
         gens_path = gens_path.joinpath("dev")
     res1: dict[str, Any] = Read.json(path=path.joinpath("config.json"))
     res2: dict[str, Any] = Read.json(path=gens_path.joinpath("config.json"))
     res2.update(res1)
-    return [Installer.from_dict(d) for d in res2.values()]
+    return [Installer.from_dict(d=d) for d in res2.values()]
+
+
+def get_py_installer(system: str, dev: bool) -> list[P]:
+    if system == "Windows": import machineconfig.jobs.python_windows_installers as os_specific_installer
+    else: import machineconfig.jobs.python_linux_installers as os_specific_installer
+    import machineconfig.jobs.python_generic_installers as generic_installer
+    os_specific_path = P(os_specific_installer.__file__).parent
+    gen_path = P(generic_installer.__file__).parent
+    if dev:
+        os_specific_path = os_specific_path.joinpath("dev")
+        gen_path = gen_path.joinpath("dev")
+    res1 = os_specific_path.search("*.py", not_in=["__init__"]).list
+    res2 = gen_path.search("*.py", not_in=["__init__"]).list
+    return res1 + res2
 
 
 def install_all(installers: L[Installer], safe: bool = False, jobs: int = 10, fresh: bool = False):

@@ -10,7 +10,7 @@ success_symbol = '[➜](bold green)'
 [username]
 style_user = 'red bold'
 style_root = 'black bold'
-format = '💁‍♂️[$user]($style) '
+format = '[$user]($style) '
 disabled = false
 show_always = true
 
@@ -20,7 +20,7 @@ format = '[$ssh_symbol](bold blue) @ [$hostname](bold blue) '
 disabled = false
 
 [os]
-format = "🖥️ [$symbol $version $codename $edition]($style)"
+format = "[$symbol $version $codename $edition]($style)"
 style = "bold italic bg:dark-blue fg:bright-green"
 disabled = false
 # $name

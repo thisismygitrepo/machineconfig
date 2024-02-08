@@ -5,7 +5,7 @@
 # import subprocess
 from crocodile.core import List as L
 from machineconfig.utils.utils import LIBRARY_ROOT, choose_multiple_options
-from machineconfig.utils.installer import get_cli_py_installers, Installer, install_all
+from machineconfig.utils.installer import get_installers, Installer, install_all
 from platform import system
 from typing import Any, Optional, Literal, TypeAlias
 
@@ -15,7 +15,7 @@ WHICH: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstal
 
 def main(which: Optional[str] = None):
     sys = system()
-    installers = get_cli_py_installers(dev=False, system=sys)
+    installers = get_installers(dev=False, system=sys)
     default = "AllEssentials"
     options = ["SystemInstallers", "OtherDevApps", "EssentialsAndOthers", "PrecheckedCloudInstaller"]
     options = [default] + options
@@ -34,9 +34,9 @@ def main(which: Optional[str] = None):
 
 def get_program(program_name: str, options: list[str], installers: list[Installer]):
     if program_name == "AllEssentials" or program_name == "EssentialsAndOthers":
-        installers_ = get_cli_py_installers(dev=False, system=system())
+        installers_ = get_installers(dev=False, system=system())
         if program_name == "EssentialsAndOthers":
-            installers_ += get_cli_py_installers(dev=True, system=system())
+            installers_ += get_installers(dev=True, system=system())
         install_all(installers=L(installers))
         program = ""
     elif program_name == "SystemInstallers":
@@ -50,9 +50,10 @@ def get_program(program_name: str, options: list[str], installers: list[Installe
             if sub_program.startswith("#winget"): sub_program = sub_program[1:]
             program += "\n" + sub_program
     elif program_name == "OtherDevApps":
-        installers = get_cli_py_installers(dev=True, system=system())
+        installers = get_installers(dev=True, system=system())
         options__: list[str] = [x.get_description() for x in installers]
-        program_names = choose_multiple_options(msg="", options=sorted(options__), header="CHOOSE DEV APP")
+        program_names = choose_multiple_options(msg="", options=sorted(options__) + ["all"], header="CHOOSE DEV APP")
+        if "all" in program_names: program_names = options__
         program = ""
         for name in program_names:
             try:
@@ -62,8 +63,6 @@ def get_program(program_name: str, options: list[str], installers: list[Installe
                 print(f"{options__=}")
                 raise ve
             sub_program = installers[idx].install_robust(version=None)  # finish the task
-            # sub_program = "echo 'Finished Installation'"  # write an empty program
-            # program += "\n" + ""sub_program
     elif program_name == "PrecheckedCloudInstaller":
         from machineconfig.jobs.python.check_installations import PrecheckedCloudInstaller
         ci = PrecheckedCloudInstaller()

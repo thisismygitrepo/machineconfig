@@ -18,14 +18,14 @@ config = {
 
 
 def main(version: Optional[str]):
-    self = Installer.from_dict(config)
-    downloaded, version_to_be_installed = self.download(version=version)
-    _= version_to_be_installed
-
     if platform.system() == "Windows":
         program = "winget install wez.wezterm"
     elif platform.system() == "Linux":
         # as per https://wezfurlong.org/wezterm/install/linux.html#installing-on-ubuntu-and-debian-based-systems
+        self = Installer.from_dict(config)
+        downloaded, version_to_be_installed = self.download(version=version)
+        _= version_to_be_installed
+
         program = f"""
 sudo apt install -y {downloaded}
 rm {downloaded}
