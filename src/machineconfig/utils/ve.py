@@ -48,11 +48,10 @@ def get_installed_interpreters() -> list[P]:
     system = platform.system()
     if system == "Windows":
         tmp: list[P] = P.get_env().PATH.search("python.exe").reduce().list[1:]
-        List(tmp).print()
     else:
         tmp = list(set(List(P.get_env().PATH.search("python3*").reduce()).filter(lambda x: not x.is_symlink() and "-" not in x)))  # type: ignore
-        List(tmp).print()
-    return [P(x) for x in tmp]
+    List(tmp).print()
+    return list(set([P(x) for x in tmp]))
 
 
 def get_ve_specs(ve_path: P) -> dict[str, str]:

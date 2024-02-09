@@ -1,24 +1,24 @@
 
 
 
-try {
-    Import-Module -Name Terminal-Icons
+# try {
+#     Import-Module -Name Terminal-Icons
 
-    # Shows navigable menu of all options when hitting Tab
-    Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
-    Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
-    Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
-    # Set-PSReadlineOption -PredictionSource History
-    # Set-PSReadlineOption -PredictionViewStyle History
-    # see how to get dynamic help with prerelease
-}
-catch [System.Management.Automation.CommandNotFoundException] {
-    # Suppresses the "module not found" error
-}
-catch {
-    # Handles other types of errors
-    Write-Output $_.Exception.Message
-}
+#     # Shows navigable menu of all options when hitting Tab
+#     Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+#     Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
+#     Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
+#     # Set-PSReadlineOption -PredictionSource History
+#     # Set-PSReadlineOption -PredictionViewStyle History
+#     # see how to get dynamic help with prerelease
+# }
+# catch [System.Management.Automation.CommandNotFoundException] {
+#     # Suppresses the "module not found" error
+# }
+# catch {
+#     # Handles other types of errors
+#     Write-Output $_.Exception.Message
+# }
 
 # PATH extension =====================================================
 # $env:Path += ";$HOME\code\machineconfig\src\machineconfig\scripts\windows;$HOME\dotfiles\scripts\windows;C:\Program Files (x86)\GnuWin32\bin;C:\Program Files\CodeBlocks\MinGW\bin;C:\Program Files\nu\bin;C:\Program Files\Graphviz\bin"
