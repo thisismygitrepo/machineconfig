@@ -1,4 +1,12 @@
 {
+  "pistol": {
+    "repo_url": "https://github.com/doronbehar/pistol",
+    "doc": "file previewer.",
+    "filename_template_windows_amd_64": "",
+    "filename_template_linux_amd_64": "pistol-static-linux-x86_64",
+    "strip_v": true,
+    "exe_name": "pistol"
+  },
   "diskonaut": {
     "repo_url": "https://github.com/imsnif/diskonaut",
     "doc": "diskonaut is a terminal disk space navigator.",

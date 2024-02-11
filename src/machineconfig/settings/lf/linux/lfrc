@@ -3,7 +3,7 @@ set scrolloff 10      # space on top and bottom of screen
 set icons true          # show icons next to files
 set period 1          # interval to check for directory updates
 set hidden true         # show hidden files by default
-set incsearch o       # jump to first match after each keystroke in search
+set incsearch true       # jump to first match after each keystroke in search
 set dircounts true      # show number of items in directory instead of sie
 set info "size"       # list directory information on the right
 set sortby "natural"  # don't sort files in any special way
@@ -13,14 +13,14 @@ set mouse false  # enable mouse support
 set number true  # show line numbers
 
 set preview true        # preview file on the right pane
-# set sixel true
 # set previewer chafa --format sixel --work 9 --optimize 9 --stretch --zoom --size 140x80
-# also see pistol file previewer.
 set previewer ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh
+set cleaner ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/cleaner.sh
 # set previewer pistol
 
-set SHELL bash
-set EDITOR code 
+# set sixels true
+# set SHELL bash
+# set EDITOR code 
 # set colors true
 set ratios '1:2:3'  # ratio of pane widths
 # set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"
@@ -46,6 +46,9 @@ set ratios '1:2:3'  # ratio of pane widths
 # avoid using confusing keys that are already bound to other functions by other programs, e.g. the console itself, like ctrl+c
 # default reference: https://pkg.go.dev/github.com/gokcehan/lf
 
+
+# test image viewer
+map Q !~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh "$f"
 
 # key bindings
 map vmap v  # default is invert

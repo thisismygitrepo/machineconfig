@@ -168,6 +168,14 @@
         "strip_v": false,
         "exe_name": "lf"
     },
+    "lsd": {
+        "repo_url": "https://github.com/lsd-rs/lsd",
+        "doc": "lsd is a modern ls with a lot of pretty colors and font-awesome icons.",
+        "filename_template_windows_amd_64": "lsd-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "lsd-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "lsd"
+    },
     "mprocs": {
         "repo_url": "https://github.com/pvolok/mprocs",
         "doc": "Windows/Linux poorman's zellij",

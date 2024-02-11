@@ -26,13 +26,15 @@ machineconfig_path=$HOME/code/machineconfig/src/machineconfig
 . $machineconfig_path/settings/lf/linux/exe/lfcd.sh
 . $machineconfig_path/settings/tere/terecd.sh
 
+# set alias l to lsd -la
+alias l='lsd -la'
+
 # echo "Initing zoxide ..."
 # from https://github.com/ajeetdsouza/zoxide
 eval "$(zoxide init bash)"
 
 # from https://github.com/starship/starship
 eval "$(starship init bash)"
-
 
 # LEVE THIS IN THE END TO AVOID EXECUTION FAILURE OF THE REST OF THE SCRIPT
 # from https://github.com/cantino/mcfly
