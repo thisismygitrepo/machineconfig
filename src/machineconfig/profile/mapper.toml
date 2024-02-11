@@ -96,6 +96,10 @@ colors = {this = '~/.config/lf/colors', to_this = 'LIBRARY_ROOT/settings/lf/linu
 config = {this = '~/.config/lf/lfrc', to_this = 'LIBRARY_ROOT/settings/lf/linux/lfrc'}
 icons = {this = '~/.config/lf/icons', to_this = 'LIBRARY_ROOT/settings/lf/linux/icons'}
 
+[broot]
+config = {this = '~/.config/broot/conf.toml', to_this = 'LIBRARY_ROOT/settings/broot/conf.toml'}
+
+
 [gromit_linux]
 config = {this = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg', to_this = 'LIBRARY_ROOT/settings/gromit-mpx/gromit-mpx.cfg'}
 
