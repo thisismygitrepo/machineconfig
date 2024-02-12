@@ -191,20 +191,6 @@ def get_installers(system: str, dev: bool) -> list[Installer]:
     return [Installer.from_dict(d=d) for d in res2.values()]
 
 
-def get_py_installer(system: str, dev: bool) -> list[P]:
-    if system == "Windows": import machineconfig.jobs.python_windows_installers as os_specific_installer
-    else: import machineconfig.jobs.python_linux_installers as os_specific_installer
-    import machineconfig.jobs.python_generic_installers as generic_installer
-    os_specific_path = P(os_specific_installer.__file__).parent
-    gen_path = P(generic_installer.__file__).parent
-    if dev:
-        os_specific_path = os_specific_path.joinpath("dev")
-        gen_path = gen_path.joinpath("dev")
-    res1 = os_specific_path.search("*.py", not_in=["__init__"]).list
-    res2 = gen_path.search("*.py", not_in=["__init__"]).list
-    return res1 + res2
-
-
 def install_all(installers: L[Installer], safe: bool = False, jobs: int = 10, fresh: bool = False):
     if fresh: INSTALL_VERSION_ROOT.delete(sure=True)
     if safe:
