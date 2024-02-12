@@ -36,16 +36,24 @@ case "$file" in
     
     # if $x is not empty string:
     if [ -n "$x" ]; then
-        echo "viu3"
+        echo "Dimensions provided"
         viu "$file" -x "$x" -y "$y" -w "$width" -h "$height"
-        echo "viu1"
+        echo "Finished viu"
         chafa "$file"
+        echo "Finished chafa"
     else 
-        echo "viu2"
+        echo "No dimensions provided"
         viu "$file"
     fi
     exit 0
     ;;
+
+#   *.md)
+#     glow "$file"
+#     exit 0
+#     ;;
+  *)
+
 esac
 
 # case "$(file -Lb --mime-type -- "$1")" in

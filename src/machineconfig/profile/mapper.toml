@@ -99,6 +99,8 @@ icons = {this = '~/.config/lf/icons', to_this = 'LIBRARY_ROOT/settings/lf/linux/
 [broot]
 config = {this = '~/.config/broot/conf.toml', to_this = 'LIBRARY_ROOT/settings/broot/conf.toml'}
 
+[pistol_linux]
+config = {this = '~/.config/pistol/pistol.conf', to_this = 'LIBRARY_ROOT/settings/pistol/pistol.conf'}
 
 [gromit_linux]
 config = {this = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg', to_this = 'LIBRARY_ROOT/settings/gromit-mpx/gromit-mpx.cfg'}

@@ -14,6 +14,9 @@ typst:
   ppi: 300
 
 options:
+  strict_front_matter_parsing: false
+    # needed so that the `class: invert` command is ignored
+
   end_slide_shorthand: true
 
     # whether slides are automatically terminated when a slide title is found.
