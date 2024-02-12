@@ -53,8 +53,9 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
 
 
 class Installer:
-    def __init__(self, repo_url: str, doc: str, filename_template_windows_amd_64: str, filename_template_linux_amd_64: str, strip_v: bool, exe_name: str):
+    def __init__(self, repo_url: str, name: str, doc: str, filename_template_windows_amd_64: str, filename_template_linux_amd_64: str, strip_v: bool, exe_name: str):
         self.repo_url = repo_url
+        self.name = name
         self.doc = doc
         self.filename_template_windows_amd_64 = filename_template_windows_amd_64
         self.filename_template_linux_amd_64 = filename_template_linux_amd_64
@@ -64,8 +65,8 @@ class Installer:
     def get_description(self): return f"{self.exe_name} -- {self.doc}"
     def to_dict(self): return self.__dict__
     @staticmethod
-    def from_dict(d: dict[str, Any]):
-        try: return Installer(**d)
+    def from_dict(d: dict[str, Any], name: str):
+        try: return Installer(name=name, **d)
         except Exception as ex:
             Struct(d).print(as_config=True)
             raise ex
@@ -75,8 +76,8 @@ class Installer:
         path = choose_one_option(options=LIBRARY_ROOT.joinpath("jobs").search("config.json", r=True).list)
         config: dict[str, Any] = Read.json(path)  # /python_generic_installers/config.json"))
         # binary = choose_one_option(options=list(config.keys()), fzf=True)
-        for binary in list(config.keys()):
-            installer = Installer.from_dict(config[binary])
+        for keys, dict_ in config.items():
+            installer = Installer.from_dict(d=dict_, name=keys)
             installer.install(version=None)
 
     def install_robust(self, version: Optional[str]):
@@ -89,6 +90,29 @@ class Installer:
         except Exception as ex:
             print(ex)
             return f"Failed at {self.exe_name} with {ex}"
+
+    def install(self, version: Optional[str]):
+        if self.repo_url == "CUSTOM":
+            import machineconfig.jobs.script_installer as custom_installer
+            installer_path = P(custom_installer.__file__).parent.joinpath(self.exe_name + ".py")
+            import runpy
+            program = runpy.run_path(installer_path, run_name="__main__")['main'](version=version)
+            Terminal().run(program, shell="powershell")
+        else:
+            downloaded, version_to_be_installed = self.download(version=version)
+            if downloaded.str.endswith(".deb"):
+                assert platform.system() == "Linux"
+                Terminal().run(f"sudo apt install -y {downloaded}").print_if_unsuccessful(desc="Installing .deb", strict_err=True, strict_returncode=True)
+                downloaded.delete(sure=True)
+            else:
+                if platform.system() == "Windows": exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True, rename_to=self.exe_name + ".exe")
+                elif platform.system() == "Linux": exe = find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True, rename_to=self.exe_name)
+                else: raise NotImplementedError(f"System {platform.system()} not implemented")
+                if exe.name.replace(".exe", "") != self.exe_name:
+                    from rich import print as pprint
+                    from rich.panel import Panel
+                    pprint(Panel(f"Expected exe name, [red]{self.exe_name}! Attained name: {exe.name}", title="exe mismatch", subtitle=self.repo_url))
+        INSTALL_VERSION_ROOT.joinpath(self.exe_name).create(parents_only=True).write_text(version_to_be_installed)
 
     def download(self, version: Optional[str]):
         print(self.repo_url, type(self.repo_url))
@@ -115,22 +139,6 @@ class Installer:
         print("Downloading", download_link.as_url_str())
         downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
         return downloaded, version_to_be_installed
-
-    def install(self, version: Optional[str]):
-        downloaded, version_to_be_installed = self.download(version=version)
-        if downloaded.str.endswith(".deb"):
-            assert platform.system() == "Linux"
-            Terminal().run(f"sudo apt install -y {downloaded}").print_if_unsuccessful(desc="Installing .deb", strict_err=True, strict_returncode=True)
-            downloaded.delete(sure=True)
-        else:
-            if platform.system() == "Windows": exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True, rename_to=self.exe_name + ".exe")
-            elif platform.system() == "Linux": exe = find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True, rename_to=self.exe_name)
-            else: raise NotImplementedError(f"System {platform.system()} not implemented")
-            if exe.name.replace(".exe", "") != self.exe_name:
-                from rich import print as pprint
-                from rich.panel import Panel
-                pprint(Panel(f"Expected exe name, [red]{self.exe_name}! Attained name: {exe.name}", title="exe mismatch", subtitle=self.repo_url))
-        INSTALL_VERSION_ROOT.joinpath(self.exe_name).create(parents_only=True).write_text(version_to_be_installed)
 
     @staticmethod
     def get_github_release(repo_url: str, version: Optional[str] = None):
@@ -188,7 +196,7 @@ def get_installers(system: str, dev: bool) -> list[Installer]:
     res1: dict[str, Any] = Read.json(path=path.joinpath("config.json"))
     res2: dict[str, Any] = Read.json(path=gens_path.joinpath("config.json"))
     res2.update(res1)
-    return [Installer.from_dict(d=d) for d in res2.values()]
+    return [Installer.from_dict(d=vd, name=k) for k, vd in res2.items()]
 
 
 def install_all(installers: L[Installer], safe: bool = False, jobs: int = 10, fresh: bool = False):

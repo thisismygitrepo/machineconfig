@@ -1,5 +1,21 @@
 
 {
+    "wezterm": {
+        "repo_url": "CUSTOM",
+        "doc": "cross-platform terminal emulator",
+        "filename_template_windows_amd_64": "WezTerm-windows-{}.zip",
+        "filename_template_linux_amd_64": "wezterm-{}.Ubuntu22.04.deb",
+        "strip_v": false,
+        "exe_name": "wezterm"
+    },
+    "ngrok": {
+        "repo_url": "CUSTOM",
+        "doc": "ngrok secure introspectable tunnels to localhost",
+        "filename_template_windows_amd_64": "ngrok-stable-windows-amd64.zip",
+        "filename_template_linux_amd_64": "ngrok-stable-linux-amd64.zip",
+        "strip_v": false,
+        "exe_name": "ngrok"
+    },
     "chatgpt": {
         "repo_url": "https://github.com/j178/chatgpt",
         "doc": "chagpt cli",

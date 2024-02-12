@@ -3,9 +3,11 @@
 """
 
 import platform
+from typing import Optional
 
 
-def main():
+def main(version: Optional[str]):
+    _ = version
     if platform.system() == "Windows":
         program = "winget install ngrok.ngrok"
     elif platform.system() == "Linux":
@@ -20,10 +22,8 @@ sudo apt update && sudo apt install ngrok
 """
     else:
         raise NotImplementedError("unsupported platform")
-    from crocodile.meta import Terminal
-    Terminal().run(program, shell="powershell")
     return program
 
 
 if __name__ == "__main__":
-    main()
+    pass

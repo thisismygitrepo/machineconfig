@@ -20,4 +20,4 @@ def main(version: Optional[str] = None):
 
 
 if __name__ == '__main__':
-    main()
+    pass
