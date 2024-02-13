@@ -98,6 +98,8 @@ class Installer:
             import runpy
             program = runpy.run_path(installer_path, run_name="__main__")['main'](version=version)
             Terminal().run(program, shell="powershell")
+        elif "npm " in self.repo_url:
+            Terminal().run(self.repo_url, shell="powershell").print_if_unsuccessful(desc="npm install", strict_err=True, strict_returncode=True)
         else:
             downloaded, version_to_be_installed = self.download(version=version)
             if downloaded.str.endswith(".deb"):

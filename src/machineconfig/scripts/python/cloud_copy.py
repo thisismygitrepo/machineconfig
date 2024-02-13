@@ -14,7 +14,7 @@ from typing import Optional
 
 
 @RepeatUntilNoException()
-def get_shared_file(url: Optional[str] = None, folder: Optional[str] = None):
+def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None):
     folder_obj = P.cwd() if folder is None else P(folder)
 
     if os.environ.get("DECRYPTION_PASSWORD") is not None:
@@ -67,7 +67,7 @@ def arg_parser() -> None:
     args_obj = Args(**args_dict)
     Struct(args_obj.__dict__).print(as_config=True, title=f"CLI config")
 
-    if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")): return get_shared_file(url=source, folder=target)
+    if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")): return get_securely_shared_file(url=source, folder=target)
     if args_obj.rel2home is True and args_obj.root is None: args_obj.root = "myhome"
 
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)

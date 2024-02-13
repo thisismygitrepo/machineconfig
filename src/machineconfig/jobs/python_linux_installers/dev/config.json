@@ -1,4 +1,28 @@
 {
+    "ytui-music": {
+        "repo_url": "https://github.com/sudipghimire533/ytui-music",
+        "doc": "A terminal based YouTube music player written in Rust.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "ytui_music-linux-amd64",
+        "strip_v": true,
+        "exe_name": "ytui-music"
+    },
+    "termusic": {
+        "repo_url": "https://github.com/tramhao/termusic",
+        "doc": "A terminal-based music player written in Rust.",
+        "filename_template_windows_amd_64": "termusic-{}-x86_64-windows.zip",
+        "filename_template_linux_amd_64": "termusic-{}-x86_64-linux.tar.xz",
+        "strip_v": false,
+        "exe_name": "termusic"
+    },
+    "kronos": {
+        "repo_url": "https://github.com/TrevorSatori/kronos",
+        "doc": "A Customizable Terminal Music Player For Offline Listening",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "Kronos",
+        "strip_v": true,
+        "exe_name": "kronos"
+    },
     "nnn": {
         "repo_url": "https://github.com/jarun/nnn",
         "doc": "A terminal-based file manager.",
