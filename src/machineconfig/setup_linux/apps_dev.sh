@@ -83,8 +83,15 @@ yes '' | sed 3q; echo "----------------------------- installing easy-sharing ---
 # Making sure npm is available in the terminal
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-npm install -g easy-sharing  # https://github.com/parvardegr/sharing
+npm install -g easy-sharing 
+# https://github.com/parvardegr/sharing
 # https://github.com/mifi/ezshare
+
+
+yes '' | sed 3q; echo "----------------------------- installing m365 ----------------------------"; yes '' | sed 3q
+# Making sure npm is available in the terminal
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 npm install -g @pnp/cli-microsoft365
 
 

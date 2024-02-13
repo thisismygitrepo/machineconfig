@@ -15,7 +15,7 @@ WHICH: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstal
 
 def main(which: Optional[str] = None):
     sys = system()
-    installers = get_installers(dev=False, system=sys)
+    installers = get_installers(dev=False, system=sys) + get_installers(dev=True, system=sys)
     default = "AllEssentials"
     options = ["SystemInstallers", "OtherDevApps", "EssentialsAndOthers", "PrecheckedCloudInstaller"]
     options = [default] + options
