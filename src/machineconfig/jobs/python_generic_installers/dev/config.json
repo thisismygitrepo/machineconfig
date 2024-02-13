@@ -1,4 +1,20 @@
 {
+    "AzureDataStudio": {
+        "repo_url": "CUSTOM",
+        "doc": "Azure Data Studio is a data management tool that enables working with SQL Server, Azure SQL DB and SQL DW from Windows, macOS and Linux.",
+        "filename_template_windows_amd_64": "AzureDataStudio-{}.exe",
+        "filename_template_linux_amd_64": "azuredatastudio-{}.deb",
+        "strip_v": true,
+        "exe_name": "azuredatastudio"
+    },
+    "vscode": {
+        "repo_url": "CUSTOM",
+        "doc": "Visual Studio Code",
+        "filename_template_windows_amd_64": "VSCodeSetup-{}.exe",
+        "filename_template_linux_amd_64": "code_{}.deb",
+        "strip_v": true,
+        "exe_name": "code"
+    },
     "marp": {
         "repo_url": "npm install -g @marp-team/marp-cli",
         "doc": "Markdown presentation writer",

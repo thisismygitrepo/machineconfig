@@ -1,13 +1,11 @@
 
 from typing import Optional
-
-
-__doc__ = """Azure Data Studio is a data management tool that enables working with SQL Server, Azure SQL DB and SQL DW from Windows, macOS and Linux."""
+import platform
 
 
 def main(version: Optional[str] = None):
     _ = version
-    return f"""
+    if platform.system() == "Linux": return f"""
 
 curl https://azuredatastudio-update.azurewebsites.net/latest/linux-x64/stable -o ~/azuredatastudio-linux-x64.tar.gz
 tar -xvf ~/azuredatastudio-linux-<version string>.tar.gz
@@ -15,6 +13,9 @@ echo 'export PATH="$PATH:~/azuredatastudio-linux-x64"' >> ~/.bashrc
 source ~/.bashrc
 
 """
+    elif platform.system() == "Windows": return "winget install -e --id Microsoft.AzureDataStudio"
+    else:
+        raise NotImplementedError(f"Your platform {platform.system()} is not supported!")
 
 
 if __name__ == '__main__':

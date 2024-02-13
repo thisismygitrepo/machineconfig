@@ -3,10 +3,12 @@
 """
 
 from typing import Optional
+import platform
 
+def main(version: Optional[str] = None):
 
-__doc__ = """vs code installer as per https://code.visualstudio.com/docs/setup/linux"""
-code = """
+    if platform.system() == 'Linux':
+        code = """
 
 sudo apt-get install wget gpg
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
@@ -20,8 +22,8 @@ sudo apt install code -y # or code-insiders
 
 """
 
-
-def main(version: Optional[str] = None):
+    elif platform.system() == 'Windows':
+        code = "winget install -e --id Microsoft.VisualStudioCode"
     _ = version
     return code
 
