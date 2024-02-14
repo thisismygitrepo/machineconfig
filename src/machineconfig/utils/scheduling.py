@@ -19,7 +19,7 @@ SUCCESS = "success"
 DEFAULT_CONFIG = """
 [specs]
 frequency = 30d
-start = 2023-11-01 01:00
+start = 2024-01-01 01:00
 
 [runtime]
 venv = ve
