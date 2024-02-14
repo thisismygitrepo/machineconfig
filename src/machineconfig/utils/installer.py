@@ -117,7 +117,6 @@ class Installer:
         INSTALL_VERSION_ROOT.joinpath(self.exe_name).create(parents_only=True).write_text(version_to_be_installed)
 
     def download(self, version: Optional[str]):
-        print(self.repo_url, type(self.repo_url))
         if "github" not in self.repo_url or ".zip" in self.repo_url or ".tar.gz" in self.repo_url:
             download_link = P(self.repo_url)
             version_to_be_installed = "predefined_url"
@@ -138,7 +137,7 @@ class Installer:
                 file_name = self.filename_template_linux_amd_64.format(version_to_be_installed_stripped)
             else: raise NotImplementedError(f"System {platform.system()} not implemented")
             download_link = release_url.joinpath(file_name)
-        print("Downloading", download_link.as_url_str())
+        print("Downloading: ", download_link.as_url_str())
         downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
         return downloaded, version_to_be_installed
 
