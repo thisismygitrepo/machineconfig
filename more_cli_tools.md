@@ -27,16 +27,14 @@
 * https://github.com/toolleeo/cli-apps
 * https://github.com/alebcay/awesome-shell
 * https://github.com/Geektrovert/AwsTerm
-# https://github.com/vinta/awesome-python
+* https://github.com/vinta/awesome-python
 
 
 # Files
 * send and recieve over internet by sending file to temproary hosting server. https://github.com/timvisee/ffsend  # better option is transfer_sh which requires zero installation.
-* send and recieve over local network https://github.com/SpatiumPortae/portal
 * torrent https://github.com/transmission/transmission/
 * https://github.com/magic-wormhole/magic-wormhole
 * https://github.com/gopasspw/gopass
-
 * https://github.com/BlueHatbRit/mdpdf -- security volunarability. https://github.com/simonhaenisch/md-to-pdf  -- use this instead
 
 # Search
@@ -55,12 +53,11 @@
 * https://github.com/ellie/atuin#install (mcfly alternative)
 * https://github.com/bootandy/dust (dua alternative)
 * lazygit  alterenative for gitui
-* asdf alternative in rust https://github.com/jdxcode/rtx#apt
+* https://github.com/jdxcode/rtx#apt asdf alternative in rust
 
 # terminal emulators
 * https://github.com/cmderdev/cmder
 * https://github.com/sedwards2009/extraterm
-* starship and alacrity.
 
 # Terminal Sharing: 
 * Comparison: https://gist.github.com/miguelmota/04245255f9dc9a862ac2bd682bdbab06

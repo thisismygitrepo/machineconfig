@@ -130,12 +130,15 @@ class Installer:
             version_to_be_installed = "predefined_url"
         else:
             release_url, version_to_be_installed = self.get_github_release(repo_url=self.repo_url, version=version)
+            print(f"Version to be installed: {version_to_be_installed}")
+            print(f"Release URL: {release_url}")
             version_to_be_installed_stripped = version_to_be_installed.replace("v", "") if self.strip_v else version_to_be_installed
             if platform.system() == "Windows":
                 file_name = self.filename_template_windows_amd_64.format(version_to_be_installed_stripped)
             elif platform.system() == "Linux":
                 file_name = self.filename_template_linux_amd_64.format(version_to_be_installed_stripped)
             else: raise NotImplementedError(f"System {platform.system()} not implemented")
+            print(f"File name", file_name)
             download_link = release_url.joinpath(file_name)
         print("Downloading: ", download_link.as_url_str())
         downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()

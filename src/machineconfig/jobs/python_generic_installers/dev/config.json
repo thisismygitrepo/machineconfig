@@ -182,5 +182,21 @@
         "filename_template_linux_amd_64": "vtm_linux_x86_64.tar.gz",
         "strip_v": false,
         "exe_name": "vtm"
+    },
+    "extraterm": {
+        "repo_url": "https://github.com/sedwards2009/extraterm/",
+        "doc": "Terminal emulator",
+        "filename_template_windows_amd_64": "extratermqt-{}-windows-x64.zip",
+        "filename_template_linux_amd_64": "extratermqt-{}-linux-x64.zip",
+        "strip_v": true,
+        "exe_name": "extraterm"
+    },
+    "portal": {
+        "repo_url": "https://github.com/SpatiumPortae/portal",
+        "doc": "A terminal-based file transfer between two computers.",
+        "filename_template_windows_amd_64": "portal_{}_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "portal_{}_Linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "portal"
     }
 }
