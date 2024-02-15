@@ -119,13 +119,21 @@
         "strip_v": false,
         "exe_name": "ots"
     },
-    "openpomodoro-cli": {
-        "repo_url": "https://github.com/open-pomodoro/openpomodoro-cli",
-        "doc": "Pomodoro timer for the command-line",
-        "filename_template_windows_amd_64": "openpomodoro-cli_{}_windows_amd64.tar.gz",
-        "filename_template_linux_amd_64": "openpomodoro-cli_{}_darwin_amd64.tar.gz",
+    "ffsend": {
+        "repo_url": "https://github.com/timvisee/ffsend",
+        "doc": "Send files in secure encrypted way over the internet.",
+        "filename_template_windows_amd_64": "ffsend-{}-windows-x64.exe",
+        "filename_template_linux_amd_64": "ffsend-{}-linux-x64",
+        "strip_v": false,
+        "exe_name": "ffsend"
+    },
+    "portal": {
+        "repo_url": "https://github.com/SpatiumPortae/portal",
+        "doc": "A terminal-based file transfer between two computers.",
+        "filename_template_windows_amd_64": "portal_{}_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "portal_{}_Linux_x86_64.tar.gz",
         "strip_v": true,
-        "exe_name": "pomodoro"
+        "exe_name": "portal"
     },
     "qrcp": {
         "repo_url": "https://github.com/claudiodangelis/qrcp",
@@ -142,6 +150,14 @@
         "filename_template_linux_amd_64": "qrscan-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": true,
         "exe_name": "qrscan"
+    },
+    "openpomodoro-cli": {
+        "repo_url": "https://github.com/open-pomodoro/openpomodoro-cli",
+        "doc": "Pomodoro timer for the command-line",
+        "filename_template_windows_amd_64": "openpomodoro-cli_{}_windows_amd64.tar.gz",
+        "filename_template_linux_amd_64": "openpomodoro-cli_{}_darwin_amd64.tar.gz",
+        "strip_v": true,
+        "exe_name": "pomodoro"
     },
     "rust-analyzer": {
         "repo_url": "https://github.com/rust-lang/rust-analyzer",
@@ -190,13 +206,5 @@
         "filename_template_linux_amd_64": "extratermqt-{}-linux-x64.zip",
         "strip_v": true,
         "exe_name": "extraterm"
-    },
-    "portal": {
-        "repo_url": "https://github.com/SpatiumPortae/portal",
-        "doc": "A terminal-based file transfer between two computers.",
-        "filename_template_windows_amd_64": "portal_{}_Windows_x86_64.zip",
-        "filename_template_linux_amd_64": "portal_{}_Linux_x86_64.tar.gz",
-        "strip_v": true,
-        "exe_name": "portal"
     }
 }

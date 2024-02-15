@@ -31,7 +31,6 @@
 
 
 # Files
-* send and recieve over internet by sending file to temproary hosting server. https://github.com/timvisee/ffsend  # better option is transfer_sh which requires zero installation.
 * torrent https://github.com/transmission/transmission/
 * https://github.com/magic-wormhole/magic-wormhole
 * https://github.com/gopasspw/gopass
