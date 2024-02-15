@@ -1,4 +1,8 @@
 
+"""Like yadm and dotter.
+"""
+
+
 from crocodile.file_management import P
 from machineconfig.profile.create import symlink
 from machineconfig.utils.utils import LIBRARY_ROOT, REPO_ROOT

@@ -192,11 +192,11 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.hyperfine  || true  # benchamrking
 fi
 
+yes '' | sed 3q; echo "----------------------------- installing nvim ----------------------------"; yes '' | sed 3q
 # sudo apt install neovim -y  # nvim, but not latest release
 # download neovim from release page
 # sudo apt remove neovim
 # sudo rm ~/.local/bin/nvim || true
-yes '' | sed 3q; echo "----------------------------- installing nvim ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   mkdir $HOME/tmp_install -p || true
   mkdir $HOME/.local/share -p || true
