@@ -8,6 +8,15 @@
         "strip_v": false,
         "exe_name": "wezterm"
     },
+    "ttyd": {
+        "repo_url": "https://github.com/tsl0922/ttyd",
+        "doc": "ttyd shares your terminal on the web.",
+        "filename_template_windows_amd_64": "ttyd.win32.exe",
+        "filename_template_linux_amd_64": "ttyd.x86_64",
+        "strip_v": true,
+        "exe_name": "ttyd"
+    },
+
     "ngrok": {
         "repo_url": "CUSTOM",
         "doc": "ngrok secure introspectable tunnels to localhost",
@@ -32,6 +41,7 @@
         "strip_v": true,
         "exe_name": "mods"
     },
+
     "glow": {
         "repo_url": "https://github.com/charmbracelet/glow/",
         "doc": "Render markdown on the CLI, with pizzazz!",
@@ -48,6 +58,15 @@
         "strip_v": true,
         "exe_name": "gum"
     },
+    "bat": {
+        "repo_url": "https://github.com/sharkdp/bat",
+        "doc": "A cat(1) clone with wings.",
+        "filename_template_windows_amd_64": "bat-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "bat-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "bat"
+    },
+
     "nushell": {
         "repo_url": "https://github.com/nushell/nushell",
         "doc": "A cross-platform shell in Rust.",
@@ -64,6 +83,7 @@
         "strip_v": false,
         "exe_name": "starship"
     },
+
     "rg": {
         "repo_url": "https://github.com/BurntSushi/ripgrep",
         "doc": "recursively searches directories for a regex pattern while respecting your gitignore rules",
@@ -88,14 +108,31 @@
         "strip_v": false,
         "exe_name": "fd"
     },
-    "bat": {
-        "repo_url": "https://github.com/sharkdp/bat",
-        "doc": "A cat(1) clone with wings.",
-        "filename_template_windows_amd_64": "bat-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "bat-{}-x86_64-unknown-linux-gnu.tar.gz",
+    "broot": {
+        "repo_url": "https://github.com/Canop/broot",
+        "doc": "broot is an fzf variant for folder structure and layered search.",
+        "filename_template_windows_amd_64": "https://dystroy.org/broot/download/x86_64-pc-windows-gnu/broot.exe",
+        "filename_template_linux_amd_64": "https://dystroy.org/broot/download/x86_64-linux/broot",
         "strip_v": false,
-        "exe_name": "bat"
+        "exe_name": "broot"
     },
+    "rga": {
+        "repo_url": "https://github.com/phiresky/ripgrep-all",
+        "doc": "ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz, etc.",
+        "filename_template_windows_amd_64": "ripgrep_all-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "ripgrep_all-{}-unknown-linux-musl.tar.gz",
+        "strip_v": false,
+        "exe_name": "rga"
+    },
+    "ouch": {
+        "repo_url": "https://github.com/ouch-org/ouch",
+        "doc": "A cli for extracting and creating archives in unified way.",
+        "filename_template_windows_amd_64": "ouch-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "ouch-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "ouch"
+    },
+
     "topgrade": {
         "repo_url": "https://github.com/topgrade-rs/topgrade",
         "doc": "Keeping your system up to date usually involves invoking multiple package managers.",
@@ -119,23 +156,7 @@
         "filename_template_windows_amd_64": "bottom_x86_64-pc-windows-msvc.zip",
         "strip_v": true,
         "exe_name": "btm"
-      },  
-    "broot": {
-        "repo_url": "https://github.com/Canop/broot",
-        "doc": "broot is an fzf variant for folder structure and layered search.",
-        "filename_template_windows_amd_64": "https://dystroy.org/broot/download/x86_64-pc-windows-gnu/broot.exe",
-        "filename_template_linux_amd_64": "https://dystroy.org/broot/download/x86_64-linux/broot",
-        "strip_v": false,
-        "exe_name": "broot"
-},
-    "browsh": {
-        "repo_url": "https://github.com/browsh-org/browsh",
-        "doc": "browser in the shell",
-        "filename_template_windows_amd_64": "browsh_{}_windows_amd64.exe",
-        "filename_template_linux_amd_64": "browsh_{}_linux_amd64",
-        "strip_v": true,
-        "exe_name": "browsh"
-    },
+      },
     "cpufetch": {
         "repo_url": "https://github.com/Dr-Noob/cpufetch",
         "doc": "cpufetch is a small yet fancy CPU architecture fetching tool, like neofetch but for CPUs.",
@@ -144,6 +165,15 @@
         "strip_v": false,
         "exe_name": "cpufetch"
     },
+    "procs": {
+        "repo_url": "https://github.com/dalance/procs/",
+        "doc": "procs is a modern replacement for ps written in Rust.",
+        "filename_template_windows_amd_64": "procs-{}-x86_64-windows.zip",
+        "filename_template_linux_amd_64": "procs-{}-x86_64-linux.zip",
+        "strip_v": false,
+        "exe_name": "procs"
+    },
+
     "delta": {
         "repo_url": "https://github.com/dandavison/delta",
         "doc": "A viewer for git and diff output",
@@ -184,6 +214,23 @@
         "strip_v": false,
         "exe_name": "lf"
     },
+    "tere": {
+        "repo_url": "https://github.com/mgunyho/tere",
+        "doc": "Tere is a terminal file explorer written in Rust. No more ls + cd",
+        "filename_template_windows_amd_64": "tere-{}-x86_64-pc-windows-gnu.zip",
+        "filename_template_linux_amd_64": "tere-{}-x86_64-unknown-linux-gnu.zip",
+        "strip_v": true,
+        "exe_name": "tere"
+    },
+    "zoxide": {
+        "repo_url": "https://github.com/ajeetdsouza/zoxide",
+        "doc": "A cd command that learns - easily navigate directories from the command-line",
+        "filename_template_windows_amd_64": "zoxide-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "zoxide-{}-x86_64-unknown-linux-musl.tar.gz",
+        "strip_v": true,
+        "exe_name": "zoxide"
+    },
+
     "lsd": {
         "repo_url": "https://github.com/lsd-rs/lsd",
         "doc": "lsd is a modern ls with a lot of pretty colors and font-awesome icons.",
@@ -200,22 +247,6 @@
         "strip_v": true,
         "exe_name": "mprocs"
     },
-    "ouch": {
-        "repo_url": "https://github.com/ouch-org/ouch",
-        "doc": "A cli for extracting and creating archives in unified way.",
-        "filename_template_windows_amd_64": "ouch-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "ouch-x86_64-unknown-linux-gnu.tar.gz",
-        "strip_v": false,
-        "exe_name": "ouch"
-    },
-    "procs": {
-        "repo_url": "https://github.com/dalance/procs/",
-        "doc": "procs is a modern replacement for ps written in Rust.",
-        "filename_template_windows_amd_64": "procs-{}-x86_64-windows.zip",
-        "filename_template_linux_amd_64": "procs-{}-x86_64-linux.zip",
-        "strip_v": false,
-        "exe_name": "procs"
-    },
     "rclone": {
         "repo_url": "https://github.com/rclone/rclone",
         "doc": "cli to sync to cloud storage providers.",
@@ -224,22 +255,7 @@
         "strip_v": false,
         "exe_name": "rclone"
     },
-    "tere": {
-        "repo_url": "https://github.com/mgunyho/tere",
-        "doc": "Tere is a terminal file explorer written in Rust. No more ls + cd",
-        "filename_template_windows_amd_64": "tere-{}-x86_64-pc-windows-gnu.zip",
-        "filename_template_linux_amd_64": "tere-{}-x86_64-unknown-linux-gnu.zip",
-        "strip_v": true,
-        "exe_name": "tere"
-    },
-    "ttyd": {
-        "repo_url": "https://github.com/tsl0922/ttyd",
-        "doc": "ttyd shares your terminal on the web.",
-        "filename_template_windows_amd_64": "ttyd.win32.exe",
-        "filename_template_linux_amd_64": "ttyd.x86_64",
-        "strip_v": true,
-        "exe_name": "ttyd"
-    },
+
     "watchexec": {
         "repo_url": "https://github.com/watchexec/watchexec",
         "doc": "Executes commands in response to file modifications.",
@@ -247,13 +263,6 @@
         "filename_template_linux_amd_64": "watchexec-{}-x86_64-unknown-linux-musl.tar.xz",
         "strip_v": true,
         "exe_name": "watchexec"
-    },
-    "zoxide": {
-        "repo_url": "https://github.com/ajeetdsouza/zoxide",
-        "doc": "A cd command that learns - easily navigate directories from the command-line",
-        "filename_template_windows_amd_64": "zoxide-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "zoxide-{}-x86_64-unknown-linux-musl.tar.gz",
-        "strip_v": true,
-        "exe_name": "zoxide"
     }
+
 }

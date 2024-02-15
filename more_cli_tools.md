@@ -1,15 +1,9 @@
 
-# IDE
-* https://github.com/ldelossa/nvim-ide?tab=readme-ov-file
-
 # Profilers
 * https://github.com/plasma-umass/scalene
 * https://github.com/benfred/py-spy
 * https://github.com/joerick/pyinstrument
 * https://github.com/bloomberg/memray
-
-# Browsers:
-* https://github.com/fathyb/carbonyl . See README for comparison
 
 # Sources:
 * https://github.com/sindresorhus/awesome
@@ -36,10 +30,16 @@
 * https://github.com/gopasspw/gopass
 * https://github.com/BlueHatbRit/mdpdf -- security volunarability. https://github.com/simonhaenisch/md-to-pdf  -- use this instead
 
-# Search
-* https://github.com/phiresky/ripgrep-all
+
+# search
+* find fd
+* ripgrep rg
+* ugrep
+* fzf
+* broot
 
 
+# Cli helper
 * https://github.com/datafolklabs/cement
 * https://github.com/pallets/click fire alternative
 * https://github.com/JaidedAI/EasyOCR
@@ -49,14 +49,12 @@
 * git grapth (rust) https://github.com/mlange-42/git-graph
 * https://github.com/cortex/ripasso rust password manager equivalent of gopass
 * https://github.com/nnethercote/counts
-* https://github.com/ellie/atuin#install (mcfly alternative)
 * https://github.com/bootandy/dust (dua alternative)
 * lazygit  alterenative for gitui
 * https://github.com/jdxcode/rtx#apt asdf alternative in rust
 
 # terminal emulators
 * https://github.com/cmderdev/cmder
-* https://github.com/sedwards2009/extraterm
 
 # Terminal Sharing: 
 * Comparison: https://gist.github.com/miguelmota/04245255f9dc9a862ac2bd682bdbab06
@@ -64,7 +62,6 @@
 # Networking
 * https://github.com/rustdesk/rustdesk/releases
 * parsec rdp
-* https://github.com/axetroy/forward-cli forward proxy server
 
 # recorder
 * pecpeck
@@ -78,9 +75,4 @@
 # https://github.com/ml-tooling/best-of-jupyter
 * https://github.com/yt-dlp/yt-dlp
 * https://github.com/ytdl-org/youtube-dl
-
-* "pylint.ignorePatterns", "mypy-type-checker.ignorePatterns" and "flake8.ignorePatterns".
-
-# Others
-* https://github.com/yt-dlp/yt-dlp/
 * https://github.com/Siriusmart/youtube-tui

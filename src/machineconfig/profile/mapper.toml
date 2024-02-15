@@ -148,6 +148,7 @@ config = {this = '~/.config/ngrol/ngrok.yml', to_this = '~/dotfiles/creds/tokens
 flake8 = {this = '~/.flake8', to_this = 'LIBRARY_ROOT/settings/linters/.flake8'}
 mypy = {this = '~/.mypy.ini', to_this = 'LIBRARY_ROOT/settings/linters/.mypy.ini'}
 ruff = {this = '~/.ruff.toml', to_this = 'LIBRARY_ROOT/settings/linters/.ruff.toml'}
+# * "pylint.ignorePatterns", "mypy-type-checker.ignorePatterns" and "flake8.ignorePatterns".
 
 
 [helix_windows]

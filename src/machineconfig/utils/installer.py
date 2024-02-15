@@ -62,7 +62,7 @@ class Installer:
         self.strip_v = strip_v
         self.exe_name = exe_name
     def __repr__(self) -> str: return f"Installer of {self.repo_url}"
-    def get_description(self): return f"{self.exe_name} -- {self.doc}"
+    def get_description(self): return f"{self.exe_name:<12} -- {self.doc}"
     def to_dict(self): return self.__dict__
     @staticmethod
     def from_dict(d: dict[str, Any], name: str):

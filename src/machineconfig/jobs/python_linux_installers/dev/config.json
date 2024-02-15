@@ -41,10 +41,27 @@
       },
     "atuin": {
         "repo_url": "https://github.com/atuinsh/atuin",
-        "doc": "Shell history search tool",
+        "doc": "Shell history search tool. Mcfly alternative",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "atuin-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
         "exe_name": "atuin"
+    },
+
+    "browsh": {
+        "repo_url": "https://github.com/browsh-org/browsh",
+        "doc": "browser in the shell",
+        "filename_template_windows_amd_64": "browsh_{}_windows_amd64.exe",
+        "filename_template_linux_amd_64": "browsh_{}_linux_amd64",
+        "strip_v": true,
+        "exe_name": "browsh"
+    },
+    "carbonyl": {
+        "repo_url": "",
+        "doc": "Brwoser in terminal. Browsh alternative.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "carbonyl.linux-amd64.zip",
+        "strip_v": false,
+        "exe_name": "carbonyl"
     }
 }
