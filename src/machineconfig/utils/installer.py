@@ -5,11 +5,12 @@ from rich.console import Console
 
 from crocodile.file_management import P, List as L, Read, Struct
 from crocodile.meta import Terminal
-from machineconfig.utils.utils import INSTALL_VERSION_ROOT, INSTALL_TMP_DIR, LIBRARY_ROOT
+from machineconfig.utils.utils import INSTALL_VERSION_ROOT, INSTALL_TMP_DIR, LIBRARY_ROOT, check_tool_exists
 
 # from dataclasses import dataclass
 from typing import Optional, Any
 import platform
+# import os
 
 
 def find_move_delete_windows(downloaded_file_path: P, exe_name: Optional[str] = None, delete: bool = True, rename_to: Optional[str] = None):
@@ -62,7 +63,13 @@ class Installer:
         self.strip_v = strip_v
         self.exe_name = exe_name
     def __repr__(self) -> str: return f"Installer of {self.repo_url}"
-    def get_description(self): return f"{self.exe_name:<12} -- {self.doc}"
+    def get_description(self):
+        # old_version_cli = Terminal().run(f"{self.exe_name} --version").op.replace("\n", "")
+        # old_version_cli = os.system(f"{self.exe_name} --version").replace("\n", "")
+        old_version_cli = check_tool_exists(self.exe_name)
+        old_version_cli_str = "✅" if old_version_cli else "❌"
+        # name_version = f"{self.exe_name} {old_version_cli_str}"
+        return f"{self.exe_name:<12} {old_version_cli_str} {self.doc}"
     def to_dict(self): return self.__dict__
     @staticmethod
     def from_dict(d: dict[str, Any], name: str):
@@ -82,9 +89,9 @@ class Installer:
 
     def install_robust(self, version: Optional[str]):
         try:
-            old_version_cli = Terminal().run(f"{self.exe_name} --version", shell="powershell").op.replace("\n", "")
+            old_version_cli = Terminal().run(f"{self.exe_name} --version").op.replace("\n", "")
             self.install(version=version)
-            new_version_cli = Terminal().run(f"{self.exe_name} --version", shell="powershell").op.replace("\n", "")
+            new_version_cli = Terminal().run(f"{self.exe_name} --version").op.replace("\n", "")
             if old_version_cli == new_version_cli: return f"😑 {self.exe_name}, same version: {old_version_cli}"
             else: return f"🤩 {self.exe_name} updated from {old_version_cli} === to ===> {new_version_cli}"
         except Exception as ex:
