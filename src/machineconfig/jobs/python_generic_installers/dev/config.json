@@ -138,8 +138,8 @@
     "qrcp": {
         "repo_url": "https://github.com/claudiodangelis/qrcp",
         "doc": "qr code file transfer",
-        "filename_template_windows_amd_64": "qrcp_v{version}_Windows_x86_64.tar.gz",
-        "filename_template_linux_amd_64": "qrcp_v{version}_linux_x86_64.tar.gz",
+        "filename_template_windows_amd_64": "qrcp_{}_windows_amd64.tar.gz",
+        "filename_template_linux_amd_64": "qrcp_{}_linux_amd64.tar.gz",
         "strip_v": true,
         "exe_name": "qrcp"
     },
@@ -150,6 +150,14 @@
         "filename_template_linux_amd_64": "qrscan-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": true,
         "exe_name": "qrscan"
+    },
+    "qr": {
+        "repo_url": "pip install qrcode",
+        "doc": "qr code generator. String to qr code.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "qr"
     },
     "openpomodoro-cli": {
         "repo_url": "https://github.com/open-pomodoro/openpomodoro-cli",

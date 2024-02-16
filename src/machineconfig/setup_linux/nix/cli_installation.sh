@@ -99,10 +99,6 @@ nix-env -iA nixpkgs.tokei || true
 #yes '' | sed 3q; echo "installing ots <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 #nix-env -iA nixpkgs.ots || true
 
-# qrcp
-yes '' | sed 3q; echo "installing qrcp <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-nix-env -iA nixpkgs.qrcp || true
-
 # helix
 yes '' | sed 3q; echo "installing helix <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 nix-env -iA nixpkgs.helix || true

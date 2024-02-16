@@ -7,6 +7,14 @@
         "strip_v": true,
         "exe_name": "ytui-music"
     },
+    "youtube-tui": {
+        "repo_url": "https://github.com/Siriusmart/youtube-tui",
+        "doc": "A terminal based YouTube music player written in Rust.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "youtube-tui-full_arch-x86_64",
+        "strip_v": true,
+        "exe_name": "youtube-tui"
+    },
     "termusic": {
         "repo_url": "https://github.com/tramhao/termusic",
         "doc": "A terminal-based music player written in Rust.",
@@ -23,6 +31,7 @@
         "strip_v": true,
         "exe_name": "kronos"
     },
+
     "nnn": {
         "repo_url": "https://github.com/jarun/nnn",
         "doc": "A terminal-based file manager.",
