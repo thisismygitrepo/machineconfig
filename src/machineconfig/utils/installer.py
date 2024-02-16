@@ -122,7 +122,7 @@ class Installer:
                 if exe.name.replace(".exe", "") != self.exe_name:
                     from rich import print as pprint
                     from rich.panel import Panel
-                    pprint(Panel(f"Expected exe name, [red]{self.exe_name}! Attained name: {exe.name}", title="exe mismatch", subtitle=self.repo_url))
+                    pprint(Panel(f"Expected exe name: `[red]{self.exe_name}` \nAttained name: `{exe.name}`", title="exe mismatch", subtitle=self.repo_url))
         INSTALL_VERSION_ROOT.joinpath(self.exe_name).create(parents_only=True).write_text(version_to_be_installed)
 
     def download(self, version: Optional[str]):
