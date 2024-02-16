@@ -132,6 +132,9 @@ config = {this = '~/.config/starship.toml', to_this = 'LIBRARY_ROOT/settings/she
 [mprocs_windows]
 config = {this = '~/mprocs.yaml', to_this = 'LIBRARY_ROOT/settings/mprocs/windows/mprocs.yaml'}
 
+[procs]
+config = {this = '~/.procs.toml', to_this = 'LIBRARY_ROOT/settings/procs/.procs.toml'}
+config_again = {this = '~/.config/procs/config.toml', to_this = 'LIBRARY_ROOT/settings/procs/.procs.toml'}
 
 [wsl_windows]
 home = {this = '~/wsl', to_this = '\\wsl.localhost\Ubuntu-22.04\home\username'}
