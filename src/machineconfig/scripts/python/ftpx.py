@@ -74,7 +74,7 @@ def main():
         received_file = ssh.copy_from_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
     # ssh.print_summary()
     # if P(args.file).is_dir(): print(f"Use: cd {repr(P(args.file).expanduser())}")
-    if isinstance(received_file, P):
+    if source_is_remote and isinstance(received_file, P):
         print(f"Received: {repr(received_file.parent), repr(received_file)}")
 
 
