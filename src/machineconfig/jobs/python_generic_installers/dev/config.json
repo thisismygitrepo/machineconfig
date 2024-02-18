@@ -71,6 +71,14 @@
         "strip_v": false,
         "exe_name": "cloudflared"
     },
+    "rustdesk": {
+        "repo_url": "https://github.com/rustdesk/rustdesk",
+        "doc": "Yet another remote desktop software, written in Rust. Works out of the box, no configuration required",
+        "filename_template_windows_amd_64": "rustdesk-{}-x86_64.exe",
+        "filename_template_linux_amd_64": "rustdesk-{}-x86_64.deb",
+        "strip_v": true,
+        "exe_name": "rustdesk"
+    },
     "evcxr": {
         "repo_url": "https://github.com/evcxr/evcxr",
         "doc": "An evaluation context for Rust.",

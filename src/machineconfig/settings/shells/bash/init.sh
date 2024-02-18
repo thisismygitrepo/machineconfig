@@ -26,8 +26,19 @@ machineconfig_path=$HOME/code/machineconfig/src/machineconfig
 . $machineconfig_path/settings/lf/linux/exe/lfcd.sh
 . $machineconfig_path/settings/tere/terecd.sh
 
+# source /home/alex/.config/broot/launcher/bash/br
+
 # set alias l to lsd -la
 alias l='lsd -la'
+
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+
+
+# eval "$(thefuck --alias)"
+
 
 # echo "Initing zoxide ..."
 # from https://github.com/ajeetdsouza/zoxide
@@ -36,6 +47,10 @@ eval "$(zoxide init bash)"
 # from https://github.com/starship/starship
 eval "$(starship init bash)"
 
+# https://github.com/atuinsh/atuin
+# eval "$(atuin init bash)"
+
 # LEVE THIS IN THE END TO AVOID EXECUTION FAILURE OF THE REST OF THE SCRIPT
 # from https://github.com/cantino/mcfly
 eval "$(mcfly init bash)"
+
