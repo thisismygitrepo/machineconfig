@@ -119,10 +119,12 @@ class Installer:
                 if platform.system() == "Windows": exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True, rename_to=self.exe_name + ".exe")
                 elif platform.system() == "Linux": exe = find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True, rename_to=self.exe_name)
                 else: raise NotImplementedError(f"System {platform.system()} not implemented")
-                if exe.name.replace(".exe", "") != self.exe_name:
+                if exe.name.replace(".exe", "") != self.exe_name.replace(".exe", ""):
                     from rich import print as pprint
                     from rich.panel import Panel
                     pprint(Panel(f"Expected exe name: `[red]{self.exe_name}` \nAttained name: `{exe.name}`", title="exe mismatch", subtitle=self.repo_url))
+                    new_exe_name = self.exe_name + ".exe" if platform.system() == "Windows" else self.exe_name
+                    exe.with_name(name=new_exe_name, inplace=True)
         INSTALL_VERSION_ROOT.joinpath(self.exe_name).create(parents_only=True).write_text(version_to_be_installed)
 
     def download(self, version: Optional[str]):

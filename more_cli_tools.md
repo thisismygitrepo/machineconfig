@@ -9,7 +9,6 @@
 * https://github.com/sindresorhus/awesome
 * https://github.com/anderspitman/awesome-tunneling
 * https://www.softwaretestinghelp.com/ngrok-alternatives/
-* https://github.com/leonwind/cli2cloud
 * https://devsession.is/
 * https://github.com/rothgar/awesome-tuis
 * https://github.com/nschloe/github-trends
@@ -28,7 +27,6 @@
 * torrent https://github.com/transmission/transmission/
 * https://github.com/magic-wormhole/magic-wormhole
 * https://github.com/gopasspw/gopass
-* https://github.com/BlueHatbRit/mdpdf -- security volunarability. https://github.com/simonhaenisch/md-to-pdf  -- use this instead
 
 
 # search
@@ -53,6 +51,7 @@
 * https://github.com/bootandy/dust (dua alternative)
 * lazygit  alterenative for gitui
 * https://github.com/jdxcode/rtx#apt asdf alternative in rust
+* pandoc alternatives: https://github.com/BlueHatbRit/mdpdf -- security volunarability. https://github.com/simonhaenisch/md-to-pdf  -- use this instead
 
 # terminal emulators
 * https://github.com/cmderdev/cmder
