@@ -34,6 +34,7 @@
 # search
 * find fd
 * ripgrep rg
+* ripgrep-all rga
 * ugrep
 * fzf
 * broot
