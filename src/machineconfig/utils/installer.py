@@ -124,9 +124,9 @@ class Installer:
                 if exe.name.replace(".exe", "") != self.exe_name.replace(".exe", ""):
                     from rich import print as pprint
                     from rich.panel import Panel
-                    pprint(Panel(f"Expected exe name: `[red]{self.exe_name}[/red]` \nAttained name: `[red]{exe.name}[/red]`", title="exe mismatch", subtitle=self.repo_url))
+                    pprint(Panel(f"Expected exe name: [red]{self.exe_name}[/red] \nAttained name: [red]{exe.name.replace('.exe', '')}[/red]", title="exe name mismatch", subtitle=self.repo_url))
                     new_exe_name = self.exe_name + ".exe" if platform.system() == "Windows" else self.exe_name
-                    exe.with_name(name=new_exe_name, inplace=True)
+                    exe.with_name(name=new_exe_name, inplace=True, overwrite=True)
         INSTALL_VERSION_ROOT.joinpath(self.exe_name).create(parents_only=True).write_text(version_to_be_installed)
 
     def download(self, version: Optional[str]):
