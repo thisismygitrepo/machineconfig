@@ -25,9 +25,9 @@ def find_move_delete_windows(downloaded_file_path: P, exe_name: Optional[str] = 
             else: exe = downloaded_file_path.search("*.exe", r=True).list[0]
         if rename_to and exe.name != rename_to:
             exe = exe.with_name(name=rename_to, inplace=True)
-    exe.move(folder=P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
+    exe_new_location = exe.move(folder=P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
     if delete: downloaded_file_path.delete(sure=True)
-    return exe
+    return exe_new_location
 
 
 def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool] = True, rename_to: Optional[str] = None):
@@ -50,7 +50,8 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
     # exe.move(folder=r"/usr/local/bin", overwrite=False)
     Terminal().run(f"sudo mv {exe} /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
     if delete: downloaded.delete(sure=True)
-    return exe
+    exe_new_location = P(r"/usr/local/bin").joinpath(exe.name)
+    return exe_new_location
 
 
 class Installer:
@@ -119,10 +120,11 @@ class Installer:
                 if platform.system() == "Windows": exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True, rename_to=self.exe_name + ".exe")
                 elif platform.system() == "Linux": exe = find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True, rename_to=self.exe_name)
                 else: raise NotImplementedError(f"System {platform.system()} not implemented")
+                _ = exe
                 if exe.name.replace(".exe", "") != self.exe_name.replace(".exe", ""):
                     from rich import print as pprint
                     from rich.panel import Panel
-                    pprint(Panel(f"Expected exe name: `[red]{self.exe_name}` \nAttained name: `{exe.name}`", title="exe mismatch", subtitle=self.repo_url))
+                    pprint(Panel(f"Expected exe name: `[red]{self.exe_name}[/red]` \nAttained name: `[red]{exe.name}[/red]`", title="exe mismatch", subtitle=self.repo_url))
                     new_exe_name = self.exe_name + ".exe" if platform.system() == "Windows" else self.exe_name
                     exe.with_name(name=new_exe_name, inplace=True)
         INSTALL_VERSION_ROOT.joinpath(self.exe_name).create(parents_only=True).write_text(version_to_be_installed)
