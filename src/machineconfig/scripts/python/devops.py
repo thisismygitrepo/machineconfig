@@ -50,9 +50,9 @@ def main(which: Optional[str] = None):
     elif choice_key == Options.ve.value:
         reply: bool = False
         if P.cwd().joinpath(".ve.ini").exists():
-            reply = input("Detected .ve.ini file. Do you want to use it to build ve? (y/[n])") == "y"
+            reply = input("Detected .ve.ini file. Do you want to use it to build ve? (y/[n]): ") == "y"
             if reply:
-                from machineconfig.utils.ve import get_ve_install_script_from_specs    
+                from machineconfig.utils.ve import get_ve_install_script_from_specs
                 program = get_ve_install_script_from_specs(repo_root=P.cwd().str)
         if not reply:
             from machineconfig.utils.ve import get_ve_install_script
