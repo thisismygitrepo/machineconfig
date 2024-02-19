@@ -3,11 +3,9 @@
 
 """devops
 """
-
-from platform import system
-# import subprocess
-# 
+from crocodile.file_management import P
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, write_shell_script
+from platform import system
 from enum import Enum
 from typing import Optional
 
@@ -50,8 +48,15 @@ def main(which: Optional[str] = None):
         program = helper.main()
 
     elif choice_key == Options.ve.value:
-        from machineconfig.utils.ve import get_ve_install_script
-        program = get_ve_install_script()
+        reply: bool = False
+        if P.cwd().joinpath(".ve.ini").exists():
+            reply = input("Detected .ve.ini file. Do you want to use it to build ve? (y/[n])") == "y"
+            if reply:
+                from machineconfig.utils.ve import get_ve_install_script_from_specs    
+                program = get_ve_install_script_from_specs(repo_root=P.cwd().str)
+        if not reply:
+            from machineconfig.utils.ve import get_ve_install_script
+            program = get_ve_install_script()
 
     elif choice_key == Options.cli_install.value:
         import machineconfig.scripts.python.devops_devapps_install as helper
