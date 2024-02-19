@@ -207,6 +207,14 @@
         "strip_v": false,
         "exe_name": "tokei"
     },
+    "dust": {
+        "repo_url": "https://github.com/bootandy/dust",
+        "doc": "A more intuitive version of du in rust. It is a dua alternative.",
+        "filename_template_windows_amd_64": "dust-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "dust-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "dust"
+    },
     "vtm": {
         "repo_url": "https://github.com/netxs-group/vtm",
         "doc": "Text-based desktop environment inside your terminal",
