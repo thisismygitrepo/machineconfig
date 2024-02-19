@@ -63,7 +63,6 @@
 # Alternatives
 * git grapth (rust) https://github.com/mlange-42/git-graph
 * https://github.com/nnethercote/counts
-* lazygit  alterenative for gitui
 * https://github.com/jdxcode/rtx#apt asdf alternative in rust
 * pandoc alternatives: https://github.com/BlueHatbRit/mdpdf -- security volunarability. https://github.com/simonhaenisch/md-to-pdf  -- use this instead
 
