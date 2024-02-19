@@ -162,16 +162,15 @@ fi
 # https://github.com/bootandy/dust
 # https://github.com/dalance/procs#installation
 
-yes '' | sed 3q; echo "----------------------------- installing exa ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install exa -y || true  # replacement for ls. no ner fonts, unlike lsd
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.exa || true
-fi
+# yes '' | sed 3q; echo "----------------------------- installing exa ----------------------------"; yes '' | sed 3q
+# if [ "$package_manager" = "apt" ]; then
+#   sudo apt install exa -y || true  # replacement for ls. no ner fonts, unlike lsd
+# else
+#   ~/.nix-profile/bin/nix-env -iA nixpkgs.exa || true
+# fi
 
 yes '' | sed 3q; echo "----------------------------- installing navi ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
-#  sudo apt install exa -y || true  # replacement for ls. no ner fonts, unlike lsd
   echo "no apt installer for navi, skipping"
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.navi || true

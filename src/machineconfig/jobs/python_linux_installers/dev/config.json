@@ -40,6 +40,14 @@
         "strip_v": false,
         "exe_name": "nnn"
       },
+    "exa": {
+        "repo_url": "https://github.com/ogham/exa",
+        "doc": "A modern replacement for ls.",
+        "filename_template_windows_amd_64": "exa-linux-x86_64-{}.zip",
+        "filename_template_linux_amd_64": "exa-linux-x86_64.zip",
+        "strip_v": false,
+        "exe_name": "exa"
+    },
     "bytehound": {
         "repo_url": "https://github.com/koute/bytehound",
         "doc": "Inspecting the memory usage of a running process",
