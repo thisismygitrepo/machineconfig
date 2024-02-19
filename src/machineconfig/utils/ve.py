@@ -123,9 +123,15 @@ def get_ve_install_script_from_specs(repo_root: str):
     ini = Read.ini(ini_file)
     ve_name = ini["specs"]["ve_name"]
     py_version = ini["specs"]["py_version"]
-    requirements_root = ini_file.with_name("requirements.txt").parent
-    ini_file.with_name(".ve_path").write_text(f"~/venvs/{ve_name}")
+    ipy_profile = ini["specs"]["ipy_profile"]
 
+    requirements_root = ini_file.with_name("requirements.txt").parent
+
+    # for backward compatibility:
+    ini_file.with_name(".ve_path").write_text(f"~/venvs/{ve_name}")
+    ini_file.with_name(".ipy_profile").write_text(ipy_profile)
+
+    # vscode:
     if not platform.system() == "Windows":  # symlinks on windows require admin rights.
         P(repo_root).joinpath(".venv").symlink_to(P.home().joinpath("venvs", ve_name))
 
