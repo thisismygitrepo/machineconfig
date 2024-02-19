@@ -24,6 +24,8 @@ sudo apt install code -y # or code-insiders
 
     elif platform.system() == 'Windows':
         code = "winget install -e --id Microsoft.VisualStudioCode"
+    else:
+        raise NotImplementedError(f"Unsupported platform: {platform.system()}")
     _ = version
     return code
 

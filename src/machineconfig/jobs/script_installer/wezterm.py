@@ -12,6 +12,7 @@ def main(version: Optional[str]):
         program = "winget install wez.wezterm"
     elif platform.system() == "Linux":
         insts = get_installers(system=platform.system(), dev=False)
+        program = ""
         for inst in insts:
             if "wezterm" in inst.name:
                 # as per https://wezfurlong.org/wezterm/install/linux.html#installing-on-ubuntu-and-debian-based-systems

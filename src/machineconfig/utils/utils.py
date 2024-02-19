@@ -36,17 +36,16 @@ def choose_cloud_interactively() -> str:
     tmp = Terminal().run("rclone listremotes").op_if_successfull_or_default(strict_returcode=False)
     # consider this: remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
     if isinstance(tmp, str):
-        remotes = L(tmp.splitlines()).apply(lambda x: x.replace(":", ""))
+        remotes: list[str] = L(tmp.splitlines()).apply(lambda x: x.replace(":", "")).list
 
     else: raise ValueError(f"Got {tmp} from rclone listremotes")
     if len(remotes) == 0:
         raise RuntimeError(f"You don't have remotes. Configure your rclone first to get cloud services access.")
-    cloud = display_options(msg="WHICH CLOUD?", options=list(remotes), default=remotes[0], fzf=True)
-    assert isinstance(cloud, str)
+    cloud: str = choose_one_option(msg="WHICH CLOUD?", options=list(remotes), default=remotes[0], fzf=True)
     return cloud
 
 
-def sanitize_path(a_path: P):
+def sanitize_path(a_path: P) -> P:
     path = P(a_path)
     if path.as_posix().startswith("/home"):
         if platform.system() == "Windows":  # path copied from Linux to Windows
@@ -140,7 +139,7 @@ def display_options(msg: str, options: Iterable[T], header: str = "", tail: str 
                     default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[T, list[T]]:
     # TODO: replace with https://github.com/tmbo/questionary  # also see https://github.com/charmbracelet/gum
     tool_name = "fzf"
-    options_strings = [str(x) for x in options]
+    options_strings: list[str] = [str(x) for x in options]
     default_string = str(default) if default is not None else None
     if fzf and check_tool_exists(tool_name):
         install_n_import("pyfzf")
@@ -288,18 +287,18 @@ def print_code(code: str, lexer: str, desc: str = ""):
     console.print(Panel(Syntax(code=code, lexer=lexer), title=desc), style="bold red")
 
 
-def get_latest_version(url: str) -> None:
-    # not yet used, consider, using it.
-    import requests
-    import json
-    url = f"https://api.github.com/repos/{url.split('github.com/')[1]}/releases/latest"
-    # Replace {owner} and {repo} with the actual owner and repository name
-    response = requests.get(url, timeout=10)
-    if response.status_code == 200:
-        data = json.loads(response.text)
-        latest_version = data["tag_name"]
-        print("Latest release version:", latest_version)
-    else: print("Error:", response.status_code)
+# def get_latest_version(url: str) -> None:
+#     # not yet used, consider, using it.
+#     import requests
+#     import json
+#     url = f"https://api.github.com/repos/{url.split('github.com/')[1]}/releases/latest"
+#     # Replace {owner} and {repo} with the actual owner and repository name
+#     response = requests.get(url, timeout=10)
+#     if response.status_code == 200:
+#         data = json.loads(response.text)
+#         latest_version = data["tag_name"]
+#         print("Latest release version:", latest_version)
+#     else: print("Error:", response.status_code)
 
 
 def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> bool:

@@ -48,6 +48,7 @@ def main(which: Optional[str] = None):
         program = helper.main()
 
     elif choice_key == Options.ve.value:
+        program = ""
         reply: bool = False
         if P.cwd().joinpath(".ve.ini").exists():
             reply = input("Detected .ve.ini file. Do you want to use it to build ve? (y/[n]): ") == "y"

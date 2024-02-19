@@ -33,11 +33,9 @@
 * https://github.com/cortex/ripasso rust password manager equivalent of gopass
 * https://github.com/hashicorp/vault
 
-* https://github.com/filebrowser/filebrowser
-* https://github.com/cloudreve/Cloudreve
 * https://github.com/IceWhaleTech/CasaOS
-* https://github.com/restic/restic
 * https://github.com/syncthing/syncthing
+
 * https://github.com/minio/minio
 * https://github.com/istio/istio
 * https://github.com/cockroachdb/cockroach

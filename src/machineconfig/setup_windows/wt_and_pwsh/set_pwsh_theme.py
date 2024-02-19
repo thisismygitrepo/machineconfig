@@ -27,7 +27,7 @@ nerd_fonts = {
 
 def install_nerd_fonts():
     # Step 1: download the required fonts that has all the glyphs and install them.
-    folder, _version_to_be_installed = Installer.from_dict(nerd_fonts).download(version=None)
+    folder, _version_to_be_installed = Installer.from_dict(d=nerd_fonts, name="nerd_fonts").download(version=None)
     folder.search("*Windows*").apply(lambda p: p.delete(sure=True))
     folder.search("*readme*").apply(lambda p: p.delete(sure=True))
     folder.search("*LICENSE*").apply(lambda p: p.delete(sure=True))

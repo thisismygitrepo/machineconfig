@@ -167,6 +167,46 @@
         "strip_v": false,
         "exe_name": "qr"
     },
+    "filebrowser": {
+        "repo_url": "https://github.com/filebrowser/filebrowser",
+        "doc": "filebrowser provides a file managing interface within a specified directory",
+        "filename_template_windows_amd_64": "windows-amd64-filebrowser.zip",
+        "filename_template_linux_amd_64": "linux-amd64-filebrowser.tar.gz",
+        "strip_v": false,
+        "exe_name": "filebrowser"
+    },
+    "cloudreve": {
+        "repo_url": "https://github.com/cloudreve/Cloudreve",
+        "doc": "Self-hosted file management system with muilt-cloud support.",
+        "filename_template_windows_amd_64": "cloudreve_{}_windows_amd64.zip",
+        "filename_template_linux_amd_64": "cloudreve_{}_linux_amd64.tar.gz",
+        "strip_v": true,
+        "exe_name": "cloudreve"
+    },
+    "restic": {
+        "repo_url": "https://github.com/restic/restic",
+        "doc": "backup program that is fast, efficient and secure. It supports the three major operating systems",
+        "filename_template_windows_amd_64": "restic_{}_windows_amd64.zip",
+        "filename_template_linux_amd_64": "restic_{}_linux_amd64.bz2",
+        "strip_v": true,
+        "exe_name": "restic"
+    },
+    "syncthing": {
+        "repo_url": "https://github.com/syncthing/syncthing",
+        "doc": "Syncthing is a continuous file synchronization program. It synchronizes files between two or more computers.",
+        "filename_template_windows_amd_64": "syncthing-windows-amd64-{}.zip",
+        "filename_template_linux_amd_64": "syncthing-linux-amd64-{}.tar.gz",
+        "strip_v": false,
+        "exe_name": "syncthing"
+    },
+    "istio": {
+        "repo_url": "https://github.com/istio/istio",
+        "doc": "Istio is an open source service mesh that layers transparently onto existing distributed applications",
+        "filename_template_windows_amd_64": "istioctl-{}-win-amd64.zip",
+        "filename_template_linux_amd_64": "istio-{}-linux-amd64.tar.gz",
+        "strip_v": true,
+        "exe_name": "istioctl"
+    },
     "openpomodoro-cli": {
         "repo_url": "https://github.com/open-pomodoro/openpomodoro-cli",
         "doc": "Pomodoro timer for the command-line",
