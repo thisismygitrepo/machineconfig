@@ -13,6 +13,7 @@ from rich.panel import Panel
 from rich.console import Console
 from rich.syntax import Syntax
 import platform
+import subprocess
 from typing import Optional, Union, TypeVar, Iterable
 
 
@@ -91,8 +92,17 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
             repo_root_dir = P(repo.working_dir)
             if repo_root_dir != root:  # may be user is in a subdirectory of the repo root, try with root dir.
                 return match_file_name(sub_string=sub_string, search_root=repo_root_dir)
+            else:
+                root = repo_root_dir
         except InvalidGitRepositoryError:
             pass
+
+        if check_tool_exists("fzf"):
+            search_res = subprocess.run(f"cd '{root}'; fzf --filter={sub_string}", stdout=subprocess.PIPE, text=True, check=True, shell=True).stdout.split("\n")[:-1]
+            if len(search_res) == 1: return root.joinpath(search_res[0])
+            else:
+                res = subprocess.run(f"cd '{root}'; fzf --query={sub_string}", check=True, stdout=subprocess.PIPE, text=True, shell=True).stdout.strip()
+                return root.joinpath(res)
         msg = f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. No search results\n{'--' * 50}\n"
         raise FileNotFoundError(msg)
     print(f"\n{'--' * 50}\n🔗 Matched `{sub_string}` ➡️ `{path_obj}`\n{'--' * 50}\n")
@@ -291,7 +301,6 @@ def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> b
     elif platform.system() == "Linux": cmd = "which"
     else: raise NotImplementedError(f"platform {platform.system()} not implemented")
 
-    import subprocess
     try:
         _tmp = subprocess.check_output([cmd, tool_name])
         res: bool = True

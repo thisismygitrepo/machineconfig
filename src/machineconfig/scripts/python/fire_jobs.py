@@ -46,7 +46,13 @@ def main() -> None:
         kwargs = {}
 
     path_obj = sanitize_path(P(args.path))
-    if not path_obj.exists(): path_obj = match_file_name(args.path)
+    if not path_obj.exists():
+        print("This pathway")
+        path_obj = match_file_name(args.path)
+        print(path_obj)
+    else:
+        print("This directory")
+        print(path_obj)
 
     if path_obj.is_dir():
         print(f"Seaching recursively for all python file in directory `{path_obj}`")

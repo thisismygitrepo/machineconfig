@@ -93,11 +93,11 @@ class Installer:
             old_version_cli = Terminal().run(f"{self.exe_name} --version").op.replace("\n", "")
             self.install(version=version)
             new_version_cli = Terminal().run(f"{self.exe_name} --version").op.replace("\n", "")
-            if old_version_cli == new_version_cli: return f"😑 {self.exe_name}, same version: {old_version_cli}"
-            else: return f"🤩 {self.exe_name} updated from {old_version_cli} === to ===> {new_version_cli}"
+            if old_version_cli == new_version_cli: return f"📦️ 😑 {self.exe_name}, same version: {old_version_cli}"
+            else: return f"📦️ 🤩 {self.exe_name} updated from {old_version_cli} === to ===> {new_version_cli}"
         except Exception as ex:
             print(ex)
-            return f"Failed at {self.exe_name} with {ex}"
+            return f"📦️ Failed at {self.exe_name} with {ex}"
 
     def install(self, version: Optional[str]):
         if self.repo_url == "CUSTOM":
@@ -133,34 +133,34 @@ class Installer:
         if "github" not in self.repo_url or ".zip" in self.repo_url or ".tar.gz" in self.repo_url:
             download_link = P(self.repo_url)
             version_to_be_installed = "predefined_url"
-            print(version_to_be_installed)
+            print(f"📦️ Version to be installed: {version_to_be_installed}")
         elif "http" in self.filename_template_linux_amd_64 or "http" in self.filename_template_windows_amd_64:
             if platform.system() == "Windows":
                 download_link = P(self.filename_template_windows_amd_64)
             elif platform.system() == "Linux":
                 download_link = P(self.filename_template_linux_amd_64)
-            else: raise NotImplementedError(f"System {platform.system()} not implemented")
+            else: raise NotImplementedError(f"📦️ System {platform.system()} not implemented")
             version_to_be_installed = "predefined_url"
         else:
             release_url, version_to_be_installed = self.get_github_release(repo_url=self.repo_url, version=version)
-            print(f"Version to be installed: {version_to_be_installed}")
-            print(f"Release URL: {release_url}")
+            print(f"📦️ Version to be installed: {version_to_be_installed}")
+            print(f"📦️ Release URL: {release_url}")
             version_to_be_installed_stripped = version_to_be_installed.replace("v", "") if self.strip_v else version_to_be_installed
             if platform.system() == "Windows":
                 file_name = self.filename_template_windows_amd_64.format(version_to_be_installed_stripped)
             elif platform.system() == "Linux":
                 file_name = self.filename_template_linux_amd_64.format(version_to_be_installed_stripped)
-            else: raise NotImplementedError(f"System {platform.system()} not implemented")
-            print(f"File name", file_name)
+            else: raise NotImplementedError(f"📦️ System {platform.system()} not implemented")
+            print(f"📦️ File name", file_name)
             download_link = release_url.joinpath(file_name)
-        print("Downloading: ", download_link.as_url_str())
+        print("📦️ Downloading: ", download_link.as_url_str())
         downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
         return downloaded, version_to_be_installed
 
     @staticmethod
     def get_github_release(repo_url: str, version: Optional[str] = None):
         print("\n\n\n")
-        print(f"Inspecting latest release @ {repo_url}   ...")
+        print(f"📦️ Inspecting latest release @ {repo_url}   ...")
         # with console.status("Installing..."):  # makes troubles on linux when prompt asks for password to move file to /usr/bin
         if version is None:
             import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
@@ -181,14 +181,14 @@ class Installer:
 
         if existing_version is not None:
             if existing_version == version_to_be_installed:
-                print(f"⚠️ {exe_name} already installed at version {version_to_be_installed}. See {INSTALL_VERSION_ROOT}")
+                print(f"📦️ ⚠️ {exe_name} already installed at version {version_to_be_installed}. See {INSTALL_VERSION_ROOT}")
                 return True
             else:
                 # print(f"Latest version is {version}, logged at {tmp_path}")
-                print(f"⬆️ {exe_name} installed at version {existing_version.rstrip()} --> Installing version {version_to_be_installed} ")
+                print(f"📦️ ⬆️ {exe_name} installed at version {existing_version.rstrip()} --> Installing version {version_to_be_installed} ")
                 tmp_path.write_text(version_to_be_installed)
         else:
-            print(f"{exe_name} has no known version. Installing version `{version_to_be_installed}` ")
+            print(f"📦️ {exe_name} has no known version. Installing version `{version_to_be_installed}` ")
             tmp_path.write_text(version_to_be_installed)
         return False
 

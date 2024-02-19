@@ -16,7 +16,7 @@ IFS=: read -ra selected < <(
       --prompt '1. Ripgrep> ' \
       --delimiter : \
       --header '╱ CTRL-R (Ripgrep mode) ╱ CTRL-F (fzf mode) ╱' \
-      --preview 'batcat --color=always {1} --highlight-line {2}' \
+      --preview 'bat --color=always {1} --highlight-line {2}' \
       --preview-window 'up,60%,border-bottom,+{2}+3/3,~3'
 )
 [ -n "${selected[0]}" ] && lvim "${selected[0]}" "+${selected[1]}

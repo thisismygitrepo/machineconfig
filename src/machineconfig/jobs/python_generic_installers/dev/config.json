@@ -26,7 +26,7 @@
     "pandoc": {
         "repo_url": "https://github.com/jgm/pandoc",
         "doc": "The universal markup converter",
-        "filename_template_windows_amd_64": "pandoc-{}-1-windows-x86_64.msi",
+        "filename_template_windows_amd_64": "pandoc-{}-windows-x86_64.msi",
         "filename_template_linux_amd_64": "pandoc-{}-1-amd64.deb",
         "strip_v": true,
         "exe_name": "pandoc"
@@ -222,5 +222,13 @@
         "filename_template_linux_amd_64": "extratermqt-{}-linux-x64.zip",
         "strip_v": true,
         "exe_name": "extraterm"
+    },
+    "sniffnet": {
+        "repo_url": "https://github.com/GyulyVGC/sniffnet",
+        "doc": "A simple network sniffer in Rust",
+        "filename_template_windows_amd_64": "Sniffnet_Windows_64-bit.msi",
+        "filename_template_linux_amd_64": "Sniffnet_LinuxDEB_amd64.deb",
+        "strip_v": true,
+        "exe_name": "sniffnet"
     }
 }
