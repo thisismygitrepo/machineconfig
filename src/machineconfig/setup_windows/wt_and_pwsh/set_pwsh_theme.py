@@ -16,12 +16,12 @@ import subprocess
 
 
 nerd_fonts = {
-        "repo_url": "https://github.com/ryanoasis/nerd-fonts",
-        "doc": "Nerd Fonts is a project that patches developer targeted fonts with a high number of glyphs (icons)",
-        "filename_template_windows_amd_64": "CascadiaCode.zip",
-        "filename_template_linux_amd_64": "CascadiaCode.zip",
-        "strip_v": False,
-        "exe_name": "nerd_fonts"
+    "repo_url": "https://github.com/ryanoasis/nerd-fonts",
+    "doc": "Nerd Fonts is a project that patches developer targeted fonts with a high number of glyphs (icons)",
+    "filename_template_windows_amd_64": "CascadiaCode.zip",
+    "filename_template_linux_amd_64": "CascadiaCode.zip",
+    "strip_v": False,
+    "exe_name": "nerd_fonts"
 }
 
 

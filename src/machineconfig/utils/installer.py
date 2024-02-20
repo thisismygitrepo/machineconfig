@@ -120,8 +120,10 @@ class Installer:
                 Terminal().run(f"sudo apt install -y {downloaded}").print_if_unsuccessful(desc="Installing .deb", strict_err=True, strict_returncode=True)
                 downloaded.delete(sure=True)
             else:
-                if platform.system() == "Windows": exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True, rename_to=self.exe_name + ".exe")
-                elif platform.system() == "Linux": exe = find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True, rename_to=self.exe_name)
+                if platform.system() == "Windows":
+                    exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True, rename_to=self.exe_name + ".exe")
+                elif platform.system() == "Linux":
+                    exe = find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True, rename_to=self.exe_name)
                 else: raise NotImplementedError(f"System {platform.system()} not implemented")
                 _ = exe
                 if exe.name.replace(".exe", "") != self.exe_name.replace(".exe", ""):

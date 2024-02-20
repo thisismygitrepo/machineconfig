@@ -54,7 +54,12 @@ def main(which: Optional[str] = None):
             reply = input("Detected .ve.ini file. Do you want to use it to build ve? (y/[n]): ") == "y"
             if reply:
                 from machineconfig.utils.ve import get_ve_install_script_from_specs
-                program = get_ve_install_script_from_specs(repo_root=P.cwd().str)
+                program_win = get_ve_install_script_from_specs(repo_root=P.cwd().str, system="Windows")
+                program_lin = get_ve_install_script_from_specs(repo_root=P.cwd().str, system="Linux")
+                if system() == "Windows": program = program_win
+                elif system() == "Linux": program = program_lin
+                else: raise ValueError(f"Unknown system: {system()}")
+
         if not reply:
             from machineconfig.utils.ve import get_ve_install_script
             program = get_ve_install_script()

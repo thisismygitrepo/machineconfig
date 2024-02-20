@@ -5,7 +5,21 @@
 from crocodile.file_management import P, Struct, modify_text, List
 from machineconfig.utils.utils import LIBRARY_ROOT
 import platform
+from dataclasses import dataclass
 from typing import Optional, Literal
+
+
+@dataclass
+class VE_Specs:
+    ve_name: str
+    py_version: str
+    ipy_profile: str
+    os: str
+
+
+@dataclass
+class VE_INI:
+    specs: VE_Specs
 
 
 def get_ipython_profile(init_path: P):
@@ -66,7 +80,7 @@ def get_ve_specs(ve_path: P) -> dict[str, str]:
 
 def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[str] = None, install_crocodile_and_machineconfig: Optional[bool] = None,
                           delete_if_exists: bool = True,
-                          system: Optional[Literal["Windows", "Linux"]] = None):
+                          system: Optional[Literal["Windows", "Linux"]] = None) -> str:
     from rich.console import Console
     if system is None:
         system_: str = platform.system()
@@ -113,10 +127,13 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
         text = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/repos.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
         text = modify_text(txt_raw=text, txt_search="ve_name=", txt_alt=f"{variable_prefix}ve_name='{ve_name}'", replace_line=True)
         scripts += text
+
+    # ve_ini_specs = VE_Specs(ve_name=ve_name, py_version=dotted_py_version, ipy_profile="default", os=system_)
+    # ve_ini = VE_INI(specs=ve_ini_specs)
     return scripts
 
 
-def get_ve_install_script_from_specs(repo_root: str):
+def get_ve_install_script_from_specs(repo_root: str, system: Literal["Windows", "Linux"]):
     from crocodile.file_management import Read, Save
     ini_file = P(repo_root).joinpath(".ve.ini")
     assert ini_file.exists(), f"File {ini_file} does not exist."
@@ -132,7 +149,7 @@ def get_ve_install_script_from_specs(repo_root: str):
     ini_file.with_name(".ipy_profile").write_text(ipy_profile)
 
     # vscode:
-    if not platform.system() == "Windows":  # symlinks on windows require admin rights.
+    if not system == "Windows":  # symlinks on windows require admin rights.
         P(repo_root).joinpath(".venv").symlink_to(P.home().joinpath("venvs", ve_name))
 
     vscode_settings = P(repo_root).joinpath(".vscode/settings.json")
@@ -140,23 +157,23 @@ def get_ve_install_script_from_specs(repo_root: str):
         settings = Read.json(vscode_settings)
     else:
         settings = {}
-    if platform.system() == "Windows":
+    if system == "Windows":
         settings["python.defaultInterpreterPath"] = f"~/venvs/{ve_name}/Scripts/python.exe"
-    elif platform.system() == "Linux":
+    elif system == "Linux":
         settings["python.defaultInterpreterPath"] = f"~/venvs/{ve_name}/bin/python"
         pass
     else:
-        raise NotImplementedError(f"System {platform.system()} not supported.")
+        raise NotImplementedError(f"System {system} not supported.")
     Save.json(obj=settings, path=vscode_settings, indent=4)
 
-    if platform.system() == "Windows":
+    if system == "Windows":
         script = get_ps1_install_template(ve_name=ve_name, requirements_root=requirements_root, py_version=py_version)
         ini_file.with_name("install_ve.ps1").write_text(script)
-    elif platform.system() == "Linux":
+    elif system == "Linux":
         script = get_bash_install_template(ve_name, requirements_root=requirements_root, py_version=py_version)
         ini_file.with_name("install_ve.sh").write_text(script)
     else:
-        raise NotImplementedError(f"System {platform.system()} not supported.")
+        raise NotImplementedError(f"System {system} not supported.")
     return script
 
 
@@ -166,7 +183,7 @@ $ve_name = '{ve_name}'
 $py_version = '{py_version}'  # type: ignore
 (Invoke-WebRequest https://bit.ly/cfgvewindows).Content | Invoke-Expression
 . $HOME/scripts/activate_ve $ve_name
-cd '{requirements_root.rel2home()}'
+cd '$HOME/{requirements_root.rel2home().as_posix()}'
 pip install -r requirements.txt
 """
     return template
@@ -176,7 +193,7 @@ export ve_name='{ve_name}'
 export py_version='{py_version}'  # type: ignore
 curl -L https://bit.ly/cfgvelinux | bash
 . activate_ve $ve_name
-cd '{requirements_root.rel2home()}'
+cd '$HOME/{requirements_root.rel2home().as_posix()}'
 pip install -r requirements.txt
 """
     return template

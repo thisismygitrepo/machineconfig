@@ -37,7 +37,6 @@
 * https://github.com/syncthing/syncthing
 
 * https://github.com/minio/minio
-* https://github.com/istio/istio
 * https://github.com/cockroachdb/cockroach
 
 
