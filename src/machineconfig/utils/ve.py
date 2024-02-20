@@ -195,7 +195,7 @@ def get_bash_install_template(ve_name: str, py_version: str):
 export ve_name='{ve_name}'
 export py_version='{py_version}'  # type: ignore
 curl -L https://bit.ly/cfgvelinux | bash
-. activate_ve $ve_name
+. $HOME/scripts/activate_ve $ve_name
 """
     return template
 
@@ -203,7 +203,7 @@ curl -L https://bit.ly/cfgvelinux | bash
 def get_install_requirements_template(repo_root: P):
     return f"""
 # This is a template that is meant to be modified manually to install requirements.txt and editable packages.
-
+# one can dispense with this and install libraries manually and on adhoc-basis and then use version_checkout utility.
 cd $HOME/{repo_root.as_posix()}
 . $HOME/scripts/activate_ve
 pip install -r requirements.txt
