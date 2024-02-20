@@ -142,7 +142,7 @@ def get_ve_install_script_from_specs(repo_root: str, system: Literal["Windows", 
     py_version = ini["specs"]["py_version"]
     ipy_profile = ini["specs"]["ipy_profile"]
 
-    requirements_root = ini_file.with_name("requirements.txt").parent
+    # repo_root = ini_file.with_name("requirements.txt").parent
 
     # for backward compatibility:
     ini_file.with_name(".ve_path").write_text(f"~/venvs/{ve_name}")
@@ -167,33 +167,55 @@ def get_ve_install_script_from_specs(repo_root: str, system: Literal["Windows", 
     Save.json(obj=settings, path=vscode_settings, indent=4)
 
     if system == "Windows":
-        script = get_ps1_install_template(ve_name=ve_name, requirements_root=requirements_root, py_version=py_version)
-        ini_file.with_name("install_ve.ps1").write_text(script)
+        script = get_ps1_install_template(ve_name=ve_name, py_version=py_version)
+        P(repo_root).joinpath("versions", "init").create()("install_ve.ps1").write_text(script)
     elif system == "Linux":
-        script = get_bash_install_template(ve_name, requirements_root=requirements_root, py_version=py_version)
-        ini_file.with_name("install_ve.sh").write_text(script)
+        script = get_bash_install_template(ve_name=ve_name, py_version=py_version)
+        P(repo_root).joinpath("versions", "init").create().joinpath("install_ve.sh").write_text(script)
     else:
         raise NotImplementedError(f"System {system} not supported.")
+
+    P(repo_root).joinpath("versions", "init").create()("install_requirements.ps1").write_text(get_install_requirements_template(repo_root=P(repo_root)))
+    P(repo_root).joinpath("versions", "init").create()("install_requirements.sh").write_text(get_install_requirements_template(repo_root=P(repo_root)))
+
     return script
 
 
-def get_ps1_install_template(ve_name: str, requirements_root: P, py_version: str):
+def get_ps1_install_template(ve_name: str, py_version: str):
     template = f"""
 $ve_name = '{ve_name}'
 $py_version = '{py_version}'  # type: ignore
 (Invoke-WebRequest https://bit.ly/cfgvewindows).Content | Invoke-Expression
 . $HOME/scripts/activate_ve $ve_name
-cd '$HOME/{requirements_root.rel2home().as_posix()}'
-pip install -r requirements.txt
 """
     return template
-def get_bash_install_template(ve_name: str, requirements_root: P, py_version: str = "3.11"):
+def get_bash_install_template(ve_name: str, py_version: str):
     template = f"""
 export ve_name='{ve_name}'
 export py_version='{py_version}'  # type: ignore
 curl -L https://bit.ly/cfgvelinux | bash
 . activate_ve $ve_name
-cd '$HOME/{requirements_root.rel2home().as_posix()}'
-pip install -r requirements.txt
 """
     return template
+
+
+def get_install_requirements_template(repo_root: P):
+    return f"""
+# This is a template that is meant to be modified manually to install requirements.txt and editable packages.
+
+cd $HOME/{repo_root.as_posix()}
+. $HOME/scripts/activate_ve
+pip install -r requirements.txt
+pip install -e .
+
+# cd ~/code; git clone https://github.com/thisismygitrepo/crocodile.git --origin origin
+# cd ~/code/crocodile; git remote set-url origin https://github.com/thisismygitrepo/crocodile.git
+# cd ~/code/crocodile; git remote add origin https://github.com/thisismygitrepo/crocodile.git
+# cd ~/code/crocodile; pip install -e .
+
+# cd ~/code; git clone https://github.com/thisismygitrepo/machineconfig --origin origin
+# cd ~/code/machineconfig; git remote set-url origin https://github.com/thisismygitrepo/machineconfig
+# cd ~/code/machineconfig; git remote add origin https://github.com/thisismygitrepo/machineconfig
+# cd ~/code/machineconfig; pip install -e .
+
+"""
