@@ -15,6 +15,14 @@
         "strip_v": true,
         "exe_name": "code"
     },
+    "devcontainer": {
+        "repo_url": "npm install -g @devcontainers/cli",
+        "doc": "Devcontainer is a command-line tool to manage development containers",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "devcontainer"
+    },
     "marp": {
         "repo_url": "npm install -g @marp-team/marp-cli",
         "doc": "Markdown presentation writer",
