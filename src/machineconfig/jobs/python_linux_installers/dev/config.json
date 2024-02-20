@@ -41,9 +41,9 @@
       },
     "exa": {
         "repo_url": "https://github.com/ogham/exa",
-        "doc": "A modern replacement for ls.",
-        "filename_template_windows_amd_64": "exa-linux-x86_64-{}.zip",
-        "filename_template_linux_amd_64": "exa-linux-x86_64.zip",
+        "doc": "A modern replacement for ls. lsd alternative.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "exa-linux-x86_64-{}.zip",
         "strip_v": false,
         "exe_name": "exa"
     },

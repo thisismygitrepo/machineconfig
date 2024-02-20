@@ -18,7 +18,7 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
     folder_obj = P.cwd() if folder is None else P(folder)
 
     if os.environ.get("DECRYPTION_PASSWORD") is not None:
-        pwd = os.environ.get("DECRYPTION_PASSWORD")
+        pwd: str = str(os.environ.get("DECRYPTION_PASSWORD"))
     else:
         pwd = getpass.getpass(prompt="Enter decryption password: ")
 
