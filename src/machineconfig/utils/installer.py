@@ -105,13 +105,13 @@ class Installer:
             installer_path = P(custom_installer.__file__).parent.joinpath(self.exe_name + ".py")
             import runpy
             program = runpy.run_path(str(installer_path), run_name="__main__")['main'](version=version)
-            Terminal().run(program, shell="powershell")
+            Terminal().run(program, shell="default")
             version_to_be_installed = str(version)
         elif "npm " in self.repo_url:
-            Terminal().run(self.repo_url, shell="powershell").print_if_unsuccessful(desc="npm install", strict_err=True, strict_returncode=True)
+            Terminal().run(self.repo_url, shell="default").print_if_unsuccessful(desc="npm install", strict_err=True, strict_returncode=True)
             version_to_be_installed = "npmLatest"
         elif "pip " in self.repo_url:
-            Terminal().run(self.repo_url, shell="powershell").print_if_unsuccessful(desc="pip install", strict_err=True, strict_returncode=True)
+            Terminal().run(self.repo_url, shell="default").print_if_unsuccessful(desc="pip install", strict_err=True, strict_returncode=True)
             version_to_be_installed = "pipLatest"
         else:
             downloaded, version_to_be_installed = self.download(version=version)
