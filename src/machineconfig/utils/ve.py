@@ -166,17 +166,18 @@ def get_ve_install_script_from_specs(repo_root: str, system: Literal["Windows", 
         raise NotImplementedError(f"System {system} not supported.")
     Save.json(obj=settings, path=vscode_settings, indent=4)
 
+    base_path = P(repo_root).joinpath("versions", "init").create()
     if system == "Windows":
         script = get_ps1_install_template(ve_name=ve_name, py_version=py_version)
-        P(repo_root).joinpath("versions", "init").create()("install_ve.ps1").write_text(script)
+        base_path.joinpath("install_ve.ps1").write_text(script)
     elif system == "Linux":
         script = get_bash_install_template(ve_name=ve_name, py_version=py_version)
-        P(repo_root).joinpath("versions", "init").create().joinpath("install_ve.sh").write_text(script)
+        base_path.joinpath("install_ve.sh").write_text(script)
     else:
         raise NotImplementedError(f"System {system} not supported.")
 
-    P(repo_root).joinpath("versions", "init").create()("install_requirements.ps1").write_text(get_install_requirements_template(repo_root=P(repo_root)))
-    P(repo_root).joinpath("versions", "init").create()("install_requirements.sh").write_text(get_install_requirements_template(repo_root=P(repo_root)))
+    base_path.joinpath("install_requirements.ps1").write_text(get_install_requirements_template(repo_root=P(repo_root)))
+    base_path.joinpath("install_requirements.sh").write_text(get_install_requirements_template(repo_root=P(repo_root)))
 
     return script
 
