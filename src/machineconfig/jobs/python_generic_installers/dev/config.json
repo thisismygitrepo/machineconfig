@@ -23,13 +23,13 @@
         "strip_v": false,
         "exe_name": "devcontainer"
     },
-    "m365": {
-        "repo_url": "npm install -g @pnp/cli-microsoft365",
-        "doc": "CLI for Microsoft 365",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
-        "strip_v": false,
-        "exe_name": "m365"
+    "onefetch": {
+        "repo_url": "https://github.com/o2sh/onefetch",
+        "doc": "Git repository summary on your terminal",
+        "filename_template_windows_amd_64": "onefetch-win.tar.gz",
+        "filename_template_linux_amd_64": "onefetch-linux.tar.gz",
+        "strip_v": true,
+        "exe_name": "onefetch"
     },
     "just": {
         "repo_url": "https://github.com/casey/just",
@@ -54,14 +54,6 @@
         "filename_template_linux_amd_64": "navi-v2.23.0-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": false,
         "exe_name": "navi"
-    },
-    "onefetch": {
-        "repo_url": "https://github.com/o2sh/onefetch",
-        "doc": "Git repository summary on your terminal",
-        "filename_template_windows_amd_64": "onefetch-win.tar.gz",
-        "filename_template_linux_amd_64": "onefetch-linux.tar.gz",
-        "strip_v": true,
-        "exe_name": "onefetch"
     },
     "marp": {
         "repo_url": "npm install -g @marp-team/marp-cli",

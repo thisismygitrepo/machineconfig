@@ -73,19 +73,13 @@ sudo apt-get install libaa-bin -y
 # yes '' | sed 3q; echo "----------------------------- installing sharewifi ----------------------------"; yes '' | sed 3q
 # npm install sharewifi -g || true
 
-yes '' | sed 3q; echo "----------------------------- installing github-copilot-cli ----------------------------"; yes '' | sed 3q
-nix-env -iA nixpkgs.gh
-# as per https://docs.github.com/en/copilot/github-copilot-in-the-cli/using-github-copilot-in-the-cli
-# gh auth login
-# gh extension install github/gh-copilot
 
 yes '' | sed 3q; echo "----------------------------- installing easy-sharing ----------------------------"; yes '' | sed 3q
 # Making sure npm is available in the terminal
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-npm install -g easy-sharing 
-# https://github.com/parvardegr/sharing
-# https://github.com/mifi/ezshare
+npm install -g easy-sharing  # based on https://github.com/parvardegr/sharing
+# alternative: https://github.com/mifi/ezshare
 
 
 yes '' | sed 3q; echo "----------------------------- installing sshfs ----------------------------"; yes '' | sed 3q
@@ -104,14 +98,6 @@ yes '' | sed 3q; echo "----------------------------- installing cloudflared Warp
 curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
 echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ jammy main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
 sudo apt-get update && sudo apt-get install cloudflare-warp -y
-
-# yes '' | sed 3q; echo "----------------------------- installing cloudflared -------------------------------"; yes '' | sed 3q
-# # install as per instructions. Advantage of avoiding a package manager is getting: cloudflared update command.
-# mkdir $HOME/tmp_install -p || true
-# cd $HOME/tmp_install || true
-# wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb && sudo dpkg -i cloudflared-linux-amd64.deb
-# rm -rfd $HOME/tmp_install || true
-# cd $HOME || true
 
 
 yes '' | sed 3q; echo "----------------------------- installing graphviz ----------------------------"; yes '' | sed 3q

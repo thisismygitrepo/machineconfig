@@ -48,7 +48,7 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
     print(f"MOVING file `{repr(exe)}` to '/usr/local/bin'")
     exe.chmod(0o777)
     # exe.move(folder=r"/usr/local/bin", overwrite=False)
-    Terminal().run(f"sudo mv {exe} /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
+    Terminal().run(f"sudo mv {exe} /usr/local/bin/").print_if_unsuccessful(desc=f"MOVING executable `{exe}` to /usr/local/bin", strict_err=True, strict_returncode=True)
     if delete: downloaded.delete(sure=True)
     exe_new_location = P(r"/usr/local/bin").joinpath(exe.name)
     return exe_new_location

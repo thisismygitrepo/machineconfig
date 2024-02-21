@@ -8,6 +8,14 @@
         "strip_v": false,
         "exe_name": "wezterm"
     },
+    "gh": {
+        "repo_url": "CUSTOM",
+        "doc": "GitHub CLI",
+        "filename_template_windows_amd_64": "gh_{}_windows_amd64.zip",
+        "filename_template_linux_amd_64": "gh_{}_linux_amd64.tar.gz",
+        "strip_v": true,
+        "exe_name": "gh"
+    },
     "ttyd": {
         "repo_url": "https://github.com/tsl0922/ttyd",
         "doc": "ttyd shares your terminal on the web.",
@@ -16,7 +24,14 @@
         "strip_v": true,
         "exe_name": "ttyd"
     },
-
+    "m365": {
+        "repo_url": "npm install -g @pnp/cli-microsoft365",
+        "doc": "CLI for Microsoft 365",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "m365"
+    },
     "ngrok": {
         "repo_url": "CUSTOM",
         "doc": "ngrok secure introspectable tunnels to localhost",
