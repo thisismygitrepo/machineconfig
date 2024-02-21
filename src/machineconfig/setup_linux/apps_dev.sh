@@ -112,13 +112,13 @@ curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmo
 echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ jammy main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
 sudo apt-get update && sudo apt-get install cloudflare-warp -y
 
-yes '' | sed 3q; echo "----------------------------- installing cloudflared -------------------------------"; yes '' | sed 3q
-# install as per instructions. Advantage of avoiding a package manager is getting: cloudflared update command.
-mkdir $HOME/tmp_install -p || true
-cd $HOME/tmp_install || true
-wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb && sudo dpkg -i cloudflared-linux-amd64.deb
-rm -rfd $HOME/tmp_install || true
-cd $HOME || true
+# yes '' | sed 3q; echo "----------------------------- installing cloudflared -------------------------------"; yes '' | sed 3q
+# # install as per instructions. Advantage of avoiding a package manager is getting: cloudflared update command.
+# mkdir $HOME/tmp_install -p || true
+# cd $HOME/tmp_install || true
+# wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb && sudo dpkg -i cloudflared-linux-amd64.deb
+# rm -rfd $HOME/tmp_install || true
+# cd $HOME || true
 
 
 yes '' | sed 3q; echo "----------------------------- installing graphviz ----------------------------"; yes '' | sed 3q
@@ -151,7 +151,6 @@ sudo apt install make -y || true  # lvim and spacevim require it.
 # fi
 
 
-
 yes '' | sed 3q; echo "----------------------------- installing ncdu ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install ncdu -y || true   # disk usage analyzer, like diskonaut
@@ -159,27 +158,6 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.ncdu || true
 fi
 
-yes '' | sed 3q; echo "----------------------------- installing navi ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  echo "no apt installer for navi, skipping"
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.navi || true
-fi
-
-yes '' | sed 3q; echo "----------------------------- installing just ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install just -y || true  # replacement for make
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.just || true
-fi
-
-
-yes '' | sed 3q; echo "----------------------------- installing hyperfine ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install curl -y
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.hyperfine  || true  # benchamrking
-fi
 
 yes '' | sed 3q; echo "----------------------------- installing nvim ----------------------------"; yes '' | sed 3q
 # sudo apt install neovim -y  # nvim, but not latest release
