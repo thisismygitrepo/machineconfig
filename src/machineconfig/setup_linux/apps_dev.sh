@@ -88,13 +88,6 @@ npm install -g easy-sharing
 # https://github.com/mifi/ezshare
 
 
-yes '' | sed 3q; echo "----------------------------- installing m365 ----------------------------"; yes '' | sed 3q
-# Making sure npm is available in the terminal
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-npm install -g @pnp/cli-microsoft365
-
-
 yes '' | sed 3q; echo "----------------------------- installing sshfs ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install sshfs  # mount remote filesystems over ssh

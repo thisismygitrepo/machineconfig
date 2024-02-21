@@ -23,6 +23,14 @@
         "strip_v": false,
         "exe_name": "devcontainer"
     },
+    "m365": {
+        "repo_url": "npm install -g @pnp/cli-microsoft365",
+        "doc": "CLI for Microsoft 365",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "m365"
+    },
     "just": {
         "repo_url": "https://github.com/casey/just",
         "doc": "A command runner",
