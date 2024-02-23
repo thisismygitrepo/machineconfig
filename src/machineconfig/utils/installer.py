@@ -158,7 +158,7 @@ class Installer:
             else: raise NotImplementedError(f"📦️ System {platform.system()} not implemented")
             print(f"📦️ File name", file_name)
             download_link = release_url.joinpath(file_name)
-        print("📦️ Downloading: ", download_link.as_url_str())
+        print(f"📦️ Downloading {self.name}: ", download_link.as_url_str())
         downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
         return downloaded, version_to_be_installed
 
