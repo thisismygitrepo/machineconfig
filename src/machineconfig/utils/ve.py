@@ -142,16 +142,9 @@ def get_ve_install_script_from_specs(repo_root: str, system: Literal["Windows", 
     py_version = ini["specs"]["py_version"]
     ipy_profile = ini["specs"]["ipy_profile"]
 
-    # repo_root = ini_file.with_name("requirements.txt").parent
-
     # for backward compatibility:
     ini_file.with_name(".ve_path").write_text(f"~/venvs/{ve_name}")
     ini_file.with_name(".ipy_profile").write_text(ipy_profile)
-
-    # vscode:
-    if not system == "Windows":  # symlinks on windows require admin rights.
-        P(repo_root).joinpath(".venv").symlink_to(target=P.home().joinpath("venvs", ve_name), strict=False)
-        # set strict to False since ve doesn't exist yet.
 
     vscode_settings = P(repo_root).joinpath(".vscode/settings.json")
     if vscode_settings.exists():
@@ -179,6 +172,11 @@ def get_ve_install_script_from_specs(repo_root: str, system: Literal["Windows", 
 
     base_path.joinpath("install_requirements.ps1").write_text(get_install_requirements_template(repo_root=P(repo_root)))
     base_path.joinpath("install_requirements.sh").write_text(get_install_requirements_template(repo_root=P(repo_root)))
+
+    # vscode:
+    if not system == "Windows":  # symlinks on windows require admin rights.
+        P(repo_root).joinpath(".venv").symlink_to(target=P.home().joinpath("venvs", ve_name), strict=False)
+        # set strict to False since ve doesn't exist yet.
 
     return script
 
