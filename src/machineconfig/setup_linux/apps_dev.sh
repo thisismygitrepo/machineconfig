@@ -1,7 +1,7 @@
 
 
 if [ -z "$package_manager" ]; then
-  package_manager="nix"  # see if variable package_manager is defined, if not, define it as "nix"
+  package_manager="apt"  # see if variable package_manager is defined, if not, define it as "nix"
 fi
 
 
@@ -187,5 +187,5 @@ yes '' | sed 3q; echo "----------------------------- installing hollywood ------
 if [ "$package_manager" = "apt" ]; then
   sudo apt install hollywood -y || true  # for fun
 else
-~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
+  ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
 fi

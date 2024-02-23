@@ -74,8 +74,10 @@ ZJ_SESSIONS=$(zellij list-sessions)
 
 if [[ "${{ZJ_SESSIONS}}" != *"(current)"* ]]; then
     echo "Not inside a zellij session ..."
-    echo '{mount_cmd}'
-    exit 1
+    echo '{mount_cmd} --daemon'
+    # exit 1
+
+    {mount_cmd} --daemon
 fi
 
 zellij run --direction down --name rclone -- {mount_cmd}

@@ -10,7 +10,7 @@ sudo apt install curl -y || true  # for handling http requests
 
 
 if [ -z "$package_manager" ]; then
-  package_manager="nix"  # see if variable package_manager is defined, if not, define it as "nix"
+  package_manager="apt"  # see if variable package_manager is defined, if not, define it as "nix"
 fi
 
 curl -L https://nixos.org/nix/install | sh  # cross *nix platforms.
