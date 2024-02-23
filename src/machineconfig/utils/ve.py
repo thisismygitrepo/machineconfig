@@ -203,7 +203,7 @@ def get_install_requirements_template(repo_root: P):
     return f"""
 # This is a template that is meant to be modified manually to install requirements.txt and editable packages.
 # one can dispense with this and install libraries manually and on adhoc-basis and then use version_checkout utility.
-cd $HOME/{repo_root.as_posix()}
+cd $HOME/{repo_root.rel2home().as_posix()}
 . $HOME/scripts/activate_ve
 pip install -r requirements.txt
 pip install -e .
