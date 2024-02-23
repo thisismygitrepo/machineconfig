@@ -150,7 +150,8 @@ def get_ve_install_script_from_specs(repo_root: str, system: Literal["Windows", 
 
     # vscode:
     if not system == "Windows":  # symlinks on windows require admin rights.
-        P(repo_root).joinpath(".venv").symlink_to(P.home().joinpath("venvs", ve_name))
+        P(repo_root).joinpath(".venv").symlink_to(target=P.home().joinpath("venvs", ve_name), strict=False)
+        # set strict to False since ve doesn't exist yet.
 
     vscode_settings = P(repo_root).joinpath(".vscode/settings.json")
     if vscode_settings.exists():

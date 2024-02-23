@@ -1,12 +1,14 @@
 
 if [ -z "$CLOUD_CONFIG_NAME" ]
 then
+    echo "When finished, what init script to run? it should be under cloud_config_name."
     read -s -p "Enter CLOUD_CONFIG_NAME: " CLOUD_CONFIG_NAME
     export CLOUD_CONFIG_NAME=$CLOUD_CONFIG_NAME
 fi
 
 if [ -z "$SHARE_URL" ]
 then
+    echo "To get share_url, go to dotfiles run: cloud_copy . :^ --config ss"
     read -s -p "Enter SHARE_URL: " SHARE_URL
     export SHARE_URL=$SHARE_URL
 fi
