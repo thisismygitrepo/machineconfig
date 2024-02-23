@@ -160,7 +160,8 @@ def get_ve_install_script_from_specs(repo_root: str, system: Literal["Windows", 
         raise NotImplementedError(f"System {system} not supported.")
     Save.json(obj=settings, path=vscode_settings, indent=4)
 
-    base_path = P(repo_root).joinpath("versions", "init").create()
+    subpath = "versions/init"
+    base_path = P(repo_root).joinpath(subpath).create()
     if system == "Windows":
         script = get_ps1_install_template(ve_name=ve_name, py_version=py_version)
         base_path.joinpath("install_ve.ps1").write_text(script)
@@ -170,8 +171,8 @@ def get_ve_install_script_from_specs(repo_root: str, system: Literal["Windows", 
     else:
         raise NotImplementedError(f"System {system} not supported.")
 
-    base_path.joinpath("install_requirements.ps1").write_text(get_install_requirements_template(repo_root=P(repo_root)))
-    base_path.joinpath("install_requirements.sh").write_text(get_install_requirements_template(repo_root=P(repo_root)))
+    base_path.joinpath("install_requirements.ps1").write_text(get_install_requirements_template(repo_root=P(repo_root), requirements_subpath=subpath))
+    base_path.joinpath("install_requirements.sh").write_text(get_install_requirements_template(repo_root=P(repo_root), requirements_subpath=subpath))
 
     # vscode:
     if not system == "Windows":  # symlinks on windows require admin rights.
@@ -199,13 +200,15 @@ curl -L https://bit.ly/cfgvelinux | bash
     return template
 
 
-def get_install_requirements_template(repo_root: P):
+def get_install_requirements_template(repo_root: P, requirements_subpath: str):
     return f"""
 # This is a template that is meant to be modified manually to install requirements.txt and editable packages.
 # one can dispense with this and install libraries manually and on adhoc-basis and then use version_checkout utility.
+
+set -e  # exit on error, you don't want to install reqiurements in wrong environment.
 cd $HOME/{repo_root.rel2home().as_posix()}
 . $HOME/scripts/activate_ve
-pip install -r requirements.txt
+pip install -r {requirements_subpath}/requirements.txt
 pip install -e .
 
 # cd ~/code; git clone https://github.com/thisismygitrepo/crocodile.git --origin origin
