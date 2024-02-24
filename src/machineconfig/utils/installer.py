@@ -105,7 +105,7 @@ class Installer:
             installer_path = P(custom_installer.__file__).parent.joinpath(self.exe_name + ".py")
             import runpy
             program = runpy.run_path(str(installer_path), run_name="__main__")['main'](version=version)
-            Terminal().run(program, shell="default").print(desc="Running custom installer", capture=True)
+            Terminal().run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)
             # import subprocess
             # subprocess.run(program, shell=True, check=True)
             version_to_be_installed = str(version)
