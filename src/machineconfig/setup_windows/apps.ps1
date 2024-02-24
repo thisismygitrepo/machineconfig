@@ -43,7 +43,7 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --source winget  # powershell require admin
 
 # ======================= Terminal-based editors =================================
-# winget install --no-upgrade --name "Lapce" --Id Lapce.Lapce  # app variant of helix
+# winget install --no-upgrade --name "Lapce" --Id Lapce.Lapce  # window app variant of helix
 winget install --no-upgrade --name "Neovim" --Id Neovim.Neovim --source winget --accept-package-agreements --accept-source-agreements
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 Invoke-WebRequest "https://spacevim.org/install.cmd" -OutFile "~/Downloads/spacevim_installer.cmd"

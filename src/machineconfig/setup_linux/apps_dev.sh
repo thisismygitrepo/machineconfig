@@ -138,27 +138,6 @@ else
 fi
 
 
-yes '' | sed 3q; echo "----------------------------- installing nvim ----------------------------"; yes '' | sed 3q
-# sudo apt install neovim -y  # nvim, but not latest release
-# download neovim from release page
-# sudo apt remove neovim
-# sudo rm ~/.local/bin/nvim || true
-if [ "$package_manager" = "apt" ]; then
-  mkdir $HOME/tmp_install -p || true
-  mkdir $HOME/.local/share -p || true
-  cd $HOME/tmp_install || true
-  wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz || true
-  tar -xvf nvim-linux64.tar.gz  -C $HOME/.local/share/ || true
-  sudo cp ~/.local/share/nvim-linux64/bin/nvim /usr/local/bin/nvim || true
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.neovim
-fi
-
-
-# yes '' | sed 3q; echo "----------------------------- installing lunarvim ----------------------------"; yes '' | sed 3q
-# # from https://www.lunarvim.org/docs/installation
-# LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
-
 
 # yes '' | sed 3q; echo "----------------------------- installing spacevim ----------------------------"; yes '' | sed 3q
 # # https://spacevim.org/quick-start-guide/#linux-and-macos

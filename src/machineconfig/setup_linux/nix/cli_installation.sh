@@ -47,9 +47,6 @@ nix-env -iA nixpkgs.nushell || true
 yes '' | sed 3q; echo "installing lf <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 nix-env -iA nixpkgs.lf || true
 
-# lvim
-#yes '' | sed 3q; echo "installing lvim <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-#nix-env -iA nixpkgs.lvim || true
 
 # termscp
 yes '' | sed 3q; echo "installing termscp <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"

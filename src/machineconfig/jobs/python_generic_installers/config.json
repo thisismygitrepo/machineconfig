@@ -278,6 +278,13 @@
         "filename_template_linux_amd_64": "watchexec-{}-x86_64-unknown-linux-musl.tar.xz",
         "strip_v": true,
         "exe_name": "watchexec"
+    },
+    "nvim": {
+        "repo_url": "CUSTOM",
+        "doc": "Neovim",
+        "filename_template_windows_amd_64": "nvim-win64.zip",
+        "filename_template_linux_amd_64": "nvim-linux64.tar.gz",
+        "strip_v": false,
+        "exe_name": "nvim"
     }
-
 }
