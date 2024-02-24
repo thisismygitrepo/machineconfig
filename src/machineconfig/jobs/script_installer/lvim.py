@@ -2,6 +2,8 @@
 """lvim
 """
 
+from crocodile.meta import Terminal
+import subprocess
 import platform
 from typing import Optional
 
@@ -24,6 +26,8 @@ LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.
 """
     else:
         raise NotImplementedError("unsupported platform")
+    _res = Terminal(stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)
+    # run script here as it requires user input
     return program
 
 
