@@ -47,7 +47,6 @@ def main() -> None:
 
     path_obj = sanitize_path(P(args.path))
     if not path_obj.exists():
-        print("This pathway")
         path_obj = match_file_name(args.path)
         print(path_obj)
     else:
