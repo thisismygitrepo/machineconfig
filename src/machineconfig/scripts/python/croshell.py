@@ -145,7 +145,8 @@ print_logo(logo="crocodile")
     if interpreter == "ipython": final_program += f"{interactivity} --profile {profile} --no-banner"
     final_program += f" {str(pyfile)}"
     print(f"🔥 sourcing  ... {pyfile}")
-    PROGRAM_PATH.write_text(final_program)
+    print(f"Running ... {final_program}")
+    PROGRAM_PATH.write_text(data=final_program)
 
     # if platform.system() == "Windows":
         # return subprocess.run([f"powershell", "-Command", res], shell=True, capture_output=False, text=True, check=True)

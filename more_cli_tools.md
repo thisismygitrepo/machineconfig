@@ -7,6 +7,9 @@
 * https://github.com/bloomberg/memray
 
 # Sources:
+* https://github.com/catppuccin/
+* https://github.com/jsonresume/resume-cli
+* https://www.bashbunni.dev/
 * https://github.com/EvanLi/Github-Ranking/
 * https://github.com/sindresorhus/awesome
 * https://github.com/anderspitman/awesome-tunneling
