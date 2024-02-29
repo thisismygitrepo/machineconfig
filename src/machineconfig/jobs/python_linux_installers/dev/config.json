@@ -87,5 +87,21 @@
         "filename_template_linux_amd_64": "patat-{}-linux-x86_64.tar.gz",
         "strip_v": false,
         "exe_name": "patat"
+    },
+    "SqliteBrowser": {
+        "repo_url": "https://github.com/sqlitebrowser/sqlitebrowser",
+        "doc": "A visual tool to create, design, and edit database files compatible with SQLite.",
+        "filename_template_windows_amd_64": "sqlitebrowser-{}-win64.zip",
+        "filename_template_linux_amd_64": "DB_Browser_for_SQLite-{}-x86_64.AppImage",
+        "strip_v": false,
+        "exe_name": "sqlite_browser"
+    },
+    "DBeaver": {
+        "repo_url": "https://github.com/dbeaver/dbeaver",
+        "doc": "Free universal database tool and SQL client.",
+        "filename_template_windows_amd_64": "dbeaver-ce-{}-win32.win32.x86_64.zip",
+        "filename_template_linux_amd_64": "dbeaver-ce-{}-linux.gtk.x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "dbeaver"
     }
 }

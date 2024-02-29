@@ -201,3 +201,6 @@ config = {this = '~/.config/mods/mods.yml', to_this = '~/dotfiles/creds/mods/mod
 [m365]
 config1 = {this = '~/.cli-m365-msal.json', to_this = '~/dotfiles/creds/tokens/.cli-m365-msal.json'}
 config2 = {this = '~/.cli-m365-tokens.json', to_this = '~/dotfiles/creds/tokens/.cli-m365-tokens.json'}
+
+[docker]
+config = {this = '~/.docker/config.json', to_this = '~/dotfiles/creds/docker/config.json'}

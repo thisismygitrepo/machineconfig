@@ -93,17 +93,20 @@ def build_parser():
         options = P.cwd().search("*.py", r=True).apply(str).list
         file = display_options(msg="Choose a python file to run", options=options, fzf=True, multi=False, )
         assert isinstance(file, str)
-        if profile is None: profile = profile = get_ipython_profile(P(file))
+        if profile is None:
+            profile = get_ipython_profile(P(file))
         program = P(file).read_text(encoding='utf-8')
 
     elif args.file != "":
         file = P(args.file.lstrip()).expanduser().absolute()
-        if profile is None: profile = profile = get_ipython_profile(P(file))
+        if profile is None:
+            profile = get_ipython_profile(P(file))
         program = get_read_pyfile_pycode(file, as_module=args.module, cmd=args.cmd)
 
     elif args.read != "":
         file = P(str(args.read).lstrip()).expanduser().absolute()
-        if profile is None: profile = profile = get_ipython_profile(P(file))
+        if profile is None:
+            profile = get_ipython_profile(P(file))
         program = get_read_data_pycode(str(file))
 
     else:  # just run croshell.py interactively
@@ -129,7 +132,9 @@ print_logo(logo="crocodile")
     total_program = preprogram + add_print_header_pycode(str(pyfile), title=title) + program
 
     pyfile.write_text(total_program, encoding='utf-8')
-    if profile is None: profile = "default"
+    if profile is None:
+        profile = get_ipython_profile(P.cwd())
+        # profile = "default"
 
     ve = get_ve_profile(P(file)) if args.ve is None else str(args.ve)
 
