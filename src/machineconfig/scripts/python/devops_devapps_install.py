@@ -57,6 +57,7 @@ def get_program(program_name: str, options: list[str], installers: list[Installe
         program_names = choose_multiple_options(msg="", options=sorted(options__) + ["all"], header="CHOOSE DEV APP")
         if "all" in program_names: program_names = options__
         program = ""
+        print(f"Installing:\n{program_names}")
         for name in program_names:
             try:
                 idx = options__.index(name)
@@ -64,6 +65,7 @@ def get_program(program_name: str, options: list[str], installers: list[Installe
                 print(f"{name=}")
                 print(f"{options__=}")
                 raise ve
+            print(f"Installing {name}")
             sub_program = installers[idx].install_robust(version=None)  # finish the task
     elif program_name == "PrecheckedCloudInstaller":
         from machineconfig.jobs.python.check_installations import PrecheckedCloudInstaller
