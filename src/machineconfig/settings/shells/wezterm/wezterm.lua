@@ -90,20 +90,30 @@ config.keys = {
 }
 
 
+config.color_scheme = 'Firefly Traditional'
+-- 'Pro' == 'Spiderman'  -- 'shades-of-purple'  -- 'synthwave' -- 'Symfonic'  -- 'PaulMillr'  -- 'Neon'  -- 'LiquidCarbonTransparentInverse' -- 'Laser'  -- 'IR_Black' -- 'Hurtado' -- 'Homebrew' -- Hipster Green'  -- Firefly Traditional' -- 'Elementary'  -- 'deep' -- 'Dark Pastel' -- 'Bright Lights' -- 'Adventure'  -- 'Nancy (terminal.sexy)'
 
-config.color_scheme = 'Builtin Dark'
+-- config.colors = {
+--   -- Make the selection text color fully transparent.
+--   -- When fully transparent, the current text color will be used.
+--   selection_fg = 'none',
+--   -- Set the selection background color with alpha.
+--   -- When selection_bg is transparent, it will be alpha blended over
+--   -- the current cell background color, rather than replace it
+--   selection_bg = 'rgba(50% 50% 50% 50%)',
+-- }
 
--- config.window_background_image = '/path/to/wallpaper.jpg'
+-- config.window_background_image = '/home/alex/Downloads/uni.jpg'
 -- config.window_background_image_hsb = {
 --   -- Darken the background image by reducing it to 1/3rd
---   brightness = 0.3,
+--   brightness = 0.04,
 
 --   -- You can adjust the hue by scaling its value.
 --   -- a multiplier of 1.0 leaves the value unchanged.
 --   hue = 1.0,
 
 --   -- You can adjust the saturation also.
---   saturation = 1.0,
+--   saturation = 0.5,
 -- }
 
 
@@ -117,7 +127,7 @@ config.inactive_pane_hsb = {
 -- config.ime_preedit_rendering = 'System'
 config.enable_tab_bar = false
 config.window_background_opacity = 1.0
-config.text_background_opacity = 0.3
+config.text_background_opacity = 1.0
 config.enable_scroll_bar = true
 config.cursor_blink_rate = 1000
 config.cursor_blink_ease_in = "Constant"
