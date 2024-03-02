@@ -25,6 +25,8 @@ wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.
 tar -xvf nvim-linux64.tar.gz  -C $HOME/.local/share/ || true
 sudo cp ~/.local/share/nvim-linux64/bin/nvim /usr/local/bin/nvim || true
 """
+        _ = program
+        program = ""
     else:
         raise NotImplementedError("unsupported platform")
     return program

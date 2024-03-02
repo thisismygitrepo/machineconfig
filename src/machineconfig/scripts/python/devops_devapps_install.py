@@ -57,7 +57,8 @@ def get_program(program_name: str, options: list[str], installers: list[Installe
         program_names = choose_multiple_options(msg="", options=sorted(options__) + ["all"], header="CHOOSE DEV APP")
         if "all" in program_names: program_names = options__
         program = ""
-        print(f"Installing:\n{program_names}")
+        print(f"Installing:")
+        L(program_names).print()
         for name in program_names:
             try:
                 idx = options__.index(name)
