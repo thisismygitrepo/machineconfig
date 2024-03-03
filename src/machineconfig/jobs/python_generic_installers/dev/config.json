@@ -87,6 +87,14 @@
         "strip_v": true,
         "exe_name": "presenterm"
     },
+    "edex-ui": {
+        "repo_url": "https://github.com/GitSquared/edex-ui",
+        "doc": "fullscreen, cross-platform terminal emulator and system monitor that looks and feels like a sci-fi computer interface",
+        "filename_template_windows_amd_64": "eDEX-UI-Windows-x64.exe",
+        "filename_template_linux_amd_64": "eDEX-UI-Linux-x86_64.AppImage",
+        "strip_v": true,
+        "exe_name": "edex"
+    },
     "auto-GPT": {
         "repo_url": "https://github.com/Significant-Gravitas/Auto-GPT",
         "doc": "GPT ",
