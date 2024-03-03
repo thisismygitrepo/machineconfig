@@ -7,7 +7,7 @@ croshell
 import argparse
 # import subprocess
 # import platform
-from crocodile.file_management import P, randstr, Read
+from crocodile.file_management import P, randstr
 from machineconfig.utils.ve import get_ipython_profile, get_ve_profile, get_ve_name_and_ipython_profile
 from machineconfig.utils.utils import PROGRAM_PATH, display_options
 

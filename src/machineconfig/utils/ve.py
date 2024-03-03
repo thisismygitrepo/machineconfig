@@ -2,7 +2,7 @@
 """python and ve installation related utils
 """
 
-from crocodile.file_management import P, Struct, modify_text, List
+from crocodile.file_management import P, Struct, modify_text, List, Read, Save
 from machineconfig.utils.utils import LIBRARY_ROOT
 import platform
 from dataclasses import dataclass
@@ -153,7 +153,6 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
 
 
 def get_ve_install_script_from_specs(repo_root: str, system: Literal["Windows", "Linux"]):
-    from crocodile.file_management import Read, Save
     ini_file = P(repo_root).joinpath(".ve.ini")
     assert ini_file.exists(), f"File {ini_file} does not exist."
     ini = Read.ini(ini_file)
