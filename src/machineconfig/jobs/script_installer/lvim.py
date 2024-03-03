@@ -8,6 +8,7 @@ import platform
 from typing import Optional
 
 
+_ = Terminal, subprocess
 # as per https://www.lunarvim.org/docs/installation
 
 

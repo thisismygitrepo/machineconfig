@@ -1,3 +1,4 @@
+# adopted from https://github.com/helix-editor/helix/discussions/6623
 
 [[language]]
 name = "python"

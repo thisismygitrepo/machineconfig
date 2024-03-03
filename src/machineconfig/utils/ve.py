@@ -23,6 +23,7 @@ class VE_INI:
 
 
 def get_ipython_profile(init_path: P):
+    """Relies on .ipy_profile"""
     a_path = init_path
     ipy_profile: str = "default"
     idx = len(a_path.parts)
@@ -39,6 +40,7 @@ def get_ipython_profile(init_path: P):
 
 
 def get_ve_profile(init_path: P, strict: bool = False):
+    """Relies on .ve_path"""
     ve = ""
     tmp = init_path
     for _ in init_path.parents:
@@ -49,6 +51,23 @@ def get_ve_profile(init_path: P, strict: bool = False):
         tmp = tmp.parent
     if ve == "" and strict: raise ValueError("❌ No virtual environment found.")
     return ve
+
+
+def get_ve_name_and_ipython_profile(init_path: P):
+    ve_name = "ve"
+    ipy_profile = "default"
+    tmp = init_path
+    for _ in init_path.parents:
+        if tmp.joinpath(".ve.ini").exists():
+            ini = Read.ini(tmp.joinpath(".ve.ini"))
+            ve_name = ini["specs"]["ve_name"]
+            # py_version = ini["specs"]["py_version"]
+            ipy_profile = ini["specs"]["ipy_profile"]
+            print(f"✅ Using Virtual Environment: {ve_name}")
+            print(f"✅ Using IPython profile: {ipy_profile}")
+            break
+        tmp = tmp.parent
+    return ve_name, ipy_profile
 
 
 def get_current_ve():

@@ -8,7 +8,7 @@ import argparse
 # import subprocess
 # import platform
 from crocodile.file_management import P, randstr
-from machineconfig.utils.ve import get_ipython_profile, get_ve_profile
+from machineconfig.utils.ve import get_ipython_profile, get_ve_profile, get_ve_name_and_ipython_profile
 from machineconfig.utils.utils import PROGRAM_PATH, display_options
 
 
@@ -105,8 +105,11 @@ def build_parser():
 
     elif args.read != "":
         file = P(str(args.read).lstrip()).expanduser().absolute()
-        if profile is None:
-            profile = get_ipython_profile(P(file))
+        ve_name_from_file, ipy_profile_from_file = get_ve_name_and_ipython_profile(init_path=P(file))
+        # if profile is None:
+        #     profile = get_ipython_profile(P(file))
+        if profile is None: profile = ipy_profile_from_file
+        if args.ve is None: args.ve = ve_name_from_file
         program = get_read_data_pycode(str(file))
 
     else:  # just run croshell.py interactively
