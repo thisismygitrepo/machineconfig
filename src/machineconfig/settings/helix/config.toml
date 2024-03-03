@@ -1,5 +1,5 @@
 
-theme = "onedark"
+theme = "dark_high_contrast"
 
 [editor]
 line-number = "relative"

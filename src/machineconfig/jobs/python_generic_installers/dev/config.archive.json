@@ -1,0 +1,18 @@
+   {
+     "frpc": {
+        "repo_url": "https://github.com/fatedier/frp",
+        "doc": "fast reverse proxy that allows you to expose a local server located behind a NAT or firewall to the Internet.",
+        "filename_template_windows_amd_64": "frp_{}_windows_amd64.zip",
+        "filename_template_linux_amd_64": "frp_{}_linux_amd64.tar.gz",
+        "strip_v": true,
+        "exe_name": "frpc"
+    },
+    "frps": {
+        "repo_url": "https://github.com/fatedier/frp",
+        "doc": "fast reverse proxy that allows you to expose a local server located behind a NAT or firewall to the Internet.",
+        "filename_template_windows_amd_64": "frp_{}_windows_amd64.zip",
+        "filename_template_linux_amd_64": "frp_{}_linux_amd64.tar.gz",
+        "strip_v": true,
+        "exe_name": "frps"
+    }
+}

@@ -6,6 +6,8 @@
 * https://github.com/joerick/pyinstrument
 * https://github.com/bloomberg/memray
 
+* stress-ng & sysbench
+
 # Sources:
 * https://github.com/catppuccin/
 * https://github.com/jsonresume/resume-cli
