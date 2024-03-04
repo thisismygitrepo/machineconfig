@@ -23,6 +23,14 @@
         "strip_v": false,
         "exe_name": "devcontainer"
     },
+    "obsidian": {
+        "repo_url": "https://github.com/obsidianmd/obsidian-releases",
+        "doc": "Obsidian is a powerful knowledge base that works on top of a local folder of plain text Markdown files.",
+        "filename_template_windows_amd_64": "Obsidian.{}.exe",
+        "filename_template_linux_amd_64": "obsidian_{}_amd64.deb",
+        "strip_v": true,
+        "exe_name": "obsidian"
+    },
     "onefetch": {
         "repo_url": "https://github.com/o2sh/onefetch",
         "doc": "Git repository summary on your terminal",
