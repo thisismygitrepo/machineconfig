@@ -42,6 +42,7 @@
 
 * https://github.com/minio/minio
 * https://github.com/cockroachdb/cockroach
+* https://github.com/simonw/datasette
 
 
 # search

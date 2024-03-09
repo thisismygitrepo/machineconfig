@@ -116,3 +116,5 @@ short `curl bit.ly/cfgcroshelllinux -L | bash`
 # Author
 Alex Al-Saffar. [email](mailto:programmer@usa.com)
 
+[![Alex's github activity graph](https://github-readme-activity-graph.vercel.app/graph?username=thisismygitrepo)](https://github.com/ashutosh00710/github-readme-activity-graph)
+
