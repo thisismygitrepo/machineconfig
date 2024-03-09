@@ -36,6 +36,7 @@ setuptools.setup(
         "pyfzf",
         "clipboard",
         "psutil",
-        "pydantic"
+        "pydantic",
+        "fire"  # required by fire command
     ],
 )

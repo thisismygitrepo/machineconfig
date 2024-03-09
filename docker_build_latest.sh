@@ -2,6 +2,8 @@
 # set -e
 
 IMAGE_NAME="alim-slim"
+# IMAGE_NAME="alim-full"
+
 docker build --no-cache --file ./Dockerfile --progress=plain -t $IMAGE_NAME:latest .
 # building with no cache since docker is unaware of changes in clode due to dynamic code like curl URL | bash etc.
 

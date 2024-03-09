@@ -88,7 +88,14 @@ def main() -> None:
         from machineconfig.utils.ve import get_ve_profile  # if file name is passed explicitly, then, user probably launched it from cwd different to repo root, so activate_ve can't infer ve from .ve_path, so we attempt to do that manually here
         args.ve = get_ve_profile(choice_file)
 
-    if args.streamlit: exe = "streamlit run --server.address 0.0.0.0 "
+    if args.streamlit:
+        import socket
+        try: local_ip_v4 = socket.gethostbyname(socket.gethostname() + ".local")  # without .local, in linux machines, '/etc/hosts' file content, you have an IP address mapping with '127.0.1.1' to your hostname
+        except Exception:
+            print(f"Warning: Could not get local_ip_v4. This is probably because you are running a WSL instance")  # TODO find a way to get the local_ip_v4 in WSL
+            local_ip_v4 = socket.gethostbyname(socket.gethostname())
+        print(f"🚀 Streamlit app is running at: http://{local_ip_v4}:8501")
+        exe = "streamlit run --server.address 0.0.0.0 "
     elif args.interactive is False: exe = "python"
     elif args.jupyter: exe = "jupyter-lab"
     else:
@@ -183,6 +190,7 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
         command = command + f"\n" + f". {PROGRAM_PATH}"
 
     # TODO: send this command to terminal history. In powershell & bash there is no way to do it with a command other than goiing to history file. In Mcfly there is a way but its linux only tool. # if platform.system() == "Windows": command = f" ({command}) | Add-History  -PassThru "
+    # mcfly add --exit 0 command
     print(f"🔥 command:\n{command}\n\n")
     # if platform.system() == "Linux":
     #     command = "timeout 1s aafire -driver slang\nclear\n" + command

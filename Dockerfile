@@ -3,7 +3,7 @@
 # FROM python:3.11.7-alpine3.19
 FROM python:3.11-slim
 # FROM python:3.11.7-bookworm
-# FROM ubuntu:22.04
+# FROM ubuntu:jammy-20240227
 
 # Set bash as default shell
 # as per https://github.com/moby/moby/issues/7281

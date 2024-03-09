@@ -5,7 +5,6 @@
 * https://github.com/benfred/py-spy
 * https://github.com/joerick/pyinstrument
 * https://github.com/bloomberg/memray
-
 * stress-ng & sysbench
 
 # Sources:
@@ -75,6 +74,10 @@
 * Comparison: https://gist.github.com/miguelmota/04245255f9dc9a862ac2bd682bdbab06
 
 # Networking
+* https://github.com/gravitational/teleport
+* https://github.com/gravitl/netmaker
+* https://github.com/WireGuard/wireguard-windows
+* https://github.com/zerotier/ZeroTierOne
 * parsec rdp
 * https://github.com/prometheus/prometheus
 * https://github.com/v2ray/v2ray-core?tab=readme-ov-file

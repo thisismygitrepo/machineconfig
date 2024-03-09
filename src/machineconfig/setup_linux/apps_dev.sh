@@ -95,6 +95,7 @@ yes '' | sed 3q; echo "----------------------------- installing samba ----------
 
 yes '' | sed 3q; echo "----------------------------- installing cloudflared Warp --------------------------------"; yes '' | sed 3q
 # as per Ubuntu of https://pkg.cloudflareclient.com/
+sudo apt-get install gnupg  # no available on debian
 curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
 echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ jammy main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
 sudo apt-get update && sudo apt-get install cloudflare-warp -y
