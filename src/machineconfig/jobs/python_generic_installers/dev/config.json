@@ -39,6 +39,14 @@
         "strip_v": true,
         "exe_name": "onefetch"
     },
+    "gitcs": {
+        "repo_url": "https://github.com/knbr13/gitcs",
+        "doc": "analyze Git repositories and generate a visual contributions graph",
+        "filename_template_windows_amd_64": "gitcs_windows_amd64.exe",
+        "filename_template_linux_amd_64": "gitcs_linux_amd64",
+        "strip_v": false,
+        "exe_name": "gitcs"
+    },
     "just": {
         "repo_url": "https://github.com/casey/just",
         "doc": "A command runner",
@@ -342,6 +350,14 @@
         "filename_template_linux_amd_64": "ollama-linux-amd64",
         "strip_v": false,
         "exe_name": "ollama"
+    },
+    "cointop": {
+        "repo_url": "https://github.com/cointop-sh/cointop",
+        "doc": "Cointop is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.",
+        "filename_template_windows_amd_64": "cointop-{}-windows-x64.zip",
+        "filename_template_linux_amd_64": "cointop_{}_linux_amd64.tar.gz",
+        "strip_v": true,
+        "exe_name": "cointop"
     }
 
 }

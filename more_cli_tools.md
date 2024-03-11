@@ -96,3 +96,9 @@
 * https://github.com/yt-dlp/yt-dlp
 * https://github.com/ytdl-org/youtube-dl
 * https://github.com/Siriusmart/youtube-tui
+
+
+# Git viz
+* gource
+* https://github.com/git-truck/git-truck
+* https://github.com/git-big-picture/git-big-picture?tab=readme-ov-file
