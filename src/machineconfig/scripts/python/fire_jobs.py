@@ -200,6 +200,7 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
 
     if args.Nprocess > 1:
         lines = [f""" zellij action new-tab --name nProcess{randstr(2)}"""]
+        command = command.replace(". activate_ve", ". ~/scripts/activate_ve")
         for an_arg in range(args.Nprocess):
             sub_command = f"{command} --idx={an_arg} --idx_max={args.Nprocess}"
             sub_command_path = P.tmpfile(suffix=".sh").write_text(sub_command)
