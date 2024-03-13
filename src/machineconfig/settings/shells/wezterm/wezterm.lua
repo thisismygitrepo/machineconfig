@@ -90,7 +90,7 @@ config.keys = {
 }
 
 
-config.color_scheme = 'Pro'
+config.color_scheme = 'Nancy (terminal.sexy)'
 -- 'Pro' == 'Spiderman'  -- 'shades-of-purple'  -- 'synthwave' -- 'Symfonic'  -- 'PaulMillr'  -- 'Neon'  -- 'LiquidCarbonTransparentInverse' -- 'Laser'  -- 'IR_Black' -- 'Hurtado' -- 'Homebrew' -- Hipster Green'  -- Firefly Traditional' -- 'Elementary'  -- 'deep' -- 'Dark Pastel' -- 'Bright Lights' -- 'Adventure'  -- 'Nancy (terminal.sexy)'
 
 -- config.colors = {

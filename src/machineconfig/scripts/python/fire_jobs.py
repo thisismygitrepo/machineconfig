@@ -107,8 +107,8 @@ def main() -> None:
 try:
     {get_import_module_code(str(choice_file))}
 except (ImportError, ModuleNotFoundError) as ex:
-    print(fr"Failed to import {choice_file} the proper way. {{ex}} ")
-    print(fr"The way below is rather hacky and can cause issues in pickling.")
+    print(fr"Failed to import `{choice_file}` the proper way. {{ex}} ")
+    print(fr"Importing with an ad-hoc `$PATH` manipulation. DO NOT pickle any files in this session as there is no gaurantee of correct deserialization.")
     import sys
     sys.path.append(r'{P(choice_file).parent}')
     from {P(choice_file).stem} import *
