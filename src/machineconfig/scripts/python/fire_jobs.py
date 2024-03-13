@@ -18,24 +18,30 @@ from typing import Callable, Any, Optional
 import argparse
 
 
+def func2(idx: int, idx_max: int):
+    print(f"idx = {idx}, idx_max = {idx_max}")
+    print(type(idx), type(idx_max))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("path", nargs='?', type=str, help="The directory containing the jobs", default=".")
     parser.add_argument("function", nargs='?', type=str, help="Fuction to run", default=None)
     # parser.add_argument("--function", "-f", type=str, help="The function to run", default="")
-    parser.add_argument("--ve", "-v", type=str, help="virtual enviroment name", default="")
-    parser.add_argument("--cmd", "-B", action="store_true", help="Create a cmd fire command to launch the the job asynchronously.")
+    parser.add_argument("--ve",          "-v", type=str, help="virtual enviroment name", default="")
+    parser.add_argument("--cmd",         "-B", action="store_true", help="Create a cmd fire command to launch the the job asynchronously.")
     parser.add_argument("--interactive", "-i", action="store_true", help="Whether to run the job interactively using IPython")
-    parser.add_argument("--debug", "-d", action="store_true", help="debug")
+    parser.add_argument("--debug",       "-d", action="store_true", help="debug")
     parser.add_argument("--choose_function", "-c", action="store_true", help="debug")
-    parser.add_argument("--loop", "-l", action="store_true", help="infinite recusion (runs again after completion)")
-    parser.add_argument("--jupyter", "-j", action="store_true", help="open in a jupyter notebook")
+    parser.add_argument("--loop",      "-l", action="store_true", help="infinite recusion (runs again after completion)")
+    parser.add_argument("--jupyter",   "-j", action="store_true", help="open in a jupyter notebook")
     parser.add_argument("--submit_to_cloud", "-C", action="store_true", help="submit to cloud compute")
-    parser.add_argument("--remote", "-r", action="store_true", help="launch on a remote machine")
-    parser.add_argument("--module", "-m", action="store_true", help="launch the main file")
+    parser.add_argument("--remote",    "-r", action="store_true", help="launch on a remote machine")
+    parser.add_argument("--module",    "-m", action="store_true", help="launch the main file")
     parser.add_argument("--streamlit", "-S", action="store_true", help="run as streamlit app")
-    parser.add_argument("--history", "-H", action="store_true", help="choose from history")
+    parser.add_argument("--history",   "-H", action="store_true", help="choose from history")
     parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ...")
+    parser.add_argument("--Nprocess", "-p", type=int, help="Number of processes to use", default=1)
 
     args = parser.parse_args()
     if args.kw is not None:
@@ -170,7 +176,10 @@ print_code(code=r'''{txt}''', lexer='python', desc='Import Script')
     if not args.cmd:
         if "ipdb" in command: command = f"pip install ipdb; {command}"
         if "pudb" in command: command = f"pip install pudb; {command}"
-        command = f". activate_ve {args.ve}; {command}"
+        if platform.system() == "Windows":
+            command = f". activate_ve {args.ve}; {command}"
+        else:
+            command = f". activate_ve {args.ve}; {command}"
     else:
         # CMD equivalent
         if "ipdb" in command: command = f"pip install ipdb & {command}"
@@ -188,6 +197,14 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
 
     if args.loop:
         command = command + f"\n" + f". {PROGRAM_PATH}"
+
+    if args.Nprocess > 1:
+        lines = [f""" zellij action new-tab --name nProcess{randstr(2)}"""]
+        for an_arg in range(args.Nprocess):
+            sub_command = f"{command} --idx={an_arg} --idx_max={args.Nprocess}"
+            sub_command_path = P.tmpfile(suffix=".sh").write_text(sub_command)
+            lines.append(f"""zellij action new-pane -- bash {sub_command_path}  """)
+        command = "\n".join(lines)
 
     # TODO: send this command to terminal history. In powershell & bash there is no way to do it with a command other than goiing to history file. In Mcfly there is a way but its linux only tool. # if platform.system() == "Windows": command = f" ({command}) | Add-History  -PassThru "
     # mcfly add --exit 0 command
@@ -242,11 +259,11 @@ def parse_pyfile(file_path: str):
     return options, func_args
 
 
-def get_attrs(obj: Any):
+def get_attrs_recursively(obj: Any):
     if hasattr(obj, '__dict__'):
         res = {}
         for k, v in obj.__dict__.items():
-            res[k] = get_attrs(v)
+            res[k] = get_attrs_recursively(v)
         return res
     return obj
 
