@@ -205,6 +205,7 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
             sub_command = f"{command} --idx={an_arg} --idx_max={args.Nprocess}"
             sub_command_path = P.tmpfile(suffix=".sh").write_text(sub_command)
             lines.append(f"""zellij action new-pane -- bash {sub_command_path}  """)
+            lines.append("sleep 1")
         command = "\n".join(lines)
 
     # TODO: send this command to terminal history. In powershell & bash there is no way to do it with a command other than goiing to history file. In Mcfly there is a way but its linux only tool. # if platform.system() == "Windows": command = f" ({command}) | Add-History  -PassThru "

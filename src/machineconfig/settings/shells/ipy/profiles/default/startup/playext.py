@@ -8,8 +8,9 @@ from crocodile.file_management import P, randstr, Struct
 
 
 @register_line_magic("print_dir")  # type: ignore
-def print_dir():
+def print_dir(line):
     """Pretty print and categorize dir() output."""
+    _ = line  # ipython caller assumes there is at least one argument, an passes '' worstcase.
     res: dict[str, list[str]] = {}
     for item in globals().keys():
         if item.startswith("_"): continue
