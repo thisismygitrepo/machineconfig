@@ -4,11 +4,11 @@
 
 from IPython.core.magic import register_line_magic
 from crocodile.file_management import P, randstr, Struct
-# from typing import Any
+from typing import Any
 
 
 @register_line_magic("print_dir")  # type: ignore
-def print_dir(line):
+def print_dir_func(line: Any):
     """Pretty print and categorize dir() output."""
     _ = line  # ipython caller assumes there is at least one argument, an passes '' worstcase.
     res: dict[str, list[str]] = {}
@@ -22,7 +22,7 @@ def print_dir(line):
 
 
 @register_line_magic("code")  # type: ignore
-def print_program(obj_str: str):
+def print_program_func(obj_str: str):
     """Inspect the code of an object."""
     from rich.syntax import Syntax
     import inspect
