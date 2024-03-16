@@ -13,7 +13,10 @@ def print_dir_func(line: Any):
     _ = line  # ipython caller assumes there is at least one argument, an passes '' worstcase.
     res: dict[str, list[str]] = {}
     for item in globals().keys():
-        if item.startswith("_"): continue
+        if item.startswith("_") or item in ("open", "In", "Out", "quit", "exit", "get_ipython"):
+            continue
+        if item in ("P", "randstr", "Struct", "print_code", "print_dir_func", "print_program_func", "run_python_file_in_this_namespace"):
+            continue
         type_ = repr(type(eval(item)))  # type: ignore  # pylint: disable=eval-used
         if "typing." in type_: continue
         if type_ in res: res[type_].append(item)
