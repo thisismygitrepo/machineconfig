@@ -30,6 +30,13 @@ machineconfig_path=$HOME/code/machineconfig/src/machineconfig
 
 # set alias l to lsd -la
 alias l='lsd -la'
+alias gcs='gh copilot suggest -t shell'
+alias gcg='gh copilot suggest -t git'
+alias gce='gh copilot explain'
+# Check uniqueness of aliases
+# type gcs
+# type gcg
+# type gce
 
 # this makes npm available.
 export NVM_DIR="$HOME/.nvm"

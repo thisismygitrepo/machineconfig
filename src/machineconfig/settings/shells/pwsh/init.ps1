@@ -57,6 +57,14 @@ Add-ToPathIfNotAlready -Directories @(
 function lsdla { lsd -la }
 Set-Alias -Name l -Value lsdla -Option AllScope
 
+Set-Alias -Name gcs -Value {gh copilot suggest -t shell}
+Set-Alias -Name gcg -Value {gh copilot suggest -t git}
+Set-Alias -Name gce -Value {gh copilot explain}
+# Check for conflicts
+# Get-Command gcs -ErrorAction SilentlyContinue
+# Get-Command gcg -ErrorAction SilentlyContinue
+# Get-Command gce -ErrorAction SilentlyContinue
+
 # patches ===========================================================
 
 try {
