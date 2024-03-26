@@ -188,7 +188,6 @@
         "strip_v": false,
         "exe_name": "procs"
     },
-
     "delta": {
         "repo_url": "https://github.com/dandavison/delta",
         "doc": "A viewer for git and diff output",
@@ -197,14 +196,6 @@
         "strip_v": true,
         "exe_name": "delta"
     },
-    "dua": {
-        "repo_url": "https://github.com/Byron/dua-cli",
-        "doc": "Rust-based cli tool to get a quick overview of disk usage.",
-        "filename_template_windows_amd_64": "dua-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "dua-{}-x86_64-unknown-linux-musl.tar.gz",
-        "strip_v": false,
-        "exe_name": "dua"
-    },
     "gitui": {
         "repo_url": "https://github.com/extrawurst/gitui",
         "doc": "gitui is a terminal ui for git written in rust.",
@@ -212,6 +203,14 @@
         "filename_template_linux_amd_64": "gitui-linux-musl.tar.gz",
         "strip_v": false,
         "exe_name": "gitui"
+    },
+    "dua": {
+        "repo_url": "https://github.com/Byron/dua-cli",
+        "doc": "Rust-based cli tool to get a quick overview of disk usage.",
+        "filename_template_windows_amd_64": "dua-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "dua-{}-x86_64-unknown-linux-musl.tar.gz",
+        "strip_v": false,
+        "exe_name": "dua"
     },
     "helix": {
         "repo_url": "https://github.com/helix-editor/helix",

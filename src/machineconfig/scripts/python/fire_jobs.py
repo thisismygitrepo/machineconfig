@@ -125,8 +125,14 @@ except (ImportError, ModuleNotFoundError) as ex:
 {choice_function}({('**' + str(kwargs)) if kwargs else ''})
 """
         txt = f"""
-from machineconfig.utils.utils import print_code
-print_code(code=r'''{txt}''', lexer='python', desc='Import Script')
+try:
+    from rich.panel import Panel
+    from rich.console import Console
+    from rich.syntax import Syntax
+    console = Console()
+    console.print(Panel(Syntax(code=r'''{txt}''', lexer='python'), title='Import Script'), style="bold red")
+except ImportError as _ex:
+    print(r'''{txt}''')
 """ + txt
         choice_file = P.tmp().joinpath(f'tmp_scripts/python/{P(choice_file).parent.name}_{P(choice_file).stem}_{randstr()}.py').create(parents_only=True).write_text(txt)
 

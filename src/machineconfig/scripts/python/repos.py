@@ -1,5 +1,9 @@
 
 """Repos
+
+# TODO use gh api user --jq '.login' to get the username and use it to clone the repos.
+in the event that username@github.com is not mentioned in the remote url.
+
 """
 
 from rich import print as pprint
@@ -168,7 +172,7 @@ def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_comm
                     if preferred_remote is not None:
                         if preferred_remote in repo["remotes"]:
                             remote_name = preferred_remote
-                            remote_url: str = repo["remotes"][preferred_remote]
+                            remote_url = repo["remotes"][preferred_remote]
                         else:
                             print(f"⚠️ `{preferred_remote=}` not found in {repo['remotes']}.")
                             # preferred_remote = None
