@@ -12,8 +12,9 @@ typeCheckingMode = "basic"
 [language-server.ruff]
 command = "ruff-lsp"
 
-# [language-server.ruff.config.settings]
+[language-server.ruff.config.settings]
 # args = ["--ignore", "E501"]
+args = ["--ignore", "E701,E702,F541,E721"]
 
 [language.formatter]
 command = "black"
