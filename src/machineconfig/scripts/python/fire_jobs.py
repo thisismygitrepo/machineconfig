@@ -108,10 +108,11 @@ def main() -> None:
         exe = f"ipython -i --no-banner --profile {get_ipython_profile(choice_file)} "
 
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
-        print("$$"  *100)
+        import_line = get_import_module_code(str(choice_file))
+        print(import_line)
         txt: str = f"""
 try:
-    {get_import_module_code(str(choice_file))}
+    {import_line}
 except (ImportError, ModuleNotFoundError) as ex:
     print(fr"Failed to import `{choice_file}` the proper way. {{ex}} ")
     print(fr"Importing with an ad-hoc `$PATH` manipulation. DO NOT pickle any files in this session as there is no gaurantee of correct deserialization.")
