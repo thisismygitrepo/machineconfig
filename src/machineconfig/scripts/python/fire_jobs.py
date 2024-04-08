@@ -316,12 +316,13 @@ def run_on_remote(func_file: str, args: argparse.Namespace):
 def find_repo_root_path(start_path: str):
     root_files = ['setup.py', 'pyproject.toml', '.git']
     path: str = start_path
-    print(f"FINDING REPO ROOT PATH FROM: {path}")
+    # print(f"FINDING REPO ROOT PATH FROM: {path}")
     trials = 0
     root_path = os.path.abspath(os.sep)
     while path != root_path and trials < 20:
         for root_file in root_files:
             if os.path.exists(os.path.join(path, root_file)):
+                print(f"Found repo root path: {path}")
                 return path
         path = os.path.dirname(path)
         trials += 1
