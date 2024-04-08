@@ -337,7 +337,7 @@ def get_import_module_code(module_path: str):
         relative_path = module_path.replace(root_path, '')
         module_name = relative_path.lstrip(os.sep).replace(os.sep, '.').replace('.py', '')
         module_name = module_name.replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("resources.", "").replace("source.", "")
-    if "-" in module_name or " " in module_name:
+    if any(char in module_name for char in "- :/\\"):
         module_name = "IncorrectModuleName"
     # TODO: use py_compile to check if the statement is valid code to avoid syntax errors that can't be caught.
     return f"from {module_name} import *"
