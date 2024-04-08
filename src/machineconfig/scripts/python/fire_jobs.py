@@ -313,9 +313,10 @@ def run_on_remote(func_file: str, args: argparse.Namespace):
     m.run()
 
 
-def find_root_path(start_path: str):
+def find_repo_root_path(start_path: str):
     root_files = ['setup.py', 'pyproject.toml', '.git']
-    path = start_path
+    path: str = start_path
+    print(f"FINDING REPO ROOT PATH FROM: {path}")
     while path != '/':
         for root_file in root_files:
             if os.path.exists(os.path.join(path, root_file)):
@@ -325,7 +326,7 @@ def find_root_path(start_path: str):
 
 
 def get_import_module_code(module_path: str):
-    root_path = find_root_path(module_path)
+    root_path = find_repo_root_path(module_path)
     if root_path is None:  # just make a desperate attempt to import it
         module_name = module_path.lstrip(os.sep).replace(os.sep, '.').replace('.py', '')
         return f"from {module_path} import *"
