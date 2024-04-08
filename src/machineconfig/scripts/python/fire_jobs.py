@@ -56,8 +56,7 @@ def main() -> None:
         path_obj = match_file_name(args.path)
         print(path_obj)
     else:
-        print("This directory")
-        print(path_obj)
+        pass
 
     if path_obj.is_dir():
         print(f"Seaching recursively for all python file in directory `{path_obj}`")
