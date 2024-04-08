@@ -317,11 +317,14 @@ def find_repo_root_path(start_path: str):
     root_files = ['setup.py', 'pyproject.toml', '.git']
     path: str = start_path
     print(f"FINDING REPO ROOT PATH FROM: {path}")
-    while path != '/':
+    trials = 0
+    root_path = os.path.abspath(os.sep)
+    while path != root_path and trials < 20:
         for root_file in root_files:
             if os.path.exists(os.path.join(path, root_file)):
                 return path
         path = os.path.dirname(path)
+        trials += 1
     return None
 
 
