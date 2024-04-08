@@ -339,6 +339,9 @@ def get_import_module_code(module_path: str):
     if "-" in module_name or " " in module_name:
         module_name = "IncorrectModuleName"
     # TODO: use py_compile to check if the statement is valid code to avoid syntax errors that can't be caught.
+    print(module_path)
+    print(module_name)
+    print("*" * 100)
     return f"from {module_name} import *"
 
 
