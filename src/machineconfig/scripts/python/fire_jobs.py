@@ -109,7 +109,6 @@ def main() -> None:
 
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         import_line = get_import_module_code(str(choice_file))
-        print(import_line)
         txt: str = f"""
 try:
     {import_line}
@@ -334,16 +333,13 @@ def get_import_module_code(module_path: str):
     root_path = find_repo_root_path(module_path)
     if root_path is None:  # just make a desperate attempt to import it
         module_name = module_path.lstrip(os.sep).replace(os.sep, '.').replace('.py', '')
-        return f"from {module_path} import *"
-    relative_path = module_path.replace(root_path, '')
-    module_name = relative_path.lstrip(os.sep).replace(os.sep, '.').replace('.py', '')
-    module_name = module_name.replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("resources.", "").replace("source.", "")
+    else:
+        relative_path = module_path.replace(root_path, '')
+        module_name = relative_path.lstrip(os.sep).replace(os.sep, '.').replace('.py', '')
+        module_name = module_name.replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("resources.", "").replace("source.", "")
     if "-" in module_name or " " in module_name:
         module_name = "IncorrectModuleName"
     # TODO: use py_compile to check if the statement is valid code to avoid syntax errors that can't be caught.
-    print(module_path)
-    print(module_name)
-    print("*" * 100)
     return f"from {module_name} import *"
 
 
