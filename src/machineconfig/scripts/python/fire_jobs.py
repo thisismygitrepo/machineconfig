@@ -185,7 +185,7 @@ except ImportError as _ex:
         if platform.system() == "Windows":
             command = f". activate_ve {args.ve}; {command}"
         else:
-            command = f". activate_ve {args.ve}; {command}"
+            command = f". ~/scripts/activate_ve {args.ve}; {command}"
     else:
         # CMD equivalent
         if "ipdb" in command: command = f"pip install ipdb & {command}"
