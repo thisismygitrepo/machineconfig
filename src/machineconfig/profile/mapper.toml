@@ -28,17 +28,17 @@ config = {this = '~/AppData/Roaming/rclone/rclone.conf', to_this = '~/dotfiles/c
 config = {this = '~/.config/presenterm/config.yaml', to_this = 'LIBRARY_ROOT/settings/presenterm/config.yaml'}
 
 # shells profiles
-[powershell_windows]
-CurrentUserCurrentHost = {this = '~/Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserCurrentHost/Microsoft.PowerShell_profile.ps1'}
-CurrentUserAllHosts = {this = '~/Documents\WindowsPowerShell\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserAllHosts/profile.ps1'}
-AllUsersCurrentHost = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersCurrentHost/Microsoft.PowerShell_profile.ps1'}
-AllUsersAllHosts = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/AllUsersAllHosts/profile.ps1'}
+# [powershell_windows]
+# CurrentUserCurrentHost = {this = '~/Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserCurrentHost/Microsoft.PowerShell_profile.ps1'}
+# CurrentUserAllHosts = {this = '~/Documents\WindowsPowerShell\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserAllHosts/profile.ps1'}
+# AllUsersCurrentHost = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersCurrentHost/Microsoft.PowerShell_profile.ps1'}
+# AllUsersAllHosts = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/AllUsersAllHosts/profile.ps1'}
 
 [pwsh_windows]
-CurrentUserCurrentHost = {this = '~/Documents\PowerShell\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/powershell/CurrentUserCurrentHost/Microsoft.PowerShell_profile.ps1'}
-CurrentUserAllHosts = {this = '~/Documents\PowerShell\profile.ps1', to_this = '~/dotfiles/shells/powershell/CurrentUserAllHosts/profile.ps1'}
-AllUsersCurrentHost = {this = 'C:\Program Files\PowerShell\7\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersCurrentHost/Microsoft.PowerShell_profile.ps1'}
-AllUsersAllHosts = {this = 'C:\Program Files\PowerShell\7\profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersAllHosts/profile.ps1'}
+CurrentUserCurrentHost = {this = '~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/init.ps1'}
+CurrentUserAllHosts = {this = '~/Documents/PowerShell/profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/init.ps1'}
+# AllUsersCurrentHost = {this = 'C:\Program Files\PowerShell\7\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersCurrentHost/Microsoft.PowerShell_profile.ps1'}
+# AllUsersAllHosts = {this = 'C:\Program Files\PowerShell\7\profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersAllHosts/profile.ps1'}
 
 [bash_linux]
 bashrc = {this = '~/.inputrc', to_this = '~/dotfiles/shells/bash/.inputrc'}
