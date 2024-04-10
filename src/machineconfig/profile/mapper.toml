@@ -36,9 +36,9 @@ config = {this = '~/.config/presenterm/config.yaml', to_this = 'LIBRARY_ROOT/set
 
 [pwsh_windows]
 CurrentUserCurrentHost = {this = '~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/init.ps1'}
-CurrentUserAllHosts = {this = '~/Documents/PowerShell/profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/init.ps1'}
-# AllUsersCurrentHost = {this = 'C:\Program Files\PowerShell\7\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersCurrentHost/Microsoft.PowerShell_profile.ps1'}
-# AllUsersAllHosts = {this = 'C:\Program Files\PowerShell\7\profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersAllHosts/profile.ps1'}
+CurrentUserAllHosts = {this = '~/Documents/PowerShell/profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/profile.ps1'}
+AllUsersCurrentHost = {this = 'C:\Program Files\PowerShell\7\Microsoft.PowerShell_profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/init.ps1'}
+AllUsersAllHosts = {this = 'C:\Program Files\PowerShell\7\profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/init.ps1'}
 
 [bash_linux]
 bashrc = {this = '~/.inputrc', to_this = '~/dotfiles/shells/bash/.inputrc'}
