@@ -10,6 +10,8 @@ import platform
 
 base_dir = P.home().joinpath("dotfiles/gpt/prompts")
 # https://platform.openai.com/docs/models/gpt-4
+# https://github.com/mbroton/chatgpt-api
+# https://github.com/transitive-bullshit/chatgpt-api
 
 
 def main():
