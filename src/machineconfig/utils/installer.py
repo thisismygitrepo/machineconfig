@@ -83,11 +83,11 @@ class Installer:
         from machineconfig.utils.utils import choose_one_option
         path = choose_one_option(options=LIBRARY_ROOT.joinpath("jobs").search("config.json", r=True).list)
         config: dict[str, Any] = Read.json(path)  # /python_generic_installers/config.json"))
-        # binary = choose_one_option(options=list(config.keys()), fzf=True)
-        for keys, dict_ in config.items():
-            installer = Installer.from_dict(d=dict_, name=keys)
-            version = input(f"Enter version to install for {installer.exe_name} [latest]: ") or None
-            installer.install(version=version)
+        app_name = choose_one_option(options=list(config.keys()), fzf=True)
+        # for keys, dict_ in config.items():
+        installer = Installer.from_dict(d=config[app_name], name=app_name)
+        version = input(f"Enter version to install for {installer.exe_name} [latest]: ") or None
+        installer.install(version=version)
 
     def install_robust(self, version: Optional[str]):
         try:
