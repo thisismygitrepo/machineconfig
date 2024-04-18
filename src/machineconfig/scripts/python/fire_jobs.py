@@ -149,15 +149,19 @@ except ImportError as _ex:
         if not kwargs:  # empty dict
             kwargs_str = ''
         else:
-            tmp_list: list[str] = []
-            for k, v in kwargs.items():
-                if v is not None:
-                    item = f'"{k}": "{v}"'
-                else:
-                    item = f'"{k}": None'
-                tmp_list.append(item)
-            tmp__ = ", ".join(tmp_list)
-            kwargs_str = "'{" + tmp__  + "}'"
+            if len(kwargs) == 1:
+                kwargs_str = f""" --{list(kwargs.keys())[0]} {list(kwargs.values())[0]} """
+            else:
+                # print(f"len(kwargs) = {len(kwargs)}")
+                tmp_list: list[str] = []
+                for k, v in kwargs.items():
+                    if v is not None:
+                        item = f'"{k}": "{v}"'
+                    else:
+                        item = f'"{k}": None'
+                    tmp_list.append(item)
+                tmp__ = ", ".join(tmp_list)
+                kwargs_str = "'{" + tmp__  + "}'"
         command = f"{exe} -m fire {choice_file} {choice_function} {kwargs_str}"
         # else:
         #     print(f"{kwargs=}")
