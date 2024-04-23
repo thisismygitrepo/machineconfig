@@ -30,7 +30,6 @@
 
 
 # Files
-* torrent https://github.com/transmission/transmission/
 * https://github.com/magic-wormhole/magic-wormhole
 
 * https://github.com/gopasspw/gopass

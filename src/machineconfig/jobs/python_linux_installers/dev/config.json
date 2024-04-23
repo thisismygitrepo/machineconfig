@@ -31,6 +31,14 @@
         "strip_v": true,
         "exe_name": "kronos"
     },
+    "transmission": {
+        "repo_url": "https://github.com/transmission/transmission",
+        "doc": "A fast, easy, and free BitTorrent client.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "transmission-{}.tar.xz",
+        "strip_v": true,
+        "exe_name": "transmission"
+    },
     "nnn": {
         "repo_url": "https://github.com/jarun/nnn",
         "doc": "A terminal-based file manager.",
