@@ -55,7 +55,8 @@ def set_theme(theme: str):
 
 
 def main():
-    import curses
+    import curses  # not availble on windows: https://docs.python.org/3/howto/curses.html
+    # from curses import wrapper
     curses.wrapper(accessory)
 
 def accessory(stdscr: Any):
