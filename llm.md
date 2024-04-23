@@ -11,7 +11,7 @@
     * https://github.com/BerriAI/litellm  `Call all LLM APIs using the OpenAI format [Bedrock, Huggingface, VertexAI, TogetherAI, Azure, OpenAI, etc.]`.
     * https://github.com/kyegomez/tree-of-thoughts `Tree of Thoughts (ToT) is a powerful and flexible algorithm that significantly advances model reasoning by up to 70%.`
 
-# Apps
+# Apps:
     * https://github.com/vanna-ai/vanna `RAG (Retrieval-Augmented Generation) framework for SQL`.
     * https://github.com/Pythagora-io/gpt-pilot `core technology for the Pythagora VS Code extension that aims to provide the first real AI developer companion`
     * https://github.com/OpenDevin/OpenDevin `an open-source project aiming to replicate Devin, an autonomous AI software engineer `
@@ -19,6 +19,8 @@
     * https://github.com/ShishirPatil/gorilla `enables LLMs to use tools by invoking APIs.`
     * https://github.com/nilsherzig/LLocalSearch `locally running search aggregator using LLM Agents.`
     * https://github.com/llm-workflow-engine/llm-workflow-engine `LLM Workflow Engine (LWE) is a Power CLI and Workflow manager for LLMs.`
+    * https://github.com/mendableai/firecrawl `Crawl and convert any website into LLM-ready markdown.`
+
 
 # Viz:
     * https://github.com/PrefectHQ/marvin `lightweight AI toolkit for building natural language interfaces that are reliable, scalable, and easy to trust.`
@@ -42,11 +44,13 @@
     * https://github.com/nomic-ai/gpt4all `Open-source large language models that run locally on your CPU and nearly any GPU`.
     * https://github.com/google/gemma.cpp `lightweight, standalone C++ inference engine for the Gemma foundation models from Google.`
 
+
 # Sources:
     * https://github.com/Hannibal046/Awesome-LLM `curated list of papers about large language models, especially relating to ChatGPT. It also contains frameworks for LLM training, tools to deploy LLM, courses and tutorials about LLM and all publicly available LLM checkpoints and APIs.`
     * https://github.com/openai/openai-cookbook `Example code and guides for accomplishing common tasks with the OpenAI API.`
     * https://ai.azure.com/explore/
     * https://github.com/f/awesome-chatgpt-prompts
+
 
 # Deprecated:
     * https://github.com/chenfei-wu/TaskMatrix

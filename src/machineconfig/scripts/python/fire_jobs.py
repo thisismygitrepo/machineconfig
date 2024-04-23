@@ -1,14 +1,15 @@
 
 """
 fire
+
+# https://github.com/pallets/click combine with fire. Consider
+# https://github.com/ceccopierangiolieugenio/pyTermTk for display_options build TUI
+# https://github.com/chriskiehl/Gooey build commandline interface
+
 """
 
 
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, choose_ssh_host, match_file_name, sanitize_path
-# from crocodile.run import *
-# https://github.com/pallets/click combine with fire. Consider
-# https://github.com/ceccopierangiolieugenio/pyTermTk for display_options build TUI
-# https://github.com/chriskiehl/Gooey build commandline interface
 from crocodile.file_management import P, install_n_import
 from crocodile.core import Display, randstr
 import inspect
@@ -18,30 +19,25 @@ from typing import Callable, Any, Optional
 import argparse
 
 
-def func2(idx: int, idx_max: int):
-    print(f"idx = {idx}, idx_max = {idx_max}")
-    print(type(idx), type(idx_max))
-
-
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("path", nargs='?', type=str, help="The directory containing the jobs", default=".")
+    parser.add_argument("path",     nargs='?', type=str, help="The directory containing the jobs", default=".")
     parser.add_argument("function", nargs='?', type=str, help="Fuction to run", default=None)
     # parser.add_argument("--function", "-f", type=str, help="The function to run", default="")
-    parser.add_argument("--ve",          "-v", type=str, help="virtual enviroment name", default="")
-    parser.add_argument("--cmd",         "-B", action="store_true", help="Create a cmd fire command to launch the the job asynchronously.")
-    parser.add_argument("--interactive", "-i", action="store_true", help="Whether to run the job interactively using IPython")
-    parser.add_argument("--debug",       "-d", action="store_true", help="debug")
+    parser.add_argument("--ve",              "-v", type=str, help="virtual enviroment name", default="")
+    parser.add_argument("--cmd",             "-B", action="store_true", help="Create a cmd fire command to launch the the job asynchronously.")
+    parser.add_argument("--interactive",     "-i", action="store_true", help="Whether to run the job interactively using IPython")
+    parser.add_argument("--debug",           "-d", action="store_true", help="debug")
     parser.add_argument("--choose_function", "-c", action="store_true", help="debug")
-    parser.add_argument("--loop",      "-l", action="store_true", help="infinite recusion (runs again after completion)")
-    parser.add_argument("--jupyter",   "-j", action="store_true", help="open in a jupyter notebook")
+    parser.add_argument("--loop",            "-l", action="store_true", help="infinite recusion (runs again after completion)")
+    parser.add_argument("--jupyter",         "-j", action="store_true", help="open in a jupyter notebook")
     parser.add_argument("--submit_to_cloud", "-C", action="store_true", help="submit to cloud compute")
-    parser.add_argument("--remote",    "-r", action="store_true", help="launch on a remote machine")
-    parser.add_argument("--module",    "-m", action="store_true", help="launch the main file")
-    parser.add_argument("--streamlit", "-S", action="store_true", help="run as streamlit app")
-    parser.add_argument("--history",   "-H", action="store_true", help="choose from history")
+    parser.add_argument("--remote",          "-r", action="store_true", help="launch on a remote machine")
+    parser.add_argument("--module",          "-m", action="store_true", help="launch the main file")
+    parser.add_argument("--streamlit",       "-S", action="store_true", help="run as streamlit app")
+    parser.add_argument("--history",         "-H", action="store_true", help="choose from history")
     parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ...")
-    parser.add_argument("--Nprocess", "-p", type=int, help="Number of processes to use", default=1)
+    parser.add_argument("--Nprocess",        "-p", type=int, help="Number of processes to use", default=1)
 
     args = parser.parse_args()
     if args.kw is not None:
@@ -317,10 +313,9 @@ def run_on_remote(func_file: str, args: argparse.Namespace):
     m.run()
 
 
-def find_repo_root_path(start_path: str):
+def find_repo_root_path(start_path: str) -> Optional[str]:
     root_files = ['setup.py', 'pyproject.toml', '.git']
     path: str = start_path
-    # print(f"FINDING REPO ROOT PATH FROM: {path}")
     trials = 0
     root_path = os.path.abspath(os.sep)
     while path != root_path and trials < 20:
