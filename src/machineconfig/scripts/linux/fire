@@ -8,13 +8,14 @@ if [ -f "$op_script" ]; then
 fi
 
 
-if [ "$TERM" = "xterm-256color" ] || [ "$TERM" = "alacritty"  ]; then
-  {
-    chafa "$HOME/code/machineconfig/assets/aafire.webp" --speed 1 --duration 1 --symbols ascii
-  } || {
-    echo "An error occurred while executing the script."
-  }
-fi
+# if [ "$TERM" = "xterm-256color" ] || [ "$TERM" = "alacritty"  ]; then
+#   {
+#     chafa "$HOME/code/machineconfig/assets/aafire.webp" --speed 1 --duration 1 --symbols ascii
+#   } || {
+#     echo "An error occurred while executing the script."
+#   }
+# fi
+
 # timeout 0.5s aafire  #  -driver slang
 # clear
 

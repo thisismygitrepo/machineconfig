@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
 . ~/scripts/activate_ve 've'
+
 python -m machineconfig.scripts.python.cloud_copy "$@"
-deactivate || true
+
+{
+  deactivate
+} || {
+  echo ""
+}

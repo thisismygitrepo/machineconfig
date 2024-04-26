@@ -102,6 +102,9 @@ config = {this = '~/.config/broot/conf.toml', to_this = 'LIBRARY_ROOT/settings/b
 [pistol_linux]
 config = {this = '~/.config/pistol/pistol.conf', to_this = 'LIBRARY_ROOT/settings/pistol/pistol.conf'}
 
+[glow]
+config = {this = '~/.config/glow/glow.yml', to_this = 'LIBRARY_ROOT/settings/glow/glow.yml'}
+
 [gromit_linux]
 config = {this = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg', to_this = 'LIBRARY_ROOT/settings/gromit-mpx/gromit-mpx.cfg'}
 

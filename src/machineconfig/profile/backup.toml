@@ -6,6 +6,15 @@ path = '~/AppData/Roaming/Thunderbird/Profiles'
 encrypt = 'True'
 zip = 'True'
 rel2home = 'True'
+os_specific = 'True'
+
+
+[thunderbird_linux]
+path = '~/.thunderbird'
+encrypt = 'True'
+zip = 'True'
+rel2home = 'True'
+os_specific = 'True'
 
 
 [zoxide_windows]
@@ -14,6 +23,7 @@ encrypt = 'False'
 zip = 'False'
 rel2home = 'True'
 os_specific = 'True'
+
 
 [zoxide_linux]
 path = '~/.local/share/zoxide/db.zo'

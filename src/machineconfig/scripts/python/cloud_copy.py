@@ -14,7 +14,7 @@ from typing import Optional
 
 
 @RepeatUntilNoException()
-def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None):
+def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
     folder_obj = P.cwd() if folder is None else P(folder)
 
     if os.environ.get("DECRYPTION_PASSWORD") is not None:
@@ -57,6 +57,7 @@ def arg_parser() -> None:
     parser.add_argument("--pwd", "-p", help="Password for encryption", type=str, default=ArgsDefaults.pwd)
     parser.add_argument("--encrypt", "-e", help="Decrypt after receiving.", action="store_true", default=ArgsDefaults.encrypt)
     parser.add_argument("--zip", "-z", help="unzip after receiving.", action="store_true", default=ArgsDefaults.zip_)
+    parser.add_argument("--os_specific", "-o", help="choose path specific for this OS.", action="store_true", default=ArgsDefaults.os_specific)
 
     parser.add_argument("--config", "-c",  help="path to cloud.json file.", default=None)
 
