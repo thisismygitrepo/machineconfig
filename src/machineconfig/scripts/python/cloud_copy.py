@@ -57,6 +57,7 @@ def arg_parser() -> None:
     parser.add_argument("--pwd", "-p", help="Password for encryption", type=str, default=ArgsDefaults.pwd)
     parser.add_argument("--encrypt", "-e", help="Decrypt after receiving.", action="store_true", default=ArgsDefaults.encrypt)
     parser.add_argument("--zip", "-z", help="unzip after receiving.", action="store_true", default=ArgsDefaults.zip_)
+    parser.add_argument("--os_specific", "-o", help="choose path specific for this OS.", action="store_true", default=ArgsDefaults.os_specific)
 
     parser.add_argument("--config", "-c",  help="path to cloud.json file.", default=None)
 

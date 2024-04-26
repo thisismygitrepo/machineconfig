@@ -5,14 +5,17 @@ TODO: use typer to make clis
 """
 
 from crocodile.file_management import P, Read, Struct
-from crocodile.core import install_n_import
+# from crocodile.core import install_n_import
 from machineconfig.utils.utils import PROGRAM_PATH, DEFAULTS_PATH
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse
 import os
 from typing import Optional
 # from dataclasses import dataclass
+# install_n_import("pydantic")
 # from tap import Tap
+from pydantic.dataclasses import dataclass  # type: ignore # ruffle: ignore
+from pydantic import ConfigDict
 
 
 ES = "^"  # chosen carefully to not mean anything on any shell. `$` was a bad choice.
@@ -30,11 +33,6 @@ class ArgsDefaults:
     os_specific = False
     key = None
     pwd = None
-
-
-install_n_import("pydantic")
-from pydantic.dataclasses import dataclass  # type: ignore # ruffle: ignore
-from pydantic import ConfigDict
 
 
 @dataclass(config=ConfigDict(extra="forbid", frozen=True))
