@@ -200,7 +200,7 @@
         "repo_url": "https://github.com/extrawurst/gitui",
         "doc": "gitui is a terminal ui for git written in rust.",
         "filename_template_windows_amd_64": "gitui-win.tar.gz",
-        "filename_template_linux_amd_64": "gitui-linux-musl.tar.gz",
+        "filename_template_linux_amd_64": "gitui-linux-x86_64.tar.gz",
         "strip_v": false,
         "exe_name": "gitui"
     },

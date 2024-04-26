@@ -65,7 +65,9 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
     mount_cmd = f"rclone mount {cloud}: {mount_loc} --vfs-cache-mode full --file-perms=0777"
 
     # txt = get_mprocs_mount_txt(cloud, mount_cmd)
-    if platform.system() == "Windows": txt = f"""
+    if platform.system() == "Windows":
+
+        txt = f"""
 wt --window 0 --profile "Windows PowerShell" --startingDirectory "$HOME/data/rclone" `; split-pane --horizontal  --profile "Command Prompt" --size 0.2 powershell -Command "{mount_cmd}" `; split-pane --vertical --profile "Windows PowerShell" --size 0.2 powershell -NoExit -Command "rclone about {cloud}:"  `; move-focus up
 """
     elif platform.system() == "Linux": txt = f"""
