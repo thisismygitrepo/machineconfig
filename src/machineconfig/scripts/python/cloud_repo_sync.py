@@ -65,38 +65,38 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
             return ""
     else: cloud_resolved = cloud
     # repo_root = P(args.repo).expanduser().absolute()
-    repo_root = P.cwd() if path is None else P(path).expanduser().absolute()
-    repo_obj = install_n_import("git", "gitpython").Repo(repo_root, search_parent_directories=True)
-    repo_root = P(repo_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
+    repo_local_root = P.cwd() if path is None else P(path).expanduser().absolute()
+    repo_local_obj = install_n_import("git", "gitpython").Repo(repo_local_root, search_parent_directories=True)
+    repo_local_root = P(repo_local_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
     CONFIG_PATH.joinpath("remote").create()
-    repo_sync_root = CONFIG_PATH.joinpath("remote", repo_root.rel2home())  # .delete(sure=True)
+    repo_remote_root = CONFIG_PATH.joinpath("remote", repo_local_root.rel2home())  # .delete(sure=True)
     try:
         print("\n", "=============================== Downloading Remote Repo ====================================")
-        remote_path = repo_root.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
-        repo_sync_root.from_cloud(remotepath=remote_path, cloud=cloud_resolved, unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=pwd)
+        remote_path = repo_local_root.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
+        repo_remote_root.from_cloud(remotepath=remote_path, cloud=cloud_resolved, unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=pwd)
     except AssertionError:
         print("Remote does not exist, creating it and exiting ... ")
-        repo_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
+        repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
         return ""
-    repo_sync_obj = install_n_import("git", "gitpython").Repo(repo_sync_root)
-    if repo_sync_obj.is_dirty():
-        print("=" * 50, '\n', f"WRANING: the remote `{repo_sync_root}` is dirty, please commit or stash changes before proceeding.", '\n', "=" * 50)
+    repo_remote_obj = install_n_import("git", "gitpython").Repo(repo_remote_root)
+    if repo_remote_obj.is_dirty():
+        print("=" * 50, '\n', f"WRANING: the remote `{repo_remote_root}` is dirty, please commit or stash changes before proceeding.", '\n', "=" * 50)
 
     script = f"""
 echo ""
 echo "=============================== Committing Local Changes ==================================="
-cd {repo_root}
+cd {repo_local_root}
 git status
 git add .
 git commit -am "{message}"
 echo ""
 echo ""
 echo "=============================== Pulling Latest From Remote ================================"
-cd {repo_root}
+cd {repo_local_root}
 echo '-> Trying to removing originEnc remote from local repo if it exists.'
 git remote remove originEnc
 echo '-> Adding originEnc remote to local repo'
-git remote add originEnc {repo_sync_root}
+git remote add originEnc {repo_remote_root}
 echo '-> Fetching originEnc remote.'
 git pull originEnc master
 
@@ -106,34 +106,41 @@ git pull originEnc master
 
     if res.is_successful(strict_err=True, strict_returcode=True):
         print("\n", "Pull succeeded, removing originEnc, the local copy of remote & pushing merged repo_root to remote ... ")
-        repo_sync_root.delete(sure=True)
+        repo_remote_root.delete(sure=True)
         from git.remote import Remote
-        Remote.remove(repo_obj, "originEnc")
+        Remote.remove(repo_local_obj, "originEnc")
         if push:
-            repo_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
+            repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
     else:
-        print(f"Failed to pull, keeping local copy of remote at {repo_sync_root} ... ")
+        print(f"Failed to pull, keeping local copy of remote at {repo_remote_root} ... ")
 
         if push:
             if skip_confirmation: resp = "y"
-            else: resp = input(f"Would you like to proceed syncing `{repo_root}` to `{cloud_resolved}` by pushing local changes to remote and deleting local copy of remote? y/[n] ") or "n"
+            else: resp = input(f"Would you like to proceed syncing `{repo_local_root}` to `{cloud_resolved}` by pushing local changes to remote and deleting local copy of remote? y/[n] ") or "n"
         else: resp = "n"
 
         if resp.lower() == "y":
-            delete_remote_repo_copy_and_push_local(remote_repo=repo_sync_root.str, local_repo=repo_root.str, cloud=cloud_resolved)
+            delete_remote_repo_copy_and_push_local(remote_repo=repo_remote_root.str, local_repo=repo_local_root.str, cloud=cloud_resolved)
         else:
             program = f"""
 from machineconfig.scripts.python.cloud_repo_sync import delete_remote_repo_copy_and_push_local as func
-func(remote_repo=r'{repo_sync_root.str}', local_repo=r'{repo_root.str}', cloud=r'{cloud_resolved}')
+func(remote_repo=r'{repo_remote_root.str}', local_repo=r'{repo_local_root.str}', cloud=r'{cloud_resolved}')
 """
             shell_file = get_shell_file_executing_python_script(python_script=program)
             print(f"When ready, use this snippet: \n. {shell_file}")
+            print(f"""
+Or, if you want to delete local repo and replace with remote, run the following bash commands:
+          
+rm -rfd {repo_local_root}
+mv {repo_remote_root} {repo_local_root}
+
+""")
             if platform.system() == "Windows":
-                program = get_wt_cmd(wd1=repo_root, wd2=repo_sync_root)
+                program = get_wt_cmd(wd1=repo_local_root, wd2=repo_remote_root)
                 write_shell_script(program=program, execute=True)
                 return None
             elif platform.system() == "Linux":
-                program = get_zellij_cmd(wd1=repo_root, wd2=repo_sync_root)
+                program = get_zellij_cmd(wd1=repo_local_root, wd2=repo_remote_root)
                 write_shell_script(program=program, execute=True)
                 return None
             else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
