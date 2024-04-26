@@ -43,20 +43,26 @@ mprocs "echo 'see {DEFAULT_MOUNT}/{cloud} for the mounted cloud'; rclone about {
 
 
 def mount(cloud: Optional[str], network: Optional[str], destination: Optional[str]) -> None:
-
     config = get_rclone_config()
     if cloud is None:
         res = choose_one_option(msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
         if type(res) is str: cloud = res
         else: raise ValueError("no cloud selected")
 
-
     if network is None:
-        if destination is None: mount_loc = P(DEFAULT_MOUNT).expanduser().joinpath(cloud)
-        else: mount_loc = P(destination)
+        if destination is None:
+            mount_loc = P(DEFAULT_MOUNT).expanduser().joinpath(cloud)
+        else:
+            mount_loc = P(destination)
 
-        if platform.system() == "Windows": mount_loc.parent.create()
-        elif platform.system() == "Linux": mount_loc.create()
+        if platform.system() == "Windows":
+            mount_loc.parent.create()
+        elif platform.system() == "Linux":
+            try: mount_loc.create()
+            except (FileExistsError, OSError) as err:
+                # We need a umount command here.
+                print(err)
+                pass
         else: raise ValueError("unsupported platform")
 
     elif network and platform.system() == "Windows": mount_loc = "X: --network-mode"

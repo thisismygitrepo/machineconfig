@@ -14,7 +14,7 @@ from typing import Optional
 
 
 @RepeatUntilNoException()
-def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None):
+def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
     folder_obj = P.cwd() if folder is None else P(folder)
 
     if os.environ.get("DECRYPTION_PASSWORD") is not None:
