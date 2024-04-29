@@ -12,7 +12,7 @@ else {
 # . $PSScriptRoot/activate_ve.ps1 ve
 . "$HOME\scripts\activate_ve.ps1" ve
 
-python -m fire machineconfig.scripts.python.choose_wezterm_theme main $args[0]
+python -m fire machineconfig.scripts.python.choose_wezterm_theme main2 $args[0]
 .$profile  # reload the profile
 
 cd $tmp

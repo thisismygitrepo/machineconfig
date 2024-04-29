@@ -94,33 +94,3 @@ def accessory(stdscr: Any):
         elif key == ord('\n'):  # Enter key
             break  # Exit the loop
         set_theme(options[current_option])
-
-
-def accessory_v0(stdscr: Any):
-    import curses
-    options = schemes_list
-    current_option = 0
-
-    while True:
-        stdscr.clear()
-
-        # Display options
-        for i, option in enumerate(options):
-            if i == current_option:
-                stdscr.addstr(i, 0, option, curses.A_REVERSE)  # Highlighted
-            else:
-                stdscr.addstr(i, 0, option)
-
-        # Get key press
-        key = stdscr.getch()
-
-        # Handle key press
-        if key == curses.KEY_UP and current_option > 0:
-            current_option -= 1
-        elif key == curses.KEY_DOWN and current_option < len(options) - 1:
-            current_option += 1
-        elif key == ord('\n'):  # Enter key
-            break  # Exit the loop
-
-        # Call the callback function
-        set_theme(options[current_option])
