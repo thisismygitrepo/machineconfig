@@ -32,7 +32,7 @@ def scan(path: P, pct: float = 0.0):
         return None
     with open(str(path), "rb") as f:
         analysis = client.scan_file(f)
-    repeat_counter = 0
+    repeat_counter: int = 0
     while True:
         with console.status(f"waiting for scan of {path} ... "):
             try:

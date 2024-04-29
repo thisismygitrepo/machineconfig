@@ -22,4 +22,3 @@ sudo apt install openssh-server -y
 # sudo service ssh restart
 # tunnels: https://www.youtube.com/watch?v=Wp7boqm3Xts
 echo "FINISHED installing openssh-server."
-

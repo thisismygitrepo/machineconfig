@@ -33,6 +33,7 @@
 
 # LLM:
     * https://github.com/xai-org/grok-1
+    * https://github.com/bigscience-workshop/petals `LLM on private swarm`
     * https://github.com/h2oai/h2o-llmstudio `framework and no-code GUI designed for fine-tuning state-of-the-art large language models (LLMs).`
     * https://github.com/hiyouga/LLaMA-Factory `Finetune`
     * https://github.com/microsoft/DeepSpeed `training with a single click, offering 15x speedup over SOTA RLHF systems with unprecedented cost reduction at all scales`.
