@@ -20,6 +20,7 @@ def get_wt_cmd(wd1: P, wd2: P) -> str:
     ]
     return " `; ".join(lines)
 
+
 def get_zellij_cmd(wd1: P, wd2: P) -> str:
     lines = [f""" zellij action new-tab --name gitdiff""",
              f"""zellij action new-pane --direction down --name local --cwd ./data """,
