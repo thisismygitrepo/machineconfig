@@ -3,12 +3,11 @@
 
 IMAGE_NAME="alim-slim"
 # IMAGE_NAME="alim-full"
+DATE=$(date +%y-%m)
+echo $DATE
 
 docker build --no-cache --file ./Dockerfile --progress=plain -t $IMAGE_NAME:latest .
 # building with no cache since docker is unaware of changes in clode due to dynamic code like curl URL | bash etc.
-
-DATE=$(date +%y-%m)
-echo $DATE
 
 docker tag $IMAGE_NAME:latest "statistician/$IMAGE_NAME:$DATE"
 # docker login --username statistician --password <password>
