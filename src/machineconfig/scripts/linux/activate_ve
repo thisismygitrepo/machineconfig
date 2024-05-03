@@ -34,7 +34,7 @@ if [ -z "$VIRTUAL_ENV" ]; then  # no active ve ==> activate one.
     echo "✅ Activated Virtual Environment $VIRTUAL_ENV "
   fi
 
-else
+else  # there is an active_ve already.
   # check if $1 is passed, if yes, activate it
   if [ -n "$1" ] && [ "$HOME/venvs/$1" != "$VIRTUAL_ENV" ]; then
     echo "🔻 Deactivating virtual environment $VIRTUAL_ENV "
@@ -51,7 +51,17 @@ else
     fi
 
   else
-    echo "⚠️ Virtual environment $VIRTUAL_ENV already active"
+
+    if [ -f ./.ve_path ]; then  # check if there is a .ve_path file in the current directory
+      name=$(cat ./.ve_path)  # if yes, use it
+      name="${name/#\~/$HOME}"  # replace ~ with $HOME
+      echo "🔻 Deactivating virtual environment $VIRTUAL_ENV "
+      source "$name/bin/activate"
+      echo "✅ Activated Virtual Environment $VIRTUAL_ENV "
+    else
+      echo "⚠️ Virtual environment $VIRTUAL_ENV already active"
+    fi
+
   fi
 
   # check if default is not defined, if so, define it as $VIRTUAL_ENV
