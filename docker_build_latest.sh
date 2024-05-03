@@ -18,3 +18,4 @@ docker push "statistician/$IMAGE_NAME:latest"
 
 echo "try it out using: docker run -it $IMAGE_NAME:latest"
 # Use this to clean space: docker ps --all -q | xargs docker rm
+# docker run --rm -it alim-slim:latest /bin/bash hollywood
