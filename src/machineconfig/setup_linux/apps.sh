@@ -69,14 +69,15 @@ sudo apt install git -y || true  # for version control
 sudo apt install htop -y || true  # for monitoring system resources
 
 
-yes '' | sed 3q; echo "----------------------------- installing neofetch ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install neofetch -y || true  # for system info
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.neofetch || true
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.cpufetch || true
-fi
-neofetch || true
+# yes '' | sed 3q; echo "----------------------------- installing neofetch ----------------------------"; yes '' | sed 3q
+# repo archived on github in April 2024
+# if [ "$package_manager" = "apt" ]; then
+#   sudo apt install neofetch -y || true  # for system info
+# else
+#   ~/.nix-profile/bin/nix-env -iA nixpkgs.neofetch || true
+#   ~/.nix-profile/bin/nix-env -iA nixpkgs.cpufetch || true
+# fi
+# neofetch || true
 
 
 

@@ -27,6 +27,7 @@
 * https://github.com/alebcay/awesome-shell
 * https://github.com/Geektrovert/AwsTerm
 * https://github.com/vinta/awesome-python
+* https://github.com/mishakorzik/AllHackingTools
 
 
 # Files

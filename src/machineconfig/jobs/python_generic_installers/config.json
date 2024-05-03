@@ -180,6 +180,14 @@
         "strip_v": false,
         "exe_name": "cpufetch"
     },
+    "fastfetch": {
+        "repo_url": "https://github.com/fastfetch-cli/fastfetch",
+        "doc": "fastfetch is a system information tool written in C.",
+        "filename_template_windows_amd_64": "fastfetch-windows-amd64.zip",
+        "filename_template_linux_amd_64": "fastfetch-linux-amd64.zip",
+        "strip_v": false,
+        "exe_name": "fastfetch"
+    },
     "procs": {
         "repo_url": "https://github.com/dalance/procs/",
         "doc": "procs is a modern replacement for ps written in Rust.",
