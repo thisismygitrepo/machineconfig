@@ -22,7 +22,11 @@ def find_move_delete_windows(downloaded_file_path: P, exe_name: Optional[str] = 
         else:
             tmp = downloaded_file_path.search(f"{exe_name}.exe", r=True)
             if len(tmp) == 1: exe = tmp.list[0]
-            else: exe = downloaded_file_path.search("*.exe", r=True).list[0]
+            else:
+                search_res = downloaded_file_path.search("*.exe", r=True)
+                if len(search_res) == 0: raise IndexError(f"No executable found in {downloaded_file_path}")
+                elif len(search_res) == 1: exe = search_res.list[0]
+                else: exe = search_res.sort(lambda x: x.size("kb")).list[-1]
         if rename_to and exe.name != rename_to:
             exe = exe.with_name(name=rename_to, inplace=True)
     exe_new_location = exe.move(folder=P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
@@ -41,8 +45,10 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
             if len(exe_search_res) == 0:
                 print(f"No search results for `{tool_name}` in `{downloaded}`")
                 raise IndexError(f"No executable found in {downloaded}")
-            else:
+            elif len(exe_search_res) == 1:
                 exe = exe_search_res.list[0]
+            else:
+                exe = exe_search_res.sort(lambda x: x.size("kb")).list[-1]
     if rename_to and exe.name != rename_to:
         exe = exe.with_name(name=rename_to, inplace=True)
     print(f"MOVING file `{repr(exe)}` to '/usr/local/bin'")
