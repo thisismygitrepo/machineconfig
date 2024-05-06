@@ -10,12 +10,13 @@
     * https://github.com/stanfordnlp/dspy `framework for algorithmically optimizing LM prompts and weights`.
     * https://github.com/BerriAI/litellm  `Call all LLM APIs using the OpenAI format [Bedrock, Huggingface, VertexAI, TogetherAI, Azure, OpenAI, etc.]`.
     * https://github.com/kyegomez/tree-of-thoughts `Tree of Thoughts (ToT) is a powerful and flexible algorithm that significantly advances model reasoning by up to 70%.`
-
+    * https://github.com/embedchain/embedchain` Embedchain is an Open Source Framework for personalizing LLM responses`.
 
 # Apps:
     * https://github.com/vanna-ai/vanna `RAG (Retrieval-Augmented Generation) framework for SQL`.
     * https://github.com/Pythagora-io/gpt-pilot `core technology for the Pythagora VS Code extension that aims to provide the first real AI developer companion`
     * https://github.com/OpenDevin/OpenDevin `an open-source project aiming to replicate Devin, an autonomous AI software engineer `
+    * https://github.com/wandb/openui `Make UI with prompts`.
     * https://github.com/princeton-nlp/SWE-agent `software engineering agents that can fix bugs and issues in real GitHub repositories.`
     * https://github.com/ShishirPatil/gorilla `enables LLMs to use tools by invoking APIs.`
     * https://github.com/nilsherzig/LLocalSearch `locally running search aggregator using LLM Agents.`
