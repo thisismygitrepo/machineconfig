@@ -36,8 +36,8 @@ def main() -> None:
     parser.add_argument("--module",          "-m", action="store_true", help="launch the main file")
     parser.add_argument("--streamlit",       "-S", action="store_true", help="run as streamlit app")
     parser.add_argument("--history",         "-H", action="store_true", help="choose from history")
-    parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ...")
     parser.add_argument("--Nprocess",        "-p", type=int, help="Number of processes to use", default=1)
+    parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ...")
 
     args = parser.parse_args()
     if args.kw is not None:
@@ -51,8 +51,7 @@ def main() -> None:
     if not path_obj.exists():
         path_obj = match_file_name(args.path)
         print(path_obj)
-    else:
-        pass
+    else: pass
 
     if path_obj.is_dir():
         print(f"Seaching recursively for all python file in directory `{path_obj}`")
@@ -68,10 +67,9 @@ def main() -> None:
 
     if choice_file.suffix in [".ps1", ".sh"]:
         PROGRAM_PATH.write_text(f". {choice_file}")
-        return
+        return None
 
     if args.choose_function or args.submit_to_cloud:
-
         options, func_args = parse_pyfile(file_path=str(choice_file))
         choice_function_tmp = display_options(msg="Choose a function to run", options=options, fzf=True, multi=False)
         assert isinstance(choice_function_tmp, str), f"choice_function must be a string. Got {type(choice_function_tmp)}"

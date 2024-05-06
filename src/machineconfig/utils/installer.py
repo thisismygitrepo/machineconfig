@@ -258,3 +258,7 @@ def install_all(installers: L[Installer], safe: bool = False, jobs: int = 10, fr
     print("\n")
     print("Completed Installation".center(100, "-"))
     print("\n" * 2)
+
+
+if __name__ == "__main__":
+    pass

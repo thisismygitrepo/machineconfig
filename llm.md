@@ -21,6 +21,7 @@
     * https://github.com/nilsherzig/LLocalSearch `locally running search aggregator using LLM Agents.`
     * https://github.com/llm-workflow-engine/llm-workflow-engine `LLM Workflow Engine (LWE) is a Power CLI and Workflow manager for LLMs.`
     * https://github.com/mendableai/firecrawl `Crawl and convert any website into LLM-ready markdown.`
+    * https://github.com/VinciGit00/Scrapegraph-ai `Scrapegraph AI is a web scraping tool that uses AI to extract data from websites.`
 
 
 # Viz:
