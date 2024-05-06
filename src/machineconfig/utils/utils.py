@@ -312,7 +312,7 @@ def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> b
     else: raise NotImplementedError(f"platform {platform.system()} not implemented")
 
     try:
-        _tmp = subprocess.check_output([cmd, tool_name])
+        _tmp = subprocess.check_output([cmd, tool_name], stderr=subprocess.DEVNULL)
         res: bool = True
     except (subprocess.CalledProcessError, FileNotFoundError):
         res = False

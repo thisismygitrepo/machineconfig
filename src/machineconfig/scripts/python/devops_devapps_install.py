@@ -3,6 +3,7 @@
 """
 
 # import subprocess
+from tqdm import tqdm
 from crocodile.core import List as L
 from machineconfig.utils.utils import LIBRARY_ROOT, choose_multiple_options
 from machineconfig.utils.installer import get_installers, Installer, install_all
@@ -18,7 +19,7 @@ def main(which: Optional[str] = None):
     installers = get_installers(dev=False, system=sys)  # + get_installers(dev=True, system=sys)
     default = "AllEssentials"
     options = ["SystemInstallers", "OtherDevApps", "EssentialsAndOthers", "PrecheckedCloudInstaller", default]
-    options = [x.get_description() for x in installers] + options
+    options = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")] + options
 
     if which is not None:
         return get_program(program_name=which, options=options, installers=list(installers))
@@ -53,7 +54,7 @@ def get_program(program_name: str, options: list[str], installers: list[Installe
             program += "\n" + sub_program
     elif program_name == "OtherDevApps":
         installers = get_installers(dev=True, system=system())
-        options__: list[str] = [x.get_description() for x in installers]
+        options__: list[str] = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")]
         program_names = choose_multiple_options(msg="", options=sorted(options__) + ["all"], header="CHOOSE DEV APP")
         if "all" in program_names: program_names = options__
         program = ""
