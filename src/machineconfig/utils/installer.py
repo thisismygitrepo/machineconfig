@@ -73,7 +73,7 @@ class Installer:
     def get_description(self):
         # old_version_cli = Terminal().run(f"{self.exe_name} --version").op.replace("\n", "")
         # old_version_cli = os.system(f"{self.exe_name} --version").replace("\n", "")
-        old_version_cli = check_tool_exists(self.exe_name)
+        old_version_cli = check_tool_exists(tool_name=self.exe_name)
         old_version_cli_str = "✅" if old_version_cli else "❌"
         # name_version = f"{self.exe_name} {old_version_cli_str}"
         return f"{self.exe_name:<12} {old_version_cli_str} {self.doc}"
@@ -258,3 +258,7 @@ def install_all(installers: L[Installer], safe: bool = False, jobs: int = 10, fr
     print("\n")
     print("Completed Installation".center(100, "-"))
     print("\n" * 2)
+
+
+if __name__ == "__main__":
+    pass
