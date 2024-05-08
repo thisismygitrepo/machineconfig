@@ -116,7 +116,7 @@ except (ImportError, ModuleNotFoundError) as ex:
 """
         if choice_function is not None:
             txt = txt + f"""
-{choice_function}({('**' + str(kwargs)) if kwargs else ''})
+res = {choice_function}({('**' + str(kwargs)) if kwargs else ''})
 """
         txt = f"""
 try:
