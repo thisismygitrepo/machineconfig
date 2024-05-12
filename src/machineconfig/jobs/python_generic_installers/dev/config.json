@@ -23,6 +23,14 @@
         "strip_v": false,
         "exe_name": "devcontainer"
     },
+    "mermaid-cli": {
+        "repo_url": "npm install -g @mermaid-js/mermaid-cli",
+        "doc": "Generate diagrams and flowcharts from text in a similar manner as markdown",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "mmdc"
+    },
     "obsidian": {
         "repo_url": "https://github.com/obsidianmd/obsidian-releases",
         "doc": "Obsidian is a powerful knowledge base that works on top of a local folder of plain text Markdown files.",

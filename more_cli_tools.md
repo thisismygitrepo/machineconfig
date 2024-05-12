@@ -85,11 +85,16 @@
 * https://github.com/v2ray/v2ray-core?tab=readme-ov-file
 
 # recorder
-* pecpeck
-* https://github.com/ShareX/ShareX
-* Snipping tool of Windows
-* clipchamp video editor of windows
-* Xbox Game Bar of windows
+* Linux:
+    * https://github.com/xlmnxp/blue-recorder
+    * https://github.com/SeaDve/Kooha
+    * https://github.com/phw/peek
+    * https://github.com/linuxdeepin/deepin-screen-recorder
+* Windows Only:
+    * https://github.com/ShareX/ShareX.
+    * pecpeck
+    * clipchamp video editor of windows
+    * Xbox Game Bar of windows
 
 # IPython
 # https://www.youtube.com/watch?v=3i6db5zX3Rw
