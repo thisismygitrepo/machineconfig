@@ -193,18 +193,43 @@ class Installer:
         if tmp_path.exists(): existing_version = tmp_path.read_text().rstrip()
         else: existing_version = None
 
+
         if existing_version is not None:
             if existing_version == version_to_be_installed:
                 print(f"📦️ ⚠️ {exe_name} already installed at version {version_to_be_installed}. See {INSTALL_VERSION_ROOT}")
-                return True
+                return ("✔️ Uptodate", version, version_to_be_installed)
             else:
                 # print(f"Latest version is {version}, logged at {tmp_path}")
                 print(f"📦️ ⬆️ {exe_name} installed at version {existing_version.rstrip()} --> Installing version {version_to_be_installed} ")
                 tmp_path.write_text(version_to_be_installed)
+                return ("❌ Outdated", existing_version, version_to_be_installed)
         else:
             print(f"📦️ {exe_name} has no known version. Installing version `{version_to_be_installed}` ")
             tmp_path.write_text(version_to_be_installed)
-        return False
+        return ("⚠️NotInstalled", "None", version_to_be_installed)
+
+
+def check_latest():
+    installers = get_installers(system=platform.system(), dev=False)
+    installers += get_installers(system=platform.system(), dev=True)
+    installers_gitshub = []
+    for inst__ in installers:
+        if "github" not in inst__.repo_url:
+            print(f"Skipping {inst__.name} as it is not a github release")
+            continue
+        installers_gitshub.append(inst__)
+
+    def func(inst: Installer):
+        _release_url, version_to_be_installed = inst.get_github_release(repo_url=inst.repo_url, version=None)
+        verdict, current_ver, new_ver = inst.check_if_installed_already(exe_name=inst.exe_name, version=version_to_be_installed)
+        return inst.exe_name, verdict, current_ver, new_ver
+
+    res = L(installers_gitshub).apply(func=func, jobs=10)
+    import pandas as pd
+    res_df = pd.DataFrame(res, columns=["Tool", "Status", "Current Version", "New Version"])
+    from crocodile.core import Display
+    Display.set_pandas_display()
+    print(res_df)
 
 
 def get_installed_cli_apps():

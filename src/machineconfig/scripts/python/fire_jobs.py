@@ -36,6 +36,7 @@ def main() -> None:
     parser.add_argument("--module",          "-m", action="store_true", help="launch the main file")
     parser.add_argument("--streamlit",       "-S", action="store_true", help="run as streamlit app")
     parser.add_argument("--history",         "-H", action="store_true", help="choose from history")
+    # parser.add_argument("--git_pull",        "-g", action="store_true", help="Start by pulling the git repo")
     parser.add_argument("--Nprocess",        "-p", type=int, help="Number of processes to use", default=1)
     parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ...")
 
