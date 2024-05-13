@@ -12,6 +12,7 @@
     * https://github.com/kyegomez/tree-of-thoughts `Tree of Thoughts (ToT) is a powerful and flexible algorithm that significantly advances model reasoning by up to 70%.`
     * https://github.com/embedchain/embedchain` Embedchain is an Open Source Framework for personalizing LLM responses`.
 
+
 # Apps:
     * https://github.com/vanna-ai/vanna `RAG (Retrieval-Augmented Generation) framework for SQL`.
     * https://github.com/Pythagora-io/gpt-pilot `core technology for the Pythagora VS Code extension that aims to provide the first real AI developer companion`
@@ -23,7 +24,7 @@
     * https://github.com/llm-workflow-engine/llm-workflow-engine `LLM Workflow Engine (LWE) is a Power CLI and Workflow manager for LLMs.`
     * https://github.com/mendableai/firecrawl `Crawl and convert any website into LLM-ready markdown.`
     * https://github.com/VinciGit00/Scrapegraph-ai `Scrapegraph AI is a web scraping tool that uses AI to extract data from websites.`
-
+    * https://github.com/BasedHardware/OpenGlass `convert glasses to ai glasses`
 
 # Viz:
     * https://github.com/PrefectHQ/marvin `lightweight AI toolkit for building natural language interfaces that are reliable, scalable, and easy to trust.`
