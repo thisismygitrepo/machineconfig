@@ -187,26 +187,40 @@ class Installer:
         return release_url, version_to_be_installed
 
     @staticmethod
-    def check_if_installed_already(exe_name: str, version: str):
+    def check_if_installed_already(exe_name: str, version: str, use_cache: bool):
         version_to_be_installed = version
         tmp_path = INSTALL_VERSION_ROOT.joinpath(exe_name).create(parents_only=True)
-        if tmp_path.exists(): existing_version = tmp_path.read_text().rstrip()
-        else: existing_version = None
 
+        if use_cache:
+            if tmp_path.exists(): existing_version = tmp_path.read_text().rstrip()
+            else: existing_version = None
+        else:
+            # check_tool_exists(tool_name=exe_name)
+            # raise NotImplementedError("Not implemented")
+            # import subprocess
+            # try:
+            #     existing_version = subprocess.check_output([exe_name, "--version"], text=True)
+            #     existing_version = existing_version.strip()
+            # except (subprocess.CalledProcessError, FileNotFoundError):
+            #     print(f"Failed to get version of {exe_name}")
+            #     existing_version = None
+            resp = Terminal().run(exe_name, "--version", check=False).capture()
+            if resp.op == '': existing_version = None
+            else: existing_version = resp.op.strip()
 
         if existing_version is not None:
             if existing_version == version_to_be_installed:
                 print(f"📦️ ⚠️ {exe_name} already installed at version {version_to_be_installed}. See {INSTALL_VERSION_ROOT}")
-                return ("✔️ Uptodate", version, version_to_be_installed)
+                return ("✅ Uptodate", version.strip(), version_to_be_installed.strip())
             else:
                 # print(f"Latest version is {version}, logged at {tmp_path}")
                 print(f"📦️ ⬆️ {exe_name} installed at version {existing_version.rstrip()} --> Installing version {version_to_be_installed} ")
                 tmp_path.write_text(version_to_be_installed)
-                return ("❌ Outdated", existing_version, version_to_be_installed)
+                return ("❌ Outdated", existing_version.strip(), version_to_be_installed.strip())
         else:
             print(f"📦️ {exe_name} has no known version. Installing version `{version_to_be_installed}` ")
             tmp_path.write_text(version_to_be_installed)
-        return ("⚠️NotInstalled", "None", version_to_be_installed)
+        return ("⚠️NotInstalled", "None", version_to_be_installed.strip())
 
 
 def check_latest():
@@ -214,6 +228,7 @@ def check_latest():
     installers += get_installers(system=platform.system(), dev=True)
     installers_gitshub = []
     for inst__ in installers:
+        if "ntop" in inst__.name: continue
         if "github" not in inst__.repo_url:
             print(f"Skipping {inst__.name} as it is not a github release")
             continue
@@ -221,12 +236,12 @@ def check_latest():
 
     def func(inst: Installer):
         _release_url, version_to_be_installed = inst.get_github_release(repo_url=inst.repo_url, version=None)
-        verdict, current_ver, new_ver = inst.check_if_installed_already(exe_name=inst.exe_name, version=version_to_be_installed)
+        verdict, current_ver, new_ver = inst.check_if_installed_already(exe_name=inst.exe_name, version=version_to_be_installed, use_cache=False)
         return inst.exe_name, verdict, current_ver, new_ver
 
-    res = L(installers_gitshub).apply(func=func, jobs=10)
+    res = L(installers_gitshub).apply(func=func, jobs=20)
     import pandas as pd
-    res_df = pd.DataFrame(res, columns=["Tool", "Status", "Current Version", "New Version"])
+    res_df = pd.DataFrame(res, columns=["Tool", "Status", "Current Version", "New Version"]).groupby("Status").apply(lambda x: x).reset_index(drop=True)
     from crocodile.core import Display
     Display.set_pandas_display()
     print(res_df)
