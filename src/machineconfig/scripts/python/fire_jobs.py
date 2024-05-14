@@ -82,7 +82,8 @@ def main() -> None:
         if len(choice_function_args) > 0 and len(kwargs) == 0:
             for item in choice_function_args:
                 kwargs[item.name] = input(f"Please enter a value for argument `{item.name}` (type = {item.type}) (default = {item.default}) : ") or item.default
-    else: choice_function = args.function
+    else:
+        choice_function = args.function
 
     if args.ve == "":
         from machineconfig.utils.ve import get_ve_profile  # if file name is passed explicitly, then, user probably launched it from cwd different to repo root, so activate_ve can't infer ve from .ve_path, so we attempt to do that manually here

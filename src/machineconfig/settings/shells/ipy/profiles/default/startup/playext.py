@@ -4,15 +4,19 @@
 
 from IPython.core.magic import register_line_magic
 from crocodile.file_management import P, randstr, Struct
-# from typing import Any
+from typing import Any
 
 
 @register_line_magic("print_dir")  # type: ignore
-def print_dir():
+def print_dir_func(line: Any):
     """Pretty print and categorize dir() output."""
+    _ = line  # ipython caller assumes there is at least one argument, an passes '' worstcase.
     res: dict[str, list[str]] = {}
     for item in globals().keys():
-        if item.startswith("_"): continue
+        if item.startswith("_") or item in ("open", "In", "Out", "quit", "exit", "get_ipython"):
+            continue
+        if item in ("P", "randstr", "Struct", "print_code", "print_dir_func", "print_program_func", "run_python_file_in_this_namespace"):
+            continue
         type_ = repr(type(eval(item)))  # type: ignore  # pylint: disable=eval-used
         if "typing." in type_: continue
         if type_ in res: res[type_].append(item)
@@ -21,7 +25,7 @@ def print_dir():
 
 
 @register_line_magic("code")  # type: ignore
-def print_program(obj_str: str):
+def print_program_func(obj_str: str):
     """Inspect the code of an object."""
     from rich.syntax import Syntax
     import inspect
@@ -36,7 +40,8 @@ def run_python_file_in_this_namespace(a_path: str, module: bool = False):
     """Given a potentially dirty path of python file, run it in this namespace."""
     from machineconfig.utils.utils import match_file_name, sanitize_path
     path = sanitize_path(P(a_path))
-    if not path.exists(): path = match_file_name(a_path)
+    if not path.exists():
+        path = match_file_name(a_path)
     from IPython import get_ipython  # type: ignore  # this gets the same instance, its in the namespace anyway even if not imported.
     if module:
         code_snippet = f"""
