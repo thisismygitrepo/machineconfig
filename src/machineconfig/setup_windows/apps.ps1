@@ -34,6 +34,7 @@ winget install --no-upgrade --name "DB Browser for SQLite" --Id "DBBrowserForSQL
 # Install icons
 Install-Module -Name Terminal-Icons -Repository PSGallery
 winget install --no-upgrade --name "Chafa" --Id hpjansson.Chafa --source winget --accept-package-agreements --accept-source-agreements
+# might need this: cp ~/AppData/Local/Microsoft/WinGet/Packages/hpjansson.Chafa_Microsoft.Winget.Source_8wekyb3d8bbwe/chafa-*/Chafa.exe ~/AppData/Local/Microsoft/WindowsApps
 
 $ErrorActionPreference = "Stop"  # if there is any error in any command, stop there instead of proceeding to the next.
 winget install --no-upgrade --name "Python" --Id Python.Python.3.11 --source winget  # from https:\\winget.run  Python.Python.3.9

@@ -11,7 +11,7 @@ try {
   Chafa.exe "$HOME\code\machineconfig\assets\aafire.webp" --speed 2 --duration 1 --symbols ascii
 
 } catch {
-  # Write-Host "Chafa not found, skipping."
+  Write-Host "Chafa not found, skipping."
 }
 
 

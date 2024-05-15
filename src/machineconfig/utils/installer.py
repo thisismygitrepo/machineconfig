@@ -14,6 +14,7 @@ import platform
 
 
 def find_move_delete_windows(downloaded_file_path: P, exe_name: Optional[str] = None, delete: bool = True, rename_to: Optional[str] = None):
+    """Moves executable to ~/AppData/Local/Microsoft/WindowsApps"""
     if exe_name is not None and ".exe" in exe_name: exe_name = exe_name.replace(".exe", "")
     if downloaded_file_path.is_file():
         exe = downloaded_file_path

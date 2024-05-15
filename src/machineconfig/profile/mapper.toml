@@ -186,8 +186,8 @@ notepadpp = {this = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', to_th
 [webapp_linux]
 brave = {this = '~/.local/share/applications', to_this = '~/dotfiles/config/webapps/linux/brave', contents = 'True'}
 
-[startup_windows]
-startup = {this = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup', to_this = '~/dotfiles/scripts/windows_startup', contents = 'True'}
+# [startup_windows]
+# startup = {this = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup', to_this = '~/dotfiles/scripts/windows_startup', contents = 'True'}
 
 # [aws]
 # config = {this = '~/.aws/config', to_this = '~/dotfiles/aws/.aws', contents = 'True'}
