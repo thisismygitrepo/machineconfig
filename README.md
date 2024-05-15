@@ -31,6 +31,11 @@ Additionally, files that contain data, sensitive information that should not be 
 
 ## Windows Setup
 With elevated `PowerShell`, run the following: (short `curl bit.ly/cfgallwindows -L | iex`)
+You have to have `winget` to do any of that
+    https://github.com/asheroto/winget-install
+    https://github.com/microsoft/winget-cli
+
+
 ```shell
 # apps  # short: `(iwr bit.ly/cfgappswindows).Content | iex`
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1 | Invoke-Expression
