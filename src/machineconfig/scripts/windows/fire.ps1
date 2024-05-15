@@ -8,8 +8,8 @@ if (Test-Path $op_script ) {
 try {
   # $null = & chafa --version
   # & chafa "$HOME\code\machineconfig\assets\aafire.webp" --speed 2 --duration 1
-  Chafa.exe "$HOME\code\machineconfig\assets\aafire.webp" --speed 2 --duration 1 --symbols ascii
-
+  # Chafa.exe "$HOME\code\machineconfig\assets\aafire.webp" --speed 2 --duration 1 --symbols ascii
+  Write-Host "🔥"
 } catch {
   Write-Host "Chafa not found, skipping."
 }
