@@ -34,6 +34,7 @@ With elevated `PowerShell`, run the following: (short `curl bit.ly/cfgallwindows
 You have to have `winget` to do any of that
     https://github.com/asheroto/winget-install
     https://github.com/microsoft/winget-cli
+    https://github.com/microsoft/winget-cli/discussions/3258
 
 
 ```shell

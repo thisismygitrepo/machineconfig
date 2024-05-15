@@ -83,7 +83,7 @@ winget install --no-upgrade --name "GnuPG" GnuPG.GnuPG
 # winget install --no-upgrade --name "nu" --Id "Nushell.Nushell" --source winget  # add to userpath C:\Program Files\nu\bin, done in symlinks
 # winget install --no-upgrade --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" --source winget
 # winget install --no-upgrade --name "Starship" --Id Starship.Starship --source winget
-# winget install --no-upgrade --name "Git" --Id Git.Git --source winget --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Git" --Id Git.Git --source winget --accept-package-agreements --accept-source-agreements
 # winget install --no-upgrade --name "GitHub CLI" --Id GitHub.cli --source winget --accept-package-agreements --accept-source-agreements
 # as per https://docs.github.com/en/copilot/github-copilot-in-the-cli/using-github-copilot-in-the-cli
 # & 'C:\Program Files\GitHub CLI\gh.exe' extension install github/gh-copilot auth login
