@@ -226,7 +226,7 @@ class Installer:
 
 def check_latest():
     installers = get_installers(system=platform.system(), dev=False)
-    installers += get_installers(system=platform.system(), dev=True)
+    # installers += get_installers(system=platform.system(), dev=True)
     installers_gitshub = []
     for inst__ in installers:
         if "ntop" in inst__.name: continue
@@ -240,7 +240,7 @@ def check_latest():
         verdict, current_ver, new_ver = inst.check_if_installed_already(exe_name=inst.exe_name, version=version_to_be_installed, use_cache=False)
         return inst.exe_name, verdict, current_ver, new_ver
 
-    res = L(installers_gitshub).apply(func=func, jobs=20)
+    res = L(installers_gitshub).apply(func=func, jobs=1)
     import pandas as pd
     res_df = pd.DataFrame(res, columns=["Tool", "Status", "Current Version", "New Version"]).groupby("Status").apply(lambda x: x).reset_index(drop=True)
     from crocodile.core import Display
