@@ -48,14 +48,6 @@
       "strip_v": false,
       "exe_name": "joshuto"
     },
-    "mcfly": {
-      "repo_url": "https://github.com/cantino/mcfly",
-      "doc": "Fly through your shell history. Great Scott!",
-      "filename_template_linux_amd_64": "mcfly-{}-x86_64-unknown-linux-musl.tar.gz",
-      "filename_template_windows_amd_64": "",
-      "strip_v": false,
-      "exe_name": "mcfly"
-    },
     "zellij": {
       "repo_url": "https://github.com/zellij-org/zellij",
       "doc": "Zellij is a terminal workspace with support for multiple plugins, such as a terminal, status bar, tabs, splits, etc.",

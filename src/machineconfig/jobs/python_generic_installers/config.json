@@ -1,5 +1,13 @@
 
 {
+    "mcfly": {
+        "repo_url": "https://github.com/cantino/mcfly",
+        "doc": "Fly through your shell history. Great Scott!",
+        "filename_template_linux_amd_64": "mcfly-{}-x86_64-unknown-linux-musl.tar.gz",
+        "filename_template_windows_amd_64": "mcfly-{}-x86_64-pc-windows-msvc.zip",
+        "strip_v": false,
+        "exe_name": "mcfly"
+      },
     "wezterm": {
         "repo_url": "CUSTOM",
         "doc": "cross-platform terminal emulator",
