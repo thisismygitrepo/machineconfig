@@ -84,6 +84,13 @@ catch {
     # Do nothing
 }
 
+try {
+    Invoke-Expression -Command $(mcfly init powershell | out-string)
+}
+catch {
+    # Do nothing
+}
+
 
 oh-my-posh --init --shell pwsh --config $env:USERPROFILE/AppData/Local/Programs/oh-my-posh/themes/atomicBit.omp.json | Invoke-Expression
 
