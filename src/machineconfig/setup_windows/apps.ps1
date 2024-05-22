@@ -14,7 +14,7 @@ winget install --no-upgrade --name "7-zip" --Id "7zip.7zip" --source winget --ac
 #winget install --no-upgrade --name "Adobe Acrobat Reader DC" --Id "dobe.Acrobat.Reader.64-bit" --source winget
 #winget install --no-upgrade --name "Mozilla Firefox" --Id "Mozilla.Firefox" --source winget --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "Mozilla Thunderbird" --Id "Mozilla.Thunderbird" --source winget --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "Microsoft Garage Mouse without Borders" --Id "Microsoft.MouseWithoutBorders" --source winget --accept-package-agreements --accept-source-agreements
+# winget install --no-upgrade --name "Microsoft Garage Mouse without Borders" --Id "Microsoft.MouseWithoutBorders" --source winget --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "StreamlabsOBS" --Id "Streamlabs.StreamlabsOBS" --source winget --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "OBSStudio" --Id "OBSProject.OBSStudio" --source winget --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "MiKTeX --Id "MiKTeX.MiKTeX"  --source winget  # library / lanugage
@@ -81,7 +81,7 @@ winget install --no-upgrade --name "GnuPG" GnuPG.GnuPG
 # winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W11
 # winget install --no-upgrade --name "wezterm" --Id "wez.wezterm" --source winget
 # winget install --no-upgrade --name "nu" --Id "Nushell.Nushell" --source winget  # add to userpath C:\Program Files\nu\bin, done in symlinks
-# winget install --no-upgrade --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" --source winget
+winget install --no-upgrade --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" --source winget
 # winget install --no-upgrade --name "Starship" --Id Starship.Starship --source winget
 winget install --no-upgrade --name "Git" --Id Git.Git --source winget --accept-package-agreements --accept-source-agreements
 # winget install --no-upgrade --name "GitHub CLI" --Id GitHub.cli --source winget --accept-package-agreements --accept-source-agreements
@@ -97,7 +97,7 @@ winget install --no-upgrade --name "xming" --Id xming.xming --source winget  # X
 winget install --no-upgrade --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements --source winget  # ncessary for nvim plugins.
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
-npm install sharewifi -g
+# npm install sharewifi -g
 npm install -g easy-sharing
 npm install -g lolcatjs
 npm install -g figlet-cli

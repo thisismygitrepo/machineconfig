@@ -44,7 +44,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfi
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
 # dev repos  # short `(iwr bit.ly/cfgreposwindows).Content | iex` OR `curl bit.ly/cfgreposwindows -L | iex`
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
-# symlinks # short `curl bit.ly/cfgsymlinkswindows -L | iex` OR `(iwr bit.ly/cfgsymlinkswindows).Content | iex`
+# symlinks # short `(iwr bit.ly/cfgsymlinkswindows).Content | iex` OR `curl bit.ly/cfgsymlinkswindows -L | iex`
 . ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
 # devapps:
 ~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
@@ -113,8 +113,11 @@ short `curl bit.ly/cfgsshlinux -L | bash`
 
 
 ###### Install Croshell Terminal Directly
+
 ```bash
+
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/web_shortcuts/croshell.sh | sudo bash
+
 ```
 short `curl bit.ly/cfgcroshelllinux -L | bash`
 

@@ -18,7 +18,7 @@ wezterm = {
 
 def main(version: Optional[str]):
     if platform.system() == "Windows":
-        program = "winget install wez.wezterm"
+        program = "winget install --Id wez.wezterm --source winget --accept-package-agreements --accept-source-agreements"
     elif platform.system() == "Linux":
         inst = Installer.from_dict(d=wezterm, name="wezterm")
         program = ""
