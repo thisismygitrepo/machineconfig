@@ -39,46 +39,6 @@
         "strip_v": true,
         "exe_name": "obsidian"
     },
-    "onefetch": {
-        "repo_url": "https://github.com/o2sh/onefetch",
-        "doc": "Git repository summary on your terminal",
-        "filename_template_windows_amd_64": "onefetch-win.tar.gz",
-        "filename_template_linux_amd_64": "onefetch-linux.tar.gz",
-        "strip_v": true,
-        "exe_name": "onefetch"
-    },
-    "gitcs": {
-        "repo_url": "https://github.com/knbr13/gitcs",
-        "doc": "analyze Git repositories and generate a visual contributions graph",
-        "filename_template_windows_amd_64": "gitcs_windows_amd64.exe",
-        "filename_template_linux_amd_64": "gitcs_linux_amd64",
-        "strip_v": false,
-        "exe_name": "gitcs"
-    },
-    "just": {
-        "repo_url": "https://github.com/casey/just",
-        "doc": "A command runner",
-        "filename_template_windows_amd_64": "just-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "just-{}-x86_64-unknown-linux-musl.tar.gz",
-        "strip_v": true,
-        "exe_name": "just"
-    },
-    "hyperfine": {
-        "repo_url": "https://github.com/sharkdp/hyperfine",
-        "doc": "A command-line benchmarking tool",
-        "filename_template_windows_amd_64": "hyperfine-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "hyperfine-{}-x86_64-unknown-linux-gnu.tar.gz",
-        "strip_v": false,
-        "exe_name": "hyperfine"
-    },
-    "navi": {
-        "repo_url": "https://github.com/denisidoro/navi",
-        "doc": "An interactive cheatsheet tool for the command-line",
-        "filename_template_windows_amd_64": "navi-v2.23.0-x86_64-pc-windows-gnu.zip",
-        "filename_template_linux_amd_64": "navi-v2.23.0-x86_64-unknown-linux-musl.tar.gz",
-        "strip_v": false,
-        "exe_name": "navi"
-    },
     "marp": {
         "repo_url": "npm install -g @marp-team/marp-cli",
         "doc": "Markdown presentation writer",
@@ -167,14 +127,6 @@
         "strip_v": false,
         "exe_name": "forward"
     },
-    "kondo": {
-        "repo_url": "https://github.com/tbillington/kondo",
-        "doc": "cleans projects from litter files.",
-        "filename_template_windows_amd_64": "kondo-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "kondo-x86_64-unknown-linux-gnu.tar.gz",
-        "strip_v": false,
-        "exe_name": "kondo"
-    },
     "lvim": {
         "repo_url": "CUSTOM",
         "doc": "Terminal text editor based on neovim.",
@@ -182,6 +134,14 @@
         "filename_template_linux_amd_64": "",
         "strip_v": false,
         "exe_name": "lvim"
+    },
+    "dust": {
+        "repo_url": "https://github.com/bootandy/dust",
+        "doc": "A more intuitive version of du in rust. It is a dua alternative.",
+        "filename_template_windows_amd_64": "dust-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "dust-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "dust"
     },
     "ots": {
         "repo_url": "https://github.com/Luzifer/ots",
@@ -303,6 +263,14 @@
         "strip_v": false,
         "exe_name": "tealdeer"
     },
+    "kondo": {
+        "repo_url": "https://github.com/tbillington/kondo",
+        "doc": "cleans projects from litter files.",
+        "filename_template_windows_amd_64": "kondo-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "kondo-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "kondo"
+    },
     "tokei": {
         "repo_url": "https://github.com/XAMPPRocky/tokei",
         "doc": "Counts the number of lines of code, comments, and blanks in a project.",
@@ -311,14 +279,6 @@
         "strip_v": false,
         "exe_name": "tokei"
     },
-    "dust": {
-        "repo_url": "https://github.com/bootandy/dust",
-        "doc": "A more intuitive version of du in rust. It is a dua alternative.",
-        "filename_template_windows_amd_64": "dust-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "dust-{}-x86_64-unknown-linux-gnu.tar.gz",
-        "strip_v": false,
-        "exe_name": "dust"
-    },
     "lazygit": {
         "repo_url": "https://github.com/jesseduffield/lazygit",
         "doc": "A simple terminal UI for git commands",
@@ -326,6 +286,46 @@
         "filename_template_linux_amd_64": "lazygit_{}_Linux_x86_64.tar.gz",
         "strip_v": true,
         "exe_name": "lazygit"
+    },
+    "onefetch": {
+        "repo_url": "https://github.com/o2sh/onefetch",
+        "doc": "Git repository summary on your terminal",
+        "filename_template_windows_amd_64": "onefetch-win.tar.gz",
+        "filename_template_linux_amd_64": "onefetch-linux.tar.gz",
+        "strip_v": true,
+        "exe_name": "onefetch"
+    },
+    "gitcs": {
+        "repo_url": "https://github.com/knbr13/gitcs",
+        "doc": "analyze Git repositories and generate a visual contributions graph",
+        "filename_template_windows_amd_64": "gitcs_windows_amd64.exe",
+        "filename_template_linux_amd_64": "gitcs_linux_amd64",
+        "strip_v": false,
+        "exe_name": "gitcs"
+    },
+    "just": {
+        "repo_url": "https://github.com/casey/just",
+        "doc": "A command runner",
+        "filename_template_windows_amd_64": "just-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "just-{}-x86_64-unknown-linux-musl.tar.gz",
+        "strip_v": true,
+        "exe_name": "just"
+    },
+    "hyperfine": {
+        "repo_url": "https://github.com/sharkdp/hyperfine",
+        "doc": "A command-line benchmarking tool",
+        "filename_template_windows_amd_64": "hyperfine-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "hyperfine-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "hyperfine"
+    },
+    "navi": {
+        "repo_url": "https://github.com/denisidoro/navi",
+        "doc": "An interactive cheatsheet tool for the command-line",
+        "filename_template_windows_amd_64": "navi-v2.23.0-x86_64-pc-windows-gnu.zip",
+        "filename_template_linux_amd_64": "navi-v2.23.0-x86_64-unknown-linux-musl.tar.gz",
+        "strip_v": false,
+        "exe_name": "navi"
     },
     "vtm": {
         "repo_url": "https://github.com/netxs-group/vtm",
