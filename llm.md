@@ -14,17 +14,19 @@
 
 
 # Apps:
-    * https://github.com/vanna-ai/vanna `RAG (Retrieval-Augmented Generation) framework for SQL`.
-    * https://github.com/Pythagora-io/gpt-pilot `core technology for the Pythagora VS Code extension that aims to provide the first real AI developer companion`
-    * https://github.com/OpenDevin/OpenDevin `an open-source project aiming to replicate Devin, an autonomous AI software engineer `
-    * https://github.com/wandb/openui `Make UI with prompts`.
-    * https://github.com/princeton-nlp/SWE-agent `software engineering agents that can fix bugs and issues in real GitHub repositories.`
-    * https://github.com/ShishirPatil/gorilla `enables LLMs to use tools by invoking APIs.`
-    * https://github.com/nilsherzig/LLocalSearch `locally running search aggregator using LLM Agents.`
-    * https://github.com/llm-workflow-engine/llm-workflow-engine `LLM Workflow Engine (LWE) is a Power CLI and Workflow manager for LLMs.`
-    * https://github.com/mendableai/firecrawl `Crawl and convert any website into LLM-ready markdown.`
-    * https://github.com/VinciGit00/Scrapegraph-ai `Scrapegraph AI is a web scraping tool that uses AI to extract data from websites.`
-    * https://github.com/BasedHardware/OpenGlass `convert glasses to ai glasses`
+
+* https://github.com/vanna-ai/vanna `RAG (Retrieval-Augmented Generation) framework for SQL`.
+* https://github.com/Pythagora-io/gpt-pilot `core technology for the Pythagora VS Code extension that aims to provide the first real AI developer companion`
+* https://github.com/OpenDevin/OpenDevin `an open-source project aiming to replicate Devin, an autonomous AI software engineer `
+* https://github.com/wandb/openui `Make UI with prompts`.
+* https://github.com/princeton-nlp/SWE-agent `software engineering agents that can fix bugs and issues in real GitHub repositories.`
+* https://github.com/ShishirPatil/gorilla `enables LLMs to use tools by invoking APIs.`
+* https://github.com/nilsherzig/LLocalSearch `locally running search aggregator using LLM Agents.`
+* https://github.com/llm-workflow-engine/llm-workflow-engine `LLM Workflow Engine (LWE) is a Power CLI and Workflow manager for LLMs.`
+* https://github.com/mendableai/firecrawl `Crawl and convert any website into LLM-ready markdown.`
+* https://github.com/VinciGit00/Scrapegraph-ai `Scrapegraph AI is a web scraping tool that uses AI to extract data from websites.`
+* https://github.com/BasedHardware/OpenGlass `convert glasses to ai glasses`
+* https://github.com/iyaja/llama-fs `self-organizing file manager. It automatically renames and organizes your files based on their contents and well-known conventions (e.g., time).`
 
 # Viz:
     * https://github.com/PrefectHQ/marvin `lightweight AI toolkit for building natural language interfaces that are reliable, scalable, and easy to trust.`
