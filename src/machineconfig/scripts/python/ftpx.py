@@ -3,6 +3,7 @@
 
 TODO: add support for cases in which source or target has non 22 default port number and is defineda as user@host:port:path which makes 2 colons in the string.
 Currently, the only way to work around this is to predifine the host in ~/.ssh/config and use the alias in the source or target which is inconvenient when dealing with newly setup machines.
+
 """
 
 import argparse
@@ -19,6 +20,7 @@ def main():
     # FLAGS
     parser.add_argument("--recursive", "-r", help="Send recursively.", action="store_true")  # default is False
     parser.add_argument("--zipFirst", "-z", help="Zip before sending.", action="store_true")  # default is False
+    parser.add_argument("--cloud", "-c", help="Transfer through the cloud.", action="store_true")  # default is False
 
     args = parser.parse_args()
 
@@ -54,6 +56,7 @@ def main():
         raise ValueError("Either source or target must be a remote path (i.e. machine:path)")
 
     Struct({"source": str(source), "target": str(target), "machine": machine}).print(as_config=True, title="CLI Resolution")
+
     from paramiko.ssh_exception import AuthenticationException  # type: ignore
     try:
         ssh = SSH(rf'{machine}')
@@ -64,14 +67,21 @@ def main():
         pwd = getpass.getpass()
         ssh = SSH(rf'{machine}', pwd=pwd)
 
-    if source_is_remote:
-        assert source is not None, "source must be a remote path (i.e. machine:path)"
-        print(f"Running: received_file = ssh.copy_to_here(source=r'{source}', target=r'{target}', z={args.zipFirst}, r={args.recursive})")
-        received_file = ssh.copy_to_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
+    if args.cloud:
+        print("Uploading from remote to cloud ...")
+        ssh.run(f"cloud_copy {source} :^", desc="Uploading from remote to the cloud.").print()
+        print("Downloading from cloud to local ...")
+        ssh.run_locally(f"cloud_copy :^ {target}").print()
+        received_file = P(target)  # type: ignore
     else:
-        assert source is not None, "target must be a remote path (i.e. machine:path)"
-        print(f"Running: received_file = ssh.copy_from_here(source=r'{source}', target=r'{target}', z={args.zipFirst}, r={args.recursive})")
-        received_file = ssh.copy_from_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
+        if source_is_remote:
+            assert source is not None, "source must be a remote path (i.e. machine:path)"
+            print(f"Running: received_file = ssh.copy_to_here(source=r'{source}', target=r'{target}', z={args.zipFirst}, r={args.recursive})")
+            received_file = ssh.copy_to_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
+        else:
+            assert source is not None, "target must be a remote path (i.e. machine:path)"
+            print(f"Running: received_file = ssh.copy_from_here(source=r'{source}', target=r'{target}', z={args.zipFirst}, r={args.recursive})")
+            received_file = ssh.copy_from_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
     # ssh.print_summary()
     # if P(args.file).is_dir(): print(f"Use: cd {repr(P(args.file).expanduser())}")
     if source_is_remote and isinstance(received_file, P):
