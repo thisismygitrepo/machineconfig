@@ -220,6 +220,14 @@
         "strip_v": false,
         "exe_name": "gitui"
     },
+    "opencommit": {
+        "repo_url": "npm install -g opencommit",
+        "doc": "Opencommit is a cli tool to help you write better commit messages.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "opencommit"
+    },
     "dua": {
         "repo_url": "https://github.com/Byron/dua-cli",
         "doc": "Rust-based cli tool to get a quick overview of disk usage.",
