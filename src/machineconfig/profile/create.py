@@ -90,6 +90,9 @@ def main_symlinks(choice: Optional[str] = None):
                     print("Caught error", e)
 
     if system == "Linux": Terminal().run(f'chmod +x {LIBRARY_ROOT.joinpath(f"scripts/{system.lower()}")} -R')
+    print("\n\n", "*" * 200)
+    if len(ERROR_LIST) > 0:
+        print("Errors caught: ", ERROR_LIST)
 
 
 def main(choice: Optional[str] = None):
