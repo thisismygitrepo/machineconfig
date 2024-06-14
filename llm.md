@@ -8,6 +8,7 @@
 * https://github.com/langchain-ai/langchain `framework for developing applications powered by large language models (LLMs)`.
 
 * https://github.com/outlines-dev/outlines  ` use Large Language Model in a simple and robust way (with structured generation). It is built by .txt`.
+* https://github.com/eth-sri/lmql `programming language for large language models (LLMs) based on a superset of Python`
 * https://github.com/stanfordnlp/dspy `framework for algorithmically optimizing LM prompts and weights`.
 * https://github.com/BerriAI/litellm  `Call all LLM APIs using the OpenAI format [Bedrock, Huggingface, VertexAI, TogetherAI, Azure, OpenAI, etc.]`.
 * https://github.com/kyegomez/tree-of-thoughts `Tree of Thoughts (ToT) is a powerful and flexible algorithm that significantly advances model reasoning by up to 70%.`

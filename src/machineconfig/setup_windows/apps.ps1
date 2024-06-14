@@ -71,7 +71,7 @@ winget install --no-upgrade --name "GnuPG" GnuPG.GnuPG
 
 # winget install --no-upgrade --name "bottom" --Id Clement.bottom --source winget --accept-package-agreements --accept-source-agreements
 # Move-Item 'C:\Program Files\bottom\bin\btm.exe' $HOME\AppData\Local\Microsoft\WindowsApps\btm.exe  # move to userpath
-# winget install --no-upgrade --name "onefetch" --Id o2sh.onefetch --source winget  # repo-version of system neofetch, see also tokei
+# winget install --no-upgrade --name "onefetch" --Id o2sh.onefetch --source winget  # repo-version of system fastfetch, see also tokei
 # winget install --no-upgrade --name "Just" --Id Casey.Just --source winget  # commandline runner
 # winget install --no-upgrade --name Cloudflare --Id Cloudflare.cloudflared --source winget
 # winget install --no-upgrade --name "Cloudflare WARP" --Id "Cloudflare.Warp" --accept-package-agreements --accept-source-agreements --source winget

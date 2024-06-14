@@ -9,7 +9,7 @@ from typing import Literal
 
 COLOR_SCHEMES = ["Campbell", "Campbell Powershell", "Solarized Dark", "Ubuntu-ColorScheme", "Retro"]
 THEMES_ITER = cycle(COLOR_SCHEMES)
-INIT_COMMANDS = ["ls", "lf", "cpufetch", "neofetch", "btm"]
+INIT_COMMANDS = ["ls", "lf", "cpufetch", "fastfetch", "btm"]
 INIT_COMMANDS_ITER = cycle(INIT_COMMANDS)
 SIZE_ITER = cycle([0.6, 0.4, 0.3])
 ORIENTATION = ["vertical", "horizontal"]
