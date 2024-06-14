@@ -84,7 +84,7 @@ def main_symlinks(choice: Optional[str] = None):
                 try:
                     subprocess.run(f"chmod 700 ~/.ssh/", check=True)
                     subprocess.run(f"chmod 700 ~/dotfiles/creds/.ssh/", check=True)  # may require sudo
-                    subprocess.run(f"chmod 600 ~/dotfiles/creds/.ssh//*", check=True)
+                    subprocess.run(f"chmod 600 ~/dotfiles/creds/.ssh/*", check=True)
                 except Exception as e:
                     ERROR_LIST.append(e)
                     print("Caught error", e)
