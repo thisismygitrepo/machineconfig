@@ -178,6 +178,7 @@ class Installer:
         print(f"📦️ Inspecting latest release @ {repo_url}   ...")
         # with console.status("Installing..."):  # makes troubles on linux when prompt asks for password to move file to /usr/bin
         if version is None:
+            # see this: https://api.github.com/repos/cointop-sh/cointop/releases/latest
             import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
             _latest_version = requests.get(str(repo_url) + "/releases/latest", timeout=10).url.split("/")[-1]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
             version_to_be_installed = _latest_version
