@@ -1,4 +1,7 @@
 
+# Dotfiles manager:
+* https://github.com/webpro/awesome-dotfiles
+
 # Profilers
 * https://github.com/analysis-tools-dev/static-analysis
 * https://github.com/plasma-umass/scalene
