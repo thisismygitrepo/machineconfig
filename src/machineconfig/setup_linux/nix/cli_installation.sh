@@ -36,6 +36,7 @@ yes '' | sed 3q; echo "installing mcfly <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 nix-env -iA nixpkgs.mcfly || true
 
 # skim
+# brew install sk: Rust version of FZF (GO)
 yes '' | sed 3q; echo "installing skim <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 nix-env -iA nixpkgs.skim || true
 

@@ -16,14 +16,14 @@ def main(version: Optional[str]):
 winget install --no-upgrade --name "Neovim" --Id Neovim.Neovim --source winget --accept-package-agreements --accept-source-agreements
 """
     elif platform.system() == "Linux":
-        # as per https://ngrok.com/docs/getting-started/?os=linux
         program = """
-mkdir $HOME/tmp_install -p || true
-mkdir $HOME/.local/share -p || true
-cd $HOME/tmp_install || true
-wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz || true
-tar -xvf nvim-linux64.tar.gz  -C $HOME/.local/share/ || true
-sudo cp ~/.local/share/nvim-linux64/bin/nvim /usr/local/bin/nvim || true
+# mkdir $HOME/tmp_install -p || true
+# mkdir $HOME/.local/share -p || true
+# cd $HOME/tmp_install || true
+# wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz || true
+# tar -xvf nvim-linux64.tar.gz  -C $HOME/.local/share/ || true
+# sudo cp ~/.local/share/nvim-linux64/bin/nvim /usr/local/bin/nvim || true
+brew install neovim
 """
         _ = program
         program = ""

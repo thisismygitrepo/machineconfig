@@ -252,6 +252,14 @@
         "strip_v": false,
         "exe_name": "lf"
     },
+    "yazi": {
+        "repo_url": "https://github.com/sxyazi/yazi",
+        "doc": "A modern and easy-to-use note-taking CLI tool.",
+        "filename_template_windows_amd_64": "yazi-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "yazi-x86_64-unknown-linux-musl.zip",
+        "strip_v": false,
+        "exe_name": "yazi"
+    },
     "tere": {
         "repo_url": "https://github.com/mgunyho/tere",
         "doc": "Tere is a terminal file explorer written in Rust. No more ls + cd",
