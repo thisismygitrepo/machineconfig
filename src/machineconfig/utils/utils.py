@@ -49,7 +49,7 @@ def sanitize_path(a_path: P) -> P:
     path = P(a_path)
     if path.as_posix().startswith("/home"):
         if platform.system() == "Windows":  # path copied from Linux to Windows
-            path = P.home().joinpath(*path.parts[2:])  # exlcude /home/username
+            path = P.home().joinpath(*path.parts[3:])  # exlcude /home/username
             assert path.exists(), f"File not found: {path}"
             print(f"\n{'--' * 50}\n🔗 Mapped `{a_path}` ➡️ `{path}`\n{'--' * 50}\n")
         elif platform.system() == "Linux" and P.home().as_posix() not in path.as_posix():  # copied from Linux to Linux with different username
