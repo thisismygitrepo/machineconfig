@@ -148,7 +148,7 @@ config = {this = '~/.wslconfig', to_this = 'LIBRARY_ROOT/settings/wsl/.wslconfig
 home = {this = '~/win', to_this = '/mnt/c/Users/username'}
 
 [ngrok]
-config = {this = '~/.config/ngrol/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
+config = {this = '~/.config/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
  
 [linters]
 flake8 = {this = '~/.flake8', to_this = 'LIBRARY_ROOT/settings/linters/.flake8'}
