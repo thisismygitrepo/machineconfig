@@ -31,10 +31,12 @@ Additionally, files that contain data, sensitive information that should not be 
 
 ## Windows Setup
 With elevated `PowerShell`, run the following: (short `curl bit.ly/cfgallwindows -L | iex`)
-You have to have `winget` to do any of that
-    https://github.com/asheroto/winget-install
-    https://github.com/microsoft/winget-cli
-    https://github.com/microsoft/winget-cli/discussions/3258
+
+**You have to have `winget` first. If its not available in the your terminal, try those resources:**
+
+* https://github.com/asheroto/winget-install
+* https://github.com/microsoft/winget-cli
+* https://github.com/microsoft/winget-cli/discussions/3258
 
 
 ```shell
