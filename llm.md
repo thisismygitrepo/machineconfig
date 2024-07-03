@@ -28,19 +28,23 @@
 * https://github.com/VinciGit00/Scrapegraph-ai `Auto webscrape`
 * https://github.com/Pythagora-io/gpt-pilot `A coding Copilot`
 
-* Parsing:
-    * https://github.com/outlines-dev/outlines `unstructured -> structured`
-    * https://github.com/PrefectHQ/marvin `unstructured -> structured`
-    * https://github.com/guardrails-ai/guardrails `unstructured -> structured`
-    * https://github.com/jackmpcollins/magentic `unstructured -> structured`
+# Parsing:
 
-* Web
-    * https://github.com/mendableai/firecrawl `Website html -> markdown.`
-    * https://github.com/McGill-NLP/webllama `Browse internet with agents`
-    * https://github.com/nilsherzig/LLocalSearch `locally running search aggregator using LLM Agents.`
+* https://github.com/outlines-dev/outlines `unstructured -> structured`
+* https://github.com/PrefectHQ/marvin `unstructured -> structured`
+* https://github.com/guardrails-ai/guardrails `unstructured -> structured`
+* https://github.com/jackmpcollins/magentic `unstructured -> structured`
 
-* Cli
-    * https://github.com/llm-workflow-engine/llm-workflow-engine `LLM Workflow Engine (LWE) is a Power CLI and Workflow manager for LLMs.`
+
+# Web
+
+* https://github.com/mendableai/firecrawl `Website html -> markdown.`
+* https://github.com/McGill-NLP/webllama `Browse internet with agents`
+* https://github.com/nilsherzig/LLocalSearch `locally running search aggregator using LLM Agents.`
+
+# Cli
+
+* https://github.com/llm-workflow-engine/llm-workflow-engine `LLM Workflow Engine (LWE) is a Power CLI and Workflow manager for LLMs.`
 
 * https://github.com/iyaja/llama-fs `self-organizing file manager. It automatically renames and organizes your files based on their contents and well-known conventions (e.g., time).`
 

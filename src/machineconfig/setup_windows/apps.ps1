@@ -23,7 +23,7 @@ winget install --no-upgrade --name "7-zip" --Id "7zip.7zip" --source winget --ac
 
 #winget install --no-upgrade --name "anaconda3" --source winget
 #winget install --no-upgrade --name miniconda3 --source winget
-winget install --no-upgrade --name "notepad++" --Id "Notepad++.Notepad++" --source winget --accept-package-agreements --accept-source-agreements
+# winget install --no-upgrade --name "notepad++" --Id "Notepad++.Notepad++" --source winget --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "PyCharm Professional Edition" --Id "JetBrains.PyCharm.Professional" --source winget --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "PyCharm Community Edition" --Id "JetBrains.PyCharm.Community" --source winget --accept-package-agreements --accept-source-agreements
@@ -63,7 +63,7 @@ winget install --no-upgrade --name "Ubuntu" --Id "Canonical.Ubuntu.2204" --sourc
 # installing requirements first (as per the installer instructions)
 winget install --no-upgrade --name "VSRedistrib" --Id "Microsoft.VC++2015-2022Redist-x64" --source winget -e
 winget install --no-upgrade --name "VSBuildTools" --Id "Microsoft.VisualStudio.2022.BuildTools" --source winget -e
-winget install --no-upgrade --name "Rustup" --Id Rustlang.Rustup --source winget
+# winget install --no-upgrade --name "Rustup" --Id Rustlang.Rustup --source winget
 #winget install --no-upgrade --name "julia" --Id "Julialang.Julia" --source winget --accept-package-agreements --accept-source-agreements
 
 winget install --no-upgrade --name "Codeblocks" --Id Codeblocks.Codeblocks --source winget  # gives gcc compiler  # could also be provided by MSCV Build Tools
@@ -80,7 +80,7 @@ winget install --no-upgrade --name "GnuPG" GnuPG.GnuPG
 #winget install --no-upgrade --name "hyperfine" --Id sharkdp.hyperfine --source winget  # benchmarking tool
 #winget install --no-upgrade --name "AWS Command Line Interface"
 #winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W11
-#winget install --no-upgrade --name "wezterm" --Id "wez.wezterm" --source winget
+winget install --no-upgrade --name "wezterm" --Id "wez.wezterm" --source winget
 #winget install --no-upgrade --name "nu" --Id "Nushell.Nushell" --source winget  # add to userpath C:\Program Files\nu\bin, done in symlinks
 winget install --no-upgrade --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" --source winget
 #winget install --no-upgrade --name "Starship" --Id Starship.Starship --source winget
