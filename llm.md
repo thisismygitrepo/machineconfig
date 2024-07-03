@@ -27,6 +27,7 @@
 * https://github.com/ShishirPatil/gorilla `Auto API call`
 * https://github.com/VinciGit00/Scrapegraph-ai `Auto webscrape`
 * https://github.com/Pythagora-io/gpt-pilot `A coding Copilot`
+* https://github.com/microsoft/graphrag `Auto graph rag`
 
 # Parsing:
 
