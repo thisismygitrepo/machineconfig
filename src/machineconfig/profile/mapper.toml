@@ -84,6 +84,15 @@ public = {this = '~/scripts', to_this = 'LIBRARY_ROOT/scripts/linux'}
 [scripts_windows]
 public = {this = '~/scripts', to_this = 'LIBRARY_ROOT/scripts/windows'}
 
+[yazi_windows]
+yazi = {this = '~/AppData/Roaming/yazi/config/yazi.toml', to_this = 'LIBRARY_ROOT/settings/yazi/yazi.toml'}
+keymap = {this = '~/AppData/Roaming/yazi/config/keymap.toml', to_this = 'LIBRARY_ROOT/settings/yazi/keymap.toml'}
+theme = {this = '~/AppData/Roaming/yazi/config/theme.toml', to_this = 'LIBRARY_ROOT/settings/yazi/theme.toml'}
+
+[yazi_linux]
+yazi = {this = '~/.config/yazi/yazi.toml', to_this = 'LIBRARY_ROOT/settings/yazi/yazi.toml'}
+keymap = {this = '~/.config/yazi/keymap.toml', to_this = 'LIBRARY_ROOT/settings/yazi/keymap.toml'}
+theme = {this = '~/.config/yazi/theme.toml', to_this = 'LIBRARY_ROOT/settings/yazi/theme.toml'}
 
 [lf_windows]
 config = {this = '~/AppData/Local/lf/lfrc', to_this = 'LIBRARY_ROOT/settings/lf/windows/lfrc'}
