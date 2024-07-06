@@ -147,9 +147,13 @@ config = {this = '~/.wslconfig', to_this = 'LIBRARY_ROOT/settings/wsl/.wslconfig
 [wsl_linux]
 home = {this = '~/win', to_this = '/mnt/c/Users/username'}
 
-[ngrok]
+[ngrok_linux]
 config = {this = '~/.config/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
- 
+
+[ngrok_windows]
+config = {this = '~/AppData/Local/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
+
+
 [linters]
 flake8 = {this = '~/.flake8', to_this = 'LIBRARY_ROOT/settings/linters/.flake8'}
 mypy = {this = '~/.mypy.ini', to_this = 'LIBRARY_ROOT/settings/linters/.mypy.ini'}

@@ -9,7 +9,7 @@ from typing import Optional
 def main(version: Optional[str]):
     _ = version
     if platform.system() == "Windows":
-        program = "winget install ngrok.ngrok"
+        program = "winget install ngrok.ngrok --source winget"
     elif platform.system() == "Linux":
         # as per https://ngrok.com/docs/getting-started/?os=linux
         program = """
