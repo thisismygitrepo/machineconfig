@@ -2,6 +2,7 @@
 local wezterm = require 'wezterm'
 local mux = wezterm.mux
 
+
 -- This table will hold the configuration.
 local config = {}
 act = wezterm.action
@@ -101,6 +102,21 @@ config.keys = {
 --   action = wezterm.action{AdjustWindowOpacity={delta=-0.1}},
 -- }
 
+  -- {
+  --   key = '[',
+  --   mods = 'CTRL|SHIFT',
+  --   action = wezterm.action_callback(function(window, pane)
+  --       adjust_opacity(window, -0.1)
+  --   end),
+  -- },
+  -- {
+  --   key = ']',
+  --   mods = 'CTRL|SHIFT',
+  --   action = wezterm.action_callback(function(window, pane)
+  --       adjust_opacity(window, 0.1)
+  --   end),
+  -- },
+
 }
 
 
@@ -140,7 +156,7 @@ config.inactive_pane_hsb = {
 
 -- config.ime_preedit_rendering = 'System'
 config.enable_tab_bar = false
-config.window_background_opacity = 0.9
+config.window_background_opacity = 0.98
 config.text_background_opacity = 1.0
 config.enable_scroll_bar = true
 config.cursor_blink_rate = 1000
@@ -152,6 +168,16 @@ config.cursor_blink_ease_out = "Constant"
 -- from https://wezfurlong.org/wezterm/config/launch.html#the-launcher-menu
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   config.default_prog = { 'pwsh', '-NoLogo' }
+end
+
+
+-- see https://wezfurlong.org/wezterm/config/lua/window/set_config_overrides.html
+local function adjust_opacity(window, delta)
+  local overrides = window:get_config_overrides() or {}
+  local current_opacity = overrides.window_background_opacity or 1.0
+  local new_opacity = math.max(0.1, math.min(1.0, current_opacity + delta))
+  overrides.window_background_opacity = new_opacity
+  window:set_config_overrides(overrides)
 end
 
 
