@@ -29,7 +29,7 @@
 * https://github.com/Pythagora-io/gpt-pilot `A coding Copilot`
 * https://github.com/microsoft/graphrag `Auto graph rag`
 
-# Parsing:
+# Parsing
 
 * https://github.com/outlines-dev/outlines `unstructured -> structured`
 * https://github.com/PrefectHQ/marvin `unstructured -> structured`

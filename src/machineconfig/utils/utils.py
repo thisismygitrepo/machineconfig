@@ -195,7 +195,8 @@ def display_options(msg: str, options: Iterable[T], header: str = "", tail: str 
                 if choice_string in options_strings:  # string input
                     choice_idx = options_strings.index(choice_one)  # type: ignore #TODO: fix this
                     choice_one = list(options)[choice_idx]
-                elif custom_input: return str(choice_string)  # type: ignore #TODO: fix this
+                elif custom_input:
+                    return choice_string  # type: ignore #TODO: fix this
                 else: raise ValueError(f"Unknown choice. {choice_string}") from te
         print(f"{choice_idx}: {choice_one}", f"<<<<-------- CHOICE MADE")
         if multi: return [choice_one]

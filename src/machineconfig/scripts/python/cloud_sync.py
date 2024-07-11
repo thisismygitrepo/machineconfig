@@ -14,7 +14,7 @@ from typing import Optional
 # from dataclasses import dataclass
 # install_n_import("pydantic")
 # from tap import Tap
-from pydantic.dataclasses import dataclass  # type: ignore # ruffle: ignore
+from pydantic.dataclasses import dataclass
 from pydantic import ConfigDict
 
 
