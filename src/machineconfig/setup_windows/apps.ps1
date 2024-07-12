@@ -104,5 +104,4 @@ npm install -g lolcatjs
 npm install -g figlet-cli
 # npm install -g @pnp/cli-microsoft365
 
-
 Write-Output "Finished installing apps"

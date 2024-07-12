@@ -24,6 +24,7 @@ winget install --no-upgrade --name "Neovim" --Id Neovim.Neovim --source winget -
 # tar -xvf nvim-linux64.tar.gz  -C $HOME/.local/share/ || true
 # sudo cp ~/.local/share/nvim-linux64/bin/nvim /usr/local/bin/nvim || true
 brew install neovim
+# nix-env -iA nixpkgs.neovim
 """
         _ = program
         program = ""
