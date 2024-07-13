@@ -6,6 +6,16 @@ import platform
 from typing import Optional
 
 
+config_dict = {
+        "repo_url": "CUSTOM",
+        "doc": "ngrok secure introspectable tunnels to localhost",
+        "filename_template_windows_amd_64": "ngrok-stable-windows-amd64.zip",
+        "filename_template_linux_amd_64": "ngrok-stable-linux-amd64.zip",
+        "strip_v": False,
+        "exe_name": "ngrok"
+    }
+
+
 def main(version: Optional[str]):
     _ = version
     if platform.system() == "Windows":

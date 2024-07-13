@@ -13,8 +13,12 @@ import platform
 # import os
 
 
+LINUX_INSTALL_PATH = '/usr/local/bin'
+WINDOWS_INSTALL_PATH = '~/AppData/Local/Microsoft/WindowsApps'
+
+
 def find_move_delete_windows(downloaded_file_path: P, exe_name: Optional[str] = None, delete: bool = True, rename_to: Optional[str] = None):
-    """Moves executable to ~/AppData/Local/Microsoft/WindowsApps"""
+    """Moves executable to {WINDOWS_INSTALL_PATH}"""
     if exe_name is not None and ".exe" in exe_name: exe_name = exe_name.replace(".exe", "")
     if downloaded_file_path.is_file():
         exe = downloaded_file_path
@@ -30,7 +34,7 @@ def find_move_delete_windows(downloaded_file_path: P, exe_name: Optional[str] = 
                 else: exe = search_res.sort(lambda x: x.size("kb")).list[-1]
         if rename_to and exe.name != rename_to:
             exe = exe.with_name(name=rename_to, inplace=True)
-    exe_new_location = exe.move(folder=P.get_env().WindowsApps, overwrite=True)  # latest version overwrites older installation.
+    exe_new_location = exe.move(folder=WINDOWS_INSTALL_PATH, overwrite=True)  # latest version overwrites older installation.
     if delete: downloaded_file_path.delete(sure=True)
     return exe_new_location
 
@@ -52,12 +56,12 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
                 exe = exe_search_res.sort(lambda x: x.size("kb")).list[-1]
     if rename_to and exe.name != rename_to:
         exe = exe.with_name(name=rename_to, inplace=True)
-    print(f"MOVING file `{repr(exe)}` to '/usr/local/bin'")
+    print(f"MOVING file `{repr(exe)}` to '{LINUX_INSTALL_PATH}'")
     exe.chmod(0o777)
-    # exe.move(folder=r"/usr/local/bin", overwrite=False)
-    Terminal().run(f"sudo mv {exe} /usr/local/bin/").print_if_unsuccessful(desc=f"MOVING executable `{exe}` to /usr/local/bin", strict_err=True, strict_returncode=True)
+    # exe.move(folder=LINUX_INSTALL_PATH, overwrite=False)
+    Terminal().run(f"sudo mv {exe} {LINUX_INSTALL_PATH}/").print_if_unsuccessful(desc=f"MOVING executable `{exe}` to {LINUX_INSTALL_PATH}", strict_err=True, strict_returncode=True)
     if delete: downloaded.delete(sure=True)
-    exe_new_location = P(r"/usr/local/bin").joinpath(exe.name)
+    exe_new_location = P(LINUX_INSTALL_PATH).joinpath(exe.name)
     return exe_new_location
 
 
@@ -109,10 +113,10 @@ class Installer:
 
     def install(self, version: Optional[str]):
         if self.repo_url == "CUSTOM":
-            import machineconfig.jobs.script_installer as custom_installer
-            installer_path = P(custom_installer.__file__).parent.joinpath(self.exe_name + ".py")
+            import machineconfig.jobs.python_custom_installers as python_custom_installers
+            installer_path = P(python_custom_installers.__file__).parent.joinpath(self.exe_name + ".py")
             import runpy
-            program = runpy.run_path(str(installer_path), run_name="__main__")['main'](version=version)
+            program = runpy.run_path(str(installer_path), run_name=None)['main'](version=version)
             Terminal().run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)
             # import subprocess
             # subprocess.run(program, shell=True, check=True)
@@ -251,7 +255,7 @@ def check_latest():
 
 def get_installed_cli_apps():
     if platform.system() == "Windows": apps = P.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad"])
-    elif platform.system() == "Linux": apps = P(r"/usr/local/bin").search("*")
+    elif platform.system() == "Linux": apps = P(LINUX_INSTALL_PATH).search("*")
     else: raise NotImplementedError("Not implemented for this OS")
     apps = L([app for app in apps if app.size("kb") > 0.1 and not app.is_symlink()])  # no symlinks like paint and wsl and bash
     return apps
@@ -261,14 +265,23 @@ def get_installers(system: str, dev: bool) -> list[Installer]:
     if system == "Windows": import machineconfig.jobs.python_windows_installers as os_specific_installer
     else: import machineconfig.jobs.python_linux_installers as os_specific_installer
     import machineconfig.jobs.python_generic_installers as generic_installer
-    path = P(os_specific_installer.__file__).parent
-    gens_path = P(generic_installer.__file__).parent
+    path_os_specific = P(os_specific_installer.__file__).parent
+    path_os_generic = P(generic_installer.__file__).parent
+    path_custom_installer = path_os_generic.with_name("python_custom_installers")
     if dev:
-        path = path.joinpath("dev")
-        gens_path = gens_path.joinpath("dev")
-    res1: dict[str, Any] = Read.json(path=path.joinpath("config.json"))
-    res2: dict[str, Any] = Read.json(path=gens_path.joinpath("config.json"))
+        path_os_specific = path_os_specific.joinpath("dev")
+        path_os_generic = path_os_generic.joinpath("dev")
+    res1: dict[str, Any] = Read.json(path=path_os_specific.joinpath("config.json"))
+    res2: dict[str, Any] = Read.json(path=path_os_generic.joinpath("config.json"))
     res2.update(res1)
+    import runpy
+    for item in path_custom_installer.search("*.py", r=False):
+        try:
+            config_dict = runpy.run_path(str(item), run_name=None)['config_dict']
+            res2[item.stem] = config_dict
+        except Exception as ex:
+            print(f"Failed to load {item}: {ex}")
+
     return [Installer.from_dict(d=vd, name=k) for k, vd in res2.items()]
 
 
@@ -280,7 +293,7 @@ def install_all(installers: L[Installer], safe: bool = False, jobs: int = 10, fr
         if platform.system().lower() == "windows":
             apps_dir.search("*").apply(lambda app: app.move(folder=P.get_env().WindowsApps))
         elif platform.system().lower() == "linux":
-            Terminal().run(f"sudo mv {apps_dir.as_posix()}/* /usr/local/bin/").print_if_unsuccessful(desc="MOVING executable to /usr/local/bin", strict_err=True, strict_returncode=True)
+            Terminal().run(f"sudo mv {apps_dir.as_posix()}/* {LINUX_INSTALL_PATH}/").print_if_unsuccessful(desc=f"MOVING executable to {LINUX_INSTALL_PATH}", strict_err=True, strict_returncode=True)
         else: raise NotImplementedError(f"I don't know this system {platform.system()}")
         apps_dir.delete(sure=True)
         return None

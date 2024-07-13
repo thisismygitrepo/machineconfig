@@ -7,7 +7,14 @@ from typing import Optional
 from crocodile.file_management import P
 
 
-__doc__ = """Plugin for chrome to bypass paywalls"""
+config_dict = {
+        "repo_url": "CUSTOM",
+        "doc": """Plugin for chrome to bypass paywalls""",
+        "filename_template_windows_amd_64": "VSCodeSetup-{}.exe",
+        "filename_template_linux_amd_64": "code_{}.deb",
+        "strip_v": True,
+        "exe_name": "code"
+    }
 
 
 def main(version: Optional[str] = None):

@@ -12,6 +12,16 @@ _ = Terminal, subprocess
 # as per https://www.lunarvim.org/docs/installation
 
 
+config_dict = {
+        "repo_url": "CUSTOM",
+        "doc": "Terminal text editor based on neovim.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": False,
+        "exe_name": "lvim"
+    }
+
+
 def main(version: Optional[str]):
     _ = version
     if platform.system() == "Windows":

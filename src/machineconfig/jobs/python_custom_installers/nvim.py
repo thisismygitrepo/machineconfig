@@ -9,6 +9,16 @@ import platform
 from typing import Optional
 
 
+config_dict = {
+        "repo_url": "CUSTOM",
+        "doc": "Neovim",
+        "filename_template_windows_amd_64": "nvim-win64.zip",
+        "filename_template_linux_amd_64": "nvim-linux64.tar.gz",
+        "strip_v": False,
+        "exe_name": "nvim"
+}
+
+
 def main(version: Optional[str]):
     _ = version
     if platform.system() == "Windows":
@@ -34,4 +44,5 @@ brew install neovim
 
 
 if __name__ == "__main__":
+    print("Executed!")
     pass

@@ -1,20 +1,4 @@
 {
-    "AzureDataStudio": {
-        "repo_url": "CUSTOM",
-        "doc": "Azure Data Studio is a data management tool that enables working with SQL Server, Azure SQL DB and SQL DW from Windows, macOS and Linux.",
-        "filename_template_windows_amd_64": "AzureDataStudio-{}.exe",
-        "filename_template_linux_amd_64": "azuredatastudio-{}.deb",
-        "strip_v": true,
-        "exe_name": "azuredatastudio"
-    },
-    "vscode": {
-        "repo_url": "CUSTOM",
-        "doc": "Visual Studio Code",
-        "filename_template_windows_amd_64": "VSCodeSetup-{}.exe",
-        "filename_template_linux_amd_64": "code_{}.deb",
-        "strip_v": true,
-        "exe_name": "code"
-    },
     "devcontainer": {
         "repo_url": "npm install -g @devcontainers/cli",
         "doc": "Devcontainer is a command-line tool to manage development containers",
@@ -126,14 +110,6 @@
         "filename_template_linux_amd_64": "forward_linux_amd64.tar.gz",
         "strip_v": false,
         "exe_name": "forward"
-    },
-    "lvim": {
-        "repo_url": "CUSTOM",
-        "doc": "Terminal text editor based on neovim.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
-        "strip_v": false,
-        "exe_name": "lvim"
     },
     "dust": {
         "repo_url": "https://github.com/bootandy/dust",

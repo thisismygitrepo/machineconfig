@@ -19,7 +19,7 @@ https://github.com/cli/cli
 
 """
 
-gh = {
+config_dict = {
     "repo_url": "https://github.com/cli/cli",
     "doc": "GitHub CLI",
     "filename_template_windows_amd_64": "gh_{}_windows_amd64.zip",
@@ -31,7 +31,7 @@ gh = {
 
 def main(version: Optional[str]):
     _ = version
-    inst = Installer.from_dict(d=gh, name="gh")
+    inst = Installer.from_dict(d=config_dict, name="gh")
     inst.install(version=version)
     if platform.system() == "Windows":
         program = "gh extension install github/gh-copilot"

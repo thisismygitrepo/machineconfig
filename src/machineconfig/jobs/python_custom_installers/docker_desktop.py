@@ -1,6 +1,8 @@
 
+"""
+Installer
+"""
 # from machineconfig.utils.installer import get_latest_release
-# 
 # from crocodile.meta import Terminal
 from typing import Optional
 
@@ -11,10 +13,19 @@ from typing import Optional
 
 # url = r"https://github.com/koute/bytehound"
 # fname = r"bytehound-x86_64-unknown-linux-gnu.tgz"
-__doc__ = """Docker Desltop for Ubuntu as per https://docs.docker.com/desktop/install/ubuntu/"""
 
 
-def main(version: Optional[str] = None):
+config_dict = {
+    "repo_url": "CUSTOM",
+    "doc": """Docker Desltop for Ubuntu as per https://docs.docker.com/desktop/install/ubuntu/""",
+    "filename_template_windows_amd_64": "gh_{}_windows_amd64.zip",
+    "filename_template_linux_amd_64": "gh_{}_linux_amd64.tar.gz",
+    "strip_v": True,
+    "exe_name": "gh"
+}
+
+
+def main(version: Optional[str]):
     _ = version
     code = """
 # Add Docker's official GPG key:
