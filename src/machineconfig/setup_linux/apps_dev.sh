@@ -70,8 +70,8 @@ yes '' | sed 3q; echo "----------------------------- installing aafire ---------
 sudo apt-get install libaa-bin -y
 
 
-yes '' | sed 3q; echo "----------------------------- installing sharewifi ----------------------------"; yes '' | sed 3q
-npm install sharewifi -g || true
+# yes '' | sed 3q; echo "----------------------------- installing sharewifi ----------------------------"; yes '' | sed 3q
+# npm install sharewifi -g || true
 
 
 yes '' | sed 3q; echo "----------------------------- installing easy-sharing ----------------------------"; yes '' | sed 3q
@@ -146,7 +146,7 @@ yes '' | sed 3q; echo "----------------------------- installing spacevim -------
 (curl -sLf https://spacevim.org/install.sh | bash) || true
 
 
----------------------------- Programming Languages ------------------------------------
+# ---------------------------- Programming Languages ------------------------------------
 yes '' | sed 3q; echo "----------------------------- installing codon ----------------------------"; yes '' | sed 3q
 /bin/bash -c "$(curl -fsSL https://exaloop.io/install.sh)"
 

@@ -1,4 +1,6 @@
 
+# Run this file with: (sudo) bash docker_build_latest.sh
+# Before that, you might need to start dockerd with: sudo dockerd # Use `which dockerd` to find the path
 # set -e
 
 IMAGE_NAME="alim-slim"

@@ -1,32 +1,34 @@
 
 # https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 
-# Add Docker's official GPG key:
-sudo apt-get update
-sudo apt-get install ca-certificates curl gnupg -y
-sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
+# # Add Docker's official GPG key:
+# sudo apt-get update
+# sudo apt-get install ca-certificates curl gnupg -y
+# sudo install -m 0755 -d /etc/apt/keyrings
+# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+# sudo chmod a+r /etc/apt/keyrings/docker.gpg
 
-# $OS_NAME=$(lsb_release -cs)
-# $OS_NAME=$(. /etc/os-release && echo "$VERSION_CODENAME")
-$OS_NAME=jammy  # verigina doens't work
+# # $OS_NAME=$(lsb_release -cs)
+# # $OS_NAME=$(. /etc/os-release && echo "$VERSION_CODENAME")
+# $OS_NAME=jammy  # verigina doens't work
 
-# Add the repository to Apt sources:
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-   $OS_NAME stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
+# # Add the repository to Apt sources:
+# echo \
+#   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+#    $OS_NAME stable" | \
+#   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+# sudo apt-get update
 
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+# sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
 
-# as per: https://www.digitalocean.com/community/questions/how-to-fix-docker-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socket
-# sudo dockerd &
+# As per NixOs installer:
+nix-env -iA nixpkgs.docker
+
+# as per: https://docs.docker.com/engine/install/linux-postinstall/
 sudo groupadd docker
 sudo usermod -aG docker $USER
-# Now you need to log out and in
+# Now you need to log out and in OR run: `newgrp docker`
 docker run hello-world
 
 
