@@ -5,6 +5,17 @@
 from typing import Optional
 import platform
 
+
+config_dict = {
+        "repo_url": "CUSTOM",
+        "doc": "Visual Studio Code",
+        "filename_template_windows_amd_64": "VSCodeSetup-{}.exe",
+        "filename_template_linux_amd_64": "code_{}.deb",
+        "strip_v": True,
+        "exe_name": "code"
+    }
+
+
 def main(version: Optional[str] = None):
 
     if platform.system() == 'Linux':

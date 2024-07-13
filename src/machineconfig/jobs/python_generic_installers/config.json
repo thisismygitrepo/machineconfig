@@ -8,22 +8,6 @@
         "strip_v": false,
         "exe_name": "mcfly"
       },
-    "wezterm": {
-        "repo_url": "CUSTOM",
-        "doc": "cross-platform terminal emulator",
-        "filename_template_windows_amd_64": "WezTerm-windows-{}.zip",
-        "filename_template_linux_amd_64": "wezterm-{}.Ubuntu22.04.deb",
-        "strip_v": false,
-        "exe_name": "wezterm"
-    },
-    "gh": {
-        "repo_url": "CUSTOM",
-        "doc": "GitHub CLI",
-        "filename_template_windows_amd_64": "gh_{}_windows_amd64.zip",
-        "filename_template_linux_amd_64": "gh_{}_linux_amd64.tar.gz",
-        "strip_v": true,
-        "exe_name": "gh"
-    },
     "ttyd": {
         "repo_url": "https://github.com/tsl0922/ttyd",
         "doc": "ttyd shares your terminal on the web.",
@@ -39,14 +23,6 @@
         "filename_template_linux_amd_64": "",
         "strip_v": false,
         "exe_name": "m365"
-    },
-    "ngrok": {
-        "repo_url": "CUSTOM",
-        "doc": "ngrok secure introspectable tunnels to localhost",
-        "filename_template_windows_amd_64": "ngrok-stable-windows-amd64.zip",
-        "filename_template_linux_amd_64": "ngrok-stable-linux-amd64.zip",
-        "strip_v": false,
-        "exe_name": "ngrok"
     },
     "chatgpt": {
         "repo_url": "https://github.com/j178/chatgpt",
@@ -236,14 +212,6 @@
         "strip_v": false,
         "exe_name": "dua"
     },
-    "helix": {
-        "repo_url": "https://github.com/helix-editor/helix",
-        "doc": "Helix is a post-modern modal text editor.",
-        "filename_template_windows_amd_64": "helix-{}-x86_64-windows.zip",
-        "filename_template_linux_amd_64": "helix-{}-x86_64-linux.tar.xz",
-        "strip_v": false,
-        "exe_name": "hx"
-    },
     "lf": {
         "repo_url": "https://github.com/gokcehan/lf",
         "doc": "lf is a terminal file manager written in go.",
@@ -309,13 +277,5 @@
         "filename_template_linux_amd_64": "watchexec-{}-x86_64-unknown-linux-musl.tar.xz",
         "strip_v": true,
         "exe_name": "watchexec"
-    },
-    "nvim": {
-        "repo_url": "CUSTOM",
-        "doc": "Neovim",
-        "filename_template_windows_amd_64": "nvim-win64.zip",
-        "filename_template_linux_amd_64": "nvim-linux64.tar.gz",
-        "strip_v": false,
-        "exe_name": "nvim"
     }
 }

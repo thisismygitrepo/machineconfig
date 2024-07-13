@@ -6,7 +6,8 @@ from machineconfig.utils.installer import Installer
 from typing import Optional
 import platform
 
-wezterm = {
+
+config_dict = {
         "repo_url": "https://github.com/wez/wezterm",
         "doc": "cross-platform terminal emulator",
         "filename_template_windows_amd_64": "WezTerm-windows-{}.zip",
@@ -20,7 +21,7 @@ def main(version: Optional[str]):
     if platform.system() == "Windows":
         program = "winget install --Id wez.wezterm --source winget --accept-package-agreements --accept-source-agreements"
     elif platform.system() == "Linux":
-        inst = Installer.from_dict(d=wezterm, name="wezterm")
+        inst = Installer.from_dict(d=config_dict, name="wezterm")
         program = ""
         # as per https://wezfurlong.org/wezterm/install/linux.html#installing-on-ubuntu-and-debian-based-systems
         downloaded, version_to_be_installed = inst.download(version=version)
