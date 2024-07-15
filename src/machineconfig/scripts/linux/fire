@@ -3,6 +3,10 @@
 . ~/scripts/activate_ve 've'
 
 op_script=$HOME/tmp_results/shells/python_return_command.sh
+
+# echo "May be removing $op_script"
+# sleep 1
+
 if [ -f "$op_script" ]; then
   rm $op_script
 fi
@@ -20,9 +24,16 @@ fi
 # clear
 
 # python $(dirname $(dirname $0))/python/fire_jobs.py "$@"
+# echo "Firing script preprocessor"
+# sleep 1
+
 python -m machineconfig.scripts.python.fire_jobs "$@"
+# ~/venvs/ve/bin/python -m machineconfig.scripts.python.fire_jobs "$@"
 
 if [ -f "$op_script" ]; then
+  # echo "Executing $op_script"
+  # sleep 1
+
   chmod +x $op_script
   set --  # clear all positional parameters
   source $op_script  # sourcing the script means the args passed to the this script are passed to the sourced script which cofuses the sources script as it contains activate_ve and it doesn't understand first.sh arguments.

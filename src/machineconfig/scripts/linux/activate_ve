@@ -38,10 +38,16 @@ else  # there is an active_ve already.
   if [ -n "$1" ] && [ "$HOME/venvs/$1" != "$VIRTUAL_ENV" ]; then  # check if $1 is passed, if yes, activate it
     echo "🔻 Deactivating virtual environment $VIRTUAL_ENV "
 
+    # if command -v deactivate >/dev/null 2>&1; then
+    #     deactivate
+      # fi
     if command -v deactivate >/dev/null 2>&1; then
-        deactivate
+        DEACTIVATE_PATH=$(command -v deactivate)
+        if [[ $DEACTIVATE_PATH != *"ms-python"* ]]; then
+            deactivate
+        fi
     fi
-    
+
     name=$1
     source ~/venvs/$name/bin/activate
 

@@ -170,22 +170,22 @@ except ImportError as _ex:
         else:
             if not args.cmd:
                 # for .streamlit config to work, it needs to be in the current directory.
-                command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {P.cwd()}"
+                command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
             else:
                 command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
-            # command = f"cd {choice_file.parent}; {exe} {choice_file.name}; cd {P.cwd()}"
+            # command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
 
     # this installs in ve env, which is not execution env
     # if "ipdb" in command: install_n_import("ipdb")
     # if "pudb" in command: install_n_import("pudb")
 
     if not args.cmd:
-        if "ipdb" in command: command = f"pip install ipdb; {command}"
-        if "pudb" in command: command = f"pip install pudb; {command}"
+        if "ipdb" in command: command = f"pip install ipdb\n\n{command}"
+        if "pudb" in command: command = f"pip install pudb\n\n{command}"
         if platform.system() == "Windows":
-            command = f". activate_ve {args.ve}; {command}"
+            command = f". activate_ve {args.ve}\n\n{command}"
         else:
-            command = f". ~/scripts/activate_ve {args.ve}; {command}"
+            command = f". ~/scripts/activate_ve {args.ve}\n\n{command}"
     else:
         # CMD equivalent
         if "ipdb" in command: command = f"pip install ipdb & {command}"
