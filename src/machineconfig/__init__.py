@@ -2,7 +2,9 @@
 """DS
 """
 
-__version__ = "1.8"
+__version__ = "1.9"
 release_notes = """
-enhanced ve management
+
+imporoved installer
+
 """
