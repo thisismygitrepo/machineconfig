@@ -54,6 +54,9 @@
 
 
 # Cli helper
+* https://github.com/BuilderIO/ai-shell
+* https://github.com/paul-gauthier/aider
+
 * https://github.com/datafolklabs/cement
 * https://github.com/pallets/click fire alternative
 * https://github.com/JaidedAI/EasyOCR
@@ -73,8 +76,10 @@
 
 # terminal emulators
 * https://github.com/cmderdev/cmder
+* https://www.warp.dev/
+* https://github.com/wavetermdev/waveterm
 
-# Terminal Sharing: 
+# Terminal Sharing:
 * Comparison: https://gist.github.com/miguelmota/04245255f9dc9a862ac2bd682bdbab06
 * https://github.com/zhaojh329/rtty
 
