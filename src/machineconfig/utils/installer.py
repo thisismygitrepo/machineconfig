@@ -3,7 +3,8 @@
 """
 from rich.console import Console
 
-from crocodile.file_management import P, List as L, Read, Struct
+from crocodile.file_management import P, List as L, Read
+from crocodile.core import Struct
 from crocodile.meta import Terminal
 from machineconfig.utils.utils import INSTALL_VERSION_ROOT, INSTALL_TMP_DIR, LIBRARY_ROOT, check_tool_exists
 
@@ -290,7 +291,7 @@ def install_all(installers: L[Installer], safe: bool = False, jobs: int = 10, fr
         from machineconfig.jobs.python.check_installations import APP_SUMMARY_PATH
         apps_dir = APP_SUMMARY_PATH.readit()
         if platform.system().lower() == "windows":
-            apps_dir.search("*").apply(lambda app: app.move(folder=P.get_env().WindowsApps))
+            apps_dir.search("*").apply(lambda app: app.move(folder=P.get_env().WindowsPaths().WindowsApps))
         elif platform.system().lower() == "linux":
             Terminal().run(f"sudo mv {apps_dir.as_posix()}/* {LINUX_INSTALL_PATH}/").print_if_unsuccessful(desc=f"MOVING executable to {LINUX_INSTALL_PATH}", strict_err=True, strict_returncode=True)
         else: raise NotImplementedError(f"I don't know this system {platform.system()}")

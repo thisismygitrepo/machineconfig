@@ -4,8 +4,8 @@ TODO: use tap typed-argument-parser to parse args
 TODO: use typer to make clis
 """
 
-from crocodile.file_management import P, Read, Struct
-# from crocodile.core import install_n_import
+from crocodile.file_management import P, Read
+from crocodile.core import Struct
 from machineconfig.utils.utils import PROGRAM_PATH, DEFAULTS_PATH
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 import argparse

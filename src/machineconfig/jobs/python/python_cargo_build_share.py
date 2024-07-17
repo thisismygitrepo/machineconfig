@@ -35,7 +35,7 @@ cargo install --path .
         print(f"PermissionError, couldn't delete: {P.home().joinpath(tool_name)}")
 
     if platform.system() == "Windows":
-        exe = exe.move(folder=P.get_env().WindowsApps)
+        exe = exe.move(folder=P.get_env().WindowsPaths().WindowsApps)
     elif platform.system() == "Linux":
         Terminal().run(f"sudo mv {exe} /usr/local/bin")
         exe = P(r"/usr/local/bin").joinpath(exe.name)

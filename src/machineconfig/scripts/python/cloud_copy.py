@@ -2,7 +2,8 @@
 """CC
 """
 
-from crocodile.file_management import P, Struct
+from crocodile.file_management import P
+from crocodile.core import Struct
 from crocodile.meta import RepeatUntilNoException
 import getpass
 from machineconfig.scripts.python.cloud_sync import parse_cloud_source_target, ArgsDefaults, Args

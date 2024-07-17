@@ -2,7 +2,9 @@
 """python and ve installation related utils
 """
 
-from crocodile.file_management import P, Struct, modify_text, List, Read, Save
+from crocodile.core import Struct, Save, List
+from crocodile.file_management import P, modify_text, Read
+
 from machineconfig.utils.utils import LIBRARY_ROOT
 import platform
 from dataclasses import dataclass
