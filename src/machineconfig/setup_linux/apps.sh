@@ -35,13 +35,16 @@ yes '' | sed 3q; echo "----------------------------- installing fusemount3 -----
 sudo apt install fuse3 -y || true  # for rclone.
 sudo apt install nfs-common -y || true  # for mounting nfs shares. Missing fom Ubuntu server by default.
 
-
 yes '' | sed 3q; echo "----------------------------- installing wget --------------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
   sudo apt install wget -y || true  # for downloading files
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.wget || true
 fi
+
+
+yes '' | sed 3q; echo "----------------------------- installing sqlite --------------------------"; yes '' | sed 3q
+sudo apt install sqlite -y || true  # sqlite vscode extension requires this to be installed. It gives sqlite and sqlite3 commands.
 
 
 yes '' | sed 3q; echo "----------------------------- installing nvm of nodejs --------------------------"; yes '' | sed 3q
