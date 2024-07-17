@@ -1,12 +1,4 @@
 {
-    "devcontainer": {
-        "repo_url": "npm install -g @devcontainers/cli",
-        "doc": "Devcontainer is a command-line tool to manage development containers",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
-        "strip_v": false,
-        "exe_name": "devcontainer"
-    },
     "mermaid-cli": {
         "repo_url": "npm install -g @mermaid-js/mermaid-cli",
         "doc": "Generate diagrams and flowcharts from text in a similar manner as markdown",
@@ -31,22 +23,6 @@
         "strip_v": false,
         "exe_name": "marp"
     },
-    "pandoc": {
-        "repo_url": "https://github.com/jgm/pandoc",
-        "doc": "The universal markup converter",
-        "filename_template_windows_amd_64": "pandoc-{}-windows-x86_64.msi",
-        "filename_template_linux_amd_64": "pandoc-{}-1-amd64.deb",
-        "strip_v": true,
-        "exe_name": "pandoc"
-    },
-    "OBS Background removal": {
-        "repo_url": "https://github.com/royshil/obs-backgroundremoval",
-        "doc": "A plugin for OBS Studio to remove background from a video",
-        "filename_template_windows_amd_64": "obs-backgroundremoval-{}-windows-x64.zip",
-        "filename_template_linux_amd_64": "obs-backgroundremoval-{}-x86_64-linux-gnu.deb",
-        "strip_v": true,
-        "exe_name": "obs-backgroundremoval"
-    },
     "presenterm": {
         "repo_url": "https://github.com/mfontanini/presenterm",
         "doc": "present from temrinal",
@@ -55,21 +31,29 @@
         "strip_v": true,
         "exe_name": "presenterm"
     },
-    "edex-ui": {
-        "repo_url": "https://github.com/GitSquared/edex-ui",
-        "doc": "fullscreen, cross-platform terminal emulator and system monitor that looks and feels like a sci-fi computer interface",
-        "filename_template_windows_amd_64": "eDEX-UI-Windows-x64.exe",
-        "filename_template_linux_amd_64": "eDEX-UI-Linux-x86_64.AppImage",
+    "pandoc": {
+        "repo_url": "https://github.com/jgm/pandoc",
+        "doc": "The universal markup converter",
+        "filename_template_windows_amd_64": "pandoc-{}-windows-x86_64.msi",
+        "filename_template_linux_amd_64": "pandoc-{}-1-amd64.deb",
         "strip_v": true,
-        "exe_name": "edex"
+        "exe_name": "pandoc"
     },
-    "auto-GPT": {
-        "repo_url": "https://github.com/Significant-Gravitas/Auto-GPT",
-        "doc": "GPT ",
+    "devcontainer": {
+        "repo_url": "npm install -g @devcontainers/cli",
+        "doc": "Devcontainer is a command-line tool to manage development containers",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "",
         "strip_v": false,
-        "exe_name": "autogpt"
+        "exe_name": "devcontainer"
+    },
+    "OBS Background removal": {
+        "repo_url": "https://github.com/royshil/obs-backgroundremoval",
+        "doc": "A plugin for OBS Studio to remove background from a video",
+        "filename_template_windows_amd_64": "obs-backgroundremoval-{}-windows-x64.zip",
+        "filename_template_linux_amd_64": "obs-backgroundremoval-{}-x86_64-linux-gnu.deb",
+        "strip_v": true,
+        "exe_name": "obs-backgroundremoval"
     },
     "bitwarden": {
         "repo_url": "https://github.com/bitwarden/clients",
@@ -159,6 +143,14 @@
         "strip_v": true,
         "exe_name": "qrscan"
     },
+    "termscp": {
+        "repo_url": "https://github.com/veeso/termscp",
+        "doc": "A TUI like winscp",
+        "filename_template_windows_amd_64": "termscp-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "termscp-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "termscp"
+    },
     "qr": {
         "repo_url": "pip install qrcode",
         "doc": "qr code generator. String to qr code.",
@@ -223,22 +215,6 @@
         "strip_v": false,
         "exe_name": "rust-analyzer"
     },
-    "termscp": {
-        "repo_url": "https://github.com/veeso/termscp",
-        "doc": "A TUI like winscp",
-        "filename_template_windows_amd_64": "termscp-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "termscp-{}-x86_64-unknown-linux-gnu.tar.gz",
-        "strip_v": false,
-        "exe_name": "termscp"
-    },
-    "tealdeer": {
-        "repo_url": "https://github.com/dbrgn/tealdeer",
-        "doc": "Too long, didn't read, but for cli tools.",
-        "filename_template_windows_amd_64": "tealdeer-windows-x86_64-msvc.exe",
-        "filename_template_linux_amd_64": "tealdeer-linux-x86_64-musl",
-        "strip_v": false,
-        "exe_name": "tealdeer"
-    },
     "kondo": {
         "repo_url": "https://github.com/tbillington/kondo",
         "doc": "cleans projects from litter files.",
@@ -287,14 +263,6 @@
         "strip_v": true,
         "exe_name": "just"
     },
-    "hyperfine": {
-        "repo_url": "https://github.com/sharkdp/hyperfine",
-        "doc": "A command-line benchmarking tool",
-        "filename_template_windows_amd_64": "hyperfine-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "hyperfine-{}-x86_64-unknown-linux-gnu.tar.gz",
-        "strip_v": false,
-        "exe_name": "hyperfine"
-    },
     "navi": {
         "repo_url": "https://github.com/denisidoro/navi",
         "doc": "An interactive cheatsheet tool for the command-line",
@@ -303,21 +271,13 @@
         "strip_v": false,
         "exe_name": "navi"
     },
-    "vtm": {
-        "repo_url": "https://github.com/netxs-group/vtm",
-        "doc": "Text-based desktop environment inside your terminal",
-        "filename_template_windows_amd_64": "vtm_windows_x86_64.zip",
-        "filename_template_linux_amd_64": "vtm_linux_x86_64.tar.gz",
+    "tealdeer": {
+        "repo_url": "https://github.com/dbrgn/tealdeer",
+        "doc": "Too long, didn't read, but for cli tools.",
+        "filename_template_windows_amd_64": "tealdeer-windows-x86_64-msvc.exe",
+        "filename_template_linux_amd_64": "tealdeer-linux-x86_64-musl",
         "strip_v": false,
-        "exe_name": "vtm"
-    },
-    "extraterm": {
-        "repo_url": "https://github.com/sedwards2009/extraterm/",
-        "doc": "Terminal emulator",
-        "filename_template_windows_amd_64": "extratermqt-{}-windows-x64.zip",
-        "filename_template_linux_amd_64": "extratermqt-{}-linux-x64.zip",
-        "strip_v": true,
-        "exe_name": "extraterm"
+        "exe_name": "tealdeer"
     },
     "sniffnet": {
         "repo_url": "https://github.com/GyulyVGC/sniffnet",
@@ -326,6 +286,14 @@
         "filename_template_linux_amd_64": "Sniffnet_LinuxDEB_amd64.deb",
         "strip_v": true,
         "exe_name": "sniffnet"
+    },
+    "hyperfine": {
+        "repo_url": "https://github.com/sharkdp/hyperfine",
+        "doc": "A command-line benchmarking tool",
+        "filename_template_windows_amd_64": "hyperfine-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "hyperfine-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "hyperfine"
     },
     "ollama": {
         "repo_url": "https://github.com/ollama/ollama",
@@ -342,6 +310,29 @@
         "filename_template_linux_amd_64": "cointop_{}_linux_amd64.tar.gz",
         "strip_v": true,
         "exe_name": "cointop"
+    },
+    "vtm": {
+        "repo_url": "https://github.com/netxs-group/vtm",
+        "doc": "Text-based desktop environment inside your terminal",
+        "filename_template_windows_amd_64": "vtm_windows_x86_64.zip",
+        "filename_template_linux_amd_64": "vtm_linux_x86_64.tar.gz",
+        "strip_v": false,
+        "exe_name": "vtm"
+    },
+    "edex-ui": {
+        "repo_url": "https://github.com/GitSquared/edex-ui",
+        "doc": "fullscreen, cross-platform terminal emulator and system monitor that looks and feels like a sci-fi computer interface",
+        "filename_template_windows_amd_64": "eDEX-UI-Windows-x64.exe",
+        "filename_template_linux_amd_64": "eDEX-UI-Linux-x86_64.AppImage",
+        "strip_v": true,
+        "exe_name": "edex"
+    },
+    "extraterm": {
+        "repo_url": "https://github.com/sedwards2009/extraterm/",
+        "doc": "Terminal emulator",
+        "filename_template_windows_amd_64": "extratermqt-{}-windows-x64.zip",
+        "filename_template_linux_amd_64": "extratermqt-{}-linux-x64.zip",
+        "strip_v": true,
+        "exe_name": "extraterm"
     }
-
 }
