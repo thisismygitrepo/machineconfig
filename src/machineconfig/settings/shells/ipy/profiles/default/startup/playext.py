@@ -3,8 +3,8 @@
 """
 
 from IPython.core.magic import register_line_magic
+from crocodile.core import Struct, randstr
 from crocodile.file_management import P
-from crocodile.core import randstr, Struct
 from typing import Any
 
 
