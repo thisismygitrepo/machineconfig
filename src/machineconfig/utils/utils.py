@@ -3,7 +3,7 @@
 Utils
 """
 
-from crocodile.file_management import P, randstr
+from crocodile.file_management import P, randstr, PLike
 from crocodile.meta import Terminal
 from crocodile.core import install_n_import
 # import crocodile.environment as env
@@ -347,6 +347,31 @@ def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool = False):
         from machineconfig.scripts.python.cloud_repo_sync import main
         main(cloud=None, path=dotfiles_path, push=False)
     return res
+
+
+def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
+    """Build symboic links from various relevant paths (e.g. data) to `repo_root/links/<name>` to facilitate easy access from
+    tree explorer of the IDE.
+    """
+    target_dirs_filtered: list[tuple[P, str]] = []
+    for a_dir, a_name in target_paths:
+        a_dir_obj = P(a_dir).resolve()
+        if not a_dir_obj.exists():
+            a_dir_obj.mkdir(parents=True, exist_ok=True)
+        target_dirs_filtered.append((a_dir_obj, a_name))
+
+    import git
+    repo = git.Repo(repo_root, search_parent_directories=True)
+    root_maybe = repo.working_tree_dir
+    assert root_maybe is not None
+    repo_root_obj = P(root_maybe)
+    tmp_results_root = P.home().joinpath("tmp_results", "tmp_data", repo_root_obj.name)
+    tmp_results_root.mkdir(parents=True, exist_ok=True)
+    target_dirs_filtered.append((tmp_results_root, "tmp_results"))
+
+    for a_target_path, a_name in target_dirs_filtered:
+        links_path = repo_root_obj.joinpath("links", a_name)
+        links_path.symlink_to(target=a_target_path)
 
 
 if __name__ == '__main__':
