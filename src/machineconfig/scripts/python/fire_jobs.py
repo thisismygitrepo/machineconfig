@@ -50,8 +50,7 @@ def main() -> None:
 
     path_obj = sanitize_path(P(args.path))
     if not path_obj.exists():
-        path_obj = match_file_name(args.path)
-        print(path_obj)
+        path_obj = match_file_name(sub_string=args.path)
     else: pass
 
     if path_obj.is_dir():
@@ -91,10 +90,10 @@ def main() -> None:
 
     if args.streamlit:
         import socket
-        try: local_ip_v4 = socket.gethostbyname(socket.gethostname() + ".local")  # without .local, in linux machines, '/etc/hosts' file content, you have an IP address mapping with '127.0.1.1' to your hostname
-        except Exception:
-            print(f"Warning: Could not get local_ip_v4. This is probably because you are running a WSL instance")  # TODO find a way to get the local_ip_v4 in WSL
-            local_ip_v4 = socket.gethostbyname(socket.gethostname())
+        # try: local_ip_v4 = socket.gethostbyname(socket.gethostname() + ".local")  # without .local, in linux machines, '/etc/hosts' file content, you have an IP address mapping with '127.0.1.1' to your hostname
+        # except Exception:
+        #     print(f"Warning: Could not get local_ip_v4. This is probably because you are running a WSL instance")  # TODO find a way to get the local_ip_v4 in WSL
+        local_ip_v4 = socket.gethostbyname(socket.gethostname())
         print(f"🚀 Streamlit app is running at: http://{local_ip_v4}:8501")
         exe = "streamlit run --server.address 0.0.0.0 --server.headless true"
     elif args.interactive is False: exe = "python"

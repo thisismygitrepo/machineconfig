@@ -71,9 +71,9 @@ def sanitize_path(a_path: P) -> P:
 
 def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
     """Look up current directory for file name that matches the passed substring."""
-    root = search_root if search_root is not None else P.cwd()
-    print(f"Searching for {sub_string} in {root}")
-    search_results = root.absolute().search(f"*{sub_string}*.py", r=True)
+    search_root_obj = search_root if search_root is not None else P.cwd()
+    print(f"Searching for {sub_string} in {search_root_obj}")
+    search_results = search_root_obj.absolute().search(f"*{sub_string}*.py", r=True)
     if len(search_results) == 1:
         path_obj = search_results.list[0]
     elif len(search_results) > 1:
@@ -87,31 +87,31 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
         from git.repo import Repo
         from git.exc import InvalidGitRepositoryError
         try:
-            repo = Repo(root, search_parent_directories=True)
+            repo = Repo(search_root_obj, search_parent_directories=True)
             repo_root_dir = P(repo.working_dir)
-            if repo_root_dir != root:  # may be user is in a subdirectory of the repo root, try with root dir.
+            if repo_root_dir != search_root_obj:  # may be user is in a subdirectory of the repo root, try with root dir.
                 return match_file_name(sub_string=sub_string, search_root=repo_root_dir)
             else:
-                root = repo_root_dir
+                search_root_obj = repo_root_dir
         except InvalidGitRepositoryError:
             pass
 
-        if check_tool_exists("fzf"):
+        if check_tool_exists(tool_name="fzf"):
             try:
-                search_res = subprocess.run(f"cd '{root}'; fzf --filter={sub_string}", stdout=subprocess.PIPE, text=True, check=True, shell=True).stdout.split("\n")[:-1]
+                search_res = subprocess.run(f"cd '{search_root_obj}'; fzf --filter={sub_string}", stdout=subprocess.PIPE, text=True, check=True, shell=True).stdout.split("\n")[:-1]
             except subprocess.CalledProcessError as cpe:
-                print(f"Failed at fzf search with {sub_string} in {root}.\n{cpe}")
+                print(f"Failed at fzf search with {sub_string} in {search_root_obj}.\n{cpe}")
                 msg = f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. No search results\n{'--' * 50}\n"
                 raise FileNotFoundError(msg) from cpe
-            if len(search_res) == 1: return root.joinpath(search_res[0])
+            if len(search_res) == 1: return search_root_obj.joinpath(search_res[0])
             else:
                 try:
-                    res = subprocess.run(f"cd '{root}'; fzf --query={sub_string}", check=True, stdout=subprocess.PIPE, text=True, shell=True).stdout.strip()
+                    res = subprocess.run(f"cd '{search_root_obj}'; fzf --query={sub_string}", check=True, stdout=subprocess.PIPE, text=True, shell=True).stdout.strip()
                 except subprocess.CalledProcessError as cpe:
-                    print(f"Failed at fzf search with {sub_string} in {root}. {cpe}")
+                    print(f"Failed at fzf search with {sub_string} in {search_root_obj}. {cpe}")
                     msg = f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. No search results\n{'--' * 50}\n"
                     raise FileNotFoundError(msg) from cpe
-                return root.joinpath(res)
+                return search_root_obj.joinpath(res)
         msg = f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. No search results\n{'--' * 50}\n"
         raise FileNotFoundError(msg)
     print(f"\n{'--' * 50}\n🔗 Matched `{sub_string}` ➡️ `{path_obj}`\n{'--' * 50}\n")
