@@ -32,7 +32,6 @@
         "strip_v": false,
         "exe_name": "autogpt"
     },
-
     "chatgpt": {
         "repo_url": "https://github.com/j178/chatgpt",
         "doc": "chagpt cli",
