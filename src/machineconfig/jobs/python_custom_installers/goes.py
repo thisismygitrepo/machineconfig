@@ -10,10 +10,10 @@ from machineconfig.utils.ve import get_ve_install_script
 config_dict = {
         "repo_url": "CUSTOM",
         "doc": "natural language to API",
-        "filename_template_windows_amd_64": "ngrok-stable-windows-amd64.zip",
-        "filename_template_linux_amd_64": "ngrok-stable-linux-amd64.zip",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
         "strip_v": False,
-        "exe_name": "ngrok"
+        "exe_name": "goex"
     }
 
 ve_name = "goex"
