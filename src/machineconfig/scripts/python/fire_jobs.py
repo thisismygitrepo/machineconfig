@@ -37,6 +37,7 @@ def main() -> None:
     parser.add_argument("--streamlit",       "-S", action="store_true", help="run as streamlit app")
     parser.add_argument("--history",         "-H", action="store_true", help="choose from history")
     # parser.add_argument("--git_pull",        "-g", action="store_true", help="Start by pulling the git repo")
+    parser.add_argument("--optimized", "-O", action="store_true", help="Run the optimized version of the function")
     parser.add_argument("--Nprocess",        "-p", type=int, help="Number of processes to use", default=1)
     parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ...")
 
@@ -215,6 +216,8 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
 
     # TODO: send this command to terminal history. In powershell & bash there is no way to do it with a command other than goiing to history file. In Mcfly there is a way but its linux only tool. # if platform.system() == "Windows": command = f" ({command}) | Add-History  -PassThru "
     # mcfly add --exit 0 command
+    if args.optimized:
+        command = command.replace("python ", "python -OO ")
     print(f"🔥 command:\n{command}\n\n")
     # if platform.system() == "Linux":
     #     command = "timeout 1s aafire -driver slang\nclear\n" + command
