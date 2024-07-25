@@ -94,7 +94,8 @@ def main() -> None:
         # except Exception:
         #     print(f"Warning: Could not get local_ip_v4. This is probably because you are running a WSL instance")  # TODO find a way to get the local_ip_v4 in WSL
         local_ip_v4 = socket.gethostbyname(socket.gethostname())
-        print(f"🚀 Streamlit app is running at: http://{local_ip_v4}:8501")
+        computer_name = platform.node()
+        print(f"🚀 Streamlit app is running at: http://{local_ip_v4}:8501 OR http://{computer_name}:8501")
         exe = "streamlit run --server.address 0.0.0.0 --server.headless true"
     elif args.interactive is False: exe = "python"
     elif args.jupyter: exe = "jupyter-lab"
