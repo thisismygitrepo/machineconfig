@@ -217,10 +217,16 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
     # TODO: send this command to terminal history. In powershell & bash there is no way to do it with a command other than goiing to history file. In Mcfly there is a way but its linux only tool. # if platform.system() == "Windows": command = f" ({command}) | Add-History  -PassThru "
     # mcfly add --exit 0 command
     if args.optimized:
+        # note that in ipython, optimization is meaningless.
         command = command.replace("python ", "python -OO ")
-    print(f"🔥 command:\n{command}\n\n")
     # if platform.system() == "Linux":
     #     command = "timeout 1s aafire -driver slang\nclear\n" + command
+
+    from rich.panel import Panel
+    from rich.console import Console
+    from rich.syntax import Syntax
+    console = Console()
+    console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command: "), style="bold red")
     PROGRAM_PATH.write_text(command)
 
 
