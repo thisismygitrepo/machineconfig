@@ -210,6 +210,8 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
         command = command.replace(". activate_ve", ". ~/scripts/activate_ve")
         for an_arg in range(args.Nprocess):
             sub_command = f"{command} --idx={an_arg} --idx_max={args.Nprocess}"
+            if args.optimized:
+                command = command.replace("python ", "python -OO ")
             sub_command_path = P.tmpfile(suffix=".sh").write_text(sub_command)
             lines.append(f"""zellij action new-pane -- bash {sub_command_path}  """)
             lines.append("sleep 1")  # python tends to freeze if you launch instances within 1 microsecond of each other
