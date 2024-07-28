@@ -229,7 +229,7 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
     from rich.console import Console
     from rich.syntax import Syntax
     console = Console()
-    console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command: "), style="bold red")
+    console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {PROGRAM_PATH}: "), style="bold red")
     PROGRAM_PATH.write_text(command)
 
 

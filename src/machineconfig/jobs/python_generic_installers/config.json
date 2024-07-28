@@ -264,8 +264,8 @@
     "mprocs": {
         "repo_url": "https://github.com/pvolok/mprocs",
         "doc": "Windows/Linux poorman's zellij",
-        "filename_template_windows_amd_64": "mprocs-{}-win64.zip",
-        "filename_template_linux_amd_64": "mprocs-{}-linux64.tar.gz",
+        "filename_template_windows_amd_64": "mprocs-{}-windows-x86_64.zip",
+        "filename_template_linux_amd_64": "mprocs-{}-linux-x86_64-musl.tar.gz",
         "strip_v": true,
         "exe_name": "mprocs"
     },
