@@ -374,6 +374,18 @@ def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
         links_path.symlink_to(target=a_target_path)
 
 
+def wait_for_jobs_to_finish(root: P, pattern: str, wait_for_n_jobs: int):
+    wait_finished: bool = False
+    import time
+    while not wait_finished:
+        parts = root.search(pattern, folders=False)
+        counter  =  len(parts)
+        if counter == wait_for_n_jobs:
+            wait_finished = True
+        print(f"Waiting for {wait_for_n_jobs - counter} / {wait_for_n_jobs} jobs to finish, sleeping for 60 seconds.")
+        time.sleep(60)
+
+
 if __name__ == '__main__':
     # import typer
     # typer.run(check_tool_exists)
