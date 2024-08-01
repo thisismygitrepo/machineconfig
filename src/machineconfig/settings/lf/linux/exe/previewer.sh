@@ -36,7 +36,7 @@ case "$file" in
     
     # if $x is not empty string:
     if [ -n "$x" ]; then
-        echo "Dimensions provided"
+        echo "Dimensions provided by caller, passing to viu"
         viu "$file" -x "$x" -y "$y" -w "$width" -h "$height"
         echo "Finished viu"
         chafa "$file"

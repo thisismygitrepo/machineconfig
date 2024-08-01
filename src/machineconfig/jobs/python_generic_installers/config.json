@@ -150,7 +150,7 @@
       },  
     "viu": {
         "repo_url": "https://github.com/atanunq/viu",
-        "doc": "A cli image viewer for the terminal",
+        "doc": "A cli image viewer for the terminal (like chafa but in Rust)",
         "filename_template_linux_amd_64": "viu-x86_64-unknown-linux-musl",
         "filename_template_windows_amd_64": "viu-x86_64-pc-windows-msvc.exe",
         "strip_v": false,
