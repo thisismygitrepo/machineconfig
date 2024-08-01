@@ -374,16 +374,23 @@ def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
         links_path.symlink_to(target=a_target_path)
 
 
-def wait_for_jobs_to_finish(root: P, pattern: str, wait_for_n_jobs: int):
+def wait_for_jobs_to_finish(root: P, pattern: str, wait_for_n_jobs: int, max_wait_minutes: float) -> bool:
     wait_finished: bool = False
     import time
+    t0 = time.time()
     while not wait_finished:
-        parts = root.search(pattern, folders=False)
+        parts = root.search(pattern, folders=False, r=False)
         counter  =  len(parts)
         if counter == wait_for_n_jobs:
             wait_finished = True
-        print(f"Waiting for {wait_for_n_jobs - counter} / {wait_for_n_jobs} jobs to finish, sleeping for 60 seconds.")
+            print(f"{counter} Jobs finished. Exiting.")
+            return True
+        if (time.time() - t0) > 60 * max_wait_minutes:
+            print(f"Waited for {max_wait_minutes} minutes. Exiting.")
+            return False
+        print(f"{counter} Jobs finished. Waiting for {wait_for_n_jobs - counter} / {wait_for_n_jobs} jobs to finish, sleeping for 60 seconds.")
         time.sleep(60)
+    return False
 
 
 if __name__ == '__main__':
