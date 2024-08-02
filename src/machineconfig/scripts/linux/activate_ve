@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 CONFIG_PATH=$HOME/.config/machineconfig/default_ve
+# TODO: This fails wheil ve in .ve_path doens't exists. It proceeds to activate a different one.
 
 # check below if VIRTUAL_ENV is set
 if [ -z "$VIRTUAL_ENV" ]; then  # no active ve ==> activate one.
