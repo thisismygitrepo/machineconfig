@@ -223,3 +223,7 @@ config2 = {this = '~/.cli-m365-tokens.json', to_this = '~/dotfiles/creds/tokens/
 
 [docker]
 config = {this = '~/.docker/config.json', to_this = '~/dotfiles/creds/docker/config.json'}
+
+[keras]
+config = {this = '~/.keras/keras.json', to_this = 'LIBRARY_ROOT/settings/keras/keras.json'}
+

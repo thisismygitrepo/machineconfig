@@ -14,7 +14,7 @@ import os
 from typing import Optional
 
 
-@RepeatUntilNoException()
+@RepeatUntilNoException(retry=3, sleep=1)
 def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
     folder_obj = P.cwd() if folder is None else P(folder)
 
