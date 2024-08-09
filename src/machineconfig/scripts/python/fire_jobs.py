@@ -301,7 +301,8 @@ def interactively_run_function(func: Callable[[Any], Any]):
             if value == "": value = default
         else: value = input(f"Please enter a value for argument `{param.name}` (type = {hint}) : ")
         try:
-            if param.annotation is not inspect.Parameter.empty: value = param.annotation(value)
+            if param.annotation is not inspect.Parameter.empty:
+                value = param.annotation
         except (TypeError, ValueError) as err:
             raise ValueError(f"Invalid input: {value} is not of type {param.annotation}") from err
         if param.kind == inspect.Parameter.KEYWORD_ONLY: kwargs[param.name] = value

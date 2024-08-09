@@ -135,6 +135,9 @@ Or, if you want to delete local repo and replace with remote, run the following 
 rm -rfd {repo_local_root}
 mv {repo_remote_root} {repo_local_root}
 
+This might be useful too:
+rm ~/dotfiles/creds/rclone/rclone.conf; cp ~/.config/machineconfig/remote/dotfiles/creds/rclone/rclone.conf ~/dotfiles/creds/rclone
+
 """)
             if platform.system() == "Windows":
                 program = get_wt_cmd(wd1=repo_local_root, wd2=repo_remote_root)
