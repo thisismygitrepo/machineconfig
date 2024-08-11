@@ -93,7 +93,7 @@ class ProcessManager:
                 print(f'💀 Killed process with pid {pid} and name {proc.name()}.  It lived {get_age(proc.create_time())}. RIP 🪦💐')
             except psutil.NoSuchProcess: print(f'No process with pid {pid} found')
         for command in commands:
-            rows = self.df[self.df['command'].str.contains(command)]
+            rows = self.df[self.df['command'].to_str().contains(command)]
             if len(rows) > 0:
                 for _idx, a_row in rows.iterrows():
                     psutil.Process(a_row.pid).kill()

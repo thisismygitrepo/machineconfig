@@ -32,7 +32,7 @@ def install_nerd_fonts():
     folder.search("*readme*").apply(lambda p: p.delete(sure=True))
     folder.search("*LICENSE*").apply(lambda p: p.delete(sure=True))
     file = P.tmpfile(suffix=".ps1").write_text(LIBRARY_ROOT.joinpath("setup_windows/wt_and_pwsh/install_fonts.ps1").read_text().replace(r".\fonts-to-be-installed", str(folder)))
-    subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {file.str}", check=True)
+    subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {file.to_str()}", check=True)
     folder.delete(sure=True)
 
 

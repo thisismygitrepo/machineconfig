@@ -168,7 +168,7 @@ def should_task_run(task: Task, tolerance_mins: int = 1440) -> tuple[bool, Optio
 def run_task(task: Task) -> Report:
     start_time = datetime.now()
 
-    shell_script = get_shell_script_executing_python_file(python_file=task.task_root.joinpath("task.py").str, ve_name=task.venv)
+    shell_script = get_shell_script_executing_python_file(python_file=task.task_root.joinpath("task.py").to_str(), ve_name=task.venv)
     shell_script_root = P.tmp().joinpath(f"tmp_scripts/scheduler/{task.name}").create()
     try:
         if platform.system() == 'Windows':

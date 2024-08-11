@@ -129,7 +129,7 @@ class Installer:
             version_to_be_installed = "pipLatest"
         else:
             downloaded, version_to_be_installed = self.download(version=version)
-            if downloaded.str.endswith(".deb"):
+            if downloaded.to_str().endswith(".deb"):
                 assert platform.system() == "Linux"
                 Terminal().run(f"sudo apt install -y {downloaded}").print_if_unsuccessful(desc="Installing .deb", strict_err=True, strict_returncode=True)
                 downloaded.delete(sure=True)

@@ -45,7 +45,7 @@ def main_parse():
         print(f"✅ Task {task_name} created in {task_root}. Head there and edit the config.ini file & task.py file.")
         return None
 
-    main(root=root.str, ignore_conditions=args.ignore_conditions)
+    main(root=root.to_str(), ignore_conditions=args.ignore_conditions)
 
 
 if __name__ == "__main__":

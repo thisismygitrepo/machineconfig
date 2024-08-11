@@ -54,8 +54,8 @@ def main(which: Optional[str] = None):
             reply = input("Detected .ve.ini file. Do you want to use it to build ve? (y/[n]): ") == "y"
             if reply:
                 from machineconfig.utils.ve import get_ve_install_script_from_specs
-                program_win = get_ve_install_script_from_specs(repo_root=P.cwd().str, system="Windows")
-                program_lin = get_ve_install_script_from_specs(repo_root=P.cwd().str, system="Linux")
+                program_win = get_ve_install_script_from_specs(repo_root=P.cwd().to_str(), system="Windows")
+                program_lin = get_ve_install_script_from_specs(repo_root=P.cwd().to_str(), system="Linux")
                 install_reply = input("Proceed with installation? (y/[n]): ") == "y"
                 if not install_reply: program = ""
                 else:

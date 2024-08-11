@@ -16,7 +16,7 @@ def pomodoro(work: int = 25, rest: int = 5, repeats: int = 4):
         while (diff := rest - ((datetime.now() - start).seconds / 60)) > 0: logger.critical(f"Keep Resting. Time Left: {round(diff)} minutes"); time.sleep(60 * 1)
     def speak(txt: str):
         install_n_import("gtts").gTTS(txt, lang='en', tld='com.au').save(tmp := P.tmpfile(suffix=".mp3")); time.sleep(0.5)
-        pyglet = install_n_import("pyglet"); pyglet.resource.path = [tmp.parent.str]; pyglet.resource.reindex(); pyglet.resource.media(tmp.name).play()
+        pyglet = install_n_import("pyglet"); pyglet.resource.path = [tmp.parent.to_str()]; pyglet.resource.reindex(); pyglet.resource.media(tmp.name).play()
     def beep(duration: int = 1, frequency: int = 3000):
         try: import winsound
         except ImportError: __import__("os").system(f'beep -f {frequency} -l {1000 * duration}')

@@ -121,11 +121,11 @@ git pull originEnc master
         else: resp = "n"
 
         if resp.lower() == "y":
-            delete_remote_repo_copy_and_push_local(remote_repo=repo_remote_root.str, local_repo=repo_local_root.str, cloud=cloud_resolved)
+            delete_remote_repo_copy_and_push_local(remote_repo=repo_remote_root.to_str(), local_repo=repo_local_root.to_str(), cloud=cloud_resolved)
         else:
             program = f"""
 from machineconfig.scripts.python.cloud_repo_sync import delete_remote_repo_copy_and_push_local as func
-func(remote_repo=r'{repo_remote_root.str}', local_repo=r'{repo_local_root.str}', cloud=r'{cloud_resolved}')
+func(remote_repo=r'{repo_remote_root.to_str()}', local_repo=r'{repo_local_root.to_str()}', cloud=r'{cloud_resolved}')
 """
             shell_file = get_shell_file_executing_python_script(python_script=program)
             print(f"When ready, use this snippet: \n. {shell_file}")

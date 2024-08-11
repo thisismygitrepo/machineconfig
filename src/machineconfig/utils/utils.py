@@ -17,7 +17,7 @@ import subprocess
 from typing import Optional, Union, TypeVar, Iterable
 
 
-LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().str.lower(), P.home().str)
+LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().to_str().lower(), P.home().str)
 REPO_ROOT = LIBRARY_ROOT.parent.parent
 PROGRAM_PATH = (P.tmp().joinpath("shells/python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh")).create(parents_only=True)
 CONFIG_PATH = P.home().joinpath(".config/machineconfig")
@@ -257,7 +257,7 @@ try:
 except ImportError: print(code)
 """ + python_script
     python_file = P.tmp().joinpath("tmp_scripts", "python", randstr() + ".py").create(parents_only=True).write_text(python_script)
-    shell_script = get_shell_script_executing_python_file(python_file=python_file.str, ve_name=ve_name)
+    shell_script = get_shell_script_executing_python_file(python_file=python_file.to_str(), ve_name=ve_name)
     if platform.system() == "Linux": suffix = ".sh"
     elif platform.system() == "Windows": suffix = ".ps1"
     else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
@@ -327,7 +327,7 @@ def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> b
 def get_ssh_hosts() -> list[str]:
     from paramiko import SSHConfig
     c = SSHConfig()
-    c.parse(open(P.home().joinpath(".ssh/config").str, encoding="utf-8"))
+    c.parse(open(P.home().joinpath(".ssh/config").to_str(), encoding="utf-8"))
     return list(c.get_hostnames())
 def choose_ssh_host(multi: bool = True): return display_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
 

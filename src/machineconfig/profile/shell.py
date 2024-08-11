@@ -22,8 +22,8 @@ system = platform.system()
 def create_default_shell_profile():
     profile_path = get_shell_profile_path()
     profile = profile_path.read_text()
-    if system == "Windows": source = f". {LIBRARY_ROOT.joinpath('settings/shells/pwsh/init.ps1').collapseuser().str.replace('~', '$HOME')}"
-    else: source = f"source {LIBRARY_ROOT.joinpath('settings/shells/bash/init.sh').collapseuser().str.replace('~', '$HOME')}"
+    if system == "Windows": source = f". {LIBRARY_ROOT.joinpath('settings/shells/pwsh/init.ps1').collapseuser().to_str().replace('~', '$HOME')}"
+    else: source = f"source {LIBRARY_ROOT.joinpath('settings/shells/bash/init.sh').collapseuser().to_str().replace('~', '$HOME')}"
 
     if source in profile: print(f"Skipping sourcing init script; already in profile")
     else:
