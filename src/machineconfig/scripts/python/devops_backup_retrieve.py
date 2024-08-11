@@ -42,7 +42,8 @@ def main(direction: OPTIONS, which: Optional[str] = None):
         if flags: flags = "-" + flags
         if direction == "BACKUP": program += f"""\ncloud_copy "{P(item['path']).as_posix()}" $cloud {flags}\n"""
         elif direction == "RETRIEVE": program += f"""\ncloud_copy $cloud "{P(item['path']).as_posix()}" {flags}\n"""
-        else: raise RuntimeError(f"Unknown direction: {direction}")
+        else:
+            raise RuntimeError(f"Unknown direction: {direction}")
         if item_name == "dotfiles" and system() == "Linux": program += f"""\nchmod 700 ~/.ssh/*\n"""
     print_code(program, lexer="shell", desc=f"{direction} script")
     return program
