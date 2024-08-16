@@ -1,5 +1,4 @@
 
-# symlinks to be created.
 
 [git]
 gitconfig = {this = '~/.gitconfig', to_this = '~/dotfiles/settings/.gitconfig'}
@@ -20,62 +19,19 @@ config = {this = '~/AppData/Roaming/rclone/rclone.conf', to_this = '~/dotfiles/c
 [presenterm]
 config = {this = '~/.config/presenterm/config.yaml', to_this = 'LIBRARY_ROOT/settings/presenterm/config.yaml'}
 
-# shells profiles
-# [powershell_windows]
-# CurrentUserCurrentHost = {this = '~/Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserCurrentHost/Microsoft.PowerShell_profile.ps1'}
-# CurrentUserAllHosts = {this = '~/Documents\WindowsPowerShell\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserAllHosts/profile.ps1'}
-# AllUsersCurrentHost = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersCurrentHost/Microsoft.PowerShell_profile.ps1'}
-# AllUsersAllHosts = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/AllUsersAllHosts/profile.ps1'}
+[docker]
+config = {this = '~/.docker/config.json', to_this = '~/dotfiles/creds/docker/config.json'}
 
-[pwsh_windows]
-CurrentUserCurrentHost = {this = '~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/init.ps1'}
-CurrentUserAllHosts = {this = '~/Documents/PowerShell/profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/profile.ps1'}
-AllUsersCurrentHost = {this = 'C:\Program Files\PowerShell\7\Microsoft.PowerShell_profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/init.ps1'}
-AllUsersAllHosts = {this = 'C:\Program Files\PowerShell\7\profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/init.ps1'}
+[keras]
+config = {this = '~/.keras/keras.json', to_this = 'LIBRARY_ROOT/settings/keras/keras.json'}
 
-[bash_linux]
-bashrc = {this = '~/.inputrc', to_this = '~/dotfiles/shells/bash/.inputrc'}
-
-[nushell_windows]
-config = {this = '~/AppData/Roaming/nushell/config.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/config.nu'}
-env = {this = '~/AppData/Roaming/nushell/env.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/env.nu'}
-
-[nushell_linux]
-config = {this = '~/.config/nushell/config.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/config.nu'}
-env = {this = '~/.config/nushell/env.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/env.nu'}
+[streamlit]
+config = {this = '~/.streamlit/config.toml', to_this = 'LIBRARY_ROOT/settings/streamlit/config.toml'}
 
 
-[kitty_linux]
-config = {this = '~/.config/kitty/kitty.conf', to_this = 'LIBRARY_ROOT/settings/shells/kitty/kitty.conf'}
-
-[alacritty_linux]
-config = {this = '~/.config/alacritty/alacritty.toml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.toml'}
-config_yaml = {this = '~/.config/alacritty/alacritty.yml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.yml'}
-
-[alacritty_windows]
-config = {this = '~/AppData/Roaming/alacritty/alacritty.toml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.toml'}
-
-[hyper_terminal]
-config = {this = '~/.hyper.js', to_this = 'LIBRARY_ROOT/settings/shells/hyper/.hyper.js'}
-
-[wezterminal]
-config = {this = '~/.config/wezterm/wezterm.lua', to_this = 'LIBRARY_ROOT/settings/shells/wezterm/wezterm.lua'}
-
-
-[vtm_windows]
-settings = {this = '~/.config/vtm/settings.xml', to_this = 'LIBRARY_ROOT/settings/shells/vtm/settings.xml'}
-
-# [ipython_default_config]
-# config = {this = '~/.ipython/profile_default/ipython_config.py', to_this = 'LIBRARY_ROOT/settings/shells/ipy/profiles/default/ipython_config.py'}
-# play_extension = {this = '~/.ipython/profile_default/startup/playext.py', to_this = 'LIBRARY_ROOT/settings/shells/ipy/profiles/default/startup/playext.py'}
-
-
-[scripts_linux]
-public = {this = '~/scripts', to_this = 'LIBRARY_ROOT/scripts/linux'}
-
-
-[scripts_windows]
-public = {this = '~/scripts', to_this = 'LIBRARY_ROOT/scripts/windows'}
+[procs]
+config = {this = '~/.procs.toml', to_this = 'LIBRARY_ROOT/settings/procs/.procs.toml'}
+config_again = {this = '~/.config/procs/config.toml', to_this = 'LIBRARY_ROOT/settings/procs/.procs.toml'}
 
 [yazi_windows]
 yazi = {this = '~/AppData/Roaming/yazi/config/yazi.toml', to_this = 'LIBRARY_ROOT/settings/yazi/yazi.toml'}
@@ -91,7 +47,6 @@ theme = {this = '~/.config/yazi/theme.toml', to_this = 'LIBRARY_ROOT/settings/ya
 config = {this = '~/AppData/Local/lf/lfrc', to_this = 'LIBRARY_ROOT/settings/lf/windows/lfrc'}
 colors = {this = '~/AppData/Local/lf/colors', to_this = 'LIBRARY_ROOT/settings/lf/windows/colors'}
 icons = {this = '~/AppData/Local/lf/icons', to_this = 'LIBRARY_ROOT/settings/lf/windows/icons'}
-
 
 [lf_linux]
 colors = {this = '~/.config/lf/colors', to_this = 'LIBRARY_ROOT/settings/lf/linux/colors'}
@@ -120,6 +75,66 @@ config = {this = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg
 #[broot_windows]
 #config = { this = '~/AppData/Roaming/dystroy/config', to_this = 'LIBRARY_ROOT/settings/broot/config' }
 
+[starship]
+config = {this = '~/.config/starship.toml', to_this = 'LIBRARY_ROOT/settings/shells/starship/starship.toml'}
+
+
+[ngrok_linux]
+config = {this = '~/.config/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
+
+[ngrok_windows]
+config = {this = '~/AppData/Local/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
+
+# ============================= shells profiles ==================================
+
+# [powershell_windows]
+# CurrentUserCurrentHost = {this = '~/Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserCurrentHost/Microsoft.PowerShell_profile.ps1'}
+# CurrentUserAllHosts = {this = '~/Documents\WindowsPowerShell\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserAllHosts/profile.ps1'}
+# AllUsersCurrentHost = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersCurrentHost/Microsoft.PowerShell_profile.ps1'}
+# AllUsersAllHosts = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/AllUsersAllHosts/profile.ps1'}
+
+[pwsh_windows]
+CurrentUserCurrentHost = {this = '~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/init.ps1'}
+CurrentUserAllHosts = {this = '~/Documents/PowerShell/profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/profile.ps1'}
+AllUsersCurrentHost = {this = 'C:\Program Files\PowerShell\7\Microsoft.PowerShell_profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/init.ps1'}
+AllUsersAllHosts = {this = 'C:\Program Files\PowerShell\7\profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/init.ps1'}
+
+[bash_linux]
+bashrc = {this = '~/.inputrc', to_this = '~/dotfiles/shells/bash/.inputrc'}
+
+[nushell_windows]
+config = {this = '~/AppData/Roaming/nushell/config.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/config.nu'}
+env = {this = '~/AppData/Roaming/nushell/env.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/env.nu'}
+
+[nushell_linux]
+config = {this = '~/.config/nushell/config.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/config.nu'}
+env = {this = '~/.config/nushell/env.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/env.nu'}
+
+[kitty_linux]
+config = {this = '~/.config/kitty/kitty.conf', to_this = 'LIBRARY_ROOT/settings/shells/kitty/kitty.conf'}
+
+[alacritty_linux]
+config = {this = '~/.config/alacritty/alacritty.toml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.toml'}
+config_yaml = {this = '~/.config/alacritty/alacritty.yml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.yml'}
+
+[alacritty_windows]
+config = {this = '~/AppData/Roaming/alacritty/alacritty.toml', to_this = 'LIBRARY_ROOT/settings/shells/alacritty/alacritty.toml'}
+
+[hyper_terminal]
+config = {this = '~/.hyper.js', to_this = 'LIBRARY_ROOT/settings/shells/hyper/.hyper.js'}
+
+[wezterminal]
+config = {this = '~/.config/wezterm/wezterm.lua', to_this = 'LIBRARY_ROOT/settings/shells/wezterm/wezterm.lua'}
+
+[vtm_windows]
+settings = {this = '~/.config/vtm/settings.xml', to_this = 'LIBRARY_ROOT/settings/shells/vtm/settings.xml'}
+
+# [ipython_default_config]
+# config = {this = '~/.ipython/profile_default/ipython_config.py', to_this = 'LIBRARY_ROOT/settings/shells/ipy/profiles/default/ipython_config.py'}
+# play_extension = {this = '~/.ipython/profile_default/startup/playext.py', to_this = 'LIBRARY_ROOT/settings/shells/ipy/profiles/default/startup/playext.py'}
+
+[mprocs_windows]
+config = {this = '~/mprocs.yaml', to_this = 'LIBRARY_ROOT/settings/mprocs/windows/mprocs.yaml'}
 
 # [tmux_linux]
 # config = {this = '~/.tmux.conf', to_this = 'LIBRARY_ROOT/settings/tmux/.tmux.conf'}
@@ -131,41 +146,11 @@ config = { this = '~/.config/zellij', to_this = 'LIBRARY_ROOT/settings/zellij' }
 #themes = { this = '~/.config/zellij/themes', to_this = 'LIBRARY_ROOT/settings/zellij/themes' }
 #layouts = { this = '~/.config/zellij/layouts', to_this = 'LIBRARY_ROOT/settings/zellij/layouts' }
 
+
+# ===================== IDEs ============================
+
 [zed_linux]
 settings = {this = '~/.config/zed/settings.json', to_this = 'LIBRARY_ROOT/settings/zed/settings.json'}
-
-
-[starship]
-config = {this = '~/.config/starship.toml', to_this = 'LIBRARY_ROOT/settings/shells/starship/starship.toml'}
-
-[mprocs_windows]
-config = {this = '~/mprocs.yaml', to_this = 'LIBRARY_ROOT/settings/mprocs/windows/mprocs.yaml'}
-
-[procs]
-config = {this = '~/.procs.toml', to_this = 'LIBRARY_ROOT/settings/procs/.procs.toml'}
-config_again = {this = '~/.config/procs/config.toml', to_this = 'LIBRARY_ROOT/settings/procs/.procs.toml'}
-
-[wsl_windows]
-home = {this = '~/wsl', to_this = '\\wsl.localhost\Ubuntu-22.04\home\username'}
-# see \\wsl$ and ~\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState
-config = {this = '~/.wslconfig', to_this = 'LIBRARY_ROOT/settings/wsl/.wslconfig'}
-
-[wsl_linux]
-home = {this = '~/win', to_this = '/mnt/c/Users/username'}
-
-[ngrok_linux]
-config = {this = '~/.config/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
-
-[ngrok_windows]
-config = {this = '~/AppData/Local/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
-
-
-[linters]
-flake8 = {this = '~/.flake8', to_this = 'LIBRARY_ROOT/settings/linters/.flake8'}
-mypy = {this = '~/.mypy.ini', to_this = 'LIBRARY_ROOT/settings/linters/.mypy.ini'}
-ruff = {this = '~/.ruff.toml', to_this = 'LIBRARY_ROOT/settings/linters/.ruff.toml'}
-# * "pylint.ignorePatterns", "mypy-type-checker.ignorePatterns" and "flake8.ignorePatterns".
-
 
 [helix_windows]
 languages = { this = '~/AppData/Roaming/helix/languages.toml', to_this = 'LIBRARY_ROOT/settings/helix/languages.toml' }
@@ -188,6 +173,15 @@ init = { this = '~/.SpaceVim.d/init.toml', to_this = 'LIBRARY_ROOT/settings/svim
 [svim_linux]
 init = { this = '~/.SpaceVim.d/init.toml', to_this = 'LIBRARY_ROOT/settings/svim/linux/init.toml' }
 
+[linters]
+flake8 = {this = '~/.flake8', to_this = 'LIBRARY_ROOT/settings/linters/.flake8'}
+mypy = {this = '~/.mypy.ini', to_this = 'LIBRARY_ROOT/settings/linters/.mypy.ini'}
+ruff = {this = '~/.ruff.toml', to_this = 'LIBRARY_ROOT/settings/linters/.ruff.toml'}
+# * "pylint.ignorePatterns", "mypy-type-checker.ignorePatterns" and "flake8.ignorePatterns".
+
+
+# ======================= OS ===============================
+
 [apps_windows]
 notepadpp = {this = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', to_this = 'C:/Program Files/Notepad++/notepad++.exe'}
 # tesseract = {this = '~/AppData/Local/Microsoft/WindowsApps/tesseract.exe', to_this = '~/AppData/Local/Tesseract-OCR/tesseract.exe'}  # doesn't work without whole installation dir is on PATH.
@@ -204,14 +198,20 @@ brave = {this = '~/.local/share/applications', to_this = '~/dotfiles/config/weba
 [wt_windows]
 settings = { this = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', to_this = 'LIBRARY_ROOT/settings/shells/wt/settings.json' }
 
-[docker]
-config = {this = '~/.docker/config.json', to_this = '~/dotfiles/creds/docker/config.json'}
+[wsl_windows]
+home = {this = '~/wsl', to_this = '\\wsl.localhost\Ubuntu-22.04\home\username'}
+# see \\wsl$ and ~\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState
+config = {this = '~/.wslconfig', to_this = 'LIBRARY_ROOT/settings/wsl/.wslconfig'}
 
-[keras]
-config = {this = '~/.keras/keras.json', to_this = 'LIBRARY_ROOT/settings/keras/keras.json'}
+[wsl_linux]
+home = {this = '~/win', to_this = '/mnt/c/Users/username'}
 
-[streamlit]
-config = {this = '~/.streamlit/config.toml', to_this = 'LIBRARY_ROOT/settings/streamlit/config.toml'}
+[scripts_linux]
+public = {this = '~/scripts', to_this = 'LIBRARY_ROOT/scripts/linux'}
+
+[scripts_windows]
+public = {this = '~/scripts', to_this = 'LIBRARY_ROOT/scripts/windows'}
+
 
 # =================== LLMs ============================
 
