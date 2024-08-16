@@ -175,13 +175,12 @@ config = { this = '~/AppData/Roaming/helix/config.toml', to_this = 'LIBRARY_ROOT
 languages = { this = '~/.config/helix/languages.toml', to_this = 'LIBRARY_ROOT/settings/helix/languages.toml' }
 config = { this = '~/.config/helix/config.toml', to_this = 'LIBRARY_ROOT/settings/helix/config.toml' }
 
-# because lvim is under high maintinance, its best to get latest config and modify it on the fly instead of using a static config
-# this proces is done at the end of the setup
-#[lvim_windows]
-#config = { this = '~/AppData/Local/lvim/config.lua', to_this = 'LIBRARY_ROOT/settings/lvim_windows/config.lua' }
-#
-#[lvim_linux]
-#config = { this = '~/.config/lvim/config.lua', to_this = 'LIBRARY_ROOT/settings/lvim_linux/config.lua' }
+[lvim_windows]
+config = { this = '~/AppData/Local/lvim/config.lua', to_this = 'LIBRARY_ROOT/settings/lvim_windows/config.lua' }
+
+[lvim_linux]
+config = { this = '~/.config/lvim/config.lua', to_this = 'LIBRARY_ROOT/settings/lvim_linux/config.lua' }
+
 
 [svim_windows]
 init = { this = '~/.SpaceVim.d/init.toml', to_this = 'LIBRARY_ROOT/settings/svim/windows/init.toml' }
