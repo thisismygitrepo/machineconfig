@@ -28,6 +28,8 @@
 * https://github.com/VinciGit00/Scrapegraph-ai `Auto webscrape`
 * https://github.com/Pythagora-io/gpt-pilot `A coding Copilot`
 * https://github.com/microsoft/graphrag `Auto graph rag`
+* https://github.com/infiniflow/ragflow `Auto graph rag`
+
 
 # Parsing
 
@@ -70,12 +72,16 @@
 * https://github.com/zylon-ai/private-gpt `local llm`
 * https://github.com/ggerganov/llama.cpp `Inference of Meta's LLaMA model (and others) in pure C/C++`
 * https://github.com/ollama/ollama `Get up and running with large language models locally.`
-* https://github.com/Mozilla-Ocho/llamafile `reduce LLM to one file`
+* https://github.com/Mozilla-Ocho/llamafile `reduce LLM to one file (focuses on CPU, uses llamacpp backed)`
+* https://github.com/vllm-project/vllm `host on gpu`
 * https://github.com/SJTU-IPADS/PowerInfer `Fast Large Language Model Serving with a Consumer-grade GPU`.
 * https://github.com/bentoml/OpenLLM `Self-Hosting Large Language Models Made Easy`.
 * https://github.com/mudler/LocalAI `Open Source OpenAI alternative`
 * https://github.com/nomic-ai/gpt4all `Open-source large language models that run locally on your CPU and nearly any GPU`.
+
+# Models
 * https://github.com/google/gemma.cpp `lightweight, standalone C++ inference engine for the Gemma foundation models from Google.`
+* https://github.com/OpenBMB/MiniCPM-V `A GPT-4V Level MLLM for Single Image`
 
 # Sources
 * https://github.com/xai-org/grok-1

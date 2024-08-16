@@ -227,3 +227,6 @@ config = {this = '~/.docker/config.json', to_this = '~/dotfiles/creds/docker/con
 [keras]
 config = {this = '~/.keras/keras.json', to_this = 'LIBRARY_ROOT/settings/keras/keras.json'}
 
+
+[streamlit]
+config = {this = '~/.streamlit/config.toml', to_this = 'LIBRARY_ROOT/settings/streamlit/config.toml'}

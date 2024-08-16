@@ -1,0 +1,22 @@
+
+# https://docs.streamlit.io/develop/api-reference/configuration/config.toml
+# [client]
+# showErrorDetails = false
+
+# https://docs.streamlit.io/develop/concepts/configuration/theming
+
+[theme]
+primaryColor="#FF4B4B"
+backgroundColor="#1E1E1E"  # Dark background color
+secondaryBackgroundColor="#2E2E2E"  # Slightly lighter dark color
+textColor="#FFFFFF"  # Light text color for contrast
+font="sans serif"
+
+
+[browser]
+gatherUsageStats = false
+
+
+[server]
+# port = 41000
+runOnSave = true
