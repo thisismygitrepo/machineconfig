@@ -205,6 +205,17 @@ brave = {this = '~/.local/share/applications', to_this = '~/dotfiles/config/weba
 [wt_windows]
 settings = { this = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', to_this = 'LIBRARY_ROOT/settings/shells/wt/settings.json' }
 
+[docker]
+config = {this = '~/.docker/config.json', to_this = '~/dotfiles/creds/docker/config.json'}
+
+[keras]
+config = {this = '~/.keras/keras.json', to_this = 'LIBRARY_ROOT/settings/keras/keras.json'}
+
+[streamlit]
+config = {this = '~/.streamlit/config.toml', to_this = 'LIBRARY_ROOT/settings/streamlit/config.toml'}
+
+# =================== LLMs ============================
+
 [chatgpt]
 config = { this = '~/.config/chatgpt/config.json', to_this = '~/dotfiles/creds/llm/chatgpt_cli/config.json' }
 
@@ -221,12 +232,7 @@ opencommit = {this = '~/.opencommit', to_this = '~/dotfiles/creds/llm/opencommit
 config1 = {this = '~/.cli-m365-msal.json', to_this = '~/dotfiles/creds/tokens/.cli-m365-msal.json'}
 config2 = {this = '~/.cli-m365-tokens.json', to_this = '~/dotfiles/creds/tokens/.cli-m365-tokens.json'}
 
-[docker]
-config = {this = '~/.docker/config.json', to_this = '~/dotfiles/creds/docker/config.json'}
+[marvin]
+config = {this = '~/.marvin/.env', to_this = '~/dotfiles/creds/llm/marvin/.env'}
+threads = {this = '~/.marvin/cli/threads/default.json', to_this = '~/dotfiles/creds/llm/marvin/threads/default.json'}
 
-[keras]
-config = {this = '~/.keras/keras.json', to_this = 'LIBRARY_ROOT/settings/keras/keras.json'}
-
-
-[streamlit]
-config = {this = '~/.streamlit/config.toml', to_this = 'LIBRARY_ROOT/settings/streamlit/config.toml'}
