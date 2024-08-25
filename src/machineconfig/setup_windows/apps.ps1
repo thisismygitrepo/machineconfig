@@ -38,6 +38,7 @@ winget install --no-upgrade --name "Chafa" --Id hpjansson.Chafa --source winget 
 # might need this: cp ~/AppData/Local/Microsoft/WinGet/Packages/hpjansson.Chafa_Microsoft.Winget.Source_8wekyb3d8bbwe/chafa-*/Chafa.exe ~/AppData/Local/Microsoft/WindowsApps
 
 $ErrorActionPreference = "Stop"  # if there is any error in any command, stop there instead of proceeding to the next.
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 winget install --no-upgrade --name "Python" --Id Python.Python.3.11 --source winget  # from https:\\winget.run  Python.Python.3.9
 
 # the two above require Restart-Computer -Force before they are available in PATH, OR:

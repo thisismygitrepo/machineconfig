@@ -25,7 +25,7 @@
 * https://github.com/wandb/openui `auto UI`.
 * https://github.com/princeton-nlp/SWE-agent `Auto bug fix on git repo.`
 * https://github.com/ShishirPatil/gorilla `Auto API call`
-* https://github.com/VinciGit00/Scrapegraph-ai `Auto webscrape`
+* https://github.com/VinciGit00/Scrapegraph-ai `Auto webscrape. See parsera as well.`
 * https://github.com/Pythagora-io/gpt-pilot `A coding Copilot`
 * https://github.com/microsoft/graphrag `Auto graph rag`
 * https://github.com/infiniflow/ragflow `Auto graph rag`

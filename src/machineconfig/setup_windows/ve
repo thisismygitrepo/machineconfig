@@ -1,0 +1,12 @@
+
+uv venv $HOME/venvs/ve --python 3.11
+cd $HOME
+mkdir code
+cd $HOME/code
+git clone https://github.com/thisismygitrepo/crocodile.git --depth 4
+git clone https://github.com/thisismygitrepo/machineconfig --depth 4  # Choose browser-based authentication.
+cd $HOME/code/crocodile
+uv pip install -e .
+cd $HOME/code/machineconfig
+uv pip install -e .
+echo "Finished setting up repos"

@@ -82,12 +82,13 @@ npm install -g easy-sharing  # based on https://github.com/parvardegr/sharing
 # alternative: https://github.com/mifi/ezshare
 
 
-yes '' | sed 3q; echo "----------------------------- installing sshfs ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install sshfs  # mount remote filesystems over ssh
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.sshfs || true
-fi
+# yes '' | sed 3q; echo "----------------------------- installing sshfs ----------------------------"; yes '' | sed 3q
+# if [ "$package_manager" = "apt" ]; then
+#   sudo apt install sshfs  # mount remote filesystems over ssh
+# else
+#   ~/.nix-profile/bin/nix-env -iA nixpkgs.sshfs || true
+# fi
+
 
 yes '' | sed 3q; echo "----------------------------- installing samba ----------------------------"; yes '' | sed 3q
 #sudo apt install samba  # LAN-based file sharing
@@ -108,51 +109,52 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.graphviz || true
 fi
 
+
 yes '' | sed 3q; echo "----------------------------- installing make ----------------------------"; yes '' | sed 3q
 sudo apt install make -y || true  # lvim and spacevim require it.
 
 
-yes '' | sed 3q; echo "----------------------------- installing lynx ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install lynx -y || true  # tex browser, just like w3m
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.lynx || true
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.brave
-fi
+# yes '' | sed 3q; echo "----------------------------- installing lynx ----------------------------"; yes '' | sed 3q
+# if [ "$package_manager" = "apt" ]; then
+#   sudo apt install lynx -y || true  # tex browser, just like w3m
+# else
+#   ~/.nix-profile/bin/nix-env -iA nixpkgs.lynx || true
+#   ~/.nix-profile/bin/nix-env -iA nixpkgs.brave
+# fi
 
-yes '' | sed 3q; echo "----------------------------- installing redis ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  # installation for ubuntu as per https://redis.io/docs/getting-started/installation/install-redis-on-linux/
-  curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
-  echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
-  sudo apt-get update
-  sudo apt-get install redis -y
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.redis || true
-fi
-
-
-yes '' | sed 3q; echo "----------------------------- installing ncdu ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install ncdu -y || true   # disk usage analyzer, like diskonaut
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.ncdu || true
-fi
+# yes '' | sed 3q; echo "----------------------------- installing redis ----------------------------"; yes '' | sed 3q
+# if [ "$package_manager" = "apt" ]; then
+#   # installation for ubuntu as per https://redis.io/docs/getting-started/installation/install-redis-on-linux/
+#   curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+#   echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+#   sudo apt-get update
+#   sudo apt-get install redis -y
+# else
+#   ~/.nix-profile/bin/nix-env -iA nixpkgs.redis || true
+# fi
 
 
+# yes '' | sed 3q; echo "----------------------------- installing ncdu ----------------------------"; yes '' | sed 3q
+# if [ "$package_manager" = "apt" ]; then
+#   sudo apt install ncdu -y || true   # disk usage analyzer, like diskonaut
+# else
+#   ~/.nix-profile/bin/nix-env -iA nixpkgs.ncdu || true
+# fi
 
-yes '' | sed 3q; echo "----------------------------- installing spacevim ----------------------------"; yes '' | sed 3q
-# https://spacevim.org/quick-start-guide/#linux-and-macos
-(curl -sLf https://spacevim.org/install.sh | bash) || true
+
+# yes '' | sed 3q; echo "----------------------------- installing spacevim ----------------------------"; yes '' | sed 3q
+# # https://spacevim.org/quick-start-guide/#linux-and-macos
+# (curl -sLf https://spacevim.org/install.sh | bash) || true
 
 
 # ---------------------------- Programming Languages ------------------------------------
-yes '' | sed 3q; echo "----------------------------- installing codon ----------------------------"; yes '' | sed 3q
-/bin/bash -c "$(curl -fsSL https://exaloop.io/install.sh)"
+# yes '' | sed 3q; echo "----------------------------- installing codon ----------------------------"; yes '' | sed 3q
+# /bin/bash -c "$(curl -fsSL https://exaloop.io/install.sh)"
 
-yes '' | sed 3q; echo "----------------------------- installing rust ----------------------------"; yes '' | sed 3q
-# curl https://sh.rustup.rs -sSf | sh
-(curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
+
+# yes '' | sed 3q; echo "----------------------------- installing rust ----------------------------"; yes '' | sed 3q
+# # curl https://sh.rustup.rs -sSf | sh
+# (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
 
 
 yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q

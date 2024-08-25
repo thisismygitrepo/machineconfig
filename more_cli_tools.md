@@ -19,6 +19,7 @@
 * https://github.com/anderspitman/awesome-tunneling
 * https://www.softwaretestinghelp.com/ngrok-alternatives/
 * https://devsession.is/
+* https://github.com/cloudmercato/awesome-benchmark
 * https://github.com/rothgar/awesome-tuis
 * https://github.com/nschloe/github-trends
 * https://github.com/EvanLi/Github-Ranking#go
@@ -36,10 +37,7 @@
 # Files
 * https://github.com/magic-wormhole/magic-wormhole
 
-* https://github.com/gopasspw/gopass
-* https://github.com/cortex/ripasso rust password manager equivalent of gopass
-* https://github.com/hashicorp/vault
-
+* https://github.com/nextcloud/server
 * https://github.com/IceWhaleTech/CasaOS
 * https://github.com/syncthing/syncthing
 
@@ -47,6 +45,12 @@
 * https://github.com/cockroachdb/cockroach
 * https://github.com/simonw/datasette
 
+
+# Self-hosting
+* https://github.com/gopasspw/gopass
+* https://github.com/cortex/ripasso rust password manager equivalent of gopass
+* https://github.com/hashicorp/vault
+* https://github.com/go-gitea/gitea
 
 # search
 * File Finder: find[fd] (Rust) & FuzzyFinder[fzf] (Go) * skim[sk] (Rust)
