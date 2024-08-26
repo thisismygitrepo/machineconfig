@@ -54,7 +54,7 @@ Invoke-WebRequest "https://spacevim.org/install.cmd" -OutFile "~/Downloads/space
 # https://nvchad.com/quickstart/install
 
 Install-Module -Name PSFzf  -SkipPublisherCheck  # -AcceptLicense -PassThru -Confirm  #  -RequiredVersion 2.5.10
-winget install --no-upgrade --name "Ubuntu" --Id "Canonical.Ubuntu.2204" --source winget --accept-package-agreements --accept-source-agreements
+# winget install --no-upgrade --name "Ubuntu" --Id "Canonical.Ubuntu.2404" --source winget --accept-package-agreements --accept-source-agreements
 # iex ((New-Object System.Net.WebClient).DownloadString('https://git.io/JJ8R4'))  # tune machine to minimal
 
 
@@ -81,7 +81,7 @@ winget install --no-upgrade --name "GnuPG" GnuPG.GnuPG
 #winget install --no-upgrade --name "hyperfine" --Id sharkdp.hyperfine --source winget  # benchmarking tool
 #winget install --no-upgrade --name "AWS Command Line Interface"
 #winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --Source winget  # Terminal is is installed by default on W11
-winget install --no-upgrade --name "wezterm" --Id "wez.wezterm" --source winget
+winget install --no-upgrade --name "wezterm" --Id wez.wezterm --source winget --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "nu" --Id "Nushell.Nushell" --source winget  # add to userpath C:\Program Files\nu\bin, done in symlinks
 winget install --no-upgrade --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" --source winget
 #winget install --no-upgrade --name "Starship" --Id Starship.Starship --source winget

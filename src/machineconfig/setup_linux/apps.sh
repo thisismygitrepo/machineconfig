@@ -2,11 +2,13 @@
 
 # This scripts is meant to keep going even if some commands fail.
 
-# ----------------- package manager -----------------
+# ----------------- package managers -----------------
+# apt, nala (fast parallel apt), brew & nix.
+
 yes '' | sed 3q; echo "----------------------------- installing upgrading and updating apt ----------------------------"; yes '' | sed 3q
 sudo apt update -y || true
 # sudo apt upgrade -y || true
-sudo apt install curl -y || true  # for handling http requests
+sudo install install curl wget -y || true  # for handling http requests
 
 
 if [ -z "$package_manager" ]; then
@@ -17,6 +19,11 @@ curl -L https://nixos.org/nix/install | sh  # cross *nix platforms.
 . ~/.nix-profile/etc/profile.d/nix.sh
 
 sudo apt install nala -y || true  # nala is a command line tool for managing your Linux system
+
+# as per: https://brew.sh/
+export NONINTERACTIVE=1  # to avoid confirmation prompts
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
 
 # sudo apt remove mlocate && plocate # solves wsl2 slow Initializing plocate database; this may take some time..
 # ignoring indexing of windows files: https://askubuntu.com/questions/1251484/why-does-it-take-so-much-time-to-initialize-mlocate-database
@@ -32,15 +39,8 @@ sudo apt install nala -y || true  # nala is a command line tool for managing you
 # -------------------- Utilities --------------------
 
 yes '' | sed 3q; echo "----------------------------- installing fusemount3 --------------------------------"; yes '' | sed 3q
-sudo apt install fuse3 -y || true  # for rclone.
-sudo apt install nfs-common -y || true  # for mounting nfs shares. Missing fom Ubuntu server by default.
-
-yes '' | sed 3q; echo "----------------------------- installing wget --------------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo apt install wget -y || true  # for downloading files
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.wget || true
-fi
+sudo nala install fuse3 -y || true  # for rclone.
+sudo nala install nfs-common -y || true  # for mounting nfs shares. Missing fom Ubuntu server by default.
 
 
 yes '' | sed 3q; echo "----------------------------- installing uv --------------------------------"; yes '' | sed 3q
@@ -48,7 +48,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 
 yes '' | sed 3q; echo "----------------------------- installing sqlite --------------------------"; yes '' | sed 3q
-sudo apt install sqlite -y || true  # sqlite vscode extension requires this to be installed. It gives sqlite and sqlite3 commands.
+sudo nala install sqlite -y || true  # sqlite vscode extension requires this to be installed. It gives sqlite and sqlite3 commands.
 
 
 yes '' | sed 3q; echo "----------------------------- installing nvm of nodejs --------------------------"; yes '' | sed 3q
@@ -65,27 +65,30 @@ nvm install node || true
 
 yes '' | sed 3q; echo "----------------------------- installing net-tools ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
-  sudo apt install net-tools -y || true  # gives ifconfig
+  sudo nala install net-tools -y || true  # gives ifconfig
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.nettools || true
 fi
 
 
 yes '' | sed 3q; echo "----------------------------- installing git ----------------------------"; yes '' | sed 3q
-sudo apt install git -y || true  # for version control
-sudo apt install htop -y || true  # for monitoring system resources
+sudo nala install git -y || true  # for version control
+sudo nala install htop -y || true  # for monitoring system resources
 
 
 # ========================================= EDITORS =========================================
 yes '' | sed 3q; echo "----------------------------- installing nano ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
-  sudo apt install nano -y || true  # for editing files
+  sudo nala install nano -y || true  # for editing files
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.nano || true
   # ~/.nix-profile/bin/nix-env -iA nixpkgs.vscode || true
 fi
 
 
+/home/linuxbrew/.linuxbrew/bin/brew install neovim
+
+
 yes '' | sed 3q; echo "----------------------------- installing chafa ----------------------------"; yes '' | sed 3q
-sudo apt install chafa -y  # like viu, one can ascii-ize images.
+sudo nala install chafa -y  # like viu, one can ascii-ize images.
 

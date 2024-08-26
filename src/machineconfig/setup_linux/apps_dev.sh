@@ -4,49 +4,50 @@ if [ -z "$package_manager" ]; then
   package_manager="apt"  # see if variable package_manager is defined, if not, define it as "nix"
 fi
 
+/home/linuxbrew/.linuxbrew/bin/brew install --cask wezterm
 
 # ---------------------------- text style ------------------------------------
 yes '' | sed 3q; echo "----------------------------- installing fortune ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
-  sudo apt install fortune -y || true  # generate random text in the form of piece of wisdom
+  sudo nala install fortune -y || true  # generate random text in the form of piece of wisdom
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.fortune || true
 fi
 
 yes '' | sed 3q; echo "----------------------------- installing boxes ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
-  sudo apt install boxes -y || true  # for ascii banners. boxes -l for list of boxes.
+  sudo nala install boxes -y || true  # for ascii banners. boxes -l for list of boxes.
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.boxes || true
 fi
 
 # yes '' | sed 3q; echo "----------------------------- installing cowsay ----------------------------"; yes '' | sed 3q
 # if [ "$package_manager" = "apt" ]; then
-#   sudo apt install cowsay -y || true  # animals saying things. Different figures with -f. Full list: cowsay -l
+#   sudo nala install cowsay -y || true  # animals saying things. Different figures with -f. Full list: cowsay -l
 # else
 #   # ~/.nix-profile/bin/nix-env -iA nixpkgs.neo-cowsay || true
 #   # ~/.nix-profile/bin/nix-env -iA nixpkgs.cowsay || true
 # fi
-sudo apt install cowsay -y || true  # animals saying things. This installer gives different figures to nix installer. Sticking to this one to avoid errors.
+sudo nala install cowsay -y || true  # animals saying things. This installer gives different figures to nix installer. Sticking to this one to avoid errors.
 
 
 yes '' | sed 3q; echo "----------------------------- installing lolcat ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
-  sudo apt install lolcat -y || true  # for coloring text in terminal.
+  sudo nala install lolcat -y || true  # for coloring text in terminal.
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.lolcat || true
 fi
 
 yes '' | sed 3q; echo "----------------------------- installing toilet ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
-  sudo apt install toilet -y || true  # large ascii text
+  sudo nala install toilet -y || true  # large ascii text
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.toilet || true
 fi
 
 yes '' | sed 3q; echo "----------------------------- installing figlet ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
-  sudo apt install figlet -y || true  # large ascii text. See: showfigfonts for full list of fonts. use -f to change font.
+  sudo nala install figlet -y || true  # large ascii text. See: showfigfonts for full list of fonts. use -f to change font.
   ~/.nix-profile/bin/nix-env -iA nixpkgs.nms || true
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.figlet || true
@@ -60,7 +61,7 @@ fi
 # ---------------------------- Fun ------------------------------------
 yes '' | sed 3q; echo "----------------------------- installing sl ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
-  sudo apt install sl -y || true  # for fun
+  sudo nala install sl -y || true  # for fun
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.sl || true
 fi
@@ -84,14 +85,14 @@ npm install -g easy-sharing  # based on https://github.com/parvardegr/sharing
 
 # yes '' | sed 3q; echo "----------------------------- installing sshfs ----------------------------"; yes '' | sed 3q
 # if [ "$package_manager" = "apt" ]; then
-#   sudo apt install sshfs  # mount remote filesystems over ssh
+#   sudo nala install sshfs  # mount remote filesystems over ssh
 # else
 #   ~/.nix-profile/bin/nix-env -iA nixpkgs.sshfs || true
 # fi
 
 
 yes '' | sed 3q; echo "----------------------------- installing samba ----------------------------"; yes '' | sed 3q
-#sudo apt install samba  # LAN-based file sharing
+#sudo nala install samba  # LAN-based file sharing
 
 
 yes '' | sed 3q; echo "----------------------------- installing cloudflared Warp --------------------------------"; yes '' | sed 3q
@@ -104,19 +105,19 @@ sudo apt-get update && sudo apt-get install cloudflare-warp -y
 
 yes '' | sed 3q; echo "----------------------------- installing graphviz ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
-  sudo apt install graphviz -y || true
+  sudo nala install graphviz -y || true
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.graphviz || true
 fi
 
 
 yes '' | sed 3q; echo "----------------------------- installing make ----------------------------"; yes '' | sed 3q
-sudo apt install make -y || true  # lvim and spacevim require it.
+sudo nala install make -y || true  # lvim and spacevim require it.
 
 
 # yes '' | sed 3q; echo "----------------------------- installing lynx ----------------------------"; yes '' | sed 3q
 # if [ "$package_manager" = "apt" ]; then
-#   sudo apt install lynx -y || true  # tex browser, just like w3m
+#   sudo nala install lynx -y || true  # tex browser, just like w3m
 # else
 #   ~/.nix-profile/bin/nix-env -iA nixpkgs.lynx || true
 #   ~/.nix-profile/bin/nix-env -iA nixpkgs.brave
@@ -136,7 +137,7 @@ sudo apt install make -y || true  # lvim and spacevim require it.
 
 # yes '' | sed 3q; echo "----------------------------- installing ncdu ----------------------------"; yes '' | sed 3q
 # if [ "$package_manager" = "apt" ]; then
-#   sudo apt install ncdu -y || true   # disk usage analyzer, like diskonaut
+#   sudo nala install ncdu -y || true   # disk usage analyzer, like diskonaut
 # else
 #   ~/.nix-profile/bin/nix-env -iA nixpkgs.ncdu || true
 # fi
@@ -168,7 +169,7 @@ fi
 
 yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "apt" ]; then
-  sudo apt install hollywood -y || true  # for fun
+  sudo nala install hollywood -y || true  # for fun
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
 fi
