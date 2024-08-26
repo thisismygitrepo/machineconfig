@@ -1,11 +1,12 @@
 
 """utils"""
 
-
-from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, write_shell_script, get_shell_file_executing_python_script
-from crocodile.file_management import P, Read, install_n_import
+import git
+from crocodile.file_management import P, Read
 from crocodile.core import randstr
 from crocodile.meta import Terminal
+
+from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, write_shell_script, get_shell_file_executing_python_script
 import argparse
 import platform
 from typing import Optional
@@ -67,7 +68,7 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
     else: cloud_resolved = cloud
     # repo_root = P(args.repo).expanduser().absolute()
     repo_local_root = P.cwd() if path is None else P(path).expanduser().absolute()
-    repo_local_obj = install_n_import("git", "gitpython").Repo(repo_local_root, search_parent_directories=True)
+    repo_local_obj = git.Repo(repo_local_root, search_parent_directories=True)
     repo_local_root = P(repo_local_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
     CONFIG_PATH.joinpath("remote").create()
     repo_remote_root = CONFIG_PATH.joinpath("remote", repo_local_root.rel2home())  # .delete(sure=True)
@@ -79,7 +80,7 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
         print("Remote does not exist, creating it and exiting ... ")
         repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
         return ""
-    repo_remote_obj = install_n_import("git", "gitpython").Repo(repo_remote_root)
+    repo_remote_obj = git.Repo(repo_remote_root)
     if repo_remote_obj.is_dirty():
         print("=" * 50, '\n', f"WRANING: the remote `{repo_remote_root}` is dirty, please commit or stash changes before proceeding.", '\n', "=" * 50)
 

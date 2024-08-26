@@ -110,7 +110,8 @@ def main() -> None:
 
 
 def upload(path: P):
-    set_time_out = install_n_import("call_function_with_timeout").SetTimeout
+    import call_function_with_timeout
+    set_time_out = call_function_with_timeout.SetTimeout
     func_with_timeout = set_time_out(lambda: path.to_cloud(CLOUD, rel2home=True, share=True, os_specific=True), timeout=180)
     is_done, _is_timeout, _erro_message, results = func_with_timeout()
     if is_done: return results
