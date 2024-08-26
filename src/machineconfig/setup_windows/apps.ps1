@@ -54,7 +54,7 @@ Invoke-WebRequest "https://spacevim.org/install.cmd" -OutFile "~/Downloads/space
 # https://nvchad.com/quickstart/install
 
 Install-Module -Name PSFzf  -SkipPublisherCheck  # -AcceptLicense -PassThru -Confirm  #  -RequiredVersion 2.5.10
-winget install --no-upgrade --name "Ubuntu" --Id "Canonical.Ubuntu.2204" --source winget --accept-package-agreements --accept-source-agreements
+# winget install --no-upgrade --name "Ubuntu" --Id "Canonical.Ubuntu.2404" --source winget --accept-package-agreements --accept-source-agreements
 # iex ((New-Object System.Net.WebClient).DownloadString('https://git.io/JJ8R4'))  # tune machine to minimal
 
 
