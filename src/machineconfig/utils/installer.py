@@ -119,7 +119,7 @@ class Installer:
             print(f"Executing func `main` from `{installer_path}`to get the program to run")
             program: str = runpy.run_path(str(installer_path), run_name=None)['main'](version=version)
             # print(program)
-            Terminal().run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)
+            Terminal(stdin=None, stdout=None, stderr=None).run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)
             # import subprocess
             # subprocess.run(program, shell=True, check=True)
             version_to_be_installed = str(version)
