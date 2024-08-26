@@ -36,8 +36,6 @@ winget install --no-upgrade --name "Neovim" --Id Neovim.Neovim --source winget -
 brew install neovim
 # nix-env -iA nixpkgs.neovim
 """
-        _ = program
-        program = ""
     else:
         raise NotImplementedError("unsupported platform")
     return program

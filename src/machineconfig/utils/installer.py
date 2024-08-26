@@ -116,7 +116,9 @@ class Installer:
             import machineconfig.jobs.python_custom_installers as python_custom_installers
             installer_path = P(python_custom_installers.__file__).parent.joinpath(self.exe_name + ".py")
             import runpy
+            print(f"Executing func `main` from `{installer_path}`to get the program to run")
             program: str = runpy.run_path(str(installer_path), run_name=None)['main'](version=version)
+            # print(program)
             Terminal().run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)
             # import subprocess
             # subprocess.run(program, shell=True, check=True)
