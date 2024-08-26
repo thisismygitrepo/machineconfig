@@ -2,7 +2,9 @@
 
 # This scripts is meant to keep going even if some commands fail.
 
-# ----------------- package manager -----------------
+# ----------------- package managers -----------------
+# apt, nala (fast parallel apt), brew & nix.
+
 yes '' | sed 3q; echo "----------------------------- installing upgrading and updating apt ----------------------------"; yes '' | sed 3q
 sudo apt update -y || true
 # sudo apt upgrade -y || true
@@ -16,7 +18,12 @@ fi
 curl -L https://nixos.org/nix/install | sh  # cross *nix platforms.
 . ~/.nix-profile/etc/profile.d/nix.sh
 
-sudo nala install nala -y || true  # nala is a command line tool for managing your Linux system
+sudo apt install nala -y || true  # nala is a command line tool for managing your Linux system
+
+# as per: https://brew.sh/
+export NONINTERACTIVE=1  # to avoid confirmation prompts
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
 
 # sudo apt remove mlocate && plocate # solves wsl2 slow Initializing plocate database; this may take some time..
 # ignoring indexing of windows files: https://askubuntu.com/questions/1251484/why-does-it-take-so-much-time-to-initialize-mlocate-database
@@ -30,20 +37,10 @@ sudo nala install nala -y || true  # nala is a command line tool for managing yo
 #updatedb --prunefs="NFS,smbfs,cifs"
 
 # -------------------- Utilities --------------------
-# as per: https://brew.sh/
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
 
 yes '' | sed 3q; echo "----------------------------- installing fusemount3 --------------------------------"; yes '' | sed 3q
 sudo nala install fuse3 -y || true  # for rclone.
 sudo nala install nfs-common -y || true  # for mounting nfs shares. Missing fom Ubuntu server by default.
-
-yes '' | sed 3q; echo "----------------------------- installing wget --------------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo nala install wget -y || true  # for downloading files
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.wget || true
-fi
 
 
 yes '' | sed 3q; echo "----------------------------- installing uv --------------------------------"; yes '' | sed 3q
@@ -87,6 +84,9 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.nano || true
   # ~/.nix-profile/bin/nix-env -iA nixpkgs.vscode || true
 fi
+
+
+/home/linuxbrew/.linuxbrew/bin/brew install neovim
 
 
 yes '' | sed 3q; echo "----------------------------- installing chafa ----------------------------"; yes '' | sed 3q

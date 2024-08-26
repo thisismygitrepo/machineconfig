@@ -4,6 +4,7 @@ if [ -z "$package_manager" ]; then
   package_manager="apt"  # see if variable package_manager is defined, if not, define it as "nix"
 fi
 
+/home/linuxbrew/.linuxbrew/bin/brew install --cask wezterm
 
 # ---------------------------- text style ------------------------------------
 yes '' | sed 3q; echo "----------------------------- installing fortune ----------------------------"; yes '' | sed 3q
