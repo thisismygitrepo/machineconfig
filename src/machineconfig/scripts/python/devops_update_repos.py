@@ -3,7 +3,6 @@
 """
 
 from crocodile.file_management import P, Read
-from crocodile.core import install_n_import
 from machineconfig.utils.utils import DEFAULTS_PATH
 from platform import system
 
@@ -31,7 +30,8 @@ to_email = myemail@email.com
     repos_objs = []
     for a_package_path in repos:
         try:
-            repo = install_n_import("git", "gitpython").Repo(str(P(a_package_path).expanduser()), search_parent_directories=True)
+            import git
+            repo = git.Repo(str(P(a_package_path).expanduser()), search_parent_directories=True)
             repos_objs.append(repo)
         except Exception as ex:
             print(ex)

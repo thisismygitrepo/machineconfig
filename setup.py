@@ -37,6 +37,7 @@ setuptools.setup(
         "clipboard",
         "psutil",
         "pydantic",
-        "fire"  # required by fire command
+        "fire",  # required by fire command
+        "call-function-with-timeout",
     ],
 )
