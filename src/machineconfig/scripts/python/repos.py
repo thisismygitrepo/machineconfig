@@ -8,7 +8,7 @@ in the event that username@github.com is not mentioned in the remote url.
 
 from rich import print as pprint
 from machineconfig.utils.utils import write_shell_script, CONFIG_PATH, DEFAULTS_PATH
-from crocodile.file_management import P, install_n_import, Read, Save
+from crocodile.file_management import P, Read, Save
 from crocodile.core import randstr
 import argparse
 from dataclasses import dataclass
@@ -83,7 +83,6 @@ def main():
 
     if args.directory == "": repos_root = P.home().joinpath("code")  # it is a positional argument, can never be empty.
     else: repos_root = P(args.directory).expanduser().absolute()
-    _ = install_n_import("git", "gitpython")
 
     program = ""
     if args.record:
