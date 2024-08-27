@@ -142,7 +142,6 @@ def display_options(msg: str, options: Iterable[T], header: str = "", tail: str 
     options_strings: list[str] = [str(x) for x in options]
     default_string = str(default) if default is not None else None
     if fzf and check_tool_exists(tool_name):
-        install_n_import("pyfzf")
         from pyfzf.pyfzf import FzfPrompt
         fzf_prompt = FzfPrompt()
         nl = "\n"
@@ -222,7 +221,6 @@ def symlink(this: P, to_this: P, prioritize_to_this: bool = True):
             else: this.move(path=to_this)  # this exists, to_this doesn't, this is prioritized.
     else:  # this doesn't exist.
         if not to_this.exists(): to_this.touch()  # we have to touch it (file) or create it (folder)
-    if platform.system() == "Windows": _ = install_n_import("win32api", "pywin32")  # this is crucial for windows to pop up the concent window in case python was not run as admin.
     try:
         # print(f"Linking {this} ➡️ {to_this}")
         P(this).symlink_to(target=to_this, verbose=True, overwrite=True)
