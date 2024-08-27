@@ -16,7 +16,7 @@ PORT_DEFAULT = 3030
 SLIDEV_REPO = CONFIG_PATH.joinpath(".cache/slidev")
 if not SLIDEV_REPO.joinpath("components").exists():
     # assert slidev is installed first
-    Terminal(stderr=subprocess.PIPE, stdin=subprocess.PIPE, stdout=subprocess.PIPE).run(f"cd {SLIDEV_REPO.parent};npm init slidev")
+    Terminal(stderr=subprocess.PIPE, stdin=subprocess.PIPE, stdout=subprocess.PIPE).run(f"cd {SLIDEV_REPO.parent};npm init slidev@latest")
 
 
 def jupyter_to_markdown(file: P):
@@ -55,10 +55,11 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--directory", default=None, help="Directory of the report")
     parser.add_argument("-j", "--jupyter-file", default=None, help="Jupyter notebook file to convert to slides. If not provided, slides.md is used.")
-    parser.add_argument("--port", default=PORT_DEFAULT, help=f"Port to serve the report, default to {PORT_DEFAULT}")
+    # parser.add_argument("--port", default=PORT_DEFAULT, help=f"Port to serve the report, default to {PORT_DEFAULT}")
     args = parser.parse_args()
 
-    port = args.port
+    # port = args.port
+    port = PORT_DEFAULT
 
     if args.jupyter_file is not None:
         report_dir = jupyter_to_markdown(P(args.jupyter_file))
@@ -95,7 +96,12 @@ def main() -> None:
     print(f"Presentation is served at http://{platform.node()}:{port}")
     print(f"Presentation is served at http://localhost:{port}")
     print(f"Presentation is served at http://{local_ip_v4}:{port}")
-    program: str = f"cd {SLIDEV_REPO}; slidev --port {port} --remote 0.0.0.0; cd {P.cwd()}"
+    # This version requires a globally installed cli of slidev, which is not recommended.
+    # program: str = f"cd {SLIDEV_REPO}; slidev --port {port} --remote 0.0.0.0; cd {P.cwd()}"
+
+    # The recommended approach is do `npm init slidev@latest` in the directory where you want to create the presentation
+    # Then you can do the following:
+    program = "npm run dev slides.md -- --remote"
     PROGRAM_PATH.write_text(program)
     print_code(program, lexer="bash")
 

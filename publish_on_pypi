@@ -8,5 +8,5 @@ git tag -a vx.y -m "new release"
 git push --tags
 # build and push to pypi
 . activate_ve ve
-python setup.py sdist bdist_wheel
-twine upload dist/*
+python setup.py sdist bdist_wheel  # requires wheel to be installed
+twine upload dist/*  # requires twine to be installed
