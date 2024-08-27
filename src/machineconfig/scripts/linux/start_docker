@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Ensure the script is run with sudo privileges
+if [ "$EUID" -ne 0 ]; then
+  echo "Please run this script with sudo."
+  exit 1
+fi
+
+dockerd_path=$(which dockerd)
+echo "dockerd_path: $dockerd_path"
+
+launch_dockerd="sudo $dockerd_path"
+echo "launch_dockerd: $launch_dockerd"
+
+zellij action new-tab --name dockerd
+sleep 1
+zellij action go-to-tab-name dockerd
+sleep 0.5
+cd $HOME
+zellij action new-pane --direction down -- sudo $dockerd_path
+zellij action move-focus up; sleep 0.2
+zellij action close-pane; sleep 0.2
+
