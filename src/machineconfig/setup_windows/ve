@@ -1,5 +1,8 @@
 
-uv venv $HOME/venvs/ve --python 3.11
+ve_name="ve"
+uv venv $HOME/venvs/$ve_name --python 3.11
+. $HOME/venvs/$ve_name/bin/activate
+
 cd $HOME
 mkdir code
 cd $HOME/code

@@ -91,4 +91,3 @@ fi
 
 yes '' | sed 3q; echo "----------------------------- installing chafa ----------------------------"; yes '' | sed 3q
 sudo nala install chafa -y  # like viu, one can ascii-ize images.
-

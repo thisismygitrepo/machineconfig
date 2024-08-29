@@ -59,14 +59,14 @@
 # copy from windows lfrc instead of the above
 fi      00;37;40              # FILE
 #rs     0               # RESET
-di      01;38;45           # DIR
+di      01;38;44           # DIR
 ln      03;33;48           # LINK
 #mh     00              # MULTIHARDLINK
 pi      03;33;40           # FIFO
 so      04;34;43           # SOCK
 #do     01;35           # DOOR
 bd      05;35;40        # BLK
-cd      01;30;44        # CHR
+cd      01;30;45        # CHR
 or      07;37;45        # ORPHAN
 #mi     00              # MISSING
 su      08;32;47           # SETUID
