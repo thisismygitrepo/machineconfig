@@ -163,7 +163,7 @@ class Installer:
             else: raise NotImplementedError(f"📦️ System {platform.system()} not implemented")
             version_to_be_installed = "predefined_url"
         else:
-            release_url, version_to_be_installed = self.get_github_release(repo_url=self.repo_url, version=version)
+            release_url, version_to_be_installed = Installer.get_github_release(repo_url=self.repo_url, version=version)
             print(f"📦️ Version to be installed: {version_to_be_installed}")
             print(f"📦️ Release URL: {release_url}")
             version_to_be_installed_stripped = version_to_be_installed.replace("v", "") if self.strip_v else version_to_be_installed
