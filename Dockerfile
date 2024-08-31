@@ -47,4 +47,5 @@ RUN /app/setup_linux/devapps.sh
 
 RUN touch /root/.bash_history  # McFly complains about missing history file
 
-CMD ["/usr/bin/bash"]  # python image defaults to python as the command
+CMD ["/usr/bin/bash"]
+# python image defaults to python as the command

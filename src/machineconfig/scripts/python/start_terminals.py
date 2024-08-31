@@ -2,7 +2,7 @@
 """Script to start terminals on windows and wsl
 """
 
-from machineconfig.utils.utils import PROGRAM_PATH, display_options, install_n_import, get_ssh_hosts, platform
+from machineconfig.utils.utils import PROGRAM_PATH, display_options, get_ssh_hosts, platform
 from itertools import cycle
 from typing import Literal
 
@@ -89,7 +89,8 @@ def main():
         cmd = main_windows_and_wsl(window=args.window, hosts=hosts, orientation="vertical" if args.vertical else "horizontal")
 
     print(cmd)
-    install_n_import("clipboard").copy(cmd)
+    # import clipboard
+    # install_n_import("clipboard").copy(cmd)
     PROGRAM_PATH.write_text(cmd)
 
 

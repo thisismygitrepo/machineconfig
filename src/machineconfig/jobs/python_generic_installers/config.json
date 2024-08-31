@@ -64,7 +64,6 @@
         "strip_v": false,
         "exe_name": "bat"
     },
-
     "nushell": {
         "repo_url": "https://github.com/nushell/nushell",
         "doc": "A cross-platform shell in Rust.",

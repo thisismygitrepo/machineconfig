@@ -5,7 +5,6 @@ Utils
 
 from crocodile.file_management import P, randstr, PLike
 from crocodile.meta import Terminal
-from crocodile.core import install_n_import
 # import crocodile.environment as env
 import machineconfig
 from rich.text import Text

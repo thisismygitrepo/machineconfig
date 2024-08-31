@@ -3,14 +3,14 @@
 Installers do not add runtime files to the machine, hence this script.
 """
 
-# from pathlib import Path
-from machineconfig.utils.installer import Installer, LINUX_INSTALL_PATH, WINDOWS_INSTALL_PATH
+from crocodile.file_management import P
+from machineconfig.utils.installer import INSTALL_TMP_DIR, LINUX_INSTALL_PATH, WINDOWS_INSTALL_PATH
 from typing import Optional
 import platform
 
 
 config_dict = {
-        "repo_url": "https://github.com/helix-editor/helix",
+        "repo_url": "CUSTOM",
         "doc": "Helix is a post-modern modal text editor.",
         "filename_template_windows_amd_64": "helix-{}-x86_64-windows.zip",
         "filename_template_linux_amd_64": "helix-{}-x86_64-linux.tar.xz",
@@ -20,8 +20,10 @@ config_dict = {
 
 
 def main(version: Optional[str]):
-    inst = Installer.from_dict(d=config_dict, name="hx")
-    downloaded, _version_to_be_installed = inst.download(version=version)
+    # inst = Installer.from_dict(d=config_dict, name="hx")
+    # downloaded, _version_to_be_installed = inst.download(version=version)
+    _ = version
+    downloaded = P("https://github.com/helix-editor/helix").download(folder=INSTALL_TMP_DIR).decompress()
     hx_file_search = downloaded.search("hx", folders=False, files=True, r=True)
     assert len(hx_file_search) == 1
     hx_file = hx_file_search.list[0]
