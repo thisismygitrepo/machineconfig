@@ -5,20 +5,22 @@
 # ----------------- package managers -----------------
 # apt, nala (fast parallel apt), brew & nix.
 
-yes '' | sed 3q; echo "----------------------------- installing upgrading and updating apt ----------------------------"; yes '' | sed 3q
-sudo apt update -y || true
-# sudo apt upgrade -y || true
-sudo install install curl wget -y || true  # for handling http requests
-
-
 if [ -z "$package_manager" ]; then
   package_manager="apt"  # see if variable package_manager is defined, if not, define it as "nix"
 fi
 
-curl -L https://nixos.org/nix/install | sh  # cross *nix platforms.
-. ~/.nix-profile/etc/profile.d/nix.sh
+
+yes '' | sed 3q; echo "----------------------------- installing upgrading and updating apt ----------------------------"; yes '' | sed 3q
+sudo apt update -y || true
+# sudo apt upgrade -y || true
+
 
 sudo apt install nala -y || true  # nala is a command line tool for managing your Linux system
+sudo nala install curl wget -y || true  # for handling http requests
+
+
+curl -L https://nixos.org/nix/install | sh  # cross *nix platforms.
+. ~/.nix-profile/etc/profile.d/nix.sh
 
 # as per: https://brew.sh/
 export NONINTERACTIVE=1  # to avoid confirmation prompts
@@ -63,27 +65,8 @@ export NVM_DIR="$HOME/.nvm"
 nvm install node || true
 
 
-yes '' | sed 3q; echo "----------------------------- installing net-tools ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo nala install net-tools -y || true  # gives ifconfig
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.nettools || true
-fi
-
-
 yes '' | sed 3q; echo "----------------------------- installing git ----------------------------"; yes '' | sed 3q
-sudo nala install git -y || true  # for version control
-sudo nala install htop -y || true  # for monitoring system resources
-
-
-# ========================================= EDITORS =========================================
-yes '' | sed 3q; echo "----------------------------- installing nano ----------------------------"; yes '' | sed 3q
-if [ "$package_manager" = "apt" ]; then
-  sudo nala install nano -y || true  # for editing files
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.nano || true
-  # ~/.nix-profile/bin/nix-env -iA nixpkgs.vscode || true
-fi
+sudo nala install git net-tools htop nano -y || true  # for version control
 
 
 /home/linuxbrew/.linuxbrew/bin/brew install neovim

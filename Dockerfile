@@ -22,7 +22,10 @@ RUN /app/setup_linux/apps.sh
 RUN /app/setup_linux/apps_dev.sh
 
 # RUN /app/setup_linux/ve.sh
+# ENV PATH="/root/.cargo/bin:${PATH}"
 RUN /root/.cargo/bin/uv venv $HOME/venvs/ve --python 3.11  # Warning: does not come with pip
+RUN source $HOME/venvs/ve/bin/activate && \
+    /root/.cargo/bin/uv pip install --upgrade pip
 
 # ENV CROCODILE_EXRA="full"
 # RUN /app/setup_linux/repos.sh

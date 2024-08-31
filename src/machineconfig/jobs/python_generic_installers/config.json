@@ -24,14 +24,6 @@
         "strip_v": false,
         "exe_name": "m365"
     },
-    "auto-GPT": {
-        "repo_url": "https://github.com/Significant-Gravitas/Auto-GPT",
-        "doc": "GPT ",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
-        "strip_v": false,
-        "exe_name": "autogpt"
-    },
     "chatgpt": {
         "repo_url": "https://github.com/j178/chatgpt",
         "doc": "chagpt cli",
@@ -48,12 +40,11 @@
         "strip_v": true,
         "exe_name": "mods"
     },
-
     "glow": {
         "repo_url": "https://github.com/charmbracelet/glow/",
         "doc": "Render markdown on the CLI, with pizzazz!",
-        "filename_template_windows_amd_64": "glow_Windows_x86_64.zip",
-        "filename_template_linux_amd_64": "glow_Linux_x86_64.tar.gz",
+        "filename_template_windows_amd_64": "glow_{}_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "glow_{}_Linux_x86_64.tar.gz",
         "strip_v": true,
         "exe_name": "glow"
     },
