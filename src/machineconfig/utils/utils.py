@@ -31,7 +31,7 @@ T = TypeVar("T")
 
 def choose_cloud_interactively() -> str:
     from crocodile.core import List as L
-    print(f"Listing Remotes ... ")
+    print("Listing Remotes ... ")
     tmp = Terminal().run("rclone listremotes").op_if_successfull_or_default(strict_returcode=False)
     # consider this: remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
     if isinstance(tmp, str):
@@ -39,7 +39,7 @@ def choose_cloud_interactively() -> str:
 
     else: raise ValueError(f"Got {tmp} from rclone listremotes")
     if len(remotes) == 0:
-        raise RuntimeError(f"You don't have remotes. Configure your rclone first to get cloud services access.")
+        raise RuntimeError("You don't have remotes. Configure your rclone first to get cloud services access.")
     cloud: str = choose_one_option(msg="WHICH CLOUD?", options=list(remotes), default=remotes[0], fzf=True)
     return cloud
 
@@ -76,7 +76,7 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
     if len(search_results) == 1:
         path_obj = search_results.list[0]
     elif len(search_results) > 1:
-        choice = choose_one_option(msg=f"Search results are ambiguous or non-existent", options=search_results.list, fzf=True)
+        choice = choose_one_option(msg="Search results are ambiguous or non-existent", options=search_results.list, fzf=True)
         path_obj = P(choice)
     else:
         # let's do a final retry with sub_string.small()
@@ -161,7 +161,7 @@ def display_options(msg: str, options: Iterable[T], header: str = "", tail: str 
         console = Console()
         if default is not None:
             assert default in options, f"Default `{default}` option not in options `{list(options)}`"
-            default_msg = Text(f" <<<<-------- DEFAULT", style="bold red")
+            default_msg = Text(" <<<<-------- DEFAULT", style="bold red")
         else: default_msg = Text("")
         txt = Text("\n" + msg + "\n")
         for idx, key in enumerate(options):
@@ -174,10 +174,10 @@ def display_options(msg: str, options: Iterable[T], header: str = "", tail: str 
 
         if choice_string == "":
             if default_string is None:
-                print(f"Default option not available!")
+                print("Default option not available!")
                 return display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
             choice_idx = options_strings.index(default_string)
-            assert default is not None, f"🧨 Default option not available!"
+            assert default is not None, "🧨 Default option not available!"
             choice_one: T = default
         else:
             try:
@@ -196,7 +196,7 @@ def display_options(msg: str, options: Iterable[T], header: str = "", tail: str 
                 elif custom_input:
                     return choice_string  # type: ignore #TODO: fix this
                 else: raise ValueError(f"Unknown choice. {choice_string}") from te
-        print(f"{choice_idx}: {choice_one}", f"<<<<-------- CHOICE MADE")
+        print(f"{choice_idx}: {choice_one}", "<<<<-------- CHOICE MADE")
         if multi: return [choice_one]
     return choice_one
 
