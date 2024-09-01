@@ -11,7 +11,9 @@
 	"image": "statistician/alim-slim:latest",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
+	// "features": {
+
+	// },
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
@@ -56,7 +58,14 @@
 
 	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "devcontainer"
+	"remoteUser": "root",
+	// changing this complicates the process: https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user
+
 	"mounts": [
-		// "source=$HOME/data,target=/root/data,type=bind"
+		"source=${localEnv:HOME}/data,target=/root/data,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/dotfiles,target=/root/dotfiles,type=bind,consistency=cached"
+
+		// "source=/home/alex/data,target=/root/data,type=bind,consistency=cached",
+		// "target=/root/.vscode-server,type=volume"
 	]
 }

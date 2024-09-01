@@ -1,0 +1,11 @@
+
+services:
+  my_service:
+    image: statistician/alim-slim:latest
+    volumes:
+      - ${HOME}/data:/root/data
+      - ${HOME}/dotfiles:/root/dotfiles
+    stdin_open: true
+    # stdout_open: true
+    # stderr_open: true
+    tty: true
