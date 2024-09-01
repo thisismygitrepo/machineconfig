@@ -2,7 +2,7 @@
 """ Setup file for machineconfig package.
 """
 
-import setuptools
+import setuptools  # type: ignore
 from src.machineconfig import __version__
 import platform
 

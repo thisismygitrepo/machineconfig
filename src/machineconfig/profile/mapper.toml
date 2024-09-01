@@ -161,10 +161,10 @@ languages = { this = '~/.config/helix/languages.toml', to_this = 'LIBRARY_ROOT/s
 config = { this = '~/.config/helix/config.toml', to_this = 'LIBRARY_ROOT/settings/helix/config.toml' }
 
 [lvim_windows]
-config = { this = '~/AppData/Local/lvim/config.lua', to_this = 'LIBRARY_ROOT/settings/lvim_windows/config.lua' }
+config = { this = '~/AppData/Local/lvim/config.lua', to_this = 'LIBRARY_ROOT/settings/lvim/windows/config.lua' }
 
 [lvim_linux]
-config = { this = '~/.config/lvim/config.lua', to_this = 'LIBRARY_ROOT/settings/lvim_linux/config.lua' }
+config = { this = '~/.config/lvim/config.lua', to_this = 'LIBRARY_ROOT/settings/lvim/linux/config.lua' }
 
 
 [svim_windows]
