@@ -203,8 +203,8 @@ home = {this = '~/wsl', to_this = '\\wsl.localhost\Ubuntu-22.04\home\username'}
 # see \\wsl$ and ~\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState
 config = {this = '~/.wslconfig', to_this = 'LIBRARY_ROOT/settings/wsl/.wslconfig'}
 
-[wsl_linux]
-home = {this = '~/win', to_this = '/mnt/c/Users/username'}
+# [wsl_linux]
+# home = {this = '~/win', to_this = '/mnt/c/Users/username'}
 
 [scripts_linux]
 public = {this = '~/scripts', to_this = 'LIBRARY_ROOT/scripts/linux'}
