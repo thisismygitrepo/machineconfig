@@ -45,7 +45,8 @@ RUN cd $HOME && \
 RUN /app/setup_linux/symlinks.sh
 RUN /app/setup_linux/devapps.sh
 
-RUN touch /root/.bash_history  # McFly complains about missing history file
+RUN touch /root/.bash_history
+# McFly complains about missing history file
 
 WORKDIR /root
 CMD ["/usr/bin/bash"]

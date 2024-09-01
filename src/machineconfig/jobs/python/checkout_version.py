@@ -33,9 +33,11 @@ def checkout_version(version: str, repo_root: P, exclude_editable: bool = False)
     checkout_ve = f"{repo_root.name}-{version}-prod" if not exclude_editable else ve_name
     checkout_ve = input(f"Name of the ve to create (default: {checkout_ve}): ") or checkout_ve
 
-    ve_template = get_ve_install_script(ve_name=checkout_ve, py_version=py_version, system="Windows", delete_if_exists=False, install_crocodile_and_machineconfig=False)
+    ve_template = f"uv venv $HOME/venvs/{checkout_ve} --python {py_version}"
+    _ = get_ve_install_script
+    # ve_template = get_ve_install_script(ve_name=checkout_ve, py_version=py_version, system="Windows", delete_if_exists=False, install_crocodile_and_machineconfig=False)
     version_root_obj.joinpath("install_ve.ps1").write_text(ve_template)
-    ve_template = get_ve_install_script(ve_name=checkout_ve, py_version=py_version, system="Linux", delete_if_exists=False, install_crocodile_and_machineconfig=False)
+    # ve_template = get_ve_install_script(ve_name=checkout_ve, py_version=py_version, system="Linux", delete_if_exists=False, install_crocodile_and_machineconfig=False)
     version_root_obj.joinpath("install_ve.sh").write_text(ve_template)
 
     install_requirements = f"""
