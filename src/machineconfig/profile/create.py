@@ -33,8 +33,8 @@ def symlink_contents(source_dir: P, target_dir: P, overwrite: bool = True):
 
 def main_symlinks(choice: Optional[str] = None):
     symlink_mapper = LIBRARY_ROOT.joinpath("profile/mapper.toml").readit()
-    symlink_mapper['wsl_windows']['home']["to_this"] = symlink_mapper['wsl_windows']['home']["to_this"].replace("username", UserName)
-    symlink_mapper['wsl_linux']['home']["to_this"] = symlink_mapper['wsl_linux']['home']["to_this"].replace("username", UserName)
+    # symlink_mapper['wsl_windows']['home']["to_this"] = symlink_mapper['wsl_windows']['home']["to_this"].replace("username", UserName)
+    # symlink_mapper['wsl_linux']['home']["to_this"] = symlink_mapper['wsl_linux']['home']["to_this"].replace("username", UserName)
 
     overwrite = True
     exclude: list[str] = []  # "wsl_linux", "wsl_windows"
