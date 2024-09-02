@@ -6,7 +6,7 @@ This script Takes away all config files from the computer, place them in one dir
 """
 
 
-from crocodile.environment import system, UserName  # ProgramFiles, WindowsApps  # , exe
+from crocodile.environment import system  # ProgramFiles, WindowsApps  # , exe
 from crocodile.meta import Terminal
 from crocodile.file_management import P
 from machineconfig.utils.utils import symlink, LIBRARY_ROOT, REPO_ROOT, display_options
@@ -62,7 +62,7 @@ def main_symlinks(choice: Optional[str] = None):
     if isinstance(choice_selected, str):
         if str(choice_selected) == "all" and system == "Windows" and not Terminal.is_user_admin():
             print("*" * 200)
-            raise RuntimeError(f"Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
+            raise RuntimeError("Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
         elif choice_selected == "all":
             print(f"{program_keys=}")
             pass  # i.e. program_keys = program_keys
@@ -82,9 +82,9 @@ def main_symlinks(choice: Optional[str] = None):
 
             if program_key == "ssh" and system == "Linux":  # permissions of ~/dotfiles/.ssh should be adjusted
                 try:
-                    subprocess.run(f"chmod 700 ~/.ssh/", check=True)
-                    subprocess.run(f"chmod 700 ~/dotfiles/creds/.ssh/", check=True)  # may require sudo
-                    subprocess.run(f"chmod 600 ~/dotfiles/creds/.ssh/*", check=True)
+                    subprocess.run("chmod 700 ~/.ssh/", check=True)
+                    subprocess.run("chmod 700 ~/dotfiles/creds/.ssh/", check=True)  # may require sudo
+                    subprocess.run("chmod 600 ~/dotfiles/creds/.ssh/*", check=True)
                 except Exception as e:
                     ERROR_LIST.append(e)
                     print("Caught error", e)
@@ -98,11 +98,11 @@ def main_symlinks(choice: Optional[str] = None):
 def main(choice: Optional[str] = None):
     console = Console()
     print("\n")
-    console.rule(f"CREATING SYMLINKS")
+    console.rule("CREATING SYMLINKS")
     main_symlinks(choice=choice)
 
     print("\n")
-    console.rule(f"CREATING SYMLINKS")
+    console.rule("CREATING SYMLINKS")
     create_default_shell_profile()
 
 

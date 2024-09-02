@@ -3,9 +3,9 @@
 """
 
 from crocodile.core import Struct, Save, List
-from crocodile.file_management import P, modify_text, Read
+from crocodile.file_management import P, Read
 
-from machineconfig.utils.utils import LIBRARY_ROOT
+# from machineconfig.utils.utils import LIBRARY_ROOT
 import platform
 from dataclasses import dataclass
 from typing import Optional, Literal
@@ -96,17 +96,19 @@ def get_ve_specs(ve_path: P) -> dict[str, str]:
     config = configparser.ConfigParser()
     config.read_string(ini)
     res = dict(config['mysection'])
-    res['version_major_minor'] = ".".join(res['version'].split(".")[0:2])
+    # try:
+    #     res['version_major_minor'] = ".".join(res['version'].split(".")[0:2])
+    # except KeyError:
+    #     # res['version_major_minor'] = ".".join(res['version_info'].split(".")[0:2])
     return res
 
 
-def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[str] = None, install_crocodile_and_machineconfig: Optional[bool] = None,
+def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[str] = None,
+                          install_crocodile_and_machineconfig: Optional[bool] = None,
                           delete_if_exists: bool = True,
-                          system: Optional[Literal["Windows", "Linux"]] = None) -> str:
+                        #   system: Optional[Literal["Windows", "Linux"]] = None
+                          ) -> str:
     from rich.console import Console
-    if system is None:
-        system_: str = platform.system()
-    else: system_ = system
     console = Console()
 
     if py_version is None:
@@ -116,39 +118,65 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
         List(res).print()
         print("\n\n")
         dotted_py_version = input("Enter python version (3.11): ") or "3.11"
-    else: dotted_py_version = py_version
+    else:
+        dotted_py_version = py_version
 
     if ve_name is None:
-        console.rule(f"Existing virtual environments")
+        console.rule("Existing virtual environments")
         for ve_path in P.home().joinpath("venvs").search("*", files=False):
-            ve_specs = get_ve_specs(ve_path)
-            # console.print(Panel(str(ve_specs), title=ve_path.stem, style="bold blue"))
+            try:
+                ve_specs = get_ve_specs(ve_path)
+            except Exception as _e:
+                continue
             Struct(ve_specs).print(title=ve_path.stem, as_config=True)
         ve_name = input("Enter virtual environment name (tst): ") or "tst"
 
-    if install_crocodile_and_machineconfig is None: croco_mac = input("Install essential repos? (y/[n]): ") == "y"
-    else: croco_mac = install_crocodile_and_machineconfig
+    if install_crocodile_and_machineconfig is None:
+        croco_mac = input("Install essential repos? (y/[n]): ") == "y"
+        other_repos = input("Input space separated other packages: ")
+    else:
+        croco_mac = install_crocodile_and_machineconfig
+        other_repos = ""
 
     env_path = P.home().joinpath("venvs", ve_name)
     if delete_if_exists and env_path.exists():
         sure = input(f"An existing environment found. Are you sure you want to delete {env_path} before making new one? (y/[n]): ") == "y"
-        console.rule(f"Deleting existing enviroment with similar name")
+        console.rule("Deleting existing enviroment with similar name")
         env_path.delete(sure=sure)
 
-    scripts = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/ve.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
+    # scripts = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/ve.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
+    scripts = f"""
 
-    variable_prefix = "$" if system_ == "Windows" else ""
-    line1 = f"{variable_prefix}ve_name='{ve_name}'"
-    line2 = f"{variable_prefix}py_version='{dotted_py_version}'"
-    line_start = "# --- Define ve name and python version here ---"
-    line_end = "# --- End of user defined variables ---"
-    assert line_start in scripts and line_end in scripts, "Script template was mutated beyond recognition."
-    scripts = scripts.split(line_start)[0] + "\n".join([line_start, line1, line2, line_end]) + scripts.split(line_end)[1]
+$HOME/.cargo/bin/uv venv $HOME/venvs/{ve_name} --python {dotted_py_version}
+. $HOME/scripts/activate_ve {ve_name}
+
+"""
+    if other_repos != "":
+        scripts += "\n$HOME/.cargo/bin/uv pip install " + other_repos
+
+    # if system is None:
+    #     system_: str = platform.system()
+    # else:
+    #     system_ = system
+    # variable_prefix = "$" if system_ == "Windows" else ""
+    # line1 = f"{variable_prefix}ve_name='{ve_name}'"
+    # line2 = f"{variable_prefix}py_version='{dotted_py_version}'"
+    # line_start = "# --- Define ve name and python version here ---"
+    # line_end = "# --- End of user defined variables ---"
+    # assert line_start in scripts and line_end in scripts, "Script template was mutated beyond recognition."
+    # scripts = scripts.split(line_start)[0] + "\n".join([line_start, line1, line2, line_end]) + scripts.split(line_end)[1]
 
     if croco_mac:  # TODO make this more robust by removing sections of the script as opposed to word placeholders.
-        text = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/repos.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
-        text = modify_text(txt_raw=text, txt_search="ve_name=", txt_alt=f"{variable_prefix}ve_name='{ve_name}'", replace_line=True)
-        scripts += text
+        # text = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/repos.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
+        # text = modify_text(txt_raw=text, txt_search="ve_name=", txt_alt=f"{variable_prefix}ve_name='{ve_name}'", replace_line=True)
+        # scripts += text
+        scripts += """
+cd $HOME/code/crocodile
+$HOME/.cargo/bin/uv pip install -e .
+cd $HOME/code/machineconfig
+$HOME/.cargo/bin/uv pip install -e .
+echo "Finished setting up repos"
+"""
 
     # ve_ini_specs = VE_Specs(ve_name=ve_name, py_version=dotted_py_version, ipy_profile="default", os=system_)
     # ve_ini = VE_INI(specs=ve_ini_specs)

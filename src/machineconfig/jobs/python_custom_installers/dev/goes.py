@@ -21,7 +21,7 @@ ve_name = "goex"
 
 def main():
     install_script = get_ve_install_script(ve_name=ve_name, py_version="3.11", install_crocodile_and_machineconfig=False,
-                                        delete_if_exists=True, system=None)
+                                        delete_if_exists=True)
 
 
     install_script += f"""
