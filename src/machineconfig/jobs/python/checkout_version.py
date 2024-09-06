@@ -99,6 +99,7 @@ def main():
 
 def get_editable_packages(ve_name: str):
     file = P.tmp().joinpath(f"tmp_files/editable_requirements_{randstr()}.txt")
+    file.parent.mkdir(parents=True, exist_ok=True)
     editable_packages_script = f"""
 . $HOME/scripts/activate_ve {ve_name}
 pip list --editable > {file}
