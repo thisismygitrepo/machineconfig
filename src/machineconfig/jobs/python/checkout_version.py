@@ -17,7 +17,7 @@ def checkout_version(version: str, repo_root: P, exclude_editable: bool = False)
     ve_name = get_ve_profile(init_path=repo_root)
     ve_path = P.home().joinpath("venvs", ve_name)
     ve_specs = get_ve_specs(ve_path)
-    py_version = ve_specs['version_major_minor']
+    py_version = ve_specs['version']
     sys = platform.system().lower()
 
     target_dir = repo_root.expanduser().absolute().joinpath(f"versions/{version}").as_posix()
