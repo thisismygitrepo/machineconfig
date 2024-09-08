@@ -6,8 +6,3 @@ warp-cli connect
 sleep 1
 warp-cli status
 curl api.ipify.org
-
-tpad: 104.28.243.74
-xps: 104.28.211.74
-p51s: 104.28.211.79
-P16s: 104.28.211.75
