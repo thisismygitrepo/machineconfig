@@ -98,8 +98,9 @@ yes '' | sed 3q; echo "----------------------------- installing cloudflared Warp
 # as per Ubuntu of https://pkg.cloudflareclient.com/
 sudo apt-get install gnupg  # no available on debian
 curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
-echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ jammy main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ Noble main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
 sudo apt-get update && sudo apt-get install cloudflare-warp -y
+# The Trick: we replaced $(lsb_release -cs) with Noble because Mint22 is based on Ubuntu24, thus we need Noble instead of Wilma. with Mint21, we replace virginia with Jammy as per the installation website options of Ubuntus supported.
 
 
 yes '' | sed 3q; echo "----------------------------- installing graphviz ----------------------------"; yes '' | sed 3q
@@ -119,7 +120,6 @@ sudo nala install make -y || true  # lvim and spacevim require it.
 #   sudo nala install lynx -y || true  # tex browser, just like w3m
 # else
 #   ~/.nix-profile/bin/nix-env -iA nixpkgs.lynx || true
-#   ~/.nix-profile/bin/nix-env -iA nixpkgs.brave
 # fi
 
 # yes '' | sed 3q; echo "----------------------------- installing redis ----------------------------"; yes '' | sed 3q

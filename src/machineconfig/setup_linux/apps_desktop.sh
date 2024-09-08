@@ -24,6 +24,8 @@
 yes '' | sed 3q; echo "----------------------------- installing Thunderbird & Brave ----------------------------"; yes '' | sed 3q
 flatpak install flathub org.mozilla.Thunderbird
 flatpak install flathub com.brave.Browser
+flatpak install flathub org.wezfurlong.wezterm
+flatpak run org.wezfurlong.wezterm
 ln -s /home/$USER/.nix-profile/share/applications/* /home/$USER/.local/share/applications/
 
 

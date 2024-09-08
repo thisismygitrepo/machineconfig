@@ -43,7 +43,7 @@ def checkout_version(version: str, repo_root: P, exclude_editable: bool = False)
     install_requirements = f"""
 . $HOME/scripts/activate_ve {ve_name}
 cd {version_root}
-pip install -r requirements_{sys}.txt
+uv pip install -r requirements_{sys}.txt
 {install_editable_packages}
 """
     if sys == "windows":
