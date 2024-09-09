@@ -17,7 +17,13 @@ def checkout_version(version: str, repo_root: P, exclude_editable: bool = False)
     ve_name = get_ve_profile(init_path=repo_root)
     ve_path = P.home().joinpath("venvs", ve_name)
     ve_specs = get_ve_specs(ve_path)
-    py_version = ve_specs['version']
+    try:
+        py_version = ve_specs['version']
+    except KeyError as err:
+        # print(f"❌ No python version found in {ve_specs}.")
+        # raise err
+        _ = err
+        py_version = ve_specs['version_info']
     sys = platform.system().lower()
 
     target_dir = repo_root.expanduser().absolute().joinpath(f"versions/{version}").as_posix()
@@ -33,26 +39,26 @@ def checkout_version(version: str, repo_root: P, exclude_editable: bool = False)
     checkout_ve = f"{repo_root.name}-{version}-prod" if not exclude_editable else ve_name
     checkout_ve = input(f"Name of the ve to create (default: {checkout_ve}): ") or checkout_ve
 
-    ve_template = f"uv venv $HOME/venvs/{checkout_ve} --python {py_version}"
-    _ = get_ve_install_script
-    # ve_template = get_ve_install_script(ve_name=checkout_ve, py_version=py_version, system="Windows", delete_if_exists=False, install_crocodile_and_machineconfig=False)
-    version_root_obj.joinpath("install_ve.ps1").write_text(ve_template)
-    # ve_template = get_ve_install_script(ve_name=checkout_ve, py_version=py_version, system="Linux", delete_if_exists=False, install_crocodile_and_machineconfig=False)
-    version_root_obj.joinpath("install_ve.sh").write_text(ve_template)
+    install_env = f"""
 
-    install_requirements = f"""
+uv venv $HOME/venvs/{checkout_ve} --python {py_version}
 . $HOME/scripts/activate_ve {ve_name}
+uv pip install pip
+
 cd {version_root}
 uv pip install -r requirements_{sys}.txt
 {install_editable_packages}
 """
     if sys == "windows":
-        version_root_obj.joinpath("install_requirements.ps1").write_text(install_requirements)
-        if not version_root_obj.joinpath("install_requirements.sh").exists(): version_root_obj.joinpath("install_requirements.sh").write_text(install_requirements)
+        version_root_obj.joinpath("install_env.ps1").write_text(install_env)
+        if not version_root_obj.joinpath("install_env.sh").exists():
+            version_root_obj.joinpath("install_env.sh").write_text(install_env)
     elif sys == "linux":
-        version_root_obj.joinpath("install_requirements.sh").write_text(install_requirements)
-        if not version_root_obj.joinpath("install_requirements.ps1").exists(): version_root_obj.joinpath("install_requirements.ps1").write_text(install_requirements)
-    else: raise NotImplementedError(f"System {sys} not supported.")
+        version_root_obj.joinpath("install_env.sh").write_text(install_env)
+        if not version_root_obj.joinpath("install_env.ps1").exists():
+            version_root_obj.joinpath("install_env.ps1").write_text(install_env)
+    else:
+        raise NotImplementedError(f"System {sys} not supported.")
 
     pip_freeze_script = f"""
 cd '{target_dir}'
@@ -61,22 +67,20 @@ python -m pip freeze {'--exclude-editable' if exclude_editable else ''} > requir
 """
     Terminal().run_script(pip_freeze_script, verbose=True, shell="default").print()
 
-    install_all_script = r"""
-#!/usr/bin/bash
+#     install_all_script = r"""
+# #!/usr/bin/bash
+# CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+# . $CUR_DIR/install_ve.sh
+# . $CUR_DIR/install_requirements.sh
+# """
+#     version_root_obj.joinpath("install.sh").write_text(install_all_script)
+#     install_all_script = r"""
+# $CUR_DIR = Split-Path $MyInvocation.MyCommand.Path -Parent
+# . $CUR_DIR/install_ve.ps1
+# . $CUR_DIR/install_requirements.ps1
+# """
+#     version_root_obj.joinpath("install.ps1").write_text(install_all_script)
 
-CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-. $CUR_DIR/install_ve.sh
-. $CUR_DIR/install_requirements.sh
-"""
-    version_root_obj.joinpath("install.sh").write_text(install_all_script)
-    install_all_script = r"""
-
-$CUR_DIR = Split-Path $MyInvocation.MyCommand.Path -Parent
-. $CUR_DIR/install_ve.ps1
-. $CUR_DIR/install_requirements.ps1
-
-"""
-    version_root_obj.joinpath("install.ps1").write_text(install_all_script)
     print(f"✅ Installed requirements for version {version}.")
 
 
