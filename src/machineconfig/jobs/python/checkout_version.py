@@ -4,7 +4,7 @@
 
 from crocodile.file_management import P, Save, randstr
 from crocodile.meta import Terminal
-from machineconfig.utils.ve import get_ve_profile, get_ve_specs, get_ve_install_script
+from machineconfig.utils.ve import get_ve_profile, get_ve_specs
 from machineconfig.scripts.python.repos import record_a_repo, install_repos
 import platform
 
@@ -41,8 +41,17 @@ def checkout_version(version: str, repo_root: P, exclude_editable: bool = False)
 
     install_env = f"""
 
-uv venv $HOME/venvs/{checkout_ve} --python {py_version}
+uv venv $HOME/venvs/{checkout_ve} --python {py_version} --python-preference only-managed
 . $HOME/scripts/activate_ve {ve_name}
+
+# if [ "$OSTYPE" == "linux-gnu"* ] || [ "$OSTYPE" == "darwin"* ]; then
+#     # Linux or macOS
+#     source $HOME/venvs/{ve_name}//bin/activate
+# else
+#     # Windows
+#     $HOME/venvs/{ve_name}//Scripts/activate.bat
+# fi
+
 uv pip install pip
 
 cd {version_root}

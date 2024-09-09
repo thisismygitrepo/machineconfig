@@ -1,9 +1,9 @@
 
 ve_name="ve"
 
-uv venv $HOME/venvs/$ve_name --python 3.11
+uv venv $HOME/venvs/$ve_name --python 3.11 --python-preference only-managed
 . $HOME/venvs/$ve_name/bin/activate
-
+uv pip install --upgrade pip
 cd $HOME
 mkdir code
 cd $HOME/code
