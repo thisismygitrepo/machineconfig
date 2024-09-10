@@ -50,7 +50,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 
 yes '' | sed 3q; echo "----------------------------- installing sqlite --------------------------"; yes '' | sed 3q
-sudo nala install sqlite -y || true  # sqlite vscode extension requires this to be installed. It gives sqlite and sqlite3 commands.
+sudo nala install sqlite3 -y || true  # sqlite vscode extension requires this to be installed. It gives sqlite and sqlite3 commands.
 
 
 yes '' | sed 3q; echo "----------------------------- installing nvm of nodejs --------------------------"; yes '' | sed 3q

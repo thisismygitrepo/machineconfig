@@ -53,6 +53,11 @@ COPY ./src/machineconfig/settings/shells/ipy/profiles/default/startup/playext.py
 
 RUN touch /root/.bash_history
 # McFly complains about missing history file
+RUN rm -rfd /root/tmp_results
+# This directory is full of tmp installers files. (200MB)
+# RUN apt-get clean && \
+#     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/cache/apt/archives/* /var/log/* /usr/share/doc /usr/share/man /usr/share/info /usr/share/locale
+
 
 WORKDIR /root
 CMD ["/usr/bin/bash"]

@@ -15,6 +15,14 @@
     "strip_v": true,
     "exe_name": "bw"
   },
+  "devtunnel": {
+    "repo_url": "curl -sL https://aka.ms/DevTunnelCliInstall | bash",
+    "doc": "devtunnel secure introspectable tunnels to localhost",
+    "filename_template_windows_amd_64": "",
+    "filename_template_linux_amd_64": "",
+    "strip_v": false,
+    "exe_name": "devtunnel"
+  },
   "diskonaut": {
     "repo_url": "https://github.com/imsnif/diskonaut",
     "doc": "like dua, diskonaut is a terminal disk space navigator.",
