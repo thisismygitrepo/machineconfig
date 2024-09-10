@@ -147,7 +147,7 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
     # scripts = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/ve.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
     scripts = f"""
 
-$HOME/.cargo/bin/uv venv $HOME/venvs/{ve_name} --python {dotted_py_version}
+$HOME/.cargo/bin/uv venv $HOME/venvs/{ve_name} --python {dotted_py_version} --python-preference only-managed
 . $HOME/scripts/activate_ve {ve_name}
 
 """
