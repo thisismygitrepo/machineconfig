@@ -16,12 +16,13 @@ docker build --no-cache --file ./Dockerfile --progress=plain -t "statistician/$I
 
 # docker login --username statistician --password <password>
 read -p "Do you want to push to the registry? (y/n): " answer
-if [ "$answer" != "${answer#[Yy]}" ] ;then
+if [[ "$answer" =~ ^[Yy]$ ]] ; then
     docker push "statistician/$IMAGE_NAME:latest"
     docker tag "statistician/$IMAGE_NAME:latest" "statistician/$IMAGE_NAME:$DATE"
     docker push "statistician/$IMAGE_NAME:$DATE"
 else
     echo "Push to registry aborted."
+fi
 
 echo "try it out using: docker run -it statistician/$IMAGE_NAME:latest"
 # Use this to clean instances: docker ps --all -q | xargs docker rm
