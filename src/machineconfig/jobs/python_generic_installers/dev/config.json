@@ -47,6 +47,14 @@
         "strip_v": false,
         "exe_name": "devcontainer"
     },
+    "bitwarden": {
+        "repo_url": "npm install -g @bitwarden/cli",
+        "doc": "bw is a password manager.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "devcontainer"
+    },
     "OBS Background removal": {
         "repo_url": "https://github.com/royshil/obs-backgroundremoval",
         "doc": "A plugin for OBS Studio to remove background from a video",
@@ -54,14 +62,6 @@
         "filename_template_linux_amd_64": "obs-backgroundremoval-{}-x86_64-linux-gnu.deb",
         "strip_v": true,
         "exe_name": "obs-backgroundremoval"
-    },
-    "bitwarden": {
-        "repo_url": "https://github.com/bitwarden/clients",
-        "doc": "Bitwarden (password manager) cli",
-        "filename_template_windows_amd_64": "bw-windows-{}.zip",
-        "filename_template_linux_amd_64": "bw-linux-{}.zip",
-        "strip_v": true,
-        "exe_name": "bw"
     },
     "cloudflared": {
         "repo_url": "https://github.com/cloudflare/cloudflared",

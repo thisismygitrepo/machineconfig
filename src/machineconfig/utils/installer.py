@@ -277,7 +277,7 @@ def get_installers(system: str, dev: bool) -> list[Installer]:
     res2: dict[str, Any] = Read.json(path=path_os_generic.joinpath("config.json"))
     res2.update(res1)
     import runpy
-    for item in path_custom_installer.search("*.py", r=False):
+    for item in path_custom_installer.search("*.py", r=False, not_in=["__init__"]):
         try:
             config_dict = runpy.run_path(str(item), run_name=None)['config_dict']
             res2[item.stem] = config_dict

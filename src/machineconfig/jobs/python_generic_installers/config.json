@@ -80,7 +80,6 @@
         "strip_v": false,
         "exe_name": "starship"
     },
-
     "rg": {
         "repo_url": "https://github.com/BurntSushi/ripgrep",
         "doc": "recursively searches directories for a regex pattern while respecting your gitignore rules",

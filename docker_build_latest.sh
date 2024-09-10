@@ -6,6 +6,8 @@
 IMAGE_NAME="alim-slim"
 DATE=$(date +%y-%m)
 echo $DATE
+docker rmi "statistician/$IMAGE_NAME:latest"
+docker rmi "statistician/$IMAGE_NAME:$DATE"
 
 
 docker build --no-cache --file ./Dockerfile --progress=plain -t "statistician/$IMAGE_NAME:latest" .
@@ -13,10 +15,13 @@ docker build --no-cache --file ./Dockerfile --progress=plain -t "statistician/$I
 # building with no cache since docker is unaware of changes in clode due to dynamic code like curl URL | bash etc.
 
 # docker login --username statistician --password <password>
-docker push "statistician/$IMAGE_NAME:latest"
-
-docker tag "statistician/$IMAGE_NAME:latest" "statistician/$IMAGE_NAME:$DATE"
-docker push "statistician/$IMAGE_NAME:$DATE"
+read -p "Do you want to push to the registry? (y/n): " answer
+if [ "$answer" != "${answer#[Yy]}" ] ;then
+    docker push "statistician/$IMAGE_NAME:latest"
+    docker tag "statistician/$IMAGE_NAME:latest" "statistician/$IMAGE_NAME:$DATE"
+    docker push "statistician/$IMAGE_NAME:$DATE"
+else
+    echo "Push to registry aborted."
 
 echo "try it out using: docker run -it statistician/$IMAGE_NAME:latest"
 # Use this to clean instances: docker ps --all -q | xargs docker rm
