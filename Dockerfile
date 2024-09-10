@@ -48,6 +48,9 @@ RUN cd $HOME && \
 RUN /app/setup_linux/symlinks.sh
 RUN /app/setup_linux/devapps.sh
 
+COPY ./src/machineconfig/settings/shells/ipy/profiles/default/startup/playext.py /root/.ipython/profile_default/startup/playext.py
+
+
 RUN touch /root/.bash_history
 # McFly complains about missing history file
 
