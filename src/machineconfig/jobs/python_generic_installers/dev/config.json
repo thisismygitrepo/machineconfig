@@ -53,7 +53,7 @@
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "",
         "strip_v": false,
-        "exe_name": "devcontainer"
+        "exe_name": "bw"
     },
     "OBS Background removal": {
         "repo_url": "https://github.com/royshil/obs-backgroundremoval",

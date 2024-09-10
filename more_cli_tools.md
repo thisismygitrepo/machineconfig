@@ -35,6 +35,9 @@
 
 
 # Files
+* https://github.com/root-gg/plik?tab=readme-ov-file#cli-client
+* https://github.com/dutchcoders/transfer.sh/
+
 * https://github.com/magic-wormhole/magic-wormhole
 
 * https://github.com/nextcloud/server

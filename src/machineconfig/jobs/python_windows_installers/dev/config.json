@@ -6,5 +6,5 @@
         "filename_template_linux_amd_64": "",
         "strip_v": true,
         "exe_name": "bw.exe"
-        }
+    }
 }

@@ -1,5 +1,6 @@
 
-"""CC
+"""
+CC
 """
 
 from crocodile.file_management import P
@@ -22,14 +23,12 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
         pwd: str = str(os.environ.get("DECRYPTION_PASSWORD"))
     else:
         pwd = getpass.getpass(prompt="Enter decryption password: ")
-
     if url is None:
         if os.environ.get("SHARE_URL") is not None:
             url = os.environ.get("SHARE_URL")
             assert url is not None
         else:
             url = input("Enter share url: ")
-
     from rich.progress import Progress
     with Progress(transient=True) as progress:
         _task = progress.add_task("Downloading ... ", total=None)
@@ -69,18 +68,20 @@ def arg_parser() -> None:
     args_obj = Args(**args_dict)
     Struct(args_obj.__dict__).print(as_config=True, title="CLI config")
 
-    if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")): return get_securely_shared_file(url=source, folder=target)
-    if args_obj.rel2home is True and args_obj.root is None: args_obj.root = "myhome"
+    if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")):
+        return get_securely_shared_file(url=source, folder=target)
+    if args_obj.rel2home is True and args_obj.root is None:
+        args_obj.root = "myhome"
 
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
 
     assert args_obj.key is None, "Key is not supported yet."
     if cloud in source:
         P(target).from_cloud(cloud=cloud, remotepath=source.replace(cloud + ":", ""),
-                                unzip=args_obj.zip, decrypt=args_obj.encrypt, pwd=args_obj.pwd,
-                                overwrite=args_obj.overwrite,
-                                rel2home=args_obj.rel2home, os_specific=args_obj.os_specific, root=args_obj.root, strict=False,
-                                )
+                            unzip=args_obj.zip, decrypt=args_obj.encrypt, pwd=args_obj.pwd,
+                            overwrite=args_obj.overwrite,
+                            rel2home=args_obj.rel2home, os_specific=args_obj.os_specific, root=args_obj.root, strict=False,
+                            )
     elif cloud in target:
         res = P(source).to_cloud(cloud=cloud, remotepath=target.replace(cloud + ":", ""),
                                     zip=args_obj.zip, encrypt=args_obj.encrypt, pwd=args_obj.pwd,

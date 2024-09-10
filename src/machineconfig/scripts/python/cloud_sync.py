@@ -35,7 +35,7 @@ class ArgsDefaults:
     pwd = None
 
 
-@dataclass(config=ConfigDict(extra="forbid", frozen=True))
+@dataclass(config=ConfigDict(extra="forbid", frozen=False))
 class Args():
     cloud: Optional[str] = None
 
