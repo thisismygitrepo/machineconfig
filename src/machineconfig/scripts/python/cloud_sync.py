@@ -98,7 +98,7 @@ def get_secure_share_cloud_config(interactive: bool = True) -> Args:
                pwd=pwd, encrypt=True,
                zip=True, overwrite=True, share=True,
                rel2home=True, root="myshare", os_specific=False,)
-    Struct(res.__dict__).print(as_config=True, title=f"⚠️ Using SecureShare cloud config")
+    Struct(res.__dict__).print(as_config=True, title="⚠️ Using SecureShare cloud config")
     return res
 
 
@@ -113,16 +113,25 @@ def find_cloud_config(path: P):
 
 
 def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str, str, str]:
+    config = args.config
+    root = args.root
+    rel2home = args.rel2home
+    pwd = args.pwd
+    encrypt = args.encrypt
+    zip_arg = args.zip
+    share = args.share
+    os_specific = args.os_specific
+
     if source.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in source
         # At the moment, this cloud.json defaults overrides the args and is activated only when source or target are just ":"
         # consider activating it by a flag, and also not not overriding explicitly passed args options.
-        assert ES not in target, f"Not Implemented here yet."
+        assert ES not in target, "Not Implemented here yet."
         path = absolute(target)
-        if args.config is None:
+        if config is None:
             maybe_config: Optional[Args] = find_cloud_config(path=path)
         else:
-            if args.config == "ss": maybe_config = get_secure_share_cloud_config()
-            else: maybe_config = Args.from_config(absolute(args.config))
+            if config == "ss": maybe_config = get_secure_share_cloud_config()
+            else: maybe_config = Args.from_config(absolute(config))
 
         if maybe_config is None:
             default_cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
@@ -131,33 +140,31 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         else:
             tmp = maybe_config
             source = f"{tmp.cloud}:" + source[1:]
-            args.root = tmp.root
-            args.rel2home = tmp.rel2home
-            args.pwd = tmp.pwd
-            args.encrypt = tmp.encrypt
-            args.zip = tmp.zip
-            args.share = tmp.share
-            # args.jh = 22
+            root = tmp.root
+            rel2home = tmp.rel2home
+            pwd = tmp.pwd
+            encrypt = tmp.encrypt
+            zip_arg = tmp.zip
+            share = tmp.share
 
     if target.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in target
-        assert ES not in source, f"Not Implemented here yet."
+        assert ES not in source, "Not Implemented here yet."
         path = absolute(source)
-        if args.config is None:
+        if config is None:
             maybe_config = find_cloud_config(path)
         else:
-            if args.config == "ss": maybe_config = get_secure_share_cloud_config()
-            else: maybe_config = Args.from_config(absolute(args.config))
+            if config == "ss": maybe_config = get_secure_share_cloud_config()
+            else: maybe_config = Args.from_config(absolute(config))
 
         if maybe_config is not None:
             tmp = maybe_config
             target = f"{tmp.cloud}:" + target[1:]
-            args.root = tmp.root
-            args.rel2home = tmp.rel2home
-            args.pwd = tmp.pwd
-            args.encrypt = tmp.encrypt
-            args.zip = tmp.zip
-            args.share = tmp.share
-
+            root = tmp.root
+            rel2home = tmp.rel2home
+            pwd = tmp.pwd
+            encrypt = tmp.encrypt
+            zip_arg = tmp.zip
+            share = tmp.share
         else:
             default_cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             print(f"⚠️ Using default cloud: {default_cloud}")
@@ -170,37 +177,37 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         if len(source_parts) > 1 and source_parts[1] == ES:  # the source path is to be inferred from target.
             assert ES not in target, f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised."
             target_obj = absolute(target)
-            remote_path = target_obj.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
+            remote_path = target_obj.get_remote_path(os_specific=os_specific, root=root, rel2home=rel2home, strict=False)
             source = f"{cloud}:{remote_path.as_posix()}"
-
         else:  # source path is mentioned, target? maybe.
             if target == ES:  # target path is to be inferred from source.
-                raise NotImplementedError(f"There is no .get_local_path method yet")
+                raise NotImplementedError("There is no .get_local_path method yet")
             else:
                 target_obj = absolute(target)
-        if args.zip and ".zip" not in source: source += ".zip"
-        if args.encrypt and ".enc" not in source: source += ".enc"
+        if zip_arg and ".zip" not in source: source += ".zip"
+        if encrypt and ".enc" not in source: source += ".enc"
 
     elif ":" in target and (target[1] != ":" if len(target) > 1 else True):  # avoid the case of "C:/"
         target_parts: list[str] = target.split(":")
         cloud = target.split(":")[0]
 
         if len(target_parts) > 1 and target_parts[1] == ES:  # the target path is to be inferred from source.
-            assert ES not in source, f"You can't use $ in both source and target. Cyclical inference dependency arised."
+            assert ES not in source, "You can't use $ in both source and target. Cyclical inference dependency arised."
             source_obj = absolute(source)
-            remote_path = source_obj.get_remote_path(os_specific=args.os_specific, root=args.root, rel2home=args.rel2home, strict=False)
+            remote_path = source_obj.get_remote_path(os_specific=os_specific, root=root, rel2home=rel2home, strict=False)
             target = f"{cloud}:{remote_path.as_posix()}"
         else:  # target path is mentioned, source? maybe.
             target = str(target)
             if source == ES:
-                raise NotImplementedError(f"There is no .get_local_path method yet")
+                raise NotImplementedError("There is no .get_local_path method yet")
             else:
                 source_obj = absolute(source)
-        if args.zip and ".zip" not in target: target += ".zip"
-        if args.encrypt and ".enc" not in target: target += ".enc"
+        if zip_arg and ".zip" not in target: target += ".zip"
+        if encrypt and ".enc" not in target: target += ".enc"
     else:
         raise ValueError("Either source or target must be a remote path (i.e. machine:path)")
     Struct({"cloud": cloud, "source": str(source), "target": str(target)}).print(as_config=True, title="CLI Resolution")
+    _ = pwd, encrypt, zip_arg, share
     return cloud, str(source), str(target)
 
 

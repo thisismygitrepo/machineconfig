@@ -3,6 +3,7 @@
 Utils
 """
 
+from crocodile.core import List as L
 from crocodile.file_management import P, randstr, PLike
 from crocodile.meta import Terminal
 # import crocodile.environment as env
@@ -30,7 +31,6 @@ T = TypeVar("T")
 
 
 def choose_cloud_interactively() -> str:
-    from crocodile.core import List as L
     print("Listing Remotes ... ")
     tmp = Terminal().run("rclone listremotes").op_if_successfull_or_default(strict_returcode=False)
     # consider this: remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()

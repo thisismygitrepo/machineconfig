@@ -42,7 +42,7 @@ def scan(path: P, pct: float = 0.0):
                 repeat_counter += 1
                 if repeat_counter > 2:
                     raise ValueError(f"Error in scanning {path}") from ex
-                print(f"Error in scanning, trying again.")
+                print("Error in scanning, trying again.")
             time.sleep(30)
     df = pd.DataFrame(anal.results.values())
     malicious = []
@@ -105,7 +105,7 @@ def main() -> None:
     res_df["app_url"] = app_url
     res_df.to_csv(APP_SUMMARY_PATH.with_suffix(".csv").create(parents_only=True), index=False)
     APP_SUMMARY_PATH.with_suffix(".md").write_text(res_df.to_markdown())
-    print(f"Safety Report:")
+    print("Safety Report:")
     print(res_df)
 
 

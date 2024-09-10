@@ -67,14 +67,14 @@ def arg_parser() -> None:
     source: str = args_dict.pop("source")
     target: str = args_dict.pop("target")
     args_obj = Args(**args_dict)
-    Struct(args_obj.__dict__).print(as_config=True, title=f"CLI config")
+    Struct(args_obj.__dict__).print(as_config=True, title="CLI config")
 
     if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")): return get_securely_shared_file(url=source, folder=target)
     if args_obj.rel2home is True and args_obj.root is None: args_obj.root = "myhome"
 
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
 
-    assert args_obj.key is None, f"Key is not supported yet."
+    assert args_obj.key is None, "Key is not supported yet."
     if cloud in source:
         P(target).from_cloud(cloud=cloud, remotepath=source.replace(cloud + ":", ""),
                                 unzip=args_obj.zip, decrypt=args_obj.encrypt, pwd=args_obj.pwd,

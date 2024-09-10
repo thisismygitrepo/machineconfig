@@ -1,8 +1,0 @@
-
-warp-cli registration delete
-sleep 2
-warp-cli registration new
-warp-cli connect
-sleep 1
-warp-cli status
-curl api.ipify.org
