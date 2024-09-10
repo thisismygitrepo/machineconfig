@@ -15,8 +15,8 @@ echo "FINISHED modifying .ssh folder attributes."
 
 
 # https://askubuntu.com/questions/265982/unable-to-start-sshd
-sudo apt purge openssh-server -y
-sudo apt install openssh-server -y
+sudo nala purge openssh-server -y
+sudo nala install openssh-server -y
 # sudo service ssh status
 # sudo nano /etc/ssh/sshd_config
 # sudo service ssh restart
