@@ -6,10 +6,10 @@ from crocodile.file_management import P, Read
 from crocodile.core import randstr
 from crocodile.meta import Terminal
 
-from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, write_shell_script, get_shell_file_executing_python_script
+from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, write_shell_script, get_shell_file_executing_python_script, get_shell_script
 import argparse
 import platform
-from typing import Optional
+from typing import Optional, Literal
 # import sys
 # import subprocess
 
@@ -23,13 +23,13 @@ def get_wt_cmd(wd1: P, wd2: P) -> str:
 
 
 def get_zellij_cmd(wd1: P, wd2: P) -> str:
-    lines = [f""" zellij action new-tab --name gitdiff""",
-             f"""zellij action new-pane --direction down --name local --cwd ./data """,
-             f"""zellij action write-chars "cd '{wd1}'; git status" """,
-             f"""zellij action move-focus up; zellij action close-pane """,
-             f"""zellij action new-pane --direction down --name remote --cwd code """,
-             f"""zellij action write-chars "cd '{wd2}' """,
-             f"""git status" """
+    lines = [""" zellij action new-tab --name gitdiff""",
+             """zellij action new-pane --direction down --name local --cwd ./data """,
+             """zellij action write-chars "cd '{wd1}'; git status" """,
+             """zellij action move-focus up; zellij action close-pane """,
+             """zellij action new-pane --direction down --name remote --cwd code """,
+             """zellij action write-chars "cd '{wd2}' """,
+             """git status" """
     ]
     return "; ".join(lines)
 
@@ -44,20 +44,22 @@ def args_parser():
 
     parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
     parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {randstr()}")
-    parser.add_argument("--skip_confirmation", "-s", help="Skip confirmation.", action="store_true", default=False)
+    # parser.add_argument("--skip_confirmation", "-s", help="Skip confirmation.", action="store_true", default=False)
     # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
-    parser.add_argument("--no_push", "-u", help="push to reomte.", action="store_true")  # default is False
+    # parser.add_argument("--no_push", "-u", help="push to reomte.", action="store_true")  # default is False
     args = parser.parse_args()
 
     # if args.share:
     #     from machineconfig.scripts.cloud.dotfiles import put
     #     put()
     #     return None
-    main(cloud=args.cloud, path=args.path, message=args.message, skip_confirmation=args.skip_confirmation, pwd=args.pwd, push=not args.no_push)
+    main(cloud=args.cloud, path=args.path, message=args.message, action=args.action)
 
 
-def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optional[str] = None, skip_confirmation: bool = False, pwd: Optional[str] = None, push: bool = True):
+def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optional[str] = None,
+         action: Literal["ask", "pushLocalMerge", "overwriteLocal", "InspectRepos", "RemoveLocalRclone"] = "ask",
+         pwd: Optional[str] = None):
     if cloud is None:
         try:
             cloud_resolved = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
@@ -103,52 +105,66 @@ echo '-> Fetching originEnc remote.'
 git pull originEnc master
 
 """
-    suffix = '.ps1' if platform.system() == 'Windows' else '.sh'
-    res = Terminal().run(f". {P.tmpfile(suffix=suffix).write_text(script)}", shell="powershell").capture().print()
+    shell_path = write_shell_script(program=script)
+    res = Terminal().run(f". {shell_path}", shell="powershell").capture().print()
 
     if res.is_successful(strict_err=True, strict_returcode=True):
         print("\n", "Pull succeeded, removing originEnc, the local copy of remote & pushing merged repo_root to remote ... ")
         repo_remote_root.delete(sure=True)
         from git.remote import Remote
         Remote.remove(repo_local_obj, "originEnc")
-        if push:
-            repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
+        repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
     else:
-        print(f"Failed to pull, keeping local copy of remote at {repo_remote_root} ... ")
+        print(f"Failed to merge with no errors, keeping local copy of remote at {repo_remote_root} ... ")
 
-        if push:
-            if skip_confirmation: resp = "y"
-            else: resp = input(f"Would you like to proceed syncing `{repo_local_root}` to `{cloud_resolved}` by pushing local changes to remote and deleting local copy of remote? y/[n] ") or "n"
-        else: resp = "n"
-
-        if resp.lower() == "y":
-            delete_remote_repo_copy_and_push_local(remote_repo=repo_remote_root.to_str(), local_repo=repo_local_root.to_str(), cloud=cloud_resolved)
-        else:
-            program = f"""
+        # ================================================================================
+        program_1 = f"""
 from machineconfig.scripts.python.cloud_repo_sync import delete_remote_repo_copy_and_push_local as func
 func(remote_repo=r'{repo_remote_root.to_str()}', local_repo=r'{repo_local_root.to_str()}', cloud=r'{cloud_resolved}')
 """
-            shell_file = get_shell_file_executing_python_script(python_script=program)
-            print(f"When ready, use this snippet: \n. {shell_file}")
-            print(f"""
-Or, if you want to delete local repo and replace with remote, run the following bash commands:
-          
+        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1)
+        print(f"Delete remote copy and push local: {shell_file_1}")
+
+        # ================================================================================
+
+        program_2 = f"""
 rm -rfd {repo_local_root}
 mv {repo_remote_root} {repo_local_root}
+"""
 
-This might be useful too:
-rm ~/dotfiles/creds/rclone/rclone.conf; cp ~/.config/machineconfig/remote/dotfiles/creds/rclone/rclone.conf ~/dotfiles/creds/rclone
+        shell_file_2 = get_shell_script(shell_script=program_2)
+        print("Delete local repo and replace it with remote copy:", shell_file_2)
+        # ================================================================================
 
-""")
-            if platform.system() == "Windows":
-                program = get_wt_cmd(wd1=repo_local_root, wd2=repo_remote_root)
-                write_shell_script(program=program, execute=True)
-                return None
-            elif platform.system() == "Linux":
-                program = get_zellij_cmd(wd1=repo_local_root, wd2=repo_remote_root)
-                write_shell_script(program=program, execute=True)
-                return None
-            else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
+        program_3 = f"""
+from machineconfig.scripts.python.cloud_repo_sync import inspect_repos as func
+func(repo_local_root=r'{repo_local_root.to_str()}', repo_remote_root=r'{repo_remote_root.to_str()}')
+"""
+        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3)
+        print(f"Inspect repos: {shell_file_3}")
+        # ================================================================================
+
+
+        program_4 = """
+rm ~/dotfiles/creds/rclone/rclone.conf
+cp ~/.config/machineconfig/remote/dotfiles/creds/rclone/rclone.conf ~/dotfiles/creds/rclone
+"""
+        shell_file_4 = get_shell_script(shell_script=program_4)
+        print("Remove problematic rclone file from repor and replace with remote:", shell_file_4)
+        # ================================================================================
+
+        match action:
+            case "ask":
+                pass
+            case "pushLocalMerge":
+                pass
+            case "overwriteLocal":
+                pass
+            case "InspectRepos":
+                pass
+            case "RemoveLocalRclone":
+                pass
+
 
 
 def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cloud: str):
@@ -160,6 +176,19 @@ def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cl
     try: Remote.remove(Repo(repo_root_path), "originEnc")
     except Exception: pass  # type: ignore
     repo_root_path.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
+
+
+def inspect_repos(repo_local_root: str, repo_remote_root: str):
+    if platform.system() == "Windows":
+        program = get_wt_cmd(wd1=P(repo_local_root), wd2=P(repo_local_root))
+        write_shell_script(program=program, execute=True)
+        return None
+    elif platform.system() == "Linux":
+        program = get_zellij_cmd(wd1=P(repo_local_root), wd2=P(repo_remote_root))
+        write_shell_script(program=program, execute=True)
+        return None
+    else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
+
 
 
 if __name__ == "__main__":

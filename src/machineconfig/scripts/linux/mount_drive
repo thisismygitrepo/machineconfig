@@ -124,3 +124,5 @@ else
     echo "❌ There was an error while mounting the drive. Please check your input and try again."
     exit 1
 fi
+
+echo "If Mount failed, try: sudo fuser -v /dev/"$device"; sudo kill piddd"

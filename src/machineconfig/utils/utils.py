@@ -244,6 +244,14 @@ deactivate || true
     return shell_script
 
 
+def get_shell_script(shell_script: str):
+    if platform.system() == "Linux": suffix = ".sh"
+    elif platform.system() == "Windows": suffix = ".ps1"
+    else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
+    shell_file = P.tmp().joinpath("tmp_scripts", "shell", randstr() + suffix).create(parents_only=True).write_text(shell_script)
+    return shell_file
+
+
 def get_shell_file_executing_python_script(python_script: str, ve_name: str = "ve", verbose: bool = True):
     if verbose:
         python_script = f"""
@@ -255,10 +263,7 @@ except ImportError: print(code)
 """ + python_script
     python_file = P.tmp().joinpath("tmp_scripts", "python", randstr() + ".py").create(parents_only=True).write_text(python_script)
     shell_script = get_shell_script_executing_python_file(python_file=python_file.to_str(), ve_name=ve_name)
-    if platform.system() == "Linux": suffix = ".sh"
-    elif platform.system() == "Windows": suffix = ".ps1"
-    else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
-    shell_file = P.tmp().joinpath("tmp_scripts", "shell", randstr() + suffix).create(parents_only=True).write_text(shell_script)
+    shell_file = get_shell_script(shell_script)
     return shell_file
 
 
@@ -271,8 +276,8 @@ def write_shell_script(program: str, desc: str = "", preserve_cwd: bool = True, 
     if display:
         print(f"Executing {PROGRAM_PATH}")
         print_code(code=program, lexer="shell", desc=desc)
-    if platform.system() == 'Windows': PROGRAM_PATH.create(parents_only=True).write_text(program)
-    else: PROGRAM_PATH.create(parents_only=True).write_text(f"{program}")
+
+    PROGRAM_PATH.create(parents_only=True).write_text(program)
     if execute: Terminal().run(f". {PROGRAM_PATH}", shell="powershell").print_if_unsuccessful(desc="Executing shell script", strict_err=True, strict_returncode=True)
     return None
 
@@ -342,7 +347,7 @@ def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool = False):
     if res is False and update is True:
         print(f"Updating dotfiles because {dtm} < {datetime.fromisoformat(commit_dtm)}")
         from machineconfig.scripts.python.cloud_repo_sync import main
-        main(cloud=None, path=dotfiles_path, push=False)
+        main(cloud=None, path=dotfiles_path)
     return res
 
 

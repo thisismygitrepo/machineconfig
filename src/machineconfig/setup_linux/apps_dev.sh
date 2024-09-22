@@ -96,11 +96,25 @@ yes '' | sed 3q; echo "----------------------------- installing samba ----------
 
 yes '' | sed 3q; echo "----------------------------- installing cloudflared Warp --------------------------------"; yes '' | sed 3q
 # as per Ubuntu of https://pkg.cloudflareclient.com/
+get_ubuntu_base_version() {
+    local mint_codename=$(lsb_release -cs)
+    case "$mint_codename" in
+        "wilma")
+            echo "noble"
+            ;;
+        "virginia")
+            echo "jammy"
+            ;;
+        *)
+            echo "$mint_codename"
+            ;;
+    esac
+}
+ubuntu_version=$(get_ubuntu_base_version)
 sudo apt-get install gnupg  # no available on debian
 curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
-echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ Noble main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $ubuntu_version main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
 sudo apt-get update && sudo apt-get install cloudflare-warp -y
-# The Trick: we replaced $(lsb_release -cs) with Noble because Mint22 is based on Ubuntu24, thus we need Noble instead of Wilma. with Mint21, we replace virginia with Jammy as per the installation website options of Ubuntus supported.
 
 
 yes '' | sed 3q; echo "----------------------------- installing graphviz ----------------------------"; yes '' | sed 3q
