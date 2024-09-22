@@ -124,8 +124,6 @@ from machineconfig.scripts.python.cloud_repo_sync import delete_remote_repo_copy
 func(remote_repo=r'{repo_remote_root.to_str()}', local_repo=r'{repo_local_root.to_str()}', cloud=r'{cloud_resolved}')
 """
         shell_file_1 = get_shell_file_executing_python_script(python_script=program_1)
-        print(f"Delete remote copy and push local: {shell_file_1}")
-
         # ================================================================================
 
         program_2 = f"""
@@ -134,7 +132,6 @@ mv {repo_remote_root} {repo_local_root}
 """
 
         shell_file_2 = get_shell_script(shell_script=program_2)
-        print("Delete local repo and replace it with remote copy:", shell_file_2)
         # ================================================================================
 
         program_3 = f"""
@@ -142,7 +139,7 @@ from machineconfig.scripts.python.cloud_repo_sync import inspect_repos as func
 func(repo_local_root=r'{repo_local_root.to_str()}', repo_remote_root=r'{repo_remote_root.to_str()}')
 """
         shell_file_3 = get_shell_file_executing_python_script(python_script=program_3)
-        print(f"Inspect repos: {shell_file_3}")
+
         # ================================================================================
 
 
@@ -151,8 +148,12 @@ rm ~/dotfiles/creds/rclone/rclone.conf
 cp ~/.config/machineconfig/remote/dotfiles/creds/rclone/rclone.conf ~/dotfiles/creds/rclone
 """
         shell_file_4 = get_shell_script(shell_script=program_4)
-        print("Remove problematic rclone file from repor and replace with remote:", shell_file_4)
         # ================================================================================
+
+        print(f"• {'Delete remote copy and push local:':75} 👉 {shell_file_1}")
+        print(f"• {'Delete local repo and replace it with remote copy:':75} 👉 {shell_file_2}")
+        print(f"• {'Inspect repos:':75} 👉 {shell_file_3}")
+        print(f"• {'Remove problematic rclone file from repo and replace with remote:':75} 👉 {shell_file_4}")
 
         match action:
             case "ask":
