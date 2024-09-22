@@ -48,6 +48,7 @@ def args_parser():
     # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
     # parser.add_argument("--no_push", "-u", help="push to reomte.", action="store_true")  # default is False
+    parser.add_argument("--action", "-a", help="Action to take if merge fails.", choices=["ask", "pushLocalMerge", "overwriteLocal", "InspectRepos", "RemoveLocalRclone"], default="ask")
     args = parser.parse_args()
 
     # if args.share:
