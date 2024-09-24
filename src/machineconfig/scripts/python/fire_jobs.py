@@ -19,6 +19,14 @@ from typing import Callable, Any, Optional
 import argparse
 
 
+def search_for_files_of_interest(path_obj: P):
+    py_files = path_obj.search(pattern="*.py", not_in=["__init__.py"], r=True).list
+    ps_files = path_obj.search(pattern="*.ps1", r=True).list
+    sh_files = path_obj.search(pattern="*.sh", r=True).list
+    files = py_files + ps_files + sh_files
+    return files
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("path",     nargs='?', type=str, help="The directory containing the jobs", default=".")
@@ -56,11 +64,14 @@ def main() -> None:
 
     if path_obj.is_dir():
         print(f"Seaching recursively for all python file in directory `{path_obj}`")
-        py_files = path_obj.search(pattern="*.py", not_in=["__init__.py"], r=True).list
-        ps_files = path_obj.search(pattern="*.ps1", r=True).list
-        sh_files = path_obj.search(pattern="*.sh", r=True).list
-        files = py_files + ps_files + sh_files
-
+        if path_obj.joinpath(".venv").exists():
+            path_objects = path_obj.search("*").list
+            path_objects.remove(path_obj.joinpath(".venv"))
+            files: list[P] = []
+            for a_path_obj in path_objects:
+                files += search_for_files_of_interest(a_path_obj)
+        else:
+            files = search_for_files_of_interest(path_obj)
         choice_file = choose_one_option(options=files, fzf=True)
         choice_file = P(choice_file)
     else:

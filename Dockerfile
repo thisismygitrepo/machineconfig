@@ -59,7 +59,8 @@ RUN rm -rfd /root/tmp_results
 #     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/cache/apt/archives/* /var/log/* /usr/share/doc /usr/share/man /usr/share/info /usr/share/locale
 
 RUN rm -rfd /root/.cache/pip && \
-    rm -rfd /root/.cache/uv
+    rm -rfd /root/.cache/uv && \
+    rm -rfd /app
 # This saves 200MB
 
 
