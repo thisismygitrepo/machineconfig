@@ -33,6 +33,9 @@ config = {this = '~/.streamlit/config.toml', to_this = 'LIBRARY_ROOT/settings/st
 config = {this = '~/.procs.toml', to_this = 'LIBRARY_ROOT/settings/procs/.procs.toml'}
 config_again = {this = '~/.config/procs/config.toml', to_this = 'LIBRARY_ROOT/settings/procs/.procs.toml'}
 
+[rofi_linux]
+config = {this = '~/.config/rofi/config.rasi', to_this = 'LIBRARY_ROOT/settings/rofi/config.rasi'}
+
 [yazi_windows]
 yazi = {this = '~/AppData/Roaming/yazi/config/yazi.toml', to_this = 'LIBRARY_ROOT/settings/yazi/yazi.toml'}
 keymap = {this = '~/AppData/Roaming/yazi/config/keymap.toml', to_this = 'LIBRARY_ROOT/settings/yazi/keymap.toml'}
