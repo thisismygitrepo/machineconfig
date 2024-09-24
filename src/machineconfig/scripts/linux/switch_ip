@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo "🔁 Switching IP ... "
-echo "Current IP: $(curl api.ipify.org)"
+echo "Current IP: $(curl -s api.ipify.org)"
 echo "🔻 Deactivating current connection ... "
 warp-cli registration delete
 # echo "✅ Deactivated current connection ... "
@@ -17,6 +17,6 @@ sleep 2
 echo "🔍 Checking status ... "
 warp-cli status
 echo "🔍 Checking IP ... "
-curl api.ipify.org
+curl -s api.ipify.org
 echo "✅ Done ... "
 
