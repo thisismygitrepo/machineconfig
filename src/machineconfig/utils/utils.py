@@ -71,12 +71,19 @@ def sanitize_path(a_path: P) -> P:
 def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
     """Look up current directory for file name that matches the passed substring."""
     search_root_obj = search_root if search_root is not None else P.cwd()
+    search_root_obj = search_root_obj.absolute()
     print(f"Searching for {sub_string} in {search_root_obj}")
-    search_results = search_root_obj.absolute().search(f"*{sub_string}*.py", r=True)
+
+    if search_root_obj.joinpath(".venv").exists():
+        search_root_objects = search_root_obj.search("*", not_in=[".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__"])
+        search_results: L[P] = L([a_search_root_obj.search(f"*{sub_string}*.py", r=True) for a_search_root_obj in search_root_objects]).reduce(lambda x, y: x + y)  # type: ignore
+    else:
+        search_results = search_root_obj.search(f"*{sub_string}*.py", r=True)
+
     if len(search_results) == 1:
         path_obj = search_results.list[0]
     elif len(search_results) > 1:
-        choice = choose_one_option(msg="Search results are ambiguous or non-existent", options=search_results.list, fzf=True)
+        choice = choose_one_option(msg="Search results are ambiguous or non-existent, choose manually:", options=search_results.list, fzf=True)
         path_obj = P(choice)
     else:
         # let's do a final retry with sub_string.small()
