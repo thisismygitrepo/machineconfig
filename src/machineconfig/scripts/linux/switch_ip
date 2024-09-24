@@ -14,9 +14,7 @@ echo "🔗 Connecting ... "
 warp-cli connect
 echo "😴 Sleeping for 2 seconds ... "
 sleep 2
-echo "🔍 Checking status ... "
+echo "🔍 Checking status of warp ... "
 warp-cli status
-echo "🔍 Checking IP ... "
-curl -s api.ipify.org
+echo "🔍 Checking new IP ... $(curl -s api.ipify.org) "
 echo "✅ Done ... "
-
