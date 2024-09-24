@@ -83,12 +83,15 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
     if len(search_results) == 1:
         path_obj = search_results.list[0]
     elif len(search_results) > 1:
-        choice = choose_one_option(msg="Search results are ambiguous or non-existent, choose manually:", options=search_results.list, fzf=True)
+        msg = "Search results are ambiguous or non-existent, choose manually:"
+        print(msg)
+        choice = choose_one_option(msg=msg, options=search_results.list, fzf=True)
         path_obj = P(choice)
     else:
         # let's do a final retry with sub_string.small()
         sub_string_small = sub_string.lower()
         if sub_string_small != sub_string:
+            print("Retrying with small letters")
             return match_file_name(sub_string=sub_string_small)
         from git.repo import Repo
         from git.exc import InvalidGitRepositoryError
@@ -96,6 +99,7 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
             repo = Repo(search_root_obj, search_parent_directories=True)
             repo_root_dir = P(repo.working_dir)
             if repo_root_dir != search_root_obj:  # may be user is in a subdirectory of the repo root, try with root dir.
+                print("Retrying with root repo instea of cwd")
                 return match_file_name(sub_string=sub_string, search_root=repo_root_dir)
             else:
                 search_root_obj = repo_root_dir
@@ -104,6 +108,7 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
 
         if check_tool_exists(tool_name="fzf"):
             try:
+                print("Trying with raw fzf ...")
                 search_res = subprocess.run(f"cd '{search_root_obj}'; fzf --filter={sub_string}", stdout=subprocess.PIPE, text=True, check=True, shell=True).stdout.split("\n")[:-1]
             except subprocess.CalledProcessError as cpe:
                 print(f"Failed at fzf search with {sub_string} in {search_root_obj}.\n{cpe}")
