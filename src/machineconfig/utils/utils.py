@@ -109,11 +109,13 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
         if check_tool_exists(tool_name="fzf"):
             try:
                 print("Trying with raw fzf ...")
-                search_res = subprocess.run(f"cd '{search_root_obj}'; fzf --filter={sub_string}", stdout=subprocess.PIPE, text=True, check=True, shell=True).stdout.split("\n")[:-1]
+                fzf_cmd = f"cd '{search_root_obj}'; fd --type f --strip-cwd-prefix | fzf --filter={sub_string}"
+                search_res = subprocess.run(fzf_cmd, stdout=subprocess.PIPE, text=True, check=True, shell=True).stdout.split("\n")[:-1]
             except subprocess.CalledProcessError as cpe:
                 print(f"Failed at fzf search with {sub_string} in {search_root_obj}.\n{cpe}")
                 msg = f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. No search results\n{'--' * 50}\n"
                 raise FileNotFoundError(msg) from cpe
+
             if len(search_res) == 1: return search_root_obj.joinpath(search_res[0])
             else:
                 try:
@@ -123,6 +125,7 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
                     msg = f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. No search results\n{'--' * 50}\n"
                     raise FileNotFoundError(msg) from cpe
                 return search_root_obj.joinpath(res)
+
         msg = f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. No search results\n{'--' * 50}\n"
         raise FileNotFoundError(msg)
     print(f"\n{'--' * 50}\n🔗 Matched `{sub_string}` ➡️ `{path_obj}`\n{'--' * 50}\n")
