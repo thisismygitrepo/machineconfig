@@ -82,6 +82,7 @@ def main() -> None:
     apps_paths_raw.print()
     positive_pct: list[Optional[float]] = []
     detailed_results: list[dict[str, Optional[pd.DataFrame]]] = []
+
     for idx, app in enumerate(apps_paths_raw):
         try: res = scan(path=app, pct=idx / len(apps_paths_raw) * 100)
         except ValueError as ve:

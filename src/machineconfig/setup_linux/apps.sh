@@ -69,8 +69,5 @@ yes '' | sed 3q; echo "----------------------------- installing git ------------
 sudo nala install git net-tools htop nano -y || true  # for version control
 
 
-/home/linuxbrew/.linuxbrew/bin/brew install neovim
-
-
 yes '' | sed 3q; echo "----------------------------- installing chafa ----------------------------"; yes '' | sed 3q
 sudo nala install chafa -y  # like viu, one can ascii-ize images.

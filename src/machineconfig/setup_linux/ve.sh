@@ -26,8 +26,8 @@ if ! command -v $mypy &> /dev/null; then
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
     sudo add-apt-repository ppa:deadsnakes/ppa -y
-    sudo apt update
-    sudo apt install -y $mypy
+    sudo nala update
+    sudo nala install -y $mypy
     #    nix-env -iA "nixpkgs.python$py_version_no_dot"
 fi
 
@@ -38,7 +38,7 @@ if ! dpkg -s $mypy-venv > /dev/null 2>&1; then  # python-venv is not a command, 
     echo "🤔 $mypy-venv could not be found, installing ..."
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
-    sudo apt install -y $mypy-venv
+    sudo nala install -y $mypy-venv
 fi
 
 
@@ -48,7 +48,7 @@ if ! command -v pip &> /dev/null; then
     echo "🤔 pip could not be found, installing ..."
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
-    sudo apt install -y python3-pip
+    sudo nala install -y python3-pip
 fi
 
 
@@ -58,7 +58,7 @@ if ! dpkg -s python3-tk > /dev/null 2>&1; then
     echo "🤔 python3-tk could not be found, installing ..."
     echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     echo ''
-    sudo apt install -y python3-tk  # without this, plt.show() will return UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    sudo nala install -y python3-tk  # without this, plt.show() will return UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
 fi
 
 # TOOD: if inside wsl, you also need xming to be installed and running. otherwise, plt.show returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running. xserver?

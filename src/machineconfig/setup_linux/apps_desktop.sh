@@ -8,6 +8,7 @@
 # desktop enviroments.
 # sudo nala install gnome-session -y  # gnome 0.3GB
 # sudo nala install ubuntu-gnome-desktop -y  # 1.2GB
+/home/linuxbrew/.linuxbrew/bin/brew install neovim
 
 
 flatpak install flathub org.mozilla.Thunderbird

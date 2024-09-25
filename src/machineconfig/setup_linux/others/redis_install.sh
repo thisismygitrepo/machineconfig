@@ -24,5 +24,5 @@ curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyr
 sudo chmod 644 /usr/share/keyrings/redis-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $ubuntu_version main" | sudo tee /etc/apt/sources.list.d/redis.list
 sudo nala update
-sudo nala install redis
+sudo nala install redis -y
 

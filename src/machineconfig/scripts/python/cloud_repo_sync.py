@@ -106,6 +106,7 @@ echo '-> Fetching originEnc remote.'
 git pull originEnc master
 
 """
+
     shell_path = get_shell_script(shell_script=script)
     res = Terminal().run(f". {shell_path}", shell="powershell").capture().print()
 

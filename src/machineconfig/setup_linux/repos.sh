@@ -14,11 +14,11 @@ fi
 cd ~/code/crocodile || exit
 
 if [ -n "$CROCODILE_EXRA" ]; then
-  pip install -e .[$CROCODILE_EXRA]
+  uv pip install -e .[$CROCODILE_EXRA]
 else
-  pip install -e .
+  uv pip install -e .
 fi
 
 cd ~/code/machineconfig || exit
-pip install -e .
+uv pip install -e .
 cd ~ || exit
