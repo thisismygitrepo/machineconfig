@@ -56,7 +56,7 @@ sudo nala install sqlite3 -y || true  # sqlite vscode extension requires this to
 yes '' | sed 3q; echo "----------------------------- installing nvm of nodejs --------------------------"; yes '' | sed 3q
 # according to: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm its best to use nvm manager
 # https://github.com/nvm-sh/nvm?tab=readme-ov-file#install--update-script
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 # shellcheck disable=SC2155
 # this code below allows to use nvm straight away without having to restart the terminal
 export NVM_DIR="$HOME/.nvm"

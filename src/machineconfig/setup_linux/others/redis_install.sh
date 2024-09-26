@@ -1,4 +1,4 @@
-
+#!/usr/bin/bash
 
 # as per https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/
 # sudo apt-get install lsb-release curl gpg
