@@ -7,7 +7,6 @@ sudo sed -i 's/#HandleLidSwitchExternalPower=suspend/HandleLidSwitchExternalPowe
 
 # https://askubuntu.com/questions/972215/a-start-job-is-running-for-wait-for-network-to-be-configured-ubuntu-server-17-1
 # This is the network config written by 'subiquity'
-
 network:
   ethernets:
     enp0s31f6:
