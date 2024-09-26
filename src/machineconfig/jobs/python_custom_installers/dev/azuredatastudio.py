@@ -20,11 +20,10 @@ def main(version: Optional[str] = None):
     _ = version
     if platform.system() == "Linux": return f"""
 
-cd ~/Downloads
-curl https://azuredatastudio-update.azurewebsites.net/latest/linux-x64/stable -o ./azuredatastudio-linux-x64.tar.gz
-tar -xvf ./azuredatastudio-linux-x64.tar.gz
-echo 'export PATH="$PATH:~/azuredatastudio-linux-x64"' >> ~/.bashrc
-source ~/.bashrc
+rm -rfd $HOME/.azuredatastudio
+cd $HOME/Downloads
+curl -L https://azuredatastudio-update.azurewebsites.net/latest/linux-deb-x64/stable -o ./azuredatastudio-linux-x64.deb
+sudo dpkg -i ./azuredatastudio-linux-x64.deb
 
 """
     elif platform.system() == "Windows": return "winget install -e --id Microsoft.AzureDataStudio"

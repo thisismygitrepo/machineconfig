@@ -16,12 +16,12 @@ cd ~/code/crocodile
 
 if (-not (Test-Path variable:CROCODILE_EXTRA)) {
     Write-Host "⚠️ Using default CROCODILE_EXTRA"
-    pip install -e .
+    uv pip install -e .
 } else { 
     Write-Host "➡️ CROCODILE_EXTRA = $CROCODILE_EXTRA"
-    pip install -e .[$CROCODILE_EXTRA]
+    uv pip install -e .[$CROCODILE_EXTRA]
 }
 
 cd ~/code/machineconfig
-pip install -e .
+uv pip install -e .
 echo "Finished setting up repos"

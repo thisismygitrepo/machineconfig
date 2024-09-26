@@ -54,9 +54,12 @@ uv venv $HOME/venvs/{checkout_ve} --python {py_version} --python-preference only
 
 uv pip install pip
 
+
+{install_editable_packages}
+
 cd {version_root}
 uv pip install -r requirements_{sys}.txt
-{install_editable_packages}
+
 """
     if sys == "windows":
         version_root_obj.joinpath("install_env.ps1").write_text(install_env)
