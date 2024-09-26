@@ -6,79 +6,88 @@
 from tqdm import tqdm
 from crocodile.core import List as L
 from machineconfig.utils.utils import LIBRARY_ROOT, choose_multiple_options
-from machineconfig.utils.installer import get_installers, Installer, install_all
+from machineconfig.utils.installer import get_installers, install_all, Installer, get_all_dicts
 from platform import system
-from typing import Any, Optional, Literal, TypeAlias
+from typing import Any, Optional, Literal, TypeAlias, get_args
 
 
-WHICH: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstallers", "OtherDevApps", "PrecheckedCloudInstaller"]
+WHICH_CAT: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstallers", "OtherDevApps", "PrecheckedCloudInstaller"]
 
 
 def main(which: Optional[str] = None):
+    if which is not None and which in get_args(WHICH_CAT):
+        return get_programs_by_category(program_name=which)
+
+    if which is not None:
+        kv = {}
+        for k, v in get_all_dicts(system=system()).items():
+            kv.update(v)
+        if which not in kv:
+            raise ValueError(f"{which=} not found in {kv.keys()}")
+        print(f"Installing {which}", kv[which])
+        installer = Installer.from_dict(name=which, d=kv[which])
+        print(installer)
+        program = installer.install_robust(version=None)  # finish the task
+        program = "echo 'Finished Installation'"  # write an empty program
+        return program
+
     sys = system()
     installers = get_installers(dev=False, system=sys)  # + get_installers(dev=True, system=sys)
     default = "AllEssentials"
     options = ["SystemInstallers", "OtherDevApps", "EssentialsAndOthers", "PrecheckedCloudInstaller", default]
     options = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")] + options
 
-    if which is not None:
-        return get_program(program_name=which, options=options, installers=list(installers))
-
     program_names = choose_multiple_options(msg="", options=options, header="CHOOSE DEV APP", default=str(default))
     total_program = ""
     for which in program_names:
         assert isinstance(which, str), f"program_name is not a string: {which}"
-        total_program += "\n" + get_program(program_name=which, options=options, installers=list(installers))
+        total_program += "\n" + get_programs_by_category(program_name=which, options=options, installers=list(installers))
     return total_program
 
 
-def get_program(program_name: str, options: list[str], installers: list[Installer]):
-    if program_name == "AllEssentials" or program_name == "EssentialsAndOthers":
-        installers_ = get_installers(dev=False, system=system())
-        if program_name == "EssentialsAndOthers":
-            installers_ += get_installers(dev=True, system=system())
-        install_all(installers=L(installers))
-        program = ""
-    elif program_name == "SystemInstallers":
-        if system() == "Windows": options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text())
-        elif system() == "Linux":
-            options_system_1 = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps_dev.sh").read_text())
-            options_system_2 = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps.sh").read_text())
-            options_system = {**options_system_1, **options_system_2}
-        else: raise NotImplementedError(f"System {system()} not supported")
-        program_names = choose_multiple_options(msg="", options=sorted(list(options_system.keys())), header="CHOOSE DEV APP")
-        program = ""
-        for name in program_names:
-            sub_program = options_system[name]
-            if sub_program.startswith("#winget"): sub_program = sub_program[1:]
-            program += "\n" + sub_program
-    elif program_name == "OtherDevApps":
-        installers = get_installers(dev=True, system=system())
-        options__: list[str] = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")]
-        program_names = choose_multiple_options(msg="", options=sorted(options__) + ["all"], header="CHOOSE DEV APP")
-        if "all" in program_names: program_names = options__
-        program = ""
-        print(f"Installing:")
-        L(program_names).print()
-        for name in program_names:
-            try:
-                idx = options__.index(name)
-            except ValueError as ve:
-                print(f"{name=}")
-                print(f"{options__=}")
-                raise ve
-            print(f"Installing {name}")
-            sub_program = installers[idx].install_robust(version=None)  # finish the task
-    elif program_name == "PrecheckedCloudInstaller":
-        from machineconfig.jobs.python.check_installations import PrecheckedCloudInstaller
-        ci = PrecheckedCloudInstaller()
-        ci.download_safe_apps(name="AllEssentials")
-        program = ""
-    else:
-        idx = options.index(program_name)
-        print(installers[idx])
-        program = installers[idx].install_robust(version=None)  # finish the task
-        program = "echo 'Finished Installation'"  # write an empty program
+def get_programs_by_category(program_name: WHICH_CAT):
+    match program_name:
+        case "AllEssentials" | "EssentialsAndOthers":
+            installers_ = get_installers(dev=False, system=system())
+            if program_name == "EssentialsAndOthers":
+                installers_ += get_installers(dev=True, system=system())
+            install_all(installers=L(installers_))
+            program = ""
+        case "SystemInstallers":
+            if system() == "Windows": options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text())
+            elif system() == "Linux":
+                options_system_1 = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps_dev.sh").read_text())
+                options_system_2 = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps.sh").read_text())
+                options_system = {**options_system_1, **options_system_2}
+            else: raise NotImplementedError(f"System {system()} not supported")
+            program_names = choose_multiple_options(msg="", options=sorted(list(options_system.keys())), header="CHOOSE DEV APP")
+            program = ""
+            for name in program_names:
+                sub_program = options_system[name]
+                if sub_program.startswith("#winget"): sub_program = sub_program[1:]
+                program += "\n" + sub_program
+        case "OtherDevApps":
+            installers = get_installers(dev=True, system=system())
+            options__: list[str] = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")]
+            program_names = choose_multiple_options(msg="", options=sorted(options__) + ["all"], header="CHOOSE DEV APP")
+            if "all" in program_names: program_names = options__
+            program = ""
+            print("Installing:")
+            L(program_names).print()
+            for name in program_names:
+                try:
+                    idx = options__.index(name)
+                except ValueError as ve:
+                    print(f"{name=}")
+                    print(f"{options__=}")
+                    raise ve
+                print(f"Installing {name}")
+                sub_program = installers[idx].install_robust(version=None)  # finish the task
+        case  "PrecheckedCloudInstaller":
+            from machineconfig.jobs.python.check_installations import PrecheckedCloudInstaller
+            ci = PrecheckedCloudInstaller()
+            ci.download_safe_apps(name="AllEssentials")
+            program = ""
     return program
 
 

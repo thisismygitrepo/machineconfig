@@ -18,7 +18,7 @@ config_dict = {
 
 def main(version: Optional[str] = None):
     _ = version
-    if platform.system() == "Linux": return f"""
+    if platform.system() == "Linux": return """
 
 rm -rfd $HOME/.azuredatastudio
 cd $HOME/Downloads

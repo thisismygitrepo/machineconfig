@@ -82,7 +82,7 @@ short: `curl bit.ly/cfgcroshellwindows -L | iex` OR `(iwr bit.ly/cfgcroshellwind
 # Linux Setup
 With `sudo` access, run the following: (short `curl bit.ly/cfgalllinux -L | bash`)
 ```bash
-export package_manager="apt"
+export package_manager="nala"
 export package_manager="nix"
 
 # apps  # short: `curl bit.ly/cfgappslinux -L | bash`

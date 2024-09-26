@@ -9,13 +9,14 @@ from crocodile.meta import Terminal
 from machineconfig.utils.utils import INSTALL_VERSION_ROOT, INSTALL_TMP_DIR, LIBRARY_ROOT, check_tool_exists
 
 # from dataclasses import dataclass
-from typing import Optional, Any
+from typing import Optional, Any, TypeAlias, Literal
 import platform
 # import os
 
 
 LINUX_INSTALL_PATH = '/usr/local/bin'
 WINDOWS_INSTALL_PATH = '~/AppData/Local/Microsoft/WindowsApps'
+CATEGORY: TypeAlias = Literal["OS_SPECIFIC", "OS_GENERIC", "CUSTOM", "OS_SPECIFIC_DEV", "OS_GENERIC_DEV", "CUSTOM_DEV"]
 
 
 def find_move_delete_windows(downloaded_file_path: P, exe_name: Optional[str] = None, delete: bool = True, rename_to: Optional[str] = None):
@@ -113,8 +114,12 @@ class Installer:
 
     def install(self, version: Optional[str]):
         if self.repo_url == "CUSTOM":
+
             import machineconfig.jobs.python_custom_installers as python_custom_installers
             installer_path = P(python_custom_installers.__file__).parent.joinpath(self.exe_name + ".py")
+            if not installer_path.exists():
+                installer_path = P(python_custom_installers.__file__).parent.joinpath("dev", self.exe_name + ".py")
+
             import runpy
             print(f"Executing func `main` from `{installer_path}`to get the program to run")
             program: str = runpy.run_path(str(installer_path), run_name=None)['main'](version=version)
@@ -172,7 +177,7 @@ class Installer:
             elif platform.system() == "Linux":
                 file_name = self.filename_template_linux_amd_64.format(version_to_be_installed_stripped)
             else: raise NotImplementedError(f"📦️ System {platform.system()} not implemented")
-            print(f"📦️ File name", file_name)
+            print("📦️ File name", file_name)
             download_link = release_url.joinpath(file_name)
         print(f"📦️ Downloading {self.name}: ", download_link.as_url_str())
         downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
@@ -264,27 +269,57 @@ def get_installed_cli_apps():
 
 
 def get_installers(system: str, dev: bool) -> list[Installer]:
+    res_all = get_all_dicts(system=system)
+    if not dev:
+        del res_all["CUSTOM_DEV"]
+        del res_all["OS_SPECIFIC_DEV"]
+        del res_all["OS_GENERIC_DEV"]
+    res_final = {}
+    for _k, v in res_all.items():
+        res_final.update(v)
+    return [Installer.from_dict(d=vd, name=k) for k, vd in res_final.items()]
+
+
+def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
     if system == "Windows": import machineconfig.jobs.python_windows_installers as os_specific_installer
     else: import machineconfig.jobs.python_linux_installers as os_specific_installer
+
     import machineconfig.jobs.python_generic_installers as generic_installer
     path_os_specific = P(os_specific_installer.__file__).parent
     path_os_generic = P(generic_installer.__file__).parent
+
+    path_os_specific_dev = path_os_specific.joinpath("dev")
+    path_os_generic_dev = path_os_generic.joinpath("dev")
+
+    res_final: dict[CATEGORY, dict[str, dict[str, Any]]] = {}
+    res_final["OS_SPECIFIC"] = Read.json(path=path_os_specific.joinpath("config.json"))
+    res_final["OS_GENERIC"] = Read.json(path=path_os_generic.joinpath("config.json"))
+    res_final["OS_SPECIFIC_DEV"] = Read.json(path=path_os_specific_dev.joinpath("config.json"))
+    res_final["OS_GENERIC_DEV"] = Read.json(path=path_os_generic_dev.joinpath("config.json"))
+
     path_custom_installer = path_os_generic.with_name("python_custom_installers")
-    if dev:
-        path_os_specific = path_os_specific.joinpath("dev")
-        path_os_generic = path_os_generic.joinpath("dev")
-    res1: dict[str, Any] = Read.json(path=path_os_specific.joinpath("config.json"))
-    res2: dict[str, Any] = Read.json(path=path_os_generic.joinpath("config.json"))
-    res2.update(res1)
+    path_custom_installer_dev = path_custom_installer.joinpath("dev")
+
     import runpy
+    res_custom: dict[str, dict[str, Any]] = {}
     for item in path_custom_installer.search("*.py", r=False, not_in=["__init__"]):
         try:
             config_dict = runpy.run_path(str(item), run_name=None)['config_dict']
-            res2[item.stem] = config_dict
+            res_custom[item.stem] = config_dict
         except Exception as ex:
             print(f"Failed to load {item}: {ex}")
 
-    return [Installer.from_dict(d=vd, name=k) for k, vd in res2.items()]
+    res_custom_dev: dict[str, dict[str, Any]] = {}
+    for item in path_custom_installer_dev.search("*.py", r=False, not_in=["__init__"]):
+        try:
+            config_dict = runpy.run_path(str(item), run_name=None)['config_dict']
+            res_custom_dev[item.stem] = config_dict
+        except Exception as ex:
+            print(f"Failed to load {item}: {ex}")
+
+    res_final["CUSTOM"] = res_custom
+    res_final["CUSTOM_DEV"] = res_custom_dev
+    return res_final
 
 
 def install_all(installers: L[Installer], safe: bool = False, jobs: int = 10, fresh: bool = False):
