@@ -33,8 +33,7 @@ def main(which: Optional[WHICH_CAT | str] = None):
         return program
 
     # interactive installation
-    sys = system()
-    installers = get_installers(dev=False, system=sys) + get_installers(dev=True, system=sys)
+    installers = [Installer.from_dict(d=vd, name=name) for __kat, vds in get_all_dicts(system=system()).items() for name, vd in vds.items()]
     options = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")] + list(get_args(WHICH_CAT))
     program_names = choose_multiple_options(msg="", options=options, header="CHOOSE DEV APP", default="AllEssentials")
 
