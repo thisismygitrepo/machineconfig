@@ -15,10 +15,10 @@ WHICH_CAT: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemIn
 
 
 def main(which: Optional[str] = None):
-    if which is not None and which in get_args(WHICH_CAT):
+    if which is not None and which in get_args(WHICH_CAT):  # install by category
         return get_programs_by_category(program_name=which)
 
-    if which is not None:
+    if which is not None:  # install by name
         kv = {}
         for k, v in get_all_dicts(system=system()).items():
             kv.update(v)
@@ -31,17 +31,15 @@ def main(which: Optional[str] = None):
         program = "echo 'Finished Installation'"  # write an empty program
         return program
 
+    # interactive installation
     sys = system()
     installers = get_installers(dev=False, system=sys)  # + get_installers(dev=True, system=sys)
-    default = "AllEssentials"
-    options = ["SystemInstallers", "OtherDevApps", "EssentialsAndOthers", "PrecheckedCloudInstaller", default]
-    options = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")] + options
-
-    program_names = choose_multiple_options(msg="", options=options, header="CHOOSE DEV APP", default=str(default))
+    options = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")] + list(get_args(WHICH_CAT))
+    program_names = choose_multiple_options(msg="", options=options, header="CHOOSE DEV APP", default="AllEssentials")
     total_program = ""
     for which in program_names:
         assert isinstance(which, str), f"program_name is not a string: {which}"
-        total_program += "\n" + get_programs_by_category(program_name=which, options=options, installers=list(installers))
+        total_program += "\n" + get_programs_by_category(program_name=which)
     return total_program
 
 
@@ -53,6 +51,7 @@ def get_programs_by_category(program_name: WHICH_CAT):
                 installers_ += get_installers(dev=True, system=system())
             install_all(installers=L(installers_))
             program = ""
+
         case "SystemInstallers":
             if system() == "Windows": options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text())
             elif system() == "Linux":
@@ -66,6 +65,7 @@ def get_programs_by_category(program_name: WHICH_CAT):
                 sub_program = options_system[name]
                 if sub_program.startswith("#winget"): sub_program = sub_program[1:]
                 program += "\n" + sub_program
+
         case "OtherDevApps":
             installers = get_installers(dev=True, system=system())
             options__: list[str] = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")]
