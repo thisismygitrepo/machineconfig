@@ -11,16 +11,17 @@ from platform import system
 from typing import Any, Optional, Literal, TypeAlias, get_args
 
 
-WHICH_CAT: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstallers", "OtherDevApps", "PrecheckedCloudInstaller"]
+WHICH_CAT: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstallers", "PrecheckedCloudInstaller"]
 
 
-def main(which: Optional[str] = None):
+def main(which: Optional[WHICH_CAT | str] = None):
+
     if which is not None and which in get_args(WHICH_CAT):  # install by category
         return get_programs_by_category(program_name=which)
 
     if which is not None:  # install by name
         kv = {}
-        for k, v in get_all_dicts(system=system()).items():
+        for _category, v in get_all_dicts(system=system()).items():
             kv.update(v)
         if which not in kv:
             raise ValueError(f"{which=} not found in {kv.keys()}")
@@ -33,13 +34,18 @@ def main(which: Optional[str] = None):
 
     # interactive installation
     sys = system()
-    installers = get_installers(dev=False, system=sys)  # + get_installers(dev=True, system=sys)
+    installers = get_installers(dev=False, system=sys) + get_installers(dev=True, system=sys)
     options = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")] + list(get_args(WHICH_CAT))
     program_names = choose_multiple_options(msg="", options=options, header="CHOOSE DEV APP", default="AllEssentials")
+
     total_program = ""
-    for which in program_names:
-        assert isinstance(which, str), f"program_name is not a string: {which}"
-        total_program += "\n" + get_programs_by_category(program_name=which)
+    for an_idx, a_program_name in enumerate(program_names):
+        print(a_program_name)
+        if a_program_name in get_args(WHICH_CAT):
+            total_program += "\n" + get_programs_by_category(program_name=which)
+        else:
+            an_installer = installers[options.index(a_program_name)]
+            total_program += "\n" + an_installer.install_robust(version=None)  # finish the task
     return total_program
 
 
