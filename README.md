@@ -44,12 +44,10 @@ With elevated `PowerShell`, run the following: (short `curl bit.ly/cfgallwindows
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1 | Invoke-Expression
 # virtual enviornment  # short (iwr bit.ly/cfgvewindows).Content | iex OR `curl bit.ly/cfgvewindows -L | iex`
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
-# dev repos  # short `(iwr bit.ly/cfgreposwindows).Content | iex` OR `curl bit.ly/cfgreposwindows -L | iex`
-Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1 | Invoke-Expression
 # symlinks # short `(iwr bit.ly/cfgsymlinkswindows).Content | iex` OR `curl bit.ly/cfgsymlinkswindows -L | iex`
-. ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
+. $HOME/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
 # devapps:
-~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
+$HOME/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
 # pwsh and wt settings: (iwr bit.ly/cfgwt).Content | iex
 iwr https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/wt_and_pwsh.ps1 | iex
 
@@ -58,10 +56,9 @@ iwr https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/mac
 ```shell
 (iwr bit.ly/cfgappswindows).Content | iex
 (iwr bit.ly/cfgvewindows).Content | iex
-(iwr bit.ly/cfgreposwindows).Content | iex
-. ~/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
+. $HOME/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
 (iwr bit.ly/cfgwt).Content | iex
-. ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
+. $HOME/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
 ```
 
 ###### Setup SSH connection:
