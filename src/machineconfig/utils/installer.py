@@ -15,7 +15,7 @@ import platform
 
 
 LINUX_INSTALL_PATH = '/usr/local/bin'
-WINDOWS_INSTALL_PATH = '~/AppData/Local/Microsoft/WindowsApps'
+WINDOWS_INSTALL_PATH = '$HOME/AppData/Local/Microsoft/WindowsApps'
 CATEGORY: TypeAlias = Literal["OS_SPECIFIC", "OS_GENERIC", "CUSTOM", "OS_SPECIFIC_DEV", "OS_GENERIC_DEV", "CUSTOM_DEV"]
 
 
@@ -67,7 +67,8 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
 
 
 class Installer:
-    def __init__(self, repo_url: str, name: str, doc: str, filename_template_windows_amd_64: str, filename_template_linux_amd_64: str, strip_v: bool, exe_name: str):
+    def __init__(self, repo_url: str, name: str, doc: str, filename_template_windows_amd_64: str, filename_template_linux_amd_64: str,
+                 strip_v: bool, exe_name: str):
         self.repo_url: str = repo_url
         self.name: str = name
         self.doc: str = doc
@@ -107,10 +108,10 @@ class Installer:
             self.install(version=version)
             new_version_cli = Terminal().run(f"{self.exe_name} --version").op.replace("\n", "")
             if old_version_cli == new_version_cli: return f"📦️ 😑 {self.exe_name}, same version: {old_version_cli}"
-            else: return f"📦️ 🤩 {self.exe_name} updated from {old_version_cli} === to ===> {new_version_cli}"
+            else: return f""" echo "📦️ 🤩 {self.exe_name} updated from {old_version_cli} === to ===> {new_version_cli}" """
         except Exception as ex:
             print(ex)
-            return f"📦️ Failed at {self.exe_name} with {ex}"
+            return f""" echo "📦️ Failed at {self.exe_name} with {ex}" """
 
     def install(self, version: Optional[str]):
         if self.repo_url == "CUSTOM":

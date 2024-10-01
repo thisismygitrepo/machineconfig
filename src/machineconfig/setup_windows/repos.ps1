@@ -12,7 +12,7 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 git clone https://github.com/thisismygitrepo/crocodile.git --depth 4
 git clone https://github.com/thisismygitrepo/machineconfig --depth 4  # Choose browser-based authentication.
 
-cd ~/code/crocodile
+cd $HOME/code/crocodile
 
 if (-not (Test-Path variable:CROCODILE_EXTRA)) {
     Write-Host "⚠️ Using default CROCODILE_EXTRA"
