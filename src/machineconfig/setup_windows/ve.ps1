@@ -47,11 +47,14 @@ git clone https://github.com/thisismygitrepo/crocodile.git --depth 4
 git clone https://github.com/thisismygitrepo/machineconfig --depth 4  # Choose browser-based authentication.
 
 cd $HOME/code/crocodile
+if (-not $env:VIRTUAL_ENV) {
+    & "$HOME/venvs/ve/Scripts/Activate.ps1" -ErrorAction Stop
+}
 
 if (-not (Test-Path variable:CROCODILE_EXTRA)) {
     Write-Host "⚠️ Using default CROCODILE_EXTRA"
     & "$HOME\.cargo\bin\uv.exe" pip install -e .
-} else { 
+} else {
     Write-Host "➡️ CROCODILE_EXTRA = $CROCODILE_EXTRA"
     & "$HOME\.cargo\bin\uv.exe" pip install -e .[$CROCODILE_EXTRA]
 }
