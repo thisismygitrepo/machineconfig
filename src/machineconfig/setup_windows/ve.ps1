@@ -15,9 +15,9 @@ $venvPath = "$HOME\venvs"
 if (-not (Test-Path -Path $venvPath)) {
     New-Item -ItemType Directory -Path $venvPath | Out-Null
 }
-Set-Location -Path $venvPath
 
 # delete ~/venvs/$ve_name and its contents if it exists
+Set-Location -Path $venvPath
 if (Test-Path -Path $ve_name) {
     Write-Output ''
     Write-Output '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
@@ -32,12 +32,8 @@ if (-not (Test-Path -Path "$HOME\.cargo\bin\uv.exe")) {
     irm https://astral.sh/uv/install.ps1 | iex
 }
 
-if (-not (Get-Command uv -ErrorAction SilentlyContinue)) {
-    Write-Output "uv command not found in PATH, adding to PATH..."
-    $env:PATH = "$HOME\.cargo\bin;$env:PATH"
-}
 
-"$HOME\.cargo\bin\uv.exe" venv "$venvPath\$ve_name" --python 3.11 --python-preference only-managed
+& "$HOME\.cargo\bin\uv.exe" venv "$venvPath\$ve_name" --python 3.11 --python-preference only-managed
 
 
 cd ~
@@ -54,12 +50,12 @@ cd $HOME/code/crocodile
 
 if (-not (Test-Path variable:CROCODILE_EXTRA)) {
     Write-Host "⚠️ Using default CROCODILE_EXTRA"
-    uv pip install -e .
+    & "$HOME\.cargo\bin\uv.exe" pip install -e .
 } else { 
     Write-Host "➡️ CROCODILE_EXTRA = $CROCODILE_EXTRA"
-    uv pip install -e .[$CROCODILE_EXTRA]
+    & "$HOME\.cargo\bin\uv.exe" pip install -e .[$CROCODILE_EXTRA]
 }
 
 cd ~/code/machineconfig
-uv pip install -e .
+& "$HOME\.cargo\bin\uv.exe" pip install -e .
 echo "Finished setting up repos"
