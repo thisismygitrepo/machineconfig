@@ -26,3 +26,4 @@ echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] ht
 
 sudo nala update && sudo nala install cloudflare-warp -y
 
+warp-cli registration new

@@ -4,7 +4,7 @@
 
 
 from crocodile.file_management import P
-from machineconfig.profile.create import symlink
+from machineconfig.profile.create import symlink_func
 from machineconfig.utils.utils import LIBRARY_ROOT, REPO_ROOT
 import argparse
 
@@ -28,7 +28,7 @@ def main():
         new_path = REPO_ROOT.joinpath(junction)
     else: new_path = P(args.dest).expanduser().absolute().create().joinpath(orig_path.name)
 
-    symlink(this=orig_path, to_this=new_path, prioritize_to_this=args.overwrite)
+    symlink_func(this=orig_path, to_this=new_path, prioritize_to_this=args.overwrite)
 
     print(f"Map completed. To enshrine this mapping, add the following line to the mapper.toml file:")
     print(f"nano {LIBRARY_ROOT}/symlinks/mapper.toml")

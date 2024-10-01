@@ -9,7 +9,7 @@ This script Takes away all config files from the computer, place them in one dir
 from crocodile.environment import system  # ProgramFiles, WindowsApps  # , exe
 from crocodile.meta import Terminal
 from crocodile.file_management import P
-from machineconfig.utils.utils import symlink, LIBRARY_ROOT, REPO_ROOT, display_options
+from machineconfig.utils.utils import symlink_func, symlink_copy, LIBRARY_ROOT, REPO_ROOT, display_options
 from machineconfig.profile.shell import create_default_shell_profile
 # import os
 import subprocess
@@ -21,14 +21,6 @@ ERROR_LIST: list[Any] = []  # append to this after every exception captured.
 CONFIG_ROOT = LIBRARY_ROOT.parent.parent.joinpath("settings")
 OTHER_SYSTEM = "windows" if system == "Linux" else "linux"
 SYSTEM = system.lower()
-
-
-# =================== SYMLINKS ====================================
-
-
-def symlink_contents(source_dir: P, target_dir: P, overwrite: bool = True):
-    for a_target in target_dir.expanduser().search("*"):
-        symlink(this=source_dir.joinpath(a_target.name), to_this=a_target, prioritize_to_this=overwrite)
 
 
 def main_symlinks(choice: Optional[str] = None):
@@ -74,10 +66,12 @@ def main_symlinks(choice: Optional[str] = None):
             this = P(file_map['this'])
             to_this = P(file_map['to_this'].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()))
             if "contents" in file_map:
-                try: symlink_contents(source_dir=this, target_dir=to_this, overwrite=overwrite)
+                try:
+                    for a_target in to_this.expanduser().search("*"):
+                        symlink_func(this=this.joinpath(a_target.name), to_this=a_target, prioritize_to_this=overwrite)
                 except Exception as ex: print("Config error: ", program_key, file_key, "missing keys 'this ==> to_this'.", ex)
             else:
-                try: symlink(this=this, to_this=to_this, prioritize_to_this=overwrite)
+                try: symlink_func(this=this, to_this=to_this, prioritize_to_this=overwrite)
                 except Exception as ex: print("Config error: ", program_key, file_key, "missing keys 'this ==> to_this'.", ex)
 
             if program_key == "ssh" and system == "Linux":  # permissions of ~/dotfiles/.ssh should be adjusted
@@ -96,6 +90,20 @@ def main_symlinks(choice: Optional[str] = None):
 
 
 def main(choice: Optional[str] = None):
+    console = Console()
+    print("\n")
+    console.rule("CREATING SYMLINKS")
+    main_symlinks(choice=choice)
+
+    print("\n")
+    console.rule("CREATING SYMLINKS")
+    create_default_shell_profile()
+
+
+
+def main2(choice: Optional[str] = None):
+    symlink_func = symlink_copy
+    _ = symlink_func
     console = Console()
     print("\n")
     console.rule("CREATING SYMLINKS")
