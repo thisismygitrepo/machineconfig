@@ -37,7 +37,7 @@ if (-not (Get-Command uv -ErrorAction SilentlyContinue)) {
     $env:PATH = "$HOME\.cargo\bin;$env:PATH"
 }
 
-$HOME\.cargo\bin\uv.exe venv "$venvPath\$ve_name" --python 3.11 --python-preference only-managed
+"$HOME\.cargo\bin\uv.exe" venv "$venvPath\$ve_name" --python 3.11 --python-preference only-managed
 
 
 cd ~
