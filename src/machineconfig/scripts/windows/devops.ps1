@@ -8,7 +8,8 @@ if (Test-Path $op_script ) {
 
 # choose ve to use
 # . $PSScriptRoot/activate_ve.ps1 've'
-. "$HOME\scripts\activate_ve.ps1" ve
+# . "$HOME\scripts\activate_ve.ps1" ve
+. "$HOME\venvs\ve\activate_ve.ps1" ve
 
 # Locate the python script to run relative to the current directory (which might be a symlink)
 $script_root = (Get-Item $PSScriptRoot).Target  # resolves symlink if any
@@ -28,3 +29,4 @@ else
 
 
 deactivate -ErrorAction SilentlyContinue
+
