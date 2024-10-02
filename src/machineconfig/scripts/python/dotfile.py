@@ -16,7 +16,7 @@ def main():
     # FLAGS
     parser.add_argument("--overwrite", "-o", help="Overwrite.", action="store_true")  # default is False
     # optional
-    parser.add_argument("-d", "--dest", help=f"destination folder", default="")
+    parser.add_argument("-d", "--dest", help="destination folder", default="")
 
     args = parser.parse_args()
     orig_path = P(args.file).expanduser().absolute()
@@ -30,7 +30,7 @@ def main():
 
     symlink_func(this=orig_path, to_this=new_path, prioritize_to_this=args.overwrite)
 
-    print(f"Map completed. To enshrine this mapping, add the following line to the mapper.toml file:")
+    print("Map completed. To enshrine this mapping, add the following line to the mapper.toml file:")
     print(f"nano {LIBRARY_ROOT}/symlinks/mapper.toml")
     print(f"""
 [{new_path.parent.name}]

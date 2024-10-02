@@ -4,6 +4,7 @@
 $ErrorActionPreference = "Stop"
 
 # ================================= APPS ================================================
+winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --source winget --scope user  # Terminal is is installed by default on W 11
 #winget install --no-upgrade --name "Google Chrome" --Id "Google.Chrome" --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Brave" --Id Brave.Brave --source winget --scope user
 #winget install --no-upgrade --name "Chrome Remote Desktop Host" --Id "Google.ChromeRemoteDesktop" --source winget --scope user
