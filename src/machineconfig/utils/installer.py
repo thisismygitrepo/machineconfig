@@ -15,7 +15,7 @@ import platform
 
 
 LINUX_INSTALL_PATH = '/usr/local/bin'
-WINDOWS_INSTALL_PATH = '$HOME/AppData/Local/Microsoft/WindowsApps'
+WINDOWS_INSTALL_PATH = P.home().joinpath("AppData/Local/Microsoft/WindowsApps").__str__()
 CATEGORY: TypeAlias = Literal["OS_SPECIFIC", "OS_GENERIC", "CUSTOM", "OS_SPECIFIC_DEV", "OS_GENERIC_DEV", "CUSTOM_DEV"]
 
 
