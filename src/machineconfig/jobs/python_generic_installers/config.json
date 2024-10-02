@@ -67,7 +67,7 @@
     "nushell": {
         "repo_url": "https://github.com/nushell/nushell",
         "doc": "A cross-platform shell in Rust.",
-        "filename_template_windows_amd_64": "nu-{}-x86_64-windows-msvc-full.zip",
+        "filename_template_windows_amd_64": "nu-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "nu-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": true,
         "exe_name": "nu"
@@ -156,7 +156,7 @@
     "cpufetch": {
         "repo_url": "https://github.com/Dr-Noob/cpufetch",
         "doc": "cpufetch is a small yet fancy CPU architecture fetching tool, like fastfetch but for CPUs.",
-        "filename_template_windows_amd_64": "cpufetch.exe",
+        "filename_template_windows_amd_64": "cpufetch_x86-64_windows.exe",
         "filename_template_linux_amd_64": "cpufetch_x86_linux",
         "strip_v": false,
         "exe_name": "cpufetch"

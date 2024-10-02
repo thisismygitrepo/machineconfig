@@ -32,7 +32,7 @@
         "exe_name": "ntop.exe"
     },
     "devtunnel": {
-        "repo_url": "winget install Microsoft.devtunnel",
+        "repo_url": "winget install --Id Microsoft.devtunnel --scope user",
         "doc": "devtunnel secure introspectable tunnels to localhost",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "",
