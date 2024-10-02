@@ -59,6 +59,11 @@ iwr https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/mac
 . $HOME/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1
 (iwr bit.ly/cfgwt).Content | iex
 . $HOME/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
+
+& "$HOME\venvs\ve\Scripts\activate.ps1"
+python -m fire machineconfig.profile.create main2 --choice=all
+deactivate
+
 ```
 
 ###### Setup SSH connection:

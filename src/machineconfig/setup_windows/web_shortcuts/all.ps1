@@ -2,7 +2,8 @@
 # apps
 # Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1 | Invoke-Expression
 # virtual enviornment
-Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
+# Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1 | Invoke-Expression
+(iwr bit.ly/cfgvewindows).Content | iex
 
 # pwsh profile
 $machineconfig = (& "$HOME\venvs\ve\Scripts\python.exe" -c "print(__import__('machineconfig').__file__[:-12])")
@@ -14,4 +15,4 @@ $machineconfig = (& "$HOME\venvs\ve\Scripts\python.exe" -c "print(__import__('ma
 # deactivate
 
 # devapps:
-. "$machineconfig/setup_windows/devapps.ps1"
+. "$machineconfig\setup_windows\devapps.ps1"

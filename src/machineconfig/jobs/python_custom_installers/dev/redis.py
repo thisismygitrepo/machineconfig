@@ -12,7 +12,7 @@ config_dict = {
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "",
         "strip_v": False,
-        "exe_name": "redis"
+        "exe_name": "redis-cli"
 }
 
 
