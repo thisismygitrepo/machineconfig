@@ -11,7 +11,7 @@ $machineconfig = (& "$HOME\venvs\ve\Scripts\python.exe" -c "print(__import__('ma
 # OR: python -c "from machineconfig.setup_windows.wt_and_pwsh.setup_pwsh_theme import install_nerd_fonts; install_nerd_fonts()"
 
 # & "$HOME\venvs\ve\Scripts\activate.ps1"
-# python -m fire machineconfig.profile.create main2 --choice=all
+# python -m fire machineconfig.profile.create_hardlinks main --choice=all
 # deactivate
 
 # devapps:
