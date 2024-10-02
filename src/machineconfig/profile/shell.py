@@ -25,7 +25,7 @@ def create_default_shell_profile():
     if system == "Windows": source = f". {LIBRARY_ROOT.joinpath('settings/shells/pwsh/init.ps1').collapseuser().to_str().replace('~', '$HOME')}"
     else: source = f"source {LIBRARY_ROOT.joinpath('settings/shells/bash/init.sh').collapseuser().to_str().replace('~', '$HOME')}"
 
-    if source in profile: print(f"Skipping sourcing init script; already in profile")
+    if source in profile: print("Skipping sourcing init script; already in profile")
     else:
         profile += "\n" + source + "\n"
         if system == "Linux":
@@ -50,7 +50,7 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
     env_path = LIBRARY_ROOT.joinpath("profile/env_path.toml").readit()
     dirs = env_path[f'path_{system.lower()}']['extension']
 
-    print(f"Current PATH: ", "\n============")
+    print("Current PATH: ", "\n============")
     P.get_env().PATH.print()
 
     if choice is None:
@@ -62,7 +62,7 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
 
     addition = PathVar.append_temporarily(dirs=dirs)
     profile_path_obj = P(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
-    profile_path_obj.copy(name=profile_path_obj.name + f".orig_" + randstr())
+    profile_path_obj.copy(name=profile_path_obj.name + ".orig_" + randstr())
     profile_path_obj.modify_text(addition, addition, replace_line=False, notfound_append=True)
 
 

@@ -17,7 +17,7 @@ WHICH_CAT: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemIn
 def main(which: Optional[WHICH_CAT | str] = None):
 
     if which is not None and which in get_args(WHICH_CAT):  # install by category
-        return get_programs_by_category(program_name=which)
+        return get_programs_by_category(program_name=which)  # type: ignore
 
     if which is not None:  # install by name
         kv = {}
@@ -38,10 +38,10 @@ def main(which: Optional[WHICH_CAT | str] = None):
     program_names = choose_multiple_options(msg="", options=options, header="CHOOSE DEV APP", default="AllEssentials")
 
     total_program = ""
-    for an_idx, a_program_name in enumerate(program_names):
+    for _an_idx, a_program_name in enumerate(program_names):
         print(a_program_name)
         if a_program_name in get_args(WHICH_CAT):
-            total_program += "\n" + get_programs_by_category(program_name=which)
+            total_program += "\n" + get_programs_by_category(program_name=a_program_name)  # type: ignore
         else:
             an_installer = installers[options.index(a_program_name)]
             total_program += "\n" + an_installer.install_robust(version=None)  # finish the task
@@ -71,23 +71,24 @@ def get_programs_by_category(program_name: WHICH_CAT):
                 if sub_program.startswith("#winget"): sub_program = sub_program[1:]
                 program += "\n" + sub_program
 
-        case "OtherDevApps":
-            installers = get_installers(dev=True, system=system())
-            options__: list[str] = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")]
-            program_names = choose_multiple_options(msg="", options=sorted(options__) + ["all"], header="CHOOSE DEV APP")
-            if "all" in program_names: program_names = options__
-            program = ""
-            print("Installing:")
-            L(program_names).print()
-            for name in program_names:
-                try:
-                    idx = options__.index(name)
-                except ValueError as ve:
-                    print(f"{name=}")
-                    print(f"{options__=}")
-                    raise ve
-                print(f"Installing {name}")
-                sub_program = installers[idx].install_robust(version=None)  # finish the task
+        # case "OtherDevApps":
+        #     installers = get_installers(dev=True, system=system())
+        #     options__: list[str] = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")]
+        #     program_names = choose_multiple_options(msg="", options=sorted(options__) + ["all"], header="CHOOSE DEV APP")
+        #     if "all" in program_names: program_names = options__
+        #     program = ""
+        #     print("Installing:")
+        #     L(program_names).print()
+        #     for name in program_names:
+        #         try:
+        #             idx = options__.index(name)
+        #         except ValueError as ve:
+        #             print(f"{name=}")
+        #             print(f"{options__=}")
+        #             raise ve
+        #         print(f"Installing {name}")
+        #         sub_program = installers[idx].install_robust(version=None)  # finish the task
+
         case  "PrecheckedCloudInstaller":
             from machineconfig.jobs.python.check_installations import PrecheckedCloudInstaller
             ci = PrecheckedCloudInstaller()

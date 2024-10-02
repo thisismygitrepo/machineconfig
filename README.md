@@ -54,6 +54,7 @@ iwr https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/mac
 ```
 
 ```shell
+
 (iwr bit.ly/cfgappswindows).Content | iex
 (iwr bit.ly/cfgvewindows).Content | iex
 . $HOME/code/machineconfig/src/machineconfig/setup_windows/devapps.ps1

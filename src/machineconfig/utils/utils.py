@@ -263,7 +263,7 @@ def symlink_copy(this: P, to_this: P, prioritize_to_this: bool = True):
     try:
         # print(f"Linking {this} ➡️ {to_this}")
         # P(this).symlink_to(target=to_this, verbose=True, overwrite=True)
-        to_this.copy(to=this, overwrite=True, verbose=True)
+        to_this.copy(this, overwrite=True, verbose=True)
     except Exception as ex: print(f"Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
 
 
