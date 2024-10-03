@@ -49,8 +49,10 @@ if (-not (Get-Command git.exe -ErrorAction SilentlyContinue)) {
 git clone https://github.com/thisismygitrepo/crocodile.git --depth 4
 git clone https://github.com/thisismygitrepo/machineconfig --depth 4  # Choose browser-based authentication.
 
+
 cd $HOME\code\crocodile
 if (-not $env:VIRTUAL_ENV) {
+    echo "Activating virtual environmen @ $HOME\venvs\$ve_name"
     & "$HOME\venvs\$ve_name\Scripts\Activate.ps1" -ErrorAction Stop
 }
 
