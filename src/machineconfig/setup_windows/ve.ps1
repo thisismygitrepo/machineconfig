@@ -45,12 +45,13 @@ if (-not (Get-Command git.exe -ErrorAction SilentlyContinue)) {
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 }
 
+
 git clone https://github.com/thisismygitrepo/crocodile.git --depth 4
 git clone https://github.com/thisismygitrepo/machineconfig --depth 4  # Choose browser-based authentication.
 
 cd $HOME\code\crocodile
 if (-not $env:VIRTUAL_ENV) {
-    & "$HOME/venvs/ve/Scripts/Activate.ps1" -ErrorAction Stop
+    & "$HOME\venvs\ve\Scripts\Activate.ps1" -ErrorAction Stop
 }
 
 if (-not (Test-Path variable:CROCODILE_EXTRA)) {
