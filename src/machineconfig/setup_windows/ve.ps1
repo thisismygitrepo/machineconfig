@@ -51,7 +51,7 @@ git clone https://github.com/thisismygitrepo/machineconfig --depth 4  # Choose b
 
 cd $HOME\code\crocodile
 if (-not $env:VIRTUAL_ENV) {
-    & "$HOME\venvs\ve\Scripts\Activate.ps1" -ErrorAction Stop
+    & "$HOME\venvs\$ve_name\Scripts\Activate.ps1" -ErrorAction Stop
 }
 
 if (-not (Test-Path variable:CROCODILE_EXTRA)) {
