@@ -334,5 +334,14 @@
         "filename_template_linux_amd_64": "extratermqt-{}-linux-x64.zip",
         "strip_v": true,
         "exe_name": "extraterm"
+    },
+    "nushell": {
+        "repo_url": "https://github.com/nushell/nushell",
+        "doc": "A cross-platform shell in Rust.",
+        "filename_template_windows_amd_64": "nu-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "nu-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": true,
+        "exe_name": "nu"
     }
+
 }

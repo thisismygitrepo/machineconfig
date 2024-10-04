@@ -19,13 +19,13 @@ WORKDIR /app
 COPY ./src/machineconfig/setup_linux /app/setup_linux
 RUN chmod +x /app/setup_linux/*
 
-ENV package_manager="apt"
+ENV package_manager="nala"
 RUN /app/setup_linux/apps.sh
 RUN /app/setup_linux/apps_dev.sh
 
 # RUN /app/setup_linux/ve.sh
 # ENV PATH="/root/.cargo/bin:${PATH}"
-RUN /root/.cargo/bin/uv venv $HOME/venvs/ve --python 3.11.9 --python-preference only-managed
+RUN /root/.cargo/bin/uv venv $HOME/venvs/ve --python 3.11 --python-preference only-managed
 # Warning: does not come with pip
 RUN source $HOME/venvs/ve/bin/activate && \
     /root/.cargo/bin/uv pip install --upgrade pip
@@ -39,7 +39,6 @@ RUN cd $HOME && \
     git clone https://github.com/thisismygitrepo/machineconfig --depth 4 && \
     cd $HOME/code/crocodile && \
     source $HOME/venvs/ve/bin/activate && \
-    /root/.cargo/bin/uv pip install pip --upgrade && \
     /root/.cargo/bin/uv pip install -e . && \
     cd $HOME/code/machineconfig && \
     /root/.cargo/bin/uv pip install -e . && \
