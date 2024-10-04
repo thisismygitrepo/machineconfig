@@ -52,7 +52,7 @@ git clone https://github.com/thisismygitrepo/machineconfig --depth 4  # Choose b
 
 cd $HOME\code\crocodile
 if (-not $env:VIRTUAL_ENV) {
-    echo "Activating virtual environmen @ $HOME\venvs\$ve_name"
+    echo "Activating virtual environment @ $HOME\venvs\$ve_name"
     & "$HOME\venvs\$ve_name\Scripts\Activate.ps1" -ErrorAction Stop
 }
 
