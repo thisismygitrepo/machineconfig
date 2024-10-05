@@ -4,7 +4,7 @@
 if (Test-Path -Path "C:\Program Files\nodejs\npm") {
     Write-Output "npm already installed ✅"
 } else {
-    winget install --Id CoreyButler.NVMforWindows
+    winget install --Id CoreyButler.NVMforWindows --source winget --scope user
 }
 
 
