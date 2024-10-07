@@ -24,7 +24,7 @@ def main(version: Optional[str]):
     config_dict["repo_url"] = "https://github.com/espanso/espanso"
     if platform.system() == "Windows":
         pass
-    elif platform.system() == "Linux"
+    elif platform.system() == "Linux":
         import os
         env = os.environ["XDG_SESSION_TYPE"]
         if env == "wayland":
@@ -39,4 +39,9 @@ def main(version: Optional[str]):
     from machineconfig.utils.installer import Installer
     installer = Installer.from_dict(config_dict, name="espanso")
     installer.install(version=None)
-    return "echo 'espanso installed'"
+    config = """
+espanso service register
+espanso start
+espanso install actually-all-emojis
+    """
+    return config
