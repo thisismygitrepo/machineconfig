@@ -19,23 +19,33 @@ flatpak install com.tomjwatson.Emote  --noninteractive
 flatpak install flathub com.github.hluk.copyq --noninteractive
 sudo nala install remmina remmina-plugin-rdp -y
 
-sudo nala install rofie
-sudo nala install pipx
-sudo pipx install rofimoji
+sudo nala install rofi -y
+sudo nala install pipx -y
+pipx install rofimoji
+# nix-env -iA nixpkgs.rofi-emoji
 # https://github.com/fdw/rofimoji?tab=readme-ov-file#dependencies
+session_type=$(echo $XDG_SESSION_TYPE)
+if [ "$session_type" == "x11" ]; then
+    echo "Detected X11 session. Installing X11-related packages and tools..."
+    sudo nala install xdotool xsel xclip -y
+elif [ "$session_type" == "wayland" ]; then
+    echo "Detected Wayland session. Installing Wayland-related packages and tools..."
+    sudo nala install wl-copy wtype -y
+else
+    echo "Unknown session type: $session_type"
+    exit 1
+fi
 
 
 wget -P ~/Downloads https://github.com/erebe/greenclip/releases/download/v4.2/greenclip
 chmod +x ~/Downloads/greenclip
 sudo mv ~/Downloads/greenclip /usr/bin/
 # greenclip daemon &
-
 # rofi -modi "emoji:rofimoji" -show emoji
 # rofi -modi "clipboard:greenclip print" -show clipboard -run-command '{cmd}'
-
+# rofi -show drun
 
 # rofie -show drun -modi drun -theme ~/.config/rofi/launcher.rasi
-nix-env -iA nixpkgs.rofi-emoji
 # https://github.com/hluk/CopyQ
 # https://github.com/SUPERCILEX/gnome-clipboard-history?tab=readme-ov-file
 # https://github.com/SUPERCILEX/clipboard-history

@@ -67,7 +67,7 @@ fi
 
 
 yes '' | sed 3q; echo "----------------------------- installing aafire ----------------------------"; yes '' | sed 3q
-sudo apt-get install libaa-bin -y
+sudo nala install libaa-bin -y
 
 
 # yes '' | sed 3q; echo "----------------------------- installing sharewifi ----------------------------"; yes '' | sed 3q
@@ -111,10 +111,10 @@ get_ubuntu_base_version() {
     esac
 }
 ubuntu_version=$(get_ubuntu_base_version)
-sudo apt-get install gnupg  # no available on debian
+sudo nala install gnupg  # no available on debian
 curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
 echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $ubuntu_version main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
-sudo apt-get update && sudo apt-get install cloudflare-warp -y
+sudo nala update && sudo nala install cloudflare-warp -y
 
 
 yes '' | sed 3q; echo "----------------------------- installing graphviz ----------------------------"; yes '' | sed 3q
@@ -141,8 +141,8 @@ sudo nala install make -y || true  # lvim and spacevim require it.
 #   # installation for ubuntu as per https://redis.io/docs/getting-started/installation/install-redis-on-linux/
 #   curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
 #   echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
-#   sudo apt-get update
-#   sudo apt-get install redis -y
+#   sudo nala update
+#   sudo nala install redis -y
 # else
 #   ~/.nix-profile/bin/nix-env -iA nixpkgs.redis || true
 # fi

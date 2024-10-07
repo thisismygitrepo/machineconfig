@@ -1,1 +1,4 @@
+configuration {
+    modi: "window,run,ssh,drun";
+}
 @theme "/usr/share/rofi/themes/DarkBlue.rasi"
