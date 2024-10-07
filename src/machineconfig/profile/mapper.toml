@@ -88,6 +88,13 @@ config = {this = '~/.config/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens
 [ngrok_windows]
 config = {this = '~/AppData/Local/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
 
+[kanata]
+config = {this = '~/.config/kanata/kanata.kbd', to_this = 'LIBRARY_ROOT/settings/keyboard/kanata/kanata.kbd'}
+
+[espanso]
+config = {this = '~/.config/espanso/config/default.yml', to_this = 'LIBRARY_ROOT/settings/keyboard/espanso/config/default.yml'}
+match = {this = '~/.config/espanso/match/base.yml', to_this = 'LIBRARY_ROOT/settings/keyboard/espanso/match/base.yml'}
+
 # ============================= shells profiles ==================================
 
 # [powershell_windows]

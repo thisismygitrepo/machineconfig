@@ -26,10 +26,15 @@ def main():
 
     install_script += f"""
 
-    . activate_ve {ve_name}
-    cd ~/code/foreign
-    git clone https://github.com/ShishirPatil/gorilla --depth 1
-    cd gorilla/goex
-    pip install -e .
+. activate_ve {ve_name}
+cd ~/code/foreign
+git clone https://github.com/ShishirPatil/gorilla --depth 1
+cd gorilla/goex
+pip install -e .
 
     """
+    return install_script
+
+
+if __name__ == "__main__":
+    pass
