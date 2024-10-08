@@ -10,5 +10,4 @@ echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft
 rm -f packages.microsoft.gpg
 sudo nala install apt-transport-https
 sudo nala update
-sudo nala install code # or code-insiders
-
+sudo nala install code -y  # or code-insiders

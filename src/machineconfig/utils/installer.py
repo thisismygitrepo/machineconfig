@@ -111,7 +111,7 @@ class Installer:
             else: return f""" echo "📦️ 🤩 {self.exe_name} updated from {old_version_cli} === to ===> {new_version_cli}" """
         except Exception as ex:
             print(ex)
-            return f""" echo "📦️ Failed at {self.exe_name} with {ex}" """
+            return f""" echo "📦️ Failed at `{self.name}` with {ex}" """
 
     def install(self, version: Optional[str]):
         if self.repo_url == "CUSTOM":

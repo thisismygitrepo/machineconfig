@@ -98,7 +98,6 @@ match = {this = '~/.config/espanso/match/base.yml', to_this = 'LIBRARY_ROOT/sett
 [remmina]
 data = {this = '~/.var/app/org.remmina.Remmina/data/remmina', to_this = '~/dotfiles/creds/RDP/remmina/data/remmina'}
 
-
 # ============================= shells profiles ==================================
 
 # [powershell_windows]
