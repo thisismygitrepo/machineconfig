@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-. ~/scripts/activate_ve 've'
+. $HOME/scripts/activate_ve 've'
 python -m fire machineconfig.scripts.python.choose_wezterm_theme main
 source ~/.bashrc  # reload the profile
 deactivate || true

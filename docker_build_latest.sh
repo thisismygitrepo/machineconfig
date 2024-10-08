@@ -6,9 +6,9 @@
 IMAGE_NAME="alim-slim"
 DATE=$(date +%y-%m)
 echo $DATE
+
 docker rmi "statistician/$IMAGE_NAME:latest"
 docker rmi "statistician/$IMAGE_NAME:$DATE"
-
 
 docker build --no-cache --file ./Dockerfile --progress=plain -t "statistician/$IMAGE_NAME:latest" .
 # docker build --file ./Dockerfile --progress=plain -t $IMAGE_NAME:latest .

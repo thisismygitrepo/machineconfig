@@ -35,7 +35,7 @@ source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 . ~/.bashrc
 
 
-. ~/scripts/activate_ve 've'
+. $HOME/scripts/activate_ve 've'
 python -m fire machineconfig.scripts.python.devops_devapps_install main  --which=AllEssentials  # this installs everything.
 . ~/.bashrc
 
