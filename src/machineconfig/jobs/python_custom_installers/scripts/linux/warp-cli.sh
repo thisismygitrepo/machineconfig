@@ -3,6 +3,7 @@
 # as per https://pkg.cloudflareclient.com/
 
 
+
 get_ubuntu_base_version() {
     local mint_codename=$(lsb_release -cs)
     case "$mint_codename" in
@@ -27,3 +28,4 @@ echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] ht
 sudo nala update && sudo nala install cloudflare-warp -y
 
 warp-cli registration new
+

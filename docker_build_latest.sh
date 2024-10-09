@@ -6,8 +6,8 @@
 IMAGE_NAME="alim-slim"
 DATE=$(date +%y-%m)
 echo $DATE
-docker rmi "statistician/$IMAGE_NAME:latest"
-docker rmi "statistician/$IMAGE_NAME:$DATE"
+docker rmi "statistician/$IMAGE_NAME:latest" --force
+docker rmi "statistician/$IMAGE_NAME:$DATE" --force
 
 
 docker build --no-cache --file ./Dockerfile --progress=plain -t "statistician/$IMAGE_NAME:latest" .
@@ -15,6 +15,8 @@ docker build --no-cache --file ./Dockerfile --progress=plain -t "statistician/$I
 # building with no cache since docker is unaware of changes in clode due to dynamic code like curl URL | bash etc.
 
 # docker login --username statistician --password <password>
+docker images
+
 read -p "Do you want to push to the registry? (y/n): " answer
 if [[ "$answer" =~ ^[Yy]$ ]] ; then
     docker push "statistician/$IMAGE_NAME:latest"
