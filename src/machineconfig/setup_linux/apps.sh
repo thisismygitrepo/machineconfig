@@ -11,7 +11,8 @@ sudo apt update -y || true
 
 
 sudo apt install nala -y || true  # nala is a command line tool for managing your Linux system
-sudo nala install curl wget gpg lsb-release  -y || true  # for handling http requests
+sudo nala install curl wget gpg lsb-release apt-transport-https  -y || true  # for handling http requests
+# gnupg
 
 
 curl -L https://nixos.org/nix/install | sh  # cross *nix platforms.
