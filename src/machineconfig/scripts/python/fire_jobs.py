@@ -194,7 +194,7 @@ except ImportError as _ex:
         if "ipdb" in command: command = f"pip install ipdb\n\n{command}"
         if "pudb" in command: command = f"pip install pudb\n\n{command}"
         if platform.system() == "Windows":
-            command = f". activate_ve {args.ve}\n\n{command}"
+            command = f". $HOME/scripts/activate_ve {args.ve}\n\n{command}"
         else:
             command = f". $HOME/scripts/activate_ve {args.ve}\n\n{command}"
     else:
@@ -206,7 +206,7 @@ except ImportError as _ex:
 
     if args.submit_to_cloud:
         command = f"""
-. activate_ve {args.ve}
+. $HOME/scripts/activate_ve {args.ve}
 python -m crocodile.cluster.templates.cli_click --file {choice_file} """
         if choice_function is not None: command += f"--function {choice_function} "
     try: install_n_import("clipboard").copy(command)

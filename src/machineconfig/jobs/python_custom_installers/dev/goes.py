@@ -26,7 +26,7 @@ def main():
 
     install_script += f"""
 
-. activate_ve {ve_name}
+. $HOME/scripts/activate_ve {ve_name}
 cd ~/code/foreign
 git clone https://github.com/ShishirPatil/gorilla --depth 1
 cd gorilla/goex
