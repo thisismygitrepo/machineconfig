@@ -7,6 +7,6 @@ git tag --list  # create a new version after the latest one with same format.
 git tag -a vx.y -m "new release"
 git push --tags
 # build and push to pypi
-. activate_ve ve
+. $HOME/scripts/activate_ve 've'
 python setup.py sdist bdist_wheel  # requires wheel to be installed
 twine upload dist/*  # requires twine to be installed

@@ -113,25 +113,6 @@ sudo nala install make -y || true  # lvim and spacevim require it.
 #   ~/.nix-profile/bin/nix-env -iA nixpkgs.lynx || true
 # fi
 
-# yes '' | sed 3q; echo "----------------------------- installing redis ----------------------------"; yes '' | sed 3q
-# if [ "$package_manager" = "nala" ]; then
-#   # installation for ubuntu as per https://redis.io/docs/getting-started/installation/install-redis-on-linux/
-#   curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
-#   echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
-#   sudo nala update
-#   sudo nala install redis -y
-# else
-#   ~/.nix-profile/bin/nix-env -iA nixpkgs.redis || true
-# fi
-
-
-# yes '' | sed 3q; echo "----------------------------- installing ncdu ----------------------------"; yes '' | sed 3q
-# if [ "$package_manager" = "nala" ]; then
-#   sudo nala install ncdu -y || true   # disk usage analyzer, like diskonaut
-# else
-#   ~/.nix-profile/bin/nix-env -iA nixpkgs.ncdu || true
-# fi
-
 
 # yes '' | sed 3q; echo "----------------------------- installing spacevim ----------------------------"; yes '' | sed 3q
 # # https://spacevim.org/quick-start-guide/#linux-and-macos
@@ -163,3 +144,9 @@ if [ "$package_manager" = "nala" ]; then
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
 fi
+
+yes '' | sed 3q; echo "----------------------------- installing sqlite --------------------------"; yes '' | sed 3q
+sudo nala install sqlite3 -y || true  # sqlite vscode extension requires this to be installed. It gives sqlite and sqlite3 commands.
+
+yes '' | sed 3q; echo "----------------------------- installing chafa ----------------------------"; yes '' | sed 3q
+sudo nala install chafa -y  # like viu, one can ascii-ize images.
