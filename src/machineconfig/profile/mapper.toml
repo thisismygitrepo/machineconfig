@@ -95,6 +95,9 @@ config = {this = '~/.config/kanata/kanata.kbd', to_this = 'LIBRARY_ROOT/settings
 config = {this = '~/.config/espanso/config/default.yml', to_this = 'LIBRARY_ROOT/settings/keyboard/espanso/config/default.yml'}
 match = {this = '~/.config/espanso/match/base.yml', to_this = 'LIBRARY_ROOT/settings/keyboard/espanso/match/base.yml'}
 
+[remmina]
+data = {this = '~/.var/app/org.remmina.Remmina/data/remmina', to_this = '~/dotfiles/creds/RDP/remmina/data/remmina'}
+
 # ============================= shells profiles ==================================
 
 # [powershell_windows]

@@ -196,7 +196,7 @@ except ImportError as _ex:
         if platform.system() == "Windows":
             command = f". activate_ve {args.ve}\n\n{command}"
         else:
-            command = f". ~/scripts/activate_ve {args.ve}\n\n{command}"
+            command = f". $HOME/scripts/activate_ve {args.ve}\n\n{command}"
     else:
         # CMD equivalent
         if "ipdb" in command: command = f"pip install ipdb & {command}"
@@ -213,11 +213,11 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
     except Exception as ex: print(f"Failed to copy command to clipboard. {ex}")
 
     if args.loop:
-        command = command + f"\n" + f". {PROGRAM_PATH}"
+        command = command + "\n" + f". {PROGRAM_PATH}"
 
     if args.Nprocess > 1:
         lines = [f""" zellij action new-tab --name nProcess{randstr(2)}"""]
-        command = command.replace(". activate_ve", ". ~/scripts/activate_ve")
+        command = command.replace(". activate_ve", ". $HOME/scripts/activate_ve")
         for an_arg in range(args.Nprocess):
             sub_command = f"{command} --idx={an_arg} --idx_max={args.Nprocess}"
             if args.optimized:

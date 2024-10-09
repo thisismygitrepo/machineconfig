@@ -256,7 +256,7 @@ def get_install_requirements_template(repo_root: P, requirements_subpath: str):
 
 set -e  # exit on error, you don't want to install reqiurements in wrong environment.
 cd $HOME/{repo_root.rel2home().as_posix()}
-. $HOME/scripts/activate_ve
+. $HOME/scripts/activate_ve 've'
 pip install -r {requirements_subpath}/requirements.txt
 pip install -e .
 

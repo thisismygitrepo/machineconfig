@@ -1,8 +1,9 @@
+
 #!/usr/bin/env bash
 
 . $HOME/scripts/activate_ve 've'
 
-python -m machineconfig.scripts.python.cloud_copy "$@"
+python -m machineconfig.scripts.python.gh_models "$@"
 
 {
   deactivate

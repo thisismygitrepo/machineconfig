@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # uses fzf as interactive ripgrep launcher.
 # from https://github.com/junegunn/fzf/blob/master/ADVANCED.md#using-fzf-as-interative-ripgrep-launcher
 

@@ -18,7 +18,14 @@ flatpak run org.wezfurlong.wezterm
 
 # flatpak install com.tomjwatson.Emote  --noninteractive
 flatpak install flathub com.github.hluk.copyq --noninteractive
+
 sudo nala install remmina remmina-plugin-rdp -y
+# as per https://remmina.org/how-to-install-remmina/
+# flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+# flatpak install org.freedesktop.Platform
+# flatpak install org.freedesktop.Platform.openh264
+# flatpak install --user flathub org.remmina.Remmina
+# flatpak run --user org.remmina.Remmina
 
 sudo nala install rofi -y
 
