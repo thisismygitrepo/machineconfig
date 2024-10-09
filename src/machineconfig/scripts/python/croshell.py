@@ -143,9 +143,10 @@ print_logo(logo="crocodile")
 
     final_program = f"""
 # deactivate
-. activate_ve {ve}
+. $HOME/scripts/activate_ve '{ve}'
 {interpreter} """
-    if interpreter == "ipython": final_program += f"{interactivity} --profile {profile} --no-banner"
+    if interpreter == "ipython":
+        final_program += f"{interactivity} --profile {profile} --no-banner"
     final_program += f" {str(pyfile)}"
     print(f"🔥 sourcing  ... {pyfile}")
     # print(f"Running ... {final_program}")
