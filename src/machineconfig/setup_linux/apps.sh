@@ -45,10 +45,6 @@ yes '' | sed 3q; echo "----------------------------- installing uv -------------
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 
-yes '' | sed 3q; echo "----------------------------- installing sqlite --------------------------"; yes '' | sed 3q
-sudo nala install sqlite3 -y || true  # sqlite vscode extension requires this to be installed. It gives sqlite and sqlite3 commands.
-
-
 yes '' | sed 3q; echo "----------------------------- installing nvm of nodejs --------------------------"; yes '' | sed 3q
 # according to: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm its best to use nvm manager
 # https://github.com/nvm-sh/nvm?tab=readme-ov-file#install--update-script
@@ -64,6 +60,3 @@ nvm install node || true
 yes '' | sed 3q; echo "----------------------------- installing git ----------------------------"; yes '' | sed 3q
 sudo nala install git net-tools htop nano -y || true  # for version control
 
-
-yes '' | sed 3q; echo "----------------------------- installing chafa ----------------------------"; yes '' | sed 3q
-sudo nala install chafa -y  # like viu, one can ascii-ize images.

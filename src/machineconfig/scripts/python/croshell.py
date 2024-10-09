@@ -72,8 +72,8 @@ def build_parser():
     parser.add_argument("--read", "-r", dest="read", help="read a binary file.", default="")
     parser.add_argument("--file", "-f", dest="file", help="python file path to interpret", default="")
     parser.add_argument("--cmd", "-c", dest="cmd", help="python command to interpret", default="")
-    parser.add_argument("--terminal", "-t", dest="terminal", help=f"specify which terminal to be used. Default console host.", default="")  # can choose `wt`
-    parser.add_argument("--shell", "-S", dest="shell", help=f"specify which shell to be used. Defaults to CMD.", default="")
+    parser.add_argument("--terminal", "-t", dest="terminal", help="specify which terminal to be used. Default console host.", default="")  # can choose `wt`
+    parser.add_argument("--shell", "-S", dest="shell", help="specify which shell to be used. Defaults to CMD.", default="")
 
     args = parser.parse_args()
     # print(f"Crocodile.run: args of the firing command = {args.__dict__}")
