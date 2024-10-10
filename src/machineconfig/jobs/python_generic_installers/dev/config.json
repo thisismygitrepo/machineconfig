@@ -295,6 +295,14 @@
         "strip_v": false,
         "exe_name": "hyperfine"
     },
+    "rainfrog": {
+        "repo_url": "https://github.com/achristmascarl/rainfrog",
+        "doc": "TUI DB Visualizer",
+        "filename_template_windows_amd_64": "rainfrog-{}-x86_64-pc-windows-msvc.tar.gz",
+        "filename_template_linux_amd_64": "rainfrog-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "rainfrog"
+    },
     "ollama": {
         "repo_url": "https://github.com/ollama/ollama",
         "doc": "Get up and running with large language models locally.",
