@@ -15,5 +15,5 @@ if [ ! -f /etc/apt/sources.list.d/vscode.list ]; then
 fi
 
 
-sudo nala update
+sudo nala update -o Dir::Etc::sourcelist="sources.list.d/vscode.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
 sudo nala install code -y
