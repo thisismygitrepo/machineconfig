@@ -15,6 +15,7 @@ flatpak install flathub org.mozilla.Thunderbird
 # flatpak install flathub com.brave.Browser
 flatpak install flathub org.wezfurlong.wezterm
 flatpak run org.wezfurlong.wezterm
+flatpak install net.christianbeier.Gromit-MPX
 
 # flatpak install com.tomjwatson.Emote  --noninteractive
 flatpak install flathub com.github.hluk.copyq --noninteractive

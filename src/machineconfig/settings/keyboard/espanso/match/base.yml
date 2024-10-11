@@ -10,8 +10,8 @@
 # it gets replaced by the "replace" string.
 matches:
   # Simple text replacement
-  - trigger: ":espanso"
-    replace: "Hi there!"
+  - trigger: ":email"
+    replace: "mathematician@usa.com"
 
   # NOTE: espanso uses YAML to define matches, so pay attention to the indentation!
 

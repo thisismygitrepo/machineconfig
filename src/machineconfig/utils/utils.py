@@ -256,7 +256,7 @@ def symlink_copy(this: P, to_this: P, prioritize_to_this: bool = True):
     else:  # this doesn't exist.
         if not to_this.exists(): to_this.touch()  # we have to touch it (file) or create it (folder)
     try:
-        to_this.copy(this, overwrite=True, verbose=True)
+        to_this.copy(path=this, overwrite=True, verbose=True)
     except Exception as ex: print(f"Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
 
 
