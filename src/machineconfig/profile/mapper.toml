@@ -66,7 +66,7 @@ config = {this = '~/.config/pistol/pistol.conf', to_this = 'LIBRARY_ROOT/setting
 config = {this = '~/.config/glow/glow.yml', to_this = 'LIBRARY_ROOT/settings/glow/glow.yml'}
 
 [gromit_linux]
-config = {this = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg', to_this = 'LIBRARY_ROOT/settings/gromit-mpx/gromit-mpx.cfg'}
+config = {this = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg', to_this = 'LIBRARY_ROOT/settings/gromit-mpx/gromit-mpx.cfg', copy = true}
 
 # zoxide can't read symlink files see: https://github.com/ajeetdsouza/zoxide/issues?q=is%3Aissue+is%3Aopen+symlink
 # [zoxide_windows]
