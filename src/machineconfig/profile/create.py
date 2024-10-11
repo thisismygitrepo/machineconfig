@@ -9,18 +9,24 @@ This script Takes away all config files from the computer, place them in one dir
 from crocodile.environment import system  # ProgramFiles, WindowsApps  # , exe
 from crocodile.meta import Terminal
 from crocodile.file_management import P
-from machineconfig.utils.utils import symlink_func, LIBRARY_ROOT, REPO_ROOT, display_options
+from machineconfig.utils.utils import symlink_func, symlink_copy, LIBRARY_ROOT, REPO_ROOT, display_options
 from machineconfig.profile.shell import create_default_shell_profile
 # import os
 import subprocess
 from rich.console import Console
-from typing import Optional, Any
+from typing import Optional, Any, TypedDict
 
 
 ERROR_LIST: list[Any] = []  # append to this after every exception captured.
 CONFIG_ROOT = LIBRARY_ROOT.parent.parent.joinpath("settings")
 OTHER_SYSTEM = "windows" if system == "Linux" else "linux"
 SYSTEM = system.lower()
+
+
+class SymlinkMapper(TypedDict):
+    this: str
+    to_this: str
+    contents: Optional[bool]
 
 
 def main_symlinks(choice: Optional[str] = None):
@@ -70,6 +76,10 @@ def main_symlinks(choice: Optional[str] = None):
                     for a_target in to_this.expanduser().search("*"):
                         symlink_func(this=this.joinpath(a_target.name), to_this=a_target, prioritize_to_this=overwrite)
                 except Exception as ex: print("Config error: ", program_key, file_key, "missing keys 'this ==> to_this'.", ex)
+            if "copy" in file_map:
+                try:
+                    symlink_copy(this=this, to_this=to_this, prioritize_to_this=overwrite)
+                except Exception as ex: print("Config error: ", program_key, file_key, ex)
             else:
                 try: symlink_func(this=this, to_this=to_this, prioritize_to_this=overwrite)
                 except Exception as ex: print("Config error: ", program_key, file_key, "missing keys 'this ==> to_this'.", ex)

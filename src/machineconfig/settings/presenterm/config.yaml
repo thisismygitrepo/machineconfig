@@ -13,10 +13,16 @@ typst:
   # the pixels per inch when rendering latex/typst formulas.
   ppi: 300
 
+mermaid:
+  # the scale parameter passed to the mermaid CLI (mmdc).
+  scale: 2
+
+
 options:
   strict_front_matter_parsing: false
-    # needed so that the `class: invert` command is ignored
+  # needed so that the `class: invert` command is ignored
 
+  # whether to treat a thematic break as a slide end.
   end_slide_shorthand: true
 
     # whether slides are automatically terminated when a slide title is found.

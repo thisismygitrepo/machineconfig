@@ -5,7 +5,7 @@ gitconfig = {this = '~/.gitconfig', to_this = '~/dotfiles/settings/.gitconfig'}
 gitcred = {this = '~/.git-credentials', to_this = '~/dotfiles/settings/.git-credentials'}
 
 [ssh]
-keys = {this = '~/.ssh', to_this = '~/dotfiles/creds/.ssh', contents = 'True'}
+keys = {this = '~/.ssh', to_this = '~/dotfiles/creds/.ssh', contents = true}
 
 [pypi]
 creds = {this = '~/.pypirc', to_this = '~/dotfiles/creds/msc/.pypirc'}
@@ -93,7 +93,7 @@ config = {this = '~/.config/kanata/kanata.kbd', to_this = 'LIBRARY_ROOT/settings
 
 [espanso]
 config = {this = '~/.config/espanso/config/default.yml', to_this = 'LIBRARY_ROOT/settings/keyboard/espanso/config/default.yml'}
-match = {this = '~/.config/espanso/match/base.yml', to_this = 'LIBRARY_ROOT/settings/keyboard/espanso/match/base.yml'}
+match = {this = '~/.config/espanso/match/base.yml', to_this = 'LIBRARY_ROOT/settings/keyboard/espanso/match/base.yml', copy = true}
 
 [remmina]
 data = {this = '~/.var/app/org.remmina.Remmina/data/remmina', to_this = '~/dotfiles/creds/RDP/remmina/data/remmina'}
@@ -200,13 +200,13 @@ notepadpp = {this = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', to_th
 # tesseract = {this = '~/AppData/Local/Microsoft/WindowsApps/tesseract.exe', to_this = '~/AppData/Local/Tesseract-OCR/tesseract.exe'}  # doesn't work without whole installation dir is on PATH.
 
 [webapp_linux]
-brave = {this = '~/.local/share/applications', to_this = '~/dotfiles/config/webapps/linux/brave', contents = 'True'}
+brave = {this = '~/.local/share/applications', to_this = '~/dotfiles/config/webapps/linux/brave', contents = true}
 
 # [startup_windows]
-# startup = {this = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup', to_this = '~/dotfiles/scripts/windows_startup', contents = 'True'}
+# startup = {this = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup', to_this = '~/dotfiles/scripts/windows_startup', contents = true}
 
 # [aws]
-# config = {this = '~/.aws/config', to_this = '~/dotfiles/aws/.aws', contents = 'True'}
+# config = {this = '~/.aws/config', to_this = '~/dotfiles/aws/.aws', contents = true}
 
 [wt_windows]
 settings = { this = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', to_this = 'LIBRARY_ROOT/settings/shells/wt/settings.json' }

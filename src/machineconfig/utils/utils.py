@@ -242,11 +242,6 @@ def symlink_func(this: P, to_this: P, prioritize_to_this: bool = True):
 
 
 def symlink_copy(this: P, to_this: P, prioritize_to_this: bool = True):
-    """helper function. creates a symlink from `this` to `to_this`.
-    What can go wrong?
-    depending on this and to_this existence, one will be prioretized depending on overwrite value.
-    True means this will potentially be overwritten (depending on whether to_this exists or not)
-    False means to_this will potentially be overwittten."""
     this = P(this).expanduser().absolute()
     to_this = P(to_this).expanduser().absolute()
     if this.is_symlink(): this.delete(sure=True)  # delete if it exists as symblic link, not a concrete path.
@@ -261,8 +256,6 @@ def symlink_copy(this: P, to_this: P, prioritize_to_this: bool = True):
     else:  # this doesn't exist.
         if not to_this.exists(): to_this.touch()  # we have to touch it (file) or create it (folder)
     try:
-        # print(f"Linking {this} ➡️ {to_this}")
-        # P(this).symlink_to(target=to_this, verbose=True, overwrite=True)
         to_this.copy(this, overwrite=True, verbose=True)
     except Exception as ex: print(f"Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
 
