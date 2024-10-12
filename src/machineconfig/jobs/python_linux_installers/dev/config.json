@@ -75,11 +75,10 @@
         "repo_url": "https://github.com/atuinsh/atuin",
         "doc": "Shell history search tool. Mcfly alternative",
         "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "atuin-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_linux_amd_64": "atuin-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
         "exe_name": "atuin"
     },
-
     "browsh": {
         "repo_url": "https://github.com/browsh-org/browsh",
         "doc": "browser in the shell",

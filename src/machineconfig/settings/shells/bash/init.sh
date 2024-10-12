@@ -12,6 +12,7 @@ add_to_path_if_not_already() {
 
 add_to_path_if_not_already \
     "$HOME/.local/bin" \
+    "$HOME/.cargo/bin" \
     "$HOME/code/machineconfig/src/machineconfig/scripts/linux" \
     "$HOME/dotfiles/scripts/linux" \
     "$HOME/.nix-profile/bin" \
