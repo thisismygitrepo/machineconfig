@@ -30,6 +30,9 @@
 * https://github.com/microsoft/graphrag `Auto graph rag`
 * https://github.com/infiniflow/ragflow `Auto graph rag`
 
+* https://github.com/hacksider/Deep-Live-Cam
+* https://github.com/black-forest-labs/flux
+
 
 # Parsing
 
