@@ -1,27 +1,32 @@
 
-# Editable installation of crocodile and machineconfig
-# no assumptions on which ve is activate is used for installation, this is dictated by activate_ve.
-
-cd ~
+cd $HOME
 mkdir code -ErrorAction SilentlyContinue
-cd ~/code
+cd $HOME\code
 
-winget install --no-upgrade --name "Git" --Id Git.Git --source winget --accept-package-agreements --accept-source-agreements
-$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+if (-not (Get-Command git.exe -ErrorAction SilentlyContinue)) {
+    winget install --no-upgrade --name "Git" --Id Git.Git --source winget --accept-package-agreements --accept-source-agreements --scope user
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+}
+
 
 git clone https://github.com/thisismygitrepo/crocodile.git --depth 4
 git clone https://github.com/thisismygitrepo/machineconfig --depth 4  # Choose browser-based authentication.
 
-cd $HOME/code/crocodile
+
+cd $HOME\code\crocodile
+if (-not $env:VIRTUAL_ENV) {
+    echo "Activating virtual environment @ $HOME\venvs\$ve_name"
+    & "$HOME\venvs\$ve_name\Scripts\Activate.ps1" -ErrorAction Stop
+}
 
 if (-not (Test-Path variable:CROCODILE_EXTRA)) {
     Write-Host "⚠️ Using default CROCODILE_EXTRA"
-    uv pip install -e .
-} else { 
+    & "$HOME\.cargo\bin\uv.exe" pip install -e .
+} else {
     Write-Host "➡️ CROCODILE_EXTRA = $CROCODILE_EXTRA"
-    uv pip install -e .[$CROCODILE_EXTRA]
+    & "$HOME\.cargo\bin\uv.exe" pip install -e .[$CROCODILE_EXTRA]
 }
 
-cd ~/code/machineconfig
-uv pip install -e .
+cd $HOME\code\machineconfig
+& "$HOME\.cargo\bin\uv.exe" pip install -e .
 echo "Finished setting up repos"

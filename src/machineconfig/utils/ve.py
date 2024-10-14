@@ -237,6 +237,7 @@ $ve_name = '{ve_name}'
 $py_version = '{py_version}'  # type: ignore
 (Invoke-WebRequest https://bit.ly/cfgvewindows).Content | Invoke-Expression
 . $HOME/scripts/activate_ve $ve_name
+
 """
     return template
 def get_bash_install_template(ve_name: str, py_version: str):

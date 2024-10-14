@@ -41,7 +41,6 @@ def main_symlinks(choice: Optional[str] = None):
     program_keys: list[str] = []
     for program_key in program_keys_raw:
         if program_key in exclude or OTHER_SYSTEM in program_key:
-            # print(f"Skipping {program_key} for {system}")
             continue
         else: program_keys.append(program_key)
 
@@ -54,7 +53,6 @@ def main_symlinks(choice: Optional[str] = None):
         # overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
         from rich.prompt import Confirm
         overwrite = Confirm.ask("Overwrite existing source file?", default=True)
-
     else: choice_selected = choice
 
     if isinstance(choice_selected, str):

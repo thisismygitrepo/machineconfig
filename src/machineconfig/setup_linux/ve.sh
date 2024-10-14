@@ -36,34 +36,14 @@ if ! command -v uv &> /dev/null; then
     export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
-uv venv $HOME/venvs/$ve_name --python 3.11 --python-preference only-managed
+$HOME/.cargo/bin/uv venv $HOME/venvs/$ve_name --python 3.11 --python-preference only-managed
 
 
 # check if $VIRTUAL_ENV is set
 if [ -z "$VIRTUAL_ENV" ]; then
   source $HOME/venvs/ve/bin/activate || exit
 fi
-uv pip install --upgrade pip
+$HOME/.cargo/bin/uv pip install --upgrade pip
 
-cd $HOME
-mkdir -p code
-cd $HOME/code
-
-git clone https://github.com/thisismygitrepo/crocodile.git --depth 4
-git clone https://github.com/thisismygitrepo/machineconfig --depth 4  # Choose browser-based authentication.
-
-cd $HOME/code/crocodile
-if [ -n "$CROCODILE_EXRA" ]; then
-  uv pip install -e .[$CROCODILE_EXRA]
-else
-  uv pip install -e .
-fi
-
-
-cd $HOME/code/machineconfig
-uv pip install -e .
 echo "✅ Finished installing virtual environment"
 echo "💡 Use this to activate: source ~/venvs/$ve_name/bin/activate"
-
-
-cd $HOME
