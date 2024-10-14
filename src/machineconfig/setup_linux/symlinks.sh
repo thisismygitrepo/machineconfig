@@ -5,4 +5,4 @@
 source ~/venvs/ve/bin/activate
 python -m fire machineconfig.profile.create main --choice=all
 . ~/.bashrc
-deactivate
+deactivate || true

@@ -5,9 +5,9 @@
 from crocodile.core import Struct, Save, List
 from crocodile.file_management import P, Read
 
-# from machineconfig.utils.utils import LIBRARY_ROOT
+from machineconfig.utils.utils import LIBRARY_ROOT
 import platform
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import Optional, Literal
 
 
@@ -110,7 +110,6 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
                           ) -> str:
     from rich.console import Console
     console = Console()
-
     if py_version is None:
         print("\n\n")
         console.rule("Existing Python versions", style="bold red")
@@ -132,10 +131,10 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
         ve_name = input("Enter virtual environment name (tst): ") or "tst"
 
     if install_crocodile_and_machineconfig is None:
-        croco_mac = input("Install essential repos? (y/[n]): ") == "y"
+        essential_repos = input("Install essential repos? (y/[n]): ") == "y"
         other_repos = input("Input space separated other packages: ")
     else:
-        croco_mac = install_crocodile_and_machineconfig
+        essential_repos = install_crocodile_and_machineconfig
         other_repos = ""
 
     env_path = P.home().joinpath("venvs", ve_name)
@@ -144,43 +143,49 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
         console.rule("Deleting existing enviroment with similar name")
         env_path.delete(sure=sure)
 
-    # scripts = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/ve.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
-    scripts = f"""
+    system = platform.system()
+    if system == "Windows":
+        script = get_ps1_ve_install_script(ve_name=ve_name, py_version=dotted_py_version, use_web=False)
+    elif system == "Linux":
+        script = get_bash_ve_install_script(ve_name=ve_name, py_version=dotted_py_version, use_web=False)
+    else:
+        raise NotImplementedError(f"System {system} not supported.")
 
-$HOME/.cargo/bin/uv venv $HOME/venvs/{ve_name} --python {dotted_py_version} --python-preference only-managed
-. $HOME/scripts/activate_ve {ve_name}
+    if essential_repos:
+        if system == "Windows":
+            script += "\n" + get_ps1_repos_install_script(ve_name=ve_name, use_web=False)
+        elif system == "Linux":
+            script += "\n" + get_bash_repos_install_script(ve_name=ve_name, use_web=False)
+        else:
+            raise NotImplementedError(f"System {system} not supported.")
 
-"""
-    if other_repos != "":
-        scripts += "\n$HOME/.cargo/bin/uv pip install " + other_repos
+    if other_repos != "": script += "\n$HOME/.cargo/bin/uv pip install " + other_repos
 
-    # if system is None:
-    #     system_: str = platform.system()
-    # else:
-    #     system_ = system
-    # variable_prefix = "$" if system_ == "Windows" else ""
-    # line1 = f"{variable_prefix}ve_name='{ve_name}'"
-    # line2 = f"{variable_prefix}py_version='{dotted_py_version}'"
-    # line_start = "# --- Define ve name and python version here ---"
-    # line_end = "# --- End of user defined variables ---"
-    # assert line_start in scripts and line_end in scripts, "Script template was mutated beyond recognition."
-    # scripts = scripts.split(line_start)[0] + "\n".join([line_start, line1, line2, line_end]) + scripts.split(line_end)[1]
+    link_ve: str = input(f"Symlink to .venv from {P.cwd()}? (y/[n]): ") == "y"
+    if link_ve:
 
-    if croco_mac:  # TODO make this more robust by removing sections of the script as opposed to word placeholders.
-        # text = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/repos.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
-        # text = modify_text(txt_raw=text, txt_search="ve_name=", txt_alt=f"{variable_prefix}ve_name='{ve_name}'", replace_line=True)
-        # scripts += text
-        scripts += """
-cd $HOME/code/crocodile
-$HOME/.cargo/bin/uv pip install -e .
-cd $HOME/code/machineconfig
-$HOME/.cargo/bin/uv pip install -e .
-echo "Finished setting up repos"
-"""
+        target = P.cwd().joinpath(".venv")
+        source = P.home().joinpath("venvs", ve_name)
+        if system == "Windows": cmd = f'New-Item -ItemType SymbolicLink -Path "{target}" -Target "{source}"'
+        elif system == "Linux": cmd = f'ln -s "{source}" "{target}"'
+        else: raise NotImplementedError(f"System {system} not supported.")
+        script += f"\n{cmd}"
 
-    # ve_ini_specs = VE_Specs(ve_name=ve_name, py_version=dotted_py_version, ipy_profile="default", os=system_)
-    # ve_ini = VE_INI(specs=ve_ini_specs)
-    return scripts
+        P.cwd().joinpath(".ve_path").write_text(f"~/venvs/{ve_name}")
+        ve_ini_specs = VE_Specs(ve_name=ve_name, py_version=dotted_py_version, ipy_profile="default", os=system)
+        ve_ini = VE_INI(specs=ve_ini_specs)
+        Save.ini(obj=asdict(ve_ini), path=P.cwd().joinpath(".ve.ini"))
+        vscode = P.cwd().joinpath(".vscode/settings.json")
+        if vscode.exists():
+            settings = Read.json(vscode)
+        else:
+            settings = {}
+        if system == "Windows":
+            settings["python.defaultInterpreterPath"] = P.home().joinpath("venvs", ve_name, "Scripts", "python.exe").as_posix()
+        elif system == "Linux":
+            settings["python.defaultInterpreterPath"] = P.home().joinpath("venvs", ve_name, "bin", "python").as_posix()
+        Save.json(obj=settings, path=vscode, indent=4)
+    return script
 
 
 def get_ve_install_script_from_specs(repo_root: str, system: Literal["Windows", "Linux"]):
@@ -212,10 +217,10 @@ def get_ve_install_script_from_specs(repo_root: str, system: Literal["Windows", 
     subpath = "versions/init"
     base_path = P(repo_root).joinpath(subpath).create()
     if system == "Windows":
-        script = get_ps1_install_template(ve_name=ve_name, py_version=py_version)
+        script = get_ps1_ve_install_script(ve_name=ve_name, py_version=py_version)
         base_path.joinpath("install_ve.ps1").write_text(script)
     elif system == "Linux":
-        script = get_bash_install_template(ve_name=ve_name, py_version=py_version)
+        script = get_bash_ve_install_script(ve_name=ve_name, py_version=py_version)
         base_path.joinpath("install_ve.sh").write_text(script)
     else:
         raise NotImplementedError(f"System {system} not supported.")
@@ -227,25 +232,55 @@ def get_ve_install_script_from_specs(repo_root: str, system: Literal["Windows", 
     if not system == "Windows":  # symlinks on windows require admin rights.
         P(repo_root).joinpath(".venv").symlink_to(target=P.home().joinpath("venvs", ve_name), strict=False)
         # set strict to False since ve doesn't exist yet.
-
     return script
 
 
-def get_ps1_install_template(ve_name: str, py_version: str):
+def get_ps1_ve_install_script(ve_name: str, py_version: str, use_web: bool = False):
+    if use_web:
+        install_line = """(Invoke-WebRequest https://bit.ly/cfgvewindows).Content | Invoke-Expression"""
+    else:
+        system_ = platform.system()
+        install_line = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/ve.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
     template = f"""
 $ve_name = '{ve_name}'
 $py_version = '{py_version}'  # type: ignore
-(Invoke-WebRequest https://bit.ly/cfgvewindows).Content | Invoke-Expression
+{install_line}
 . $HOME/scripts/activate_ve $ve_name
-
 """
     return template
-def get_bash_install_template(ve_name: str, py_version: str):
+def get_bash_ve_install_script(ve_name: str, py_version: str, use_web: bool = False):
+    if use_web: install_line = """curl -L https://bit.ly/cfgvelinux | bash"""
+    else:
+        system_ = platform.system()
+        install_line = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/ve.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
     template = f"""
 export ve_name='{ve_name}'
 export py_version='{py_version}'  # type: ignore
-curl -L https://bit.ly/cfgvelinux | bash
+{install_line}
 . $HOME/scripts/activate_ve $ve_name
+"""
+    return template
+def get_ps1_repos_install_script(ve_name: str, use_web: bool = False):
+    if use_web: install_line = """(Invoke-WebRequest https://bit.ly/cfgreposwindows).Content | Invoke-Expression"""
+    else:
+        system_ = platform.system()
+        install_line = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/repos.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
+    template = f"""
+$ve_name = '{ve_name}'
+. $HOME/scripts/activate_ve $ve_name
+{install_line}
+"""
+    return template
+
+def get_bash_repos_install_script(ve_name: str, use_web: bool = False):
+    if use_web: install_line = """curl -L https://bit.ly/cfgreposlinux | bash"""
+    else:
+        system_ = platform.system()
+        install_line = LIBRARY_ROOT.joinpath(f"setup_{system_.lower()}/repos.{'ps1' if system_ == 'Windows' else 'sh'}").read_text()
+    template = f"""
+export ve_name='{ve_name}'
+. $HOME/scripts/activate_ve $ve_name
+{install_line}
 """
     return template
 

@@ -13,8 +13,10 @@ if [ -z "$py_version" ]; then
 fi
 # --- End of user defined variables ---
 
+# echo "🐍 Setting up virtual environment for Python $py_version"
+# sleep 15
 
-mkdir $HOME/venvs/ || true
+mkdir -p $HOME/venvs/ || true
 cd $HOME/venvs/ || exit
 # delete ~/venvs/$ve_name and its contents if it exists
 if [ -d "$ve_name" ]; then
@@ -37,7 +39,6 @@ if ! command -v uv &> /dev/null; then
 fi
 
 $HOME/.cargo/bin/uv venv $HOME/venvs/$ve_name --python 3.11 --python-preference only-managed
-
 
 # check if $VIRTUAL_ENV is set
 if [ -z "$VIRTUAL_ENV" ]; then

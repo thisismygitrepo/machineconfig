@@ -142,7 +142,6 @@ print_logo(logo="crocodile")
     ve = get_ve_profile(P(file)) if args.ve is None else str(args.ve)
 
     final_program = f"""
-# deactivate
 . $HOME/scripts/activate_ve '{ve}'
 {interpreter} """
     if interpreter == "ipython":

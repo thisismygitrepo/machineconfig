@@ -19,5 +19,6 @@ fi
 
 # check below if VIRTUAL_ENV enviroment variable exist, then deactivate it, other wise skip
 if [ -n "$VIRTUAL_ENV" ]; then
-  deactivate
+  deactivate || true
+
 fi
