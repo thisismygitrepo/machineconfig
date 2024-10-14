@@ -98,6 +98,10 @@ match = {this = '~/.config/espanso/match/base.yml', to_this = 'LIBRARY_ROOT/sett
 [remmina]
 data = {this = '~/.var/app/org.remmina.Remmina/data/remmina', to_this = '~/dotfiles/creds/RDP/remmina/data/remmina'}
 
+[pudb]
+config = {this = '~/.config/pudb/pudb.cfg', to_this = 'LIBRARY_ROOT/settings/pudb/pudb.cfg'}
+
+
 # ============================= shells profiles ==================================
 
 # [powershell_windows]
