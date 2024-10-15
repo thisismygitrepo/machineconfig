@@ -2,8 +2,8 @@
 # https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 
 # # Add Docker's official GPG key:
-# sudo apt-get update
-# sudo apt-get install ca-certificates curl gnupg -y
+# sudo nala update
+# sudo nala install ca-certificates curl gnupg -y
 # sudo install -m 0755 -d /etc/apt/keyrings
 # curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 # sudo chmod a+r /etc/apt/keyrings/docker.gpg
@@ -17,19 +17,53 @@
 #   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
 #    $OS_NAME stable" | \
 #   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-# sudo apt-get update
+# sudo nala update
 
-# sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+# sudo nala install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+
+get_ubuntu_base_version() {
+    local mint_codename=$(lsb_release -cs)
+    case "$mint_codename" in
+        "wilma")
+            echo "noble"
+            ;;
+        "virginia")
+            echo "jammy"
+            ;;
+        *)
+            echo "$mint_codename"
+            ;;
+    esac
+}
+ubuntu_version=$(get_ubuntu_base_version)
+
+
+# Add Docker's official GPG key:
+sudo nala update
+sudo nala install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $ubuntu_version stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo nala update
+
+sudo nala install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+sudo systemctl enable docker
+docker run hello-world
 
 
 # As per NixOs installer:
-nix-env -iA nixpkgs.docker
-
-# as per: https://docs.docker.com/engine/install/linux-postinstall/
-sudo groupadd docker
-sudo usermod -aG docker $USER
-# Now you need to log out and in OR run: `newgrp docker`
-docker run hello-world
+# nix-env -iA nixpkgs.docker
+# # as per: https://docs.docker.com/engine/install/linux-postinstall/
+# sudo groupadd docker
+# sudo usermod -aG docker $USER
+# # Now you need to log out and in OR run: `newgrp docker`
+# 
 
 
 # in older wsl, following installation, docker run hello-world will fail with error:
@@ -47,5 +81,5 @@ docker run hello-world
 # this is as per: https://stackoverflow.com/questions/47854463/docker-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socke
 
 # databricks only:
-# sudo apt-get install fuse-overlayfs
+# sudo nala install fuse-overlayfs
 
