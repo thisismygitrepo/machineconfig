@@ -3,7 +3,6 @@
 """devops
 """
 
-from crocodile.file_management import P
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, write_shell_script
 from platform import system
 from enum import Enum
@@ -50,18 +49,18 @@ def main(which: Optional[str] = None):
     elif choice_key == Options.ve.value:
         program = ""
         reply: bool = False
-        if P.cwd().joinpath(".ve.ini").exists():
-            reply = input("Detected .ve.ini file. Do you want to use it to build ve? (y/[n]): ") == "y"
-            if reply:
-                from machineconfig.utils.ve import get_ve_install_script_from_specs
-                program_win = get_ve_install_script_from_specs(repo_root=P.cwd().to_str(), system="Windows")
-                program_lin = get_ve_install_script_from_specs(repo_root=P.cwd().to_str(), system="Linux")
-                install_reply = input("Proceed with installation? (y/[n]): ") == "y"
-                if not install_reply: program = ""
-                else:
-                    if system() == "Windows": program = program_win
-                    elif system() == "Linux": program = program_lin
-                    else: raise ValueError(f"Unknown system: {system()}")
+        # if P.cwd().joinpath(".ve.ini").exists():
+        #     reply = input("Detected .ve.ini file. Do you want to use it to build ve? (y/[n]): ") == "y"
+        #     if reply:
+        #         from machineconfig.utils.ve import get_ve_install_script_from_specs
+        #         program_win = get_ve_install_script_from_specs(repo_root=P.cwd().to_str(), system="Windows")
+        #         program_lin = get_ve_install_script_from_specs(repo_root=P.cwd().to_str(), system="Linux")
+        #         install_reply = input("Proceed with installation? (y/[n]): ") == "y"
+        #         if not install_reply: program = ""
+        #         else:
+        #             if system() == "Windows": program = program_win
+        #             elif system() == "Linux": program = program_lin
+        #             else: raise ValueError(f"Unknown system: {system()}")
 
         if not reply:
             from machineconfig.utils.ve import get_ve_install_script
