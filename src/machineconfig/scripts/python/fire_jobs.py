@@ -59,6 +59,9 @@ def main() -> None:
     if args.kw is not None:
         assert len(args.kw) % 2 == 0, f"args.kw must be a list of even length. Got {len(args.kw)}"
         kwargs = dict(zip(args.kw[::2], args.kw[1::2]))
+        for key, value in kwargs.items():
+            if value == "True": kwargs[key] = True
+            elif value == "False": kwargs[key] = False
         # print(f"kwargs = {kwargs}")
     else:
         kwargs = {}
