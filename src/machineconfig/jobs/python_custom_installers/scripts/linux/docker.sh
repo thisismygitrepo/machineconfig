@@ -41,12 +41,20 @@ ubuntu_version=$(get_ubuntu_base_version)
 # Add Docker's official GPG key:
 sudo nala update
 sudo nala install ca-certificates curl
+
+# sudo mkdir -p /etc/apt/keyrings  # USE IF THINGS GET MESSY,  THIS DOES OVERWRITING
 sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
+# sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+# sudo chmod a+r /etc/apt/keyrings/docker.asc
 # Add the repository to Apt sources:
+# echo \
+#   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+#   $ubuntu_version stable" | \
+#   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $ubuntu_version stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
