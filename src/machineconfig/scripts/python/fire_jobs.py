@@ -33,6 +33,9 @@ def search_for_files_of_interest(path_obj: P):
     return files
 
 
+str2obj = {"True": True, "False": False, "None": None}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("path",     nargs='?', type=str, help="The directory containing the jobs", default=".")
@@ -60,8 +63,8 @@ def main() -> None:
         assert len(args.kw) % 2 == 0, f"args.kw must be a list of even length. Got {len(args.kw)}"
         kwargs = dict(zip(args.kw[::2], args.kw[1::2]))
         for key, value in kwargs.items():
-            if value == "True": kwargs[key] = True
-            elif value == "False": kwargs[key] = False
+            if value in str2obj:
+                kwargs[key] = str2obj[value]
         # print(f"kwargs = {kwargs}")
     else:
         kwargs = {}
