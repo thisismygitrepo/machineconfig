@@ -42,7 +42,7 @@ $HOME/.cargo/bin/uv venv $HOME/venvs/$ve_name --python 3.11 --python-preference 
 
 # check if $VIRTUAL_ENV is set
 if [ -z "$VIRTUAL_ENV" ]; then
-  source $HOME/venvs/ve/bin/activate || exit
+  source "$HOME/venvs/$ve_name/bin/activate" || exit
 fi
 $HOME/.cargo/bin/uv pip install --upgrade pip
 
