@@ -17,7 +17,6 @@ else
 fi
 
 
-
 export ve_name="ve"
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
@@ -38,21 +37,31 @@ else
 fi
 
 
-
-read -p "Install CLI Apps [y]/n ? " choice
+read -p "Did you finish copying [y]/n ? " choice
 choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
+    sudo nala install openssh-server -y
 else
     echo "Installation aborted."
 fi
 
 
-read -p "Create Symlinks [y]/n ? " choice
+read -p "Create Symlinks (finish dotfiles transfer first) [y]/n ? " choice
 choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     source $HOME/venvs/ve/bin/activate
     python -m fire machineconfig.profile.create main --choice=all
+    sudo chmod 600 $HOME/.ssh/*
+    sudo chmod 700 $HOME/.ssh
+else
+    echo "Installation aborted."
+fi
+
+
+read -p "Install CLI Apps [y]/n ? " choice
+choice=${choice:-y}
+if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
+    source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
 else
     echo "Installation aborted."
 fi
