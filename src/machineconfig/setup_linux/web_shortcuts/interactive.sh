@@ -98,6 +98,15 @@ else
     echo "Installation aborted."
 fi
 
+
+read -p "Install ascii art libs [y]/n ? " choice
+choice=${choice:-y}
+if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
+    curl bit.ly/cfgasciiartlinux -L | sudo bash
+else
+    echo "Installation aborted."
+fi
+
 # echo "run this after installing Thunderbird and starting it and shutting it down but before downloading backup"
 # cd ~/AppData/Roaming/ThunderBird/Profiles
 # $res = ls
