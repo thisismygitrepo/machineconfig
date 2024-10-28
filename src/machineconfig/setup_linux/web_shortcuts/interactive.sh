@@ -71,10 +71,7 @@ read -p "Install Brave+WezTerm+VSCode [y]/n ? " choice
 choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     . $HOME/venvs/ve/bin/activate
-    python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm
-    python -m fire machineconfig.scripts.python.devops_devapps_install main --which=brave
-    python -m fire machineconfig.scripts.python.devops_devapps_install main --which=code
-
+    python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm,brave,code
 else
     echo "Installation aborted."
 fi

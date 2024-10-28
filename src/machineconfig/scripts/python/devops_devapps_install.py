@@ -20,17 +20,21 @@ def main(which: Optional[WHICH_CAT | str] = None):
         return get_programs_by_category(program_name=which)  # type: ignore
 
     if which is not None:  # install by name
-        kv = {}
-        for _category, v in get_all_dicts(system=system()).items():
-            kv.update(v)
-        if which not in kv:
-            raise ValueError(f"{which=} not found in {kv.keys()}")
-        print(f"Installing {which}", kv[which])
-        installer = Installer.from_dict(name=which, d=kv[which])
-        print(installer)
-        program = installer.install_robust(version=None)  # finish the task
-        program = "echo 'Finished Installation'"  # write an empty program
-        return program
+        which_list = which.split(",")
+        program_total = ""
+        for a_which in which_list:
+            kv = {}
+            for _category, v in get_all_dicts(system=system()).items():
+                kv.update(v)
+            if a_which not in kv:
+                raise ValueError(f"{a_which=} not found in {kv.keys()}")
+            print(f"Installing {a_which}", kv[a_which])
+            installer = Installer.from_dict(name=a_which, d=kv[a_which])
+            print(installer)
+            program = installer.install_robust(version=None)  # finish the task
+            program = "echo 'Finished Installation'"  # write an empty program
+            program_total += "\n" + program
+        return program_total
 
     # interactive installation
     installers = [Installer.from_dict(d=vd, name=name) for __kat, vds in get_all_dicts(system=system()).items() for name, vd in vds.items()]
