@@ -84,7 +84,7 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 }
 
 # Retrieve Repos
-$choice = Read-Host "Retrieve Repos @ ~/code [y]/n ? "
+$choice = Read-Host "Retrieve Repos at ~/code [y]/n ? "
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
     repos ~\code --clone --cloud odg1
