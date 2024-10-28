@@ -1,4 +1,4 @@
 
-from machineconfig.scripts.python.devops_backup_retrieve import main
+from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve
 
-program = main(direction="BACKUP", which="all")
+program = main_backup_retrieve(direction="BACKUP", which="all")

@@ -99,10 +99,10 @@ def main(which: Optional[str] = None):
         program = """curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
 
     elif choice_key == Options.backup.value:
-        from machineconfig.scripts.python.devops_backup_retrieve import main as helper
+        from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve as helper
         program = helper(direction="BACKUP")
     elif choice_key == Options.retreive.value:
-        from machineconfig.scripts.python.devops_backup_retrieve import main as helper
+        from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve as helper
         program = helper(direction="RETRIEVE")
 
     elif choice_key == Options.scheduler.value:

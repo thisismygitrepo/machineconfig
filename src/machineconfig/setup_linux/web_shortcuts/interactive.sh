@@ -112,3 +112,5 @@ fi
 # $res = ls
 # $name = $res[0].Name
 # mv $backup_folder $name
+
+echo "ALL DONE. Youh might need to reboot"

@@ -13,7 +13,7 @@ from typing import Any, Literal, Optional
 OPTIONS = Literal["BACKUP", "RETRIEVE"]
 
 
-def main(direction: OPTIONS, which: Optional[str] = None):
+def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
     try:
         cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
         print(f"\n{'--' *  50}\n ⚠️ Using default cloud: `{cloud}` ⚠️\n{'--' *  50}\n")
@@ -47,6 +47,10 @@ def main(direction: OPTIONS, which: Optional[str] = None):
         if item_name == "dotfiles" and system() == "Linux": program += f"""\nchmod 700 ~/.ssh/*\n"""
     print_code(program, lexer="shell", desc=f"{direction} script")
     return program
+
+
+def main(direction: OPTIONS, which: Optional[str] = None):
+    code = main_backup_retrieve(direction, which)
 
 
 if __name__ == "__main__":
