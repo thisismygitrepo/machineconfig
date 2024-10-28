@@ -22,7 +22,7 @@ THIS_MACHINE_HOSTNAME = platform.node()
 THIS_MACHINE_HOSTNAME_WSL = f"{THIS_MACHINE_HOSTNAME}wsl"
 
 
-def main_windows_and_wsl(window: int, hosts: list[str], orientation: ORIENTATION_TYPE = "vertical", mprocs: bool = False):
+def main_windows_and_wsl(window: int, hosts: list[str], orientation: ORIENTATION_TYPE = "vertical", mprocs: bool=False):
     orientation_oposite = "horizontal" if orientation == "vertical" else "vertical"
     orientation_swap                = "up" if orientation         == "horizontal" else "left"
     orientation_opposite_move_focus = "up" if orientation_oposite == "horizontal" else "left"

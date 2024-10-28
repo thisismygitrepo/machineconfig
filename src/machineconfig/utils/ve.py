@@ -27,7 +27,7 @@ class VE_INI:
 def get_ipython_profile(init_path: P):
     """Relies on .ipy_profile"""
     a_path = init_path
-    ipy_profile: str = "default"
+    ipy_profile: str="default"
     idx = len(a_path.parts)
     while idx >= 0:
         if a_path.joinpath(".ipy_profile").exists():
@@ -39,7 +39,7 @@ def get_ipython_profile(init_path: P):
     else:
         print(f"⚠️ Using default IPython: {ipy_profile}")
     return ipy_profile
-def get_ve_profile(init_path: P, strict: bool = False):
+def get_ve_profile(init_path: P, strict: bool=False):
     """Relies on .ve_path"""
     ve = ""
     tmp = init_path
@@ -97,7 +97,7 @@ def get_ve_specs(ve_path: P) -> dict[str, str]:
 
 def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[str] = None,
                           install_crocodile_and_machineconfig: Optional[bool] = None,
-                          delete_if_exists: bool = True,
+                          delete_if_exists: bool=True,
                         #   system: Optional[Literal["Windows", "Linux"]] = None
                           ) -> str:
     from rich.console import Console
@@ -159,7 +159,7 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
     # else: raise NotImplementedError(f"System {system} not supported.")
     # script += f"\n{cmd}"
 
-    link_ve: str = input("Create symlinks? [y/[n]] ") == "y"
+    link_ve: str=input("Create symlinks? [y/[n]] ") == "y"
     if link_ve: create_symlinks(repo_root=P.cwd(), ve_name=ve_name, dotted_py_version=dotted_py_version, system=system, ipy_profile="default")
     make_installation_recipe(repo_root=P.cwd(), ve_name=ve_name, py_version=dotted_py_version)
     return script

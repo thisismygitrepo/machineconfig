@@ -19,7 +19,7 @@ WINDOWS_INSTALL_PATH = P.home().joinpath("AppData/Local/Microsoft/WindowsApps").
 CATEGORY: TypeAlias = Literal["OS_SPECIFIC", "OS_GENERIC", "CUSTOM", "OS_SPECIFIC_DEV", "OS_GENERIC_DEV", "CUSTOM_DEV"]
 
 
-def find_move_delete_windows(downloaded_file_path: P, exe_name: Optional[str] = None, delete: bool = True, rename_to: Optional[str] = None):
+def find_move_delete_windows(downloaded_file_path: P, exe_name: Optional[str] = None, delete: bool=True, rename_to: Optional[str] = None):
     if exe_name is not None and ".exe" in exe_name: exe_name = exe_name.replace(".exe", "")
     if downloaded_file_path.is_file():
         exe = downloaded_file_path
@@ -69,18 +69,18 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
 class Installer:
     def __init__(self, repo_url: str, name: str, doc: str, filename_template_windows_amd_64: str, filename_template_linux_amd_64: str,
                  strip_v: bool, exe_name: str):
-        self.repo_url: str = repo_url
-        self.name: str = name
-        self.doc: str = doc
-        self.filename_template_windows_amd_64: str = filename_template_windows_amd_64
-        self.filename_template_linux_amd_64: str = filename_template_linux_amd_64
-        self.strip_v: bool = strip_v
-        self.exe_name: str = exe_name
+        self.repo_url: str=repo_url
+        self.name: str=name
+        self.doc: str=doc
+        self.filename_template_windows_amd_64: str=filename_template_windows_amd_64
+        self.filename_template_linux_amd_64: str=filename_template_linux_amd_64
+        self.strip_v: bool=strip_v
+        self.exe_name: str=exe_name
     def __repr__(self) -> str: return f"Installer of {self.repo_url}"
     def get_description(self):
         # old_version_cli = Terminal().run(f"{self.exe_name} --version").op.replace("\n", "")
         # old_version_cli = os.system(f"{self.exe_name} --version").replace("\n", "")
-        old_version_cli: bool = check_tool_exists(tool_name=self.exe_name)
+        old_version_cli: bool=check_tool_exists(tool_name=self.exe_name)
         old_version_cli_str = "✅" if old_version_cli else "❌"
         # name_version = f"{self.exe_name} {old_version_cli_str}"
         return f"{self.exe_name:<12} {old_version_cli_str} {self.doc}"
@@ -126,7 +126,7 @@ class Installer:
 
             import runpy
             print(f"Executing func `main` from `{installer_path}`to get the program to run")
-            program: str = runpy.run_path(str(installer_path), run_name=None)['main'](version=version)
+            program: str=runpy.run_path(str(installer_path), run_name=None)['main'](version=version)
             # print(program)
             Terminal(stdin=None, stdout=None, stderr=None).run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)
             # import subprocess
@@ -326,7 +326,7 @@ def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
     return res_final
 
 
-def install_all(installers: L[Installer], safe: bool = False, jobs: int = 10, fresh: bool = False):
+def install_all(installers: L[Installer], safe: bool=False, jobs: int = 10, fresh: bool=False):
     if fresh: INSTALL_VERSION_ROOT.delete(sure=True)
     if safe:
         from machineconfig.jobs.python.check_installations import APP_SUMMARY_PATH

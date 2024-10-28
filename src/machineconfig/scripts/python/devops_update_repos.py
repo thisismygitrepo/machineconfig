@@ -10,7 +10,7 @@ from platform import system
 sep = "\n"
 
 
-def main(verbose: bool = True) -> str:
+def main(verbose: bool=True) -> str:
     _ = verbose
     repos: list[str] = ["~/code/crocodile", "~/code/machineconfig", ]
     try:

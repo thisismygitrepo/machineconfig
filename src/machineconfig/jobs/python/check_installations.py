@@ -18,7 +18,7 @@ from typing import Optional
 
 
 APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
-CLOUD: str = "gdw"  # Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+CLOUD: str="gdw"  # Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
 # my onedrive doesn't allow sharing.
 
 
@@ -148,7 +148,7 @@ class PrecheckedCloudInstaller:
             exe.move(folder=P.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
         return True
 
-    def download_safe_apps(self, name: str = "AllEssentials"):
+    def download_safe_apps(self, name: str="AllEssentials"):
         # if platform.system().lower() == "windows":
         #     from machineconfig.jobs.python.python_windows_installers_all import get_cli_py_installers
         #     cli_installers = get_cli_py_installers()

@@ -31,7 +31,7 @@ class RepoRecord:
     version: dict[str, str]
 
 
-def git_action(path: P, action: GitAction, mess: Optional[str] = None, r: bool = False) -> str:
+def git_action(path: P, action: GitAction, mess: Optional[str] = None, r: bool=False) -> str:
     from git.exc import InvalidGitRepositoryError
     from git.repo import Repo
     try:
@@ -101,7 +101,7 @@ def main():
             repos_root = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
             if not repos_root.exists():
                 if args.cloud is None:
-                    cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+                    cloud: str=Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
                     print(f"⚠️ Using default cloud: {cloud}")
                 else:
                     cloud = args.cloud
@@ -121,7 +121,7 @@ def main():
     write_shell_script(program, "Script to update repos")
 
 
-def record_repos(repos_root: str, r: bool = True) -> list[dict[str, Any]]:
+def record_repos(repos_root: str, r: bool=True) -> list[dict[str, Any]]:
     path_obj = P(repos_root).expanduser().absolute()
     if path_obj.is_file(): return []
     search_res = path_obj.search("*", files=False)
@@ -134,7 +134,7 @@ def record_repos(repos_root: str, r: bool = True) -> list[dict[str, Any]]:
     return res
 
 
-def record_a_repo(path: P, search_parent_directories: bool = False, preferred_remote: Optional[str] = None):
+def record_a_repo(path: P, search_parent_directories: bool=False, preferred_remote: Optional[str] = None):
     from git.repo import Repo
     repo = Repo(path, search_parent_directories=search_parent_directories)  # get list of remotes using git python
     repo_root = P(repo.working_dir).absolute()
@@ -159,7 +159,7 @@ def record_a_repo(path: P, search_parent_directories: bool = False, preferred_re
     return res
 
 
-def install_repos(specs_path: str, clone: bool = True, checkout_to_recorded_commit: bool = False, checkout_to_branch: bool = False, editable_install: bool = False, preferred_remote: Optional[str] = None):
+def install_repos(specs_path: str, clone: bool=True, checkout_to_recorded_commit: bool=False, checkout_to_branch: bool=False, editable_install: bool=False, preferred_remote: Optional[str] = None):
     program = ""
     path_obj = P(specs_path).expanduser().absolute()
     repos: list[dict[str, Any]] = Read.json(path_obj)

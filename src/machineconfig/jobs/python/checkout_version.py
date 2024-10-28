@@ -12,7 +12,7 @@ import platform
 # TODO: add data requirements for added isolation of file system.
 
 
-def checkout_version(version: str, repo_root: P, exclude_editable: bool = False):
+def checkout_version(version: str, repo_root: P, exclude_editable: bool=False):
     """Checkout a version of the repo and install its requirements."""
     ve_name = get_ve_profile(init_path=repo_root)
     ve_path = P.home().joinpath("venvs", ve_name)

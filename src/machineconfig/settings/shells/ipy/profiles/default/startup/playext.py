@@ -32,13 +32,13 @@ def print_program_func(obj_str: str):
     from rich.syntax import Syntax
     import inspect
     obj = eval(obj_str, globals(), locals())  # type: ignore  # pylint: disable=eval-used
-    q: str = inspect.getsource(obj)
+    q: str=inspect.getsource(obj)
     from rich import console
     console.Console().print(Syntax(code=q, lexer="python"))
 
 
 @register_line_magic("play")  # type: ignore
-def run_python_file_in_this_namespace(a_path: str, module: bool = False):
+def run_python_file_in_this_namespace(a_path: str, module: bool=False):
     """Given a potentially dirty path of python file, run it in this namespace."""
     from machineconfig.utils.utils import match_file_name, sanitize_path
     path = sanitize_path(P(a_path))

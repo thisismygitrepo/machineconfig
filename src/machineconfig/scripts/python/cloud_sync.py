@@ -22,12 +22,12 @@ ES = "^"  # chosen carefully to not mean anything on any shell. `$` was a bad ch
 
 
 class ArgsDefaults:
-    # source: str = None
-    # target: str = None
-    encrypt: bool = False
-    zip_: bool = False
-    overwrite: bool = False
-    share: bool = False
+    # source: str=None
+    # target: str=None
+    encrypt: bool=False
+    zip_: bool=False
+    overwrite: bool=False
+    share: bool=False
     rel2home = False
     root = None
     os_specific = False
@@ -39,15 +39,15 @@ class ArgsDefaults:
 class Args():
     cloud: Optional[str] = None
 
-    zip: bool = ArgsDefaults.zip_
-    overwrite: bool = ArgsDefaults.overwrite
-    share: bool = ArgsDefaults.share
+    zip: bool=ArgsDefaults.zip_
+    overwrite: bool=ArgsDefaults.overwrite
+    share: bool=ArgsDefaults.share
 
     root: Optional[str] = ArgsDefaults.root
-    os_specific: bool = ArgsDefaults.os_specific
-    rel2home: bool = ArgsDefaults.rel2home
+    os_specific: bool=ArgsDefaults.os_specific
+    rel2home: bool=ArgsDefaults.rel2home
 
-    encrypt: bool = ArgsDefaults.encrypt
+    encrypt: bool=ArgsDefaults.encrypt
     key: Optional[str] = ArgsDefaults.key
     pwd: Optional[str] = ArgsDefaults.pwd
 
@@ -70,7 +70,7 @@ def absolute(path: str) -> P:
     return obj.absolute()
 
 
-def get_secure_share_cloud_config(interactive: bool = True) -> Args:
+def get_secure_share_cloud_config(interactive: bool=True) -> Args:
     if os.environ.get("CLOUD_CONFIG_NAME") is not None:
         default_cloud = os.environ.get("CLOUD_CONFIG_NAME")
         assert default_cloud is not None
@@ -134,7 +134,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
             else: maybe_config = Args.from_config(absolute(config))
 
         if maybe_config is None:
-            default_cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            default_cloud: str=Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             print(f"⚠️ Using default cloud: {default_cloud}")
             source = default_cloud + ":" + source[1:]
         else:
@@ -231,11 +231,11 @@ def args_parser():
 
     args = parser.parse_args()
     args_dict = vars(args)
-    source: str = args_dict.pop("source")
-    target: str = args_dict.pop("target")
-    verbose: bool = args_dict.pop("verbose")
-    delete: bool = args_dict.pop("delete")
-    bisync: bool = args_dict.pop("bisync")
+    source: str=args_dict.pop("source")
+    target: str=args_dict.pop("target")
+    verbose: bool=args_dict.pop("verbose")
+    delete: bool=args_dict.pop("delete")
+    bisync: bool=args_dict.pop("bisync")
     transfers: int = args_dict.pop("transfers")
     args_obj = Args(**args_dict)
 

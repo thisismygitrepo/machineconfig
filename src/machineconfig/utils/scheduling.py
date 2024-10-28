@@ -62,7 +62,7 @@ class Report:
     status: str
 
     @classmethod
-    def from_path(cls, path: P, return_default_if_not_found: bool = False):
+    def from_path(cls, path: P, return_default_if_not_found: bool=False):
         if not path.exists():
             if return_default_if_not_found:
                 return Report(name=path.parent.name, start=datetime(year=2000, month=1, day=1), end=datetime(year=2000, month=1, day=1), status="NA")
@@ -108,7 +108,7 @@ def read_task_from_dir(path: P):
     return task
 
 
-def main(root: Optional[str] = None, ignore_conditions: bool = True):
+def main(root: Optional[str] = None, ignore_conditions: bool=True):
     if root is None: root_resolved = SCHEDULER_DEFAULT_ROOT
     else: root_resolved = P(root).expanduser().absolute()
     tasks_dirs = root_resolved.search(files=False, folders=True).filter(lambda x: x.joinpath("task.py").exists())

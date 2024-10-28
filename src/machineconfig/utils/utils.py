@@ -40,7 +40,7 @@ def choose_cloud_interactively() -> str:
     else: raise ValueError(f"Got {tmp} from rclone listremotes")
     if len(remotes) == 0:
         raise RuntimeError("You don't have remotes. Configure your rclone first to get cloud services access.")
-    cloud: str = choose_one_option(msg="WHICH CLOUD?", options=list(remotes), default=remotes[0], fzf=True)
+    cloud: str=choose_one_option(msg="WHICH CLOUD?", options=list(remotes), default=remotes[0], fzf=True)
     return cloud
 
 
@@ -132,16 +132,16 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
     return path_obj
 
 
-def choose_one_option(options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "",
-                      default: Optional[T] = None, fzf: bool = False, custom_input: bool = False) -> T:
+def choose_one_option(options: Iterable[T], header: str="", tail: str="", prompt: str="", msg: str="",
+                      default: Optional[T] = None, fzf: bool=False, custom_input: bool=False) -> T:
     choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt,
                                  default=default, fzf=fzf, multi=False, custom_input=custom_input)
     assert not isinstance(choice_key, list)
     return choice_key
 
 
-def choose_multiple_options(options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "",
-                            default: Optional[T] = None, custom_input: bool = False) -> list[T]:
+def choose_multiple_options(options: Iterable[T], header: str="", tail: str="", prompt: str="", msg: str="",
+                            default: Optional[T] = None, custom_input: bool=False) -> list[T]:
     choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt,
                                  default=default, fzf=True, multi=True,
                                  custom_input=custom_input)
@@ -149,8 +149,8 @@ def choose_multiple_options(options: Iterable[T], header: str = "", tail: str = 
     return [choice_key]
 
 
-def display_options(msg: str, options: Iterable[T], header: str = "", tail: str = "", prompt: str = "",
-                    default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[T, list[T]]:
+def display_options(msg: str, options: Iterable[T], header: str="", tail: str="", prompt: str="",
+                    default: Optional[T] = None, fzf: bool=False, multi: bool=False, custom_input: bool=False) -> Union[T, list[T]]:
     # TODO: replace with https://github.com/tmbo/questionary  # also see https://github.com/charmbracelet/gum
     tool_name = "fzf"
     options_strings: list[str] = [str(x) for x in options]
@@ -216,7 +216,7 @@ def display_options(msg: str, options: Iterable[T], header: str = "", tail: str 
     return choice_one
 
 
-def symlink_func(this: P, to_this: P, prioritize_to_this: bool = True):
+def symlink_func(this: P, to_this: P, prioritize_to_this: bool=True):
     """helper function. creates a symlink from `this` to `to_this`.
     What can go wrong?
     depending on this and to_this existence, one will be prioretized depending on overwrite value.
@@ -241,7 +241,7 @@ def symlink_func(this: P, to_this: P, prioritize_to_this: bool = True):
     except Exception as ex: print(f"Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
 
 
-def symlink_copy(this: P, to_this: P, prioritize_to_this: bool = True):
+def symlink_copy(this: P, to_this: P, prioritize_to_this: bool=True):
     this = P(this).expanduser().absolute()
     to_this = P(to_this).expanduser().absolute()
     if this.is_symlink(): this.delete(sure=True)  # delete if it exists as symblic link, not a concrete path.
@@ -260,7 +260,7 @@ def symlink_copy(this: P, to_this: P, prioritize_to_this: bool = True):
     except Exception as ex: print(f"Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
 
 
-def get_shell_script_executing_python_file(python_file: str, func: Optional[str] = None, ve_name: str = "ve", strict_execution: bool = True):
+def get_shell_script_executing_python_file(python_file: str, func: Optional[str] = None, ve_name: str="ve", strict_execution: bool=True):
     if func is None: exec_line = f"""python {python_file}"""
     else: exec_line = f"""python -m fire {python_file} {func}"""
     shell_script = f"""
@@ -286,7 +286,7 @@ def get_shell_script(shell_script: str):
     return shell_file
 
 
-def get_shell_file_executing_python_script(python_script: str, ve_name: str = "ve", verbose: bool = True):
+def get_shell_file_executing_python_script(python_script: str, ve_name: str="ve", verbose: bool=True):
     if verbose:
         python_script = f"""
 code = r'''{python_script}'''
@@ -301,7 +301,7 @@ except ImportError: print(code)
     return shell_file
 
 
-def write_shell_script(program: str, desc: str = "", preserve_cwd: bool = True, display: bool = True, execute: bool = False):
+def write_shell_script(program: str, desc: str="", preserve_cwd: bool=True, display: bool=True, execute: bool=False):
     if preserve_cwd:
         if platform.system() == "Windows":
             program = "$orig_path = $pwd\n" + program + "\ncd $orig_path"
@@ -316,7 +316,7 @@ def write_shell_script(program: str, desc: str = "", preserve_cwd: bool = True, 
     return None
 
 
-def print_code(code: str, lexer: str, desc: str = ""):
+def print_code(code: str, lexer: str, desc: str=""):
     if lexer == "shell":
         if platform.system() == "Windows": lexer = "powershell"
         elif platform.system() == "Linux": lexer = "sh"
@@ -350,7 +350,7 @@ def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> b
 
     try:
         _tmp = subprocess.check_output([cmd, tool_name], stderr=subprocess.DEVNULL)
-        res: bool = True
+        res: bool=True
     except (subprocess.CalledProcessError, FileNotFoundError):
         res = False
     if res is False and install_script is not None:
@@ -365,11 +365,11 @@ def get_ssh_hosts() -> list[str]:
     c = SSHConfig()
     c.parse(open(P.home().joinpath(".ssh/config").to_str(), encoding="utf-8"))
     return list(c.get_hostnames())
-def choose_ssh_host(multi: bool = True): return display_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
+def choose_ssh_host(multi: bool=True): return display_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
 
 
 
-def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool = False):
+def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool=False):
     dotfiles_path = str(P.home().joinpath("dotfiles"))
     from git import Repo
     repo = Repo(path=dotfiles_path)
@@ -411,7 +411,7 @@ def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
 
 
 def wait_for_jobs_to_finish(root: P, pattern: str, wait_for_n_jobs: int, max_wait_minutes: float) -> bool:
-    wait_finished: bool = False
+    wait_finished: bool=False
     import time
     t0 = time.time()
     while not wait_finished:

@@ -97,7 +97,7 @@ def main() -> None:
     print(f"Presentation is served at http://localhost:{port}")
     print(f"Presentation is served at http://{local_ip_v4}:{port}")
     # This version requires a globally installed cli of slidev, which is not recommended.
-    # program: str = f"cd {SLIDEV_REPO}; slidev --port {port} --remote 0.0.0.0; cd {P.cwd()}"
+    # program: str=f"cd {SLIDEV_REPO}; slidev --port {port} --remote 0.0.0.0; cd {P.cwd()}"
 
     # The recommended approach is do `npm init slidev@latest` in the directory where you want to create the presentation
     # Then you can do the following:

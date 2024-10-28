@@ -43,7 +43,7 @@ except Exception as e:
     return pycode
 
 
-def get_read_pyfile_pycode(path: P, as_module: bool, cmd: str = ""):
+def get_read_pyfile_pycode(path: P, as_module: bool, cmd: str=""):
     if as_module: pycode = fr"""
 import sys
 sys.path.append(r'{path.parent}')

@@ -20,7 +20,7 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
     folder_obj = P.cwd() if folder is None else P(folder)
 
     if os.environ.get("DECRYPTION_PASSWORD") is not None:
-        pwd: str = str(os.environ.get("DECRYPTION_PASSWORD"))
+        pwd: str=str(os.environ.get("DECRYPTION_PASSWORD"))
     else:
         pwd = getpass.getpass(prompt="Enter decryption password: ")
     if url is None:
@@ -63,8 +63,8 @@ def arg_parser() -> None:
 
     args = parser.parse_args()
     args_dict = vars(args)
-    source: str = args_dict.pop("source")
-    target: str = args_dict.pop("target")
+    source: str=args_dict.pop("source")
+    target: str=args_dict.pop("target")
     args_obj = Args(**args_dict)
     Struct(args_obj.__dict__).print(as_config=True, title="CLI config")
 

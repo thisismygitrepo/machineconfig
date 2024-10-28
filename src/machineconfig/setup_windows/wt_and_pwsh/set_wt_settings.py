@@ -52,7 +52,7 @@ class TerminalSettings(object):
 
     # 1- Customizing Powershell========================================================
     # as opposed to Windows Powershell
-    def customize_powershell(self, nerd_font: bool = True):
+    def customize_powershell(self, nerd_font: bool=True):
         pwsh: dict[str, Any] = dict(name="PowerShell",
                                     commandline="pwsh",
                                     hidden=False,

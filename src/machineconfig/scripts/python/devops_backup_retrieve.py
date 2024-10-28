@@ -15,7 +15,7 @@ OPTIONS = Literal["BACKUP", "RETRIEVE"]
 
 def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
     try:
-        cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+        cloud: str=Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
         print(f"\n{'--' *  50}\n ⚠️ Using default cloud: `{cloud}` ⚠️\n{'--' *  50}\n")
     except (FileNotFoundError, KeyError, IndexError): cloud = choose_cloud_interactively()
 
