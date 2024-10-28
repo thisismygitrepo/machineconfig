@@ -39,5 +39,5 @@ if (-not $env:VIRTUAL_ENV) {
     echo "Activating virtual environment @ $HOME\venvs\$ve_name"
     & "$HOME\venvs\$ve_name\Scripts\Activate.ps1" -ErrorAction Stop
 }
-"$HOME\.cargo\bin\uv.exe" pip install --upgrade pip
+~\.cargo\bin\uv.exe pip install --upgrade pip
 
