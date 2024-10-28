@@ -28,7 +28,7 @@ winget install --no-upgrade --name "7-zip" --Id "7zip.7zip" --source winget --sc
 winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "PyCharm Professional Edition" --Id "JetBrains.PyCharm.Professional" --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "PyCharm Community Edition" --Id "JetBrains.PyCharm.Community" --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "DB Browser for SQLite" --Id "DBBrowserForSQLite.DBBrowserForSQLite" --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "DB Browser for SQLite" --Id "DBBrowserForSQLite.DBBrowserForSQLite" --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "sql server management studio" --Id "Microsoft.SQLServerManagementStudi" --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "TesseractOCR" --Id UB-Mannheim.TesseractOCR
 

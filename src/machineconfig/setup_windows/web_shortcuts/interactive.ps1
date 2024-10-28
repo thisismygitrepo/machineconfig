@@ -1,25 +1,25 @@
 # Install Apps
 $choice = Read-Host "Install Apps [y]/n ? "
 if ($choice -eq "y" -or $choice -eq "Y") {
-    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/apps.ps1" -OutFile "apps.ps1"
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1" -OutFile "apps.ps1"
     .\apps.ps1
 } else {
     Write-Host "Installation aborted."
 }
 
 # Upgrade system packages
-$choice = Read-Host "Upgrade system packages [y]/n ? "
-if ($choice -eq "y" -or $choice -eq "Y") {
-    winget upgrade --all
-} else {
-    Write-Host "Installation aborted."
-}
+# $choice = Read-Host "Upgrade system packages [y]/n ? "
+# if ($choice -eq "y" -or $choice -eq "Y") {
+#     winget upgrade --all
+# } else {
+#     Write-Host "Installation aborted."
+# }
 
 # Set environment variable and execute scripts
-$env:ve_name = "ve"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.ps1" -OutFile "ve.ps1"
+$ve_name = "ve"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1" -OutFile "ve.ps1"
 .\ve.ps1
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.ps1" -OutFile "repos.ps1"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1" -OutFile "repos.ps1"
 .\repos.ps1
 
 # Display messages about moving dotfiles
@@ -51,13 +51,25 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 }
 
 # Create Symlinks
-$choice = Read-Host "Create Symlinks (finish dotfiles transfer first) [y]/n ? "
-if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
-if ($choice -eq "y" -or $choice -eq "Y") {
+$createLinksChoice = Read-Host "Create Symlinks (finish dotfiles transfer first) [y]/n ? "
+if ([string]::IsNullOrEmpty($createLinksChoice)) { $createLinksChoice = "y" }
+
+if ($createLinksChoice -eq "y" -or $createLinksChoice -eq "Y") {
+    $linkTypeChoice = Read-Host "Create Symlinks (s) or Hardlinks (h) [s]/h ? "
+    if ([string]::IsNullOrEmpty($linkTypeChoice)) { $linkTypeChoice = "s" }
+
     . ~\venvs\ve\Scripts\Activate.ps1
-    python -m fire machineconfig.profile.create main --choice=all
-    icacls "~\.ssh\*" /inheritance:r /grant:r "$($env:USERNAME):(F)"
-    icacls "~\.ssh" /inheritance:r /grant:r "$($env:USERNAME):(F)"
+
+    if ($linkTypeChoice -eq "s" -or $linkTypeChoice -eq "S") {
+        python -m fire machineconfig.profile.create main --choice=all
+    } elseif ($linkTypeChoice -eq "h" -or $linkTypeChoice -eq "H") {
+        python -m fire machineconfig.profile.create_hardlinks main --choice=all
+    } else {
+        Write-Host "Invalid choice for link type. Installation aborted."
+    }
+
+    # icacls "~\.ssh\*" /inheritance:r /grant:r "$($env:USERNAME):(F)"
+    # icacls "~\.ssh" /inheritance:r /grant:r "$($env:USERNAME):(F)"
 } else {
     Write-Host "Installation aborted."
 }
