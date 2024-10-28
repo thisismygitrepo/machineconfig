@@ -1,5 +1,4 @@
 
-
 # as per https://github.com/marketplace/models/azure-openai/o1-preview
 from openai import OpenAI
 from crocodile.file_management import Read, P
@@ -44,7 +43,7 @@ def interactive_chat():
                     continue
                 else:
                     break
-            
+
             for a_choice in choices:
                 response_content = a_choice.message.content
                 print("\n" * 5)

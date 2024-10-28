@@ -286,7 +286,7 @@ def get_shell_script(shell_script: str):
     return shell_file
 
 
-def get_shell_file_executing_python_script(python_script: str, ve_name: str="ve", verbose: bool=True):
+def get_shell_file_executing_python_script(python_script: str, ve_name: str, verbose: bool=True):
     if verbose:
         python_script = f"""
 code = r'''{python_script}'''
@@ -310,9 +310,9 @@ def write_shell_script(program: str, desc: str="", preserve_cwd: bool=True, disp
     if display:
         print(f"Executing {PROGRAM_PATH}")
         print_code(code=program, lexer="shell", desc=desc)
-
     PROGRAM_PATH.create(parents_only=True).write_text(program)
-    if execute: Terminal().run(f". {PROGRAM_PATH}", shell="powershell").print_if_unsuccessful(desc="Executing shell script", strict_err=True, strict_returncode=True)
+    if execute:
+        Terminal().run(f". {PROGRAM_PATH}", shell="powershell").print_if_unsuccessful(desc="Executing shell script", strict_err=True, strict_returncode=True)
     return None
 
 
@@ -366,7 +366,6 @@ def get_ssh_hosts() -> list[str]:
     c.parse(open(P.home().joinpath(".ssh/config").to_str(), encoding="utf-8"))
     return list(c.get_hostnames())
 def choose_ssh_host(multi: bool=True): return display_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
-
 
 
 def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool=False):
