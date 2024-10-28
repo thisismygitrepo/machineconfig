@@ -34,7 +34,7 @@ if (-not (Test-Path -Path "$HOME\.cargo\bin\uv.exe")) {
 }
 
 
-"$HOME\.cargo\bin\uv.exe" venv "$venvPath\$ve_name" --python $py_version --python-preference only-managed
+~\.cargo\bin\uv.exe venv "$venvPath\$ve_name" --python $py_version --python-preference only-managed
 if (-not $env:VIRTUAL_ENV) {
     echo "Activating virtual environment @ $HOME\venvs\$ve_name"
     & "$HOME\venvs\$ve_name\Scripts\Activate.ps1" -ErrorAction Stop
