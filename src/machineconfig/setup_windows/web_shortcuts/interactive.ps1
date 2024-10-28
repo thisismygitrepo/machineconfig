@@ -56,8 +56,8 @@ if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
     . ~\venvs\ve\Scripts\Activate.ps1
     python -m fire machineconfig.profile.create main --choice=all
-    icacls ~\.ssh\* /inheritance:r /grant:r "$($env:USERNAME):(F)"
-    icacls ~\.ssh" /inheritance:r /grant:r "$($env:USERNAME):(F)"
+    icacls "~\.ssh\*" /inheritance:r /grant:r "$($env:USERNAME):(F)"
+    icacls "~\.ssh" /inheritance:r /grant:r "$($env:USERNAME):(F)"
 } else {
     Write-Host "Installation aborted."
 }
