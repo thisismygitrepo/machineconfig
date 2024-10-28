@@ -1,7 +1,7 @@
 
-cd $HOME
+cd ~
 mkdir code -ErrorAction SilentlyContinue
-cd $HOME\code
+cd ~\code
 
 if (-not (Get-Command git.exe -ErrorAction SilentlyContinue)) {
     winget install --no-upgrade --name "Git" --Id Git.Git --source winget --accept-package-agreements --accept-source-agreements --scope user
@@ -27,6 +27,6 @@ if (-not (Test-Path variable:CROCODILE_EXTRA)) {
     & "$HOME\.cargo\bin\uv.exe" pip install -e .[$CROCODILE_EXTRA]
 }
 
-cd $HOME\code\machineconfig
+cd ~\code\machineconfig
 & "$HOME\.cargo\bin\uv.exe" pip install -e .
 echo "Finished setting up repos"
