@@ -65,6 +65,9 @@ sudo systemctl enable docker
 docker run hello-world
 
 
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
 # As per NixOs installer:
 # nix-env -iA nixpkgs.docker
 # # as per: https://docs.docker.com/engine/install/linux-postinstall/
