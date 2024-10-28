@@ -80,7 +80,7 @@ else
 fi
 
 
-read -p "Retrieve Repos @ ~/code [y]/n ? " choice
+read -p "Retrieve Repos at ~/code [y]/n ? " choice
 choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     repos ~/code --clone --cloud odg1
