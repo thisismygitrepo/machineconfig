@@ -54,10 +54,10 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 $choice = Read-Host "Create Symlinks (finish dotfiles transfer first) [y]/n ? "
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
-    . "$HOME\venvs\ve\Scripts\Activate.ps1"
+    . ~\venvs\ve\Scripts\Activate.ps1
     python -m fire machineconfig.profile.create main --choice=all
-    icacls "$HOME\.ssh\*" /inheritance:r /grant:r "$($env:USERNAME):(F)"
-    icacls "$HOME\.ssh" /inheritance:r /grant:r "$($env:USERNAME):(F)"
+    icacls ~\.ssh\* /inheritance:r /grant:r "$($env:USERNAME):(F)"
+    icacls ~\.ssh" /inheritance:r /grant:r "$($env:USERNAME):(F)"
 } else {
     Write-Host "Installation aborted."
 }
@@ -66,7 +66,7 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 $choice = Read-Host "Install CLI Apps [y]/n ? "
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
-    . "$HOME\code\machineconfig\src\machineconfig\setup_windows\devapps.ps1"
+    . ~\code\machineconfig\src\machineconfig\setup_windows\devapps.ps1
 } else {
     Write-Host "Installation aborted."
 }
@@ -75,7 +75,7 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 $choice = Read-Host "Install Brave+WezTerm+VSCode [y]/n ? "
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
-    . "$HOME\venvs\ve\Scripts\Activate.ps1"
+    . ~\venvs\ve\Scripts\Activate.ps1
     python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm
     python -m fire machineconfig.scripts.python.devops_devapps_install main --which=brave
     python -m fire machineconfig.scripts.python.devops_devapps_install main --which=code
@@ -87,7 +87,7 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 $choice = Read-Host "Retrieve Repos @ ~/code [y]/n ? "
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
-    repos "$HOME\code" --clone --cloud odg1
+    repos ~\code --clone --cloud odg1
 } else {
     Write-Host "Installation aborted."
 }
@@ -96,7 +96,7 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 $choice = Read-Host "Retrieve data [y]/n ? "
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
-    . "$HOME\venvs\ve\Scripts\Activate.ps1"
+    . ~\venvs\ve\Scripts\Activate.ps1
     python -m fire machineconfig.scripts.python.devops_backup_retrieve main --direction=RETRIEVE
 } else {
     Write-Host "Installation aborted."
