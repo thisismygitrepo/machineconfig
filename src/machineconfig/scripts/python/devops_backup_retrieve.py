@@ -26,7 +26,7 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
     if which is None:
         choices = choose_multiple_options(msg=f"WHICH FILE of the following do you want to {direction}?", options=['all'] + list(bu_file.keys()))
     else:
-        choices = which.split(",")
+        choices = which.split(",") if isinstance(which, str) else which
 
     if "all" in choices: items = bu_file
     else:

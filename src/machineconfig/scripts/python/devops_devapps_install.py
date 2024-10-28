@@ -20,9 +20,8 @@ def main(which: Optional[WHICH_CAT | str] = None):
         return get_programs_by_category(program_name=which)  # type: ignore
 
     if which is not None:  # install by name
-        which_list = which.split(",")
         program_total = ""
-        for a_which in which_list:
+        for a_which in (which.split(",") if type(which) == str else which):
             kv = {}
             for _category, v in get_all_dicts(system=system()).items():
                 kv.update(v)
