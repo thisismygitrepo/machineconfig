@@ -109,12 +109,12 @@ class Installer:
             self.install(version=version)
             new_version_cli = Terminal().run(f"{self.exe_name} --version").op.replace("\n", "")
 
-            if old_version_cli == new_version_cli: return f"""" echo "📦️ 😑 {self.exe_name}, same version: {old_version_cli}" """
-            else: return f""" echo "📦️ 🤩 {self.exe_name} updated from {old_version_cli} === to ===> {new_version_cli}" """
+            if old_version_cli == new_version_cli: return f"""echo "📦️ 😑 {self.exe_name}, same version: {old_version_cli}" """
+            else: return f"""echo "📦️ 🤩 {self.exe_name} updated from {old_version_cli} === to ===> {new_version_cli}" """
 
         except Exception as ex:
             print(ex)
-            return f""" echo "📦️ Failed at `{self.name}` with {ex}" """
+            return f"""echo "📦️ Failed at `{self.name}` with {ex}" """
 
     def install(self, version: Optional[str]):
         if self.repo_url == "CUSTOM":

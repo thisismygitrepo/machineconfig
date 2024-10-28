@@ -1,14 +1,14 @@
 
 # --------------------------- libs ---------------------------------
-# sudo apt install nautilus -y  # graphical file manager
-# sudo apt install x11-apps  # few graphical test apps like xeyes
-sudo apt install xrdp -y  # remote desktop protocol
-#sudo apt install xorg -y  # xorg server
-#sudo apt install xinit -y  # xorg init
-#sudo apt install xserver-xorg -y  # xorg server
+# sudo nala install nautilus -y  # graphical file manager
+# sudo nala install x11-apps  # few graphical test apps like xeyes
+sudo nala install xrdp -y  # remote desktop protocol
+#sudo nala install xorg -y  # xorg server
+#sudo nala install xinit -y  # xorg init
+#sudo nala install xserver-xorg -y  # xorg server
 
-sudo apt install xfce4 -y  # xfce4 desktop environment
-sudo apt install xfce4-goodies -y  # xfce4 desktop environment
+sudo nala install xfce4 -y  # xfce4 desktop environment
+sudo nala install xfce4-goodies -y  # xfce4 desktop environment
 
 # --------------- setup ----------------------------------
 sudo cp /etc/xrdp/xrdp.ini /etc/xrdp/xrdp.ini.bak
