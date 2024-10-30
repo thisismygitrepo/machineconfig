@@ -60,7 +60,7 @@ class ProcessManager:
             self.kill(pids=sub_df.pid.to_list())
             return
         kill_by_index = input("🔫 Kill by index? 1 4 ... /[n] ")
-        if kill_by_index != "":
+        if kill_by_index != "" and kill_by_index != "n":
             indices = [int(val) for val in kill_by_index.split(" ")]
             sub_sub_df = sub_df.iloc[indices]
             for idx2, row in sub_sub_df.iterrows():
