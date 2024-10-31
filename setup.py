@@ -21,6 +21,7 @@ install_requires = [
         "pydantic",
         "fire",  # required by fire command
         "call-function-with-timeout",
+        "openai"
     ]
 
 if platform.system() == "Windows":

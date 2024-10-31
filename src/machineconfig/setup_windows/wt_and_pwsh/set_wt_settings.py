@@ -65,7 +65,8 @@ class TerminalSettings(object):
             if item["name"] == "PowerShell":
                 self.profs.list[idx].update(pwsh)
                 break
-        else: print(f"Couldn't customize powershell because profile not found, try to install it first.")
+        else:
+            print("Couldn't customize powershell because profile not found, try to install it first.")
 
     def make_powershell_default_profile(self):
         for profile in self.profs:

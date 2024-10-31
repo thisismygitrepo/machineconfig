@@ -7,7 +7,7 @@ from crocodile.file_management import Read, P
 gh_token = Read.ini(P.home().joinpath("dotfiles/creds/git/git_host_tokens.ini"))['thisismygitrepo']['newLongterm']
 endpoint = "https://models.inference.ai.azure.com"
 model_name_preferences = ["o1-preview", "o1-mini", "GPT-4o", "GPT-4-o-mini"]
-client = OpenAI(
+client__ = OpenAI(
     base_url=endpoint,
     api_key=gh_token,
 )
@@ -35,7 +35,7 @@ def interactive_chat():
             conversation_history.append({"role": "user", "content": user_input})
 
             while True:
-                choices = get_response(client, model_name, conversation_history)
+                choices = get_response(client__, model_name, conversation_history)
                 if choices is None:
                     model_index += 1
                     model_name = model_name_preferences[model_index % len(model_name_preferences)]

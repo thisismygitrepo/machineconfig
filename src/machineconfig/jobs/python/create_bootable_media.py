@@ -1,6 +1,6 @@
 
 
-# 
+# try ventory or netboot.xyz
 
 # # one can either install rufus: https://rufus.ie/en/
 # # however, to create bootable media with multiple OSs to choose from:

@@ -57,7 +57,7 @@ git add .; git commit -am "{mess}"
         action_name = "pull" if action == GitAction.pull else "push"
         cmds = [f'echo "pulling from {remote.url}" ; git {action_name} {remote.name} {repo.active_branch.name}' for remote in repo.remotes]
         program += '\n' + '\n'.join(cmds) + '\n'
-    program = program + f'''
+    program = program + '''
 echo ""; echo ""
 '''
     return program
@@ -68,17 +68,17 @@ def main():
     # POSITIONAL
     parser.add_argument("directory", help="folder containing repos to record a json out of OR a specs json file to follow.", default="")
     # FLAGS
-    parser.add_argument("--push", help=f"push", action="store_true")
-    parser.add_argument("--pull", help=f"pull", action="store_true")
-    parser.add_argument("--commit", help=f"commit", action="store_true")
-    parser.add_argument("--all", help=f"pull, commit and push", action="store_true")
-    parser.add_argument("--record", help=f"record respos", action="store_true")
-    parser.add_argument("--clone", help=f"clone repos from record", action="store_true")
-    parser.add_argument("--checkout", help=f"Check out to versions prvided in this json file", action="store_true")
+    parser.add_argument("--push", help="push", action="store_true")
+    parser.add_argument("--pull", help="pull", action="store_true")
+    parser.add_argument("--commit", help="commit", action="store_true")
+    parser.add_argument("--all", help="pull, commit and push", action="store_true")
+    parser.add_argument("--record", help="record respos", action="store_true")
+    parser.add_argument("--clone", help="clone repos from record", action="store_true")
+    parser.add_argument("--checkout", help="Check out to versions prvided in this json file", action="store_true")
     parser.add_argument("--checkout_to_branch", help="Checkout to the main branch", action="store_true")
-    parser.add_argument("--recursive", "-r", help=f"recursive flag", action="store_true")
+    parser.add_argument("--recursive", "-r", help="recursive flag", action="store_true")
     # OPTIONAL
-    parser.add_argument("--cloud", "-c", help=f"cloud", default=None)
+    parser.add_argument("--cloud", "-c", help="cloud", default=None)
     args = parser.parse_args()
 
     if args.directory == "": repos_root = P.home().joinpath("code")  # it is a positional argument, can never be empty.
@@ -87,16 +87,16 @@ def main():
     program = ""
     if args.record:
         res = record_repos(repos_root=str(repos_root))
-        pprint(f"Recorded repositories:\n", res)
+        pprint("Recorded repositories:\n", res)
         save_path = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
         # Save.pickle(obj=res, path=save_path)
-        Save.json(obj=res, path=save_path)
+        Save.json(obj=res, path=save_path, indent=4)
         pprint(f"Result pickled at {P(save_path)}")
         if args.cloud is not None: P(save_path).to_cloud(rel2home=True, cloud=args.cloud)
-        program += f"""\necho '>>>>>>>>> Finished Recording'\n"""
+        program += """\necho '>>>>>>>>> Finished Recording'\n"""
     elif args.clone or args.checkout or args.checkout_to_branch:
         # preferred_remote = input("Enter preferred remote to use (default: None): ") or ""
-        program += f"""\necho '>>>>>>>>> Cloning Repos'\n"""
+        program += """\necho '>>>>>>>>> Cloning Repos'\n"""
         if not repos_root.exists() or repos_root.stem != 'repos.json':  # user didn't pass absolute path to pickle file, but rather expected it to be in the default save location
             repos_root = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
             if not repos_root.exists():
