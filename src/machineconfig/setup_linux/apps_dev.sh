@@ -94,7 +94,7 @@ sudo nala install make -y || true  # lvim and spacevim require it.
 yes '' | sed 3q; echo "----------------------------- installing rust ----------------------------"; yes '' | sed 3q
 # curl https://sh.rustup.rs -sSf | sh
 # (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
-# sudo apt-get install libssl-dev -y  # required for web development
+# sudo nala install libssl-dev -y  # required for web development
 
 yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "nala" ]; then
