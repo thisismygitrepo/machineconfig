@@ -74,11 +74,8 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
     search_root_obj = search_root_obj.absolute()
     print(f"Searching for {sub_string} in {search_root_obj}")
 
-    if search_root_obj.joinpath(".venv").exists():
-        search_root_objects = search_root_obj.search("*", not_in=[".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__"])
-        search_results: L[P] = L([a_search_root_obj.search(f"*{sub_string}*.py", r=True) for a_search_root_obj in search_root_objects]).reduce(lambda x, y: x + y)  # type: ignore
-    else:
-        search_results = search_root_obj.search(f"*{sub_string}*.py", r=True)
+    search_root_objects = search_root_obj.search("*", not_in=["links", ".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__"])
+    search_results: L[P] = L([a_search_root_obj.search(f"*{sub_string}*", r=True) for a_search_root_obj in search_root_objects]).reduce(lambda x, y: x + y)  # type: ignore
 
     if len(search_results) == 1:
         path_obj = search_results.list[0]
@@ -108,7 +105,7 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
 
         if check_tool_exists(tool_name="fzf"):
             try:
-                print("Trying with raw fzf ...")
+                print("Trying with fd ...")
                 fzf_cmd = f"cd '{search_root_obj}'; fd --type f --strip-cwd-prefix | fzf --filter={sub_string}"
                 search_res = subprocess.run(fzf_cmd, stdout=subprocess.PIPE, text=True, check=True, shell=True).stdout.split("\n")[:-1]
             except subprocess.CalledProcessError as cpe:
@@ -118,6 +115,7 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
 
             if len(search_res) == 1: return search_root_obj.joinpath(search_res[0])
             else:
+                print("Tring with raw fzf search ...")
                 try:
                     res = subprocess.run(f"cd '{search_root_obj}'; fzf --query={sub_string}", check=True, stdout=subprocess.PIPE, text=True, shell=True).stdout.strip()
                 except subprocess.CalledProcessError as cpe:
