@@ -10,7 +10,7 @@ fire
 
 
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, choose_ssh_host, match_file_name, sanitize_path
-from crocodile.file_management import P, install_n_import
+from crocodile.file_management import P, install_n_import, Read
 from crocodile.core import Display, randstr
 import inspect
 import platform
@@ -106,13 +106,19 @@ def main() -> None:
         args.ve = get_ve_profile(choice_file)
 
     if args.streamlit:
-        import socket
-        # try: local_ip_v4 = socket.gethostbyname(socket.gethostname() + ".local")  # without .local, in linux machines, '/etc/hosts' file content, you have an IP address mapping with '127.0.1.1' to your hostname
-        # except Exception:
-        #     print(f"Warning: Could not get local_ip_v4. This is probably because you are running a WSL instance")  # TODO find a way to get the local_ip_v4 in WSL
-        local_ip_v4 = socket.gethostbyname(socket.gethostname())
+        from crocodile.environment import get_network_addresses
+        local_ip_v4 = get_network_addresses()["local_ip_v4"]
         computer_name = platform.node()
-        print(f"🚀 Streamlit app is running at: http://{local_ip_v4}:8501 OR http://{computer_name}:8501")
+        port = 8501
+        if choice_file.parent.joinpath(".streamlit/config.toml").exists():
+            config = Read.toml(choice_file.parent.joinpath(".streamlit/config.toml"))
+            if "server" in config:
+                if "port" in config["server"]:
+                    port = config["server"]["port"]
+        message = f"🚀 Streamlit app is running @:\n1- http://{local_ip_v4}:{port}\n2- http://{computer_name}:{port}\n3- http://localhost:{port}"
+        from rich.panel import Panel
+        from rich import print as rprint
+        rprint(Panel(message))
         exe = "streamlit run --server.address 0.0.0.0 --server.headless true"
     elif args.interactive is False: exe = "python"
     elif args.jupyter: exe = "jupyter-lab"

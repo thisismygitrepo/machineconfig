@@ -93,8 +93,9 @@ sudo nala install make -y || true  # lvim and spacevim require it.
 
 yes '' | sed 3q; echo "----------------------------- installing rust ----------------------------"; yes '' | sed 3q
 # curl https://sh.rustup.rs -sSf | sh
-# (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
-# sudo nala install libssl-dev -y  # required for web development
+(curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
+sudo nala install libssl-dev -y  # required for web development
+
 
 yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "nala" ]; then
@@ -114,6 +115,8 @@ fi
 
 yes '' | sed 3q; echo "----------------------------- installing sqlite --------------------------"; yes '' | sed 3q
 sudo nala install sqlite3 -y || true  # sqlite vscode extension requires this to be installed. It gives sqlite and sqlite3 commands.
+sudo nala install postgresql-client -y || true  # for connecting to postgresql databases
+
 
 yes '' | sed 3q; echo "----------------------------- installing chafa ----------------------------"; yes '' | sed 3q
 sudo nala install chafa -y  # like viu, one can ascii-ize images.
