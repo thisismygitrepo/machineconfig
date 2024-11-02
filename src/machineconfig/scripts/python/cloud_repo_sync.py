@@ -6,7 +6,7 @@ from crocodile.file_management import P, Read
 from crocodile.core import randstr
 from crocodile.meta import Terminal
 
-from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, write_shell_script, get_shell_file_executing_python_script, get_shell_script
+from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, PROGRAM_PATH, write_shell_script, get_shell_file_executing_python_script, get_shell_script, choose_one_option
 import argparse
 import platform
 from typing import Optional, Literal
@@ -23,6 +23,7 @@ def get_wt_cmd(wd1: P, wd2: P) -> str:
 
 
 def get_zellij_cmd(wd1: P, wd2: P) -> str:
+    _ = wd1, wd2
     lines = [""" zellij action new-tab --name gitdiff""",
              """zellij action new-pane --direction down --name local --cwd ./data """,
              """zellij action write-chars "cd '{wd1}'; git status" """,
@@ -124,7 +125,8 @@ git pull originEnc master
 from machineconfig.scripts.python.cloud_repo_sync import delete_remote_repo_copy_and_push_local as func
 func(remote_repo=r'{repo_remote_root.to_str()}', local_repo=r'{repo_local_root.to_str()}', cloud=r'{cloud_resolved}')
 """
-        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1)
+        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1, ve_name="ve")
+        option1 = 'Delete remote copy and push local:'
         # ================================================================================
 
         program_2 = f"""
@@ -133,14 +135,15 @@ mv {repo_remote_root} {repo_local_root}
 """
 
         shell_file_2 = get_shell_script(shell_script=program_2)
+        option2 = 'Delete local repo and replace it with remote copy:'
         # ================================================================================
 
         program_3 = f"""
 from machineconfig.scripts.python.cloud_repo_sync import inspect_repos as func
 func(repo_local_root=r'{repo_local_root.to_str()}', repo_remote_root=r'{repo_remote_root.to_str()}')
 """
-        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3)
-
+        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3, ve_name="ve")
+        option3 = 'Inspect repos:'
         # ================================================================================
 
 
@@ -149,25 +152,30 @@ rm ~/dotfiles/creds/rclone/rclone.conf
 cp ~/.config/machineconfig/remote/dotfiles/creds/rclone/rclone.conf ~/dotfiles/creds/rclone
 """
         shell_file_4 = get_shell_script(shell_script=program_4)
+        option4 = 'Remove problematic rclone file from repo and replace with remote:'
         # ================================================================================
 
-        print(f"• {'Delete remote copy and push local:':75} 👉 {shell_file_1}")
-        print(f"• {'Delete local repo and replace it with remote copy:':75} 👉 {shell_file_2}")
-        print(f"• {'Inspect repos:':75} 👉 {shell_file_3}")
-        print(f"• {'Remove problematic rclone file from repo and replace with remote:':75} 👉 {shell_file_4}")
+        print(f"• {option1:75} 👉 {shell_file_1}")
+        print(f"• {option2:75} 👉 {shell_file_2}")
+        print(f"• {option3:75} 👉 {shell_file_3}")
+        print(f"• {option4:75} 👉 {shell_file_4}")
 
         match action:
             case "ask":
-                pass
+                choice = choose_one_option(options=[option1, option2, option3, option4])
+                if choice == option1: PROGRAM_PATH.write_text(program_1)
+                elif choice == option2: PROGRAM_PATH.write_text(program_2)
+                elif choice == option3: PROGRAM_PATH.write_text(program_3)
+                elif choice == option4: PROGRAM_PATH.write_text(program_4)
+                else: raise NotImplementedError(f"Choice {choice} not implemented.")
             case "pushLocalMerge":
-                pass
+                PROGRAM_PATH.write_text(program_1)
             case "overwriteLocal":
-                pass
+                PROGRAM_PATH.write_text(program_2)
             case "InspectRepos":
-                pass
+                PROGRAM_PATH.write_text(program_3)
             case "RemoveLocalRclone":
-                pass
-
+                PROGRAM_PATH.write_text(program_4)
 
 
 def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cloud: str):
