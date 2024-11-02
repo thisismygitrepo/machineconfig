@@ -11,7 +11,7 @@ import platform
 
 
 def main():
-    print(f"Mounting NFS Share ... ")
+    print("Mounting NFS Share ... ")
     share_info = input("share path? (e.g. machine:~/data/share_nfs) [press enter for interactive choice] = ")
     if share_info == "":
         tmp = choose_ssh_host(multi=False)

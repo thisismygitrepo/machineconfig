@@ -29,7 +29,7 @@ def main_windows_and_wsl(window: int, hosts: list[str], orientation: ORIENTATION
     orientation_opposite_move_focus_other = "down" if orientation_oposite == "horizontal" else "right"
     sleep = 3
     sep = f"\nsleep {sleep}; wt --window {window}"  # or '`;'
-    ssh_cmd = f"-t 'mprocs'" if mprocs else ''  # 'wsl_ssh_windows_port_forwarding.ps1'
+    ssh_cmd = "-t 'mprocs'" if mprocs else ''  # 'wsl_ssh_windows_port_forwarding.ps1'
     split_per_machine = 1 / len(hosts)
     size = 0.3
     known_hosts = get_ssh_hosts()

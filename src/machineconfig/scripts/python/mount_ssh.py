@@ -11,8 +11,7 @@ from machineconfig.utils.utils import PROGRAM_PATH, choose_ssh_host
 
 
 def main():
-
-    print(f"Mounting SSHFS ... ")
+    print("Mounting SSHFS ... ")
     share_info = input("share path? (e.g. user@host:/path) [press enter for interactive choice] = ")
     if share_info == "":
         tmp = choose_ssh_host(multi=False)
@@ -28,7 +27,7 @@ def main():
     if mount_point == "": mount_point = P.home().joinpath(fr"data/mount_ssh/{ssh.hostname}")
 
     if system() == "Linux":
-        txt = fr"""
+        txt = """
 sshfs alex@:/media/dbhdd /media/dbhdd\
 """
     elif system() == "Windows":

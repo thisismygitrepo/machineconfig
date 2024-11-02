@@ -19,10 +19,10 @@ def main(verbose: bool=True) -> str:
         repos += tmp
     except (FileNotFoundError, KeyError, IndexError):
         print(f"Missing {DEFAULTS_PATH} or section [general] or key repos. Using default repos.")
-        print(f"""It should look like this:
+        print("""It should look like this:
 [general]
 repos = ~/code/repo1,~/code/repo2
-rclone_config_name = onedriveWork
+rclone_config_name = onedrivePersonal
 email_config_name = Yahoo3
 to_email = myemail@email.com
 """)

@@ -28,7 +28,7 @@ Otherwise, a flag must be raised to indicate the direction.""")
     path = P(args.path).expanduser().absolute()
 
     if args.same_file_system:
-        print(f"💥 Using a not recommended transfer method! Copying same files across different file systems.")
+        print("💥 Using a not recommended transfer method! Copying same files across different file systems.")
         if system == "Windows":  # move files over to WSL
             path.copy(folder=WSL_FROM_WIN.joinpath(UserName).joinpath(path.rel2home().parent), overwrite=True)  # the following works for files and folders alike.
         else:  # move files from WSL to win

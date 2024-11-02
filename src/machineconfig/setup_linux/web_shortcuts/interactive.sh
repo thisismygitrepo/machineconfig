@@ -73,7 +73,7 @@ if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
     sudo nala install libssl-dev -y  # required for web development
     sudo nala install ffmpeg -y
-    python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm,brave,code,docker
+    python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm,brave,code,docker,warp-cli
 else
     echo "Installation aborted."
 fi
