@@ -2,4 +2,7 @@
 
 . $HOME/scripts/activate_ve 've'
 python -m machineconfig.scripts.python.scheduler "$@"
-deactivate || true
+if [ -n "$VIRTUAL_ENV" ]; then
+  deactivate || true
+
+fi

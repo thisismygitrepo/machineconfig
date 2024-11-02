@@ -2,5 +2,7 @@
 
 . $HOME/scripts/activate_ve 've'
 python -m fire machineconfig.jobs.python.checkout_version main
-deactivate || true
+if [ -n "$VIRTUAL_ENV" ]; then
+  deactivate || true
 
+fi

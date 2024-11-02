@@ -4,4 +4,7 @@
 
 python -c "from machineconfig.utils.procs import ProcessManager; ProcessManager().choose_and_kill()"
 
-deactivate || true
+if [ -n "$VIRTUAL_ENV" ]; then
+  deactivate || true
+
+fi

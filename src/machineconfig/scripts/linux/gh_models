@@ -5,8 +5,7 @@
 
 python -m machineconfig.scripts.python.gh_models "$@"
 
-{
-  deactivate
-} || {
-  echo ""
-}
+if [ -n "$VIRTUAL_ENV" ]; then
+  deactivate || true
+
+fi

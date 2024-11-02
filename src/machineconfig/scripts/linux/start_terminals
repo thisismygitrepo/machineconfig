@@ -6,5 +6,7 @@ python -m machineconfig.jobs.python.create_zellij_template
 
 zellij --layout $HOME/tmp_results/tmp_files/templates/zellij_template.kdl
 
-deactivate || true
+if [ -n "$VIRTUAL_ENV" ]; then
+  deactivate || true
 
+fi

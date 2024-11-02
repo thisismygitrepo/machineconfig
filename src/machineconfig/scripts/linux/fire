@@ -40,5 +40,7 @@ if [ -f "$op_script" ]; then
 fi
 
 
-deactivate || true
+if [ -n "$VIRTUAL_ENV" ]; then
+  deactivate || true
 
+fi

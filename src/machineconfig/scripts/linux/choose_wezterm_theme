@@ -3,4 +3,7 @@
 . $HOME/scripts/activate_ve 've'
 python -m fire machineconfig.scripts.python.choose_wezterm_theme main
 source ~/.bashrc  # reload the profile
-deactivate || true
+if [ -n "$VIRTUAL_ENV" ]; then
+  deactivate || true
+
+fi

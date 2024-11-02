@@ -16,7 +16,6 @@ config_dict = {
 }
 
 
-
 def main(version: Optional[str]):
     _ = version
     if platform.system() == "Windows":
