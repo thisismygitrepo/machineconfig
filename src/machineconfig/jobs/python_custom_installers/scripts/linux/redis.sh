@@ -26,8 +26,8 @@ echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://pack
 sudo nala update
 sudo nala install redis -y
 
-echo "ℹ️ To start redis server:           sudo systemctl start redis"
-echo "ℹ️ To stop redis server:            sudo systemctl stop redis"
-echo "ℹ️ To restart redis server:         sudo systemctl restart redis"
-echo "ℹ️ To check status of redis server: sudo systemctl status redis"
-echo "ℹ️ To start on boot:                sudo systemctl enable --now redis"
+echo "ℹ️ To start redis server:           sudo systemctl start redis-server"
+echo "ℹ️ To stop redis server:            sudo systemctl stop redis-server"
+echo "ℹ️ To restart redis server:         sudo systemctl restart redis-server"
+echo "ℹ️ To check status of redis server: sudo systemctl status redis-server"
+echo "ℹ️ To start on boot:                sudo systemctl enable --now redis-server"
