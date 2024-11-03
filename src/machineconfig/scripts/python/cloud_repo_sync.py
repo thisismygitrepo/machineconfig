@@ -121,38 +121,39 @@ git pull originEnc master
         print(f"Failed to merge with no errors, keeping local copy of remote at {repo_remote_root} ... ")
 
         # ================================================================================
+        option1 = 'Delete remote copy and push local:'
         program_1 = f"""
 from machineconfig.scripts.python.cloud_repo_sync import delete_remote_repo_copy_and_push_local as func
 func(remote_repo=r'{repo_remote_root.to_str()}', local_repo=r'{repo_local_root.to_str()}', cloud=r'{cloud_resolved}')
 """
         shell_file_1 = get_shell_file_executing_python_script(python_script=program_1, ve_name="ve")
-        option1 = 'Delete remote copy and push local:'
         # ================================================================================
 
+        option2 = 'Delete local repo and replace it with remote copy:'
         program_2 = f"""
 rm -rfd {repo_local_root}
 mv {repo_remote_root} {repo_local_root}
+sudo chmod 600 ~/.ssh/*
+sudo chmod 700 ~/.ssh
 """
 
         shell_file_2 = get_shell_script(shell_script=program_2)
-        option2 = 'Delete local repo and replace it with remote copy:'
-        # ================================================================================
 
+        # ================================================================================
+        option3 = 'Inspect repos:'
         program_3 = f"""
 from machineconfig.scripts.python.cloud_repo_sync import inspect_repos as func
 func(repo_local_root=r'{repo_local_root.to_str()}', repo_remote_root=r'{repo_remote_root.to_str()}')
 """
         shell_file_3 = get_shell_file_executing_python_script(python_script=program_3, ve_name="ve")
-        option3 = 'Inspect repos:'
         # ================================================================================
 
-
+        option4 = 'Remove problematic rclone file from repo and replace with remote:'
         program_4 = """
 rm ~/dotfiles/creds/rclone/rclone.conf
 cp ~/.config/machineconfig/remote/dotfiles/creds/rclone/rclone.conf ~/dotfiles/creds/rclone
 """
         shell_file_4 = get_shell_script(shell_script=program_4)
-        option4 = 'Remove problematic rclone file from repo and replace with remote:'
         # ================================================================================
 
         print(f"• {option1:75} 👉 {shell_file_1}")
