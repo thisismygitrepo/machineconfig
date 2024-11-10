@@ -122,11 +122,11 @@ git pull originEnc master
 
         # ================================================================================
         option1 = 'Delete remote copy and push local:'
-        program_1 = f"""
+        program_1_py = f"""
 from machineconfig.scripts.python.cloud_repo_sync import delete_remote_repo_copy_and_push_local as func
 func(remote_repo=r'{repo_remote_root.to_str()}', local_repo=r'{repo_local_root.to_str()}', cloud=r'{cloud_resolved}')
 """
-        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1, ve_name="ve")
+        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, ve_name="ve")
         # ================================================================================
 
         option2 = 'Delete local repo and replace it with remote copy:'
@@ -141,11 +141,11 @@ sudo chmod 700 ~/.ssh
 
         # ================================================================================
         option3 = 'Inspect repos:'
-        program_3 = f"""
+        program_3_py = f"""
 from machineconfig.scripts.python.cloud_repo_sync import inspect_repos as func
 func(repo_local_root=r'{repo_local_root.to_str()}', repo_remote_root=r'{repo_remote_root.to_str()}')
 """
-        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3, ve_name="ve")
+        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_name="ve")
         # ================================================================================
 
         option4 = 'Remove problematic rclone file from repo and replace with remote:'
@@ -164,17 +164,17 @@ cp ~/.config/machineconfig/remote/dotfiles/creds/rclone/rclone.conf ~/dotfiles/c
         match action:
             case "ask":
                 choice = choose_one_option(options=[option1, option2, option3, option4])
-                if choice == option1: PROGRAM_PATH.write_text(program_1)
+                if choice == option1: PROGRAM_PATH.write_text(shell_file_1.read_text())
                 elif choice == option2: PROGRAM_PATH.write_text(program_2)
-                elif choice == option3: PROGRAM_PATH.write_text(program_3)
+                elif choice == option3: PROGRAM_PATH.write_text(shell_file_3.read_text())
                 elif choice == option4: PROGRAM_PATH.write_text(program_4)
                 else: raise NotImplementedError(f"Choice {choice} not implemented.")
             case "pushLocalMerge":
-                PROGRAM_PATH.write_text(program_1)
+                PROGRAM_PATH.write_text(shell_file_1.read_text())
             case "overwriteLocal":
                 PROGRAM_PATH.write_text(program_2)
             case "InspectRepos":
-                PROGRAM_PATH.write_text(program_3)
+                PROGRAM_PATH.write_text(shell_file_3.read_text())
             case "RemoveLocalRclone":
                 PROGRAM_PATH.write_text(program_4)
 

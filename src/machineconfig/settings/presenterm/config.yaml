@@ -1,5 +1,11 @@
 
+# margin:
+#    percent: 8
+
 defaults:
+  # margin:
+  #  percent: 8
+
   # override the terminal font size when in windows or when using sixel.
   terminal_font_size: 16
 

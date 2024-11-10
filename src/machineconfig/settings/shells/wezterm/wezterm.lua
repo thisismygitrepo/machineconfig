@@ -32,6 +32,8 @@ end)
 --   window:gui_window():maximize()
 -- end)
 
+-- config.animation_fps = 60
+
 
 config.leader = { key = 'Space', mods = 'CTRL', timeout_milliseconds = 1000 }
 config.keys = {
