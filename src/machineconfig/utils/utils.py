@@ -118,7 +118,8 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
             else:
                 print("Tring with raw fzf search ...")
                 try:
-                    res = subprocess.run(f"cd '{search_root_obj}'; fzf --query={sub_string}", check=True, stdout=subprocess.PIPE, text=True, shell=True).stdout.strip()
+                    # res = subprocess.run(f"cd '{search_root_obj}'; fzf --query={sub_string}", check=True, stdout=subprocess.PIPE, text=True, shell=True).stdout.strip()
+                    res = subprocess.run(f"cd '{search_root_obj}'; fd | fzf --query={sub_string}", check=True, stdout=subprocess.PIPE, text=True, shell=True).stdout.strip()
                 except subprocess.CalledProcessError as cpe:
                     print(f"Failed at fzf search with {sub_string} in {search_root_obj}. {cpe}")
                     msg = f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. No search results\n{'--' * 50}\n"
