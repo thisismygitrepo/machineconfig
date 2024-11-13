@@ -122,16 +122,19 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
     share = args.share
     os_specific = args.os_specific
 
+    if config == "ss":
+        maybe_config = get_secure_share_cloud_config()
+    elif config is not None:
+        maybe_config = Args.from_config(absolute(config))
+    else:
+        maybe_config = None
+
     if source.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in source
         # At the moment, this cloud.json defaults overrides the args and is activated only when source or target are just ":"
         # consider activating it by a flag, and also not not overriding explicitly passed args options.
         assert ES not in target, "Not Implemented here yet."
         path = absolute(target)
-        if config is None:
-            maybe_config: Optional[Args] = find_cloud_config(path=path)
-        else:
-            if config == "ss": maybe_config = get_secure_share_cloud_config()
-            else: maybe_config = Args.from_config(absolute(config))
+        if maybe_config is None:  maybe_config: Optional[Args] = find_cloud_config(path=path)
 
         if maybe_config is None:
             default_cloud: str=Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
@@ -150,13 +153,13 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
     if target.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in target
         assert ES not in source, "Not Implemented here yet."
         path = absolute(source)
-        if config is None:
-            maybe_config = find_cloud_config(path)
-        else:
-            if config == "ss": maybe_config = get_secure_share_cloud_config()
-            else: maybe_config = Args.from_config(absolute(config))
+        if maybe_config is None: maybe_config = find_cloud_config(path)
 
-        if maybe_config is not None:
+        if maybe_config is None:
+            default_cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            print(f"⚠️ Using default cloud: {default_cloud}")
+            target = default_cloud + ":" + target[1:]
+        else:
             tmp = maybe_config
             target = f"{tmp.cloud}:" + target[1:]
             root = tmp.root
@@ -165,10 +168,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
             encrypt = tmp.encrypt
             zip_arg = tmp.zip
             share = tmp.share
-        else:
-            default_cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
-            print(f"⚠️ Using default cloud: {default_cloud}")
-            target = default_cloud + ":" + target[1:]
+
 
     if ":" in source and (source[1] != ":" if len(source) > 1 else True):  # avoid the deceptive case of "C:/"
         source_parts: list[str] = source.split(":")

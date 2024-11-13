@@ -73,6 +73,7 @@ def arg_parser() -> None:
     if args_obj.rel2home is True and args_obj.root is None:
         args_obj.root = "myhome"
 
+    # print(f"source: {source}")
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
 
     assert args_obj.key is None, "Key is not supported yet."
