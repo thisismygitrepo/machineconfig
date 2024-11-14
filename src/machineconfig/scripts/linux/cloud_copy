@@ -6,5 +6,4 @@ python -m machineconfig.scripts.python.cloud_copy "$@"
 
 if [ -n "$VIRTUAL_ENV" ]; then
   deactivate || true
-
 fi

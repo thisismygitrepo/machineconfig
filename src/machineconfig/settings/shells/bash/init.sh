@@ -62,4 +62,3 @@ eval "$(starship init bash)"
 # LEVE THIS IN THE END TO AVOID EXECUTION FAILURE OF THE REST OF THE SCRIPT
 # from https://github.com/cantino/mcfly
 eval "$(mcfly init bash)"
-
