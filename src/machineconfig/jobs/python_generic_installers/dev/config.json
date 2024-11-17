@@ -239,6 +239,14 @@
         "strip_v": true,
         "exe_name": "lazygit"
     },
+    "lazydocker": {
+        "repo_url": "https://github.com/jesseduffield/lazydocker/",
+        "doc": "A simple terminal UI for both docker and docker-compose",
+        "filename_template_windows_amd_64": "lazydocker_{}_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "lazydocker_{}_Linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "lazydocker"
+    },
     "onefetch": {
         "repo_url": "https://github.com/o2sh/onefetch",
         "doc": "Git repository summary on your terminal",
