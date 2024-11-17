@@ -28,7 +28,7 @@ if [ -d "$ve_name" ]; then
     rm -rfd $ve_name
 fi
 
-if [ ! -f "$HOME/.cargo/bin/uv" ]; then
+if [ ! -f "$HOME/.local/bin/uv" ]; then
     echo "uv binary not found, installing..."
     curl -LsSf https://astral.sh/uv/install.sh | sh
 fi
@@ -38,13 +38,13 @@ if ! command -v uv &> /dev/null; then
     export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
-$HOME/.cargo/bin/uv venv $HOME/venvs/$ve_name --python 3.11 --python-preference only-managed
+$HOME/.local/bin/uv venv $HOME/venvs/$ve_name --python 3.11 --python-preference only-managed
 
 # check if $VIRTUAL_ENV is set
 if [ -z "$VIRTUAL_ENV" ]; then
   source "$HOME/venvs/$ve_name/bin/activate" || exit
 fi
-$HOME/.cargo/bin/uv pip install --upgrade pip
+$HOME/.local/bin/uv pip install --upgrade pip
 
 echo "✅ Finished installing virtual environment"
 echo "💡 Use this to activate: source ~/venvs/$ve_name/bin/activate"

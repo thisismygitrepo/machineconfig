@@ -24,11 +24,11 @@ RUN /app/setup_linux/apps.sh
 RUN /app/setup_linux/apps_dev.sh
 
 # RUN /app/setup_linux/ve.sh
-# ENV PATH="/root/.cargo/bin:${PATH}"
-RUN /root/.cargo/bin/uv venv $HOME/venvs/ve --python 3.11 --python-preference only-managed
+# ENV PATH="/root/.local/bin:${PATH}"
+RUN /root/.local/bin/uv venv $HOME/venvs/ve --python 3.11 --python-preference only-managed
 # Warning: does not come with pip
 RUN source $HOME/venvs/ve/bin/activate && \
-    /root/.cargo/bin/uv pip install --upgrade pip
+    /root/.local/bin/uv pip install --upgrade pip
 
 # ENV CROCODILE_EXRA="full"
 # RUN /app/setup_linux/repos.sh
@@ -39,9 +39,9 @@ RUN cd $HOME && \
     git clone https://github.com/thisismygitrepo/machineconfig --depth 4 && \
     cd $HOME/code/crocodile && \
     source $HOME/venvs/ve/bin/activate && \
-    /root/.cargo/bin/uv pip install -e . && \
+    /root/.local/bin/uv pip install -e . && \
     cd $HOME/code/machineconfig && \
-    /root/.cargo/bin/uv pip install -e . && \
+    /root/.local/bin/uv pip install -e . && \
     echo "Finished setting up repos"
 
 RUN /app/setup_linux/symlinks.sh

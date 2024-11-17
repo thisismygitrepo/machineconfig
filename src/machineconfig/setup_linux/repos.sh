@@ -13,14 +13,14 @@ fi
 
 cd $HOME/code/crocodile
 if [ -n "$CROCODILE_EXRA" ]; then
-  $HOME/.cargo/bin/uv pip install -e .[$CROCODILE_EXRA]
+  $HOME/.local/bin/uv pip install -e .[$CROCODILE_EXRA]
 else
-  $HOME/.cargo/bin/uv pip install -e .
+  $HOME/.local/bin/uv pip install -e .
 fi
 
 
 cd $HOME/code/machineconfig
-$HOME/.cargo/bin/uv pip install -e .
+$HOME/.local/bin/uv pip install -e .
 
 
 cd $HOME

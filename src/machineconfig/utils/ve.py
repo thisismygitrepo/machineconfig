@@ -151,7 +151,9 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
         else:
             raise NotImplementedError(f"System {system} not supported.")
 
-    if other_repos != "": script += "\n$HOME/.cargo/bin/uv pip install " + other_repos
+    if other_repos != "":
+        # TODO: check the quivalent full path of uv on windows $HOME/.local/bin/
+        script += "\nuv pip install " + other_repos
     # target = repo_root.joinpath(".venv")
     # source = P.home().joinpath("venvs", ve_name)
     # if system == "Windows": cmd = f'New-Item -ItemType SymbolicLink -Path "{target}" -Target "{source}"'
