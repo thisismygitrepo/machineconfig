@@ -315,7 +315,7 @@
         "repo_url": "https://github.com/ollama/ollama",
         "doc": "Get up and running with large language models locally.",
         "filename_template_windows_amd_64": "OllamaSetup.exe",
-        "filename_template_linux_amd_64": "ollama-linux-amd64",
+        "filename_template_linux_amd_64": "ollama-linux-amd64.tgz",
         "strip_v": false,
         "exe_name": "ollama"
     },
