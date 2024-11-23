@@ -28,16 +28,16 @@ if (Test-Path -Path $ve_name) {
     Remove-Item -Recurse -Force $ve_name
 }
 
-if (-not (Test-Path -Path "$HOME\.cargo\bin\uv.exe")) {
+if (-not (Test-Path -Path "$HOME\.local\bin\uv.exe")) {
     Write-Output "uv binary not found, installing..."
     irm https://astral.sh/uv/install.ps1 | iex
 }
 
 
-~\.cargo\bin\uv.exe venv "$venvPath\$ve_name" --python $py_version --python-preference only-managed
+~\.local\bin\uv.exe venv "$venvPath\$ve_name" --python $py_version --python-preference only-managed
 if (-not $env:VIRTUAL_ENV) {
     echo "Activating virtual environment @ $HOME\venvs\$ve_name"
     & "$HOME\venvs\$ve_name\Scripts\Activate.ps1" -ErrorAction Stop
 }
-~\.cargo\bin\uv.exe pip install --upgrade pip
+~\.local\bin\uv.exe pip install --upgrade pip
 

@@ -21,12 +21,12 @@ if (-not $env:VIRTUAL_ENV) {
 
 if (-not (Test-Path variable:CROCODILE_EXTRA)) {
     Write-Host "⚠️ Using default CROCODILE_EXTRA"
-    & "$HOME\.cargo\bin\uv.exe" pip install -e .
+    & "$HOME\.local\bin\uv.exe" pip install -e .
 } else {
     Write-Host "➡️ CROCODILE_EXTRA = $CROCODILE_EXTRA"
-    & "$HOME\.cargo\bin\uv.exe" pip install -e .[$CROCODILE_EXTRA]
+    & "$HOME\.local\bin\uv.exe" pip install -e .[$CROCODILE_EXTRA]
 }
 
 cd ~\code\machineconfig
-& "$HOME\.cargo\bin\uv.exe" pip install -e .
+& "$HOME\.local\bin\uv.exe" pip install -e .
 echo "Finished setting up repos"
