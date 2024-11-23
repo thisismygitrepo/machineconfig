@@ -81,7 +81,7 @@ winget install --no-upgrade --name "GnuPG" GnuPG.GnuPG --scope user --accept-pac
 #winget install --no-upgrade --name "gitui" --Id gitui --source winget --scope user
 #winget install --no-upgrade --name "hyperfine" --Id sharkdp.hyperfine --source winget --scope user  # benchmarking tool
 #winget install --no-upgrade --name "AWS Command Line Interface"
-#winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --source winget --scope user  # Terminal is is installed by default on W11
+winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --source winget --scope user  # Terminal is is installed by default on W11
 winget install --no-upgrade --name "wezterm" --Id wez.wezterm --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "nu" --Id "Nushell.Nushell" --source winget --scope user  # add to userpath C:\Program Files\nu\bin, done in symlinks
 winget install --no-upgrade --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" --source winget --scope user

@@ -132,12 +132,10 @@ class Installer:
             # import subprocess
             # subprocess.run(program, shell=True, check=True)
             version_to_be_installed = str(version)
-        elif "npm " in self.repo_url:
-            Terminal().run(self.repo_url, shell="default").print_if_unsuccessful(desc="npm install", strict_err=True, strict_returncode=True)
-            version_to_be_installed = "npmLatest"
-        elif "pip " in self.repo_url:
-            Terminal().run(self.repo_url, shell="default").print_if_unsuccessful(desc="pip install", strict_err=True, strict_returncode=True)
-            version_to_be_installed = "pipLatest"
+        elif "npm " in self.repo_url or "pip " in self.repo_url or "winget " in self.repo_url:
+            desc = self.repo_url.split(" ", maxsplit=1)[0] + "installation"
+            version_to_be_installed = self.repo_url.split(" ", maxsplit=1)[0] + "Latest"
+            Terminal().run(self.repo_url, shell="default").print_if_unsuccessful(desc=desc, strict_err=True, strict_returncode=True)
         else:
             downloaded, version_to_be_installed = self.download(version=version)
             if downloaded.to_str().endswith(".deb"):
