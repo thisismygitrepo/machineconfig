@@ -118,5 +118,13 @@
         "filename_template_linux_amd_64": "dbeaver-ce-{}-linux.gtk.x86_64.tar.gz",
         "strip_v": true,
         "exe_name": "dbeaver"
+    },
+    "rainfrog": {
+        "repo_url": "https://github.com/achristmascarl/rainfrog",
+        "doc": "TUI DB Visualizer",
+        "filename_template_windows_amd_64": "rainfrog-{}-x86_64-pc-windows-msvc.tar.gz",
+        "filename_template_linux_amd_64": "rainfrog-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "rainfrog"
     }
 }
