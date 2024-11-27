@@ -130,7 +130,7 @@ def main() -> None:
 
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         import_line = get_import_module_code(str(choice_file))
-        txt: str=f"""
+        txt: str = f"""
 try:
     {import_line}
 except (ImportError, ModuleNotFoundError) as ex:
