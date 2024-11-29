@@ -164,7 +164,8 @@ except ImportError as _ex:
         elif platform.system() in ["Linux", "Darwin"]:
             command = f"{exe} -m pudb {choice_file} "  # TODO: functions not supported yet in debug mode.
         else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
-    elif choice_function is not None and not args.module:  # if args.module, then kwargs are handled in the impot script, no need to pass them in fire command.
+    elif choice_function is not None and (not args.module and args.Nprocess == 1):
+        # if args.module, then kwargs are handled in the impot script, no need to pass them in fire command.
         # https://google.github.io/python-fire/guide/
         # https://github.com/google/python-fire/blob/master/docs/guide.md#argument-parsing
         if not kwargs:  # empty dict
@@ -222,7 +223,8 @@ except ImportError as _ex:
         command = f"""
 . $HOME/scripts/activate_ve {args.ve}
 python -m crocodile.cluster.templates.cli_click --file {choice_file} """
-        if choice_function is not None: command += f"--function {choice_function} "
+        if choice_function is not None:
+            command += f"--function {choice_function} "
     try: install_n_import("clipboard").copy(command)
     except Exception as ex: print(f"Failed to copy command to clipboard. {ex}")
 
