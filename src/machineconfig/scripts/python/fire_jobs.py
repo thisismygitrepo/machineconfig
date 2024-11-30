@@ -33,6 +33,28 @@ def search_for_files_of_interest(path_obj: P):
     return files
 
 
+def convert_kwargs_to_fire_kwargs_str(kwargs: dict[str, Any]) -> str:
+    # https://google.github.io/python-fire/guide/
+    # https://github.com/google/python-fire/blob/master/docs/guide.md#argument-parsing
+    if not kwargs:  # empty dict
+        kwargs_str = ''
+    else:
+        if len(kwargs) == 1:
+            kwargs_str = f""" --{list(kwargs.keys())[0]} {list(kwargs.values())[0]} """
+        else:
+            # print(f"len(kwargs) = {len(kwargs)}")
+            tmp_list: list[str] = []
+            for k, v in kwargs.items():
+                if v is not None:
+                    item = f'"{k}": "{v}"'
+                else:
+                    item = f'"{k}": None'
+                tmp_list.append(item)
+            tmp__ = ", ".join(tmp_list)
+            kwargs_str = "'{" + tmp__  + "}'"
+    return kwargs_str
+
+
 str2obj = {"True": True, "False": False, "None": None}
 
 
@@ -59,14 +81,15 @@ def main() -> None:
     parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ... (meaning k1=v1, k2=v2, etc)")
 
     args = parser.parse_args()
+
+    # Convert args.kw to dictionary
     if args.kw is not None:
         assert len(args.kw) % 2 == 0, f"args.kw must be a list of even length. Got {len(args.kw)}"
         kwargs = dict(zip(args.kw[::2], args.kw[1::2]))
         for key, value in kwargs.items():
             if value in str2obj:
                 kwargs[key] = str2obj[value]
-        # print(f"kwargs = {kwargs}")
-        if args.function is None:  # if user passed arguments
+        if args.function is None:  # if user passed arguments and forgot to pass function, then assume they want to run the main function.
             args.choose_function = True
     else:
         kwargs = {}
@@ -157,49 +180,27 @@ except ImportError as _ex:
 """ + txt
         choice_file = P.tmp().joinpath(f'tmp_scripts/python/{P(choice_file).parent.name}_{P(choice_file).stem}_{randstr()}.py').create(parents_only=True).write_text(txt)
 
-    # determining basic command structure: putting together exe & choice_file & choice_function & pdb
+    # =========================  determining basic command structure: putting together exe & choice_file & choice_function & pdb
     if args.debug:
         if platform.system() == "Windows":
             command = f"{exe} -m ipdb {choice_file} "  # pudb is not available on windows machines, use poor man's debugger instead.
         elif platform.system() in ["Linux", "Darwin"]:
             command = f"{exe} -m pudb {choice_file} "  # TODO: functions not supported yet in debug mode.
         else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
-    elif choice_function is not None and (not args.module and args.Nprocess == 1):
-        # if args.module, then kwargs are handled in the impot script, no need to pass them in fire command.
-        # https://google.github.io/python-fire/guide/
-        # https://github.com/google/python-fire/blob/master/docs/guide.md#argument-parsing
-        if not kwargs:  # empty dict
-            kwargs_str = ''
-        else:
-            if len(kwargs) == 1:
-                kwargs_str = f""" --{list(kwargs.keys())[0]} {list(kwargs.values())[0]} """
-            else:
-                # print(f"len(kwargs) = {len(kwargs)}")
-                tmp_list: list[str] = []
-                for k, v in kwargs.items():
-                    if v is not None:
-                        item = f'"{k}": "{v}"'
-                    else:
-                        item = f'"{k}": None'
-                    tmp_list.append(item)
-                tmp__ = ", ".join(tmp_list)
-                kwargs_str = "'{" + tmp__  + "}'"
+    elif args.module:
+        # both selected function and kwargs are mentioned in the made up script, therefore no need for fire module.
+        command = f"{exe} {choice_file} "
+    elif choice_function is not None:
+        kwargs_str = convert_kwargs_to_fire_kwargs_str(kwargs)
         command = f"{exe} -m fire {choice_file} {choice_function} {kwargs_str}"
-        # else:
-        #     print(f"{kwargs=}")
-        #     print(f"{choice_function_args=}")
-        # if choice_function != "RUN AS MAIN":
-            # kgs1, _ = interactively_run_function(module[choice_function])
-            # " ".join([f"--{k} {v}" for k, v in kgs1.items()])
+    elif args.streamlit:
+        # for .streamlit config to work, it needs to be in the current directory.
+        command = f"{exe} {choice_file} "
+    elif args.cmd:
+        command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
     else:
-        if not args.streamlit: command = f"{exe} {choice_file} "
-        else:
-            if not args.cmd:
-                # for .streamlit config to work, it needs to be in the current directory.
-                command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
-            else:
-                command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
-            # command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
+        command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"            
+        # command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
 
     # this installs in ve env, which is not execution env
     # if "ipdb" in command: install_n_import("ipdb")
