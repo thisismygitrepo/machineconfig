@@ -133,8 +133,8 @@ func(remote_repo=r'{repo_remote_root.to_str()}', local_repo=r'{repo_local_root.t
         program_2 = f"""
 rm -rfd {repo_local_root}
 mv {repo_remote_root} {repo_local_root}
-sudo chmod 600 ~/.ssh/*
-sudo chmod 700 ~/.ssh
+sudo chmod 600 $HOME/.ssh/*
+sudo chmod 700 $HOME/.ssh
 """
 
         shell_file_2 = get_shell_script(shell_script=program_2)
@@ -149,9 +149,12 @@ func(repo_local_root=r'{repo_local_root.to_str()}', repo_remote_root=r'{repo_rem
         # ================================================================================
 
         option4 = 'Remove problematic rclone file from repo and replace with remote:'
-        program_4 = """
-rm ~/dotfiles/creds/rclone/rclone.conf
-cp ~/.config/machineconfig/remote/dotfiles/creds/rclone/rclone.conf ~/dotfiles/creds/rclone
+        program_4 = f"""
+rm $HOME/dotfiles/creds/rclone/rclone.conf
+cp $HOME/.config/machineconfig/remote/dotfiles/creds/rclone/rclone.conf $HOME/dotfiles/creds/rclone
+cd $HOME/dotfiles
+git commit -am "finished merging"
+. {shell_file_1}
 """
         shell_file_4 = get_shell_script(shell_script=program_4)
         # ================================================================================
