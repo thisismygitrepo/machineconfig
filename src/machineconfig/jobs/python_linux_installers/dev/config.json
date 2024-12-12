@@ -83,12 +83,12 @@
         "repo_url": "https://github.com/browsh-org/browsh",
         "doc": "browser in the shell",
         "filename_template_windows_amd_64": "browsh_{}_windows_amd64.exe",
-        "filename_template_linux_amd_64": "browsh_{}_linux_amd64",
+        "filename_template_linux_amd_64": "browsh-{}.xpi",
         "strip_v": true,
         "exe_name": "browsh"
     },
     "carbonyl": {
-        "repo_url": "",
+        "repo_url": "https://github.com/fathyb/carbonyl",
         "doc": "Brwoser in terminal. Browsh alternative.",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "carbonyl.linux-amd64.zip",
