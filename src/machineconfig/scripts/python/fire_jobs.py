@@ -195,13 +195,13 @@ except ImportError as _ex:
         command = f"{exe} -m fire {choice_file} {choice_function} {kwargs_str}"
     elif args.streamlit:
         # for .streamlit config to work, it needs to be in the current directory.
-        command = f"{exe} {choice_file} "
+        command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
     elif args.cmd:
         command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
     else:
-        command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"            
+        command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
         # command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
-
+        command = f"{exe} {choice_file} "
     # this installs in ve env, which is not execution env
     # if "ipdb" in command: install_n_import("ipdb")
     # if "pudb" in command: install_n_import("pudb")
