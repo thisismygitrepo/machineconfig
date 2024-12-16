@@ -73,6 +73,7 @@
 * https://github.com/microsoft/DeepSpeed `training with a single click, offering 15x speedup over SOTA RLHF systems with unprecedented cost reduction at all scales`.
 * https://github.com/TensorOpsAI/LLMstudio  `Prompt Engineering at your fingertips`
 * https://lmstudio.ai/ `Discover, download, and run local LLMs`
+* https://github.com/janhq/cortex.cpp `Cortex is a Local AI API Platform that is used to run and customize LLMs.`
 * https://github.com/zylon-ai/private-gpt `local llm`
 * https://github.com/ggerganov/llama.cpp `Inference of Meta's LLaMA model (and others) in pure C/C++`
 * https://github.com/ollama/ollama `Get up and running with large language models locally.`
