@@ -49,7 +49,7 @@
 * https://github.com/McGill-NLP/webllama `Browse internet with agents`
 * https://github.com/nilsherzig/LLocalSearch `locally running search aggregator using LLM Agents.`
 
-# Cli
+# CLI
 
 * https://github.com/llm-workflow-engine/llm-workflow-engine `LLM Workflow Engine (LWE) is a Power CLI and Workflow manager for LLMs.`
 
