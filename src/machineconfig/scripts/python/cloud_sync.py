@@ -44,10 +44,10 @@ class Args():
     share: bool=ArgsDefaults.share
 
     root: Optional[str] = ArgsDefaults.root
-    os_specific: bool=ArgsDefaults.os_specific
-    rel2home: bool=ArgsDefaults.rel2home
+    os_specific: bool = ArgsDefaults.os_specific
+    rel2home: bool = ArgsDefaults.rel2home
 
-    encrypt: bool=ArgsDefaults.encrypt
+    encrypt: bool = ArgsDefaults.encrypt
     key: Optional[str] = ArgsDefaults.key
     pwd: Optional[str] = ArgsDefaults.pwd
 
@@ -114,6 +114,22 @@ def find_cloud_config(path: P):
 
 def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str, str, str]:
     config = args.config
+    if config == "ss":
+        maybe_config = get_secure_share_cloud_config()
+    elif config is not None:
+        maybe_config = Args.from_config(absolute(config))
+    else:
+        maybe_config = None
+
+    if maybe_config is not None:
+        if args.zip == ArgsDefaults.zip_: args.zip = maybe_config.zip
+        if args.encrypt == ArgsDefaults.encrypt: args.encrypt = maybe_config.encrypt
+        if args.share == ArgsDefaults.share: args.share = maybe_config.share
+        if args.root == ArgsDefaults.root: args.root = maybe_config.root
+        if args.rel2home == ArgsDefaults.rel2home: args.rel2home = maybe_config.rel2home
+        if args.pwd == ArgsDefaults.pwd: args.pwd = maybe_config.pwd
+        if args.os_specific == ArgsDefaults.os_specific: args.os_specific = maybe_config.os_specific
+
     root = args.root
     rel2home = args.rel2home
     pwd = args.pwd
@@ -121,13 +137,6 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
     zip_arg = args.zip
     share = args.share
     os_specific = args.os_specific
-
-    if config == "ss":
-        maybe_config = get_secure_share_cloud_config()
-    elif config is not None:
-        maybe_config = Args.from_config(absolute(config))
-    else:
-        maybe_config = None
 
     if source.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in source
         # At the moment, this cloud.json defaults overrides the args and is activated only when source or target are just ":"
@@ -184,13 +193,14 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
                 raise NotImplementedError("There is no .get_local_path method yet")
             else:
                 target_obj = absolute(target)
-        if zip_arg and ".zip" not in source: source += ".zip"
-        if encrypt and ".enc" not in source: source += ".enc"
+        if zip_arg and ".zip" not in source:
+            source += ".zip"
+        if encrypt and ".enc" not in source:
+            source += ".enc"
 
     elif ":" in target and (target[1] != ":" if len(target) > 1 else True):  # avoid the case of "C:/"
         target_parts: list[str] = target.split(":")
         cloud = target.split(":")[0]
-
         if len(target_parts) > 1 and target_parts[1] == ES:  # the target path is to be inferred from source.
             assert ES not in source, "You can't use $ in both source and target. Cyclical inference dependency arised."
             source_obj = absolute(source)
