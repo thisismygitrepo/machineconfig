@@ -145,6 +145,7 @@ def main() -> None:
         from rich import print as rprint
         rprint(Panel(message))
         exe = "streamlit run --server.address 0.0.0.0 --server.headless true"
+        exe = f"cd '{choice_file.parent}'; " + exe
     elif args.interactive is False: exe = "python"
     elif args.jupyter: exe = "jupyter-lab"
     else:
@@ -195,12 +196,12 @@ except ImportError as _ex:
         command = f"{exe} -m fire {choice_file} {choice_function} {kwargs_str}"
     elif args.streamlit:
         # for .streamlit config to work, it needs to be in the current directory.
-        command = f"{exe} {choice_file} "
+        # command = f"{exe} {choice_file} "
+        command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
     elif args.cmd:
         command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
     else:
-        command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"            
-        # command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
+        command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
 
     # this installs in ve env, which is not execution env
     # if "ipdb" in command: install_n_import("ipdb")
