@@ -104,7 +104,7 @@ map os mark-save
 map ol mark-load
 map oR mark-remove
 map oD $ouch d $f
-map oC $ouch c $f
+map oC $ouch c $f "$f.zip"
 
 # j jump
 map j
@@ -112,7 +112,7 @@ map jc cd ~/code
 map jd cd ~/data
 map jD cd ~/Downloads
 map jx cd ~/dotfiles
-map jm cd ~/code/machineconfig/src/machineconfig
+# map jm cd ~/code/machineconfig/src/machineconfig
 map jh cd ~
 map jj $lvim ~/code/machineconfig/src/machineconfig/settings/lf/linux/lfrc
 
@@ -122,6 +122,7 @@ cmd zi ${{
     lf -remote "send ${id} cd '${result}'"
 }}
 map Z zi
+
 cmd ter ${{
     result="$(tere query -i -- "$@")"
     lf -remote "send ${id} cd '${result}'"
