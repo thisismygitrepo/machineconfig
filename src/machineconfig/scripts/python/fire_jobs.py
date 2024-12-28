@@ -376,7 +376,9 @@ def get_import_module_code(module_path: str):
             module_name = module_name[:-3]
     else:
         relative_path = module_path.replace(root_path, '')
-        module_name = relative_path.lstrip(os.sep).replace(os.sep, '.').replace('.py', '')
+        module_name = relative_path.lstrip(os.sep).replace(os.sep, '.')
+        if module_name.endswith(".py"):
+            module_name = module_name[:-3]
         module_name = module_name.replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "")
 
     if any(char in module_name for char in "- :/\\"):
