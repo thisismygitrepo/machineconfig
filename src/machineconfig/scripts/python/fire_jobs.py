@@ -379,8 +379,15 @@ def get_import_module_code(module_path: str):
         module_name = relative_path.lstrip(os.sep).replace(os.sep, '.')
         if module_name.endswith(".py"):
             module_name = module_name[:-3]
-        module_name = module_name.replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "")
-
+        # module_name = module_name.replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "")
+        if module_name.startswith("src."):
+            module_name = module_name[4:]
+        if module_name.startswith("myresources."):
+            module_name = module_name[12:]
+        if module_name.startswith("resources."):
+            module_name = module_name[10:]
+        if module_name.startswith("source."):
+            module_name = module_name[7:]
     if any(char in module_name for char in "- :/\\"):
         module_name = "IncorrectModuleName"
     # TODO: use py_compile to check if the statement is valid code to avoid syntax errors that can't be caught.
