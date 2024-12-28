@@ -169,6 +169,7 @@ except (ImportError, ModuleNotFoundError) as ex:
             txt = txt + f"""
 res = {choice_function}({('**' + str(kwargs)) if kwargs else ''})
 """
+
         txt = f"""
 try:
     from rich.panel import Panel
@@ -370,11 +371,14 @@ def find_repo_root_path(start_path: str) -> Optional[str]:
 def get_import_module_code(module_path: str):
     root_path = find_repo_root_path(module_path)
     if root_path is None:  # just make a desperate attempt to import it
-        module_name = module_path.lstrip(os.sep).replace(os.sep, '.').replace('.py', '')
+        module_name = module_path.lstrip(os.sep).replace(os.sep, '.')
+        if module_name.endswith(".py"):
+            module_name = module_name[:-3]
     else:
         relative_path = module_path.replace(root_path, '')
         module_name = relative_path.lstrip(os.sep).replace(os.sep, '.').replace('.py', '')
-        module_name = module_name.replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "").replace("src.", "").replace("resources.", "").replace("source.", "")
+        module_name = module_name.replace("src.", "").replace("myresources.", "").replace("resources.", "").replace("source.", "")
+
     if any(char in module_name for char in "- :/\\"):
         module_name = "IncorrectModuleName"
     # TODO: use py_compile to check if the statement is valid code to avoid syntax errors that can't be caught.

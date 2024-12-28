@@ -21,7 +21,7 @@ config_dict = {
     "filename_template_windows_amd_64": "gh_{}_windows_amd64.zip",
     "filename_template_linux_amd_64": "gh_{}_linux_amd64.tar.gz",
     "strip_v": True,
-    "exe_name": "gh"
+    "exe_name": "docker"
 }
 
 
