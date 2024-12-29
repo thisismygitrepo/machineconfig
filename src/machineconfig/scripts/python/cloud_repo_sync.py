@@ -166,7 +166,7 @@ git commit -am "finished merging"
 
         match action:
             case "ask":
-                choice = choose_one_option(options=[option1, option2, option3, option4])
+                choice = choose_one_option(options=[option1, option2, option3, option4], fzf=True)
                 if choice == option1: PROGRAM_PATH.write_text(shell_file_1.read_text())
                 elif choice == option2: PROGRAM_PATH.write_text(program_2)
                 elif choice == option3: PROGRAM_PATH.write_text(shell_file_3.read_text())
@@ -203,7 +203,6 @@ def inspect_repos(repo_local_root: str, repo_remote_root: str):
         write_shell_script(program=program, execute=True)
         return None
     else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
-
 
 
 if __name__ == "__main__":

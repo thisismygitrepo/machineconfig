@@ -9,10 +9,7 @@ from crocodile.file_management import P
 from typing import Any
 
 
-@register_line_magic("print_dir")  # type: ignore
-def print_dir_func(line: Any):
-    """Pretty print and categorize dir() output."""
-    _ = line  # ipython caller assumes there is at least one argument, an passes '' worstcase.
+def get_names():
     res: dict[str, list[str]] = {}
     for item in globals().keys():
         if item.startswith("_") or item in ("open", "In", "Out", "quit", "exit", "get_ipython"):
@@ -23,15 +20,36 @@ def print_dir_func(line: Any):
         if "typing." in type_: continue
         if type_ in res: res[type_].append(item)
         else: res[type_] = [item]
+    return res
+
+
+@register_line_magic("codei")  # type: ignore
+def print_code_interactive(_):
+    res = get_names()
+    from machineconfig.utils.utils import choose_one_option
+    choice = choose_one_option(options=res["<class 'function'>"], msg="Choose a type to inspect", fzf=True)
+    obj = eval(choice, globals(), locals())  # type: ignore  # pylint: disable=eval-used
+    from rich.syntax import Syntax
+    import inspect
+    q: str=inspect.getsource(obj)
+    from rich import console
+    console.Console().print(Syntax(code=q, lexer="python"))
+
+
+@register_line_magic("print_dir")  # type: ignore
+def print_dir_func(line: Any):
+    """Pretty print and categorize dir() output."""
+    _ = line  # ipython caller assumes there is at least one argument, an passes '' worstcase.
+    res = get_names()
     Struct(dictionary=res).print(as_config=True, title="Objects defined in current dir")
 
 
 @register_line_magic("code")  # type: ignore
 def print_program_func(obj_str: str):
     """Inspect the code of an object."""
+    obj = eval(obj_str, globals(), locals())  # type: ignore  # pylint: disable=eval-used
     from rich.syntax import Syntax
     import inspect
-    obj = eval(obj_str, globals(), locals())  # type: ignore  # pylint: disable=eval-used
     q: str=inspect.getsource(obj)
     from rich import console
     console.Console().print(Syntax(code=q, lexer="python"))

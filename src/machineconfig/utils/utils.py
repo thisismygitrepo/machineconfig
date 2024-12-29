@@ -19,11 +19,10 @@ from typing import Optional, Union, TypeVar, Iterable
 
 LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().to_str().lower(), P.home().str)
 REPO_ROOT = LIBRARY_ROOT.parent.parent
-PROGRAM_PATH = (P.tmp().joinpath("shells/python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh")).create(parents_only=True)
+PROGRAM_PATH = (P.home().joinpath("tmp_results", "shells", "python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh"))
 CONFIG_PATH = P.home().joinpath(".config/machineconfig")
 INSTALL_VERSION_ROOT = CONFIG_PATH.joinpath("cli_tools_installers/versions")
-INSTALL_TMP_DIR = P.tmp(folder="tmp_installers")
-
+INSTALL_TMP_DIR = P.home().joinpath("tmp_results", "tmp_installers")
 DEFAULTS_PATH = P.home().joinpath("dotfiles/machineconfig/defaults.ini")
 
 
