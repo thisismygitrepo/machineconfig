@@ -164,8 +164,14 @@ config.enable_scroll_bar = true
 config.cursor_blink_rate = 1000
 config.cursor_blink_ease_in = "Constant"
 config.cursor_blink_ease_out = "Constant"
+
 -- config.unicode_version = 7
 -- c.force_reverse_video_cursor = true
+-- config.font = 'JetBrains Mono'
+-- config.font = wezterm.font 'Fira Code'
+-- config.font = wezterm.font('Iosevka Term', { weight = 'Bold', italic = true,
+--                                                experimental_bidi = true })
+config.bidi_enabled = true
 
 -- from https://wezfurlong.org/wezterm/config/launch.html#the-launcher-menu
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then

@@ -27,10 +27,6 @@ nix-env -iA nixpkgs.nnn || true
 yes '' | sed 3q; echo "installing joshuto <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 nix-env -iA nixpkgs.joshuto || true
 
-# bandwhich
-yes '' | sed 3q; echo "installing bandwhich <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-nix-env -iA nixpkgs.bandwhich || true
-
 # mcfly
 yes '' | sed 3q; echo "installing mcfly <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 nix-env -iA nixpkgs.mcfly || true

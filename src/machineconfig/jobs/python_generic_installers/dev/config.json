@@ -95,6 +95,22 @@
         "strip_v": false,
         "exe_name": "forward"
     },
+    "bandwhich": {
+        "repo_url": "https://github.com/imsnif/bandwhich",
+        "doc": "monitor network usage from cli",
+        "filename_template_windows_amd_64": "bandwhich-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_linux_amd_64": "bandwhich-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "strip_v": false,
+        "exe_name": "bandwhich"
+    },
+    "ipinfo": {
+        "repo_url": "https://github.com/ipinfo/cli",
+        "doc": "cli to get info of ips",
+        "filename_template_windows_amd_64": "ipinfo_{}_windows_amd64.zip",
+        "filename_template_linux_amd_64": "ipinfo_{}_linux_amd64.tar.gz",
+        "strip_v": true,
+        "exe_name": "ipinfo"
+    },
     "dust": {
         "repo_url": "https://github.com/bootandy/dust",
         "doc": "A more intuitive version of du in rust. It is a dua alternative.",
