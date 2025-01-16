@@ -166,7 +166,7 @@ git commit -am "finished merging"
 
         match action:
             case "ask":
-                choice = choose_one_option(options=[option1, option2, option3, option4], fzf=True)
+                choice = choose_one_option(options=[option1, option2, option3, option4], fzf=False)
                 if choice == option1: PROGRAM_PATH.write_text(shell_file_1.read_text())
                 elif choice == option2: PROGRAM_PATH.write_text(program_2)
                 elif choice == option3: PROGRAM_PATH.write_text(shell_file_3.read_text())
