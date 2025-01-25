@@ -4,9 +4,16 @@
 # $ErrorActionPreference = "Stop" # if there is any error in any command, stop there instead of proceeding to the next.
 
 # ================================= APPS ================================================
-winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W 11
+winget install --no-upgrade --name "Windows Terminal"             --Id "Microsoft.WindowsTerminal"  --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W 11
+winget install --no-upgrade --name "Brave"                        --Id "Brave.Brave"                --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "WezTerm"                      --Id "wez.wezterm"                --source winget --scope user --accept-package-agreements --accept-source-agreements
+#winget install --no-upgrade --name "nu"                           --Id "Nushell.Nushell"            --source winget --scope user --accept-package-agreements --accept-source-agreements  # add to userpath C:\Program Files\nu\bin, done in symlinks
+winget install --no-upgrade --name "Oh My Posh"                    --Id "JanDeDobbeleer.OhMyPosh"   --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Starship"                      --Id "Starship.Starship"         --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Git"                           --Id "Git.Git"                   --source winget --scope user --accept-package-agreements --accept-source-agreements
+
 #winget install --no-upgrade --name "Google Chrome" --Id "Google.Chrome" --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "Brave" --Id Brave.Brave --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "Chrome Remote Desktop Host" --Id "Google.ChromeRemoteDesktop" --source winget --scope user
 #winget install --no-upgrade --name Zoom --Id Zoom.Zoom --source winget --scope user --accept-package-agreements --accept-source-agreements
 
@@ -25,7 +32,6 @@ winget install --no-upgrade --name "Brave" --Id Brave.Brave --source winget --sc
 #winget install --no-upgrade --name "anaconda3" --source winget --scope user
 #winget install --no-upgrade --name miniconda3 --source winget --scope user
 #winget install --no-upgrade --name "notepad++" --Id "Notepad++.Notepad++" --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "PyCharm Professional Edition" --Id "JetBrains.PyCharm.Professional" --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "PyCharm Community Edition" --Id "JetBrains.PyCharm.Community" --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "DB Browser for SQLite" --Id "DBBrowserForSQLite.DBBrowserForSQLite" --source winget --scope user --accept-package-agreements --accept-source-agreements
@@ -81,13 +87,8 @@ winget install --no-upgrade --name "GnuPG" GnuPG.GnuPG --scope user --accept-pac
 #winget install --no-upgrade --name "gitui" --Id gitui --source winget --scope user
 #winget install --no-upgrade --name "hyperfine" --Id sharkdp.hyperfine --source winget --scope user  # benchmarking tool
 #winget install --no-upgrade --name "AWS Command Line Interface"
-winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W11
-winget install --no-upgrade --name "WezTerm"          --Id "wez.wezterm"               --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "Oh My Posh"       --Id "JanDeDobbeleer.OhMyPosh" --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "nu"             --Id "Nushell.Nushell"           --source winget --scope user --accept-package-agreements --accept-source-agreements  # add to userpath C:\Program Files\nu\bin, done in symlinks
-winget install --no-upgrade --name "Starship" --Id Starship.Starship --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "Git" --Id Git.Git                --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "GitHub CLI" --Id GitHub.cli     --source winget --scope user --accept-package-agreements --accept-source-agreements
+
+# winget install --no-upgrade --name "GitHub CLI" --Id GitHub.cli     --source winget --scope user --accept-package-agreements --accept-source-agreements
 # as per https://docs.github.com/en/copilot/github-copilot-in-the-cli/using-github-copilot-in-the-cli
 # & 'C:\Program Files\GitHub CLI\gh.exe' extension install github/gh-copilot auth login
 # & 'C:\Program Files\GitHub CLI\gh.exe' extension install github/gh-copilot
