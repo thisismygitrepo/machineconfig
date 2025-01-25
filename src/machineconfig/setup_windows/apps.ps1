@@ -1,17 +1,17 @@
 
 # to get exact version of an app in winget, head to: https://winget.run
 # on older windows, use this to get winget for first time: Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe as per https://learn.microsoft.com/en-us/windows/package-manager/winget/
-$ErrorActionPreference = "Stop"
+# $ErrorActionPreference = "Stop" # if there is any error in any command, stop there instead of proceeding to the next.
 
 # ================================= APPS ================================================
-winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --source winget --scope user  # Terminal is is installed by default on W 11
+winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W 11
 #winget install --no-upgrade --name "Google Chrome" --Id "Google.Chrome" --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "Brave" --Id Brave.Brave --source winget --scope user
+winget install --no-upgrade --name "Brave" --Id Brave.Brave --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "Chrome Remote Desktop Host" --Id "Google.ChromeRemoteDesktop" --source winget --scope user
-#winget install --no-upgrade --name Zoom --Id Zoom.Zoom --source winget --scope user
+#winget install --no-upgrade --name Zoom --Id Zoom.Zoom --source winget --scope user --accept-package-agreements --accept-source-agreements
 
 # productivity
-winget install --no-upgrade --name "7-zip" --Id "7zip.7zip" --source winget --scope user --accept-package-agreements --accept-source-agreements
+#winget install --no-upgrade --name "7-zip" --Id "7zip.7zip" --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "Adobe Acrobat Reader DC" --Id "dobe.Acrobat.Reader.64-bit" --source winget --scope user
 #winget install --no-upgrade --name "Mozilla Firefox" --Id "Mozilla.Firefox" --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "Mozilla Thunderbird" --Id "Mozilla.Thunderbird" --source winget --scope user --accept-package-agreements --accept-source-agreements
@@ -24,27 +24,27 @@ winget install --no-upgrade --name "7-zip" --Id "7zip.7zip" --source winget --sc
 
 #winget install --no-upgrade --name "anaconda3" --source winget --scope user
 #winget install --no-upgrade --name miniconda3 --source winget --scope user
-# winget install --no-upgrade --name "notepad++" --Id "Notepad++.Notepad++" --source winget --scope user --accept-package-agreements --accept-source-agreements
+#winget install --no-upgrade --name "notepad++" --Id "Notepad++.Notepad++" --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "PyCharm Professional Edition" --Id "JetBrains.PyCharm.Professional" --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "PyCharm Community Edition" --Id "JetBrains.PyCharm.Community" --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "DB Browser for SQLite" --Id "DBBrowserForSQLite.DBBrowserForSQLite" --source winget --scope user --accept-package-agreements --accept-source-agreements
+#winget install --no-upgrade --name "DB Browser for SQLite" --Id "DBBrowserForSQLite.DBBrowserForSQLite" --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "sql server management studio" --Id "Microsoft.SQLServerManagementStudi" --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "TesseractOCR" --Id UB-Mannheim.TesseractOCR
+#winget install --no-upgrade --name "TesseractOCR" --Id UB-Mannheim.TesseractOCR --source winget --scope user --accept-package-agreements --accept-source-agreements
 
 # ================================================== Shells ===========================================
+
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+winget install --no-upgrade --name "Python" --Id Python.Python.3.11 --source winget --scope user --accept-package-agreements --accept-source-agreements  # from https:\\winget.run  Python.Python.3.9
+
+# the two above require Restart-Computer -Force before they are available in PATH, OR:
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
+
 # Install icons
 Install-Module -Name Terminal-Icons -Repository PSGallery
 winget install --no-upgrade --name "Chafa" --Id hpjansson.Chafa --source winget --scope user --accept-package-agreements --accept-source-agreements
 # might need this: cp ~/AppData/Local/Microsoft/WinGet/Packages/hpjansson.Chafa_Microsoft.Winget.Source_8wekyb3d8bbwe/chafa-*/Chafa.exe ~/AppData/Local/Microsoft/WindowsApps
-
-$ErrorActionPreference = "Stop"  # if there is any error in any command, stop there instead of proceeding to the next.
-powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
-winget install --no-upgrade --name "Python" --Id Python.Python.3.11 --source winget --scope user  # from https:\\winget.run  Python.Python.3.9
-
-# the two above require Restart-Computer -Force before they are available in PATH, OR:
-$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --source winget --scope user  # powershell require admin
 
 # ======================= Terminal-based editors =================================
 #winget install --no-upgrade --name "Lapce" --Id Lapce.Lapce  # window app variant of helix
@@ -63,8 +63,8 @@ Install-Module -Name PSFzf  -SkipPublisherCheck  # -AcceptLicense -PassThru -Con
 # https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
 # installing via winget as opposoed to the installer above, causes ignoring the requirements, and not adding ~/.carog/bin to PATH.
 # installing requirements first (as per the installer instructions)
-winget install --no-upgrade --name "VSRedistrib" --Id "Microsoft.VC++2015-2022Redist-x64" --source winget --scope user -e
-winget install --no-upgrade --name "VSBuildTools" --Id "Microsoft.VisualStudio.2022.BuildTools" --source winget --scope user -e
+winget install --no-upgrade --name "VSRedistrib" --Id "Microsoft.VC++2015-2022Redist-x64" --source winget --scope user -e --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "VSBuildTools" --Id "Microsoft.VisualStudio.2022.BuildTools" --source winget --scope user -e --accept-package-agreements --accept-source-agreements
 # winget install --no-upgrade --name "Rustup" --Id Rustlang.Rustup --source winget --scope user
 #winget install --no-upgrade --name "julia" --Id "Julialang.Julia" --source winget --scope user --accept-package-agreements --accept-source-agreements
 
@@ -81,23 +81,23 @@ winget install --no-upgrade --name "GnuPG" GnuPG.GnuPG --scope user --accept-pac
 #winget install --no-upgrade --name "gitui" --Id gitui --source winget --scope user
 #winget install --no-upgrade --name "hyperfine" --Id sharkdp.hyperfine --source winget --scope user  # benchmarking tool
 #winget install --no-upgrade --name "AWS Command Line Interface"
-winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --source winget --scope user  # Terminal is is installed by default on W11
-winget install --no-upgrade --name "wezterm" --Id wez.wezterm --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "nu" --Id "Nushell.Nushell" --source winget --scope user  # add to userpath C:\Program Files\nu\bin, done in symlinks
-winget install --no-upgrade --name "Oh My Posh" --Id "JanDeDobbeleer.OhMyPosh" --source winget --scope user
-#winget install --no-upgrade --name "Starship" --Id Starship.Starship --source winget --scope user
-winget install --no-upgrade --name "Git" --Id Git.Git --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "GitHub CLI" --Id GitHub.cli --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W11
+winget install --no-upgrade --name "WezTerm"          --Id "wez.wezterm"               --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Oh My Posh"       --Id "JanDeDobbeleer.OhMyPosh" --source winget --scope user --accept-package-agreements --accept-source-agreements
+#winget install --no-upgrade --name "nu"             --Id "Nushell.Nushell"           --source winget --scope user --accept-package-agreements --accept-source-agreements  # add to userpath C:\Program Files\nu\bin, done in symlinks
+winget install --no-upgrade --name "Starship" --Id Starship.Starship --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Git" --Id Git.Git                --source winget --scope user --accept-package-agreements --accept-source-agreements
+#winget install --no-upgrade --name "GitHub CLI" --Id GitHub.cli     --source winget --scope user --accept-package-agreements --accept-source-agreements
 # as per https://docs.github.com/en/copilot/github-copilot-in-the-cli/using-github-copilot-in-the-cli
 # & 'C:\Program Files\GitHub CLI\gh.exe' extension install github/gh-copilot auth login
 # & 'C:\Program Files\GitHub CLI\gh.exe' extension install github/gh-copilot
 
-winget install --no-upgrade --name "graphviz" --Id Graphviz.Graphviz --source winget --scope user  # required by pygraphviz. Used in Base.viz_object_hirarchy and Model.plot_model()
-winget install --no-upgrade --name "WinFsp" --Id WinFsp.WinFsp --source winget --scope user  # mount remote filesystems and required by rclone
-winget install --no-upgrade --name "SSHFS-win" --Id SSHFS-Win.SSHFS-Win --source winget --scope user  # mount remote filesystems  # as per https://github.com/winfsp/sshfs-win
+winget install --no-upgrade --name "graphviz" --Id Graphviz.Graphviz --source winget --scope user --accept-package-agreements --accept-source-agreements  # required by pygraphviz. Used in Base.viz_object_hirarchy and Model.plot_model()
+winget install --no-upgrade --name "WinFsp" --Id WinFsp.WinFsp --source winget --scope user --accept-package-agreements --accept-source-agreements  # mount remote filesystems and required by rclone
+winget install --no-upgrade --name "SSHFS-win" --Id SSHFS-Win.SSHFS-Win --source winget --scope user --accept-package-agreements --accept-source-agreements  # mount remote filesystems  # as per https://github.com/winfsp/sshfs-win
 
-winget install --no-upgrade --name "xming" --Id xming.xming --source winget --scope user  # X11 server. you need this while using wsl with gui, otherwise plt.show() returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running
-winget install --no-upgrade --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements --source winget --scope user  # ncessary for nvim plugins.
+winget install --no-upgrade --name "xming" --Id xming.xming --source winget --scope user --accept-package-agreements --accept-source-agreements  # X11 server. you need this while using wsl with gui, otherwise plt.show() returns: ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running
+winget install --no-upgrade --name "Node.js" --Id "OpenJS.NodeJS" --accept-package-agreements --accept-source-agreements --source winget --scope user --accept-package-agreements --accept-source-agreements  # ncessary for nvim plugins.
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 # npm install sharewifi -g

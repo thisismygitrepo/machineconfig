@@ -24,7 +24,10 @@ def main(version: Optional[str]):
     config_dict_copy["repo_url"] = "https://github.com/helix-editor/helix"
     inst = Installer.from_dict(d=config_dict_copy, name="hx")
     downloaded, _version_to_be_installed = inst.download(version=version)
-    hx_file_search = downloaded.search("hx", folders=False, files=True, r=True)
+    if platform.system() == "Windows":
+        hx_file_search = downloaded.search("hx.exe", folders=False, files=True, r=True)
+    else:
+        hx_file_search = downloaded.search("hx", folders=False, files=True, r=True)        
     assert len(hx_file_search) == 1
     hx_file = hx_file_search.list[0]
     contrib = hx_file.parent / "contrib"
