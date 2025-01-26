@@ -316,7 +316,7 @@ def write_shell_script(program: str, desc: str, preserve_cwd: bool, display: boo
     return None
 
 
-def print_code(code: str, lexer: str, desc: str=""):
+def print_code(code: str, lexer: str, desc: str):
     if lexer == "shell":
         if platform.system() == "Windows": lexer = "powershell"
         elif platform.system() == "Linux": lexer = "sh"

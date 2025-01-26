@@ -90,7 +90,7 @@ def main() -> None:
     import socket
     try: local_ip_v4 = socket.gethostbyname(socket.gethostname() + ".local")  # without .local, in linux machines, '/etc/hosts' file content, you have an IP address mapping with '127.0.1.1' to your hostname
     except Exception:
-        print(f"Warning: Could not get local_ip_v4. This is probably because you are running a WSL instance")  # TODO find a way to get the local_ip_v4 in WSL
+        print("Warning: Could not get local_ip_v4. This is probably because you are running a WSL instance")  # TODO find a way to get the local_ip_v4 in WSL
         local_ip_v4 = socket.gethostbyname(socket.gethostname())
 
     print(f"Presentation is served at http://{platform.node()}:{port}")
@@ -103,7 +103,7 @@ def main() -> None:
     # Then you can do the following:
     program = "npm run dev slides.md -- --remote"
     PROGRAM_PATH.write_text(program)
-    print_code(program, lexer="bash")
+    print_code(code=program, lexer="bash", desc="Run the following command to start the presentation")
 
 
 if __name__ == '__main__':
