@@ -110,7 +110,8 @@ def main(which: Optional[str] = None):
         program = helper()
 
     else: raise ValueError(f"Unimplemented choice: {choice_key}")
-    if program: write_shell_script(program, display=True, preserve_cwd=True, desc="Shell script prepared by Python.", execute=True if which is not None else False)
+    if program:
+        write_shell_script(program, display=True, preserve_cwd=True, desc="Shell script prepared by Python.", execute=True if which is not None else False)
     else: write_shell_script("echo 'Done.'", display=False, )  # Python did not return any script to run.
 
 

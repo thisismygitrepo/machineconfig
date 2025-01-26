@@ -37,9 +37,9 @@ indent-width = 4
 # Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
 # McCabe complexity (`C901`) by default.
 select = ["E4", "E7", "E9", "F"]
+
 ignore = ["E701", # multiple statements in one line.
           "E702", 
-#          "F541",  # F string without placeholders.
           "E721",  # don't compare types use isinstance
           ]
 

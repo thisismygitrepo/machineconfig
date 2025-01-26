@@ -110,7 +110,7 @@ class Installer:
             new_version_cli = Terminal().run(f"{self.exe_name} --version").op.replace("\n", "")
 
             if old_version_cli == new_version_cli: return f"""echo "📦️ 😑 {self.exe_name}, same version: {old_version_cli}" """
-            else: return f"""echo "📦️ 🤩 {self.exe_name} updated from {old_version_cli} === to ===> {new_version_cli}" """
+            else: return f"""echo "📦️ 🤩 {self.exe_name} updated from {old_version_cli} ➡️ TO ➡️  {new_version_cli}" """
 
         except Exception as ex:
             print(ex)
@@ -126,7 +126,7 @@ class Installer:
 
             import runpy
             print(f"Executing func `main` from `{installer_path}`to get the program to run")
-            program: str=runpy.run_path(str(installer_path), run_name=None)['main'](version=version)
+            program: str = runpy.run_path(str(installer_path), run_name=None)['main'](version=version)
             # print(program)
             Terminal(stdin=None, stdout=None, stderr=None).run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)
             # import subprocess

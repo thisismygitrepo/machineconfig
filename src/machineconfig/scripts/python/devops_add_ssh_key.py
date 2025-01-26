@@ -38,7 +38,7 @@ def get_add_ssh_key_script(path_to_key: P):
             program = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add-sshkey.ps1")
             program = P(program).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
 
-    if system() == "Linux": program += f"""
+    if system() == "Linux": program += """
 
 sudo chmod 700 ~/.ssh
 sudo chmod 644 ~/.ssh/authorized_keys

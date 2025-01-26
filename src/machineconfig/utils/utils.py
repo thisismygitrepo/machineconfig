@@ -300,7 +300,8 @@ except ImportError: print(code)
     return shell_file
 
 
-def write_shell_script(program: str, desc: str="", preserve_cwd: bool=True, display: bool=True, execute: bool=False):
+# def write_shell_script(program: str, desc: str="", preserve_cwd: bool=True, display: bool=True, execute: bool=False):
+def write_shell_script(program: str, desc: str, preserve_cwd: bool, display: bool, execute: bool):
     if preserve_cwd:
         if platform.system() == "Windows":
             program = "$orig_path = $pwd\n" + program + "\ncd $orig_path"
