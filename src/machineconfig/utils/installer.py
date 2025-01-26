@@ -174,6 +174,7 @@ class Installer:
             print(f"📦️ Version to be installed: {version_to_be_installed}")
             print(f"📦️ Release URL: {release_url}")
             version_to_be_installed_stripped = version_to_be_installed.replace("v", "") if self.strip_v else version_to_be_installed
+            version_to_be_installed_stripped = version_to_be_installed_stripped.replace("ipinfo-", "")
             if platform.system() == "Windows":
                 file_name = self.filename_template_windows_amd_64.format(version_to_be_installed_stripped)
             elif platform.system() == "Linux":

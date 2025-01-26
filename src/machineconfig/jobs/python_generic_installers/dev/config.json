@@ -107,7 +107,7 @@
         "repo_url": "https://github.com/ipinfo/cli",
         "doc": "cli to get info of ips",
         "filename_template_windows_amd_64": "ipinfo_{}_windows_amd64.zip",
-        "filename_template_linux_amd_64": "ipinfo_{}_linux_amd64.tar.gz",
+        "filename_template_linux_amd_64": "ipinfo_{}_linux_amd64.deb",
         "strip_v": true,
         "exe_name": "ipinfo"
     },
