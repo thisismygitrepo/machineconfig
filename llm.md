@@ -22,6 +22,7 @@
 
 * https://github.com/vanna-ai/vanna `Auto SQL`.
 * https://github.com/OpenDevin/OpenDevin `Auto software engineer`
+* https://github.com/OpenInterpreter/open-interpreter `Auto code interpreter`
 * https://github.com/wandb/openui `auto UI`.
 * https://github.com/princeton-nlp/SWE-agent `Auto bug fix on git repo.`
 * https://github.com/ShishirPatil/gorilla `Auto API call`
@@ -34,16 +35,18 @@
 * https://github.com/black-forest-labs/flux
 
 
-# Parsing
+# Parsing Text
 
 * https://github.com/outlines-dev/outlines `unstructured -> structured`
 * https://github.com/PrefectHQ/marvin `unstructured -> structured`
+* https://github.com/guidance-ai/guidance `unstructured -> structured`
 * https://github.com/guardrails-ai/guardrails `unstructured -> structured`
 * https://github.com/jackmpcollins/magentic `unstructured -> structured`
+* https://github.com/bespokelabsai/curator `Make data`.
 
 
 # Web
-
+* https://github.com/browser-use/browser-use
 * https://github.com/mendableai/firecrawl `Website html -> markdown.`
 * https://github.com/apify/crawlee-python `Website html -> markdown.`
 * https://github.com/McGill-NLP/webllama `Browse internet with agents`
@@ -52,9 +55,7 @@
 # CLI
 
 * https://github.com/llm-workflow-engine/llm-workflow-engine `LLM Workflow Engine (LWE) is a Power CLI and Workflow manager for LLMs.`
-
 * https://github.com/iyaja/llama-fs `self-organizing file manager. It automatically renames and organizes your files based on their contents and well-known conventions (e.g., time).`
-
 * https://github.com/BasedHardware/OpenGlass `convert glasses to ai glasses`
 * https://github.com/microsoft/PubSec-Info-Assistant `Information Assistant Accelerator`
 * https://github.com/goldmansachs/gs-quant
@@ -90,6 +91,7 @@
 
 # Sources
 * https://github.com/xai-org/grok-1
+* https://github.com/Shubhamsaboo/awesome-llm-apps
 * https://github.com/Hannibal046/Awesome-LLM `curated list of papers about large language models, especially relating to ChatGPT. It also contains frameworks for LLM training, tools to deploy LLM, courses and tutorials about LLM and all publicly available LLM checkpoints and APIs.`
 * https://github.com/openai/openai-cookbook `Example code and guides for accomplishing common tasks with the OpenAI API.`
 * https://ai.azure.com/explore/
