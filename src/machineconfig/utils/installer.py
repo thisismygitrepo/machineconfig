@@ -14,7 +14,9 @@ import platform
 # import os
 
 
-LINUX_INSTALL_PATH = '/usr/local/bin'
+# LINUX_INSTALL_PATH = '/usr/local/bin'
+LINUX_INSTALL_PATH = '~/.local/bin'
+
 WINDOWS_INSTALL_PATH = P.home().joinpath("AppData/Local/Microsoft/WindowsApps").__str__()
 CATEGORY: TypeAlias = Literal["OS_SPECIFIC", "OS_GENERIC", "CUSTOM", "OS_SPECIFIC_DEV", "OS_GENERIC_DEV", "CUSTOM_DEV"]
 
@@ -60,7 +62,10 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
     print(f"MOVING file `{repr(exe)}` to '{LINUX_INSTALL_PATH}'")
     exe.chmod(0o777)
     # exe.move(folder=LINUX_INSTALL_PATH, overwrite=False)
-    Terminal().run(f"sudo mv {exe} {LINUX_INSTALL_PATH}/").print_if_unsuccessful(desc=f"MOVING executable `{exe}` to {LINUX_INSTALL_PATH}", strict_err=True, strict_returncode=True)
+    if "/usr" in LINUX_INSTALL_PATH:
+        Terminal().run(f"sudo mv {exe} {LINUX_INSTALL_PATH}/").print_if_unsuccessful(desc=f"MOVING executable `{exe}` to {LINUX_INSTALL_PATH}", strict_err=True, strict_returncode=True)
+    else:
+        exe.move(folder=LINUX_INSTALL_PATH, overwrite=True)
     if delete: downloaded.delete(sure=True)
     exe_new_location = P(LINUX_INSTALL_PATH).joinpath(exe.name)
     return exe_new_location

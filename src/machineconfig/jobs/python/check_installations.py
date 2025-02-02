@@ -15,10 +15,11 @@ from crocodile.file_management import P
 from crocodile.meta import Terminal
 from tqdm import tqdm
 from typing import Optional
+from datetime import datetime
 
 
 APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
-CLOUD: str="gdw"  # Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+CLOUD: str = "gdw"  # Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
 # my onedrive doesn't allow sharing.
 
 
@@ -81,6 +82,7 @@ def main() -> None:
     print(f"Checking tools collected from `{INSTALL_VERSION_ROOT}`:")
     apps_paths_raw.print()
     positive_pct: list[Optional[float]] = []
+    scan_time: list[str] = []
     detailed_results: list[dict[str, Optional[pd.DataFrame]]] = []
 
     for idx, app in enumerate(apps_paths_raw):
@@ -95,9 +97,13 @@ def main() -> None:
             ppct, df = res
             positive_pct.append(ppct)
             detailed_results.append({app.stem: df})
+        scan_time.append(datetime.now().strftime("%Y-%m-%d %H:%M"))
 
-    res_df = pd.DataFrame({"app_name": apps_paths_raw.apply(lambda x: x.stem).list, "version": app_versions, "positive_pct": positive_pct,
-                                "app_path": apps_paths_raw.apply(lambda x: x.collapseuser(strict=False).as_posix()).list})
+    res_df = pd.DataFrame({"app_name": apps_paths_raw.apply(lambda x: x.stem).list,
+                           "version": app_versions,
+                           "positive_pct": positive_pct,
+                            "scan_time": scan_time,
+                           "app_path": apps_paths_raw.apply(lambda x: x.collapseuser(strict=False).as_posix()).list})
 
     app_url: list[Optional[str]] = []
     for idx, row in tqdm(res_df.iterrows(), total=res_df.shape[0]):
