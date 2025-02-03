@@ -16,10 +16,14 @@ else
     echo "Installation upgrade."
 fi
 
-
+read -p "Install ve venv [y]/n ? " choice
 export ve_name="ve"
-curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
-curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
+if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
+    curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
+    curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
+else
+    echo "Installation aborted."
+fi
 
 
 echo "MOVING DOTFILES TO NEW MACHINE"
@@ -61,7 +65,10 @@ fi
 read -p "Install CLI Apps [y]/n ? " choice
 choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
+    # source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
+    . $HOME/venvs/ve/bin/activate
+    python -m fire machineconfig.scripts.python.devops_devapps_install main --which=AllEssentials  # this installs everything.
+    . $HOME/.bashrc
 else
     echo "Installation aborted."
 fi

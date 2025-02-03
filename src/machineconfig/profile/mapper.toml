@@ -245,8 +245,10 @@ token = {this = '~/.copilot-cli-access-token', to_this = '~/dotfiles/creds/llm/g
 opencommit = {this = '~/.opencommit', to_this = '~/dotfiles/creds/llm/opencommit_cli/.opencommit'}
 
 [m365]
-config1 = {this = '~/.cli-m365-msal.json', to_this = '~/dotfiles/creds/tokens/.cli-m365-msal.json'}
-config2 = {this = '~/.cli-m365-tokens.json', to_this = '~/dotfiles/creds/tokens/.cli-m365-tokens.json'}
+config1 = {this = '~/.cli-m365-msal.json',            to_this = '~/dotfiles/creds/tokens/.cli-m365-msal.json'}
+config2 = {this = '~/.cli-m365-all-connections.json', to_this = '~/dotfiles/creds/tokens/.cli-m365-all-connections.json'}
+config3 = {this = '~/.cli-m365-connection.json',      to_this = '~/dotfiles/creds/tokens/.cli-m365-connection.json'}
+# config2 = {this = '~/.cli-m365-tokens.json',        to_this = '~/dotfiles/creds/tokens/.cli-m365-tokens.json'}
 
 [marvin]
 config = {this = '~/.marvin/.env', to_this = '~/dotfiles/creds/llm/marvin/.env'}
