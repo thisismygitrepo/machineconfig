@@ -150,7 +150,8 @@ def choose_multiple_options(options: Iterable[T], header: str="", tail: str="", 
 
 def display_options(msg: str, options: Iterable[T], header: str="", tail: str="", prompt: str="",
                     default: Optional[T] = None, fzf: bool=False, multi: bool=False, custom_input: bool=False) -> Union[T, list[T]]:
-    # TODO: replace with https://github.com/tmbo/questionary  # also see https://github.com/charmbracelet/gum
+    # TODO: replace with https://github.com/tmbo/questionary
+    # # also see https://github.com/charmbracelet/gum
     tool_name = "fzf"
     options_strings: list[str] = [str(x) for x in options]
     default_string = str(default) if default is not None else None

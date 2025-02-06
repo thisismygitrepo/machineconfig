@@ -9,9 +9,6 @@ import string
 import os
 
 
-# TODO make it automatically start a zellij session and pick appropraite tmate session matching machine name
-
-
 def main():
     creds = configparser.ConfigParser()
     creds.read(Path.home().joinpath('dotfiles/creds/tmate/creds.ini'))
@@ -19,7 +16,7 @@ def main():
     parser = argparse.ArgumentParser(description='Tmate launcher')
     random_sess = random.choices(list(string.digits + string.ascii_letters), k=20)
     _ = random_sess
-    parser.add_argument("sess_name", help=f"session name (new only with random string will be chosen if not passed)", default=None)
+    parser.add_argument("sess_name", help="session name (new only with random string will be chosen if not passed)", default=None)
 
     args = parser.parse_args()
 
