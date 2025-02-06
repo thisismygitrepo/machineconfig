@@ -2,19 +2,23 @@
 # as per: https://docs.timescale.com/self-hosted/latest/install/installation-linux/#install-timescaledb-on-linux
 
 get_ubuntu_base_version() {
-    local mint_codename=$(lsb_release -cs)
-    case "$mint_codename" in
+    local os_codename=$(lsb_release -cs)
+    case "$os_codename" in
         "wilma")
-            echo "noble"
+            echo "noble"  # Map Mint Wilma to the base image Ubuntu 24.04 LTS
             ;;
         "virginia")
-            echo "jammy"
+            echo "jammy"  # Map Mint Jammy tothe base image Ubuntu 22.04 LTS
+            ;;
+        "bookworm")
+            echo "jammy"  # Map Debian 12 to Ubuntu 22.04 LTS
             ;;
         *)
-            echo "$mint_codename"
+            echo "$os_codename"
             ;;
     esac
 }
+
 ubuntu_version=$(get_ubuntu_base_version)
 
 echo "deb https://packagecloud.io/timescale/timescaledb/ubuntu/ $ubuntu_version main" | sudo tee /etc/apt/sources.list.d/timescaledb.list

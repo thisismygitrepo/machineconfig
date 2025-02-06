@@ -19,19 +19,22 @@
 #   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 # sudo nala update
 
-# sudo nala install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+# sudo nala install docker-ce docker-ce-cli containerd.io docker- buildx-plugin docker-compose-plugin -y
 
 get_ubuntu_base_version() {
-    local mint_codename=$(lsb_release -cs)
-    case "$mint_codename" in
+    local os_codename=$(lsb_release -cs)
+    case "$os_codename" in
         "wilma")
-            echo "noble"
+            echo "noble"  # Map Mint Wilma to the base image Ubuntu 24.04 LTS
             ;;
         "virginia")
-            echo "jammy"
+            echo "jammy"  # Map Mint Jammy tothe base image Ubuntu 22.04 LTS
+            ;;
+        "bookworm")
+            echo "jammy"  # Map Debian 12 to Ubuntu 22.04 LTS
             ;;
         *)
-            echo "$mint_codename"
+            echo "$os_codename"
             ;;
     esac
 }
@@ -40,7 +43,7 @@ ubuntu_version=$(get_ubuntu_base_version)
 
 # Add Docker's official GPG key:
 sudo nala update
-sudo nala install ca-certificates curl
+sudo nala install ca-certificates curl -y
 
 # sudo mkdir -p /etc/apt/keyrings  # USE IF THINGS GET MESSY,  THIS DOES OVERWRITING
 sudo install -m 0755 -d /etc/apt/keyrings
@@ -63,7 +66,6 @@ sudo nala update
 sudo nala install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 sudo systemctl enable docker
 docker run hello-world
-
 
 sudo groupadd docker
 sudo usermod -aG docker $USER
