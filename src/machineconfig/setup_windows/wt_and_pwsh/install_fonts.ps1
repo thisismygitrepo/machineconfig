@@ -8,6 +8,11 @@ function Test-FontInstalled {
     return $fonts -contains $FontName
 }
 
+if (Test-FontInstalled -FontName "CaskadyiaCove NF") {
+    Write-Host "Font CaskadyiaCove NF is installed. Skipping installation."
+    exit
+}
+
 $FONTS = 0x14
 $Path = ".\fonts-to-be-installed"
 $objShell = New-Object -ComObject Shell.Application
