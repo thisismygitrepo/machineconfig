@@ -62,11 +62,10 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 sudo nala update
-
 sudo nala install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+
 sudo systemctl enable docker
 docker run hello-world
-
 sudo groupadd docker
 sudo usermod -aG docker $USER
 
