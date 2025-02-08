@@ -9,9 +9,6 @@ get_ubuntu_base_version() {
         "virginia")
             echo "jammy"  # Map Mint Jammy tothe base image Ubuntu 22.04 LTS
             ;;
-        "bookworm")
-            echo "jammy"  # Map Debian 12 to Ubuntu 22.04 LTS
-            ;;
         *)
             echo "$os_codename"
             ;;

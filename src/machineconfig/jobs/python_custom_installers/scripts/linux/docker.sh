@@ -52,28 +52,29 @@ if [ "$os_type" = "unsupported" ]; then
 fi
 
 if [ "$os_type" = "ubuntu" ]; then
-    ubuntu_version=$(get_ubuntu_base_version)
+    distro_codename=$(get_ubuntu_base_version)
     repo_url="https://download.docker.com/linux/ubuntu"
 else
-    ubuntu_version=$(lsb_release -cs)
+    distro_codename=$(lsb_release -cs)
     repo_url="https://download.docker.com/linux/debian"
 fi
 
 echo "OS type: $os_type"
-echo "Version: $ubuntu_version"
+echo "Version: $distro_codename"
 
 # Add Docker's official GPG key:
 sudo nala update
 sudo nala install ca-certificates curl -y
 
-# sudo mkdir -p /etc/apt/keyrings  # USE IF THINGS GET MESSY,  THIS DOES OVERWRITING
 sudo install -m 0755 -d /etc/apt/keyrings
-# sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo curl -fsSL $repo_url/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+# sudo curl -fsSL $repo_url/gpg -o /etc/apt/keyrings/docker.asc
+sudo curl -fsSL "$repo_url/gpg" | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+#   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] $repo_url \
+#   $distro_codename stable" | \
 
 echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] $repo_url \
-  $ubuntu_version stable" | \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] $repo_url $distro_codename stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 sudo nala update
