@@ -97,6 +97,7 @@
 * https://ai.azure.com/explore/
 * https://github.com/f/awesome-chatgpt-prompts
 * https://github.com/erikbern/ann-benchmarks
+* https://debarghyadas.com/writes/github
 
 
 # Deprecated
