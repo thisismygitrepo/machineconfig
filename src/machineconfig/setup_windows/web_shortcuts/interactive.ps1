@@ -1,6 +1,6 @@
 
 echo "If you have execution policy issues, run: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser."
-echo "If you want to accept everything, run: $yesAll = $true"
+echo "If you want to accept everything, run: \$yesAll = $true"
 
 # Set environment variable and execute scripts
 
@@ -49,7 +49,7 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 
 # Create Symlinks
 if (-not $yesAll) {
-    $createLinksChoice = Read-Host "Create Symlinks (finish dotfiles transfer first) [y]/n ? "
+    $createLinksChoice = Read-Host "Create (Sym/Hard)links (finish dotfiles transfer first) [y]/n ? "
 } else {
     $createLinksChoice = "y"
 }
@@ -59,7 +59,7 @@ if ($createLinksChoice -eq "y" -or $createLinksChoice -eq "Y") {
     if (-not $yesAll) {
         $linkTypeChoice = Read-Host "Create Symlinks (s) or Hardlinks (h) [s]/h ? "
     } else {
-        $linkTypeChoice = "s"
+        $linkTypeChoice = "h"
     }
 
     . ~\venvs\ve\Scripts\Activate.ps1

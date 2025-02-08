@@ -1,4 +1,3 @@
-
 """
 setup file for each shell can be found in $profile. The settings.json is the config file for Terminal.
 https://glitchbone.github.io/vscode-base16-term/#/3024
@@ -31,8 +30,33 @@ def install_nerd_fonts():
     folder.search("*Windows*").apply(lambda p: p.delete(sure=True))
     folder.search("*readme*").apply(lambda p: p.delete(sure=True))
     folder.search("*LICENSE*").apply(lambda p: p.delete(sure=True))
-    file = P.tmpfile(suffix=".ps1").write_text(LIBRARY_ROOT.joinpath("setup_windows/wt_and_pwsh/install_fonts.ps1").read_text().replace(r".\fonts-to-be-installed", str(folder)))
-    subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {file.to_str()}", check=True)
+
+    # Check for installed fonts and remove them from folder
+    check_font_script = '''
+        param($fontName)
+        $installedFonts = (New-Object System.Drawing.Text.InstalledFontCollection).Families
+        return $installedFonts | Where-Object { $_.Name -eq $fontName } | Select-Object -First 1
+    '''
+    # Process each font file in the folder
+    for font_file in folder.search("*.ttf"):
+        # Extract font name from filename (remove extension and any variants like 'Bold', 'Italic')
+        font_name = font_file.stem.split('-')[0]
+        # Check if font is installed
+        result = subprocess.run([
+            'powershell.exe',
+            '-ExecutionPolicy', 'Bypass',
+            '-Command', check_font_script,
+            '-fontName', font_name
+        ], capture_output=True, text=True, check=True)
+        # If font is installed, delete the file
+        if result.stdout.strip():
+            font_file.delete(sure=True)
+
+    # Install remaining fonts
+    if list(folder.search("*.ttf")):
+        file = P.tmpfile(suffix=".ps1").write_text(LIBRARY_ROOT.joinpath("setup_windows/wt_and_pwsh/install_fonts.ps1").read_text().replace(r".\fonts-to-be-installed", str(folder)))
+        subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {file.to_str()}", check=True)
+
     folder.delete(sure=True)
 
 
