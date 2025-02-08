@@ -1,3 +1,4 @@
+
 # https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 
 # # Add Docker's official GPG key:
@@ -18,70 +19,52 @@
 #   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 # sudo nala update
 
-# sudo nala install docker-ce docker-ce-cli containerd.io docker- buildx-plugin docker-compose-plugin -y
-
-get_os_type() {
-    if [ -f /etc/debian_version ]; then
-        echo "debian"
-    elif [ -f /etc/lsb-release ]; then
-        echo "ubuntu"
-    else
-        echo "unsupported"
-    fi
-}
+# sudo nala install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
 get_ubuntu_base_version() {
-    local os_codename=$(lsb_release -cs)
-    case "$os_codename" in
+    local mint_codename=$(lsb_release -cs)
+    case "$mint_codename" in
         "wilma")
-            echo "noble"  # Map Mint Wilma to the base image Ubuntu 24.04 LTS
+            echo "noble"
             ;;
         "virginia")
-            echo "jammy"  # Map Mint virginia to the base image Ubuntu 22.04 LTS
+            echo "jammy"
             ;;
         *)
-            echo "$os_codename"
+            echo "$mint_codename"
             ;;
     esac
 }
+ubuntu_version=$(get_ubuntu_base_version)
 
-os_type=$(get_os_type)
-if [ "$os_type" = "unsupported" ]; then
-    echo "Unsupported OS type"
-    exit 1
-fi
-
-if [ "$os_type" = "ubuntu" ]; then
-    distro_codename=$(get_ubuntu_base_version)
-    repo_url="https://download.docker.com/linux/ubuntu"
-else
-    distro_codename=$(lsb_release -cs)
-    repo_url="https://download.docker.com/linux/debian"
-fi
-
-echo "OS type: $os_type"
-echo "Version: $distro_codename"
 
 # Add Docker's official GPG key:
 sudo nala update
-sudo nala install ca-certificates curl -y
+sudo nala install ca-certificates curl
 
+# sudo mkdir -p /etc/apt/keyrings  # USE IF THINGS GET MESSY,  THIS DOES OVERWRITING
 sudo install -m 0755 -d /etc/apt/keyrings
-# sudo curl -fsSL $repo_url/gpg -o /etc/apt/keyrings/docker.asc
-sudo curl -fsSL "$repo_url/gpg" | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+# sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
-#   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] $repo_url \
-#   $distro_codename stable" | \
-
+# sudo chmod a+r /etc/apt/keyrings/docker.asc
+# Add the repository to Apt sources:
+# echo \
+#   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+#   $ubuntu_version stable" | \
+#   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] $repo_url $distro_codename stable" | \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $ubuntu_version stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 sudo nala update
-sudo nala install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
+sudo nala install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 sudo systemctl enable docker
 docker run hello-world
+
+
 sudo groupadd docker
 sudo usermod -aG docker $USER
 
