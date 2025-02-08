@@ -17,7 +17,7 @@ from typing import Optional
 
 config_dict = {
     "repo_url": "CUSTOM",
-    "doc": """Docker Desltop for Ubuntu as per https://docs.docker.com/desktop/install/ubuntu/""",
+    "doc": """Docker Desktop for Ubuntu as per https://docs.docker.com/desktop/install/ubuntu/""",
     "filename_template_windows_amd_64": "gh_{}_windows_amd64.zip",
     "filename_template_linux_amd_64": "gh_{}_linux_amd64.tar.gz",
     "strip_v": True,
