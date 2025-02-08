@@ -48,7 +48,9 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
 
 # Install icons
-Install-Module -Name Terminal-Icons -Repository PSGallery
+# Install-Module -Name Terminal-Icons -Repository PSGallery
+Install-Module -Name Terminal-Icons -Repository PSGallery -Force -AcceptLicense -PassThru -Confirm  # -RequiredVersion 2.5.10
+
 winget install --no-upgrade --name "Chafa" --Id hpjansson.Chafa --source winget --scope user --accept-package-agreements --accept-source-agreements
 # might need this: cp ~/AppData/Local/Microsoft/WinGet/Packages/hpjansson.Chafa_Microsoft.Winget.Source_8wekyb3d8bbwe/chafa-*/Chafa.exe ~/AppData/Local/Microsoft/WindowsApps
 
