@@ -1,30 +1,22 @@
-
 # to run: powershell.exe -executionpolicy Bypass -nologo -noninteractive -file .\Install_Fonts.ps1
 
 $FONTS = 0x14
-$Path=".\fonts-to-be-installed"
+$Path = ".\fonts-to-be-installed"
 $objShell = New-Object -ComObject Shell.Application
 $objFolder = $objShell.Namespace($FONTS)
-$Fontdir = dir $Path
-foreach($File in $Fontdir) {
-if(!($file.name -match "pfb$"))
-{
-$try = $true
-$installedFonts = @(Get-ChildItem c:\windows\fonts | Where-Object {$_.PSIsContainer -eq $false} | Select-Object basename)
-$name = $File.baseName
 
-foreach($font in $installedFonts)
-{
-$font = $font -replace "_", ""
-$name = $name -replace "_", ""
-if($font -match $name)
-{
-$try = $false
-}
-}
-if($try)
-{
-$objFolder.CopyHere($File.fullname)
-}
-}
+# Get all currently installed fonts
+$installedFonts = [System.Drawing.Text.InstalledFontCollection]::new().Families.Name
+
+# Process each font in the directory
+Get-ChildItem -Path $Path | Where-Object { $_.Extension -match '^\.(ttf|otf)$' } | ForEach-Object {
+    $fontName = [System.Drawing.Text.PrivateFontCollection]::new().AddFontFile($_.FullName).Families.Name
+    
+    if ($installedFonts -contains $fontName) {
+        Write-Host "Skipping $fontName - already installed"
+    } else {
+        Write-Host "Installing $fontName..."
+        $objFolder.CopyHere($_.FullName)
+        Start-Sleep -Milliseconds 500  # Give Windows time to process the font
+    }
 }

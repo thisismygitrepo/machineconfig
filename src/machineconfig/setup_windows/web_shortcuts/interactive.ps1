@@ -81,14 +81,17 @@ if ($createLinksChoice -eq "y" -or $createLinksChoice -eq "Y") {
 # Install CLI Apps
 if (-not $yesAll) {
     $choice = Read-Host "Install CLI Apps [y]/n ? "
+    if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
+    if ($choice -eq "y" -or $choice -eq "Y") {
+        . ~\code\machineconfig\src\machineconfig\setup_windows\devapps.ps1
+    } else {
+        Write-Host "Installation aborted."
+    }
+    
 } else {
-    $choice = "y"
-}
-if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
-if ($choice -eq "y" -or $choice -eq "Y") {
-    . ~\code\machineconfig\src\machineconfig\setup_windows\devapps.ps1
-} else {
-    Write-Host "Installation aborted."
+    . $HOME\venvs\ve\Scripts\activate.ps1
+    python -m fire machineconfig.scripts.python.devops_devapps_install main  --which=AllEssentials
+    deactivate    
 }
 
 
@@ -122,7 +125,7 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 
 # Install Brave, WezTerm, and VSCode
 if (-not $yesAll) {
-    $choice = Read-Host "Install Brave+WezTerm+VSCode [y]/n ? "
+    $choice = Read-Host "Install Brave+WindowsTerminal+WezTerm+VSCode [y]/n ? "
 } else {
     $choice = "y"
 }
