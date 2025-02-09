@@ -1,3 +1,4 @@
+
 get_os_type() {
     if [ -f "/etc/debian_version" ]; then
         if [ -f "/etc/ubuntu_version" ] || [ -f "/etc/lsb-release" ]; then

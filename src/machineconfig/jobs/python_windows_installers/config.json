@@ -1,4 +1,12 @@
 {
+    "speedtest": {
+        "repo_url": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-win64.zip",
+        "doc": "Test your internet connection speed and ping using speedtest.net from the CLI",
+        "filename_template_windows_amd_64": "speedtest",
+        "filename_template_linux_amd_64": "speedtest",
+        "strip_v": false,
+        "exe_name": "speedtest"
+    },
     "boxes": {
         "repo_url": "https://github.com/ascii-boxes/boxes",
         "doc": "ASCI draws boxes around text.",
