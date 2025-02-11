@@ -2,9 +2,7 @@
 """DS
 """
 
-__version__ = "1.91"
+__version__ = "1.92"
 release_notes = """
-
-imporoved installer
-
+included settings
 """
