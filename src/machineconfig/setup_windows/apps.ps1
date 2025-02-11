@@ -8,11 +8,11 @@ winget install --no-upgrade --name "Windows Terminal"             --Id "Microsof
 winget install --no-upgrade --name "Brave"                        --Id "Brave.Brave"                --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "WezTerm"                      --Id "wez.wezterm"                --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Oh My Posh"                   --Id "JanDeDobbeleer.OhMyPosh"   --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Powershell"                   --Id "Microsoft.PowerShell"      --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
+winget install --no-upgrade --name "Starship"                     --Id "Starship.Starship"         --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Git"                          --Id "Git.Git"                   --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "nu"                           --Id "Nushell.Nushell"            --source winget --scope user --accept-package-agreements --accept-source-agreements  # add to userpath C:\Program Files\nu\bin, done in symlinks
-winget install --no-upgrade --name "Oh My Posh"                    --Id "JanDeDobbeleer.OhMyPosh"   --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "Starship"                      --Id "Starship.Starship"         --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "Git"                           --Id "Git.Git"                   --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
 
 #winget install --no-upgrade --name "Google Chrome" --Id "Google.Chrome" --source winget --scope user --accept-package-agreements --accept-source-agreements
 #winget install --no-upgrade --name "Chrome Remote Desktop Host" --Id "Google.ChromeRemoteDesktop" --source winget --scope user
