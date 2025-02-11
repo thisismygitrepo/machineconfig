@@ -3,6 +3,7 @@
 * [link](https://github.com/deepset-ai/haystack) `frameworks for LLM apps`.
 * https://github.com/joaomdmoura/crewAI `framework for orchestrating role-playing, autonomous AI agents`.
 * https://github.com/microsoft/autogen `framework for multiple agents`.
+* https://github.com/huggingface/smolagents `framework for multiple agents`.
 * https://github.com/run-llama/llama_index `framework for your LLM application`.
 * https://github.com/langchain-ai/langchain `framework for LLM apps`.
 * https://github.com/agenta-ai/agenta

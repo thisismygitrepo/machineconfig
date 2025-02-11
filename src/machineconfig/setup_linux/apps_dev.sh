@@ -12,6 +12,8 @@ if [ "$package_manager" = "nala" ]; then
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.fortune || true
 fi
+# as per https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex
+# sudo nala install texlive-xetex texlive-fonts-recommended texlive-plain-generic -y
 
 
 yes '' | sed 3q; echo "----------------------------- installing toilet ----------------------------"; yes '' | sed 3q
