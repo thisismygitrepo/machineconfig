@@ -1,17 +1,13 @@
 
-
-# Upgrade system packages
-# $choice = Read-Host "Upgrade system packages [y]/n ? "
-# if ($choice -eq "y" -or $choice -eq "Y") {
-#     winget upgrade --all
-# } else {
-#     Write-Host "Installation aborted."
-# }
+echo "If you have execution policy issues, run: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser."
+echo "If you want to accept everything, run: \$yesAll = $true"
 
 # Set environment variable and execute scripts
+
 $ve_name = "ve"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1" -OutFile "ve.ps1"
 .\ve.ps1
+
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1" -OutFile "repos.ps1"
 .\repos.ps1
 
@@ -23,7 +19,11 @@ Write-Host "* for WSL: `wsl_server.ps1; ftpx ~/dotfiles $env:USERNAME@localhost:
 Write-Host "USING INTERNET SECURE SHARE: cd ~; cloud_copy SHARE_URL . --config ss (requires symlinks to be created first)"
 
 # Install SSH Server
-$choice = Read-Host "Install SSH Server [y]/n ? "
+if (-not $yesAll) {
+    $choice = Read-Host "Install SSH Server [y]/n ? "
+} else {
+    $choice = "y"
+}
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
     Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
@@ -35,7 +35,11 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 }
 
 # Confirm copying finished
-$choice = Read-Host "Did you finish copying [y]/n ? "
+if (-not $yesAll) {
+    $choice = Read-Host "Did you finish copying [y]/n ? "
+} else {
+    $choice = "y"
+}
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
     Write-Host "Proceeding..."
@@ -44,12 +48,19 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 }
 
 # Create Symlinks
-$createLinksChoice = Read-Host "Create Symlinks (finish dotfiles transfer first) [y]/n ? "
+if (-not $yesAll) {
+    $createLinksChoice = Read-Host "Create (Sym/Hard)links (finish dotfiles transfer first) [y]/n ? "
+} else {
+    $createLinksChoice = "y"
+}
 if ([string]::IsNullOrEmpty($createLinksChoice)) { $createLinksChoice = "y" }
 
 if ($createLinksChoice -eq "y" -or $createLinksChoice -eq "Y") {
-    $linkTypeChoice = Read-Host "Create Symlinks (s) or Hardlinks (h) [s]/h ? "
-    if ([string]::IsNullOrEmpty($linkTypeChoice)) { $linkTypeChoice = "s" }
+    if (-not $yesAll) {
+        $linkTypeChoice = Read-Host "Create Symlinks (s) or Hardlinks (h) [s]/h ? "
+    } else {
+        $linkTypeChoice = "h"
+    }
 
     . ~\venvs\ve\Scripts\Activate.ps1
 
@@ -68,17 +79,28 @@ if ($createLinksChoice -eq "y" -or $createLinksChoice -eq "Y") {
 }
 
 # Install CLI Apps
-$choice = Read-Host "Install CLI Apps [y]/n ? "
-if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
-if ($choice -eq "y" -or $choice -eq "Y") {
-    . ~\code\machineconfig\src\machineconfig\setup_windows\devapps.ps1
+if (-not $yesAll) {
+    $choice = Read-Host "Install CLI Apps [y]/n ? "
+    if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
+    if ($choice -eq "y" -or $choice -eq "Y") {
+        . ~\code\machineconfig\src\machineconfig\setup_windows\devapps.ps1
+    } else {
+        Write-Host "Installation aborted."
+    }
+    
 } else {
-    Write-Host "Installation aborted."
+    . $HOME\venvs\ve\Scripts\activate.ps1
+    python -m fire machineconfig.scripts.python.devops_devapps_install main  --which=AllEssentials
+    deactivate    
 }
 
 
 # Retrieve Repos
-$choice = Read-Host "Retrieve Repos at ~/code [y]/n ? "
+if (-not $yesAll) {
+    $choice = Read-Host "Retrieve Repos at ~/code [y]/n ? "
+} else {
+    $choice = "y"
+}
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
     repos ~\code --clone --cloud odg1
@@ -87,7 +109,11 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 }
 
 # Retrieve Data
-$choice = Read-Host "Retrieve data [y]/n ? "
+if (-not $yesAll) {
+    $choice = Read-Host "Retrieve data [y]/n ? "
+} else {
+    $choice = "y"
+}
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
     . ~\venvs\ve\Scripts\Activate.ps1
@@ -98,10 +124,13 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 
 
 # Install Brave, WezTerm, and VSCode
-$choice = Read-Host "Install Brave+WezTerm+VSCode [y]/n ? "
+if (-not $yesAll) {
+    $choice = Read-Host "Install Brave+WindowsTerminal+WezTerm+VSCode [y]/n ? "
+} else {
+    $choice = "y"
+}
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
-    . ~\venvs\ve\Scripts\Activate.ps1
     # python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm
     # python -m fire machineconfig.scripts.python.devops_devapps_install main --which=brave
     # python -m fire machineconfig.scripts.python.devops_devapps_install main --which=code
@@ -111,6 +140,9 @@ if ($choice -eq "y" -or $choice -eq "Y") {
     python -m fire machineconfig.setup_windows.wt_and_pwsh.set_wt_settings main
     winget install --no-upgrade --name "Brave"                        --Id "Brave.Brave"                --source winget --scope user --accept-package-agreements --accept-source-agreements
     winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements
+    . $HOME\venvs\ve\Scripts\Activate.ps1
+    python -m fire machineconfig.setup_windows.wt_and_pwsh.set_pwsh_theme install_nerd_fonts
+    python -m fire machineconfig.setup_windows.wt_and_pwsh.set_wt_settings main
 
 } else {
     Write-Host "Installation aborted."
@@ -118,7 +150,11 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 
 
 # Install Apps
-$choice = Read-Host "Install Apps [y]/n ? "
+if (-not $yesAll) {
+    $choice = Read-Host "Install Apps [y]/n ? "
+} else {
+    $choice = "y"
+}
 if ($choice -eq "y" -or $choice -eq "Y") {
     Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/apps.ps1" -OutFile "apps.ps1"
     .\apps.ps1

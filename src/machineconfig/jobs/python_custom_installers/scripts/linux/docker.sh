@@ -1,74 +1,62 @@
 
-# https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
-
-# # Add Docker's official GPG key:
-# sudo nala update
-# sudo nala install ca-certificates curl gnupg -y
-# sudo install -m 0755 -d /etc/apt/keyrings
-# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-# sudo chmod a+r /etc/apt/keyrings/docker.gpg
-
-# # $OS_NAME=$(lsb_release -cs)
-# # $OS_NAME=$(. /etc/os-release && echo "$VERSION_CODENAME")
-# $OS_NAME=jammy  # verigina doens't work
-
-# # Add the repository to Apt sources:
-# echo \
-#   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-#    $OS_NAME stable" | \
-#   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-# sudo nala update
-
-# sudo nala install docker-ce docker-ce-cli containerd.io docker- buildx-plugin docker-compose-plugin -y
+get_os_type() {
+    if [ -f "/etc/debian_version" ]; then
+        if [ -f "/etc/ubuntu_version" ] || [ -f "/etc/lsb-release" ]; then
+            echo "ubuntu"
+        else
+            echo "debian"
+        fi
+    fi
+}
 
 get_ubuntu_base_version() {
-    local os_codename=$(lsb_release -cs)
-    case "$os_codename" in
+    local mint_codename=$(lsb_release -cs)
+    case "$mint_codename" in
         "wilma")
-            echo "noble"  # Map Mint Wilma to the base image Ubuntu 24.04 LTS
+            echo "noble"
             ;;
         "virginia")
-            echo "jammy"  # Map Mint Jammy tothe base image Ubuntu 22.04 LTS
-            ;;
-        "bookworm")
-            echo "jammy"  # Map Debian 12 to Ubuntu 22.04 LTS
+            echo "jammy"
             ;;
         *)
-            echo "$os_codename"
+            echo "$mint_codename"
             ;;
     esac
 }
-ubuntu_version=$(get_ubuntu_base_version)
 
+get_debian_version() {
+    lsb_release -cs
+}
+
+OS_TYPE=$(get_os_type)
+if [ "$OS_TYPE" = "ubuntu" ]; then
+    DISTRO_VERSION=$(get_ubuntu_base_version)
+else
+    DISTRO_VERSION=$(get_debian_version)
+fi
 
 # Add Docker's official GPG key:
 sudo nala update
-sudo nala install ca-certificates curl -y
+sudo nala install ca-certificates curl
 
-# sudo mkdir -p /etc/apt/keyrings  # USE IF THINGS GET MESSY,  THIS DOES OVERWRITING
 sudo install -m 0755 -d /etc/apt/keyrings
-# sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo curl -fsSL "https://download.docker.com/linux/$OS_TYPE/gpg" | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
-# sudo chmod a+r /etc/apt/keyrings/docker.asc
 # Add the repository to Apt sources:
-# echo \
-#   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-#   $ubuntu_version stable" | \
-#   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $ubuntu_version stable" | \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/$OS_TYPE \
+  $DISTRO_VERSION stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 sudo nala update
-
 sudo nala install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-sudo systemctl enable docker
-docker run hello-world
 
-sudo groupadd docker
-sudo usermod -aG docker $USER
+
+sudo systemctl enable docker || true
+docker run hello-world || true
+
+sudo groupadd docker 2>/dev/null || true
+sudo usermod -aG docker $USER || true
 
 # As per NixOs installer:
 # nix-env -iA nixpkgs.docker

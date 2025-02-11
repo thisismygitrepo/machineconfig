@@ -8,9 +8,9 @@ get_ubuntu_base_version() {
     local mint_codename=$(lsb_release -cs)
     case "$mint_codename" in
         "wilma")
-            echo "noble"
+            echo "noble"  # Mint 22 (wilma) is based on Ubuntu 24.04 (noble)
             ;;
-        "virginia")
+        "virginia")  # Mint 21 (virginia) is based on Ubuntu 22.04 (jammy)
             echo "jammy"
             ;;
         *)
@@ -20,12 +20,10 @@ get_ubuntu_base_version() {
 }
 ubuntu_version=$(get_ubuntu_base_version)
 
-
 curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
 
 echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $ubuntu_version main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
 
-sudo nala update && sudo nala install cloudflare-warp -y
-
+sudo nala update
+sudo nala install cloudflare-warp -y
 warp-cli registration new
-
