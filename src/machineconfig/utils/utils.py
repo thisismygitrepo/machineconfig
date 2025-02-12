@@ -312,7 +312,7 @@ def write_shell_script(program: str, desc: str, preserve_cwd: bool, display: boo
         print_code(code=program, lexer="shell", desc=desc)
     PROGRAM_PATH.create(parents_only=True).write_text(program)
     if execute:
-        Terminal().run(f". {PROGRAM_PATH}", shell="powershell").print_if_unsuccessful(desc="🛠️ Executing shell script", strict_err=True, strict_returncode=True)
+        Terminal().run(f". {PROGRAM_PATH}", shell="powershell").capture().print_if_unsuccessful(desc="🛠️ Executing shell script", strict_err=True, strict_returncode=True)
     return None
 
 

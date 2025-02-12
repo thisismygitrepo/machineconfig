@@ -63,7 +63,7 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
     exe.chmod(0o777)
     # exe.move(folder=LINUX_INSTALL_PATH, overwrite=False)
     if "/usr" in LINUX_INSTALL_PATH:
-        Terminal().run(f"sudo mv {exe} {LINUX_INSTALL_PATH}/").print_if_unsuccessful(desc=f"MOVING executable `{exe}` to {LINUX_INSTALL_PATH}", strict_err=True, strict_returncode=True)
+        Terminal().run(f"sudo mv {exe} {LINUX_INSTALL_PATH}/").capture().print_if_unsuccessful(desc=f"MOVING executable `{exe}` to {LINUX_INSTALL_PATH}", strict_err=True, strict_returncode=True)
     else:
         exe.move(folder=LINUX_INSTALL_PATH, overwrite=True)
     if delete: downloaded.delete(sure=True)
@@ -140,12 +140,12 @@ class Installer:
         elif "npm " in self.repo_url or "pip " in self.repo_url or "winget " in self.repo_url:
             desc = self.repo_url.split(" ", maxsplit=1)[0] + "installation"
             version_to_be_installed = self.repo_url.split(" ", maxsplit=1)[0] + "Latest"
-            Terminal().run(self.repo_url, shell="default").print_if_unsuccessful(desc=desc, strict_err=True, strict_returncode=True)
+            Terminal().run(self.repo_url, shell="default").capture().print_if_unsuccessful(desc=desc, strict_err=True, strict_returncode=True)
         else:
             downloaded, version_to_be_installed = self.download(version=version)
             if downloaded.to_str().endswith(".deb"):
                 assert platform.system() == "Linux"
-                Terminal().run(f"sudo apt install -y {downloaded}").print_if_unsuccessful(desc="Installing .deb", strict_err=True, strict_returncode=True)
+                Terminal().run(f"sudo apt install -y {downloaded}").capture().print_if_unsuccessful(desc="Installing .deb", strict_err=True, strict_returncode=True)
                 downloaded.delete(sure=True)
             else:
                 if platform.system() == "Windows":
@@ -338,7 +338,7 @@ def install_all(installers: L[Installer], safe: bool=False, jobs: int = 10, fres
         if platform.system().lower() == "windows":
             apps_dir.search("*").apply(lambda app: app.move(folder=P.get_env().WindowsPaths().WindowsApps))
         elif platform.system().lower() == "linux":
-            Terminal().run(f"sudo mv {apps_dir.as_posix()}/* {LINUX_INSTALL_PATH}/").print_if_unsuccessful(desc=f"MOVING executable to {LINUX_INSTALL_PATH}", strict_err=True, strict_returncode=True)
+            Terminal().run(f"sudo mv {apps_dir.as_posix()}/* {LINUX_INSTALL_PATH}/").capture().print_if_unsuccessful(desc=f"MOVING executable to {LINUX_INSTALL_PATH}", strict_err=True, strict_returncode=True)
         else: raise NotImplementedError(f"I don't know this system {platform.system()}")
         apps_dir.delete(sure=True)
         return None

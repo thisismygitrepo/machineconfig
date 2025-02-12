@@ -89,10 +89,11 @@ def arg_parser() -> None:
                                     rel2home=args_obj.rel2home, root=args_obj.root, os_specific=args_obj.os_specific, strict=False,
                                     share=args_obj.share)
         if args_obj.share:
-            if P(source).is_dir(): share_url_path = P(source).joinpath(".share_url")
-            else: share_url_path = P(source).with_suffix(".share_url")
+            fname = f".share_url_{cloud}"
+            if P(source).is_dir(): share_url_path = P(source).joinpath(fname)
+            else: share_url_path = P(source).with_suffix(fname)
             share_url_path.write_text(res.as_url_str())
-            print(f"🔗 Share url saved to {share_url_path}")
+            print(f"🔗 share url saved to {share_url_path}")
             print(f"🌍 {res.as_url_str()}")
     else: raise ValueError(f"Cloud `{cloud}` not found in source or target.")
 
