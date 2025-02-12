@@ -1,24 +1,24 @@
 #!/usr/bin/bash
+# 🔐 OpenSSH Server Setup and Configuration
 
-# most common ssh oitfalls: config files written in wrong LF/CLRF for this system (not readable), and, network problems, usually choose different port (2222 -> 2223) dot that from wsl and windows_server side.
+# Common pitfalls: 
+# 🚫 Wrong line endings (LF/CRLF) in config files
+# 🌐 Network port conflicts (try 2222 -> 2223) between WSL and Windows
+
+# 📁 Setup SSH directory and permissions
 mkdir -p ~/.ssh
-echo $pubkey_string >> ~/.ssh/authorized_keys  # consider adding this after curl: | head -n 1 >> author...
-
-
+echo $pubkey_string >> ~/.ssh/authorized_keys
 sudo chmod 600 ~/.ssh/*
 sudo chmod 700 ~/.ssh
-echo "FINISHED modifying .ssh folder attributes."
-#python -m fire ~/code/machineconfig/src/machineconfig/create_symlinks.py link_scripts
-# netsh interface portproxy add v4tov4 listenport=2222 listenaddress=0.0.0.0 connectport=2222 connectaddres=172.29.153.156
-# Google: ssh to wsl
-# systemctl status/start/end sshd doesn't work on wsl
+echo "✅ FINISHED modifying .ssh folder attributes."
 
-
-# https://askubuntu.com/questions/265982/unable-to-start-sshd
+# 🔄 Clean install OpenSSH server
 sudo nala purge openssh-server -y
 sudo nala install openssh-server -y
+echo "✅ FINISHED installing openssh-server."
+
+# 📝 Additional commands if needed:
 # sudo service ssh status
 # sudo nano /etc/ssh/sshd_config
 # sudo service ssh restart
-# tunnels: https://www.youtube.com/watch?v=Wp7boqm3Xts
-echo "FINISHED installing openssh-server."
+# For tunnels see: https://www.youtube.com/watch?v=Wp7boqm3Xts

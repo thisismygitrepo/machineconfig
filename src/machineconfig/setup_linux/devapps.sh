@@ -1,9 +1,16 @@
 #!/usr/bin/bash
+# 🛠️ Development Tools Installation Script
 
+# 🐍 Activate Python virtual environment
 . $HOME/venvs/ve/bin/activate
-python -m fire machineconfig.scripts.python.devops_devapps_install main --which=AllEssentials  # this installs everything.
+
+# ⚙️ Install development applications
+python -m fire machineconfig.scripts.python.devops_devapps_install main --which=AllEssentials  # Installs all essential tools
+
+# 🔄 Reload shell configuration
 . $HOME/.bashrc
 
+# 🚫 Deactivate virtual environment if active
 if [ -n "$VIRTUAL_ENV" ]; then
   deactivate || true
 fi

@@ -1,22 +1,20 @@
-
-
-# Change working dir in shell to last dir in lf on exit (adapted from ranger).
+#!/bin/sh
+# 📂 LF File Manager Directory Change Integration
 #
-# You need to either copy the content of this file to your shell rc file
-# (e.g. ~/.bashrc) or source this file directly:
+# Changes working directory in shell to last dir in lf on exit (adapted from ranger).
 #
+# 📝 Setup Instructions:
 #     LFCD="/path/to/lfcd.sh"
 #     if [ -f "$LFCD" ]; then
 #         source "$LFCD"
 #     fi
 #
-# You may also like to assign a key to this command:
-#
+# ⌨️ Optional Keybinding:
 #     bind '"\C-o":"lfcd\C-m"'  # bash
 #     bindkey -s '^o' 'lfcd\n'  # zsh
 #
-
 lfcd () {
+    # 🔄 Create temporary file for directory tracking
     tmp="$(mktemp)"
     lf -last-dir-path="$tmp" "$@"
     if [ -f "$tmp" ]; then
@@ -30,5 +28,5 @@ lfcd () {
     fi
 }
 
-# create alias for lfcd
+# 🔗 Create alias for quick access
 alias lf="lfcd"

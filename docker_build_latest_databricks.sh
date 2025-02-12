@@ -1,4 +1,5 @@
-
+#!/bin/bash
+# 🐳 Docker build script for Databricks image 🚀
 # set -e
 
 IMAGE_NAME="alim-databricks"
@@ -12,4 +13,4 @@ docker tag $IMAGE_NAME:latest "statistician/$IMAGE_NAME:$DATE"
 echo "try it out: docker run -it $IMAGE_NAME:$DATE"
 
 # docker login --username statistician --password <password>
-docker push "statistician/$IMAGE_NAME:$DATE"
+docker push "statistician/$IMAGE_NAME:$DATE" # 📤 Pushing to registry

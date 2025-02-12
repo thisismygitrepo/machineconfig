@@ -1,24 +1,21 @@
-
+#!/usr/bin/bash
+# 🛠️ Development Tools and Fun Utilities Installation Script
 
 if [ -z "$package_manager" ]; then
-  package_manager="nala"  # see if variable package_manager is defined, if not, define it as "nix"
+  package_manager="nala"  # 📦 Default package manager
 fi
 
-
-# ---------------------------- text style ------------------------------------
+# 🎨 Text Style Tools
 yes '' | sed 3q; echo "----------------------------- installing fortune ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "nala" ]; then
-  sudo nala install fortune -y || true  # generate random text in the form of piece of wisdom
+  sudo nala install fortune -y || true  # 🔮 Random wisdom generator
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.fortune || true
 fi
-# as per https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex
-# sudo nala install texlive-xetex texlive-fonts-recommended texlive-plain-generic -y
-
 
 yes '' | sed 3q; echo "----------------------------- installing toilet ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "nala" ]; then
-  sudo nala install toilet -y || true  # large ascii text
+  sudo nala install toilet -y || true  # 📝 Large ASCII text generator
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.toilet || true
 fi
@@ -26,11 +23,10 @@ fi
 # midnight commander, similarv# Asciiquarium# https://github.com/bartobri/no-more-secrets
 # https://www.youtube.com/watch?v=haitmoSyTls
 
-
-# ---------------------------- Fun ------------------------------------
+# 🎮 Fun Terminal Tools
 yes '' | sed 3q; echo "----------------------------- installing sl ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "nala" ]; then
-  sudo nala install sl -y || true  # for fun
+  sudo nala install sl -y || true  # 🚂 Steam locomotive animation
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.sl || true
 fi
@@ -65,7 +61,7 @@ yes '' | sed 3q; echo "----------------------------- installing samba ----------
 
 yes '' | sed 3q; echo "----------------------------- installing graphviz ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "nala" ]; then
-  sudo nala install graphviz -y || true
+  sudo nala install graphviz -y || true  # 📈 Graph visualization
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.graphviz || true
 fi
@@ -94,31 +90,31 @@ sudo nala install make -y || true  # lvim and spacevim require it.
 
 
 yes '' | sed 3q; echo "----------------------------- installing rust ----------------------------"; yes '' | sed 3q
-# curl https://sh.rustup.rs -sSf | sh
 (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
-sudo nala install libssl-dev -y  # required for web development
+sudo nala install libssl-dev -y  # 🔐 SSL development libraries
 
-
+# 🎬 Terminal Eye Candy
 yes '' | sed 3q; echo "----------------------------- installing cmatrix ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "nala" ]; then
   echo 'keyboard-configuration keyboard-configuration/layout select US English' | sudo debconf-set-selections
   echo 'keyboard-configuration keyboard-configuration/layoutcode string us' | sudo debconf-set-selections
-  sudo DEBIAN_FRONTEND=noninteractive nala install -y cmatrix
+  sudo DEBIAN_FRONTEND=noninteractive nala install -y cmatrix  # 👾 Matrix-style animation
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.cmatrix || true
 fi
 
 yes '' | sed 3q; echo "----------------------------- installing hollywood ----------------------------"; yes '' | sed 3q
 if [ "$package_manager" = "nala" ]; then
-  sudo nala install hollywood -y || true  # for fun
+  sudo nala install hollywood -y || true  # 🎬 Hollywood hacker terminal effect
 else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
 fi
 
+# 💾 Database Tools
 yes '' | sed 3q; echo "----------------------------- installing sqlite --------------------------"; yes '' | sed 3q
-sudo nala install sqlite3 -y || true  # sqlite vscode extension requires this to be installed. It gives sqlite and sqlite3 commands.
-sudo nala install postgresql-client -y || true  # for connecting to postgresql databases
+sudo nala install sqlite3 -y || true  # 🗃️ SQLite database
+sudo nala install postgresql-client -y || true  # 🐘 PostgreSQL client
 
-
+# 🎨 Image Tools
 yes '' | sed 3q; echo "----------------------------- installing chafa ----------------------------"; yes '' | sed 3q
-sudo nala install chafa -y  # like viu, one can ascii-ize images.
+sudo nala install chafa -y  # 🖼️ Terminal image viewer

@@ -1,12 +1,7 @@
 #!/bin/sh
+# 📦 Archive and File Preview Script for LF File Manager
 
-# clear
-# bat --color=always --theme=base16 $1
-# read 1 -s -r  # -p "Press any key to continue"
-
-# from https://github.com/neeshy/lfimg/blob/e9154721514a1384a89f2713092c15dc77992f37/pv
-# via https://github.com/doronbehar/pistol#_footnotedef_4
-
+# 🎨 Image Drawing Function for Ueberzug
 draw() {
   path="$(printf '%s' "$1" | sed 's/\\/\\\\/g;s/"/\\"/g')"
   printf '{"action": "add", "identifier": "preview", "x": %d, "y": %d, "width": %d, "height": %d, "scaler": "contain", "scaling_position_x": 0.5, "scaling_position_y": 0.5, "path": "%s"}\n' \
@@ -14,7 +9,7 @@ draw() {
   exit 1
 }
 
-
+# 🗄️ Cache Management Functions
 hash() {
   printf '%s/.cache/lf/%s' "$HOME" \
     "$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | awk '{print $1}')"
@@ -26,6 +21,7 @@ cache() {
   fi
 }
 
+# ⚡ Main Preview Logic
 if ! [ -f "$1" ] && ! [ -h "$1" ]; then
   exit
 fi
@@ -34,25 +30,28 @@ width="$2"
 height="$3"
 x="$4"
 y="$5"
-
 default_x="1920"
 default_y="1080"
 
+# 📂 File Type Handling
 case "$1" in
+  # 📦 Archive Files
   *.7z|*.a|*.ace|*.alz|*.arc|*.arj|*.bz|*.bz2|*.cab|*.cpio|*.deb|*.gz|*.jar|\
   *.lha|*.lrz|*.lz|*.lzh|*.lzma|*.lzo|*.rar|*.rpm|*.rz|*.t7z|*.tar|*.tbz|\
   *.tbz2|*.tgz|*.tlz|*.txz|*.tZ|*.tzo|*.war|*.xz|*.Z|*.zip)
     als -- "$1"
     exit 0
     ;;
+  # 📚 Man Pages
   *.[1-8])
     man -- "$1" | col -b
     exit 0
     ;;
+  # 🖼️ Images
   *.jpg|*.jpeg|*.png|*.gif|*.bmp)
     chafa "$1"
-    # exit 0
     ;;
+  # 📄 PDF Documents
   *.pdf)
     if [ -n "$FIFO_UEBERZUG" ]; then
       cache="$(hash "$1")"
@@ -69,6 +68,7 @@ case "$1" in
       exit 0
     fi
     ;;
+  # 📖 DJVU Documents
   *.djvu|*.djv)
     if [ -n "$FIFO_UEBERZUG" ]; then
       cache="$(hash "$1").tiff"
@@ -81,14 +81,17 @@ case "$1" in
       exit 0
     fi
     ;;
+  # 📝 Office Documents
   *.docx|*.odt|*.epub)
     pandoc -s -t plain -- "$1"
     exit 0
     ;;
+  # 🌐 Web Documents
   *.htm|*.html|*.xhtml)
     lynx -dump -- "$1"
     exit 0
     ;;
+  # 🎨 Vector Graphics
   *.svg)
     if [ -n "$FIFO_UEBERZUG" ]; then
       cache="$(hash "$1").jpg"
@@ -99,15 +102,15 @@ case "$1" in
     ;;
 esac
 
+# 📋 MIME Type Based Preview
 case "$(file -Lb --mime-type -- "$1")" in
+  # 📝 Text Files
   text/*)
-    #highlight -q -O ansi -- "$1" || cat -- "$1"
-    #pygmentize -f terminal -- "$1" || cat -- "$1"
-    # source-highlight -q --outlang-def=esc.outlang --style-file=esc.style -i "$1" || cat -- "$1"
     clear
     bat --color=always --theme=base16 $1
     exit 0
     ;;
+  # 🖼️ Image Files
   image/*)
     if [ -n "$FIFO_UEBERZUG" ]; then
       orientation="$(identify -format '%[EXIF:Orientation]\n' -- "$1")"
@@ -121,6 +124,7 @@ case "$(file -Lb --mime-type -- "$1")" in
       fi
     fi
     ;;
+  # 🎥 Video Files
   video/*)
     if [ -n "$FIFO_UEBERZUG" ]; then
       cache="$(hash "$1").jpg"
@@ -131,6 +135,7 @@ case "$(file -Lb --mime-type -- "$1")" in
     ;;
 esac
 
+# 📊 File Info Header
 header_text="File Type Classification"
 header=""
 len="$(( (width - (${#header_text} + 2)) / 2 ))"

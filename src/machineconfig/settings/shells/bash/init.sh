@@ -1,3 +1,5 @@
+#!/bin/bash
+# 🛠️ Bash Shell Configuration and Initialization
 
 
 # export PATH="~/.local/bin:~/code/machineconfig/src/machineconfig/scripts/linux:~/dotfiles/scripts/linux:~/.nix-profile/bin:/usr/games:$PATH"
@@ -10,6 +12,7 @@ add_to_path_if_not_already() {
     done
 }
 
+# 📂 Add directories to PATH
 add_to_path_if_not_already \
     "$HOME/.local/bin" \
     "$HOME/.cargo/bin" \
@@ -44,8 +47,7 @@ gcd() {
   gh copilot explain "Input command is: $x The output is this: $y"
 }
 
-
-# this makes npm available.
+# 📦 Node Version Manager
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

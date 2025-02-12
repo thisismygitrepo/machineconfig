@@ -1,40 +1,40 @@
+#!/usr/bin/bash
+# 🖥️ Desktop Applications Installation Script
 
-# consider wayland instead of xorg
-
-# install chrome:
+# 🌐 Web Browsers
+# Chrome installation:
 # wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 # sudo dpkg -i google-chrome-stable_current_amd64.deb
 
-# desktop enviroments.
-# sudo nala install gnome-session -y  # gnome 0.3GB
-# sudo nala install ubuntu-gnome-desktop -y  # 1.2GB
+# 📝 Text Editor
 /home/linuxbrew/.linuxbrew/bin/brew install neovim
 
-
+# 📧 Email Client
 flatpak install flathub org.mozilla.Thunderbird
-# flatpak install flathub com.brave.Browser
+
+# 🖲️ Terminal Emulator
 flatpak install flathub org.wezfurlong.wezterm
 flatpak run org.wezfurlong.wezterm
+
+# ✏️ Screen Annotation
 flatpak install net.christianbeier.Gromit-MPX
 
-# flatpak install com.tomjwatson.Emote  --noninteractive
+# 📋 Clipboard Managers
 flatpak install flathub com.github.hluk.copyq --noninteractive
 
+# 🔗 Remote Desktop
 sudo nala install remmina remmina-plugin-rdp -y
-# as per https://remmina.org/how-to-install-remmina/
+# Alternative Remmina installation via flatpak:
 # flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 # flatpak install org.freedesktop.Platform
 # flatpak install org.freedesktop.Platform.openh264
 # flatpak install --user flathub org.remmina.Remmina
 # flatpak run --user org.remmina.Remmina
 
+# 🚀 Application Launcher
 sudo nala install rofi -y
 
-
-## =============== rofi emoji and its dependencies ==========================
-# sudo nala install pipx -y
-# pipx install rofimoji
-# nix-env -iA nixpkgs.rofi-emoji
+# 📎 Clipboard History (greenclip)
 # https://github.com/fdw/rofimoji?tab=readme-ov-file#dependencies
 # session_type=$(echo $XDG_SESSION_TYPE)
 # if [ "$session_type" == "x11" ]; then

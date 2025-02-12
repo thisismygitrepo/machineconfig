@@ -1,44 +1,38 @@
+#!/usr/bin/bash
+# 🐧 WSL2 SSH Configuration for LAN Access 🌐
+# Purpose: Enable SSH access to WSL2 from LAN (requires wsl_server.ps1 in Windows)
+# Common pitfall: sshd fails after config changes due to wrong line endings/permissions
 
-# The purpose of this file is to config SSH in WSL2 so that it is accessible from LAN.
-# before running this script, WSL2 can only be SSHed from the same machine, given WSL2 address.
-# after running this setup, user from within windows must run wsl_server.ps1 to activate port forwarding.
-# the most common pitfall here is sshd fails to start as evidenced by `sudo service ssh status` because the sshd_config file is not readable or has wrong line endings or wrong configuration.
-# Thus, you see that it works when installed, but after modifying sshd_config it fails. Try different port never used before.
-
+# 🔍 Check if running in WSL
 if [[ $(uname -a) == *"icrosoft"* ]]; then
-  echo "Running inside WSL"
+  echo "✅ Running inside WSL"
 else
-  echo "Not running inside WSL, no need for this script"
+  echo "❌ Not running inside WSL, no need for this script"
   exit 0
 fi
 
+# 🔢 Set SSH port
 if [ -z "$port" ]; then
-#  port=$(shuf -i 10000-50000 -n 1)
   port=2222
-  echo "port variable not defined, setting it to $port"
+  echo "📝 Port variable not defined, setting it to $port"
 fi
 
+# 🛠️ Configure SSH
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
-
 sudo sed -i 's/#Port 22/Port '$port'/g' /etc/ssh/sshd_config
-# sudo sed -i 's/#Port 22/Port 2222/g' /etc/ssh/sshd_config
-
 sudo sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g' /etc/ssh/sshd_config
 sudo sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' /etc/ssh/sshd_config
 sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 
-# The following is to encounter this error:
-#  * Starting OpenBSD Secure Shell server sshd
-#  sshd: no hostkeys available -- exiting.
+# 🔑 Generate host keys and restart service
 sudo service ssh start
-sudo ssh-keygen -A  # without this, ssh gives this error: use systemctl if this doesn't work. sudo systemctl status ssh
+sudo ssh-keygen -A
 sudo service ssh --full-restart
 sudo service ssh status
-echo "FINISHED configuring SSH in WSL2."
 
-# https://superuser.com/questions/1701853/how-to-enable-a-service-to-start-with-wsl2
-# another way: https://gist.github.com/dentechy/de2be62b55cfd234681921d5a8b6be11
-# relevant wsl.config file: https://superuser.com/questions/1150597/linux-overrides-etc-hosts-on-windows-linux-subsystem
-# more on wsl config https://www.aleksandrhovhannisyan.com/blog/limiting-memory-usage-in-wsl-2/#:~:text=According%20to%20Microsoft's%20documentation%2C%20the,whichever%20happens%20to%20be%20smaller.
-# https://learn.microsoft.com/en-us/windows/wsl/networking#accessing-a-wsl-2-distribution-from-your-local-area-network-lan
+echo "✨ FINISHED configuring SSH in WSL2."
+
+# 📚 References:
+# Service startup: https://superuser.com/questions/1701853/how-to-enable-a-service-to-start-with-wsl2
+# WSL config: https://learn.microsoft.com/en-us/windows/wsl/networking#accessing-a-wsl-2-distribution-from-your-local-area-network-lan
 
