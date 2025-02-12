@@ -23,7 +23,7 @@ try:
     console = Console()
     if pycode.strip() != "":
         console.print(Panel(Syntax(pycode, lexer="python"), title='{title}'), style="bold red")
-except Exception: print("❌ Error: ", pycode)
+except Exception: print(pycode)
 """
 
 
