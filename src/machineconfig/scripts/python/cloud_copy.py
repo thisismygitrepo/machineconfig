@@ -1,4 +1,3 @@
-
 """
 CC
 """
@@ -33,33 +32,34 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
     with Progress(transient=True) as progress:
         _task = progress.add_task("Downloading ... ", total=None)
         url_obj = P(url).download(folder=folder_obj)
+        print(f"📥 Downloaded to {url_obj}")
     with Progress(transient=True) as progress:
         _task = progress.add_task("Decrypting ... ", total=None)
         tmp_folder = P.tmpdir(prefix="tmp_unzip")
         res = url_obj.decrypt(pwd=pwd, inplace=True).unzip(inplace=True, folder=tmp_folder)
         res.search("*").apply(lambda x: x.move(folder=folder_obj, overwrite=True))
-        print(f"Decrypted to {res}")
+        print(f"🔓 Decrypted to {res}")
 
 
 def arg_parser() -> None:
-    parser = argparse.ArgumentParser(description='Cloud CLI. It wraps rclone with sane defaults for optimum type time.')
+    parser = argparse.ArgumentParser(description='🚀 Cloud CLI. It wraps rclone with sane defaults for optimum type time.')
 
     # positional argument
-    parser.add_argument("source", help="file/folder path to be taken from here.")
-    parser.add_argument("target", help="file/folder path to be be sent to here.")
+    parser.add_argument("source", help="📂 file/folder path to be taken from here.")
+    parser.add_argument("target", help="🎯 file/folder path to be be sent to here.")
 
-    parser.add_argument("--overwrite", "-w", help="Overwrite existing file.", action="store_true", default=ArgsDefaults.overwrite)
-    parser.add_argument("--share", "-s", help="Share file / directory", action="store_true", default=ArgsDefaults.share)
-    parser.add_argument("--rel2home", "-r", help="Relative to `myhome` folder", action="store_true", default=ArgsDefaults.rel2home)
-    parser.add_argument("--root", "-R", help="Remote root. None is the default, unless rel2home is raied, making the default `myhome`.", default=ArgsDefaults.root)
+    parser.add_argument("--overwrite", "-w", help="✍️ Overwrite existing file.", action="store_true", default=ArgsDefaults.overwrite)
+    parser.add_argument("--share", "-s", help="🔗 Share file / directory", action="store_true", default=ArgsDefaults.share)
+    parser.add_argument("--rel2home", "-r", help="🏠 Relative to `myhome` folder", action="store_true", default=ArgsDefaults.rel2home)
+    parser.add_argument("--root", "-R", help="🌳 Remote root. None is the default, unless rel2home is raied, making the default `myhome`.", default=ArgsDefaults.root)
 
-    parser.add_argument("--key", "-k", help="Key for encryption", type=str, default=ArgsDefaults.key)
-    parser.add_argument("--pwd", "-p", help="Password for encryption", type=str, default=ArgsDefaults.pwd)
-    parser.add_argument("--encrypt", "-e", help="Decrypt after receiving.", action="store_true", default=ArgsDefaults.encrypt)
-    parser.add_argument("--zip", "-z", help="unzip after receiving.", action="store_true", default=ArgsDefaults.zip_)
-    parser.add_argument("--os_specific", "-o", help="choose path specific for this OS.", action="store_true", default=ArgsDefaults.os_specific)
+    parser.add_argument("--key", "-k", help="🔑 Key for encryption", type=str, default=ArgsDefaults.key)
+    parser.add_argument("--pwd", "-p", help="🔒 Password for encryption", type=str, default=ArgsDefaults.pwd)
+    parser.add_argument("--encrypt", "-e", help="🔐 Decrypt after receiving.", action="store_true", default=ArgsDefaults.encrypt)
+    parser.add_argument("--zip", "-z", help="📦 unzip after receiving.", action="store_true", default=ArgsDefaults.zip_)
+    parser.add_argument("--os_specific", "-o", help="💻 choose path specific for this OS.", action="store_true", default=ArgsDefaults.os_specific)
 
-    parser.add_argument("--config", "-c",  help="path to cloud.json file.", default=None)
+    parser.add_argument("--config", "-c",  help="⚙️ path to cloud.json file.", default=None)
 
     args = parser.parse_args()
     args_dict = vars(args)
@@ -92,8 +92,8 @@ def arg_parser() -> None:
             if P(source).is_dir(): share_url_path = P(source).joinpath(".share_url")
             else: share_url_path = P(source).with_suffix(".share_url")
             share_url_path.write_text(res.as_url_str())
-            print(f"Share url saved to {share_url_path}")
-            print(res.as_url_str())
+            print(f"🔗 Share url saved to {share_url_path}")
+            print(f"🌍 {res.as_url_str()}")
     else: raise ValueError(f"Cloud `{cloud}` not found in source or target.")
 
 
