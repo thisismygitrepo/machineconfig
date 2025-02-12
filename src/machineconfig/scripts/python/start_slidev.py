@@ -1,4 +1,3 @@
-
 """
 slidev
 """
@@ -21,6 +20,8 @@ if not SLIDEV_REPO.joinpath("components").exists():
 
 def jupyter_to_markdown(file: P):
     op_dir = file.parent.joinpath("presentation")
+
+    print("📝 Converting Jupyter notebook to markdown...")
 
     # https://nbconvert.readthedocs.io/en/latest/nbconvert_library.html
     # from nbconvert.exporters.markdown import MarkdownExporter
@@ -45,6 +46,9 @@ def jupyter_to_markdown(file: P):
     md = op_file.read_text().replace('\n\n\n\n', slide_separator)
     md = slide_separator.join([item for item in md.split(slide_separator) if bool(item.strip())])  # remove empty slides.
     op_file.with_name("slides.md").write_text(md)
+
+    print("✅ Conversion completed.")
+
     return op_dir
 
 

@@ -1,4 +1,3 @@
-
 """G
 
 """
@@ -41,7 +40,7 @@ def print_dir_func(line: Any):
     """Pretty print and categorize dir() output."""
     _ = line  # ipython caller assumes there is at least one argument, an passes '' worstcase.
     res = get_names()
-    Struct(dictionary=res).print(as_config=True, title="Objects defined in current dir")
+    Struct(dictionary=res).print(as_config=True, title="📂 Objects defined in current dir")
 
 
 @register_line_magic("code")  # type: ignore

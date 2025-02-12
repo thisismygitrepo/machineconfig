@@ -1,5 +1,3 @@
-
-
 """devops
 """
 
@@ -35,6 +33,7 @@ def args_parser():
 
 def main(which: Optional[str] = None):
     PROGRAM_PATH.delete(sure=True, verbose=False)
+    print("🚀 Starting the main function...")
     options = [op.value for op in Options]
     if which is None:
         # import questionary
@@ -113,6 +112,7 @@ def main(which: Optional[str] = None):
     if program:
         write_shell_script(program=program, display=True, preserve_cwd=True, desc="Shell script prepared by Python.", execute=True if which is not None else False)
     else: write_shell_script(program="echo 'Done.'", display=False, desc="Shell script prepared by Python.", preserve_cwd=True, execute=False)  # Python did not return any script to run.
+    print("✅ Main function completed.")
 
 
 if __name__ == "__main__":

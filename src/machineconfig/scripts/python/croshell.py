@@ -1,5 +1,3 @@
-
-
 """
 croshell
 """
@@ -25,7 +23,7 @@ try:
     console = Console()
     if pycode.strip() != "":
         console.print(Panel(Syntax(pycode, lexer="python"), title='{title}'), style="bold red")
-except Exception: print(pycode)
+except Exception: print("❌ Error: ", pycode)
 """
 
 
@@ -35,9 +33,9 @@ p = P(r\'{path}\').absolute()
 try:
     dat = p.readit()
     if isinstance(dat, dict): Struct(dat).print(as_config=True, title=p.name)
-    else: print(f"Successfully read the file {{p.name}}")
+    else: print(f"📄 Successfully read the file {{p.name}}")
 except Exception as e:
-    print(e)
+    print("❌ Error: ", e)
 
 """
     return pycode

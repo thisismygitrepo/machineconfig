@@ -1,4 +1,3 @@
-
 """Sx & Rx
 
 TODO: add support for cases in which source or target has non 22 default port number and is defineda as user@host:port:path which makes 2 colons in the string.
@@ -12,6 +11,7 @@ from machineconfig.scripts.python.cloud_sync import ES
 
 
 def main():
+    print("🚀 Starting the main function...")
     parser = argparse.ArgumentParser(description='FTP client')
 
     parser.add_argument("source", help=f"source path (machine:path)")
@@ -31,7 +31,7 @@ def main():
         source_parts = args.source.split(":")
         machine = source_parts[0]
         if len(source_parts) > 1 and source_parts[1] == ES:  # the source path is to be inferred from target.
-            if args.target == ES: raise ValueError(f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised.")
+            if args.target == ES: raise ValueError(f"❌ You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised.")
             else: target = P(args.target).expanduser().absolute()
             source = target.collapseuser().as_posix()
         else:
@@ -44,7 +44,7 @@ def main():
         target_parts = args.target.split(":")
         machine = target_parts[0]
         if len(target_parts) > 1 and target_parts[1] == ES:
-            if args.source == ES: raise ValueError(f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised.")
+            if args.source == ES: raise ValueError(f"❌ You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised.")
             else: source = args.source
             target = None
         else:
@@ -53,7 +53,7 @@ def main():
             else: source = P(args.source).expanduser().absolute()
 
     else:
-        raise ValueError("Either source or target must be a remote path (i.e. machine:path)")
+        raise ValueError("❌ Either source or target must be a remote path (i.e. machine:path)")
 
     Struct({"source": str(source), "target": str(target), "machine": machine}).print(as_config=True, title="CLI Resolution")
 
@@ -61,31 +61,31 @@ def main():
     try:
         ssh = SSH(rf'{machine}')
     except AuthenticationException:
-        print("Authentication failed, trying manually:")
-        print(f"Caution: Ensure that username is passed appropriately as this exception only handles password.")
+        print("🔑 Authentication failed, trying manually:")
+        print("⚠️ Caution: Ensure that username is passed appropriately as this exception only handles password.")
         import getpass
         pwd = getpass.getpass()
         ssh = SSH(rf'{machine}', pwd=pwd)
 
     if args.cloud:
-        print("Uploading from remote to cloud ...")
+        print("☁️ Uploading from remote to cloud ...")
         ssh.run(f"cloud_copy {source} :^", desc="Uploading from remote to the cloud.").print()
-        print("Downloading from cloud to local ...")
+        print("⬇️ Downloading from cloud to local ...")
         ssh.run_locally(f"cloud_copy :^ {target}").print()
         received_file = P(target)  # type: ignore
     else:
         if source_is_remote:
-            assert source is not None, "source must be a remote path (i.e. machine:path)"
-            print(f"Running: received_file = ssh.copy_to_here(source=r'{source}', target=r'{target}', z={args.zipFirst}, r={args.recursive})")
+            assert source is not None, "❌ source must be a remote path (i.e. machine:path)"
+            print(f"🔄 Running: received_file = ssh.copy_to_here(source=r'{source}', target=r'{target}', z={args.zipFirst}, r={args.recursive})")
             received_file = ssh.copy_to_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
         else:
-            assert source is not None, "target must be a remote path (i.e. machine:path)"
-            print(f"Running: received_file = ssh.copy_from_here(source=r'{source}', target=r'{target}', z={args.zipFirst}, r={args.recursive})")
+            assert source is not None, "❌ target must be a remote path (i.e. machine:path)"
+            print(f"🔄 Running: received_file = ssh.copy_from_here(source=r'{source}', target=r'{target}', z={args.zipFirst}, r={args.recursive})")
             received_file = ssh.copy_from_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
-    # ssh.print_summary()
-    # if P(args.file).is_dir(): print(f"Use: cd {repr(P(args.file).expanduser())}")
+
     if source_is_remote and isinstance(received_file, P):
-        print(f"Received: {repr(received_file.parent), repr(received_file)}")
+        print(f"📁 Received: {repr(received_file.parent), repr(received_file)}")
+    print("✅ Main function completed.")
 
 
 if __name__ == '__main__':

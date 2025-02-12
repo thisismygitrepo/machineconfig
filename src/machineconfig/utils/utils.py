@@ -1,4 +1,3 @@
-
 """
 Utils
 """
@@ -309,11 +308,11 @@ def write_shell_script(program: str, desc: str, preserve_cwd: bool, display: boo
         else:
             program = 'orig_path=$(cd -- "." && pwd)\n' + program + '\ncd "$orig_path" || exit'
     if display:
-        print(f"Executing {PROGRAM_PATH}")
+        print(f"⚙️ Executing {PROGRAM_PATH}")
         print_code(code=program, lexer="shell", desc=desc)
     PROGRAM_PATH.create(parents_only=True).write_text(program)
     if execute:
-        Terminal().run(f". {PROGRAM_PATH}", shell="powershell").print_if_unsuccessful(desc="Executing shell script", strict_err=True, strict_returncode=True)
+        Terminal().run(f". {PROGRAM_PATH}", shell="powershell").print_if_unsuccessful(desc="🛠️ Executing shell script", strict_err=True, strict_returncode=True)
     return None
 
 

@@ -1,4 +1,3 @@
-
 """
 fire
 
@@ -59,6 +58,7 @@ str2obj = {"True": True, "False": False, "None": None}
 
 
 def main() -> None:
+    print("🚀 Starting the main function...")
     parser = argparse.ArgumentParser()
     parser.add_argument("path",     nargs='?', type=str, help="The directory containing the jobs", default=".")
     parser.add_argument("function", nargs='?', type=str, help="Fuction to run", default=None)
@@ -100,7 +100,7 @@ def main() -> None:
     else: pass
 
     if path_obj.is_dir():
-        print(f"Seaching recursively for all python file in directory `{path_obj}`")
+        print(f"🔍 Searching recursively for all python files in directory `{path_obj}`")
         files = search_for_files_of_interest(path_obj)
         choice_file = choose_one_option(options=files, fzf=True)
         choice_file = P(choice_file)
@@ -158,8 +158,8 @@ def main() -> None:
 try:
     {import_line}
 except (ImportError, ModuleNotFoundError) as ex:
-    print(fr"Failed to import `{choice_file}` the proper way. {{ex}} ")
-    print(fr"Importing with an ad-hoc `$PATH` manipulation. DO NOT pickle any files in this session as there is no gaurantee of correct deserialization.")
+    print(fr"❌ Failed to import `{choice_file}` the proper way. {{ex}} ")
+    print(fr"⚠️ Importing with an ad-hoc `$PATH` manipulation. DO NOT pickle any files in this session as there is no gaurantee of correct deserialization.")
     import sys
     sys.path.append(r'{P(choice_file).parent}')
     from {P(choice_file).stem} import *
@@ -259,10 +259,11 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
     console = Console()
     console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {PROGRAM_PATH}: "), style="bold red")
     PROGRAM_PATH.write_text(command)
+    print("✅ Main function completed.")
 
 
 def parse_pyfile(file_path: str):
-    print(f"Loading {file_path} ...")
+    print(f"🔍 Loading {file_path} ...")
     from typing import NamedTuple
     args_spec = NamedTuple("args_spec", [("name", str), ("type", str), ("default", Optional[str])])
     func_args: list[list[args_spec]] = [[]]  # this firt prepopulated dict is for the option 'RUN AS MAIN' which has no args
@@ -279,6 +280,7 @@ def parse_pyfile(file_path: str):
     options = [main_option]
     for function in functions:
         if function.name.startswith('__') and function.name.endswith('__'): continue
+        if any(arg.arg == 'self' for arg in function.args.args): continue
         if any(arg.arg == 'self' for arg in function.args.args): continue
         doc_string_tmp: str | None = ast.get_docstring(function)
         if doc_string_tmp is None: doc_string = "NoDocs"
