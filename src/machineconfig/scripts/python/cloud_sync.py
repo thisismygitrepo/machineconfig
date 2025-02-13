@@ -70,21 +70,22 @@ def absolute(path: str) -> P:
     return obj.absolute()
 
 
-def get_secure_share_cloud_config(interactive: bool=True) -> Args:
-    if os.environ.get("CLOUD_CONFIG_NAME") is not None:
-        default_cloud = os.environ.get("CLOUD_CONFIG_NAME")
-        assert default_cloud is not None
-        cloud = default_cloud
-    else:
-        try:
-            default_cloud__ = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
-        except Exception:
-            default_cloud__ = 'No default cloud found.'
-        if default_cloud__ == 'No default cloud found.' or interactive:
-            # assert default_cloud is not None
-            cloud = input(f"Enter cloud name (default {default_cloud__}): ") or default_cloud__
+def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Args:
+    if cloud is None:
+        if os.environ.get("CLOUD_CONFIG_NAME") is not None:
+            default_cloud = os.environ.get("CLOUD_CONFIG_NAME")
+            assert default_cloud is not None
+            cloud = default_cloud
         else:
-            cloud = default_cloud__
+            try:
+                default_cloud__ = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            except Exception:
+                default_cloud__ = 'No default cloud found.'
+            if default_cloud__ == 'No default cloud found.' or interactive:
+                # assert default_cloud is not None
+                cloud = input(f"Enter cloud name (default {default_cloud__}): ") or default_cloud__
+            else:
+                cloud = default_cloud__
 
     default_password_path = P.home().joinpath("dotfiles/creds/passwords/quick_password")
     if default_password_path.exists():
@@ -115,7 +116,10 @@ def find_cloud_config(path: P):
 def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str, str, str]:
     config = args.config
     if config == "ss":
-        maybe_config = get_secure_share_cloud_config()
+        cloud_maybe = target.split(":")[0]
+        if cloud_maybe == "": cloud_maybe = source.split(":")[0]
+        if cloud_maybe == "": cloud_maybe = None
+        maybe_config = get_secure_share_cloud_config(interactive=True, cloud=cloud_maybe)
     elif config is not None:
         maybe_config = Args.from_config(absolute(config))
     else:

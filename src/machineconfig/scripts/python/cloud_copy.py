@@ -17,7 +17,6 @@ from typing import Optional
 @RepeatUntilNoException(retry=3, sleep=1)
 def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
     folder_obj = P.cwd() if folder is None else P(folder)
-
     if os.environ.get("DECRYPTION_PASSWORD") is not None:
         pwd: str=str(os.environ.get("DECRYPTION_PASSWORD"))
     else:
@@ -63,18 +62,20 @@ def arg_parser() -> None:
 
     args = parser.parse_args()
     args_dict = vars(args)
-    source: str=args_dict.pop("source")
-    target: str=args_dict.pop("target")
+    source: str = args_dict.pop("source")
+    target: str = args_dict.pop("target")
     args_obj = Args(**args_dict)
-    Struct(args_obj.__dict__).print(as_config=True, title="CLI config")
 
     if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")):
+        if source.startswith("https://drive.google.com/open?id="):
+            source = "https://drive.google.com/uc?export=download&id=" + source.split("https://drive.google.com/open?id=")[1]
         return get_securely_shared_file(url=source, folder=target)
+
     if args_obj.rel2home is True and args_obj.root is None:
         args_obj.root = "myhome"
 
-    # print(f"source: {source}")
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
+    Struct(args_obj.__dict__).print(as_config=True, title="CLI config")
 
     assert args_obj.key is None, "Key is not supported yet."
     if cloud in source:
