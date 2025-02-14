@@ -120,6 +120,8 @@ def build_parser():
         # # --autocall 1 in order to enable shell-like behaviour: e.g.: P x is interpretred as P(x)
 
     preprogram = """
+
+#%%
 from crocodile.croshell import *
 print_header()
 print_logo(logo="crocodile")
