@@ -142,14 +142,16 @@ print_logo(logo="crocodile")
     ve = get_ve_profile(P(file)) if args.ve is None else str(args.ve)
 
     final_program = f"""
+#!/bin/bash
+
 . $HOME/scripts/activate_ve '{ve}'
 {interpreter} """
     if interpreter == "ipython":
         final_program += f"{interactivity} --profile {profile} --no-banner"
     final_program += f" {str(pyfile)}"
     print(f"🔥 sourcing  ... {pyfile}")
-    # print(f"Running ... {final_program}")
     PROGRAM_PATH.write_text(data=final_program)
+    (PROGRAM_PATH + ".py").write_text(str(pyfile), encoding='utf-8')
 
     # if platform.system() == "Windows":
         # return subprocess.run([f"powershell", "-Command", res], shell=True, capture_output=False, text=True, check=True)

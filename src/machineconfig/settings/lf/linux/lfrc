@@ -89,6 +89,7 @@ map wr $~/scripts/croshell
 map i !~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh $f
 map I !cat $f | gum pager
 map R $~/scripts/croshell -r $f
+map J $~/scripts/croshellj $f
 
 
 # o file/folder Operations

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+
+op_script=$HOME/tmp_results/shells/python_return_command.sh
+if [ -f "$op_script" ]; then
+  rm $op_script
+fi
+
+source $HOME/scripts/activate_ve 've'
+
+python -m machineconfig.scripts.python.croshell --read "$@"
+# python $(dirname $(dirname $0))/python/fire_jobs.py "$@"
+
+# path_container = "$op_script/.py"
+# path = echo of path_container
+path=$(cat "$op_script.py")
+code $path
