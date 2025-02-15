@@ -20,7 +20,6 @@ if not SLIDEV_REPO.joinpath("components").exists():
 
 def jupyter_to_markdown(file: P):
     op_dir = file.parent.joinpath("presentation")
-
     print("📝 Converting Jupyter notebook to markdown...")
 
     # https://nbconvert.readthedocs.io/en/latest/nbconvert_library.html
@@ -40,14 +39,12 @@ def jupyter_to_markdown(file: P):
     # cmd = f"jupyter nbconvert --to pdf --no-prompt --no-input --output-dir {op_dir} {file}"
     # Terminal().run(cmd, shell="powershell").print()
 
-
     op_file = op_dir.joinpath("slides_raw.md")
     slide_separator =  '\n\n---\n\n'
     md = op_file.read_text().replace('\n\n\n\n', slide_separator)
     md = slide_separator.join([item for item in md.split(slide_separator) if bool(item.strip())])  # remove empty slides.
     op_file.with_name("slides.md").write_text(md)
-
-    print("✅ Conversion completed.")
+    print("✅ Conversion completed, check the results @", op_dir)
 
     return op_dir
 
