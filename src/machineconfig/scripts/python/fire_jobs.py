@@ -58,7 +58,6 @@ str2obj = {"True": True, "False": False, "None": None}
 
 
 def main() -> None:
-    print("🚀 Starting the main function...")
     parser = argparse.ArgumentParser()
     parser.add_argument("path",     nargs='?', type=str, help="The directory containing the jobs", default=".")
     parser.add_argument("function", nargs='?', type=str, help="Fuction to run", default=None)
@@ -259,7 +258,6 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
     console = Console()
     console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {PROGRAM_PATH}: "), style="bold red")
     PROGRAM_PATH.write_text(command)
-    print("✅ Main function completed.")
 
 
 def parse_pyfile(file_path: str):
