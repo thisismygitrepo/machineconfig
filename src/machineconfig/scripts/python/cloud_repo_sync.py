@@ -100,7 +100,8 @@ echo ""
 echo "=============================== Pulling Latest From Remote ================================"
 cd {repo_local_root}
 echo '-> Trying to removing originEnc remote from local repo if it exists.'
-git remote remove originEnc
+# git remote remove originEnc
+git remote remove originEnc 2>/dev/null || true
 echo '-> Adding originEnc remote to local repo'
 git remote add originEnc {repo_remote_root}
 echo '-> Fetching originEnc remote.'
