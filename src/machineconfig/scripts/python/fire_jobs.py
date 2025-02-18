@@ -157,12 +157,12 @@ def main() -> None:
 try:
     {import_line}
 except (ImportError, ModuleNotFoundError) as ex:
-    print(fr"❌ Failed to import `{choice_file}` the proper way. {{ex}} ")
+    print(fr"❌ Failed to import `{choice_file}` as a module. {{ex}} ")
     print(fr"⚠️ Importing with an ad-hoc `$PATH` manipulation. DO NOT pickle any files in this session as there is no gaurantee of correct deserialization.")
     import sys
     sys.path.append(r'{P(choice_file).parent}')
     from {P(choice_file).stem} import *
-
+    print(fr"✅ imported `{choice_file}`")
 """
         if choice_function is not None:
             txt = txt + f"""
