@@ -120,7 +120,8 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
             except Exception as _e:
                 continue
             Struct(ve_specs).print(title=ve_path.stem, as_config=True)
-        ve_name = input("Enter virtual environment name (tst): ") or "tst"
+        default_ve_name = P.cwd().name
+        ve_name = input(f"Enter virtual environment name ({default_ve_name}): ") or default_ve_name
 
     if install_crocodile_and_machineconfig is None:
         essential_repos = input("Install essential repos? (y/[n]): ") == "y"

@@ -35,4 +35,4 @@ echo "✨ try it out using: docker run --rm -it statistician/$IMAGE_NAME:latest"
 # Use this to clean instances: docker ps --all -q | xargs docker rm
 # delete images: docker rmi -f $(docker images -q)
 # docker ps --all -q | xargs docker rm; docker rmi -f $(docker images -q)
-# docker run --rm -it alim-slim:latest /bin/bash hollywood
+# docker run --rm -it statistician/alim-slim:latest /bin/bash hollywood
