@@ -1,7 +1,7 @@
 {
     "mermaid-cli": {
         "repo_url": "npm install -g @mermaid-js/mermaid-cli",
-        "doc": "Generate diagrams and flowcharts from text in a similar manner as markdown",
+        "doc": "📊 Generate diagrams and flowcharts from text in a similar manner as markdown",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "",
         "strip_v": false,
@@ -9,7 +9,7 @@
     },
     "obsidian": {
         "repo_url": "https://github.com/obsidianmd/obsidian-releases",
-        "doc": "Obsidian is a powerful knowledge base that works on top of a local folder of plain text Markdown files.",
+        "doc": "🧠 Obsidian is a powerful knowledge base that works on top of a local folder of plain text Markdown files.",
         "filename_template_windows_amd_64": "Obsidian.{}.exe",
         "filename_template_linux_amd_64": "obsidian_{}_amd64.deb",
         "strip_v": true,
@@ -17,7 +17,7 @@
     },
     "marp": {
         "repo_url": "npm install -g @marp-team/marp-cli",
-        "doc": "Markdown presentation writer",
+        "doc": "🎯 Markdown presentation writer",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "",
         "strip_v": false,
@@ -25,7 +25,7 @@
     },
     "presenterm": {
         "repo_url": "https://github.com/mfontanini/presenterm",
-        "doc": "present from temrinal",
+        "doc": "🎭 present from temrinal",
         "filename_template_windows_amd_64": "presenterm-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "presenterm-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": true,
@@ -33,7 +33,7 @@
     },
     "pandoc": {
         "repo_url": "https://github.com/jgm/pandoc",
-        "doc": "The universal markup converter",
+        "doc": "📝 The universal markup converter",
         "filename_template_windows_amd_64": "pandoc-{}-windows-x86_64.msi",
         "filename_template_linux_amd_64": "pandoc-{}-1-amd64.deb",
         "strip_v": true,
@@ -41,7 +41,7 @@
     },
     "devcontainer": {
         "repo_url": "npm install -g @devcontainers/cli",
-        "doc": "Devcontainer is a command-line tool to manage development containers",
+        "doc": "🐋 Devcontainer is a command-line tool to manage development containers",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "",
         "strip_v": false,
@@ -49,7 +49,7 @@
     },
     "bitwarden": {
         "repo_url": "npm install -g @bitwarden/cli",
-        "doc": "bw is a password manager.",
+        "doc": "🔐 bw is a password manager.",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "",
         "strip_v": false,
@@ -57,7 +57,7 @@
     },
     "OBS Background removal": {
         "repo_url": "https://github.com/royshil/obs-backgroundremoval",
-        "doc": "A plugin for OBS Studio to remove background from a video",
+        "doc": "🎥 A plugin for OBS Studio to remove background from a video",
         "filename_template_windows_amd_64": "obs-backgroundremoval-{}-windows-x64.zip",
         "filename_template_linux_amd_64": "obs-backgroundremoval-{}-x86_64-linux-gnu.deb",
         "strip_v": true,
@@ -65,7 +65,7 @@
     },
     "cloudflared": {
         "repo_url": "https://github.com/cloudflare/cloudflared",
-        "doc": "Cloudflared installer. Should only be installed at main computer and servers of tunnels.",
+        "doc": "☁️ Cloudflared installer. Should only be installed at main computer and servers of tunnels.",
         "filename_template_windows_amd_64": "cloudflared-windows-amd64.exe",
         "filename_template_linux_amd_64": "cloudflared-linux-amd64",
         "strip_v": false,
@@ -73,7 +73,7 @@
     },
     "rustdesk": {
         "repo_url": "https://github.com/rustdesk/rustdesk",
-        "doc": "Yet another remote desktop software, written in Rust. Works out of the box, no configuration required",
+        "doc": "🖥️ Yet another remote desktop software, written in Rust. Works out of the box, no configuration required",
         "filename_template_windows_amd_64": "rustdesk-{}-x86_64.exe",
         "filename_template_linux_amd_64": "rustdesk-{}-x86_64.deb",
         "strip_v": true,
@@ -81,7 +81,7 @@
     },
     "evcxr": {
         "repo_url": "https://github.com/evcxr/evcxr",
-        "doc": "An evaluation context for Rust.",
+        "doc": "🦀 An evaluation context for Rust.",
         "filename_template_windows_amd_64": "evcxr-v0.17.0-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "evcxr-v0.17.0-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
@@ -89,7 +89,7 @@
     },
     "forward-cli": {
         "repo_url": "https://github.com/axetroy/forward-cli",
-        "doc": "Reverse Proxy port forwarding cli tool",
+        "doc": "🔄 Reverse Proxy port forwarding cli tool",
         "filename_template_windows_amd_64": "forward_windows_amd64.tar.gz",
         "filename_template_linux_amd_64": "forward_linux_amd64.tar.gz",
         "strip_v": false,
@@ -97,7 +97,7 @@
     },
     "bandwhich": {
         "repo_url": "https://github.com/imsnif/bandwhich",
-        "doc": "monitor network usage from cli",
+        "doc": "📊 monitor network usage from cli",
         "filename_template_windows_amd_64": "bandwhich-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "bandwhich-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
@@ -105,7 +105,7 @@
     },
     "ipinfo": {
         "repo_url": "https://github.com/ipinfo/cli",
-        "doc": "cli to get info of ips",
+        "doc": "🌐 cli to get info of ips",
         "filename_template_windows_amd_64": "ipinfo_{}_windows_amd64.zip",
         "filename_template_linux_amd_64": "ipinfo_{}_linux_amd64.deb",
         "strip_v": true,
@@ -113,7 +113,7 @@
     },
     "dust": {
         "repo_url": "https://github.com/bootandy/dust",
-        "doc": "A more intuitive version of du in rust. It is a dua alternative.",
+        "doc": "📊 A more intuitive version of du in rust. It is a dua alternative.",
         "filename_template_windows_amd_64": "dust-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "dust-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
@@ -121,7 +121,7 @@
     },
     "ots": {
         "repo_url": "https://github.com/Luzifer/ots",
-        "doc": "A command line tool for generating and verifying one-time secrets.",
+        "doc": "🔒 A command line tool for generating and verifying one-time secrets.",
         "filename_template_windows_amd_64": "ots_windows_amd64.zip",
         "filename_template_linux_amd_64": "ots_linux_amd64.tgz",
         "strip_v": false,
@@ -129,7 +129,7 @@
     },
     "ffsend": {
         "repo_url": "https://github.com/timvisee/ffsend",
-        "doc": "Send files in secure encrypted way over the internet.",
+        "doc": "📤 Send files in secure encrypted way over the internet.",
         "filename_template_windows_amd_64": "ffsend-{}-windows-x64.exe",
         "filename_template_linux_amd_64": "ffsend-{}-linux-x64",
         "strip_v": false,
@@ -137,7 +137,7 @@
     },
     "portal": {
         "repo_url": "https://github.com/SpatiumPortae/portal",
-        "doc": "A terminal-based file transfer between two computers.",
+        "doc": "🔄 A terminal-based file transfer between two computers.",
         "filename_template_windows_amd_64": "portal_{}_Windows_x86_64.zip",
         "filename_template_linux_amd_64": "portal_{}_Linux_x86_64.tar.gz",
         "strip_v": true,
@@ -145,7 +145,7 @@
     },
     "qrcp": {
         "repo_url": "https://github.com/claudiodangelis/qrcp",
-        "doc": "qr code file transfer",
+        "doc": "📱 qr code file transfer",
         "filename_template_windows_amd_64": "qrcp_{}_windows_amd64.tar.gz",
         "filename_template_linux_amd_64": "qrcp_{}_linux_amd64.tar.gz",
         "strip_v": true,
@@ -153,7 +153,7 @@
     },
     "qrscan": {
         "repo_url": "https://github.com/sayanarijit/qrscan",
-        "doc": "qr code scanner",
+        "doc": "📷 qr code scanner",
         "filename_template_windows_amd_64": "qrscan-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "qrscan-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": true,
@@ -161,7 +161,7 @@
     },
     "termscp": {
         "repo_url": "https://github.com/veeso/termscp",
-        "doc": "A TUI like winscp",
+        "doc": "📂 A TUI like winscp",
         "filename_template_windows_amd_64": "termscp-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "termscp-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
@@ -169,7 +169,7 @@
     },
     "qr": {
         "repo_url": "pip install qrcode",
-        "doc": "qr code generator. String to qr code.",
+        "doc": "🔲 qr code generator. String to qr code.",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "",
         "strip_v": false,
@@ -177,7 +177,7 @@
     },
     "filebrowser": {
         "repo_url": "https://github.com/filebrowser/filebrowser",
-        "doc": "filebrowser provides a file managing interface within a specified directory",
+        "doc": "🗂️ filebrowser provides a file managing interface within a specified directory",
         "filename_template_windows_amd_64": "windows-amd64-filebrowser.zip",
         "filename_template_linux_amd_64": "linux-amd64-filebrowser.tar.gz",
         "strip_v": false,
@@ -185,7 +185,7 @@
     },
     "cloudreve": {
         "repo_url": "https://github.com/cloudreve/Cloudreve",
-        "doc": "Self-hosted file management system with muilt-cloud support.",
+        "doc": "☁️ Self-hosted file management system with muilt-cloud support.",
         "filename_template_windows_amd_64": "cloudreve_{}_windows_amd64.zip",
         "filename_template_linux_amd_64": "cloudreve_{}_linux_amd64.tar.gz",
         "strip_v": true,
@@ -193,7 +193,7 @@
     },
     "restic": {
         "repo_url": "https://github.com/restic/restic",
-        "doc": "backup program that is fast, efficient and secure. It supports the three major operating systems",
+        "doc": "💾 backup program that is fast, efficient and secure. It supports the three major operating systems",
         "filename_template_windows_amd_64": "restic_{}_windows_amd64.zip",
         "filename_template_linux_amd_64": "restic_{}_linux_amd64.bz2",
         "strip_v": true,
@@ -201,7 +201,7 @@
     },
     "syncthing": {
         "repo_url": "https://github.com/syncthing/syncthing",
-        "doc": "Syncthing is a continuous file synchronization program. It synchronizes files between two or more computers.",
+        "doc": "🔄 Syncthing is a continuous file synchronization program. It synchronizes files between two or more computers.",
         "filename_template_windows_amd_64": "syncthing-windows-amd64-{}.zip",
         "filename_template_linux_amd_64": "syncthing-linux-amd64-{}.tar.gz",
         "strip_v": false,
@@ -209,7 +209,7 @@
     },
     "istio": {
         "repo_url": "https://github.com/istio/istio",
-        "doc": "Istio is an open source service mesh that layers transparently onto existing distributed applications",
+        "doc": "🌐 Istio is an open source service mesh that layers transparently onto existing distributed applications",
         "filename_template_windows_amd_64": "istioctl-{}-win-amd64.zip",
         "filename_template_linux_amd_64": "istio-{}-linux-amd64.tar.gz",
         "strip_v": true,
@@ -217,7 +217,7 @@
     },
     "openpomodoro-cli": {
         "repo_url": "https://github.com/open-pomodoro/openpomodoro-cli",
-        "doc": "Pomodoro timer for the command-line",
+        "doc": "⏲️ Pomodoro timer for the command-line",
         "filename_template_windows_amd_64": "openpomodoro-cli_{}_windows_amd64.tar.gz",
         "filename_template_linux_amd_64": "openpomodoro-cli_{}_darwin_amd64.tar.gz",
         "strip_v": true,
@@ -225,7 +225,7 @@
     },
     "rust-analyzer": {
         "repo_url": "https://github.com/rust-lang/rust-analyzer",
-        "doc": "Rust Language Server (LSP)",
+        "doc": "🦀 Rust Language Server (LSP)",
         "filename_template_windows_amd_64": "rust-analyzer-x86_64-pc-windows-msvc.gz",
         "filename_template_linux_amd_64": "rust-analyzer-x86_64-unknown-linux-gnu.gz",
         "strip_v": false,
@@ -233,7 +233,7 @@
     },
     "kondo": {
         "repo_url": "https://github.com/tbillington/kondo",
-        "doc": "cleans projects from litter files.",
+        "doc": "🧹 cleans projects from litter files.",
         "filename_template_windows_amd_64": "kondo-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "kondo-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
@@ -241,7 +241,7 @@
     },
     "tokei": {
         "repo_url": "https://github.com/XAMPPRocky/tokei",
-        "doc": "Counts the number of lines of code, comments, and blanks in a project.",
+        "doc": "📊 Counts the number of lines of code, comments, and blanks in a project.",
         "filename_template_windows_amd_64": "tokei-x86_64-pc-windows-msvc.exe",
         "filename_template_linux_amd_64": "tokei-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
@@ -249,7 +249,7 @@
     },
     "lazygit": {
         "repo_url": "https://github.com/jesseduffield/lazygit",
-        "doc": "A simple terminal UI for git commands",
+        "doc": "🐙 A simple terminal UI for git commands",
         "filename_template_windows_amd_64": "lazygit_{}_Windows_x86_64.zip",
         "filename_template_linux_amd_64": "lazygit_{}_Linux_x86_64.tar.gz",
         "strip_v": true,
@@ -257,7 +257,7 @@
     },
     "lazydocker": {
         "repo_url": "https://github.com/jesseduffield/lazydocker/",
-        "doc": "A simple terminal UI for both docker and docker-compose",
+        "doc": "🐋 A simple terminal UI for both docker and docker-compose",
         "filename_template_windows_amd_64": "lazydocker_{}_Windows_x86_64.zip",
         "filename_template_linux_amd_64": "lazydocker_{}_Linux_x86_64.tar.gz",
         "strip_v": true,
@@ -265,7 +265,7 @@
     },
     "onefetch": {
         "repo_url": "https://github.com/o2sh/onefetch",
-        "doc": "Git repository summary on your terminal",
+        "doc": "📊 Git repository summary on your terminal",
         "filename_template_windows_amd_64": "onefetch-win.tar.gz",
         "filename_template_linux_amd_64": "onefetch-linux.tar.gz",
         "strip_v": true,
@@ -273,7 +273,7 @@
     },
     "gitcs": {
         "repo_url": "https://github.com/knbr13/gitcs",
-        "doc": "analyze Git repositories and generate a visual contributions graph",
+        "doc": "📈 analyze Git repositories and generate a visual contributions graph",
         "filename_template_windows_amd_64": "gitcs_windows_amd64.exe",
         "filename_template_linux_amd_64": "gitcs_linux_amd64",
         "strip_v": false,
@@ -281,7 +281,7 @@
     },
     "just": {
         "repo_url": "https://github.com/casey/just",
-        "doc": "A command runner",
+        "doc": "🎯 A command runner",
         "filename_template_windows_amd_64": "just-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "just-{}-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": true,
@@ -289,7 +289,7 @@
     },
     "navi": {
         "repo_url": "https://github.com/denisidoro/navi",
-        "doc": "An interactive cheatsheet tool for the command-line",
+        "doc": "📚 An interactive cheatsheet tool for the command-line",
         "filename_template_windows_amd_64": "navi-v2.23.0-x86_64-pc-windows-gnu.zip",
         "filename_template_linux_amd_64": "navi-v2.23.0-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": false,
@@ -297,7 +297,7 @@
     },
     "tealdeer": {
         "repo_url": "https://github.com/dbrgn/tealdeer",
-        "doc": "Too long, didn't read, but for cli tools.",
+        "doc": "📖 Too long, didn't read, but for cli tools.",
         "filename_template_windows_amd_64": "tealdeer-windows-x86_64-msvc.exe",
         "filename_template_linux_amd_64": "tealdeer-linux-x86_64-musl",
         "strip_v": false,
@@ -305,7 +305,7 @@
     },
     "sniffnet": {
         "repo_url": "https://github.com/GyulyVGC/sniffnet",
-        "doc": "A simple network sniffer in Rust",
+        "doc": "🔍 A simple network sniffer in Rust",
         "filename_template_windows_amd_64": "Sniffnet_Windows_64-bit.msi",
         "filename_template_linux_amd_64": "Sniffnet_LinuxDEB_amd64.deb",
         "strip_v": true,
@@ -313,7 +313,7 @@
     },
     "hyperfine": {
         "repo_url": "https://github.com/sharkdp/hyperfine",
-        "doc": "A command-line benchmarking tool",
+        "doc": "⚡ A command-line benchmarking tool",
         "filename_template_windows_amd_64": "hyperfine-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "hyperfine-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
@@ -321,7 +321,7 @@
     },
     "ollama": {
         "repo_url": "https://github.com/ollama/ollama",
-        "doc": "Get up and running with large language models locally.",
+        "doc": "🤖 Get up and running with large language models locally.",
         "filename_template_windows_amd_64": "OllamaSetup.exe",
         "filename_template_linux_amd_64": "ollama-linux-amd64.tgz",
         "strip_v": false,
@@ -329,7 +329,7 @@
     },
     "cointop": {
         "repo_url": "https://github.com/cointop-sh/cointop",
-        "doc": "Cointop is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.",
+        "doc": "💰 Cointop is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.",
         "filename_template_windows_amd_64": "cointop-{}-windows-x64.zip",
         "filename_template_linux_amd_64": "cointop_{}_linux_amd64.tar.gz",
         "strip_v": true,
@@ -337,7 +337,7 @@
     },
     "vtm": {
         "repo_url": "https://github.com/netxs-group/vtm",
-        "doc": "Text-based desktop environment inside your terminal",
+        "doc": "🖥️ Text-based desktop environment inside your terminal",
         "filename_template_windows_amd_64": "vtm_windows_x86_64.zip",
         "filename_template_linux_amd_64": "vtm_linux_x86_64.tar.gz",
         "strip_v": false,
@@ -345,7 +345,7 @@
     },
     "edex-ui": {
         "repo_url": "https://github.com/GitSquared/edex-ui",
-        "doc": "fullscreen, cross-platform terminal emulator and system monitor that looks and feels like a sci-fi computer interface",
+        "doc": "🚀 fullscreen, cross-platform terminal emulator and system monitor that looks and feels like a sci-fi computer interface",
         "filename_template_windows_amd_64": "eDEX-UI-Windows-x64.exe",
         "filename_template_linux_amd_64": "eDEX-UI-Linux-x86_64.AppImage",
         "strip_v": true,
@@ -353,7 +353,7 @@
     },
     "extraterm": {
         "repo_url": "https://github.com/sedwards2009/extraterm/",
-        "doc": "Terminal emulator",
+        "doc": "💻 Terminal emulator",
         "filename_template_windows_amd_64": "extratermqt-{}-windows-x64.zip",
         "filename_template_linux_amd_64": "extratermqt-{}-linux-x64.zip",
         "strip_v": true,
@@ -361,7 +361,7 @@
     },
     "nushell": {
         "repo_url": "https://github.com/nushell/nushell",
-        "doc": "A cross-platform shell in Rust.",
+        "doc": "🐚 A cross-platform shell in Rust.",
         "filename_template_windows_amd_64": "nu-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "nu-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": true,

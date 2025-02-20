@@ -1,8 +1,7 @@
-
 {
     "mcfly": {
         "repo_url": "https://github.com/cantino/mcfly",
-        "doc": "Fly through your shell history. Great Scott!",
+        "doc": "🚀 Fly through your shell history. Great Scott!",
         "filename_template_linux_amd_64": "mcfly-{}-x86_64-unknown-linux-musl.tar.gz",
         "filename_template_windows_amd_64": "mcfly-{}-x86_64-pc-windows-msvc.zip",
         "strip_v": false,
@@ -10,7 +9,7 @@
       },
     "ttyd": {
         "repo_url": "https://github.com/tsl0922/ttyd",
-        "doc": "ttyd shares your terminal on the web.",
+        "doc": "🌐 ttyd shares your terminal on the web.",
         "filename_template_windows_amd_64": "ttyd.win32.exe",
         "filename_template_linux_amd_64": "ttyd.x86_64",
         "strip_v": true,
@@ -18,7 +17,7 @@
     },
     "m365": {
         "repo_url": "npm install -g @pnp/cli-microsoft365",
-        "doc": "CLI for Microsoft 365",
+        "doc": "☁️ CLI for Microsoft 365",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "",
         "strip_v": false,
@@ -26,7 +25,7 @@
     },
     "chatgpt": {
         "repo_url": "https://github.com/j178/chatgpt",
-        "doc": "chagpt cli",
+        "doc": "🤖 chagpt cli",
         "filename_template_windows_amd_64": "chatgpt_Windows_x86_64.zip",
         "filename_template_linux_amd_64": "chatgpt_Linux_x86_64.tar.gz",
         "strip_v": true,
@@ -34,7 +33,7 @@
     },
     "mods": {
         "repo_url": "https://github.com/charmbracelet/mods/",
-        "doc": "AI for the command line, built for pipelines",
+        "doc": "🤖 AI for the command line, built for pipelines",
         "filename_template_windows_amd_64": "mods_{}_Windows_x86_64.zip",
         "filename_template_linux_amd_64": "mods_{}_Linux_x86_64.tar.gz",
         "strip_v": true,
@@ -42,7 +41,7 @@
     },
     "glow": {
         "repo_url": "https://github.com/charmbracelet/glow/",
-        "doc": "Render markdown on the CLI, with pizzazz!",
+        "doc": "✨ Render markdown on the CLI, with pizzazz!",
         "filename_template_windows_amd_64": "glow_{}_Windows_x86_64.zip",
         "filename_template_linux_amd_64": "glow_{}_Linux_x86_64.tar.gz",
         "strip_v": true,
@@ -50,7 +49,7 @@
     },
     "gum": {
         "repo_url": "https://github.com/charmbracelet/gum",
-        "doc": "Prompt user to select from options, written in golang.",
+        "doc": "🎯 Prompt user to select from options, written in golang.",
         "filename_template_windows_amd_64": "gum_{}_Windows_x86_64.zip",
         "filename_template_linux_amd_64": "gum_{}_Linux_x86_64.tar.gz",
         "strip_v": true,
@@ -58,7 +57,7 @@
     },
     "bat": {
         "repo_url": "https://github.com/sharkdp/bat",
-        "doc": "A cat(1) clone with wings.",
+        "doc": "🦇 A cat(1) clone with wings.",
         "filename_template_windows_amd_64": "bat-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "bat-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
@@ -66,7 +65,7 @@
     },
     "starship": {
         "repo_url": "https://github.com/starship/starship",
-        "doc": "a cross-platform prompt for your shell",
+        "doc": "🚀 a cross-platform prompt for your shell",
         "filename_template_windows_amd_64": "starship-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "starship-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
@@ -74,7 +73,7 @@
     },
     "rg": {
         "repo_url": "https://github.com/BurntSushi/ripgrep",
-        "doc": "recursively searches directories for a regex pattern while respecting your gitignore rules",
+        "doc": "🔍 recursively searches directories for a regex pattern while respecting your gitignore rules",
         "filename_template_windows_amd_64": "ripgrep-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "ripgrep-{}-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": true,
@@ -82,7 +81,7 @@
     },
     "fzf": {
         "repo_url": "https://github.com/junegunn/fzf",
-        "doc": "a general-purpose cli fuzzy finder.",
+        "doc": "🔍 a general-purpose cli fuzzy finder.",
         "filename_template_windows_amd_64": "fzf-{}-windows_amd64.zip",
         "filename_template_linux_amd_64": "fzf-{}-linux_amd64.tar.gz",
         "strip_v": true,
@@ -90,7 +89,7 @@
     },
     "fd": {
         "repo_url": "https://github.com/sharkdp/fd",
-        "doc": "fd is a simple, fast and user-friendly alternative to find.",
+        "doc": "🔍 fd is a simple, fast and user-friendly alternative to find.",
         "filename_template_windows_amd_64": "fd-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "fd-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
@@ -98,7 +97,7 @@
     },
     "broot": {
         "repo_url": "https://github.com/Canop/broot",
-        "doc": "broot is an fzf variant for folder structure and layered search.",
+        "doc": "🌳 broot is an fzf variant for folder structure and layered search.",
         "filename_template_windows_amd_64": "https://dystroy.org/broot/download/x86_64-pc-windows-gnu/broot.exe",
         "filename_template_linux_amd_64": "https://dystroy.org/broot/download/x86_64-linux/broot",
         "strip_v": false,
@@ -106,7 +105,7 @@
     },
     "rga": {
         "repo_url": "https://github.com/phiresky/ripgrep-all",
-        "doc": "ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz, etc.",
+        "doc": "🔍 ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz, etc.",
         "filename_template_windows_amd_64": "ripgrep_all-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "ripgrep_all-{}-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": false,
@@ -114,7 +113,7 @@
     },
     "ouch": {
         "repo_url": "https://github.com/ouch-org/ouch",
-        "doc": "A cli for extracting and creating archives in unified way.",
+        "doc": "📦 A cli for extracting and creating archives in unified way.",
         "filename_template_windows_amd_64": "ouch-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "ouch-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
@@ -122,7 +121,7 @@
     },
     "topgrade": {
         "repo_url": "https://github.com/topgrade-rs/topgrade",
-        "doc": "Keeping your system up to date usually involves invoking multiple package managers.",
+        "doc": "⬆️ Keeping your system up to date usually involves invoking multiple package managers.",
         "filename_template_linux_amd_64": "topgrade-{}-x86_64-unknown-linux-gnu.tar.gz",
         "filename_template_windows_amd_64": "topgrade-{}-x86_64-pc-windows-msvc.zip",
         "strip_v": false,
@@ -130,7 +129,7 @@
       },  
     "viu": {
         "repo_url": "https://github.com/atanunq/viu",
-        "doc": "A cli image viewer for the terminal (like chafa but in Rust)",
+        "doc": "🖼️ A cli image viewer for the terminal (like chafa but in Rust)",
         "filename_template_linux_amd_64": "viu-x86_64-unknown-linux-musl",
         "filename_template_windows_amd_64": "viu-x86_64-pc-windows-msvc.exe",
         "strip_v": false,
@@ -138,7 +137,7 @@
       },  
     "btm": {
         "repo_url": "https://github.com/ClementTsang/bottom",
-        "doc": "bottom is a cross-platform graphical process/system monitor with a customizable interface and a multitude of features.",
+        "doc": "📊 bottom is a cross-platform graphical process/system monitor with a customizable interface and a multitude of features.",
         "filename_template_linux_amd_64": "bottom_x86_64-unknown-linux-gnu.tar.gz",
         "filename_template_windows_amd_64": "bottom_x86_64-pc-windows-msvc.zip",
         "strip_v": true,
@@ -146,7 +145,7 @@
       },
     "cpufetch": {
         "repo_url": "https://github.com/Dr-Noob/cpufetch",
-        "doc": "cpufetch is a small yet fancy CPU architecture fetching tool, like fastfetch but for CPUs.",
+        "doc": "💻 cpufetch is a small yet fancy CPU architecture fetching tool, like fastfetch but for CPUs.",
         "filename_template_windows_amd_64": "cpufetch_x86-64_windows.exe",
         "filename_template_linux_amd_64": "cpufetch_x86_linux",
         "strip_v": false,
@@ -154,7 +153,7 @@
     },
     "fastfetch": {
         "repo_url": "https://github.com/fastfetch-cli/fastfetch",
-        "doc": "fastfetch is a system information tool written in C.",
+        "doc": "💻 fastfetch is a system information tool written in C.",
         "filename_template_windows_amd_64": "fastfetch-windows-amd64.zip",
         "filename_template_linux_amd_64": "fastfetch-linux-amd64.zip",
         "strip_v": false,
@@ -162,7 +161,7 @@
     },
     "procs": {
         "repo_url": "https://github.com/dalance/procs/",
-        "doc": "procs is a modern replacement for ps written in Rust.",
+        "doc": "📊 procs is a modern replacement for ps written in Rust.",
         "filename_template_windows_amd_64": "procs-{}-x86_64-windows.zip",
         "filename_template_linux_amd_64": "procs-{}-x86_64-linux.zip",
         "strip_v": false,
@@ -170,7 +169,7 @@
     },
     "delta": {
         "repo_url": "https://github.com/dandavison/delta",
-        "doc": "A viewer for git and diff output",
+        "doc": "👀 A viewer for git and diff output",
         "filename_template_windows_amd_64": "delta-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "delta-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": true,
@@ -178,7 +177,7 @@
     },
     "gitui": {
         "repo_url": "https://github.com/extrawurst/gitui",
-        "doc": "gitui is a terminal ui for git written in rust.",
+        "doc": "🐙 gitui is a terminal ui for git written in rust.",
         "filename_template_windows_amd_64": "gitui-win.tar.gz",
         "filename_template_linux_amd_64": "gitui-linux-x86_64.tar.gz",
         "strip_v": false,
@@ -186,7 +185,7 @@
     },
     "opencommit": {
         "repo_url": "npm install -g opencommit",
-        "doc": "Opencommit is a cli tool to help you write better commit messages.",
+        "doc": "📝 Opencommit is a cli tool to help you write better commit messages.",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "",
         "strip_v": false,
@@ -194,7 +193,7 @@
     },
     "dua": {
         "repo_url": "https://github.com/Byron/dua-cli",
-        "doc": "Rust-based cli tool to get a quick overview of disk usage.",
+        "doc": "💾 Rust-based cli tool to get a quick overview of disk usage.",
         "filename_template_windows_amd_64": "dua-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "dua-{}-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": false,
@@ -202,7 +201,7 @@
     },
     "lf": {
         "repo_url": "https://github.com/gokcehan/lf",
-        "doc": "lf is a terminal file manager written in go.",
+        "doc": "📂 lf is a terminal file manager written in go.",
         "filename_template_windows_amd_64": "lf-windows-amd64.zip",
         "filename_template_linux_amd_64": "lf-linux-amd64.tar.gz",
         "strip_v": false,
@@ -218,7 +217,7 @@
     },
     "tere": {
         "repo_url": "https://github.com/mgunyho/tere",
-        "doc": "Tere is a terminal file explorer written in Rust. No more ls + cd",
+        "doc": "📂 Tere is a terminal file explorer written in Rust. No more ls + cd",
         "filename_template_windows_amd_64": "tere-{}-x86_64-pc-windows-gnu.zip",
         "filename_template_linux_amd_64": "tere-{}-x86_64-unknown-linux-gnu.zip",
         "strip_v": true,
@@ -226,7 +225,7 @@
     },
     "zoxide": {
         "repo_url": "https://github.com/ajeetdsouza/zoxide",
-        "doc": "A cd command that learns - easily navigate directories from the command-line",
+        "doc": "🚀 A cd command that learns - easily navigate directories from the command-line",
         "filename_template_windows_amd_64": "zoxide-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "zoxide-{}-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": true,
@@ -235,7 +234,7 @@
 
     "lsd": {
         "repo_url": "https://github.com/lsd-rs/lsd",
-        "doc": "lsd is a modern ls with a lot of pretty colors and font-awesome icons.",
+        "doc": "📂 lsd is a modern ls with a lot of pretty colors and font-awesome icons.",
         "filename_template_windows_amd_64": "lsd-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "lsd-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
@@ -243,7 +242,7 @@
     },
     "mprocs": {
         "repo_url": "https://github.com/pvolok/mprocs",
-        "doc": "Windows/Linux poorman's zellij",
+        "doc": "🖥️ Windows/Linux poorman's zellij",
         "filename_template_windows_amd_64": "mprocs-{}-windows-x86_64.zip",
         "filename_template_linux_amd_64": "mprocs-{}-linux-x86_64-musl.tar.gz",
         "strip_v": true,
@@ -251,7 +250,7 @@
     },
     "rclone": {
         "repo_url": "https://github.com/rclone/rclone",
-        "doc": "cli to sync to cloud storage providers.",
+        "doc": "☁️ cli to sync to cloud storage providers.",
         "filename_template_windows_amd_64": "rclone-{}-windows-amd64.zip",
         "filename_template_linux_amd_64": "rclone-{}-linux-amd64.zip",
         "strip_v": false,
@@ -259,7 +258,7 @@
     },
     "watchexec": {
         "repo_url": "https://github.com/watchexec/watchexec",
-        "doc": "Executes commands in response to file modifications.",
+        "doc": "👀 Executes commands in response to file modifications.",
         "filename_template_windows_amd_64": "watchexec-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "watchexec-{}-x86_64-unknown-linux-musl.tar.xz",
         "strip_v": true,

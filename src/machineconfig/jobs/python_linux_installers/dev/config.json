@@ -1,7 +1,7 @@
 {
     "bitwarden": {
         "repo_url": "https://vault.bitwarden.com/download/?app=cli&platform=linux",
-        "doc": "password manager cli",
+        "doc": "🔐 password manager cli",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "bw",
         "strip_v": true,
@@ -9,7 +9,7 @@
     },
     "ytui-music": {
         "repo_url": "https://github.com/sudipghimire533/ytui-music",
-        "doc": "A terminal based YouTube music player written in Rust.",
+        "doc": "🎵 A terminal based YouTube music player written in Rust.",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "ytui_music-linux-amd64",
         "strip_v": true,
@@ -17,7 +17,7 @@
     },
     "youtube-tui": {
         "repo_url": "https://github.com/Siriusmart/youtube-tui",
-        "doc": "A terminal based YouTube music player written in Rust.",
+        "doc": "🎵 A terminal based YouTube music player written in Rust.",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "youtube-tui-full_arch-x86_64",
         "strip_v": true,
@@ -25,7 +25,7 @@
     },
     "termusic": {
         "repo_url": "https://github.com/tramhao/termusic",
-        "doc": "A terminal-based music player written in Rust.",
+        "doc": "🎵 A terminal-based music player written in Rust.",
         "filename_template_windows_amd_64": "termusic-{}-x86_64-windows.zip",
         "filename_template_linux_amd_64": "termusic-{}-x86_64-linux.tar.xz",
         "strip_v": false,
@@ -33,7 +33,7 @@
     },
     "kronos": {
         "repo_url": "https://github.com/TrevorSatori/kronos",
-        "doc": "A Customizable Terminal Music Player For Offline Listening",
+        "doc": "🎵 A Customizable Terminal Music Player For Offline Listening",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "Kronos",
         "strip_v": true,
@@ -41,7 +41,7 @@
     },
     "transmission": {
         "repo_url": "https://github.com/transmission/transmission",
-        "doc": "A fast, easy, and free BitTorrent client.",
+        "doc": "📥 A fast, easy, and free BitTorrent client.",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "transmission-{}.tar.xz",
         "strip_v": true,
@@ -49,7 +49,7 @@
     },
     "nnn": {
         "repo_url": "https://github.com/jarun/nnn",
-        "doc": "A terminal-based file manager.",
+        "doc": "📂 A terminal-based file manager.",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "nnn-{}.tar.gz",
         "strip_v": false,
@@ -57,7 +57,7 @@
       },
     "exa": {
         "repo_url": "https://github.com/ogham/exa",
-        "doc": "A modern replacement for ls. lsd alternative.",
+        "doc": "📂 A modern replacement for ls. lsd alternative.",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "exa-linux-x86_64-{}.zip",
         "strip_v": false,
@@ -65,7 +65,7 @@
     },
     "bytehound": {
         "repo_url": "https://github.com/koute/bytehound",
-        "doc": "Inspecting the memory usage of a running process",
+        "doc": "🔍 Inspecting the memory usage of a running process",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "bytehound-x86_64-unknown-linux-gnu.tgz",
         "strip_v": false,
@@ -73,7 +73,7 @@
       },
     "atuin": {
         "repo_url": "https://github.com/atuinsh/atuin",
-        "doc": "Shell history search tool. Mcfly alternative",
+        "doc": "🔍 Shell history search tool. Mcfly alternative",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "atuin-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
@@ -81,7 +81,7 @@
     },
     "browsh": {
         "repo_url": "https://github.com/browsh-org/browsh",
-        "doc": "browser in the shell",
+        "doc": "🌐 browser in the shell",
         "filename_template_windows_amd_64": "browsh_{}_windows_amd64.exe",
         "filename_template_linux_amd_64": "browsh-{}.xpi",
         "strip_v": true,
@@ -89,7 +89,7 @@
     },
     "carbonyl": {
         "repo_url": "https://github.com/fathyb/carbonyl",
-        "doc": "Brwoser in terminal. Browsh alternative.",
+        "doc": "🌐 Brwoser in terminal. Browsh alternative.",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "carbonyl.linux-amd64.zip",
         "strip_v": false,
@@ -97,7 +97,7 @@
     },
     "patat": {
         "repo_url": "https://github.com/jaspervdj/patat",
-        "doc": "Terminal-based presentations using Pandoc. Presenterm alternative.",
+        "doc": "🎯 Terminal-based presentations using Pandoc. Presenterm alternative.",
         "filename_template_windows_amd_64": "",
         "filename_template_linux_amd_64": "patat-{}-linux-x86_64.tar.gz",
         "strip_v": false,
@@ -105,7 +105,7 @@
     },
     "SqliteBrowser": {
         "repo_url": "https://github.com/sqlitebrowser/sqlitebrowser",
-        "doc": "A visual tool to create, design, and edit database files compatible with SQLite.",
+        "doc": "🗃️ A visual tool to create, design, and edit database files compatible with SQLite.",
         "filename_template_windows_amd_64": "sqlitebrowser-{}-win64.zip",
         "filename_template_linux_amd_64": "DB_Browser_for_SQLite-{}-x86_64.AppImage",
         "strip_v": false,
@@ -113,7 +113,7 @@
     },
     "DBeaver": {
         "repo_url": "https://github.com/dbeaver/dbeaver",
-        "doc": "Free universal database tool and SQL client.",
+        "doc": "🗃️ Free universal database tool and SQL client.",
         "filename_template_windows_amd_64": "dbeaver-ce-{}-win32.win32.x86_64.zip",
         "filename_template_linux_amd_64": "dbeaver-ce-{}-linux.gtk.x86_64.tar.gz",
         "strip_v": true,
@@ -121,7 +121,7 @@
     },
     "rainfrog": {
         "repo_url": "https://github.com/achristmascarl/rainfrog",
-        "doc": "TUI DB Visualizer",
+        "doc": "🗃️ TUI DB Visualizer",
         "filename_template_windows_amd_64": "rainfrog-{}-x86_64-pc-windows-msvc.tar.gz",
         "filename_template_linux_amd_64": "rainfrog-{}-x86_64-unknown-linux-gnu.tar.gz",
         "strip_v": false,
