@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # mount nfs share on linux
-# sudo apt install nfs-common
+# sudo nala install nfs-common
 # mkdir ~/data/local
 # sudo mount -o nolock,noatime,nodiratime,proto=tcp,timeo=600,retrans=2,noac alex-p51s-5:/home/alex/data/local ./data/local
 

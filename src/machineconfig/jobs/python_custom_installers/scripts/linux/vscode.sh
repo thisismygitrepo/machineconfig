@@ -17,3 +17,9 @@ fi
 
 sudo nala update -o Dir::Etc::sourcelist="sources.list.d/vscode.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
 sudo nala install code -y
+
+
+if command -v code-insiders >/dev/null 2>&1; then
+    echo "VS Code Insiders found, updating..."
+    sudo nala install code-insiders -y
+fi

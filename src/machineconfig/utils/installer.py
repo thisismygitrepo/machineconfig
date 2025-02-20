@@ -145,7 +145,7 @@ class Installer:
             downloaded, version_to_be_installed = self.download(version=version)
             if downloaded.to_str().endswith(".deb"):
                 assert platform.system() == "Linux"
-                Terminal().run(f"sudo apt install -y {downloaded}").capture().print_if_unsuccessful(desc="Installing .deb", strict_err=True, strict_returncode=True)
+                Terminal().run(f"sudo nala install -y {downloaded}").capture().print_if_unsuccessful(desc="Installing .deb", strict_err=True, strict_returncode=True)
                 downloaded.delete(sure=True)
             else:
                 if platform.system() == "Windows":

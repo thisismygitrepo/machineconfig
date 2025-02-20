@@ -28,7 +28,7 @@ echo "deb https://packagecloud.io/timescale/timescaledb/ubuntu/ $ubuntu_version 
 wget --quiet -O - https://packagecloud.io/timescale/timescaledb/gpgkey | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/timescaledb.gpg
 
 sudo nala update
-sudo apt install -y postgresql-16 postgresql-client-16 timescaledb-2-postgresql-16
+sudo nala -y postgresql-16 postgresql-client-16 timescaledb-2-postgresql-16
 sudo timescaledb-tune
 sudo systemctl restart postgresql
 sudo -u postgres psql

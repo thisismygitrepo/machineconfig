@@ -17,7 +17,7 @@ install_if_missing() {
     if ! command -v "$package" &> /dev/null; then
         echo "⚠️ $package could not be found"
         echo "💡 Installing $package"
-        sudo apt install -y "$package"
+        sudo nala install -y "$package"
     fi
 }
 
