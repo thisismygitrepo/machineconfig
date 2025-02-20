@@ -1,4 +1,4 @@
-"""devops
+"""devops with emojis
 """
 
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, write_shell_script
@@ -8,19 +8,19 @@ from typing import Optional
 
 
 class Options(Enum):
-    update         = 'UPDATE essential repos'
-    cli_install    = 'DEVAPPS install'
-    ve             = 'VE install'
-    sym_path_shell = 'SYMLINKS, PATH & SHELL PROFILE'
-    sym_new        = 'SYMLINKS new'
-    ssh_add_pubkey = 'SSH add pub key to this machine'
-    ssh_add_id     = 'SSH add identity (private key) to this machine'
-    ssh_use_pair   = 'SSH use key pair to connect two machines'
-    ssh_setup      = 'SSH setup'
-    ssh_setup_wsl  = 'SSH setup wsl'
-    backup         = 'BACKUP'
-    retreive       = 'RETRIEVE'
-    scheduler      = 'SCHEDULER'
+    update         = '🔄 UPDATE essential repos'
+    cli_install    = '⚙️ DEVAPPS install'
+    ve             = '🐍 VE install'
+    sym_path_shell = '🔗 SYMLINKS, PATH & SHELL PROFILE'
+    sym_new        = '🆕 SYMLINKS new'
+    ssh_add_pubkey = '🔑 SSH add pub key to this machine'
+    ssh_add_id     = '🗝️ SSH add identity (private key) to this machine'
+    ssh_use_pair   = '🔐 SSH use key pair to connect two machines'
+    ssh_setup      = '📡 SSH setup'
+    ssh_setup_wsl  = '🐧 SSH setup wsl'
+    backup         = '💾 BACKUP'
+    retreive       = '📥 RETRIEVE'
+    scheduler      = '⏰ SCHEDULER'
 
 
 def args_parser():
@@ -36,9 +36,7 @@ def main(which: Optional[str] = None):
     print("🚀 Starting the main function...")
     options = [op.value for op in Options]
     if which is None:
-        # import questionary
-        # choice_key = questionary.autocomplete(message="Which option to run?", choices=options, default=options[0]).ask()
-        choice_key = display_options(msg="", options=options, header="DEVOPS", default=options[0])
+        choice_key = display_options(msg="", options=options, header="🛠️ DEVOPS", default=options[0])
     else: choice_key = Options[which].value
 
     if choice_key == Options.update.value:
@@ -46,24 +44,8 @@ def main(which: Optional[str] = None):
         program = helper.main()
 
     elif choice_key == Options.ve.value:
-        program = ""
-        reply: bool=False
-        # if P.cwd().joinpath(".ve.ini").exists():
-        #     reply = input("Detected .ve.ini file. Do you want to use it to build ve? (y/[n]): ") == "y"
-        #     if reply:
-        #         from machineconfig.utils.ve import get_ve_install_script_from_specs
-        #         program_win = get_ve_install_script_from_specs(repo_root=P.cwd().to_str(), system="Windows")
-        #         program_lin = get_ve_install_script_from_specs(repo_root=P.cwd().to_str(), system="Linux")
-        #         install_reply = input("Proceed with installation? (y/[n]): ") == "y"
-        #         if not install_reply: program = ""
-        #         else:
-        #             if system() == "Windows": program = program_win
-        #             elif system() == "Linux": program = program_lin
-        #             else: raise ValueError(f"Unknown system: {system()}")
-
-        if not reply:
-            from machineconfig.utils.ve import get_ve_install_script
-            program = get_ve_install_script()
+        from machineconfig.utils.ve import get_ve_install_script
+        program = get_ve_install_script()
 
     elif choice_key == Options.cli_install.value:
         import machineconfig.scripts.python.devops_devapps_install as helper
@@ -108,10 +90,10 @@ def main(which: Optional[str] = None):
         from machineconfig.scripts.python.scheduler import main as helper
         program = helper()
 
-    else: raise ValueError(f"Unimplemented choice: {choice_key}")
+    else: raise ValueError(f"❌ Unimplemented choice: {choice_key}")
     if program:
-        write_shell_script(program=program, display=True, preserve_cwd=True, desc="Shell script prepared by Python.", execute=True if which is not None else False)
-    else: write_shell_script(program="echo 'Done.'", display=False, desc="Shell script prepared by Python.", preserve_cwd=True, execute=False)  # Python did not return any script to run.
+        write_shell_script(program=program, display=True, preserve_cwd=True, desc="🔧 Shell script prepared by Python.", execute=True if which is not None else False)
+    else: write_shell_script(program="echo '✨ Done.'", display=False, desc="🔧 Shell script prepared by Python.", preserve_cwd=True, execute=False)
     print("✅ Main function completed.")
 
 
