@@ -181,14 +181,16 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
         for idx, key in enumerate(options):
             txt = txt + Text(f"{idx:2d} ", style="bold blue") + str(key) + (default_msg if default is not None and default == key else "") + "\n"
         txt_panel = Panel(txt, title=header, subtitle=tail, border_style="bold red")
+
         console.print(txt_panel)
         if default is not None:
             choice_string = input(f"{prompt}\nEnter option number or hit enter for default choice: ")
-        else: choice_string = input(f"{prompt}\nEnter option number: ")
+        else:
+            choice_string = input(f"{prompt}\nEnter option number: ")
 
         if choice_string == "":
             if default_string is None:
-                print("Default option not available!")
+                print("🧨 Default option not available!")
                 return display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
             choice_idx = options_strings.index(default_string)
             assert default is not None, "🧨 Default option not available!"
@@ -199,17 +201,25 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
                 choice_one = list(options)[choice_idx]
             except IndexError as ie:  # i.e. converting to integer was successful but indexing failed.
                 if choice_string in options_strings:  # string input
-                    choice_idx = options_strings.index(choice_one)  # type: ignore #TODO: fix this
+                    choice_idx = options_strings.index(choice_one)  # type: ignore
                     choice_one = list(options)[choice_idx]
-                elif custom_input: return str(choice_string)  # type: ignore #TODO: fix this
-                else: raise ValueError(f"Unknown choice. {choice_string}") from ie
+                elif custom_input: return str(choice_string)  # type: ignore
+                else:
+                    _ = ie
+                    # raise ValueError(f"Unknown choice. {choice_string}") from ie
+                    print(f"Unknown choice. {choice_string}")
+                    return display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
             except TypeError as te:  # int(choice_string) failed due to # either the number is invalid, or the input is custom.
                 if choice_string in options_strings:  # string input
-                    choice_idx = options_strings.index(choice_one)  # type: ignore #TODO: fix this
+                    choice_idx = options_strings.index(choice_one)  # type: ignore
                     choice_one = list(options)[choice_idx]
                 elif custom_input:
-                    return choice_string  # type: ignore #TODO: fix this
-                else: raise ValueError(f"Unknown choice. {choice_string}") from te
+                    return choice_string  # type: ignore
+                else:
+                    _ = te
+                    # raise ValueError(f"Unknown choice. {choice_string}") from te
+                    print(f"Unknown choice. {choice_string}")
+                    return display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
         print(f"{choice_idx}: {choice_one}", "<<<<-------- CHOICE MADE")
         if multi: return [choice_one]
     return choice_one

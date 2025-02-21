@@ -8,6 +8,5 @@
 . $HOME/scripts/activate_ve ''
 machineconfig_path=$(python -c "print(__import__('machineconfig').__file__[:-12])")
 pyfile=$machineconfig_path/scripts/python/tmate_conn.py
-# TODO make this path relevant to current file ($0)
 python3 $pyfile $1
 deactivate || true

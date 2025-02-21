@@ -1,7 +1,6 @@
 
 """CS
-TODO: use tap typed-argument-parser to parse args
-TODO: use typer to make clis
+TODO: use typer or typed-argument-parser to parse args
 """
 
 from crocodile.file_management import P, Read

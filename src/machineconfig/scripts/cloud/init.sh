@@ -20,7 +20,6 @@ then
 fi
 
 # essentials
-# TODO: https://askubuntu.com/questions/1367139/apt-get-upgrade-auto-restart-services
 export package_manager="apt"
 curl bit.ly/cfgappslinux -L | bash
 curl bit.ly/cfgvelinux -L | bash

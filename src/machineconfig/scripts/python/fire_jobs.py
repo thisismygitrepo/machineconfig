@@ -244,8 +244,6 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
             lines.append("sleep 1")  # python tends to freeze if you launch instances within 1 microsecond of each other
         command = "\n".join(lines)
 
-    # TODO: send this command to terminal history. In powershell & bash there is no way to do it with a command other than goiing to history file. In Mcfly there is a way but its linux only tool. # if platform.system() == "Windows": command = f" ({command}) | Add-History  -PassThru "
-    # mcfly add --exit 0 command
     if args.optimized:
         # note that in ipython, optimization is meaningless.
         command = command.replace("python ", "python -OO ")

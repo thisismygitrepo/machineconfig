@@ -16,6 +16,9 @@ config = {this = '~/.config/rclone/rclone.conf', to_this = '~/dotfiles/creds/rcl
 [rclone_windows]
 config = {this = '~/AppData/Roaming/rclone/rclone.conf', to_this = '~/dotfiles/creds/rclone/rclone.conf'}
 
+[cloudflare]
+config = {this = '~/.cloudflared', to_this = '~/dotfiles/creds/cloudflare/.cloudflared'}
+
 [presenterm]
 config = {this = '~/.config/presenterm/config.yaml', to_this = 'LIBRARY_ROOT/settings/presenterm/config.yaml'}
 

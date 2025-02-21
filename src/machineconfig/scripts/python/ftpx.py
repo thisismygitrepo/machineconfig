@@ -14,7 +14,7 @@ def main():
     print("🚀 Starting the main function...")
     parser = argparse.ArgumentParser(description='FTP client')
 
-    parser.add_argument("source", help=f"source path (machine:path)")
+    parser.add_argument("source", help="source path (machine:path)")
     parser.add_argument("target", help="target path (machine:path)")
 
     # FLAGS

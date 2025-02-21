@@ -1,5 +1,4 @@
 
-# TODO: use a non-bloated os like alpine and remove the venv
 # FROM python:3.11.7-alpine3.19
 # FROM python:3.11.7-bookworm
 # FROM ubuntu:jammy-20240227
