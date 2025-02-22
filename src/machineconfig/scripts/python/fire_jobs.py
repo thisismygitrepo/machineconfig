@@ -9,7 +9,7 @@ fire
 
 
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, choose_ssh_host, match_file_name, sanitize_path
-from crocodile.file_management import P, install_n_import, Read
+from crocodile.file_management import P, Read
 from crocodile.core import Display, randstr
 import inspect
 import platform

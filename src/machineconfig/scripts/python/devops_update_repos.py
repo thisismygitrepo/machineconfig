@@ -45,7 +45,7 @@ echo "🔄 {("Updating " + str(a_repo.working_dir)).center(80, "═")}"
 echo "🛠  Special handling for machineconfig repository..."
 cd "{a_repo.working_dir}"
 # git reset --hard
-git pull origin
+git pull origin &
 chmod +x ~/scripts -R
 chmod +x ~/code/machineconfig/src/machineconfig/jobs/linux -R
 chmod +x ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe -R
@@ -55,7 +55,7 @@ chmod +x ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe -R
                 additions.append(f"""
 echo "🔄 {("Updating " + str(a_repo.working_dir)).center(80, "═")}"
 cd "{a_repo.working_dir}"
-{sep.join([f'git pull {remote.name} {a_repo.active_branch.name}' for remote in a_repo.remotes])}
+{sep.join([f'git pull {remote.name} {a_repo.active_branch.name} &' for remote in a_repo.remotes])}
 """
 )
         program = "\n".join(additions)
@@ -64,7 +64,7 @@ cd "{a_repo.working_dir}"
         program = "\n".join([f"""
 echo "🔄 {("Updating " + str(a_repo.working_dir)).center(80, "═")}"
 cd "{a_repo.working_dir}"
-{sep.join([f'git pull {remote.name} {a_repo.active_branch.name}' for remote in a_repo.remotes])}
+{sep.join([f'git pull {remote.name} {a_repo.active_branch.name} &' for remote in a_repo.remotes])}
 """ for a_repo in repos_objs])
     else: raise NotImplementedError(f"⚠️ System {system()} not supported")
     return program
