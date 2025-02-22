@@ -226,8 +226,9 @@ except ImportError as _ex:
 python -m crocodile.cluster.templates.cli_click --file {choice_file} """
         if choice_function is not None:
             command += f"--function {choice_function} "
-    try: install_n_import("clipboard").copy(command)
-    except Exception as ex: print(f"Failed to copy command to clipboard. {ex}")
+
+    # try: install_n_import("clipboard").copy(command)
+    # except Exception as ex: print(f"Failed to copy command to clipboard. {ex}")
 
     if args.loop:
         command = command + "\n" + f". {PROGRAM_PATH}"
