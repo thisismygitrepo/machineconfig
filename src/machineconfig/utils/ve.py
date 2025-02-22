@@ -23,10 +23,10 @@ class VE_INI:
     specs: VE_Specs
 
 
-def get_ipython_profile(init_path: P):
+def get_ipython_profile(init_path: P, ve_name: Optional[str] = None):
     """Relies on .ipy_profile"""
     a_path = init_path
-    ipy_profile: str="default"
+    ipy_profile: str = "default"
     idx = len(a_path.parts)
     while idx >= 0:
         if a_path.joinpath(".ipy_profile").exists():
@@ -36,7 +36,11 @@ def get_ipython_profile(init_path: P):
         idx -= 1
         a_path = a_path.parent
     else:
-        print(f"⚠️ Using default IPython: {ipy_profile}")
+        if ve_name is not None and P.home().joinpath(".ipython", f"profile_{ve_name}").exists():
+            ipy_profile = ve_name
+            print(f"✨ Using IPython profile: {ipy_profile}")
+        else:
+            print(f"⚠️ Using default IPython: {ipy_profile}")
     return ipy_profile
 
 def get_ve_profile(init_path: P, strict: bool=False):

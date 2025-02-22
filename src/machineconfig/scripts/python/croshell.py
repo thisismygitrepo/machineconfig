@@ -135,21 +135,23 @@ print_logo(logo="crocodile")
     total_program = preprogram + add_print_header_pycode(str(pyfile), title=title) + program
 
     pyfile.write_text(total_program, encoding='utf-8')
-    if profile is None:
-        profile = get_ipython_profile(P.cwd())
-        # profile = "default"
 
     ve = get_ve_profile(P(file)) if args.ve is None else str(args.ve)
-
+    if profile is None:
+        profile = get_ipython_profile(init_path=P.cwd(), ve_name=ve)
+        # profile = "default"
     final_program = f"""
 #!/bin/bash
 
 . $HOME/scripts/activate_ve '{ve}'
-{interpreter} """
+
+"""
+    fire_line = interpreter
     if interpreter == "ipython":
-        final_program += f"{interactivity} --profile {profile} --no-banner"
+        fire_line += f" {interactivity} --profile {profile} --no-banner"
+    final_program += fire_line
     final_program += f" {str(pyfile)}"
-    print(f"🔥 sourcing  ... {pyfile}")
+    print(f"🔥 sourcing  ... {pyfile}\nwith fire line `{fire_line}`")
     PROGRAM_PATH.write_text(data=final_program)
     (PROGRAM_PATH + ".py").write_text(str(pyfile), encoding='utf-8')
 
