@@ -51,7 +51,7 @@ def args_parser():
     main(cloud=args.cloud, path=args.path, message=args.message, action=args.action)
 
 
-def sync_dotfiles():
+def fetch_dotfiles():
     cloud_resolved = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
     print(f"⚠️ Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH} ⚠️")
     dotfiles_local = P.home().joinpath("dotfiles")
