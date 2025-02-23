@@ -37,12 +37,9 @@ def get_zellij_cmd(wd1: P, wd2: P) -> str:
 
 def args_parser():
     parser = argparse.ArgumentParser(description="Secure Repo CLI.")
-
     # parser.add_argument("cmd", help="command to run", choices=["pull", "push"])
     parser.add_argument("path", nargs='?', type=str, help="Repository path, defaults to cwd.", default=None)
-
     # parser.add_argument("--share", help="Repository path, defaults to cwd.", action="store_true", default=False)
-
     parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
     parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {randstr()}")
     # parser.add_argument("--skip_confirmation", "-s", help="Skip confirmation.", action="store_true", default=False)
@@ -51,12 +48,28 @@ def args_parser():
     # parser.add_argument("--no_push", "-u", help="push to reomte.", action="store_true")  # default is False
     parser.add_argument("--action", "-a", help="Action to take if merge fails.", choices=["ask", "pushLocalMerge", "overwriteLocal", "InspectRepos", "RemoveLocalRclone"], default="ask")
     args = parser.parse_args()
-
-    # if args.share:
-    #     from machineconfig.scripts.cloud.dotfiles import put
-    #     put()
-    #     return None
     main(cloud=args.cloud, path=args.path, message=args.message, action=args.action)
+
+
+def sync_dotfiles():
+    cloud_resolved = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+    print(f"⚠️ Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH} ⚠️")
+    dotfiles_local = P.home().joinpath("dotfiles")
+    CONFIG_PATH.joinpath("remote").create()
+    dotfiles_remote = CONFIG_PATH.joinpath("remote", dotfiles_local.rel2home())
+    remote_path = dotfiles_local.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
+    dotfiles_remote.from_cloud(remotepath=remote_path, cloud=cloud_resolved,
+        unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=None)
+    dotfiles_local.delete(sure=True)
+    dotfiles_remote.move(folder=P.home())
+    script = f"""
+# rm -rf {dotfiles_local}
+# mv {dotfiles_remote} {dotfiles_local}
+sudo chmod 600 $HOME/.ssh/*
+sudo chmod 700 $HOME/.ssh
+"""
+    shell_path = get_shell_script(shell_script=script)
+    Terminal().run(f". {shell_path}", shell="bash").capture().print()
 
 
 def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optional[str] = None,
