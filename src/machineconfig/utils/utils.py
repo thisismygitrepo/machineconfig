@@ -332,6 +332,14 @@ def print_code(code: str, lexer: str, desc: str):
         elif platform.system() == "Linux": lexer = "sh"
         else: raise NotImplementedError(f"lexer {lexer} not implemented for system {platform.system()}")
     console = Console()
+    # print("====")
+    # print(f"{desc}", type(desc))
+    # print("====")
+    # print(f"{code}", type(code))
+    # print("====")
+    # print(f"{lexer}", type(lexer))
+    # print("====")
+
     console.print(Panel(Syntax(code=code, lexer=lexer), title=desc), style="bold red")
 
 

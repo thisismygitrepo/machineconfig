@@ -18,6 +18,7 @@ class Options(Enum):
     ssh_use_pair   = '🔐 SSH use key pair to connect two machines'
     ssh_setup      = '📡 SSH setup'
     ssh_setup_wsl  = '🐧 SSH setup wsl'
+    dot_files_sync = '🔗 DOTFILES sync'
     backup         = '💾 BACKUP'
     retreive       = '📥 RETRIEVE'
     scheduler      = '⏰ SCHEDULER'
@@ -89,6 +90,10 @@ def main(which: Optional[str] = None):
     elif choice_key == Options.scheduler.value:
         from machineconfig.scripts.python.scheduler import main as helper
         program = helper()
+
+    elif choice_key == Options.dot_files_sync.value:
+        from machineconfig.scripts.python.cloud_repo_sync import main as helper, P
+        program = helper(cloud=None, path=str(P.home() / "dotfiles"), pwd=None, action="ask")
 
     else: raise ValueError(f"❌ Unimplemented choice: {choice_key}")
     if program:

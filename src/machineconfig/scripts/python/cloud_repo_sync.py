@@ -178,22 +178,21 @@ git commit -am "finished merging"
         print(f"• {option3:75} 👉 {shell_file_3}")
         print(f"• {option4:75} 👉 {shell_file_4}")
 
+        program_content = None
         match action:
             case "ask":
                 choice = choose_one_option(options=[option1, option2, option3, option4], fzf=False)
-                if choice == option1: PROGRAM_PATH.write_text(shell_file_1.read_text())
-                elif choice == option2: PROGRAM_PATH.write_text(program_2)
-                elif choice == option3: PROGRAM_PATH.write_text(shell_file_3.read_text())
-                elif choice == option4: PROGRAM_PATH.write_text(program_4)
+                if choice == option1: program_content = shell_file_1.read_text()
+                elif choice == option2: program_content = program_2
+                elif choice == option3: program_content = shell_file_3.read_text()
+                elif choice == option4: program_content = program_4
                 else: raise NotImplementedError(f"Choice {choice} not implemented.")
-            case "pushLocalMerge":
-                PROGRAM_PATH.write_text(shell_file_1.read_text())
-            case "overwriteLocal":
-                PROGRAM_PATH.write_text(program_2)
-            case "InspectRepos":
-                PROGRAM_PATH.write_text(shell_file_3.read_text())
-            case "RemoveLocalRclone":
-                PROGRAM_PATH.write_text(program_4)
+            case "pushLocalMerge": program_content = shell_file_1.read_text()
+            case "overwriteLocal": program_content = program_2
+            case "InspectRepos": program_content = shell_file_3.read_text()
+            case "RemoveLocalRclone": program_content = program_4
+        PROGRAM_PATH.write_text(program_content)
+    return program_content
 
 
 def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cloud: str):
