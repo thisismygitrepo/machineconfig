@@ -65,8 +65,11 @@ def fetch_dotfiles():
     script = f"""
 # rm -rf {dotfiles_local}
 # mv {dotfiles_remote} {dotfiles_local}
+"""
+    if platform.system() == "Linux": script += """
 sudo chmod 600 $HOME/.ssh/*
 sudo chmod 700 $HOME/.ssh
+sudo chmod +x $HOME/dotfiles/scripts/linux -R
 """
     shell_path = get_shell_script(shell_script=script)
     Terminal().run(f". {shell_path}", shell="bash").capture().print()
@@ -147,8 +150,11 @@ func(remote_repo=r'{repo_remote_root.to_str()}', local_repo=r'{repo_local_root.t
         program_2 = f"""
 rm -rfd {repo_local_root}
 mv {repo_remote_root} {repo_local_root}
+"""
+        if platform.system() == "Linux": program_2 += """
 sudo chmod 600 $HOME/.ssh/*
 sudo chmod 700 $HOME/.ssh
+sudo chmod +x $HOME/dotfiles/scripts/linux -R
 """
 
         shell_file_2 = get_shell_script(shell_script=program_2)
