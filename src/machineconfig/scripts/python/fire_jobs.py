@@ -153,6 +153,15 @@ def main() -> None:
 
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         import_line = get_import_module_code(str(choice_file))
+        from git import Repo, InvalidGitRepositoryError
+        try:
+            repo_root = Repo(P(choice_file).parent, search_parent_directories=True).working_tree_dir
+        except InvalidGitRepositoryError:
+            repo_root = None
+        if repo_root is not None:
+            repo_root_add = f"""sys.path.append(r'{repo_root}')"""
+        else:
+            repo_root_add = ""
         txt: str = f"""
 try:
     {import_line}
@@ -161,6 +170,7 @@ except (ImportError, ModuleNotFoundError) as ex:
     print(fr"⚠️ Importing with an ad-hoc `$PATH` manipulation. DO NOT pickle any files in this session as there is no gaurantee of correct deserialization.")
     import sys
     sys.path.append(r'{P(choice_file).parent}')
+    {repo_root_add}
     from {P(choice_file).stem} import *
     print(fr"✅ imported `{choice_file}`")
 """
