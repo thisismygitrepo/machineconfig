@@ -116,7 +116,7 @@ map jD cd ~/Downloads
 map jx cd ~/dotfiles
 # map jm cd ~/code/machineconfig/src/machineconfig
 map jh cd ~
-map jj $~/scripts/croshellj $f
+map jj $~/scripts/croshell -j --read $f
 # map jj $lvim ~/code/machineconfig/src/machineconfig/settings/lf/linux/lfrc
 
 # from https://github.com/gokcehan/lf/wiki/Integrations#zoxide

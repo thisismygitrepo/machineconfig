@@ -79,7 +79,7 @@ def main() -> None:
         #     if tmp is not None: tmp = tmp.split("\n")[0]
         #     print(f"➡️ Found version `{tmp}` for {an_app.stem}.")
         #     app_versions.append(None)
-    print(f"Checking tools collected from `{INSTALL_VERSION_ROOT}`:")
+    print(f"Checking tools (#{len(apps_paths_tmp)}) collected from `{INSTALL_VERSION_ROOT}`:")
     apps_paths_raw.print()
     positive_pct: list[Optional[float]] = []
     scan_time: list[str] = []

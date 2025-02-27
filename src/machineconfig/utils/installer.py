@@ -270,7 +270,7 @@ def check_latest():
 
 def get_installed_cli_apps():
     if platform.system() == "Windows": apps = P.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad"])
-    elif platform.system() == "Linux": apps = P(LINUX_INSTALL_PATH).search("*")
+    elif platform.system() == "Linux": apps = P(LINUX_INSTALL_PATH).search("*") + P("/usr/local/bin").search("*")
     else: raise NotImplementedError("Not implemented for this OS")
     apps = L([app for app in apps if app.size("kb") > 0.1 and not app.is_symlink()])  # no symlinks like paint and wsl and bash
     return apps

@@ -72,6 +72,8 @@ def build_parser():
     parser.add_argument("--cmd", "-c", dest="cmd", help="python command to interpret", default="")
     parser.add_argument("--terminal", "-t", dest="terminal", help="specify which terminal to be used. Default console host.", default="")  # can choose `wt`
     parser.add_argument("--shell", "-S", dest="shell", help="specify which shell to be used. Defaults to CMD.", default="")
+    parser.add_argument("--jupyter", "-j", dest="jupyter", help="run in jupyter interactive console", action="store_true", default=False)
+    parser.add_argument("--stViewer", "-s", dest="streamlit_viewer", help="view in streamlit app", action="store_true", default=False)
 
     args = parser.parse_args()
     # print(f"Crocodile.run: args of the firing command = {args.__dict__}")
@@ -102,6 +104,16 @@ def build_parser():
         program = get_read_pyfile_pycode(file, as_module=args.module, cmd=args.cmd)
 
     elif args.read != "":
+        if args.streamlit_viewer:
+            from machineconfig.scripts.python.viewer import run
+            py_file_path = run(data_path=args.read, data=None, get_figure=None)
+            final_program = f"""
+#!/bin/bash
+. $HOME/scripts/activate_ve 've'
+streamlit run {py_file_path}
+"""
+            PROGRAM_PATH.write_text(data=final_program)
+            return
         file = P(str(args.read).lstrip()).expanduser().absolute()
         ve_name_from_file, ipy_profile_from_file = get_ve_name_and_ipython_profile(init_path=P(file))
         # if profile is None:
@@ -146,14 +158,17 @@ print_logo(logo="crocodile")
 . $HOME/scripts/activate_ve '{ve}'
 
 """
-    fire_line = interpreter
-    if interpreter == "ipython":
-        fire_line += f" {interactivity} --profile {profile} --no-banner"
+    if args.jupyter:
+        fire_line = f"code --new-window {str(pyfile)}"
+    else:
+        fire_line = interpreter
+        if interpreter == "ipython":
+            fire_line += f" {interactivity} --profile {profile} --no-banner"
+        fire_line += f" {str(pyfile)}"
     final_program += fire_line
-    final_program += f" {str(pyfile)}"
     print(f"🔥 sourcing  ... {pyfile}\nwith fire line `{fire_line}`")
     PROGRAM_PATH.write_text(data=final_program)
-    (PROGRAM_PATH + ".py").write_text(str(pyfile), encoding='utf-8')
+    # (PROGRAM_PATH + ".py").write_text(str(pyfile), encoding='utf-8')
 
     # if platform.system() == "Windows":
         # return subprocess.run([f"powershell", "-Command", res], shell=True, capture_output=False, text=True, check=True)
