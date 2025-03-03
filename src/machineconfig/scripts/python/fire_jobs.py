@@ -95,9 +95,6 @@ def main() -> None:
         choice_file = path_obj
 
     print(f"🔍 Selected file: {choice_file}")
-    if choice_file.suffix in [".ps1", ".sh"]:
-        PROGRAM_PATH.write_text(f". {choice_file}")
-        return None
 
     # Convert args.kw to dictionary
     if choice_file.suffix == ".py":
@@ -155,10 +152,15 @@ def main() -> None:
         else:
             from machineconfig.utils.ve import get_ipython_profile
             exe = f"ipython -i --no-banner --profile {get_ipython_profile(choice_file)} "
-    else:
+    elif choice_file.suffix == ".ps1" or choice_file.suffix == ".sh":
+        exe = "."
+    elif choice_file.suffix == "":
         exe = ""
+    else:
+        raise NotImplementedError(f"File type {choice_file.suffix} not supported, in the sense that I don't know how to fire it.")
 
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
+        assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file.suffix}"
         import_line = get_import_module_code(str(choice_file))
         from git import Repo, InvalidGitRepositoryError
         try:
