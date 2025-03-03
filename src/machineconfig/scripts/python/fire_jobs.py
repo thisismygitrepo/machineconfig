@@ -217,7 +217,8 @@ except ImportError as _ex:
         command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
     else:
         if choice_file.suffix == "":
-            command = f"{exe} {choice_file} {args.kw}"
+            kwargs_raw = " ".join(args.kw)
+            command = f"{exe} {choice_file} {kwargs_str}"
         else:
             # command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
             command = f"{exe} {choice_file} "
@@ -268,22 +269,25 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
     # if platform.system() == "Linux":
     #     command = "timeout 1s aafire -driver slang\nclear\n" + command
 
+    from rich.panel import Panel
+    from rich.console import Console
+    from rich.syntax import Syntax
+    console = Console()
+
     if args.zellij_tab is not None:
+        comman_path__ = P.tmpfile(suffix=".sh").write_text(command)
+        console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {comman_path__}: "), style="bold red")
         command = f"""
 sleep 0.25
 zellij action new-tab --name {args.zellij_tab}
 sleep 0.5
 zellij action go-to-tab-name {args.zellij_tab}
 sleep 0.5
-zellij action new-pane --direction down -- /bin/bash {P.tmpfile(suffix=".sh").write_text(command)}
+zellij action new-pane --direction down -- /bin/bash {comman_path__}
 zellij action move-focus up; sleep 0.5
 zellij action close-pane; sleep 0.5
 """
 
-    from rich.panel import Panel
-    from rich.console import Console
-    from rich.syntax import Syntax
-    console = Console()
     console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {PROGRAM_PATH}: "), style="bold red")
     PROGRAM_PATH.write_text(command)
 
