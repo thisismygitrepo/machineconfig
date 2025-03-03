@@ -81,18 +81,6 @@ def main() -> None:
     parser.add_argument("--zellij_tab",      "-z", type=str, dest="zellij_tab", help="open in a new zellij tab")
     args = parser.parse_args()
 
-    # Convert args.kw to dictionary
-    if args.kw is not None:
-        assert len(args.kw) % 2 == 0, f"args.kw must be a list of even length. Got {len(args.kw)}"
-        kwargs = dict(zip(args.kw[::2], args.kw[1::2]))
-        for key, value in kwargs.items():
-            if value in str2obj:
-                kwargs[key] = str2obj[value]
-        if args.function is None:  # if user passed arguments and forgot to pass function, then assume they want to run the main function.
-            args.choose_function = True
-    else:
-        kwargs = {}
-
     path_obj = sanitize_path(P(args.path))
     if not path_obj.exists():
         path_obj = match_file_name(sub_string=args.path)
@@ -109,6 +97,21 @@ def main() -> None:
     if choice_file.suffix in [".ps1", ".sh"]:
         PROGRAM_PATH.write_text(f". {choice_file}")
         return None
+
+    # Convert args.kw to dictionary
+    if choice_file.suffix == ".py":
+        if args.kw is not None:
+            assert len(args.kw) % 2 == 0, f"args.kw must be a list of even length. Got {len(args.kw)}"
+            kwargs = dict(zip(args.kw[::2], args.kw[1::2]))
+            for key, value in kwargs.items():
+                if value in str2obj:
+                    kwargs[key] = str2obj[value]
+            if args.function is None:  # if user passed arguments and forgot to pass function, then assume they want to run the main function.
+                args.choose_function = True
+        else:
+            kwargs = {}
+    else:
+        kwargs = {}
 
     if args.choose_function or args.submit_to_cloud:
         options, func_args = parse_pyfile(file_path=str(choice_file))
@@ -213,8 +216,11 @@ except ImportError as _ex:
     elif args.cmd:
         command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
     else:
-        # command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
-        command = f"{exe} {choice_file} "
+        if choice_file.suffix == "":
+            command = f"{exe} {choice_file} {args.kw}"
+        else:
+            # command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
+            command = f"{exe} {choice_file} "
     # this installs in ve env, which is not execution env
     # if "ipdb" in command: install_n_import("ipdb")
     # if "pudb" in command: install_n_import("pudb")
