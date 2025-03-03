@@ -244,6 +244,9 @@ config = {this = '~/.config/mods/mods.yml', to_this = '~/dotfiles/creds/llm/mods
 [github_cli_token]
 token = {this = '~/.copilot-cli-access-token', to_this = '~/dotfiles/creds/llm/github_cli/.copilot-cli-access-token'}
 
+[aider]
+config = {this = '~/.aider.conf.yml', to_this = '~/dotfiles/creds/llm/aider/.aider.conf.yml'}
+
 [opencommit]
 opencommit = {this = '~/.opencommit', to_this = '~/dotfiles/creds/llm/opencommit_cli/.opencommit'}
 

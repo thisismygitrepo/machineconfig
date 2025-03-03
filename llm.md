@@ -60,6 +60,7 @@
 * https://github.com/BasedHardware/OpenGlass `convert glasses to ai glasses`
 * https://github.com/microsoft/PubSec-Info-Assistant `Information Assistant Accelerator`
 * https://github.com/goldmansachs/gs-quant
+* aider
 
 
 # Viz

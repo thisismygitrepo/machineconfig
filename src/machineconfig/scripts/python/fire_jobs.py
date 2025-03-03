@@ -78,7 +78,7 @@ def main() -> None:
     parser.add_argument("--optimized", "-O", action="store_true", help="Run the optimized version of the function")
     parser.add_argument("--Nprocess",        "-p", type=int, help="Number of processes to use", default=1)
     parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ... (meaning k1=v1, k2=v2, etc)")
-
+    parser.add_argument("--zellij_tab",      "-z", type=str, dest="zellij_tab", help="open in a new zellij tab")
     args = parser.parse_args()
 
     # Convert args.kw to dictionary
@@ -129,27 +129,30 @@ def main() -> None:
         from machineconfig.utils.ve import get_ve_profile  # if file name is passed explicitly, then, user probably launched it from cwd different to repo root, so activate_ve can't infer ve from .ve_path, so we attempt to do that manually here
         args.ve = get_ve_profile(choice_file)
 
-    if args.streamlit:
-        from crocodile.environment import get_network_addresses
-        local_ip_v4 = get_network_addresses()["local_ip_v4"]
-        computer_name = platform.node()
-        port = 8501
-        if choice_file.parent.joinpath(".streamlit/config.toml").exists():
-            config = Read.toml(choice_file.parent.joinpath(".streamlit/config.toml"))
-            if "server" in config:
-                if "port" in config["server"]:
-                    port = config["server"]["port"]
-        message = f"🚀 Streamlit app is running @:\n1- http://{local_ip_v4}:{port}\n2- http://{computer_name}:{port}\n3- http://localhost:{port}"
-        from rich.panel import Panel
-        from rich import print as rprint
-        rprint(Panel(message))
-        exe = "streamlit run --server.address 0.0.0.0 --server.headless true"
-        exe = f"cd '{choice_file.parent}'; " + exe
-    elif args.interactive is False: exe = "python"
-    elif args.jupyter: exe = "jupyter-lab"
+    if choice_file.suffix == ".py":
+        if args.streamlit:
+            from crocodile.environment import get_network_addresses
+            local_ip_v4 = get_network_addresses()["local_ip_v4"]
+            computer_name = platform.node()
+            port = 8501
+            if choice_file.parent.joinpath(".streamlit/config.toml").exists():
+                config = Read.toml(choice_file.parent.joinpath(".streamlit/config.toml"))
+                if "server" in config:
+                    if "port" in config["server"]:
+                        port = config["server"]["port"]
+            message = f"🚀 Streamlit app is running @:\n1- http://{local_ip_v4}:{port}\n2- http://{computer_name}:{port}\n3- http://localhost:{port}"
+            from rich.panel import Panel
+            from rich import print as rprint
+            rprint(Panel(message))
+            exe = "streamlit run --server.address 0.0.0.0 --server.headless true"
+            exe = f"cd '{choice_file.parent}'; " + exe
+        elif args.interactive is False: exe = "python"
+        elif args.jupyter: exe = "jupyter-lab"
+        else:
+            from machineconfig.utils.ve import get_ipython_profile
+            exe = f"ipython -i --no-banner --profile {get_ipython_profile(choice_file)} "
     else:
-        from machineconfig.utils.ve import get_ipython_profile
-        exe = f"ipython -i --no-banner --profile {get_ipython_profile(choice_file)} "
+        exe = ""
 
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         import_line = get_import_module_code(str(choice_file))
@@ -219,10 +222,8 @@ except ImportError as _ex:
     if not args.cmd:
         if "ipdb" in command: command = f"pip install ipdb\n\n{command}"
         if "pudb" in command: command = f"pip install pudb\n\n{command}"
-        if platform.system() == "Windows":
-            command = f". $HOME/scripts/activate_ve {args.ve}\n\n{command}"
-        else:
-            command = f". $HOME/scripts/activate_ve {args.ve}\n\n{command}"
+        if platform.system() == "Windows": command = f". $HOME/scripts/activate_ve {args.ve}\n\n{command}"
+        else: command = f". $HOME/scripts/activate_ve {args.ve}\n\n{command}"
     else:
         # CMD equivalent
         if "ipdb" in command: command = f"pip install ipdb & {command}"
@@ -260,6 +261,18 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
         command = command.replace("python ", "python -OO ")
     # if platform.system() == "Linux":
     #     command = "timeout 1s aafire -driver slang\nclear\n" + command
+
+    if args.zellij_tab is not None:
+        command = f"""
+sleep 0.25
+zellij action new-tab --name {args.zellij_tab}
+sleep 0.5
+zellij action go-to-tab-name {args.zellij_tab}
+sleep 0.5
+zellij action new-pane --direction down -- /bin/bash {P.tmpfile(suffix=".sh").write_text(command)}
+zellij action move-focus up; sleep 0.5
+zellij action close-pane; sleep 0.5
+"""
 
     from rich.panel import Panel
     from rich.console import Console

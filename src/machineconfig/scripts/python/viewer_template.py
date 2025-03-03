@@ -8,7 +8,7 @@ from crocodile.file_management import Read
 import time
 from typing import Any
 
-_ = px, Any, go
+_ = px, Any, go, npt, Read, time, np
 st.set_page_config(layout="wide", page_title="Figure Viewer", page_icon="📊")
 
 # Initialize session state
@@ -18,7 +18,7 @@ if 'last_time' not in st.session_state:
     st.session_state.last_time = time.time()
 
 data_path = "get_figure_placeholder.pkl"  # Placeholder for the data path
-data: list[npt.NDArray[np.float32]] = Read.read(data_path)
+data: Any = Read.read(data_path)
 
 
 # get_figure_placeholder
@@ -31,21 +31,17 @@ def get_figure(data: Any) -> go.Figure:
 
 total_figures = len(data)
 
-# Helper functions
 def change_index(new_index: int) -> None:
     """Update the current index with bounds checking"""
     if 0 <= new_index < total_figures:
         st.session_state.current_index = new_index
         st.session_state.last_time = time.time()
-
 def next_figure():
     """Navigate to the next figure"""
     change_index(st.session_state.current_index + 1)
-
 def prev_figure():
     """Navigate to the previous figure"""
     change_index(st.session_state.current_index - 1)
-
 def go_to_index():
     """Navigate to a specific index"""
     try:
@@ -53,6 +49,7 @@ def go_to_index():
         change_index(idx)
     except ValueError:
         st.error("Please enter a valid integer index")
+
 
 st.title("Interactive Figure Viewer")
 
