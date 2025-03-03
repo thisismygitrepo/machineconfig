@@ -38,7 +38,7 @@ def choose_cloud_interactively() -> str:
     else: raise ValueError(f"Got {tmp} from rclone listremotes")
     if len(remotes) == 0:
         raise RuntimeError("You don't have remotes. Configure your rclone first to get cloud services access.")
-    cloud: str=choose_one_option(msg="WHICH CLOUD?", options=list(remotes), default=remotes[0], fzf=True)
+    cloud: str = choose_one_option(msg="WHICH CLOUD?", options=list(remotes), default=remotes[0], fzf=True)
     return cloud
 
 

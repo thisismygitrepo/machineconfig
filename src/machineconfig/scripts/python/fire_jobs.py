@@ -220,7 +220,7 @@ except ImportError as _ex:
         command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
     else:
         if choice_file.suffix == "":
-            kwargs_raw = " ".join(args.kw)
+            kwargs_raw = " ".join(args.kw) if args.kw is not None else ""
             command = f"{exe} {choice_file} {kwargs_raw}"
         else:
             # command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
