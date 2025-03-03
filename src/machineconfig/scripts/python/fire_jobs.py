@@ -94,6 +94,7 @@ def main() -> None:
     else:
         choice_file = path_obj
 
+    print(f"🔍 Selected file: {choice_file}")
     if choice_file.suffix in [".ps1", ".sh"]:
         PROGRAM_PATH.write_text(f". {choice_file}")
         return None
