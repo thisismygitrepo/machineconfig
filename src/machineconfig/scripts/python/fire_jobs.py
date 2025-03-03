@@ -218,7 +218,7 @@ except ImportError as _ex:
     else:
         if choice_file.suffix == "":
             kwargs_raw = " ".join(args.kw)
-            command = f"{exe} {choice_file} {kwargs_str}"
+            command = f"{exe} {choice_file} {kwargs_raw}"
         else:
             # command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
             command = f"{exe} {choice_file} "
