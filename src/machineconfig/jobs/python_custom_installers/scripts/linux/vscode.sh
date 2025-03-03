@@ -23,3 +23,4 @@ if command -v code-insiders >/dev/null 2>&1; then
     echo "VS Code Insiders found, updating..."
     sudo nala install code-insiders -y
 fi
+
