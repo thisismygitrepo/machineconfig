@@ -111,18 +111,30 @@ def main() -> None:
     else:
         kwargs = {}
 
+    # =========================  choosing function to run
     if args.choose_function or args.submit_to_cloud:
-        options, func_args = parse_pyfile(file_path=str(choice_file))
-        choice_function_tmp = display_options(msg="Choose a function to run", options=options, fzf=True, multi=False)
-        assert isinstance(choice_function_tmp, str), f"choice_function must be a string. Got {type(choice_function_tmp)}"
-        choice_index = options.index(choice_function_tmp)
-        choice_function: Optional[str] = choice_function_tmp.split(' -- ')[0]
-        choice_function_args = func_args[choice_index]
+        if choice_file.suffix == ".py":
+            options, func_args = parse_pyfile(file_path=str(choice_file))
+            choice_function_tmp = display_options(msg="Choose a function to run", options=options, fzf=True, multi=False)
+            assert isinstance(choice_function_tmp, str), f"choice_function must be a string. Got {type(choice_function_tmp)}"
+            choice_index = options.index(choice_function_tmp)
+            choice_function: Optional[str] = choice_function_tmp.split(' -- ')[0]
+            choice_function_args = func_args[choice_index]
 
-        if choice_function == "RUN AS MAIN": choice_function = None
-        if len(choice_function_args) > 0 and len(kwargs) == 0:
-            for item in choice_function_args:
-                kwargs[item.name] = input(f"Please enter a value for argument `{item.name}` (type = {item.type}) (default = {item.default}) : ") or item.default
+            if choice_function == "RUN AS MAIN": choice_function = None
+            if len(choice_function_args) > 0 and len(kwargs) == 0:
+                for item in choice_function_args:
+                    kwargs[item.name] = input(f"Please enter a value for argument `{item.name}` (type = {item.type}) (default = {item.default}) : ") or item.default
+        elif choice_file.suffix == ".sh":  # in this case, we choos lines.
+            options = []
+            for line in choice_file.read_text().splitlines():
+                if line.startswith("#"): continue
+                if line == "": continue
+                if line.startswith("echo"): continue
+                options.append(line)
+            choice_line = choose_one_option(options=options, fzf=True)
+            choice_file = P.tmpfile(suffix=".sh").write_text(choice_line)
+            choice_function = None
     else:
         choice_function = args.function
 
