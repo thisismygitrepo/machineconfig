@@ -1,4 +1,49 @@
-|    | app_name   | version        |   positive_pct | scan_time        | app_path            | app_url   |
-|---:|:-----------|:---------------|---------------:|:-----------------|:--------------------|:----------|
-|  0 | bw         | predefined_url |              0 | 2025-02-23 22:23 | ~/.local/bin/bw     |           |
-|  1 | rclone     | v1.69.0        |              0 | 2025-02-23 22:25 | ~/.local/bin/rclone |           |
+|    | app_name    | version        |   positive_pct | scan_time        | app_path                   | app_url   |
+|---:|:------------|:---------------|---------------:|:-----------------|:---------------------------|:----------|
+|  0 | broot       | predefined_url |            0   | 2025-03-04 14:58 | /usr/local/bin/broot       |           |
+|  1 | cloudreve   | 3.8.3          |            0   | 2025-03-04 14:59 | /usr/local/bin/cloudreve   |           |
+|  2 | fd          | v10.2.0        |            0   | 2025-03-04 15:02 | /usr/local/bin/fd          |           |
+|  3 | cpufetch    | v1.06          |            0   | 2025-03-04 15:04 | /usr/local/bin/cpufetch    |           |
+|  4 | gotty       | v1.5.0         |            0   | 2025-03-04 15:07 | /usr/local/bin/gotty       |           |
+|  5 | viu         | v1.5.0         |            0   | 2025-03-04 15:08 | /usr/local/bin/viu         |           |
+|  6 | mcfly       | v0.9.2         |            0   | 2025-03-04 15:11 | /usr/local/bin/mcfly       |           |
+|  7 | rg          | 14.1.0         |            0   | 2025-03-04 15:14 | /usr/local/bin/rg          |           |
+|  8 | procs       | v0.14.6        |            0   | 2025-03-04 15:16 | /usr/local/bin/procs       |           |
+|  9 | cloudflared | 2024.8.3       |            0   | 2025-03-04 15:17 | /usr/local/bin/cloudflared |           |
+| 10 | gh          | v2.55.0        |            0   | 2025-03-04 15:20 | /usr/local/bin/gh          |           |
+| 11 | diskonaut   | 0.11.0         |            0   | 2025-03-04 15:22 | /usr/local/bin/diskonaut   |           |
+| 12 | zellij      | v0.40.1        |            0   | 2025-03-04 15:37 | /usr/local/bin/zellij      |           |
+| 13 | hx          | None           |            0   | 2025-03-04 15:38 | /usr/local/bin/hx          |           |
+| 14 | ouch        | 0.5.1          |            0   | 2025-03-04 15:40 | /usr/local/bin/ouch        |           |
+| 15 | fzf         | v0.55.0        |            0   | 2025-03-04 15:43 | /usr/local/bin/fzf         |           |
+| 16 | tere        | v1.5.1         |            0   | 2025-03-04 15:44 | /usr/local/bin/tere        |           |
+| 17 | zoxide      | v0.9.4         |            0   | 2025-03-04 15:46 | /usr/local/bin/zoxide      |           |
+| 18 | watchexec   | v2.1.2         |            0   | 2025-03-04 15:46 | /usr/local/bin/watchexec   |           |
+| 19 | pistol      | v0.5.2         |            0   | 2025-03-04 15:47 | /usr/local/bin/pistol      |           |
+| 20 | gitui       | v0.26.3        |            0   | 2025-03-04 15:51 | /usr/local/bin/gitui       |           |
+| 21 | starship    | v1.20.1        |            0   | 2025-03-04 15:54 | /usr/local/bin/starship    |           |
+| 22 | lsd         | v1.1.5         |            0   | 2025-03-04 15:55 | /usr/local/bin/lsd         |           |
+| 23 | rclone      | v1.67.0        |            0   | 2025-03-04 15:56 | /usr/local/bin/rclone      |           |
+| 24 | topgrade    | v15.0.0        |            0   | 2025-03-04 15:59 | /usr/local/bin/topgrade    |           |
+| 25 | onefetch    | 2.22.0         |            0   | 2025-03-04 16:01 | /usr/local/bin/onefetch    |           |
+| 26 | gum         | v0.14.4        |            0   | 2025-03-04 16:02 | /usr/local/bin/gum         |           |
+| 27 | btop        | v1.3.2         |            0   | 2025-03-04 16:04 | /usr/local/bin/btop        |           |
+| 28 | termusic    | v0.9.1         |            0   | 2025-03-04 16:07 | /usr/local/bin/termusic    |           |
+| 29 | bat         | v0.24.0        |            0   | 2025-03-04 16:08 | /usr/local/bin/bat         |           |
+| 30 | joshuto     | predefined_url |            0   | 2025-03-04 16:09 | /usr/local/bin/joshuto     |           |
+| 31 | fastfetch   | 2.23.0         |            0   | 2025-03-04 16:10 | /usr/local/bin/fastfetch   |           |
+| 32 | nu          | 0.97.1         |            0   | 2025-03-04 16:14 | /usr/local/bin/nu          |           |
+| 33 | btm         | 0.10.2         |            0   | 2025-03-04 16:15 | /usr/local/bin/btm         |           |
+| 34 | chatgpt     | v1.3.5         |            0   | 2025-03-04 16:17 | /usr/local/bin/chatgpt     |           |
+| 35 | glow        | v2.0.0         |            0   | 2025-03-04 16:19 | /usr/local/bin/glow        |           |
+| 36 | rga         | v0.10.6        |            0   | 2025-03-04 16:22 | /usr/local/bin/rga         |           |
+| 37 | presenterm  | v0.8.0         |            0   | 2025-03-04 16:25 | /usr/local/bin/presenterm  |           |
+| 38 | delta       | 0.18.1         |            0   | 2025-03-04 16:27 | /usr/local/bin/delta       |           |
+| 39 | mods        | v1.5.0         |            0   | 2025-03-04 16:29 | /usr/local/bin/mods        |           |
+| 40 | dua         | v2.29.2        |            0   | 2025-03-04 16:30 | /usr/local/bin/dua         |           |
+| 41 | ttyd        | 1.7.7          |            0   | 2025-03-04 16:43 | /usr/local/bin/ttyd        |           |
+| 42 | lf          | r32            |            1.3 | 2025-03-04 16:45 | /usr/local/bin/lf          |           |
+| 43 | ytui-music  | main           |            0   | 2025-03-04 16:46 | /usr/local/bin/ytui-music  |           |
+| 44 | mprocs      | v0.7.1         |            0   | 2025-03-04 16:47 | /usr/local/bin/mprocs      |           |
+| 45 | yazi        | v0.3.3         |            0   | 2025-03-04 16:48 | /usr/local/bin/yazi        |           |
+| 46 | xplr        | v0.21.9        |            0   | 2025-03-04 16:50 | /usr/local/bin/xplr        |           |
