@@ -74,7 +74,7 @@ def main() -> None:
     parser.add_argument("--module",          "-m", action="store_true", help="launch the main file")
     parser.add_argument("--streamlit",       "-S", action="store_true", help="run as streamlit app")
     parser.add_argument("--history",         "-H", action="store_true", help="choose from history")
-    # parser.add_argument("--git_pull",        "-g", action="store_true", help="Start by pulling the git repo")
+    parser.add_argument("--git_pull",        "-g", action="store_true", help="Start by pulling the git repo")
     parser.add_argument("--optimized", "-O", action="store_true", help="Run the optimized version of the function")
     parser.add_argument("--Nprocess",        "-p", type=int, help="Number of processes to use", default=1)
     parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ... (meaning k1=v1, k2=v2, etc)")
@@ -302,7 +302,8 @@ zellij action new-pane --direction down -- /bin/bash {comman_path__}
 zellij action move-focus up; sleep 0.5
 zellij action close-pane; sleep 0.5
 """
-
+    if args.git_pull:
+        command = f"\ngit -C {choice_file.parent} pull\n\n" + command
     console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {PROGRAM_PATH}: "), style="bold red")
     PROGRAM_PATH.write_text(command)
 
