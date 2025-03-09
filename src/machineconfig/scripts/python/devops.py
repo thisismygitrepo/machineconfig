@@ -27,7 +27,8 @@ class Options(Enum):
 def args_parser():
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("-w", "--which", help="which option to run", type=str, default=None)  # , choices=[op.value for op in Options]
+    new_line = "\n\n"
+    parser.add_argument("-w", "--which", help=f"""which option to run\nChoose one of those:\n{new_line.join([f"{item.name}: {item.value}" for item in list(Options)])}""", type=str, default=None)  # , choices=[op.value for op in Options]
     args = parser.parse_args()
     main(which=args.which)
 
