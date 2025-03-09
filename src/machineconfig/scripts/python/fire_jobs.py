@@ -292,8 +292,16 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
     if args.zellij_tab is not None:
         comman_path__ = P.tmpfile(suffix=".sh").write_text(command)
         console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {comman_path__}: "), style="bold red")
+        # this gives exising zellij tab names: zellij action query-tab-names
+        import subprocess
+        existing_tab_names = subprocess.run(["zellij", "action", "query-tab-names"], capture_output=True, text=True).stdout.splitlines()
+        if args.zellij_tab in existing_tab_names:
+            print(f"⚠️ Tab name `{args.zellij_tab}` already exists. Please choose a different name.")
+            # args.zellij_tab = input("Please enter a new tab name: ")
+            args.zellij_tab += f"_{randstr(3)}"
         command = f"""
 sleep 0.25
+
 zellij action new-tab --name {args.zellij_tab}
 sleep 0.5
 zellij action go-to-tab-name {args.zellij_tab}
