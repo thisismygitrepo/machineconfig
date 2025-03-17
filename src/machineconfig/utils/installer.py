@@ -149,7 +149,7 @@ class Installer:
                 downloaded.delete(sure=True)
             else:
                 if platform.system() == "Windows":
-                    exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True, rename_to=self.exe_name + ".exe")
+                    exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True, rename_to=self.exe_name.replace(".exe", "") + ".exe")
                 elif platform.system() == "Linux":
                     exe = find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True, rename_to=self.exe_name)
                 else: raise NotImplementedError(f"System {platform.system()} not implemented")

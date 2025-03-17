@@ -1,38 +1,68 @@
+Write-Host "
+🚀 ===========================================
+📦 Machine Configuration Installation Script
+============================================="
 
-echo "If you have execution policy issues, run: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser."
-echo "If you want to accept everything, run: \$yesAll = $true"
+Write-Host "ℹ️  If you have execution policy issues, run:
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser"
+Write-Host "💡 To accept all prompts automatically, run: `$yesAll = `$true`n"
 
 # Set environment variable and execute scripts
-
 $ve_name = "ve"
+
+Write-Host "🔄 Setting up Python environment..."
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1" -OutFile "ve.ps1"
 .\ve.ps1
 
+Write-Host "`n🔄 Setting up repositories..."
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1" -OutFile "repos.ps1"
 .\repos.ps1
 
-# Display messages about moving dotfiles
-Write-Host "MOVING DOTFILES TO NEW MACHINE"
-Write-Host "USING MOUSE WITHOUT KB OR BROWSER SHARE: On original machine, run: 'cd ~/dotfiles/creds/msc; easy-sharing . --password rew'. On new machine, open browser and navigate to URL to get password of mousewithoutborders"
-Write-Host "USING SSH: FROM REMOTE, RUN: fptx ~/dotfiles $(hostname):^ -z"
-Write-Host "* for WSL: `wsl_server.ps1; ftpx ~/dotfiles $env:USERNAME@localhost:2222 -z # OR: New-Item -ItemType SymbolicLink -Path $env:USERPROFILE\dotfiles -Target \\wsl$\Ubuntu\home\$env:USERNAME\dotfiles"
-Write-Host "USING INTERNET SECURE SHARE: cd ~; cloud_copy SHARE_URL . --config ss (requires symlinks to be created first)"
+Write-Host "`n📂 ============================================
+🔄 DOTFILES MIGRATION OPTIONS
+============================================="
 
-# Install SSH Server
+Write-Host "🖱️  Method 1: USING MOUSE WITHOUT KB OR BROWSER SHARE
+    On original machine, run:
+    cd ~/dotfiles/creds/msc
+    easy-sharing . --password rew
+    Then open browser on new machine to get MouseWithoutBorders password"
+
+Write-Host "`n🔐 Method 2: USING SSH
+    FROM REMOTE, RUN:
+    ftpx ~/dotfiles `$(hostname):^ -z"
+
+Write-Host "`n💻 For WSL:
+    wsl_server.ps1
+    ftpx ~/dotfiles `$env:USERNAME@localhost:2222 -z
+    # OR:
+    New-Item -ItemType SymbolicLink -Path `$env:USERPROFILE\dotfiles -Target \\wsl`$\Ubuntu\home\`$env:USERNAME\dotfiles"
+
+Write-Host "`n☁️  Method 3: USING INTERNET SECURE SHARE
+    cd ~
+    cloud_copy SHARE_URL . --config ss
+    (requires symlinks to be created first)"
+
+Write-Host "`n----------------------------------------"
 if (-not $yesAll) {
-    $choice = Read-Host "Install SSH Server [y]/n ? "
+    $choice = Read-Host "🔒 Install SSH Server [y]/n"
 } else {
     $choice = "y"
 }
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
+    Write-Host "`n🔧 Installing and configuring SSH server..."
     Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
     Start-Service sshd
     Set-Service -Name sshd -StartupType 'Automatic'
-    Write-Host "SSH Server installed and started."
+    Write-Host "✅ SSH Server installed and configured successfully!"
 } else {
-    Write-Host "Installation aborted."
+    Write-Host "⏭️  Skipping SSH server installation"
 }
+
+Write-Host "`n✨ ===========================================
+🎉 Installation Complete!
+============================================="
 
 # Confirm copying finished
 if (-not $yesAll) {
