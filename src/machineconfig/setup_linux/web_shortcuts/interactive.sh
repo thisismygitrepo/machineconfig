@@ -35,6 +35,17 @@ else
     echo "⏭️  Skipping virtual environment setup"
 fi
 
+echo -e "\n----------------------------------------"
+read -p "🔒 Install SSH Server [y]/n? " choice
+choice=${choice:-y}
+if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
+    echo -e "\n🔧 Installing SSH server..."
+    sudo nala install openssh-server -y
+else
+    echo "⏭️  Skipping SSH server installation"
+fi
+
+
 echo -e "\n📂 ============================================
 🔄 DOTFILES MIGRATION OPTIONS
 ============================================="
@@ -53,25 +64,9 @@ echo -e "\n☁️  Method 3: USING INTERNET SECURE SHARE
     cloud_copy SHARE_URL . --config ss
     (requires symlinks to be created first)"
 
-echo -e "\n----------------------------------------"
-read -p "🔒 Install SSH Server [y]/n? " choice
-choice=${choice:-y}
-if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    echo -e "\n🔧 Installing SSH server..."
-    sudo nala install openssh-server -y
-else
-    echo "⏭️  Skipping SSH server installation"
-fi
 
 echo -e "\n----------------------------------------"
 read -p "📂 Have you finished copying dotfiles? [y]/n? " choice
-choice=${choice:-y}
-if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    echo -e "\n🔧 Setting up SSH server..."
-    sudo nala install openssh-server -y
-else
-    echo "⏭️  Skipping final SSH setup"
-fi
 
 echo -e "\n----------------------------------------"
 read -p "🔗 Create Symlinks (finish dotfiles transfer first) [y]/n? " choice
