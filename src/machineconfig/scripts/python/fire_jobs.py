@@ -288,7 +288,7 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
         comman_path__ = P.tmpfile(suffix=".sh").write_text(command)
         console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {comman_path__}: "), style="bold red")
         import subprocess
-        existing_tab_names = subprocess.run(["zellij", "action", "query-tab-names"], capture_output=True, text=True).stdout.splitlines()
+        existing_tab_names = subprocess.run(["zellij", "action", "query-tab-names"], capture_output=True, text=True, check=True).stdout.splitlines()
         if args.zellij_tab in existing_tab_names:
             print(f"⚠️ Tab name `{args.zellij_tab}` already exists. Please choose a different name.")
             # args.zellij_tab = input("Please enter a new tab name: ")
@@ -411,7 +411,7 @@ def find_repo_root_path(start_path: str) -> Optional[str]:
     while path != root_path and trials < 20:
         for root_file in root_files:
             if os.path.exists(os.path.join(path, root_file)):
-                print(f"Found repo root path: {path}")
+                # print(f"Found repo root path: {path}")
                 return path
         path = os.path.dirname(path)
         trials += 1
