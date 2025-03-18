@@ -9,7 +9,7 @@ fire
 
 
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, choose_ssh_host, match_file_name, sanitize_path
-from machineconfig.utils.ve import get_ve_activate_line
+from machineconfig.utils.ve import get_ve_activate_line, get_repo_root
 from crocodile.file_management import P, Read
 from crocodile.core import Display, randstr
 import inspect
