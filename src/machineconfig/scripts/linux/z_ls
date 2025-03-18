@@ -32,7 +32,7 @@ fi
 
 # check whether the string "(current)" is in ZJ_SESSIONS
 if [[ "${ZJ_SESSIONS}" == *"(current)"* ]]; then
-    # if so, then we are in a zellij session
+    # if so, then we are in a zellijsession
     echo "already inside a session, existing."
     COMMANDS=$(ls $HOME/code/machineconfig/src/machineconfig/settings/zellij/commands)
     # fzf the results
@@ -40,7 +40,7 @@ if [[ "${ZJ_SESSIONS}" == *"(current)"* ]]; then
     # run the bash fiZJ_SESSIONSle chosen
     bash $HOME/code/machineconfig/src/machineconfig/settings/zellij/commands/$res
 
-else # ==> we are not in a zellij session
+else # ==> we are not in a zellijsession
   if [ "${NO_SESSIONS}" -ge 1 ]; then  # sessions do exist
 
       # remove sessions that have 'EXITED' in them

@@ -43,9 +43,9 @@ def get_ipython_profile(init_path: P, ve_name: Optional[str] = None):
             print(f"⚠️ Using default IPython: {ipy_profile}")
     return ipy_profile
 
-def get_ve_profile(init_path: P, strict: bool=False):
+def get_ve_profile(init_path: P) -> Optional[str]:
     """Relies on .ve_path"""
-    ve = ""
+    ve: Optional[str] = None
     tmp = init_path
     for _ in init_path.parents:
         if tmp.joinpath(".ve_path").exists():
@@ -53,8 +53,8 @@ def get_ve_profile(init_path: P, strict: bool=False):
             print(f"🔮 Using Virtual Environment: {ve}")
             break
         tmp = tmp.parent
-    if ve == "" and strict: raise ValueError("❌ No virtual environment found.")
     return ve
+
 
 def get_ve_name_and_ipython_profile(init_path: P):
     ve_name = "ve"

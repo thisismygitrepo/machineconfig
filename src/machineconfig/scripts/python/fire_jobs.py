@@ -30,6 +30,13 @@ def search_for_files_of_interest(path_obj: P):
     sh_files = path_obj.search(pattern="*.sh", r=True).list
     files = py_files + ps_files + sh_files
     return files
+def get_repo_root(choice_file: str) -> Optional[str]:
+    from git import Repo, InvalidGitRepositoryError
+    try:
+        repo_root = Repo(P(choice_file).parent, search_parent_directories=True).working_tree_dir
+    except InvalidGitRepositoryError:
+        repo_root = None
+    return repo_root
 
 
 def convert_kwargs_to_fire_kwargs_str(kwargs: dict[str, Any]) -> str:
@@ -140,7 +147,21 @@ def main() -> None:
 
     if args.ve == "":
         from machineconfig.utils.ve import get_ve_profile  # if file name is passed explicitly, then, user probably launched it from cwd different to repo root, so activate_ve can't infer ve from .ve_path, so we attempt to do that manually here
-        args.ve = get_ve_profile(choice_file)
+        ve_resolved = get_ve_profile(choice_file) or ""
+    else: ve_resolved = args.ve
+    if ve_resolved == "":
+        repo_root = get_repo_root(str(choice_file))
+        if repo_root is not None and P(repo_root).joinpath(".venv").exists():
+            if platform.system() == "Windows":
+                activate_ve_line = f". {repo_root}\\.venv\\Scripts\\activate.ps1"
+            elif platform.system() in ["Linux", "Darwin"]:
+                activate_ve_line = f". {repo_root}/.venv/bin/activate"
+            print(f"⚠️ .ve_path not found; using the one found in {repo_root}/.venv")
+        else:
+            activate_ve_line = f". $HOME/scripts/activate_ve {ve_resolved}"
+    else:
+        activate_ve_line = f". $HOME/scripts/activate_ve {args.ve}"
+
 
     if choice_file.suffix == ".py":
         if args.streamlit:
@@ -174,11 +195,7 @@ def main() -> None:
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file.suffix}"
         import_line = get_import_module_code(str(choice_file))
-        from git import Repo, InvalidGitRepositoryError
-        try:
-            repo_root = Repo(P(choice_file).parent, search_parent_directories=True).working_tree_dir
-        except InvalidGitRepositoryError:
-            repo_root = None
+        repo_root = get_repo_root(str(choice_file))
         if repo_root is not None:
             repo_root_add = f"""sys.path.append(r'{repo_root}')"""
         else:
@@ -244,8 +261,7 @@ except ImportError as _ex:
     if not args.cmd:
         if "ipdb" in command: command = f"pip install ipdb\n\n{command}"
         if "pudb" in command: command = f"pip install pudb\n\n{command}"
-        if platform.system() == "Windows": command = f". $HOME/scripts/activate_ve {args.ve}\n\n{command}"
-        else: command = f". $HOME/scripts/activate_ve {args.ve}\n\n{command}"
+        command = f"{activate_ve_line}\n\n{command}"
     else:
         # CMD equivalent
         if "ipdb" in command: command = f"pip install ipdb & {command}"
