@@ -12,6 +12,7 @@ import platform
 def checkout_version(version: str, repo_root: P, exclude_editable: bool=False):
     """Checkout a version of the repo and install its requirements."""
     ve_name = get_ve_profile(init_path=repo_root)
+    if ve_name is None: raise ValueError("No virtual environment found.")
     ve_path = P.home().joinpath("venvs", ve_name)
     ve_specs = get_ve_specs(ve_path)
     try:

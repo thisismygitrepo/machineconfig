@@ -54,6 +54,35 @@ def get_ve_profile(init_path: P) -> Optional[str]:
             break
         tmp = tmp.parent
     return ve
+def get_repo_root(choice_file: str) -> Optional[str]:
+    from git import Repo, InvalidGitRepositoryError
+    try:
+        repo_root = Repo(P(choice_file), search_parent_directories=True).working_tree_dir
+    except InvalidGitRepositoryError:
+        repo_root = None
+    return repo_root
+def get_ve_activate_line(ve_name: Optional[str], a_path: str):
+    if ve_name == "" or ve_name is None:
+        ve_resolved = get_ve_profile(P(a_path)) or ""
+        # print(f"🔍 Found virtual environment: {ve_resolved}")
+    else: ve_resolved = ve_name
+    if ve_resolved == "" or ve_resolved is None:
+        repo_root = get_repo_root(str(a_path))
+        print(a_path)
+        if repo_root is not None and P(repo_root).joinpath(".venv").exists():
+            if platform.system() == "Windows":
+                activate_ve_line = f". {repo_root}\\.venv\\Scripts\\activate.ps1"
+            elif platform.system() in ["Linux", "Darwin"]:
+                activate_ve_line = f". {repo_root}/.venv/bin/activate"
+            else:
+                raise NotImplementedError(f"Platform {platform.system()} not supported.")
+            print(f"⚠️ .ve_path not found; using the one found in {repo_root}/.venv")
+        else:
+            activate_ve_line = f". $HOME/scripts/activate_ve {ve_resolved}"
+    else:
+        activate_ve_line = f". $HOME/scripts/activate_ve {ve_name}"
+    # print(f"🔮 Activating virtual environment: {activate_ve_line}")
+    return activate_ve_line
 
 
 def get_ve_name_and_ipython_profile(init_path: P):

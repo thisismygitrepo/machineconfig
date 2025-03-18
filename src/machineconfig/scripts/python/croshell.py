@@ -6,7 +6,7 @@ import argparse
 # import subprocess
 # import platform
 from crocodile.file_management import P, randstr
-from machineconfig.utils.ve import get_ipython_profile, get_ve_profile, get_ve_name_and_ipython_profile
+from machineconfig.utils.ve import get_ipython_profile, get_ve_profile, get_ve_name_and_ipython_profile, get_ve_activate_line
 from machineconfig.utils.utils import PROGRAM_PATH, display_options
 
 
@@ -148,14 +148,16 @@ print_logo(logo="crocodile")
 
     pyfile.write_text(total_program, encoding='utf-8')
 
-    ve = get_ve_profile(P(file)) if args.ve is None else str(args.ve)
     if profile is None:
-        profile = get_ipython_profile(init_path=P.cwd(), ve_name=ve)
+        ve_name = get_ve_profile(P(file)) if args.ve is None else str(args.ve)
+        if ve_name is not None:
+            profile = get_ipython_profile(init_path=P.cwd(), ve_name=ve_name)
         # profile = "default"
+    ve_activateion_line = get_ve_activate_line(ve_name=args.ve, a_path=P.cwd())
     final_program = f"""
 #!/bin/bash
 
-. $HOME/scripts/activate_ve '{ve}'
+{ve_activateion_line}
 
 """
     if args.jupyter:

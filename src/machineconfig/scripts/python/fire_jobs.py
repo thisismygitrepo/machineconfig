@@ -9,6 +9,7 @@ fire
 
 
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, choose_ssh_host, match_file_name, sanitize_path
+from machineconfig.utils.ve import get_ve_activate_line
 from crocodile.file_management import P, Read
 from crocodile.core import Display, randstr
 import inspect
@@ -30,13 +31,6 @@ def search_for_files_of_interest(path_obj: P):
     sh_files = path_obj.search(pattern="*.sh", r=True).list
     files = py_files + ps_files + sh_files
     return files
-def get_repo_root(choice_file: str) -> Optional[str]:
-    from git import Repo, InvalidGitRepositoryError
-    try:
-        repo_root = Repo(P(choice_file).parent, search_parent_directories=True).working_tree_dir
-    except InvalidGitRepositoryError:
-        repo_root = None
-    return repo_root
 
 
 def convert_kwargs_to_fire_kwargs_str(kwargs: dict[str, Any]) -> str:
@@ -102,6 +96,7 @@ def main() -> None:
         choice_file = path_obj
 
     print(f"🔍 Selected file: {choice_file}")
+    activate_ve_line  = get_ve_activate_line(ve_name=args.ve, a_path=str(choice_file))
 
     # Convert args.kw to dictionary
     if choice_file.suffix == ".py":
@@ -145,22 +140,6 @@ def main() -> None:
     else:
         choice_function = args.function
 
-    if args.ve == "":
-        from machineconfig.utils.ve import get_ve_profile  # if file name is passed explicitly, then, user probably launched it from cwd different to repo root, so activate_ve can't infer ve from .ve_path, so we attempt to do that manually here
-        ve_resolved = get_ve_profile(choice_file) or ""
-    else: ve_resolved = args.ve
-    if ve_resolved == "":
-        repo_root = get_repo_root(str(choice_file))
-        if repo_root is not None and P(repo_root).joinpath(".venv").exists():
-            if platform.system() == "Windows":
-                activate_ve_line = f". {repo_root}\\.venv\\Scripts\\activate.ps1"
-            elif platform.system() in ["Linux", "Darwin"]:
-                activate_ve_line = f". {repo_root}/.venv/bin/activate"
-            print(f"⚠️ .ve_path not found; using the one found in {repo_root}/.venv")
-        else:
-            activate_ve_line = f". $HOME/scripts/activate_ve {ve_resolved}"
-    else:
-        activate_ve_line = f". $HOME/scripts/activate_ve {args.ve}"
 
 
     if choice_file.suffix == ".py":
@@ -271,7 +250,7 @@ except ImportError as _ex:
 
     if args.submit_to_cloud:
         command = f"""
-. $HOME/scripts/activate_ve {args.ve}
+{activate_ve_line}
 python -m crocodile.cluster.templates.cli_click --file {choice_file} """
         if choice_function is not None:
             command += f"--function {choice_function} "
