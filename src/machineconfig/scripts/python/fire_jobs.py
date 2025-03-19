@@ -74,6 +74,7 @@ def main() -> None:
     parser.add_argument("--remote",          "-r", action="store_true", help="launch on a remote machine")
     parser.add_argument("--module",          "-m", action="store_true", help="launch the main file")
     parser.add_argument("--streamlit",       "-S", action="store_true", help="run as streamlit app")
+    parser.add_argument("--holdDirectory",   "-D", action="store_true", help="hold current directory and avoid cd'ing to the script directory")
     parser.add_argument("--history",         "-H", action="store_true", help="choose from history")
     parser.add_argument("--git_pull",        "-g", action="store_true", help="Start by pulling the git repo")
     parser.add_argument("--optimized", "-O", action="store_true", help="Run the optimized version of the function")
@@ -141,15 +142,17 @@ def main() -> None:
         choice_function = args.function
 
 
-
     if choice_file.suffix == ".py":
         if args.streamlit:
             from crocodile.environment import get_network_addresses
             local_ip_v4 = get_network_addresses()["local_ip_v4"]
             computer_name = platform.node()
             port = 8501
-            if choice_file.parent.joinpath(".streamlit/config.toml").exists():
-                config = Read.toml(choice_file.parent.joinpath(".streamlit/config.toml"))
+            toml_path1 = choice_file.parent.joinpath(".streamlit/config.toml")
+            toml_path2 = choice_file.parent.parent.joinpath(".streamlit/config.toml")
+            toml_path = toml_path1 if toml_path1.exists() else toml_path2
+            if toml_path.exists():
+                config = Read.toml(toml_path)
                 if "server" in config:
                     if "port" in config["server"]:
                         port = config["server"]["port"]
@@ -223,8 +226,11 @@ except ImportError as _ex:
         command = f"{exe} -m fire {choice_file} {choice_function} {kwargs_str}"
     elif args.streamlit:
         # for .streamlit config to work, it needs to be in the current directory.
-        # cd {choice_file.parent}\n\n
-        command = f"{exe} {choice_file}\n\ncd {P.cwd()}"
+        if args.holdDirectory:
+            command = f"{exe} {choice_file}"
+        else:
+            command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
+
     elif args.cmd:
         command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
     else:
