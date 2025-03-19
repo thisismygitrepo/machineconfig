@@ -224,7 +224,7 @@ except ImportError as _ex:
     elif args.streamlit:
         # for .streamlit config to work, it needs to be in the current directory.
         # cd {choice_file.parent}\n\n
-        command = f"{exe} {choice_file.name}\n\ncd {P.cwd()}"
+        command = f"{exe} {choice_file}\n\ncd {P.cwd()}"
     elif args.cmd:
         command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
     else:
