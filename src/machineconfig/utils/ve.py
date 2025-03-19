@@ -50,7 +50,7 @@ def get_ve_profile(init_path: P) -> Optional[str]:
     for _ in init_path.parents:
         if tmp.joinpath(".ve_path").exists():
             ve = P(tmp.joinpath(".ve_path").read_text().rstrip().replace("\n", "")).name
-            print(f"🔮 Using Virtual Environment found @ .ve_path: {ve}")
+            print(f"🔮 Using Virtual Environment found @ {tmp}/.ve_path: {ve}")
             break
         tmp = tmp.parent
     return ve
