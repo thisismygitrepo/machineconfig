@@ -48,10 +48,12 @@
 
 # Web
 * https://github.com/browser-use/browser-use
+* https://github.com/mannaandpoem/OpenManus
 * https://github.com/mendableai/firecrawl `Website html -> markdown.`
 * https://github.com/apify/crawlee-python `Website html -> markdown.`
 * https://github.com/McGill-NLP/webllama `Browse internet with agents`
 * https://github.com/nilsherzig/LLocalSearch `locally running search aggregator using LLM Agents.`
+* https://github.com/LearningCircuit/local-deep-research
 
 # CLI
 

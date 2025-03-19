@@ -6,3 +6,6 @@
 
 # ensure .bash_profile only calls .profile
 # ensure .profile calls .bashrc only at the end.
+
+When you login: /etc/profile -> ~/.profile -> ~/.bash_profile -> ~/.bashrc
+When you open a new terminal: ~/.bashrc

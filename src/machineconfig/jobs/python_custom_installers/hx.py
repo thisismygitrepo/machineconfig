@@ -4,7 +4,7 @@ Installers do not add runtime files to the machine, hence this script.
 """
 
 from crocodile.file_management import P
-from machineconfig.utils.installer import Installer, WINDOWS_INSTALL_PATH
+from machineconfig.utils.installer import Installer, WINDOWS_INSTALL_PATH, LINUX_INSTALL_PATH
 from typing import Optional
 import platform
 
@@ -37,20 +37,19 @@ def main(version: Optional[str]):
     P.home().joinpath(".config/helix/runtime").delete(sure=True)
     P.home().joinpath(".config/helix/contrib").delete(sure=True)
     if platform.system() == "Linux":
-        # hx_file.move(folder=LINUX_INSTALL_PATH)  # to be added later
-        contrib.move(folder="~/.config/helix")
-        runtime.move(folder="~/.config/helix")
+        hx_file.move(folder=LINUX_INSTALL_PATH, overwrite=True)  # to be added later
+        contrib.move(folder="~/.config/helix", overwrite=True)
+        runtime.move(folder="~/.config/helix", overwrite=True)
     elif platform.system() == "Windows":
-        hx_file.move(folder=WINDOWS_INSTALL_PATH)
-        contrib.move(folder="~/.config/helix")
-        runtime.move(folder="~/.config/helix")
+        hx_file.move(folder=WINDOWS_INSTALL_PATH, overwrite=True)
+        contrib.move(folder="~/.config/helix", overwrite=True)
+        runtime.move(folder="~/.config/helix", overwrite=True)
     else:
         print("Unsupported OS")
     downloaded.delete(sure=True)
 
-    if platform.system() == "Linux":
-        inst.install(version=version)  # because we can't normally move hx (without privliage) # hx_file.move(folder=LINUX_INSTALL_PATH)
-
+    # if platform.system() == "Linux":
+    #     inst.install(version=version)  # because we can't normally move hx (without privliage) # hx_file.move(folder=LINUX_INSTALL_PATH)
     return ""
 
 

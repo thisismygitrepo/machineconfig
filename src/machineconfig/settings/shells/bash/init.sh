@@ -7,7 +7,7 @@
 add_to_path_if_not_already() {
     for dir in "$@"; do
         if [[ ! $PATH =~ (^|:)"${dir}"(:|$) ]]; then
-            export PATH="${dir}:$PATH"
+            export PATH="$PATH:${dir}"
         fi
     done
 }
