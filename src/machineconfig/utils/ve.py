@@ -77,7 +77,16 @@ def get_ve_activate_line(ve_name: Optional[str], a_path: str):
                 raise NotImplementedError(f"Platform {platform.system()} not supported.")
             print(f"⚠️ .ve_path not found; using the one found in {repo_root}/.venv")
         else:
+            # No repo root, let's try to find .venv by searching up the directory tree
             activate_ve_line = f". $HOME/scripts/activate_ve {ve_resolved}"
+            tmp = P(a_path)
+            for _ in range(len(tmp.parts)):
+                if tmp.joinpath(".venv").exists():
+                    if platform.system() == "Windows": activate_ve_line = f". {tmp}\\.venv\\Scripts\\activate.ps1"
+                    elif platform.system() in ["Linux", "Darwin"]: activate_ve_line = f". {tmp}/.venv/bin/activate"
+                    print(f"🔮 Using Virtual Environment @ {tmp.joinpath('.venv')}")
+                    break
+                tmp = tmp.parent
     else:
         activate_ve_line = f". $HOME/scripts/activate_ve {ve_name}"
     # print(f"🔮 Activating virtual environment: {activate_ve_line}")
