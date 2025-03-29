@@ -62,10 +62,11 @@ def get_repo_root(choice_file: str) -> Optional[str]:
         repo_root = None
     return repo_root
 def get_ve_activate_line(ve_name: Optional[str], a_path: str):
+
     if ve_name == "" or ve_name is None:
         ve_resolved = get_ve_profile(P(a_path)) or ""
-        # print(f"🔍 Found virtual environment: {ve_resolved}")
     else: ve_resolved = ve_name
+
     if ve_resolved == "" or ve_resolved is None:
         repo_root = get_repo_root(str(a_path))
         if repo_root is not None and P(repo_root).joinpath(".venv").exists():
@@ -88,8 +89,7 @@ def get_ve_activate_line(ve_name: Optional[str], a_path: str):
                     break
                 tmp = tmp.parent
     else:
-        activate_ve_line = f". $HOME/scripts/activate_ve {ve_name}"
-    # print(f"🔮 Activating virtual environment: {activate_ve_line}")
+        activate_ve_line = f". $HOME/scripts/activate_ve {ve_resolved}"
     return activate_ve_line
 
 
