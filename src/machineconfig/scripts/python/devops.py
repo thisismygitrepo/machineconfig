@@ -38,7 +38,11 @@ def main(which: Optional[str] = None):
     print("🚀 Starting the main function...")
     options = [op.value for op in Options]
     if which is None:
-        choice_key = display_options(msg="", options=options, header="🛠️ DEVOPS", default=options[0])
+        try:
+            choice_key = display_options(msg="", options=options, header="🛠️ DEVOPS", default=options[0])
+        except KeyboardInterrupt:
+            print("\n❌ KeyboardInterrupt")
+            return
     else: choice_key = Options[which].value
 
     if choice_key == Options.update.value:

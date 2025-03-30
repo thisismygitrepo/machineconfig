@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
 # if variable zellij is not set, then set it to /$HOME/.local/bin/zellij
-if [ -z "$zellij" ]; then
-  zellij="$HOME/.local/bin/zellij"
-fi
+# if [ -z "$zellij" ]; then
+#   zellij="$HOME/.local/bin/zellij"
+# fi
+zellij="$HOME/.local/bin/zellij"
 
 # adopted from https://zellij.dev/documentation/integration.html
 ZJ_SESSIONS=$(zellij list-sessions)
