@@ -141,17 +141,19 @@ def main() -> None:
     else:
         choice_function = args.function
 
-
     if choice_file.suffix == ".py":
         if args.streamlit:
             from crocodile.environment import get_network_addresses
             local_ip_v4 = get_network_addresses()["local_ip_v4"]
             computer_name = platform.node()
             port = 8501
-            toml_path1 = choice_file.parent.joinpath(".streamlit/config.toml")
-            toml_path2 = choice_file.parent.parent.joinpath(".streamlit/config.toml")
-            toml_path = toml_path1 if toml_path1.exists() else toml_path2
-            if toml_path.exists():
+            toml_path: Optional[P] = None
+            toml_path_maybe = choice_file.parent.joinpath(".streamlit/config.toml")
+            if toml_path_maybe.exists(): toml_path = toml_path_maybe
+            elif choice_file.parent.name == "pages":
+                toml_path_maybe = choice_file.parent.parent.joinpath(".streamlit/config.toml")
+                if toml_path_maybe.exists(): toml_path = toml_path_maybe
+            if toml_path is not None:
                 config = Read.toml(toml_path)
                 if "server" in config:
                     if "port" in config["server"]:
