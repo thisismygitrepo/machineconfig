@@ -7,6 +7,22 @@
         "strip_v": false,
         "exe_name": "mmdc"
     },
+    "html2markdown": {
+        "repo_url": "https://github.com/JohannesKaufmann/html-to-markdown",
+        "doc": "📜 Convert HTML to Markdown (no LLM, very fast, very cheap)",
+        "filename_template_windows_amd_64": "html-to-markdown_Windows_x86_64.zip",
+        "filename_template_linux_amd_64": "html-to-markdown_Linux_x86_64.tar.gz",
+        "strip_v": true,
+        "exe_name": "html2markdown"
+    },
+    "xcrawl3r": {
+        "repo_url": "https://github.com/hueristiq/xcrawl3r",
+        "doc": "🕷️ A command line tool to crawl and scrape websites",
+        "filename_template_windows_amd_64": "xcrawl3r_{}_windows_amd64.zip",
+        "filename_template_linux_amd_64": "xcrawl3r_{}_linux_amd64.tar.gz",
+        "strip_v": true,
+        "exe_name": "xcrawl3r"
+    },
     "obsidian": {
         "repo_url": "https://github.com/obsidianmd/obsidian-releases",
         "doc": "🧠 Obsidian is a powerful knowledge base that works on top of a local folder of plain text Markdown files.",
