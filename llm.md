@@ -7,6 +7,7 @@
 * https://github.com/run-llama/llama_index `framework for your LLM application`.
 * https://github.com/langchain-ai/langchain `framework for LLM apps`.
 * https://github.com/agenta-ai/agenta
+* https://github.com/agno-agi/agno `Agno is a lightweight library for building Multimodal Agents. It exposes LLMs as a unified API and gives them superpowers like memory, knowledge, tools and reasoning.`
 
 * Enhances:
     * https://github.com/stanfordnlp/dspy `framework for algorithmically optimizing LM prompts and weights`.
@@ -17,6 +18,7 @@
     * Or, use Perplexity, TogetherAI, You etc.
 * https://github.com/eth-sri/lmql `programming language for large language models (LLMs) based on a superset of Python`
 * https://github.com/embedchain/embedchain` Embedchain is an Open Source Framework for personalizing LLM responses`.
+* https://github.com/camel-ai/camel
 
 
 # Apps

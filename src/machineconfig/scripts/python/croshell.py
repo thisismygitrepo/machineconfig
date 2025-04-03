@@ -35,7 +35,7 @@ try:
     if isinstance(dat, dict): Struct(dat).print(as_config=True, title=p.name)
     else: print(f"📄 Successfully read the file {{p.name}}")
 except Exception as e:
-    print("❌ Error: ", e)
+    print(f"❌ Error reading file: {e}")
 
 """
     return pycode
@@ -168,7 +168,7 @@ print_logo(logo="crocodile")
             fire_line += f" {interactivity} --profile {profile} --no-banner"
         fire_line += f" {str(pyfile)}"
     final_program += fire_line
-    print(f"🔥 sourcing  ... {pyfile}\nwith fire line `{fire_line}`")
+    print(f"🚀 Launching script at {pyfile}\n🔥 Using command: `{fire_line}`")
     PROGRAM_PATH.write_text(data=final_program)
     # (PROGRAM_PATH + ".py").write_text(str(pyfile), encoding='utf-8')
 

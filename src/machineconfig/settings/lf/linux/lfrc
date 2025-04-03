@@ -34,7 +34,7 @@ set ratios '1:2:3'  # ratio of pane widths
 # https://github.com/junegunn/fzf/blob/master/ADVANCED.md#ripgrep-integration
 
 
-# Unix-like defaults
+# Unix-like defaults1
 #           $OPENER  open      # macos
 #           $OPENER  xdg-open  # others
           # $EDITOR  code  # not vi

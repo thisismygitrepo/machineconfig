@@ -36,7 +36,7 @@ matches:
           cmd: "echo 'Hello from your shell'"
 
   # as per https://github.com/bk138/gromit-mpx
-  - trigger: "`1"
+  - trigger: "qq"
     replace: "{{output}}"
     vars:
       - name: output
@@ -45,7 +45,7 @@ matches:
           cmd: "/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=gromit-mpx net.christianbeier.Gromit-MPX --toggle"
 
 
-  - trigger: "1`"
+  - trigger: "ww"
     replace: "{{output}}"
     vars:
       - name: output

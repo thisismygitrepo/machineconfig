@@ -89,14 +89,14 @@ def main() -> None:
     else: pass
 
     if path_obj.is_dir():
-        print(f"🔍 Searching recursively for all python files in directory `{path_obj}`")
+        print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
         files = search_for_files_of_interest(path_obj)
         choice_file = choose_one_option(options=files, fzf=True)
         choice_file = P(choice_file)
     else:
         choice_file = path_obj
 
-    print(f"🔍 Selected file: {choice_file}")
+    print(f"💾 Selected file: {choice_file}")
     activate_ve_line  = get_ve_activate_line(ve_name=args.ve, a_path=str(choice_file))
 
     # Convert args.kw to dictionary
@@ -188,13 +188,13 @@ def main() -> None:
 try:
     {import_line}
 except (ImportError, ModuleNotFoundError) as ex:
-    print(fr"❌ Failed to import `{choice_file}` as a module. {{ex}} ")
-    print(fr"⚠️ Importing with an ad-hoc `$PATH` manipulation. DO NOT pickle any files in this session as there is no gaurantee of correct deserialization.")
+    print(fr"❌ Failed to import `{choice_file}` as a module: {{ex}} ")
+    print(fr"⚠️ Attempting import with ad-hoc `$PATH` manipulation. DO NOT pickle any objects in this session as correct deserialization cannot be guaranteed.")
     import sys
     sys.path.append(r'{P(choice_file).parent}')
     {repo_root_add}
     from {P(choice_file).stem} import *
-    print(fr"✅ imported `{choice_file}`")
+    print(fr"✅ Successfully imported `{choice_file}`")
 """
         if choice_function is not None:
             txt = txt + f"""

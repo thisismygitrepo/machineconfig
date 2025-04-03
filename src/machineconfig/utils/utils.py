@@ -29,7 +29,7 @@ T = TypeVar("T")
 
 
 def choose_cloud_interactively() -> str:
-    print("Listing Remotes ... ")
+    print("🔍 Listing Cloud Remotes ... ")
     tmp = Terminal().run("rclone listremotes").op_if_successfull_or_default(strict_returcode=False)
     # consider this: remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
     if isinstance(tmp, str):
@@ -70,7 +70,7 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
     """Look up current directory for file name that matches the passed substring."""
     search_root_obj = search_root if search_root is not None else P.cwd()
     search_root_obj = search_root_obj.absolute()
-    print(f"Searching for {sub_string} in {search_root_obj}")
+    print(f"🔍 Searching for '{sub_string}' in {search_root_obj}")
 
     search_root_objects = search_root_obj.search("*", not_in=["links", ".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__"])
     search_results: L[P] = L([a_search_root_obj.search(f"*{sub_string}*", r=True) for a_search_root_obj in search_root_objects]).reduce(lambda x, y: x + y)  # type: ignore
@@ -80,14 +80,14 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
         path_obj = search_results.list[0]
     elif len(search_results) > 1:
         msg = "Search results are ambiguous or non-existent, choose manually:"
-        print(msg)
+        print(f"⚠️ {msg}")
         choice = choose_one_option(msg=msg, options=search_results.list, fzf=True)
         path_obj = P(choice)
     else:
         # let's do a final retry with sub_string.small()
         sub_string_small = sub_string.lower()
         if sub_string_small != sub_string:
-            print("Retrying with small letters")
+            print("🔄 Retrying with lowercase letters")
             return match_file_name(sub_string=sub_string_small)
         from git.repo import Repo
         from git.exc import InvalidGitRepositoryError
@@ -95,7 +95,7 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
             repo = Repo(search_root_obj, search_parent_directories=True)
             repo_root_dir = P(repo.working_dir)
             if repo_root_dir != search_root_obj:  # may be user is in a subdirectory of the repo root, try with root dir.
-                print("Retrying with root repo instea of cwd")
+                print("🔄 Retrying with repository root instead of current directory")
                 return match_file_name(sub_string=sub_string, search_root=repo_root_dir)
             else:
                 search_root_obj = repo_root_dir
@@ -104,22 +104,22 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
 
         if check_tool_exists(tool_name="fzf"):
             try:
-                print(f"Using fd to searching for `{sub_string}` in `{search_root_obj}` ...")
+                print(f"🔍 Using fd to search for '{sub_string}' in '{search_root_obj}' ...")
                 fzf_cmd = f"cd '{search_root_obj}'; fd --type f --strip-cwd-prefix | fzf --filter={sub_string}"
                 search_res = subprocess.run(fzf_cmd, stdout=subprocess.PIPE, text=True, check=True, shell=True).stdout.split("\n")[:-1]
             except subprocess.CalledProcessError as cpe:
-                print(f"Failed at fzf search with {sub_string} in {search_root_obj}.\n{cpe}")
+                print(f"❌ Failed at fzf search with '{sub_string}' in '{search_root_obj}'.\n{cpe}")
                 msg = f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. No search results\n{'--' * 50}\n"
                 raise FileNotFoundError(msg) from cpe
 
             if len(search_res) == 1: return search_root_obj.joinpath(search_res[0])
             else:
-                print("Tring with raw fzf search ...")
+                print("🔍 Trying with raw fzf search ...")
                 try:
                     # res = subprocess.run(f"cd '{search_root_obj}'; fzf --query={sub_string}", check=True, stdout=subprocess.PIPE, text=True, shell=True).stdout.strip()
                     res = subprocess.run(f"cd '{search_root_obj}'; fd | fzf --query={sub_string}", check=True, stdout=subprocess.PIPE, text=True, shell=True).stdout.strip()
                 except subprocess.CalledProcessError as cpe:
-                    print(f"Failed at fzf search with {sub_string} in {search_root_obj}. {cpe}")
+                    print(f"❌ Failed at fzf search with '{sub_string}' in '{search_root_obj}'. {cpe}")
                     msg = f"\n{'--' * 50}\n💥 Path {sub_string} does not exist. No search results\n{'--' * 50}\n"
                     raise FileNotFoundError(msg) from cpe
                 return search_root_obj.joinpath(res)
@@ -166,8 +166,8 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
                 choice_idx = options_strings.index(choice_one_string)
                 return list(options)[choice_idx]
             except IndexError as ie:
-                print(f"{options=}, {choice_string_multi=}")
-                print(choice_string_multi)
+                print(f"❌ Error: {options=}, {choice_string_multi=}")
+                print(f"🔍 Available choices: {choice_string_multi}")
                 raise ie
         choice_idx_s = [options_strings.index(x) for x in choice_string_multi]
         return [list(options)[x] for x in choice_idx_s]
@@ -207,7 +207,7 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
                 else:
                     _ = ie
                     # raise ValueError(f"Unknown choice. {choice_string}") from ie
-                    print(f"Unknown choice. {choice_string}")
+                    print(f"❓ Unknown choice: '{choice_string}'")
                     return display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
             except TypeError as te:  # int(choice_string) failed due to # either the number is invalid, or the input is custom.
                 if choice_string in options_strings:  # string input
@@ -218,9 +218,9 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
                 else:
                     _ = te
                     # raise ValueError(f"Unknown choice. {choice_string}") from te
-                    print(f"Unknown choice. {choice_string}")
+                    print(f"❓ Unknown choice: '{choice_string}'")
                     return display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
-        print(f"{choice_idx}: {choice_one}", "<<<<-------- CHOICE MADE")
+        print(f"✅ Selected option {choice_idx}: {choice_one}")
         if multi: return [choice_one]
     return choice_one
 
@@ -247,7 +247,7 @@ def symlink_func(this: P, to_this: P, prioritize_to_this: bool=True):
     try:
         # print(f"Linking {this} ➡️ {to_this}")
         P(this).symlink_to(target=to_this, verbose=True, overwrite=True)
-    except Exception as ex: print(f"Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
+    except Exception as ex: print(f"❌ Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
 
 
 def symlink_copy(this: P, to_this: P, prioritize_to_this: bool=True):
@@ -266,7 +266,7 @@ def symlink_copy(this: P, to_this: P, prioritize_to_this: bool=True):
         if not to_this.exists(): to_this.touch()  # we have to touch it (file) or create it (folder)
     try:
         to_this.copy(path=this, overwrite=True, verbose=True)
-    except Exception as ex: print(f"Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
+    except Exception as ex: print(f"❌ Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
 
 
 def get_shell_script_executing_python_file(python_file: str, func: Optional[str] = None, ve_name: str="ve", strict_execution: bool=True):
@@ -318,7 +318,7 @@ def write_shell_script(program: str, desc: str, preserve_cwd: bool, display: boo
         else:
             program = 'orig_path=$(cd -- "." && pwd)\n' + program + '\ncd "$orig_path" || exit'
     if display:
-        print(f"⚙️ Executing {PROGRAM_PATH}")
+        print(f"⚙️ Executing shell script at {PROGRAM_PATH}")
         print_code(code=program, lexer="shell", desc=desc)
     PROGRAM_PATH.create(parents_only=True).write_text(program)
     if execute:
@@ -372,7 +372,7 @@ def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> b
     except (subprocess.CalledProcessError, FileNotFoundError):
         res = False
     if res is False and install_script is not None:
-        print(f"Installing {tool_name} ...")
+        print(f"📥 Installing {tool_name} ...")
         Terminal().run(install_script, shell="powershell").print()
         return check_tool_exists(tool_name=tool_name, install_script=None)
     return res
@@ -396,7 +396,7 @@ def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool=False):
     dtm = datetime(dtm.year, dtm.month, dtm.day, dtm.hour, dtm.minute, dtm.second)
     res =  dtm > datetime.fromisoformat(commit_dtm)
     if res is False and update is True:
-        print(f"Updating dotfiles because {dtm} < {datetime.fromisoformat(commit_dtm)}")
+        print(f"🔄 Updating dotfiles because {dtm} < {datetime.fromisoformat(commit_dtm)}")
         from machineconfig.scripts.python.cloud_repo_sync import main
         main(cloud=None, path=dotfiles_path)
     return res
@@ -436,12 +436,12 @@ def wait_for_jobs_to_finish(root: P, pattern: str, wait_for_n_jobs: int, max_wai
         counter  =  len(parts)
         if counter == wait_for_n_jobs:
             wait_finished = True
-            print(f"{counter} Jobs finished. Exiting.")
+            print(f"✅ {counter} Jobs finished successfully. Exiting.")
             return True
         if (time.time() - t0) > 60 * max_wait_minutes:
-            print(f"Waited for {max_wait_minutes} minutes. Exiting.")
+            print(f"⏱️ Timeout: Waited for {max_wait_minutes} minutes. Exiting.")
             return False
-        print(f"{counter} Jobs finished. Waiting for {wait_for_n_jobs - counter} / {wait_for_n_jobs} jobs to finish, sleeping for 60 seconds.")
+        print(f"⏳ Progress: {counter}/{wait_for_n_jobs} jobs finished. Waiting for {wait_for_n_jobs - counter} more jobs to complete, sleeping for 60 seconds.")
         time.sleep(60)
     return False
 
