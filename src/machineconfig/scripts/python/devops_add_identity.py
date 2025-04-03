@@ -5,7 +5,7 @@
 
 # from platform import system
 from crocodile.file_management import P
-from machineconfig.utils.utils import display_options
+from machineconfig.utils.utils_options import display_options
 
 
 def main():
