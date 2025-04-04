@@ -62,7 +62,8 @@ disable=C0301,  # line-too-long: Enforces a maximum line length
        R0914,  # Too many local variables (19/15) (too-many-locals)
        R0913,  # Too many arguments (6/5) (too-many-arguments)
        R0917,  # Too many positional arguments (8/5) (too-many-positional-arguments)
-
+       R0902,  # Too many instance attributes 
+       C0410,  # Multiple imports in one line.
 
 [REPORTS]
 

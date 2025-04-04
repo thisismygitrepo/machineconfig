@@ -42,6 +42,7 @@ ignore = [
     "E701", # multiple statements in one line.
     "E702", 
     "E721",  # don't compare types use isinstance
+    "E401",  # multiple imports in one line
           ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
