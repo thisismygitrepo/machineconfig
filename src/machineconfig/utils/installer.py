@@ -3,7 +3,8 @@
 """
 from rich.console import Console
 
-from crocodile.file_management import P, List as L, Read
+from crocodile.file_management import P, Read
+from crocodile.core import L
 from crocodile.core import Struct
 from crocodile.meta import Terminal
 from machineconfig.utils.utils import INSTALL_VERSION_ROOT, INSTALL_TMP_DIR, LIBRARY_ROOT, check_tool_exists
