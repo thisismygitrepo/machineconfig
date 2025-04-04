@@ -3,9 +3,8 @@ croshell
 """
 
 import argparse
-# import subprocess
-# import platform
-from crocodile.file_management import P, randstr
+from crocodile.file_management import P
+from crocodile.core_modules.core_1 import randstr
 from machineconfig.utils.ve import get_ipython_profile, get_ve_profile, get_ve_name_and_ipython_profile, get_ve_activate_line
 from machineconfig.utils.utils import PROGRAM_PATH, display_options
 
@@ -35,7 +34,7 @@ try:
     if isinstance(dat, dict): Struct(dat).print(as_config=True, title=p.name)
     else: print(f"📄 Successfully read the file {{p.name}}")
 except Exception as e:
-    print(f"❌ Error reading file: {e}")
+    print(f"❌ Error reading file: {{e}}")
 
 """
     return pycode

@@ -1,6 +1,7 @@
 
 
-from crocodile.file_management import P, randstr, PLike
+from crocodile.file_management import P, PLike
+from crocodile.core_modules.core_1 import randstr
 
 
 def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
