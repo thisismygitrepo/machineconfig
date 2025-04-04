@@ -1,0 +1,90 @@
+[MASTER]
+
+# Specify a configuration file.
+# DEFAULT: None
+
+# Python code to execute, usually for sys.path manipulation such as
+# pygtk.require().
+# init-hook=
+
+# Add files or directories to the blacklist.
+# DEFAULT: []
+ignore=
+
+# Add files or directories matching the regex patterns to the blacklist. The
+# regex matches against base names, not paths.
+# DEFAULT: []
+ignore-patterns=
+
+# Pickle collected data for later comparisons.
+# DEFAULT: True
+persistent=yes
+
+# Use multiple processes to speed up Pylint.
+# DEFAULT: 0
+jobs=5
+
+# List of plugins (as comma separated values of python modules names) to load,
+# usually to register additional checkers.
+# DEFAULT: []
+load-plugins=
+
+[MESSAGES CONTROL]
+
+# Only show warnings with the listed confidence levels. Leave empty to show all.
+# Valid levels: HIGH, INFERENCE, INFERENCE_FAILURE, UNDEFINED
+# DEFAULT: []
+confidence=
+
+# Disable specific messages, codes, or categories.
+disable=C0301,  # line-too-long: Enforces a maximum line length
+       C0114,  # missing-module-docstring: Requires docstrings in modules
+       C0303,  # trailing-whitespace: Reports trailing whitespace
+       C0321,  # multiple-statements: Disallows multiple statements on one line
+       C1802,  # use-list-literal: Suggests using [] instead of list()
+       C0116,  # missing-function-docstring: Requires docstrings in functions
+       C0103,  # invalid-name: Enforces naming conventions
+       W1309,  # f-string-without-interpolation: Flags f-strings with no formatting
+       C0415,  # import-outside-toplevel: Requires imports to be at the top level
+       C0115,  # missing-class-docstring: Requires docstrings in classes
+       C2801,  # unnecessary-dunder-call: Redundant __method() call
+       C0123,  # unidiomatic-typecheck: Warns about using type() instead of isinstance()
+       C0411,  # wrong-import-order: Enforces a specific import order
+       W0640,  # cell-var-from-loop: Warns about loop variables used in closures
+       W0718,  # broad-exception-caught: Warns when catching too broad exceptions
+       W1203,  # logging-fstring-interpolation: Warns about f-strings in logging
+       W1201,  # logging-not-lazy: Warns about non-lazy % logging
+       W0105,  # pointless-string-statement: String statements with no effect
+       W0107,  # unnecessary-pass: Unnecessary pass statements
+       W0511,  # fixme: Warns about TODO, FIXME comments
+       W0221,   # arguments-differ: Method arguments differ from overridden method
+       R0903,  # Too few public methods (1/2) (too-few-public-methods)
+       R0914,  # Too many local variables (19/15) (too-many-locals)
+       R0913,  # Too many arguments (6/5) (too-many-arguments)
+       R0917,  # Too many positional arguments (8/5) (too-many-positional-arguments)
+
+
+[REPORTS]
+
+# Set the output format.
+# DEFAULT: text
+output-format=text
+
+# Tells whether to display a full report or only the messages.
+# DEFAULT: yes
+reports=no
+
+# Disable the reporting of duplicated code
+; ignore-duplicated=yes
+
+# Python expression which should return a note less than 10 (10 is the highest
+# note). You have access to the variables errors warning, statement which
+# respectively contain the number of errors / warnings messages and the total
+# number of statements analyzed. This is used by the global evaluation report.
+# DEFAULT: 10.0 - ((float(5 * error + warning + refactor + convention) /
+# statement) * 10)
+evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10)
+
+# Disable metrics calculation and display
+score=no
+
