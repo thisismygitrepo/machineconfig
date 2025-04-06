@@ -126,7 +126,7 @@
         "filename_template_windows_amd_64": "topgrade-{}-x86_64-pc-windows-msvc.zip",
         "strip_v": false,
         "exe_name": "topgrade"
-      },  
+      },
     "viu": {
         "repo_url": "https://github.com/atanunq/viu",
         "doc": "🖼️ A cli image viewer for the terminal (like chafa but in Rust)",
@@ -134,7 +134,7 @@
         "filename_template_windows_amd_64": "viu-x86_64-pc-windows-msvc.exe",
         "strip_v": false,
         "exe_name": "viu"
-      },  
+      },
     "btm": {
         "repo_url": "https://github.com/ClementTsang/bottom",
         "doc": "📊 bottom is a cross-platform graphical process/system monitor with a customizable interface and a multitude of features.",

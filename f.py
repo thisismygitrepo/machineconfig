@@ -8,7 +8,7 @@ import os
 def take_screenshot(url: str) -> str:
     options = Options()
     options.add_argument("--headless")
-    
+
     service = Service()
 
     try:
@@ -16,7 +16,7 @@ def take_screenshot(url: str) -> str:
         driver.get(url)
         driver.set_window_size(1920, 1080)
         time.sleep(5)  # Wait for 5 seconds before taking screenshot
-        
+
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"screenshot_{timestamp}.png"
         driver.save_screenshot(filename)

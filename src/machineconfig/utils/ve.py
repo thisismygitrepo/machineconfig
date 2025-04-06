@@ -309,7 +309,7 @@ def get_install_requirements_template(repo_root: P, requirements_subpath: str, v
         activate_ve = fr""". $HOME/venvs/{ve_name}/bin/activate """
     else: raise NotImplementedError(f"❌ System {system} not supported.")
     return f"""
-    
+
 # 📝 This is a template that is meant to be modified manually to install requirements.txt and editable packages.
 # 💡 One can dispense with this and install libraries manually and on adhoc-basis and then use version_checkout utility.
 

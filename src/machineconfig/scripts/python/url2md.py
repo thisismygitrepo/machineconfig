@@ -43,23 +43,23 @@ def main():
     cpu_count = multiprocessing.cpu_count()
     max_processes = min(20, cpu_count)
     print(f"Running commands with {max_processes} parallel processes...")
-    
+
     start_time = time.time()
-    
+
     # Create a pool of workers
     with multiprocessing.Pool(processes=max_processes) as pool:
         results = pool.map(run_command, commands)
-    
+
     # Report results
     successful = results.count(True)
     failed = results.count(False)
     elapsed_time = time.time() - start_time
-    
+
     print(f"\nCompleted in {elapsed_time:.2f} seconds")
     print(f"Successfully processed: {successful} files")
     if failed > 0:
         print(f"Failed to process: {failed} files")
-    
+
     print(f"Output saved to: {op_dir}")
 
 

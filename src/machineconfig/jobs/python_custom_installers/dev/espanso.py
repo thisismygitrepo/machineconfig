@@ -35,7 +35,7 @@ def main(version: Optional[str]):
             config_dict["filename_template_linux_amd_64"] = "espanso-debian-x11-amd64.deb"
     else:
         raise NotImplementedError(f"Unsupported platform: {platform.system()}")
-    
+
     from machineconfig.utils.installer import Installer
     installer = Installer.from_dict(config_dict, name="espanso")
     installer.install(version=None)

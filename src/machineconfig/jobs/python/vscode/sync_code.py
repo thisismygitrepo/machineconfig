@@ -34,4 +34,3 @@ ssh -o "HostName={machine_config['HostName']}" -o "User={machine_config['User']}
     import subprocess
     subprocess.run([str(code_path)], shell=True, check=True)
 
-    

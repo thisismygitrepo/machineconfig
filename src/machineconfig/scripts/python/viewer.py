@@ -20,7 +20,7 @@ port = 4614
 
 """
 
-def run(data: Optional[Iterable[Any]], data_path: Optional[str], 
+def run(data: Optional[Iterable[Any]], data_path: Optional[str],
         get_figure: Optional[Callable[[Any], go.Figure]]):
     # code = Path(crocodile.__file__).parent.joinpath("viewer_template.py").read_text(encoding='utf-8')
     code = P(__file__).parent.joinpath("viewer_template.py").read_text(encoding='utf-8')

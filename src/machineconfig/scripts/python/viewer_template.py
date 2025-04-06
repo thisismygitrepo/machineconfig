@@ -71,7 +71,7 @@ with col_info4:
 # Navigation controls
 col1, col2, col3, col4 = st.columns([1, 1, 2, 1])
 with col1:
-    st.button("⏮ Previous", on_click=prev_figure, 
+    st.button("⏮ Previous", on_click=prev_figure,
               disabled=(st.session_state.current_index <= 0),
               use_container_width=True)
 
@@ -81,7 +81,7 @@ with col2:
               use_container_width=True)
 
 with col3:
-    st.text_input("Go to index", key="input_index", 
+    st.text_input("Go to index", key="input_index",
                   placeholder=f"Enter index (0-{total_figures-1})",
                   on_change=go_to_index)
 

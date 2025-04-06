@@ -27,7 +27,7 @@ def main(version: Optional[str]):
     if platform.system() == "Windows":
         hx_file_search = downloaded.search("hx.exe", folders=False, files=True, r=True)
     else:
-        hx_file_search = downloaded.search("hx", folders=False, files=True, r=True)        
+        hx_file_search = downloaded.search("hx", folders=False, files=True, r=True)
     assert len(hx_file_search) == 1
     hx_file = hx_file_search.list[0]
     contrib = hx_file.parent / "contrib"
