@@ -23,6 +23,10 @@ exclude = [
     "dist",
     "node_modules",
     "venv",
+    ".ipynb_checkpoints",
+    ".ipynb",
+    ".pytest_cache",
+
 ]
 
 # Same as Black.
