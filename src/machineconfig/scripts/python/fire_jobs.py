@@ -95,8 +95,8 @@ def main() -> None:
         choice_file = P(choice_file)
     else:
         choice_file = path_obj
-
     print(f"💾 Selected file: {choice_file}")
+
     activate_ve_line  = get_ve_activate_line(ve_name=args.ve, a_path=str(choice_file))
 
     # Convert args.kw to dictionary
