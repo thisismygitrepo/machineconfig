@@ -4,6 +4,8 @@ from crocodile.meta import Terminal
 from machineconfig.scripts.python.cloud_repo_sync import main
 from machineconfig.scripts.python.get_zellij_cmd import get_zellij_cmd
 from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, get_shell_script, write_shell_script
+import platform
+import argparse
 
 
 def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cloud: str):

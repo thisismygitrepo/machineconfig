@@ -6,12 +6,15 @@ from crocodile.file_management import P
 from crocodile.core import Struct
 from crocodile.meta import RepeatUntilNoException
 import getpass
-from machineconfig.scripts.python.cloud_sync import parse_cloud_source_target, ArgsDefaults, Args
+from machineconfig.scripts.python.helpers.helpers3 import Args
 import argparse
 import os
 # from dataclasses import dataclass
 # from pydantic import BaseModel
 from typing import Optional
+
+from machineconfig.scripts.python.helpers.helpers2 import parse_cloud_source_target
+from machineconfig.scripts.python.helpers.helpers3 import ArgsDefaults
 
 
 @RepeatUntilNoException(retry=3, sleep=1)
