@@ -1,4 +1,3 @@
-
 """CS
 TODO: use typer or typed-argument-parser to parse args
 """
@@ -65,16 +64,29 @@ def absolute(path: str) -> P:
     if not path.startswith(".") and  obj.exists(): return obj
     try_absing =  P.cwd().joinpath(path)
     if try_absing.exists(): return try_absing
-    print(f"Warning: {path} was not resolved to absolute one, trying out resolving symlinks (This may result in unintended paths)")
+    print(f"""
+╭{'─' * 70}╮
+│ ⚠️  WARNING:                                                              │
+│ Path {path} could not be resolved to absolute path.         
+│ Trying to resolve symlinks (this may result in unintended paths).        │
+╰{'─' * 70}╯
+""")
     return obj.absolute()
 
 
 def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Args:
+    print(f"""
+╔{'═' * 70}╗
+║ 🔐 Secure Share Cloud Configuration                                       ║
+╚{'═' * 70}╝
+""")
+    
     if cloud is None:
         if os.environ.get("CLOUD_CONFIG_NAME") is not None:
             default_cloud = os.environ.get("CLOUD_CONFIG_NAME")
             assert default_cloud is not None
             cloud = default_cloud
+            print(f"☁️  Using cloud from environment: {cloud}")
         else:
             try:
                 default_cloud__ = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
@@ -82,9 +94,10 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Ar
                 default_cloud__ = 'No default cloud found.'
             if default_cloud__ == 'No default cloud found.' or interactive:
                 # assert default_cloud is not None
-                cloud = input(f"Enter cloud name (default {default_cloud__}): ") or default_cloud__
+                cloud = input(f"☁️  Enter cloud name (default {default_cloud__}): ") or default_cloud__
             else:
                 cloud = default_cloud__
+                print(f"☁️  Using default cloud: {cloud}")
 
     default_password_path = P.home().joinpath("dotfiles/creds/passwords/quick_password")
     if default_password_path.exists():
@@ -93,22 +106,41 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Ar
     else:
         pwd = ""
         default_message = "no default password found"
-    pwd = input(f"Enter encryption password ({default_message}): ") or pwd
+    pwd = input(f"🔑 Enter encryption password ({default_message}): ") or pwd
     res = Args(cloud=cloud,
                pwd=pwd, encrypt=True,
                zip=True, overwrite=True, share=True,
                rel2home=True, root="myshare", os_specific=False,)
-    Struct(res.__dict__).print(as_config=True, title="⚠️ Using SecureShare cloud config")
+    
+    print(f"""
+╭{'─' * 70}╮
+│ ⚙️  Using SecureShare cloud config                                        │
+╰{'─' * 70}╯
+""")
+    Struct(res.__dict__).print(as_config=True, title="SecureShare Config")
     return res
 
 
 def find_cloud_config(path: P):
+    print(f"""
+╭{'─' * 70}╮
+│ 🔍 Searching for cloud configuration file...                              │
+╰{'─' * 70}╯
+""")
+    
     for _i in range(len(path.parts)):
         if path.joinpath("cloud.json").exists():
-            res =  Args.from_config(path.joinpath("cloud.json"))
-            Struct(res.__dict__).print(as_config=True, title=f"⚠️ Using default cloud config @ {path.joinpath('cloud.json')} ")
+            res = Args.from_config(path.joinpath("cloud.json"))
+            print(f"""
+╭{'─' * 70}╮
+│ ✅ Found cloud config at: {path.joinpath('cloud.json')}   │
+╰{'─' * 70}╯
+""")
+            Struct(res.__dict__).print(as_config=True, title="Cloud Config")
             return res
         path = path.parent
+        
+    print("❌ No cloud configuration file found")
     return None
 
 
@@ -120,6 +152,11 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         if cloud_maybe == "": cloud_maybe = None
         maybe_config = get_secure_share_cloud_config(interactive=True, cloud=cloud_maybe)
     elif config is not None:
+        print(f"""
+╭{'─' * 70}╮
+│ 📄 Loading configuration from: {config}                   │
+╰{'─' * 70}╯
+""")
         maybe_config = Args.from_config(absolute(config))
     else:
         maybe_config = None
@@ -150,7 +187,11 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
 
         if maybe_config is None:
             default_cloud: str=Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
-            print(f"⚠️ Using default cloud: {default_cloud}")
+            print(f"""
+╭{'─' * 70}╮
+│ ⚠️  No cloud config found. Using default cloud: {default_cloud}            │
+╰{'─' * 70}╯
+""")
             source = default_cloud + ":" + source[1:]
         else:
             tmp = maybe_config
@@ -169,7 +210,11 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
 
         if maybe_config is None:
             default_cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
-            print(f"⚠️ Using default cloud: {default_cloud}")
+            print(f"""
+╭{'─' * 70}╮
+│ ⚠️  No cloud config found. Using default cloud: {default_cloud}            │
+╰{'─' * 70}╯
+""")
             target = default_cloud + ":" + target[1:]
         else:
             tmp = maybe_config
@@ -218,13 +263,31 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         if zip_arg and ".zip" not in target: target += ".zip"
         if encrypt and ".enc" not in target: target += ".enc"
     else:
-        raise ValueError("Either source or target must be a remote path (i.e. machine:path)")
+        raise ValueError(f"""
+╔{'═' * 70}╗
+║ ❌ ERROR: Invalid path configuration                                      ║
+╠{'═' * 70}╣
+║ Either source or target must be a remote path (i.e. machine:path)        ║
+╚{'═' * 70}╝
+""")
+
+    print(f"""
+╭{'─' * 70}╮
+│ 🔍 Path resolution complete                                               │
+╰{'─' * 70}╯
+""")
     Struct({"cloud": cloud, "source": str(source), "target": str(target)}).print(as_config=True, title="CLI Resolution")
     _ = pwd, encrypt, zip_arg, share
     return cloud, str(source), str(target)
 
 
 def args_parser():
+    print(f"""
+╔{'═' * 70}╗
+║ ☁️  Cloud Sync Utility                                                    ║
+╚{'═' * 70}╝
+""")
+    
     parser = argparse.ArgumentParser(description="""A wrapper for rclone sync and rclone bisync, with some extra features.""")
 
     parser.add_argument("source", help="source", default=None)
@@ -258,10 +321,25 @@ def args_parser():
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
     # map short flags to long flags (-u -> --upload), for easier use in the script
     if bisync:
-        print(f"SYNCING 🔄️ {source} {'<>' * 7} {target}`")
+        print(f"""
+╔{'═' * 70}╗
+║ 🔄 BI-DIRECTIONAL SYNC                                                    ║
+╠{'═' * 70}╣
+║ Source: {source}                       
+║ Target: {target}                       
+╚{'═' * 70}╝
+""")
         rclone_cmd = f"""rclone bisync '{source}' '{target}' --resync"""
     else:
-        print(f"SYNCING {source} {'>' * 15} {target}`")
+        print(f"""
+╔{'═' * 70}╗
+║ 📤 ONE-WAY SYNC                                                           ║
+╠{'═' * 70}╣
+║ Source: {source}                       
+║ ↓                                                                        ║
+║ Target: {target}                       
+╚{'═' * 70}╝
+""")
         rclone_cmd = f"""rclone sync '{source}' '{target}' """
 
     rclone_cmd += f" --progress --transfers={transfers} --verbose"
@@ -270,8 +348,15 @@ def args_parser():
 
     if verbose: txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd, cloud_brand="Unknown")
     else: txt = f"""{rclone_cmd}"""
-    print(r'running command'.center(100, '-'))
-    print(txt)
+    
+    print(f"""
+╔{'═' * 70}╗
+║ 🚀 EXECUTING COMMAND                                                      ║
+╠{'═' * 70}╣
+║ {rclone_cmd[:65]}... ║
+╚{'═' * 70}╝
+""")
+    
     PROGRAM_PATH.write_text(txt)
 
 

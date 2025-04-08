@@ -1,4 +1,3 @@
-
 """Cloud mount script
 """
 
@@ -43,32 +42,60 @@ mprocs "echo 'see {DEFAULT_MOUNT}/{cloud} for the mounted cloud'; rclone about {
 
 
 def mount(cloud: Optional[str], network: Optional[str], destination: Optional[str]) -> None:
+    print(f"""
+╔{'═' * 70}╗
+║ ☁️  Cloud Mount Utility                                                   ║
+╚{'═' * 70}╝
+""")
+    
     config = get_rclone_config()
     if cloud is None:
         res = choose_one_option(msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
         if type(res) is str: cloud = res
         else: raise ValueError("no cloud selected")
+        print(f"🌩️  Selected cloud: {cloud}")
 
     if network is None:
         if destination is None:
             mount_loc = P(DEFAULT_MOUNT).expanduser().joinpath(cloud)
         else:
             mount_loc = P(destination)
+        
+        print(f"""
+╭{'─' * 70}╮
+│ 📂 Mount location: {mount_loc}                          │
+╰{'─' * 70}╯
+""")
 
         if platform.system() == "Windows":
+            print("🪟 Creating mount directory on Windows...")
             mount_loc.parent.create()
         elif platform.system() == "Linux":
+            print("🐧 Creating mount directory on Linux...")
             try: mount_loc.create()
             except (FileExistsError, OSError) as err:
                 # We need a umount command here.
-                print(err)
+                print(f"""
+╭{'─' * 70}╮
+│ ⚠️  WARNING: Mount directory issue                                        │
+│    {err}                                                           
+╰{'─' * 70}╯
+""")
                 pass
         else: raise ValueError("unsupported platform")
 
-    elif network and platform.system() == "Windows": mount_loc = "X: --network-mode"
+    elif network and platform.system() == "Windows": 
+        mount_loc = "X: --network-mode"
+        print(f"🔌 Setting up network mount at {mount_loc}")
     else: raise ValueError("network mount only supported on windows")
 
     mount_cmd = f"rclone mount {cloud}: {mount_loc} --vfs-cache-mode full --file-perms=0777"
+    print(f"""
+╭{'─' * 70}╮
+│ 🚀 Preparing mount command:                                              │
+│ {mount_cmd}
+╰{'─' * 70}╯
+""")
 
     # txt = get_mprocs_mount_txt(cloud, mount_cmd)
     if platform.system() == "Windows":
@@ -110,15 +137,27 @@ zellij action move-focus up
     else: raise ValueError("unsupported platform")
     # print(f"running command: \n{txt}")
     PROGRAM_PATH.write_text(txt)
+    print(f"""
+╔{'═' * 70}╗
+║ ✅ Cloud mount command prepared successfully                              ║
+║ 🔄 Running mount process...                                              ║
+╚{'═' * 70}╝
+""")
 
 
 def main():
+    print(f"""
+╔{'═' * 70}╗
+║ ☁️  RCLONE CLOUD MOUNT                                                    ║
+╚{'═' * 70}╝
+""")
+    
     parser = argparse.ArgumentParser(description='mount cloud')
     parser.add_argument('cloud', nargs='?', type=str, default=None, help='cloud to mount')
     parser.add_argument('destination', nargs='?', type=str, default=None, help='destination to mount')
     parser.add_argument('--network', type=str, default=None, help='mount network drive')
     args = parser.parse_args()
-    mount(cloud=args.cloud, network=args.network, destination=args.destination)
+    mount(cloud=args.clEoud, network=args.network, destination=args.destination)
 
 
 if __name__ == '__main__':

@@ -18,7 +18,7 @@ from typing import Optional
 def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
     print(f"""
 ╔{'═' * 70}╗
-║ 🚀 Secure File Downloader
+║ 🚀 Secure File Downloader                                                  ║
 ╚{'═' * 70}╝
 """)
     
@@ -38,8 +38,12 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
             print("🔗 Using URL from environment variables")
         else:
             url = input("🔗 Enter share URL: ")
-            
-    print("\n📡 Downloading from URL...")
+    
+    print(f"""
+╭{'─' * 70}╮
+│ 📡 Downloading from URL...                                                │
+╰{'─' * 70}╯
+""")
     from rich.progress import Progress
     with Progress(transient=True) as progress:
         _task = progress.add_task("Downloading... ", total=None)
@@ -47,11 +51,15 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
         
     print(f"""
 ╭{'─' * 70}╮
-│ 📥 Downloaded file: {url_obj}
+│ 📥 Downloaded file: {url_obj}                                
 ╰{'─' * 70}╯
 """)
     
-    print("🔐 Decrypting and extracting...")
+    print(f"""
+╭{'─' * 70}╮
+│ 🔐 Decrypting and extracting...                                           │
+╰{'─' * 70}╯
+""")
     with Progress(transient=True) as progress:
         _task = progress.add_task("Decrypting... ", total=None)
         tmp_folder = P.tmpdir(prefix="tmp_unzip")
@@ -60,8 +68,8 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
         
     print(f"""
 ╔{'═' * 70}╗
-║ ✅ Operation completed successfully!
-║ 🔓 Files extracted to: {folder_obj}
+║ ✅ Operation completed successfully!                                       ║
+║ 🔓 Files extracted to: {folder_obj}                      ║
 ╚{'═' * 70}╝
 """)
 
@@ -69,7 +77,7 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
 def arg_parser() -> None:
     print(f"""
 ╔{'═' * 70}╗
-║ ☁️  Cloud Copy Utility
+║ ☁️  Cloud Copy Utility                                                     ║
 ╚{'═' * 70}╝
 """)
     
@@ -99,7 +107,11 @@ def arg_parser() -> None:
     args_obj = Args(**args_dict)
 
     if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")):
-        print("🔒 Detected secure share link")
+        print(f"""
+╭{'─' * 70}╮
+│ 🔒 Detected secure share link                                             │
+╰{'─' * 70}╯
+""")
         if source.startswith("https://drive.google.com/open?id="):
             source = "https://drive.google.com/uc?export=download&id=" + source.split("https://drive.google.com/open?id=")[1]
             print("🔄 Converting Google Drive link to direct download URL")
@@ -109,12 +121,16 @@ def arg_parser() -> None:
         args_obj.root = "myhome"
         print("🏠 Using 'myhome' as root directory")
 
-    print("\n🔍 Parsing source and target paths...")
+    print(f"""
+╭{'─' * 70}╮
+│ 🔍 Parsing source and target paths...                                     │
+╰{'─' * 70}╯
+""")
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
     
     print(f"""
 ╭{'─' * 70}╮
-│ ⚙️  Configuration:
+│ ⚙️  Configuration:                                                         │
 ╰{'─' * 70}╯
 """)
     Struct(args_obj.__dict__).print(as_config=True, title="CLI config")
@@ -123,11 +139,13 @@ def arg_parser() -> None:
     
     if cloud in source:
         print(f"""
-╭{'─' * 70}╮
-│ 📥 Downloading from cloud: {cloud}
-│ 📂 Source: {source.replace(cloud + ":", "")}
-│ 🎯 Target: {target}
-╰{'─' * 70}╯
+╔{'═' * 70}╗
+║ 📥 DOWNLOADING FROM CLOUD                                                 ║
+╠{'═' * 70}╣
+║ ☁️  Cloud: {cloud}                                                        
+║ 📂 Source: {source.replace(cloud + ":", "")}                  
+║ 🎯 Target: {target}                                
+╚{'═' * 70}╝
 """)
         
         P(target).from_cloud(cloud=cloud, remotepath=source.replace(cloud + ":", ""),
@@ -135,22 +153,32 @@ def arg_parser() -> None:
                             overwrite=args_obj.overwrite,
                             rel2home=args_obj.rel2home, os_specific=args_obj.os_specific, root=args_obj.root, strict=False,
                             )
-        print("✅ Download completed successfully")
+        print(f"""
+╔{'═' * 70}╗
+║ ✅ Download completed successfully                                         ║
+╚{'═' * 70}╝
+""")
         
     elif cloud in target:
         print(f"""
-╭{'─' * 70}╮
-│ 📤 Uploading to cloud: {cloud}
-│ 📂 Source: {source}
-│ 🎯 Target: {target.replace(cloud + ":", "")}
-╰{'─' * 70}╯
+╔{'═' * 70}╗
+║ 📤 UPLOADING TO CLOUD                                                     ║
+╠{'═' * 70}╣
+║ ☁️  Cloud: {cloud}                                                        
+║ 📂 Source: {source}                                    
+║ 🎯 Target: {target.replace(cloud + ":", "")}                  
+╚{'═' * 70}╝
 """)
         
         res = P(source).to_cloud(cloud=cloud, remotepath=target.replace(cloud + ":", ""),
                                     zip=args_obj.zip, encrypt=args_obj.encrypt, pwd=args_obj.pwd,
                                     rel2home=args_obj.rel2home, root=args_obj.root, os_specific=args_obj.os_specific, strict=False,
                                     share=args_obj.share)
-        print("✅ Upload completed successfully")
+        print(f"""
+╔{'═' * 70}╗
+║ ✅ Upload completed successfully                                           ║
+╚{'═' * 70}╝
+""")
         
         if args_obj.share:
             fname = f".share_url_{cloud}"
@@ -159,16 +187,16 @@ def arg_parser() -> None:
             share_url_path.write_text(res.as_url_str())
             print(f"""
 ╔{'═' * 70}╗
-║ 🔗 Share URL generated:
+║ 🔗 SHARE URL GENERATED                                                    ║
 ╠{'═' * 70}╣
-║ 📝 URL file: {share_url_path}
+║ 📝 URL file: {share_url_path}                            
 ║ 🌍 {res.as_url_str()}
 ╚{'═' * 70}╝
 """)
     else: 
         print(f"""
 ╔{'═' * 70}╗
-║ ❌ ERROR: Cloud '{cloud}' not found in source or target
+║ ❌ ERROR: Cloud '{cloud}' not found in source or target                   ║
 ╚{'═' * 70}╝
 """)
         raise ValueError(f"Cloud `{cloud}` not found in source or target.")

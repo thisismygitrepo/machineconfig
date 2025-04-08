@@ -1,78 +1,13 @@
-
 """utils"""
 
 import git
 from crocodile.file_management import P, Read
-from crocodile.core import randstr
 from crocodile.meta import Terminal
 
-from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, PROGRAM_PATH, write_shell_script, get_shell_file_executing_python_script, get_shell_script, choose_one_option
-import argparse
+from machineconfig.scripts.python.helpers.helpers1 import args_parser
+from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, PROGRAM_PATH, get_shell_file_executing_python_script, get_shell_script, choose_one_option
 import platform
 from typing import Optional, Literal
-# import sys
-# import subprocess
-
-
-def get_wt_cmd(wd1: P, wd2: P) -> str:
-    lines = [
-        f"""wt --window 0 new-tab --profile pwsh --title "gitdiff" --tabColor `#3b04d1 --startingDirectory {wd1} ` --colorScheme "Solarized Dark" """,
-        f"""split-pane --horizontal --profile pwsh --startingDirectory {wd2} --size 0.5 --colorScheme "Tango Dark" -- pwsh -Interactive """
-    ]
-    return " `; ".join(lines)
-
-
-def get_zellij_cmd(wd1: P, wd2: P) -> str:
-    _ = wd1, wd2
-    lines = [""" zellij action new-tab --name gitdiff""",
-             """zellij action new-pane --direction down --name local --cwd ./data """,
-             """zellij action write-chars "cd '{wd1}'; git status" """,
-             """zellij action move-focus up; zellij action close-pane """,
-             """zellij action new-pane --direction down --name remote --cwd code """,
-             """zellij action write-chars "cd '{wd2}' """,
-             """git status" """
-    ]
-    return "; ".join(lines)
-
-
-def args_parser():
-    parser = argparse.ArgumentParser(description="Secure Repo CLI.")
-    # parser.add_argument("cmd", help="command to run", choices=["pull", "push"])
-    parser.add_argument("path", nargs='?', type=str, help="Repository path, defaults to cwd.", default=None)
-    # parser.add_argument("--share", help="Repository path, defaults to cwd.", action="store_true", default=False)
-    parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
-    parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {randstr()}")
-    # parser.add_argument("--skip_confirmation", "-s", help="Skip confirmation.", action="store_true", default=False)
-    # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
-    parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
-    # parser.add_argument("--no_push", "-u", help="push to reomte.", action="store_true")  # default is False
-    parser.add_argument("--action", "-a", help="Action to take if merge fails.", choices=["ask", "pushLocalMerge", "overwriteLocal", "InspectRepos", "RemoveLocalRclone"], default="ask")
-    args = parser.parse_args()
-    main(cloud=args.cloud, path=args.path, message=args.message, action=args.action)
-
-
-def fetch_dotfiles():
-    cloud_resolved = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
-    print(f"⚠️ Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH} ⚠️")
-    dotfiles_local = P.home().joinpath("dotfiles")
-    CONFIG_PATH.joinpath("remote").create()
-    dotfiles_remote = CONFIG_PATH.joinpath("remote", dotfiles_local.rel2home())
-    remote_path = dotfiles_local.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
-    dotfiles_remote.from_cloud(remotepath=remote_path, cloud=cloud_resolved,
-        unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=None)
-    dotfiles_local.delete(sure=True)
-    dotfiles_remote.move(folder=P.home())
-    script = f"""
-# rm -rf {dotfiles_local}
-# mv {dotfiles_remote} {dotfiles_local}
-"""
-    if platform.system() == "Linux": script += """
-sudo chmod 600 $HOME/.ssh/*
-sudo chmod 700 $HOME/.ssh
-sudo chmod +x $HOME/dotfiles/scripts/linux -R
-"""
-    shell_path = get_shell_script(shell_script=script)
-    Terminal().run(f". {shell_path}", shell="bash").capture().print()
 
 
 def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optional[str] = None,
@@ -81,39 +16,73 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
     if cloud is None:
         try:
             cloud_resolved = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
-            print(f"⚠️ Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH} ⚠️")
+            print(f"""
+╭{'─' * 70}╮
+│ ⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}     │
+╰{'─' * 70}╯
+""")
         except FileNotFoundError:
-            print(f"No cloud profile found @ {DEFAULTS_PATH}, please set one up or provide one via the --cloud flag.")
+            print(f"""
+╔{'═' * 70}╗
+║ ❌ ERROR: No cloud profile found                                          ║
+╠{'═' * 70}╣
+║ Location: {DEFAULTS_PATH}                        
+║ Please set one up or provide one via the --cloud flag.                   ║
+╚{'═' * 70}╝
+""")
             return ""
     else: cloud_resolved = cloud
+    
     # repo_root = P(args.repo).expanduser().absolute()
     repo_local_root = P.cwd() if path is None else P(path).expanduser().absolute()
     repo_local_obj = git.Repo(repo_local_root, search_parent_directories=True)
     repo_local_root = P(repo_local_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
     CONFIG_PATH.joinpath("remote").create()
     repo_remote_root = CONFIG_PATH.joinpath("remote", repo_local_root.rel2home())  # .delete(sure=True)
+    
     try:
-        print("\n", "=============================== Downloading Remote Repo ====================================")
+        print(f"""
+╔{'═' * 70}╗
+║ 📥 DOWNLOADING REMOTE REPOSITORY                                          ║
+╚{'═' * 70}╝
+""")
         remote_path = repo_local_root.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
         repo_remote_root.from_cloud(remotepath=remote_path, cloud=cloud_resolved, unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=pwd)
     except AssertionError:
-        print("Remote does not exist, creating it and exiting ... ")
+        print(f"""
+╔{'═' * 70}╗
+║ 🆕 Remote repository doesn't exist                                        ║
+║ 📤 Creating new remote and exiting...                                     ║
+╚{'═' * 70}╝
+""")
         repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
         return ""
+        
     repo_remote_obj = git.Repo(repo_remote_root)
     if repo_remote_obj.is_dirty():
-        print("=" * 50, '\n', f"WRANING: the remote `{repo_remote_root}` is dirty, please commit or stash changes before proceeding.", '\n', "=" * 50)
+        print(f"""
+╔{'═' * 70}╗
+║ ⚠️  WARNING: REMOTE REPOSITORY IS DIRTY                                    ║
+╠{'═' * 70}╣
+║ Location: {repo_remote_root}               
+║ Please commit or stash changes before proceeding.                        ║
+╚{'═' * 70}╝
+""")
 
     script = f"""
 echo ""
-echo "=============================== Committing Local Changes ==================================="
+echo "╔{'═' * 70}╗"
+echo "║ 💾 COMMITTING LOCAL CHANGES                                               ║"
+echo "╚{'═' * 70}╝"
 cd {repo_local_root}
 git status
 git add .
 git commit -am "{message}"
 echo ""
 echo ""
-echo "=============================== Pulling Latest From Remote ================================"
+echo "╔{'═' * 70}╗"
+echo "║ 🔄 PULLING LATEST FROM REMOTE                                             ║"
+echo "╚{'═' * 70}╝"
 cd {repo_local_root}
 echo '-> Trying to removing originEnc remote from local repo if it exists.'
 # git remote remove originEnc
@@ -129,13 +98,27 @@ git pull originEnc master
     res = Terminal().run(f". {shell_path}", shell="powershell").capture().print()
 
     if res.is_successful(strict_err=True, strict_returcode=True):
-        print("\n", "Pull succeeded, removing originEnc, the local copy of remote & pushing merged repo_root to remote ... ")
+        print(f"""
+╔{'═' * 70}╗
+║ ✅ Pull succeeded!                                                        ║
+╠{'═' * 70}╣
+║ 🧹 Removing originEnc remote and local copy                               ║
+║ 📤 Pushing merged repository to cloud storage                             ║
+╚{'═' * 70}╝
+""")
         repo_remote_root.delete(sure=True)
         from git.remote import Remote
         Remote.remove(repo_local_obj, "originEnc")
         repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
     else:
-        print(f"Failed to merge with no errors, keeping local copy of remote at {repo_remote_root} ... ")
+        print(f"""
+╔{'═' * 70}╗
+║ ⚠️  MERGE FAILED                                                          ║
+╠{'═' * 70}╣
+║ 💾 Keeping local copy of remote at:                                       ║
+║ 📂 {repo_remote_root}                    
+╚{'═' * 70}╝
+""")
 
         # ================================================================================
         option1 = 'Delete remote copy and push local:'
@@ -179,10 +162,18 @@ git commit -am "finished merging"
         shell_file_4 = get_shell_script(shell_script=program_4)
         # ================================================================================
 
-        print(f"• {option1:75} 👉 {shell_file_1}")
-        print(f"• {option2:75} 👉 {shell_file_2}")
-        print(f"• {option3:75} 👉 {shell_file_3}")
-        print(f"• {option4:75} 👉 {shell_file_4}")
+        print(f"""
+╔{'═' * 70}╗
+║ 🔄 RESOLVE MERGE CONFLICT                                                 ║
+╠{'═' * 70}╣
+║ Choose an option to resolve the conflict:                                ║
+╚{'═' * 70}╝
+""")
+        
+        print(f"• 1️⃣  {option1:75} 👉 {shell_file_1}")
+        print(f"• 2️⃣  {option2:75} 👉 {shell_file_2}")
+        print(f"• 3️⃣  {option3:75} 👉 {shell_file_3}")
+        print(f"• 4️⃣  {option4:75} 👉 {shell_file_4}")
 
         program_content = None
         match action:
@@ -199,29 +190,6 @@ git commit -am "finished merging"
             case "RemoveLocalRclone": program_content = program_4
         PROGRAM_PATH.write_text(program_content)
     return program_content
-
-
-def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cloud: str):
-    repo_sync_root = P(remote_repo).expanduser().absolute()
-    repo_root_path = P(local_repo).expanduser().absolute()
-    repo_sync_root.delete(sure=True)
-    from git.remote import Remote
-    from git.repo import Repo
-    try: Remote.remove(Repo(repo_root_path), "originEnc")
-    except Exception: pass  # type: ignore
-    repo_root_path.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
-
-
-def inspect_repos(repo_local_root: str, repo_remote_root: str):
-    if platform.system() == "Windows":
-        program = get_wt_cmd(wd1=P(repo_local_root), wd2=P(repo_local_root))
-        write_shell_script(program=program, execute=True, desc="Inspecting repos ...", preserve_cwd=True, display=True)
-        return None
-    elif platform.system() == "Linux":
-        program = get_zellij_cmd(wd1=P(repo_local_root), wd2=P(repo_remote_root))
-        write_shell_script(program=program, execute=True, desc="Inspecting repos ...", preserve_cwd=True, display=True)
-        return None
-    else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
 
 
 if __name__ == "__main__":

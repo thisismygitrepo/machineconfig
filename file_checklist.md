@@ -42,15 +42,15 @@
 - [x] src/machineconfig/scripts/python/archive/tmate_start.py
 - [x] src/machineconfig/scripts/python/browser_user_wrapper.py
 - [x] src/machineconfig/scripts/python/choose_wezterm_theme.py
-- [ ] src/machineconfig/scripts/python/cloud_copy.py
-- [ ] src/machineconfig/scripts/python/cloud_manager.py
-- [ ] src/machineconfig/scripts/python/cloud_mount.py
-- [ ] src/machineconfig/scripts/python/cloud_repo_sync.py
-- [ ] src/machineconfig/scripts/python/cloud_sync.py
-- [ ] src/machineconfig/scripts/python/croshell.py
-- [ ] src/machineconfig/scripts/python/devops.py
-- [ ] src/machineconfig/scripts/python/devops_add_identity.py
-- [ ] src/machineconfig/scripts/python/devops_add_ssh_key.py
+- [x] src/machineconfig/scripts/python/cloud_copy.py
+- [x] src/machineconfig/scripts/python/cloud_manager.py
+- [x] src/machineconfig/scripts/python/cloud_mount.py
+- [x] src/machineconfig/scripts/python/cloud_repo_sync.py
+- [x] src/machineconfig/scripts/python/cloud_sync.py
+- [x] src/machineconfig/scripts/python/croshell.py
+- [x] src/machineconfig/scripts/python/devops.py
+- [x] src/machineconfig/scripts/python/devops_add_identity.py
+- [x] src/machineconfig/scripts/python/devops_add_ssh_key.py
 - [ ] src/machineconfig/scripts/python/devops_backup_retrieve.py
 - [ ] src/machineconfig/scripts/python/devops_devapps_install.py
 - [ ] src/machineconfig/scripts/python/devops_update_repos.py

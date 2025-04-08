@@ -31,10 +31,28 @@ def get_read_data_pycode(path: str):
 p = P(r\'{path}\').absolute()
 try:
     dat = p.readit()
-    if isinstance(dat, dict): Struct(dat).print(as_config=True, title=p.name)
-    else: print(f"📄 Successfully read the file {{p.name}}")
+    if isinstance(dat, dict): 
+        print(f'''
+╔{'═' * 70}╗
+║ 📄 File Data: {{p.name}}                                              
+╚{'═' * 70}╝
+''')
+        Struct(dat).print(as_config=True, title=p.name)
+    else: 
+        print(f'''
+╔{'═' * 70}╗
+║ 📄 Successfully read the file: {{p.name}}                              
+╚{'═' * 70}╝
+''')
 except Exception as e:
-    print(f"❌ Error reading file: {{e}}")
+    print(f'''
+╔{'═' * 70}╗
+║ ❌ ERROR READING FILE                                                    ║
+╠{'═' * 70}╣
+║ File: {{p.name}}                                                       
+║ Error: {{e}}                                                      
+╚{'═' * 70}╝
+''')
 
 """
     return pycode
@@ -55,6 +73,12 @@ __file__ = P(r'{path}')
 
 
 def build_parser():
+    print(f"""
+╔{'═' * 70}╗
+║ 🐊 Crocodile Shell Launcher                                              ║
+╚{'═' * 70}╝
+""")
+    
     parser = argparse.ArgumentParser(description="Generic Parser to launch crocodile shell.")
     # A FLAG:
     parser.add_argument("--module", '-m', help="flag to run the file as a module as opposed to main.", action="store_true", default=False)  # default is running as main, unless indicated by --module flag.
@@ -85,25 +109,51 @@ def build_parser():
     file = P.cwd()  # initialization value, could be modified according to args.
 
     if args.cmd != "":
+        print(f"""
+╭{'─' * 70}╮
+│ 🖥️  Executing command from CLI argument                                   │
+╰{'─' * 70}╯
+""")
         import textwrap
         program = textwrap.dedent(args.cmd)
 
     elif args.fzf:
+        print(f"""
+╭{'─' * 70}╮
+│ 🔍 Searching for Python files...                                         │
+╰{'─' * 70}╯
+""")
         options = P.cwd().search("*.py", r=True).apply(str).list
         file = display_options(msg="Choose a python file to run", options=options, fzf=True, multi=False, )
         assert isinstance(file, str)
         if profile is None:
             profile = get_ipython_profile(P(file))
         program = P(file).read_text(encoding='utf-8')
+        print(f"""
+╭{'─' * 70}╮
+│ 📄 Selected file: {P(file).name}                                  │
+╰{'─' * 70}╯
+""")
 
     elif args.file != "":
         file = P(args.file.lstrip()).expanduser().absolute()
         if profile is None:
             profile = get_ipython_profile(P(file))
         program = get_read_pyfile_pycode(file, as_module=args.module, cmd=args.cmd)
+        print(f"""
+╭{'─' * 70}╮
+│ 📄 Loading file: {file.name}                                    │
+│ 🔄 Mode: {'Module' if args.module else 'Script'}                                                 │
+╰{'─' * 70}╯
+""")
 
     elif args.read != "":
         if args.streamlit_viewer:
+            print(f"""
+╔{'═' * 70}╗
+║ 📊 STARTING STREAMLIT VIEWER                                              ║
+╚{'═' * 70}╝
+""")
             from machineconfig.scripts.python.viewer import run
             py_file_path = run(data_path=args.read, data=None, get_figure=None)
             final_program = f"""
@@ -113,6 +163,7 @@ streamlit run {py_file_path}
 """
             PROGRAM_PATH.write_text(data=final_program)
             return
+        
         file = P(str(args.read).lstrip()).expanduser().absolute()
         ve_name_from_file, ipy_profile_from_file = get_ve_name_and_ipython_profile(init_path=P(file))
         # if profile is None:
@@ -120,9 +171,20 @@ streamlit run {py_file_path}
         if profile is None: profile = ipy_profile_from_file
         if args.ve is None: args.ve = ve_name_from_file
         program = get_read_data_pycode(str(file))
+        print(f"""
+╭{'─' * 70}╮
+│ 📄 Reading data from: {file.name}                              │
+│ 🐍 Python profile: {profile if profile else 'default'}                                         │
+╰{'─' * 70}╯
+""")
 
     else:  # just run croshell.py interactively
         program = ""
+        print(f"""
+╭{'─' * 70}╮
+│ 🔄 Starting interactive Crocodile Shell session                           │
+╰{'─' * 70}╯
+""")
         # program = f" --profile {get_ipython_profile(P.cwd())} --no-banner -m crocodile.croshell"  # --term-title croshell
         # from IPython import start_ipython
         # start_ipython(argv=program.split(' ')[1:])
@@ -166,8 +228,18 @@ print_logo(logo="crocodile")
         if interpreter == "ipython":
             fire_line += f" {interactivity} --profile {profile} --no-banner"
         fire_line += f" {str(pyfile)}"
+            
     final_program += fire_line
-    print(f"🚀 Launching script at {pyfile}\n🔥 Using command: `{fire_line}`")
+    
+    print(f"""
+╔{'═' * 70}╗
+║ 🚀 LAUNCHING SCRIPT                                                      ║
+╠{'═' * 70}╣
+║ 📄 Script: {pyfile}
+║ 🔥 Command: {fire_line}
+╚{'═' * 70}╝
+""")
+    
     PROGRAM_PATH.write_text(data=final_program)
     # (PROGRAM_PATH + ".py").write_text(str(pyfile), encoding='utf-8')
 
