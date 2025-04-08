@@ -1,4 +1,3 @@
-
 """
 Choose a theme for Wezterm
 """
@@ -39,11 +38,18 @@ schemes_list = [
 
 
 def main2():
+    print(f"""
+╔{'═' * 60}╗
+║ 🎨 WezTerm Theme Selector
+╚{'═' * 60}╝
+""")
     option = choose_one_option(options=schemes_list, header="Choose a theme for Wezterm", fzf=True)
     set_theme(option)
+    print(f"✅ Theme set to: {option}")
 
 
 def set_theme(theme: str):
+    print(f"🔄 Setting WezTerm theme to: {theme}")
     txt_lines = P("~/.config/wezterm/wezterm.lua").expanduser().read_text().splitlines()
     res_lines = []
     for line in txt_lines:
@@ -52,12 +58,25 @@ def set_theme(theme: str):
         else: res_lines.append(line)
     P("~/.config/wezterm/wezterm.lua").expanduser().write_text('\n'.join(res_lines))
     time.sleep(0.1)
+    print("💾 Configuration saved")
 
 
 def main():
+    print(f"""
+╔{'═' * 60}╗
+║ 🎨 WezTerm Theme Selector - Interactive Mode
+╚{'═' * 60}╝
+
+📝 Use arrow keys to navigate, Enter to select a theme
+""")
     import curses  # not availble on windows: https://docs.python.org/3/howto/curses.html
     # from curses import wrapper
     curses.wrapper(accessory)
+    print(f"""
+╔{'═' * 60}╗
+║ ✅ Theme selection completed
+╚{'═' * 60}╝
+""")
 
 def accessory(stdscr: Any):
     import curses
@@ -75,12 +94,12 @@ def accessory(stdscr: Any):
         # Display options
         for i, option in enumerate(options[start_index:end_index]):
             if start_index + i == current_option:
-                stdscr.addstr(i, 0, option, curses.A_REVERSE)  # Highlighted
+                stdscr.addstr(i, 0, f"➤ {option}", curses.A_REVERSE)  # Highlighted with arrow
             else:
-                stdscr.addstr(i, 0, option)
+                stdscr.addstr(i, 0, f"  {option}")
 
         # Display status line
-        status_line = f"Option {current_option+1} of {len(options)}. Use arrow keys to navigate, Enter to select."
+        status_line = f"🔍 Theme {current_option+1}/{len(options)} | ↑/↓: Navigate | Enter: Select"
         stdscr.addstr(page_size, 0, status_line)
 
         # Get key press

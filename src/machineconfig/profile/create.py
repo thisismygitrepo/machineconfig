@@ -1,4 +1,3 @@
-
 """
 This script Takes away all config files from the computer, place them in one directory
 `dotfiles`, and create symlinks to those files from thier original locations.
@@ -57,15 +56,23 @@ def main_symlinks(choice: Optional[str] = None):
 
     if isinstance(choice_selected, str):
         if str(choice_selected) == "all" and system == "Windows" and not Terminal.is_user_admin():
-            print("*" * 200)
+            print(f"""
+{'*' * 80}
+⚠️  WARNING: Administrator privileges required
+{'*' * 80}
+""")
             raise RuntimeError("Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
         elif choice_selected == "all":
-            print(f"{program_keys=}")
+            print(f"""
+🔍 Processing all program keys: 
+{program_keys}
+""")
             pass  # i.e. program_keys = program_keys
         else: program_keys = [choice_selected]
     else: program_keys = choice_selected
 
     for program_key in program_keys:
+        print(f"\n🔄 Processing {program_key} symlinks...")
         for file_key, file_map in symlink_mapper[program_key].items():
             this = P(file_map['this'])
             to_this = P(file_map['to_this'].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()))
@@ -73,40 +80,66 @@ def main_symlinks(choice: Optional[str] = None):
                 try:
                     for a_target in to_this.expanduser().search("*"):
                         symlink_func(this=this.joinpath(a_target.name), to_this=a_target, prioritize_to_this=overwrite)
-                except Exception as ex: print("Config error: ", program_key, file_key, "missing keys 'this ==> to_this'.", ex)
+                except Exception as ex: 
+                    print(f"❌ Config error: {program_key} | {file_key} | missing keys 'this ==> to_this'. {ex}")
             if "copy" in file_map:
                 try:
                     symlink_copy(this=this, to_this=to_this, prioritize_to_this=overwrite)
-                except Exception as ex: print("Config error: ", program_key, file_key, ex)
+                except Exception as ex: 
+                    print(f"❌ Config error: {program_key} | {file_key} | {ex}")
             else:
-                try: symlink_func(this=this, to_this=to_this, prioritize_to_this=overwrite)
-                except Exception as ex: print("Config error: ", program_key, file_key, "missing keys 'this ==> to_this'.", ex)
+                try: 
+                    symlink_func(this=this, to_this=to_this, prioritize_to_this=overwrite)
+                except Exception as ex: 
+                    print(f"❌ Config error: {program_key} | {file_key} | missing keys 'this ==> to_this'. {ex}")
 
             if program_key == "ssh" and system == "Linux":  # permissions of ~/dotfiles/.ssh should be adjusted
                 try:
+                    print("\n🔒 Setting secure permissions for SSH files...")
                     subprocess.run("chmod 700 ~/.ssh/", check=True)
                     subprocess.run("chmod 700 ~/dotfiles/creds/.ssh/", check=True)  # may require sudo
                     subprocess.run("chmod 600 ~/dotfiles/creds/.ssh/*", check=True)
+                    print("✅ SSH permissions set successfully")
                 except Exception as e:
                     ERROR_LIST.append(e)
-                    print("Caught error", e)
+                    print(f"❌ Error setting SSH permissions: {e}")
 
     if system == "Linux":
+        print("\n📜 Setting executable permissions for scripts...")
         Terminal().run(f'chmod +x {LIBRARY_ROOT.joinpath(f"scripts/{system.lower()}")} -R')
-    print("\n\n", "*" * 200)
+        print("✅ Script permissions updated")
+        
     if len(ERROR_LIST) > 0:
-        print("Errors caught: ", ERROR_LIST)
+        print(f"""
+{'*' * 80}
+❗ ERRORS ENCOUNTERED DURING PROCESSING
+{'*' * 80}
+{ERROR_LIST}
+{'*' * 80}
+""")
+    else:
+        print(f"""
+{'*' * 80}
+✅ All symlinks created successfully!
+{'*' * 80}
+""")
 
 
 def main(choice: Optional[str] = None):
     console = Console()
     print("\n")
-    console.rule("CREATING SYMLINKS")
+    console.rule("[bold blue]🔗 CREATING SYMLINKS 🔗")
     main_symlinks(choice=choice)
 
     print("\n")
-    console.rule("CREATING SYMLINKS")
+    console.rule("[bold green]🐚 CREATING SHELL PROFILE 🐚")
     create_default_shell_profile()
+    
+    print(f"""
+{'=' * 80}
+✨ Configuration setup complete! ✨
+{'=' * 80}
+""")
 
 
 if __name__ == '__main__':

@@ -39,7 +39,7 @@ def main_parse():
         task_root = root.joinpath(task_name).create(exist_ok=False)
         # assert not root.joinpath("config.ini").exists(), f"Config file already exists in {root}"
         task_root.joinpath("config.ini").write_text(DEFAULT_CONFIG, encoding="utf-8")
-        task_root.joinpath("task.py").write_text(f"""
+        task_root.joinpath("task.py").write_text("""
 # Scheduler Task.
 """)
         print(f"✅ Task {task_name} created in {task_root}. Head there and edit the config.ini file & task.py file.")

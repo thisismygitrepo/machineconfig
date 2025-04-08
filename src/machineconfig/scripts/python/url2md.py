@@ -3,8 +3,6 @@ from crocodile.core import randstr
 from pathlib import Path
 import subprocess
 import multiprocessing
-import os
-import sys
 import time
 
 cwd = Path.cwd()
@@ -31,7 +29,7 @@ for a_url in relevant_urls:
 # run 20 commands in parallel, should work in both Linux and Windows
 def run_command(cmd):
     try:
-        result = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
+        _result = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
         print(f"Completed: {cmd[:60]} ...")
         return True
     except subprocess.SubprocessError as e:

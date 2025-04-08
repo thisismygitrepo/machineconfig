@@ -33,15 +33,15 @@
 - [x] src/machineconfig/jobs/python_custom_installers/dev/warp-cli.py
 - [x] src/machineconfig/jobs/python_custom_installers/dev/wezterm.py
 - [x] src/machineconfig/jobs/python_custom_installers/gh.py
-- [ ] src/machineconfig/jobs/python_custom_installers/hx.py
-- [ ] src/machineconfig/profile/create.py
-- [ ] src/machineconfig/profile/create_hardlinks.py
-- [ ] src/machineconfig/profile/shell.py
-- [ ] src/machineconfig/scripts/python/archive/im2text.py
-- [ ] src/machineconfig/scripts/python/archive/tmate_conn.py
-- [ ] src/machineconfig/scripts/python/archive/tmate_start.py
-- [ ] src/machineconfig/scripts/python/browser_user_wrapper.py
-- [ ] src/machineconfig/scripts/python/choose_wezterm_theme.py
+- [x] src/machineconfig/jobs/python_custom_installers/hx.py
+- [x] src/machineconfig/profile/create.py
+- [x] src/machineconfig/profile/create_hardlinks.py
+- [x] src/machineconfig/profile/shell.py
+- [x] src/machineconfig/scripts/python/archive/im2text.py
+- [x] src/machineconfig/scripts/python/archive/tmate_conn.py
+- [x] src/machineconfig/scripts/python/archive/tmate_start.py
+- [x] src/machineconfig/scripts/python/browser_user_wrapper.py
+- [x] src/machineconfig/scripts/python/choose_wezterm_theme.py
 - [ ] src/machineconfig/scripts/python/cloud_copy.py
 - [ ] src/machineconfig/scripts/python/cloud_manager.py
 - [ ] src/machineconfig/scripts/python/cloud_mount.py

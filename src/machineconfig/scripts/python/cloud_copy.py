@@ -16,31 +16,63 @@ from typing import Optional
 
 @RepeatUntilNoException(retry=3, sleep=1)
 def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
+    print(f"""
+╔{'═' * 70}╗
+║ 🚀 Secure File Downloader
+╚{'═' * 70}╝
+""")
+    
     folder_obj = P.cwd() if folder is None else P(folder)
+    print(f"📂 Target folder: {folder_obj}")
+    
     if os.environ.get("DECRYPTION_PASSWORD") is not None:
+        print("🔑 Using password from environment variables")
         pwd: str=str(os.environ.get("DECRYPTION_PASSWORD"))
     else:
-        pwd = getpass.getpass(prompt="Enter decryption password: ")
+        pwd = getpass.getpass(prompt="🔑 Enter decryption password: ")
+        
     if url is None:
         if os.environ.get("SHARE_URL") is not None:
             url = os.environ.get("SHARE_URL")
             assert url is not None
+            print("🔗 Using URL from environment variables")
         else:
-            url = input("Enter share url: ")
+            url = input("🔗 Enter share URL: ")
+            
+    print("\n📡 Downloading from URL...")
     from rich.progress import Progress
     with Progress(transient=True) as progress:
-        _task = progress.add_task("Downloading ... ", total=None)
+        _task = progress.add_task("Downloading... ", total=None)
         url_obj = P(url).download(folder=folder_obj)
-        print(f"📥 Downloaded to {url_obj}")
+        
+    print(f"""
+╭{'─' * 70}╮
+│ 📥 Downloaded file: {url_obj}
+╰{'─' * 70}╯
+""")
+    
+    print("🔐 Decrypting and extracting...")
     with Progress(transient=True) as progress:
-        _task = progress.add_task("Decrypting ... ", total=None)
+        _task = progress.add_task("Decrypting... ", total=None)
         tmp_folder = P.tmpdir(prefix="tmp_unzip")
         res = url_obj.decrypt(pwd=pwd, inplace=True).unzip(inplace=True, folder=tmp_folder)
         res.search("*").apply(lambda x: x.move(folder=folder_obj, overwrite=True))
-        print(f"🔓 Decrypted to {res}")
+        
+    print(f"""
+╔{'═' * 70}╗
+║ ✅ Operation completed successfully!
+║ 🔓 Files extracted to: {folder_obj}
+╚{'═' * 70}╝
+""")
 
 
 def arg_parser() -> None:
+    print(f"""
+╔{'═' * 70}╗
+║ ☁️  Cloud Copy Utility
+╚{'═' * 70}╝
+""")
+    
     parser = argparse.ArgumentParser(description='🚀 Cloud CLI. It wraps rclone with sane defaults for optimum type time.')
 
     # positional argument
@@ -67,36 +99,79 @@ def arg_parser() -> None:
     args_obj = Args(**args_dict)
 
     if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")):
+        print("🔒 Detected secure share link")
         if source.startswith("https://drive.google.com/open?id="):
             source = "https://drive.google.com/uc?export=download&id=" + source.split("https://drive.google.com/open?id=")[1]
+            print("🔄 Converting Google Drive link to direct download URL")
         return get_securely_shared_file(url=source, folder=target)
 
     if args_obj.rel2home is True and args_obj.root is None:
         args_obj.root = "myhome"
+        print("🏠 Using 'myhome' as root directory")
 
+    print("\n🔍 Parsing source and target paths...")
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
+    
+    print(f"""
+╭{'─' * 70}╮
+│ ⚙️  Configuration:
+╰{'─' * 70}╯
+""")
     Struct(args_obj.__dict__).print(as_config=True, title="CLI config")
 
     assert args_obj.key is None, "Key is not supported yet."
+    
     if cloud in source:
+        print(f"""
+╭{'─' * 70}╮
+│ 📥 Downloading from cloud: {cloud}
+│ 📂 Source: {source.replace(cloud + ":", "")}
+│ 🎯 Target: {target}
+╰{'─' * 70}╯
+""")
+        
         P(target).from_cloud(cloud=cloud, remotepath=source.replace(cloud + ":", ""),
                             unzip=args_obj.zip, decrypt=args_obj.encrypt, pwd=args_obj.pwd,
                             overwrite=args_obj.overwrite,
                             rel2home=args_obj.rel2home, os_specific=args_obj.os_specific, root=args_obj.root, strict=False,
                             )
+        print("✅ Download completed successfully")
+        
     elif cloud in target:
+        print(f"""
+╭{'─' * 70}╮
+│ 📤 Uploading to cloud: {cloud}
+│ 📂 Source: {source}
+│ 🎯 Target: {target.replace(cloud + ":", "")}
+╰{'─' * 70}╯
+""")
+        
         res = P(source).to_cloud(cloud=cloud, remotepath=target.replace(cloud + ":", ""),
                                     zip=args_obj.zip, encrypt=args_obj.encrypt, pwd=args_obj.pwd,
                                     rel2home=args_obj.rel2home, root=args_obj.root, os_specific=args_obj.os_specific, strict=False,
                                     share=args_obj.share)
+        print("✅ Upload completed successfully")
+        
         if args_obj.share:
             fname = f".share_url_{cloud}"
             if P(source).is_dir(): share_url_path = P(source).joinpath(fname)
             else: share_url_path = P(source).with_suffix(fname)
             share_url_path.write_text(res.as_url_str())
-            print(f"🔗 share url saved to {share_url_path}")
-            print(f"🌍 {res.as_url_str()}")
-    else: raise ValueError(f"Cloud `{cloud}` not found in source or target.")
+            print(f"""
+╔{'═' * 70}╗
+║ 🔗 Share URL generated:
+╠{'═' * 70}╣
+║ 📝 URL file: {share_url_path}
+║ 🌍 {res.as_url_str()}
+╚{'═' * 70}╝
+""")
+    else: 
+        print(f"""
+╔{'═' * 70}╗
+║ ❌ ERROR: Cloud '{cloud}' not found in source or target
+╚{'═' * 70}╝
+""")
+        raise ValueError(f"Cloud `{cloud}` not found in source or target.")
 
 
 if __name__ == "__main__":

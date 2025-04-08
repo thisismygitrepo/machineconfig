@@ -40,9 +40,9 @@ tab = """
 def build_template(tabs: list[str]):
     res = prefix
     for t in tabs:
-        res += tab.replace("TABNAME", t).replace("TABCOMMAND", f"ssh").replace("TABARGS", t)
+        res += tab.replace("TABNAME", t).replace("TABCOMMAND", "ssh").replace("TABARGS", t)
     res += suffix.replace("THISMACHINE", socket.gethostname())
-    file = P.tmp().joinpath(f"tmp_files/templates/zellij_template.kdl").create(parents_only=True).write_text(res)
+    file = P.tmp().joinpath("tmp_files/templates/zellij_template.kdl").create(parents_only=True).write_text(res)
     res = f"zellij --layout {file}"
     return res
 

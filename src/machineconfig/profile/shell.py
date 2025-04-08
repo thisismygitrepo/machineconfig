@@ -24,14 +24,26 @@ def create_default_shell_profile():
     if system == "Windows": source = f". {LIBRARY_ROOT.joinpath('settings/shells/pwsh/init.ps1').collapseuser().to_str().replace('~', '$HOME')}"
     else: source = f"source {LIBRARY_ROOT.joinpath('settings/shells/bash/init.sh').collapseuser().to_str().replace('~', '$HOME')}"
 
-    if source in profile: print(f"\n🔄 PROFILE | Skipping init script sourcing - already present in profile\n")
+    if source in profile: 
+        print(f"""
+╭{'─' * 78}╮
+│ 🔄 PROFILE | Skipping init script sourcing - already present in profile      │
+╰{'─' * 78}╯
+""")
     else:
+        print(f"""
+╭{'─' * 78}╮
+│ 📝 PROFILE | Adding init script sourcing to profile                          │
+╰{'─' * 78}╯
+""")
         profile += "\n" + source + "\n"
         if system == "Linux":
             res = Terminal().run("cat /proc/version").op
             if "microsoft" in res.lower() or "wsl" in res.lower():
                 profile += "\ncd ~"  # this is to make sure that the current dir is not in the windows file system, which is terribly slow and its a bad idea to be there anyway.
+                print("📌 WSL detected - adding 'cd ~' to profile to avoid Windows filesystem")
         profile_path.create(parents_only=True).write_text(profile)
+        print("✅ Profile updated successfully")
 
 
 def get_shell_profile_path():
@@ -44,7 +56,12 @@ def get_shell_profile_path():
             raise ValueError(f"Could not get profile path for Windows. Got {res}")
     elif system == "Linux": profile_path = P("~/.bashrc").expanduser()
     else: raise ValueError(f"Not implemented for this system {system}")
-    print(f"\n{'=' * 60}\n🐚 SHELL PROFILE | Working with path: `{profile_path}`\n{'=' * 60}\n")
+    
+    print(f"""
+╔{'═' * 78}╗
+║ 🐚 SHELL PROFILE | Working with path: `{profile_path}`
+╚{'═' * 78}╝
+""")
     return profile_path
 
 
@@ -52,7 +69,11 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
     env_path = LIBRARY_ROOT.joinpath("profile/env_path.toml").readit()
     dirs = env_path[f'path_{system.lower()}']['extension']
 
-    print(f"\n{'=' * 60}\n🔍 ENVIRONMENT | Current PATH variables:\n{'=' * 60}")
+    print(f"""
+╔{'═' * 78}╗
+║ 🔍 ENVIRONMENT | Current PATH variables:
+╚{'═' * 78}╝
+""")
     P.get_env().PATH.print()
 
     if choice is None:
@@ -62,14 +83,23 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
         if str(choice) != "all": dirs = [choice]
     if choice == "none(EXIT)": return
 
+    print(f"\n📌 Adding directories to PATH: {dirs}")
     addition = PathVar.append_temporarily(dirs=dirs)
     profile_path_obj = P(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
     profile_path_obj.copy(name=profile_path_obj.name + ".orig_" + randstr())
+    print(f"💾 Created backup of profile: {profile_path_obj.name}.orig_*")
     profile_path_obj.modify_text(addition, addition, replace_line=False, notfound_append=True)
+    print("✅ PATH variables added to profile successfully")
 
 
 def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice: Optional[str] = None):
     sources: list[str] = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()[system.lower()]['files']
+
+    print(f"""
+╭{'─' * 78}╮
+│ 🔄 Adding sources to shell profile                                          │
+╰{'─' * 78}╯
+""")
 
     if choice is None:
         choice_obj = display_options(msg="Which patch to add?", options=sources + ["all", "none(EXIT)"], default="none(EXIT)", multi=True)
@@ -91,22 +121,39 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice
         file = P(tmp).collapseuser()  # this makes the shell profile interuseable across machines.
         file = file.as_posix() if system == "Linux" else str(file)
         if file not in profile:
-            if system == "Windows": profile += f"\n. {file}"
-            elif system == "Linux": profile += f"\nsource {file}"
+            if system == "Windows": 
+                profile += f"\n. {file}"
+                print(f"➕ Added PowerShell source: {file}")
+            elif system == "Linux": 
+                profile += f"\nsource {file}"
+                print(f"➕ Added Bash source: {file}")
             else: raise ValueError(f"Not implemented for this system {system}")
-        else: print(f"\n⏭️  SKIPPED | Source `{file}` is already present in shell profile")
+        else: 
+            print(f"⏭️  Source already present: {file}")
+    
     profile_path_obj.write_text(profile)
+    print("✅ Shell profile updated with sources")
 
 
 def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice: Optional[str] = None):
     patches: list[str] = list(LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search().apply(lambda x: x.as_posix()))
+    
+    print(f"""
+╭{'─' * 78}╮
+│ 🩹 Adding patches to shell profile                                          │
+╰{'─' * 78}╯
+""")
+    
     if choice is None:
         choice_chosen = display_options(msg="Which patch to add?", options=list(patches) + ["all", "none(EXIT)"], default="none(EXIT)", multi=False)
         assert isinstance(choice_chosen, str), f"Choice must be a string or a list of strings, not {type(choice)}"
         choice = choice_chosen
     if choice == "none(EXIT)": return None
-    elif str(choice) == "all": pass  # i.e. patches = patches
-    else: patches = [choice]
+    elif str(choice) == "all": 
+        print("📌 Adding all patches to profile")
+    else: 
+        patches = [choice]
+        print(f"📌 Adding selected patch: {choice}")
 
     profile_path_obj = P(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
     profile = profile_path_obj.read_text()
@@ -114,15 +161,20 @@ def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice
     for patch_path in patches:
         patch_path_obj = P(patch_path)
         patch = patch_path_obj.read_text()
-        if patch in profile: print(f"\n⏭️  SKIPPED | Patch `{patch_path_obj.name}` is already present in profile")
-        else: profile += "\n" + patch
+        if patch in profile: 
+            print(f"⏭️  Patch already present: {patch_path_obj.name}")
+        else: 
+            profile += "\n" + patch
+            print(f"➕ Added patch: {patch_path_obj.name}")
 
     if system == "Linux":
         res = Terminal().run("cat /proc/version").op
         if "microsoft" in res.lower() or "wsl" in res.lower():
             profile += "\ncd ~"  # this is to make sure that the current dir is not in the windows file system, which is terribly slow and its a bad idea to be there anyway.
+            print("📌 WSL detected - adding 'cd ~' to profile to avoid Windows filesystem")
 
     profile_path_obj.write_text(profile)
+    print("✅ Shell profile updated with patches")
 
 
 if __name__ == '__main__':

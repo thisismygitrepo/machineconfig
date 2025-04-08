@@ -1,4 +1,3 @@
-
 import argparse
 import configparser
 from pathlib import Path
@@ -16,12 +15,29 @@ def get_conn_string(sess_name: str) -> str:
 
 
 def main():
+    print(f"""
+╔{'═' * 60}╗
+║ 🔌 Tmate Connection Manager
+╚{'═' * 60}╝
+""")
+    
     parser = argparse.ArgumentParser(description='Tmate launcher')
-    parser.add_argument("sess_name", help=f"session name", default=random.choices(list(string.digits + string.ascii_letters), k=20))
+    parser.add_argument("sess_name", help="session name", default=random.choices(list(string.digits + string.ascii_letters), k=20))
     args = parser.parse_args()
+    
+    print(f"🔍 Looking up session: {args.sess_name}")
     conn_string = get_conn_string(args.sess_name)
-    print(f"ssh {conn_string}")
+    
+    print(f"""
+╭{'─' * 60}╮
+│ 🔗 Connection String: ssh {conn_string}
+╰{'─' * 60}╯
+""")
+    
+    print("🚀 Connecting to tmate session...")
     os.system(f"ssh {conn_string}")
+    
+    print("✅ Connection closed")
 
 
 if __name__ == '__main__':

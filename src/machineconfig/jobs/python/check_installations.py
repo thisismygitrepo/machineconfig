@@ -42,7 +42,7 @@ def scan(path: P, pct: float = 0.0):
                 repeat_counter += 1
                 if repeat_counter > 2:
                     raise ValueError(f"❌ Error in scanning {path}") from ex
-                print(f"⚠️  Error in scanning, trying again...")
+                print("⚠️  Error in scanning, trying again...")
             time.sleep(30)
     df = pd.DataFrame(anal.results.values())
     malicious = []

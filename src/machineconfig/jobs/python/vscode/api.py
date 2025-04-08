@@ -17,7 +17,6 @@ code --profile bitProfile --new-window {file_path}
 """
     from rich.console import Console
     from rich.syntax import Syntax
-    from rich.text import Text
     from rich.panel import Panel
     console = Console()
     console.print(f"\n{'=' * 70}")
