@@ -36,6 +36,7 @@
 
 * https://github.com/hacksider/Deep-Live-Cam
 * https://github.com/black-forest-labs/flux
+* https://github.com/n8n-io/n8n `Auto workflow`
 
 
 # Parsing Text

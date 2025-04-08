@@ -1,4 +1,3 @@
-
 """shell
 """
 
@@ -25,7 +24,7 @@ def create_default_shell_profile():
     if system == "Windows": source = f". {LIBRARY_ROOT.joinpath('settings/shells/pwsh/init.ps1').collapseuser().to_str().replace('~', '$HOME')}"
     else: source = f"source {LIBRARY_ROOT.joinpath('settings/shells/bash/init.sh').collapseuser().to_str().replace('~', '$HOME')}"
 
-    if source in profile: print("Skipping sourcing init script; already in profile")
+    if source in profile: print(f"\n🔄 PROFILE | Skipping init script sourcing - already present in profile\n")
     else:
         profile += "\n" + source + "\n"
         if system == "Linux":
@@ -45,7 +44,7 @@ def get_shell_profile_path():
             raise ValueError(f"Could not get profile path for Windows. Got {res}")
     elif system == "Linux": profile_path = P("~/.bashrc").expanduser()
     else: raise ValueError(f"Not implemented for this system {system}")
-    print(f"Working on shell profile `{profile_path}`")
+    print(f"\n{'=' * 60}\n🐚 SHELL PROFILE | Working with path: `{profile_path}`\n{'=' * 60}\n")
     return profile_path
 
 
@@ -53,7 +52,7 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
     env_path = LIBRARY_ROOT.joinpath("profile/env_path.toml").readit()
     dirs = env_path[f'path_{system.lower()}']['extension']
 
-    print("Current PATH: ", "\n============")
+    print(f"\n{'=' * 60}\n🔍 ENVIRONMENT | Current PATH variables:\n{'=' * 60}")
     P.get_env().PATH.print()
 
     if choice is None:
@@ -95,7 +94,7 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice
             if system == "Windows": profile += f"\n. {file}"
             elif system == "Linux": profile += f"\nsource {file}"
             else: raise ValueError(f"Not implemented for this system {system}")
-        else: print(f"SKIPPED source `{file}`, it is already sourced in shell profile.")
+        else: print(f"\n⏭️  SKIPPED | Source `{file}` is already present in shell profile")
     profile_path_obj.write_text(profile)
 
 
@@ -115,7 +114,7 @@ def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice
     for patch_path in patches:
         patch_path_obj = P(patch_path)
         patch = patch_path_obj.read_text()
-        if patch in profile: print(f"Skipping `{patch_path_obj.name}`; patch already in profile")
+        if patch in profile: print(f"\n⏭️  SKIPPED | Patch `{patch_path_obj.name}` is already present in profile")
         else: profile += "\n" + patch
 
     if system == "Linux":

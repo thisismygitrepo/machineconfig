@@ -1,6 +1,3 @@
-
-
-
 from typing import Optional
 import platform
 from rich.console import Console
@@ -47,7 +44,7 @@ code = r'''{python_script}'''
 try:
     from machineconfig.utils.utils import print_code
     print_code(code=code, lexer="python", desc="Python Script")
-except ImportError: print(code)
+except ImportError: print(f"\\n{'=' * 60}\\n📜 PYTHON SCRIPT:\\n\\n{code}\\n{'=' * 60}\\n")
 """ + python_script
     python_file = P.tmp().joinpath("tmp_scripts", "python", randstr() + ".py").create(parents_only=True).write_text(python_script)
     shell_script = get_shell_script_executing_python_file(python_file=python_file.to_str(), ve_name=ve_name)
@@ -55,7 +52,6 @@ except ImportError: print(code)
     return shell_file
 
 
-# def write_shell_script(program: str, desc: str="", preserve_cwd: bool=True, display: bool=True, execute: bool=False):
 def write_shell_script(program: str, desc: str, preserve_cwd: bool, display: bool, execute: bool):
     if preserve_cwd:
         if platform.system() == "Windows":
@@ -63,11 +59,11 @@ def write_shell_script(program: str, desc: str, preserve_cwd: bool, display: boo
         else:
             program = 'orig_path=$(cd -- "." && pwd)\n' + program + '\ncd "$orig_path" || exit'
     if display:
-        print(f"⚙️ Executing shell script at {PROGRAM_PATH}")
+        print(f"\n{'=' * 60}\n⚙️  SHELL SCRIPT | Executing at {PROGRAM_PATH}\n{'=' * 60}")
         print_code(code=program, lexer="shell", desc=desc)
     PROGRAM_PATH.create(parents_only=True).write_text(program)
     if execute:
-        Terminal().run(f". {PROGRAM_PATH}", shell="powershell").capture().print_if_unsuccessful(desc="🛠️ Executing shell script", strict_err=True, strict_returncode=True)
+        Terminal().run(f". {PROGRAM_PATH}", shell="powershell").capture().print_if_unsuccessful(desc="🛠️  EXECUTION | Shell script running", strict_err=True, strict_returncode=True)
     return None
 
 
@@ -75,15 +71,8 @@ def print_code(code: str, lexer: str, desc: str):
     if lexer == "shell":
         if platform.system() == "Windows": lexer = "powershell"
         elif platform.system() == "Linux": lexer = "sh"
-        else: raise NotImplementedError(f"lexer {lexer} not implemented for system {platform.system()}")
+        else: raise NotImplementedError(f"Platform {platform.system()} not supported for lexer {lexer}")
     console = Console()
-    # print("====")
-    # print(f"{desc}", type(desc))
-    # print("====")
-    # print(f"{code}", type(code))
-    # print("====")
-    # print(f"{lexer}", type(lexer))
-    # print("====")
 
-    console.print(Panel(Syntax(code=code, lexer=lexer), title=desc), style="bold red")
+    console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}"), style="bold red")
 

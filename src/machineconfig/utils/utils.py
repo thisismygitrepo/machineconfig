@@ -34,8 +34,8 @@ DEFAULTS_PATH = P.home().joinpath("dotfiles/machineconfig/defaults.ini")
 #     if response.status_code == 200:
 #         data = json.loads(response.text)
 #         latest_version = data["tag_name"]
-#         print("Latest release version:", latest_version)
-#     else: print("Error:", response.status_code)
+#         print(f"\n📦 VERSION INFO | Latest release: {latest_version}\n")
+#     else: print(f"\n❌ ERROR | API request failed: {response.status_code}\n")
 
 
 
@@ -50,7 +50,7 @@ def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool=False):
     dtm = datetime(dtm.year, dtm.month, dtm.day, dtm.hour, dtm.minute, dtm.second)
     res =  dtm > datetime.fromisoformat(commit_dtm)
     if res is False and update is True:
-        print(f"🔄 Updating dotfiles because {dtm} < {datetime.fromisoformat(commit_dtm)}")
+        print(f"\n{'=' * 60}\n🔄 UPDATE REQUIRED | Updating dotfiles because {dtm} < {datetime.fromisoformat(commit_dtm)}\n{'=' * 60}\n")
         from machineconfig.scripts.python.cloud_repo_sync import main
         main(cloud=None, path=dotfiles_path)
     return res
@@ -64,12 +64,12 @@ def wait_for_jobs_to_finish(root: P, pattern: str, wait_for_n_jobs: int, max_wai
         counter  =  len(parts)
         if counter == wait_for_n_jobs:
             wait_finished = True
-            print(f"✅ {counter} Jobs finished successfully. Exiting.")
+            print(f"\n{'=' * 60}\n✅ JOB COMPLETE | {counter} Jobs finished successfully. Exiting.\n{'=' * 60}\n")
             return True
         if (time.time() - t0) > 60 * max_wait_minutes:
-            print(f"⏱️ Timeout: Waited for {max_wait_minutes} minutes. Exiting.")
+            print(f"\n{'=' * 60}\n⏱️  TIMEOUT | Waited for {max_wait_minutes} minutes. Exiting.\n{'=' * 60}\n")
             return False
-        print(f"⏳ Progress: {counter}/{wait_for_n_jobs} jobs finished. Waiting for {wait_for_n_jobs - counter} more jobs to complete, sleeping for 60 seconds.")
+        print(f"\n⏳ PROGRESS | {counter}/{wait_for_n_jobs} jobs finished. Waiting for {wait_for_n_jobs - counter} more jobs to complete, sleeping for 60 seconds.")
         time.sleep(60)
     return False
 

@@ -1,5 +1,3 @@
-
-
 from pathlib import Path
 from crocodile.core import randstr
 
@@ -25,7 +23,7 @@ code --profile bitProfile --new-window {file_path}
     from rich.panel import Panel
     from rich.console import Console
     console = Console()
-    console.print(Panel(Syntax(code, lexer="bash"), title='Open file in new instance'), style="bold red")
+    console.print(Panel(Syntax(code, lexer="bash"), title='🔍 VS CODE | Opening file in new instance'), style="bold blue")
 
     code_path = Path.home().joinpath(".config", "machingconfig", "vscode_api", "code_temp")
     code_path.parent.mkdir(parents=True, exist_ok=True)

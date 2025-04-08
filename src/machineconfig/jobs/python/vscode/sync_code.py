@@ -1,6 +1,3 @@
-
-
-
 from crocodile.core import Read
 from pathlib import Path
 
@@ -25,7 +22,7 @@ ssh -o "HostName={machine_config['HostName']}" -o "User={machine_config['User']}
     from rich.console import Console
 
     console = Console()
-    console.print(Panel(Syntax(code, lexer="bash"), title='Sync remote'), style="bold red")
+    console.print(Panel(Syntax(code, lexer="bash"), title=f'🔄 SYNC REMOTE | Connecting to {machine_name}'), style="bold blue")
 
     code_path = Path.home().joinpath(".config", "machingconfig", "vscode_api", "code_temp")
     code_path.parent.mkdir(parents=True, exist_ok=True)

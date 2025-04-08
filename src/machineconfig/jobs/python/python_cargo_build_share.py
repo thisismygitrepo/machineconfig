@@ -1,4 +1,3 @@
-
 """
 cargo install
 """
@@ -21,7 +20,7 @@ git clone --depth 1 {url}
 cd {tool_name}
 cargo install --path .
 """
-    print(f"Executing {script}")
+    print(f"\n{'=' * 60}\n🦀 CARGO BUILD | Executing Rust build script for {tool_name}\n{'=' * 60}")
     if platform.system() == "Windows":
         Terminal(stdout=None).run(f". {P.tmpfile(suffix='.ps1').write_text(script)}", shell="pwsh").print()
     else:
@@ -32,7 +31,7 @@ cargo install --path .
     try:
         P.home().joinpath(tool_name).delete(sure=True)
     except PermissionError:
-        print(f"PermissionError, couldn't delete: {P.home().joinpath(tool_name)}")
+        print(f"\n⚠️  WARNING | Permission error when cleaning up: {P.home().joinpath(tool_name)}")
 
     if platform.system() == "Windows":
         exe = exe.move(folder=P.get_env().WindowsPaths().WindowsApps)

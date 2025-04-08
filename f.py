@@ -31,7 +31,7 @@ if __name__ == "__main__":
     url: str = "http://10.17.62.79:49981/"
     try:
         screenshot_file: str = take_screenshot(url)
-        print(f"Screenshot saved as: {screenshot_file}")
+        print(f"\n{'=' * 60}\n📸 SUCCESS | Screenshot captured and saved as: {screenshot_file}\n{'=' * 60}\n")
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"\n{'⚠️' * 20}\n❌ ERROR | Screenshot process failed: {e}\n{'⚠️' * 20}\n")
 
