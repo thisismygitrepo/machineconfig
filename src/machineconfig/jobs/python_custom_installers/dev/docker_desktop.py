@@ -1,4 +1,3 @@
-
 """
 Installer
 """
@@ -26,7 +25,24 @@ config_dict = {
 
 
 def main(version: Optional[str]):
+    print(f"""
+{'=' * 70}
+🐳 DOCKER DESKTOP | Installing Docker Desktop for Ubuntu
+🔄 Version: {'latest' if version is None else version}
+📚 Source: https://docs.docker.com/desktop/install/ubuntu/
+{'=' * 70}
+""")
+    
     _ = version
+    
+    print("""
+📋 Installation steps:
+1️⃣  Adding Docker's official GPG key
+2️⃣  Adding repository to Apt sources
+3️⃣  Updating package lists
+4️⃣  Installing Docker components
+""")
+    
     code = """
 # Add Docker's official GPG key:
 sudo apt-get update
@@ -45,6 +61,15 @@ sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 """
+    print(f"""
+{'=' * 70}
+ℹ️  INFO | After installation:
+🔹 Run 'sudo docker run hello-world' to verify installation
+🔹 Add your user to the docker group with 'sudo usermod -aG docker $USER'
+🔹 Log out and back in to apply group changes
+{'=' * 70}
+""")
+    
     return code
 
 

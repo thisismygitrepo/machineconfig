@@ -40,7 +40,7 @@ def generate_file_checklist(repo_root: Union[str, Path], exclude_dirs: Optional[
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(markdown_content)
         
-    print(f"Checklist generated at: {output_path}")
+    print(f"📋 Checklist generated at: {output_path}")
     return output_path
 
 
@@ -60,7 +60,12 @@ def main() -> None:
         exclude_dirs.extend(args.exclude)
     
     output_path = generate_file_checklist(args.repo, exclude_dirs)
-    print(f"Markdown checklist generated successfully at {output_path}")
+    print(f"""
+{'=' * 60}
+✅ SUCCESS | Markdown checklist generated successfully!
+📄 File Location: {output_path}
+{'=' * 60}
+""")
 
 
 if __name__ == "__main__":

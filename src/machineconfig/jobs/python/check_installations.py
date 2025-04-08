@@ -1,4 +1,3 @@
-
 """CI
 """
 
@@ -29,7 +28,7 @@ def scan(path: P, pct: float = 0.0):
     console = Console()
     console.rule(f"Scanning {path}. {pct:.2f}% done")
     if path.is_dir():
-        print(f"Skipping {path} as it is a directory.")
+        print(f"📁 Skipping {path} as it is a directory.")
         return None
     with open(str(path), "rb") as f:
         analysis = client.scan_file(f)
@@ -42,8 +41,8 @@ def scan(path: P, pct: float = 0.0):
             except Exception as ex:  # type: ignore
                 repeat_counter += 1
                 if repeat_counter > 2:
-                    raise ValueError(f"Error in scanning {path}") from ex
-                print("Error in scanning, trying again.")
+                    raise ValueError(f"❌ Error in scanning {path}") from ex
+                print(f"⚠️  Error in scanning, trying again...")
             time.sleep(30)
     df = pd.DataFrame(anal.results.values())
     malicious = []
@@ -54,10 +53,14 @@ def scan(path: P, pct: float = 0.0):
         #     print(row)
         if row.result is None and row.category in ["undetected", "type-unsupported", "failure", "timeout", "confirmed-timeout"]: continue
         else:
-            Struct(row.to_dict()).print(as_config=True, title=f"Found Category {row.category}")
+            Struct(row.to_dict()).print(as_config=True, title=f"🔍 Found Category {row.category}")
             malicious.append(row)
     positive_pct: float = round(number=len(malicious) / len(df) * 100, ndigits=1)
-    print(f"positive_ratio = {positive_pct:.1f} %")
+    print(f"""
+{'=' * 50}
+🔬 SCAN RESULTS | Positive ratio: {positive_pct:.1f}%
+{'=' * 50}
+""")
     return positive_pct, df
 
 
@@ -79,7 +82,11 @@ def main() -> None:
         #     if tmp is not None: tmp = tmp.split("\n")[0]
         #     print(f"➡️ Found version `{tmp}` for {an_app.stem}.")
         #     app_versions.append(None)
-    print(f"Checking tools (#{len(apps_paths_tmp)}) collected from `{INSTALL_VERSION_ROOT}`:")
+    print(f"""
+{'=' * 70}
+🔍 TOOL CHECK | Checking tools (#{len(apps_paths_tmp)}) collected from `{INSTALL_VERSION_ROOT}`
+{'=' * 70}
+""")
     apps_paths_raw.print()
     positive_pct: list[Optional[float]] = []
     scan_time: list[str] = []
@@ -88,7 +95,7 @@ def main() -> None:
     for idx, app in enumerate(apps_paths_raw):
         try: res = scan(path=app, pct=idx / len(apps_paths_raw) * 100)
         except ValueError as ve:
-            print(ve)
+            print(f"❌ ERROR | {ve}")
             res = None
         if res is None:
             positive_pct.append(None)
@@ -112,7 +119,11 @@ def main() -> None:
     res_df["app_url"] = app_url
     res_df.to_csv(APP_SUMMARY_PATH.with_suffix(".csv").create(parents_only=True), index=False)
     APP_SUMMARY_PATH.with_suffix(".md").write_text(res_df.to_markdown())
-    print("Safety Report:")
+    print(f"""
+{'=' * 70}
+📊 SAFETY REPORT | Summary of app scanning results
+{'=' * 70}
+""")
     print(res_df)
 
 
@@ -145,7 +156,7 @@ class PrecheckedCloudInstaller:
         try:
             exe = PrecheckedCloudInstaller.download_google_links(app_url)
         except Exception as ex:  # type: ignore
-            print(f"Error in downloading {app_url} {ex}")
+            print(f"❌ ERROR | Failed downloading {app_url}: {ex}")
             return None
         if platform.system().lower() == "linux":
             Terminal().run(f"chmod +x {exe}")
@@ -164,7 +175,11 @@ class PrecheckedCloudInstaller:
         # else: raise NotImplementedError(f"Platform {platform.system().lower()} is not supported yet.")
 
         if name == "AllEssentials":
-            print(f"Downloading {self.df.shape[0]} apps ...")
+            print(f"""
+{'=' * 70}
+📥 DOWNLOAD | Downloading {self.df.shape[0]} apps...
+{'=' * 70}
+""")
             print(self.df)
             _res = L(self.df.app_url).apply(PrecheckedCloudInstaller.install_cli_apps, jobs=20)
         else:

@@ -20,7 +20,12 @@ git clone --depth 1 {url}
 cd {tool_name}
 cargo install --path .
 """
-    print(f"\n{'=' * 60}\n🦀 CARGO BUILD | Executing Rust build script for {tool_name}\n{'=' * 60}")
+    print(f"""
+{'=' * 70}
+🦀 CARGO BUILD | Building Rust project: {tool_name}
+📦 Source: {url}
+{'=' * 70}
+""")
     if platform.system() == "Windows":
         Terminal(stdout=None).run(f". {P.tmpfile(suffix='.ps1').write_text(script)}", shell="pwsh").print()
     else:
@@ -31,7 +36,12 @@ cargo install --path .
     try:
         P.home().joinpath(tool_name).delete(sure=True)
     except PermissionError:
-        print(f"\n⚠️  WARNING | Permission error when cleaning up: {P.home().joinpath(tool_name)}")
+        print(f"""
+{'⚠️' * 20}
+⚠️  WARNING | Permission error when cleaning up
+📂 Path: {P.home().joinpath(tool_name)}
+{'⚠️' * 20}
+""")
 
     if platform.system() == "Windows":
         exe = exe.move(folder=P.get_env().WindowsPaths().WindowsApps)
@@ -39,7 +49,7 @@ cargo install --path .
         Terminal().run(f"sudo mv {exe} /usr/local/bin")
         exe = P(r"/usr/local/bin").joinpath(exe.name)
     else:
-        raise NotImplementedError(f"Platform {platform.system()} not supported.")
+        raise NotImplementedError(f"🚫 Platform {platform.system()} not supported.")
     share_link = exe.to_cloud("gdpo", share=True)
     return share_link
 

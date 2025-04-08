@@ -1,4 +1,3 @@
-
 """lvim
 """
 
@@ -23,21 +22,51 @@ config_dict = {
 
 
 def main(version: Optional[str]):
+    print(f"""
+{'=' * 70}
+🌙 LUNARVIM INSTALLER | Setting up Neovim-based IDE
+🔄 Version: {'latest' if version is None else version}
+📚 Branch: release-1.4/neovim-0.9
+{'=' * 70}
+""")
+    
     _ = version
     if platform.system() == "Windows":
+        print("🪟 Installing LunarVim on Windows...")
         program = """
 
 pwsh -c "`$LV_BRANCH='release-1.4/neovim-0.9'; iwr https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.4/neovim-0.9/utils/installer/install.ps1 -UseBasicParsing | iex"
 
 """
     elif platform.system() == "Linux":
+        print("🐧 Installing LunarVim on Linux...")
         program = """
 
 LV_BRANCH='release-1.4/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.4/neovim-0.9/utils/installer/install.sh)
 
 """
     else:
-        raise NotImplementedError("unsupported platform")
+        error_msg = f"Unsupported platform: {platform.system()}"
+        print(f"""
+{'⚠️' * 20}
+❌ ERROR | {error_msg}
+{'⚠️' * 20}
+""")
+        raise NotImplementedError(error_msg)
+        
+    print(f"""
+{'=' * 70}
+ℹ️  INFO | LunarVim features:
+📝 IDE-like experience for Neovim
+🔌 Built-in plugin management
+🛠️  LSP configuration out of the box
+🔍 Powerful fuzzy finding
+⚙️  Simple and unified configuration
+{'=' * 70}
+
+⚠️  NOTE: The installer will prompt for user input during installation.
+""")
+    
     # _res = Terminal(stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)
     # run script here as it requires user input
     return program

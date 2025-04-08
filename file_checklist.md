@@ -2,37 +2,37 @@
 
 ## Python Files
 
-- [ ] f.py
-- [ ] scripts/ai/generate_file_checklist.py
-- [ ] scripts/ai/pomodoro.py
-- [ ] setup.py
-- [ ] src/machineconfig/jobs/python/check_installations.py
-- [ ] src/machineconfig/jobs/python/checkout_version.py
-- [ ] src/machineconfig/jobs/python/create_bootable_media.py
-- [ ] src/machineconfig/jobs/python/create_zellij_template.py
-- [ ] src/machineconfig/jobs/python/python_cargo_build_share.py
-- [ ] src/machineconfig/jobs/python/python_ve_symlink.py
-- [ ] src/machineconfig/jobs/python/tasks.py
-- [ ] src/machineconfig/jobs/python/vscode/api.py
-- [ ] src/machineconfig/jobs/python/vscode/link_ve.py
-- [ ] src/machineconfig/jobs/python/vscode/select_interpreter.py
-- [ ] src/machineconfig/jobs/python/vscode/sync_code.py
-- [ ] src/machineconfig/jobs/python_custom_installers/archive/ngrok.py
-- [ ] src/machineconfig/jobs/python_custom_installers/dev/aider.py
-- [ ] src/machineconfig/jobs/python_custom_installers/dev/alacritty.py
-- [ ] src/machineconfig/jobs/python_custom_installers/dev/brave.py
-- [ ] src/machineconfig/jobs/python_custom_installers/dev/bypass_paywall.py
-- [ ] src/machineconfig/jobs/python_custom_installers/dev/code.py
-- [ ] src/machineconfig/jobs/python_custom_installers/dev/docker.py
-- [ ] src/machineconfig/jobs/python_custom_installers/dev/docker_desktop.py
-- [ ] src/machineconfig/jobs/python_custom_installers/dev/espanso.py
-- [ ] src/machineconfig/jobs/python_custom_installers/dev/goes.py
-- [ ] src/machineconfig/jobs/python_custom_installers/dev/lvim.py
-- [ ] src/machineconfig/jobs/python_custom_installers/dev/nerdfont.py
-- [ ] src/machineconfig/jobs/python_custom_installers/dev/redis.py
-- [ ] src/machineconfig/jobs/python_custom_installers/dev/warp-cli.py
-- [ ] src/machineconfig/jobs/python_custom_installers/dev/wezterm.py
-- [ ] src/machineconfig/jobs/python_custom_installers/gh.py
+- [x] f.py
+- [x] scripts/ai/generate_file_checklist.py
+- [x] scripts/ai/pomodoro.py
+- [x] setup.py
+- [x] src/machineconfig/jobs/python/check_installations.py
+- [x] src/machineconfig/jobs/python/checkout_version.py
+- [x] src/machineconfig/jobs/python/create_bootable_media.py
+- [x] src/machineconfig/jobs/python/create_zellij_template.py
+- [x] src/machineconfig/jobs/python/python_cargo_build_share.py
+- [x] src/machineconfig/jobs/python/python_ve_symlink.py
+- [x] src/machineconfig/jobs/python/tasks.py
+- [x] src/machineconfig/jobs/python/vscode/api.py
+- [x] src/machineconfig/jobs/python/vscode/link_ve.py
+- [x] src/machineconfig/jobs/python/vscode/select_interpreter.py
+- [x] src/machineconfig/jobs/python/vscode/sync_code.py
+- [x] src/machineconfig/jobs/python_custom_installers/archive/ngrok.py
+- [x] src/machineconfig/jobs/python_custom_installers/dev/aider.py
+- [x] src/machineconfig/jobs/python_custom_installers/dev/alacritty.py
+- [x] src/machineconfig/jobs/python_custom_installers/dev/brave.py
+- [x] src/machineconfig/jobs/python_custom_installers/dev/bypass_paywall.py
+- [x] src/machineconfig/jobs/python_custom_installers/dev/code.py
+- [x] src/machineconfig/jobs/python_custom_installers/dev/docker.py
+- [x] src/machineconfig/jobs/python_custom_installers/dev/docker_desktop.py
+- [x] src/machineconfig/jobs/python_custom_installers/dev/espanso.py
+- [x] src/machineconfig/jobs/python_custom_installers/dev/goes.py
+- [x] src/machineconfig/jobs/python_custom_installers/dev/lvim.py
+- [x] src/machineconfig/jobs/python_custom_installers/dev/nerdfont.py
+- [x] src/machineconfig/jobs/python_custom_installers/dev/redis.py
+- [x] src/machineconfig/jobs/python_custom_installers/dev/warp-cli.py
+- [x] src/machineconfig/jobs/python_custom_installers/dev/wezterm.py
+- [x] src/machineconfig/jobs/python_custom_installers/gh.py
 - [ ] src/machineconfig/jobs/python_custom_installers/hx.py
 - [ ] src/machineconfig/profile/create.py
 - [ ] src/machineconfig/profile/create_hardlinks.py

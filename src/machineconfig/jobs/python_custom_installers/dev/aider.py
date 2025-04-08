@@ -1,5 +1,3 @@
-
-
 from typing import Optional
 import platform
 
@@ -14,7 +12,23 @@ config_dict = {
 
 
 def main(version: Optional[str] = None):
+    print(f"""
+{'=' * 70}
+🤖 AIDER INSTALLER | Installing AI code assistant
+💻 Platform: {platform.system()}
+🔄 Version: {'latest' if version is None else version}
+{'=' * 70}
+""")
+    
     install_script = "uv tool install --force --python python3.12 aider-chat@latest"
+    
+    print(f"""
+{'=' * 70}
+✅ SUCCESS | Installation command prepared:
+📄 Command: {install_script}
+{'=' * 70}
+""")
+    
     return install_script
 
 

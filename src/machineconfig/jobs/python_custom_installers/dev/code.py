@@ -1,4 +1,3 @@
-
 """vs code installer as per https://code.visualstudio.com/docs/setup/linux
 """
 
@@ -17,17 +16,45 @@ config_dict = {
 
 
 def main(version: Optional[str] = None):
+    print(f"""
+{'=' * 70}
+💻 VS CODE INSTALLER | Setting up Visual Studio Code
+🖥️  Platform: {platform.system()}
+🔄 Version: {'latest' if version is None else version}
+{'=' * 70}
+""")
 
     if platform.system() == 'Linux':
+        print("🐧 Installing VS Code on Linux using official script...")
         import machineconfig.jobs.python_custom_installers as module
         from pathlib import Path
         install_script = Path(module.__file__).parent.joinpath("scripts/linux/vscode.sh").read_text(encoding="utf-8")
 
     elif platform.system() == 'Windows':
+        print("🪟 Installing VS Code on Windows using winget...")
         install_script = """winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements"""
     else:
-        raise NotImplementedError(f"Unsupported platform: {platform.system()}")
+        error_msg = f"Unsupported platform: {platform.system()}"
+        print(f"""
+{'⚠️' * 20}
+❌ ERROR | {error_msg}
+{'⚠️' * 20}
+""")
+        raise NotImplementedError(error_msg)
+    
     _ = version
+    
+    print(f"""
+{'=' * 70}
+ℹ️  INFO | VS Code features:
+📝 Powerful code editor with IntelliSense
+🧩 Thousands of extensions available
+🔍 Integrated debugging
+🔄 Git integration
+⚙️  Highly customizable
+{'=' * 70}
+""")
+    
     return install_script
 
 

@@ -3,7 +3,6 @@ from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
 from datetime import datetime
 import time
-import os
 
 def take_screenshot(url: str) -> str:
     options = Options()
@@ -22,7 +21,7 @@ def take_screenshot(url: str) -> str:
         driver.save_screenshot(filename)
         return filename
     except Exception as e:
-        raise Exception(f"Failed to take screenshot: {str(e)}")
+        raise Exception(f"🔴 Failed to take screenshot: {str(e)}")
     finally:
         if 'driver' in locals():
             driver.quit()
@@ -31,7 +30,17 @@ if __name__ == "__main__":
     url: str = "http://10.17.62.79:49981/"
     try:
         screenshot_file: str = take_screenshot(url)
-        print(f"\n{'=' * 60}\n📸 SUCCESS | Screenshot captured and saved as: {screenshot_file}\n{'=' * 60}\n")
+        print(f"""
+{'=' * 70}
+📸 SUCCESS | Screenshot captured successfully!
+📄 File saved as: {screenshot_file}
+{'=' * 70}
+""")
     except Exception as e:
-        print(f"\n{'⚠️' * 20}\n❌ ERROR | Screenshot process failed: {e}\n{'⚠️' * 20}\n")
+        print(f"""
+{'🔥' * 20}
+❌ ERROR | Screenshot process failed! 
+📋 Details: {e}
+{'🔥' * 20}
+""")
 

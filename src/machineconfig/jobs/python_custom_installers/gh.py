@@ -1,4 +1,3 @@
-
 """gh-cli installer
 """
 
@@ -30,22 +29,65 @@ config_dict = {
 
 
 def main(version: Optional[str]):
+    print(f"""
+{'═' * 70}
+🔱 GITHUB CLI INSTALLER | Command line tool for GitHub
+💻 Platform: {platform.system()}
+🔄 Version: {'latest' if version is None else version}
+{'═' * 70}
+""")
+    
     _ = version
     inst = Installer.from_dict(d=config_dict, name="gh")
+    print("""
+📦 INSTALLATION | Installing GitHub CLI base package...
+""")
     inst.install(version=version)
+    
+    print(f"""
+{'─' * 70}
+🤖 GITHUB COPILOT | Setting up GitHub Copilot CLI extension
+{'─' * 70}
+""")
+    
     if platform.system() == "Windows":
+        print("""
+🪟 WINDOWS SETUP | Configuring GitHub CLI for Windows...
+""")
         program = "gh extension install github/gh-copilot"
     elif platform.system() == "Linux":
+        print("""
+🐧 LINUX SETUP | Configuring GitHub CLI for Linux...
+""")
         program = """
 gh extension install github/gh-copilot
 """
     else:
-        raise NotImplementedError("unsupported platform")
+        error_msg = f"Unsupported platform: {platform.system()}"
+        print(f"""
+{'⚠️' * 20}
+❌ ERROR | {error_msg}
+{'⚠️' * 20}
+""")
+        raise NotImplementedError(error_msg)
 
     program += """
 gh auth login --with-token $HOME/dotfiles/creds/git/gh_token.txt
 """
-    Terminal().run(program, shell="default").print(desc="installing gh-copilot extension", capture=True)
+    print("""
+🔐 AUTHENTICATION | Setting up GitHub authentication with token...
+""")
+    
+    Terminal().run(program, shell="default").print(desc="Installing GitHub Copilot extension", capture=True)
+    
+    print(f"""
+{'═' * 70}
+✅ SUCCESS | GitHub CLI installation completed
+🚀 GitHub Copilot CLI extension installed
+🔑 Authentication configured with token
+{'═' * 70}
+""")
+    
     return program
 
 

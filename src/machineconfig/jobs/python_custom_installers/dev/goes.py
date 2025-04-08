@@ -1,4 +1,3 @@
-
 """
 natural language to API
 https://github.com/ShishirPatil/gorilla
@@ -20,9 +19,17 @@ ve_name = "goex"
 
 
 def main():
+    print(f"""
+{'=' * 70}
+🦍 GORILLA INSTALLER | Natural language to API converter
+🌐 Source: https://github.com/ShishirPatil/gorilla
+📦 Virtual Environment: {ve_name}
+{'=' * 70}
+""")
+    
+    print("🔄 Preparing installation script...")
     install_script = get_ve_install_script(ve_name=ve_name, py_version="3.11", install_crocodile_and_machineconfig=False,
                                         delete_if_exists=True)
-
 
     install_script += f"""
 
@@ -33,6 +40,18 @@ cd gorilla/goex
 pip install -e .
 
     """
+    
+    print(f"""
+{'=' * 70}
+📋 INSTALLATION STEPS:
+1️⃣  Creating Python 3.11 virtual environment: {ve_name}
+2️⃣  Cloning Gorilla repository to ~/code/foreign
+3️⃣  Installing Gorilla in development mode
+{'=' * 70}
+
+✅ Installation script prepared successfully!
+""")
+    
     return install_script
 
 

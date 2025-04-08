@@ -1,4 +1,3 @@
-
 # import numpy as np
 # import matplotlib.pyplot as plt
 
@@ -18,11 +17,32 @@ config_dict = {
 
 
 def main(version: Optional[str] = None):
+    print(f"""
+{'=' * 70}
+🔓 BYPASS PAYWALL | Installing paywall bypass extension for Chrome
+🔄 Version: {'latest' if version is None else version}
+{'=' * 70}
+""")
+    
     _ = version
     # see remove paywalls and enhance YT experience by Chris Titus
     folder = r"C:\\"
+    
+    print("📥 Downloading extension from GitHub repository...")
     P("https://github.com/iamadamdev/bypass-paywalls-chrome/archive/master.zip").download().unzip(folder=folder, content=True)
-    P(folder).joinpath("bypass-paywalls-chrome-master")
+    extension_folder = P(folder).joinpath("bypass-paywalls-chrome-master")
+    
+    print(f"""
+{'=' * 70}
+✅ SUCCESS | Extension downloaded successfully
+📂 Location: {extension_folder}
+ℹ️  Next steps: 
+1️⃣  Open Chrome and navigate to chrome://extensions
+2️⃣  Enable Developer Mode (toggle in top right)
+3️⃣  Click "Load unpacked" and select the extension folder
+{'=' * 70}
+""")
+    
     return ""
 
 

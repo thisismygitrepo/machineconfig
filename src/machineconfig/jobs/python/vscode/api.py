@@ -11,19 +11,22 @@ def open_file_in_new_instance(file_path: str):
     copy_path = Path.home().joinpath(".config", "machingconfig", "vscode_api", repo_name, repo_copy_name)
     copy_path.parent.mkdir(parents=True, exist_ok=True)
     code = f"""
-
 ln -s {repo_path} {copy_path}
 cd {copy_path}
 code --profile bitProfile --new-window {file_path}
-
 """
     from rich.console import Console
     from rich.syntax import Syntax
     from rich.text import Text
     from rich.panel import Panel
-    from rich.console import Console
     console = Console()
-    console.print(Panel(Syntax(code, lexer="bash"), title='🔍 VS CODE | Opening file in new instance'), style="bold blue")
+    console.print(f"\n{'=' * 70}")
+    console.print(Panel(
+        Syntax(code, lexer="bash"),
+        title="🔍 VS CODE API | Opening file in new instance",
+        subtitle=f"📂 {file_path}"
+    ), style="bold blue")
+    console.print(f"{'=' * 70}\n")
 
     code_path = Path.home().joinpath(".config", "machingconfig", "vscode_api", "code_temp")
     code_path.parent.mkdir(parents=True, exist_ok=True)

@@ -1,4 +1,3 @@
-
 """checkout_version.py
 """
 
@@ -12,7 +11,7 @@ import platform
 def checkout_version(version: str, repo_root: P, exclude_editable: bool=False):
     """Checkout a version of the repo and install its requirements."""
     ve_name = get_ve_profile(init_path=repo_root)
-    if ve_name is None: raise ValueError("No virtual environment found.")
+    if ve_name is None: raise ValueError("❌ No virtual environment found.")
     ve_path = P.home().joinpath("venvs", ve_name)
     ve_specs = get_ve_specs(ve_path)
     try:
@@ -35,7 +34,7 @@ def checkout_version(version: str, repo_root: P, exclude_editable: bool=False):
     version_root = repo_root.collapseuser().joinpath(f"versions/{version}").as_posix()
     version_root_obj = P(version_root).expanduser().create()
     checkout_ve = f"{repo_root.name}-{version}-prod" if not exclude_editable else ve_name
-    checkout_ve = input(f"Name of the ve to create (default: {checkout_ve}): ") or checkout_ve
+    checkout_ve = input(f"📝 Name of the ve to create (default: {checkout_ve}): ") or checkout_ve
 
     install_env = f"""
 
@@ -59,7 +58,7 @@ uv pip install -r requirements_{sys}.txt
         if not version_root_obj.joinpath("install_env.ps1").exists():
             version_root_obj.joinpath("install_env.ps1").write_text(install_env)
     else:
-        raise NotImplementedError(f"System {sys} not supported.")
+        raise NotImplementedError(f"🚫 System {sys} not supported.")
 
     pip_freeze_script = f"""
 cd '{target_dir}'
@@ -67,7 +66,11 @@ cd '{target_dir}'
 python -m pip freeze {'--exclude-editable' if exclude_editable else ''} > requirements_{sys}.txt
 """
     Terminal().run_script(pip_freeze_script, verbose=True, shell="default").print()
-    print(f"✅ Installed requirements for version {version}.")
+    print(f"""
+{'=' * 70}
+✅ SUCCESS | Requirements for version {version} installed successfully
+{'=' * 70}
+""")
 
 
 def main():
@@ -75,13 +78,21 @@ def main():
     from git.exc import InvalidGitRepositoryError
     try:
         repo = Repo(P.cwd(), search_parent_directories=True)
-        print(f"✅ Found repo at {repo.working_dir}")
+        print(f"""
+{'=' * 70}
+🔍 GIT REPO | Found repository at {repo.working_dir}
+{'=' * 70}
+""")
     except InvalidGitRepositoryError as err:
-        print(f"❌ No repo found at {P.cwd()} or its parents.")
+        print(f"""
+{'🔥' * 20}
+❌ ERROR | No Git repository found at {P.cwd()} or its parent directories
+{'🔥' * 20}
+""")
         raise err
-    version = input("Enter version name: ")
+    version = input("📝 Enter version name: ")
     from rich.prompt import Confirm
-    exclude_editable = Confirm.ask("Exclude editable packages?", default=False)
+    exclude_editable = Confirm.ask("🔄 Exclude editable packages?", default=False)
 
     repo_root = P(repo.working_dir)
     checkout_version(version, repo_root, exclude_editable=exclude_editable)
