@@ -2,10 +2,9 @@
 
 . $HOME/scripts/activate_ve 've'
 
-# python -m machineconfig.jobs.python.create_zellij_template
-# /home/alex/code/machineconfig/src/machineconfig/scripts/python/url2md.py
-python -m machineconfig.scripts.python.url2md
+python -m machineconfig.scripts.python.url2md "$@"
 
 if [ -n "$VIRTUAL_ENV" ]; then
   deactivate || true
+
 fi

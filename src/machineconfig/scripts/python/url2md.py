@@ -10,7 +10,8 @@ cwd = Path.cwd()
 url = input("Enter the URL: ")
 op_dir = cwd.joinpath(".website", url.split("/")[-1])
 op_dir.mkdir(exist_ok=True, parents=True)
-urls_file = op_dir.joinpath("urls.txt")
+urls_file = op_dir.joinpath("urls", "urls.txt")
+urls_file.parent.mkdir(exist_ok=True, parents=True)
 if urls_file.exists(): urls_file.unlink()
 
 
