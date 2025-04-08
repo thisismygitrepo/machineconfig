@@ -5,8 +5,9 @@ croshell
 import argparse
 from crocodile.file_management import P
 from crocodile.core_modules.core_1 import randstr
-from machineconfig.utils.ve import get_ipython_profile, get_ve_profile, get_ve_name_and_ipython_profile, get_ve_activate_line
+from machineconfig.utils.ve_utils.ve1 import get_ve_name_and_ipython_profile
 from machineconfig.utils.utils import PROGRAM_PATH, display_options
+from machineconfig.utils.ve_utils.ve1 import get_ipython_profile, get_ve_activate_line, get_ve_profile
 
 
 def add_print_header_pycode(path: str, title: str):

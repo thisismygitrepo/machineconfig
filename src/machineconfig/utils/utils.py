@@ -10,10 +10,18 @@ from machineconfig.utils.utils_links import build_links, symlink_copy, symlink_f
 from machineconfig.utils.utils_code import get_shell_script_executing_python_file, get_shell_file_executing_python_script, write_shell_script, print_code, PROGRAM_PATH
 from machineconfig.utils.utils_path import sanitize_path, match_file_name
 
+# Split into multiple assignments to fix incompatible tuple sizes
 _ = get_shell_script_executing_python_file, get_shell_file_executing_python_script, print_code, PROGRAM_PATH, display_options, write_shell_script
-_ = build_links, symlink_copy, symlink_func
-_ = check_tool_exists, choose_cloud_interactively, choose_multiple_options, choose_one_option, choose_ssh_host
-_ = sanitize_path, match_file_name
+_ = build_links
+_ = symlink_copy
+_ = symlink_func
+_ = check_tool_exists
+_ = choose_cloud_interactively
+_ = choose_multiple_options
+_ = choose_one_option
+_ = choose_ssh_host
+_ = sanitize_path
+_ = match_file_name
 
 
 LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().to_str().lower(), P.home().str)

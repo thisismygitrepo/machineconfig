@@ -6,7 +6,8 @@ def open_file_in_new_instance(file_path: str):
     import git
     repo = git.Repo(search_parent_directories=True)
     repo_path = repo.working_tree_dir
-    repo_name = Path(repo_path).name
+    # Ensure repo_path is not None before passing to Path
+    repo_name = Path(repo_path if repo_path is not None else ".").name
     repo_copy_name = f"{repo_name}_{randstr(5)}"
     copy_path = Path.home().joinpath(".config", "machingconfig", "vscode_api", repo_name, repo_copy_name)
     copy_path.parent.mkdir(parents=True, exist_ok=True)

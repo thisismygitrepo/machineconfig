@@ -8,7 +8,7 @@ from typing import Optional
 def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str, str, str]:
     config = args.config
     if config == "ss":
-        cloud_maybe = target.split(":")[0]
+        cloud_maybe: Optional[str] = target.split(":")[0]
         if cloud_maybe == "": cloud_maybe = source.split(":")[0]
         if cloud_maybe == "": cloud_maybe = None
         maybe_config = get_secure_share_cloud_config(interactive=True, cloud=cloud_maybe)
@@ -44,7 +44,9 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         # consider activating it by a flag, and also not not overriding explicitly passed args options.
         assert ES not in target, "Not Implemented here yet."
         path = absolute(target)
-        if maybe_config is None:  maybe_config: Optional[Args] = find_cloud_config(path=path)
+        if maybe_config is None:  
+            tmp_maybe_config: Optional[Args] = find_cloud_config(path=path)
+            maybe_config = tmp_maybe_config
 
         if maybe_config is None:
             default_cloud: str=Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']

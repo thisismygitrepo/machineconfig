@@ -13,12 +13,14 @@ from machineconfig.scripts.python.helpers.helpers4 import convert_kwargs_to_fire
 from machineconfig.scripts.python.helpers.helpers4 import parse_pyfile
 from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, match_file_name, sanitize_path
-from machineconfig.utils.ve import get_ve_activate_line, get_repo_root
+from machineconfig.utils.ve_utils.ve1 import get_ve_activate_line
 from crocodile.file_management import P, Read
 from crocodile.core import randstr
 import platform
 from typing import Optional
 import argparse
+
+from machineconfig.utils.ve_utils.ve1 import get_repo_root
 
 
 str2obj = {"True": True, "False": False, "None": None}
@@ -133,7 +135,7 @@ def main() -> None:
         elif args.interactive is False: exe = "python"
         elif args.jupyter: exe = "jupyter-lab"
         else:
-            from machineconfig.utils.ve import get_ipython_profile
+            from machineconfig.utils.ve_utils.ve1 import get_ipython_profile
             exe = f"ipython -i --no-banner --profile {get_ipython_profile(choice_file)} "
     elif choice_file.suffix == ".ps1" or choice_file.suffix == ".sh":
         exe = "."

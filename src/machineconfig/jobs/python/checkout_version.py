@@ -3,9 +3,11 @@
 
 from crocodile.file_management import P, Save, randstr
 from crocodile.meta import Terminal
-from machineconfig.utils.ve import get_ve_profile, get_ve_specs
+from machineconfig.utils.ve_utils.ve1 import get_ve_specs
 from machineconfig.scripts.python.repos import record_a_repo, install_repos
 import platform
+
+from machineconfig.utils.ve_utils.ve1 import get_ve_profile
 
 
 def checkout_version(version: str, repo_root: P, exclude_editable: bool=False):

@@ -1,4 +1,3 @@
-
 # as per https://github.com/marketplace/models/azure-openai/o1-preview
 from openai import OpenAI
 from crocodile.file_management import Read, P
@@ -13,7 +12,7 @@ client__ = OpenAI(
 )
 
 
-def get_response(client, model_name: str, messages: list[str]):
+def get_response(client, model_name: str, messages: list[dict[str, str]]):
     print(f"Getting response from model {model_name}")
     try:
         response = client.chat.completions.create(

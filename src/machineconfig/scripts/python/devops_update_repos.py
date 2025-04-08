@@ -38,7 +38,7 @@ to_email = myemail@email.com
     if system() == "Linux":
         additions = []
         for a_repo in repos_objs:
-            if "machineconfig" in a_repo.working_dir:  # special treatment because of executables.
+            if "machineconfig" in str(a_repo.working_dir):  # special treatment because of executables.
                 an_addition = f"""
 echo ""
 echo "🔄 {("Updating " + str(a_repo.working_dir)).center(80, "═")}"
