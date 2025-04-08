@@ -124,7 +124,7 @@ def make_installation_recipe(repo_root: str, ve_name: str, py_version: str):
     subpath = "versions/init"
     base_path = P(repo_root).joinpath(subpath).create()
 
-    system = "Windows"
+    system: Literal["Windows", "Linux"] = "Windows"
     path3 = base_path.joinpath("install_requirements.ps1")
     if path3.exists(): print(f"❌ File already exists @ {path3}, skipping.")
     else:
@@ -132,7 +132,7 @@ def make_installation_recipe(repo_root: str, ve_name: str, py_version: str):
         install_req_script = get_install_requirements_template(repo_root=P(repo_root), requirements_subpath=subpath, ve_name=ve_name, system=system)
         path3.write_text(install_ve_script + "\n" + install_req_script)
 
-    system= "Linux"
+    system = "Linux"
     path4 = base_path.joinpath("install_requirements.sh")
     if path4.exists(): print(f"❌ File already exists @ {path4}, skipping.")
     else:
