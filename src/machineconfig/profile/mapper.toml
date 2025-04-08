@@ -195,7 +195,9 @@ init = { this = '~/.SpaceVim.d/init.toml', to_this = 'LIBRARY_ROOT/settings/svim
 
 [linters]
 flake8 = {this = '~/.flake8', to_this = 'LIBRARY_ROOT/settings/linters/.flake8'}
-mypy = {this = '~/.mypy.ini', to_this = 'LIBRARY_ROOT/settings/linters/.mypy.ini'}
+# as per https://mypy.readthedocs.io/en/stable/config_file.html
+mypy = {this = '~/mypy/config/mypy.ini', to_this = 'LIBRARY_ROOT/settings/linters/.mypy.ini'}
+mypy2 = {this = '~/.config/mypy/config/mypy.ini', to_this = 'LIBRARY_ROOT/settings/linters/.mypy.ini'}
 ruff = {this = '~/.ruff.toml', to_this = 'LIBRARY_ROOT/settings/linters/.ruff.toml'}
 pylint = {this = '~/.pylintrc', to_this = 'LIBRARY_ROOT/settings/linters/.pylintrc'}
 

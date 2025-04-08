@@ -8,7 +8,9 @@ import time
 cwd = Path.cwd()
 
 url = input("Enter the URL: ")
-urls_file = cwd.joinpath("urls.txt")
+op_dir = cwd.joinpath(".website", url.split("/")[-1])
+op_dir.mkdir(exist_ok=True, parents=True)
+urls_file = op_dir.joinpath("urls.txt")
 if urls_file.exists(): urls_file.unlink()
 
 
@@ -19,8 +21,6 @@ all_urls = urls_file.read_text().splitlines()
 relevant_urls = [a_url for a_url in all_urls if a_url.startswith(url)]
 relevant_urls = list(set(relevant_urls))  # remove duplicates
 
-op_dir = cwd.joinpath(".website", url.split("/")[-1])
-op_dir.mkdir(exist_ok=True)
 
 commands: list[str] = []
 for a_url in relevant_urls:
