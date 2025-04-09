@@ -1,8 +1,8 @@
 
 from crocodile.core import Struct
-from crocodile.file_management import P
+from crocodile.file_management import P, Read
 from pydantic import ConfigDict
-from pydantic.dataclasses import dataclass, Read
+from pydantic.dataclasses import dataclass
 from typing import Optional
 import os
 from machineconfig.utils.utils import DEFAULTS_PATH

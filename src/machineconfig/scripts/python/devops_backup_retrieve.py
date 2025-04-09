@@ -4,7 +4,7 @@
 # import subprocess
 from crocodile.file_management import Read, P
 from machineconfig.utils.utils import LIBRARY_ROOT, DEFAULTS_PATH, print_code, choose_cloud_interactively, choose_multiple_options
-from machineconfig.scripts.python.cloud_sync import ES
+from machineconfig.scripts.python.helpers.helpers2 import ES
 from platform import system
 from typing import Any, Literal, Optional
 
