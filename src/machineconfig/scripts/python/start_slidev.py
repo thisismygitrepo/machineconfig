@@ -4,19 +4,16 @@ slidev
 
 from machineconfig.utils.utils import CONFIG_PATH, PROGRAM_PATH, print_code
 from crocodile.meta import Terminal, P
-# from crocodile.environment import get_network_addresses
 import subprocess
 import platform
 
-
 PORT_DEFAULT = 3030
-
 
 SLIDEV_REPO = CONFIG_PATH.joinpath(".cache/slidev")
 if not SLIDEV_REPO.joinpath("components").exists():
-    # assert slidev is installed first
+    print("📦 Initializing Slidev repository...")
     Terminal(stderr=subprocess.PIPE, stdin=subprocess.PIPE, stdout=subprocess.PIPE).run(f"cd {SLIDEV_REPO.parent};npm init slidev@latest")
-
+    print("✅ Slidev repository initialized successfully!\n")
 
 def jupyter_to_markdown(file: P):
     op_dir = file.parent.joinpath("presentation")
@@ -36,33 +33,32 @@ def jupyter_to_markdown(file: P):
     Terminal().run(cmd, shell="powershell").print()
     cmd = f"jupyter nbconvert --to html --no-prompt --no-input --output-dir {op_dir} {file}"
     Terminal().run(cmd, shell="powershell").print()
-    # cmd = f"jupyter nbconvert --to pdf --no-prompt --no-input --output-dir {op_dir} {file}"
-    # Terminal().run(cmd, shell="powershell").print()
 
     op_file = op_dir.joinpath("slides_raw.md")
-    slide_separator =  '\n\n---\n\n'
+    slide_separator = '\n\n---\n\n'
     md = op_file.read_text().replace('\n\n\n\n', slide_separator)
-    md = slide_separator.join([item for item in md.split(slide_separator) if bool(item.strip())])  # remove empty slides.
+    md = slide_separator.join([item for item in md.split(slide_separator) if bool(item.strip())])
     op_file.with_name("slides.md").write_text(md)
-    print("✅ Conversion completed, check the results @", op_dir)
+    print(f"✅ Conversion completed! Check the results at: {op_dir}\n")
 
     return op_dir
-
 
 def main() -> None:
     import argparse
 
+    print("\n" + "=" * 50)
+    print("🎥 Welcome to the Slidev Presentation Tool")
+    print("=" * 50 + "\n")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--directory", default=None, help="Directory of the report")
-    parser.add_argument("-j", "--jupyter-file", default=None, help="Jupyter notebook file to convert to slides. If not provided, slides.md is used.")
-    # parser.add_argument("--port", default=PORT_DEFAULT, help=f"Port to serve the report, default to {PORT_DEFAULT}")
+    parser.add_argument("-d", "--directory", default=None, help="📁 Directory of the report.")
+    parser.add_argument("-j", "--jupyter-file", default=None, help="📓 Jupyter notebook file to convert to slides. If not provided, slides.md is used.")
     args = parser.parse_args()
 
-    # port = args.port
     port = PORT_DEFAULT
 
     if args.jupyter_file is not None:
+        print("📓 Jupyter file provided. Converting to markdown...")
         report_dir = jupyter_to_markdown(P(args.jupyter_file))
     else:
         if args.directory is None:
@@ -70,8 +66,8 @@ def main() -> None:
         else:
             report_dir = P(args.directory)
 
-    assert report_dir.exists(), f"{report_dir} does not exist"
-    assert report_dir.is_dir(), f"{report_dir} is not a directory"
+    assert report_dir.exists(), f"❌ Directory {report_dir} does not exist."
+    assert report_dir.is_dir(), f"❌ {report_dir} is not a directory."
 
     md_file = report_dir.joinpath("slides.md")
     if not md_file.exists():
@@ -79,33 +75,28 @@ def main() -> None:
         if len(res) == 1:
             md_file = res.list[0]
         else:
-            raise FileNotFoundError(f"slides.md not found in {report_dir}")
+            raise FileNotFoundError(f"❌ slides.md not found in {report_dir}")
 
+    print("📂 Copying files to Slidev repository...")
     report_dir.search().apply(lambda x: x.copy(folder=SLIDEV_REPO, overwrite=True))
     if md_file.name != "slides.md":
         SLIDEV_REPO.joinpath(md_file.name).with_name(name="slides.md", inplace=True, overwrite=True)
 
-    # from machineconfig.utils.utils import check_tool_exists
-    # check_tool_exists(tool_name="slidev", install_script="npm i -g @slidev/cli")
-
     import socket
-    try: local_ip_v4 = socket.gethostbyname(socket.gethostname() + ".local")  # without .local, in linux machines, '/etc/hosts' file content, you have an IP address mapping with '127.0.1.1' to your hostname
+    try:
+        local_ip_v4 = socket.gethostbyname(socket.gethostname() + ".local")
     except Exception:
-        print("Warning: Could not get local_ip_v4. This is probably because you are running a WSL instance")
+        print("⚠️ Warning: Could not get local_ip_v4. This might be due to running in a WSL instance.")
         local_ip_v4 = socket.gethostbyname(socket.gethostname())
 
-    print(f"Presentation is served at http://{platform.node()}:{port}")
-    print(f"Presentation is served at http://localhost:{port}")
-    print(f"Presentation is served at http://{local_ip_v4}:{port}")
-    # This version requires a globally installed cli of slidev, which is not recommended.
-    # program: str=f"cd {SLIDEV_REPO}; slidev --port {port} --remote 0.0.0.0; cd {P.cwd()}"
+    print("🌐 Presentation will be served at:")
+    print(f"   - http://{platform.node()}:{port}")
+    print(f"   - http://localhost:{port}")
+    print(f"   - http://{local_ip_v4}:{port}\n")
 
-    # The recommended approach is do `npm init slidev@latest` in the directory where you want to create the presentation
-    # Then you can do the following:
     program = "npm run dev slides.md -- --remote"
     PROGRAM_PATH.write_text(program)
     print_code(code=program, lexer="bash", desc="Run the following command to start the presentation")
-
 
 if __name__ == '__main__':
     main()

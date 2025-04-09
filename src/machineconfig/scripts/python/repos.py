@@ -1,4 +1,3 @@
-
 """Repos
 
 # TODO use gh api user --jq '.login' to get the username and use it to clone the repos.
@@ -14,7 +13,6 @@ import argparse
 from dataclasses import dataclass
 from enum import Enum
 from typing import Optional, Any
-# tm = Terminal()
 
 
 class GitAction(Enum):
@@ -37,48 +35,51 @@ def git_action(path: P, action: GitAction, mess: Optional[str] = None, r: bool=F
     try:
         repo = Repo(str(path), search_parent_directories=False)
     except InvalidGitRepositoryError:
-        pprint(f"Skipping {path} because it is not a git repository.")
+        pprint(f"⚠️ Skipping {path} because it is not a git repository.")
         if r:
             prgs = [git_action(path=sub_path, action=action, mess=mess, r=r) for sub_path in path.search()]
             return "\n".join(prgs)
         else: return "\necho 'skipped because not a git repo'\n\n"
 
     program = f'''
-echo '>>>>>>>>> {action}'
+🔧 echo '>>>>>>>>> {action}'
 cd '{path}'
 '''
     if action == GitAction.commit:
         if mess is None: mess = "auto_commit_" + randstr()
         program += f'''
-git add .; git commit -am "{mess}"
+🔄 git add .; git commit -am "{mess}"
 '''
     if action == GitAction.push or action == GitAction.pull:
-        # remotes = tm.run(f"cd {path}; git remote", shell="powershell").op.split("\n")
         action_name = "pull" if action == GitAction.pull else "push"
-        cmds = [f'echo "pulling from {remote.url}" ; git {action_name} {remote.name} {repo.active_branch.name}' for remote in repo.remotes]
+        cmds = [f'echo "🔄 {action_name.capitalize()}ing from {remote.url}" ; git {action_name} {remote.name} {repo.active_branch.name}' for remote in repo.remotes]
         program += '\n' + '\n'.join(cmds) + '\n'
     program = program + '''
-echo ""; echo ""
+✅ echo ""; echo ""
 '''
     return program
 
 
 def main():
+    print("\n" + "=" * 50)
+    print("📂 Welcome to the Repository Manager")
+    print("=" * 50 + "\n")
+
     parser = argparse.ArgumentParser(description='REPO MANAGER')
     # POSITIONAL
-    parser.add_argument("directory", help="folder containing repos to record a json out of OR a specs json file to follow.", default="")
+    parser.add_argument("directory", help="📁 Folder containing repos to record or a specs JSON file to follow.", default="")
     # FLAGS
-    parser.add_argument("--push", help="push", action="store_true")
-    parser.add_argument("--pull", help="pull", action="store_true")
-    parser.add_argument("--commit", help="commit", action="store_true")
-    parser.add_argument("--all", help="pull, commit and push", action="store_true")
-    parser.add_argument("--record", help="record respos", action="store_true")
-    parser.add_argument("--clone", help="clone repos from record", action="store_true")
-    parser.add_argument("--checkout", help="Check out to versions prvided in this json file", action="store_true")
-    parser.add_argument("--checkout_to_branch", help="Checkout to the main branch", action="store_true")
-    parser.add_argument("--recursive", "-r", help="recursive flag", action="store_true")
+    parser.add_argument("--push", help="🚀 Push changes.", action="store_true")
+    parser.add_argument("--pull", help="⬇️ Pull changes.", action="store_true")
+    parser.add_argument("--commit", help="💾 Commit changes.", action="store_true")
+    parser.add_argument("--all", help="🔄 Pull, commit, and push changes.", action="store_true")
+    parser.add_argument("--record", help="📝 Record repositories.", action="store_true")
+    parser.add_argument("--clone", help="📥 Clone repositories from record.", action="store_true")
+    parser.add_argument("--checkout", help="🔀 Check out to versions provided in a JSON file.", action="store_true")
+    parser.add_argument("--checkout_to_branch", help="🔀 Check out to the main branch.", action="store_true")
+    parser.add_argument("--recursive", "-r", help="🔍 Recursive flag.", action="store_true")
     # OPTIONAL
-    parser.add_argument("--cloud", "-c", help="cloud", default=None)
+    parser.add_argument("--cloud", "-c", help="☁️ Cloud storage option.", default=None)
     args = parser.parse_args()
 
     if args.directory == "": repos_root = P.home().joinpath("code")  # it is a positional argument, can never be empty.
@@ -86,16 +87,16 @@ def main():
 
     program = ""
     if args.record:
+        print("\n📝 Recording repositories...")
         res = record_repos(repos_root=str(repos_root))
-        pprint("Recorded repositories:\n", res)
+        pprint("✅ Recorded repositories:\n", res)
         save_path = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
-        # Save.pickle(obj=res, path=save_path)
         Save.json(obj=res, path=save_path, indent=4)
-        pprint(f"Result pickled at {P(save_path)}")
+        pprint(f"📁 Result saved at {P(save_path)}")
         if args.cloud is not None: P(save_path).to_cloud(rel2home=True, cloud=args.cloud)
         program += """\necho '>>>>>>>>> Finished Recording'\n"""
     elif args.clone or args.checkout or args.checkout_to_branch:
-        # preferred_remote = input("Enter preferred remote to use (default: None): ") or ""
+        print("\n📥 Cloning or checking out repositories...")
         program += """\necho '>>>>>>>>> Cloning Repos'\n"""
         if not repos_root.exists() or repos_root.stem != 'repos.json':  # user didn't pass absolute path to pickle file, but rather expected it to be in the default save location
             repos_root = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
@@ -109,15 +110,14 @@ def main():
                 repos_root.from_cloud(cloud=cloud, rel2home=True)
         assert (repos_root.exists() and repos_root.name == 'repos.json') or args.cloud is not None, f"Path {repos_root} does not exist and cloud was not passed. You can't clone without one of them."
         program += install_repos(specs_path=str(repos_root), clone=args.clone, checkout_to_recorded_commit=args.checkout, checkout_to_branch=args.checkout_to_branch)
-    # elif args.checkout is not None:
-
     elif args.all or args.commit or args.pull or args.push:
+        print("\n🔄 Performing Git actions on repositories...")
         for a_path in repos_root.search("*"):
             program += f"""echo "{("Handling " + str(a_path)).center(80, "-")}" """
             if args.pull or args.all: program += git_action(path=a_path, action=GitAction.pull, r=args.recursive)
             if args.commit or args.all: program += git_action(a_path, action=GitAction.commit, r=args.recursive)
             if args.push or args.all: program += git_action(a_path, action=GitAction.push, r=args.recursive)
-    else: program = "echo 'no action specified, try to pass --push, --pull, --commit or --all'"
+    else: program = "echo '❌ No action specified. Try passing --push, --pull, --commit, or --all.'"
     write_shell_script_to_default_program_path(program=program, desc="Script to update repos", preserve_cwd=True, display=True, execute=False)
 
 
@@ -147,7 +147,6 @@ def record_a_repo(path: P, search_parent_directories: bool=False, preferred_remo
     try: commit = repo.head.commit.hexsha
     except ValueError:  # look at https://github.com/gitpython-developers/GitPython/issues/1016
         print(f"⚠️ Failed to get latest commit of {repo}")
-        # cmd = "git config --global -add safe.directory"
         commit = None
     try: current_branch = repo.head.reference.name  # same as repo.active_branch.name
     except TypeError:
@@ -174,16 +173,14 @@ def install_repos(specs_path: str, clone: bool=True, checkout_to_recorded_commit
                             remote_url = repo["remotes"][preferred_remote]
                         else:
                             print(f"⚠️ `{preferred_remote=}` not found in {repo['remotes']}.")
-                            # preferred_remote = None
                     program += f"\ncd {parent_dir.collapseuser().as_posix()}; git clone {remote_url} --origin {remote_name}"
                     program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}"
-                    # the new url-setting to ensure that account name before `@` was not lost (git clone ignores it): https://thisismygitrepo@github.com/thisismygitrepo/crocodile.git
                 program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote add {remote_name} {remote_url}"
             if checkout_to_recorded_commit:
                 commit = repo['version']['commit']
                 if isinstance(commit, str): program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git checkout {commit}"
                 else: print(f"Skipping {repo['parent_dir']} because it doesn't have a commit recorded. Found {commit}")
-                break  # you need to checkout only once, no need to repeat for other remotes.
+                break
             if checkout_to_branch:
                 program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git checkout {repo['current_branch']}"
                 break

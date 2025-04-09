@@ -1,4 +1,3 @@
-
 """Like yadm and dotter.
 """
 
@@ -30,9 +29,15 @@ def main():
 
     symlink_func(this=orig_path, to_this=new_path, prioritize_to_this=args.overwrite)
 
-    print("Map completed. To enshrine this mapping, add the following line to the mapper.toml file:")
-    print(f"nano {LIBRARY_ROOT}/symlinks/mapper.toml")
     print(f"""
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┃ ✅ Symbolic Link Created Successfully
+┃ 
+┃ 🔄 To enshrine this mapping, add the following to mapper.toml:
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
+    print(f"""
+📝 Edit configuration file: nano {LIBRARY_ROOT}/symlinks/mapper.toml
+
 [{new_path.parent.name}]
 {orig_path.trunk} = {{ this = '{orig_path.collapseuser().as_posix()}', to_this = '{new_path.collapseuser().as_posix()}' }}
 """)

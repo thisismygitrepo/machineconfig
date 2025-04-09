@@ -30,7 +30,7 @@ def print_code_interactive(_):
     obj = eval(choice, globals(), locals())  # type: ignore  # pylint: disable=eval-used
     from rich.syntax import Syntax
     import inspect
-    q: str=inspect.getsource(obj)
+    q: str = inspect.getsource(obj)
     from rich import console
     console.Console().print(Syntax(code=q, lexer="python"))
 
@@ -40,7 +40,10 @@ def print_dir_func(line: Any):
     """Pretty print and categorize dir() output."""
     _ = line  # ipython caller assumes there is at least one argument, an passes '' worstcase.
     res = get_names()
-    Struct(dictionary=res).print(as_config=True, title="📂 Objects defined in current dir")
+    Struct(dictionary=res).print(as_config=True, title="""
+📂 Objects Defined in Current Directory
+=======================================
+""")
 
 
 @register_line_magic("code")  # type: ignore
@@ -49,7 +52,7 @@ def print_program_func(obj_str: str):
     obj = eval(obj_str, globals(), locals())  # type: ignore  # pylint: disable=eval-used
     from rich.syntax import Syntax
     import inspect
-    q: str=inspect.getsource(obj)
+    q: str = inspect.getsource(obj)
     from rich import console
     console.Console().print(Syntax(code=q, lexer="python"))
 
@@ -70,17 +73,11 @@ from {path.stem} import *
 """
 
         result = P.tmp().joinpath(f"tmp_scripts/python/{randstr()}.py").write_text(code_snippet)
-        # print(f"IPyExtention: Remember that reload fails for imported moules that import other varying modules.")
+        print("""💡 IPyExtension: Remember that reload fails for imported modules that import other varying modules.""")
         get_ipython().run_line_magic(magic_name="load", line=result)  # type: ignore
         return
 
     result = path.as_posix()
-    # from IPython.terminal.embed import InteractiveShellEmbed
-    # from IPython.terminal.interactiveshell import TerminalInteractiveShell
-    # shell = TerminalInteractiveShell()  # ❌ don't start a new instance
-    # %run $result  # pylint: disable=E0001 # type: ignore  # noqa: #999
     print(f"➡️ Running magic: %run {result}")
     get_ipython().run_line_magic(magic_name="run", line=result)  # type: ignore
-    # shell.run_line_magic(magic_name="load", line="$_result")
-    # update gobal namespace
     globals().update(locals())

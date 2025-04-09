@@ -1,6 +1,8 @@
 # as per https://github.com/marketplace/models/azure-openai/o1-preview
 from openai import OpenAI
 from crocodile.file_management import Read, P
+from rich import print as rprint
+from rich.panel import Panel
 
 
 gh_token = Read.ini(P.home().joinpath("dotfiles/creds/git/git_host_tokens.ini"))['thisismygitrepo']['newLongterm']
@@ -13,7 +15,11 @@ client__ = OpenAI(
 
 
 def get_response(client, model_name: str, messages: list[dict[str, str]]):
-    print(f"Getting response from model {model_name}")
+    print(f"""
+┌────────────────────────────────────────────────────────────────
+│ 🤖 Querying Model: {model_name}
+│    Sending request to API...
+└────────────────────────────────────────────────────────────────""")
     try:
         response = client.chat.completions.create(
             messages=messages,
@@ -21,7 +27,11 @@ def get_response(client, model_name: str, messages: list[dict[str, str]]):
         )
         return response.choices
     except Exception as e:
-        print(f"Error with model {model_name}: {e}")
+        print(f"""
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┃ ❌ API Error with model {model_name}
+┃    {str(e)}
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
         return None
 
 
@@ -29,26 +39,64 @@ def interactive_chat():
     conversation_history = []
     model_index = 0
     model_name = model_name_preferences[model_index]
+    
+    print(f"""
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┃ 🚀 Interactive Chat Started
+┃    Type your message and press Enter to chat
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
+    
     while True:
-        print(f"Using model {model_name}".center(80, "="))
+        header = f" 🤖 Using Model: {model_name} "
+        print(f"\n{header.center(80, '═')}\n")
+        
         while True:
-            user_input = input("You: ")
-            conversation_history.append({"role": "user", "content": user_input})
+            try:
+                user_input = input("💬 You: ")
+                conversation_history.append({"role": "user", "content": user_input})
 
-            while True:
-                choices = get_response(client__, model_name, conversation_history)
-                if choices is None:
-                    model_index += 1
-                    model_name = model_name_preferences[model_index % len(model_name_preferences)]
-                    print(f"Switching to model {model_name}".center(80, "="))
-                    continue
-                else:
-                    break
+                while True:
+                    choices = get_response(client__, model_name, conversation_history)
+                    if choices is None:
+                        model_index += 1
+                        model_name = model_name_preferences[model_index % len(model_name_preferences)]
+                        print(f"""
+┌────────────────────────────────────────────────────────────────
+│ 🔄 Model Switch
+│    Now using: {model_name}
+└────────────────────────────────────────────────────────────────""")
+                        continue
+                    else:
+                        break
 
-            for a_choice in choices:
-                response_content = a_choice.message.content
-                print("\n" * 5)
-                print(f"AI: {response_content}")
-                conversation_history.append({"role": "assistant", "content": response_content})
+                for a_choice in choices:
+                    response_content = a_choice.message.content
+                    print("\n" * 2)
+                    try:
+                        rprint(Panel(
+                            f"{response_content}", 
+                            title=f"🤖 AI ({model_name})",
+                            border_style="blue"
+                        ))
+                    except:
+                        # Fallback if rich formatting fails
+                        print(f"""
+┌────────────────────────────────────────────────────────────────
+│ 🤖 AI ({model_name}):
+│ 
+{response_content}
+└────────────────────────────────────────────────────────────────""")
+                    
+                    conversation_history.append({"role": "assistant", "content": response_content})
+                    print("\n")
+            except KeyboardInterrupt:
+                print(f"""
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┃ 👋 Chat Session Ended
+┃    Thank you for using the interactive chat!
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
+                return
 
-interactive_chat()
+
+if __name__ == "__main__":
+    interactive_chat()

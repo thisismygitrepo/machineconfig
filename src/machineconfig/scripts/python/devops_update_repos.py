@@ -17,14 +17,21 @@ def main(verbose: bool=True) -> str:
         if tmp[-1] == "": tmp = tmp[:-1]
         repos += tmp
     except (FileNotFoundError, KeyError, IndexError):
-        print(f"🚫 Missing {DEFAULTS_PATH} or section [general] or key repos. Using default repos.")
-        print("""✨ It should look like this:
-[general]
-repos = ~/code/repo1,~/code/repo2
-rclone_config_name = onedrivePersonal
-email_config_name = Yahoo3
-to_email = myemail@email.com
-""")
+        print(f"""
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┃ 🚫 Configuration Error: Missing {DEFAULTS_PATH} or section [general] or key repos
+┃ ℹ️  Using default repositories instead
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
+        print("""
+┌────────────────────────────────────────────────────────────────
+│ ✨ Example Configuration:
+│ 
+│ [general]
+│ repos = ~/code/repo1,~/code/repo2
+│ rclone_config_name = onedrivePersonal
+│ email_config_name = Yahoo3
+│ to_email = myemail@email.com
+└────────────────────────────────────────────────────────────────""")
 
     repos_objs = []
     for a_package_path in repos:
@@ -33,7 +40,11 @@ to_email = myemail@email.com
             repo = git.Repo(str(P(a_package_path).expanduser()), search_parent_directories=True)
             repos_objs.append(repo)
         except Exception as ex:
-            print(f"❌ Error: {ex}")
+            print(f"""
+❌ Repository Error:
+   Path: {a_package_path}
+   Exception: {ex}
+{'-' * 50}""")
 
     if system() == "Linux":
         additions = []
@@ -66,7 +77,11 @@ echo "🔄 {("Updating " + str(a_repo.working_dir)).center(80, "═")}"
 cd "{a_repo.working_dir}"
 {sep.join([f'git pull {remote.name} {a_repo.active_branch.name} &' for remote in a_repo.remotes])}
 """ for a_repo in repos_objs])
-    else: raise NotImplementedError(f"⚠️ System {system()} not supported")
+    else: raise NotImplementedError(f"""
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┃ ⚠️  Unsupported System: {system()}
+┃ ℹ️  This functionality is only available on Windows and Linux
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
     return program
 
 

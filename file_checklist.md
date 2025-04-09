@@ -52,29 +52,28 @@
 - [x] src/machineconfig/scripts/python/devops_add_identity.py
 - [x] src/machineconfig/scripts/python/devops_add_ssh_key.py
 - [x] src/machineconfig/scripts/python/devops_backup_retrieve.py
-- [ ] src/machineconfig/scripts/python/devops_devapps_install.py
-- [ ] src/machineconfig/scripts/python/devops_update_repos.py
-- [ ] src/machineconfig/scripts/python/dotfile.py
-- [ ] src/machineconfig/scripts/python/fire_jobs.py
-- [ ] src/machineconfig/scripts/python/ftpx.py
-- [ ] src/machineconfig/scripts/python/gh_models.py
-- [ ] src/machineconfig/scripts/python/make_to_do_list.py
-- [ ] src/machineconfig/scripts/python/mount_nfs.py
-- [ ] src/machineconfig/scripts/python/mount_nw_drive.py
-- [ ] src/machineconfig/scripts/python/mount_ssh.py
-- [ ] src/machineconfig/scripts/python/onetimeshare.py
-- [ ] src/machineconfig/scripts/python/pomodoro.py
-- [ ] src/machineconfig/scripts/python/repos.py
-- [ ] src/machineconfig/scripts/python/scheduler.py
-- [ ] src/machineconfig/scripts/python/snapshot.py
-- [ ] src/machineconfig/scripts/python/start_slidev.py
-- [ ] src/machineconfig/scripts/python/start_terminals.py
-- [ ] src/machineconfig/scripts/python/url2md.py
-- [ ] src/machineconfig/scripts/python/viewer.py
-- [ ] src/machineconfig/scripts/python/viewer_template.py
-- [ ] src/machineconfig/scripts/python/wifi_conn.py
-- [ ] src/machineconfig/scripts/python/wsl_windows_transfer.py
-- [ ] src/machineconfig/settings/shells/ipy/profiles/default/startup/playext.py
+- [x] src/machineconfig/scripts/python/devops_devapps_install.py
+- [x] src/machineconfig/scripts/python/devops_update_repos.py
+- [x] src/machineconfig/scripts/python/dotfile.py
+- [x] src/machineconfig/scripts/python/fire_jobs.py
+- [x] src/machineconfig/scripts/python/ftpx.py
+- [x] src/machineconfig/scripts/python/gh_models.py
+- [x] src/machineconfig/scripts/python/mount_nfs.py
+- [x] src/machineconfig/scripts/python/mount_nw_drive.py
+- [x] src/machineconfig/scripts/python/mount_ssh.py
+- [x] src/machineconfig/scripts/python/onetimeshare.py
+- [x] src/machineconfig/scripts/python/pomodoro.py
+- [x] src/machineconfig/scripts/python/repos.py
+- [x] src/machineconfig/scripts/python/scheduler.py
+- [x] src/machineconfig/scripts/python/snapshot.py
+- [x] src/machineconfig/scripts/python/start_slidev.py
+- [x] src/machineconfig/scripts/python/start_terminals.py
+- [x] src/machineconfig/scripts/python/url2md.py
+- [x] src/machineconfig/scripts/python/viewer.py
+- [x] src/machineconfig/scripts/python/wifi_conn.py
+- [x] src/machineconfig/scripts/python/wsl_windows_transfer.py
+- [x] src/machineconfig/scripts/python/viewer_template.py
+- [x] src/machineconfig/settings/shells/ipy/profiles/default/startup/playext.py
 - [ ] src/machineconfig/setup_windows/wt_and_pwsh/set_pwsh_theme.py
 - [ ] src/machineconfig/setup_windows/wt_and_pwsh/set_wt_settings.py
 - [ ] src/machineconfig/utils/installer.py

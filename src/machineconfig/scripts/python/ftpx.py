@@ -11,7 +11,11 @@ from machineconfig.scripts.python.cloud_sync import ES
 
 
 def main():
-    print("🚀 Starting the main function...")
+    print(f"""
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┃ 🚀 FTP File Transfer
+┃ 📋 Starting transfer process...
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
     parser = argparse.ArgumentParser(description='FTP client')
 
     parser.add_argument("source", help="source path (machine:path)")
@@ -31,7 +35,12 @@ def main():
         source_parts = args.source.split(":")
         machine = source_parts[0]
         if len(source_parts) > 1 and source_parts[1] == ES:  # the source path is to be inferred from target.
-            if args.target == ES: raise ValueError(f"❌ You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised.")
+            if args.target == ES: raise ValueError(f"""
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┃ ❌ Configuration Error
+┃    Cannot use expand symbol `{ES}` in both source and target
+┃    This creates a cyclical inference dependency
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
             else: target = P(args.target).expanduser().absolute()
             source = target.collapseuser().as_posix()
         else:
@@ -44,7 +53,12 @@ def main():
         target_parts = args.target.split(":")
         machine = target_parts[0]
         if len(target_parts) > 1 and target_parts[1] == ES:
-            if args.source == ES: raise ValueError(f"❌ You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised.")
+            if args.source == ES: raise ValueError(f"""
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┃ ❌ Configuration Error
+┃    Cannot use expand symbol `{ES}` in both source and target
+┃    This creates a cyclical inference dependency
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
             else: source = args.source
             target = None
         else:
@@ -53,7 +67,12 @@ def main():
             else: source = P(args.source).expanduser().absolute()
 
     else:
-        raise ValueError("❌ Either source or target must be a remote path (i.e. machine:path)")
+        raise ValueError("""
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┃ ❌ Path Error
+┃    Either source or target must be a remote path
+┃    Format should be: machine:path
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
 
     Struct({"source": str(source), "target": str(target), "machine": machine}).print(as_config=True, title="CLI Resolution")
 
@@ -61,31 +80,68 @@ def main():
     try:
         ssh = SSH(rf'{machine}')
     except AuthenticationException:
-        print("🔑 Authentication failed, trying manually:")
-        print("⚠️ Caution: Ensure that username is passed appropriately as this exception only handles password.")
+        print(f"""
+┌────────────────────────────────────────────────────────────────
+│ 🔑 Authentication Failed
+│    Trying manual authentication...
+│ 
+│ ⚠️  Caution: Ensure that username is passed appropriately
+│    This exception only handles password authentication
+└────────────────────────────────────────────────────────────────""")
         import getpass
         pwd = getpass.getpass()
         ssh = SSH(rf'{machine}', pwd=pwd)
 
     if args.cloud:
-        print("☁️ Uploading from remote to cloud ...")
+        print(f"""
+┌────────────────────────────────────────────────────────────────
+│ ☁️  Cloud Transfer Mode
+│    Uploading from remote to cloud...
+└────────────────────────────────────────────────────────────────""")
         ssh.run(f"cloud_copy {source} :^", desc="Uploading from remote to the cloud.").print()
-        print("⬇️ Downloading from cloud to local ...")
+        print(f"""
+┌────────────────────────────────────────────────────────────────
+│ ⬇️  Cloud Transfer Mode
+│    Downloading from cloud to local...
+└────────────────────────────────────────────────────────────────""")
         ssh.run_locally(f"cloud_copy :^ {target}").print()
         received_file = P(target)  # type: ignore
     else:
         if source_is_remote:
-            assert source is not None, "❌ source must be a remote path (i.e. machine:path)"
-            print(f"🔄 Running: received_file = ssh.copy_to_here(source=r'{source}', target=r'{target}', z={args.zipFirst}, r={args.recursive})")
+            assert source is not None, """
+❌ Path Error: Source must be a remote path (machine:path)"""
+            print(f"""
+┌────────────────────────────────────────────────────────────────
+│ 📥 Transfer Mode: Remote → Local
+│    Source: {source}
+│    Target: {target}
+│    Options: {'ZIP compression' if args.zipFirst else 'No compression'}, {'Recursive' if args.recursive else 'Non-recursive'}
+└────────────────────────────────────────────────────────────────""")
             received_file = ssh.copy_to_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
         else:
-            assert source is not None, "❌ target must be a remote path (i.e. machine:path)"
-            print(f"🔄 Running: received_file = ssh.copy_from_here(source=r'{source}', target=r'{target}', z={args.zipFirst}, r={args.recursive})")
+            assert source is not None, """
+❌ Path Error: Target must be a remote path (machine:path)"""
+            print(f"""
+┌────────────────────────────────────────────────────────────────
+│ 📤 Transfer Mode: Local → Remote
+│    Source: {source}
+│    Target: {target}
+│    Options: {'ZIP compression' if args.zipFirst else 'No compression'}, {'Recursive' if args.recursive else 'Non-recursive'}
+└────────────────────────────────────────────────────────────────""")
             received_file = ssh.copy_from_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
 
     if source_is_remote and isinstance(received_file, P):
-        print(f"📁 Received: {repr(received_file.parent), repr(received_file)}")
-    print("✅ Main function completed.")
+        print(f"""
+┌────────────────────────────────────────────────────────────────
+│ 📁 File Received
+│    Parent: {repr(received_file.parent)}
+│    File: {repr(received_file)}
+└────────────────────────────────────────────────────────────────""")
+    print(f"""
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┃ ✅ Transfer Complete
+┃    File transfer process finished successfully
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
 
 
 if __name__ == '__main__':
