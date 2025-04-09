@@ -51,7 +51,7 @@
 - [x] src/machineconfig/scripts/python/devops.py
 - [x] src/machineconfig/scripts/python/devops_add_identity.py
 - [x] src/machineconfig/scripts/python/devops_add_ssh_key.py
-- [ ] src/machineconfig/scripts/python/devops_backup_retrieve.py
+- [x] src/machineconfig/scripts/python/devops_backup_retrieve.py
 - [ ] src/machineconfig/scripts/python/devops_devapps_install.py
 - [ ] src/machineconfig/scripts/python/devops_update_repos.py
 - [ ] src/machineconfig/scripts/python/dotfile.py

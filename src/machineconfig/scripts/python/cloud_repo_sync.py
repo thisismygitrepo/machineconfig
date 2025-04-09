@@ -4,10 +4,12 @@ import git
 from crocodile.file_management import P, Read
 from crocodile.meta import Terminal
 
-from machineconfig.scripts.python.helpers.helpers1 import args_parser
+from machineconfig.scripts.python.helpers.helpers1 import args_parser, fetch_dotfiles
 from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, PROGRAM_PATH, get_shell_file_executing_python_script, get_shell_script, choose_one_option
 import platform
 from typing import Optional, Literal
+
+_ = fetch_dotfiles
 
 
 def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optional[str] = None,
