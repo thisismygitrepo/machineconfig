@@ -163,7 +163,7 @@ def main(direction: OPTIONS, which: Optional[str] = None):
 """)
     
     code = main_backup_retrieve(direction=direction, which=which)
-    from machineconfig.utils.utils import write_shell_script
+    from machineconfig.utils.utils import write_shell_script_to_default_program_path
     
     print(f"""
 ╔{'═' * 70}╗
@@ -172,7 +172,7 @@ def main(direction: OPTIONS, which: Optional[str] = None):
 ╚{'═' * 70}╝
 """)
     
-    write_shell_script(program=code, desc="backup_retrieve.sh")
+    write_shell_script_to_default_program_path(program=code, desc="backup_retrieve.sh")
     
     print(f"""
 ╔{'═' * 70}╗

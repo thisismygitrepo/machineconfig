@@ -7,7 +7,7 @@ in the event that username@github.com is not mentioned in the remote url.
 """
 
 from rich import print as pprint
-from machineconfig.utils.utils import write_shell_script, CONFIG_PATH, DEFAULTS_PATH
+from machineconfig.utils.utils import write_shell_script_to_default_program_path, CONFIG_PATH, DEFAULTS_PATH
 from crocodile.file_management import P, Read, Save
 from crocodile.core import randstr
 import argparse
@@ -118,7 +118,7 @@ def main():
             if args.commit or args.all: program += git_action(a_path, action=GitAction.commit, r=args.recursive)
             if args.push or args.all: program += git_action(a_path, action=GitAction.push, r=args.recursive)
     else: program = "echo 'no action specified, try to pass --push, --pull, --commit or --all'"
-    write_shell_script(program=program, desc="Script to update repos", preserve_cwd=True, display=True, execute=False)
+    write_shell_script_to_default_program_path(program=program, desc="Script to update repos", preserve_cwd=True, display=True, execute=False)
 
 
 def record_repos(repos_root: str, r: bool=True) -> list[dict[str, Any]]:

@@ -1,7 +1,7 @@
 """devops with emojis
 """
 
-from machineconfig.utils.utils import display_options, PROGRAM_PATH, write_shell_script
+from machineconfig.utils.utils import display_options, PROGRAM_PATH, write_shell_script_to_default_program_path
 from platform import system
 from enum import Enum
 from typing import Optional
@@ -210,9 +210,9 @@ def main(which: Optional[str] = None):
 │ 📜 Preparing shell script...                                             │
 ╰{'─' * 70}╯
 """)
-        write_shell_script(program=program, display=True, preserve_cwd=True, desc="🔧 Shell script prepared by Python.", execute=True if which is not None else False)
+        write_shell_script_to_default_program_path(program=program, display=True, preserve_cwd=True, desc="🔧 Shell script prepared by Python.", execute=True if which is not None else False)
     else: 
-        write_shell_script(program="echo '✨ Done.'", display=False, desc="🔧 Shell script prepared by Python.", preserve_cwd=True, execute=False)
+        write_shell_script_to_default_program_path(program="echo '✨ Done.'", display=False, desc="🔧 Shell script prepared by Python.", preserve_cwd=True, execute=False)
     
     print(f"""
 ╔{'═' * 70}╗

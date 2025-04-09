@@ -3,7 +3,7 @@ from crocodile.file_management import P, Read
 from crocodile.meta import Terminal
 from machineconfig.scripts.python.cloud_repo_sync import main
 from machineconfig.scripts.python.get_zellij_cmd import get_zellij_cmd
-from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, get_shell_script, write_shell_script
+from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, write_shell_script_to_file, write_shell_script_to_default_program_path
 import platform
 import argparse
 
@@ -67,11 +67,11 @@ def inspect_repos(repo_local_root: str, repo_remote_root: str):
 
     if platform.system() == "Windows":
         program = get_wt_cmd(wd1=P(repo_local_root), wd2=P(repo_local_root))
-        write_shell_script(program=program, execute=True, desc="Inspecting repos ...", preserve_cwd=True, display=True)
+        write_shell_script_to_default_program_path(program=program, execute=True, desc="Inspecting repos ...", preserve_cwd=True, display=True)
         return None
     elif platform.system() == "Linux":
         program = get_zellij_cmd(wd1=P(repo_local_root), wd2=P(repo_remote_root))
-        write_shell_script(program=program, execute=True, desc="Inspecting repos ...", preserve_cwd=True, display=True)
+        write_shell_script_to_default_program_path(program=program, execute=True, desc="Inspecting repos ...", preserve_cwd=True, display=True)
         return None
     else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
 
@@ -121,7 +121,7 @@ sudo chmod 600 $HOME/.ssh/*
 sudo chmod 700 $HOME/.ssh
 sudo chmod +x $HOME/dotfiles/scripts/linux -R
 """
-    shell_path = get_shell_script(shell_script=script)
+    shell_path = write_shell_script_to_file(shell_script=script)
     Terminal().run(f". {shell_path}", shell="bash").capture().print()
 
     print(f"""

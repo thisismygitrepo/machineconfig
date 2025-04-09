@@ -5,7 +5,7 @@ from crocodile.file_management import P, Read
 from crocodile.meta import Terminal
 
 from machineconfig.scripts.python.helpers.helpers1 import args_parser, fetch_dotfiles
-from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, PROGRAM_PATH, get_shell_file_executing_python_script, get_shell_script, choose_one_option
+from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, PROGRAM_PATH, get_shell_file_executing_python_script, write_shell_script_to_file, choose_one_option
 import platform
 from typing import Optional, Literal
 
@@ -96,7 +96,7 @@ git pull originEnc master
 
 """
 
-    shell_path = get_shell_script(shell_script=script)
+    shell_path = write_shell_script_to_file(shell_script=script)
     res = Terminal().run(f". {shell_path}", shell="powershell").capture().print()
 
     if res.is_successful(strict_err=True, strict_returcode=True):
@@ -142,7 +142,7 @@ sudo chmod 700 $HOME/.ssh
 sudo chmod +x $HOME/dotfiles/scripts/linux -R
 """
 
-        shell_file_2 = get_shell_script(shell_script=program_2)
+        shell_file_2 = write_shell_script_to_file(shell_script=program_2)
 
         # ================================================================================
         option3 = 'Inspect repos:'
@@ -161,7 +161,7 @@ cd $HOME/dotfiles
 git commit -am "finished merging"
 . {shell_file_1}
 """
-        shell_file_4 = get_shell_script(shell_script=program_4)
+        shell_file_4 = write_shell_script_to_file(shell_script=program_4)
         # ================================================================================
 
         print(f"""

@@ -29,30 +29,13 @@ deactivate || true
     return shell_script
 
 
-def get_shell_script(shell_script: str):
+def write_shell_script_to_file(shell_script: str):
     if platform.system() == "Linux": suffix = ".sh"
     elif platform.system() == "Windows": suffix = ".ps1"
     else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
     shell_file = P.tmp().joinpath("tmp_scripts", "shell", randstr() + suffix).create(parents_only=True).write_text(shell_script)
     return shell_file
-
-
-def get_shell_file_executing_python_script(python_script: str, ve_name: str, verbose: bool=True):
-    if verbose:
-        python_script = f"""
-code = r'''{python_script}'''
-try:
-    from machineconfig.utils.utils import print_code
-    print_code(code=code, lexer="python", desc="Python Script")
-except ImportError: print(f"\\n{'=' * 60}\\n📜 PYTHON SCRIPT:\\n\\n{{code}}\\n{'=' * 60}\\n")
-""" + python_script
-    python_file = P.tmp().joinpath("tmp_scripts", "python", randstr() + ".py").create(parents_only=True).write_text(python_script)
-    shell_script = get_shell_script_executing_python_file(python_file=python_file.to_str(), ve_name=ve_name)
-    shell_file = get_shell_script(shell_script)
-    return shell_file
-
-
-def write_shell_script(program: str, desc: str, preserve_cwd: bool, display: bool, execute: bool):
+def write_shell_script_to_default_program_path(program: str, desc: str, preserve_cwd: bool, display: bool, execute: bool):
     if preserve_cwd:
         if platform.system() == "Windows":
             program = "$orig_path = $pwd\n" + program + "\ncd $orig_path"
@@ -66,6 +49,19 @@ def write_shell_script(program: str, desc: str, preserve_cwd: bool, display: boo
         Terminal().run(f". {PROGRAM_PATH}", shell="powershell").capture().print_if_unsuccessful(desc="🛠️  EXECUTION | Shell script running", strict_err=True, strict_returncode=True)
     return None
 
+def get_shell_file_executing_python_script(python_script: str, ve_name: str, verbose: bool=True):
+    if verbose:
+        python_script = f"""
+code = r'''{python_script}'''
+try:
+    from machineconfig.utils.utils import print_code
+    print_code(code=code, lexer="python", desc="Python Script")
+except ImportError: print(f"\\n{'=' * 60}\\n📜 PYTHON SCRIPT:\\n\\n{{code}}\\n{'=' * 60}\\n")
+""" + python_script
+    python_file = P.tmp().joinpath("tmp_scripts", "python", randstr() + ".py").create(parents_only=True).write_text(python_script)
+    shell_script = get_shell_script_executing_python_file(python_file=python_file.to_str(), ve_name=ve_name)
+    shell_file = write_shell_script_to_file(shell_script)
+    return shell_file
 
 def print_code(code: str, lexer: str, desc: str):
     if lexer == "shell":

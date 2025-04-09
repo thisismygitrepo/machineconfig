@@ -3,7 +3,7 @@
 """
 
 import socket
-from machineconfig.utils.utils import choose_ssh_host, write_shell_script
+from machineconfig.utils.utils import choose_ssh_host, write_shell_script_to_default_program_path
 from crocodile.file_management import P
 
 prefix = """
@@ -51,7 +51,7 @@ def launch_from_ssh_config():
     hosts = choose_ssh_host(multi=True)
     assert isinstance(hosts, list)
     res = build_template(hosts)
-    write_shell_script(res, execute=False, desc="zellij launch script")
+    write_shell_script_to_default_program_path(res, execute=False, desc="zellij launch script")
     return None
 
 
