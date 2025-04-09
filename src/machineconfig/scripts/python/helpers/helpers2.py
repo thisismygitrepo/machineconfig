@@ -1,9 +1,14 @@
+
+
 from crocodile.core import Struct
 from crocodile.file_management import Read
-from machineconfig.scripts.python.cloud_sync import ES, get_secure_share_cloud_config
-from machineconfig.scripts.python.helpers.helpers3 import Args, ArgsDefaults, absolute, find_cloud_config
+from machineconfig.scripts.python.helpers.cloud_helpers import Args, ArgsDefaults, absolute, find_cloud_config, get_secure_share_cloud_config
 from machineconfig.utils.utils import DEFAULTS_PATH
 from typing import Optional
+
+
+ES = "^"  # chosen carefully to not mean anything on any shell. `$` was a bad choice.
+
 
 def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str, str, str]:
     config = args.config

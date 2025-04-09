@@ -3,10 +3,12 @@
 import git
 from crocodile.file_management import P, Read
 from crocodile.meta import Terminal
+from crocodile.core import randstr
 
-from machineconfig.scripts.python.helpers.helpers1 import args_parser, fetch_dotfiles
+from machineconfig.scripts.python.helpers.repo_sync_helpers import fetch_dotfiles
 from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, PROGRAM_PATH, get_shell_file_executing_python_script, write_shell_script_to_file, choose_one_option
 import platform
+import argparse
 from typing import Optional, Literal
 
 _ = fetch_dotfiles
@@ -193,6 +195,26 @@ git commit -am "finished merging"
         PROGRAM_PATH.write_text(program_content)
     return program_content
 
+def args_parser():
+    print(f"""
+╔{'═' * 70}╗
+║ 🔄 Repository Synchronization Utility                                     ║
+╚{'═' * 70}╝
+""")
+
+    parser = argparse.ArgumentParser(description="Secure Repo CLI.")
+    # parser.add_argument("cmd", help="command to run", choices=["pull", "push"])
+    parser.add_argument("path", nargs='?', type=str, help="Repository path, defaults to cwd.", default=None)
+    # parser.add_argument("--share", help="Repository path, defaults to cwd.", action="store_true", default=False)
+    parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
+    parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {randstr()}")
+    # parser.add_argument("--skip_confirmation", "-s", help="Skip confirmation.", action="store_true", default=False)
+    # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
+    parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
+    # parser.add_argument("--no_push", "-u", help="push to reomte.", action="store_true")  # default is False
+    parser.add_argument("--action", "-a", help="Action to take if merge fails.", choices=["ask", "pushLocalMerge", "overwriteLocal", "InspectRepos", "RemoveLocalRclone"], default="ask")
+    args = parser.parse_args()
+    main(cloud=args.cloud, path=args.path, message=args.message, action=args.action)
 
 if __name__ == "__main__":
     args_parser()

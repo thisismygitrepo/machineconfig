@@ -1,11 +1,9 @@
-from crocodile.core import randstr
+
 from crocodile.file_management import P, Read
 from crocodile.meta import Terminal
-from machineconfig.scripts.python.cloud_repo_sync import main
 from machineconfig.scripts.python.get_zellij_cmd import get_zellij_cmd
-from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, write_shell_script_to_file, write_shell_script_to_default_program_path
+from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, get_shell_script, write_shell_script
 import platform
-import argparse
 
 
 def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cloud: str):
@@ -14,20 +12,16 @@ def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cl
 ║ 🗑️  Deleting remote repo copy and pushing local copy                       ║
 ╚{'═' * 70}╝
 """)
-
     repo_sync_root = P(remote_repo).expanduser().absolute()
     repo_root_path = P(local_repo).expanduser().absolute()
     repo_sync_root.delete(sure=True)
-
     print("🧹 Removed temporary remote copy")
-
     from git.remote import Remote
     from git.repo import Repo
     try:
         Remote.remove(Repo(repo_root_path), "originEnc")
         print("🔗 Removed originEnc remote reference")
     except Exception: pass  # type: ignore
-
     print(f"""
 ╭{'─' * 70}╮
 │ 📤 Uploading local repository to cloud...                                │
@@ -67,11 +61,11 @@ def inspect_repos(repo_local_root: str, repo_remote_root: str):
 
     if platform.system() == "Windows":
         program = get_wt_cmd(wd1=P(repo_local_root), wd2=P(repo_local_root))
-        write_shell_script_to_default_program_path(program=program, execute=True, desc="Inspecting repos ...", preserve_cwd=True, display=True)
+        write_shell_script(program=program, execute=True, desc="Inspecting repos ...", preserve_cwd=True, display=True)
         return None
     elif platform.system() == "Linux":
         program = get_zellij_cmd(wd1=P(repo_local_root), wd2=P(repo_remote_root))
-        write_shell_script_to_default_program_path(program=program, execute=True, desc="Inspecting repos ...", preserve_cwd=True, display=True)
+        write_shell_script(program=program, execute=True, desc="Inspecting repos ...", preserve_cwd=True, display=True)
         return None
     else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
 
@@ -121,7 +115,7 @@ sudo chmod 600 $HOME/.ssh/*
 sudo chmod 700 $HOME/.ssh
 sudo chmod +x $HOME/dotfiles/scripts/linux -R
 """
-    shell_path = write_shell_script_to_file(shell_script=script)
+    shell_path = get_shell_script(shell_script=script)
     Terminal().run(f". {shell_path}", shell="bash").capture().print()
 
     print(f"""
@@ -130,24 +124,3 @@ sudo chmod +x $HOME/dotfiles/scripts/linux -R
 ╚{'═' * 70}╝
 """)
 
-
-def args_parser():
-    print(f"""
-╔{'═' * 70}╗
-║ 🔄 Repository Synchronization Utility                                     ║
-╚{'═' * 70}╝
-""")
-
-    parser = argparse.ArgumentParser(description="Secure Repo CLI.")
-    # parser.add_argument("cmd", help="command to run", choices=["pull", "push"])
-    parser.add_argument("path", nargs='?', type=str, help="Repository path, defaults to cwd.", default=None)
-    # parser.add_argument("--share", help="Repository path, defaults to cwd.", action="store_true", default=False)
-    parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
-    parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {randstr()}")
-    # parser.add_argument("--skip_confirmation", "-s", help="Skip confirmation.", action="store_true", default=False)
-    # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
-    parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
-    # parser.add_argument("--no_push", "-u", help="push to reomte.", action="store_true")  # default is False
-    parser.add_argument("--action", "-a", help="Action to take if merge fails.", choices=["ask", "pushLocalMerge", "overwriteLocal", "InspectRepos", "RemoveLocalRclone"], default="ask")
-    args = parser.parse_args()
-    main(cloud=args.cloud, path=args.path, message=args.message, action=args.action)

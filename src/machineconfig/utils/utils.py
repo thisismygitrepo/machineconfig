@@ -7,7 +7,7 @@ from crocodile.file_management import P
 import machineconfig
 from machineconfig.utils.utils_options import check_tool_exists, choose_cloud_interactively, choose_multiple_options, choose_one_option, choose_ssh_host, display_options
 from machineconfig.utils.utils_links import build_links, symlink_copy, symlink_func
-from machineconfig.utils.utils_code import write_shell_script_to_file, get_shell_script_executing_python_file, get_shell_file_executing_python_script, write_shell_script_to_default_program_path, print_code, PROGRAM_PATH
+from machineconfig.utils.utils_code import get_shell_script_executing_python_file, get_shell_file_executing_python_script, write_shell_script_to_default_program_path, print_code, PROGRAM_PATH
 from machineconfig.utils.utils_path import sanitize_path, match_file_name
 
 # Split into multiple assignments to fix incompatible tuple sizes

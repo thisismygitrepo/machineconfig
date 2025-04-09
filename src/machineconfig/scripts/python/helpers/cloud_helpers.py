@@ -1,8 +1,12 @@
+
 from crocodile.core import Struct
 from crocodile.file_management import P
 from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass, Read
 from typing import Optional
+import os
+from machineconfig.utils.utils import DEFAULTS_PATH
+
 
 class ArgsDefaults:
     # source: str=None
@@ -82,3 +86,49 @@ def absolute(path: str) -> P:
     return obj.absolute()
 
 
+
+def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Args:
+    print(f"""
+╔{'═' * 70}╗
+║ 🔐 Secure Share Cloud Configuration                                       ║
+╚{'═' * 70}╝
+""")
+    
+    if cloud is None:
+        if os.environ.get("CLOUD_CONFIG_NAME") is not None:
+            default_cloud = os.environ.get("CLOUD_CONFIG_NAME")
+            assert default_cloud is not None
+            cloud = default_cloud
+            print(f"☁️  Using cloud from environment: {cloud}")
+        else:
+            try:
+                default_cloud__ = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            except Exception:
+                default_cloud__ = 'No default cloud found.'
+            if default_cloud__ == 'No default cloud found.' or interactive:
+                # assert default_cloud is not None
+                cloud = input(f"☁️  Enter cloud name (default {default_cloud__}): ") or default_cloud__
+            else:
+                cloud = default_cloud__
+                print(f"☁️  Using default cloud: {cloud}")
+
+    default_password_path = P.home().joinpath("dotfiles/creds/passwords/quick_password")
+    if default_password_path.exists():
+        pwd = default_password_path.read_text().strip()
+        default_message = "defaults to quick_password"
+    else:
+        pwd = ""
+        default_message = "no default password found"
+    pwd = input(f"🔑 Enter encryption password ({default_message}): ") or pwd
+    res = Args(cloud=cloud,
+               pwd=pwd, encrypt=True,
+               zip=True, overwrite=True, share=True,
+               rel2home=True, root="myshare", os_specific=False,)
+    
+    print(f"""
+╭{'─' * 70}╮
+│ ⚙️  Using SecureShare cloud config                                        │
+╰{'─' * 70}╯
+""")
+    Struct(res.__dict__).print(as_config=True, title="SecureShare Config")
+    return res
