@@ -1,16 +1,66 @@
+#!/usr/bin/bash
+#=======================================================================
+# 🐊 CROCODILE SHELL SETUP SCRIPT
+#=======================================================================
+# This script sets up the crocodile shell environment with all dependencies
 
-# python & virtual enviornment
-# curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
+echo """
+#=======================================================================
+🚀 ENVIRONMENT SETUP | Quick installation via URL shorteners
+#=======================================================================
+"""
+
+echo """
+#=======================================================================
+🐍 PYTHON ENVIRONMENT | Setting up Python virtual environment
+#=======================================================================
+
+Setting up Python virtual environment via bit.ly shortlink...
+"""
+# Alternative URL: curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
 curl bit.ly/cfgvelinux -L | bash
 
-# repos
-# curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
+echo """
+#=======================================================================
+📦 CODE REPOSITORIES | Cloning project repositories
+#=======================================================================
+
+Cloning essential repositories via bit.ly shortlink...
+"""
+# Alternative URL: curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
 curl bit.ly/cfgreposlinux -L | bash
 
-# symlinks
-source $HOME/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh  # requires sudo since it invloves chmod of dotfiles/.ssh, however sudo doesn't work with source. best to have sudo -s earlier.
+echo """
+#=======================================================================
+🔗 CONFIGURATION SETUP | Creating symbolic links
+#=======================================================================
+
+Setting up configuration symlinks...
+Note: This may require sudo permissions for .ssh permissions
+"""
+source $HOME/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
+
+echo """
+#=======================================================================
+🔄 SHELL RELOADING | Refreshing shell configuration
+#=======================================================================
+
+Reloading bash configuration...
+"""
 . ~/.bashrc
 
-# devaps
+echo """
+#=======================================================================
+⚙️  DEVELOPMENT TOOLS | Developer applications
+#=======================================================================
+
+# To install development applications, run:
 # source <(sudo cat ~/code/machineconfig/src/machineconfig/setup_linux/devapps.sh)
+
+#=======================================================================
+✅ SETUP COMPLETE | CroShell environment setup finished
+#=======================================================================
+
+🚀 Your CroShell development environment is ready to use!
+"""
 
