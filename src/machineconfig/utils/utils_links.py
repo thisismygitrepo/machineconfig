@@ -1,5 +1,3 @@
-
-
 from crocodile.file_management import P, PLike
 from crocodile.core_modules.core_1 import randstr
 
@@ -27,6 +25,7 @@ def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
     for a_target_path, a_name in target_dirs_filtered:
         links_path = repo_root_obj.joinpath("links", a_name)
         links_path.symlink_to(target=a_target_path)
+
 def symlink_func(this: P, to_this: P, prioritize_to_this: bool=True):
     """helper function. creates a symlink from `this` to `to_this`.
     What can go wrong?
@@ -47,9 +46,19 @@ def symlink_func(this: P, to_this: P, prioritize_to_this: bool=True):
     else:  # this doesn't exist.
         if not to_this.exists(): to_this.touch()  # we have to touch it (file) or create it (folder)
     try:
-        # print(f"Linking {this} ➡️ {to_this}")
+        print(f"""
+{'=' * 60}
+🔗 LINKING | Creating symlink from {this} ➡️  {to_this}
+{'=' * 60}
+""")
         P(this).symlink_to(target=to_this, verbose=True, overwrite=True)
-    except Exception as ex: print(f"❌ Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
+    except Exception as ex:
+        print(f"""
+❌ ERROR | Failed at linking {this} ➡️  {to_this}.
+Reason: {ex}
+{'=' * 60}
+""")
+
 def symlink_copy(this: P, to_this: P, prioritize_to_this: bool=True):
     this = P(this).expanduser().absolute()
     to_this = P(to_this).expanduser().absolute()
@@ -65,5 +74,15 @@ def symlink_copy(this: P, to_this: P, prioritize_to_this: bool=True):
     else:  # this doesn't exist.
         if not to_this.exists(): to_this.touch()  # we have to touch it (file) or create it (folder)
     try:
+        print(f"""
+{'=' * 60}
+📋 COPYING | Copying {to_this} to {this}
+{'=' * 60}
+""")
         to_this.copy(path=this, overwrite=True, verbose=True)
-    except Exception as ex: print(f"❌ Failed at linking {this} ➡️ {to_this}.\nReason: {ex}")
+    except Exception as ex:
+        print(f"""
+❌ ERROR | Failed at copying {to_this} to {this}.
+Reason: {ex}
+{'=' * 60}
+""")

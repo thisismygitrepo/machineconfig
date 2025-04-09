@@ -77,14 +77,14 @@
 - [x] src/machineconfig/setup_windows/wt_and_pwsh/set_pwsh_theme.py
 - [x] src/machineconfig/setup_windows/wt_and_pwsh/set_wt_settings.py
 - [x] src/machineconfig/utils/installer.py
-- [ ] src/machineconfig/utils/procs.py
-- [ ] src/machineconfig/utils/scheduling.py
-- [ ] src/machineconfig/utils/utils.py
-- [ ] src/machineconfig/utils/utils_code.py
-- [ ] src/machineconfig/utils/utils_links.py
-- [ ] src/machineconfig/utils/utils_options.py
-- [ ] src/machineconfig/utils/utils_path.py
-- [ ] src/machineconfig/utils/ve.py
+- [x] src/machineconfig/utils/procs.py
+- [x] src/machineconfig/utils/scheduling.py
+- [x] src/machineconfig/utils/utils.py
+- [x] src/machineconfig/utils/utils_code.py
+- [x] src/machineconfig/utils/utils_links.py
+- [x] src/machineconfig/utils/utils_options.py
+- [x] src/machineconfig/utils/utils_path.py
+- [x] src/machineconfig/utils/ve.py
 
 ## Shell Script Files
 

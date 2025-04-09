@@ -35,6 +35,11 @@ def write_shell_script_to_file(shell_script: str):
     else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
     shell_file = P.tmp().joinpath("tmp_scripts", "shell", randstr() + suffix).create(parents_only=True).write_text(shell_script)
     return shell_file
+
+# Enhanced print/log/error/exception statements for better clarity and consistency
+# Improved formatting and language of messages
+# Ensured consistent use of f-strings with triple quotes where applicable
+
 def write_shell_script_to_default_program_path(program: str, desc: str, preserve_cwd: bool, display: bool, execute: bool):
     if preserve_cwd:
         if platform.system() == "Windows":
@@ -42,7 +47,11 @@ def write_shell_script_to_default_program_path(program: str, desc: str, preserve
         else:
             program = 'orig_path=$(cd -- "." && pwd)\n' + program + '\ncd "$orig_path" || exit'
     if display:
-        print(f"\n{'=' * 60}\n⚙️  SHELL SCRIPT | Executing at {PROGRAM_PATH}\n{'=' * 60}")
+        print(f"""
+{'=' * 60}
+⚙️  SHELL SCRIPT | Executing at {PROGRAM_PATH}
+{'=' * 60}
+""")
         print_code(code=program, lexer="shell", desc=desc)
     PROGRAM_PATH.create(parents_only=True).write_text(program)
     if execute:
@@ -71,4 +80,9 @@ def print_code(code: str, lexer: str, desc: str):
     console = Console()
 
     console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}"), style="bold red")
+    print(f"""
+{'=' * 60}
+📜 CODE DISPLAYED | {desc}
+{'=' * 60}
+""")
 

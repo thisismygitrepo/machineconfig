@@ -1,5 +1,3 @@
-
-
 from crocodile.core import List as L
 from crocodile.meta import Terminal
 from crocodile.file_management import P
@@ -31,7 +29,11 @@ def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> b
     except (subprocess.CalledProcessError, FileNotFoundError):
         res = False
     if res is False and install_script is not None:
-        print(f"📥 Installing {tool_name} ...")
+        print(f"""
+{'=' * 60}
+📥 INSTALLING TOOL | Installing {tool_name}...
+{'=' * 60}
+""")
         Terminal().run(install_script, shell="powershell").print()
         return check_tool_exists(tool_name=tool_name, install_script=None)
     return res
@@ -133,7 +135,11 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
 
 
 def choose_cloud_interactively() -> str:
-    print("🔍 Listing Cloud Remotes ... ")
+    print(f"""
+{'=' * 60}
+🔍 LISTING CLOUD REMOTES | Fetching available cloud remotes...
+{'=' * 60}
+""")
     tmp = Terminal().run("rclone listremotes").op_if_successfull_or_default(strict_returcode=False)
     # consider this: remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
     if isinstance(tmp, str):
@@ -143,6 +149,10 @@ def choose_cloud_interactively() -> str:
     if len(remotes) == 0:
         raise RuntimeError("You don't have remotes. Configure your rclone first to get cloud services access.")
     cloud: str = choose_one_option(msg="WHICH CLOUD?", options=list(remotes), default=remotes[0], fzf=True)
+    print(f"""
+✅ SELECTED CLOUD | {cloud}
+{'=' * 60}
+""")
     return cloud
 
 def get_ssh_hosts() -> list[str]:

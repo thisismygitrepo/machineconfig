@@ -39,11 +39,16 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
     from rich.console import Console
     console = Console()
     if py_version is None:
-        print("\n\n")
-        console.rule("🔍 Available Python Versions", style="bold red")
+        print("""
+{'=' * 60}
+🔍 AVAILABLE PYTHON VERSIONS
+{'=' * 60}
+""")
         res = get_installed_interpreters()
         List(res).print()
-        print("\n\n")
+        print("""
+{'=' * 60}
+""")
         dotted_py_version = input("🔢 Enter python version (3.11): ") or "3.11"
     else:
         dotted_py_version = py_version
@@ -69,7 +74,7 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
     env_path = P.home().joinpath("venvs", ve_name)
     if delete_if_exists and env_path.exists():
         sure = input(f"⚠️ An existing environment found. Are you sure you want to delete {env_path} before making new one? (y/[n]): ") == "y"
-        console.rule("🗑️ Deleting existing enviroment with similar name")
+        console.rule("🗑️ Deleting existing environment with similar name")
         env_path.delete(sure=sure)
 
     system: Literal["Windows", "Linux"]

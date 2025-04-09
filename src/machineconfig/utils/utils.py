@@ -58,7 +58,11 @@ def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool=False):
     dtm = datetime(dtm.year, dtm.month, dtm.day, dtm.hour, dtm.minute, dtm.second)
     res =  dtm > datetime.fromisoformat(commit_dtm)
     if res is False and update is True:
-        print(f"\n{'=' * 60}\n🔄 UPDATE REQUIRED | Updating dotfiles because {dtm} < {datetime.fromisoformat(commit_dtm)}\n{'=' * 60}\n")
+        print(f"""
+{'=' * 60}
+🔄 UPDATE REQUIRED | Updating dotfiles because {dtm} < {datetime.fromisoformat(commit_dtm)}
+{'=' * 60}
+""")
         from machineconfig.scripts.python.cloud_repo_sync import main
         main(cloud=None, path=dotfiles_path)
     return res
@@ -72,12 +76,22 @@ def wait_for_jobs_to_finish(root: P, pattern: str, wait_for_n_jobs: int, max_wai
         counter  =  len(parts)
         if counter == wait_for_n_jobs:
             wait_finished = True
-            print(f"\n{'=' * 60}\n✅ JOB COMPLETE | {counter} Jobs finished successfully. Exiting.\n{'=' * 60}\n")
+            print(f"""
+{'=' * 60}
+✅ JOB COMPLETE | {counter} Jobs finished successfully. Exiting.
+{'=' * 60}
+""")
             return True
         if (time.time() - t0) > 60 * max_wait_minutes:
-            print(f"\n{'=' * 60}\n⏱️  TIMEOUT | Waited for {max_wait_minutes} minutes. Exiting.\n{'=' * 60}\n")
+            print(f"""
+{'=' * 60}
+⏱️  TIMEOUT | Waited for {max_wait_minutes} minutes. Exiting.
+{'=' * 60}
+""")
             return False
-        print(f"\n⏳ PROGRESS | {counter}/{wait_for_n_jobs} jobs finished. Waiting for {wait_for_n_jobs - counter} more jobs to complete, sleeping for 60 seconds.")
+        print(f"""
+⏳ PROGRESS | {counter}/{wait_for_n_jobs} jobs finished. Waiting for {wait_for_n_jobs - counter} more jobs to complete, sleeping for 60 seconds.
+""")
         time.sleep(60)
     return False
 
