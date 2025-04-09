@@ -29,7 +29,7 @@ def main():
 
     symlink_func(this=orig_path, to_this=new_path, prioritize_to_this=args.overwrite)
 
-    print(f"""
+    print("""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ ✅ Symbolic Link Created Successfully
 ┃ 

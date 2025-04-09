@@ -3,9 +3,12 @@ Installers do not add runtime files to the machine, hence this script.
 """
 
 from crocodile.file_management import P
-from machineconfig.utils.installer import Installer, WINDOWS_INSTALL_PATH, LINUX_INSTALL_PATH
+from machineconfig.utils.installer_utils.installer_abc import WINDOWS_INSTALL_PATH
 from typing import Optional
 import platform
+
+from machineconfig.utils.installer_utils.installer_abc import LINUX_INSTALL_PATH
+from machineconfig.utils.installer_utils.installer_class import Installer
 
 
 config_dict = {

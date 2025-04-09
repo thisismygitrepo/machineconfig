@@ -40,7 +40,7 @@ def interactive_chat():
     model_index = 0
     model_name = model_name_preferences[model_index]
     
-    print(f"""
+    print("""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ 🚀 Interactive Chat Started
 ┃    Type your message and press Enter to chat
@@ -90,7 +90,7 @@ def interactive_chat():
                     conversation_history.append({"role": "assistant", "content": response_content})
                     print("\n")
             except KeyboardInterrupt:
-                print(f"""
+                print("""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ 👋 Chat Session Ended
 ┃    Thank you for using the interactive chat!

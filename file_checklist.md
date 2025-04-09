@@ -74,9 +74,9 @@
 - [x] src/machineconfig/scripts/python/wsl_windows_transfer.py
 - [x] src/machineconfig/scripts/python/viewer_template.py
 - [x] src/machineconfig/settings/shells/ipy/profiles/default/startup/playext.py
-- [ ] src/machineconfig/setup_windows/wt_and_pwsh/set_pwsh_theme.py
-- [ ] src/machineconfig/setup_windows/wt_and_pwsh/set_wt_settings.py
-- [ ] src/machineconfig/utils/installer.py
+- [x] src/machineconfig/setup_windows/wt_and_pwsh/set_pwsh_theme.py
+- [x] src/machineconfig/setup_windows/wt_and_pwsh/set_wt_settings.py
+- [x] src/machineconfig/utils/installer.py
 - [ ] src/machineconfig/utils/procs.py
 - [ ] src/machineconfig/utils/scheduling.py
 - [ ] src/machineconfig/utils/utils.py

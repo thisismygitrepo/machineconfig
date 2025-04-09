@@ -2,10 +2,11 @@
 """
 
 # import subprocess
+from machineconfig.utils.installer_utils.installer_class import Installer
 from tqdm import tqdm
 from crocodile.core import List as L
 from machineconfig.utils.utils import LIBRARY_ROOT, choose_multiple_options
-from machineconfig.utils.installer import get_installers, install_all, Installer, get_all_dicts
+from machineconfig.utils.installer import get_installers, install_all, get_all_dicts
 from platform import system
 from typing import Any, Optional, Literal, TypeAlias, get_args
 

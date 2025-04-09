@@ -3,7 +3,7 @@
 
 import platform
 from typing import Optional
-from machineconfig.utils.installer import Installer
+from machineconfig.utils.installer_utils.installer_class import Installer
 from crocodile.meta import Terminal
 
 r"""

@@ -59,7 +59,7 @@ def main(version: Optional[str]):
         raise NotImplementedError(error_msg)
 
     print("🚀 Installing Espanso using installer...")
-    from machineconfig.utils.installer import Installer
+    from machineconfig.utils.installer_utils.installer_class import Installer
     installer = Installer.from_dict(config_dict, name="espanso")
     installer.install(version=None)
     
