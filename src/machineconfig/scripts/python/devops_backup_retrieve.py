@@ -173,14 +173,6 @@ def main(direction: OPTIONS, which: Optional[str] = None):
 """)
     
     write_shell_script_to_default_program_path(program=code, desc="backup_retrieve.sh")
-    
-    print(f"""
-╔{'═' * 70}╗
-║ ✅ OPERATION COMPLETED SUCCESSFULLY                                     ║
-║ 🚀 Execute the generated script to perform the {direction} operation     ║
-║ 🏁 {'-' * 58} ║
-╚{'═' * 70}╝
-""")
 
 
 if __name__ == "__main__":

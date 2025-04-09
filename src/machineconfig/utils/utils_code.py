@@ -80,9 +80,4 @@ def print_code(code: str, lexer: str, desc: str):
     console = Console()
 
     console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}"), style="bold red")
-    print(f"""
-{'=' * 60}
-📜 CODE DISPLAYED | {desc}
-{'=' * 60}
-""")
 

@@ -88,49 +88,49 @@
 
 ## Shell Script Files
 
-- [ ] docker_build_latest.sh
-- [ ] docker_build_latest_databricks.sh
-- [ ] src/machineconfig/jobs/linux/msc/lid.sh
-- [ ] src/machineconfig/jobs/linux/msc/network.sh
-- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/brave.sh
-- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/docker.sh
-- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/docker_start.sh
-- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/edge.sh
-- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/nerdfont.sh
-- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/pgsql.sh
-- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/redis.sh
-- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/timescaledb.sh
-- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/vscode.sh
-- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/warp-cli.sh
-- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/wezterm.sh
-- [ ] src/machineconfig/scripts/cloud/init.sh
-- [ ] src/machineconfig/scripts/linux/share_cloud.sh
-- [ ] src/machineconfig/settings/broot/br.sh
-- [ ] src/machineconfig/settings/lf/linux/autocall/delete.sh
-- [ ] src/machineconfig/settings/lf/linux/autocall/on-cd.sh
-- [ ] src/machineconfig/settings/lf/linux/autocall/on-quit.sh
-- [ ] src/machineconfig/settings/lf/linux/autocall/open.sh
-- [ ] src/machineconfig/settings/lf/linux/autocall/paste.sh
-- [ ] src/machineconfig/settings/lf/linux/autocall/pre-cd.sh
-- [ ] src/machineconfig/settings/lf/linux/autocall/rename.sh
-- [ ] src/machineconfig/settings/lf/linux/exe/cleaner.sh
-- [ ] src/machineconfig/settings/lf/linux/exe/fzf_nano.sh
-- [ ] src/machineconfig/settings/lf/linux/exe/leftpane_previewer.sh
-- [ ] src/machineconfig/settings/lf/linux/exe/lfcd.sh
-- [ ] src/machineconfig/settings/lf/linux/exe/previewer.sh
-- [ ] src/machineconfig/settings/lf/linux/exe/previewer_archive.sh
-- [ ] src/machineconfig/settings/shells/bash/init.sh
-- [ ] src/machineconfig/settings/tere/terecd.sh
-- [ ] src/machineconfig/setup_linux/apps.sh
-- [ ] src/machineconfig/setup_linux/apps_desktop.sh
-- [ ] src/machineconfig/setup_linux/apps_dev.sh
-- [ ] src/machineconfig/setup_linux/apps_gui.sh
-- [ ] src/machineconfig/setup_linux/devapps.sh
-- [ ] src/machineconfig/setup_linux/nix/cli_installation.sh
-- [ ] src/machineconfig/setup_linux/openssh_all.sh
-- [ ] src/machineconfig/setup_linux/openssh_wsl.sh
-- [ ] src/machineconfig/setup_linux/others/mint_keyboard_shortcuts.sh
-- [ ] src/machineconfig/setup_linux/others/openssh-server_add_pub_key.sh
+- [x] docker_build_latest.sh
+- [x] docker_build_latest_databricks.sh
+- [x] src/machineconfig/jobs/linux/msc/lid.sh
+- [x] src/machineconfig/jobs/linux/msc/network.sh
+- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/brave.sh
+- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/docker.sh
+- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/docker_start.sh
+- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/edge.sh
+- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/nerdfont.sh
+- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/pgsql.sh
+- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/redis.sh
+- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/timescaledb.sh
+- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/vscode.sh
+- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/warp-cli.sh
+- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/wezterm.sh
+- [x] src/machineconfig/scripts/cloud/init.sh
+- [x] src/machineconfig/scripts/linux/share_cloud.sh
+- [x] src/machineconfig/settings/broot/br.sh
+- [x] src/machineconfig/settings/lf/linux/autocall/delete.sh
+- [x] src/machineconfig/settings/lf/linux/autocall/on-cd.sh
+- [x] src/machineconfig/settings/lf/linux/autocall/on-quit.sh
+- [x] src/machineconfig/settings/lf/linux/autocall/open.sh
+- [x] src/machineconfig/settings/lf/linux/autocall/paste.sh
+- [x] src/machineconfig/settings/lf/linux/autocall/pre-cd.sh
+- [x] src/machineconfig/settings/lf/linux/autocall/rename.sh
+- [x] src/machineconfig/settings/lf/linux/exe/cleaner.sh
+- [x] src/machineconfig/settings/lf/linux/exe/fzf_nano.sh
+- [x] src/machineconfig/settings/lf/linux/exe/leftpane_previewer.sh
+- [x] src/machineconfig/settings/lf/linux/exe/lfcd.sh
+- [x] src/machineconfig/settings/lf/linux/exe/previewer.sh
+- [x] src/machineconfig/settings/lf/linux/exe/previewer_archive.sh
+- [x] src/machineconfig/settings/shells/bash/init.sh
+- [x] src/machineconfig/settings/tere/terecd.sh
+- [x] src/machineconfig/setup_linux/apps.sh
+- [x] src/machineconfig/setup_linux/apps_desktop.sh
+- [x] src/machineconfig/setup_linux/apps_dev.sh
+- [x] src/machineconfig/setup_linux/apps_gui.sh
+- [x] src/machineconfig/setup_linux/devapps.sh
+- [x] src/machineconfig/setup_linux/nix/cli_installation.sh
+- [x] src/machineconfig/setup_linux/openssh_all.sh
+- [x] src/machineconfig/setup_linux/openssh_wsl.sh
+- [x] src/machineconfig/setup_linux/others/mint_keyboard_shortcuts.sh
+- [x] src/machineconfig/setup_linux/others/openssh-server_add_pub_key.sh
 - [ ] src/machineconfig/setup_linux/repos.sh
 - [ ] src/machineconfig/setup_linux/symlinks.sh
 - [ ] src/machineconfig/setup_linux/symlinks2windows.sh

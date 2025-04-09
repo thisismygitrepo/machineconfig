@@ -40,11 +40,11 @@ def check_latest():
         verdict, current_ver, new_ver = inst.check_if_installed_already(exe_name=inst.exe_name, version=version_to_be_installed, use_cache=False)
         return inst.exe_name, verdict, current_ver, new_ver
 
-    print(f"\n⏳ Processing installers...\n")
+    print("\n⏳ Processing installers...\n")
     res = L(installers_gitshub).apply(func=func, jobs=1)
     
     import pandas as pd
-    print(f"\n📊 Generating results table...\n")
+    print("\n📊 Generating results table...\n")
     res_df = pd.DataFrame(res, columns=["Tool", "Status", "Current Version", "New Version"]).groupby("Status").apply(lambda x: x).reset_index(drop=True)
     
     from crocodile.core import Display
@@ -110,16 +110,16 @@ def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
 
     print("📂 Loading configuration files...")
     res_final: dict[CATEGORY, dict[str, dict[str, Any]]] = {}
-    print(f"📄 Loading OS-specific config from: {path_os_specific.joinpath('config.json')}")
+    print(f"""📄 Loading OS-specific config from: {path_os_specific.joinpath('config.json')}""")
     res_final["OS_SPECIFIC"] = Read.json(path=path_os_specific.joinpath("config.json"))
     
-    print(f"📄 Loading OS-generic config from: {path_os_generic.joinpath('config.json')}")
-    res_final["OS_GENERIC"] = Read.json(path=path_os_generic.joinpath("config.json"))
+    print(f"""📄 Loading OS-generic config from: {path_os_generic.joinpath("config.json")}""")
+    res_final["OS_GENERIC"] = Read.json(path=path_os_specific.joinpath("config.json"))
     
-    print(f"📄 Loading OS-specific dev config from: {path_os_specific_dev.joinpath("config.json")}")
+    print(f"""📄 Loading OS-specific dev config from: {path_os_specific_dev.joinpath("config.json")}""")
     res_final["OS_SPECIFIC_DEV"] = Read.json(path=path_os_specific_dev.joinpath("config.json"))
     
-    print(f"📄 Loading OS-generic dev config from: {path_os_generic_dev.joinpath("config.json")}")
+    print(f"""📄 Loading OS-generic dev config from: {path_os_generic_dev.joinpath("config.json")}""")
     res_final["OS_GENERIC_DEV"] = Read.json(path=path_os_generic_dev.joinpath("config.json"))
 
     path_custom_installer = path_os_generic.with_name("python_custom_installers")

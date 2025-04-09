@@ -74,12 +74,6 @@ __file__ = P(r'{path}')
 
 
 def build_parser():
-    print(f"""
-╔{'═' * 70}╗
-║ 🐊 Crocodile Shell Launcher                                              ║
-╚{'═' * 70}╝
-""")
-    
     parser = argparse.ArgumentParser(description="Generic Parser to launch crocodile shell.")
     # A FLAG:
     parser.add_argument("--module", '-m', help="flag to run the file as a module as opposed to main.", action="store_true", default=False)  # default is running as main, unless indicated by --module flag.
@@ -181,11 +175,7 @@ streamlit run {py_file_path}
 
     else:  # just run croshell.py interactively
         program = ""
-        print(f"""
-╭{'─' * 70}╮
-│ 🔄 Starting interactive Crocodile Shell session                           │
-╰{'─' * 70}╯
-""")
+
         # program = f" --profile {get_ipython_profile(P.cwd())} --no-banner -m crocodile.croshell"  # --term-title croshell
         # from IPython import start_ipython
         # start_ipython(argv=program.split(' ')[1:])

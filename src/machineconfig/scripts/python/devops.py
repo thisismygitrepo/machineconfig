@@ -213,12 +213,7 @@ def main(which: Optional[str] = None):
         write_shell_script_to_default_program_path(program=program, display=True, preserve_cwd=True, desc="🔧 Shell script prepared by Python.", execute=True if which is not None else False)
     else: 
         write_shell_script_to_default_program_path(program="echo '✨ Done.'", display=False, desc="🔧 Shell script prepared by Python.", preserve_cwd=True, execute=False)
-    
-    print(f"""
-╔{'═' * 70}╗
-║ ✅ OPERATION COMPLETED SUCCESSFULLY                                       ║
-╚{'═' * 70}╝
-""")
+
 
 
 if __name__ == "__main__":

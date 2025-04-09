@@ -73,9 +73,9 @@ class ProcessManager:
         res = display_options(options=str(self.df).split("\n"), msg="📋 Select processes to manage:", fzf=True, multi=True)
         indices = [options.index(val) for val in res]
         sub_df = self.df.iloc[indices]
-        print(f"\n📊 All Processes:")
+        print("\n📊 All Processes:")
         print(self.df)
-        print(f"\n🎯 Selected Processes:")
+        print("\n🎯 Selected Processes:")
         print(sub_df)
         from crocodile.core import Struct
         for idx, (_, row) in enumerate(sub_df.iterrows()):

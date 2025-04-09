@@ -68,13 +68,6 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
         tmp_folder = P.tmpdir(prefix="tmp_unzip")
         res = url_obj.decrypt(pwd=pwd, inplace=True).unzip(inplace=True, folder=tmp_folder)
         res.search("*").apply(lambda x: x.move(folder=folder_obj, overwrite=True))
-        
-    print(f"""
-╔{'═' * 70}╗
-║ ✅ Operation completed successfully!                                       ║
-║ 🔓 Files extracted to: {folder_obj}                      ║
-╚{'═' * 70}╝
-""")
 
 
 def arg_parser() -> None:
