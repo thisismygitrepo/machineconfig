@@ -13,7 +13,7 @@ from machineconfig.scripts.python.helpers.helpers4 import convert_kwargs_to_fire
 from machineconfig.scripts.python.helpers.helpers4 import parse_pyfile
 from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, match_file_name, sanitize_path
-from machineconfig.utils.ve_utils.ve1 import get_ve_activate_line
+from machineconfig.utils.ve_utils.ve1 import get_ve_activate_line, get_ve_name_and_ipython_profile
 from crocodile.file_management import P, Read
 from crocodile.core import randstr
 import platform
@@ -65,7 +65,9 @@ def main() -> None:
         choice_file = path_obj
     print(f"💾 Selected file: {choice_file}")
 
-    activate_ve_line  = get_ve_activate_line(ve_name=args.ve, a_path=str(choice_file))
+    ve_name_suggested, ipy_profile = get_ve_name_and_ipython_profile(choice_file)
+    if ipy_profile is None: ipy_profile = "default"
+    activate_ve_line  = get_ve_activate_line(ve_name=args.ve or ve_name_suggested, a_path=str(choice_file))
 
     # Convert args.kw to dictionary
     if choice_file.suffix == ".py":
@@ -134,9 +136,8 @@ def main() -> None:
             # exe = f"cd '{choice_file.parent}'; " + exe
         elif args.interactive is False: exe = "python"
         elif args.jupyter: exe = "jupyter-lab"
-        else:
-            from machineconfig.utils.ve_utils.ve1 import get_ipython_profile
-            exe = f"ipython -i --no-banner --profile {get_ipython_profile(choice_file)} "
+        else:            
+            exe = f"ipython -i --no-banner --profile {ipy_profile} "
     elif choice_file.suffix == ".ps1" or choice_file.suffix == ".sh":
         exe = "."
     elif choice_file.suffix == "":
