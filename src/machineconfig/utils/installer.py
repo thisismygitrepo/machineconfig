@@ -112,9 +112,9 @@ def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
     res_final: dict[CATEGORY, dict[str, dict[str, Any]]] = {}
     print(f"""📄 Loading OS-specific config from: {path_os_specific.joinpath('config.json')}""")
     res_final["OS_SPECIFIC"] = Read.json(path=path_os_specific.joinpath("config.json"))
-    
+
     print(f"""📄 Loading OS-generic config from: {path_os_generic.joinpath("config.json")}""")
-    res_final["OS_GENERIC"] = Read.json(path=path_os_specific.joinpath("config.json"))
+    res_final["OS_GENERIC"] = Read.json(path=path_os_generic.joinpath("config.json"))
     
     print(f"""📄 Loading OS-specific dev config from: {path_os_specific_dev.joinpath("config.json")}""")
     res_final["OS_SPECIFIC_DEV"] = Read.json(path=path_os_specific_dev.joinpath("config.json"))
