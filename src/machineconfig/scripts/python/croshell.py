@@ -5,9 +5,9 @@ croshell
 import argparse
 from crocodile.file_management import P
 from crocodile.core_modules.core_1 import randstr
-from machineconfig.utils.ve_utils.ve1 import get_ve_name_and_ipython_profile
 from machineconfig.utils.utils import PROGRAM_PATH, display_options
-from machineconfig.utils.ve_utils.ve1 import get_ipython_profile, get_ve_activate_line, get_ve_profile
+from machineconfig.utils.ve_utils.ve1 import get_ve_name_and_ipython_profile, get_ve_activate_line
+from typing import Optional
 
 
 def add_print_header_pycode(path: str, title: str):
@@ -100,7 +100,7 @@ def build_parser():
     # flags processing
     interactivity = '' if args.nonInteratctive else '-i'
     interpreter = 'python' if args.python else 'ipython'
-    profile = args.profile
+    ipython_profile: Optional[str] = args.profile
     file = P.cwd()  # initialization value, could be modified according to args.
 
     if args.cmd != "":
@@ -121,8 +121,6 @@ def build_parser():
         options = P.cwd().search("*.py", r=True).apply(str).list
         file = display_options(msg="Choose a python file to run", options=options, fzf=True, multi=False, )
         assert isinstance(file, str)
-        if profile is None:
-            profile = get_ipython_profile(P(file))
         program = P(file).read_text(encoding='utf-8')
         print(f"""
 ╭{'─' * 70}╮
@@ -132,8 +130,6 @@ def build_parser():
 
     elif args.file != "":
         file = P(args.file.lstrip()).expanduser().absolute()
-        if profile is None:
-            profile = get_ipython_profile(P(file))
         program = get_read_pyfile_pycode(file, as_module=args.module, cmd=args.cmd)
         print(f"""
 ╭{'─' * 70}╮
@@ -157,26 +153,18 @@ def build_parser():
 streamlit run {py_file_path}
 """
             PROGRAM_PATH.write_text(data=final_program)
-            return
-        
+            return None
         file = P(str(args.read).lstrip()).expanduser().absolute()
-        ve_name_from_file, ipy_profile_from_file = get_ve_name_and_ipython_profile(init_path=P(file))
-        # if profile is None:
-        #     profile = get_ipython_profile(P(file))
-        if profile is None: profile = ipy_profile_from_file
-        if args.ve is None: args.ve = ve_name_from_file
         program = get_read_data_pycode(str(file))
         print(f"""
 ╭{'─' * 70}╮
 │ 📄 Reading data from: {file.name}                              │
-│ 🐍 Python profile: {profile if profile else 'default'}                                         │
 ╰{'─' * 70}╯
 """)
 
     else:  # just run croshell.py interactively
         program = ""
 
-        # program = f" --profile {get_ipython_profile(P.cwd())} --no-banner -m crocodile.croshell"  # --term-title croshell
         # from IPython import start_ipython
         # start_ipython(argv=program.split(' ')[1:])
         # return
@@ -200,12 +188,11 @@ print_logo(logo="crocodile")
 
     pyfile.write_text(total_program, encoding='utf-8')
 
-    if profile is None:
-        ve_name = get_ve_profile(P(file)) if args.ve is None else str(args.ve)
-        if ve_name is not None:
-            profile = get_ipython_profile(init_path=P.cwd(), ve_name=ve_name)
-        # profile = "default"
-    ve_activateion_line = get_ve_activate_line(ve_name=args.ve, a_path=P.cwd())
+    ve_profile_suggested: Optional[str] = None
+    if ipython_profile is None:
+        ve_profile_suggested, ipython_profile = get_ve_name_and_ipython_profile(P(file))
+        ipython_profile = ipython_profile if ipython_profile is not None else "default"
+    ve_activateion_line = get_ve_activate_line(ve_name=args.ve or ve_profile_suggested, a_path=P.cwd())
     final_program = f"""
 #!/bin/bash
 
@@ -217,14 +204,14 @@ print_logo(logo="crocodile")
     else:
         fire_line = interpreter
         if interpreter == "ipython":
-            fire_line += f" {interactivity} --profile {profile} --no-banner"
+            fire_line += f" {interactivity} --profile {ipython_profile} --no-banner"
         fire_line += f" {str(pyfile)}"
             
     final_program += fire_line
     
     print(f"""
 ╔{'═' * 70}╗
-║ 🚀 LAUNCHING SCRIPT                                                      ║
+║ 🚀 LAUNCHING SCRIPT   {PROGRAM_PATH}           ║
 ╠{'═' * 70}╣
 ║ 📄 Script: {pyfile}
 ║ 🔥 Command: {fire_line}

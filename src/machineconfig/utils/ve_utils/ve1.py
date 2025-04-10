@@ -5,38 +5,60 @@ import platform
 from typing import Optional
 
 
-def get_ipython_profile(init_path: P, ve_name: Optional[str] = None):
-    """Relies on .ipy_profile"""
-    a_path = init_path
-    ipy_profile: str = "default"
-    idx = len(a_path.parts)
-    while idx >= 0:
-        if a_path.joinpath(".ipy_profile").exists():
-            ipy_profile = a_path.joinpath(".ipy_profile").read_text().rstrip()
-            print(f"✨ Using IPython profile: {ipy_profile}")
-            break
-        idx -= 1
-        a_path = a_path.parent
-    else:
-        if ve_name is not None and P.home().joinpath(".ipython", f"profile_{ve_name}").exists():
-            ipy_profile = ve_name
-            print(f"✨ Using IPython profile: {ipy_profile}")
-        else:
-            print(f"⚠️ Using default IPython: {ipy_profile}")
-    return ipy_profile
+# def get_ipython_profile(init_path: P, ve_name: Optional[str] = None):
+#     """Relies on .ipy_profile"""
+#     a_path = init_path
+#     ipy_profile: str = "default"
+#     idx = len(a_path.parts)
+#     while idx >= 0:
+#         if a_path.joinpath(".ipy_profile").exists():
+#             ipy_profile = a_path.joinpath(".ipy_profile").read_text().rstrip()
+#             print(f"✨ Using IPython profile: {ipy_profile}")
+#             break
+#         idx -= 1
+#         a_path = a_path.parent
+#     else:
+#         if ve_name is not None and P.home().joinpath(".ipython", f"profile_{ve_name}").exists():
+#             ipy_profile = ve_name
+#             print(f"✨ Using IPython profile: {ipy_profile}")
+#         else:
+#             print(f"⚠️ Using default IPython: {ipy_profile}")
+#     return ipy_profile
+# def get_ve_profile(init_path: P) -> Optional[str]:
+#     """Relies on .ve_path"""
+#     ve: Optional[str] = None
+#     tmp = init_path
+#     for _ in init_path.parents:
+#         if tmp.joinpath(".ve_path").exists():
+#             ve = P(tmp.joinpath(".ve_path").read_text().rstrip().replace("\n", "")).name
+#             print(f"🔮 Using Virtual Environment found @ {tmp}/.ve_path: {ve}")
+#             break
+#         tmp = tmp.parent
+#     return ve
 
-
-def get_ve_profile(init_path: P) -> Optional[str]:
-    """Relies on .ve_path"""
-    ve: Optional[str] = None
+def get_ve_name_and_ipython_profile(init_path: P) -> tuple[Optional[str], Optional[str]]:
+    ve_name: Optional[str] = None
+    ipy_profile: Optional[str] = None
     tmp = init_path
     for _ in init_path.parents:
-        if tmp.joinpath(".ve_path").exists():
-            ve = P(tmp.joinpath(".ve_path").read_text().rstrip().replace("\n", "")).name
-            print(f"🔮 Using Virtual Environment found @ {tmp}/.ve_path: {ve}")
+        if tmp.joinpath(".ve.ini").exists():
+            ini = Read.ini(tmp.joinpath(".ve.ini"))
+            ve_name = ini["specs"]["ve_name"]
+            # py_version = ini["specs"]["py_version"]
+            ipy_profile = ini["specs"]["ipy_profile"]
+            print(f"🐍 Using Virtual Environment: {ve_name}")
+            print(f"✨ Using IPython profile: {ipy_profile}")
+            break
+        if tmp.joinpath(".ve_path").exists() or tmp.joinpath(".ipy_profile").exists():
+            if tmp.joinpath(".ipy_profile").exists():
+                ipy_profile = tmp.joinpath(".ipy_profile").read_text().rstrip()
+                print(f"✨ Using IPython profile: {ipy_profile}")
+            if tmp.joinpath(".ve_path").exists():
+                ve_name = P(tmp.joinpath(".ve_path").read_text().rstrip().replace("\n", "")).name
+                print(f"🔮 Using Virtual Environment found @ {tmp}/.ve_path: {ve_name}")
             break
         tmp = tmp.parent
-    return ve
+    return ve_name, ipy_profile
 
 
 def get_repo_root(choice_file: str) -> Optional[str]:
@@ -51,16 +73,19 @@ def get_repo_root(choice_file: str) -> Optional[str]:
 
 
 def get_ve_activate_line(ve_name: Optional[str], a_path: str):
-
     if ve_name == "" or ve_name is None:
-        ve_profile_maybe = get_ve_profile(P(a_path))
+        ve_profile_maybe, _iprofile = get_ve_name_and_ipython_profile(P(a_path))
         if ve_profile_maybe is not None:
             # activate_ve_line = f". $HOME/scripts/activate_ve {ve_resolved}"
             if platform.system() == "Windows": activate_ve_line = f". $HOME/venvs/{ve_profile_maybe}/Scripts/activate.ps1"
             elif platform.system() in ["Linux", "Darwin"]: activate_ve_line = f". $HOME/venvs/{ve_profile_maybe}/bin/activate"
             else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
             return activate_ve_line
-
+    else:
+        if platform.system() == "Windows": activate_ve_line = f". $HOME/venvs/{ve_name}/Scripts/activate.ps1"
+        elif platform.system() in ["Linux", "Darwin"]: activate_ve_line = f". $HOME/venvs/{ve_name}/bin/activate"
+        else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
+        return activate_ve_line
     repo_root = get_repo_root(str(a_path))
     if repo_root is not None and P(repo_root).joinpath(".venv").exists():
         if platform.system() == "Windows":
@@ -87,23 +112,6 @@ def get_ve_activate_line(ve_name: Optional[str], a_path: str):
             else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
             print(f"⚠️ Using default virtual environment: {activate_ve_line}")
     return activate_ve_line
-
-
-def get_ve_name_and_ipython_profile(init_path: P):
-    ve_name = "ve"
-    ipy_profile = "default"
-    tmp = init_path
-    for _ in init_path.parents:
-        if tmp.joinpath(".ve.ini").exists():
-            ini = Read.ini(tmp.joinpath(".ve.ini"))
-            ve_name = ini["specs"]["ve_name"]
-            # py_version = ini["specs"]["py_version"]
-            ipy_profile = ini["specs"]["ipy_profile"]
-            print(f"🐍 Using Virtual Environment: {ve_name}")
-            print(f"✨ Using IPython profile: {ipy_profile}")
-            break
-        tmp = tmp.parent
-    return ve_name, ipy_profile
 
 
 def get_installed_interpreters() -> list[P]:
