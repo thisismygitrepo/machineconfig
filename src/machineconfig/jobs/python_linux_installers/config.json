@@ -58,7 +58,7 @@
     "joshuto": {
       "repo_url": "https://github.com/kamiyaa/joshuto",
       "doc": "📂 A terminal file manager written in Rust.",
-      "filename_template_linux_amd_64": "https://github.com/kamiyaa/joshuto/releases/download/v0.9.4/joshuto-v0.9.4-x86_64-unknown-linux-gnu.tar.gz",
+      "filename_template_linux_amd_64": "joshuto-{}-x86_64-unknown-linux-musl.tar.gz",
       "filename_template_windows_amd_64": "",
       "strip_v": false,
       "exe_name": "joshuto"

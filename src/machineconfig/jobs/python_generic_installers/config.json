@@ -59,7 +59,7 @@
         "repo_url": "https://github.com/sharkdp/bat",
         "doc": "🦇 A cat(1) clone with wings.",
         "filename_template_windows_amd_64": "bat-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "bat-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_linux_amd_64": "bat-{}-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": false,
         "exe_name": "bat"
     },
@@ -67,7 +67,7 @@
         "repo_url": "https://github.com/starship/starship",
         "doc": "🚀 a cross-platform prompt for your shell",
         "filename_template_windows_amd_64": "starship-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "starship-x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_linux_amd_64": "starship-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": false,
         "exe_name": "starship"
     },
@@ -91,7 +91,7 @@
         "repo_url": "https://github.com/sharkdp/fd",
         "doc": "🔍 fd is a simple, fast and user-friendly alternative to find.",
         "filename_template_windows_amd_64": "fd-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "fd-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_linux_amd_64": "fd-{}-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": false,
         "exe_name": "fd"
     },
@@ -115,14 +115,14 @@
         "repo_url": "https://github.com/ouch-org/ouch",
         "doc": "📦 A cli for extracting and creating archives in unified way.",
         "filename_template_windows_amd_64": "ouch-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "ouch-x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_linux_amd_64": "ouch-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": false,
         "exe_name": "ouch"
     },
     "topgrade": {
         "repo_url": "https://github.com/topgrade-rs/topgrade",
         "doc": "⬆️ Keeping your system up to date usually involves invoking multiple package managers.",
-        "filename_template_linux_amd_64": "topgrade-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_linux_amd_64": "topgrade-{}-x86_64-unknown-linux-musl.tar.gz",
         "filename_template_windows_amd_64": "topgrade-{}-x86_64-pc-windows-msvc.zip",
         "strip_v": false,
         "exe_name": "topgrade"
@@ -138,7 +138,7 @@
     "btm": {
         "repo_url": "https://github.com/ClementTsang/bottom",
         "doc": "📊 bottom is a cross-platform graphical process/system monitor with a customizable interface and a multitude of features.",
-        "filename_template_linux_amd_64": "bottom_x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_linux_amd_64": "bottom_x86_64-unknown-linux-musl.tar.gz",
         "filename_template_windows_amd_64": "bottom_x86_64-pc-windows-msvc.zip",
         "strip_v": true,
         "exe_name": "btm"
@@ -171,7 +171,7 @@
         "repo_url": "https://github.com/dandavison/delta",
         "doc": "👀 A viewer for git and diff output",
         "filename_template_windows_amd_64": "delta-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "delta-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_linux_amd_64": "delta-{}-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": true,
         "exe_name": "delta"
     },
@@ -236,7 +236,7 @@
         "repo_url": "https://github.com/lsd-rs/lsd",
         "doc": "📂 lsd is a modern ls with a lot of pretty colors and font-awesome icons.",
         "filename_template_windows_amd_64": "lsd-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "lsd-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_linux_amd_64": "lsd-{}-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": false,
         "exe_name": "lsd"
     },
