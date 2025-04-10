@@ -115,7 +115,7 @@
         "repo_url": "https://github.com/imsnif/bandwhich",
         "doc": "📊 monitor network usage from cli",
         "filename_template_windows_amd_64": "bandwhich-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "bandwhich-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_linux_amd_64": "bandwhich-{}-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": false,
         "exe_name": "bandwhich"
     },
@@ -131,7 +131,7 @@
         "repo_url": "https://github.com/bootandy/dust",
         "doc": "📊 A more intuitive version of du in rust. It is a dua alternative.",
         "filename_template_windows_amd_64": "dust-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "dust-{}-x86_64-unknown-linux-gnu.tar.gz",
+        "filename_template_linux_amd_64": "dust-{}-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": false,
         "exe_name": "dust"
     },
