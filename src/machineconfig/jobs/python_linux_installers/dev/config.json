@@ -118,5 +118,22 @@
         "filename_template_linux_amd_64": "rainfrog-{}-x86_64-unknown-linux-musl.tar.gz",
         "strip_v": false,
         "exe_name": "rainfrog"
+    },
+    "cpz": {
+        "repo_url": "https://github.com/SUPERCILEX/fuc",
+        "doc": "📋 Fast copy",
+        "filename_template_windows_amd_64": "cpz-{}-windows.zip",
+        "filename_template_linux_amd_64": "x86_64-unknown-linux-musl-cpz",
+        "strip_v": true,
+        "exe_name": "cpz"
+    },
+    "rmz": {
+        "repo_url": "https://github.com/SUPERCILEX/fuc",
+        "doc": "🗑️ Fast remove",
+        "filename_template_windows_amd_64": "rmz-{}-windows.zip",
+        "filename_template_linux_amd_64": "x86_64-unknown-linux-musl-rmz",
+        "strip_v": true,
+        "exe_name": "rmz"
     }
+
 }

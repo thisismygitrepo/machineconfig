@@ -5,37 +5,6 @@ import platform
 from typing import Optional
 
 
-# def get_ipython_profile(init_path: P, ve_name: Optional[str] = None):
-#     """Relies on .ipy_profile"""
-#     a_path = init_path
-#     ipy_profile: str = "default"
-#     idx = len(a_path.parts)
-#     while idx >= 0:
-#         if a_path.joinpath(".ipy_profile").exists():
-#             ipy_profile = a_path.joinpath(".ipy_profile").read_text().rstrip()
-#             print(f"✨ Using IPython profile: {ipy_profile}")
-#             break
-#         idx -= 1
-#         a_path = a_path.parent
-#     else:
-#         if ve_name is not None and P.home().joinpath(".ipython", f"profile_{ve_name}").exists():
-#             ipy_profile = ve_name
-#             print(f"✨ Using IPython profile: {ipy_profile}")
-#         else:
-#             print(f"⚠️ Using default IPython: {ipy_profile}")
-#     return ipy_profile
-# def get_ve_profile(init_path: P) -> Optional[str]:
-#     """Relies on .ve_path"""
-#     ve: Optional[str] = None
-#     tmp = init_path
-#     for _ in init_path.parents:
-#         if tmp.joinpath(".ve_path").exists():
-#             ve = P(tmp.joinpath(".ve_path").read_text().rstrip().replace("\n", "")).name
-#             print(f"🔮 Using Virtual Environment found @ {tmp}/.ve_path: {ve}")
-#             break
-#         tmp = tmp.parent
-#     return ve
-
 def get_ve_name_and_ipython_profile(init_path: P) -> tuple[Optional[str], Optional[str]]:
     ve_name: Optional[str] = None
     ipy_profile: Optional[str] = None
