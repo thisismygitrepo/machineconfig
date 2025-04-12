@@ -248,7 +248,7 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
                 sub_command = sub_command.replace("python ", "python -OO ")
             sub_command_path = P.tmpfile(suffix=".sh").write_text(sub_command)
             lines.append(f"""zellij action new-pane -- bash {sub_command_path}  """)
-            lines.append("sleep 1")  # python tends to freeze if you launch instances within 1 microsecond of each other
+            lines.append("sleep 5")  # python tends to freeze if you launch instances within 1 microsecond of each other
         command = "\n".join(lines)
 
     if args.optimized:
@@ -272,15 +272,15 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
             # args.zellij_tab = input("Please enter a new tab name: ")
             args.zellij_tab += f"_{randstr(3)}"
         command = f"""
-sleep 0.25
+sleep 1
 
 zellij action new-tab --name {args.zellij_tab}
-sleep 0.5
+sleep 2
 zellij action go-to-tab-name {args.zellij_tab}
-sleep 0.5
+sleep 2
 zellij action new-pane --direction down -- /bin/bash {comman_path__}
-zellij action move-focus up; sleep 0.5
-zellij action close-pane; sleep 0.5
+zellij action move-focus up; sleep 2
+zellij action close-pane; sleep 2
 """
     if args.git_pull:
         command = f"\ngit -C {choice_file.parent} pull\n\n" + command
