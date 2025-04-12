@@ -134,6 +134,15 @@
         "filename_template_linux_amd_64": "x86_64-unknown-linux-musl-rmz",
         "strip_v": true,
         "exe_name": "rmz"
+    },
+    "geckodriver": {
+
+        "repo_url": "https://github.com/mozilla/geckodriver",
+        "doc": "🦊 WebDriver for Firefox.",
+        "filename_template_windows_amd_64": "geckodriver-{}-win32.zip",
+        "filename_template_linux_amd_64": "geckodriver-{}-linux64.tar.gz",
+        "strip_v": false,
+        "exe_name": "geckodriver"
     }
 
 }

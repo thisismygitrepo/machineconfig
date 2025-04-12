@@ -273,7 +273,6 @@ python -m crocodile.cluster.templates.cli_click --file {choice_file} """
             args.zellij_tab += f"_{randstr(3)}"
         command = f"""
 sleep 1
-
 zellij action new-tab --name {args.zellij_tab}
 sleep 2
 zellij action go-to-tab-name {args.zellij_tab}
