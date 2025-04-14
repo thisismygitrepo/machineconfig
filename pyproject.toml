@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "machineconfig"
+version = "1.93"
+description = "Dotfiles management package"
+readme = "README.md"
+authors = [
+    {name = "Alex Al-Saffar", email = "programmer@usa.com"},
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "rich",
+    "paramiko",
+    "gitpython",
+    "pudb",
+    "pyfzf",
+    "clipboard",
+    "psutil",
+    "pydantic",
+    "fire",
+    "call-function-with-timeout",
+    "openai",
+]
+
+[project.optional-dependencies]
+dev = [
+    "crocodile @ file:///home/alex/code/crocodile#egg=crocodile"
+]
+windows = [
+    "pywin32"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/thisismygitrepo/machineconfig"
+"Bug Tracker" = "https://github.com/thisismygitrepo/machineconfig/issues"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
