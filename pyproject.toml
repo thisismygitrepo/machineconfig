@@ -17,6 +17,7 @@ classifiers = [
 ]
 requires-python = ">=3.9"
 dependencies = [
+    "crocodile",
     "rich",
     "paramiko",
     "gitpython",
@@ -28,12 +29,11 @@ dependencies = [
     "fire",
     "call-function-with-timeout",
     "openai",
+    "nbformat",
+    "streamlit",
 ]
 
 [project.optional-dependencies]
-dev = [
-    "crocodile @ file:///home/alex/code/crocodile#egg=crocodile"
-]
 windows = [
     "pywin32"
 ]
