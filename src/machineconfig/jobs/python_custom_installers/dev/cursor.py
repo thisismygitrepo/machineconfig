@@ -4,14 +4,24 @@ import os
 import shutil
 from pathlib import Path
 import platform
+from typing import Optional
 
 
+config_dict = {
+        "repo_url": "CUSTOM",
+        "doc": "Cursor",
+        "filename_template_windows_amd_64": "VSCodeSetup-{}.exe",
+        "filename_template_linux_amd_64": "code_{}.deb",
+        "strip_v": True,
+        "exe_name": "cursor"
+}
 
-def main():
+
+def main(version: Optional[str] = None):
     assert platform.system() == "Linux", "This script is intended for Linux systems only."
     # assert flvour is debiean/mint or ubuntu, "This script is intended for Debian-based systems only."
     # Variables
-    username = os.getenv("USER")
+    # username = os.getenv("USER")
     home = str(Path.home())
     # appimage_src = f"{home}/Downloads/Cursor-0.48.8-x86_64.AppImage"
     # search for anything that has Cursor in the name and ends with .AppImage
