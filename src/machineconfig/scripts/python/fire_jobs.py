@@ -43,7 +43,6 @@ def main() -> None:
     parser.add_argument("--module",          "-m", action="store_true", help="launch the main file")
     parser.add_argument("--streamlit",       "-S", action="store_true", help="run as streamlit app")
     parser.add_argument("--holdDirectory",   "-D", action="store_true", help="hold current directory and avoid cd'ing to the script directory")
-    parser.add_argument("--history",         "-H", action="store_true", help="choose from history")
     parser.add_argument("--git_pull",        "-g", action="store_true", help="Start by pulling the git repo")
     parser.add_argument("--optimized", "-O", action="store_true", help="Run the optimized version of the function")
     parser.add_argument("--Nprocess",        "-p", type=int, help="Number of processes to use", default=1)
@@ -229,7 +228,7 @@ except ImportError as _ex:
     if args.submit_to_cloud:
         command = f"""
 {activate_ve_line}
-python -m crocodile.cluster.templates.cli_click --file {choice_file} """
+python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
         if choice_function is not None:
             command += f"--function {choice_function} "
 

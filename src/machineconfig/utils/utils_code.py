@@ -78,6 +78,5 @@ def print_code(code: str, lexer: str, desc: str):
         elif platform.system() == "Linux": lexer = "sh"
         else: raise NotImplementedError(f"Platform {platform.system()} not supported for lexer {lexer}")
     console = Console()
-
     console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}"), style="bold red")
 

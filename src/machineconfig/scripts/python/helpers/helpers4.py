@@ -126,7 +126,7 @@ def get_attrs_recursively(obj: Any):
 def run_on_remote(func_file: str, args: argparse.Namespace):
     host = choose_ssh_host(multi=False)
     assert isinstance(host, str), f"host must be a string. Got {type(host)}"
-    from crocodile.cluster.remote_machine import RemoteMachine, RemoteMachineConfig
+    from machineconfig.cluster.remote_machine import RemoteMachine, RemoteMachineConfig
     config = RemoteMachineConfig(copy_repo=True, update_repo=False, update_essential_repos=True,
                                  notify_upon_completion=True, ssh_params=dict(host=host),
                                  # to_email=None, email_config_name='enaut',

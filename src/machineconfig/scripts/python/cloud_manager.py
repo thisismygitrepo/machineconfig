@@ -1,7 +1,7 @@
 """Run cloud manager.
 """
 
-from crocodile.cluster.loader_runner import CloudManager
+from machineconfig.cluster.loader_runner import CloudManager
 import argparse
 
 
