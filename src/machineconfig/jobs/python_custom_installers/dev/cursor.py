@@ -18,6 +18,7 @@ config_dict = {
 
 
 def main(version: Optional[str] = None):
+    _ = version
     assert platform.system() == "Linux", "This script is intended for Linux systems only."
     # assert flvour is debiean/mint or ubuntu, "This script is intended for Debian-based systems only."
     # Variables

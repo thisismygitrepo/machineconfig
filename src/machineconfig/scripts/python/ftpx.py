@@ -6,8 +6,10 @@ Currently, the only way to work around this is to predifine the host in ~/.ssh/c
 """
 
 import argparse
-from crocodile.meta import SSH, P, Struct
-from machineconfig.scripts.python.cloud_sync import ES
+from crocodile.meta import SSH
+from crocodile.core import Struct
+from crocodile.file_management import P
+from machineconfig.scripts.python.helpers.helpers2 import ES
 
 
 def main():
