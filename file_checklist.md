@@ -2,135 +2,162 @@
 
 ## Python Files
 
-- [x] f.py
-- [x] scripts/ai/generate_file_checklist.py
-- [x] scripts/ai/pomodoro.py
-- [x] setup.py
-- [x] src/machineconfig/jobs/python/check_installations.py
-- [x] src/machineconfig/jobs/python/checkout_version.py
-- [x] src/machineconfig/jobs/python/create_bootable_media.py
-- [x] src/machineconfig/jobs/python/create_zellij_template.py
-- [x] src/machineconfig/jobs/python/python_cargo_build_share.py
-- [x] src/machineconfig/jobs/python/python_ve_symlink.py
-- [x] src/machineconfig/jobs/python/tasks.py
-- [x] src/machineconfig/jobs/python/vscode/api.py
-- [x] src/machineconfig/jobs/python/vscode/link_ve.py
-- [x] src/machineconfig/jobs/python/vscode/select_interpreter.py
-- [x] src/machineconfig/jobs/python/vscode/sync_code.py
-- [x] src/machineconfig/jobs/python_custom_installers/archive/ngrok.py
-- [x] src/machineconfig/jobs/python_custom_installers/dev/aider.py
-- [x] src/machineconfig/jobs/python_custom_installers/dev/alacritty.py
-- [x] src/machineconfig/jobs/python_custom_installers/dev/brave.py
-- [x] src/machineconfig/jobs/python_custom_installers/dev/bypass_paywall.py
-- [x] src/machineconfig/jobs/python_custom_installers/dev/code.py
-- [x] src/machineconfig/jobs/python_custom_installers/dev/docker.py
-- [x] src/machineconfig/jobs/python_custom_installers/dev/docker_desktop.py
-- [x] src/machineconfig/jobs/python_custom_installers/dev/espanso.py
-- [x] src/machineconfig/jobs/python_custom_installers/dev/goes.py
-- [x] src/machineconfig/jobs/python_custom_installers/dev/lvim.py
-- [x] src/machineconfig/jobs/python_custom_installers/dev/nerdfont.py
-- [x] src/machineconfig/jobs/python_custom_installers/dev/redis.py
-- [x] src/machineconfig/jobs/python_custom_installers/dev/warp-cli.py
-- [x] src/machineconfig/jobs/python_custom_installers/dev/wezterm.py
-- [x] src/machineconfig/jobs/python_custom_installers/gh.py
-- [x] src/machineconfig/jobs/python_custom_installers/hx.py
-- [x] src/machineconfig/profile/create.py
-- [x] src/machineconfig/profile/create_hardlinks.py
-- [x] src/machineconfig/profile/shell.py
-- [x] src/machineconfig/scripts/python/archive/im2text.py
-- [x] src/machineconfig/scripts/python/archive/tmate_conn.py
-- [x] src/machineconfig/scripts/python/archive/tmate_start.py
-- [x] src/machineconfig/scripts/python/browser_user_wrapper.py
-- [x] src/machineconfig/scripts/python/choose_wezterm_theme.py
-- [x] src/machineconfig/scripts/python/cloud_copy.py
-- [x] src/machineconfig/scripts/python/cloud_manager.py
-- [x] src/machineconfig/scripts/python/cloud_mount.py
-- [x] src/machineconfig/scripts/python/cloud_repo_sync.py
-- [x] src/machineconfig/scripts/python/cloud_sync.py
-- [x] src/machineconfig/scripts/python/croshell.py
-- [x] src/machineconfig/scripts/python/devops.py
-- [x] src/machineconfig/scripts/python/devops_add_identity.py
-- [x] src/machineconfig/scripts/python/devops_add_ssh_key.py
-- [x] src/machineconfig/scripts/python/devops_backup_retrieve.py
-- [x] src/machineconfig/scripts/python/devops_devapps_install.py
-- [x] src/machineconfig/scripts/python/devops_update_repos.py
-- [x] src/machineconfig/scripts/python/dotfile.py
-- [x] src/machineconfig/scripts/python/fire_jobs.py
-- [x] src/machineconfig/scripts/python/ftpx.py
-- [x] src/machineconfig/scripts/python/gh_models.py
-- [x] src/machineconfig/scripts/python/mount_nfs.py
-- [x] src/machineconfig/scripts/python/mount_nw_drive.py
-- [x] src/machineconfig/scripts/python/mount_ssh.py
-- [x] src/machineconfig/scripts/python/onetimeshare.py
-- [x] src/machineconfig/scripts/python/pomodoro.py
-- [x] src/machineconfig/scripts/python/repos.py
-- [x] src/machineconfig/scripts/python/scheduler.py
-- [x] src/machineconfig/scripts/python/snapshot.py
-- [x] src/machineconfig/scripts/python/start_slidev.py
-- [x] src/machineconfig/scripts/python/start_terminals.py
-- [x] src/machineconfig/scripts/python/url2md.py
-- [x] src/machineconfig/scripts/python/viewer.py
-- [x] src/machineconfig/scripts/python/wifi_conn.py
-- [x] src/machineconfig/scripts/python/wsl_windows_transfer.py
-- [x] src/machineconfig/scripts/python/viewer_template.py
-- [x] src/machineconfig/settings/shells/ipy/profiles/default/startup/playext.py
-- [x] src/machineconfig/setup_windows/wt_and_pwsh/set_pwsh_theme.py
-- [x] src/machineconfig/setup_windows/wt_and_pwsh/set_wt_settings.py
-- [x] src/machineconfig/utils/installer.py
-- [x] src/machineconfig/utils/procs.py
-- [x] src/machineconfig/utils/scheduling.py
-- [x] src/machineconfig/utils/utils.py
-- [x] src/machineconfig/utils/utils_code.py
-- [x] src/machineconfig/utils/utils_links.py
-- [x] src/machineconfig/utils/utils_options.py
-- [x] src/machineconfig/utils/utils_path.py
-- [x] src/machineconfig/utils/ve.py
+- [ ] scripts/ai/generate_file_checklist.py
+- [ ] src/machineconfig/cluster/cloud_manager.py
+- [ ] src/machineconfig/cluster/data_transfer.py
+- [ ] src/machineconfig/cluster/distribute.py
+- [ ] src/machineconfig/cluster/file_manager.py
+- [ ] src/machineconfig/cluster/job_params.py
+- [ ] src/machineconfig/cluster/loader_runner.py
+- [ ] src/machineconfig/cluster/remote_machine.py
+- [ ] src/machineconfig/cluster/script_execution.py
+- [ ] src/machineconfig/cluster/script_notify_upon_completion.py
+- [ ] src/machineconfig/cluster/self_ssh.py
+- [ ] src/machineconfig/cluster/session_managers.py
+- [ ] src/machineconfig/cluster/templates/cli_click.py
+- [ ] src/machineconfig/cluster/templates/cli_gooey.py
+- [ ] src/machineconfig/cluster/templates/cli_trogon.py
+- [ ] src/machineconfig/cluster/templates/f.py
+- [ ] src/machineconfig/cluster/templates/run_cloud.py
+- [ ] src/machineconfig/cluster/templates/run_cluster.py
+- [ ] src/machineconfig/cluster/templates/run_remote.py
+- [ ] src/machineconfig/cluster/templates/utils.py
+- [ ] src/machineconfig/jobs/python/check_installations.py
+- [ ] src/machineconfig/jobs/python/checkout_version.py
+- [ ] src/machineconfig/jobs/python/create_bootable_media.py
+- [ ] src/machineconfig/jobs/python/create_zellij_template.py
+- [ ] src/machineconfig/jobs/python/python_cargo_build_share.py
+- [ ] src/machineconfig/jobs/python/python_ve_symlink.py
+- [ ] src/machineconfig/jobs/python/tasks.py
+- [ ] src/machineconfig/jobs/python/vscode/api.py
+- [ ] src/machineconfig/jobs/python/vscode/link_ve.py
+- [ ] src/machineconfig/jobs/python/vscode/select_interpreter.py
+- [ ] src/machineconfig/jobs/python/vscode/sync_code.py
+- [ ] src/machineconfig/jobs/python_custom_installers/archive/ngrok.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/aider.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/alacritty.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/brave.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/bypass_paywall.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/code.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/cursor.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/docker.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/docker_desktop.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/espanso.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/goes.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/lvim.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/nerdfont.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/redis.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/warp-cli.py
+- [ ] src/machineconfig/jobs/python_custom_installers/dev/wezterm.py
+- [ ] src/machineconfig/jobs/python_custom_installers/gh.py
+- [ ] src/machineconfig/jobs/python_custom_installers/hx.py
+- [ ] src/machineconfig/profile/create.py
+- [ ] src/machineconfig/profile/create_hardlinks.py
+- [ ] src/machineconfig/profile/shell.py
+- [ ] src/machineconfig/scripts/python/archive/im2text.py
+- [ ] src/machineconfig/scripts/python/archive/tmate_conn.py
+- [ ] src/machineconfig/scripts/python/archive/tmate_start.py
+- [ ] src/machineconfig/scripts/python/browser_user_wrapper.py
+- [ ] src/machineconfig/scripts/python/choose_wezterm_theme.py
+- [ ] src/machineconfig/scripts/python/cloud_copy.py
+- [ ] src/machineconfig/scripts/python/cloud_manager.py
+- [ ] src/machineconfig/scripts/python/cloud_mount.py
+- [ ] src/machineconfig/scripts/python/cloud_repo_sync.py
+- [ ] src/machineconfig/scripts/python/cloud_sync.py
+- [ ] src/machineconfig/scripts/python/croshell.py
+- [ ] src/machineconfig/scripts/python/devops.py
+- [ ] src/machineconfig/scripts/python/devops_add_identity.py
+- [ ] src/machineconfig/scripts/python/devops_add_ssh_key.py
+- [ ] src/machineconfig/scripts/python/devops_backup_retrieve.py
+- [ ] src/machineconfig/scripts/python/devops_devapps_install.py
+- [ ] src/machineconfig/scripts/python/devops_update_repos.py
+- [ ] src/machineconfig/scripts/python/dotfile.py
+- [ ] src/machineconfig/scripts/python/fire_jobs.py
+- [ ] src/machineconfig/scripts/python/ftpx.py
+- [ ] src/machineconfig/scripts/python/get_zellij_cmd.py
+- [ ] src/machineconfig/scripts/python/gh_models.py
+- [ ] src/machineconfig/scripts/python/helpers/cloud_helpers.py
+- [ ] src/machineconfig/scripts/python/helpers/helpers2.py
+- [ ] src/machineconfig/scripts/python/helpers/helpers4.py
+- [ ] src/machineconfig/scripts/python/helpers/repo_sync_helpers.py
+- [ ] src/machineconfig/scripts/python/mount_nfs.py
+- [ ] src/machineconfig/scripts/python/mount_nw_drive.py
+- [ ] src/machineconfig/scripts/python/mount_ssh.py
+- [ ] src/machineconfig/scripts/python/onetimeshare.py
+- [ ] src/machineconfig/scripts/python/pomodoro.py
+- [ ] src/machineconfig/scripts/python/repos.py
+- [ ] src/machineconfig/scripts/python/scheduler.py
+- [ ] src/machineconfig/scripts/python/snapshot.py
+- [ ] src/machineconfig/scripts/python/start_slidev.py
+- [ ] src/machineconfig/scripts/python/start_terminals.py
+- [ ] src/machineconfig/scripts/python/url2md.py
+- [ ] src/machineconfig/scripts/python/viewer.py
+- [ ] src/machineconfig/scripts/python/viewer_template.py
+- [ ] src/machineconfig/scripts/python/wifi_conn.py
+- [ ] src/machineconfig/scripts/python/wsl_windows_transfer.py
+- [ ] src/machineconfig/settings/shells/ipy/profiles/default/startup/playext.py
+- [ ] src/machineconfig/setup_windows/wt_and_pwsh/set_pwsh_theme.py
+- [ ] src/machineconfig/setup_windows/wt_and_pwsh/set_wt_settings.py
+- [ ] src/machineconfig/utils/installer.py
+- [ ] src/machineconfig/utils/installer_utils/installer_abc.py
+- [ ] src/machineconfig/utils/installer_utils/installer_class.py
+- [ ] src/machineconfig/utils/procs.py
+- [ ] src/machineconfig/utils/scheduling.py
+- [ ] src/machineconfig/utils/utils.py
+- [ ] src/machineconfig/utils/utils_code.py
+- [ ] src/machineconfig/utils/utils_links.py
+- [ ] src/machineconfig/utils/utils_options.py
+- [ ] src/machineconfig/utils/utils_path.py
+- [ ] src/machineconfig/utils/ve.py
+- [ ] src/machineconfig/utils/ve_utils/ve1.py
+- [ ] src/machineconfig/utils/ve_utils/ve2.py
 
 ## Shell Script Files
 
-- [x] docker_build_latest.sh
-- [x] docker_build_latest_databricks.sh
-- [x] src/machineconfig/jobs/linux/msc/lid.sh
-- [x] src/machineconfig/jobs/linux/msc/network.sh
-- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/brave.sh
-- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/docker.sh
-- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/docker_start.sh
-- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/edge.sh
-- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/nerdfont.sh
-- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/pgsql.sh
-- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/redis.sh
-- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/timescaledb.sh
-- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/vscode.sh
-- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/warp-cli.sh
-- [x] src/machineconfig/jobs/python_custom_installers/scripts/linux/wezterm.sh
-- [x] src/machineconfig/scripts/cloud/init.sh
-- [x] src/machineconfig/scripts/linux/share_cloud.sh
-- [x] src/machineconfig/settings/broot/br.sh
-- [x] src/machineconfig/settings/lf/linux/autocall/delete.sh
-- [x] src/machineconfig/settings/lf/linux/autocall/on-cd.sh
-- [x] src/machineconfig/settings/lf/linux/autocall/on-quit.sh
-- [x] src/machineconfig/settings/lf/linux/autocall/open.sh
-- [x] src/machineconfig/settings/lf/linux/autocall/paste.sh
-- [x] src/machineconfig/settings/lf/linux/autocall/pre-cd.sh
-- [x] src/machineconfig/settings/lf/linux/autocall/rename.sh
-- [x] src/machineconfig/settings/lf/linux/exe/cleaner.sh
-- [x] src/machineconfig/settings/lf/linux/exe/fzf_nano.sh
-- [x] src/machineconfig/settings/lf/linux/exe/leftpane_previewer.sh
-- [x] src/machineconfig/settings/lf/linux/exe/lfcd.sh
-- [x] src/machineconfig/settings/lf/linux/exe/previewer.sh
-- [x] src/machineconfig/settings/lf/linux/exe/previewer_archive.sh
-- [x] src/machineconfig/settings/shells/bash/init.sh
-- [x] src/machineconfig/settings/tere/terecd.sh
-- [x] src/machineconfig/setup_linux/apps.sh
-- [x] src/machineconfig/setup_linux/apps_desktop.sh
-- [x] src/machineconfig/setup_linux/apps_dev.sh
-- [x] src/machineconfig/setup_linux/apps_gui.sh
-- [x] src/machineconfig/setup_linux/devapps.sh
-- [x] src/machineconfig/setup_linux/nix/cli_installation.sh
-- [x] src/machineconfig/setup_linux/openssh_all.sh
-- [x] src/machineconfig/setup_linux/openssh_wsl.sh
-- [x] src/machineconfig/setup_linux/others/mint_keyboard_shortcuts.sh
-- [x] src/machineconfig/setup_linux/others/openssh-server_add_pub_key.sh
+- [ ] build_and_publish.sh
+- [ ] docker_build_latest.sh
+- [ ] docker_build_latest_databricks.sh
+- [ ] src/machineconfig/jobs/linux/msc/lid.sh
+- [ ] src/machineconfig/jobs/linux/msc/network.sh
+- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/brave.sh
+- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/docker.sh
+- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/docker_start.sh
+- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/edge.sh
+- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/nerdfont.sh
+- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/pgsql.sh
+- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/redis.sh
+- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/timescaledb.sh
+- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/vscode.sh
+- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/warp-cli.sh
+- [ ] src/machineconfig/jobs/python_custom_installers/scripts/linux/wezterm.sh
+- [ ] src/machineconfig/scripts/cloud/init.sh
+- [ ] src/machineconfig/scripts/linux/share_cloud.sh
+- [ ] src/machineconfig/settings/broot/br.sh
+- [ ] src/machineconfig/settings/lf/linux/autocall/delete.sh
+- [ ] src/machineconfig/settings/lf/linux/autocall/on-cd.sh
+- [ ] src/machineconfig/settings/lf/linux/autocall/on-quit.sh
+- [ ] src/machineconfig/settings/lf/linux/autocall/open.sh
+- [ ] src/machineconfig/settings/lf/linux/autocall/paste.sh
+- [ ] src/machineconfig/settings/lf/linux/autocall/pre-cd.sh
+- [ ] src/machineconfig/settings/lf/linux/autocall/rename.sh
+- [ ] src/machineconfig/settings/lf/linux/exe/cleaner.sh
+- [ ] src/machineconfig/settings/lf/linux/exe/fzf_nano.sh
+- [ ] src/machineconfig/settings/lf/linux/exe/leftpane_previewer.sh
+- [ ] src/machineconfig/settings/lf/linux/exe/lfcd.sh
+- [ ] src/machineconfig/settings/lf/linux/exe/previewer.sh
+- [ ] src/machineconfig/settings/lf/linux/exe/previewer_archive.sh
+- [ ] src/machineconfig/settings/shells/bash/init.sh
+- [ ] src/machineconfig/settings/tere/terecd.sh
+- [ ] src/machineconfig/setup_linux/apps.sh
+- [ ] src/machineconfig/setup_linux/apps_desktop.sh
+- [ ] src/machineconfig/setup_linux/apps_dev.sh
+- [ ] src/machineconfig/setup_linux/apps_gui.sh
+- [ ] src/machineconfig/setup_linux/devapps.sh
+- [ ] src/machineconfig/setup_linux/nix/cli_installation.sh
+- [ ] src/machineconfig/setup_linux/openssh_all.sh
+- [ ] src/machineconfig/setup_linux/openssh_wsl.sh
+- [ ] src/machineconfig/setup_linux/others/mint_keyboard_shortcuts.sh
+- [ ] src/machineconfig/setup_linux/others/openssh-server_add_pub_key.sh
 - [ ] src/machineconfig/setup_linux/repos.sh
 - [ ] src/machineconfig/setup_linux/symlinks.sh
 - [ ] src/machineconfig/setup_linux/symlinks2windows.sh

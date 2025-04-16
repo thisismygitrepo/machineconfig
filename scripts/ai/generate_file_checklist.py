@@ -5,13 +5,13 @@ from typing import List, Optional, Union
 
 
 def generate_file_checklist(repo_root: Union[str, Path], exclude_dirs: Optional[List[str]] = None) -> Path:
+
     actual_exclude_dirs: List[str] = ['.venv', '.git', '__pycache__', 'build', 'dist', '*.egg-info']
     if exclude_dirs is not None:
         actual_exclude_dirs = exclude_dirs
         
-    repo_root = Path(repo_root)
+    repo_root = Path(repo_root).expanduser().absolute()
     output_path: Path = repo_root / "file_checklist.md"
-    
     py_files: List[Path] = []
     for filepath in repo_root.glob('**/*.py'):
         if any(excl in filepath.parts for excl in actual_exclude_dirs) or any(filepath.match(f"**/{excl}/**") for excl in actual_exclude_dirs) or filepath.name == "__init__.py":
@@ -36,7 +36,6 @@ def generate_file_checklist(repo_root: Union[str, Path], exclude_dirs: Optional[
     markdown_content += "\n## Shell Script Files\n\n"
     for sh_file in sh_files:
         markdown_content += f"- [ ] {sh_file}\n"
-    
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(markdown_content)
         
@@ -48,8 +47,7 @@ def main() -> None:
     import argparse
     
     parser = argparse.ArgumentParser(description='Generate a markdown file with checkboxes for all .py and .sh files.')
-    parser.add_argument('--repo', '-r', type=str, default=str(Path.cwd()),
-                        help='Repository root path. Defaults to current working directory.')
+    parser.add_argument('--repo', '-r', type=str, default=str(Path.cwd()), help='Repository root path. Defaults to current working directory.')
     parser.add_argument('--exclude', '-e', nargs='+', type=str,
                         help='Additional directories to exclude (by default excludes .venv, .git, __pycache__, build, dist, *.egg-info)')
     
