@@ -2,7 +2,7 @@
 
 . $HOME/scripts/activate_ve 've'
 
-python -m machineconfig.utls.ai.python.url2md "$@"
+python -m machineconfig.utils.ai.url2md "$@"
 
 if [ -n "$VIRTUAL_ENV" ]; then
   deactivate || true
