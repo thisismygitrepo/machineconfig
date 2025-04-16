@@ -11,7 +11,7 @@ def generate_file_checklist(repo_root: Union[str, Path], exclude_dirs: Optional[
         actual_exclude_dirs = exclude_dirs
         
     repo_root = Path(repo_root).expanduser().absolute()
-    output_path: Path = repo_root / "file_checklist.md"
+    output_path: Path = repo_root / ".ai" / "repo_task" / "file_checklist.md"
     py_files: List[Path] = []
     for filepath in repo_root.glob('**/*.py'):
         if any(excl in filepath.parts for excl in actual_exclude_dirs) or any(filepath.match(f"**/{excl}/**") for excl in actual_exclude_dirs) or filepath.name == "__init__.py":
