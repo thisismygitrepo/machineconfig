@@ -26,6 +26,7 @@ if urls_file.exists():
 
 print("🌐 Crawling the website to extract URLs...")
 command = f"""xcrawl3r --url {url} --domain {url} --depth {depth} --concurrency 20 --parallelism 10 --output {urls_file} """
+print(f"Running command: {command}")
 subprocess.run(command, shell=True, check=True)
 
 all_urls = urls_file.read_text().splitlines()
