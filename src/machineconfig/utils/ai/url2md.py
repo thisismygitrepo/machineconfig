@@ -17,6 +17,7 @@ url = input("🔗 Enter the URL: ")
 depth = input("🔍 Enter the crawl depth (default: 4): ") or "4"
 
 website_name_as_valid_filename = url.split("//")[-1].split("/")[0].replace(".", "_").replace(":", "_")
+domain = url.split("//")[-1].split("/")[0]
 op_dir = cwd.joinpath(".website", website_name_as_valid_filename)
 op_dir.mkdir(exist_ok=True, parents=True)
 urls_file = op_dir.joinpath("urls", "urls.txt")
@@ -25,13 +26,13 @@ if urls_file.exists():
     urls_file.unlink()
 
 print("🌐 Crawling the website to extract URLs...")
-command = f"""xcrawl3r --url {url} --domain {url} --depth {depth} --concurrency 20 --parallelism 10 --output {urls_file} """
+command = f"""xcrawl3r --url {url} --domain {domain} --depth {depth} --concurrency 20 --parallelism 4 --output {urls_file} """
 print(f"Running command: {command}")
 subprocess.run(command, shell=True, check=True)
 
 all_urls = urls_file.read_text().splitlines()
-relevant_urls = [a_url for a_url in all_urls if a_url.startswith(url)]
-relevant_urls = list(set(relevant_urls))  # remove duplicates
+relevant_urls = list(set(all_urls))  # remove duplicates
+relevant_urls = [a_url for a_url in relevant_urls if not a_url.endswith(".css") and not a_url.endswith(".js") and not a_url.endswith(".png") and not a_url.endswith(".jpg") and not a_url.endswith(".jpeg") and not a_url.endswith(".gif")]
 
 print(f"✅ Found {len(relevant_urls)} relevant URLs. Preparing to convert to Markdown...\n")
 
