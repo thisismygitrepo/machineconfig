@@ -10,7 +10,12 @@ print("\n" + "=" * 50)
 print("🌐 Welcome to the URL to Markdown Converter")
 print("=" * 50 + "\n")
 
+tools_needed = ["xcrawl3r", "html2markdown"]
+
+
 url = input("🔗 Enter the URL: ")
+depth = input("🔍 Enter the crawl depth (default: 4): ") or "4"
+
 website_name_as_valid_filename = url.split("//")[-1].split("/")[0].replace(".", "_").replace(":", "_")
 op_dir = cwd.joinpath(".website", website_name_as_valid_filename)
 op_dir.mkdir(exist_ok=True, parents=True)
@@ -20,7 +25,7 @@ if urls_file.exists():
     urls_file.unlink()
 
 print("🌐 Crawling the website to extract URLs...")
-command = f"""xcrawl3r --url {url} --depth 10 --concurrency 20 --parallelism 5 --output {urls_file} """
+command = f"""xcrawl3r --url {url} --domain {url} --depth {depth} --concurrency 20 --parallelism 10 --output {urls_file} """
 subprocess.run(command, shell=True, check=True)
 
 all_urls = urls_file.read_text().splitlines()
