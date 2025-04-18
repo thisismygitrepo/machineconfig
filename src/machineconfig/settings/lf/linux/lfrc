@@ -107,6 +107,7 @@ map ol mark-load
 map oR mark-remove
 map oD $ouch d $f
 map oC $ouch c $f "$f.zip"
+map oL $ln -s $f $HOME/tmp_results/tmp_links/$(basename "$f")
 
 # j jump
 map j
