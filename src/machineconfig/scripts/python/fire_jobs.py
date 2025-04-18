@@ -271,13 +271,20 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
             # args.zellij_tab = input("Please enter a new tab name: ")
             args.zellij_tab += f"_{randstr(3)}"
         command = f"""
+echo "Sleep 1 seconds to allow zellij to create a new tab"
 sleep 1
 zellij action new-tab --name {args.zellij_tab}
+echo "Sleep 2 seconds to allow zellij to go to the new tab"
 sleep 2
 zellij action go-to-tab-name {args.zellij_tab}
+echo "Sleep 2 seconds to allow zellij to start the new pane"
 sleep 2
 zellij action new-pane --direction down -- /bin/bash {comman_path__}
+echo "Sleep 2 seconds to allow zellij to start the new pane"
+sleep 1
 zellij action move-focus up; sleep 2
+echo "Sleep 2 seconds to allow zellij to close the pane"
+sleep 1
 zellij action close-pane; sleep 2
 """
     if args.git_pull:
