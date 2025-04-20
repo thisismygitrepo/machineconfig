@@ -36,6 +36,7 @@ def generate_file_checklist(repo_root: Union[str, Path], exclude_dirs: Optional[
     markdown_content += "\n## Shell Script Files\n\n"
     for sh_file in sh_files:
         markdown_content += f"- [ ] {sh_file}\n"
+    Path(output_path).parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(markdown_content)
         
@@ -56,6 +57,9 @@ def main() -> None:
     exclude_dirs: List[str] = ['.venv', '.git', '__pycache__', 'build', 'dist', '*.egg-info']
     if args.exclude:
         exclude_dirs.extend(args.exclude)
+    if args.repo == '':
+        print("Error: Repository path cannot be empty.")
+        return
     
     output_path = generate_file_checklist(args.repo, exclude_dirs)
     print(f"""
