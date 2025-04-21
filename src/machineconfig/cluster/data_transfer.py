@@ -2,7 +2,8 @@
 """
 
 
-from crocodile.file_management import P, List as L
+from crocodile.file_management import P
+from crocodile.core import List as L
 from machineconfig.cluster.remote_machine import RemoteMachine, FileManager
 
 

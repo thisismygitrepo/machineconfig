@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "1.93"
+version = "1.94"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -39,6 +39,10 @@ dependencies = [
 [project.optional-dependencies]
 windows = [
     "pywin32"
+]
+# docs extra for documentation generation
+docs = [
+    "pdoc>=15.0.2"
 ]
 
 [project.urls]
