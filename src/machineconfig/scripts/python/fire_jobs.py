@@ -124,6 +124,7 @@ def main() -> None:
                 toml_path_maybe = choice_file.parent.parent.joinpath(".streamlit/config.toml")
                 if toml_path_maybe.exists(): toml_path = toml_path_maybe
             if toml_path is not None:
+                print(f"📄 Reading config.toml @ {toml_path}")
                 config = Read.toml(toml_path)
                 if "server" in config:
                     if "port" in config["server"]:
@@ -132,7 +133,7 @@ def main() -> None:
             from rich.panel import Panel
             from rich import print as rprint
             rprint(Panel(message))
-            exe = f"streamlit run --server.address 0.0.0.0 --server.headless true --port {port}"
+            exe = f"streamlit run --server.address 0.0.0.0 --server.headless true --server.port {port}"
             # exe = f"cd '{choice_file.parent}'; " + exe
         elif args.interactive is False: exe = "python"
         elif args.jupyter: exe = "jupyter-lab"
