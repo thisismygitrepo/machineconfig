@@ -3,7 +3,7 @@ from crocodile.file_management import P
 import platform
 import subprocess
 from typing import Optional, TypeVar
-from machineconfig.utils.utils_options import check_tool_exists, choose_one_option
+from machineconfig.utils.options import check_tool_exists, choose_one_option
 
 T = TypeVar("T")
 

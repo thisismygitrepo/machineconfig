@@ -173,7 +173,7 @@ def install_repos(specs_path: str, clone: bool=True, checkout_to_recorded_commit
                             remote_url = repo["remotes"][preferred_remote]
                         else:
                             print(f"⚠️ `{preferred_remote=}` not found in {repo['remotes']}.")
-                    program += f"\ncd {parent_dir.collapseuser().as_posix()}; git clone {remote_url} --origin {remote_name}"
+                    program += f"\ncd {parent_dir.collapseuser().as_posix()}; git clone {remote_url} --origin {remote_name} --depth 2"
                     program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}"
                 program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote add {remote_name} {remote_url}"
             if checkout_to_recorded_commit:

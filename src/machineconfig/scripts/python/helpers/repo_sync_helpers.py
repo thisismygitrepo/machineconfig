@@ -2,7 +2,8 @@
 from crocodile.file_management import P, Read
 from crocodile.meta import Terminal
 from machineconfig.scripts.python.get_zellij_cmd import get_zellij_cmd
-from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, get_shell_script, write_shell_script
+from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH
+from machineconfig.utils.code import get_shell_script, write_shell_script
 import platform
 
 
