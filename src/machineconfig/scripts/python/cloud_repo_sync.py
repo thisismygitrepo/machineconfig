@@ -6,7 +6,8 @@ from crocodile.meta import Terminal
 from crocodile.core import randstr
 
 from machineconfig.scripts.python.helpers.repo_sync_helpers import fetch_dotfiles
-from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, PROGRAM_PATH, get_shell_file_executing_python_script, write_shell_script_to_file, choose_one_option
+from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, PROGRAM_PATH, choose_one_option
+from machineconfig.utils.code import get_shell_file_executing_python_script, write_shell_script_to_file
 import platform
 import argparse
 from typing import Optional, Literal
