@@ -128,7 +128,7 @@ git pull originEnc master
         # ================================================================================
         option1 = 'Delete remote copy and push local:'
         program_1_py = f"""
-from machineconfig.scripts.python.cloud_repo_sync import delete_remote_repo_copy_and_push_local as func
+from machineconfig.scripts.python.helpers.repo_sync_helpers import delete_remote_repo_copy_and_push_local as func
 func(remote_repo=r'{repo_remote_root.to_str()}', local_repo=r'{repo_local_root.to_str()}', cloud=r'{cloud_resolved}')
 """
         shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, ve_name="ve")
