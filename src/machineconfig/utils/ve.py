@@ -5,7 +5,6 @@ from crocodile.core import Struct, List
 from crocodile.file_management import P
 
 import platform
-from dataclasses import dataclass
 from typing import Optional, Literal
 
 from machineconfig.utils.ve_utils.ve1 import get_installed_interpreters
@@ -16,20 +15,6 @@ from machineconfig.utils.ve_utils.ve2 import get_bash_ve_install_script
 from machineconfig.utils.ve_utils.ve2 import get_ps1_ve_install_script
 from machineconfig.utils.ve_utils.ve2 import create_symlinks
 from machineconfig.utils.ve_utils.ve2 import make_installation_recipe
-
-
-
-@dataclass
-class VE_Specs:
-    ve_name: str
-    py_version: str
-    ipy_profile: str
-    os: str
-
-
-@dataclass
-class VE_INI:
-    specs: VE_Specs
 
 
 def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[str] = None,

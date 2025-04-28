@@ -4,9 +4,22 @@ from crocodile.file_management import P, Read
 
 
 from typing import Literal
-
+from dataclasses import dataclass
 from machineconfig.utils.utils import LIBRARY_ROOT
-from machineconfig.utils.ve import VE_INI, VE_Specs
+
+
+
+@dataclass
+class VE_Specs:
+    ve_name: str
+    py_version: str
+    ipy_profile: str
+    os: str
+
+
+@dataclass
+class VE_INI:
+    specs: VE_Specs
 
 
 def get_install_requirements_template(repo_root: P, requirements_subpath: str, ve_name: str, system: Literal["Windows", "Linux"]):
