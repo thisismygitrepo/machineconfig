@@ -14,7 +14,7 @@ from machineconfig.scripts.python.helpers.helpers4 import parse_pyfile
 from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, match_file_name, sanitize_path
 from machineconfig.utils.ve_utils.ve1 import get_ve_activate_line, get_ve_name_and_ipython_profile
-from crocodile.file_management import P, Read
+from crocodile.file_management import P, Read, Save
 from crocodile.core import randstr
 import platform
 from typing import Optional
@@ -42,6 +42,7 @@ def main() -> None:
     parser.add_argument("--remote",          "-r", action="store_true", help="launch on a remote machine")
     parser.add_argument("--module",          "-m", action="store_true", help="launch the main file")
     parser.add_argument("--streamlit",       "-S", action="store_true", help="run as streamlit app")
+    parser.add_argument("--environment",     "-E", type=str, help="Choose ip, localhost, hostname or arbitrary url", default="")
     parser.add_argument("--holdDirectory",   "-D", action="store_true", help="hold current directory and avoid cd'ing to the script directory")
     parser.add_argument("--git_pull",        "-g", action="store_true", help="Start by pulling the git repo")
     parser.add_argument("--optimized", "-O", action="store_true", help="Run the optimized version of the function")
@@ -62,7 +63,8 @@ def main() -> None:
         choice_file = P(choice_file)
     else:
         choice_file = path_obj
-    print(f"💾 Selected file: {choice_file}")
+    repo_root = get_repo_root(str(choice_file))
+    print(f"💾 Selected file: {choice_file}. Repo root: {repo_root}")
 
     ve_name_suggested, ipy_profile = get_ve_name_and_ipython_profile(choice_file)
     if ipy_profile is None: ipy_profile = "default"
@@ -129,6 +131,22 @@ def main() -> None:
                 if "server" in config:
                     if "port" in config["server"]:
                         port = config["server"]["port"]
+                secrets_path = toml_path.with_name("secrets.toml")
+                if repo_root is not None:
+                    secrets_template_path = P.home().joinpath(f"dotfiles/creds/streamlit/{P(repo_root).name}/secrets.toml")
+                    if args.environment != "" and not secrets_path.exists() and secrets_template_path.exists():
+                        secrets_template = Read.toml(secrets_template_path)
+                        if args.environment == "ip": host_url = f"http://{local_ip_v4}:{port}/oauth2callback"
+                        elif args.environment == "localhost": host_url = f"http://localhost:{port}/oauth2callback"
+                        elif args.environment == "hostname": host_url = f"http://{computer_name}:{port}/oauth2callback"
+                        else: host_url = f"http://{args.environment}:{port}/oauth2callback"
+                        try:
+                            secrets_template["auth"]["redirect_uri"] = host_url
+                            secrets_template["auth"]["auth0"]["redirect_uri"] = host_url
+                            Save.toml(obj=secrets_template, path=secrets_path)                        
+                        except Exception as ex:
+                            print(ex)
+                            raise ex
             message = f"🚀 Streamlit app is running @:\n1- http://{local_ip_v4}:{port}\n2- http://{computer_name}:{port}\n3- http://localhost:{port}"
             from rich.panel import Panel
             from rich import print as rprint
@@ -149,7 +167,6 @@ def main() -> None:
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file.suffix}"
         import_line = get_import_module_code(str(choice_file))
-        repo_root = get_repo_root(str(choice_file))
         if repo_root is not None:
             repo_root_add = f"""sys.path.append(r'{repo_root}')"""
         else:
