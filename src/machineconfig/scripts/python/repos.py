@@ -42,20 +42,20 @@ def git_action(path: P, action: GitAction, mess: Optional[str] = None, r: bool=F
         else: return "\necho 'skipped because not a git repo'\n\n"
 
     program = f'''
-🔧 echo '>>>>>>>>> {action}'
+echo '>>>>>>>>> 🔧{action}'
 cd '{path}'
 '''
     if action == GitAction.commit:
         if mess is None: mess = "auto_commit_" + randstr()
         program += f'''
-🔄 git add .; git commit -am "{mess}"
+git add .; git commit -am "{mess}"
 '''
     if action == GitAction.push or action == GitAction.pull:
         action_name = "pull" if action == GitAction.pull else "push"
         cmds = [f'echo "🔄 {action_name.capitalize()}ing from {remote.url}" ; git {action_name} {remote.name} {repo.active_branch.name}' for remote in repo.remotes]
         program += '\n' + '\n'.join(cmds) + '\n'
     program = program + '''
-✅ echo ""; echo ""
+echo "✅"; echo ""
 '''
     return program
 
