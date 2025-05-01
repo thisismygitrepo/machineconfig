@@ -133,7 +133,7 @@ def main() -> None:
                         port = config["server"]["port"]
                 secrets_path = toml_path.with_name("secrets.toml")
                 if repo_root is not None:
-                    secrets_template_path = P.home().joinpath(f"dotfiles/creds/streamlit/{P(repo_root).name}/secrets.toml")
+                    secrets_template_path = P.home().joinpath(f"dotfiles/creds/streamlit/{P(repo_root).name}/{choice_file.name}/secrets.toml")
                     if args.environment != "" and not secrets_path.exists() and secrets_template_path.exists():
                         secrets_template = Read.toml(secrets_template_path)
                         if args.environment == "ip": host_url = f"http://{local_ip_v4}:{port}/oauth2callback"
