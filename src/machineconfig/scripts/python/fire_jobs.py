@@ -241,7 +241,7 @@ except ImportError as _ex:
         # CMD equivalent
         if "ipdb" in command: command = f"pip install ipdb & {command}"
         if "pudb" in command: command = f"pip install pudb & {command}"
-        command = fr"""start cmd -Argument "/k %USERPROFILE%\venvs\{args.ve}\Scripts\activate.bat & {command} " """  # this works from powershell
+        command = fr"""start cmd -Argument "/k {activate_ve_line.replace(".ps1", ".bat")} & {command} " """  # this works from powershell
         # this works from cmd  # command = fr""" start cmd /k "%USERPROFILE%\venvs\{args.ve}\Scripts\activate.bat & {command} " """ # because start in cmd is different from start in powershell (in powershell it is short for Start-Process)
 
     if args.submit_to_cloud:
