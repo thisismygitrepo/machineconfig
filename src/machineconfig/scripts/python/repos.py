@@ -29,7 +29,7 @@ class RepoRecord:
     version: dict[str, str]
 
 
-def git_action(path: P, action: GitAction, mess: Optional[str] = None, r: bool=False) -> str:
+def git_action(path: P, action: GitAction, mess: Optional[str] = None, r: bool = False, uv_sync: bool = False) -> str:
     from git.exc import InvalidGitRepositoryError
     from git.repo import Repo
     try:
@@ -37,7 +37,7 @@ def git_action(path: P, action: GitAction, mess: Optional[str] = None, r: bool=F
     except InvalidGitRepositoryError:
         pprint(f"⚠️ Skipping {path} because it is not a git repository.")
         if r:
-            prgs = [git_action(path=sub_path, action=action, mess=mess, r=r) for sub_path in path.search()]
+            prgs = [git_action(path=sub_path, action=action, mess=mess, r=r, uv_sync=uv_sync) for sub_path in path.search()]
             return "\n".join(prgs)
         else: return "\necho 'skipped because not a git repo'\n\n"
 
@@ -54,7 +54,9 @@ git add .; git commit -am "{mess}"
         action_name = "pull" if action == GitAction.pull else "push"
         cmds = [f'echo "🔄 {action_name.capitalize()}ing from {remote.url}" ; git {action_name} {remote.name} {repo.active_branch.name}' for remote in repo.remotes]
         program += '\n' + '\n'.join(cmds) + '\n'
-    program = program + '''
+    uv_sync = "uv sync" if uv_sync else ""
+    program = program + f'''
+{uv_sync}
 echo "✅"; echo ""
 '''
     return program
@@ -70,6 +72,7 @@ def main():
     parser.add_argument("directory", help="📁 Folder containing repos to record or a specs JSON file to follow.", default="")
     # FLAGS
     parser.add_argument("--push", help="🚀 Push changes.", action="store_true")
+    parser.add_argument("--uv_sync", help="🚀 Push changes.", action="store_true")
     parser.add_argument("--pull", help="⬇️ Pull changes.", action="store_true")
     parser.add_argument("--commit", help="💾 Commit changes.", action="store_true")
     parser.add_argument("--all", help="🔄 Pull, commit, and push changes.", action="store_true")
@@ -114,9 +117,9 @@ def main():
         print("\n🔄 Performing Git actions on repositories...")
         for a_path in repos_root.search("*"):
             program += f"""echo "{("Handling " + str(a_path)).center(80, "-")}" """
-            if args.pull or args.all: program += git_action(path=a_path, action=GitAction.pull, r=args.recursive)
-            if args.commit or args.all: program += git_action(a_path, action=GitAction.commit, r=args.recursive)
-            if args.push or args.all: program += git_action(a_path, action=GitAction.push, r=args.recursive)
+            if args.pull or args.all: program += git_action(path=a_path, action=GitAction.pull, r=args.recursive, uv_sync=args.uv_sync)
+            if args.commit or args.all: program += git_action(a_path, action=GitAction.commit, r=args.recursive, uv_sync=args.uv_sync)
+            if args.push or args.all: program += git_action(a_path, action=GitAction.push, r=args.recursive, uv_sync=args.uv_sync)
     else: program = "echo '❌ No action specified. Try passing --push, --pull, --commit, or --all.'"
     write_shell_script_to_default_program_path(program=program, desc="Script to update repos", preserve_cwd=True, display=True, execute=False)
 
