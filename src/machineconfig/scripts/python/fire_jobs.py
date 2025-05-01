@@ -141,7 +141,9 @@ def main() -> None:
                         elif args.environment == "hostname": host_url = f"http://{computer_name}:{port}/oauth2callback"
                         else: host_url = f"http://{args.environment}:{port}/oauth2callback"
                         try:
+                            
                             secrets_template["auth"]["redirect_uri"] = host_url
+                            secrets_template["auth"]["cookie_secret"] = randstr(35)
                             secrets_template["auth"]["auth0"]["redirect_uri"] = host_url
                             Save.toml(obj=secrets_template, path=secrets_path)                        
                         except Exception as ex:
