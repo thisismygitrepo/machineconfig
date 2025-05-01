@@ -218,7 +218,7 @@ except ImportError as _ex:
         if args.holdDirectory:
             command = f"{exe} {choice_file}"
         else:
-            command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
+            command = f"cd {choice_file.parent}\n{exe} {choice_file.name}\ncd {P.cwd()}"
 
     elif args.cmd:
         command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
@@ -227,22 +227,22 @@ except ImportError as _ex:
             kwargs_raw = " ".join(args.kw) if args.kw is not None else ""
             command = f"{exe} {choice_file} {kwargs_raw}"
         else:
-            # command = f"cd {choice_file.parent}\n\n{exe} {choice_file.name}\n\ncd {P.cwd()}"
+            # command = f"cd {choice_file.parent}\n{exe} {choice_file.name}\ncd {P.cwd()}"
             command = f"{exe} {choice_file} "
     # this installs in ve env, which is not execution env
     # if "ipdb" in command: install_n_import("ipdb")
     # if "pudb" in command: install_n_import("pudb")
 
     if not args.cmd:
-        if "ipdb" in command: command = f"pip install ipdb\n\n{command}"
-        if "pudb" in command: command = f"pip install pudb\n\n{command}"
-        command = f"{activate_ve_line}\n\n{command}"
+        if "ipdb" in command: command = f"pip install ipdb\n{command}"
+        if "pudb" in command: command = f"pip install pudb\n{command}"
+        command = f"{activate_ve_line}\n{command}"
     else:
         # CMD equivalent
         if "ipdb" in command: command = f"pip install ipdb & {command}"
         if "pudb" in command: command = f"pip install pudb & {command}"
         new_line = "\n"
-        command = fr"""start cmd -Argument "/k {activate_ve_line.replace(".ps1", ".bat").replace(". ", "")} & {command.replace(new_line, "& ")} " """  # this works from powershell
+        command = fr"""start cmd -Argument "/k {activate_ve_line.replace(".ps1", ".bat").replace(". ", "")} & {command.replace(new_line, " & ")} " """  # this works from powershell
         # this works from cmd  # command = fr""" start cmd /k "%USERPROFILE%\venvs\{args.ve}\Scripts\activate.bat & {command} " """ # because start in cmd is different from start in powershell (in powershell it is short for Start-Process)
 
     if args.submit_to_cloud:
@@ -308,7 +308,7 @@ sleep 1
 zellij action close-pane; sleep 2
 """
     if args.git_pull:
-        command = f"\ngit -C {choice_file.parent} pull\n\n" + command
+        command = f"\ngit -C {choice_file.parent} pull\n" + command
     console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {PROGRAM_PATH}: "), style="bold red")
     PROGRAM_PATH.write_text(command)
 
