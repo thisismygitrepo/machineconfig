@@ -150,7 +150,7 @@ sudo chmod +x $HOME/dotfiles/scripts/linux -R
         # ================================================================================
         option3 = 'Inspect repos:'
         program_3_py = f"""
-from machineconfig.scripts.python.cloud_repo_sync import inspect_repos as func
+from machineconfig.scripts.python.helper.repo_sync_helpers import inspect_repos as func
 func(repo_local_root=r'{repo_local_root.to_str()}', repo_remote_root=r'{repo_remote_root.to_str()}')
 """
         shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_name="ve")
