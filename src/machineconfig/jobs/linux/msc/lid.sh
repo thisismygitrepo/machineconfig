@@ -5,8 +5,7 @@
 # This script disables suspension when laptop lid is closed
 # Reference: https://askubuntu.com/questions/141866/keep-ubuntu-server-running-on-a-laptop-with-the-lid-closed/1426611#1426611
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔧 CONFIGURING | Modifying lid close behavior
 #=======================================================================
 """
@@ -18,8 +17,7 @@ sudo sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/g' /etc/systemd/l
 echo "📝 Updating HandleLidSwitchExternalPower parameter..."
 sudo sed -i 's/#HandleLidSwitchExternalPower=suspend/HandleLidSwitchExternalPower=ignore/g' /etc/systemd/logind.conf
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ COMPLETE | Lid close configuration has been updated
 #=======================================================================
 """

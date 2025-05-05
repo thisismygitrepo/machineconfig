@@ -4,16 +4,14 @@
 #=======================================================================
 # This script provides quick access to installation scripts via web
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📚 AVAILABLE INSTALLATION OPTIONS | Web-based installers
 #=======================================================================
 
 Choose from the following installation options:
 """
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📦 SYSTEM APPLICATIONS | Basic system applications
 #=======================================================================
 
@@ -21,8 +19,7 @@ echo """
 # curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/apps.sh | bash
 """
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🐍 PYTHON ENVIRONMENT | Virtual environment setup
 #=======================================================================
 
@@ -30,8 +27,7 @@ Setting up Python virtual environment...
 """
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔄 CODE REPOSITORIES | Cloning project repositories
 #=======================================================================
 
@@ -39,8 +35,7 @@ Setting up code repositories...
 """
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ⚙️  DEVELOPMENT TOOLS | Developer applications
 #=======================================================================
 

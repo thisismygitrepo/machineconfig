@@ -10,8 +10,7 @@ if [ -z "$package_manager" ]; then
   echo "ℹ️ Using default package manager: $package_manager"
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🎨 TEXT STYLE TOOLS | Installing terminal text formatters
 #=======================================================================
 """
@@ -32,8 +31,7 @@ fi
 # More fun terminal tools: https://linoxide.com/linux-fun-terminal-crazy-output/
 # Examples: midnight commander, Asciiquarium, https://github.com/bartobri/no-more-secrets
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🎮 FUN TERMINAL TOOLS | Installing amusing terminal animations
 #=======================================================================
 """
@@ -48,8 +46,7 @@ fi
 echo "📥 Installing aafire - ASCII art fire animation..."
 sudo nala install libaa-bin -y
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔄 FILE SHARING TOOLS | Installing network sharing utilities
 #=======================================================================
 """
@@ -71,8 +68,7 @@ npm install -g easy-sharing  # based on https://github.com/parvardegr/sharing
 echo "📥 Installing Samba - LAN-based file sharing..."
 #sudo nala install samba
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📊 DEVELOPMENT TOOLS | Installing programming utilities
 #=======================================================================
 """
@@ -98,22 +94,8 @@ sudo nala install make -y || true  # Required by LunarVim and SpaceVim
 # # https://spacevim.org/quick-start-guide/#linux-and-macos
 # (curl -sLf https://spacevim.org/install.sh | bash) || true
 
-echo """
-#=======================================================================
-🧰 PROGRAMMING LANGUAGES | Installing language runtimes and tools
-#=======================================================================
-"""
 
-# echo "📥 Installing Codon - high-performance Python compiler..."
-# /bin/bash -c "$(curl -fsSL https://exaloop.io/install.sh)"
-
-echo "📥 Installing Rust programming language and toolchain..."
-(curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
-echo "📥 Installing SSL development libraries for Rust..."
-sudo nala install libssl-dev -y
-
-echo """
-#=======================================================================
+echo """#=======================================================================
 🎬 TERMINAL EYE CANDY | Installing visual terminal effects
 #=======================================================================
 """
@@ -134,8 +116,7 @@ else
   ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 💾 DATABASE TOOLS | Installing database clients
 #=======================================================================
 """
@@ -145,8 +126,7 @@ sudo nala install sqlite3 -y || true
 echo "📥 Installing PostgreSQL client..."
 sudo nala install postgresql-client -y || true
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🎨 IMAGE TOOLS | Installing terminal image viewers
 #=======================================================================
 """
@@ -154,8 +134,21 @@ echo """
 echo "📥 Installing chafa - terminal image viewer..."
 sudo nala install chafa -y
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ INSTALLATION COMPLETE | Development tools and utilities installed
 #=======================================================================
 """
+
+
+echo """#=======================================================================
+🧰 PROGRAMMING LANGUAGES | Installing language runtimes and tools
+#=======================================================================
+"""
+
+# echo "📥 Installing Codon - high-performance Python compiler..."
+# /bin/bash -c "$(curl -fsSL https://exaloop.io/install.sh)"
+
+echo "📥 Installing Rust programming language and toolchain..."
+(curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
+echo "📥 Installing SSL development libraries for Rust..."
+sudo nala install libssl-dev -y

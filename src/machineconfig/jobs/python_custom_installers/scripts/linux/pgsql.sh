@@ -5,8 +5,7 @@
 # This script installs PostgreSQL database on Ubuntu/Debian systems
 # Reference: https://www.postgresql.org/download/linux/ubuntu/
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🚀 STARTING POSTGRESQL INSTALLATION | Setting up PostgreSQL database
 #=======================================================================
 """
@@ -20,16 +19,14 @@ echo "🔧 Setting up PostgreSQL repository..."
 sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
 
 # Install PostgreSQL 17
-echo """
-#=======================================================================
+echo """#=======================================================================
 📦 INSTALLING POSTGRESQL | Installing PostgreSQL 17
 #=======================================================================
 """
 sudo nala install postgresql-17 -y
 # Alternative: sudo nala install postgresql -y
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ INSTALLATION COMPLETE | PostgreSQL has been installed successfully
 #=======================================================================
 """
@@ -38,8 +35,7 @@ echo "💡 Connect to default 'postgres' database with: sudo -u postgres psql"
 echo "🔄 To check service status: sudo systemctl status postgresql"
 
 # REMOVAL INSTRUCTIONS:
-echo """
-#-----------------------------------------------------------------------
+echo """#-----------------------------------------------------------------------
 📝 NOTES | For future reference
 #-----------------------------------------------------------------------
 To remove PostgreSQL completely:

@@ -4,14 +4,12 @@
 #=======================================================================
 # This script sets up the crocodile shell environment with all dependencies
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🚀 ENVIRONMENT SETUP | Quick installation via URL shorteners
 #=======================================================================
 """
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🐍 PYTHON ENVIRONMENT | Setting up Python virtual environment
 #=======================================================================
 
@@ -20,8 +18,7 @@ Setting up Python virtual environment via bit.ly shortlink...
 # Alternative URL: curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
 curl bit.ly/cfgvelinux -L | bash
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📦 CODE REPOSITORIES | Cloning project repositories
 #=======================================================================
 
@@ -30,8 +27,7 @@ Cloning essential repositories via bit.ly shortlink...
 # Alternative URL: curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
 curl bit.ly/cfgreposlinux -L | bash
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔗 CONFIGURATION SETUP | Creating symbolic links
 #=======================================================================
 
@@ -40,8 +36,7 @@ Note: This may require sudo permissions for .ssh permissions
 """
 source $HOME/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔄 SHELL RELOADING | Refreshing shell configuration
 #=======================================================================
 
@@ -49,8 +44,7 @@ Reloading bash configuration...
 """
 . ~/.bashrc
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ⚙️  DEVELOPMENT TOOLS | Developer applications
 #=======================================================================
 

@@ -4,14 +4,12 @@
 #=======================================================================
 # This script provides methods to update Ubuntu system and kernel
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔄 SYSTEM UPGRADE OPTIONS | Ubuntu system maintenance
 #=======================================================================
 """
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📦 UBUNTU DISTRIBUTION UPGRADE | Full system version upgrade
 #=======================================================================
 
@@ -21,8 +19,7 @@ echo """
 # Uncomment the line below to actually run the upgrade
 # do-release-upgrade 
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔧 KERNEL UPDATE | Installing the latest Linux kernel
 #=======================================================================
 
@@ -30,23 +27,19 @@ echo """
 """
 wget https://raw.githubusercontent.com/pimlie/ubuntu-mainline-kernel.sh/master/ubuntu-mainline-kernel.sh
 
-echo """
-🛠️  Installing script to system path...
+echo """🛠️  Installing script to system path...
 """
 sudo install ubuntu-mainline-kernel.sh /usr/local/bin/
 
-echo """
-🔍 Checking available kernel versions...
+echo """🔍 Checking available kernel versions...
 """
 sudo ubuntu-mainline-kernel.sh -c
 
-echo """
-⏳ Installing the latest kernel (this may take several minutes)...
+echo """⏳ Installing the latest kernel (this may take several minutes)...
 """
 sudo ubuntu-mainline-kernel.sh -i -y
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ UPDATE COMPLETE | System upgrade finished
 #=======================================================================
 

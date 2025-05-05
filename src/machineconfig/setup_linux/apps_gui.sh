@@ -4,8 +4,7 @@
 #=======================================================================
 # This script installs graphical user interfaces and desktop environments
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📦 INSTALLING GUI COMPONENTS | Setting up desktop environment
 #=======================================================================
 """
@@ -30,8 +29,7 @@ sudo nala install xfce4 -y  # 🏠 xfce4 desktop environment
 echo "📥 Installing XFCE4 additional components..."
 sudo nala install xfce4-goodies -y  # ✨ xfce4 desktop environment extras
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔧 CONFIGURING XRDP | Setting up Remote Desktop service
 #=======================================================================
 """
@@ -59,8 +57,7 @@ sudo sed -i 's/test/#test/g' /etc/xrdp/startwm.sh
 sudo sed -i 's/exec/#exec/g' /etc/xrdp/startwm.sh
 echo "startxfce4" | sudo tee -a /etc/xrdp/startwm.sh
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🚀 STARTING SERVICES | Initializing XRDP service
 #=======================================================================
 """
@@ -68,8 +65,7 @@ echo """
 echo "🔄 Starting XRDP service..."
 sudo /etc/init.d/xrdp start
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ SETUP COMPLETE | GUI environment has been configured
 #=======================================================================
 """

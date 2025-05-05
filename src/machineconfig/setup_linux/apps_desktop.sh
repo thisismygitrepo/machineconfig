@@ -4,8 +4,7 @@
 #=======================================================================
 # This script installs desktop applications for a Linux workstation
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🌐 WEB BROWSERS | Installing browser applications
 #=======================================================================
 """
@@ -14,24 +13,21 @@ echo """
 # wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 # sudo dpkg -i google-chrome-stable_current_amd64.deb
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📝 TEXT EDITORS | Installing Neovim editor
 #=======================================================================
 """
 echo "📥 Installing Neovim via Homebrew..."
 /home/linuxbrew/.linuxbrew/bin/brew install neovim
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📧 EMAIL CLIENT | Installing Thunderbird
 #=======================================================================
 """
 echo "📥 Installing Thunderbird via Flatpak..."
 flatpak install flathub org.mozilla.Thunderbird
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🖲️ TERMINAL EMULATOR | Installing WezTerm
 #=======================================================================
 """
@@ -40,24 +36,21 @@ flatpak install flathub org.wezfurlong.wezterm
 echo "🚀 Launching WezTerm..."
 flatpak run org.wezfurlong.wezterm
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✏️ SCREEN ANNOTATION | Installing Gromit-MPX
 #=======================================================================
 """
 echo "📥 Installing Gromit-MPX via Flatpak..."
 flatpak install net.christianbeier.Gromit-MPX
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📋 CLIPBOARD MANAGERS | Installing CopyQ
 #=======================================================================
 """
 echo "📥 Installing CopyQ via Flatpak..."
 flatpak install flathub com.github.hluk.copyq --noninteractive
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔗 REMOTE DESKTOP | Installing Remmina
 #=======================================================================
 """
@@ -72,16 +65,14 @@ sudo nala install remmina remmina-plugin-rdp -y
 # flatpak install --user flathub org.remmina.Remmina
 # flatpak run --user org.remmina.Remmina
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🚀 APPLICATION LAUNCHER | Installing Rofi
 #=======================================================================
 """
 echo "📥 Installing Rofi application launcher..."
 sudo nala install rofi -y
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📎 CLIPBOARD HISTORY | Installing Greenclip
 #=======================================================================
 """
@@ -109,16 +100,14 @@ echo "- With Rofi: rofi -modi \"clipboard:greenclip print\" -show clipboard -run
 echo "- For emoji picker: rofi -modi \"emoji:rofimoji\" -show emoji"
 echo "- Application launcher: rofi -show drun"
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔄 APPLICATION LINKING | Linking applications to user space
 #=======================================================================
 """
 echo "🔗 Creating application symlinks..."
 ln -s /home/$USER/.nix-profile/share/applications/* /home/$USER/.local/share/applications/
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ INSTALLATION COMPLETE | Desktop applications have been installed
 #=======================================================================
 """

@@ -4,8 +4,7 @@
 #=======================================================================
 # This script installs and configures essential package managers and utilities
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📥 PACKAGE MANAGERS | Installing and configuring system package managers
 #=======================================================================
 """
@@ -21,8 +20,7 @@ echo "📥 Installing essential network tools..."
 sudo nala install curl wget gpg lsb-release apt-transport-https -y || true
 
 # Install Nix Package Manager
-echo """
-#=======================================================================
+echo """#=======================================================================
 ❄️ NIX PACKAGE MANAGER | Installing cross-platform package manager
 #=======================================================================
 """
@@ -31,8 +29,7 @@ curl -L https://nixos.org/nix/install | sh
 . ~/.nix-profile/etc/profile.d/nix.sh
 
 # Install Homebrew
-echo """
-#=======================================================================
+echo """#=======================================================================
 🍺 HOMEBREW PACKAGE MANAGER | Installing macOS-style package manager
 #=======================================================================
 """
@@ -40,8 +37,7 @@ echo "📥 Installing Homebrew..."
 export NONINTERACTIVE=1
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🛠️ SYSTEM UTILITIES | Installing essential system tools
 #=======================================================================
 """
@@ -52,8 +48,7 @@ sudo nala install fuse3 -y || true
 sudo nala install nfs-common -y || true
 
 # Python package installer
-echo """
-#=======================================================================
+echo """#=======================================================================
 ⚡ UV PYTHON INSTALLER | Installing fast Python package manager
 #=======================================================================
 """
@@ -61,8 +56,7 @@ echo "📥 Installing uv Python package installer..."
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Node.js via NVM
-echo """
-#=======================================================================
+echo """#=======================================================================
 📝 NODE.JS ENVIRONMENT | Installing Node Version Manager
 #=======================================================================
 """
@@ -79,16 +73,14 @@ echo "📥 Installing latest Node.js..."
 nvm install node || true
 
 # Development tools
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔧 DEVELOPMENT TOOLS | Installing git and system utilities
 #=======================================================================
 """
 echo "📥 Installing git and system tools..."
 sudo nala install git net-tools htop nano -y || true
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ INSTALLATION COMPLETE | System package managers and utilities set up
 #=======================================================================
 """

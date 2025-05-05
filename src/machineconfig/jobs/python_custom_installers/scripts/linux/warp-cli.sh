@@ -5,8 +5,7 @@
 # This script installs Cloudflare WARP client on Ubuntu/Debian-based Linux distributions
 # Reference: https://pkg.cloudflareclient.com/
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔍 DETECTING SYSTEM | Identifying OS distribution version
 #=======================================================================
 """
@@ -28,8 +27,7 @@ get_ubuntu_base_version() {
 ubuntu_version=$(get_ubuntu_base_version)
 echo "📋 Detected distribution: $ubuntu_version"
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔑 ADDING REPOSITORY KEYS | Setting up Cloudflare repository
 #=======================================================================
 """
@@ -42,8 +40,7 @@ curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmo
 echo "📝 Adding Cloudflare WARP repository to sources list..."
 echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $ubuntu_version main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📦 INSTALLING CLOUDFLARE WARP | Updating and installing packages
 #=======================================================================
 """
@@ -56,8 +53,7 @@ sudo nala update
 echo "📥 Installing Cloudflare WARP..."
 sudo nala install cloudflare-warp -y
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔧 REGISTERING WARP CLIENT | Setting up new registration
 #=======================================================================
 """
@@ -66,8 +62,7 @@ echo """
 echo "📡 Registering WARP client..."
 warp-cli registration new
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ INSTALLATION COMPLETE | Cloudflare WARP has been installed successfully
 #=======================================================================
 """

@@ -4,16 +4,14 @@
 #=======================================================================
 # This script installs various ASCII art and text formatting tools
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🖼️  ASCII ART TOOLS | Installing terminal visualization packages
 #=======================================================================
 """
 
 # Alternate Nix installation method (commented reference)
 # if [ -f "$HOME/.nix-profile/bin/nix-env" ]; then
-#   echo """
-#   #=======================================================================
+#   echo """#   #=======================================================================
 #   📦 NIX PACKAGE INSTALLATION | Using Nix package manager
 #   #=======================================================================
 #   """
@@ -25,8 +23,7 @@ echo """
 
 # Check if cowsay is installed, if not install it
 if [ ! -f "/usr/games/cowsay" ]; then
-  echo """
-  #=======================================================================
+  echo """  #=======================================================================
   🐮 INSTALLING COWSAY | ASCII art animals with speech bubbles
   #=======================================================================
   
@@ -40,8 +37,7 @@ fi
 
 # Check if lolcat is installed, if not install it
 if [ ! -f "/usr/games/lolcat" ]; then
-  echo """
-  #=======================================================================
+  echo """  #=======================================================================
   🌈 INSTALLING LOLCAT | Rainbow text colorizer for terminal
   #=======================================================================
   
@@ -54,8 +50,7 @@ fi
 
 # Check if boxes is installed, if not install it
 if [ ! -f "/usr/bin/boxes" ]; then
-  echo """
-  #=======================================================================
+  echo """  #=======================================================================
   📦 INSTALLING BOXES | ASCII art box drawing around text
   #=======================================================================
   
@@ -69,8 +64,7 @@ fi
 
 # Check if figlet is installed, if not install it
 if [ ! -f "/usr/bin/figlet" ]; then
-  echo """
-  #=======================================================================
+  echo """  #=======================================================================
   📝 INSTALLING FIGLET | Large ASCII text generator
   #=======================================================================
   
@@ -82,8 +76,7 @@ if [ ! -f "/usr/bin/figlet" ]; then
   sudo nala install figlet -y || true
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ INSTALLATION COMPLETE | All ASCII art tools installed successfully
 #=======================================================================
 

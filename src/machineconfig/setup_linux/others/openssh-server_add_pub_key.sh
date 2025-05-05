@@ -4,14 +4,12 @@
 #=======================================================================
 # This script helps set up passwordless SSH authentication to remote Linux machines
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ℹ️ PASSWORDLESS SSH SETUP | Manual instructions for key deployment
 #=======================================================================
 """
 
-echo """
-🔐 There are two methods to copy your public key to a remote server:
+echo """🔐 There are two methods to copy your public key to a remote server:
 
 📌 METHOD 1: Using ssh-copy-id (Linux clients only)
    ssh-copy-id username@hostname
@@ -23,8 +21,7 @@ echo """
 📌 METHOD 3: Using SFTP (detailed below)
 """
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📋 MANUAL SFTP PROCESS | Step-by-step instructions
 #=======================================================================
 

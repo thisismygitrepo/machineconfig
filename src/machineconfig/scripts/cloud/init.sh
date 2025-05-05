@@ -4,16 +4,14 @@
 #=======================================================================
 # This script initializes cloud configuration settings and sets up the environment
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔑 COLLECTING CONFIGURATION PARAMETERS | Setting up cloud environment
 #=======================================================================
 """
 
 # Check for required environment variables and prompt if not set
 if [ -z "$CLOUD_CONFIG_NAME" ]; then
-    echo """
-    #-----------------------------------------------------------------------
+    echo """    #-----------------------------------------------------------------------
     📋 CONFIG NAME | Specify cloud configuration to run
     #-----------------------------------------------------------------------
     """
@@ -23,8 +21,7 @@ if [ -z "$CLOUD_CONFIG_NAME" ]; then
 fi
 
 if [ -z "$SHARE_URL" ]; then
-    echo """
-    #-----------------------------------------------------------------------
+    echo """    #-----------------------------------------------------------------------
     🔗 SHARE URL | Provide cloud share URL for configuration files
     #-----------------------------------------------------------------------
     ℹ️ To get share_url, go to dotfiles and run: cloud_copy . :^ --config ss
@@ -35,8 +32,7 @@ if [ -z "$SHARE_URL" ]; then
 fi
 
 if [ -z "$DECRYPTION_PASSWORD" ]; then
-    echo """
-    #-----------------------------------------------------------------------
+    echo """    #-----------------------------------------------------------------------
     🔒 SECURITY | Enter decryption password
     #-----------------------------------------------------------------------
     """
@@ -45,8 +41,7 @@ if [ -z "$DECRYPTION_PASSWORD" ]; then
     echo ""
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📦 INSTALLING ESSENTIALS | Setting up core dependencies
 #=======================================================================
 """
@@ -70,8 +65,7 @@ echo "🚀 Activating Python virtual environment..."
 echo "📋 Setting up code repositories..."
 curl bit.ly/cfgreposlinux -L | bash
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ⚙️ CONFIGURING ENVIRONMENT | Setting up dotfiles
 #=======================================================================
 """
@@ -93,8 +87,7 @@ source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 echo "🔄 Reloading shell configuration..."
 . ~/.bashrc
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📦 INSTALLING DEVELOPMENT TOOLS | Setting up development environment
 #=======================================================================
 """
@@ -111,8 +104,7 @@ python -m fire machineconfig.scripts.python.devops_devapps_install main --which=
 echo "🔄 Reloading shell configuration..."
 . ~/.bashrc
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ FINALIZING CONFIGURATION | Running cloud-specific initialization
 #=======================================================================
 """
@@ -121,8 +113,7 @@ echo """
 echo "⚙️ Running cloud-specific configuration: $CLOUD_CONFIG_NAME"
 . $HOME/dotfiles/config/cloud/$CLOUD_CONFIG_NAME/init.sh
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ INITIALIZATION COMPLETE | Cloud environment has been set up successfully
 #=======================================================================
 """

@@ -14,8 +14,7 @@ if [ -z "$py_version" ]; then
 fi
 # --- End of user defined variables ---
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🚀 VIRTUAL ENVIRONMENT SETUP | Creating Python $py_version environment
 #=======================================================================
 """
@@ -25,8 +24,7 @@ cd $HOME/venvs/ || exit
 
 # Delete ~/venvs/$ve_name and its contents if it exists
 if [ -d "$ve_name" ]; then
-    echo """
-#=======================================================================
+    echo """#=======================================================================
 🗑️  CLEANING UP | Removing existing virtual environment
 #=======================================================================
 
@@ -36,16 +34,14 @@ if [ -d "$ve_name" ]; then
     rm -rfd $ve_name
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🛠️  TOOLS INSTALLATION | Setting up package manager
 #=======================================================================
 """
 
 # Install uv package manager if not present
 if [ ! -f "$HOME/.local/bin/uv" ]; then
-    echo """
-📦 uv binary not found
+    echo """📦 uv binary not found
    ⏳ Installing uv package manager...
 """
     curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -53,15 +49,13 @@ fi
 
 # Add uv to PATH if not already there
 if ! command -v uv &> /dev/null; then
-    echo """
-🔍 uv command not found in PATH
+    echo """🔍 uv command not found in PATH
    ➕ Adding uv to system PATH...
 """
     export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🐍 ENVIRONMENT CREATION | Building Python virtual environment
 #=======================================================================
 
@@ -72,8 +66,7 @@ echo """
 
 $HOME/.local/bin/uv venv $HOME/venvs/$ve_name --python 3.11 --python-preference only-managed
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔌 ENVIRONMENT ACTIVATION | Setting up the environment
 #=======================================================================
 """
@@ -81,8 +74,7 @@ echo """
 # Check if a virtual environment is active and if it's different from the target one
 if [ ! -z "$VIRTUAL_ENV" ]; then
     if [ "$VIRTUAL_ENV" != "$HOME/venvs/$ve_name" ]; then
-        echo """
-🔄 Deactivating existing environment: $(basename $VIRTUAL_ENV)
+        echo """🔄 Deactivating existing environment: $(basename $VIRTUAL_ENV)
 """
         deactivate
     fi
@@ -90,14 +82,12 @@ fi
 
 # Activate the target virtual environment if not already active
 if [ -z "$VIRTUAL_ENV" ] || [ "$VIRTUAL_ENV" != "$HOME/venvs/$ve_name" ]; then
-    echo """
-🔌 Activating virtual environment: $ve_name
+    echo """🔌 Activating virtual environment: $ve_name
 """
     source "$HOME/venvs/$ve_name/bin/activate" || exit
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📦 PACKAGE UPDATES | Updating core packages
 #=======================================================================
 
@@ -106,8 +96,7 @@ echo """
 
 $HOME/.local/bin/uv pip install --upgrade pip
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ SETUP COMPLETE | Virtual environment created successfully
 #=======================================================================
 

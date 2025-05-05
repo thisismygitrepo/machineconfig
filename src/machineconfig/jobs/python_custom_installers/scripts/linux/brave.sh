@@ -5,8 +5,7 @@
 # This script installs the Brave browser on Linux systems
 # Reference: https://brave.com/linux/
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🚀 STARTING BRAVE BROWSER INSTALLATION | Installing dependencies
 #=======================================================================
 """
@@ -15,8 +14,7 @@ echo """
 echo "📥 Installing curl..."
 sudo nala install curl -y
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔑 ADDING REPOSITORY KEYS | Setting up Brave repository
 #=======================================================================
 """
@@ -29,8 +27,7 @@ sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://b
 echo "📝 Adding Brave repository to sources list..."
 echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📦 INSTALLING BRAVE BROWSER | Updating and installing packages
 #=======================================================================
 """
@@ -43,8 +40,7 @@ sudo nala update
 echo "📥 Installing Brave browser..."
 sudo nala install brave-browser -y
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ INSTALLATION COMPLETE | Brave browser has been installed successfully
 #=======================================================================
 """

@@ -5,8 +5,7 @@
 # This script installs TimescaleDB on Ubuntu/Debian-based Linux distributions
 # Reference: https://docs.timescale.com/self-hosted/latest/install/installation-linux/
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔍 DETECTING SYSTEM | Identifying OS distribution version
 #=======================================================================
 """
@@ -29,8 +28,7 @@ get_ubuntu_base_version() {
 ubuntu_version=$(get_ubuntu_base_version)
 echo "📋 Detected distribution: $ubuntu_version"
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🐘 INSTALLING POSTGRESQL | Setting up PostgreSQL dependencies
 #=======================================================================
 """
@@ -40,8 +38,7 @@ echo "🔧 Setting up PostgreSQL repository..."
 sudo nala install postgresql-common -y
 sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔑 ADDING REPOSITORY KEYS | Setting up TimescaleDB repository
 #=======================================================================
 """
@@ -53,8 +50,7 @@ echo "deb https://packagecloud.io/timescale/timescaledb/ubuntu/ $ubuntu_version 
 echo "🔐 Adding TimescaleDB GPG key..."
 wget --quiet -O - https://packagecloud.io/timescale/timescaledb/gpgkey | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/timescaledb.gpg
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📦 INSTALLING TIMESCALEDB | Updating and installing packages
 #=======================================================================
 """
@@ -67,8 +63,7 @@ sudo nala update
 echo "📥 Installing PostgreSQL 16 and TimescaleDB..."
 sudo nala install -y postgresql-16 postgresql-client-16 timescaledb-2-postgresql-16
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ⚙️ CONFIGURING TIMESCALEDB | Optimizing database settings
 #=======================================================================
 """
@@ -81,8 +76,7 @@ sudo timescaledb-tune
 echo "🔄 Restarting PostgreSQL service..."
 sudo systemctl restart postgresql
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ INSTALLATION COMPLETE | TimescaleDB has been installed successfully
 #=======================================================================
 """

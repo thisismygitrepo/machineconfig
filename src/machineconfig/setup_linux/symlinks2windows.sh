@@ -4,26 +4,22 @@
 #=======================================================================
 # This script creates symbolic links between Windows and Linux filesystems
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🖥️  WINDOWS INTEGRATION | Creating links to Windows filesystem
 #=======================================================================
 """
 
-echo """
-📂 Linking Windows code directory...
+echo """📂 Linking Windows code directory...
    🔗 /mnt/c/Users/$(whoami)/code -> ~/code
 """
 ln -s /mnt/c/Users/$(whoami)/code ~/code
 
-echo """
-⚙️  Linking Windows dotfiles...
+echo """⚙️  Linking Windows dotfiles...
    🔗 /mnt/c/Users/$(whoami)/dotfiles -> ~/dotfiles
 """
 ln -s /mnt/c/Users/$(whoami)/dotfiles ~/dotfiles
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ SETUP COMPLETE | Cross-platform symlinks created successfully
 #=======================================================================
 """

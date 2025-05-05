@@ -5,8 +5,7 @@
 # This script installs Visual Studio Code on Ubuntu/Debian-based Linux distributions
 # Reference: https://code.visualstudio.com/docs/setup/linux
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔑 ADDING REPOSITORY KEYS | Setting up Microsoft repository
 #=======================================================================
 """
@@ -29,8 +28,7 @@ else
     echo "✅ VS Code repository already configured"
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📦 INSTALLING VS CODE | Updating and installing packages
 #=======================================================================
 """
@@ -43,8 +41,7 @@ sudo nala update -o Dir::Etc::sourcelist="sources.list.d/vscode.list" -o Dir::Et
 echo "📥 Installing Visual Studio Code..."
 sudo nala install code -y
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔄 CHECKING FOR VS CODE INSIDERS | Updating if installed
 #=======================================================================
 """
@@ -57,8 +54,7 @@ else
     echo "ℹ️ VS Code Insiders not installed, skipping"
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ INSTALLATION COMPLETE | VS Code has been installed successfully
 #=======================================================================
 """

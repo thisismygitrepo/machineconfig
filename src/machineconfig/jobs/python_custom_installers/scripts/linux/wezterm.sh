@@ -5,8 +5,7 @@
 # This script installs WezTerm terminal emulator on Ubuntu/Debian-based Linux distributions
 # Reference: https://wezfurlong.org/wezterm/install/linux.html
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔑 ADDING REPOSITORY KEYS | Setting up WezTerm repository
 #=======================================================================
 """
@@ -19,8 +18,7 @@ curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/sh
 echo "📝 Adding WezTerm repository to sources list..."
 echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📦 INSTALLING WEZTERM | Updating and installing packages
 #=======================================================================
 """
@@ -33,8 +31,7 @@ sudo nala update
 echo "📥 Installing WezTerm terminal emulator..."
 sudo nala install wezterm -y
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✅ INSTALLATION COMPLETE | WezTerm has been installed successfully
 #=======================================================================
 """

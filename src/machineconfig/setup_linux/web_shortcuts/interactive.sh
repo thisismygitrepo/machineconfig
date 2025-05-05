@@ -1,7 +1,6 @@
 #!/bin/bash
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📦 MACHINE CONFIGURATION | Interactive Installation Script
 #=======================================================================
 """
@@ -9,75 +8,63 @@ echo """
 read -p "📥 Install Apps [y]/n? " choice
 
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    echo """
-    #=======================================================================
+    echo """    #=======================================================================
     📦 APPLICATIONS | Installing base system applications
     #=======================================================================
     """
     curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/apps.sh | bash
 else
-    echo """
-    ⏭️  Skipping applications installation
+    echo """    ⏭️  Skipping applications installation
     """
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔄 SYSTEM UPDATE | Package management
 #=======================================================================
 """
 read -p "🔄 Upgrade system packages [y]/n? " choice
 
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    echo """
-    📦 Upgrading system packages...
+    echo """    📦 Upgrading system packages...
     """
     sudo nala upgrade -y
 else
-    echo """
-    ⏭️  Skipping system upgrade
+    echo """    ⏭️  Skipping system upgrade
     """
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🐍 PYTHON ENVIRONMENT | Virtual environment setup
 #=======================================================================
 """
 read -p "🐍 Install Python virtual environment 've' [y]/n? " choice
 export ve_name="ve"
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    echo """
-    🔧 Setting up Python environment...
+    echo """    🔧 Setting up Python environment...
     """
     curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
     curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/repos.sh | bash
 else
-    echo """
-    ⏭️  Skipping virtual environment setup
+    echo """    ⏭️  Skipping virtual environment setup
     """
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔒 SSH SERVER | Remote access setup
 #=======================================================================
 """
 read -p "🔒 Install SSH Server [y]/n? " choice
 choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    echo """
-    🔧 Installing SSH server...
+    echo """    🔧 Installing SSH server...
     """
     sudo nala install openssh-server -y
 else
-    echo """
-    ⏭️  Skipping SSH server installation
+    echo """    ⏭️  Skipping SSH server installation
     """
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📂 DOTFILES MIGRATION | Configuration transfer options
 #=======================================================================
 
@@ -97,64 +84,55 @@ echo """
     (requires symlinks to be created first)
 """
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📂 DOTFILES STATUS | Configuration files check
 #=======================================================================
 """
 read -p "📂 Have you finished copying dotfiles? [y]/n? " choice
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🔗 SYMLINK CREATION | Configuration setup
 #=======================================================================
 """
 read -p "🔗 Create Symlinks (finish dotfiles transfer first) [y]/n? " choice
 choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    echo """
-    🔧 Creating symlinks and setting permissions...
+    echo """    🔧 Creating symlinks and setting permissions...
     """
     source $HOME/venvs/ve/bin/activate
     python -m fire machineconfig.profile.create main --choice=all
     sudo chmod 600 $HOME/.ssh/*
     sudo chmod 700 $HOME/.ssh
 else
-    echo """
-    ⏭️  Skipping symlink creation
+    echo """    ⏭️  Skipping symlink creation
     """
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ⚡ CLI APPLICATIONS | Command-line tools installation
 #=======================================================================
 """
 read -p "⚡ Install CLI Apps [y]/n? " choice
 choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    echo """
-    🔧 Installing CLI applications...
+    echo """    🔧 Installing CLI applications...
     """
     . $HOME/venvs/ve/bin/activate
     python -m fire machineconfig.scripts.python.devops_devapps_install main --which=AllEssentials
     . $HOME/.bashrc
 else
-    echo """
-    ⏭️  Skipping CLI apps installation
+    echo """    ⏭️  Skipping CLI apps installation
     """
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🛠️  DEVELOPMENT TOOLS | Software development packages
 #=======================================================================
 """
 read -p "🛠️  Install Development Tools [y]/n? " choice
 choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    echo """
-    🔧 Installing development tools...
+    echo """    🔧 Installing development tools...
     """
     . $HOME/venvs/ve/bin/activate
     (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
@@ -162,68 +140,57 @@ if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     sudo nala install ffmpeg -y
     python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm,brave,code,docker,warp-cli
 else
-    echo """
-    ⏭️  Skipping development tools installation
+    echo """    ⏭️  Skipping development tools installation
     """
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 📚 REPOSITORIES | Project code retrieval
 #=======================================================================
 """
 read -p "📚 Retrieve Repositories to ~/code [y]/n? " choice
 choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    echo """
-    🔄 Cloning repositories...
+    echo """    🔄 Cloning repositories...
     """
     repos ~/code --clone --cloud odg1
 else
-    echo """
-    ⏭️  Skipping repository retrieval
+    echo """    ⏭️  Skipping repository retrieval
     """
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 💾 DATA RETRIEVAL | Backup restoration
 #=======================================================================
 """
 read -p "💾 Retrieve Data [y]/n? " choice
 choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    echo """
-    🔄 Retrieving data...
+    echo """    🔄 Retrieving data...
     """
     . $HOME/venvs/ve/bin/activate
     python -m fire machineconfig.scripts.python.devops_backup_retrieve main --direction=RETRIEVE
 else
-    echo """
-    ⏭️  Skipping data retrieval
+    echo """    ⏭️  Skipping data retrieval
     """
 fi
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 🎨 ASCII ART | Terminal visualization tools
 #=======================================================================
 """
 read -p "🎨 Install ASCII Art Libraries [y]/n? " choice
 choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    echo """
-    🎨 Installing ASCII art libraries...
+    echo """    🎨 Installing ASCII art libraries...
     """
     curl bit.ly/cfgasciiartlinux -L | sudo bash
 else
-    echo """
-    ⏭️  Skipping ASCII art installation
+    echo """    ⏭️  Skipping ASCII art installation
     """
 fi
 
-# echo """
-# 📧 Thunderbird Setup Note:
+# echo """# 📧 Thunderbird Setup Note:
 # Run after installing Thunderbird and starting it once:
 # cd ~/AppData/Roaming/ThunderBird/Profiles
 # \$res = ls
@@ -231,8 +198,7 @@ fi
 # mv \$backup_folder \$name
 # """
 
-echo """
-#=======================================================================
+echo """#=======================================================================
 ✨ INSTALLATION COMPLETE | System setup finished successfully
 #=======================================================================
 
