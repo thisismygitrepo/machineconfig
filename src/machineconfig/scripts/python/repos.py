@@ -114,7 +114,7 @@ def main():
         assert (repos_root.exists() and repos_root.name == 'repos.json') or args.cloud is not None, f"Path {repos_root} does not exist and cloud was not passed. You can't clone without one of them."
         program += install_repos(specs_path=str(repos_root), clone=args.clone, checkout_to_recorded_commit=args.checkout, checkout_to_branch=args.checkout_to_branch)
     elif args.all or args.commit or args.pull or args.push:
-        print("\n🔄 Performing Git actions on repositories...")
+        print(f"\n🔄 Performing Git actions on repositories @ `{repos_root}`...")
         for a_path in repos_root.search("*"):
             program += f"""echo "{("Handling " + str(a_path)).center(80, "-")}" """
             if args.pull or args.all: program += git_action(path=a_path, action=GitAction.pull, r=args.recursive, uv_sync=args.uv_sync)
