@@ -157,7 +157,7 @@ def main():
     parser.add_argument('destination', nargs='?', type=str, default=None, help='destination to mount')
     parser.add_argument('--network', type=str, default=None, help='mount network drive')
     args = parser.parse_args()
-    mount(cloud=args.clEoud, network=args.network, destination=args.destination)
+    mount(cloud=args.cloud, network=args.network, destination=args.destination)
 
 
 if __name__ == '__main__':
