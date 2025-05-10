@@ -10,10 +10,10 @@ import argparse
 
 def select_interpreter(workspace_root: str):
     print(f"""
-{'=' * 70}
+{'=' * 150}
 🔗 VSCODE VE LINKER | Linking virtual environment for VS Code
 📂 Workspace: {workspace_root}
-{'=' * 70}
+{'=' * 150}
 """)
     
     path = Path(workspace_root).joinpath('.ve_path')
@@ -44,11 +44,11 @@ def select_interpreter(workspace_root: str):
     venv_link.symlink_to(target=ve_path.expanduser().absolute())
     
     print(f"""
-{'=' * 70}
+{'=' * 150}
 ✅ SUCCESS | Virtual environment linked successfully
 🔗 Link: {venv_link}
 🎯 Target: {ve_path.expanduser().absolute()}
-{'=' * 70}
+{'=' * 150}
 """)
 
 

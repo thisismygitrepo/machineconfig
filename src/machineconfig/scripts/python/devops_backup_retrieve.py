@@ -16,90 +16,90 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
     try:
         cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ⚠️  DEFAULT CLOUD CONFIGURATION                                          ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ 🌥️  Using default cloud: {cloud:<52} ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     except (FileNotFoundError, KeyError, IndexError):
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🔍 DEFAULT CLOUD NOT FOUND                                              ║
 ║ 🔄 Please select a cloud configuration from the options below            ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         cloud = choose_cloud_interactively()
 
     bu_file: dict[str, Any] = Read.toml(LIBRARY_ROOT.joinpath("profile/backup.toml"))
     
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🧰 LOADING BACKUP CONFIGURATION                                         ║
 ║ 📄 File: {LIBRARY_ROOT.joinpath("profile/backup.toml")}      ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     if system() == "Linux": 
         bu_file = {key: val for key, val in bu_file.items() if "windows" not in key}
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🐧 LINUX ENVIRONMENT DETECTED                                           ║
 ║ 🔍 Filtering out Windows-specific entries                               ║
-║ ✅ Found {len(bu_file)} applicable backup configuration entries               ╚{'═' * 70}╝
+║ ✅ Found {len(bu_file)} applicable backup configuration entries               ╚{'═' * 150}╝
 """)
     elif system() == "Windows": 
         bu_file = {key: val for key, val in bu_file.items() if "linux" not in key}
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🪟 WINDOWS ENVIRONMENT DETECTED                                         ║
 ║ 🔍 Filtering out Linux-specific entries                                 ║
-║ ✅ Found {len(bu_file)} applicable backup configuration entries               ╚{'═' * 70}╝
+║ ✅ Found {len(bu_file)} applicable backup configuration entries               ╚{'═' * 150}╝
 """)
 
     if which is None:
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🔍 SELECT {direction} ITEMS                                             ║
 ║ 📋 Choose which configuration entries to process                         ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         choices = choose_multiple_options(msg=f"WHICH FILE of the following do you want to {direction}?", options=['all'] + list(bu_file.keys()))
     else:
         choices = which.split(",") if isinstance(which, str) else which
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🔖 PRE-SELECTED ITEMS                                                   ║
 ║ 📝 Using: {', '.join(choices):<54} ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
 
     if "all" in choices:
         items = bu_file
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 📋 PROCESSING ALL ENTRIES                                               ║
 ║ 🔢 Total entries to process: {len(bu_file):<39} ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     else:
         items = {key: val for key, val in bu_file.items() if key in choices}
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 📋 PROCESSING SELECTED ENTRIES                                          ║
 ║ 🔢 Total entries to process: {len(items):<39} ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
 
     program = f"""$cloud = "{cloud}:{ES}" \n """ if system() == "Windows" else f"""cloud="{cloud}:{ES}" \n """
     
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🚀 GENERATING {direction} SCRIPT                                        ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ 🌥️  Cloud: {cloud:<58} ║
 ║ 🗂️  Items: {len(items):<58} ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     for item_name, item in items.items():
@@ -110,12 +110,12 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
         flags += 'o' if system().lower() in item_name else ''
         
         print(f"""
-╔{'─' * 70}╗
+╔{'─' * 150}╗
 ║ 📦 PROCESSING: {item_name:<53} ║
-╠{'─' * 70}╣
+╠{'─' * 150}╣
 ║ 📂 Path: {P(item['path']).as_posix():<55} ║
 ║ 🏳️  Flags: {flags or 'None':<56} ║
-╚{'─' * 70}╝
+╚{'─' * 150}╝
 """)
         
         if flags: flags = "-" + flags
@@ -125,30 +125,30 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
             program += f"""\ncloud_copy $cloud "{P(item['path']).as_posix()}" {flags}\n"""
         else:
             print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ❌ ERROR: INVALID DIRECTION                                            ║
 ║ ⚠️  Direction must be either "BACKUP" or "RETRIEVE"                     ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
             raise RuntimeError(f"Unknown direction: {direction}")
             
         if item_name == "dotfiles" and system() == "Linux": 
             program += """\nchmod 700 ~/.ssh/*\n"""
             print(f"""
-╔{'─' * 70}╗
+╔{'─' * 150}╗
 ║ 🔒 SPECIAL HANDLING: SSH PERMISSIONS                                    ║
 ║ 🛠️  Setting secure permissions for SSH files                            ║
 ║ 📝 Command: chmod 700 ~/.ssh/*                                          ║
-╚{'─' * 70}╝
+╚{'─' * 150}╝
 """)
             
     print_code(program, lexer="shell", desc=f"{direction} script")
     
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ✅ {direction} SCRIPT GENERATION COMPLETE                               ║
 ║ 🚀 Ready to execute the operations                                      ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     return program
@@ -156,20 +156,20 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
 
 def main(direction: OPTIONS, which: Optional[str] = None):
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🔄 {direction} OPERATION STARTED                                        ║
 ║ ⏱️  {'-' * 58} ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     code = main_backup_retrieve(direction=direction, which=which)
     from machineconfig.utils.utils import write_shell_script_to_default_program_path
     
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 💾 GENERATING SHELL SCRIPT                                             ║
 ║ 📄 Filename: backup_retrieve.sh                                         ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     write_shell_script_to_default_program_path(program=code, desc="backup_retrieve.sh")

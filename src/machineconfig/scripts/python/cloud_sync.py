@@ -11,9 +11,9 @@ import argparse
 
 def args_parser():
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ☁️  Cloud Sync Utility                                                    ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     parser = argparse.ArgumentParser(description="""A wrapper for rclone sync and rclone bisync, with some extra features.""")
@@ -50,23 +50,23 @@ def args_parser():
     # map short flags to long flags (-u -> --upload), for easier use in the script
     if bisync:
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🔄 BI-DIRECTIONAL SYNC                                                    ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ Source: {source}                       
 ║ Target: {target}                       
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         rclone_cmd = f"""rclone bisync '{source}' '{target}' --resync"""
     else:
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 📤 ONE-WAY SYNC                                                           ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ Source: {source}                       
 ║ ↓                                                                        ║
 ║ Target: {target}                       
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         rclone_cmd = f"""rclone sync '{source}' '{target}' """
 
@@ -78,11 +78,11 @@ def args_parser():
     else: txt = f"""{rclone_cmd}"""
     
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🚀 EXECUTING COMMAND                                                      ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ {rclone_cmd[:65]}... ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     PROGRAM_PATH.write_text(txt)

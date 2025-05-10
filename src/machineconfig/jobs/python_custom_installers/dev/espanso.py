@@ -18,11 +18,11 @@ config_dict = {
 
 def main(version: Optional[str]):
     print(f"""
-{'=' * 70}
+{'=' * 150}
 ⚡ ESPANSO INSTALLER | Setting up text expansion tool
 🔄 Version: {'latest' if version is None else version}
 🔗 Source: https://github.com/espanso/espanso
-{'=' * 70}
+{'=' * 150}
 """)
     
     _ = version
@@ -35,18 +35,18 @@ def main(version: Optional[str]):
         env = os.environ["XDG_SESSION_TYPE"]
         if env == "wayland":
             print(f"""
-{'=' * 70}
+{'=' * 150}
 🖥️  DISPLAY SERVER | Wayland detected
 📦 Using Wayland-specific package
-{'=' * 70}
+{'=' * 150}
 """)
             config_dict["filename_template_linux_amd_64"] = "espanso-debian-wayland-amd64.deb"
         else:
             print(f"""
-{'=' * 70}
+{'=' * 150}
 🖥️  DISPLAY SERVER | X11 detected
 📦 Using X11-specific package
-{'=' * 70}
+{'=' * 150}
 """)
             config_dict["filename_template_linux_amd_64"] = "espanso-debian-x11-amd64.deb"
     else:
@@ -70,13 +70,13 @@ espanso install actually-all-emojis
     """
     
     print(f"""
-{'=' * 70}
+{'=' * 150}
 ✅ SUCCESS | Espanso installation completed
 📋 Post-installation steps:
 1️⃣  Register Espanso as a service
 2️⃣  Start the Espanso service
 3️⃣  Install the emoji package
-{'=' * 70}
+{'=' * 150}
 """)
     
     return config

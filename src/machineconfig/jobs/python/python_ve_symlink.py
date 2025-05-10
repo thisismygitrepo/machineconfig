@@ -7,9 +7,9 @@ from crocodile.file_management import P
 
 def main():
     print(f"""
-{'=' * 70}
+{'=' * 150}
 🔗 SYMLINK CREATOR | Create symlinks for virtual environments
-{'=' * 70}
+{'=' * 150}
 """)
     target = P(input("🎯 Symlink to which target? ")).expanduser().absolute()
     source = input(f"📍 Symlink from which source? [default to: CWD/{target.name}] ") or P.cwd().joinpath(target.name)
@@ -18,11 +18,11 @@ def main():
     # P('.gitignore').modify_text('venv', 'venv', replace_line=True)"
     source.symlink_to(target, overwrite=True)
     print(f"""
-{'=' * 70}
+{'=' * 150}
 ✅ SUCCESS | Symlink created successfully
 📍 Source: {source}
 🎯 Target: {target}
-{'=' * 70}
+{'=' * 150}
 """)
     return "echo '🔗 Finished creating symlink.'"
 

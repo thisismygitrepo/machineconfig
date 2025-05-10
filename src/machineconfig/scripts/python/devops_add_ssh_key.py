@@ -9,33 +9,33 @@ from crocodile.file_management import P
 
 def get_add_ssh_key_script(path_to_key: P):
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🔑 SSH KEY CONFIGURATION                                                 ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     if system() == "Linux": 
         authorized_keys = P.home().joinpath(".ssh/authorized_keys")
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🐧 Linux SSH configuration                                               │
 │ 📄 Authorized keys file: {authorized_keys}                      │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     elif system() == "Windows": 
         authorized_keys = P("C:/ProgramData/ssh/administrators_authorized_keys")
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🪟 Windows SSH configuration                                             │
 │ 📄 Authorized keys file: {authorized_keys}                │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     else: 
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ❌ ERROR: Unsupported operating system                                   ║
 ║ Only Linux and Windows are supported                                     ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         raise NotImplementedError
 
@@ -45,29 +45,29 @@ def get_add_ssh_key_script(path_to_key: P):
         key_count = len([k for k in keys_text if k.strip()])
         
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔍 Current SSH authorization status                                      │
 │ ✅ Found {key_count} authorized key(s)                                        │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         
         if path_to_key.read_text() in authorized_keys.read_text():
             print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ⚠️  Key already authorized                                                ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ Key: {path_to_key.name}
 ║ Status: Already present in authorized_keys file
 ║ No action required
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
             program = ""
         else:
             print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ ➕ Adding new SSH key to authorized keys                                 │
 │ 🔑 Key file: {path_to_key.name}                                          │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
             
             if system() == "Linux":
@@ -79,18 +79,18 @@ def get_add_ssh_key_script(path_to_key: P):
                 assert place_holder in program, f"This section performs string manipulation on the script {program_path} to add the key to the authorized_keys file. The script has changed and the string {place_holder} is not found."
                 program = program.replace(place_holder, f'$sshfile = "{path_to_key}"')
                 print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔧 Configured PowerShell script for Windows                              │
 │ 📝 Replaced placeholder with actual key path                             │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
             else: raise NotImplementedError
     else:
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 📝 Creating new authorized_keys file                                     │
 │ 🔑 Using key: {path_to_key.name}                                         │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         
         if system() == "Linux":
@@ -99,10 +99,10 @@ def get_add_ssh_key_script(path_to_key: P):
             program_path = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add-sshkey.ps1")
             program = P(program_path).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
             print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔧 Configured PowerShell script for Windows                              │
 │ 📝 Set key path in script                                                │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
 
     if system() == "Linux": 
@@ -116,15 +116,15 @@ sudo service ssh --full-restart
 
 """
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔒 Setting proper SSH permissions and restarting service                 │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ✅ SSH KEY CONFIGURATION PREPARED                                        ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         
     return program
@@ -132,30 +132,30 @@ sudo service ssh --full-restart
 
 def main():
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🔐 SSH PUBLIC KEY AUTHORIZATION TOOL                                     ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔍 Searching for public keys...                                          │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     
     pub_keys = P.home().joinpath(".ssh").search("*.pub")
     
     if pub_keys:
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ ✅ Found {len(pub_keys)} public key(s)                                           │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     else:
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ ⚠️  No public keys found                                                  │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     
     all_keys_option = f"all pub keys available ({len(pub_keys)})"
@@ -167,55 +167,55 @@ def main():
     
     if res == all_keys_option:
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔄 Processing all {len(pub_keys)} public keys...                                  │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         program = "\n\n\n".join(pub_keys.apply(get_add_ssh_key_script))
     
     elif res == i_have_path_option:
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 📂 Please provide the path to your public key                             │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         key_path = P(input("📋 Path: ")).expanduser().absolute()
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 📄 Using key from path: {key_path}                        │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         program = get_add_ssh_key_script(key_path)
     
     elif res == i_paste_option:
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 📋 Please provide a filename and paste the public key content             │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         key_filename = input("📝 File name (default: my_pasted_key.pub): ") or "my_pasted_key.pub"
         key_path = P.home().joinpath(f".ssh/{key_filename}")
         key_path.write_text(input("🔑 Paste the public key here: "))
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 💾 Key saved to: {key_path}                           │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         program = get_add_ssh_key_script(key_path)
     
     else:
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔑 Using selected key: {P(res).name}                                     │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         program = get_add_ssh_key_script(P(res))
     
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🚀 SSH KEY AUTHORIZATION READY                                           ║
 ║ Run the generated script to apply changes                                ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     return program

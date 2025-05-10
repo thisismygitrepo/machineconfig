@@ -18,11 +18,11 @@ config_dict = {
 
 def main(version: Optional[str]):
     print(f"""
-{'=' * 70}
+{'=' * 150}
 🐳 DOCKER INSTALLER | Setting up containerization platform
 💻 Platform: {platform.system()}
 🔄 Version: {'latest' if version is None else version}
-{'=' * 70}
+{'=' * 150}
 """)
     
     _ = version
@@ -50,14 +50,14 @@ def main(version: Optional[str]):
         raise NotImplementedError(error_msg)
         
     print(f"""
-{'=' * 70}
+{'=' * 150}
 ℹ️  INFO | Docker features:
 📦 Container-based virtualization
 🚀 Simplified application deployment
 🔄 Consistent development environments
 🛡️ Isolated application environments
 📊 Efficient resource utilization
-{'=' * 70}
+{'=' * 150}
 """)
     
     # _res = Terminal(stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)

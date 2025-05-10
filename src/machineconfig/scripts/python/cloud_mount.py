@@ -43,9 +43,9 @@ mprocs "echo 'see {DEFAULT_MOUNT}/{cloud} for the mounted cloud'; rclone about {
 
 def mount(cloud: Optional[str], network: Optional[str], destination: Optional[str]) -> None:
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ☁️  Cloud Mount Utility                                                   ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     config = get_rclone_config()
@@ -62,9 +62,9 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
             mount_loc = P(destination)
         
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 📂 Mount location: {mount_loc}                          │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
 
         if platform.system() == "Windows":
@@ -76,10 +76,10 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
             except (FileExistsError, OSError) as err:
                 # We need a umount command here.
                 print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ ⚠️  WARNING: Mount directory issue                                        │
 │    {err}                                                           
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
                 pass
         else: raise ValueError("unsupported platform")
@@ -91,10 +91,10 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
 
     mount_cmd = f"rclone mount {cloud}: {mount_loc} --vfs-cache-mode full --file-perms=0777"
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🚀 Preparing mount command:                                              │
 │ {mount_cmd}
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
 
     # txt = get_mprocs_mount_txt(cloud, mount_cmd)
@@ -138,18 +138,18 @@ zellij action move-focus up
     # print(f"running command: \n{txt}")
     PROGRAM_PATH.write_text(txt)
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ✅ Cloud mount command prepared successfully                              ║
 ║ 🔄 Running mount process...                                              ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
 
 
 def main():
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ☁️  RCLONE CLOUD MOUNT                                                    ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     parser = argparse.ArgumentParser(description='mount cloud')

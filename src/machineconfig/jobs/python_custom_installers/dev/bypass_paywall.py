@@ -18,10 +18,10 @@ config_dict = {
 
 def main(version: Optional[str] = None):
     print(f"""
-{'=' * 70}
+{'=' * 150}
 🔓 BYPASS PAYWALL | Installing paywall bypass extension for Chrome
 🔄 Version: {'latest' if version is None else version}
-{'=' * 70}
+{'=' * 150}
 """)
     
     _ = version
@@ -33,14 +33,14 @@ def main(version: Optional[str] = None):
     extension_folder = P(folder).joinpath("bypass-paywalls-chrome-master")
     
     print(f"""
-{'=' * 70}
+{'=' * 150}
 ✅ SUCCESS | Extension downloaded successfully
 📂 Location: {extension_folder}
 ℹ️  Next steps: 
 1️⃣  Open Chrome and navigate to chrome://extensions
 2️⃣  Enable Developer Mode (toggle in top right)
 3️⃣  Click "Load unpacked" and select the extension folder
-{'=' * 70}
+{'=' * 150}
 """)
     
     return ""

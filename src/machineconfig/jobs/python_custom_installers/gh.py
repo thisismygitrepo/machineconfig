@@ -30,11 +30,11 @@ config_dict = {
 
 def main(version: Optional[str]):
     print(f"""
-{'═' * 70}
+{'═' * 150}
 🔱 GITHUB CLI INSTALLER | Command line tool for GitHub
 💻 Platform: {platform.system()}
 🔄 Version: {'latest' if version is None else version}
-{'═' * 70}
+{'═' * 150}
 """)
     
     _ = version
@@ -45,9 +45,9 @@ def main(version: Optional[str]):
     inst.install(version=version)
     
     print(f"""
-{'─' * 70}
+{'─' * 150}
 🤖 GITHUB COPILOT | Setting up GitHub Copilot CLI extension
-{'─' * 70}
+{'─' * 150}
 """)
     
     if platform.system() == "Windows":
@@ -81,11 +81,11 @@ gh auth login --with-token $HOME/dotfiles/creds/git/gh_token.txt
     Terminal().run(program, shell="default").print(desc="Installing GitHub Copilot extension", capture=True)
     
     print(f"""
-{'═' * 70}
+{'═' * 150}
 ✅ SUCCESS | GitHub CLI installation completed
 🚀 GitHub Copilot CLI extension installed
 🔑 Authentication configured with token
-{'═' * 70}
+{'═' * 150}
 """)
     
     return program

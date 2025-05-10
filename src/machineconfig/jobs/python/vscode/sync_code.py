@@ -8,10 +8,10 @@ if config is None:
 
 def sync_remote(machine_name: str):
     print(f"""
-{'=' * 70}
+{'=' * 150}
 🔄 SYNC REMOTE | Initiating remote code synchronization
 🖥️  Target machine: {machine_name}
-{'=' * 70}
+{'=' * 150}
 """)
     
     machine_config = config.get(machine_name)
@@ -33,13 +33,13 @@ ssh -o "HostName={machine_config['HostName']}" -o "User={machine_config['User']}
     from rich.panel import Panel
 
     console = Console()
-    console.print(f"\n{'=' * 70}")
+    console.print(f"\n{'=' * 150}")
     console.print(Panel(
         Syntax(code, lexer="bash"),
         title=f"🔄 SYNC COMMAND | Connecting to {machine_name}",
         subtitle=f"🌐 Host: {machine_config['HostName']}"
     ), style="bold blue")
-    console.print(f"{'=' * 70}\n")
+    console.print(f"{'=' * 150}\n")
 
     code_path = Path.home().joinpath(".config", "machingconfig", "vscode_api", "code_temp")
     code_path.parent.mkdir(parents=True, exist_ok=True)
@@ -52,9 +52,9 @@ ssh -o "HostName={machine_config['HostName']}" -o "User={machine_config['User']}
     subprocess.run([str(code_path)], shell=True, check=True)
     
     print(f"""
-{'=' * 70}
+{'=' * 150}
 ✅ SUCCESS | Remote sync completed successfully
 🖥️  Machine: {machine_name}
-{'=' * 70}
+{'=' * 150}
 """)
 

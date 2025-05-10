@@ -23,11 +23,11 @@ config_dict = {
 
 def main(version: Optional[str]):
     print(f"""
-{'=' * 70}
+{'=' * 150}
 🌙 LUNARVIM INSTALLER | Setting up Neovim-based IDE
 🔄 Version: {'latest' if version is None else version}
 📚 Branch: release-1.4/neovim-0.9
-{'=' * 70}
+{'=' * 150}
 """)
     
     _ = version
@@ -55,14 +55,14 @@ LV_BRANCH='release-1.4/neovim-0.9' bash <(curl -s https://raw.githubusercontent.
         raise NotImplementedError(error_msg)
         
     print(f"""
-{'=' * 70}
+{'=' * 150}
 ℹ️  INFO | LunarVim features:
 📝 IDE-like experience for Neovim
 🔌 Built-in plugin management
 🛠️  LSP configuration out of the box
 🔍 Powerful fuzzy finding
 ⚙️  Simple and unified configuration
-{'=' * 70}
+{'=' * 150}
 
 ⚠️  NOTE: The installer will prompt for user input during installation.
 """)

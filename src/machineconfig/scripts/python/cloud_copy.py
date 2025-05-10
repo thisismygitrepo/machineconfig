@@ -20,9 +20,9 @@ from machineconfig.scripts.python.helpers.cloud_helpers import ArgsDefaults
 @RepeatUntilNoException(retry=3, sleep=1)
 def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🚀 Secure File Downloader                                                  ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     folder_obj = P.cwd() if folder is None else P(folder)
@@ -43,9 +43,9 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
             url = input("🔗 Enter share URL: ")
     
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 📡 Downloading from URL...                                                │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     from rich.progress import Progress
     with Progress(transient=True) as progress:
@@ -53,15 +53,15 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
         url_obj = P(url).download(folder=folder_obj)
         
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 📥 Downloaded file: {url_obj}                                
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔐 Decrypting and extracting...                                           │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     with Progress(transient=True) as progress:
         _task = progress.add_task("Decrypting... ", total=None)
@@ -72,9 +72,9 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
 
 def arg_parser() -> None:
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ☁️  Cloud Copy Utility                                                     ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     parser = argparse.ArgumentParser(description='🚀 Cloud CLI. It wraps rclone with sane defaults for optimum type time.')
@@ -104,9 +104,9 @@ def arg_parser() -> None:
 
     if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")):
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔒 Detected secure share link                                             │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         if source.startswith("https://drive.google.com/open?id="):
             source = "https://drive.google.com/uc?export=download&id=" + source.split("https://drive.google.com/open?id=")[1]
@@ -118,16 +118,16 @@ def arg_parser() -> None:
         print("🏠 Using 'myhome' as root directory")
 
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔍 Parsing source and target paths...                                     │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
     
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ ⚙️  Configuration:                                                         │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     Struct(args_obj.__dict__).print(as_config=True, title="CLI config")
 
@@ -135,13 +135,13 @@ def arg_parser() -> None:
     
     if cloud in source:
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 📥 DOWNLOADING FROM CLOUD                                                 ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ ☁️  Cloud: {cloud}                                                        
 ║ 📂 Source: {source.replace(cloud + ":", "")}                  
 ║ 🎯 Target: {target}                                
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         
         P(target).from_cloud(cloud=cloud, remotepath=source.replace(cloud + ":", ""),
@@ -150,20 +150,20 @@ def arg_parser() -> None:
                             rel2home=args_obj.rel2home, os_specific=args_obj.os_specific, root=args_obj.root, strict=False,
                             )
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ✅ Download completed successfully                                         ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         
     elif cloud in target:
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 📤 UPLOADING TO CLOUD                                                     ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ ☁️  Cloud: {cloud}                                                        
 ║ 📂 Source: {source}                                    
 ║ 🎯 Target: {target.replace(cloud + ":", "")}                  
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         
         res = P(source).to_cloud(cloud=cloud, remotepath=target.replace(cloud + ":", ""),
@@ -171,9 +171,9 @@ def arg_parser() -> None:
                                     rel2home=args_obj.rel2home, root=args_obj.root, os_specific=args_obj.os_specific, strict=False,
                                     share=args_obj.share)
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ✅ Upload completed successfully                                           ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         
         if args_obj.share:
@@ -182,18 +182,18 @@ def arg_parser() -> None:
             else: share_url_path = P(source).with_suffix(fname)
             share_url_path.write_text(res.as_url_str())
             print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🔗 SHARE URL GENERATED                                                    ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ 📝 URL file: {share_url_path}                            
 ║ 🌍 {res.as_url_str()}
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     else: 
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ❌ ERROR: Cloud '{cloud}' not found in source or target                   ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         raise ValueError(f"Cloud `{cloud}` not found in source or target.")
 

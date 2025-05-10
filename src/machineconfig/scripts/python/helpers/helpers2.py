@@ -19,9 +19,9 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         maybe_config = get_secure_share_cloud_config(interactive=True, cloud=cloud_maybe)
     elif config is not None:
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 📄 Loading configuration from: {config}                   │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         maybe_config = Args.from_config(absolute(config))
     else:
@@ -56,9 +56,9 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         if maybe_config is None:
             default_cloud: str=Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ ⚠️  No cloud config found. Using default cloud: {default_cloud}            │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
             source = default_cloud + ":" + source[1:]
         else:
@@ -79,9 +79,9 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         if maybe_config is None:
             default_cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ ⚠️  No cloud config found. Using default cloud: {default_cloud}            │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
             target = default_cloud + ":" + target[1:]
         else:
@@ -132,17 +132,17 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         if encrypt and ".enc" not in target: target += ".enc"
     else:
         raise ValueError(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ❌ ERROR: Invalid path configuration                                      ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ Either source or target must be a remote path (i.e. machine:path)        ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
 
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔍 Path resolution complete                                               │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     Struct({"cloud": cloud, "source": str(source), "target": str(target)}).print(as_config=True, title="CLI Resolution")
     _ = pwd, encrypt, zip_arg, share

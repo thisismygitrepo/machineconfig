@@ -21,10 +21,10 @@ cd {tool_name}
 cargo install --path .
 """
     print(f"""
-{'=' * 70}
+{'=' * 150}
 🦀 CARGO BUILD | Building Rust project: {tool_name}
 📦 Source: {url}
-{'=' * 70}
+{'=' * 150}
 """)
     if platform.system() == "Windows":
         Terminal(stdout=None).run(f". {P.tmpfile(suffix='.ps1').write_text(script)}", shell="pwsh").print()

@@ -10,10 +10,10 @@ import platform
 
 def select_interpreter(workspace_root: str):
     print(f"""
-{'=' * 70}
+{'=' * 150}
 🐍 PYTHON INTERPRETER | Setting up VS Code Python interpreter
 📂 Workspace: {workspace_root}
-{'=' * 70}
+{'=' * 150}
 """)
     
     path = Path(workspace_root).joinpath('.ve_path')
@@ -64,11 +64,11 @@ def select_interpreter(workspace_root: str):
     Save.json(obj=settings, path=work_space_settings, indent=4)
     
     print(f"""
-{'=' * 70}
+{'=' * 150}
 ✅ SUCCESS | Python interpreter configured successfully
 🐍 Interpreter: {python_path}
 📄 Settings: {work_space_settings}
-{'=' * 70}
+{'=' * 150}
 """)
 
 

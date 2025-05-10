@@ -20,11 +20,11 @@ ve_name = "goex"
 
 def main():
     print(f"""
-{'=' * 70}
+{'=' * 150}
 🦍 GORILLA INSTALLER | Natural language to API converter
 🌐 Source: https://github.com/ShishirPatil/gorilla
 📦 Virtual Environment: {ve_name}
-{'=' * 70}
+{'=' * 150}
 """)
     
     print("🔄 Preparing installation script...")
@@ -42,12 +42,12 @@ pip install -e .
     """
     
     print(f"""
-{'=' * 70}
+{'=' * 150}
 📋 INSTALLATION STEPS:
 1️⃣  Creating Python 3.11 virtual environment: {ve_name}
 2️⃣  Cloning Gorilla repository to ~/code/foreign
 3️⃣  Installing Gorilla in development mode
-{'=' * 70}
+{'=' * 150}
 
 ✅ Installation script prepared successfully!
 """)

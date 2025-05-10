@@ -34,25 +34,25 @@ try:
     dat = p.readit()
     if isinstance(dat, dict): 
         print(f'''
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 📄 File Data: {{p.name}}                                              
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 ''')
         Struct(dat).print(as_config=True, title=p.name)
     else: 
         print(f'''
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 📄 Successfully read the file: {{p.name}}                              
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 ''')
 except Exception as e:
     print(f'''
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ❌ ERROR READING FILE                                                    ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ File: {{p.name}}                                                       
 ║ Error: {{e}}                                                      
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 ''')
 
 """
@@ -105,45 +105,45 @@ def build_parser():
 
     if args.cmd != "":
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🖥️  Executing command from CLI argument                                   │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         import textwrap
         program = textwrap.dedent(args.cmd)
 
     elif args.fzf:
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔍 Searching for Python files...                                         │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         options = P.cwd().search("*.py", r=True).apply(str).list
         file = display_options(msg="Choose a python file to run", options=options, fzf=True, multi=False, )
         assert isinstance(file, str)
         program = P(file).read_text(encoding='utf-8')
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 📄 Selected file: {P(file).name}                                  │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
 
     elif args.file != "":
         file = P(args.file.lstrip()).expanduser().absolute()
         program = get_read_pyfile_pycode(file, as_module=args.module, cmd=args.cmd)
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 📄 Loading file: {file.name}                                    │
 │ 🔄 Mode: {'Module' if args.module else 'Script'}                                                 │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
 
     elif args.read != "":
         if args.streamlit_viewer:
             print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 📊 STARTING STREAMLIT VIEWER                                              ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
             from machineconfig.scripts.python.viewer import run
             py_file_path = run(data_path=args.read, data=None, get_figure=None)
@@ -157,9 +157,9 @@ streamlit run {py_file_path}
         file = P(str(args.read).lstrip()).expanduser().absolute()
         program = get_read_data_pycode(str(file))
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 📄 Reading data from: {file.name}                              │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
 
     else:  # just run croshell.py interactively
@@ -210,12 +210,12 @@ print_logo(logo="crocodile")
     final_program += fire_line
     
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🚀 LAUNCHING SCRIPT   {PROGRAM_PATH}           ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ 📄 Script: {pyfile}
 ║ 🔥 Command: {fire_line}
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     PROGRAM_PATH.write_text(data=final_program)

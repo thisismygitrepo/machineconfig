@@ -20,13 +20,13 @@ code --profile bitProfile --new-window {file_path}
     from rich.syntax import Syntax
     from rich.panel import Panel
     console = Console()
-    console.print(f"\n{'=' * 70}")
+    console.print(f"\n{'=' * 150}")
     console.print(Panel(
         Syntax(code, lexer="bash"),
         title="🔍 VS CODE API | Opening file in new instance",
         subtitle=f"📂 {file_path}"
     ), style="bold blue")
-    console.print(f"{'=' * 70}\n")
+    console.print(f"{'=' * 150}\n")
 
     code_path = Path.home().joinpath(".config", "machingconfig", "vscode_api", "code_temp")
     code_path.parent.mkdir(parents=True, exist_ok=True)

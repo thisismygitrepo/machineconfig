@@ -83,9 +83,9 @@ def main() -> None:
         #     print(f"➡️ Found version `{tmp}` for {an_app.stem}.")
         #     app_versions.append(None)
     print(f"""
-{'=' * 70}
+{'=' * 150}
 🔍 TOOL CHECK | Checking tools (#{len(apps_paths_tmp)}) collected from `{INSTALL_VERSION_ROOT}`
-{'=' * 70}
+{'=' * 150}
 """)
     apps_paths_raw.print()
     positive_pct: list[Optional[float]] = []
@@ -120,9 +120,9 @@ def main() -> None:
     res_df.to_csv(APP_SUMMARY_PATH.with_suffix(".csv").create(parents_only=True), index=False)
     APP_SUMMARY_PATH.with_suffix(".md").write_text(res_df.to_markdown())
     print(f"""
-{'=' * 70}
+{'=' * 150}
 📊 SAFETY REPORT | Summary of app scanning results
-{'=' * 70}
+{'=' * 150}
 """)
     print(res_df)
 
@@ -176,9 +176,9 @@ class PrecheckedCloudInstaller:
 
         if name == "AllEssentials":
             print(f"""
-{'=' * 70}
+{'=' * 150}
 📥 DOWNLOAD | Downloading {self.df.shape[0]} apps...
-{'=' * 70}
+{'=' * 150}
 """)
             print(self.df)
             _res = L(self.df.app_url).apply(PrecheckedCloudInstaller.install_cli_apps, jobs=20)

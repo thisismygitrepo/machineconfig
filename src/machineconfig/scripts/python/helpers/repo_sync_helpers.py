@@ -9,9 +9,9 @@ import platform
 
 def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cloud: str):
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🗑️  Deleting remote repo copy and pushing local copy                       ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     repo_sync_root = P(remote_repo).expanduser().absolute()
     repo_root_path = P(local_repo).expanduser().absolute()
@@ -24,17 +24,17 @@ def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cl
         print("🔗 Removed originEnc remote reference")
     except Exception: pass  # type: ignore
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 📤 Uploading local repository to cloud...                                │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
 
     repo_root_path.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
 
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ✅ Repository successfully pushed to cloud                                ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
 
 
@@ -52,12 +52,12 @@ def get_wt_cmd(wd1: P, wd2: P) -> str:
 
 def inspect_repos(repo_local_root: str, repo_remote_root: str):
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🔍 Inspecting Repositories                                                ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ 📂 Local:  {repo_local_root}                      
 ║ 📂 Remote: {repo_remote_root}                    
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
 
     if platform.system() == "Windows":
@@ -73,16 +73,16 @@ def inspect_repos(repo_local_root: str, repo_remote_root: str):
 
 def fetch_dotfiles():
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 📁 Fetching Dotfiles                                                      ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
 
     cloud_resolved = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ ⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}     │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
 
     dotfiles_local = P.home().joinpath("dotfiles")
@@ -91,18 +91,18 @@ def fetch_dotfiles():
     remote_path = dotfiles_local.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
 
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 📥 Downloading dotfiles from cloud...                                    │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
 
     dotfiles_remote.from_cloud(remotepath=remote_path, cloud=cloud_resolved,
         unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=None)
 
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🗑️  Removing old dotfiles and replacing with cloud version...            │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
 
     dotfiles_local.delete(sure=True)
@@ -120,8 +120,8 @@ sudo chmod +x $HOME/dotfiles/scripts/linux -R
     Terminal().run(f". {shell_path}", shell="bash").capture().print()
 
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ✅ Dotfiles successfully fetched and installed                            ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
 

@@ -69,9 +69,9 @@ python -m pip freeze {'--exclude-editable' if exclude_editable else ''} > requir
 """
     Terminal().run_script(pip_freeze_script, verbose=True, shell="default").print()
     print(f"""
-{'=' * 70}
+{'=' * 150}
 ✅ SUCCESS | Requirements for version {version} installed successfully
-{'=' * 70}
+{'=' * 150}
 """)
 
 
@@ -81,9 +81,9 @@ def main():
     try:
         repo = Repo(P.cwd(), search_parent_directories=True)
         print(f"""
-{'=' * 70}
+{'=' * 150}
 🔍 GIT REPO | Found repository at {repo.working_dir}
-{'=' * 70}
+{'=' * 150}
 """)
     except InvalidGitRepositoryError as err:
         print(f"""

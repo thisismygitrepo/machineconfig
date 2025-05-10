@@ -17,11 +17,11 @@ config_dict = {
 
 def main(version: Optional[str]):
     print(f"""
-{'═' * 70}
+{'═' * 150}
 🌐 CLOUDFLARE WARP | Installing Cloudflare WARP CLI
 💻 Platform: {platform.system()}
 🔄 Version: {'latest' if version is None else version}
-{'═' * 70}
+{'═' * 150}
 """)
     
     _ = version
@@ -51,14 +51,14 @@ def main(version: Optional[str]):
         raise NotImplementedError(error_msg)
     
     print(f"""
-{'═' * 70}
+{'═' * 150}
 ℹ️  INFO | Cloudflare WARP Features:
 🔒 Secure your internet connection
 🚀 Improve browsing performance
 🛡️ Hide your IP address
 🔐 Encrypt your DNS queries
 🌐 Access Cloudflare Zero Trust services
-{'═' * 70}
+{'═' * 150}
 """)
     
     # _res = Terminal(stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)

@@ -22,18 +22,18 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
         try:
             cloud_resolved = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ ⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}     │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         except FileNotFoundError:
             print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ❌ ERROR: No cloud profile found                                          ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ Location: {DEFAULTS_PATH}                        
 ║ Please set one up or provide one via the --cloud flag.                   ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
             return ""
     else: cloud_resolved = cloud
@@ -47,18 +47,18 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
     
     try:
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 📥 DOWNLOADING REMOTE REPOSITORY                                          ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         remote_path = repo_local_root.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
         repo_remote_root.from_cloud(remotepath=remote_path, cloud=cloud_resolved, unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=pwd)
     except AssertionError:
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🆕 Remote repository doesn't exist                                        ║
 ║ 📤 Creating new remote and exiting...                                     ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
         return ""
@@ -66,28 +66,28 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
     repo_remote_obj = git.Repo(repo_remote_root)
     if repo_remote_obj.is_dirty():
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ⚠️  WARNING: REMOTE REPOSITORY IS DIRTY                                    ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ Location: {repo_remote_root}               
 ║ Please commit or stash changes before proceeding.                        ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
 
     script = f"""
 echo ""
-echo "╔{'═' * 70}╗"
+echo "╔{'═' * 150}╗"
 echo "║ 💾 COMMITTING LOCAL CHANGES                                               ║"
-echo "╚{'═' * 70}╝"
+echo "╚{'═' * 150}╝"
 cd {repo_local_root}
 git status
 git add .
 git commit -am "{message}"
 echo ""
 echo ""
-echo "╔{'═' * 70}╗"
+echo "╔{'═' * 150}╗"
 echo "║ 🔄 PULLING LATEST FROM REMOTE                                             ║"
-echo "╚{'═' * 70}╝"
+echo "╚{'═' * 150}╝"
 cd {repo_local_root}
 echo '-> Trying to removing originEnc remote from local repo if it exists.'
 # git remote remove originEnc
@@ -104,12 +104,12 @@ git pull originEnc master
 
     if res.is_successful(strict_err=True, strict_returcode=True):
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ✅ Pull succeeded!                                                        ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ 🧹 Removing originEnc remote and local copy                               ║
 ║ 📤 Pushing merged repository to cloud storage                             ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         repo_remote_root.delete(sure=True)
         from git.remote import Remote
@@ -117,12 +117,12 @@ git pull originEnc master
         repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
     else:
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ⚠️  MERGE FAILED                                                          ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ 💾 Keeping local copy of remote at:                                       ║
 ║ 📂 {repo_remote_root}                    
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
 
         # ================================================================================
@@ -168,11 +168,11 @@ git commit -am "finished merging"
         # ================================================================================
 
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🔄 RESOLVE MERGE CONFLICT                                                 ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ Choose an option to resolve the conflict:                                ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         
         print(f"• 1️⃣  {option1:75} 👉 {shell_file_1}")
@@ -198,9 +198,9 @@ git commit -am "finished merging"
 
 def args_parser():
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🔄 Repository Synchronization Utility                                     ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
 
     parser = argparse.ArgumentParser(description="Secure Repo CLI.")

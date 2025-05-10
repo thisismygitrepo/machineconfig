@@ -17,11 +17,11 @@ config_dict = {
 
 def main(version: Optional[str] = None):
     print(f"""
-{'=' * 70}
+{'=' * 150}
 💻 VS CODE INSTALLER | Setting up Visual Studio Code
 🖥️  Platform: {platform.system()}
 🔄 Version: {'latest' if version is None else version}
-{'=' * 70}
+{'=' * 150}
 """)
 
     if platform.system() == 'Linux':
@@ -45,14 +45,14 @@ def main(version: Optional[str] = None):
     _ = version
     
     print(f"""
-{'=' * 70}
+{'=' * 150}
 ℹ️  INFO | VS Code features:
 📝 Powerful code editor with IntelliSense
 🧩 Thousands of extensions available
 🔍 Integrated debugging
 🔄 Git integration
 ⚙️  Highly customizable
-{'=' * 70}
+{'=' * 150}
 """)
     
     return install_script

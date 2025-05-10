@@ -14,9 +14,9 @@ import asyncio
 # Create agent with the model
 async def main():
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🌐 Browser Automation Agent
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
 
     print("🔄 Initializing LLM model (llama3.1:8b)...")
@@ -24,10 +24,10 @@ async def main():
     print("✅ LLM model initialized")
     
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🤖 Task: Open https://chat.openai.com/ and ask how many r's in  │
 │       rrraaararewey, use Thinking Button and type the answer    │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     
     print("🚀 Creating and launching browser agent...")
@@ -40,9 +40,9 @@ async def main():
     await agent.run()
     
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ✅ Browser automation task completed
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
 
 

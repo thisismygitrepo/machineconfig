@@ -50,18 +50,18 @@ class Args():
 
 def find_cloud_config(path: P):
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔍 Searching for cloud configuration file...                              │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
 
     for _i in range(len(path.parts)):
         if path.joinpath("cloud.json").exists():
             res = Args.from_config(path.joinpath("cloud.json"))
             print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ ✅ Found cloud config at: {path.joinpath('cloud.json')}   │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
             Struct(res.__dict__).print(as_config=True, title="Cloud Config")
             return res
@@ -77,11 +77,11 @@ def absolute(path: str) -> P:
     try_absing =  P.cwd().joinpath(path)
     if try_absing.exists(): return try_absing
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ ⚠️  WARNING:                                                              │
 │ Path {path} could not be resolved to absolute path.         
 │ Trying to resolve symlinks (this may result in unintended paths).        │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     return obj.absolute()
 
@@ -89,9 +89,9 @@ def absolute(path: str) -> P:
 
 def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Args:
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🔐 Secure Share Cloud Configuration                                       ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     if cloud is None:
@@ -126,9 +126,9 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Ar
                rel2home=True, root="myshare", os_specific=False,)
     
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ ⚙️  Using SecureShare cloud config                                        │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     Struct(res.__dict__).print(as_config=True, title="SecureShare Config")
     return res

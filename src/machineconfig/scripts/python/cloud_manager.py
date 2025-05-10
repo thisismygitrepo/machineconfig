@@ -7,9 +7,9 @@ import argparse
 
 def main():
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ☁️  Cloud Manager                                                         ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     
     parser = argparse.ArgumentParser()
@@ -24,18 +24,18 @@ def main():
     args = parser.parse_args()
 
     print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔧 Initializing Cloud Manager with {args.num_jobs} worker{'s' if args.num_jobs > 1 else ''}    │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
     
     cm = CloudManager(max_jobs=args.num_jobs, cloud=args.cloud, reset_local=args.reset_local)
     
     if args.release_lock:
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔓 Releasing lock...                                                      │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         cm.claim_lock()
         cm.release_lock()
@@ -43,45 +43,45 @@ def main():
         
     if args.queue_failed_jobs:
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔄 Requeuing failed jobs...                                               │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         cm.clean_failed_jobs_mess()
         print("✅ Failed jobs moved to queue")
         
     if args.rerun_jobs:
         print(f"""
-╭{'─' * 70}╮
+╭{'─' * 150}╮
 │ 🔁 Rerunning jobs...                                                      │
-╰{'─' * 70}╯
+╰{'─' * 150}╯
 """)
         cm.rerun_jobs()
         print("✅ Jobs restarted successfully")
         
     if args.monitor_cloud:
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 👁️  STARTING CLOUD MONITOR                                                 ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         cm.run_monitor()
         
     if args.serve:
         print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ 🚀 STARTING JOB SERVER                                                    ║
-╠{'═' * 70}╣
+╠{'═' * 150}╣
 ║ 💻 Running {args.num_jobs} worker{'s' if args.num_jobs > 1 else ''}                                                   ║
 ║ ☁️  Cloud: {args.cloud if args.cloud else 'Default'}                                               
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
         cm.serve()
         
     print(f"""
-╔{'═' * 70}╗
+╔{'═' * 150}╗
 ║ ✅ Cloud Manager finished successfully                                    ║
-╚{'═' * 70}╝
+╚{'═' * 150}╝
 """)
     import sys
     sys.exit(0)

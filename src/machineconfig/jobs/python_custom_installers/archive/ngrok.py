@@ -19,10 +19,10 @@ config_dict = {
 
 def main(version: Optional[str]):
     print(f"""
-{'=' * 70}
+{'=' * 150}
 🔄 NGROK INSTALLER | Setting up secure tunnels to localhost
 💻 Platform: {platform.system()}
-{'=' * 70}
+{'=' * 150}
 """)
     
     _ = version
@@ -50,10 +50,10 @@ sudo nala update && sudo nala install ngrok
         raise NotImplementedError(error_msg)
         
     print(f"""
-{'=' * 70}
+{'=' * 150}
 ⚠️  SECURITY WARNING | ngrok has been flagged by some antivirus engines
 🛡️  Use at your own risk - flagged by 35% of antivirus engines
-{'=' * 70}
+{'=' * 150}
 """)
     return program
 
