@@ -12,6 +12,8 @@ from typing import Optional
 
 system = platform.system()
 
+BOX_WIDTH = 78  # width for box drawing
+
 # --------------------------------------- SHELL PROFILE --------------------------------------------------------
 # modification of shell profile by additing dirs to PATH
 # Shell profile is either in dotfiles and is synced (as in Windows), hence no need for update, or is updated on the fly (for Linux)
@@ -26,15 +28,15 @@ def create_default_shell_profile():
 
     if source in profile: 
         print(f"""
-╭{'─' * 78}╮
-│ 🔄 PROFILE | Skipping init script sourcing - already present in profile      │
-╰{'─' * 78}╯
+╭{'─' * BOX_WIDTH}╮
+│ 🔄 PROFILE | Skipping init script sourcing - already present in profile{' ' * (BOX_WIDTH - len("🔄 PROFILE | Skipping init script sourcing - already present in profile"))}│
+╰{'─' * BOX_WIDTH}╯
 """)
     else:
         print(f"""
-╭{'─' * 78}╮
-│ 📝 PROFILE | Adding init script sourcing to profile                          │
-╰{'─' * 78}╯
+╭{'─' * BOX_WIDTH}╮
+│ 📝 PROFILE | Adding init script sourcing to profile{' ' * (BOX_WIDTH - len("📝 PROFILE | Adding init script sourcing to profile"))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         profile += "\n" + source + "\n"
         if system == "Linux":
@@ -58,9 +60,9 @@ def get_shell_profile_path():
     else: raise ValueError(f"Not implemented for this system {system}")
     
     print(f"""
-╔{'═' * 78}╗
-║ 🐚 SHELL PROFILE | Working with path: `{profile_path}`
-╚{'═' * 78}╝
+╔{'═' * BOX_WIDTH}╗
+║ 🐚 SHELL PROFILE | Working with path: `{profile_path}`{' ' * (BOX_WIDTH - len(f"🐚 SHELL PROFILE | Working with path: `{profile_path}`"))}║
+╚{'═' * BOX_WIDTH}╝
 """)
     return profile_path
 
@@ -70,9 +72,9 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
     dirs = env_path[f'path_{system.lower()}']['extension']
 
     print(f"""
-╔{'═' * 78}╗
-║ 🔍 ENVIRONMENT | Current PATH variables:
-╚{'═' * 78}╝
+╔{'═' * BOX_WIDTH}╗
+║ 🔍 ENVIRONMENT | Current PATH variables:{' ' * (BOX_WIDTH - len("🔍 ENVIRONMENT | Current PATH variables:"))}║
+╚{'═' * BOX_WIDTH}╝
 """)
     P.get_env().PATH.print()
 
@@ -96,9 +98,9 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice
     sources: list[str] = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()[system.lower()]['files']
 
     print(f"""
-╭{'─' * 78}╮
-│ 🔄 Adding sources to shell profile                                          │
-╰{'─' * 78}╯
+╭{'─' * BOX_WIDTH}╮
+│ 🔄 Adding sources to shell profile{' ' * (BOX_WIDTH - len("🔄 Adding sources to shell profile"))}│
+╰{'─' * BOX_WIDTH}╯
 """)
 
     if choice is None:
@@ -139,9 +141,9 @@ def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice
     patches: list[str] = list(LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search().apply(lambda x: x.as_posix()))
     
     print(f"""
-╭{'─' * 78}╮
-│ 🩹 Adding patches to shell profile                                          │
-╰{'─' * 78}╯
+╭{'─' * BOX_WIDTH}╮
+│ 🩹 Adding patches to shell profile{' ' * (BOX_WIDTH - len("🩹 Adding patches to shell profile"))}│
+╰{'─' * BOX_WIDTH}╯
 """)
     
     if choice is None:

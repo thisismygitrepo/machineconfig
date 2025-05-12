@@ -9,6 +9,25 @@ from machineconfig.utils.utils import PROGRAM_PATH, display_options
 from machineconfig.utils.ve_utils.ve1 import get_ve_name_and_ipython_profile, get_ve_activate_line
 from typing import Optional
 
+BOX_WIDTH = 150  # width for box drawing
+
+
+def _get_padding(text: str, padding_before: int = 2, padding_after: int = 1) -> str:
+    """Calculate the padding needed to align the box correctly.
+    
+    Args:
+        text: The text to pad
+        padding_before: The space taken before the text (usually "║ ")
+        padding_after: The space needed after the text (usually " ║")
+    
+    Returns:
+        A string of spaces for padding
+    """
+    # Count visible characters (might not be perfect for all Unicode characters)
+    text_length = len(text)
+    padding_length = BOX_WIDTH - padding_before - text_length - padding_after
+    return ' ' * max(0, padding_length)
+
 
 def add_print_header_pycode(path: str, title: str):
     return f"""
@@ -28,35 +47,45 @@ except Exception: print(pycode)
 
 
 def get_read_data_pycode(path: str):
-    pycode = f"""
+    # We need to be careful here since we're generating Python code as a string
+    # that will use f-strings itself
+    return f"""
 p = P(r\'{path}\').absolute()
 try:
     dat = p.readit()
     if isinstance(dat, dict): 
+        text = "📄 File Data: " + str(p.name)
+        spaces = ' ' * (150 - len(text) - 3)
         print(f'''
 ╔{'═' * 150}╗
-║ 📄 File Data: {{p.name}}                                              
+║ {{text}}{{spaces}}║
 ╚{'═' * 150}╝
 ''')
         Struct(dat).print(as_config=True, title=p.name)
     else: 
+        text = "📄 Successfully read the file: " + str(p.name)
+        spaces = ' ' * (150 - len(text) - 3)
         print(f'''
 ╔{'═' * 150}╗
-║ 📄 Successfully read the file: {{p.name}}                              
+║ {{text}}{{spaces}}║
 ╚{'═' * 150}╝
 ''')
 except Exception as e:
+    error_text = "❌ ERROR READING FILE"
+    error_spaces = ' ' * (150 - len(error_text) - 3)
+    file_text = "File: " + str(p.name)
+    file_spaces = ' ' * (150 - len(file_text) - 3)
+    err_text = "Error: " + str(e)
+    err_spaces = ' ' * (150 - len(err_text) - 3)
     print(f'''
 ╔{'═' * 150}╗
-║ ❌ ERROR READING FILE                                                    ║
+║ {{error_text}}{{error_spaces}}║
 ╠{'═' * 150}╣
-║ File: {{p.name}}                                                       
-║ Error: {{e}}                                                      
+║ {{file_text}}{{file_spaces}}║
+║ {{err_text}}{{err_spaces}}║
 ╚{'═' * 150}╝
 ''')
-
 """
-    return pycode
 
 
 def get_read_pyfile_pycode(path: P, as_module: bool, cmd: str=""):
@@ -104,46 +133,52 @@ def build_parser():
     file = P.cwd()  # initialization value, could be modified according to args.
 
     if args.cmd != "":
+        text = "🖥️  Executing command from CLI argument"
         print(f"""
-╭{'─' * 150}╮
-│ 🖥️  Executing command from CLI argument                                   │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ {text}{_get_padding(text)}│
+╰{'─' * BOX_WIDTH}╯
 """)
         import textwrap
         program = textwrap.dedent(args.cmd)
 
     elif args.fzf:
+        text = "🔍 Searching for Python files..."
         print(f"""
-╭{'─' * 150}╮
-│ 🔍 Searching for Python files...                                         │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ {text}{_get_padding(text)}│
+╰{'─' * BOX_WIDTH}╯
 """)
         options = P.cwd().search("*.py", r=True).apply(str).list
         file = display_options(msg="Choose a python file to run", options=options, fzf=True, multi=False, )
         assert isinstance(file, str)
         program = P(file).read_text(encoding='utf-8')
+        text = f"📄 Selected file: {P(file).name}"
         print(f"""
-╭{'─' * 150}╮
-│ 📄 Selected file: {P(file).name}                                  │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ {text}{_get_padding(text)}│
+╰{'─' * BOX_WIDTH}╯
 """)
 
     elif args.file != "":
         file = P(args.file.lstrip()).expanduser().absolute()
         program = get_read_pyfile_pycode(file, as_module=args.module, cmd=args.cmd)
+        text1 = f"📄 Loading file: {file.name}"
+        text2 = f"🔄 Mode: {'Module' if args.module else 'Script'}"
         print(f"""
-╭{'─' * 150}╮
-│ 📄 Loading file: {file.name}                                    │
-│ 🔄 Mode: {'Module' if args.module else 'Script'}                                                 │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ {text1}{_get_padding(text1)}│
+│ {text2}{_get_padding(text2)}│
+╰{'─' * BOX_WIDTH}╯
 """)
 
     elif args.read != "":
         if args.streamlit_viewer:
+            text = "📊 STARTING STREAMLIT VIEWER"
             print(f"""
-╔{'═' * 150}╗
-║ 📊 STARTING STREAMLIT VIEWER                                              ║
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ {text}{_get_padding(text)}║
+╚{'═' * BOX_WIDTH}╝
 """)
             from machineconfig.scripts.python.viewer import run
             py_file_path = run(data_path=args.read, data=None, get_figure=None)
@@ -156,10 +191,11 @@ streamlit run {py_file_path}
             return None
         file = P(str(args.read).lstrip()).expanduser().absolute()
         program = get_read_data_pycode(str(file))
+        text = f"📄 Reading data from: {file.name}"
         print(f"""
-╭{'─' * 150}╮
-│ 📄 Reading data from: {file.name}                              │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ {text}{_get_padding(text)}│
+╰{'─' * BOX_WIDTH}╯
 """)
 
     else:  # just run croshell.py interactively
@@ -209,13 +245,16 @@ print_logo(logo="crocodile")
             
     final_program += fire_line
     
+    title = "🚀 LAUNCHING SCRIPT"
+    text1 = f"📄 Script: {pyfile}"
+    text2 = f"🔥 Command: {fire_line}"
     print(f"""
-╔{'═' * 150}╗
-║ 🚀 LAUNCHING SCRIPT   {PROGRAM_PATH}           ║
-╠{'═' * 150}╣
-║ 📄 Script: {pyfile}
-║ 🔥 Command: {fire_line}
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ {title}   {PROGRAM_PATH}{_get_padding(f"{title}   {PROGRAM_PATH}")}║
+╠{'═' * BOX_WIDTH}╣
+║ {text1}{_get_padding(text1)}║
+║ {text2}{_get_padding(text2)}║
+╚{'═' * BOX_WIDTH}╝
 """)
     
     PROGRAM_PATH.write_text(data=final_program)

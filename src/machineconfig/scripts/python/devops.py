@@ -6,6 +6,8 @@ from platform import system
 from enum import Enum
 from typing import Optional
 
+BOX_WIDTH = 150  # width for box drawing
+
 
 class Options(Enum):
     update         = '🔄 UPDATE essential repos'
@@ -26,9 +28,9 @@ class Options(Enum):
 
 def args_parser():
     print(f"""
-╔{'═' * 150}╗
-║ 🛠️  DevOps Tool Suite                                                    ║
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ 🛠️  DevOps Tool Suite{' ' * (BOX_WIDTH - len('🛠️  DevOps Tool Suite'))}║
+╚{'═' * BOX_WIDTH}╝
 """)
     
     import argparse
@@ -42,9 +44,9 @@ def args_parser():
 def main(which: Optional[str] = None):
     PROGRAM_PATH.delete(sure=True, verbose=False)
     print(f"""
-╭{'─' * 150}╮
-│ 🚀 Initializing DevOps operation...                                      │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ 🚀 Initializing DevOps operation...{' ' * (BOX_WIDTH - len('│ 🚀 Initializing DevOps operation...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
     
     options = [op.value for op in Options]
@@ -53,62 +55,62 @@ def main(which: Optional[str] = None):
             choice_key = display_options(msg="", options=options, header="🛠️ DEVOPS", default=options[0])
         except KeyboardInterrupt:
             print(f"""
-╔{'═' * 150}╗
-║ ❌ Operation cancelled by user                                           ║
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ ❌ Operation cancelled by user{' ' * (BOX_WIDTH - len('║ ❌ Operation cancelled by user'))}║
+╚{'═' * BOX_WIDTH}╝
 """)
             return
     else: choice_key = Options[which].value
 
     print(f"""
-╔{'═' * 150}╗
-║ 🔧 SELECTED OPERATION                                                    ║
-╠{'═' * 150}╣
-║ {choice_key.center(68)} ║
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ 🔧 SELECTED OPERATION{' ' * (BOX_WIDTH - len('║ 🔧 SELECTED OPERATION'))}║
+╠{'═' * BOX_WIDTH}╣
+║ {choice_key.center(BOX_WIDTH-4)} ║
+╚{'═' * BOX_WIDTH}╝
 """)
 
     if choice_key == Options.update.value:
         print(f"""
-╭{'─' * 150}╮
-│ 🔄 Updating essential repositories...                                    │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ 🔄 Updating essential repositories...{' ' * (BOX_WIDTH - len('│ 🔄 Updating essential repositories...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         import machineconfig.scripts.python.devops_update_repos as helper
         program = helper.main()
 
     elif choice_key == Options.ve.value:
         print(f"""
-╭{'─' * 150}╮
-│ 🐍 Setting up virtual environment...                                     │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ 🐍 Setting up virtual environment...{' ' * (BOX_WIDTH - len('│ 🐍 Setting up virtual environment...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         from machineconfig.utils.ve import get_ve_install_script
         program = get_ve_install_script()
 
     elif choice_key == Options.cli_install.value:
         print(f"""
-╭{'─' * 150}╮
-│ ⚙️  Installing development applications...                                │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ ⚙️  Installing development applications...{' ' * (BOX_WIDTH - len('│ ⚙️  Installing development applications...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         import machineconfig.scripts.python.devops_devapps_install as helper
         program = helper.main()
 
     elif choice_key == Options.sym_new.value:
         print(f"""
-╭{'─' * 150}╮
-│ 🔄 Creating new symlinks...                                              │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ 🔄 Creating new symlinks...{' ' * (BOX_WIDTH - len('│ 🔄 Creating new symlinks...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         import machineconfig.jobs.python.python_ve_symlink as helper
         program = helper.main()
 
     elif choice_key == Options.sym_path_shell.value:
         print(f"""
-╭{'─' * 150}╮
-│ 🔗 Setting up symlinks, PATH, and shell profile...                       │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ 🔗 Setting up symlinks, PATH, and shell profile...{' ' * (BOX_WIDTH - len('│ 🔗 Setting up symlinks, PATH, and shell profile...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         import machineconfig.profile.create as helper
         helper.main()
@@ -116,36 +118,36 @@ def main(which: Optional[str] = None):
 
     elif choice_key == Options.ssh_add_pubkey.value:
         print(f"""
-╭{'─' * 150}╮
-│ 🔑 Adding public SSH key to this machine...                              │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ 🔑 Adding public SSH key to this machine...{' ' * (BOX_WIDTH - len('│ 🔑 Adding public SSH key to this machine...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         import machineconfig.scripts.python.devops_add_ssh_key as helper
         program = helper.main()
 
     elif choice_key == Options.ssh_use_pair.value:
         print(f"""
-╔{'═' * 150}╗
-║ ❌ ERROR: Not Implemented                                                ║
-║ SSH key pair connection feature is not yet implemented                   ║
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ ❌ ERROR: Not Implemented{' ' * (BOX_WIDTH - len('║ ❌ ERROR: Not Implemented'))}║
+║ SSH key pair connection feature is not yet implemented{' ' * (BOX_WIDTH - len('║ SSH key pair connection feature is not yet implemented'))}║
+╚{'═' * BOX_WIDTH}╝
 """)
         raise NotImplementedError
 
     elif choice_key == Options.ssh_add_id.value:  # so that you can SSH directly withuot pointing to identity key.
         print(f"""
-╭{'─' * 150}╮
-│ 🗝️  Adding SSH identity (private key) to this machine...                  │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ 🗝️  Adding SSH identity (private key) to this machine...{' ' * (BOX_WIDTH - len('│ 🗝️  Adding SSH identity (private key) to this machine...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         import machineconfig.scripts.python.devops_add_identity as helper
         program = helper.main()
 
     elif choice_key == Options.ssh_setup.value:
         print(f"""
-╭{'─' * 150}╮
-│ 📡 Setting up SSH...                                                     │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ 📡 Setting up SSH...{' ' * (BOX_WIDTH - len('│ 📡 Setting up SSH...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         program_windows = """Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""
         program_linux = """curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash  # https://github.com/thisismygitrepo.keys"""
@@ -153,62 +155,62 @@ def main(which: Optional[str] = None):
 
     elif choice_key == Options.ssh_setup_wsl.value:
         print(f"""
-╭{'─' * 150}╮
-│ 🐧 Setting up SSH for WSL...                                             │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ 🐧 Setting up SSH for WSL...{' ' * (BOX_WIDTH - len('│ 🐧 Setting up SSH for WSL...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         program = """curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
 
     elif choice_key == Options.backup.value:
         print(f"""
-╭{'─' * 150}╮
-│ 💾 Creating backup...                                                    │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ 💾 Creating backup...{' ' * (BOX_WIDTH - len('│ 💾 Creating backup...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve as helper
         program = helper(direction="BACKUP")
         
     elif choice_key == Options.retreive.value:
         print(f"""
-╭{'─' * 150}╮
-│ 📥 Retrieving backup...                                                  │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ 📥 Retrieving backup...{' ' * (BOX_WIDTH - len('│ 📥 Retrieving backup...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve as helper
         program = helper(direction="RETRIEVE")
 
     elif choice_key == Options.scheduler.value:
         print(f"""
-╭{'─' * 150}╮
-│ ⏰ Setting up scheduler...                                               │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ ⏰ Setting up scheduler...{' ' * (BOX_WIDTH - len('│ ⏰ Setting up scheduler...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         from machineconfig.scripts.python.scheduler import main as helper
         program = helper()
 
     elif choice_key == Options.dot_files_sync.value:
         print(f"""
-╭{'─' * 150}╮
-│ 🔗 Synchronizing dotfiles...                                             │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ 🔗 Synchronizing dotfiles...{' ' * (BOX_WIDTH - len('│ 🔗 Synchronizing dotfiles...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         from machineconfig.scripts.python.cloud_repo_sync import main as helper, P
         program = helper(cloud=None, path=str(P.home() / "dotfiles"), pwd=None, action="ask")
 
     else: 
         print(f"""
-╔{'═' * 150}╗
-║ ❌ ERROR: Invalid choice                                                 ║
-║ The selected operation is not implemented: {choice_key}                  
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ ❌ ERROR: Invalid choice{' ' * (BOX_WIDTH - len('║ ❌ ERROR: Invalid choice'))}║
+║ The selected operation is not implemented: {choice_key}{' ' * (BOX_WIDTH - len(f'║ The selected operation is not implemented: {choice_key}'))}║
+╚{'═' * BOX_WIDTH}╝
 """)
         raise ValueError(f"Unimplemented choice: {choice_key}")
         
     if program:
         print(f"""
-╭{'─' * 150}╮
-│ 📜 Preparing shell script...                                             │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ 📜 Preparing shell script...{' ' * (BOX_WIDTH - len('│ 📜 Preparing shell script...'))}│
+╰{'─' * BOX_WIDTH}╯
 """)
         write_shell_script_to_default_program_path(program=program, display=True, preserve_cwd=True, desc="🔧 Shell script prepared by Python.", execute=True if which is not None else False)
     else: 

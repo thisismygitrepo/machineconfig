@@ -17,11 +17,29 @@ from machineconfig.scripts.python.helpers.helpers2 import parse_cloud_source_tar
 from machineconfig.scripts.python.helpers.cloud_helpers import ArgsDefaults
 
 
+def _get_padding(text: str, box_width: int = 150, padding_before: int = 2, padding_after: int = 1) -> str:
+    """Calculate the padding needed to align the box correctly.
+    
+    Args:
+        text: The text to pad
+        box_width: The total width of the box
+        padding_before: The space taken before the text (usually "║ ")
+        padding_after: The space needed after the text (usually " ║")
+    
+    Returns:
+        A string of spaces for padding
+    """
+    # Count visible characters (might not be perfect for all Unicode characters)
+    text_length = len(text)
+    padding_length = box_width - padding_before - text_length - padding_after
+    return ' ' * max(0, padding_length)
+
+
 @RepeatUntilNoException(retry=3, sleep=1)
 def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
     print(f"""
 ╔{'═' * 150}╗
-║ 🚀 Secure File Downloader                                                  ║
+║ 🚀 Secure File Downloader{_get_padding("🚀 Secure File Downloader")}║
 ╚{'═' * 150}╝
 """)
     
@@ -44,7 +62,7 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
     
     print(f"""
 ╭{'─' * 150}╮
-│ 📡 Downloading from URL...                                                │
+│ 📡 Downloading from URL...{_get_padding("📡 Downloading from URL...")}│
 ╰{'─' * 150}╯
 """)
     from rich.progress import Progress
@@ -54,13 +72,13 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
         
     print(f"""
 ╭{'─' * 150}╮
-│ 📥 Downloaded file: {url_obj}                                
+│ 📥 Downloaded file: {url_obj}{_get_padding(f"📥 Downloaded file: {url_obj}")}│
 ╰{'─' * 150}╯
 """)
     
     print(f"""
 ╭{'─' * 150}╮
-│ 🔐 Decrypting and extracting...                                           │
+│ 🔐 Decrypting and extracting...{_get_padding("🔐 Decrypting and extracting...")}│
 ╰{'─' * 150}╯
 """)
     with Progress(transient=True) as progress:
@@ -73,7 +91,7 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
 def arg_parser() -> None:
     print(f"""
 ╔{'═' * 150}╗
-║ ☁️  Cloud Copy Utility                                                     ║
+║ ☁️  Cloud Copy Utility{_get_padding("☁️  Cloud Copy Utility")}║
 ╚{'═' * 150}╝
 """)
     
@@ -105,7 +123,7 @@ def arg_parser() -> None:
     if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")):
         print(f"""
 ╭{'─' * 150}╮
-│ 🔒 Detected secure share link                                             │
+│ 🔒 Detected secure share link{_get_padding("🔒 Detected secure share link")}│
 ╰{'─' * 150}╯
 """)
         if source.startswith("https://drive.google.com/open?id="):
@@ -119,14 +137,14 @@ def arg_parser() -> None:
 
     print(f"""
 ╭{'─' * 150}╮
-│ 🔍 Parsing source and target paths...                                     │
+│ 🔍 Parsing source and target paths...{_get_padding("🔍 Parsing source and target paths...")}│
 ╰{'─' * 150}╯
 """)
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
     
     print(f"""
 ╭{'─' * 150}╮
-│ ⚙️  Configuration:                                                         │
+│ ⚙️  Configuration:{_get_padding("⚙️  Configuration:")}│
 ╰{'─' * 150}╯
 """)
     Struct(args_obj.__dict__).print(as_config=True, title="CLI config")
@@ -136,11 +154,11 @@ def arg_parser() -> None:
     if cloud in source:
         print(f"""
 ╔{'═' * 150}╗
-║ 📥 DOWNLOADING FROM CLOUD                                                 ║
+║ 📥 DOWNLOADING FROM CLOUD{_get_padding("📥 DOWNLOADING FROM CLOUD")}║
 ╠{'═' * 150}╣
-║ ☁️  Cloud: {cloud}                                                        
-║ 📂 Source: {source.replace(cloud + ":", "")}                  
-║ 🎯 Target: {target}                                
+║ ☁️  Cloud: {cloud}{_get_padding(f"☁️  Cloud: {cloud}")}
+║ 📂 Source: {source.replace(cloud + ":", "")}{_get_padding(f"📂 Source: {source.replace(cloud + ':', '')}")}
+║ 🎯 Target: {target}{_get_padding(f"🎯 Target: {target}")}
 ╚{'═' * 150}╝
 """)
         
@@ -151,18 +169,18 @@ def arg_parser() -> None:
                             )
         print(f"""
 ╔{'═' * 150}╗
-║ ✅ Download completed successfully                                         ║
+║ ✅ Download completed successfully{_get_padding("✅ Download completed successfully")}║
 ╚{'═' * 150}╝
 """)
         
     elif cloud in target:
         print(f"""
 ╔{'═' * 150}╗
-║ 📤 UPLOADING TO CLOUD                                                     ║
+║ 📤 UPLOADING TO CLOUD{_get_padding("📤 UPLOADING TO CLOUD")}║
 ╠{'═' * 150}╣
-║ ☁️  Cloud: {cloud}                                                        
-║ 📂 Source: {source}                                    
-║ 🎯 Target: {target.replace(cloud + ":", "")}                  
+║ ☁️  Cloud: {cloud}{_get_padding(f"☁️  Cloud: {cloud}")}
+║ 📂 Source: {source}{_get_padding(f"📂 Source: {source}")}
+║ 🎯 Target: {target.replace(cloud + ":", "")}{_get_padding(f"🎯 Target: {target.replace(cloud + ':', '')}")}
 ╚{'═' * 150}╝
 """)
         
@@ -172,7 +190,7 @@ def arg_parser() -> None:
                                     share=args_obj.share)
         print(f"""
 ╔{'═' * 150}╗
-║ ✅ Upload completed successfully                                           ║
+║ ✅ Upload completed successfully{_get_padding("✅ Upload completed successfully")}║
 ╚{'═' * 150}╝
 """)
         
@@ -183,16 +201,16 @@ def arg_parser() -> None:
             share_url_path.write_text(res.as_url_str())
             print(f"""
 ╔{'═' * 150}╗
-║ 🔗 SHARE URL GENERATED                                                    ║
+║ 🔗 SHARE URL GENERATED{_get_padding("🔗 SHARE URL GENERATED")}║
 ╠{'═' * 150}╣
-║ 📝 URL file: {share_url_path}                            
-║ 🌍 {res.as_url_str()}
+║ 📝 URL file: {share_url_path}{_get_padding(f"📝 URL file: {share_url_path}")}
+║ 🌍 {res.as_url_str()}{_get_padding(f"🌍 {res.as_url_str()}")}
 ╚{'═' * 150}╝
 """)
     else: 
         print(f"""
 ╔{'═' * 150}╗
-║ ❌ ERROR: Cloud '{cloud}' not found in source or target                   ║
+║ ❌ ERROR: Cloud '{cloud}' not found in source or target{_get_padding(f"❌ ERROR: Cloud '{cloud}' not found in source or target")}║
 ╚{'═' * 150}╝
 """)
         raise ValueError(f"Cloud `{cloud}` not found in source or target.")

@@ -4,12 +4,31 @@
 from machineconfig.cluster.loader_runner import CloudManager
 import argparse
 
+BOX_WIDTH = 150  # width for box drawing
+
+
+def _get_padding(text: str, padding_before: int = 2, padding_after: int = 1) -> str:
+    """Calculate the padding needed to align the box correctly.
+    
+    Args:
+        text: The text to pad
+        padding_before: The space taken before the text (usually "║ ")
+        padding_after: The space needed after the text (usually " ║")
+    
+    Returns:
+        A string of spaces for padding
+    """
+    # Count visible characters (might not be perfect for all Unicode characters)
+    text_length = len(text)
+    padding_length = BOX_WIDTH - padding_before - text_length - padding_after
+    return ' ' * max(0, padding_length)
+
 
 def main():
     print(f"""
-╔{'═' * 150}╗
-║ ☁️  Cloud Manager                                                         ║
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ ☁️  Cloud Manager{_get_padding("☁️  Cloud Manager")}║
+╚{'═' * BOX_WIDTH}╝
 """)
     
     parser = argparse.ArgumentParser()
@@ -23,65 +42,73 @@ def main():
     parser.add_argument("-j", "--num_jobs", help="Number of jobs the server will run in parallel.", action="store", type=int, default=1)
     args = parser.parse_args()
 
+    init_line = f"🔧 Initializing Cloud Manager with {args.num_jobs} worker{'s' if args.num_jobs > 1 else ''}"
     print(f"""
-╭{'─' * 150}╮
-│ 🔧 Initializing Cloud Manager with {args.num_jobs} worker{'s' if args.num_jobs > 1 else ''}    │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ {init_line}{_get_padding(init_line)}│
+╰{'─' * BOX_WIDTH}╯
 """)
     
     cm = CloudManager(max_jobs=args.num_jobs, cloud=args.cloud, reset_local=args.reset_local)
     
     if args.release_lock:
+        line = "🔓 Releasing lock..."
         print(f"""
-╭{'─' * 150}╮
-│ 🔓 Releasing lock...                                                      │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ {line}{_get_padding(line)}│
+╰{'─' * BOX_WIDTH}╯
 """)
         cm.claim_lock()
         cm.release_lock()
         print("✅ Lock successfully released")
         
     if args.queue_failed_jobs:
+        line = "🔄 Requeuing failed jobs..."
         print(f"""
-╭{'─' * 150}╮
-│ 🔄 Requeuing failed jobs...                                               │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ {line}{_get_padding(line)}│
+╰{'─' * BOX_WIDTH}╯
 """)
         cm.clean_failed_jobs_mess()
         print("✅ Failed jobs moved to queue")
         
     if args.rerun_jobs:
+        line = "🔁 Rerunning jobs..."
         print(f"""
-╭{'─' * 150}╮
-│ 🔁 Rerunning jobs...                                                      │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ {line}{_get_padding(line)}│
+╰{'─' * BOX_WIDTH}╯
 """)
         cm.rerun_jobs()
         print("✅ Jobs restarted successfully")
         
     if args.monitor_cloud:
+        title = "👁️  STARTING CLOUD MONITOR"
         print(f"""
-╔{'═' * 150}╗
-║ 👁️  STARTING CLOUD MONITOR                                                 ║
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ {title}{_get_padding(title)}║
+╚{'═' * BOX_WIDTH}╝
 """)
         cm.run_monitor()
         
     if args.serve:
+        title1 = "🚀 STARTING JOB SERVER"
+        run_line = f"💻 Running {args.num_jobs} worker{'s' if args.num_jobs > 1 else ''}"
+        cloud_line = f"☁️  Cloud: {args.cloud if args.cloud else 'Default'}"
         print(f"""
-╔{'═' * 150}╗
-║ 🚀 STARTING JOB SERVER                                                    ║
-╠{'═' * 150}╣
-║ 💻 Running {args.num_jobs} worker{'s' if args.num_jobs > 1 else ''}                                                   ║
-║ ☁️  Cloud: {args.cloud if args.cloud else 'Default'}                                               
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ {title1}{_get_padding(title1)}║
+╠{'═' * BOX_WIDTH}╣
+║ {run_line}{_get_padding(run_line)}║
+║ {cloud_line}{_get_padding(cloud_line)}║
+╚{'═' * BOX_WIDTH}╝
 """)
-        cm.serve()
         
+    title = "✅ Cloud Manager finished successfully"
     print(f"""
-╔{'═' * 150}╗
-║ ✅ Cloud Manager finished successfully                                    ║
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ {title}{_get_padding(title)}║
+╚{'═' * BOX_WIDTH}╝
 """)
     import sys
     sys.exit(0)

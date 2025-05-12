@@ -191,7 +191,7 @@ def run_task(task: Task) -> Report:
 
     print(f"""
 ╔{'═'*78}╗
-║ 🚀  RUNNING TASK                                                              ║
+║ 🚀  RUNNING TASK{' ' * (78 - len('║ 🚀  RUNNING TASK'))}║
 ╚{'═'*78}╝
 """)
     print(f"🔧 Task Name: {task.name}")

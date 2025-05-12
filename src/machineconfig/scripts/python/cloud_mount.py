@@ -11,6 +11,24 @@ from typing import Optional
 
 
 DEFAULT_MOUNT = "~/data/rclone"
+BOX_WIDTH = 150  # width for box drawing
+
+
+def _get_padding(text: str, padding_before: int = 2, padding_after: int = 1) -> str:
+    """Calculate the padding needed to align the box correctly.
+    
+    Args:
+        text: The text to pad
+        padding_before: The space taken before the text (usually "║ ")
+        padding_after: The space needed after the text (usually " ║")
+    
+    Returns:
+        A string of spaces for padding
+    """
+    # Count visible characters (might not be perfect for all Unicode characters)
+    text_length = len(text)
+    padding_length = BOX_WIDTH - padding_before - text_length - padding_after
+    return ' ' * max(0, padding_length)
 
 
 def get_rclone_config():
@@ -42,10 +60,12 @@ mprocs "echo 'see {DEFAULT_MOUNT}/{cloud} for the mounted cloud'; rclone about {
 
 
 def mount(cloud: Optional[str], network: Optional[str], destination: Optional[str]) -> None:
+    # draw header box dynamically
+    title = "☁️  Cloud Mount Utility"
     print(f"""
-╔{'═' * 150}╗
-║ ☁️  Cloud Mount Utility                                                   ║
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ {title}{_get_padding(title)}║
+╚{'═' * BOX_WIDTH}╝
 """)
     
     config = get_rclone_config()
@@ -61,10 +81,11 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
         else:
             mount_loc = P(destination)
         
+        mount_info = f"📂 Mount location: {mount_loc}"
         print(f"""
-╭{'─' * 150}╮
-│ 📂 Mount location: {mount_loc}                          │
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ {mount_info}{_get_padding(mount_info)}│
+╰{'─' * BOX_WIDTH}╯
 """)
 
         if platform.system() == "Windows":
@@ -75,11 +96,13 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
             try: mount_loc.create()
             except (FileExistsError, OSError) as err:
                 # We need a umount command here.
+                warning_line = "⚠️  WARNING: Mount directory issue"
+                err_line = f"{err}"
                 print(f"""
-╭{'─' * 150}╮
-│ ⚠️  WARNING: Mount directory issue                                        │
-│    {err}                                                           
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ {warning_line}{_get_padding(warning_line)}│
+│ {err_line}{_get_padding(err_line)}│
+╰{'─' * BOX_WIDTH}╯
 """)
                 pass
         else: raise ValueError("unsupported platform")
@@ -91,10 +114,10 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
 
     mount_cmd = f"rclone mount {cloud}: {mount_loc} --vfs-cache-mode full --file-perms=0777"
     print(f"""
-╭{'─' * 150}╮
-│ 🚀 Preparing mount command:                                              │
-│ {mount_cmd}
-╰{'─' * 150}╯
+╭{'─' * BOX_WIDTH}╮
+│ 🚀 Preparing mount command:{_get_padding("🚀 Preparing mount command:")}│
+│ {mount_cmd}{_get_padding(mount_cmd)}│
+╰{'─' * BOX_WIDTH}╯
 """)
 
     # txt = get_mprocs_mount_txt(cloud, mount_cmd)
@@ -126,6 +149,8 @@ sleep 0.1; zellij action resize decrease up
 sleep 0.1; zellij action resize decrease up
 sleep 0.1; zellij action resize decrease up
 sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
 zellij run --direction right --name about -- rclone about {cloud}:
 zellij action move-focus up
 # zellij action write-chars "cd $HOME/data/rclone/{cloud}; sleep 0.1; ls"
@@ -137,19 +162,24 @@ zellij action move-focus up
     else: raise ValueError("unsupported platform")
     # print(f"running command: \n{txt}")
     PROGRAM_PATH.write_text(txt)
+    # draw success box dynamically
+    title1 = "✅ Cloud mount command prepared successfully"
+    title2 = "🔄 Running mount process..."
     print(f"""
-╔{'═' * 150}╗
-║ ✅ Cloud mount command prepared successfully                              ║
-║ 🔄 Running mount process...                                              ║
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ {title1}{_get_padding(title1)}║
+║ {title2}{_get_padding(title2)}║
+╚{'═' * BOX_WIDTH}╝
 """)
 
 
 def main():
+    # draw main title box dynamically
+    main_title = "☁️  RCLONE CLOUD MOUNT"
     print(f"""
-╔{'═' * 150}╗
-║ ☁️  RCLONE CLOUD MOUNT                                                    ║
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ {main_title}{_get_padding(main_title)}║
+╚{'═' * BOX_WIDTH}╝
 """)
     
     parser = argparse.ArgumentParser(description='mount cloud')
