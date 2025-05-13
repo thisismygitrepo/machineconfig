@@ -74,14 +74,14 @@ def inspect_repos(repo_local_root: str, repo_remote_root: str):
 def fetch_dotfiles():
     print(f"""
 ╔{'═' * 150}╗
-║ 📁 Fetching Dotfiles                                                      ║
+║ 📁 Fetching Dotfiles{' ' * (78 - len('║ 📁 Fetching Dotfiles'))}║
 ╚{'═' * 150}╝
 """)
 
     cloud_resolved = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
     print(f"""
 ╭{'─' * 150}╮
-│ ⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}     │
+│ ⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}{' ' * (78 - len(f'│ ⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}'))}│
 ╰{'─' * 150}╯
 """)
 

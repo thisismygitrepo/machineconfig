@@ -7,14 +7,18 @@ from pytz import timezone
 from machineconfig.utils.utils import display_options
 from typing import Optional
 
+BOX_WIDTH = 78  # width for box drawing
+
 pd.options.display.max_rows = 10000
 
 
 def get_processes_accessing_file(path: str):
+    # header for searching processes
+    title = "🔍  SEARCHING FOR PROCESSES ACCESSING FILE"
     print(f"""
-╔{'═'*78}╗
-║ 🔍  SEARCHING FOR PROCESSES ACCESSING FILE                                     ║
-╚{'═'*78}╝
+╔{'═'*BOX_WIDTH}╗
+║ {title}{' ' * (BOX_WIDTH - len(title))}║
+╚{'═'*BOX_WIDTH}╝
 """)
     res: dict[int, list[str]] = {}
     for proc in tqdm(psutil.process_iter(), desc="🔎 Scanning processes"):
@@ -45,10 +49,12 @@ def kill_process(name: str):
 
 class ProcessManager:
     def __init__(self):
+        # header for initializing process manager
+        title = "📊  INITIALIZING PROCESS MANAGER"
         print(f"""
-╔{'═'*78}╗
-║ 📊  INITIALIZING PROCESS MANAGER                                               ║
-╚{'═'*78}╝
+╔{'═'*BOX_WIDTH}╗
+║ {title}{' ' * (BOX_WIDTH - len(title))}║
+╚{'═'*BOX_WIDTH}╝
 """)
         process_info = []
         for proc in tqdm(psutil.process_iter(), desc="🔍 Reading system processes"):
@@ -64,10 +70,12 @@ class ProcessManager:
         print(f"✅ Process Manager initialized with {len(df)} processes\n{'─'*80}\n")
 
     def choose_and_kill(self):
+        # header for interactive process selection
+        title = "🎯  INTERACTIVE PROCESS SELECTION AND TERMINATION"
         print(f"""
-╔{'═'*78}╗
-║ 🎯  INTERACTIVE PROCESS SELECTION AND TERMINATION                              ║
-╚{'═'*78}╝
+╔{'═'*BOX_WIDTH}╗
+║ {title}{' ' * (BOX_WIDTH - len(title))}║
+╚{'═'*BOX_WIDTH}╝
 """)
         options = str(self.df).split("\n")[1:]
         res = display_options(options=str(self.df).split("\n"), msg="📋 Select processes to manage:", fzf=True, multi=True)
@@ -94,10 +102,12 @@ class ProcessManager:
         print(f"\n🔔 No processes were terminated.\n{'─'*80}\n")
 
     def filter_and_kill(self, name: Optional[str] = None):
+        # header for filtering processes by name
+        title = "🔍  FILTERING AND TERMINATING PROCESSES BY NAME"
         print(f"""
-╔{'═'*78}╗
-║ 🔍  FILTERING AND TERMINATING PROCESSES BY NAME                                ║
-╚{'═'*78}╝
+╔{'═'*BOX_WIDTH}╗
+║ {title}{' ' * (BOX_WIDTH - len(title))}║
+╚{'═'*BOX_WIDTH}╝
 """)
         _ = 20
         df_sub = self.df.query(f"name == '{name}' ").sort_values(by='create_time', ascending=True)
@@ -106,10 +116,12 @@ class ProcessManager:
         print(f"{'─'*80}\n")
 
     def kill(self, names: Optional[list[str]] = None, pids: Optional[list[int]] = None, commands: Optional[list[str]] = None):
+        # header for process termination
+        title = "💀  PROCESS TERMINATION"
         print(f"""
-╔{'═'*78}╗
-║ 💀  PROCESS TERMINATION                                                        ║
-╚{'═'*78}╝
+╔{'═'*BOX_WIDTH}╗
+║ {title}{' ' * (BOX_WIDTH - len(title))}║
+╚{'═'*BOX_WIDTH}╝
 """)
         if names is None and pids is None and commands is None:
             print("❌ Error: No termination targets specified (names, pids, or commands)")

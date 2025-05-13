@@ -8,12 +8,32 @@ from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 from machineconfig.utils.utils import PROGRAM_PATH
 import argparse
 
+BOX_WIDTH = 150  # width for box drawing
+
+
+def _get_padding(text: str, padding_before: int = 2, padding_after: int = 1) -> str:
+    """Calculate the padding needed to align the box correctly.
+    
+    Args:
+        text: The text to pad
+        padding_before: The space taken before the text (usually "║ ")
+        padding_after: The space needed after the text (usually " ║")
+    
+    Returns:
+        A string of spaces for padding
+    """
+    # Count visible characters (might not be perfect for all Unicode characters)
+    text_length = len(text)
+    padding_length = BOX_WIDTH - padding_before - text_length - padding_after
+    return ' ' * max(0, padding_length)
+
 
 def args_parser():
+    title = "☁️  Cloud Sync Utility"
     print(f"""
-╔{'═' * 150}╗
-║ ☁️  Cloud Sync Utility                                                    ║
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ {title}{_get_padding(title)}║
+╚{'═' * BOX_WIDTH}╝
 """)
     
     parser = argparse.ArgumentParser(description="""A wrapper for rclone sync and rclone bisync, with some extra features.""")
@@ -49,24 +69,31 @@ def args_parser():
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
     # map short flags to long flags (-u -> --upload), for easier use in the script
     if bisync:
+        title = "🔄 BI-DIRECTIONAL SYNC"
+        source_line = f"Source: {source}"
+        target_line = f"Target: {target}"
         print(f"""
-╔{'═' * 150}╗
-║ 🔄 BI-DIRECTIONAL SYNC                                                    ║
-╠{'═' * 150}╣
-║ Source: {source}                       
-║ Target: {target}                       
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ {title}{_get_padding(title)}║
+╠{'═' * BOX_WIDTH}╣
+║ {source_line}{_get_padding(source_line)}║
+║ {target_line}{_get_padding(target_line)}║
+╚{'═' * BOX_WIDTH}╝
 """)
         rclone_cmd = f"""rclone bisync '{source}' '{target}' --resync"""
     else:
+        title = "📤 ONE-WAY SYNC"
+        source_line = f"Source: {source}"
+        arrow_line = "↓"
+        target_line = f"Target: {target}"
         print(f"""
-╔{'═' * 150}╗
-║ 📤 ONE-WAY SYNC                                                           ║
-╠{'═' * 150}╣
-║ Source: {source}                       
-║ ↓                                                                        ║
-║ Target: {target}                       
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ {title}{_get_padding(title)}║
+╠{'═' * BOX_WIDTH}╣
+║ {source_line}{_get_padding(source_line)}║
+║ {arrow_line}{_get_padding(arrow_line)}║
+║ {target_line}{_get_padding(target_line)}║
+╚{'═' * BOX_WIDTH}╝
 """)
         rclone_cmd = f"""rclone sync '{source}' '{target}' """
 
@@ -77,12 +104,14 @@ def args_parser():
     if verbose: txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd, cloud_brand="Unknown")
     else: txt = f"""{rclone_cmd}"""
     
+    title = "🚀 EXECUTING COMMAND"
+    cmd_line = f"{rclone_cmd[:65]}..."
     print(f"""
-╔{'═' * 150}╗
-║ 🚀 EXECUTING COMMAND                                                      ║
-╠{'═' * 150}╣
-║ {rclone_cmd[:140]}... ║
-╚{'═' * 150}╝
+╔{'═' * BOX_WIDTH}╗
+║ {title}{_get_padding(title)}║
+╠{'═' * BOX_WIDTH}╣
+║ {cmd_line}{_get_padding(cmd_line)}║
+╚{'═' * BOX_WIDTH}╝
 """)
     
     PROGRAM_PATH.write_text(txt)

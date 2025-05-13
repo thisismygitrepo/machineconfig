@@ -78,9 +78,9 @@ def absolute(path: str) -> P:
     if try_absing.exists(): return try_absing
     print(f"""
 ╭{'─' * 150}╮
-│ ⚠️  WARNING:                                                              │
-│ Path {path} could not be resolved to absolute path.         
-│ Trying to resolve symlinks (this may result in unintended paths).        │
+│ ⚠️  WARNING:{' ' * (78 - len('│ ⚠️  WARNING:'))}│
+│ Path {path} could not be resolved to absolute path.{' ' * (78 - len(f'│ Path {path} could not be resolved to absolute path.'))}│
+│ Trying to resolve symlinks (this may result in unintended paths).{' ' * (78 - len('│ Trying to resolve symlinks (this may result in unintended paths).'))}│
 ╰{'─' * 150}╯
 """)
     return obj.absolute()
@@ -90,7 +90,7 @@ def absolute(path: str) -> P:
 def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Args:
     print(f"""
 ╔{'═' * 150}╗
-║ 🔐 Secure Share Cloud Configuration                                       ║
+║ 🔐 Secure Share Cloud Configuration{' ' * (79 - len('║ 🔐 Secure Share Cloud Configuration'))}║
 ╚{'═' * 150}╝
 """)
     

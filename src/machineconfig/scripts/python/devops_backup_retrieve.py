@@ -17,16 +17,16 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
         cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
         print(f"""
 ╔{'═' * 150}╗
-║ ⚠️  DEFAULT CLOUD CONFIGURATION                                          ║
+║ ⚠️  DEFAULT CLOUD CONFIGURATION{' ' * (78 - len('║ ⚠️  DEFAULT CLOUD CONFIGURATION'))}║
 ╠{'═' * 150}╣
-║ 🌥️  Using default cloud: {cloud:<52} ║
+║ 🌥️  Using default cloud: {cloud}{' ' * (78 - len(f'║ 🌥️  Using default cloud: {cloud}'))}║
 ╚{'═' * 150}╝
 """)
     except (FileNotFoundError, KeyError, IndexError):
         print(f"""
 ╔{'═' * 150}╗
-║ 🔍 DEFAULT CLOUD NOT FOUND                                              ║
-║ 🔄 Please select a cloud configuration from the options below            ║
+║ 🔍 DEFAULT CLOUD NOT FOUND{' ' * (78 - len('║ 🔍 DEFAULT CLOUD NOT FOUND'))}║
+║ 🔄 Please select a cloud configuration from the options below{' ' * (78 - len('║ 🔄 Please select a cloud configuration from the options below'))}║
 ╚{'═' * 150}╝
 """)
         cloud = choose_cloud_interactively()
@@ -69,8 +69,8 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
         choices = which.split(",") if isinstance(which, str) else which
         print(f"""
 ╔{'═' * 150}╗
-║ 🔖 PRE-SELECTED ITEMS                                                   ║
-║ 📝 Using: {', '.join(choices):<54} ║
+║ 🔖 PRE-SELECTED ITEMS{' ' * (78 - len('║ 🔖 PRE-SELECTED ITEMS'))}║
+║ 📝 Using: {', '.join(choices)}{' ' * (78 - len(f'║ 📝 Using: {", ".join(choices)}'))}║
 ╚{'═' * 150}╝
 """)
 
@@ -78,8 +78,8 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
         items = bu_file
         print(f"""
 ╔{'═' * 150}╗
-║ 📋 PROCESSING ALL ENTRIES                                               ║
-║ 🔢 Total entries to process: {len(bu_file):<39} ║
+║ 📋 PROCESSING ALL ENTRIES{' ' * (78 - len('║ 📋 PROCESSING ALL ENTRIES'))}║
+║ 🔢 Total entries to process: {len(bu_file)}{' ' * (78 - len(f'║ 🔢 Total entries to process: {len(bu_file)}'))}║
 ╚{'═' * 150}╝
 """)
     else:

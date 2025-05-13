@@ -105,10 +105,10 @@ git pull originEnc master
     if res.is_successful(strict_err=True, strict_returcode=True):
         print(f"""
 ╔{'═' * 150}╗
-║ ✅ Pull succeeded!                                                        ║
+║ ✅ Pull succeeded!{' ' * (78 - len('║ ✅ Pull succeeded!'))}║
 ╠{'═' * 150}╣
-║ 🧹 Removing originEnc remote and local copy                               ║
-║ 📤 Pushing merged repository to cloud storage                             ║
+║ 🧹 Removing originEnc remote and local copy{' ' * (78 - len('║ 🧹 Removing originEnc remote and local copy'))}║
+║ 📤 Pushing merged repository to cloud storage{' ' * (78 - len('║ 📤 Pushing merged repository to cloud storage'))}║
 ╚{'═' * 150}╝
 """)
         repo_remote_root.delete(sure=True)
@@ -118,10 +118,10 @@ git pull originEnc master
     else:
         print(f"""
 ╔{'═' * 150}╗
-║ ⚠️  MERGE FAILED                                                          ║
+║ ⚠️  MERGE FAILED{' ' * (78 - len('║ ⚠️  MERGE FAILED'))}║
 ╠{'═' * 150}╣
-║ 💾 Keeping local copy of remote at:                                       ║
-║ 📂 {repo_remote_root}                    
+║ 💾 Keeping local copy of remote at:{' ' * (78 - len('║ 💾 Keeping local copy of remote at:'))}║
+║ 📂 {repo_remote_root}{' ' * (78 - len(f'║ 📂 {repo_remote_root}'))}║
 ╚{'═' * 150}╝
 """)
 
