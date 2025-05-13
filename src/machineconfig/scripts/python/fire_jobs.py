@@ -36,7 +36,7 @@ def main() -> None:
     parser.add_argument("--interactive",     "-i", action="store_true", help="Whether to run the job interactively using IPython")
     parser.add_argument("--debug",           "-d", action="store_true", help="debug")
     parser.add_argument("--choose_function", "-c", action="store_true", help="debug")
-    parser.add_argument("--loop",            "-l", action="store_true", help="infinite recusion (runs again after completion)")
+    parser.add_argument("--loop",            "-l", action="store_true", help="infinite recusion (runs again after completion/interruption)")
     parser.add_argument("--jupyter",         "-j", action="store_true", help="open in a jupyter notebook")
     parser.add_argument("--submit_to_cloud", "-C", action="store_true", help="submit to cloud compute")
     parser.add_argument("--remote",          "-r", action="store_true", help="launch on a remote machine")
