@@ -12,6 +12,7 @@ from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_in
 from machineconfig.scripts.python.helpers.helpers4 import convert_kwargs_to_fire_kwargs_str
 from machineconfig.scripts.python.helpers.helpers4 import parse_pyfile
 from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
+from machineconfig.utils.ve_utils.ve1 import get_repo_root
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, match_file_name, sanitize_path
 from machineconfig.utils.ve_utils.ve1 import get_ve_activate_line, get_ve_name_and_ipython_profile
 from crocodile.file_management import P, Read, Save
@@ -19,8 +20,7 @@ from crocodile.core import randstr
 import platform
 from typing import Optional
 import argparse
-
-from machineconfig.utils.ve_utils.ve1 import get_repo_root
+import os
 
 
 str2obj = {"True": True, "False": False, "None": None}
@@ -257,9 +257,6 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
     # try: install_n_import("clipboard").copy(command)
     # except Exception as ex: print(f"Failed to copy command to clipboard. {ex}")
 
-    if args.loop:
-        command = command + "\n" + f". {PROGRAM_PATH}"
-
     if args.Nprocess > 1:
         lines = [f""" zellij action new-tab --name nProcess{randstr(2)}"""]
         command = command.replace(". activate_ve", ". $HOME/scripts/activate_ve")
@@ -320,8 +317,13 @@ zellij action close-pane; sleep 2
         else:
             raise NotImplementedError(f"Platform {platform.system()} not supported.")
         command = export_line + "\n" + command
-    console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {PROGRAM_PATH}: "), style="bold red")
-    PROGRAM_PATH.write_text(command)
+
+    program_path = os.environ.get("op_script", None)
+    program_path = P(program_path) if program_path is not None else PROGRAM_PATH
+    if args.loop:
+        command = command + "\n" + f". {program_path}"
+    console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {program_path}: "), style="bold red")
+    program_path.write_text(command)
 
 
 if __name__ == '__main__':
