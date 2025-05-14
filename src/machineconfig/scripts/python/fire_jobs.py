@@ -321,7 +321,15 @@ zellij action close-pane; sleep 2
     program_path = os.environ.get("op_script", None)
     program_path = P(program_path) if program_path is not None else PROGRAM_PATH
     if args.loop:
-        command = command + "\n" + f". {program_path}"
+        if platform.system() == "Linux":
+            command = command + "\nsleep 0.5"
+        elif platform.system() == "Windows":
+            # command = command + "timeout 0.5\n"
+            #pwsh equivalent
+            command ="$ErrorActionPreference = 'SilentlyContinue';\n" + command + "\nStart-Sleep -Seconds 0.5"
+        else:
+            raise NotImplementedError(f"Platform {platform.system()} not supported.")
+        command = command + f"\n. {program_path}"
     console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {program_path}: "), style="bold red")
     program_path.write_text(command)
 
