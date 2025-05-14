@@ -1,8 +1,22 @@
 
-$op_script = "~/tmp_results/shells/python_return_command.ps1"
-if (Test-Path $op_script ) {
-  Remove-Item $op_script
-}
+param(
+    [switch]$IgnoreKeyboardInterrupt
+)
+
+# Generate a random string of 10 characters
+$random_str = -join ((65..90) + (97..122) + (48..57) | Get-Random -Count 10 | ForEach-Object {[char]$_})
+$op_script = "$HOME\tmp_results\shells\$random_str\python_return_command.ps1"
+
+# Create directory if it doesn't exist
+# $op_script = "~/tmp_results/shells/python_return_command.ps1"
+# $script_dir = Split-Path -Path $op_script -Parent
+# if (-not (Test-Path $script_dir)) {
+#     New-Item -ItemType Directory -Path $script_dir -Force | Out-Null
+# }
+
+# if (Test-Path $op_script ) {
+#   Remove-Item $op_script
+# }
 
 
 try {
@@ -21,9 +35,6 @@ python -m machineconfig.scripts.python.fire_jobs $args
 
 if (Test-Path $op_script ) {
     . $op_script
-#   content of $op_script
-#  $content = Get-Content $op_script
-#  Invoke-Expression $content | Add-History   # this way, $content will go to hisyory of powershell. You don't neet Add-history
 }
 else
 {

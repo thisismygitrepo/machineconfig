@@ -306,8 +306,7 @@ echo "Sleep 2 seconds to allow zellij to close the pane"
 sleep 1
 zellij action close-pane; sleep 2
 """
-    if args.git_pull:
-        command = f"\ngit -C {choice_file.parent} pull\n" + command
+    if args.git_pull: command = f"\ngit -C {choice_file.parent} pull\n" + command
     if args.PathExport:
         if platform.system() == "Linux": export_line = f"""export PYTHONPATH="{repo_root}""" + """:${PYTHONPATH}" """
         elif platform.system() == "Windows":
