@@ -4,6 +4,11 @@ from pathlib import Path
 import random
 import string
 import os
+from rich.console import Console
+from rich.panel import Panel
+
+
+console = Console()
 
 
 def get_conn_string(sess_name: str) -> str:
@@ -15,29 +20,21 @@ def get_conn_string(sess_name: str) -> str:
 
 
 def main():
-    print(f"""
-╔{'═' * 60}╗
-║ 🔌 Tmate Connection Manager
-╚{'═' * 60}╝
-""")
+    console.print(Panel("🔌 Tmate Connection Manager", title="[bold]Welcome[/bold]"))
     
     parser = argparse.ArgumentParser(description='Tmate launcher')
     parser.add_argument("sess_name", help="session name", default=random.choices(list(string.digits + string.ascii_letters), k=20))
     args = parser.parse_args()
     
-    print(f"🔍 Looking up session: {args.sess_name}")
+    console.print(f"🔍 Looking up session: {args.sess_name}")
     conn_string = get_conn_string(args.sess_name)
     
-    print(f"""
-╭{'─' * 60}╮
-│ 🔗 Connection String: ssh {conn_string}
-╰{'─' * 60}╯
-""")
+    console.print(Panel(f"SSH Connection String: ssh {conn_string}", title="[bold green]SSH Connection[/bold green]"))
     
-    print("🚀 Connecting to tmate session...")
+    console.print("🚀 Connecting to tmate session...")
     os.system(f"ssh {conn_string}")
     
-    print("✅ Connection closed")
+    console.print("✅ Connection closed")
 
 
 if __name__ == '__main__':

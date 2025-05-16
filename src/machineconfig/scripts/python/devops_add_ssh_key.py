@@ -5,107 +5,57 @@
 from platform import system
 from machineconfig.utils.utils import LIBRARY_ROOT, display_options
 from crocodile.file_management import P
+from rich.console import Console
+from rich.panel import Panel
+
+
+console = Console()
 
 
 def get_add_ssh_key_script(path_to_key: P):
-    print(f"""
-╔{'═' * 150}╗
-║ 🔑 SSH KEY CONFIGURATION                                                 ║
-╚{'═' * 150}╝
-""")
-    
-    if system() == "Linux": 
+    console.print(Panel("🔑 SSH KEY CONFIGURATION", title="[bold blue]SSH Setup[/bold blue]"))
+
+    if system() == "Linux":
         authorized_keys = P.home().joinpath(".ssh/authorized_keys")
-        print(f"""
-╭{'─' * 150}╮
-│ 🐧 Linux SSH configuration                                               │
-│ 📄 Authorized keys file: {authorized_keys}                      │
-╰{'─' * 150}╯
-""")
-    elif system() == "Windows": 
+        console.print(Panel(f"🐧 Linux SSH configuration\n📄 Authorized keys file: {authorized_keys}", title="[bold blue]System Info[/bold blue]"))
+    elif system() == "Windows":
         authorized_keys = P("C:/ProgramData/ssh/administrators_authorized_keys")
-        print(f"""
-╭{'─' * 150}╮
-│ 🪟 Windows SSH configuration                                             │
-│ 📄 Authorized keys file: {authorized_keys}                │
-╰{'─' * 150}╯
-""")
-    else: 
-        print(f"""
-╔{'═' * 150}╗
-║ ❌ ERROR: Unsupported operating system                                   ║
-║ Only Linux and Windows are supported                                     ║
-╚{'═' * 150}╝
-""")
+        console.print(Panel(f"🪟 Windows SSH configuration\n📄 Authorized keys file: {authorized_keys}", title="[bold blue]System Info[/bold blue]"))
+    else:
+        console.print(Panel("❌ ERROR: Unsupported operating system\nOnly Linux and Windows are supported", title="[bold red]Error[/bold red]"))
         raise NotImplementedError
 
     if authorized_keys.exists():
         split = "\n"
         keys_text = authorized_keys.read_text().split(split)
         key_count = len([k for k in keys_text if k.strip()])
-        
-        print(f"""
-╭{'─' * 150}╮
-│ 🔍 Current SSH authorization status                                      │
-│ ✅ Found {key_count} authorized key(s)                                        │
-╰{'─' * 150}╯
-""")
-        
+        console.print(Panel(f"🔍 Current SSH authorization status\n✅ Found {key_count} authorized key(s)", title="[bold blue]Status[/bold blue]"))
+
         if path_to_key.read_text() in authorized_keys.read_text():
-            print(f"""
-╔{'═' * 150}╗
-║ ⚠️  Key already authorized                                                ║
-╠{'═' * 150}╣
-║ Key: {path_to_key.name}
-║ Status: Already present in authorized_keys file
-║ No action required
-╚{'═' * 150}╝
-""")
+            console.print(Panel(f"⚠️  Key already authorized\nKey: {path_to_key.name}\nStatus: Already present in authorized_keys file\nNo action required", title="[bold yellow]Warning[/bold yellow]"))
             program = ""
         else:
-            print(f"""
-╭{'─' * 150}╮
-│ ➕ Adding new SSH key to authorized keys                                 │
-│ 🔑 Key file: {path_to_key.name}                                          │
-╰{'─' * 150}╯
-""")
-            
+            console.print(Panel(f"➕ Adding new SSH key to authorized keys\n🔑 Key file: {path_to_key.name}", title="[bold blue]Action[/bold blue]"))
             if system() == "Linux":
                 program = f"cat {path_to_key} >> ~/.ssh/authorized_keys"
             elif system() == "Windows":
                 program_path = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add-sshkey.ps1")
                 program = program_path.expanduser().read_text()
-                place_holder = r'$sshfile = "$env:USERPROFILE\.ssh\pubkey.pub"'
+                place_holder = r'$sshfile = "$env:USERPROFILE\\.ssh\\pubkey.pub"'
                 assert place_holder in program, f"This section performs string manipulation on the script {program_path} to add the key to the authorized_keys file. The script has changed and the string {place_holder} is not found."
                 program = program.replace(place_holder, f'$sshfile = "{path_to_key}"')
-                print(f"""
-╭{'─' * 150}╮
-│ 🔧 Configured PowerShell script for Windows                              │
-│ 📝 Replaced placeholder with actual key path                             │
-╰{'─' * 150}╯
-""")
+                console.print(Panel("🔧 Configured PowerShell script for Windows\n📝 Replaced placeholder with actual key path", title="[bold blue]Configuration[/bold blue]"))
             else: raise NotImplementedError
     else:
-        print(f"""
-╭{'─' * 150}╮
-│ 📝 Creating new authorized_keys file                                     │
-│ 🔑 Using key: {path_to_key.name}                                         │
-╰{'─' * 150}╯
-""")
-        
+        console.print(Panel(f"📝 Creating new authorized_keys file\n🔑 Using key: {path_to_key.name}", title="[bold blue]Action[/bold blue]"))
         if system() == "Linux":
             program = f"cat {path_to_key} > ~/.ssh/authorized_keys"
         else:
             program_path = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add-sshkey.ps1")
             program = P(program_path).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
-            print(f"""
-╭{'─' * 150}╮
-│ 🔧 Configured PowerShell script for Windows                              │
-│ 📝 Set key path in script                                                │
-╰{'─' * 150}╯
-""")
+            console.print(Panel("🔧 Configured PowerShell script for Windows\n📝 Set key path in script", title="[bold blue]Configuration[/bold blue]"))
 
-    if system() == "Linux": 
+    if system() == "Linux":
         program += """
 
 sudo chmod 700 ~/.ssh
@@ -113,20 +63,7 @@ sudo chmod 644 ~/.ssh/authorized_keys
 sudo chmod 644 ~/.ssh/*.pub
 sudo service ssh --full-restart
 # from superuser.com/questions/215504/permissions-on-private-key-in-ssh-folder
-
 """
-        print(f"""
-╭{'─' * 150}╮
-│ 🔒 Setting proper SSH permissions and restarting service                 │
-╰{'─' * 150}╯
-""")
-        
-    print(f"""
-╔{'═' * 150}╗
-║ ✅ SSH KEY CONFIGURATION PREPARED                                        ║
-╚{'═' * 150}╝
-""")
-        
     return program
 
 

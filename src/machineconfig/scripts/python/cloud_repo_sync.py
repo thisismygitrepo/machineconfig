@@ -11,6 +11,10 @@ from machineconfig.utils.code import get_shell_file_executing_python_script, wri
 import platform
 import argparse
 from typing import Optional, Literal
+from rich.console import Console
+from rich.panel import Panel
+
+console = Console()
 
 _ = fetch_dotfiles
 
