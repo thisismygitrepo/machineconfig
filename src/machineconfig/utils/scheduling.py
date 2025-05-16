@@ -10,6 +10,8 @@ import platform
 import subprocess
 from typing import Optional
 # from crocodile.meta import Scheduler
+from rich.console import Console
+from rich.panel import Panel
 
 
 SCHEDULER_DEFAULT_ROOT = P.home().joinpath("dotfiles/scripts/.scheduler")
@@ -111,11 +113,10 @@ def main(root: Optional[str] = None, ignore_conditions: bool=True):
     else: root_resolved = P(root).expanduser().absolute()
     tasks_dirs = root_resolved.search(files=False, folders=True).filter(lambda x: x.joinpath("task.py").exists())
 
-    print(f"""
-╔{'═'*78}╗
-║ 📂  TASK SCHEDULER INITIALIZED                                                ║
-╚{'═'*78}╝
-""")
+    # Print a fancy box using rich
+    console = Console()
+    console.print(Panel(f"TASK SCHEDULER INITIALIZED", title="Status", expand=False))
+
     print(f"📁 Root directory resolved: {root_resolved}")
 
     tasks: list[Task] = []
@@ -189,12 +190,11 @@ def should_task_run(task: Task, tolerance_mins: int = 1440) -> tuple[bool, Optio
 def run_task(task: Task) -> Report:
     start_time = datetime.now()
 
-    print(f"""
-╔{'═'*78}╗
-║ 🚀  RUNNING TASK{' ' * (78 - len('║ 🚀  RUNNING TASK'))}║
-╚{'═'*78}╝
-""")
-    print(f"🔧 Task Name: {task.name}")
+    # Print a fancy box using rich
+    console = Console()
+    console.print(Panel(f"RUNNING TASK", title="Status", expand=False))
+
+    print(f"Task: {task_name}")
 
     shell_script = get_shell_script_executing_python_file(python_file=task.task_root.joinpath("task.py").to_str(), ve_name=task.venv)
     shell_script_root = P.tmp().joinpath(f"tmp_scripts/scheduler/{task.name}").create()

@@ -1,18 +1,17 @@
-
 from crocodile.file_management import P, Read
 from crocodile.meta import Terminal
 from machineconfig.scripts.python.get_zellij_cmd import get_zellij_cmd
 from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH
 from machineconfig.utils.code import write_shell_script_to_file
 import platform
+from rich.console import Console
+from rich.panel import Panel
+
+console = Console()
 
 
 def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cloud: str):
-    print(f"""
-╔{'═' * 150}╗
-║ 🗑️  Deleting remote repo copy and pushing local copy                       ║
-╚{'═' * 150}╝
-""")
+    console.print(Panel("🗑️  Deleting remote repo copy and pushing local copy", title="[bold blue]Repo Sync[/bold blue]", border_style="blue"))
     repo_sync_root = P(remote_repo).expanduser().absolute()
     repo_root_path = P(local_repo).expanduser().absolute()
     repo_sync_root.delete(sure=True)
@@ -31,11 +30,7 @@ def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cl
 
     repo_root_path.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
 
-    print(f"""
-╔{'═' * 150}╗
-║ ✅ Repository successfully pushed to cloud                                ║
-╚{'═' * 150}╝
-""")
+    console.print(Panel("✅ Repository successfully pushed to cloud", title="[bold green]Repo Sync[/bold green]", border_style="green"))
 
 
 # import sys
@@ -51,14 +46,7 @@ def get_wt_cmd(wd1: P, wd2: P) -> str:
 
 
 def inspect_repos(repo_local_root: str, repo_remote_root: str):
-    print(f"""
-╔{'═' * 150}╗
-║ 🔍 Inspecting Repositories                                                ║
-╠{'═' * 150}╣
-║ 📂 Local:  {repo_local_root}                      
-║ 📂 Remote: {repo_remote_root}                    
-╚{'═' * 150}╝
-""")
+    console.print(Panel(f"📂 Local:  {repo_local_root}\\n📂 Remote: {repo_remote_root}", title="[bold blue]🔍 Inspecting Repositories[/bold blue]", border_style="blue"))
 
     if platform.system() == "Windows":
         program = get_wt_cmd(wd1=P(repo_local_root), wd2=P(repo_local_root))
@@ -72,11 +60,7 @@ def inspect_repos(repo_local_root: str, repo_remote_root: str):
 
 
 def fetch_dotfiles():
-    print(f"""
-╔{'═' * 150}╗
-║ 📁 Fetching Dotfiles{' ' * (78 - len('║ 📁 Fetching Dotfiles'))}║
-╚{'═' * 150}╝
-""")
+    console.print(Panel("📁 Fetching Dotfiles", title="[bold blue]Dotfiles[/bold blue]", border_style="blue"))
 
     cloud_resolved = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
     print(f"""
@@ -119,9 +103,5 @@ sudo chmod +x $HOME/dotfiles/scripts/linux -R
     shell_path = write_shell_script_to_file(shell_script=script)
     Terminal().run(f". {shell_path}", shell="bash").capture().print()
 
-    print(f"""
-╔{'═' * 150}╗
-║ ✅ Dotfiles successfully fetched and installed                            ║
-╚{'═' * 150}╝
-""")
+    console.print(Panel("✅ Dotfiles successfully fetched and installed", title="[bold green]Dotfiles[/bold green]", border_style="green"))
 

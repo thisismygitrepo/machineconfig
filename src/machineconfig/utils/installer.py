@@ -3,6 +3,7 @@
 from machineconfig.utils.installer_utils.installer_abc import LINUX_INSTALL_PATH, CATEGORY
 from machineconfig.utils.installer_utils.installer_class import Installer
 from rich.console import Console
+from rich.panel import Panel # Added import
 
 from crocodile.file_management import P, Read
 from crocodile.core import List as L
@@ -15,11 +16,8 @@ import platform
 
 
 def check_latest():
-    print(f"""
-╔{'═'*78}╗
-║ 🔍  CHECKING FOR LATEST VERSIONS                                               ║
-╚{'═'*78}╝
-""")
+    console = Console() # Added console initialization
+    console.print(Panel("🔍  CHECKING FOR LATEST VERSIONS", title="Status", expand=False)) # Replaced print with Panel
     installers = get_installers(system=platform.system(), dev=False)
     # installers += get_installers(system=platform.system(), dev=True)
     installers_gitshub = []
@@ -49,11 +47,7 @@ def check_latest():
     
     from crocodile.core import Display
     Display.set_pandas_display()
-    print(f"""
-╔{'═'*78}╗
-║ 📊  INSTALLATION STATUS SUMMARY                                                ║
-╚{'═'*78}╝
-""")
+    console.print(Panel("📊  INSTALLATION STATUS SUMMARY", title="Status", expand=False)) # Replaced print with Panel
     print(res_df)
     print(f"{'═'*80}")
 

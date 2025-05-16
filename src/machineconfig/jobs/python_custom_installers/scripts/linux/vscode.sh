@@ -5,6 +5,11 @@
 # This script installs Visual Studio Code on Ubuntu/Debian-based Linux distributions
 # Reference: https://code.visualstudio.com/docs/setup/linux
 
+# sudo rm /etc/apt/sources.list.d/vscode.sources
+# sudo apt-get update
+
+
+
 echo """#=======================================================================
 🔑 ADDING REPOSITORY KEYS | Setting up Microsoft repository
 #=======================================================================

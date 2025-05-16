@@ -9,6 +9,8 @@ import platform
 
 from machineconfig.utils.installer_utils.installer_abc import LINUX_INSTALL_PATH
 from machineconfig.utils.installer_utils.installer_class import Installer
+from rich.console import Console
+from rich.panel import Panel
 
 
 config_dict = {
@@ -22,14 +24,9 @@ config_dict = {
 
 
 def main(version: Optional[str]):
-    print(f"""
-{'═' * 80}
-║ 🧬 HELIX EDITOR INSTALLER 🧬
-{'═' * 80}
-║ 💻 Platform: {platform.system()}
-║ 📦 Version:  {'latest' if version is None else version}
-{'═' * 80}
-""")
+    console = Console()
+
+    console.print(Panel(f"HELIX EDITOR INSTALLER 🧬\nPlatform: {platform.system()}\nVersion:  {'latest' if version is None else version}", title="Installer", expand=False))
 
     config_dict_copy = config_dict.copy()
     config_dict_copy["repo_url"] = "https://github.com/helix-editor/helix"
@@ -46,12 +43,8 @@ def main(version: Optional[str]):
         hx_file_search = downloaded.search("hx", folders=False, files=True, r=True)
 
     if not hx_file_search:
-        print(f"""
-{'═' * 80}
-║ ❌ ERROR: Could not find 'hx' executable in downloaded files.
-{'═' * 80}
-""")
-        return "Error: Executable not found"
+        console.print(Panel("❌ ERROR: Could not find 'hx' executable in downloaded files.", title="Error", expand=False))
+        raise FileNotFoundError(f"Could not find 'hx' executable in {tmp_dir.name}")
 
     assert len(hx_file_search) == 1, f"Expected 1 'hx' executable, found {len(hx_file_search)}"
     hx_file = hx_file_search.list[0]
@@ -59,19 +52,11 @@ def main(version: Optional[str]):
     runtime = contrib.parent / "runtime"
 
     if not runtime.exists():
-        print(f"""
-{'═' * 80}
-║ ❌ ERROR: 'runtime' directory not found at expected location: {runtime}
-{'═' * 80}
-""")
-        return "Error: Runtime directory not found"
+        console.print(Panel(f"❌ ERROR: 'runtime' directory not found at expected location: {runtime}", title="Error", expand=False))
+        raise FileNotFoundError(f"'runtime' directory not found at expected location: {runtime}")
     if not contrib.exists():
-        print(f"""
-{'═' * 80}
-║ ❌ ERROR: 'contrib' directory not found at expected location: {contrib}
-{'═' * 80}
-""")
-        return "Error: Contrib directory not found"
+        console.print(Panel(f"❌ ERROR: 'contrib' directory not found at expected location: {contrib}", title="Error", expand=False))
+        raise FileNotFoundError(f"'contrib' directory not found at expected location: {contrib}")
     print("   ✨ Executable and components located.")
 
 

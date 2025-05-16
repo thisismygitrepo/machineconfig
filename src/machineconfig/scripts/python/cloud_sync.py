@@ -7,6 +7,10 @@ from machineconfig.scripts.python.helpers.cloud_helpers import Args
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 from machineconfig.utils.utils import PROGRAM_PATH
 import argparse
+from rich.console import Console
+from rich.panel import Panel
+
+console = Console()
 
 BOX_WIDTH = 150  # width for box drawing
 
