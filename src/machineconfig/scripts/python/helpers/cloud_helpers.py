@@ -11,6 +11,8 @@ from rich import box # Import box
 
 
 console = Console()
+from rich.console import Console
+from rich.panel import Panel
 
 
 class ArgsDefaults:
@@ -80,7 +82,8 @@ def absolute(path: str) -> P:
 
 
 def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Args:
-    display_header("Secure Share Cloud Configuration")
+    console = Console()
+    console.print(Panel("🔐 Secure Share Cloud Configuration", expand=False))
     
     if cloud is None:
         if os.environ.get("CLOUD_CONFIG_NAME") is not None:
