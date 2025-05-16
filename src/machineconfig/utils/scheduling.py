@@ -115,7 +115,7 @@ def main(root: Optional[str] = None, ignore_conditions: bool=True):
 
     # Print a fancy box using rich
     console = Console()
-    console.print(Panel(f"TASK SCHEDULER INITIALIZED", title="Status", expand=False))
+    console.print(Panel("TASK SCHEDULER INITIALIZED", title="Status", expand=False))
 
     print(f"📁 Root directory resolved: {root_resolved}")
 
@@ -192,9 +192,9 @@ def run_task(task: Task) -> Report:
 
     # Print a fancy box using rich
     console = Console()
-    console.print(Panel(f"RUNNING TASK", title="Status", expand=False))
+    console.print(Panel("RUNNING TASK", title="Status", expand=False))
 
-    print(f"Task: {task_name}")
+    print(f"Task: {task.name}")
 
     shell_script = get_shell_script_executing_python_file(python_file=task.task_root.joinpath("task.py").to_str(), ve_name=task.venv)
     shell_script_root = P.tmp().joinpath(f"tmp_scripts/scheduler/{task.name}").create()
