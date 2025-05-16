@@ -5,6 +5,11 @@ Choose a theme for Wezterm
 from machineconfig.utils.utils import choose_one_option, P
 from typing import Any
 import time
+from rich.panel import Panel
+from rich.console import Console
+import curses
+
+console = Console()
 
 
 schemes_list = [
@@ -38,11 +43,7 @@ schemes_list = [
 
 
 def main2():
-    print(f"""
-╔{'═' * 60}╗
-║ 🎨 WezTerm Theme Selector
-╚{'═' * 60}╝
-""")
+    console.print(Panel("🎨 WezTerm Theme Selector", title_align="left", border_style="green"))
     option = choose_one_option(options=schemes_list, header="Choose a theme for Wezterm", fzf=True)
     set_theme(option)
     print(f"✅ Theme set to: {option}")
@@ -62,24 +63,14 @@ def set_theme(theme: str):
 
 
 def main():
-    print(f"""
-╔{'═' * 60}╗
-║ 🎨 WezTerm Theme Selector - Interactive Mode
-╚{'═' * 60}╝
-
+    console.print(Panel("🎨 WezTerm Theme Selector - Interactive Mode", title_align="left", border_style="blue"))
+    print("""
 📝 Use arrow keys to navigate, Enter to select a theme
 """)
-    import curses  # not availble on windows: https://docs.python.org/3/howto/curses.html
-    # from curses import wrapper
     curses.wrapper(accessory)
-    print(f"""
-╔{'═' * 60}╗
-║ ✅ Theme selection completed
-╚{'═' * 60}╝
-""")
+    console.print(Panel("✅ Theme selection completed", title_align="left", border_style="green"))
 
 def accessory(stdscr: Any):
-    import curses
     options = schemes_list
     current_option = 0
     page_size = stdscr.getmaxyx()[0] - 1  # curses.LINES - 1  # Number of lines in the terminal, -1 for status line

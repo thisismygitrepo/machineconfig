@@ -32,11 +32,8 @@ class Options(Enum):
 
 
 def args_parser():
-    print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ 🛠️  DevOps Tool Suite{' ' * (BOX_WIDTH - len('🛠️  DevOps Tool Suite'))}║
-╚{'═' * BOX_WIDTH}╝
-""")
+    # Print header
+    console.print(Panel("🛠️  DevOps Tool Suite", title_align="left", border_style="blue", width=BOX_WIDTH))
     
     import argparse
     parser = argparse.ArgumentParser()
@@ -81,21 +78,11 @@ def main(which: Optional[str] = None):
         try:
             choice_key = display_options(msg="", options=options, header="🛠️ DEVOPS", default=options[0])
         except KeyboardInterrupt:
-            print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ ❌ Operation cancelled by user{' ' * (BOX_WIDTH - len('║ ❌ Operation cancelled by user'))}║
-╚{'═' * BOX_WIDTH}╝
-""")
+            console.print(Panel("❌ Operation cancelled by user", title_align="left", border_style="red", width=BOX_WIDTH))
             return
     else: choice_key = Options[which].value
 
-    print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ 🔧 SELECTED OPERATION{' ' * (BOX_WIDTH - len('║ 🔧 SELECTED OPERATION'))}║
-╠{'═' * BOX_WIDTH}╣
-║ {choice_key.center(BOX_WIDTH-4)} ║
-╚{'═' * BOX_WIDTH}╝
-""")
+    console.print(Panel(f"🔧 SELECTED OPERATION\n{choice_key}", title_align="left", border_style="green", width=BOX_WIDTH))
 
     if choice_key == Options.update.value:
         print(f"""
@@ -153,12 +140,7 @@ def main(which: Optional[str] = None):
         program = helper.main()
 
     elif choice_key == Options.ssh_use_pair.value:
-        print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ ❌ ERROR: Not Implemented{' ' * (BOX_WIDTH - len('║ ❌ ERROR: Not Implemented'))}║
-║ SSH key pair connection feature is not yet implemented{' ' * (BOX_WIDTH - len('║ SSH key pair connection feature is not yet implemented'))}║
-╚{'═' * BOX_WIDTH}╝
-""")
+        console.print(Panel("❌ ERROR: Not Implemented\nSSH key pair connection feature is not yet implemented", title_align="left", border_style="red", width=BOX_WIDTH))
         raise NotImplementedError
 
     elif choice_key == Options.ssh_add_id.value:  # so that you can SSH directly withuot pointing to identity key.
@@ -225,12 +207,7 @@ def main(which: Optional[str] = None):
         program = helper(cloud=None, path=str(P.home() / "dotfiles"), pwd=None, action="ask")
 
     else: 
-        print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ ❌ ERROR: Invalid choice{' ' * (BOX_WIDTH - len('║ ❌ ERROR: Invalid choice'))}║
-║ The selected operation is not implemented: {choice_key}{' ' * (BOX_WIDTH - len(f'║ The selected operation is not implemented: {choice_key}'))}║
-╚{'═' * BOX_WIDTH}╝
-""")
+        console.print(Panel(f"❌ ERROR: Invalid choice", title_align="left", border_style="red", width=BOX_WIDTH))
         raise ValueError(f"Unimplemented choice: {choice_key}")
         
     if program:
