@@ -5,6 +5,11 @@ from machineconfig.utils.utils import display_options, PROGRAM_PATH, write_shell
 from platform import system
 from enum import Enum
 from typing import Optional
+from rich.console import Console
+from rich.panel import Panel
+from rich import box # Import box
+
+console = Console()
 
 BOX_WIDTH = 150  # width for box drawing
 
@@ -39,6 +44,28 @@ def args_parser():
     parser.add_argument("-w", "--which", help=f"""which option to run\nChoose one of those:\n{new_line.join([f"{item.name}: {item.value}" for item in list(Options)])}""", type=str, default=None)  # , choices=[op.value for op in Options]
     args = parser.parse_args()
     main(which=args.which)
+
+
+def display_title(title):
+    console.print(Panel(title, box=box.DOUBLE_EDGE, title_align="left")) # Replace print with Panel
+
+def display_task_title(title):
+    console.print(Panel(title, box=box.ROUNDED, title_align="left")) # Replace print with Panel
+
+def display_task_status(status):
+    console.print(Panel(status, box=box.ROUNDED, title_align="left")) # Replace print with Panel
+
+def display_task_result(result):
+    console.print(Panel(result, box=box.ROUNDED, title_align="left")) # Replace print with Panel
+
+def display_task_error(error):
+    console.print(Panel(error, box=box.ROUNDED, border_style="red", title_align="left")) # Replace print with Panel
+
+def display_task_warning(warning):
+    console.print(Panel(warning, box=box.ROUNDED, border_style="yellow", title_align="left")) # Replace print with Panel
+
+def display_task_success(success):
+    console.print(Panel(success, box=box.ROUNDED, border_style="green", title_align="left")) # Replace print with Panel
 
 
 def main(which: Optional[str] = None):

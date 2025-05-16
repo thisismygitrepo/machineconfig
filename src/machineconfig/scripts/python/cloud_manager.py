@@ -3,6 +3,11 @@
 
 from machineconfig.cluster.loader_runner import CloudManager
 import argparse
+from rich.console import Console
+from rich.panel import Panel
+from rich import box # Import box
+
+console = Console()
 
 BOX_WIDTH = 150  # width for box drawing
 
@@ -23,13 +28,24 @@ def _get_padding(text: str, padding_before: int = 2, padding_after: int = 1) -> 
     padding_length = BOX_WIDTH - padding_before - text_length - padding_after
     return ' ' * max(0, padding_length)
 
+def display_section_title(title):
+    console.print(Panel(title, box=box.DOUBLE_EDGE, title_align="left")) # Replace print with Panel
+
+def display_info(info_text):
+    console.print(Panel(info_text, box=box.ROUNDED, title_align="left")) # Replace print with Panel
+
+def display_warning(warning_text):
+    console.print(Panel(warning_text, box=box.ROUNDED, border_style="yellow", title_align="left")) # Replace print with Panel
+
+def display_error(error_text):
+    console.print(Panel(error_text, box=box.ROUNDED, border_style="red", title_align="left")) # Replace print with Panel
+
+def display_success(success_text):
+    console.print(Panel(success_text, box=box.ROUNDED, border_style="green", title_align="left")) # Replace print with Panel
+
 
 def main():
-    print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ ☁️  Cloud Manager{_get_padding("☁️  Cloud Manager")}║
-╚{'═' * BOX_WIDTH}╝
-""")
+    display_section_title("☁️  Cloud Manager")
     
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--cloud", help="Rclone Config Name", action="store", type=str, default=None)
@@ -43,73 +59,44 @@ def main():
     args = parser.parse_args()
 
     init_line = f"🔧 Initializing Cloud Manager with {args.num_jobs} worker{'s' if args.num_jobs > 1 else ''}"
-    print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {init_line}{_get_padding(init_line)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+    display_info(init_line)
     
     cm = CloudManager(max_jobs=args.num_jobs, cloud=args.cloud, reset_local=args.reset_local)
     
     if args.release_lock:
         line = "🔓 Releasing lock..."
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {line}{_get_padding(line)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        display_info(line)
         cm.claim_lock()
         cm.release_lock()
-        print("✅ Lock successfully released")
+        display_success("✅ Lock successfully released")
         
     if args.queue_failed_jobs:
         line = "🔄 Requeuing failed jobs..."
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {line}{_get_padding(line)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        display_info(line)
         cm.clean_failed_jobs_mess()
-        print("✅ Failed jobs moved to queue")
+        display_success("✅ Failed jobs moved to queue")
         
     if args.rerun_jobs:
         line = "🔁 Rerunning jobs..."
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {line}{_get_padding(line)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        display_info(line)
         cm.rerun_jobs()
-        print("✅ Jobs restarted successfully")
+        display_success("✅ Jobs restarted successfully")
         
     if args.monitor_cloud:
         title = "👁️  STARTING CLOUD MONITOR"
-        print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title}{_get_padding(title)}║
-╚{'═' * BOX_WIDTH}╝
-""")
+        display_section_title(title)
         cm.run_monitor()
         
     if args.serve:
         title1 = "🚀 STARTING JOB SERVER"
         run_line = f"💻 Running {args.num_jobs} worker{'s' if args.num_jobs > 1 else ''}"
         cloud_line = f"☁️  Cloud: {args.cloud if args.cloud else 'Default'}"
-        print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title1}{_get_padding(title1)}║
-╠{'═' * BOX_WIDTH}╣
-║ {run_line}{_get_padding(run_line)}║
-║ {cloud_line}{_get_padding(cloud_line)}║
-╚{'═' * BOX_WIDTH}╝
-""")
+        display_section_title(title1)
+        display_info(run_line)
+        display_info(cloud_line)
         
     title = "✅ Cloud Manager finished successfully"
-    print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title}{_get_padding(title)}║
-╚{'═' * BOX_WIDTH}╝
-""")
+    display_section_title(title)
     import sys
     sys.exit(0)
 

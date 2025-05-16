@@ -15,6 +15,10 @@ from typing import Optional
 
 from machineconfig.scripts.python.helpers.helpers2 import parse_cloud_source_target
 from machineconfig.scripts.python.helpers.cloud_helpers import ArgsDefaults
+from rich.console import Console
+from rich.panel import Panel
+
+console = Console()
 
 
 def _get_padding(text: str, box_width: int = 150, padding_before: int = 2, padding_after: int = 1) -> str:
@@ -37,11 +41,7 @@ def _get_padding(text: str, box_width: int = 150, padding_before: int = 2, paddi
 
 @RepeatUntilNoException(retry=3, sleep=1)
 def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
-    print(f"""
-╔{'═' * 150}╗
-║ 🚀 Secure File Downloader{_get_padding("🚀 Secure File Downloader")}║
-╚{'═' * 150}╝
-""")
+    console.print(Panel("🚀 Secure File Downloader", title="[bold blue]Downloader[/bold blue]", border_style="blue"))
     
     folder_obj = P.cwd() if folder is None else P(folder)
     print(f"📂 Target folder: {folder_obj}")
@@ -60,27 +60,15 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
         else:
             url = input("🔗 Enter share URL: ")
     
-    print(f"""
-╭{'─' * 150}╮
-│ 📡 Downloading from URL...{_get_padding("📡 Downloading from URL...")}│
-╰{'─' * 150}╯
-""")
+    console.print(Panel("📡 Downloading from URL...", title="[bold blue]Download[/bold blue]", border_style="blue"))
     from rich.progress import Progress
     with Progress(transient=True) as progress:
         _task = progress.add_task("Downloading... ", total=None)
         url_obj = P(url).download(folder=folder_obj)
         
-    print(f"""
-╭{'─' * 150}╮
-│ 📥 Downloaded file: {url_obj}{_get_padding(f"📥 Downloaded file: {url_obj}")}│
-╰{'─' * 150}╯
-""")
+    console.print(Panel(f"📥 Downloaded file: {url_obj}", title="[bold green]Success[/bold green]", border_style="green"))
     
-    print(f"""
-╭{'─' * 150}╮
-│ 🔐 Decrypting and extracting...{_get_padding("🔐 Decrypting and extracting...")}│
-╰{'─' * 150}╯
-""")
+    console.print(Panel("🔐 Decrypting and extracting...", title="[bold blue]Processing[/bold blue]", border_style="blue"))
     with Progress(transient=True) as progress:
         _task = progress.add_task("Decrypting... ", total=None)
         tmp_folder = P.tmpdir(prefix="tmp_unzip")
@@ -121,11 +109,7 @@ def arg_parser() -> None:
     args_obj = Args(**args_dict)
 
     if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")):
-        print(f"""
-╭{'─' * 150}╮
-│ 🔒 Detected secure share link{_get_padding("🔒 Detected secure share link")}│
-╰{'─' * 150}╯
-""")
+        console.print(Panel("🔒 Detected secure share link", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
         if source.startswith("https://drive.google.com/open?id="):
             source = "https://drive.google.com/uc?export=download&id=" + source.split("https://drive.google.com/open?id=")[1]
             print("🔄 Converting Google Drive link to direct download URL")
@@ -135,18 +119,10 @@ def arg_parser() -> None:
         args_obj.root = "myhome"
         print("🏠 Using 'myhome' as root directory")
 
-    print(f"""
-╭{'─' * 150}╮
-│ 🔍 Parsing source and target paths...{_get_padding("🔍 Parsing source and target paths...")}│
-╰{'─' * 150}╯
-""")
+    console.print(Panel("🔍 Parsing source and target paths...", title="[bold blue]Info[/bold blue]", border_style="blue"))
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
     
-    print(f"""
-╭{'─' * 150}╮
-│ ⚙️  Configuration:{_get_padding("⚙️  Configuration:")}│
-╰{'─' * 150}╯
-""")
+    console.print(Panel("⚙️  Configuration:", title="[bold blue]Config[/bold blue]", border_style="blue"))
     Struct(args_obj.__dict__).print(as_config=True, title="CLI config")
 
     assert args_obj.key is None, "Key is not supported yet."

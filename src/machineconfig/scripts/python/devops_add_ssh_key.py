@@ -7,6 +7,7 @@ from machineconfig.utils.utils import LIBRARY_ROOT, display_options
 from crocodile.file_management import P
 from rich.console import Console
 from rich.panel import Panel
+from rich import box # Import box
 
 
 console = Console()
@@ -68,32 +69,16 @@ sudo service ssh --full-restart
 
 
 def main():
-    print(f"""
-╔{'═' * 150}╗
-║ 🔐 SSH PUBLIC KEY AUTHORIZATION TOOL                                     ║
-╚{'═' * 150}╝
-""")
+    console.print(Panel("🔐 SSH PUBLIC KEY AUTHORIZATION TOOL", box=box.DOUBLE_EDGE, title_align="left"))
     
-    print(f"""
-╭{'─' * 150}╮
-│ 🔍 Searching for public keys...                                          │
-╰{'─' * 150}╯
-""")
+    console.print(Panel("🔍 Searching for public keys...", title="[bold blue]SSH Setup[/bold blue]", border_style="blue"))
     
     pub_keys = P.home().joinpath(".ssh").search("*.pub")
     
     if pub_keys:
-        print(f"""
-╭{'─' * 150}╮
-│ ✅ Found {len(pub_keys)} public key(s)                                           │
-╰{'─' * 150}╯
-""")
+        console.print(Panel(f"✅ Found {len(pub_keys)} public key(s)", title="[bold green]Status[/bold green]", border_style="green"))
     else:
-        print(f"""
-╭{'─' * 150}╮
-│ ⚠️  No public keys found                                                  │
-╰{'─' * 150}╯
-""")
+        console.print(Panel("⚠️  No public keys found", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
     
     all_keys_option = f"all pub keys available ({len(pub_keys)})"
     i_have_path_option = "I have the path to the key file"
@@ -103,57 +88,28 @@ def main():
     assert isinstance(res, str), f"Got {res} of type {type(res)} instead of str."
     
     if res == all_keys_option:
-        print(f"""
-╭{'─' * 150}╮
-│ 🔄 Processing all {len(pub_keys)} public keys...                                  │
-╰{'─' * 150}╯
-""")
-        program = "\n\n\n".join(pub_keys.apply(get_add_ssh_key_script))
+        console.print(Panel(f"🔄 Processing all {len(pub_keys)} public keys...", title="[bold blue]Processing[/bold blue]", border_style="blue"))
+        program = "\\n\\n\\n".join(pub_keys.apply(get_add_ssh_key_script))
     
     elif res == i_have_path_option:
-        print(f"""
-╭{'─' * 150}╮
-│ 📂 Please provide the path to your public key                             │
-╰{'─' * 150}╯
-""")
+        console.print(Panel("📂 Please provide the path to your public key", title="[bold blue]Input Required[/bold blue]", border_style="blue"))
         key_path = P(input("📋 Path: ")).expanduser().absolute()
-        print(f"""
-╭{'─' * 150}╮
-│ 📄 Using key from path: {key_path}                        │
-╰{'─' * 150}╯
-""")
+        console.print(Panel(f"📄 Using key from path: {key_path}", title="[bold blue]Info[/bold blue]", border_style="blue"))
         program = get_add_ssh_key_script(key_path)
     
     elif res == i_paste_option:
-        print(f"""
-╭{'─' * 150}╮
-│ 📋 Please provide a filename and paste the public key content             │
-╰{'─' * 150}╯
-""")
+        console.print(Panel("📋 Please provide a filename and paste the public key content", title="[bold blue]Input Required[/bold blue]", border_style="blue"))
         key_filename = input("📝 File name (default: my_pasted_key.pub): ") or "my_pasted_key.pub"
         key_path = P.home().joinpath(f".ssh/{key_filename}")
         key_path.write_text(input("🔑 Paste the public key here: "))
-        print(f"""
-╭{'─' * 150}╮
-│ 💾 Key saved to: {key_path}                           │
-╰{'─' * 150}╯
-""")
+        console.print(Panel(f"💾 Key saved to: {key_path}", title="[bold green]Success[/bold green]", border_style="green"))
         program = get_add_ssh_key_script(key_path)
     
     else:
-        print(f"""
-╭{'─' * 150}╮
-│ 🔑 Using selected key: {P(res).name}                                     │
-╰{'─' * 150}╯
-""")
+        console.print(Panel(f"🔑 Using selected key: {P(res).name}", title="[bold blue]Info[/bold blue]", border_style="blue"))
         program = get_add_ssh_key_script(P(res))
     
-    print(f"""
-╔{'═' * 150}╗
-║ 🚀 SSH KEY AUTHORIZATION READY                                           ║
-║ Run the generated script to apply changes                                ║
-╚{'═' * 150}╝
-""")
+    console.print(Panel("🚀 SSH KEY AUTHORIZATION READY\\nRun the generated script to apply changes", box=box.DOUBLE_EDGE, title_align="left"))
     
     return program
 

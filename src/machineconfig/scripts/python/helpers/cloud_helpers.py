@@ -1,4 +1,3 @@
-
 from crocodile.core import Struct
 from crocodile.file_management import P, Read
 from pydantic import ConfigDict
@@ -6,6 +5,12 @@ from pydantic.dataclasses import dataclass
 from typing import Optional
 import os
 from machineconfig.utils.utils import DEFAULTS_PATH
+from rich.console import Console
+from rich.panel import Panel
+from rich import box # Import box
+
+
+console = Console()
 
 
 class ArgsDefaults:
@@ -49,25 +54,17 @@ class Args():
 
 
 def find_cloud_config(path: P):
-    print(f"""
-╭{'─' * 150}╮
-│ 🔍 Searching for cloud configuration file...                              │
-╰{'─' * 150}╯
-""")
+    display_header("Searching for cloud configuration file...")
 
     for _i in range(len(path.parts)):
         if path.joinpath("cloud.json").exists():
             res = Args.from_config(path.joinpath("cloud.json"))
-            print(f"""
-╭{'─' * 150}╮
-│ ✅ Found cloud config at: {path.joinpath('cloud.json')}   │
-╰{'─' * 150}╯
-""")
+            display_success(f"Found cloud config at: {path.joinpath('cloud.json')}")
             Struct(res.__dict__).print(as_config=True, title="Cloud Config")
             return res
         path = path.parent
 
-    print("❌ No cloud configuration file found")
+    display_error("No cloud configuration file found")
     return None
 
 
@@ -76,30 +73,21 @@ def absolute(path: str) -> P:
     if not path.startswith(".") and  obj.exists(): return obj
     try_absing =  P.cwd().joinpath(path)
     if try_absing.exists(): return try_absing
-    print(f"""
-╭{'─' * 150}╮
-│ ⚠️  WARNING:{' ' * (78 - len('│ ⚠️  WARNING:'))}│
-│ Path {path} could not be resolved to absolute path.{' ' * (78 - len(f'│ Path {path} could not be resolved to absolute path.'))}│
-│ Trying to resolve symlinks (this may result in unintended paths).{' ' * (78 - len('│ Trying to resolve symlinks (this may result in unintended paths).'))}│
-╰{'─' * 150}╯
-""")
+    display_warning(f"Path {path} could not be resolved to absolute path.")
+    display_warning("Trying to resolve symlinks (this may result in unintended paths).")
     return obj.absolute()
 
 
 
 def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Args:
-    print(f"""
-╔{'═' * 150}╗
-║ 🔐 Secure Share Cloud Configuration{' ' * (79 - len('║ 🔐 Secure Share Cloud Configuration'))}║
-╚{'═' * 150}╝
-""")
+    display_header("Secure Share Cloud Configuration")
     
     if cloud is None:
         if os.environ.get("CLOUD_CONFIG_NAME") is not None:
             default_cloud = os.environ.get("CLOUD_CONFIG_NAME")
             assert default_cloud is not None
             cloud = default_cloud
-            print(f"☁️  Using cloud from environment: {cloud}")
+            console.print(f"☁️  Using cloud from environment: {cloud}")
         else:
             try:
                 default_cloud__ = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
@@ -110,7 +98,7 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Ar
                 cloud = input(f"☁️  Enter cloud name (default {default_cloud__}): ") or default_cloud__
             else:
                 cloud = default_cloud__
-                print(f"☁️  Using default cloud: {cloud}")
+                console.print(f"☁️  Using default cloud: {cloud}")
 
     default_password_path = P.home().joinpath("dotfiles/creds/passwords/quick_password")
     if default_password_path.exists():
@@ -125,10 +113,27 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Ar
                zip=True, overwrite=True, share=True,
                rel2home=True, root="myshare", os_specific=False,)
     
-    print(f"""
-╭{'─' * 150}╮
-│ ⚙️  Using SecureShare cloud config                                        │
-╰{'─' * 150}╯
-""")
+    display_success("Using SecureShare cloud config")
     Struct(res.__dict__).print(as_config=True, title="SecureShare Config")
     return res
+
+def display_header(title: str):
+    console.print(Panel(title, box=box.DOUBLE_EDGE, title_align="left")) # Replace print with Panel
+
+def display_subheader(title: str):
+    console.print(Panel(title, box=box.ROUNDED, title_align="left")) # Replace print with Panel
+
+def display_content(content: str):
+    console.print(Panel(content, box=box.ROUNDED, title_align="left")) # Replace print with Panel
+
+def display_status(status: str):
+    console.print(Panel(status, box=box.ROUNDED, title_align="left")) # Replace print with Panel
+
+def display_success(message: str):
+    console.print(Panel(message, box=box.ROUNDED, border_style="green", title_align="left")) # Replace print with Panel
+
+def display_warning(message: str):
+    console.print(Panel(message, box=box.ROUNDED, border_style="yellow", title_align="left")) # Replace print with Panel
+
+def display_error(message: str):
+    console.print(Panel(message, box=box.ROUNDED, border_style="red", title_align="left")) # Replace print with Panel
