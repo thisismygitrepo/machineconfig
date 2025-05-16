@@ -1,4 +1,3 @@
-
 from crocodile.core import Struct
 from crocodile.file_management import P, Read
 from pydantic import ConfigDict
@@ -6,6 +5,8 @@ from pydantic.dataclasses import dataclass
 from typing import Optional
 import os
 from machineconfig.utils.utils import DEFAULTS_PATH
+from rich.console import Console
+from rich.panel import Panel
 
 
 class ArgsDefaults:
@@ -88,11 +89,8 @@ def absolute(path: str) -> P:
 
 
 def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Args:
-    print(f"""
-╔{'═' * 150}╗
-║ 🔐 Secure Share Cloud Configuration{' ' * (79 - len('║ 🔐 Secure Share Cloud Configuration'))}║
-╚{'═' * 150}╝
-""")
+    console = Console()
+    console.print(Panel("🔐 Secure Share Cloud Configuration", expand=False))
     
     if cloud is None:
         if os.environ.get("CLOUD_CONFIG_NAME") is not None:

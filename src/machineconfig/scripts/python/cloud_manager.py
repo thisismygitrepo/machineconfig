@@ -1,36 +1,45 @@
 """Run cloud manager.
 """
 
-from machineconfig.cluster.loader_runner import CloudManager
+# from machineconfig.cluster.loader_runner import CloudManager
+from crocodile.file_management import P  # Add import for P
+from rich.console import Console  # Add import for Console
+from rich.panel import Panel  # Add import for Panel
 import argparse
 
 BOX_WIDTH = 150  # width for box drawing
 
 
-def _get_padding(text: str, padding_before: int = 2, padding_after: int = 1) -> str:
-    """Calculate the padding needed to align the box correctly.
-    
-    Args:
-        text: The text to pad
-        padding_before: The space taken before the text (usually "║ ")
-        padding_after: The space needed after the text (usually " ║")
-    
-    Returns:
-        A string of spaces for padding
-    """
-    # Count visible characters (might not be perfect for all Unicode characters)
-    text_length = len(text)
-    padding_length = BOX_WIDTH - padding_before - text_length - padding_after
-    return ' ' * max(0, padding_length)
+def print_section_title(title: str):
+    """Prints a section title formatted nicely with a border and padding."""
+    console = Console()
+    console.print(Panel(title, title_align="left", expand=False))
+
+
+class CloudManager:
+    """Manages cloud operations like syncing, comparing, and listing files."""
+
+    def compare_local_and_cloud(self, sub_path: P):
+        """Compares local and cloud files and prints a summary."""
+        local_files, cloud_files = self._get_local_and_cloud_files(sub_path)
+        title1 = f"Comparing Local and Cloud: {sub_path.name}"
+        run_line = f"Local files: {len(local_files)}"
+        cloud_line = f"Cloud files: {len(cloud_files)}"
+        console = Console()
+        console.print(Panel(f"{title1}\\n{run_line}\\n{cloud_line}", title_align="left", expand=False))
+
+    def list_cloud_files(self, sub_path: P):
+        """Lists files in the cloud directory."""
+        cloud_files = self._get_cloud_files(sub_path)
+        title = f"Cloud Files in {sub_path.name}: {len(cloud_files)}"
+        console = Console()
+        console.print(Panel(title, title_align="left", expand=False))
 
 
 def main():
-    print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ ☁️  Cloud Manager{_get_padding("☁️  Cloud Manager")}║
-╚{'═' * BOX_WIDTH}╝
-""")
-    
+    console = Console() # Add console initialization
+    console.print(Panel("☁️  Cloud Manager", title_align="left", expand=False))
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--cloud", help="Rclone Config Name", action="store", type=str, default=None)
     parser.add_argument("-s", "--serve", help="Start job server", action="store_true", default=False)
@@ -43,73 +52,42 @@ def main():
     args = parser.parse_args()
 
     init_line = f"🔧 Initializing Cloud Manager with {args.num_jobs} worker{'s' if args.num_jobs > 1 else ''}"
-    print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {init_line}{_get_padding(init_line)}│
-╰{'─' * BOX_WIDTH}╯
-""")
-    
+    console.print(Panel(init_line, title_align="left", expand=False))
+
     cm = CloudManager(max_jobs=args.num_jobs, cloud=args.cloud, reset_local=args.reset_local)
-    
+
     if args.release_lock:
         line = "🔓 Releasing lock..."
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {line}{_get_padding(line)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel(line, title_align="left", expand=False))
         cm.claim_lock()
         cm.release_lock()
         print("✅ Lock successfully released")
-        
+
     if args.queue_failed_jobs:
         line = "🔄 Requeuing failed jobs..."
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {line}{_get_padding(line)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel(line, title_align="left", expand=False))
         cm.clean_failed_jobs_mess()
         print("✅ Failed jobs moved to queue")
-        
+
     if args.rerun_jobs:
         line = "🔁 Rerunning jobs..."
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {line}{_get_padding(line)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel(line, title_align="left", expand=False))
         cm.rerun_jobs()
         print("✅ Jobs restarted successfully")
-        
+
     if args.monitor_cloud:
         title = "👁️  STARTING CLOUD MONITOR"
-        print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title}{_get_padding(title)}║
-╚{'═' * BOX_WIDTH}╝
-""")
+        console.print(Panel(title, title_align="left", expand=False))
         cm.run_monitor()
-        
+
     if args.serve:
         title1 = "🚀 STARTING JOB SERVER"
         run_line = f"💻 Running {args.num_jobs} worker{'s' if args.num_jobs > 1 else ''}"
         cloud_line = f"☁️  Cloud: {args.cloud if args.cloud else 'Default'}"
-        print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title1}{_get_padding(title1)}║
-╠{'═' * BOX_WIDTH}╣
-║ {run_line}{_get_padding(run_line)}║
-║ {cloud_line}{_get_padding(cloud_line)}║
-╚{'═' * BOX_WIDTH}╝
-""")
-        
+        console.print(Panel(f"{title1}\\n{run_line}\\n{cloud_line}", title_align="left", expand=False))
+
     title = "✅ Cloud Manager finished successfully"
-    print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title}{_get_padding(title)}║
-╚{'═' * BOX_WIDTH}╝
-""")
+    console.print(Panel(title, title_align="left", expand=False))
     import sys
     sys.exit(0)
 

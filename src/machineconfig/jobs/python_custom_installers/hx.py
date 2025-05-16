@@ -78,35 +78,23 @@ def main(version: Optional[str]):
         hx_file.move(folder=target_bin_path, overwrite=True)
         contrib.move(folder=target_config_dir, overwrite=True)
         runtime.move(folder=target_config_dir, overwrite=True)
-        print(f"""
-{'─' * 80}
-║ ✅ SUCCESS | Helix editor installed successfully on Linux!
-{'─' * 80}
-║ 📂 Executable: {target_bin_path / exe_name}
-║ 🔧 Config:     {target_config_dir}
-{'─' * 80}
-""")
+        console.print(Panel(f"""✅ SUCCESS | Helix editor installed successfully on Linux!
+
+📂 Executable: {target_bin_path / exe_name}
+🔧 Config:     {target_config_dir}""", title="Success", expand=False))
     elif platform.system() == "Windows":
         target_bin_path = WINDOWS_INSTALL_PATH
         exe_name = "hx.exe"
         hx_file.move(folder=target_bin_path, overwrite=True)
         contrib.move(folder=target_config_dir, overwrite=True)
         runtime.move(folder=target_config_dir, overwrite=True)
-        print(f"""
-{'─' * 80}
-║ ✅ SUCCESS | Helix editor installed successfully on Windows!
-{'─' * 80}
-║ 📂 Executable: {target_bin_path / exe_name}
-║ 🔧 Config:     {target_config_dir}
-{'─' * 80}
-""")
+        console.print(Panel(f"""✅ SUCCESS | Helix editor installed successfully on Windows!
+
+📂 Executable: {target_bin_path / exe_name}
+🔧 Config:     {target_config_dir}""", title="Success", expand=False))
     else:
-        print(f"""
-{'═' * 80}
-║ ⚠️ WARNING | Unsupported operating system: {platform.system()}
-║           | Installation aborted.
-{'═' * 80}
-""")
+        console.print(Panel(f"""⚠️ WARNING | Unsupported operating system: {platform.system()}
+          | Installation aborted.""", title="Warning", expand=False))
         print("\n🧹 [Step 5/5] Cleaning up temporary download files...")
         downloaded.delete(sure=True)
         print("   ✨ Cleanup complete.")
@@ -116,11 +104,7 @@ def main(version: Optional[str]):
     downloaded.delete(sure=True)
     print("   ✨ Cleanup complete.")
 
-    print(f"""
-{'═' * 80}
-║ 🎉 Installation Finished Successfully! 🎉
-{'═' * 80}
-""")
+    console.print(Panel("🎉 Installation Finished Successfully! 🎉", title="Finished", expand=False))
     return ""
 
 
