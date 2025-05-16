@@ -20,13 +20,9 @@ def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cl
     from git.repo import Repo
     try:
         Remote.remove(Repo(repo_root_path), "originEnc")
-        print("🔗 Removed originEnc remote reference")
+        console.print(Panel("🔗 Removed originEnc remote reference", border_style="blue"))
     except Exception: pass  # type: ignore
-    print(f"""
-╭{'─' * 150}╮
-│ 📤 Uploading local repository to cloud...                                │
-╰{'─' * 150}╯
-""")
+    console.print(Panel(f"📈 Deleting remote repository copy and pushing local changes", width=150, border_style="blue"))
 
     repo_root_path.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
 
@@ -63,31 +59,19 @@ def fetch_dotfiles():
     console.print(Panel("📁 Fetching Dotfiles", title="[bold blue]Dotfiles[/bold blue]", border_style="blue"))
 
     cloud_resolved = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
-    print(f"""
-╭{'─' * 150}╮
-│ ⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}{' ' * (78 - len(f'│ ⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}'))}│
-╰{'─' * 150}╯
-""")
+    console.print(Panel(f"⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}", width=150, border_style="yellow"))
 
     dotfiles_local = P.home().joinpath("dotfiles")
     CONFIG_PATH.joinpath("remote").create()
     dotfiles_remote = CONFIG_PATH.joinpath("remote", dotfiles_local.rel2home())
     remote_path = dotfiles_local.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
 
-    print(f"""
-╭{'─' * 150}╮
-│ 📥 Downloading dotfiles from cloud...                                    │
-╰{'─' * 150}╯
-""")
+    console.print(Panel(f"📥 Downloading dotfiles from cloud...", width=150, border_style="blue"))
 
     dotfiles_remote.from_cloud(remotepath=remote_path, cloud=cloud_resolved,
         unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=None)
 
-    print(f"""
-╭{'─' * 150}╮
-│ 🗑️  Removing old dotfiles and replacing with cloud version...            │
-╰{'─' * 150}╯
-""")
+    console.print(Panel(f"🗑️  Removing old dotfiles and replacing with cloud version...", width=150, border_style="blue"))
 
     dotfiles_local.delete(sure=True)
     dotfiles_remote.move(folder=P.home())

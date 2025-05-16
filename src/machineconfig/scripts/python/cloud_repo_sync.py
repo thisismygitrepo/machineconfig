@@ -13,6 +13,7 @@ import argparse
 from typing import Optional, Literal
 from rich.console import Console
 from rich.panel import Panel
+from rich.text import Text
 
 console = Console()
 
@@ -25,20 +26,9 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
     if cloud is None:
         try:
             cloud_resolved = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
-            print(f"""
-╭{'─' * 150}╮
-│ ⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}     │
-╰{'─' * 150}╯
-""")
+            console.print(Panel(f"⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}", title="Default Cloud", border_style="yellow"))
         except FileNotFoundError:
-            print(f"""
-╔{'═' * 150}╗
-║ ❌ ERROR: No cloud profile found                                          ║
-╠{'═' * 150}╣
-║ Location: {DEFAULTS_PATH}                        
-║ Please set one up or provide one via the --cloud flag.                   ║
-╚{'═' * 150}╝
-""")
+            console.print(Panel(f"❌ ERROR: No cloud profile found\\nLocation: {DEFAULTS_PATH}\\nPlease set one up or provide one via the --cloud flag.", title="Error", border_style="red"))
             return ""
     else: cloud_resolved = cloud
     
@@ -50,48 +40,28 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
     repo_remote_root = CONFIG_PATH.joinpath("remote", repo_local_root.rel2home())  # .delete(sure=True)
     
     try:
-        print(f"""
-╔{'═' * 150}╗
-║ 📥 DOWNLOADING REMOTE REPOSITORY                                          ║
-╚{'═' * 150}╝
-""")
+        console.print(Panel("📥 DOWNLOADING REMOTE REPOSITORY", title_align="left", border_style="blue"))
         remote_path = repo_local_root.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
         repo_remote_root.from_cloud(remotepath=remote_path, cloud=cloud_resolved, unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=pwd)
     except AssertionError:
-        print(f"""
-╔{'═' * 150}╗
-║ 🆕 Remote repository doesn't exist                                        ║
-║ 📤 Creating new remote and exiting...                                     ║
-╚{'═' * 150}╝
-""")
+        console.print(Panel("🆕 Remote repository doesn't exist\\n📤 Creating new remote and exiting...", title_align="left", border_style="green"))
         repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
         return ""
         
     repo_remote_obj = git.Repo(repo_remote_root)
     if repo_remote_obj.is_dirty():
-        print(f"""
-╔{'═' * 150}╗
-║ ⚠️  WARNING: REMOTE REPOSITORY IS DIRTY                                    ║
-╠{'═' * 150}╣
-║ Location: {repo_remote_root}               
-║ Please commit or stash changes before proceeding.                        ║
-╚{'═' * 150}╝
-""")
+        console.print(Panel(f"⚠️  WARNING: REMOTE REPOSITORY IS DIRTY\\\\nLocation: {repo_remote_root}\\\\nPlease commit or stash changes before proceeding.", title="Warning", border_style="yellow"))
 
     script = f"""
 echo ""
-echo "╔{'═' * 150}╗"
-echo "║ 💾 COMMITTING LOCAL CHANGES                                               ║"
-echo "╚{'═' * 150}╝"
+echo 'echo -e "\\033[1;34m═════ COMMITTING LOCAL CHANGES ═════\\033[0m"'
 cd {repo_local_root}
 git status
 git add .
 git commit -am "{message}"
 echo ""
 echo ""
-echo "╔{'═' * 150}╗"
-echo "║ 🔄 PULLING LATEST FROM REMOTE                                             ║"
-echo "╚{'═' * 150}╝"
+echo 'echo -e "\\033[1;34m═════ PULLING LATEST FROM REMOTE ═════\\033[0m"'
 cd {repo_local_root}
 echo '-> Trying to removing originEnc remote from local repo if it exists.'
 # git remote remove originEnc
@@ -107,27 +77,13 @@ git pull originEnc master
     res = Terminal().run(f". {shell_path}", shell="powershell").capture().print()
 
     if res.is_successful(strict_err=True, strict_returcode=True):
-        print(f"""
-╔{'═' * 150}╗
-║ ✅ Pull succeeded!{' ' * (78 - len('║ ✅ Pull succeeded!'))}║
-╠{'═' * 150}╣
-║ 🧹 Removing originEnc remote and local copy{' ' * (78 - len('║ 🧹 Removing originEnc remote and local copy'))}║
-║ 📤 Pushing merged repository to cloud storage{' ' * (78 - len('║ 📤 Pushing merged repository to cloud storage'))}║
-╚{'═' * 150}╝
-""")
+        console.print(Panel("✅ Pull succeeded!\\n🧹 Removing originEnc remote and local copy\\n📤 Pushing merged repository to cloud storage", title="Success", border_style="green"))
         repo_remote_root.delete(sure=True)
         from git.remote import Remote
         Remote.remove(repo_local_obj, "originEnc")
         repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
     else:
-        print(f"""
-╔{'═' * 150}╗
-║ ⚠️  MERGE FAILED{' ' * (78 - len('║ ⚠️  MERGE FAILED'))}║
-╠{'═' * 150}╣
-║ 💾 Keeping local copy of remote at:{' ' * (78 - len('║ 💾 Keeping local copy of remote at:'))}║
-║ 📂 {repo_remote_root}{' ' * (78 - len(f'║ 📂 {repo_remote_root}'))}║
-╚{'═' * 150}╝
-""")
+        console.print(Panel(f"⚠️  MERGE FAILED\\n💾 Keeping local copy of remote at:\\n📂 {repo_remote_root}", title="Merge Failed", border_style="red"))
 
         # ================================================================================
         option1 = 'Delete remote copy and push local:'
@@ -171,13 +127,7 @@ git commit -am "finished merging"
         shell_file_4 = write_shell_script_to_file(shell_script=program_4)
         # ================================================================================
 
-        print(f"""
-╔{'═' * 150}╗
-║ 🔄 RESOLVE MERGE CONFLICT                                                 ║
-╠{'═' * 150}╣
-║ Choose an option to resolve the conflict:                                ║
-╚{'═' * 150}╝
-""")
+        console.print(Panel("🔄 RESOLVE MERGE CONFLICT\\nChoose an option to resolve the conflict:", title_align="left", border_style="blue"))
         
         print(f"• 1️⃣  {option1:75} 👉 {shell_file_1}")
         print(f"• 2️⃣  {option2:75} 👉 {shell_file_2}")
@@ -201,11 +151,7 @@ git commit -am "finished merging"
     return program_content
 
 def args_parser():
-    print(f"""
-╔{'═' * 150}╗
-║ 🔄 Repository Synchronization Utility                                     ║
-╚{'═' * 150}╝
-""")
+    console.print(Panel("🔄 Repository Synchronization Utility", title_align="left", border_style="blue"))
 
     parser = argparse.ArgumentParser(description="Secure Repo CLI.")
     # parser.add_argument("cmd", help="command to run", choices=["pull", "push"])

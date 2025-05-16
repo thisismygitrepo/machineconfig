@@ -1,13 +1,14 @@
-
-
 from crocodile.core import Struct
 from crocodile.file_management import Read
 from machineconfig.scripts.python.helpers.cloud_helpers import Args, ArgsDefaults, absolute, find_cloud_config, get_secure_share_cloud_config
 from machineconfig.utils.utils import DEFAULTS_PATH
 from typing import Optional
+from rich.console import Console
+from rich.panel import Panel
 
 
 ES = "^"  # chosen carefully to not mean anything on any shell. `$` was a bad choice.
+console = Console()
 
 
 def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str, str, str]:
@@ -18,11 +19,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         if cloud_maybe == "": cloud_maybe = None
         maybe_config = get_secure_share_cloud_config(interactive=True, cloud=cloud_maybe)
     elif config is not None:
-        print(f"""
-╭{'─' * 150}╮
-│ 📄 Loading configuration from: {config}                   │
-╰{'─' * 150}╯
-""")
+        console.print(Panel(f"📄 Loading configuration from: {config}", width=150, border_style="blue"))
         maybe_config = Args.from_config(absolute(config))
     else:
         maybe_config = None
@@ -55,11 +52,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
 
         if maybe_config is None:
             default_cloud: str=Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
-            print(f"""
-╭{'─' * 150}╮
-│ ⚠️  No cloud config found. Using default cloud: {default_cloud}            │
-╰{'─' * 150}╯
-""")
+            console.print(Panel(f"⚠️  No cloud config found. Using default cloud: {default_cloud}", width=150, border_style="yellow"))
             source = default_cloud + ":" + source[1:]
         else:
             tmp = maybe_config
@@ -78,11 +71,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
 
         if maybe_config is None:
             default_cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
-            print(f"""
-╭{'─' * 150}╮
-│ ⚠️  No cloud config found. Using default cloud: {default_cloud}            │
-╰{'─' * 150}╯
-""")
+            console.print(Panel(f"⚠️  No cloud config found. Using default cloud: {default_cloud}", width=150, border_style="yellow"))
             target = default_cloud + ":" + target[1:]
         else:
             tmp = maybe_config
@@ -131,19 +120,10 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         if zip_arg and ".zip" not in target: target += ".zip"
         if encrypt and ".enc" not in target: target += ".enc"
     else:
-        raise ValueError(f"""
-╔{'═' * 150}╗
-║ ❌ ERROR: Invalid path configuration                                      ║
-╠{'═' * 150}╣
-║ Either source or target must be a remote path (i.e. machine:path)        ║
-╚{'═' * 150}╝
-""")
+        console.print(Panel("❌ ERROR: Invalid path configuration\nEither source or target must be a remote path (i.e. machine:path)", title="[bold red]Error[/bold red]", border_style="red"))
+        raise ValueError("Either source or target must be a remote path (i.e. machine:path)")
 
-    print(f"""
-╭{'─' * 150}╮
-│ 🔍 Path resolution complete                                               │
-╰{'─' * 150}╯
-""")
+    console.print(Panel("🔍 Path resolution complete", title="[bold blue]Resolution[/bold blue]", border_style="blue"))
     Struct({"cloud": cloud, "source": str(source), "target": str(target)}).print(as_config=True, title="CLI Resolution")
     _ = pwd, encrypt, zip_arg, share
     return cloud, str(source), str(target)

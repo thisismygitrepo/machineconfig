@@ -67,11 +67,7 @@ def display_task_success(success):
 
 def main(which: Optional[str] = None):
     PROGRAM_PATH.delete(sure=True, verbose=False)
-    print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ 🚀 Initializing DevOps operation...{' ' * (BOX_WIDTH - len('│ 🚀 Initializing DevOps operation...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+    console.print(Panel("🚀 Initializing DevOps operation...", width=BOX_WIDTH, border_style="blue"))
     
     options = [op.value for op in Options]
     if which is None:
@@ -85,57 +81,33 @@ def main(which: Optional[str] = None):
     console.print(Panel(f"🔧 SELECTED OPERATION\n{choice_key}", title_align="left", border_style="green", width=BOX_WIDTH))
 
     if choice_key == Options.update.value:
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ 🔄 Updating essential repositories...{' ' * (BOX_WIDTH - len('│ 🔄 Updating essential repositories...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel("🔄 Updating essential repositories...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_update_repos as helper
         program = helper.main()
 
     elif choice_key == Options.ve.value:
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ 🐍 Setting up virtual environment...{' ' * (BOX_WIDTH - len('│ 🐍 Setting up virtual environment...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel("🐍 Setting up virtual environment...", width=BOX_WIDTH, border_style="blue"))
         from machineconfig.utils.ve import get_ve_install_script
         program = get_ve_install_script()
 
     elif choice_key == Options.cli_install.value:
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ ⚙️  Installing development applications...{' ' * (BOX_WIDTH - len('│ ⚙️  Installing development applications...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel("⚙️  Installing development applications...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_devapps_install as helper
         program = helper.main()
 
     elif choice_key == Options.sym_new.value:
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ 🔄 Creating new symlinks...{' ' * (BOX_WIDTH - len('│ 🔄 Creating new symlinks...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel("🔄 Creating new symlinks...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.jobs.python.python_ve_symlink as helper
         program = helper.main()
 
     elif choice_key == Options.sym_path_shell.value:
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ 🔗 Setting up symlinks, PATH, and shell profile...{' ' * (BOX_WIDTH - len('│ 🔗 Setting up symlinks, PATH, and shell profile...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel("🔗 Setting up symlinks, PATH, and shell profile...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.profile.create as helper
         helper.main()
         program = "echo '✅ done with symlinks'"
 
     elif choice_key == Options.ssh_add_pubkey.value:
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ 🔑 Adding public SSH key to this machine...{' ' * (BOX_WIDTH - len('│ 🔑 Adding public SSH key to this machine...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel("🔑 Adding public SSH key to this machine...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_add_ssh_key as helper
         program = helper.main()
 
@@ -144,38 +116,22 @@ def main(which: Optional[str] = None):
         raise NotImplementedError
 
     elif choice_key == Options.ssh_add_id.value:  # so that you can SSH directly withuot pointing to identity key.
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ 🗝️  Adding SSH identity (private key) to this machine...{' ' * (BOX_WIDTH - len('│ 🗝️  Adding SSH identity (private key) to this machine...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel("🗝️  Adding SSH identity (private key) to this machine...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_add_identity as helper
         program = helper.main()
 
     elif choice_key == Options.ssh_setup.value:
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ 📡 Setting up SSH...{' ' * (BOX_WIDTH - len('│ 📡 Setting up SSH...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel("📡 Setting up SSH...", width=BOX_WIDTH, border_style="blue"))
         program_windows = """Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""
         program_linux = """curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash  # https://github.com/thisismygitrepo.keys"""
         program = program_linux if system() == "Linux" else program_windows
 
     elif choice_key == Options.ssh_setup_wsl.value:
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ 🐧 Setting up SSH for WSL...{' ' * (BOX_WIDTH - len('│ 🐧 Setting up SSH for WSL...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel("🐧 Setting up SSH for WSL...", width=BOX_WIDTH, border_style="blue"))
         program = """curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
 
     elif choice_key == Options.backup.value:
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ 💾 Creating backup...{' ' * (BOX_WIDTH - len('│ 💾 Creating backup...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel("💾 Creating backup...", width=BOX_WIDTH, border_style="blue"))
         from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve as helper
         program = helper(direction="BACKUP")
         

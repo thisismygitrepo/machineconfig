@@ -153,7 +153,7 @@ kwargs_path @ `{manager.kwargs_path.collapseuser()}`
 
 # print to execution console:
 exec_times.print(title="⏱️ Execution Times", as_config=True)
-print("\n" + "─" * 60 + "\n")
+console.rule(title="", characters="─", style="blue")
 ssh_repr_remote = params.ssh_repr_remote or f"{getpass.getuser()}@{platform.node()}"  # os.getlogin() can throw an error in non-login shells.
 console.print(Panel(Text(f'''
 ftprx {ssh_repr_remote} {res_folder.collapseuser()} -r

@@ -10,27 +10,9 @@ from machineconfig.utils.ve_utils.ve1 import get_ve_name_and_ipython_profile, ge
 from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
+from rich.text import Text # Added import for rich.text
 
 console = Console()
-
-BOX_WIDTH = 150
-
-
-def _get_padding(text: str, padding_before: int = 2, padding_after: int = 1) -> str:
-    """Calculate the padding needed to align the box correctly.
-    
-    Args:
-        text: The text to pad
-        padding_before: The space taken before the text (usually "║ ")
-        padding_after: The space needed after the text (usually " ║")
-    
-    Returns:
-        A string of spaces for padding
-    """
-    # Count visible characters (might not be perfect for all Unicode characters)
-    text_length = len(text)
-    padding_length = BOX_WIDTH - padding_before - text_length - padding_after
-    return ' ' * max(0, padding_length)
 
 
 def add_print_header_pycode(path: str, title: str):
@@ -54,41 +36,23 @@ def get_read_data_pycode(path: str):
     # We need to be careful here since we're generating Python code as a string
     # that will use f-strings itself
     return f"""
-p = P(r\'{path}\').absolute()
+from rich.panel import Panel
+from rich.text import Text
+from rich.console import Console
+console = Console()
+p = P(r'{path}').absolute()
 try:
     dat = p.readit()
-    if isinstance(dat, dict): 
-        text = "📄 File Data: " + str(p.name)
-        spaces = ' ' * (150 - len(text) - 3)
-        print(f'''
-╔{'═' * 150}╗
-║ {{text}}{{spaces}}║
-╚{'═' * 150}╝
-''')
+    if isinstance(dat, dict):
+        panel_title = f"📄 File Data: {{p.name}}"
+        console.print(Panel(Text(str(dat), justify="left"), title=panel_title, expand=False))
         Struct(dat).print(as_config=True, title=p.name)
-    else: 
-        text = "📄 Successfully read the file: " + str(p.name)
-        spaces = ' ' * (150 - len(text) - 3)
-        print(f'''
-╔{'═' * 150}╗
-║ {{text}}{{spaces}}║
-╚{'═' * 150}╝
-''')
+    else:
+        panel_title = f"📄 Successfully read the file: {{p.name}}"
+        console.print(Panel(Text(str(dat), justify="left"), title=panel_title, expand=False))
 except Exception as e:
-    error_text = "❌ ERROR READING FILE"
-    error_spaces = ' ' * (150 - len(error_text) - 3)
-    file_text = "File: " + str(p.name)
-    file_spaces = ' ' * (150 - len(file_text) - 3)
-    err_text = "Error: " + str(e)
-    err_spaces = ' ' * (150 - len(err_text) - 3)
-    print(f'''
-╔{'═' * 150}╗
-║ {{error_text}}{{error_spaces}}║
-╠{'═' * 150}╣
-║ {{file_text}}{{file_spaces}}║
-║ {{err_text}}{{err_spaces}}║
-╚{'═' * 150}╝
-''')
+    error_message = f"❌ ERROR READING FILE\\nFile: {{p.name}}\\nError: {{e}}"
+    console.print(Panel(Text(error_message, justify="left"), title="Error", expand=False, border_style="red"))
 """
 
 
@@ -221,19 +185,13 @@ print_logo(logo="crocodile")
         fire_line += f" {str(pyfile)}"
             
     final_program += fire_line
-    
+
     title = "🚀 LAUNCHING SCRIPT"
     text1 = f"📄 Script: {pyfile}"
     text2 = f"🔥 Command: {fire_line}"
-    print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title}   {PROGRAM_PATH}{_get_padding(f"{title}   {PROGRAM_PATH}")}║
-╠{'═' * BOX_WIDTH}╣
-║ {text1}{_get_padding(text1)}║
-║ {text2}{_get_padding(text2)}║
-╚{'═' * BOX_WIDTH}╝
-""")
-    
+    launch_message = f"{title}   {PROGRAM_PATH}\\n{text1}\\n{text2}"
+    console.print(Panel(Text(launch_message, justify="left"), expand=False, border_style="blue"))
+
     PROGRAM_PATH.write_text(data=final_program)
     # (PROGRAM_PATH + ".py").write_text(str(pyfile), encoding='utf-8')
 

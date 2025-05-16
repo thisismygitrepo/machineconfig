@@ -8,27 +8,13 @@ from crocodile.file_management import P, Read
 import platform
 import argparse
 from typing import Optional
+from rich.console import Console
+from rich.panel import Panel
+
+console = Console()
 
 
 DEFAULT_MOUNT = "~/data/rclone"
-BOX_WIDTH = 150  # width for box drawing
-
-
-def _get_padding(text: str, padding_before: int = 2, padding_after: int = 1) -> str:
-    """Calculate the padding needed to align the box correctly.
-    
-    Args:
-        text: The text to pad
-        padding_before: The space taken before the text (usually "║ ")
-        padding_after: The space needed after the text (usually " ║")
-    
-    Returns:
-        A string of spaces for padding
-    """
-    # Count visible characters (might not be perfect for all Unicode characters)
-    text_length = len(text)
-    padding_length = BOX_WIDTH - padding_before - text_length - padding_after
-    return ' ' * max(0, padding_length)
 
 
 def get_rclone_config():
@@ -62,11 +48,7 @@ mprocs "echo 'see {DEFAULT_MOUNT}/{cloud} for the mounted cloud'; rclone about {
 def mount(cloud: Optional[str], network: Optional[str], destination: Optional[str]) -> None:
     # draw header box dynamically
     title = "☁️  Cloud Mount Utility"
-    print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title}{_get_padding(title)}║
-╚{'═' * BOX_WIDTH}╝
-""")
+    console.print(Panel(title, title_align="left", border_style="blue"))
     
     config = get_rclone_config()
     if cloud is None:
@@ -82,11 +64,7 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
             mount_loc = P(destination)
         
         mount_info = f"📂 Mount location: {mount_loc}"
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {mount_info}{_get_padding(mount_info)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel(mount_info, border_style="blue"))
 
         if platform.system() == "Windows":
             print("🪟 Creating mount directory on Windows...")
@@ -98,12 +76,7 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
                 # We need a umount command here.
                 warning_line = "⚠️  WARNING: Mount directory issue"
                 err_line = f"{err}"
-                print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {warning_line}{_get_padding(warning_line)}│
-│ {err_line}{_get_padding(err_line)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+                console.print(Panel(f"{warning_line}\\n{err_line}", title="Warning", border_style="yellow"))
                 pass
         else: raise ValueError("unsupported platform")
 
@@ -113,12 +86,7 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
     else: raise ValueError("network mount only supported on windows")
 
     mount_cmd = f"rclone mount {cloud}: {mount_loc} --vfs-cache-mode full --file-perms=0777"
-    print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ 🚀 Preparing mount command:{_get_padding("🚀 Preparing mount command:")}│
-│ {mount_cmd}{_get_padding(mount_cmd)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+    console.print(Panel(f"🚀 Preparing mount command:\\n{mount_cmd}", border_style="blue"))
 
     # txt = get_mprocs_mount_txt(cloud, mount_cmd)
     if platform.system() == "Windows":
@@ -160,27 +128,18 @@ zellij run --in-place --cwd $HOME/data/rclone/{cloud} -- bash
 zellij action move-focus up
 """
     else: raise ValueError("unsupported platform")
-    # print(f"running command: \n{txt}")
+    # print(f"running command: \\n{txt}")
     PROGRAM_PATH.write_text(txt)
     # draw success box dynamically
     title1 = "✅ Cloud mount command prepared successfully"
     title2 = "🔄 Running mount process..."
-    print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title1}{_get_padding(title1)}║
-║ {title2}{_get_padding(title2)}║
-╚{'═' * BOX_WIDTH}╝
-""")
+    console.print(Panel(f"{title1}\\n{title2}", title="Success", border_style="green"))
 
 
 def main():
     # draw main title box dynamically
     main_title = "☁️  RCLONE CLOUD MOUNT"
-    print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {main_title}{_get_padding(main_title)}║
-╚{'═' * BOX_WIDTH}╝
-""")
+    console.print(Panel(main_title, title_align="left", border_style="blue"))
     
     parser = argparse.ArgumentParser(description='mount cloud')
     parser.add_argument('cloud', nargs='?', type=str, default=None, help='cloud to mount')

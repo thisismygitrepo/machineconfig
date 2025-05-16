@@ -10,6 +10,10 @@ from pathlib import Path
 import os
 import platform
 import subprocess
+from rich.console import Console
+from rich.panel import Panel
+
+console = Console()
 
 def create_new_connection(name: str, ssid: str, password: str):
     print(f"\n🔧 Creating new connection: {name} (SSID: {ssid})")
@@ -45,9 +49,7 @@ def display_available_networks():
     print("✅ Network scan completed!\n")
 
 def main():
-    print("\n" + "=" * 50)
-    print("📶 Welcome to the WiFi Connector Tool")
-    print("=" * 50 + "\n")
+    console.print(Panel("📶 Welcome to the WiFi Connector Tool", title="[bold blue]WiFi Connection[/bold blue]", border_style="blue"))
 
     creds = configparser.ConfigParser()
     creds.read(Path.home().joinpath('dotfiles/machineconfig/setup/wifi.ini'))

@@ -77,11 +77,7 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
 
 
 def arg_parser() -> None:
-    print(f"""
-╔{'═' * 150}╗
-║ ☁️  Cloud Copy Utility{_get_padding("☁️  Cloud Copy Utility")}║
-╚{'═' * 150}╝
-""")
+    console.print(Panel("☁️  Cloud Copy Utility", title="[bold blue]Cloud Copy[/bold blue]", border_style="blue", width=152))
     
     parser = argparse.ArgumentParser(description='🚀 Cloud CLI. It wraps rclone with sane defaults for optimum type time.')
 
@@ -128,67 +124,32 @@ def arg_parser() -> None:
     assert args_obj.key is None, "Key is not supported yet."
     
     if cloud in source:
-        print(f"""
-╔{'═' * 150}╗
-║ 📥 DOWNLOADING FROM CLOUD{_get_padding("📥 DOWNLOADING FROM CLOUD")}║
-╠{'═' * 150}╣
-║ ☁️  Cloud: {cloud}{_get_padding(f"☁️  Cloud: {cloud}")}
-║ 📂 Source: {source.replace(cloud + ":", "")}{_get_padding(f"📂 Source: {source.replace(cloud + ':', '')}")}
-║ 🎯 Target: {target}{_get_padding(f"🎯 Target: {target}")}
-╚{'═' * 150}╝
-""")
+        console.print(Panel(f"📥 DOWNLOADING FROM CLOUD\\n☁️  Cloud: {cloud}\\n📂 Source: {source.replace(cloud + ':', '')}\\n🎯 Target: {target}", title="[bold blue]Download[/bold blue]", border_style="blue", width=152))
         
         P(target).from_cloud(cloud=cloud, remotepath=source.replace(cloud + ":", ""),
                             unzip=args_obj.zip, decrypt=args_obj.encrypt, pwd=args_obj.pwd,
                             overwrite=args_obj.overwrite,
                             rel2home=args_obj.rel2home, os_specific=args_obj.os_specific, root=args_obj.root, strict=False,
                             )
-        print(f"""
-╔{'═' * 150}╗
-║ ✅ Download completed successfully{_get_padding("✅ Download completed successfully")}║
-╚{'═' * 150}╝
-""")
+        console.print(Panel("✅ Download completed successfully", title="[bold green]Success[/bold green]", border_style="green", width=152))
         
     elif cloud in target:
-        print(f"""
-╔{'═' * 150}╗
-║ 📤 UPLOADING TO CLOUD{_get_padding("📤 UPLOADING TO CLOUD")}║
-╠{'═' * 150}╣
-║ ☁️  Cloud: {cloud}{_get_padding(f"☁️  Cloud: {cloud}")}
-║ 📂 Source: {source}{_get_padding(f"📂 Source: {source}")}
-║ 🎯 Target: {target.replace(cloud + ":", "")}{_get_padding(f"🎯 Target: {target.replace(cloud + ':', '')}")}
-╚{'═' * 150}╝
-""")
+        console.print(Panel(f"📤 UPLOADING TO CLOUD\\n☁️  Cloud: {cloud}\\n📂 Source: {source}\\n🎯 Target: {target.replace(cloud + ':', '')}", title="[bold blue]Upload[/bold blue]", border_style="blue", width=152))
         
         res = P(source).to_cloud(cloud=cloud, remotepath=target.replace(cloud + ":", ""),
                                     zip=args_obj.zip, encrypt=args_obj.encrypt, pwd=args_obj.pwd,
                                     rel2home=args_obj.rel2home, root=args_obj.root, os_specific=args_obj.os_specific, strict=False,
                                     share=args_obj.share)
-        print(f"""
-╔{'═' * 150}╗
-║ ✅ Upload completed successfully{_get_padding("✅ Upload completed successfully")}║
-╚{'═' * 150}╝
-""")
+        console.print(Panel("✅ Upload completed successfully", title="[bold green]Success[/bold green]", border_style="green", width=152))
         
         if args_obj.share:
             fname = f".share_url_{cloud}"
             if P(source).is_dir(): share_url_path = P(source).joinpath(fname)
             else: share_url_path = P(source).with_suffix(fname)
             share_url_path.write_text(res.as_url_str())
-            print(f"""
-╔{'═' * 150}╗
-║ 🔗 SHARE URL GENERATED{_get_padding("🔗 SHARE URL GENERATED")}║
-╠{'═' * 150}╣
-║ 📝 URL file: {share_url_path}{_get_padding(f"📝 URL file: {share_url_path}")}
-║ 🌍 {res.as_url_str()}{_get_padding(f"🌍 {res.as_url_str()}")}
-╚{'═' * 150}╝
-""")
+            console.print(Panel(f"🔗 SHARE URL GENERATED\\n📝 URL file: {share_url_path}\\n🌍 {res.as_url_str()}", title="[bold blue]Share[/bold blue]", border_style="blue", width=152))
     else: 
-        print(f"""
-╔{'═' * 150}╗
-║ ❌ ERROR: Cloud '{cloud}' not found in source or target{_get_padding(f"❌ ERROR: Cloud '{cloud}' not found in source or target")}║
-╚{'═' * 150}╝
-""")
+        console.print(Panel(f"❌ ERROR: Cloud '{cloud}' not found in source or target", title="[bold red]Error[/bold red]", border_style="red", width=152))
         raise ValueError(f"Cloud `{cloud}` not found in source or target.")
 
 

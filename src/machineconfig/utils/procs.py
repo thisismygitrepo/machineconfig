@@ -30,7 +30,7 @@ def get_processes_accessing_file(path: str):
         if len(tmp) > 0:
             res[proc.pid] = tmp
     df = pd.DataFrame(res.items(), columns=['pid', 'files'])
-    print(f"\n✅ Found {len(res)} processes accessing the specified file\n{'─'*80}\n")
+    console.print(Panel(f"✅ Found {len(res)} processes accessing the specified file", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
     return df
 
 
@@ -63,7 +63,7 @@ class ProcessManager:
         df['create_time'] = pd.to_datetime(df['create_time'], unit='s', utc=True).apply(lambda x: x.tz_convert(timezone('Australia/Adelaide')))
         df = df.sort_values(by='memory_usage_mb', ascending=False).reset_index(drop=True)
         self.df = df
-        print(f"✅ Process Manager initialized with {len(df)} processes\n{'─'*80}\n")
+        console.print(Panel(f"✅ Process Manager initialized with {len(df)} processes", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
     def choose_and_kill(self):
         # header for interactive process selection
@@ -91,7 +91,7 @@ class ProcessManager:
             for idx2, row in sub_sub_df.iterrows():
                 Struct(row.to_dict()).print(as_config=True, title=f"🎯 Target Process {idx2}")
             _ = self.kill(pids=sub_sub_df.pid.to_list()) if input("\n⚠️  Confirm termination? y/[n] ").lower() == "y" else None
-        print(f"\n🔔 No processes were terminated.\n{'─'*80}\n")
+        console.print(Panel("🔔 No processes were terminated.", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
     def filter_and_kill(self, name: Optional[str] = None):
         # header for filtering processes by name
@@ -101,7 +101,7 @@ class ProcessManager:
         df_sub = self.df.query(f"name == '{name}' ").sort_values(by='create_time', ascending=True)
         print(f"🎯 Found {len(df_sub)} processes matching name: '{name}'")
         self.kill(pids=df_sub.pid.to_list())
-        print(f"{'─'*80}\n")
+        console.print(Panel("", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
     def kill(self, names: Optional[list[str]] = None, pids: Optional[list[int]] = None, commands: Optional[list[str]] = None):
         # header for process termination
@@ -147,7 +147,7 @@ class ProcessManager:
             else: 
                 print(f'❓ No process has "{command}" in its command.')
         
-        print(f"\n✅ Termination complete: {killed_count} processes terminated\n{'─'*80}\n")
+        console.print(Panel(f"✅ Termination complete: {killed_count} processes terminated", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
 
 def get_age(create_time: float):

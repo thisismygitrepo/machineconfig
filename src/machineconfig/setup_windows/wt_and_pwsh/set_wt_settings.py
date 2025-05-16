@@ -8,6 +8,8 @@ from machineconfig.utils.utils import LIBRARY_ROOT
 from uuid import uuid4
 import os
 from typing import Any
+from rich.console import Console
+from rich.panel import Panel
 
 
 """
@@ -20,6 +22,7 @@ All settings are available on GitHub: https://aka.ms/terminal-profiles-schema
 """
 
 
+console = Console()
 assert env.system == 'Windows', 'This script is only for Windows.'
 
 
@@ -38,13 +41,14 @@ class TerminalSettings(object):
         print(f"📂 Loading Windows Terminal settings from: {self.path}")
         self.dat: dict[str, Any] = Read.json(self.path)
         self.profs = L(self.dat["profiles"]["list"])
-        print(f"✅ Successfully loaded {len(self.profs)} profiles\n{'-'*80}")
+        console = Console()
+        console.print(Panel(f"✅ Successfully loaded {len(self.profs)} profiles", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
 
     def save_terminal_settings(self):
         print(f"\n💾 Saving terminal settings to: {self.path}")
         self.dat["profiles"]["list"] = list(self.profs)
         Save.json(obj=self.dat, path=self.path, indent=5)
-        print(f"✅ Settings saved successfully!\n{'-'*80}")
+        console.print(Panel("✅ Settings saved successfully!", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
 
     # ========================= Terminal Settings =========================================
     def update_default_settings(self):
@@ -57,7 +61,7 @@ class TerminalSettings(object):
         self.dat["copyOnSelect"] = True
         self.dat["profiles"]["defaults"]["padding"] = "0"
         self.dat["profiles"]["defaults"]["useAcrylic"] = False
-        print(f"✅ Default settings updated\n{'-'*80}")
+        console.print(Panel("✅ Default settings updated", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
 
     # 1- Customizing Powershell========================================================
     # as opposed to Windows Powershell
@@ -77,20 +81,20 @@ class TerminalSettings(object):
         for idx, item in enumerate(self.profs):
             if item["name"] == "PowerShell":
                 self.profs.list[idx].update(pwsh)
-                print(f"✅ PowerShell profile customized successfully\n{'-'*80}")
+                console.print(Panel("✅ PowerShell profile customized successfully", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
                 break
         else:
-            print(f"❌ Couldn't customize PowerShell because profile not found, try to install it first.\n{'-'*80}")
+            console.print(Panel("❌ Couldn't customize PowerShell because profile not found, try to install it first.", title="[bold red]Terminal Settings[/bold red]", border_style="red"))
 
     def make_powershell_default_profile(self):
         print("\n🌟 Setting PowerShell as the default profile...")
         for profile in self.profs:
             if profile["name"] == "PowerShell":
                 self.dat["defaultProfile"] = profile["guid"]
-                print(f"✅ PowerShell is now the default profile!\n{'-'*80}")
+                console.print(Panel("✅ PowerShell is now the default profile!", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
                 break
         else: 
-            print(f"❌ PowerShell profile was not found in the list of profiles and therefore was not made the default.\n{'-'*80}")
+            console.print(Panel("❌ PowerShell profile was not found in the list of profiles and therefore was not made the default.", title="[bold red]Terminal Settings[/bold red]", border_style="red"))
 
     def add_croshell(self):
         print("\n🐊 Adding croshell profile...")
@@ -105,11 +109,11 @@ class TerminalSettings(object):
         for profile in self.profs:
             if profile["name"] == "croshell":
                 profile.update(croshell)
-                print(f"✅ Updated existing croshell profile\n{'-'*80}")
+                console.print(Panel("✅ Updated existing croshell profile", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
                 break
         else: 
             self.profs.append(croshell)
-            print(f"✅ Added new croshell profile\n{'-'*80}")
+            console.print(Panel("✅ Added new croshell profile", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
 
     def add_ubuntu(self):
         print("\n🐧 Adding Ubuntu WSL profile...")
@@ -122,9 +126,9 @@ class TerminalSettings(object):
                       )
         if self.profs.filter(lambda x: x["name"] == "Ubuntu").__len__() < 1:
             self.profs.append(ubuntu)
-            print(f"✅ Added Ubuntu WSL profile\n{'-'*80}")
+            console.print(Panel("✅ Added Ubuntu WSL profile", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
         else:
-            print(f"ℹ️ Ubuntu profile already exists\n{'-'*80}")
+            console.print(Panel("ℹ️ Ubuntu profile already exists", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
 
     def standardize_profiles_order(self):
         print("\n🔄 Standardizing profile order...")
@@ -141,7 +145,7 @@ class TerminalSettings(object):
             elif name == "Azure Cloud Shell": azure = profile
             else: others.append(profile)
         self.profs = L([item for item in [pwsh, croshell, ubuntu, wpwsh, cmd, azure] + others if item is not None])
-        print(f"✅ Profile order standardized\n{'-'*80}")
+        console.print(Panel("✅ Profile order standardized", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
 
 
 def main():

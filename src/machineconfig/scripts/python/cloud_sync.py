@@ -9,61 +9,53 @@ from machineconfig.utils.utils import PROGRAM_PATH
 import argparse
 from rich.console import Console
 from rich.panel import Panel
+from rich.text import Text  # Added import for rich.text
 
 console = Console()
-
-BOX_WIDTH = 150  # width for box drawing
-
-
-def _get_padding(text: str, padding_before: int = 2, padding_after: int = 1) -> str:
-    """Calculate the padding needed to align the box correctly.
-    
-    Args:
-        text: The text to pad
-        padding_before: The space taken before the text (usually "║ ")
-        padding_after: The space needed after the text (usually " ║")
-    
-    Returns:
-        A string of spaces for padding
-    """
-    # Count visible characters (might not be perfect for all Unicode characters)
-    text_length = len(text)
-    padding_length = BOX_WIDTH - padding_before - text_length - padding_after
-    return ' ' * max(0, padding_length)
 
 
 def args_parser():
     title = "☁️  Cloud Sync Utility"
-    print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title}{_get_padding(title)}║
-╚{'═' * BOX_WIDTH}╝
-""")
-    
-    parser = argparse.ArgumentParser(description="""A wrapper for rclone sync and rclone bisync, with some extra features.""")
+    console.print(Panel(title, title_align="left", border_style="blue"))
+
+    parser = argparse.ArgumentParser(
+        description="""A wrapper for rclone sync and rclone bisync, with some extra features."""
+    )
 
     parser.add_argument("source", help="source", default=None)
     parser.add_argument("target", help="target", default=None)
 
-    parser.add_argument("--transfers", "-t", help="Number of threads in syncing.", default=10)  # default is False
+    parser.add_argument(
+        "--transfers", "-t", help="Number of threads in syncing.", default=10
+    )  # default is False
     parser.add_argument("--root", "-R", help="Remote root.", default="myhome")  # default is False
 
     parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
-    parser.add_argument("--encrypt", "-e", help="Decrypt after receiving.", action="store_true")  # default is False
-    parser.add_argument("--zip", "-z", help="unzip after receiving.", action="store_true")  # default is False
+    parser.add_argument(
+        "--encrypt", "-e", help="Decrypt after receiving.", action="store_true"
+    )  # default is False
+    parser.add_argument(
+        "--zip", "-z", help="unzip after receiving.", action="store_true"
+    )  # default is False
 
-    parser.add_argument("--bisync", "-b", help="Bidirectional sync.", action="store_true")  # default is False
-    parser.add_argument("--delete", "-D", help="Delete files in remote that are not in local.", action="store_true")  # default is False
-    parser.add_argument("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.", action="store_true")  # default is False
+    parser.add_argument(
+        "--bisync", "-b", help="Bidirectional sync.", action="store_true"
+    )  # default is False
+    parser.add_argument(
+        "--delete", "-D", help="Delete files in remote that are not in local.", action="store_true"
+    )  # default is False
+    parser.add_argument(
+        "--verbose", "-v", help="Verbosity of mprocs to show details of syncing.", action="store_true"
+    )  # default is False
 
     args = parser.parse_args()
     args_dict = vars(args)
-    source: str=args_dict.pop("source")
-    target: str=args_dict.pop("target")
-    verbose: bool=args_dict.pop("verbose")
-    delete: bool=args_dict.pop("delete")
-    bisync: bool=args_dict.pop("bisync")
+    source: str = args_dict.pop("source")
+    target: str = args_dict.pop("target")
+    verbose: bool = args_dict.pop("verbose")
+    delete: bool = args_dict.pop("delete")
+    bisync: bool = args_dict.pop("bisync")
     transfers: int = args_dict.pop("transfers")
     args_obj = Args(**args_dict)
 
@@ -76,48 +68,33 @@ def args_parser():
         title = "🔄 BI-DIRECTIONAL SYNC"
         source_line = f"Source: {source}"
         target_line = f"Target: {target}"
-        print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title}{_get_padding(title)}║
-╠{'═' * BOX_WIDTH}╣
-║ {source_line}{_get_padding(source_line)}║
-║ {target_line}{_get_padding(target_line)}║
-╚{'═' * BOX_WIDTH}╝
-""")
+        console.print(Panel(f"{source_line}\\n{target_line}", title=title, border_style="blue"))
         rclone_cmd = f"""rclone bisync '{source}' '{target}' --resync"""
     else:
         title = "📤 ONE-WAY SYNC"
         source_line = f"Source: {source}"
         arrow_line = "↓"
         target_line = f"Target: {target}"
-        print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title}{_get_padding(title)}║
-╠{'═' * BOX_WIDTH}╣
-║ {source_line}{_get_padding(source_line)}║
-║ {arrow_line}{_get_padding(arrow_line)}║
-║ {target_line}{_get_padding(target_line)}║
-╚{'═' * BOX_WIDTH}╝
-""")
-        rclone_cmd = f"""rclone sync '{source}' '{target}' """
+        console.print(Panel(f"{source_line}\\n{arrow_line}\\n{target_line}", title=title, border_style="blue"))
+        if delete:
+            rclone_cmd = f"rclone sync -P \"{source}\" \"{target}\" --delete-during --transfers={transfers}"
+        else:
+            rclone_cmd = f"rclone sync -P \"{source}\" \"{target}\" --transfers={transfers}"
 
     rclone_cmd += f" --progress --transfers={transfers} --verbose"
     # rclone_cmd += f"  --vfs-cache-mode full"
-    if delete: rclone_cmd += " --delete-during"
+    if delete:
+        rclone_cmd += " --delete-during"
 
-    if verbose: txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd, cloud_brand="Unknown")
-    else: txt = f"""{rclone_cmd}"""
-    
+    if verbose:
+        txt = get_mprocs_mount_txt(cloud=cloud, rclone_cmd=rclone_cmd, cloud_brand="Unknown")
+    else:
+        txt = f"""{rclone_cmd}"""
+
     title = "🚀 EXECUTING COMMAND"
     cmd_line = f"{rclone_cmd[:65]}..."
-    print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title}{_get_padding(title)}║
-╠{'═' * BOX_WIDTH}╣
-║ {cmd_line}{_get_padding(cmd_line)}║
-╚{'═' * BOX_WIDTH}╝
-""")
-    
+    console.print(Panel(f"{title}\\n{cmd_line}", title="[bold blue]Command[/bold blue]", expand=False))
+
     PROGRAM_PATH.write_text(txt)
 
 
