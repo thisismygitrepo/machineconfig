@@ -8,8 +8,12 @@ from crocodile.core_modules.core_1 import randstr
 from machineconfig.utils.utils import PROGRAM_PATH, display_options
 from machineconfig.utils.ve_utils.ve1 import get_ve_name_and_ipython_profile, get_ve_activate_line
 from typing import Optional
+from rich.console import Console
+from rich.panel import Panel
 
-BOX_WIDTH = 150  # width for box drawing
+console = Console()
+
+BOX_WIDTH = 150
 
 
 def _get_padding(text: str, padding_before: int = 2, padding_after: int = 1) -> str:
@@ -134,52 +138,31 @@ def build_parser():
 
     if args.cmd != "":
         text = "🖥️  Executing command from CLI argument"
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {text}{_get_padding(text)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
         import textwrap
         program = textwrap.dedent(args.cmd)
 
     elif args.fzf:
         text = "🔍 Searching for Python files..."
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {text}{_get_padding(text)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
         options = P.cwd().search("*.py", r=True).apply(str).list
         file = display_options(msg="Choose a python file to run", options=options, fzf=True, multi=False, )
         assert isinstance(file, str)
         program = P(file).read_text(encoding='utf-8')
         text = f"📄 Selected file: {P(file).name}"
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {text}{_get_padding(text)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
 
     elif args.file != "":
         file = P(args.file.lstrip()).expanduser().absolute()
         program = get_read_pyfile_pycode(file, as_module=args.module, cmd=args.cmd)
         text1 = f"📄 Loading file: {file.name}"
         text2 = f"🔄 Mode: {'Module' if args.module else 'Script'}"
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {text1}{_get_padding(text1)}│
-│ {text2}{_get_padding(text2)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel(f"{text1}\n{text2}", title="[bold blue]Info[/bold blue]"))
 
     elif args.read != "":
         if args.streamlit_viewer:
             text = "📊 STARTING STREAMLIT VIEWER"
-            print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {text}{_get_padding(text)}║
-╚{'═' * BOX_WIDTH}╝
-""")
+            console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
             from machineconfig.scripts.python.viewer import run
             py_file_path = run(data_path=args.read, data=None, get_figure=None)
             final_program = f"""
@@ -192,20 +175,14 @@ streamlit run {py_file_path}
         file = P(str(args.read).lstrip()).expanduser().absolute()
         program = get_read_data_pycode(str(file))
         text = f"📄 Reading data from: {file.name}"
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {text}{_get_padding(text)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
 
-    else:  # just run croshell.py interactively
-        program = ""
-
-        # from IPython import start_ipython
-        # start_ipython(argv=program.split(' ')[1:])
-        # return
-        # Clear-Host;
-        # # --autocall 1 in order to enable shell-like behaviour: e.g.: P x is interpretred as P(x)
+    else:  # if nothing is specified, then run in interactive mode.
+        text = "⌨️  Entering interactive mode"
+        console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
+        from machineconfig.scripts.python.croshell import InteractiveShell
+        InteractiveShell().run()
+        return None
 
     preprogram = """
 

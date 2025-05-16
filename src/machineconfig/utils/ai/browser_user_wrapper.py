@@ -9,6 +9,8 @@ os.environ["ANONYMIZED_TELEMETRY"] = "false"
 from langchain_ollama import ChatOllama
 from browser_use import Agent
 import asyncio
+from rich.panel import Panel
+from rich import print as rprint
 
 BOX_WIDTH = 150  # width for box drawing
 
@@ -34,41 +36,29 @@ def _get_padding(text: str, padding_before: int = 2, padding_after: int = 1) -> 
 async def main():
     # header for browser automation agent
     title = "🌐 Browser Automation Agent"
-    print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title}{_get_padding(title)}║
-╚{'═' * BOX_WIDTH}╝
-""")
+    rprint(Panel(title, title="Status", width=BOX_WIDTH))
 
-    print("🔄 Initializing LLM model (llama3.1:8b)...")
+    rprint("🔄 Initializing LLM model (llama3.1:8b)...")
     llm = ChatOllama(model="llama3.1:8b")
-    print("✅ LLM model initialized")
+    rprint("✅ LLM model initialized")
     
     task_line1 = "🤖 Task: Open https://chat.openai.com/ and ask how many r's in"
     task_line2 = "rrraaararewey, use Thinking Button and type the answer"
-    print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ {task_line1}{_get_padding(task_line1)}│
-│ {task_line2}{_get_padding(task_line2)}│
-╰{'─' * BOX_WIDTH}╯
-""")
+    task_content = f"{task_line1}\\n{task_line2}"
+    rprint(Panel(task_content, title="Task", width=BOX_WIDTH))
     
-    print("🚀 Creating and launching browser agent...")
+    rprint("🚀 Creating and launching browser agent...")
     agent = Agent(
         task="open https://chat.openai.com/ and ask how many r's in rrraaararewey, use Thinking Button and type the answer",
         llm=llm
     )
 
-    print("🏃‍♂️ Running agent task...")
+    rprint("🏃‍♂️ Running agent task...")
     await agent.run()
     
     # footer success box
     title = "✅ Browser automation task completed"
-    print(f"""
-╔{'═' * BOX_WIDTH}╗
-║ {title}{_get_padding(title)}║
-╚{'═' * BOX_WIDTH}╝
-""")
+    rprint(Panel(title, title="Status", width=BOX_WIDTH))
 
 
 if __name__ == "__main__":
