@@ -144,9 +144,10 @@ streamlit run {py_file_path}
     else:  # if nothing is specified, then run in interactive mode.
         text = "⌨️  Entering interactive mode"
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
-        from machineconfig.scripts.python.croshell import InteractiveShell
-        InteractiveShell().run()
-        return None
+        # from machineconfig.scripts.python.croshell import InteractiveShell
+        # InteractiveShell().run()
+        # return None
+        program = ""
 
     preprogram = """
 
@@ -189,7 +190,7 @@ print_logo(logo="crocodile")
     title = "🚀 LAUNCHING SCRIPT"
     text1 = f"📄 Script: {pyfile}"
     text2 = f"🔥 Command: {fire_line}"
-    launch_message = f"{title}   {PROGRAM_PATH}\\n{text1}\\n{text2}"
+    launch_message = f"{title}   {PROGRAM_PATH}\n{text1}\n{text2}"
     console.print(Panel(Text(launch_message, justify="left"), expand=False, border_style="blue"))
 
     PROGRAM_PATH.write_text(data=final_program)
