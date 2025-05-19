@@ -164,7 +164,7 @@ def main() -> None:
         elif args.interactive is False: exe = "python"
         elif args.jupyter: exe = "jupyter-lab"
         else:            
-            exe = f"ipython -i --no-banner --profile {ipy_profile} "
+            exe = f"which ipython\nipython -i --no-banner --profile {ipy_profile} "
     elif choice_file.suffix == ".ps1" or choice_file.suffix == ".sh":
         exe = "."
     elif choice_file.suffix == "":
