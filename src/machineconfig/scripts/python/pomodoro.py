@@ -31,8 +31,8 @@ def pomodoro(work: int = 25, rest: int = 5, repeats: int = 4):
     def speak(txt: str):
         print(f"🔊 Speaking: {txt}")
         install_n_import("gtts").gTTS(txt, lang='en', tld='com.au').save(tmp := P.tmpfile(suffix=".mp3"))
-        time.sleep(0.5)
         pyglet = install_n_import("pyglet")
+        time.sleep(0.5)
         pyglet.resource.path = [tmp.parent.to_str()]
         pyglet.resource.reindex()
         pyglet.resource.media(tmp.name).play()

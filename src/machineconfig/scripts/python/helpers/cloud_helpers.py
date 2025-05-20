@@ -49,9 +49,6 @@ class Args():
 
     @staticmethod
     def from_config(config_path: P):
-        # from crocodile.core import install_n_import
-        # install_n_import("pydantic")
-        # from pydantic import BaseModel, ConfigDict
         return Args(**Read.json(config_path))
 
 

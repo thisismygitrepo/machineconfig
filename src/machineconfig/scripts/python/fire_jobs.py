@@ -50,7 +50,13 @@ def main() -> None:
     parser.add_argument("--Nprocess",        "-p", type=int, help="Number of processes to use", default=1)
     parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ... (meaning k1=v1, k2=v2, etc)")
     parser.add_argument("--zellij_tab",      "-z", type=str, dest="zellij_tab", help="open in a new zellij tab")
-    args = parser.parse_args()
+
+    try:
+        args = parser.parse_args()
+    except Exception as ex:
+        print(f"❌ Failed to parse arguments: {ex}")
+        parser.print_help()
+        raise ex
 
     path_obj = sanitize_path(P(args.path))
     if not path_obj.exists():

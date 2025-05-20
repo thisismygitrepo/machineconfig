@@ -15,7 +15,6 @@ T = TypeVar("T")
 
 
 def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> bool:
-    """This is the CLI equivalent of `install_n_import` function of crocodile. """
     if platform.system() == "Windows":
         tool_name = tool_name.replace(".exe", "") + ".exe"
 
