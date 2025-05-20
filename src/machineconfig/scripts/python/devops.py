@@ -136,42 +136,26 @@ def main(which: Optional[str] = None):
         program = helper(direction="BACKUP")
         
     elif choice_key == Options.retreive.value:
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ 📥 Retrieving backup...{' ' * (BOX_WIDTH - len('│ 📥 Retrieving backup...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel("📥 Retrieving backup...", width=BOX_WIDTH, border_style="blue"))
         from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve as helper
         program = helper(direction="RETRIEVE")
 
     elif choice_key == Options.scheduler.value:
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ ⏰ Setting up scheduler...{' ' * (BOX_WIDTH - len('│ ⏰ Setting up scheduler...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel("⏰ Setting up scheduler...", width=BOX_WIDTH, border_style="blue"))
         from machineconfig.scripts.python.scheduler import main as helper
         program = helper()
 
     elif choice_key == Options.dot_files_sync.value:
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ 🔗 Synchronizing dotfiles...{' ' * (BOX_WIDTH - len('│ 🔗 Synchronizing dotfiles...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel("🔗 Synchronizing dotfiles...", width=BOX_WIDTH, border_style="blue"))
         from machineconfig.scripts.python.cloud_repo_sync import main as helper, P
         program = helper(cloud=None, path=str(P.home() / "dotfiles"), pwd=None, action="ask")
 
     else: 
-        console.print(Panel(f"❌ ERROR: Invalid choice", title_align="left", border_style="red", width=BOX_WIDTH))
+        console.print(Panel("❌ ERROR: Invalid choice", title_align="left", border_style="red", width=BOX_WIDTH))
         raise ValueError(f"Unimplemented choice: {choice_key}")
         
     if program:
-        print(f"""
-╭{'─' * BOX_WIDTH}╮
-│ 📜 Preparing shell script...{' ' * (BOX_WIDTH - len('│ 📜 Preparing shell script...'))}│
-╰{'─' * BOX_WIDTH}╯
-""")
+        console.print(Panel("📜 Preparing shell script...", width=BOX_WIDTH, border_style="blue"))
         write_shell_script_to_default_program_path(program=program, display=True, preserve_cwd=True, desc="🔧 Shell script prepared by Python.", execute=True if which is not None else False)
     else: 
         write_shell_script_to_default_program_path(program="echo '✨ Done.'", display=False, desc="🔧 Shell script prepared by Python.", preserve_cwd=True, execute=False)

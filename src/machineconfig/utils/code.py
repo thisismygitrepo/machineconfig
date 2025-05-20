@@ -46,13 +46,7 @@ def write_shell_script_to_default_program_path(program: str, desc: str, preserve
             program = "$orig_path = $pwd\n" + program + "\ncd $orig_path"
         else:
             program = 'orig_path=$(cd -- "." && pwd)\n' + program + '\ncd "$orig_path" || exit'
-    if display:
-        print(f"""
-{'=' * 60}
-⚙️  SHELL SCRIPT | Executing at {PROGRAM_PATH}
-{'=' * 60}
-""")
-        print_code(code=program, lexer="shell", desc=desc)
+    if display: print_code(code=program, lexer="shell", desc=desc, subtitle=str(PROGRAM_PATH))
     PROGRAM_PATH.create(parents_only=True).write_text(program)
     if execute:
         Terminal().run(f". {PROGRAM_PATH}", shell="powershell").capture().print_if_unsuccessful(desc="🛠️  EXECUTION | Shell script running", strict_err=True, strict_returncode=True)
@@ -72,11 +66,11 @@ except ImportError: print(f"\\n{'=' * 60}\\n📜 PYTHON SCRIPT:\\n\\n{{code}}\\n
     shell_file = write_shell_script_to_file(shell_script)
     return shell_file
 
-def print_code(code: str, lexer: str, desc: str):
+def print_code(code: str, lexer: str, desc: str, subtitle: str=""):
     if lexer == "shell":
         if platform.system() == "Windows": lexer = "powershell"
         elif platform.system() == "Linux": lexer = "sh"
         else: raise NotImplementedError(f"Platform {platform.system()} not supported for lexer {lexer}")
     console = Console()
-    console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}"), style="bold red")
+    console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}", subtitle=subtitle), style="bold red")
 
