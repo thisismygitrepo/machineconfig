@@ -167,7 +167,7 @@ def main() -> None:
         raise NotImplementedError(f"File type {choice_file.suffix} not supported, in the sense that I don't know how to fire it.")
 
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
-        assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file.suffix}"
+        assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file}"
         import_line = get_import_module_code(str(choice_file))
         if repo_root is not None:
             repo_root_add = f"""sys.path.append(r'{repo_root}')"""
