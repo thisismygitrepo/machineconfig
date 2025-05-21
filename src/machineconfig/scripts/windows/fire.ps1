@@ -39,7 +39,7 @@ if (Test-Path $op_script ) {
 }
 else
 {
-    Write-Host "No output script to be executed @ $op_script"
+    Write-Host "No output script to be executed at $op_script"
 }
 
 deactivate -ErrorAction SilentlyContinue
