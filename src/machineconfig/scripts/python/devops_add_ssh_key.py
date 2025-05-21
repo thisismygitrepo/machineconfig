@@ -42,7 +42,7 @@ def get_add_ssh_key_script(path_to_key: P):
             elif system() == "Windows":
                 program_path = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add-sshkey.ps1")
                 program = program_path.expanduser().read_text()
-                place_holder = r'$sshfile = "$env:USERPROFILE\\.ssh\\pubkey.pub"'
+                place_holder = r'$sshfile = "$env:USERPROFILE\.ssh\pubkey.pub"'
                 assert place_holder in program, f"This section performs string manipulation on the script {program_path} to add the key to the authorized_keys file. The script has changed and the string {place_holder} is not found."
                 program = program.replace(place_holder, f'$sshfile = "{path_to_key}"')
                 console.print(Panel("🔧 Configured PowerShell script for Windows\n📝 Replaced placeholder with actual key path", title="[bold blue]Configuration[/bold blue]"))
