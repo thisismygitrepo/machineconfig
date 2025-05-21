@@ -46,10 +46,11 @@ def main() -> None:
     parser.add_argument("--holdDirectory",   "-D", action="store_true", help="hold current directory and avoid cd'ing to the script directory")
     parser.add_argument("--PathExport",      "-P", action="store_true", help="augment the PYTHONPATH with repo root.")
     parser.add_argument("--git_pull",        "-g", action="store_true", help="Start by pulling the git repo")
-    parser.add_argument("--optimized", "-O", action="store_true", help="Run the optimized version of the function")
+    parser.add_argument("--optimized",       "-O", action="store_true", help="Run the optimized version of the function")
     parser.add_argument("--Nprocess",        "-p", type=int, help="Number of processes to use", default=1)
-    parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ... (meaning k1=v1, k2=v2, etc)")
     parser.add_argument("--zellij_tab",      "-z", type=str, dest="zellij_tab", help="open in a new zellij tab")
+    parser.add_argument("--watch",           "-w", action="store_true", help="watch the file for changes")
+    parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ... (meaning k1=v1, k2=v2, etc)")
 
     try:
         args = parser.parse_args()
@@ -312,6 +313,7 @@ echo "Sleep 2 seconds to allow zellij to close the pane"
 sleep 1
 zellij action close-pane; sleep 2
 """
+    if args.watch: command = "watchexec --restart --exts py,sh,ps1 " + command
     if args.git_pull: command = f"\ngit -C {choice_file.parent} pull\n" + command
     if args.PathExport:
         if platform.system() == "Linux": export_line = f"""export PYTHONPATH="{repo_root}""" + """:${PYTHONPATH}" """
