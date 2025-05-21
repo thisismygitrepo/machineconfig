@@ -1,7 +1,7 @@
 
-param(
-    [switch]$IgnoreKeyboardInterrupt
-)
+# param(
+#     [switch]$IgnoreKeyboardInterrupt
+# )
 
 # Generate a random string of 10 characters
 $random_str = -join ((65..90) + (97..122) + (48..57) | Get-Random -Count 10 | ForEach-Object {[char]$_})
@@ -39,7 +39,7 @@ if (Test-Path $op_script ) {
 }
 else
 {
-    Write-Host "No output script to be executed at $op_script"
+    Write-Host "No output script to be executed at $op_script."
 }
 
 deactivate -ErrorAction SilentlyContinue
