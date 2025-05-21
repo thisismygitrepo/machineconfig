@@ -20,14 +20,14 @@ if (-not (Test-Path $script_dir)) {
 # }
 
 
-try {
-  # $null = & chafa --version
-  # & chafa "$HOME\code\machineconfig\assets\aafire.webp" --speed 2 --duration 1
-  # Chafa.exe "$HOME\code\machineconfig\assets\aafire.webp" --speed 2 --duration 1 --symbols ascii
-  Write-Host "🔥"
-} catch {
-  Write-Host "Chafa not found, skipping."
-}
+# try {
+#   # $null = & chafa --version
+#   # & chafa "$HOME\code\machineconfig\assets\aafire.webp" --speed 2 --duration 1
+#   # Chafa.exe "$HOME\code\machineconfig\assets\aafire.webp" --speed 2 --duration 1 --symbols ascii
+#   Write-Host "🔥"
+# } catch {
+#   Write-Host "Chafa not found, skipping."
+# }
 
 
 . "$HOME\scripts\activate_ve.ps1" ve
