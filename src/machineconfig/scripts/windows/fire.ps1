@@ -6,13 +6,14 @@ param(
 # Generate a random string of 10 characters
 $random_str = -join ((65..90) + (97..122) + (48..57) | Get-Random -Count 10 | ForEach-Object {[char]$_})
 $op_script = "$HOME\tmp_results\shells\$random_str\python_return_command.ps1"
+# Export the op_script variable to environment so python can access it
+$env:op_script = $op_script
 
 # Create directory if it doesn't exist
-# $op_script = "~/tmp_results/shells/python_return_command.ps1"
-# $script_dir = Split-Path -Path $op_script -Parent
-# if (-not (Test-Path $script_dir)) {
-#     New-Item -ItemType Directory -Path $script_dir -Force | Out-Null
-# }
+$script_dir = Split-Path -Path $op_script -Parent
+if (-not (Test-Path $script_dir)) {
+    New-Item -ItemType Directory -Path $script_dir -Force | Out-Null
+}
 
 # if (Test-Path $op_script ) {
 #   Remove-Item $op_script
