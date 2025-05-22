@@ -9,7 +9,6 @@ from machineconfig.utils.utils import PROGRAM_PATH
 import argparse
 from rich.console import Console
 from rich.panel import Panel
-# from rich.text import Text  # Added import for rich.text
 
 console = Console()
 
@@ -17,37 +16,18 @@ console = Console()
 def args_parser():
     title = "☁️  Cloud Sync Utility"
     console.print(Panel(title, title_align="left", border_style="blue"))
-
-    parser = argparse.ArgumentParser(
-        description="""A wrapper for rclone sync and rclone bisync, with some extra features."""
-    )
-
+    parser = argparse.ArgumentParser(description="""A wrapper for rclone sync and rclone bisync, with some extra features.""")
     parser.add_argument("source", help="source", default=None)
     parser.add_argument("target", help="target", default=None)
-
-    parser.add_argument(
-        "--transfers", "-t", help="Number of threads in syncing.", default=10
-    )  # default is False
+    parser.add_argument("--transfers", "-t", help="Number of threads in syncing.", default=10)  # default is False
     parser.add_argument("--root", "-R", help="Remote root.", default="myhome")  # default is False
-
     parser.add_argument("--key", "-k", help="Key for encryption", default=None)
     parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
-    parser.add_argument(
-        "--encrypt", "-e", help="Decrypt after receiving.", action="store_true"
-    )  # default is False
-    parser.add_argument(
-        "--zip", "-z", help="unzip after receiving.", action="store_true"
-    )  # default is False
-
-    parser.add_argument(
-        "--bisync", "-b", help="Bidirectional sync.", action="store_true"
-    )  # default is False
-    parser.add_argument(
-        "--delete", "-D", help="Delete files in remote that are not in local.", action="store_true"
-    )  # default is False
-    parser.add_argument(
-        "--verbose", "-v", help="Verbosity of mprocs to show details of syncing.", action="store_true"
-    )  # default is False
+    parser.add_argument("--encrypt", "-e", help="Decrypt after receiving.", action="store_true")  # default is False
+    parser.add_argument("--zip", "-z", help="unzip after receiving.", action="store_true")  # default is False
+    parser.add_argument("--bisync", "-b", help="Bidirectional sync.", action="store_true")  # default is False
+    parser.add_argument("--delete", "-D", help="Delete files in remote that are not in local.", action="store_true")  # default is False
+    parser.add_argument("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.", action="store_true")  # default is False
 
     args = parser.parse_args()
     args_dict = vars(args)

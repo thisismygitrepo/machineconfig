@@ -14,27 +14,9 @@ from machineconfig.scripts.python.helpers.helpers2 import parse_cloud_source_tar
 from machineconfig.scripts.python.helpers.cloud_helpers import ArgsDefaults, Args
 from rich.console import Console
 from rich.panel import Panel
+from rich.progress import Progress
 
 console = Console()
-
-
-def _get_padding(text: str, box_width: int = 150, padding_before: int = 2, padding_after: int = 1) -> str:
-    """Calculate the padding needed to align the box correctly.
-    
-    Args:
-        text: The text to pad
-        box_width: The total width of the box
-        padding_before: The space taken before the text (usually "║ ")
-        padding_after: The space needed after the text (usually " ║")
-    
-    Returns:
-        A string of spaces for padding
-    """
-    # Count visible characters (might not be perfect for all Unicode characters)
-    text_length = len(text)
-    padding_length = box_width - padding_before - text_length - padding_after
-    return ' ' * max(0, padding_length)
-
 
 @RepeatUntilNoException(retry=3, sleep=1)
 def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
@@ -45,7 +27,7 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
     
     if os.environ.get("DECRYPTION_PASSWORD") is not None:
         print("🔑 Using password from environment variables")
-        pwd: str=str(os.environ.get("DECRYPTION_PASSWORD"))
+        pwd = str(os.environ.get("DECRYPTION_PASSWORD"))
     else:
         pwd = getpass.getpass(prompt="🔑 Enter decryption password: ")
         
@@ -58,7 +40,6 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
             url = input("🔗 Enter share URL: ")
     
     console.print(Panel("📡 Downloading from URL...", title="[bold blue]Download[/bold blue]", border_style="blue"))
-    from rich.progress import Progress
     with Progress(transient=True) as progress:
         _task = progress.add_task("Downloading... ", total=None)
         url_obj = P(url).download(folder=folder_obj)
@@ -69,8 +50,13 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
     with Progress(transient=True) as progress:
         _task = progress.add_task("Decrypting... ", total=None)
         tmp_folder = P.tmpdir(prefix="tmp_unzip")
-        res = url_obj.decrypt(pwd=pwd, inplace=True).unzip(inplace=True, folder=tmp_folder)
-        res.search("*").apply(lambda x: x.move(folder=folder_obj, overwrite=True))
+        try:
+            res = url_obj.decrypt(pwd=pwd, inplace=True).unzip(inplace=True, folder=tmp_folder)
+            res.search("*").apply(lambda x: x.move(folder=folder_obj, overwrite=True))
+        finally:
+            # Clean up temporary folder
+            if tmp_folder.exists():
+                tmp_folder.delete()
 
 
 def arg_parser() -> None:
@@ -89,7 +75,7 @@ def arg_parser() -> None:
 
     parser.add_argument("--key", "-k", help="🔑 Key for encryption", type=str, default=ArgsDefaults.key)
     parser.add_argument("--pwd", "-p", help="🔒 Password for encryption", type=str, default=ArgsDefaults.pwd)
-    parser.add_argument("--encrypt", "-e", help="🔐 Decrypt after receiving.", action="store_true", default=ArgsDefaults.encrypt)
+    parser.add_argument("--encrypt", "-e", help="🔐 Encrypt before sending.", action="store_true", default=ArgsDefaults.encrypt)
     parser.add_argument("--zip", "-z", help="📦 unzip after receiving.", action="store_true", default=ArgsDefaults.zip_)
     parser.add_argument("--os_specific", "-o", help="💻 choose path specific for this OS.", action="store_true", default=ArgsDefaults.os_specific)
 
@@ -104,8 +90,13 @@ def arg_parser() -> None:
     if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")):
         console.print(Panel("🔒 Detected secure share link", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
         if source.startswith("https://drive.google.com/open?id="):
-            source = "https://drive.google.com/uc?export=download&id=" + source.split("https://drive.google.com/open?id=")[1]
-            print("🔄 Converting Google Drive link to direct download URL")
+            file_id = source.split("https://drive.google.com/open?id=")[1]
+            if file_id:  # Ensure we actually extracted an ID
+                source = f"https://drive.google.com/uc?export=download&id={file_id}"
+                print("🔄 Converting Google Drive link to direct download URL")
+            else:
+                console.print(Panel("❌ Invalid Google Drive link format", title="[bold red]Error[/bold red]", border_style="red"))
+                raise ValueError("Invalid Google Drive link format")
         return get_securely_shared_file(url=source, folder=target)
 
     if args_obj.rel2home is True and args_obj.root is None:
@@ -118,7 +109,9 @@ def arg_parser() -> None:
     console.print(Panel("⚙️  Configuration:", title="[bold blue]Config[/bold blue]", border_style="blue"))
     Struct(args_obj.__dict__).print(as_config=True, title="CLI config")
 
-    assert args_obj.key is None, "Key is not supported yet."
+    if args_obj.key is not None:
+        console.print(Panel("❌ Key-based encryption is not supported yet", title="[bold red]Error[/bold red]", border_style="red"))
+        raise ValueError("Key-based encryption is not supported yet.")
     
     if cloud in source:
         console.print(Panel(f"📥 DOWNLOADING FROM CLOUD\n☁️  Cloud: {cloud}\n📂 Source: {source.replace(cloud + ':', '')}\n🎯 Target: {target}", title="[bold blue]Download[/bold blue]", border_style="blue", width=152))

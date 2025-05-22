@@ -28,11 +28,8 @@ def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> b
     except (subprocess.CalledProcessError, FileNotFoundError):
         res = False
     if res is False and install_script is not None:
-        print(f"""
-{'=' * 60}
-📥 INSTALLING TOOL | Installing {tool_name}...
-{'=' * 60}
-""")
+        console = Console()
+        console.print(Panel(f"📥 INSTALLING TOOL | Installing {tool_name}...", border_style="bold blue", expand=False))
         Terminal().run(install_script, shell="powershell").print()
         return check_tool_exists(tool_name=tool_name, install_script=None)
     return res
@@ -62,6 +59,7 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
     tool_name = "fzf"
     options_strings: list[str] = [str(x) for x in options]
     default_string = str(default) if default is not None else None
+    console = Console()
     if fzf and check_tool_exists(tool_name):
         from pyfzf.pyfzf import FzfPrompt
         fzf_prompt = FzfPrompt()
@@ -80,7 +78,6 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
         choice_idx_s = [options_strings.index(x) for x in choice_string_multi]
         return [list(options)[x] for x in choice_idx_s]
     else:
-        console = Console()
         if default is not None:
             assert default in options, f"Default `{default}` option not in options `{list(options)}`"
             default_msg = Text(" <<<<-------- DEFAULT", style="bold red")
@@ -98,7 +95,7 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
 
         if choice_string == "":
             if default_string is None:
-                print("🧨 Default option not available!")
+                console.print(Panel("🧨 Default option not available!", title="Error", expand=False))
                 return display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
             choice_idx = options_strings.index(default_string)
             assert default is not None, "🧨 Default option not available!"
@@ -115,7 +112,7 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
                 else:
                     _ = ie
                     # raise ValueError(f"Unknown choice. {choice_string}") from ie
-                    print(f"❓ Unknown choice: '{choice_string}'")
+                    console.print(Panel(f"❓ Unknown choice: '{choice_string}'", title="Error", expand=False))
                     return display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
             except TypeError as te:  # int(choice_string) failed due to # either the number is invalid, or the input is custom.
                 if choice_string in options_strings:  # string input
@@ -126,19 +123,16 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
                 else:
                     _ = te
                     # raise ValueError(f"Unknown choice. {choice_string}") from te
-                    print(f"❓ Unknown choice: '{choice_string}'")
+                    console.print(Panel(f"❓ Unknown choice: '{choice_string}'", title="Error", expand=False))
                     return display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
-        print(f"✅ Selected option {choice_idx}: {choice_one}")
+        console.print(Panel(f"✅ Selected option {choice_idx}: {choice_one}", title="Selected", expand=False))
         if multi: return [choice_one]
     return choice_one
 
 
 def choose_cloud_interactively() -> str:
-    print(f"""
-{'=' * 60}
-🔍 LISTING CLOUD REMOTES | Fetching available cloud remotes...
-{'=' * 60}
-""")
+    console = Console()
+    console.print(Panel("🔍 LISTING CLOUD REMOTES | Fetching available cloud remotes...", border_style="bold blue", expand=False))
     tmp = Terminal().run("rclone listremotes").op_if_successfull_or_default(strict_returcode=False)
     # consider this: remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
     if isinstance(tmp, str):
@@ -148,10 +142,7 @@ def choose_cloud_interactively() -> str:
     if len(remotes) == 0:
         raise RuntimeError("You don't have remotes. Configure your rclone first to get cloud services access.")
     cloud: str = choose_one_option(msg="WHICH CLOUD?", options=list(remotes), default=remotes[0], fzf=True)
-    print(f"""
-✅ SELECTED CLOUD | {cloud}
-{'=' * 60}
-""")
+    console.print(Panel(f"✅ SELECTED CLOUD | {cloud}", border_style="bold blue", expand=False))
     return cloud
 
 def get_ssh_hosts() -> list[str]:

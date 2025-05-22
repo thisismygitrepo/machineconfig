@@ -15,25 +15,24 @@ from machineconfig.utils.ve_utils.ve2 import get_bash_ve_install_script
 from machineconfig.utils.ve_utils.ve2 import get_ps1_ve_install_script
 from machineconfig.utils.ve_utils.ve2 import create_symlinks
 from machineconfig.utils.ve_utils.ve2 import make_installation_recipe
+from rich.console import Console
+from rich.panel import Panel
 
 
 def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[str] = None,
                           install_crocodile_and_machineconfig: Optional[bool] = None,
                           delete_if_exists: bool=True,
                           ) -> str:
-    from rich.console import Console
     console = Console()
     if py_version is None:
-        print("""
+        console.print(Panel("""
 {'=' * 60}
 🔍 AVAILABLE PYTHON VERSIONS
 {'=' * 60}
-""")
+""", title="Python Versions", expand=False))
         res = get_installed_interpreters()
         List(res).print()
-        print("""
-{'=' * 60}
-""")
+        console.print(Panel("", title="Python Versions", expand=False))
         dotted_py_version = input("🔢 Enter python version (3.11): ") or "3.11"
     else:
         dotted_py_version = py_version

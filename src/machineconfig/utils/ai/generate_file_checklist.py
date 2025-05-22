@@ -2,6 +2,8 @@
 
 from pathlib import Path
 from typing import List, Optional, Union
+from rich.console import Console
+from rich.panel import Panel
 
 
 def generate_file_checklist(repo_root: Union[str, Path], exclude_dirs: Optional[List[str]] = None) -> Path:
@@ -9,7 +11,6 @@ def generate_file_checklist(repo_root: Union[str, Path], exclude_dirs: Optional[
     actual_exclude_dirs: List[str] = ['.venv', '.git', '__pycache__', 'build', 'dist', '*.egg-info']
     if exclude_dirs is not None:
         actual_exclude_dirs = exclude_dirs
-        
     repo_root = Path(repo_root).expanduser().absolute()
     output_path: Path = repo_root / ".ai" / "repo_task" / "file_checklist.md"
     py_files: List[Path] = []
@@ -62,12 +63,8 @@ def main() -> None:
         return
     
     output_path = generate_file_checklist(args.repo, exclude_dirs)
-    print(f"""
-{'=' * 60}
-✅ SUCCESS | Markdown checklist generated successfully!
-📄 File Location: {output_path}
-{'=' * 60}
-""")
+    console = Console()
+    console.print(Panel(f"✅ SUCCESS | Markdown checklist generated successfully!\n📄 File Location: {output_path}", border_style="bold blue", expand=False))
 
 
 if __name__ == "__main__":

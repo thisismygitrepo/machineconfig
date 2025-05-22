@@ -1,5 +1,10 @@
 from crocodile.file_management import P, PLike
 from crocodile.core_modules.core_1 import randstr
+from rich.console import Console
+from rich.panel import Panel
+
+
+console = Console()
 
 
 def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
@@ -46,18 +51,10 @@ def symlink_func(this: P, to_this: P, prioritize_to_this: bool=True):
     else:  # this doesn't exist.
         if not to_this.exists(): to_this.touch()  # we have to touch it (file) or create it (folder)
     try:
-        print(f"""
-{'=' * 60}
-🔗 LINKING | Creating symlink from {this} ➡️  {to_this}
-{'=' * 60}
-""")
+        console.print(Panel(f"🔗 LINKING | Creating symlink from {this} ➡️  {to_this}", title="Linking", expand=False))
         P(this).symlink_to(target=to_this, verbose=True, overwrite=True)
     except Exception as ex:
-        print(f"""
-❌ ERROR | Failed at linking {this} ➡️  {to_this}.
-Reason: {ex}
-{'=' * 60}
-""")
+        console.print(Panel(f"❌ ERROR | Failed at linking {this} ➡️  {to_this}. Reason: {ex}", title="Error", expand=False))
 
 def symlink_copy(this: P, to_this: P, prioritize_to_this: bool=True):
     this = P(this).expanduser().absolute()
@@ -74,15 +71,7 @@ def symlink_copy(this: P, to_this: P, prioritize_to_this: bool=True):
     else:  # this doesn't exist.
         if not to_this.exists(): to_this.touch()  # we have to touch it (file) or create it (folder)
     try:
-        print(f"""
-{'=' * 60}
-📋 COPYING | Copying {to_this} to {this}
-{'=' * 60}
-""")
+        console.print(Panel(f"📋 COPYING | Copying {to_this} to {this}", title="Copying", expand=False))
         to_this.copy(path=this, overwrite=True, verbose=True)
     except Exception as ex:
-        print(f"""
-❌ ERROR | Failed at copying {to_this} to {this}.
-Reason: {ex}
-{'=' * 60}
-""")
+        console.print(Panel(f"❌ ERROR | Failed at copying {to_this} to {this}. Reason: {ex}", title="Error", expand=False))

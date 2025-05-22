@@ -25,7 +25,7 @@ class GitAction(Enum):
 class RepoRecord:
     name: str
     parent_dir: str
-    remotes: list[str]
+    remotes: dict[str, str]  # Fixed: should be dict mapping remote name to URL
     version: dict[str, str]
 
 
@@ -48,7 +48,7 @@ cd '{path}'
     if action == GitAction.commit:
         if mess is None: mess = "auto_commit_" + randstr()
         program += f'''
-git add .; git commit -am "{mess}"
+git commit -am "{mess}"
 '''
     if action == GitAction.push or action == GitAction.pull:
         action_name = "pull" if action == GitAction.pull else "push"
@@ -72,7 +72,7 @@ def main():
     parser.add_argument("directory", help="📁 Folder containing repos to record or a specs JSON file to follow.", default="")
     # FLAGS
     parser.add_argument("--push", help="🚀 Push changes.", action="store_true")
-    parser.add_argument("--uv_sync", help="🚀 Push changes.", action="store_true")
+    parser.add_argument("--uv_sync", help="🔄 Sync UV dependencies.", action="store_true")
     parser.add_argument("--pull", help="⬇️ Pull changes.", action="store_true")
     parser.add_argument("--commit", help="💾 Commit changes.", action="store_true")
     parser.add_argument("--all", help="🔄 Pull, commit, and push changes.", action="store_true")
@@ -101,7 +101,7 @@ def main():
     elif args.clone or args.checkout or args.checkout_to_branch:
         print("\n📥 Cloning or checking out repositories...")
         program += """\necho '>>>>>>>>> Cloning Repos'\n"""
-        if not repos_root.exists() or repos_root.stem != 'repos.json':  # user didn't pass absolute path to pickle file, but rather expected it to be in the default save location
+        if not repos_root.exists() or repos_root.name != 'repos.json':  # Fixed: use name instead of stem
             repos_root = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
             if not repos_root.exists():
                 if args.cloud is None:
@@ -167,28 +167,40 @@ def install_repos(specs_path: str, clone: bool=True, checkout_to_recorded_commit
     repos: list[dict[str, Any]] = Read.json(path_obj)
     for repo in repos:
         parent_dir = P(repo["parent_dir"]).expanduser().absolute().create()
-        for idx, (remote_name, remote_url) in enumerate(repo["remotes"].items()):
-            if clone:
-                if idx == 0:  # clone
-                    if preferred_remote is not None:
-                        if preferred_remote in repo["remotes"]:
-                            remote_name = preferred_remote
-                            remote_url = repo["remotes"][preferred_remote]
-                        else:
-                            print(f"⚠️ `{preferred_remote=}` not found in {repo['remotes']}.")
-                    program += f"\ncd {parent_dir.collapseuser().as_posix()}; git clone {remote_url} --origin {remote_name} --depth 2"
-                    program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}"
-                program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote add {remote_name} {remote_url}"
-            if checkout_to_recorded_commit:
-                commit = repo['version']['commit']
-                if isinstance(commit, str): program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git checkout {commit}"
-                else: print(f"Skipping {repo['parent_dir']} because it doesn't have a commit recorded. Found {commit}")
-                break
-            if checkout_to_branch:
-                program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git checkout {repo['current_branch']}"
-                break
-            if editable_install and idx == 0:
-                program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; uv pip install -e ."
+        
+        # Handle cloning and remote setup
+        if clone:
+            # Select the remote to use for cloning
+            remote_name, remote_url = next(iter(repo["remotes"].items()))  # Get first remote by default
+            if preferred_remote is not None and preferred_remote in repo["remotes"]:
+                remote_name = preferred_remote
+                remote_url = repo["remotes"][preferred_remote]
+            elif preferred_remote is not None:
+                print(f"⚠️ `{preferred_remote=}` not found in {repo['remotes']}.")
+            
+            # Clone with the selected remote
+            program += f"\ncd {parent_dir.collapseuser().as_posix()}; git clone {remote_url} --origin {remote_name} --depth 2"
+            program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}"
+            
+            # Add any additional remotes
+            for other_remote_name, other_remote_url in repo["remotes"].items():
+                if other_remote_name != remote_name:
+                    program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote add {other_remote_name} {other_remote_url}"
+        
+        # Handle checkout operations (after all remotes are set up)
+        if checkout_to_recorded_commit:
+            commit = repo['version']['commit']
+            if isinstance(commit, str): 
+                program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git checkout {commit}"
+            else: 
+                print(f"Skipping {repo['parent_dir']} because it doesn't have a commit recorded. Found {commit}")
+        elif checkout_to_branch:
+            program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git checkout {repo['current_branch']}"
+        
+        # Handle editable install
+        if editable_install:
+            program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; uv pip install -e ."
+        
         program += "\n"
     pprint(program)
     return program

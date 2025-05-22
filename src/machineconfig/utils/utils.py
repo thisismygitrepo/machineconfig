@@ -6,6 +6,8 @@ from crocodile.file_management import P
 # import crocodile.environment as env
 import machineconfig
 from machineconfig.utils.options import check_tool_exists, choose_cloud_interactively, choose_multiple_options, choose_one_option, choose_ssh_host, display_options
+from rich.console import Console
+from rich.panel import Panel
 from machineconfig.utils.links import build_links, symlink_copy, symlink_func
 from machineconfig.utils.code import get_shell_script_executing_python_file, get_shell_file_executing_python_script, write_shell_script_to_default_program_path, print_code, PROGRAM_PATH
 from machineconfig.utils.path import sanitize_path, match_file_name
@@ -58,11 +60,8 @@ def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool=False):
     dtm = datetime(dtm.year, dtm.month, dtm.day, dtm.hour, dtm.minute, dtm.second)
     res =  dtm > datetime.fromisoformat(commit_dtm)
     if res is False and update is True:
-        print(f"""
-{'=' * 60}
-🔄 UPDATE REQUIRED | Updating dotfiles because {dtm} < {datetime.fromisoformat(commit_dtm)}
-{'=' * 60}
-""")
+        console = Console()
+        console.print(Panel(f"🔄 UPDATE REQUIRED | Updating dotfiles because {dtm} < {datetime.fromisoformat(commit_dtm)}", border_style="bold blue", expand=False))
         from machineconfig.scripts.python.cloud_repo_sync import main
         main(cloud=None, path=dotfiles_path)
     return res
@@ -76,18 +75,12 @@ def wait_for_jobs_to_finish(root: P, pattern: str, wait_for_n_jobs: int, max_wai
         counter  =  len(parts)
         if counter == wait_for_n_jobs:
             wait_finished = True
-            print(f"""
-{'=' * 60}
-✅ JOB COMPLETE | {counter} Jobs finished successfully. Exiting.
-{'=' * 60}
-""")
+            console = Console()
+            console.print(Panel(f"✅ JOB COMPLETE | {counter} Jobs finished successfully. Exiting.", border_style="bold blue", expand=False))
             return True
         if (time.time() - t0) > 60 * max_wait_minutes:
-            print(f"""
-{'=' * 60}
-⏱️  TIMEOUT | Waited for {max_wait_minutes} minutes. Exiting.
-{'=' * 60}
-""")
+            console = Console()
+            console.print(Panel(f"⏱️  TIMEOUT | Waited for {max_wait_minutes} minutes. Exiting.", border_style="bold blue", expand=False))
             return False
         print(f"""
 ⏳ PROGRESS | {counter}/{wait_for_n_jobs} jobs finished. Waiting for {wait_for_n_jobs - counter} more jobs to complete, sleeping for 60 seconds.
