@@ -57,9 +57,12 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
 """)
 
     search_root_objects = search_root_obj.search("*", not_in=["links", ".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__"])
-    search_results: L[P] = L([a_search_root_obj.search(f"*{sub_string}*", r=True) for a_search_root_obj in search_root_objects]).reduce(lambda x, y: x + y)  # type: ignore
+    search_results: L[P] = L([a_search_root_obj.search(f"*{sub_string}*", r=True) for a_search_root_obj in search_root_objects])
+    if len(search_results) > 0:
+        search_results = search_results.reduce(lambda x, y: x + y)  # type: ignore
+    else:
+        pass
     search_results = search_results.filter(lambda x: x.suffix in (".py", ".sh", ".ps1"))
-
     if len(search_results) == 1:
         path_obj = search_results.list[0]
     elif len(search_results) > 1:
