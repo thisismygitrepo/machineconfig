@@ -155,10 +155,6 @@ def parse_apps_installer_windows(txt: str) -> dict[str, Any]:
 {a_chunk}
 {'-' * 50}""")
             raise e
-    # Struct(res).print(as_config=True)
-    # L(chunks).print(sep="-----------------------------------------------------------------------\n\n")
-    # import time
-    # time.sleep(10)
     return res
 
 

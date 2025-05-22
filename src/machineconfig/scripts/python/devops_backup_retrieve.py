@@ -69,16 +69,12 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
             program += f"""\ncloud_copy $cloud "{P(item['path']).as_posix()}" {flags}\n"""
         else:
             console.print(Panel("❌ ERROR: INVALID DIRECTION\n⚠️  Direction must be either \"BACKUP\" or \"RETRIEVE\"", title="[bold red]Error: Invalid Direction[/bold red]", border_style="red"))
-            raise RuntimeError(f"Unknown direction: {direction}")
-            
+            raise RuntimeError(f"Unknown direction: {direction}")            
         if item_name == "dotfiles" and system() == "Linux": 
             program += """\nchmod 700 ~/.ssh/*\n"""
             console.print(Panel("🔒 SPECIAL HANDLING: SSH PERMISSIONS\n🛠️  Setting secure permissions for SSH files\n📝 Command: chmod 700 ~/.ssh/*", title="[bold blue]Special Handling: SSH Permissions[/bold blue]", border_style="blue"))
-            
     print_code(program, lexer="shell", desc=f"{direction} script")
-    
     console.print(Panel(f"✅ {direction} SCRIPT GENERATION COMPLETE\n🚀 Ready to execute the operations", title="[bold green]Script Generation Complete[/bold green]", border_style="green"))
-    
     return program
 
 
