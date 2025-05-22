@@ -126,7 +126,7 @@ workload_params = []
 for idx, x in enumerate(kwargs_workload):
     S(x).print(as_config=True, title=f"Instance {{idx}}")
     workload_params.append(WorkloadParams(**x))
-print("\\n" * 2)
+print("\n" * 2)
 res = L(workload_params).apply(lambda a_workload_params: func(workload_params=a_workload_params, **func_kwargs), jobs={workload_params.jobs})
 """
         else: base += """

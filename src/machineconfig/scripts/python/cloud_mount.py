@@ -76,7 +76,7 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
                 # We need a umount command here.
                 warning_line = "⚠️  WARNING: Mount directory issue"
                 err_line = f"{err}"
-                console.print(Panel(f"{warning_line}\\n{err_line}", title="Warning", border_style="yellow"))
+                console.print(Panel(f"{warning_line}\n{err_line}", title="Warning", border_style="yellow"))
                 pass
         else: raise ValueError("unsupported platform")
 
@@ -86,7 +86,7 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
     else: raise ValueError("network mount only supported on windows")
 
     mount_cmd = f"rclone mount {cloud}: {mount_loc} --vfs-cache-mode full --file-perms=0777"
-    console.print(Panel(f"🚀 Preparing mount command:\\n{mount_cmd}", border_style="blue"))
+    console.print(Panel(f"🚀 Preparing mount command:\n{mount_cmd}", border_style="blue"))
 
     # txt = get_mprocs_mount_txt(cloud, mount_cmd)
     if platform.system() == "Windows":
@@ -128,12 +128,12 @@ zellij run --in-place --cwd $HOME/data/rclone/{cloud} -- bash
 zellij action move-focus up
 """
     else: raise ValueError("unsupported platform")
-    # print(f"running command: \\n{txt}")
+    # print(f"running command: \n{txt}")
     PROGRAM_PATH.write_text(txt)
     # draw success box dynamically
     title1 = "✅ Cloud mount command prepared successfully"
     title2 = "🔄 Running mount process..."
-    console.print(Panel(f"{title1}\\n{title2}", title="Success", border_style="green"))
+    console.print(Panel(f"{title1}\n{title2}", title="Success", border_style="green"))
 
 
 def main():

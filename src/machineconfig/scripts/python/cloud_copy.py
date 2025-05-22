@@ -124,7 +124,7 @@ def arg_parser() -> None:
     assert args_obj.key is None, "Key is not supported yet."
     
     if cloud in source:
-        console.print(Panel(f"📥 DOWNLOADING FROM CLOUD\\n☁️  Cloud: {cloud}\\n📂 Source: {source.replace(cloud + ':', '')}\\n🎯 Target: {target}", title="[bold blue]Download[/bold blue]", border_style="blue", width=152))
+        console.print(Panel(f"📥 DOWNLOADING FROM CLOUD\n☁️  Cloud: {cloud}\n📂 Source: {source.replace(cloud + ':', '')}\n🎯 Target: {target}", title="[bold blue]Download[/bold blue]", border_style="blue", width=152))
         
         P(target).from_cloud(cloud=cloud, remotepath=source.replace(cloud + ":", ""),
                             unzip=args_obj.zip, decrypt=args_obj.encrypt, pwd=args_obj.pwd,
@@ -134,7 +134,7 @@ def arg_parser() -> None:
         console.print(Panel("✅ Download completed successfully", title="[bold green]Success[/bold green]", border_style="green", width=152))
         
     elif cloud in target:
-        console.print(Panel(f"📤 UPLOADING TO CLOUD\\n☁️  Cloud: {cloud}\\n📂 Source: {source}\\n🎯 Target: {target.replace(cloud + ':', '')}", title="[bold blue]Upload[/bold blue]", border_style="blue", width=152))
+        console.print(Panel(f"📤 UPLOADING TO CLOUD\n☁️  Cloud: {cloud}\n📂 Source: {source}\n🎯 Target: {target.replace(cloud + ':', '')}", title="[bold blue]Upload[/bold blue]", border_style="blue", width=152))
         
         res = P(source).to_cloud(cloud=cloud, remotepath=target.replace(cloud + ":", ""),
                                     zip=args_obj.zip, encrypt=args_obj.encrypt, pwd=args_obj.pwd,
@@ -147,7 +147,7 @@ def arg_parser() -> None:
             if P(source).is_dir(): share_url_path = P(source).joinpath(fname)
             else: share_url_path = P(source).with_suffix(fname)
             share_url_path.write_text(res.as_url_str())
-            console.print(Panel(f"🔗 SHARE URL GENERATED\\n📝 URL file: {share_url_path}\\n🌍 {res.as_url_str()}", title="[bold blue]Share[/bold blue]", border_style="blue", width=152))
+            console.print(Panel(f"🔗 SHARE URL GENERATED\n📝 URL file: {share_url_path}\n🌍 {res.as_url_str()}", title="[bold blue]Share[/bold blue]", border_style="blue", width=152))
     else: 
         console.print(Panel(f"❌ ERROR: Cloud '{cloud}' not found in source or target", title="[bold red]Error[/bold red]", border_style="red", width=152))
         raise ValueError(f"Cloud `{cloud}` not found in source or target.")

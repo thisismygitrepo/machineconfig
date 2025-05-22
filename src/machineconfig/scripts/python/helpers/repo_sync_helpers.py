@@ -42,7 +42,7 @@ def get_wt_cmd(wd1: P, wd2: P) -> str:
 
 
 def inspect_repos(repo_local_root: str, repo_remote_root: str):
-    console.print(Panel(f"📂 Local:  {repo_local_root}\\n📂 Remote: {repo_remote_root}", title="[bold blue]🔍 Inspecting Repositories[/bold blue]", border_style="blue"))
+    console.print(Panel(f"📂 Local:  {repo_local_root}\n📂 Remote: {repo_remote_root}", title="[bold blue]🔍 Inspecting Repositories[/bold blue]", border_style="blue"))
 
     if platform.system() == "Windows":
         program = get_wt_cmd(wd1=P(repo_local_root), wd2=P(repo_local_root))

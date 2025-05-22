@@ -28,7 +28,7 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
             cloud_resolved = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             console.print(Panel(f"⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}", title="Default Cloud", border_style="yellow"))
         except FileNotFoundError:
-            console.print(Panel(f"❌ ERROR: No cloud profile found\\nLocation: {DEFAULTS_PATH}\\nPlease set one up or provide one via the --cloud flag.", title="Error", border_style="red"))
+            console.print(Panel(f"❌ ERROR: No cloud profile found\nLocation: {DEFAULTS_PATH}\nPlease set one up or provide one via the --cloud flag.", title="Error", border_style="red"))
             return ""
     else: cloud_resolved = cloud
     
@@ -44,13 +44,13 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
         remote_path = repo_local_root.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
         repo_remote_root.from_cloud(remotepath=remote_path, cloud=cloud_resolved, unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=pwd)
     except AssertionError:
-        console.print(Panel("🆕 Remote repository doesn't exist\\n📤 Creating new remote and exiting...", title_align="left", border_style="green"))
+        console.print(Panel("🆕 Remote repository doesn't exist\n📤 Creating new remote and exiting...", title_align="left", border_style="green"))
         repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
         return ""
         
     repo_remote_obj = git.Repo(repo_remote_root)
     if repo_remote_obj.is_dirty():
-        console.print(Panel(f"⚠️  WARNING: REMOTE REPOSITORY IS DIRTY\\\\nLocation: {repo_remote_root}\\\\nPlease commit or stash changes before proceeding.", title="Warning", border_style="yellow"))
+        console.print(Panel(f"⚠️  WARNING: REMOTE REPOSITORY IS DIRTY\nLocation: {repo_remote_root}\nPlease commit or stash changes before proceeding.", title="Warning", border_style="yellow"))
 
     script = f"""
 echo ""
@@ -77,13 +77,13 @@ git pull originEnc master
     res = Terminal().run(f". {shell_path}", shell="powershell").capture().print()
 
     if res.is_successful(strict_err=True, strict_returcode=True):
-        console.print(Panel("✅ Pull succeeded!\\n🧹 Removing originEnc remote and local copy\\n📤 Pushing merged repository to cloud storage", title="Success", border_style="green"))
+        console.print(Panel("✅ Pull succeeded!\n🧹 Removing originEnc remote and local copy\n📤 Pushing merged repository to cloud storage", title="Success", border_style="green"))
         repo_remote_root.delete(sure=True)
         from git.remote import Remote
         Remote.remove(repo_local_obj, "originEnc")
         repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
     else:
-        console.print(Panel(f"⚠️  MERGE FAILED\\n💾 Keeping local copy of remote at:\\n📂 {repo_remote_root}", title="Merge Failed", border_style="red"))
+        console.print(Panel(f"⚠️  MERGE FAILED\n💾 Keeping local copy of remote at:\n📂 {repo_remote_root}", title="Merge Failed", border_style="red"))
 
         # ================================================================================
         option1 = 'Delete remote copy and push local:'
@@ -127,7 +127,7 @@ git commit -am "finished merging"
         shell_file_4 = write_shell_script_to_file(shell_script=program_4)
         # ================================================================================
 
-        console.print(Panel("🔄 RESOLVE MERGE CONFLICT\\nChoose an option to resolve the conflict:", title_align="left", border_style="blue"))
+        console.print(Panel("🔄 RESOLVE MERGE CONFLICT\nChoose an option to resolve the conflict:", title_align="left", border_style="blue"))
         
         print(f"• 1️⃣  {option1:75} 👉 {shell_file_1}")
         print(f"• 2️⃣  {option2:75} 👉 {shell_file_2}")

@@ -59,7 +59,7 @@ code = r'''{python_script}'''
 try:
     from machineconfig.utils.utils import print_code
     print_code(code=code, lexer="python", desc="Python Script")
-except ImportError: print(f"\\n{'=' * 60}\\n📜 PYTHON SCRIPT:\\n\\n{{code}}\\n{'=' * 60}\\n")
+except ImportError: print(f"\n{'=' * 60}\n📜 PYTHON SCRIPT:\n\n{{code}}\n{'=' * 60}\n")
 """ + python_script
     python_file = P.tmp().joinpath("tmp_scripts", "python", randstr() + ".py").create(parents_only=True).write_text(python_script)
     shell_script = get_shell_script_executing_python_file(python_file=python_file.to_str(), ve_name=ve_name)

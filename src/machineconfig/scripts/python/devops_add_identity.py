@@ -42,7 +42,7 @@ def main():
         print(Panel(f"🔑 Using selected key: {path_to_key.name}", expand=False))
 
     else:
-        error_message = f"❌ ERROR: Invalid choice\\nThe selected option is not supported: {choice}"
+        error_message = f"❌ ERROR: Invalid choice\nThe selected option is not supported: {choice}"
         print(Panel(Text(error_message, justify="center"), expand=False, border_style="red"))
         raise NotImplementedError(f"Choice {choice} not supported")
 
@@ -58,9 +58,9 @@ def main():
         config_path.write_text(txt)
         print(Panel("📄 Created new SSH config file", expand=False))
 
-    program = f"""echo '{Panel(Text("✅ SSH IDENTITY CONFIGURATION COMPLETE\\nIdentity added to SSH config file\\nConsider reloading the SSH config to apply changes", justify="center"), expand=False, border_style="green")}' """
+    program = f"""echo '{Panel(Text("✅ SSH IDENTITY CONFIGURATION COMPLETE\nIdentity added to SSH config file\nConsider reloading the SSH config to apply changes", justify="center"), expand=False, border_style="green")}' """
 
-    success_message = f"🎉 CONFIGURATION SUCCESSFUL\\nIdentity added: {path_to_key.name}\\nConfig file: {config_path}"
+    success_message = f"🎉 CONFIGURATION SUCCESSFUL\nIdentity added: {path_to_key.name}\nConfig file: {config_path}"
     print(Panel(Text(success_message, justify="center"), expand=False, border_style="green"))
 
     return program

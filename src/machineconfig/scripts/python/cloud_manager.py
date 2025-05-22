@@ -31,7 +31,7 @@ class CloudManager:
         run_line = f"Local files: {len(local_files)}"
         cloud_line = f"Cloud files: {len(cloud_files)}"
         console = Console()
-        console.print(Panel(f"{title1}\\n{run_line}\\n{cloud_line}", title_align="left", expand=False))
+        console.print(Panel(f"{title1}\n{run_line}\n{cloud_line}", title_align="left", expand=False))
 
     def list_cloud_files(self, sub_path: P):
         """Lists files in the cloud directory."""
@@ -89,7 +89,7 @@ def main():
         title1 = "🚀 STARTING JOB SERVER"
         run_line = f"💻 Running {args.num_jobs} worker{'s' if args.num_jobs > 1 else ''}"
         cloud_line = f"☁️  Cloud: {args.cloud if args.cloud else 'Default'}"
-        console.print(Panel(f"{title1}\\n{run_line}\\n{cloud_line}", title_align="left", expand=False))
+        console.print(Panel(f"{title1}\n{run_line}\n{cloud_line}", title_align="left", expand=False))
 
     title = "✅ Cloud Manager finished successfully"
     console.print(Panel(title, title_align="left", expand=False))

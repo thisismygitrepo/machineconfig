@@ -89,7 +89,7 @@ def main():
     
     if res == all_keys_option:
         console.print(Panel(f"🔄 Processing all {len(pub_keys)} public keys...", title="[bold blue]Processing[/bold blue]", border_style="blue"))
-        program = "\\n\\n\\n".join(pub_keys.apply(get_add_ssh_key_script))
+        program = "\n\n\n".join(pub_keys.apply(get_add_ssh_key_script))
     
     elif res == i_have_path_option:
         console.print(Panel("📂 Please provide the path to your public key", title="[bold blue]Input Required[/bold blue]", border_style="blue"))
@@ -109,7 +109,7 @@ def main():
         console.print(Panel(f"🔑 Using selected key: {P(res).name}", title="[bold blue]Info[/bold blue]", border_style="blue"))
         program = get_add_ssh_key_script(P(res))
     
-    console.print(Panel("🚀 SSH KEY AUTHORIZATION READY\\nRun the generated script to apply changes", box=box.DOUBLE_EDGE, title_align="left"))
+    console.print(Panel("🚀 SSH KEY AUTHORIZATION READY\nRun the generated script to apply changes", box=box.DOUBLE_EDGE, title_align="left"))
     
     return program
 

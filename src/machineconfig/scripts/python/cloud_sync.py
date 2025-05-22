@@ -9,7 +9,7 @@ from machineconfig.utils.utils import PROGRAM_PATH
 import argparse
 from rich.console import Console
 from rich.panel import Panel
-from rich.text import Text  # Added import for rich.text
+# from rich.text import Text  # Added import for rich.text
 
 console = Console()
 
@@ -68,14 +68,14 @@ def args_parser():
         title = "🔄 BI-DIRECTIONAL SYNC"
         source_line = f"Source: {source}"
         target_line = f"Target: {target}"
-        console.print(Panel(f"{source_line}\\n{target_line}", title=title, border_style="blue"))
+        console.print(Panel(f"{source_line}\n{target_line}", title=title, border_style="blue"))
         rclone_cmd = f"""rclone bisync '{source}' '{target}' --resync"""
     else:
         title = "📤 ONE-WAY SYNC"
         source_line = f"Source: {source}"
         arrow_line = "↓"
         target_line = f"Target: {target}"
-        console.print(Panel(f"{source_line}\\n{arrow_line}\\n{target_line}", title=title, border_style="blue"))
+        console.print(Panel(f"{source_line}\n{arrow_line}\n{target_line}", title=title, border_style="blue"))
         if delete:
             rclone_cmd = f"rclone sync -P \"{source}\" \"{target}\" --delete-during --transfers={transfers}"
         else:
@@ -93,7 +93,7 @@ def args_parser():
 
     title = "🚀 EXECUTING COMMAND"
     cmd_line = f"{rclone_cmd[:65]}..."
-    console.print(Panel(f"{title}\\n{cmd_line}", title="[bold blue]Command[/bold blue]", expand=False))
+    console.print(Panel(f"{title}\n{cmd_line}", title="[bold blue]Command[/bold blue]", expand=False))
 
     PROGRAM_PATH.write_text(txt)
 

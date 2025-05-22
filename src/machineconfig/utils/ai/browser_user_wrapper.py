@@ -44,7 +44,7 @@ async def main():
     
     task_line1 = "🤖 Task: Open https://chat.openai.com/ and ask how many r's in"
     task_line2 = "rrraaararewey, use Thinking Button and type the answer"
-    task_content = f"{task_line1}\\n{task_line2}"
+    task_content = f"{task_line1}\n{task_line2}"
     rprint(Panel(task_content, title="Task", width=BOX_WIDTH))
     
     rprint("🚀 Creating and launching browser agent...")
