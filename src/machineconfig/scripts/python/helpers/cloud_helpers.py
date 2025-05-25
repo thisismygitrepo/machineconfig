@@ -11,8 +11,6 @@ from rich import box # Import box
 
 
 console = Console()
-from rich.console import Console
-from rich.panel import Panel
 
 
 class ArgsDefaults:
@@ -53,7 +51,7 @@ class Args():
 
 
 def find_cloud_config(path: P):
-    display_header("Searching for cloud configuration file...")
+    display_header(f"Searching for cloud configuration file @ {path}")
 
     for _i in range(len(path.parts)):
         if path.joinpath("cloud.json").exists():

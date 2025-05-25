@@ -12,11 +12,14 @@ console = Console()
 
 
 def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str, str, str]:
+    print("Source:", source)
+    print("Target:", target)
     config = args.config
     if config == "ss":
         cloud_maybe: Optional[str] = target.split(":")[0]
-        if cloud_maybe == "": cloud_maybe = source.split(":")[0]
+        # if cloud_maybe == "": cloud_maybe = source.split(":")[0]
         if cloud_maybe == "": cloud_maybe = None
+        print("cloud_maybe:", cloud_maybe)
         maybe_config = get_secure_share_cloud_config(interactive=True, cloud=cloud_maybe)
     elif config is not None:
         console.print(Panel(f"📄 Loading configuration from: {config}", width=150, border_style="blue"))
@@ -67,14 +70,17 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
     if target.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in target
         assert ES not in source, "Not Implemented here yet."
         path = absolute(source)
-        if maybe_config is None: maybe_config = find_cloud_config(path)
+        if maybe_config is None:
+            maybe_config = find_cloud_config(path)
 
         if maybe_config is None:
             default_cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
             console.print(Panel(f"⚠️  No cloud config found. Using default cloud: {default_cloud}", width=150, border_style="yellow"))
             target = default_cloud + ":" + target[1:]
+            print("target mutated to:", target, f"because of default cloud being {default_cloud}")
         else:
             tmp = maybe_config
+            # print("target mutated to:", target, f"because of cloud config being {tmp.cloud}")
             target = f"{tmp.cloud}:" + target[1:]
             root = tmp.root
             rel2home = tmp.rel2home
@@ -121,7 +127,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         if encrypt and ".enc" not in target: target += ".enc"
     else:
         console.print(Panel("❌ ERROR: Invalid path configuration\nEither source or target must be a remote path (i.e. machine:path)", title="[bold red]Error[/bold red]", border_style="red"))
-        raise ValueError("Either source or target must be a remote path (i.e. machine:path)")
+        raise ValueError(f"Either source or target must be a remote path (i.e. machine:path)\nGot: source: `{source}`, target: `{target}`")
 
     console.print(Panel("🔍 Path resolution complete", title="[bold blue]Resolution[/bold blue]", border_style="blue"))
     Struct({"cloud": cloud, "source": str(source), "target": str(target)}).print(as_config=True, title="CLI Resolution")
