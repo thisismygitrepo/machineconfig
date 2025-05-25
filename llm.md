@@ -107,6 +107,10 @@
 * https://debarghyadas.com/writes/github
 
 
+# Other
+* https://github.com/microsoft/NLWeb
+
 # Deprecated
 * https://github.com/chenfei-wu/TaskMatrix
 * https://github.com/tg12/gpt_jailbreak_status
+

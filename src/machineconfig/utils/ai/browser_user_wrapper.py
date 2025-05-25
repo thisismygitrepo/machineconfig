@@ -15,23 +15,6 @@ from rich import print as rprint
 BOX_WIDTH = 150  # width for box drawing
 
 
-def _get_padding(text: str, padding_before: int = 2, padding_after: int = 1) -> str:
-    """Calculate the padding needed to align the box correctly.
-    
-    Args:
-        text: The text to pad
-        padding_before: The space taken before the text (usually "║ ")
-        padding_after: The space needed after the text (usually " ║")
-    
-    Returns:
-        A string of spaces for padding
-    """
-    # Count visible characters (might not be perfect for all Unicode characters)
-    text_length = len(text)
-    padding_length = BOX_WIDTH - padding_before - text_length - padding_after
-    return ' ' * max(0, padding_length)
-
-
 # Create agent with the model
 async def main():
     # header for browser automation agent

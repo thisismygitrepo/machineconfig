@@ -48,20 +48,15 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
     else:
         items = {key: val for key, val in bu_file.items() if key in choices}
         console.print(Panel(f"📋 PROCESSING SELECTED ENTRIES\n🔢 Total entries to process: {len(items)}", title="[bold blue]Process Selected Entries[/bold blue]", border_style="blue"))
-
     program = f"""$cloud = "{cloud}:{ES}" \n """ if system() == "Windows" else f"""cloud="{cloud}:{ES}" \n """
-    
     console.print(Panel(f"🚀 GENERATING {direction} SCRIPT\n🌥️  Cloud: {cloud}\n🗂️  Items: {len(items)}", title="[bold blue]Script Generation[/bold blue]", border_style="blue"))
-    
     for item_name, item in items.items():
         flags = ''
         flags += 'z' if item['zip'] == 'True' else ''
         flags += 'e' if item['encrypt'] == 'True' else ''
         flags += 'r' if item['rel2home'] == 'True' else ''
         flags += 'o' if system().lower() in item_name else ''
-        
         console.print(Panel(f"📦 PROCESSING: {item_name}\n📂 Path: {P(item['path']).as_posix()}\n🏳️  Flags: {flags or 'None'}", title=f"[bold blue]Processing Item: {item_name}[/bold blue]", border_style="blue"))
-        
         if flags: flags = "-" + flags
         if direction == "BACKUP": 
             program += f"""\ncloud_copy "{P(item['path']).as_posix()}" $cloud {flags}\n"""
