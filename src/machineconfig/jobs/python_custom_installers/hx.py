@@ -23,7 +23,7 @@ config_dict = {
     }
 
 
-def main(version: Optional[str]):
+def main(version: Optional[str], install_lib: bool = False):
     console = Console()
 
     console.print(Panel(f"HELIX EDITOR INSTALLER 🧬\nPlatform: {platform.system()}\nVersion:  {'latest' if version is None else version}", title="Installer", expand=False))
@@ -76,8 +76,9 @@ def main(version: Optional[str]):
         target_bin_path = LINUX_INSTALL_PATH
         exe_name = "hx"
         hx_file.move(folder=target_bin_path, overwrite=True)
-        contrib.move(folder=target_config_dir, overwrite=True)
-        runtime.move(folder=target_config_dir, overwrite=True)
+        if install_lib:
+            contrib.move(folder=target_config_dir, overwrite=True)
+            runtime.move(folder=target_config_dir, overwrite=True)
         console.print(Panel(f"""✅ SUCCESS | Helix editor installed successfully on Linux!
 
 📂 Executable: {target_bin_path / exe_name}
@@ -86,10 +87,10 @@ def main(version: Optional[str]):
         target_bin_path = WINDOWS_INSTALL_PATH
         exe_name = "hx.exe"
         hx_file.move(folder=target_bin_path, overwrite=True)
-        contrib.move(folder=target_config_dir, overwrite=True)
-        runtime.move(folder=target_config_dir, overwrite=True)
+        if install_lib:
+            contrib.move(folder=target_config_dir, overwrite=True)
+            runtime.move(folder=target_config_dir, overwrite=True)
         console.print(Panel(f"""✅ SUCCESS | Helix editor installed successfully on Windows!
-
 📂 Executable: {target_bin_path / exe_name}
 🔧 Config:     {target_config_dir}""", title="Success", expand=False))
     else:

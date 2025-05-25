@@ -140,15 +140,15 @@ echo """#=======================================================================
 """
 
 
-echo """#=======================================================================
-🧰 PROGRAMMING LANGUAGES | Installing language runtimes and tools
-#=======================================================================
-"""
+# echo """#=======================================================================
+# 🧰 PROGRAMMING LANGUAGES | Installing language runtimes and tools
+# #=======================================================================
+# """
 
 # echo "📥 Installing Codon - high-performance Python compiler..."
 # /bin/bash -c "$(curl -fsSL https://exaloop.io/install.sh)"
 
-echo "📥 Installing Rust programming language and toolchain..."
-(curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
-echo "📥 Installing SSL development libraries for Rust..."
-sudo nala install libssl-dev -y
+# echo "📥 Installing Rust programming language and toolchain..."
+# (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
+# echo "📥 Installing SSL development libraries for Rust..."
+# sudo nala install libssl-dev -y
