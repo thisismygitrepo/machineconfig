@@ -51,7 +51,7 @@ try:
         panel_title = f"📄 Successfully read the file: {{p.name}}"
         console.print(Panel(Text(str(dat), justify="left"), title=panel_title, expand=False))
 except Exception as e:
-    error_message = f"❌ ERROR READING FILE\nFile: {{p.name}}\nError: {{e}}"
+    error_message = f'''❌ ERROR READING FILE\nFile: {{p.name}}\nError: {{e}}'''
     console.print(Panel(Text(error_message, justify="left"), title="Error", expand=False, border_style="red"))
 """
 
