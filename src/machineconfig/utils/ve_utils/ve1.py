@@ -15,7 +15,7 @@ def get_ve_name_and_ipython_profile(init_path: P) -> tuple[Optional[str], Option
             ve_name = ini["specs"]["ve_name"]
             # py_version = ini["specs"]["py_version"]
             ipy_profile = ini["specs"]["ipy_profile"]
-            print(f"🐍 Using Virtual Environment: {ve_name}")
+            print(f"🐍 Using Virtual Environment: {ve_name}. This is based on this file {tmp.joinpath('.ve.ini')}")
             print(f"✨ Using IPython profile: {ipy_profile}")
             break
         if tmp.joinpath(".ve_path").exists() or tmp.joinpath(".ipy_profile").exists():
