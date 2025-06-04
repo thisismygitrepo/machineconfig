@@ -131,7 +131,10 @@ def record_repos(repos_root: str, r: bool=True) -> list[dict[str, Any]]:
     res: list[dict[str, Any]] = []
     for a_search_res in search_res:
         if a_search_res.joinpath(".git").exists():
-            res.append(record_a_repo(a_search_res))
+            try:
+                res.append(record_a_repo(a_search_res))
+            except Exception as e:
+                print(f"⚠️ Failed to record {a_search_res}: {e}")
         else:
             if r: res += record_repos(str(a_search_res), r=r)
     return res
