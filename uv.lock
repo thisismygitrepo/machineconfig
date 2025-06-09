@@ -487,7 +487,7 @@ wheels = [
 
 [[package]]
 name = "crocodile"
-version = "14.3"
+version = "14.5"
 source = { editable = "../crocodile" }
 dependencies = [
     { name = "bcrypt" },
@@ -577,6 +577,7 @@ dev = [
     { name = "onnxruntime", specifier = ">=1.21.1" },
     { name = "tensorboard", specifier = ">=2.19.0" },
     { name = "torch", specifier = ">=2.6.0" },
+    { name = "torchinfo", specifier = ">=1.8.0" },
     { name = "torchview", specifier = ">=0.2.7" },
 ]
 
@@ -1168,7 +1169,7 @@ wheels = [
 
 [[package]]
 name = "machineconfig"
-version = "1.94"
+version = "1.95"
 source = { editable = "." }
 dependencies = [
     { name = "call-function-with-timeout" },
