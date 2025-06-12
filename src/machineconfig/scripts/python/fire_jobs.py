@@ -51,19 +51,16 @@ def main() -> None:
     parser.add_argument("--zellij_tab",      "-z", type=str, dest="zellij_tab", help="open in a new zellij tab")
     parser.add_argument("--watch",           "-w", action="store_true", help="watch the file for changes")
     parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ... (meaning k1=v1, k2=v2, etc)")
-
     try:
         args = parser.parse_args()
     except Exception as ex:
         print(f"❌ Failed to parse arguments: {ex}")
         parser.print_help()
         raise ex
-
     path_obj = sanitize_path(P(args.path))
     if not path_obj.exists():
         path_obj = match_file_name(sub_string=args.path)
     else: pass
-
     if path_obj.is_dir():
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
         files = search_for_files_of_interest(path_obj)
