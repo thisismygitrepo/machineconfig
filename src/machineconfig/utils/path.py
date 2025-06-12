@@ -82,6 +82,8 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
                 console.print(Panel(f"❌ ERROR | FZF search failed with '{sub_string}' in '{search_root_obj}'.\n{cpe}", title="Error", expand=False))
                 # msg = Panel(f"💥 FILE NOT FOUND | Path {sub_string} does not exist. No search results", title="File Not Found", expand=False)
                 # raise FileNotFoundError(msg) from cpe
+                import sys
+                sys.exit(f"💥 FILE NOT FOUND | Path {sub_string} does not exist. No search results.")
 
             if len(search_res) == 1: return search_root_obj.joinpath(search_res[0])
             else:
