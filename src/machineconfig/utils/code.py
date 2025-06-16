@@ -55,11 +55,15 @@ def write_shell_script_to_default_program_path(program: str, desc: str, preserve
 def get_shell_file_executing_python_script(python_script: str, ve_name: str, verbose: bool=True):
     if verbose:
         python_script = f"""
-code = r'''{python_script}'''
+code = r'''{python_script}''' """ + """
 try:
     from machineconfig.utils.utils import print_code
     print_code(code=code, lexer="python", desc="Python Script")
-except ImportError: console.print(Panel(f"📜 PYTHON SCRIPT:\n\n{python_script}", title="Python Script", expand=False))
+except ImportError:
+    from rich.console import Console
+    from rich.panel import Panel
+    console = Console()
+    console.print(Panel(f'''📜 PYTHON SCRIPT:\n\n{{code}}''', title="Python Script", expand=False))
 """ + python_script
     python_file = P.tmp().joinpath("tmp_scripts", "python", randstr() + ".py").create(parents_only=True).write_text(python_script)
     shell_script = get_shell_script_executing_python_file(python_file=python_file.to_str(), ve_name=ve_name)
