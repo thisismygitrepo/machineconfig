@@ -14,6 +14,7 @@ class Installer:
                 strip_v: bool, exe_name: str,
                 filename_template_windows_amd_64: str,
                 filename_template_linux_amd_64: str,
+                filename_template_windows_arm_64: Optional[str] = None,
                 filename_template_linux_arm_64: Optional[str] = None,
                 filename_template_macos_amd_64: Optional[str] = None,
                 filename_template_macos_arm_64: Optional[str] = None,
@@ -23,6 +24,7 @@ class Installer:
         self.doc: str=doc
         self.filename_template_windows_amd_64: str=filename_template_windows_amd_64
         self.filename_template_linux_amd_64: str=filename_template_linux_amd_64
+        self.filename_template_windows_arm_64: Optional[str]=filename_template_windows_arm_64
         self.filename_template_linux_arm_64: Optional[str]=filename_template_linux_arm_64
         self.filename_template_macos_amd_64: Optional[str]=filename_template_macos_amd_64
         self.filename_template_macos_arm_64: Optional[str]=filename_template_macos_arm_64
