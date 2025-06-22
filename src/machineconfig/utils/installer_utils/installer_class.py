@@ -10,13 +10,22 @@ from typing import Any, Optional
 
 
 class Installer:
-    def __init__(self, repo_url: str, name: str, doc: str, filename_template_windows_amd_64: str, filename_template_linux_amd_64: str,
-                 strip_v: bool, exe_name: str):
+    def __init__(self, repo_url: str, name: str, doc: str,
+                strip_v: bool, exe_name: str,
+                filename_template_windows_amd_64: str,
+                filename_template_linux_amd_64: str,
+                filename_template_linux_arm_64: Optional[str] = None,
+                filename_template_macos_amd_64: Optional[str] = None,
+                filename_template_macos_arm_64: Optional[str] = None,
+                ):
         self.repo_url: str=repo_url
         self.name: str=name
         self.doc: str=doc
         self.filename_template_windows_amd_64: str=filename_template_windows_amd_64
         self.filename_template_linux_amd_64: str=filename_template_linux_amd_64
+        self.filename_template_linux_arm_64: Optional[str]=filename_template_linux_arm_64
+        self.filename_template_macos_amd_64: Optional[str]=filename_template_macos_amd_64
+        self.filename_template_macos_arm_64: Optional[str]=filename_template_macos_arm_64
         self.strip_v: bool=strip_v
         self.exe_name: str=exe_name
     def __repr__(self) -> str: return f"Installer of {self.repo_url}"
