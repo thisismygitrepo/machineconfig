@@ -4,6 +4,7 @@
     "doc": "🚀 Test your internet connection speed and ping using speedtest.net from the CLI",
     "filename_template_windows_amd_64": "speedtest",
     "filename_template_linux_amd_64": "speedtest",
+    "filename_template_linux_arm_64": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-aarch64.tgz",
     "strip_v": false,
     "exe_name": "speedtest"
   },
@@ -12,6 +13,7 @@
     "doc": "👁️ file previewer.",
     "filename_template_windows_amd_64": "",
     "filename_template_linux_amd_64": "pistol-static-linux-x86_64",
+    "filename_template_linux_arm_64": "pistol-static-linux-aarch64",
     "strip_v": true,
     "exe_name": "pistol"
   },
@@ -20,6 +22,7 @@
     "doc": "🔄 devtunnel secure introspectable tunnels to localhost",
     "filename_template_windows_amd_64": "",
     "filename_template_linux_amd_64": "",
+    "filename_template_linux_arm_64": "",
     "strip_v": false,
     "exe_name": "devtunnel"
   },
@@ -28,6 +31,7 @@
     "doc": "💾 like dua, diskonaut is a terminal disk space navigator.",
     "filename_template_windows_amd_64": "",
     "filename_template_linux_amd_64": "diskonaut-{}-unknown-linux-musl.tar.gz",
+    "filename_template_linux_arm_64": "",
     "strip_v": true,
     "exe_name": "diskonaut"
   },
@@ -36,6 +40,7 @@
       "doc": "📂 A terminal file explorer with vi keybindings",
       "filename_template_windows_amd_64": "",
       "filename_template_linux_amd_64": "xplr-linux.tar.gz",
+      "filename_template_linux_arm_64": "xplr-linux-aarch64.tar.gz",
       "strip_v": false,
       "exe_name": "xplr"
   },
@@ -43,6 +48,7 @@
       "repo_url": "https://github.com/aristocratos/btop",
       "doc": "📊 btop is a resource monitor for Linux, FreeBSD and MacOS.",
       "filename_template_linux_amd_64": "btop-x86_64-linux-musl.tbz",
+      "filename_template_linux_arm_64": "btop-aarch64-linux-musl.tbz",
       "filename_template_windows_amd_64": "",
       "strip_v": false,
       "exe_name": "btop"
@@ -51,6 +57,7 @@
       "repo_url": "https://github.com/sorenisanerd/gotty",
       "doc": "🌐 gotty is a simple command line tool that turns your CLI tools into web applications.",
       "filename_template_linux_amd_64": "gotty_{}_linux_amd64.tar.gz",
+      "filename_template_linux_arm_64": "gotty_{}_linux_arm64.tar.gz",
       "filename_template_windows_amd_64": "",
       "strip_v": false,
       "exe_name": "gotty"
@@ -59,6 +66,7 @@
       "repo_url": "https://github.com/kamiyaa/joshuto",
       "doc": "📂 A terminal file manager written in Rust.",
       "filename_template_linux_amd_64": "joshuto-{}-x86_64-unknown-linux-musl.tar.gz",
+      "filename_template_linux_arm_64": "joshuto-{}-aarch64-unknown-linux-musl.tar.gz",
       "filename_template_windows_amd_64": "",
       "strip_v": false,
       "exe_name": "joshuto"
@@ -67,6 +75,7 @@
       "repo_url": "https://github.com/zellij-org/zellij",
       "doc": "🖥️ Zellij is a terminal workspace with support for multiple plugins, such as a terminal, status bar, tabs, splits, etc.",
       "filename_template_linux_amd_64": "zellij-x86_64-unknown-linux-musl.tar.gz",
+      "filename_template_linux_arm_64": "zellij-aarch64-unknown-linux-musl.tar.gz",
       "filename_template_windows_amd_64": "",
       "strip_v": false,
       "exe_name": "zellij"
