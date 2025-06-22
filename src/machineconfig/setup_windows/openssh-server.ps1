@@ -5,7 +5,7 @@ Set-ExecutionPolicy Bypass
 # PowerShell.exe -ExecutionPolicy Bypass -File "C:\bypass\prompt\standard.ps1" 2>&1>$null
 
 # Install SSH-Server on a windows machine. see this one below if this one didn't work:
-# to install: winget install --Id Microsoft.OpenSSH.Beta --source winget --scope user  # from: https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH
+# to install: winget install --Id Microsoft.OpenSSH.Preview --source winget --scope user  # from: https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH
 # the result is installed in C:\Program Files\OpenSSH as opposed to C:\Windows\System32\OpenSSH which is the case if openssh is added as a feature/capability to windows
 # However, notice the new path is not in PATH as is the cases with system variant, so it needs to be added manually.
 # finally, ssh config files are always @ "$env:ProgramData\ssh" irrespective of installation method.
