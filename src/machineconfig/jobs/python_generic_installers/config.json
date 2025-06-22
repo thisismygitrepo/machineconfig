@@ -3,7 +3,10 @@
         "repo_url": "https://github.com/cantino/mcfly",
         "doc": "🚀 Fly through your shell history. Great Scott!",
         "filename_template_linux_amd_64": "mcfly-{}-x86_64-unknown-linux-musl.tar.gz",
+        "filename_template_linux_arm_64": "mcfly-{}-aarch64-unknown-linux-musl.tar.gz",
         "filename_template_windows_amd_64": "mcfly-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_macos_amd_64": "mcfly-{}-x86_64-apple-darwin.tar.gz",
+        "filename_template_macos_arm_64": "mcfly-{}-aarch64-apple-darwin.tar.gz",
         "strip_v": false,
         "exe_name": "mcfly"
       },
@@ -12,6 +15,9 @@
         "doc": "🌐 ttyd shares your terminal on the web.",
         "filename_template_windows_amd_64": "ttyd.win32.exe",
         "filename_template_linux_amd_64": "ttyd.x86_64",
+        "filename_template_linux_arm_64": "ttyd.aarch64",
+        "filename_template_macos_amd_64": "ttyd.x86_64",
+        "filename_template_macos_arm_64": "ttyd.aarch64",
         "strip_v": true,
         "exe_name": "ttyd"
     },
@@ -28,6 +34,9 @@
         "doc": "🤖 chagpt cli",
         "filename_template_windows_amd_64": "chatgpt_Windows_x86_64.zip",
         "filename_template_linux_amd_64": "chatgpt_Linux_x86_64.tar.gz",
+        "filename_template_linux_arm_64": "chatgpt_Linux_arm64.tar.gz",
+        "filename_template_macos_amd_64": "chatgpt_Darwin_x86_64.tar.gz",
+        "filename_template_macos_arm_64": "chatgpt_Darwin_arm64.tar.gz",
         "strip_v": true,
         "exe_name": "chatgpt"
     },
@@ -36,6 +45,9 @@
         "doc": "🤖 AI for the command line, built for pipelines",
         "filename_template_windows_amd_64": "mods_{}_Windows_x86_64.zip",
         "filename_template_linux_amd_64": "mods_{}_Linux_x86_64.tar.gz",
+        "filename_template_linux_arm_64": "mods_{}_Linux_arm64.tar.gz",
+        "filename_template_macos_amd_64": "mods_{}_Darwin_x86_64.tar.gz",
+        "filename_template_macos_arm_64": "mods_{}_Darwin_arm64.tar.gz",
         "strip_v": true,
         "exe_name": "mods"
     },
@@ -44,6 +56,9 @@
         "doc": "✨ Render markdown on the CLI, with pizzazz!",
         "filename_template_windows_amd_64": "glow_{}_Windows_x86_64.zip",
         "filename_template_linux_amd_64": "glow_{}_Linux_x86_64.tar.gz",
+        "filename_template_linux_arm_64": "glow_{}_Linux_arm64.tar.gz",
+        "filename_template_macos_amd_64": "glow_{}_Darwin_x86_64.tar.gz",
+        "filename_template_macos_arm_64": "glow_{}_Darwin_arm64.tar.gz",
         "strip_v": true,
         "exe_name": "glow"
     },
@@ -52,6 +67,9 @@
         "doc": "🎯 Prompt user to select from options, written in golang.",
         "filename_template_windows_amd_64": "gum_{}_Windows_x86_64.zip",
         "filename_template_linux_amd_64": "gum_{}_Linux_x86_64.tar.gz",
+        "filename_template_linux_arm_64": "gum_{}_Linux_arm64.tar.gz",
+        "filename_template_macos_amd_64": "gum_{}_Darwin_x86_64.tar.gz",
+        "filename_template_macos_arm_64": "gum_{}_Darwin_arm64.tar.gz",
         "strip_v": true,
         "exe_name": "gum"
     },
@@ -60,6 +78,9 @@
         "doc": "🦇 A cat(1) clone with wings.",
         "filename_template_windows_amd_64": "bat-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "bat-{}-x86_64-unknown-linux-musl.tar.gz",
+        "filename_template_linux_arm_64": "bat-{}-aarch64-unknown-linux-musl.tar.gz",
+        "filename_template_macos_amd_64": "bat-{}-x86_64-apple-darwin.tar.gz",
+        "filename_template_macos_arm_64": "bat-{}-aarch64-apple-darwin.tar.gz",
         "strip_v": false,
         "exe_name": "bat"
     },
@@ -68,6 +89,9 @@
         "doc": "🚀 a cross-platform prompt for your shell",
         "filename_template_windows_amd_64": "starship-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "starship-x86_64-unknown-linux-musl.tar.gz",
+        "filename_template_linux_arm_64": "starship-aarch64-unknown-linux-musl.tar.gz",
+        "filename_template_macos_amd_64": "starship-x86_64-apple-darwin.tar.gz",
+        "filename_template_macos_arm_64": "starship-aarch64-apple-darwin.tar.gz",
         "strip_v": false,
         "exe_name": "starship"
     },
@@ -76,6 +100,9 @@
         "doc": "🔍 recursively searches directories for a regex pattern while respecting your gitignore rules",
         "filename_template_windows_amd_64": "ripgrep-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "ripgrep-{}-x86_64-unknown-linux-musl.tar.gz",
+        "filename_template_linux_arm_64": "ripgrep-{}-aarch64-unknown-linux-musl.tar.gz",
+        "filename_template_macos_amd_64": "ripgrep-{}-x86_64-apple-darwin.tar.gz",
+        "filename_template_macos_arm_64": "ripgrep-{}-aarch64-apple-darwin.tar.gz",
         "strip_v": true,
         "exe_name": "rg"
     },
@@ -84,6 +111,9 @@
         "doc": "🔍 a general-purpose cli fuzzy finder.",
         "filename_template_windows_amd_64": "fzf-{}-windows_amd64.zip",
         "filename_template_linux_amd_64": "fzf-{}-linux_amd64.tar.gz",
+        "filename_template_linux_arm_64": "fzf-{}-linux_arm64.tar.gz",
+        "filename_template_macos_amd_64": "fzf-{}-darwin_amd64.tar.gz",
+        "filename_template_macos_arm_64": "fzf-{}-darwin_arm64.tar.gz",
         "strip_v": true,
         "exe_name": "fzf"
     },
@@ -92,6 +122,9 @@
         "doc": "🔍 fd is a simple, fast and user-friendly alternative to find.",
         "filename_template_windows_amd_64": "fd-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "fd-{}-x86_64-unknown-linux-musl.tar.gz",
+        "filename_template_linux_arm_64": "fd-{}-aarch64-unknown-linux-musl.tar.gz",
+        "filename_template_macos_amd_64": "fd-{}-x86_64-apple-darwin.tar.gz",
+        "filename_template_macos_arm_64": "fd-{}-aarch64-apple-darwin.tar.gz",
         "strip_v": false,
         "exe_name": "fd"
     },
@@ -100,6 +133,7 @@
         "doc": "🌳 broot is an fzf variant for folder structure and layered search.",
         "filename_template_windows_amd_64": "https://dystroy.org/broot/download/x86_64-pc-windows-gnu/broot.exe",
         "filename_template_linux_amd_64": "https://dystroy.org/broot/download/x86_64-linux/broot",
+        "filename_template_linux_arm_64": "https://dystroy.org/broot/download/aarch64-unknown-linux-musl/broot",
         "strip_v": false,
         "exe_name": "broot"
     },
@@ -116,6 +150,7 @@
         "doc": "📦 A cli for extracting and creating archives in unified way.",
         "filename_template_windows_amd_64": "ouch-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "ouch-x86_64-unknown-linux-musl.tar.gz",
+        "filename_template_linux_arm_64": "ouch-aarch64-unknown-linux-musl.tar.gz",
         "strip_v": false,
         "exe_name": "ouch"
     },
@@ -123,7 +158,10 @@
         "repo_url": "https://github.com/topgrade-rs/topgrade",
         "doc": "⬆️ Keeping your system up to date usually involves invoking multiple package managers.",
         "filename_template_linux_amd_64": "topgrade-{}-x86_64-unknown-linux-musl.tar.gz",
+        "filename_template_linux_arm_64": "topgrade-{}-aarch64-unknown-linux-musl.tar.gz",
         "filename_template_windows_amd_64": "topgrade-{}-x86_64-pc-windows-msvc.zip",
+        "filename_template_macos_amd_64": "topgrade-{}-x86_64-apple-darwin.tar.gz",
+        "filename_template_macos_arm_64": "topgrade-{}-aarch64-apple-darwin.tar.gz",
         "strip_v": false,
         "exe_name": "topgrade"
       },
@@ -131,7 +169,10 @@
         "repo_url": "https://github.com/atanunq/viu",
         "doc": "🖼️ A cli image viewer for the terminal (like chafa but in Rust)",
         "filename_template_linux_amd_64": "viu-x86_64-unknown-linux-musl",
+        "filename_template_linux_arm_64": "viu-aarch64-unknown-linux-musl",
         "filename_template_windows_amd_64": "viu-x86_64-pc-windows-msvc.exe",
+        "filename_template_macos_amd_64": "viu-x86_64-apple-darwin",
+        "filename_template_macos_arm_64": "viu-aarch64-apple-darwin",
         "strip_v": false,
         "exe_name": "viu"
       },
@@ -139,7 +180,10 @@
         "repo_url": "https://github.com/ClementTsang/bottom",
         "doc": "📊 bottom is a cross-platform graphical process/system monitor with a customizable interface and a multitude of features.",
         "filename_template_linux_amd_64": "bottom_x86_64-unknown-linux-musl.tar.gz",
+        "filename_template_linux_arm_64": "bottom_aarch64-unknown-linux-musl.tar.gz",
         "filename_template_windows_amd_64": "bottom_x86_64-pc-windows-msvc.zip",
+        "filename_template_macos_amd_64": "bottom_x86_64-apple-darwin.tar.gz",
+        "filename_template_macos_arm_64": "bottom_aarch64-apple-darwin.tar.gz",
         "strip_v": true,
         "exe_name": "btm"
       },
@@ -148,6 +192,9 @@
         "doc": "💻 cpufetch is a small yet fancy CPU architecture fetching tool, like fastfetch but for CPUs.",
         "filename_template_windows_amd_64": "cpufetch_x86-64_windows.exe",
         "filename_template_linux_amd_64": "cpufetch_x86_linux",
+        "filename_template_linux_arm_64": "cpufetch_arm64_linux",
+        "filename_template_macos_amd_64": "cpufetch_x86-64_macos",
+        "filename_template_macos_arm_64": "cpufetch_arm64_macos",
         "strip_v": false,
         "exe_name": "cpufetch"
     },
@@ -156,6 +203,9 @@
         "doc": "💻 fastfetch is a system information tool written in C.",
         "filename_template_windows_amd_64": "fastfetch-windows-amd64.zip",
         "filename_template_linux_amd_64": "fastfetch-linux-amd64.zip",
+        "filename_template_linux_arm_64": "fastfetch-linux-aarch64.zip",
+        "filename_template_macos_amd_64": "fastfetch-macos-amd64.zip",
+        "filename_template_macos_arm_64": "fastfetch-macos-aarch64.zip",
         "strip_v": false,
         "exe_name": "fastfetch"
     },
@@ -164,6 +214,9 @@
         "doc": "📊 procs is a modern replacement for ps written in Rust.",
         "filename_template_windows_amd_64": "procs-{}-x86_64-windows.zip",
         "filename_template_linux_amd_64": "procs-{}-x86_64-linux.zip",
+        "filename_template_linux_arm_64": "procs-{}-aarch64-linux.zip",
+        "filename_template_macos_amd_64": "procs-{}-x86_64-mac.zip",
+        "filename_template_macos_arm_64": "procs-{}-aarch64-mac.zip",
         "strip_v": false,
         "exe_name": "procs"
     },
@@ -172,6 +225,7 @@
         "doc": "👀 A viewer for git and diff output",
         "filename_template_windows_amd_64": "delta-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "delta-{}-x86_64-unknown-linux-musl.tar.gz",
+        "filename_template_linux_arm_64": "delta-{}-aarch64-unknown-linux-gnu.tar.gz",
         "strip_v": true,
         "exe_name": "delta"
     },
@@ -180,6 +234,7 @@
         "doc": "🐙 gitui is a terminal ui for git written in rust.",
         "filename_template_windows_amd_64": "gitui-win.tar.gz",
         "filename_template_linux_amd_64": "gitui-linux-x86_64.tar.gz",
+        "filename_template_linux_arm_64": "gitui-linux-aarch64.tar.gz",
         "strip_v": false,
         "exe_name": "gitui"
     },
@@ -196,6 +251,7 @@
         "doc": "💾 Rust-based cli tool to get a quick overview of disk usage.",
         "filename_template_windows_amd_64": "dua-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "dua-{}-x86_64-unknown-linux-musl.tar.gz",
+        "filename_template_linux_arm_64": "dua-{}-aarch64-unknown-linux-musl.tar.gz",
         "strip_v": false,
         "exe_name": "dua"
     },
@@ -204,6 +260,7 @@
         "doc": "📂 lf is a terminal file manager written in go.",
         "filename_template_windows_amd_64": "lf-windows-amd64.zip",
         "filename_template_linux_amd_64": "lf-linux-amd64.tar.gz",
+        "filename_template_linux_arm_64": "lf-linux-arm64.tar.gz",
         "strip_v": false,
         "exe_name": "lf"
     },
@@ -212,6 +269,7 @@
         "doc": "⚡️ Blazing Fast Terminal File Manager.",
         "filename_template_windows_amd_64": "yazi-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "yazi-x86_64-unknown-linux-musl.zip",
+        "filename_template_linux_arm_64": "yazi-aarch64-unknown-linux-musl.zip",
         "strip_v": false,
         "exe_name": "yazi"
     },
@@ -220,6 +278,7 @@
         "doc": "📂 Tere is a terminal file explorer written in Rust. No more ls + cd",
         "filename_template_windows_amd_64": "tere-{}-x86_64-pc-windows-gnu.zip",
         "filename_template_linux_amd_64": "tere-{}-x86_64-unknown-linux-gnu.zip",
+        "filename_template_linux_arm_64": "tere-{}-aarch64-unknown-linux-gnu.zip",
         "strip_v": true,
         "exe_name": "tere"
     },
@@ -228,6 +287,7 @@
         "doc": "🚀 A cd command that learns - easily navigate directories from the command-line",
         "filename_template_windows_amd_64": "zoxide-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "zoxide-{}-x86_64-unknown-linux-musl.tar.gz",
+        "filename_template_linux_arm_64": "zoxide-{}-aarch64-unknown-linux-musl.tar.gz",
         "strip_v": true,
         "exe_name": "zoxide"
     },
@@ -237,6 +297,7 @@
         "doc": "📂 lsd is a modern ls with a lot of pretty colors and font-awesome icons.",
         "filename_template_windows_amd_64": "lsd-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "lsd-{}-x86_64-unknown-linux-musl.tar.gz",
+        "filename_template_linux_arm_64": "lsd-{}-aarch64-unknown-linux-musl.tar.gz",
         "strip_v": false,
         "exe_name": "lsd"
     },
@@ -245,6 +306,7 @@
         "doc": "🖥️ Windows/Linux poorman's zellij",
         "filename_template_windows_amd_64": "mprocs-{}-windows-x86_64.zip",
         "filename_template_linux_amd_64": "mprocs-{}-linux-x86_64-musl.tar.gz",
+        "filename_template_linux_arm_64": "mprocs-{}-linux-aarch64-musl.tar.gz",
         "strip_v": true,
         "exe_name": "mprocs"
     },
@@ -253,6 +315,7 @@
         "doc": "☁️ cli to sync to cloud storage providers.",
         "filename_template_windows_amd_64": "rclone-{}-windows-amd64.zip",
         "filename_template_linux_amd_64": "rclone-{}-linux-amd64.zip",
+        "filename_template_linux_arm_64": "rclone-{}-linux-arm64.zip",
         "strip_v": false,
         "exe_name": "rclone"
     },
@@ -261,6 +324,7 @@
         "doc": "👀 Executes commands in response to file modifications.",
         "filename_template_windows_amd_64": "watchexec-{}-x86_64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "watchexec-{}-x86_64-unknown-linux-musl.tar.xz",
+        "filename_template_linux_arm_64": "watchexec-{}-aarch64-unknown-linux-musl.tar.xz",
         "strip_v": true,
         "exe_name": "watchexec"
     },
