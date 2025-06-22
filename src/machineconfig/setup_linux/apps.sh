@@ -24,18 +24,18 @@ echo """#=======================================================================
 ❄️ NIX PACKAGE MANAGER | Installing cross-platform package manager
 #=======================================================================
 """
-echo "📥 Installing Nix..."
-curl -L https://nixos.org/nix/install | sh
-. ~/.nix-profile/etc/profile.d/nix.sh
+# echo "📥 Installing Nix..."
+# curl -L https://nixos.org/nix/install | sh
+# . ~/.nix-profile/etc/profile.d/nix.sh
 
-# Install Homebrew
-echo """#=======================================================================
-🍺 HOMEBREW PACKAGE MANAGER | Installing macOS-style package manager
-#=======================================================================
-"""
-echo "📥 Installing Homebrew..."
-export NONINTERACTIVE=1
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# # Install Homebrew
+# echo """#=======================================================================
+# 🍺 HOMEBREW PACKAGE MANAGER | Installing macOS-style package manager
+# #=======================================================================
+# """
+# echo "📥 Installing Homebrew..."
+# export NONINTERACTIVE=1
+# /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 echo """#=======================================================================
 🛠️ SYSTEM UTILITIES | Installing essential system tools
@@ -46,6 +46,7 @@ echo """#=======================================================================
 echo "📂 Installing filesystem utilities..."
 sudo nala install fuse3 -y || true
 sudo nala install nfs-common -y || true
+sudo nala install redis-tools -y || true
 
 # Python package installer
 echo """#=======================================================================

@@ -76,7 +76,9 @@ echo """#=======================================================================
 
 🔐 Method 2: USING SSH
     FROM REMOTE, RUN:
-    fptx ~/dotfiles \$USER@\$(hostname):^ -z
+    fptx ~/dotfiles $USER@$(hostname):^ -z
+    # OR, using IP address if router has not yet found the hostname:
+    fptx ~/dotfiles $USER@$(hostname -I | awk '{print $1}'):^ -z
 
 ☁️  Method 3: USING INTERNET SECURE SHARE
     cd ~
@@ -138,7 +140,7 @@ if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
     sudo nala install libssl-dev -y
     sudo nala install ffmpeg -y
-    python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm,brave,code,docker,warp-cli
+    python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm,brave,code
 else
     echo """    ⏭️  Skipping development tools installation
     """

@@ -79,14 +79,6 @@
         "strip_v": true,
         "exe_name": "obs-backgroundremoval"
     },
-    "cloudflared": {
-        "repo_url": "https://github.com/cloudflare/cloudflared",
-        "doc": "☁️ Cloudflared installer. Should only be installed at main computer and servers of tunnels.",
-        "filename_template_windows_amd_64": "cloudflared-windows-amd64.exe",
-        "filename_template_linux_amd_64": "cloudflared-linux-amd64",
-        "strip_v": false,
-        "exe_name": "cloudflared"
-    },
     "rustdesk": {
         "repo_url": "https://github.com/rustdesk/rustdesk",
         "doc": "🖥️ Yet another remote desktop software, written in Rust. Works out of the box, no configuration required",
