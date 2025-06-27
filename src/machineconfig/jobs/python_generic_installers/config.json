@@ -29,6 +29,14 @@
         "strip_v": false,
         "exe_name": "m365"
     },
+    "gemini-cli": {
+        "repo_url": "npm install -g @google/gemini-cli",
+        "doc": "🤖 Gemini CLI is a command line interface for Google Gemini AI.",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": false,
+        "exe_name": "gemini"
+    },
     "chatgpt": {
         "repo_url": "https://github.com/j178/chatgpt",
         "doc": "🤖 chagpt cli",
