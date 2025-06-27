@@ -119,8 +119,15 @@ def main() -> None:
 
     if choice_file.suffix == ".py":
         if args.streamlit:
-            from crocodile.environment import get_network_addresses
-            local_ip_v4 = get_network_addresses()["local_ip_v4"]
+            import socket
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            try:
+                s.connect(('8.8.8.8', 1))
+                local_ip_v4 = s.getsockname()[0]
+            except Exception:
+                local_ip_v4 = socket.gethostbyname(socket.gethostname())
+            finally:
+                s.close()
             computer_name = platform.node()
             port = 8501
             toml_path: Optional[P] = None
