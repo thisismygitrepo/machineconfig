@@ -58,7 +58,17 @@ def main():
         config_path.write_text(txt)
         print(Panel("📄 Created new SSH config file", expand=False))
 
-    program = f"""echo '{Panel(Text("✅ SSH IDENTITY CONFIGURATION COMPLETE\nIdentity added to SSH config file\nConsider reloading the SSH config to apply changes", justify="center"), expand=False, border_style="green")}' """
+    panel_complete = Panel(
+        Text(
+            "✅ SSH IDENTITY CONFIGURATION COMPLETE\n"
+            "Identity added to SSH config file\n"
+            "Consider reloading the SSH config to apply changes",
+            justify="center"
+        ),
+        expand=False,
+        border_style="green"
+    )
+    program = f"echo '{panel_complete}'"
 
     success_message = f"🎉 CONFIGURATION SUCCESSFUL\nIdentity added: {path_to_key.name}\nConfig file: {config_path}"
     print(Panel(Text(success_message, justify="center"), expand=False, border_style="green"))
