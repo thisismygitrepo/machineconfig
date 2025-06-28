@@ -64,3 +64,9 @@ eval "$(starship init bash)"
 # LEVE THIS IN THE END TO AVOID EXECUTION FAILURE OF THE REST OF THE SCRIPT
 # from https://github.com/cantino/mcfly
 eval "$(mcfly init bash)"
+
+# check if file in ~/dotfiles/machineconfig/init_linux.sh exists and source it
+if [ -f "$HOME/dotfiles/machineconfig/init_linux.sh" ]; then
+    # echo "Sourcing $HOME/dotfiles/machineconfig/init_linux.sh"
+    source "$HOME/dotfiles/machineconfig/init_linux.sh"
+fi

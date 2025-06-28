@@ -69,7 +69,7 @@ def main() -> None:
     else:
         choice_file = path_obj
     repo_root = get_repo_root(str(choice_file))
-    print(f"💾 Selected file: {choice_file}. Repo root: {repo_root}")
+    print(f"💾 Selected file: {choice_file}.\nRepo root: {repo_root}")
 
     ve_name_suggested, ipy_profile = get_ve_name_and_ipython_profile(choice_file)
     if ipy_profile is None: ipy_profile = "default"
