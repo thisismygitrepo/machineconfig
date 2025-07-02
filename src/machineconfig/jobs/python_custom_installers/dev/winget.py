@@ -5,6 +5,16 @@ from pathlib import Path
 from typing import Optional
 
 
+config_dict = {
+        "repo_url": "CUSTOM",
+        "doc": "winget installer",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "",
+        "strip_v": False,
+        "exe_name": "winget"
+}
+
+
 def is_winget_available() -> bool:
     """
     Check if winget is available in the system PATH.
