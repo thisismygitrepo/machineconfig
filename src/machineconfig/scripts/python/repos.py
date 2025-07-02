@@ -174,6 +174,9 @@ def install_repos(specs_path: str, clone: bool=True, checkout_to_recorded_commit
         # Handle cloning and remote setup
         if clone:
             # Select the remote to use for cloning
+            if len(repo["remotes"]) == 0:
+                print(f"⚠️ No remotes found for {repo['name']}. Skipping clone.")
+                continue
             remote_name, remote_url = next(iter(repo["remotes"].items()))  # Get first remote by default
             if preferred_remote is not None and preferred_remote in repo["remotes"]:
                 remote_name = preferred_remote
