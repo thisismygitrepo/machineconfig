@@ -111,8 +111,7 @@ def main() -> None:
                 if line == "": continue
                 if line.startswith("echo"): continue
                 options.append(line)
-            # choice_line = choose_one_option(options=options, fzf=True)
-            chosen_lines = display_options(msg="Choose a line to run", options=options, fzf=True, multi=False)
+            chosen_lines = display_options(msg="Choose a line to run", options=options, fzf=True, multi=True)
             choice_file = P.tmpfile(suffix=".sh").write_text("\n".join(chosen_lines))
             choice_function = None
     else:
