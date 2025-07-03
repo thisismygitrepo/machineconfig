@@ -9,7 +9,7 @@ import getpass
 from crocodile.core import randstr, Struct as S
 from crocodile.file_management import P, Save
 from crocodile.meta import SSH
-from machineconfig.cluster.session_managers import Zellij, WindowsTerminal
+from src.machineconfig.cluster.sessions_managers.session_managers import Zellij, WindowsTerminal
 from machineconfig.cluster.self_ssh import SelfSSH
 from machineconfig.cluster.loader_runner import EmailParams, WorkloadParams, LAUNCH_METHOD, JOB_STATUS, LogEntry, RemoteMachineConfig
 from machineconfig.cluster.file_manager import FileManager

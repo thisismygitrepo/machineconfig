@@ -179,7 +179,7 @@ rm_conf: RemoteMachineConfig = Read.pickle(path=manager.remote_machine_config_pa
 if rm_conf.kill_on_completion:
     # assert rm_conf.launch_method == "cloud_manager"
     if platform.system() == "Linux":
-        from machineconfig.cluster.session_managers import Zellij  # type: ignore  # pylint: disable=C0412
+        from src.machineconfig.cluster.sessions_managers.session_managers import Zellij  # type: ignore  # pylint: disable=C0412
         current_session = Zellij.get_current_zellij_session()
         # Zellij.close_tab(sess_name=params.session_name, tab_name=params.tab_name)
         print(f"""
