@@ -28,19 +28,11 @@ def convert_kwargs_to_fire_kwargs_str(kwargs: dict[str, Any]) -> str:
     if not kwargs:  # empty dict
         kwargs_str = ''
     else:
-        if len(kwargs) == 1:
-            kwargs_str = f""" --{list(kwargs.keys())[0]} {list(kwargs.values())[0]} """
-        else:
-            # print(f"len(kwargs) = {len(kwargs)}")
-            tmp_list: list[str] = []
-            for k, v in kwargs.items():
-                if v is not None:
-                    item = f'"{k}": "{v}"'
-                else:
-                    item = f'"{k}": None'
-                tmp_list.append(item)
-            tmp__ = ", ".join(tmp_list)
-            kwargs_str = "'{" + tmp__  + "}'"
+        # For fire module, all keyword arguments should be passed as --key value pairs
+        tmp_list: list[str] = []
+        for k, v in kwargs.items():
+            tmp_list.append(f"--{k} {v}")
+        kwargs_str = " " + " ".join(tmp_list) + " "
     return kwargs_str
 
 
