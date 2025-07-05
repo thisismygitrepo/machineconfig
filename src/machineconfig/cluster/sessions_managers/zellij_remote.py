@@ -171,7 +171,8 @@ class ZellijRemoteLayoutGenerator:
             layout_content += "\n" + self._create_tab_section(tab_name, cwd, command)
         return layout_content + "\n}\n"
     
-    def check_command_status(self, tab_name: str) -> Dict[str, any]:
+    def check_command_status(self, tab_name: str, use_verification: bool = True) -> Dict[str, any]:
+        """Check command status with optional process verification."""
         if tab_name not in self.tab_config:
             return {
                 "status": "unknown",
@@ -182,6 +183,10 @@ class ZellijRemoteLayoutGenerator:
                 "remote": self.remote_name
             }
         
+        # Use the verified method by default for more accurate results
+        if use_verification:
+            return self.get_verified_process_status(tab_name)
+        
         cwd, command = self.tab_config[tab_name]
         cmd, args = self._parse_command(command)
         
@@ -191,27 +196,47 @@ class ZellijRemoteLayoutGenerator:
             check_script = f"""
 import psutil
 import json
+import os
 
 def check_process():
     matching_processes = []
     full_command = '{command}'
-    cmd_parts = '{' '.join(command.split())}'
+    cmd_parts = [part for part in full_command.split() if len(part) > 2]  # Only significant parts
+    current_pid = os.getpid()
     
-    for proc in psutil.process_iter(['pid', 'name', 'cmdline', 'status']):
+    # More specific command patterns to match
+    primary_cmd = cmd_parts[0] if cmd_parts else ''
+    
+    for proc in psutil.process_iter(['pid', 'name', 'cmdline', 'status', 'create_time']):
         try:
+            # Skip the current process (this script itself)
+            if proc.info['pid'] == current_pid:
+                continue
+                
             if proc.info['cmdline'] and len(proc.info['cmdline']) > 0:
                 cmdline_str = ' '.join(proc.info['cmdline'])
                 
-                # Check if the full command or significant parts are in the process command line
-                if (full_command in cmdline_str or
-                    cmd_parts in cmdline_str or
-                    any(part in cmdline_str for part in full_command.split() if len(part) > 3)):
+                # Skip if this is clearly the psutil check script itself
+                if 'check_process()' in cmdline_str or 'psutil.process_iter' in cmdline_str:
+                    continue
+                
+                # More precise matching - require primary command to be present
+                # and at least 2 other significant parts
+                matches_primary = primary_cmd in cmdline_str
+                matches_parts = sum(1 for part in cmd_parts[1:] if part in cmdline_str)
+                
+                # Only match if we have the primary command and at least 2 other parts
+                # OR if the full command string is present (but not in a Python script)
+                if (matches_primary and matches_parts >= 2) or \\
+                   (full_command in cmdline_str and not any(python_indicator in cmdline_str.lower() 
+                                                           for python_indicator in ['python -c', 'import psutil', 'def check_process'])):
                     matching_processes.append({{
                         "pid": proc.info['pid'],
                         "name": proc.info['name'],
                         "cmdline": proc.info['cmdline'],
                         "status": proc.info['status'],
-                        "cmdline_str": cmdline_str
+                        "cmdline_str": cmdline_str,
+                        "create_time": proc.info['create_time']
                     }})
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             continue
@@ -468,46 +493,86 @@ if __name__ == "__main__":
         
         # Check 1: What the psutil script actually returns
         try:
-            check_script = f"""
+            # Escape the command properly for the debug script
+            escaped_command = command.replace("'", "\\'").replace('"', '\\"')
+            
+            check_script = f'''
 import psutil
 import json
+import os
 
 def check_process():
     all_processes = []
     matching_processes = []
-    full_command = '{command}'
-    cmd_parts = '{' '.join(command.split())}'
+    full_command = '{escaped_command}'
+    cmd_parts = [part for part in full_command.split() if len(part) > 2]
+    current_pid = os.getpid()
+    primary_cmd = cmd_parts[0] if cmd_parts else ''
     
-    for proc in psutil.process_iter(['pid', 'name', 'cmdline', 'status']):
+    for proc in psutil.process_iter(['pid', 'name', 'cmdline', 'status', 'create_time']):
         try:
+            # Skip current process
+            if proc.info['pid'] == current_pid:
+                continue
+                
             if proc.info['cmdline'] and len(proc.info['cmdline']) > 0:
                 cmdline_str = ' '.join(proc.info['cmdline'])
-                all_processes.append({{
-                    "pid": proc.info['pid'],
-                    "name": proc.info['name'],
-                    "cmdline_str": cmdline_str
-                }})
                 
-                # Check if the full command or significant parts are in the process command line
-                if (full_command in cmdline_str or
-                    cmd_parts in cmdline_str or
-                    any(part in cmdline_str for part in full_command.split() if len(part) > 3)):
+                # Log all processes for debugging (excluding psutil scripts)
+                if not any(indicator in cmdline_str for indicator in ['check_process()', 'psutil.process_iter']):
+                    all_processes.append({{
+                        "pid": proc.info['pid'],
+                        "name": proc.info['name'],
+                        "cmdline_str": cmdline_str[:100] + "..." if len(cmdline_str) > 100 else cmdline_str
+                    }})
+                
+                # Skip if this is clearly the psutil check script itself
+                if 'check_process()' in cmdline_str or 'psutil.process_iter' in cmdline_str:
+                    continue
+                
+                # More precise matching
+                matches_primary = primary_cmd in cmdline_str and primary_cmd != 'python'
+                matches_parts = sum(1 for part in cmd_parts[1:] if part in cmdline_str)
+                
+                # Debug info for matching logic
+                match_info = {{
+                    "primary_cmd": primary_cmd,
+                    "matches_primary": matches_primary,
+                    "matches_parts": matches_parts,
+                    "cmd_parts": cmd_parts[1:],
+                    "full_command_match": full_command in cmdline_str,
+                    "is_python_script": any(python_indicator in cmdline_str.lower() 
+                                          for python_indicator in ['python -c', 'import psutil', 'def check_process'])
+                }}
+                
+                if (matches_primary and matches_parts >= 2) or \\
+                   (full_command in cmdline_str and not match_info["is_python_script"]):
                     matching_processes.append({{
                         "pid": proc.info['pid'],
                         "name": proc.info['name'],
                         "cmdline": proc.info['cmdline'],
                         "status": proc.info['status'],
-                        "cmdline_str": cmdline_str
+                        "cmdline_str": cmdline_str,
+                        "create_time": proc.info['create_time'],
+                        "match_info": match_info
                     }})
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             continue
     
-    return {{"matching": matching_processes, "all_processes": all_processes[:10]}}  # First 10 for debugging
+    return {{
+        "matching": matching_processes, 
+        "all_processes": all_processes[:20],  # First 20 for debugging
+        "search_info": {{
+            "full_command": full_command,
+            "cmd_parts": cmd_parts,
+            "primary_cmd": primary_cmd
+        }}
+    }}
 
 if __name__ == "__main__":
     result = check_process()
     print(json.dumps(result))
-"""
+'''
             remote_cmd = f"$HOME/venvs/ve/bin/python -c {shlex.quote(check_script)}"
             result = self._run_remote_command(self.remote_name, remote_cmd, timeout=15)
             debug_info["checks"]["psutil_detailed"] = {
@@ -521,9 +586,117 @@ if __name__ == "__main__":
         
         return debug_info
 
-    def print_debug_info(self, tab_name: str) -> None:
-        """Print formatted debug information for a specific tab."""
-        debug_info = self.debug_remote_process_check(tab_name)
+    def test_process_detection_methods(self, tab_name: str) -> Dict[str, any]:
+        """Test different process detection methods side by side for comparison."""
+        if tab_name not in self.tab_config:
+            return {"error": f"Tab '{tab_name}' not found in configuration"}
+        
+        results = {
+            "tab_name": tab_name,
+            "command": self.tab_config[tab_name][1],
+            "remote": self.remote_name,
+            "methods": {}
+        }
+        
+        # Test old method (if you want to compare)
+        try:
+            # This uses the updated check_command_status with use_verification=False
+            old_result = self.check_command_status(tab_name, use_verification=False)
+            results["methods"]["old_method"] = old_result
+        except Exception as e:
+            results["methods"]["old_method"] = {"error": str(e)}
+        
+        # Test new fresh check method
+        try:
+            fresh_result = self.force_fresh_process_check(tab_name)
+            results["methods"]["fresh_check"] = fresh_result
+        except Exception as e:
+            results["methods"]["fresh_check"] = {"error": str(e)}
+        
+        # Test verified method (fresh + alive verification)
+        try:
+            verified_result = self.get_verified_process_status(tab_name)
+            results["methods"]["verified_method"] = verified_result
+        except Exception as e:
+            results["methods"]["verified_method"] = {"error": str(e)}
+        
+        return results
+
+    def print_test_results(self, tab_name: str) -> None:
+        """Print a formatted comparison of different detection methods."""
+        results = self.test_process_detection_methods(tab_name)
+        
+        print("=" * 80)
+        print(f"🧪 PROCESS DETECTION METHODS COMPARISON")
+        print("=" * 80)
+        print(f"Tab: {results['tab_name']}")
+        print(f"Command: {results['command']}")
+        print(f"Remote: {results['remote']}")
+        print()
+        
+        for method_name, method_result in results["methods"].items():
+            print(f"--- {method_name.upper().replace('_', ' ')} ---")
+            if "error" in method_result:
+                print(f"❌ Error: {method_result['error']}")
+            else:
+                running = method_result.get("running", False)
+                status_icon = "✅" if running else "❌"
+                print(f"{status_icon} Status: {method_result.get('status', 'unknown')}")
+                print(f"   Running: {running}")
+                if method_result.get("processes"):
+                    print(f"   Processes found: {len(method_result['processes'])}")
+                    for i, proc in enumerate(method_result["processes"][:3]):  # Show first 3
+                        verified = proc.get("verified_alive", "N/A")
+                        print(f"     {i+1}. PID {proc['pid']}: {proc['name']} (verified: {verified})")
+                else:
+                    print("   Processes found: 0")
+            print()
+        
+        print("=" * 80)
+
+    def debug_remote_process_check_v2(self, tab_name: str) -> Dict[str, any]:
+        """Debug method to check process detection methods."""
+        if tab_name not in self.tab_config:
+            return {"error": f"Tab '{tab_name}' not found in configuration"}
+        
+        cwd, command = self.tab_config[tab_name]
+        cmd, args = self._parse_command(command)
+        
+        debug_info = {
+            "tab_name": tab_name,
+            "command": command,
+            "parsed_cmd": cmd,
+            "parsed_args": args,
+            "remote": self.remote_name,
+            "checks": {}
+        }
+        
+        # Check using old method (for comparison)
+        try:
+            old_status = self.check_command_status(tab_name, use_verification=False)
+            debug_info["checks"]["old_method"] = old_status
+        except Exception as e:
+            debug_info["checks"]["old_method"] = {"error": str(e)}
+        
+        # Check using fresh method
+        try:
+            fresh_status = self.force_fresh_process_check(tab_name)
+            debug_info["checks"]["fresh_check"] = fresh_status
+        except Exception as e:
+            debug_info["checks"]["fresh_check"] = {"error": str(e)}
+        
+        # Check using verified method
+        try:
+            verified_status = self.get_verified_process_status(tab_name)
+            debug_info["checks"]["verified_method"] = verified_status
+        except Exception as e:
+            debug_info["checks"]["verified_method"] = {"error": str(e)}
+        
+        return debug_info
+
+    def print_debug_info_v2(self, tab_name: str) -> None:
+        """Print formatted debug information for process detection methods."""
+        debug_info = self.debug_remote_process_check_v2(tab_name)
         
         print("=" * 60)
         print(f"🐛 DEBUG INFO FOR TAB: {tab_name}")
@@ -560,6 +733,195 @@ if __name__ == "__main__":
             print()
         print("=" * 60)
     
+    def force_fresh_process_check(self, tab_name: str) -> Dict[str, any]:
+        """Force a fresh process check with additional validation to avoid stale results."""
+        if tab_name not in self.tab_config:
+            return {
+                "status": "unknown",
+                "error": f"Tab '{tab_name}' not found in tracked configuration",
+                "running": False,
+                "command": None,
+                "remote": self.remote_name
+            }
+        
+        cwd, command = self.tab_config[tab_name]
+        cmd, args = self._parse_command(command)
+        
+        try:
+            # First, get a timestamp to ensure we're getting fresh results
+            timestamp_cmd = "date +%s"
+            timestamp_result = self._run_remote_command(self.remote_name, timestamp_cmd, timeout=5)
+            check_timestamp = timestamp_result.stdout.strip() if timestamp_result.returncode == 0 else "unknown"
+            
+            # Create a more robust process checking script
+            # Escape the command properly for the Python script
+            escaped_command = command.replace("'", "\\'").replace('"', '\\"')
+            
+            check_script = f'''
+import psutil
+import json
+import os
+import time
+
+def force_fresh_check():
+    # Add a small delay to ensure we're not reading cached data
+    time.sleep(0.1)
+    
+    matching_processes = []
+    full_command = '{escaped_command}'
+    cmd_parts = [part for part in full_command.split() if len(part) > 2]
+    current_pid = os.getpid()
+    primary_cmd = cmd_parts[0] if cmd_parts else ''
+    
+    # Get current timestamp
+    check_time = time.time()
+    
+    for proc in psutil.process_iter(['pid', 'name', 'cmdline', 'status', 'create_time']):
+        try:
+            # Skip current process and any python scripts running psutil
+            if proc.info['pid'] == current_pid:
+                continue
+                
+            if proc.info['cmdline'] and len(proc.info['cmdline']) > 0:
+                cmdline_str = ' '.join(proc.info['cmdline'])
+                
+                # Absolutely skip any psutil checking scripts
+                if any(indicator in cmdline_str for indicator in [
+                    'check_process()', 'psutil.process_iter', 'force_fresh_check',
+                    'import psutil', 'def check_process'
+                ]):
+                    continue
+                
+                # Check if process was created before our check (avoid catching our own script)
+                if proc.info['create_time'] and proc.info['create_time'] > check_time - 5:
+                    # Process created very recently, might be our script or related
+                    continue
+                
+                # More precise matching - require primary command and multiple parts
+                matches_primary = primary_cmd in cmdline_str and primary_cmd != 'python'
+                matches_parts = sum(1 for part in cmd_parts[1:] if part in cmdline_str)
+                
+                # Only match if we have strong evidence this is the right process
+                if matches_primary and matches_parts >= 2:
+                    # Additional validation: check if this looks like the actual command vs a script
+                    script_indicators = ['-c', 'import ', 'def ', 'psutil']
+                    is_direct_command = not any(script_indicator in cmdline_str.lower() 
+                                              for script_indicator in script_indicators)
+                    
+                    if is_direct_command or (full_command in cmdline_str and 'python -c' not in cmdline_str):
+                        matching_processes.append({{
+                            "pid": proc.info['pid'],
+                            "name": proc.info['name'],
+                            "cmdline": proc.info['cmdline'],
+                            "status": proc.info['status'],
+                            "cmdline_str": cmdline_str,
+                            "create_time": proc.info['create_time'],
+                            "is_direct_command": is_direct_command
+                        }})
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            continue
+    
+    return {{
+        "processes": matching_processes,
+        "check_timestamp": check_time,
+        "search_command": full_command,
+        "search_parts": cmd_parts
+    }}
+
+if __name__ == "__main__":
+    result = force_fresh_check()
+    print(json.dumps(result))
+'''
+            
+            # Execute the fresh check script on remote machine
+            remote_cmd = f"$HOME/venvs/ve/bin/python -c {shlex.quote(check_script)}"
+            result = self._run_remote_command(self.remote_name, remote_cmd, timeout=15)
+            
+            if result.returncode == 0:
+                try:
+                    check_result = json.loads(result.stdout.strip())
+                    matching_processes = check_result.get("processes", [])
+                    
+                    return {
+                        "status": "running" if matching_processes else "not_running",
+                        "running": bool(matching_processes),
+                        "processes": matching_processes,
+                        "command": command,
+                        "tab_name": tab_name,
+                        "remote": self.remote_name,
+                        "check_timestamp": check_timestamp,
+                        "method": "force_fresh_check"
+                    }
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse fresh check output: {e}")
+                    logger.error(f"Raw output was: {result.stdout}")
+                    return {
+                        "status": "error",
+                        "error": f"Failed to parse output: {e}",
+                        "running": False,
+                        "command": command,
+                        "tab_name": tab_name,
+                        "remote": self.remote_name,
+                        "raw_output": result.stdout
+                    }
+            else:
+                return {
+                    "status": "error", 
+                    "error": f"Remote command failed: {result.stderr}",
+                    "running": False,
+                    "command": command,
+                    "tab_name": tab_name,
+                    "remote": self.remote_name
+                }
+                
+        except Exception as e:
+            logger.error(f"Error in fresh process check for tab '{tab_name}' on remote '{self.remote_name}': {e}")
+            return {
+                "status": "error",
+                "error": str(e),
+                "running": False,
+                "command": command,
+                "tab_name": tab_name,
+                "remote": self.remote_name
+            }
+
+    def verify_process_alive(self, pid: int) -> bool:
+        """Verify if a process with given PID is actually alive on the remote machine."""
+        try:
+            # Use kill -0 to check if process exists without actually killing it
+            verify_cmd = f"kill -0 {pid} 2>/dev/null && echo 'alive' || echo 'dead'"
+            result = self._run_remote_command(self.remote_name, verify_cmd, timeout=5)
+            
+            if result.returncode == 0:
+                return result.stdout.strip() == 'alive'
+            return False
+        except Exception:
+            return False
+
+    def get_verified_process_status(self, tab_name: str) -> Dict[str, any]:
+        """Get process status with additional verification that processes are actually alive."""
+        # First do the fresh check
+        status = self.force_fresh_process_check(tab_name)
+        
+        if status.get("running") and status.get("processes"):
+            # Verify each process is actually alive
+            verified_processes = []
+            for proc in status["processes"]:
+                pid = proc.get("pid")
+                if pid and self.verify_process_alive(pid):
+                    proc["verified_alive"] = True
+                    verified_processes.append(proc)
+                else:
+                    proc["verified_alive"] = False
+                    logger.warning(f"Process PID {pid} found in process list but not actually alive")
+            
+            # Update status based on verified processes
+            status["processes"] = verified_processes
+            status["running"] = bool(verified_processes)
+            status["status"] = "running" if verified_processes else "not_running"
+            status["verification_method"] = "kill_signal_check"
+        
+        return status
 
 if __name__ == "__main__":
     # Example usage
