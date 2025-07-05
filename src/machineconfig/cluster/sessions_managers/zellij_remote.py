@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 # from typing import Optional, Dict
 
-def send_and_execute_zellij_layout(remote_machine: str, local_layout_path: str, remote_layout_path: str | None = None):
+def copy_layout_to_remote(remote_machine: str, local_layout_path: str, remote_layout_path: str | None = None) -> str:
     local_path = Path(local_layout_path)
     if not local_path.exists():
         raise FileNotFoundError(f"Local layout file not found: {local_layout_path}")
@@ -23,7 +23,7 @@ def send_and_execute_zellij_layout(remote_machine: str, local_layout_path: str, 
             # If path is not relative to home, just use the filename in remote home
             remote_layout_path = f"~/{local_path.name}"
     
-    # Ensure remote directory exists and copy the layout file
+    # Copy the layout file to remote machine
     scp_command = [
         "scp", 
         str(local_path), 
@@ -35,10 +35,14 @@ def send_and_execute_zellij_layout(remote_machine: str, local_layout_path: str, 
     if result.returncode != 0:
         raise RuntimeError(f"Failed to copy layout file: {result.stderr}")
     
+    return remote_layout_path
+
+
+def execute_zellij_layout(remote_machine: str, remote_layout_path: str, session_name: str = "JobManager"):
     # Execute zellij with the layout on remote machine
     ssh_command = [
         "ssh", remote_machine, "-n",
-        f". ~/.profile; . ~/.bashrc; zellij --layout {remote_layout_path} a -b JobManager"
+        f". ~/.profile; . ~/.bashrc; zellij --layout {remote_layout_path} a -b {session_name}"
     ]
     
     print(f"🚀 Executing zellij layout on {remote_machine}")
@@ -49,3 +53,8 @@ def send_and_execute_zellij_layout(remote_machine: str, local_layout_path: str, 
         print(f"✅ Successfully launched zellij layout on {remote_machine}")
     
     return result
+
+
+def send_and_execute_zellij_layout(remote_machine: str, local_layout_path: str, remote_layout_path: str | None = None, session_name: str = "JobManager"):
+    remote_path = copy_layout_to_remote(remote_machine, local_layout_path, remote_layout_path)
+    return execute_zellij_layout(remote_machine, remote_path, session_name)
