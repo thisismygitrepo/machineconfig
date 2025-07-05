@@ -90,3 +90,6 @@ echo """
 
 🏠 Returned to home directory: $HOME
 """
+
+ln -s $HOME/venvs/ve $HOME/code/machineconfig/.venv
+ln -s $HOME/venvs/ve $HOME/code/crocodile/.venv
