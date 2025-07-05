@@ -35,7 +35,7 @@ class ZellijRemoteLayoutGenerator:
         return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
     
     @staticmethod
-    def _run_remote_command(remote_name: str, command: str, timeout: int = 30) -> subprocess.CompletedProcess:
+    def run_remote_command(remote_name: str, command: str, timeout: int = 30) -> subprocess.CompletedProcess:
         """Execute a command on the remote machine via SSH."""
         ssh_cmd = ["ssh", remote_name, command]
         try:
@@ -110,7 +110,7 @@ class ZellijRemoteLayoutGenerator:
         remote_layout_file = f"{remote_layout_dir}/zellij_layout_{self.session_name}_{random_suffix}.kdl"
         
         # Create remote directory
-        mkdir_result = self._run_remote_command(self.remote_name, f"mkdir -p {remote_layout_dir}")
+        mkdir_result = self.run_remote_command(self.remote_name, f"mkdir -p {remote_layout_dir}")
         if mkdir_result.returncode != 0:
             raise RuntimeError(f"Failed to create remote directory: {mkdir_result.stderr}")
         
@@ -250,7 +250,7 @@ if __name__ == "__main__":
             
             # Execute the check script on remote machine using the virtual environment Python
             remote_cmd = f"$HOME/venvs/ve/bin/python -c {shlex.quote(check_script)}"
-            result = self._run_remote_command(self.remote_name, remote_cmd, timeout=15)
+            result = self.run_remote_command(self.remote_name, remote_cmd, timeout=15)
             
             if result.returncode == 0:
                 try:
@@ -319,7 +319,7 @@ if __name__ == "__main__":
     def check_zellij_session_status(self) -> Dict[str, any]:
         try:
             # Run zellij list-sessions command on remote machine
-            result = self._run_remote_command(self.remote_name, 'zellij list-sessions', timeout=10)
+            result = self.run_remote_command(self.remote_name, 'zellij list-sessions', timeout=10)
             
             if result.returncode == 0:
                 sessions = result.stdout.strip().split('\n') if result.stdout.strip() else []
@@ -436,7 +436,7 @@ if __name__ == "__main__":
             # Start Zellij session with layout
             start_cmd = f"zellij --layout {remote_layout_file} a -b {self.session_name}"
             print(f"Executing command: {start_cmd}")
-            result = self._run_remote_command(self.remote_name, start_cmd, timeout=30)
+            result = self.run_remote_command(self.remote_name, start_cmd, timeout=30)
             
             if result.returncode == 0:
                 logger.info(f"Zellij session '{self.session_name}' started on {self.remote_name}")
@@ -574,7 +574,7 @@ if __name__ == "__main__":
     print(json.dumps(result))
 '''
             remote_cmd = f"$HOME/venvs/ve/bin/python -c {shlex.quote(check_script)}"
-            result = self._run_remote_command(self.remote_name, remote_cmd, timeout=15)
+            result = self.run_remote_command(self.remote_name, remote_cmd, timeout=15)
             debug_info["checks"]["psutil_detailed"] = {
                 "command": remote_cmd,
                 "returncode": result.returncode,
@@ -750,7 +750,7 @@ if __name__ == "__main__":
         try:
             # First, get a timestamp to ensure we're getting fresh results
             timestamp_cmd = "date +%s"
-            timestamp_result = self._run_remote_command(self.remote_name, timestamp_cmd, timeout=5)
+            timestamp_result = self.run_remote_command(self.remote_name, timestamp_cmd, timeout=5)
             check_timestamp = timestamp_result.stdout.strip() if timestamp_result.returncode == 0 else "unknown"
             
             # Create a more robust process checking script
@@ -835,7 +835,7 @@ if __name__ == "__main__":
             
             # Execute the fresh check script on remote machine
             remote_cmd = f"$HOME/venvs/ve/bin/python -c {shlex.quote(check_script)}"
-            result = self._run_remote_command(self.remote_name, remote_cmd, timeout=15)
+            result = self.run_remote_command(self.remote_name, remote_cmd, timeout=15)
             
             if result.returncode == 0:
                 try:
@@ -890,7 +890,7 @@ if __name__ == "__main__":
         try:
             # Use kill -0 to check if process exists without actually killing it
             verify_cmd = f"kill -0 {pid} 2>/dev/null && echo 'alive' || echo 'dead'"
-            result = self._run_remote_command(self.remote_name, verify_cmd, timeout=5)
+            result = self.run_remote_command(self.remote_name, verify_cmd, timeout=5)
             
             if result.returncode == 0:
                 return result.stdout.strip() == 'alive'
