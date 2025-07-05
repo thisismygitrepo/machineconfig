@@ -283,7 +283,6 @@ if __name__ == "__main__":
         status_report = {}
         for tab_name in self.tab_config:
             status_report[tab_name] = self.check_command_status(tab_name)
-        
         return status_report
 
     def check_zellij_session_status(self) -> Dict[str, any]:
