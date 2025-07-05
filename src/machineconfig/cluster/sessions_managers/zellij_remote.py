@@ -103,6 +103,26 @@ class ZellijRemoteLayoutGenerator:
             if not cwd.strip(): 
                 raise ValueError(f"Invalid cwd for tab '{tab_name}': {cwd}")
     
+    def copy_layout_to_remote(self, local_layout_file: Path, session_name: str, random_suffix: str) -> str:
+        """Copy the layout file to the remote machine and return the remote path."""
+        # Create remote directory and copy layout file
+        remote_layout_dir = "~/tmp_results/zellij_layouts/layout_manager"
+        remote_layout_file = f"{remote_layout_dir}/zellij_layout_{session_name or 'default'}_{random_suffix}.kdl"
+        
+        # Create remote directory
+        mkdir_result = self._run_remote_command(self.remote_name, f"mkdir -p {remote_layout_dir}")
+        if mkdir_result.returncode != 0:
+            raise RuntimeError(f"Failed to create remote directory: {mkdir_result.stderr}")
+        
+        # Copy layout file to remote machine
+        scp_cmd = ["scp", str(local_layout_file), f"{self.remote_name}:{remote_layout_file}"]
+        scp_result = subprocess.run(scp_cmd, capture_output=True, text=True)
+        if scp_result.returncode != 0:
+            raise RuntimeError(f"Failed to copy layout file to remote: {scp_result.stderr}")
+        
+        logger.info(f"Zellij layout file copied to remote: {self.remote_name}:{remote_layout_file}")
+        return remote_layout_file
+
     def create_zellij_layout(self, tab_config: Dict[str, tuple[str, str]], output_dir: Optional[str] = None, session_name: Optional[str] = None) -> str:
         self._validate_tab_config(tab_config)
         logger.info(f"Creating Zellij layout with {len(tab_config)} tabs for remote '{self.remote_name}'")
@@ -137,23 +157,7 @@ class ZellijRemoteLayoutGenerator:
             with open(layout_file, 'w', encoding='utf-8') as f:
                 f.write(layout_content)
             
-            # Create remote directory and copy layout file
-            remote_layout_dir = "~/tmp_results/zellij_layouts/layout_manager"
-            remote_layout_file = f"{remote_layout_dir}/zellij_layout_{self.session_name or 'default'}_{random_suffix}.kdl"
-            
-            # Create remote directory
-            mkdir_result = self._run_remote_command(self.remote_name, f"mkdir -p {remote_layout_dir}")
-            if mkdir_result.returncode != 0:
-                raise RuntimeError(f"Failed to create remote directory: {mkdir_result.stderr}")
-            
-            # Copy layout file to remote machine
-            scp_cmd = ["scp", str(layout_file), f"{self.remote_name}:{remote_layout_file}"]
-            scp_result = subprocess.run(scp_cmd, capture_output=True, text=True)
-            if scp_result.returncode != 0:
-                raise RuntimeError(f"Failed to copy layout file to remote: {scp_result.stderr}")
-            
             logger.info(f"Zellij layout file created locally: {layout_file.absolute()}")
-            logger.info(f"Zellij layout file copied to remote: {self.remote_name}:{remote_layout_file}")
             
             return str(layout_file.absolute())
             
