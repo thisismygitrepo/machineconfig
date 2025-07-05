@@ -187,7 +187,49 @@ class ZellijRemoteLayoutGenerator:
         cmd, args = self._parse_command(command)
         
         try:
-            # Create a Python script to check processes on remote machine
+            # First try a simple Unix-based approach that doesn't require psutil
+            simple_cmd = f"pgrep -f {shlex.quote(cmd)} || echo 'NO_PROCESSES_FOUND'"
+            result = self._run_remote_command(self.remote_name, simple_cmd, timeout=10)
+            
+            if result.returncode == 0 and result.stdout.strip() and 'NO_PROCESSES_FOUND' not in result.stdout:
+                # Found processes, get more details
+                pids = [pid.strip() for pid in result.stdout.strip().split('\n') if pid.strip()]
+                
+                # Get detailed info for each PID
+                matching_processes = []
+                for pid in pids:
+                    if pid and pid != 'NO_PROCESSES_FOUND':
+                        try:
+                            # Get process details using ps
+                            ps_cmd = f"ps -p {pid} -o pid,comm,args,stat --no-headers 2>/dev/null || echo 'DEAD_PROCESS'"
+                            ps_result = self._run_remote_command(self.remote_name, ps_cmd, timeout=5)
+                            
+                            if ps_result.returncode == 0 and 'DEAD_PROCESS' not in ps_result.stdout:
+                                ps_output = ps_result.stdout.strip()
+                                if ps_output:
+                                    parts = ps_output.split(None, 3)
+                                    if len(parts) >= 4:
+                                        matching_processes.append({
+                                            "pid": int(parts[0]),
+                                            "name": parts[1],
+                                            "cmdline": parts[3].split(),
+                                            "status": parts[2]
+                                        })
+                        except (ValueError, IndexError):
+                            continue
+                
+                if matching_processes:
+                    return {
+                        "status": "running",
+                        "running": True,
+                        "processes": matching_processes,
+                        "command": command,
+                        "tab_name": tab_name,
+                        "remote": self.remote_name,
+                        "method": "unix_tools"
+                    }
+            
+            # If Unix tools didn't find anything or failed, try psutil approach
             check_script = f"""
 import psutil
 import json
@@ -218,10 +260,38 @@ if __name__ == "__main__":
     print(json.dumps(processes))
 """
             
-            # Execute the check script on remote machine using the virtual environment Python
-            remote_cmd = f"$HOME/venvs/ve/bin/python -c {shlex.quote(check_script)}"
-            result = self._run_remote_command(self.remote_name, remote_cmd, timeout=15)
+            # Try multiple Python executables in order of preference
+            python_candidates = [
+                "python3",  # System Python3
+                "python",   # System Python
+                "$HOME/venvs/ve/bin/python",  # Virtual environment Python
+            ]
             
+            for python_exe in python_candidates:
+                try:
+                    remote_cmd = f"{python_exe} -c {shlex.quote(check_script)}"
+                    result = self._run_remote_command(self.remote_name, remote_cmd, timeout=15)
+                    
+                    if result.returncode == 0:
+                        break  # Success, use this result
+                    else:
+                        logger.debug(f"Python executable '{python_exe}' failed on {self.remote_name}: {result.stderr}")
+                        continue
+                except Exception as e:
+                    logger.debug(f"Failed to execute with '{python_exe}': {e}")
+                    continue
+            else:
+                # All Python attempts failed
+                return {
+                    "status": "error",
+                    "error": "All Python executables failed. psutil may not be available on remote machine.",
+                    "running": False,
+                    "command": command,
+                    "tab_name": tab_name,
+                    "remote": self.remote_name
+                }
+            
+            # Process the result from psutil approach
             if result.returncode == 0:
                 try:
                     matching_processes = json.loads(result.stdout.strip())
@@ -233,7 +303,8 @@ if __name__ == "__main__":
                             "processes": matching_processes,
                             "command": command,
                             "tab_name": tab_name,
-                            "remote": self.remote_name
+                            "remote": self.remote_name,
+                            "method": "psutil"
                         }
                     else:
                         return {
@@ -242,26 +313,35 @@ if __name__ == "__main__":
                             "processes": [],
                             "command": command,
                             "tab_name": tab_name,
-                            "remote": self.remote_name
+                            "remote": self.remote_name,
+                            "method": "psutil"
                         }
                 except json.JSONDecodeError as e:
-                    logger.error(f"Failed to parse remote process check output: {e}")
+                    logger.error(f"Failed to parse remote psutil output: {e}")
+                    logger.error(f"Raw output was: {result.stdout}")
+                    # Fall back to "not running" if we can't parse the output
                     return {
-                        "status": "error",
-                        "error": f"Failed to parse remote output: {e}",
+                        "status": "not_running",
                         "running": False,
+                        "processes": [],
                         "command": command,
                         "tab_name": tab_name,
-                        "remote": self.remote_name
+                        "remote": self.remote_name,
+                        "error": f"Failed to parse psutil output: {e}",
+                        "method": "psutil_failed"
                     }
             else:
+                logger.error(f"Psutil command failed on {self.remote_name}: {result.stderr}")
+                # If psutil failed, assume process is not running rather than error
                 return {
-                    "status": "error",
-                    "error": f"Remote command failed: {result.stderr}",
+                    "status": "not_running",
                     "running": False,
+                    "processes": [],
                     "command": command,
                     "tab_name": tab_name,
-                    "remote": self.remote_name
+                    "remote": self.remote_name,
+                    "error": f"Process check failed: {result.stderr}",
+                    "method": "psutil_failed"
                 }
                 
         except Exception as e:
@@ -443,6 +523,103 @@ if __name__ == "__main__":
             logger.error(f"Failed to attach to session: {e}")
             raise
 
+    def debug_remote_process_check(self, tab_name: str) -> Dict[str, any]:
+        """Debug method to manually check what's happening on the remote machine."""
+        if tab_name not in self.tab_config:
+            return {"error": f"Tab '{tab_name}' not found in configuration"}
+        
+        cwd, command = self.tab_config[tab_name]
+        cmd, args = self._parse_command(command)
+        
+        debug_info = {
+            "tab_name": tab_name,
+            "command": command,
+            "parsed_cmd": cmd,
+            "parsed_args": args,
+            "remote": self.remote_name,
+            "checks": {}
+        }
+        
+        # Check 1: Simple pgrep
+        try:
+            pgrep_cmd = f"pgrep -f {shlex.quote(cmd)}"
+            result = self._run_remote_command(self.remote_name, pgrep_cmd, timeout=10)
+            debug_info["checks"]["pgrep"] = {
+                "command": pgrep_cmd,
+                "returncode": result.returncode,
+                "stdout": result.stdout,
+                "stderr": result.stderr
+            }
+        except Exception as e:
+            debug_info["checks"]["pgrep"] = {"error": str(e)}
+        
+        # Check 2: ps aux grep
+        try:
+            ps_cmd = f"ps aux | grep {shlex.quote(cmd)} | grep -v grep"
+            result = self._run_remote_command(self.remote_name, ps_cmd, timeout=10)
+            debug_info["checks"]["ps_aux"] = {
+                "command": ps_cmd,
+                "returncode": result.returncode,
+                "stdout": result.stdout,
+                "stderr": result.stderr
+            }
+        except Exception as e:
+            debug_info["checks"]["ps_aux"] = {"error": str(e)}
+        
+        # Check 3: Python availability
+        for python_exe in ["python3", "python", "$HOME/venvs/ve/bin/python"]:
+            try:
+                version_cmd = f"{python_exe} --version"
+                result = self._run_remote_command(self.remote_name, version_cmd, timeout=5)
+                debug_info["checks"][f"{python_exe}_version"] = {
+                    "command": version_cmd,
+                    "returncode": result.returncode,
+                    "stdout": result.stdout,
+                    "stderr": result.stderr
+                }
+                
+                # Check psutil availability
+                if result.returncode == 0:
+                    psutil_cmd = f"{python_exe} -c 'import psutil; print(psutil.__version__)'"
+                    psutil_result = self._run_remote_command(self.remote_name, psutil_cmd, timeout=5)
+                    debug_info["checks"][f"{python_exe}_psutil"] = {
+                        "command": psutil_cmd,
+                        "returncode": psutil_result.returncode,
+                        "stdout": psutil_result.stdout,
+                        "stderr": psutil_result.stderr
+                    }
+            except Exception as e:
+                debug_info["checks"][f"{python_exe}_check"] = {"error": str(e)}
+        
+        return debug_info
+
+    def print_debug_info(self, tab_name: str) -> None:
+        """Print formatted debug information for a specific tab."""
+        debug_info = self.debug_remote_process_check(tab_name)
+        
+        print("=" * 60)
+        print(f"🐛 DEBUG INFO FOR TAB: {tab_name}")
+        print("=" * 60)
+        print(f"Remote: {debug_info['remote']}")
+        print(f"Command: {debug_info['command']}")
+        print(f"Parsed cmd: {debug_info['parsed_cmd']}")
+        print(f"Parsed args: {debug_info['parsed_args']}")
+        print()
+        
+        for check_name, check_result in debug_info["checks"].items():
+            print(f"--- {check_name.upper()} ---")
+            if "error" in check_result:
+                print(f"❌ Error: {check_result['error']}")
+            else:
+                print(f"Command: {check_result['command']}")
+                print(f"Return code: {check_result['returncode']}")
+                if check_result['stdout']:
+                    print(f"Stdout: {check_result['stdout']}")
+                if check_result['stderr']:
+                    print(f"Stderr: {check_result['stderr']}")
+            print()
+        print("=" * 60)
+    
 
 if __name__ == "__main__":
     # Example usage
