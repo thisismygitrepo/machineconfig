@@ -14,12 +14,11 @@ TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "zellij_layouts", "layout_m
 
 
 class ZellijRemoteLayoutGenerator:
-    def __init__(self, remote_name: str, default_cwd: Optional[str] = None):
+    def __init__(self, remote_name: str):
         self.remote_name = remote_name
-        self.default_cwd = default_cwd or "~"
         self.session_name: Optional[str] = None
-        self.tab_commands = {}  # Store tab commands for status checking
-        self.random_suffix = self._generate_random_suffix()  # Generate unique suffix
+        self.tab_config: Dict[str, tuple[str, str]] = {}  # Store entire tab configuration (name -> (cwd, command))
+        self.layout_path: Optional[str] = None  # Store the full layout file path
         self.layout_template = """layout {
     default_tab_template {
         // the default zellij tab-bar and status bar plugins
@@ -30,13 +29,15 @@ class ZellijRemoteLayoutGenerator:
     }
 """
     
-    def _generate_random_suffix(self, length: int = 8) -> str:
+    @staticmethod
+    def _generate_random_suffix(length: int = 8) -> str:
         """Generate a random string suffix for unique layout file names."""
         return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
     
-    def _run_remote_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess:
+    @staticmethod
+    def _run_remote_command(remote_name: str, command: str, timeout: int = 30) -> subprocess.CompletedProcess:
         """Execute a command on the remote machine via SSH."""
-        ssh_cmd = ["ssh", self.remote_name, command]
+        ssh_cmd = ["ssh", remote_name, command]
         try:
             result = subprocess.run(
                 ssh_cmd,
@@ -52,7 +53,8 @@ class ZellijRemoteLayoutGenerator:
             logger.error(f"SSH command failed: {e}")
             raise
     
-    def _parse_command(self, command: str) -> tuple[str, List[str]]:
+    @staticmethod
+    def _parse_command(command: str) -> tuple[str, List[str]]:
         try:
             parts = shlex.split(command)
             if not parts: 
@@ -63,7 +65,8 @@ class ZellijRemoteLayoutGenerator:
             parts = command.split()
             return parts[0] if parts else "", parts[1:] if len(parts) > 1 else []
     
-    def _format_args_for_kdl(self, args: List[str]) -> str:
+    @staticmethod
+    def _format_args_for_kdl(args: List[str]) -> str:
         if not args: 
             return ""
         formatted_args = []
@@ -75,10 +78,11 @@ class ZellijRemoteLayoutGenerator:
                 formatted_args.append(f'"{arg}"')
         return " ".join(formatted_args)
     
-    def _create_tab_section(self, tab_name: str, cwd: str, command: str) -> str:
-        cmd, args = self._parse_command(command)
-        args_str = self._format_args_for_kdl(args)
-        tab_cwd = cwd or self.default_cwd
+    @staticmethod
+    def _create_tab_section(tab_name: str, cwd: str, command: str) -> str:
+        cmd, args = ZellijRemoteLayoutGenerator._parse_command(command)
+        args_str = ZellijRemoteLayoutGenerator._format_args_for_kdl(args)
+        tab_cwd = cwd or "~"
         escaped_tab_name = tab_name.replace('"', '\\"')
         tab_section = f'  tab name="{escaped_tab_name}" cwd="{tab_cwd}" {{\n'
         tab_section += f'    pane command="{cmd}" {{\n'
@@ -87,7 +91,8 @@ class ZellijRemoteLayoutGenerator:
         tab_section += '    }\n  }\n'
         return tab_section
     
-    def _validate_tab_config(self, tab_config: Dict[str, tuple[str, str]]) -> None:
+    @staticmethod
+    def _validate_tab_config(tab_config: Dict[str, tuple[str, str]]) -> None:
         if not tab_config: 
             raise ValueError("Tab configuration cannot be empty")
         for tab_name, (cwd, command) in tab_config.items():
@@ -102,9 +107,12 @@ class ZellijRemoteLayoutGenerator:
         self._validate_tab_config(tab_config)
         logger.info(f"Creating Zellij layout with {len(tab_config)} tabs for remote '{self.remote_name}'")
         
-        # Store session name and tab commands for status checking
+        # Store session name and tab configuration
         self.session_name = session_name or "default"
-        self.tab_commands = {tab_name: command for tab_name, (_, command) in tab_config.items()}
+        self.tab_config = tab_config.copy()  # Store the entire tab configuration
+        
+        # Generate unique suffix for this layout
+        random_suffix = self._generate_random_suffix()
         
         layout_content = self.layout_template
         for tab_name, (cwd, command) in tab_config.items():
@@ -116,22 +124,25 @@ class ZellijRemoteLayoutGenerator:
             if output_dir:
                 output_path = Path(output_dir)
                 output_path.mkdir(parents=True, exist_ok=True)
-                layout_file = output_path / f"zellij_layout_{self.random_suffix}.kdl"
+                layout_file = output_path / f"zellij_layout_{random_suffix}.kdl"
             else:
                 # Use the predefined TMP_LAYOUT_DIR for temporary files
                 TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
-                layout_file = TMP_LAYOUT_DIR / f"zellij_layout_{self.session_name or 'default'}_{self.random_suffix}.kdl"
+                layout_file = TMP_LAYOUT_DIR / f"zellij_layout_{self.session_name or 'default'}_{random_suffix}.kdl"
+            
+            # Store the layout path as an attribute
+            self.layout_path = str(layout_file.absolute())
             
             # Write layout file locally
             with open(layout_file, 'w', encoding='utf-8') as f:
                 f.write(layout_content)
             
             # Create remote directory and copy layout file
-            remote_layout_dir = f"~/tmp_results/zellij_layouts/layout_manager"
-            remote_layout_file = f"{remote_layout_dir}/zellij_layout_{self.session_name or 'default'}_{self.random_suffix}.kdl"
+            remote_layout_dir = "~/tmp_results/zellij_layouts/layout_manager"
+            remote_layout_file = f"{remote_layout_dir}/zellij_layout_{self.session_name or 'default'}_{random_suffix}.kdl"
             
             # Create remote directory
-            mkdir_result = self._run_remote_command(f"mkdir -p {remote_layout_dir}")
+            mkdir_result = self._run_remote_command(self.remote_name, f"mkdir -p {remote_layout_dir}")
             if mkdir_result.returncode != 0:
                 raise RuntimeError(f"Failed to create remote directory: {mkdir_result.stderr}")
             
@@ -158,17 +169,17 @@ class ZellijRemoteLayoutGenerator:
         return layout_content + "\n}\n"
     
     def check_command_status(self, tab_name: str) -> Dict[str, any]:
-        if tab_name not in self.tab_commands:
+        if tab_name not in self.tab_config:
             return {
                 "status": "unknown",
-                "error": f"Tab '{tab_name}' not found in tracked commands",
+                "error": f"Tab '{tab_name}' not found in tracked configuration",
                 "running": False,
                 "pid": None,
                 "command": None,
                 "remote": self.remote_name
             }
         
-        command = self.tab_commands[tab_name]
+        cwd, command = self.tab_config[tab_name]
         cmd, args = self._parse_command(command)
         
         try:
@@ -205,7 +216,7 @@ if __name__ == "__main__":
             
             # Execute the check script on remote machine
             remote_cmd = f"python3 -c {shlex.quote(check_script)}"
-            result = self._run_remote_command(remote_cmd, timeout=15)
+            result = self._run_remote_command(self.remote_name, remote_cmd, timeout=15)
             
             if result.returncode == 0:
                 try:
@@ -261,12 +272,12 @@ if __name__ == "__main__":
             }
 
     def check_all_commands_status(self) -> Dict[str, Dict[str, any]]:
-        if not self.tab_commands:
-            logger.warning("No tab commands tracked. Make sure to create a layout first.")
+        if not self.tab_config:
+            logger.warning("No tab configuration tracked. Make sure to create a layout first.")
             return {}
         
         status_report = {}
-        for tab_name in self.tab_commands:
+        for tab_name in self.tab_config:
             status_report[tab_name] = self.check_command_status(tab_name)
         
         return status_report
@@ -274,7 +285,7 @@ if __name__ == "__main__":
     def check_zellij_session_status(self) -> Dict[str, any]:
         try:
             # Run zellij list-sessions command on remote machine
-            result = self._run_remote_command('zellij list-sessions', timeout=10)
+            result = self._run_remote_command(self.remote_name, 'zellij list-sessions', timeout=10)
             
             if result.returncode == 0:
                 sessions = result.stdout.strip().split('\n') if result.stdout.strip() else []
@@ -377,13 +388,19 @@ if __name__ == "__main__":
         """Start a Zellij session on the remote machine with the generated layout."""
         try:
             if layout_file_path:
-                remote_layout_file = f"~/tmp_results/zellij_layouts/layout_manager/zellij_layout_{self.session_name or 'default'}_{self.random_suffix}.kdl"
+                # Extract filename from provided path
+                layout_filename = Path(layout_file_path).name
+                remote_layout_file = f"~/tmp_results/zellij_layouts/layout_manager/{layout_filename}"
+            elif self.layout_path:
+                # Use stored layout path
+                layout_filename = Path(self.layout_path).name
+                remote_layout_file = f"~/tmp_results/zellij_layouts/layout_manager/{layout_filename}"
             else:
-                remote_layout_file = f"~/tmp_results/zellij_layouts/layout_manager/zellij_layout_{self.session_name or 'default'}_{self.random_suffix}.kdl"
+                raise ValueError("No layout file path available. Create a layout first.")
             
             # Start Zellij session with layout
             start_cmd = f"zellij --session {self.session_name} --layout {remote_layout_file}"
-            result = self._run_remote_command(start_cmd, timeout=30)
+            result = self._run_remote_command(self.remote_name, start_cmd, timeout=30)
             
             if result.returncode == 0:
                 logger.info(f"Zellij session '{self.session_name}' started on {self.remote_name}")
@@ -391,7 +408,7 @@ if __name__ == "__main__":
                     "success": True,
                     "session_name": self.session_name,
                     "remote": self.remote_name,
-                    "message": f"Session started successfully"
+                    "message": "Session started successfully"
                 }
             else:
                 return {
@@ -420,63 +437,6 @@ if __name__ == "__main__":
         except Exception as e:
             logger.error(f"Failed to attach to session: {e}")
             raise
-
-
-# Legacy functions for backward compatibility
-def copy_layout_to_remote(remote_machine: str, local_layout_path: str, remote_layout_path: str | None = None) -> str:
-    """Legacy function for copying layout files to remote machines."""
-    local_path = Path(local_layout_path)
-    if not local_path.exists():
-        raise FileNotFoundError(f"Local layout file not found: {local_layout_path}")
-    
-    # Use same path on remote if not specified, but resolve relative to remote home
-    if remote_layout_path is None:
-        local_home = Path.home()
-        local_abs_path = local_path.resolve()
-        # Check if the local path is within the home directory
-        try:
-            relative_to_home = local_abs_path.relative_to(local_home)
-            # Use the relative path from home, which will resolve to the remote user's home
-            remote_layout_path = f"~/{relative_to_home}"
-        except ValueError:
-            # If path is not relative to home, just use the filename in remote home
-            remote_layout_path = f"~/{local_path.name}"    
-    
-    # Copy the layout file to remote machine
-    scp_command = [
-        "scp", 
-        str(local_path), 
-        f"{remote_machine}:{remote_layout_path}"
-    ]
-    print(f"📁 Copying layout file to {remote_machine}:{remote_layout_path}")
-    result = subprocess.run(scp_command, capture_output=True, text=True)
-    if result.returncode != 0:
-        raise RuntimeError(f"Failed to copy layout file: {result.stderr}")    
-    return remote_layout_path
-
-
-def execute_zellij_layout(remote_machine: str, remote_layout_path: str, session_name: str = "JobManager"):
-    """Legacy function for executing zellij layouts on remote machines."""
-    # Execute zellij with the layout on remote machine
-    ssh_command = [
-        "ssh", remote_machine, "-n",
-        f". ~/.profile; . ~/.bashrc; zellij --layout {remote_layout_path} a -b {session_name}"
-    ]
-    
-    print(f"🚀 Executing zellij layout on {remote_machine}")
-    result = subprocess.run(ssh_command, capture_output=True, text=True)
-    if result.returncode != 0:
-        print(f"⚠️  Warning: SSH command returned non-zero exit code: {result.stderr}")
-    else:
-        print(f"✅ Successfully launched zellij layout on {remote_machine}")
-    
-    return result
-
-
-def create_remote_zellij_layout(remote_name: str, tab_config: Dict[str, tuple[str, str]], output_dir: Optional[str] = None, default_cwd: Optional[str] = None, session_name: Optional[str] = None) -> str:
-    """Convenience function to create a remote Zellij layout."""
-    generator = ZellijRemoteLayoutGenerator(remote_name=remote_name, default_cwd=default_cwd)
-    return generator.create_zellij_layout(tab_config, output_dir, session_name)
 
 
 if __name__ == "__main__":
@@ -510,8 +470,3 @@ if __name__ == "__main__":
         
     except Exception as e:
         print(f"❌ Error: {e}")
-
-
-def send_and_execute_zellij_layout(remote_machine: str, local_layout_path: str, remote_layout_path: str | None = None, session_name: str = "JobManager"):
-    remote_path = copy_layout_to_remote(remote_machine, local_layout_path, remote_layout_path)
-    return execute_zellij_layout(remote_machine, remote_path, session_name)

@@ -14,11 +14,10 @@ TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "zellij_layouts", "layout_m
 
 
 class ZellijLayoutGenerator:
-    def __init__(self, default_cwd: Optional[str] = None, ):
-        self.default_cwd = default_cwd or "~"
+    def __init__(self):
         self.session_name: Optional[str] = None
-        self.tab_commands = {}  # Store tab commands for status checking
-        self.random_suffix = self._generate_random_suffix()  # Generate unique suffix
+        self.tab_config: Dict[str, tuple[str, str]] = {}  # Store entire tab config (cwd, command) for status checking
+        self.layout_path: Optional[str] = None  # Store the full path to the layout file
         self.layout_template = """layout {
     default_tab_template {
         // the default zellij tab-bar and status bar plugins
@@ -29,11 +28,13 @@ class ZellijLayoutGenerator:
     }
 """
     
-    def _generate_random_suffix(self, length: int = 8) -> str:
+    @staticmethod
+    def _generate_random_suffix(length: int = 8) -> str:
         """Generate a random string suffix for unique layout file names."""
         return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
     
-    def _parse_command(self, command: str) -> tuple[str, List[str]]:
+    @staticmethod
+    def _parse_command(command: str) -> tuple[str, List[str]]:
         try:
             parts = shlex.split(command)
             if not parts: raise ValueError("Empty command provided")
@@ -43,7 +44,8 @@ class ZellijLayoutGenerator:
             parts = command.split()
             return parts[0] if parts else "", parts[1:] if len(parts) > 1 else []
     
-    def _format_args_for_kdl(self, args: List[str]) -> str:
+    @staticmethod
+    def _format_args_for_kdl(args: List[str]) -> str:
         if not args: return ""
         formatted_args = []
         for arg in args:
@@ -54,10 +56,11 @@ class ZellijLayoutGenerator:
                 formatted_args.append(f'"{arg}"')
         return " ".join(formatted_args)
     
-    def _create_tab_section(self, tab_name: str, cwd: str, command: str) -> str:
-        cmd, args = self._parse_command(command)
-        args_str = self._format_args_for_kdl(args)
-        tab_cwd = cwd or self.default_cwd
+    @staticmethod
+    def _create_tab_section(tab_name: str, cwd: str, command: str) -> str:
+        cmd, args = ZellijLayoutGenerator._parse_command(command)
+        args_str = ZellijLayoutGenerator._format_args_for_kdl(args)
+        tab_cwd = cwd or "~"
         escaped_tab_name = tab_name.replace('"', '\\"')
         tab_section = f'  tab name="{escaped_tab_name}" cwd="{tab_cwd}" {{\n'
         tab_section += f'    pane command="{cmd}" {{\n'
@@ -65,7 +68,8 @@ class ZellijLayoutGenerator:
         tab_section += '    }\n  }\n'
         return tab_section
     
-    def _validate_tab_config(self, tab_config: Dict[str, tuple[str, str]]) -> None:
+    @staticmethod
+    def _validate_tab_config(tab_config: Dict[str, tuple[str, str]]) -> None:
         if not tab_config: raise ValueError("Tab configuration cannot be empty")
         for tab_name, (cwd, command) in tab_config.items():
             if not tab_name.strip(): raise ValueError(f"Invalid tab name: {tab_name}")
@@ -73,57 +77,71 @@ class ZellijLayoutGenerator:
             if not cwd.strip(): raise ValueError(f"Invalid cwd for tab '{tab_name}': {cwd}")
     
     def create_zellij_layout(self, tab_config: Dict[str, tuple[str, str]], output_dir: Optional[str] = None, session_name: Optional[str] = None) -> str:
-        self._validate_tab_config(tab_config)
+        ZellijLayoutGenerator._validate_tab_config(tab_config)
         logger.info(f"Creating Zellij layout with {len(tab_config)} tabs")
         
-        # Store session name and tab commands for status checking
+        # Store session name and entire tab config for status checking
         self.session_name = session_name or "default"
-        self.tab_commands = {tab_name: command for tab_name, (_, command) in tab_config.items()}
+        self.tab_config = tab_config.copy()
         
         layout_content = self.layout_template
         for tab_name, (cwd, command) in tab_config.items():
-            layout_content += "\n" + self._create_tab_section(tab_name, cwd, command)
+            layout_content += "\n" + ZellijLayoutGenerator._create_tab_section(tab_name, cwd, command)
         layout_content += "\n}\n"
         try:
+            random_suffix = ZellijLayoutGenerator._generate_random_suffix()
             if output_dir:
                 output_path = Path(output_dir)
                 output_path.mkdir(parents=True, exist_ok=True)
-                layout_file = output_path / f"zellij_layout_{self.random_suffix}.kdl"
+                layout_file = output_path / f"zellij_layout_{random_suffix}.kdl"
                 with open(layout_file, 'w', encoding='utf-8') as f:
                     f.write(layout_content)
-                file_path = str(layout_file.absolute())
+                self.layout_path = str(layout_file.absolute())
             else:
                 # Use the predefined TMP_LAYOUT_DIR for temporary files
                 TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
-                layout_file = TMP_LAYOUT_DIR / f"zellij_layout_{self.session_name or 'default'}_{self.random_suffix}.kdl"
+                layout_file = TMP_LAYOUT_DIR / f"zellij_layout_{self.session_name or 'default'}_{random_suffix}.kdl"
                 with open(layout_file, 'w', encoding='utf-8') as f:
                     f.write(layout_content)
-                file_path = str(layout_file.absolute())
-            logger.info(f"Zellij layout file created: {file_path}")
-            return file_path
+                self.layout_path = str(layout_file.absolute())
+            logger.info(f"Zellij layout file created: {self.layout_path}")
+            return self.layout_path
         except OSError as e:
             logger.error(f"Failed to create layout file: {e}")
             raise
     
-    def get_layout_preview(self, tab_config: Dict[str, tuple[str, str]]) -> str:
-        self._validate_tab_config(tab_config)
-        layout_content = self.layout_template
+    @staticmethod
+    def get_layout_preview(tab_config: Dict[str, tuple[str, str]], layout_template: str = None) -> str:
+        if layout_template is None:
+            layout_template = """layout {
+    default_tab_template {
+        // the default zellij tab-bar and status bar plugins
+        pane size=1 borderless=true {
+            plugin location="zellij:compact-bar"
+        }
+        children
+    }
+"""
+        ZellijLayoutGenerator._validate_tab_config(tab_config)
+        layout_content = layout_template
         for tab_name, (cwd, command) in tab_config.items():
-            layout_content += "\n" + self._create_tab_section(tab_name, cwd, command)
+            layout_content += "\n" + ZellijLayoutGenerator._create_tab_section(tab_name, cwd, command)
         return layout_content + "\n}\n"
     
-    def check_command_status(self, tab_name: str) -> Dict[str, any]:
-        if tab_name not in self.tab_commands:
+    @staticmethod
+    def check_command_status(tab_name: str, tab_config: Dict[str, tuple[str, str]]) -> Dict[str, any]:
+        if tab_name not in tab_config:
             return {
                 "status": "unknown",
-                "error": f"Tab '{tab_name}' not found in tracked commands",
+                "error": f"Tab '{tab_name}' not found in tracked tab config",
                 "running": False,
                 "pid": None,
-                "command": None
+                "command": None,
+                "cwd": None
             }
         
-        command = self.tab_commands[tab_name]
-        cmd, args = self._parse_command(command)
+        cwd, command = tab_config[tab_name]
+        cmd, args = ZellijLayoutGenerator._parse_command(command)
         
         try:
             # Look for processes matching the command
@@ -150,6 +168,7 @@ class ZellijLayoutGenerator:
                     "running": True,
                     "processes": matching_processes,
                     "command": command,
+                    "cwd": cwd,
                     "tab_name": tab_name
                 }
             else:
@@ -158,6 +177,7 @@ class ZellijLayoutGenerator:
                     "running": False,
                     "processes": [],
                     "command": command,
+                    "cwd": cwd,
                     "tab_name": tab_name
                 }
                 
@@ -168,21 +188,23 @@ class ZellijLayoutGenerator:
                 "error": str(e),
                 "running": False,
                 "command": command,
+                "cwd": cwd,
                 "tab_name": tab_name
             }
 
     def check_all_commands_status(self) -> Dict[str, Dict[str, any]]:
-        if not self.tab_commands:
-            logger.warning("No tab commands tracked. Make sure to create a layout first.")
+        if not self.tab_config:
+            logger.warning("No tab config tracked. Make sure to create a layout first.")
             return {}
         
         status_report = {}
-        for tab_name in self.tab_commands:
-            status_report[tab_name] = self.check_command_status(tab_name)
+        for tab_name in self.tab_config:
+            status_report[tab_name] = ZellijLayoutGenerator.check_command_status(tab_name, self.tab_config)
         
         return status_report
 
-    def check_zellij_session_status(self) -> Dict[str, any]:
+    @staticmethod
+    def check_zellij_session_status(session_name: str) -> Dict[str, any]:
         try:
             # Run zellij list-sessions command
             result = subprocess.run(
@@ -194,42 +216,42 @@ class ZellijLayoutGenerator:
             
             if result.returncode == 0:
                 sessions = result.stdout.strip().split('\n') if result.stdout.strip() else []
-                session_running = any(self.session_name in session for session in sessions)
+                session_running = any(session_name in session for session in sessions)
                 
                 return {
                     "zellij_running": True,
                     "session_exists": session_running,
-                    "session_name": self.session_name,
+                    "session_name": session_name,
                     "all_sessions": sessions
                 }
             else:
                 return {
                     "zellij_running": False,
                     "error": result.stderr,
-                    "session_name": self.session_name
+                    "session_name": session_name
                 }
                 
         except subprocess.TimeoutExpired:
             return {
                 "zellij_running": False,
                 "error": "Timeout while checking Zellij sessions",
-                "session_name": self.session_name
+                "session_name": session_name
             }
         except FileNotFoundError:
             return {
                 "zellij_running": False,
                 "error": "Zellij not found in PATH",
-                "session_name": self.session_name
+                "session_name": session_name
             }
         except Exception as e:
             return {
                 "zellij_running": False,
                 "error": str(e),
-                "session_name": self.session_name
+                "session_name": session_name
             }
 
     def get_comprehensive_status(self) -> Dict[str, any]:
-        zellij_status = self.check_zellij_session_status()
+        zellij_status = ZellijLayoutGenerator.check_zellij_session_status(self.session_name or "default")
         commands_status = self.check_all_commands_status()
         
         running_count = sum(1 for status in commands_status.values() if status.get("running", False))
@@ -289,9 +311,52 @@ class ZellijLayoutGenerator:
         print(f"   Session healthy: {'✅' if summary['session_healthy'] else '❌'}")
         print("=" * 60)
 
-def created_zellij_layout(tab_config: Dict[str, tuple[str, str]], output_dir: Optional[str] = None, default_cwd: Optional[str] = None) -> str:
-    generator = ZellijLayoutGenerator(default_cwd=default_cwd)
+def created_zellij_layout(tab_config: Dict[str, tuple[str, str]], output_dir: Optional[str] = None) -> str:
+    generator = ZellijLayoutGenerator()
     return generator.create_zellij_layout(tab_config, output_dir)
+
+def create_layout_static(tab_config: Dict[str, tuple[str, str]], output_dir: Optional[str] = None, session_name: Optional[str] = None) -> str:
+    """
+    Static function to create a Zellij layout without needing to instantiate the class.
+    Returns the path to the created layout file.
+    """
+    ZellijLayoutGenerator._validate_tab_config(tab_config)
+    logger.info(f"Creating Zellij layout with {len(tab_config)} tabs")
+    
+    # Generate layout content
+    layout_template = """layout {
+    default_tab_template {
+        // the default zellij tab-bar and status bar plugins
+        pane size=1 borderless=true {
+            plugin location="zellij:compact-bar"
+        }
+        children
+    }
+"""
+    layout_content = layout_template
+    for tab_name, (cwd, command) in tab_config.items():
+        layout_content += "\n" + ZellijLayoutGenerator._create_tab_section(tab_name, cwd, command)
+    layout_content += "\n}\n"
+    
+    # Save to file
+    try:
+        random_suffix = ZellijLayoutGenerator._generate_random_suffix()
+        if output_dir:
+            output_path = Path(output_dir)
+            output_path.mkdir(parents=True, exist_ok=True)
+            layout_file = output_path / f"zellij_layout_{random_suffix}.kdl"
+        else:
+            TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
+            layout_file = TMP_LAYOUT_DIR / f"zellij_layout_{session_name or 'default'}_{random_suffix}.kdl"
+        
+        with open(layout_file, 'w', encoding='utf-8') as f:
+            f.write(layout_content)
+        file_path = str(layout_file.absolute())
+        logger.info(f"Zellij layout file created: {file_path}")
+        return file_path
+    except OSError as e:
+        logger.error(f"Failed to create layout file: {e}")
+        raise
 
 if __name__ == "__main__":
     sample_tabs = {
@@ -312,7 +377,7 @@ if __name__ == "__main__":
         
         # Individual command status check
         print("\n🔎 Individual command status for Bot1:")
-        bot1_status = generator.check_command_status("🤖Bot1")
+        bot1_status = ZellijLayoutGenerator.check_command_status("🤖Bot1", generator.tab_config)
         print(f"Status: {bot1_status['status']}")
         print(f"Running: {bot1_status['running']}")
         
