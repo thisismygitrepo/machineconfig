@@ -106,7 +106,7 @@ class ZellijRemoteLayoutGenerator:
     def copy_layout_to_remote(self, local_layout_file: Path, session_name: str, random_suffix: str) -> str:
         """Copy the layout file to the remote machine and return the remote path."""
         # Create remote directory and copy layout file
-        remote_layout_dir = "~/tmp_results/zellij_layouts/layout_manager"
+        remote_layout_dir = f"~/{TMP_LAYOUT_DIR.relative_to(Path.home())}"
         remote_layout_file = f"{remote_layout_dir}/zellij_layout_{session_name or 'default'}_{random_suffix}.kdl"
         
         # Create remote directory
@@ -394,17 +394,18 @@ if __name__ == "__main__":
             if layout_file_path:
                 # Extract filename from provided path
                 layout_filename = Path(layout_file_path).name
-                remote_layout_file = f"~/tmp_results/zellij_layouts/layout_manager/{layout_filename}"
+                remote_layout_file = f"~/{TMP_LAYOUT_DIR.relative_to(Path.home())}/{layout_filename}"
             elif self.layout_path:
                 # Use stored layout path
                 layout_filename = Path(self.layout_path).name
-                remote_layout_file = f"~/tmp_results/zellij_layouts/layout_manager/{layout_filename}"
+                remote_layout_file = f"~/{TMP_LAYOUT_DIR.relative_to(Path.home())}/{layout_filename}"
             else:
                 raise ValueError("No layout file path available. Create a layout first.")
             
             print(f"Starting Zellij session '{self.session_name}' on remote '{self.remote_name}' with layout: {remote_layout_file}")
             # Start Zellij session with layout
             start_cmd = f"zellij --layout {remote_layout_file} a -b {self.session_name}"
+            print(f"Executing command: {start_cmd}")
             result = self._run_remote_command(self.remote_name, start_cmd, timeout=30)
             
             if result.returncode == 0:
