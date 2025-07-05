@@ -403,7 +403,7 @@ if __name__ == "__main__":
                 raise ValueError("No layout file path available. Create a layout first.")
             
             # Start Zellij session with layout
-            start_cmd = f"zellij --session {self.session_name} --layout {remote_layout_file}"
+            start_cmd = f"zellij --layout {remote_layout_file} a -b {self.session_name}"
             result = self._run_remote_command(self.remote_name, start_cmd, timeout=30)
             
             if result.returncode == 0:
