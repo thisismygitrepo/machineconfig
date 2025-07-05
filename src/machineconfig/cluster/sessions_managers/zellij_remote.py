@@ -218,8 +218,8 @@ if __name__ == "__main__":
     print(json.dumps(processes))
 """
             
-            # Execute the check script on remote machine
-            remote_cmd = f"python3 -c {shlex.quote(check_script)}"
+            # Execute the check script on remote machine using the virtual environment Python
+            remote_cmd = f"$HOME/venvs/ve/bin/python -c {shlex.quote(check_script)}"
             result = self._run_remote_command(self.remote_name, remote_cmd, timeout=15)
             
             if result.returncode == 0:
