@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import tempfile
 import shlex
 import subprocess
 import psutil
@@ -9,11 +8,13 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "zellij_layouts", "layout_manager")
+
 
 class ZellijLayoutGenerator:
-    def __init__(self, default_cwd: Optional[str] = None):
+    def __init__(self, default_cwd: Optional[str] = None, ):
         self.default_cwd = default_cwd or "~"
-        self.session_name = None
+        self.session_name: Optional[str] = None
         self.tab_commands = {}  # Store tab commands for status checking
         self.layout_template = """layout {
     default_tab_template {
@@ -85,9 +86,12 @@ class ZellijLayoutGenerator:
                     f.write(layout_content)
                 file_path = str(layout_file.absolute())
             else:
-                with tempfile.NamedTemporaryFile(mode='w', suffix='.kdl', prefix='zellij_layout_', delete=False, encoding='utf-8') as f:
+                # Use the predefined TMP_LAYOUT_DIR for temporary files
+                TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
+                layout_file = TMP_LAYOUT_DIR / f"zellij_layout_{self.session_name or 'default'}.kdl"
+                with open(layout_file, 'w', encoding='utf-8') as f:
                     f.write(layout_content)
-                    file_path = f.name
+                file_path = str(layout_file.absolute())
             logger.info(f"Zellij layout file created: {file_path}")
             return file_path
         except OSError as e:
@@ -124,10 +128,6 @@ class ZellijLayoutGenerator:
         return layout_content + "\n}\n"
     
     def check_command_status(self, tab_name: str) -> Dict[str, any]:
-        """
-        Check if a command for a specific tab is still running.
-        Returns a dictionary with status information.
-        """
         if tab_name not in self.tab_commands:
             return {
                 "status": "unknown",
@@ -187,10 +187,6 @@ class ZellijLayoutGenerator:
             }
 
     def check_all_commands_status(self) -> Dict[str, Dict[str, any]]:
-        """
-        Check the status of all commands in all tabs.
-        Returns a dictionary with tab names as keys and status info as values.
-        """
         if not self.tab_commands:
             logger.warning("No tab commands tracked. Make sure to create a layout first.")
             return {}
@@ -202,9 +198,6 @@ class ZellijLayoutGenerator:
         return status_report
 
     def check_zellij_session_status(self) -> Dict[str, any]:
-        """
-        Check if the Zellij session itself is running.
-        """
         try:
             # Run zellij list-sessions command
             result = subprocess.run(
@@ -251,9 +244,6 @@ class ZellijLayoutGenerator:
             }
 
     def get_comprehensive_status(self) -> Dict[str, any]:
-        """
-        Get a comprehensive status report including Zellij session and all commands.
-        """
         zellij_status = self.check_zellij_session_status()
         commands_status = self.check_all_commands_status()
         
@@ -272,9 +262,6 @@ class ZellijLayoutGenerator:
         }
 
     def print_status_report(self) -> None:
-        """
-        Print a formatted status report to the console.
-        """
         status = self.get_comprehensive_status()
         
         print("=" * 60)
