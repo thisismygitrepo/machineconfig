@@ -2,6 +2,8 @@
 import shlex
 import subprocess
 import psutil
+import random
+import string
 from typing import Dict, List, Optional
 from pathlib import Path
 import logging
@@ -16,6 +18,7 @@ class ZellijLayoutGenerator:
         self.default_cwd = default_cwd or "~"
         self.session_name: Optional[str] = None
         self.tab_commands = {}  # Store tab commands for status checking
+        self.random_suffix = self._generate_random_suffix()  # Generate unique suffix
         self.layout_template = """layout {
     default_tab_template {
         // the default zellij tab-bar and status bar plugins
@@ -25,6 +28,10 @@ class ZellijLayoutGenerator:
         children
     }
 """
+    
+    def _generate_random_suffix(self, length: int = 8) -> str:
+        """Generate a random string suffix for unique layout file names."""
+        return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
     
     def _parse_command(self, command: str) -> tuple[str, List[str]]:
         try:
@@ -81,14 +88,14 @@ class ZellijLayoutGenerator:
             if output_dir:
                 output_path = Path(output_dir)
                 output_path.mkdir(parents=True, exist_ok=True)
-                layout_file = output_path / "zellij_layout.kdl"
+                layout_file = output_path / f"zellij_layout_{self.random_suffix}.kdl"
                 with open(layout_file, 'w', encoding='utf-8') as f:
                     f.write(layout_content)
                 file_path = str(layout_file.absolute())
             else:
                 # Use the predefined TMP_LAYOUT_DIR for temporary files
                 TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
-                layout_file = TMP_LAYOUT_DIR / f"zellij_layout_{self.session_name or 'default'}.kdl"
+                layout_file = TMP_LAYOUT_DIR / f"zellij_layout_{self.session_name or 'default'}_{self.random_suffix}.kdl"
                 with open(layout_file, 'w', encoding='utf-8') as f:
                     f.write(layout_content)
                 file_path = str(layout_file.absolute())
@@ -97,28 +104,6 @@ class ZellijLayoutGenerator:
         except OSError as e:
             logger.error(f"Failed to create layout file: {e}")
             raise
-    
-    def create_layout_from_config_file(self, config_file: str, output_dir: Optional[str] = None) -> str:
-        tab_config = {}
-        try:
-            with open(config_file, 'r', encoding='utf-8') as f:
-                for line_num, line in enumerate(f, 1):
-                    line = line.strip()
-                    if not line or line.startswith('#'): continue
-                    if '|' not in line:
-                        logger.warning(f"Skipping invalid line {line_num}: {line}")
-                        continue
-                    parts = line.split('|', 2)
-                    if len(parts) < 3:
-                        logger.warning(f"Skipping invalid line {line_num}: {line} (expected format: tab_name|cwd|command)")
-                        continue
-                    tab_name, cwd, command = parts
-                    tab_config[tab_name.strip()] = (cwd.strip(), command.strip())
-            return self.create_zellij_layout(tab_config, output_dir)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Configuration file not found: {config_file}")
-        except Exception as e:
-            raise ValueError(f"Error reading configuration file: {e}")
     
     def get_layout_preview(self, tab_config: Dict[str, tuple[str, str]]) -> str:
         self._validate_tab_config(tab_config)
