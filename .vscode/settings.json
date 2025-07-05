@@ -1,5 +1,4 @@
 {
-    // "python.pythonPath": "$HOME/venvs/ve/Scripts/python.exe",
-    "python.defaultInterpreterPath": "/root/venvs/ve/bin/python",
+    "python.defaultInterpreterPath": "/home/alex/venvs/ve/bin/python",
     "python-envs.pythonProjects": []
 }

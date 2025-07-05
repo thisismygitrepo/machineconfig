@@ -10,7 +10,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "zellij_layouts", "layout_manager")
+TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "session_manager", "zellij", "layout_manager")
 
 
 class ZellijLayoutGenerator:
@@ -315,48 +315,26 @@ def created_zellij_layout(tab_config: Dict[str, tuple[str, str]], output_dir: Op
     generator = ZellijLayoutGenerator()
     return generator.create_zellij_layout(tab_config, output_dir)
 
-def create_layout_static(tab_config: Dict[str, tuple[str, str]], output_dir: Optional[str] = None, session_name: Optional[str] = None) -> str:
-    """
-    Static function to create a Zellij layout without needing to instantiate the class.
-    Returns the path to the created layout file.
-    """
-    ZellijLayoutGenerator._validate_tab_config(tab_config)
-    logger.info(f"Creating Zellij layout with {len(tab_config)} tabs")
-    
-    # Generate layout content
-    layout_template = """layout {
-    default_tab_template {
-        // the default zellij tab-bar and status bar plugins
-        pane size=1 borderless=true {
-            plugin location="zellij:compact-bar"
-        }
-        children
-    }
+
+def run_command_in_zellij_tab(command: str, tab_name: str, cwd: Optional[str]) -> str:
+    maybe_cwd = f"--cwd {cwd}" if cwd is not None else ""
+    return f"""
+echo "Sleep 1 seconds to allow zellij to create a new tab"
+sleep 1
+zellij action new-tab --name {tab_name} {maybe_cwd}
+echo "Sleep 2 seconds to allow zellij to go to the new tab"
+sleep 2
+zellij action go-to-tab-name {tab_name}
+echo "Sleep 2 seconds to allow zellij to start the new pane"
+sleep 2
+zellij action new-pane --direction down -- /bin/bash {command}
+echo "Sleep 2 seconds to allow zellij to start the new pane"
+sleep 1
+zellij action move-focus up; sleep 2
+echo "Sleep 2 seconds to allow zellij to close the pane"
+sleep 1
+zellij action close-pane; sleep 2
 """
-    layout_content = layout_template
-    for tab_name, (cwd, command) in tab_config.items():
-        layout_content += "\n" + ZellijLayoutGenerator._create_tab_section(tab_name, cwd, command)
-    layout_content += "\n}\n"
-    
-    # Save to file
-    try:
-        random_suffix = ZellijLayoutGenerator._generate_random_suffix()
-        if output_dir:
-            output_path = Path(output_dir)
-            output_path.mkdir(parents=True, exist_ok=True)
-            layout_file = output_path / f"zellij_layout_{random_suffix}.kdl"
-        else:
-            TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
-            layout_file = TMP_LAYOUT_DIR / f"zellij_layout_{session_name or 'default'}_{random_suffix}.kdl"
-        
-        with open(layout_file, 'w', encoding='utf-8') as f:
-            f.write(layout_content)
-        file_path = str(layout_file.absolute())
-        logger.info(f"Zellij layout file created: {file_path}")
-        return file_path
-    except OSError as e:
-        logger.error(f"Failed to create layout file: {e}")
-        raise
 
 if __name__ == "__main__":
     sample_tabs = {
