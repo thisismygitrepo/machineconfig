@@ -281,7 +281,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
         # command = "\n".join(lines)
         tab_config = {}
         for an_arg in range(args.Nprocess):
-            tab_config[f"tab{an_arg}"] = (str(P.cwd()), f"{command} --idx={an_arg} --idx_max={args.Nprocess}")
+            tab_config[f"tab{an_arg}"] = (str(P.cwd()), f"uv run python -m fire {choice_file.name} {choice_function} --idx={an_arg} --idx_max={args.Nprocess}")
         from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
         run_zellij_layout(tab_config=tab_config, session_name=None)
         return None
