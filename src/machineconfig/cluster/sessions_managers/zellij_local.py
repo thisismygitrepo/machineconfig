@@ -314,6 +314,13 @@ class ZellijLayoutGenerator:
 def created_zellij_layout(tab_config: Dict[str, tuple[str, str]], output_dir: Optional[str] = None) -> str:
     generator = ZellijLayoutGenerator()
     return generator.create_zellij_layout(tab_config, output_dir)
+def run_zellij_layout(tab_config: Dict[str, tuple[str, str]], session_name: Optional[str] = None) -> str:
+    if not session_name:
+        session_name = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    layout_path = created_zellij_layout(tab_config)
+    cmd = f"zellij delete-session --force {session_name}; zellij --layout {layout_path} a -b {session_name}"
+    import subprocess
+    subprocess.run(cmd, shell=True, check=True)
 
 
 def run_command_in_zellij_tab(command: str, tab_name: str, cwd: Optional[str]) -> str:
@@ -335,6 +342,7 @@ echo "Sleep 2 seconds to allow zellij to close the pane"
 sleep 1
 zellij action close-pane; sleep 2
 """
+
 
 if __name__ == "__main__":
     sample_tabs = {

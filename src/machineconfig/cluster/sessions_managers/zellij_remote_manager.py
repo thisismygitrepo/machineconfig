@@ -118,13 +118,10 @@ class ZellijSessionManager:
         session_dir = TMP_SERIALIAZATION_DIR / session_id
         
         if not session_dir.exists():
-            raise FileNotFoundError(f"Session directory not found: {session_dir}")
-        
-        # Load machine2zellij_tabs configuration
+            raise FileNotFoundError(f"Session directory not found: {session_dir}")        
         config_file = session_dir / "machine2zellij_tabs.json"
         if not config_file.exists():
-            raise FileNotFoundError(f"Configuration file not found: {config_file}")
-        
+            raise FileNotFoundError(f"Configuration file not found: {config_file}")        
         with open(config_file, 'r', encoding='utf-8') as f:
             machine2zellij_tabs = json.load(f)
         
@@ -134,27 +131,22 @@ class ZellijSessionManager:
         if metadata_file.exists():
             with open(metadata_file, 'r', encoding='utf-8') as f:
                 metadata = json.load(f)
-                session_name_prefix = metadata.get("session_name_prefix", "JobMgr")
-        
+                session_name_prefix = metadata.get("session_name_prefix", "JobMgr")        
         # Create new instance (this will create new managers)
         instance = cls(machine2zellij_tabs=machine2zellij_tabs, session_name_prefix=session_name_prefix)
-        
         # Load saved managers to restore their states
         managers_dir = session_dir / "managers"
         if managers_dir.exists():
             # Clear the auto-created managers and load the saved ones
             instance.managers = []
-            
             # Get all manager files and sort them
-            manager_files = sorted(managers_dir.glob("manager_*.json"))
-            
+            manager_files = sorted(managers_dir.glob("manager_*.json"))            
             for manager_file in manager_files:
                 try:
                     loaded_manager = ZellijRemoteLayoutGenerator.from_json(str(manager_file))
                     instance.managers.append(loaded_manager)
                 except Exception as e:
                     logging.warning(f"Failed to load manager from {manager_file}: {e}")
-        
         logging.info(f"✅ Loaded ZellijSessionManager session from: {session_dir}")
         return instance
 

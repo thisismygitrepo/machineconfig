@@ -15,7 +15,7 @@
         "strip_v": true,
         "exe_name": "html2markdown"
     },
-    "xcrawl3r": {
+    "xcrawl3r": {   
         "repo_url": "https://github.com/hueristiq/xcrawl3r",
         "doc": "🕷️ A command line tool to crawl and scrape websites",
         "filename_template_windows_amd_64": "xcrawl3r_{}_windows_amd64.zip",
