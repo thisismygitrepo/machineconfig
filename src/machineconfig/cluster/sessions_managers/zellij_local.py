@@ -321,6 +321,7 @@ def run_zellij_layout(tab_config: Dict[str, tuple[str, str]], session_name: Opti
     cmd = f"zellij delete-session --force {session_name}; zellij --layout {layout_path} a -b {session_name}"
     import subprocess
     subprocess.run(cmd, shell=True, check=True)
+    print(f"zellij layout is running @ {session_name}")
 
 
 def run_command_in_zellij_tab(command: str, tab_name: str, cwd: Optional[str]) -> str:
