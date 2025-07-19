@@ -269,16 +269,22 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
     # except Exception as ex: print(f"Failed to copy command to clipboard. {ex}")
 
     if args.Nprocess > 1:
-        lines = [f""" zellij action new-tab --name nProcess{randstr(2)}"""]
-        command = command.replace(". activate_ve", ". $HOME/scripts/activate_ve")
+        # lines = [f""" zellij action new-tab --name nProcess{randstr(2)}"""]
+        # command = command.replace(". activate_ve", ". $HOME/scripts/activate_ve")
+        # for an_arg in range(args.Nprocess):
+        #     sub_command = f"{command} --idx={an_arg} --idx_max={args.Nprocess}"
+        #     if args.optimized:
+        #         sub_command = sub_command.replace("python ", "python -OO ")
+        #     sub_command_path = P.tmpfile(suffix=".sh").write_text(sub_command)
+        #     lines.append(f"""zellij action new-pane -- bash {sub_command_path}  """)
+        #     lines.append("sleep 5")  # python tends to freeze if you launch instances within 1 microsecond of each other
+        # command = "\n".join(lines)
+        tab_config = {}
         for an_arg in range(args.Nprocess):
-            sub_command = f"{command} --idx={an_arg} --idx_max={args.Nprocess}"
-            if args.optimized:
-                sub_command = sub_command.replace("python ", "python -OO ")
-            sub_command_path = P.tmpfile(suffix=".sh").write_text(sub_command)
-            lines.append(f"""zellij action new-pane -- bash {sub_command_path}  """)
-            lines.append("sleep 5")  # python tends to freeze if you launch instances within 1 microsecond of each other
-        command = "\n".join(lines)
+            tab_config[f"tab{an_arg}"] = (str(P.cwd()), f"{command} --idx={an_arg} --idx_max={args.Nprocess}")
+        from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
+        run_zellij_layout(tab_config=tab_config, session_name=None)
+        return None
 
     if args.optimized:
         # note that in ipython, optimization is meaningless.
