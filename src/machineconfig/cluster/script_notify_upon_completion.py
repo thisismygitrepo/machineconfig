@@ -4,7 +4,6 @@ Notify User Upon Completion
 """
 
 from crocodile.comms.notification import Email
-from crocodile.core import Struct as S
 from crocodile.file_management import P
 from machineconfig.cluster.file_manager import FileManager
 from machineconfig.cluster.loader_runner import EmailParams
@@ -14,7 +13,7 @@ from rich.console import Console
 
 
 error_message = ''
-exec_times = S()
+exec_times = {}
 res_folder = P()
 
 email_params = EmailParams.from_empty()

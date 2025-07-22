@@ -7,7 +7,6 @@ import getpass
 import platform
 import io
 
-from crocodile.core import Struct as S
 from crocodile.file_management import P, Read
 from crocodile.meta import generate_readme, Terminal
 from machineconfig.cluster.loader_runner import WorkloadParams, JOB_STATUS
@@ -99,15 +98,16 @@ Execution metadata will be saved separately in:
 time_at_execution_end_utc = pd.Timestamp.utcnow()
 time_at_execution_end_local = pd.Timestamp.now()
 delta = time_at_execution_end_utc - time_at_execution_start_utc
-exec_times = S({"start_utc 🌍⏲️": time_at_execution_start_utc, "end_utc 🌍⏰": time_at_execution_end_utc,
+exec_times = {"start_utc 🌍⏲️": time_at_execution_start_utc, "end_utc 🌍⏰": time_at_execution_end_utc,
                    "start_local ⏲️": time_at_execution_start_local, "end_local ⏰": time_at_execution_end_local, "delta ⏳": delta,
-                   "submission_time": manager.submission_time, "wait_time": time_at_execution_start_local - manager.submission_time})
+                   "submission_time": manager.submission_time, "wait_time": time_at_execution_start_local - manager.submission_time}
 
 # save the following in results folder and execution log folder.:
 manager.execution_log_dir.expanduser().joinpath("end_time.txt").write_text(str(time_at_execution_end_local))
 manager.execution_log_dir.expanduser().joinpath("results_folder_path.txt").write_text(res_folder.collapseuser().as_posix())
 manager.execution_log_dir.expanduser().joinpath("error_message.txt").write_text(params.error_message)
-exec_times.save(path=manager.execution_log_dir.expanduser().joinpath("execution_times.Struct.pkl"))
+# exec_times.save(path=manager.execution_log_dir.expanduser().joinpath("execution_times.Struct.pkl"))
+
 if params.error_message == "":
     job_status = "completed"
     manager.execution_log_dir.expanduser().joinpath("status.txt").write_text(job_status)

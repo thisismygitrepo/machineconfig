@@ -10,7 +10,7 @@ from dataclasses import dataclass
 import psutil
 import numpy as np
 
-from crocodile.core import List as L, Struct as S, install_n_import
+from crocodile.core import List as L,  install_n_import
 from machineconfig.utils.utils2 import randstr
 from crocodile.file_management import P, Save
 from crocodile.meta import SSH, Terminal
