@@ -3,6 +3,7 @@
 
 import git
 from crocodile.file_management import P
+from rich import inspect
 
 from typing import Optional, Callable, Union, Any
 from machineconfig.cluster.remote_machine import WorkloadParams
@@ -124,7 +125,7 @@ res = func(workload_params=workload_params, **func_kwargs)
 kwargs_workload = {list(workload_params.split_to_jobs().apply(lambda a_kwargs: a_kwargs.__dict__))}
 workload_params = []
 for idx, x in enumerate(kwargs_workload):
-    S(x).print(as_config=True, title=f"Instance {{idx}}")
+            inspect(x, value=False, title=f"Instance {{idx}}", docs=False, dunder=False, sort=False)
     workload_params.append(WorkloadParams(**x))
 print("\n" * 2)
 res = L(workload_params).apply(lambda a_workload_params: func(workload_params=a_workload_params, **func_kwargs), jobs={workload_params.jobs})

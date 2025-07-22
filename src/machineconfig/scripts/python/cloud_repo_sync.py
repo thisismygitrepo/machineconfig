@@ -3,7 +3,7 @@
 import git
 from crocodile.file_management import P, Read
 from crocodile.meta import Terminal
-from crocodile.core import randstr
+from machineconfig.utils.utils2 import randstr
 
 from machineconfig.scripts.python.helpers.repo_sync_helpers import fetch_dotfiles
 from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, PROGRAM_PATH, choose_one_option

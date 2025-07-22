@@ -8,7 +8,7 @@ in the event that username@github.com is not mentioned in the remote url.
 from rich import print as pprint
 from machineconfig.utils.utils import write_shell_script_to_default_program_path, CONFIG_PATH, DEFAULTS_PATH
 from crocodile.file_management import P, Read, Save
-from crocodile.core import randstr
+from machineconfig.utils.utils2 import randstr
 import argparse
 from dataclasses import dataclass
 from enum import Enum

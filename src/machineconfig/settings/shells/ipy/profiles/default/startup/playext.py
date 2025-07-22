@@ -3,8 +3,10 @@
 """
 
 from IPython.core.magic import register_line_magic
-from crocodile.core import Struct, randstr
+from crocodile.core import Struct
+from machineconfig.utils.utils2 import randstr
 from crocodile.file_management import P
+from rich import inspect
 from typing import Any
 
 
@@ -40,7 +42,7 @@ def print_dir_func(line: Any):
     """Pretty print and categorize dir() output."""
     _ = line  # ipython caller assumes there is at least one argument, an passes '' worstcase.
     res = get_names()
-    Struct(dictionary=res).print(as_config=True, title="""
+    inspect(res, value=False, title="""
 📂 Objects Defined in Current Directory
 =======================================
 """)

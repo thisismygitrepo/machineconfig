@@ -2,7 +2,7 @@
 """
 
 from crocodile.environment import PathVar
-from crocodile.core import randstr
+from machineconfig.utils.utils2 import randstr
 from crocodile.file_management import P
 from crocodile.meta import Terminal
 from machineconfig.utils.utils import LIBRARY_ROOT, REPO_ROOT, display_options

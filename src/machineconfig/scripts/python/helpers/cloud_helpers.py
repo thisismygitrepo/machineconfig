@@ -8,6 +8,7 @@ from machineconfig.utils.utils import DEFAULTS_PATH
 from rich.console import Console
 from rich.panel import Panel
 from rich import box # Import box
+from rich import inspect
 
 
 console = Console()
@@ -57,7 +58,7 @@ def find_cloud_config(path: P):
         if path.joinpath("cloud.json").exists():
             res = Args.from_config(path.joinpath("cloud.json"))
             display_success(f"Found cloud config at: {path.joinpath('cloud.json')}")
-            Struct(res.__dict__).print(as_config=True, title="Cloud Config")
+            inspect(res.__dict__, value=False, title="Cloud Config", docs=False, dunder=False, sort=False)
             return res
         path = path.parent
 
@@ -112,7 +113,7 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Ar
                rel2home=True, root="myshare", os_specific=False,)
     
     display_success("Using SecureShare cloud config")
-    Struct(res.__dict__).print(as_config=True, title="SecureShare Config")
+    inspect(res.__dict__, value=False, title="SecureShare Config", docs=False, dunder=False, sort=False)
     return res
 
 def display_header(title: str):

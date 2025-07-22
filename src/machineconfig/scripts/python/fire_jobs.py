@@ -16,7 +16,7 @@ from machineconfig.utils.ve_utils.ve1 import get_repo_root
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, match_file_name, sanitize_path
 from machineconfig.utils.ve_utils.ve1 import get_ve_activate_line, get_ve_name_and_ipython_profile
 from crocodile.file_management import P, Read, Save
-from crocodile.core import randstr
+from machineconfig.utils.utils2 import randstr
 import platform
 from typing import Optional
 import argparse

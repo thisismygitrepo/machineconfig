@@ -4,13 +4,14 @@ croshell
 
 import argparse
 from crocodile.file_management import P
-from crocodile.core_modules.core_1 import randstr
+from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.utils import PROGRAM_PATH, display_options
 from machineconfig.utils.ve_utils.ve1 import get_ve_name_and_ipython_profile, get_ve_activate_line
 from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text # Added import for rich.text
+from rich import inspect
 
 console = Console()
 
@@ -46,7 +47,7 @@ try:
     if isinstance(dat, dict):
         panel_title = f"📄 File Data: {{p.name}}"
         console.print(Panel(Text(str(dat), justify="left"), title=panel_title, expand=False))
-        Struct(dat).print(as_config=True, title=p.name)
+        inspect(dat, value=False, title=p.name, docs=False, dunder=False, sort=False)
     else:
         panel_title = f"📄 Successfully read the file: {{p.name}}"
         console.print(Panel(Text(str(dat), justify="left"), title=panel_title, expand=False))

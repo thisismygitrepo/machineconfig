@@ -1,7 +1,8 @@
 """Set Windows Terminal Settings
 """
 
-from crocodile.core import randstr, List as L
+from crocodile.core import List as L
+from machineconfig.utils.utils2 import randstr
 from crocodile.file_management import P, Read, Save
 import crocodile.environment as env
 from machineconfig.utils.utils import LIBRARY_ROOT

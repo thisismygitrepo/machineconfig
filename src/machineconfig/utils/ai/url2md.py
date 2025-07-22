@@ -1,4 +1,4 @@
-from crocodile.core import randstr
+from machineconfig.utils.utils2 import randstr
 from pathlib import Path
 import subprocess
 import multiprocessing

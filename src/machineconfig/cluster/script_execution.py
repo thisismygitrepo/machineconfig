@@ -5,6 +5,7 @@ Job Execution Script
 import os
 import getpass
 import platform
+import io
 
 from crocodile.core import Struct as S
 from crocodile.file_management import P, Read
@@ -60,7 +61,7 @@ console.print(f"""
 """, style="bold blue")
 
 if isinstance(func_kwargs, dict): 
-    S(func_kwargs).print(title="📋 Function Arguments", as_config=True)
+    inspect(func_kwargs, value=False, title="📋 Function Arguments", docs=False, dunder=False, sort=False)
 else: 
     inspect(func_kwargs, value=False, title=f"📋 Function Arguments from `{manager.kwargs_path.collapseuser().as_posix()}`", docs=False, sort=False)
 
@@ -129,6 +130,10 @@ else:
 ═════════════════════════════════════════════════════════════════
 """)
 
+# Capture exec_times as string for the readme
+buffer = io.StringIO()
+Console(file=buffer, width=80).print(inspect(exec_times, value=False, docs=False, dunder=False, sort=False))
+exec_times_str = buffer.getvalue()
 
 generate_readme(path=manager.job_root.expanduser().joinpath("execution_log.md"), obj=func, desc=f'''
 
@@ -141,7 +146,7 @@ shell_script_path @ `{manager.shell_script_path.collapseuser()}`
 kwargs_path @ `{manager.kwargs_path.collapseuser()}`
 
 ### Execution Time:
-{exec_times.print(as_config=True, return_str=True)}
+{exec_times_str}
 
 ### Job description
 {params.description}
@@ -152,7 +157,7 @@ kwargs_path @ `{manager.kwargs_path.collapseuser()}`
 # manager.root_dir.expanduser().copy(folder=res_folder, overwrite=True)
 
 # print to execution console:
-exec_times.print(title="⏱️ Execution Times", as_config=True)
+inspect(exec_times, value=False, title="⏱️ Execution Times", docs=False, dunder=False, sort=False)
 console.rule(title="", characters="─", style="blue")
 ssh_repr_remote = params.ssh_repr_remote or f"{getpass.getuser()}@{platform.node()}"  # os.getlogin() can throw an error in non-login shells.
 console.print(Panel(Text(f'''

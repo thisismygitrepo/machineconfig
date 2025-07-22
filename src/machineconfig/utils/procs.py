@@ -8,6 +8,7 @@ from machineconfig.utils.utils import display_options
 from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
+from rich import inspect
 
 console = Console()
 
@@ -79,7 +80,7 @@ class ProcessManager:
         print(sub_df)
         from crocodile.core import Struct
         for idx, (_, row) in enumerate(sub_df.iterrows()):
-            Struct(row.to_dict()).print(as_config=True, title=f"📌 Process {idx}")
+            inspect(row.to_dict(), value=False, title=f"📌 Process {idx}", docs=False, dunder=False, sort=False)
         kill_all = input("\n⚠️  Confirm killing ALL selected processes? y/[n] ").lower() == "y"
         if kill_all:
             self.kill(pids=sub_df.pid.to_list())
@@ -89,7 +90,7 @@ class ProcessManager:
             indices = [int(val) for val in kill_by_index.split(" ")]
             sub_sub_df = sub_df.iloc[indices]
             for idx2, row in sub_sub_df.iterrows():
-                Struct(row.to_dict()).print(as_config=True, title=f"🎯 Target Process {idx2}")
+                inspect(row.to_dict(), value=False, title=f"🎯 Target Process {idx2}", docs=False, dunder=False, sort=False)
             _ = self.kill(pids=sub_sub_df.pid.to_list()) if input("\n⚠️  Confirm termination? y/[n] ").lower() == "y" else None
         console.print(Panel("🔔 No processes were terminated.", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 

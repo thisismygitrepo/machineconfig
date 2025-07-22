@@ -6,6 +6,7 @@ import time
 import pandas as pd
 import platform
 from rich.console import Console
+from rich import inspect
 # from rich.progress import track
 from machineconfig.utils.utils import LIBRARY_ROOT, INSTALL_VERSION_ROOT
 from machineconfig.utils.installer import get_installed_cli_apps
@@ -53,7 +54,7 @@ def scan(path: P, pct: float = 0.0):
         #     print(row)
         if row.result is None and row.category in ["undetected", "type-unsupported", "failure", "timeout", "confirmed-timeout"]: continue
         else:
-            Struct(row.to_dict()).print(as_config=True, title=f"🔍 Found Category {row.category}")
+            inspect(row.to_dict(), value=False, title=f"🔍 Found Category {row.category}", docs=False, dunder=False, sort=False)
             malicious.append(row)
     positive_pct: float = round(number=len(malicious) / len(df) * 100, ndigits=1)
     print(f"""

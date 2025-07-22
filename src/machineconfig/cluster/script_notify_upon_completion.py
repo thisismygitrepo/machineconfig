@@ -8,6 +8,9 @@ from crocodile.core import Struct as S
 from crocodile.file_management import P
 from machineconfig.cluster.file_manager import FileManager
 from machineconfig.cluster.loader_runner import EmailParams
+from rich import inspect
+import io
+from rich.console import Console
 
 
 error_message = ''
@@ -20,6 +23,12 @@ manager = FileManager.from_pickle(email_params.file_manager_path)
 print(f'SENDING notification email using `{email_params.email_config_name}` email configuration ...')
 
 sep = "\n" * 2  # SyntaxError: f-string expression part cannot include a backslash, keep it here outside fstring.
+
+# Capture exec_times as string for the email
+buffer = io.StringIO()
+Console(file=buffer, width=80).print(inspect(exec_times, value=False, docs=False, dunder=False, sort=False))
+exec_times_str = buffer.getvalue()
+
 msg = f'''
 
 Hi `{email_params.addressee}`, I'm `{email_params.speaker}`, this is a notification that I have completed running the script you sent to me.
@@ -30,7 +39,7 @@ Hi `{email_params.addressee}`, I'm `{email_params.speaker}`, this is a notificat
 #### Error Message:
 `{error_message}`
 #### Execution Times
-{exec_times.print(as_config=True, return_str=True)}
+{exec_times_str}
 #### Executed Shell Script:
 `{manager.shell_script_path}`
 #### Executed Python Script:

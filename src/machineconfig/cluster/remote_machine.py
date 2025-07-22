@@ -6,7 +6,8 @@ import time
 import platform
 import getpass
 
-from crocodile.core import randstr, Struct as S
+from crocodile.core import Struct as S
+from machineconfig.utils.utils2 import randstr
 from crocodile.file_management import P, Save
 from crocodile.meta import SSH
 from src.machineconfig.cluster.sessions_managers.session_managers import Zellij, WindowsTerminal

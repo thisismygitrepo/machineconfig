@@ -1,5 +1,5 @@
 from crocodile.file_management import P, PLike
-from crocodile.core_modules.core_1 import randstr
+from machineconfig.utils.utils2 import randstr
 from rich.console import Console
 from rich.panel import Panel
 

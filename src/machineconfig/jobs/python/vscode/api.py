@@ -1,5 +1,5 @@
 from pathlib import Path
-from crocodile.core import randstr
+from machineconfig.utils.utils2 import randstr
 
 
 def open_file_in_new_instance(file_path: str):

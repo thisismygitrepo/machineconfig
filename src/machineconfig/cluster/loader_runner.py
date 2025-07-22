@@ -4,9 +4,11 @@ Runner
 """
 
 from rich.console import Console
+from rich import inspect
 import pandas as pd
 
-from crocodile.core import List as L, Struct as S, randstr
+from crocodile.core import List as L, Struct as S
+from machineconfig.utils.utils2 import randstr
 from crocodile.file_management_helpers.file4 import Read
 from crocodile.meta import SSH
 from machineconfig.cluster.self_ssh import SelfSSH
@@ -44,7 +46,7 @@ class WorkloadParams:
         min_start = series[min_idx_start]
         min_end = series[min_idx_end]
         return min_start, min_end
-    def print(self): S(self.__dict__).print(as_config=True, title="Job Workload")
+    def print(self): inspect(self.__dict__, value=False, title="Job Workload", docs=False, dunder=False, sort=False)
     def viz(self):
         print(f"This machine will execute ({(self.idx_end - self.idx_start) / self.idx_max * 100:.2f}%) of total job workload.")
         print(f"This share of workload will be split among {self.jobs} of threads on this machine.")

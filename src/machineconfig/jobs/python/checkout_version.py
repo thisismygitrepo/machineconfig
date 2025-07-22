@@ -1,7 +1,8 @@
 """checkout_version.py
 """
 
-from crocodile.file_management import P, Save, randstr
+from crocodile.file_management import P, Save
+from machineconfig.utils.utils2 import randstr
 from crocodile.meta import Terminal
 from machineconfig.utils.ve_utils.ve1 import get_ve_specs
 from machineconfig.scripts.python.repos import record_a_repo, install_repos

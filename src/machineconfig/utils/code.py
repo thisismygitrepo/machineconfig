@@ -3,7 +3,7 @@ import platform
 from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
-from crocodile.core import randstr
+from machineconfig.utils.utils2 import randstr
 from crocodile.file_management import P
 from crocodile.meta import Terminal
 

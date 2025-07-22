@@ -10,11 +10,14 @@ from dataclasses import dataclass
 import psutil
 import numpy as np
 
-from crocodile.core import randstr, List as L, Struct as S, install_n_import
+from crocodile.core import List as L, Struct as S, install_n_import
+from machineconfig.utils.utils2 import randstr
 from crocodile.file_management import P, Save
 from crocodile.meta import SSH, Terminal
 from machineconfig.cluster.remote_machine import RemoteMachine, RemoteMachineConfig, WorkloadParams, LAUNCH_METHOD
 from rich.console import Console
+from rich import inspect
+import io
 # from platform import system
 # import time
 # from rich.progress import track
@@ -156,7 +159,7 @@ class Cluster:
         print("\n" * 2)
         console.rule(title="kwargs of functions to be run on machines")
         for an_ssh, a_kwarg in zip(self.sshz, self.workload_params):
-            S(a_kwarg.__dict__).print(as_config=True, title=an_ssh.get_remote_repr())
+            inspect(a_kwarg.__dict__, value=False, title=an_ssh.get_remote_repr(), docs=False, dunder=False, sort=False)
     def print_commands(self, launch_method: LAUNCH_METHOD):
         print("\n" * 2)
         console.rule(title="Commands to run on each machine:")
@@ -198,7 +201,10 @@ class Cluster:
         plt.simple_bar(names, self.machine_load_calc.load_ratios, width=100, title=f"Load distribution for machines using criterion `{self.machine_load_calc.load_criterion}`")
         plt.show()
 
-        tmp = S(dict(zip(names, L((np.array(self.machine_load_calc.load_ratios) * 100).round(1)).apply(lambda x: f"{int(x)}%")))).print(as_config=True, justify=75, return_str=True)
+        # Capture load ratios as string
+        buffer = io.StringIO()
+        Console(file=buffer, width=75).print(inspect(dict(zip(names, L((np.array(self.machine_load_calc.load_ratios) * 100).round(1)).apply(lambda x: f"{int(x)}%"))), value=False, docs=False, dunder=False, sort=False))
+        tmp = buffer.getvalue()
         assert isinstance(tmp, str)
         self.machine_load_calc.load_ratios_repr = tmp
         print(self.machine_load_calc.load_ratios_repr)
