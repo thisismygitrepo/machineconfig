@@ -4,11 +4,11 @@ import psutil
 from tqdm import tqdm
 from pytz import timezone
 from machineconfig.utils.utils import display_options
-from typing import Optional, Any
+from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
 from rich import inspect
-from datetime import datetime, timedelta
+from datetime import datetime
 
 console = Console()
 
@@ -83,7 +83,7 @@ class ProcessManager:
             return ""
         
         # Create header
-        headers = ['PID', 'Name', 'Username', 'CPU%', 'Memory(MB)', 'Status', 'Create Time', 'Command']
+        _headers = ['PID', 'Name', 'Username', 'CPU%', 'Memory(MB)', 'Status', 'Create Time', 'Command']
         header_line = f"{'PID':<8} {'Name':<20} {'Username':<12} {'CPU%':<8} {'Memory(MB)':<12} {'Status':<12} {'Create Time':<20} {'Command':<50}"
         separator = "-" * len(header_line)
         

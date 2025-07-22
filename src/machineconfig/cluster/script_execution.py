@@ -39,8 +39,8 @@ manager.execution_log_dir.expanduser().joinpath("status.txt").write_text(job_sta
 
 
 # keep those values after lock is released
-    time_at_execution_start_utc = datetime.now(timezone.utc)
-    time_at_execution_start_local = datetime.now()
+time_at_execution_start_utc = datetime.now(timezone.utc)
+time_at_execution_start_local = datetime.now()
 manager.execution_log_dir.expanduser().create().joinpath("start_time.txt").write_text(str(time_at_execution_start_local))
 func_kwargs = Read.pickle(path=manager.kwargs_path.expanduser())
 
