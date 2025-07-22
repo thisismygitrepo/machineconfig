@@ -1,5 +1,5 @@
 from machineconfig.utils.utils import PROGRAM_PATH
-from crocodile.file_management import P
+from pathlib import Path
 import platform
 
 def main():
@@ -12,9 +12,9 @@ def main():
 
     mount_point = input(f"📂 Enter the mount point directory (e.g., /mnt/network) [Default: ~/data/mount_nw/{machine_name}]: ")
     if mount_point == "":
-        mount_point = P.home().joinpath(fr"data/mount_nw/{machine_name}")
+        mount_point = Path.home().joinpath(fr"data/mount_nw/{machine_name}")
     else:
-        mount_point = P(mount_point).expanduser()
+        mount_point = Path(mount_point).expanduser()
 
     print(f"\n🌐 Network Drive Location: {drive_location}")
     print(f"📁 Mount Point: {mount_point}\n")

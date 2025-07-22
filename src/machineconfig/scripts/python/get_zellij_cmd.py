@@ -1,7 +1,7 @@
-from crocodile.file_management import P
+from pathlib import Path
 
 
-def get_zellij_cmd(wd1: P, wd2: P) -> str:
+def get_zellij_cmd(wd1: Path, wd2: Path) -> str:
     _ = wd1, wd2
     lines = [""" zellij action new-tab --name gitdiff""",
              """zellij action new-pane --direction down --name local --cwd ./data """,

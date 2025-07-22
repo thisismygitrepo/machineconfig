@@ -3,7 +3,7 @@ from rich import inspect
 from rich.console import Console
 import pandas as pd
 
-from crocodile.core import Struct as S, install_n_import
+from crocodile.core import Struct as S
 from crocodile.file_management import P, Save
 from crocodile.meta import MACHINE
 from machineconfig.cluster.loader_runner import JOB_STATUS, LAUNCH_METHOD, JobStatus
@@ -76,10 +76,11 @@ class FileManager:
             tmp.write_text(script_path.read_text(), encoding="utf-8", newline='\n')
             script_path = tmp
         return f". {script_path}"
-    def fire_command_to_clip_memory(self, launch_method: LAUNCH_METHOD):
-        print("Execution command copied to clipboard 📋")
-        print(self.get_fire_command(launch_method=launch_method)); install_n_import("clipboard").copy(self.get_fire_command(launch_method=launch_method))
-        print("\n")
+    # def fire_command_to_clip_memory(self, launch_method: LAUNCH_METHOD):
+    #     print("Execution command copied to clipboard 📋")
+    #     print(self.get_fire_command(launch_method=launch_method));
+    #     install_n_import("clipboard").copy(self.get_fire_command(launch_method=launch_method))
+    #     print("\n")
     def get_job_status(self, session_name: str, tab_name: str) -> JOB_STATUS:
         pid_path = self.execution_log_dir.expanduser().joinpath("pid.txt")
         tmp = self.execution_log_dir.expanduser().joinpath("status.txt").read_text()
