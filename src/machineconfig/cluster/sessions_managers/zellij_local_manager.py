@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import pandas as pd
+from datetime import datetime
 import json
 import uuid
 import logging
@@ -243,7 +243,7 @@ class ZellijLocalManager:
             wait_time: How long to wait between checks (e.g., "30s", "1m", "2m")
         """
         def routine(scheduler: Scheduler):
-            print(f"\n⏰ Monitoring cycle {scheduler.cycle} at {pd.Timestamp.now()}")
+            print(f"\n⏰ Monitoring cycle {scheduler.cycle} at {datetime.now()}")
             print("-" * 50)
             
             if scheduler.cycle % 2 == 0:
@@ -263,11 +263,21 @@ class ZellijLocalManager:
                         })
                 
                 if status_data:
-                    df = pd.DataFrame(status_data)
-                    print(df.to_string(index=False))
+                    # Format data as table
+                    if status_data:
+                        # Create header
+                        headers = list(status_data[0].keys()) if status_data else []
+                        header_line = " | ".join(f"{h:<15}" for h in headers)
+                        separator = "-" * len(header_line)
+                        print(header_line)
+                        print(separator)
+                        for row in status_data:
+                            values = [str(row.get(h, ""))[:15] for h in headers]
+                            print(" | ".join(f"{v:<15}" for v in values))
                     
                     # Check if all sessions have stopped
-                    if df["running"].sum() == 0:
+                    running_count = sum(1 for row in status_data if row.get("running", False))
+                    if running_count == 0:
                         print("\n⚠️  All commands have stopped. Stopping monitoring.")
                         scheduler.max_cycles = scheduler.cycle
                         return
@@ -299,7 +309,7 @@ class ZellijLocalManager:
         # Save metadata
         metadata = {
             "session_name_prefix": self.session_name_prefix,
-            "created_at": str(pd.Timestamp.now()),
+            "created_at": str(datetime.now()),
             "num_managers": len(self.managers),
             "sessions": list(self.session2zellij_tabs.keys()),
             "manager_type": "ZellijLocalManager"

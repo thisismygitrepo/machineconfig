@@ -19,7 +19,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich import inspect
 from rich.text import Text
-import pandas as pd
+from datetime import datetime, timezone
 
 console = Console()
 
@@ -39,8 +39,8 @@ manager.execution_log_dir.expanduser().joinpath("status.txt").write_text(job_sta
 
 
 # keep those values after lock is released
-time_at_execution_start_utc = pd.Timestamp.utcnow()
-time_at_execution_start_local = pd.Timestamp.now()
+    time_at_execution_start_utc = datetime.now(timezone.utc)
+    time_at_execution_start_local = datetime.now()
 manager.execution_log_dir.expanduser().create().joinpath("start_time.txt").write_text(str(time_at_execution_start_local))
 func_kwargs = Read.pickle(path=manager.kwargs_path.expanduser())
 
@@ -95,8 +95,8 @@ Execution metadata will be saved separately in:
         # print(e)
         # print(f"Could not pickle res object to path `{res_folder.joinpath('result.pkl').collapseuser().as_posix()}`.")
 
-time_at_execution_end_utc = pd.Timestamp.utcnow()
-time_at_execution_end_local = pd.Timestamp.now()
+time_at_execution_end_utc = datetime.now(timezone.utc)
+time_at_execution_end_local = datetime.now()
 delta = time_at_execution_end_utc - time_at_execution_start_utc
 exec_times = {"start_utc 🌍⏲️": time_at_execution_start_utc, "end_utc 🌍⏰": time_at_execution_end_utc,
                    "start_local ⏲️": time_at_execution_start_local, "end_local ⏰": time_at_execution_end_local, "delta ⏳": delta,

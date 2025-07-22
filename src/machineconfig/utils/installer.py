@@ -41,14 +41,35 @@ def check_latest():
     print("\n⏳ Processing installers...\n")
     res = L(installers_gitshub).apply(func=func, jobs=1)
     
-    import pandas as pd
     print("\n📊 Generating results table...\n")
-    res_df = pd.DataFrame(res, columns=["Tool", "Status", "Current Version", "New Version"]).groupby("Status").apply(lambda x: x).reset_index(drop=True)
     
-    from crocodile.core import Display
-    Display.set_pandas_display()
-    console.print(Panel("📊  INSTALLATION STATUS SUMMARY", title="Status", expand=False)) # Replaced print with Panel
-    print(res_df)
+    # Convert to list of dictionaries and group by status
+    result_data = []
+    for tool, status, current_ver, new_ver in res:
+        result_data.append({
+            "Tool": tool,
+            "Status": status,
+            "Current Version": current_ver,
+            "New Version": new_ver
+        })
+    
+    # Group by status
+    grouped_data = {}
+    for item in result_data:
+        status = item["Status"]
+        if status not in grouped_data:
+            grouped_data[status] = []
+        grouped_data[status].append(item)
+    
+    console.print(Panel("📊  INSTALLATION STATUS SUMMARY", title="Status", expand=False))
+    
+    # Print each group
+    for status, items in grouped_data.items():
+        print(f"\n{status.upper()}:")
+        print("-" * 60)
+        for item in items:
+            print(f"  {item['Tool']:<20} | Current: {item['Current Version']:<15} | New: {item['New Version']}")
+    print("-" * 60)
     print(f"{'═'*80}")
 
 

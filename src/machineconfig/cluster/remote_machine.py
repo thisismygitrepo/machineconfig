@@ -22,7 +22,7 @@ from rich.syntax import Syntax
 from rich import inspect
 # from rich.text import Text
 from rich.console import Console
-import pandas as pd
+from datetime import datetime
 
 
 console = Console()
@@ -207,7 +207,12 @@ deactivate
                 start_time = start_time_file.read_text()
                 txt = f"Machine {self.ssh.get_remote_repr(add_machine=True)} has not yet finished job `{self.config.job_id}`. 😟"
                 txt += f"\nIt started at {start_time}. 🕒, and is still running. 🏃‍♂️"
-                txt += f"\nExecution time so far: {pd.Timestamp.now() - pd.to_datetime(start_time)}. 🕒"
+                try:
+                    start_dt = datetime.fromisoformat(start_time.strip())
+                    execution_time = datetime.now() - start_dt
+                    txt += f"\nExecution time so far: {execution_time}. 🕒"
+                except ValueError:
+                    txt += f"\nExecution time: Could not parse start time. 🕒"
                 console.print(Panel(txt, title=f"Job `{self.config.job_id}` Status", subtitle=self.ssh.get_remote_repr(), highlight=True, border_style="bold red", style="bold"))
                 print("\n")
         else:
@@ -265,12 +270,12 @@ deactivate
             rm.submitted = True  # must be done before generate_script which performs the pickling.
             rm.generate_scripts()
             rms.append(rm)
-            new_log_entries.append(LogEntry(name=rm.config.job_id, submission_time=pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S"), start_time=None, end_time=None, run_machine=None,
+            new_log_entries.append(LogEntry(name=rm.config.job_id, submission_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"), start_time=None, end_time=None, run_machine=None,
                                             source_machine=f"{getpass.getuser()}@{platform.node()}", note="", pid=None, cmd="", session_name=""))
         log = cm.read_log()  # this claims lock internally.
-        new_queued_df: 'pd.DataFrame' = pd.DataFrame([item.__dict__ for item in new_log_entries])
-        total_queued_df = pd.concat([log["queued"], new_queued_df], ignore_index=True, sort=False)
-        log["queued"] = total_queued_df
+        # Add new entries to queued list
+        for entry in new_log_entries:
+            log["queued"].append(entry.__dict__)
         cm.write_log(log=log)
         cm.release_lock()  # all base_dir is synced anyway: self.resources.base_dir.joinpath(status_init).to_cloud(cloud=cm.cloud, rel2home=True)
         return rms

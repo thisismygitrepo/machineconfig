@@ -26,7 +26,6 @@ dependencies = [
     "psutil>=7.0.0",
     "openai>=1.75.0",
     "nbformat>=5.10.4",
-    "streamlit>=1.44.1",
     "fire>=0.7.0",
     "pydantic>=2.11.3",
     "clipboard>=0.0.4",

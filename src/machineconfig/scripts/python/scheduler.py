@@ -29,9 +29,24 @@ def main_parse():
     if args.report:
         print("📊 Generating report...")
         reports: list[Report] = [Report.from_path(read_task_from_dir(x).report_path) for x in P(root).search("*").filter(lambda path: path.joinpath("task.py").exists())]
-        import pandas as pd
-        df_res = pd.DataFrame([r.__dict__ for r in reports])
-        print(df_res.to_markdown())
+        
+        # Format as markdown table
+        report_data = [r.__dict__ for r in reports]
+        if report_data:
+            # Get keys from first report
+            keys = list(report_data[0].keys())
+            # Create header
+            header = "|" + "|".join(f" {key} " for key in keys) + "|"
+            separator = "|" + "|".join(" --- " for _ in keys) + "|"
+            # Create rows
+            rows = []
+            for report in report_data:
+                row_values = [f" {str(report.get(key, ''))} " for key in keys]
+                rows.append("|" + "|".join(row_values) + "|")
+            markdown_table = "\n".join([header, separator] + rows)
+            print(markdown_table)
+        else:
+            print("No reports found.")
         print("\n✅ Report generated successfully!\n")
         return None
 

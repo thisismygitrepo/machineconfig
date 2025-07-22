@@ -1,7 +1,7 @@
 
 from rich import inspect
 from rich.console import Console
-import pandas as pd
+from datetime import datetime
 
 from crocodile.file_management import P, Save
 from crocodile.meta import MACHINE
@@ -39,7 +39,7 @@ class FileManager:
         self.max_simulataneous_jobs = max_simulataneous_jobs
         self.lock_resources = lock_resources
 
-        self.submission_time = pd.Timestamp.now()
+        self.submission_time = datetime.now()
 
         self.base_dir = P(base).collapseuser() if bool(base) else FileManager.default_base
         status: JOB_STATUS
@@ -183,9 +183,10 @@ echo "Unlocked resources"
             running_job = running_file[0]  # arbitrary job in the running file.
             assert running_job.start_time is not None, f"Running job {running_job} has no start time. This should not happen."
 
-            this_specs = {"Submission time": this_job.submission_time, "Time now": pd.Timestamp.now(),
-                          "Time spent waiting in the queue so far 🛌": pd.Timestamp.now() - this_job.submission_time,
-                          f"Time consumed by locking job so far (job_id = {running_job.job_id}) so far ⏰": pd.Timestamp.now() - running_job.start_time}
+            now = datetime.now()
+            this_specs = {"Submission time": this_job.submission_time, "Time now": now,
+                          "Time spent waiting in the queue so far 🛌": now - this_job.submission_time,
+                          f"Time consumed by locking job so far (job_id = {running_job.job_id}) so far ⏰": now - running_job.start_time}
             inspect(this_specs, value=False, title=f"This Job `{this_job.job_id}` Details", docs=False, dunder=False, sort=False)
             console.rule(title=f"Resources are locked by another job `{running_job.job_id}`. Sleeping for {sleep_time_mins} minutes. 😴", style="bold red", characters="-")
             print("\n")
@@ -194,7 +195,7 @@ echo "Unlocked resources"
         console.print(f"Resources are locked by this job `{self.job_id}`. Process pid = {os.getpid()}.", highlight=True)
 
     def write_lock_file(self, job_status: JobStatus):
-        job_status.start_time = pd.Timestamp.now()
+        job_status.start_time = datetime.now()
         queue_path = self.queue_path.expanduser()
         try: queue_file: list[JobStatus] = queue_path.readit()
         except FileNotFoundError as fne: raise FileNotFoundError(f"Queue file {queue_path} does not exist. This method should not be called in the first place.") from fne
@@ -226,8 +227,9 @@ echo "Unlocked resources"
             running_file.remove(this_job)
         console.print(f"Resources have been released by this job `{self.job_id}`. Saving new running file")
         Save.pickle(path=self.running_path.expanduser(), obj=running_file)
-        start_time = pd.to_datetime(self.execution_log_dir.expanduser().joinpath("start_time.txt").readit(), utc=False)
-        end_time = pd.Timestamp.now()
+        start_time_str = self.execution_log_dir.expanduser().joinpath("start_time.txt").readit()
+        start_time = datetime.fromisoformat(start_time_str)
+        end_time = datetime.now()
         item = {"job_id": self.job_id, "start_time": start_time, "end_time": end_time, "submission_time": self.submission_time}
         hist_file = self.history_path.expanduser()
         if hist_file.exists(): hist = hist_file.readit()

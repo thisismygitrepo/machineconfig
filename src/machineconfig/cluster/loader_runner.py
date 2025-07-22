@@ -5,7 +5,7 @@ Runner
 
 from rich.console import Console
 from rich import inspect
-import pandas as pd
+from datetime import datetime
 
 from crocodile.core import List as L
 from machineconfig.utils.utils2 import randstr
@@ -39,7 +39,7 @@ class WorkloadParams:
         res = L(range(self.idx_start, self.idx_end, 1)).split(to=jobs or self.jobs).apply(lambda sub_list: WorkloadParams(idx_start=sub_list.list[0], idx_end=sub_list.list[-1] + 1, idx_max=self.idx_max, jobs=self.jobs))
         for idx, item in enumerate(res): item.idx = idx
         return res
-    def get_section_from_series(self, series: list[pd.Timestamp]):
+    def get_section_from_series(self, series: list[datetime]):
         from math import floor
         min_idx_start = int(floor((len(series) - 1) * self.idx_start / self.idx_max))
         min_idx_end = int(floor((len(series) - 1) * self.idx_end / self.idx_max))
@@ -57,8 +57,8 @@ class JobStatus:
     pid: int
     job_id: str
     status: Literal['locked', 'unlocked']
-    submission_time: pd.Timestamp
-    start_time: Optional[pd.Timestamp] = None
+    submission_time: datetime
+    start_time: Optional[datetime] = None
 
 
 @dataclass
@@ -88,8 +88,26 @@ class LogEntry:
     note: str
     @staticmethod
     def from_dict(a_dict: dict[str, Any]):
-        return LogEntry(name=a_dict["name"], submission_time=pd.to_datetime(a_dict["submission_time"]), start_time=pd.to_datetime(a_dict["start_time"]), end_time=pd.to_datetime(a_dict["end_time"]),
-                        run_machine=a_dict["run_machine"], source_machine=a_dict["source_machine"], note=a_dict["note"], pid=a_dict["pid"], cmd=a_dict["cmd"], session_name=a_dict["session_name"])
+        def parse_datetime(dt_str):
+            if dt_str is None or dt_str == "" or dt_str == "None":
+                return None
+            try:
+                return datetime.fromisoformat(str(dt_str))
+            except ValueError:
+                return None
+        
+        return LogEntry(
+            name=a_dict["name"], 
+            submission_time=str(a_dict["submission_time"]), 
+            start_time=str(a_dict["start_time"]) if a_dict.get("start_time") else None, 
+            end_time=str(a_dict["end_time"]) if a_dict.get("end_time") else None,
+            run_machine=a_dict.get("run_machine"), 
+            source_machine=a_dict.get("source_machine", ""), 
+            note=a_dict.get("note", ""), 
+            pid=a_dict.get("pid"), 
+            cmd=a_dict.get("cmd"), 
+            session_name=a_dict.get("session_name")
+        )
 
 
 

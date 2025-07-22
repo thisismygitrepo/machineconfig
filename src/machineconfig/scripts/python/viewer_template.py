@@ -1,140 +1,141 @@
-import streamlit as st
-import plotly.express as px
-import plotly.graph_objects as go
-import numpy as np
-from numpy import typing as npt
-from crocodile.file_management import Read
-import time
-from typing import Any
 
-_ = px, Any, go, npt, Read, time, np
-st.set_page_config(layout="wide", page_title="📊 Interactive Figure Viewer", page_icon="📈")
+# import streamlit as st
+# import plotly.express as px
+# import plotly.graph_objects as go
+# import numpy as np
+# from numpy import typing as npt
+# from crocodile.file_management import Read
+# import time
+# from typing import Any
 
-# Initialize session state
-if 'current_index' not in st.session_state:
-    st.session_state.current_index = 0
-if 'last_time' not in st.session_state:
-    st.session_state.last_time = time.time()
+# _ = px, Any, go, npt, Read, time, np
+# st.set_page_config(layout="wide", page_title="📊 Interactive Figure Viewer", page_icon="📈")
 
-data_path = "get_figure_placeholder.pkl"  # Placeholder for the data path
-data: Any = Read.read(data_path)
+# # Initialize session state
+# if 'current_index' not in st.session_state:
+#     st.session_state.current_index = 0
+# if 'last_time' not in st.session_state:
+#     st.session_state.last_time = time.time()
 
-# get_figure_placeholder
-def get_figure(data: Any) -> go.Figure:
-    return px.line(data)
-# get_figure_placeholder
+# data_path = "get_figure_placeholder.pkl"  # Placeholder for the data path
+# data: Any = Read.read(data_path)
 
-total_figures = len(data)
+# # get_figure_placeholder
+# def get_figure(data: Any) -> go.Figure:
+#     return px.line(data)
+# # get_figure_placeholder
 
-def change_index(new_index: int) -> None:
-    """Update the current index with bounds checking"""
-    if 0 <= new_index < total_figures:
-        st.session_state.current_index = new_index
-        st.session_state.last_time = time.time()
+# total_figures = len(data)
 
-def next_figure():
-    """Navigate to the next figure"""
-    change_index(st.session_state.current_index + 1)
+# def change_index(new_index: int) -> None:
+#     """Update the current index with bounds checking"""
+#     if 0 <= new_index < total_figures:
+#         st.session_state.current_index = new_index
+#         st.session_state.last_time = time.time()
 
-def prev_figure():
-    """Navigate to the previous figure"""
-    change_index(st.session_state.current_index - 1)
+# def next_figure():
+#     """Navigate to the next figure"""
+#     change_index(st.session_state.current_index + 1)
 
-def go_to_index():
-    """Navigate to a specific index"""
-    try:
-        idx = int(st.session_state.input_index)
-        change_index(idx)
-    except ValueError:
-        st.error("""
-❌ Invalid Input!
-Please enter a valid integer index. 🧮
-        """)
+# def prev_figure():
+#     """Navigate to the previous figure"""
+#     change_index(st.session_state.current_index - 1)
 
-st.title("""
-📊 Interactive Figure Viewer
-=============================
-""")
+# def go_to_index():
+#     """Navigate to a specific index"""
+#     try:
+#         idx = int(st.session_state.input_index)
+#         change_index(idx)
+#     except ValueError:
+#         st.error("""
+# ❌ Invalid Input!
+# Please enter a valid integer index. 🧮
+#         """)
 
-# Top info bar with metadata
-col_info1, col_info2, col_info3, col_info4 = st.columns([1, 1, 1, 1])
-with col_info1:
-    st.info(f"""
-📂 **Dataset Loaded:**
-`{data_path.split('/')[-1]}`
-    """)
-with col_info2:
-    st.info(f"""
-📈 **Total Figures:**
-{total_figures}
-    """)
-with col_info3:
-    render_time = time.time() - st.session_state.last_time
-    st.info(f"""
-⏱️ **Render Time:**
-{render_time:.3f} seconds
-    """)
-with col_info4:
-    try:
-        data_shape = str(data[st.session_state.current_index].shape)
-        st.info(f"""
-📐 **Current Data Shape:**
-{data_shape}
-        """)
-    except Exception:
-        st.info("""
-📐 **Current Data Shape:**
-N/A
-        """)
+# st.title("""
+# 📊 Interactive Figure Viewer
+# =============================
+# """)
 
-# Navigation controls
-col1, col2, col3, col4 = st.columns([1, 1, 2, 1])
-with col1:
-    st.button("⏮ **Previous**", on_click=prev_figure,
-              disabled=(st.session_state.current_index <= 0),
-              use_container_width=True)
+# # Top info bar with metadata
+# col_info1, col_info2, col_info3, col_info4 = st.columns([1, 1, 1, 1])
+# with col_info1:
+#     st.info(f"""
+# 📂 **Dataset Loaded:**
+# `{data_path.split('/')[-1]}`
+#     """)
+# with col_info2:
+#     st.info(f"""
+# 📈 **Total Figures:**
+# {total_figures}
+#     """)
+# with col_info3:
+#     render_time = time.time() - st.session_state.last_time
+#     st.info(f"""
+# ⏱️ **Render Time:**
+# {render_time:.3f} seconds
+#     """)
+# with col_info4:
+#     try:
+#         data_shape = str(data[st.session_state.current_index].shape)
+#         st.info(f"""
+# 📐 **Current Data Shape:**
+# {data_shape}
+#         """)
+#     except Exception:
+#         st.info("""
+# 📐 **Current Data Shape:**
+# N/A
+#         """)
 
-with col2:
-    st.button("**Next** ⏭", on_click=next_figure,
-              disabled=(st.session_state.current_index >= total_figures - 1),
-              use_container_width=True)
+# # Navigation controls
+# col1, col2, col3, col4 = st.columns([1, 1, 2, 1])
+# with col1:
+#     st.button("⏮ **Previous**", on_click=prev_figure,
+#               disabled=(st.session_state.current_index <= 0),
+#               use_container_width=True)
 
-with col3:
-    st.text_input("""
-🔢 **Go to Index**
-""", key="input_index",
-                  placeholder=f"Enter index (0-{total_figures-1})",
-                  on_change=go_to_index)
+# with col2:
+#     st.button("**Next** ⏭", on_click=next_figure,
+#               disabled=(st.session_state.current_index >= total_figures - 1),
+#               use_container_width=True)
 
-with col4:
-    if st.button("🎲 **Random**", use_container_width=True):
-        import random
-        change_index(random.randint(0, total_figures - 1))
+# with col3:
+#     st.text_input("""
+# 🔢 **Go to Index**
+# """, key="input_index",
+#                   placeholder=f"Enter index (0-{total_figures-1})",
+#                   on_change=go_to_index)
 
-# Progress indicators
-st.progress(st.session_state.current_index / (total_figures - 1))
-st.caption(f"""
-📊 **Figure {st.session_state.current_index + 1} of {total_figures}**
-(Index: {st.session_state.current_index})
-""")
+# with col4:
+#     if st.button("🎲 **Random**", use_container_width=True):
+#         import random
+#         change_index(random.randint(0, total_figures - 1))
 
-# Display the current figure
-with st.spinner("""
-🔄 **Generating Figure...**
-Please wait while the figure is being rendered. 🖼️
-"""):
-    try:
-        current_data = data[st.session_state.current_index]
-        fig = get_figure(current_data)
-        st.plotly_chart(fig, use_container_width=True, theme="streamlit")
-    except Exception as e:
-        st.error(f"""
-❌ **Error Displaying Figure:**
-{str(e)}
-        """)
+# # Progress indicators
+# st.progress(st.session_state.current_index / (total_figures - 1))
+# st.caption(f"""
+# 📊 **Figure {st.session_state.current_index + 1} of {total_figures}**
+# (Index: {st.session_state.current_index})
+# """)
 
-# Footer
-st.divider()
-st.caption("""
-Developed with ❤️ using **Streamlit** and **Plotly**.
-""")
+# # Display the current figure
+# with st.spinner("""
+# 🔄 **Generating Figure...**
+# Please wait while the figure is being rendered. 🖼️
+# """):
+#     try:
+#         current_data = data[st.session_state.current_index]
+#         fig = get_figure(current_data)
+#         st.plotly_chart(fig, use_container_width=True, theme="streamlit")
+#     except Exception as e:
+#         st.error(f"""
+# ❌ **Error Displaying Figure:**
+# {str(e)}
+#         """)
+
+# # Footer
+# st.divider()
+# st.caption("""
+# Developed with ❤️ using **Streamlit** and **Plotly**.
+# """)

@@ -1,7 +1,5 @@
 
 
-import pandas as pd
-
 from crocodile.file_management import P, Save, Read
 from crocodile.meta import Scheduler
 from machineconfig.cluster.loader_runner import JOB_STATUS, LogEntry
@@ -12,6 +10,40 @@ from dataclasses import fields
 import getpass
 import random
 import platform
+from datetime import datetime, timedelta
+
+
+def format_table_markdown(data: list[dict]) -> str:
+    """Convert list of dictionaries to markdown table format."""
+    if not data:
+        return ""
+    
+    # Get all unique keys from all dictionaries
+    all_keys = set()
+    for row in data:
+        all_keys.update(row.keys())
+    
+    keys = sorted(all_keys)
+    
+    # Create header
+    header = "|" + "|".join(f" {key} " for key in keys) + "|"
+    separator = "|" + "|".join(" --- " for _ in keys) + "|"
+    
+    # Create rows
+    rows = []
+    for row in data:
+        row_values = []
+        for key in keys:
+            value = row.get(key, "")
+            # Convert to string and handle None values
+            if value is None:
+                value = ""
+            else:
+                value = str(value)
+            row_values.append(f" {value} ")
+        rows.append("|" + "|".join(row_values) + "|")
+    
+    return "\n".join([header, separator] + rows)
 
 
 class CloudManager:
@@ -35,21 +67,20 @@ class CloudManager:
         self.console = Console()
 
     # =================== READ WRITE OF LOGS ===================
-    def read_log(self) -> dict[JOB_STATUS, 'pd.DataFrame']:
+    def read_log(self) -> dict[JOB_STATUS, list[dict]]:
         # assert self.claim_lock, f"method should never be called without claiming the lock first. This is a cloud-wide file."
         if not self.lock_claimed: self.claim_lock()
         path = self.base_path.joinpath("logs.pkl").expanduser()
         if not path.exists():
-            cols = [a_field.name for a_field in fields(LogEntry)]
-            log: dict[JOB_STATUS, 'pd.DataFrame'] = {}
-            log['queued'] = pd.DataFrame(columns=cols)
-            log['running'] = pd.DataFrame(columns=cols)
-            log['completed'] = pd.DataFrame(columns=cols)
-            log['failed'] = pd.DataFrame(columns=cols)
+            log: dict[JOB_STATUS, list[dict]] = {}
+            log['queued'] = []
+            log['running'] = []
+            log['completed'] = []
+            log['failed'] = []
             Save.pickle(obj=log, path=path.create(parents_only=True), verbose=False)
             return log
         return Read.pickle(path=path)
-    def write_log(self, log: dict[JOB_STATUS, 'pd.DataFrame']):
+    def write_log(self, log: dict[JOB_STATUS, list[dict]]):
         # assert self.claim_lock, f"method should never be called without claiming the lock first. This is a cloud-wide file."
         if not self.lock_claimed: self.claim_lock()
         Save.pickle(obj=log, path=self.base_path.joinpath("logs.pkl").expanduser(), verbose=False)
@@ -66,12 +97,21 @@ class CloudManager:
         from machineconfig.cluster.remote_machine import RemoteMachine
         workers_root = cloud_root.joinpath("workers").search("*")
         res: dict[str, list[RemoteMachine]] = {}
-        times: dict[str, pd.Timedelta] = {}
+        times: dict[str, timedelta] = {}
         for a_worker in workers_root:
             running_jobs = a_worker.joinpath("running_jobs.pkl")
-            times[a_worker.name] = pd.Timestamp.now() - pd.to_datetime(running_jobs.time("m"))
+            file_mod_time = datetime.fromtimestamp(running_jobs.stat().st_mtime) if running_jobs.exists() else datetime.min
+            times[a_worker.name] = datetime.now() - file_mod_time
             res[a_worker.name] = Read.pickle(path=running_jobs) if running_jobs.exists() else []
-        servers_report = pd.DataFrame({"machine": list(res.keys()), "#RJobs": [len(x) for x in res.values()], "LastUpdate": list(times.values())})
+        
+        # Create list of dictionaries instead of DataFrame
+        servers_report = []
+        for machine in res.keys():
+            servers_report.append({
+                "machine": machine,
+                "#RJobs": len(res[machine]),
+                "LastUpdate": times[machine]
+            })
         return servers_report
     def run_monitor(self):
         """Without syncing, bring the latest from the cloud to random local path (not the default path, as that would require the lock)"""
@@ -86,29 +126,49 @@ class CloudManager:
             self.console.print(f"🔒 Lock is held by: {lock_owner}")
             self.console.print("🧾 Log File:")
             log_path = alternative_base.joinpath("logs.pkl")
-            if log_path.exists(): log: dict[JOB_STATUS, 'pd.DataFrame'] = Read.pickle(path=log_path)
+            if log_path.exists(): log: dict[JOB_STATUS, list[dict]] = Read.pickle(path=log_path)
             else:
                 self.console.print("Log file doesn't exist! 🫤 must be that cloud is getting purged or something 🤔 ")
                 log = {}
-            for item_name, item_df in log.items():
-                self.console.rule(f"{item_name} DataFrame (Latest {'10' if len(item_df) > 10 else len(item_df)} / {len(item_df)})")
+            for item_name, item_list in log.items():
+                self.console.rule(f"{item_name} Jobs (Latest {'10' if len(item_list) > 10 else len(item_list)} / {len(item_list)})")
                 print()  # empty line after the rule helps keeping the rendering clean in the terminal while zooming in and out.
-                if item_name != "queued":
-                    t2 = pd.to_datetime(item_df["end_time"]) if item_name != "running" else pd.Series([pd.Timestamp.now()] * len(item_df))
-                    if len(t2) == 0 and len(item_df) == 0: pass  # the subtraction below gives an error if both are empty. TypeError: cannot subtract DatetimeArray from ndarray
-                    else: item_df["duration"] = t2 - pd.to_datetime(item_df["start_time"])
+                
+                # Add duration calculation for non-queued items
+                display_items = []
+                for item in item_list:
+                    display_item = item.copy()
+                    if item_name != "queued" and "start_time" in item and item["start_time"]:
+                        try:
+                            if item_name == "running":
+                                end_time = datetime.now()
+                            else:
+                                end_time = datetime.fromisoformat(item["end_time"]) if item.get("end_time") else datetime.now()
+                            start_time = datetime.fromisoformat(item["start_time"])
+                            display_item["duration"] = end_time - start_time
+                        except:
+                            display_item["duration"] = "unknown"
+                    display_items.append(display_item)
 
-                cols = item_df.columns
-                cols = [a_col for a_col in cols if a_col not in {"cmd", "note"}]
-                if item_name == "queued": cols = [a_col for a_col in cols if a_col not in {"pid", "start_time", "end_time", "run_machine"}]
-                if item_name == "running": cols = [a_col for a_col in cols if a_col not in {"submission_time", "source_machine", "end_time"}]
-                if item_name == "completed": cols = [a_col for a_col in cols if a_col not in {"submission_time", "source_machine", "start_time", "pid"}]
-                if item_name == "failed": cols = [a_col for a_col in cols if a_col not in {"submission_time", "source_machine", "start_time"}]
-                pprint(item_df[cols][-10:].to_markdown())
+                # Filter columns based on item type
+                excluded_cols = {"cmd", "note"}
+                if item_name == "queued": excluded_cols.update({"pid", "start_time", "end_time", "run_machine"})
+                if item_name == "running": excluded_cols.update({"submission_time", "source_machine", "end_time"})
+                if item_name == "completed": excluded_cols.update({"submission_time", "source_machine", "start_time", "pid"})
+                if item_name == "failed": excluded_cols.update({"submission_time", "source_machine", "start_time"})
+                
+                # Filter items and take last 10
+                filtered_items = []
+                for item in display_items[-10:]:
+                    filtered_item = {k: v for k, v in item.items() if k not in excluded_cols}
+                    filtered_items.append(filtered_item)
+                
+                if filtered_items:
+                    pprint(format_table_markdown(filtered_items))
                 pprint("\n\n")
             print("👷 Workers:")
             servers_report = self.prepare_servers_report(cloud_root=alternative_base)
-            pprint(servers_report.to_markdown())
+            pprint(format_table_markdown(servers_report))
         sched = Scheduler(routine=routine, wait="5m")
         sched.run()
 
@@ -122,8 +182,8 @@ class CloudManager:
         log = self.read_log()
         # servers_report = self.prepare_servers_report(cloud_root=CloudManager.base_path.expanduser())
         dirt: list[str] = []
-        for _idx, row in log["running"].iterrows():
-            entry = LogEntry.from_dict(row.to_dict())
+        for job_data in log["running"]:
+            entry = LogEntry.from_dict(job_data)
             if entry.run_machine != this_machine: continue
             a_job_path = CloudManager.base_path.expanduser().joinpath(f"jobs/{entry.name}")
             rm: RemoteMachine = Read.pickle(path=a_job_path.joinpath("data/remote_machine.Machine.pkl"))
@@ -144,20 +204,21 @@ class CloudManager:
                 dirt.append(entry.name)
                 print(f"Job `{entry.name}` is not running, removing it from log of running jobs.")
                 if return_to_queue:
-                    log["queued"] = pd.concat([log["queued"], pd.DataFrame([entry.__dict__])], ignore_index=True)
+                    log["queued"].append(entry.__dict__)
                     print(f"Job `{entry.name}` is not running, returning it to the queue.")
                 else:
-                    log["failed"] = pd.concat([log["failed"], pd.DataFrame([entry.__dict__])], ignore_index=True)
+                    log["failed"].append(entry.__dict__)
                     print(f"Job `{entry.name}` is not running, moving it to failed jobs.")
-        log["running"] = log["running"][~log["running"]["name"].isin(dirt)]
+        # Remove entries that are in dirt list
+        log["running"] = [job for job in log["running"] if job.get("name") not in dirt]
         self.write_log(log=log)
     def clean_failed_jobs_mess(self):
         """If you want to do it for remote machine, use `rerun_jobs` (manual selection)"""
         print("⚠️ Cleaning failed jobs mess for this machine ⚠️")
         from machineconfig.cluster.remote_machine import RemoteMachine
         log = self.read_log()
-        for _idx, row in log["failed"].iterrows():
-            entry = LogEntry.from_dict(row.to_dict())
+        for job_data in log["failed"]:
+            entry = LogEntry.from_dict(job_data)
             a_job_path = CloudManager.base_path.expanduser().joinpath(f"jobs/{entry.name}")
             rm: RemoteMachine = Read.pickle(path=a_job_path.joinpath("data/remote_machine.Machine.pkl"))
             entry.note += f"| Job failed @ {entry.run_machine}"
@@ -170,9 +231,9 @@ class CloudManager:
             rm.file_manager.execution_log_dir.expanduser().joinpath("status.txt").delete(sure=True)
             rm.file_manager.execution_log_dir.expanduser().joinpath("pid.txt").delete(sure=True)
             print(f"Job `{entry.name}` is not running, removing it from log of running jobs.")
-            log["queued"] = pd.concat([log["queued"], pd.DataFrame([entry.__dict__])], ignore_index=True)
+            log["queued"].append(entry.__dict__)
             print(f"Job `{entry.name}` is not running, returning it to the queue.")
-        log["failed"] = pd.DataFrame(columns=log["failed"].columns)
+        log["failed"] = []
         self.write_log(log=log)
         self.release_lock()
     def rerun_jobs(self):
@@ -184,11 +245,22 @@ class CloudManager:
         jobs_all: list[str] = self.base_path.expanduser().joinpath("jobs").search("*").apply(lambda x: x.name).list
         jobs_selected = display_options(options=jobs_all, msg="Select Jobs to Redo", multi=True, fzf=True)
         for a_job in jobs_selected:
-            # find in which dataframe does this job lives:
-            for log_type, log_df in log.items():
-                if a_job in log_df["name"].values: break
-            else: raise ValueError(f"Job `{a_job}` is not found in any of the log dataframes.")
-            entry = LogEntry.from_dict(log_df[log_df["name"] == a_job].iloc[0].to_dict())
+            # find in which log list does this job live:
+            found_log_type = None
+            found_entry_data = None
+            for log_type, log_list in log.items():
+                for job_data in log_list:
+                    if job_data.get("name") == a_job:
+                        found_log_type = log_type
+                        found_entry_data = job_data
+                        break
+                if found_log_type:
+                    break
+            
+            if not found_log_type:
+                raise ValueError(f"Job `{a_job}` is not found in any of the log lists.")
+            
+            entry = LogEntry.from_dict(found_entry_data)
             a_job_path = CloudManager.base_path.expanduser().joinpath(f"jobs/{entry.name}")
             entry.note += f"| Job failed @ {entry.run_machine}"
             entry.pid = None
@@ -200,9 +272,10 @@ class CloudManager:
             rm: RemoteMachine = Read.pickle(path=a_job_path.joinpath("data/remote_machine.Machine.pkl"))
             rm.file_manager.execution_log_dir.expanduser().joinpath("status.txt").delete(sure=True)
             rm.file_manager.execution_log_dir.expanduser().joinpath("pid.txt").delete(sure=True)
-            log["queued"] = pd.concat([log["queued"], pd.DataFrame([entry.__dict__])], ignore_index=True)
-            log[log_type] = log[log_type][log[log_type]["name"] != a_job]
-            print(f"Job `{entry.name}` was removed from {log_type} and added to the queue in order to be re-run.")
+            log["queued"].append(entry.__dict__)
+            # Remove from original log type
+            log[found_log_type] = [job for job in log[found_log_type] if job.get("name") != a_job]
+            print(f"Job `{entry.name}` was removed from {found_log_type} and added to the queue in order to be re-run.")
         self.write_log(log=log)
         self.release_lock()
 
@@ -225,14 +298,20 @@ class CloudManager:
             elif status == "completed" or status == "failed":
                 job_name = a_rm.config.job_id
                 log = self.read_log()
-                df_to_add = log[status]
-                df_to_take = log["running"]
-                entry = LogEntry.from_dict(df_to_take[df_to_take["name"] == job_name].iloc[0].to_dict())
-                entry.end_time = pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
-                df_to_add = pd.concat([df_to_add, pd.DataFrame([entry.__dict__])], ignore_index=True)
-                df_to_take = df_to_take[df_to_take["name"] != job_name]
-                log[status] = df_to_add
-                log["running"] = df_to_take
+                
+                # Find the entry in running jobs
+                entry_data = None
+                for job_data in log["running"]:
+                    if job_data.get("name") == job_name:
+                        entry_data = job_data
+                        break
+                
+                if entry_data:
+                    entry = LogEntry.from_dict(entry_data)
+                    entry.end_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    log[status].append(entry.__dict__)
+                    # Remove from running
+                    log["running"] = [job for job in log["running"] if job.get("name") != job_name]
                 self.write_log(log=log)
                 # self.running_jobs.remove(a_rm)
                 jobs_ids_to_be_removed_from_running.append(a_rm.config.job_id)
@@ -253,24 +332,27 @@ class CloudManager:
             return None
         idx: int = 0
         while len(self.running_jobs) < self.max_jobs:
-            queue_entry = LogEntry.from_dict(log["queued"].iloc[idx].to_dict())
+            if idx >= len(log["queued"]):
+                break  # looked at all jobs in the queue
+            
+            queue_entry = LogEntry.from_dict(log["queued"][idx])
             a_job_path = CloudManager.base_path.expanduser().joinpath(f"jobs/{queue_entry.name}")
             rm: RemoteMachine = Read.pickle(path=a_job_path.joinpath("data/remote_machine.Machine.pkl"))
             if rm.config.allowed_remotes is not None and f"{getpass.getuser()}@{platform.node()}" not in rm.config.allowed_remotes:
                 print(f"Job `{queue_entry.name}` is not allowed to run on this machine. Skipping ...")
                 idx += 1
-                if idx >= len(log["queued"]):
-                    break  # looked at all jobs in the queue and none is allowed to run on this machine.
                 continue  # look at the next job in the queue.
+            
             pid, _process_cmd = rm.fire(run=True)
             queue_entry.pid = pid
             # queue_entry.cmd = process_cmd
             queue_entry.run_machine = f"{getpass.getuser()}@{platform.node()}"
-            queue_entry.start_time = pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
+            queue_entry.start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             queue_entry.session_name = rm.job_params.session_name
-            log["queued"] = log["queued"][log["queued"]["name"] != queue_entry.name]
-            # log["queued"] = log["queued"].iloc[1:] if len(log["queued"]) > 0 else pd.DataFrame(columns=log["queued"].column)
-            log["running"] = pd.concat([log["running"], pd.DataFrame([queue_entry.__dict__])], ignore_index=True)
+            
+            # Remove from queued and add to running
+            log["queued"] = [job for job in log["queued"] if job.get("name") != queue_entry.name]
+            log["running"].append(queue_entry.__dict__)
             self.running_jobs.append(rm)
             self.write_log(log=log)
         return None
@@ -304,7 +386,8 @@ class CloudManager:
 
         locking_machine = lock_path.read_text()
         if locking_machine != "" and locking_machine != this_machine:
-            if (pd.Timestamp.now() - lock_path.time("m")).total_seconds() > 3600:
+            lock_mod_time = datetime.fromtimestamp(lock_path.stat().st_mtime)
+            if (datetime.now() - lock_mod_time).total_seconds() > 3600:
                 print(f"⚠️ Lock was claimed by `{locking_machine}` for more than an hour. Something wrong happened there. Resetting the lock!")
                 self.reset_lock()
                 return self.claim_lock(first_call=False)

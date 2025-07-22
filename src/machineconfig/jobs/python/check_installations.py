@@ -3,7 +3,6 @@
 
 
 import time
-import pandas as pd
 import platform
 from rich.console import Console
 from rich import inspect
@@ -14,8 +13,9 @@ from crocodile.core import List as L, install_n_import, Struct
 from crocodile.file_management import P
 from crocodile.meta import Terminal
 from tqdm import tqdm
-from typing import Optional
+from typing import Optional, Any
 from datetime import datetime
+import csv
 
 
 APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
@@ -45,24 +45,34 @@ def scan(path: P, pct: float = 0.0):
                     raise ValueError(f"❌ Error in scanning {path}") from ex
                 print("⚠️  Error in scanning, trying again...")
             time.sleep(30)
-    df = pd.DataFrame(anal.results.values())
+    
+    # Convert results to list of dictionaries
+    results_data = list(anal.results.values())
     malicious = []
-    for _idx, row in df.iterrows():
-        # try:
-        #     print(row.result)
-        # except Exception as ex:  # type: ignore
-        #     print(row)
-        if row.result is None and row.category in ["undetected", "type-unsupported", "failure", "timeout", "confirmed-timeout"]: continue
+    for result_item in results_data:
+        # Convert result item to dictionary if it has attributes
+        if hasattr(result_item, '__dict__'):
+            result_dict = result_item.__dict__
         else:
-            inspect(row.to_dict(), value=False, title=f"🔍 Found Category {row.category}", docs=False, dunder=False, sort=False)
-            malicious.append(row)
-    positive_pct: float = round(number=len(malicious) / len(df) * 100, ndigits=1)
+            # Assume it already has the necessary attributes
+            result_dict = {
+                'result': getattr(result_item, 'result', None),
+                'category': getattr(result_item, 'category', 'unknown')
+            }
+        
+        if result_dict.get('result') is None and result_dict.get('category') in ["undetected", "type-unsupported", "failure", "timeout", "confirmed-timeout"]: 
+            continue
+        else:
+            inspect(result_dict, value=False, title=f"🔍 Found Category {result_dict.get('category')}", docs=False, dunder=False, sort=False)
+            malicious.append(result_item)
+    
+    positive_pct: float = round(number=len(malicious) / len(results_data) * 100, ndigits=1)
     print(f"""
 {'=' * 50}
 🔬 SCAN RESULTS | Positive ratio: {positive_pct:.1f}%
 {'=' * 50}
 """)
-    return positive_pct, df
+    return positive_pct, results_data
 
 
 def main() -> None:
@@ -91,7 +101,7 @@ def main() -> None:
     apps_paths_raw.print()
     positive_pct: list[Optional[float]] = []
     scan_time: list[str] = []
-    detailed_results: list[dict[str, Optional[pd.DataFrame]]] = []
+    detailed_results: list[dict[str, Optional[list]]] = []
 
     for idx, app in enumerate(apps_paths_raw):
         try: res = scan(path=app, pct=idx / len(apps_paths_raw) * 100)
@@ -102,30 +112,58 @@ def main() -> None:
             positive_pct.append(None)
             detailed_results.append({app.stem: None})
         else:
-            ppct, df = res
+            ppct, results_data = res
             positive_pct.append(ppct)
-            detailed_results.append({app.stem: df})
+            detailed_results.append({app.stem: results_data})
         scan_time.append(datetime.now().strftime("%Y-%m-%d %H:%M"))
 
-    res_df = pd.DataFrame({"app_name": apps_paths_raw.apply(lambda x: x.stem).list,
-                           "version": app_versions,
-                           "positive_pct": positive_pct,
-                            "scan_time": scan_time,
-                           "app_path": apps_paths_raw.apply(lambda x: x.collapseuser(strict=False).as_posix()).list})
+    # Create list of dictionaries instead of DataFrame
+    app_data = []
+    for i, app_path in enumerate(apps_paths_raw):
+        app_data.append({
+            "app_name": app_path.stem,
+            "version": app_versions[i],
+            "positive_pct": positive_pct[i],
+            "scan_time": scan_time[i],
+            "app_path": app_path.collapseuser(strict=False).as_posix()
+        })
 
-    app_url: list[Optional[str]] = []
-    for idx, row in tqdm(res_df.iterrows(), total=res_df.shape[0]):
-        apps_safe_url = upload(P(str(row["app_path"])).expanduser())
-        app_url.append(apps_safe_url.as_posix() if type(apps_safe_url) is P else apps_safe_url)
-    res_df["app_url"] = app_url
-    res_df.to_csv(APP_SUMMARY_PATH.with_suffix(".csv").create(parents_only=True), index=False)
-    APP_SUMMARY_PATH.with_suffix(".md").write_text(res_df.to_markdown())
+    # Add app URLs
+    for i, app_info in enumerate(tqdm(app_data, desc="Uploading apps")):
+        apps_safe_url = upload(P(app_info["app_path"]).expanduser())
+        app_info["app_url"] = apps_safe_url.as_posix() if type(apps_safe_url) is P else apps_safe_url
+
+    # Write to CSV using standard library
+    csv_path = APP_SUMMARY_PATH.with_suffix(".csv").create(parents_only=True)
+    with open(csv_path, 'w', newline='', encoding='utf-8') as csvfile:
+        if app_data:
+            fieldnames = app_data[0].keys()
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(app_data)
+
+    # Create markdown table
+    def format_app_table_markdown(data: list[dict]) -> str:
+        if not data:
+            return ""
+        keys = list(data[0].keys())
+        header = "|" + "|".join(f" {key} " for key in keys) + "|"
+        separator = "|" + "|".join(" --- " for _ in keys) + "|"
+        rows = []
+        for row in data:
+            row_values = [f" {str(row.get(key, ''))} " for key in keys]
+            rows.append("|" + "|".join(row_values) + "|")
+        return "\n".join([header, separator] + rows)
+
+    markdown_content = format_app_table_markdown(app_data)
+    APP_SUMMARY_PATH.with_suffix(".md").write_text(markdown_content)
+    
     print(f"""
 {'=' * 150}
 📊 SAFETY REPORT | Summary of app scanning results
 {'=' * 150}
 """)
-    print(res_df)
+    print(markdown_content)
 
 
 def upload(path: P):
@@ -140,7 +178,12 @@ def upload(path: P):
 class PrecheckedCloudInstaller:
     def __init__(self):
         install_n_import("gdown")
-        self.df = pd.read_csv(APP_SUMMARY_PATH)
+        # Read CSV using standard library
+        self.data = []
+        if APP_SUMMARY_PATH.exists():
+            with open(APP_SUMMARY_PATH, 'r', encoding='utf-8') as csvfile:
+                reader = csv.DictReader(csvfile)
+                self.data = list(reader)
 
     @staticmethod
     def download_google_links(url: str):

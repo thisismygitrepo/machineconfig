@@ -1,4 +1,4 @@
-import pandas as pd
+from datetime import datetime
 import json
 import uuid
 import logging
@@ -59,22 +59,29 @@ class ZellijSessionManager:
                 values = []
                 for item in statuses:
                     values.extend(item.values())
-                statuses_df = pd.DataFrame(values, index=keys)
-                statuses_df.reset_index(inplace=True)
-                statuses_df.rename(columns={"index": "tabName"}, inplace=True)
-                if statuses_df["running"].sum() == 0:  # they all stopped
-                    # raise RuntimeError("All sessions have stopped. Exiting the routine.")
-                    # import sys
-                    # sys.exit("All sessions have stopped. Exiting the routine.")
+                # Create list of dictionaries instead of DataFrame
+                status_data = []
+                for i, key in enumerate(keys):
+                    if i < len(values):
+                        status_data.append({"tabName": key, "status": values[i]})
+                
+                # Check if all stopped
+                running_count = sum(1 for item in status_data if item.get("status", {}).get("running", False))
+                if running_count == 0:  # they all stopped
                     sched.max_cycles = sched.cycle  # stop the scheduler from calling this routine again
-                print(statuses_df)
+                
+                # Print status
+                for item in status_data:
+                    print(f"Tab: {item['tabName']}, Status: {item['status']}")
             else:
                 statuses = []
                 for _idx, an_m in enumerate(self.managers):
                     a_status = an_m.check_zellij_session_status()
                     statuses.append(a_status)
-                statuses_df = pd.DataFrame(statuses)
-                print(statuses_df)
+                
+                # Print statuses
+                for i, status in enumerate(statuses):
+                    print(f"Manager {i}: {status}")
         sched = Scheduler(routine=routine, wait="1m")
         sched.run()
 
@@ -94,7 +101,7 @@ class ZellijSessionManager:
         # Save session metadata
         metadata = {
             "session_name_prefix": self.session_name_prefix,
-            "created_at": str(pd.Timestamp.now()),
+            "created_at": str(datetime.now()),
             "num_managers": len(self.managers),
             "machines": list(self.machine2zellij_tabs.keys())
         }

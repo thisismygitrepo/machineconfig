@@ -8,10 +8,43 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 import platform
 import subprocess
-from typing import Optional
+from typing import Optional, Any
 # from crocodile.meta import Scheduler
 from rich.console import Console
 from rich.panel import Panel
+
+
+def format_table_markdown(data: list[dict[str, Any]]) -> str:
+    """Convert list of dictionaries to markdown table format."""
+    if not data:
+        return ""
+    
+    # Get all unique keys from all dictionaries
+    all_keys = set()
+    for row in data:
+        all_keys.update(row.keys())
+    
+    keys = sorted(all_keys)
+    
+    # Create header
+    header = "|" + "|".join(f" {key} " for key in keys) + "|"
+    separator = "|" + "|".join(" --- " for _ in keys) + "|"
+    
+    # Create rows
+    rows = []
+    for row in data:
+        row_values = []
+        for key in keys:
+            value = row.get(key, "")
+            # Convert to string and handle None values
+            if value is None:
+                value = ""
+            else:
+                value = str(value)
+            row_values.append(f" {value} ")
+        rows.append("|" + "|".join(row_values) + "|")
+    
+    return "\n".join([header, separator] + rows)
 
 
 SCHEDULER_DEFAULT_ROOT = P.home().joinpath("dotfiles/scripts/.scheduler")
@@ -124,14 +157,16 @@ def main(root: Optional[str] = None, ignore_conditions: bool=True):
         tasks.append(read_task_from_dir(a_dir))
 
     from machineconfig.utils.utils import choose_multiple_options
-    import pandas as pd
-    df_res = pd.DataFrame([Report.from_path(path=a_task.report_path).__dict__ for a_task in tasks])
-    tasks_chosen_raw = choose_multiple_options(df_res.to_markdown().splitlines(), "📋 Choose tasks to run")
+    
+    # Create data for tasks display
+    task_data = [Report.from_path(path=a_task.report_path).__dict__ for a_task in tasks]
+    task_display = format_table_markdown(task_data)
+    tasks_chosen_raw = choose_multiple_options(task_display.splitlines(), "📋 Choose tasks to run")
     tasks_chosen = [tasks[int(a_task_chosen.split("|")[1])] for a_task_chosen in tasks_chosen_raw]
 
     print(f"""
 🎯 Selected Tasks:
-{df_res}
+{task_display}
 """)
 
     result: list[Report] = []
@@ -145,10 +180,11 @@ def main(root: Optional[str] = None, ignore_conditions: bool=True):
             assert report is not None
         result.append(report)
 
-    df_res = pd.DataFrame([r.__dict__ for r in result])
+    result_data = [r.__dict__ for r in result]
+    result_display = format_table_markdown(result_data)
     print(f"""
 ✅ Task Execution Results:
-{df_res}
+{result_display}
 """)
     return ""
 
