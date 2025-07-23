@@ -9,7 +9,7 @@ import getpass
 from machineconfig.utils.utils2 import randstr
 from crocodile.file_management import P, Save
 from crocodile.meta import SSH
-from src.machineconfig.cluster.sessions_managers.session_managers import Zellij, WindowsTerminal
+from src.machineconfig.cluster.sessions_managers.archive.session_managers import Zellij, WindowsTerminal
 from machineconfig.cluster.self_ssh import SelfSSH
 from machineconfig.cluster.loader_runner import EmailParams, WorkloadParams, LAUNCH_METHOD, JOB_STATUS, LogEntry, RemoteMachineConfig
 from machineconfig.cluster.file_manager import FileManager
@@ -212,7 +212,7 @@ deactivate
                     execution_time = datetime.now() - start_dt
                     txt += f"\nExecution time so far: {execution_time}. 🕒"
                 except ValueError:
-                    txt += f"\nExecution time: Could not parse start time. 🕒"
+                    txt += "\nExecution time: Could not parse start time. 🕒"
                 console.print(Panel(txt, title=f"Job `{self.config.job_id}` Status", subtitle=self.ssh.get_remote_repr(), highlight=True, border_style="bold red", style="bold"))
                 print("\n")
         else:

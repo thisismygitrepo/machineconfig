@@ -466,10 +466,8 @@ wt new-tab --title "{tab_name}" {cwd_part} "{command}"
 if __name__ == "__main__":
     # Example usage
     sample_tabs = {
-        "🚀Frontend": ("~/code/myapp/frontend", "npm run dev"),
-        "⚙️Backend": ("~/code/myapp/backend", "python manage.py runserver"),
-        "📊Monitor": ("~", "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10"),
-        "📝Logs": ("~/logs", "Get-Content app.log -Wait")
+        "Frontend": ("~/code", "btm"),
+        "Monitor": ("~", "lf"),
     }
     
     try:
