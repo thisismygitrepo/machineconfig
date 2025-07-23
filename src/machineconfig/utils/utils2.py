@@ -1,7 +1,7 @@
 
 
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any
 
 
 def randstr(length: int = 10, lower: bool = True, upper: bool = True, digits: bool = True, punctuation: bool = False, safe: bool = False, noun: bool = False) -> str:
@@ -23,3 +23,14 @@ def read_ini(path: 'Path', encoding: Optional[str] = None):
     res = configparser.ConfigParser()
     res.read(filenames=[str(path)], encoding=encoding)
     return res
+
+
+def read_json(path: 'Path', r: bool = False, **kwargs: Any) -> Any:  # return could be list or dict etc
+    import json
+    try:
+        mydict = json.loads(Path(path).read_text(encoding='utf-8'), **kwargs)
+    except Exception:
+        import pyjson5
+        mydict = pyjson5.loads(Path(path).read_text(encoding='utf-8'), **kwargs)  # file has C-style comments.
+    _ = r
+    return mydict
