@@ -49,7 +49,7 @@ class SelfSSH:
         # Terminal().run_async(*(self.get_ssh_conn_str(cmd=cmd).split(" ")), new_window=new_window, terminal=terminal, shell=shell)
         if platform.system() == "Windows":
             subprocess.Popen(["wt", "--profile", "pwsh"], stdin=subprocess.PIPE, shell=True)
-        elif platform.system() == "Linux":
+        elif platform.system() in ["Linux", "Darwin"]:
             subprocess.Popen(["zellij --session haha"], shell=True, stdin=None, stdout=None, stderr=None)
     def copy_to_here(self, source: PLike = '', target: Optional[str] = '', z: bool = True, r: bool = True, desc: str = '', overwrite: bool = False):
         _ = source, target, z, r, desc, overwrite

@@ -34,8 +34,9 @@ mkdir -p ~/.config/alacritty/themes
 git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/themes
 
 """
-    elif platform.system() == "Linux":
-        print("🐧 Installing Alacritty on Linux using Cargo...")
+    elif platform.system() in ["Linux", "Darwin"]:
+        system_name = "Linux" if platform.system() == "Linux" else "macOS"
+        print(f"🐧 Installing Alacritty on {system_name} using Cargo...")
         program = """
 
 

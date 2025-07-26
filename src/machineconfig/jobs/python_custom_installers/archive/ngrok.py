@@ -29,7 +29,7 @@ def main(version: Optional[str]):
     if platform.system() == "Windows":
         print("🪟 Installing ngrok using winget on Windows...")
         program = "winget install ngrok.ngrok --source winget"
-    elif platform.system() == "Linux":
+    elif platform.system() in ["Linux", "Darwin"]:
         print("🐧 Installing ngrok using apt/nala on Linux...")
         # as per https://ngrok.com/docs/getting-started/?os=linux
         program = """

@@ -238,7 +238,7 @@ def run_task(task: Task) -> Report:
         if platform.system() == 'Windows':
             shell_script = shell_script_root.joinpath("run.ps1").write_text(shell_script)
             subprocess.run(['powershell', '-ExecutionPolicy', 'Unrestricted', shell_script], check=True)
-        elif platform.system() == 'Linux':
+        elif platform.system() in ['Linux', 'Darwin']:
             shell_script = shell_script_root.joinpath("run.sh").write_text(shell_script)
             subprocess.run(['bash', shell_script], check=True)
         else: res = f"Error: Unsupported platform {platform.system()}."

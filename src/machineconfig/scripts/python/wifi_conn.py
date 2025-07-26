@@ -76,11 +76,17 @@ def get_available_networks() -> List[Dict[str, str]]:
                         networks.append({"ssid": current_ssid, "signal": signal})
                     current_ssid = None
                     
-        elif platform.system() == "Linux":
-            result = subprocess.run(
-                ["nmcli", "-t", "-f", "SSID,SIGNAL", "device", "wifi", "list"],
-                capture_output=True, text=True, check=True
-            )
+        elif platform.system() in ["Linux", "Darwin"]:
+            if platform.system() == "Linux":
+                result = subprocess.run(
+                    ["nmcli", "-t", "-f", "SSID,SIGNAL", "device", "wifi", "list"],
+                    capture_output=True, text=True, check=True
+                )
+            else:  # Darwin/macOS - using airport command
+                result = subprocess.run(
+                    ["/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport", "-s"],
+                    capture_output=True, text=True, check=True
+                )
             
             for line in result.stdout.strip().split('\n'):
                 if line and ':' in line:

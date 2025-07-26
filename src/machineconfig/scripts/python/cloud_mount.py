@@ -19,7 +19,7 @@ DEFAULT_MOUNT = "~/data/rclone"
 
 def get_rclone_config():
     if platform.system() == "Windows": config = Read.ini(P.home().joinpath("AppData/Roaming/rclone/rclone.conf"))
-    elif platform.system() == "Linux": config = Read.ini(P.home().joinpath(".config/rclone/rclone.conf"))
+    elif platform.system() in ["Linux", "Darwin"]: config = Read.ini(P.home().joinpath(".config/rclone/rclone.conf"))
     else: raise ValueError("unsupported platform")
     return config
 
@@ -69,8 +69,9 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
         if platform.system() == "Windows":
             print("🪟 Creating mount directory on Windows...")
             mount_loc.parent.create()
-        elif platform.system() == "Linux":
-            print("🐧 Creating mount directory on Linux...")
+        elif platform.system() in ["Linux", "Darwin"]:
+            system_name = "Linux" if platform.system() == "Linux" else "macOS"
+            print(f"🐧 Creating mount directory on {system_name}...")
             try: mount_loc.create()
             except (FileExistsError, OSError) as err:
                 # We need a umount command here.
@@ -94,7 +95,7 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
         txt = f"""
 wt --window 0 --profile "Windows PowerShell" --startingDirectory "$HOME/data/rclone" `; split-pane --horizontal  --profile "Command Prompt" --size 0.2 powershell -Command "{mount_cmd}" `; split-pane --vertical --profile "Windows PowerShell" --size 0.2 powershell -NoExit -Command "rclone about {cloud}:"  `; move-focus up
 """
-    elif platform.system() == "Linux": txt = f"""
+    elif platform.system() in ["Linux", "Darwin"]: txt = f"""
 
 ZJ_SESSIONS=$(zellij list-sessions)
 

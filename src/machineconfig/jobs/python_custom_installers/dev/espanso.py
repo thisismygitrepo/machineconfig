@@ -30,25 +30,29 @@ def main(version: Optional[str]):
     config_dict["repo_url"] = "https://github.com/espanso/espanso"
     if platform.system() == "Windows":
         print("🪟 Installing Espanso on Windows...")
-    elif platform.system() == "Linux":
-        import os
-        env = os.environ["XDG_SESSION_TYPE"]
-        if env == "wayland":
-            print(f"""
+    elif platform.system() in ["Linux", "Darwin"]:
+        if platform.system() == "Linux":
+            import os
+            env = os.environ["XDG_SESSION_TYPE"]
+            if env == "wayland":
+                print(f"""
 {'=' * 150}
 🖥️  DISPLAY SERVER | Wayland detected
 📦 Using Wayland-specific package
 {'=' * 150}
 """)
-            config_dict["filename_template_linux_amd_64"] = "espanso-debian-wayland-amd64.deb"
-        else:
-            print(f"""
+                config_dict["filename_template_linux_amd_64"] = "espanso-debian-wayland-amd64.deb"
+            else:
+                print(f"""
 {'=' * 150}
 🖥️  DISPLAY SERVER | X11 detected
 📦 Using X11-specific package
 {'=' * 150}
 """)
-            config_dict["filename_template_linux_amd_64"] = "espanso-debian-x11-amd64.deb"
+                config_dict["filename_template_linux_amd_64"] = "espanso-debian-x11-amd64.deb"
+        else:  # Darwin/macOS
+            print("🍎 Installing Espanso on macOS...")
+            config_dict["filename_template_linux_amd_64"] = "Espanso.dmg"
     else:
         error_msg = f"Unsupported platform: {platform.system()}"
         print(f"""

@@ -34,7 +34,7 @@ def main(version: Optional[str]):
 {'⚠️' * 20}
 """)
         raise NotImplementedError(error_msg)
-    elif platform.system() == "Linux":
+    elif platform.system() in ["Linux", "Darwin"]:
         print("🐧 Installing Nerd Fonts on Linux using installation script...")
         import machineconfig.jobs.python_custom_installers as module
         from pathlib import Path

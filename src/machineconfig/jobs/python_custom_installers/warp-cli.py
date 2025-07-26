@@ -34,7 +34,7 @@ def main(version: Optional[str]):
 {'⚠️' * 20}
 """)
         raise NotImplementedError(error_msg)
-    elif platform.system() == "Linux":
+    elif platform.system() in ["Linux", "Darwin"]:
         print("""
 🐧 LINUX SETUP | Installing Cloudflare WARP CLI using installation script...
 """)

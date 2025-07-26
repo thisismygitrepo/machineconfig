@@ -22,7 +22,7 @@ def main():
     username = input("👤 Enter the username: ")
     password = input("🔒 Enter the password: ")
 
-    if platform.system() == "Linux":
+    if platform.system() in ["Linux", "Darwin"]:
         print("\n🔧 Saving configuration for Linux...")
         PROGRAM_PATH.write_text(f"""
 drive_location='{drive_location}'

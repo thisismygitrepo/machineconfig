@@ -311,7 +311,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
     if args.watch: command = "watchexec --restart --exts py,sh,ps1 " + command
     if args.git_pull: command = f"\ngit -C {choice_file.parent} pull\n" + command
     if args.PathExport:
-        if platform.system() == "Linux": export_line = f"""export PYTHONPATH="{repo_root}""" + """:${PYTHONPATH}" """
+        if platform.system() in ["Linux", "Darwin"]: export_line = f"""export PYTHONPATH="{repo_root}""" + """:${PYTHONPATH}" """
         elif platform.system() == "Windows":
             # export_line = f"""set PYTHONPATH="{repo_root}""" + """:%PYTHONPATH%" """
             # powershell equivalent
@@ -323,7 +323,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
     program_path = os.environ.get("op_script", None)
     program_path = P(program_path) if program_path is not None else PROGRAM_PATH
     if args.loop:
-        if platform.system() == "Linux":
+        if platform.system() in ["Linux", "Darwin"]:
             command = command + "\nsleep 0.5"
         elif platform.system() == "Windows":
             # command = command + "timeout 0.5\n"

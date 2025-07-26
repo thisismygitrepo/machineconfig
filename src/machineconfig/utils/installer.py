@@ -78,9 +78,12 @@ def get_installed_cli_apps():
     if platform.system() == "Windows": 
         print("🪟 Searching for Windows executables...")
         apps = P.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad"])
-    elif platform.system() == "Linux": 
-        print("🐧 Searching for Linux executables...")
-        apps = P(LINUX_INSTALL_PATH).search("*") + P("/usr/local/bin").search("*")
+    elif platform.system() in ["Linux", "Darwin"]: 
+        print(f"🐧 Searching for {platform.system()} executables...")
+        if platform.system() == "Linux":
+            apps = P(LINUX_INSTALL_PATH).search("*") + P("/usr/local/bin").search("*")
+        else:  # Darwin/macOS
+            apps = P("/usr/local/bin").search("*") + P("/opt/homebrew/bin").search("*")
     else: 
         error_msg = f"❌ ERROR: System {platform.system()} not supported"
         print(error_msg)
@@ -183,9 +186,14 @@ def install_all(installers: L[Installer], safe: bool=False, jobs: int = 10, fres
         if platform.system().lower() == "windows":
             print("🪟 Moving applications to Windows Apps folder...")
             apps_dir.search("*").apply(lambda app: app.move(folder=P.get_env().WindowsPaths().WindowsApps))
-        elif platform.system().lower() == "linux":
-            print("🐧 Moving applications to Linux bin folder...")
-            Terminal().run(f"sudo mv {apps_dir.as_posix()}/* {LINUX_INSTALL_PATH}/").capture().print_if_unsuccessful(desc=f"MOVING executable to {LINUX_INSTALL_PATH}", strict_err=True, strict_returncode=True)
+        elif platform.system().lower() in ["linux", "darwin"]:
+            system_name = "Linux" if platform.system().lower() == "linux" else "macOS"
+            print(f"🐧 Moving applications to {system_name} bin folder...")
+            if platform.system().lower() == "linux":
+                install_path = LINUX_INSTALL_PATH
+            else:  # Darwin/macOS
+                install_path = "/usr/local/bin"
+            Terminal().run(f"sudo mv {apps_dir.as_posix()}/* {install_path}/").capture().print_if_unsuccessful(desc=f"MOVING executable to {install_path}", strict_err=True, strict_returncode=True)
         else: 
             error_msg = f"❌ ERROR: System {platform.system()} not supported"
             print(error_msg)

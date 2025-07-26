@@ -9,11 +9,11 @@ from rich import inspect
 # from rich.progress import track
 from machineconfig.utils.utils import LIBRARY_ROOT, INSTALL_VERSION_ROOT
 from machineconfig.utils.installer import get_installed_cli_apps
-from crocodile.core import List as L, install_n_import, Struct
+from crocodile.core import List as L, install_n_import
 from crocodile.file_management import P
 from crocodile.meta import Terminal
 from tqdm import tqdm
-from typing import Optional, Any
+from typing import Optional
 from datetime import datetime
 import csv
 
@@ -202,7 +202,7 @@ class PrecheckedCloudInstaller:
         except Exception as ex:  # type: ignore
             print(f"❌ ERROR | Failed downloading {app_url}: {ex}")
             return None
-        if platform.system().lower() == "linux":
+        if platform.system().lower() in ["linux", "darwin"]:
             Terminal().run(f"chmod +x {exe}")
             Terminal().run(f"mv {exe} /usr/local/bin/")
         elif platform.system().lower() == "windows":

@@ -62,12 +62,12 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
         console.rule("🗑️ Deleting existing environment with similar name")
         env_path.delete(sure=sure)
 
-    system: Literal["Windows", "Linux"]
+    system: Literal["Windows", "Linux", "Darwin"]
     if platform.system() == "Windows":
         system = "Windows"
         script = get_ps1_ve_install_script(ve_name=ve_name, py_version=dotted_py_version, use_web=False, system=system)
-    elif platform.system() == "Linux":
-        system = "Linux"
+    elif platform.system() in ["Linux", "Darwin"]:
+        system = "Linux" if platform.system() == "Linux" else "Darwin"
         script = get_bash_ve_install_script(ve_name=ve_name, py_version=dotted_py_version, use_web=False, system=system)
     else:
         raise NotImplementedError(f"❌ System {platform.system()} not supported.")
@@ -75,7 +75,7 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
     if essential_repos:
         if system == "Windows":
             script += "\n" + get_ps1_repos_install_script(ve_name=ve_name, use_web=False, system=system)
-        elif system == "Linux":
+        elif system in ["Linux", "Darwin"]:
             script += "\n" + get_bash_repos_install_script(ve_name=ve_name, use_web=False, system=system)
         else:
             raise NotImplementedError(f"❌ System {system} not supported.")

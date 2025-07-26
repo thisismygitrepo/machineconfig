@@ -130,8 +130,9 @@ class Installer:
                 if platform.system() == "Windows":
                     print("🪟 Installing on Windows...")
                     exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=self.exe_name, delete=True, rename_to=self.exe_name.replace(".exe", "") + ".exe")
-                elif platform.system() == "Linux":
-                    print("🐧 Installing on Linux...")
+                elif platform.system() in ["Linux", "Darwin"]:
+                    system_name = "Linux" if platform.system() == "Linux" else "macOS"
+                    print(f"🐧 Installing on {system_name}...")
                     exe = find_move_delete_linux(downloaded=downloaded, tool_name=self.exe_name, delete=True, rename_to=self.exe_name)
                 else:
                     error_msg = f"❌ ERROR: System {platform.system()} not supported"
@@ -164,9 +165,10 @@ class Installer:
             if platform.system() == "Windows":
                 download_link = P(self.filename_template_windows_amd_64)
                 print(f"🪟 Using Windows-specific download URL: {download_link}")
-            elif platform.system() == "Linux":
+            elif platform.system() in ["Linux", "Darwin"]:
                 download_link = P(self.filename_template_linux_amd_64)
-                print(f"🐧 Using Linux-specific download URL: {download_link}")
+                system_name = "Linux" if platform.system() == "Linux" else "macOS"
+                print(f"🐧 Using {system_name}-specific download URL: {download_link}")
             else:
                 error_msg = f"❌ ERROR: System {platform.system()} not supported"
                 print(error_msg)
@@ -186,9 +188,10 @@ class Installer:
             if platform.system() == "Windows":
                 file_name = self.filename_template_windows_amd_64.format(version_to_be_installed_stripped)
                 print(f"🪟 Windows file name: {file_name}")
-            elif platform.system() == "Linux":
+            elif platform.system() in ["Linux", "Darwin"]:
                 file_name = self.filename_template_linux_amd_64.format(version_to_be_installed_stripped)
-                print(f"🐧 Linux file name: {file_name}")
+                system_name = "Linux" if platform.system() == "Linux" else "macOS"
+                print(f"🐧 {system_name} file name: {file_name}")
             else:
                 error_msg = f"❌ ERROR: System {platform.system()} not supported"
                 print(error_msg)

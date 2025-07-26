@@ -72,14 +72,15 @@ def main(version: Optional[str], install_lib: bool = False):
     target_config_dir = P("~/.config/helix").expanduser()
     target_config_dir.mkdir(parents=True, exist_ok=True)
 
-    if platform.system() == "Linux":
-        target_bin_path = LINUX_INSTALL_PATH
+    if platform.system() in ["Linux", "Darwin"]:
+        target_bin_path = LINUX_INSTALL_PATH if platform.system() == "Linux" else P("/usr/local/bin")
         exe_name = "hx"
         hx_file.move(folder=target_bin_path, overwrite=True)
         if install_lib:
             contrib.move(folder=target_config_dir, overwrite=True)
             runtime.move(folder=target_config_dir, overwrite=True)
-        console.print(Panel(f"""✅ SUCCESS | Helix editor installed successfully on Linux!
+        system_name = "Linux" if platform.system() == "Linux" else "macOS"
+        console.print(Panel(f"""✅ SUCCESS | Helix editor installed successfully on {system_name}!
 
 📂 Executable: {target_bin_path / exe_name}
 🔧 Config:     {target_config_dir}""", title="Success", expand=False))

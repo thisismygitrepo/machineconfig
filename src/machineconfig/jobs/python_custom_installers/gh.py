@@ -55,9 +55,10 @@ def main(version: Optional[str]):
 🪟 WINDOWS SETUP | Configuring GitHub CLI for Windows...
 """)
         program = "gh extension install github/gh-copilot"
-    elif platform.system() == "Linux":
-        print("""
-🐧 LINUX SETUP | Configuring GitHub CLI for Linux...
+    elif platform.system() in ["Linux", "Darwin"]:
+        system_name = "LINUX" if platform.system() == "Linux" else "MACOS"
+        print(f"""
+🐧 {system_name} SETUP | Configuring GitHub CLI for {platform.system()}...
 """)
         program = """
 gh extension install github/gh-copilot

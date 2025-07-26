@@ -99,7 +99,7 @@ func(remote_repo=r'{repo_remote_root.to_str()}', local_repo=r'{repo_local_root.t
 rm -rfd {repo_local_root}
 mv {repo_remote_root} {repo_local_root}
 """
-        if platform.system() == "Linux": program_2 += """
+        if platform.system() in ["Linux", "Darwin"]: program_2 += """
 sudo chmod 600 $HOME/.ssh/*
 sudo chmod 700 $HOME/.ssh
 sudo chmod +x $HOME/dotfiles/scripts/linux -R

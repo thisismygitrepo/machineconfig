@@ -33,11 +33,15 @@ def main(version: Optional[str]):
 winget install --Name "Brave Browser" --Id Brave.Brave --source winget --accept-package-agreements --accept-source-agreements
 
 """
-    elif platform.system() == "Linux":
-        print("🐧 Installing Brave Browser on Linux using installation script...")
+    elif platform.system() in ["Linux", "Darwin"]:
+        system_name = "Linux" if platform.system() == "Linux" else "macOS"
+        print(f"🐧 Installing Brave Browser on {system_name}...")
         import machineconfig.jobs.python_custom_installers as module
         from pathlib import Path
-        program = Path(module.__file__).parent.joinpath("scripts/linux/brave.sh").read_text(encoding="utf-8")
+        if platform.system() == "Linux":
+            program = Path(module.__file__).parent.joinpath("scripts/linux/brave.sh").read_text(encoding="utf-8")
+        else:  # Darwin/macOS
+            program = "brew install --cask brave-browser"
     else:
         error_msg = f"Unsupported platform: {platform.system()}"
         print(f"""

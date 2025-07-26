@@ -23,14 +23,14 @@ deactivate || true
 
     if strict_execution:
         if platform.system() == "Windows": shell_script = """$ErrorActionPreference = "Stop" """ + "\n" + shell_script
-        if platform.system() == "Linux": shell_script = "set -e" + "\n" + shell_script
+        if platform.system() in ["Linux", "Darwin"]: shell_script = "set -e" + "\n" + shell_script
 
-    if platform.system() == "Linux": shell_script = "#!/bin/bash" + "\n" + shell_script  # vs #!/usr/bin/env bash
+    if platform.system() in ["Linux", "Darwin"]: shell_script = "#!/bin/bash" + "\n" + shell_script  # vs #!/usr/bin/env bash
     return shell_script
 
 
 def write_shell_script_to_file(shell_script: str):
-    if platform.system() == "Linux": suffix = ".sh"
+    if platform.system() in ["Linux", "Darwin"]: suffix = ".sh"
     elif platform.system() == "Windows": suffix = ".ps1"
     else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
     shell_file = P.tmp().joinpath("tmp_scripts", "shell", randstr() + suffix).create(parents_only=True).write_text(shell_script)
@@ -73,7 +73,7 @@ except ImportError:
 def print_code(code: str, lexer: str, desc: str, subtitle: str=""):
     if lexer == "shell":
         if platform.system() == "Windows": lexer = "powershell"
-        elif platform.system() == "Linux": lexer = "sh"
+        elif platform.system() in ["Linux", "Darwin"]: lexer = "sh"
         else: raise NotImplementedError(f"Platform {platform.system()} not supported for lexer {lexer}")
     console = Console()
     console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}", subtitle=subtitle), style="bold red")

@@ -45,7 +45,7 @@ cargo install --path .
 
     if platform.system() == "Windows":
         exe = exe.move(folder=P.get_env().WindowsPaths().WindowsApps)
-    elif platform.system() == "Linux":
+    elif platform.system() in ["Linux", "Darwin"]:
         Terminal().run(f"sudo mv {exe} /usr/local/bin")
         exe = P(r"/usr/local/bin").joinpath(exe.name)
     else:

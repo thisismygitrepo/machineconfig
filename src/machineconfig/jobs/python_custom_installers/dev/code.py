@@ -29,7 +29,9 @@ def main(version: Optional[str] = None):
         import machineconfig.jobs.python_custom_installers as module
         from pathlib import Path
         install_script = Path(module.__file__).parent.joinpath("scripts/linux/vscode.sh").read_text(encoding="utf-8")
-
+    elif platform.system() == 'Darwin':
+        print("🍎 Installing VS Code on macOS using Homebrew...")
+        install_script = """brew install --cask visual-studio-code"""
     elif platform.system() == 'Windows':
         print("🪟 Installing VS Code on Windows using winget...")
         install_script = """winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements"""

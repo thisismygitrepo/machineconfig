@@ -3,7 +3,8 @@ from crocodile.meta import Terminal
 from typing import Optional, TypeAlias, Literal
 
 # LINUX_INSTALL_PATH = '/usr/local/bin'
-LINUX_INSTALL_PATH = '~/.local/bin'
+# LINUX_INSTALL_PATH = '~/.local/bin'
+LINUX_INSTALL_PATH = P.home().joinpath(".local/bin").__str__()
 WINDOWS_INSTALL_PATH = P.home().joinpath("AppData/Local/Microsoft/WindowsApps").__str__()
 CATEGORY: TypeAlias = Literal["OS_SPECIFIC", "OS_GENERIC", "CUSTOM", "OS_SPECIFIC_DEV", "OS_GENERIC_DEV", "CUSTOM_DEV"]
 

@@ -166,7 +166,7 @@ ftprx {ssh_repr_remote} {res_folder.collapseuser()} -r
 
 
 if params.session_name != "":
-    if platform.system() == "Linux":
+    if platform.system() in ["Linux", "Darwin"]:
         Terminal().run(f"""zellij --session {params.session_name} action new-tab --name results  """)
         # --layout ~/code/machineconfig/src/machineconfig/settings/zellij/layouts/d.kdl --cwd {res_folder.as_posix()}
         Terminal().run(f"""zellij --session {params.session_name} action write-chars "cd {res_folder.as_posix()};lf" """)
@@ -183,7 +183,7 @@ rm_conf: RemoteMachineConfig = Read.pickle(path=manager.remote_machine_config_pa
 
 if rm_conf.kill_on_completion:
     # assert rm_conf.launch_method == "cloud_manager"
-    if platform.system() == "Linux":
+    if platform.system() in ["Linux", "Darwin"]:
         from src.machineconfig.cluster.sessions_managers.session_managers import Zellij  # type: ignore  # pylint: disable=C0412
         current_session = Zellij.get_current_zellij_session()
         # Zellij.close_tab(sess_name=params.session_name, tab_name=params.tab_name)

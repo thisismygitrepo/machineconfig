@@ -34,11 +34,15 @@ def main(version: Optional[str]):
 {'⚠️' * 20}
 """)
         raise NotImplementedError(error_msg)
-    elif platform.system() == "Linux":
-        print("🐧 Installing Redis on Linux using installation script...")
+    elif platform.system() in ["Linux", "Darwin"]:
+        system_name = "Linux" if platform.system() == "Linux" else "macOS"
+        print(f"🐧 Installing Redis on {system_name} using installation script...")
         import machineconfig.jobs.python_custom_installers as module
         from pathlib import Path
-        program = Path(module.__file__).parent.joinpath("scripts/linux/redis.sh").read_text(encoding="utf-8")
+        if platform.system() == "Linux":
+            program = Path(module.__file__).parent.joinpath("scripts/linux/redis.sh").read_text(encoding="utf-8")
+        else:  # Darwin/macOS
+            program = "brew install redis"
     else:
         error_msg = f"Unsupported platform: {platform.system()}"
         print(f"""

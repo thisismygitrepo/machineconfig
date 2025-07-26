@@ -38,8 +38,9 @@ def main(version: Optional[str]):
 pwsh -c "`$LV_BRANCH='release-1.4/neovim-0.9'; iwr https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.4/neovim-0.9/utils/installer/install.ps1 -UseBasicParsing | iex"
 
 """
-    elif platform.system() == "Linux":
-        print("🐧 Installing LunarVim on Linux...")
+    elif platform.system() in ["Linux", "Darwin"]:
+        system_name = "Linux" if platform.system() == "Linux" else "macOS"
+        print(f"🐧 Installing LunarVim on {system_name}...")
         program = """
 
 LV_BRANCH='release-1.4/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.4/neovim-0.9/utils/installer/install.sh)

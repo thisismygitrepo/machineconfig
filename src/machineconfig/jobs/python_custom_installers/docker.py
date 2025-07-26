@@ -35,11 +35,16 @@ def main(version: Optional[str]):
 {'⚠️' * 20}
 """)
         raise NotImplementedError(error_msg)
-    elif platform.system() == "Linux":
-        print("🐧 Installing Docker on Linux using official script...")
+    elif platform.system() in ["Linux", "Darwin"]:
+        system_name = "Linux" if platform.system() == "Linux" else "macOS"
+        print(f"🐧 Installing Docker on {system_name} using official script...")
         import machineconfig.jobs.python_custom_installers as module
         from pathlib import Path
-        program = Path(module.__file__).parent.joinpath("scripts/linux/docker.sh").read_text(encoding="utf-8")
+        if platform.system() == "Linux":
+            program = Path(module.__file__).parent.joinpath("scripts/linux/docker.sh").read_text(encoding="utf-8")
+        else:  # Darwin/macOS
+            # For macOS, we'll use the same script or recommend Homebrew
+            program = "brew install --cask docker"
     else:
         error_msg = f"Unsupported platform: {platform.system()}"
         print(f"""

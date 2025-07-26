@@ -34,7 +34,7 @@ def main():
     print(f"\n🌐 Remote Server: {remote_server}")
     print(f"📁 Share Path: {share_path}\n")
 
-    if platform.system() == "Linux":
+    if platform.system() in ["Linux", "Darwin"]:
         mount_path_1 = P(share_path)
         mount_path_2 = P.home().joinpath(f"data/mount_nfs/{remote_server}")
         if str(mount_path_1).startswith("/home"):

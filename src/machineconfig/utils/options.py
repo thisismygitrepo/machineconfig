@@ -19,7 +19,7 @@ def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> b
         tool_name = tool_name.replace(".exe", "") + ".exe"
 
     if platform.system() == "Windows": cmd = "where.exe"
-    elif platform.system() == "Linux": cmd = "which"
+    elif platform.system() in ["Linux", "Darwin"]: cmd = "which"
     else: raise NotImplementedError(f"platform {platform.system()} not implemented")
 
     try:

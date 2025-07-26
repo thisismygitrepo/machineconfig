@@ -12,21 +12,28 @@ console = Console()
 
 def sanitize_path(a_path: P) -> P:
     path = P(a_path)
-    if path.as_posix().startswith("/home"):
-        if platform.system() == "Windows":  # path copied from Linux to Windows
-            path = P.home().joinpath(*path.parts[3:])  # exclude /home/username
+    if path.as_posix().startswith("/home") or path.as_posix().startswith("/Users"):
+        if platform.system() == "Windows":  # path copied from Linux/Mac to Windows
+            # For Linux: /home/username, for Mac: /Users/username
+            skip_parts = 3 if path.as_posix().startswith("/home") else 3  # Both have 3 parts to skip
+            path = P.home().joinpath(*path.parts[skip_parts:])
             assert path.exists(), f"File not found: {path}"
-            console.print(Panel(f"🔗 PATH MAPPING | Linux → Windows: `{a_path}` ➡️ `{path}`", title="Path Mapping", expand=False))
-        elif platform.system() == "Linux" and P.home().as_posix() not in path.as_posix():  # copied from Linux to Linux with different username
-            path = P.home().joinpath(*path.parts[3:])  # exclude /home/username (three parts: /, home, username)
+            source_os = "Linux" if a_path.as_posix().startswith("/home") else "macOS"
+            console.print(Panel(f"🔗 PATH MAPPING | {source_os} → Windows: `{a_path}` ➡️ `{path}`", title="Path Mapping", expand=False))
+        elif platform.system() in ["Linux", "Darwin"] and P.home().as_posix() not in path.as_posix():  # copied between Unix-like systems with different username
+            skip_parts = 3  # Both /home/username and /Users/username have 3 parts to skip
+            path = P.home().joinpath(*path.parts[skip_parts:])
             assert path.exists(), f"File not found: {path}"
-            console.print(Panel(f"🔗 PATH MAPPING | Linux → Linux: `{a_path}` ➡️ `{path}`", title="Path Mapping", expand=False))
+            current_os = "Linux" if platform.system() == "Linux" else "macOS"
+            source_os = "Linux" if a_path.as_posix().startswith("/home") else "macOS"
+            console.print(Panel(f"🔗 PATH MAPPING | {source_os} → {current_os}: `{a_path}` ➡️ `{path}`", title="Path Mapping", expand=False))
     elif path.as_posix().startswith("C:"):
-        if platform.system() == "Linux":  # path copied from Windows to Linux
+        if platform.system() in ["Linux", "Darwin"]:  # path copied from Windows to Linux/Mac
             xx = str(a_path).replace("\\\\", "/")
             path = P.home().joinpath(*P(xx).parts[3:])  # exclude C:\\Users\\username
             assert path.exists(), f"File not found: {path}"
-            console.print(Panel(f"🔗 PATH MAPPING | Windows → Linux: `{a_path}` ➡️ `{path}`", title="Path Mapping", expand=False))
+            target_os = "Linux" if platform.system() == "Linux" else "macOS"
+            console.print(Panel(f"🔗 PATH MAPPING | Windows → {target_os}: `{a_path}` ➡️ `{path}`", title="Path Mapping", expand=False))
         elif platform.system() == "Windows" and P.home().as_posix() not in path.as_posix():  # copied from Windows to Windows with different username
             path = P.home().joinpath(*path.parts[2:])
             assert path.exists(), f"File not found: {path}"
