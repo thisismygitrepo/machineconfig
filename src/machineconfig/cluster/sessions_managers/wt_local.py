@@ -110,7 +110,7 @@ class WTLayoutGenerator:
             
             # Create batch script
             with open(script_file, 'w', encoding='utf-8') as f:
-                f.write(f"@echo off\n")
+                f.write("@echo off\n")
                 f.write(f"REM Windows Terminal layout for {self.session_name}\n")
                 f.write(f"{wt_command}\n")
             
@@ -402,11 +402,11 @@ Get-Process | ForEach-Object {{
             if wt_session.get("session_exists", False):
                 session_windows = wt_session.get("session_windows", [])
                 all_windows = wt_session.get("all_windows", [])
-                print(f"✅ Windows Terminal is running")
+                print("✅ Windows Terminal is running")
                 print(f"   Session windows: {len(session_windows)}")
                 print(f"   Total WT windows: {len(all_windows)}")
             else:
-                print(f"⚠️  Windows Terminal is running but no session windows found")
+                print("⚠️  Windows Terminal is running but no session windows found")
         else:
             error_msg = wt_session.get("error", "Unknown error")
             print(f"❌ Windows Terminal session issue: {error_msg}")
@@ -481,11 +481,11 @@ if __name__ == "__main__":
         print(f"\n📋 Command Preview:\n{preview}")
         
         # Check status (won't find anything since we haven't run it)
-        print(f"\n🔍 Current status:")
+        print("\n🔍 Current status:")
         generator.print_status_report()
         
         # Show how to run the layout
-        print(f"\n▶️  To run this layout, execute:")
+        print("\n▶️  To run this layout, execute:")
         print(f"   powershell -ExecutionPolicy Bypass -File \"{script_path}\"")
         
     except Exception as e:
