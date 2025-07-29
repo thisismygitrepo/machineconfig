@@ -26,8 +26,8 @@ RUN /app/setup_linux/apps_dev.sh
 # ENV PATH="/root/.local/bin:${PATH}"
 RUN /root/.local/bin/uv venv $HOME/venvs/ve --python 3.11 --python-preference only-managed
 # Warning: does not come with pip
-RUN source $HOME/venvs/ve/bin/activate && \
-    /root/.local/bin/uv pip install --upgrade pip
+RUN source $HOME/venvs/ve/bin/activate
+#  && \/root/.local/bin/uv pip install --upgrade pip
 
 # ENV CROCODILE_EXRA="full"
 # RUN /app/setup_linux/repos.sh
@@ -57,8 +57,8 @@ RUN rm -rfd /root/tmp_results
 #     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/cache/apt/archives/* /var/log/* /usr/share/doc /usr/share/man /usr/share/info /usr/share/locale
 
 RUN rm -rfd /root/.cache/pip && \
-    rm -rfd /root/.cache/uv && \
-    rm -rfd /app
+    rm -rfd /app && \
+    /root/.local/bin/uv clean
 # This saves 200MB
 
 
