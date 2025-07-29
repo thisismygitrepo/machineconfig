@@ -95,7 +95,7 @@
         "exe_name": "bat"
     },
     "starship": {
-        "repo": "starship/starship",
+        "repo_url": "starship/starship",
         "filename_template_windows_amd_64": "starship-x86_64-pc-windows-msvc.zip",
         "filename_template_windows_arm_64": "starship-aarch64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "starship-x86_64-unknown-linux-musl.tar.gz",
@@ -328,7 +328,7 @@
     },
 
     "lsd": {
-        "repo": "lsd-rs/lsd",
+        "repo_url": "lsd-rs/lsd",
         "filename_template_windows_amd_64": "lsd-v{version}-x86_64-pc-windows-msvc.zip",
         "filename_template_windows_arm_64": "",
         "filename_template_linux_amd_64": "lsd-v{version}-x86_64-unknown-linux-musl.tar.gz",
