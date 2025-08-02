@@ -84,9 +84,10 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
 
         if check_tool_exists(tool_name="fzf"):
             try:
-                console.print(Panel(f"🔍 SEARCH STRATEGY | Using fd to search for '{sub_string}' in '{search_root_obj}' ...", title="Search Strategy", expand=False))
-                fzf_cmd = f"cd '{search_root_obj}'; fd --type f --strip-cwd-prefix | fzf --filter={sub_string}"
-                search_res = subprocess.run(fzf_cmd, stdout=subprocess.PIPE, text=True, check=True, shell=True).stdout.split("\\n")[:-1]
+                fzf_cmd = f"cd '{search_root_obj}'; fd --type file --strip-cwd-prefix | fzf  --delimiter='/' --nth=-1 --filter={sub_string}"
+                console.print(Panel(f"🔍 SEARCH STRATEGY | Using fd to search for '{sub_string}' in '{search_root_obj}' ...\n{fzf_cmd}", title="Search Strategy", expand=False))
+                search_res_raw = subprocess.run(fzf_cmd, stdout=subprocess.PIPE, text=True, check=True, shell=True).stdout
+                search_res = search_res_raw.strip().split("\\n")[:-1]
             except subprocess.CalledProcessError as cpe:
                 console.print(Panel(f"❌ ERROR | FZF search failed with '{sub_string}' in '{search_root_obj}'.\n{cpe}", title="Error", expand=False))
                 # msg = Panel(f"💥 FILE NOT FOUND | Path {sub_string} does not exist. No search results", title="File Not Found", expand=False)
@@ -94,11 +95,13 @@ def match_file_name(sub_string: str, search_root: Optional[P] = None) -> P:
                 import sys
                 sys.exit(f"💥 FILE NOT FOUND | Path {sub_string} does not exist. No search results.")
 
-            if len(search_res) == 1: return search_root_obj.joinpath(search_res[0])
+            if len(search_res) == 1: return search_root_obj.joinpath(search_res_raw)
             else:
-                console.print(Panel("🔍 SEARCH STRATEGY | Trying with raw fzf search ...", title="Search Strategy", expand=False))
+                print(f"⚠️ WARNING | Multiple search results found for '{search_res}':")
+                cmd = f"cd '{search_root_obj}'; fd --type file | fzf --delimiter='/' --nth=-1 --query={sub_string}"
+                console.print(Panel(f"🔍 SEARCH STRATEGY | Trying with raw fzf search ...\n{cmd}", title="Search Strategy", expand=False))
                 try:
-                    res = subprocess.run(f"cd '{search_root_obj}'; fd | fzf --query={sub_string}", check=True, stdout=subprocess.PIPE, text=True, shell=True).stdout.strip()
+                    res = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, text=True, shell=True).stdout.strip()
                 except subprocess.CalledProcessError as cpe:
                     console.print(Panel(f"❌ ERROR | FZF search failed with '{sub_string}' in '{search_root_obj}'. {cpe}", title="Error", expand=False))
                     msg = Panel(f"💥 FILE NOT FOUND | Path {sub_string} does not exist. No search results", title="File Not Found", expand=False)
