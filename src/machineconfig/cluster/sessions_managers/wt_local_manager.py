@@ -42,14 +42,14 @@ class WTLocalManager:
 
     def get_all_session_names(self) -> List[str]:
         """Get all managed session names."""
-        return [manager.session_name for manager in self.managers]
+        return [manager.session_name for manager in self.managers if manager.session_name is not None]
 
     def start_all_sessions(self) -> Dict[str, Any]:
         """Start all Windows Terminal sessions with their layouts."""
         results = {}
         for manager in self.managers:
+            session_name = manager.session_name or "unknown"
             try:
-                session_name = manager.session_name
                 script_path = manager.script_path
                 
                 if not script_path:
@@ -91,9 +91,8 @@ class WTLocalManager:
         """Kill all managed Windows Terminal sessions."""
         results = {}
         for manager in self.managers:
+            session_name = manager.session_name or "unknown"
             try:
-                session_name = manager.session_name
-                
                 # Kill all Windows Terminal processes (Windows Terminal doesn't have session-specific killing)
                 cmd = "powershell -Command \"Get-Process -Name 'WindowsTerminal' -ErrorAction SilentlyContinue | Stop-Process -Force\""
                 
@@ -143,7 +142,7 @@ class WTLocalManager:
         status_report = {}
         
         for manager in self.managers:
-            session_name = manager.session_name
+            session_name = manager.session_name or "default"
             
             # Get session status
             session_status = WTLayoutGenerator.check_wt_session_status(session_name)
