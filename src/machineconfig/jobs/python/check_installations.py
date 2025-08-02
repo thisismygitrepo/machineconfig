@@ -131,7 +131,7 @@ def main() -> None:
     # Add app URLs
     for i, app_info in enumerate(tqdm(app_data, desc="Uploading apps")):
         apps_safe_url = upload(P(app_info["app_path"]).expanduser())
-        app_info["app_url"] = apps_safe_url.as_posix() if type(apps_safe_url) is P else apps_safe_url
+        app_info["app_url"] = apps_safe_url.as_posix() if (apps_safe_url is not None and type(apps_safe_url) is P) else str(apps_safe_url) if apps_safe_url is not None else ""
 
     # Write to CSV using standard library
     csv_path = APP_SUMMARY_PATH.with_suffix(".csv").create(parents_only=True)

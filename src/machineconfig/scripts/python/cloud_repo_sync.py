@@ -82,6 +82,7 @@ git pull originEnc master
         from git.remote import Remote
         Remote.remove(repo_local_obj, "originEnc")
         repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
+        return "success"
     else:
         console.print(Panel(f"⚠️  MERGE FAILED\n💾 Keeping local copy of remote at:\n📂 {repo_remote_root}", title="Merge Failed", border_style="red"))
 
