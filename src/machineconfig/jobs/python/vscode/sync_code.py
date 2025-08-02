@@ -1,9 +1,8 @@
 from crocodile.file_management import Read
 from pathlib import Path
+from configparser import SectionProxy
 
 config = Read.ini(Path.home().joinpath(".ssh", "config"))
-if config is None:
-    raise ValueError("❌ SSH config not found. Please create one first.")
 
 
 def sync_remote(machine_name: str):
@@ -14,7 +13,11 @@ def sync_remote(machine_name: str):
 {'=' * 150}
 """)
     
-    machine_config = config.get(machine_name)
+    # Handle config as a ConfigParser object
+    machine_config: SectionProxy | None = None
+    if machine_name in config:
+        machine_config = config[machine_name]
+    
     if machine_config is None:
         error_msg = f"Machine {machine_name} not found in SSH config."
         print(f"""

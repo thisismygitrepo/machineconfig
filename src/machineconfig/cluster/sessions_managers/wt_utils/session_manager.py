@@ -26,7 +26,7 @@ class WTSessionManager:
         """Get the location name for status reporting."""
         return "local" if self.is_local else (self.remote_executor.remote_name if self.remote_executor else "unknown")
     
-    def _run_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess:
+    def _run_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess[str]:
         """Run command either locally or remotely."""
         if self.is_local:
             return subprocess.run(
@@ -179,7 +179,7 @@ ConvertTo-Json -Depth 2
                 }
                 
         except Exception as e:
-            error_location = "locally" if self.is_local else f"on {self.remote_executor.remote_name}"
+            error_location = "locally" if self.is_local else f"on {self.remote_executor.remote_name if self.remote_executor else 'unknown'}"
             logger.error(f"Failed to start Windows Terminal session {error_location}: {e}")
             return {
                 "success": False,

@@ -200,7 +200,7 @@ def get_age(create_time):
     """Calculate age from create_time which can be either float timestamp or datetime object."""
     try:
         if isinstance(create_time, (int, float)):
-            # Handle timestamp
+            # Handle timestampz
             create_time_utc = datetime.fromtimestamp(create_time, tz=timezone('UTC'))
             create_time_local = create_time_utc.astimezone(timezone('Australia/Adelaide'))
         else:

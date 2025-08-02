@@ -82,8 +82,11 @@ class ZellijLocalManager:
                     logger.error(f"❌ Failed to start session '{session_name}': {result.stderr}")
                     
             except Exception as e:
-                # session_name might be None here, so use a fallback
-                key = session_name if session_name is not None else f"manager_{self.managers.index(manager)}"
+                # Use a fallback key since session_name might not be defined here
+                try:
+                    key = getattr(manager, 'session_name', None) or f"manager_{self.managers.index(manager)}"
+                except Exception:
+                    key = f"manager_{self.managers.index(manager)}"
                 results[key] = {
                     "success": False,
                     "error": str(e)
@@ -112,8 +115,8 @@ class ZellijLocalManager:
                 }
                 
             except Exception as e:
-                # session_name might be None here, so use a fallback
-                key = session_name if session_name is not None else f"manager_{self.managers.index(manager)}"
+                # Use a fallback key since session_name might not be defined here
+                key = getattr(manager, 'session_name', None) or f"manager_{self.managers.index(manager)}"
                 results[key] = {
                     "success": False,
                     "error": str(e)
@@ -230,7 +233,7 @@ class ZellijLocalManager:
             
             # Session health
             if session_status.get("session_exists", False):
-                print(f"✅ Session is running")
+                print("✅ Session is running")
             else:
                 print(f"❌ Session not found: {session_status.get('error', 'Unknown error')}")
             
