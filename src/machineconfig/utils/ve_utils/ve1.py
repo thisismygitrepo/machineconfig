@@ -66,6 +66,7 @@ def get_ve_activate_line(ve_name: Optional[str], a_path: str):
         print(f"⚠️ .ve_path not found; using the one found in {repo_root}/.venv")
     else:
         # path passed is not a repo root, or .venv doesn't exist, let's try to find .venv by searching up the directory tree
+        activate_ve_line = ""  # Initialize to avoid unbound variable warning
         tmp = P(a_path)
         for _ in range(len(tmp.parts)):
             if tmp.joinpath(".venv").exists():

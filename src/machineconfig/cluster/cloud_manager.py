@@ -260,6 +260,9 @@ class CloudManager:
             if not found_log_type:
                 raise ValueError(f"Job `{a_job}` is not found in any of the log lists.")
             
+            if found_entry_data is None:
+                raise ValueError(f"Job `{a_job}` has no entry data.")
+            
             entry = LogEntry.from_dict(found_entry_data)
             a_job_path = CloudManager.base_path.expanduser().joinpath(f"jobs/{entry.name}")
             entry.note += f"| Job failed @ {entry.run_machine}"

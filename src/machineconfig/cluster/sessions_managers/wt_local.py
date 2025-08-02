@@ -7,7 +7,8 @@ import shlex
 import subprocess
 import random
 import string
-from typing import Dict, List, Optional
+import json
+from typing import Dict, List, Optional, Any
 from pathlib import Path
 import logging
 
@@ -161,7 +162,7 @@ class WTLayoutGenerator:
         WTLayoutGenerator._validate_tab_config(tab_config)
         return self._generate_wt_command_string(tab_config, "preview")
     
-    def check_all_commands_status(self) -> Dict[str, Dict[str, any]]:
+    def check_all_commands_status(self) -> Dict[str, Dict[str, Any]]:
         if not self.tab_config:
             logger.warning("No tab config tracked. Make sure to create a layout first.")
             return {}
@@ -173,7 +174,7 @@ class WTLayoutGenerator:
         return status_report
 
     @staticmethod
-    def check_wt_session_status(session_name: str) -> Dict[str, any]:
+    def check_wt_session_status(session_name: str) -> Dict[str, Any]:
         try:
             # Check for Windows Terminal processes
             wt_check_cmd = [
@@ -249,7 +250,7 @@ class WTLayoutGenerator:
             }
 
     @staticmethod
-    def check_command_status(tab_name: str, tab_config: Dict[str, tuple[str, str]]) -> Dict[str, any]:
+    def check_command_status(tab_name: str, tab_config: Dict[str, tuple[str, str]]) -> Dict[str, Any]:
         """Check if a command is running by looking for processes."""
         if tab_name not in tab_config:
             return {
@@ -325,7 +326,6 @@ Get-Process | ForEach-Object {{
                 for line in output_lines:
                     if line.startswith('{') and line.endswith('}'):
                         try:
-                            import json
                             proc_info = json.loads(line)
                             matching_processes.append(proc_info)
                         except json.JSONDecodeError:
@@ -366,7 +366,7 @@ Get-Process | ForEach-Object {{
                 "tab_name": tab_name
             }
 
-    def get_status_report(self) -> Dict[str, any]:
+    def get_status_report(self) -> Dict[str, Any]:
         """Get status report for this layout including Windows Terminal and commands."""
         wt_status = WTLayoutGenerator.check_wt_session_status(self.session_name or "default")
         commands_status = self.check_all_commands_status()

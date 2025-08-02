@@ -131,7 +131,7 @@ def main() -> None:
     # Add app URLs
     for i, app_info in enumerate(tqdm(app_data, desc="Uploading apps")):
         apps_safe_url = upload(P(app_info["app_path"]).expanduser())
-        app_info["app_url"] = apps_safe_url.as_posix() if type(apps_safe_url) is P else apps_safe_url
+        app_info["app_url"] = apps_safe_url.as_posix() if (apps_safe_url is not None and type(apps_safe_url) is P) else str(apps_safe_url) if apps_safe_url is not None else ""
 
     # Write to CSV using standard library
     csv_path = APP_SUMMARY_PATH.with_suffix(".csv").create(parents_only=True)
@@ -221,13 +221,17 @@ class PrecheckedCloudInstaller:
         if name == "AllEssentials":
             print(f"""
 {'=' * 150}
-📥 DOWNLOAD | Downloading {self.df.shape[0]} apps...
+📥 DOWNLOAD | Downloading {len(self.data)} apps...
 {'=' * 150}
 """)
-            print(self.df)
-            _res = L(self.df.app_url).apply(PrecheckedCloudInstaller.install_cli_apps, jobs=20)
+            print(self.data)
+            app_urls = [item['app_url'] for item in self.data]
+            _res = L(app_urls).apply(PrecheckedCloudInstaller.install_cli_apps, jobs=20)
         else:
-            app_url = self.df[self.df.app_name == name].iloc[0].app_url
+            app_items = [item for item in self.data if item['app_name'] == name]
+            if not app_items:
+                raise ValueError(f"App '{name}' not found in data")
+            app_url = app_items[0]['app_url']
             _res = PrecheckedCloudInstaller.install_cli_apps(app_url=app_url)
 
         # print("\n" * 3)

@@ -83,7 +83,7 @@ def main(direction: OPTIONS, which: Optional[str] = None):
     
     console.print(Panel("💾 GENERATING SHELL SCRIPT\n📄 Filename: backup_retrieve.sh", title="[bold blue]Shell Script Generation[/bold blue]", border_style="blue"))
     
-    write_shell_script_to_default_program_path(program=code, desc="backup_retrieve.sh")
+    write_shell_script_to_default_program_path(program=code, desc="backup_retrieve.sh", preserve_cwd=True, display=True, execute=False)
 
 
 if __name__ == "__main__":

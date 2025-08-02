@@ -68,7 +68,9 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
         script = get_ps1_ve_install_script(ve_name=ve_name, py_version=dotted_py_version, use_web=False, system=system)
     elif platform.system() in ["Linux", "Darwin"]:
         system = "Linux" if platform.system() == "Linux" else "Darwin"
-        script = get_bash_ve_install_script(ve_name=ve_name, py_version=dotted_py_version, use_web=False, system=system)
+        # Map Darwin to Linux for functions that don't support Darwin
+        system_for_functions = "Linux" if system == "Darwin" else system
+        script = get_bash_ve_install_script(ve_name=ve_name, py_version=dotted_py_version, use_web=False, system=system_for_functions)
     else:
         raise NotImplementedError(f"❌ System {platform.system()} not supported.")
 
@@ -76,7 +78,8 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
         if system == "Windows":
             script += "\n" + get_ps1_repos_install_script(ve_name=ve_name, use_web=False, system=system)
         elif system in ["Linux", "Darwin"]:
-            script += "\n" + get_bash_repos_install_script(ve_name=ve_name, use_web=False, system=system)
+            system_for_functions = "Linux" if system == "Darwin" else system
+            script += "\n" + get_bash_repos_install_script(ve_name=ve_name, use_web=False, system=system_for_functions)
         else:
             raise NotImplementedError(f"❌ System {system} not supported.")
 
@@ -84,7 +87,9 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
         script += "\nuv pip install " + other_repos
 
     link_ve: bool = input("🔗 Create symlinks? [y/[n]] ") == "y"
-    if link_ve: create_symlinks(repo_root=P.cwd(), ve_name=ve_name, dotted_py_version=dotted_py_version, system=system, ipy_profile="default")
-    make_installation_recipe(repo_root=P.cwd(), ve_name=ve_name, py_version=dotted_py_version)
+    if link_ve: 
+        system_for_functions = "Linux" if system == "Darwin" else system
+        create_symlinks(repo_root=P.cwd(), ve_name=ve_name, dotted_py_version=dotted_py_version, system=system_for_functions, ipy_profile="default")
+    make_installation_recipe(repo_root=str(P.cwd()), ve_name=ve_name, py_version=dotted_py_version)
     return script
 

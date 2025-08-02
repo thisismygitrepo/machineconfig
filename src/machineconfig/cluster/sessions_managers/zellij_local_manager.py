@@ -42,7 +42,7 @@ class ZellijLocalManager:
 
     def get_all_session_names(self) -> List[str]:
         """Get all managed session names."""
-        return [manager.session_name for manager in self.managers]
+        return [manager.session_name for manager in self.managers if manager.session_name is not None]
 
     def start_all_sessions(self) -> Dict[str, Any]:
         """Start all zellij sessions with their layouts."""
@@ -50,6 +50,9 @@ class ZellijLocalManager:
         for manager in self.managers:
             try:
                 session_name = manager.session_name
+                if session_name is None:
+                    continue  # Skip managers without a session name
+                    
                 layout_path = manager.layout_path
                 
                 if not layout_path:
@@ -79,11 +82,13 @@ class ZellijLocalManager:
                     logger.error(f"❌ Failed to start session '{session_name}': {result.stderr}")
                     
             except Exception as e:
-                results[session_name] = {
+                # session_name might be None here, so use a fallback
+                key = session_name if session_name is not None else f"manager_{self.managers.index(manager)}"
+                results[key] = {
                     "success": False,
                     "error": str(e)
                 }
-                logger.error(f"❌ Exception starting session '{session_name}': {e}")
+                logger.error(f"❌ Exception starting session '{key}': {e}")
         
         return results
 
@@ -93,6 +98,9 @@ class ZellijLocalManager:
         for manager in self.managers:
             try:
                 session_name = manager.session_name
+                if session_name is None:
+                    continue  # Skip managers without a session name
+                    
                 cmd = f"zellij delete-session --force {session_name}"
                 
                 logger.info(f"Killing session '{session_name}'")
@@ -104,7 +112,9 @@ class ZellijLocalManager:
                 }
                 
             except Exception as e:
-                results[session_name] = {
+                # session_name might be None here, so use a fallback
+                key = session_name if session_name is not None else f"manager_{self.managers.index(manager)}"
+                results[key] = {
                     "success": False,
                     "error": str(e)
                 }
@@ -142,6 +152,8 @@ class ZellijLocalManager:
         
         for manager in self.managers:
             session_name = manager.session_name
+            if session_name is None:
+                continue  # Skip managers without a session name
             
             # Get session status
             session_status = ZellijLayoutGenerator.check_zellij_session_status(session_name)
@@ -437,6 +449,8 @@ class ZellijLocalManager:
                 # Filter to only our managed sessions
                 for manager in self.managers:
                     session_name = manager.session_name
+                    if session_name is None:
+                        continue  # Skip managers without a session name
                     is_active = any(session_name in session for session in all_sessions)
                     
                     active_sessions.append({
