@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-from typing import Dict, Tuple, Optional, List
+from typing import Dict, Tuple, Optional, List, Union
+from typing import Any
 from pathlib import Path
 import logging
 import json
@@ -48,35 +49,35 @@ class ZellijRemoteLayoutGenerator:
     def get_layout_preview(self, tab_config: Dict[str, Tuple[str, str]]) -> str:
         return self.layout_generator.generate_layout_content(tab_config)
     
-    def check_command_status(self, tab_name: str, use_verification: bool = True) -> Dict[str, any]:
+    def check_command_status(self, tab_name: str, use_verification: bool = True) -> Dict[str, Any]:
         return self.process_monitor.check_command_status(tab_name, self.tab_config, use_verification)
 
-    def check_all_commands_status(self) -> Dict[str, Dict[str, any]]:
+    def check_all_commands_status(self) -> Dict[str, Dict[str, Any]]:
         return self.process_monitor.check_all_commands_status(self.tab_config)
 
-    def check_zellij_session_status(self) -> Dict[str, any]:
+    def check_zellij_session_status(self) -> Dict[str, Any]:
         return self.session_manager.check_zellij_session_status()
 
-    def get_comprehensive_status(self) -> Dict[str, any]:
+    def get_comprehensive_status(self) -> Dict[str, Any]:
         return self.status_reporter.get_comprehensive_status(self.tab_config)
 
     def print_status_report(self) -> None:
         self.status_reporter.print_status_report(self.tab_config)
 
-    def start_zellij_session(self, layout_file_path: Optional[str] = None) -> Dict[str, any]:
+    def start_zellij_session(self, layout_file_path: Optional[str] = None) -> Dict[str, Any]:
         return self.session_manager.start_zellij_session(layout_file_path or self.layout_path)
 
     def attach_to_session(self) -> None:
         self.session_manager.attach_to_session()
 
     # Legacy methods for backward compatibility
-    def force_fresh_process_check(self, tab_name: str) -> Dict[str, any]:
+    def force_fresh_process_check(self, tab_name: str) -> Dict[str, Any]:
         return self.process_monitor.force_fresh_process_check(tab_name, self.tab_config)
 
     def verify_process_alive(self, pid: int) -> bool:
         return self.process_monitor.verify_process_alive(pid)
 
-    def get_verified_process_status(self, tab_name: str) -> Dict[str, any]:
+    def get_verified_process_status(self, tab_name: str) -> Dict[str, Any]:
         return self.process_monitor.get_verified_process_status(tab_name, self.tab_config)
 
     # Static methods for backward compatibility
@@ -85,7 +86,7 @@ class ZellijRemoteLayoutGenerator:
         executor = RemoteExecutor(remote_name)
         return executor.run_command(command, timeout)
 
-    def to_dict(self) -> Dict[str, any]:
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "remote_name": self.remote_name,
             "session_name": self.session_name,
@@ -95,7 +96,7 @@ class ZellijRemoteLayoutGenerator:
             "class_name": self.__class__.__name__
         }
 
-    def to_json(self, file_path: Optional[str] = None) -> str:
+    def to_json(self, file_path: Optional[Union[str, Path]] = None) -> str:
         # Generate file path if not provided
         if file_path is None:
             random_id = str(uuid.uuid4())[:8]
@@ -122,7 +123,7 @@ class ZellijRemoteLayoutGenerator:
         return str(file_path)
 
     @classmethod
-    def from_json(cls, file_path: str) -> 'ZellijRemoteLayoutGenerator':
+    def from_json(cls, file_path: Union[str, Path]) -> 'ZellijRemoteLayoutGenerator':
         file_path = Path(file_path)
         
         # Ensure .json extension
@@ -159,7 +160,7 @@ class ZellijRemoteLayoutGenerator:
         return instance
 
     @staticmethod
-    def list_saved_sessions(directory_path: Optional[str] = None) -> List[str]:
+    def list_saved_sessions(directory_path: Optional[Union[str, Path]] = None) -> List[str]:
         if directory_path is None:
             directory_path = Path.home() / "tmp_results" / "zellij_sessions" / "serialized"
         else:

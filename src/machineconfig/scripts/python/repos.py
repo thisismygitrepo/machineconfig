@@ -54,9 +54,9 @@ git commit -am "{mess}"
         action_name = "pull" if action == GitAction.pull else "push"
         cmds = [f'echo "🔄 {action_name.capitalize()}ing from {remote.url}" ; git {action_name} {remote.name} {repo.active_branch.name}' for remote in repo.remotes]
         program += '\n' + '\n'.join(cmds) + '\n'
-    uv_sync = "uv sync" if uv_sync else ""
+    uv_sync_cmd = "uv sync" if uv_sync else ""
     program = program + f'''
-{uv_sync}
+{uv_sync_cmd}
 echo "✅"; echo ""
 '''
     return program
