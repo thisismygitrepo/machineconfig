@@ -46,11 +46,11 @@ def inspect_repos(repo_local_root: str, repo_remote_root: str):
 
     if platform.system() == "Windows":
         program = get_wt_cmd(wd1=P(repo_local_root), wd2=P(repo_local_root))
-        write_shell_script_to_file(program=program, execute=True, desc="Inspecting repos ...", preserve_cwd=True, display=True)
+        write_shell_script_to_file(shell_script=program)
         return None
     elif platform.system() in ["Linux", "Darwin"]:
         program = get_zellij_cmd(wd1=P(repo_local_root), wd2=P(repo_remote_root))
-        write_shell_script_to_file(program=program, execute=True, desc="Inspecting repos ...", preserve_cwd=True, display=True)
+        write_shell_script_to_file(shell_script=program)
         return None
     else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
 
