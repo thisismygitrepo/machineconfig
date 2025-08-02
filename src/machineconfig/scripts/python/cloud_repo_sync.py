@@ -147,6 +147,8 @@ git commit -am "finished merging"
             case "overwriteLocal": program_content = program_2
             case "InspectRepos": program_content = shell_file_3.read_text()
             case "RemoveLocalRclone": program_content = program_4
+            case _: 
+                raise ValueError(f"Unknown action: {action}")
         PROGRAM_PATH.write_text(program_content)
     return program_content
 
