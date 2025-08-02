@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from typing import Dict, Tuple, Optional, List, Any
+from typing import Dict, Tuple, Optional, List, Union, Any
 from pathlib import Path
 import logging
 import json
@@ -95,7 +95,7 @@ class ZellijRemoteLayoutGenerator:
             "class_name": self.__class__.__name__
         }
 
-    def to_json(self, file_path: Optional[str] = None) -> str:
+    def to_json(self, file_path: Optional[Union[str, Path]] = None) -> str:
         # Generate file path if not provided
         if file_path is None:
             random_id = str(uuid.uuid4())[:8]
@@ -122,7 +122,7 @@ class ZellijRemoteLayoutGenerator:
         return str(file_path_obj)
 
     @classmethod
-    def from_json(cls, file_path: str) -> 'ZellijRemoteLayoutGenerator':
+    def from_json(cls, file_path: Union[str, Path]) -> 'ZellijRemoteLayoutGenerator':
         file_path = Path(file_path)
         
         # Ensure .json extension
@@ -159,7 +159,7 @@ class ZellijRemoteLayoutGenerator:
         return instance
 
     @staticmethod
-    def list_saved_sessions(directory_path: Optional[str] = None) -> List[str]:
+    def list_saved_sessions(directory_path: Optional[Union[str, Path]] = None) -> List[str]:
         if directory_path is None:
             directory_path = Path.home() / "tmp_results" / "zellij_sessions" / "serialized"
         else:

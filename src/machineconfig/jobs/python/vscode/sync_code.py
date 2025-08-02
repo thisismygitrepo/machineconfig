@@ -1,4 +1,4 @@
-from crocodile.core import Read
+from crocodile.file_management import Read
 from pathlib import Path
 
 config = Read.ini(Path.home().joinpath(".ssh", "config"))

@@ -37,6 +37,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
 import requests
+from urllib.parse import quote
 import json
 
 
@@ -259,7 +260,7 @@ def simple_upload(local_file: Path, remote_path: str) -> bool:
             file_content = f.read()
         
         # URL encode the remote path and use specific drive
-        encoded_path = requests.utils.quote(remote_path, safe='/')
+        encoded_path = quote(remote_path, safe='/')
         drive_id = get_drive_id()
         endpoint = f"drives/{drive_id}/root:{encoded_path}:/content"
         
@@ -281,7 +282,7 @@ def resumable_upload(local_file: Path, remote_path: str) -> bool:
     """Upload large files using resumable upload."""
     try:
         # Create upload session using specific drive
-        encoded_path = requests.utils.quote(remote_path, safe='/')
+        encoded_path = quote(remote_path, safe='/')
         drive_id = get_drive_id()
         endpoint = f"drives/{drive_id}/root:{encoded_path}:/createUploadSession"
         
@@ -352,7 +353,7 @@ def pull_from_onedrive(remote_path: str, local_path: str) -> bool:
     
     try:
         # Get file metadata and download URL using specific drive
-        encoded_path = requests.utils.quote(remote_path, safe='/')
+        encoded_path = quote(remote_path, safe='/')
         drive_id = get_drive_id()
         endpoint = f"drives/{drive_id}/root:{encoded_path}"
         
@@ -426,7 +427,7 @@ def create_remote_directory(remote_path: str) -> bool:
     
     try:
         # Check if directory already exists using specific drive
-        encoded_path = requests.utils.quote(remote_path, safe='/')
+        encoded_path = quote(remote_path, safe='/')
         drive_id = get_drive_id()
         endpoint = f"drives/{drive_id}/root:{encoded_path}"
         
@@ -447,7 +448,7 @@ def create_remote_directory(remote_path: str) -> bool:
         
         # Create the directory
         dir_name = os.path.basename(remote_path)
-        parent_encoded = requests.utils.quote(parent_dir if parent_dir else '/', safe='/')
+        parent_encoded = quote(parent_dir if parent_dir else '/', safe='/')
         
         if parent_dir and parent_dir != '/':
             endpoint = f"drives/{drive_id}/root:{parent_encoded}:/children"

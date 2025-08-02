@@ -3,7 +3,7 @@ import json
 import uuid
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any
 from crocodile.meta import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import run_command_in_wt_tab
 from machineconfig.cluster.sessions_managers.wt_remote import WTRemoteLayoutGenerator
@@ -183,7 +183,7 @@ class WTSessionManager:
             logging.error(f"Failed to delete session {session_id}: {e}")
             return False
 
-    def start_all_sessions(self) -> dict[str, any]:
+    def start_all_sessions(self) -> dict[str, Any]:
         """Start all Windows Terminal sessions on their respective remote machines."""
         results = {}
         for manager in self.managers:
@@ -210,7 +210,7 @@ class WTSessionManager:
         
         return results
 
-    def check_all_sessions_status(self) -> dict[str, dict[str, any]]:
+    def check_all_sessions_status(self) -> dict[str, dict[str, Any]]:
         """Check the status of all remote sessions and their commands."""
         status_report = {}
         
@@ -257,7 +257,7 @@ class WTSessionManager:
         
         return status_report
 
-    def get_global_summary(self) -> dict[str, any]:
+    def get_global_summary(self) -> dict[str, Any]:
         """Get a global summary across all remote sessions."""
         all_status = self.check_all_sessions_status()
         
@@ -346,7 +346,7 @@ class WTSessionManager:
         
         print("=" * 80)
 
-    def get_remote_overview(self) -> dict[str, any]:
+    def get_remote_overview(self) -> dict[str, Any]:
         """Get overview of all remote machines and their Windows Terminal status."""
         overview = {}
         

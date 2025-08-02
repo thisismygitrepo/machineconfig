@@ -171,7 +171,7 @@ print_logo(logo="crocodile")
     if ipython_profile is None:
         ve_profile_suggested, ipython_profile = get_ve_name_and_ipython_profile(P(file))
         ipython_profile = ipython_profile if ipython_profile is not None else "default"
-    ve_activateion_line = get_ve_activate_line(ve_name=args.ve or ve_profile_suggested, a_path=P.cwd())
+    ve_activateion_line = get_ve_activate_line(ve_name=args.ve or ve_profile_suggested, a_path=str(P.cwd()))
     final_program = f"""
 #!/bin/bash
 

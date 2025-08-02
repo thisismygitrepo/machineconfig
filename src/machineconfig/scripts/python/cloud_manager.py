@@ -1,7 +1,7 @@
 """Run cloud manager.
 """
 
-# from machineconfig.cluster.loader_runner import CloudManager
+from machineconfig.cluster.cloud_manager import CloudManager
 from rich.console import Console  # Add import for Console
 from rich.panel import Panel  # Add import for Panel
 import argparse
@@ -16,26 +16,6 @@ def print_section_title(title: str):
     """Prints a section title formatted nicely with a border and padding."""
     console = Console()
     console.print(Panel(title, title_align="left", expand=False))
-
-
-class CloudManager:
-    """Manages cloud operations like syncing, comparing, and listing files."""
-
-    def compare_local_and_cloud(self, sub_path: Path):
-        """Compares local and cloud files and prints a summary."""
-        local_files, cloud_files = self._get_local_and_cloud_files(sub_path)
-        title1 = f"Comparing Local and Cloud: {sub_path.name}"
-        run_line = f"Local files: {len(local_files)}"
-        cloud_line = f"Cloud files: {len(cloud_files)}"
-        console = Console()
-        console.print(Panel(f"{title1}\n{run_line}\n{cloud_line}", title_align="left", expand=False))
-
-    def list_cloud_files(self, sub_path: Path):
-        """Lists files in the cloud directory."""
-        cloud_files = self._get_cloud_files(sub_path)
-        title = f"Cloud Files in {sub_path.name}: {len(cloud_files)}"
-        console = Console()
-        console.print(Panel(title, title_align="left", expand=False))
 
 
 def main():

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from typing import Dict, Tuple, Optional, List
+from typing import Dict, Tuple, Optional, List, Any
 from pathlib import Path
 import logging
 import json
@@ -48,35 +48,35 @@ class WTRemoteLayoutGenerator:
     def get_layout_preview(self, tab_config: Dict[str, Tuple[str, str]]) -> str:
         return self.layout_generator.generate_wt_command(tab_config)
     
-    def check_command_status(self, tab_name: str, use_verification: bool = True) -> Dict[str, any]:
+    def check_command_status(self, tab_name: str, use_verification: bool = True) -> Dict[str, Any]:
         return self.process_monitor.check_command_status(tab_name, self.tab_config, use_verification)
 
-    def check_all_commands_status(self) -> Dict[str, Dict[str, any]]:
+    def check_all_commands_status(self) -> Dict[str, Dict[str, Any]]:
         return self.process_monitor.check_all_commands_status(self.tab_config)
 
-    def check_wt_session_status(self) -> Dict[str, any]:
+    def check_wt_session_status(self) -> Dict[str, Any]:
         return self.session_manager.check_wt_session_status()
 
-    def get_comprehensive_status(self) -> Dict[str, any]:
+    def get_comprehensive_status(self) -> Dict[str, Any]:
         return self.status_reporter.get_comprehensive_status(self.tab_config)
 
     def print_status_report(self) -> None:
         self.status_reporter.print_status_report(self.tab_config)
 
-    def start_wt_session(self, script_file_path: Optional[str] = None) -> Dict[str, any]:
+    def start_wt_session(self, script_file_path: Optional[str] = None) -> Dict[str, Any]:
         return self.session_manager.start_wt_session(script_file_path or self.script_path)
 
     def attach_to_session(self) -> None:
         self.session_manager.attach_to_session()
 
     # Legacy methods for backward compatibility
-    def force_fresh_process_check(self, tab_name: str) -> Dict[str, any]:
+    def force_fresh_process_check(self, tab_name: str) -> Dict[str, Any]:
         return self.process_monitor.force_fresh_process_check(tab_name, self.tab_config)
 
     def verify_process_alive(self, pid: int) -> bool:
         return self.process_monitor.verify_process_alive(pid)
 
-    def get_verified_process_status(self, tab_name: str) -> Dict[str, any]:
+    def get_verified_process_status(self, tab_name: str) -> Dict[str, Any]:
         return self.process_monitor.get_verified_process_status(tab_name, self.tab_config)
 
     # Static methods for backward compatibility
@@ -85,23 +85,23 @@ class WTRemoteLayoutGenerator:
         executor = WTRemoteExecutor(remote_name)
         return executor.run_command(command, timeout)
 
-    def kill_wt_session(self, force: bool = True) -> Dict[str, any]:
+    def kill_wt_session(self, force: bool = True) -> Dict[str, Any]:
         """Kill Windows Terminal processes on the remote machine."""
         return self.session_manager.kill_wt_session(force)
 
-    def create_new_tab(self, tab_name: str, cwd: str, command: str) -> Dict[str, any]:
+    def create_new_tab(self, tab_name: str, cwd: str, command: str) -> Dict[str, Any]:
         """Create a new tab in the Windows Terminal session."""
         return self.session_manager.create_new_tab(tab_name, cwd, command, self.session_name)
 
-    def get_wt_version(self) -> Dict[str, any]:
+    def get_wt_version(self) -> Dict[str, Any]:
         """Get Windows Terminal version information on the remote machine."""
         return self.session_manager.get_wt_version()
 
-    def get_remote_windows_info(self) -> Dict[str, any]:
+    def get_remote_windows_info(self) -> Dict[str, Any]:
         """Get information about the remote Windows system."""
         return self.remote_executor.get_remote_windows_info()
 
-    def to_dict(self) -> Dict[str, any]:
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "remote_name": self.remote_name,
             "session_name": self.session_name,
@@ -117,39 +117,39 @@ class WTRemoteLayoutGenerator:
             random_id = str(uuid.uuid4())[:8]
             default_dir = Path.home() / "tmp_results" / "wt_sessions" / "serialized"
             default_dir.mkdir(parents=True, exist_ok=True)
-            file_path = default_dir / f"wt_session_{random_id}.json"
+            path_obj = default_dir / f"wt_session_{random_id}.json"
         else:
-            file_path = Path(file_path)
+            path_obj = Path(file_path)
         
         # Ensure .json extension
-        if not str(file_path).endswith('.json'):
-            file_path = file_path.with_suffix('.json')
+        if not str(path_obj).endswith('.json'):
+            path_obj = path_obj.with_suffix('.json')
             
         # Ensure parent directory exists
-        file_path.parent.mkdir(parents=True, exist_ok=True)
+        path_obj.parent.mkdir(parents=True, exist_ok=True)
         
         # Serialize to JSON
         data = self.to_dict()
         
-        with open(file_path, 'w', encoding='utf-8') as f:
+        with open(path_obj, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
         
-        logger.info(f"✅ Serialized WTRemoteLayoutGenerator to: {file_path}")
-        return str(file_path)
+        logger.info(f"✅ Serialized WTRemoteLayoutGenerator to: {path_obj}")
+        return str(path_obj)
 
     @classmethod
     def from_json(cls, file_path: str) -> 'WTRemoteLayoutGenerator':
-        file_path = Path(file_path)
+        path_obj = Path(file_path)
         
         # Ensure .json extension
-        if not str(file_path).endswith('.json'):
-            file_path = file_path.with_suffix('.json')
+        if not str(path_obj).endswith('.json'):
+            path_obj = path_obj.with_suffix('.json')
             
-        if not file_path.exists():
-            raise FileNotFoundError(f"JSON file not found: {file_path}")
+        if not path_obj.exists():
+            raise FileNotFoundError(f"JSON file not found: {path_obj}")
         
         # Load JSON data
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(path_obj, 'r', encoding='utf-8') as f:
             data = json.load(f)
         
         # Validate that it's the correct class
@@ -177,29 +177,29 @@ class WTRemoteLayoutGenerator:
     @staticmethod
     def list_saved_sessions(directory_path: Optional[str] = None) -> List[str]:
         if directory_path is None:
-            directory_path = Path.home() / "tmp_results" / "wt_sessions" / "serialized"
+            dir_path = Path.home() / "tmp_results" / "wt_sessions" / "serialized"
         else:
-            directory_path = Path(directory_path)
+            dir_path = Path(directory_path)
             
-        if not directory_path.exists():
+        if not dir_path.exists():
             return []
         
-        json_files = [f.name for f in directory_path.glob("*.json")]
+        json_files = [f.name for f in dir_path.glob("*.json")]
         return sorted(json_files)
 
     def check_wt_available(self) -> bool:
         """Check if Windows Terminal is available on the remote machine."""
         return self.remote_executor.check_wt_available()
 
-    def list_wt_processes(self) -> Dict[str, any]:
+    def list_wt_processes(self) -> Dict[str, Any]:
         """List Windows Terminal processes on the remote machine."""
         return self.remote_executor.list_wt_processes()
 
-    def kill_wt_processes(self, process_ids: list = None) -> Dict[str, any]:
+    def kill_wt_processes(self, process_ids: Optional[List[Any]] = None) -> Dict[str, Any]:
         """Kill Windows Terminal processes on the remote machine."""
         return self.remote_executor.kill_wt_processes(process_ids)
 
-    def get_windows_terminal_overview(self) -> Dict[str, any]:
+    def get_windows_terminal_overview(self) -> Dict[str, Any]:
         """Get overview of Windows Terminal on the remote machine."""
         return self.status_reporter.get_windows_terminal_overview()
 
@@ -207,11 +207,11 @@ class WTRemoteLayoutGenerator:
         """Print overview of Windows Terminal on the remote machine."""
         self.status_reporter.print_windows_terminal_overview()
 
-    def generate_status_summary(self) -> Dict[str, any]:
+    def generate_status_summary(self) -> Dict[str, Any]:
         """Generate a concise status summary for monitoring."""
         return self.status_reporter.generate_status_summary(self.tab_config)
 
-    def check_tab_specific_status(self, tab_name: str) -> Dict[str, any]:
+    def check_tab_specific_status(self, tab_name: str) -> Dict[str, Any]:
         """Get detailed status for a specific tab."""
         return self.status_reporter.check_tab_specific_status(tab_name, self.tab_config)
 

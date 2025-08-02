@@ -1,7 +1,9 @@
 """Script to start terminals on windows and wsl
 """
 
-from machineconfig.utils.utils import PROGRAM_PATH, display_options, get_ssh_hosts, platform
+from machineconfig.utils.utils import PROGRAM_PATH, display_options
+from machineconfig.utils.options import get_ssh_hosts
+import platform
 from itertools import cycle
 from typing import Literal
 
