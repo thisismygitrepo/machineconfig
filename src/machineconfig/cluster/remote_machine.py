@@ -174,7 +174,11 @@ deactivate
     def show_scripts(self) -> None:
         Console().print(Panel(Syntax(self.file_manager.shell_script_path.expanduser().read_text(encoding='utf-8'), lexer="ps1" if self.ssh.get_remote_machine() == "Windows" else "sh", theme="monokai", line_numbers=True), title="prepared shell script"))
         Console().print(Panel(Syntax(self.file_manager.py_script_path.expanduser().read_text(encoding='utf-8'), lexer="ps1" if self.ssh.get_remote_machine() == "Windows" else "sh", theme="monokai", line_numbers=True), title="prepared python script"))
-        inspect(shell_script=repr(P(self.file_manager.shell_script_path).expanduser(), python_script=repr(P(self.file_manager.py_script_path).expanduser()), kwargs_file=repr(P(self.file_manager.kwargs_path).expanduser())), title="Prepared scripts and files.", value=False, docs=False, sort=False)
+        inspect({
+            "shell_script": repr(P(self.file_manager.shell_script_path).expanduser()),
+            "python_script": repr(P(self.file_manager.py_script_path).expanduser()),
+            "kwargs_file": repr(P(self.file_manager.kwargs_path).expanduser())
+        }, title="Prepared scripts and files.", value=False, docs=False, sort=False)
 
     def wait_for_results(self, sleep_minutes: int = 10) -> None:
         assert self.submitted, "Job even not submitted yet. 🤔"
