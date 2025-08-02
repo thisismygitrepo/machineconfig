@@ -4,7 +4,7 @@ import psutil
 from tqdm import tqdm
 from pytz import timezone
 from machineconfig.utils.utils import display_options
-from typing import Optional
+from typing import Optional, Any
 from rich.console import Console
 from rich.panel import Panel
 from rich import inspect
@@ -196,7 +196,7 @@ class ProcessManager:
         console.print(Panel(f"✅ Termination complete: {killed_count} processes terminated", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
 
-def get_age(create_time):
+def get_age(create_time: Any) -> str:
     """Calculate age from create_time which can be either float timestamp or datetime object."""
     try:
         if isinstance(create_time, (int, float)):
@@ -209,7 +209,7 @@ def get_age(create_time):
         
         now_local = datetime.now(tz=timezone('Australia/Adelaide'))
         age = now_local - create_time_local
-        return age
+        return str(age)
     except Exception as e:
         try:
             # Fallback without timezone
@@ -219,7 +219,7 @@ def get_age(create_time):
                 create_time_dt = create_time.replace(tzinfo=None) if create_time.tzinfo else create_time
             now_dt = datetime.now()
             age = now_dt - create_time_dt
-            return age
+            return str(age)
         except Exception as ee:
             return f"unknown due to {ee} and {e}"
 

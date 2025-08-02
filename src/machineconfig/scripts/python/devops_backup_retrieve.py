@@ -39,7 +39,7 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
         console.print(Panel(f"🔍 SELECT {direction} ITEMS\n📋 Choose which configuration entries to process", title="[bold blue]Select Items[/bold blue]", border_style="blue"))
         choices = choose_multiple_options(msg=f"WHICH FILE of the following do you want to {direction}?", options=['all'] + list(bu_file.keys()))
     else:
-        choices = which.split(",") if isinstance(which, str) else which
+        choices = which.split(",") if which else []
         console.print(Panel(f"🔖 PRE-SELECTED ITEMS\n📝 Using: {', '.join(choices)}", title="[bold blue]Pre-selected Items[/bold blue]", border_style="blue"))
 
     if "all" in choices:

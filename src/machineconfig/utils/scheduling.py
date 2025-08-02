@@ -6,6 +6,9 @@ from crocodile.file_management import P, Read, Save
 from machineconfig.utils.utils import get_shell_script_executing_python_file
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from typing import Optional, Any
+from rich.console import Console
+from rich.panel import Panel
 import platform
 import subprocess
 
@@ -14,9 +17,6 @@ def str2timedelta(time_str: str) -> timedelta:
     """Convert string to timedelta. Simple implementation for common cases."""
     # Handle common formats like "1h", "30m", "2d", etc.
     import re
-    
-    if not isinstance(time_str, str):
-        return time_str  # Assume it's already a timedelta
     
     # Parse patterns like "1h", "30m", "2d", "1w"
     match = re.match(r'^(\d+)([hdwm])$', time_str.lower())
@@ -38,10 +38,6 @@ def str2timedelta(time_str: str) -> timedelta:
         return timedelta(seconds=int(time_str))
     except ValueError:
         raise ValueError(f"Cannot parse time string: {time_str}")
-from typing import Optional, Any
-# from crocodile.meta import Scheduler
-from rich.console import Console
-from rich.panel import Panel
 
 
 def format_table_markdown(data: list[dict[str, Any]]) -> str:

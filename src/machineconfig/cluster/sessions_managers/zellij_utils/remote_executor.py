@@ -15,7 +15,7 @@ class RemoteExecutor:
     def __init__(self, remote_name: str):
         self.remote_name = remote_name
     
-    def run_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess:
+    def run_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess[str]:
         """Execute a command on the remote machine via SSH."""
         ssh_cmd = ["ssh", self.remote_name, command]
         try:

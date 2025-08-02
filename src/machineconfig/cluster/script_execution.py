@@ -78,7 +78,7 @@ print("\n" + "═" * 80 + "\n")
 # ######################### END OF EXECUTION #############################
 
 
-if type(res) is P or (type(res) is str and P(res).expanduser().exists()):
+if isinstance(res, P) or (res and P(res).expanduser().exists()):
     res_folder = P(res).expanduser()
 else:
     res_folder = P.tmp(folder=rf"tmp_dirs/{manager.job_id}").create()

@@ -5,9 +5,8 @@ Process monitoring and status checking utilities for remote commands.
 import json
 import shlex
 import logging
-from typing import Dict, List, Tuple, Any
+from typing import Dict, Tuple, Any
 from .remote_executor import RemoteExecutor
-from .layout_generator import LayoutGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +38,7 @@ class ProcessMonitor:
     
     def _basic_process_check(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
         """Basic process checking without verification."""
-        cwd, command = tab_config[tab_name]
+        _, command = tab_config[tab_name]
         
         try:
             check_script = self._create_process_check_script(command)
@@ -160,7 +159,7 @@ if __name__ == "__main__":
                 "remote": self.remote_executor.remote_name
             }
         
-        cwd, command = tab_config[tab_name]
+        _, command = tab_config[tab_name]
         
         try:
             # Get timestamp for freshness validation

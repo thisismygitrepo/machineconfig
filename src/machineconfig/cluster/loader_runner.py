@@ -88,14 +88,6 @@ class LogEntry:
     note: str
     @staticmethod
     def from_dict(a_dict: dict[str, Any]):
-        def parse_datetime(dt_str):
-            if dt_str is None or dt_str == "" or dt_str == "None":
-                return None
-            try:
-                return datetime.fromisoformat(str(dt_str))
-            except ValueError:
-                return None
-        
         return LogEntry(
             name=a_dict["name"], 
             submission_time=str(a_dict["submission_time"]), 

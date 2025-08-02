@@ -1,4 +1,3 @@
-from crocodile.core import Struct
 from crocodile.file_management import Read
 from machineconfig.scripts.python.helpers.cloud_helpers import Args, ArgsDefaults, absolute, find_cloud_config, get_secure_share_cloud_config
 from machineconfig.utils.utils import DEFAULTS_PATH

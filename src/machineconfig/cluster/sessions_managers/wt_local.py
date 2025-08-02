@@ -261,7 +261,7 @@ class WTLayoutGenerator:
                 "command": None
             }
         
-        cwd, command = tab_config[tab_name]
+        _, command = tab_config[tab_name]
         
         try:
             # Create PowerShell script to check for processes

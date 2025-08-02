@@ -301,7 +301,7 @@ class WTSessionManager:
         print()
         
         # Per-session details
-        for session_key, status in all_status.items():
+        for _, status in all_status.items():
             remote_name = status["remote_name"]
             session_name = status["session_name"]
             

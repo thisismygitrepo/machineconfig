@@ -4,6 +4,7 @@
 
 import time
 import platform
+from typing import Any
 from rich.console import Console
 from rich import inspect
 # from rich.progress import track
@@ -101,7 +102,7 @@ def main() -> None:
     apps_paths_raw.print()
     positive_pct: list[Optional[float]] = []
     scan_time: list[str] = []
-    detailed_results: list[dict[str, Optional[list]]] = []
+    detailed_results: list[dict[str, Optional[list[Any]]]] = []
 
     for idx, app in enumerate(apps_paths_raw):
         try: res = scan(path=app, pct=idx / len(apps_paths_raw) * 100)
@@ -143,7 +144,7 @@ def main() -> None:
             writer.writerows(app_data)
 
     # Create markdown table
-    def format_app_table_markdown(data: list[dict]) -> str:
+    def format_app_table_markdown(data: list[dict[str, Any]]) -> str:
         if not data:
             return ""
         keys = list(data[0].keys())

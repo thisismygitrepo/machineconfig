@@ -11,7 +11,6 @@ from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text # Added import for rich.text
-from rich import inspect
 
 console = Console()
 

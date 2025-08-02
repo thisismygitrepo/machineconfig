@@ -3,7 +3,6 @@
 """
 
 from IPython.core.magic import register_line_magic
-from crocodile.core import Struct
 from machineconfig.utils.utils2 import randstr
 from crocodile.file_management import P
 from rich import inspect

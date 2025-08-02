@@ -5,7 +5,6 @@ from machineconfig.cluster.cloud_manager import CloudManager
 from rich.console import Console  # Add import for Console
 from rich.panel import Panel  # Add import for Panel
 import argparse
-from pathlib import Path
 
 console = Console()
 

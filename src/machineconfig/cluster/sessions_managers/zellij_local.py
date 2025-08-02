@@ -141,7 +141,7 @@ class ZellijLayoutGenerator:
             }
         
         cwd, command = tab_config[tab_name]
-        cmd, args = ZellijLayoutGenerator._parse_command(command)
+        cmd, _ = ZellijLayoutGenerator._parse_command(command)
         
         try:
             # Look for processes matching the command

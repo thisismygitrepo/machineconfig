@@ -4,12 +4,10 @@ Process monitoring and status checking utilities for Windows Terminal commands.
 Adapted from zellij process monitor but focused on Windows processes.
 """
 import json
-import shlex
 import logging
 import subprocess
-from typing import Dict, List, Tuple, Any, Optional
+from typing import Dict, Tuple, Any, Optional
 from .remote_executor import WTRemoteExecutor
-from .layout_generator import WTLayoutGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +24,7 @@ class WTProcessMonitor:
         """Get the location name for status reporting."""
         return "local" if self.is_local else (self.remote_executor.remote_name if self.remote_executor else "unknown")
     
-    def _run_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess:
+    def _run_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess[str]:
         """Run command either locally or remotely."""
         if self.is_local:
             return subprocess.run(
@@ -61,7 +59,7 @@ class WTProcessMonitor:
     
     def _basic_process_check(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
         """Basic process checking without verification."""
-        cwd, command = tab_config[tab_name]
+        _, command = tab_config[tab_name]
         
         try:
             check_script = self._create_process_check_script(command)
@@ -192,7 +190,7 @@ Get-Process | ForEach-Object {{
                 "location": self.location_name
             }
         
-        cwd, command = tab_config[tab_name]
+        _, command = tab_config[tab_name]
         
         try:
             # Get timestamp for freshness validation

@@ -3,8 +3,6 @@
 
 import git
 from crocodile.file_management import P
-from rich import inspect
-
 from typing import Optional, Callable, Union, Any
 from machineconfig.cluster.remote_machine import WorkloadParams
 from dataclasses import dataclass

@@ -3,7 +3,6 @@ CC
 """
 
 from crocodile.file_management import P
-from crocodile.core import Struct
 from crocodile.meta import RepeatUntilNoException
 import getpass
 import argparse

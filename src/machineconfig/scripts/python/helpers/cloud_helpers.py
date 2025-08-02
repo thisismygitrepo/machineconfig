@@ -1,4 +1,3 @@
-from crocodile.core import Struct
 from crocodile.file_management import P, Read
 from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass

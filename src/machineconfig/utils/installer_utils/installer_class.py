@@ -1,4 +1,3 @@
-from crocodile.core import Struct
 from crocodile.file_management import P, Read
 from crocodile.meta import Terminal
 from machineconfig.utils.installer_utils.installer_abc import find_move_delete_linux, find_move_delete_windows

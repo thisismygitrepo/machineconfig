@@ -16,7 +16,7 @@ class WTRemoteExecutor:
     def __init__(self, remote_name: str):
         self.remote_name = remote_name
     
-    def run_command(self, command: str, timeout: int = 30, shell: str = "powershell") -> subprocess.CompletedProcess:
+    def run_command(self, command: str, timeout: int = 30, shell: str = "powershell") -> subprocess.CompletedProcess[str]:
         """Execute a command on the remote machine via SSH."""
         # For Windows Terminal on remote machines, we need to use PowerShell or CMD
         if shell == "powershell":
@@ -107,7 +107,7 @@ class WTRemoteExecutor:
                 "error": str(e)
             }
     
-    def run_wt_command(self, wt_command: str, detached: bool = True) -> subprocess.CompletedProcess:
+    def run_wt_command(self, wt_command: str, detached: bool = True) -> subprocess.CompletedProcess[str]:
         """Run a Windows Terminal command on the remote machine."""
         try:
             if detached:
