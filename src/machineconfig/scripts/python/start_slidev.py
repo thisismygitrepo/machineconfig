@@ -3,7 +3,8 @@ slidev
 """
 
 from machineconfig.utils.utils import CONFIG_PATH, PROGRAM_PATH, print_code
-from crocodile.meta import Terminal, P
+from crocodile.file_management import P
+from crocodile.meta import Terminal
 import subprocess
 import platform
 
