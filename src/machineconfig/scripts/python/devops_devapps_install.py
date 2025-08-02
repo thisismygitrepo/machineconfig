@@ -49,10 +49,10 @@ def main(which: Optional[WHICH_CAT | str] = None):
                     installers.append(Installer.from_dict(d=vd, name=name))
                 except Exception as e:
                     # print(vd)
-                    from rich import inspect
+                    from machineconfig.utils.utils2 import pprint
                     # from pprint import pprint
                     # from rich import print
-                    inspect(vd, value=True, title="corrupt attrs", docs=False, dunder=False, sort=False)
+                    pprint(vd, "corrupt attrs")
                     print(vd)
                     raise e from e1
     options = [x.get_description() for x in tqdm(installers, desc="✅ Checking installed programs")] + list(get_args(WHICH_CAT))

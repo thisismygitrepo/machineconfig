@@ -2,7 +2,7 @@ from crocodile.file_management import P, Read
 from crocodile.meta import Terminal
 from machineconfig.utils.installer_utils.installer_abc import find_move_delete_linux, find_move_delete_windows
 from machineconfig.utils.utils import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT, LIBRARY_ROOT, check_tool_exists
-from rich import inspect
+from machineconfig.utils.utils2 import pprint
 
 import platform
 from typing import Any, Optional
@@ -42,7 +42,7 @@ class Installer:
     def from_dict(d: dict[str, Any], name: str):
         try: return Installer(name=name, **d)
         except Exception as ex:
-            inspect(d, value=False, docs=False, dunder=False, sort=False)
+            pprint(d, "Installer Creation Error")
             raise ex
     @staticmethod
     def choose_app_and_install():

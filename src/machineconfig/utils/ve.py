@@ -7,7 +7,7 @@ from crocodile.file_management import P
 import platform
 from typing import Optional, Literal
 from rich.console import Console
-from rich import inspect
+from machineconfig.utils.utils2 import pprint
 
 from machineconfig.utils.ve_utils.ve1 import get_installed_interpreters
 from machineconfig.utils.ve_utils.ve1 import get_ve_specs
@@ -45,7 +45,7 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
                 ve_specs = get_ve_specs(ve_path)
             except Exception as _e:
                 continue
-            inspect(ve_specs, value=False, title=ve_path.stem, docs=False, dunder=False, sort=False)
+            pprint(ve_specs, ve_path.stem)
         default_ve_name = P.cwd().name
         ve_name = input(f"📝 Enter virtual environment name ({default_ve_name}): ") or default_ve_name
 

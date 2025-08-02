@@ -17,7 +17,7 @@ from machineconfig.cluster.job_params import JobParams
 from importlib.machinery import SourceFileLoader
 from rich.console import Console
 from rich.panel import Panel
-from rich import inspect
+from machineconfig.utils.utils2 import pprint
 from rich.text import Text
 from datetime import datetime, timezone
 
@@ -60,9 +60,9 @@ console.print(f"""
 """, style="bold blue")
 
 if isinstance(func_kwargs, dict): 
-    inspect(func_kwargs, value=False, title="📋 Function Arguments", docs=False, dunder=False, sort=False)
+    pprint(func_kwargs, "📋 Function Arguments")
 else: 
-    inspect(func_kwargs, value=False, title=f"📋 Function Arguments from `{manager.kwargs_path.collapseuser().as_posix()}`", docs=False, sort=False)
+    pprint(func_kwargs, f"📋 Function Arguments from `{manager.kwargs_path.collapseuser().as_posix()}`")
 
 print("\n" + "•" * 60 + "\n")
 
@@ -132,6 +132,7 @@ else:
 
 # Capture exec_times as string for the readme
 buffer = io.StringIO()
+from rich import inspect
 Console(file=buffer, width=80).print(inspect(exec_times, value=False, docs=False, dunder=False, sort=False))
 exec_times_str = buffer.getvalue()
 
@@ -157,7 +158,7 @@ kwargs_path @ `{manager.kwargs_path.collapseuser()}`
 # manager.root_dir.expanduser().copy(folder=res_folder, overwrite=True)
 
 # print to execution console:
-inspect(exec_times, value=False, title="⏱️ Execution Times", docs=False, dunder=False, sort=False)
+pprint(exec_times, "⏱️ Execution Times")
 console.rule(title="", characters="─", style="blue")
 ssh_repr_remote = params.ssh_repr_remote or f"{getpass.getuser()}@{platform.node()}"  # os.getlogin() can throw an error in non-login shells.
 console.print(Panel(Text(f'''

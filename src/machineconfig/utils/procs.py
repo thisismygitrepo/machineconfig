@@ -7,8 +7,8 @@ from machineconfig.utils.utils import display_options
 from typing import Optional, Any
 from rich.console import Console
 from rich.panel import Panel
-from rich import inspect
 from datetime import datetime
+from machineconfig.utils.utils2 import pprint
 
 console = Console()
 
@@ -119,7 +119,7 @@ class ProcessManager:
             print(f"PID: {process['pid']}, Name: {process['name']}, Memory: {process['memory_usage_mb']:.2f}MB")
         
         for idx, process in enumerate(selected_processes):
-            inspect(process, value=False, title=f"📌 Process {idx}", docs=False, dunder=False, sort=False)
+            pprint(process, f"📌 Process {idx}")
             
         kill_all = input("\n⚠️  Confirm killing ALL selected processes? y/[n] ").lower() == "y"
         if kill_all:
@@ -131,7 +131,7 @@ class ProcessManager:
             indices = [int(val) for val in kill_by_index.split(" ")]
             target_processes = [selected_processes[i] for i in indices]
             for idx2, process in enumerate(target_processes):
-                inspect(process, value=False, title=f"🎯 Target Process {idx2}", docs=False, dunder=False, sort=False)
+                pprint(process, f"🎯 Target Process {idx2}")
             _ = self.kill(pids=[p['pid'] for p in target_processes]) if input("\n⚠️  Confirm termination? y/[n] ").lower() == "y" else None
         console.print(Panel("🔔 No processes were terminated.", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 

@@ -1,7 +1,7 @@
 from crocodile.core import List as L
 from crocodile.meta import Terminal
 from crocodile.file_management import P
-
+# from crocodile.core import Struct
 # import crocodile.environment as env
 from rich.text import Text
 from rich.panel import Panel

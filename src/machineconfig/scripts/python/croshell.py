@@ -11,6 +11,7 @@ from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text # Added import for rich.text
+from machineconfig.utils.utils2 import pprint
 
 console = Console()
 
@@ -46,7 +47,7 @@ try:
     if isinstance(dat, dict):
         panel_title = f"📄 File Data: {{p.name}}"
         console.print(Panel(Text(str(dat), justify="left"), title=panel_title, expand=False))
-        inspect(dat, value=False, title=p.name, docs=False, dunder=False, sort=False)
+        pprint(dat, p.name)
     else:
         panel_title = f"📄 Successfully read the file: {{p.name}}"
         console.print(Panel(Text(str(dat), justify="left"), title=panel_title, expand=False))

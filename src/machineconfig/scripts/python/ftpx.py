@@ -9,7 +9,7 @@ import argparse
 from crocodile.meta import SSH
 from crocodile.file_management import P
 from machineconfig.scripts.python.helpers.helpers2 import ES
-from rich import inspect
+from machineconfig.utils.utils2 import pprint
 
 
 def main():
@@ -76,7 +76,7 @@ def main():
 ┃    Format should be: machine:path
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
 
-    inspect({"source": str(source), "target": str(target), "machine": machine}, value=False, title="CLI Resolution", docs=False, dunder=False, sort=False)
+    pprint({"source": str(source), "target": str(target), "machine": machine}, "CLI Resolution")
 
     from paramiko.ssh_exception import AuthenticationException  # type: ignore
     try:

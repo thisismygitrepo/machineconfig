@@ -6,7 +6,7 @@ import time
 import platform
 from typing import Any
 from rich.console import Console
-from rich import inspect
+from machineconfig.utils.utils2 import pprint
 # from rich.progress import track
 from machineconfig.utils.utils import LIBRARY_ROOT, INSTALL_VERSION_ROOT
 from machineconfig.utils.installer import get_installed_cli_apps
@@ -64,7 +64,7 @@ def scan(path: P, pct: float = 0.0):
         if result_dict.get('result') is None and result_dict.get('category') in ["undetected", "type-unsupported", "failure", "timeout", "confirmed-timeout"]: 
             continue
         else:
-            inspect(result_dict, value=False, title=f"🔍 Found Category {result_dict.get('category')}", docs=False, dunder=False, sort=False)
+            pprint(result_dict, f"🔍 Found Category {result_dict.get('category')}")
             malicious.append(result_item)
     
     positive_pct: float = round(number=len(malicious) / len(results_data) * 100, ndigits=1)
