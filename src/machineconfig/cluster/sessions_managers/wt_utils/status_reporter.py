@@ -116,14 +116,14 @@ class WTStatusReporter:
                 "success": True,
                 "windows_info": wt_windows,
                 "version_info": wt_version,
-                "location": "local" if self.process_monitor.is_local else self.process_monitor.remote_executor.remote_name
+                "location": self.process_monitor.location_name
             }
         except Exception as e:
             logger.error(f"Failed to get Windows Terminal overview: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "location": "local" if self.process_monitor.is_local else self.process_monitor.remote_executor.remote_name
+                "location": self.process_monitor.location_name
             }
     
     def print_windows_terminal_overview(self) -> None:
@@ -197,7 +197,7 @@ class WTStatusReporter:
             return {
                 "error": str(e),
                 "session_name": self.session_manager.session_name,
-                "location": "local" if self.process_monitor.is_local else self.process_monitor.remote_executor.remote_name
+                "location": self.process_monitor.location_name
             }
     
     def check_tab_specific_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
@@ -224,5 +224,5 @@ class WTStatusReporter:
             return {
                 "error": str(e),
                 "tab_name": tab_name,
-                "location": "local" if self.process_monitor.is_local else self.process_monitor.remote_executor.remote_name
+                "location": self.process_monitor.location_name
             } 

@@ -4,7 +4,7 @@ import subprocess
 import psutil
 import random
 import string
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from pathlib import Path
 import logging
 
@@ -111,7 +111,7 @@ class ZellijLayoutGenerator:
             raise
     
     @staticmethod
-    def get_layout_preview(tab_config: Dict[str, tuple[str, str]], layout_template: str = None) -> str:
+    def get_layout_preview(tab_config: Dict[str, tuple[str, str]], layout_template: str | None = None) -> str:
         if layout_template is None:
             layout_template = """layout {
     default_tab_template {
@@ -129,7 +129,7 @@ class ZellijLayoutGenerator:
         return layout_content + "\n}\n"
     
     @staticmethod
-    def check_command_status(tab_name: str, tab_config: Dict[str, tuple[str, str]]) -> Dict[str, any]:
+    def check_command_status(tab_name: str, tab_config: Dict[str, tuple[str, str]]) -> Dict[str, Any]:
         if tab_name not in tab_config:
             return {
                 "status": "unknown",
@@ -192,7 +192,7 @@ class ZellijLayoutGenerator:
                 "tab_name": tab_name
             }
 
-    def check_all_commands_status(self) -> Dict[str, Dict[str, any]]:
+    def check_all_commands_status(self) -> Dict[str, Dict[str, Any]]:
         if not self.tab_config:
             logger.warning("No tab config tracked. Make sure to create a layout first.")
             return {}
@@ -204,7 +204,7 @@ class ZellijLayoutGenerator:
         return status_report
 
     @staticmethod
-    def check_zellij_session_status(session_name: str) -> Dict[str, any]:
+    def check_zellij_session_status(session_name: str) -> Dict[str, Any]:
         try:
             # Run zellij list-sessions command
             result = subprocess.run(
@@ -250,7 +250,7 @@ class ZellijLayoutGenerator:
                 "session_name": session_name
             }
 
-    def get_comprehensive_status(self) -> Dict[str, any]:
+    def get_comprehensive_status(self) -> Dict[str, Any]:
         zellij_status = ZellijLayoutGenerator.check_zellij_session_status(self.session_name or "default")
         commands_status = self.check_all_commands_status()
         
@@ -322,6 +322,7 @@ def run_zellij_layout(tab_config: Dict[str, tuple[str, str]], session_name: Opti
     import subprocess
     subprocess.run(cmd, shell=True, check=True)
     print(f"zellij layout is running @ {session_name}")
+    return session_name
 
 
 def run_command_in_zellij_tab(command: str, tab_name: str, cwd: Optional[str]) -> str:

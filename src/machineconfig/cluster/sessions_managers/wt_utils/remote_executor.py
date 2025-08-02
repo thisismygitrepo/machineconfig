@@ -149,7 +149,7 @@ class WTRemoteExecutor:
                 "remote": self.remote_name
             }
     
-    def kill_wt_processes(self, process_ids: list = None) -> Dict[str, Any]:
+    def kill_wt_processes(self, process_ids: list | None = None) -> Dict[str, Any]:
         """Kill Windows Terminal processes on the remote machine."""
         try:
             if process_ids:
