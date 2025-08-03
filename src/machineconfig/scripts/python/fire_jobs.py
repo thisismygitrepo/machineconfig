@@ -59,7 +59,7 @@ def main() -> None:
         raise ex
     path_obj = sanitize_path(P(args.path))
     if not path_obj.exists():
-        path_obj = match_file_name(sub_string=args.path)
+        path_obj = match_file_name(sub_string=args.path, search_root=P.cwd())
     else: pass
     if path_obj.is_dir():
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")

@@ -64,7 +64,7 @@ def run_python_file_in_this_namespace(a_path: str, module: bool=False):
     from machineconfig.utils.utils import match_file_name, sanitize_path
     path = sanitize_path(P(a_path))
     if not path.exists():
-        path = match_file_name(a_path)
+        path = match_file_name(a_path, search_root=P.cwd())
     from IPython import get_ipython  # type: ignore  # this gets the same instance, its in the namespace anyway even if not imported.
     if module:
         code_snippet = f"""
