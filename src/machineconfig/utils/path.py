@@ -69,6 +69,7 @@ def match_file_name(sub_string: str, search_root: P) -> P:
         # let's see if avoiding .lower() helps narrowing down to one result
         reduced_scripts = [script for script in all_scripts if sub_string in script.name]
         if len(reduced_scripts) == 1: return P(reduced_scripts[0])
+
     try:
         fzf_cmd = f"cd '{search_root_obj}'; fd --type file --strip-cwd-prefix | fzf --ignore-case --exact --query={sub_string}"
         console.print(Panel(f"🔍 SEARCH STRATEGY | Using fd to search for '{sub_string}' in '{search_root_obj}' ...\n{fzf_cmd}", title="Search Strategy", expand=False))
