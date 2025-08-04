@@ -57,6 +57,7 @@ def find_scripts(root: Path, name_substring: str) -> list[Path]:
                 scripts.append(entry)
     return scripts
 
+def func(): return "a"
 
 def match_file_name(sub_string: str, search_root: P) -> P:
     search_root_obj = search_root.absolute()
