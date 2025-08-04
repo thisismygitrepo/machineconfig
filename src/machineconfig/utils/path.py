@@ -63,12 +63,12 @@ def match_file_name(sub_string: str, search_root: P) -> P:
     # assume subscript is filename only, not a sub_path. There is no need to fzf over the paths.
     all_scripts = find_scripts(search_root_obj, sub_string)
     if len(all_scripts) == 1: return P(all_scripts[0])
-    # print(f"⚠️ WARNING | Multiple scripts found for `{sub_string}` in {search_root_obj}:\n{all_scripts}")
+    console.print(Panel(f"Partial filename match with case-insensitivity failed. This generated #{len(all_scripts)} results.\n🔍 SEARCH | Looking for '{sub_string}' in {search_root_obj}", title="Search", expand=False))
     if len(all_scripts) > 1:
+        print("Try to narrow down the search by case-sensitivity.")
         # let's see if avoiding .lower() helps narrowing down to one result
         reduced_scripts = [script for script in all_scripts if sub_string in script.name]
         if len(reduced_scripts) == 1: return P(reduced_scripts[0])
-    console.print(Panel(f"🔍 SEARCH | Looking for '{sub_string}' in {search_root_obj}", title="Search", expand=False))
     try:
         fzf_cmd = f"cd '{search_root_obj}'; fd --type file --strip-cwd-prefix | fzf --ignore-case --exact --query={sub_string}"
         console.print(Panel(f"🔍 SEARCH STRATEGY | Using fd to search for '{sub_string}' in '{search_root_obj}' ...\n{fzf_cmd}", title="Search Strategy", expand=False))
