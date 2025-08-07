@@ -38,24 +38,20 @@ confidence=
 
 # Disable specific messages, codes, or categories.
 disable=C0301,  # line-too-long: Enforces a maximum line length
+       C0411,  # wrong-import-order: Enforces correct import order
+       C0303,  # trailing-whitespace: Enforces no trailing whitespace
        C0114,  # missing-module-docstring: Requires docstrings in modules
-       C0303,  # trailing-whitespace: Reports trailing whitespace
        C0321,  # multiple-statements: Disallows multiple statements on one line
-       C1802,  # use-list-literal: Suggests using [] instead of list()
        C0116,  # missing-function-docstring: Requires docstrings in functions
        C0103,  # invalid-name: Enforces naming conventions
-       W1309,  # f-string-without-interpolation: Flags f-strings with no formatting
        C0415,  # import-outside-toplevel: Requires imports to be at the top level
        C0115,  # missing-class-docstring: Requires docstrings in classes
        C2801,  # unnecessary-dunder-call: Redundant __method() call
-       C0123,  # unidiomatic-typecheck: Warns about using type() instead of isinstance()
-       C0411,  # wrong-import-order: Enforces a specific import order
        W0640,  # cell-var-from-loop: Warns about loop variables used in closures
        W0718,  # broad-exception-caught: Warns when catching too broad exceptions
        W1203,  # logging-fstring-interpolation: Warns about f-strings in logging
        W1201,  # logging-not-lazy: Warns about non-lazy % logging
        W0105,  # pointless-string-statement: String statements with no effect
-       W0107,  # unnecessary-pass: Unnecessary pass statements
        W0511,  # fixme: Warns about TODO, FIXME comments
        W0221,   # arguments-differ: Method arguments differ from overridden method
        R0903,  # Too few public methods (1/2) (too-few-public-methods)
@@ -64,7 +60,10 @@ disable=C0301,  # line-too-long: Enforces a maximum line length
        R0917,  # Too many positional arguments (8/5) (too-many-positional-arguments)
        R0902,  # Too many instance attributes 
        C0410,  # Multiple imports in one line.
-
+       R0912,  # Too many branches (16/12) (too-many-branches)
+       R0915,  # Too many statements (20/15) (too-many-stat
+       R0911,  # Too many return statements (6/5) (too-many-return-statements)
+       R1702,  # Too many nested blocks (5/3) (too-many-nested-blocks)
 [REPORTS]
 
 # Set the output format.
