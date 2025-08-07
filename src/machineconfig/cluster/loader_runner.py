@@ -4,7 +4,7 @@ Runner
 """
 
 from rich.console import Console
-from rich import inspect
+from machineconfig.utils.utils2 import pprint
 from datetime import datetime
 
 from crocodile.core import List as L
@@ -46,7 +46,7 @@ class WorkloadParams:
         min_start = series[min_idx_start]
         min_end = series[min_idx_end]
         return min_start, min_end
-    def print(self): inspect(self.__dict__, value=False, title="Job Workload", docs=False, dunder=False, sort=False)
+    def print(self): pprint(self.__dict__, "Job Workload")
     def viz(self):
         print(f"This machine will execute ({(self.idx_end - self.idx_start) / self.idx_max * 100:.2f}%) of total job workload.")
         print(f"This share of workload will be split among {self.jobs} of threads on this machine.")
@@ -88,14 +88,6 @@ class LogEntry:
     note: str
     @staticmethod
     def from_dict(a_dict: dict[str, Any]):
-        def parse_datetime(dt_str):
-            if dt_str is None or dt_str == "" or dt_str == "None":
-                return None
-            try:
-                return datetime.fromisoformat(str(dt_str))
-            except ValueError:
-                return None
-        
         return LogEntry(
             name=a_dict["name"], 
             submission_time=str(a_dict["submission_time"]), 

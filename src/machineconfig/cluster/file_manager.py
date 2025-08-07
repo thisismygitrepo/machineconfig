@@ -1,6 +1,6 @@
 
-from rich import inspect
 from rich.console import Console
+from machineconfig.utils.utils2 import pprint
 from datetime import datetime
 
 from crocodile.file_management import P, Save
@@ -165,7 +165,7 @@ echo "Unlocked resources"
                 try: proc = psutil.Process(pid=running_job.pid)
                 except psutil.NoSuchProcess:
                     print(f"Locking process with pid {running_job.pid} is dead. Ignoring this lock file.")
-                    inspect(running_job.__dict__, value=False, title="Ignored Lock File Details", docs=False, dunder=False, sort=False)
+                    pprint(running_job.__dict__, "Ignored Lock File Details")
                     running_file.remove(running_job)
                     Save.pickle(obj=running_file, path=self.running_path.expanduser())
                     found_dead_process = True
@@ -176,8 +176,8 @@ echo "Unlocked resources"
                 # if self.remote_machine_type == 'Windows': attrs_txt += ['num_handles']
                 # environ, memory_maps, 'io_counters'
                 attrs_objs = ['memory_info', 'memory_full_info', 'cpu_times', 'ionice', 'threads', 'open_files', 'connections']
-                inspect(proc.as_dict(attrs=attrs_objs), value=False, title=f"Process holding the Lock (pid = {running_job.pid})", docs=False, sort=False)
-                inspect(proc.as_dict(attrs=attrs_txt), value=False, title=f"Process holding the Lock (pid = {running_job.pid})", docs=False, sort=False)
+                pprint(proc.as_dict(attrs=attrs_objs), f"Process holding the Lock (pid = {running_job.pid})")
+                pprint(proc.as_dict(attrs=attrs_txt), f"Process holding the Lock (pid = {running_job.pid})")
 
             if found_dead_process: continue  # repeat while loop logic.
             running_job = running_file[0]  # arbitrary job in the running file.
@@ -187,7 +187,7 @@ echo "Unlocked resources"
             this_specs = {"Submission time": this_job.submission_time, "Time now": now,
                           "Time spent waiting in the queue so far 🛌": now - this_job.submission_time,
                           f"Time consumed by locking job so far (job_id = {running_job.job_id}) so far ⏰": now - running_job.start_time}
-            inspect(this_specs, value=False, title=f"This Job `{this_job.job_id}` Details", docs=False, dunder=False, sort=False)
+            pprint(this_specs, f"This Job `{this_job.job_id}` Details")
             console.rule(title=f"Resources are locked by another job `{running_job.job_id}`. Sleeping for {sleep_time_mins} minutes. 😴", style="bold red", characters="-")
             print("\n")
             time.sleep(sleep_time_mins * 60)

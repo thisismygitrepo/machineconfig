@@ -15,13 +15,18 @@ class WTSessionManager:
     """Handles Windows Terminal session operations on local and remote machines."""
     
     def __init__(self, remote_executor: Optional[WTRemoteExecutor] = None, 
-                 session_name: str = "default", tmp_layout_dir: Path = None):
+                 session_name: str = "default", tmp_layout_dir: Path | None = None):
         self.remote_executor = remote_executor
         self.session_name = session_name
         self.tmp_layout_dir = tmp_layout_dir or Path.home() / "tmp_results" / "wt_layouts" / "layout_manager"
         self.is_local = remote_executor is None
     
-    def _run_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess:
+    @property
+    def location_name(self) -> str:
+        """Get the location name for status reporting."""
+        return "local" if self.is_local else (self.remote_executor.remote_name if self.remote_executor else "unknown")
+    
+    def _run_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess[str]:
         """Run command either locally or remotely."""
         if self.is_local:
             return subprocess.run(
@@ -31,6 +36,8 @@ class WTSessionManager:
                 timeout=timeout
             )
         else:
+            if self.remote_executor is None:
+                raise ValueError("Remote executor is None but is_local is False")
             return self.remote_executor.run_command(command, timeout)
     
     def copy_script_to_remote(self, local_script_file: Path, random_suffix: str) -> str:
@@ -38,6 +45,9 @@ class WTSessionManager:
         if self.is_local:
             # For local operations, just return the local path
             return str(local_script_file)
+        
+        if self.remote_executor is None:
+            raise ValueError("Remote executor is None but operation requires remote access")
         
         remote_layout_dir = f"~/{self.tmp_layout_dir.relative_to(Path.home())}"
         remote_script_file = f"{remote_layout_dir}/wt_script_{self.session_name}_{random_suffix}.ps1"
@@ -87,7 +97,7 @@ ConvertTo-Json -Depth 2
                             "session_name": self.session_name,
                             "all_windows": processes,
                             "session_windows": session_windows,
-                            "location": "local" if self.is_local else self.remote_executor.remote_name
+                            "location": self.location_name
                         }
                     except Exception as e:
                         logger.error(f"Failed to parse Windows Terminal process info: {e}")
@@ -96,7 +106,7 @@ ConvertTo-Json -Depth 2
                             "session_exists": False,
                             "error": f"Failed to parse process info: {e}",
                             "session_name": self.session_name,
-                            "location": "local" if self.is_local else self.remote_executor.remote_name
+                            "location": self.location_name
                         }
                 else:
                     return {
@@ -104,14 +114,14 @@ ConvertTo-Json -Depth 2
                         "session_exists": False,
                         "session_name": self.session_name,
                         "all_windows": [],
-                        "location": "local" if self.is_local else self.remote_executor.remote_name
+                        "location": self.location_name
                     }
             else:
                 return {
                     "wt_running": False,
                     "error": result.stderr,
                     "session_name": self.session_name,
-                    "location": "local" if self.is_local else self.remote_executor.remote_name
+                    "location": self.location_name
                 }
                 
         except Exception as e:
@@ -119,7 +129,7 @@ ConvertTo-Json -Depth 2
                 "wt_running": False,
                 "error": str(e),
                 "session_name": self.session_name,
-                "location": "local" if self.is_local else self.remote_executor.remote_name
+                "location": self.location_name
             }
     
     def start_wt_session(self, script_file_path: Optional[str] = None, 
@@ -157,7 +167,7 @@ ConvertTo-Json -Depth 2
                 return {
                     "success": True,
                     "session_name": self.session_name,
-                    "location": "local" if self.is_local else self.remote_executor.remote_name,
+                    "location": self.location_name,
                     "message": "Session started successfully"
                 }
             else:
@@ -165,17 +175,17 @@ ConvertTo-Json -Depth 2
                     "success": False,
                     "error": result.stderr or result.stdout,
                     "session_name": self.session_name,
-                    "location": "local" if self.is_local else self.remote_executor.remote_name
+                    "location": self.location_name
                 }
                 
         except Exception as e:
-            error_location = "locally" if self.is_local else f"on {self.remote_executor.remote_name}"
+            error_location = "locally" if self.is_local else f"on {self.remote_executor.remote_name if self.remote_executor else 'unknown'}"
             logger.error(f"Failed to start Windows Terminal session {error_location}: {e}")
             return {
                 "success": False,
                 "error": str(e),
                 "session_name": self.session_name,
-                "location": "local" if self.is_local else self.remote_executor.remote_name
+                "location": self.location_name
             }
     
     def attach_to_session(self, window_name: Optional[str] = None) -> None:
@@ -192,6 +202,9 @@ ConvertTo-Json -Depth 2
                 subprocess.run(attach_cmd, shell=True)
             else:
                 # For remote sessions, use SSH with interactive terminal
+                if self.remote_executor is None:
+                    raise ValueError("Remote executor is None but operation requires remote access")
+                    
                 if window_name:
                     attach_cmd = f"wt -w {window_name}"
                 else:
@@ -219,7 +232,7 @@ ConvertTo-Json -Depth 2
                 "success": result.returncode == 0,
                 "message": "Session killed" if result.returncode == 0 else result.stderr,
                 "session_name": self.session_name,
-                "location": "local" if self.is_local else self.remote_executor.remote_name
+                "location": self.location_name
             }
             
         except Exception as e:
@@ -228,7 +241,7 @@ ConvertTo-Json -Depth 2
                 "success": False,
                 "error": str(e),
                 "session_name": self.session_name,
-                "location": "local" if self.is_local else self.remote_executor.remote_name
+                "location": self.location_name
             }
     
     def create_new_tab(self, tab_name: str, cwd: str, command: str, 
@@ -256,7 +269,7 @@ ConvertTo-Json -Depth 2
                 "message": f"Tab '{tab_name}' created" if result.returncode == 0 else result.stderr,
                 "tab_name": tab_name,
                 "command": command,
-                "location": "local" if self.is_local else self.remote_executor.remote_name
+                "location": self.location_name
             }
             
         except Exception as e:
@@ -265,7 +278,7 @@ ConvertTo-Json -Depth 2
                 "success": False,
                 "error": str(e),
                 "tab_name": tab_name,
-                "location": "local" if self.is_local else self.remote_executor.remote_name
+                "location": self.location_name
             }
     
     def get_wt_version(self) -> Dict[str, Any]:
@@ -277,11 +290,11 @@ ConvertTo-Json -Depth 2
             return {
                 "success": result.returncode == 0,
                 "version": result.stdout.strip() if result.returncode == 0 else "Unknown",
-                "location": "local" if self.is_local else self.remote_executor.remote_name
+                "location": self.location_name
             }
         except Exception as e:
             return {
                 "success": False,
                 "error": str(e),
-                "location": "local" if self.is_local else self.remote_executor.remote_name
+                "location": self.location_name
             } 

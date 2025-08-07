@@ -4,12 +4,10 @@ Process monitoring and status checking utilities for Windows Terminal commands.
 Adapted from zellij process monitor but focused on Windows processes.
 """
 import json
-import shlex
 import logging
 import subprocess
-from typing import Dict, List, Tuple, Any, Optional
+from typing import Dict, Tuple, Any, Optional
 from .remote_executor import WTRemoteExecutor
-from .layout_generator import WTLayoutGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +19,12 @@ class WTProcessMonitor:
         self.remote_executor = remote_executor
         self.is_local = remote_executor is None
     
-    def _run_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess:
+    @property
+    def location_name(self) -> str:
+        """Get the location name for status reporting."""
+        return "local" if self.is_local else (self.remote_executor.remote_name if self.remote_executor else "unknown")
+    
+    def _run_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess[str]:
         """Run command either locally or remotely."""
         if self.is_local:
             return subprocess.run(
@@ -31,6 +34,8 @@ class WTProcessMonitor:
                 timeout=timeout
             )
         else:
+            if self.remote_executor is None:
+                raise ValueError("Remote executor is None but is_local is False")
             return self.remote_executor.run_command(command, timeout)
     
     def check_command_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]], 
@@ -43,7 +48,7 @@ class WTProcessMonitor:
                 "running": False,
                 "pid": None,
                 "command": None,
-                "location": "local" if self.is_local else self.remote_executor.remote_name
+                "location": self.location_name
             }
         
         # Use the verified method by default for more accurate results
@@ -54,7 +59,7 @@ class WTProcessMonitor:
     
     def _basic_process_check(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
         """Basic process checking without verification."""
-        cwd, command = tab_config[tab_name]
+        _, command = tab_config[tab_name]
         
         try:
             check_script = self._create_process_check_script(command)
@@ -81,7 +86,7 @@ class WTProcessMonitor:
                             "processes": matching_processes,
                             "command": command,
                             "tab_name": tab_name,
-                            "location": "local" if self.is_local else self.remote_executor.remote_name
+                            "location": self.location_name
                         }
                     else:
                         return {
@@ -90,7 +95,7 @@ class WTProcessMonitor:
                             "processes": [],
                             "command": command,
                             "tab_name": tab_name,
-                            "location": "local" if self.is_local else self.remote_executor.remote_name
+                            "location": self.location_name
                         }
                 except Exception as e:
                     logger.error(f"Failed to parse process check output: {e}")
@@ -100,7 +105,7 @@ class WTProcessMonitor:
                         "running": False,
                         "command": command,
                         "tab_name": tab_name,
-                        "location": "local" if self.is_local else self.remote_executor.remote_name
+                        "location": self.location_name
                     }
             else:
                 return {
@@ -109,7 +114,7 @@ class WTProcessMonitor:
                     "running": False,
                     "command": command,
                     "tab_name": tab_name,
-                    "location": "local" if self.is_local else self.remote_executor.remote_name
+                    "location": self.location_name
                 }
                 
         except Exception as e:
@@ -120,7 +125,7 @@ class WTProcessMonitor:
                 "running": False,
                 "command": command,
                 "tab_name": tab_name,
-                "location": "local" if self.is_local else self.remote_executor.remote_name
+                "location": self.location_name
             }
     
     def _create_process_check_script(self, command: str) -> str:
@@ -182,10 +187,10 @@ Get-Process | ForEach-Object {{
                 "error": f"Tab '{tab_name}' not found in tracked configuration",
                 "running": False,
                 "command": None,
-                "location": "local" if self.is_local else self.remote_executor.remote_name
+                "location": self.location_name
             }
         
-        cwd, command = tab_config[tab_name]
+        _, command = tab_config[tab_name]
         
         try:
             # Get timestamp for freshness validation
@@ -211,7 +216,7 @@ Get-Process | ForEach-Object {{
                                 "processes": matching_processes,
                                 "command": command,
                                 "tab_name": tab_name,
-                                "location": "local" if self.is_local else self.remote_executor.remote_name,
+                                "location": self.location_name,
                                 "check_timestamp": check_timestamp,
                                 "method": "force_fresh_check"
                             }
@@ -223,7 +228,7 @@ Get-Process | ForEach-Object {{
                         "processes": [],
                         "command": command,
                         "tab_name": tab_name,
-                        "location": "local" if self.is_local else self.remote_executor.remote_name,
+                        "location": self.location_name,
                         "raw_output": result.stdout
                     }
                 except json.JSONDecodeError as e:
@@ -234,7 +239,7 @@ Get-Process | ForEach-Object {{
                         "running": False,
                         "command": command,
                         "tab_name": tab_name,
-                        "location": "local" if self.is_local else self.remote_executor.remote_name,
+                        "location": self.location_name,
                         "raw_output": result.stdout
                     }
             else:
@@ -244,7 +249,7 @@ Get-Process | ForEach-Object {{
                     "running": False,
                     "command": command,
                     "tab_name": tab_name,
-                    "location": "local" if self.is_local else self.remote_executor.remote_name
+                    "location": self.location_name
                 }
                 
         except Exception as e:
@@ -255,7 +260,7 @@ Get-Process | ForEach-Object {{
                 "running": False,
                 "command": command,
                 "tab_name": tab_name,
-                "location": "local" if self.is_local else self.remote_executor.remote_name
+                "location": self.location_name
             }
     
     def _create_fresh_check_script(self, command: str) -> str:
@@ -389,25 +394,25 @@ ConvertTo-Json -Depth 2
                     return {
                         "success": True,
                         "windows": wt_processes if isinstance(wt_processes, list) else [wt_processes],
-                        "location": "local" if self.is_local else self.remote_executor.remote_name
+                        "location": self.location_name
                     }
                 except json.JSONDecodeError:
                     return {
                         "success": False,
                         "error": "Failed to parse Windows Terminal process info",
-                        "location": "local" if self.is_local else self.remote_executor.remote_name
+                        "location": self.location_name
                     }
             else:
                 return {
                     "success": True,
                     "windows": [],
                     "message": "No Windows Terminal processes found",
-                    "location": "local" if self.is_local else self.remote_executor.remote_name
+                    "location": self.location_name
                 }
         except Exception as e:
             logger.error(f"Failed to get Windows Terminal windows: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "location": "local" if self.is_local else self.remote_executor.remote_name
+                "location": self.location_name
             } 

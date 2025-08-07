@@ -6,14 +6,13 @@ from machineconfig.cluster.loader_runner import JOB_STATUS, LogEntry
 from typing import Optional, Any, NoReturn
 from rich.console import Console
 import time
-from dataclasses import fields
 import getpass
 import random
 import platform
 from datetime import datetime, timedelta
 
 
-def format_table_markdown(data: list[dict]) -> str:
+def format_table_markdown(data: list[dict[str, Any]]) -> str:
     """Convert list of dictionaries to markdown table format."""
     if not data:
         return ""
@@ -67,12 +66,12 @@ class CloudManager:
         self.console = Console()
 
     # =================== READ WRITE OF LOGS ===================
-    def read_log(self) -> dict[JOB_STATUS, list[dict]]:
+    def read_log(self) -> dict[JOB_STATUS, list[dict[str, Any]]]:
         # assert self.claim_lock, f"method should never be called without claiming the lock first. This is a cloud-wide file."
         if not self.lock_claimed: self.claim_lock()
         path = self.base_path.joinpath("logs.pkl").expanduser()
         if not path.exists():
-            log: dict[JOB_STATUS, list[dict]] = {}
+            log: dict[JOB_STATUS, list[dict[str, Any]]] = {}
             log['queued'] = []
             log['running'] = []
             log['completed'] = []
@@ -80,11 +79,10 @@ class CloudManager:
             Save.pickle(obj=log, path=path.create(parents_only=True), verbose=False)
             return log
         return Read.pickle(path=path)
-    def write_log(self, log: dict[JOB_STATUS, list[dict]]):
+    def write_log(self, log: dict[JOB_STATUS, list[dict[str, Any]]]) -> None:
         # assert self.claim_lock, f"method should never be called without claiming the lock first. This is a cloud-wide file."
         if not self.lock_claimed: self.claim_lock()
         Save.pickle(obj=log, path=self.base_path.joinpath("logs.pkl").expanduser(), verbose=False)
-        return NoReturn
 
     # =================== CLOUD MONITORING ===================
     def fetch_cloud_live(self):
@@ -93,7 +91,7 @@ class CloudManager:
         alternative_base = localpath.delete(sure=True).from_cloud(cloud=self.cloud, remotepath=remote.get_remote_path(root="myhome", rel2home=True), verbose=False)
         return alternative_base
     @staticmethod
-    def prepare_servers_report(cloud_root: P):
+    def prepare_servers_report(cloud_root: P) -> list[dict[str, Any]]:
         from machineconfig.cluster.remote_machine import RemoteMachine
         workers_root = cloud_root.joinpath("workers").search("*")
         res: dict[str, list[RemoteMachine]] = {}
@@ -126,7 +124,7 @@ class CloudManager:
             self.console.print(f"🔒 Lock is held by: {lock_owner}")
             self.console.print("🧾 Log File:")
             log_path = alternative_base.joinpath("logs.pkl")
-            if log_path.exists(): log: dict[JOB_STATUS, list[dict]] = Read.pickle(path=log_path)
+            if log_path.exists(): log: dict[JOB_STATUS, list[dict[str, Any]]] = Read.pickle(path=log_path)
             else:
                 self.console.print("Log file doesn't exist! 🫤 must be that cloud is getting purged or something 🤔 ")
                 log = {}
@@ -146,7 +144,7 @@ class CloudManager:
                                 end_time = datetime.fromisoformat(item["end_time"]) if item.get("end_time") else datetime.now()
                             start_time = datetime.fromisoformat(item["start_time"])
                             display_item["duration"] = end_time - start_time
-                        except:
+                        except Exception:
                             display_item["duration"] = "unknown"
                     display_items.append(display_item)
 
@@ -260,6 +258,9 @@ class CloudManager:
             if not found_log_type:
                 raise ValueError(f"Job `{a_job}` is not found in any of the log lists.")
             
+            if found_entry_data is None:
+                raise ValueError(f"Job `{a_job}` has no entry data.")
+            
             entry = LogEntry.from_dict(found_entry_data)
             a_job_path = CloudManager.base_path.expanduser().joinpath(f"jobs/{entry.name}")
             entry.note += f"| Job failed @ {entry.run_machine}"
@@ -370,7 +371,7 @@ class CloudManager:
         from machineconfig.cluster.templates.run_remote import run_on_cloud
         run_on_cloud()
         self.serve()
-    def claim_lock(self, first_call: bool = True):
+    def claim_lock(self, first_call: bool = True) -> None:
         """
         Note: If the parameters of the class are messed with, there is no gaurantee of zero collision by this method.
         It takes at least inter_check_interval_sec * num_claims_check to claim the lock.

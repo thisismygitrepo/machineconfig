@@ -35,8 +35,9 @@ Environment Variables (for OAuth2):
 import os
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any
 import requests
+from urllib.parse import quote
 import json
 
 
@@ -59,7 +60,7 @@ def get_rclone_token(section: str):
 # Configuration - Will be loaded from rclone config
 _cached_config = None
 
-def get_config(section: str = "odp"):
+def get_config(section: str = "odp") -> dict[str, Any]:
     """
     Get OneDrive configuration from rclone config.
     
@@ -77,13 +78,10 @@ def get_config(section: str = "odp"):
         
         # Parse the token from rclone config
         token_str = rclone_config.get("token", "{}")
-        if isinstance(token_str, str):
-            try:
-                token_data = json.loads(token_str)
-            except json.JSONDecodeError:
-                raise Exception(f"Invalid token format in rclone config section '{section}'")
-        else:
-            token_data = token_str
+        try:
+            token_data = json.loads(token_str)
+        except json.JSONDecodeError:
+            raise Exception(f"Invalid token format in rclone config section '{section}'")
         
         _cached_config = {
             "token": token_data,
@@ -93,7 +91,7 @@ def get_config(section: str = "odp"):
     
     return _cached_config
 
-def get_token():
+def get_token() -> dict[str, Any]:
     """Get the current token from rclone config."""
     return get_config()["token"]
 
@@ -178,7 +176,7 @@ def get_access_token() -> Optional[str]:
     return token.get("access_token")
 
 
-def make_graph_request(method: str, endpoint: str, **kwargs) -> requests.Response:
+def make_graph_request(method: str, endpoint: str, **kwargs: Any) -> requests.Response:
     """
     Make authenticated request to Microsoft Graph API.
     
@@ -259,7 +257,7 @@ def simple_upload(local_file: Path, remote_path: str) -> bool:
             file_content = f.read()
         
         # URL encode the remote path and use specific drive
-        encoded_path = requests.utils.quote(remote_path, safe='/')
+        encoded_path = quote(remote_path, safe='/')
         drive_id = get_drive_id()
         endpoint = f"drives/{drive_id}/root:{encoded_path}:/content"
         
@@ -281,7 +279,7 @@ def resumable_upload(local_file: Path, remote_path: str) -> bool:
     """Upload large files using resumable upload."""
     try:
         # Create upload session using specific drive
-        encoded_path = requests.utils.quote(remote_path, safe='/')
+        encoded_path = quote(remote_path, safe='/')
         drive_id = get_drive_id()
         endpoint = f"drives/{drive_id}/root:{encoded_path}:/createUploadSession"
         
@@ -352,7 +350,7 @@ def pull_from_onedrive(remote_path: str, local_path: str) -> bool:
     
     try:
         # Get file metadata and download URL using specific drive
-        encoded_path = requests.utils.quote(remote_path, safe='/')
+        encoded_path = quote(remote_path, safe='/')
         drive_id = get_drive_id()
         endpoint = f"drives/{drive_id}/root:{encoded_path}"
         
@@ -426,7 +424,7 @@ def create_remote_directory(remote_path: str) -> bool:
     
     try:
         # Check if directory already exists using specific drive
-        encoded_path = requests.utils.quote(remote_path, safe='/')
+        encoded_path = quote(remote_path, safe='/')
         drive_id = get_drive_id()
         endpoint = f"drives/{drive_id}/root:{encoded_path}"
         
@@ -447,7 +445,7 @@ def create_remote_directory(remote_path: str) -> bool:
         
         # Create the directory
         dir_name = os.path.basename(remote_path)
-        parent_encoded = requests.utils.quote(parent_dir if parent_dir else '/', safe='/')
+        parent_encoded = quote(parent_dir if parent_dir else '/', safe='/')
         
         if parent_dir and parent_dir != '/':
             endpoint = f"drives/{drive_id}/root:{parent_encoded}:/children"
@@ -473,7 +471,7 @@ def create_remote_directory(remote_path: str) -> bool:
         return False
 
 
-def refresh_access_token() -> Optional[dict]:
+def refresh_access_token() -> Optional[dict[str, Any]]:
     """
     Refresh the access token using the refresh token.
     
@@ -547,7 +545,7 @@ def refresh_access_token() -> Optional[dict]:
         return None
 
 
-def save_token_to_file(token_data: dict, file_path: Optional[str] = None) -> bool:
+def save_token_to_file(token_data: dict[str, Any], file_path: Optional[str] = None) -> bool:
     """
     Save token data to a file for persistence.
     
@@ -580,7 +578,7 @@ def save_token_to_file(token_data: dict, file_path: Optional[str] = None) -> boo
         return False
 
 
-def load_token_from_file(file_path: Optional[str] = None) -> Optional[dict]:
+def load_token_from_file(file_path: Optional[str] = None) -> Optional[dict[str, Any]]:
     """
     Load token data from a file.
     
@@ -639,7 +637,7 @@ def get_authorization_url() -> str:
     return auth_url
 
 
-def exchange_authorization_code(authorization_code: str) -> Optional[dict]:
+def exchange_authorization_code(authorization_code: str) -> Optional[dict[str, Any]]:
     """
     Exchange authorization code for initial tokens.
     This is used during the first-time OAuth setup.

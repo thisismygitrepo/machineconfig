@@ -3,7 +3,6 @@ CC
 """
 
 from crocodile.file_management import P
-from crocodile.core import Struct
 from crocodile.meta import RepeatUntilNoException
 import getpass
 import argparse
@@ -15,7 +14,7 @@ from machineconfig.scripts.python.helpers.cloud_helpers import ArgsDefaults, Arg
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress
-from rich import inspect
+from machineconfig.utils.utils2 import pprint
 
 console = Console()
 
@@ -108,7 +107,7 @@ def arg_parser() -> None:
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
     
     console.print(Panel("⚙️  Configuration:", title="[bold blue]Config[/bold blue]", border_style="blue"))
-    inspect(args_obj.__dict__, value=False, title="CLI config", docs=False, dunder=False, sort=False)
+    pprint(args_obj.__dict__, "CLI config")
 
     if args_obj.key is not None:
         console.print(Panel("❌ Key-based encryption is not supported yet", title="[bold red]Error[/bold red]", border_style="red"))

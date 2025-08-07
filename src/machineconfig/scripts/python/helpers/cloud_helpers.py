@@ -1,4 +1,3 @@
-from crocodile.core import Struct
 from crocodile.file_management import P, Read
 from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass
@@ -8,7 +7,7 @@ from machineconfig.utils.utils import DEFAULTS_PATH
 from rich.console import Console
 from rich.panel import Panel
 from rich import box # Import box
-from rich import inspect
+from machineconfig.utils.utils2 import pprint
 
 
 console = Console()
@@ -58,7 +57,7 @@ def find_cloud_config(path: P):
         if path.joinpath("cloud.json").exists():
             res = Args.from_config(path.joinpath("cloud.json"))
             display_success(f"Found cloud config at: {path.joinpath('cloud.json')}")
-            inspect(res.__dict__, value=False, title="Cloud Config", docs=False, dunder=False, sort=False)
+            pprint(res.__dict__, "Cloud Config")
             return res
         path = path.parent
 
@@ -113,7 +112,7 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Ar
                rel2home=True, root="myshare", os_specific=False,)
     
     display_success("Using SecureShare cloud config")
-    inspect(res.__dict__, value=False, title="SecureShare Config", docs=False, dunder=False, sort=False)
+    pprint(res.__dict__, "SecureShare Config")
     return res
 
 def display_header(title: str):

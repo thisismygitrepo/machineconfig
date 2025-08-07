@@ -34,3 +34,9 @@ def read_json(path: 'Path', r: bool = False, **kwargs: Any) -> Any:  # return co
         mydict = pyjson5.loads(Path(path).read_text(encoding='utf-8'), **kwargs)  # file has C-style comments.
     _ = r
     return mydict
+
+
+def pprint(obj: dict[Any, Any], title: str) -> None:
+    """Pretty print an object."""
+    from rich import inspect
+    inspect(type("TempStruct", (object,), obj)(), value=False, title=title, docs=False, dunder=False, sort=False)

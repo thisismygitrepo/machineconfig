@@ -16,7 +16,7 @@ from crocodile.file_management import P, Save
 from crocodile.meta import SSH, Terminal
 from machineconfig.cluster.remote_machine import RemoteMachine, RemoteMachineConfig, WorkloadParams, LAUNCH_METHOD
 from rich.console import Console
-from rich import inspect
+from machineconfig.utils.utils2 import pprint
 import io
 # from platform import system
 # import time
@@ -159,7 +159,7 @@ class Cluster:
         print("\n" * 2)
         console.rule(title="kwargs of functions to be run on machines")
         for an_ssh, a_kwarg in zip(self.sshz, self.workload_params):
-            inspect(a_kwarg.__dict__, value=False, title=an_ssh.get_remote_repr(), docs=False, dunder=False, sort=False)
+            pprint(a_kwarg.__dict__, an_ssh.get_remote_repr())
     def print_commands(self, launch_method: LAUNCH_METHOD):
         print("\n" * 2)
         console.rule(title="Commands to run on each machine:")
@@ -203,6 +203,7 @@ class Cluster:
 
         # Capture load ratios as string
         buffer = io.StringIO()
+        from rich import inspect
         Console(file=buffer, width=75).print(inspect(dict(zip(names, L((np.array(self.machine_load_calc.load_ratios) * 100).round(1)).apply(lambda x: f"{int(x)}%"))), value=False, docs=False, dunder=False, sort=False))
         tmp = buffer.getvalue()
         assert isinstance(tmp, str)

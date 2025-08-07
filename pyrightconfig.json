@@ -1,0 +1,25 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  // "python.analysis.typeCheckingMode": "strict",
+  // "typeCheckingMode": "strict",
+  "extraPaths": [],
+  "typeCheckingMode": "strict",
+  "reportMissingTypeStubs": "none",
+  "reportUnknownMemberType": "none",
+  "reportUnknownArgumentType": "none",
+  "reportUnknownVariableType": "none",
+  "reportUnknownParameterType": "none",
+  "reportUnknownLambdaType": "none",
+
+  "diagnosticSeverityOverrides": {
+      "reportUnknownMemberType": "none",
+      "reportUnknownVariableType": "none",
+      "reportUnknownArgumentType": "none",
+      "reportUnknownParameterType": "none",
+      "reportMissingTypeStubs": "none",
+      "reportUnknownLambdaType": "none",
+      "reportIncompatibleMethodOverride": "none",
+  }
+}
+

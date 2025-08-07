@@ -1,11 +1,10 @@
-from crocodile.core import Struct
 from crocodile.file_management import Read
 from machineconfig.scripts.python.helpers.cloud_helpers import Args, ArgsDefaults, absolute, find_cloud_config, get_secure_share_cloud_config
 from machineconfig.utils.utils import DEFAULTS_PATH
 from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
-from rich import inspect
+from machineconfig.utils.utils2 import pprint
 
 
 ES = "^"  # chosen carefully to not mean anything on any shell. `$` was a bad choice.
@@ -131,6 +130,6 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         raise ValueError(f"Either source or target must be a remote path (i.e. machine:path)\nGot: source: `{source}`, target: `{target}`")
 
     console.print(Panel("🔍 Path resolution complete", title="[bold blue]Resolution[/bold blue]", border_style="blue"))
-    inspect({"cloud": cloud, "source": str(source), "target": str(target)}, value=False, title="CLI Resolution", docs=False, dunder=False, sort=False)
+    pprint({"cloud": cloud, "source": str(source), "target": str(target)}, "CLI Resolution")
     _ = pwd, encrypt, zip_arg, share
     return cloud, str(source), str(target)

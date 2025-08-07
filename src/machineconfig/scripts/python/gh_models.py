@@ -3,6 +3,7 @@ from openai import OpenAI
 from crocodile.file_management import Read, P
 from rich import print as rprint
 from rich.panel import Panel
+from typing import Any
 
 
 gh_token = Read.ini(P.home().joinpath("dotfiles/creds/git/git_host_tokens.ini"))['thisismygitrepo']['newLongterm']
@@ -14,7 +15,7 @@ client__ = OpenAI(
 )
 
 
-def get_response(client, model_name: str, messages: list[dict[str, str]]):
+def get_response(client: Any, model_name: str, messages: list[dict[str, str]]):
     print(f"""
 ┌────────────────────────────────────────────────────────────────
 │ 🤖 Querying Model: {model_name}
@@ -78,7 +79,7 @@ def interactive_chat():
                             title=f"🤖 AI ({model_name})",
                             border_style="blue"
                         ))
-                    except:
+                    except Exception:
                         # Fallback if rich formatting fails
                         print(f"""
 ┌────────────────────────────────────────────────────────────────

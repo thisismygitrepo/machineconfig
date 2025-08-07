@@ -5,7 +5,7 @@ Adapted from zellij remote executor but focused on Windows Terminal commands.
 """
 import subprocess
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Optional, List
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ class WTRemoteExecutor:
     def __init__(self, remote_name: str):
         self.remote_name = remote_name
     
-    def run_command(self, command: str, timeout: int = 30, shell: str = "powershell") -> subprocess.CompletedProcess:
+    def run_command(self, command: str, timeout: int = 30, shell: str = "powershell") -> subprocess.CompletedProcess[str]:
         """Execute a command on the remote machine via SSH."""
         # For Windows Terminal on remote machines, we need to use PowerShell or CMD
         if shell == "powershell":
@@ -107,7 +107,7 @@ class WTRemoteExecutor:
                 "error": str(e)
             }
     
-    def run_wt_command(self, wt_command: str, detached: bool = True) -> subprocess.CompletedProcess:
+    def run_wt_command(self, wt_command: str, detached: bool = True) -> subprocess.CompletedProcess[str]:
         """Run a Windows Terminal command on the remote machine."""
         try:
             if detached:
@@ -149,7 +149,7 @@ class WTRemoteExecutor:
                 "remote": self.remote_name
             }
     
-    def kill_wt_processes(self, process_ids: list = None) -> Dict[str, Any]:
+    def kill_wt_processes(self, process_ids: Optional[List[Any]] = None) -> Dict[str, Any]:
         """Kill Windows Terminal processes on the remote machine."""
         try:
             if process_ids:

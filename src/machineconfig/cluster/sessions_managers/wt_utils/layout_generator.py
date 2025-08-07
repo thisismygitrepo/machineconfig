@@ -90,7 +90,7 @@ class WTLayoutGenerator:
                 raise ValueError(f"Invalid cwd for tab '{tab_name}': {cwd}")
     
     def generate_wt_command(self, tab_config: Dict[str, Tuple[str, str]], 
-                           window_name: str = None, 
+                           window_name: str | None = None, 
                            maximized: bool = False,
                            focus: bool = True) -> str:
         """Generate complete Windows Terminal command string."""
@@ -131,7 +131,7 @@ class WTLayoutGenerator:
     
     def create_wt_script(self, tab_config: Dict[str, Tuple[str, str]], 
                         output_dir: Path, session_name: str,
-                        window_name: str = None) -> str:
+                        window_name: str | None = None) -> str:
         """Create a Windows Terminal script file and return its absolute path."""
         self.validate_tab_config(tab_config)
         
@@ -167,7 +167,7 @@ class WTLayoutGenerator:
             raise
     
     def generate_split_pane_command(self, tab_config: Dict[str, Tuple[str, str]], 
-                                   window_name: str = None) -> str:
+                                   window_name: str | None = None) -> str:
         """Generate Windows Terminal command with split panes instead of separate tabs."""
         self.validate_tab_config(tab_config)
         

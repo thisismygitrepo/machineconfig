@@ -59,7 +59,7 @@ def main() -> None:
         raise ex
     path_obj = sanitize_path(P(args.path))
     if not path_obj.exists():
-        path_obj = match_file_name(sub_string=args.path)
+        path_obj = match_file_name(sub_string=args.path, search_root=P.cwd())
     else: pass
     if path_obj.is_dir():
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
@@ -91,6 +91,7 @@ def main() -> None:
         kwargs = {}
 
     # =========================  choosing function to run
+    choice_function: Optional[str] = None  # Initialize to avoid unbound variable
     if args.choose_function or args.submit_to_cloud:
         if choice_file.suffix == ".py":
             options, func_args = parse_pyfile(file_path=str(choice_file))
@@ -307,7 +308,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
             # args.zellij_tab = input("Please enter a new tab name: ")
             args.zellij_tab += f"_{randstr(3)}"
         from machineconfig.cluster.sessions_managers.zellij_local import run_command_in_zellij_tab
-        command = run_command_in_zellij_tab(command=comman_path__, tab_name=args.zellij_tab, cwd=None)
+        command = run_command_in_zellij_tab(command=str(comman_path__), tab_name=args.zellij_tab, cwd=None)
     if args.watch: command = "watchexec --restart --exts py,sh,ps1 " + command
     if args.git_pull: command = f"\ngit -C {choice_file.parent} pull\n" + command
     if args.PathExport:

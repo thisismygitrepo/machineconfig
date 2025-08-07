@@ -43,25 +43,25 @@ def args_parser():
     main(which=args.which)
 
 
-def display_title(title):
+def display_title(title: str) -> None:
     console.print(Panel(title, box=box.DOUBLE_EDGE, title_align="left")) # Replace print with Panel
 
-def display_task_title(title):
+def display_task_title(title: str) -> None:
     console.print(Panel(title, box=box.ROUNDED, title_align="left")) # Replace print with Panel
 
-def display_task_status(status):
+def display_task_status(status: str) -> None:
     console.print(Panel(status, box=box.ROUNDED, title_align="left")) # Replace print with Panel
 
-def display_task_result(result):
+def display_task_result(result: str) -> None:
     console.print(Panel(result, box=box.ROUNDED, title_align="left")) # Replace print with Panel
 
-def display_task_error(error):
+def display_task_error(error: str) -> None:
     console.print(Panel(error, box=box.ROUNDED, border_style="red", title_align="left")) # Replace print with Panel
 
-def display_task_warning(warning):
+def display_task_warning(warning: str) -> None:
     console.print(Panel(warning, box=box.ROUNDED, border_style="yellow", title_align="left")) # Replace print with Panel
 
-def display_task_success(success):
+def display_task_success(success: str) -> None:
     console.print(Panel(success, box=box.ROUNDED, border_style="green", title_align="left")) # Replace print with Panel
 
 

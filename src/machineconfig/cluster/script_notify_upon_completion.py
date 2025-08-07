@@ -7,7 +7,6 @@ from crocodile.comms.notification import Email
 from crocodile.file_management import P
 from machineconfig.cluster.file_manager import FileManager
 from machineconfig.cluster.loader_runner import EmailParams
-from rich import inspect
 import io
 from rich.console import Console
 
@@ -25,6 +24,7 @@ sep = "\n" * 2  # SyntaxError: f-string expression part cannot include a backsla
 
 # Capture exec_times as string for the email
 buffer = io.StringIO()
+from rich import inspect
 Console(file=buffer, width=80).print(inspect(exec_times, value=False, docs=False, dunder=False, sort=False))
 exec_times_str = buffer.getvalue()
 

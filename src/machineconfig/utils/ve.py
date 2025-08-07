@@ -7,7 +7,7 @@ from crocodile.file_management import P
 import platform
 from typing import Optional, Literal
 from rich.console import Console
-from rich import inspect
+from machineconfig.utils.utils2 import pprint
 
 from machineconfig.utils.ve_utils.ve1 import get_installed_interpreters
 from machineconfig.utils.ve_utils.ve1 import get_ve_specs
@@ -45,7 +45,7 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
                 ve_specs = get_ve_specs(ve_path)
             except Exception as _e:
                 continue
-            inspect(ve_specs, value=False, title=ve_path.stem, docs=False, dunder=False, sort=False)
+            pprint(ve_specs, ve_path.stem)
         default_ve_name = P.cwd().name
         ve_name = input(f"📝 Enter virtual environment name ({default_ve_name}): ") or default_ve_name
 
@@ -68,7 +68,9 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
         script = get_ps1_ve_install_script(ve_name=ve_name, py_version=dotted_py_version, use_web=False, system=system)
     elif platform.system() in ["Linux", "Darwin"]:
         system = "Linux" if platform.system() == "Linux" else "Darwin"
-        script = get_bash_ve_install_script(ve_name=ve_name, py_version=dotted_py_version, use_web=False, system=system)
+        # Map Darwin to Linux for functions that don't support Darwin
+        system_for_functions = "Linux" if system == "Darwin" else system
+        script = get_bash_ve_install_script(ve_name=ve_name, py_version=dotted_py_version, use_web=False, system=system_for_functions)
     else:
         raise NotImplementedError(f"❌ System {platform.system()} not supported.")
 
@@ -76,7 +78,8 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
         if system == "Windows":
             script += "\n" + get_ps1_repos_install_script(ve_name=ve_name, use_web=False, system=system)
         elif system in ["Linux", "Darwin"]:
-            script += "\n" + get_bash_repos_install_script(ve_name=ve_name, use_web=False, system=system)
+            system_for_functions = "Linux" if system == "Darwin" else system
+            script += "\n" + get_bash_repos_install_script(ve_name=ve_name, use_web=False, system=system_for_functions)
         else:
             raise NotImplementedError(f"❌ System {system} not supported.")
 
@@ -84,7 +87,9 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
         script += "\nuv pip install " + other_repos
 
     link_ve: bool = input("🔗 Create symlinks? [y/[n]] ") == "y"
-    if link_ve: create_symlinks(repo_root=P.cwd(), ve_name=ve_name, dotted_py_version=dotted_py_version, system=system, ipy_profile="default")
-    make_installation_recipe(repo_root=P.cwd(), ve_name=ve_name, py_version=dotted_py_version)
+    if link_ve: 
+        system_for_functions = "Linux" if system == "Darwin" else system
+        create_symlinks(repo_root=P.cwd(), ve_name=ve_name, dotted_py_version=dotted_py_version, system=system_for_functions, ipy_profile="default")
+    make_installation_recipe(repo_root=str(P.cwd()), ve_name=ve_name, py_version=dotted_py_version)
     return script
 

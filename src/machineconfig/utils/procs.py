@@ -4,11 +4,11 @@ import psutil
 from tqdm import tqdm
 from pytz import timezone
 from machineconfig.utils.utils import display_options
-from typing import Optional
+from typing import Optional, Any
 from rich.console import Console
 from rich.panel import Panel
-from rich import inspect
 from datetime import datetime
+from machineconfig.utils.utils2 import pprint
 
 console = Console()
 
@@ -119,7 +119,7 @@ class ProcessManager:
             print(f"PID: {process['pid']}, Name: {process['name']}, Memory: {process['memory_usage_mb']:.2f}MB")
         
         for idx, process in enumerate(selected_processes):
-            inspect(process, value=False, title=f"📌 Process {idx}", docs=False, dunder=False, sort=False)
+            pprint(process, f"📌 Process {idx}")
             
         kill_all = input("\n⚠️  Confirm killing ALL selected processes? y/[n] ").lower() == "y"
         if kill_all:
@@ -131,7 +131,7 @@ class ProcessManager:
             indices = [int(val) for val in kill_by_index.split(" ")]
             target_processes = [selected_processes[i] for i in indices]
             for idx2, process in enumerate(target_processes):
-                inspect(process, value=False, title=f"🎯 Target Process {idx2}", docs=False, dunder=False, sort=False)
+                pprint(process, f"🎯 Target Process {idx2}")
             _ = self.kill(pids=[p['pid'] for p in target_processes]) if input("\n⚠️  Confirm termination? y/[n] ").lower() == "y" else None
         console.print(Panel("🔔 No processes were terminated.", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
@@ -196,11 +196,11 @@ class ProcessManager:
         console.print(Panel(f"✅ Termination complete: {killed_count} processes terminated", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
 
-def get_age(create_time):
+def get_age(create_time: Any) -> str:
     """Calculate age from create_time which can be either float timestamp or datetime object."""
     try:
         if isinstance(create_time, (int, float)):
-            # Handle timestamp
+            # Handle timestampz
             create_time_utc = datetime.fromtimestamp(create_time, tz=timezone('UTC'))
             create_time_local = create_time_utc.astimezone(timezone('Australia/Adelaide'))
         else:
@@ -209,7 +209,7 @@ def get_age(create_time):
         
         now_local = datetime.now(tz=timezone('Australia/Adelaide'))
         age = now_local - create_time_local
-        return age
+        return str(age)
     except Exception as e:
         try:
             # Fallback without timezone
@@ -219,7 +219,7 @@ def get_age(create_time):
                 create_time_dt = create_time.replace(tzinfo=None) if create_time.tzinfo else create_time
             now_dt = datetime.now()
             age = now_dt - create_time_dt
-            return age
+            return str(age)
         except Exception as ee:
             return f"unknown due to {ee} and {e}"
 

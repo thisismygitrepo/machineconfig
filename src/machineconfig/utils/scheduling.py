@@ -1,17 +1,43 @@
 """Task scheduler
 """
 
-from crocodile.file_management import P, Read, str2timedelta, Save
+from crocodile.file_management import P, Read, Save
 # from crocodile.meta import Terminal
 from machineconfig.utils.utils import get_shell_script_executing_python_file
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-import platform
-import subprocess
 from typing import Optional, Any
-# from crocodile.meta import Scheduler
 from rich.console import Console
 from rich.panel import Panel
+import platform
+import subprocess
+
+
+def str2timedelta(time_str: str) -> timedelta:
+    """Convert string to timedelta. Simple implementation for common cases."""
+    # Handle common formats like "1h", "30m", "2d", etc.
+    import re
+    
+    # Parse patterns like "1h", "30m", "2d", "1w"
+    match = re.match(r'^(\d+)([hdwm])$', time_str.lower())
+    if match:
+        value, unit = match.groups()
+        value = int(value)
+        
+        if unit == 'h':
+            return timedelta(hours=value)
+        elif unit == 'd':
+            return timedelta(days=value)
+        elif unit == 'w':
+            return timedelta(weeks=value)
+        elif unit == 'm':
+            return timedelta(minutes=value)
+    
+    # Fallback: try to parse as seconds
+    try:
+        return timedelta(seconds=int(time_str))
+    except ValueError:
+        raise ValueError(f"Cannot parse time string: {time_str}")
 
 
 def format_table_markdown(data: list[dict[str, Any]]) -> str:

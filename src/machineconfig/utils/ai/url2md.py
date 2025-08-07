@@ -48,7 +48,7 @@ commands: list[str] = []
 for a_url in relevant_urls:
     commands.append(f"""curl {a_url} | html2markdown --output {op_dir.joinpath(a_url.split('/')[-1] + "_" + randstr(5) + ".md")} """)
 
-def run_command(cmd):
+def run_command(cmd: str) -> bool:
     try:
         _result = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
         print(f"✅ Completed: {cmd[:60]} ...")

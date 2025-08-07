@@ -4,8 +4,9 @@
 
 import time
 import platform
+from typing import Any
 from rich.console import Console
-from rich import inspect
+from machineconfig.utils.utils2 import pprint
 # from rich.progress import track
 from machineconfig.utils.utils import LIBRARY_ROOT, INSTALL_VERSION_ROOT
 from machineconfig.utils.installer import get_installed_cli_apps
@@ -63,7 +64,7 @@ def scan(path: P, pct: float = 0.0):
         if result_dict.get('result') is None and result_dict.get('category') in ["undetected", "type-unsupported", "failure", "timeout", "confirmed-timeout"]: 
             continue
         else:
-            inspect(result_dict, value=False, title=f"🔍 Found Category {result_dict.get('category')}", docs=False, dunder=False, sort=False)
+            pprint(result_dict, f"🔍 Found Category {result_dict.get('category')}")
             malicious.append(result_item)
     
     positive_pct: float = round(number=len(malicious) / len(results_data) * 100, ndigits=1)
@@ -101,7 +102,7 @@ def main() -> None:
     apps_paths_raw.print()
     positive_pct: list[Optional[float]] = []
     scan_time: list[str] = []
-    detailed_results: list[dict[str, Optional[list]]] = []
+    detailed_results: list[dict[str, Optional[list[Any]]]] = []
 
     for idx, app in enumerate(apps_paths_raw):
         try: res = scan(path=app, pct=idx / len(apps_paths_raw) * 100)
@@ -131,7 +132,7 @@ def main() -> None:
     # Add app URLs
     for i, app_info in enumerate(tqdm(app_data, desc="Uploading apps")):
         apps_safe_url = upload(P(app_info["app_path"]).expanduser())
-        app_info["app_url"] = apps_safe_url.as_posix() if type(apps_safe_url) is P else apps_safe_url
+        app_info["app_url"] = apps_safe_url.as_posix() if (apps_safe_url is not None and type(apps_safe_url) is P) else str(apps_safe_url) if apps_safe_url is not None else ""
 
     # Write to CSV using standard library
     csv_path = APP_SUMMARY_PATH.with_suffix(".csv").create(parents_only=True)
@@ -143,7 +144,7 @@ def main() -> None:
             writer.writerows(app_data)
 
     # Create markdown table
-    def format_app_table_markdown(data: list[dict]) -> str:
+    def format_app_table_markdown(data: list[dict[str, Any]]) -> str:
         if not data:
             return ""
         keys = list(data[0].keys())
@@ -221,13 +222,17 @@ class PrecheckedCloudInstaller:
         if name == "AllEssentials":
             print(f"""
 {'=' * 150}
-📥 DOWNLOAD | Downloading {self.df.shape[0]} apps...
+📥 DOWNLOAD | Downloading {len(self.data)} apps...
 {'=' * 150}
 """)
-            print(self.df)
-            _res = L(self.df.app_url).apply(PrecheckedCloudInstaller.install_cli_apps, jobs=20)
+            print(self.data)
+            app_urls = [item['app_url'] for item in self.data]
+            _res = L(app_urls).apply(PrecheckedCloudInstaller.install_cli_apps, jobs=20)
         else:
-            app_url = self.df[self.df.app_name == name].iloc[0].app_url
+            app_items = [item for item in self.data if item['app_name'] == name]
+            if not app_items:
+                raise ValueError(f"App '{name}' not found in data")
+            app_url = app_items[0]['app_url']
             _res = PrecheckedCloudInstaller.install_cli_apps(app_url=app_url)
 
         # print("\n" * 3)

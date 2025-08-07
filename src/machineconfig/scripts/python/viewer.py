@@ -31,7 +31,7 @@ def run(data: Optional[Iterable[Any]], data_path: Optional[str],
 
     if data_path is None:
         print("💾 Saving data to temporary path...")
-        data_path = Save.pickle(obj=data, path=code_dir.joinpath("data.pkl"))
+        data_path = str(Save.pickle(obj=data, path=code_dir.joinpath("data.pkl")))
 
     code = code.replace("""data_path = \"get_figure_placeholder.pkl\" """, f"""data_path = r"{data_path}" """)
 
