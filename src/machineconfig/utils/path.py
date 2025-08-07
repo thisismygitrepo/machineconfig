@@ -69,15 +69,19 @@ def match_file_name(sub_string: str, search_root: P) -> P:
     if len(filename_matches) == 1: return P(filename_matches[0])
     console.print(Panel(f"Partial filename match with case-insensitivity failed. This generated #{len(filename_matches)} results.", title="Search", expand=False))
     if len(filename_matches) < 10:
-        print(filename_matches)
+        print("\n".join([a_potential_match.as_posix() for a_potential_match in filename_matches]))
     if len(filename_matches) > 1:
         print("Try to narrow down filename_matches search by case-sensitivity.")
         # let's see if avoiding .lower() helps narrowing down to one result
         reduced_scripts = [a_potential_match for a_potential_match in filename_matches if sub_string in a_potential_match.name]
         if len(reduced_scripts) == 1: return P(reduced_scripts[0])
+        elif len(reduced_scripts) > 1:
+            choice = choose_one_option(msg="Multiple matches found", options=reduced_scripts, fzf=True)
+            return P(choice)
         print(f"Result: This still generated {len(reduced_scripts)} results.")
         if len(reduced_scripts) < 10:
-            print(reduced_scripts)
+            print("\n".join([a_potential_match.as_posix() for a_potential_match in reduced_scripts]))
+
     console.print(Panel(f"Partial path match with case-insensitivity failed. This generated #{len(partial_path_matches)} results.", title="Search", expand=False))
     if len(partial_path_matches) == 1:
         return P(partial_path_matches[0])
@@ -86,7 +90,6 @@ def match_file_name(sub_string: str, search_root: P) -> P:
         reduced_scripts = [a_potential_match for a_potential_match in partial_path_matches if sub_string in a_potential_match.as_posix()]
         if len(reduced_scripts) == 1: return P(reduced_scripts[0])
         print(f"Result: This still generated {len(reduced_scripts)} results.")
-
     try:
         fzf_cmd = f"cd '{search_root_obj}'; fd --type file --strip-cwd-prefix | fzf --ignore-case --exact --query={sub_string}"
         console.print(Panel(f"🔍 Second attempt: SEARCH STRATEGY | Using fd to search for '{sub_string}' in '{search_root_obj}' ...\n{fzf_cmd}", title="Search Strategy", expand=False))
@@ -108,70 +111,3 @@ def match_file_name(sub_string: str, search_root: P) -> P:
         msg = Panel(f"💥 FILE NOT FOUND | Path {sub_string} does not exist @ root {search_root_obj}. No search results", title="File Not Found", expand=False)
         raise FileNotFoundError(msg) from cpe
     return search_root_obj.joinpath(res)
-
-def match_file_name_(sub_string: str, search_root: P) -> P:
-    """Look up current directory for file name that matches the passed substring."""
-    search_root_obj = search_root.absolute()
-    console.print(Panel(f"🔍 SEARCH | Looking for '{sub_string}' in {search_root_obj}", title="Search", expand=False))
-
-    search_root_objects = search_root_obj.search("*", not_in=[".links", ".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__"], folders=True, files=False)
-    search_results: L[P] = L()
-    for a_search_root_obj in search_root_objects:
-        search_results.extend(a_search_root_obj.search(f"*{sub_string}*", r=True))
-    search_results.extend(search_root_obj.search(f"*{sub_string}*", r=False, files=True, folders=False))
-    if len(search_results) > 0:
-        search_results = search_results.reduce(lambda x, y: x + y)  # type: ignore
-    else:
-        pass
-    search_results = search_results.filter(lambda x: x.suffix in (".py", ".sh", ".ps1"))
-    if len(search_results) == 1:
-        path_obj = search_results.list[0]
-    elif len(search_results) > 1:
-        msg = "Search results are ambiguous or non-existent, choose manually:"
-        console.print(Panel(f"⚠️ WARNING | {msg}", title="Warning", expand=False))
-        choice = choose_one_option(msg=msg, options=search_results.list, fzf=True)
-        path_obj = P(choice)
-    else:
-        if sub_string.lower() != sub_string:  # its worth it to retry with lowercase
-            console.print(Panel("🔄 RETRY | Searching with lowercase letters", title="Retry", expand=False))
-            return match_file_name(sub_string=sub_string.lower(), search_root=search_root_obj)
-        from git.repo import Repo
-        from git.exc import InvalidGitRepositoryError
-        try:
-            repo = Repo(search_root_obj, search_parent_directories=True)
-            repo_root_dir = P(repo.working_dir)
-            if repo_root_dir != search_root_obj:  # may be user is in a subdirectory of the repo root, try with root dir.
-                console.print(Panel("🔄 RETRY | Searching from repository root instead of current directory", title="Retry", expand=False))
-                return match_file_name(sub_string=sub_string, search_root=repo_root_dir)
-            else:
-                search_root_obj = repo_root_dir
-        except InvalidGitRepositoryError:
-            pass
-
-        if check_tool_exists(tool_name="fzf"):
-            try:
-                fzf_cmd = f"cd '{search_root_obj}'; fd --type file --strip-cwd-prefix | fzf  --delimiter='/' --nth=-1 --filter={sub_string}"
-                console.print(Panel(f"🔍 SEARCH STRATEGY | Using fd to search for '{sub_string}' in '{search_root_obj}' ...\n{fzf_cmd}", title="Search Strategy", expand=False))
-                search_res_raw = subprocess.run(fzf_cmd, stdout=subprocess.PIPE, text=True, check=True, shell=True).stdout
-                search_res = search_res_raw.strip().split("\\n")[:-1]
-            except subprocess.CalledProcessError as cpe:
-                console.print(Panel(f"❌ ERROR | FZF search failed with '{sub_string}' in '{search_root_obj}'.\n{cpe}", title="Error", expand=False))
-                import sys
-                sys.exit(f"💥 FILE NOT FOUND | Path {sub_string} does not exist @ root {search_root_obj}. No search results.")
-            if len(search_res) == 1: return search_root_obj.joinpath(search_res_raw)
-            else:
-                print(f"⚠️ WARNING | Multiple search results found for '{search_res}':")
-                cmd = f"cd '{search_root_obj}'; fd --type file | fzf --select-1 --query={sub_string}"
-                console.print(Panel(f"🔍 SEARCH STRATEGY | Trying with raw fzf search ...\n{cmd}", title="Search Strategy", expand=False))
-                try:
-                    res = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, text=True, shell=True).stdout.strip()
-                except subprocess.CalledProcessError as cpe:
-                    console.print(Panel(f"❌ ERROR | FZF search failed with '{sub_string}' in '{search_root_obj}'. {cpe}", title="Error", expand=False))
-                    msg = Panel(f"💥 FILE NOT FOUND | Path {sub_string} does not exist @ root {search_root_obj}. No search results", title="File Not Found", expand=False)
-                    raise FileNotFoundError(msg) from cpe
-                return search_root_obj.joinpath(res)
-
-        msg = Panel(f"💥 FILE NOT FOUND | Path {sub_string} does not exist @ root {search_root_obj}. No search results", title="File Not Found", expand=False)
-        raise FileNotFoundError(msg)
-    console.print(Panel(f"✅ MATCH FOUND | `{sub_string}` ➡️ `{path_obj}`", title="Match Found", expand=False))
-    return path_obj
