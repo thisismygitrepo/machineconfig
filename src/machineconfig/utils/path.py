@@ -68,12 +68,16 @@ def match_file_name(sub_string: str, search_root: P) -> P:
     filename_matches, partial_path_matches = find_scripts(search_root_obj, sub_string)
     if len(filename_matches) == 1: return P(filename_matches[0])
     console.print(Panel(f"Partial filename match with case-insensitivity failed. This generated #{len(filename_matches)} results.", title="Search", expand=False))
+    if len(filename_matches) < 10:
+        print(filename_matches)
     if len(filename_matches) > 1:
         print("Try to narrow down filename_matches search by case-sensitivity.")
         # let's see if avoiding .lower() helps narrowing down to one result
         reduced_scripts = [a_potential_match for a_potential_match in filename_matches if sub_string in a_potential_match.name]
         if len(reduced_scripts) == 1: return P(reduced_scripts[0])
         print(f"Result: This still generated {len(reduced_scripts)} results.")
+        if len(reduced_scripts) < 10:
+            print(reduced_scripts)
     console.print(Panel(f"Partial path match with case-insensitivity failed. This generated #{len(partial_path_matches)} results.", title="Search", expand=False))
     if len(partial_path_matches) == 1:
         return P(partial_path_matches[0])
