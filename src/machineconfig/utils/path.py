@@ -43,39 +43,47 @@ def sanitize_path(a_path: P) -> P:
     return path.expanduser().absolute()
 
 
-def find_scripts(root: Path, name_substring: str) -> list[Path]:
-    scripts = []
+def find_scripts(root: Path, name_substring: str) -> tuple[list[Path], list[Path]]:
+    filename_matches = []
+    partial_path_matches = []
     for entry in root.iterdir():
         if entry.is_dir():
             if entry.name in {".links", ".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__"}:
                 # prune this entire subtree
                 continue
             tmp = find_scripts(entry, name_substring)
-            scripts.extend(tmp)
+            filename_matches.extend(tmp)
         elif entry.is_file() and entry.suffix in {".py", ".sh", ".ps1"}:
             if name_substring.lower() in entry.name.lower():
-                scripts.append(entry)
-    return scripts
+                filename_matches.append(entry)
+            elif name_substring.lower() in entry.as_posix().lower():
+                partial_path_matches.append(entry)
+    return filename_matches, partial_path_matches
 
-def func(): return "a"
 
 def match_file_name(sub_string: str, search_root: P) -> P:
     search_root_obj = search_root.absolute()
     # assume subscript is filename only, not a sub_path. There is no need to fzf over the paths.
-    all_scripts = find_scripts(search_root_obj, sub_string)
-    if len(all_scripts) == 1: return P(all_scripts[0])
-    console.print(Panel(f"Partial filename match with case-insensitivity failed. This generated #{len(all_scripts)} results.\n🔍 SEARCH | Looking for '{sub_string}' in {search_root_obj}", title="Search", expand=False))
-    if len(all_scripts) > 1:
-        print("Try to narrow down the search by case-sensitivity.")
+    filename_matches, partial_path_matches = find_scripts(search_root_obj, sub_string)
+    if len(filename_matches) == 1: return P(filename_matches[0])
+    console.print(Panel(f"Partial filename match with case-insensitivity failed. This generated #{len(filename_matches)} results.", title="Search", expand=False))
+    if len(filename_matches) > 1:
+        print("Try to narrow down filename_matches search by case-sensitivity.")
         # let's see if avoiding .lower() helps narrowing down to one result
-        reduced_scripts = [script for script in all_scripts if sub_string in script.name]
+        reduced_scripts = [script for script in filename_matches if sub_string in script.name]
         if len(reduced_scripts) == 1: return P(reduced_scripts[0])
-
-
+        print(f"Result: This still generated {len(reduced_scripts)} results.")
+    if len(partial_path_matches) == 1:
+        return P(partial_path_matches[0])
+    elif len(partial_path_matches) > 1:
+        print("Try to narrow down partial_path_matches search by case-sensitivity.")
+        reduced_scripts = [script for script in partial_path_matches if sub_string in script.as_posix()]
+        if len(reduced_scripts) == 1: return P(reduced_scripts[0])
+        print(f"Result: This still generated {len(reduced_scripts)} results.")
 
     try:
         fzf_cmd = f"cd '{search_root_obj}'; fd --type file --strip-cwd-prefix | fzf --ignore-case --exact --query={sub_string}"
-        console.print(Panel(f"🔍 SEARCH STRATEGY | Using fd to search for '{sub_string}' in '{search_root_obj}' ...\n{fzf_cmd}", title="Search Strategy", expand=False))
+        console.print(Panel(f"🔍 Second attempt: SEARCH STRATEGY | Using fd to search for '{sub_string}' in '{search_root_obj}' ...\n{fzf_cmd}", title="Search Strategy", expand=False))
         search_res_raw = subprocess.run(fzf_cmd, stdout=subprocess.PIPE, text=True, check=True, shell=True,).stdout
         search_res = search_res_raw.strip().split("\\n")[:-1]
     except subprocess.CalledProcessError as cpe:
