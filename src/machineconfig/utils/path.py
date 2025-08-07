@@ -51,8 +51,9 @@ def find_scripts(root: Path, name_substring: str) -> tuple[list[Path], list[Path
             if entry.name in {".links", ".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__"}:
                 # prune this entire subtree
                 continue
-            tmp = find_scripts(entry, name_substring)
-            filename_matches.extend(tmp)
+            tmp1, tmp2 = find_scripts(entry, name_substring)
+            filename_matches.extend(tmp1)
+            partial_path_matches.extend(tmp2)
         elif entry.is_file() and entry.suffix in {".py", ".sh", ".ps1"}:
             if name_substring.lower() in entry.name.lower():
                 filename_matches.append(entry)
@@ -70,14 +71,15 @@ def match_file_name(sub_string: str, search_root: P) -> P:
     if len(filename_matches) > 1:
         print("Try to narrow down filename_matches search by case-sensitivity.")
         # let's see if avoiding .lower() helps narrowing down to one result
-        reduced_scripts = [script for script in filename_matches if sub_string in script.name]
+        reduced_scripts = [a_potential_match for a_potential_match in filename_matches if sub_string in a_potential_match.name]
         if len(reduced_scripts) == 1: return P(reduced_scripts[0])
         print(f"Result: This still generated {len(reduced_scripts)} results.")
+    console.print(Panel(f"Partial path match with case-insensitivity failed. This generated #{len(partial_path_matches)} results.", title="Search", expand=False))
     if len(partial_path_matches) == 1:
         return P(partial_path_matches[0])
     elif len(partial_path_matches) > 1:
         print("Try to narrow down partial_path_matches search by case-sensitivity.")
-        reduced_scripts = [script for script in partial_path_matches if sub_string in script.as_posix()]
+        reduced_scripts = [a_potential_match for a_potential_match in partial_path_matches if sub_string in a_potential_match.as_posix()]
         if len(reduced_scripts) == 1: return P(reduced_scripts[0])
         print(f"Result: This still generated {len(reduced_scripts)} results.")
 
