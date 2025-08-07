@@ -96,6 +96,7 @@
     },
     "starship": {
         "repo_url": "starship/starship",
+        "doc": "⭐️ The minimal, blazing-fast, and infinitely customizable prompt for any shell!",
         "filename_template_windows_amd_64": "starship-x86_64-pc-windows-msvc.zip",
         "filename_template_windows_arm_64": "starship-aarch64-pc-windows-msvc.zip",
         "filename_template_linux_amd_64": "starship-x86_64-unknown-linux-musl.tar.gz",
@@ -329,6 +330,7 @@
 
     "lsd": {
         "repo_url": "lsd-rs/lsd",
+        "doc": "📂 A modern replacement for ls written in Rust.",
         "filename_template_windows_amd_64": "lsd-v{version}-x86_64-pc-windows-msvc.zip",
         "filename_template_windows_arm_64": "",
         "filename_template_linux_amd_64": "lsd-v{version}-x86_64-unknown-linux-musl.tar.gz",

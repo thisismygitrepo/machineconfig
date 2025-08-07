@@ -39,7 +39,15 @@ def main(which: Optional[WHICH_CAT | str] = None):
         return program_total
 
     # interactive installation
-    installers = [Installer.from_dict(d=vd, name=name) for __kat, vds in get_all_dicts(system=system()).items() for name, vd in vds.items()]
+    try:
+        installers = [Installer.from_dict(d=vd, name=name) for __kat, vds in get_all_dicts(system=system()).items() for name, vd in vds.items()]
+    except ValueError as ve:
+        installers = []
+        for __kat, vds in get_all_dicts(system=system()).items():
+            for name, vd in vds.items():
+                for k, v in vd.items():
+                    installers.append(Installer(name=name, d={k: v}))
+        return ve
     options = [x.get_description() for x in tqdm(installers, desc="✅ Checking installed programs")] + list(get_args(WHICH_CAT))
     program_names = choose_multiple_options(msg="", options=options, header="🚀 CHOOSE DEV APP", default="AllEssentials")
 

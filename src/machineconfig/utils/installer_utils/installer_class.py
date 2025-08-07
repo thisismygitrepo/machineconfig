@@ -43,7 +43,7 @@ class Installer:
     def from_dict(d: dict[str, Any], name: str):
         try: return Installer(name=name, **d)
         except Exception as ex:
-            inspect(d, value=False, docs=False, dunder=False, sort=False)
+            inspect(d, value=True, docs=False, dunder=False, sort=False)
             raise ex
     @staticmethod
     def choose_app_and_install():
