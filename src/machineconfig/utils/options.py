@@ -1,4 +1,3 @@
-from crocodile.core import List as L
 from crocodile.meta import Terminal
 from crocodile.file_management import P
 # from crocodile.core import Struct
@@ -136,7 +135,7 @@ def choose_cloud_interactively() -> str:
     tmp = Terminal().run("rclone listremotes").op_if_successfull_or_default(strict_returcode=False)
     # consider this: remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
     if isinstance(tmp, str):
-        remotes: list[str] = L(tmp.splitlines()).apply(lambda x: x.replace(":", "")).list
+        remotes: list[str] = [x.replace(":", "") for x in tmp.splitlines()]
 
     else: raise ValueError(f"Got {tmp} from rclone listremotes")
     if len(remotes) == 0:

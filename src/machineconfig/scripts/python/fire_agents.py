@@ -33,9 +33,11 @@ def main():
         file_path = repo_root.joinpath(".ai", "target_file.txt")
         file_path.parent.mkdir(parents=True, exist_ok=True)
         file_path.write_text("\n".join(str(f) for f in matching_files), encoding='utf-8')
+        separator = "\n"
+    else:
+        separator = input("Enter separator [\\n]: ") or "\n"
 
     err_file = Path(file_path).expanduser().absolute().read_text()
-    separator = input("Enter separator [\\n]: ") or "\n"
     prefix = input("Enter prefix prompt: ")
     prompts = [item for item in err_file.split(separator)]
     # Dynamically choose chunk size so we end up with <= 15 combined prompts.
@@ -50,10 +52,12 @@ def main():
         chunk_size = ceil(len(prompts) / 15)
         combined_prompts: list[str] = []
         for i in range(0, len(prompts), chunk_size):
-            combined_prompts.append("\n".join(prompts[i:i+chunk_size]))
-    combined_prompts = [prefix + item for item in combined_prompts]
+            combined_prompts.append("\nTargted Locations:\n".join(prompts[i:i+chunk_size]))
+    combined_prompts = [prefix + "\n" + item for item in combined_prompts]
     tab_config = launch_agents(repo_root=repo_root, prompts=combined_prompts)
-    manager = ZellijLocalManager(session2zellij_tabs={"Agents": tab_config}, session_name_prefix="DevEnv")
+    from machineconfig.utils.utils2 import randstr
+    random_name = randstr(length=3)
+    manager = ZellijLocalManager(session2zellij_tabs={"Agents": tab_config}, session_name_prefix=random_name)
     manager.start_all_sessions()
     manager.run_monitoring_routine()
 

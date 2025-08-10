@@ -10,7 +10,7 @@ from machineconfig.utils.utils2 import pprint
 # from rich.progress import track
 from machineconfig.utils.utils import LIBRARY_ROOT, INSTALL_VERSION_ROOT
 from machineconfig.utils.installer import get_installed_cli_apps
-from crocodile.core import List as L, install_n_import
+from crocodile.core import install_n_import
 from crocodile.file_management import P
 from crocodile.meta import Terminal
 from tqdm import tqdm
@@ -77,14 +77,33 @@ def scan(path: P, pct: float = 0.0):
 
 
 def main() -> None:
-    apps_paths_tmp: L[P] = get_installed_cli_apps()
-    versions_files_paths: L[P] = INSTALL_VERSION_ROOT.search()
+    # Convert potential custom List types to plain Python lists
+    tmp_apps = get_installed_cli_apps()
+    apps_paths_tmp: list[P]
+    if hasattr(tmp_apps, "list"):
+        apps_paths_tmp = list(tmp_apps.list)
+    else:
+        try:
+            apps_paths_tmp = list(tmp_apps)
+        except TypeError:
+            apps_paths_tmp = [tmp_apps]
+
+    tmp_versions = INSTALL_VERSION_ROOT.search()
+    versions_files_paths: list[P]
+    if hasattr(tmp_versions, "list"):
+        versions_files_paths = list(tmp_versions.list)
+    else:
+        try:
+            versions_files_paths = list(tmp_versions)
+        except TypeError:
+            versions_files_paths = [tmp_versions]
+
     app_versions: list[Optional[str]] = []
-    apps_paths_raw: L[P] = L([])
+    apps_paths_raw: list[P] = []
     for an_app in apps_paths_tmp:
-        version_path = versions_files_paths.filter(lambda x: x.stem == an_app.stem)
+        version_path = [x for x in versions_files_paths if x.stem == an_app.stem]
         if len(version_path) == 1:
-            app_versions.append(version_path.list[0].read_text())
+            app_versions.append(version_path[0].read_text())
             apps_paths_raw.append(an_app)
         # if an_app.stem in versions_files_paths.stem:
         #     app_versions.append(versions_files_paths.filter(lambda x: x.stem == an_app.stem.replace(".exe", "")).list[0].read_text())
@@ -99,7 +118,8 @@ def main() -> None:
 🔍 TOOL CHECK | Checking tools (#{len(apps_paths_tmp)}) collected from `{INSTALL_VERSION_ROOT}`
 {'=' * 150}
 """)
-    apps_paths_raw.print()
+    for path_item in apps_paths_raw:
+        print(path_item)
     positive_pct: list[Optional[float]] = []
     scan_time: list[str] = []
     detailed_results: list[dict[str, Optional[list[Any]]]] = []
@@ -227,7 +247,9 @@ class PrecheckedCloudInstaller:
 """)
             print(self.data)
             app_urls = [item['app_url'] for item in self.data]
-            _res = L(app_urls).apply(PrecheckedCloudInstaller.install_cli_apps, jobs=20)
+            from concurrent.futures import ThreadPoolExecutor
+            with ThreadPoolExecutor(max_workers=20) as executor:
+                _res = list(executor.map(PrecheckedCloudInstaller.install_cli_apps, app_urls))
         else:
             app_items = [item for item in self.data if item['app_name'] == name]
             if not app_items:

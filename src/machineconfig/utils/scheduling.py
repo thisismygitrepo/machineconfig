@@ -195,7 +195,10 @@ def read_task_from_dir(path: P):
 def main(root: Optional[str] = None, ignore_conditions: bool=True):
     if root is None: root_resolved = SCHEDULER_DEFAULT_ROOT
     else: root_resolved = P(root).expanduser().absolute()
-    tasks_dirs = root_resolved.search(files=False, folders=True).filter(lambda x: x.joinpath("task.py").exists())
+    # Replace crocodile List usage with pathlib iteration
+    from pathlib import Path
+    # Find all `task.py` files under root and use their parent directories
+    tasks_dirs = list({P(p.parent) for p in Path(root_resolved.to_str()).rglob("task.py")})
 
     # Print a fancy box using rich
     console = Console()

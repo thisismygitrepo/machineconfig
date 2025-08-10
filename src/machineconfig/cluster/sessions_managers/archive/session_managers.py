@@ -4,7 +4,6 @@ Session Manager
 """
 
 from machineconfig.cluster.self_ssh import SelfSSH
-from crocodile.core import List as L
 from crocodile.file_management import P
 from machineconfig.utils.io_save import save_yaml
 from crocodile.meta import SSH, Response, Terminal
@@ -17,7 +16,9 @@ class Zellij:
     @staticmethod
     def get_current_zellij_session() -> str:
         try:
-            return L(Terminal().run("zellij ls --no-formatting").op.split("\n")).filter(lambda x: "(current)" in x).list[0].split(" [Created")[0]
+                output_lines = Terminal().run("zellij ls --no-formatting").op.split("\n")
+                current_lines = [line for line in output_lines if "(current)" in line]
+                return current_lines[0].split(" [Created")[0]
         except IndexError as ie:
             print("""Fails if there is no zellij session running, fails if there is no (current) suffix against the session name.""")
             raise ie

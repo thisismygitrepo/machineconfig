@@ -1,5 +1,3 @@
-
-from crocodile.core import List
 from crocodile.file_management import P, Read
 import platform
 from typing import Optional
@@ -89,10 +87,11 @@ def get_installed_interpreters() -> list[P]:
     if system == "Windows":
         tmp: list[P] = P.get_env().PATH.search("python.exe").reduce(func=lambda x, y: x+y).list[1:]
     else:
-        items: List[P] = P.get_env().PATH.search("python3*").reduce(lambda x, y: x+y)
-        tmp = list(set(items.filter(lambda x: not x.is_symlink() and "-" not in x)))
+        all_matches: list[P] = P.get_env().PATH.search("python3*").reduce(lambda x, y: x+y).list
+        tmp = list(set([x for x in all_matches if (not x.is_symlink()) and ("-" not in str(x))]))
     print("🔍 Found Python interpreters:")
-    List(tmp).print()
+    for interpreter_path in tmp:
+        print(interpreter_path)
     return list(set([P(x) for x in tmp]))
 
 

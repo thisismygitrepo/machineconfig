@@ -1,7 +1,6 @@
 """Set Windows Terminal Settings
 """
 
-from crocodile.core import List as L
 from machineconfig.utils.utils2 import randstr
 from crocodile.file_management import P, Read
 from machineconfig.utils.io_save import save_json
@@ -42,7 +41,8 @@ class TerminalSettings(object):
         self.path.copy(append=backup_name)
         print(f"📂 Loading Windows Terminal settings from: {self.path}")
         self.dat: dict[str, Any] = Read.json(self.path)
-        self.profs = L(self.dat["profiles"]["list"])
+        # Use a plain Python list for profiles
+        self.profs = list(self.dat["profiles"]["list"])
         console = Console()
         console.print(Panel(f"✅ Successfully loaded {len(self.profs)} profiles", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
 
@@ -82,7 +82,7 @@ class TerminalSettings(object):
         
         for idx, item in enumerate(self.profs):
             if item["name"] == "PowerShell":
-                self.profs.list[idx].update(pwsh)
+                self.profs[idx].update(pwsh)
                 console.print(Panel("✅ PowerShell profile customized successfully", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
                 break
         else:
@@ -126,7 +126,7 @@ class TerminalSettings(object):
                       guid="{" + str(uuid4()) + "}",
                       startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
                       )
-        if self.profs.filter(lambda x: x["name"] == "Ubuntu").__len__() < 1:
+        if not any(x.get("name") == "Ubuntu" for x in self.profs):
             self.profs.append(ubuntu)
             console.print(Panel("✅ Added Ubuntu WSL profile", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
         else:
@@ -146,7 +146,7 @@ class TerminalSettings(object):
             elif name == "Command Prompt": cmd = profile
             elif name == "Azure Cloud Shell": azure = profile
             else: others.append(profile)
-        self.profs = L([item for item in [pwsh, croshell, ubuntu, wpwsh, cmd, azure] + others if item is not None])
+        self.profs = [item for item in [pwsh, croshell, ubuntu, wpwsh, cmd, azure] + others if item is not None]
         console.print(Panel("✅ Profile order standardized", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
 
 

@@ -6,6 +6,7 @@ from machineconfig.utils.utils2 import pprint
 
 import platform
 from typing import Any, Optional
+from pathlib import Path
 
 
 class Installer:
@@ -49,7 +50,9 @@ class Installer:
         print(f"\n{'='*80}\n🔍 SELECT APPLICATION TO INSTALL 🔍\n{'='*80}")
         from machineconfig.utils.utils import choose_one_option
         print("📂 Searching for configuration files...")
-        path = choose_one_option(options=LIBRARY_ROOT.joinpath("jobs").search("config.json", r=True).list)
+        jobs_dir = Path(LIBRARY_ROOT.joinpath("jobs").to_str())
+        config_paths = [P(p) for p in jobs_dir.rglob("config.json")]
+        path = choose_one_option(options=config_paths)
         print(f"📄 Loading configuration from: {path}")
         config: dict[str, Any] = Read.json(path)  # /python_generic_installers/config.json"))
         print("🔍 Select an application to install:")

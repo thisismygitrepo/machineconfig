@@ -3,7 +3,6 @@
 
 
 from crocodile.file_management import P
-from crocodile.core import List as L
 from machineconfig.cluster.remote_machine import RemoteMachine, FileManager
 
 
@@ -49,7 +48,13 @@ class Submission:
         assert rm.ssh.sftp is not None, f"SFTP is not available for this machine `{rm.ssh}`. Consider using different `transfer_method` other than `sftp`."
         rm.ssh.run_py(f"P(r'{FileManager.shell_script_path_log}').expanduser().create(parents_only=True).delete(sure=True).write_text(r'{rm.file_manager.shell_script_path.collapseuser().as_posix()}')", desc="Logging latest shell script path on remote.", verbose=False)
         if rm.config.copy_repo: rm.ssh.copy_from_here(rm.job_params.repo_path_rh, z=True, overwrite=True)
-        L(rm.data).apply(lambda a_path: rm.ssh.copy_from_here(a_path, z=True if P(a_path).is_dir() else False, r=False, overwrite=True))
+        for a_path in rm.data:
+            rm.ssh.copy_from_here(
+                a_path,
+                z=True if P(a_path).is_dir() else False,
+                r=False,
+                overwrite=True,
+            )
         rm.ssh.copy_from_here(rm.file_manager.job_root, z=True)
 
 

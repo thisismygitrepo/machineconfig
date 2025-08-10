@@ -94,7 +94,8 @@ class CloudManager:
     @staticmethod
     def prepare_servers_report(cloud_root: P) -> list[dict[str, Any]]:
         from machineconfig.cluster.remote_machine import RemoteMachine
-        workers_root = cloud_root.joinpath("workers").search("*")
+        # Replace crocodile List usage with plain Python list
+        workers_root = [p for p in cloud_root.joinpath("workers").iterdir()]
         res: dict[str, list[RemoteMachine]] = {}
         times: dict[str, timedelta] = {}
         for a_worker in workers_root:
@@ -241,7 +242,8 @@ class CloudManager:
         log = self.read_log()
         from machineconfig.cluster.remote_machine import RemoteMachine
         from machineconfig.utils.utils import display_options
-        jobs_all: list[str] = self.base_path.expanduser().joinpath("jobs").search("*").apply(lambda x: x.name).list
+        # Replace crocodile List usage with plain Python list comprehension
+        jobs_all: list[str] = [p.name for p in self.base_path.expanduser().joinpath("jobs").iterdir()]
         jobs_selected = display_options(options=jobs_all, msg="Select Jobs to Redo", multi=True, fzf=True)
         for a_job in jobs_selected:
             # find in which log list does this job live:

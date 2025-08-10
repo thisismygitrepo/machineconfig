@@ -7,7 +7,6 @@ from rich.console import Console
 from machineconfig.utils.utils2 import pprint
 from datetime import datetime
 
-from crocodile.core import List as L
 from machineconfig.utils.utils2 import randstr
 from crocodile.file_management_helpers.file4 import Read
 from crocodile.meta import SSH
@@ -34,11 +33,35 @@ class WorkloadParams:
     job_id: str = ''
     @property
     def save_suffix(self) -> str: return f"machine_{self.idx_start}_{self.idx_end}"
-    def split_to_jobs(self, jobs: Optional[int] = None) -> L['WorkloadParams']:
-        # Note: like MachineLoadCalculator get_kwargs, the behaviour is to include the edge cases on both ends of subsequent intervals.
-        res = L(range(self.idx_start, self.idx_end, 1)).split(to=jobs or self.jobs).apply(lambda sub_list: WorkloadParams(idx_start=sub_list.list[0], idx_end=sub_list.list[-1] + 1, idx_max=self.idx_max, jobs=self.jobs))
-        for idx, item in enumerate(res): item.idx = idx
-        return res
+    def split_to_jobs(self, jobs: Optional[int] = None) -> list['WorkloadParams']:
+        # Evenly split the integer range [idx_start, idx_end) into contiguous chunks
+        # and return a list of WorkloadParams describing each chunk.
+        num_jobs = jobs or self.jobs or 1
+        total_items = max(0, self.idx_end - self.idx_start)
+        if total_items == 0:
+            return []
+        # Do not create more jobs than items to avoid empty chunks
+        num_jobs = min(num_jobs, total_items)
+
+        indices = list(range(self.idx_start, self.idx_end))
+        result: list[WorkloadParams] = []
+        for i in range(num_jobs):
+            start_offset = (i * total_items) // num_jobs
+            end_offset = ((i + 1) * total_items) // num_jobs
+            chunk = indices[start_offset:end_offset]
+            if not chunk:
+                continue
+            result.append(
+                WorkloadParams(
+                    idx_start=chunk[0],
+                    idx_end=chunk[-1] + 1,  # make end exclusive
+                    idx_max=self.idx_max,
+                    jobs=self.jobs,
+                )
+            )
+        for idx, item in enumerate(result):
+            item.idx = idx
+        return result
     def get_section_from_series(self, series: list[datetime]):
         from math import floor
         min_idx_start = int(floor((len(series) - 1) * self.idx_start / self.idx_max))
