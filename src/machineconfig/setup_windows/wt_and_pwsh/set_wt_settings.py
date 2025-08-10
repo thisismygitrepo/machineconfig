@@ -3,7 +3,8 @@
 
 from crocodile.core import List as L
 from machineconfig.utils.utils2 import randstr
-from crocodile.file_management import P, Read, Save
+from crocodile.file_management import P, Read
+from machineconfig.utils.io_save import save_json
 import crocodile.environment as env
 from machineconfig.utils.utils import LIBRARY_ROOT
 from uuid import uuid4
@@ -48,7 +49,7 @@ class TerminalSettings(object):
     def save_terminal_settings(self):
         print(f"\n💾 Saving terminal settings to: {self.path}")
         self.dat["profiles"]["list"] = list(self.profs)
-        Save.json(obj=self.dat, path=self.path, indent=5)
+        save_json(obj=self.dat, path=self.path, indent=5)
         console.print(Panel("✅ Settings saved successfully!", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
 
     # ========================= Terminal Settings =========================================

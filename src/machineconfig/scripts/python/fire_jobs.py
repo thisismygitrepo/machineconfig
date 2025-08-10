@@ -15,7 +15,8 @@ from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
 from machineconfig.utils.ve_utils.ve1 import get_repo_root
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, match_file_name, sanitize_path
 from machineconfig.utils.ve_utils.ve1 import get_ve_activate_line, get_ve_name_and_ipython_profile
-from crocodile.file_management import P, Read, Save
+from crocodile.file_management import P, Read
+from machineconfig.utils.io_save import save_toml
 from machineconfig.utils.utils2 import randstr
 import platform
 from typing import Optional
@@ -157,7 +158,7 @@ def main() -> None:
                             secrets_template["auth"]["redirect_uri"] = host_url
                             secrets_template["auth"]["cookie_secret"] = randstr(35)
                             secrets_template["auth"]["auth0"]["redirect_uri"] = host_url
-                            Save.toml(obj=secrets_template, path=secrets_path)                        
+                            save_toml(obj=secrets_template, path=secrets_path)                        
                         except Exception as ex:
                             print(ex)
                             raise ex

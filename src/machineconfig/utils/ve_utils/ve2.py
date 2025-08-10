@@ -1,4 +1,4 @@
-from crocodile.core import Save
+from machineconfig.utils.io_save import save_json, save_ini
 from dataclasses import asdict
 from crocodile.file_management import P, Read
 
@@ -118,7 +118,7 @@ def create_symlinks(repo_root: P, ve_name: str, dotted_py_version: str, system: 
 
     ve_ini_specs = VE_Specs(ve_name=ve_name, py_version=dotted_py_version, ipy_profile="default", os=system)
     ve_ini = VE_INI(specs=ve_ini_specs)
-    Save.ini(obj=asdict(ve_ini), path=repo_root.joinpath(".ve.ini"))
+    save_ini(path=repo_root.joinpath(".ve.ini"), obj=asdict(ve_ini))
     vscode = repo_root.joinpath(".vscode/settings.json")
     if vscode.exists():
         settings = Read.json(vscode)
@@ -130,7 +130,7 @@ def create_symlinks(repo_root: P, ve_name: str, dotted_py_version: str, system: 
         settings["python.defaultInterpreterPath"] = P.home().joinpath("venvs", ve_name, "bin", "python").as_posix()
     else:
         raise NotImplementedError(f"System {system} not supported.")
-    Save.json(obj=settings, path=vscode, indent=4)
+    save_json(obj=settings, path=vscode, indent=4)
 
 
 def make_installation_recipe(repo_root: str, ve_name: str, py_version: str):

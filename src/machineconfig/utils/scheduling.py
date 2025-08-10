@@ -1,7 +1,7 @@
 """Task scheduler
 """
 
-from crocodile.file_management import P, Read, Save
+from crocodile.file_management import P, Read
 # from crocodile.meta import Terminal
 from machineconfig.utils.utils import get_shell_script_executing_python_file
 from dataclasses import dataclass
@@ -85,6 +85,29 @@ venv = ve
 """
 
 
+def save_ini(path: P, obj: dict[str, dict[str, Any]]) -> P:
+    """Write a simple INI file to `path` using standard library.
+
+    The `obj` should be a mapping of section name to a mapping of key/value pairs.
+    Values are converted to strings. The parent directory is created if missing.
+    Returns the resolved path.
+    """
+    import configparser
+
+    resolved_path: P = P(path).expanduser().absolute()
+    resolved_path.parent.create()
+
+    config = configparser.ConfigParser()
+    for section_name, section_values in obj.items():
+        # Ensure all values are stringified for configparser
+        config[section_name] = {str(k): ("" if v is None else str(v)) for k, v in section_values.items()}
+
+    with open(resolved_path, "w", encoding="utf-8") as file:
+        config.write(file)
+
+    return resolved_path
+
+
 class Register:
     def __init__(self, root: str):
         self.root = P(root).expanduser().absolute()
@@ -135,12 +158,14 @@ class Report:
             status=ini["status"],
         )
     def to_path(self, path: P):
-        Save.ini(path=path, obj={'report': {
-            'name': self.name,
-            'start': self.start.isoformat(),
-            'end': self.end.isoformat(),
-            'status': str(self.status),
-        }})
+        save_ini(path=path, obj={
+            'report': {
+                'name': self.name,
+                'start': self.start.isoformat(),
+                'end': self.end.isoformat(),
+                'status': str(self.status),
+            }
+        })
 
 
 @dataclass

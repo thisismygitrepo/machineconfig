@@ -3,7 +3,8 @@
 
 # import os
 # import json
-from crocodile.file_management import P as Path, Read, Save
+from crocodile.file_management import P as Path, Read
+from machineconfig.utils.io_save import save_json
 import argparse
 import platform
 
@@ -61,7 +62,7 @@ def select_interpreter(workspace_root: str):
         
     settings = Read.json(work_space_settings)
     settings['python.defaultInterpreterPath'] = str(python_path)
-    Save.json(obj=settings, path=work_space_settings, indent=4)
+    save_json(obj=settings, path=work_space_settings, indent=4)
     
     print(f"""
 {'=' * 150}

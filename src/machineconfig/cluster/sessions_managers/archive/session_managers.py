@@ -5,7 +5,8 @@ Session Manager
 
 from machineconfig.cluster.self_ssh import SelfSSH
 from crocodile.core import List as L
-from crocodile.file_management import P, Save
+from crocodile.file_management import P
+from machineconfig.utils.io_save import save_yaml
 from crocodile.meta import SSH, Response, Terminal
 import time
 import subprocess
@@ -177,7 +178,7 @@ class Mprocs:
     def get_layout(self):
         temp = self.get_template()
         temp.procs['main']['shell']['windows'] = "croshell"
-        _template_file = Save.yaml(obj=temp, path=P.tmpfile(suffix=".yaml"))
+        _template_file = save_yaml(obj=temp, path=P.tmpfile(suffix=".yaml"))
     def asssert_session_started(self):
         time.sleep(3)
         return True

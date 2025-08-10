@@ -7,7 +7,8 @@ import platform
 import getpass
 
 from machineconfig.utils.utils2 import randstr
-from crocodile.file_management import P, Save
+from crocodile.file_management import P
+from machineconfig.utils.io_save import save_pickle
 from crocodile.meta import SSH
 from src.machineconfig.cluster.sessions_managers.archive.session_managers import Zellij, WindowsTerminal
 from machineconfig.cluster.self_ssh import SelfSSH
@@ -64,7 +65,7 @@ class RemoteMachine:
                 # This is a workaround that uses the same existing session and make special tab for new jobs, until zellij implements detached session capability.
                 # no need to assert session started, as it is already started. Plus, The lack of suffix `sess_name (current)` creates problems.
                 self.job_params.session_name = sess_name
-                Save.pickle(obj=self, path=self.file_manager.remote_machine_path.expanduser(), verbose=False)
+                save_pickle(obj=self, path=self.file_manager.remote_machine_path.expanduser(), verbose=False)
             else:
                 # As for Windows Terminal, there is another problem preventing us from using the same window; there is no kill-pane or kill-tab or even kill-window, the only way is to kill process (kills window).
                 # Thus, we can't terminate a job unless it has a window of its own. So we follow that apporach here.
@@ -163,10 +164,10 @@ deactivate
         # shell_script_path.write_text(shell_script, encoding='utf-8', newline={"Windows": None, "Linux": "\n"}[ssh.get_remote_machine()])  # LF vs CRLF requires py3.10
         with open(file=self.file_manager.shell_script_path.expanduser().create(parents_only=True), mode='w', encoding="utf-8", newline={"Windows": None, "Linux": "\n"}[self.ssh.get_remote_machine()]) as file: file.write(shell_script)
         self.file_manager.py_script_path.expanduser().create(parents_only=True).write_text(py_script, encoding='utf-8')  # py_version = sys.version.split(".")[1]
-        Save.pickle(obj=self.kwargs, path=self.file_manager.kwargs_path.expanduser(), verbose=False)
-        Save.pickle(obj=self.file_manager.__getstate__(), path=self.file_manager.file_manager_path.expanduser(), verbose=False)
-        Save.pickle(obj=self.config, path=self.file_manager.remote_machine_config_path.expanduser(), verbose=False)
-        Save.pickle(obj=self, path=self.file_manager.remote_machine_path.expanduser(), verbose=False)
+        save_pickle(obj=self.kwargs, path=self.file_manager.kwargs_path.expanduser(), verbose=False)
+        save_pickle(obj=self.file_manager.__getstate__(), path=self.file_manager.file_manager_path.expanduser(), verbose=False)
+        save_pickle(obj=self.config, path=self.file_manager.remote_machine_config_path.expanduser(), verbose=False)
+        save_pickle(obj=self, path=self.file_manager.remote_machine_path.expanduser(), verbose=False)
         job_status: JOB_STATUS = "queued"
         self.file_manager.execution_log_dir.expanduser().create().joinpath("status.txt").write_text(job_status)
         print("\n")

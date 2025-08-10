@@ -12,7 +12,8 @@ import numpy as np
 
 from crocodile.core import List as L,  install_n_import
 from machineconfig.utils.utils2 import randstr
-from crocodile.file_management import P, Save
+from crocodile.file_management import P
+from machineconfig.utils.io_save import save_pickle
 from crocodile.meta import SSH, Terminal
 from machineconfig.cluster.remote_machine import RemoteMachine, RemoteMachineConfig, WorkloadParams, LAUNCH_METHOD
 from rich.console import Console
@@ -100,7 +101,7 @@ class Cluster:
     def __setstate__(self, state: dict[str, Any]) -> None: self.__dict__.update(state)
     def save(self) -> P:
         path = self.root_dir.joinpath("cluster.Cluster.pkl")
-        Save.pickle(obj=self.__getstate__(), path=path)
+        save_pickle(obj=self.__getstate__(), path=path)
         return path
     @staticmethod
     def load(job_id: str, base: Optional[str] = None) -> 'Cluster': return Cluster.get_cluster_path(job_id=job_id, base=base).joinpath("cluster.Cluster.pkl").readit()

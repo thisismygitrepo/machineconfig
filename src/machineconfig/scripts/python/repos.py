@@ -7,7 +7,8 @@ in the event that username@github.com is not mentioned in the remote url.
 
 from rich import print as pprint
 from machineconfig.utils.utils import write_shell_script_to_default_program_path, CONFIG_PATH, DEFAULTS_PATH
-from crocodile.file_management import P, Read, Save
+from crocodile.file_management import P, Read
+from machineconfig.utils.io_save import save_json
 from machineconfig.utils.utils2 import randstr
 import argparse
 from dataclasses import dataclass
@@ -94,7 +95,7 @@ def main():
         res = record_repos(repos_root=str(repos_root))
         pprint("✅ Recorded repositories:\n", res)
         save_path = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
-        Save.json(obj=res, path=save_path, indent=4)
+        save_json(obj=res, path=save_path, indent=4)
         pprint(f"📁 Result saved at {P(save_path)}")
         if args.cloud is not None: P(save_path).to_cloud(rel2home=True, cloud=args.cloud)
         program += """\necho '>>>>>>>>> Finished Recording'\n"""

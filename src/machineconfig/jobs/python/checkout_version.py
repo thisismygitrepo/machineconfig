@@ -1,7 +1,8 @@
 """checkout_version.py
 """
 
-from crocodile.file_management import P, Save
+from crocodile.file_management import P
+from machineconfig.utils.io_save import save_json
 from machineconfig.utils.utils2 import randstr
 from crocodile.meta import Terminal
 from machineconfig.utils.ve_utils.ve1 import get_ve_specs
@@ -30,7 +31,7 @@ def checkout_version(version: str, repo_root: P, exclude_editable: bool=False):
     if exclude_editable:
         editable_json = get_editable_packages(ve_name=ve_name)
         specs_path = P(target_dir).expanduser().joinpath("editable_packages.json")
-        Save.json(obj=editable_json, path=specs_path, indent=4)
+        save_json(obj=editable_json, path=specs_path, indent=4)
         install_editable_packages = install_repos(specs_path=str(specs_path), editable_install=True)
     else: install_editable_packages = ""
 

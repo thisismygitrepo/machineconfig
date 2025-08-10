@@ -3,7 +3,8 @@ from rich.console import Console
 from machineconfig.utils.utils2 import pprint
 from datetime import datetime
 
-from crocodile.file_management import P, Save
+from crocodile.file_management import P
+from machineconfig.utils.io_save import save_pickle
 from crocodile.meta import MACHINE
 from machineconfig.cluster.loader_runner import JOB_STATUS, LAUNCH_METHOD, JobStatus
 
@@ -114,12 +115,12 @@ class FileManager:
         except FileNotFoundError:
             print("Queue file was deleted by the locking job, creating an empty one and saving it.")
             queue_file = []
-            Save.pickle(obj=queue_file, path=self.queue_path.expanduser())
+            save_pickle(obj=queue_file, path=self.queue_path.expanduser())
         job_ids = [job.job_id for job in queue_file]
         if self.job_id not in job_ids:
             print(f"Adding this job {self.job_id} to the queue and saving it. {len(queue_file)=}")
             queue_file.append(job_status)
-            Save.pickle(obj=queue_file, path=self.queue_path.expanduser())
+            save_pickle(obj=queue_file, path=self.queue_path.expanduser())
         return queue_file
 
     def get_resources_unlocking(self):  # this one works at shell level in case python script failed.
@@ -139,7 +140,7 @@ echo "Unlocked resources"
             except FileNotFoundError:
                 print("Running file was deleted by the locking job, making one.")
                 running_file = []
-                Save.pickle(obj=running_file, path=self.running_path.expanduser())
+                save_pickle(obj=running_file, path=self.running_path.expanduser())
 
             queue_file = self.add_to_queue(job_status=this_job)
 
@@ -154,7 +155,7 @@ echo "Unlocked resources"
             except psutil.NoSuchProcess:
                 print(f"Next job in queue {next_job_in_queue} has no associated process, removing it from the queue.")
                 queue_file.pop(0)
-                Save.pickle(obj=queue_file, path=self.queue_path.expanduser())
+                save_pickle(obj=queue_file, path=self.queue_path.expanduser())
                 continue
 
             # --------------- Clearning up running_file from dead processes -----------------
@@ -167,7 +168,7 @@ echo "Unlocked resources"
                     print(f"Locking process with pid {running_job.pid} is dead. Ignoring this lock file.")
                     pprint(running_job.__dict__, "Ignored Lock File Details")
                     running_file.remove(running_job)
-                    Save.pickle(obj=running_file, path=self.running_path.expanduser())
+                    save_pickle(obj=running_file, path=self.running_path.expanduser())
                     found_dead_process = True
                     continue  # for for loop
                 attrs_txt = ['status', 'memory_percent', 'exe', 'num_ctx_switches',
@@ -202,7 +203,7 @@ echo "Unlocked resources"
 
         if job_status in queue_file: queue_file.remove(job_status)
         print("Removed current job from waiting queue and added it to the running queue. Saving both files.")
-        Save.pickle(obj=queue_file, path=queue_path)
+        save_pickle(obj=queue_file, path=queue_path)
 
         running_path = self.running_path.expanduser()
         try: running_file: list[JobStatus] = running_path.readit()
@@ -211,7 +212,7 @@ echo "Unlocked resources"
         assert job_status not in running_file, f"Job status {job_status} is already in the running file. This should not happen."
         assert len(running_file) < self.max_simulataneous_jobs, f"Number of running jobs ({len(running_file)}) is greater than the maximum allowed ({self.max_simulataneous_jobs}). This method should not be called in the first place."
         running_file.append(job_status)
-        Save.pickle(obj=running_file, path=running_path)
+        save_pickle(obj=running_file, path=running_path)
 
     def unlock_resources(self):
         if self.lock_resources is False: return True
@@ -226,7 +227,7 @@ echo "Unlocked resources"
         if this_job is not None:
             running_file.remove(this_job)
         console.print(f"Resources have been released by this job `{self.job_id}`. Saving new running file")
-        Save.pickle(path=self.running_path.expanduser(), obj=running_file)
+        save_pickle(path=self.running_path.expanduser(), obj=running_file)
         start_time_str = self.execution_log_dir.expanduser().joinpath("start_time.txt").readit()
         start_time = datetime.fromisoformat(start_time_str)
         end_time = datetime.now()
@@ -236,5 +237,5 @@ echo "Unlocked resources"
         else: hist = []
         hist.append(item)
         print(f"Saved history file to {hist_file} with {len(hist)} items.")
-        Save.pickle(obj=hist, path=hist_file)
+        save_pickle(obj=hist, path=hist_file)
         # this is further handled by the calling script in case this function failed.

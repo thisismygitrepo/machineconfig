@@ -1,5 +1,6 @@
 from pathlib import Path
-from crocodile.file_management import Save, P
+from crocodile.file_management import P
+from machineconfig.utils.io_save import save_pickle
 from plotly import graph_objects as go
 import plotly.express as px
 from typing import Callable, Iterable, Any, Optional
@@ -31,7 +32,7 @@ def run(data: Optional[Iterable[Any]], data_path: Optional[str],
 
     if data_path is None:
         print("💾 Saving data to temporary path...")
-        data_path = str(Save.pickle(obj=data, path=code_dir.joinpath("data.pkl")))
+        data_path = str(save_pickle(obj=data, path=code_dir.joinpath("data.pkl")))
 
     code = code.replace("""data_path = \"get_figure_placeholder.pkl\" """, f"""data_path = r"{data_path}" """)
 
