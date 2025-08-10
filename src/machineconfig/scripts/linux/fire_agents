@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+. $HOME/scripts/activate_ve 've'
+
+# Generate random string of length 5
+random_str=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)
+export op_script=$HOME/tmp_results/shells/$random_str/python_return_command.sh
+# op_script=$HOME/tmp_results/shells/$random_str/python_return_command.sh
+
+if [ -f "$op_script" ]; then
+  rm $op_script
+fi
+
+
+python -m machineconfig.scripts.python.fire_agents "$@"
+
+if [ -f "$op_script" ]; then
+  echo "Running $op_script"
+  chmod +x $op_script
+  set --  # clear all positional parameters
+  source $op_script  # sourcing the script means the args passed to the this script are passed to the sourced script which cofuses the sources script as it contains activate_ve and it doesn't understand first.sh arguments.
+fi
+
+
+if [ -n "$VIRTUAL_ENV" ]; then
+  deactivate || true
+fi

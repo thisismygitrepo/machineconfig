@@ -1,6 +1,6 @@
-from crocodile.core import List as L
+# from crocodile.core import List as L
 from crocodile.file_management import P
-from machineconfig.utils.options import check_tool_exists, choose_one_option
+from machineconfig.utils.options import choose_one_option
 from rich.console import Console
 from rich.panel import Panel
 import platform
