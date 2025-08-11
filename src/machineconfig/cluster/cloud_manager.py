@@ -1,11 +1,13 @@
 
 
-from crocodile.file_management import P, Read
+from crocodile.file_management import P
+from machineconfig.utils.utils2 import read_ini
 from machineconfig.utils.io_save import save_pickle
 from crocodile.meta import Scheduler
 from machineconfig.cluster.loader_runner import JOB_STATUS, LogEntry
 from typing import Optional, Any, NoReturn
 from rich.console import Console
+import pickle
 import time
 import getpass
 import random
@@ -59,7 +61,7 @@ class CloudManager:
         self.max_jobs: int = max_jobs
         if cloud is None:
             from machineconfig.utils.utils import DEFAULTS_PATH
-            self.cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            self.cloud = read_ini(DEFAULTS_PATH)['general']['rclone_config_name']
         else: self.cloud = cloud
         self.lock_claimed = False
         from machineconfig.cluster.remote_machine import RemoteMachine
@@ -79,7 +81,7 @@ class CloudManager:
             log['failed'] = []
             save_pickle(obj=log, path=path.create(parents_only=True), verbose=False)
             return log
-        return Read.pickle(path=path)
+        return pickle.loads(path.read_bytes())
     def write_log(self, log: dict[JOB_STATUS, list[dict[str, Any]]]) -> None:
         # assert self.claim_lock, f"method should never be called without claiming the lock first. This is a cloud-wide file."
         if not self.lock_claimed: self.claim_lock()
@@ -102,7 +104,7 @@ class CloudManager:
             running_jobs = a_worker.joinpath("running_jobs.pkl")
             file_mod_time = datetime.fromtimestamp(running_jobs.stat().st_mtime) if running_jobs.exists() else datetime.min
             times[a_worker.name] = datetime.now() - file_mod_time
-            res[a_worker.name] = Read.pickle(path=running_jobs) if running_jobs.exists() else []
+            res[a_worker.name] = pickle.loads(running_jobs.read_bytes()) if running_jobs.exists() else []
         
         # Create list of dictionaries instead of DataFrame
         servers_report = []
@@ -126,7 +128,7 @@ class CloudManager:
             self.console.print(f"🔒 Lock is held by: {lock_owner}")
             self.console.print("🧾 Log File:")
             log_path = alternative_base.joinpath("logs.pkl")
-            if log_path.exists(): log: dict[JOB_STATUS, list[dict[str, Any]]] = Read.pickle(path=log_path)
+            if log_path.exists(): log: dict[JOB_STATUS, list[dict[str, Any]]] = pickle.loads(log_path.read_bytes())
             else:
                 self.console.print("Log file doesn't exist! 🫤 must be that cloud is getting purged or something 🤔 ")
                 log = {}
@@ -186,7 +188,7 @@ class CloudManager:
             entry = LogEntry.from_dict(job_data)
             if entry.run_machine != this_machine: continue
             a_job_path = CloudManager.base_path.expanduser().joinpath(f"jobs/{entry.name}")
-            rm: RemoteMachine = Read.pickle(path=a_job_path.joinpath("data/remote_machine.Machine.pkl"))
+            rm: RemoteMachine = pickle.loads(a_job_path.joinpath("data/remote_machine.Machine.pkl").read_bytes())
             status = rm.file_manager.get_job_status(session_name=rm.job_params.session_name, tab_name=rm.job_params.tab_name)
             if status == "running":
                 print(f"Job `{entry.name}` is still running, added to running jobs.")
@@ -220,7 +222,7 @@ class CloudManager:
         for job_data in log["failed"]:
             entry = LogEntry.from_dict(job_data)
             a_job_path = CloudManager.base_path.expanduser().joinpath(f"jobs/{entry.name}")
-            rm: RemoteMachine = Read.pickle(path=a_job_path.joinpath("data/remote_machine.Machine.pkl"))
+            rm: RemoteMachine = pickle.loads(a_job_path.joinpath("data/remote_machine.Machine.pkl").read_bytes())
             entry.note += f"| Job failed @ {entry.run_machine}"
             entry.pid = None
             entry.cmd = None
@@ -273,7 +275,7 @@ class CloudManager:
             entry.end_time = None
             entry.run_machine = None
             entry.session_name = None
-            rm: RemoteMachine = Read.pickle(path=a_job_path.joinpath("data/remote_machine.Machine.pkl"))
+            rm: RemoteMachine = pickle.loads(a_job_path.joinpath("data/remote_machine.Machine.pkl").read_bytes())
             rm.file_manager.execution_log_dir.expanduser().joinpath("status.txt").delete(sure=True)
             rm.file_manager.execution_log_dir.expanduser().joinpath("pid.txt").delete(sure=True)
             log["queued"].append(entry.__dict__)
@@ -341,7 +343,7 @@ class CloudManager:
             
             queue_entry = LogEntry.from_dict(log["queued"][idx])
             a_job_path = CloudManager.base_path.expanduser().joinpath(f"jobs/{queue_entry.name}")
-            rm: RemoteMachine = Read.pickle(path=a_job_path.joinpath("data/remote_machine.Machine.pkl"))
+            rm: RemoteMachine = pickle.loads(a_job_path.joinpath("data/remote_machine.Machine.pkl").read_bytes())
             if rm.config.allowed_remotes is not None and f"{getpass.getuser()}@{platform.node()}" not in rm.config.allowed_remotes:
                 print(f"Job `{queue_entry.name}` is not allowed to run on this machine. Skipping ...")
                 idx += 1

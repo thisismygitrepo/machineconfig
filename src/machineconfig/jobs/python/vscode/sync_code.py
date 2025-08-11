@@ -1,8 +1,8 @@
-from crocodile.file_management import Read
 from pathlib import Path
 from configparser import SectionProxy
+from machineconfig.utils.utils2 import read_ini
 
-config = Read.ini(Path.home().joinpath(".ssh", "config"))
+config = read_ini(Path.home().joinpath(".ssh", "config"))
 
 
 def sync_remote(machine_name: str):

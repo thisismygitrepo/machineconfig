@@ -1,8 +1,8 @@
 """Set Windows Terminal Settings
 """
 
-from machineconfig.utils.utils2 import randstr
-from crocodile.file_management import P, Read
+from machineconfig.utils.utils2 import randstr, read_json
+from crocodile.file_management import P
 from machineconfig.utils.io_save import save_json
 import crocodile.environment as env
 from machineconfig.utils.utils import LIBRARY_ROOT
@@ -40,7 +40,7 @@ class TerminalSettings(object):
         print(f"📝 Creating backup of original settings as {backup_name}...")
         self.path.copy(append=backup_name)
         print(f"📂 Loading Windows Terminal settings from: {self.path}")
-        self.dat: dict[str, Any] = Read.json(self.path)
+        self.dat: dict[str, Any] = read_json(self.path)
         # Use a plain Python list for profiles
         self.profs = list(self.dat["profiles"]["list"])
         console = Console()

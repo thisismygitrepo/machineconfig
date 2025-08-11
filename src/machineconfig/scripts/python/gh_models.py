@@ -1,12 +1,13 @@
 # as per https://github.com/marketplace/models/azure-openai/o1-preview
 from openai import OpenAI
-from crocodile.file_management import Read, P
+from crocodile.file_management import P
+from machineconfig.utils.utils2 import read_ini
 from rich import print as rprint
 from rich.panel import Panel
 from typing import Any
 
 
-gh_token = Read.ini(P.home().joinpath("dotfiles/creds/git/git_host_tokens.ini"))['thisismygitrepo']['newLongterm']
+gh_token = read_ini(P.home().joinpath("dotfiles/creds/git/git_host_tokens.ini"))['thisismygitrepo']['newLongterm']
 endpoint = "https://models.inference.ai.azure.com"
 model_name_preferences = ["o3-mini", "o1-preview", "o1-mini", "GPT-4o", "GPT-4-o-mini"]
 client__ = OpenAI(

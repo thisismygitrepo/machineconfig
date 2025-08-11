@@ -3,7 +3,8 @@
 
 
 from machineconfig.utils.utils import PROGRAM_PATH, choose_one_option
-from crocodile.file_management import P, Read
+from machineconfig.utils.utils2 import read_ini
+from crocodile.file_management import P
 
 import platform
 import argparse
@@ -18,8 +19,8 @@ DEFAULT_MOUNT = "~/data/rclone"
 
 
 def get_rclone_config():
-    if platform.system() == "Windows": config = Read.ini(P.home().joinpath("AppData/Roaming/rclone/rclone.conf"))
-    elif platform.system() in ["Linux", "Darwin"]: config = Read.ini(P.home().joinpath(".config/rclone/rclone.conf"))
+    if platform.system() == "Windows": config = read_ini(P.home().joinpath("AppData/Roaming/rclone/rclone.conf"))
+    elif platform.system() in ["Linux", "Darwin"]: config = read_ini(P.home().joinpath(".config/rclone/rclone.conf"))
     else: raise ValueError("unsupported platform")
     return config
 

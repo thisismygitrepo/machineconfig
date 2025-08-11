@@ -6,22 +6,22 @@ from machineconfig.cluster.remote_machine import RemoteMachine, RemoteMachineCon
 from machineconfig.cluster.cloud_manager import CloudManager
 from machineconfig.cluster.loader_runner import WorkloadParams
 from machineconfig.cluster.self_ssh import SelfSSH
-from crocodile.file_management import Read
 from machineconfig.utils.utils import DEFAULTS_PATH
+from machineconfig.utils.utils2 import read_ini
 from typing import Any, Callable, Union
 
 _ = WorkloadParams
 
 
 try:
-    section = Read.ini(DEFAULTS_PATH)['general']
+    section = read_ini(DEFAULTS_PATH)['general']
     to_email_default = section['to_email']
     email_config_name_default = section['email_config_name']
 except (FileNotFoundError, KeyError, IndexError):
     to_email_default = 'random@email.com'
     email_config_name_default = 'enaut'
 
-try: default_cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+try: default_cloud: str = read_ini(DEFAULTS_PATH)['general']['rclone_config_name']
 except (FileNotFoundError, KeyError, IndexError): default_cloud = 'gdrive'
 
 

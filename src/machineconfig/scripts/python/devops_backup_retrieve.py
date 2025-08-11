@@ -2,7 +2,8 @@
 """
 
 # import subprocess
-from crocodile.file_management import Read, P
+from crocodile.file_management import P, Read
+from machineconfig.utils.utils2 import read_ini
 from machineconfig.utils.utils import LIBRARY_ROOT, DEFAULTS_PATH, print_code, choose_cloud_interactively, choose_multiple_options
 from machineconfig.scripts.python.helpers.helpers2 import ES
 from platform import system
@@ -18,7 +19,7 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
     console = Console()
     
     try:
-        cloud: str = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+        cloud: str = read_ini(DEFAULTS_PATH)['general']['rclone_config_name']
         console.print(Panel(f"⚠️  DEFAULT CLOUD CONFIGURATION\n🌥️  Using default cloud: {cloud}", title="[bold blue]Cloud Configuration[/bold blue]", border_style="blue"))
     except (FileNotFoundError, KeyError, IndexError):
         console.print(Panel("🔍 DEFAULT CLOUD NOT FOUND\n🔄 Please select a cloud configuration from the options below", title="[bold red]Error: Cloud Not Found[/bold red]", border_style="red"))

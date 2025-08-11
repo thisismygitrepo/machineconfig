@@ -1,4 +1,5 @@
-from crocodile.file_management import P, Read
+from crocodile.file_management import P
+from machineconfig.utils.utils2 import pprint, read_json, read_ini
 from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass
 from typing import Optional
@@ -7,7 +8,6 @@ from machineconfig.utils.utils import DEFAULTS_PATH
 from rich.console import Console
 from rich.panel import Panel
 from rich import box # Import box
-from machineconfig.utils.utils2 import pprint
 
 
 console = Console()
@@ -47,7 +47,7 @@ class Args():
 
     @staticmethod
     def from_config(config_path: P):
-        return Args(**Read.json(config_path))
+        return Args(**read_json(config_path))
 
 
 def find_cloud_config(path: P):
@@ -88,7 +88,7 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Ar
             console.print(f"☁️  Using cloud from environment: {cloud}")
         else:
             try:
-                default_cloud__ = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+                default_cloud__ = read_ini(DEFAULTS_PATH)['general']['rclone_config_name']
             except Exception:
                 default_cloud__ = 'No default cloud found.'
             if default_cloud__ == 'No default cloud found.' or interactive:

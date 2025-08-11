@@ -1,4 +1,5 @@
-from crocodile.file_management import P, Read
+from crocodile.file_management import P
+from machineconfig.utils.utils2 import read_ini
 import platform
 from typing import Optional
 
@@ -9,7 +10,7 @@ def get_ve_name_and_ipython_profile(init_path: P) -> tuple[Optional[str], Option
     tmp = init_path
     for _ in init_path.parents:
         if tmp.joinpath(".ve.ini").exists():
-            ini = Read.ini(tmp.joinpath(".ve.ini"))
+            ini = read_ini(tmp.joinpath(".ve.ini"))
             ve_name = ini["specs"]["ve_name"]
             # py_version = ini["specs"]["py_version"]
             ipy_profile = ini["specs"]["ipy_profile"]

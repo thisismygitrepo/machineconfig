@@ -5,11 +5,11 @@
 from argparse import ArgumentParser
 # from gooey import Gooey  #, GooeyParser
 from crocodile.core import install_n_import
-from crocodile.file_management import Read
 # from machineconfig.cluster.distribute import Cluster, WorkloadParams
 from machineconfig.cluster.remote_machine import RemoteMachineConfig
 # from machineconfig.cluster.utils import expensive_function
 from machineconfig.utils.utils import DEFAULTS_PATH
+from machineconfig.utils.utils2 import read_ini
 # from typing import Any, Optional
 
 Gooey = install_n_import("gooey").Gooey
@@ -63,7 +63,7 @@ def main() -> RemoteMachineConfig:
     parser.add_argument('-v', '--notify_upon_completion', help='Notify upon completion', action='store_true', default=True)
 
     try:
-        section = Read.ini(DEFAULTS_PATH)['general']
+        section = read_ini(DEFAULTS_PATH)['general']
         to_email = section['to_email']
         email_config_name = section['email_config_name']
     except (FileNotFoundError, KeyError, IndexError):

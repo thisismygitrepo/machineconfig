@@ -5,10 +5,11 @@ from machineconfig.utils.installer_utils.installer_class import Installer
 from rich.console import Console
 from rich.panel import Panel # Added import
 
-from crocodile.file_management import P, Read
+from crocodile.file_management import P
 from crocodile.core import List as L
 from crocodile.meta import Terminal
 from machineconfig.utils.utils import INSTALL_VERSION_ROOT
+from machineconfig.utils.utils2 import read_json
 
 # from dataclasses import dataclass
 from typing import Any
@@ -129,16 +130,16 @@ def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
     print("📂 Loading configuration files...")
     res_final: dict[CATEGORY, dict[str, dict[str, Any]]] = {}
     print(f"""📄 Loading OS-specific config from: {path_os_specific.joinpath('config.json')}""")
-    res_final["OS_SPECIFIC"] = Read.json(path=path_os_specific.joinpath("config.json"))
+    res_final["OS_SPECIFIC"] = read_json(path=path_os_specific.joinpath("config.json"))
 
     print(f"""📄 Loading OS-generic config from: {path_os_generic.joinpath("config.json")}""")
-    res_final["OS_GENERIC"] = Read.json(path=path_os_generic.joinpath("config.json"))
+    res_final["OS_GENERIC"] = read_json(path=path_os_generic.joinpath("config.json"))
     
     print(f"""📄 Loading OS-specific dev config from: {path_os_specific_dev.joinpath("config.json")}""")
-    res_final["OS_SPECIFIC_DEV"] = Read.json(path=path_os_specific_dev.joinpath("config.json"))
+    res_final["OS_SPECIFIC_DEV"] = read_json(path=path_os_specific_dev.joinpath("config.json"))
     
     print(f"""📄 Loading OS-generic dev config from: {path_os_generic_dev.joinpath("config.json")}""")
-    res_final["OS_GENERIC_DEV"] = Read.json(path=path_os_generic_dev.joinpath("config.json"))
+    res_final["OS_GENERIC_DEV"] = read_json(path=path_os_generic_dev.joinpath("config.json"))
 
     path_custom_installer = path_os_generic.with_name("python_custom_installers")
     path_custom_installer_dev = path_custom_installer.joinpath("dev")

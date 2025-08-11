@@ -1,8 +1,9 @@
 """Update repositories with fancy output
 """
 
-from crocodile.file_management import P, Read
+from crocodile.file_management import P
 from machineconfig.utils.utils import DEFAULTS_PATH
+from machineconfig.utils.utils2 import read_ini
 from platform import system
 
 
@@ -13,7 +14,7 @@ def main(verbose: bool=True) -> str:
     _ = verbose
     repos: list[str] = ["~/code/crocodile", "~/code/machineconfig", ]
     try:
-        tmp = Read.ini(DEFAULTS_PATH)['general']['repos'].split(",")
+        tmp = read_ini(DEFAULTS_PATH)['general']['repos'].split(",")
         if tmp[-1] == "": tmp = tmp[:-1]
         repos += tmp
     except (FileNotFoundError, KeyError, IndexError):

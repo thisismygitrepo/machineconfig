@@ -1,6 +1,7 @@
 from machineconfig.utils.io_save import save_json, save_ini
 from dataclasses import asdict
-from crocodile.file_management import P, Read
+from crocodile.file_management import P
+from machineconfig.utils.utils2 import read_json
 
 
 from typing import Literal
@@ -121,7 +122,7 @@ def create_symlinks(repo_root: P, ve_name: str, dotted_py_version: str, system: 
     save_ini(path=repo_root.joinpath(".ve.ini"), obj=asdict(ve_ini))
     vscode = repo_root.joinpath(".vscode/settings.json")
     if vscode.exists():
-        settings = Read.json(vscode)
+        settings = read_json(vscode)
     else:
         settings = {}
     if system == "Windows":

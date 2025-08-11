@@ -7,9 +7,9 @@ in the event that username@github.com is not mentioned in the remote url.
 
 from rich import print as pprint
 from machineconfig.utils.utils import write_shell_script_to_default_program_path, CONFIG_PATH, DEFAULTS_PATH
-from crocodile.file_management import P, Read
+from crocodile.file_management import P
 from machineconfig.utils.io_save import save_json
-from machineconfig.utils.utils2 import randstr
+from machineconfig.utils.utils2 import randstr, read_json, read_ini
 import argparse
 from dataclasses import dataclass
 from enum import Enum
@@ -106,7 +106,7 @@ def main():
             repos_root = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
             if not repos_root.exists():
                 if args.cloud is None:
-                    cloud: str=Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+                    cloud: str=read_ini(DEFAULTS_PATH)['general']['rclone_config_name']
                     print(f"⚠️ Using default cloud: {cloud}")
                 else:
                     cloud = args.cloud
@@ -168,7 +168,7 @@ def record_a_repo(path: P, search_parent_directories: bool=False, preferred_remo
 def install_repos(specs_path: str, clone: bool=True, checkout_to_recorded_commit: bool=False, checkout_to_branch: bool=False, editable_install: bool=False, preferred_remote: Optional[str] = None):
     program = ""
     path_obj = P(specs_path).expanduser().absolute()
-    repos: list[dict[str, Any]] = Read.json(path_obj)
+    repos: list[dict[str, Any]] = read_json(path_obj)
     for repo in repos:
         parent_dir = P(repo["parent_dir"]).expanduser().absolute().create()
         

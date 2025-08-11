@@ -1,9 +1,9 @@
 """utils"""
 
 import git
-from crocodile.file_management import P, Read
+from crocodile.file_management import P
 from crocodile.meta import Terminal
-from machineconfig.utils.utils2 import randstr
+from machineconfig.utils.utils2 import randstr, read_ini
 
 from machineconfig.scripts.python.helpers.repo_sync_helpers import fetch_dotfiles
 from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH, PROGRAM_PATH, choose_one_option
@@ -25,7 +25,7 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
          pwd: Optional[str] = None):
     if cloud is None:
         try:
-            cloud_resolved = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            cloud_resolved = read_ini(DEFAULTS_PATH)['general']['rclone_config_name']
             console.print(Panel(f"⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}", title="Default Cloud", border_style="yellow"))
         except FileNotFoundError:
             console.print(Panel(f"❌ ERROR: No cloud profile found\nLocation: {DEFAULTS_PATH}\nPlease set one up or provide one via the --cloud flag.", title="Error", border_style="red"))

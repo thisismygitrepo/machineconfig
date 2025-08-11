@@ -4,11 +4,10 @@ Runner
 """
 
 from rich.console import Console
-from machineconfig.utils.utils2 import pprint
+from machineconfig.utils.utils2 import pprint, read_ini
 from datetime import datetime
 
 from machineconfig.utils.utils2 import randstr
-from crocodile.file_management_helpers.file4 import Read
 from crocodile.meta import SSH
 from machineconfig.cluster.self_ssh import SelfSSH
 
@@ -169,13 +168,13 @@ class RemoteMachineConfig:
         if self.notify_upon_completion and self.to_email is None:
             from machineconfig.utils.utils import DEFAULTS_PATH
             try:
-                section = Read.ini(DEFAULTS_PATH)['general']
+                section = read_ini(DEFAULTS_PATH)['general']
                 self.to_email = section['to_email']
             except (FileNotFoundError, KeyError, IndexError) as err: raise ValueError(f"Email address is not provided. 🤷‍♂️ & default could not be read @ `{DEFAULTS_PATH}`") from err
         if self.notify_upon_completion and self.email_config_name is None:
             from machineconfig.utils.utils import DEFAULTS_PATH
             try:
-                section = Read.ini(DEFAULTS_PATH)['general']
+                section = read_ini(DEFAULTS_PATH)['general']
                 self.email_config_name = section['email_config_name']
             except (FileNotFoundError, KeyError, IndexError) as err: raise ValueError(f"Email config name is not provided. 🤷‍♂️ & default could not be read @ `{DEFAULTS_PATH}`") from err
 

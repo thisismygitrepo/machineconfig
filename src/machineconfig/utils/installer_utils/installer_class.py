@@ -1,8 +1,8 @@
-from crocodile.file_management import P, Read
+from crocodile.file_management import P
 from crocodile.meta import Terminal
 from machineconfig.utils.installer_utils.installer_abc import find_move_delete_linux, find_move_delete_windows
 from machineconfig.utils.utils import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT, LIBRARY_ROOT, check_tool_exists
-from machineconfig.utils.utils2 import pprint
+from machineconfig.utils.utils2 import pprint, read_json
 
 import platform
 from typing import Any, Optional
@@ -54,7 +54,7 @@ class Installer:
         config_paths = [P(p) for p in jobs_dir.rglob("config.json")]
         path = choose_one_option(options=config_paths)
         print(f"📄 Loading configuration from: {path}")
-        config: dict[str, Any] = Read.json(path)  # /python_generic_installers/config.json"))
+        config: dict[str, Any] = read_json(path)  # /python_generic_installers/config.json"))
         print("🔍 Select an application to install:")
         app_name = choose_one_option(options=list(config.keys()), fzf=True)
         # for keys, dict_ in config.items():

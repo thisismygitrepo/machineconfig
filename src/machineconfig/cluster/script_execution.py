@@ -6,8 +6,9 @@ import os
 import getpass
 import platform
 import io
+import pickle
 
-from crocodile.file_management import P, Read
+from crocodile.file_management import P
 from crocodile.meta import generate_readme, Terminal
 from machineconfig.cluster.loader_runner import WorkloadParams, JOB_STATUS
 from machineconfig.cluster.remote_machine import RemoteMachineConfig
@@ -42,7 +43,7 @@ manager.execution_log_dir.expanduser().joinpath("status.txt").write_text(job_sta
 time_at_execution_start_utc = datetime.now(timezone.utc)
 time_at_execution_start_local = datetime.now()
 manager.execution_log_dir.expanduser().create().joinpath("start_time.txt").write_text(str(time_at_execution_start_local))
-func_kwargs = Read.pickle(path=manager.kwargs_path.expanduser())
+func_kwargs = pickle.loads(manager.kwargs_path.expanduser().read_bytes())
 
 # EXTRA-PLACEHOLDER-POST
 
@@ -179,7 +180,7 @@ if params.session_name != "":
 
 
 manager.unlock_resources()
-rm_conf: RemoteMachineConfig = Read.pickle(path=manager.remote_machine_config_path.expanduser())
+rm_conf: RemoteMachineConfig = pickle.loads(manager.remote_machine_config_path.expanduser().read_bytes())
 
 
 if rm_conf.kill_on_completion:

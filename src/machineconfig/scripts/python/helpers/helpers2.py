@@ -1,10 +1,9 @@
-from crocodile.file_management import Read
 from machineconfig.scripts.python.helpers.cloud_helpers import Args, ArgsDefaults, absolute, find_cloud_config, get_secure_share_cloud_config
 from machineconfig.utils.utils import DEFAULTS_PATH
+from machineconfig.utils.utils2 import read_ini, pprint
 from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
-from machineconfig.utils.utils2 import pprint
 
 
 ES = "^"  # chosen carefully to not mean anything on any shell. `$` was a bad choice.
@@ -54,7 +53,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
             maybe_config = tmp_maybe_config
 
         if maybe_config is None:
-            default_cloud: str=Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            default_cloud: str=read_ini(DEFAULTS_PATH)['general']['rclone_config_name']
             console.print(Panel(f"⚠️  No cloud config found. Using default cloud: {default_cloud}", width=150, border_style="yellow"))
             source = default_cloud + ":" + source[1:]
         else:
@@ -74,7 +73,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
             maybe_config = find_cloud_config(path)
 
         if maybe_config is None:
-            default_cloud = Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            default_cloud = read_ini(DEFAULTS_PATH)['general']['rclone_config_name']
             console.print(Panel(f"⚠️  No cloud config found. Using default cloud: {default_cloud}", width=150, border_style="yellow"))
             target = default_cloud + ":" + target[1:]
             print("target mutated to:", target, f"because of default cloud being {default_cloud}")

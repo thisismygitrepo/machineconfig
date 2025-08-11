@@ -1,9 +1,10 @@
 """Task scheduler
 """
 
-from crocodile.file_management import P, Read
+from crocodile.file_management import P
 # from crocodile.meta import Terminal
 from machineconfig.utils.utils import get_shell_script_executing_python_file
+from machineconfig.utils.utils2 import read_ini
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Optional, Any
@@ -150,7 +151,7 @@ class Report:
                 return Report(name=path.parent.name, start=datetime(year=2000, month=1, day=1), end=datetime(year=2000, month=1, day=1), status="NA")
             else:
                 raise ValueError(f"Could not find report at {path}")
-        ini = Read.ini(path)['report']
+        ini = read_ini(path)['report']
         return cls(
             name=ini["name"],
             start=datetime.fromisoformat(ini["start"]),
@@ -181,7 +182,7 @@ class Task:
 
 
 def read_task_from_dir(path: P):
-    tasks_config = Read.ini(path.joinpath("config.ini"))
+    tasks_config = read_ini(path.joinpath("config.ini"))
     task = Task(name=path.name,
                 task_root=path,
                 frequency=str2timedelta(tasks_config["specs"]["frequency"]),
