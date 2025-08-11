@@ -5,12 +5,9 @@ https://glitchbone.github.io/vscode-base16-term/#/3024
 """
 
 
-# # import crocodile.environment as env
 from crocodile.file_management import P
-# from crocodile.meta import Terminal
 from machineconfig.utils.utils import LIBRARY_ROOT
 from machineconfig.utils.installer_utils.installer_class import Installer
-# import os
 import subprocess
 
 

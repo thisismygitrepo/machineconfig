@@ -4,11 +4,10 @@
 # import plotly.graph_objects as go
 # import numpy as np
 # from numpy import typing as npt
-# from crocodile.file_management import Read
 # import time
 # from typing import Any
 
-# _ = px, Any, go, npt, Read, time, np
+# _ = px, Any, go, npt, time, np
 # st.set_page_config(layout="wide", page_title="📊 Interactive Figure Viewer", page_icon="📈")
 
 # # Initialize session state
@@ -18,7 +17,6 @@
 #     st.session_state.last_time = time.time()
 
 # data_path = "get_figure_placeholder.pkl"  # Placeholder for the data path
-# data: Any = Read.read(data_path)
 
 # # get_figure_placeholder
 # def get_figure(data: Any) -> go.Figure:

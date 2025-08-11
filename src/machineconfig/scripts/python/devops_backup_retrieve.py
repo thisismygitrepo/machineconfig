@@ -2,8 +2,8 @@
 """
 
 # import subprocess
-from crocodile.file_management import P, Read
-from machineconfig.utils.utils2 import read_ini
+from crocodile.file_management import P
+from machineconfig.utils.utils2 import read_ini, read_toml
 from machineconfig.utils.utils import LIBRARY_ROOT, DEFAULTS_PATH, print_code, choose_cloud_interactively, choose_multiple_options
 from machineconfig.scripts.python.helpers.helpers2 import ES
 from platform import system
@@ -25,7 +25,7 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
         console.print(Panel("🔍 DEFAULT CLOUD NOT FOUND\n🔄 Please select a cloud configuration from the options below", title="[bold red]Error: Cloud Not Found[/bold red]", border_style="red"))
         cloud = choose_cloud_interactively()
 
-    bu_file: dict[str, Any] = Read.toml(LIBRARY_ROOT.joinpath("profile/backup.toml"))
+    bu_file: dict[str, Any] = read_toml(LIBRARY_ROOT.joinpath("profile/backup.toml"))
     
     console.print(Panel(f"🧰 LOADING BACKUP CONFIGURATION\n📄 File: {LIBRARY_ROOT.joinpath('profile/backup.toml')}", title="[bold blue]Backup Configuration[/bold blue]", border_style="blue"))
     

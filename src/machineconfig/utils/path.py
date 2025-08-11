@@ -1,4 +1,3 @@
-# from crocodile.core import List as L
 from crocodile.file_management import P
 from machineconfig.utils.options import choose_one_option
 from rich.console import Console

@@ -26,7 +26,6 @@ def get_rclone_config():
 
 
 def get_mprocs_mount_txt(cloud: str, rclone_cmd: str, cloud_brand: str):  # cloud_brand = config[cloud]["type"]
-    # config = Read.ini(P.home().joinpath(".config/rclone/rclone.conf"))
     header = f"{' ' + cloud + ' | ' + cloud_brand + ' '}".center(50, "=")
     if platform.system() == "Windows":
         sub_text_path = P.tmpfile(suffix=".ps1").write_text(f"""

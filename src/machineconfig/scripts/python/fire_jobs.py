@@ -15,9 +15,9 @@ from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
 from machineconfig.utils.ve_utils.ve1 import get_repo_root
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, match_file_name, sanitize_path
 from machineconfig.utils.ve_utils.ve1 import get_ve_activate_line, get_ve_name_and_ipython_profile
-from crocodile.file_management import P, Read
+from crocodile.file_management import P
 from machineconfig.utils.io_save import save_toml
-from machineconfig.utils.utils2 import randstr
+from machineconfig.utils.utils2 import randstr, read_toml
 import platform
 from typing import Optional
 import argparse
@@ -141,7 +141,7 @@ def main() -> None:
                 if toml_path_maybe.exists(): toml_path = toml_path_maybe
             if toml_path is not None:
                 print(f"📄 Reading config.toml @ {toml_path}")
-                config = Read.toml(toml_path)
+                config = read_toml(toml_path)
                 if "server" in config:
                     if "port" in config["server"]:
                         port = config["server"]["port"]
@@ -149,7 +149,7 @@ def main() -> None:
                 if repo_root is not None:
                     secrets_template_path = P.home().joinpath(f"dotfiles/creds/streamlit/{P(repo_root).name}/{choice_file.name}/secrets.toml")
                     if args.environment != "" and not secrets_path.exists() and secrets_template_path.exists():
-                        secrets_template = Read.toml(secrets_template_path)
+                        secrets_template = read_toml(secrets_template_path)
                         if args.environment == "ip": host_url = f"http://{local_ip_v4}:{port}/oauth2callback"
                         elif args.environment == "localhost": host_url = f"http://localhost:{port}/oauth2callback"
                         elif args.environment == "hostname": host_url = f"http://{computer_name}:{port}/oauth2callback"

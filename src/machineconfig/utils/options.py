@@ -1,7 +1,5 @@
 from crocodile.meta import Terminal
 from crocodile.file_management import P
-# from crocodile.core import Struct
-# import crocodile.environment as env
 from rich.text import Text
 from rich.panel import Panel
 from rich.console import Console
@@ -133,7 +131,6 @@ def choose_cloud_interactively() -> str:
     console = Console()
     console.print(Panel("🔍 LISTING CLOUD REMOTES | Fetching available cloud remotes...", border_style="bold blue", expand=False))
     tmp = Terminal().run("rclone listremotes").op_if_successfull_or_default(strict_returcode=False)
-    # consider this: remotes = Read.ini(P.home().joinpath(".config/rclone/rclone.conf")).sections()
     if isinstance(tmp, str):
         remotes: list[str] = [x.replace(":", "") for x in tmp.splitlines()]
 

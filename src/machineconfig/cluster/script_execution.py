@@ -90,11 +90,6 @@ Execution metadata will be saved separately in:
 {res_folder.collapseuser().as_posix()}
 """, title="📁 Result Directory Warning", border_style="yellow"))
     print("\n\n")
-    # try:
-        # Save.pickle(obj=res, path=res_folder.joinpath("result.pkl"))
-    # except TypeError as e:
-        # print(e)
-        # print(f"Could not pickle res object to path `{res_folder.joinpath('result.pkl').collapseuser().as_posix()}`.")
 
 time_at_execution_end_utc = datetime.now(timezone.utc)
 time_at_execution_end_local = datetime.now()
