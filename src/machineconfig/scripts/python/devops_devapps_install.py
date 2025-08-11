@@ -107,10 +107,11 @@ def get_programs_by_category(program_name: WHICH_CAT):
         #         sub_program = installers[idx].install_robust(version=None)  # finish the task
 
         case  "PrecheckedCloudInstaller":
-            from machineconfig.jobs.python.check_installations import PrecheckedCloudInstaller
-            ci = PrecheckedCloudInstaller()
-            ci.download_safe_apps(name="AllEssentials")
-            program = ""
+            # from machineconfig.jobs.python.check_installations import PrecheckedCloudInstaller
+            # ci = PrecheckedCloudInstaller()
+            # ci.download_safe_apps(name="AllEssentials")
+            # program = ""
+            raise NotImplementedError("PrecheckedCloudInstaller is not implemented yet.")
     return program
 
 

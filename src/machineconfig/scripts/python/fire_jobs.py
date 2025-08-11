@@ -244,10 +244,6 @@ except ImportError as _ex:
         else:
             # command = f"cd {choice_file.parent}\n{exe} {choice_file.name}\ncd {P.cwd()}"
             command = f"{exe} {choice_file} "
-    # this installs in ve env, which is not execution env
-    # if "ipdb" in command: install_n_import("ipdb")
-    # if "pudb" in command: install_n_import("pudb")
-
     if not args.cmd:
         if "ipdb" in command: command = f"pip install ipdb\n{command}"
         if "pudb" in command: command = f"pip install pudb\n{command}"
@@ -266,9 +262,6 @@ except ImportError as _ex:
 python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
         if choice_function is not None:
             command += f"--function {choice_function} "
-
-    # try: install_n_import("clipboard").copy(command)
-    # except Exception as ex: print(f"Failed to copy command to clipboard. {ex}")
 
     if args.Nprocess > 1:
         # lines = [f""" zellij action new-tab --name nProcess{randstr(2)}"""]
