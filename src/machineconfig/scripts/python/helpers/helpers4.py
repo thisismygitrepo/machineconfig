@@ -65,12 +65,8 @@ def parse_pyfile(file_path: str):
             if arg.annotation is not None:
                 try: type_ = arg.annotation.__dict__['id']
                 except KeyError as ke:
-                    # type_ = arg.annotation.__name__
-                    # print(f"Failed to get type for {arg.annotation}. {ke}")
-                    # Struct(get_attrs(arg.annotation)).print(as_yaml=True)
                     type_ = "Any"  # e.g. a callable object
                     _ = ke
-                    # raise ke
             else: type_ = "Any"
             default_tmp = function.args.defaults[idx] if idx < len(function.args.defaults) else None
             if default_tmp is None: default = None

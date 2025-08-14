@@ -3,7 +3,6 @@
 from pathlib import Path
 from typing import Optional, Any
 
-
 def randstr(length: int = 10, lower: bool = True, upper: bool = True, digits: bool = True, punctuation: bool = False, safe: bool = False, noun: bool = False) -> str:
     if safe:
         import secrets
@@ -37,6 +36,7 @@ def read_toml(path: 'Path'):
     return tomli.loads(path.read_text(encoding='utf-8'))
 
 def pprint(obj: dict[Any, Any], title: str) -> None:
-    """Pretty print an object."""
     from rich import inspect
     inspect(type("TempStruct", (object,), obj)(), value=False, title=title, docs=False, dunder=False, sort=False)
+def get_repr(obj: dict[Any, Any], sep: str = "\n", justify: int = 15, quotes: bool = False):
+    return sep.join([f"{key:>{justify}} = {repr(val) if quotes else val}" for key, val in obj.items()])
