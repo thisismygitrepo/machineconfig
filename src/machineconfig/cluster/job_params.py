@@ -121,7 +121,7 @@ res = None  # in case the file did not define it.
 res = func(workload_params=workload_params, **func_kwargs)
 """
         elif workload_params is not None and parallelize is True: base += f"""
-kwargs_workload = {list(workload_params.split_to_jobs().apply(lambda a_kwargs: a_kwargs.__dict__))}
+kwargs_workload = {list([item.__dict__ for item in workload_params.split_to_jobs()])}
 workload_params = []
 for idx, x in enumerate(kwargs_workload):
             pprint(x, f"Instance {{idx}}")
