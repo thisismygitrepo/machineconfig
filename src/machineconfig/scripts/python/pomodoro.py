@@ -1,7 +1,6 @@
 # """Pomodoro
 # """
 
-# from crocodile.toolbox import Log, Scheduler, P
 # import time
 # from datetime import datetime
 

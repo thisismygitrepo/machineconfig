@@ -3,7 +3,6 @@
 
 from crocodile.file_management import P
 from crocodile.meta import SSH, Terminal
-from crocodile.core import List as L
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_host
 import platform
 
@@ -21,9 +20,7 @@ def main():
         default = f"{ssh.hostname}:{ssh.run('echo $HOME').op}/data/share_nfs"
         share_info = display_options(
             "📂 Choose a share path:",
-            options=L(ssh.run("cat /etc/exports").op.split("\n"))
-                .filter(lambda x: not x.startswith("#"))
-                .apply(lambda x: f"{ssh.hostname}:{x.split(' ')[0]}").list + [default],
+            options=[f"{ssh.hostname}:{item.split(' ')[0]}" for item in ssh.run("cat /etc/exports").op.split("\n") if not item.startswith("#")] + [default],
             default=default
         )
         assert isinstance(share_info, str), f"❌ share_info must be a string. Got {type(share_info)}"

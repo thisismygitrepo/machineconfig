@@ -2,7 +2,6 @@
 Installer
 """
 # from machineconfig.utils.installer import get_latest_release
-# from crocodile.meta import Terminal
 from typing import Optional
 
 # https://docs.docker.com/desktop/install/ubuntu/

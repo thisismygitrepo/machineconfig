@@ -1,7 +1,6 @@
 """python and ve installation related utils
 """
 
-from crocodile.core import List
 from crocodile.file_management import P
 
 import platform
@@ -32,7 +31,8 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
 {'=' * 60}
 """, title="Python Versions", expand=False))
         res = get_installed_interpreters()
-        List(res).print()
+        for _idx, item in res:
+            print(f"{_idx}. {item}")
         console.print(Panel("", title="Python Versions", expand=False))
         dotted_py_version = input("🔢 Enter python version (3.11): ") or "3.11"
     else:

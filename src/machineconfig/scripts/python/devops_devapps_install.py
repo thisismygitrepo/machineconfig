@@ -4,7 +4,6 @@
 # import subprocess
 from machineconfig.utils.installer_utils.installer_class import Installer
 from tqdm import tqdm
-from crocodile.core import List as L
 from machineconfig.utils.utils import LIBRARY_ROOT, choose_multiple_options
 from machineconfig.utils.installer import get_installers, install_all, get_all_dicts
 from platform import system
@@ -67,7 +66,7 @@ def get_programs_by_category(program_name: WHICH_CAT):
             installers_ = get_installers(dev=False, system=system())
             if program_name == "EssentialsAndOthers":
                 installers_ += get_installers(dev=True, system=system())
-            install_all(installers=L(installers_))
+            install_all(installers=installers_)
             program = ""
 
         case "SystemInstallers":

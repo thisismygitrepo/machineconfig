@@ -3,8 +3,6 @@
 
 
 # # import sys
-# from crocodile.msc.odds import capture_from_webcam
-# from crocodile.meta import Terminal
 # from rich.console import Console
 # from rich.panel import Panel
 # import pytesseract

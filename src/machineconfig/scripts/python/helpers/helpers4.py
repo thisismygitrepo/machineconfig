@@ -2,10 +2,10 @@
 from typing import Any, Callable, Optional
 import inspect
 import os
-import argparse
+# import argparse
 from crocodile.core import Display
 from crocodile.file_management import P
-from machineconfig.utils.utils import choose_ssh_host
+# from machineconfig.utils.utils import choose_ssh_host
 
 
 def search_for_files_of_interest(path_obj: P):
@@ -111,18 +111,18 @@ def get_attrs_recursively(obj: Any):
     return obj
 
 
-def run_on_remote(func_file: str, args: argparse.Namespace):
-    host = choose_ssh_host(multi=False)
-    assert isinstance(host, str), f"host must be a string. Got {type(host)}"
-    from machineconfig.cluster.remote_machine import RemoteMachine, RemoteMachineConfig
-    config = RemoteMachineConfig(copy_repo=True, update_repo=False, update_essential_repos=True,
-                                 notify_upon_completion=True, ssh_params=dict(host=host),
-                                 # to_email=None, email_config_name='enaut',
-                                 data=[],
-                                 ipython=False, interactive=args.interactive, pdb=False, pudb=args.debug, wrap_in_try_except=False,
-                                 transfer_method="sftp")
-    m = RemoteMachine(func=func_file, func_kwargs=None, config=config)
-    m.run()
+# def run_on_remote(func_file: str, args: argparse.Namespace):
+#     host = choose_ssh_host(multi=False)
+#     assert isinstance(host, str), f"host must be a string. Got {type(host)}"
+#     from machineconfig.cluster.remote_machine import RemoteMachine, RemoteMachineConfig
+#     config = RemoteMachineConfig(copy_repo=True, update_repo=False, update_essential_repos=True,
+#                                  notify_upon_completion=True, ssh_params=dict(host=host),
+#                                  # to_email=None, email_config_name='enaut',
+#                                  data=[],
+#                                  ipython=False, interactive=args.interactive, pdb=False, pudb=args.debug, wrap_in_try_except=False,
+#                                  transfer_method="sftp")
+#     m = RemoteMachine(func=func_file, func_kwargs=None, config=config)
+#     m.run()
 
 
 def find_repo_root_path(start_path: str) -> Optional[str]:

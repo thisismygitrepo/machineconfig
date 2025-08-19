@@ -6,7 +6,6 @@ from rich.console import Console
 from rich.panel import Panel # Added import
 
 from crocodile.file_management import P
-from crocodile.core import List as L
 from crocodile.meta import Terminal
 from machineconfig.utils.utils import INSTALL_VERSION_ROOT
 from machineconfig.utils.utils2 import read_json
@@ -14,6 +13,7 @@ from machineconfig.utils.utils2 import read_json
 # from dataclasses import dataclass
 from typing import Any
 import platform
+from joblib import Parallel, delayed
 
 
 def check_latest():
@@ -21,7 +21,7 @@ def check_latest():
     console.print(Panel("🔍  CHECKING FOR LATEST VERSIONS", title="Status", expand=False)) # Replaced print with Panel
     installers = get_installers(system=platform.system(), dev=False)
     # installers += get_installers(system=platform.system(), dev=True)
-    installers_gitshub = []
+    installers_github = []
     for inst__ in installers:
         if "ntop" in inst__.name: 
             print(f"⏭️  Skipping {inst__.name} (ntop)")
@@ -29,9 +29,9 @@ def check_latest():
         if "github" not in inst__.repo_url:
             print(f"⏭️  Skipping {inst__.name} (not a GitHub release)")
             continue
-        installers_gitshub.append(inst__)
+        installers_github.append(inst__)
         
-    print(f"\n🔍 Checking {len(installers_gitshub)} GitHub-based installers...\n")
+    print(f"\n🔍 Checking {len(installers_github)} GitHub-based installers...\n")
 
     def func(inst: Installer):
         print(f"🔎 Checking {inst.exe_name}...")
@@ -40,7 +40,7 @@ def check_latest():
         return inst.exe_name, verdict, current_ver, new_ver
 
     print("\n⏳ Processing installers...\n")
-    res = L(installers_gitshub).apply(func=func, jobs=1)
+    res = [func(inst) for inst in installers_github]
     
     print("\n📊 Generating results table...\n")
     
@@ -89,8 +89,7 @@ def get_installed_cli_apps():
         error_msg = f"❌ ERROR: System {platform.system()} not supported"
         print(error_msg)
         raise NotImplementedError(error_msg)
-        
-    apps = L([app for app in apps if app.size("kb") > 0.1 and not app.is_symlink()])  # no symlinks like paint and wsl and bash
+    apps = [app for app in apps if app.size("kb") > 0.1 and not app.is_symlink()]  # no symlinks like paint and wsl and bash
     print(f"✅ Found {len(apps)} installed applications\n{'='*80}")
     return apps
 
@@ -172,7 +171,7 @@ def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
     return res_final
 
 
-def install_all(installers: L[Installer], safe: bool=False, jobs: int = 10, fresh: bool=False):
+def install_all(installers: list[Installer], safe: bool=False, jobs: int = 10, fresh: bool=False):
     print(f"\n{'='*80}\n🚀 BULK INSTALLATION PROCESS 🚀\n{'='*80}")
     if fresh: 
         print("🧹 Fresh install requested - clearing version cache...")
@@ -206,10 +205,16 @@ def install_all(installers: L[Installer], safe: bool=False, jobs: int = 10, fres
         
     print(f"🚀 Starting installation of {len(installers)} packages...")
     print(f"\n{'='*80}\n📦 INSTALLING FIRST PACKAGE 📦\n{'='*80}")
-    installers.list[0].install(version=None)
-    
+    installers[0].install(version=None)
+    installers_remaining = installers[1:]
     print(f"\n{'='*80}\n📦 INSTALLING REMAINING PACKAGES 📦\n{'='*80}")
-    res = installers.slice(start=1).apply(lambda x: x.install_robust(version=None), jobs=jobs)  # try out the first installer alone cause it will ask for password, so the rest will inherit the sudo session.
+    
+    # Use joblib for parallel processing of remaining installers
+    res = Parallel(n_jobs=jobs)(
+        delayed(lambda x: x.install_robust(version=None))(installer) 
+        for installer in installers_remaining
+    )
+    
     console = Console()
     
     print("\n")
@@ -217,15 +222,21 @@ def install_all(installers: L[Installer], safe: bool=False, jobs: int = 10, fres
     
     print("\n")
     console.rule("✓ Same Version Apps")
-    print(f"{res.filter(lambda x: 'same version' in x).print()}")
+    same_version_results = [r for r in res if r and 'same version' in str(r)]
+    for result in same_version_results:
+        print(f"  {result}")
     
     print("\n")
     console.rule("⬆️ Updated Apps")
-    print(f"{res.filter(lambda x: 'updated from' in x).print()}")
+    updated_results = [r for r in res if r and 'updated from' in str(r)]
+    for result in updated_results:
+        print(f"  {result}")
     
     print("\n")
     console.rule("❌ Failed Apps")
-    print(f"{res.filter(lambda x: 'Failed at' in x).print()}")
+    failed_results = [r for r in res if r and 'Failed at' in str(r)]
+    for result in failed_results:
+        print(f"  {result}")
 
     print("\n")
     print("✨ INSTALLATION COMPLETE ✨".center(100, "="))
