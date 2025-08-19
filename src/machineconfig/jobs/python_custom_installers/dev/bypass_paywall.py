@@ -3,7 +3,7 @@
 
 # from platform import system
 from typing import Optional
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 
 
 config_dict = {

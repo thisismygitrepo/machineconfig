@@ -83,7 +83,7 @@ class ZellijSessionManager:
                 # Print statuses
                 for i, status in enumerate(statuses):
                     print(f"Manager {i}: {status}")
-        sched = Scheduler(routine=routine, wait="1m")
+        sched = Scheduler(routine=routine, wait_ms=60000)  # 60 seconds
         sched.run()
 
     def save(self, session_id: Optional[str] = None) -> str:

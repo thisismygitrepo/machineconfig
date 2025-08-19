@@ -2,7 +2,7 @@
 Utils
 """
 
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 # import crocodile.environment as env
 import machineconfig
 from machineconfig.utils.options import check_tool_exists, choose_cloud_interactively, choose_multiple_options, choose_one_option, choose_ssh_host, display_options
@@ -26,12 +26,12 @@ _ = sanitize_path
 _ = match_file_name
 
 
-LIBRARY_ROOT = P(machineconfig.__file__).resolve().parent  # .replace(P.home().to_str().lower(), P.home().str)
+LIBRARY_ROOT = PathExtended(machineconfig.__file__).resolve().parent  # .replace(P.home().to_str().lower(), P.home().str)
 REPO_ROOT = LIBRARY_ROOT.parent.parent
-CONFIG_PATH = P.home().joinpath(".config/machineconfig")
+CONFIG_PATH = PathExtended.home().joinpath(".config/machineconfig")
 INSTALL_VERSION_ROOT = CONFIG_PATH.joinpath("cli_tools_installers/versions")
-INSTALL_TMP_DIR = P.home().joinpath("tmp_results", "tmp_installers")
-DEFAULTS_PATH = P.home().joinpath("dotfiles/machineconfig/defaults.ini")
+INSTALL_TMP_DIR = PathExtended.home().joinpath("tmp_results", "tmp_installers")
+DEFAULTS_PATH = PathExtended.home().joinpath("dotfiles/machineconfig/defaults.ini")
 
 
 # def get_latest_version(url: str) -> None:
@@ -51,7 +51,7 @@ DEFAULTS_PATH = P.home().joinpath("dotfiles/machineconfig/defaults.ini")
 
 
 def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool=False):
-    dotfiles_path = str(P.home().joinpath("dotfiles"))
+    dotfiles_path = str(PathExtended.home().joinpath("dotfiles"))
     from git import Repo
     repo = Repo(path=dotfiles_path)
     last_commit = repo.head.commit
@@ -66,7 +66,7 @@ def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool=False):
         main(cloud=None, path=dotfiles_path)
     return res
 
-def wait_for_jobs_to_finish(root: P, pattern: str, wait_for_n_jobs: int, max_wait_minutes: float) -> bool:
+def wait_for_jobs_to_finish(root: PathExtended, pattern: str, wait_for_n_jobs: int, max_wait_minutes: float) -> bool:
     wait_finished: bool=False
     import time
     t0 = time.time()

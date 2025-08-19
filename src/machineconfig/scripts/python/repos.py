@@ -7,7 +7,7 @@ in the event that username@github.com is not mentioned in the remote url.
 
 from rich import print as pprint
 from machineconfig.utils.utils import write_shell_script_to_default_program_path, CONFIG_PATH, DEFAULTS_PATH
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.io_save import save_json
 from machineconfig.utils.utils2 import randstr, read_json, read_ini
 import argparse
@@ -86,8 +86,8 @@ def main():
     parser.add_argument("--cloud", "-c", help="☁️ Cloud storage option.", default=None)
     args = parser.parse_args()
 
-    if args.directory == "": repos_root = P.home().joinpath("code")  # it is a positional argument, can never be empty.
-    else: repos_root = P(args.directory).expanduser().absolute()
+    if args.directory == "": repos_root = PathExtended.home().joinpath("code")  # it is a positional argument, can never be empty.
+    else: repos_root = PathExtended(args.directory).expanduser().absolute()
 
     program = ""
     if args.record:
@@ -97,7 +97,7 @@ def main():
         save_path = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
         save_json(obj=res, path=save_path, indent=4)
         pprint(f"📁 Result saved at {P(save_path)}")
-        if args.cloud is not None: P(save_path).to_cloud(rel2home=True, cloud=args.cloud)
+        if args.cloud is not None: PathExtended(save_path).to_cloud(rel2home=True, cloud=args.cloud)
         program += """\necho '>>>>>>>>> Finished Recording'\n"""
     elif args.clone or args.checkout or args.checkout_to_branch:
         print("\n📥 Cloning or checking out repositories...")

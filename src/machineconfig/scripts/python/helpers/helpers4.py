@@ -4,11 +4,11 @@ import inspect
 import os
 # import argparse
 from crocodile.core import Display
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 # from machineconfig.utils.utils import choose_ssh_host
 
 
-def search_for_files_of_interest(path_obj: P):
+def search_for_files_of_interest(path_obj: PathExtended):
     if path_obj.joinpath(".venv").exists():
         path_objects = path_obj.search("*", not_in=[".venv"]).list
         files: list[P] = []
@@ -43,7 +43,7 @@ def parse_pyfile(file_path: str):
     func_args: list[list[args_spec]] = [[]]  # this firt prepopulated dict is for the option 'RUN AS MAIN' which has no args
 
     import ast
-    parsed_ast = ast.parse(P(file_path).read_text(encoding='utf-8'))
+    parsed_ast = ast.parse(PathExtended(file_path).read_text(encoding='utf-8'))
     functions = [
         node
         for node in ast.walk(parsed_ast)

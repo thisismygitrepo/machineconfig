@@ -4,7 +4,7 @@
 
 from machineconfig.utils.utils import PROGRAM_PATH, choose_one_option
 from machineconfig.utils.utils2 import read_ini
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 
 import platform
 import argparse
@@ -59,9 +59,9 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
 
     if network is None:
         if destination is None:
-            mount_loc = P(DEFAULT_MOUNT).expanduser().joinpath(cloud)
+            mount_loc = PathExtended(DEFAULT_MOUNT).expanduser().joinpath(cloud)
         else:
-            mount_loc = P(destination)
+            mount_loc = PathExtended(destination)
         
         mount_info = f"📂 Mount location: {mount_loc}"
         console.print(Panel(mount_info, border_style="blue"))

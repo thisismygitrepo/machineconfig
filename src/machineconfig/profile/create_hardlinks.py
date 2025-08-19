@@ -7,7 +7,7 @@ This script Takes away all config files from the computer, place them in one dir
 
 import platform
 from crocodile.meta import Terminal
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.utils import symlink_copy as symlink_func, LIBRARY_ROOT, REPO_ROOT, display_options
 from machineconfig.profile.shell import create_default_shell_profile
 # import os
@@ -63,8 +63,8 @@ def main_symlinks(choice: Optional[str] = None):
     for program_key in program_keys:
         print(f"\n🔄 Creating hardlinks for {program_key}...")
         for file_key, file_map in symlink_mapper[program_key].items():
-            this = P(file_map['this'])
-            to_this = P(file_map['to_this'].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()))
+            this = PathExtended(file_map['this'])
+            to_this = PathExtended(file_map['to_this'].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()))
             if "contents" in file_map:
                 try:
                     for a_target in to_this.expanduser().search("*"):

@@ -2,7 +2,7 @@
 CC
 """
 
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from crocodile.meta import RepeatUntilNoException
 import getpass
 import argparse
@@ -22,7 +22,7 @@ console = Console()
 def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
     console.print(Panel("🚀 Secure File Downloader", title="[bold blue]Downloader[/bold blue]", border_style="blue"))
     
-    folder_obj = P.cwd() if folder is None else P(folder)
+    folder_obj = PathExtended.cwd() if folder is None else PathExtended(folder)
     print(f"📂 Target folder: {folder_obj}")
     
     if os.environ.get("DECRYPTION_PASSWORD") is not None:
@@ -42,14 +42,14 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
     console.print(Panel("📡 Downloading from URL...", title="[bold blue]Download[/bold blue]", border_style="blue"))
     with Progress(transient=True) as progress:
         _task = progress.add_task("Downloading... ", total=None)
-        url_obj = P(url).download(folder=folder_obj)
+        url_obj = PathExtended(url).download(folder=folder_obj)
         
     console.print(Panel(f"📥 Downloaded file: {url_obj}", title="[bold green]Success[/bold green]", border_style="green"))
     
     console.print(Panel("🔐 Decrypting and extracting...", title="[bold blue]Processing[/bold blue]", border_style="blue"))
     with Progress(transient=True) as progress:
         _task = progress.add_task("Decrypting... ", total=None)
-        tmp_folder = P.tmpdir(prefix="tmp_unzip")
+        tmp_folder = PathExtended.tmpdir(prefix="tmp_unzip")
         try:
             res = url_obj.decrypt(pwd=pwd, inplace=True).unzip(inplace=True, folder=tmp_folder)
             res.search("*").apply(lambda x: x.move(folder=folder_obj, overwrite=True))
@@ -116,7 +116,7 @@ def arg_parser() -> None:
     if cloud in source:
         console.print(Panel(f"📥 DOWNLOADING FROM CLOUD\n☁️  Cloud: {cloud}\n📂 Source: {source.replace(cloud + ':', '')}\n🎯 Target: {target}", title="[bold blue]Download[/bold blue]", border_style="blue", width=152))
         
-        P(target).from_cloud(cloud=cloud, remotepath=source.replace(cloud + ":", ""),
+        PathExtended(target).from_cloud(cloud=cloud, remotepath=source.replace(cloud + ":", ""),
                             unzip=args_obj.zip, decrypt=args_obj.encrypt, pwd=args_obj.pwd,
                             overwrite=args_obj.overwrite,
                             rel2home=args_obj.rel2home, os_specific=args_obj.os_specific, root=args_obj.root, strict=False,
@@ -126,7 +126,7 @@ def arg_parser() -> None:
     elif cloud in target:
         console.print(Panel(f"📤 UPLOADING TO CLOUD\n☁️  Cloud: {cloud}\n📂 Source: {source}\n🎯 Target: {target.replace(cloud + ':', '')}", title="[bold blue]Upload[/bold blue]", border_style="blue", width=152))
         
-        res = P(source).to_cloud(cloud=cloud, remotepath=target.replace(cloud + ":", ""),
+        res = PathExtended(source).to_cloud(cloud=cloud, remotepath=target.replace(cloud + ":", ""),
                                     zip=args_obj.zip, encrypt=args_obj.encrypt, pwd=args_obj.pwd,
                                     rel2home=args_obj.rel2home, root=args_obj.root, os_specific=args_obj.os_specific, strict=False,
                                     share=args_obj.share)
@@ -134,8 +134,8 @@ def arg_parser() -> None:
         
         if args_obj.share:
             fname = f".share_url_{cloud}"
-            if P(source).is_dir(): share_url_path = P(source).joinpath(fname)
-            else: share_url_path = P(source).with_suffix(fname)
+            if PathExtended(source).is_dir(): share_url_path = PathExtended(source).joinpath(fname)
+            else: share_url_path = PathExtended(source).with_suffix(fname)
             share_url_path.write_text(res.as_url_str())
             console.print(Panel(f"🔗 SHARE URL GENERATED\n📝 URL file: {share_url_path}\n🌍 {res.as_url_str()}", title="[bold blue]Share[/bold blue]", border_style="blue", width=152))
     else: 

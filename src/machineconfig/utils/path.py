@@ -1,4 +1,4 @@
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.options import choose_one_option
 from rich.console import Console
 from rich.panel import Panel
@@ -11,19 +11,19 @@ from pathlib import Path
 T = TypeVar("T")
 console = Console()
 
-def sanitize_path(a_path: P) -> P:
-    path = P(a_path)
+def sanitize_path(a_path: PathExtended) -> PathExtended:
+    path = PathExtended(a_path)
     if path.as_posix().startswith("/home") or path.as_posix().startswith("/Users"):
         if platform.system() == "Windows":  # path copied from Linux/Mac to Windows
             # For Linux: /home/username, for Mac: /Users/username
             skip_parts = 3 if path.as_posix().startswith("/home") else 3  # Both have 3 parts to skip
-            path = P.home().joinpath(*path.parts[skip_parts:])
+            path = PathExtended.home().joinpath(*path.parts[skip_parts:])
             assert path.exists(), f"File not found: {path}"
             source_os = "Linux" if a_path.as_posix().startswith("/home") else "macOS"
             console.print(Panel(f"🔗 PATH MAPPING | {source_os} → Windows: `{a_path}` ➡️ `{path}`", title="Path Mapping", expand=False))
-        elif platform.system() in ["Linux", "Darwin"] and P.home().as_posix() not in path.as_posix():  # copied between Unix-like systems with different username
+        elif platform.system() in ["Linux", "Darwin"] and PathExtended.home().as_posix() not in path.as_posix():  # copied between Unix-like systems with different username
             skip_parts = 3  # Both /home/username and /Users/username have 3 parts to skip
-            path = P.home().joinpath(*path.parts[skip_parts:])
+            path = PathExtended.home().joinpath(*path.parts[skip_parts:])
             assert path.exists(), f"File not found: {path}"
             current_os = "Linux" if platform.system() == "Linux" else "macOS"
             source_os = "Linux" if a_path.as_posix().startswith("/home") else "macOS"
@@ -31,12 +31,12 @@ def sanitize_path(a_path: P) -> P:
     elif path.as_posix().startswith("C:"):
         if platform.system() in ["Linux", "Darwin"]:  # path copied from Windows to Linux/Mac
             xx = str(a_path).replace("\\\\", "/")
-            path = P.home().joinpath(*P(xx).parts[3:])  # exclude C:\\Users\\username
+            path = PathExtended.home().joinpath(*PathExtended(xx).parts[3:])  # exclude C:\\Users\\username
             assert path.exists(), f"File not found: {path}"
             target_os = "Linux" if platform.system() == "Linux" else "macOS"
             console.print(Panel(f"🔗 PATH MAPPING | Windows → {target_os}: `{a_path}` ➡️ `{path}`", title="Path Mapping", expand=False))
-        elif platform.system() == "Windows" and P.home().as_posix() not in path.as_posix():  # copied from Windows to Windows with different username
-            path = P.home().joinpath(*path.parts[2:])
+        elif platform.system() == "Windows" and PathExtended.home().as_posix() not in path.as_posix():  # copied from Windows to Windows with different username
+            path = PathExtended.home().joinpath(*path.parts[2:])
             assert path.exists(), f"File not found: {path}"
             console.print(Panel(f"🔗 PATH MAPPING | Windows → Windows: `{a_path}` ➡️ `{path}`", title="Path Mapping", expand=False))
     return path.expanduser().absolute()
@@ -61,11 +61,11 @@ def find_scripts(root: Path, name_substring: str) -> tuple[list[Path], list[Path
     return filename_matches, partial_path_matches
 
 
-def match_file_name(sub_string: str, search_root: P) -> P:
+def match_file_name(sub_string: str, search_root: PathExtended) -> PathExtended:
     search_root_obj = search_root.absolute()
     # assume subscript is filename only, not a sub_path. There is no need to fzf over the paths.
     filename_matches, partial_path_matches = find_scripts(search_root_obj, sub_string)
-    if len(filename_matches) == 1: return P(filename_matches[0])
+    if len(filename_matches) == 1: return PathExtended(filename_matches[0])
     console.print(Panel(f"Partial filename match with case-insensitivity failed. This generated #{len(filename_matches)} results.", title="Search", expand=False))
     if len(filename_matches) < 10:
         print("\n".join([a_potential_match.as_posix() for a_potential_match in filename_matches]))
@@ -73,17 +73,17 @@ def match_file_name(sub_string: str, search_root: P) -> P:
         print("Try to narrow down filename_matches search by case-sensitivity.")
         # let's see if avoiding .lower() helps narrowing down to one result
         reduced_scripts = [a_potential_match for a_potential_match in filename_matches if sub_string in a_potential_match.name]
-        if len(reduced_scripts) == 1: return P(reduced_scripts[0])
+        if len(reduced_scripts) == 1: return PathExtended(reduced_scripts[0])
         elif len(reduced_scripts) > 1:
             choice = choose_one_option(msg="Multiple matches found", options=reduced_scripts, fzf=True)
-            return P(choice)
+            return PathExtended(choice)
         print(f"Result: This still generated {len(reduced_scripts)} results.")
         if len(reduced_scripts) < 10:
             print("\n".join([a_potential_match.as_posix() for a_potential_match in reduced_scripts]))
 
     console.print(Panel(f"Partial path match with case-insensitivity failed. This generated #{len(partial_path_matches)} results.", title="Search", expand=False))
     if len(partial_path_matches) == 1:
-        return P(partial_path_matches[0])
+        return PathExtended(partial_path_matches[0])
     elif len(partial_path_matches) > 1:
         print("Try to narrow down partial_path_matches search by case-sensitivity.")
         reduced_scripts = [a_potential_match for a_potential_match in partial_path_matches if sub_string in a_potential_match.as_posix()]

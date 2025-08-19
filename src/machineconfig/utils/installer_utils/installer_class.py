@@ -1,4 +1,4 @@
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from crocodile.meta import Terminal
 from machineconfig.utils.installer_utils.installer_abc import find_move_delete_linux, find_move_delete_windows
 from machineconfig.utils.utils import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT, LIBRARY_ROOT, check_tool_exists
@@ -51,7 +51,7 @@ class Installer:
         from machineconfig.utils.utils import choose_one_option
         print("📂 Searching for configuration files...")
         jobs_dir = Path(LIBRARY_ROOT.joinpath("jobs").to_str())
-        config_paths = [P(p) for p in jobs_dir.rglob("config.json")]
+        config_paths = [PathExtended(p) for p in jobs_dir.rglob("config.json")]
         path = choose_one_option(options=config_paths)
         print(f"📄 Loading configuration from: {path}")
         config: dict[str, Any] = read_json(path)  # /python_generic_installers/config.json"))
@@ -91,9 +91,9 @@ class Installer:
         if self.repo_url == "CUSTOM":
             print(f"🧩 Using custom installer for {self.exe_name}")
             import machineconfig.jobs.python_custom_installers as python_custom_installers
-            installer_path = P(python_custom_installers.__file__).parent.joinpath(self.exe_name + ".py")
+            installer_path = PathExtended(python_custom_installers.__file__).parent.joinpath(self.exe_name + ".py")
             if not installer_path.exists():
-                installer_path = P(python_custom_installers.__file__).parent.joinpath("dev", self.exe_name + ".py")
+                installer_path = PathExtended(python_custom_installers.__file__).parent.joinpath("dev", self.exe_name + ".py")
                 print(f"🔍 Looking for installer in dev folder: {installer_path}")
             else:
                 print(f"🔍 Found installer at: {installer_path}")

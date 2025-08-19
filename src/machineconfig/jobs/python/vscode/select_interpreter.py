@@ -3,7 +3,7 @@
 
 # import os
 # import json
-from crocodile.file_management import P as Path
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.io_save import save_json
 from machineconfig.utils.utils2 import read_json
 import argparse
@@ -18,7 +18,7 @@ def select_interpreter(workspace_root: str):
 {'=' * 150}
 """)
     
-    path = Path(workspace_root).joinpath('.ve_path')
+    path = PathExtended(workspace_root).joinpath('.ve_path')
     if not path.exists():
         print(f"""
 {'⚠️' * 20}
@@ -29,7 +29,7 @@ def select_interpreter(workspace_root: str):
         return
         
     with open(path, 'r', encoding='utf-8') as f:
-        python_path = Path(f.read().strip().replace("~", str(Path.home())))
+        python_path = PathExtended(f.read().strip().replace("~", str(PathExtended.home())))
     
     print(f"📁 Virtual environment path: {python_path}")
 
@@ -53,7 +53,7 @@ def select_interpreter(workspace_root: str):
     # tmp = os.getenv('APPDATA')
     # assert tmp is not None
     # settings_path = Path(tmp).joinpath('Code', 'User', 'settings.json')
-    work_space_settings = Path(workspace_root).joinpath('.vscode', 'settings.json').create(parents_only=True)
+    work_space_settings = PathExtended(workspace_root).joinpath('.vscode', 'settings.json').create(parents_only=True)
     if not work_space_settings.exists():
         print(f"📄 Creating new settings file: {work_space_settings}")
         work_space_settings.touch()

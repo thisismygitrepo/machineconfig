@@ -1,7 +1,7 @@
 """TWSL
 """
 
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 import argparse
 import platform
 import getpass
@@ -43,7 +43,7 @@ Otherwise, a flag must be raised to indicate the direction.""")
     parser.add_argument("--zip_first", "-z", help="📦 Zip before transferring.", action="store_true")  # default is False
 
     args = parser.parse_args()
-    path = P(args.path).expanduser().absolute()
+    path = PathExtended(args.path).expanduser().absolute()
 
     if args.same_file_system:
         print("⚠️ Using a not recommended transfer method! Copying files across the same file system.")

@@ -4,7 +4,7 @@
 
 import socket
 from machineconfig.utils.utils import choose_ssh_host, write_shell_script_to_default_program_path
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 
 prefix = """
 
@@ -42,7 +42,7 @@ def build_template(tabs: list[str]):
     for t in tabs:
         res += tab.replace("TABNAME", t).replace("TABCOMMAND", "ssh").replace("TABARGS", t)
     res += suffix.replace("THISMACHINE", socket.gethostname())
-    file = P.tmp().joinpath("tmp_files/templates/zellij_template.kdl").create(parents_only=True).write_text(res)
+    file = PathExtended.tmp().joinpath("tmp_files/templates/zellij_template.kdl").create(parents_only=True).write_text(res)
     res = f"zellij --layout {file}"
     return res
 

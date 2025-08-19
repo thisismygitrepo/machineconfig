@@ -1,7 +1,7 @@
 """Task scheduler
 """
 
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.utils import get_shell_script_executing_python_file
 from machineconfig.utils.utils2 import read_ini
 from dataclasses import dataclass
@@ -73,7 +73,7 @@ def format_table_markdown(data: list[dict[str, Any]]) -> str:
     return "\n".join([header, separator] + rows)
 
 
-SCHEDULER_DEFAULT_ROOT = P.home().joinpath("dotfiles/scripts/.scheduler")
+SCHEDULER_DEFAULT_ROOT = PathExtended.home().joinpath("dotfiles/scripts/.scheduler")
 SUCCESS = "success"
 DEFAULT_CONFIG = """
 [specs]
@@ -85,7 +85,7 @@ venv = ve
 """
 
 
-def save_ini(path: P, obj: dict[str, dict[str, Any]]) -> P:
+def save_ini(path: PathExtended, obj: dict[str, dict[str, Any]]) -> PathExtended:
     """Write a simple INI file to `path` using standard library.
 
     The `obj` should be a mapping of section name to a mapping of key/value pairs.
@@ -94,7 +94,7 @@ def save_ini(path: P, obj: dict[str, dict[str, Any]]) -> P:
     """
     import configparser
 
-    resolved_path: P = P(path).expanduser().absolute()
+    resolved_path: PathExtended = PathExtended(path).expanduser().absolute()
     resolved_path.parent.create()
 
     config = configparser.ConfigParser()
@@ -110,7 +110,7 @@ def save_ini(path: P, obj: dict[str, dict[str, Any]]) -> P:
 
 class Register:
     def __init__(self, root: str):
-        self.root = P(root).expanduser().absolute()
+        self.root = PathExtended(root).expanduser().absolute()
 
     def register_runtime(self, frequency_months: int = 1):
         start, end = self.get_report_start_end_datetimes(frequency_months=frequency_months)
@@ -144,7 +144,7 @@ class Report:
     status: str
 
     @classmethod
-    def from_path(cls, path: P, return_default_if_not_found: bool=False):
+    def from_path(cls, path: PathExtended, return_default_if_not_found: bool=False):
         if not path.exists():
             if return_default_if_not_found:
                 return Report(name=path.parent.name, start=datetime(year=2000, month=1, day=1), end=datetime(year=2000, month=1, day=1), status="NA")
@@ -157,7 +157,7 @@ class Report:
             end=datetime.fromisoformat(ini["end"]),
             status=ini["status"],
         )
-    def to_path(self, path: P):
+    def to_path(self, path: PathExtended):
         save_ini(path=path, obj={
             'report': {
                 'name': self.name,
@@ -171,7 +171,7 @@ class Report:
 @dataclass
 class Task:
     name: str
-    task_root: P
+    task_root: PathExtended
     frequency: timedelta
     start: datetime
     venv: str
@@ -180,7 +180,7 @@ class Task:
         return self.task_root.joinpath("report.ini")
 
 
-def read_task_from_dir(path: P):
+def read_task_from_dir(path: PathExtended):
     tasks_config = read_ini(path.joinpath("config.ini"))
     task = Task(name=path.name,
                 task_root=path,
@@ -194,11 +194,11 @@ def read_task_from_dir(path: P):
 
 def main(root: Optional[str] = None, ignore_conditions: bool=True):
     if root is None: root_resolved = SCHEDULER_DEFAULT_ROOT
-    else: root_resolved = P(root).expanduser().absolute()
+    else: root_resolved = PathExtended(root).expanduser().absolute()
     # Replace crocodile List usage with pathlib iteration
     from pathlib import Path
     # Find all `task.py` files under root and use their parent directories
-    tasks_dirs = list({P(p.parent) for p in Path(root_resolved.to_str()).rglob("task.py")})
+    tasks_dirs = list({PathExtended(p.parent) for p in Path(root_resolved.to_str()).rglob("task.py")})
 
     # Print a fancy box using rich
     console = Console()
@@ -287,7 +287,7 @@ def run_task(task: Task) -> Report:
     print(f"Task: {task.name}")
 
     shell_script = get_shell_script_executing_python_file(python_file=task.task_root.joinpath("task.py").to_str(), ve_name=task.venv)
-    shell_script_root = P.tmp().joinpath(f"tmp_scripts/scheduler/{task.name}").create()
+    shell_script_root = PathExtended.tmp().joinpath(f"tmp_scripts/scheduler/{task.name}").create()
     try:
         if platform.system() == 'Windows':
             shell_script = shell_script_root.joinpath("run.ps1").write_text(shell_script)

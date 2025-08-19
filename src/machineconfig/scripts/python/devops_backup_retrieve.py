@@ -2,7 +2,7 @@
 """
 
 # import subprocess
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.utils2 import read_ini, read_toml
 from machineconfig.utils.utils import LIBRARY_ROOT, DEFAULTS_PATH, print_code, choose_cloud_interactively, choose_multiple_options
 from machineconfig.scripts.python.helpers.helpers2 import ES
@@ -57,12 +57,12 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
         flags += 'e' if item['encrypt'] == 'True' else ''
         flags += 'r' if item['rel2home'] == 'True' else ''
         flags += 'o' if system().lower() in item_name else ''
-        console.print(Panel(f"📦 PROCESSING: {item_name}\n📂 Path: {P(item['path']).as_posix()}\n🏳️  Flags: {flags or 'None'}", title=f"[bold blue]Processing Item: {item_name}[/bold blue]", border_style="blue"))
+        console.print(Panel(f"📦 PROCESSING: {item_name}\n📂 Path: {PathExtended(item['path']).as_posix()}\n🏳️  Flags: {flags or 'None'}", title=f"[bold blue]Processing Item: {item_name}[/bold blue]", border_style="blue"))
         if flags: flags = "-" + flags
         if direction == "BACKUP": 
-            program += f"""\ncloud_copy "{P(item['path']).as_posix()}" $cloud {flags}\n"""
+            program += f"""\ncloud_copy "{PathExtended(item['path']).as_posix()}" $cloud {flags}\n"""
         elif direction == "RETRIEVE": 
-            program += f"""\ncloud_copy $cloud "{P(item['path']).as_posix()}" {flags}\n"""
+            program += f"""\ncloud_copy $cloud "{PathExtended(item['path']).as_posix()}" {flags}\n"""
         else:
             console.print(Panel("❌ ERROR: INVALID DIRECTION\n⚠️  Direction must be either \"BACKUP\" or \"RETRIEVE\"", title="[bold red]Error: Invalid Direction[/bold red]", border_style="red"))
             raise RuntimeError(f"Unknown direction: {direction}")            

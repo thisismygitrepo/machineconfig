@@ -1,6 +1,6 @@
 from machineconfig.utils.io_save import save_json, save_ini
 from dataclasses import asdict
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.utils2 import read_json
 
 
@@ -23,7 +23,7 @@ class VE_INI:
     specs: VE_Specs
 
 
-def get_install_requirements_template(repo_root: P, requirements_subpath: str, ve_name: str, system: Literal["Windows", "Linux"]):
+def get_install_requirements_template(repo_root: PathExtended, requirements_subpath: str, ve_name: str, system: Literal["Windows", "Linux"]):
     if system == 'Windows':
         set_e_equivalent = 'Set-StrictMode -Version Latest'  # PowerShell equivalent
         install_line = """(Invoke-WebRequest https://bit.ly/cfgreposwindows).Content | Invoke-Expression"""
@@ -106,10 +106,10 @@ $py_version = '{py_version}'  # type: ignore
     return template
 
 
-def create_symlinks(repo_root: P, ve_name: str, dotted_py_version: str, system: Literal["Windows", "Linux"], ipy_profile: str):
+def create_symlinks(repo_root: PathExtended, ve_name: str, dotted_py_version: str, system: Literal["Windows", "Linux"], ipy_profile: str):
     from machineconfig.utils.utils import symlink_func
     source = repo_root.joinpath(".venv")
-    target = P.home().joinpath("venvs", ve_name)
+    target = PathExtended.home().joinpath("venvs", ve_name)
     target.mkdir(exist_ok=True, parents=True)  # if ve not created yet, make up a folder at least, so that symlink can be created, then this folder is either populated or recreated by ve creation script.
     symlink_func(this=source, to_this=target)
 
@@ -126,9 +126,9 @@ def create_symlinks(repo_root: P, ve_name: str, dotted_py_version: str, system: 
     else:
         settings = {}
     if system == "Windows":
-        settings["python.defaultInterpreterPath"] = P.home().joinpath("venvs", ve_name, "Scripts", "python.exe").as_posix()
+        settings["python.defaultInterpreterPath"] = PathExtended.home().joinpath("venvs", ve_name, "Scripts", "python.exe").as_posix()
     elif system == "Linux":
-        settings["python.defaultInterpreterPath"] = P.home().joinpath("venvs", ve_name, "bin", "python").as_posix()
+        settings["python.defaultInterpreterPath"] = PathExtended.home().joinpath("venvs", ve_name, "bin", "python").as_posix()
     else:
         raise NotImplementedError(f"System {system} not supported.")
     save_json(obj=settings, path=vscode, indent=4)
@@ -136,7 +136,7 @@ def create_symlinks(repo_root: P, ve_name: str, dotted_py_version: str, system: 
 
 def make_installation_recipe(repo_root: str, ve_name: str, py_version: str):
     subpath = "versions/init"
-    base_path = P(repo_root).joinpath(subpath).create()
+    base_path = PathExtended(repo_root).joinpath(subpath).create()
 
     system: Literal["Windows", "Linux"] = "Windows"
     path3 = base_path.joinpath("install_requirements.ps1")

@@ -2,7 +2,7 @@
 Installers do not add runtime files to the machine, hence this script.
 """
 
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.installer_utils.installer_abc import WINDOWS_INSTALL_PATH
 from typing import Optional
 import platform

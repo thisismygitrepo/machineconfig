@@ -2,7 +2,7 @@
 """
 
 from machineconfig.utils.utils2 import randstr
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from crocodile.meta import Terminal
 from machineconfig.utils.utils import LIBRARY_ROOT, REPO_ROOT, display_options
 import platform
@@ -48,11 +48,11 @@ def get_shell_profile_path():
     if system == "Windows":
         obj = Terminal().run("$PROFILE", shell="pwsh")
         res = obj.op2path()
-        if isinstance(res, P): profile_path = res
+        if isinstance(res, PathExtended): profile_path = res
         else:
             obj.print(capture=False)
             raise ValueError(f"Could not get profile path for Windows. Got {res}")
-    elif system == "Linux": profile_path = P("~/.bashrc").expanduser()
+    elif system == "Linux": profile_path = PathExtended("~/.bashrc").expanduser()
     else: raise ValueError(f"Not implemented for this system {system}")
     console.print(Panel(f"🐚 SHELL PROFILE | Working with path: `{profile_path}`", title="[bold blue]Shell Profile[/bold blue]", border_style="blue"))
     return profile_path
@@ -61,7 +61,7 @@ def get_shell_profile_path():
 def append_temporarily(dirs: list[str], kind: Literal['append', 'prefix', 'replace'] = "append"):
     dirs_ = []
     for path in dirs:
-        path_rel = P(path).collapseuser(strict=False)
+        path_rel = PathExtended(path).collapseuser(strict=False)
         if path_rel.as_posix() in PATH or str(path_rel) in PATH or path_rel.expanduser().to_str() in PATH or path_rel.expanduser().as_posix() in PATH: print(f"Path passed `{path}` is already in PATH, skipping the appending.")
         else:
             dirs_.append(path_rel.as_posix() if system == "Linux" else str(path_rel))
@@ -94,7 +94,7 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
 
     console.print(f"\n📌 Adding directories to PATH: {dirs}")
     addition = append_temporarily(dirs=dirs)
-    profile_path_obj = P(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
+    profile_path_obj = PathExtended(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
     profile_path_obj.copy(name=profile_path_obj.name + ".orig_" + randstr())
     console.print(f"💾 Created backup of profile: {profile_path_obj.name}.orig_*")
     profile_path_obj.modify_text(addition, addition, replace_line=False, notfound_append=True)
@@ -117,13 +117,13 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice
     elif choice == "none(EXIT)": return
 
     if isinstance(profile_path, str):
-        profile_path_obj = P(profile_path)
+        profile_path_obj = PathExtended(profile_path)
     else: profile_path_obj = get_shell_profile_path()
     profile = profile_path_obj.read_text()
 
     for a_file in sources:
         tmp = a_file.replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix())
-        file = P(tmp).collapseuser()  # this makes the shell profile interuseable across machines.
+        file = PathExtended(tmp).collapseuser()  # this makes the shell profile interuseable across machines.
         file = file.as_posix() if system == "Linux" else str(file)
         if file not in profile:
             if system == "Windows": 
@@ -156,11 +156,11 @@ def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice
         patches = [choice]
         console.print(f"📌 Adding selected patch: {choice}")
 
-    profile_path_obj = P(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
+    profile_path_obj = PathExtended(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
     profile = profile_path_obj.read_text()
 
     for patch_path in patches:
-        patch_path_obj = P(patch_path)
+        patch_path_obj = PathExtended(patch_path)
         patch = patch_path_obj.read_text()
         if patch in profile: 
             console.print(f"⏭️  Patch already present: {patch_path_obj.name}")

@@ -4,11 +4,11 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
 from machineconfig.utils.utils2 import randstr
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from crocodile.meta import Terminal
 
 
-PROGRAM_PATH = (P.home().joinpath("tmp_results", "shells", "python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh"))
+PROGRAM_PATH = (PathExtended.home().joinpath("tmp_results", "shells", "python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh"))
 
 
 def get_shell_script_executing_python_file(python_file: str, func: Optional[str] = None, ve_name: str="ve", strict_execution: bool=True):
@@ -33,7 +33,7 @@ def write_shell_script_to_file(shell_script: str):
     if platform.system() in ["Linux", "Darwin"]: suffix = ".sh"
     elif platform.system() == "Windows": suffix = ".ps1"
     else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
-    shell_file = P.tmp().joinpath("tmp_scripts", "shell", randstr() + suffix).create(parents_only=True).write_text(shell_script)
+    shell_file = PathExtended.tmp().joinpath("tmp_scripts", "shell", randstr() + suffix).create(parents_only=True).write_text(shell_script)
     return shell_file
 
 # Enhanced print/log/error/exception statements for better clarity and consistency
@@ -65,7 +65,7 @@ except ImportError:
     console = Console()
     console.print(Panel(f'''📜 PYTHON SCRIPT:\n\n{{code}}''', title="Python Script", expand=False))
 """ + python_script
-    python_file = P.tmp().joinpath("tmp_scripts", "python", randstr() + ".py").create(parents_only=True).write_text(python_script)
+    python_file = PathExtended.tmp().joinpath("tmp_scripts", "python", randstr() + ".py").create(parents_only=True).write_text(python_script)
     shell_script = get_shell_script_executing_python_file(python_file=python_file.to_str(), ve_name=ve_name)
     shell_file = write_shell_script_to_file(shell_script)
     return shell_file

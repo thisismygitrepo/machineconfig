@@ -1,7 +1,7 @@
 """NFS mounting script
 """
 
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from crocodile.meta import SSH, Terminal
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_host
 import platform
@@ -32,10 +32,10 @@ def main():
     print(f"📁 Share Path: {share_path}\n")
 
     if platform.system() in ["Linux", "Darwin"]:
-        mount_path_1 = P(share_path)
-        mount_path_2 = P.home().joinpath(f"data/mount_nfs/{remote_server}")
+        mount_path_1 = PathExtended(share_path)
+        mount_path_2 = PathExtended.home().joinpath(f"data/mount_nfs/{remote_server}")
         if str(mount_path_1).startswith("/home"):
-            mount_path_3 = P.home().joinpath(*mount_path_1.parts[3:])
+            mount_path_3 = PathExtended.home().joinpath(*mount_path_1.parts[3:])
         else:
             mount_path_3 = mount_path_2
 
@@ -46,8 +46,8 @@ def main():
             default=mount_path_2,
             custom_input=True
         )
-        assert isinstance(local_mount_point, P), f"❌ local_mount_point must be a pathlib.Path. Got {type(local_mount_point)}"
-        local_mount_point = P(local_mount_point).expanduser()
+        assert isinstance(local_mount_point, PathExtended), f"❌ local_mount_point must be a pathlib.Path. Got {type(local_mount_point)}"
+        local_mount_point = PathExtended(local_mount_point).expanduser()
 
         PROGRAM_PATH.write_text(f"""
 share_info={share_info}

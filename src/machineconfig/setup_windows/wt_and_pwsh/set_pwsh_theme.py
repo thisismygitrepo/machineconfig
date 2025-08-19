@@ -5,7 +5,7 @@ https://glitchbone.github.io/vscode-base16-term/#/3024
 """
 
 
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.utils import LIBRARY_ROOT
 from machineconfig.utils.installer_utils.installer_class import Installer
 import subprocess
@@ -33,7 +33,7 @@ def install_nerd_fonts():
     folder.search("*LICENSE*").apply(lambda p: p.delete(sure=True))
     
     print("⚙️  Installing fonts via PowerShell...")
-    file = P.tmpfile(suffix=".ps1").write_text(LIBRARY_ROOT.joinpath("setup_windows/wt_and_pwsh/install_fonts.ps1").read_text().replace(r".\fonts-to-be-installed", str(folder)))
+    file = PathExtended.tmpfile(suffix=".ps1").write_text(LIBRARY_ROOT.joinpath("setup_windows/wt_and_pwsh/install_fonts.ps1").read_text().replace(r".\fonts-to-be-installed", str(folder)))
     subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {file.to_str()}", check=True)
     
     print("🗑️  Cleaning up temporary files...")

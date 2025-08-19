@@ -1,7 +1,7 @@
 """python and ve installation related utils
 """
 
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 
 import platform
 from typing import Optional, Literal
@@ -40,13 +40,13 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
 
     if ve_name is None:
         console.rule("📦 Existing Virtual Environments")
-        for ve_path in P.home().joinpath("venvs").search("*", files=False):
+        for ve_path in PathExtended.home().joinpath("venvs").search("*", files=False):
             try:
                 ve_specs = get_ve_specs(ve_path)
             except Exception as _e:
                 continue
             pprint(ve_specs, ve_path.stem)
-        default_ve_name = P.cwd().name
+        default_ve_name = PathExtended.cwd().name
         ve_name = input(f"📝 Enter virtual environment name ({default_ve_name}): ") or default_ve_name
 
     if install_crocodile_and_machineconfig is None:
@@ -56,7 +56,7 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
         essential_repos = install_crocodile_and_machineconfig
         other_repos = ""
 
-    env_path = P.home().joinpath("venvs", ve_name)
+    env_path = PathExtended.home().joinpath("venvs", ve_name)
     if delete_if_exists and env_path.exists():
         sure = input(f"⚠️ An existing environment found. Are you sure you want to delete {env_path} before making new one? (y/[n]): ") == "y"
         console.rule("🗑️ Deleting existing environment with similar name")
@@ -89,7 +89,7 @@ def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[st
     link_ve: bool = input("🔗 Create symlinks? [y/[n]] ") == "y"
     if link_ve: 
         system_for_functions = "Linux" if system == "Darwin" else system
-        create_symlinks(repo_root=P.cwd(), ve_name=ve_name, dotted_py_version=dotted_py_version, system=system_for_functions, ipy_profile="default")
-    make_installation_recipe(repo_root=str(P.cwd()), ve_name=ve_name, py_version=dotted_py_version)
+        create_symlinks(repo_root=PathExtended.cwd(), ve_name=ve_name, dotted_py_version=dotted_py_version, system=system_for_functions, ipy_profile="default")
+    make_installation_recipe(repo_root=str(PathExtended.cwd()), ve_name=ve_name, py_version=dotted_py_version)
     return script
 

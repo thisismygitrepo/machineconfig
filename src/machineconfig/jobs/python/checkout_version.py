@@ -1,7 +1,7 @@
 """checkout_version.py
 """
 
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.io_save import save_json
 from machineconfig.utils.utils2 import randstr
 from crocodile.meta import Terminal
@@ -12,11 +12,11 @@ import platform
 from machineconfig.utils.ve_utils.ve1 import get_ve_name_and_ipython_profile
 
 
-def checkout_version(version: str, repo_root: P, exclude_editable: bool=False):
+def checkout_version(version: str, repo_root: PathExtended, exclude_editable: bool=False):
     """Checkout a version of the repo and install its requirements."""
     ve_name, _ipyprofile = get_ve_name_and_ipython_profile(init_path=repo_root)
     if ve_name is None: raise ValueError("❌ No virtual environment found.")
-    ve_path = P.home().joinpath("venvs", ve_name or "ve")
+    ve_path = PathExtended.home().joinpath("venvs", ve_name or "ve")
     ve_specs = get_ve_specs(ve_path)
     try:
         py_version = ve_specs['version']
@@ -36,7 +36,7 @@ def checkout_version(version: str, repo_root: P, exclude_editable: bool=False):
     else: install_editable_packages = ""
 
     version_root = repo_root.collapseuser().joinpath(f"versions/{version}").as_posix()
-    version_root_obj = P(version_root).expanduser().create()
+    version_root_obj = PathExtended(version_root).expanduser().create()
     checkout_ve = f"{repo_root.name}-{version}-prod" if not exclude_editable else ve_name
     checkout_ve = input(f"📝 Name of the ve to create (default: {checkout_ve}): ") or checkout_ve
 
@@ -81,7 +81,7 @@ def main():
     from git.repo import Repo
     from git.exc import InvalidGitRepositoryError
     try:
-        repo = Repo(P.cwd(), search_parent_directories=True)
+        repo = Repo(PathExtended.cwd(), search_parent_directories=True)
         print(f"""
 {'=' * 150}
 🔍 GIT REPO | Found repository at {repo.working_dir}
@@ -90,7 +90,7 @@ def main():
     except InvalidGitRepositoryError as err:
         print(f"""
 {'🔥' * 20}
-❌ ERROR | No Git repository found at {P.cwd()} or its parent directories
+❌ ERROR | No Git repository found at {PathExtended.cwd()} or its parent directories
 {'🔥' * 20}
 """)
         raise err
@@ -98,12 +98,12 @@ def main():
     from rich.prompt import Confirm
     exclude_editable = Confirm.ask("🔄 Exclude editable packages?", default=False)
 
-    repo_root = P(repo.working_dir)
+    repo_root = PathExtended(repo.working_dir)
     checkout_version(version, repo_root, exclude_editable=exclude_editable)
 
 
 def get_editable_packages(ve_name: str):
-    file = P.tmp().joinpath(f"tmp_files/editable_requirements_{randstr()}.txt")
+    file = PathExtended.tmp().joinpath(f"tmp_files/editable_requirements_{randstr()}.txt")
     file.parent.mkdir(parents=True, exist_ok=True)
     editable_packages_script = f"""
 . $HOME/scripts/activate_ve {ve_name}
@@ -115,7 +115,7 @@ pip list --editable > {file}
 
     res = []
     for a_pkg in tmp3:
-        tmp = P(a_pkg.split(" ")[-1].rstrip())
+        tmp = PathExtended(a_pkg.split(" ")[-1].rstrip())
         tmp1 = record_a_repo(tmp, search_parent_directories=True)  # pip list --editable returns path to package or repo in a way not yet understood.
         res.append(tmp1)
     return res

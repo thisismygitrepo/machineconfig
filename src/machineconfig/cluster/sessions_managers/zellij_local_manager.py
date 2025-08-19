@@ -250,12 +250,12 @@ class ZellijLocalManager:
         
         print("=" * 80)
 
-    def run_monitoring_routine(self, wait_time: str = "30s") -> None:
+    def run_monitoring_routine(self, wait_ms: int = 30000) -> None:
         """
         Run a continuous monitoring routine that checks status periodically.
         
         Args:
-            wait_time: How long to wait between checks (e.g., "30s", "1m", "2m")
+            wait_ms: How long to wait between checks in milliseconds (default: 30000ms = 30s)
         """
         def routine(scheduler: Scheduler):
             print(f"\n⏰ Monitoring cycle {scheduler.cycle} at {datetime.now()}")
@@ -303,8 +303,8 @@ class ZellijLocalManager:
                 global_summary = self.get_global_summary()
                 print(f"📊 Quick Summary: {global_summary['running_commands']}/{global_summary['total_commands']} commands running across {global_summary['healthy_sessions']}/{global_summary['total_sessions']} sessions")
         
-        logger.info(f"Starting monitoring routine with {wait_time} intervals")
-        sched = Scheduler(routine=routine, wait=wait_time)
+        logger.info(f"Starting monitoring routine with {wait_ms}ms intervals")
+        sched = Scheduler(routine=routine, wait_ms=wait_ms)
         sched.run()
 
     def save(self, session_id: Optional[str] = None) -> str:
@@ -520,7 +520,7 @@ if __name__ == "__main__":
         
         # Show how to start monitoring (commented out to prevent infinite loop in demo)
         print("\n⏰ To start monitoring, run:")
-        print("manager.run_monitoring_routine(wait_time='30s')")
+        print("manager.run_monitoring_routine(wait_ms=30000)  # 30 seconds")
         
     except Exception as e:
         print(f"❌ Error: {e}")

@@ -5,7 +5,7 @@ from machineconfig.utils.installer_utils.installer_class import Installer
 from rich.console import Console
 from rich.panel import Panel # Added import
 
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from crocodile.meta import Terminal
 from machineconfig.utils.utils import INSTALL_VERSION_ROOT
 from machineconfig.utils.utils2 import read_json
@@ -78,13 +78,13 @@ def get_installed_cli_apps():
     print(f"\n{'='*80}\n🔍 LISTING INSTALLED CLI APPS 🔍\n{'='*80}")
     if platform.system() == "Windows": 
         print("🪟 Searching for Windows executables...")
-        apps = P.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad"])
+        apps = PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad"])
     elif platform.system() in ["Linux", "Darwin"]: 
         print(f"🐧 Searching for {platform.system()} executables...")
         if platform.system() == "Linux":
-            apps = P(LINUX_INSTALL_PATH).search("*") + P("/usr/local/bin").search("*")
+            apps = PathExtended(LINUX_INSTALL_PATH).search("*") + PathExtended("/usr/local/bin").search("*")
         else:  # Darwin/macOS
-            apps = P("/usr/local/bin").search("*") + P("/opt/homebrew/bin").search("*")
+            apps = PathExtended("/usr/local/bin").search("*") + PathExtended("/opt/homebrew/bin").search("*")
     else: 
         error_msg = f"❌ ERROR: System {platform.system()} not supported"
         print(error_msg)

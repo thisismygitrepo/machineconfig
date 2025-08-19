@@ -3,7 +3,7 @@ slidev
 """
 
 from machineconfig.utils.utils import CONFIG_PATH, PROGRAM_PATH, print_code
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from crocodile.meta import Terminal
 import subprocess
 import platform
@@ -16,7 +16,7 @@ if not SLIDEV_REPO.joinpath("components").exists():
     Terminal(stderr=subprocess.PIPE, stdin=subprocess.PIPE, stdout=subprocess.PIPE).run(f"cd {SLIDEV_REPO.parent};npm init slidev@latest")
     print("✅ Slidev repository initialized successfully!\n")
 
-def jupyter_to_markdown(file: P):
+def jupyter_to_markdown(file: PathExtended):
     op_dir = file.parent.joinpath("presentation")
     print("📝 Converting Jupyter notebook to markdown...")
 
@@ -60,12 +60,12 @@ def main() -> None:
 
     if args.jupyter_file is not None:
         print("📓 Jupyter file provided. Converting to markdown...")
-        report_dir = jupyter_to_markdown(P(args.jupyter_file))
+        report_dir = jupyter_to_markdown(PathExtended(args.jupyter_file))
     else:
         if args.directory is None:
-            report_dir = P.cwd()
+            report_dir = PathExtended.cwd()
         else:
-            report_dir = P(args.directory)
+            report_dir = PathExtended(args.directory)
 
     assert report_dir.exists(), f"❌ Directory {report_dir} does not exist."
     assert report_dir.is_dir(), f"❌ {report_dir} is not a directory."

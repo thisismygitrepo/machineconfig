@@ -3,7 +3,7 @@
 
 from platform import system
 from crocodile.meta import SSH, Terminal
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.utils import PROGRAM_PATH, choose_ssh_host
 
 def main():
@@ -32,7 +32,7 @@ def main():
 
     mount_point = input(f"📂 Enter the mount point directory (e.g., /mnt/network) [Default: ~/data/mount_ssh/{ssh.hostname}]: ")
     if mount_point == "":
-        mount_point = P.home().joinpath(fr"data/mount_ssh/{ssh.hostname}")
+        mount_point = PathExtended.home().joinpath(fr"data/mount_ssh/{ssh.hostname}")
 
     print(f"\n📁 Mount Point: {mount_point}")
 

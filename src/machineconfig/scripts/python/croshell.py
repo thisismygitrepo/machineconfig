@@ -3,7 +3,7 @@ croshell
 """
 
 import argparse
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.utils import PROGRAM_PATH, display_options
 from machineconfig.utils.ve_utils.ve1 import get_ve_name_and_ipython_profile, get_ve_activate_line
@@ -57,7 +57,7 @@ except Exception as e:
 """
 
 
-def get_read_pyfile_pycode(path: P, as_module: bool, cmd: str=""):
+def get_read_pyfile_pycode(path: PathExtended, as_module: bool, cmd: str=""):
     if as_module: pycode = fr"""
 import sys
 sys.path.append(r'{path.parent}')
@@ -99,7 +99,7 @@ def build_parser():
     interactivity = '' if args.nonInteratctive else '-i'
     interpreter = 'python' if args.python else 'ipython'
     ipython_profile: Optional[str] = args.profile
-    file = P.cwd()  # initialization value, could be modified according to args.
+    file = PathExtended.cwd()  # initialization value, could be modified according to args.
 
     if args.cmd != "":
         text = "🖥️  Executing command from CLI argument"
@@ -110,15 +110,15 @@ def build_parser():
     elif args.fzf:
         text = "🔍 Searching for Python files..."
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
-        options = P.cwd().search("*.py", r=True).apply(str).list
+        options = PathExtended.cwd().search("*.py", r=True).apply(str).list
         file = display_options(msg="Choose a python file to run", options=options, fzf=True, multi=False, )
         assert isinstance(file, str)
-        program = P(file).read_text(encoding='utf-8')
-        text = f"📄 Selected file: {P(file).name}"
+        program = PathExtended(file).read_text(encoding='utf-8')
+        text = f"📄 Selected file: {PathExtended(file).name}"
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
 
     elif args.file != "":
-        file = P(args.file.lstrip()).expanduser().absolute()
+        file = PathExtended(args.file.lstrip()).expanduser().absolute()
         program = get_read_pyfile_pycode(file, as_module=args.module, cmd=args.cmd)
         text1 = f"📄 Loading file: {file.name}"
         text2 = f"🔄 Mode: {'Module' if args.module else 'Script'}"
@@ -137,7 +137,7 @@ streamlit run {py_file_path}
 """
             PROGRAM_PATH.write_text(data=final_program)
             return None
-        file = P(str(args.read).lstrip()).expanduser().absolute()
+        file = PathExtended(str(args.read).lstrip()).expanduser().absolute()
         program = get_read_data_pycode(str(file))
         text = f"📄 Reading data from: {file.name}"
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
@@ -158,7 +158,7 @@ print_header()
 print_logo(logo="crocodile")
 """
 
-    pyfile = P.tmp().joinpath(f"tmp_scripts/python/croshell/{randstr()}.py").create(parents_only=True)
+    pyfile = PathExtended.tmp().joinpath(f"tmp_scripts/python/croshell/{randstr()}.py").create(parents_only=True)
 
     if args.read != "": title = "Reading Data"
     elif args.file != "": title = "Running Python File"
@@ -169,9 +169,9 @@ print_logo(logo="crocodile")
 
     ve_profile_suggested: Optional[str] = None
     if ipython_profile is None:
-        ve_profile_suggested, ipython_profile = get_ve_name_and_ipython_profile(P(file))
+        ve_profile_suggested, ipython_profile = get_ve_name_and_ipython_profile(PathExtended(file))
         ipython_profile = ipython_profile if ipython_profile is not None else "default"
-    ve_activateion_line = get_ve_activate_line(ve_name=args.ve or ve_profile_suggested, a_path=str(P.cwd()))
+    ve_activateion_line = get_ve_activate_line(ve_name=args.ve or ve_profile_suggested, a_path=str(PathExtended.cwd()))
     final_program = f"""
 #!/bin/bash
 

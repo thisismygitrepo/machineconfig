@@ -42,7 +42,7 @@ class WTSessionManager:
                 command="powershell -Command \"Get-Process -Name 'WindowsTerminal' -ErrorAction SilentlyContinue | Stop-Process -Force\""
             )
 
-    def run_monitoring_routine(self, wait_time: str = "1m") -> None:
+    def run_monitoring_routine(self, wait_ms: int = 60000) -> None:
         def routine(scheduler: Scheduler):
             if scheduler.cycle % 2 == 0:
                 statuses = []
@@ -78,7 +78,7 @@ class WTSessionManager:
                 # Print statuses
                 for i, status in enumerate(statuses):
                     print(f"Manager {i}: {status}")
-        sched = Scheduler(routine=routine, wait=wait_time)
+        sched = Scheduler(routine=routine, wait_ms=wait_ms)
         sched.run()
 
     def save(self, session_id: Optional[str] = None) -> str:
@@ -475,7 +475,7 @@ if __name__ == "__main__":
         
         # Show how to start monitoring (commented out to prevent infinite loop in demo)
         print("\n⏰ To start monitoring, run:")
-        print("manager.run_monitoring_routine(wait_time='1m')")
+        print("manager.run_monitoring_routine(wait_ms=60000)  # 60 seconds")
         
     except Exception as e:
         print(f"❌ Error: {e}")

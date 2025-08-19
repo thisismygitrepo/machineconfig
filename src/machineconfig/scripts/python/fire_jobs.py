@@ -15,7 +15,7 @@ from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
 from machineconfig.utils.ve_utils.ve1 import get_repo_root
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, match_file_name, sanitize_path
 from machineconfig.utils.ve_utils.ve1 import get_ve_activate_line, get_ve_name_and_ipython_profile
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.io_save import save_toml
 from machineconfig.utils.utils2 import randstr, read_toml
 import platform
@@ -58,15 +58,15 @@ def main() -> None:
         print(f"❌ Failed to parse arguments: {ex}")
         parser.print_help()
         raise ex
-    path_obj = sanitize_path(P(args.path))
+    path_obj = sanitize_path(PathExtended(args.path))
     if not path_obj.exists():
-        path_obj = match_file_name(sub_string=args.path, search_root=P.cwd())
+        path_obj = match_file_name(sub_string=args.path, search_root=PathExtended.cwd())
     else: pass
     if path_obj.is_dir():
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
         files = search_for_files_of_interest(path_obj)
         choice_file = choose_one_option(options=files, fzf=True)
-        choice_file = P(choice_file)
+        choice_file = PathExtended(choice_file)
     else:
         choice_file = path_obj
     repo_root = get_repo_root(str(choice_file))
@@ -99,7 +99,7 @@ def main() -> None:
             choice_function_tmp = display_options(msg="Choose a function to run", options=options, fzf=True, multi=False)
             assert isinstance(choice_function_tmp, str), f"choice_function must be a string. Got {type(choice_function_tmp)}"
             choice_index = options.index(choice_function_tmp)
-            choice_function: Optional[str] = choice_function_tmp.split(' -- ')[0]
+            choice_function = choice_function_tmp.split(' -- ')[0]
             choice_function_args = func_args[choice_index]
 
             if choice_function == "RUN AS MAIN": choice_function = None
@@ -114,7 +114,7 @@ def main() -> None:
                 if line.startswith("echo"): continue
                 options.append(line)
             chosen_lines = display_options(msg="Choose a line to run", options=options, fzf=True, multi=True)
-            choice_file = P.tmpfile(suffix=".sh").write_text("\n".join(chosen_lines))
+            choice_file = PathExtended.tmpfile(suffix=".sh").write_text("\n".join(chosen_lines))
             choice_function = None
     else:
         choice_function = args.function
@@ -132,7 +132,7 @@ def main() -> None:
                 s.close()
             computer_name = platform.node()
             port = 8501
-            toml_path: Optional[P] = None
+            toml_path: Optional[PathExtended] = None
             toml_path_maybe = choice_file.parent.joinpath(".streamlit/config.toml")
             if toml_path_maybe.exists():
                 toml_path = toml_path_maybe
@@ -147,7 +147,7 @@ def main() -> None:
                         port = config["server"]["port"]
                 secrets_path = toml_path.with_name("secrets.toml")
                 if repo_root is not None:
-                    secrets_template_path = P.home().joinpath(f"dotfiles/creds/streamlit/{P(repo_root).name}/{choice_file.name}/secrets.toml")
+                    secrets_template_path = PathExtended.home().joinpath(f"dotfiles/creds/streamlit/{PathExtended(repo_root).name}/{choice_file.name}/secrets.toml")
                     if args.environment != "" and not secrets_path.exists() and secrets_template_path.exists():
                         secrets_template = read_toml(secrets_template_path)
                         if args.environment == "ip": host_url = f"http://{local_ip_v4}:{port}/oauth2callback"
@@ -193,9 +193,9 @@ except (ImportError, ModuleNotFoundError) as ex:
     print(fr"❌ Failed to import `{choice_file}` as a module: {{ex}} ")
     print(fr"⚠️ Attempting import with ad-hoc `$PATH` manipulation. DO NOT pickle any objects in this session as correct deserialization cannot be guaranteed.")
     import sys
-    sys.path.append(r'{P(choice_file).parent}')
+    sys.path.append(r'{PathExtended(choice_file).parent}')
     {repo_root_add}
-    from {P(choice_file).stem} import *
+    from {PathExtended(choice_file).stem} import *
     print(fr"✅ Successfully imported `{choice_file}`")
 """
         if choice_function is not None:
@@ -213,7 +213,7 @@ try:
 except ImportError as _ex:
     print(r'''{txt}''')
 """ + txt
-        choice_file = P.tmp().joinpath(f'tmp_scripts/python/{P(choice_file).parent.name}_{P(choice_file).stem}_{randstr()}.py').create(parents_only=True).write_text(txt)
+        choice_file = PathExtended.tmp().joinpath(f'tmp_scripts/python/{PathExtended(choice_file).parent.name}_{PathExtended(choice_file).stem}_{randstr()}.py').create(parents_only=True).write_text(txt)
 
     # =========================  determining basic command structure: putting together exe & choice_file & choice_function & pdb
     if args.debug:
@@ -233,7 +233,7 @@ except ImportError as _ex:
         if args.holdDirectory:
             command = f"{exe} {choice_file}"
         else:
-            command = f"cd {choice_file.parent}\n{exe} {choice_file.name}\ncd {P.cwd()}"
+            command = f"cd {choice_file.parent}\n{exe} {choice_file.name}\ncd {PathExtended.cwd()}"
 
     elif args.cmd:
         command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
@@ -242,7 +242,7 @@ except ImportError as _ex:
             kwargs_raw = " ".join(args.kw) if args.kw is not None else ""
             command = f"{exe} {choice_file} {kwargs_raw}"
         else:
-            # command = f"cd {choice_file.parent}\n{exe} {choice_file.name}\ncd {P.cwd()}"
+            # command = f"cd {choice_file.parent}\n{exe} {choice_file.name}\ncd {PathExtended.cwd()}"
             command = f"{exe} {choice_file} "
     if not args.cmd:
         if "ipdb" in command: command = f"pip install ipdb\n{command}"
@@ -270,13 +270,13 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
         #     sub_command = f"{command} --idx={an_arg} --idx_max={args.Nprocess}"
         #     if args.optimized:
         #         sub_command = sub_command.replace("python ", "python -OO ")
-        #     sub_command_path = P.tmpfile(suffix=".sh").write_text(sub_command)
+        #     sub_command_path = PathExtended.tmpfile(suffix=".sh").write_text(sub_command)
         #     lines.append(f"""zellij action new-pane -- bash {sub_command_path}  """)
         #     lines.append("sleep 5")  # python tends to freeze if you launch instances within 1 microsecond of each other
         # command = "\n".join(lines)
         tab_config = {}
         for an_arg in range(args.Nprocess):
-            tab_config[f"tab{an_arg}"] = (str(P.cwd()), f"uv run python -m fire {choice_file} {choice_function} --idx={an_arg} --idx_max={args.Nprocess}")
+            tab_config[f"tab{an_arg}"] = (str(PathExtended.cwd()), f"uv run python -m fire {choice_file} {choice_function} --idx={an_arg} --idx_max={args.Nprocess}")
         from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
         run_zellij_layout(tab_config=tab_config, session_name=None)
         return None
@@ -293,7 +293,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
     console = Console()
 
     if args.zellij_tab is not None:
-        comman_path__ = P.tmpfile(suffix=".sh").write_text(command)
+        comman_path__ = PathExtended.tmpfile(suffix=".sh").write_text(command)
         console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {comman_path__}: "), style="bold red")
         import subprocess
         existing_tab_names = subprocess.run(["zellij", "action", "query-tab-names"], capture_output=True, text=True, check=True).stdout.splitlines()
@@ -316,7 +316,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
         command = export_line + "\n" + command
 
     program_path = os.environ.get("op_script", None)
-    program_path = P(program_path) if program_path is not None else PROGRAM_PATH
+    program_path = PathExtended(program_path) if program_path is not None else PROGRAM_PATH
     if args.loop:
         if platform.system() in ["Linux", "Darwin"]:
             command = command + "\nsleep 0.5"

@@ -2,7 +2,7 @@
 """
 
 from machineconfig.utils.utils2 import randstr, read_json
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.io_save import save_json
 import crocodile.environment as env
 from machineconfig.utils.utils import LIBRARY_ROOT
@@ -35,7 +35,7 @@ class TerminalSettings(object):
         if not isinstance(tmp, str):
             print("❌ ERROR: Could not find LOCALAPPDATA environment variable!")
             raise ValueError("Could not find LOCALAPPDATA environment variable.")
-        self.path = P(tmp).joinpath(r"Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json")
+        self.path = PathExtended(tmp).joinpath(r"Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json")
         backup_name = f".orig_{randstr()}"
         print(f"📝 Creating backup of original settings as {backup_name}...")
         self.path.copy(append=backup_name)

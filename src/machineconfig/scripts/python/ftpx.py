@@ -7,7 +7,7 @@ Currently, the only way to work around this is to predifine the host in ~/.ssh/c
 
 import argparse
 from crocodile.meta import SSH
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.scripts.python.helpers.helpers2 import ES
 from machineconfig.utils.utils2 import pprint
 
@@ -48,7 +48,7 @@ def main():
         else:
             source = ":".join(args.source.split(":")[1:])
             if args.target == ES: target = None
-            else: target = P(args.target).expanduser().absolute().as_posix()
+            else: target = PathExtended(args.target).expanduser().absolute().as_posix()
 
     elif ":" in args.target and (args.target[1] != ":" if len(args.target) > 1 else True):  # avoid the case of "C:/":
         source_is_remote = False
@@ -66,7 +66,7 @@ def main():
         else:
             target = ":".join(args.target.split(":")[1:])
             if args.source == ES: source = None
-            else: source = P(args.source).expanduser().absolute()
+            else: source = PathExtended(args.source).expanduser().absolute()
 
     else:
         raise ValueError("""
@@ -107,7 +107,7 @@ def main():
 │    Downloading from cloud to local...
 └────────────────────────────────────────────────────────────────""")
         ssh.run_locally(f"cloud_copy :^ {target}").print()
-        received_file = P(target)  # type: ignore
+        received_file = PathExtended(target)  # type: ignore
     else:
         if source_is_remote:
             assert source is not None, """
@@ -132,7 +132,7 @@ def main():
 └────────────────────────────────────────────────────────────────""")
             received_file = ssh.copy_from_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
 
-    if source_is_remote and isinstance(received_file, P):
+    if source_is_remote and isinstance(received_file, PathExtended):
         print(f"""
 ┌────────────────────────────────────────────────────────────────
 │ 📁 File Received

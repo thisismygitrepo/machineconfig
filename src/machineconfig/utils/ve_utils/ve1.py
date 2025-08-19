@@ -1,4 +1,4 @@
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.utils2 import read_ini
 import platform
 from typing import Optional

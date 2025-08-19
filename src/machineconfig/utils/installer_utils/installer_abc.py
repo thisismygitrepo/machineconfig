@@ -1,15 +1,15 @@
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from crocodile.meta import Terminal
 from typing import Optional, TypeAlias, Literal
 
 # LINUX_INSTALL_PATH = '/usr/local/bin'
 # LINUX_INSTALL_PATH = '~/.local/bin'
-LINUX_INSTALL_PATH = P.home().joinpath(".local/bin").__str__()
-WINDOWS_INSTALL_PATH = P.home().joinpath("AppData/Local/Microsoft/WindowsApps").__str__()
+LINUX_INSTALL_PATH = PathExtended.home().joinpath(".local/bin").__str__()
+WINDOWS_INSTALL_PATH = PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps").__str__()
 CATEGORY: TypeAlias = Literal["OS_SPECIFIC", "OS_GENERIC", "CUSTOM", "OS_SPECIFIC_DEV", "OS_GENERIC_DEV", "CUSTOM_DEV"]
 
 
-def find_move_delete_windows(downloaded_file_path: P, exe_name: Optional[str] = None, delete: bool=True, rename_to: Optional[str] = None):
+def find_move_delete_windows(downloaded_file_path: PathExtended, exe_name: Optional[str] = None, delete: bool=True, rename_to: Optional[str] = None):
     print(f"\n{'='*80}\n🔍 PROCESSING WINDOWS EXECUTABLE 🔍\n{'='*80}")
     if exe_name is not None and ".exe" in exe_name: exe_name = exe_name.replace(".exe", "")
     if downloaded_file_path.is_file():
@@ -53,7 +53,7 @@ def find_move_delete_windows(downloaded_file_path: P, exe_name: Optional[str] = 
     return exe_new_location
 
 
-def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool] = True, rename_to: Optional[str] = None):
+def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: Optional[bool] = True, rename_to: Optional[str] = None):
     print(f"\n{'='*80}\n🔍 PROCESSING LINUX EXECUTABLE 🔍\n{'='*80}")
     if downloaded.is_file():
         exe = downloaded
@@ -96,6 +96,6 @@ def find_move_delete_linux(downloaded: P, tool_name: str, delete: Optional[bool]
         downloaded.delete(sure=True)
         print("✅ Temporary files removed")
 
-    exe_new_location = P(LINUX_INSTALL_PATH).joinpath(exe.name)
+    exe_new_location = PathExtended(LINUX_INSTALL_PATH).joinpath(exe.name)
     print(f"✅ Executable installed at: {exe_new_location}\n{'='*80}")
     return exe_new_location

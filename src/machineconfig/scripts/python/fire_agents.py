@@ -25,7 +25,10 @@ def main():
     if file_path == "":
         keyword = input("Enter keyword to search recursively for all .py files containing it. ")
         py_files = list(repo_root.rglob("*.py"))
-        matching_files = [f for f in py_files if keyword in f.read_text(encoding='utf-8')]
+        matching_files = [
+            f for f in py_files
+            if keyword in f.read_text(encoding='utf-8', errors='ignore')
+        ]
         if not matching_files:
             print(f"💥 No .py files found containing keyword: {keyword}")
             return
@@ -37,7 +40,7 @@ def main():
     else:
         separator = input("Enter separator [\\n]: ") or "\n"
 
-    err_file = Path(file_path).expanduser().absolute().read_text()
+    err_file = Path(file_path).expanduser().absolute().read_text(encoding='utf-8', errors='ignore')
     prefix = input("Enter prefix prompt: ")
     prompts = [item for item in err_file.split(separator)]
     # Dynamically choose chunk size so we end up with <= 15 combined prompts.
@@ -52,7 +55,7 @@ def main():
         chunk_size = ceil(len(prompts) / 15)
         combined_prompts: list[str] = []
         for i in range(0, len(prompts), chunk_size):
-            combined_prompts.append("\nTargted Locations:\n".join(prompts[i:i+chunk_size]))
+            combined_prompts.append("\nTargeted Locations:\n".join(prompts[i:i+chunk_size]))
     combined_prompts = [prefix + "\n" + item for item in combined_prompts]
     tab_config = launch_agents(repo_root=repo_root, prompts=combined_prompts)
     from machineconfig.utils.utils2 import randstr

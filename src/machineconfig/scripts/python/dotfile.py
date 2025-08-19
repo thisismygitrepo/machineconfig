@@ -2,7 +2,7 @@
 """
 
 
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.profile.create import symlink_func
 from machineconfig.utils.utils import LIBRARY_ROOT, REPO_ROOT
 import argparse

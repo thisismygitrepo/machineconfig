@@ -3,7 +3,7 @@ cargo install
 """
 
 from crocodile.meta import Terminal
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 import platform
 
 
@@ -27,14 +27,14 @@ cargo install --path .
 {'=' * 150}
 """)
     if platform.system() == "Windows":
-        Terminal(stdout=None).run(f". {P.tmpfile(suffix='.ps1').write_text(script)}", shell="pwsh").print()
+        Terminal(stdout=None).run(f". {PathExtended.tmpfile(suffix='.ps1').write_text(script)}", shell="pwsh").print()
     else:
         Terminal(stdout=None).run(script, shell="pwsh")
 
-    exe = P.home().joinpath(f".cargo/bin/{tool_name}" + (".exe" if platform.system() == "Windows" else ""))
+    exe = PathExtended.home().joinpath(f".cargo/bin/{tool_name}" + (".exe" if platform.system() == "Windows" else ""))
 
     try:
-        P.home().joinpath(tool_name).delete(sure=True)
+        PathExtended.home().joinpath(tool_name).delete(sure=True)
     except PermissionError:
         print(f"""
 {'⚠️' * 20}
@@ -44,10 +44,10 @@ cargo install --path .
 """)
 
     if platform.system() == "Windows":
-        exe = exe.move(folder=P.get_env().WindowsPaths().WindowsApps)
+        exe = exe.move(folder=PathExtended.get_env().WindowsPaths().WindowsApps)
     elif platform.system() in ["Linux", "Darwin"]:
         Terminal().run(f"sudo mv {exe} /usr/local/bin")
-        exe = P(r"/usr/local/bin").joinpath(exe.name)
+        exe = PathExtended(r"/usr/local/bin").joinpath(exe.name)
     else:
         raise NotImplementedError(f"🚫 Platform {platform.system()} not supported.")
     share_link = exe.to_cloud("gdpo", share=True)

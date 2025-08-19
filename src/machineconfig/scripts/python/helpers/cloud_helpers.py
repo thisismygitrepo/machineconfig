@@ -1,4 +1,4 @@
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from machineconfig.utils.utils2 import pprint, read_json, read_ini
 from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass
@@ -46,11 +46,11 @@ class Args():
     config: Optional[str] = None
 
     @staticmethod
-    def from_config(config_path: P):
+    def from_config(config_path: PathExtended):
         return Args(**read_json(config_path))
 
 
-def find_cloud_config(path: P):
+def find_cloud_config(path: PathExtended):
     display_header(f"Searching for cloud configuration file @ {path}")
 
     for _i in range(len(path.parts)):
@@ -65,8 +65,8 @@ def find_cloud_config(path: P):
     return None
 
 
-def absolute(path: str) -> P:
-    obj = P(path).expanduser()
+def absolute(path: str) -> PathExtended:
+    obj = PathExtended(path).expanduser()
     if not path.startswith(".") and  obj.exists(): return obj
     try_absing =  P.cwd().joinpath(path)
     if try_absing.exists(): return try_absing
@@ -98,7 +98,7 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Ar
                 cloud = default_cloud__
                 console.print(f"☁️  Using default cloud: {cloud}")
 
-    default_password_path = P.home().joinpath("dotfiles/creds/passwords/quick_password")
+    default_password_path = PathExtended.home().joinpath("dotfiles/creds/passwords/quick_password")
     if default_password_path.exists():
         pwd = default_password_path.read_text().strip()
         default_message = "defaults to quick_password"

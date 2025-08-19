@@ -1,4 +1,4 @@
-from crocodile.file_management import P
+from crocodile.file_management import P as PathExtended
 from crocodile.meta import Terminal
 from machineconfig.scripts.python.get_zellij_cmd import get_zellij_cmd
 from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH
@@ -13,8 +13,8 @@ console = Console()
 
 def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cloud: str):
     console.print(Panel("🗑️  Deleting remote repo copy and pushing local copy", title="[bold blue]Repo Sync[/bold blue]", border_style="blue"))
-    repo_sync_root = P(remote_repo).expanduser().absolute()
-    repo_root_path = P(local_repo).expanduser().absolute()
+    repo_sync_root = PathExtended(remote_repo).expanduser().absolute()
+    repo_root_path = PathExtended(local_repo).expanduser().absolute()
     repo_sync_root.delete(sure=True)
     print("🧹 Removed temporary remote copy")
     from git.remote import Remote
@@ -34,7 +34,7 @@ def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cl
 # import subprocess
 
 
-def get_wt_cmd(wd1: P, wd2: P) -> str:
+def get_wt_cmd(wd1: PathExtended, wd2: PathExtended) -> str:
     lines = [
         f"""wt --window 0 new-tab --profile pwsh --title "gitdiff" --tabColor `#3b04d1 --startingDirectory {wd1} ` --colorScheme "Solarized Dark" """,
         f"""split-pane --horizontal --profile pwsh --startingDirectory {wd2} --size 0.5 --colorScheme "Tango Dark" -- pwsh -Interactive """
@@ -46,11 +46,11 @@ def inspect_repos(repo_local_root: str, repo_remote_root: str):
     console.print(Panel(f"📂 Local:  {repo_local_root}\n📂 Remote: {repo_remote_root}", title="[bold blue]🔍 Inspecting Repositories[/bold blue]", border_style="blue"))
 
     if platform.system() == "Windows":
-        program = get_wt_cmd(wd1=P(repo_local_root), wd2=P(repo_local_root))
+        program = get_wt_cmd(wd1=PathExtended(repo_local_root), wd2=PathExtended(repo_local_root))
         write_shell_script_to_file(shell_script=program)
         return None
     elif platform.system() in ["Linux", "Darwin"]:
-        program = get_zellij_cmd(wd1=P(repo_local_root), wd2=P(repo_remote_root))
+        program = get_zellij_cmd(wd1=PathExtended(repo_local_root), wd2=PathExtended(repo_remote_root))
         write_shell_script_to_file(shell_script=program)
         return None
     else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
@@ -62,7 +62,7 @@ def fetch_dotfiles():
     cloud_resolved = read_ini(DEFAULTS_PATH)['general']['rclone_config_name']
     console.print(Panel(f"⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}", width=150, border_style="yellow"))
 
-    dotfiles_local = P.home().joinpath("dotfiles")
+    dotfiles_local = PathExtended.home().joinpath("dotfiles")
     CONFIG_PATH.joinpath("remote").create()
     dotfiles_remote = CONFIG_PATH.joinpath("remote", dotfiles_local.rel2home())
     remote_path = dotfiles_local.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
@@ -75,7 +75,7 @@ def fetch_dotfiles():
     console.print(Panel("🗑️  Removing old dotfiles and replacing with cloud version...", width=150, border_style="blue"))
 
     dotfiles_local.delete(sure=True)
-    dotfiles_remote.move(folder=P.home())
+    dotfiles_remote.move(folder=PathExtended.home())
     script = f"""
 # rm -rf {dotfiles_local}
 # mv {dotfiles_remote} {dotfiles_local}
