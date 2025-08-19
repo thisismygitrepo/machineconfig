@@ -5,7 +5,7 @@ This script Takes away all config files from the computer, place them in one dir
 """
 
 
-from crocodile.environment import system  # ProgramFiles, WindowsApps  # , exe
+from crocodile.environment import system
 from crocodile.meta import Terminal
 from crocodile.file_management import P
 from machineconfig.utils.utils import symlink_copy as symlink_func, LIBRARY_ROOT, REPO_ROOT, display_options

@@ -7,7 +7,6 @@
 # def run_on_remote():
 #     from machineconfig.cluster.remote_machine import RemoteMachine, RemoteMachineConfig, WorkloadParams
 #     from machineconfig.cluster.templates.utils import expensive_function
-#     from crocodile.file_management import P
 #     # from machineconfig.cluster.self_ssh import SelfSSH
 #     data: list[P] = []
 #     config = RemoteMachineConfig(
