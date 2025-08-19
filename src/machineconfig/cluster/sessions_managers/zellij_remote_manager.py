@@ -4,9 +4,10 @@ import uuid
 import logging
 from pathlib import Path
 from typing import Optional
-from crocodile.meta import Scheduler
+from machineconfig.utils.utils5 import Scheduler
 from machineconfig.cluster.sessions_managers.zellij_local import run_command_in_zellij_tab
 from machineconfig.cluster.sessions_managers.zellij_remote import ZellijRemoteLayoutGenerator
+
 
 TMP_SERIALIAZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "zellij", "remote_manager")
 

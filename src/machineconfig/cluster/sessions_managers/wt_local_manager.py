@@ -6,7 +6,7 @@ import logging
 import subprocess
 from pathlib import Path
 from typing import Optional, Dict, List, Any
-from crocodile.meta import Scheduler
+from machineconfig.utils.utils5 import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import WTLayoutGenerator
 
 logging.basicConfig(level=logging.INFO)
@@ -222,11 +222,11 @@ class WTLocalManager:
                 if session_status.get("session_exists", False):
                     session_windows = session_status.get("session_windows", [])
                     all_windows = session_status.get("all_windows", [])
-                    print(f"✅ Windows Terminal is running")
+                    print("✅ Windows Terminal is running")
                     print(f"   Session windows: {len(session_windows)}")
                     print(f"   Total WT windows: {len(all_windows)}")
                 else:
-                    print(f"⚠️  Windows Terminal is running but no session windows found")
+                    print("⚠️  Windows Terminal is running but no session windows found")
             else:
                 print(f"❌ Windows Terminal session issue: {session_status.get('error', 'Unknown error')}")
             
@@ -299,7 +299,7 @@ class WTLocalManager:
         
         logger.info(f"Starting monitoring routine with {wait_time} intervals")
         sched = Scheduler(routine=routine, wait=wait_time)
-        sched.run()
+        sched.run(max_cycles=None)
 
     def save(self, session_id: Optional[str] = None) -> str:
         """Save the manager state to disk."""

@@ -2,8 +2,23 @@
 """
 
 from crocodile.file_management import P
-from crocodile.environment import WIN_FROM_WSL, system, WSL_FROM_WIN, UserName
 import argparse
+import platform
+import getpass
+from pathlib import Path
+
+system = platform.system()  # e.g. "Windows", "Linux", "Darwin" (macOS)
+# HostName          = platform.node()  # e.g. "MY-SURFACE", os.env["COMPUTERNAME") only works for windows.
+UserName          = getpass.getuser()  # e.g: username, os.env["USERNAME") only works for windows.
+# UserDomain        = os.environ["USERDOMAIN"]  # e.g. HAD OR MY-SURFACE
+# UserDomainRoaming = P(os.environ["USERDOMAIN_ROAMINGPROFILE"])  # e.g. SURFACE
+# LogonServer       = os.environ["LOGONSERVER"]  # e.g. "\\MY-SURFACE"
+# UserProfile       = P(os.env["USERPROFILE"))  # e.g C:\Users\username
+# HomePath          = P(os.env["HOMEPATH"))  # e.g. C:\Users\username
+# Public            = P(os.environ["PUBLIC"])  # C:\Users\Public
+
+WSL_FROM_WIN = Path(r"\\wsl.localhost\Ubuntu-22.04\home")  # P(rf"\\wsl$\Ubuntu\home")  # see localappdata/canonical
+WIN_FROM_WSL = Path(r"/mnt/c/Users")
 
 
 def main():

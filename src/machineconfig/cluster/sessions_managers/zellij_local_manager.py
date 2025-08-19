@@ -6,7 +6,7 @@ import logging
 import subprocess
 from pathlib import Path
 from typing import Optional, Dict, List, Any
-from crocodile.meta import Scheduler
+from machineconfig.utils.utils5 import Scheduler
 from machineconfig.cluster.sessions_managers.zellij_local import ZellijLayoutGenerator
 
 logging.basicConfig(level=logging.INFO)
