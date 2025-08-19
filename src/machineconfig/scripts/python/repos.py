@@ -96,7 +96,7 @@ def main():
         pprint("✅ Recorded repositories:\n", res)
         save_path = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
         save_json(obj=res, path=save_path, indent=4)
-        pprint(f"📁 Result saved at {P(save_path)}")
+        pprint(f"📁 Result saved at {PathExtended(save_path)}")
         if args.cloud is not None: PathExtended(save_path).to_cloud(rel2home=True, cloud=args.cloud)
         program += """\necho '>>>>>>>>> Finished Recording'\n"""
     elif args.clone or args.checkout or args.checkout_to_branch:

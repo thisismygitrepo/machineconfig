@@ -72,7 +72,7 @@
 #             print(e)
 #             repo_path, func_relative_file = func_file.parent, func_file.name
 #         return JobParams(repo_path_rh=repo_path.collapseuser().as_posix(), file_path_rh=repo_path.collapseuser().joinpath(func_relative_file).collapseuser().as_posix(),
-#                          file_path_r=P(func_relative_file).as_posix(),
+#                          file_path_r=PathExtended(func_relative_file).as_posix(),
 #                          func_module=func_module, func_class=func_class, func_name=func_name,
 #                          description="", ssh_repr="", ssh_repr_remote="", error_message="",
 #                          session_name="", tab_name="", file_manager_path="")

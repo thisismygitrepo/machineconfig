@@ -47,7 +47,7 @@ try:
     if isinstance(dat, dict):
         panel_title = f"📄 File Data: {{p.name}}"
         console.print(Panel(Text(str(dat), justify="left"), title=panel_title, expand=False))
-        pprint(dat, p.name)
+        pprint(dat, PathExtended.name)
     else:
         panel_title = f"📄 Successfully read the file: {{p.name}}"
         console.print(Panel(Text(str(dat), justify="left"), title=panel_title, expand=False))

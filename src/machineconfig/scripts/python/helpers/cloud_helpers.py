@@ -68,7 +68,7 @@ def find_cloud_config(path: PathExtended):
 def absolute(path: str) -> PathExtended:
     obj = PathExtended(path).expanduser()
     if not path.startswith(".") and  obj.exists(): return obj
-    try_absing =  P.cwd().joinpath(path)
+    try_absing =  PathExtended.cwd().joinpath(path)
     if try_absing.exists(): return try_absing
     display_warning(f"Path {path} could not be resolved to absolute path.")
     display_warning("Trying to resolve symlinks (this may result in unintended paths).")

@@ -12,7 +12,7 @@ def main():
 {'=' * 150}
 """)
     target = PathExtended(input("🎯 Symlink to which target? ")).expanduser().absolute()
-    source = input(f"📍 Symlink from which source? [default to: CWD/{target.name}] ") or P.cwd().joinpath(target.name)
+    source = input(f"📍 Symlink from which source? [default to: CWD/{target.name}] ") or PathExtended.cwd().joinpath(target.name)
     if isinstance(source, str): source = PathExtended(source).expanduser().absolute()
     # ve_path = display_options(msg="symlin link? ", options=PathExtended.home().joinpath("ve").starget.symlink_to; PathExtended(r'$pwd').joinpath('venv').symlink_to(r'$to'); PathExtended('.gitignore').modify_text('venv', 'venv', replace_line=True)"(target.symlink_to(
     # PathExtended('.gitignore').modify_text('venv', 'venv', replace_line=True)"

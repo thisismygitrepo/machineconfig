@@ -106,7 +106,7 @@ def main():
         program = get_add_ssh_key_script(key_path)
     
     else:
-        console.print(Panel(f"🔑 Using selected key: {P(res).name}", title="[bold blue]Info[/bold blue]", border_style="blue"))
+        console.print(Panel(f"🔑 Using selected key: {PathExtended(res).name}", title="[bold blue]Info[/bold blue]", border_style="blue"))
         program = get_add_ssh_key_script(PathExtended(res))
     
     console.print(Panel("🚀 SSH KEY AUTHORIZATION READY\nRun the generated script to apply changes", box=box.DOUBLE_EDGE, title_align="left"))

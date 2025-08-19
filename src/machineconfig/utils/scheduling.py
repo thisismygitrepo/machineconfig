@@ -187,7 +187,7 @@ def read_task_from_dir(path: PathExtended):
                 frequency=str2timedelta(tasks_config["specs"]["frequency"]),
                 start=datetime.fromisoformat(tasks_config["specs"]["start"]),
                 venv=tasks_config["runtime"]["venv"],
-                # output_dir=P(a_task_section["output_dir"]).expanduser().absolute(),
+                # output_dir=PathExtended(a_task_section["output_dir"]).expanduser().absolute(),
                 )
     return task
 

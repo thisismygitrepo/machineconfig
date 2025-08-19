@@ -143,7 +143,7 @@ def make_installation_recipe(repo_root: str, ve_name: str, py_version: str):
     if path3.exists(): print(f"❌ File already exists @ {path3}, skipping.")
     else:
         install_ve_script = get_ps1_ve_install_script(ve_name=ve_name, py_version=py_version, use_web=True, system=system)
-        install_req_script = get_install_requirements_template(repo_root=P(repo_root), requirements_subpath=subpath, ve_name=ve_name, system=system)
+        install_req_script = get_install_requirements_template(repo_root=PathExtended(repo_root), requirements_subpath=subpath, ve_name=ve_name, system=system)
         path3.write_text(install_ve_script + "\n" + install_req_script)
 
     system = "Linux"
@@ -151,6 +151,6 @@ def make_installation_recipe(repo_root: str, ve_name: str, py_version: str):
     if path4.exists(): print(f"❌ File already exists @ {path4}, skipping.")
     else:
         install_ve_script = get_bash_ve_install_script(ve_name=ve_name, py_version=py_version, use_web=True, system=system)
-        install_req_script = get_install_requirements_template(repo_root=P(repo_root), requirements_subpath=subpath, ve_name=ve_name, system=system)
+        install_req_script = get_install_requirements_template(repo_root=PathExtended(repo_root), requirements_subpath=subpath, ve_name=ve_name, system=system)
         path4.write_text(install_ve_script + "\n" + install_req_script)
     return None

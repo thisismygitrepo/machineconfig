@@ -1,7 +1,7 @@
 """devops with emojis
 """
 
-from machineconfig.utils.utils import display_options, PROGRAM_PATH, write_shell_script_to_default_program_path, PathExtended
+from machineconfig.utils.utils import display_options, PROGRAM_PATH, write_shell_script_to_default_program_path
 from platform import system
 from enum import Enum
 from typing import Optional
@@ -147,7 +147,7 @@ def main(which: Optional[str] = None):
 
     elif choice_key == Options.dot_files_sync.value:
         console.print(Panel("🔗 Synchronizing dotfiles...", width=BOX_WIDTH, border_style="blue"))
-        from machineconfig.scripts.python.cloud_repo_sync import main as helper, P
+        from machineconfig.scripts.python.cloud_repo_sync import main as helper, PathExtended
         program = helper(cloud=None, path=str(PathExtended.home() / "dotfiles"), pwd=None, action="ask")
 
     else: 

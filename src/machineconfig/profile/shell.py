@@ -13,7 +13,7 @@ from rich.panel import Panel
 
 
 system = platform.system()
-sep = ";" if system == "Windows" else ":"  # PATH separator, this is special for PATH object, not to be confused with P.sep (normal paths), usually / or \
+sep = ";" if system == "Windows" else ":"  # PATH separator, this is special for PATH object, not to be confused with PathExtended.sep (normal paths), usually / or \
 PATH = os.environ["PATH"].split(sep)  # this is a list of paths in PATH variable, not a crocodile.file_management.P object.
 console = Console()
 BOX_WIDTH = 100  # Define BOX_WIDTH or get it from a config

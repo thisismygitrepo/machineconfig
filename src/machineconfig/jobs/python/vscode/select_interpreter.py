@@ -62,7 +62,7 @@ def select_interpreter(workspace_root: str):
     else:
         print(f"📄 Updating existing settings file: {work_space_settings}")
         
-    settings = read_json(str(work_space_settings))
+    settings = read_json(work_space_settings)
     settings['python.defaultInterpreterPath'] = str(python_path)
     save_json(obj=settings, path=str(work_space_settings), indent=4)
     
