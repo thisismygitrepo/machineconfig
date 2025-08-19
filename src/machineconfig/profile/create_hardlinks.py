@@ -5,7 +5,7 @@ This script Takes away all config files from the computer, place them in one dir
 """
 
 
-from crocodile.environment import system
+import platform
 from crocodile.meta import Terminal
 from crocodile.file_management import P
 from machineconfig.utils.utils import symlink_copy as symlink_func, LIBRARY_ROOT, REPO_ROOT, display_options
@@ -15,7 +15,7 @@ import subprocess
 from rich.console import Console
 from typing import Optional, Any
 
-
+system = platform.system()  # Linux or Windows
 ERROR_LIST: list[Any] = []  # append to this after every exception captured.
 CONFIG_ROOT = LIBRARY_ROOT.parent.parent.joinpath("settings")
 OTHER_SYSTEM = "windows" if system == "Linux" else "linux"

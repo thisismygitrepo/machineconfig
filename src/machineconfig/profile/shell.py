@@ -1,19 +1,20 @@
 """shell
 """
 
-from crocodile.environment import PathVar
 from machineconfig.utils.utils2 import randstr
 from crocodile.file_management import P
 from crocodile.meta import Terminal
 from machineconfig.utils.utils import LIBRARY_ROOT, REPO_ROOT, display_options
 import platform
-from typing import Optional
+import os
+from typing import Literal, Optional
 from rich.console import Console
 from rich.panel import Panel
 
 
 system = platform.system()
-
+sep = ";" if system == "Windows" else ":"  # PATH separator, this is special for PATH object, not to be confused with P.sep (normal paths), usually / or \
+PATH = os.environ["PATH"].split(sep)  # this is a list of paths in PATH variable, not a crocodile.file_management.P object.
 console = Console()
 BOX_WIDTH = 100  # Define BOX_WIDTH or get it from a config
 
@@ -57,6 +58,27 @@ def get_shell_profile_path():
     return profile_path
 
 
+def append_temporarily(dirs: list[str], kind: Literal['append', 'prefix', 'replace'] = "append"):
+    dirs_ = []
+    for path in dirs:
+        path_rel = P(path).collapseuser(strict=False)
+        if path_rel.as_posix() in PATH or str(path_rel) in PATH or path_rel.expanduser().to_str() in PATH or path_rel.expanduser().as_posix() in PATH: print(f"Path passed `{path}` is already in PATH, skipping the appending.")
+        else:
+            dirs_.append(path_rel.as_posix() if system == "Linux" else str(path_rel))
+    dirs = dirs_
+    if len(dirs) == 0: return ""
+
+    if system == "Windows":
+        """Source: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_environment_variables?view=powershell-7.2"""
+        if kind == "append": command = fr'$env:Path += ";{sep.join(dirs)}"'  # Append to the Path variable in the current window:
+        elif kind == "prefix": command = fr'$env:Path = "{sep.join(dirs)};" + $env:Path'  # Prefix the Path variable in the current window:
+        elif kind == "replace": command = fr'$env:Path = "{sep.join(dirs)}"'  # Replace the Path variable in the current window (use with caution!):
+        else: raise KeyError
+        return command  # if run is False else tm.run(command, shell="powershell")
+    elif system in ["Linux", "Darwin"]: result = f'export PATH="{sep.join(dirs)}:$PATH"'
+    else: raise ValueError
+    return result
+
 def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = None):
     env_path = LIBRARY_ROOT.joinpath("profile/env_path.toml").readit()
     dirs = env_path[f'path_{system.lower()}']['extension']
@@ -71,7 +93,7 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
     if choice == "none(EXIT)": return
 
     console.print(f"\n📌 Adding directories to PATH: {dirs}")
-    addition = PathVar.append_temporarily(dirs=dirs)
+    addition = append_temporarily(dirs=dirs)
     profile_path_obj = P(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
     profile_path_obj.copy(name=profile_path_obj.name + ".orig_" + randstr())
     console.print(f"💾 Created backup of profile: {profile_path_obj.name}.orig_*")
