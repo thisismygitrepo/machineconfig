@@ -1,7 +1,7 @@
 """cli for scheduler
 """
 
-from machineconfig.utils.scheduling import P, Report, DEFAULT_CONFIG, read_task_from_dir, main
+from machineconfig.utils.scheduling import PathExtended, Report, DEFAULT_CONFIG, read_task_from_dir, main
 
 def main_parse():
     import argparse
@@ -16,9 +16,9 @@ def main_parse():
     parser.add_argument('--create_task', "-c", action='store_true', help='🆕 Add default config.', default=False)
     args = parser.parse_args()
 
-    tmp = P(args.root).expanduser().absolute()
-    if P(args.root).joinpath(".scheduler").exists():
-        root = P(args.root).joinpath(".scheduler")
+    tmp = PathExtended(args.root).expanduser().absolute()
+    if PathExtended(args.root).joinpath(".scheduler").exists():
+        root = PathExtended(args.root).joinpath(".scheduler")
     elif tmp.name == ".scheduler":
         root = tmp
     else:
@@ -28,7 +28,7 @@ def main_parse():
 
     if args.report:
         print("📊 Generating report...")
-        reports: list[Report] = [Report.from_path(read_task_from_dir(x).report_path) for x in P(root).search("*").filter(lambda path: path.joinpath("task.py").exists())]
+        reports: list[Report] = [Report.from_path(read_task_from_dir(x).report_path) for x in PathExtended(root).search("*").filter(lambda path: path.joinpath("task.py").exists())]
         
         # Format as markdown table
         report_data = [r.__dict__ for r in reports]

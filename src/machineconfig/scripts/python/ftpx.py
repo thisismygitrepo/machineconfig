@@ -43,7 +43,7 @@ def main():
 ┃    Cannot use expand symbol `{ES}` in both source and target
 ┃    This creates a cyclical inference dependency
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
-            else: target = P(args.target).expanduser().absolute()
+            else: target = PathExtended(args.target).expanduser().absolute()
             source = target.collapseuser().as_posix()
         else:
             source = ":".join(args.source.split(":")[1:])

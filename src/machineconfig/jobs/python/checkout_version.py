@@ -30,7 +30,7 @@ def checkout_version(version: str, repo_root: PathExtended, exclude_editable: bo
     target_dir = repo_root.expanduser().absolute().joinpath(f"versions/{version}").as_posix()
     if exclude_editable:
         editable_json = get_editable_packages(ve_name=ve_name)
-        specs_path = P(target_dir).expanduser().joinpath("editable_packages.json")
+        specs_path = PathExtended(target_dir).expanduser().joinpath("editable_packages.json")
         save_json(obj=editable_json, path=specs_path, indent=4)
         install_editable_packages = install_repos(specs_path=str(specs_path), editable_install=True)
     else: install_editable_packages = ""

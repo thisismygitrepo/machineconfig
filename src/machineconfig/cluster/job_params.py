@@ -31,7 +31,7 @@
 
 #     def auto_commit(self):
 #         from git.repo import Repo
-#         repo = Repo(P(self.repo_path_rh).expanduser(), search_parent_directories=True)
+#         repo = Repo(PathExtended(self.repo_path_rh).expanduser(), search_parent_directories=True)
 #         # do a commit if the repo is dirty
 #         if repo.is_dirty():
 #             repo.git.add(update=True)
@@ -39,7 +39,7 @@
 #             print(f"⚠️ Repo {repo.working_dir} was dirty, auto-committed.")
 #         else: print(f"✅ Repo {repo.working_dir} was clean, no auto-commit.")
 
-#     def is_installabe(self) -> bool: return True if "setup.py" in P(self.repo_path_rh).expanduser().absolute().listdir().apply(str) else False
+#     def is_installabe(self) -> bool: return True if "setup.py" in PathExtended(self.repo_path_rh).expanduser().absolute().listdir().apply(str) else False
 #     @staticmethod
 #     def from_empty() -> 'JobParams':
 #         return JobParams(repo_path_rh="", file_path_rh="", file_path_r="", func_module="", func_class="", func_name="", description="", ssh_repr="", ssh_repr_remote="", error_message="", session_name="", tab_name="", file_manager_path="")
@@ -50,23 +50,23 @@
 #             func_name = func.__name__
 #             func_module = func.__module__
 #             if func_module == "<run_path>":  # function imported through readpy module.
-#                 func_module = P(func.__globals__['__file__']).name
+#                 func_module = PathExtended(func.__globals__['__file__']).name
 #             assert func_module != "__main__", f"Function must be defined in a module, not in __main__. Consider importing `{func.__name__}` or, restart this session and import the contents of this module."
 #             if func.__name__ != func.__qualname__:
 #                 # print(f"Passed function {func} is a method of a class.")
-#                 func_file, func_class = P(func.__code__.co_filename), func.__qualname__.split(".")[0]
+#                 func_file, func_class = PathExtended(func.__code__.co_filename), func.__qualname__.split(".")[0]
 #             else:
 #                 # print(f"Passed function {func} is not a method of a class.")
-#                 func_file, func_class = P(func.__code__.co_filename), None
+#                 func_file, func_class = PathExtended(func.__code__.co_filename), None
 #         elif type(func) is str or type(func) is P:
-#             func_file = P(func)
+#             func_file = PathExtended(func)
 #             # func = None
 #             func_class = None
 #             func_name = None
 #             func_module = func_file.stem
 #         else: raise TypeError(f"Passed function {func} is not a callable or a path to a python file.")
 #         try:
-#             repo_path = P(git.Repo(func_file, search_parent_directories=True).working_dir)
+#             repo_path = PathExtended(git.Repo(func_file, search_parent_directories=True).working_dir)
 #             func_relative_file = func_file.relative_to(repo_path)
 #         except Exception as e:
 #             print(e)
@@ -78,23 +78,23 @@
 #                          session_name="", tab_name="", file_manager_path="")
 
 #     def get_execution_line(self, workload_params: Optional[WorkloadParams], parallelize: bool, wrap_in_try_except: bool) -> str:
-#         # P(self.repo_path_rh).name}.{self.file_path_r.replace(".py", '').replace('/', '.')#
+#         # PathExtended(self.repo_path_rh).name}.{self.file_path_r.replace(".py", '').replace('/', '.')#
 #         # if func_module is not None:
 #         #     # noinspection PyTypeChecker
 #         #     module = __import__(func_module, fromlist=[None])
 #         #     exec_obj = module.__dict__[func_name] if not bool(func_class) else getattr(module.__dict__[func_class], func_name)
 #         # elif func_name is not None:
 #         #     # This approach is not conducive to parallelization since "mymod" is not pickleable.
-#         #     module = SourceFileLoader("mymod", P.home().joinpath(rel_full_path).as_posix()).load_module()  # loading the module assumes its not a script, there should be at least if __name__ == __main__ wrapping any script.
+#         #     module = SourceFileLoader("mymod", PathExtended.home().joinpath(rel_full_path).as_posix()).load_module()  # loading the module assumes its not a script, there should be at least if __name__ == __main__ wrapping any script.
 #         #     exec_obj = getattr(module, func_name) if not bool(func_class) else getattr(getattr(module, func_class), func_name)
 #         # else:
-#         #     module = P.home().joinpath(rel_full_path).readit()  # uses runpy to read .py files.
+#         #     module = PathExtended.home().joinpath(rel_full_path).readit()  # uses runpy to read .py files.
 #         #     exec_obj = module  # for README.md generation.
 
 #         if workload_params is not None: base = f"""
 # workload_params = WorkloadParams(**{workload_params.__dict__})
-# repo_path = P(rf'{self.repo_path_rh}').expanduser().absolute()
-# file_root = P(rf'{self.file_path_rh}').expanduser().absolute().parent
+# repo_path = PathExtended(rf'{self.repo_path_rh}').expanduser().absolute()
+# file_root = PathExtended(rf'{self.file_path_rh}').expanduser().absolute().parent
 # tb.sys.path.insert(0, repo_path.str)
 # tb.sys.path.insert(0, file_root.str)
 # """

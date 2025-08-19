@@ -11,7 +11,7 @@ from crocodile.file_management import P as PathExtended
 def search_for_files_of_interest(path_obj: PathExtended):
     if path_obj.joinpath(".venv").exists():
         path_objects = path_obj.search("*", not_in=[".venv"]).list
-        files: list[P] = []
+        files: list[PathExtended] = []
         for a_path_obj in path_objects:
             files += search_for_files_of_interest(path_obj=a_path_obj)
         return files

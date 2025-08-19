@@ -16,15 +16,15 @@
 
 
 # class FileManager:
-#     running_path          = P("~/tmp_results/remote_machines/file_manager/running_jobs.pkl")
-#     queue_path            = P("~/tmp_results/remote_machines/file_manager/queued_jobs.pkl")
-#     history_path          = P("~/tmp_results/remote_machines/file_manager/history_jobs.pkl")
-#     shell_script_path_log = P("~/tmp_results/remote_machines/file_manager/last_cluster_script.txt")
-#     default_base          = P("~/tmp_results/remote_machines/jobs")
+#     running_path          = PathExtended("~/tmp_results/remote_machines/file_manager/running_jobs.pkl")
+#     queue_path            = PathExtended("~/tmp_results/remote_machines/file_manager/queued_jobs.pkl")
+#     history_path          = PathExtended("~/tmp_results/remote_machines/file_manager/history_jobs.pkl")
+#     shell_script_path_log = PathExtended("~/tmp_results/remote_machines/file_manager/last_cluster_script.txt")
+#     default_base          = PathExtended("~/tmp_results/remote_machines/jobs")
 #     @staticmethod
 #     def from_pickle(path: Union[str, P]):
 #         fm = FileManager(job_id='1', remote_machine_type='Windows', lock_resources=True, max_simulataneous_jobs=1, base=None)
-#         fm.__setstate__(dict(P(path).expanduser().readit()))
+#         fm.__setstate__(dict(PathExtended(path).expanduser().readit()))
 #         return fm
 #     def __getstate__(self): return self.__dict__
 #     def __setstate__(self, state: dict[str, Any]): self.__dict__ = state
@@ -41,7 +41,7 @@
 
 #         self.submission_time = datetime.now()
 
-#         self.base_dir = P(base).collapseuser() if bool(base) else FileManager.default_base
+#         self.base_dir = PathExtended(base).collapseuser() if bool(base) else FileManager.default_base
 #         status: JOB_STATUS
 #         status = 'queued'
 #         self.job_root = self.base_dir.joinpath(f"{status}/{self.job_id}")

@@ -78,10 +78,10 @@
 # # ######################### END OF EXECUTION #############################
 
 
-# if isinstance(res, P) or (res and P(res).expanduser().exists()):
-#     res_folder = P(res).expanduser()
+# if isinstance(res, P) or (res and PathExtended(res).expanduser().exists()):
+#     res_folder = PathExtended(res).expanduser()
 # else:
-#     res_folder = P.tmp(folder=rf"tmp_dirs/{manager.job_id}").create()
+#     res_folder = PathExtended.tmp(folder=rf"tmp_dirs/{manager.job_id}").create()
 #     console.print(Panel(f"""
 # ⚠️  WARNING ⚠️
 # The executed function did not return a path to a results directory.

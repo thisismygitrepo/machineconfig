@@ -3,7 +3,7 @@
 
 # import os
 # import json
-from crocodile.file_management import P as PathExtended
+from pathlib import Path
 import argparse
 # import platform
 
@@ -16,7 +16,7 @@ def select_interpreter(workspace_root: str):
 {'=' * 150}
 """)
     
-    path = PathExtended(workspace_root).joinpath('.ve_path')
+    path = Path(workspace_root).joinpath('.ve_path')
     
     if not path.exists():
         print(f"""
@@ -28,9 +28,9 @@ def select_interpreter(workspace_root: str):
         return
     
     with open(path, 'r', encoding='utf-8') as f:
-        ve_path = PathExtended(f.read().strip().replace("~", str(PathExtended.home())))
+        ve_path = Path(f.read().strip()).expanduser()
     
-    venv_link = PathExtended(workspace_root).joinpath(".venv")
+    venv_link = Path(workspace_root).joinpath(".venv")
     
     if venv_link.exists() and not venv_link.is_symlink():
         print(f"""

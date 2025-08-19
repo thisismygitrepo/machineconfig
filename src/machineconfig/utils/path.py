@@ -87,7 +87,7 @@ def match_file_name(sub_string: str, search_root: PathExtended) -> PathExtended:
     elif len(partial_path_matches) > 1:
         print("Try to narrow down partial_path_matches search by case-sensitivity.")
         reduced_scripts = [a_potential_match for a_potential_match in partial_path_matches if sub_string in a_potential_match.as_posix()]
-        if len(reduced_scripts) == 1: return P(reduced_scripts[0])
+        if len(reduced_scripts) == 1: return PathExtended(reduced_scripts[0])
         print(f"Result: This still generated {len(reduced_scripts)} results.")
     try:
         fzf_cmd = f"cd '{search_root_obj}'; fd --type file --strip-cwd-prefix | fzf --ignore-case --exact --query={sub_string}"

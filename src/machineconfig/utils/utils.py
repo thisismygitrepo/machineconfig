@@ -26,7 +26,7 @@ _ = sanitize_path
 _ = match_file_name
 
 
-LIBRARY_ROOT = PathExtended(machineconfig.__file__).resolve().parent  # .replace(P.home().to_str().lower(), P.home().str)
+LIBRARY_ROOT = PathExtended(machineconfig.__file__).resolve().parent  # .replace(PathExtended.home().to_str().lower(), PathExtended.home().str)
 REPO_ROOT = LIBRARY_ROOT.parent.parent
 CONFIG_PATH = PathExtended.home().joinpath(".config/machineconfig")
 INSTALL_VERSION_ROOT = CONFIG_PATH.joinpath("cli_tools_installers/versions")

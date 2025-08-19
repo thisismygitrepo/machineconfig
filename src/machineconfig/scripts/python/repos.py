@@ -30,7 +30,7 @@ class RepoRecord:
     version: dict[str, str]
 
 
-def git_action(path: P, action: GitAction, mess: Optional[str] = None, r: bool = False, uv_sync: bool = False) -> str:
+def git_action(path: PathExtended, action: GitAction, mess: Optional[str] = None, r: bool = False, uv_sync: bool = False) -> str:
     from git.exc import InvalidGitRepositoryError
     from git.repo import Repo
     try:
@@ -126,7 +126,7 @@ def main():
 
 
 def record_repos(repos_root: str, r: bool=True) -> list[dict[str, Any]]:
-    path_obj = P(repos_root).expanduser().absolute()
+    path_obj = PathExtended(repos_root).expanduser().absolute()
     if path_obj.is_file(): return []
     search_res = path_obj.search("*", files=False)
     res: list[dict[str, Any]] = []
@@ -141,10 +141,10 @@ def record_repos(repos_root: str, r: bool=True) -> list[dict[str, Any]]:
     return res
 
 
-def record_a_repo(path: P, search_parent_directories: bool=False, preferred_remote: Optional[str] = None):
+def record_a_repo(path: PathExtended, search_parent_directories: bool=False, preferred_remote: Optional[str] = None):
     from git.repo import Repo
     repo = Repo(path, search_parent_directories=search_parent_directories)  # get list of remotes using git python
-    repo_root = P(repo.working_dir).absolute()
+    repo_root = PathExtended(repo.working_dir).absolute()
     remotes = {remote.name: remote.url for remote in repo.remotes}
     if preferred_remote is not None:
         if preferred_remote in remotes: remotes = {preferred_remote: remotes[preferred_remote]}
@@ -167,10 +167,10 @@ def record_a_repo(path: P, search_parent_directories: bool=False, preferred_remo
 
 def install_repos(specs_path: str, clone: bool=True, checkout_to_recorded_commit: bool=False, checkout_to_branch: bool=False, editable_install: bool=False, preferred_remote: Optional[str] = None):
     program = ""
-    path_obj = P(specs_path).expanduser().absolute()
+    path_obj = PathExtended(specs_path).expanduser().absolute()
     repos: list[dict[str, Any]] = read_json(path_obj)
     for repo in repos:
-        parent_dir = P(repo["parent_dir"]).expanduser().absolute().create()
+        parent_dir = PathExtended(repo["parent_dir"]).expanduser().absolute().create()
         
         # Handle cloning and remote setup
         if clone:

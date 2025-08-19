@@ -8,7 +8,7 @@
 #     from machineconfig.cluster.remote_machine import RemoteMachine, RemoteMachineConfig, WorkloadParams
 #     from machineconfig.cluster.templates.utils import expensive_function
 #     # from machineconfig.cluster.self_ssh import SelfSSH
-#     data: list[P] = []
+#     data: list[PathExtended] = []
 #     config = RemoteMachineConfig(
 #         # connection
 #         #        ssh_obj=SelfSSH(),  # overrides ssh_params

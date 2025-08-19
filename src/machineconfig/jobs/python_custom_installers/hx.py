@@ -61,19 +61,19 @@ def main(version: Optional[str], install_lib: bool = False):
 
 
     print("\n🗑️  [Step 3/5] Cleaning up previous installation (if any)...")
-    runtime_path = P.home().joinpath(".config/helix/runtime")
-    contrib_path = P.home().joinpath(".config/helix/contrib")
+    runtime_path = PathExtended.home().joinpath(".config/helix/runtime")
+    contrib_path = PathExtended.home().joinpath(".config/helix/contrib")
     runtime_path.delete(sure=True, verbose=False)
     contrib_path.delete(sure=True, verbose=False)
     print(f"   ✨ Cleaned '{runtime_path}' and '{contrib_path}'.")
 
 
     print("\n📦 [Step 4/5] Installing Helix components...")
-    target_config_dir = P("~/.config/helix").expanduser()
+    target_config_dir = PathExtended("~/.config/helix").expanduser()
     target_config_dir.mkdir(parents=True, exist_ok=True)
 
     if platform.system() in ["Linux", "Darwin"]:
-        target_bin_path = P(LINUX_INSTALL_PATH) if platform.system() == "Linux" else P("/usr/local/bin")
+        target_bin_path = PathExtended(LINUX_INSTALL_PATH) if platform.system() == "Linux" else PathExtended("/usr/local/bin")
         exe_name = "hx"
         hx_file.move(folder=target_bin_path, overwrite=True)
         if install_lib:
@@ -85,7 +85,7 @@ def main(version: Optional[str], install_lib: bool = False):
 📂 Executable: {target_bin_path / exe_name}
 🔧 Config:     {target_config_dir}""", title="Success", expand=False))
     elif platform.system() == "Windows":
-        target_bin_path = P(WINDOWS_INSTALL_PATH)
+        target_bin_path = PathExtended(WINDOWS_INSTALL_PATH)
         exe_name = "hx.exe"
         hx_file.move(folder=target_bin_path, overwrite=True)
         if install_lib:

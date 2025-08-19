@@ -24,9 +24,9 @@ def run(data: Optional[Iterable[Any]], data_path: Optional[str],
     print("=" * 50 + "\n")
 
     print("📂 Preparing viewer application...")
-    code = P(__file__).parent.joinpath("viewer_template.py").read_text(encoding='utf-8')
+    code = PathExtended(__file__).parent.joinpath("viewer_template.py").read_text(encoding='utf-8')
 
-    code_dir = P.tmpdir(prefix="viewer")
+    code_dir = PathExtended.tmpdir(prefix="viewer")
     code_dir.joinpath(".streamlit").mkdir(parents=True, exist_ok=False)
     code_dir.joinpath(".streamlit/config.toml").write_text(default_streamlit_config, encoding='utf-8')
 

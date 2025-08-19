@@ -19,8 +19,8 @@ DEFAULT_MOUNT = "~/data/rclone"
 
 
 def get_rclone_config():
-    if platform.system() == "Windows": config = read_ini(P.home().joinpath("AppData/Roaming/rclone/rclone.conf"))
-    elif platform.system() in ["Linux", "Darwin"]: config = read_ini(P.home().joinpath(".config/rclone/rclone.conf"))
+    if platform.system() == "Windows": config = read_ini(PathExtended.home().joinpath("AppData/Roaming/rclone/rclone.conf"))
+    elif platform.system() in ["Linux", "Darwin"]: config = read_ini(PathExtended.home().joinpath(".config/rclone/rclone.conf"))
     else: raise ValueError("unsupported platform")
     return config
 
@@ -28,7 +28,7 @@ def get_rclone_config():
 def get_mprocs_mount_txt(cloud: str, rclone_cmd: str, cloud_brand: str):  # cloud_brand = config[cloud]["type"]
     header = f"{' ' + cloud + ' | ' + cloud_brand + ' '}".center(50, "=")
     if platform.system() == "Windows":
-        sub_text_path = P.tmpfile(suffix=".ps1").write_text(f"""
+        sub_text_path = PathExtended.tmpfile(suffix=".ps1").write_text(f"""
 echo "{header}"
 iex 'rclone about {cloud}:'
 echo 'See {DEFAULT_MOUNT}/{cloud} for the mounted cloud'

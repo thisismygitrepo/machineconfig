@@ -24,7 +24,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 
 # def scan(path: P, pct: float = 0.0):
 #     import vt  # vt-py
-#     client = vt.Client(P.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
+#     client = vt.Client(PathExtended.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
 #     console = Console()
 #     console.rule(f"Scanning {path}. {pct:.2f}% done")
 #     if path.is_dir():
@@ -77,7 +77,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 # def main() -> None:
 #     # Convert potential custom List types to plain Python lists
 #     tmp_apps = get_installed_cli_apps()
-#     apps_paths_tmp: list[P]
+#     apps_paths_tmp: list[PathExtended]
 #     if hasattr(tmp_apps, "list"):
 #         apps_paths_tmp = list(tmp_apps.list)
 #     else:
@@ -87,7 +87,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #             apps_paths_tmp = [tmp_apps]
 
 #     tmp_versions = INSTALL_VERSION_ROOT.search()
-#     versions_files_paths: list[P]
+#     versions_files_paths: list[PathExtended]
 #     if hasattr(tmp_versions, "list"):
 #         versions_files_paths = list(tmp_versions.list)
 #     else:
@@ -97,7 +97,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #             versions_files_paths = [tmp_versions]
 
 #     app_versions: list[Optional[str]] = []
-#     apps_paths_raw: list[P] = []
+#     apps_paths_raw: list[PathExtended] = []
 #     for an_app in apps_paths_tmp:
 #         version_path = [x for x in versions_files_paths if x.stem == an_app.stem]
 #         if len(version_path) == 1:
@@ -149,7 +149,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 
 #     # Add app URLs
 #     for i, app_info in enumerate(tqdm(app_data, desc="Uploading apps")):
-#         apps_safe_url = upload(P(app_info["app_path"]).expanduser())
+#         apps_safe_url = upload(PathExtended(app_info["app_path"]).expanduser())
 #         app_info["app_url"] = apps_safe_url.as_posix() if (apps_safe_url is not None and type(apps_safe_url) is P) else str(apps_safe_url) if apps_safe_url is not None else ""
 
 #     # Write to CSV using standard library
@@ -185,7 +185,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #     print(markdown_content)
 
 
-# def upload(path: P):
+# def upload(path: PathExtended):
 #     import call_function_with_timeout
 #     set_time_out = call_function_with_timeout.SetTimeout
 #     func_with_timeout = set_time_out(lambda: path.to_cloud(CLOUD, rel2home=True, share=True, os_specific=True), timeout=180)
@@ -207,9 +207,9 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #     def download_google_links(url: str):
 #         # if "drive.google.com" in str(url): url = str(url).replace("open?", "uc?")
 #         # else: raise NotImplementedError("Only google drive is supported for now.")
-#         # return P(url).download(name=name)
-#         gdrive_id = P(url).parts[-1].split("id=")[1]
-#         result = P(gdown.download(id=gdrive_id)).absolute()
+#         # return PathExtended(url).download(name=name)
+#         gdrive_id = PathExtended(url).parts[-1].split("id=")[1]
+#         result = PathExtended(gdown.download(id=gdrive_id)).absolute()
 #         return result
 
 #     @staticmethod
@@ -223,7 +223,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #             Terminal().run(f"chmod +x {exe}")
 #             Terminal().run(f"mv {exe} /usr/local/bin/")
 #         elif platform.system().lower() == "windows":
-#             exe.move(folder=P.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
+#             exe.move(folder=PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
 #         return True
 
 #     def download_safe_apps(self, name: str="AllEssentials"):

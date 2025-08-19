@@ -4,7 +4,7 @@ import platform
 from typing import Optional
 
 
-def get_ve_name_and_ipython_profile(init_path: P) -> tuple[Optional[str], Optional[str]]:
+def get_ve_name_and_ipython_profile(init_path: PathExtended) -> tuple[Optional[str], Optional[str]]:
     ve_name: Optional[str] = None
     ipy_profile: Optional[str] = None
     tmp = init_path
@@ -22,7 +22,7 @@ def get_ve_name_and_ipython_profile(init_path: P) -> tuple[Optional[str], Option
                 ipy_profile = tmp.joinpath(".ipy_profile").read_text().rstrip()
                 print(f"✨ Using IPython profile: {ipy_profile}")
             if tmp.joinpath(".ve_path").exists():
-                ve_name = P(tmp.joinpath(".ve_path").read_text().rstrip().replace("\n", "")).name
+                ve_name = PathExtended(tmp.joinpath(".ve_path").read_text().rstrip().replace("\n", "")).name
                 print(f"🔮 Using Virtual Environment found @ {tmp}/.ve_path: {ve_name}")
             break
         tmp = tmp.parent
@@ -32,7 +32,7 @@ def get_ve_name_and_ipython_profile(init_path: P) -> tuple[Optional[str], Option
 def get_repo_root(choice_file: str) -> Optional[str]:
     from git import Repo, InvalidGitRepositoryError
     try:
-        repo = Repo(P(choice_file), search_parent_directories=True)
+        repo = Repo(PathExtended(choice_file), search_parent_directories=True)
         # Convert PathLike to str to satisfy mypy
         repo_root = str(repo.working_tree_dir) if repo.working_tree_dir else None
     except InvalidGitRepositoryError:
@@ -42,7 +42,7 @@ def get_repo_root(choice_file: str) -> Optional[str]:
 
 def get_ve_activate_line(ve_name: Optional[str], a_path: str):
     if ve_name == "" or ve_name is None:
-        ve_profile_maybe, _iprofile = get_ve_name_and_ipython_profile(P(a_path))
+        ve_profile_maybe, _iprofile = get_ve_name_and_ipython_profile(PathExtended(a_path))
         if ve_profile_maybe is not None:
             # activate_ve_line = f". $HOME/scripts/activate_ve {ve_resolved}"
             if platform.system() == "Windows": activate_ve_line = f". $HOME/venvs/{ve_profile_maybe}/Scripts/activate.ps1"
@@ -55,7 +55,7 @@ def get_ve_activate_line(ve_name: Optional[str], a_path: str):
         else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
         return activate_ve_line
     repo_root = get_repo_root(str(a_path))
-    if repo_root is not None and P(repo_root).joinpath(".venv").exists():
+    if repo_root is not None and PathExtended(repo_root).joinpath(".venv").exists():
         if platform.system() == "Windows":
             activate_ve_line = f". {repo_root}\\.venv\\Scripts\\activate.ps1"
         elif platform.system() in ["Linux", "Darwin"]:
@@ -66,7 +66,7 @@ def get_ve_activate_line(ve_name: Optional[str], a_path: str):
     else:
         # path passed is not a repo root, or .venv doesn't exist, let's try to find .venv by searching up the directory tree
         activate_ve_line = ""  # Initialize to avoid unbound variable warning
-        tmp = P(a_path)
+        tmp = PathExtended(a_path)
         for _ in range(len(tmp.parts)):
             if tmp.joinpath(".venv").exists():
                 if platform.system() == "Windows": activate_ve_line = f". {tmp}\\.venv\\Scripts\\activate.ps1"
@@ -83,27 +83,27 @@ def get_ve_activate_line(ve_name: Optional[str], a_path: str):
     return activate_ve_line
 
 
-def get_installed_interpreters() -> list[P]:
+def get_installed_interpreters() -> list[PathExtended]:
     system = platform.system()
     if system == "Windows":
-        tmp: list[P] = P.get_env().PATH.search("python.exe").reduce(func=lambda x, y: x+y).list[1:]
+        tmp: list[PathExtended] = PathExtended.get_env().PATH.search("python.exe").reduce(func=lambda x, y: x+y).list[1:]
     else:
-        all_matches: list[P] = P.get_env().PATH.search("python3*").reduce(lambda x, y: x+y).list
+        all_matches: list[PathExtended] = PathExtended.get_env().PATH.search("python3*").reduce(lambda x, y: x+y).list
         tmp = list(set([x for x in all_matches if (not x.is_symlink()) and ("-" not in str(x))]))
     print("🔍 Found Python interpreters:")
     for interpreter_path in tmp:
         print(interpreter_path)
-    return list(set([P(x) for x in tmp]))
+    return list(set([PathExtended(x) for x in tmp]))
 
 
 def get_current_ve():
     import sys
-    path = P(sys.executable)  # something like ~\\venvs\\ve\\Scripts\\python.exe'
-    if str(P.home().joinpath("venvs")) in str(path): return path.parent.parent.stem
+    path = PathExtended(sys.executable)  # something like ~\\venvs\\ve\\Scripts\\python.exe'
+    if str(PathExtended.home().joinpath("venvs")) in str(path): return path.parent.parent.stem
     else: raise NotImplementedError("❌ Not a kind of virtual enviroment that I expected.")
 
 
-def get_ve_specs(ve_path: P) -> dict[str, str]:
+def get_ve_specs(ve_path: PathExtended) -> dict[str, str]:
     ini = r"[mysection]\n" + ve_path.joinpath("pyvenv.cfg").read_text()
     import configparser
     config = configparser.ConfigParser()

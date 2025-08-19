@@ -120,8 +120,8 @@ def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
 
     print("🔍 Importing generic installers...")
     import machineconfig.jobs.python_generic_installers as generic_installer
-    path_os_specific = P(os_specific_installer.__file__).parent
-    path_os_generic = P(generic_installer.__file__).parent
+    path_os_specific = PathExtended(os_specific_installer.__file__).parent
+    path_os_generic = PathExtended(generic_installer.__file__).parent
 
     path_os_specific_dev = path_os_specific.joinpath("dev")
     path_os_generic_dev = path_os_generic.joinpath("dev")
@@ -185,7 +185,7 @@ def install_all(installers: list[Installer], safe: bool=False, jobs: int = 10, f
         
         if platform.system().lower() == "windows":
             print("🪟 Moving applications to Windows Apps folder...")
-            apps_dir.search("*").apply(lambda app: app.move(folder=P.get_env().WindowsPaths().WindowsApps))
+            apps_dir.search("*").apply(lambda app: app.move(folder=PathExtended.get_env().WindowsPaths().WindowsApps))
         elif platform.system().lower() in ["linux", "darwin"]:
             system_name = "Linux" if platform.system().lower() == "linux" else "macOS"
             print(f"🐧 Moving applications to {system_name} bin folder...")

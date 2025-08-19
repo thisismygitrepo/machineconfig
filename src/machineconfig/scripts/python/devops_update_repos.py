@@ -38,7 +38,7 @@ def main(verbose: bool=True) -> str:
     for a_package_path in repos:
         try:
             import git
-            repo = git.Repo(str(P(a_package_path).expanduser()), search_parent_directories=True)
+            repo = git.Repo(str(PathExtended(a_package_path).expanduser()), search_parent_directories=True)
             repos_objs.append(repo)
         except Exception as ex:
             print(f"""

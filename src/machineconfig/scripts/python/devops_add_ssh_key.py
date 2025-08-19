@@ -13,14 +13,14 @@ from rich import box # Import box
 console = Console()
 
 
-def get_add_ssh_key_script(path_to_key: P):
+def get_add_ssh_key_script(path_to_key: PathExtended):
     console.print(Panel("🔑 SSH KEY CONFIGURATION", title="[bold blue]SSH Setup[/bold blue]"))
 
     if system() == "Linux":
-        authorized_keys = P.home().joinpath(".ssh/authorized_keys")
+        authorized_keys = PathExtended.home().joinpath(".ssh/authorized_keys")
         console.print(Panel(f"🐧 Linux SSH configuration\n📄 Authorized keys file: {authorized_keys}", title="[bold blue]System Info[/bold blue]"))
     elif system() == "Windows":
-        authorized_keys = P("C:/ProgramData/ssh/administrators_authorized_keys")
+        authorized_keys = PathExtended("C:/ProgramData/ssh/administrators_authorized_keys")
         console.print(Panel(f"🪟 Windows SSH configuration\n📄 Authorized keys file: {authorized_keys}", title="[bold blue]System Info[/bold blue]"))
     else:
         console.print(Panel("❌ ERROR: Unsupported operating system\nOnly Linux and Windows are supported", title="[bold red]Error[/bold red]"))
@@ -53,7 +53,7 @@ def get_add_ssh_key_script(path_to_key: P):
             program = f"cat {path_to_key} > ~/.ssh/authorized_keys"
         else:
             program_path = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add-sshkey.ps1")
-            program = P(program_path).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
+            program = PathExtended(program_path).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
             console.print(Panel("🔧 Configured PowerShell script for Windows\n📝 Set key path in script", title="[bold blue]Configuration[/bold blue]"))
 
     if system() == "Linux":
@@ -73,7 +73,7 @@ def main():
     
     console.print(Panel("🔍 Searching for public keys...", title="[bold blue]SSH Setup[/bold blue]", border_style="blue"))
     
-    pub_keys = P.home().joinpath(".ssh").search("*.pub")
+    pub_keys = PathExtended.home().joinpath(".ssh").search("*.pub")
     
     if pub_keys:
         console.print(Panel(f"✅ Found {len(pub_keys)} public key(s)", title="[bold green]Status[/bold green]", border_style="green"))
@@ -93,21 +93,21 @@ def main():
     
     elif res == i_have_path_option:
         console.print(Panel("📂 Please provide the path to your public key", title="[bold blue]Input Required[/bold blue]", border_style="blue"))
-        key_path = P(input("📋 Path: ")).expanduser().absolute()
+        key_path = PathExtended(input("📋 Path: ")).expanduser().absolute()
         console.print(Panel(f"📄 Using key from path: {key_path}", title="[bold blue]Info[/bold blue]", border_style="blue"))
         program = get_add_ssh_key_script(key_path)
     
     elif res == i_paste_option:
         console.print(Panel("📋 Please provide a filename and paste the public key content", title="[bold blue]Input Required[/bold blue]", border_style="blue"))
         key_filename = input("📝 File name (default: my_pasted_key.pub): ") or "my_pasted_key.pub"
-        key_path = P.home().joinpath(f".ssh/{key_filename}")
+        key_path = PathExtended.home().joinpath(f".ssh/{key_filename}")
         key_path.write_text(input("🔑 Paste the public key here: "))
         console.print(Panel(f"💾 Key saved to: {key_path}", title="[bold green]Success[/bold green]", border_style="green"))
         program = get_add_ssh_key_script(key_path)
     
     else:
         console.print(Panel(f"🔑 Using selected key: {P(res).name}", title="[bold blue]Info[/bold blue]", border_style="blue"))
-        program = get_add_ssh_key_script(P(res))
+        program = get_add_ssh_key_script(PathExtended(res))
     
     console.print(Panel("🚀 SSH KEY AUTHORIZATION READY\nRun the generated script to apply changes", box=box.DOUBLE_EDGE, title_align="left"))
     

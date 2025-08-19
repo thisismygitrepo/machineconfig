@@ -118,7 +118,7 @@
 #         pm = ProcessManager()
 #         pm.kill(commands=[sess_name])
 #     @staticmethod
-#     def open_reference(): P(r"https://learn.microsoft.com/en-us/windows/terminal/command-line-arguments?tabs=windows")()
+#     def open_reference(): PathExtended(r"https://learn.microsoft.com/en-us/windows/terminal/command-line-arguments?tabs=windows")()
 #     @staticmethod
 #     def get_new_session_command(sess_name: str): return f"wt -w {sess_name} -d ."
 #     @staticmethod
@@ -168,7 +168,7 @@
 #     @staticmethod
 #     def get_template():
 #         import machineconfig
-#         return P(machineconfig.__file__).parent.joinpath(r"settings/mprocs/windows/mprocs.yaml").readit()
+#         return PathExtended(machineconfig.__file__).parent.joinpath(r"settings/mprocs/windows/mprocs.yaml").readit()
 #     # def get_new_session_name(self): return f"mprocs{self.id}"
 #     @staticmethod
 #     def get_ssh_command(): return ""
@@ -178,7 +178,7 @@
 #     def get_layout(self):
 #         temp = self.get_template()
 #         temp.procs['main']['shell']['windows'] = "croshell"
-#         _template_file = save_yaml(obj=temp, path=P.tmpfile(suffix=".yaml"))
+#         _template_file = save_yaml(obj=temp, path=PathExtended.tmpfile(suffix=".yaml"))
 #     def asssert_session_started(self):
 #         time.sleep(3)
 #         return True

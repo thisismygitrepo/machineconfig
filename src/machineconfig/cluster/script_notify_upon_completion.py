@@ -12,7 +12,7 @@
 
 # error_message = ''
 # exec_times = {}
-# res_folder = P()
+# res_folder = PathExtended()
 
 # email_params = EmailParams.from_empty()
 # manager = FileManager.from_pickle(email_params.file_manager_path)

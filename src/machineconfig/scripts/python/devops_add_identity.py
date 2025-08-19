@@ -17,7 +17,7 @@ def main():
 
     print(Panel("🔍 Searching for existing SSH keys...", expand=False))
 
-    private_keys = P.home().joinpath(".ssh").search("*.pub").apply(lambda x: x.with_name(x.stem)).filter(lambda x: x.exists())
+    private_keys = PathExtended.home().joinpath(".ssh").search("*.pub").apply(lambda x: x.with_name(x.stem)).filter(lambda x: x.exists())
 
     if private_keys:
         print(Panel(f"✅ Found {len(private_keys)} SSH private key(s)", expand=False))
@@ -28,17 +28,17 @@ def main():
 
     if choice == "I have the path to the key file":
         print(Panel("📄 Please enter the path to your private key file", expand=False))
-        path_to_key = P(input("📋 Input path here: ")).expanduser().absolute()
+        path_to_key = PathExtended(input("📋 Input path here: ")).expanduser().absolute()
         print(Panel(f"📂 Using key from custom path: {path_to_key}", expand=False))
 
     elif choice == "I want to paste the key itself":
         print(Panel("📋 Please provide a filename and paste the private key content", expand=False))
         key_filename = input("📝 File name (default: my_pasted_key): ") or "my_pasted_key"
-        path_to_key = P.home().joinpath(f".ssh/{key_filename}").write_text(input("🔑 Paste the private key here: "))
+        path_to_key = PathExtended.home().joinpath(f".ssh/{key_filename}").write_text(input("🔑 Paste the private key here: "))
         print(Panel(f"💾 Key saved to: {path_to_key}", expand=False))
 
     elif isinstance(choice, str):
-        path_to_key = P(choice)
+        path_to_key = PathExtended(choice)
         print(Panel(f"🔑 Using selected key: {path_to_key.name}", expand=False))
 
     else:
@@ -47,7 +47,7 @@ def main():
         raise NotImplementedError(f"Choice {choice} not supported")
 
     txt = f"IdentityFile {path_to_key.collapseuser().as_posix()}"  # adds this id for all connections, no host specified.
-    config_path = P.home().joinpath(".ssh/config")
+    config_path = PathExtended.home().joinpath(".ssh/config")
 
     print(Panel("📝 Updating SSH configuration...", expand=False))
 

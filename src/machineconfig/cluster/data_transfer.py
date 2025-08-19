@@ -14,7 +14,7 @@
 #         cloud_download_py_script = "\n"
 #         # downloading repo, this takes place prior to pyscript (otherwise, its tool late as the library is loaded at the top of the pyscript already)
 #         if rm.config.copy_repo:
-#             tmp_file = P(rm.job_params.repo_path_rh).expanduser().zip_n_encrypt()
+#             tmp_file = PathExtended(rm.job_params.repo_path_rh).expanduser().zip_n_encrypt()
 #             cloud_download_py_script += f"print('Downloading `{tmp_file.collapseuser()}`.')\n"
 #             cloud_download_py_script += f"P(r'{tmp_file.share_on_cloud()}').download(folder=r'{P(rm.job_params.repo_path_rh).parent}').decrypt_n_unzip()\n"
 #             tmp_file.delete(sure=True)
@@ -35,13 +35,13 @@
 #     def cloud(rm: RemoteMachine) -> None:
 #         cloud = rm.config.cloud_name
 #         assert cloud is not None, "Cloud name is not specified in the config file. Please specify it in the config file."
-#         if rm.config.copy_repo: P(rm.job_params.repo_path_rh).to_cloud(cloud=cloud, rel2home=True, zip=True, encrypt=True)
+#         if rm.config.copy_repo: PathExtended(rm.job_params.repo_path_rh).to_cloud(cloud=cloud, rel2home=True, zip=True, encrypt=True)
 #         for x in rm.data: x.to_cloud(cloud=cloud, rel2home=True)
 #         downloads = '\n'.join([f"cloud_copy {cloud}: '{a_path.collapseuser().as_posix()} -r" for a_path in rm.data])
 #         if not rm.config.copy_repo: downloads += f"""\n cloud_copy {cloud}: {P(rm.job_params.repo_path_rh).collapseuser().as_posix()} -zer """
 #         downloads += f"\ncloud_copy {cloud}: {rm.file_manager.job_root} -zr"
 #         rm.file_manager.shell_script_path.expanduser().write_text(downloads + rm.file_manager.shell_script_path.expanduser().read_text(), encoding='utf-8')  # newline={"Windows": None, "Linux": "\n"}[rm.ssh.get_remote_machine()]
-#         P(rm.file_manager.job_root).to_cloud(cloud=cloud, zip=True, rel2home=True)
+#         PathExtended(rm.file_manager.job_root).to_cloud(cloud=cloud, zip=True, rel2home=True)
 
 #     @staticmethod
 #     def sftp(rm: RemoteMachine) -> None:
@@ -51,7 +51,7 @@
 #         for a_path in rm.data:
 #             rm.ssh.copy_from_here(
 #                 a_path,
-#                 z=True if P(a_path).is_dir() else False,
+#                 z=True if PathExtended(a_path).is_dir() else False,
 #                 r=False,
 #                 overwrite=True,
 #             )

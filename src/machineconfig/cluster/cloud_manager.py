@@ -49,14 +49,14 @@
 
 
 # class CloudManager:
-#     base_path = P("~/tmp_results/remote_machines/cloud")
+#     base_path = PathExtended("~/tmp_results/remote_machines/cloud")
 #     server_interval_sec: int = 60 * 5
 #     num_claim_checks: int = 3
 #     inter_check_interval_sec: int = 15
 #     def __init__(self, max_jobs: int, cloud: Optional[str] = None, reset_local: bool = False) -> None:
 #         if reset_local:
 #             print("☠️ Resetting local cloud cache ☠️. Locally created / completed jobs not yet synced will not make it to the cloud.")
-#             P(self.base_path).expanduser().delete(sure=True)
+#             PathExtended(self.base_path).expanduser().delete(sure=True)
 #         self.status_root: P = self.base_path.expanduser().joinpath("workers", f"{getpass.getuser()}@{platform.node()}").create()
 #         self.max_jobs: int = max_jobs
 #         if cloud is None:
@@ -90,11 +90,11 @@
 #     # =================== CLOUD MONITORING ===================
 #     def fetch_cloud_live(self):
 #         remote = CloudManager.base_path
-#         localpath = P.tmp().joinpath("tmp_dirs/cloud_manager_live").create()
+#         localpath = PathExtended.tmp().joinpath("tmp_dirs/cloud_manager_live").create()
 #         alternative_base = localpath.delete(sure=True).from_cloud(cloud=self.cloud, remotepath=remote.get_remote_path(root="myhome", rel2home=True), verbose=False)
 #         return alternative_base
 #     @staticmethod
-#     def prepare_servers_report(cloud_root: P) -> list[dict[str, Any]]:
+#     def prepare_servers_report(cloud_root: PathExtended) -> list[dict[str, Any]]:
 #         from machineconfig.cluster.remote_machine import RemoteMachine
 #         # Replace crocodile List usage with plain Python list
 #         workers_root = [p for p in cloud_root.joinpath("workers").iterdir()]

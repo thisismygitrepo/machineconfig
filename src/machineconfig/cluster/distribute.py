@@ -104,8 +104,8 @@
 #     def load(job_id: str, base: Optional[str] = None) -> 'Cluster': return Cluster.get_cluster_path(job_id=job_id, base=base).joinpath("cluster.Cluster.pkl").readit()
 #     @staticmethod
 #     def get_cluster_path(job_id: str, base: Union[str, P, None] = None):
-#         if base is None: base_obj = P.home().joinpath("tmp_results/remote_machines")
-#         else: base_obj = P(base)
+#         if base is None: base_obj = PathExtended.home().joinpath("tmp_results/remote_machines")
+#         else: base_obj = PathExtended(base)
 #         return base_obj.joinpath(f"job_id__{job_id}")
 #     def __init__(self,
 #                  func: Callable[..., Any],
@@ -270,7 +270,7 @@
 #                 print(f"Results are not ready for machine {a_m}.")
 #                 print("Try to run `.check_job_status()` to check if the job is done and obtain results path.")
 #                 continue
-#             # results_folder = P(a_m.results_path).expanduser()
+#             # results_folder = PathExtended(a_m.results_path).expanduser()
 #             if a_m.results_downloaded is False:
 #                 print("\n")
 #                 console.rule(f"Downloading results from {a_m}")

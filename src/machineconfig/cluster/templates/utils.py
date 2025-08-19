@@ -22,7 +22,7 @@
 #     print(f"I'm done, I crunched numbers from {workload_params.idx_start} to {workload_params.idx_end}.")
 #     _ = workload_params.idx_max
 
-#     save_dir = P.tmp().joinpath("tmp_dirs/expensive_function_single_thread").joinpath(workload_params.save_suffix, f"thread_{workload_params.idx_start}_{workload_params.idx_end}").create()
+#     save_dir = PathExtended.tmp().joinpath("tmp_dirs/expensive_function_single_thread").joinpath(workload_params.save_suffix, f"thread_{workload_params.idx_start}_{workload_params.idx_end}").create()
 #     save_pickle(obj={'a': 1}, path=save_dir.joinpath("trial_func_result.pkl"))
 #     return save_dir
 

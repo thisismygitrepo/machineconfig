@@ -158,17 +158,17 @@ class Installer:
     def download(self, version: Optional[str]):
         print(f"\n{'='*80}\n📥 DOWNLOADING: {self.exe_name} 📥\n{'='*80}")
         if "github" not in self.repo_url or ".zip" in self.repo_url or ".tar.gz" in self.repo_url:
-            download_link = P(self.repo_url)
+            download_link = PathExtended(self.repo_url)
             version_to_be_installed = "predefined_url"
             print(f"🔗 Using direct download URL: {download_link}")
             print(f"📦 Version to be installed: {version_to_be_installed}")
 
         elif "http" in self.filename_template_linux_amd_64 or "http" in self.filename_template_windows_amd_64:
             if platform.system() == "Windows":
-                download_link = P(self.filename_template_windows_amd_64)
+                download_link = PathExtended(self.filename_template_windows_amd_64)
                 print(f"🪟 Using Windows-specific download URL: {download_link}")
             elif platform.system() in ["Linux", "Darwin"]:
-                download_link = P(self.filename_template_linux_amd_64)
+                download_link = PathExtended(self.filename_template_linux_amd_64)
                 system_name = "Linux" if platform.system() == "Linux" else "macOS"
                 print(f"🐧 Using {system_name}-specific download URL: {download_link}")
             else:
@@ -224,7 +224,7 @@ class Installer:
             version_to_be_installed = version
             print(f"📝 Using specified version: {version_to_be_installed}")
 
-        release_url = P(repo_url + "/releases/download/" + version_to_be_installed)
+        release_url = PathExtended(repo_url + "/releases/download/" + version_to_be_installed)
         print(f"🔗 Release download URL: {release_url}\n{'='*80}")
         return release_url, version_to_be_installed
 

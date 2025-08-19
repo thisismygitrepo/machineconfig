@@ -18,7 +18,7 @@ console = Console()
 
 def add_print_header_pycode(path: str, title: str):
     return f"""
-pycode = P(r'{path}').read_text(encoding="utf-8")
+pycode = PathExtended(r'{path}').read_text(encoding="utf-8")
 pycode = pycode.split("except Exception: print(pycode)")[2]
 
 try:
@@ -41,9 +41,9 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.console import Console
 console = Console()
-p = P(r'{path}').absolute()
+p = PathExtended(r'{path}').absolute()
 try:
-    dat = p.readit()
+    dat = PathExtended.readit()
     if isinstance(dat, dict):
         panel_title = f"📄 File Data: {{p.name}}"
         console.print(Panel(Text(str(dat), justify="left"), title=panel_title, expand=False))
@@ -65,7 +65,7 @@ from {path.stem} import *
 {cmd}
 """
     else: pycode = f"""
-__file__ = P(r'{path}')
+__file__ = PathExtended(r'{path}')
 {path.read_text(encoding="utf-8")}
 """
     return pycode

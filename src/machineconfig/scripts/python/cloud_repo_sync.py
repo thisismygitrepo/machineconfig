@@ -32,7 +32,7 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
             return ""
     else: cloud_resolved = cloud
     
-    # repo_root = P(args.repo).expanduser().absolute()
+    # repo_root = PathExtended(args.repo).expanduser().absolute()
     repo_local_root = PathExtended.cwd() if path is None else PathExtended(path).expanduser().absolute()
     repo_local_obj = git.Repo(repo_local_root, search_parent_directories=True)
     repo_local_root = PathExtended(repo_local_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.

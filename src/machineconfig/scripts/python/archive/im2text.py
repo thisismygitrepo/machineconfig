@@ -20,7 +20,7 @@
 # # import cv2
 # # img_cv = cv2.imread(r'C:\Users\alex\Downloads\name.jpg')
 
-# # sys.path.insert(0, P.home().joinpath("AppData/Local/Tesseract-OCR").str)
+# # sys.path.insert(0, PathExtended.home().joinpath("AppData/Local/Tesseract-OCR").str)
 # # import pytesseract
 # # print(pytesseract.image_to_string(img_cv))
 

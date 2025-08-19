@@ -33,7 +33,7 @@
 #     def __getstate__(self) -> dict[str, Any]: return self.__dict__
 #     def __setstate__(self, state: dict[str, Any]): self.__dict__ = state
 #     def __repr__(self): return f"Compute Machine {self.ssh.get_remote_repr(add_machine=True)}"
-#     def __init__(self, func: Union[str, Callable[..., Any]], config: RemoteMachineConfig, func_kwargs: Optional[dict[str, Any]] = None, data: Optional[list[P]] = None):
+#     def __init__(self, func: Union[str, Callable[..., Any]], config: RemoteMachineConfig, func_kwargs: Optional[dict[str, Any]] = None, data: Optional[list[PathExtended]] = None):
 #         self.config: RemoteMachineConfig = config
 #         self.job_params: JobParams = JobParams.from_func(func=func)
 #         if self.config.install_repo is True: assert self.job_params.is_installabe()
@@ -50,7 +50,7 @@
 #         self.submitted: bool = False
 #         self.scipts_generated: bool = False
 #         self.results_downloaded: bool = False
-#         self.results_path: Optional[P] = None
+#         self.results_path: Optional[PathExtended] = None
 
 #     def get_session_manager(self): return Zellij() if self.ssh.get_remote_machine() != "Windows" else WindowsTerminal()
 #     def fire(self, run: bool = False, open_console: bool = True, launch_method: LAUNCH_METHOD = "remotely") -> tuple[int, str]:
@@ -119,7 +119,7 @@
 #         self.job_params.session_name = "TS-" + randstr(noun=True)  # TS: TerminalSession-CloudManager, to distinguish from other sessions created manually.
 #         self.job_params.tab_name = f'🏃‍♂️{self.file_manager.job_id}'  # randstr(noun=True)
 #         execution_line = self.job_params.get_execution_line(parallelize=self.config.parallelize, workload_params=self.config.workload_params, wrap_in_try_except=self.config.wrap_in_try_except)
-#         py_script = P(cluster.__file__).parent.joinpath("script_execution.py").read_text(encoding="utf-8").replace("params = JobParams.from_empty()", f"params = {self.job_params}").replace("# execution_line", execution_line)
+#         py_script = PathExtended(cluster.__file__).parent.joinpath("script_execution.py").read_text(encoding="utf-8").replace("params = JobParams.from_empty()", f"params = {self.job_params}").replace("# execution_line", execution_line)
 #         if self.config.notify_upon_completion:
 #             executed_obj = f"""File *{P(self.job_params.repo_path_rh).joinpath(self.job_params.file_path_r).collapseuser().as_posix()}*"""  # for email.
 #             assert self.config.email_config_name is not None, "Email config name is not provided. 🤷‍♂️"
@@ -130,13 +130,13 @@
 #                                        executed_obj=executed_obj,
 #                                        file_manager_path=self.file_manager.file_manager_path.collapseuser().as_posix(),
 #                                        to_email=self.config.to_email, email_config_name=self.config.email_config_name)
-#             email_script = P(cluster.__file__).parent.joinpath("script_notify_upon_completion.py").read_text(encoding="utf-8").replace("email_params = EmailParams.from_empty()", f"email_params = {email_params}").replace('manager = FileManager.from_pickle(params.file_manager_path)', '')
+#             email_script = PathExtended(cluster.__file__).parent.joinpath("script_notify_upon_completion.py").read_text(encoding="utf-8").replace("email_params = EmailParams.from_empty()", f"email_params = {email_params}").replace('manager = FileManager.from_pickle(params.file_manager_path)', '')
 #             py_script = py_script.replace("# NOTIFICATION-CODE-PLACEHOLDER", email_script)
-#         ve_path = P(self.job_params.repo_path_rh).expanduser().joinpath(".ve_path")
-#         if ve_path.exists(): ve_name = P(ve_path.read_text()).expanduser().name
+#         ve_path = PathExtended(self.job_params.repo_path_rh).expanduser().joinpath(".ve_path")
+#         if ve_path.exists(): ve_name = PathExtended(ve_path.read_text()).expanduser().name
 #         else:
 #             import sys
-#             ve_name = P(sys.executable).parent.parent.name
+#             ve_name = PathExtended(sys.executable).parent.parent.name
 #         shell_script = f"""
 
 # # EXTRA-PLACEHOLDER-PRE
@@ -176,9 +176,9 @@
 #         Console().print(Panel(Syntax(self.file_manager.shell_script_path.expanduser().read_text(encoding='utf-8'), lexer="ps1" if self.ssh.get_remote_machine() == "Windows" else "sh", theme="monokai", line_numbers=True), title="prepared shell script"))
 #         Console().print(Panel(Syntax(self.file_manager.py_script_path.expanduser().read_text(encoding='utf-8'), lexer="ps1" if self.ssh.get_remote_machine() == "Windows" else "sh", theme="monokai", line_numbers=True), title="prepared python script"))
 #         inspect({
-#             "shell_script": repr(P(self.file_manager.shell_script_path).expanduser()),
-#             "python_script": repr(P(self.file_manager.py_script_path).expanduser()),
-#             "kwargs_file": repr(P(self.file_manager.kwargs_path).expanduser())
+#             "shell_script": repr(PathExtended(self.file_manager.shell_script_path).expanduser()),
+#             "python_script": repr(PathExtended(self.file_manager.py_script_path).expanduser()),
+#             "kwargs_file": repr(PathExtended(self.file_manager.kwargs_path).expanduser())
 #         }, title="Prepared scripts and files.", value=False, docs=False, sort=False)
 
 #     def wait_for_results(self, sleep_minutes: int = 10) -> None:
@@ -191,7 +191,7 @@
 #         self.download_results()
 #         if self.config.notify_upon_completion: pass
 
-#     def check_job_status(self) -> Optional[P]:
+#     def check_job_status(self) -> Optional[PathExtended]:
 #         if not self.submitted:
 #             print("Job even not submitted yet. 🤔")
 #             return None
@@ -232,7 +232,7 @@
 #             except Exception as err: print(f"Could not read execution times files. 🤷‍♂️, here is the error:\n {err}️")
 #             print("\n")
 
-#             self.results_path = P(results_folder)
+#             self.results_path = PathExtended(results_folder)
 #             return self.results_path
 #         return None
 
@@ -261,7 +261,7 @@
 #         cm.claim_lock()  # before adding any new jobs, make sure the global jobs folder is mirrored locally.
 #         from copy import deepcopy
 #         self.config.base_dir = CloudManager.base_path.joinpath("jobs").collapseuser().as_posix()
-#         self.file_manager.base_dir = P(self.config.base_dir).collapseuser()
+#         self.file_manager.base_dir = PathExtended(self.config.base_dir).collapseuser()
 #         wl = WorkloadParams().split_to_jobs(jobs=split)
 #         rms: list[RemoteMachine] = []
 #         new_log_entries: list[LogEntry] = []

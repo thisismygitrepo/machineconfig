@@ -39,7 +39,7 @@ cargo install --path .
         print(f"""
 {'⚠️' * 20}
 ⚠️  WARNING | Permission error when cleaning up
-📂 Path: {P.home().joinpath(tool_name)}
+📂 Path: {PathExtended.home().joinpath(tool_name)}
 {'⚠️' * 20}
 """)
 

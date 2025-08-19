@@ -29,8 +29,8 @@ def main(version: Optional[str] = None):
     folder = r"C:\\"
     
     print("📥 Downloading extension from GitHub repository...")
-    P("https://github.com/iamadamdev/bypass-paywalls-chrome/archive/master.zip").download().unzip(folder=folder, content=True)
-    extension_folder = P(folder).joinpath("bypass-paywalls-chrome-master")
+    PathExtended("https://github.com/iamadamdev/bypass-paywalls-chrome/archive/master.zip").download().unzip(folder=folder, content=True)
+    extension_folder = PathExtended(folder).joinpath("bypass-paywalls-chrome-master")
     
     print(f"""
 {'=' * 150}
