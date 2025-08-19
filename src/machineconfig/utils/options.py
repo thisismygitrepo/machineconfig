@@ -1,5 +1,5 @@
 from crocodile.meta import Terminal
-from crocodile.file_management import P as PathExtended
+from pathlib import Path
 from rich.text import Text
 from rich.panel import Panel
 from rich.console import Console
@@ -144,6 +144,6 @@ def choose_cloud_interactively() -> str:
 def get_ssh_hosts() -> list[str]:
     from paramiko import SSHConfig
     c = SSHConfig()
-    c.parse(open(PathExtended.home().joinpath(".ssh/config").to_str(), encoding="utf-8"))
+    c.parse(open(Path.home().joinpath(".ssh/config"), encoding="utf-8"))
     return list(c.get_hostnames())
 def choose_ssh_host(multi: bool=True): return display_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)

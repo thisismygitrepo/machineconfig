@@ -68,11 +68,11 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
 
         if platform.system() == "Windows":
             print("🪟 Creating mount directory on Windows...")
-            mount_loc.parent.create()
+            mount_loc.parent.mkdir(parents=True, exist_ok=True)
         elif platform.system() in ["Linux", "Darwin"]:
             system_name = "Linux" if platform.system() == "Linux" else "macOS"
             print(f"🐧 Creating mount directory on {system_name}...")
-            try: mount_loc.create()
+            try: mount_loc.mkdir(parents=True, exist_ok=True)
             except (FileExistsError, OSError) as err:
                 # We need a umount command here.
                 warning_line = "⚠️  WARNING: Mount directory issue"

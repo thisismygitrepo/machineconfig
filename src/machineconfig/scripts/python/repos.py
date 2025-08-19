@@ -170,7 +170,8 @@ def install_repos(specs_path: str, clone: bool=True, checkout_to_recorded_commit
     path_obj = PathExtended(specs_path).expanduser().absolute()
     repos: list[dict[str, Any]] = read_json(path_obj)
     for repo in repos:
-        parent_dir = PathExtended(repo["parent_dir"]).expanduser().absolute().create()
+        parent_dir = PathExtended(repo["parent_dir"]).expanduser().absolute()
+        parent_dir.mkdir(parents=True, exist_ok=True)
         
         # Handle cloning and remote setup
         if clone:

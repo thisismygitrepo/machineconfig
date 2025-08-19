@@ -153,7 +153,8 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #         app_info["app_url"] = apps_safe_url.as_posix() if (apps_safe_url is not None and type(apps_safe_url) is P) else str(apps_safe_url) if apps_safe_url is not None else ""
 
 #     # Write to CSV using standard library
-#     csv_path = APP_SUMMARY_PATH.with_suffix(".csv").create(parents_only=True)
+#     csv_path = APP_SUMMARY_PATH.with_suffix(".csv")
+#     csv_path.parent.mkdir(parents=True, exist_ok=True)
 #     with open(csv_path, 'w', newline='', encoding='utf-8') as csvfile:
 #         if app_data:
 #             fieldnames = app_data[0].keys()

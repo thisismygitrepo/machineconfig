@@ -162,14 +162,20 @@
 
 # """  # EVERYTHING in the script above is shell-agnostic. Ensure this is the case when adding new lines.
 #         # shell_script_path.write_text(shell_script, encoding='utf-8', newline={"Windows": None, "Linux": "\n"}[ssh.get_remote_machine()])  # LF vs CRLF requires py3.10
-#         with open(file=self.file_manager.shell_script_path.expanduser().create(parents_only=True), mode='w', encoding="utf-8", newline={"Windows": None, "Linux": "\n"}[self.ssh.get_remote_machine()]) as file: file.write(shell_script)
-#         self.file_manager.py_script_path.expanduser().create(parents_only=True).write_text(py_script, encoding='utf-8')  # py_version = sys.version.split(".")[1]
+#         shell_script_path = self.file_manager.shell_script_path.expanduser()
+#         shell_script_path.parent.mkdir(parents=True, exist_ok=True)
+#         with open(file=shell_script_path, mode='w', encoding="utf-8", newline={"Windows": None, "Linux": "\n"}[self.ssh.get_remote_machine()]) as file: file.write(shell_script)
+#         py_script_path = self.file_manager.py_script_path.expanduser()
+#         py_script_path.parent.mkdir(parents=True, exist_ok=True)
+#         py_script_path.write_text(py_script, encoding='utf-8')  # py_version = sys.version.split(".")[1]
 #         save_pickle(obj=self.kwargs, path=self.file_manager.kwargs_path.expanduser(), verbose=False)
 #         save_pickle(obj=self.file_manager.__getstate__(), path=self.file_manager.file_manager_path.expanduser(), verbose=False)
 #         save_pickle(obj=self.config, path=self.file_manager.remote_machine_config_path.expanduser(), verbose=False)
 #         save_pickle(obj=self, path=self.file_manager.remote_machine_path.expanduser(), verbose=False)
 #         job_status: JOB_STATUS = "queued"
-#         self.file_manager.execution_log_dir.expanduser().create().joinpath("status.txt").write_text(job_status)
+#         execution_log_dir = self.file_manager.execution_log_dir.expanduser()
+#         execution_log_dir.mkdir(parents=True, exist_ok=True)
+#         execution_log_dir.joinpath("status.txt").write_text(job_status)
 #         print("\n")
 
 #     def show_scripts(self) -> None:
@@ -199,7 +205,8 @@
 #             print("Job already completed. 🤔")
 #             return None
 
-#         base = self.file_manager.execution_log_dir.expanduser().create()
+#         base = self.file_manager.execution_log_dir.expanduser()
+#         base.mkdir(parents=True, exist_ok=True)
 #         try: self.ssh.copy_to_here(self.file_manager.execution_log_dir.as_posix(), z=True)
 #         except Exception: pass  # type: ignore  # the directory doesn't exist yet at the remote.
 #         end_time_file = base.joinpath("end_time.txt")

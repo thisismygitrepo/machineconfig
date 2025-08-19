@@ -40,7 +40,8 @@ def create_default_shell_profile():
             if "microsoft" in res.lower() or "wsl" in res.lower():
                 profile += "\ncd ~"  # this is to make sure that the current dir is not in the windows file system, which is terribly slow and its a bad idea to be there anyway.
                 console.print("📌 WSL detected - adding 'cd ~' to profile to avoid Windows filesystem")
-        profile_path.create(parents_only=True).write_text(profile)
+        profile_path.parent.mkdir(parents=True, exist_ok=True)
+        profile_path.write_text(profile)
         console.print(Panel("✅ Profile updated successfully", title="[bold blue]Profile[/bold blue]", border_style="blue"))
 
 

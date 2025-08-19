@@ -136,7 +136,8 @@ def create_symlinks(repo_root: PathExtended, ve_name: str, dotted_py_version: st
 
 def make_installation_recipe(repo_root: str, ve_name: str, py_version: str):
     subpath = "versions/init"
-    base_path = PathExtended(repo_root).joinpath(subpath).create()
+    base_path = PathExtended(repo_root).joinpath(subpath)
+    base_path.mkdir(parents=True, exist_ok=True)
 
     system: Literal["Windows", "Linux"] = "Windows"
     path3 = base_path.joinpath("install_requirements.ps1")

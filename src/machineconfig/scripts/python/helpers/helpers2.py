@@ -96,7 +96,8 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         if len(source_parts) > 1 and source_parts[1] == ES:  # the source path is to be inferred from target.
             assert ES not in target, f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised."
             target_obj = absolute(target)
-            remote_path = target_obj.get_remote_path(os_specific=os_specific, root=root, rel2home=rel2home, strict=False)
+            from crocodile.file_management import P as PathExtended
+            remote_path = PathExtended(target_obj).get_remote_path(os_specific=os_specific, root=root, rel2home=rel2home, strict=False)
             source = f"{cloud}:{remote_path.as_posix()}"
         else:  # source path is mentioned, target? maybe.
             if target == ES:  # target path is to be inferred from source.
@@ -114,7 +115,8 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         if len(target_parts) > 1 and target_parts[1] == ES:  # the target path is to be inferred from source.
             assert ES not in source, "You can't use $ in both source and target. Cyclical inference dependency arised."
             source_obj = absolute(source)
-            remote_path = source_obj.get_remote_path(os_specific=os_specific, root=root, rel2home=rel2home, strict=False)
+            from crocodile.file_management import P as PathExtended
+            remote_path = PathExtended(source_obj).get_remote_path(os_specific=os_specific, root=root, rel2home=rel2home, strict=False)
             target = f"{cloud}:{remote_path.as_posix()}"
         else:  # target path is mentioned, source? maybe.
             target = str(target)

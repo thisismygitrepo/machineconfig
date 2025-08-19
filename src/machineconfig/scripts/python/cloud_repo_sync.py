@@ -36,7 +36,7 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
     repo_local_root = PathExtended.cwd() if path is None else PathExtended(path).expanduser().absolute()
     repo_local_obj = git.Repo(repo_local_root, search_parent_directories=True)
     repo_local_root = PathExtended(repo_local_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
-    CONFIG_PATH.joinpath("remote").create()
+    CONFIG_PATH.joinpath("remote").mkdir(parents=True, exist_ok=True)
     repo_remote_root = CONFIG_PATH.joinpath("remote", repo_local_root.rel2home())  # .delete(sure=True)
     
     try:

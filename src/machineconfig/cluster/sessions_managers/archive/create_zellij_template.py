@@ -42,7 +42,9 @@ def build_template(tabs: list[str]):
     for t in tabs:
         res += tab.replace("TABNAME", t).replace("TABCOMMAND", "ssh").replace("TABARGS", t)
     res += suffix.replace("THISMACHINE", socket.gethostname())
-    file = PathExtended.tmp().joinpath("tmp_files/templates/zellij_template.kdl").create(parents_only=True).write_text(res)
+    file = PathExtended.tmp().joinpath("tmp_files/templates/zellij_template.kdl")
+    file.parent.mkdir(parents=True, exist_ok=True)
+    file.write_text(res)
     res = f"zellij --layout {file}"
     return res
 

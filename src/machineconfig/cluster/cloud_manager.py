@@ -57,7 +57,9 @@
 #         if reset_local:
 #             print("☠️ Resetting local cloud cache ☠️. Locally created / completed jobs not yet synced will not make it to the cloud.")
 #             PathExtended(self.base_path).expanduser().delete(sure=True)
-#         self.status_root: P = self.base_path.expanduser().joinpath("workers", f"{getpass.getuser()}@{platform.node()}").create()
+#         status_root_path = self.base_path.expanduser().joinpath("workers", f"{getpass.getuser()}@{platform.node()}")
+#         status_root_path.mkdir(parents=True, exist_ok=True)
+#         self.status_root: P = status_root_path
 #         self.max_jobs: int = max_jobs
 #         if cloud is None:
 #             from machineconfig.utils.utils import DEFAULTS_PATH
@@ -79,7 +81,8 @@
 #             log['running'] = []
 #             log['completed'] = []
 #             log['failed'] = []
-#             save_pickle(obj=log, path=path.create(parents_only=True), verbose=False)
+#             path.parent.mkdir(parents=True, exist_ok=True)
+#             save_pickle(obj=log, path=path, verbose=False)
 #             return log
 #         return pickle.loads(path.read_bytes())
 #     def write_log(self, log: dict[JOB_STATUS, list[dict[str, Any]]]) -> None:
@@ -90,7 +93,8 @@
 #     # =================== CLOUD MONITORING ===================
 #     def fetch_cloud_live(self):
 #         remote = CloudManager.base_path
-#         localpath = PathExtended.tmp().joinpath("tmp_dirs/cloud_manager_live").create()
+#         localpath = PathExtended.tmp().joinpath("tmp_dirs/cloud_manager_live")
+#         localpath.mkdir(parents=True, exist_ok=True)
 #         alternative_base = localpath.delete(sure=True).from_cloud(cloud=self.cloud, remotepath=remote.get_remote_path(root="myhome", rel2home=True), verbose=False)
 #         return alternative_base
 #     @staticmethod
@@ -366,13 +370,20 @@
 #     def reset_cloud(self, unsafe: bool = False):
 #         print("☠️ Resetting cloud server ☠️")
 #         if not unsafe: self.claim_lock()  # it is unsafe to ignore the lock since other workers thinnk they own the lock and will push their data and overwrite the reset. Do so only when knowing that other
-#         CloudManager.base_path.expanduser().delete(sure=True).create().sync_to_cloud(cloud=self.cloud, rel2home=True, sync_up=True, verbose=True, transfers=100)
+#         base_path = CloudManager.base_path.expanduser().delete(sure=True)
+#         base_path.mkdir(parents=True, exist_ok=True)
+#         base_path.sync_to_cloud(cloud=self.cloud, rel2home=True, sync_up=True, verbose=True, transfers=100)
 #         self.release_lock()
-#     def reset_lock(self): CloudManager.base_path.expanduser().create().joinpath("lock.txt").write_text("").to_cloud(cloud=self.cloud, rel2home=True, verbose=False)
+#     def reset_lock(self): 
+#         base_path = CloudManager.base_path.expanduser()
+#         base_path.mkdir(parents=True, exist_ok=True)
+#         base_path.joinpath("lock.txt").write_text("").to_cloud(cloud=self.cloud, rel2home=True, verbose=False)
 #     @staticmethod
 #     def run_clean_trial():
 #         self = CloudManager(max_jobs=1)
-#         self.base_path.expanduser().delete(sure=True).create().sync_to_cloud(cloud=self.cloud, rel2home=True, sync_up=True, transfers=20)
+#         base_path = self.base_path.expanduser().delete(sure=True)
+#         base_path.mkdir(parents=True, exist_ok=True)
+#         base_path.sync_to_cloud(cloud=self.cloud, rel2home=True, sync_up=True, transfers=20)
 #         from machineconfig.cluster.templates.run_remote import run_on_cloud
 #         run_on_cloud()
 #         self.serve()
@@ -383,7 +394,8 @@
 #         """
 #         if first_call: print("Claiming lock 🔒 ...")
 #         this_machine = f"{getpass.getuser()}@{platform.node()}"
-#         path = CloudManager.base_path.expanduser().create()
+#         path = CloudManager.base_path.expanduser()
+#         path.mkdir(parents=True, exist_ok=True)
 #         lock_path = path.joinpath("lock.txt").from_cloud(cloud=self.cloud, rel2home=True, verbose=False)
 #         if lock_path is None:
 #             print("Lock doesn't exist on remote, uploading for the first time.")
@@ -430,7 +442,8 @@
 #             print("⚠️ Lock is not claimed, nothing to release.")
 #             return
 #         print("Releasing Lock")
-#         path = CloudManager.base_path.expanduser().create()
+#         path = CloudManager.base_path.expanduser()
+#         path.mkdir(parents=True, exist_ok=True)
 #         lock_path = path.joinpath("lock.txt").from_cloud(cloud=self.cloud, rel2home=True, verbose=False)
 #         if lock_path is None:
 #             print("Lock doesn't exist on remote, uploading for the first time.")

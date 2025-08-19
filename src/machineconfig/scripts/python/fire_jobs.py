@@ -213,7 +213,9 @@ try:
 except ImportError as _ex:
     print(r'''{txt}''')
 """ + txt
-        choice_file = PathExtended.tmp().joinpath(f'tmp_scripts/python/{PathExtended(choice_file).parent.name}_{PathExtended(choice_file).stem}_{randstr()}.py').create(parents_only=True).write_text(txt)
+        choice_file = PathExtended.tmp().joinpath(f'tmp_scripts/python/{PathExtended(choice_file).parent.name}_{PathExtended(choice_file).stem}_{randstr()}.py')
+        choice_file.parent.mkdir(parents=True, exist_ok=True)
+        choice_file.write_text(txt)
 
     # =========================  determining basic command structure: putting together exe & choice_file & choice_function & pdb
     if args.debug:

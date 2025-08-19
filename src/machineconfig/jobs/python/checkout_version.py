@@ -36,7 +36,8 @@ def checkout_version(version: str, repo_root: PathExtended, exclude_editable: bo
     else: install_editable_packages = ""
 
     version_root = repo_root.collapseuser().joinpath(f"versions/{version}").as_posix()
-    version_root_obj = PathExtended(version_root).expanduser().create()
+    version_root_obj = PathExtended(version_root).expanduser()
+    version_root_obj.mkdir(parents=True, exist_ok=True)
     checkout_ve = f"{repo_root.name}-{version}-prod" if not exclude_editable else ve_name
     checkout_ve = input(f"📝 Name of the ve to create (default: {checkout_ve}): ") or checkout_ve
 

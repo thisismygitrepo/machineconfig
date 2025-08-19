@@ -22,7 +22,8 @@ def main_parse():
     elif tmp.name == ".scheduler":
         root = tmp
     else:
-        root = tmp.joinpath(".scheduler").create()
+        root = tmp.joinpath(".scheduler")
+        root.mkdir(parents=True, exist_ok=True)
 
     print(f"\n✅ Running tasks in {root}\n")
 
@@ -52,7 +53,8 @@ def main_parse():
 
     if args.create_task:
         task_name = input("📝 Enter task name: ")
-        task_root = root.joinpath(task_name).create(exist_ok=False)
+        task_root = root.joinpath(task_name)
+        task_root.mkdir(parents=True, exist_ok=False)
         task_root.joinpath("config.ini").write_text(DEFAULT_CONFIG, encoding="utf-8")
         task_root.joinpath("task.py").write_text("""
 # Scheduler Task.

@@ -33,7 +33,9 @@ def write_shell_script_to_file(shell_script: str):
     if platform.system() in ["Linux", "Darwin"]: suffix = ".sh"
     elif platform.system() == "Windows": suffix = ".ps1"
     else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
-    shell_file = PathExtended.tmp().joinpath("tmp_scripts", "shell", randstr() + suffix).create(parents_only=True).write_text(shell_script)
+    shell_file = PathExtended.tmp().joinpath("tmp_scripts", "shell", randstr() + suffix)
+    shell_file.parent.mkdir(parents=True, exist_ok=True)
+    shell_file.write_text(shell_script)
     return shell_file
 
 # Enhanced print/log/error/exception statements for better clarity and consistency
@@ -47,7 +49,8 @@ def write_shell_script_to_default_program_path(program: str, desc: str, preserve
         else:
             program = 'orig_path=$(cd -- "." && pwd)\n' + program + '\ncd "$orig_path" || exit'
     if display: print_code(code=program, lexer="shell", desc=desc, subtitle=str(PROGRAM_PATH))
-    PROGRAM_PATH.create(parents_only=True).write_text(program)
+    PROGRAM_PATH.parent.mkdir(parents=True, exist_ok=True)
+    PROGRAM_PATH.write_text(program)
     if execute:
         Terminal().run(f". {PROGRAM_PATH}", shell="powershell").capture().print_if_unsuccessful(desc="🛠️  EXECUTION | Shell script running", strict_err=True, strict_returncode=True)
     return None
@@ -65,7 +68,9 @@ except ImportError:
     console = Console()
     console.print(Panel(f'''📜 PYTHON SCRIPT:\n\n{{code}}''', title="Python Script", expand=False))
 """ + python_script
-    python_file = PathExtended.tmp().joinpath("tmp_scripts", "python", randstr() + ".py").create(parents_only=True).write_text(python_script)
+    python_file = PathExtended.tmp().joinpath("tmp_scripts", "python", randstr() + ".py")
+    python_file.parent.mkdir(parents=True, exist_ok=True)
+    python_file.write_text(python_script)
     shell_script = get_shell_script_executing_python_file(python_file=python_file.to_str(), ve_name=ve_name)
     shell_file = write_shell_script_to_file(shell_script)
     return shell_file

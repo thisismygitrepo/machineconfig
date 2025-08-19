@@ -33,7 +33,9 @@
 # manager: FileManager = FileManager.from_pickle(params.file_manager_path)
 # manager.secure_resources()
 # pid: int = os.getpid()
-# manager.execution_log_dir.expanduser().joinpath("pid.txt").create(parents_only=True).write_text(str(pid))
+# pid_file = manager.execution_log_dir.expanduser().joinpath("pid.txt")
+# pid_file.parent.mkdir(parents=True, exist_ok=True)
+# pid_file.write_text(str(pid))
 # job_status: JOB_STATUS = "running"
 # manager.execution_log_dir.expanduser().joinpath("status.txt").write_text(job_status)
 
@@ -41,7 +43,9 @@
 # # keep those values after lock is released
 # time_at_execution_start_utc = datetime.now(timezone.utc)
 # time_at_execution_start_local = datetime.now()
-# manager.execution_log_dir.expanduser().create().joinpath("start_time.txt").write_text(str(time_at_execution_start_local))
+# execution_log_dir = manager.execution_log_dir.expanduser()
+# execution_log_dir.mkdir(parents=True, exist_ok=True)
+# execution_log_dir.joinpath("start_time.txt").write_text(str(time_at_execution_start_local))
 # func_kwargs = pickle.loads(manager.kwargs_path.expanduser().read_bytes())
 
 # # EXTRA-PLACEHOLDER-POST
@@ -81,7 +85,8 @@
 # if isinstance(res, P) or (res and PathExtended(res).expanduser().exists()):
 #     res_folder = PathExtended(res).expanduser()
 # else:
-#     res_folder = PathExtended.tmp(folder=rf"tmp_dirs/{manager.job_id}").create()
+#     res_folder = PathExtended.tmp(folder=rf"tmp_dirs/{manager.job_id}")
+#     res_folder.mkdir(parents=True, exist_ok=True)
 #     console.print(Panel(f"""
 # ⚠️  WARNING ⚠️
 # The executed function did not return a path to a results directory.

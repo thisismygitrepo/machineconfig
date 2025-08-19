@@ -63,7 +63,7 @@ def fetch_dotfiles():
     console.print(Panel(f"⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}", width=150, border_style="yellow"))
 
     dotfiles_local = PathExtended.home().joinpath("dotfiles")
-    CONFIG_PATH.joinpath("remote").create()
+    CONFIG_PATH.joinpath("remote").mkdir(parents=True, exist_ok=True)
     dotfiles_remote = CONFIG_PATH.joinpath("remote", dotfiles_local.rel2home())
     remote_path = dotfiles_local.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
 

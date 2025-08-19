@@ -46,7 +46,8 @@
 #     @staticmethod
 #     def sftp(rm: RemoteMachine) -> None:
 #         assert rm.ssh.sftp is not None, f"SFTP is not available for this machine `{rm.ssh}`. Consider using different `transfer_method` other than `sftp`."
-#         rm.ssh.run_py(f"P(r'{FileManager.shell_script_path_log}').expanduser().create(parents_only=True).delete(sure=True).write_text(r'{rm.file_manager.shell_script_path.collapseuser().as_posix()}')", desc="Logging latest shell script path on remote.", verbose=False)
+#         log_path_parent = f"P(r'{FileManager.shell_script_path_log}').expanduser().parent"
+#         rm.ssh.run_py(f"{log_path_parent}.mkdir(parents=True, exist_ok=True); P(r'{FileManager.shell_script_path_log}').expanduser().delete(sure=True).write_text(r'{rm.file_manager.shell_script_path.collapseuser().as_posix()}')", desc="Logging latest shell script path on remote.", verbose=False)
 #         if rm.config.copy_repo: rm.ssh.copy_from_here(rm.job_params.repo_path_rh, z=True, overwrite=True)
 #         for a_path in rm.data:
 #             rm.ssh.copy_from_here(

@@ -1,3 +1,4 @@
+
 from crocodile.file_management import P as PathExtended
 from crocodile.meta import Terminal
 from machineconfig.utils.installer_utils.installer_abc import find_move_delete_linux, find_move_delete_windows
@@ -50,8 +51,8 @@ class Installer:
         print(f"\n{'='*80}\n🔍 SELECT APPLICATION TO INSTALL 🔍\n{'='*80}")
         from machineconfig.utils.utils import choose_one_option
         print("📂 Searching for configuration files...")
-        jobs_dir = Path(LIBRARY_ROOT.joinpath("jobs").to_str())
-        config_paths = [PathExtended(p) for p in jobs_dir.rglob("config.json")]
+        jobs_dir = Path(LIBRARY_ROOT.joinpath("jobs"))
+        config_paths = [Path(p) for p in jobs_dir.rglob("config.json")]
         path = choose_one_option(options=config_paths)
         print(f"📄 Loading configuration from: {path}")
         config: dict[str, Any] = read_json(path)  # /python_generic_installers/config.json"))
@@ -91,9 +92,9 @@ class Installer:
         if self.repo_url == "CUSTOM":
             print(f"🧩 Using custom installer for {self.exe_name}")
             import machineconfig.jobs.python_custom_installers as python_custom_installers
-            installer_path = PathExtended(python_custom_installers.__file__).parent.joinpath(self.exe_name + ".py")
+            installer_path = Path(python_custom_installers.__file__).parent.joinpath(self.exe_name + ".py")
             if not installer_path.exists():
-                installer_path = PathExtended(python_custom_installers.__file__).parent.joinpath("dev", self.exe_name + ".py")
+                installer_path = Path(python_custom_installers.__file__).parent.joinpath("dev", self.exe_name + ".py")
                 print(f"🔍 Looking for installer in dev folder: {installer_path}")
             else:
                 print(f"🔍 Found installer at: {installer_path}")
@@ -152,23 +153,24 @@ class Installer:
                     exe.with_name(name=new_exe_name, inplace=True, overwrite=True)
 
         print(f"💾 Saving version information to: {INSTALL_VERSION_ROOT.joinpath(self.exe_name)}")
-        INSTALL_VERSION_ROOT.joinpath(self.exe_name).create(parents_only=True).write_text(version_to_be_installed)
+        INSTALL_VERSION_ROOT.joinpath(self.exe_name).parent.mkdir(parents=True, exist_ok=True)
+        INSTALL_VERSION_ROOT.joinpath(self.exe_name).write_text(version_to_be_installed)
         print(f"✅ Installation completed successfully!\n{'='*80}")
 
     def download(self, version: Optional[str]):
         print(f"\n{'='*80}\n📥 DOWNLOADING: {self.exe_name} 📥\n{'='*80}")
         if "github" not in self.repo_url or ".zip" in self.repo_url or ".tar.gz" in self.repo_url:
-            download_link = PathExtended(self.repo_url)
+            download_link = Path(self.repo_url)
             version_to_be_installed = "predefined_url"
             print(f"🔗 Using direct download URL: {download_link}")
             print(f"📦 Version to be installed: {version_to_be_installed}")
 
         elif "http" in self.filename_template_linux_amd_64 or "http" in self.filename_template_windows_amd_64:
             if platform.system() == "Windows":
-                download_link = PathExtended(self.filename_template_windows_amd_64)
+                download_link = Path(self.filename_template_windows_amd_64)
                 print(f"🪟 Using Windows-specific download URL: {download_link}")
             elif platform.system() in ["Linux", "Darwin"]:
-                download_link = PathExtended(self.filename_template_linux_amd_64)
+                download_link = Path(self.filename_template_linux_amd_64)
                 system_name = "Linux" if platform.system() == "Linux" else "macOS"
                 print(f"🐧 Using {system_name}-specific download URL: {download_link}")
             else:
@@ -202,8 +204,8 @@ class Installer:
             print(f"📄 File name: {file_name}")
             download_link = release_url.joinpath(file_name)
 
-        print(f"📥 Downloading {self.name} from: {download_link.as_url_str()}")
-        downloaded = download_link.download(folder=INSTALL_TMP_DIR).decompress()
+        print(f"📥 Downloading {self.name} from: {download_link}")
+        downloaded = PathExtended(download_link).download(folder=INSTALL_TMP_DIR).decompress()
         print(f"✅ Download and extraction completed to: {downloaded}\n{'='*80}")
         return downloaded, version_to_be_installed
 
@@ -224,7 +226,7 @@ class Installer:
             version_to_be_installed = version
             print(f"📝 Using specified version: {version_to_be_installed}")
 
-        release_url = PathExtended(repo_url + "/releases/download/" + version_to_be_installed)
+        release_url = Path(repo_url + "/releases/download/" + version_to_be_installed)
         print(f"🔗 Release download URL: {release_url}\n{'='*80}")
         return release_url, version_to_be_installed
 
@@ -232,7 +234,8 @@ class Installer:
     def check_if_installed_already(exe_name: str, version: str, use_cache: bool):
         print(f"\n{'='*80}\n🔍 CHECKING INSTALLATION STATUS: {exe_name} 🔍\n{'='*80}")
         version_to_be_installed = version
-        tmp_path = INSTALL_VERSION_ROOT.joinpath(exe_name).create(parents_only=True)
+        INSTALL_VERSION_ROOT.joinpath(exe_name).parent.mkdir(parents=True, exist_ok=True)
+        tmp_path = INSTALL_VERSION_ROOT.joinpath(exe_name)
 
         if use_cache:
             print("🗂️  Using cached version information...")
