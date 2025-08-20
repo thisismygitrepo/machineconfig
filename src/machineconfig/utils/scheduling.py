@@ -1,7 +1,6 @@
 # """Task scheduler
 # """
 
-# from crocodile.file_management import P as PathExtended
 # from machineconfig.utils.utils import get_shell_script_executing_python_file
 # from machineconfig.utils.utils2 import read_ini
 # from dataclasses import dataclass

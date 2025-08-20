@@ -38,7 +38,7 @@ from crocodile.file_management import P, PLike
 #     return True
 
 
-def to_cloud(localpath: PLike, cloud: str, remotepath: PLike, zip: bool = False,encrypt: bool = False,  # pylint: disable=W0621, W0622
+def to_cloud(localpath: PLike, cloud: str, remotepath: Optional[PLike], zip: bool = False, encrypt: bool = False,
                 key: Optional[bytes] = None, pwd: Optional[str] = None, rel2home: bool = False, strict: bool = True,
                 obfuscate: bool = False,
                 share: bool = False, verbose: bool = True, os_specific: bool = False, transfers: int = 10, root: Optional[str] = "myhome") -> 'P':
@@ -59,8 +59,8 @@ def to_cloud(localpath: PLike, cloud: str, remotepath: PLike, zip: bool = False,
 
     if share:
         if verbose: print("🔗 SHARING FILE")
-        tmp = rclone.link(f"{cloud}:{rp.as_posix()}", show_progress=True)
-        return tmp
+        tmp = rclone.link(f"{cloud}:{rp.as_posix()}")
+        return P(tmp)
     return localpath
 
 

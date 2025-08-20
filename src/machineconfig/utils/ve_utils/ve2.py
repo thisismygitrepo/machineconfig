@@ -113,10 +113,6 @@ def create_symlinks(repo_root: PathExtended, ve_name: str, dotted_py_version: st
     target.mkdir(exist_ok=True, parents=True)  # if ve not created yet, make up a folder at least, so that symlink can be created, then this folder is either populated or recreated by ve creation script.
     symlink_func(this=source, to_this=target)
 
-    # for backward compatibility:
-    repo_root.joinpath(".ve_path").write_text(f"~/venvs/{ve_name}")
-    repo_root.joinpath(".ipy_profile").write_text(ipy_profile)
-
     ve_ini_specs = VE_Specs(ve_name=ve_name, py_version=dotted_py_version, ipy_profile="default", os=system)
     ve_ini = VE_INI(specs=ve_ini_specs)
     save_ini(path=repo_root.joinpath(".ve.ini"), obj=asdict(ve_ini))
