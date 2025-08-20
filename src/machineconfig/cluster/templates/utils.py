@@ -7,8 +7,8 @@
 # from machineconfig.utils.io_save import save_pickle
 
 # from machineconfig.cluster.remote_machine import WorkloadParams
-# from typing import Optional, Any, Callable
-
+from typing import Optional
+from crocodile.file_management import P, PLike
 
 # def expensive_function(workload_params: WorkloadParams, sim_dict: Optional[dict[str, Any]] = None) -> P:
 #     import time
@@ -36,3 +36,35 @@
 #     if params['workload_params'].kind != inspect.Parameter.POSITIONAL_OR_KEYWORD: raise ValueError(f"{func_or_method.__name__}() 'workload_params' parameter is not a positional or keyword parameter.")
 #     if params['workload_params'].default is not inspect.Parameter.empty: raise ValueError(f"{func_or_method.__name__}() 'workload_params' parameter should not have a default value.")
 #     return True
+
+
+def to_cloud(localpath: PLike, cloud: str, remotepath: PLike, zip: bool = False,encrypt: bool = False,  # pylint: disable=W0621, W0622
+                key: Optional[bytes] = None, pwd: Optional[str] = None, rel2home: bool = False, strict: bool = True,
+                obfuscate: bool = False,
+                share: bool = False, verbose: bool = True, os_specific: bool = False, transfers: int = 10, root: Optional[str] = "myhome") -> 'P':
+    to_del = []
+    localpath = P(localpath).expanduser().absolute() if not P(localpath).exists() else P(localpath)
+    if zip:
+        localpath = localpath.zip(inplace=False)
+        to_del.append(localpath)
+    if encrypt:
+        localpath = localpath.encrypt(key=key, pwd=pwd, inplace=False)
+        to_del.append(localpath)
+    if remotepath is None:
+        rp = localpath.get_remote_path(root=root, os_specific=os_specific, rel2home=rel2home, strict=strict, obfuscate=obfuscate)  # if rel2home else (P(root) / localpath if root is not None else localpath)
+    else: rp = P(remotepath)
+
+    from rclone_python import rclone
+    rclone.copy(localpath.as_posix(), f"{cloud}:{rp.as_posix()}", show_progress=True)
+
+    if share:
+        if verbose: print("🔗 SHARING FILE")
+        tmp = rclone.link(f"{cloud}:{rp.as_posix()}", show_progress=True)
+        return tmp
+    return localpath
+
+
+if __name__ == "__main__":
+    from pathlib import Path
+    localpath = Path.home().joinpath("Downloads", "exchangeInfo")
+    to_cloud(localpath, "odp", remotepath=None)

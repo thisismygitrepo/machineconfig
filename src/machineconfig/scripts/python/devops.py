@@ -142,8 +142,9 @@ def main(which: Optional[str] = None):
 
     elif choice_key == Options.scheduler.value:
         console.print(Panel("⏰ Setting up scheduler...", width=BOX_WIDTH, border_style="blue"))
-        from machineconfig.scripts.python.scheduler import main as helper
-        program = helper()
+        # from machineconfig.scripts.python.scheduler import main as helper
+        # program = helper()
+        program = ""
 
     elif choice_key == Options.dot_files_sync.value:
         console.print(Panel("🔗 Synchronizing dotfiles...", width=BOX_WIDTH, border_style="blue"))

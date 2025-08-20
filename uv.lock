@@ -1149,6 +1149,11 @@ windows = [
     { name = "pywin32" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "rclone-python" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "call-function-with-timeout", specifier = ">=1.1.1" },
@@ -1168,6 +1173,9 @@ requires-dist = [
     { name = "rich", specifier = ">=14.0.0" },
 ]
 provides-extras = ["windows", "docs"]
+
+[package.metadata.requires-dev]
+dev = [{ name = "rclone-python", specifier = ">=0.1.23" }]
 
 [[package]]
 name = "markdown-it-py"
@@ -2256,6 +2264,18 @@ dependencies = [
     { name = "fire" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e8/c2/525e9e9b458c3ca493d9bd0871f3ed9b51446d26fe82d462494de188f848/randomname-0.2.1.tar.gz", hash = "sha256:b79b98302ba4479164b0a4f87995b7bebbd1d91012aeda483341e3e58ace520e", size = 64242, upload-time = "2023-01-29T02:42:26.469Z" }
+
+[[package]]
+name = "rclone-python"
+version = "0.1.23"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "rich" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f4/97/b939d197402e9e07e8f6279639010816c3ae68f811a0ac4c6fdfadf9d3d1/rclone_python-0.1.23.tar.gz", hash = "sha256:ee66792614693a615b877dac04ce4a2b135411cc19e32b4ba7a6079d868b987b", size = 22040, upload-time = "2025-07-12T14:12:54.47Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7d/29/4e3ca152bf6e3415d06a0b34cd5091a8954062a724d879f2875d92924b74/rclone_python-0.1.23-py3-none-any.whl", hash = "sha256:a38902fef0dad5c54c3895efad390e75d65f3b71c895d947d08c191210a8ccf8", size = 15493, upload-time = "2025-07-12T14:12:53.399Z" },
+]
 
 [[package]]
 name = "referencing"

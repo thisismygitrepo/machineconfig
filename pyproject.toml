@@ -57,3 +57,8 @@ where = ["src"]
 
 [tool.uv.sources]
 crocodile = { path = "../crocodile", editable = true }
+
+[dependency-groups]
+dev = [
+    "rclone-python>=0.1.23",
+]
