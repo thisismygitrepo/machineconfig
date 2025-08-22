@@ -6,7 +6,7 @@ import argparse
 from crocodile.file_management import P as PathExtended
 from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.utils import PROGRAM_PATH, display_options
-from machineconfig.utils.ve_utils.ve1 import get_ve_path_and_ipython_profile, get_ve_activate_line
+from machineconfig.utils.ve import get_ve_path_and_ipython_profile, get_ve_activate_line
 from typing import Optional
 from rich.console import Console
 from rich.panel import Panel

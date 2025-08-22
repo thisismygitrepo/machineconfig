@@ -1,95 +1,61 @@
-"""python and ve installation related utils
-"""
-
 from crocodile.file_management import P as PathExtended
-
+from machineconfig.utils.utils2 import read_ini
 import platform
-from typing import Optional, Literal
-from rich.console import Console
-from machineconfig.utils.utils2 import pprint
-
-from machineconfig.utils.ve_utils.ve1 import get_installed_interpreters
-from machineconfig.utils.ve_utils.ve1 import get_ve_specs
-from machineconfig.utils.ve_utils.ve2 import get_bash_repos_install_script
-from machineconfig.utils.ve_utils.ve2 import get_ps1_repos_install_script
-from machineconfig.utils.ve_utils.ve2 import get_bash_ve_install_script
-from machineconfig.utils.ve_utils.ve2 import get_ps1_ve_install_script
-from machineconfig.utils.ve_utils.ve2 import create_symlinks
-from machineconfig.utils.ve_utils.ve2 import make_installation_recipe
-from rich.panel import Panel
+from typing import Optional
 
 
-def get_ve_install_script(ve_name: Optional[str] = None, py_version: Optional[str] = None,
-                          install_crocodile_and_machineconfig: Optional[bool] = None,
-                          delete_if_exists: bool=True,
-                          ) -> str:
-    console = Console()
-    if py_version is None:
-        console.print(Panel("""
-{'=' * 60}
-🔍 AVAILABLE PYTHON VERSIONS
-{'=' * 60}
-""", title="Python Versions", expand=False))
-        res = get_installed_interpreters()
-        for _idx, item in res:
-            print(f"{_idx}. {item}")
-        console.print(Panel("", title="Python Versions", expand=False))
-        dotted_py_version = input("🔢 Enter python version (3.11): ") or "3.11"
+def get_ve_path_and_ipython_profile(init_path: PathExtended) -> tuple[Optional[str], Optional[str]]:
+    """Works with .ve.ini .venv and .ve_path"""
+    ve_path: Optional[str] = None
+    ipy_profile: Optional[str] = None
+    tmp = init_path
+    for _ in init_path.parents:
+        if tmp.joinpath(".ve.ini").exists():
+            ini = read_ini(tmp.joinpath(".ve.ini"))
+            ve_path = ini["specs"]["ve_path"]
+            # py_version = ini["specs"]["py_version"]
+            ipy_profile = ini["specs"]["ipy_profile"]
+            print(f"🐍 Using Virtual Environment: {ve_path}. This is based on this file {tmp.joinpath('.ve.ini')}")
+            print(f"✨ Using IPython profile: {ipy_profile}")
+            break
+        if tmp.joinpath(".ve_path").exists() or tmp.joinpath(".ipy_profile").exists():
+            if tmp.joinpath(".ipy_profile").exists():
+                ipy_profile = tmp.joinpath(".ipy_profile").read_text().rstrip()
+                print(f"✨ Using IPython profile: {ipy_profile}")
+            if tmp.joinpath(".ve_path").exists():
+                ve_path = tmp.joinpath(".ve_path").read_text().rstrip().replace("\n", "")
+                print(f"🔮 Using Virtual Environment found @ {tmp}/.ve_path: {ve_path}")
+            break
+        if tmp.joinpath(".venv").exists():
+            ve_path = tmp.joinpath(".venv").resolve().__str__()
+            break
+        tmp = tmp.parent
+    return ve_path, ipy_profile
+
+
+def get_repo_root(choice_file: str) -> Optional[str]:
+    from git import Repo, InvalidGitRepositoryError
+    try:
+        repo = Repo(PathExtended(choice_file), search_parent_directories=True)
+        repo_root = str(repo.working_tree_dir) if repo.working_tree_dir else None
+    except InvalidGitRepositoryError:
+        repo_root = None
+    return repo_root
+
+def get_ve_activate_line(ve_root: str):
+    if platform.system() == "Windows": activate_ve_line = f". {ve_root}/Scripts/activate.ps1"
+    elif platform.system() in ["Linux", "Darwin"]: activate_ve_line = f". {ve_root}/bin/activate"
+    else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
+    return activate_ve_line
+
+def get_installed_interpreters() -> list[PathExtended]:
+    system = platform.system()
+    if system == "Windows":
+        tmp: list[PathExtended] = PathExtended.get_env().PATH.search("python.exe").reduce(func=lambda x, y: x+y).list[1:]
     else:
-        dotted_py_version = py_version
-
-    if ve_name is None:
-        console.rule("📦 Existing Virtual Environments")
-        for ve_path in PathExtended.home().joinpath("venvs").search("*", files=False):
-            try:
-                ve_specs = get_ve_specs(ve_path)
-            except Exception as _e:
-                continue
-            pprint(ve_specs, ve_path.stem)
-        default_ve_name = PathExtended.cwd().name
-        ve_name = input(f"📝 Enter virtual environment name ({default_ve_name}): ") or default_ve_name
-
-    if install_crocodile_and_machineconfig is None:
-        essential_repos = input("🔄 Install essential repos? (y/[n]): ") == "y"
-        other_repos = input("📦 Input space separated other packages: ")
-    else:
-        essential_repos = install_crocodile_and_machineconfig
-        other_repos = ""
-
-    env_path = PathExtended.home().joinpath("venvs", ve_name)
-    if delete_if_exists and env_path.exists():
-        sure = input(f"⚠️ An existing environment found. Are you sure you want to delete {env_path} before making new one? (y/[n]): ") == "y"
-        console.rule("🗑️ Deleting existing environment with similar name")
-        env_path.delete(sure=sure)
-
-    system: Literal["Windows", "Linux", "Darwin"]
-    if platform.system() == "Windows":
-        system = "Windows"
-        script = get_ps1_ve_install_script(ve_name=ve_name, py_version=dotted_py_version, use_web=False, system=system)
-    elif platform.system() in ["Linux", "Darwin"]:
-        system = "Linux" if platform.system() == "Linux" else "Darwin"
-        # Map Darwin to Linux for functions that don't support Darwin
-        system_for_functions = "Linux" if system == "Darwin" else system
-        script = get_bash_ve_install_script(ve_name=ve_name, py_version=dotted_py_version, use_web=False, system=system_for_functions)
-    else:
-        raise NotImplementedError(f"❌ System {platform.system()} not supported.")
-
-    if essential_repos:
-        if system == "Windows":
-            script += "\n" + get_ps1_repos_install_script(ve_name=ve_name, use_web=False, system=system)
-        elif system in ["Linux", "Darwin"]:
-            system_for_functions = "Linux" if system == "Darwin" else system
-            script += "\n" + get_bash_repos_install_script(ve_name=ve_name, use_web=False, system=system_for_functions)
-        else:
-            raise NotImplementedError(f"❌ System {system} not supported.")
-
-    if other_repos != "":
-        script += "\nuv pip install " + other_repos
-
-    link_ve: bool = input("🔗 Create symlinks? [y/[n]] ") == "y"
-    if link_ve: 
-        system_for_functions = "Linux" if system == "Darwin" else system
-        create_symlinks(repo_root=PathExtended.cwd(), ve_name=ve_name, dotted_py_version=dotted_py_version, system=system_for_functions, ipy_profile="default")
-    make_installation_recipe(repo_root=str(PathExtended.cwd()), ve_name=ve_name, py_version=dotted_py_version)
-    return script
-
+        all_matches: list[PathExtended] = PathExtended.get_env().PATH.search("python3*").reduce(lambda x, y: x+y).list
+        tmp = list(set([x for x in all_matches if (not x.is_symlink()) and ("-" not in str(x))]))
+    print("🔍 Found Python interpreters:")
+    for interpreter_path in tmp:
+        print(interpreter_path)
+    return list(set([PathExtended(x) for x in tmp]))

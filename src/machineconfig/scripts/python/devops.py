@@ -17,7 +17,6 @@ BOX_WIDTH = 150  # width for box drawing
 class Options(Enum):
     update         = '🔄 UPDATE essential repos'
     cli_install    = '⚙️ DEVAPPS install'
-    ve             = '🐍 VE install'
     sym_path_shell = '🔗 SYMLINKS, PATH & SHELL PROFILE'
     sym_new        = '🆕 SYMLINKS new'
     ssh_add_pubkey = '🔑 SSH add pub key to this machine'
@@ -84,11 +83,6 @@ def main(which: Optional[str] = None):
         console.print(Panel("🔄 Updating essential repositories...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_update_repos as helper
         program = helper.main()
-
-    elif choice_key == Options.ve.value:
-        console.print(Panel("🐍 Setting up virtual environment...", width=BOX_WIDTH, border_style="blue"))
-        from machineconfig.utils.ve import get_ve_install_script
-        program = get_ve_install_script()
 
     elif choice_key == Options.cli_install.value:
         console.print(Panel("⚙️  Installing development applications...", width=BOX_WIDTH, border_style="blue"))

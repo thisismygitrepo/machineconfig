@@ -12,9 +12,8 @@ from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_in
 from machineconfig.scripts.python.helpers.helpers4 import convert_kwargs_to_fire_kwargs_str
 from machineconfig.scripts.python.helpers.helpers4 import parse_pyfile
 from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
-from machineconfig.utils.ve_utils.ve1 import get_repo_root
+from machineconfig.utils.ve import get_repo_root, get_ve_activate_line, get_ve_path_and_ipython_profile
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, match_file_name, sanitize_path
-from machineconfig.utils.ve_utils.ve1 import get_ve_activate_line, get_ve_path_and_ipython_profile
 from crocodile.file_management import P as PathExtended
 from machineconfig.utils.io_save import save_toml
 from machineconfig.utils.utils2 import randstr, read_toml
