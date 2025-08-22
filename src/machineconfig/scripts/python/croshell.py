@@ -43,7 +43,7 @@ from rich.console import Console
 console = Console()
 p = PathExtended(r'{path}').absolute()
 try:
-    dat = PathExtended.readit()
+    dat = p.readit()
     if isinstance(dat, dict):
         panel_title = f"📄 File Data: {{p.name}}"
         console.print(Panel(Text(str(dat), justify="left"), title=panel_title, expand=False))
