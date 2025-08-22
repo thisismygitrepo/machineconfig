@@ -14,7 +14,7 @@ from machineconfig.scripts.python.helpers.helpers4 import parse_pyfile
 from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
 from machineconfig.utils.ve_utils.ve1 import get_repo_root
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, match_file_name, sanitize_path
-from machineconfig.utils.ve_utils.ve1 import get_ve_activate_line, get_ve_name_and_ipython_profile
+from machineconfig.utils.ve_utils.ve1 import get_ve_activate_line, get_ve_path_and_ipython_profile
 from crocodile.file_management import P as PathExtended
 from machineconfig.utils.io_save import save_toml
 from machineconfig.utils.utils2 import randstr, read_toml
@@ -72,9 +72,9 @@ def main() -> None:
     repo_root = get_repo_root(str(choice_file))
     print(f"💾 Selected file: {choice_file}.\nRepo root: {repo_root}")
 
-    ve_name_suggested, ipy_profile = get_ve_name_and_ipython_profile(choice_file)
+    ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
     if ipy_profile is None: ipy_profile = "default"
-    activate_ve_line  = get_ve_activate_line(ve_name=args.ve or ve_name_suggested, a_path=str(choice_file))
+    activate_ve_line  = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/venvs/ve")
 
     # Convert args.kw to dictionary
     if choice_file.suffix == ".py":

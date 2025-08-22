@@ -6,7 +6,7 @@ import argparse
 from crocodile.file_management import P as PathExtended
 from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.utils import PROGRAM_PATH, display_options
-from machineconfig.utils.ve_utils.ve1 import get_ve_name_and_ipython_profile, get_ve_activate_line
+from machineconfig.utils.ve_utils.ve1 import get_ve_path_and_ipython_profile, get_ve_activate_line
 from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
@@ -168,15 +168,14 @@ print_logo(logo="crocodile")
 
     pyfile.write_text(total_program, encoding='utf-8')
 
-    ve_profile_suggested: Optional[str] = None
-    if ipython_profile is None:
-        ve_profile_suggested, ipython_profile = get_ve_name_and_ipython_profile(PathExtended(file))
-        ipython_profile = ipython_profile if ipython_profile is not None else "default"
-    ve_activateion_line = get_ve_activate_line(ve_name=args.ve or ve_profile_suggested, a_path=str(PathExtended.cwd()))
+    ve_root_from_file, ipython_profile = get_ve_path_and_ipython_profile(PathExtended(file))
+    ipython_profile = ipython_profile if ipython_profile is not None else "default"
+    # ve_activateion_line = get_ve_activate_line(ve_name=args.ve or ve_profile_suggested, a_path=str(PathExtended.cwd()))
+    activate_ve_line  = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/venvs/ve")
     final_program = f"""
 #!/bin/bash
 
-{ve_activateion_line}
+{activate_ve_line}
 
 """
     if args.jupyter:

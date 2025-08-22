@@ -9,12 +9,12 @@ from machineconfig.utils.ve_utils.ve1 import get_ve_specs
 from machineconfig.scripts.python.repos import record_a_repo, install_repos
 import platform
 
-from machineconfig.utils.ve_utils.ve1 import get_ve_name_and_ipython_profile
+from machineconfig.utils.ve_utils.ve1 import get_ve_path_and_ipython_profile
 
 
 def checkout_version(version: str, repo_root: PathExtended, exclude_editable: bool=False):
     """Checkout a version of the repo and install its requirements."""
-    ve_name, _ipyprofile = get_ve_name_and_ipython_profile(init_path=repo_root)
+    ve_name, _ipyprofile = get_ve_path_and_ipython_profile(init_path=repo_root)
     if ve_name is None: raise ValueError("❌ No virtual environment found.")
     ve_path = PathExtended.home().joinpath("venvs", ve_name or "ve")
     ve_specs = get_ve_specs(ve_path)
