@@ -25,6 +25,7 @@ def get_ve_path_and_ipython_profile(init_path: PathExtended) -> tuple[Optional[s
             ve_path = tmp.joinpath(".ve_path").read_text().rstrip().replace("\n", "")
             print(f"🔮 Using Virtual Environment found @ {tmp}/.ve_path: {ve_path}")
         if ve_path is None and tmp.joinpath(".venv").exists():
+            print(f"🔮 Using Virtual Environment found @ {tmp}/.venv")
             ve_path = tmp.joinpath(".venv").resolve().__str__()
         tmp = tmp.parent
         if ve_path and ipy_profile:
