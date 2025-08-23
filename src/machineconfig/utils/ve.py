@@ -12,24 +12,25 @@ def get_ve_path_and_ipython_profile(init_path: PathExtended) -> tuple[Optional[s
     for _ in init_path.parents:
         if tmp.joinpath(".ve.ini").exists():
             ini = read_ini(tmp.joinpath(".ve.ini"))
-            ve_path = ini["specs"]["ve_path"]
-            # py_version = ini["specs"]["py_version"]
-            ipy_profile = ini["specs"]["ipy_profile"]
-            print(f"🐍 Using Virtual Environment: {ve_path}. This is based on this file {tmp.joinpath('.ve.ini')}")
-            print(f"✨ Using IPython profile: {ipy_profile}")
-            break
-        if tmp.joinpath(".ve_path").exists() or tmp.joinpath(".ipy_profile").exists():
-            if tmp.joinpath(".ipy_profile").exists():
-                ipy_profile = tmp.joinpath(".ipy_profile").read_text().rstrip()
-                print(f"✨ Using IPython profile: {ipy_profile}. This is based on this file {tmp.joinpath('.ipy_profile')}")
-            if tmp.joinpath(".ve_path").exists():
-                ve_path = tmp.joinpath(".ve_path").read_text().rstrip().replace("\n", "")
-                print(f"🔮 Using Virtual Environment found @ {tmp}/.ve_path: {ve_path}")
-            break
-        if tmp.joinpath(".venv").exists():
+            if ve_path is None:
+                ve_path = ini["specs"]["ve_path"]
+                print(f"🐍 Using Virtual Environment: {ve_path}. This is based on this file {tmp.joinpath('.ve.ini')}")
+            if ipy_profile is None:
+                ipy_profile = ini["specs"]["ipy_profile"]
+                print(f"✨ Using IPython profile: {ipy_profile}")
+        if ipy_profile is None and tmp.joinpath(".ipy_profile").exists():
+            ipy_profile = tmp.joinpath(".ipy_profile").read_text().rstrip()
+            print(f"✨ Using IPython profile: {ipy_profile}. This is based on this file {tmp.joinpath('.ipy_profile')}")
+        if ve_path is None and tmp.joinpath(".ve_path").exists():
+            ve_path = tmp.joinpath(".ve_path").read_text().rstrip().replace("\n", "")
+            print(f"🔮 Using Virtual Environment found @ {tmp}/.ve_path: {ve_path}")
+        if ve_path is None and tmp.joinpath(".venv").exists():
             ve_path = tmp.joinpath(".venv").resolve().__str__()
-            break
         tmp = tmp.parent
+        if ve_path and ipy_profile:
+            break
+    else:
+        print("🔍 No Virtual Environment or IPython profile found.")
     return ve_path, ipy_profile
 
 
