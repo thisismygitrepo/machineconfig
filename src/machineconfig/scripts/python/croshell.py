@@ -18,6 +18,7 @@ console = Console()
 
 def add_print_header_pycode(path: str, title: str):
     return f"""
+from crocodile.file_management import P as PathExtended 
 pycode = PathExtended(r'{path}').read_text(encoding="utf-8")
 pycode = pycode.split("except Exception: print(pycode)")[2]
 
