@@ -3,7 +3,7 @@
 
 from platform import system
 from crocodile.meta import SSH, Terminal
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.utils import PROGRAM_PATH, choose_ssh_host
 
 def main():

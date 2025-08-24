@@ -3,7 +3,7 @@ croshell
 """
 
 import argparse
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.utils import PROGRAM_PATH, display_options
 from machineconfig.utils.ve import get_ve_path_and_ipython_profile, get_ve_activate_line
@@ -18,7 +18,7 @@ console = Console()
 
 def add_print_header_pycode(path: str, title: str):
     return f"""
-from crocodile.file_management import P as PathExtended 
+from machineconfig.utils.path_reduced import P as PathExtended 
 pycode = PathExtended(r'{path}').read_text(encoding="utf-8")
 pycode = pycode.split("except Exception: print(pycode)")[2]
 

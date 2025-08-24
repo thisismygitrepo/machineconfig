@@ -4,7 +4,7 @@
 
 from platform import system
 from machineconfig.utils.utils import LIBRARY_ROOT, display_options
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 from rich.console import Console
 from rich.panel import Panel
 from rich import box # Import box

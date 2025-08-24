@@ -4,7 +4,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
 from machineconfig.utils.utils2 import randstr
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 from crocodile.meta import Terminal
 
 

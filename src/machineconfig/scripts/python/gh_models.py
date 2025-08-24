@@ -1,6 +1,6 @@
 # as per https://github.com/marketplace/models/azure-openai/o1-preview
 from openai import OpenAI
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.utils2 import read_ini
 from rich import print as rprint
 from rich.panel import Panel

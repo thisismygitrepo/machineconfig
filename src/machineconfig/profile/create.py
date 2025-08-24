@@ -6,7 +6,7 @@ This script Takes away all config files from the computer, place them in one dir
 
 
 from crocodile.meta import Terminal
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.utils import symlink_func, symlink_copy, LIBRARY_ROOT, REPO_ROOT, display_options
 from machineconfig.profile.shell import create_default_shell_profile
 # import os

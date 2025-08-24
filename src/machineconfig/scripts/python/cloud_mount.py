@@ -4,7 +4,7 @@
 
 from machineconfig.utils.utils import PROGRAM_PATH, choose_one_option
 from machineconfig.utils.utils2 import read_ini
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 
 import platform
 import argparse

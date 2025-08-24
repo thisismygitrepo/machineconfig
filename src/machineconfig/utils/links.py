@@ -1,4 +1,4 @@
-from crocodile.file_management import P as PathExtended, PLike
+from machineconfig.utils.path_reduced import P as PathExtended, PLike
 from machineconfig.utils.utils2 import randstr
 from rich.console import Console
 from rich.panel import Panel

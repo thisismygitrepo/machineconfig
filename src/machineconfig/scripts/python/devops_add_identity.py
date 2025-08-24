@@ -3,7 +3,7 @@
 
 
 # from platform import system
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.options import display_options
 from rich.panel import Panel
 from rich.text import Text

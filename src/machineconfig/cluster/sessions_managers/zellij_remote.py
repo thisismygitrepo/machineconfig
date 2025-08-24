@@ -6,6 +6,8 @@ import json
 import uuid
 from datetime import datetime
 
+from rich.console import Console
+
 from machineconfig.cluster.sessions_managers.zellij_utils.remote_executor import RemoteExecutor
 from machineconfig.cluster.sessions_managers.zellij_utils.layout_generator import LayoutGenerator
 from machineconfig.cluster.sessions_managers.zellij_utils.process_monitor import ProcessMonitor
@@ -14,6 +16,7 @@ from machineconfig.cluster.sessions_managers.zellij_utils.status_reporter import
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+console = Console()
 TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "zellij_layouts", "layout_manager")
 
 
@@ -36,7 +39,14 @@ class ZellijRemoteLayoutGenerator:
         return self.session_manager.copy_layout_to_remote(local_layout_file, random_suffix)
 
     def create_zellij_layout(self, tab_config: Dict[str, Tuple[str, str]], output_dir: Optional[str] = None) -> str:
-        logger.info(f"Creating Zellij layout with {len(tab_config)} tabs for remote '{self.remote_name}'")
+        # Enhanced Rich logging for remote layout creation
+        tab_count = len(tab_config)
+        console.print(f"[bold cyan]📋 Creating Zellij layout[/bold cyan] [bright_green]with {tab_count} tabs[/bright_green] [magenta]for remote[/magenta] [bold yellow]'{self.remote_name}'[/bold yellow]")
+        
+        # Display tab summary for remote
+        for tab_name, (cwd, _) in tab_config.items():
+            console.print(f"  [yellow]→[/yellow] [bold]{tab_name}[/bold] [dim]in[/dim] [blue]{cwd}[/blue] [dim]on[/dim] [yellow]{self.remote_name}[/yellow]")
+        
         self.tab_config = tab_config.copy()
         if output_dir:
             output_path = Path(output_dir)

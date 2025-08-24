@@ -2,7 +2,7 @@
 """
 
 # import subprocess
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.utils2 import read_ini, read_toml
 from machineconfig.utils.utils import LIBRARY_ROOT, DEFAULTS_PATH, print_code, choose_cloud_interactively, choose_multiple_options
 from machineconfig.scripts.python.helpers.helpers2 import ES

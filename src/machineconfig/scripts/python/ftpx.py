@@ -7,7 +7,7 @@ Currently, the only way to work around this is to predifine the host in ~/.ssh/c
 
 import argparse
 from crocodile.meta import SSH
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.scripts.python.helpers.helpers2 import ES
 from machineconfig.utils.utils2 import pprint
 

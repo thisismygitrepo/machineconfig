@@ -1,7 +1,7 @@
 """Symlinks
 """
 
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 # from machineconfig.utils.utils import display_options
 
 

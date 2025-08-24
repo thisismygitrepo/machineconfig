@@ -4,7 +4,7 @@ import inspect
 import os
 # import argparse
 from crocodile.core import Display
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 # from machineconfig.utils.utils import choose_ssh_host
 
 

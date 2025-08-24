@@ -4,7 +4,7 @@
 
 import socket
 from machineconfig.utils.utils import choose_ssh_host, write_shell_script_to_default_program_path
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 
 prefix = """
 

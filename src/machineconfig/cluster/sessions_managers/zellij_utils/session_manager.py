@@ -5,9 +5,13 @@ Zellij session management utilities for remote operations.
 import logging
 from typing import Dict, Any, Optional
 from pathlib import Path
+
+from rich.console import Console
+
 from .remote_executor import RemoteExecutor
 
 logger = logging.getLogger(__name__)
+console = Console()
 
 
 class SessionManager:
@@ -32,7 +36,8 @@ class SessionManager:
         if not copy_result["success"]:
             raise RuntimeError(f"Failed to copy layout file to remote: {copy_result['error']}")
         
-        logger.info(f"Zellij layout file copied to remote: {self.remote_executor.remote_name}:{remote_layout_file}")
+        # Enhanced Rich logging
+        console.print(f"[bold green]📁 Zellij layout file copied to remote:[/bold green] [yellow]{self.remote_executor.remote_name}[/yellow][cyan]:{remote_layout_file}[/cyan]")
         return remote_layout_file
     
     def check_zellij_session_status(self) -> Dict[str, Any]:
@@ -76,15 +81,16 @@ class SessionManager:
             else:
                 raise ValueError("No layout file path provided.")
             
-            logger.info(f"Starting Zellij session '{self.session_name}' on remote '{self.remote_executor.remote_name}' with layout: {remote_layout_file}")
+            # Enhanced Rich logging for session start
+            console.print(f"[bold cyan]🚀 Starting Zellij session[/bold cyan] [yellow]'{self.session_name}'[/yellow] [dim]on remote[/dim] [bold yellow]'{self.remote_executor.remote_name}'[/bold yellow] [dim]with layout:[/dim] [blue]{remote_layout_file}[/blue]")
             
             # Start Zellij session with layout
             start_cmd = f"zellij --layout {remote_layout_file} a -b {self.session_name}"
-            logger.info(f"Executing command: {start_cmd}")
+            console.print(f"[dim]Executing:[/dim] [green]{start_cmd}[/green]")
             result = self.remote_executor.run_command(start_cmd, timeout=30)
             
             if result.returncode == 0:
-                logger.info(f"Zellij session '{self.session_name}' started on {self.remote_executor.remote_name}")
+                console.print(f"[bold green]✅ Zellij session[/bold green] [yellow]'{self.session_name}'[/yellow] [green]started successfully on[/green] [bold yellow]{self.remote_executor.remote_name}[/bold yellow]")
                 return {
                     "success": True,
                     "session_name": self.session_name,

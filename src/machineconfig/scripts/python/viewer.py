@@ -1,5 +1,5 @@
 from pathlib import Path
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.io_save import save_pickle
 from plotly import graph_objects as go
 import plotly.express as px

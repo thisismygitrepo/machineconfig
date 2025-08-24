@@ -2,7 +2,7 @@
 """
 
 from machineconfig.utils.utils2 import randstr, read_json
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.io_save import save_json
 import crocodile.environment as env
 from machineconfig.utils.utils import LIBRARY_ROOT

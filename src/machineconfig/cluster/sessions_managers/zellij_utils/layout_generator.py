@@ -9,7 +9,10 @@ from typing import Dict, List, Tuple
 from pathlib import Path
 import logging
 
+from rich.console import Console
+
 logger = logging.getLogger(__name__)
+console = Console()
 
 
 class LayoutGenerator:
@@ -114,7 +117,8 @@ class LayoutGenerator:
             with open(layout_file, 'w', encoding='utf-8') as f:
                 f.write(layout_content)
             
-            logger.info(f"Zellij layout file created: {layout_file.absolute()}")
+            # Enhanced Rich logging
+            console.print(f"[bold green]✅ Zellij layout file created:[/bold green] [cyan]{layout_file.absolute()}[/cyan]")
             return str(layout_file.absolute())
             
         except OSError as e:

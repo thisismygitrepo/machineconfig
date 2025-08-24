@@ -8,8 +8,11 @@ from typing import Dict, List, Optional, Any
 from pathlib import Path
 import logging
 
+from rich.console import Console
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+console = Console()
 TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "session_manager", "zellij", "layout_manager")
 
 
@@ -78,7 +81,14 @@ class ZellijLayoutGenerator:
     
     def create_zellij_layout(self, tab_config: Dict[str, tuple[str, str]], output_dir: Optional[str] = None, session_name: Optional[str] = None) -> str:
         ZellijLayoutGenerator._validate_tab_config(tab_config)
-        logger.info(f"Creating Zellij layout with {len(tab_config)} tabs")
+        
+        # Enhanced Rich logging
+        tab_count = len(tab_config)
+        console.print(f"[bold cyan]📋 Creating Zellij layout[/bold cyan] [bright_green]with {tab_count} tabs[/bright_green]")
+        
+        # Display tab summary with emojis and colors
+        for tab_name, (cwd, command) in tab_config.items():
+            console.print(f"  [yellow]→[/yellow] [bold]{tab_name}[/bold] [dim]in[/dim] [blue]{cwd}[/blue]")
         
         # Store session name and entire tab config for status checking
         self.session_name = session_name or "default"
@@ -104,7 +114,9 @@ class ZellijLayoutGenerator:
                 with open(layout_file, 'w', encoding='utf-8') as f:
                     f.write(layout_content)
                 self.layout_path = str(layout_file.absolute())
-            logger.info(f"Zellij layout file created: {self.layout_path}")
+            
+            # Enhanced Rich logging for file creation
+            console.print(f"[bold green]✅ Zellij layout file created:[/bold green] [cyan]{self.layout_path}[/cyan]")
             return self.layout_path
         except OSError as e:
             logger.error(f"Failed to create layout file: {e}")
@@ -269,47 +281,72 @@ class ZellijLayoutGenerator:
         }
 
     def print_status_report(self) -> None:
+        from rich.panel import Panel
+        from rich.table import Table
+        
         status = self.get_comprehensive_status()
         
-        print("=" * 60)
-        print("🔍 ZELLIJ LAYOUT STATUS REPORT")
-        print("=" * 60)
+        # Create main panel
+        console.print()
+        console.print(Panel.fit("🔍 ZELLIJ LAYOUT STATUS REPORT", style="bold cyan"))
         
         # Zellij session status
         zellij = status["zellij_session"]
         if zellij.get("zellij_running", False):
             if zellij.get("session_exists", False):
-                print(f"✅ Zellij session '{self.session_name}' is running")
+                console.print(f"[bold green]✅ Zellij session[/bold green] [yellow]'{self.session_name}'[/yellow] [green]is running[/green]")
             else:
-                print(f"⚠️  Zellij is running but session '{self.session_name}' not found")
+                console.print(f"[bold yellow]⚠️  Zellij is running but session[/bold yellow] [yellow]'{self.session_name}'[/yellow] [yellow]not found[/yellow]")
         else:
-            print(f"❌ Zellij session issue: {zellij.get('error', 'Unknown error')}")
+            error_msg = zellij.get('error', 'Unknown error')
+            console.print(f"[bold red]❌ Zellij session issue:[/bold red] [red]{error_msg}[/red]")
         
-        print()
+        console.print()
         
-        # Commands status
-        print("📋 COMMAND STATUS:")
-        print("-" * 40)
+        # Commands status table
+        table = Table(title="📋 COMMAND STATUS", show_header=True, header_style="bold magenta")
+        table.add_column("Tab", style="cyan", no_wrap=True)
+        table.add_column("Status", justify="center")
+        table.add_column("PID", justify="center", style="dim")
+        table.add_column("Memory", justify="center", style="blue")
+        table.add_column("Command", style="green", max_width=40)
         
         for tab_name, cmd_status in status["commands"].items():
+            # Determine status display
             if cmd_status.get("running", False):
-                print(f"✅ {tab_name}: Running")
-                if cmd_status.get("processes"):
-                    for proc in cmd_status["processes"][:2]:  # Show first 2 processes
-                        print(f"   └─ PID {proc['pid']}: {proc['name']} ({proc['status']})")
+                status_text = "[bold green]✅ Running[/bold green]"
+                processes = cmd_status.get("processes", [])
+                if processes:
+                    proc = processes[0]  # Show first process
+                    pid = str(proc.get('pid', 'N/A'))
+                    memory = f"{proc.get('memory_mb', 0):.1f}MB" if proc.get('memory_mb') else "N/A"
+                else:
+                    pid = "N/A"
+                    memory = "N/A"
             else:
-                print(f"❌ {tab_name}: Not running")
-            print(f"   Command: {cmd_status.get('command', 'Unknown')}")
-            print()
+                status_text = "[bold red]❌ Stopped[/bold red]"
+                pid = "N/A"
+                memory = "N/A"
+            
+            command = cmd_status.get('command', 'Unknown')
+            # Truncate long commands
+            if len(command) > 35:
+                command = command[:32] + "..."
+            
+            table.add_row(tab_name, status_text, pid, memory, command)
         
-        # Summary
+        console.print(table)
+        console.print()
+        
+        # Enhanced summary
         summary = status["summary"]
-        print("📊 SUMMARY:")
-        print(f"   Total commands: {summary['total_commands']}")
-        print(f"   Running: {summary['running_commands']}")
-        print(f"   Stopped: {summary['stopped_commands']}")
-        print(f"   Session healthy: {'✅' if summary['session_healthy'] else '❌'}")
-        print("=" * 60)
+        from rich.panel import Panel
+        summary_text = f"""[bold]Total commands:[/bold] {summary['total_commands']}
+[green]Running:[/green] {summary['running_commands']}
+[red]Stopped:[/red] {summary['stopped_commands']}
+[yellow]Session healthy:[/yellow] {'✅' if summary['session_healthy'] else '❌'}"""
+        
+        console.print(Panel(summary_text, title="📊 Summary", style="blue"))
 
 def created_zellij_layout(tab_config: Dict[str, tuple[str, str]], output_dir: Optional[str] = None) -> str:
     generator = ZellijLayoutGenerator()
@@ -318,10 +355,18 @@ def run_zellij_layout(tab_config: Dict[str, tuple[str, str]], session_name: Opti
     if not session_name:
         session_name = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
     layout_path = created_zellij_layout(tab_config)
-    cmd = f"zellij delete-session --force {session_name}; zellij --layout {layout_path} a -b {session_name}"
-    import subprocess
-    subprocess.run(cmd, shell=True, check=True)
-    print(f"zellij layout is running @ {session_name}")
+    
+    # Use enhanced command execution
+    try:
+        from .enhanced_command_runner import enhanced_zellij_session_start
+        enhanced_zellij_session_start(session_name, layout_path)
+    except ImportError:
+        # Fallback to original implementation
+        cmd = f"zellij delete-session --force {session_name}; zellij --layout {layout_path} a -b {session_name}"
+        import subprocess
+        subprocess.run(cmd, shell=True, check=True)
+        console.print(f"[bold green]🚀 Zellij layout is running[/bold green] [yellow]@[/yellow] [bold cyan]{session_name}[/bold cyan]")
+    
     return session_name
 
 

@@ -5,7 +5,7 @@ https://glitchbone.github.io/vscode-base16-term/#/3024
 """
 
 
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.utils import LIBRARY_ROOT
 from machineconfig.utils.installer_utils.installer_class import Installer
 import subprocess

@@ -3,7 +3,7 @@ cargo install
 """
 
 from crocodile.meta import Terminal
-from crocodile.file_management import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended
 import platform
 
 

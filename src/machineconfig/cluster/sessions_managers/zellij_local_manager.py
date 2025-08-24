@@ -6,11 +6,15 @@ import logging
 import subprocess
 from pathlib import Path
 from typing import Optional, Dict, List, Any
+
+from rich.console import Console
+
 from machineconfig.utils.utils5 import Scheduler
 from machineconfig.cluster.sessions_managers.zellij_local import ZellijLayoutGenerator
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+console = Console()
 
 TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "zellij", "local_manager")
 
@@ -38,7 +42,8 @@ class ZellijLocalManager:
             manager.create_zellij_layout(tab_config=tab_config, session_name=full_session_name)
             self.managers.append(manager)
         
-        logger.info(f"Initialized ZellijLocalManager with {len(self.managers)} sessions")
+        # Enhanced Rich logging for initialization
+        console.print(f"[bold green]🔧 Initialized ZellijLocalManager[/bold green] [dim]with[/dim] [bright_green]{len(self.managers)} sessions[/bright_green]")
 
     def get_all_session_names(self) -> List[str]:
         """Get all managed session names."""
@@ -65,7 +70,7 @@ class ZellijLocalManager:
                 # Delete existing session if it exists, then start with layout
                 cmd = f"zellij delete-session --force {session_name}; zellij --layout {layout_path} attach {session_name} --create"
                 
-                logger.info(f"Starting session '{session_name}' with layout: {layout_path}")
+                console.print(f"[bold cyan]🚀 Starting session[/bold cyan] [yellow]'{session_name}'[/yellow] [dim]with layout:[/dim] [blue]{layout_path}[/blue]")
                 result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
                 
                 if result.returncode == 0:
@@ -73,13 +78,13 @@ class ZellijLocalManager:
                         "success": True,
                         "message": f"Session '{session_name}' started successfully"
                     }
-                    logger.info(f"✅ Session '{session_name}' started successfully")
+                    console.print(f"[bold green]✅ Session[/bold green] [yellow]'{session_name}'[/yellow] [green]started successfully[/green]")
                 else:
                     results[session_name] = {
                         "success": False,
                         "error": result.stderr or result.stdout
                     }
-                    logger.error(f"❌ Failed to start session '{session_name}': {result.stderr}")
+                    console.print(f"[bold red]❌ Failed to start session[/bold red] [yellow]'{session_name}'[/yellow][red]:[/red] [dim]{result.stderr}[/dim]")
                     
             except Exception as e:
                 # Use a fallback key since session_name might not be defined here
