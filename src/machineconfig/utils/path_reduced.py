@@ -8,7 +8,6 @@ from crocodile.file_management_helpers.file2 import Compression
 from crocodile.file_management_helpers.file5 import Read
 from pathlib import Path
 from datetime import datetime
-import os
 import sys
 import subprocess
 from typing import Any, Optional, Union, Callable, TypeAlias, Literal
@@ -40,16 +39,6 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             import shutil
             shutil.rmtree(self, ignore_errors=False)
         if verbose: print(f"🗑️ ❌ DELETED {repr(self)}.")
-        return self
-    def send2trash(self, verbose: bool = True) -> 'P':
-        if self.exists():
-            from send2trash import send2trash
-            send2trash(self.resolve().to_str())
-            if verbose: print(f"🗑️ TRASHED {repr(self)}")
-            return self  # do not expand user symlinks.
-        elif verbose:
-            print(f"💥 Could NOT trash {self}")
-            return self
         return self
     def move(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, rel2it: bool = False, overwrite: bool = False, verbose: bool = True, parents: bool = True, content: bool = False) -> 'P':
         path = self._resolve_path(folder=folder, name=name, path=path, default_name=self.absolute().name, rel2it=rel2it)
@@ -117,33 +106,10 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         try:
             return Read.read(filename, **kwargs) if reader is None else reader(str(filename), **kwargs)
         except IOError as ioe: raise IOError from ioe
-    def start(self, opener: Optional[str] = None):
-        if str(self).startswith("http") or str(self).startswith("www"):
-            import webbrowser
-            webbrowser.open(str(self))
-            return self
-        if sys.platform == "win32":  # double quotes fail with cmd. # os.startfile(filename)  # works for files and folders alike, but if opener is given, e.g. opener="start"
-            subprocess.Popen(f"powershell start '{self.expanduser().resolve().to_str()}'" if opener is None else rf'powershell {opener} \'{self}\'')
-            return self  # fails for folders. Start must be passed, but is not defined.
-        elif sys.platform.startswith('linux'):
-            subprocess.call(["xdg-open", self.expanduser().resolve().to_str()])
-            return self  # works for files and folders alike
-        elif sys.platform == 'darwin':
-            subprocess.call(["open", self.expanduser().resolve().to_str()])
-            return self  # works for files and folders alike  # mac
-        else:
-            subprocess.call(["open", self.expanduser().resolve().to_str()])
-            return self
-    def __call__(self, *args: Any, **kwargs: Any) -> None:
-        self.start(*args, **kwargs)
-        return None
     # def append_text(self, appendix: str) -> 'P': self.write_text(self.read_text() + appendix); return self
     def modify_text(self, txt_search: str, txt_alt: str, replace_line: bool = False, notfound_append: bool = False, prepend: bool = False, encoding: str = 'utf-8'):
         if not self.exists(): self.create(parents_only=True).write_text(txt_search)
         return self.write_text(modify_text(txt_raw=self.read_text(encoding=encoding), txt_search=txt_search, txt_alt=txt_alt, replace_line=replace_line, notfound_append=notfound_append, prepend=prepend), encoding=encoding)
-    def download_to_memory(self, allow_redirects: bool = True, timeout: Optional[int] = None, params: Any = None) -> 'Any':
-        import requests
-        return requests.get(self.as_url_str(), allow_redirects=allow_redirects, timeout=timeout, params=params)  # Alternative: from urllib import request; request.urlopen(url).read().decode('utf-8').
     def download(self, folder: OPLike = None, name: Optional[str]= None, allow_redirects: bool = True, timeout: Optional[int] = None, params: Any = None) -> 'P':
         import requests
         response = requests.get(self.as_url_str(), allow_redirects=allow_redirects, timeout=timeout, params=params)  # Alternative: from urllib import request; request.urlopen(url).read().decode('utf-8').
@@ -181,9 +147,6 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         `inplace`: the operation on the path object will affect the underlying file on disk if this flag is raised, otherwise the method will only alter the string.
         `inliue`: the method acts on the path object itself instead of creating a new one if this flag is raised.
         `orig`: whether the method returns the original path object or a new one."""
-    def prepend(self, prefix: str, suffix: Optional[str] = None, verbose: bool = True, **kwargs: Any):
-        """Returns a new path object with the name prepended to the stem of the path."""
-        return self._return(self.parent.joinpath(prefix + self.trunk + (suffix or ''.join(('bruh' + self).suffixes))), operation="rename", verbose=verbose, **kwargs)  # Path('.ssh').suffix fails, 'bruh' fixes it.
     def append(self, name: str = '', index: bool = False, suffix: Optional[str] = None, verbose: bool = True, **kwargs: Any) -> 'P':
         """Returns a new path object with the name appended to the stem of the path. If `index` is True, the name will be the index of the path in the parent directory."""
         if index:
@@ -193,11 +156,8 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         full_suffix = suffix or ''.join(('bruh' + self).suffixes)
         subpath = self.trunk + full_name + full_suffix
         return self._return(self.parent.joinpath(subpath), operation="rename", verbose=verbose, **kwargs)
-    def with_trunk(self, name: str, verbose: bool = True, **kwargs: Any): return self._return(self.parent.joinpath(name + "".join(self.suffixes)), operation="rename", verbose=verbose, **kwargs)  # Complementary to `with_stem` and `with_suffix`
     def with_name(self, name: str, verbose: bool = True, inplace: bool = False, overwrite: bool = False, **kwargs: Any):
         return self._return(self.parent / name, verbose=verbose, operation="rename", inplace=inplace, overwrite=overwrite, **kwargs)
-    def switch(self, key: str, val: str, verbose: bool = True, **kwargs: Any): return self._return(P(str(self).replace(key, val)), operation="rename", verbose=verbose, **kwargs)  # Like string replace method, but `replace` is an already defined method."""
-    def switch_by_index(self, idx: int, val: str, verbose: bool = True, **kwargs: Any): return self._return(P(*[val if index == idx else value for index, value in enumerate(self.parts)]), operation="rename", verbose=verbose, **kwargs)
     # ============================= attributes of object ======================================
     @property
     def trunk(self) -> str: return self.name.split('.')[0]  # """ useful if you have multiple dots in file path where `.stem` fails."""
@@ -219,7 +179,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
     def __sub__(self, other: PLike) -> 'P':
         res = P(str(self).replace(str(other), ""))
         return (res[1:] if str(res[0]) in {"\\", "/"} else res) if len(res) else res  # paths starting with "/" are problematic. e.g ~ / "/path" doesn't work.
-    def rel2cwd(self, ) -> 'P': return self._return(P(self.expanduser().absolute().relative_to(Path.cwd())), operation='Whack')
+    
     def rel2home(self, ) -> 'P': return self._return(P(self.expanduser().absolute().relative_to(Path.home())), operation='Whack')  # very similat to collapseuser but without "~" being added so its consistent with rel2cwd.
     def collapseuser(self, strict: bool = True, placeholder: str = "~") -> 'P':  # opposite of `expanduser` resolve is crucial to fix Windows cases insensitivty problem.
         if strict: assert P.home() in self.expanduser().absolute().resolve(), ValueError(f"`{P.home()}` is not in the subpath of `{self}`")
@@ -264,7 +224,6 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         elif "http" in str(self): return "🕸️ URL " + str(self.as_url_str())
         else: return "📍 Relative " + "'" + str(self) + "'"  # not much can be said about a relative path.
     def to_str(self) -> str: return str(self)
-    def pistol(self): os.system(command=f"pistol {self}")
     def size(self, units: Literal['b', 'kb', 'mb', 'gb'] = 'mb') -> float:  # ===================================== File Specs ==========================================================================================
         total_size = self.stat().st_size if self.is_file() else sum([item.stat().st_size for item in self.rglob("*") if item.is_file()])
         tmp: int
@@ -284,11 +243,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             case "a": tmp = self.stat().st_atime
             case "c": tmp = self.stat().st_ctime
         return datetime.fromtimestamp(tmp, **kwargs)
-    def stats(self) -> dict[str, Any]:
-        return dict(size=self.size(), content_mod_time=self.time(which="m"),
-                    attr_mod_time=self.time(which="c"), last_access_time=self.time(which="a"),
-                    group_id_owner=self.stat().st_gid, user_id_owner=self.stat().st_uid
-                    )
+    
     # ================================ String Nature management ====================================
     def _type(self):
         if self.absolute():
@@ -298,19 +253,11 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         return "📍Relative"
     def clickable(self, ) -> 'P': return self._return(res=P(self.expanduser().resolve().as_uri()), operation='Whack')
     def as_url_str(self) -> 'str': return self.as_posix().replace("https:/", "https://").replace("http:/", "http://")
-    def as_url_obj(self):
-        import urllib3
-        tmp = urllib3.connection_from_url(str(self))
-        return tmp
-    def as_unix(self, ) -> 'P':
-        return self._return(P(str(self).replace('\\', '/').replace('//', '/')), operation='Whack')
     def as_zip_path(self):
         import zipfile
         res = self.expanduser().resolve()
         return zipfile.Path(res)  # .str.split(".zip") tmp=res[1]+(".zip" if len(res) > 2 else ""); root=res[0]+".zip", at=P(tmp).as_posix())  # TODO
-    def as_str(self) -> str: return str(self)
-    def get_num(self, astring: Optional['str'] = None): int("".join(filter(str.isdigit, str(astring or self.stem))))
-    def validate_name(self, replace: str = '_'): return validate_name(self.trunk, replace=replace)
+    
     # ========================== override =======================================
     def write_text(self, data: str, encoding: str = 'utf-8', newline: Optional[str] = None) -> 'P':
         self.parent.mkdir(parents=True, exist_ok=True)
@@ -327,12 +274,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         if parents: self.parent.create(parents=parents)
         super(P, self).touch(mode=mode, exist_ok=exist_ok)
         return self
-    def symlink_from(self, src_folder: OPLike = None, src_file: OPLike = None, verbose: bool = False, overwrite: bool = False):
-        assert self.expanduser().exists(), "self must exist if this method is used."
-        if src_file is not None:
-            assert src_folder is None, "You can only pass source or source_dir, not both."
-        result = P(src_folder or P.cwd()).expanduser().absolute() / self.name
-        return result.symlink_to(self, verbose=verbose, overwrite=overwrite)
+    
     def symlink_to(self, target: PLike, verbose: bool = True, overwrite: bool = False, orig: bool = False, strict: bool = True):  # pylint: disable=W0237
         self.parent.create()
         target_obj = P(target).expanduser().resolve()
@@ -389,27 +331,13 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         import re
         processed.sort(key=lambda x: [int(k) if k.isdigit() else k for k in re.split('([0-9]+)', string=x.stem)])
         return List(processed)
-    def tree(self, *args: Any, **kwargs: Any):
-        from crocodile.msc.odds import tree
-        return tree(self, *args, **kwargs)
-    @property
-    def browse(self): return self.search("*").to_struct(key_val=lambda x: ("qq_" + validate_name(str(x)), x)).clean_view
+    
     def create(self, parents: bool = True, exist_ok: bool = True, parents_only: bool = False) -> 'P':
         target_path = self.parent if parents_only else self
         target_path.mkdir(parents=parents, exist_ok=exist_ok)
         return self
-    def chdir(self) -> 'P':
-        os.chdir(str(self.expanduser()))
-        return self
-    def listdir(self) -> List['P']: return List(os.listdir(self.expanduser().resolve())).apply(lambda x: P(x))  # pylint: disable=W0108
-    @staticmethod
-    def tempdir() -> 'P':
-        import tempfile
-        return P(tempfile.mktemp())
-    @staticmethod
-    def temp() -> 'P':
-        import tempfile
-        return P(tempfile.gettempdir())
+    
+    
     @staticmethod
     def tmpdir(prefix: str = "") -> 'P':
         return P.tmp(folder=rf"tmp_dirs/{prefix + ('_' if prefix != '' else '') + randstr()}")
@@ -470,34 +398,18 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             result = Compression.unzip(zipfile__.to_str(), str(folder), None if name is None else P(name).as_posix())
             assert isinstance(result, Path)
         return self._return(P(result), inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNZIPPED {repr(zipfile__)} ==> {repr(result)}")
-    def tar(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
-        op_path = self._resolve_path(folder, name, path, self.name + ".tar").expanduser().resolve()
-        Compression.tar(self.expanduser().resolve().to_str(), op_path=op_path.to_str())
-        return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"TARRED {repr(self)} ==>  {repr(op_path)}")
     def untar(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
         op_path = self._resolve_path(folder, name, path, self.name.replace(".tar", "")).expanduser().resolve()
         Compression.untar(self.expanduser().resolve().to_str(), op_path=op_path.to_str())
         return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNTARRED {repr(self)} ==>  {repr(op_path)}")
-    def gz(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
-        op_path = self._resolve_path(folder, name, path, self.name + ".gz").expanduser().resolve()
-        Compression.gz(file=self.expanduser().resolve().to_str(), op_path=op_path.to_str())
-        return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"GZED {repr(self)} ==>  {repr(op_path)}")
     def ungz(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
         op_path = self._resolve_path(folder, name, path, self.name.replace(".gz", "")).expanduser().resolve()
         Compression.ungz(self.expanduser().resolve().to_str(), op_path=op_path.to_str())
         return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNGZED {repr(self)} ==>  {repr(op_path)}")
-    def xz(self, name: Optional[str]= None, folder: OPLike = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
-        op_path = self._resolve_path(folder, name, path, self.name + ".xz").expanduser().resolve()
-        Compression.xz(self.expanduser().resolve().to_str(), op_path=op_path.to_str())
-        return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"XZED {repr(self)} ==>  {repr(op_path)}")
     def unxz(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
         op_path = self._resolve_path(folder, name, path, self.name.replace(".xz", "")).expanduser().resolve()
         Compression.unxz(self.expanduser().resolve().to_str(), op_path=op_path.to_str())
         return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNXZED {repr(self)} ==>  {repr(op_path)}")
-    def tar_gz(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
-        return self.tar(inplace=inplace).gz(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)
-    def tar_xz(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
-        return self.tar(inplace=inplace).xz(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)
     # def ungz_untar(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
     #     return self.ungz(name=f"tmp_{randstr()}.tar", inplace=inplace).untar(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)  # this works for .tgz suffix as well as .tar.gz
     # def unxz_untar(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
@@ -545,43 +457,12 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             return path
         name, folder = (default_name if name is None else str(name)), (self.parent if folder is None else folder)  # good for edge cases of path with single part.  # means same directory, just different name
         return P(self.joinpath(folder).resolve() if rel2it else folder).expanduser().resolve() / name
-    def checksum(self, kind: str = ["md5", "sha256"][1]):
-        import hashlib
-        myhash = {"md5": hashlib.md5, "sha256": hashlib.sha256}[kind]()
-        myhash.update(self.read_bytes())
-        return myhash.hexdigest()
+    
     @staticmethod
     def get_env():
         import crocodile.environment as env
         return env
-    def share_on_cloud(self, service: Literal['gofile', 'pixeldrain'] = "gofile", timeout: int = 60_000) -> 'P':
-        import requests
-        # return P(requests.put(url=f"https://transfer.sh/{self.expanduser().name}", data=self.expanduser().absolute().read_bytes(), timeout=timeout).text)
-        import mimetypes
-        file_path = self.expanduser().absolute()
-        file_data = file_path.read_bytes()
-        mime_type, _ = mimetypes.guess_type(file_path)
-        if service == 'gofile':
-            response = requests.post(url="https://store1.gofile.io/uploadFile", files={"file": (file_path.name, file_data, mime_type) }, timeout=timeout)
-            return P(response.json()['data']['downloadPage'])
-        elif service == 'pixeldrain':
-            response = requests.post(url="https://pixeldrain.com/api/file", files={"file": file_data}, timeout=timeout)
-            return P(f"https://pixeldrain.com/u/{response.json()['id']}")
-        else:
-            raise ValueError("Unsupported service specified.")
-    def share_on_network(self, username: Optional[str]= None, password: Optional[str] = None):
-        from crocodile.meta import Terminal
-        Terminal(stdout=None).run(f"sharing {self} {('--username ' + str(username)) if username else ''} {('--password ' + password) if password else ''}", shell="powershell")
-    def to_qr(self, text: bool = True, path: OPLike = None) -> None:
-        qrcode = install_n_import("qrcode")
-        qr = qrcode.QRCode()
-        qr.add_data(str(self) if "http" in str(self) else (self.read_text() if text else self.read_bytes()))
-        import io
-        f = io.StringIO()
-        qr.print_ascii(out=f)
-        f.seek(0)
-        print(f.read())
-        if path is not None: qr.make_image().save(path)
+    
     def get_remote_path(self, root: Optional[str], os_specific: bool = False, rel2home: bool = True, strict: bool = True, obfuscate: bool = False) -> 'P':
         import platform
         tmp1: str = (platform.system().lower() if os_specific else 'generic_os')
