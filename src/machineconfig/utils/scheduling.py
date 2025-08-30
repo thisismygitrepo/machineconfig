@@ -197,7 +197,7 @@
 #     # Replace crocodile List usage with pathlib iteration
 #     from pathlib import Path
 #     # Find all `task.py` files under root and use their parent directories
-#     tasks_dirs = list({PathExtended(p.parent) for p in Path(root_resolved.to_str()).rglob("task.py")})
+#     tasks_dirs = list({PathExtended(p.parent) for p in Path(str(root_resolved)).rglob("task.py")})
 
 #     # Print a fancy box using rich
 #     console = Console()
@@ -285,7 +285,7 @@
 
 #     print(f"Task: {task.name}")
 
-#     shell_script = get_shell_script_executing_python_file(python_file=task.task_root.joinpath("task.py").to_str(), ve_name=task.venv)
+#     shell_script = get_shell_script_executing_python_file(python_file=str(task.task_root.joinpath("task.py")), ve_name=task.venv)
 #     shell_script_root = PathExtended.tmp().joinpath(f"tmp_scripts/scheduler/{task.name}")
 #     shell_script_root.mkdir(parents=True, exist_ok=True)
 #     try:

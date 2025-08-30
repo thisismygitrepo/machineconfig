@@ -27,8 +27,8 @@ BOX_WIDTH = 100  # Define BOX_WIDTH or get it from a config
 def create_default_shell_profile():
     profile_path = get_shell_profile_path()
     profile = profile_path.read_text()
-    if system == "Windows": source = f". {LIBRARY_ROOT.joinpath('settings/shells/pwsh/init.ps1').collapseuser().to_str().replace('~', '$HOME')}"
-    else: source = f"source {LIBRARY_ROOT.joinpath('settings/shells/bash/init.sh').collapseuser().to_str().replace('~', '$HOME')}"
+    if system == "Windows": source = f". {str(LIBRARY_ROOT.joinpath('settings/shells/pwsh/init.ps1').collapseuser()).replace('~', '$HOME')}"
+    else: source = f"source {str(LIBRARY_ROOT.joinpath('settings/shells/bash/init.sh').collapseuser()).replace('~', '$HOME')}"
 
     if source in profile: 
         console.print(Panel("🔄 PROFILE | Skipping init script sourcing - already present in profile", title="[bold blue]Profile[/bold blue]", border_style="blue"))
@@ -63,7 +63,8 @@ def append_temporarily(dirs: list[str], kind: Literal['append', 'prefix', 'repla
     dirs_ = []
     for path in dirs:
         path_rel = PathExtended(path).collapseuser(strict=False)
-        if path_rel.as_posix() in PATH or str(path_rel) in PATH or path_rel.expanduser().to_str() in PATH or path_rel.expanduser().as_posix() in PATH: print(f"Path passed `{path}` is already in PATH, skipping the appending.")
+        if path_rel.as_posix() in PATH or str(path_rel) in PATH or str(path_rel.expanduser()) in PATH or path_rel.expanduser().as_posix() in PATH:
+            print(f"Path passed `{path}` is already in PATH, skipping the appending.")
         else:
             dirs_.append(path_rel.as_posix() if system == "Linux" else str(path_rel))
     dirs = dirs_
@@ -98,7 +99,7 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
     profile_path_obj = PathExtended(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
     profile_path_obj.copy(name=profile_path_obj.name + ".orig_" + randstr())
     console.print(f"💾 Created backup of profile: {profile_path_obj.name}.orig_*")
-    profile_path_obj.modify_text(addition, addition, replace_line=False, notfound_append=True)
+    profile_path_obj.modify_text(addition, addition, replace_line=False, notfound_append=True)  # type: ignore[attr-defined]
     console.print(Panel("✅ PATH variables added to profile successfully", title="[bold blue]Environment[/bold blue]", border_style="blue"))
 
 

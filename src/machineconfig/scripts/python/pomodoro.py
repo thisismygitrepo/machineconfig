@@ -33,7 +33,7 @@
 #         import gtts
 #         gtts.gTTS(txt, lang='en', tld='com.au').save(tmp := PathExtended.tmpfile(suffix=".mp3"))
 #         time.sleep(0.5)
-#         pyglet.resource.path = [tmp.parent.to_str()]
+#         pyglet.resource.path = [str(tmp.parent)]
 #         pyglet.resource.reindex()
 #         pyglet.resource.media(tmp.name).play()
 

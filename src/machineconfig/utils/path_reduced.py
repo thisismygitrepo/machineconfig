@@ -2,12 +2,11 @@
 
 
 
-from crocodile.core import List, timestamp, randstr, validate_name, install_n_import
+from crocodile.core import List, timestamp, randstr, install_n_import
 from crocodile.file_management_helpers.file1 import encrypt, decrypt, modify_text
 from crocodile.file_management_helpers.file2 import Compression
-from crocodile.file_management_helpers.file5 import Read
+from crocodile.file_management_helpers.file3 import Read
 from pathlib import Path
-from datetime import datetime
 import sys
 import subprocess
 from typing import Any, Optional, Union, Callable, TypeAlias, Literal
@@ -106,7 +105,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         try:
             return Read.read(filename, **kwargs) if reader is None else reader(str(filename), **kwargs)
         except IOError as ioe: raise IOError from ioe
-    # def append_text(self, appendix: str) -> 'P': self.write_text(self.read_text() + appendix); return self
+    def append_text(self, appendix: str) -> 'P': self.write_text(self.read_text() + appendix); return self
     def modify_text(self, txt_search: str, txt_alt: str, replace_line: bool = False, notfound_append: bool = False, prepend: bool = False, encoding: str = 'utf-8'):
         if not self.exists(): self.create(parents_only=True).write_text(txt_search)
         return self.write_text(modify_text(txt_raw=self.read_text(encoding=encoding), txt_search=txt_search, txt_alt=txt_alt, replace_line=replace_line, notfound_append=notfound_append, prepend=prepend), encoding=encoding)
@@ -142,20 +141,20 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             try: print(__delayed_msg__)
             except UnicodeEncodeError: print("P._return warning: UnicodeEncodeError, could not print message.")
         return self if orig else res
-    # ================================ Path Object management ===========================================
-    """ Distinction between Path object and the underlying file on disk that the path may refer to. Two distinct flags are used:
-        `inplace`: the operation on the path object will affect the underlying file on disk if this flag is raised, otherwise the method will only alter the string.
-        `inliue`: the method acts on the path object itself instead of creating a new one if this flag is raised.
-        `orig`: whether the method returns the original path object or a new one."""
-    def append(self, name: str = '', index: bool = False, suffix: Optional[str] = None, verbose: bool = True, **kwargs: Any) -> 'P':
-        """Returns a new path object with the name appended to the stem of the path. If `index` is True, the name will be the index of the path in the parent directory."""
-        if index:
-            appended_name = f'''{name}_{len(self.parent.search(f"*{self.name.split('.')[0]}*"))}'''
-            return self.append(name=appended_name, index=False, verbose=verbose, suffix=suffix, **kwargs)
-        full_name = (name or ("_" + str(timestamp())))
-        full_suffix = suffix or ''.join(('bruh' + self).suffixes)
-        subpath = self.name.split('.')[0] + full_name + full_suffix
-        return self._return(self.parent.joinpath(subpath), operation="rename", verbose=verbose, **kwargs)
+    # # ================================ Path Object management ===========================================
+    # """ Distinction between Path object and the underlying file on disk that the path may refer to. Two distinct flags are used:
+    #     `inplace`: the operation on the path object will affect the underlying file on disk if this flag is raised, otherwise the method will only alter the string.
+    #     `inliue`: the method acts on the path object itself instead of creating a new one if this flag is raised.
+    #     `orig`: whether the method returns the original path object or a new one."""
+    # def append(self, name: str = '', index: bool = False, suffix: Optional[str] = None, verbose: bool = True, **kwargs: Any) -> 'P':
+    #     """Returns a new path object with the name appended to the stem of the path. If `index` is True, the name will be the index of the path in the parent directory."""
+    #     if index:
+    #         appended_name = f'''{name}_{len(self.parent.search(f"*{self.name.split('.')[0]}*"))}'''
+    #         return self.append(name=appended_name, index=False, verbose=verbose, suffix=suffix, **kwargs)
+    #     full_name = (name or ("_" + str(timestamp())))
+    #     full_suffix = suffix or ''.join(('bruh' + self).suffixes)
+    #     subpath = self.name.split('.')[0] + full_name + full_suffix
+    #     return self._return(self.parent.joinpath(subpath), operation="rename", verbose=verbose, **kwargs)
     def with_name(self, name: str, verbose: bool = True, inplace: bool = False, overwrite: bool = False, **kwargs: Any):
         return self._return(self.parent / name, verbose=verbose, operation="rename", inplace=inplace, overwrite=overwrite, **kwargs)
     # ============================= attributes of object ======================================
@@ -185,15 +184,6 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         if isinstance(slici, list): return P(*[self[item] for item in slici])
         elif isinstance(slici, int): return P(self.parts[slici])
         return P(*self.parts[slici])  # must be a slice
-    # def __setitem__(self, key: Union['str', int, slice], value: PLike):
-    #     fullparts, new = list(self.parts), list(P(value).parts)
-    #     if type(key) is str:
-    #         idx = fullparts.index(key)
-    #         fullparts.remove(key)
-    #         fullparts = fullparts[:idx] + new + fullparts[idx + 1:]
-    #     elif type(key) is int: fullparts = fullparts[:key] + new + fullparts[key + 1:]
-    #     elif type(key) is slice: fullparts = fullparts[:(0 if key.start is None else key.start)] + new + fullparts[(len(fullparts) if key.stop is None else key.stop):]
-    #     self._str = str(P(*fullparts))  # pylint: disable=W0201  # similar attributes: # self._parts # self._pparts # self._cparts # self._cached_cparts
     def split(self, at: Optional[str] = None, index: Optional[int] = None, sep: Literal[-1, 0, 1] = 1, strict: bool = True):
         if index is None and at is not None:  # at is provided  # ====================================   Splitting
             if not strict:  # behaves like split method of string
@@ -219,7 +209,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         elif self.is_absolute(): return self._type() + " '" + str(self.clickable()) + "'" + (" | " + self.time(which="c").isoformat()[:-7].replace("T", "  ") if self.exists() else "") + (f" | {self.size()} Mb" if self.is_file() else "")
         elif "http" in str(self): return "🕸️ URL " + str(self.as_url_str())
         else: return "📍 Relative " + "'" + str(self) + "'"  # not much can be said about a relative path.
-    def to_str(self) -> str: return str(self)
+    # def to_str(self) -> str: return str(self)
     def size(self, units: Literal['b', 'kb', 'mb', 'gb'] = 'mb') -> float:  # ===================================== File Specs ==========================================================================================
         total_size = self.stat().st_size if self.is_file() else sum([item.stat().st_size for item in self.rglob("*") if item.is_file()])
         tmp: int
@@ -241,20 +231,29 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         return datetime.fromtimestamp(tmp, **kwargs)
     
     # ================================ String Nature management ====================================
-    def _type(self):
-        if self.absolute():
-            if self.is_file(): return "📄"
-            elif self.is_dir(): return "📁"
-            return "👻NotExist"
-        return "📍Relative"
     def clickable(self, ) -> 'P': return self._return(res=P(self.expanduser().resolve().as_uri()), operation='Whack')
     def as_url_str(self) -> 'str': return self.as_posix().replace("https:/", "https://").replace("http:/", "http://")
     def as_zip_path(self):
         import zipfile
         res = self.expanduser().resolve()
         return zipfile.Path(res)  # .str.split(".zip") tmp=res[1]+(".zip" if len(res) > 2 else ""); root=res[0]+".zip", at=P(tmp).as_posix())  # TODO
-    
     # ========================== override =======================================
+    def __setitem__(self, key: Union['str', int, slice], value: PLike):
+        fullparts, new = list(self.parts), list(P(value).parts)
+        if type(key) is str:
+            idx = fullparts.index(key)
+            fullparts.remove(key)
+            fullparts = fullparts[:idx] + new + fullparts[idx + 1:]
+        elif type(key) is int: fullparts = fullparts[:key] + new + fullparts[key + 1:]
+        elif type(key) is slice: fullparts = fullparts[:(0 if key.start is None else key.start)] + new + fullparts[(len(fullparts) if key.stop is None else key.stop):]
+        self._str = str(P(*fullparts))  # pylint: disable=W0201  # similar attributes: # self._parts # self._pparts # self._cparts # self._cached_cparts
+
+    def _type(self):
+        if self.absolute():
+            if self.is_file(): return "📄"
+            elif self.is_dir(): return "📁"
+            return "👻NotExist"
+        return "📍Relative"
     def write_text(self, data: str, encoding: str = 'utf-8', newline: Optional[str] = None) -> 'P':
         self.parent.mkdir(parents=True, exist_ok=True)
         super(P, self).write_text(data, encoding=encoding, newline=newline)
@@ -270,7 +269,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         if parents: self.parent.create(parents=parents)
         super(P, self).touch(mode=mode, exist_ok=exist_ok)
         return self
-    
+
     def symlink_to(self, target: PLike, verbose: bool = True, overwrite: bool = False, orig: bool = False, strict: bool = True):  # pylint: disable=W0237
         self.parent.create()
         target_obj = P(target).expanduser().resolve()
@@ -333,8 +332,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         target_path = self.parent if parents_only else self
         target_path.mkdir(parents=parents, exist_ok=exist_ok)
         return self
-    
-    
+
     @staticmethod
     def tmpdir(prefix: str = "") -> 'P':
         return P.tmp(folder=rf"tmp_dirs/{prefix + ('_' if prefix != '' else '') + randstr()}")
@@ -391,38 +389,38 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                 if not content: P(folder).joinpath(name or "").delete(sure=True, verbose=True)  # deletes a specific file / folder that has the same name as the zip file without extension.
                 else:
                     import zipfile
-                    List([x for x in zipfile.ZipFile(self.to_str()).namelist() if "/" not in x or (len(x.split('/')) == 2 and x.endswith("/"))]).apply(lambda item: P(folder).joinpath(name or "", item.replace("/", "")).delete(sure=True, verbose=True))
-            result = Compression.unzip(zipfile__.to_str(), str(folder), None if name is None else P(name).as_posix())
+                    List([x for x in zipfile.ZipFile(str(self)).namelist() if "/" not in x or (len(x.split('/')) == 2 and x.endswith("/"))]).apply(lambda item: P(folder).joinpath(name or "", item.replace("/", "")).delete(sure=True, verbose=True))
+            result = Compression.unzip(str(zipfile__), str(folder), None if name is None else P(name).as_posix())
             assert isinstance(result, Path)
         return self._return(P(result), inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNZIPPED {repr(zipfile__)} ==> {repr(result)}")
     def untar(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
         op_path = self._resolve_path(folder, name, path, self.name.replace(".tar", "")).expanduser().resolve()
-        Compression.untar(self.expanduser().resolve().to_str(), op_path=op_path.to_str())
+        Compression.untar(str(self.expanduser().resolve()), op_path=str(op_path))
         return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNTARRED {repr(self)} ==>  {repr(op_path)}")
     def ungz(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
         op_path = self._resolve_path(folder, name, path, self.name.replace(".gz", "")).expanduser().resolve()
-        Compression.ungz(self.expanduser().resolve().to_str(), op_path=op_path.to_str())
+        Compression.ungz(str(self.expanduser().resolve()), op_path=str(op_path))
         return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNGZED {repr(self)} ==>  {repr(op_path)}")
     def unxz(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
         op_path = self._resolve_path(folder, name, path, self.name.replace(".xz", "")).expanduser().resolve()
-        Compression.unxz(self.expanduser().resolve().to_str(), op_path=op_path.to_str())
+        Compression.unxz(str(self.expanduser().resolve()), op_path=str(op_path))
         return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNXZED {repr(self)} ==>  {repr(op_path)}")
     def unbz(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
         op_path = self._resolve_path(folder=folder, name=name, path=path, default_name=self.name.replace(".bz", "").replace(".tbz", ".tar")).expanduser().resolve()
-        Compression.unbz(self.expanduser().resolve().to_str(), op_path=str(op_path))
+        Compression.unbz(str(self.expanduser().resolve()), op_path=str(op_path))
         return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNBZED {repr(self)} ==>  {repr(op_path)}")
     def decompress(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
-        if "tar.gz" in str(self) or ".tgz" in str(self):
+        if ".tar.gz" in str(self) or ".tgz" in str(self):
             # res = self.ungz_untar(folder=folder, path=path, name=name, inplace=inplace, verbose=verbose, orig=orig)
             return self.ungz(name=f"tmp_{randstr()}.tar", inplace=inplace).untar(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)  # this works for .tgz suffix as well as .tar.gz
         elif ".gz" in str(self): res = self.ungz(folder=folder, path=path, name=name, inplace=inplace, verbose=verbose, orig=orig)
-        elif "tar.bz" in str(self) or "tbz" in str(self):
+        elif ".tar.bz" in str(self) or "tbz" in str(self):
             res = self.unbz(name=f"tmp_{randstr()}.tar", inplace=inplace)
             return res.untar(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)
-        elif "tar.xz" in self:
+        elif ".tar.xz" in str(self):
             # res = self.unxz_untar(folder=folder, path=path, name=name, inplace=inplace, verbose=verbose, orig=orig)
             res = self.unxz(inplace=inplace).untar(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)
-        elif "zip" in self: res = self.unzip(folder=folder, path=path, name=name, inplace=inplace, verbose=verbose, orig=orig)
+        elif ".zip" in str(self): res = self.unzip(folder=folder, path=path, name=name, inplace=inplace, verbose=verbose, orig=orig)
         else: res = self
         return res
     def encrypt(self, key: Optional[bytes] = None, pwd: Optional[str] = None, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None,
@@ -450,12 +448,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             return path
         name, folder = (default_name if name is None else str(name)), (self.parent if folder is None else folder)  # good for edge cases of path with single part.  # means same directory, just different name
         return P(self.joinpath(folder).resolve() if rel2it else folder).expanduser().resolve() / name
-    
-    @staticmethod
-    def get_env():
-        import crocodile.environment as env
-        return env
-    
+
     def get_remote_path(self, root: Optional[str], os_specific: bool = False, rel2home: bool = True, strict: bool = True, obfuscate: bool = False) -> 'P':
         import platform
         tmp1: str = (platform.system().lower() if os_specific else 'generic_os')

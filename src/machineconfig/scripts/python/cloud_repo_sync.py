@@ -90,7 +90,7 @@ git pull originEnc master
         option1 = 'Delete remote copy and push local:'
         program_1_py = f"""
 from machineconfig.scripts.python.helpers.repo_sync_helpers import delete_remote_repo_copy_and_push_local as func
-func(remote_repo=r'{repo_remote_root.to_str()}', local_repo=r'{repo_local_root.to_str()}', cloud=r'{cloud_resolved}')
+func(remote_repo=r'{str(repo_remote_root)}', local_repo=r'{str(repo_local_root)}', cloud=r'{cloud_resolved}')
 """
         shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, ve_name="ve")
         # ================================================================================
@@ -112,7 +112,7 @@ sudo chmod +x $HOME/dotfiles/scripts/linux -R
         option3 = 'Inspect repos:'
         program_3_py = f"""
 from machineconfig.scripts.python.helper.repo_sync_helpers import inspect_repos as func
-func(repo_local_root=r'{repo_local_root.to_str()}', repo_remote_root=r'{repo_remote_root.to_str()}')
+func(repo_local_root=r'{str(repo_local_root)}', repo_remote_root=r'{str(repo_remote_root)}')
 """
         shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_name="ve")
         # ================================================================================
