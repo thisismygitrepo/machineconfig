@@ -150,24 +150,20 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
     def append(self, name: str = '', index: bool = False, suffix: Optional[str] = None, verbose: bool = True, **kwargs: Any) -> 'P':
         """Returns a new path object with the name appended to the stem of the path. If `index` is True, the name will be the index of the path in the parent directory."""
         if index:
-            appended_name = f'{name}_{len(self.parent.search(f"*{self.trunk}*"))}'
+            appended_name = f'''{name}_{len(self.parent.search(f"*{self.name.split('.')[0]}*"))}'''
             return self.append(name=appended_name, index=False, verbose=verbose, suffix=suffix, **kwargs)
         full_name = (name or ("_" + str(timestamp())))
         full_suffix = suffix or ''.join(('bruh' + self).suffixes)
-        subpath = self.trunk + full_name + full_suffix
+        subpath = self.name.split('.')[0] + full_name + full_suffix
         return self._return(self.parent.joinpath(subpath), operation="rename", verbose=verbose, **kwargs)
     def with_name(self, name: str, verbose: bool = True, inplace: bool = False, overwrite: bool = False, **kwargs: Any):
         return self._return(self.parent / name, verbose=verbose, operation="rename", inplace=inplace, overwrite=overwrite, **kwargs)
     # ============================= attributes of object ======================================
-    @property
-    def trunk(self) -> str: return self.name.split('.')[0]  # """ useful if you have multiple dots in file path where `.stem` fails."""
-    @property
-    def len(self) -> int: return self.__len__()
-    @property
-    def items(self) -> List[str]: return List(self.parts)
-    def __len__(self) -> int: return len(self.parts)
-    def __contains__(self, item: PLike): return P(item).as_posix() in self.as_posix()
-    def __iter__(self): return self.parts.__iter__()
+    # @property
+    # def items(self) -> List[str]: return List(self.parts)
+    # def __len__(self) -> int: return len(self.parts)
+    # def __contains__(self, item: PLike): return P(item).as_posix() in self.as_posix()
+    # def __iter__(self): return self.parts.__iter__()
     def __deepcopy__(self, *args: Any, **kwargs: Any) -> 'P':
         _ = args, kwargs
         return P(str(self))
@@ -178,7 +174,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         return self.parent.joinpath(str(other) + self.name)  # other + P and `other` doesn't know how to make this addition.
     def __sub__(self, other: PLike) -> 'P':
         res = P(str(self).replace(str(other), ""))
-        return (res[1:] if str(res[0]) in {"\\", "/"} else res) if len(res) else res  # paths starting with "/" are problematic. e.g ~ / "/path" doesn't work.
+        return (res[1:] if str(res[0]) in {"\\", "/"} else res) if len(res.parts) else res  # paths starting with "/" are problematic. e.g ~ / "/path" doesn't work.
     
     def rel2home(self, ) -> 'P': return self._return(P(self.expanduser().absolute().relative_to(Path.home())), operation='Whack')  # very similat to collapseuser but without "~" being added so its consistent with rel2cwd.
     def collapseuser(self, strict: bool = True, placeholder: str = "~") -> 'P':  # opposite of `expanduser` resolve is crucial to fix Windows cases insensitivty problem.
@@ -301,7 +297,8 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         filters_total = (filters_total or []) + filters_notin + filters_extension
         if not files: filters_total.append(lambda x: x.is_dir())
         if not folders: filters_total.append(lambda x: x.is_file())
-        if ".zip" in (slf := self.expanduser().resolve()) and compressed:  # the root (self) is itself a zip archive (as opposed to some search results are zip archives)
+        slf = self.expanduser().resolve()
+        if ".zip" in str(slf) and compressed:  # the root (self) is itself a zip archive (as opposed to some search results are zip archives)
             import zipfile
             import fnmatch
             root = slf.as_zip_path()
@@ -318,7 +315,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                 raw = glob(str(slf / "**" / pattern), recursive=r)
             else:
                 raw = glob(str(slf.joinpath(pattern)))  # glob ignroes dot and hidden files
-        if ".zip" not in slf and compressed:
+        if ".zip" not in str(slf) and compressed:
             filters_notin = [P(comp_file).search(pattern=pattern, r=r, files=files, folders=folders, compressed=True, dotfiles=dotfiles, filters_total=filters_total, not_in=not_in, win_order=win_order) for comp_file in self.search("*.zip", r=r)]
             haha = List(filters_notin).reduce(func=lambda x, y: x + y)
             raw = raw + haha  # type: ignore
@@ -371,7 +368,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         assert path is None, "I have not implemented this yet"
         if tmp: return self.unzip(folder=P.tmp().joinpath("tmp_unzips").joinpath(randstr()), content=True).joinpath(self.stem)
         slf = zipfile__ = self.expanduser().resolve()
-        if any(ztype in slf.parent for ztype in (".zip", ".7z")):  # path include a zip archive in the middle.
+        if any(ztype in str(slf.parent) for ztype in (".zip", ".7z")):  # path include a zip archive in the middle.
             tmp__ = [item for item in (".zip", ".7z", "") if item in str(slf)]
             ztype = tmp__[0]
             if ztype == "": return slf
@@ -410,20 +407,16 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         op_path = self._resolve_path(folder, name, path, self.name.replace(".xz", "")).expanduser().resolve()
         Compression.unxz(self.expanduser().resolve().to_str(), op_path=op_path.to_str())
         return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNXZED {repr(self)} ==>  {repr(op_path)}")
-    # def ungz_untar(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
-    #     return self.ungz(name=f"tmp_{randstr()}.tar", inplace=inplace).untar(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)  # this works for .tgz suffix as well as .tar.gz
-    # def unxz_untar(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
-    #     return self.unxz(inplace=inplace).untar(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)
     def unbz(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
         op_path = self._resolve_path(folder=folder, name=name, path=path, default_name=self.name.replace(".bz", "").replace(".tbz", ".tar")).expanduser().resolve()
         Compression.unbz(self.expanduser().resolve().to_str(), op_path=str(op_path))
         return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNBZED {repr(self)} ==>  {repr(op_path)}")
     def decompress(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> 'P':
-        if "tar.gz" in self or ".tgz" in self:
+        if "tar.gz" in str(self) or ".tgz" in str(self):
             # res = self.ungz_untar(folder=folder, path=path, name=name, inplace=inplace, verbose=verbose, orig=orig)
             return self.ungz(name=f"tmp_{randstr()}.tar", inplace=inplace).untar(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)  # this works for .tgz suffix as well as .tar.gz
-        elif ".gz" in self: res = self.ungz(folder=folder, path=path, name=name, inplace=inplace, verbose=verbose, orig=orig)
-        elif "tar.bz" in self or "tbz" in self:
+        elif ".gz" in str(self): res = self.ungz(folder=folder, path=path, name=name, inplace=inplace, verbose=verbose, orig=orig)
+        elif "tar.bz" in str(self) or "tbz" in str(self):
             res = self.unbz(name=f"tmp_{randstr()}.tar", inplace=inplace)
             return res.untar(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)
         elif "tar.xz" in self:
