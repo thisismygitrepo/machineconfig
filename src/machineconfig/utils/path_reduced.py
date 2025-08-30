@@ -3,9 +3,10 @@
 
 
 from crocodile.core import List, timestamp, randstr, install_n_import, validate_name
-from crocodile.file_management_helpers.file1 import encrypt, decrypt, modify_text
+from crocodile.file_management_helpers.file1 import encrypt, decrypt
 from crocodile.file_management_helpers.file2 import Compression
 from crocodile.file_management_helpers.file3 import Read
+
 from datetime import datetime
 from pathlib import Path
 import sys
@@ -18,6 +19,24 @@ PLike: TypeAlias = Union[str, 'P', Path]
 FILE_MODE: TypeAlias = Literal['r', 'w', 'x', 'a']
 SHUTIL_FORMATS: TypeAlias = Literal["zip", "tar", "gztar", "bztar", "xztar"]
 
+
+def modify_text(txt_raw: str, txt_search: str, txt_alt: Union[str, Callable[[str], str]], replace_line: bool = True, notfound_append: bool = False, prepend: bool = False, strict: bool = False):
+    lines, bingo = txt_raw.split("\n"), False
+    if not replace_line:  # no need for line splitting
+        assert isinstance(txt_alt, str), f"txt_alt must be a string if notfound_append is True. It is not: {txt_alt}"
+        if txt_search in txt_raw: return txt_raw.replace(txt_search, txt_alt)
+        return txt_raw + "\n" + txt_alt if notfound_append else txt_raw
+    for idx, line in enumerate(lines):
+        if txt_search in line:
+            if isinstance(txt_alt, str): lines[idx] = txt_alt
+            elif callable(txt_alt): lines[idx] = txt_alt(line)
+            bingo = True
+    if strict and not bingo: raise ValueError(f"txt_search `{txt_search}` not found in txt_raw `{txt_raw}`")
+    if bingo is False and notfound_append is True:
+        assert isinstance(txt_alt, str), f"txt_alt must be a string if notfound_append is True. It is not: {txt_alt}"
+        if prepend: lines.insert(0, txt_alt)
+        else: lines.append(txt_alt)  # txt not found, add it anyway.
+    return "\n".join(lines)
 
 class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
     # ============= Path management ==================
@@ -107,12 +126,24 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         try:
             return Read.read(filename, **kwargs) if reader is None else reader(str(filename), **kwargs)
         except IOError as ioe: raise IOError from ioe
-    def append_text(self, appendix: str) -> 'P': self.write_text(self.read_text() + appendix); return self
-    def modify_text(self, txt_search: str, txt_alt: str, replace_line: bool = False, notfound_append: bool = False, prepend: bool = False, encoding: str = 'utf-8'):
-        if not self.exists():
-            self.parent.mkdir(parents=True, exist_ok=True)
-            self.write_text(txt_search)
-        return self.write_text(modify_text(txt_raw=self.read_text(encoding=encoding), txt_search=txt_search, txt_alt=txt_alt, replace_line=replace_line, notfound_append=notfound_append, prepend=prepend), encoding=encoding)
+    # DEPRECATED: append_text has been removed. Use the inline equivalent instead:
+    #   p.write_text(p.read_text() + appendix)
+    # Returning the path (p) is preserved by write_text in this class.
+    # Example:
+    #   p = p.write_text(p.read_text() + appendix)
+    # def append_text(self, appendix: str) -> 'P':
+    #     self.write_text(self.read_text() + appendix)
+    #     return self
+    # DEPRECATED: Instance method modify_text is deprecated and left commented-out to prevent new usage.
+    # Please inline using the module-level modify_text helper:
+    #   current = p.read_text() if p.exists() else ""
+    #   updated = modify_text(current, search, alt, replace_line=..., notfound_append=..., prepend=...)
+    #   p.write_text(updated)
+    # def modify_text(self, txt_search: str, txt_alt: str, replace_line: bool = False, notfound_append: bool = False, prepend: bool = False, encoding: str = 'utf-8'):
+    #     if not self.exists():
+    #         self.parent.mkdir(parents=True, exist_ok=True)
+    #         self.write_text(txt_search)
+    #     return self.write_text(modify_text(txt_raw=self.read_text(encoding=encoding), txt_search=txt_search, txt_alt=txt_alt, replace_line=replace_line, notfound_append=notfound_append, prepend=prepend), encoding=encoding)
     def download(self, folder: OPLike = None, name: Optional[str]= None, allow_redirects: bool = True, timeout: Optional[int] = None, params: Any = None) -> 'P':
         import requests
         response = requests.get(self.as_url_str(), allow_redirects=allow_redirects, timeout=timeout, params=params)  # Alternative: from urllib import request; request.urlopen(url).read().decode('utf-8').

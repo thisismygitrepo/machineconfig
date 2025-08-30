@@ -2,7 +2,7 @@
 """
 
 from machineconfig.utils.utils2 import randstr
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended, modify_text
 from crocodile.meta import Terminal
 from machineconfig.utils.utils import LIBRARY_ROOT, REPO_ROOT, display_options
 import platform
@@ -99,7 +99,10 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
     profile_path_obj = PathExtended(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
     profile_path_obj.copy(name=profile_path_obj.name + ".orig_" + randstr())
     console.print(f"💾 Created backup of profile: {profile_path_obj.name}.orig_*")
-    profile_path_obj.modify_text(addition, addition, replace_line=False, notfound_append=True)  # type: ignore[attr-defined]
+    # Inline deprecated P.modify_text: if file missing, seed with search text before modification
+    current = profile_path_obj.read_text() if profile_path_obj.exists() else addition
+    updated = modify_text(current, addition, addition, replace_line=False, notfound_append=True)
+    profile_path_obj.write_text(updated)
     console.print(Panel("✅ PATH variables added to profile successfully", title="[bold blue]Environment[/bold blue]", border_style="blue"))
 
 
