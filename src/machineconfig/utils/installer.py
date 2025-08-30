@@ -185,7 +185,9 @@ def install_all(installers: list[Installer], safe: bool=False, jobs: int = 10, f
         
         if platform.system().lower() == "windows":
             print("🪟 Moving applications to Windows Apps folder...")
-            apps_dir.search("*").apply(lambda app: app.move(folder=PathExtended.get_env().WindowsPaths().WindowsApps))
+            # PathExtended.get_env().WindowsPaths().WindowsApps)
+            folder = PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps")
+            apps_dir.search("*").apply(lambda app: app.move(folder=folder))
         elif platform.system().lower() in ["linux", "darwin"]:
             system_name = "Linux" if platform.system().lower() == "linux" else "macOS"
             print(f"🐧 Moving applications to {system_name} bin folder...")

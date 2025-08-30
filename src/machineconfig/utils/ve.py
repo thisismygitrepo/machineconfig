@@ -49,15 +49,3 @@ def get_ve_activate_line(ve_root: str):
     elif platform.system() in ["Linux", "Darwin"]: activate_ve_line = f". {ve_root}/bin/activate"
     else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
     return activate_ve_line
-
-def get_installed_interpreters() -> list[PathExtended]:
-    system = platform.system()
-    if system == "Windows":
-        tmp: list[PathExtended] = PathExtended.get_env().PATH.search("python.exe").reduce(func=lambda x, y: x+y).list[1:]
-    else:
-        all_matches: list[PathExtended] = PathExtended.get_env().PATH.search("python3*").reduce(lambda x, y: x+y).list
-        tmp = list(set([x for x in all_matches if (not x.is_symlink()) and ("-" not in str(x))]))
-    print("🔍 Found Python interpreters:")
-    for interpreter_path in tmp:
-        print(interpreter_path)
-    return list(set([PathExtended(x) for x in tmp]))

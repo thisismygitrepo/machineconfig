@@ -2,10 +2,11 @@
 
 
 
-from crocodile.core import List, timestamp, randstr, install_n_import
+from crocodile.core import List, timestamp, randstr, install_n_import, validate_name
 from crocodile.file_management_helpers.file1 import encrypt, decrypt, modify_text
 from crocodile.file_management_helpers.file2 import Compression
 from crocodile.file_management_helpers.file3 import Read
+from datetime import datetime
 from pathlib import Path
 import sys
 import subprocess
@@ -146,15 +147,15 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
     #     `inplace`: the operation on the path object will affect the underlying file on disk if this flag is raised, otherwise the method will only alter the string.
     #     `inliue`: the method acts on the path object itself instead of creating a new one if this flag is raised.
     #     `orig`: whether the method returns the original path object or a new one."""
-    # def append(self, name: str = '', index: bool = False, suffix: Optional[str] = None, verbose: bool = True, **kwargs: Any) -> 'P':
-    #     """Returns a new path object with the name appended to the stem of the path. If `index` is True, the name will be the index of the path in the parent directory."""
-    #     if index:
-    #         appended_name = f'''{name}_{len(self.parent.search(f"*{self.name.split('.')[0]}*"))}'''
-    #         return self.append(name=appended_name, index=False, verbose=verbose, suffix=suffix, **kwargs)
-    #     full_name = (name or ("_" + str(timestamp())))
-    #     full_suffix = suffix or ''.join(('bruh' + self).suffixes)
-    #     subpath = self.name.split('.')[0] + full_name + full_suffix
-    #     return self._return(self.parent.joinpath(subpath), operation="rename", verbose=verbose, **kwargs)
+    def append(self, name: str = '', index: bool = False, suffix: Optional[str] = None, verbose: bool = True, **kwargs: Any) -> 'P':
+        """Returns a new path object with the name appended to the stem of the path. If `index` is True, the name will be the index of the path in the parent directory."""
+        if index:
+            appended_name = f'''{name}_{len(self.parent.search(f"*{self.name.split('.')[0]}*"))}'''
+            return self.append(name=appended_name, index=False, verbose=verbose, suffix=suffix, **kwargs)
+        full_name = (name or ("_" + str(timestamp())))
+        full_suffix = suffix or ''.join(('bruh' + self).suffixes)
+        subpath = self.name.split('.')[0] + full_name + full_suffix
+        return self._return(self.parent.joinpath(subpath), operation="rename", verbose=verbose, **kwargs)
     def with_name(self, name: str, verbose: bool = True, inplace: bool = False, overwrite: bool = False, **kwargs: Any):
         return self._return(self.parent / name, verbose=verbose, operation="rename", inplace=inplace, overwrite=overwrite, **kwargs)
     # ============================= attributes of object ======================================
