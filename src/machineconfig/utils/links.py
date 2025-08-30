@@ -49,7 +49,9 @@ def symlink_func(this: PathExtended, to_this: PathExtended, prioritize_to_this: 
             if to_this.exists(): this.move(path=to_this, overwrite=True)  # this exists, to_this as well, this is prioritized.   # now we are readly to make the link
             else: this.move(path=to_this)  # this exists, to_this doesn't, this is prioritized.
     else:  # this doesn't exist.
-        if not to_this.exists(): to_this.touch()  # we have to touch it (file) or create it (folder)
+        if not to_this.exists():
+            to_this.parent.mkdir(parents=True, exist_ok=True)
+            to_this.touch()  # we have to touch it (file) or create it (folder)
     try:
         console.print(Panel(f"🔗 LINKING | Creating symlink from {this} ➡️  {to_this}", title="Linking", expand=False))
         PathExtended(this).symlink_to(target=to_this, verbose=True, overwrite=True)
@@ -69,7 +71,9 @@ def symlink_copy(this: PathExtended, to_this: PathExtended, prioritize_to_this: 
             if to_this.exists(): this.move(path=to_this, overwrite=True)  # this exists, to_this as well, this is prioritized.   # now we are readly to make the link
             else: this.move(path=to_this)  # this exists, to_this doesn't, this is prioritized.
     else:  # this doesn't exist.
-        if not to_this.exists(): to_this.touch()  # we have to touch it (file) or create it (folder)
+        if not to_this.exists():
+            to_this.parent.mkdir(parents=True, exist_ok=True)
+            to_this.touch()  # we have to touch it (file) or create it (folder)
     try:
         console.print(Panel(f"📋 COPYING | Copying {to_this} to {this}", title="Copying", expand=False))
         to_this.copy(path=this, overwrite=True, verbose=True)

@@ -42,7 +42,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         return self
     def move(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, rel2it: bool = False, overwrite: bool = False, verbose: bool = True, parents: bool = True, content: bool = False) -> 'P':
         path = self._resolve_path(folder=folder, name=name, path=path, default_name=self.absolute().name, rel2it=rel2it)
-        if parents: path.parent.create(parents=True, exist_ok=True)
+        if parents: path.parent.mkdir(parents=True, exist_ok=True)
         slf = self.expanduser().resolve()
         if content:
             assert self.is_dir(), NotADirectoryError(f"💥 When `content` flag is set to True, path must be a directory. It is not: `{repr(self)}`")
@@ -64,7 +64,8 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         return path
     def copy(self, folder: OPLike = None, name: Optional[str]= None, path: OPLike = None, content: bool = False, verbose: bool = True, append: Optional[str] = None, overwrite: bool = False, orig: bool = False) -> 'P':  # tested %100  # TODO: replace `content` flag with ability to interpret "*" in resolve method.
         dest = self._resolve_path(folder=folder, name=name, path=path, default_name=self.name, rel2it=False)
-        dest = dest.expanduser().resolve().create(parents_only=True)
+        dest = dest.expanduser().resolve()
+        dest.parent.mkdir(parents=True, exist_ok=True)
         slf = self.expanduser().resolve()
         if dest == slf:
             dest = self.append(append if append is not None else f"_copy_{randstr()}")
@@ -108,7 +109,9 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         except IOError as ioe: raise IOError from ioe
     def append_text(self, appendix: str) -> 'P': self.write_text(self.read_text() + appendix); return self
     def modify_text(self, txt_search: str, txt_alt: str, replace_line: bool = False, notfound_append: bool = False, prepend: bool = False, encoding: str = 'utf-8'):
-        if not self.exists(): self.create(parents_only=True).write_text(txt_search)
+        if not self.exists():
+            self.parent.mkdir(parents=True, exist_ok=True)
+            self.write_text(txt_search)
         return self.write_text(modify_text(txt_raw=self.read_text(encoding=encoding), txt_search=txt_search, txt_alt=txt_alt, replace_line=replace_line, notfound_append=notfound_append, prepend=prepend), encoding=encoding)
     def download(self, folder: OPLike = None, name: Optional[str]= None, allow_redirects: bool = True, timeout: Optional[int] = None, params: Any = None) -> 'P':
         import requests
@@ -116,11 +119,15 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         assert response.status_code == 200, f"Download failed with status code {response.status_code}\n{response.text}"
         if name is not None: f_name = name
         else:
-            try: f_name = response.headers['Content-Disposition'].split('filename=')[1].replace('"', '')
+            try:
+                f_name = response.headers['Content-Disposition'].split('filename=')[1].replace('"', '')
             except (KeyError, IndexError):
                 f_name = validate_name(str(P(response.history[-1].url).name if len(response.history) > 0 else P(response.url).name))
-        return (P.home().joinpath("Downloads") if folder is None else P(folder)).joinpath(f_name).create(parents_only=True).write_bytes(response.content)
-    def _return(self, res: 'P', operation: Literal['rename', 'delete', 'Whack'], inplace: bool = False, overwrite: bool = False, orig: bool = False, verbose: bool = False, strict: bool = True, msg: str = "", __delayed_msg__: str = "") -> 'P':
+        dest_path = (P.home().joinpath("Downloads") if folder is None else P(folder)).joinpath(f_name)
+        dest_path.parent.mkdir(parents=True, exist_ok=True)
+        return dest_path.write_bytes(response.content)
+    def _return(self, res: Union['P', 'Path'], operation: Literal['rename', 'delete', 'Whack'], inplace: bool = False, overwrite: bool = False, orig: bool = False, verbose: bool = False, strict: bool = True, msg: str = "", __delayed_msg__: str = "") -> 'P':
+        res = P(res)
         if inplace:
             assert self.exists(), f"`inplace` flag is only relevant if the path exists. It doesn't {self}"
             if operation == "rename":
@@ -266,13 +273,21 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         res = super(P, slf).write_bytes(data)
         if res == 0: raise RuntimeError("Could not save file on disk.")
         return self
-    def touch(self, mode: int = 0o666, parents: bool = True, exist_ok: bool = True) -> 'P':  # pylint: disable=W0237
-        if parents: self.parent.create(parents=parents)
-        super(P, self).touch(mode=mode, exist_ok=exist_ok)
-        return self
+    # def touch(self, mode: int = 0o666, parents: bool = True, exist_ok: bool = True) -> 'P':  # pylint: disable=W0237
+    #     """Deprecated: rely on pathlib.Path.touch at call sites.
+    #     Behavior was:
+    #       - if parents: ensure parent directories exist
+    #       - then call Path.touch(mode=mode, exist_ok=exist_ok)
+    #       - return self
+    #     Replace usages with:
+    #         p.parent.mkdir(parents=True, exist_ok=True); p.touch(mode=..., exist_ok=...)
+    #     """
+    #     if parents: self.parent.mkdir(parents=parents, exist_ok=True)
+    #     super(P, self).touch(mode=mode, exist_ok=exist_ok)
+    #     return self
 
     def symlink_to(self, target: PLike, verbose: bool = True, overwrite: bool = False, orig: bool = False, strict: bool = True):  # pylint: disable=W0237
-        self.parent.create()
+        self.parent.mkdir(parents=True, exist_ok=True)
         target_obj = P(target).expanduser().resolve()
         if strict: assert target_obj.exists(), f"Target path `{target}` (aka `{target_obj}`) doesn't exist. This will create a broken link."
         if overwrite and (self.is_symlink() or self.exists()): self.delete(sure=True, verbose=verbose)
@@ -329,10 +344,18 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         processed.sort(key=lambda x: [int(k) if k.isdigit() else k for k in re.split('([0-9]+)', string=x.stem)])
         return List(processed)
     
-    def create(self, parents: bool = True, exist_ok: bool = True, parents_only: bool = False) -> 'P':
-        target_path = self.parent if parents_only else self
-        target_path.mkdir(parents=parents, exist_ok=exist_ok)
-        return self
+    # def create(self, parents: bool = True, exist_ok: bool = True, parents_only: bool = False) -> 'P':
+    #     """Deprecated. Use Path.mkdir directly at the call site:
+    #     - When creating a directory: self.mkdir(parents=True, exist_ok=True)
+    #     - When ensuring parent exists: self.parent.mkdir(parents=True, exist_ok=True)
+    #     This method used to:
+    #         target_path = self.parent if parents_only else self
+    #         target_path.mkdir(parents=parents, exist_ok=exist_ok)
+    #         return self
+    #     """
+    #     target_path = self.parent if parents_only else self
+    #     target_path.mkdir(parents=parents, exist_ok=exist_ok)
+    #     return self
 
     @staticmethod
     def tmpdir(prefix: str = "") -> 'P':
@@ -343,7 +366,10 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         return P.tmp(file=name_concrete + "_" + randstr() + (("_" + str(timestamp())) if tstamp else "") + suffix, folder=folder or "tmp_files")
     @staticmethod
     def tmp(folder: OPLike = None, file: Optional[str] = None, root: str = "~/tmp_results") -> 'P':
-        return P(root).expanduser().joinpath(folder or "").joinpath(file or "").create(parents_only=True if file else False)
+        base = P(root).expanduser().joinpath(folder or "").joinpath(file or "")
+        target_path = base.parent if file else base
+        target_path.mkdir(parents=True, exist_ok=True)
+        return base
     # ====================================== Compression & Encryption ===========================================
     def zip(self, path: OPLike = None, folder: OPLike = None, name: Optional[str]= None, arcname: Optional[str] = None, inplace: bool = False, verbose: bool = True,
             content: bool = False, orig: bool = False, use_7z: bool = False, pwd: Optional[str] = None, mode: FILE_MODE = 'w', **kwargs: Any) -> 'P':
@@ -528,7 +554,9 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         if unzip: localpath = localpath.unzip(inplace=True, verbose=True, overwrite=overwrite, content=True, merge=merge)
         return localpath
     def sync_to_cloud(self, cloud: str, sync_up: bool = False, sync_down: bool = False, os_specific: bool = False, rel2home: bool = True, transfers: int = 10, delete: bool = False, root: Optional[str] = "myhome", verbose: bool = True):
-        tmp1, tmp2 = self.expanduser().absolute().create(parents_only=True).as_posix(), self.get_remote_path(root=root, os_specific=os_specific).as_posix()
+        tmp_path_obj = self.expanduser().absolute()
+        tmp_path_obj.parent.mkdir(parents=True, exist_ok=True)
+        tmp1, tmp2 = tmp_path_obj.as_posix(), self.get_remote_path(root=root, os_specific=os_specific).as_posix()
         source, target = (tmp1, f"{cloud}:{tmp2 if rel2home else tmp1}") if sync_up else (f"{cloud}:{tmp2 if rel2home else tmp1}", tmp1)  # in bisync direction is irrelavent.
         if not sync_down and not sync_up:
             _ = print(f"SYNCING 🔄️ {source} {'<>' * 7} {target}`") if verbose else None
