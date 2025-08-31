@@ -47,6 +47,7 @@ def add_ai_configs(repo_root: Path):
         to_add: list[str] = []
         if ".links" not in dot_git_ignore_content: to_add.append(".links")
         if "notebooks" not in dot_git_ignore_content: to_add.append("notebooks")
+        # if "*.ipynb"
         if len(to_add) > 0:
             dot_git_ignore_path.write_text(data=dot_git_ignore_content + "\n" + "\n".join(to_add), encoding="utf-8")
 
