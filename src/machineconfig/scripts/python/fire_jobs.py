@@ -58,7 +58,7 @@ def main() -> None:
         print(f"❌ Failed to parse arguments: {ex}")
         parser.print_help()
         raise ex
-    path_obj = sanitize_path(PathExtended(args.path))
+    path_obj = sanitize_path(PathExtended.cwd())
 
     if args.init != "":
         from machineconfig.scripts.python.ai.init import add_ai_configs
