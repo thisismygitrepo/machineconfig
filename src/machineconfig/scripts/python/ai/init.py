@@ -38,7 +38,6 @@ def add_ai_configs(repo_root: Path):
     tmp = repo_root.joinpath("GEMINI.md")
     tmp.write_text(data=python_rules_file.read_text(), encoding="utf-8")
 
-
     dot_ai_dir = repo_root.joinpath(".ai")
     dot_ai_dir.mkdir(parents=True, exist_ok=True)
     dot_git_ignore_path = dot_ai_dir.joinpath(".gitignore")
@@ -47,6 +46,7 @@ def add_ai_configs(repo_root: Path):
         to_add: list[str] = []
         if ".links" not in dot_git_ignore_content: to_add.append(".links")
         if "notebooks" not in dot_git_ignore_content: to_add.append("notebooks")
+        if ".ai" not in dot_git_ignore_content: to_add.append(".ai")
         # if "*.ipynb"
         if len(to_add) > 0:
             dot_git_ignore_path.write_text(data=dot_git_ignore_content + "\n" + "\n".join(to_add), encoding="utf-8")
