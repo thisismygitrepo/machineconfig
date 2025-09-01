@@ -56,13 +56,15 @@ def main() -> None:
         print(f"❌ Failed to parse arguments: {ex}")
         parser.print_help()
         raise ex
-    path_obj = sanitize_path(PathExtended.cwd())
+    path_obj = sanitize_path(args.path)
+    # print(f"Passed path sanitied to {path_obj}")
     if not path_obj.exists():
         path_obj = match_file_name(sub_string=args.path, search_root=PathExtended.cwd())
     else: pass
     if path_obj.is_dir():
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
         files = search_for_files_of_interest(path_obj)
+        print(f"🔍 Got #{len(files)} results.")
         choice_file = choose_one_option(options=files, fzf=True)
         choice_file = PathExtended(choice_file)
     else:
