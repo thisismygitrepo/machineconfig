@@ -15,6 +15,8 @@ def search_for_files_of_interest(path_obj: PathExtended):
         for a_path_obj in path_objects:
             files += search_for_files_of_interest(path_obj=a_path_obj)
         return files
+    if path_obj.is_file():
+        return [path_obj]
     py_files = path_obj.search(pattern="*.py", not_in=["__init__.py"], r=True).list
     ps_files = path_obj.search(pattern="*.ps1", r=True).list
     sh_files = path_obj.search(pattern="*.sh", r=True).list

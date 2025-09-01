@@ -53,4 +53,4 @@ def add_ai_configs(repo_root: Path):
 
 
 if __name__ == "__main__":
-    add_ai_configs(repo_root=Path("."))
+    add_ai_configs(repo_root=Path.cwd())
