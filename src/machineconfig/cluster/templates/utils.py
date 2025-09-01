@@ -8,7 +8,7 @@
 
 # from machineconfig.cluster.remote_machine import WorkloadParams
 from typing import Optional
-from crocodile.file_management import P, PLike
+from machineconfig.utils.path_reduced import P, PLike
 
 # def expensive_function(workload_params: WorkloadParams, sim_dict: Optional[dict[str, Any]] = None) -> P:
 #     import time
