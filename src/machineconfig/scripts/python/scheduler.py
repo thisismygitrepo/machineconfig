@@ -63,7 +63,7 @@
 #         return None
 
 #     print("🚀 Executing tasks...")
-#     main(root=root.to_str(), ignore_conditions=args.ignore_conditions)
+#     main(root=str(root), ignore_conditions=args.ignore_conditions)
 #     print("🎉 All tasks executed successfully!\n")
 
 # if __name__ == "__main__":

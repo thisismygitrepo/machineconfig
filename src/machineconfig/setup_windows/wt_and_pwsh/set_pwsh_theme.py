@@ -34,7 +34,7 @@ def install_nerd_fonts():
     
     print("⚙️  Installing fonts via PowerShell...")
     file = PathExtended.tmpfile(suffix=".ps1").write_text(LIBRARY_ROOT.joinpath("setup_windows/wt_and_pwsh/install_fonts.ps1").read_text().replace(r".\fonts-to-be-installed", str(folder)))
-    subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {file.to_str()}", check=True)
+    subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {str(file)}", check=True)
     
     print("🗑️  Cleaning up temporary files...")
     folder.delete(sure=True)

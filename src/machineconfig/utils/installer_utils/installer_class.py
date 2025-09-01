@@ -122,7 +122,7 @@ class Installer:
         else:
             print("📥 Downloading from repository...")
             downloaded, version_to_be_installed = self.download(version=version)
-            if downloaded.to_str().endswith(".deb"):
+            if str(downloaded).endswith(".deb"):
                 print(f"📦 Installing .deb package: {downloaded}")
                 assert platform.system() == "Linux"
                 Terminal().run(f"sudo nala install -y {downloaded}").capture().print_if_unsuccessful(desc="Installing .deb", strict_err=True, strict_returncode=True)

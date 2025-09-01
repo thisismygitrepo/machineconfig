@@ -3,7 +3,7 @@
 
 
 # from platform import system
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import P as PathExtended, modify_text
 from machineconfig.utils.options import display_options
 from rich.panel import Panel
 from rich.text import Text
@@ -51,12 +51,24 @@ def main():
 
     print(Panel("📝 Updating SSH configuration...", expand=False))
 
+    # Inline the previous P.modify_text behavior (now deprecated):
+    # - If file doesn't exist, seed content with txt_search
+    # - Then run modify_text to replace/append accordingly and write back
     if config_path.exists():
-        config_path.modify_text(txt_search=txt, txt_alt=txt, replace_line=True, notfound_append=True, prepend=True)  # note that Identity line must come on top of config file otherwise it won't work, hence `prepend=True`
+        current = config_path.read_text()
         print(Panel("✏️  Updated existing SSH config file", expand=False))
     else:
-        config_path.write_text(txt)
+        current = txt
         print(Panel("📄 Created new SSH config file", expand=False))
+    new_content = modify_text(
+        txt_raw=current,
+        txt_search=txt,
+        txt_alt=txt,
+        replace_line=True,
+        notfound_append=True,
+        prepend=True,
+    )
+    config_path.write_text(new_content)
 
     panel_complete = Panel(
         Text(

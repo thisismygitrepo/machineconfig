@@ -71,7 +71,7 @@ except ImportError:
     python_file = PathExtended.tmp().joinpath("tmp_scripts", "python", randstr() + ".py")
     python_file.parent.mkdir(parents=True, exist_ok=True)
     python_file.write_text(python_script)
-    shell_script = get_shell_script_executing_python_file(python_file=python_file.to_str(), ve_name=ve_name)
+    shell_script = get_shell_script_executing_python_file(python_file=str(python_file), ve_name=ve_name)
     shell_file = write_shell_script_to_file(shell_script)
     return shell_file
 

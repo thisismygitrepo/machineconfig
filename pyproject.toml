@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "1.95"
+version = "1.96"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -33,6 +33,7 @@ dependencies = [
     "pudb>=2024.1.3",
     "pyfzf>=0.3.1",
     "call-function-with-timeout>=1.1.1",
+    "rclone-python>=0.1.23",
 ]
 
 [project.optional-dependencies]

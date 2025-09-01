@@ -57,6 +57,7 @@ def select_interpreter(workspace_root: str):
     work_space_settings.parent.mkdir(parents=True, exist_ok=True)
     if not work_space_settings.exists():
         print(f"📄 Creating new settings file: {work_space_settings}")
+        work_space_settings.parent.mkdir(parents=True, exist_ok=True)
         work_space_settings.touch()
         work_space_settings.write_text("{}")
     else:

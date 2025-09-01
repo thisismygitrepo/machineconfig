@@ -20,9 +20,9 @@ def main():
     args = parser.parse_args()
     orig_path = PathExtended(args.file).expanduser().absolute()
     if args.dest == "":
-        if "Local" in orig_path: junction = orig_path.split(at="Local", sep=-1)[1]
-        elif "Roaming" in orig_path: junction = orig_path.split(at="Roaming", sep=-1)[1]
-        elif ".config" in orig_path: junction = orig_path.split(at=".config", sep=-1)[1]
+        if "Local" in str(orig_path): junction = orig_path.split(at="Local", sep=-1)[1]
+        elif "Roaming" in str(orig_path): junction = orig_path.split(at="Roaming", sep=-1)[1]
+        elif ".config" in str(orig_path): junction = orig_path.split(at=".config", sep=-1)[1]
         else: junction = orig_path.rel2home()
         new_path = REPO_ROOT.joinpath(junction)
     else: 
@@ -42,7 +42,7 @@ def main():
 📝 Edit configuration file: nano {LIBRARY_ROOT}/symlinks/mapper.toml
 
 [{new_path.parent.name}]
-{orig_path.trunk} = {{ this = '{orig_path.collapseuser().as_posix()}', to_this = '{new_path.collapseuser().as_posix()}' }}
+{orig_path.name.split('.')[0]} = {{ this = '{orig_path.collapseuser().as_posix()}', to_this = '{new_path.collapseuser().as_posix()}' }}
 """)
 
 
