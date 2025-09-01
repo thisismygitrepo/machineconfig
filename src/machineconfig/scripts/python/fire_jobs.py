@@ -30,8 +30,6 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("path",     nargs='?', type=str, help="The directory containing the jobs", default=".")
     parser.add_argument("function", nargs='?', type=str, help="Fuction to run", default=None)
-
-    parser.add_argument("--init", "-I", type=str, help="init this repo", default="")
     parser.add_argument("--ve",              "-v", type=str, help="virtual enviroment name", default="")
     parser.add_argument("--cmd",             "-B", action="store_true", help="Create a cmd fire command to launch the the job asynchronously.")
     parser.add_argument("--interactive",     "-i", action="store_true", help="Whether to run the job interactively using IPython")
@@ -59,11 +57,6 @@ def main() -> None:
         parser.print_help()
         raise ex
     path_obj = sanitize_path(PathExtended.cwd())
-
-    if args.init != "":
-        from machineconfig.scripts.python.ai.init import add_ai_configs
-        add_ai_configs(repo_root=path_obj)
-
     if not path_obj.exists():
         path_obj = match_file_name(sub_string=args.path, search_root=PathExtended.cwd())
     else: pass

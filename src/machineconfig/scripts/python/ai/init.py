@@ -25,9 +25,9 @@ def add_ai_configs(repo_root: Path):
 
     # as per: https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions
     # Copilot Chat on github website chat
-    tmp = repo_root.joinpath(".github/copilot-instructions.md")
-    tmp.parent.mkdir(parents=True, exist_ok=True)
-    tmp.write_text(data=python_rules_file.read_text(), encoding="utf-8")
+    # tmp = repo_root.joinpath(".github/copilot-instructions.md")
+    # tmp.parent.mkdir(parents=True, exist_ok=True)
+    # tmp.write_text(data=python_rules_file.read_text(), encoding="utf-8")
 
     tmp = repo_root.joinpath(".github/instructions/python01.instructions.md")
     tmp.parent.mkdir(parents=True, exist_ok=True)
@@ -44,9 +44,11 @@ def add_ai_configs(repo_root: Path):
     if dot_git_ignore_path.exists():
         dot_git_ignore_content = dot_git_ignore_path.read_text(encoding="utf-8")
         to_add: list[str] = []
-        if ".links" not in dot_git_ignore_content: to_add.append(".links")
-        if "notebooks" not in dot_git_ignore_content: to_add.append("notebooks")
-        if ".ai" not in dot_git_ignore_content: to_add.append(".ai")
+        to_check_for: list[str] = [".links", "notebooks", ".ai",
+                                   "GEMINI.md", "CLAUDE.md", ".cursor", ".github"]
+        for item in to_check_for:
+            if item not in dot_git_ignore_content:
+                to_add.append(item)
         # if "*.ipynb"
         if len(to_add) > 0:
             dot_git_ignore_path.write_text(data=dot_git_ignore_content + "\n" + "\n".join(to_add), encoding="utf-8")
