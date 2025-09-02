@@ -4,6 +4,7 @@ import json
 import uuid
 import logging
 import subprocess
+import time
 from pathlib import Path
 from typing import Optional, Dict, List, Any
 
@@ -49,55 +50,73 @@ class ZellijLocalManager:
         """Get all managed session names."""
         return [manager.session_name for manager in self.managers if manager.session_name is not None]
 
-    def start_all_sessions(self) -> Dict[str, Any]:
-        """Start all zellij sessions with their layouts."""
-        results = {}
+    def start_all_sessions(self, poll_seconds: float = 5.0, poll_interval: float = 0.25) -> Dict[str, Any]:
+        """Start all zellij sessions with their layouts without blocking on the interactive TUI.
+
+        Rationale:
+            Previous implementation used subprocess.run(... timeout=30) on an "attach" command
+            which never returns (interactive) causing a timeout. We now:
+              1. Ensure any old session is deleted (best-effort, short timeout)
+              2. Launch new session in background with Popen (no wait)
+              3. Poll 'zellij list-sessions' to confirm creation
+
+        Args:
+            poll_seconds: Total seconds to wait for session to appear
+            poll_interval: Delay between polls
+        Returns:
+            Dict mapping session name to success metadata.
+        """
+        results: Dict[str, Any] = {}
         for manager in self.managers:
+            session_name = manager.session_name
             try:
-                session_name = manager.session_name
                 if session_name is None:
-                    continue  # Skip managers without a session name
-                    
-                layout_path = manager.layout_path
-                
-                if not layout_path:
-                    results[session_name] = {
-                        "success": False,
-                        "error": "No layout file path available"
-                    }
                     continue
-                
-                # Delete existing session if it exists, then start with layout
-                cmd = f"zellij delete-session --force {session_name}; zellij --layout {layout_path} attach {session_name} --create"
-                
-                console.print(f"[bold cyan]🚀 Starting session[/bold cyan] [yellow]'{session_name}'[/yellow] [dim]with layout:[/dim] [blue]{layout_path}[/blue]")
-                result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
-                
-                if result.returncode == 0:
-                    results[session_name] = {
-                        "success": True,
-                        "message": f"Session '{session_name}' started successfully"
-                    }
-                    console.print(f"[bold green]✅ Session[/bold green] [yellow]'{session_name}'[/yellow] [green]started successfully[/green]")
-                else:
-                    results[session_name] = {
-                        "success": False,
-                        "error": result.stderr or result.stdout
-                    }
-                    console.print(f"[bold red]❌ Failed to start session[/bold red] [yellow]'{session_name}'[/yellow][red]:[/red] [dim]{result.stderr}[/dim]")
-                    
-            except Exception as e:
-                # Use a fallback key since session_name might not be defined here
+                layout_path = manager.layout_path
+                if not layout_path:
+                    results[session_name] = {"success": False, "error": "No layout file path available"}
+                    continue
+
+                # 1. Best-effort delete existing session
+                delete_cmd = ["zellij", "delete-session", "--force", session_name]
                 try:
-                    key = getattr(manager, 'session_name', None) or f"manager_{self.managers.index(manager)}"
-                except Exception:
-                    key = f"manager_{self.managers.index(manager)}"
-                results[key] = {
-                    "success": False,
-                    "error": str(e)
-                }
+                    subprocess.run(delete_cmd, capture_output=True, text=True, timeout=5)
+                except subprocess.TimeoutExpired:
+                    logger.warning(f"Timeout deleting session {session_name}; continuing")
+                except FileNotFoundError:
+                    results[session_name] = {"success": False, "error": "'zellij' executable not found in PATH"}
+                    continue
+
+                # 2. Launch new session. We intentionally do NOT wait for completion.
+                # Using the same pattern as before (attach --create) but detached via env var.
+                # ZELLIJ_AUTO_ATTACH=0 prevents auto-attach if compiled with that feature; harmless otherwise.
+                start_cmd = [
+                    "bash", "-lc",
+                    f"ZELLIJ_AUTO_ATTACH=0 zellij --layout {layout_path} attach {session_name} --create >/dev/null 2>&1 &"
+                ]
+                console.print(f"[bold cyan]🚀 Starting session[/bold cyan] [yellow]'{session_name}'[/yellow] with layout [blue]{layout_path}[/blue] (non-blocking)...")
+                subprocess.Popen(start_cmd)
+
+                # 3. Poll for presence
+                deadline = time.time() + poll_seconds
+                appeared = False
+                while time.time() < deadline:
+                    list_res = subprocess.run(["zellij", "list-sessions"], capture_output=True, text=True)
+                    if list_res.returncode == 0 and session_name in list_res.stdout:
+                        appeared = True
+                        break
+                    time.sleep(poll_interval)
+
+                if appeared:
+                    results[session_name] = {"success": True, "message": f"Session '{session_name}' started"}
+                    console.print(f"[bold green]✅ Session[/bold green] [yellow]'{session_name}'[/yellow] [green]is up[/green]")
+                else:
+                    results[session_name] = {"success": False, "error": "Session did not appear within poll window"}
+                    console.print(f"[bold red]❌ Session '{session_name}' did not appear after {poll_seconds:.1f}s[/bold red]")
+            except Exception as e:
+                key = session_name or f"manager_{self.managers.index(manager)}"
+                results[key] = {"success": False, "error": str(e)}
                 logger.error(f"❌ Exception starting session '{key}': {e}")
-        
         return results
 
     def kill_all_sessions(self) -> Dict[str, Any]:

@@ -1,17 +1,29 @@
 
 
 from pathlib import Path
+import shlex
 # from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
 from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
+from typing import Literal, TypeAlias, get_args
 
 
-def launch_agents(repo_root: Path, prompts: list[str]):
+AGENTS: TypeAlias = Literal["cursor-agent", "gemini"]
+
+def launch_agents(repo_root: Path, prompts: list[str], agent: AGENTS):
     tab_config: dict[str, tuple[str, str]] = {}
     for idx, a_prompt in enumerate(prompts):
         tmp_file_path = repo_root.joinpath(f".ai/tmp_prompts/agent{idx}.txt")
         tmp_file_path.parent.mkdir(parents=True, exist_ok=True)
         Path(tmp_file_path).write_text(a_prompt)
-        tab_config[f"Agent{idx}"] = (str(repo_root), f"cursor-agent --print --output-format text < .ai/tmp_prompts/agent{idx}.txt")
+        match agent:
+            case "gemini":
+                # Need a real shell for the pipeline; otherwise '| gemini ...' is passed as args to 'cat'
+                safe_path = shlex.quote(str(tmp_file_path))
+                cmd = f"bash -lc 'cat {safe_path} | gemini --yolo --prompt'"
+            case "cursor-agent":
+                # Leave as originally implemented (user reports this worked as-is)
+                cmd = f"cursor-agent --print --output-format text < {tmp_file_path}"
+        tab_config[f"Agent{idx}"] = (str(repo_root), cmd)
     if len(tab_config) > 15:
         raise RuntimeError(f"Too many agents (#{len(tab_config)}), please cut them down to 15 or less")
     print(f"Launching a template with #{len(tab_config)} agents")
@@ -60,7 +72,10 @@ def main():
         for i in range(0, len(prompts), chunk_size):
             combined_prompts.append("\nTargeted Locations:\n".join(prompts[i:i+chunk_size]))
     combined_prompts = [prefix + "\n" + item for item in combined_prompts]
-    tab_config = launch_agents(repo_root=repo_root, prompts=combined_prompts)
+
+    from machineconfig.utils.options import choose_one_option
+    agent_selected = choose_one_option(header="Select agent type", options=get_args(AGENTS))
+    tab_config = launch_agents(repo_root=repo_root, prompts=combined_prompts, agent=agent_selected)
     from machineconfig.utils.utils2 import randstr
     random_name = randstr(length=3)
     manager = ZellijLocalManager(session2zellij_tabs={"Agents": tab_config}, session_name_prefix=random_name)
