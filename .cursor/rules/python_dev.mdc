@@ -33,3 +33,7 @@
 * When passing arguments or constructing dicts or lists or tuples, avoid breaking lines too much, try to use ~ 150 characters per line before breaking to new one.
 * when finished, run a linting static analysis check against files you touched, any fix any mistakes.
 * Please run `uv run -m pyright $file_touched` and address all issues. if `pyright is not there, first run `uv add pyright --dev`.
+
+# Tooling guideline
+* When you run a little command in terminal, if its multilined, then create a bash script for it, or, if its python multi line, create a little python script for it.
+    Avoid writing confusing long commands with plenty of escape characters.

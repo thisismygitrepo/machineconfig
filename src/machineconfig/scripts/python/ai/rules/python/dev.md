@@ -22,15 +22,15 @@
 * Use typeddict, dataclasses and literals when necessary to avoid blackbox str or dict[str, str] etc.
 * ALL functions / methods etc must clearly indicate the return type.
 * Do not leave dangling imports or variables unused, prefix their name with underscore if necessary to undicate they are unused.
-* Use triple quotes and triple double quotes f-strings for string formatting and avoid when possible all goofy escaping when interpolation.
-* Make sure all the code is rigorous, no lazy stuff.
-    * For example, always avoid default values in arguments of functions. Those are evil and cause confusion. Always be explicit in parameter passing.
-    * Unless asked explicitly, please never ever attempt to change code files by writing meta code to do string manipulation on files. Please do change the files one by one, no matter how many there is. Don't worry about time, its okay.
-
 * Please prefer to use absolute imports, avoid relatives when possible.
-* Please avoid writing README files and avoid docstring and comments in code unless absolutely necessary. Use clear naming conventions instead of documenting.
-* Always prefer to functional style of programming over OOP.
+* Use triple quotes and triple double quotes f-strings for string formatting and avoid when possible all goofy escaping when interpolation.
 * If needed, opt for polars not pandas, whenever possible.
-* When passing arguments or constructing dicts or lists or tuples, avoid breaking lines too much, try to use ~ 150 characters per line before breaking to new one.
 * when finished, run a linting static analysis check against files you touched, any fix any mistakes.
 * Please run `uv run -m pyright $file_touched` and address all issues. if `pyright is not there, first run `uv add pyright --dev`.
+
+* Make sure all the code is rigorous, no lazy stuff.
+    * For example, always avoid default values in arguments of functions. Those are evil and cause confusion. Always be explicit in parameter passing.
+    * Unless asked explicitly, please never ever attempt to change code files by writing meta code to do string manipulation on files. Please do change the files one by one, no matter how many there is. Don't worry about time, its okay, take your time and do them one by one. You can stop in the middle and we will have another LLM to help with the rest.
+* Please avoid writing README files and avoid docstring and comments in code unless absolutely necessary. Use clear naming conventions instead of documenting.
+* Always prefer to functional style of programming over OOP.
+* When passing arguments or constructing dicts or lists or tuples, avoid breaking lines too much, try to use ~ 150 characters per line before breaking to new one.
