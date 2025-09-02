@@ -40,7 +40,7 @@ def add_ai_configs(repo_root: Path):
 
     dot_ai_dir = repo_root.joinpath(".ai")
     dot_ai_dir.mkdir(parents=True, exist_ok=True)
-    dot_git_ignore_path = dot_ai_dir.joinpath(".gitignore")
+    dot_git_ignore_path = repo_root.joinpath(".gitignore")
     if dot_git_ignore_path.exists():
         dot_git_ignore_content = dot_git_ignore_path.read_text(encoding="utf-8")
         to_add: list[str] = []
