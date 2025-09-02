@@ -32,6 +32,9 @@ def main():
         if not matching_files:
             print(f"💥 No .py files found containing keyword: {keyword}")
             return
+        for idx, a_matching_file in enumerate(matching_files):
+            print(idx, a_matching_file)
+        print("\n\n")
         print(f"Found {len(matching_files)} .py files containing keyword: {keyword}")
         file_path = repo_root.joinpath(".ai", "target_file.txt")
         file_path.parent.mkdir(parents=True, exist_ok=True)

@@ -49,7 +49,7 @@ class Scheduler:
         self.record_session_end(reason=f"Reached maximum number of cycles ({self.max_cycles})" if self.cycle >= self.max_cycles else f"Reached due stop time ({until_ms})")
     def get_records_df(self):
         import polars as pl
-        columns = ["start", "finish", "duration", "cycles", "termination reason", "logfile"] + list(self.sess_stats(self).keys())
+        columns = ["start", "finish", "duration", "cycles", "termination reason"] + list(self.sess_stats(self).keys())
         return pl.DataFrame(self.records, schema=columns)
     def record_session_end(self, reason: str):
         import polars as pl
