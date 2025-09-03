@@ -24,11 +24,11 @@ BOX_WIDTH = 100  # Define BOX_WIDTH or get it from a config
 # for windows it won't change the profile, if the profile was modified already e.g. due to syncing
 
 
-def create_default_shell_profile():
+def create_default_shell_profile() -> None:
     profile_path = get_shell_profile_path()
     profile = profile_path.read_text()
-    if system == "Windows": source = f". {str(LIBRARY_ROOT.joinpath('settings/shells/pwsh/init.ps1').collapseuser()).replace('~', '$HOME')}"
-    else: source = f"source {str(LIBRARY_ROOT.joinpath('settings/shells/bash/init.sh').collapseuser()).replace('~', '$HOME')}"
+    if system == "Windows": source = f""". {str(LIBRARY_ROOT.joinpath('settings/shells/pwsh/init.ps1').collapseuser()).replace('~', '$HOME')}"""
+    else: source = f"""source {str(LIBRARY_ROOT.joinpath('settings/shells/bash/init.sh').collapseuser()).replace('~', '$HOME')}"""
 
     if source in profile:
         console.print(Panel("🔄 PROFILE | Skipping init script sourcing - already present in profile", title="[bold blue]Profile[/bold blue]", border_style="blue"))
@@ -38,28 +38,28 @@ def create_default_shell_profile():
         if system == "Linux":
             res = Terminal().run("cat /proc/version").op
             if "microsoft" in res.lower() or "wsl" in res.lower():
-                profile += "\ncd ~"  # this is to make sure that the current dir is not in the windows file system, which is terribly slow and its a bad idea to be there anyway.
+                profile += "\ncd ~"
                 console.print("📌 WSL detected - adding 'cd ~' to profile to avoid Windows filesystem")
         profile_path.parent.mkdir(parents=True, exist_ok=True)
         profile_path.write_text(profile)
         console.print(Panel("✅ Profile updated successfully", title="[bold blue]Profile[/bold blue]", border_style="blue"))
 
 
-def get_shell_profile_path():
+def get_shell_profile_path() -> PathExtended:
     if system == "Windows":
         obj = Terminal().run("$PROFILE", shell="pwsh")
         res = obj.op2path()
         if isinstance(res, PathExtended): profile_path = res
         else:
             obj.print(capture=False)
-            raise ValueError(f"Could not get profile path for Windows. Got {res}")
+            raise ValueError(f"""Could not get profile path for Windows. Got {res}""")
     elif system == "Linux": profile_path = PathExtended("~/.bashrc").expanduser()
-    else: raise ValueError(f"Not implemented for this system {system}")
-    console.print(Panel(f"🐚 SHELL PROFILE | Working with path: `{profile_path}`", title="[bold blue]Shell Profile[/bold blue]", border_style="blue"))
+    else: raise ValueError(f"""Not implemented for this system {system}""")
+    console.print(Panel(f"""🐚 SHELL PROFILE | Working with path: `{profile_path}`""", title="[bold blue]Shell Profile[/bold blue]", border_style="blue"))
     return profile_path
 
 
-def append_temporarily(dirs: list[str], kind: Literal['append', 'prefix', 'replace'] = "append"):
+def append_temporarily(dirs: list[str], kind: Literal['append', 'prefix', 'replace']) -> str:
     dirs_ = []
     for path in dirs:
         path_rel = PathExtended(path).collapseuser(strict=False)
@@ -81,7 +81,7 @@ def append_temporarily(dirs: list[str], kind: Literal['append', 'prefix', 'repla
     else: raise ValueError
     return result
 
-def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = None):
+def main_env_path(choice: Optional[str], profile_path: Optional[str]) -> None:
     env_path = LIBRARY_ROOT.joinpath("profile/env_path.toml").readit()
     dirs = env_path[f'path_{system.lower()}']['extension']
 
@@ -95,7 +95,7 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
     if choice == "none(EXIT)": return
 
     console.print(f"\n📌 Adding directories to PATH: {dirs}")
-    addition = append_temporarily(dirs=dirs)
+    addition = append_temporarily(dirs=dirs, kind="append")
     profile_path_obj = PathExtended(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
     profile_path_obj.copy(name=profile_path_obj.name + ".orig_" + randstr())
     console.print(f"💾 Created backup of profile: {profile_path_obj.name}.orig_*")
@@ -106,7 +106,7 @@ def main_env_path(choice: Optional[str] = None, profile_path: Optional[str] = No
     console.print(Panel("✅ PATH variables added to profile successfully", title="[bold blue]Environment[/bold blue]", border_style="blue"))
 
 
-def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice: Optional[str] = None):
+def main_add_sources_to_shell_profile(profile_path: Optional[str], choice: Optional[str]) -> None:
     sources: list[str] = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()[system.lower()]['files']
 
     console.print(Panel("🔄 Adding sources to shell profile", title="[bold blue]Sources[/bold blue]", border_style="blue"))
@@ -145,7 +145,7 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice
     console.print(Panel("✅ Shell profile updated with sources", title="[bold blue]Sources[/bold blue]", border_style="blue"))
 
 
-def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice: Optional[str] = None):
+def main_add_patches_to_shell_profile(profile_path: Optional[str], choice: Optional[str]) -> None:
     patches: list[str] = list(LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search().apply(lambda x: x.as_posix()))
 
     console.print(Panel("🩹 Adding patches to shell profile", title="[bold blue]Patches[/bold blue]", border_style="blue"))

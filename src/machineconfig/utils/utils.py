@@ -3,7 +3,6 @@ Utils
 """
 
 from machineconfig.utils.path_reduced import P as PathExtended
-# import crocodile.environment as env
 import machineconfig
 from machineconfig.utils.options import check_tool_exists, choose_cloud_interactively, choose_multiple_options, choose_one_option, choose_ssh_host, display_options
 from rich.console import Console
@@ -50,7 +49,7 @@ DEFAULTS_PATH = PathExtended.home().joinpath("dotfiles/machineconfig/defaults.in
 
 
 
-def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool=False):
+def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool) -> bool:
     dotfiles_path = str(PathExtended.home().joinpath("dotfiles"))
     from git import Repo
     repo = Repo(path=dotfiles_path)
