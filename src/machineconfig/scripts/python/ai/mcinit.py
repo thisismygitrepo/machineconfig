@@ -1,25 +1,33 @@
 
 
 from pathlib import Path
-from git import Repo
 
 
 installations = """
-uv add pyrefly --dev
-uv add mypy --dev
-uv add pyright --dev
-uv add pylint --dev
+uv add pylint pyright mypy pyrefly ty --dev  # linters and type checkers
+uv add pytest --dev
 """
 
 def add_ai_configs(repo_root: Path):
     import machineconfig as mc
     mc_root = Path(mc.__file__).parent
-
-    try:
-        _repo_obj = Repo(repo_root)
-    except Exception as e:
-        print(f"Error initializing git repo: {e}")
-        return
+    # from git import Repo
+    # try:
+    #     _repo_obj = Repo(repo_root)
+    # except Exception as _e:
+    #     print(f"{Path.cwd()} is not a git repository, would you like to initialize one? (y/n)")
+    #     if input().strip().lower() == "y":
+    #         Repo.init(repo_root)
+    #     return
+    if repo_root.joinpath("pyproject.toml").exists() is False:
+        uv_init = input(f"{repo_root} does not seem to be a python project (no pyproject.toml found), would you like to initialize one? (y/n) ")
+        if uv_init.strip().lower() == "y":
+            command_to_run = "uv init --python 3.13; uv venv"
+            import subprocess
+            subprocess.run(command_to_run, shell=True)
+        else:
+            print("Terminating mcinit ...")
+            return
 
     instructions_repository_dir = mc_root.joinpath("scripts/python/ai/instructions")
     chatmodes_dir = mc_root.joinpath("scripts/python/ai/chatmodes")
