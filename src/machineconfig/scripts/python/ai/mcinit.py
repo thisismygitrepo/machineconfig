@@ -33,11 +33,11 @@ def add_ai_configs(repo_root: Path):
     repo_root.joinpath(".github/prompts").mkdir(parents=True, exist_ok=True)
     repo_root.joinpath(".github/instructions").mkdir(parents=True, exist_ok=True)
     for a_chatmode in chatmodes_dir.iterdir():
-        repo_root.joinpath(".github/chatmodes", a_chatmode.stem + ".chatmode.md").write_text(data=a_chatmode.read_text(), encoding="utf-8")
+        repo_root.joinpath(".github/chatmodes", a_chatmode.name.split(".")[0] + ".chatmode.md").write_text(data=a_chatmode.read_text(), encoding="utf-8")
     for a_prompt in prompts_dir.iterdir():
-        repo_root.joinpath(".github/prompts", a_prompt.stem + ".prompt.md").write_text(data=a_prompt.read_text(), encoding="utf-8")
-    for an_instruction in instructions_repository_dir.glob("*.md"):
-        repo_root.joinpath(".github/instructions", an_instruction.stem + ".instructions.md").write_text(data=an_instruction.read_text(), encoding="utf-8")
+        repo_root.joinpath(".github/prompts", a_prompt.name.split(".")[0] + ".prompt.md").write_text(data=a_prompt.read_text(), encoding="utf-8")
+    for an_instruction in instructions_repository_dir.rglob("*.md"):
+        repo_root.joinpath(".github/instructions", an_instruction.name.split(".")[0] + ".instruction.md").write_text(data=an_instruction.read_text(), encoding="utf-8")
     tmp = repo_root.joinpath(".github/copilot-instructions.md")
 
     generic_instructions = instructions_repository_dir.joinpath("python/dev.instructions.md")

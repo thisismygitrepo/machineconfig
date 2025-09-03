@@ -32,6 +32,7 @@ applyTo: "**/*.py"
 * If needed, opt for polars not pandas, whenever possible.
 * when finished, run a linting static analysis check against files you touched, Any fix any mistakes.
 * Please run `uv run -m pyright $file_touched` and address all issues. if `pyright is not there, first run `uv add pyright --dev`.
+* For all type checkers and linters, like mypy, pyright, pyrefly and pylint, there are config files at different levels of the repo all the way up to home directory level. You don't need to worry about them, just be mindful that they exist. The tools themselves will respect the configs therein.
 
 # General Programming Ethos:
 * Make sure all the code is rigorous, no lazy stuff.
