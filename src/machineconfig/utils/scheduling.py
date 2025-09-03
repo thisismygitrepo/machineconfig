@@ -290,10 +290,10 @@
 #     shell_script_root.mkdir(parents=True, exist_ok=True)
 #     try:
 #         if platform.system() == 'Windows':
-#             shell_script = shell_script_root.joinpath("run.ps1").write_text(shell_script)
+#             shell_script = shell_script_root.joinpath("run.ps1").write_text(shell_script, encoding="utf-8")
 #             subprocess.run(['powershell', '-ExecutionPolicy', 'Unrestricted', shell_script], check=True)
 #         elif platform.system() in ['Linux', 'Darwin']:
-#             shell_script = shell_script_root.joinpath("run.sh").write_text(shell_script)
+#             shell_script = shell_script_root.joinpath("run.sh").write_text(shell_script, encoding="utf-8")
 #             subprocess.run(['bash', shell_script], check=True)
 #         else: res = f"Error: Unsupported platform {platform.system()}."
 #         res = SUCCESS

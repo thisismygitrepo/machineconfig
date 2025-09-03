@@ -30,7 +30,7 @@ mount_point='{mount_point}'
 username='{username}'
 password='{password}'
 
-""")
+""", encoding="utf-8")
         print("✅ Configuration saved successfully!\n")
 
     elif platform.system() == "Windows":
