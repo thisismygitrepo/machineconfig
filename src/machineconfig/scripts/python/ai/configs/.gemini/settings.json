@@ -8,9 +8,9 @@
   // Tool usage and safety
   "sandbox": false,                    // Enable with true or specify backend ("docker", "podman")
   "autoAccept": true,                 // Auto-approve safe tool calls
-  "usageStatisticsEnabled": true,      // Collect anonymized usage stats
+  "usageStatisticsEnabled": false,      // Collect anonymized usage stats
   "telemetry": {
-    "enabled": true,
+    "enabled": false,
     "target": "remote",               // or "local"
     "logPrompts": false
   },
