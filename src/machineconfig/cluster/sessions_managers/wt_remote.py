@@ -131,8 +131,8 @@ class WTRemoteLayoutGenerator:
         # Serialize to JSON
         data = self.to_dict()
 
-        with open(path_obj, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
+        text = json.dumps(data, indent=2, ensure_ascii=False)
+        path_obj.write_text(text, encoding="utf-8")
 
         logger.info(f"✅ Serialized WTRemoteLayoutGenerator to: {path_obj}")
         return str(path_obj)

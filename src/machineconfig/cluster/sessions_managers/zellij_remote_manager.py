@@ -96,8 +96,8 @@ class ZellijSessionManager:
 
         # Save the machine2zellij_tabs configuration
         config_file = session_dir / "machine2zellij_tabs.json"
-        with open(config_file, 'w', encoding='utf-8') as f:
-            json.dump(self.machine2zellij_tabs, f, indent=2, ensure_ascii=False)
+        text = json.dumps(self.machine2zellij_tabs, indent=2, ensure_ascii=False)
+        config_file.write_text(text, encoding="utf-8")
 
         # Save session metadata
         metadata = {
@@ -107,8 +107,8 @@ class ZellijSessionManager:
             "machines": list(self.machine2zellij_tabs.keys())
         }
         metadata_file = session_dir / "metadata.json"
-        with open(metadata_file, 'w', encoding='utf-8') as f:
-            json.dump(metadata, f, indent=2, ensure_ascii=False)
+        text = json.dumps(metadata, indent=2, ensure_ascii=False)
+        metadata_file.write_text(text, encoding="utf-8")
 
         # Save each ZellijRemoteLayoutGenerator
         managers_dir = session_dir / "managers"

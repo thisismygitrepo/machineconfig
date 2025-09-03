@@ -30,7 +30,7 @@ applyTo: "**/*.py"
 * Please prefer to use absolute imports, avoid relatives when possible.
 * Use triple quotes and triple double quotes f-strings for string formatting and avoid when possible all goofy escaping when interpolation.
 * If needed, opt for polars not pandas, whenever possible.
-* when finished, run a linting static analysis check against files you touched, any fix any mistakes.
+* when finished, run a linting static analysis check against files you touched, Any fix any mistakes.
 * Please run `uv run -m pyright $file_touched` and address all issues. if `pyright is not there, first run `uv add pyright --dev`.
 
 # General Programming Ethos:

@@ -405,8 +405,7 @@ def create_new_connection(name: str, ssid: str, password: str):
 </WLANProfile>"""
 
             profile_path = f"{name}.xml"
-            with open(profile_path, 'w', encoding='utf-8') as file:
-                file.write(xml_config)
+            Path(profile_path).write_text(xml_config, encoding="utf-8")
 
             subprocess.run(
                 ["netsh", "wlan", "add", "profile", f"filename={profile_path}", "interface=Wi-Fi"],

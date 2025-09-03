@@ -38,8 +38,7 @@ def generate_file_checklist(repo_root: Union[str, Path], exclude_dirs: Optional[
     for sh_file in sh_files:
         markdown_content += f"- [ ] {sh_file}\n"
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(markdown_content)
+    Path(output_path).write_text(markdown_content, encoding="utf-8")
 
     print(f"📋 Checklist generated at: {output_path}")
     return output_path

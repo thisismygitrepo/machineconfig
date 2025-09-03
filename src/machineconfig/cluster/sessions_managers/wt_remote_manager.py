@@ -91,8 +91,8 @@ class WTSessionManager:
 
         # Save the machine2wt_tabs configuration
         config_file = session_dir / "machine2wt_tabs.json"
-        with open(config_file, 'w', encoding='utf-8') as f:
-            json.dump(self.machine2wt_tabs, f, indent=2, ensure_ascii=False)
+        text = json.dumps(self.machine2wt_tabs, indent=2, ensure_ascii=False)
+        config_file.write_text(text, encoding="utf-8")
 
         # Save session metadata
         metadata = {
@@ -103,8 +103,8 @@ class WTSessionManager:
             "manager_type": "WTSessionManager"
         }
         metadata_file = session_dir / "metadata.json"
-        with open(metadata_file, 'w', encoding='utf-8') as f:
-            json.dump(metadata, f, indent=2, ensure_ascii=False)
+        text = json.dumps(metadata, indent=2, ensure_ascii=False)
+        metadata_file.write_text(text, encoding="utf-8")
 
         # Save each WTRemoteLayoutGenerator
         managers_dir = session_dir / "managers"

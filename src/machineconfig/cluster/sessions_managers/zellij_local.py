@@ -104,15 +104,13 @@ class ZellijLayoutGenerator:
                 output_path = Path(output_dir)
                 output_path.mkdir(parents=True, exist_ok=True)
                 layout_file = output_path / f"zellij_layout_{random_suffix}.kdl"
-                with open(layout_file, 'w', encoding='utf-8') as f:
-                    f.write(layout_content)
+                layout_file.write_text(layout_content, encoding="utf-8")
                 self.layout_path = str(layout_file.absolute())
             else:
                 # Use the predefined TMP_LAYOUT_DIR for temporary files
                 TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
                 layout_file = TMP_LAYOUT_DIR / f"zellij_layout_{self.session_name or 'default'}_{random_suffix}.kdl"
-                with open(layout_file, 'w', encoding='utf-8') as f:
-                    f.write(layout_content)
+                layout_file.write_text(layout_content, encoding="utf-8")
                 self.layout_path = str(layout_file.absolute())
 
             # Enhanced Rich logging for file creation

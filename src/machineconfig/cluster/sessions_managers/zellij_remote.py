@@ -125,8 +125,8 @@ class ZellijRemoteLayoutGenerator:
         # Serialize to JSON
         data = self.to_dict()
 
-        with open(file_path_obj, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
+        text = json.dumps(data, indent=2, ensure_ascii=False)
+        file_path_obj.write_text(text, encoding="utf-8")
 
         logger.info(f"✅ Serialized ZellijRemoteLayoutGenerator to: {file_path_obj}")
         return str(file_path_obj)

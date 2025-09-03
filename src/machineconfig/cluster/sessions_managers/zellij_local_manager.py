@@ -342,8 +342,8 @@ class ZellijLocalManager:
 
         # Save the session2zellij_tabs configuration
         config_file = session_dir / "session2zellij_tabs.json"
-        with open(config_file, 'w', encoding='utf-8') as f:
-            json.dump(self.session2zellij_tabs, f, indent=2, ensure_ascii=False)
+        text = json.dumps(self.session2zellij_tabs, indent=2, ensure_ascii=False)
+        config_file.write_text(text, encoding="utf-8")
 
         # Save metadata
         metadata = {
@@ -354,8 +354,8 @@ class ZellijLocalManager:
             "manager_type": "ZellijLocalManager"
         }
         metadata_file = session_dir / "metadata.json"
-        with open(metadata_file, 'w', encoding='utf-8') as f:
-            json.dump(metadata, f, indent=2, ensure_ascii=False)
+        text = json.dumps(metadata, indent=2, ensure_ascii=False)
+        metadata_file.write_text(text, encoding="utf-8")
 
         # Save each manager's state
         managers_dir = session_dir / "managers"
@@ -368,8 +368,8 @@ class ZellijLocalManager:
                 "layout_path": manager.layout_path
             }
             manager_file = managers_dir / f"manager_{i}_{manager.session_name}.json"
-            with open(manager_file, 'w', encoding='utf-8') as f:
-                json.dump(manager_data, f, indent=2, ensure_ascii=False)
+            text = json.dumps(manager_data, indent=2, ensure_ascii=False)
+            manager_file.write_text(text, encoding="utf-8")
 
         logger.info(f"✅ Saved ZellijLocalManager session to: {session_dir}")
         return session_id

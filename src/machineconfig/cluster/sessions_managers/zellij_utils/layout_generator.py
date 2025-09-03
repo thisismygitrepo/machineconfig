@@ -114,8 +114,7 @@ class LayoutGenerator:
             layout_file = output_dir / f"zellij_layout_{session_name}_{random_suffix}.kdl"
 
             # Write layout file
-            with open(layout_file, 'w', encoding='utf-8') as f:
-                f.write(layout_content)
+            layout_file.write_text(layout_content, encoding="utf-8")
 
             # Enhanced Rich logging
             console.print(f"[bold green]✅ Zellij layout file created:[/bold green] [cyan]{layout_file.absolute()}[/cyan]")

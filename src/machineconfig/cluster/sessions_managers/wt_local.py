@@ -110,17 +110,19 @@ class WTLayoutGenerator:
                 script_file = TMP_LAYOUT_DIR / f"wt_layout_{self.session_name}_{random_suffix}.bat"
 
             # Create batch script
-            with open(script_file, 'w', encoding='utf-8') as f:
-                f.write("@echo off\n")
-                f.write(f"REM Windows Terminal layout for {self.session_name}\n")
-                f.write(f"{wt_command}\n")
+            text = f"""@echo off
+REM Windows Terminal layout for {self.session_name}
+{wt_command}
+"""
+            script_file.write_text(text, encoding="utf-8")
 
             # Also create PowerShell script for better command handling
             ps1_file = script_file.with_suffix('.ps1')
-            with open(ps1_file, 'w', encoding='utf-8') as f:
-                f.write(f"# Windows Terminal layout for {self.session_name}\n")
-                f.write(f"# Generated with random suffix: {random_suffix}\n")
-                f.write(f"{wt_command}\n")
+            text = f"""# Windows Terminal layout for {self.session_name}
+# Generated with random suffix: {random_suffix}
+{wt_command}
+"""
+            ps1_file.write_text(text, encoding="utf-8")
 
             self.script_path = str(script_file.absolute())
             logger.info(f"Windows Terminal script file created: {self.script_path}")

@@ -148,16 +148,18 @@ class WTLayoutGenerator:
             ps1_file = output_dir / f"wt_layout_{session_name}_{random_suffix}.ps1"
 
             # Create batch file
-            with open(bat_file, 'w', encoding='utf-8') as f:
-                f.write(f"@echo off\n")
-                f.write(f"REM Windows Terminal layout for {session_name}\n")
-                f.write(f"{wt_command}\n")
+            text = f"""@echo off
+REM Windows Terminal layout for {session_name}
+{wt_command}
+"""
+            bat_file.write_text(text, encoding="utf-8")
 
             # Create PowerShell file (better for complex commands)
-            with open(ps1_file, 'w', encoding='utf-8') as f:
-                f.write(f"# Windows Terminal layout for {session_name}\n")
-                f.write(f"# Generated on {random_suffix}\n")
-                f.write(f"{wt_command}\n")
+            text = f"""# Windows Terminal layout for {session_name}
+# Generated on {random_suffix}
+{wt_command}
+"""
+            ps1_file.write_text(text, encoding="utf-8")
 
             logger.info(f"Windows Terminal script files created: {bat_file.absolute()}")
             return str(bat_file.absolute())
