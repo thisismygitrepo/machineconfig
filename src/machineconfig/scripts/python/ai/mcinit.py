@@ -22,9 +22,12 @@ def add_ai_configs(repo_root: Path):
     if repo_root.joinpath("pyproject.toml").exists() is False:
         uv_init = input(f"{repo_root} does not seem to be a python project (no pyproject.toml found), would you like to initialize one? (y/n) ")
         if uv_init.strip().lower() == "y":
-            command_to_run = "uv init --python 3.13; uv venv"
+            command_to_run = """
+uv init --python 3.13
+uv venv
+"""
             import subprocess
-            subprocess.run(command_to_run, shell=True)
+            subprocess.run(command_to_run, shell=True, check=True)
         else:
             print("Terminating mcinit ...")
             return
