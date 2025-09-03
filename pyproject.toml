@@ -34,6 +34,7 @@ dependencies = [
     "pyfzf>=0.3.1",
     "call-function-with-timeout>=1.1.1",
     "rclone-python>=0.1.23",
+    "pytz>=2025.2",
 ]
 
 [project.optional-dependencies]
