@@ -1,4 +1,8 @@
 
+---
+applyTo: "**/*.py"
+---
+
 # Python Development Environment and tooling:
 * If you find that uv is not available in terminal, look for how to install it in https://github.com/astral-sh/uv
 * To initialize a new python project, use `cd $repo_root; uv init --python 3.13`

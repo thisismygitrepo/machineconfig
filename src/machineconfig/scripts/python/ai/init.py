@@ -3,7 +3,6 @@
 from pathlib import Path
 from git import Repo
 
-# def add_config_for_curor(repo_root: Path, config_f):
 
 def add_ai_configs(repo_root: Path):
     import machineconfig as mc
@@ -15,29 +14,36 @@ def add_ai_configs(repo_root: Path):
         print(f"Error initializing git repo: {e}")
         return
 
-    rules_dir = mc_root.joinpath("scripts/python/ai/rules")
+    instructions_repository_dir = mc_root.joinpath("scripts/python/ai/instructions")
+    chatmodes_dir = mc_root.joinpath("scripts/python/ai/chatmodes")
+    prompts_dir = mc_root.joinpath("scripts/python/ai/prompts")
+    python_rules_file = instructions_repository_dir.joinpath("python/dev.md")
 
-    python_rules_file = rules_dir.joinpath("python/dev.md")
+    # VSCODE:
+    # as per: https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions
+    # Copilot Chat on github website chat & basic guideline.
+    repo_root.joinpath(".github/chatmodes").mkdir(parents=True, exist_ok=True)
+    repo_root.joinpath(".github/prompts").mkdir(parents=True, exist_ok=True)
+    repo_root.joinpath(".github/instructions").mkdir(parents=True, exist_ok=True)
+    for a_chatmode in chatmodes_dir.iterdir():
+        repo_root.joinpath(".github/chatmodes", a_chatmode.stem + ".chatmode.md").write_text(data=a_chatmode.read_text(), encoding="utf-8")
+    for a_prompt in prompts_dir.iterdir():
+        repo_root.joinpath(".github/prompts", a_prompt.stem + ".prompt.md").write_text(data=a_prompt.read_text(), encoding="utf-8")
+    for an_instruction in instructions_repository_dir.iterdir():
+        repo_root.joinpath(".github/instructions", an_instruction.stem + ".instructions.md").write_text(data=an_instruction.read_text(), encoding="utf-8")
+    tmp = repo_root.joinpath(".github/copilot-instructions.md")
+    tmp.write_text(data=python_rules_file.read_text(), encoding="utf-8")
 
+    # CURSOR, GEMINI, CLAUDE CODE.
     tmp = repo_root.joinpath(".cursor/rules/python_dev.mdc")
     tmp.parent.mkdir(parents=True, exist_ok=True)
     tmp.write_text(data=python_rules_file.read_text(), encoding="utf-8")
-
-    # as per: https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions
-    # Copilot Chat on github website chat
-    # tmp = repo_root.joinpath(".github/copilot-instructions.md")
-    # tmp.parent.mkdir(parents=True, exist_ok=True)
-    # tmp.write_text(data=python_rules_file.read_text(), encoding="utf-8")
-
-    tmp = repo_root.joinpath(".github/instructions/python01.instructions.md")
-    tmp.parent.mkdir(parents=True, exist_ok=True)
-    tmp.write_text(data=python_rules_file.read_text(), encoding="utf-8")
-
     tmp = repo_root.joinpath("CLAUDE.md")
     tmp.write_text(data=python_rules_file.read_text(), encoding="utf-8")
     tmp = repo_root.joinpath("GEMINI.md")
     tmp.write_text(data=python_rules_file.read_text(), encoding="utf-8")
 
+    # OTHERS
     dot_ai_dir = repo_root.joinpath(".ai")
     dot_ai_dir.mkdir(parents=True, exist_ok=True)
     dot_git_ignore_path = repo_root.joinpath(".gitignore")
