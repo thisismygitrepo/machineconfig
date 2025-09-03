@@ -1,5 +1,6 @@
 
-# Development Environment and tooling:
+# Python Development Environment and tooling:
+* If you find that uv is not available in terminal, look for how to install it in https://github.com/astral-sh/uv
 * To initialize a new python project, use `cd $repo_root; uv init --python 3.13`
 * To create virtual env, use `cd $repo_root; uv venv`.
 * To install venv and dependency of an existing project, use `cd $repo_root; uv sync`.
@@ -10,7 +11,6 @@
     * On this note, I have to say that I am seriously concerned about AI using very outdated coding style.
         * Use python 3.13 syntax features.
         * Use modern standards, e.g. Path from pathlib.
-
 * Never touch `pyproject.toml` manually, this file is strictly managed by `uv` tool on your behalf.
 * If you are writing a test or any temporary script for discovering or undestanding something as an intermediate step, then,
   please keep all your temp scripts and files under ./.ai/tmp_scripts directory, its included in .gitignore and won't litter the repo.
