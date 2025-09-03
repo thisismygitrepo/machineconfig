@@ -4,6 +4,13 @@ from pathlib import Path
 from git import Repo
 
 
+installations = """
+uv add pyrefly --dev
+uv add mypy --dev
+uv add pyright --dev
+uv add pylint --dev
+"""
+
 def add_ai_configs(repo_root: Path):
     import machineconfig as mc
     mc_root = Path(mc.__file__).parent
@@ -17,7 +24,7 @@ def add_ai_configs(repo_root: Path):
     instructions_repository_dir = mc_root.joinpath("scripts/python/ai/instructions")
     chatmodes_dir = mc_root.joinpath("scripts/python/ai/chatmodes")
     prompts_dir = mc_root.joinpath("scripts/python/ai/prompts")
-    python_rules_file = instructions_repository_dir.joinpath("python/dev.md")
+    # python_rules_file = instructions_repository_dir.joinpath("python/dev.md")
 
     # VSCODE:
     # as per: https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions
@@ -29,19 +36,21 @@ def add_ai_configs(repo_root: Path):
         repo_root.joinpath(".github/chatmodes", a_chatmode.stem + ".chatmode.md").write_text(data=a_chatmode.read_text(), encoding="utf-8")
     for a_prompt in prompts_dir.iterdir():
         repo_root.joinpath(".github/prompts", a_prompt.stem + ".prompt.md").write_text(data=a_prompt.read_text(), encoding="utf-8")
-    for an_instruction in instructions_repository_dir.iterdir():
+    for an_instruction in instructions_repository_dir.glob("*.md"):
         repo_root.joinpath(".github/instructions", an_instruction.stem + ".instructions.md").write_text(data=an_instruction.read_text(), encoding="utf-8")
     tmp = repo_root.joinpath(".github/copilot-instructions.md")
-    tmp.write_text(data=python_rules_file.read_text(), encoding="utf-8")
+
+    generic_instructions = instructions_repository_dir.joinpath("python/dev.instructions.md")
+    tmp.write_text(data=generic_instructions.read_text(), encoding="utf-8")
 
     # CURSOR, GEMINI, CLAUDE CODE.
     tmp = repo_root.joinpath(".cursor/rules/python_dev.mdc")
     tmp.parent.mkdir(parents=True, exist_ok=True)
-    tmp.write_text(data=python_rules_file.read_text(), encoding="utf-8")
+    tmp.write_text(data=generic_instructions.read_text(), encoding="utf-8")
     tmp = repo_root.joinpath("CLAUDE.md")
-    tmp.write_text(data=python_rules_file.read_text(), encoding="utf-8")
+    tmp.write_text(data=generic_instructions.read_text(), encoding="utf-8")
     tmp = repo_root.joinpath("GEMINI.md")
-    tmp.write_text(data=python_rules_file.read_text(), encoding="utf-8")
+    tmp.write_text(data=generic_instructions.read_text(), encoding="utf-8")
 
     # OTHERS
     dot_ai_dir = repo_root.joinpath(".ai")

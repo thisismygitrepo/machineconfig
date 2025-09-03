@@ -41,17 +41,17 @@ def interactive_chat():
     conversation_history = []
     model_index = 0
     model_name = model_name_preferences[model_index]
-    
+
     print("""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ 🚀 Interactive Chat Started
 ┃    Type your message and press Enter to chat
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
-    
+
     while True:
         header = f" 🤖 Using Model: {model_name} "
         print(f"\n{header.center(80, '═')}\n")
-        
+
         while True:
             try:
                 user_input = input("💬 You: ")
@@ -76,7 +76,7 @@ def interactive_chat():
                     print("\n" * 2)
                     try:
                         rprint(Panel(
-                            f"{response_content}", 
+                            f"{response_content}",
                             title=f"🤖 AI ({model_name})",
                             border_style="blue"
                         ))
@@ -85,10 +85,10 @@ def interactive_chat():
                         print(f"""
 ┌────────────────────────────────────────────────────────────────
 │ 🤖 AI ({model_name}):
-│ 
+│
 {response_content}
 └────────────────────────────────────────────────────────────────""")
-                    
+
                     conversation_history.append({"role": "assistant", "content": response_content})
                     print("\n")
             except KeyboardInterrupt:

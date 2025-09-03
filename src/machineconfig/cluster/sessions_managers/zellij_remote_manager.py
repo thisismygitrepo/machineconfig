@@ -35,14 +35,14 @@ class ZellijSessionManager:
             a_cmd = run_command_in_zellij_tab(command=ssh_cmd, tab_name=hostname, cwd=None)
             cmds += a_cmd + "\n"
         return cmds
-    
+
     def kill_all_sessions(self) -> None:
         for an_m in self.managers:
             ZellijRemoteLayoutGenerator.run_remote_command(
                 remote_name=an_m.remote_name,
                 command="zellij kill-all-sessions --yes"
             )
-    
+
     def start_zellij_sessions(self) -> None:
         for an_m in self.managers:
             an_m.start_zellij_session()
@@ -65,12 +65,12 @@ class ZellijSessionManager:
                 for i, key in enumerate(keys):
                     if i < len(values):
                         status_data.append({"tabName": key, "status": values[i]})
-                
+
                 # Check if all stopped
                 running_count = sum(1 for item in status_data if item.get("status", {}).get("running", False))
                 if running_count == 0:  # they all stopped
                     sched.max_cycles = sched.cycle  # stop the scheduler from calling this routine again
-                
+
                 # Print status
                 for item in status_data:
                     print(f"Tab: {item['tabName']}, Status: {item['status']}")
@@ -79,7 +79,7 @@ class ZellijSessionManager:
                 for _idx, an_m in enumerate(self.managers):
                     a_status = an_m.check_zellij_session_status()
                     statuses.append(a_status)
-                
+
                 # Print statuses
                 for i, status in enumerate(statuses):
                     print(f"Manager {i}: {status}")
@@ -89,16 +89,16 @@ class ZellijSessionManager:
     def save(self, session_id: Optional[str] = None) -> str:
         if session_id is None:
             session_id = str(uuid.uuid4())[:8]
-        
+
         # Create session directory
         session_dir = TMP_SERIALIAZATION_DIR / session_id
         session_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Save the machine2zellij_tabs configuration
         config_file = session_dir / "machine2zellij_tabs.json"
         with open(config_file, 'w', encoding='utf-8') as f:
             json.dump(self.machine2zellij_tabs, f, indent=2, ensure_ascii=False)
-        
+
         # Save session metadata
         metadata = {
             "session_name_prefix": self.session_name_prefix,
@@ -109,37 +109,37 @@ class ZellijSessionManager:
         metadata_file = session_dir / "metadata.json"
         with open(metadata_file, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, indent=2, ensure_ascii=False)
-        
+
         # Save each ZellijRemoteLayoutGenerator
         managers_dir = session_dir / "managers"
         managers_dir.mkdir(exist_ok=True)
-        
+
         for i, manager in enumerate(self.managers):
             manager_file = managers_dir / f"manager_{i}_{manager.remote_name}.json"
             manager.to_json(str(manager_file))
-        
+
         logging.info(f"✅ Saved ZellijSessionManager session to: {session_dir}")
         return session_id
 
     @classmethod
     def load(cls, session_id: str) -> 'ZellijSessionManager':
         session_dir = TMP_SERIALIAZATION_DIR / session_id
-        
+
         if not session_dir.exists():
-            raise FileNotFoundError(f"Session directory not found: {session_dir}")        
+            raise FileNotFoundError(f"Session directory not found: {session_dir}")
         config_file = session_dir / "machine2zellij_tabs.json"
         if not config_file.exists():
-            raise FileNotFoundError(f"Configuration file not found: {config_file}")        
+            raise FileNotFoundError(f"Configuration file not found: {config_file}")
         with open(config_file, 'r', encoding='utf-8') as f:
             machine2zellij_tabs = json.load(f)
-        
+
         # Load metadata
         metadata_file = session_dir / "metadata.json"
         session_name_prefix = "JobMgr"  # default fallback
         if metadata_file.exists():
             with open(metadata_file, 'r', encoding='utf-8') as f:
                 metadata = json.load(f)
-                session_name_prefix = metadata.get("session_name_prefix", "JobMgr")        
+                session_name_prefix = metadata.get("session_name_prefix", "JobMgr")
         # Create new instance (this will create new managers)
         instance = cls(machine2zellij_tabs=machine2zellij_tabs, session_name_prefix=session_name_prefix)
         # Load saved managers to restore their states
@@ -148,7 +148,7 @@ class ZellijSessionManager:
             # Clear the auto-created managers and load the saved ones
             instance.managers = []
             # Get all manager files and sort them
-            manager_files = sorted(managers_dir.glob("manager_*.json"))            
+            manager_files = sorted(managers_dir.glob("manager_*.json"))
             for manager_file in manager_files:
                 try:
                     loaded_manager = ZellijRemoteLayoutGenerator.from_json(str(manager_file))
@@ -162,22 +162,22 @@ class ZellijSessionManager:
     def list_saved_sessions() -> list[str]:
         if not TMP_SERIALIAZATION_DIR.exists():
             return []
-        
+
         sessions = []
         for item in TMP_SERIALIAZATION_DIR.iterdir():
             if item.is_dir() and (item / "metadata.json").exists():
                 sessions.append(item.name)
-        
+
         return sorted(sessions)
 
     @staticmethod
     def delete_session(session_id: str) -> bool:
         session_dir = TMP_SERIALIAZATION_DIR / session_id
-        
+
         if not session_dir.exists():
             logging.warning(f"Session directory not found: {session_dir}")
             return False
-        
+
         try:
             import shutil
             shutil.rmtree(session_dir)

@@ -25,7 +25,7 @@ def main():
 📦 Virtual Environment: {ve_name}
 {'=' * 150}
 """)
-    
+
     print("🔄 Preparing installation script...")
     install_script = """
 
@@ -34,7 +34,7 @@ git clone https://github.com/ShishirPatil/gorilla --depth 1
 cd gorilla/goex
 uv sync
     """
-    
+
     print(f"""
 {'=' * 150}
 📋 INSTALLATION STEPS:
@@ -45,7 +45,7 @@ uv sync
 
 ✅ Installation script prepared successfully!
 """)
-    
+
     return install_script
 
 

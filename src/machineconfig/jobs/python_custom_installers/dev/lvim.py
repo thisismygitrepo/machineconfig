@@ -29,7 +29,7 @@ def main(version: Optional[str]):
 📚 Branch: release-1.4/neovim-0.9
 {'=' * 150}
 """)
-    
+
     _ = version
     if platform.system() == "Windows":
         print("🪟 Installing LunarVim on Windows...")
@@ -54,7 +54,7 @@ LV_BRANCH='release-1.4/neovim-0.9' bash <(curl -s https://raw.githubusercontent.
 {'⚠️' * 20}
 """)
         raise NotImplementedError(error_msg)
-        
+
     print(f"""
 {'=' * 150}
 ℹ️  INFO | LunarVim features:
@@ -67,7 +67,7 @@ LV_BRANCH='release-1.4/neovim-0.9' bash <(curl -s https://raw.githubusercontent.
 
 ⚠️  NOTE: The installer will prompt for user input during installation.
 """)
-    
+
     # _res = Terminal(stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)
     # run script here as it requires user input
     return program

@@ -12,12 +12,12 @@ def sync_remote(machine_name: str):
 🖥️  Target machine: {machine_name}
 {'=' * 150}
 """)
-    
+
     # Handle config as a ConfigParser object
     machine_config: SectionProxy | None = None
     if machine_name in config:
         machine_config = config[machine_name]
-    
+
     if machine_config is None:
         error_msg = f"Machine {machine_name} not found in SSH config."
         print(f"""
@@ -48,12 +48,12 @@ ssh -o "HostName={machine_config['HostName']}" -o "User={machine_config['User']}
     code_path.parent.mkdir(parents=True, exist_ok=True)
     code_path.write_text(code, encoding="utf-8")
     code_path.chmod(0o755)
-    
+
     print(f"🚀 Executing sync command for {machine_name}...")
-    
+
     import subprocess
     subprocess.run([str(code_path)], shell=True, check=True)
-    
+
     print(f"""
 {'=' * 150}
 ✅ SUCCESS | Remote sync completed successfully

@@ -67,15 +67,13 @@ def run_python_file_in_this_namespace(a_path: str, module: bool=False):
         path = match_file_name(a_path, search_root=PathExtended.cwd())
     from IPython import get_ipython  # type: ignore  # this gets the same instance, its in the namespace anyway even if not imported.
     if module:
-        code_snippet = f"""
+        result = PathExtended.tmp().joinpath(f"tmp_scripts/python/{randstr()}.py")
+        result.parent.mkdir(parents=True, exist_ok=True)
+        result.write_text(f"""
 import sys
 sys.path.append(r'{path.parent}')
 from {path.stem} import *
-"""
-
-        result = PathExtended.tmp().joinpath(f"tmp_scripts/python/{randstr()}.py")
-        result.parent.mkdir(parents=True, exist_ok=True)
-        result.write_text(code_snippet)
+""")
         print("""💡 IPyExtension: Remember that reload fails for imported modules that import other varying modules.""")
         get_ipython().run_line_magic(magic_name="load", line=result)  # type: ignore
     return

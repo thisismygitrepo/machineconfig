@@ -44,7 +44,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #                     raise ValueError(f"❌ Error in scanning {path}") from ex
 #                 print("⚠️  Error in scanning, trying again...")
 #             time.sleep(30)
-    
+
 #     # Convert results to list of dictionaries
 #     results_data = list(anal.results.values())
 #     malicious = []
@@ -58,13 +58,13 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #                 'result': getattr(result_item, 'result', None),
 #                 'category': getattr(result_item, 'category', 'unknown')
 #             }
-        
-#         if result_dict.get('result') is None and result_dict.get('category') in ["undetected", "type-unsupported", "failure", "timeout", "confirmed-timeout"]: 
+
+#         if result_dict.get('result') is None and result_dict.get('category') in ["undetected", "type-unsupported", "failure", "timeout", "confirmed-timeout"]:
 #             continue
 #         else:
 #             pprint(result_dict, f"🔍 Found Category {result_dict.get('category')}")
 #             malicious.append(result_item)
-    
+
 #     positive_pct: float = round(number=len(malicious) / len(results_data) * 100, ndigits=1)
 #     print(f"""
 # {'=' * 50}
@@ -177,7 +177,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 
 #     markdown_content = format_app_table_markdown(app_data)
 #     APP_SUMMARY_PATH.with_suffix(".md").write_text(markdown_content)
-    
+
 #     print(f"""
 # {'=' * 150}
 # 📊 SAFETY REPORT | Summary of app scanning results

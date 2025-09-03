@@ -15,9 +15,9 @@ def select_interpreter(workspace_root: str):
 📂 Workspace: {workspace_root}
 {'=' * 150}
 """)
-    
+
     path = Path(workspace_root).joinpath('.ve_path')
-    
+
     if not path.exists():
         print(f"""
 {'⚠️' * 20}
@@ -26,12 +26,12 @@ def select_interpreter(workspace_root: str):
 {'⚠️' * 20}
 """)
         return
-    
+
     with open(path, 'r', encoding='utf-8') as f:
         ve_path = Path(f.read().strip()).expanduser()
-    
+
     venv_link = Path(workspace_root).joinpath(".venv")
-    
+
     if venv_link.exists() and not venv_link.is_symlink():
         print(f"""
 {'⚠️' * 20}
@@ -40,9 +40,9 @@ def select_interpreter(workspace_root: str):
 {'⚠️' * 20}
 """)
         return
-    
+
     venv_link.symlink_to(target=ve_path.expanduser().absolute())
-    
+
     print(f"""
 {'=' * 150}
 ✅ SUCCESS | Virtual environment linked successfully

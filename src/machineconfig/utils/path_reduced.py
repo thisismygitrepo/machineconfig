@@ -214,7 +214,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
     def __sub__(self, other: PLike) -> 'P':
         res = P(str(self).replace(str(other), ""))
         return (res[1:] if str(res[0]) in {"\\", "/"} else res) if len(res.parts) else res  # paths starting with "/" are problematic. e.g ~ / "/path" doesn't work.
-    
+
     def rel2home(self, ) -> 'P': return self._return(P(self.expanduser().absolute().relative_to(Path.home())), operation='Whack')  # very similat to collapseuser but without "~" being added so its consistent with rel2cwd.
     def collapseuser(self, strict: bool = True, placeholder: str = "~") -> 'P':  # opposite of `expanduser` resolve is crucial to fix Windows cases insensitivty problem.
         if strict: assert P.home() in self.expanduser().absolute().resolve(), ValueError(f"`{P.home()}` is not in the subpath of `{self}`")
@@ -269,7 +269,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             case "a": tmp = self.stat().st_atime
             case "c": tmp = self.stat().st_ctime
         return datetime.fromtimestamp(tmp, **kwargs)
-    
+
     # ================================ String Nature management ====================================
     def clickable(self, ) -> 'P': return self._return(res=P(self.expanduser().resolve().as_uri()), operation='Whack')
     def as_url_str(self) -> 'str': return self.as_posix().replace("https:/", "https://").replace("http:/", "http://")
@@ -324,7 +324,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
     #     super(P, self).touch(mode=mode, exist_ok=exist_ok)
     #     return self
 
-    def symlink_to(self, target: PLike, verbose: bool = True, overwrite: bool = False, orig: bool = False, strict: bool = True):  # pylint: disable=W0237
+    def symlink_to(self, target: PLike, verbose: bool = True, overwrite: bool = False, orig: bool = False, strict: bool = True):  # type: ignore[reportIncompatibleMethodOverride]  # pylint: disable=W0237
         self.parent.mkdir(parents=True, exist_ok=True)
         target_obj = P(target).expanduser().resolve()
         if strict: assert target_obj.exists(), f"Target path `{target}` (aka `{target_obj}`) doesn't exist. This will create a broken link."
@@ -381,7 +381,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         import re
         processed.sort(key=lambda x: [int(k) if k.isdigit() else k for k in re.split('([0-9]+)', string=x.stem)])
         return List(processed)
-    
+
     # def create(self, parents: bool = True, exist_ok: bool = True, parents_only: bool = False) -> 'P':
     #     """Deprecated. Use Path.mkdir directly at the call site:
     #     - When creating a directory: self.mkdir(parents=True, exist_ok=True)
@@ -566,7 +566,8 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                 raise RuntimeError(f"💥 Could not get link for {self}.")
             else:
                 res.print_if_unsuccessful(desc="Cloud Storage Operation", strict_err=True, strict_returncode=True)
-            return tmp
+            link_p: 'P' = P(str(tmp))
+            return link_p
         return self
     def from_cloud(self, cloud: str, remotepath: OPLike = None, decrypt: bool = False, unzip: bool = False,  # type: ignore  # pylint: disable=W0621
                    key: Optional[bytes] = None, pwd: Optional[str] = None, rel2home: bool = False, os_specific: bool = False, strict: bool = True,

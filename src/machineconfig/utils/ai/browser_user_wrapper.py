@@ -17,12 +17,12 @@
 
 # def _get_padding(text: str, padding_before: int = 2, padding_after: int = 1) -> str:
 #     """Calculate the padding needed to align the box correctly.
-    
+
 #     Args:
 #         text: The text to pad
 #         padding_before: The space taken before the text (usually "║ ")
 #         padding_after: The space needed after the text (usually " ║")
-    
+
 #     Returns:
 #         A string of spaces for padding
 #     """
@@ -41,12 +41,12 @@
 #     rprint("🔄 Initializing LLM model (llama3.1:8b)...")
 #     llm = ChatOllama(model="llama3.1:8b")
 #     rprint("✅ LLM model initialized")
-    
+
 #     task_line1 = "🤖 Task: Open https://chat.openai.com/ and ask how many r's in"
 #     task_line2 = "rrraaararewey, use Thinking Button and type the answer"
 #     task_content = f"{task_line1}\n{task_line2}"
 #     rprint(Panel(task_content, title="Task", width=BOX_WIDTH))
-    
+
 #     rprint("🚀 Creating and launching browser agent...")
 #     agent = Agent(
 #         task="open https://chat.openai.com/ and ask how many r's in rrraaararewey, use Thinking Button and type the answer",
@@ -55,7 +55,7 @@
 
 #     rprint("🏃‍♂️ Running agent task...")
 #     await agent.run()
-    
+
 #     # footer success box
 #     title = "✅ Browser automation task completed"
 #     rprint(Panel(title, title="Status", width=BOX_WIDTH))

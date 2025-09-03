@@ -24,7 +24,7 @@ def main(version: Optional[str]):
 💻 Platform: {platform.system()}
 {'=' * 150}
 """)
-    
+
     _ = version
     if platform.system() == "Windows":
         print("🪟 Installing ngrok using winget on Windows...")
@@ -48,7 +48,7 @@ sudo nala update && sudo nala install ngrok
 {'⚠️' * 20}
 """)
         raise NotImplementedError(error_msg)
-        
+
     print(f"""
 {'=' * 150}
 ⚠️  SECURITY WARNING | ngrok has been flagged by some antivirus engines

@@ -24,7 +24,7 @@ def main(version: Optional[str]):
 🔗 Source: https://github.com/espanso/espanso
 {'=' * 150}
 """)
-    
+
     _ = version
     import platform
     config_dict["repo_url"] = "https://github.com/espanso/espanso"
@@ -66,13 +66,13 @@ def main(version: Optional[str]):
     from machineconfig.utils.installer_utils.installer_class import Installer
     installer = Installer.from_dict(config_dict, name="espanso")
     installer.install(version=None)
-    
+
     config = """
 espanso service register
 espanso start
 espanso install actually-all-emojis
     """
-    
+
     print(f"""
 {'=' * 150}
 ✅ SUCCESS | Espanso installation completed
@@ -82,5 +82,5 @@ espanso install actually-all-emojis
 3️⃣  Install the emoji package
 {'=' * 150}
 """)
-    
+
     return config

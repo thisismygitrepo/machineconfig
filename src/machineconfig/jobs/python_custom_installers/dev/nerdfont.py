@@ -23,7 +23,7 @@ def main(version: Optional[str]):
 🔄 Version: {'latest' if version is None else version}
 {'=' * 150}
 """)
-    
+
     _ = version
     if platform.system() == "Windows":
         error_msg = "Nerd Fonts installation not supported on Windows through this installer"
@@ -47,7 +47,7 @@ def main(version: Optional[str]):
 {'⚠️' * 20}
 """)
         raise NotImplementedError(error_msg)
-    
+
     print(f"""
 {'=' * 150}
 ℹ️  INFO | Nerd Fonts features:
@@ -57,7 +57,7 @@ def main(version: Optional[str]):
 🧰 Works with many terminal applications and editors
 {'=' * 150}
 """)
-    
+
     # _res = Terminal(stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)
     # run script here as it requires user input
     return program

@@ -70,33 +70,33 @@ sudo service ssh --full-restart
 
 def main():
     console.print(Panel("🔐 SSH PUBLIC KEY AUTHORIZATION TOOL", box=box.DOUBLE_EDGE, title_align="left"))
-    
+
     console.print(Panel("🔍 Searching for public keys...", title="[bold blue]SSH Setup[/bold blue]", border_style="blue"))
-    
+
     pub_keys = PathExtended.home().joinpath(".ssh").search("*.pub")
-    
+
     if pub_keys:
         console.print(Panel(f"✅ Found {len(pub_keys)} public key(s)", title="[bold green]Status[/bold green]", border_style="green"))
     else:
         console.print(Panel("⚠️  No public keys found", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
-    
+
     all_keys_option = f"all pub keys available ({len(pub_keys)})"
     i_have_path_option = "I have the path to the key file"
     i_paste_option = "I want to paste the key itself"
-    
+
     res = display_options("Which public key to add? ", options=pub_keys.apply(str).list + [all_keys_option, i_have_path_option, i_paste_option])
     assert isinstance(res, str), f"Got {res} of type {type(res)} instead of str."
-    
+
     if res == all_keys_option:
         console.print(Panel(f"🔄 Processing all {len(pub_keys)} public keys...", title="[bold blue]Processing[/bold blue]", border_style="blue"))
         program = "\n\n\n".join(pub_keys.apply(get_add_ssh_key_script))
-    
+
     elif res == i_have_path_option:
         console.print(Panel("📂 Please provide the path to your public key", title="[bold blue]Input Required[/bold blue]", border_style="blue"))
         key_path = PathExtended(input("📋 Path: ")).expanduser().absolute()
         console.print(Panel(f"📄 Using key from path: {key_path}", title="[bold blue]Info[/bold blue]", border_style="blue"))
         program = get_add_ssh_key_script(key_path)
-    
+
     elif res == i_paste_option:
         console.print(Panel("📋 Please provide a filename and paste the public key content", title="[bold blue]Input Required[/bold blue]", border_style="blue"))
         key_filename = input("📝 File name (default: my_pasted_key.pub): ") or "my_pasted_key.pub"
@@ -104,13 +104,13 @@ def main():
         key_path.write_text(input("🔑 Paste the public key here: "))
         console.print(Panel(f"💾 Key saved to: {key_path}", title="[bold green]Success[/bold green]", border_style="green"))
         program = get_add_ssh_key_script(key_path)
-    
+
     else:
         console.print(Panel(f"🔑 Using selected key: {PathExtended(res).name}", title="[bold blue]Info[/bold blue]", border_style="blue"))
         program = get_add_ssh_key_script(PathExtended(res))
-    
+
     console.print(Panel("🚀 SSH KEY AUTHORIZATION READY\nRun the generated script to apply changes", box=box.DOUBLE_EDGE, title_align="left"))
-    
+
     return program
 
 

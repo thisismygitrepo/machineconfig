@@ -17,7 +17,7 @@ OPTIONS = Literal["BACKUP", "RETRIEVE"]
 
 def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
     console = Console()
-    
+
     try:
         cloud: str = read_ini(DEFAULTS_PATH)['general']['rclone_config_name']
         console.print(Panel(f"⚠️  DEFAULT CLOUD CONFIGURATION\n🌥️  Using default cloud: {cloud}", title="[bold blue]Cloud Configuration[/bold blue]", border_style="blue"))
@@ -26,13 +26,13 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
         cloud = choose_cloud_interactively()
 
     bu_file: dict[str, Any] = read_toml(LIBRARY_ROOT.joinpath("profile/backup.toml"))
-    
+
     console.print(Panel(f"🧰 LOADING BACKUP CONFIGURATION\n📄 File: {LIBRARY_ROOT.joinpath('profile/backup.toml')}", title="[bold blue]Backup Configuration[/bold blue]", border_style="blue"))
-    
-    if system() == "Linux": 
+
+    if system() == "Linux":
         bu_file = {key: val for key, val in bu_file.items() if "windows" not in key}
         console.print(Panel(f"🐧 LINUX ENVIRONMENT DETECTED\n🔍 Filtering out Windows-specific entries\n✅ Found {len(bu_file)} applicable backup configuration entries", title="[bold blue]Linux Environment[/bold blue]", border_style="blue"))
-    elif system() == "Windows": 
+    elif system() == "Windows":
         bu_file = {key: val for key, val in bu_file.items() if "linux" not in key}
         console.print(Panel(f"🪟 WINDOWS ENVIRONMENT DETECTED\n🔍 Filtering out Linux-specific entries\n✅ Found {len(bu_file)} applicable backup configuration entries", title="[bold blue]Windows Environment[/bold blue]", border_style="blue"))
 
@@ -59,14 +59,14 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
         flags += 'o' if system().lower() in item_name else ''
         console.print(Panel(f"📦 PROCESSING: {item_name}\n📂 Path: {PathExtended(item['path']).as_posix()}\n🏳️  Flags: {flags or 'None'}", title=f"[bold blue]Processing Item: {item_name}[/bold blue]", border_style="blue"))
         if flags: flags = "-" + flags
-        if direction == "BACKUP": 
+        if direction == "BACKUP":
             program += f"""\ncloud_copy "{PathExtended(item['path']).as_posix()}" $cloud {flags}\n"""
-        elif direction == "RETRIEVE": 
+        elif direction == "RETRIEVE":
             program += f"""\ncloud_copy $cloud "{PathExtended(item['path']).as_posix()}" {flags}\n"""
         else:
             console.print(Panel("❌ ERROR: INVALID DIRECTION\n⚠️  Direction must be either \"BACKUP\" or \"RETRIEVE\"", title="[bold red]Error: Invalid Direction[/bold red]", border_style="red"))
-            raise RuntimeError(f"Unknown direction: {direction}")            
-        if item_name == "dotfiles" and system() == "Linux": 
+            raise RuntimeError(f"Unknown direction: {direction}")
+        if item_name == "dotfiles" and system() == "Linux":
             program += """\nchmod 700 ~/.ssh/*\n"""
             console.print(Panel("🔒 SPECIAL HANDLING: SSH PERMISSIONS\n🛠️  Setting secure permissions for SSH files\n📝 Command: chmod 700 ~/.ssh/*", title="[bold blue]Special Handling: SSH Permissions[/bold blue]", border_style="blue"))
     print_code(program, lexer="shell", desc=f"{direction} script")
@@ -76,14 +76,14 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
 
 def main(direction: OPTIONS, which: Optional[str] = None):
     console = Console()
-    
+
     console.print(Panel(f"🔄 {direction} OPERATION STARTED\n⏱️  {'-' * 58}", title="[bold blue]Operation Initiated[/bold blue]", border_style="blue"))
-    
+
     code = main_backup_retrieve(direction=direction, which=which)
     from machineconfig.utils.utils import write_shell_script_to_default_program_path
-    
+
     console.print(Panel("💾 GENERATING SHELL SCRIPT\n📄 Filename: backup_retrieve.sh", title="[bold blue]Shell Script Generation[/bold blue]", border_style="blue"))
-    
+
     write_shell_script_to_default_program_path(program=code, desc="backup_retrieve.sh", preserve_cwd=True, display=True, execute=False)
 
 

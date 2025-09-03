@@ -63,9 +63,9 @@
 # ⏰ Time: {time_at_execution_start_local}
 # """, style="bold blue")
 
-# if isinstance(func_kwargs, dict): 
+# if isinstance(func_kwargs, dict):
 #     pprint(func_kwargs, "📋 Function Arguments")
-# else: 
+# else:
 #     pprint(func_kwargs, f"📋 Function Arguments from `{manager.kwargs_path.collapseuser().as_posix()}`")
 
 # print("\n" + "•" * 60 + "\n")

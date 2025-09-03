@@ -172,7 +172,7 @@ def install_repos(specs_path: str, clone: bool=True, checkout_to_recorded_commit
     for repo in repos:
         parent_dir = PathExtended(repo["parent_dir"]).expanduser().absolute()
         parent_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Handle cloning and remote setup
         if clone:
             # Select the remote to use for cloning
@@ -185,30 +185,30 @@ def install_repos(specs_path: str, clone: bool=True, checkout_to_recorded_commit
                 remote_url = repo["remotes"][preferred_remote]
             elif preferred_remote is not None:
                 print(f"⚠️ `{preferred_remote=}` not found in {repo['remotes']}.")
-            
+
             # Clone with the selected remote
             program += f"\ncd {parent_dir.collapseuser().as_posix()}; git clone {remote_url} --origin {remote_name} --depth 2"
             program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote set-url {remote_name} {remote_url}"
-            
+
             # Add any additional remotes
             for other_remote_name, other_remote_url in repo["remotes"].items():
                 if other_remote_name != remote_name:
                     program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git remote add {other_remote_name} {other_remote_url}"
-        
+
         # Handle checkout operations (after all remotes are set up)
         if checkout_to_recorded_commit:
             commit = repo['version']['commit']
-            if isinstance(commit, str): 
+            if isinstance(commit, str):
                 program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git checkout {commit}"
-            else: 
+            else:
                 print(f"Skipping {repo['parent_dir']} because it doesn't have a commit recorded. Found {commit}")
         elif checkout_to_branch:
             program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; git checkout {repo['current_branch']}"
-        
+
         # Handle editable install
         if editable_install:
             program += f"\ncd {parent_dir.collapseuser().as_posix()}/{repo['name']}; uv pip install -e ."
-        
+
         program += "\n"
     pprint(program)
     return program

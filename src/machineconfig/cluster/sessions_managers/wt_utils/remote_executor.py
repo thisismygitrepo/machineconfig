@@ -12,10 +12,10 @@ logger = logging.getLogger(__name__)
 
 class WTRemoteExecutor:
     """Handles SSH command execution on remote Windows machines with Windows Terminal."""
-    
+
     def __init__(self, remote_name: str):
         self.remote_name = remote_name
-    
+
     def run_command(self, command: str, timeout: int = 30, shell: str = "powershell") -> subprocess.CompletedProcess[str]:
         """Execute a command on the remote machine via SSH."""
         # For Windows Terminal on remote machines, we need to use PowerShell or CMD
@@ -23,7 +23,7 @@ class WTRemoteExecutor:
             # Wrap command in PowerShell invocation if needed
             if not command.startswith("powershell"):
                 command = f"powershell -Command \"{command}\""
-        
+
         ssh_cmd = ["ssh", self.remote_name, command]
         try:
             result = subprocess.run(
@@ -39,7 +39,7 @@ class WTRemoteExecutor:
         except Exception as e:
             logger.error(f"SSH command failed: {e}")
             raise
-    
+
     def copy_file_to_remote(self, local_file: str, remote_path: str) -> Dict[str, Any]:
         """Copy a file to the remote machine using SCP."""
         scp_cmd = ["scp", local_file, f"{self.remote_name}:{remote_path}"]
@@ -54,7 +54,7 @@ class WTRemoteExecutor:
         except Exception as e:
             logger.error(f"SCP operation failed: {e}")
             return {"success": False, "error": str(e)}
-    
+
     def create_remote_directory(self, remote_dir: str) -> bool:
         """Create a directory on the remote machine."""
         try:
@@ -64,7 +64,7 @@ class WTRemoteExecutor:
         except Exception as e:
             logger.error(f"Failed to create remote directory {remote_dir}: {e}")
             return False
-    
+
     def start_wt_session_interactive(self, wt_command: str) -> None:
         """Start a Windows Terminal session interactively via SSH."""
         try:
@@ -75,7 +75,7 @@ class WTRemoteExecutor:
         except Exception as e:
             logger.error(f"Failed to start Windows Terminal session: {e}")
             raise
-    
+
     def check_wt_available(self) -> bool:
         """Check if Windows Terminal is available on the remote machine."""
         try:
@@ -83,16 +83,16 @@ class WTRemoteExecutor:
             return result.returncode == 0
         except Exception:
             return False
-    
+
     def get_remote_windows_info(self) -> Dict[str, Any]:
         """Get information about the remote Windows system."""
         try:
             # Get Windows version and terminal info
             version_cmd = "Get-ComputerInfo | Select-Object WindowsProductName, WindowsVersion"
             result = self.run_command(version_cmd, timeout=15)
-            
+
             wt_available = self.check_wt_available()
-            
+
             return {
                 "windows_info": result.stdout if result.returncode == 0 else "Unknown",
                 "wt_available": wt_available,
@@ -106,7 +106,7 @@ class WTRemoteExecutor:
                 "remote_name": self.remote_name,
                 "error": str(e)
             }
-    
+
     def run_wt_command(self, wt_command: str, detached: bool = True) -> subprocess.CompletedProcess[str]:
         """Run a Windows Terminal command on the remote machine."""
         try:
@@ -116,19 +116,19 @@ class WTRemoteExecutor:
             else:
                 # Run in foreground
                 full_command = f"wt {wt_command}"
-            
+
             return self.run_command(full_command, timeout=30)
         except Exception as e:
             logger.error(f"Failed to run Windows Terminal command: {e}")
             raise
-    
+
     def list_wt_processes(self) -> Dict[str, Any]:
         """List Windows Terminal processes on the remote machine."""
         try:
             # Get all WindowsTerminal.exe processes
             ps_command = "Get-Process -Name 'WindowsTerminal' -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, StartTime, CPU"
             result = self.run_command(ps_command, timeout=15)
-            
+
             if result.returncode == 0:
                 return {
                     "success": True,
@@ -148,7 +148,7 @@ class WTRemoteExecutor:
                 "error": str(e),
                 "remote": self.remote_name
             }
-    
+
     def kill_wt_processes(self, process_ids: Optional[List[Any]] = None) -> Dict[str, Any]:
         """Kill Windows Terminal processes on the remote machine."""
         try:
@@ -158,9 +158,9 @@ class WTRemoteExecutor:
             else:
                 # Kill all Windows Terminal processes
                 kill_cmd = "Get-Process -Name 'WindowsTerminal' -ErrorAction SilentlyContinue | Stop-Process -Force"
-            
+
             result = self.run_command(kill_cmd, timeout=10)
-            
+
             return {
                 "success": result.returncode == 0,
                 "message": "Processes killed" if result.returncode == 0 else result.stderr,
@@ -172,4 +172,4 @@ class WTRemoteExecutor:
                 "success": False,
                 "error": str(e),
                 "remote": self.remote_name
-            } 
+            }

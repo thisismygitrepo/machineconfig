@@ -160,7 +160,7 @@ def main() -> None:
                             secrets_template["auth"]["redirect_uri"] = host_url
                             secrets_template["auth"]["cookie_secret"] = randstr(35)
                             secrets_template["auth"]["auth0"]["redirect_uri"] = host_url
-                            save_toml(obj=secrets_template, path=secrets_path)                        
+                            save_toml(obj=secrets_template, path=secrets_path)
                         except Exception as ex:
                             print(ex)
                             raise ex
@@ -172,7 +172,7 @@ def main() -> None:
             # exe = f"cd '{choice_file.parent}'; " + exe
         elif args.interactive is False: exe = "python"
         elif args.jupyter: exe = "jupyter-lab"
-        else:            
+        else:
             exe = f"ipython -i --no-banner --profile {ipy_profile} "
     elif choice_file.suffix == ".ps1" or choice_file.suffix == ".sh":
         exe = "."
@@ -334,6 +334,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
             raise NotImplementedError(f"Platform {platform.system()} not supported.")
         command = command + f"\n. {program_path}"
     console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {program_path}: "), style="bold red")
+    program_path.parent.mkdir(parents=True, exist_ok=True)
     program_path.write_text(command)
 
 

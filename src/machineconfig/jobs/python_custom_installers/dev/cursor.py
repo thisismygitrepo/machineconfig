@@ -66,7 +66,7 @@ def install_windows(version: Optional[str] = None):
     _ = version
     home = Path.home()
     downloads_dir = home / "Downloads"
-    
+
     # Search for Cursor installer in Downloads
     cursor_installer = None
     for pattern in ["**/Cursor*.exe", "**/cursor*.exe"]:
@@ -74,16 +74,16 @@ def install_windows(version: Optional[str] = None):
         if found:
             cursor_installer = found[0]
             break
-    
+
     if cursor_installer is None:
         raise FileNotFoundError("Cursor installer (.exe) not found in Downloads folder.")
-    
+
     print(f"Cursor installer found: {cursor_installer}")
-    
+
     # Run the installer silently
     try:
         print("Running Cursor installer...")
-        subprocess.run([str(cursor_installer), "/SILENT"], 
+        subprocess.run([str(cursor_installer), "/SILENT"],
                               capture_output=True, text=True, check=True)
         print("Cursor installer completed successfully.")
     except subprocess.CalledProcessError as e:
@@ -92,7 +92,7 @@ def install_windows(version: Optional[str] = None):
         # Try alternative silent install flags
         try:
             print("Trying alternative silent install...")
-            subprocess.run([str(cursor_installer), "/S"], 
+            subprocess.run([str(cursor_installer), "/S"],
                                   capture_output=True, text=True, check=True)
             print("Cursor installer completed successfully with /S flag.")
         except subprocess.CalledProcessError as e2:
@@ -101,21 +101,21 @@ def install_windows(version: Optional[str] = None):
             # If silent install fails, run normally and let user handle it
             print("Running installer in normal mode (user interaction required)...")
             subprocess.run([str(cursor_installer)])
-    
+
     # Clean up installer file
     try:
         cursor_installer.unlink()
         print(f"Installer file removed: {cursor_installer}")
     except OSError as e:
         print(f"Warning: Could not remove installer file: {e}")
-    
+
     print("Cursor installation completed. Check your Start Menu or Desktop for Cursor.")
 
 
 def main(version: Optional[str] = None):
     """Main installation function that handles both Linux and Windows."""
     system = platform.system()
-    
+
     if system == "Linux":
         install_linux(version)
     elif system == "Windows":

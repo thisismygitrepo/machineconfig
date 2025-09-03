@@ -19,7 +19,7 @@ def main():
     """Main setup function."""
     print("🔧 OneDrive OAuth Setup")
     print("=" * 40)
-    
+
     # Check if environment variables are set
     if CLIENT_ID == "your_client_id_here":
         print("\n❌ ONEDRIVE_CLIENT_ID environment variable not set!")
@@ -42,15 +42,15 @@ def main():
         print("   export ONEDRIVE_REDIRECT_URI='http://localhost:8080/callback'")
         print("\n🔄 Then run this script again.")
         return
-    
+
     print(f"✅ Client ID: {CLIENT_ID}")
     print(f"✅ Redirect URI: {REDIRECT_URI}")
-    
+
     if CLIENT_SECRET and CLIENT_SECRET != "your_client_secret_here":
         print("✅ Client Secret: [SET]")
     else:
         print("ℹ️  Client Secret: [NOT SET - Using public client mode]")
-    
+
     print("\n🚀 Starting OAuth setup...")
     setup_oauth_authentication()
 

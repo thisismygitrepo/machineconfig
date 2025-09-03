@@ -30,7 +30,7 @@ def create_default_shell_profile():
     if system == "Windows": source = f". {str(LIBRARY_ROOT.joinpath('settings/shells/pwsh/init.ps1').collapseuser()).replace('~', '$HOME')}"
     else: source = f"source {str(LIBRARY_ROOT.joinpath('settings/shells/bash/init.sh').collapseuser()).replace('~', '$HOME')}"
 
-    if source in profile: 
+    if source in profile:
         console.print(Panel("🔄 PROFILE | Skipping init script sourcing - already present in profile", title="[bold blue]Profile[/bold blue]", border_style="blue"))
     else:
         console.print(Panel("📝 PROFILE | Adding init script sourcing to profile", title="[bold blue]Profile[/bold blue]", border_style="blue"))
@@ -131,33 +131,33 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str] = None, choice
         file = PathExtended(tmp).collapseuser()  # this makes the shell profile interuseable across machines.
         file = file.as_posix() if system == "Linux" else str(file)
         if file not in profile:
-            if system == "Windows": 
+            if system == "Windows":
                 profile += f"\n. {file}"
                 console.print(f"➕ Added PowerShell source: {file}")
-            elif system == "Linux": 
+            elif system == "Linux":
                 profile += f"\nsource {file}"
                 console.print(f"➕ Added Bash source: {file}")
             else: raise ValueError(f"Not implemented for this system {system}")
-        else: 
+        else:
             console.print(f"⏭️  Source already present: {file}")
-    
+
     profile_path_obj.write_text(profile)
     console.print(Panel("✅ Shell profile updated with sources", title="[bold blue]Sources[/bold blue]", border_style="blue"))
 
 
 def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice: Optional[str] = None):
     patches: list[str] = list(LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search().apply(lambda x: x.as_posix()))
-    
+
     console.print(Panel("🩹 Adding patches to shell profile", title="[bold blue]Patches[/bold blue]", border_style="blue"))
-    
+
     if choice is None:
         choice_chosen = display_options(msg="Which patch to add?", options=list(patches) + ["all", "none(EXIT)"], default="none(EXIT)", multi=False)
         assert isinstance(choice_chosen, str), f"Choice must be a string or a list of strings, not {type(choice)}"
         choice = choice_chosen
     if choice == "none(EXIT)": return None
-    elif str(choice) == "all": 
+    elif str(choice) == "all":
         console.print("📌 Adding all patches to profile")
-    else: 
+    else:
         patches = [choice]
         console.print(f"📌 Adding selected patch: {choice}")
 
@@ -167,9 +167,9 @@ def main_add_patches_to_shell_profile(profile_path: Optional[str] = None, choice
     for patch_path in patches:
         patch_path_obj = PathExtended(patch_path)
         patch = patch_path_obj.read_text()
-        if patch in profile: 
+        if patch in profile:
             console.print(f"⏭️  Patch already present: {patch_path_obj.name}")
-        else: 
+        else:
             profile += "\n" + patch
             console.print(f"➕ Added patch: {patch_path_obj.name}")
 

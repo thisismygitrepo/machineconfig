@@ -16,13 +16,13 @@
 #     """Convert string to timedelta. Simple implementation for common cases."""
 #     # Handle common formats like "1h", "30m", "2d", etc.
 #     import re
-    
+
 #     # Parse patterns like "1h", "30m", "2d", "1w"
 #     match = re.match(r'^(\d+)([hdwm])$', time_str.lower())
 #     if match:
 #         value, unit = match.groups()
 #         value = int(value)
-        
+
 #         if unit == 'h':
 #             return timedelta(hours=value)
 #         elif unit == 'd':
@@ -31,7 +31,7 @@
 #             return timedelta(weeks=value)
 #         elif unit == 'm':
 #             return timedelta(minutes=value)
-    
+
 #     # Fallback: try to parse as seconds
 #     try:
 #         return timedelta(seconds=int(time_str))
@@ -43,18 +43,18 @@
 #     """Convert list of dictionaries to markdown table format."""
 #     if not data:
 #         return ""
-    
+
 #     # Get all unique keys from all dictionaries
 #     all_keys = set()
 #     for row in data:
 #         all_keys.update(row.keys())
-    
+
 #     keys = sorted(all_keys)
-    
+
 #     # Create header
 #     header = "|" + "|".join(f" {key} " for key in keys) + "|"
 #     separator = "|" + "|".join(" --- " for _ in keys) + "|"
-    
+
 #     # Create rows
 #     rows = []
 #     for row in data:
@@ -68,7 +68,7 @@
 #                 value = str(value)
 #             row_values.append(f" {value} ")
 #         rows.append("|" + "|".join(row_values) + "|")
-    
+
 #     return "\n".join([header, separator] + rows)
 
 
@@ -210,7 +210,7 @@
 #         tasks.append(read_task_from_dir(a_dir))
 
 #     from machineconfig.utils.utils import choose_multiple_options
-    
+
 #     # Create data for tasks display
 #     task_data = [Report.from_path(path=a_task.report_path).__dict__ for a_task in tasks]
 #     task_display = format_table_markdown(task_data)

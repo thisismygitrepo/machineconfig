@@ -48,7 +48,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         # consider activating it by a flag, and also not not overriding explicitly passed args options.
         assert ES not in target, "Not Implemented here yet."
         path = absolute(target)
-        if maybe_config is None:  
+        if maybe_config is None:
             tmp_maybe_config: Optional[Args] = find_cloud_config(path=path)
             maybe_config = tmp_maybe_config
 

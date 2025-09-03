@@ -79,7 +79,7 @@ class TerminalSettings(object):
         if nerd_font:
             print("🔤 Setting PowerShell font to CaskaydiaCove Nerd Font...")
             pwsh["font"] = dict(face="CaskaydiaCove Nerd Font")  # because oh-my-posh uses glyphs from this font.
-        
+
         for idx, item in enumerate(self.profs):
             if item["name"] == "PowerShell":
                 self.profs[idx].update(pwsh)
@@ -95,7 +95,7 @@ class TerminalSettings(object):
                 self.dat["defaultProfile"] = profile["guid"]
                 console.print(Panel("✅ PowerShell is now the default profile!", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
                 break
-        else: 
+        else:
             console.print(Panel("❌ PowerShell profile was not found in the list of profiles and therefore was not made the default.", title="[bold red]Terminal Settings[/bold red]", border_style="red"))
 
     def add_croshell(self):
@@ -113,7 +113,7 @@ class TerminalSettings(object):
                 profile.update(croshell)
                 console.print(Panel("✅ Updated existing croshell profile", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
                 break
-        else: 
+        else:
             self.profs.append(croshell)
             console.print(Panel("✅ Added new croshell profile", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
 
@@ -163,10 +163,10 @@ def main():
         ts.add_croshell()
         ts.add_ubuntu()
         ts.standardize_profiles_order()
-        
+
         print("⌨️  Adding keyboard shortcut for pane zoom (ctrl+shift+z)...")
         ts.dat['actions'].append({'command': 'togglePaneZoom', 'keys': 'ctrl+shift+z'})
-        
+
         ts.save_terminal_settings()
         print(f"\n{'='*80}\n✨ WINDOWS TERMINAL SETUP COMPLETE ✨\n{'='*80}")
     else:

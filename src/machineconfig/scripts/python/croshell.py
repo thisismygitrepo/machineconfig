@@ -18,7 +18,7 @@ console = Console()
 
 def add_print_header_pycode(path: str, title: str):
     return f"""
-# from machineconfig.utils.path_reduced import P as PathExtended 
+# from machineconfig.utils.path_reduced import P as PathExtended
 from crocodile.file_management import P as PathExtended
 pycode = PathExtended(r'{path}').read_text(encoding="utf-8")
 pycode = pycode.split("except Exception: print(pycode)")[2]
@@ -187,7 +187,7 @@ print_logo(logo="crocodile")
         if interpreter == "ipython":
             fire_line += f" {interactivity} --profile {ipython_profile} --no-banner"
         fire_line += f" {str(pyfile)}"
-            
+
     final_program += fire_line
 
     title = "🚀 LAUNCHING SCRIPT"

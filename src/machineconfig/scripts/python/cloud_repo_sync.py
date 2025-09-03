@@ -31,14 +31,14 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
             console.print(Panel(f"❌ ERROR: No cloud profile found\nLocation: {DEFAULTS_PATH}\nPlease set one up or provide one via the --cloud flag.", title="Error", border_style="red"))
             return ""
     else: cloud_resolved = cloud
-    
+
     # repo_root = PathExtended(args.repo).expanduser().absolute()
     repo_local_root = PathExtended.cwd() if path is None else PathExtended(path).expanduser().absolute()
     repo_local_obj = git.Repo(repo_local_root, search_parent_directories=True)
     repo_local_root = PathExtended(repo_local_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
     CONFIG_PATH.joinpath("remote").mkdir(parents=True, exist_ok=True)
     repo_remote_root = CONFIG_PATH.joinpath("remote", repo_local_root.rel2home())  # .delete(sure=True)
-    
+
     try:
         console.print(Panel("📥 DOWNLOADING REMOTE REPOSITORY", title_align="left", border_style="blue"))
         remote_path = repo_local_root.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
@@ -47,7 +47,7 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
         console.print(Panel("🆕 Remote repository doesn't exist\n📤 Creating new remote and exiting...", title_align="left", border_style="green"))
         repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)
         return ""
-        
+
     repo_remote_obj = git.Repo(repo_remote_root)
     if repo_remote_obj.is_dirty():
         console.print(Panel(f"⚠️  WARNING: REMOTE REPOSITORY IS DIRTY\nLocation: {repo_remote_root}\nPlease commit or stash changes before proceeding.", title="Warning", border_style="yellow"))
@@ -129,7 +129,7 @@ git commit -am "finished merging"
         # ================================================================================
 
         console.print(Panel("🔄 RESOLVE MERGE CONFLICT\nChoose an option to resolve the conflict:", title_align="left", border_style="blue"))
-        
+
         print(f"• 1️⃣  {option1:75} 👉 {shell_file_1}")
         print(f"• 2️⃣  {option2:75} 👉 {shell_file_2}")
         print(f"• 3️⃣  {option3:75} 👉 {shell_file_3}")
@@ -148,7 +148,7 @@ git commit -am "finished merging"
             case "overwriteLocal": program_content = program_2
             case "InspectRepos": program_content = shell_file_3.read_text()
             case "RemoveLocalRclone": program_content = program_4
-            case _: 
+            case _:
                 raise ValueError(f"Unknown action: {action}")
         PROGRAM_PATH.write_text(program_content)
     return program_content

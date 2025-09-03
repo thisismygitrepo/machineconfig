@@ -79,7 +79,7 @@ def absolute(path: str) -> Path:
 def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Args:
     console = Console()
     console.print(Panel("🔐 Secure Share Cloud Configuration", expand=False))
-    
+
     if cloud is None:
         if os.environ.get("CLOUD_CONFIG_NAME") is not None:
             default_cloud = os.environ.get("CLOUD_CONFIG_NAME")
@@ -110,7 +110,7 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Ar
                pwd=pwd, encrypt=True,
                zip=True, overwrite=True, share=True,
                rel2home=True, root="myshare", os_specific=False,)
-    
+
     display_success("Using SecureShare cloud config")
     pprint(res.__dict__, "SecureShare Config")
     return res

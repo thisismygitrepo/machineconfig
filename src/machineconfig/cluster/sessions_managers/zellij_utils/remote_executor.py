@@ -11,10 +11,10 @@ logger = logging.getLogger(__name__)
 
 class RemoteExecutor:
     """Handles SSH command execution on remote machines."""
-    
+
     def __init__(self, remote_name: str):
         self.remote_name = remote_name
-    
+
     def run_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess[str]:
         """Execute a command on the remote machine via SSH."""
         ssh_cmd = ["ssh", self.remote_name, command]
@@ -32,7 +32,7 @@ class RemoteExecutor:
         except Exception as e:
             logger.error(f"SSH command failed: {e}")
             raise
-    
+
     def copy_file_to_remote(self, local_file: str, remote_path: str) -> Dict[str, Any]:
         """Copy a file to the remote machine using SCP."""
         scp_cmd = ["scp", local_file, f"{self.remote_name}:{remote_path}"]
@@ -47,7 +47,7 @@ class RemoteExecutor:
         except Exception as e:
             logger.error(f"SCP operation failed: {e}")
             return {"success": False, "error": str(e)}
-    
+
     def create_remote_directory(self, remote_dir: str) -> bool:
         """Create a directory on the remote machine."""
         try:
@@ -56,7 +56,7 @@ class RemoteExecutor:
         except Exception as e:
             logger.error(f"Failed to create remote directory {remote_dir}: {e}")
             return False
-    
+
     def attach_to_session_interactive(self, session_name: str) -> None:
         """Attach to a Zellij session interactively via SSH."""
         try:

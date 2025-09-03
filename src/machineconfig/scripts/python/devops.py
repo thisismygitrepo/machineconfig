@@ -33,7 +33,7 @@ class Options(Enum):
 def args_parser():
     # Print header
     console.print(Panel("🛠️  DevOps Tool Suite", title_align="left", border_style="blue", width=BOX_WIDTH))
-    
+
     import argparse
     parser = argparse.ArgumentParser()
     new_line = "\n\n"
@@ -67,7 +67,7 @@ def display_task_success(success: str) -> None:
 def main(which: Optional[str] = None):
     PROGRAM_PATH.delete(sure=True, verbose=False)
     console.print(Panel("🚀 Initializing DevOps operation...", width=BOX_WIDTH, border_style="blue"))
-    
+
     options = [op.value for op in Options]
     if which is None:
         try:
@@ -128,7 +128,7 @@ def main(which: Optional[str] = None):
         console.print(Panel("💾 Creating backup...", width=BOX_WIDTH, border_style="blue"))
         from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve as helper
         program = helper(direction="BACKUP")
-        
+
     elif choice_key == Options.retreive.value:
         console.print(Panel("📥 Retrieving backup...", width=BOX_WIDTH, border_style="blue"))
         from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve as helper
@@ -145,14 +145,14 @@ def main(which: Optional[str] = None):
         from machineconfig.scripts.python.cloud_repo_sync import main as helper, PathExtended
         program = helper(cloud=None, path=str(PathExtended.home() / "dotfiles"), pwd=None, action="ask")
 
-    else: 
+    else:
         console.print(Panel("❌ ERROR: Invalid choice", title_align="left", border_style="red", width=BOX_WIDTH))
         raise ValueError(f"Unimplemented choice: {choice_key}")
-        
+
     if program:
         console.print(Panel("📜 Preparing shell script...", width=BOX_WIDTH, border_style="blue"))
         write_shell_script_to_default_program_path(program=program, display=True, preserve_cwd=True, desc="🔧 Shell script prepared by Python.", execute=True if which is not None else False)
-    else: 
+    else:
         write_shell_script_to_default_program_path(program="echo '✨ Done.'", display=False, desc="🔧 Shell script prepared by Python.", preserve_cwd=True, execute=False)
 
 

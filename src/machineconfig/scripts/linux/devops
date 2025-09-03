@@ -4,14 +4,14 @@
 # if [ -z "$VIRTUAL_ENV" ]; then
 #   source ~/scripts/activate_ve ''
 # fi
-source ~/scripts/activate_ve ve  # this script only works under ve default ve.
+# source ~/scripts/activate_ve ve  # this script only works under ve default ve.
 
 op_script=$HOME/tmp_results/shells/python_return_command.sh
 if [ -f "$op_script" ]; then
   rm $op_script
 fi
 
-python -m machineconfig.scripts.python.devops "$@"
+uv run --project ~/code/machineconfig python -m machineconfig.scripts.python.devops "$@"
 if [ -f "$op_script" ]; then
   chmod +x $op_script
   source $op_script

@@ -12,7 +12,7 @@ if [ -f "$op_script" ]; then
 fi
 
 
-python -m machineconfig.scripts.python.ai.init "$@"
+python -m machineconfig.scripts.python.ai.mcinit "$@"
 
 if [ -f "$op_script" ]; then
   echo "Running $op_script"

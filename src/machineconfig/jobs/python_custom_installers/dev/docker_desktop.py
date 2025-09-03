@@ -31,9 +31,9 @@ def main(version: Optional[str]):
 📚 Source: https://docs.docker.com/desktop/install/ubuntu/
 {'=' * 150}
 """)
-    
+
     _ = version
-    
+
     print("""
 📋 Installation steps:
 1️⃣  Adding Docker's official GPG key
@@ -41,7 +41,7 @@ def main(version: Optional[str]):
 3️⃣  Updating package lists
 4️⃣  Installing Docker components
 """)
-    
+
     code = """
 # Add Docker's official GPG key:
 sudo apt-get update
@@ -68,7 +68,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 🔹 Log out and back in to apply group changes
 {'=' * 150}
 """)
-    
+
     return code
 
 

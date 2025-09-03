@@ -53,7 +53,7 @@ def main_symlinks(choice: Optional[str] = None):
     if isinstance(choice_selected, str):
         if choice_selected == "all":
             print(f"""
-🔍 Processing all program keys: 
+🔍 Processing all program keys:
 {program_keys}
 """)
             pass  # i.e. program_keys = program_keys
@@ -69,13 +69,13 @@ def main_symlinks(choice: Optional[str] = None):
                 try:
                     for a_target in to_this.expanduser().search("*"):
                         symlink_func(this=this.joinpath(a_target.name), to_this=a_target, prioritize_to_this=overwrite)
-                except Exception as ex: 
+                except Exception as ex:
                     print(f"❌ Config error: {program_key} | {file_key} | missing keys 'this ==> to_this'. {ex}")
             else:
-                try: 
+                try:
                     symlink_func(this=this, to_this=to_this, prioritize_to_this=overwrite)
                     print(f"  ✅ Created hardlink from {this} to {to_this}")
-                except Exception as ex: 
+                except Exception as ex:
                     print(f"❌ Config error: {program_key} | {file_key} | missing keys 'this ==> to_this'. {ex}")
 
             if program_key == "ssh" and system == "Linux":  # permissions of ~/dotfiles/.ssh should be adjusted
@@ -119,7 +119,7 @@ def main(choice: Optional[str] = None):
     print("\n")
     console.rule("[bold green]🐚 CREATING SHELL PROFILE 🐚")
     create_default_shell_profile()
-    
+
     print(f"""
 {'=' * 80}
 ✨ Configuration setup complete! ✨

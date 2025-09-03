@@ -19,18 +19,18 @@
 #     """Convert list of dictionaries to markdown table format."""
 #     if not data:
 #         return ""
-    
+
 #     # Get all unique keys from all dictionaries
 #     all_keys = set()
 #     for row in data:
 #         all_keys.update(row.keys())
-    
+
 #     keys = sorted(all_keys)
-    
+
 #     # Create header
 #     header = "|" + "|".join(f" {key} " for key in keys) + "|"
 #     separator = "|" + "|".join(" --- " for _ in keys) + "|"
-    
+
 #     # Create rows
 #     rows = []
 #     for row in data:
@@ -44,7 +44,7 @@
 #                 value = str(value)
 #             row_values.append(f" {value} ")
 #         rows.append("|" + "|".join(row_values) + "|")
-    
+
 #     return "\n".join([header, separator] + rows)
 
 
@@ -109,7 +109,7 @@
 #             file_mod_time = datetime.fromtimestamp(running_jobs.stat().st_mtime) if running_jobs.exists() else datetime.min
 #             times[a_worker.name] = datetime.now() - file_mod_time
 #             res[a_worker.name] = pickle.loads(running_jobs.read_bytes()) if running_jobs.exists() else []
-        
+
 #         # Create list of dictionaries instead of DataFrame
 #         servers_report = []
 #         for machine in res.keys():
@@ -139,7 +139,7 @@
 #             for item_name, item_list in log.items():
 #                 self.console.rule(f"{item_name} Jobs (Latest {'10' if len(item_list) > 10 else len(item_list)} / {len(item_list)})")
 #                 print()  # empty line after the rule helps keeping the rendering clean in the terminal while zooming in and out.
-                
+
 #                 # Add duration calculation for non-queued items
 #                 display_items = []
 #                 for item in item_list:
@@ -162,13 +162,13 @@
 #                 if item_name == "running": excluded_cols.update({"submission_time", "source_machine", "end_time"})
 #                 if item_name == "completed": excluded_cols.update({"submission_time", "source_machine", "start_time", "pid"})
 #                 if item_name == "failed": excluded_cols.update({"submission_time", "source_machine", "start_time"})
-                
+
 #                 # Filter items and take last 10
 #                 filtered_items = []
 #                 for item in display_items[-10:]:
 #                     filtered_item = {k: v for k, v in item.items() if k not in excluded_cols}
 #                     filtered_items.append(filtered_item)
-                
+
 #                 if filtered_items:
 #                     pprint(format_table_markdown(filtered_items))
 #                 pprint("\n\n")
@@ -263,13 +263,13 @@
 #                         break
 #                 if found_log_type:
 #                     break
-            
+
 #             if not found_log_type:
 #                 raise ValueError(f"Job `{a_job}` is not found in any of the log lists.")
-            
+
 #             if found_entry_data is None:
 #                 raise ValueError(f"Job `{a_job}` has no entry data.")
-            
+
 #             entry = LogEntry.from_dict(found_entry_data)
 #             a_job_path = CloudManager.base_path.expanduser().joinpath(f"jobs/{entry.name}")
 #             entry.note += f"| Job failed @ {entry.run_machine}"
@@ -308,14 +308,14 @@
 #             elif status == "completed" or status == "failed":
 #                 job_name = a_rm.config.job_id
 #                 log = self.read_log()
-                
+
 #                 # Find the entry in running jobs
 #                 entry_data = None
 #                 for job_data in log["running"]:
 #                     if job_data.get("name") == job_name:
 #                         entry_data = job_data
 #                         break
-                
+
 #                 if entry_data:
 #                     entry = LogEntry.from_dict(entry_data)
 #                     entry.end_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -344,7 +344,7 @@
 #         while len(self.running_jobs) < self.max_jobs:
 #             if idx >= len(log["queued"]):
 #                 break  # looked at all jobs in the queue
-            
+
 #             queue_entry = LogEntry.from_dict(log["queued"][idx])
 #             a_job_path = CloudManager.base_path.expanduser().joinpath(f"jobs/{queue_entry.name}")
 #             rm: RemoteMachine = pickle.loads(a_job_path.joinpath("data/remote_machine.Machine.pkl").read_bytes())
@@ -352,14 +352,14 @@
 #                 print(f"Job `{queue_entry.name}` is not allowed to run on this machine. Skipping ...")
 #                 idx += 1
 #                 continue  # look at the next job in the queue.
-            
+
 #             pid, _process_cmd = rm.fire(run=True)
 #             queue_entry.pid = pid
 #             # queue_entry.cmd = process_cmd
 #             queue_entry.run_machine = f"{getpass.getuser()}@{platform.node()}"
 #             queue_entry.start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 #             queue_entry.session_name = rm.job_params.session_name
-            
+
 #             # Remove from queued and add to running
 #             log["queued"] = [job for job in log["queued"] if job.get("name") != queue_entry.name]
 #             log["running"].append(queue_entry.__dict__)
@@ -374,7 +374,7 @@
 #         base_path.mkdir(parents=True, exist_ok=True)
 #         base_path.sync_to_cloud(cloud=self.cloud, rel2home=True, sync_up=True, verbose=True, transfers=100)
 #         self.release_lock()
-#     def reset_lock(self): 
+#     def reset_lock(self):
 #         base_path = CloudManager.base_path.expanduser()
 #         base_path.mkdir(parents=True, exist_ok=True)
 #         base_path.joinpath("lock.txt").write_text("").to_cloud(cloud=self.cloud, rel2home=True, verbose=False)

@@ -23,14 +23,14 @@ def check_latest():
     # installers += get_installers(system=platform.system(), dev=True)
     installers_github = []
     for inst__ in installers:
-        if "ntop" in inst__.name: 
+        if "ntop" in inst__.name:
             print(f"⏭️  Skipping {inst__.name} (ntop)")
             continue
         if "github" not in inst__.repo_url:
             print(f"⏭️  Skipping {inst__.name} (not a GitHub release)")
             continue
         installers_github.append(inst__)
-        
+
     print(f"\n🔍 Checking {len(installers_github)} GitHub-based installers...\n")
 
     def func(inst: Installer):
@@ -41,9 +41,9 @@ def check_latest():
 
     print("\n⏳ Processing installers...\n")
     res = [func(inst) for inst in installers_github]
-    
+
     print("\n📊 Generating results table...\n")
-    
+
     # Convert to list of dictionaries and group by status
     result_data = []
     for tool, status, current_ver, new_ver in res:
@@ -53,7 +53,7 @@ def check_latest():
             "Current Version": current_ver,
             "New Version": new_ver
         })
-    
+
     # Group by status
     grouped_data = {}
     for item in result_data:
@@ -61,9 +61,9 @@ def check_latest():
         if status not in grouped_data:
             grouped_data[status] = []
         grouped_data[status].append(item)
-    
+
     console.print(Panel("📊  INSTALLATION STATUS SUMMARY", title="Status", expand=False))
-    
+
     # Print each group
     for status, items in grouped_data.items():
         print(f"\n{status.upper()}:")
@@ -76,16 +76,16 @@ def check_latest():
 
 def get_installed_cli_apps():
     print(f"\n{'='*80}\n🔍 LISTING INSTALLED CLI APPS 🔍\n{'='*80}")
-    if platform.system() == "Windows": 
+    if platform.system() == "Windows":
         print("🪟 Searching for Windows executables...")
         apps = PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad"])
-    elif platform.system() in ["Linux", "Darwin"]: 
+    elif platform.system() in ["Linux", "Darwin"]:
         print(f"🐧 Searching for {platform.system()} executables...")
         if platform.system() == "Linux":
             apps = PathExtended(LINUX_INSTALL_PATH).search("*") + PathExtended("/usr/local/bin").search("*")
         else:  # Darwin/macOS
             apps = PathExtended("/usr/local/bin").search("*") + PathExtended("/opt/homebrew/bin").search("*")
-    else: 
+    else:
         error_msg = f"❌ ERROR: System {platform.system()} not supported"
         print(error_msg)
         raise NotImplementedError(error_msg)
@@ -111,11 +111,11 @@ def get_installers(system: str, dev: bool) -> list[Installer]:
 
 def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
     print(f"\n{'='*80}\n📂 LOADING CONFIGURATION FILES 📂\n{'='*80}")
-    
+
     print(f"🔍 Importing OS-specific installers for {system}...")
-    if system == "Windows": 
+    if system == "Windows":
         import machineconfig.jobs.python_windows_installers as os_specific_installer
-    else: 
+    else:
         import machineconfig.jobs.python_linux_installers as os_specific_installer
 
     print("🔍 Importing generic installers...")
@@ -133,10 +133,10 @@ def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
 
     print(f"""📄 Loading OS-generic config from: {path_os_generic.joinpath("config.json")}""")
     res_final["OS_GENERIC"] = read_json(path=path_os_generic.joinpath("config.json"))
-    
+
     print(f"""📄 Loading OS-specific dev config from: {path_os_specific_dev.joinpath("config.json")}""")
     res_final["OS_SPECIFIC_DEV"] = read_json(path=path_os_specific_dev.joinpath("config.json"))
-    
+
     print(f"""📄 Loading OS-generic dev config from: {path_os_generic_dev.joinpath("config.json")}""")
     res_final["OS_GENERIC_DEV"] = read_json(path=path_os_generic_dev.joinpath("config.json"))
 
@@ -166,23 +166,23 @@ def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
 
     res_final["CUSTOM"] = res_custom
     res_final["CUSTOM_DEV"] = res_custom_dev
-    
+
     print(f"✅ Configuration loading complete:\n - OS_SPECIFIC: {len(res_final['OS_SPECIFIC'])} items\n - OS_GENERIC: {len(res_final['OS_GENERIC'])} items\n - CUSTOM: {len(res_final['CUSTOM'])} items\n{'='*80}")
     return res_final
 
 
 def install_all(installers: list[Installer], safe: bool=False, jobs: int = 10, fresh: bool=False):
     print(f"\n{'='*80}\n🚀 BULK INSTALLATION PROCESS 🚀\n{'='*80}")
-    if fresh: 
+    if fresh:
         print("🧹 Fresh install requested - clearing version cache...")
         INSTALL_VERSION_ROOT.delete(sure=True)
         print("✅ Version cache cleared")
-        
+
     if safe:
         print("⚠️  Safe installation mode activated...")
         from machineconfig.jobs.python.check_installations import APP_SUMMARY_PATH
         apps_dir = APP_SUMMARY_PATH.readit()
-        
+
         if platform.system().lower() == "windows":
             print("🪟 Moving applications to Windows Apps folder...")
             # PathExtended.get_env().WindowsPaths().WindowsApps)
@@ -196,44 +196,44 @@ def install_all(installers: list[Installer], safe: bool=False, jobs: int = 10, f
             else:  # Darwin/macOS
                 install_path = "/usr/local/bin"
             Terminal().run(f"sudo mv {apps_dir.as_posix()}/* {install_path}/").capture().print_if_unsuccessful(desc=f"MOVING executable to {install_path}", strict_err=True, strict_returncode=True)
-        else: 
+        else:
             error_msg = f"❌ ERROR: System {platform.system()} not supported"
             print(error_msg)
             raise NotImplementedError(error_msg)
-            
+
         apps_dir.delete(sure=True)
         print(f"✅ Safe installation completed\n{'='*80}")
         return None
-        
+
     print(f"🚀 Starting installation of {len(installers)} packages...")
     print(f"\n{'='*80}\n📦 INSTALLING FIRST PACKAGE 📦\n{'='*80}")
     installers[0].install(version=None)
     installers_remaining = installers[1:]
     print(f"\n{'='*80}\n📦 INSTALLING REMAINING PACKAGES 📦\n{'='*80}")
-    
+
     # Use joblib for parallel processing of remaining installers
     res = Parallel(n_jobs=jobs)(
-        delayed(lambda x: x.install_robust(version=None))(installer) 
+        delayed(lambda x: x.install_robust(version=None))(installer)
         for installer in installers_remaining
     )
-    
+
     console = Console()
-    
+
     print("\n")
     console.rule("📊 INSTALLATION RESULTS SUMMARY 📊")
-    
+
     print("\n")
     console.rule("✓ Same Version Apps")
     same_version_results = [r for r in res if r and 'same version' in str(r)]
     for result in same_version_results:
         print(f"  {result}")
-    
+
     print("\n")
     console.rule("⬆️ Updated Apps")
     updated_results = [r for r in res if r and 'updated from' in str(r)]
     for result in updated_results:
         print(f"  {result}")
-    
+
     print("\n")
     console.rule("❌ Failed Apps")
     failed_results = [r for r in res if r and 'Failed at' in str(r)]

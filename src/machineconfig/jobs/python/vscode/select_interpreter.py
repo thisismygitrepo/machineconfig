@@ -17,7 +17,7 @@ def select_interpreter(workspace_root: str):
 📂 Workspace: {workspace_root}
 {'=' * 150}
 """)
-    
+
     path = Path(workspace_root).joinpath('.ve_path')
     if not path.exists():
         print(f"""
@@ -27,10 +27,10 @@ def select_interpreter(workspace_root: str):
 {'⚠️' * 20}
 """)
         return
-        
+
     with open(path, 'r', encoding='utf-8') as f:
         python_path = Path(f.read().strip()).expanduser()
-    
+
     print(f"📁 Virtual environment path: {python_path}")
 
     if platform.system() == 'Windows':
@@ -49,7 +49,7 @@ def select_interpreter(workspace_root: str):
         raise NotImplementedError(error_msg)
 
     print(f"🔍 Python interpreter path: {python_path}")
-    
+
     # tmp = os.getenv('APPDATA')
     # assert tmp is not None
     # settings_path = Path(tmp).joinpath('Code', 'User', 'settings.json')
@@ -62,11 +62,11 @@ def select_interpreter(workspace_root: str):
         work_space_settings.write_text("{}")
     else:
         print(f"📄 Updating existing settings file: {work_space_settings}")
-        
+
     settings = read_json(work_space_settings)
     settings['python.defaultInterpreterPath'] = str(python_path)
     save_json(obj=settings, path=str(work_space_settings), indent=4)
-    
+
     print(f"""
 {'=' * 150}
 ✅ SUCCESS | Python interpreter configured successfully

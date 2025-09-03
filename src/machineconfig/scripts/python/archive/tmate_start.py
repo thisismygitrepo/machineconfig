@@ -30,13 +30,13 @@ def main():
     console.print(f"🔍 Looking up session configuration: {args.sess_name}")
     sess_name = creds['sessions_names'][args.sess_name]
     api_key = creds['keys']['api_key']
-    
+
     console.print(Panel(f"🚀 Starting tmate session: {sess_name}", title="[bold green]Session Info[/bold green]"))
-    
+
     res = f"tmate -a ~/.ssh/authorized_keys -k {api_key} -n {sess_name} -F"
     console.print("[bold cyan]Running:[/bold cyan] tmate with configured API key and session name")
     os.system(res)
-    
+
     console.print("[green]Tmate session ended[/green]")
 
 

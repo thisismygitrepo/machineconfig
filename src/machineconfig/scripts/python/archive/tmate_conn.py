@@ -21,19 +21,19 @@ def get_conn_string(sess_name: str) -> str:
 
 def main():
     console.print(Panel("🔌 Tmate Connection Manager", title="[bold]Welcome[/bold]"))
-    
+
     parser = argparse.ArgumentParser(description='Tmate launcher')
     parser.add_argument("sess_name", help="session name", default=random.choices(list(string.digits + string.ascii_letters), k=20))
     args = parser.parse_args()
-    
+
     console.print(f"🔍 Looking up session: {args.sess_name}")
     conn_string = get_conn_string(args.sess_name)
-    
+
     console.print(Panel(f"SSH Connection String: ssh {conn_string}", title="[bold green]SSH Connection[/bold green]"))
-    
+
     console.print("🚀 Connecting to tmate session...")
     os.system(f"ssh {conn_string}")
-    
+
     console.print("✅ Connection closed")
 
 

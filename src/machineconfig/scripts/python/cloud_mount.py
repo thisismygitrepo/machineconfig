@@ -51,7 +51,7 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
     # draw header box dynamically
     title = "☁️  Cloud Mount Utility"
     console.print(Panel(title, title_align="left", border_style="blue"))
-    
+
     config = get_rclone_config()
     if cloud is None:
         res = choose_one_option(msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
@@ -64,7 +64,7 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
             mount_loc = PathExtended(DEFAULT_MOUNT).expanduser().joinpath(cloud)
         else:
             mount_loc = PathExtended(destination)
-        
+
         mount_info = f"📂 Mount location: {mount_loc}"
         console.print(Panel(mount_info, border_style="blue"))
 
@@ -83,7 +83,7 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
                 pass
         else: raise ValueError("unsupported platform")
 
-    elif network and platform.system() == "Windows": 
+    elif network and platform.system() == "Windows":
         mount_loc = "X: --network-mode"
         print(f"🔌 Setting up network mount at {mount_loc}")
     else: raise ValueError("network mount only supported on windows")
@@ -143,7 +143,7 @@ def main():
     # draw main title box dynamically
     main_title = "☁️  RCLONE CLOUD MOUNT"
     console.print(Panel(main_title, title_align="left", border_style="blue"))
-    
+
     parser = argparse.ArgumentParser(description='mount cloud')
     parser.add_argument('cloud', nargs='?', type=str, default=None, help='cloud to mount')
     parser.add_argument('destination', nargs='?', type=str, default=None, help='destination to mount')

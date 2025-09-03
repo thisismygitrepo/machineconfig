@@ -13,11 +13,11 @@ logger = logging.getLogger(__name__)
 
 class ProcessMonitor:
     """Handles process status checking and verification on remote machines."""
-    
+
     def __init__(self, remote_executor: RemoteExecutor):
         self.remote_executor = remote_executor
-    
-    def check_command_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]], 
+
+    def check_command_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]],
                            use_verification: bool = True) -> Dict[str, Any]:
         """Check command status with optional process verification."""
         if tab_name not in tab_config:
@@ -29,26 +29,26 @@ class ProcessMonitor:
                 "command": None,
                 "remote": self.remote_executor.remote_name
             }
-        
+
         # Use the verified method by default for more accurate results
         if use_verification:
             return self.get_verified_process_status(tab_name, tab_config)
-        
+
         return self._basic_process_check(tab_name, tab_config)
-    
+
     def _basic_process_check(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
         """Basic process checking without verification."""
         _, command = tab_config[tab_name]
-        
+
         try:
             check_script = self._create_process_check_script(command)
             remote_cmd = f"$HOME/venvs/ve/bin/python -c {shlex.quote(check_script)}"
             result = self.remote_executor.run_command(remote_cmd, timeout=15)
-            
+
             if result.returncode == 0:
                 try:
                     matching_processes = json.loads(result.stdout.strip())
-                    
+
                     if matching_processes:
                         return {
                             "status": "running",
@@ -79,14 +79,14 @@ class ProcessMonitor:
                     }
             else:
                 return {
-                    "status": "error", 
+                    "status": "error",
                     "error": f"Remote command failed: {result.stderr}",
                     "running": False,
                     "command": command,
                     "tab_name": tab_name,
                     "remote": self.remote_executor.remote_name
                 }
-                
+
         except Exception as e:
             logger.error(f"Error checking command status for tab '{tab_name}': {e}")
             return {
@@ -97,7 +97,7 @@ class ProcessMonitor:
                 "tab_name": tab_name,
                 "remote": self.remote_executor.remote_name
             }
-    
+
     def _create_process_check_script(self, command: str) -> str:
         """Create Python script for checking processes on remote machine."""
         return f"""
@@ -110,25 +110,25 @@ def check_process():
     full_command = '{command}'
     cmd_parts = [part for part in full_command.split() if len(part) > 2]
     current_pid = os.getpid()
-    
+
     primary_cmd = cmd_parts[0] if cmd_parts else ''
-    
+
     for proc in psutil.process_iter(['pid', 'name', 'cmdline', 'status', 'create_time']):
         try:
             if proc.info['pid'] == current_pid:
                 continue
-                
+
             if proc.info['cmdline'] and len(proc.info['cmdline']) > 0:
                 cmdline_str = ' '.join(proc.info['cmdline'])
-                
+
                 if 'check_process()' in cmdline_str or 'psutil.process_iter' in cmdline_str:
                     continue
-                
+
                 matches_primary = primary_cmd in cmdline_str
                 matches_parts = sum(1 for part in cmd_parts[1:] if part in cmdline_str)
-                
+
                 if (matches_primary and matches_parts >= 2) or \\
-                   (full_command in cmdline_str and not any(python_indicator in cmdline_str.lower() 
+                   (full_command in cmdline_str and not any(python_indicator in cmdline_str.lower()
                                                            for python_indicator in ['python -c', 'import psutil', 'def check_process'])):
                     matching_processes.append({{
                         "pid": proc.info['pid'],
@@ -140,14 +140,14 @@ def check_process():
                     }})
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             continue
-    
+
     return matching_processes
 
 if __name__ == "__main__":
     processes = check_process()
     print(json.dumps(processes))
 """
-    
+
     def force_fresh_process_check(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
         """Force a fresh process check with additional validation."""
         if tab_name not in tab_config:
@@ -158,23 +158,23 @@ if __name__ == "__main__":
                 "command": None,
                 "remote": self.remote_executor.remote_name
             }
-        
+
         _, command = tab_config[tab_name]
-        
+
         try:
             # Get timestamp for freshness validation
             timestamp_result = self.remote_executor.run_command("date +%s", timeout=5)
             check_timestamp = timestamp_result.stdout.strip() if timestamp_result.returncode == 0 else "unknown"
-            
+
             check_script = self._create_fresh_check_script(command)
             remote_cmd = f"$HOME/venvs/ve/bin/python -c {shlex.quote(check_script)}"
             result = self.remote_executor.run_command(remote_cmd, timeout=15)
-            
+
             if result.returncode == 0:
                 try:
                     check_result = json.loads(result.stdout.strip())
                     matching_processes = check_result.get("processes", [])
-                    
+
                     return {
                         "status": "running" if matching_processes else "not_running",
                         "running": bool(matching_processes),
@@ -198,14 +198,14 @@ if __name__ == "__main__":
                     }
             else:
                 return {
-                    "status": "error", 
+                    "status": "error",
                     "error": f"Remote command failed: {result.stderr}",
                     "running": False,
                     "command": command,
                     "tab_name": tab_name,
                     "remote": self.remote_executor.remote_name
                 }
-                
+
         except Exception as e:
             logger.error(f"Error in fresh process check for tab '{tab_name}': {e}")
             return {
@@ -216,11 +216,11 @@ if __name__ == "__main__":
                 "tab_name": tab_name,
                 "remote": self.remote_executor.remote_name
             }
-    
+
     def _create_fresh_check_script(self, command: str) -> str:
         """Create enhanced process checking script with freshness validation."""
         escaped_command = command.replace("'", "\\'").replace('"', '\\"')
-        
+
         return f'''
 import psutil
 import json
@@ -229,40 +229,40 @@ import time
 
 def force_fresh_check():
     time.sleep(0.1)
-    
+
     matching_processes = []
     full_command = '{escaped_command}'
     cmd_parts = [part for part in full_command.split() if len(part) > 2]
     current_pid = os.getpid()
     primary_cmd = cmd_parts[0] if cmd_parts else ''
-    
+
     check_time = time.time()
-    
+
     for proc in psutil.process_iter(['pid', 'name', 'cmdline', 'status', 'create_time']):
         try:
             if proc.info['pid'] == current_pid:
                 continue
-                
+
             if proc.info['cmdline'] and len(proc.info['cmdline']) > 0:
                 cmdline_str = ' '.join(proc.info['cmdline'])
-                
+
                 if any(indicator in cmdline_str for indicator in [
                     'check_process()', 'psutil.process_iter', 'force_fresh_check',
                     'import psutil', 'def check_process'
                 ]):
                     continue
-                
+
                 if proc.info['create_time'] and proc.info['create_time'] > check_time - 5:
                     continue
-                
+
                 matches_primary = primary_cmd in cmdline_str and primary_cmd != 'python'
                 matches_parts = sum(1 for part in cmd_parts[1:] if part in cmdline_str)
-                
+
                 if matches_primary and matches_parts >= 2:
                     script_indicators = ['-c', 'import ', 'def ', 'psutil']
-                    is_direct_command = not any(script_indicator in cmdline_str.lower() 
+                    is_direct_command = not any(script_indicator in cmdline_str.lower()
                                               for script_indicator in script_indicators)
-                    
+
                     if is_direct_command or (full_command in cmdline_str and 'python -c' not in cmdline_str):
                         matching_processes.append({{
                             "pid": proc.info['pid'],
@@ -275,7 +275,7 @@ def force_fresh_check():
                         }})
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             continue
-    
+
     return {{
         "processes": matching_processes,
         "check_timestamp": check_time,
@@ -287,23 +287,23 @@ if __name__ == "__main__":
     result = force_fresh_check()
     print(json.dumps(result))
 '''
-    
+
     def verify_process_alive(self, pid: int) -> bool:
         """Verify if a process with given PID is actually alive."""
         try:
             verify_cmd = f"kill -0 {pid} 2>/dev/null && echo 'alive' || echo 'dead'"
             result = self.remote_executor.run_command(verify_cmd, timeout=5)
-            
+
             if result.returncode == 0:
                 return result.stdout.strip() == 'alive'
             return False
         except Exception:
             return False
-    
+
     def get_verified_process_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
         """Get process status with additional verification that processes are actually alive."""
         status = self.force_fresh_process_check(tab_name, tab_config)
-        
+
         if status.get("running") and status.get("processes"):
             verified_processes = []
             for proc in status["processes"]:
@@ -314,20 +314,20 @@ if __name__ == "__main__":
                 else:
                     proc["verified_alive"] = False
                     logger.warning(f"Process PID {pid} found in process list but not actually alive")
-            
+
             status["processes"] = verified_processes
             status["running"] = bool(verified_processes)
             status["status"] = "running" if verified_processes else "not_running"
             status["verification_method"] = "kill_signal_check"
-        
+
         return status
-    
+
     def check_all_commands_status(self, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Dict[str, Any]]:
         """Check status of all commands in the tab configuration."""
         if not tab_config:
             logger.warning("No tab configuration provided.")
             return {}
-        
+
         status_report = {}
         for tab_name in tab_config:
             status_report[tab_name] = self.check_command_status(tab_name, tab_config)

@@ -111,15 +111,15 @@
 #     @staticmethod
 #     def from_dict(a_dict: dict[str, Any]):
 #         return LogEntry(
-#             name=a_dict["name"], 
-#             submission_time=str(a_dict["submission_time"]), 
-#             start_time=str(a_dict["start_time"]) if a_dict.get("start_time") else None, 
+#             name=a_dict["name"],
+#             submission_time=str(a_dict["submission_time"]),
+#             start_time=str(a_dict["start_time"]) if a_dict.get("start_time") else None,
 #             end_time=str(a_dict["end_time"]) if a_dict.get("end_time") else None,
-#             run_machine=a_dict.get("run_machine"), 
-#             source_machine=a_dict.get("source_machine", ""), 
-#             note=a_dict.get("note", ""), 
-#             pid=a_dict.get("pid"), 
-#             cmd=a_dict.get("cmd"), 
+#             run_machine=a_dict.get("run_machine"),
+#             source_machine=a_dict.get("source_machine", ""),
+#             note=a_dict.get("note", ""),
+#             pid=a_dict.get("pid"),
+#             cmd=a_dict.get("cmd"),
 #             session_name=a_dict.get("session_name")
 #         )
 

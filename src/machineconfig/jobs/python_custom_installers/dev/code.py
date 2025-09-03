@@ -43,9 +43,9 @@ def main(version: Optional[str] = None):
 {'⚠️' * 20}
 """)
         raise NotImplementedError(error_msg)
-    
+
     _ = version
-    
+
     print(f"""
 {'=' * 150}
 ℹ️  INFO | VS Code features:
@@ -56,7 +56,7 @@ def main(version: Optional[str] = None):
 ⚙️  Highly customizable
 {'=' * 150}
 """)
-    
+
     return install_script
 
 

@@ -25,7 +25,7 @@ def main():
         elif ".config" in str(orig_path): junction = orig_path.split(at=".config", sep=-1)[1]
         else: junction = orig_path.rel2home()
         new_path = REPO_ROOT.joinpath(junction)
-    else: 
+    else:
         dest_path = PathExtended(args.dest).expanduser().absolute()
         dest_path.mkdir(parents=True, exist_ok=True)
         new_path = dest_path.joinpath(orig_path.name)
@@ -35,7 +35,7 @@ def main():
     print("""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ ✅ Symbolic Link Created Successfully
-┃ 
+┃
 ┃ 🔄 To enshrine this mapping, add the following to mapper.toml:
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
     print(f"""

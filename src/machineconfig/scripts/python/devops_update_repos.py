@@ -26,7 +26,7 @@ def main(verbose: bool=True) -> str:
         print("""
 ┌────────────────────────────────────────────────────────────────
 │ ✨ Example Configuration:
-│ 
+│
 │ [general]
 │ repos = ~/code/repo1,~/code/repo2
 │ rclone_config_name = onedrivePersonal

@@ -36,20 +36,20 @@ def main(version: Optional[str]):
 🔄 Version: {'latest' if version is None else version}
 {'═' * 150}
 """)
-    
+
     _ = version
     inst = Installer.from_dict(d=config_dict, name="gh")
     print("""
 📦 INSTALLATION | Installing GitHub CLI base package...
 """)
     inst.install(version=version)
-    
+
     print(f"""
 {'─' * 150}
 🤖 GITHUB COPILOT | Setting up GitHub Copilot CLI extension
 {'─' * 150}
 """)
-    
+
     if platform.system() == "Windows":
         print("""
 🪟 WINDOWS SETUP | Configuring GitHub CLI for Windows...
@@ -78,9 +78,9 @@ gh auth login --with-token $HOME/dotfiles/creds/git/gh_token.txt
     print("""
 🔐 AUTHENTICATION | Setting up GitHub authentication with token...
 """)
-    
+
     Terminal().run(program, shell="default").print(desc="Installing GitHub Copilot extension", capture=True)
-    
+
     print(f"""
 {'═' * 150}
 ✅ SUCCESS | GitHub CLI installation completed
@@ -88,7 +88,7 @@ gh auth login --with-token $HOME/dotfiles/creds/git/gh_token.txt
 🔑 Authentication configured with token
 {'═' * 150}
 """)
-    
+
     return program
 
 
