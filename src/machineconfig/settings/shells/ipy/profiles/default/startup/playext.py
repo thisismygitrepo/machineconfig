@@ -73,10 +73,12 @@ sys.path.append(r'{path.parent}')
 from {path.stem} import *
 """
 
-        result = PathExtended.tmp().joinpath(f"tmp_scripts/python/{randstr()}.py").write_text(code_snippet)
+        result = PathExtended.tmp().joinpath(f"tmp_scripts/python/{randstr()}.py")
+        result.parent.mkdir(parents=True, exist_ok=True)
+        result.write_text(code_snippet)
         print("""💡 IPyExtension: Remember that reload fails for imported modules that import other varying modules.""")
         get_ipython().run_line_magic(magic_name="load", line=result)  # type: ignore
-        return
+    return
 
     result = path.as_posix()
     print(f"➡️ Running magic: %run {result}")

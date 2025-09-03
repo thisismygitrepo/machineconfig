@@ -114,7 +114,9 @@ def main() -> None:
                 if line.startswith("echo"): continue
                 options.append(line)
             chosen_lines = display_options(msg="Choose a line to run", options=options, fzf=True, multi=True)
-            choice_file = PathExtended.tmpfile(suffix=".sh").write_text("\n".join(chosen_lines))
+            choice_file = PathExtended.tmpfile(suffix=".sh")
+            choice_file.parent.mkdir(parents=True, exist_ok=True)
+            choice_file.write_text("\n".join(chosen_lines))
             choice_function = None
     else:
         choice_function = args.function
@@ -295,7 +297,9 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
     console = Console()
 
     if args.zellij_tab is not None:
-        comman_path__ = PathExtended.tmpfile(suffix=".sh").write_text(command)
+        comman_path__ = PathExtended.tmpfile(suffix=".sh")
+        comman_path__.parent.mkdir(parents=True, exist_ok=True)
+        comman_path__.write_text(command)
         console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {comman_path__}: "), style="bold red")
         import subprocess
         existing_tab_names = subprocess.run(["zellij", "action", "query-tab-names"], capture_output=True, text=True, check=True).stdout.splitlines()

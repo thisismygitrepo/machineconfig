@@ -156,7 +156,8 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                 f_name = validate_name(str(P(response.history[-1].url).name if len(response.history) > 0 else P(response.url).name))
         dest_path = (P.home().joinpath("Downloads") if folder is None else P(folder)).joinpath(f_name)
         dest_path.parent.mkdir(parents=True, exist_ok=True)
-        return dest_path.write_bytes(response.content)
+        dest_path.write_bytes(response.content)
+        return dest_path
     def _return(self, res: Union['P', 'Path'], operation: Literal['rename', 'delete', 'Whack'], inplace: bool = False, overwrite: bool = False, orig: bool = False, verbose: bool = False, strict: bool = True, msg: str = "", __delayed_msg__: str = "") -> 'P':
         res = P(res)
         if inplace:
@@ -293,17 +294,23 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             elif self.is_dir(): return "📁"
             return "👻NotExist"
         return "📍Relative"
-    def write_text(self, data: str, encoding: str = 'utf-8', newline: Optional[str] = None) -> 'P':
-        self.parent.mkdir(parents=True, exist_ok=True)
-        super(P, self).write_text(data, encoding=encoding, newline=newline)
-        return self
-    def read_text(self, encoding: Optional[str] = 'utf-8') -> str: return super(P, self).read_text(encoding=encoding)
-    def write_bytes(self, data: bytes, overwrite: bool = False) -> 'P':
-        slf = self.expanduser().absolute()
-        if overwrite and slf.exists(): slf.delete(sure=True)
-        res = super(P, slf).write_bytes(data)
-        if res == 0: raise RuntimeError("Could not save file on disk.")
-        return self
+    # def write_text(self, data: str, encoding: str = 'utf-8', newline: Optional[str] = None) -> 'P':
+    #     """Deprecated override. Use pathlib.Path.write_text and don't rely on return value being the path.
+    #     Ensure parent directories exist at call sites if needed.
+    #     """
+    #     self.parent.mkdir(parents=True, exist_ok=True)
+    #     super(P, self).write_text(data, encoding=encoding, newline=newline)
+    #     return self
+    # def read_text(self, encoding: Optional[str] = 'utf-8') -> str:
+    #     """Deprecated override. Use pathlib.Path.read_text directly."""
+    #     return super(P, self).read_text(encoding=encoding)
+    # def write_bytes(self, data: bytes, overwrite: bool = False) -> 'P':
+    #     """Deprecated override. Use pathlib.Path.write_bytes and handle overwrites at call sites."""
+    #     slf = self.expanduser().absolute()
+    #     if overwrite and slf.exists(): slf.delete(sure=True)
+    #     res = super(P, slf).write_bytes(data)
+    #     if res == 0: raise RuntimeError("Could not save file on disk.")
+    #     return self
     # def touch(self, mode: int = 0o666, parents: bool = True, exist_ok: bool = True) -> 'P':  # pylint: disable=W0237
     #     """Deprecated: rely on pathlib.Path.touch at call sites.
     #     Behavior was:
@@ -492,7 +499,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
     def decrypt(self, key: Optional[bytes] = None, pwd: Optional[str] = None, path: OPLike = None, folder: OPLike = None, name: Optional[str]= None, verbose: bool = True, suffix: str = ".enc", inplace: bool = False) -> 'P':
         slf = self.expanduser().resolve()
         path = self._resolve_path(folder=folder, name=name, path=path, default_name=slf.name.replace(suffix, "") if suffix in slf.name else "decrypted_" + slf.name)
-        path.write_bytes(data=decrypt(token=slf.read_bytes(), key=key, pwd=pwd))
+        path.write_bytes(decrypt(token=slf.read_bytes(), key=key, pwd=pwd))
         return self._return(path, operation="delete", verbose=verbose, msg=f"🔓🔑 DECRYPTED: {repr(slf)} ==> {repr(path)}.", inplace=inplace)
     def zip_n_encrypt(self, key: Optional[bytes] = None, pwd: Optional[str] = None, inplace: bool = False, verbose: bool = True, orig: bool = False, content: bool = False) -> 'P':
         return self.zip(inplace=inplace, verbose=verbose, content=content).encrypt(key=key, pwd=pwd, verbose=verbose, inplace=True) if not orig else self

@@ -34,7 +34,9 @@ def main():
     elif choice == "I want to paste the key itself":
         print(Panel("📋 Please provide a filename and paste the private key content", expand=False))
         key_filename = input("📝 File name (default: my_pasted_key): ") or "my_pasted_key"
-        path_to_key = PathExtended.home().joinpath(f".ssh/{key_filename}").write_text(input("🔑 Paste the private key here: "))
+        path_to_key = PathExtended.home().joinpath(f".ssh/{key_filename}")
+        path_to_key.parent.mkdir(parents=True, exist_ok=True)
+        path_to_key.write_text(input("🔑 Paste the private key here: "))
         print(Panel(f"💾 Key saved to: {path_to_key}", expand=False))
 
     elif isinstance(choice, str):

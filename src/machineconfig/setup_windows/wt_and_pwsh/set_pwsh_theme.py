@@ -33,7 +33,10 @@ def install_nerd_fonts():
     folder.search("*LICENSE*").apply(lambda p: p.delete(sure=True))
     
     print("⚙️  Installing fonts via PowerShell...")
-    file = PathExtended.tmpfile(suffix=".ps1").write_text(LIBRARY_ROOT.joinpath("setup_windows/wt_and_pwsh/install_fonts.ps1").read_text().replace(r".\fonts-to-be-installed", str(folder)))
+    file = PathExtended.tmpfile(suffix=".ps1")
+    file.parent.mkdir(parents=True, exist_ok=True)
+    content = LIBRARY_ROOT.joinpath("setup_windows/wt_and_pwsh/install_fonts.ps1").read_text().replace(r".\fonts-to-be-installed", str(folder))
+    file.write_text(content)
     subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {str(file)}", check=True)
     
     print("🗑️  Cleaning up temporary files...")
