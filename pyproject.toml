@@ -35,6 +35,8 @@ dependencies = [
     "call-function-with-timeout>=1.1.1",
     "rclone-python>=0.1.23",
     "pytz>=2025.2",
+    "tomli>=2.2.1",
+    "toml>=0.10.2",
 ]
 
 [project.optional-dependencies]

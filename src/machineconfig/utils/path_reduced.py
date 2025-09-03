@@ -126,24 +126,6 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         try:
             return Read.read(filename, **kwargs) if reader is None else reader(str(filename), **kwargs)
         except IOError as ioe: raise IOError from ioe
-    # DEPRECATED: append_text has been removed. Use the inline equivalent instead:
-    #   p.write_text(p.read_text() + appendix)
-    # Returning the path (p) is preserved by write_text in this class.
-    # Example:
-    #   p = p.write_text(p.read_text() + appendix)
-    # def append_text(self, appendix: str) -> 'P':
-    #     self.write_text(self.read_text() + appendix)
-    #     return self
-    # DEPRECATED: Instance method modify_text is deprecated and left commented-out to prevent new usage.
-    # Please inline using the module-level modify_text helper:
-    #   current = p.read_text() if p.exists() else ""
-    #   updated = modify_text(current, search, alt, replace_line=..., notfound_append=..., prepend=...)
-    #   p.write_text(updated)
-    # def modify_text(self, txt_search: str, txt_alt: str, replace_line: bool = False, notfound_append: bool = False, prepend: bool = False, encoding: str = 'utf-8'):
-    #     if not self.exists():
-    #         self.parent.mkdir(parents=True, exist_ok=True)
-    #         self.write_text(txt_search)
-    #     return self.write_text(modify_text(txt_raw=self.read_text(encoding=encoding), txt_search=txt_search, txt_alt=txt_alt, replace_line=replace_line, notfound_append=notfound_append, prepend=prepend), encoding=encoding)
     def download(self, folder: OPLike = None, name: Optional[str]= None, allow_redirects: bool = True, timeout: Optional[int] = None, params: Any = None) -> 'P':
         import requests
         response = requests.get(self.as_url_str(), allow_redirects=allow_redirects, timeout=timeout, params=params)  # Alternative: from urllib import request; request.urlopen(url).read().decode('utf-8').
@@ -181,11 +163,6 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             try: print(__delayed_msg__)
             except UnicodeEncodeError: print("P._return warning: UnicodeEncodeError, could not print message.")
         return self if orig else res
-    # # ================================ Path Object management ===========================================
-    # """ Distinction between Path object and the underlying file on disk that the path may refer to. Two distinct flags are used:
-    #     `inplace`: the operation on the path object will affect the underlying file on disk if this flag is raised, otherwise the method will only alter the string.
-    #     `inliue`: the method acts on the path object itself instead of creating a new one if this flag is raised.
-    #     `orig`: whether the method returns the original path object or a new one."""
     def append(self, name: str = '', index: bool = False, suffix: Optional[str] = None, verbose: bool = True, **kwargs: Any) -> 'P':
         """Returns a new path object with the name appended to the stem of the path. If `index` is True, the name will be the index of the path in the parent directory."""
         if index:
@@ -197,12 +174,6 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         return self._return(self.parent.joinpath(subpath), operation="rename", verbose=verbose, **kwargs)
     def with_name(self, name: str, verbose: bool = True, inplace: bool = False, overwrite: bool = False, **kwargs: Any):
         return self._return(self.parent / name, verbose=verbose, operation="rename", inplace=inplace, overwrite=overwrite, **kwargs)
-    # ============================= attributes of object ======================================
-    # @property
-    # def items(self) -> List[str]: return List(self.parts)
-    # def __len__(self) -> int: return len(self.parts)
-    # def __contains__(self, item: PLike): return P(item).as_posix() in self.as_posix()
-    # def __iter__(self): return self.parts.__iter__()
     def __deepcopy__(self, *args: Any, **kwargs: Any) -> 'P':
         _ = args, kwargs
         return P(str(self))
@@ -294,36 +265,6 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             elif self.is_dir(): return "📁"
             return "👻NotExist"
         return "📍Relative"
-    # def write_text(self, data: str, encoding: str = 'utf-8', newline: Optional[str] = None) -> 'P':
-    #     """Deprecated override. Use pathlib.Path.write_text and don't rely on return value being the path.
-    #     Ensure parent directories exist at call sites if needed.
-    #     """
-    #     self.parent.mkdir(parents=True, exist_ok=True)
-    #     super(P, self).write_text(data, encoding=encoding, newline=newline)
-    #     return self
-    # def read_text(self, encoding: Optional[str] = 'utf-8') -> str:
-    #     """Deprecated override. Use pathlib.Path.read_text directly."""
-    #     return super(P, self).read_text(encoding=encoding)
-    # def write_bytes(self, data: bytes, overwrite: bool = False) -> 'P':
-    #     """Deprecated override. Use pathlib.Path.write_bytes and handle overwrites at call sites."""
-    #     slf = self.expanduser().absolute()
-    #     if overwrite and slf.exists(): slf.delete(sure=True)
-    #     res = super(P, slf).write_bytes(data)
-    #     if res == 0: raise RuntimeError("Could not save file on disk.")
-    #     return self
-    # def touch(self, mode: int = 0o666, parents: bool = True, exist_ok: bool = True) -> 'P':  # pylint: disable=W0237
-    #     """Deprecated: rely on pathlib.Path.touch at call sites.
-    #     Behavior was:
-    #       - if parents: ensure parent directories exist
-    #       - then call Path.touch(mode=mode, exist_ok=exist_ok)
-    #       - return self
-    #     Replace usages with:
-    #         p.parent.mkdir(parents=True, exist_ok=True); p.touch(mode=..., exist_ok=...)
-    #     """
-    #     if parents: self.parent.mkdir(parents=parents, exist_ok=True)
-    #     super(P, self).touch(mode=mode, exist_ok=exist_ok)
-    #     return self
-
     def symlink_to(self, target: PLike, verbose: bool = True, overwrite: bool = False, orig: bool = False, strict: bool = True):  # type: ignore[reportIncompatibleMethodOverride]  # pylint: disable=W0237
         self.parent.mkdir(parents=True, exist_ok=True)
         target_obj = P(target).expanduser().resolve()
@@ -381,20 +322,6 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         import re
         processed.sort(key=lambda x: [int(k) if k.isdigit() else k for k in re.split('([0-9]+)', string=x.stem)])
         return List(processed)
-
-    # def create(self, parents: bool = True, exist_ok: bool = True, parents_only: bool = False) -> 'P':
-    #     """Deprecated. Use Path.mkdir directly at the call site:
-    #     - When creating a directory: self.mkdir(parents=True, exist_ok=True)
-    #     - When ensuring parent exists: self.parent.mkdir(parents=True, exist_ok=True)
-    #     This method used to:
-    #         target_path = self.parent if parents_only else self
-    #         target_path.mkdir(parents=parents, exist_ok=exist_ok)
-    #         return self
-    #     """
-    #     target_path = self.parent if parents_only else self
-    #     target_path.mkdir(parents=parents, exist_ok=exist_ok)
-    #     return self
-
     @staticmethod
     def tmpdir(prefix: str = "") -> 'P':
         return P.tmp(folder=rf"tmp_dirs/{prefix + ('_' if prefix != '' else '') + randstr()}")

@@ -5,16 +5,8 @@ from pathlib import Path
 import json
 import pickle
 import configparser
-
-try:
-    import toml  # type: ignore
-except Exception:  # pragma: no cover
-    toml = None  # type: ignore
-
-try:
-    import yaml  # type: ignore
-except Exception:  # pragma: no cover
-    yaml = None  # type: ignore
+import toml
+import yaml
 
 
 PathLike = Union[str, Path]
@@ -46,8 +38,6 @@ def save_json(obj: Any, path: PathLike, indent: Optional[int] = None, verbose: b
 
 
 def save_toml(obj: Mapping[str, Any], path: PathLike, verbose: bool = False) -> Path:
-    if toml is None:
-        raise RuntimeError("toml package is required to write TOML files")
     path_obj = _ensure_parent(path)
     with open(path_obj, "w", encoding="utf-8") as fh:
         toml.dump(obj, fh)
@@ -57,8 +47,6 @@ def save_toml(obj: Mapping[str, Any], path: PathLike, verbose: bool = False) -> 
 
 
 def save_yaml(obj: Any, path: PathLike, verbose: bool = False) -> Path:
-    if yaml is None:
-        raise RuntimeError("PyYAML is required to write YAML files")
     path_obj = _ensure_parent(path)
     with open(path_obj, "w", encoding="utf-8") as fh:
         yaml.safe_dump(obj, fh, sort_keys=False)

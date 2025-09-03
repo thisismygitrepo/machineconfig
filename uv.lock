@@ -961,6 +961,8 @@ dependencies = [
     { name = "pytz" },
     { name = "rclone-python" },
     { name = "rich" },
+    { name = "toml" },
+    { name = "tomli" },
 ]
 
 [package.optional-dependencies]
@@ -996,6 +998,8 @@ requires-dist = [
     { name = "pywin32", marker = "extra == 'windows'" },
     { name = "rclone-python", specifier = ">=0.1.23" },
     { name = "rich", specifier = ">=14.0.0" },
+    { name = "toml", specifier = ">=0.10.2" },
+    { name = "tomli", specifier = ">=2.2.1" },
 ]
 provides-extras = ["windows", "docs"]
 
@@ -2191,6 +2195,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/a2/70/c24eddbf5e62ed4f4cf254afbf354d12019bf83fac6ef9d731d0cf0b503d/thread_with_results-1.0.1.tar.gz", hash = "sha256:945a1b2bf8e017bc99c2b0620454399d991cc155e14c7cf395e57410aa0ffef7", size = 3266, upload-time = "2022-07-26T09:13:38.16Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/05/fc/0a0e031345aaaa06bbeb7164aa140270df4a3a8310dec5e572434416a7bf/thread_with_results-1.0.1-py3-none-any.whl", hash = "sha256:ef64a50a2d4719918ab871b7c8e4cc64335077a3380a1984dda32f53343b1a0a", size = 4217, upload-time = "2022-07-26T09:13:36.017Z" },
+]
+
+[[package]]
+name = "toml"
+version = "0.10.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/be/ba/1f744cdc819428fc6b5084ec34d9b30660f6f9daaf70eead706e3203ec3c/toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f", size = 22253, upload-time = "2020-11-01T01:40:22.204Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/44/6f/7120676b6d73228c96e17f1f794d8ab046fc910d781c8d151120c3f1569e/toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b", size = 16588, upload-time = "2020-11-01T01:40:20.672Z" },
 ]
 
 [[package]]
