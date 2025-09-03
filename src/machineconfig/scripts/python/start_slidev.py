@@ -37,7 +37,7 @@ def jupyter_to_markdown(file: PathExtended):
 
     op_file = op_dir.joinpath("slides_raw.md")
     slide_separator = '\n\n---\n\n'
-    md = op_file.read_text().replace('\n\n\n\n', slide_separator)
+    md = op_file.read_text(encoding="utf-8").replace('\n\n\n\n', slide_separator)
     md = slide_separator.join([item for item in md.split(slide_separator) if bool(item.strip())])
     op_file.with_name("slides.md").write_text(md)
     print(f"✅ Conversion completed! Check the results at: {op_dir}\n")

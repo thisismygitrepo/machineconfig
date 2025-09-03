@@ -24,7 +24,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 
 # def scan(path: P, pct: float = 0.0):
 #     import vt  # vt-py
-#     client = vt.Client(PathExtended.home().joinpath("dotfiles/creds/tokens/virustotal").read_text().split("\n")[0])
+#     client = vt.Client(PathExtended.home().joinpath("dotfiles/creds/tokens/virustotal").read_text(encoding="utf-8").split("\n")[0])
 #     console = Console()
 #     console.rule(f"Scanning {path}. {pct:.2f}% done")
 #     if path.is_dir():
@@ -101,10 +101,10 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #     for an_app in apps_paths_tmp:
 #         version_path = [x for x in versions_files_paths if x.stem == an_app.stem]
 #         if len(version_path) == 1:
-#             app_versions.append(version_path[0].read_text())
+#             app_versions.append(version_path[0].read_text(encoding="utf-8"))
 #             apps_paths_raw.append(an_app)
 #         # if an_app.stem in versions_files_paths.stem:
-#         #     app_versions.append(versions_files_paths.filter(lambda x: x.stem == an_app.stem.replace(".exe", "")).list[0].read_text())
+#         #     app_versions.append(versions_files_paths.filter(lambda x: x.stem == an_app.stem.replace(".exe", "")).list[0].read_text(encoding="utf-8"))
 #         # else:
 #         #     print(f"🤔 Cloud not find a documented version for installation of {an_app.stem}, trying to get it from the app itself.")
 #         #     tmp = Terminal().run(f"{an_app.stem} --version", shell="powershell").capture().op_if_successfull_or_default(strict_err=False, strict_returcode=False)

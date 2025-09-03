@@ -26,7 +26,7 @@ BOX_WIDTH = 100  # Define BOX_WIDTH or get it from a config
 
 def create_default_shell_profile() -> None:
     profile_path = get_shell_profile_path()
-    profile = profile_path.read_text()
+    profile = profile_path.read_text(encoding="utf-8")
     if system == "Windows": source = f""". {str(LIBRARY_ROOT.joinpath('settings/shells/pwsh/init.ps1').collapseuser()).replace('~', '$HOME')}"""
     else: source = f"""source {str(LIBRARY_ROOT.joinpath('settings/shells/bash/init.sh').collapseuser()).replace('~', '$HOME')}"""
 
@@ -100,7 +100,7 @@ def main_env_path(choice: Optional[str], profile_path: Optional[str]) -> None:
     profile_path_obj.copy(name=profile_path_obj.name + ".orig_" + randstr())
     console.print(f"💾 Created backup of profile: {profile_path_obj.name}.orig_*")
     # Inline deprecated P.modify_text: if file missing, seed with search text before modification
-    current = profile_path_obj.read_text() if profile_path_obj.exists() else addition
+    current = profile_path_obj.read_text(encoding="utf-8") if profile_path_obj.exists() else addition
     updated = modify_text(current, addition, addition, replace_line=False, notfound_append=True)
     profile_path_obj.write_text(updated)
     console.print(Panel("✅ PATH variables added to profile successfully", title="[bold blue]Environment[/bold blue]", border_style="blue"))
@@ -124,7 +124,7 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str], choice: Optio
     if isinstance(profile_path, str):
         profile_path_obj = PathExtended(profile_path)
     else: profile_path_obj = get_shell_profile_path()
-    profile = profile_path_obj.read_text()
+    profile = profile_path_obj.read_text(encoding="utf-8")
 
     for a_file in sources:
         tmp = a_file.replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix())
@@ -162,11 +162,11 @@ def main_add_patches_to_shell_profile(profile_path: Optional[str], choice: Optio
         console.print(f"📌 Adding selected patch: {choice}")
 
     profile_path_obj = PathExtended(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
-    profile = profile_path_obj.read_text()
+    profile = profile_path_obj.read_text(encoding="utf-8")
 
     for patch_path in patches:
         patch_path_obj = PathExtended(patch_path)
-        patch = patch_path_obj.read_text()
+        patch = patch_path_obj.read_text(encoding="utf-8")
         if patch in profile:
             console.print(f"⏭️  Patch already present: {patch_path_obj.name}")
         else:

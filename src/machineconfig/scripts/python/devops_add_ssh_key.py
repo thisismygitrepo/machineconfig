@@ -28,11 +28,11 @@ def get_add_ssh_key_script(path_to_key: PathExtended):
 
     if authorized_keys.exists():
         split = "\n"
-        keys_text = authorized_keys.read_text().split(split)
+        keys_text = authorized_keys.read_text(encoding="utf-8").split(split)
         key_count = len([k for k in keys_text if k.strip()])
         console.print(Panel(f"🔍 Current SSH authorization status\n✅ Found {key_count} authorized key(s)", title="[bold blue]Status[/bold blue]"))
 
-        if path_to_key.read_text() in authorized_keys.read_text():
+        if path_to_key.read_text(encoding="utf-8") in authorized_keys.read_text(encoding="utf-8"):
             console.print(Panel(f"⚠️  Key already authorized\nKey: {path_to_key.name}\nStatus: Already present in authorized_keys file\nNo action required", title="[bold yellow]Warning[/bold yellow]"))
             program = ""
         else:
@@ -41,7 +41,7 @@ def get_add_ssh_key_script(path_to_key: PathExtended):
                 program = f"cat {path_to_key} >> ~/.ssh/authorized_keys"
             elif system() == "Windows":
                 program_path = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add-sshkey.ps1")
-                program = program_path.expanduser().read_text()
+                program = program_path.expanduser().read_text(encoding="utf-8")
                 place_holder = r'$sshfile = "$env:USERPROFILE\.ssh\pubkey.pub"'
                 assert place_holder in program, f"This section performs string manipulation on the script {program_path} to add the key to the authorized_keys file. The script has changed and the string {place_holder} is not found."
                 program = program.replace(place_holder, f'$sshfile = "{path_to_key}"')
@@ -53,7 +53,7 @@ def get_add_ssh_key_script(path_to_key: PathExtended):
             program = f"cat {path_to_key} > ~/.ssh/authorized_keys"
         else:
             program_path = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add-sshkey.ps1")
-            program = PathExtended(program_path).expanduser().read_text().replace('$sshfile=""', f'$sshfile="{path_to_key}"')
+            program = PathExtended(program_path).expanduser().read_text(encoding="utf-8").replace('$sshfile=""', f'$sshfile="{path_to_key}"')
             console.print(Panel("🔧 Configured PowerShell script for Windows\n📝 Set key path in script", title="[bold blue]Configuration[/bold blue]"))
 
     if system() == "Linux":

@@ -127,7 +127,7 @@
 #             alternative_base = self.fetch_cloud_live()
 #             assert alternative_base is not None
 #             lock_path = alternative_base.expanduser().joinpath("lock.txt")
-#             if lock_path.exists(): lock_owner: str = lock_path.read_text()
+#             if lock_path.exists(): lock_owner: str = lock_path.read_text(encoding="utf-8")
 #             else: lock_owner = "None"
 #             self.console.print(f"🔒 Lock is held by: {lock_owner}")
 #             self.console.print("🧾 Log File:")
@@ -402,7 +402,7 @@
 #             path.joinpath("lock.txt").write_text(this_machine).to_cloud(cloud=self.cloud, rel2home=True, verbose=False)
 #             return self.claim_lock(first_call=False)
 
-#         locking_machine = lock_path.read_text()
+#         locking_machine = lock_path.read_text(encoding="utf-8")
 #         if locking_machine != "" and locking_machine != this_machine:
 #             lock_mod_time = datetime.fromtimestamp(lock_path.stat().st_mtime)
 #             if (datetime.now() - lock_mod_time).total_seconds() > 3600:
@@ -424,7 +424,7 @@
 #         while counter < self.num_claim_checks:
 #             lock_path_tmp = path.joinpath("lock.txt").from_cloud(cloud=self.cloud, rel2home=True, verbose=False)
 #             assert lock_path_tmp is not None
-#             lock_data_tmp = lock_path_tmp.read_text()
+#             lock_data_tmp = lock_path_tmp.read_text(encoding="utf-8")
 #             if lock_data_tmp != this_machine:
 #                 print(f"CloudManager: Lock already claimed by `{lock_data_tmp}`. 🤷‍♂️")
 #                 print(f"sleeping for {self.inter_check_interval_sec} seconds and trying again.")
@@ -450,7 +450,7 @@
 #             path.joinpath("lock.txt").write_text("").to_cloud(cloud=self.cloud, rel2home=True, verbose=False)
 #             self.lock_claimed = False
 #             return NoReturn
-#         data = lock_path.read_text()
+#         data = lock_path.read_text(encoding="utf-8")
 #         this_machine = f"{getpass.getuser()}@{platform.node()}"
 #         if data != this_machine:
 #             raise ValueError(f"CloudManager: Lock already claimed by `{data}`. 🤷‍♂️ Can't release a lock not owned! This shouldn't happen. Consider increasing trails before confirming the claim.")

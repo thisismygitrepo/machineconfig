@@ -113,7 +113,7 @@
 #         else: base = f"""
 # res = None  # in case the file did not define it.
 # # --------------------------------- SCRIPT AS IS
-# {P(self.file_path_rh).expanduser().read_text()}
+# {P(self.file_path_rh).expanduser().read_text(encoding="utf-8")}
 # # --------------------------------- END OF SCRIPT AS IS
 # """
 

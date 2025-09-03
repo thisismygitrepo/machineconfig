@@ -139,14 +139,14 @@ git commit -am "finished merging"
         match action:
             case "ask":
                 choice = choose_one_option(options=[option1, option2, option3, option4], fzf=False)
-                if choice == option1: program_content = shell_file_1.read_text()
+                if choice == option1: program_content = shell_file_1.read_text(encoding="utf-8")
                 elif choice == option2: program_content = program_2
-                elif choice == option3: program_content = shell_file_3.read_text()
+                elif choice == option3: program_content = shell_file_3.read_text(encoding="utf-8")
                 elif choice == option4: program_content = program_4
                 else: raise NotImplementedError(f"Choice {choice} not implemented.")
-            case "pushLocalMerge": program_content = shell_file_1.read_text()
+            case "pushLocalMerge": program_content = shell_file_1.read_text(encoding="utf-8")
             case "overwriteLocal": program_content = program_2
-            case "InspectRepos": program_content = shell_file_3.read_text()
+            case "InspectRepos": program_content = shell_file_3.read_text(encoding="utf-8")
             case "RemoveLocalRclone": program_content = program_4
             case _:
                 raise ValueError(f"Unknown action: {action}")

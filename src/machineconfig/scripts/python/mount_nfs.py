@@ -73,7 +73,7 @@ $driveLetter = "{driver_letter}"
 
     print("\n📄 Configuration File Content:")
     print("-" * 50)
-    print(PROGRAM_PATH.read_text())
+    print(PROGRAM_PATH.read_text(encoding="utf-8"))
     print("-" * 50 + "\n")
 
     print("🎉 NFS Mounting Process Completed Successfully!\n")

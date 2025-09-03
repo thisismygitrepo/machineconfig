@@ -68,16 +68,16 @@
 #         # else:
 #         if platform.system() == "Windows" and script_path.name.endswith(".sh"):
 #             tmp = script_path.with_suffix(".ps1")
-#             tmp.write_text(script_path.read_text(), encoding="utf-8", newline=None)
+#             tmp.write_text(script_path.read_text(encoding="utf-8"), encoding="utf-8", newline=None)
 #             script_path = tmp
 #         if platform.system() == "Linux" and script_path.name.endswith(".ps1"):
 #             tmp = script_path.with_suffix(".sh")
-#             tmp.write_text(script_path.read_text(), encoding="utf-8", newline='\n')
+#             tmp.write_text(script_path.read_text(encoding="utf-8"), encoding="utf-8", newline='\n')
 #             script_path = tmp
 #         return f". {script_path}"
 #     def get_job_status(self, session_name: str, tab_name: str) -> JOB_STATUS:
 #         pid_path = self.execution_log_dir.expanduser().joinpath("pid.txt")
-#         tmp = self.execution_log_dir.expanduser().joinpath("status.txt").read_text()
+#         tmp = self.execution_log_dir.expanduser().joinpath("status.txt").read_text(encoding="utf-8")
 #         status: JOB_STATUS = tmp  # type: ignore
 #         if status == "running":
 #             if not pid_path.exists():
@@ -85,7 +85,7 @@
 #                 status = 'failed'
 #                 self.execution_log_dir.expanduser().joinpath("status.txt").write_text(status)
 #                 return status
-#             pid: int = int(pid_path.read_text().rstrip())
+#             pid: int = int(pid_path.read_text(encoding="utf-8").rstrip())
 #             import psutil
 #             try: proc = psutil.Process(pid=pid)
 #             except psutil.NoSuchProcess:

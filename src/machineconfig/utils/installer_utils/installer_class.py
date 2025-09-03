@@ -240,7 +240,7 @@ class Installer:
         if use_cache:
             print("🗂️  Using cached version information...")
             if tmp_path.exists():
-                existing_version = tmp_path.read_text().rstrip()
+                existing_version = tmp_path.read_text(encoding="utf-8").rstrip()
                 print(f"📄 Found cached version: {existing_version}")
             else:
                 existing_version = None

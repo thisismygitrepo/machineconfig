@@ -19,10 +19,10 @@ def get_ve_path_and_ipython_profile(init_path: PathExtended) -> tuple[Optional[s
                 ipy_profile = ini["specs"]["ipy_profile"]
                 print(f"✨ Using IPython profile: {ipy_profile}")
         if ipy_profile is None and tmp.joinpath(".ipy_profile").exists():
-            ipy_profile = tmp.joinpath(".ipy_profile").read_text().rstrip()
+            ipy_profile = tmp.joinpath(".ipy_profile").read_text(encoding="utf-8").rstrip()
             print(f"✨ Using IPython profile: {ipy_profile}. This is based on this file {tmp.joinpath('.ipy_profile')}")
         if ve_path is None and tmp.joinpath(".ve_path").exists():
-            ve_path = tmp.joinpath(".ve_path").read_text().rstrip().replace("\n", "")
+            ve_path = tmp.joinpath(".ve_path").read_text(encoding="utf-8").rstrip().replace("\n", "")
             print(f"🔮 Using Virtual Environment found @ {tmp}/.ve_path: {ve_path}")
         if ve_path is None and tmp.joinpath(".venv").exists():
             print(f"🔮 Using Virtual Environment found @ {tmp}/.venv")

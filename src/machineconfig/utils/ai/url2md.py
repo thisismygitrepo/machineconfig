@@ -38,7 +38,7 @@ except KeyboardInterrupt:
         print("\n❌ Process interrupted by user, no URLs found.")
         exit(1)
 
-all_urls = urls_file.read_text().splitlines()
+all_urls = urls_file.read_text(encoding="utf-8").splitlines()
 relevant_urls = list(set(all_urls))  # remove duplicates
 relevant_urls = [a_url for a_url in relevant_urls if not a_url.endswith(".css") and not a_url.endswith(".js") and not a_url.endswith(".png") and not a_url.endswith(".jpg") and not a_url.endswith(".jpeg") and not a_url.endswith(".gif")]
 

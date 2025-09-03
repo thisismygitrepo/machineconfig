@@ -108,7 +108,7 @@ def main() -> None:
                     kwargs[item.name] = input(f"Please enter a value for argument `{item.name}` (type = {item.type}) (default = {item.default}) : ") or item.default
         elif choice_file.suffix == ".sh":  # in this case, we choos lines.
             options = []
-            for line in choice_file.read_text().splitlines():
+            for line in choice_file.read_text(encoding="utf-8").splitlines():
                 if line.startswith("#"): continue
                 if line == "": continue
                 if line.startswith("echo"): continue

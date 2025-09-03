@@ -79,7 +79,7 @@
 #                 print(f"🧑‍💻 Waiting for Python process to start and declare its pid @ `{pid_path}` as dictated in python script ... ")
 #                 time.sleep(3)
 #                 try:
-#                     pid = int(pid_path.read_text())
+#                     pid = int(pid_path.read_text(encoding="utf-8"))
 #                     import psutil
 #                     process_command = " ".join(psutil.Process(pid).cmdline())
 #                     print(f"🎉 Python process started running @ {pid=} & {process_command=}")
@@ -133,7 +133,7 @@
 #             email_script = PathExtended(cluster.__file__).parent.joinpath("script_notify_upon_completion.py").read_text(encoding="utf-8").replace("email_params = EmailParams.from_empty()", f"email_params = {email_params}").replace('manager = FileManager.from_pickle(params.file_manager_path)', '')
 #             py_script = py_script.replace("# NOTIFICATION-CODE-PLACEHOLDER", email_script)
 #         ve_path = PathExtended(self.job_params.repo_path_rh).expanduser().joinpath(".ve_path")
-#         if ve_path.exists(): ve_name = PathExtended(ve_path.read_text()).expanduser().name
+#         if ve_path.exists(): ve_name = PathExtended(ve_path.read_text(encoding="utf-8")).expanduser().name
 #         else:
 #             import sys
 #             ve_name = PathExtended(sys.executable).parent.parent.name
@@ -216,7 +216,7 @@
 #             if not start_time_file.exists():
 #                 print(f"Job {self.config.job_id} is still in the queue. 😯")
 #             else:
-#                 start_time = start_time_file.read_text()
+#                 start_time = start_time_file.read_text(encoding="utf-8")
 #                 txt = f"Machine {self.ssh.get_remote_repr(add_machine=True)} has not yet finished job `{self.config.job_id}`. 😟"
 #                 txt += f"\nIt started at {start_time}. 🕒, and is still running. 🏃‍♂️"
 #                 try:
@@ -229,7 +229,7 @@
 #                 print("\n")
 #         else:
 #             results_folder_file = base.joinpath("results_folder_path.txt")  # it could be one returned by function executed or one made up by the running context.
-#             results_folder = results_folder_file.read_text()
+#             results_folder = results_folder_file.read_text(encoding="utf-8")
 #             print("\n" * 2)
 #             console.rule("Job Completed 🎉🥳🎆🥂🍾🎊🪅")
 #             print(f"""Machine {self.ssh.get_remote_repr(add_machine=True)} has finished job `{self.config.job_id}`. 😁

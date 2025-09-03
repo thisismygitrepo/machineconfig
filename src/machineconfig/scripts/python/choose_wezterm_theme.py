@@ -51,7 +51,7 @@ def main2():
 
 def set_theme(theme: str):
     print(f"🔄 Setting WezTerm theme to: {theme}")
-    txt_lines = PathExtended("~/.config/wezterm/wezterm.lua").expanduser().read_text().splitlines()
+    txt_lines = PathExtended("~/.config/wezterm/wezterm.lua").expanduser().read_text(encoding="utf-8").splitlines()
     res_lines = []
     for line in txt_lines:
         if 'config.color_scheme = ' in line:

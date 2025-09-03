@@ -57,7 +57,7 @@ def main():
     # - If file doesn't exist, seed content with txt_search
     # - Then run modify_text to replace/append accordingly and write back
     if config_path.exists():
-        current = config_path.read_text()
+        current = config_path.read_text(encoding="utf-8")
         print(Panel("✏️  Updated existing SSH config file", expand=False))
     else:
         current = txt

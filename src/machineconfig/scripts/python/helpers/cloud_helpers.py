@@ -100,7 +100,7 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Ar
 
     default_password_path = Path.home().joinpath("dotfiles/creds/passwords/quick_password")
     if default_password_path.exists():
-        pwd = default_password_path.read_text().strip()
+        pwd = default_password_path.read_text(encoding="utf-8").strip()
         default_message = "defaults to quick_password"
     else:
         pwd = ""

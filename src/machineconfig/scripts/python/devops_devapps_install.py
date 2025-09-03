@@ -70,10 +70,10 @@ def get_programs_by_category(program_name: WHICH_CAT):
             program = ""
 
         case "SystemInstallers":
-            if system() == "Windows": options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text())
+            if system() == "Windows": options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text(encoding="utf-8"))
             elif system() == "Linux":
-                options_system_1 = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps_dev.sh").read_text())
-                options_system_2 = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps.sh").read_text())
+                options_system_1 = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps_dev.sh").read_text(encoding="utf-8"))
+                options_system_2 = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps.sh").read_text(encoding="utf-8"))
                 options_system = {**options_system_1, **options_system_2}
             else: raise NotImplementedError(f"❌ System {system()} not supported")
             program_names = choose_multiple_options(msg="", options=sorted(list(options_system.keys())), header="🚀 CHOOSE DEV APP")
