@@ -73,7 +73,7 @@ def run_python_file_in_this_namespace(a_path: str, module: bool=False):
 import sys
 sys.path.append(r'{path.parent}')
 from {path.stem} import *
-""")
+""", encoding="utf-8")
         print("""💡 IPyExtension: Remember that reload fails for imported modules that import other varying modules.""")
         get_ipython().run_line_magic(magic_name="load", line=result)  # type: ignore
     return

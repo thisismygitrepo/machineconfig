@@ -27,7 +27,7 @@ def jupyter_to_markdown(file: PathExtended):
     # assert isinstance(nb, nbformat.notebooknode.NotebookNode), f"{file} is not a notebook"
     # e = MarkdownExporter(exclude_input=True, exclude_input_prompt=True, exclude_output_prompt=True)
     # body, resources = e.from_notebook_node(nb=nb)
-    # op_dir.joinpath("slides_raw.md").write_text(body)
+    # op_dir.joinpath("slides_raw.md").write_text(body, encoding="utf-8")
     # for key, value in resources['outputs'].items():
 
     cmd = f"jupyter nbconvert --to markdown --no-prompt --no-input --output-dir {op_dir} --output slides_raw.md {file}"
@@ -39,7 +39,7 @@ def jupyter_to_markdown(file: PathExtended):
     slide_separator = '\n\n---\n\n'
     md = op_file.read_text(encoding="utf-8").replace('\n\n\n\n', slide_separator)
     md = slide_separator.join([item for item in md.split(slide_separator) if bool(item.strip())])
-    op_file.with_name("slides.md").write_text(md)
+    op_file.with_name("slides.md").write_text(md, encoding="utf-8")
     print(f"✅ Conversion completed! Check the results at: {op_dir}\n")
 
     return op_dir
@@ -96,7 +96,7 @@ def main() -> None:
     print(f"   - http://{local_ip_v4}:{port}\n")
 
     program = "npm run dev slides.md -- --remote"
-    PROGRAM_PATH.write_text(program)
+    PROGRAM_PATH.write_text(program, encoding="utf-8")
     print_code(code=program, lexer="bash", desc="Run the following command to start the presentation")
 
 if __name__ == '__main__':

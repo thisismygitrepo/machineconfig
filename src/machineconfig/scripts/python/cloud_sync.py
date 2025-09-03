@@ -75,7 +75,7 @@ def args_parser():
     cmd_line = f"{rclone_cmd[:65]}..."
     console.print(Panel(f"{title}\n{cmd_line}", title="[bold blue]Command[/bold blue]", expand=False))
 
-    PROGRAM_PATH.write_text(txt)
+    PROGRAM_PATH.write_text(txt, encoding="utf-8")
 
 
 if __name__ == '__main__':

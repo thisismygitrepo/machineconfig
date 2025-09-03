@@ -150,7 +150,7 @@ git commit -am "finished merging"
             case "RemoveLocalRclone": program_content = program_4
             case _:
                 raise ValueError(f"Unknown action: {action}")
-        PROGRAM_PATH.write_text(program_content)
+        PROGRAM_PATH.write_text(program_content, encoding="utf-8")
     return program_content
 
 def args_parser():

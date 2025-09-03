@@ -36,7 +36,7 @@ iex 'rclone about {cloud}:'
 echo 'See {DEFAULT_MOUNT}/{cloud} for the mounted cloud'
 
 echo ''
-""")
+""", encoding="utf-8")
         txt = f"""
 cd ~
 mprocs "powershell {sub_text_path}" "{rclone_cmd}" "btm" "timeout 2 & cd {DEFAULT_MOUNT} & lf" "timeout 2 & cd {DEFAULT_MOUNT} & pwsh" "pwsh" --names "info,service,monitor,explorer,main,terminal"
@@ -132,7 +132,7 @@ zellij action move-focus up
 """
     else: raise ValueError("unsupported platform")
     # print(f"running command: \n{txt}")
-    PROGRAM_PATH.write_text(txt)
+    PROGRAM_PATH.write_text(txt, encoding="utf-8")
     # draw success box dynamically
     title1 = "✅ Cloud mount command prepared successfully"
     title2 = "🔄 Running mount process..."

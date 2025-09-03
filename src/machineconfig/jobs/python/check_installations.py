@@ -176,7 +176,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #         return "\n".join([header, separator] + rows)
 
 #     markdown_content = format_app_table_markdown(app_data)
-#     APP_SUMMARY_PATH.with_suffix(".md").write_text(markdown_content)
+#     APP_SUMMARY_PATH.with_suffix(".md").write_text(markdown_content, encoding="utf-8")
 
 #     print(f"""
 # {'=' * 150}

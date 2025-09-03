@@ -57,7 +57,7 @@ def set_theme(theme: str):
         if 'config.color_scheme = ' in line:
             res_lines.append(f"config.color_scheme = '{theme}'")
         else: res_lines.append(line)
-    PathExtended("~/.config/wezterm/wezterm.lua").expanduser().write_text('\n'.join(res_lines))
+    PathExtended("~/.config/wezterm/wezterm.lua").expanduser().write_text('\n'.join(res_lines), encoding="utf-8")
     time.sleep(0.1)
     print("💾 Configuration saved")
 

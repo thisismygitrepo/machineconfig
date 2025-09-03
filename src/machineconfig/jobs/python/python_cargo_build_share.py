@@ -27,7 +27,7 @@ cargo install
 # {'=' * 150}
 # """)
 #     if platform.system() == "Windows":
-#         Terminal(stdout=None).run(f". {PathExtended.tmpfile(suffix='.ps1').write_text(script)}", shell="pwsh").print()
+#         Terminal(stdout=None).run(f". {PathExtended.tmpfile(suffix='.ps1').write_text(script, encoding="utf-8")}", shell="pwsh").print()
 #     else:
 #         Terminal(stdout=None).run(script, shell="pwsh")
 

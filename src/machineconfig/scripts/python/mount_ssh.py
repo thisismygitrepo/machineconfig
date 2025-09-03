@@ -50,7 +50,7 @@ fusermount -u /mnt/dbhdd
     else:
         raise ValueError(f"❌ Not implemented for this system: {system()}")
 
-    PROGRAM_PATH.write_text(txt)
+    PROGRAM_PATH.write_text(txt, encoding="utf-8")
     print("✅ Configuration saved successfully!\n")
 
     print("🎉 SSHFS Mounting Process Completed!\n")

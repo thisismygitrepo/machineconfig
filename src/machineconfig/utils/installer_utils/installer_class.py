@@ -154,7 +154,7 @@ class Installer:
 
         print(f"💾 Saving version information to: {INSTALL_VERSION_ROOT.joinpath(self.exe_name)}")
         INSTALL_VERSION_ROOT.joinpath(self.exe_name).parent.mkdir(parents=True, exist_ok=True)
-        INSTALL_VERSION_ROOT.joinpath(self.exe_name).write_text(version_to_be_installed)
+        INSTALL_VERSION_ROOT.joinpath(self.exe_name).write_text(version_to_be_installed, encoding="utf-8")
         print(f"✅ Installation completed successfully!\n{'='*80}")
 
     def download(self, version: Optional[str]):
@@ -262,11 +262,11 @@ class Installer:
                 return ("✅ Uptodate", version.strip(), version_to_be_installed.strip())
             else:
                 print(f"🔄 {exe_name} needs update: {existing_version.rstrip()} → {version_to_be_installed}")
-                tmp_path.write_text(version_to_be_installed)
+                tmp_path.write_text(version_to_be_installed, encoding="utf-8")
                 return ("❌ Outdated", existing_version.strip(), version_to_be_installed.strip())
         else:
             print(f"📦 {exe_name} is not installed. Will install version: {version_to_be_installed}")
-            tmp_path.write_text(version_to_be_installed)
+            tmp_path.write_text(version_to_be_installed, encoding="utf-8")
 
         print(f"{'='*80}")
         return ("⚠️ NotInstalled", "None", version_to_be_installed.strip())

@@ -136,7 +136,7 @@ def arg_parser() -> None:
             fname = f".share_url_{cloud}"
             if PathExtended(source).is_dir(): share_url_path = PathExtended(source).joinpath(fname)
             else: share_url_path = PathExtended(source).with_suffix(fname)
-            share_url_path.write_text(res.as_url_str())
+            share_url_path.write_text(res.as_url_str(), encoding="utf-8")
             console.print(Panel(f"🔗 SHARE URL GENERATED\n📝 URL file: {share_url_path}\n🌍 {res.as_url_str()}", title="[bold blue]Share[/bold blue]", border_style="blue", width=152))
     else:
         console.print(Panel(f"❌ ERROR: Cloud '{cloud}' not found in source or target", title="[bold red]Error[/bold red]", border_style="red", width=152))

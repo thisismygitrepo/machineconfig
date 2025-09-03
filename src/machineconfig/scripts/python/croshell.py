@@ -137,7 +137,7 @@ def build_parser():
 . $HOME/scripts/activate_ve 've'
 streamlit run {py_file_path}
 """
-            PROGRAM_PATH.write_text(data=final_program)
+            PROGRAM_PATH.write_text(data=final_program, encoding="utf-8")
             return None
         file = PathExtended(str(args.read).lstrip()).expanduser().absolute()
         program = get_read_data_pycode(str(file))
@@ -196,7 +196,7 @@ print_logo(logo="crocodile")
     launch_message = f"{title}   {PROGRAM_PATH}\n{text1}\n{text2}"
     console.print(Panel(Text(launch_message, justify="left"), expand=False, border_style="blue"))
 
-    PROGRAM_PATH.write_text(data=final_program)
+    PROGRAM_PATH.write_text(data=final_program, encoding="utf-8")
     # (PROGRAM_PATH + ".py").write_text(str(pyfile), encoding='utf-8')
 
     # if platform.system() == "Windows":

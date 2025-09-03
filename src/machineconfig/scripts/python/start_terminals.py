@@ -105,7 +105,7 @@ def main():
     print(cmd)
     print("-" * 50 + "\n")
 
-    PROGRAM_PATH.write_text(cmd)
+    PROGRAM_PATH.write_text(cmd, encoding="utf-8")
     print("✅ Command saved successfully!\n")
 
 

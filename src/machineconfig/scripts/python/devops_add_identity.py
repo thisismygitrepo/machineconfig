@@ -36,7 +36,7 @@ def main():
         key_filename = input("📝 File name (default: my_pasted_key): ") or "my_pasted_key"
         path_to_key = PathExtended.home().joinpath(f".ssh/{key_filename}")
         path_to_key.parent.mkdir(parents=True, exist_ok=True)
-        path_to_key.write_text(input("🔑 Paste the private key here: "))
+        path_to_key.write_text(input("🔑 Paste the private key here: "), encoding="utf-8")
         print(Panel(f"💾 Key saved to: {path_to_key}", expand=False))
 
     elif isinstance(choice, str):
@@ -70,7 +70,7 @@ def main():
         notfound_append=True,
         prepend=True,
     )
-    config_path.write_text(new_content)
+    config_path.write_text(new_content, encoding="utf-8")
 
     panel_complete = Panel(
         Text(

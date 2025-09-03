@@ -44,7 +44,7 @@ def build_template(tabs: list[str]):
     res += suffix.replace("THISMACHINE", socket.gethostname())
     file = PathExtended.tmp().joinpath("tmp_files/templates/zellij_template.kdl")
     file.parent.mkdir(parents=True, exist_ok=True)
-    file.write_text(res)
+    file.write_text(res, encoding="utf-8")
     res = f"zellij --layout {file}"
     return res
 

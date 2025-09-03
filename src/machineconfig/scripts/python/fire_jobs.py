@@ -116,7 +116,7 @@ def main() -> None:
             chosen_lines = display_options(msg="Choose a line to run", options=options, fzf=True, multi=True)
             choice_file = PathExtended.tmpfile(suffix=".sh")
             choice_file.parent.mkdir(parents=True, exist_ok=True)
-            choice_file.write_text("\n".join(chosen_lines))
+            choice_file.write_text("\n".join(chosen_lines), encoding="utf-8")
             choice_function = None
     else:
         choice_function = args.function
@@ -217,7 +217,7 @@ except ImportError as _ex:
 """ + txt
         choice_file = PathExtended.tmp().joinpath(f'tmp_scripts/python/{PathExtended(choice_file).parent.name}_{PathExtended(choice_file).stem}_{randstr()}.py')
         choice_file.parent.mkdir(parents=True, exist_ok=True)
-        choice_file.write_text(txt)
+        choice_file.write_text(txt, encoding="utf-8")
 
     # =========================  determining basic command structure: putting together exe & choice_file & choice_function & pdb
     if args.debug:
@@ -274,7 +274,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
         #     sub_command = f"{command} --idx={an_arg} --idx_max={args.Nprocess}"
         #     if args.optimized:
         #         sub_command = sub_command.replace("python ", "python -OO ")
-        #     sub_command_path = PathExtended.tmpfile(suffix=".sh").write_text(sub_command)
+        #     sub_command_path = PathExtended.tmpfile(suffix=".sh").write_text(sub_command, encoding="utf-8")
         #     lines.append(f"""zellij action new-pane -- bash {sub_command_path}  """)
         #     lines.append("sleep 5")  # python tends to freeze if you launch instances within 1 microsecond of each other
         # command = "\n".join(lines)
@@ -299,7 +299,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
     if args.zellij_tab is not None:
         comman_path__ = PathExtended.tmpfile(suffix=".sh")
         comman_path__.parent.mkdir(parents=True, exist_ok=True)
-        comman_path__.write_text(command)
+        comman_path__.write_text(command, encoding="utf-8")
         console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {comman_path__}: "), style="bold red")
         import subprocess
         existing_tab_names = subprocess.run(["zellij", "action", "query-tab-names"], capture_output=True, text=True, check=True).stdout.splitlines()
@@ -335,7 +335,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
         command = command + f"\n. {program_path}"
     console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {program_path}: "), style="bold red")
     program_path.parent.mkdir(parents=True, exist_ok=True)
-    program_path.write_text(command)
+    program_path.write_text(command, encoding="utf-8")
 
 
 if __name__ == '__main__':

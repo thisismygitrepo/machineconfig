@@ -101,7 +101,7 @@ def main():
         console.print(Panel("📋 Please provide a filename and paste the public key content", title="[bold blue]Input Required[/bold blue]", border_style="blue"))
         key_filename = input("📝 File name (default: my_pasted_key.pub): ") or "my_pasted_key.pub"
         key_path = PathExtended.home().joinpath(f".ssh/{key_filename}")
-        key_path.write_text(input("🔑 Paste the public key here: "))
+        key_path.write_text(input("🔑 Paste the public key here: "), encoding="utf-8")
         console.print(Panel(f"💾 Key saved to: {key_path}", title="[bold green]Success[/bold green]", border_style="green"))
         program = get_add_ssh_key_script(key_path)
 

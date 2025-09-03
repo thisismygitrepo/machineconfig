@@ -41,7 +41,7 @@ def create_default_shell_profile() -> None:
                 profile += "\ncd ~"
                 console.print("📌 WSL detected - adding 'cd ~' to profile to avoid Windows filesystem")
         profile_path.parent.mkdir(parents=True, exist_ok=True)
-        profile_path.write_text(profile)
+        profile_path.write_text(profile, encoding="utf-8")
         console.print(Panel("✅ Profile updated successfully", title="[bold blue]Profile[/bold blue]", border_style="blue"))
 
 
@@ -102,7 +102,7 @@ def main_env_path(choice: Optional[str], profile_path: Optional[str]) -> None:
     # Inline deprecated P.modify_text: if file missing, seed with search text before modification
     current = profile_path_obj.read_text(encoding="utf-8") if profile_path_obj.exists() else addition
     updated = modify_text(current, addition, addition, replace_line=False, notfound_append=True)
-    profile_path_obj.write_text(updated)
+    profile_path_obj.write_text(updated, encoding="utf-8")
     console.print(Panel("✅ PATH variables added to profile successfully", title="[bold blue]Environment[/bold blue]", border_style="blue"))
 
 
@@ -141,7 +141,7 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str], choice: Optio
         else:
             console.print(f"⏭️  Source already present: {file}")
 
-    profile_path_obj.write_text(profile)
+    profile_path_obj.write_text(profile, encoding="utf-8")
     console.print(Panel("✅ Shell profile updated with sources", title="[bold blue]Sources[/bold blue]", border_style="blue"))
 
 
@@ -179,7 +179,7 @@ def main_add_patches_to_shell_profile(profile_path: Optional[str], choice: Optio
             profile += "\ncd ~"  # this is to make sure that the current dir is not in the windows file system, which is terribly slow and its a bad idea to be there anyway.
             console.print("📌 WSL detected - adding 'cd ~' to profile to avoid Windows filesystem")
 
-    profile_path_obj.write_text(profile)
+    profile_path_obj.write_text(profile, encoding="utf-8")
     console.print(Panel("✅ Shell profile updated with patches", title="[bold blue]Patches[/bold blue]", border_style="blue"))
 
 

@@ -59,7 +59,7 @@ def select_interpreter(workspace_root: str):
         print(f"📄 Creating new settings file: {work_space_settings}")
         work_space_settings.parent.mkdir(parents=True, exist_ok=True)
         work_space_settings.touch()
-        work_space_settings.write_text("{}")
+        work_space_settings.write_text("{}", encoding="utf-8")
     else:
         print(f"📄 Updating existing settings file: {work_space_settings}")
 
