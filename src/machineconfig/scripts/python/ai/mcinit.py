@@ -60,8 +60,12 @@ uv venv
     tmp.write_text(data=generic_instructions.read_text(encoding="utf-8"), encoding="utf-8")
     tmp = repo_root.joinpath("CLAUDE.md")
     tmp.write_text(data=generic_instructions.read_text(encoding="utf-8"), encoding="utf-8")
+
     tmp = repo_root.joinpath("GEMINI.md")
     tmp.write_text(data=generic_instructions.read_text(encoding="utf-8"), encoding="utf-8")
+    gemini_settings = mc_root.joinpath("scripts/python/ai/configs/.gemini/settings.json")
+    repo_root.joinpath(".gemini").mkdir(parents=True, exist_ok=True)
+    repo_root.joinpath(".gemini/settings.json").write_text(data=gemini_settings.read_text(encoding="utf-8"), encoding="utf-8")
 
     # OTHERS
     dot_ai_dir = repo_root.joinpath(".ai")
