@@ -55,7 +55,7 @@ def check_latest():
         })
 
     # Group by status
-    grouped_data = {}
+    grouped_data: dict[str, list[dict[str, Any]]] = {}
     for item in result_data:
         status = item["Status"]
         if status not in grouped_data:

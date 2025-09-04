@@ -64,7 +64,15 @@ crocodile = { path = "../crocodile", editable = true }
 
 [dependency-groups]
 dev = [
+    "mypy>=1.17.1",
     "pylint>=3.3.8",
+    "pyrefly>=0.31.0",
     "pyright>=1.1.404",
     "rclone-python>=0.1.23",
+    "ty>=0.0.1a20",
+    "types-paramiko>=4.0.0.20250822",
+    "types-pytz>=2025.2.0.20250809",
+    "types-pyyaml>=6.0.12.20250822",
+    "types-requests>=2.32.4.20250809",
+    "types-toml>=0.10.8.20240310",
 ]

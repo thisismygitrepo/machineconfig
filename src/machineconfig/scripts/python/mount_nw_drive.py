@@ -10,11 +10,11 @@ def main():
     drive_location = input("🔗 Enter the network drive location (e.g., //192.168.1.100/Share): ")
     machine_name = drive_location.split("//")[1].split("/")[0]
 
-    mount_point = input(f"📂 Enter the mount point directory (e.g., /mnt/network) [Default: ~/data/mount_nw/{machine_name}]: ")
-    if mount_point == "":
+    mount_point_input = input(f"📂 Enter the mount point directory (e.g., /mnt/network) [Default: ~/data/mount_nw/{machine_name}]: ")
+    if mount_point_input == "":
         mount_point = Path.home().joinpath(fr"data/mount_nw/{machine_name}")
     else:
-        mount_point = Path(mount_point).expanduser()
+        mount_point = Path(mount_point_input).expanduser()
 
     print(f"\n🌐 Network Drive Location: {drive_location}")
     print(f"📁 Mount Point: {mount_point}\n")

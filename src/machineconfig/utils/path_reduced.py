@@ -265,7 +265,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             elif self.is_dir(): return "📁"
             return "👻NotExist"
         return "📍Relative"
-    def symlink_to(self, target: PLike, verbose: bool = True, overwrite: bool = False, orig: bool = False, strict: bool = True):  # type: ignore[reportIncompatibleMethodOverride]  # pylint: disable=W0237
+    def symlink_to(self, target: PLike, verbose: bool = True, overwrite: bool = False, orig: bool = False, strict: bool = True):  # type: ignore[override]  # pylint: disable=W0237
         self.parent.mkdir(parents=True, exist_ok=True)
         target_obj = P(target).expanduser().resolve()
         if strict: assert target_obj.exists(), f"Target path `{target}` (aka `{target_obj}`) doesn't exist. This will create a broken link."
@@ -365,6 +365,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             zipfile__, name__ = slf.split(at=str(List(slf.parts).filter(lambda x: ztype in x)[0]), sep=-1)
             name = str(name__)
         folder = (zipfile__.parent / zipfile__.stem) if folder is None else P(folder).expanduser().absolute().resolve().joinpath(zipfile__.stem)
+        assert isinstance(folder, P), "folder should be a P object at this point"
         folder = folder if not content else folder.parent
         if slf.suffix == ".7z":
             if overwrite: P(folder).delete(sure=True)
@@ -436,6 +437,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         if path is not None:
             path = P(self.joinpath(path).resolve() if rel2it else path).expanduser().resolve()
             assert folder is None and name is None, "If `path` is passed, `folder` and `name` cannot be passed."
+            assert isinstance(path, P), "path should be a P object at this point"
             assert not path.is_dir(), f"`path` passed is a directory! it must not be that. If this is meant, pass it with `folder` kwarg. `{path}`"
             return path
         name, folder = (default_name if name is None else str(name)), (self.parent if folder is None else folder)  # good for edge cases of path with single part.  # means same directory, just different name

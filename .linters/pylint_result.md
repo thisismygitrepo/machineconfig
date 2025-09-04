@@ -375,6 +375,7 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
     program_keys: list[str] = []
     for program_key in program_keys_raw:
         if program_key in exclude or OTHER_SYSTEM in program_key:
+            # print(f"🚫 Skipping {program_key} for {system}")
             continue
         else: program_keys.append(program_key)
 
@@ -387,6 +388,7 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
         # overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
         from rich.prompt import Confirm
         overwrite = Confirm.ask("Overwrite existing source file?", default=True)
+
     else: choice_selected = choice
 
     if isinstance(choice_selected, str): (duplicate-code)
@@ -412,7 +414,7 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
                 # Detailed status check every other cycle
                 all_status = self.check_all_sessions_status()
 
-                # Create DataFrame for easier viewing
+                # Create DataFrame-like data for easier viewing
                 status_data = []
                 for session_name, status in all_status.items():
                     for tab_name, cmd_status in status["commands_status"].items():
@@ -427,12 +429,12 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
                 if status_data:
                     # Format data as table (duplicate-code)
 src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
+==machineconfig.cluster.sessions_managers.wt_local_manager:[167:189]
 ==machineconfig.cluster.sessions_managers.wt_remote_manager:[257:279]
-==machineconfig.cluster.sessions_managers.zellij_local_manager:[205:227]
         return status_report
 
-    def get_global_summary(self) -> Dict[str, Any]:
-        """Get a global summary across all sessions."""
+    def get_global_summary(self) -> dict[str, Any]:
+        """Get a global summary across all remote sessions."""
         all_status = self.check_all_sessions_status()
 
         total_sessions = len(all_status)
@@ -533,13 +535,12 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
                 "session_name": manager.session_name,
                 "tab_config": manager.tab_config, (duplicate-code)
 src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
+==machineconfig.cluster.sessions_managers.wt_local_manager:[396:417]
 ==machineconfig.cluster.sessions_managers.wt_remote_manager:[154:173]
-==machineconfig.cluster.sessions_managers.zellij_local_manager:[426:447]
         return instance
 
     @staticmethod
-    def list_saved_sessions() -> List[str]:
-        """List all saved session IDs."""
+    def list_saved_sessions() -> list[str]:
         if not TMP_SERIALIZATION_DIR.exists():
             return []
 
@@ -552,7 +553,6 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
 
     @staticmethod
     def delete_session(session_id: str) -> bool:
-        """Delete a saved session."""
         session_dir = TMP_SERIALIZATION_DIR / session_id
 
         if not session_dir.exists(): (duplicate-code)
@@ -570,40 +570,7 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
             return True
         except Exception as e:
             logging.error(f"Failed to delete session {session_id}: {e}")
-            return False
-
-    def start_all_sessions(self) -> dict[str, Any]:
-        """Start all Windows Terminal sessions on their respective remote machines.""" (duplicate-code)
-src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
-==machineconfig.cluster.sessions_managers.wt_local:[28:45]
-==machineconfig.cluster.sessions_managers.zellij_local:[36:51]
-        return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
-
-    @staticmethod
-    def _parse_command(command: str) -> tuple[str, List[str]]:
-        try:
-            parts = shlex.split(command)
-            if not parts: raise ValueError("Empty command provided")
-            return parts[0], parts[1:] if len(parts) > 1 else []
-        except ValueError as e:
-            logger.error(f"Error parsing command '{command}': {e}")
-            parts = command.split()
-            return parts[0] if parts else "", parts[1:] if len(parts) > 1 else []
-
-    @staticmethod
-    def _format_args_for_kdl(args: List[str]) -> str: (duplicate-code)
-src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
-==machineconfig.cluster.templates.utils:[46:57]
-==machineconfig.utils.path_reduced:[468:477]
-        if zip:
-            localpath = localpath.zip(inplace=False)
-            to_del.append(localpath)
-        if encrypt:
-            localpath = localpath.encrypt(key=key, pwd=pwd, inplace=False)
-            to_del.append(localpath)
-        if remotepath is None:
-            rp = localpath.get_remote_path(root=root, os_specific=os_specific, rel2home=rel2home, strict=strict, obfuscate=obfuscate)  # if rel2home else (P(root) / localpath if root is not None else localpath)
-        else: rp = P(remotepath) (duplicate-code)
+            return False (duplicate-code)
 src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
 ==machineconfig.cluster.sessions_managers.wt_local_manager:[233:243]
 ==machineconfig.cluster.sessions_managers.wt_remote_manager:[333:343]
@@ -633,6 +600,38 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
             manager_file = managers_dir / f"manager_{i}_{manager.remote_name}.json"
             manager.to_json(str(manager_file))
  (duplicate-code)
+src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
+==machineconfig.cluster.templates.utils:[46:57]
+==machineconfig.utils.path_reduced:[468:477]
+        if zip:
+            localpath = localpath.zip(inplace=False)
+            to_del.append(localpath)
+        if encrypt:
+            localpath = localpath.encrypt(key=key, pwd=pwd, inplace=False)
+            to_del.append(localpath)
+        if remotepath is None:
+            rp = localpath.get_remote_path(root=root, os_specific=os_specific, rel2home=rel2home, strict=strict, obfuscate=obfuscate)  # if rel2home else (P(root) / localpath if root is not None else localpath)
+        else: rp = P(remotepath) (duplicate-code)
+src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
+==machineconfig.cluster.sessions_managers.wt_local:[28:45]
+==machineconfig.cluster.sessions_managers.zellij_local:[36:51]
+        return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
+
+    @staticmethod
+    def _parse_command(command: str) -> tuple[str, List[str]]:
+        try:
+            parts = shlex.split(command)
+            if not parts: raise ValueError("Empty command provided")
+            return parts[0], parts[1:] if len(parts) > 1 else []
+        except ValueError as e:
+            logger.error(f"Error parsing command '{command}': {e}")
+            parts = command.split()
+            return parts[0] if parts else "", parts[1:] if len(parts) > 1 else []
+
+    @staticmethod
+    def _escape_for_wt(text: str) -> str:
+        """Escape text for use in Windows Terminal commands."""
+        # Windows Terminal uses PowerShell-style escaping (duplicate-code)
 src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
 ==machineconfig.cluster.sessions_managers.wt_local_manager:[374:385]
 ==machineconfig.cluster.sessions_managers.zellij_local_manager:[404:415]
@@ -671,7 +670,7 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
             for manager in self.managers:
                 if manager.session_name == session_name: (duplicate-code)
 src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
-==machineconfig.cluster.sessions_managers.wt_local_manager:[324:334]
+==machineconfig.cluster.sessions_managers.zellij_local_manager:[354:364]
 ==machineconfig.cluster.sessions_managers.zellij_remote_manager:[107:117]
         }
         metadata_file = session_dir / "metadata.json"
@@ -684,14 +683,14 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
 
         for i, manager in enumerate(self.managers): (duplicate-code)
 src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
+==machineconfig.cluster.sessions_managers.wt_local_manager:[324:334]
 ==machineconfig.cluster.sessions_managers.wt_remote_manager:[103:113]
-==machineconfig.cluster.sessions_managers.zellij_local_manager:[354:364]
         }
         metadata_file = session_dir / "metadata.json"
         text = json.dumps(metadata, indent=2, ensure_ascii=False)
         metadata_file.write_text(text, encoding="utf-8")
 
-        # Save each WTRemoteLayoutGenerator
+        # Save each manager's state
         managers_dir = session_dir / "managers"
         managers_dir.mkdir(exist_ok=True)
 
@@ -727,26 +726,6 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
 
         # Show Windows Terminal overview (duplicate-code)
 src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
-==machineconfig.cluster.sessions_managers.wt_local:[406:412]
-==machineconfig.cluster.sessions_managers.wt_local_manager:[224:230]
-                    print("✅ Windows Terminal is running")
-                    print(f"   Session windows: {len(session_windows)}")
-                    print(f"   Total WT windows: {len(all_windows)}")
-                else:
-                    print("⚠️  Windows Terminal is running but no session windows found")
-            else: (duplicate-code)
-src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
-==machineconfig.cluster.sessions_managers.wt_remote_manager:[290:298]
-==machineconfig.cluster.sessions_managers.zellij_local_manager:[237:245]
-        print("=" * 80)
-
-        # Global summary
-        print("🌐 GLOBAL SUMMARY:")
-        print(f"   Total sessions: {global_summary['total_sessions']}")
-        print(f"   Healthy sessions: {global_summary['healthy_sessions']}")
-        print(f"   Total commands: {global_summary['total_commands']}")
-        print(f"   Running commands: {global_summary['running_commands']}") (duplicate-code)
-src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
 ==machineconfig.cluster.sessions_managers.wt_remote_manager:[80:92]
 ==machineconfig.cluster.sessions_managers.zellij_local_manager:[330:343]
         sched = Scheduler(routine=routine, wait_ms=wait_ms)
@@ -762,6 +741,17 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
 
         # Save the machine2wt_tabs configuration (duplicate-code)
 src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
+==machineconfig.cluster.sessions_managers.wt_local_manager:[199:207]
+==machineconfig.cluster.sessions_managers.wt_remote_manager:[290:298]
+        print("=" * 80)
+
+        # Global summary
+        print("🌐 GLOBAL SUMMARY:")
+        print(f"   Total sessions: {global_summary['total_sessions']}")
+        print(f"   Healthy sessions: {global_summary['healthy_sessions']}")
+        print(f"   Total commands: {global_summary['total_commands']}")
+        print(f"   Running commands: {global_summary['running_commands']}") (duplicate-code)
+src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
 ==machineconfig.cluster.sessions_managers.wt_remote_manager:[141:149]
 ==machineconfig.cluster.sessions_managers.zellij_remote_manager:[145:153]
         managers_dir = session_dir / "managers"
@@ -772,6 +762,15 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
             manager_files = sorted(managers_dir.glob("manager_*.json"))
             for manager_file in manager_files:
                 try: (duplicate-code)
+src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
+==machineconfig.cluster.sessions_managers.wt_local:[406:412]
+==machineconfig.cluster.sessions_managers.wt_local_manager:[224:230]
+                print("✅ Windows Terminal is running")
+                print(f"   Session windows: {len(session_windows)}")
+                print(f"   Total WT windows: {len(all_windows)}")
+            else:
+                print("⚠️  Windows Terminal is running but no session windows found")
+        else: (duplicate-code)
 src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
 ==machineconfig.cluster.sessions_managers.wt_local_manager:[511:517]
 ==machineconfig.cluster.sessions_managers.zellij_local_manager:[495:501]
@@ -801,23 +800,13 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
             for manager in self.managers:
                 commands.append(f"# Attach to session '{manager.session_name}':") (duplicate-code)
 src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
-==machineconfig.profile.create:[17:24]
-==machineconfig.profile.create_hardlinks:[17:25]
-system = platform.system()  # Linux or Windows
-ERROR_LIST: list[Any] = []  # append to this after every exception captured.
-CONFIG_ROOT = LIBRARY_ROOT.parent.parent.joinpath("settings")
-OTHER_SYSTEM = "windows" if system == "Linux" else "linux"
-SYSTEM = system.lower()
-
- (duplicate-code)
-src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
+==machineconfig.cluster.sessions_managers.wt_local_manager:[158:163]
 ==machineconfig.cluster.sessions_managers.wt_remote_manager:[234:239]
-==machineconfig.cluster.sessions_managers.zellij_local_manager:[196:201]
-                    "commands_status": commands_status,
-                    "summary": {
-                        "total_commands": total_count,
-                        "running_commands": running_count,
-                        "stopped_commands": total_count - running_count, (duplicate-code)
+                "commands_status": commands_status,
+                "summary": {
+                    "total_commands": total_count,
+                    "running_commands": running_count,
+                    "stopped_commands": total_count - running_count, (duplicate-code)
 src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
 ==machineconfig.cluster.sessions_managers.wt_remote_manager:[94:101]
 ==machineconfig.cluster.sessions_managers.zellij_remote_manager:[99:106]
@@ -836,6 +825,17 @@ src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
             else:
                 statuses = []
                 for _idx, an_m in enumerate(self.managers): (duplicate-code)
+src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
+==machineconfig.profile.create:[17:24]
+==machineconfig.profile.create_hardlinks:[17:25]
+system = platform.system()  # Linux or Windows
+ERROR_LIST: list[Any] = []  # append to this after every exception captured.
+CONFIG_ROOT = LIBRARY_ROOT.parent.parent.joinpath("settings")
+OTHER_SYSTEM = "windows" if system == "Linux" else "linux"
+SYSTEM = system.lower()
+
+
+def main_symlinks(choice: Optional[str] = None): (duplicate-code)
 src/machineconfig/profile/__init__.py:1:0: R0801: Similar lines in 2 files
 ==machineconfig.cluster.sessions_managers.wt_remote:[39:44]
 ==machineconfig.cluster.sessions_managers.zellij_remote:[49:54]
