@@ -188,7 +188,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
 
     def rel2home(self, ) -> 'P': return self._return(P(self.expanduser().absolute().relative_to(Path.home())), operation='Whack')  # very similat to collapseuser but without "~" being added so its consistent with rel2cwd.
     def collapseuser(self, strict: bool = True, placeholder: str = "~") -> 'P':  # opposite of `expanduser` resolve is crucial to fix Windows cases insensitivty problem.
-        if strict: assert P.home() in self.expanduser().absolute().resolve(), ValueError(f"`{P.home()}` is not in the subpath of `{self}`")
+        if strict: assert str(self.expanduser().absolute().resolve()).startswith(str(P.home())), ValueError(f"`{P.home()}` is not in the subpath of `{self}`")
         if (str(self).startswith(placeholder) or P.home().as_posix() not in self.resolve().as_posix()): return self
         return self._return(res=P(placeholder) / (self.expanduser().absolute().resolve(strict=strict) - P.home()), operation='Whack')  # resolve also solves the problem of Windows case insensitivty.
     def __getitem__(self, slici: Union[int, list[int], slice]):

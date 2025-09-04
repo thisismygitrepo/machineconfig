@@ -1,6 +1,7 @@
 
 
 from pathlib import Path
+from typing import Optional
 
 
 installations = """
@@ -8,17 +9,24 @@ uv add pylint pyright mypy pyrefly ty --dev  # linters and type checkers
 uv add pytest --dev
 """
 
+def get_repo_root(path: Path) -> Optional[Path]:
+    from git import Repo, InvalidGitRepositoryError
+    try:
+        repo = Repo(path, search_parent_directories=True)
+        root = repo.working_tree_dir
+        if root is not None:
+            return Path(root)
+    except InvalidGitRepositoryError:
+        pass
+    return None
+
 def add_ai_configs(repo_root: Path):
     import machineconfig as mc
     mc_root = Path(mc.__file__).parent
-    # from git import Repo
-    # try:
-    #     _repo_obj = Repo(repo_root)
-    # except Exception as _e:
-    #     print(f"{Path.cwd()} is not a git repository, would you like to initialize one? (y/n)")
-    #     if input().strip().lower() == "y":
-    #         Repo.init(repo_root)
-    #     return
+
+    repo_root_resolved = get_repo_root(repo_root)
+    if repo_root_resolved is not None: repo_root = repo_root_resolved  # this means you can run the command from any subdirectory of the repo.
+
     if repo_root.joinpath("pyproject.toml").exists() is False:
         uv_init = input(f"{repo_root} does not seem to be a python project (no pyproject.toml found), would you like to initialize one? (y/n) ")
         if uv_init.strip().lower() == "y":
@@ -68,13 +76,18 @@ uv venv
     repo_root.joinpath(".gemini/settings.json").write_text(data=gemini_settings.read_text(encoding="utf-8"), encoding="utf-8")
 
     # OTHERS
+    scripts_dir = mc_root.joinpath("scripts/python/ai/scripts")
+    repo_root.joinpath("scripts").mkdir(parents=True, exist_ok=True)
+    for a_script in scripts_dir.iterdir():
+        repo_root.joinpath("scripts", a_script.name).write_text(data=a_script.read_text(encoding="utf-8"), encoding="utf-8")
+
     dot_ai_dir = repo_root.joinpath(".ai")
     dot_ai_dir.mkdir(parents=True, exist_ok=True)
     dot_git_ignore_path = repo_root.joinpath(".gitignore")
     if dot_git_ignore_path.exists():
         dot_git_ignore_content = dot_git_ignore_path.read_text(encoding="utf-8")
         to_add: list[str] = []
-        to_check_for: list[str] = [".links", "notebooks", ".ai",
+        to_check_for: list[str] = [".links", "notebooks", ".ai", "scripts",
                                    "GEMINI.md", "CLAUDE.md", ".cursor", ".github"]
         for item in to_check_for:
             if item not in dot_git_ignore_content:

@@ -64,6 +64,7 @@ crocodile = { path = "../crocodile", editable = true }
 
 [dependency-groups]
 dev = [
+    "pylint>=3.3.8",
     "pyright>=1.1.404",
     "rclone-python>=0.1.23",
 ]
