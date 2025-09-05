@@ -22,6 +22,22 @@ AGENTS: TypeAlias = Literal["cursor-agent", "gemini"]
 TabConfig = dict[str, tuple[str, str]]  # tab name -> (cwd, command)
 DEFAULT_AGENT_CAP = 15
 
+
+def get_gemini_api_keys() -> list[str]:
+    from machineconfig.utils.utils2 import read_ini
+    config = read_ini(Path.home().joinpath("dotfiles/creds/llm/gemini/api_keys.ini"))
+    res: list[str] = []
+    for a_section_name in list(config.sections()):
+        a_section = config[a_section_name]
+        if "api_key" in a_section:
+            api_key = a_section["api_key"].strip()
+            if api_key:
+                res.append(api_key)
+    # res = [v for k, v in config.items("api_keys") if k.startswith("key") and v.strip() != ""]
+    print(f"Found {len(res)} Gemini API keys configured.")
+    return res
+
+
 def _search_python_files(repo_root: Path, keyword: str) -> list[Path]:
     """Return all Python files under repo_root whose text contains keyword.
 
@@ -92,7 +108,10 @@ def launch_agents(repo_root: Path, prompts: list[str], agent: AGENTS, *, max_age
             case "gemini":
                 # Need a real shell for the pipeline; otherwise '| gemini ...' is passed as args to 'cat'
                 safe_path = shlex.quote(str(tmp_file_path))
-                cmd = f"bash -lc 'cat {safe_path} | gemini --yolo --prompt'"
+                api_keys = get_gemini_api_keys()
+                api_key = api_keys[idx % len(api_keys)] if api_keys else ""
+                # Use env command to set environment variable instead of export
+                cmd = f"env GEMINI_API_KEY={shlex.quote(api_key)} bash -lc 'cat {safe_path} | gemini --model gemini-2.5-pro --yolo --prompt'"
             case "cursor-agent":
                 # As originally implemented
                 cmd = f"cursor-agent --print --output-format text < {tmp_file_path}"

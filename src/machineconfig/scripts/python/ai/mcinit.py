@@ -5,8 +5,8 @@ from typing import Optional
 
 
 installations = """
-uv add pylint pyright mypy pyrefly ty --dev  # linters and type checkers
-uv add pytest --dev
+uv add --upgrade-package pylint pyright mypy pyrefly ty --dev  # linters and type checkers
+uv add --upgrade-package pytest --dev
 """
 
 def get_repo_root(path: Path) -> Optional[Path]:
