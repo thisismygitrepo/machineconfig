@@ -28,7 +28,7 @@ class Scheduler:
         if max_cycles is not None:
             self.max_cycles = max_cycles
         if until_ms is None:
-            until_ms = 1_000_000_000_000
+            until_ms = 1_000_000_000_000_000
         self.sess_start_time_ms = time.time_ns() // 1_000_000
         while (time.time_ns() // 1_000_000) < until_ms and self.cycle < self.max_cycles:
             # 1- Time before Ops, and Opening Message
@@ -50,7 +50,7 @@ class Scheduler:
     def get_records_df(self):
         import polars as pl
         columns = ["start", "finish", "duration", "cycles", "termination reason"] + list(self.sess_stats(self).keys())
-        return pl.DataFrame(self.records, schema=columns)
+        return pl.DataFrame(self.records, schema=columns, orient="row")
     def record_session_end(self, reason: str):
         import polars as pl
         end_time_ms = time.time_ns() // 1_000_000
