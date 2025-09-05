@@ -8,7 +8,7 @@ fi
 echo "Running linting and type checking..."
 
 echo "Setting up environment..."
-uv add pylint pyright mypy pyrefly ty --dev  # linters and type checkers
+uv add pylint pyright mypy pyrefly ruff ty --dev  # linters and type checkers
 uv add cleanpy --dev  # codebase cleaner
 
 uv add types-requests types-toml types-PyYAML types-pytz types-paramiko types-urllib3 --dev
@@ -16,6 +16,10 @@ uv add types-mysqlclient types-SQLAlchemy --dev
 uv add types-pytest-lazy-fixtures --dev
 
 uv run -m cleanpy .
+uv run -m ruff clean
+uv run -m ruff format .
+uv run -m ruff check . --fix
+
 
 mkdir .linters
 
@@ -31,5 +35,13 @@ echo "Results of mypy are in ./.linters/mypy_result.md"
 rm ./.linters/pylint_result.md || true
 uv run pylint ./src/ > ./.linters/pylint_result.md
 echo "Results of pylint are in ./.linters/pylint_result.md"
+
+rm ./.linters/pylint_result.md || true
+uv run pyrefly check . > ./.linters/pyrefly_result.md
+echo "Results of pyrefly are in ./.linters/pyrefly_result.md"
+
+rm ./.linters/ruff_result.md || true
+uv run ruff check . > ./.linters/ruff_result.md
+echo "Results of ruff are in ./.linters/ruff_result.md"
 
 echo "All done! Please check the .linters directory for results."

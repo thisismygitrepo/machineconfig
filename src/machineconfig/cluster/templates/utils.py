@@ -40,7 +40,7 @@ from machineconfig.utils.path_reduced import P, PLike
 
 def to_cloud(localpath: PLike, cloud: str, remotepath: Optional[PLike], zip: bool = False, encrypt: bool = False,
                 key: Optional[bytes] = None, pwd: Optional[str] = None, rel2home: bool = False, strict: bool = True,
-                obfuscate: bool = False,
+                # obfuscate: bool = False,
                 share: bool = False, verbose: bool = True, os_specific: bool = False, transfers: int = 10, root: Optional[str] = "myhome") -> 'P':
     to_del = []
     localpath = P(localpath).expanduser().absolute() if not P(localpath).exists() else P(localpath)
@@ -51,7 +51,7 @@ def to_cloud(localpath: PLike, cloud: str, remotepath: Optional[PLike], zip: boo
         localpath = localpath.encrypt(key=key, pwd=pwd, inplace=False)
         to_del.append(localpath)
     if remotepath is None:
-        rp = localpath.get_remote_path(root=root, os_specific=os_specific, rel2home=rel2home, strict=strict, obfuscate=obfuscate)  # if rel2home else (P(root) / localpath if root is not None else localpath)
+        rp = localpath.get_remote_path(root=root, os_specific=os_specific, rel2home=rel2home, strict=strict)  # if rel2home else (P(root) / localpath if root is not None else localpath)
     else: rp = P(remotepath)
 
     from rclone_python import rclone

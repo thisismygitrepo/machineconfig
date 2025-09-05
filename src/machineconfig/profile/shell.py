@@ -82,7 +82,9 @@ def append_temporarily(dirs: list[str], kind: Literal['append', 'prefix', 'repla
     return result
 
 def main_env_path(choice: Optional[str], profile_path: Optional[str]) -> None:
-    env_path = LIBRARY_ROOT.joinpath("profile/env_path.toml").readit()
+    from machineconfig.utils.utils2 import read_toml
+    env_path = read_toml(LIBRARY_ROOT.joinpath("profile/env_path.toml"))
+    # env_path = LIBRARY_ROOT.joinpath("profile/env_path.toml").readit()
     dirs = env_path[f'path_{system.lower()}']['extension']
 
     console.print(Panel("🔍 ENVIRONMENT | Current PATH variables:", title="[bold blue]Environment[/bold blue]", border_style="blue"))
@@ -107,7 +109,9 @@ def main_env_path(choice: Optional[str], profile_path: Optional[str]) -> None:
 
 
 def main_add_sources_to_shell_profile(profile_path: Optional[str], choice: Optional[str]) -> None:
-    sources: list[str] = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()[system.lower()]['files']
+    # sources: list[str] = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()[system.lower()]['files']
+    from machineconfig.utils.utils2 import read_toml
+    sources: list[str] = read_toml(LIBRARY_ROOT.joinpath("profile/sources.toml"))[system.lower()]['files']
 
     console.print(Panel("🔄 Adding sources to shell profile", title="[bold blue]Sources[/bold blue]", border_style="blue"))
 

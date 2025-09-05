@@ -6,7 +6,6 @@ from rich.console import Console
 from rich.panel import Panel # Added import
 
 from machineconfig.utils.path_reduced import P as PathExtended
-from crocodile.meta import Terminal
 from machineconfig.utils.utils import INSTALL_VERSION_ROOT
 from machineconfig.utils.utils2 import read_json
 
@@ -179,31 +178,30 @@ def install_all(installers: list[Installer], safe: bool=False, jobs: int = 10, f
         print("✅ Version cache cleared")
 
     if safe:
-        print("⚠️  Safe installation mode activated...")
-        from machineconfig.jobs.python.check_installations import APP_SUMMARY_PATH
-        apps_dir = APP_SUMMARY_PATH.readit()
+        pass
+        # print("⚠️  Safe installation mode activated...")
+        # from machineconfig.jobs.python.check_installations import APP_SUMMARY_PATH
+        # if platform.system().lower() == "windows":
+        #     print("🪟 Moving applications to Windows Apps folder...")
+        #     # PathExtended.get_env().WindowsPaths().WindowsApps)
+        #     folder = PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps")
+        #     apps_dir.search("*").apply(lambda app: app.move(folder=folder))
+        # elif platform.system().lower() in ["linux", "darwin"]:
+        #     system_name = "Linux" if platform.system().lower() == "linux" else "macOS"
+        #     print(f"🐧 Moving applications to {system_name} bin folder...")
+        #     if platform.system().lower() == "linux":
+        #         install_path = LINUX_INSTALL_PATH
+        #     else:  # Darwin/macOS
+        #         install_path = "/usr/local/bin"
+        #     Terminal().run(f"sudo mv {apps_dir.as_posix()}/* {install_path}/").capture().print_if_unsuccessful(desc=f"MOVING executable to {install_path}", strict_err=True, strict_returncode=True)
+        # else:
+        #     error_msg = f"❌ ERROR: System {platform.system()} not supported"
+        #     print(error_msg)
+        #     raise NotImplementedError(error_msg)
 
-        if platform.system().lower() == "windows":
-            print("🪟 Moving applications to Windows Apps folder...")
-            # PathExtended.get_env().WindowsPaths().WindowsApps)
-            folder = PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps")
-            apps_dir.search("*").apply(lambda app: app.move(folder=folder))
-        elif platform.system().lower() in ["linux", "darwin"]:
-            system_name = "Linux" if platform.system().lower() == "linux" else "macOS"
-            print(f"🐧 Moving applications to {system_name} bin folder...")
-            if platform.system().lower() == "linux":
-                install_path = LINUX_INSTALL_PATH
-            else:  # Darwin/macOS
-                install_path = "/usr/local/bin"
-            Terminal().run(f"sudo mv {apps_dir.as_posix()}/* {install_path}/").capture().print_if_unsuccessful(desc=f"MOVING executable to {install_path}", strict_err=True, strict_returncode=True)
-        else:
-            error_msg = f"❌ ERROR: System {platform.system()} not supported"
-            print(error_msg)
-            raise NotImplementedError(error_msg)
-
-        apps_dir.delete(sure=True)
-        print(f"✅ Safe installation completed\n{'='*80}")
-        return None
+        # apps_dir.delete(sure=True)
+        # print(f"✅ Safe installation completed\n{'='*80}")
+        # return None
 
     print(f"🚀 Starting installation of {len(installers)} packages...")
     print(f"\n{'='*80}\n📦 INSTALLING FIRST PACKAGE 📦\n{'='*80}")

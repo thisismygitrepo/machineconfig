@@ -9,6 +9,7 @@ import platform
 from crocodile.meta import Terminal
 from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.utils import symlink_copy as symlink_func, LIBRARY_ROOT, REPO_ROOT, display_options
+from machineconfig.utils.utils2 import read_toml
 from machineconfig.profile.shell import create_default_shell_profile
 # import os
 import subprocess
@@ -23,7 +24,7 @@ SYSTEM = system.lower()
 
 
 def main_symlinks(choice: Optional[str] = None):
-    symlink_mapper = LIBRARY_ROOT.joinpath("profile/mapper.toml").readit()
+    symlink_mapper = read_toml(LIBRARY_ROOT.joinpath("profile/mapper.toml"))
     # symlink_mapper['wsl_windows']['home']["to_this"] = symlink_mapper['wsl_windows']['home']["to_this"].replace("username", UserName)
     # symlink_mapper['wsl_linux']['home']["to_this"] = symlink_mapper['wsl_linux']['home']["to_this"].replace("username", UserName)
 

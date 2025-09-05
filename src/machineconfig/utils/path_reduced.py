@@ -5,7 +5,6 @@
 from crocodile.core import List, timestamp, randstr, install_n_import, validate_name
 from crocodile.file_management_helpers.file1 import encrypt, decrypt
 from crocodile.file_management_helpers.file2 import Compression
-from crocodile.file_management_helpers.file3 import Read
 
 from datetime import datetime
 from pathlib import Path
@@ -103,29 +102,6 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         else: print(f"💥 Could NOT COPY. Not a file nor a path: {repr(slf)}.")
         return dest if not orig else self
     # ======================================= File Editing / Reading ===================================
-    def readit(self, reader: Optional[Callable[[PLike], Any]] = None, strict: bool = True, default: Optional[Any] = None, verbose: bool = False, **kwargs: Any) -> 'Any':
-        slf = self.expanduser().resolve()
-        if not slf.exists():
-            if strict: raise FileNotFoundError(f"`{slf}` is no where to be found!")
-            else:
-                if verbose: print(f"💥 P.readit warning: FileNotFoundError, skipping reading of file `{self}")
-                return default
-        if verbose: print(f"Reading {slf} ({slf.size()} MB) ...")
-        if '.tar.gz' in str(slf) or '.tgz' in str(slf) or '.gz' in str(slf) or '.tar.bz' in str(slf) or 'tbz' in str(slf) or 'tar.xz' in str(slf) or '.zip' in str(slf):
-            filename = slf.decompress(folder=slf.tmp(folder="tmp_unzipped"), verbose=True)
-            if filename.is_dir():
-                tmp_content = filename.search("*")
-                if len(tmp_content) == 1:
-                    print(f"⚠️ Found only one file in the unzipped folder: {tmp_content[0]}")
-                    filename = tmp_content.list[0]
-                else:
-                    if strict: raise ValueError(f"❌ Expected only one file in the unzipped folder, but found {len(tmp_content)} files.")
-                    else: print(f"⚠️ Found {len(tmp_content)} files in the unzipped folder. Using the first one: {tmp_content[0]}")
-                    filename = tmp_content.list[0]
-        else: filename = slf
-        try:
-            return Read.read(filename, **kwargs) if reader is None else reader(str(filename), **kwargs)
-        except IOError as ioe: raise IOError from ioe
     def download(self, folder: OPLike = None, name: Optional[str]= None, allow_redirects: bool = True, timeout: Optional[int] = None, params: Any = None) -> 'P':
         import requests
         response = requests.get(self.as_url_str(), allow_redirects=allow_redirects, timeout=timeout, params=params)  # Alternative: from urllib import request; request.urlopen(url).read().decode('utf-8').
@@ -443,7 +419,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         name, folder = (default_name if name is None else str(name)), (self.parent if folder is None else folder)  # good for edge cases of path with single part.  # means same directory, just different name
         return P(self.joinpath(folder).resolve() if rel2it else folder).expanduser().resolve() / name
 
-    def get_remote_path(self, root: Optional[str], os_specific: bool = False, rel2home: bool = True, strict: bool = True, obfuscate: bool = False) -> 'P':
+    def get_remote_path(self, root: Optional[str], os_specific: bool = False, rel2home: bool = True, strict: bool = True) -> 'P':
         import platform
         tmp1: str = (platform.system().lower() if os_specific else 'generic_os')
         if not rel2home: path = self
@@ -452,10 +428,10 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             except ValueError as ve:
                 if strict: raise ve
                 path = self
-        if obfuscate:
-            from crocodile.msc.obfuscater import obfuscate as obfuscate_func
-            name = obfuscate_func(seed=P.home().joinpath('dotfiles/creds/data/obfuscation_seed').read_text(encoding="utf-8").rstrip(), data=path.name)
-            path = path.with_name(name=name)
+        # if obfuscate:
+        #     from crocodile.msc.obfuscater import obfuscate as obfuscate_func
+        #     name = obfuscate_func(seed=P.home().joinpath('dotfiles/creds/data/obfuscation_seed').read_text(encoding="utf-8").rstrip(), data=path.name)
+        #     path = path.with_name(name=name)
         if isinstance(root, str):  # the following is to avoid the confusing behaviour of A.joinpath(B) if B is absolute.
             part1 = path.parts[0]
             if part1 == "/": sanitized_path = path[1:].as_posix()
@@ -464,7 +440,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         return tmp1 / path
     def to_cloud(self, cloud: str, remotepath: OPLike = None, zip: bool = False,encrypt: bool = False,  # pylint: disable=W0621, W0622
                  key: Optional[bytes] = None, pwd: Optional[str] = None, rel2home: bool = False, strict: bool = True,
-                 obfuscate: bool = False,
+                #  obfuscate: bool = False,
                  share: bool = False, verbose: bool = True, os_specific: bool = False, transfers: int = 10, root: Optional[str] = "myhome") -> 'P':
         to_del = []
         localpath = self.expanduser().absolute() if not self.exists() else self
@@ -475,7 +451,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             localpath = localpath.encrypt(key=key, pwd=pwd, inplace=False)
             to_del.append(localpath)
         if remotepath is None:
-            rp = localpath.get_remote_path(root=root, os_specific=os_specific, rel2home=rel2home, strict=strict, obfuscate=obfuscate)  # if rel2home else (P(root) / localpath if root is not None else localpath)
+            rp = localpath.get_remote_path(root=root, os_specific=os_specific, rel2home=rel2home, strict=strict)  # if rel2home else (P(root) / localpath if root is not None else localpath)
         else: rp = P(remotepath)
         rclone_cmd = f"""rclone copyto '{localpath.as_posix()}' '{cloud}:{rp.as_posix()}' {'--progress' if verbose else ''} --transfers={transfers}"""
         from crocodile.meta import Terminal
