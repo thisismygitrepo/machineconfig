@@ -13,6 +13,11 @@ console = Console()
 
 def sanitize_path(a_path: PathExtended) -> PathExtended:
     path = PathExtended(a_path)
+    if Path.cwd() == Path.home() and not path.exists():
+        result = input("Current working directory is home, and passed path is not full path, are you sure you want to continue, [y]/n? ") or "y"
+        if result == "y":
+            import sys
+            sys.exit()
     if path.as_posix().startswith("/home") or path.as_posix().startswith("/Users"):
         if platform.system() == "Windows":  # path copied from Linux/Mac to Windows
             # For Linux: /home/username, for Mac: /Users/username

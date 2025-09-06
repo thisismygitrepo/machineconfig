@@ -1,39 +1,52 @@
 
-from typing import Callable, Optional, Union, Any, NoReturn, TypeVar, Protocol
-from logging import Logger as Log
-from machineconfig.utils.utils2 import randstr, get_repr
+from typing import Callable, Optional, Union, Any, NoReturn, TypeVar, Protocol, List
+import logging
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+
+
+class LoggerTemplate(Protocol):
+    handlers: List[logging.Handler]
+    def debug(self, msg: str) -> None:
+        pass  # 10
+    def info(self, msg: str) -> None:
+        pass  # 20
+    def warning(self, msg: str) -> None:
+        pass  # 30
+    def error(self, msg: str) -> None:
+        pass  # 40
+    def critical(self, msg: str) -> None:
+        pass  # 50
+    def fatal(self, msg: str) -> None:
+        pass  # 50
 
 
 class Scheduler:
-    def __init__(self, routine: Callable[['Scheduler'], Any],
-                 wait_ms: int,
+    def __init__(self, routine: Callable[['Scheduler'], Any], wait_ms: int,
+                 logger: LoggerTemplate,  sess_stats: Optional[Callable[['Scheduler'], dict[str, Any]]] = None,
                  exception_handler: Optional[Callable[[Union[Exception, KeyboardInterrupt], str, 'Scheduler'], Any]] = None,
-                 logger: Optional[Log] = None,
-                 sess_stats: Optional[Callable[['Scheduler'], dict[str, Any]]] = None,
-                 max_cycles: int = 1_000_000_000,
-                 records: Optional[list[list[Any]]] = None):
+                 max_cycles: int = 1_000_000_000, records: Optional[list[list[Any]]] = None):
         self.routine = routine  # main routine to be repeated every `wait` time period
-        self.logger = logger if logger is not None else Log(name="SchedLogger_" + randstr(noun=True))
+        self.logger = logger
         self.exception_handler = exception_handler if exception_handler is not None else self.default_exception_handler
         self.records: list[list[Any]] = records if records is not None else []
         self.wait_ms = wait_ms  # wait period between routine cycles.
         self.cycle: int = 0
         self.max_cycles: int = max_cycles
-        self.sess_start_time_ms: int
+        self.sess_start_utc_ms: int
         self.sess_stats = sess_stats or (lambda _sched: {})
-    def __repr__(self): return f"Scheduler with {self.cycle} cycles ran so far. Last cycle was at {self.sess_start_time_ms}."
+    def __repr__(self): return f"Scheduler with {self.cycle} cycles ran so far. Last cycle was at {self.sess_start_utc_ms}."
     def run(self, max_cycles: Optional[int]=None, until_ms: Optional[int]=None):
         if max_cycles is not None:
             self.max_cycles = max_cycles
         if until_ms is None:
             until_ms = 1_000_000_000_000_000
-        self.sess_start_time_ms = time.time_ns() // 1_000_000
+        self.sess_start_utc_ms = time.time_ns() // 1_000_000
         while (time.time_ns() // 1_000_000) < until_ms and self.cycle < self.max_cycles:
             # 1- Time before Ops, and Opening Message
             time1_ms = time.time_ns() // 1_000_000
-            self.logger.info(f"Starting Cycle {str(self.cycle).zfill(5)}. Total Run Time = {str(time1_ms - self.sess_start_time_ms).split('.', maxsplit=1)[0]}. UTC🕜 {datetime.now(tz=timezone.utc).strftime('%d %H:%M:%S')}")
+            duration = timedelta(milliseconds=time1_ms - self.sess_start_utc_ms)
+            self.logger.info(f"Starting Cycle {str(self.cycle).zfill(5)}. Total Run Time = {str(duration).split('.', maxsplit=1)[0]}. UTC🕜 {datetime.now(tz=timezone.utc).strftime('%d %H:%M:%S')}")
             try:
                 self.routine(self)
             except Exception as ex:
@@ -41,7 +54,7 @@ class Scheduler:
             time2_ms = time.time_ns() // 1_000_000
             time_left_ms = int(self.wait_ms - (time2_ms - time1_ms))  # 4- Conclude Message
             self.cycle += 1
-            self.logger.info(f"Finishing Cycle {str(self.cycle - 1).zfill(5)} in {str((time2_ms - time1_ms)*0.001).split('.', maxsplit=1)[0]}s. Sleeping for {self.wait_ms*0.001:0.1f}s ({time_left_ms*0.001:0.1}s left)\n" + "-" * 100)
+            self.logger.info(f"Finishing Cycle {str(self.cycle - 1).zfill(5)} in {str((time2_ms - time1_ms)*0.001).split('.', maxsplit=1)[0]}s. Sleeping for {self.wait_ms*0.001:0.1f}s ({time_left_ms*0.001:0.1f}s left)\n" + "-" * 100)
             try: time.sleep(time_left_ms*0.001 if time_left_ms > 0 else 0.0)  # # 5- Sleep. consider replacing by Asyncio.sleep
             except KeyboardInterrupt as ex:
                 self.exception_handler(ex, "sleep", self)
@@ -54,12 +67,12 @@ class Scheduler:
     def record_session_end(self, reason: str):
         import polars as pl
         end_time_ms = time.time_ns() // 1_000_000
-        duration_ms = end_time_ms - self.sess_start_time_ms
+        duration_ms = end_time_ms - self.sess_start_utc_ms
         sess_stats = self.sess_stats(self)
-        self.records.append([self.sess_start_time_ms, end_time_ms, duration_ms, self.cycle, reason,
+        self.records.append([self.sess_start_utc_ms, end_time_ms, duration_ms, self.cycle, reason,
                             #  self.logger.file_path
                              ] + list(sess_stats.values()))
-        summ = {"start time": f"{str(self.sess_start_time_ms)}",
+        summ = {"start time": f"{str(self.sess_start_utc_ms)}",
                 "finish time": f"{str(end_time_ms)}.",
                 "duration": f"{str(duration_ms)} | wait time {self.wait_ms/1_000: 0.1f}s",
                 "cycles ran": f"{self.cycle} | Lifetime cycles = {self.get_records_df().select(pl.col('cycles').sum()).item()}",
@@ -67,6 +80,7 @@ class Scheduler:
                 # "logfile": self.logger.file_path
                 }
         summ.update(sess_stats)
+        from machineconfig.utils.utils2 import get_repr
         tmp = get_repr(summ)
         self.logger.critical("\n--> Scheduler has finished running a session. \n" + tmp + "\n" + "-" * 100)
         df = self.get_records_df()
@@ -80,7 +94,7 @@ class Scheduler:
     def default_exception_handler(self, ex: Union[Exception, KeyboardInterrupt], during: str, sched: 'Scheduler') -> None:  # user decides on handling and continue, terminate, save checkpoint, etc.  # Use signal library.
         print(sched)
         self.record_session_end(reason=f"during {during}, " + str(ex))
-        self.logger.exception(ex)
+        self.logger.fatal(str(ex))
         raise ex
 
 
