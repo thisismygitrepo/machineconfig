@@ -1,5 +1,5 @@
-curl -O http://ftp.debian.org/debian/pool/main/d/debootstrap/debootstrap_1.0.141_all.deb
-ar x debootstrap_1.0.141_all.deb
-tar -xf data.tar.xz
-sudo cp -a usr/share/debootstrap /usr/share/
-sudo cp usr/sbin/debootstrap /usr/sbin/
+
+curl -O https://raw.githubusercontent.com/dnschneid/crouton/master/installer/crouton
+sudo sh crouton -r bookworm -t core -n debian
+
+sudo enter-chroot -n debian
