@@ -10,6 +10,9 @@ from machineconfig.cluster.sessions_managers.wt_remote import WTRemoteLayoutGene
 
 TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "wt", "remote_manager")
 
+# Module-level logger to be used throughout this module
+logger = logging.getLogger(__name__)
+
 
 class WTSessionManager:
     def __init__(self, machine2wt_tabs: dict[str, dict[str, tuple[str, str]]], session_name_prefix: str = "WTJobMgr"):
@@ -78,7 +81,7 @@ class WTSessionManager:
                 # Print statuses
                 for i, status in enumerate(statuses):
                     print(f"Manager {i}: {status}")
-        sched = Scheduler(routine=routine, wait_ms=wait_ms)
+        sched = Scheduler(routine=routine, wait_ms=wait_ms, logger=logger)
         sched.run()
 
     def save(self, session_id: Optional[str] = None) -> str:
@@ -114,7 +117,7 @@ class WTSessionManager:
             manager_file = managers_dir / f"manager_{i}_{manager.remote_name}.json"
             manager.to_json(str(manager_file))
 
-        logging.info(f"✅ Saved WTSessionManager session to: {session_dir}")
+        logger.info(f"✅ Saved WTSessionManager session to: {session_dir}")
         return session_id
 
     @classmethod
@@ -150,8 +153,8 @@ class WTSessionManager:
                     loaded_manager = WTRemoteLayoutGenerator.from_json(str(manager_file))
                     instance.managers.append(loaded_manager)
                 except Exception as e:
-                    logging.warning(f"Failed to load manager from {manager_file}: {e}")
-        logging.info(f"✅ Loaded WTSessionManager session from: {session_dir}")
+                    logger.warning(f"Failed to load manager from {manager_file}: {e}")
+        logger.info(f"✅ Loaded WTSessionManager session from: {session_dir}")
         return instance
 
     @staticmethod
@@ -171,16 +174,16 @@ class WTSessionManager:
         session_dir = TMP_SERIALIZATION_DIR / session_id
 
         if not session_dir.exists():
-            logging.warning(f"Session directory not found: {session_dir}")
+            logger.warning(f"Session directory not found: {session_dir}")
             return False
 
         try:
             import shutil
             shutil.rmtree(session_dir)
-            logging.info(f"✅ Deleted session: {session_id}")
+            logger.info(f"✅ Deleted session: {session_id}")
             return True
         except Exception as e:
-            logging.error(f"Failed to delete session {session_id}: {e}")
+            logger.error(f"Failed to delete session {session_id}: {e}")
             return False
 
     def start_all_sessions(self) -> dict[str, Any]:
@@ -197,16 +200,16 @@ class WTSessionManager:
                 results[f"{remote_name}:{session_name}"] = start_result
 
                 if start_result.get("success"):
-                    logging.info(f"✅ Started session '{session_name}' on {remote_name}")
+                    logger.info(f"✅ Started session '{session_name}' on {remote_name}")
                 else:
-                    logging.error(f"❌ Failed to start session '{session_name}' on {remote_name}: {start_result.get('error')}")
+                    logger.error(f"❌ Failed to start session '{session_name}' on {remote_name}: {start_result.get('error')}")
 
             except Exception as e:
                 results[f"{manager.remote_name}:{manager.session_name}"] = {
                     "success": False,
                     "error": str(e)
                 }
-                logging.error(f"❌ Exception starting session on {manager.remote_name}: {e}")
+                logger.error(f"❌ Exception starting session on {manager.remote_name}: {e}")
 
         return results
 
@@ -253,7 +256,7 @@ class WTSessionManager:
                         "session_healthy": False
                     }
                 }
-                logging.error(f"Error checking status for {session_key}: {e}")
+                logger.error(f"Error checking status for {session_key}: {e}")
 
         return status_report
 
@@ -411,9 +414,9 @@ class WTSessionManager:
             if wt_processes.get("success"):
                 processes_output = wt_processes.get("processes", "")
                 if processes_output.strip():
-                    print(f"Active processes: Found")
+                    print("Active processes: Found")
                 else:
-                    print(f"Active processes: None")
+                    print("Active processes: None")
 
             # Session info
             session_name = info.get("session_name", "Unknown")

@@ -1,15 +1,16 @@
 from datetime import datetime
 import json
 import uuid
-import logging
 from pathlib import Path
 from typing import Optional
 from machineconfig.utils.utils5 import Scheduler
 from machineconfig.cluster.sessions_managers.zellij_local import run_command_in_zellij_tab
 from machineconfig.cluster.sessions_managers.zellij_remote import ZellijRemoteLayoutGenerator
+from machineconfig.logger import get_logger
 
 
 TMP_SERIALIAZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "zellij", "remote_manager")
+logger = get_logger("cluster.sessions_managers.zellij_remote_manager")
 
 
 class ZellijSessionManager:
@@ -83,7 +84,7 @@ class ZellijSessionManager:
                 # Print statuses
                 for i, status in enumerate(statuses):
                     print(f"Manager {i}: {status}")
-        sched = Scheduler(routine=routine, wait_ms=60000)  # 60 seconds
+        sched = Scheduler(routine=routine, wait_ms=60_000, logger=logger)
         sched.run()
 
     def save(self, session_id: Optional[str] = None) -> str:
@@ -117,8 +118,7 @@ class ZellijSessionManager:
         for i, manager in enumerate(self.managers):
             manager_file = managers_dir / f"manager_{i}_{manager.remote_name}.json"
             manager.to_json(str(manager_file))
-
-        logging.info(f"✅ Saved ZellijSessionManager session to: {session_dir}")
+        logger.info(f"✅ Saved ZellijSessionManager session to: {session_dir}")
         return session_id
 
     @classmethod
@@ -154,8 +154,8 @@ class ZellijSessionManager:
                     loaded_manager = ZellijRemoteLayoutGenerator.from_json(str(manager_file))
                     instance.managers.append(loaded_manager)
                 except Exception as e:
-                    logging.warning(f"Failed to load manager from {manager_file}: {e}")
-        logging.info(f"✅ Loaded ZellijSessionManager session from: {session_dir}")
+                    logger.warning(f"Failed to load manager from {manager_file}: {e}")
+        logger.info(f"✅ Loaded ZellijSessionManager session from: {session_dir}")
         return instance
 
     @staticmethod
@@ -175,14 +175,14 @@ class ZellijSessionManager:
         session_dir = TMP_SERIALIAZATION_DIR / session_id
 
         if not session_dir.exists():
-            logging.warning(f"Session directory not found: {session_dir}")
+            logger.warning(f"Session directory not found: {session_dir}")
             return False
 
         try:
             import shutil
             shutil.rmtree(session_dir)
-            logging.info(f"✅ Deleted session: {session_id}")
+            logger.info(f"✅ Deleted session: {session_id}")
             return True
         except Exception as e:
-            logging.error(f"Failed to delete session {session_id}: {e}")
+            logger.error(f"Failed to delete session {session_id}: {e}")
             return False

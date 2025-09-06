@@ -328,7 +328,7 @@ class ZellijLocalManager:
                 print(f"📊 Quick Summary: {global_summary['running_commands']}/{global_summary['total_commands']} commands running across {global_summary['healthy_sessions']}/{global_summary['total_sessions']} sessions")
 
         logger.info(f"Starting monitoring routine with {wait_ms}ms intervals")
-        sched = Scheduler(routine=routine, wait_ms=wait_ms)
+        sched = Scheduler(routine=routine, wait_ms=wait_ms, logger=logger)
         sched.run()
 
     def save(self, session_id: Optional[str] = None) -> str:
