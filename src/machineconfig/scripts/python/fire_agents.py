@@ -16,11 +16,11 @@ from math import ceil
 from typing import Literal, TypeAlias, get_args, Iterable
 
 from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
-
+from machineconfig.utils.utils2 import randstr
 
 AGENTS: TypeAlias = Literal["cursor-agent", "gemini"]
 TabConfig = dict[str, tuple[str, str]]  # tab name -> (cwd, command)
-DEFAULT_AGENT_CAP = 15
+DEFAULT_AGENT_CAP = 6
 
 
 def get_gemini_api_keys() -> list[str]:
@@ -63,6 +63,7 @@ def _chunk_prompts(prompts: list[str], max_agents: int) -> list[str]:
     prompts = [p for p in prompts if p.strip() != ""]  # drop blank entries
     if len(prompts) <= max_agents:
         return prompts
+    print(f"Chunking {len(prompts)} prompts into groups for up to {max_agents} agents because it exceeds the cap.")
     chunk_size = ceil(len(prompts) / max_agents)
     grouped: list[str] = []
     for i in range(0, len(prompts), chunk_size):
@@ -98,26 +99,39 @@ def launch_agents(repo_root: Path, prompts: list[str], agent: AGENTS, *, max_age
             return {}
 
     tab_config: TabConfig = {}
-    tmp_dir = repo_root / ".ai" / "tmp_prompts"
+    tmp_dir = repo_root / ".ai" / f"tmp_prompts/{randstr()}"
     tmp_dir.mkdir(parents=True, exist_ok=True)
 
     for idx, a_prompt in enumerate(prompts):
-        tmp_file_path = tmp_dir / f"agent{idx}.txt"
-        tmp_file_path.write_text(a_prompt, encoding="utf-8")
+        prompt_path = tmp_dir / f"agent{idx}_prompt.txt"
+        prompt_path.write_text(a_prompt, encoding="utf-8")
         match agent:
             case "gemini":
                 # Need a real shell for the pipeline; otherwise '| gemini ...' is passed as args to 'cat'
-                safe_path = shlex.quote(str(tmp_file_path))
+                safe_path = shlex.quote(str(prompt_path))
                 api_keys = get_gemini_api_keys()
                 api_key = api_keys[idx % len(api_keys)] if api_keys else ""
-                # Use env command to set environment variable instead of export
-                cmd = f"env GEMINI_API_KEY={shlex.quote(api_key)} bash -lc 'cat {safe_path} | gemini --model gemini-2.5-pro --yolo --prompt'"
+                # Export the environment variable so it's available to subshells
+                cmd = f"""
+export GEMINI_API_KEY={shlex.quote(api_key)}
+echo "Using Gemini API key $GEMINI_API_KEY"
+echo "Launching gemini agent with prompt from {shlex.quote(str(prompt_path))}"
+cat {prompt_path}
+GEMINI_API_KEY={shlex.quote(api_key)} bash -lc 'cat {safe_path} | gemini --model gemini-2.5-pro --yolo --prompt'
+"""
             case "cursor-agent":
                 # As originally implemented
-                cmd = f"cursor-agent --print --output-format text < {tmp_file_path}"
+                cmd = f"""
+echo "Launching cursor-agent with prompt from {shlex.quote(str(prompt_path))}"
+cat {prompt_path}
+cursor-agent --print --output-format text < {prompt_path}
+"""
             case _:
                 raise ValueError(f"Unsupported agent type: {agent}")
-        tab_config[f"Agent{idx}"] = (str(repo_root), cmd)
+        cmd_path = tmp_dir / f"agent{idx}_cmd.sh"
+        cmd_path.write_text(cmd, encoding="utf-8")
+        fire_cmd = f"bash {shlex.quote(str(cmd_path))}"
+        tab_config[f"Agent{idx}"] = (str(repo_root), fire_cmd)
 
     print(f"Launching a template with #{len(tab_config)} agents")
     return tab_config
@@ -145,15 +159,19 @@ def main():  # noqa: C901 - (complexity acceptable for CLI glue)
         separator = "\n"
         source_text = target_list_file.read_text(encoding="utf-8", errors="ignore")
     else:
-        separator = input("Enter separator [\\n]: ").strip() or "\n"
         target_file_path = Path(file_path_input).expanduser().resolve()
+        if not target_file_path.exists() or not target_file_path.is_file():
+            print(f"Invalid file path: {target_file_path}")
+            return
+        separator = input("Enter separator [\\n]: ").strip() or "\n"
         if not target_file_path.exists():
             print(f"File does not exist: {target_file_path}")
             return
         source_text = target_file_path.read_text(encoding="utf-8", errors="ignore")
 
-    prefix = input("Enter prefix prompt: ")
     raw_prompts = source_text.split(separator)
+    print(f"Loaded {len(raw_prompts)} raw prompts from source.")
+    prefix = input("Enter prefix prompt: ")
     combined_prompts = _chunk_prompts(raw_prompts, DEFAULT_AGENT_CAP)
     combined_prompts = [prefix + "\n" + p for p in combined_prompts]
 
