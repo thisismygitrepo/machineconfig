@@ -107,6 +107,13 @@ def launch_agents(repo_root: Path, prompts: list[str], agent: AGENTS, *, max_age
         prompt_path.write_text(a_prompt, encoding="utf-8")
         match agent:
             case "gemini":
+                # model = "gemini-2.5-pro"
+                # model = "gemini-2.5-flash-lite"
+                model = None  # auto-select
+                if model is None:
+                    model_arg = ""
+                else:
+                    model_arg = f"--model {shlex.quote(model)}"
                 # Need a real shell for the pipeline; otherwise '| gemini ...' is passed as args to 'cat'
                 safe_path = shlex.quote(str(prompt_path))
                 api_keys = get_gemini_api_keys()
@@ -117,7 +124,7 @@ export GEMINI_API_KEY={shlex.quote(api_key)}
 echo "Using Gemini API key $GEMINI_API_KEY"
 echo "Launching gemini agent with prompt from {shlex.quote(str(prompt_path))}"
 cat {prompt_path}
-GEMINI_API_KEY={shlex.quote(api_key)} bash -lc 'cat {safe_path} | gemini --model gemini-2.5-pro --yolo --prompt'
+GEMINI_API_KEY={shlex.quote(api_key)} bash -lc 'cat {safe_path} | gemini {model_arg} --yolo --prompt'
 """
             case "cursor-agent":
                 # As originally implemented
