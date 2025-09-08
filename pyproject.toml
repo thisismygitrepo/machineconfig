@@ -18,9 +18,8 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies = [
-    "crocodile",
     "rich>=14.0.0",
     "paramiko>=3.5.1",
     "psutil>=7.0.0",
@@ -37,6 +36,14 @@ dependencies = [
     "pytz>=2025.2",
     "tomli>=2.2.1",
     "toml>=0.10.2",
+    "pyyaml>=6.0.2",
+    "pyjson5>=1.6.9",
+    "requests>=2.32.5",
+    "tqdm>=4.67.1",
+    "polars>=1.33.0",
+    "joblib>=1.5.2",
+    "randomname>=0.2.1",
+    "cryptography>=44.0.2",
 ]
 
 [project.optional-dependencies]

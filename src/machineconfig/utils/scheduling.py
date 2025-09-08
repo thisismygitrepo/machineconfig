@@ -194,7 +194,6 @@
 # def main(root: Optional[str] = None, ignore_conditions: bool=True):
 #     if root is None: root_resolved = SCHEDULER_DEFAULT_ROOT
 #     else: root_resolved = PathExtended(root).expanduser().absolute()
-#     # Replace crocodile List usage with pathlib iteration
 #     from pathlib import Path
 #     # Find all `task.py` files under root and use their parent directories
 #     tasks_dirs = list({PathExtended(p.parent) for p in Path(str(root_resolved)).rglob("task.py")})

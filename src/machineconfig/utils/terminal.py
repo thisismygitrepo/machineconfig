@@ -1,9 +1,7 @@
 
-from crocodile.core import install_n_import
-from machineconfig.utils.path_reduced import P, PLike, OPLike
+from machineconfig.utils.path_reduced import P, OPLike
 import subprocess
 from typing import Any, BinaryIO, Optional, Union
-import time
 import platform
 import sys
 import os
@@ -165,12 +163,12 @@ class Terminal:
                 return False
         else:
             return os.getuid() == 0  # Check for root on Posix
-    @staticmethod
-    def run_as_admin(file: PLike, params: Any, wait: bool = False):
-        proce_info = install_n_import(library="win32com", package="pywin32", fromlist=["shell.shell.ShellExecuteEx"]).shell.shell.ShellExecuteEx(lpVerb='runas', lpFile=file, lpParameters=params)
-        # TODO update PATH for this to take effect immediately.
-        if wait: time.sleep(1)
-        return proce_info
+#     @staticmethod
+#     def run_as_admin(file: PLike, params: Any, wait: bool = False):
+#         proce_info = install_n_import(library="win32com", package="pywin32", fromlist=["shell.shell.ShellExecuteEx"]).shell.shell.ShellExecuteEx(lpVerb='runas', lpFile=file, lpParameters=params)
+#         # TODO update PATH for this to take effect immediately.
+#         if wait: time.sleep(1)
+#         return proce_info
 
     @staticmethod
     def get_header(wdir: OPLike, toolbox: bool): return f"""

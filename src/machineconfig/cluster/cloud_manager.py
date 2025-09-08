@@ -100,7 +100,6 @@
 #     @staticmethod
 #     def prepare_servers_report(cloud_root: PathExtended) -> list[dict[str, Any]]:
 #         from machineconfig.cluster.remote_machine import RemoteMachine
-#         # Replace crocodile List usage with plain Python list
 #         workers_root = [p for p in cloud_root.joinpath("workers").iterdir()]
 #         res: dict[str, list[RemoteMachine]] = {}
 #         times: dict[str, timedelta] = {}
@@ -246,9 +245,6 @@
 #         """This method involves manual selection but has all-files scope (failed and running) and can be used for both local and remote machines.
 #         The reason it is not automated for remotes is because even though the server might have failed, the processes therein might be running, so there is no automated way to tell."""
 #         log = self.read_log()
-#         from machineconfig.cluster.remote_machine import RemoteMachine
-#         from machineconfig.utils.utils import display_options
-#         # Replace crocodile List usage with plain Python list comprehension
 #         jobs_all: list[str] = [p.name for p in self.base_path.expanduser().joinpath("jobs").iterdir()]
 #         jobs_selected = display_options(options=jobs_all, msg="Select Jobs to Redo", multi=True, fzf=True)
 #         for a_job in jobs_selected:

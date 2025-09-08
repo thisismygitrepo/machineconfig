@@ -68,7 +68,7 @@ def save_ini(path: PathLike, obj: Mapping[str, Mapping[str, Any]], verbose: bool
 
 
 class Save:
-    """Drop-in replacement for crocodile's Save helper.
+    """
 
     Provides static methods for common serialization formats while ensuring
     parent directories exist and returning a `P` path object.

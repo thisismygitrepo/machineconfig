@@ -4,7 +4,7 @@
 from machineconfig.utils.utils2 import randstr, read_json
 from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.io_save import save_json
-import crocodile.environment as env
+import platform
 from machineconfig.utils.utils import LIBRARY_ROOT
 from uuid import uuid4
 import os
@@ -24,7 +24,9 @@ All settings are available on GitHub: https://aka.ms/terminal-profiles-schema
 
 
 console = Console()
-assert env.system == 'Windows', 'This script is only for Windows.'
+system = platform.system()  # Linux or Windows
+
+assert system == 'Windows', 'This script is only for Windows.'
 
 
 class TerminalSettings(object):
