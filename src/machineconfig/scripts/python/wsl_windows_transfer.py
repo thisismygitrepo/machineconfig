@@ -55,7 +55,7 @@ Otherwise, a flag must be raised to indicate the direction.""")
             path.copy(folder=WIN_FROM_WSL.joinpath(UserName).joinpath(path.rel2home().parent), overwrite=True)
         print("✅ Transfer completed successfully!\n")
     else:
-        from crocodile.meta import SSH
+        from machineconfig.utils.ssh import SSH
         import platform
         port = int(args.port) if args.port else (2222 if system == "Windows" else 22)
         username = UserName

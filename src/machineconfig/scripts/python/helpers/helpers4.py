@@ -3,7 +3,6 @@ from typing import Any, Callable, Optional
 import inspect
 import os
 # import argparse
-from crocodile.core import Display
 from machineconfig.utils.path_reduced import P as PathExtended
 # from machineconfig.utils.utils import choose_ssh_host
 
@@ -52,7 +51,8 @@ def parse_pyfile(file_path: str):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
     ]
     module__doc__ = ast.get_docstring(parsed_ast)
-    main_option = f"RUN AS MAIN -- {Display.get_repr(module__doc__, limit=150) if module__doc__ is not None else 'NoDocs'}"
+    # from crocodile.core import Display
+    main_option = f"RUN AS MAIN -- {module__doc__ if module__doc__ is not None else 'NoDocs'}"
     options = [main_option]
     for function in functions:
         if function.name.startswith('__') and function.name.endswith('__'): continue

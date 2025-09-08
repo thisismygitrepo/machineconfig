@@ -3,7 +3,7 @@ CC
 """
 
 from machineconfig.utils.path_reduced import P as PathExtended
-from crocodile.meta import RepeatUntilNoException
+from tenacity import retry, stop_after_attempt, wait_chain, wait_fixed
 import getpass
 import argparse
 import os
@@ -18,7 +18,7 @@ from machineconfig.utils.utils2 import pprint
 
 console = Console()
 
-@RepeatUntilNoException(retry=3, sleep=1)
+@retry(stop=stop_after_attempt(3), wait=wait_chain(wait_fixed(1), wait_fixed(4), wait_fixed(9)))
 def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
     console.print(Panel("🚀 Secure File Downloader", title="[bold blue]Downloader[/bold blue]", border_style="blue"))
 

@@ -1,5 +1,33 @@
 
-from typing import Optional, Any, Union, List, Literal
+from typing import Optional, Any, Union, List
+import os
+from dataclasses import dataclass
+import rich.console
+from machineconfig.utils.terminal import Terminal, Response, MACHINE
+from machineconfig.utils.path_reduced import P, PLike, OPLike
+from machineconfig.utils.utils2 import pprint
+
+@dataclass
+class Scout:
+    source_full: P
+    source_rel2home: P
+    exists: bool
+    is_dir: bool
+    files: Optional[List[P]]
+def scout(source: PLike, z: bool = False, r: bool = False) -> Scout:
+    source_full = P(source).expanduser().absolute()
+    source_rel2home = source_full.collapseuser()
+    exists = source_full.exists()
+    is_dir = source_full.is_dir() if exists else False
+    if z and exists:
+        try: source_full = source_full.zip()
+        except Exception as ex:
+            raise Exception(f"Could not zip {source_full} due to {ex}") from ex  # type: ignore # pylint: disable=W0719
+        source_rel2home = source_full.zip()
+    if r and exists and is_dir:
+        files = [item.collapseuser() for item in source_full.search(folders=False, r=True)]
+    else: files = None
+    return Scout(source_full=source_full, source_rel2home=source_rel2home, exists=exists, is_dir=is_dir, files=files)
 
 
 class SSH:  # inferior alternative: https://github.com/fabric/fabric
@@ -19,7 +47,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         if isinstance(host, str):
             try:
                 import paramiko.config as pconfig
-                config = pconfig.SSHConfig.from_path(P.home().joinpath(".ssh/config").to_str())
+                config = pconfig.SSHConfig.from_path(str(P.home().joinpath(".ssh/config")))
                 config_dict = config.lookup(host)
                 self.hostname = config_dict["hostname"]
                 self.username = config_dict["user"]
@@ -31,7 +59,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
                 self.proxycommand = config_dict.get("proxycommand", None)
                 if sshkey is not None:
                     tmp = config.lookup("*").get("identityfile", sshkey)
-                    if type(tmp) is list: sshkey = tmp[0]
+                    if isinstance(tmp, list): sshkey = tmp[0]
                     else: sshkey = tmp
             except (FileNotFoundError, KeyError):
                 assert "@" in host or ":" in host, f"Host must be in the form of `username@hostname:port` or `username@hostname` or `hostname:port`, but it is: {host}"
@@ -53,8 +81,8 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         self.ssh = paramiko.SSHClient()
         self.ssh.load_system_host_keys()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        import rich
-        rich.inspect(Struct(host=self.host, hostname=self.hostname, username=self.username, password="***", port=self.port, key_filename=self.sshkey, ve=self.ve), value=False, title="SSHing To", docs=False, sort=False)
+        pprint(dict(host=self.host, hostname=self.hostname, username=self.username, password="***", port=self.port, key_filename=self.sshkey, ve=self.ve), title="SSHing To")
+
         sock = paramiko.ProxyCommand(self.proxycommand) if self.proxycommand is not None else None
         try:
             if pwd is None:
@@ -129,7 +157,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         res.output.returncode = os.system(command)
         return res
     def get_ssh_conn_str(self, cmd: str = ""): return "ssh " + (f" -i {self.sshkey}" if self.sshkey else "") + self.get_remote_repr().replace(':', ' -p ') + (f' -t {cmd} ' if cmd != '' else ' ')
-    def open_console(self, cmd: str = '', new_window: bool = True, terminal: Optional[str] = None, shell: str = "pwsh"): Terminal().run_async(*(self.get_ssh_conn_str(cmd=cmd).split(" ")), new_window=new_window, terminal=terminal, shell=shell)
+    # def open_console(self, cmd: str = '', new_window: bool = True, terminal: Optional[str] = None, shell: str = "pwsh"): Terminal().run_async(*(self.get_ssh_conn_str(cmd=cmd).split(" ")), new_window=new_window, terminal=terminal, shell=shell)
     def run(self, cmd: str, verbose: bool = True, desc: str = "", strict_err: bool = False, strict_returncode: bool = False, env_prefix: bool = False) -> Response:  # most central method.
         cmd = (self.remote_env_cmd + "; " + cmd) if env_prefix else cmd
         raw = self.ssh.exec_command(cmd)
@@ -143,7 +171,10 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         if not return_obj: return self.run(cmd=f"""{self.remote_env_cmd}; python -c "{Terminal.get_header(wdir=None, toolbox=True)}{cmd}\n""" + '"', desc=desc or f"run_py on {self.get_remote_repr()}", verbose=verbose, strict_err=strict_err, strict_returncode=strict_returncode)
         assert "obj=" in cmd, "The command sent to run_py must have `obj=` statement if return_obj is set to True"
         source_file = self.run_py(f"""{cmd}\npath = Save.pickle(obj=obj, path=P.tmpfile(suffix='.pkl'))\nprint(path)""", desc=desc, verbose=verbose, strict_err=True, strict_returncode=True).op.split('\n')[-1]
-        return self.copy_to_here(source=source_file, target=P.tmpfile(suffix='.pkl')).readit()
+        res = self.copy_to_here(source=source_file, target=P.tmpfile(suffix='.pkl'))
+        import pickle
+        res_bytes = res.read_bytes()
+        return pickle.loads(res_bytes)
     def copy_from_here(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False, overwrite: bool = False, init: bool = True) -> Union[P, list[P]]:
         if init: print(f"{'⬆️' * 5} [SFTP UPLOAD] FROM `{source}` TO `{target}`")  # TODO: using return_obj do all tests required in one go.
         source_obj = P(source).expanduser().absolute()
@@ -154,9 +185,9 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             if z: target += ".zip"
         if not z and source_obj.is_dir():
             if r is False: raise RuntimeError(f"Meta.SSH Error: source `{source_obj}` is a directory! either set `r=True` for recursive sending or raise `z=True` flag to zip it first.")
-            source_list: List[P] = source_obj.search("*", folders=False, files=True, r=True)
+            source_list: list[P] = source_obj.search("*", folders=False, files=True, r=True)
             remote_root = self.run_py(f"path=P(r'{P(target).as_posix()}').expanduser()\n{'path.delete(sure=True)' if overwrite else ''}\nprint(path.create())", desc=f"Creating Target directory `{P(target).as_posix()}` @ {self.get_remote_repr()}", verbose=False).op or ''
-            source_list.print()
+            for idx, item in enumerate(source_list): print(f"   {idx+1:03d}. {item}")
             for item in source_list:
                 a__target = P(remote_root).joinpath(item.relative_to(source_obj))
                 self.copy_from_here(source=item, target=a__target)
@@ -191,7 +222,8 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             if isinstance(tmpx, P): target = tmpx
             else: raise RuntimeError(f"Could not resolve target path {target} due to error")
             assert target.is_relative_to("~"), f"If target is not specified, source must be relative to home.\n{target=}"
-        target_obj = P(target).expanduser().absolute().create(parents_only=True)
+        target_obj = P(target).expanduser().absolute()
+        target_obj.parent.mkdir(parents=True, exist_ok=True)
         if z and '.zip' not in target_obj.suffix: target_obj += '.zip'
         if "~" in str(source):
             tmp3 = self.run_py(f"print(P(r'{source}').expanduser())", desc="# Resolving source path address by expanding user", strict_returncode=True, strict_err=True, verbose=False).op2path()
@@ -212,10 +244,14 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         assert isinstance(scout, Scout)
         if not z and scout.is_dir and scout.files is not None:
             if r:
-                tmp: List[P] = scout.files.apply(lambda file: self.receieve(source=file.as_posix(), target=P(target).joinpath(P(file).relative_to(source)) if target else None, r=False))
-                return tmp.list[0]
+                tmp: list[P] = [self.receieve(source=file.as_posix(), target=P(target).joinpath(P(file).relative_to(source)) if target else None, r=False) for file in scout.files]
+                return tmp[0]
             else: print("Source is a directory! either set `r=True` for recursive sending or raise `zip_first=True` flag.")
-        target = P(target).expanduser().absolute().create(parents_only=True) if target else scout.source_rel2home.expanduser().absolute().create(parents_only=True)
+        if target:
+            target = P(target).expanduser().absolute()
+        else:
+            target = scout.source_rel2home.expanduser().absolute()
+        target.parent.mkdir(parents=True, exist_ok=True)
         if z and '.zip' not in target.suffix: target += '.zip'
         source = scout.source_full
         with self.tqdm_wrap(ascii=True, unit='b', unit_scale=True) as pbar: self.sftp.get(remotepath=source.as_posix(), localpath=target.as_posix(), callback=pbar.view_bar)  # type: ignore # pylint: disable=E1129

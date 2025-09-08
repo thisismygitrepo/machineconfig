@@ -41,10 +41,10 @@ def get_jupyter_notebook(python_code: str):
     return template
 
 
-def create_jupyter_notebook(py_script: str) -> None:
-    import nbformat as nbf
-    from nbformat.notebooknode import NotebookNode
-    nb: NotebookNode = nbf.v4.new_notebook()
-    nb.cells.append(nbf.v4.new_code_cell(py_script))
-    with open("new_notebook.ipynb", mode="w", encoding="utf-8") as f:
-        nbf.write(nb,f)
+# def create_jupyter_notebook(py_script: str) -> None:
+#     import nbformat as nbf
+#     from nbformat.notebooknode import NotebookNode
+#     nb: NotebookNode = nbf.v4.new_notebook()
+#     nb.cells.append(nbf.v4.new_code_cell(py_script))
+#     with open("new_notebook.ipynb", mode="w", encoding="utf-8") as f:
+#         nbf.write(nb,f)
