@@ -137,7 +137,7 @@ cursor-agent --print --output-format text < {prompt_path}
                 cmd = f"""
 echo "Launching crush with prompt from {shlex.quote(str(prompt_path))}"
 cat {prompt_path}
-cat {prompt_path} | crush
+cat {prompt_path} | crush run
 """
             case _:
                 raise ValueError(f"Unsupported agent type: {agent}")
