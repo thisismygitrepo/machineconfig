@@ -364,7 +364,6 @@ def run_zellij_layout(tab_config: Dict[str, tuple[str, str]], session_name: Opti
         import subprocess
         subprocess.run(cmd, shell=True, check=True)
         console.print(f"[bold green]🚀 Zellij layout is running[/bold green] [yellow]@[/yellow] [bold cyan]{session_name}[/bold cyan]")
-
     return session_name
 
 

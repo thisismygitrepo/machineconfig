@@ -436,7 +436,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                 if strict: raise ve
                 path = self
         # if obfuscate:
-        #     from crocodile.msc.obfuscater import obfuscate as obfuscate_func
+        #     msc.obfuscater import obfuscate as obfuscate_func
         #     name = obfuscate_func(seed=P.home().joinpath('dotfiles/creds/data/obfuscation_seed').read_text(encoding="utf-8").rstrip(), data=path.name)
         #     path = path.with_name(name=name)
         if isinstance(root, str):  # the following is to avoid the confusing behaviour of A.joinpath(B) if B is absolute.
