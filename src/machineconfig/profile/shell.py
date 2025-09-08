@@ -150,7 +150,7 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str], choice: Optio
 
 
 def main_add_patches_to_shell_profile(profile_path: Optional[str], choice: Optional[str]) -> None:
-    patches: list[str] = list(LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search().apply(lambda x: x.as_posix()))
+    patches: list[str] = [item.as_posix() for item in LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search()]
 
     console.print(Panel("🩹 Adding patches to shell profile", title="[bold blue]Patches[/bold blue]", border_style="blue"))
 
