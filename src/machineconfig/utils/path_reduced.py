@@ -255,7 +255,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         if strict: assert target_obj.exists(), f"Target path `{target}` (aka `{target_obj}`) doesn't exist. This will create a broken link."
         if overwrite and (self.is_symlink() or self.exists()): self.delete(sure=True, verbose=verbose)
         from platform import system
-        from crocodile.meta import Terminal
+        from machineconfig.utils.terminal import Terminal
         if system() == "Windows" and not Terminal.is_user_admin():  # you cannot create symlink without priviliages.
             Terminal.run_as_admin(file=sys.executable, params=f" -c \"from pathlib import Path; Path(r'{self.expanduser()}').symlink_to(r'{str(target_obj)}')\"", wait=True)
         else: super(P, self.expanduser()).symlink_to(str(target_obj))
@@ -461,7 +461,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             rp = localpath.get_remote_path(root=root, os_specific=os_specific, rel2home=rel2home, strict=strict)  # if rel2home else (P(root) / localpath if root is not None else localpath)
         else: rp = P(remotepath)
         rclone_cmd = f"""rclone copyto '{localpath.as_posix()}' '{cloud}:{rp.as_posix()}' {'--progress' if verbose else ''} --transfers={transfers}"""
-        from crocodile.meta import Terminal
+        from machineconfig.utils.terminal import Terminal
         if verbose: print(f"{'⬆️'*5} UPLOADING with `{rclone_cmd}`")
         shell_to_use = "powershell" if sys.platform == "win32" else "bash"
         res = Terminal(stdout=None if verbose else subprocess.PIPE).run(rclone_cmd, shell=shell_to_use).capture()
@@ -493,7 +493,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         localpath += ".zip" if unzip else ""
         localpath += ".enc" if decrypt else ""
         rclone_cmd = f"""rclone copyto '{cloud}:{remotepath.as_posix()}' '{localpath.as_posix()}' {'--progress' if verbose else ''} --transfers={transfers}"""
-        from crocodile.meta import Terminal
+        from machineconfig.utils.terminal import Terminal
         if verbose: print(f"{'⬇️' * 5} DOWNLOADING with `{rclone_cmd}`")
         shell_to_use = "powershell" if sys.platform == "win32" else "bash"
         res = Terminal(stdout=None if verbose else subprocess.PIPE).run(rclone_cmd, shell=shell_to_use)
@@ -517,7 +517,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             rclone_cmd = f"""rclone sync '{source}' '{target}' """
         rclone_cmd += f" --progress --transfers={transfers} --verbose"
         rclone_cmd += (" --delete-during" if delete else "")
-        from crocodile.meta import Terminal
+        from machineconfig.utils.terminal import Terminal
         if verbose : print(rclone_cmd)
         shell_to_use = "powershell" if sys.platform == "win32" else "bash"
         res = Terminal(stdout=None if verbose else subprocess.PIPE).run(rclone_cmd, shell=shell_to_use)

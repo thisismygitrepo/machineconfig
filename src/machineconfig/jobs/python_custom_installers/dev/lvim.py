@@ -1,7 +1,7 @@
 """lvim
 """
 
-from crocodile.meta import Terminal
+from machineconfig.utils.terminal import Terminal
 import subprocess
 import platform
 from typing import Optional

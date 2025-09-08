@@ -5,7 +5,7 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.path_reduced import P as PathExtended
-from crocodile.meta import Terminal
+from machineconfig.utils.terminal import Terminal
 
 
 PROGRAM_PATH = (PathExtended.home().joinpath("tmp_results", "shells", "python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh"))

@@ -1,5 +1,5 @@
 
-from crocodile.meta import Terminal
+from machineconfig.utils.terminal import Terminal
 from pathlib import Path
 from rich.text import Text
 from rich.panel import Panel

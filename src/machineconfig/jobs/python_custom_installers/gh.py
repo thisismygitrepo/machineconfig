@@ -4,7 +4,7 @@
 import platform
 from typing import Optional
 from machineconfig.utils.installer_utils.installer_class import Installer
-from crocodile.meta import Terminal
+from machineconfig.utils.terminal import Terminal
 
 r"""
 https://github.com/cli/cli

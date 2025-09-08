@@ -1,5 +1,5 @@
 from machineconfig.utils.path_reduced import P as PathExtended
-from crocodile.meta import Terminal
+from machineconfig.utils.terminal import Terminal
 from typing import Optional, TypeAlias, Literal
 
 # LINUX_INSTALL_PATH = '/usr/local/bin'
