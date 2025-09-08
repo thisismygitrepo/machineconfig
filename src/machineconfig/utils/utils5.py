@@ -60,22 +60,22 @@ class Scheduler:
                 self.exception_handler(ex, "sleep", self)
                 return  # that's probably the only kind of exception that can rise during sleep.
         self.record_session_end(reason=f"Reached maximum number of cycles ({self.max_cycles})" if self.cycle >= self.max_cycles else f"Reached due stop time ({until_ms})")
-    def get_records_df(self):
-        import polars as pl
+    def get_records_df(self) -> List[dict[str, Any]]:
         columns = ["start", "finish", "duration", "cycles", "termination reason"] + list(self.sess_stats(self).keys())
-        return pl.DataFrame(self.records, schema=columns, orient="row")
+        return [dict(zip(columns, row)) for row in self.records]
     def record_session_end(self, reason: str):
-        import polars as pl
         end_time_ms = time.time_ns() // 1_000_000
         duration_ms = end_time_ms - self.sess_start_utc_ms
         sess_stats = self.sess_stats(self)
         self.records.append([self.sess_start_utc_ms, end_time_ms, duration_ms, self.cycle, reason,
                             #  self.logger.file_path
                              ] + list(sess_stats.values()))
+        records_df = self.get_records_df()
+        total_cycles = sum(row["cycles"] for row in records_df)
         summ = {"start time": f"{str(self.sess_start_utc_ms)}",
                 "finish time": f"{str(end_time_ms)}.",
                 "duration": f"{str(duration_ms)} | wait time {self.wait_ms/1_000: 0.1f}s",
-                "cycles ran": f"{self.cycle} | Lifetime cycles = {self.get_records_df().select(pl.col('cycles').sum()).item()}",
+                "cycles ran": f"{self.cycle} | Lifetime cycles = {total_cycles}",
                 "termination reason": reason,
                 # "logfile": self.logger.file_path
                 }
@@ -83,13 +83,27 @@ class Scheduler:
         from machineconfig.utils.utils2 import get_repr
         tmp = get_repr(summ)
         self.logger.critical("\n--> Scheduler has finished running a session. \n" + tmp + "\n" + "-" * 100)
-        df = self.get_records_df()
-        df = df.with_columns([
-            pl.col("start").map_elements(lambda x: str(x).split(".", maxsplit=1)[0], return_dtype=pl.String),
-            pl.col("finish").map_elements(lambda x: str(x).split(".", maxsplit=1)[0], return_dtype=pl.String),
-            pl.col("duration").map_elements(lambda x: str(x).split(".", maxsplit=1)[0], return_dtype=pl.String)
-        ])
-        self.logger.critical("\n--> Logger history.\n" + str(df))
+        # Format records as table
+        if records_df:
+            headers = list(records_df[0].keys())
+            # Process start, finish, duration to strings without milliseconds
+            processed_records = []
+            for row in records_df:
+                processed = row.copy()
+                processed["start"] = str(row["start"]).split(".", maxsplit=1)[0]
+                processed["finish"] = str(row["finish"]).split(".", maxsplit=1)[0]
+                processed["duration"] = str(row["duration"]).split(".", maxsplit=1)[0]
+                processed_records.append(processed)
+            # Simple aligned table formatting
+            max_lengths = {col: max(len(str(row.get(col, ""))) for row in processed_records) for col in headers}
+            table_lines = ["| " + " | ".join(col.ljust(max_lengths[col]) for col in headers) + " |"]
+            table_lines.append("|" + "-+-".join("-" * max_lengths[col] for col in headers) + "|")
+            for row in processed_records:
+                table_lines.append("| " + " | ".join(str(row.get(col, "")).ljust(max_lengths[col]) for col in headers) + " |")
+            table_str = "\n".join(table_lines)
+        else:
+            table_str = "No records available."
+        self.logger.critical("\n--> Logger history.\n" + table_str)
         return self
     def default_exception_handler(self, ex: Union[Exception, KeyboardInterrupt], during: str, sched: 'Scheduler') -> None:  # user decides on handling and continue, terminate, save checkpoint, etc.  # Use signal library.
         print(sched)

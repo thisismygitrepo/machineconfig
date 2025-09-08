@@ -14,6 +14,7 @@ fi
 
 python -m machineconfig.scripts.python.fire_jobs "$@"
 
+
 if [ -f "$op_script" ]; then
   echo "Running $op_script"
   chmod +x $op_script
