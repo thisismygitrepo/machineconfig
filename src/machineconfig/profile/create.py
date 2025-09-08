@@ -5,13 +5,14 @@ This script Takes away all config files from the computer, place them in one dir
 """
 
 
-from machineconfig.utils.terminal import Terminal
 from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.utils import symlink_func, symlink_copy, LIBRARY_ROOT, REPO_ROOT, display_options
 from machineconfig.utils.utils2 import read_toml
 from machineconfig.profile.shell import create_default_shell_profile
 # import os
 import platform
+import os
+import ctypes
 import subprocess
 from rich.console import Console
 from typing import Optional, Any, TypedDict
@@ -53,13 +54,21 @@ def main_symlinks(choice: Optional[str] = None):
     else: choice_selected = choice
 
     if isinstance(choice_selected, str):
-        if str(choice_selected) == "all" and system == "Windows" and not Terminal.is_user_admin():
-            print(f"""
+        if str(choice_selected) == "all" and system == "Windows":
+            if os.name == 'nt':
+                try:
+                    is_admin = ctypes.windll.shell32.IsUserAnAdmin()
+                except Exception:
+                    is_admin = False
+            else:
+                is_admin = False
+            if not is_admin:
+                print(f"""
 {'*' * 80}
 ⚠️  WARNING: Administrator privileges required
 {'*' * 80}
 """)
-            raise RuntimeError("Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
+                raise RuntimeError("Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
         elif choice_selected == "all":
             print(f"""
 🔍 Processing all program keys:
@@ -104,7 +113,7 @@ def main_symlinks(choice: Optional[str] = None):
 
     if system == "Linux":
         print("\n📜 Setting executable permissions for scripts...")
-        Terminal().run(f'chmod +x {LIBRARY_ROOT.joinpath(f"scripts/{system.lower()}")} -R')
+        subprocess.run(f'chmod +x {LIBRARY_ROOT.joinpath(f"scripts/{system.lower()}")} -R', shell=True, capture_output=True, text=True)
         print("✅ Script permissions updated")
 
     if len(ERROR_LIST) > 0:

@@ -190,8 +190,6 @@
 #     def viz_load_ratios(self) -> None:
 #         if not self.workload_params: raise RuntimeError("func_kwargs_list is None. You need to run generate_standard_kwargs() first.")
 #         import plottext
-#         names = L(self.sshz).apply(lambda x: x.get_remote_repr(add_machine=True)).list
-
 #         plt.simple_multiple_bar(names, [[machine_specs.cpu for machine_specs in self.machines_specs], [machine_specs.ram for machine_specs in self.machines_specs]], title="Resources per machine", labels=["#cpu threads", "memory size"])
 #         plt.show()
 #         print("")

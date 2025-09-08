@@ -1,5 +1,4 @@
 
-from machineconfig.utils.terminal import Terminal
 from pathlib import Path
 from rich.text import Text
 from rich.panel import Panel
@@ -28,7 +27,13 @@ def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> b
     if res is False and install_script is not None:
         console = Console()
         console.print(Panel(f"📥 INSTALLING TOOL | Installing {tool_name}...", border_style="bold blue", expand=False))
-        Terminal().run(install_script, shell="powershell").print()
+        result = subprocess.run(install_script, shell=True, capture_output=True, text=True)
+        print(f"Command: {install_script}")
+        if result.stdout:
+            print(f"STDOUT: {result.stdout}")
+        if result.stderr:
+            print(f"STDERR: {result.stderr}")
+        print(f"Return code: {result.returncode}")
         return check_tool_exists(tool_name=tool_name, install_script=None)
     return res
 
@@ -131,7 +136,8 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
 def choose_cloud_interactively() -> str:
     console = Console()
     console.print(Panel("🔍 LISTING CLOUD REMOTES | Fetching available cloud remotes...", border_style="bold blue", expand=False))
-    tmp = Terminal().run("rclone listremotes").op_if_successfull_or_default(strict_returcode=False)
+    result = subprocess.run("rclone listremotes", shell=True, capture_output=True, text=True)
+    tmp = result.stdout if result.returncode == 0 else None
     if isinstance(tmp, str):
         remotes: list[str] = [x.replace(":", "") for x in tmp.splitlines()]
 

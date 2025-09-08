@@ -6,7 +6,6 @@ This script Takes away all config files from the computer, place them in one dir
 
 
 import platform
-from machineconfig.utils.terminal import Terminal
 from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.utils import symlink_copy as symlink_func, LIBRARY_ROOT, REPO_ROOT, display_options
 from machineconfig.utils.utils2 import read_toml
@@ -92,7 +91,7 @@ def main_symlinks(choice: Optional[str] = None):
 
     if system == "Linux":
         print("\n📜 Setting executable permissions for scripts...")
-        Terminal().run(f'chmod +x {LIBRARY_ROOT.joinpath(f"scripts/{system.lower()}")} -R')
+        subprocess.run(f'chmod +x {LIBRARY_ROOT.joinpath(f"scripts/{system.lower()}")} -R', shell=True, capture_output=True, text=True)
         print("✅ Script permissions updated")
 
     if len(ERROR_LIST) > 0:

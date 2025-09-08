@@ -104,7 +104,6 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #             app_versions.append(version_path[0].read_text(encoding="utf-8"))
 #             apps_paths_raw.append(an_app)
 #         # if an_app.stem in versions_files_paths.stem:
-#         #     app_versions.append(versions_files_paths.filter(lambda x: x.stem == an_app.stem.replace(".exe", "")).list[0].read_text(encoding="utf-8"))
 #         # else:
 #         #     print(f"🤔 Cloud not find a documented version for installation of {an_app.stem}, trying to get it from the app itself.")
 #         #     tmp = Terminal().run(f"{an_app.stem} --version", shell="powershell").capture().op_if_successfull_or_default(strict_err=False, strict_returcode=False)

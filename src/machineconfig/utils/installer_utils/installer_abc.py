@@ -1,6 +1,6 @@
 from machineconfig.utils.path_reduced import P as PathExtended
-from machineconfig.utils.terminal import Terminal
 from typing import Optional, TypeAlias, Literal
+import subprocess
 
 # LINUX_INSTALL_PATH = '/usr/local/bin'
 # LINUX_INSTALL_PATH = '~/.local/bin'
@@ -18,12 +18,12 @@ def find_move_delete_windows(downloaded_file_path: PathExtended, exe_name: Optio
     else:
         print(f"🔎 Searching for executable in: {downloaded_file_path}")
         if exe_name is None:
-            exe = downloaded_file_path.search("*.exe", r=True).list[0]
+            exe = downloaded_file_path.search("*.exe", r=True)[0]
             print(f"✅ Found executable: {exe}")
         else:
             tmp = downloaded_file_path.search(f"{exe_name}.exe", r=True)
             if len(tmp) == 1:
-                exe = tmp.list[0]
+                exe = tmp[0]
                 print(f"✅ Found exact match for {exe_name}.exe: {exe}")
             else:
                 search_res = downloaded_file_path.search("*.exe", r=True)
@@ -31,10 +31,10 @@ def find_move_delete_windows(downloaded_file_path: PathExtended, exe_name: Optio
                     print(f"❌ ERROR: No executable found in {downloaded_file_path}")
                     raise IndexError(f"No executable found in {downloaded_file_path}")
                 elif len(search_res) == 1:
-                    exe = search_res.list[0]
+                    exe = search_res[0]
                     print(f"✅ Found single executable: {exe}")
                 else:
-                    exe = search_res.sort(lambda x: x.size("kb")).list[-1]
+                    exe = search_res.sort(lambda x: x.size("kb"))[-1]
                     print(f"✅ Selected largest executable ({exe.size('kb')} KB): {exe}")
         if rename_to and exe.name != rename_to:
             print(f"🏷️  Renaming '{exe.name}' to '{rename_to}'")
@@ -62,7 +62,7 @@ def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: Opt
         print(f"🔎 Searching for executable in: {downloaded}")
         res = downloaded.search(f"*{tool_name}*", folders=False, r=True)
         if len(res) == 1:
-            exe = res.list[0]
+            exe = res[0]
             print(f"✅ Found match for pattern '*{tool_name}*': {exe}")
         else:
             exe_search_res = downloaded.search(tool_name, folders=False, r=True)
@@ -70,10 +70,10 @@ def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: Opt
                 print(f"❌ ERROR: No search results for `{tool_name}` in `{downloaded}`")
                 raise IndexError(f"No executable found in {downloaded}")
             elif len(exe_search_res) == 1:
-                exe = exe_search_res.list[0]
+                exe = exe_search_res[0]
                 print(f"✅ Found exact match for '{tool_name}': {exe}")
             else:
-                exe = exe_search_res.sort(lambda x: x.size("kb")).list[-1]
+                exe = exe_search_res.sort(lambda x: x.size("kb"))[-1]
                 print(f"✅ Selected largest executable ({exe.size('kb')} KB): {exe}")
 
     if rename_to and exe.name != rename_to:
@@ -87,7 +87,18 @@ def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: Opt
     # exe.move(folder=LINUX_INSTALL_PATH, overwrite=False)
     if "/usr" in LINUX_INSTALL_PATH:
         print("🔑 Using sudo to move file to system directory...")
-        Terminal().run(f"sudo mv {exe} {LINUX_INSTALL_PATH}/").capture().print_if_unsuccessful(desc=f"MOVING executable `{exe}` to {LINUX_INSTALL_PATH}", strict_err=True, strict_returncode=True)
+        cmd = f"sudo mv {exe} {LINUX_INSTALL_PATH}/"
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+        success = result.returncode == 0 and result.stderr == ""
+        if not success:
+            desc = f"MOVING executable `{exe}` to {LINUX_INSTALL_PATH}"
+            print(f"❌ {desc} failed")
+            if result.stdout:
+                print(f"STDOUT: {result.stdout}")
+            if result.stderr:
+                print(f"STDERR: {result.stderr}")
+            print(f"Return code: {result.returncode}")
+            raise RuntimeError(f"Failed to move executable: {result.stderr or result.stdout}")
     else:
         exe.move(folder=LINUX_INSTALL_PATH, overwrite=True)
 

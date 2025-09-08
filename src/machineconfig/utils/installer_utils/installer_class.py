@@ -1,11 +1,11 @@
 
 from machineconfig.utils.path_reduced import P as PathExtended
-from machineconfig.utils.terminal import Terminal
 from machineconfig.utils.installer_utils.installer_abc import find_move_delete_linux, find_move_delete_windows
 from machineconfig.utils.utils import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT, LIBRARY_ROOT, check_tool_exists
 from machineconfig.utils.utils2 import pprint, read_json
 
 import platform
+import subprocess
 from typing import Any, Optional
 from pathlib import Path
 
@@ -68,12 +68,14 @@ class Installer:
     def install_robust(self, version: Optional[str]):
         try:
             print(f"\n{'='*80}\n🚀 INSTALLING {self.exe_name.upper()} 🚀\n{'='*80}")
-            old_version_cli = Terminal().run(f"{self.exe_name} --version").op.replace("\n", "")
+            result_old = subprocess.run(f"{self.exe_name} --version", shell=True, capture_output=True, text=True)
+            old_version_cli = result_old.stdout.strip()
             print(f"📊 Current version: {old_version_cli or 'Not installed'}")
 
             self.install(version=version)
 
-            new_version_cli = Terminal().run(f"{self.exe_name} --version").op.replace("\n", "")
+            result_new = subprocess.run(f"{self.exe_name} --version", shell=True, capture_output=True, text=True)
+            new_version_cli = result_new.stdout.strip()
             print(f"📊 New version: {new_version_cli}")
 
             if old_version_cli == new_version_cli:
@@ -104,9 +106,16 @@ class Installer:
             program: str = runpy.run_path(str(installer_path), run_name=None)['main'](version=version)
             # print(program)
             print("🚀 Running installation script...")
-            Terminal(stdin=None, stdout=None, stderr=None).run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)
-            # import subprocess
-            # subprocess.run(program, shell=True, check=True)
+            if platform.system() == "Linux": script = "#!/bin/bash" + "\n" + program
+            else: script = program
+            script_file = PathExtended.tmpfile(name="tmp_shell_script", suffix=".ps1" if platform.system() == "Windows" else ".sh", folder="tmp_scripts").write_text(script, newline=None if platform.system() == "Windows" else "\n")
+            if platform.system() == "Windows":
+                start_cmd = "powershell"
+                full_command = f"{start_cmd} {script_file}"
+            else:
+                start_cmd = "bash"
+                full_command = f"{start_cmd} {script_file}"
+            subprocess.run(full_command, stdin=None, stdout=None, stderr=None, shell=True, text=True)
             version_to_be_installed = str(version)
             print(f"✅ Custom installation completed\n{'='*80}")
 
@@ -116,7 +125,15 @@ class Installer:
             desc = package_manager + " installation"
             version_to_be_installed = package_manager + "Latest"
             print(f"🚀 Running: {self.repo_url}")
-            Terminal().run(self.repo_url, shell="default").capture().print_if_unsuccessful(desc=desc, strict_err=True, strict_returncode=True)
+            result = subprocess.run(self.repo_url, shell=True, capture_output=True, text=True)
+            success = result.returncode == 0 and result.stderr == ""
+            if not success:
+                print(f"❌ {desc} failed")
+                if result.stdout:
+                    print(f"STDOUT: {result.stdout}")
+                if result.stderr:
+                    print(f"STDERR: {result.stderr}")
+                print(f"Return code: {result.returncode}")
             print(f"✅ Package manager installation completed\n{'='*80}")
 
         else:
@@ -125,7 +142,16 @@ class Installer:
             if str(downloaded).endswith(".deb"):
                 print(f"📦 Installing .deb package: {downloaded}")
                 assert platform.system() == "Linux"
-                Terminal().run(f"sudo nala install -y {downloaded}").capture().print_if_unsuccessful(desc="Installing .deb", strict_err=True, strict_returncode=True)
+                result = subprocess.run(f"sudo nala install -y {downloaded}", shell=True, capture_output=True, text=True)
+                success = result.returncode == 0 and result.stderr == ""
+                if not success:
+                    desc = "Installing .deb"
+                    print(f"❌ {desc} failed")
+                    if result.stdout:
+                        print(f"STDOUT: {result.stdout}")
+                    if result.stderr:
+                        print(f"STDERR: {result.stderr}")
+                    print(f"Return code: {result.returncode}")
                 print("🗑️  Cleaning up .deb package...")
                 downloaded.delete(sure=True)
                 print(f"✅ DEB package installation completed\n{'='*80}")
@@ -247,12 +273,12 @@ class Installer:
                 print("ℹ️  No cached version information found")
         else:
             print("🔍 Checking installed version directly...")
-            resp = Terminal().run(exe_name, "--version", check=False).capture()
-            if resp.op == '':
+            result = subprocess.run([exe_name, "--version"], check=False, capture_output=True, text=True)
+            if result.stdout.strip() == '':
                 existing_version = None
                 print("ℹ️  Could not detect installed version")
             else:
-                existing_version = resp.op.strip()
+                existing_version = result.stdout.strip()
                 print(f"📄 Detected installed version: {existing_version}")
 
         if existing_version is not None:

@@ -82,6 +82,10 @@ class Response:
         con.print(Panel(txt, title=f"🖥️  {self.desc}", subtitle=f"📋 {desc}", width=150, style="bold cyan on black"))
         return self
 
+# DEPRECATED: Use subprocess.run directly instead of Terminal class.
+# The Terminal class has been replaced with inline subprocess calls to underlying primitives.
+# This file is kept for reference but should not be used.
+
 class Terminal:
     def __init__(self, stdout: Optional[int] = subprocess.PIPE, stderr: Optional[int] = subprocess.PIPE, stdin: Optional[int] = subprocess.PIPE, elevated: bool = False):
         self.machine: str = platform.system()

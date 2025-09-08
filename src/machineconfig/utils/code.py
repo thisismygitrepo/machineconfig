@@ -1,11 +1,11 @@
 from typing import Optional
 import platform
+import subprocess
 from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
 from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.path_reduced import P as PathExtended
-from machineconfig.utils.terminal import Terminal
 
 
 PROGRAM_PATH = (PathExtended.home().joinpath("tmp_results", "shells", "python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh"))
@@ -52,7 +52,15 @@ def write_shell_script_to_default_program_path(program: str, desc: str, preserve
     PROGRAM_PATH.parent.mkdir(parents=True, exist_ok=True)
     PROGRAM_PATH.write_text(program, encoding="utf-8")
     if execute:
-        Terminal().run(f". {PROGRAM_PATH}", shell="powershell").capture().print_if_unsuccessful(desc="🛠️  EXECUTION | Shell script running", strict_err=True, strict_returncode=True)
+        result = subprocess.run(f". {PROGRAM_PATH}", shell=True, capture_output=True, text=True)
+        success = result.returncode == 0 and result.stderr == ""
+        if not success:
+            print(f"❌ 🛠️  EXECUTION | Shell script running failed")
+            if result.stdout:
+                print(f"STDOUT: {result.stdout}")
+            if result.stderr:
+                print(f"STDERR: {result.stderr}")
+            print(f"Return code: {result.returncode}")
     return None
 
 def get_shell_file_executing_python_script(python_script: str, ve_name: str, verbose: bool=True):
@@ -82,4 +90,3 @@ def print_code(code: str, lexer: str, desc: str, subtitle: str=""):
         else: raise NotImplementedError(f"Platform {platform.system()} not supported for lexer {lexer}")
     console = Console()
     console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}", subtitle=subtitle), style="bold red")
-

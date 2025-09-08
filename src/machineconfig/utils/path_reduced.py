@@ -2,7 +2,7 @@
 
 
 
-from crocodile.core import List
+# from crocodile.core import List
 from crocodile.file_management_helpers.file1 import encrypt, decrypt
 from crocodile.file_management_helpers.file2 import Compression
 
@@ -265,7 +265,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         except OSError: return self
     # ======================================== Folder management =======================================
     def search(self, pattern: str = '*', r: bool = False, files: bool = True, folders: bool = True, compressed: bool = False, dotfiles: bool = False, filters_total: Optional[list[Callable[[Any], bool]]] = None, not_in: Optional[list[str]] = None,
-               exts: Optional[list[str]] = None, win_order: bool = False) -> List['P']:
+               exts: Optional[list[str]] = None, win_order: bool = False) -> list['P']:
         if isinstance(not_in, list):
             filters_notin = [lambda x: all([str(a_not_in) not in str(x) for a_not_in in not_in])]  # type: ignore
         else: filters_notin = []
@@ -281,11 +281,13 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             import fnmatch
             root = slf.as_zip_path()
             if not r:
-                raw = List(root.iterdir())
+                raw = list(root.iterdir())
             else:
-                raw = List(zipfile.ZipFile(str(slf)).namelist()).apply(root.joinpath)
-            res1 = raw.filter(lambda zip_path: fnmatch.fnmatch(zip_path.at, pattern))  # type: ignore
-            return res1.filter(lambda x: (folders or x.is_file()) and (files or x.is_dir()))  # type: ignore
+                raw = [root.joinpath(item) for item in zipfile.ZipFile(str(slf)).namelist()]
+            # res1 = raw.filter(lambda zip_path: fnmatch.fnmatch(zip_path.at, pattern))  # type: ignore
+            res1 = [item for item in raw if fnmatch.fnmatch(item.at, pattern)]
+            # return res1.filter(lambda x: (folders or x.is_file()) and (files or x.is_dir()))
+            return [item for item in res1 if (folders or item.is_file()) and (files or item.is_dir())]  # type: ignore
         elif dotfiles: raw = slf.glob(pattern) if not r else self.rglob(pattern)
         else:
             from glob import glob
@@ -295,17 +297,19 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                 raw = glob(str(slf.joinpath(pattern)))  # glob ignroes dot and hidden files
         if ".zip" not in str(slf) and compressed:
             filters_notin = [P(comp_file).search(pattern=pattern, r=r, files=files, folders=folders, compressed=True, dotfiles=dotfiles, filters_total=filters_total, not_in=not_in, win_order=win_order) for comp_file in self.search("*.zip", r=r)]
-            haha = List(filters_notin).reduce(func=lambda x, y: x + y)
+            from functools import reduce
+            # haha = List(filters_notin).reduce(func=lambda x, y: x + y)
+            haha = reduce(lambda x, y: x + y, filters_notin) if len(filters_notin) else []
             raw = raw + haha  # type: ignore
         processed = []
         for item in raw:
             item_ = P(item)
             if all([afilter(item_) for afilter in filters_total]):
                 processed.append(item_)
-        if not win_order: return List(processed)
+        if not win_order: return list(processed)
         import re
         processed.sort(key=lambda x: [int(k) if k.isdigit() else k for k in re.split('([0-9]+)', string=x.stem)])
-        return List(processed)
+        return list(processed)
     @staticmethod
     def tmpdir(prefix: str = "") -> 'P':
         return P.tmp(folder=rf"tmp_dirs/{prefix + ('_' if prefix != '' else '') + randstr()}")
@@ -345,7 +349,8 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             tmp__ = [item for item in (".zip", ".7z", "") if item in str(slf)]
             ztype = tmp__[0]
             if ztype == "": return slf
-            zipfile__, name__ = slf.split(at=str(List(slf.parts).filter(lambda x: ztype in x)[0]), sep=-1)
+            # zipfile__, name__ = slf.split(at=str(List(slf.parts).filter(lambda x: ztype in x)[0]), sep=-1)
+            zipfile__, name__ = slf.split(at=str(next(item for item in slf.parts if ztype in item)), sep=-1)
             name = str(name__)
         folder = (zipfile__.parent / zipfile__.stem) if folder is None else P(folder).expanduser().absolute().resolve().joinpath(zipfile__.stem)
         assert isinstance(folder, P), "folder should be a P object at this point"
@@ -365,7 +370,9 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                 if not content: P(folder).joinpath(name or "").delete(sure=True, verbose=True)  # deletes a specific file / folder that has the same name as the zip file without extension.
                 else:
                     import zipfile
-                    List([x for x in zipfile.ZipFile(str(self)).namelist() if "/" not in x or (len(x.split('/')) == 2 and x.endswith("/"))]).apply(lambda item: P(folder).joinpath(name or "", item.replace("/", "")).delete(sure=True, verbose=True))
+                    mylist = [x for x in zipfile.ZipFile(str(self)).namelist() if "/" not in x or (len(x.split('/')) == 2 and x.endswith("/"))]
+                    # List().apply(lambda item: P(folder).joinpath(name or "", item.replace("/", "")).delete(sure=True, verbose=True))
+                    for item in mylist: P(folder).joinpath(name or "", item.replace("/", "")).delete(sure=True, verbose=True)
             result = Compression.unzip(str(zipfile__), str(folder), None if name is None else P(name).as_posix())
             assert isinstance(result, Path)
         return self._return(P(result), inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNZIPPED {repr(zipfile__)} ==> {repr(result)}")
