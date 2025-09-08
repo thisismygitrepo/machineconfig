@@ -18,7 +18,7 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies = [
     "rich>=14.0.0",
     "paramiko>=3.5.1",

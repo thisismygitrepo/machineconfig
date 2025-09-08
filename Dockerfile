@@ -56,9 +56,9 @@ RUN rm -rfd /root/tmp_results
 # RUN apt-get clean && \
 #     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/cache/apt/archives/* /var/log/* /usr/share/doc /usr/share/man /usr/share/info /usr/share/locale
 
-RUN rm -rfd /root/.cache/pip && \
-    rm -rfd /app && \
-    /root/.local/bin/uv clean
+RUN /root/.local/bin/uv clean && \
+    rm -rfd /root/.cache/pip && \
+    rm -rfd /app
 # This saves 200MB
 
 
