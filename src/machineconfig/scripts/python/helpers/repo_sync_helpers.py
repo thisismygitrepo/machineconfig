@@ -1,5 +1,5 @@
 from machineconfig.utils.path_reduced import P as PathExtended
-from crocodile.meta import Terminal
+from machineconfig.utils.terminal import Terminal
 from machineconfig.scripts.python.get_zellij_cmd import get_zellij_cmd
 from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH
 from machineconfig.utils.utils2 import read_ini

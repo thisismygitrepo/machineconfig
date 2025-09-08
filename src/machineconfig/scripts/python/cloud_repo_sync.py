@@ -2,7 +2,7 @@
 
 import git
 from machineconfig.utils.path_reduced import P as PathExtended
-from crocodile.meta import Terminal
+from machineconfig.utils.terminal import Terminal
 from machineconfig.utils.utils2 import randstr, read_ini
 
 from machineconfig.scripts.python.helpers.repo_sync_helpers import fetch_dotfiles
