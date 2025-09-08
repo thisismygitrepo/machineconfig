@@ -28,9 +28,9 @@ def install_nerd_fonts():
     folder, _version_to_be_installed = Installer.from_dict(d=nerd_fonts, name="nerd_fonts").download(version=None)
 
     print("🧹 Cleaning up unnecessary files...")
-    folder.search("*Windows*").apply(lambda p: p.delete(sure=True))
-    folder.search("*readme*").apply(lambda p: p.delete(sure=True))
-    folder.search("*LICENSE*").apply(lambda p: p.delete(sure=True))
+    [p.delete(sure=True) for p in folder.search("*Windows*")]
+    [p.delete(sure=True) for p in folder.search("*readme*")]
+    [p.delete(sure=True) for p in folder.search("*LICENSE*")]
 
     print("⚙️  Installing fonts via PowerShell...")
     file = PathExtended.tmpfile(suffix=".ps1")

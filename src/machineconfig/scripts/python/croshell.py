@@ -112,7 +112,7 @@ def build_parser():
     elif args.fzf:
         text = "🔍 Searching for Python files..."
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
-        options = PathExtended.cwd().search("*.py", r=True).apply(str).list
+        options = [str(item) for item in PathExtended.cwd().search("*.py", r=True)]
         file = display_options(msg="Choose a python file to run", options=options, fzf=True, multi=False, )
         assert isinstance(file, str)
         program = PathExtended(file).read_text(encoding='utf-8')

@@ -84,12 +84,12 @@ def main():
     i_have_path_option = "I have the path to the key file"
     i_paste_option = "I want to paste the key itself"
 
-    res = display_options("Which public key to add? ", options=pub_keys.apply(str).list + [all_keys_option, i_have_path_option, i_paste_option])
+    res = display_options("Which public key to add? ", options=[str(x) for x in pub_keys] + [all_keys_option, i_have_path_option, i_paste_option])
     assert isinstance(res, str), f"Got {res} of type {type(res)} instead of str."
 
     if res == all_keys_option:
         console.print(Panel(f"🔄 Processing all {len(pub_keys)} public keys...", title="[bold blue]Processing[/bold blue]", border_style="blue"))
-        program = "\n\n\n".join(pub_keys.apply(get_add_ssh_key_script))
+        program = "\n\n\n".join([get_add_ssh_key_script(key) for key in pub_keys])
 
     elif res == i_have_path_option:
         console.print(Panel("📂 Please provide the path to your public key", title="[bold blue]Input Required[/bold blue]", border_style="blue"))

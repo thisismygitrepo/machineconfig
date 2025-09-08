@@ -17,14 +17,14 @@ def main():
 
     print(Panel("🔍 Searching for existing SSH keys...", expand=False))
 
-    private_keys = PathExtended.home().joinpath(".ssh").search("*.pub").apply(lambda x: x.with_name(x.stem)).filter(lambda x: x.exists())
-
+    private_keys = [x.with_name(x.stem) for x in PathExtended.home().joinpath(".ssh").search("*.pub")]
+    private_keys = [x for x in private_keys if x.exists()]
     if private_keys:
         print(Panel(f"✅ Found {len(private_keys)} SSH private key(s)", expand=False))
     else:
         print(Panel("⚠️  No SSH private keys found", expand=False))
 
-    choice = display_options(msg="Path to private key to be used when ssh'ing: ", options=private_keys.apply(str).list + ["I have the path to the key file", "I want to paste the key itself"])
+    choice = display_options(msg="Path to private key to be used when ssh'ing: ", options=[str(x) for x in private_keys] + ["I have the path to the key file", "I want to paste the key itself"])
 
     if choice == "I have the path to the key file":
         print(Panel("📄 Please enter the path to your private key file", expand=False))

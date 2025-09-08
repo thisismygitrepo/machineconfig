@@ -34,7 +34,7 @@ def find_move_delete_windows(downloaded_file_path: PathExtended, exe_name: Optio
                     exe = search_res[0]
                     print(f"✅ Found single executable: {exe}")
                 else:
-                    exe = search_res.sort(lambda x: x.size("kb"))[-1]
+                    exe = max(search_res, key=lambda x: x.size("kb"))
                     print(f"✅ Selected largest executable ({exe.size('kb')} KB): {exe}")
         if rename_to and exe.name != rename_to:
             print(f"🏷️  Renaming '{exe.name}' to '{rename_to}'")
@@ -73,7 +73,7 @@ def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: Opt
                 exe = exe_search_res[0]
                 print(f"✅ Found exact match for '{tool_name}': {exe}")
             else:
-                exe = exe_search_res.sort(lambda x: x.size("kb"))[-1]
+                exe = max(exe_search_res, key=lambda x: x.size("kb"))
                 print(f"✅ Selected largest executable ({exe.size('kb')} KB): {exe}")
 
     if rename_to and exe.name != rename_to:

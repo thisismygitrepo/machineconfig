@@ -2,9 +2,11 @@
 
 from machineconfig.utils.utils2 import randstr
 from datetime import datetime
+import time
 from pathlib import Path
 import sys
 import subprocess
+from platform import system
 from typing import Any, Optional, Union, Callable, TypeAlias, Literal
 import os
 
@@ -96,11 +98,6 @@ def modify_text(txt_raw: str, txt_search: str, txt_alt: Union[str, Callable[[str
     return "\n".join(lines)
 
 
-
-FILE_MODE: TypeAlias = Literal['r', 'w', 'x', 'a']
-SHUTIL_FORMATS: TypeAlias = Literal["zip", "tar", "gztar", "bztar", "xztar"]
-
-
 class Compression:
     @staticmethod
     def compress_folder(root_dir: str, op_path: str, base_dir: str, fmt: SHUTIL_FORMATS = 'zip', verbose: bool = False, **kwargs: Any) -> str:  # shutil works with folders nicely (recursion is done interally) # directory to be archived: root_dir\base_dir, unless base_dir is passed as absolute path. # when archive opened; base_dir will be found."""
@@ -161,7 +158,7 @@ class Compression:
         with tarfile.open(op_path, "w:gz") as tar_: tar_.add(str(path), arcname=os.path.basename(path))
         return Path(op_path)
     @staticmethod
-    def untar(path: str, op_path: str, fname: Optional[str]= None, mode: str = 'r', **kwargs: Any):
+    def untar(path: str, op_path: str, fname: Optional[str]= None, mode: Literal['r', 'w'] = 'r', **kwargs: Any):
         import tarfile
         with tarfile.open(str(path), mode) as file:
             if fname is None: file.extractall(path=op_path, **kwargs)  # extract all files in the archive
@@ -197,7 +194,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         slf = self.expanduser().resolve()
         if content:
             assert self.is_dir(), NotADirectoryError(f"💥 When `content` flag is set to True, path must be a directory. It is not: `{repr(self)}`")
-            self.search("*").apply(lambda x: x.move(folder=path.parent, content=False, overwrite=overwrite))
+            [x.move(folder=path.parent, content=False, overwrite=overwrite) for x in self.search("*")]
             return path  # contents live within this directory.
         if overwrite:
             tmp_path = slf.rename(path.parent.absolute() / randstr())
@@ -379,10 +376,8 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         target_obj = P(target).expanduser().resolve()
         if strict: assert target_obj.exists(), f"Target path `{target}` (aka `{target_obj}`) doesn't exist. This will create a broken link."
         if overwrite and (self.is_symlink() or self.exists()): self.delete(sure=True, verbose=verbose)
-        from platform import system
         from machineconfig.utils.terminal import Terminal
         if system() == "Windows" and not Terminal.is_user_admin():  # you cannot create symlink without priviliages.
-            import time
             import win32com.shell.shell
             _proce_info = win32com.shell.shell.ShellExecuteEx(lpVerb='runas', lpFile=sys.executable, lpParameters=f" -c \"from pathlib import Path; Path(r'{self.expanduser()}').symlink_to(r'{str(target_obj)}')\"")
             # TODO update PATH for this to take effect immediately.

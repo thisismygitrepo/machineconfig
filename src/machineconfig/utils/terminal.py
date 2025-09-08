@@ -140,7 +140,8 @@ class Terminal:
         return Response.from_completed_process(resp)
     def run_py(self, script: str, wdir: OPLike = None, interactive: bool = True, ipython: bool = True, shell: Optional[str] = None, terminal: str = "", new_window: bool = True, header: bool = True):  # async run, since sync run is meaningless.
         script = (Terminal.get_header(wdir=wdir, toolbox=True) if header else "") + script + ("\nDisplayData.set_pandas_auto_width()\n" if terminal in {"wt", "powershell", "pwsh"} else "")
-        py_script = P.tmpfile(name="tmp_python_script", suffix=".py", folder="tmp_scripts/terminal").write_text(f"""print(r'''{script}''')""" + "\n" + script)
+        py_script = P.tmpfile(name="tmp_python_script", suffix=".py", folder="tmp_scripts/terminal")
+        py_script.write_text(f"""print(r'''{script}''')""" + "\n" + script)
         print(f"""🚀 [ASYNC PYTHON SCRIPT] Script URI:
    {py_script.absolute().as_uri()}""")
         print("Script to be executed asyncronously: ", py_script.absolute().as_uri())
