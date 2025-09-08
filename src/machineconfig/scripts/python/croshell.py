@@ -128,16 +128,16 @@ def build_parser():
 
     elif args.read != "":
         if args.streamlit_viewer:
-            text = "📊 STARTING STREAMLIT VIEWER"
-            console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
-            from machineconfig.scripts.python.viewer import run
-            py_file_path = run(data_path=args.read, data=None, get_figure=None)
-            final_program = f"""
-#!/bin/bash
-. $HOME/scripts/activate_ve 've'
-streamlit run {py_file_path}
-"""
-            PROGRAM_PATH.write_text(data=final_program, encoding="utf-8")
+#             text = "📊 STARTING STREAMLIT VIEWER"
+#             console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
+#             from machineconfig.scripts.python.viewer import run
+#             py_file_path = run(data_path=args.read, data=None, get_figure=None)
+#             final_program = f"""
+# #!/bin/bash
+# . $HOME/scripts/activate_ve 've'
+# streamlit run {py_file_path}
+# """
+#             PROGRAM_PATH.write_text(data=final_program, encoding="utf-8")
             return None
         file = PathExtended(str(args.read).lstrip()).expanduser().absolute()
         program = get_read_data_pycode(str(file))

@@ -23,7 +23,6 @@ dependencies = [
     "rich>=14.0.0",
     "paramiko>=3.5.1",
     "psutil>=7.0.0",
-    "openai>=1.75.0",
     "fire>=0.7.0",
     "pydantic>=2.11.3",
     "clipboard>=0.0.4",
@@ -68,6 +67,8 @@ crocodile = { path = "../crocodile", editable = true }
 
 [dependency-groups]
 dev = [
+    "ipykernel>=6.30.1",
+    "ipython>=9.5.0",
     "mypy>=1.17.1",
     "pudb>=2025.1",
     "pylint>=3.3.8",
