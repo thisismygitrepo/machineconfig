@@ -19,6 +19,7 @@ applyTo: "**/*.py"
 * If you are writing a test or any temporary script for discovering or undestanding something as an intermediate step, then,
   please keep all your temp scripts and files under ./.ai/tmp_scripts directory, its included in .gitignore and won't litter the repo.
   Its also nice if you create a subdirectory therein to contain relevant files for the task at hand, to avoid confusion with other files from other ai agents working simulataneously on other things.
+* When you run a command in the terminal, please don't assume that it will run in the correct repo root directory. Always cd first to the repo root, or the desired directory, then run the command.
 
 # Python Coding Rules
 * Please type hint all the code. Use fully quilaified types, not just generics like dict, list, etc, rather dict[str, int], list[float], 'npt.NDarray[np.float32]', etc.

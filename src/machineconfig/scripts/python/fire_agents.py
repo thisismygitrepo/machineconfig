@@ -18,7 +18,7 @@ from typing import Literal, TypeAlias, get_args, Iterable
 from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
 from machineconfig.utils.utils2 import randstr
 
-AGENTS: TypeAlias = Literal["cursor-agent", "gemini"]
+AGENTS: TypeAlias = Literal["cursor-agent", "gemini", "crush"]
 TabConfig = dict[str, tuple[str, str]]  # tab name -> (cwd, command)
 DEFAULT_AGENT_CAP = 6
 
@@ -132,6 +132,12 @@ GEMINI_API_KEY={shlex.quote(api_key)} bash -lc 'cat {safe_path} | gemini {model_
 echo "Launching cursor-agent with prompt from {shlex.quote(str(prompt_path))}"
 cat {prompt_path}
 cursor-agent --print --output-format text < {prompt_path}
+"""
+            case "crush":
+                cmd = f"""
+echo "Launching crush with prompt from {shlex.quote(str(prompt_path))}"
+cat {prompt_path}
+cat {prompt_path} | crush
 """
             case _:
                 raise ValueError(f"Unsupported agent type: {agent}")

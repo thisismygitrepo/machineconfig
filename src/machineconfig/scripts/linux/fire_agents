@@ -11,7 +11,6 @@ if [ -f "$op_script" ]; then
   rm $op_script
 fi
 
-
 python -m machineconfig.scripts.python.fire_agents "$@"
 
 if [ -f "$op_script" ]; then

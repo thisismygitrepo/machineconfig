@@ -62,11 +62,13 @@ uv venv
     generic_instructions = instructions_repository_dir.joinpath("python/dev.instructions.md")
     tmp.write_text(data=generic_instructions.read_text(encoding="utf-8"), encoding="utf-8")
 
-    # CURSOR, GEMINI, CLAUDE CODE.
+    # CURSOR, GEMINI, CLAUDE CODE, CRUSH, CLINE.
     tmp = repo_root.joinpath(".cursor/rules/python_dev.mdc")
     tmp.parent.mkdir(parents=True, exist_ok=True)
     tmp.write_text(data=generic_instructions.read_text(encoding="utf-8"), encoding="utf-8")
     tmp = repo_root.joinpath("CLAUDE.md")
+    tmp.write_text(data=generic_instructions.read_text(encoding="utf-8"), encoding="utf-8")
+    tmp = repo_root.joinpath("CRUSH.md")
     tmp.write_text(data=generic_instructions.read_text(encoding="utf-8"), encoding="utf-8")
 
     tmp = repo_root.joinpath("GEMINI.md")
