@@ -1,5 +1,6 @@
 """utils"""
 
+from pathlib import Path
 import git
 from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.terminal import Terminal
@@ -92,7 +93,7 @@ git pull originEnc master
 from machineconfig.scripts.python.helpers.repo_sync_helpers import delete_remote_repo_copy_and_push_local as func
 func(remote_repo=r'{str(repo_remote_root)}', local_repo=r'{str(repo_local_root)}', cloud=r'{cloud_resolved}')
 """
-        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, ve_name="ve")
+        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, ve_path=str(Path.home().joinpath(".venv", "ve")))
         # ================================================================================
 
         option2 = 'Delete local repo and replace it with remote copy:'
@@ -114,7 +115,7 @@ sudo chmod +x $HOME/dotfiles/scripts/linux -R
 from machineconfig.scripts.python.helper.repo_sync_helpers import inspect_repos as func
 func(repo_local_root=r'{str(repo_local_root)}', repo_remote_root=r'{str(repo_remote_root)}')
 """
-        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_name="ve")
+        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_path=str(Path.home().joinpath(".venv", "ve")))
         # ================================================================================
 
         option4 = 'Remove problematic rclone file from repo and replace with remote:'
