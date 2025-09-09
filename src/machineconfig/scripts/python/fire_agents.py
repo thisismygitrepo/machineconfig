@@ -156,7 +156,7 @@ sleep 0.1
 echo "---------END OF AGENT OUTPUT---------"
 """
         cmd_path.write_text(cmd_prefix+cmd+cmd_postfix, encoding="utf-8")
-        fire_cmd = f". {shlex.quote(str(cmd_path))}"
+        fire_cmd = f"source {shlex.quote(str(cmd_path))}"
         tab_config[f"Agent{idx}"] = (str(repo_root), fire_cmd)
 
     print(f"Launching a template with #{len(tab_config)} agents")
