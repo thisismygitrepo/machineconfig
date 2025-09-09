@@ -137,8 +137,8 @@ cursor-agent --print --output-format text < {prompt_path}
 """
             case "crush":
                 cmd = f"""
-
-cat {prompt_path} | crush run
+# cat {prompt_path} | crush run
+crush run {prompt_path}
 """
             case _:
                 raise ValueError(f"Unsupported agent type: {agent}")
