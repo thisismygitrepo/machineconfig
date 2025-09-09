@@ -41,18 +41,36 @@ echo """
 #=======================================================================
 """
 
-echo """📥 Cloning repositories...
+echo """📥 Setting up repositories...
    🐊 crocodile     - Main utility package
    🔧 machineconfig - System configuration tools
 """
 
-echo """⏳ Cloning crocodile repository...
-"""
-git clone https://github.com/thisismygitrepo/crocodile.git --depth 4
+# Setup crocodile repository
+if [ -d "crocodile" ]; then
+    echo """🔄 crocodile directory exists, updating...
+    """
+    cd crocodile
+    git pull
+    cd ..
+else
+    echo """⏳ Cloning crocodile repository...
+    """
+    git clone https://github.com/thisismygitrepo/crocodile.git --depth 4
+fi
 
-echo """⏳ Cloning machineconfig repository...
-"""
-git clone https://github.com/thisismygitrepo/machineconfig --depth 4  # Choose browser-based authentication.
+# Setup machineconfig repository
+if [ -d "machineconfig" ]; then
+    echo """🔄 machineconfig directory exists, updating...
+    """
+    cd machineconfig
+    git pull
+    cd ..
+else
+    echo """⏳ Cloning machineconfig repository...
+    """
+    git clone https://github.com/thisismygitrepo/machineconfig --depth 4  # Choose browser-based authentication.
+fi
 
 echo """
 #=======================================================================
