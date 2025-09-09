@@ -1,8 +1,8 @@
 
-# FROM python:3.11.7-alpine3.19
-# FROM python:3.11.7-bookworm
+# FROM python:3.13.7-alpine3.19
+# FROM python:3.13.7-bookworm
 # FROM ubuntu:jammy-20240227
-# FROM python:3.11.9-slim
+# FROM python:3.13.9-slim
 FROM debian:bookworm-slim
 
 
@@ -24,7 +24,7 @@ RUN /app/setup_linux/apps_dev.sh
 
 # RUN /app/setup_linux/ve.sh
 # ENV PATH="/root/.local/bin:${PATH}"
-RUN /root/.local/bin/uv venv $HOME/venvs/ve --python 3.11 --python-preference only-managed
+RUN /root/.local/bin/uv venv $HOME/venvs/ve --python 3.13 --python-preference only-managed
 # Warning: does not come with pip
 RUN source $HOME/venvs/ve/bin/activate
 #  && \/root/.local/bin/uv pip install --upgrade pip

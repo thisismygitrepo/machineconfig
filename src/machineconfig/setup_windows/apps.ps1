@@ -42,7 +42,7 @@ winget install --no-upgrade --name "Git"                          --Id "Git.Git"
 
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 
-# winget install --no-upgrade --name "Python" --Id Python.Python.3.11 --source winget --scope user --accept-package-agreements --accept-source-agreements  # from https:\\winget.run  Python.Python.3.9
+# winget install --no-upgrade --name "Python" --Id Python.Python.3.13 --source winget --scope user --accept-package-agreements --accept-source-agreements  # from https:\\winget.run  Python.Python.3.9
 # the two above require Restart-Computer -Force before they are available in PATH, OR:
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 

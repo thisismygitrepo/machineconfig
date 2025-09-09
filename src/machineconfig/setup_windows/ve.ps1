@@ -6,7 +6,7 @@ if (-not $ve_name) {
 }
 
 if (-not $py_version) {
-    $py_version = "3.11"  # fastest version.
+    $py_version = "3.13"  # fastest version.
 }
 
 # --- End of user defined variables ---

@@ -38,7 +38,7 @@ uv sync
     print(f"""
 {'=' * 150}
 📋 INSTALLATION STEPS:
-1️⃣  Creating Python 3.11 virtual environment: {ve_name}
+1️⃣  Creating Python 3.13 virtual environment: {ve_name}
 2️⃣  Cloning Gorilla repository to ~/code/foreign
 3️⃣  Installing Gorilla in development mode
 {'=' * 150}

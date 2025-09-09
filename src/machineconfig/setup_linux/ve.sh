@@ -10,7 +10,7 @@ if [ -z "$ve_name" ]; then
 fi
 
 if [ -z "$py_version" ]; then
-    py_version=3.11  # fastest version.
+    py_version=3.13  # fastest version.
 fi
 # --- End of user defined variables ---
 
@@ -66,7 +66,7 @@ echo """#=======================================================================
     🐍 Python version: $py_version
 """
 
-$HOME/.local/bin/uv venv $HOME/venvs/$ve_name --python 3.11 --python-preference only-managed
+$HOME/.local/bin/uv venv $HOME/venvs/$ve_name --python 3.13 --python-preference only-managed
 
 echo """#=======================================================================
 🔌 ENVIRONMENT ACTIVATION | Setting up the environment
