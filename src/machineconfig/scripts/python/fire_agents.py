@@ -146,8 +146,8 @@ cat {prompt_path} | crush run
         cmd_prefix = f"""
 echo "Sleeping for {random_sleep_time:.2f} seconds to stagger agent startups..."
 sleep {random_sleep_time:.2f}
-echo "Launching `{agent}` with prompt from {shlex.quote(str(prompt_path))}"
-echo "Launching `{agent}` with command from {shlex.quote(str(cmd_path))}"
+echo "Launching `{agent}` with prompt from {prompt_path}"
+echo "Launching `{agent}` with command from {cmd_path}"
 echo "--------START OF AGENT OUTPUT--------"
 sleep 0.1
 """
