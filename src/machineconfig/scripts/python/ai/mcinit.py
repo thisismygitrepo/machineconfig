@@ -77,6 +77,10 @@ uv venv
     repo_root.joinpath(".gemini").mkdir(parents=True, exist_ok=True)
     repo_root.joinpath(".gemini/settings.json").write_text(data=gemini_settings.read_text(encoding="utf-8"), encoding="utf-8")
 
+    tmp = repo_root.joinpath(".clinerules")
+    tmp.mkdir(parents=True, exist_ok=True)
+    tmp.joinpath("python_dev.md").write_text(data=generic_instructions.read_text(encoding="utf-8"), encoding="utf-8")
+
     # OTHERS
     scripts_dir = mc_root.joinpath("scripts/python/ai/scripts")
     repo_root.joinpath("scripts").mkdir(parents=True, exist_ok=True)

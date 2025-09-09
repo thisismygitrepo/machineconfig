@@ -89,6 +89,8 @@ if [ -z "$VIRTUAL_ENV" ]; then
   echo """  🔌 Activating Python virtual environment...
   """
   source $HOME/venvs/$ve_name/bin/activate || exit
+else
+  echo "ve `$VIRTUAL_ENV` is already activated"
 fi
 
 echo """
