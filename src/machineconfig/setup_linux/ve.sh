@@ -66,7 +66,8 @@ echo """#=======================================================================
     🐍 Python version: $py_version
 """
 
-$HOME/.local/bin/uv venv $HOME/venvs/$ve_name --python 3.13 --python-preference only-managed
+$HOME/.local/bin/uv python upgrade $py_version
+$HOME/.local/bin/uv venv $HOME/venvs/$ve_name --python $py_version --python-preference only-managed
 
 echo """#=======================================================================
 🔌 ENVIRONMENT ACTIVATION | Setting up the environment

@@ -38,6 +38,7 @@ if (-not (Test-Path -Path "$HOME\.local\bin\uv.exe")) {
 }
 
 
+~\.local\bin\uv.exe python upgrade $py_version
 ~\.local\bin\uv.exe venv "$venvPath\$ve_name" --python $py_version --python-preference only-managed
 if (-not $env:VIRTUAL_ENV) {
     echo "Activating virtual environment @ $HOME\venvs\$ve_name"
