@@ -25,6 +25,7 @@ if (-not (Get-Command git.exe -ErrorAction SilentlyContinue)) {
 if (Test-Path "crocodile") {
     Write-Host "🔄 crocodile directory exists, updating..."
     Set-Location crocodile
+    git reset --hard
     git pull
     Set-Location ..
 } else {
@@ -36,6 +37,7 @@ if (Test-Path "crocodile") {
 if (Test-Path "machineconfig") {
     Write-Host "🔄 machineconfig directory exists, updating..."
     Set-Location machineconfig
+    git reset --hard
     git pull
     Set-Location ..
 } else {

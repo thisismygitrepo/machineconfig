@@ -51,6 +51,7 @@ if [ -d "crocodile" ]; then
     echo """🔄 crocodile directory exists, updating...
     """
     cd crocodile
+    git reset --hard
     git pull
     cd ..
 else
@@ -64,6 +65,7 @@ if [ -d "machineconfig" ]; then
     echo """🔄 machineconfig directory exists, updating...
     """
     cd machineconfig
+    git reset --hard
     git pull
     cd ..
 else
