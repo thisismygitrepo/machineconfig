@@ -8,11 +8,11 @@ from machineconfig.utils.options import check_tool_exists, choose_cloud_interact
 from rich.console import Console
 from rich.panel import Panel
 from machineconfig.utils.links import build_links, symlink_copy, symlink_func
-from machineconfig.utils.code import get_shell_script_executing_python_file, get_shell_file_executing_python_script, write_shell_script_to_default_program_path, print_code, PROGRAM_PATH
+from machineconfig.utils.code import write_shell_script_to_default_program_path, print_code, PROGRAM_PATH
 from machineconfig.utils.path import sanitize_path, match_file_name
 
 # Split into multiple assignments to fix incompatible tuple sizes
-_ = get_shell_script_executing_python_file, get_shell_file_executing_python_script, print_code, PROGRAM_PATH, display_options, write_shell_script_to_default_program_path
+_ = print_code, PROGRAM_PATH, display_options, write_shell_script_to_default_program_path
 _ = build_links
 _ = symlink_copy
 _ = symlink_func

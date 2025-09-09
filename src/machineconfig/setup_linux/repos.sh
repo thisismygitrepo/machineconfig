@@ -116,6 +116,7 @@ echo """📦 Installing machineconfig package in development mode...
 """
 cd $HOME/code/machineconfig
 $HOME/.local/bin/uv pip install -e .
+# $HOME/.local/bin/uv cache clean
 
 # Return to home directory
 cd $HOME

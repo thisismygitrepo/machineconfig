@@ -54,7 +54,7 @@ def write_shell_script_to_default_program_path(program: str, desc: str, preserve
         result = subprocess.run(f". {PROGRAM_PATH}", shell=True, capture_output=True, text=True)
         success = result.returncode == 0 and result.stderr == ""
         if not success:
-            print(f"❌ 🛠️  EXECUTION | Shell script running failed")
+            print("❌ 🛠️  EXECUTION | Shell script running failed")
             if result.stdout:
                 print(f"STDOUT: {result.stdout}")
             if result.stderr:
