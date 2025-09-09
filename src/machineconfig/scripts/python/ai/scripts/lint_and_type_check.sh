@@ -13,7 +13,6 @@ uv add cleanpy --dev  # codebase cleaner
 
 uv add types-requests types-toml types-PyYAML types-pytz types-paramiko types-urllib3 --dev
 uv add types-mysqlclient types-SQLAlchemy --dev
-uv add types-pytest-lazy-fixtures --dev
 
 uv run -m cleanpy .
 uv run -m ruff clean
