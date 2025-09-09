@@ -5,7 +5,7 @@
 # winget install Microsoft.VC++2015-2022Redist-x86
 
 
-~/scritps/activate_ve.ps1
+. "$env:USERPROFILE\venvs\ve\Scripts\Activate.ps1"
 Set-Location C:
 python -m pip install --global-option=build_ext --global-option="-IC:\Program Files\Graphviz\include" --global-option="-LC:\Program Files\Graphviz\lib" pygraphviz
 # not including the options as above (from https://pygraphviz.github.io/documentation/stable/install.html)

@@ -284,7 +284,6 @@
 
 #     print(f"Task: {task.name}")
 
-#     shell_script = get_shell_script_executing_python_file(python_file=str(task.task_root.joinpath("task.py")), ve_name=task.venv)
 #     shell_script_root = PathExtended.tmp().joinpath(f"tmp_scripts/scheduler/{task.name}")
 #     shell_script_root.mkdir(parents=True, exist_ok=True)
 #     try:

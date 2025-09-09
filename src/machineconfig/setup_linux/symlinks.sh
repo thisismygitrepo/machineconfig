@@ -8,7 +8,6 @@ echo """#=======================================================================
 🔌 ENVIRONMENT ACTIVATION | Setting up Python environment
 #=======================================================================
 """
-# ⚠️ CAUTION: deliberately avoided using ~/scripts/activate_ve since this is yet to be established in this script.
 echo """🐍 Activating Python virtual environment...
 """
 source $HOME/venvs/ve/bin/activate

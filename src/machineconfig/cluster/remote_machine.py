@@ -144,7 +144,6 @@
 # echo "~~~~~~~~~~~~~~~~SHELL START~~~~~~~~~~~~~~~"
 # {'~/scripts/devops -w update' if self.config.update_essential_repos else ''}
 # {f'cd {P(self.job_params.repo_path_rh).collapseuser().as_posix()}'}
-# . activate_ve {ve_name}
 # {'git pull' if self.config.update_repo else ''}
 # {'pip install -e .' if self.config.install_repo else ''}
 # echo "~~~~~~~~~~~~~~~~SHELL  END ~~~~~~~~~~~~~~~"
