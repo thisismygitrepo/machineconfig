@@ -105,6 +105,7 @@ def launch_agents(repo_root: Path, prompts: list[str], agent: AGENTS, *, max_age
     for idx, a_prompt in enumerate(prompts):
         prompt_path = tmp_dir / f"agent{idx}_prompt.txt"
         prompt_path.write_text(a_prompt, encoding="utf-8")
+        cmd_path = tmp_dir / f"agent{idx}_cmd.sh"
         match agent:
             case "gemini":
                 # model = "gemini-2.5-pro"
@@ -122,27 +123,28 @@ def launch_agents(repo_root: Path, prompts: list[str], agent: AGENTS, *, max_age
                 cmd = f"""
 export GEMINI_API_KEY={shlex.quote(api_key)}
 echo "Using Gemini API key $GEMINI_API_KEY"
-echo "Launching gemini agent with prompt from {shlex.quote(str(prompt_path))}"
 cat {prompt_path}
 GEMINI_API_KEY={shlex.quote(api_key)} bash -lc 'cat {safe_path} | gemini {model_arg} --yolo --prompt'
 """
             case "cursor-agent":
                 # As originally implemented
                 cmd = f"""
-echo "Launching cursor-agent with prompt from {shlex.quote(str(prompt_path))}"
-cat {prompt_path}
+
 cursor-agent --print --output-format text < {prompt_path}
+
 """
             case "crush":
                 cmd = f"""
-echo "Launching crush with prompt from {shlex.quote(str(prompt_path))}"
-cat {prompt_path}
+
 cat {prompt_path} | crush run
 """
             case _:
                 raise ValueError(f"Unsupported agent type: {agent}")
-        cmd_path = tmp_dir / f"agent{idx}_cmd.sh"
-        cmd_path.write_text(cmd, encoding="utf-8")
+        cmd_prefix = f"""
+echo "Launching `{agent}` with prompt from {shlex.quote(str(prompt_path))}"
+echo "Launching `{agent}` with command from {shlex.quote(str(cmd_path))}"
+"""
+        cmd_path.write_text(cmd_prefix+cmd, encoding="utf-8")
         fire_cmd = f"bash {shlex.quote(str(cmd_path))}"
         tab_config[f"Agent{idx}"] = (str(repo_root), fire_cmd)
 
