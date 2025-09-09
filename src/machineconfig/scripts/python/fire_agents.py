@@ -17,6 +17,8 @@ from typing import Literal, TypeAlias, get_args, Iterable
 
 from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
 from machineconfig.utils.utils2 import randstr
+import random
+# import time
 
 AGENTS: TypeAlias = Literal["cursor-agent", "gemini", "crush"]
 TabConfig = dict[str, tuple[str, str]]  # tab name -> (cwd, command)
@@ -140,7 +142,10 @@ cat {prompt_path} | crush run
 """
             case _:
                 raise ValueError(f"Unsupported agent type: {agent}")
+        random_sleep_time = random.uniform(0, 5)
         cmd_prefix = f"""
+echo "Sleeping for {random_sleep_time:.2f} seconds to stagger agent startups..."
+sleep {random_sleep_time:.2f}
 echo "Launching `{agent}` with prompt from {shlex.quote(str(prompt_path))}"
 echo "Launching `{agent}` with command from {shlex.quote(str(cmd_path))}"
 """
