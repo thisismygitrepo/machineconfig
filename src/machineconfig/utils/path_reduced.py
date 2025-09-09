@@ -9,6 +9,7 @@ import subprocess
 from platform import system
 from typing import Any, Optional, Union, Callable, TypeAlias, Literal
 import os
+import warnings
 
 
 OPLike: TypeAlias = Union[str, 'P', Path, None]
@@ -323,7 +324,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             try: target = self.resolve()  # broken symolinks are funny, and almost always fail `resolve` method.
             except Exception: target = "BROKEN LINK " + str(self)  # avoid infinite recursions for broken links.
             return "🔗 Symlink '" + str(self) + "' ==> " + (str(target) if target == self else str(target))
-        elif self.is_absolute(): return self._type() + " '" + str(self.clickable()) + "'" + (" | " + self.time(which="c").isoformat()[:-7].replace("T", "  ") if self.exists() else "") + (f" | {self.size()} Mb" if self.is_file() else "")
+        elif self.is_absolute(): return self._type() + " '" + str(self.clickable()) + "'" + (" | " + datetime.fromtimestamp(self.stat().st_ctime).isoformat()[:-7].replace("T", "  ") if self.exists() else "") + (f" | {self.size()} Mb" if self.is_file() else "")
         elif "http" in str(self): return "🕸️ URL " + str(self.as_url_str())
         else: return "📍 Relative " + "'" + str(self) + "'"  # not much can be said about a relative path.
     # def to_str(self) -> str: return str(self)
@@ -336,16 +337,23 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             case "mb": tmp = 1024 ** 2
             case "gb": tmp = 1024 ** 3
         return round(number=total_size / tmp, ndigits=1)
-    def time(self, which: Literal["m", "c", "a"] = "m", **kwargs: Any):
-        """* `m`: last mofidication of content, i.e. the time it was created.
-        * `c`: last status change (its inode is changed, permissions, path, but not content)
-        * `a`: last access (read)
-        """
-        match which:
-            case "m": tmp = self.stat().st_mtime
-            case "a": tmp = self.stat().st_atime
-            case "c": tmp = self.stat().st_ctime
-        return datetime.fromtimestamp(tmp, **kwargs)
+    # def time(self, which: Literal["m", "c", "a"] = "m", **kwargs: Any):
+    #     """* `m`: last mofidication of content, i.e. the time it was created.
+    #     * `c`: last status change (its inode is changed, permissions, path, but not content)
+    #     * `a`: last access (read)
+    #     """
+    #     warnings.warn(
+    #         "The 'time' method is deprecated. Use 'datetime.fromtimestamp(self.stat().st_mtime)' for 'm', "
+    #         "'datetime.fromtimestamp(self.stat().st_ctime)' for 'c', or "
+    #         "'datetime.fromtimestamp(self.stat().st_atime)' for 'a' instead.",
+    #         DeprecationWarning,
+    #         stacklevel=2
+    #     )
+    #     match which:
+    #         case "m": tmp = self.stat().st_mtime
+    #         case "a": tmp = self.stat().st_atime
+    #         case "c": tmp = self.stat().st_ctime
+    #     return datetime.fromtimestamp(tmp, **kwargs)
 
     # ================================ String Nature management ====================================
     def clickable(self, ) -> 'P': return self._return(res=P(self.expanduser().resolve().as_uri()), operation='Whack')
