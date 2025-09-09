@@ -149,7 +149,9 @@ sleep {random_sleep_time:.2f}
 echo "Launching `{agent}` with prompt from {shlex.quote(str(prompt_path))}"
 echo "Launching `{agent}` with command from {shlex.quote(str(cmd_path))}"
 """
-        cmd_path.write_text(cmd_prefix+cmd, encoding="utf-8")
+        cmd_postfix = """
+echo "Agent finished." """
+        cmd_path.write_text(cmd_prefix+cmd+cmd_postfix, encoding="utf-8")
         fire_cmd = f"bash {shlex.quote(str(cmd_path))}"
         tab_config[f"Agent{idx}"] = (str(repo_root), fire_cmd)
 
