@@ -20,7 +20,9 @@ from machineconfig.utils.utils2 import randstr
 import random
 # import time
 
-AGENTS: TypeAlias = Literal["cursor-agent", "gemini", "crush"]
+AGENTS: TypeAlias = Literal["cursor-agent", "gemini", "crush", "q",
+                            # warp terminal
+                            ]
 TabConfig = dict[str, tuple[str, str]]  # tab name -> (cwd, command)
 DEFAULT_AGENT_CAP = 6
 
@@ -139,6 +141,10 @@ cursor-agent --print --output-format text < {prompt_path}
                 cmd = f"""
 # cat {prompt_path} | crush run
 crush run {prompt_path}
+"""
+            case "q":
+                cmd = f"""
+q chat --no-interactive --trust-all-tools {prompt_path}
 """
             case _:
                 raise ValueError(f"Unsupported agent type: {agent}")
