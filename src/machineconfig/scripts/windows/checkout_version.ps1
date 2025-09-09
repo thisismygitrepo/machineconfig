@@ -1,6 +1,4 @@
 
-# . $HOME/scripts/activate_ve 've'
-. "$HOME\scripts\activate_ve.ps1" ve
-
+. "$HOME\venvs\ve\Scripts\activate.ps1"
 python -m fire machineconfig.jobs.python.checkout_version main
 deactivate

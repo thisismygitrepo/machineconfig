@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-. $HOME/scripts/activate_ve 've'
+source ~/venvs/ve/bin/activate
+
 
 # Generate random string of length 5
 random_str=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)
@@ -17,7 +18,7 @@ if [ -f "$op_script" ]; then
   echo "Running $op_script"
   chmod +x $op_script
   set --  # clear all positional parameters
-  source $op_script  # sourcing the script means the args passed to the this script are passed to the sourced script which cofuses the sources script as it contains activate_ve and it doesn't understand first.sh arguments.
+  source $op_script  # sourcing the script means the args passed to the this script are passed to the sourced script which cofuses the sources script as it  and it doesn't understand first.sh arguments.
 fi
 
 

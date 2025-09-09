@@ -2,7 +2,7 @@
 
 # check below if VIRTUAL_ENV is set
 # if [ -z "$VIRTUAL_ENV" ]; then
-source $HOME/scripts/activate_ve 've'
+source ~/venvs/ve/bin/activate
 # fi
 
 op_script=$HOME/tmp_results/shells/python_return_command.sh

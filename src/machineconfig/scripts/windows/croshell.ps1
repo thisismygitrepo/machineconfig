@@ -18,7 +18,7 @@ $ErrorActionPreference = "Stop"
 # }
 
 $script_root = $MyInvocation.MyCommand.Path
-. "$HOME\scripts\activate_ve.ps1" ve
+. "$HOME\venvs\ve\Scripts\activate.ps1"
 
 #. "$script_root\..\activate_ve.ps1"  # dynamic v
 

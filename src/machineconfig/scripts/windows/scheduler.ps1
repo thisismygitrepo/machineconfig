@@ -1,5 +1,5 @@
 
-. "$HOME\scripts\activate_ve.ps1" ve
+. "$HOME\venvs\ve\Scripts\activate.ps1"
 
 python -m machineconfig.scripts.python.scheduler $Args
 

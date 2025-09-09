@@ -6,7 +6,7 @@ if [ -f "$op_script" ]; then
 fi
 
 
-. $HOME/scripts/activate_ve 've'
+source ~/venvs/ve/bin/activate
 
 python $(dirname $(dirname $0))/python/cloud_repo_sync.py "$@"
 

@@ -1,6 +1,5 @@
 
-# . $PSScriptRoot/activate_ve.ps1 ve
-. "$HOME\scripts\activate_ve.ps1" ve
+. "$HOME\venvs\ve\Scripts\activate.ps1"
 
 # python $PSScriptRoot/../python/cloud_repo_sync.py $args
 python -m machineconfig.scripts.python.cloud_repo_sync $args

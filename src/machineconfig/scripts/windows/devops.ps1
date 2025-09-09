@@ -6,9 +6,6 @@ if (Test-Path $op_script ) {
 }
 
 
-# choose ve to use
-# . $PSScriptRoot/activate_ve.ps1 've'
-# . "$HOME\scripts\activate_ve.ps1" ve
 . "$HOME\venvs\ve\Scripts\activate.ps1"
 
 # Locate the python script to run relative to the current directory (which might be a symlink)
