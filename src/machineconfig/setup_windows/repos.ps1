@@ -3,6 +3,19 @@ cd ~
 mkdir code -ErrorAction SilentlyContinue
 cd ~\code
 
+# Cleanup - Remove existing .venv folders if they exist
+Write-Host "🧹 CLEANUP | Removing existing .venv folders if present"
+
+if (Test-Path "$HOME\code\machineconfig\.venv") {
+    Write-Host "  🗑️  Removing existing .venv folder in machineconfig..."
+    Remove-Item -Path "$HOME\code\machineconfig\.venv" -Recurse -Force
+}
+
+if (Test-Path "$HOME\code\crocodile\.venv") {
+    Write-Host "  🗑️  Removing existing .venv folder in crocodile..."
+    Remove-Item -Path "$HOME\code\crocodile\.venv" -Recurse -Force
+}
+
 if (-not (Get-Command git.exe -ErrorAction SilentlyContinue)) {
     winget install --no-upgrade --name "Git" --Id Git.Git --source winget --accept-package-agreements --accept-source-agreements --scope user
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")

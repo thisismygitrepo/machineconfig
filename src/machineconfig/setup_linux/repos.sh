@@ -19,6 +19,23 @@ mkdir -p code
 cd $HOME/code
 
 echo """
+🧹 CLEANUP | Removing existing .venv folders if present
+"""
+
+# Remove .venv folders if they exist
+if [ -d "$HOME/code/machineconfig/.venv" ]; then
+    echo """  🗑️  Removing existing .venv folder in machineconfig...
+    """
+    rm -rf "$HOME/code/machineconfig/.venv"
+fi
+
+if [ -d "$HOME/code/crocodile/.venv" ]; then
+    echo """  🗑️  Removing existing .venv folder in crocodile...
+    """
+    rm -rf "$HOME/code/crocodile/.venv"
+fi
+
+echo """
 #=======================================================================
 🔄 REPOSITORIES SETUP | Cloning project codebases
 #=======================================================================
