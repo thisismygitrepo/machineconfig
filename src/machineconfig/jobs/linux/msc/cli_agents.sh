@@ -3,6 +3,8 @@
 
 npm install -g @google/gemini-cli
 npm install -g @charmland/crush
+npm install -g opencode-ai@latest
+
 curl https://cursor.com/install -fsS | bash
 
 cd $HOME/Downloads
