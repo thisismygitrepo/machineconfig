@@ -9,7 +9,7 @@ import subprocess
 from platform import system
 from typing import Any, Optional, Union, Callable, TypeAlias, Literal
 import os
-import warnings
+# import warnings
 
 
 OPLike: TypeAlias = Union[str, 'P', Path, None]
