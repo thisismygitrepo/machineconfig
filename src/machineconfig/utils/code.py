@@ -17,7 +17,7 @@ def get_shell_script_executing_python_file(python_file: str, func: Optional[str]
     if func is None: exec_line = f"""python {python_file}"""
     else: exec_line = f"""python -m fire {python_file} {func}"""
     shell_script = f"""
-echo "Executing {exec_line}"
+echo "Executing `{exec_line}`"
 {get_ve_activate_line(ve_path)}
 {exec_line}
 deactivate || true
