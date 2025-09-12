@@ -19,6 +19,7 @@ applyTo: "**/*.py"
 * If you are writing a test or any temporary script for discovering or undestanding something as an intermediate step, then,
   please keep all your temp scripts and files under ./.ai/tmp_scripts directory, its included in .gitignore and won't litter the repo.
   Its also nice if you create a subdirectory therein to contain relevant files for the task at hand, to avoid confusion with other files from other ai agents working simulataneously on other things.
+* When you run a command in the terminal, please don't assume that it will run in the correct repo root directory. Always cd first to the repo root, or the desired directory, then run the command.
 
 # Python Coding Rules
 * Please type hint all the code. Use fully quilaified types, not just generics like dict, list, etc, rather dict[str, int], list[float], 'npt.NDarray[np.float32]', etc.
@@ -38,7 +39,7 @@ applyTo: "**/*.py"
 # General Programming Ethos:
 * Make sure all the code is rigorous, no lazy stuff.
     * For example, always avoid default values in arguments of functions. Those are evil and cause confusion. Always be explicit in parameter passing.
-    * Unless asked explicitly, please never ever attempt to change code files by writing meta code to do string manipulation on files. Please do change the files one by one, no matter how many there is. Don't worry about time, its okay, take your time and do them one by one. You can stop in the middle and we will have another LLM to help with the rest.
+    * Please never ever attempt to change code files by writing meta code to do string manipulation on files, e.g. with `sed` command with terminal. Please do change the files one by one, no matter how many there is. Don't worry about time, nor context window size, its okay, take your time and do the legwork. You can stop in the middle and we will have another LLM to help with the rest.
 * Please avoid writing README files and avoid docstring and comments in code unless absolutely necessary. Use clear naming conventions instead of documenting.
 * Always prefer to functional style of programming over OOP.
 * When passing arguments or constructing dicts or lists or tuples, avoid breaking lines too much, try to use ~ 150 characters per line before breaking to new one.

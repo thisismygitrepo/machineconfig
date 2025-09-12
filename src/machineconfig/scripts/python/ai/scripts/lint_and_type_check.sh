@@ -8,8 +8,9 @@ fi
 echo "Running linting and type checking..."
 
 echo "Setting up environment..."
-uv add pylint pyright mypy pyrefly ruff ty --dev  # linters and type checkers
-uv add cleanpy --dev  # codebase cleaner
+# uv add pylint pyright mypy pyrefly ruff ty --dev  # linters and type checkers
+uv add --dev cleanpy pylint pyright mypy pyrefly --upgrade-package cleanpy pylint pyright mypy pyrefly
+
 
 uv add types-requests types-toml types-PyYAML types-pytz types-paramiko types-urllib3 --dev
 uv add types-mysqlclient types-SQLAlchemy --dev

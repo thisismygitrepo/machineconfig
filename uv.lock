@@ -151,6 +151,15 @@ wheels = [
 ]
 
 [[package]]
+name = "cleanpy"
+version = "0.5.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/da/94/c10e463f720c804c55cb4b3c5f04380fa03e9b1e2fb7026420528fd89476/cleanpy-0.5.1.tar.gz", hash = "sha256:9ddfa7ce80dd888b597a8b0bfeea3b69567839b6f41b775a4f76f46914d5170e", size = 11985, upload-time = "2024-12-30T06:08:15.068Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c1/61/cfd606e2425a7490982cdfa5c8da86f35b158eba792f5f9107a1788a2ad7/cleanpy-0.5.1-py3-none-any.whl", hash = "sha256:c60589d5da68527ca0c9151e28ed56fffae69df4ab6c9bfd8c1cf1d9e76a09b8", size = 9823, upload-time = "2024-12-30T06:08:12.107Z" },
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -450,6 +459,7 @@ windows = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "cleanpy" },
     { name = "ipykernel" },
     { name = "ipython" },
     { name = "mypy" },
@@ -493,6 +503,7 @@ provides-extras = ["windows", "docs"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "cleanpy", specifier = ">=0.5.1" },
     { name = "ipykernel", specifier = ">=6.30.1" },
     { name = "ipython", specifier = ">=9.5.0" },
     { name = "mypy", specifier = ">=1.17.1" },
