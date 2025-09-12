@@ -9,7 +9,12 @@ echo "Running linting and type checking..."
 
 echo "Setting up environment..."
 # uv add pylint pyright mypy pyrefly ruff ty --dev  # linters and type checkers
-uv add --dev cleanpy pylint pyright mypy pyrefly --upgrade-package cleanpy pylint pyright mypy pyrefly
+# uv add --dev cleanpy pylint pyright mypy pyrefly --upgrade-package cleanpy pylint pyright mypy pyrefly
+uv add --dev pyright --upgrade-package pyright
+uv add --dev pylint --upgrade-package pylint
+uv add --dev mypy --upgrade-package mypy
+uv add --dev pyrefly --upgrade-package pyrefly
+uv add --dev cleanpy --upgrade-package cleanpy
 
 
 uv add types-requests types-toml types-PyYAML types-pytz types-paramiko types-urllib3 --dev
