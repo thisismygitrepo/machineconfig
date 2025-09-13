@@ -22,9 +22,9 @@ uv add types-mysqlclient types-SQLAlchemy --dev
 
 uv run -m cleanpy .
 uv run -m ruff clean
-uv run -m ruff format .
+# uv run -m ruff format .
 uv run -m ruff check . --fix
-
+uv run --with machineconfig -m machineconfig.scripts.python.ai.generate_files
 
 mkdir .linters
 
