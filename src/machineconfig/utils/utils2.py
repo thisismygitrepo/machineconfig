@@ -1,5 +1,3 @@
-
-
 from pathlib import Path
 from typing import Optional, Any
 # import time
@@ -45,41 +43,18 @@ def get_repr(obj: dict[Any, Any], sep: str = "\n", justify: int = 15, quotes: bo
     return sep.join([f"{key:>{justify}} = {repr(val) if quotes else val}" for key, val in obj.items()])
 
 
-# T = TypeVar('T')
-# PS = ParamSpec('PS')
+def human_friendly_dict(d: dict[str, Any]) -> dict[str, Any]:
+    from datetime import datetime
+    result = {}
+    for k, v in d.items():
+        if isinstance(v, float):
+            result[k] = f"{v:.2f}"
+        elif isinstance(v, bool):
+            result[k] = "✓" if v else "✗"
+        elif isinstance(v, int) and len(str(v)) == 13 and v > 0:  # assuming ms timestamp
+            dt = datetime.fromtimestamp(v / 1000)
+            result[k] = dt.strftime("%Y-%m-%d %H:%M")
+        else:
+            result[k] = v
+    return result
 
-# class RepeatUntilNoException:
-#     """
-#     Repeat function calling if it raised an exception and/or exceeded the timeout, for a maximum of `retry` times.
-#     * Alternative: `https://github.com/jd/tenacity`
-#     """
-#     def __init__(self, retry: int, sleep: float, timeout: Optional[float] = None, scaling: Literal["linear", "exponential"] = "exponential"):
-#         self.retry = retry
-#         self.sleep = sleep
-#         self.timeout = timeout
-#         self.scaling: Literal["linear", "exponential"] = scaling
-#     def __call__(self, func: Callable[PS, T]) -> Callable[PS, T]:
-#         from functools import wraps
-#         if self.timeout is not None:
-#             import warpt_time_decorator
-#             func = wrapt_timeout_decorator.timeout(self.timeout)(func)
-#         @wraps(wrapped=func)
-#         def wrapper(*args: PS.args, **kwargs: PS.kwargs):
-#             t0 = time.time()
-#             for idx in range(self.retry):
-#                 try:
-#                     return func(*args, **kwargs)
-#                 except Exception as ex:
-#                     match self.scaling:
-#                         case "linear":
-#                             sleep_time = self.sleep * (idx + 1)
-#                         case "exponential":
-#                             sleep_time = self.sleep * (idx + 1)**2
-#                     print(f"""💥 [RETRY] Function {func.__name__} call failed with error:
-# {ex}
-# Retry count: {idx}/{self.retry}. Sleeping for {sleep_time} seconds.
-# Total elapsed time: {time.time() - t0:0.1f} seconds.""")
-#                     print(f"""💥 Robust call of `{func}` failed with ```{ex}```.\nretrying {idx}/{self.retry} more times after sleeping for {sleep_time} seconds.\nTotal wait time so far {time.time() - t0: 0.1f} seconds.""")
-#                     time.sleep(sleep_time)
-#             raise RuntimeError(f"💥 Robust call failed after {self.retry} retries and total wait time of {time.time() - t0: 0.1f} seconds.\n{func=}\n{args=}\n{kwargs=}")
-#         return wrapper
