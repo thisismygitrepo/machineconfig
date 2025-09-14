@@ -33,7 +33,7 @@ require('dap').configurations.python = { {
 local dap = require('dap')
 dap.adapters.python = {
   type = 'executable';
-  command = "C:/Users/alex/venvs/ve/Scripts/python.exe";
+  command = "C:/Users/alex/code/crocodile/.venv/Scripts/python.exe";
   args = {"-i" };
 }
 

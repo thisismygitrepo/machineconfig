@@ -30,7 +30,7 @@ if (-not (Test-Path $script_dir)) {
 # }
 
 
-. "$HOME\venvs\ve\Scripts\activate.ps1"
+. "$HOME\code\crocodile\.venv\Scripts\activate.ps1"
 python -m machineconfig.scripts.python.fire_jobs $args
 
 

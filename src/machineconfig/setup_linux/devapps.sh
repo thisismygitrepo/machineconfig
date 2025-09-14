@@ -2,7 +2,7 @@
 # 🛠️ Development Tools Installation Script
 
 # 🐍 Activate Python virtual environment
-. $HOME/venvs/ve/bin/activate
+. $HOME/code/crocodile/.venv/bin/activate
 
 # ⚙️ Install development applications
 python -m fire machineconfig.scripts.python.devops_devapps_install main --which=AllEssentials  # Installs all essential tools

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ~/venvs/ve/bin/activate
+source ~/code/crocodile/.venv/bin/activate
 python $(dirname $(dirname $0))/python/ftpx.py "$@"
 if [ -n "$VIRTUAL_ENV" ]; then
   deactivate || true

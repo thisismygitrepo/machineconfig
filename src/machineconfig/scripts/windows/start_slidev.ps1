@@ -5,7 +5,7 @@ if (Test-Path $op_script ) {
   Remove-Item $op_script
 }
 
-. "$HOME\venvs\ve\Scripts\activate.ps1"
+. "$HOME\code\crocodile\.venv\Scripts\activate.ps1"
 
 python -m machineconfig.scripts.python.start_slidev $args
 

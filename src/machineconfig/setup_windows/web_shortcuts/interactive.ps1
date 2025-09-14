@@ -8,7 +8,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser"
 Write-Host "💡 To accept all prompts automatically, run: `$yesAll = `$true`n"
 
 # Set environment variable and execute scripts
-$ve_name = "ve"
+$ve_name = ".venv"
 
 Write-Host "🔄 Setting up Python environment..."
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1" -OutFile "ve.ps1"
@@ -92,7 +92,7 @@ if ($createLinksChoice -eq "y" -or $createLinksChoice -eq "Y") {
         $linkTypeChoice = "h"
     }
 
-    . ~\venvs\ve\Scripts\Activate.ps1
+    . ~\code\crocodile\.venv\Scripts\Activate.ps1
 
     if ($linkTypeChoice -eq "s" -or $linkTypeChoice -eq "S") {
         python -m fire machineconfig.profile.create main --choice=all
@@ -119,7 +119,7 @@ if (-not $yesAll) {
     }
     
 } else {
-    . $HOME\venvs\ve\Scripts\activate.ps1
+    . $HOME\code\crocodile\.venv\Scripts\activate.ps1
     python -m fire machineconfig.scripts.python.devops_devapps_install main  --which=AllEssentials
     deactivate    
 }
@@ -146,7 +146,7 @@ if (-not $yesAll) {
 }
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
-    . ~\venvs\ve\Scripts\Activate.ps1
+    . ~\code\crocodile\.venv\Scripts\Activate.ps1
     python -m fire machineconfig.scripts.python.devops_backup_retrieve main --direction=RETRIEVE
 } else {
     Write-Host "Installation aborted."
@@ -170,7 +170,7 @@ if ($choice -eq "y" -or $choice -eq "Y") {
     python -m fire machineconfig.setup_windows.wt_and_pwsh.set_wt_settings main
     winget install --no-upgrade --name "Brave"                        --Id "Brave.Brave"                --source winget --scope user --accept-package-agreements --accept-source-agreements
     winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements
-    . $HOME\venvs\ve\Scripts\Activate.ps1
+    . $HOME\code\crocodile\.venv\Scripts\Activate.ps1
     python -m fire machineconfig.setup_windows.wt_and_pwsh.set_pwsh_theme install_nerd_fonts
     python -m fire machineconfig.setup_windows.wt_and_pwsh.set_wt_settings main
 

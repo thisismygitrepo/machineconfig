@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ~/venvs/ve/bin/activate
+source ~/code/crocodile/.venv/bin/activate
 python -m fire machineconfig.jobs.python.checkout_version main
 if [ -n "$VIRTUAL_ENV" ]; then
   deactivate || true

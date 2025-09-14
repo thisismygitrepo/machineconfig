@@ -10,7 +10,7 @@ echo """#=======================================================================
 """
 echo """🐍 Activating Python virtual environment...
 """
-source $HOME/venvs/ve/bin/activate
+source $HOME/code/crocodile/.venv/bin/activate
 
 echo """#=======================================================================
 🔄 CONFIGURATION SETUP | Creating configuration symlinks

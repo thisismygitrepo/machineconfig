@@ -1,6 +1,6 @@
 
 
-. "$HOME\venvs\ve\Scripts\activate.ps1"
+. "$HOME\code\crocodile\.venv\Scripts\activate.ps1"
 
 python -c "from machineconfig.utils.procs import ProcessManager; ProcessManager().choose_and_kill()"
 deactivate

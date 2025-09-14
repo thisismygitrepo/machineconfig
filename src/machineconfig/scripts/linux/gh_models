@@ -1,7 +1,7 @@
 
 #!/usr/bin/env bash
 
-source ~/venvs/ve/bin/activate
+source ~/code/crocodile/.venv/bin/activate
 
 python -m machineconfig.scripts.python.gh_models "$@"
 

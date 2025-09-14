@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ~/venvs/ve/bin/activate
+source ~/code/crocodile/.venv/bin/activate
 
 op_script=$HOME/tmp_results/shells/python_return_command.sh
 if [ -f "$op_script" ]; then

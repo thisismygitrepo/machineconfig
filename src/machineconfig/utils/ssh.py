@@ -36,7 +36,7 @@ def scout(source: PLike, z: bool = False, r: bool = False) -> Scout:
 
 class SSH:  # inferior alternative: https://github.com/fabric/fabric
     def __init__(
-        self, host: Optional[str] = None, username: Optional[str] = None, hostname: Optional[str] = None, sshkey: Optional[str] = None, pwd: Optional[str] = None, port: int = 22, ve: Optional[str] = "ve", compress: bool = False
+        self, host: Optional[str] = None, username: Optional[str] = None, hostname: Optional[str] = None, sshkey: Optional[str] = None, pwd: Optional[str] = None, port: int = 22, ve: Optional[str] = ".venv", compress: bool = False
     ):  # https://stackoverflow.com/questions/51027192/execute-command-script-using-different-shell-in-ssh-paramiko
         self.pwd = pwd
         self.ve = ve
@@ -129,8 +129,8 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         self._remote_machine: Optional[MACHINE] = None
         self.terminal_responses: list[Response] = []
         self.platform = platform
-        self.remote_env_cmd = rf"""~/venvs/{self.ve}/Scripts/Activate.ps1""" if self.get_remote_machine() == "Windows" else rf"""source ~/venvs/{self.ve}/bin/activate"""
-        self.local_env_cmd = rf"""~/venvs/{self.ve}/Scripts/Activate.ps1""" if self.platform.system() == "Windows" else rf"""source ~/venvs/{self.ve}/bin/activate"""  # works for both cmd and pwsh
+        self.remote_env_cmd = rf"""~/code/crocodile/{self.ve}/Scripts/Activate.ps1""" if self.get_remote_machine() == "Windows" else rf"""source ~/code/crocodile/{self.ve}/bin/activate"""
+        self.local_env_cmd = rf"""~/code/crocodile/{self.ve}/Scripts/Activate.ps1""" if self.platform.system() == "Windows" else rf"""source ~/code/crocodile/{self.ve}/bin/activate"""  # works for both cmd and pwsh
 
     def __getstate__(self):
         return {attr: self.__getattribute__(attr) for attr in ["username", "hostname", "host", "port", "sshkey", "compress", "pwd", "ve"]}

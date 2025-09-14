@@ -47,19 +47,6 @@ if (Test-Path "machineconfig") {
 
 
 cd $HOME\code\crocodile
-if (-not $env:VIRTUAL_ENV) {
-    echo "Activating virtual environment @ $HOME\venvs\$ve_name"
-    & "$HOME\venvs\$ve_name\Scripts\Activate.ps1" -ErrorAction Stop
-}
-
-if (-not (Test-Path variable:CROCODILE_EXTRA)) {
-    Write-Host "⚠️ Using default CROCODILE_EXTRA"
-    & "$HOME\.local\bin\uv.exe" pip install -e .
-} else {
-    Write-Host "➡️ CROCODILE_EXTRA = $CROCODILE_EXTRA"
-    & "$HOME\.local\bin\uv.exe" pip install -e .[$CROCODILE_EXTRA]
-}
-
-cd ~\code\machineconfig
-& "$HOME\.local\bin\uv.exe" pip install -e .
+"$HOME\.local\bin\uv.exe" sync
+"$HOME\.local\bin\uv.exe" pip install -e ../machineconfig
 echo "Finished setting up repos"

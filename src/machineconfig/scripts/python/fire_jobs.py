@@ -74,7 +74,7 @@ def main() -> None:
 
     ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
     if ipy_profile is None: ipy_profile = "default"
-    activate_ve_line  = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/venvs/ve")
+    activate_ve_line  = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/crocodile/.venv")
 
     # Convert args.kw to dictionary
     if choice_file.suffix == ".py":
@@ -258,7 +258,6 @@ except ImportError as _ex:
         if "pudb" in command: command = f"pip install pudb & {command}"
         new_line = "\n"
         command = fr"""start cmd -Argument "/k {activate_ve_line.replace(".ps1", ".bat").replace(". ", "")} & {command.replace(new_line, " & ")} " """  # this works from powershell
-        # this works from cmd  # command = fr""" start cmd /k "%USERPROFILE%\venvs\{args.ve}\Scripts\activate.bat & {command} " """ # because start in cmd is different from start in powershell (in powershell it is short for Start-Process)
 
     if args.submit_to_cloud:
         command = f"""

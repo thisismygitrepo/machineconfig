@@ -5,7 +5,7 @@ if (Test-Path $op_script ) {
 }
 
 $ErrorActionPreference = "Stop"
-#~/venvs/ve/Scripts/Activate.ps1  # fixed ve
+#~/code/crocodile/.venv/Scripts/Activate.ps1  # fixed ve
 
 # Locate the python script to run relative to the current directory (which might be a symlink)
 # $script_root = (Get-Item $PSScriptRoot).Target  # resolves symlink if any
@@ -18,7 +18,7 @@ $ErrorActionPreference = "Stop"
 # }
 
 $script_root = $MyInvocation.MyCommand.Path
-. "$HOME\venvs\ve\Scripts\activate.ps1"
+. "$HOME\code\crocodile\.venv\Scripts\activate.ps1"
 
 #. "$script_root\..\activate_ve.ps1"  # dynamic v
 

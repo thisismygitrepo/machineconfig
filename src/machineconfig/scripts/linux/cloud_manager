@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ~/venvs/ve/bin/activate
+source ~/code/crocodile/.venv/bin/activate
 python -i -m machineconfig.scripts.python.cloud_manager "$@"
 
 if [ -n "$VIRTUAL_ENV" ]; then

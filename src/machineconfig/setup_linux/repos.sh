@@ -1,30 +1,4 @@
 #!/usr/bin/bash
-#=======================================================================
-# 📦 CODE REPOSITORIES SETUP SCRIPT
-#=======================================================================
-# This script clones essential repositories and installs them in development mode
-
-echo """#=======================================================================
-📂 DIRECTORY SETUP | Creating code directory structure
-#=======================================================================
-"""
-
-if [ -z "$ve_name" ]; then
-    ve_name="ve"
-fi
-
-# Create and enter code directory
-cd $HOME
-
-echo """🏗️  Creating directory structure...
-    📁 $HOME/code
-"""
-mkdir -p code
-cd $HOME/code
-
-echo """
-🧹 CLEANUP | Removing existing .venv folders if present
-"""
 
 # Remove .venv folders if they exist
 if [ -d "$HOME/code/machineconfig/.venv" ]; then
@@ -50,6 +24,8 @@ echo """📥 Setting up repositories...
    🔧 machineconfig - System configuration tools
 """
 
+mkdir -p $HOME/code
+cd $HOME/code
 # Setup crocodile repository
 if [ -d "crocodile" ]; then
     echo """🔄 crocodile directory exists, updating...
@@ -84,56 +60,8 @@ echo """
 #=======================================================================
 """
 
-# Activate virtual environment if not already active
-if [ -z "$VIRTUAL_ENV" ]; then
-  echo """  🔌 Activating Python virtual environment...
-  """
-  source $HOME/venvs/$ve_name/bin/activate || exit
-else
-  echo "ve `$VIRTUAL_ENV` is already activated"
-fi
-
-echo """
-#=======================================================================
-⚙️  PACKAGE INSTALLATION | Installing projects in development mode
-#=======================================================================
-"""
-
-# Install crocodile package
-echo """📦 Installing crocodile package in development mode...
-"""
-cd $HOME/code/crocodile
-if [ -n "$CROCODILE_EXRA" ]; then
-  echo """  ➕ Installing with extra dependencies: $CROCODILE_EXRA
-  """
-  $HOME/.local/bin/uv pip install -e .[$CROCODILE_EXRA]
-else
-  echo """  🔄 Installing with standard dependencies
-  """
-  $HOME/.local/bin/uv pip install -e .
-fi
-
-# Install machineconfig package
-echo """📦 Installing machineconfig package in development mode...
-"""
-cd $HOME/code/machineconfig
-$HOME/.local/bin/uv pip install -e .
+# $HOME/.local/bin/uv venv
+# $HOME/.local/bin/uv pip install -e .
+uv sync
+$HOME/.local/bin/uv pip install -e ../machineconfig
 # $HOME/.local/bin/uv cache clean
-
-# Return to home directory
-cd $HOME
-
-echo """
-#=======================================================================
-✅ INSTALLATION COMPLETE | Repository setup finished successfully
-#=======================================================================
-
-📚 Installed packages:
-   ✓ crocodile     - Development mode
-   ✓ machineconfig - Development mode
-
-🏠 Returned to home directory: $HOME
-"""
-
-ln -s $HOME/venvs/ve $HOME/code/machineconfig/.venv
-ln -s $HOME/venvs/ve $HOME/code/crocodile/.venv

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ~/venvs/ve/bin/activate
+source ~/code/crocodile/.venv/bin/activate
 
 python -m machineconfig.utils.ai.url2md "$@"
 

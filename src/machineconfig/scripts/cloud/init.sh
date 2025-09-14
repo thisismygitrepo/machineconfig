@@ -59,7 +59,7 @@ curl bit.ly/cfgvelinux -L | bash
 
 # Activate virtual environment
 echo "🚀 Activating Python virtual environment..."
-. $HOME/venvs/ve/bin/activate
+. $HOME/code/crocodile/.venv/bin/activate
 
 # Clone repositories
 echo "📋 Setting up code repositories..."
@@ -94,7 +94,7 @@ echo """#=======================================================================
 
 # Activate virtual environment
 echo "🚀 Activating Python virtual environment..."
-. $HOME/scripts/activate_ve 've'
+. $HOME/scripts/activate_ve '.venv'
 
 # Install all essential development applications
 echo "📥 Installing essential development applications..."

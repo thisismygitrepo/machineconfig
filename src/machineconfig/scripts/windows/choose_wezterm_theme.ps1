@@ -8,9 +8,7 @@ else {
     $name = $args[0]
 }
 
-#~/venvs/ve/Scripts/Activate.ps1
-# . $PSScriptRoot/activate_ve.ps1 ve
-. "$HOME\venvs\ve\Scripts\activate.ps1"
+. "$HOME\code\crocodile\.venv\Scripts\activate.ps1"
 
 python -m fire machineconfig.scripts.python.choose_wezterm_theme main2 $args[0]
 .$profile  # reload the profile

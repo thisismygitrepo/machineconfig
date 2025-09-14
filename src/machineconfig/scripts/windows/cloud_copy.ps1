@@ -1,10 +1,10 @@
 
-#~/venvs/ve/Scripts/Activate.ps1
+#~/code/crocodile/.venv/Scripts/Activate.ps1
 # . $PSScriptRoot/activate_ve.ps1
 # python -m machineconfig.scripts.python.cloud_copy $args
 # deactivate -ErrorAction SilentlyContinue
 try {
-    . "$HOME\venvs\ve\Scripts\activate.ps1"
+    . "$HOME\code\crocodile\.venv\Scripts\activate.ps1"
     python -m machineconfig.scripts.python.cloud_copy $args
 } catch {
     Write-Error $_.Exception.Message

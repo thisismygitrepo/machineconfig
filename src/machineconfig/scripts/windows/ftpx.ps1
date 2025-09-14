@@ -1,5 +1,5 @@
 
-#~/venvs/ve/Scripts/Activate.ps1
-. "$HOME\venvs\ve\Scripts\activate.ps1"
+#~/code/crocodile/.venv/Scripts/Activate.ps1
+. "$HOME\code\crocodile\.venv\Scripts\activate.ps1"
 python $PSScriptRoot/../python/ftpx.py $args
 deactivate -ErrorAction SilentlyContinue

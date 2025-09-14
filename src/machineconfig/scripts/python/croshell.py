@@ -136,7 +136,7 @@ def build_parser():
 #             py_file_path = run(data_path=args.read, data=None, get_figure=None)
 #             final_program = f"""
 # #!/bin/bash
-# . $HOME/scripts/activate_ve 've'
+# . $HOME/scripts/activate_ve '.venv'
 # streamlit run {py_file_path}
 # """
 #             PROGRAM_PATH.write_text(data=final_program, encoding="utf-8")
@@ -175,7 +175,7 @@ print_logo(logo="crocodile")
     ve_root_from_file, ipython_profile = get_ve_path_and_ipython_profile(PathExtended(file))
     ipython_profile = ipython_profile if ipython_profile is not None else "default"
     # ve_activateion_line = get_ve_activate_line(ve_name=args.ve or ve_profile_suggested, a_path=str(PathExtended.cwd()))
-    activate_ve_line  = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/venvs/ve")
+    activate_ve_line  = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/crocodile/.venv")
     final_program = f"""
 #!/bin/bash
 
