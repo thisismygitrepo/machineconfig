@@ -62,6 +62,6 @@ echo """
 
 # $HOME/.local/bin/uv venv
 # $HOME/.local/bin/uv pip install -e .
-uv sync
+$HOME/.local/bin/uv sync --no-dev
 $HOME/.local/bin/uv pip install -e ../machineconfig
 # $HOME/.local/bin/uv cache clean

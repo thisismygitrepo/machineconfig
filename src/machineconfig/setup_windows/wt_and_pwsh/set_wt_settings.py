@@ -105,7 +105,6 @@ class TerminalSettings(object):
         croshell = dict(
             name="croshell",
             guid="{" + str(uuid4()) + "}",
-            # commandline=f"powershell.exe -Command \"{activate} ipython -i -c 'from crocodile.toolbox import *'\"",
             commandline=f'powershell.exe -Command "{LIBRARY_ROOT.as_posix()}/scripts/windows/croshell.ps1"',
             startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
         )

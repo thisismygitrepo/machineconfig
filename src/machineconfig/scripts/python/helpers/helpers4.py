@@ -51,7 +51,6 @@ def parse_pyfile(file_path: str):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
     ]
     module__doc__ = ast.get_docstring(parsed_ast)
-    # from crocodile.core import Display
     main_option = f"RUN AS MAIN -- {module__doc__ if module__doc__ is not None else 'NoDocs'}"
     options = [main_option]
     for function in functions:
