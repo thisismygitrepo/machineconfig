@@ -11,9 +11,9 @@ if (Test-Path "$HOME\code\machineconfig\.venv") {
     Remove-Item -Path "$HOME\code\machineconfig\.venv" -Recurse -Force
 }
 
-if (Test-Path "$HOME\code\crocodile\.venv") {
+if (Test-Path "$HOME\code\machineconfig\") {
     Write-Host "  🗑️  Removing existing .venv folder in crocodile..."
-    Remove-Item -Path "$HOME\code\crocodile\.venv" -Recurse -Force
+    Remove-Item -Path "$HOME\code\machineconfig\" -Recurse -Force
 }
 
 if (-not (Get-Command git.exe -ErrorAction SilentlyContinue)) {

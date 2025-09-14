@@ -6,11 +6,11 @@
 (iwr bit.ly/cfgvewindows).Content | iex
 
 # pwsh profile
-$machineconfig = (& "$HOME\code\crocodile\.venv\Scripts\python.exe" -c "print(__import__('machineconfig').__file__[:-12])")
+$machineconfig = (& "$HOME\code\machineconfig\\Scripts\python.exe" -c "print(__import__('machineconfig').__file__[:-12])")
 # . $machineconfig/setup_windows/wt_and_pwsh.ps1  # experimental
 # OR: python -c "from machineconfig.setup_windows.wt_and_pwsh.setup_pwsh_theme import install_nerd_fonts; install_nerd_fonts()"
 
-# & "$HOME\code\crocodile\.venv\Scripts\activate.ps1"
+# & "$HOME\code\machineconfig\\Scripts\activate.ps1"
 # python -m fire machineconfig.profile.create_hardlinks main --choice=all
 # deactivate
 

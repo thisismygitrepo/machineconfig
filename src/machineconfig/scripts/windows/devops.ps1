@@ -6,7 +6,7 @@ if (Test-Path $op_script ) {
 }
 
 
-. "$HOME\code\crocodile\.venv\Scripts\activate.ps1"
+. "$HOME\code\machineconfig\\Scripts\activate.ps1"
 
 # Locate the python script to run relative to the current directory (which might be a symlink)
 $script_root = (Get-Item $PSScriptRoot).Target  # resolves symlink if any

@@ -30,7 +30,7 @@ if (Test-Path -Path "~/AppData/Roaming/npm/figlet") {  # may be ensure that util
 if (Test-Path -Path "~/AppData/Local/Microsoft/WindowsApps/boxes.exe") {  # may be ensure that utility.cmd is available
     Write-Output "boxes already installed ✅"
 } else {
-    . "$env:USERPROFILE\code\crocodile\.venv\Scripts\Activate.ps1"
+    . "$env:USERPROFILE\code\machineconfig\\Scripts\Activate.ps1"
     python -m fire machineconfig.jobs.python_windows_installers.boxes main
     deactivate
 }
