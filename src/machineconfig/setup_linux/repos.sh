@@ -7,10 +7,10 @@ if [ -d "$HOME/code/machineconfig/.venv" ]; then
     rm -rf "$HOME/code/machineconfig/.venv"
 fi
 
-if [ -d "$HOME/code/crocodile/.venv" ]; then
+if [ -d "$HOME/code/machineconfig/.venv" ]; then
     echo """  🗑️  Removing existing .venv folder in crocodile...
     """
-    rm -rf "$HOME/code/crocodile/.venv"
+    rm -rf "$HOME/code/machineconfig/.venv"
 fi
 
 echo """
@@ -41,6 +41,7 @@ else
 fi
 
 # Setup machineconfig repository
+cd $HOME/code
 if [ -d "machineconfig" ]; then
     echo """🔄 machineconfig directory exists, updating...
     """
@@ -54,14 +55,7 @@ else
     git clone https://github.com/thisismygitrepo/machineconfig --depth 4  # Choose browser-based authentication.
 fi
 
-echo """
-#=======================================================================
-🐍 PYTHON ENVIRONMENT | Setting up virtual environment
-#=======================================================================
-"""
-
-# $HOME/.local/bin/uv venv
-# $HOME/.local/bin/uv pip install -e .
+cd $HOME/code/machineconfig
 $HOME/.local/bin/uv sync --no-dev
-$HOME/.local/bin/uv pip install -e ../machineconfig
+$HOME/.local/bin/uv pip install -e ../crocodile
 # $HOME/.local/bin/uv cache clean

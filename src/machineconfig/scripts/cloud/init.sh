@@ -59,7 +59,7 @@ curl bit.ly/cfgvelinux -L | bash
 
 # Activate virtual environment
 echo "🚀 Activating Python virtual environment..."
-. $HOME/code/crocodile/.venv/bin/activate
+. $HOME/code/machineconfig/.venv/bin/activate
 
 # Clone repositories
 echo "📋 Setting up code repositories..."

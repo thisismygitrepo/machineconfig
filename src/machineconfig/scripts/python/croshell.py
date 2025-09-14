@@ -175,7 +175,7 @@ print_logo(logo="crocodile")
     ve_root_from_file, ipython_profile = get_ve_path_and_ipython_profile(PathExtended(file))
     ipython_profile = ipython_profile if ipython_profile is not None else "default"
     # ve_activateion_line = get_ve_activate_line(ve_name=args.ve or ve_profile_suggested, a_path=str(PathExtended.cwd()))
-    activate_ve_line  = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/crocodile/.venv")
+    activate_ve_line  = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/machineconfig/.venv")
     final_program = f"""
 #!/bin/bash
 

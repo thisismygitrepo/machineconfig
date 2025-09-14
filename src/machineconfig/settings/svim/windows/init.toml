@@ -37,7 +37,7 @@ default_height = 30
 
 [[layers]]
   name = "lang#python"
-  python_interpreter = '~/code/crocodile/.venv/Scripts/python.exe'
+  python_interpreter = '~/code/machineconfig/.venv/Scripts/python.exe'
 
 [[layers]]
   name = "colorscheme"

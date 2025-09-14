@@ -5,7 +5,7 @@ if (Test-Path $op_script ) {
 }
 
 $ErrorActionPreference = "Stop"
-#~/code/crocodile/.venv/Scripts/Activate.ps1  # fixed ve
+#~/code/machineconfig/.venv/Scripts/Activate.ps1  # fixed ve
 
 # Locate the python script to run relative to the current directory (which might be a symlink)
 # $script_root = (Get-Item $PSScriptRoot).Target  # resolves symlink if any

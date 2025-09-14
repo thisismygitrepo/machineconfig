@@ -12,7 +12,7 @@ sep = "\n"
 
 def main(verbose: bool=True) -> str:
     _ = verbose
-    repos: list[str] = ["~/code/crocodile", "~/code/machineconfig", ]
+    repos: list[str] = ["~/code/machineconfig", "~/code/machineconfig", ]
     try:
         tmp = read_ini(DEFAULTS_PATH)['general']['repos'].split(",")
         if tmp[-1] == "": tmp = tmp[:-1]

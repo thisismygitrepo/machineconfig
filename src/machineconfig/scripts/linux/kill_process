@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ~/code/crocodile/.venv/bin/activate
+source ~/code/machineconfig/.venv/bin/activate
 
 python -c "from machineconfig.utils.procs import ProcessManager; ProcessManager().choose_and_kill()"
 

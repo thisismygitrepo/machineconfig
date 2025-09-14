@@ -102,7 +102,7 @@ choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     echo """    🔧 Creating symlinks and setting permissions...
     """
-    source $HOME/code/crocodile/.venv/bin/activate
+    source $HOME/code/machineconfig/.venv/bin/activate
     python -m fire machineconfig.profile.create main --choice=all
     sudo chmod 600 $HOME/.ssh/*
     sudo chmod 700 $HOME/.ssh
@@ -120,7 +120,7 @@ choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     echo """    🔧 Installing CLI applications...
     """
-    . $HOME/code/crocodile/.venv/bin/activate
+    . $HOME/code/machineconfig/.venv/bin/activate
     python -m fire machineconfig.scripts.python.devops_devapps_install main --which=AllEssentials
     . $HOME/.bashrc
 else
@@ -137,7 +137,7 @@ choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     echo """    🔧 Installing development tools...
     """
-    . $HOME/code/crocodile/.venv/bin/activate
+    . $HOME/code/machineconfig/.venv/bin/activate
     (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
     sudo nala install libssl-dev -y
     sudo nala install ffmpeg -y
@@ -171,7 +171,7 @@ choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     echo """    🔄 Retrieving data...
     """
-    . $HOME/code/crocodile/.venv/bin/activate
+    . $HOME/code/machineconfig/.venv/bin/activate
     python -m fire machineconfig.scripts.python.devops_backup_retrieve main --direction=RETRIEVE
 else
     echo """    ⏭️  Skipping data retrieval

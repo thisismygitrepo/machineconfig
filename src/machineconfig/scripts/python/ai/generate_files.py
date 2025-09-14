@@ -65,8 +65,8 @@ def main() -> None:
     
     # Create 5 symlinks to repo_root at ~/code_copies/${repo_name}_copy_{i}
     import pathlib
-    import os
-    repo_root: str = str(pathlib.Path.cwd().resolve())
+    # import os
+    repo_root = pathlib.Path.cwd().resolve()
     repo_name: str = pathlib.Path(repo_root).name
     symlink_dir: pathlib.Path = pathlib.Path.home() / "code_copies"
     symlink_dir.mkdir(exist_ok=True)

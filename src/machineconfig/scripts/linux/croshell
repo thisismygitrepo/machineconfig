@@ -6,7 +6,7 @@ if [ -f "$op_script" ]; then
   rm $op_script
 fi
 
-source ~/code/crocodile/.venv/bin/activate
+source ~/code/machineconfig/.venv/bin/activate
 
 python -m machineconfig.scripts.python.croshell "$@"
 # python $(dirname $(dirname $0))/python/fire_jobs.py "$@"

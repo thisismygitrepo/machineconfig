@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ~/code/crocodile/.venv/bin/activate
+source ~/code/machineconfig/.venv/bin/activate
 
 # Generate random string of length 5
 random_str=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)

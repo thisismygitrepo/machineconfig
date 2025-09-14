@@ -8,7 +8,7 @@ $sharePath = ''
 $driveLetter = ''
 
 # . activate_ve
-. $HOME/code/crocodile/.venv/Scripts/activate.ps1
+. $HOME/code/machineconfig/.venv/Scripts/activate.ps1
 
 python -m machineconfig.scripts.python.mount_ssh
 . $HOME/tmp_results/shells/python_return_command.ps1

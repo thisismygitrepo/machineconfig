@@ -2,7 +2,7 @@
 
 # check below if VIRTUAL_ENV is set
 # if [ -z "$VIRTUAL_ENV" ]; then
-source ~/code/crocodile/.venv/bin/activate
+source ~/code/machineconfig/.venv/bin/activate
 # fi
 
 op_script=$HOME/tmp_results/shells/python_return_command.sh

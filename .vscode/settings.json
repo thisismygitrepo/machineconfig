@@ -1,4 +1,4 @@
 {
-    "python.defaultInterpreterPath": "/home/alex/code/crocodile/.venv/bin/python",
+    "python.defaultInterpreterPath": "/home/alex/code/machineconfig/.venv/bin/python",
     "python-envs.pythonProjects": []
 }

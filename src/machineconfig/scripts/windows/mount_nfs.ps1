@@ -18,7 +18,7 @@ $driveLetter=''
 $options = "rw,sec=sys,no_subtree_check"
 
 # . activate_ve
-. $HOME/code/crocodile/.venv/Scripts/activate.ps1
+. $HOME/code/machineconfig/.venv/Scripts/activate.ps1
 
 python -m machineconfig.scripts.python.mount_nfs
 . $HOME/tmp_results/shells/python_return_command.ps1

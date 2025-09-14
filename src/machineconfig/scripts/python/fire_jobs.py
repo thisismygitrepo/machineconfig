@@ -74,7 +74,7 @@ def main() -> None:
 
     ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
     if ipy_profile is None: ipy_profile = "default"
-    activate_ve_line  = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/crocodile/.venv")
+    activate_ve_line  = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/machineconfig/.venv")
 
     # Convert args.kw to dictionary
     if choice_file.suffix == ".py":
@@ -338,5 +338,5 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
 
 
 if __name__ == '__main__':
-    # options, func_args = parse_pyfile(file_path="C:/Users/aalsaf01/code/crocodile/myresources/crocodile/core.py")
+    # options, func_args = parse_pyfile(file_path="C:/Users/aalsaf01/code/machineconfig/myresources/crocodile/core.py")
     main()

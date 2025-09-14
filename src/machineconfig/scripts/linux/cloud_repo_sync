@@ -6,7 +6,7 @@ if [ -f "$op_script" ]; then
 fi
 
 
-source ~/code/crocodile/.venv/bin/activate
+source ~/code/machineconfig/.venv/bin/activate
 
 python $(dirname $(dirname $0))/python/cloud_repo_sync.py "$@"
 
