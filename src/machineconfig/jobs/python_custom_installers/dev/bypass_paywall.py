@@ -2,7 +2,7 @@
 
 # from platform import system
 from typing import Optional
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 
 
 config_dict = {"repo_url": "CUSTOM", "doc": """Plugin for chrome to bypass paywalls""", "filename_template_windows_amd_64": "VSCodeSetup-{}.exe", "filename_template_linux_amd_64": "code_{}.deb", "strip_v": True, "exe_name": "pluginName"}

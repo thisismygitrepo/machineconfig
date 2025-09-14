@@ -1,4 +1,4 @@
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from typing import Optional, TypeAlias, Literal
 import subprocess
 

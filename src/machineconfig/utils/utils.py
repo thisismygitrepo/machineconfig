@@ -2,7 +2,7 @@
 Utils
 """
 
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 import machineconfig
 from machineconfig.utils.options import check_tool_exists, choose_cloud_interactively, choose_multiple_options, choose_one_option, choose_ssh_host, display_options
 from rich.console import Console

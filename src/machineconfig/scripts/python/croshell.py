@@ -5,7 +5,7 @@ croshell
 """
 
 import argparse
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.utils import PROGRAM_PATH, display_options
 from machineconfig.utils.ve import get_ve_path_and_ipython_profile, get_ve_activate_line

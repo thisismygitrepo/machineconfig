@@ -2,7 +2,7 @@
 CC
 """
 
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from tenacity import retry, stop_after_attempt, wait_chain, wait_fixed
 import getpass
 import argparse

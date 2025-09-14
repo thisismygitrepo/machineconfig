@@ -7,7 +7,7 @@ in the event that username@github.com is not mentioned in the remote url.
 
 from rich import print as pprint
 from machineconfig.utils.utils import write_shell_script_to_default_program_path, CONFIG_PATH, DEFAULTS_PATH
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.io_save import save_json
 from machineconfig.utils.utils2 import randstr, read_json, read_ini
 import argparse

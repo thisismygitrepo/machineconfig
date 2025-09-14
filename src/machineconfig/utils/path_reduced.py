@@ -10,8 +10,8 @@ import os
 # import warnings
 
 
-OPLike: TypeAlias = Union[str, "P", Path, None]
-PLike: TypeAlias = Union[str, "P", Path]
+OPLike: TypeAlias = Union[str, "PathExtended", Path, None]
+PLike: TypeAlias = Union[str, "PathExtended", Path]
 FILE_MODE: TypeAlias = Literal["r", "w", "x", "a"]
 SHUTIL_FORMATS: TypeAlias = Literal["zip", "tar", "gztar", "bztar", "xztar"]
 
@@ -54,7 +54,7 @@ def encrypt(msg: bytes, key: Optional[bytes] = None, pwd: Optional[str] = None, 
             except FileNotFoundError as err:
                 print("\n" * 3, "~" * 50, """Consider Loading up your dotfiles or pass `gen_key=True` to make and save one.""", "~" * 50, "\n" * 3)
                 raise FileNotFoundError(err) from err
-    elif isinstance(key, (str, P, Path)):
+    elif isinstance(key, (str, PathExtended, Path)):
         key_resolved = Path(key).read_bytes()  # a path to a key file was passed, read it:
     elif type(key) is bytes:
         key_resolved = key  # key passed explicitly
@@ -224,7 +224,7 @@ class Compression:
         return Path(op_path)
 
 
-class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
+class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
     # ============= Path management ==================
     """The default behaviour of methods acting on underlying disk object is to perform the action and return a new path referring to the mutated object in disk drive.
     However, there is a flag `orig` that makes the function return orignal path object `self` as opposed to the new one pointing to new object.
@@ -232,7 +232,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
     This can be seen in `zip` and `encrypt` but not in `copy`, `move`, `retitle` because the fate of original file is dictated already.
     Furthermore, those methods are accompanied with print statement explaining what happened to the object."""
 
-    def delete(self, sure: bool = False, verbose: bool = True) -> "P":  # slf = self.expanduser().resolve() don't resolve symlinks.
+    def delete(self, sure: bool = False, verbose: bool = True) -> "PathExtended":  # slf = self.expanduser().resolve() don't resolve symlinks.
         if not sure:
             if verbose:
                 print(f"❌ Did NOT DELETE because user is not sure. file: {repr(self)}.")
@@ -252,7 +252,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             print(f"🗑️ ❌ DELETED {repr(self)}.")
         return self
 
-    def move(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, rel2it: bool = False, overwrite: bool = False, verbose: bool = True, parents: bool = True, content: bool = False) -> "P":
+    def move(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, rel2it: bool = False, overwrite: bool = False, verbose: bool = True, parents: bool = True, content: bool = False) -> "PathExtended":
         path = self._resolve_path(folder=folder, name=name, path=path, default_name=self.absolute().name, rel2it=rel2it)
         if parents:
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -280,7 +280,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
 
     def copy(
         self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, content: bool = False, verbose: bool = True, append: Optional[str] = None, overwrite: bool = False, orig: bool = False
-    ) -> "P":  # tested %100  # TODO: replace `content` flag with ability to interpret "*" in resolve method.
+    ) -> "PathExtended":  # tested %100  # TODO: replace `content` flag with ability to interpret "*" in resolve method.
         dest = self._resolve_path(folder=folder, name=name, path=path, default_name=self.name, rel2it=False)
         dest = dest.expanduser().resolve()
         dest.parent.mkdir(parents=True, exist_ok=True)
@@ -310,7 +310,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         return dest if not orig else self
 
     # ======================================= File Editing / Reading ===================================
-    def download(self, folder: OPLike = None, name: Optional[str] = None, allow_redirects: bool = True, timeout: Optional[int] = None, params: Any = None) -> "P":
+    def download(self, folder: OPLike = None, name: Optional[str] = None, allow_redirects: bool = True, timeout: Optional[int] = None, params: Any = None) -> "PathExtended":
         import requests
 
         response = requests.get(self.as_url_str(), allow_redirects=allow_redirects, timeout=timeout, params=params)  # Alternative: from urllib import request; request.urlopen(url).read().decode('utf-8').
@@ -321,16 +321,16 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             try:
                 f_name = response.headers["Content-Disposition"].split("filename=")[1].replace('"', "")
             except (KeyError, IndexError):
-                f_name = validate_name(str(P(response.history[-1].url).name if len(response.history) > 0 else P(response.url).name))
-        dest_path = (P.home().joinpath("Downloads") if folder is None else P(folder)).joinpath(f_name)
+                f_name = validate_name(str(PathExtended(response.history[-1].url).name if len(response.history) > 0 else PathExtended(response.url).name))
+        dest_path = (PathExtended.home().joinpath("Downloads") if folder is None else PathExtended(folder)).joinpath(f_name)
         dest_path.parent.mkdir(parents=True, exist_ok=True)
         dest_path.write_bytes(response.content)
         return dest_path
 
     def _return(
-        self, res: Union["P", "Path"], operation: Literal["rename", "delete", "Whack"], inplace: bool = False, overwrite: bool = False, orig: bool = False, verbose: bool = False, strict: bool = True, msg: str = "", __delayed_msg__: str = ""
-    ) -> "P":
-        res = P(res)
+        self, res: Union["PathExtended", "Path"], operation: Literal["rename", "delete", "Whack"], inplace: bool = False, overwrite: bool = False, orig: bool = False, verbose: bool = False, strict: bool = True, msg: str = "", __delayed_msg__: str = ""
+    ) -> "PathExtended":
+        res = PathExtended(res)
         if inplace:
             assert self.exists(), f"`inplace` flag is only relevant if the path exists. It doesn't {self}"
             if operation == "rename":
@@ -360,7 +360,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                 print("P._return warning: UnicodeEncodeError, could not print message.")
         return self if orig else res
 
-    def append(self, name: str = "", index: bool = False, suffix: Optional[str] = None, verbose: bool = True, **kwargs: Any) -> "P":
+    def append(self, name: str = "", index: bool = False, suffix: Optional[str] = None, verbose: bool = True, **kwargs: Any) -> "PathExtended":
         """Returns a new path object with the name appended to the stem of the path. If `index` is True, the name will be the index of the path in the parent directory."""
         if index:
             appended_name = f"""{name}_{len(self.parent.search(f"*{self.name.split('.')[0]}*"))}"""
@@ -373,57 +373,57 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
     def with_name(self, name: str, verbose: bool = True, inplace: bool = False, overwrite: bool = False, **kwargs: Any):
         return self._return(self.parent / name, verbose=verbose, operation="rename", inplace=inplace, overwrite=overwrite, **kwargs)
 
-    def __deepcopy__(self, *args: Any, **kwargs: Any) -> "P":
+    def __deepcopy__(self, *args: Any, **kwargs: Any) -> "PathExtended":
         _ = args, kwargs
-        return P(str(self))
+        return PathExtended(str(self))
 
     def __getstate__(self) -> str:
         return str(self)
 
-    def __add__(self, other: PLike) -> "P":
+    def __add__(self, other: PLike) -> "PathExtended":
         return self.parent.joinpath(self.name + str(other))  # used append and prepend if the addition wanted to be before suffix.
 
-    def __radd__(self, other: PLike) -> "P":
+    def __radd__(self, other: PLike) -> "PathExtended":
         return self.parent.joinpath(str(other) + self.name)  # other + P and `other` doesn't know how to make this addition.
 
-    def __sub__(self, other: PLike) -> "P":
-        res = P(str(self).replace(str(other), ""))
+    def __sub__(self, other: PLike) -> "PathExtended":
+        res = PathExtended(str(self).replace(str(other), ""))
         return (res[1:] if str(res[0]) in {"\\", "/"} else res) if len(res.parts) else res  # paths starting with "/" are problematic. e.g ~ / "/path" doesn't work.
 
-    def rel2home(self) -> "P":
-        return self._return(P(self.expanduser().absolute().relative_to(Path.home())), operation="Whack")  # very similat to collapseuser but without "~" being added so its consistent with rel2cwd.
+    def rel2home(self) -> "PathExtended":
+        return self._return(PathExtended(self.expanduser().absolute().relative_to(Path.home())), operation="Whack")  # very similat to collapseuser but without "~" being added so its consistent with rel2cwd.
 
-    def collapseuser(self, strict: bool = True, placeholder: str = "~") -> "P":  # opposite of `expanduser` resolve is crucial to fix Windows cases insensitivty problem.
+    def collapseuser(self, strict: bool = True, placeholder: str = "~") -> "PathExtended":  # opposite of `expanduser` resolve is crucial to fix Windows cases insensitivty problem.
         if strict:
-            assert str(self.expanduser().absolute().resolve()).startswith(str(P.home())), ValueError(f"`{P.home()}` is not in the subpath of `{self}`")
-        if str(self).startswith(placeholder) or P.home().as_posix() not in self.resolve().as_posix():
+            assert str(self.expanduser().absolute().resolve()).startswith(str(PathExtended.home())), ValueError(f"`{PathExtended.home()}` is not in the subpath of `{self}`")
+        if str(self).startswith(placeholder) or PathExtended.home().as_posix() not in self.resolve().as_posix():
             return self
-        return self._return(res=P(placeholder) / (self.expanduser().absolute().resolve(strict=strict) - P.home()), operation="Whack")  # resolve also solves the problem of Windows case insensitivty.
+        return self._return(res=PathExtended(placeholder) / (self.expanduser().absolute().resolve(strict=strict) - PathExtended.home()), operation="Whack")  # resolve also solves the problem of Windows case insensitivty.
 
     def __getitem__(self, slici: Union[int, list[int], slice]):
         if isinstance(slici, list):
-            return P(*[self[item] for item in slici])
+            return PathExtended(*[self[item] for item in slici])
         elif isinstance(slici, int):
-            return P(self.parts[slici])
-        return P(*self.parts[slici])  # must be a slice
+            return PathExtended(self.parts[slici])
+        return PathExtended(*self.parts[slici])  # must be a slice
 
     def split(self, at: Optional[str] = None, index: Optional[int] = None, sep: Literal[-1, 0, 1] = 1, strict: bool = True):
         if index is None and at is not None:  # at is provided  # ====================================   Splitting
             if not strict:  # behaves like split method of string
                 one, two = (items := str(self).split(sep=str(at)))[0], items[1]
-                one, two = P(one[:-1]) if one.endswith("/") else P(one), P(two[1:]) if two.startswith("/") else P(two)
+                one, two = PathExtended(one[:-1]) if one.endswith("/") else PathExtended(one), PathExtended(two[1:]) if two.startswith("/") else PathExtended(two)
             else:  # "strict": # raises an error if exact match is not found.
                 index = self.parts.index(str(at))
                 one, two = self[0:index], self[index + 1 :]  # both one and two do not include the split item.
         elif index is not None and at is None:  # index is provided
-            one, two = self[:index], P(*self.parts[index + 1 :])
+            one, two = self[:index], PathExtended(*self.parts[index + 1 :])
             at = self.parts[index]  # this is needed below.
         else:
             raise ValueError("Either `index` or `at` can be provided. Both are not allowed simulatanesouly.")
         if sep == 0:
             return one, two  # neither of the portions get the sperator appended to it. # ================================  appending `at` to one of the portions
         elif sep == 1:
-            return one, P(at) / two  # append it to right portion
+            return one, PathExtended(at) / two  # append it to right portion
         elif sep == -1:
             return one / at, two  # append it to left portion.
         else:
@@ -477,8 +477,8 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
     #     return datetime.fromtimestamp(tmp, **kwargs)
 
     # ================================ String Nature management ====================================
-    def clickable(self) -> "P":
-        return self._return(res=P(self.expanduser().resolve().as_uri()), operation="Whack")
+    def clickable(self) -> "PathExtended":
+        return self._return(res=PathExtended(self.expanduser().resolve().as_uri()), operation="Whack")
 
     def as_url_str(self) -> "str":
         return self.as_posix().replace("https:/", "https://").replace("http:/", "http://")
@@ -491,7 +491,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
 
     # ========================== override =======================================
     def __setitem__(self, key: Union["str", int, slice], value: PLike):
-        fullparts, new = list(self.parts), list(P(value).parts)
+        fullparts, new = list(self.parts), list(PathExtended(value).parts)
         if type(key) is str:
             idx = fullparts.index(key)
             fullparts.remove(key)
@@ -500,7 +500,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             fullparts = fullparts[:key] + new + fullparts[key + 1 :]
         elif type(key) is slice:
             fullparts = fullparts[: (0 if key.start is None else key.start)] + new + fullparts[(len(fullparts) if key.stop is None else key.stop) :]
-        self._str = str(P(*fullparts))  # pylint: disable=W0201  # similar attributes: # self._parts # self._pparts # self._cparts # self._cached_cparts
+        self._str = str(PathExtended(*fullparts))  # pylint: disable=W0201  # similar attributes: # self._parts # self._pparts # self._cparts # self._cached_cparts
 
     def _type(self):
         if self.absolute():
@@ -513,7 +513,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
 
     def symlink_to(self, target: PLike, verbose: bool = True, overwrite: bool = False, orig: bool = False, strict: bool = True):  # type: ignore[override]  # pylint: disable=W0237
         self.parent.mkdir(parents=True, exist_ok=True)
-        target_obj = P(target).expanduser().resolve()
+        target_obj = PathExtended(target).expanduser().resolve()
         if strict:
             assert target_obj.exists(), f"Target path `{target}` (aka `{target_obj}`) doesn't exist. This will create a broken link."
         if overwrite and (self.is_symlink() or self.exists()):
@@ -527,12 +527,12 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             # TODO update PATH for this to take effect immediately.
             time.sleep(1)  # wait=True equivalent
         else:
-            super(P, self.expanduser()).symlink_to(str(target_obj))
+            super(PathExtended, self.expanduser()).symlink_to(str(target_obj))
         return self._return(target_obj, operation="Whack", inplace=False, orig=orig, verbose=verbose, msg=f"LINKED {repr(self)} ➡️ {repr(target_obj)}")
 
     def resolve(self, strict: bool = False):
         try:
-            return super(P, self).resolve(strict=strict)
+            return super(PathExtended, self).resolve(strict=strict)
         except OSError:
             return self
 
@@ -549,7 +549,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         not_in: Optional[list[str]] = None,
         exts: Optional[list[str]] = None,
         win_order: bool = False,
-    ) -> list["P"]:
+    ) -> list["PathExtended"]:
         if isinstance(not_in, list):
             filters_notin = [lambda x: all([str(a_not_in) not in str(x) for a_not_in in not_in])]  # type: ignore
         else:
@@ -587,7 +587,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             else:
                 raw = glob(str(slf.joinpath(pattern)))  # glob ignroes dot and hidden files
         if ".zip" not in str(slf) and compressed:
-            filters_notin = [P(comp_file).search(pattern=pattern, r=r, files=files, folders=folders, compressed=True, dotfiles=dotfiles, filters_total=filters_total, not_in=not_in, win_order=win_order) for comp_file in self.search("*.zip", r=r)]
+            filters_notin = [PathExtended(comp_file).search(pattern=pattern, r=r, files=files, folders=folders, compressed=True, dotfiles=dotfiles, filters_total=filters_total, not_in=not_in, win_order=win_order) for comp_file in self.search("*.zip", r=r)]
             from functools import reduce
 
             # haha = List(filters_notin).reduce(func=lambda x, y: x + y)
@@ -595,7 +595,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             raw = raw + haha  # type: ignore
         processed = []
         for item in raw:
-            item_ = P(item)
+            item_ = PathExtended(item)
             if all([afilter(item_) for afilter in filters_total]):
                 processed.append(item_)
         if not win_order:
@@ -606,17 +606,17 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         return list(processed)
 
     @staticmethod
-    def tmpdir(prefix: str = "") -> "P":
-        return P.tmp(folder=rf"tmp_dirs/{prefix + ('_' if prefix != '' else '') + randstr()}")
+    def tmpdir(prefix: str = "") -> "PathExtended":
+        return PathExtended.tmp(folder=rf"tmp_dirs/{prefix + ('_' if prefix != '' else '') + randstr()}")
 
     @staticmethod
-    def tmpfile(name: Optional[str] = None, suffix: str = "", folder: OPLike = None, tstamp: bool = False, noun: bool = False) -> "P":
+    def tmpfile(name: Optional[str] = None, suffix: str = "", folder: OPLike = None, tstamp: bool = False, noun: bool = False) -> "PathExtended":
         name_concrete = name or randstr(noun=noun)
-        return P.tmp(file=name_concrete + "_" + randstr() + (("_" + str(timestamp())) if tstamp else "") + suffix, folder=folder or "tmp_files")
+        return PathExtended.tmp(file=name_concrete + "_" + randstr() + (("_" + str(timestamp())) if tstamp else "") + suffix, folder=folder or "tmp_files")
 
     @staticmethod
-    def tmp(folder: OPLike = None, file: Optional[str] = None, root: str = "~/tmp_results") -> "P":
-        base = P(root).expanduser().joinpath(folder or "").joinpath(file or "")
+    def tmp(folder: OPLike = None, file: Optional[str] = None, root: str = "~/tmp_results") -> "PathExtended":
+        base = PathExtended(root).expanduser().joinpath(folder or "").joinpath(file or "")
         target_path = base.parent if file else base
         target_path.mkdir(parents=True, exist_ok=True)
         return base
@@ -635,12 +635,12 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         pwd: Optional[str] = None,
         mode: FILE_MODE = "w",
         **kwargs: Any,
-    ) -> "P":
+    ) -> "PathExtended":
         path_resolved, slf = self._resolve_path(folder, name, path, self.name).expanduser().resolve(), self.expanduser().resolve()
         # if use_7z:  # benefits over regular zip and encrypt: can handle very large files with low memory footprint
         #     path_resolved = path_resolved + '.7z' if not path_resolved.suffix == '.7z' else path_resolved
         #     with install_n_import("py7zr").SevenZipFile(file=path_resolved, mode=mode, password=pwd) as archive: archive.writeall(path=str(slf), arcname=None)
-        arcname_obj = P(arcname or slf.name)
+        arcname_obj = PathExtended(arcname or slf.name)
         if arcname_obj.name != slf.name:
             arcname_obj /= slf.name  # arcname has to start from somewhere and end with filename
         if slf.is_file():
@@ -650,7 +650,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                 root_dir, base_dir = slf, "."
             else:
                 root_dir, base_dir = slf.split(at=str(arcname_obj[0]), sep=1)[0], str(arcname_obj)
-            path_resolved = P(Compression.compress_folder(root_dir=str(root_dir), op_path=str(path_resolved), base_dir=base_dir, fmt="zip", **kwargs))  # TODO: see if this supports mode
+            path_resolved = PathExtended(Compression.compress_folder(root_dir=str(root_dir), op_path=str(path_resolved), base_dir=base_dir, fmt="zip", **kwargs))  # TODO: see if this supports mode
         return self._return(path_resolved, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"ZIPPED {repr(slf)} ==>  {repr(path)}")
 
     def unzip(
@@ -667,11 +667,11 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         tmp: bool = False,
         pattern: Optional[str] = None,
         merge: bool = False,
-    ) -> "P":
+    ) -> "PathExtended":
         assert merge is False, "I have not implemented this yet"
         assert path is None, "I have not implemented this yet"
         if tmp:
-            return self.unzip(folder=P.tmp().joinpath("tmp_unzips").joinpath(randstr()), content=True).joinpath(self.stem)
+            return self.unzip(folder=PathExtended.tmp().joinpath("tmp_unzips").joinpath(randstr()), content=True).joinpath(self.stem)
         slf = zipfile__ = self.expanduser().resolve()
         if any(ztype in str(slf.parent) for ztype in (".zip", ".7z")):  # path include a zip archive in the middle.
             tmp__ = [item for item in (".zip", ".7z", "") if item in str(slf)]
@@ -681,8 +681,8 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             # zipfile__, name__ = slf.split(at=str(List(slf.parts).filter(lambda x: ztype in x)[0]), sep=-1)
             zipfile__, name__ = slf.split(at=str(next(item for item in slf.parts if ztype in item)), sep=-1)
             name = str(name__)
-        folder = (zipfile__.parent / zipfile__.stem) if folder is None else P(folder).expanduser().absolute().resolve().joinpath(zipfile__.stem)
-        assert isinstance(folder, P), "folder should be a P object at this point"
+        folder = (zipfile__.parent / zipfile__.stem) if folder is None else PathExtended(folder).expanduser().absolute().resolve().joinpath(zipfile__.stem)
+        assert isinstance(folder, PathExtended), "folder should be a P object at this point"
         folder = folder if not content else folder.parent
         if slf.suffix == ".7z":
             raise NotImplementedError("I have not implemented this yet")
@@ -698,39 +698,39 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         else:
             if overwrite:
                 if not content:
-                    P(folder).joinpath(name or "").delete(sure=True, verbose=True)  # deletes a specific file / folder that has the same name as the zip file without extension.
+                    PathExtended(folder).joinpath(name or "").delete(sure=True, verbose=True)  # deletes a specific file / folder that has the same name as the zip file without extension.
                 else:
                     import zipfile
 
                     mylist = [x for x in zipfile.ZipFile(str(self)).namelist() if "/" not in x or (len(x.split("/")) == 2 and x.endswith("/"))]
                     # List().apply(lambda item: P(folder).joinpath(name or "", item.replace("/", "")).delete(sure=True, verbose=True))
                     for item in mylist:
-                        P(folder).joinpath(name or "", item.replace("/", "")).delete(sure=True, verbose=True)
-            result = Compression.unzip(str(zipfile__), str(folder), None if name is None else P(name).as_posix())
+                        PathExtended(folder).joinpath(name or "", item.replace("/", "")).delete(sure=True, verbose=True)
+            result = Compression.unzip(str(zipfile__), str(folder), None if name is None else PathExtended(name).as_posix())
             assert isinstance(result, Path)
-        return self._return(P(result), inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNZIPPED {repr(zipfile__)} ==> {repr(result)}")
+        return self._return(PathExtended(result), inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNZIPPED {repr(zipfile__)} ==> {repr(result)}")
 
-    def untar(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "P":
+    def untar(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "PathExtended":
         op_path = self._resolve_path(folder, name, path, self.name.replace(".tar", "")).expanduser().resolve()
         Compression.untar(str(self.expanduser().resolve()), op_path=str(op_path))
         return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNTARRED {repr(self)} ==>  {repr(op_path)}")
 
-    def ungz(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "P":
+    def ungz(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "PathExtended":
         op_path = self._resolve_path(folder, name, path, self.name.replace(".gz", "")).expanduser().resolve()
         Compression.ungz(str(self.expanduser().resolve()), op_path=str(op_path))
         return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNGZED {repr(self)} ==>  {repr(op_path)}")
 
-    def unxz(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "P":
+    def unxz(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "PathExtended":
         op_path = self._resolve_path(folder, name, path, self.name.replace(".xz", "")).expanduser().resolve()
         Compression.unxz(str(self.expanduser().resolve()), op_path=str(op_path))
         return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNXZED {repr(self)} ==>  {repr(op_path)}")
 
-    def unbz(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "P":
+    def unbz(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "PathExtended":
         op_path = self._resolve_path(folder=folder, name=name, path=path, default_name=self.name.replace(".bz", "").replace(".tbz", ".tar")).expanduser().resolve()
         Compression.unbz(str(self.expanduser().resolve()), op_path=str(op_path))
         return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNBZED {repr(self)} ==>  {repr(op_path)}")
 
-    def decompress(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "P":
+    def decompress(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "PathExtended":
         if ".tar.gz" in str(self) or ".tgz" in str(self):
             # res = self.ungz_untar(folder=folder, path=path, name=name, inplace=inplace, verbose=verbose, orig=orig)
             return self.ungz(name=f"tmp_{randstr()}.tar", inplace=inplace).untar(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)  # this works for .tgz suffix as well as .tar.gz
@@ -748,7 +748,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             res = self
         return res
 
-    def encrypt(self, key: Optional[bytes] = None, pwd: Optional[str] = None, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, verbose: bool = True, suffix: str = ".enc", inplace: bool = False, orig: bool = False) -> "P":
+    def encrypt(self, key: Optional[bytes] = None, pwd: Optional[str] = None, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, verbose: bool = True, suffix: str = ".enc", inplace: bool = False, orig: bool = False) -> "PathExtended":
         # see: https://stackoverflow.com/questions/42568262/how-to-encrypt-text-with-a-password-in-python & https://stackoverflow.com/questions/2490334/simple-way-to-encode-a-string-according-to-a-password"""
         slf = self.expanduser().resolve()
         path = self._resolve_path(folder, name, path, slf.name + suffix)
@@ -756,30 +756,30 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         path.write_bytes(encrypt(msg=slf.read_bytes(), key=key, pwd=pwd))
         return self._return(path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"🔒🔑 ENCRYPTED: {repr(slf)} ==> {repr(path)}.")
 
-    def decrypt(self, key: Optional[bytes] = None, pwd: Optional[str] = None, path: OPLike = None, folder: OPLike = None, name: Optional[str] = None, verbose: bool = True, suffix: str = ".enc", inplace: bool = False) -> "P":
+    def decrypt(self, key: Optional[bytes] = None, pwd: Optional[str] = None, path: OPLike = None, folder: OPLike = None, name: Optional[str] = None, verbose: bool = True, suffix: str = ".enc", inplace: bool = False) -> "PathExtended":
         slf = self.expanduser().resolve()
         path = self._resolve_path(folder=folder, name=name, path=path, default_name=slf.name.replace(suffix, "") if suffix in slf.name else "decrypted_" + slf.name)
         path.write_bytes(decrypt(token=slf.read_bytes(), key=key, pwd=pwd))
         return self._return(path, operation="delete", verbose=verbose, msg=f"🔓🔑 DECRYPTED: {repr(slf)} ==> {repr(path)}.", inplace=inplace)
 
-    def zip_n_encrypt(self, key: Optional[bytes] = None, pwd: Optional[str] = None, inplace: bool = False, verbose: bool = True, orig: bool = False, content: bool = False) -> "P":
+    def zip_n_encrypt(self, key: Optional[bytes] = None, pwd: Optional[str] = None, inplace: bool = False, verbose: bool = True, orig: bool = False, content: bool = False) -> "PathExtended":
         return self.zip(inplace=inplace, verbose=verbose, content=content).encrypt(key=key, pwd=pwd, verbose=verbose, inplace=True) if not orig else self
 
-    def decrypt_n_unzip(self, key: Optional[bytes] = None, pwd: Optional[str] = None, inplace: bool = False, verbose: bool = True, orig: bool = False) -> "P":
+    def decrypt_n_unzip(self, key: Optional[bytes] = None, pwd: Optional[str] = None, inplace: bool = False, verbose: bool = True, orig: bool = False) -> "PathExtended":
         return self.decrypt(key=key, pwd=pwd, verbose=verbose, inplace=inplace).unzip(folder=None, inplace=True, content=False) if not orig else self
 
-    def _resolve_path(self, folder: OPLike, name: Optional[str], path: OPLike, default_name: str, rel2it: bool = False) -> "P":
+    def _resolve_path(self, folder: OPLike, name: Optional[str], path: OPLike, default_name: str, rel2it: bool = False) -> "PathExtended":
         """:param rel2it: `folder` or `path` are relative to `self` as opposed to cwd. This is used when resolving '../dir'"""
         if path is not None:
-            path = P(self.joinpath(path).resolve() if rel2it else path).expanduser().resolve()
+            path = PathExtended(self.joinpath(path).resolve() if rel2it else path).expanduser().resolve()
             assert folder is None and name is None, "If `path` is passed, `folder` and `name` cannot be passed."
-            assert isinstance(path, P), "path should be a P object at this point"
+            assert isinstance(path, PathExtended), "path should be a P object at this point"
             assert not path.is_dir(), f"`path` passed is a directory! it must not be that. If this is meant, pass it with `folder` kwarg. `{path}`"
             return path
         name, folder = (default_name if name is None else str(name)), (self.parent if folder is None else folder)  # good for edge cases of path with single part.  # means same directory, just different name
-        return P(self.joinpath(folder).resolve() if rel2it else folder).expanduser().resolve() / name
+        return PathExtended(self.joinpath(folder).resolve() if rel2it else folder).expanduser().resolve() / name
 
-    def get_remote_path(self, root: Optional[str], os_specific: bool = False, rel2home: bool = True, strict: bool = True) -> "P":
+    def get_remote_path(self, root: Optional[str], os_specific: bool = False, rel2home: bool = True, strict: bool = True) -> "PathExtended":
         import platform
 
         tmp1: str = platform.system().lower() if os_specific else "generic_os"
@@ -802,7 +802,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                 sanitized_path = path[1:].as_posix()
             else:
                 sanitized_path = path.as_posix()
-            return P(root + "/" + tmp1 + "/" + sanitized_path)
+            return PathExtended(root + "/" + tmp1 + "/" + sanitized_path)
         return tmp1 / path
 
     def to_cloud(
@@ -821,7 +821,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         os_specific: bool = False,
         transfers: int = 10,
         root: Optional[str] = "myhome",
-    ) -> "P":
+    ) -> "PathExtended":
         to_del = []
         localpath = self.expanduser().absolute() if not self.exists() else self
         if zip:
@@ -833,7 +833,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         if remotepath is None:
             rp = localpath.get_remote_path(root=root, os_specific=os_specific, rel2home=rel2home, strict=strict)  # if rel2home else (P(root) / localpath if root is not None else localpath)
         else:
-            rp = P(remotepath)
+            rp = PathExtended(remotepath)
         rclone_cmd = f"""rclone copyto '{localpath.as_posix()}' '{cloud}:{rp.as_posix()}' {"--progress" if verbose else ""} --transfers={transfers}"""
         from machineconfig.utils.terminal import Terminal
 
@@ -856,7 +856,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                 raise RuntimeError(f"💥 Could not get link for {self}.")
             else:
                 res.print_if_unsuccessful(desc="Cloud Storage Operation", strict_err=True, strict_returncode=True)
-            link_p: "P" = P(str(tmp))
+            link_p: "PathExtended" = PathExtended(str(tmp))
             return link_p
         return self
 
@@ -882,7 +882,7 @@ class P(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             remotepath += ".zip" if unzip else ""
             remotepath += ".enc" if decrypt else ""
         else:
-            remotepath = P(remotepath)
+            remotepath = PathExtended(remotepath)
         localpath = self.expanduser().absolute()
         localpath += ".zip" if unzip else ""
         localpath += ".enc" if decrypt else ""

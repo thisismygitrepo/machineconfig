@@ -7,7 +7,7 @@
 
 # from machineconfig.cluster.remote_machine import WorkloadParams
 from typing import Optional
-from machineconfig.utils.path_reduced import P, PLike
+from machineconfig.utils.path_reduced import PathExtended, PLike
 
 # def expensive_function(workload_params: WorkloadParams, sim_dict: Optional[dict[str, Any]] = None) -> P:
 #     import time
@@ -53,9 +53,9 @@ def to_cloud(
     os_specific: bool = False,
     transfers: int = 10,
     root: Optional[str] = "myhome",
-) -> "P":
+) -> "PathExtended":
     to_del = []
-    localpath = P(localpath).expanduser().absolute() if not P(localpath).exists() else P(localpath)
+    localpath = PathExtended(localpath).expanduser().absolute() if not PathExtended(localpath).exists() else PathExtended(localpath)
     if zip:
         localpath = localpath.zip(inplace=False)
         to_del.append(localpath)
@@ -65,7 +65,7 @@ def to_cloud(
     if remotepath is None:
         rp = localpath.get_remote_path(root=root, os_specific=os_specific, rel2home=rel2home, strict=strict)  # if rel2home else (P(root) / localpath if root is not None else localpath)
     else:
-        rp = P(remotepath)
+        rp = PathExtended(remotepath)
 
     from rclone_python import rclone
 
@@ -75,7 +75,7 @@ def to_cloud(
         if verbose:
             print("🔗 SHARING FILE")
         tmp = rclone.link(f"{cloud}:{rp.as_posix()}")
-        return P(tmp)
+        return PathExtended(tmp)
     return localpath
 
 

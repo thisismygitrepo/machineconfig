@@ -1,7 +1,7 @@
 """shell"""
 
 from machineconfig.utils.utils2 import randstr
-from machineconfig.utils.path_reduced import P as PathExtended, modify_text
+from machineconfig.utils.path_reduced import PathExtended as PathExtended, modify_text
 from machineconfig.utils.terminal import Terminal
 from machineconfig.utils.utils import LIBRARY_ROOT, REPO_ROOT, display_options
 import platform

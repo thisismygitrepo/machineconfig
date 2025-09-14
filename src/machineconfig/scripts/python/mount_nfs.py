@@ -1,7 +1,7 @@
 """NFS mounting script
 """
 
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.ssh import SSH
 from machineconfig.utils.terminal import Terminal
 from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_host

@@ -3,7 +3,7 @@ slidev
 """
 
 from machineconfig.utils.utils import CONFIG_PATH, PROGRAM_PATH, print_code
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.terminal import Terminal
 import subprocess
 import platform

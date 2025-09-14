@@ -2,7 +2,7 @@
 Installers do not add runtime files to the machine, hence this script.
 """
 
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.installer_utils.installer_abc import WINDOWS_INSTALL_PATH
 from typing import Optional
 import platform

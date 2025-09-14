@@ -6,7 +6,7 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.ve import get_ve_activate_line
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 
 
 PROGRAM_PATH = PathExtended.home().joinpath("tmp_results", "shells", "python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh")

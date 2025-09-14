@@ -1,7 +1,7 @@
 """Update repositories with fancy output
 """
 
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.utils import DEFAULTS_PATH
 from machineconfig.utils.utils2 import read_ini
 from platform import system

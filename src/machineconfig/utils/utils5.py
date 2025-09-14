@@ -3,6 +3,7 @@ from typing import Callable, Optional, Union, Any, NoReturn, TypeVar, Protocol, 
 import logging
 import time
 from datetime import datetime, timezone, timedelta
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 
 
 class LoggerTemplate(Protocol):
@@ -160,16 +161,16 @@ def from_pickle(path: Path) -> Any:
 class Cache(Generic[T]):  # This class helps to accelrate access to latest data coming from expensive function. The class has two flavours, memory-based and disk-based variants."""
     # source_func: Callable[[], T]
     def __init__(self, source_func: Callable[[], T],
-                 expire: Union[str, timedelta] = "1m", logger: Optional[PrintFunc] = None, path: OPLike = None,
-                 saver: Callable[[T, PLike], Any] = Save.pickle, reader: Callable[[PLike], T] = Read.pickle, name: Optional[str] = None) -> None:
+                 expire: timedelta, logger: Optional[PrintFunc] = None, path: Optional[Path] = None,
+                 saver: Callable[[T, Path], Any] = to_pickle, reader: Callable[[Path], T] = from_pickle, name: Optional[str] = None) -> None:
         self.cache: T
         self.source_func = source_func  # function which when called returns a fresh object to be frozen.
-        self.path: Optional[P] = P(path) if path else None  # if path is passed, it will function as disk-based flavour.
+        self.path: Optional[PathExtended] = PathExtended(path) if path is not None else None  # if path is passed, it will function as disk-based flavour.
         self.time_produced = datetime.now()  # if path is None else
         self.save = saver
         self.reader = reader
         self.logger = logger
-        self.expire = str2timedelta(expire) if isinstance(expire, str) else expire
+        self.expire = expire
         self.name = name if isinstance(name, str) else str(self.source_func)
         self.last_call_is_fresh = False
     @property
@@ -178,13 +179,13 @@ class Cache(Generic[T]):  # This class helps to accelrate access to latest data 
         if self.path is None:  # memory-based cache.
             return datetime.now() - self.time_produced
         return datetime.now() - datetime.fromtimestamp(self.path.stat().st_mtime)
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        self.__dict__.update(state)
-        self.path = P.home() / self.path if self.path is not None else self.path
-    def __getstate__(self) -> dict[str, Any]:
-        state = self.__dict__.copy()
-        state["path"] = self.path.rel2home() if self.path is not None else state["path"]
-        return state  # With this implementation, instances can be pickled and loaded up in different machine and still works.
+    # def __setstate__(self, state: dict[str, Any]) -> None:
+    #     self.__dict__.update(state)
+    #     self.path = P.home() / self.path if self.path is not None else self.path
+    # def __getstate__(self) -> dict[str, Any]:
+    #     state = self.__dict__.copy()
+    #     state["path"] = self.path.rel2home() if self.path is not None else state["path"]
+    #     return state  # With this implementation, instances can be pickled and loaded up in different machine and still works.
     def __call__(self, fresh: bool = False) -> T:
         self.last_call_is_fresh = False
         if fresh or not hasattr(self, "cache"):  # populate cache for the first time
@@ -210,8 +211,8 @@ class Cache(Generic[T]):  # This class helps to accelrate access to latest data 
                     self.cache = self.source_func()
                     self.last_call_is_fresh = True
                     self.time_produced = datetime.now()
-                    if self.path is not None:
-                        self.save(self.cache, self.path)
+                    # if self.path is not None:
+                    #     self.save(self.cache, self.path)
                     return self.cache
                 return self(fresh=False)  # may be the cache is old ==> check that by passing it through the logic again.
             else:
@@ -252,9 +253,9 @@ class Cache(Generic[T]):  # This class helps to accelrate access to latest data 
 ════════════════════════════════════════════════════════""")
         return self.cache
     @staticmethod
-    def as_decorator(expire: Union[str, timedelta] = "1m", logger: Optional[PrintFunc] = None, path: OPLike = None,
-                     saver: Callable[[T2, PLike], Any] = Save.pickle,
-                     reader: Callable[[PLike], T2] = Read.pickle,
+    def as_decorator(expire: timedelta, logger: Optional[PrintFunc] = None, path: Optional[Path] = None,
+                     saver: Callable[[T2, Path], Any] = to_pickle,
+                     reader: Callable[[Path], T2] = from_pickle,
                      name: Optional[str] = None):  # -> Callable[..., 'Cache[T2]']:
         def decorator(source_func: Callable[[], T2]) -> Cache['T2']:
             res = Cache(source_func=source_func, expire=expire, logger=logger, path=path, name=name, reader=reader, saver=saver)

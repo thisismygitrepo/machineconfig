@@ -1,4 +1,4 @@
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.terminal import Terminal
 from machineconfig.scripts.python.get_zellij_cmd import get_zellij_cmd
 from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH

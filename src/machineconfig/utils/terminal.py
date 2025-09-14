@@ -1,4 +1,4 @@
-from machineconfig.utils.path_reduced import P, OPLike
+from machineconfig.utils.path_reduced import PathExtended, OPLike
 import subprocess
 from typing import Any, BinaryIO, Optional, Union
 import platform
@@ -55,9 +55,9 @@ class Response:
     def returncode(self) -> int:
         return self.output.returncode
 
-    def op2path(self, strict_returncode: bool = True, strict_err: bool = False) -> Union[P, None]:
+    def op2path(self, strict_returncode: bool = True, strict_err: bool = False) -> Union[PathExtended, None]:
         if self.is_successful(strict_returcode=strict_returncode, strict_err=strict_err):
-            return P(self.op.rstrip())
+            return PathExtended(self.op.rstrip())
         return None
 
     def op_if_successfull_or_default(self, strict_returcode: bool = True, strict_err: bool = False) -> Optional[str]:
@@ -143,7 +143,7 @@ class Terminal:
     def run_script(self, script: str, shell: SHELLS = "default", verbose: bool = False):
         if self.machine == "Linux":
             script = "#!/bin/bash" + "\n" + script  # `source` is only available in bash.
-        script_file = P.tmpfile(name="tmp_shell_script", suffix=".ps1" if self.machine == "Windows" else ".sh", folder="tmp_scripts").write_text(script, newline={"Windows": None, "Linux": "\n"}[self.machine])
+        script_file = PathExtended.tmpfile(name="tmp_shell_script", suffix=".ps1" if self.machine == "Windows" else ".sh", folder="tmp_scripts").write_text(script, newline={"Windows": None, "Linux": "\n"}[self.machine])
         if shell == "default":
             if self.machine == "Windows":
                 start_cmd = "powershell"  # default shell on Windows is cmd which is not very useful. (./source is not available)
@@ -179,7 +179,7 @@ class Terminal:
 
     def run_py(self, script: str, wdir: OPLike = None, interactive: bool = True, ipython: bool = True, shell: Optional[str] = None, terminal: str = "", new_window: bool = True, header: bool = True):  # async run, since sync run is meaningless.
         script = (Terminal.get_header(wdir=wdir, toolbox=True) if header else "") + script + ("\nDisplayData.set_pandas_auto_width()\n" if terminal in {"wt", "powershell", "pwsh"} else "")
-        py_script = P.tmpfile(name="tmp_python_script", suffix=".py", folder="tmp_scripts/terminal")
+        py_script = PathExtended.tmpfile(name="tmp_python_script", suffix=".py", folder="tmp_scripts/terminal")
         py_script.write_text(f"""print(r'''{script}''')""" + "\n" + script)
         print(f"""🚀 [ASYNC PYTHON SCRIPT] Script URI:
    {py_script.absolute().as_uri()}""")
@@ -188,7 +188,7 @@ class Terminal:
 {f"cd {wdir}" if wdir is not None else ""}
 {"ipython" if ipython else "python"} {"-i" if interactive else ""} {py_script}
 """
-        shell_script = P.tmpfile(name="tmp_shell_script", suffix=".sh" if self.machine == "Linux" else ".ps1", folder="tmp_scripts/shell").write_text(shell_script)
+        shell_script = PathExtended.tmpfile(name="tmp_shell_script", suffix=".sh" if self.machine == "Linux" else ".ps1", folder="tmp_scripts/shell").write_text(shell_script)
         if shell is None and self.machine == "Windows":
             shell = "pwsh"
         window = "start" if new_window and self.machine == "Windows" else ""

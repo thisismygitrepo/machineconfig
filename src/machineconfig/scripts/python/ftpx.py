@@ -8,7 +8,7 @@ Currently, the only way to work around this is to predifine the host in ~/.ssh/c
 
 import argparse
 from machineconfig.utils.ssh import SSH
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.scripts.python.helpers.helpers2 import ES
 from machineconfig.utils.utils2 import pprint
 

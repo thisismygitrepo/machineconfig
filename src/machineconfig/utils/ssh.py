@@ -3,21 +3,21 @@ import os
 from dataclasses import dataclass
 import rich.console
 from machineconfig.utils.terminal import Terminal, Response, MACHINE
-from machineconfig.utils.path_reduced import P, PLike, OPLike
+from machineconfig.utils.path_reduced import PathExtended, PLike, OPLike
 from machineconfig.utils.utils2 import pprint
 
 
 @dataclass
 class Scout:
-    source_full: P
-    source_rel2home: P
+    source_full: PathExtended
+    source_rel2home: PathExtended
     exists: bool
     is_dir: bool
-    files: Optional[List[P]]
+    files: Optional[List[PathExtended]]
 
 
 def scout(source: PLike, z: bool = False, r: bool = False) -> Scout:
-    source_full = P(source).expanduser().absolute()
+    source_full = PathExtended(source).expanduser().absolute()
     source_rel2home = source_full.collapseuser()
     exists = source_full.exists()
     is_dir = source_full.is_dir() if exists else False
@@ -55,7 +55,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             try:
                 import paramiko.config as pconfig
 
-                config = pconfig.SSHConfig.from_path(str(P.home().joinpath(".ssh/config")))
+                config = pconfig.SSHConfig.from_path(str(PathExtended.home().joinpath(".ssh/config")))
                 config_dict = config.lookup(host)
                 self.hostname = config_dict["hostname"]
                 self.username = config_dict["user"]
@@ -90,7 +90,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             print(f"Provided values: host={host}, username={username}, hostname={hostname}")
             raise ValueError("Either host or username and hostname must be provided.")
 
-        self.sshkey = str(P(sshkey).expanduser().absolute()) if sshkey is not None else None  # no need to pass sshkey if it was configured properly already
+        self.sshkey = str(PathExtended(sshkey).expanduser().absolute()) if sshkey is not None else None  # no need to pass sshkey if it was configured properly already
         self.ssh = paramiko.SSHClient()
         self.ssh.load_system_host_keys()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -169,7 +169,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         self.copy_from_here("~/.ssh/id_rsa.pub")
         assert self.get_remote_machine() == "Windows"
         code_url = "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/refs/heads/main/src/machineconfig/setup_windows/openssh-server_add-sshkey.ps1"
-        code = P(code_url).download().read_text(encoding="utf-8")
+        code = PathExtended(code_url).download().read_text(encoding="utf-8")
         self.run(code)
 
     def copy_env_var(self, name: str):
@@ -216,61 +216,61 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             )
         assert "obj=" in cmd, "The command sent to run_py must have `obj=` statement if return_obj is set to True"
         source_file = self.run_py(f"""{cmd}\npath = Save.pickle(obj=obj, path=P.tmpfile(suffix='.pkl'))\nprint(path)""", desc=desc, verbose=verbose, strict_err=True, strict_returncode=True).op.split("\n")[-1]
-        res = self.copy_to_here(source=source_file, target=P.tmpfile(suffix=".pkl"))
+        res = self.copy_to_here(source=source_file, target=PathExtended.tmpfile(suffix=".pkl"))
         import pickle
 
         res_bytes = res.read_bytes()
         return pickle.loads(res_bytes)
 
-    def copy_from_here(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False, overwrite: bool = False, init: bool = True) -> Union[P, list[P]]:
+    def copy_from_here(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False, overwrite: bool = False, init: bool = True) -> Union[PathExtended, list[PathExtended]]:
         if init:
             print(f"{'⬆️' * 5} [SFTP UPLOAD] FROM `{source}` TO `{target}`")  # TODO: using return_obj do all tests required in one go.
-        source_obj = P(source).expanduser().absolute()
+        source_obj = PathExtended(source).expanduser().absolute()
         if not source_obj.exists():
             raise RuntimeError(f"Meta.SSH Error: source `{source_obj}` does not exist!")
         if target is None:
-            target = P(source_obj).expanduser().absolute().collapseuser(strict=True)
+            target = PathExtended(source_obj).expanduser().absolute().collapseuser(strict=True)
             assert target.is_relative_to("~"), "If target is not specified, source must be relative to home."
             if z:
                 target += ".zip"
         if not z and source_obj.is_dir():
             if r is False:
                 raise RuntimeError(f"Meta.SSH Error: source `{source_obj}` is a directory! either set `r=True` for recursive sending or raise `z=True` flag to zip it first.")
-            source_list: list[P] = source_obj.search("*", folders=False, files=True, r=True)
+            source_list: list[PathExtended] = source_obj.search("*", folders=False, files=True, r=True)
             remote_root = (
                 self.run_py(
-                    f"path=P(r'{P(target).as_posix()}').expanduser()\n{'path.delete(sure=True)' if overwrite else ''}\nprint(path.create())", desc=f"Creating Target directory `{P(target).as_posix()}` @ {self.get_remote_repr()}", verbose=False
+                    f"path=P(r'{PathExtended(target).as_posix()}').expanduser()\n{'path.delete(sure=True)' if overwrite else ''}\nprint(path.create())", desc=f"Creating Target directory `{PathExtended(target).as_posix()}` @ {self.get_remote_repr()}", verbose=False
                 ).op
                 or ""
             )
             for idx, item in enumerate(source_list):
                 print(f"   {idx + 1:03d}. {item}")
             for item in source_list:
-                a__target = P(remote_root).joinpath(item.relative_to(source_obj))
+                a__target = PathExtended(remote_root).joinpath(item.relative_to(source_obj))
                 self.copy_from_here(source=item, target=a__target)
             return list(source_list)
         if z:
             print("🗜️ ZIPPING ...")
-            source_obj = P(source_obj).expanduser().zip(content=True)  # .append(f"_{randstr()}", inplace=True)  # eventually, unzip will raise content flag, so this name doesn't matter.
+            source_obj = PathExtended(source_obj).expanduser().zip(content=True)  # .append(f"_{randstr()}", inplace=True)  # eventually, unzip will raise content flag, so this name doesn't matter.
         remotepath = (
             self.run_py(
-                f"path=P(r'{P(target).as_posix()}').expanduser()\n{'path.delete(sure=True)' if overwrite else ''}\nprint(path.parent.create())",
-                desc=f"Creating Target directory `{P(target).parent.as_posix()}` @ {self.get_remote_repr()}",
+                f"path=P(r'{PathExtended(target).as_posix()}').expanduser()\n{'path.delete(sure=True)' if overwrite else ''}\nprint(path.parent.create())",
+                desc=f"Creating Target directory `{PathExtended(target).parent.as_posix()}` @ {self.get_remote_repr()}",
                 verbose=False,
             ).op
             or ""
         )
-        remotepath = P(remotepath.split("\n")[-1]).joinpath(P(target).name)
-        print(f"""📤 [SFTP UPLOAD] Sending file: {repr(P(source_obj))}  ==>  Remote Path: {remotepath.as_posix()}""")
+        remotepath = PathExtended(remotepath.split("\n")[-1]).joinpath(PathExtended(target).name)
+        print(f"""📤 [SFTP UPLOAD] Sending file: {repr(PathExtended(source_obj))}  ==>  Remote Path: {remotepath.as_posix()}""")
         with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
-            self.sftp.put(localpath=P(source_obj).expanduser(), remotepath=remotepath.as_posix(), callback=pbar.view_bar)  # type: ignore # pylint: disable=E1129
+            self.sftp.put(localpath=PathExtended(source_obj).expanduser(), remotepath=remotepath.as_posix(), callback=pbar.view_bar)  # type: ignore # pylint: disable=E1129
         if z:
             _resp = self.run_py(f"""P(r'{remotepath.as_posix()}').expanduser().unzip(content=False, inplace=True, overwrite={overwrite})""", desc=f"UNZIPPING {remotepath.as_posix()}", verbose=False, strict_err=True, strict_returncode=True)
             source_obj.delete(sure=True)
             print("\n")
         return source_obj
 
-    def copy_to_here(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False, init: bool = True) -> P:
+    def copy_to_here(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False, init: bool = True) -> PathExtended:
         if init:
             print(f"{'⬇️' * 5} SFTP DOWNLOADING FROM `{source}` TO `{target}`")
         if not z and self.run_py(f"print(P(r'{source}').expanduser().absolute().is_dir())", desc=f"Check if source `{source}` is a dir", verbose=False, strict_returncode=True, strict_err=True).op.split("\n")[-1] == "True":
@@ -279,33 +279,33 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             source_list = self.run_py(f"obj=P(r'{source}').search(folders=False, r=True).collapseuser(strict=False)", desc="Searching for files in source", return_obj=True, verbose=False)
             assert isinstance(source_list, List), f"Could not resolve source path {source} due to error"
             for file in source_list:
-                self.copy_to_here(source=file.as_posix(), target=P(target).joinpath(P(file).relative_to(source)) if target else None, r=False)
+                self.copy_to_here(source=file.as_posix(), target=PathExtended(target).joinpath(PathExtended(file).relative_to(source)) if target else None, r=False)
         if z:
             tmp: Response = self.run_py(f"print(P(r'{source}').expanduser().zip(inplace=False, verbose=False))", desc=f"Zipping source file {source}", verbose=False)
             tmp2 = tmp.op2path(strict_returncode=True, strict_err=True)
-            if not isinstance(tmp2, P):
+            if not isinstance(tmp2, PathExtended):
                 raise RuntimeError(f"Could not zip {source} due to {tmp.err}")
             else:
                 source = tmp2
         if target is None:
-            tmpx = self.run_py(f"print(P(r'{P(source).as_posix()}').collapseuser(strict=False).as_posix())", desc="Finding default target via relative source path", strict_returncode=True, strict_err=True, verbose=False).op2path()
-            if isinstance(tmpx, P):
+            tmpx = self.run_py(f"print(P(r'{PathExtended(source).as_posix()}').collapseuser(strict=False).as_posix())", desc="Finding default target via relative source path", strict_returncode=True, strict_err=True, verbose=False).op2path()
+            if isinstance(tmpx, PathExtended):
                 target = tmpx
             else:
                 raise RuntimeError(f"Could not resolve target path {target} due to error")
             assert target.is_relative_to("~"), f"If target is not specified, source must be relative to home.\n{target=}"
-        target_obj = P(target).expanduser().absolute()
+        target_obj = PathExtended(target).expanduser().absolute()
         target_obj.parent.mkdir(parents=True, exist_ok=True)
         if z and ".zip" not in target_obj.suffix:
             target_obj += ".zip"
         if "~" in str(source):
             tmp3 = self.run_py(f"print(P(r'{source}').expanduser())", desc="# Resolving source path address by expanding user", strict_returncode=True, strict_err=True, verbose=False).op2path()
-            if isinstance(tmp3, P):
+            if isinstance(tmp3, PathExtended):
                 source = tmp3
             else:
                 raise RuntimeError(f"Could not resolve source path {source} due to")
         else:
-            source = P(source)
+            source = PathExtended(source)
         print(f"""📥 [DOWNLOAD] Receiving: {source}  ==>  Local Path: {target_obj}""")
         with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:  # type: ignore # pylint: disable=E1129
             assert self.sftp is not None, f"Could not establish SFTP connection to {self.hostname}."
@@ -316,17 +316,17 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         print("\n")
         return target_obj
 
-    def receieve(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False) -> P:
+    def receieve(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False) -> PathExtended:
         scout = self.run_py(cmd=f"obj=scout(r'{source}', z={z}, r={r})", desc=f"Scouting source `{source}` path on remote", return_obj=True, verbose=False)
         assert isinstance(scout, Scout)
         if not z and scout.is_dir and scout.files is not None:
             if r:
-                tmp: list[P] = [self.receieve(source=file.as_posix(), target=P(target).joinpath(P(file).relative_to(source)) if target else None, r=False) for file in scout.files]
+                tmp: list[PathExtended] = [self.receieve(source=file.as_posix(), target=PathExtended(target).joinpath(PathExtended(file).relative_to(source)) if target else None, r=False) for file in scout.files]
                 return tmp[0]
             else:
                 print("Source is a directory! either set `r=True` for recursive sending or raise `zip_first=True` flag.")
         if target:
-            target = P(target).expanduser().absolute()
+            target = PathExtended(target).expanduser().absolute()
         else:
             target = scout.source_rel2home.expanduser().absolute()
         target.parent.mkdir(parents=True, exist_ok=True)

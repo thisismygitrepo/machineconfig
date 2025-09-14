@@ -3,7 +3,7 @@
 
 
 # from platform import system
-from machineconfig.utils.path_reduced import P as PathExtended, modify_text
+from machineconfig.utils.path_reduced import PathExtended as PathExtended, modify_text
 from machineconfig.utils.options import display_options
 from rich.panel import Panel
 from rich.text import Text

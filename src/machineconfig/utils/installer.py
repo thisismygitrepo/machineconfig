@@ -5,7 +5,7 @@ from machineconfig.utils.installer_utils.installer_class import Installer
 from rich.console import Console
 from rich.panel import Panel  # Added import
 
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.utils import INSTALL_VERSION_ROOT
 from machineconfig.utils.utils2 import read_json
 

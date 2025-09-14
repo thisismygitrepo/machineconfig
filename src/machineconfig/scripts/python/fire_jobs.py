@@ -14,7 +14,7 @@ from machineconfig.scripts.python.helpers.helpers4 import parse_pyfile
 from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
 from machineconfig.utils.ve import get_repo_root, get_ve_activate_line, get_ve_path_and_ipython_profile
 from machineconfig.utils.utils import display_options, choose_one_option, PROGRAM_PATH, match_file_name, sanitize_path
-from machineconfig.utils.path_reduced import P as PathExtended
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.io_save import save_toml
 from machineconfig.utils.utils2 import randstr, read_toml
 import platform
