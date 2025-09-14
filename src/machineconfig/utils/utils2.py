@@ -51,7 +51,6 @@ def read_toml(path: "Path"):
 
 def pprint(obj: dict[Any, Any], title: str) -> None:
     from rich import inspect
-
     inspect(type("TempStruct", (object,), obj)(), value=False, title=title, docs=False, dunder=False, sort=False)
 
 
