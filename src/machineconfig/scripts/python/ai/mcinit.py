@@ -40,9 +40,9 @@ uv venv
             print("Terminating mcinit ...")
             return
 
-    instructions_repository_dir = mc_root.joinpath(".scripts/python/ai/instructions")
-    chatmodes_dir = mc_root.joinpath(".scripts/python/ai/chatmodes")
-    prompts_dir = mc_root.joinpath(".scripts/python/ai/prompts")
+    instructions_repository_dir = mc_root.joinpath("scripts/python/ai/instructions")
+    chatmodes_dir = mc_root.joinpath("scripts/python/ai/chatmodes")
+    prompts_dir = mc_root.joinpath("scripts/python/ai/prompts")
     # python_rules_file = instructions_repository_dir.joinpath("python/dev.md")
 
     # VSCODE:
@@ -73,7 +73,7 @@ uv venv
 
     tmp = repo_root.joinpath("GEMINI.md")
     tmp.write_text(data=generic_instructions.read_text(encoding="utf-8"), encoding="utf-8")
-    gemini_settings = mc_root.joinpath(".scripts/python/ai/configs/.gemini/settings.json")
+    gemini_settings = mc_root.joinpath("scripts/python/ai/configs/.gemini/settings.json")
     repo_root.joinpath(".gemini").mkdir(parents=True, exist_ok=True)
     repo_root.joinpath(".gemini/settings.json").write_text(data=gemini_settings.read_text(encoding="utf-8"), encoding="utf-8")
 
@@ -82,7 +82,7 @@ uv venv
     tmp.joinpath("python_dev.md").write_text(data=generic_instructions.read_text(encoding="utf-8"), encoding="utf-8")
 
     # OTHERS
-    scripts_dir = mc_root.joinpath(".scripts/python/ai/.scripts")
+    scripts_dir = mc_root.joinpath("scripts/python/ai/scripts")
     repo_root.joinpath(".scripts").mkdir(parents=True, exist_ok=True)
     for a_script in scripts_dir.iterdir():
         repo_root.joinpath(".scripts", a_script.name).write_text(data=a_script.read_text(encoding="utf-8"), encoding="utf-8")
