@@ -1,5 +1,5 @@
 
 
-. $HOME\code\machineconfig\\Scripts\activate.ps1
+. $HOME\code\machineconfig\Scripts\activate.ps1
 python -m fire machineconfig.profile.create main --choice=all
 deactivate

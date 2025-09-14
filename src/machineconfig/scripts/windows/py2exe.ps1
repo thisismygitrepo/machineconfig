@@ -1,5 +1,5 @@
 
-. "$HOME\code\machineconfig\\Scripts\activate.ps1"
+. "$HOME\code\machineconfig\Scripts\activate.ps1"
 
 croshell -c "import_n_install('pyinstaller')"
 $destination = $(croshell -c "print(P.tmpdir())")

@@ -1,5 +1,5 @@
 
-. "$HOME\code\machineconfig\\Scripts\activate.ps1"
+. "$HOME\code\machineconfig\Scripts\activate.ps1"
 
 # python $PSScriptRoot/../python/dotfile.py $args
 python -m machineconfig.scripts.python.dotfile $args

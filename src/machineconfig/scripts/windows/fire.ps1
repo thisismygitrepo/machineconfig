@@ -30,7 +30,7 @@ if (-not (Test-Path $script_dir)) {
 # }
 
 
-. "$HOME\code\machineconfig\\Scripts\activate.ps1"
+. "$HOME\code\machineconfig\Scripts\activate.ps1"
 python -m machineconfig.scripts.python.fire_jobs $args
 
 

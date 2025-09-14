@@ -1,5 +1,5 @@
 
-. "$HOME\code\machineconfig\\Scripts\activate.ps1"
+. "$HOME\code\machineconfig\Scripts\activate.ps1"
 
 # python $PSScriptRoot/../python/cloud_repo_sync.py $args
 python -m machineconfig.scripts.python.cloud_repo_sync $args

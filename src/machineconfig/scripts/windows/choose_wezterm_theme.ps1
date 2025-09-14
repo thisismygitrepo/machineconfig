@@ -8,7 +8,7 @@ else {
     $name = $args[0]
 }
 
-. "$HOME\code\machineconfig\\Scripts\activate.ps1"
+. "$HOME\code\machineconfig\Scripts\activate.ps1"
 
 python -m fire machineconfig.scripts.python.choose_wezterm_theme main2 $args[0]
 .$profile  # reload the profile
