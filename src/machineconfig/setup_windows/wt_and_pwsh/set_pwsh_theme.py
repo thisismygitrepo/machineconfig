@@ -22,9 +22,11 @@ nerd_fonts = {
 }
 
 
-REQUIRED_FONT_KEYWORDS: tuple[str, ...] = (
-    "CaskaydiaCove Nerd Font",
-    "CascadiaCode Nerd Font",  # older naming variant
+# Patterns to match any installed variant (NF, Nerd Font, Mono, Propo, style weights) of Cascadia/Caskaydia
+# We'll compile them at runtime for flexibility. Keep them simple to avoid false positives.
+REQUIRED_FONT_PATTERNS: tuple[str, ...] = (
+    r"caskaydiacove.*(nf|nerd ?font)",
+    r"cascadiacode.*(nf|nerd ?font)",
 )
 
 
@@ -52,12 +54,14 @@ def _list_installed_fonts() -> list[str]:
 
 
 def _missing_required_fonts(installed_fonts: Iterable[str]) -> list[str]:
-    installed_joined = "\n".join(installed_fonts)
+    import re
+
+    installed_norm = [f.lower().replace(" ", "") for f in installed_fonts]
     missing: list[str] = []
-    for kw in REQUIRED_FONT_KEYWORDS:
-        # perform case-insensitive containment check across any font name.
-        if kw.lower().replace(" ", "") not in installed_joined.lower().replace(" ", ""):
-            missing.append(kw)
+    for pattern in REQUIRED_FONT_PATTERNS:
+        regex = re.compile(pattern)
+        if not any(regex.search(f) for f in installed_norm):
+            missing.append(pattern)
     return missing
 
 

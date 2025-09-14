@@ -4,24 +4,28 @@ $FONTS = 0x14
 $Path = ".\fonts-to-be-installed"
 $objShell = New-Object -ComObject Shell.Application
 $objFolder = $objShell.Namespace($FONTS)
-$Fontdir = dir $Path
+$Fontdir = Get-ChildItem -Path $Path -File
+
+# Cache installed font basenames once to avoid repeated enumeration and normalize by removing underscores
+$installedFonts = @(Get-ChildItem C:\Windows\Fonts -File | Select-Object -ExpandProperty BaseName | ForEach-Object { ($_ -replace '_','').ToLower() })
+
+Write-Host "🔍 Existing fonts detected:" ($installedFonts | Where-Object { $_ -match 'caskaydiacove|cascadiacode' } | Sort-Object | Get-Unique) -ForegroundColor DarkGray
 
 foreach ($File in $Fontdir) {
-    if (!($file.name -match "pfb$")) {
-        $try = $true
-        $installedFonts = @(Get-ChildItem c:\windows\fonts | Where-Object {$_.PSIsContainer -eq $false} | Select-Object basename)
-        $name = $File.baseName
-
-        foreach ($font in $installedFonts) {
-            $font = $font -replace "_", ""
-            $name = $name -replace "_", ""
-            if ($font -match $name) {
-                $try = $false
-            }
+    if ($File.Name -notmatch 'pfb$') {
+        $candidate = ($File.BaseName -replace '_','').ToLower()
+        # If any installed font contains the candidate substring, skip copy to avoid replacement prompt.
+        if ($installedFonts -contains $candidate) {
+            Write-Host "✅ Skipping already installed font $($File.Name)" -ForegroundColor Green
+            continue
         }
-
-        if ($try) {
-            $objFolder.CopyHere($File.fullname)
+        # Fallback: broader match using -match if -contains misses stylistic variations
+        if ($installedFonts | Where-Object { $_ -match [Regex]::Escape($candidate) }) {
+            Write-Host "✅ Skipping (regex) already installed font $($File.Name)" -ForegroundColor Green
+            continue
         }
+        Write-Host "⬆️ Installing font $($File.Name)" -ForegroundColor Yellow
+        $objFolder.CopyHere($File.FullName)
     }
 }
+Write-Host "🏁 Font installation script completed." -ForegroundColor Cyan
