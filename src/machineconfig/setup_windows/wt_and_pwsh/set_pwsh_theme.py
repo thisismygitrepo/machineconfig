@@ -8,6 +8,8 @@ from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.utils import LIBRARY_ROOT
 from machineconfig.utils.installer_utils.installer_class import Installer
 import subprocess
+import sys
+from typing import Iterable
 
 
 nerd_fonts = {
@@ -20,9 +22,53 @@ nerd_fonts = {
 }
 
 
-def install_nerd_fonts():
+REQUIRED_FONT_KEYWORDS: tuple[str, ...] = (
+    "CaskaydiaCove Nerd Font",
+    "CascadiaCode Nerd Font",  # older naming variant
+)
+
+
+def _list_installed_fonts() -> list[str]:
+    """Return list of installed font file base names (without extension) on Windows.
+
+    Uses PowerShell to enumerate c:\\windows\\fonts because Python on *nix host can't rely on that path.
+    If PowerShell call fails (e.g. running on non-Windows), returns empty list so install proceeds.
+    """
+    try:
+        # Query only base names to make substring matching simpler; remove underscores like the PS script does.
+        cmd = [
+            "powershell.exe",
+            "-NoLogo",
+            "-NonInteractive",
+            "-Command",
+            "Get-ChildItem -Path C:/Windows/Fonts -File | Select-Object -ExpandProperty BaseName"
+        ]
+        res = subprocess.run(cmd, capture_output=True, text=True, check=True)  # noqa: S603 S607 (trusted command)
+        fonts = [x.strip().replace("_", "") for x in res.stdout.splitlines() if x.strip() != ""]
+        return fonts
+    except Exception as exc:  # noqa: BLE001
+        print(f"⚠️ Could not enumerate installed fonts (continuing with install). Reason: {exc}")
+        return []
+
+
+def _missing_required_fonts(installed_fonts: Iterable[str]) -> list[str]:
+    installed_joined = "\n".join(installed_fonts)
+    missing: list[str] = []
+    for kw in REQUIRED_FONT_KEYWORDS:
+        # perform case-insensitive containment check across any font name.
+        if kw.lower().replace(" ", "") not in installed_joined.lower().replace(" ", ""):
+            missing.append(kw)
+    return missing
+
+
+def install_nerd_fonts() -> None:
     print(f"\n{'=' * 80}\n📦 INSTALLING NERD FONTS 📦\n{'=' * 80}")
-    # Step 1: download the required fonts that has all the glyphs and install them.
+    installed = _list_installed_fonts()
+    missing = _missing_required_fonts(installed)
+    if len(missing) == 0:
+        print("✅ Required Nerd Fonts already installed. Skipping download & install.")
+        return
+    print(f"🔍 Missing fonts detected: {', '.join(missing)}. Proceeding with installation...")
     print("🔍 Downloading Nerd Fonts package...")
     folder, _version_to_be_installed = Installer.from_dict(d=nerd_fonts, name="nerd_fonts").download(version=None)
 
@@ -36,7 +82,12 @@ def install_nerd_fonts():
     file.parent.mkdir(parents=True, exist_ok=True)
     content = LIBRARY_ROOT.joinpath("setup_windows/wt_and_pwsh/install_fonts.ps1").read_text(encoding="utf-8").replace(r".\fonts-to-be-installed", str(folder))
     file.write_text(content, encoding="utf-8")
-    subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {str(file)}", check=True)
+    try:
+        subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {str(file)}", check=True)
+    except subprocess.CalledProcessError as cpe:
+        print(f"💥 Font installation script failed: {cpe}")
+        # do not delete download to allow debugging
+        sys.exit(1)
 
     print("🗑️  Cleaning up temporary files...")
     folder.delete(sure=True)

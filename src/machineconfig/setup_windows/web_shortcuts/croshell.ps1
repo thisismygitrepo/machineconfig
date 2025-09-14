@@ -10,7 +10,7 @@
 (iwr bit.ly/cfgreposwindows).Content | iex
 
 # symlinks
-. ~/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
+. $HOME/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
 
 # windows terminal and powershell
 (iwr bit.ly/cfgwt).Content | iex
