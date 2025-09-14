@@ -8,7 +8,6 @@ from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.utils import LIBRARY_ROOT
 from machineconfig.utils.installer_utils.installer_class import Installer
 import subprocess
-import sys
 from typing import Iterable
 
 
@@ -84,14 +83,15 @@ def install_nerd_fonts() -> None:
     print("⚙️  Installing fonts via PowerShell...")
     file = PathExtended.tmpfile(suffix=".ps1")
     file.parent.mkdir(parents=True, exist_ok=True)
-    content = LIBRARY_ROOT.joinpath("setup_windows/wt_and_pwsh/install_fonts.ps1").read_text(encoding="utf-8").replace(r".\fonts-to-be-installed", str(folder))
+    raw_content = LIBRARY_ROOT.joinpath("setup_windows/wt_and_pwsh/install_fonts.ps1").read_text(encoding="utf-8").replace(r".\fonts-to-be-installed", str(folder))
+    # PowerShell 5.1 can choke on certain unicode chars in some locales; keep ASCII only.
+    content = "".join(ch for ch in raw_content if ord(ch) < 128)
     file.write_text(content, encoding="utf-8")
     try:
         subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {str(file)}", check=True)
     except subprocess.CalledProcessError as cpe:
-        print(f"💥 Font installation script failed: {cpe}")
-        # do not delete download to allow debugging
-        sys.exit(1)
+        print(f"💥 Font installation script failed (continuing without abort): {cpe}")
+        return
 
     print("🗑️  Cleaning up temporary files...")
     folder.delete(sure=True)
