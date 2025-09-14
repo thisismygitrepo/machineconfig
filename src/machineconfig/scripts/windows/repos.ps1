@@ -12,7 +12,7 @@ if (Test-Path $op_script ) {
 # if ( $script_root -eq $null) {  # this does happen if a virtual enviroment is activated before running this script (don't know why)
 # $script_root = $PSScriptRoot
 # }
-. "$HOME\code\machineconfig\Scripts\activate.ps1"
+. "$HOME\code\machineconfig\.venv\Scripts\activate.ps1"
 
 # python $script_root/../python/repos.py $args
 python -m machineconfig.scripts.python.repos $args

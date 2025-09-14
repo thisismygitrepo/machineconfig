@@ -61,7 +61,7 @@ iwr https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/mac
 (iwr bit.ly/cfgwt).Content | iex
 . $HOME/code/machineconfig/src/machineconfig/setup_windows/symlinks.ps1
 
-& "$HOME\code\machineconfig\Scripts\activate.ps1"
+& "$HOME\code\machineconfig\.venv\Scripts\activate.ps1"
 python -m fire machineconfig.profile.create main2 --choice=all
 deactivate
 

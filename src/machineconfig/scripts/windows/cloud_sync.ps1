@@ -5,7 +5,7 @@ if (Test-Path $op_script ) {
   Remove-Item $op_script
 }
 
-. "$HOME\code\machineconfig\Scripts\activate.ps1"
+. "$HOME\code\machineconfig\.venv\Scripts\activate.ps1"
 
 # python $PSScriptRoot/../python/cloud_sync.py $args
 python -m machineconfig.scripts.python.cloud_sync $args

@@ -4,7 +4,7 @@
 # python -m machineconfig.scripts.python.cloud_copy $args
 # deactivate -ErrorAction SilentlyContinue
 try {
-    . "$HOME\code\machineconfig\Scripts\activate.ps1"
+    . "$HOME\code\machineconfig\.venv\Scripts\activate.ps1"
     python -m machineconfig.scripts.python.cloud_copy $args
 } catch {
     Write-Error $_.Exception.Message
