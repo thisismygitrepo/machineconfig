@@ -14,17 +14,44 @@ Write-Host "Existing related fonts detected:" ($installedFonts | Where-Object { 
 foreach ($File in $Fontdir) {
     if ($File.Name -notmatch 'pfb$') {
         $candidate = ($File.BaseName -replace '_','').ToLower()
-        # If any installed font contains the candidate substring, skip copy to avoid replacement prompt.
+
+        # 1. Exact file existence check (handles .ttf/.otf pairs) before invoking Shell CopyHere.
+        $destFile = Join-Path -Path 'C:\Windows\Fonts' -ChildPath $File.Name
+        if (Test-Path -LiteralPath $destFile) {
+            Write-Host "Skip (file exists) $($File.Name)" -ForegroundColor Green
+            continue
+        }
+
+        # 2. Registry check: Fonts are registered under HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts
+        try {
+            $fontReg = Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts' -ErrorAction Stop
+            $regMatch = $false
+            foreach ($prop in $fontReg.PSObject.Properties) {
+                $val = ($prop.Value | Out-String).Trim().ToLower()
+                $nm  = ($prop.Name | Out-String).Trim().ToLower()
+                if ($val -eq $File.Name.ToLower() -or $val -eq ($File.BaseName + '.ttf').ToLower() -or $nm -match [Regex]::Escape($candidate)) {
+                    $regMatch = $true; break
+                }
+            }
+            if ($regMatch) {
+                Write-Host "Skip (registry) $($File.Name)" -ForegroundColor Green
+                continue
+            }
+        } catch {
+            Write-Host "Registry font query failed: $($_.Exception.Message) (continuing)" -ForegroundColor DarkYellow
+        }
+
+        # 3. Original heuristic set: in-memory list
         if ($installedFonts -contains $candidate) {
             Write-Host "Skip (already installed) $($File.Name)" -ForegroundColor Green
             continue
         }
-        # Fallback: broader match using -match if -contains misses stylistic variations
         if ($installedFonts | Where-Object { $_ -match [Regex]::Escape($candidate) }) {
             Write-Host "Skip (regex match) $($File.Name)" -ForegroundColor Green
             continue
         }
-    Write-Host "Installing font $($File.Name)" -ForegroundColor Yellow
+
+        Write-Host "Installing font $($File.Name)" -ForegroundColor Yellow
         $objFolder.CopyHere($File.FullName)
     }
 }
