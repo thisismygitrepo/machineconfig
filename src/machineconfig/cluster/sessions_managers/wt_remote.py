@@ -18,7 +18,6 @@ TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "wt_layouts", "layout_manag
 
 
 class WTRemoteLayoutGenerator:
-
     def __init__(self, remote_name: str, session_name_prefix: str):
         self.remote_name = remote_name
         self.session_name = session_name_prefix + "_" + WTLayoutGenerator.generate_random_suffix()
@@ -102,14 +101,7 @@ class WTRemoteLayoutGenerator:
         return self.remote_executor.get_remote_windows_info()
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
-            "remote_name": self.remote_name,
-            "session_name": self.session_name,
-            "tab_config": self.tab_config,
-            "script_path": self.script_path,
-            "created_at": datetime.now().isoformat(),
-            "class_name": self.__class__.__name__
-        }
+        return {"remote_name": self.remote_name, "session_name": self.session_name, "tab_config": self.tab_config, "script_path": self.script_path, "created_at": datetime.now().isoformat(), "class_name": self.__class__.__name__}
 
     def to_json(self, file_path: Optional[str] = None) -> str:
         # Generate file path if not provided
@@ -122,8 +114,8 @@ class WTRemoteLayoutGenerator:
             path_obj = Path(file_path)
 
         # Ensure .json extension
-        if not str(path_obj).endswith('.json'):
-            path_obj = path_obj.with_suffix('.json')
+        if not str(path_obj).endswith(".json"):
+            path_obj = path_obj.with_suffix(".json")
 
         # Ensure parent directory exists
         path_obj.parent.mkdir(parents=True, exist_ok=True)
@@ -138,38 +130,38 @@ class WTRemoteLayoutGenerator:
         return str(path_obj)
 
     @classmethod
-    def from_json(cls, file_path: str) -> 'WTRemoteLayoutGenerator':
+    def from_json(cls, file_path: str) -> "WTRemoteLayoutGenerator":
         path_obj = Path(file_path)
 
         # Ensure .json extension
-        if not str(path_obj).endswith('.json'):
-            path_obj = path_obj.with_suffix('.json')
+        if not str(path_obj).endswith(".json"):
+            path_obj = path_obj.with_suffix(".json")
 
         if not path_obj.exists():
             raise FileNotFoundError(f"JSON file not found: {path_obj}")
 
         # Load JSON data
-        with open(path_obj, 'r', encoding='utf-8') as f:
+        with open(path_obj, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         # Validate that it's the correct class
-        if data.get('class_name') != cls.__name__:
+        if data.get("class_name") != cls.__name__:
             logger.warning(f"Class name mismatch: expected {cls.__name__}, got {data.get('class_name')}")
 
         # Create new instance
         # Extract session name prefix by removing the suffix
-        session_name = data['session_name']
-        if '_' in session_name:
-            session_name_prefix = '_'.join(session_name.split('_')[:-1])
+        session_name = data["session_name"]
+        if "_" in session_name:
+            session_name_prefix = "_".join(session_name.split("_")[:-1])
         else:
             session_name_prefix = session_name
 
-        instance = cls(remote_name=data['remote_name'], session_name_prefix=session_name_prefix)
+        instance = cls(remote_name=data["remote_name"], session_name_prefix=session_name_prefix)
 
         # Restore state
-        instance.session_name = data['session_name']
-        instance.tab_config = data['tab_config']
-        instance.script_path = data['script_path']
+        instance.session_name = data["session_name"]
+        instance.tab_config = data["tab_config"]
+        instance.script_path = data["script_path"]
 
         logger.info(f"✅ Loaded WTRemoteLayoutGenerator from: {file_path}")
         return instance
@@ -222,7 +214,7 @@ if __name__ == "__main__":
         "🤖Bot1": ("~/code/bytesense/bithence", "python bot1.py --create_new_bot True"),
         "🤖Bot2": ("~/code/bytesense/bithence", "python bot2.py --create_new_bot True"),
         "📊Monitor": ("~", "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10"),
-        "📝Logs": ("C:/logs", "Get-Content app.log -Wait")
+        "📝Logs": ("C:/logs", "Get-Content app.log -Wait"),
     }
 
     # Replace 'myserver' with an actual SSH config alias for a Windows machine
@@ -267,7 +259,7 @@ if __name__ == "__main__":
         generator.print_status_report()
 
         # Show Windows Terminal overview
-        print(f"\n🖥️  Windows Terminal Overview:")
+        print("\n🖥️  Windows Terminal Overview:")
         generator.print_windows_terminal_overview()
 
         # Start the session (uncomment to actually start)
@@ -277,12 +269,13 @@ if __name__ == "__main__":
         # Attach to session (uncomment to attach)
         # generator.attach_to_session()
 
-        print(f"\n▶️  To start this session, run:")
-        print(f"   generator.start_wt_session()")
-        print(f"\n📎 To attach to this session, run:")
-        print(f"   generator.attach_to_session()")
+        print("\n▶️  To start this session, run:")
+        print("   generator.start_wt_session()")
+        print("\n📎 To attach to this session, run:")
+        print("   generator.attach_to_session()")
 
     except Exception as e:
         print(f"❌ Error: {e}")
         import traceback
+
         traceback.print_exc()

@@ -40,10 +40,7 @@ class WTSessionManager:
 
     def kill_all_sessions(self) -> None:
         for an_m in self.managers:
-            WTRemoteLayoutGenerator.run_remote_command(
-                remote_name=an_m.remote_name,
-                command="powershell -Command \"Get-Process -Name 'WindowsTerminal' -ErrorAction SilentlyContinue | Stop-Process -Force\""
-            )
+            WTRemoteLayoutGenerator.run_remote_command(remote_name=an_m.remote_name, command="powershell -Command \"Get-Process -Name 'WindowsTerminal' -ErrorAction SilentlyContinue | Stop-Process -Force\"")
 
     def run_monitoring_routine(self, wait_ms: int = 60000) -> None:
         def routine(scheduler: Scheduler):
@@ -81,6 +78,7 @@ class WTSessionManager:
                 # Print statuses
                 for i, status in enumerate(statuses):
                     print(f"Manager {i}: {status}")
+
         sched = Scheduler(routine=routine, wait_ms=wait_ms, logger=logger)
         sched.run()
 
@@ -98,13 +96,7 @@ class WTSessionManager:
         config_file.write_text(text, encoding="utf-8")
 
         # Save session metadata
-        metadata = {
-            "session_name_prefix": self.session_name_prefix,
-            "created_at": str(datetime.now()),
-            "num_managers": len(self.managers),
-            "machines": list(self.machine2wt_tabs.keys()),
-            "manager_type": "WTSessionManager"
-        }
+        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "machines": list(self.machine2wt_tabs.keys()), "manager_type": "WTSessionManager"}
         metadata_file = session_dir / "metadata.json"
         text = json.dumps(metadata, indent=2, ensure_ascii=False)
         metadata_file.write_text(text, encoding="utf-8")
@@ -121,7 +113,7 @@ class WTSessionManager:
         return session_id
 
     @classmethod
-    def load(cls, session_id: str) -> 'WTSessionManager':
+    def load(cls, session_id: str) -> "WTSessionManager":
         session_dir = TMP_SERIALIZATION_DIR / session_id
 
         if not session_dir.exists():
@@ -129,14 +121,14 @@ class WTSessionManager:
         config_file = session_dir / "machine2wt_tabs.json"
         if not config_file.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_file}")
-        with open(config_file, 'r', encoding='utf-8') as f:
+        with open(config_file, "r", encoding="utf-8") as f:
             machine2wt_tabs = json.load(f)
 
         # Load metadata
         metadata_file = session_dir / "metadata.json"
         session_name_prefix = "WTJobMgr"  # default fallback
         if metadata_file.exists():
-            with open(metadata_file, 'r', encoding='utf-8') as f:
+            with open(metadata_file, "r", encoding="utf-8") as f:
                 metadata = json.load(f)
                 session_name_prefix = metadata.get("session_name_prefix", "WTJobMgr")
         # Create new instance (this will create new managers)
@@ -179,6 +171,7 @@ class WTSessionManager:
 
         try:
             import shutil
+
             shutil.rmtree(session_dir)
             logger.info(f"✅ Deleted session: {session_id}")
             return True
@@ -205,10 +198,7 @@ class WTSessionManager:
                     logger.error(f"❌ Failed to start session '{session_name}' on {remote_name}: {start_result.get('error')}")
 
             except Exception as e:
-                results[f"{manager.remote_name}:{manager.session_name}"] = {
-                    "success": False,
-                    "error": str(e)
-                }
+                results[f"{manager.remote_name}:{manager.session_name}"] = {"success": False, "error": str(e)}
                 logger.error(f"❌ Exception starting session on {manager.remote_name}: {e}")
 
         return results
@@ -236,26 +226,11 @@ class WTSessionManager:
                     "session_name": manager.session_name,
                     "wt_status": wt_status,
                     "commands_status": commands_status,
-                    "summary": {
-                        "total_commands": total_count,
-                        "running_commands": running_count,
-                        "stopped_commands": total_count - running_count,
-                        "session_healthy": wt_status.get("wt_running", False)
-                    }
+                    "summary": {"total_commands": total_count, "running_commands": running_count, "stopped_commands": total_count - running_count, "session_healthy": wt_status.get("wt_running", False)},
                 }
 
             except Exception as e:
-                status_report[session_key] = {
-                    "remote_name": manager.remote_name,
-                    "session_name": manager.session_name,
-                    "error": str(e),
-                    "summary": {
-                        "total_commands": 0,
-                        "running_commands": 0,
-                        "stopped_commands": 0,
-                        "session_healthy": False
-                    }
-                }
+                status_report[session_key] = {"remote_name": manager.remote_name, "session_name": manager.session_name, "error": str(e), "summary": {"total_commands": 0, "running_commands": 0, "stopped_commands": 0, "session_healthy": False}}
                 logger.error(f"Error checking status for {session_key}: {e}")
 
         return status_report
@@ -265,12 +240,9 @@ class WTSessionManager:
         all_status = self.check_all_sessions_status()
 
         total_sessions = len(all_status)
-        healthy_sessions = sum(1 for status in all_status.values()
-                             if status["summary"]["session_healthy"])
-        total_commands = sum(status["summary"]["total_commands"]
-                           for status in all_status.values())
-        total_running = sum(status["summary"]["running_commands"]
-                          for status in all_status.values())
+        healthy_sessions = sum(1 for status in all_status.values() if status["summary"]["session_healthy"])
+        total_commands = sum(status["summary"]["total_commands"] for status in all_status.values())
+        total_running = sum(status["summary"]["running_commands"] for status in all_status.values())
 
         return {
             "total_sessions": total_sessions,
@@ -281,7 +253,7 @@ class WTSessionManager:
             "stopped_commands": total_commands - total_running,
             "all_sessions_healthy": healthy_sessions == total_sessions,
             "all_commands_running": total_running == total_commands,
-            "remote_machines": list(set(status["remote_name"] for status in all_status.values()))
+            "remote_machines": list(set(status["remote_name"] for status in all_status.values())),
         }
 
     def print_status_report(self) -> None:
@@ -366,19 +338,10 @@ class WTSessionManager:
                 # Get Windows Terminal version
                 wt_version = manager.get_wt_version()
 
-                overview[remote_name] = {
-                    "windows_info": windows_info,
-                    "wt_processes": wt_processes,
-                    "wt_version": wt_version,
-                    "session_name": manager.session_name,
-                    "tab_count": len(manager.tab_config)
-                }
+                overview[remote_name] = {"windows_info": windows_info, "wt_processes": wt_processes, "wt_version": wt_version, "session_name": manager.session_name, "tab_count": len(manager.tab_config)}
 
             except Exception as e:
-                overview[manager.remote_name] = {
-                    "error": str(e),
-                    "session_name": manager.session_name
-                }
+                overview[manager.remote_name] = {"error": str(e), "session_name": manager.session_name}
 
         return overview
 
@@ -431,14 +394,8 @@ class WTSessionManager:
 if __name__ == "__main__":
     # Example usage
     sample_machines = {
-        "server1": {
-            "🤖Bot1": ("~/code/project", "python bot1.py"),
-            "📊Monitor": ("~", "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10"),
-        },
-        "server2": {
-            "🤖Bot2": ("~/code/project", "python bot2.py"),
-            "📝Logs": ("C:/logs", "Get-Content app.log -Wait"),
-        }
+        "server1": {"🤖Bot1": ("~/code/project", "python bot1.py"), "📊Monitor": ("~", "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10")},
+        "server2": {"🤖Bot2": ("~/code/project", "python bot2.py"), "📝Logs": ("C:/logs", "Get-Content app.log -Wait")},
     }
 
     try:
@@ -483,4 +440,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"❌ Error: {e}")
         import traceback
+
         traceback.print_exc()

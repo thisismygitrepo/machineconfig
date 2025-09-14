@@ -4,11 +4,11 @@ This script Takes away all config files from the computer, place them in one dir
 
 """
 
-
 from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.utils import symlink_func, symlink_copy, LIBRARY_ROOT, REPO_ROOT, display_options
 from machineconfig.utils.utils2 import read_toml
 from machineconfig.profile.shell import create_default_shell_profile
+
 # import os
 import platform
 import os
@@ -40,22 +40,27 @@ def main_symlinks(choice: Optional[str] = None):
     for program_key in program_keys_raw:
         if program_key in exclude or OTHER_SYSTEM in program_key:
             continue
-        else: program_keys.append(program_key)
+        else:
+            program_keys.append(program_key)
 
     program_keys.sort()
     if choice is None:
         choice_selected = display_options(msg="Which symlink to create?", options=program_keys + ["all", "none(EXIT)"], default="none(EXIT)", fzf=True, multi=True)
         assert isinstance(choice_selected, list)
-        if len(choice_selected) == 1 and choice_selected[0] == "none(EXIT)": return  # terminate function.
-        elif len(choice_selected) == 1 and choice_selected[0] == "all": choice_selected = "all"  # i.e. program_keys = program_keys
+        if len(choice_selected) == 1 and choice_selected[0] == "none(EXIT)":
+            return  # terminate function.
+        elif len(choice_selected) == 1 and choice_selected[0] == "all":
+            choice_selected = "all"  # i.e. program_keys = program_keys
         # overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
         from rich.prompt import Confirm
+
         overwrite = Confirm.ask("Overwrite existing source file?", default=True)
-    else: choice_selected = choice
+    else:
+        choice_selected = choice
 
     if isinstance(choice_selected, str):
         if str(choice_selected) == "all" and system == "Windows":
-            if os.name == 'nt':
+            if os.name == "nt":
                 try:
                     is_admin = ctypes.windll.shell32.IsUserAnAdmin()
                 except Exception:
@@ -64,9 +69,9 @@ def main_symlinks(choice: Optional[str] = None):
                 is_admin = False
             if not is_admin:
                 print(f"""
-{'*' * 80}
+{"*" * 80}
 ⚠️  WARNING: Administrator privileges required
-{'*' * 80}
+{"*" * 80}
 """)
                 raise RuntimeError("Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
         elif choice_selected == "all":
@@ -75,14 +80,16 @@ def main_symlinks(choice: Optional[str] = None):
 {program_keys}
 """)
             pass  # i.e. program_keys = program_keys
-        else: program_keys = [choice_selected]
-    else: program_keys = choice_selected
+        else:
+            program_keys = [choice_selected]
+    else:
+        program_keys = choice_selected
 
     for program_key in program_keys:
         print(f"\n🔄 Processing {program_key} symlinks...")
         for file_key, file_map in symlink_mapper[program_key].items():
-            this = PathExtended(file_map['this'])
-            to_this = PathExtended(file_map['to_this'].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()))
+            this = PathExtended(file_map["this"])
+            to_this = PathExtended(file_map["to_this"].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()))
             if "contents" in file_map:
                 try:
                     for a_target in to_this.expanduser().search("*"):
@@ -113,22 +120,22 @@ def main_symlinks(choice: Optional[str] = None):
 
     if system == "Linux":
         print("\n📜 Setting executable permissions for scripts...")
-        subprocess.run(f'chmod +x {LIBRARY_ROOT.joinpath(f"scripts/{system.lower()}")} -R', shell=True, capture_output=True, text=True)
+        subprocess.run(f"chmod +x {LIBRARY_ROOT.joinpath(f'scripts/{system.lower()}')} -R", shell=True, capture_output=True, text=True)
         print("✅ Script permissions updated")
 
     if len(ERROR_LIST) > 0:
         print(f"""
-{'*' * 80}
+{"*" * 80}
 ❗ ERRORS ENCOUNTERED DURING PROCESSING
-{'*' * 80}
+{"*" * 80}
 {ERROR_LIST}
-{'*' * 80}
+{"*" * 80}
 """)
     else:
         print(f"""
-{'*' * 80}
+{"*" * 80}
 ✅ All symlinks created successfully!
-{'*' * 80}
+{"*" * 80}
 """)
 
 
@@ -143,11 +150,11 @@ def main(choice: Optional[str] = None):
     create_default_shell_profile()
 
     print(f"""
-{'=' * 80}
+{"=" * 80}
 ✨ Configuration setup complete! ✨
-{'=' * 80}
+{"=" * 80}
 """)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

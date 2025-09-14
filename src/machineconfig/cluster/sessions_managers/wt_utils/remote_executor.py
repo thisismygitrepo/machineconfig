@@ -3,6 +3,7 @@
 Remote command execution utilities for SSH operations with Windows Terminal.
 Adapted from zellij remote executor but focused on Windows Terminal commands.
 """
+
 import subprocess
 import logging
 from typing import Dict, Any, Optional, List
@@ -22,16 +23,11 @@ class WTRemoteExecutor:
         if shell == "powershell":
             # Wrap command in PowerShell invocation if needed
             if not command.startswith("powershell"):
-                command = f"powershell -Command \"{command}\""
+                command = f'powershell -Command "{command}"'
 
         ssh_cmd = ["ssh", self.remote_name, command]
         try:
-            result = subprocess.run(
-                ssh_cmd,
-                capture_output=True,
-                text=True,
-                timeout=timeout
-            )
+            result = subprocess.run(ssh_cmd, capture_output=True, text=True, timeout=timeout)
             return result
         except subprocess.TimeoutExpired:
             logger.error(f"SSH command timed out after {timeout}s: {command}")
@@ -93,19 +89,10 @@ class WTRemoteExecutor:
 
             wt_available = self.check_wt_available()
 
-            return {
-                "windows_info": result.stdout if result.returncode == 0 else "Unknown",
-                "wt_available": wt_available,
-                "remote_name": self.remote_name
-            }
+            return {"windows_info": result.stdout if result.returncode == 0 else "Unknown", "wt_available": wt_available, "remote_name": self.remote_name}
         except Exception as e:
             logger.error(f"Failed to get remote Windows info: {e}")
-            return {
-                "windows_info": "Error getting info",
-                "wt_available": False,
-                "remote_name": self.remote_name,
-                "error": str(e)
-            }
+            return {"windows_info": "Error getting info", "wt_available": False, "remote_name": self.remote_name, "error": str(e)}
 
     def run_wt_command(self, wt_command: str, detached: bool = True) -> subprocess.CompletedProcess[str]:
         """Run a Windows Terminal command on the remote machine."""
@@ -130,24 +117,12 @@ class WTRemoteExecutor:
             result = self.run_command(ps_command, timeout=15)
 
             if result.returncode == 0:
-                return {
-                    "success": True,
-                    "processes": result.stdout,
-                    "remote": self.remote_name
-                }
+                return {"success": True, "processes": result.stdout, "remote": self.remote_name}
             else:
-                return {
-                    "success": False,
-                    "error": result.stderr,
-                    "remote": self.remote_name
-                }
+                return {"success": False, "error": result.stderr, "remote": self.remote_name}
         except Exception as e:
             logger.error(f"Failed to list Windows Terminal processes: {e}")
-            return {
-                "success": False,
-                "error": str(e),
-                "remote": self.remote_name
-            }
+            return {"success": False, "error": str(e), "remote": self.remote_name}
 
     def kill_wt_processes(self, process_ids: Optional[List[Any]] = None) -> Dict[str, Any]:
         """Kill Windows Terminal processes on the remote machine."""
@@ -161,15 +136,7 @@ class WTRemoteExecutor:
 
             result = self.run_command(kill_cmd, timeout=10)
 
-            return {
-                "success": result.returncode == 0,
-                "message": "Processes killed" if result.returncode == 0 else result.stderr,
-                "remote": self.remote_name
-            }
+            return {"success": result.returncode == 0, "message": "Processes killed" if result.returncode == 0 else result.stderr, "remote": self.remote_name}
         except Exception as e:
             logger.error(f"Failed to kill Windows Terminal processes: {e}")
-            return {
-                "success": False,
-                "error": str(e),
-                "remote": self.remote_name
-            }
+            return {"success": False, "error": str(e), "remote": self.remote_name}

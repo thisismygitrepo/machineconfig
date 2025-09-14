@@ -4,6 +4,7 @@ from machineconfig.utils.utils2 import randstr
 
 def open_file_in_new_instance(file_path: str):
     import git
+
     repo = git.Repo(search_parent_directories=True)
     repo_path = repo.working_tree_dir
     # Ensure repo_path is not None before passing to Path
@@ -19,13 +20,10 @@ code --profile bitProfile --new-window {file_path}
     from rich.console import Console
     from rich.syntax import Syntax
     from rich.panel import Panel
+
     console = Console()
     console.print(f"\n{'=' * 150}")
-    console.print(Panel(
-        Syntax(code, lexer="bash"),
-        title="🔍 VS CODE API | Opening file in new instance",
-        subtitle=f"📂 {file_path}"
-    ), style="bold blue")
+    console.print(Panel(Syntax(code, lexer="bash"), title="🔍 VS CODE API | Opening file in new instance", subtitle=f"📂 {file_path}"), style="bold blue")
     console.print(f"{'=' * 150}\n")
 
     code_path = Path.home().joinpath(".config", "machingconfig", "vscode_api", "code_temp")
@@ -33,11 +31,13 @@ code --profile bitProfile --new-window {file_path}
     code_path.write_text(code, encoding="utf-8")
     code_path.chmod(0o755)
     import subprocess
+
     subprocess.run([str(code_path)], shell=True, check=True)
 
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser(description="Open file in new vscode instance")
     parser.add_argument("file_path", type=str, help="Path to the file to open")
     args = parser.parse_args()

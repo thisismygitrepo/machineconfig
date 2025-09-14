@@ -43,12 +43,14 @@ import json
 
 def get_rclone_token(section: str):
     import platform
+
     if platform.system() == "Windows":
         rclone_file_path = Path(os.getenv("APPDATA", "")) / "rclone" / "rclone.conf"
     else:
         rclone_file_path = Path.home() / ".config" / "rclone" / "rclone.conf"
     if rclone_file_path.exists():
         import configparser
+
         config = configparser.ConfigParser()
         config.read(rclone_file_path)
         if section in config:
@@ -57,8 +59,10 @@ def get_rclone_token(section: str):
             return dict(results)
     return None
 
+
 # Configuration - Will be loaded from rclone config
 _cached_config = None
+
 
 def get_config(section: str = "odp") -> dict[str, Any]:
     """
@@ -83,30 +87,31 @@ def get_config(section: str = "odp") -> dict[str, Any]:
         except json.JSONDecodeError:
             raise Exception(f"Invalid token format in rclone config section '{section}'")
 
-        _cached_config = {
-            "token": token_data,
-            "drive_id": rclone_config.get("drive_id"),
-            "drive_type": rclone_config.get("drive_type", "personal")
-        }
+        _cached_config = {"token": token_data, "drive_id": rclone_config.get("drive_id"), "drive_type": rclone_config.get("drive_type", "personal")}
 
     return _cached_config
+
 
 def get_token() -> dict[str, Any]:
     """Get the current token from rclone config."""
     return get_config()["token"]
 
+
 def get_drive_id():
     """Get the drive ID from rclone config."""
     return get_config()["drive_id"]
+
 
 def get_drive_type():
     """Get the drive type from rclone config."""
     return get_config()["drive_type"]
 
+
 def clear_config_cache():
     """Clear the cached config to force reload from rclone."""
     global _cached_config
     _cached_config = None
+
 
 # OAuth2 Configuration - You'll need to set these up in Azure App Registration
 CLIENT_ID = os.getenv("ONEDRIVE_CLIENT_ID", "your_client_id_here")
@@ -133,10 +138,10 @@ def is_token_valid() -> bool:
             return False
 
         # Remove timezone info for parsing (rclone format includes timezone)
-        if '+' in expiry_str:
-            expiry_str = expiry_str.split('+')[0]
-        elif 'Z' in expiry_str:
-            expiry_str = expiry_str.replace('Z', '')
+        if "+" in expiry_str:
+            expiry_str = expiry_str.split("+")[0]
+        elif "Z" in expiry_str:
+            expiry_str = expiry_str.replace("Z", "")
 
         expiry_time = datetime.fromisoformat(expiry_str)
         current_time = datetime.now()
@@ -195,9 +200,9 @@ def make_graph_request(method: str, endpoint: str, **kwargs: Any) -> requests.Re
     if not token:
         raise Exception("Failed to get valid access token")
 
-    headers = kwargs.get('headers', {})
-    headers['Authorization'] = f'Bearer {token}'
-    kwargs['headers'] = headers
+    headers = kwargs.get("headers", {})
+    headers["Authorization"] = f"Bearer {token}"
+    kwargs["headers"] = headers
 
     url = f"{GRAPH_API_BASE}/{endpoint.lstrip('/')}"
     response = requests.request(method, url, **kwargs)
@@ -228,12 +233,12 @@ def push_to_onedrive(local_path: str, remote_path: str) -> bool:
         return False
 
     # Ensure remote path starts with /
-    if not remote_path.startswith('/'):
-        remote_path = '/' + remote_path
+    if not remote_path.startswith("/"):
+        remote_path = "/" + remote_path
 
     # Create parent directories if they don't exist
     remote_dir = os.path.dirname(remote_path)
-    if remote_dir and remote_dir != '/':
+    if remote_dir and remote_dir != "/":
         create_remote_directory(remote_dir)
 
     try:
@@ -253,15 +258,15 @@ def push_to_onedrive(local_path: str, remote_path: str) -> bool:
 def simple_upload(local_file: Path, remote_path: str) -> bool:
     """Upload small files using simple upload."""
     try:
-        with open(local_file, 'rb') as f:
+        with open(local_file, "rb") as f:
             file_content = f.read()
 
         # URL encode the remote path and use specific drive
-        encoded_path = quote(remote_path, safe='/')
+        encoded_path = quote(remote_path, safe="/")
         drive_id = get_drive_id()
         endpoint = f"drives/{drive_id}/root:{encoded_path}:/content"
 
-        response = make_graph_request('PUT', endpoint, data=file_content)
+        response = make_graph_request("PUT", endpoint, data=file_content)
 
         if response.status_code in [200, 201]:
             print(f"Successfully uploaded: {local_file} -> {remote_path}")
@@ -279,28 +284,23 @@ def resumable_upload(local_file: Path, remote_path: str) -> bool:
     """Upload large files using resumable upload."""
     try:
         # Create upload session using specific drive
-        encoded_path = quote(remote_path, safe='/')
+        encoded_path = quote(remote_path, safe="/")
         drive_id = get_drive_id()
         endpoint = f"drives/{drive_id}/root:{encoded_path}:/createUploadSession"
 
-        item_data = {
-            "item": {
-                "@microsoft.graph.conflictBehavior": "replace",
-                "name": local_file.name
-            }
-        }
+        item_data = {"item": {"@microsoft.graph.conflictBehavior": "replace", "name": local_file.name}}
 
-        response = make_graph_request('POST', endpoint, json=item_data)
+        response = make_graph_request("POST", endpoint, json=item_data)
 
         if response.status_code != 200:
             print(f"Failed to create upload session: {response.status_code} - {response.text}")
             return False
 
-        upload_url = response.json()['uploadUrl']
+        upload_url = response.json()["uploadUrl"]
         file_size = local_file.stat().st_size
         chunk_size = 320 * 1024  # 320KB chunks
 
-        with open(local_file, 'rb') as f:
+        with open(local_file, "rb") as f:
             bytes_uploaded = 0
 
             while bytes_uploaded < file_size:
@@ -310,10 +310,7 @@ def resumable_upload(local_file: Path, remote_path: str) -> bool:
 
                 chunk_end = min(bytes_uploaded + len(chunk_data) - 1, file_size - 1)
 
-                headers = {
-                    'Content-Range': f'bytes {bytes_uploaded}-{chunk_end}/{file_size}',
-                    'Content-Length': str(len(chunk_data))
-                }
+                headers = {"Content-Range": f"bytes {bytes_uploaded}-{chunk_end}/{file_size}", "Content-Length": str(len(chunk_data))}
 
                 chunk_response = requests.put(upload_url, data=chunk_data, headers=headers)
 
@@ -345,16 +342,16 @@ def pull_from_onedrive(remote_path: str, local_path: str) -> bool:
         True if successful, False otherwise
     """
     # Ensure remote path starts with /
-    if not remote_path.startswith('/'):
-        remote_path = '/' + remote_path
+    if not remote_path.startswith("/"):
+        remote_path = "/" + remote_path
 
     try:
         # Get file metadata and download URL using specific drive
-        encoded_path = quote(remote_path, safe='/')
+        encoded_path = quote(remote_path, safe="/")
         drive_id = get_drive_id()
         endpoint = f"drives/{drive_id}/root:{encoded_path}"
 
-        response = make_graph_request('GET', endpoint)
+        response = make_graph_request("GET", endpoint)
 
         if response.status_code == 404:
             print(f"File not found in OneDrive: {remote_path}")
@@ -366,12 +363,12 @@ def pull_from_onedrive(remote_path: str, local_path: str) -> bool:
         file_info = response.json()
 
         # Check if it's a file (not a folder)
-        if 'folder' in file_info:
+        if "folder" in file_info:
             print(f"Path is a folder, not a file: {remote_path}")
             return False
 
         # Get download URL
-        download_url = file_info.get('@microsoft.graph.downloadUrl')
+        download_url = file_info.get("@microsoft.graph.downloadUrl")
         if not download_url:
             print("No download URL available")
             return False
@@ -384,10 +381,10 @@ def pull_from_onedrive(remote_path: str, local_path: str) -> bool:
         download_response = requests.get(download_url, stream=True)
         download_response.raise_for_status()
 
-        file_size = int(file_info.get('size', 0))
+        file_size = int(file_info.get("size", 0))
         bytes_downloaded = 0
 
-        with open(local_file, 'wb') as f:
+        with open(local_file, "wb") as f:
             for chunk in download_response.iter_content(chunk_size=8192):
                 if chunk:
                     f.write(chunk)
@@ -415,20 +412,20 @@ def create_remote_directory(remote_path: str) -> bool:
     Returns:
         True if successful or already exists, False otherwise
     """
-    if not remote_path or remote_path == '/':
+    if not remote_path or remote_path == "/":
         return True
 
     # Ensure remote path starts with /
-    if not remote_path.startswith('/'):
-        remote_path = '/' + remote_path
+    if not remote_path.startswith("/"):
+        remote_path = "/" + remote_path
 
     try:
         # Check if directory already exists using specific drive
-        encoded_path = quote(remote_path, safe='/')
+        encoded_path = quote(remote_path, safe="/")
         drive_id = get_drive_id()
         endpoint = f"drives/{drive_id}/root:{encoded_path}"
 
-        response = make_graph_request('GET', endpoint)
+        response = make_graph_request("GET", endpoint)
 
         if response.status_code == 200:
             # Directory already exists
@@ -439,26 +436,22 @@ def create_remote_directory(remote_path: str) -> bool:
 
         # Create parent directory first
         parent_dir = os.path.dirname(remote_path)
-        if parent_dir and parent_dir != '/':
+        if parent_dir and parent_dir != "/":
             if not create_remote_directory(parent_dir):
                 return False
 
         # Create the directory
         dir_name = os.path.basename(remote_path)
-        parent_encoded = quote(parent_dir if parent_dir else '/', safe='/')
+        parent_encoded = quote(parent_dir if parent_dir else "/", safe="/")
 
-        if parent_dir and parent_dir != '/':
+        if parent_dir and parent_dir != "/":
             endpoint = f"drives/{drive_id}/root:{parent_encoded}:/children"
         else:
             endpoint = f"drives/{drive_id}/root/children"
 
-        folder_data = {
-            "name": dir_name,
-            "folder": {},
-            "@microsoft.graph.conflictBehavior": "replace"
-        }
+        folder_data = {"name": dir_name, "folder": {}, "@microsoft.graph.conflictBehavior": "replace"}
 
-        response = make_graph_request('POST', endpoint, json=folder_data)
+        response = make_graph_request("POST", endpoint, json=folder_data)
 
         if response.status_code in [200, 201]:
             return True
@@ -487,20 +480,13 @@ def refresh_access_token() -> Optional[dict[str, Any]]:
     print("🔄 Refreshing access token...")
 
     # Prepare the token refresh request
-    data = {
-        'client_id': CLIENT_ID,
-        'grant_type': 'refresh_token',
-        'refresh_token': refresh_token,
-        'scope': 'https://graph.microsoft.com/Files.ReadWrite.All offline_access'
-    }
+    data = {"client_id": CLIENT_ID, "grant_type": "refresh_token", "refresh_token": refresh_token, "scope": "https://graph.microsoft.com/Files.ReadWrite.All offline_access"}
 
     # Add client secret if available (for confidential clients)
     if CLIENT_SECRET and CLIENT_SECRET != "your_client_secret_here":
-        data['client_secret'] = CLIENT_SECRET
+        data["client_secret"] = CLIENT_SECRET
 
-    headers = {
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
     try:
         response = requests.post(OAUTH_TOKEN_ENDPOINT, data=data, headers=headers)
@@ -509,15 +495,15 @@ def refresh_access_token() -> Optional[dict[str, Any]]:
             token_data = response.json()
 
             # Calculate expiry time (tokens typically last 1 hour)
-            expires_in = token_data.get('expires_in', 3600)  # Default to 1 hour
+            expires_in = token_data.get("expires_in", 3600)  # Default to 1 hour
             expiry_time = datetime.now() + timedelta(seconds=expires_in)
 
             # Update the cached token configuration
             new_token = {
-                'access_token': token_data['access_token'],
-                'token_type': token_data.get('token_type', 'Bearer'),
-                'refresh_token': token_data.get('refresh_token', refresh_token),  # Use new or keep old
-                'expiry': expiry_time.isoformat()
+                "access_token": token_data["access_token"],
+                "token_type": token_data.get("token_type", "Bearer"),
+                "refresh_token": token_data.get("refresh_token", refresh_token),  # Use new or keep old
+                "expiry": expiry_time.isoformat(),
             }
 
             # Update the cached config
@@ -564,7 +550,7 @@ def save_token_to_file(token_data: dict[str, Any], file_path: Optional[str] = No
         # Create directory if it doesn't exist
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-        with open(file_path, 'w') as f:
+        with open(file_path, "w") as f:
             json.dump(token_data, f, indent=2)
 
         # Set restrictive permissions (readable only by owner)
@@ -593,7 +579,7 @@ def load_token_from_file(file_path: Optional[str] = None) -> Optional[dict[str, 
 
     try:
         if os.path.exists(file_path):
-            with open(file_path, 'r') as f:
+            with open(file_path, "r") as f:
                 token_data = json.load(f)
 
             # Update the cached config token
@@ -624,14 +610,7 @@ def get_authorization_url() -> str:
     """
     from urllib.parse import urlencode
 
-    params = {
-        'client_id': CLIENT_ID,
-        'response_type': 'code',
-        'redirect_uri': REDIRECT_URI,
-        'response_mode': 'query',
-        'scope': 'https://graph.microsoft.com/Files.ReadWrite.All offline_access',
-        'state': 'onedrive_auth'
-    }
+    params = {"client_id": CLIENT_ID, "response_type": "code", "redirect_uri": REDIRECT_URI, "response_mode": "query", "scope": "https://graph.microsoft.com/Files.ReadWrite.All offline_access", "state": "onedrive_auth"}
 
     auth_url = f"https://login.microsoftonline.com/common/oauth2/v2.0/authorize?{urlencode(params)}"
     return auth_url
@@ -648,21 +627,13 @@ def exchange_authorization_code(authorization_code: str) -> Optional[dict[str, A
     Returns:
         Token dictionary or None if failed
     """
-    data = {
-        'client_id': CLIENT_ID,
-        'grant_type': 'authorization_code',
-        'code': authorization_code,
-        'redirect_uri': REDIRECT_URI,
-        'scope': 'https://graph.microsoft.com/Files.ReadWrite.All offline_access'
-    }
+    data = {"client_id": CLIENT_ID, "grant_type": "authorization_code", "code": authorization_code, "redirect_uri": REDIRECT_URI, "scope": "https://graph.microsoft.com/Files.ReadWrite.All offline_access"}
 
     # Add client secret if available
     if CLIENT_SECRET and CLIENT_SECRET != "your_client_secret_here":
-        data['client_secret'] = CLIENT_SECRET
+        data["client_secret"] = CLIENT_SECRET
 
-    headers = {
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
     try:
         response = requests.post(OAUTH_TOKEN_ENDPOINT, data=data, headers=headers)
@@ -671,15 +642,10 @@ def exchange_authorization_code(authorization_code: str) -> Optional[dict[str, A
             token_data = response.json()
 
             # Calculate expiry time
-            expires_in = token_data.get('expires_in', 3600)
+            expires_in = token_data.get("expires_in", 3600)
             expiry_time = datetime.now() + timedelta(seconds=expires_in)
 
-            new_token = {
-                'access_token': token_data['access_token'],
-                'token_type': token_data.get('token_type', 'Bearer'),
-                'refresh_token': token_data['refresh_token'],
-                'expiry': expiry_time.isoformat()
-            }
+            new_token = {"access_token": token_data["access_token"], "token_type": token_data.get("token_type", "Bearer"), "refresh_token": token_data["refresh_token"], "expiry": expiry_time.isoformat()}
 
             # Update cached config and save
             global _cached_config
@@ -793,4 +759,3 @@ if __name__ == "__main__":
 
     # Uncomment to test with a file
     # push_to_onedrive('/home/alex/Downloads/users.xlsx', '/Documents/users.xlsx')
-

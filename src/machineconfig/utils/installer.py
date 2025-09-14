@@ -1,9 +1,9 @@
-"""package manager
-"""
+"""package manager"""
+
 from machineconfig.utils.installer_utils.installer_abc import LINUX_INSTALL_PATH, CATEGORY
 from machineconfig.utils.installer_utils.installer_class import Installer
 from rich.console import Console
-from rich.panel import Panel # Added import
+from rich.panel import Panel  # Added import
 
 from machineconfig.utils.path_reduced import P as PathExtended
 from machineconfig.utils.utils import INSTALL_VERSION_ROOT
@@ -16,8 +16,8 @@ from joblib import Parallel, delayed
 
 
 def check_latest():
-    console = Console() # Added console initialization
-    console.print(Panel("🔍  CHECKING FOR LATEST VERSIONS", title="Status", expand=False)) # Replaced print with Panel
+    console = Console()  # Added console initialization
+    console.print(Panel("🔍  CHECKING FOR LATEST VERSIONS", title="Status", expand=False))  # Replaced print with Panel
     installers = get_installers(system=platform.system(), dev=False)
     # installers += get_installers(system=platform.system(), dev=True)
     installers_github = []
@@ -46,12 +46,7 @@ def check_latest():
     # Convert to list of dictionaries and group by status
     result_data = []
     for tool, status, current_ver, new_ver in res:
-        result_data.append({
-            "Tool": tool,
-            "Status": status,
-            "Current Version": current_ver,
-            "New Version": new_ver
-        })
+        result_data.append({"Tool": tool, "Status": status, "Current Version": current_ver, "New Version": new_ver})
 
     # Group by status
     grouped_data: dict[str, list[dict[str, Any]]] = {}
@@ -70,11 +65,11 @@ def check_latest():
         for item in items:
             print(f"  {item['Tool']:<20} | Current: {item['Current Version']:<15} | New: {item['New Version']}")
     print("-" * 60)
-    print(f"{'═'*80}")
+    print(f"{'═' * 80}")
 
 
 def get_installed_cli_apps():
-    print(f"\n{'='*80}\n🔍 LISTING INSTALLED CLI APPS 🔍\n{'='*80}")
+    print(f"\n{'=' * 80}\n🔍 LISTING INSTALLED CLI APPS 🔍\n{'=' * 80}")
     if platform.system() == "Windows":
         print("🪟 Searching for Windows executables...")
         apps = PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad"])
@@ -89,12 +84,12 @@ def get_installed_cli_apps():
         print(error_msg)
         raise NotImplementedError(error_msg)
     apps = [app for app in apps if app.size("kb") > 0.1 and not app.is_symlink()]  # no symlinks like paint and wsl and bash
-    print(f"✅ Found {len(apps)} installed applications\n{'='*80}")
+    print(f"✅ Found {len(apps)} installed applications\n{'=' * 80}")
     return apps
 
 
 def get_installers(system: str, dev: bool) -> list[Installer]:
-    print(f"\n{'='*80}\n🔍 LOADING INSTALLER CONFIGURATIONS 🔍\n{'='*80}")
+    print(f"\n{'=' * 80}\n🔍 LOADING INSTALLER CONFIGURATIONS 🔍\n{'=' * 80}")
     res_all = get_all_dicts(system=system)
     if not dev:
         print("ℹ️  Excluding development installers...")
@@ -104,12 +99,12 @@ def get_installers(system: str, dev: bool) -> list[Installer]:
     res_final = {}
     for _k, v in res_all.items():
         res_final.update(v)
-    print(f"✅ Loaded {len(res_final)} installer configurations\n{'='*80}")
+    print(f"✅ Loaded {len(res_final)} installer configurations\n{'=' * 80}")
     return [Installer.from_dict(d=vd, name=k) for k, vd in res_final.items()]
 
 
 def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
-    print(f"\n{'='*80}\n📂 LOADING CONFIGURATION FILES 📂\n{'='*80}")
+    print(f"\n{'=' * 80}\n📂 LOADING CONFIGURATION FILES 📂\n{'=' * 80}")
 
     print(f"🔍 Importing OS-specific installers for {system}...")
     if system == "Windows":
@@ -119,6 +114,7 @@ def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
 
     print("🔍 Importing generic installers...")
     import machineconfig.jobs.python_generic_installers as generic_installer
+
     path_os_specific = PathExtended(os_specific_installer.__file__).parent
     path_os_generic = PathExtended(generic_installer.__file__).parent
 
@@ -127,7 +123,7 @@ def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
 
     print("📂 Loading configuration files...")
     res_final: dict[CATEGORY, dict[str, dict[str, Any]]] = {}
-    print(f"""📄 Loading OS-specific config from: {path_os_specific.joinpath('config.json')}""")
+    print(f"""📄 Loading OS-specific config from: {path_os_specific.joinpath("config.json")}""")
     res_final["OS_SPECIFIC"] = read_json(path=path_os_specific.joinpath("config.json"))
 
     print(f"""📄 Loading OS-generic config from: {path_os_generic.joinpath("config.json")}""")
@@ -144,11 +140,12 @@ def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
 
     print(f"🔍 Loading custom installers from: {path_custom_installer}")
     import runpy
+
     res_custom: dict[str, dict[str, Any]] = {}
     for item in path_custom_installer.search("*.py", r=False, not_in=["__init__"]):
         try:
             print(f"📄 Loading custom installer: {item.name}")
-            config_dict = runpy.run_path(str(item), run_name=None)['config_dict']
+            config_dict = runpy.run_path(str(item), run_name=None)["config_dict"]
             res_custom[item.stem] = config_dict
         except Exception as ex:
             print(f"❌ Failed to load {item}: {ex}")
@@ -158,7 +155,7 @@ def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
     for item in path_custom_installer_dev.search("*.py", r=False, not_in=["__init__"]):
         try:
             print(f"📄 Loading custom dev installer: {item.name}")
-            config_dict = runpy.run_path(str(item), run_name=None)['config_dict']
+            config_dict = runpy.run_path(str(item), run_name=None)["config_dict"]
             res_custom_dev[item.stem] = config_dict
         except Exception as ex:
             print(f"❌ Failed to load {item}: {ex}")
@@ -166,12 +163,12 @@ def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
     res_final["CUSTOM"] = res_custom
     res_final["CUSTOM_DEV"] = res_custom_dev
 
-    print(f"✅ Configuration loading complete:\n - OS_SPECIFIC: {len(res_final['OS_SPECIFIC'])} items\n - OS_GENERIC: {len(res_final['OS_GENERIC'])} items\n - CUSTOM: {len(res_final['CUSTOM'])} items\n{'='*80}")
+    print(f"✅ Configuration loading complete:\n - OS_SPECIFIC: {len(res_final['OS_SPECIFIC'])} items\n - OS_GENERIC: {len(res_final['OS_GENERIC'])} items\n - CUSTOM: {len(res_final['CUSTOM'])} items\n{'=' * 80}")
     return res_final
 
 
-def install_all(installers: list[Installer], safe: bool=False, jobs: int = 10, fresh: bool=False):
-    print(f"\n{'='*80}\n🚀 BULK INSTALLATION PROCESS 🚀\n{'='*80}")
+def install_all(installers: list[Installer], safe: bool = False, jobs: int = 10, fresh: bool = False):
+    print(f"\n{'=' * 80}\n🚀 BULK INSTALLATION PROCESS 🚀\n{'=' * 80}")
     if fresh:
         print("🧹 Fresh install requested - clearing version cache...")
         INSTALL_VERSION_ROOT.delete(sure=True)
@@ -204,16 +201,13 @@ def install_all(installers: list[Installer], safe: bool=False, jobs: int = 10, f
         # return None
 
     print(f"🚀 Starting installation of {len(installers)} packages...")
-    print(f"\n{'='*80}\n📦 INSTALLING FIRST PACKAGE 📦\n{'='*80}")
+    print(f"\n{'=' * 80}\n📦 INSTALLING FIRST PACKAGE 📦\n{'=' * 80}")
     installers[0].install(version=None)
     installers_remaining = installers[1:]
-    print(f"\n{'='*80}\n📦 INSTALLING REMAINING PACKAGES 📦\n{'='*80}")
+    print(f"\n{'=' * 80}\n📦 INSTALLING REMAINING PACKAGES 📦\n{'=' * 80}")
 
     # Use joblib for parallel processing of remaining installers
-    res = Parallel(n_jobs=jobs)(
-        delayed(lambda x: x.install_robust(version=None))(installer)
-        for installer in installers_remaining
-    )
+    res = Parallel(n_jobs=jobs)(delayed(lambda x: x.install_robust(version=None))(installer) for installer in installers_remaining)
 
     console = Console()
 
@@ -222,19 +216,19 @@ def install_all(installers: list[Installer], safe: bool=False, jobs: int = 10, f
 
     print("\n")
     console.rule("✓ Same Version Apps")
-    same_version_results = [r for r in res if r and 'same version' in str(r)]
+    same_version_results = [r for r in res if r and "same version" in str(r)]
     for result in same_version_results:
         print(f"  {result}")
 
     print("\n")
     console.rule("⬆️ Updated Apps")
-    updated_results = [r for r in res if r and 'updated from' in str(r)]
+    updated_results = [r for r in res if r and "updated from" in str(r)]
     for result in updated_results:
         print(f"  {result}")
 
     print("\n")
     console.rule("❌ Failed Apps")
-    failed_results = [r for r in res if r and 'Failed at' in str(r)]
+    failed_results = [r for r in res if r and "Failed at" in str(r)]
     for result in failed_results:
         print(f"  {result}")
 

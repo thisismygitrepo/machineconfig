@@ -47,31 +47,34 @@ DEFAULTS_PATH = PathExtended.home().joinpath("dotfiles/machineconfig/defaults.in
 #     else: print(f"\n❌ ERROR | API request failed: {response.status_code}\n")
 
 
-
-
 def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool) -> bool:
     dotfiles_path = str(PathExtended.home().joinpath("dotfiles"))
     from git import Repo
+
     repo = Repo(path=dotfiles_path)
     last_commit = repo.head.commit
     dtm = last_commit.committed_datetime
     from datetime import datetime  # make it tz unaware
+
     dtm = datetime(dtm.year, dtm.month, dtm.day, dtm.hour, dtm.minute, dtm.second)
-    res =  dtm > datetime.fromisoformat(commit_dtm)
+    res = dtm > datetime.fromisoformat(commit_dtm)
     if res is False and update is True:
         console = Console()
         console.print(Panel(f"🔄 UPDATE REQUIRED | Updating dotfiles because {dtm} < {datetime.fromisoformat(commit_dtm)}", border_style="bold blue", expand=False))
         from machineconfig.scripts.python.cloud_repo_sync import main
+
         main(cloud=None, path=dotfiles_path)
     return res
 
+
 def wait_for_jobs_to_finish(root: PathExtended, pattern: str, wait_for_n_jobs: int, max_wait_minutes: float) -> bool:
-    wait_finished: bool=False
+    wait_finished: bool = False
     import time
+
     t0 = time.time()
     while not wait_finished:
         parts = root.search(pattern, folders=False, r=False)
-        counter  =  len(parts)
+        counter = len(parts)
         if counter == wait_for_n_jobs:
             wait_finished = True
             console = Console()
@@ -88,8 +91,7 @@ def wait_for_jobs_to_finish(root: PathExtended, pattern: str, wait_for_n_jobs: i
     return False
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     # import typer
     # typer.run(check_tool_exists)
     pass

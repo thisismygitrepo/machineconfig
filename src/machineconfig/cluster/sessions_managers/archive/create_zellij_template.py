@@ -1,6 +1,4 @@
-
-"""ZT
-"""
+"""ZT"""
 
 import socket
 from machineconfig.utils.utils import choose_ssh_host, write_shell_script_to_default_program_path
@@ -57,5 +55,5 @@ def launch_from_ssh_config():
     return None
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     launch_from_ssh_config()

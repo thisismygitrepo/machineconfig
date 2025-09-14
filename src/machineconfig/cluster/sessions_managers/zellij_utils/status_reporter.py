@@ -2,6 +2,7 @@
 """
 Status reporting utilities for Zellij remote layouts.
 """
+
 import logging
 from typing import Dict, Any, Tuple
 from .process_monitor import ProcessMonitor
@@ -33,8 +34,8 @@ class StatusReporter:
                 "running_commands": running_count,
                 "stopped_commands": total_count - running_count,
                 "session_healthy": zellij_status.get("session_exists", False),
-                "remote": self.session_manager.remote_executor.remote_name
-            }
+                "remote": self.session_manager.remote_executor.remote_name,
+            },
         }
 
     def print_status_report(self, tab_config: Dict[str, Tuple[str, str]]) -> None:

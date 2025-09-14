@@ -8,21 +8,21 @@ from typing import Optional
 
 
 config_dict = {
-        "repo_url": "CUSTOM",
-        "doc": "ngrok secure introspectable tunnels to localhost",
-        "filename_template_windows_amd_64": "ngrok-stable-windows-amd64.zip",
-        "filename_template_linux_amd_64": "ngrok-stable-linux-amd64.zip",
-        "strip_v": False,
-        "exe_name": "ngrok"
-    }
+    "repo_url": "CUSTOM",
+    "doc": "ngrok secure introspectable tunnels to localhost",
+    "filename_template_windows_amd_64": "ngrok-stable-windows-amd64.zip",
+    "filename_template_linux_amd_64": "ngrok-stable-linux-amd64.zip",
+    "strip_v": False,
+    "exe_name": "ngrok",
+}
 
 
 def main(version: Optional[str]):
     print(f"""
-{'=' * 150}
+{"=" * 150}
 🔄 NGROK INSTALLER | Setting up secure tunnels to localhost
 💻 Platform: {platform.system()}
-{'=' * 150}
+{"=" * 150}
 """)
 
     _ = version
@@ -43,17 +43,17 @@ sudo nala update && sudo nala install ngrok
     else:
         error_msg = f"Unsupported platform: {platform.system()}"
         print(f"""
-{'⚠️' * 20}
+{"⚠️" * 20}
 ❌ ERROR | {error_msg}
-{'⚠️' * 20}
+{"⚠️" * 20}
 """)
         raise NotImplementedError(error_msg)
 
     print(f"""
-{'=' * 150}
+{"=" * 150}
 ⚠️  SECURITY WARNING | ngrok has been flagged by some antivirus engines
 🛡️  Use at your own risk - flagged by 35% of antivirus engines
-{'=' * 150}
+{"=" * 150}
 """)
     return program
 

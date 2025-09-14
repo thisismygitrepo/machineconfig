@@ -2,6 +2,7 @@
 """
 Windows Terminal session management utilities for local and remote operations.
 """
+
 import logging
 import subprocess
 from typing import Dict, Any, Optional
@@ -14,8 +15,7 @@ logger = logging.getLogger(__name__)
 class WTSessionManager:
     """Handles Windows Terminal session operations on local and remote machines."""
 
-    def __init__(self, remote_executor: Optional[WTRemoteExecutor] = None,
-                 session_name: str = "default", tmp_layout_dir: Path | None = None):
+    def __init__(self, remote_executor: Optional[WTRemoteExecutor] = None, session_name: str = "default", tmp_layout_dir: Path | None = None):
         self.remote_executor = remote_executor
         self.session_name = session_name
         self.tmp_layout_dir = tmp_layout_dir or Path.home() / "tmp_results" / "wt_layouts" / "layout_manager"
@@ -29,12 +29,7 @@ class WTSessionManager:
     def _run_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess[str]:
         """Run command either locally or remotely."""
         if self.is_local:
-            return subprocess.run(
-                ["powershell", "-Command", command],
-                capture_output=True,
-                text=True,
-                timeout=timeout
-            )
+            return subprocess.run(["powershell", "-Command", command], capture_output=True, text=True, timeout=timeout)
         else:
             if self.remote_executor is None:
                 raise ValueError("Remote executor is None but is_local is False")
@@ -80,6 +75,7 @@ ConvertTo-Json -Depth 2
                 if output and output != "":
                     try:
                         import json
+
                         processes = json.loads(output)
                         if not isinstance(processes, list):
                             processes = [processes]
@@ -91,49 +87,19 @@ ConvertTo-Json -Depth 2
                             if self.session_name in window_title or not window_title:
                                 session_windows.append(proc)
 
-                        return {
-                            "wt_running": True,
-                            "session_exists": len(session_windows) > 0,
-                            "session_name": self.session_name,
-                            "all_windows": processes,
-                            "session_windows": session_windows,
-                            "location": self.location_name
-                        }
+                        return {"wt_running": True, "session_exists": len(session_windows) > 0, "session_name": self.session_name, "all_windows": processes, "session_windows": session_windows, "location": self.location_name}
                     except Exception as e:
                         logger.error(f"Failed to parse Windows Terminal process info: {e}")
-                        return {
-                            "wt_running": True,
-                            "session_exists": False,
-                            "error": f"Failed to parse process info: {e}",
-                            "session_name": self.session_name,
-                            "location": self.location_name
-                        }
+                        return {"wt_running": True, "session_exists": False, "error": f"Failed to parse process info: {e}", "session_name": self.session_name, "location": self.location_name}
                 else:
-                    return {
-                        "wt_running": False,
-                        "session_exists": False,
-                        "session_name": self.session_name,
-                        "all_windows": [],
-                        "location": self.location_name
-                    }
+                    return {"wt_running": False, "session_exists": False, "session_name": self.session_name, "all_windows": [], "location": self.location_name}
             else:
-                return {
-                    "wt_running": False,
-                    "error": result.stderr,
-                    "session_name": self.session_name,
-                    "location": self.location_name
-                }
+                return {"wt_running": False, "error": result.stderr, "session_name": self.session_name, "location": self.location_name}
 
         except Exception as e:
-            return {
-                "wt_running": False,
-                "error": str(e),
-                "session_name": self.session_name,
-                "location": self.location_name
-            }
+            return {"wt_running": False, "error": str(e), "session_name": self.session_name, "location": self.location_name}
 
-    def start_wt_session(self, script_file_path: Optional[str] = None,
-                        wt_command: Optional[str] = None) -> Dict[str, Any]:
+    def start_wt_session(self, script_file_path: Optional[str] = None, wt_command: Optional[str] = None) -> Dict[str, Any]:
         """Start a Windows Terminal session with the generated layout."""
         try:
             if script_file_path:
@@ -164,29 +130,14 @@ ConvertTo-Json -Depth 2
 
             if result.returncode == 0:
                 logger.info(f"Windows Terminal session '{self.session_name}' started successfully")
-                return {
-                    "success": True,
-                    "session_name": self.session_name,
-                    "location": self.location_name,
-                    "message": "Session started successfully"
-                }
+                return {"success": True, "session_name": self.session_name, "location": self.location_name, "message": "Session started successfully"}
             else:
-                return {
-                    "success": False,
-                    "error": result.stderr or result.stdout,
-                    "session_name": self.session_name,
-                    "location": self.location_name
-                }
+                return {"success": False, "error": result.stderr or result.stdout, "session_name": self.session_name, "location": self.location_name}
 
         except Exception as e:
             error_location = "locally" if self.is_local else f"on {self.remote_executor.remote_name if self.remote_executor else 'unknown'}"
             logger.error(f"Failed to start Windows Terminal session {error_location}: {e}")
-            return {
-                "success": False,
-                "error": str(e),
-                "session_name": self.session_name,
-                "location": self.location_name
-            }
+            return {"success": False, "error": str(e), "session_name": self.session_name, "location": self.location_name}
 
     def attach_to_session(self, window_name: Optional[str] = None) -> None:
         """Attach to a Windows Terminal session/window."""
@@ -228,24 +179,13 @@ ConvertTo-Json -Depth 2
             logger.info(f"Killing Windows Terminal session '{self.session_name}'")
             result = self._run_command(kill_cmd, timeout=10)
 
-            return {
-                "success": result.returncode == 0,
-                "message": "Session killed" if result.returncode == 0 else result.stderr,
-                "session_name": self.session_name,
-                "location": self.location_name
-            }
+            return {"success": result.returncode == 0, "message": "Session killed" if result.returncode == 0 else result.stderr, "session_name": self.session_name, "location": self.location_name}
 
         except Exception as e:
             logger.error(f"Failed to kill Windows Terminal session: {e}")
-            return {
-                "success": False,
-                "error": str(e),
-                "session_name": self.session_name,
-                "location": self.location_name
-            }
+            return {"success": False, "error": str(e), "session_name": self.session_name, "location": self.location_name}
 
-    def create_new_tab(self, tab_name: str, cwd: str, command: str,
-                      window_name: Optional[str] = None) -> Dict[str, Any]:
+    def create_new_tab(self, tab_name: str, cwd: str, command: str, window_name: Optional[str] = None) -> Dict[str, Any]:
         """Create a new tab in the Windows Terminal session."""
         try:
             # Build the new-tab command
@@ -264,22 +204,11 @@ ConvertTo-Json -Depth 2
             logger.info(f"Creating new tab '{tab_name}' in Windows Terminal")
             result = self._run_command(new_tab_cmd, timeout=15)
 
-            return {
-                "success": result.returncode == 0,
-                "message": f"Tab '{tab_name}' created" if result.returncode == 0 else result.stderr,
-                "tab_name": tab_name,
-                "command": command,
-                "location": self.location_name
-            }
+            return {"success": result.returncode == 0, "message": f"Tab '{tab_name}' created" if result.returncode == 0 else result.stderr, "tab_name": tab_name, "command": command, "location": self.location_name}
 
         except Exception as e:
             logger.error(f"Failed to create new tab '{tab_name}': {e}")
-            return {
-                "success": False,
-                "error": str(e),
-                "tab_name": tab_name,
-                "location": self.location_name
-            }
+            return {"success": False, "error": str(e), "tab_name": tab_name, "location": self.location_name}
 
     def get_wt_version(self) -> Dict[str, Any]:
         """Get Windows Terminal version information."""
@@ -287,14 +216,6 @@ ConvertTo-Json -Depth 2
             version_cmd = "wt --version"
             result = self._run_command(version_cmd, timeout=10)
 
-            return {
-                "success": result.returncode == 0,
-                "version": result.stdout.strip() if result.returncode == 0 else "Unknown",
-                "location": self.location_name
-            }
+            return {"success": result.returncode == 0, "version": result.stdout.strip() if result.returncode == 0 else "Unknown", "location": self.location_name}
         except Exception as e:
-            return {
-                "success": False,
-                "error": str(e),
-                "location": self.location_name
-            }
+            return {"success": False, "error": str(e), "location": self.location_name}

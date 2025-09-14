@@ -5,22 +5,15 @@ from typing import Optional
 from machineconfig.utils.path_reduced import P as PathExtended
 
 
-config_dict = {
-        "repo_url": "CUSTOM",
-        "doc": """Plugin for chrome to bypass paywalls""",
-        "filename_template_windows_amd_64": "VSCodeSetup-{}.exe",
-        "filename_template_linux_amd_64": "code_{}.deb",
-        "strip_v": True,
-        "exe_name": "pluginName"
-    }
+config_dict = {"repo_url": "CUSTOM", "doc": """Plugin for chrome to bypass paywalls""", "filename_template_windows_amd_64": "VSCodeSetup-{}.exe", "filename_template_linux_amd_64": "code_{}.deb", "strip_v": True, "exe_name": "pluginName"}
 
 
 def main(version: Optional[str] = None):
     print(f"""
-{'=' * 150}
+{"=" * 150}
 🔓 BYPASS PAYWALL | Installing paywall bypass extension for Chrome
-🔄 Version: {'latest' if version is None else version}
-{'=' * 150}
+🔄 Version: {"latest" if version is None else version}
+{"=" * 150}
 """)
 
     _ = version
@@ -32,18 +25,18 @@ def main(version: Optional[str] = None):
     extension_folder = PathExtended(folder).joinpath("bypass-paywalls-chrome-master")
 
     print(f"""
-{'=' * 150}
+{"=" * 150}
 ✅ SUCCESS | Extension downloaded successfully
 📂 Location: {extension_folder}
 ℹ️  Next steps:
 1️⃣  Open Chrome and navigate to chrome://extensions
 2️⃣  Enable Developer Mode (toggle in top right)
 3️⃣  Click "Load unpacked" and select the extension folder
-{'=' * 150}
+{"=" * 150}
 """)
 
     return ""
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

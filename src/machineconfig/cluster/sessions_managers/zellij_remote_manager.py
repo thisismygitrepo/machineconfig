@@ -39,10 +39,7 @@ class ZellijSessionManager:
 
     def kill_all_sessions(self) -> None:
         for an_m in self.managers:
-            ZellijRemoteLayoutGenerator.run_remote_command(
-                remote_name=an_m.remote_name,
-                command="zellij kill-all-sessions --yes"
-            )
+            ZellijRemoteLayoutGenerator.run_remote_command(remote_name=an_m.remote_name, command="zellij kill-all-sessions --yes")
 
     def start_zellij_sessions(self) -> None:
         for an_m in self.managers:
@@ -84,6 +81,7 @@ class ZellijSessionManager:
                 # Print statuses
                 for i, status in enumerate(statuses):
                     print(f"Manager {i}: {status}")
+
         sched = Scheduler(routine=routine, wait_ms=60_000, logger=logger)
         sched.run()
 
@@ -101,12 +99,7 @@ class ZellijSessionManager:
         config_file.write_text(text, encoding="utf-8")
 
         # Save session metadata
-        metadata = {
-            "session_name_prefix": self.session_name_prefix,
-            "created_at": str(datetime.now()),
-            "num_managers": len(self.managers),
-            "machines": list(self.machine2zellij_tabs.keys())
-        }
+        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "machines": list(self.machine2zellij_tabs.keys())}
         metadata_file = session_dir / "metadata.json"
         text = json.dumps(metadata, indent=2, ensure_ascii=False)
         metadata_file.write_text(text, encoding="utf-8")
@@ -122,7 +115,7 @@ class ZellijSessionManager:
         return session_id
 
     @classmethod
-    def load(cls, session_id: str) -> 'ZellijSessionManager':
+    def load(cls, session_id: str) -> "ZellijSessionManager":
         session_dir = TMP_SERIALIAZATION_DIR / session_id
 
         if not session_dir.exists():
@@ -130,14 +123,14 @@ class ZellijSessionManager:
         config_file = session_dir / "machine2zellij_tabs.json"
         if not config_file.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_file}")
-        with open(config_file, 'r', encoding='utf-8') as f:
+        with open(config_file, "r", encoding="utf-8") as f:
             machine2zellij_tabs = json.load(f)
 
         # Load metadata
         metadata_file = session_dir / "metadata.json"
         session_name_prefix = "JobMgr"  # default fallback
         if metadata_file.exists():
-            with open(metadata_file, 'r', encoding='utf-8') as f:
+            with open(metadata_file, "r", encoding="utf-8") as f:
                 metadata = json.load(f)
                 session_name_prefix = metadata.get("session_name_prefix", "JobMgr")
         # Create new instance (this will create new managers)
@@ -180,6 +173,7 @@ class ZellijSessionManager:
 
         try:
             import shutil
+
             shutil.rmtree(session_dir)
             logger.info(f"✅ Deleted session: {session_id}")
             return True

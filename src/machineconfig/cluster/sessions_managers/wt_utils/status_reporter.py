@@ -2,6 +2,7 @@
 """
 Status reporting utilities for Windows Terminal layouts and sessions.
 """
+
 import logging
 from typing import Dict, Any, Tuple
 from .process_monitor import WTProcessMonitor
@@ -28,13 +29,7 @@ class WTStatusReporter:
         return {
             "wt_session": wt_status,
             "commands": commands_status,
-            "summary": {
-                "total_commands": total_count,
-                "running_commands": running_count,
-                "stopped_commands": total_count - running_count,
-                "session_healthy": wt_status.get("session_exists", False),
-                "location": wt_status.get("location", "unknown")
-            }
+            "summary": {"total_commands": total_count, "running_commands": running_count, "stopped_commands": total_count - running_count, "session_healthy": wt_status.get("session_exists", False), "location": wt_status.get("location", "unknown")},
         }
 
     def print_status_report(self, tab_config: Dict[str, Tuple[str, str]]) -> None:
@@ -57,11 +52,11 @@ class WTStatusReporter:
             if wt_session.get("session_exists", False):
                 session_windows = wt_session.get("session_windows", [])
                 all_windows = wt_session.get("all_windows", [])
-                print(f"✅ Windows Terminal is running")
+                print("✅ Windows Terminal is running")
                 print(f"   Session windows: {len(session_windows)}")
                 print(f"   Total WT windows: {len(all_windows)}")
             else:
-                print(f"⚠️  Windows Terminal is running but no session windows found")
+                print("⚠️  Windows Terminal is running but no session windows found")
         else:
             error_msg = wt_session.get("error", "Unknown error")
             print(f"❌ Windows Terminal session issue: {error_msg}")
@@ -112,19 +107,10 @@ class WTStatusReporter:
             wt_windows = self.process_monitor.get_windows_terminal_windows()
             wt_version = self.session_manager.get_wt_version()
 
-            return {
-                "success": True,
-                "windows_info": wt_windows,
-                "version_info": wt_version,
-                "location": self.process_monitor.location_name
-            }
+            return {"success": True, "windows_info": wt_windows, "version_info": wt_version, "location": self.process_monitor.location_name}
         except Exception as e:
             logger.error(f"Failed to get Windows Terminal overview: {e}")
-            return {
-                "success": False,
-                "error": str(e),
-                "location": self.process_monitor.location_name
-            }
+            return {"success": False, "error": str(e), "location": self.process_monitor.location_name}
 
     def print_windows_terminal_overview(self) -> None:
         """Print an overview of Windows Terminal status."""
@@ -190,39 +176,25 @@ class WTStatusReporter:
                 "stopped_commands": summary["stopped_commands"],
                 "all_commands_running": summary["running_commands"] == summary["total_commands"],
                 "wt_windows_count": len(wt_overview.get("windows_info", {}).get("windows", [])) if wt_overview["success"] else 0,
-                "wt_version": wt_overview.get("version_info", {}).get("version", "Unknown") if wt_overview["success"] else "Unknown"
+                "wt_version": wt_overview.get("version_info", {}).get("version", "Unknown") if wt_overview["success"] else "Unknown",
             }
         except Exception as e:
             logger.error(f"Failed to generate status summary: {e}")
-            return {
-                "error": str(e),
-                "session_name": self.session_manager.session_name,
-                "location": self.process_monitor.location_name
-            }
+            return {"error": str(e), "session_name": self.session_manager.session_name, "location": self.process_monitor.location_name}
 
     def check_tab_specific_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
         """Get detailed status for a specific tab."""
         if tab_name not in tab_config:
-            return {
-                "error": f"Tab '{tab_name}' not found in configuration",
-                "tab_name": tab_name
-            }
+            return {"error": f"Tab '{tab_name}' not found in configuration", "tab_name": tab_name}
 
         try:
             cmd_status = self.process_monitor.check_command_status(tab_name, tab_config)
 
             # Add additional context
             cwd, command = tab_config[tab_name]
-            cmd_status["tab_config"] = {
-                "working_directory": cwd,
-                "command": command
-            }
+            cmd_status["tab_config"] = {"working_directory": cwd, "command": command}
 
             return cmd_status
         except Exception as e:
             logger.error(f"Failed to check status for tab '{tab_name}': {e}")
-            return {
-                "error": str(e),
-                "tab_name": tab_name,
-                "location": self.process_monitor.location_name
-            }
+            return {"error": str(e), "tab_name": tab_name, "location": self.process_monitor.location_name}

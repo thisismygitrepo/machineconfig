@@ -3,6 +3,7 @@
 Windows Terminal layout generation utilities for creating wt command strings.
 Based on Windows Terminal documentation: https://learn.microsoft.com/en-us/windows/terminal/command-line-arguments
 """
+
 import shlex
 import random
 import string
@@ -19,7 +20,7 @@ class WTLayoutGenerator:
     @staticmethod
     def generate_random_suffix(length: int = 8) -> str:
         """Generate a random string suffix for unique window names."""
-        return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
+        return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
     @staticmethod
     def parse_command(command: str) -> Tuple[str, List[str]]:
@@ -40,7 +41,7 @@ class WTLayoutGenerator:
         # Windows Terminal uses PowerShell-style escaping
         # Escape special characters that might cause issues
         text = text.replace('"', '""')  # Escape quotes for PowerShell
-        if ' ' in text or ';' in text or '&' in text or '|' in text:
+        if " " in text or ";" in text or "&" in text or "|" in text:
             return f'"{text}"'
         return text
 
@@ -50,9 +51,9 @@ class WTLayoutGenerator:
         cmd, args = WTLayoutGenerator.parse_command(command)
 
         # Convert paths to Windows format if needed
-        if cwd.startswith('~/'):
-            cwd = cwd.replace('~/', f"{Path.home()}/")
-        elif cwd == '~':
+        if cwd.startswith("~/"):
+            cwd = cwd.replace("~/", f"{Path.home()}/")
+        elif cwd == "~":
             cwd = str(Path.home())
 
         # Build the wt command parts
@@ -89,10 +90,7 @@ class WTLayoutGenerator:
             if not cwd.strip():
                 raise ValueError(f"Invalid cwd for tab '{tab_name}': {cwd}")
 
-    def generate_wt_command(self, tab_config: Dict[str, Tuple[str, str]],
-                           window_name: str | None = None,
-                           maximized: bool = False,
-                           focus: bool = True) -> str:
+    def generate_wt_command(self, tab_config: Dict[str, Tuple[str, str]], window_name: str | None = None, maximized: bool = False, focus: bool = True) -> str:
         """Generate complete Windows Terminal command string."""
         self.validate_tab_config(tab_config)
 
@@ -129,9 +127,7 @@ class WTLayoutGenerator:
 
         return " ".join(wt_parts)
 
-    def create_wt_script(self, tab_config: Dict[str, Tuple[str, str]],
-                        output_dir: Path, session_name: str,
-                        window_name: str | None = None) -> str:
+    def create_wt_script(self, tab_config: Dict[str, Tuple[str, str]], output_dir: Path, session_name: str, window_name: str | None = None) -> str:
         """Create a Windows Terminal script file and return its absolute path."""
         self.validate_tab_config(tab_config)
 
@@ -168,8 +164,7 @@ REM Windows Terminal layout for {session_name}
             logger.error(f"Failed to create script file: {e}")
             raise
 
-    def generate_split_pane_command(self, tab_config: Dict[str, Tuple[str, str]],
-                                   window_name: str | None = None) -> str:
+    def generate_split_pane_command(self, tab_config: Dict[str, Tuple[str, str]], window_name: str | None = None) -> str:
         """Generate Windows Terminal command with split panes instead of separate tabs."""
         self.validate_tab_config(tab_config)
 

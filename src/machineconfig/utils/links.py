@@ -19,6 +19,7 @@ def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
         target_dirs_filtered.append((a_dir_obj, a_name))
 
     import git
+
     repo = git.Repo(repo_root, search_parent_directories=True)
     root_maybe = repo.working_tree_dir
     assert root_maybe is not None
@@ -31,7 +32,8 @@ def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
         links_path = repo_root_obj.joinpath("links", a_name)
         links_path.symlink_to(target=a_target_path)
 
-def symlink_func(this: PathExtended, to_this: PathExtended, prioritize_to_this: bool=True):
+
+def symlink_func(this: PathExtended, to_this: PathExtended, prioritize_to_this: bool = True):
     """helper function. creates a symlink from `this` to `to_this`.
     What can go wrong?
     depending on this and to_this existence, one will be prioretized depending on overwrite value.
@@ -39,15 +41,19 @@ def symlink_func(this: PathExtended, to_this: PathExtended, prioritize_to_this: 
     False means to_this will potentially be overwittten."""
     this = PathExtended(this).expanduser().absolute()
     to_this = PathExtended(to_this).expanduser().absolute()
-    if this.is_symlink(): this.delete(sure=True)  # delete if it exists as symblic link, not a concrete path.
+    if this.is_symlink():
+        this.delete(sure=True)  # delete if it exists as symblic link, not a concrete path.
     if this.exists():  # this is a problem. It will be resolved via `overwrite`
         if prioritize_to_this is True:  # it *can* be deleted, but let's look at target first.
             if to_this.exists():  # this exists, to_this as well. to_this is prioritized.
                 this.append(f".orig_{randstr()}", inplace=True)  # rename is better than deletion
-            else: this.move(path=to_this)  # this exists, to_this doesn't. to_this is prioritized.
+            else:
+                this.move(path=to_this)  # this exists, to_this doesn't. to_this is prioritized.
         elif prioritize_to_this is False:  # don't sacrefice this, sacrefice to_this.
-            if to_this.exists(): this.move(path=to_this, overwrite=True)  # this exists, to_this as well, this is prioritized.   # now we are readly to make the link
-            else: this.move(path=to_this)  # this exists, to_this doesn't, this is prioritized.
+            if to_this.exists():
+                this.move(path=to_this, overwrite=True)  # this exists, to_this as well, this is prioritized.   # now we are readly to make the link
+            else:
+                this.move(path=to_this)  # this exists, to_this doesn't, this is prioritized.
     else:  # this doesn't exist.
         if not to_this.exists():
             to_this.parent.mkdir(parents=True, exist_ok=True)
@@ -58,18 +64,23 @@ def symlink_func(this: PathExtended, to_this: PathExtended, prioritize_to_this: 
     except Exception as ex:
         console.print(Panel(f"❌ ERROR | Failed at linking {this} ➡️  {to_this}. Reason: {ex}", title="Error", expand=False))
 
-def symlink_copy(this: PathExtended, to_this: PathExtended, prioritize_to_this: bool=True):
+
+def symlink_copy(this: PathExtended, to_this: PathExtended, prioritize_to_this: bool = True):
     this = PathExtended(this).expanduser().absolute()
     to_this = PathExtended(to_this).expanduser().absolute()
-    if this.is_symlink(): this.delete(sure=True)  # delete if it exists as symblic link, not a concrete path.
+    if this.is_symlink():
+        this.delete(sure=True)  # delete if it exists as symblic link, not a concrete path.
     if this.exists():  # this is a problem. It will be resolved via `overwrite`
         if prioritize_to_this is True:  # it *can* be deleted, but let's look at target first.
             if to_this.exists():  # this exists, to_this as well. to_this is prioritized.
                 this.append(f".orig_{randstr()}", inplace=True)  # rename is better than deletion
-            else: this.move(path=to_this)  # this exists, to_this doesn't. to_this is prioritized.
+            else:
+                this.move(path=to_this)  # this exists, to_this doesn't. to_this is prioritized.
         elif prioritize_to_this is False:  # don't sacrefice this, sacrefice to_this.
-            if to_this.exists(): this.move(path=to_this, overwrite=True)  # this exists, to_this as well, this is prioritized.   # now we are readly to make the link
-            else: this.move(path=to_this)  # this exists, to_this doesn't, this is prioritized.
+            if to_this.exists():
+                this.move(path=to_this, overwrite=True)  # this exists, to_this as well, this is prioritized.   # now we are readly to make the link
+            else:
+                this.move(path=to_this)  # this exists, to_this doesn't, this is prioritized.
     else:  # this doesn't exist.
         if not to_this.exists():
             to_this.parent.mkdir(parents=True, exist_ok=True)

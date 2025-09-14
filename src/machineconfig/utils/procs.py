@@ -1,5 +1,5 @@
-"""Procs
-"""
+"""Procs"""
+
 import psutil
 from tqdm import tqdm
 from pytz import timezone
@@ -29,7 +29,7 @@ def get_processes_accessing_file(path: str):
         if len(tmp) > 0:
             res[proc.pid] = tmp
     # Convert to list of dictionaries for consistent data structure
-    result_data = [{'pid': pid, 'files': files} for pid, files in res.items()]
+    result_data = [{"pid": pid, "files": files} for pid, files in res.items()]
     console.print(Panel(f"✅ Found {len(res)} processes accessing the specified file", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
     return result_data
 
@@ -44,7 +44,7 @@ def kill_process(name: str):
             killed = True
     if not killed:
         print(f"❓ No process with name '{name}' was found")
-    print(f"{'─'*80}\n")
+    print(f"{'─' * 80}\n")
 
 
 class ProcessManager:
@@ -57,23 +57,26 @@ class ProcessManager:
             try:
                 mem_usage_mb = proc.memory_info().rss / (1024 * 1024)
                 # Convert create_time to local timezone
-                create_time_utc = datetime.fromtimestamp(proc.create_time(), tz=timezone('UTC'))
-                create_time_local = create_time_utc.astimezone(timezone('Australia/Adelaide'))
+                create_time_utc = datetime.fromtimestamp(proc.create_time(), tz=timezone("UTC"))
+                create_time_local = create_time_utc.astimezone(timezone("Australia/Adelaide"))
 
-                process_info.append({
-                    'pid': proc.pid,
-                    'name': proc.name(),
-                    'username': proc.username(),
-                    'cpu_percent': proc.cpu_percent(),
-                    'memory_usage_mb': mem_usage_mb,
-                    'status': proc.status(),
-                    'create_time': create_time_local,
-                    'command': " ".join(proc.cmdline())
-                })
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess): pass
+                process_info.append(
+                    {
+                        "pid": proc.pid,
+                        "name": proc.name(),
+                        "username": proc.username(),
+                        "cpu_percent": proc.cpu_percent(),
+                        "memory_usage_mb": mem_usage_mb,
+                        "status": proc.status(),
+                        "create_time": create_time_local,
+                        "command": " ".join(proc.cmdline()),
+                    }
+                )
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
 
         # Sort by memory usage (descending)
-        process_info.sort(key=lambda x: x['memory_usage_mb'], reverse=True)
+        process_info.sort(key=lambda x: x["memory_usage_mb"], reverse=True)
         self.data = process_info
         console.print(Panel(f"✅ Process Manager initialized with {len(process_info)} processes", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
@@ -83,7 +86,7 @@ class ProcessManager:
             return ""
 
         # Create header
-        _headers = ['PID', 'Name', 'Username', 'CPU%', 'Memory(MB)', 'Status', 'Create Time', 'Command']
+        _headers = ["PID", "Name", "Username", "CPU%", "Memory(MB)", "Status", "Create Time", "Command"]
         header_line = f"{'PID':<8} {'Name':<20} {'Username':<12} {'CPU%':<8} {'Memory(MB)':<12} {'Status':<12} {'Create Time':<20} {'Command':<50}"
         separator = "-" * len(header_line)
 
@@ -91,9 +94,9 @@ class ProcessManager:
 
         for process in self.data:
             # Format create_time as string
-            create_time_str = process['create_time'].strftime('%Y-%m-%d %H:%M:%S')
+            create_time_str = process["create_time"].strftime("%Y-%m-%d %H:%M:%S")
             # Truncate command if too long
-            command = process['command'][:47] + "..." if len(process['command']) > 50 else process['command']
+            command = process["command"][:47] + "..." if len(process["command"]) > 50 else process["command"]
 
             line = f"{process['pid']:<8} {process['name'][:19]:<20} {process['username'][:11]:<12} {process['cpu_percent']:<8.1f} {process['memory_usage_mb']:<12.2f} {process['status'][:11]:<12} {create_time_str:<20} {command:<50}"
             lines.append(line)
@@ -123,7 +126,7 @@ class ProcessManager:
 
         kill_all = input("\n⚠️  Confirm killing ALL selected processes? y/[n] ").lower() == "y"
         if kill_all:
-            self.kill(pids=[p['pid'] for p in selected_processes])
+            self.kill(pids=[p["pid"] for p in selected_processes])
             return
 
         kill_by_index = input("\n🔫 Kill by index? (enter numbers separated by spaces, e.g. '1 4') or [n] to cancel: ")
@@ -132,7 +135,7 @@ class ProcessManager:
             target_processes = [selected_processes[i] for i in indices]
             for idx2, process in enumerate(target_processes):
                 pprint(process, f"🎯 Target Process {idx2}")
-            _ = self.kill(pids=[p['pid'] for p in target_processes]) if input("\n⚠️  Confirm termination? y/[n] ").lower() == "y" else None
+            _ = self.kill(pids=[p["pid"] for p in target_processes]) if input("\n⚠️  Confirm termination? y/[n] ").lower() == "y" else None
         console.print(Panel("🔔 No processes were terminated.", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
     def filter_and_kill(self, name: Optional[str] = None):
@@ -141,12 +144,12 @@ class ProcessManager:
         console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
         # Filter processes by name
-        filtered_processes = [p for p in self.data if p['name'] == name]
+        filtered_processes = [p for p in self.data if p["name"] == name]
         # Sort by create_time (ascending)
-        filtered_processes.sort(key=lambda x: x['create_time'])
+        filtered_processes.sort(key=lambda x: x["create_time"])
 
         print(f"🎯 Found {len(filtered_processes)} processes matching name: '{name}'")
-        self.kill(pids=[p['pid'] for p in filtered_processes])
+        self.kill(pids=[p["pid"] for p in filtered_processes])
         console.print(Panel("", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
     def kill(self, names: Optional[list[str]] = None, pids: Optional[list[int]] = None, commands: Optional[list[str]] = None):
@@ -155,19 +158,22 @@ class ProcessManager:
         console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
         if names is None and pids is None and commands is None:
             print("❌ Error: No termination targets specified (names, pids, or commands)")
-            raise ValueError('names, pids and commands cannot all be None')
-        if names is None: names = []
-        if pids is None: pids = []
-        if commands is None: commands = []
+            raise ValueError("names, pids and commands cannot all be None")
+        if names is None:
+            names = []
+        if pids is None:
+            pids = []
+        if commands is None:
+            commands = []
 
         killed_count = 0
 
         for name in names:
-            matching_processes = [p for p in self.data if p['name'] == name]
+            matching_processes = [p for p in self.data if p["name"] == name]
             if len(matching_processes) > 0:
                 for process in matching_processes:
-                    psutil.Process(process['pid']).kill()
-                    print(f'💀 Killed process {name} with PID {process["pid"]}. It lived {get_age(process["create_time"])}. RIP 🪦💐')
+                    psutil.Process(process["pid"]).kill()
+                    print(f"💀 Killed process {name} with PID {process['pid']}. It lived {get_age(process['create_time'])}. RIP 🪦💐")
                     killed_count += 1
             else:
                 print(f'❓ No process named "{name}" found')
@@ -181,13 +187,13 @@ class ProcessManager:
                 print(f'💀 Killed process with PID {pid} and name "{proc_name}". It lived {proc_lifetime}. RIP 🪦💐')
                 killed_count += 1
             except psutil.NoSuchProcess:
-                print(f'❓ No process with PID {pid} found')
+                print(f"❓ No process with PID {pid} found")
 
         for command in commands:
-            matching_processes = [p for p in self.data if command in p['command']]
+            matching_processes = [p for p in self.data if command in p["command"]]
             if len(matching_processes) > 0:
                 for process in matching_processes:
-                    psutil.Process(process['pid']).kill()
+                    psutil.Process(process["pid"]).kill()
                     print(f'💀 Killed process with "{command}" in its command & PID {process["pid"]}. It lived {get_age(process["create_time"])}. RIP 🪦💐')
                     killed_count += 1
             else:
@@ -201,13 +207,13 @@ def get_age(create_time: Any) -> str:
     try:
         if isinstance(create_time, (int, float)):
             # Handle timestampz
-            create_time_utc = datetime.fromtimestamp(create_time, tz=timezone('UTC'))
-            create_time_local = create_time_utc.astimezone(timezone('Australia/Adelaide'))
+            create_time_utc = datetime.fromtimestamp(create_time, tz=timezone("UTC"))
+            create_time_local = create_time_utc.astimezone(timezone("Australia/Adelaide"))
         else:
             # Already a datetime object
             create_time_local = create_time
 
-        now_local = datetime.now(tz=timezone('Australia/Adelaide'))
+        now_local = datetime.now(tz=timezone("Australia/Adelaide"))
         age = now_local - create_time_local
         return str(age)
     except Exception as e:
@@ -224,5 +230,5 @@ def get_age(create_time: Any) -> str:
             return f"unknown due to {ee} and {e}"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

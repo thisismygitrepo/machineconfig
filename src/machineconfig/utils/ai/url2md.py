@@ -46,7 +46,8 @@ print(f"✅ Found {len(relevant_urls)} relevant URLs. Preparing to convert to Ma
 
 commands: list[str] = []
 for a_url in relevant_urls:
-    commands.append(f"""curl {a_url} | html2markdown --output {op_dir.joinpath(a_url.split('/')[-1] + "_" + randstr(5) + ".md")} """)
+    commands.append(f"""curl {a_url} | html2markdown --output {op_dir.joinpath(a_url.split("/")[-1] + "_" + randstr(5) + ".md")} """)
+
 
 def run_command(cmd: str) -> bool:
     try:
@@ -56,6 +57,7 @@ def run_command(cmd: str) -> bool:
     except subprocess.SubprocessError as e:
         print(f"❌ Error with command: {cmd[:60]}...\n{str(e)}")
         return False
+
 
 def main():
     cpu_count = multiprocessing.cpu_count()
@@ -78,6 +80,6 @@ def main():
 
     print(f"📂 Output saved to: {op_dir}\n")
 
+
 if __name__ == "__main__":
     main()
-

@@ -2,6 +2,7 @@
 """
 Remote command execution utilities for SSH operations.
 """
+
 import subprocess
 import logging
 from typing import Dict, Any
@@ -19,12 +20,7 @@ class RemoteExecutor:
         """Execute a command on the remote machine via SSH."""
         ssh_cmd = ["ssh", self.remote_name, command]
         try:
-            result = subprocess.run(
-                ssh_cmd,
-                capture_output=True,
-                text=True,
-                timeout=timeout
-            )
+            result = subprocess.run(ssh_cmd, capture_output=True, text=True, timeout=timeout)
             return result
         except subprocess.TimeoutExpired:
             logger.error(f"SSH command timed out after {timeout}s: {command}")

@@ -3,6 +3,7 @@
 Process monitoring and status checking utilities for Windows Terminal commands.
 Adapted from zellij process monitor but focused on Windows processes.
 """
+
 import json
 import logging
 import subprocess
@@ -27,29 +28,16 @@ class WTProcessMonitor:
     def _run_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess[str]:
         """Run command either locally or remotely."""
         if self.is_local:
-            return subprocess.run(
-                ["powershell", "-Command", command],
-                capture_output=True,
-                text=True,
-                timeout=timeout
-            )
+            return subprocess.run(["powershell", "-Command", command], capture_output=True, text=True, timeout=timeout)
         else:
             if self.remote_executor is None:
                 raise ValueError("Remote executor is None but is_local is False")
             return self.remote_executor.run_command(command, timeout)
 
-    def check_command_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]],
-                           use_verification: bool = True) -> Dict[str, Any]:
+    def check_command_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]], use_verification: bool = True) -> Dict[str, Any]:
         """Check command status with optional process verification."""
         if tab_name not in tab_config:
-            return {
-                "status": "unknown",
-                "error": f"Tab '{tab_name}' not found in tracked configuration",
-                "running": False,
-                "pid": None,
-                "command": None,
-                "location": self.location_name
-            }
+            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in tracked configuration", "running": False, "pid": None, "command": None, "location": self.location_name}
 
         # Use the verified method by default for more accurate results
         if use_verification:
@@ -68,11 +56,11 @@ class WTProcessMonitor:
             if result.returncode == 0:
                 try:
                     # Parse PowerShell output (JSON format)
-                    output_lines = [line.strip() for line in result.stdout.strip().split('\n') if line.strip()]
+                    output_lines = [line.strip() for line in result.stdout.strip().split("\n") if line.strip()]
                     matching_processes = []
 
                     for line in output_lines:
-                        if line.startswith('{') and line.endswith('}'):
+                        if line.startswith("{") and line.endswith("}"):
                             try:
                                 proc_info = json.loads(line)
                                 matching_processes.append(proc_info)
@@ -80,64 +68,29 @@ class WTProcessMonitor:
                                 continue
 
                     if matching_processes:
-                        return {
-                            "status": "running",
-                            "running": True,
-                            "processes": matching_processes,
-                            "command": command,
-                            "tab_name": tab_name,
-                            "location": self.location_name
-                        }
+                        return {"status": "running", "running": True, "processes": matching_processes, "command": command, "tab_name": tab_name, "location": self.location_name}
                     else:
-                        return {
-                            "status": "not_running",
-                            "running": False,
-                            "processes": [],
-                            "command": command,
-                            "tab_name": tab_name,
-                            "location": self.location_name
-                        }
+                        return {"status": "not_running", "running": False, "processes": [], "command": command, "tab_name": tab_name, "location": self.location_name}
                 except Exception as e:
                     logger.error(f"Failed to parse process check output: {e}")
-                    return {
-                        "status": "error",
-                        "error": f"Failed to parse output: {e}",
-                        "running": False,
-                        "command": command,
-                        "tab_name": tab_name,
-                        "location": self.location_name
-                    }
+                    return {"status": "error", "error": f"Failed to parse output: {e}", "running": False, "command": command, "tab_name": tab_name, "location": self.location_name}
             else:
-                return {
-                    "status": "error",
-                    "error": f"Command failed: {result.stderr}",
-                    "running": False,
-                    "command": command,
-                    "tab_name": tab_name,
-                    "location": self.location_name
-                }
+                return {"status": "error", "error": f"Command failed: {result.stderr}", "running": False, "command": command, "tab_name": tab_name, "location": self.location_name}
 
         except Exception as e:
             logger.error(f"Error checking command status for tab '{tab_name}': {e}")
-            return {
-                "status": "error",
-                "error": str(e),
-                "running": False,
-                "command": command,
-                "tab_name": tab_name,
-                "location": self.location_name
-            }
+            return {"status": "error", "error": str(e), "running": False, "command": command, "tab_name": tab_name, "location": self.location_name}
 
     def _create_process_check_script(self, command: str) -> str:
         """Create PowerShell script for checking processes."""
         # Escape command for PowerShell
         escaped_command = command.replace("'", "''").replace('"', '""')
         cmd_parts = [part for part in command.split() if len(part) > 2]
-        primary_cmd = cmd_parts[0] if cmd_parts else ''
+        primary_cmd = cmd_parts[0] if cmd_parts else ""
 
         return f"""
 $targetCommand = '{escaped_command}'
-$cmdParts = @({', '.join([f"'{part}'" for part in cmd_parts])})
+$cmdParts = @({", ".join([f"'{part}'" for part in cmd_parts])})
 $primaryCmd = '{primary_cmd}'
 $currentPid = $PID
 
@@ -182,13 +135,7 @@ Get-Process | ForEach-Object {{
     def force_fresh_process_check(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
         """Force a fresh process check with additional validation."""
         if tab_name not in tab_config:
-            return {
-                "status": "unknown",
-                "error": f"Tab '{tab_name}' not found in tracked configuration",
-                "running": False,
-                "command": None,
-                "location": self.location_name
-            }
+            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in tracked configuration", "running": False, "command": None, "location": self.location_name}
 
         _, command = tab_config[tab_name]
 
@@ -204,9 +151,9 @@ Get-Process | ForEach-Object {{
             if result.returncode == 0:
                 try:
                     # Parse the output to extract JSON
-                    output_lines = [line.strip() for line in result.stdout.strip().split('\n') if line.strip()]
+                    output_lines = [line.strip() for line in result.stdout.strip().split("\n") if line.strip()]
                     for line in output_lines:
-                        if line.startswith('{') and '"processes"' in line:
+                        if line.startswith("{") and '"processes"' in line:
                             check_result = json.loads(line)
                             matching_processes = check_result.get("processes", [])
 
@@ -218,62 +165,32 @@ Get-Process | ForEach-Object {{
                                 "tab_name": tab_name,
                                 "location": self.location_name,
                                 "check_timestamp": check_timestamp,
-                                "method": "force_fresh_check"
+                                "method": "force_fresh_check",
                             }
 
                     # Fallback if no JSON found
-                    return {
-                        "status": "not_running",
-                        "running": False,
-                        "processes": [],
-                        "command": command,
-                        "tab_name": tab_name,
-                        "location": self.location_name,
-                        "raw_output": result.stdout
-                    }
+                    return {"status": "not_running", "running": False, "processes": [], "command": command, "tab_name": tab_name, "location": self.location_name, "raw_output": result.stdout}
                 except json.JSONDecodeError as e:
                     logger.error(f"Failed to parse fresh check output: {e}")
-                    return {
-                        "status": "error",
-                        "error": f"Failed to parse output: {e}",
-                        "running": False,
-                        "command": command,
-                        "tab_name": tab_name,
-                        "location": self.location_name,
-                        "raw_output": result.stdout
-                    }
+                    return {"status": "error", "error": f"Failed to parse output: {e}", "running": False, "command": command, "tab_name": tab_name, "location": self.location_name, "raw_output": result.stdout}
             else:
-                return {
-                    "status": "error",
-                    "error": f"Command failed: {result.stderr}",
-                    "running": False,
-                    "command": command,
-                    "tab_name": tab_name,
-                    "location": self.location_name
-                }
+                return {"status": "error", "error": f"Command failed: {result.stderr}", "running": False, "command": command, "tab_name": tab_name, "location": self.location_name}
 
         except Exception as e:
             logger.error(f"Error in fresh process check for tab '{tab_name}': {e}")
-            return {
-                "status": "error",
-                "error": str(e),
-                "running": False,
-                "command": command,
-                "tab_name": tab_name,
-                "location": self.location_name
-            }
+            return {"status": "error", "error": str(e), "running": False, "command": command, "tab_name": tab_name, "location": self.location_name}
 
     def _create_fresh_check_script(self, command: str) -> str:
         """Create enhanced PowerShell process checking script with freshness validation."""
         escaped_command = command.replace("'", "''").replace('"', '""')
         cmd_parts = [part for part in command.split() if len(part) > 2]
-        primary_cmd = cmd_parts[0] if cmd_parts else ''
+        primary_cmd = cmd_parts[0] if cmd_parts else ""
 
         return f"""
 Start-Sleep -Milliseconds 100
 
 $targetCommand = '{escaped_command}'
-$cmdParts = @({', '.join([f"'{part}'" for part in cmd_parts])})
+$cmdParts = @({", ".join([f"'{part}'" for part in cmd_parts])})
 $primaryCmd = '{primary_cmd}'
 $currentPid = $PID
 $checkTime = Get-Date
@@ -391,28 +308,11 @@ ConvertTo-Json -Depth 2
             if result.returncode == 0 and result.stdout.strip():
                 try:
                     wt_processes = json.loads(result.stdout)
-                    return {
-                        "success": True,
-                        "windows": wt_processes if isinstance(wt_processes, list) else [wt_processes],
-                        "location": self.location_name
-                    }
+                    return {"success": True, "windows": wt_processes if isinstance(wt_processes, list) else [wt_processes], "location": self.location_name}
                 except json.JSONDecodeError:
-                    return {
-                        "success": False,
-                        "error": "Failed to parse Windows Terminal process info",
-                        "location": self.location_name
-                    }
+                    return {"success": False, "error": "Failed to parse Windows Terminal process info", "location": self.location_name}
             else:
-                return {
-                    "success": True,
-                    "windows": [],
-                    "message": "No Windows Terminal processes found",
-                    "location": self.location_name
-                }
+                return {"success": True, "windows": [], "message": "No Windows Terminal processes found", "location": self.location_name}
         except Exception as e:
             logger.error(f"Failed to get Windows Terminal windows: {e}")
-            return {
-                "success": False,
-                "error": str(e),
-                "location": self.location_name
-            }
+            return {"success": False, "error": str(e), "location": self.location_name}

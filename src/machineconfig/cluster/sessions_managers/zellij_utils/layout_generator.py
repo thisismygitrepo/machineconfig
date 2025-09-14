@@ -2,6 +2,7 @@
 """
 Zellij layout generation utilities for creating KDL layout files.
 """
+
 import shlex
 import random
 import string
@@ -31,7 +32,7 @@ class LayoutGenerator:
     @staticmethod
     def generate_random_suffix(length: int = 8) -> str:
         """Generate a random string suffix for unique layout file names."""
-        return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
+        return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
     @staticmethod
     def parse_command(command: str) -> Tuple[str, List[str]]:
@@ -53,7 +54,7 @@ class LayoutGenerator:
             return ""
         formatted_args = []
         for arg in args:
-            if ' ' in arg or '"' in arg or "'" in arg:
+            if " " in arg or '"' in arg or "'" in arg:
                 escaped_arg = arg.replace('"', '\\"')
                 formatted_args.append(f'"{escaped_arg}"')
             else:
@@ -71,8 +72,8 @@ class LayoutGenerator:
         tab_section = f'  tab name="{escaped_tab_name}" cwd="{tab_cwd}" {{\n'
         tab_section += f'    pane command="{cmd}" {{\n'
         if args_str:
-            tab_section += f'      args {args_str}\n'
-        tab_section += '    }\n  }\n'
+            tab_section += f"      args {args_str}\n"
+        tab_section += "    }\n  }\n"
         return tab_section
 
     @staticmethod
@@ -99,8 +100,7 @@ class LayoutGenerator:
 
         return layout_content
 
-    def create_layout_file(self, tab_config: Dict[str, Tuple[str, str]],
-                          output_dir: Path, session_name: str) -> str:
+    def create_layout_file(self, tab_config: Dict[str, Tuple[str, str]], output_dir: Path, session_name: str) -> str:
         """Create a layout file and return its absolute path."""
         self.validate_tab_config(tab_config)
 

@@ -1,4 +1,3 @@
-
 # """Run with sane defaults for a remote machine.
 # """
 

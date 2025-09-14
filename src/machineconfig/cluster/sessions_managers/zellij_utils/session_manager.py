@@ -2,6 +2,7 @@
 """
 Zellij session management utilities for remote operations.
 """
+
 import logging
 from typing import Dict, Any, Optional
 from pathlib import Path
@@ -43,34 +44,18 @@ class SessionManager:
     def check_zellij_session_status(self) -> Dict[str, Any]:
         """Check if the Zellij session exists and is running."""
         try:
-            result = self.remote_executor.run_command('zellij list-sessions', timeout=10)
+            result = self.remote_executor.run_command("zellij list-sessions", timeout=10)
 
             if result.returncode == 0:
-                sessions = result.stdout.strip().split('\n') if result.stdout.strip() else []
+                sessions = result.stdout.strip().split("\n") if result.stdout.strip() else []
                 session_running = any(self.session_name in session for session in sessions)
 
-                return {
-                    "zellij_running": True,
-                    "session_exists": session_running,
-                    "session_name": self.session_name,
-                    "all_sessions": sessions,
-                    "remote": self.remote_executor.remote_name
-                }
+                return {"zellij_running": True, "session_exists": session_running, "session_name": self.session_name, "all_sessions": sessions, "remote": self.remote_executor.remote_name}
             else:
-                return {
-                    "zellij_running": False,
-                    "error": result.stderr,
-                    "session_name": self.session_name,
-                    "remote": self.remote_executor.remote_name
-                }
+                return {"zellij_running": False, "error": result.stderr, "session_name": self.session_name, "remote": self.remote_executor.remote_name}
 
         except Exception as e:
-            return {
-                "zellij_running": False,
-                "error": str(e),
-                "session_name": self.session_name,
-                "remote": self.remote_executor.remote_name
-            }
+            return {"zellij_running": False, "error": str(e), "session_name": self.session_name, "remote": self.remote_executor.remote_name}
 
     def start_zellij_session(self, layout_file_path: Optional[str] = None) -> Dict[str, Any]:
         """Start a Zellij session on the remote machine with the generated layout."""
@@ -82,7 +67,9 @@ class SessionManager:
                 raise ValueError("No layout file path provided.")
 
             # Enhanced Rich logging for session start
-            console.print(f"[bold cyan]🚀 Starting Zellij session[/bold cyan] [yellow]'{self.session_name}'[/yellow] [dim]on remote[/dim] [bold yellow]'{self.remote_executor.remote_name}'[/bold yellow] [dim]with layout:[/dim] [blue]{remote_layout_file}[/blue]")
+            console.print(
+                f"[bold cyan]🚀 Starting Zellij session[/bold cyan] [yellow]'{self.session_name}'[/yellow] [dim]on remote[/dim] [bold yellow]'{self.remote_executor.remote_name}'[/bold yellow] [dim]with layout:[/dim] [blue]{remote_layout_file}[/blue]"
+            )
 
             # Start Zellij session with layout
             start_cmd = f"zellij --layout {remote_layout_file} a -b {self.session_name}"
@@ -91,28 +78,13 @@ class SessionManager:
 
             if result.returncode == 0:
                 console.print(f"[bold green]✅ Zellij session[/bold green] [yellow]'{self.session_name}'[/yellow] [green]started successfully on[/green] [bold yellow]{self.remote_executor.remote_name}[/bold yellow]")
-                return {
-                    "success": True,
-                    "session_name": self.session_name,
-                    "remote": self.remote_executor.remote_name,
-                    "message": "Session started successfully"
-                }
+                return {"success": True, "session_name": self.session_name, "remote": self.remote_executor.remote_name, "message": "Session started successfully"}
             else:
-                return {
-                    "success": False,
-                    "error": result.stderr,
-                    "session_name": self.session_name,
-                    "remote": self.remote_executor.remote_name
-                }
+                return {"success": False, "error": result.stderr, "session_name": self.session_name, "remote": self.remote_executor.remote_name}
 
         except Exception as e:
             logger.error(f"Failed to start Zellij session on {self.remote_executor.remote_name}: {e}")
-            return {
-                "success": False,
-                "error": str(e),
-                "session_name": self.session_name,
-                "remote": self.remote_executor.remote_name
-            }
+            return {"success": False, "error": str(e), "session_name": self.session_name, "remote": self.remote_executor.remote_name}
 
     def attach_to_session(self) -> None:
         """Attach to the Zellij session on the remote machine via SSH."""

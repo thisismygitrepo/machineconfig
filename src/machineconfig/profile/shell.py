@@ -1,5 +1,4 @@
-"""shell
-"""
+"""shell"""
 
 from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.path_reduced import P as PathExtended, modify_text
@@ -27,8 +26,10 @@ BOX_WIDTH = 100  # Define BOX_WIDTH or get it from a config
 def create_default_shell_profile() -> None:
     profile_path = get_shell_profile_path()
     profile = profile_path.read_text(encoding="utf-8")
-    if system == "Windows": source = f""". {str(LIBRARY_ROOT.joinpath('settings/shells/pwsh/init.ps1').collapseuser()).replace('~', '$HOME')}"""
-    else: source = f"""source {str(LIBRARY_ROOT.joinpath('settings/shells/bash/init.sh').collapseuser()).replace('~', '$HOME')}"""
+    if system == "Windows":
+        source = f""". {str(LIBRARY_ROOT.joinpath("settings/shells/pwsh/init.ps1").collapseuser()).replace("~", "$HOME")}"""
+    else:
+        source = f"""source {str(LIBRARY_ROOT.joinpath("settings/shells/bash/init.sh").collapseuser()).replace("~", "$HOME")}"""
 
     if source in profile:
         console.print(Panel("🔄 PROFILE | Skipping init script sourcing - already present in profile", title="[bold blue]Profile[/bold blue]", border_style="blue"))
@@ -49,17 +50,20 @@ def get_shell_profile_path() -> PathExtended:
     if system == "Windows":
         obj = Terminal().run("$PROFILE", shell="pwsh")
         res = obj.op2path()
-        if isinstance(res, PathExtended): profile_path = res
+        if isinstance(res, PathExtended):
+            profile_path = res
         else:
             obj.print(capture=False)
             raise ValueError(f"""Could not get profile path for Windows. Got {res}""")
-    elif system == "Linux": profile_path = PathExtended("~/.bashrc").expanduser()
-    else: raise ValueError(f"""Not implemented for this system {system}""")
+    elif system == "Linux":
+        profile_path = PathExtended("~/.bashrc").expanduser()
+    else:
+        raise ValueError(f"""Not implemented for this system {system}""")
     console.print(Panel(f"""🐚 SHELL PROFILE | Working with path: `{profile_path}`""", title="[bold blue]Shell Profile[/bold blue]", border_style="blue"))
     return profile_path
 
 
-def append_temporarily(dirs: list[str], kind: Literal['append', 'prefix', 'replace']) -> str:
+def append_temporarily(dirs: list[str], kind: Literal["append", "prefix", "replace"]) -> str:
     dirs_ = []
     for path in dirs:
         path_rel = PathExtended(path).collapseuser(strict=False)
@@ -68,24 +72,33 @@ def append_temporarily(dirs: list[str], kind: Literal['append', 'prefix', 'repla
         else:
             dirs_.append(path_rel.as_posix() if system == "Linux" else str(path_rel))
     dirs = dirs_
-    if len(dirs) == 0: return ""
+    if len(dirs) == 0:
+        return ""
 
     if system == "Windows":
         """Source: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_environment_variables?view=powershell-7.2"""
-        if kind == "append": command = fr'$env:Path += ";{sep.join(dirs)}"'  # Append to the Path variable in the current window:
-        elif kind == "prefix": command = fr'$env:Path = "{sep.join(dirs)};" + $env:Path'  # Prefix the Path variable in the current window:
-        elif kind == "replace": command = fr'$env:Path = "{sep.join(dirs)}"'  # Replace the Path variable in the current window (use with caution!):
-        else: raise KeyError
+        if kind == "append":
+            command = rf'$env:Path += ";{sep.join(dirs)}"'  # Append to the Path variable in the current window:
+        elif kind == "prefix":
+            command = rf'$env:Path = "{sep.join(dirs)};" + $env:Path'  # Prefix the Path variable in the current window:
+        elif kind == "replace":
+            command = rf'$env:Path = "{sep.join(dirs)}"'  # Replace the Path variable in the current window (use with caution!):
+        else:
+            raise KeyError
         return command  # if run is False else tm.run(command, shell="powershell")
-    elif system in ["Linux", "Darwin"]: result = f'export PATH="{sep.join(dirs)}:$PATH"'
-    else: raise ValueError
+    elif system in ["Linux", "Darwin"]:
+        result = f'export PATH="{sep.join(dirs)}:$PATH"'
+    else:
+        raise ValueError
     return result
+
 
 def main_env_path(choice: Optional[str], profile_path: Optional[str]) -> None:
     from machineconfig.utils.utils2 import read_toml
+
     env_path = read_toml(LIBRARY_ROOT.joinpath("profile/env_path.toml"))
     # env_path = LIBRARY_ROOT.joinpath("profile/env_path.toml").readit()
-    dirs = env_path[f'path_{system.lower()}']['extension']
+    dirs = env_path[f"path_{system.lower()}"]["extension"]
 
     console.print(Panel("🔍 ENVIRONMENT | Current PATH variables:", title="[bold blue]Environment[/bold blue]", border_style="blue"))
 
@@ -93,8 +106,10 @@ def main_env_path(choice: Optional[str], profile_path: Optional[str]) -> None:
         tmp = display_options(msg="Which directory to add?", options=dirs + ["all", "none(EXIT)"], default="none(EXIT)")
         assert isinstance(tmp, str), f"Choice must be a string or a list of strings, not {type(choice)}"
         choice = tmp
-        if str(choice) != "all": dirs = [choice]
-    if choice == "none(EXIT)": return
+        if str(choice) != "all":
+            dirs = [choice]
+    if choice == "none(EXIT)":
+        return
 
     console.print(f"\n📌 Adding directories to PATH: {dirs}")
     addition = append_temporarily(dirs=dirs, kind="append")
@@ -111,23 +126,29 @@ def main_env_path(choice: Optional[str], profile_path: Optional[str]) -> None:
 def main_add_sources_to_shell_profile(profile_path: Optional[str], choice: Optional[str]) -> None:
     # sources: list[str] = LIBRARY_ROOT.joinpath("profile/sources.toml").readit()[system.lower()]['files']
     from machineconfig.utils.utils2 import read_toml
-    sources: list[str] = read_toml(LIBRARY_ROOT.joinpath("profile/sources.toml"))[system.lower()]['files']
+
+    sources: list[str] = read_toml(LIBRARY_ROOT.joinpath("profile/sources.toml"))[system.lower()]["files"]
 
     console.print(Panel("🔄 Adding sources to shell profile", title="[bold blue]Sources[/bold blue]", border_style="blue"))
 
     if choice is None:
         choice_obj = display_options(msg="Which patch to add?", options=sources + ["all", "none(EXIT)"], default="none(EXIT)", multi=True)
         if isinstance(choice_obj, str):
-            if choice_obj == "all": choice = choice_obj
-            elif choice_obj == "none(EXIT)": return
-            else: sources = [choice_obj]
+            if choice_obj == "all":
+                choice = choice_obj
+            elif choice_obj == "none(EXIT)":
+                return
+            else:
+                sources = [choice_obj]
         else:  # isinstance(choice_obj, list):
             sources = choice_obj
-    elif choice == "none(EXIT)": return
+    elif choice == "none(EXIT)":
+        return
 
     if isinstance(profile_path, str):
         profile_path_obj = PathExtended(profile_path)
-    else: profile_path_obj = get_shell_profile_path()
+    else:
+        profile_path_obj = get_shell_profile_path()
     profile = profile_path_obj.read_text(encoding="utf-8")
 
     for a_file in sources:
@@ -141,7 +162,8 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str], choice: Optio
             elif system == "Linux":
                 profile += f"\nsource {file}"
                 console.print(f"➕ Added Bash source: {file}")
-            else: raise ValueError(f"Not implemented for this system {system}")
+            else:
+                raise ValueError(f"Not implemented for this system {system}")
         else:
             console.print(f"⏭️  Source already present: {file}")
 
@@ -158,7 +180,8 @@ def main_add_patches_to_shell_profile(profile_path: Optional[str], choice: Optio
         choice_chosen = display_options(msg="Which patch to add?", options=list(patches) + ["all", "none(EXIT)"], default="none(EXIT)", multi=False)
         assert isinstance(choice_chosen, str), f"Choice must be a string or a list of strings, not {type(choice)}"
         choice = choice_chosen
-    if choice == "none(EXIT)": return None
+    if choice == "none(EXIT)":
+        return None
     elif str(choice) == "all":
         console.print("📌 Adding all patches to profile")
     else:
@@ -187,5 +210,5 @@ def main_add_patches_to_shell_profile(profile_path: Optional[str], choice: Optio
     console.print(Panel("✅ Shell profile updated with patches", title="[bold blue]Patches[/bold blue]", border_style="blue"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

@@ -90,10 +90,7 @@ class ZellijLocalManager:
                 # 2. Launch new session. We intentionally do NOT wait for completion.
                 # Using the same pattern as before (attach --create) but detached via env var.
                 # ZELLIJ_AUTO_ATTACH=0 prevents auto-attach if compiled with that feature; harmless otherwise.
-                start_cmd = [
-                    "bash", "-lc",
-                    f"ZELLIJ_AUTO_ATTACH=0 zellij --layout {layout_path} attach {session_name} --create >/dev/null 2>&1 &"
-                ]
+                start_cmd = ["bash", "-lc", f"ZELLIJ_AUTO_ATTACH=0 zellij --layout {layout_path} attach {session_name} --create >/dev/null 2>&1 &"]
                 console.print(f"[bold cyan]🚀 Starting session[/bold cyan] [yellow]'{session_name}'[/yellow] with layout [blue]{layout_path}[/blue] (non-blocking)...")
                 subprocess.Popen(start_cmd)
 
@@ -133,18 +130,12 @@ class ZellijLocalManager:
                 logger.info(f"Killing session '{session_name}'")
                 result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
 
-                results[session_name] = {
-                    "success": result.returncode == 0,
-                    "message": "Session killed" if result.returncode == 0 else result.stderr
-                }
+                results[session_name] = {"success": result.returncode == 0, "message": "Session killed" if result.returncode == 0 else result.stderr}
 
             except Exception as e:
                 # Use a fallback key since session_name might not be defined here
-                key = getattr(manager, 'session_name', None) or f"manager_{self.managers.index(manager)}"
-                results[key] = {
-                    "success": False,
-                    "error": str(e)
-                }
+                key = getattr(manager, "session_name", None) or f"manager_{self.managers.index(manager)}"
+                results[key] = {"success": False, "error": str(e)}
 
         return results
 
@@ -195,12 +186,7 @@ class ZellijLocalManager:
             status_report[session_name] = {
                 "session_status": session_status,
                 "commands_status": commands_status,
-                "summary": {
-                    "total_commands": total_count,
-                    "running_commands": running_count,
-                    "stopped_commands": total_count - running_count,
-                    "session_healthy": session_status.get("session_exists", False)
-                }
+                "summary": {"total_commands": total_count, "running_commands": running_count, "stopped_commands": total_count - running_count, "session_healthy": session_status.get("session_exists", False)},
             }
 
         return status_report
@@ -210,12 +196,9 @@ class ZellijLocalManager:
         all_status = self.check_all_sessions_status()
 
         total_sessions = len(all_status)
-        healthy_sessions = sum(1 for status in all_status.values()
-                             if status["summary"]["session_healthy"])
-        total_commands = sum(status["summary"]["total_commands"]
-                           for status in all_status.values())
-        total_running = sum(status["summary"]["running_commands"]
-                          for status in all_status.values())
+        healthy_sessions = sum(1 for status in all_status.values() if status["summary"]["session_healthy"])
+        total_commands = sum(status["summary"]["total_commands"] for status in all_status.values())
+        total_running = sum(status["summary"]["running_commands"] for status in all_status.values())
 
         return {
             "total_sessions": total_sessions,
@@ -225,7 +208,7 @@ class ZellijLocalManager:
             "running_commands": total_running,
             "stopped_commands": total_commands - total_running,
             "all_sessions_healthy": healthy_sessions == total_sessions,
-            "all_commands_running": total_running == total_commands
+            "all_commands_running": total_running == total_commands,
         }
 
     def print_status_report(self) -> None:
@@ -281,6 +264,7 @@ class ZellijLocalManager:
         Args:
             wait_ms: How long to wait between checks in milliseconds (default: 30000ms = 30s)
         """
+
         def routine(scheduler: Scheduler):
             print(f"\n⏰ Monitoring cycle {scheduler.cycle} at {datetime.now()}")
             print("-" * 50)
@@ -293,13 +277,15 @@ class ZellijLocalManager:
                 status_data = []
                 for session_name, status in all_status.items():
                     for tab_name, cmd_status in status["commands_status"].items():
-                        status_data.append({
-                            "session": session_name,
-                            "tab": tab_name,
-                            "running": cmd_status.get("running", False),
-                            "command": cmd_status.get("command", "Unknown")[:50] + "..." if len(cmd_status.get("command", "")) > 50 else cmd_status.get("command", ""),
-                            "processes": len(cmd_status.get("processes", []))
-                        })
+                        status_data.append(
+                            {
+                                "session": session_name,
+                                "tab": tab_name,
+                                "running": cmd_status.get("running", False),
+                                "command": cmd_status.get("command", "Unknown")[:50] + "..." if len(cmd_status.get("command", "")) > 50 else cmd_status.get("command", ""),
+                                "processes": len(cmd_status.get("processes", [])),
+                            }
+                        )
 
                 if status_data:
                     # Format data as table
@@ -346,13 +332,7 @@ class ZellijLocalManager:
         config_file.write_text(text, encoding="utf-8")
 
         # Save metadata
-        metadata = {
-            "session_name_prefix": self.session_name_prefix,
-            "created_at": str(datetime.now()),
-            "num_managers": len(self.managers),
-            "sessions": list(self.session2zellij_tabs.keys()),
-            "manager_type": "ZellijLocalManager"
-        }
+        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "sessions": list(self.session2zellij_tabs.keys()), "manager_type": "ZellijLocalManager"}
         metadata_file = session_dir / "metadata.json"
         text = json.dumps(metadata, indent=2, ensure_ascii=False)
         metadata_file.write_text(text, encoding="utf-8")
@@ -362,11 +342,7 @@ class ZellijLocalManager:
         managers_dir.mkdir(exist_ok=True)
 
         for i, manager in enumerate(self.managers):
-            manager_data = {
-                "session_name": manager.session_name,
-                "tab_config": manager.tab_config,
-                "layout_path": manager.layout_path
-            }
+            manager_data = {"session_name": manager.session_name, "tab_config": manager.tab_config, "layout_path": manager.layout_path}
             manager_file = managers_dir / f"manager_{i}_{manager.session_name}.json"
             text = json.dumps(manager_data, indent=2, ensure_ascii=False)
             manager_file.write_text(text, encoding="utf-8")
@@ -375,7 +351,7 @@ class ZellijLocalManager:
         return session_id
 
     @classmethod
-    def load(cls, session_id: str) -> 'ZellijLocalManager':
+    def load(cls, session_id: str) -> "ZellijLocalManager":
         """Load a saved manager state from disk."""
         session_dir = TMP_SERIALIZATION_DIR / session_id
 
@@ -387,14 +363,14 @@ class ZellijLocalManager:
         if not config_file.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_file}")
 
-        with open(config_file, 'r', encoding='utf-8') as f:
+        with open(config_file, "r", encoding="utf-8") as f:
             session2zellij_tabs = json.load(f)
 
         # Load metadata
         metadata_file = session_dir / "metadata.json"
         session_name_prefix = "LocalJobMgr"  # default fallback
         if metadata_file.exists():
-            with open(metadata_file, 'r', encoding='utf-8') as f:
+            with open(metadata_file, "r", encoding="utf-8") as f:
                 metadata = json.load(f)
                 session_name_prefix = metadata.get("session_name_prefix", "LocalJobMgr")
 
@@ -409,7 +385,7 @@ class ZellijLocalManager:
 
             for manager_file in manager_files:
                 try:
-                    with open(manager_file, 'r', encoding='utf-8') as f:
+                    with open(manager_file, "r", encoding="utf-8") as f:
                         manager_data = json.load(f)
 
                     # Recreate the manager
@@ -450,6 +426,7 @@ class ZellijLocalManager:
 
         try:
             import shutil
+
             shutil.rmtree(session_dir)
             logger.info(f"✅ Deleted session: {session_id}")
             return True
@@ -463,15 +440,10 @@ class ZellijLocalManager:
 
         try:
             # Get all running zellij sessions
-            result = subprocess.run(
-                ['zellij', 'list-sessions'],
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
+            result = subprocess.run(["zellij", "list-sessions"], capture_output=True, text=True, timeout=10)
 
             if result.returncode == 0:
-                all_sessions = result.stdout.strip().split('\n') if result.stdout.strip() else []
+                all_sessions = result.stdout.strip().split("\n") if result.stdout.strip() else []
 
                 # Filter to only our managed sessions
                 for manager in self.managers:
@@ -480,12 +452,7 @@ class ZellijLocalManager:
                         continue  # Skip managers without a session name
                     is_active = any(session_name in session for session in all_sessions)
 
-                    active_sessions.append({
-                        "session_name": session_name,
-                        "is_active": is_active,
-                        "tab_count": len(manager.tab_config),
-                        "tabs": list(manager.tab_config.keys())
-                    })
+                    active_sessions.append({"session_name": session_name, "is_active": is_active, "tab_count": len(manager.tab_config), "tabs": list(manager.tab_config.keys())})
 
         except Exception as e:
             logger.error(f"Error listing active sessions: {e}")
@@ -496,21 +463,9 @@ class ZellijLocalManager:
 if __name__ == "__main__":
     # Example usage
     sample_sessions = {
-        "development": {
-            "🚀Frontend": ("~/code/myapp/frontend", "npm run dev"),
-            "⚙️Backend": ("~/code/myapp/backend", "python manage.py runserver"),
-            "📊Monitor": ("~", "htop")
-        },
-        "testing": {
-            "🧪Tests": ("~/code/myapp", "pytest --watch"),
-            "🔍Coverage": ("~/code/myapp", "coverage run --source=. -m pytest"),
-            "📝Logs": ("~/logs", "tail -f app.log")
-        },
-        "deployment": {
-            "🐳Docker": ("~/code/myapp", "docker-compose up"),
-            "☸️K8s": ("~/k8s", "kubectl get pods --watch"),
-            "📈Metrics": ("~", "k9s")
-        }
+        "development": {"🚀Frontend": ("~/code/myapp/frontend", "npm run dev"), "⚙️Backend": ("~/code/myapp/backend", "python manage.py runserver"), "📊Monitor": ("~", "htop")},
+        "testing": {"🧪Tests": ("~/code/myapp", "pytest --watch"), "🔍Coverage": ("~/code/myapp", "coverage run --source=. -m pytest"), "📝Logs": ("~/logs", "tail -f app.log")},
+        "deployment": {"🐳Docker": ("~/code/myapp", "docker-compose up"), "☸️K8s": ("~/k8s", "kubectl get pods --watch"), "📈Metrics": ("~", "k9s")},
     }
 
     try:
@@ -549,4 +504,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"❌ Error: {e}")
         import traceback
+
         traceback.print_exc()

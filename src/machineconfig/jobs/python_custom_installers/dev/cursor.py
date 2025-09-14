@@ -1,5 +1,3 @@
-
-
 import os
 import shutil
 from pathlib import Path
@@ -8,14 +6,7 @@ import subprocess
 from typing import Optional
 
 
-config_dict = {
-        "repo_url": "CUSTOM",
-        "doc": "Cursor",
-        "filename_template_windows_amd_64": "VSCodeSetup-{}.exe",
-        "filename_template_linux_amd_64": "code_{}.deb",
-        "strip_v": True,
-        "exe_name": "cursor"
-}
+config_dict = {"repo_url": "CUSTOM", "doc": "Cursor", "filename_template_windows_amd_64": "VSCodeSetup-{}.exe", "filename_template_linux_amd_64": "code_{}.deb", "strip_v": True, "exe_name": "cursor"}
 
 
 def install_linux(version: Optional[str] = None):
@@ -83,8 +74,7 @@ def install_windows(version: Optional[str] = None):
     # Run the installer silently
     try:
         print("Running Cursor installer...")
-        subprocess.run([str(cursor_installer), "/SILENT"],
-                              capture_output=True, text=True, check=True)
+        subprocess.run([str(cursor_installer), "/SILENT"], capture_output=True, text=True, check=True)
         print("Cursor installer completed successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Installer failed with exit code {e.returncode}")
@@ -92,8 +82,7 @@ def install_windows(version: Optional[str] = None):
         # Try alternative silent install flags
         try:
             print("Trying alternative silent install...")
-            subprocess.run([str(cursor_installer), "/S"],
-                                  capture_output=True, text=True, check=True)
+            subprocess.run([str(cursor_installer), "/S"], capture_output=True, text=True, check=True)
             print("Cursor installer completed successfully with /S flag.")
         except subprocess.CalledProcessError as e2:
             print(f"Alternative installer also failed with exit code {e2.returncode}")

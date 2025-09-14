@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from rich.text import Text
 from rich.panel import Panel
@@ -10,18 +9,20 @@ from typing import Optional, Union, TypeVar, Iterable
 T = TypeVar("T")
 
 
-
 def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> bool:
     if platform.system() == "Windows":
         tool_name = tool_name.replace(".exe", "") + ".exe"
 
-    if platform.system() == "Windows": cmd = "where.exe"
-    elif platform.system() in ["Linux", "Darwin"]: cmd = "which"
-    else: raise NotImplementedError(f"platform {platform.system()} not implemented")
+    if platform.system() == "Windows":
+        cmd = "where.exe"
+    elif platform.system() in ["Linux", "Darwin"]:
+        cmd = "which"
+    else:
+        raise NotImplementedError(f"platform {platform.system()} not implemented")
 
     try:
         _tmp = subprocess.check_output([cmd, tool_name], stderr=subprocess.DEVNULL)
-        res: bool=True
+        res: bool = True
     except (subprocess.CalledProcessError, FileNotFoundError):
         res = False
     if res is False and install_script is not None:
@@ -38,25 +39,20 @@ def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> b
     return res
 
 
-def choose_one_option(options: Iterable[T], header: str="", tail: str="", prompt: str="", msg: str="",
-                      default: Optional[T] = None, fzf: bool=False, custom_input: bool=False) -> T:
-    choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt,
-                                 default=default, fzf=fzf, multi=False, custom_input=custom_input)
+def choose_one_option(options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "", default: Optional[T] = None, fzf: bool = False, custom_input: bool = False) -> T:
+    choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=False, custom_input=custom_input)
     assert not isinstance(choice_key, list)
     return choice_key
 
 
-def choose_multiple_options(options: Iterable[T], header: str="", tail: str="", prompt: str="", msg: str="",
-                            default: Optional[T] = None, custom_input: bool=False) -> list[T]:
-    choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt,
-                                 default=default, fzf=True, multi=True,
-                                 custom_input=custom_input)
-    if isinstance(choice_key, list): return choice_key
+def choose_multiple_options(options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "", default: Optional[T] = None, custom_input: bool = False) -> list[T]:
+    choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=True, multi=True, custom_input=custom_input)
+    if isinstance(choice_key, list):
+        return choice_key
     return [choice_key]
 
 
-def display_options(msg: str, options: Iterable[T], header: str="", tail: str="", prompt: str="",
-                    default: Optional[T] = None, fzf: bool=False, multi: bool=False, custom_input: bool=False) -> Union[T, list[T]]:
+def display_options(msg: str, options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[T, list[T]]:
     # TODO: replace with https://github.com/tmbo/questionary
     # # also see https://github.com/charmbracelet/gum
     tool_name = "fzf"
@@ -65,6 +61,7 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
     console = Console()
     if fzf and check_tool_exists(tool_name):
         from pyfzf.pyfzf import FzfPrompt
+
         fzf_prompt = FzfPrompt()
         nl = "\n"
         choice_string_multi: list[str] = fzf_prompt.prompt(choices=options_strings, fzf_options=("--multi" if multi else "") + f' --prompt "{prompt.replace(nl, " ")}" ')  # --border-label={msg.replace(nl, ' ')}")
@@ -84,7 +81,8 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
         if default is not None:
             assert default in options, f"Default `{default}` option not in options `{list(options)}`"
             default_msg = Text(" <<<<-------- DEFAULT", style="bold red")
-        else: default_msg = Text("")
+        else:
+            default_msg = Text("")
         txt = Text("\n" + msg + "\n")
         for idx, key in enumerate(options):
             txt = txt + Text(f"{idx:2d} ", style="bold blue") + str(key) + (default_msg if default is not None and default == key else "") + "\n"
@@ -111,7 +109,8 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
                 if choice_string in options_strings:  # string input
                     choice_idx = options_strings.index(choice_one)  # type: ignore
                     choice_one = list(options)[choice_idx]
-                elif custom_input: return str(choice_string)  # type: ignore
+                elif custom_input:
+                    return str(choice_string)  # type: ignore
                 else:
                     _ = ie
                     # raise ValueError(f"Unknown choice. {choice_string}") from ie
@@ -129,7 +128,8 @@ def display_options(msg: str, options: Iterable[T], header: str="", tail: str=""
                     console.print(Panel(f"❓ Unknown choice: '{choice_string}'", title="Error", expand=False))
                     return display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
         console.print(Panel(f"✅ Selected option {choice_idx}: {choice_one}", title="Selected", expand=False))
-        if multi: return [choice_one]
+        if multi:
+            return [choice_one]
     return choice_one
 
 
@@ -141,16 +141,22 @@ def choose_cloud_interactively() -> str:
     if isinstance(tmp, str):
         remotes: list[str] = [x.replace(":", "") for x in tmp.splitlines()]
 
-    else: raise ValueError(f"Got {tmp} from rclone listremotes")
+    else:
+        raise ValueError(f"Got {tmp} from rclone listremotes")
     if len(remotes) == 0:
         raise RuntimeError("You don't have remotes. Configure your rclone first to get cloud services access.")
     cloud: str = choose_one_option(msg="WHICH CLOUD?", options=list(remotes), default=remotes[0], fzf=True)
     console.print(Panel(f"✅ SELECTED CLOUD | {cloud}", border_style="bold blue", expand=False))
     return cloud
 
+
 def get_ssh_hosts() -> list[str]:
     from paramiko import SSHConfig
+
     c = SSHConfig()
     c.parse(open(Path.home().joinpath(".ssh/config"), encoding="utf-8"))
     return list(c.get_hostnames())
-def choose_ssh_host(multi: bool=True): return display_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
+
+
+def choose_ssh_host(multi: bool = True):
+    return display_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)

@@ -1,6 +1,7 @@
 """
 Installer
 """
+
 # from machineconfig.utils.installer import get_latest_release
 from typing import Optional
 
@@ -19,17 +20,17 @@ config_dict = {
     "filename_template_windows_amd_64": "gh_{}_windows_amd64.zip",
     "filename_template_linux_amd_64": "gh_{}_linux_amd64.tar.gz",
     "strip_v": True,
-    "exe_name": "docker"
+    "exe_name": "docker",
 }
 
 
 def main(version: Optional[str]):
     print(f"""
-{'=' * 150}
+{"=" * 150}
 🐳 DOCKER DESKTOP | Installing Docker Desktop for Ubuntu
-🔄 Version: {'latest' if version is None else version}
+🔄 Version: {"latest" if version is None else version}
 📚 Source: https://docs.docker.com/desktop/install/ubuntu/
-{'=' * 150}
+{"=" * 150}
 """)
 
     _ = version
@@ -61,16 +62,16 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 
 """
     print(f"""
-{'=' * 150}
+{"=" * 150}
 ℹ️  INFO | After installation:
 🔹 Run 'sudo docker run hello-world' to verify installation
 🔹 Add your user to the docker group with 'sudo usermod -aG docker $USER'
 🔹 Log out and back in to apply group changes
-{'=' * 150}
+{"=" * 150}
 """)
 
     return code
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

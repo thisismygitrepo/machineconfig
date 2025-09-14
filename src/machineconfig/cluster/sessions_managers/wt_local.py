@@ -3,6 +3,7 @@
 Windows Terminal local layout generator and session manager.
 Equivalent to zellij_local.py but for Windows Terminal.
 """
+
 import shlex
 import subprocess
 import random
@@ -26,13 +27,14 @@ class WTLayoutGenerator:
     @staticmethod
     def _generate_random_suffix(length: int = 8) -> str:
         """Generate a random string suffix for unique script file names."""
-        return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
+        return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
     @staticmethod
     def _parse_command(command: str) -> tuple[str, List[str]]:
         try:
             parts = shlex.split(command)
-            if not parts: raise ValueError("Empty command provided")
+            if not parts:
+                raise ValueError("Empty command provided")
             return parts[0], parts[1:] if len(parts) > 1 else []
         except ValueError as e:
             logger.error(f"Error parsing command '{command}': {e}")
@@ -44,7 +46,7 @@ class WTLayoutGenerator:
         """Escape text for use in Windows Terminal commands."""
         # Windows Terminal uses PowerShell-style escaping
         text = text.replace('"', '""')  # Escape quotes for PowerShell
-        if ' ' in text or ';' in text or '&' in text or '|' in text:
+        if " " in text or ";" in text or "&" in text or "|" in text:
             return f'"{text}"'
         return text
 
@@ -52,9 +54,9 @@ class WTLayoutGenerator:
     def _create_tab_command(tab_name: str, cwd: str, command: str, is_first_tab: bool = False) -> str:
         """Create a Windows Terminal tab command string."""
         # Convert paths to Windows format if needed
-        if cwd.startswith('~/'):
-            cwd = cwd.replace('~/', f"{Path.home()}/")
-        elif cwd == '~':
+        if cwd.startswith("~/"):
+            cwd = cwd.replace("~/", f"{Path.home()}/")
+        elif cwd == "~":
             cwd = str(Path.home())
 
         # Build the wt command parts
@@ -117,7 +119,7 @@ REM Windows Terminal layout for {self.session_name}
             script_file.write_text(text, encoding="utf-8")
 
             # Also create PowerShell script for better command handling
-            ps1_file = script_file.with_suffix('.ps1')
+            ps1_file = script_file.with_suffix(".ps1")
             text = f"""# Windows Terminal layout for {self.session_name}
 # Generated with random suffix: {random_suffix}
 {wt_command}
@@ -179,12 +181,7 @@ REM Windows Terminal layout for {self.session_name}
     def check_wt_session_status(session_name: str) -> Dict[str, Any]:
         try:
             # Check for Windows Terminal processes
-            wt_check_cmd = [
-                "powershell", "-Command",
-                "Get-Process -Name 'WindowsTerminal' -ErrorAction SilentlyContinue | "
-                "Select-Object Id, ProcessName, StartTime, MainWindowTitle | "
-                "ConvertTo-Json -Depth 2"
-            ]
+            wt_check_cmd = ["powershell", "-Command", "Get-Process -Name 'WindowsTerminal' -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, StartTime, MainWindowTitle | ConvertTo-Json -Depth 2"]
 
             result = subprocess.run(wt_check_cmd, capture_output=True, text=True, timeout=10)
 
@@ -193,6 +190,7 @@ REM Windows Terminal layout for {self.session_name}
                 if output and output != "":
                     try:
                         import json
+
                         processes = json.loads(output)
                         if not isinstance(processes, list):
                             processes = [processes]
@@ -204,75 +202,37 @@ REM Windows Terminal layout for {self.session_name}
                             if session_name in window_title or not window_title:
                                 session_windows.append(proc)
 
-                        return {
-                            "wt_running": True,
-                            "session_exists": len(session_windows) > 0,
-                            "session_name": session_name,
-                            "all_windows": processes,
-                            "session_windows": session_windows
-                        }
+                        return {"wt_running": True, "session_exists": len(session_windows) > 0, "session_name": session_name, "all_windows": processes, "session_windows": session_windows}
                     except Exception as e:
-                        return {
-                            "wt_running": True,
-                            "session_exists": False,
-                            "error": f"Failed to parse process info: {e}",
-                            "session_name": session_name
-                        }
+                        return {"wt_running": True, "session_exists": False, "error": f"Failed to parse process info: {e}", "session_name": session_name}
                 else:
-                    return {
-                        "wt_running": False,
-                        "session_exists": False,
-                        "session_name": session_name,
-                        "all_windows": []
-                    }
+                    return {"wt_running": False, "session_exists": False, "session_name": session_name, "all_windows": []}
             else:
-                return {
-                    "wt_running": False,
-                    "error": result.stderr,
-                    "session_name": session_name
-                }
+                return {"wt_running": False, "error": result.stderr, "session_name": session_name}
 
         except subprocess.TimeoutExpired:
-            return {
-                "wt_running": False,
-                "error": "Timeout while checking Windows Terminal processes",
-                "session_name": session_name
-            }
+            return {"wt_running": False, "error": "Timeout while checking Windows Terminal processes", "session_name": session_name}
         except FileNotFoundError:
-            return {
-                "wt_running": False,
-                "error": "PowerShell not found in PATH",
-                "session_name": session_name
-            }
+            return {"wt_running": False, "error": "PowerShell not found in PATH", "session_name": session_name}
         except Exception as e:
-            return {
-                "wt_running": False,
-                "error": str(e),
-                "session_name": session_name
-            }
+            return {"wt_running": False, "error": str(e), "session_name": session_name}
 
     @staticmethod
     def check_command_status(tab_name: str, tab_config: Dict[str, tuple[str, str]]) -> Dict[str, Any]:
         """Check if a command is running by looking for processes."""
         if tab_name not in tab_config:
-            return {
-                "status": "unknown",
-                "error": f"Tab '{tab_name}' not found in tracked configuration",
-                "running": False,
-                "pid": None,
-                "command": None
-            }
+            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in tracked configuration", "running": False, "pid": None, "command": None}
 
         _, command = tab_config[tab_name]
 
         try:
             # Create PowerShell script to check for processes
             cmd_parts = [part for part in command.split() if len(part) > 2]
-            primary_cmd = cmd_parts[0] if cmd_parts else ''
+            primary_cmd = cmd_parts[0] if cmd_parts else ""
 
             ps_script = f"""
 $targetCommand = '{command.replace("'", "''")}'
-$cmdParts = @({', '.join([f"'{part}'" for part in cmd_parts])})
+$cmdParts = @({", ".join([f"'{part}'" for part in cmd_parts])})
 $primaryCmd = '{primary_cmd}'
 $currentPid = $PID
 $matchingProcesses = @()
@@ -314,19 +274,14 @@ Get-Process | ForEach-Object {{
 }}
 """
 
-            result = subprocess.run(
-                ["powershell", "-Command", ps_script],
-                capture_output=True,
-                text=True,
-                timeout=15
-            )
+            result = subprocess.run(["powershell", "-Command", ps_script], capture_output=True, text=True, timeout=15)
 
             if result.returncode == 0:
-                output_lines = [line.strip() for line in result.stdout.strip().split('\n') if line.strip()]
+                output_lines = [line.strip() for line in result.stdout.strip().split("\n") if line.strip()]
                 matching_processes = []
 
                 for line in output_lines:
-                    if line.startswith('{') and line.endswith('}'):
+                    if line.startswith("{") and line.endswith("}"):
                         try:
                             proc_info = json.loads(line)
                             matching_processes.append(proc_info)
@@ -334,39 +289,15 @@ Get-Process | ForEach-Object {{
                             continue
 
                 if matching_processes:
-                    return {
-                        "status": "running",
-                        "running": True,
-                        "processes": matching_processes,
-                        "command": command,
-                        "tab_name": tab_name
-                    }
+                    return {"status": "running", "running": True, "processes": matching_processes, "command": command, "tab_name": tab_name}
                 else:
-                    return {
-                        "status": "not_running",
-                        "running": False,
-                        "processes": [],
-                        "command": command,
-                        "tab_name": tab_name
-                    }
+                    return {"status": "not_running", "running": False, "processes": [], "command": command, "tab_name": tab_name}
             else:
-                return {
-                    "status": "error",
-                    "error": f"Command failed: {result.stderr}",
-                    "running": False,
-                    "command": command,
-                    "tab_name": tab_name
-                }
+                return {"status": "error", "error": f"Command failed: {result.stderr}", "running": False, "command": command, "tab_name": tab_name}
 
         except Exception as e:
             logger.error(f"Error checking command status for tab '{tab_name}': {e}")
-            return {
-                "status": "error",
-                "error": str(e),
-                "running": False,
-                "command": command,
-                "tab_name": tab_name
-            }
+            return {"status": "error", "error": str(e), "running": False, "command": command, "tab_name": tab_name}
 
     def get_status_report(self) -> Dict[str, Any]:
         """Get status report for this layout including Windows Terminal and commands."""
@@ -379,12 +310,7 @@ Get-Process | ForEach-Object {{
         return {
             "wt_session": wt_status,
             "commands": commands_status,
-            "summary": {
-                "total_commands": total_count,
-                "running_commands": running_count,
-                "stopped_commands": total_count - running_count,
-                "session_healthy": wt_status.get("session_exists", False)
-            }
+            "summary": {"total_commands": total_count, "running_commands": running_count, "stopped_commands": total_count - running_count, "session_healthy": wt_status.get("session_exists", False)},
         }
 
     def print_status_report(self) -> None:
@@ -439,13 +365,14 @@ def create_wt_layout(tab_config: Dict[str, tuple[str, str]], output_dir: Optiona
     generator = WTLayoutGenerator()
     return generator.create_wt_layout(tab_config, output_dir)
 
+
 def run_wt_layout(tab_config: Dict[str, tuple[str, str]], session_name: Optional[str] = None) -> str:
     """Create and run a Windows Terminal layout."""
     generator = WTLayoutGenerator()
     script_path = generator.create_wt_layout(tab_config, session_name=session_name)
 
     # Execute the script
-    cmd = f"powershell -ExecutionPolicy Bypass -File \"{script_path}\""
+    cmd = f'powershell -ExecutionPolicy Bypass -File "{script_path}"'
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
 
     if result.returncode == 0:
@@ -455,9 +382,10 @@ def run_wt_layout(tab_config: Dict[str, tuple[str, str]], session_name: Optional
         logger.error(f"Failed to run Windows Terminal layout: {result.stderr}")
         raise RuntimeError(f"Failed to run layout: {result.stderr}")
 
+
 def run_command_in_wt_tab(command: str, tab_name: str, cwd: Optional[str]) -> str:
     """Create a command to run in a new Windows Terminal tab."""
-    cwd_part = f"-d \"{cwd}\"" if cwd else ""
+    cwd_part = f'-d "{cwd}"' if cwd else ""
 
     return f"""
 echo "Creating new Windows Terminal tab: {tab_name}"
@@ -467,10 +395,7 @@ wt new-tab --title "{tab_name}" {cwd_part} "{command}"
 
 if __name__ == "__main__":
     # Example usage
-    sample_tabs = {
-        "Frontend": ("~/code", "btm"),
-        "Monitor": ("~", "lf"),
-    }
+    sample_tabs = {"Frontend": ("~/code", "btm"), "Monitor": ("~", "lf")}
 
     try:
         # Create layout using the generator
@@ -488,9 +413,10 @@ if __name__ == "__main__":
 
         # Show how to run the layout
         print("\n▶️  To run this layout, execute:")
-        print(f"   powershell -ExecutionPolicy Bypass -File \"{script_path}\"")
+        print(f'   powershell -ExecutionPolicy Bypass -File "{script_path}"')
 
     except Exception as e:
         print(f"❌ Error: {e}")
         import traceback
+
         traceback.print_exc()

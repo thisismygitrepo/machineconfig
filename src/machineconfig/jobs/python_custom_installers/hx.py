@@ -14,13 +14,13 @@ from rich.panel import Panel
 
 
 config_dict = {
-        "repo_url": "CUSTOM",
-        "doc": "Helix is a post-modern modal text editor.",
-        "filename_template_windows_amd_64": "helix-{}-x86_64-windows.zip",
-        "filename_template_linux_amd_64": "helix-{}-x86_64-linux.tar.xz",
-        "strip_v": False,
-        "exe_name": "hx"
-    }
+    "repo_url": "CUSTOM",
+    "doc": "Helix is a post-modern modal text editor.",
+    "filename_template_windows_amd_64": "helix-{}-x86_64-windows.zip",
+    "filename_template_linux_amd_64": "helix-{}-x86_64-linux.tar.xz",
+    "strip_v": False,
+    "exe_name": "hx",
+}
 
 
 def main(version: Optional[str], install_lib: bool = False):
@@ -59,14 +59,12 @@ def main(version: Optional[str], install_lib: bool = False):
         raise FileNotFoundError(f"'contrib' directory not found at expected location: {contrib}")
     print("   ✨ Executable and components located.")
 
-
     print("\n🗑️  [Step 3/5] Cleaning up previous installation (if any)...")
     runtime_path = PathExtended.home().joinpath(".config/helix/runtime")
     contrib_path = PathExtended.home().joinpath(".config/helix/contrib")
     runtime_path.delete(sure=True, verbose=False)
     contrib_path.delete(sure=True, verbose=False)
     print(f"   ✨ Cleaned '{runtime_path}' and '{contrib_path}'.")
-
 
     print("\n📦 [Step 4/5] Installing Helix components...")
     target_config_dir = PathExtended("~/.config/helix").expanduser()
@@ -80,10 +78,16 @@ def main(version: Optional[str], install_lib: bool = False):
             contrib.move(folder=target_config_dir, overwrite=True)
             runtime.move(folder=target_config_dir, overwrite=True)
         system_name = "Linux" if platform.system() == "Linux" else "macOS"
-        console.print(Panel(f"""✅ SUCCESS | Helix editor installed successfully on {system_name}!
+        console.print(
+            Panel(
+                f"""✅ SUCCESS | Helix editor installed successfully on {system_name}!
 
 📂 Executable: {target_bin_path / exe_name}
-🔧 Config:     {target_config_dir}""", title="Success", expand=False))
+🔧 Config:     {target_config_dir}""",
+                title="Success",
+                expand=False,
+            )
+        )
     elif platform.system() == "Windows":
         target_bin_path = PathExtended(WINDOWS_INSTALL_PATH)
         exe_name = "hx.exe"
@@ -91,12 +95,24 @@ def main(version: Optional[str], install_lib: bool = False):
         if install_lib:
             contrib.move(folder=target_config_dir, overwrite=True)
             runtime.move(folder=target_config_dir, overwrite=True)
-        console.print(Panel(f"""✅ SUCCESS | Helix editor installed successfully on Windows!
+        console.print(
+            Panel(
+                f"""✅ SUCCESS | Helix editor installed successfully on Windows!
 📂 Executable: {target_bin_path / exe_name}
-🔧 Config:     {target_config_dir}""", title="Success", expand=False))
+🔧 Config:     {target_config_dir}""",
+                title="Success",
+                expand=False,
+            )
+        )
     else:
-        console.print(Panel(f"""⚠️ WARNING | Unsupported operating system: {platform.system()}
-          | Installation aborted.""", title="Warning", expand=False))
+        console.print(
+            Panel(
+                f"""⚠️ WARNING | Unsupported operating system: {platform.system()}
+          | Installation aborted.""",
+                title="Warning",
+                expand=False,
+            )
+        )
         print("\n🧹 [Step 5/5] Cleaning up temporary download files...")
         downloaded.delete(sure=True)
         print("   ✨ Cleanup complete.")

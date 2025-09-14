@@ -1,5 +1,4 @@
-"""gh-cli installer
-"""
+"""gh-cli installer"""
 
 import platform
 from typing import Optional
@@ -18,23 +17,16 @@ https://github.com/cli/cli
 
 """
 
-config_dict = {
-    "repo_url": "https://github.com/cli/cli",
-    "doc": "GitHub CLI",
-    "filename_template_windows_amd_64": "gh_{}_windows_amd64.zip",
-    "filename_template_linux_amd_64": "gh_{}_linux_amd64.tar.gz",
-    "strip_v": True,
-    "exe_name": "gh"
-}
+config_dict = {"repo_url": "https://github.com/cli/cli", "doc": "GitHub CLI", "filename_template_windows_amd_64": "gh_{}_windows_amd64.zip", "filename_template_linux_amd_64": "gh_{}_linux_amd64.tar.gz", "strip_v": True, "exe_name": "gh"}
 
 
 def main(version: Optional[str]):
     print(f"""
-{'═' * 150}
+{"═" * 150}
 🔱 GITHUB CLI INSTALLER | Command line tool for GitHub
 💻 Platform: {platform.system()}
-🔄 Version: {'latest' if version is None else version}
-{'═' * 150}
+🔄 Version: {"latest" if version is None else version}
+{"═" * 150}
 """)
 
     _ = version
@@ -45,9 +37,9 @@ def main(version: Optional[str]):
     inst.install(version=version)
 
     print(f"""
-{'─' * 150}
+{"─" * 150}
 🤖 GITHUB COPILOT | Setting up GitHub Copilot CLI extension
-{'─' * 150}
+{"─" * 150}
 """)
 
     if platform.system() == "Windows":
@@ -66,9 +58,9 @@ gh extension install github/gh-copilot
     else:
         error_msg = f"Unsupported platform: {platform.system()}"
         print(f"""
-{'⚠️' * 20}
+{"⚠️" * 20}
 ❌ ERROR | {error_msg}
-{'⚠️' * 20}
+{"⚠️" * 20}
 """)
         raise NotImplementedError(error_msg)
 
@@ -82,11 +74,11 @@ gh auth login --with-token $HOME/dotfiles/creds/git/gh_token.txt
     Terminal().run(program, shell="default").print(desc="Installing GitHub Copilot extension", capture=True)
 
     print(f"""
-{'═' * 150}
+{"═" * 150}
 ✅ SUCCESS | GitHub CLI installation completed
 🚀 GitHub Copilot CLI extension installed
 🔑 Authentication configured with token
-{'═' * 150}
+{"═" * 150}
 """)
 
     return program

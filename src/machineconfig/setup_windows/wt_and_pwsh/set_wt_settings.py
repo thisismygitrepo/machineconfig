@@ -1,5 +1,4 @@
-"""Set Windows Terminal Settings
-"""
+"""Set Windows Terminal Settings"""
 
 from machineconfig.utils.utils2 import randstr, read_json
 from machineconfig.utils.path_reduced import P as PathExtended
@@ -26,13 +25,13 @@ All settings are available on GitHub: https://aka.ms/terminal-profiles-schema
 console = Console()
 system = platform.system()  # Linux or Windows
 
-assert system == 'Windows', 'This script is only for Windows.'
+assert system == "Windows", "This script is only for Windows."
 
 
 class TerminalSettings(object):
     def __init__(self):
         # Grabbing Terminal Settings file:
-        print(f"\n{'='*80}\n🔍 INITIALIZING TERMINAL SETTINGS 🔍\n{'='*80}")
+        print(f"\n{'=' * 80}\n🔍 INITIALIZING TERMINAL SETTINGS 🔍\n{'=' * 80}")
         tmp = os.getenv("LOCALAPPDATA")
         if not isinstance(tmp, str):
             print("❌ ERROR: Could not find LOCALAPPDATA environment variable!")
@@ -69,15 +68,16 @@ class TerminalSettings(object):
 
     # 1- Customizing Powershell========================================================
     # as opposed to Windows Powershell
-    def customize_powershell(self, nerd_font: bool=True):
+    def customize_powershell(self, nerd_font: bool = True):
         print("\n🛠️  Customizing PowerShell profile...")
-        pwsh: dict[str, Any] = dict(name="PowerShell",
-                                    commandline="pwsh",
-                                    hidden=False,
-                                    opacity=87,
-                                    # guid="{" + str(uuid4()) + "}",  # WT doesn't accept any GUID to identify pwsh
-                                    startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
-                                    )
+        pwsh: dict[str, Any] = dict(
+            name="PowerShell",
+            commandline="pwsh",
+            hidden=False,
+            opacity=87,
+            # guid="{" + str(uuid4()) + "}",  # WT doesn't accept any GUID to identify pwsh
+            startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
+        )
         if nerd_font:
             print("🔤 Setting PowerShell font to CaskaydiaCove Nerd Font...")
             pwsh["font"] = dict(face="CaskaydiaCove Nerd Font")  # because oh-my-posh uses glyphs from this font.
@@ -102,12 +102,13 @@ class TerminalSettings(object):
 
     def add_croshell(self):
         print("\n🐊 Adding croshell profile...")
-        croshell = dict(name="croshell",
-                        guid="{" + str(uuid4()) + "}",
-                        # commandline=f"powershell.exe -Command \"{activate} ipython -i -c 'from crocodile.toolbox import *'\"",
-                        commandline=f'powershell.exe -Command "{LIBRARY_ROOT.as_posix()}/scripts/windows/croshell.ps1"',
-                        startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
-                        )
+        croshell = dict(
+            name="croshell",
+            guid="{" + str(uuid4()) + "}",
+            # commandline=f"powershell.exe -Command \"{activate} ipython -i -c 'from crocodile.toolbox import *'\"",
+            commandline=f'powershell.exe -Command "{LIBRARY_ROOT.as_posix()}/scripts/windows/croshell.ps1"',
+            startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
+        )
         # startingDirectory = None means: inheret from parent process, which will is the default, which point to /System32
         # Launching a new profile with ctr+shift+2 is equivalent to: wt --profile croshell -d . --new-tab
         for profile in self.profs:
@@ -122,12 +123,13 @@ class TerminalSettings(object):
     def add_ubuntu(self):
         print("\n🐧 Adding Ubuntu WSL profile...")
         # Add Ubunto if it is not there.
-        ubuntu = dict(name="Ubuntu",
-                      commandline="wsl -d Ubuntu -- cd ~",
-                      hidden=False,
-                      guid="{" + str(uuid4()) + "}",
-                      startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
-                      )
+        ubuntu = dict(
+            name="Ubuntu",
+            commandline="wsl -d Ubuntu -- cd ~",
+            hidden=False,
+            guid="{" + str(uuid4()) + "}",
+            startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
+        )
         if not any(x.get("name") == "Ubuntu" for x in self.profs):
             self.profs.append(ubuntu)
             console.print(Panel("✅ Added Ubuntu WSL profile", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
@@ -141,19 +143,26 @@ class TerminalSettings(object):
         pwsh = croshell = ubuntu = wpwsh = cmd = azure = None
         for profile in self.profs:
             name = profile["name"]
-            if name == "PowerShell": pwsh = profile
-            elif name == "croshell": croshell = profile
-            elif name == "Ubuntu": ubuntu = profile
-            elif name == "Windows PowerShell": wpwsh = profile
-            elif name == "Command Prompt": cmd = profile
-            elif name == "Azure Cloud Shell": azure = profile
-            else: others.append(profile)
+            if name == "PowerShell":
+                pwsh = profile
+            elif name == "croshell":
+                croshell = profile
+            elif name == "Ubuntu":
+                ubuntu = profile
+            elif name == "Windows PowerShell":
+                wpwsh = profile
+            elif name == "Command Prompt":
+                cmd = profile
+            elif name == "Azure Cloud Shell":
+                azure = profile
+            else:
+                others.append(profile)
         self.profs = [item for item in [pwsh, croshell, ubuntu, wpwsh, cmd, azure] + others if item is not None]
         console.print(Panel("✅ Profile order standardized", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
 
 
 def main():
-    print(f"\n{'='*80}\n🖥️  WINDOWS TERMINAL SETUP 🖥️\n{'='*80}")
+    print(f"\n{'=' * 80}\n🖥️  WINDOWS TERMINAL SETUP 🖥️\n{'=' * 80}")
     shell = {"powershell": "pwsh.exe", "Windows Powershell": "powershell.exe"}["powershell"].split(".exe", maxsplit=1)[0]
     if shell == "pwsh":
         print("🚀 Starting Windows Terminal configuration with PowerShell...")
@@ -167,15 +176,15 @@ def main():
         ts.standardize_profiles_order()
 
         print("⌨️  Adding keyboard shortcut for pane zoom (ctrl+shift+z)...")
-        ts.dat['actions'].append({'command': 'togglePaneZoom', 'keys': 'ctrl+shift+z'})
+        ts.dat["actions"].append({"command": "togglePaneZoom", "keys": "ctrl+shift+z"})
 
         ts.save_terminal_settings()
-        print(f"\n{'='*80}\n✨ WINDOWS TERMINAL SETUP COMPLETE ✨\n{'='*80}")
+        print(f"\n{'=' * 80}\n✨ WINDOWS TERMINAL SETUP COMPLETE ✨\n{'=' * 80}")
     else:
         error_msg = "❌ ERROR: Only PowerShell is supported, not Windows PowerShell!"
         print(error_msg)
         raise NotImplementedError(error_msg)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

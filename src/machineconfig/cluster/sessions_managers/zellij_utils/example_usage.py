@@ -5,6 +5,7 @@ Example usage of the modularized Zellij remote layout generator.
 
 from machineconfig.cluster.sessions_managers.zellij_remote import ZellijRemoteLayoutGenerator
 
+
 def example_usage():
     """Demonstrate the refactored modular usage."""
 
@@ -13,7 +14,7 @@ def example_usage():
         "🤖Bot1": ("~/code/bytesense/bithence", "~/scripts/fire -mO go1.py bot1 --kw create_new_bot True"),
         "🤖Bot2": ("~/code/bytesense/bithence", "~/scripts/fire -mO go2.py bot2 --kw create_new_bot True"),
         "📊Monitor": ("~", "htop"),
-        "📝Logs": ("/var/log", "tail -f /var/log/app.log")
+        "📝Logs": ("/var/log", "tail -f /var/log/app.log"),
     }
 
     # Replace 'myserver' with an actual SSH config alias
@@ -37,7 +38,7 @@ def example_usage():
         generator.print_status_report()
 
         # The individual components can also be used directly:
-        print(f"\n🔧 Direct component usage examples:")
+        print("\n🔧 Direct component usage examples:")
 
         # Use remote executor directly
         print(f"Remote executor: {generator.remote_executor.remote_name}")
@@ -59,6 +60,7 @@ def example_usage():
 
     except Exception as e:
         print(f"❌ Error: {e}")
+
 
 if __name__ == "__main__":
     example_usage()

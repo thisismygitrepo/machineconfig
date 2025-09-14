@@ -1,6 +1,3 @@
-
-
-
 # from machineconfig.utils.utils2 import read_ini
 # from machineconfig.utils.io_save import save_pickle
 

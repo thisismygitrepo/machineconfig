@@ -5,14 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 
-config_dict = {
-        "repo_url": "CUSTOM",
-        "doc": "winget installer",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
-        "strip_v": False,
-        "exe_name": "winget"
-}
+config_dict = {"repo_url": "CUSTOM", "doc": "winget installer", "filename_template_windows_amd_64": "", "filename_template_linux_amd_64": "", "strip_v": False, "exe_name": "winget"}
 
 
 def is_winget_available() -> bool:
@@ -23,12 +16,7 @@ def is_winget_available() -> bool:
         bool: True if winget is available, False otherwise
     """
     try:
-        result = subprocess.run(
-            ["winget", "--version"],
-            capture_output=True,
-            text=True,
-            timeout=10
-        )
+        result = subprocess.run(["winget", "--version"], capture_output=True, text=True, timeout=10)
         return result.returncode == 0
     except (subprocess.TimeoutExpired, FileNotFoundError, subprocess.SubprocessError):
         return False
@@ -77,7 +65,7 @@ def download_file(url: str, destination: Path) -> bool:
         response = requests.get(url, stream=True, timeout=60)
         response.raise_for_status()
 
-        with open(destination, 'wb') as f:
+        with open(destination, "wb") as f:
             for chunk in response.iter_content(chunk_size=8192):
                 if chunk:
                     f.write(chunk)
@@ -100,18 +88,13 @@ def install_msix_package(package_path: Path) -> bool:
     """
     try:
         # Use PowerShell to install the MSIX package
-        powershell_cmd = [
-            "powershell.exe",
-            "-ExecutionPolicy", "Bypass",
-            "-Command",
-            f"Add-AppxPackage -Path '{package_path}'"
-        ]
+        powershell_cmd = ["powershell.exe", "-ExecutionPolicy", "Bypass", "-Command", f"Add-AppxPackage -Path '{package_path}'"]
 
         result = subprocess.run(
             powershell_cmd,
             capture_output=True,
             text=True,
-            timeout=300  # 5 minutes timeout
+            timeout=300,  # 5 minutes timeout
         )
 
         if result.returncode == 0:
@@ -191,4 +174,3 @@ if __name__ == "__main__":
         print("Winget is ready to use!")
     else:
         print("Failed to ensure winget availability.")
-

@@ -21,7 +21,6 @@ TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "zellij_layouts", "layout_m
 
 
 class ZellijRemoteLayoutGenerator:
-
     def __init__(self, remote_name: str, session_name_prefix: str):
         self.remote_name = remote_name
         self.session_name = session_name_prefix + "_" + LayoutGenerator.generate_random_suffix()
@@ -96,14 +95,7 @@ class ZellijRemoteLayoutGenerator:
         return executor.run_command(command, timeout)
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
-            "remote_name": self.remote_name,
-            "session_name": self.session_name,
-            "tab_config": self.tab_config,
-            "layout_path": self.layout_path,
-            "created_at": datetime.now().isoformat(),
-            "class_name": self.__class__.__name__
-        }
+        return {"remote_name": self.remote_name, "session_name": self.session_name, "tab_config": self.tab_config, "layout_path": self.layout_path, "created_at": datetime.now().isoformat(), "class_name": self.__class__.__name__}
 
     def to_json(self, file_path: Optional[Union[str, Path]] = None) -> str:
         # Generate file path if not provided
@@ -116,8 +108,8 @@ class ZellijRemoteLayoutGenerator:
             file_path_obj = Path(file_path)
 
         # Ensure .json extension
-        if not str(file_path_obj).endswith('.json'):
-            file_path_obj = file_path_obj.with_suffix('.json')
+        if not str(file_path_obj).endswith(".json"):
+            file_path_obj = file_path_obj.with_suffix(".json")
 
         # Ensure parent directory exists
         file_path_obj.parent.mkdir(parents=True, exist_ok=True)
@@ -132,38 +124,38 @@ class ZellijRemoteLayoutGenerator:
         return str(file_path_obj)
 
     @classmethod
-    def from_json(cls, file_path: Union[str, Path]) -> 'ZellijRemoteLayoutGenerator':
+    def from_json(cls, file_path: Union[str, Path]) -> "ZellijRemoteLayoutGenerator":
         file_path = Path(file_path)
 
         # Ensure .json extension
-        if not str(file_path).endswith('.json'):
-            file_path = file_path.with_suffix('.json')
+        if not str(file_path).endswith(".json"):
+            file_path = file_path.with_suffix(".json")
 
         if not file_path.exists():
             raise FileNotFoundError(f"JSON file not found: {file_path}")
 
         # Load JSON data
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         # Validate that it's the correct class
-        if data.get('class_name') != cls.__name__:
+        if data.get("class_name") != cls.__name__:
             logger.warning(f"Class name mismatch: expected {cls.__name__}, got {data.get('class_name')}")
 
         # Create new instance
         # Extract session name prefix by removing the suffix
-        session_name = data['session_name']
-        if '_' in session_name:
-            session_name_prefix = '_'.join(session_name.split('_')[:-1])
+        session_name = data["session_name"]
+        if "_" in session_name:
+            session_name_prefix = "_".join(session_name.split("_")[:-1])
         else:
             session_name_prefix = session_name
 
-        instance = cls(remote_name=data['remote_name'], session_name_prefix=session_name_prefix)
+        instance = cls(remote_name=data["remote_name"], session_name_prefix=session_name_prefix)
 
         # Restore state
-        instance.session_name = data['session_name']
-        instance.tab_config = data['tab_config']
-        instance.layout_path = data['layout_path']
+        instance.session_name = data["session_name"]
+        instance.tab_config = data["tab_config"]
+        instance.layout_path = data["layout_path"]
 
         logger.info(f"✅ Loaded ZellijRemoteLayoutGenerator from: {file_path}")
         return instance
@@ -181,13 +173,14 @@ class ZellijRemoteLayoutGenerator:
         json_files = [f.name for f in directory_path.glob("*.json")]
         return sorted(json_files)
 
+
 if __name__ == "__main__":
     # Example usage
     sample_tabs = {
         "🤖Bot1": ("~/code/bytesense/bithence", "~/scripts/fire -mO go1.py bot1 --kw create_new_bot True"),
         "🤖Bot2": ("~/code/bytesense/bithence", "~/scripts/fire -mO go2.py bot2 --kw create_new_bot True"),
         "📊Monitor": ("~", "htop"),
-        "📝Logs": ("/var/log", "tail -f /var/log/app.log")
+        "📝Logs": ("/var/log", "tail -f /var/log/app.log"),
     }
 
     # Replace 'myserver' with an actual SSH config alias

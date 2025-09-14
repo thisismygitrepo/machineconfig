@@ -2,6 +2,7 @@
 """
 Process monitoring and status checking utilities for remote commands.
 """
+
 import json
 import shlex
 import logging
@@ -17,18 +18,10 @@ class ProcessMonitor:
     def __init__(self, remote_executor: RemoteExecutor):
         self.remote_executor = remote_executor
 
-    def check_command_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]],
-                           use_verification: bool = True) -> Dict[str, Any]:
+    def check_command_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]], use_verification: bool = True) -> Dict[str, Any]:
         """Check command status with optional process verification."""
         if tab_name not in tab_config:
-            return {
-                "status": "unknown",
-                "error": f"Tab '{tab_name}' not found in tracked configuration",
-                "running": False,
-                "pid": None,
-                "command": None,
-                "remote": self.remote_executor.remote_name
-            }
+            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in tracked configuration", "running": False, "pid": None, "command": None, "remote": self.remote_executor.remote_name}
 
         # Use the verified method by default for more accurate results
         if use_verification:
@@ -50,53 +43,18 @@ class ProcessMonitor:
                     matching_processes = json.loads(result.stdout.strip())
 
                     if matching_processes:
-                        return {
-                            "status": "running",
-                            "running": True,
-                            "processes": matching_processes,
-                            "command": command,
-                            "tab_name": tab_name,
-                            "remote": self.remote_executor.remote_name
-                        }
+                        return {"status": "running", "running": True, "processes": matching_processes, "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
                     else:
-                        return {
-                            "status": "not_running",
-                            "running": False,
-                            "processes": [],
-                            "command": command,
-                            "tab_name": tab_name,
-                            "remote": self.remote_executor.remote_name
-                        }
+                        return {"status": "not_running", "running": False, "processes": [], "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
                 except json.JSONDecodeError as e:
                     logger.error(f"Failed to parse remote process check output: {e}")
-                    return {
-                        "status": "error",
-                        "error": f"Failed to parse remote output: {e}",
-                        "running": False,
-                        "command": command,
-                        "tab_name": tab_name,
-                        "remote": self.remote_executor.remote_name
-                    }
+                    return {"status": "error", "error": f"Failed to parse remote output: {e}", "running": False, "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
             else:
-                return {
-                    "status": "error",
-                    "error": f"Remote command failed: {result.stderr}",
-                    "running": False,
-                    "command": command,
-                    "tab_name": tab_name,
-                    "remote": self.remote_executor.remote_name
-                }
+                return {"status": "error", "error": f"Remote command failed: {result.stderr}", "running": False, "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
 
         except Exception as e:
             logger.error(f"Error checking command status for tab '{tab_name}': {e}")
-            return {
-                "status": "error",
-                "error": str(e),
-                "running": False,
-                "command": command,
-                "tab_name": tab_name,
-                "remote": self.remote_executor.remote_name
-            }
+            return {"status": "error", "error": str(e), "running": False, "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
 
     def _create_process_check_script(self, command: str) -> str:
         """Create Python script for checking processes on remote machine."""
@@ -151,13 +109,7 @@ if __name__ == "__main__":
     def force_fresh_process_check(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
         """Force a fresh process check with additional validation."""
         if tab_name not in tab_config:
-            return {
-                "status": "unknown",
-                "error": f"Tab '{tab_name}' not found in tracked configuration",
-                "running": False,
-                "command": None,
-                "remote": self.remote_executor.remote_name
-            }
+            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in tracked configuration", "running": False, "command": None, "remote": self.remote_executor.remote_name}
 
         _, command = tab_config[tab_name]
 
@@ -183,45 +135,23 @@ if __name__ == "__main__":
                         "tab_name": tab_name,
                         "remote": self.remote_executor.remote_name,
                         "check_timestamp": check_timestamp,
-                        "method": "force_fresh_check"
+                        "method": "force_fresh_check",
                     }
                 except json.JSONDecodeError as e:
                     logger.error(f"Failed to parse fresh check output: {e}")
-                    return {
-                        "status": "error",
-                        "error": f"Failed to parse output: {e}",
-                        "running": False,
-                        "command": command,
-                        "tab_name": tab_name,
-                        "remote": self.remote_executor.remote_name,
-                        "raw_output": result.stdout
-                    }
+                    return {"status": "error", "error": f"Failed to parse output: {e}", "running": False, "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name, "raw_output": result.stdout}
             else:
-                return {
-                    "status": "error",
-                    "error": f"Remote command failed: {result.stderr}",
-                    "running": False,
-                    "command": command,
-                    "tab_name": tab_name,
-                    "remote": self.remote_executor.remote_name
-                }
+                return {"status": "error", "error": f"Remote command failed: {result.stderr}", "running": False, "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
 
         except Exception as e:
             logger.error(f"Error in fresh process check for tab '{tab_name}': {e}")
-            return {
-                "status": "error",
-                "error": str(e),
-                "running": False,
-                "command": command,
-                "tab_name": tab_name,
-                "remote": self.remote_executor.remote_name
-            }
+            return {"status": "error", "error": str(e), "running": False, "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
 
     def _create_fresh_check_script(self, command: str) -> str:
         """Create enhanced process checking script with freshness validation."""
         escaped_command = command.replace("'", "\\'").replace('"', '\\"')
 
-        return f'''
+        return f"""
 import psutil
 import json
 import os
@@ -286,7 +216,7 @@ def force_fresh_check():
 if __name__ == "__main__":
     result = force_fresh_check()
     print(json.dumps(result))
-'''
+"""
 
     def verify_process_alive(self, pid: int) -> bool:
         """Verify if a process with given PID is actually alive."""
@@ -295,7 +225,7 @@ if __name__ == "__main__":
             result = self.remote_executor.run_command(verify_cmd, timeout=5)
 
             if result.returncode == 0:
-                return result.stdout.strip() == 'alive'
+                return result.stdout.strip() == "alive"
             return False
         except Exception:
             return False

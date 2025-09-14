@@ -1,4 +1,3 @@
-
 # """
 # Runner
 # """
@@ -124,7 +123,6 @@
 #         )
 
 
-
 # @dataclass
 # class RemoteMachineConfig:
 #     # conn
@@ -177,7 +175,6 @@
 #                 section = read_ini(DEFAULTS_PATH)['general']
 #                 self.email_config_name = section['email_config_name']
 #             except (FileNotFoundError, KeyError, IndexError) as err: raise ValueError(f"Email config name is not provided. 🤷‍♂️ & default could not be read @ `{DEFAULTS_PATH}`") from err
-
 
 
 # if __name__ == '__main__':

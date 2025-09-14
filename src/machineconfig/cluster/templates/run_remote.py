@@ -1,4 +1,3 @@
-
 # """
 # This file contains a template for a remote machine. It is not meant to be run, but rather to be used as a template for
 # """

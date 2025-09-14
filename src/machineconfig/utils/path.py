@@ -11,12 +11,14 @@ from pathlib import Path
 T = TypeVar("T")
 console = Console()
 
+
 def sanitize_path(a_path: PathExtended) -> PathExtended:
     path = PathExtended(a_path)
     if Path.cwd() == Path.home() and not path.exists():
         result = input("Current working directory is home, and passed path is not full path, are you sure you want to continue, [y]/n? ") or "y"
         if result == "y":
             import sys
+
             sys.exit()
     if path.as_posix().startswith("/home") or path.as_posix().startswith("/Users"):
         if platform.system() == "Windows":  # path copied from Linux/Mac to Windows
@@ -70,7 +72,8 @@ def match_file_name(sub_string: str, search_root: PathExtended) -> PathExtended:
     search_root_obj = search_root.absolute()
     # assume subscript is filename only, not a sub_path. There is no need to fzf over the paths.
     filename_matches, partial_path_matches = find_scripts(search_root_obj, sub_string)
-    if len(filename_matches) == 1: return PathExtended(filename_matches[0])
+    if len(filename_matches) == 1:
+        return PathExtended(filename_matches[0])
     console.print(Panel(f"Partial filename match with case-insensitivity failed. This generated #{len(filename_matches)} results.", title="Search", expand=False))
     if len(filename_matches) < 10:
         print("\n".join([a_potential_match.as_posix() for a_potential_match in filename_matches]))
@@ -78,7 +81,8 @@ def match_file_name(sub_string: str, search_root: PathExtended) -> PathExtended:
         print("Try to narrow down filename_matches search by case-sensitivity.")
         # let's see if avoiding .lower() helps narrowing down to one result
         reduced_scripts = [a_potential_match for a_potential_match in filename_matches if sub_string in a_potential_match.name]
-        if len(reduced_scripts) == 1: return PathExtended(reduced_scripts[0])
+        if len(reduced_scripts) == 1:
+            return PathExtended(reduced_scripts[0])
         elif len(reduced_scripts) > 1:
             choice = choose_one_option(msg="Multiple matches found", options=reduced_scripts, fzf=True)
             return PathExtended(choice)
@@ -92,18 +96,21 @@ def match_file_name(sub_string: str, search_root: PathExtended) -> PathExtended:
     elif len(partial_path_matches) > 1:
         print("Try to narrow down partial_path_matches search by case-sensitivity.")
         reduced_scripts = [a_potential_match for a_potential_match in partial_path_matches if sub_string in a_potential_match.as_posix()]
-        if len(reduced_scripts) == 1: return PathExtended(reduced_scripts[0])
+        if len(reduced_scripts) == 1:
+            return PathExtended(reduced_scripts[0])
         print(f"Result: This still generated {len(reduced_scripts)} results.")
     try:
         fzf_cmd = f"cd '{search_root_obj}'; fd --type file --strip-cwd-prefix | fzf --ignore-case --exact --query={sub_string}"
         console.print(Panel(f"🔍 Second attempt: SEARCH STRATEGY | Using fd to search for '{sub_string}' in '{search_root_obj}' ...\n{fzf_cmd}", title="Search Strategy", expand=False))
-        search_res_raw = subprocess.run(fzf_cmd, stdout=subprocess.PIPE, text=True, check=True, shell=True,).stdout
+        search_res_raw = subprocess.run(fzf_cmd, stdout=subprocess.PIPE, text=True, check=True, shell=True).stdout
         search_res = search_res_raw.strip().split("\\n")[:-1]
     except subprocess.CalledProcessError as cpe:
         console.print(Panel(f"❌ ERROR | FZF search failed with '{sub_string}' in '{search_root_obj}'.\n{cpe}", title="Error", expand=False))
         import sys
+
         sys.exit(f"💥 FILE NOT FOUND | Path {sub_string} does not exist @ root {search_root_obj}. No search results.")
-    if len(search_res) == 1: return search_root_obj.joinpath(search_res_raw)
+    if len(search_res) == 1:
+        return search_root_obj.joinpath(search_res_raw)
 
     print(f"⚠️ WARNING | Multiple search results found for `{sub_string}`\n'{search_res_raw}'")
     cmd = f"cd '{search_root_obj}'; fd --type file | fzf --select-1 --query={sub_string}"

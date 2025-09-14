@@ -53,36 +53,24 @@ class WTLocalManager:
                 script_path = manager.script_path
 
                 if not script_path:
-                    results[session_name] = {
-                        "success": False,
-                        "error": "No script file path available"
-                    }
+                    results[session_name] = {"success": False, "error": "No script file path available"}
                     continue
 
                 # Execute the PowerShell script to start Windows Terminal
-                cmd = f"powershell -ExecutionPolicy Bypass -File \"{script_path}\""
+                cmd = f'powershell -ExecutionPolicy Bypass -File "{script_path}"'
 
                 logger.info(f"Starting session '{session_name}' with script: {script_path}")
                 result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
 
                 if result.returncode == 0:
-                    results[session_name] = {
-                        "success": True,
-                        "message": f"Session '{session_name}' started successfully"
-                    }
+                    results[session_name] = {"success": True, "message": f"Session '{session_name}' started successfully"}
                     logger.info(f"✅ Session '{session_name}' started successfully")
                 else:
-                    results[session_name] = {
-                        "success": False,
-                        "error": result.stderr or result.stdout
-                    }
+                    results[session_name] = {"success": False, "error": result.stderr or result.stdout}
                     logger.error(f"❌ Failed to start session '{session_name}': {result.stderr}")
 
             except Exception as e:
-                results[session_name] = {
-                    "success": False,
-                    "error": str(e)
-                }
+                results[session_name] = {"success": False, "error": str(e)}
                 logger.error(f"❌ Exception starting session '{session_name}': {e}")
 
         return results
@@ -99,16 +87,10 @@ class WTLocalManager:
                 logger.info(f"Killing Windows Terminal processes for session '{session_name}'")
                 result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
 
-                results[session_name] = {
-                    "success": result.returncode == 0,
-                    "message": "Windows Terminal processes killed" if result.returncode == 0 else result.stderr
-                }
+                results[session_name] = {"success": result.returncode == 0, "message": "Windows Terminal processes killed" if result.returncode == 0 else result.stderr}
 
             except Exception as e:
-                results[session_name] = {
-                    "success": False,
-                    "error": str(e)
-                }
+                results[session_name] = {"success": False, "error": str(e)}
 
         return results
 
@@ -157,12 +139,7 @@ class WTLocalManager:
             status_report[session_name] = {
                 "session_status": session_status,
                 "commands_status": commands_status,
-                "summary": {
-                    "total_commands": total_count,
-                    "running_commands": running_count,
-                    "stopped_commands": total_count - running_count,
-                    "session_healthy": session_status.get("session_exists", False)
-                }
+                "summary": {"total_commands": total_count, "running_commands": running_count, "stopped_commands": total_count - running_count, "session_healthy": session_status.get("session_exists", False)},
             }
 
         return status_report
@@ -172,12 +149,9 @@ class WTLocalManager:
         all_status = self.check_all_sessions_status()
 
         total_sessions = len(all_status)
-        healthy_sessions = sum(1 for status in all_status.values()
-                             if status["summary"]["session_healthy"])
-        total_commands = sum(status["summary"]["total_commands"]
-                           for status in all_status.values())
-        total_running = sum(status["summary"]["running_commands"]
-                          for status in all_status.values())
+        healthy_sessions = sum(1 for status in all_status.values() if status["summary"]["session_healthy"])
+        total_commands = sum(status["summary"]["total_commands"] for status in all_status.values())
+        total_running = sum(status["summary"]["running_commands"] for status in all_status.values())
 
         return {
             "total_sessions": total_sessions,
@@ -187,7 +161,7 @@ class WTLocalManager:
             "running_commands": total_running,
             "stopped_commands": total_commands - total_running,
             "all_sessions_healthy": healthy_sessions == total_sessions,
-            "all_commands_running": total_running == total_commands
+            "all_commands_running": total_running == total_commands,
         }
 
     def print_status_report(self) -> None:
@@ -253,6 +227,7 @@ class WTLocalManager:
         Args:
             wait_ms: How long to wait between checks in milliseconds (default: 30000ms = 30s)
         """
+
         def routine(scheduler: Scheduler):
             print(f"\n⏰ Monitoring cycle {scheduler.cycle} at {datetime.now()}")
             print("-" * 50)
@@ -265,13 +240,15 @@ class WTLocalManager:
                 status_data = []
                 for session_name, status in all_status.items():
                     for tab_name, cmd_status in status["commands_status"].items():
-                        status_data.append({
-                            "session": session_name,
-                            "tab": tab_name,
-                            "running": cmd_status.get("running", False),
-                            "command": cmd_status.get("command", "Unknown")[:50] + "..." if len(cmd_status.get("command", "")) > 50 else cmd_status.get("command", ""),
-                            "processes": len(cmd_status.get("processes", []))
-                        })
+                        status_data.append(
+                            {
+                                "session": session_name,
+                                "tab": tab_name,
+                                "running": cmd_status.get("running", False),
+                                "command": cmd_status.get("command", "Unknown")[:50] + "..." if len(cmd_status.get("command", "")) > 50 else cmd_status.get("command", ""),
+                                "processes": len(cmd_status.get("processes", [])),
+                            }
+                        )
 
                 if status_data:
                     # Format data as table
@@ -316,13 +293,7 @@ class WTLocalManager:
         config_file.write_text(text, encoding="utf-8")
 
         # Save metadata
-        metadata = {
-            "session_name_prefix": self.session_name_prefix,
-            "created_at": str(datetime.now()),
-            "num_managers": len(self.managers),
-            "sessions": list(self.session2wt_tabs.keys()),
-            "manager_type": "WTLocalManager"
-        }
+        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "sessions": list(self.session2wt_tabs.keys()), "manager_type": "WTLocalManager"}
         metadata_file = session_dir / "metadata.json"
         text = json.dumps(metadata, indent=2, ensure_ascii=False)
         metadata_file.write_text(text, encoding="utf-8")
@@ -332,11 +303,7 @@ class WTLocalManager:
         managers_dir.mkdir(exist_ok=True)
 
         for i, manager in enumerate(self.managers):
-            manager_data = {
-                "session_name": manager.session_name,
-                "tab_config": manager.tab_config,
-                "script_path": manager.script_path
-            }
+            manager_data = {"session_name": manager.session_name, "tab_config": manager.tab_config, "script_path": manager.script_path}
             manager_file = managers_dir / f"manager_{i}_{manager.session_name}.json"
             text = json.dumps(manager_data, indent=2, ensure_ascii=False)
             manager_file.write_text(text, encoding="utf-8")
@@ -345,7 +312,7 @@ class WTLocalManager:
         return session_id
 
     @classmethod
-    def load(cls, session_id: str) -> 'WTLocalManager':
+    def load(cls, session_id: str) -> "WTLocalManager":
         """Load a saved manager state from disk."""
         session_dir = TMP_SERIALIZATION_DIR / session_id
 
@@ -357,14 +324,14 @@ class WTLocalManager:
         if not config_file.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_file}")
 
-        with open(config_file, 'r', encoding='utf-8') as f:
+        with open(config_file, "r", encoding="utf-8") as f:
             session2wt_tabs = json.load(f)
 
         # Load metadata
         metadata_file = session_dir / "metadata.json"
         session_name_prefix = "LocalWTMgr"  # default fallback
         if metadata_file.exists():
-            with open(metadata_file, 'r', encoding='utf-8') as f:
+            with open(metadata_file, "r", encoding="utf-8") as f:
                 metadata = json.load(f)
                 session_name_prefix = metadata.get("session_name_prefix", "LocalWTMgr")
 
@@ -379,7 +346,7 @@ class WTLocalManager:
 
             for manager_file in manager_files:
                 try:
-                    with open(manager_file, 'r', encoding='utf-8') as f:
+                    with open(manager_file, "r", encoding="utf-8") as f:
                         manager_data = json.load(f)
 
                     # Recreate the manager
@@ -420,6 +387,7 @@ class WTLocalManager:
 
         try:
             import shutil
+
             shutil.rmtree(session_dir)
             logger.info(f"✅ Deleted session: {session_id}")
             return True
@@ -434,15 +402,12 @@ class WTLocalManager:
         try:
             # Get all running Windows Terminal processes
             result = subprocess.run(
-                ['powershell', '-Command',
-                 'Get-Process -Name "WindowsTerminal" -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, StartTime, MainWindowTitle | ConvertTo-Json -Depth 2'],
-                capture_output=True,
-                text=True,
-                timeout=10
+                ["powershell", "-Command", 'Get-Process -Name "WindowsTerminal" -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, StartTime, MainWindowTitle | ConvertTo-Json -Depth 2'], capture_output=True, text=True, timeout=10
             )
 
             if result.returncode == 0 and result.stdout.strip():
                 import json
+
                 all_processes = json.loads(result.stdout.strip())
                 if not isinstance(all_processes, list):
                     all_processes = [all_processes]
@@ -457,13 +422,7 @@ class WTLocalManager:
                         if session_name in window_title or not window_title:
                             session_windows.append(proc)
 
-                    active_sessions.append({
-                        "session_name": session_name,
-                        "is_active": len(session_windows) > 0,
-                        "tab_count": len(manager.tab_config),
-                        "tabs": list(manager.tab_config.keys()),
-                        "windows": session_windows
-                    })
+                    active_sessions.append({"session_name": session_name, "is_active": len(session_windows) > 0, "tab_count": len(manager.tab_config), "tabs": list(manager.tab_config.keys()), "windows": session_windows})
 
         except Exception as e:
             logger.error(f"Error listing active sessions: {e}")
@@ -474,59 +433,29 @@ class WTLocalManager:
         """Get overview of all Windows Terminal windows and processes."""
         try:
             result = subprocess.run(
-                ['powershell', '-Command',
-                 'Get-Process -Name "WindowsTerminal" -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, StartTime, MainWindowTitle, CPU | ConvertTo-Json -Depth 2'],
-                capture_output=True,
-                text=True,
-                timeout=10
+                ["powershell", "-Command", 'Get-Process -Name "WindowsTerminal" -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, StartTime, MainWindowTitle, CPU | ConvertTo-Json -Depth 2'], capture_output=True, text=True, timeout=10
             )
 
             if result.returncode == 0 and result.stdout.strip():
                 import json
+
                 processes = json.loads(result.stdout.strip())
                 if not isinstance(processes, list):
                     processes = [processes]
 
-                return {
-                    "success": True,
-                    "total_windows": len(processes),
-                    "windows": processes,
-                    "managed_sessions": len(self.managers)
-                }
+                return {"success": True, "total_windows": len(processes), "windows": processes, "managed_sessions": len(self.managers)}
             else:
-                return {
-                    "success": True,
-                    "total_windows": 0,
-                    "windows": [],
-                    "managed_sessions": len(self.managers),
-                    "message": "No Windows Terminal processes found"
-                }
+                return {"success": True, "total_windows": 0, "windows": [], "managed_sessions": len(self.managers), "message": "No Windows Terminal processes found"}
         except Exception as e:
-            return {
-                "success": False,
-                "error": str(e),
-                "managed_sessions": len(self.managers)
-            }
+            return {"success": False, "error": str(e), "managed_sessions": len(self.managers)}
 
 
 if __name__ == "__main__":
     # Example usage
     sample_sessions = {
-        "development": {
-            "🚀Frontend": ("~/code/myapp/frontend", "npm run dev"),
-            "⚙️Backend": ("~/code/myapp/backend", "python manage.py runserver"),
-            "📊Monitor": ("~", "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10")
-        },
-        "testing": {
-            "🧪Tests": ("~/code/myapp", "pytest --watch"),
-            "🔍Coverage": ("~/code/myapp", "python -m coverage run --source=. -m pytest"),
-            "📝Logs": ("~/logs", "Get-Content app.log -Wait")
-        },
-        "deployment": {
-            "🐳Docker": ("~/code/myapp", "docker-compose up"),
-            "☸️K8s": ("~/k8s", "kubectl get pods --watch"),
-            "📈Metrics": ("~", "Get-Counter \"\\Processor(_Total)\\% Processor Time\" -SampleInterval 2 -MaxSamples 30")
-        }
+        "development": {"🚀Frontend": ("~/code/myapp/frontend", "npm run dev"), "⚙️Backend": ("~/code/myapp/backend", "python manage.py runserver"), "📊Monitor": ("~", "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10")},
+        "testing": {"🧪Tests": ("~/code/myapp", "pytest --watch"), "🔍Coverage": ("~/code/myapp", "python -m coverage run --source=. -m pytest"), "📝Logs": ("~/logs", "Get-Content app.log -Wait")},
+        "deployment": {"🐳Docker": ("~/code/myapp", "docker-compose up"), "☸️K8s": ("~/k8s", "kubectl get pods --watch"), "📈Metrics": ("~", 'Get-Counter "\\Processor(_Total)\\% Processor Time" -SampleInterval 2 -MaxSamples 30')},
     }
 
     try:
@@ -574,4 +503,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"❌ Error: {e}")
         import traceback
+
         traceback.print_exc()

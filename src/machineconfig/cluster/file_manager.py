@@ -1,4 +1,3 @@
-
 # from rich.console import Console
 # from machineconfig.utils.utils2 import pprint
 # from datetime import datetime

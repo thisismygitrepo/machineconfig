@@ -1,5 +1,4 @@
-"""lvim
-"""
+"""lvim"""
 
 from machineconfig.utils.terminal import Terminal
 import subprocess
@@ -11,23 +10,16 @@ _ = Terminal, subprocess
 # as per https://www.lunarvim.org/docs/installation
 
 
-config_dict = {
-        "repo_url": "CUSTOM",
-        "doc": "Terminal text editor based on neovim.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
-        "strip_v": False,
-        "exe_name": "lvim"
-    }
+config_dict = {"repo_url": "CUSTOM", "doc": "Terminal text editor based on neovim.", "filename_template_windows_amd_64": "", "filename_template_linux_amd_64": "", "strip_v": False, "exe_name": "lvim"}
 
 
 def main(version: Optional[str]):
     print(f"""
-{'=' * 150}
+{"=" * 150}
 🌙 LUNARVIM INSTALLER | Setting up Neovim-based IDE
-🔄 Version: {'latest' if version is None else version}
+🔄 Version: {"latest" if version is None else version}
 📚 Branch: release-1.4/neovim-0.9
-{'=' * 150}
+{"=" * 150}
 """)
 
     _ = version
@@ -49,21 +41,21 @@ LV_BRANCH='release-1.4/neovim-0.9' bash <(curl -s https://raw.githubusercontent.
     else:
         error_msg = f"Unsupported platform: {platform.system()}"
         print(f"""
-{'⚠️' * 20}
+{"⚠️" * 20}
 ❌ ERROR | {error_msg}
-{'⚠️' * 20}
+{"⚠️" * 20}
 """)
         raise NotImplementedError(error_msg)
 
     print(f"""
-{'=' * 150}
+{"=" * 150}
 ℹ️  INFO | LunarVim features:
 📝 IDE-like experience for Neovim
 🔌 Built-in plugin management
 🛠️  LSP configuration out of the box
 🔍 Powerful fuzzy finding
 ⚙️  Simple and unified configuration
-{'=' * 150}
+{"=" * 150}
 
 ⚠️  NOTE: The installer will prompt for user input during installation.
 """)

@@ -34,13 +34,14 @@ class ZellijLayoutGenerator:
     @staticmethod
     def _generate_random_suffix(length: int = 8) -> str:
         """Generate a random string suffix for unique layout file names."""
-        return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
+        return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
     @staticmethod
     def _parse_command(command: str) -> tuple[str, List[str]]:
         try:
             parts = shlex.split(command)
-            if not parts: raise ValueError("Empty command provided")
+            if not parts:
+                raise ValueError("Empty command provided")
             return parts[0], parts[1:] if len(parts) > 1 else []
         except ValueError as e:
             logger.error(f"Error parsing command '{command}': {e}")
@@ -49,10 +50,11 @@ class ZellijLayoutGenerator:
 
     @staticmethod
     def _format_args_for_kdl(args: List[str]) -> str:
-        if not args: return ""
+        if not args:
+            return ""
         formatted_args = []
         for arg in args:
-            if ' ' in arg or '"' in arg or "'" in arg:
+            if " " in arg or '"' in arg or "'" in arg:
                 escaped_arg = arg.replace('"', '\\"')
                 formatted_args.append(f'"{escaped_arg}"')
             else:
@@ -67,17 +69,22 @@ class ZellijLayoutGenerator:
         escaped_tab_name = tab_name.replace('"', '\\"')
         tab_section = f'  tab name="{escaped_tab_name}" cwd="{tab_cwd}" {{\n'
         tab_section += f'    pane command="{cmd}" {{\n'
-        if args_str: tab_section += f'      args {args_str}\n'
-        tab_section += '    }\n  }\n'
+        if args_str:
+            tab_section += f"      args {args_str}\n"
+        tab_section += "    }\n  }\n"
         return tab_section
 
     @staticmethod
     def _validate_tab_config(tab_config: Dict[str, tuple[str, str]]) -> None:
-        if not tab_config: raise ValueError("Tab configuration cannot be empty")
+        if not tab_config:
+            raise ValueError("Tab configuration cannot be empty")
         for tab_name, (cwd, command) in tab_config.items():
-            if not tab_name.strip(): raise ValueError(f"Invalid tab name: {tab_name}")
-            if not command.strip(): raise ValueError(f"Invalid command for tab '{tab_name}': {command}")
-            if not cwd.strip(): raise ValueError(f"Invalid cwd for tab '{tab_name}': {cwd}")
+            if not tab_name.strip():
+                raise ValueError(f"Invalid tab name: {tab_name}")
+            if not command.strip():
+                raise ValueError(f"Invalid command for tab '{tab_name}': {command}")
+            if not cwd.strip():
+                raise ValueError(f"Invalid cwd for tab '{tab_name}': {cwd}")
 
     def create_zellij_layout(self, tab_config: Dict[str, tuple[str, str]], output_dir: Optional[str] = None, session_name: Optional[str] = None) -> str:
         ZellijLayoutGenerator._validate_tab_config(tab_config)
@@ -141,14 +148,7 @@ class ZellijLayoutGenerator:
     @staticmethod
     def check_command_status(tab_name: str, tab_config: Dict[str, tuple[str, str]]) -> Dict[str, Any]:
         if tab_name not in tab_config:
-            return {
-                "status": "unknown",
-                "error": f"Tab '{tab_name}' not found in tracked tab config",
-                "running": False,
-                "pid": None,
-                "command": None,
-                "cwd": None
-            }
+            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in tracked tab config", "running": False, "pid": None, "command": None, "cwd": None}
 
         cwd, command = tab_config[tab_name]
         cmd, _ = ZellijLayoutGenerator._parse_command(command)
@@ -156,51 +156,23 @@ class ZellijLayoutGenerator:
         try:
             # Look for processes matching the command
             matching_processes = []
-            for proc in psutil.process_iter(['pid', 'name', 'cmdline', 'status']):
+            for proc in psutil.process_iter(["pid", "name", "cmdline", "status"]):
                 try:
-                    if proc.info['cmdline'] and len(proc.info['cmdline']) > 0:
+                    if proc.info["cmdline"] and len(proc.info["cmdline"]) > 0:
                         # Check if the command matches
-                        if (proc.info['name'] == cmd or
-                            cmd in proc.info['cmdline'][0] or
-                            any(cmd in arg for arg in proc.info['cmdline'])):
-                            matching_processes.append({
-                                "pid": proc.info['pid'],
-                                "name": proc.info['name'],
-                                "cmdline": proc.info['cmdline'],
-                                "status": proc.info['status']
-                            })
+                        if proc.info["name"] == cmd or cmd in proc.info["cmdline"][0] or any(cmd in arg for arg in proc.info["cmdline"]):
+                            matching_processes.append({"pid": proc.info["pid"], "name": proc.info["name"], "cmdline": proc.info["cmdline"], "status": proc.info["status"]})
                 except (psutil.NoSuchProcess, psutil.AccessDenied):
                     continue
 
             if matching_processes:
-                return {
-                    "status": "running",
-                    "running": True,
-                    "processes": matching_processes,
-                    "command": command,
-                    "cwd": cwd,
-                    "tab_name": tab_name
-                }
+                return {"status": "running", "running": True, "processes": matching_processes, "command": command, "cwd": cwd, "tab_name": tab_name}
             else:
-                return {
-                    "status": "not_running",
-                    "running": False,
-                    "processes": [],
-                    "command": command,
-                    "cwd": cwd,
-                    "tab_name": tab_name
-                }
+                return {"status": "not_running", "running": False, "processes": [], "command": command, "cwd": cwd, "tab_name": tab_name}
 
         except Exception as e:
             logger.error(f"Error checking command status for tab '{tab_name}': {e}")
-            return {
-                "status": "error",
-                "error": str(e),
-                "running": False,
-                "command": command,
-                "cwd": cwd,
-                "tab_name": tab_name
-            }
+            return {"status": "error", "error": str(e), "running": False, "command": command, "cwd": cwd, "tab_name": tab_name}
 
     def check_all_commands_status(self) -> Dict[str, Dict[str, Any]]:
         if not self.tab_config:
@@ -217,48 +189,22 @@ class ZellijLayoutGenerator:
     def check_zellij_session_status(session_name: str) -> Dict[str, Any]:
         try:
             # Run zellij list-sessions command
-            result = subprocess.run(
-                ['zellij', 'list-sessions'],
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
+            result = subprocess.run(["zellij", "list-sessions"], capture_output=True, text=True, timeout=10)
 
             if result.returncode == 0:
-                sessions = result.stdout.strip().split('\n') if result.stdout.strip() else []
+                sessions = result.stdout.strip().split("\n") if result.stdout.strip() else []
                 session_running = any(session_name in session for session in sessions)
 
-                return {
-                    "zellij_running": True,
-                    "session_exists": session_running,
-                    "session_name": session_name,
-                    "all_sessions": sessions
-                }
+                return {"zellij_running": True, "session_exists": session_running, "session_name": session_name, "all_sessions": sessions}
             else:
-                return {
-                    "zellij_running": False,
-                    "error": result.stderr,
-                    "session_name": session_name
-                }
+                return {"zellij_running": False, "error": result.stderr, "session_name": session_name}
 
         except subprocess.TimeoutExpired:
-            return {
-                "zellij_running": False,
-                "error": "Timeout while checking Zellij sessions",
-                "session_name": session_name
-            }
+            return {"zellij_running": False, "error": "Timeout while checking Zellij sessions", "session_name": session_name}
         except FileNotFoundError:
-            return {
-                "zellij_running": False,
-                "error": "Zellij not found in PATH",
-                "session_name": session_name
-            }
+            return {"zellij_running": False, "error": "Zellij not found in PATH", "session_name": session_name}
         except Exception as e:
-            return {
-                "zellij_running": False,
-                "error": str(e),
-                "session_name": session_name
-            }
+            return {"zellij_running": False, "error": str(e), "session_name": session_name}
 
     def get_comprehensive_status(self) -> Dict[str, Any]:
         zellij_status = ZellijLayoutGenerator.check_zellij_session_status(self.session_name or "default")
@@ -270,12 +216,7 @@ class ZellijLayoutGenerator:
         return {
             "zellij_session": zellij_status,
             "commands": commands_status,
-            "summary": {
-                "total_commands": total_count,
-                "running_commands": running_count,
-                "stopped_commands": total_count - running_count,
-                "session_healthy": zellij_status.get("session_exists", False)
-            }
+            "summary": {"total_commands": total_count, "running_commands": running_count, "stopped_commands": total_count - running_count, "session_healthy": zellij_status.get("session_exists", False)},
         }
 
     def print_status_report(self) -> None:
@@ -296,7 +237,7 @@ class ZellijLayoutGenerator:
             else:
                 console.print(f"[bold yellow]⚠️  Zellij is running but session[/bold yellow] [yellow]'{self.session_name}'[/yellow] [yellow]not found[/yellow]")
         else:
-            error_msg = zellij.get('error', 'Unknown error')
+            error_msg = zellij.get("error", "Unknown error")
             console.print(f"[bold red]❌ Zellij session issue:[/bold red] [red]{error_msg}[/red]")
 
         console.print()
@@ -316,8 +257,8 @@ class ZellijLayoutGenerator:
                 processes = cmd_status.get("processes", [])
                 if processes:
                     proc = processes[0]  # Show first process
-                    pid = str(proc.get('pid', 'N/A'))
-                    memory = f"{proc.get('memory_mb', 0):.1f}MB" if proc.get('memory_mb') else "N/A"
+                    pid = str(proc.get("pid", "N/A"))
+                    memory = f"{proc.get('memory_mb', 0):.1f}MB" if proc.get("memory_mb") else "N/A"
                 else:
                     pid = "N/A"
                     memory = "N/A"
@@ -326,7 +267,7 @@ class ZellijLayoutGenerator:
                 pid = "N/A"
                 memory = "N/A"
 
-            command = cmd_status.get('command', 'Unknown')
+            command = cmd_status.get("command", "Unknown")
             # Truncate long commands
             if len(command) > 35:
                 command = command[:32] + "..."
@@ -339,29 +280,35 @@ class ZellijLayoutGenerator:
         # Enhanced summary
         summary = status["summary"]
         from rich.panel import Panel
-        summary_text = f"""[bold]Total commands:[/bold] {summary['total_commands']}
-[green]Running:[/green] {summary['running_commands']}
-[red]Stopped:[/red] {summary['stopped_commands']}
-[yellow]Session healthy:[/yellow] {'✅' if summary['session_healthy'] else '❌'}"""
+
+        summary_text = f"""[bold]Total commands:[/bold] {summary["total_commands"]}
+[green]Running:[/green] {summary["running_commands"]}
+[red]Stopped:[/red] {summary["stopped_commands"]}
+[yellow]Session healthy:[/yellow] {"✅" if summary["session_healthy"] else "❌"}"""
 
         console.print(Panel(summary_text, title="📊 Summary", style="blue"))
+
 
 def created_zellij_layout(tab_config: Dict[str, tuple[str, str]], output_dir: Optional[str] = None) -> str:
     generator = ZellijLayoutGenerator()
     return generator.create_zellij_layout(tab_config, output_dir)
+
+
 def run_zellij_layout(tab_config: Dict[str, tuple[str, str]], session_name: Optional[str] = None) -> str:
     if not session_name:
-        session_name = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+        session_name = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
     layout_path = created_zellij_layout(tab_config)
 
     # Use enhanced command execution
     try:
         from .enhanced_command_runner import enhanced_zellij_session_start
+
         enhanced_zellij_session_start(session_name, layout_path)
     except ImportError:
         # Fallback to original implementation
         cmd = f"zellij delete-session --force {session_name}; zellij --layout {layout_path} a -b {session_name}"
         import subprocess
+
         subprocess.run(cmd, shell=True, check=True)
         console.print(f"[bold green]🚀 Zellij layout is running[/bold green] [yellow]@[/yellow] [bold cyan]{session_name}[/bold cyan]")
     return session_name
@@ -393,7 +340,7 @@ if __name__ == "__main__":
         "🤖Bot1": ("~/code/bytesense/bithence", "~/scripts/fire -mO go1.py bot1 --kw create_new_bot True"),
         "🤖Bot2": ("~/code/bytesense/bithence", "~/scripts/fire -mO go2.py bot2 --kw create_new_bot True"),
         "📊Monitor": ("~", "htop"),
-        "📝Logs": ("/var/log", "tail -f /var/log/app.log")
+        "📝Logs": ("/var/log", "tail -f /var/log/app.log"),
     }
     try:
         # Create layout using the generator directly to access status methods

@@ -37,6 +37,7 @@ def get_ve_path_and_ipython_profile(init_path: PathExtended) -> tuple[Optional[s
 
 def get_repo_root(choice_file: str) -> Optional[str]:
     from git import Repo, InvalidGitRepositoryError
+
     try:
         repo = Repo(PathExtended(choice_file), search_parent_directories=True)
         repo_root = str(repo.working_tree_dir) if repo.working_tree_dir else None
@@ -44,8 +45,12 @@ def get_repo_root(choice_file: str) -> Optional[str]:
         repo_root = None
     return repo_root
 
+
 def get_ve_activate_line(ve_root: str):
-    if platform.system() == "Windows": activate_ve_line = f". {ve_root}/Scripts/activate.ps1"
-    elif platform.system() in ["Linux", "Darwin"]: activate_ve_line = f". {ve_root}/bin/activate"
-    else: raise NotImplementedError(f"Platform {platform.system()} not supported.")
+    if platform.system() == "Windows":
+        activate_ve_line = f". {ve_root}/Scripts/activate.ps1"
+    elif platform.system() in ["Linux", "Darwin"]:
+        activate_ve_line = f". {ve_root}/bin/activate"
+    else:
+        raise NotImplementedError(f"Platform {platform.system()} not supported.")
     return activate_ve_line

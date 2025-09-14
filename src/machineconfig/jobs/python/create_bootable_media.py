@@ -1,5 +1,3 @@
-
-
 # try ventory or netboot.xyz
 
 # # one can either install rufus: https://rufus.ie/en/
