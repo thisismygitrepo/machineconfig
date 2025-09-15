@@ -143,7 +143,8 @@ class Terminal:
     def run_script(self, script: str, shell: SHELLS = "default", verbose: bool = False):
         if self.machine == "Linux":
             script = "#!/bin/bash" + "\n" + script  # `source` is only available in bash.
-        script_file = PathExtended.tmpfile(name="tmp_shell_script", suffix=".ps1" if self.machine == "Windows" else ".sh", folder="tmp_scripts").write_text(script, newline={"Windows": None, "Linux": "\n"}[self.machine])
+        script_file = PathExtended.tmpfile(name="tmp_shell_script", suffix=".ps1" if self.machine == "Windows" else ".sh", folder="tmp_scripts")
+        script_file.write_text(script, newline={"Windows": None, "Linux": "\n"}[self.machine])
         if shell == "default":
             if self.machine == "Windows":
                 start_cmd = "powershell"  # default shell on Windows is cmd which is not very useful. (./source is not available)
@@ -188,7 +189,8 @@ class Terminal:
 {f"cd {wdir}" if wdir is not None else ""}
 {"ipython" if ipython else "python"} {"-i" if interactive else ""} {py_script}
 """
-        shell_script = PathExtended.tmpfile(name="tmp_shell_script", suffix=".sh" if self.machine == "Linux" else ".ps1", folder="tmp_scripts/shell").write_text(shell_script)
+        shell_path = PathExtended.tmpfile(name="tmp_shell_script", suffix=".sh" if self.machine == "Linux" else ".ps1", folder="tmp_scripts/shell")
+        shell_path.write_text(shell_script)
         if shell is None and self.machine == "Windows":
             shell = "pwsh"
         window = "start" if new_window and self.machine == "Windows" else ""

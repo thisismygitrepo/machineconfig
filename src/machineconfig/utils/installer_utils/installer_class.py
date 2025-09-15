@@ -125,7 +125,8 @@ class Installer:
                 script = "#!/bin/bash" + "\n" + program
             else:
                 script = program
-            script_file = PathExtended.tmpfile(name="tmp_shell_script", suffix=".ps1" if platform.system() == "Windows" else ".sh", folder="tmp_scripts").write_text(script, newline=None if platform.system() == "Windows" else "\n")
+            script_file = PathExtended.tmpfile(name="tmp_shell_script", suffix=".ps1" if platform.system() == "Windows" else ".sh", folder="tmp_scripts")
+            script_file.write_text(script, newline=None if platform.system() == "Windows" else "\n")
             if platform.system() == "Windows":
                 start_cmd = "powershell"
                 full_command = f"{start_cmd} {script_file}"
