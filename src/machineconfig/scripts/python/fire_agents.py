@@ -45,12 +45,17 @@ def get_gemini_api_keys() -> list[str]:
 def _search_python_files(repo_root: Path, keyword: str) -> list[Path]:
     """Return all Python files under repo_root whose text contains keyword.
 
-    Errors reading individual files are ignored (decoded with 'ignore').
+    Notes:
+      - Skips any paths that reside under a directory named ".venv" at any depth.
+      - Errors reading individual files are ignored (decoded with 'ignore').
     """
     py_files = list(repo_root.rglob("*.py"))
     keyword_lower = keyword.lower()
     matches: list[Path] = []
     for f in py_files:
+        # Skip anything under a .venv directory anywhere in the path
+        if any(part == ".venv" for part in f.parts):
+            continue
         try:
             if keyword_lower in f.read_text(encoding="utf-8", errors="ignore").lower():
                 matches.append(f)
