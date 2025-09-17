@@ -20,7 +20,7 @@ from machineconfig.utils.utils2 import randstr
 import random
 # import time
 
-AGENTS: TypeAlias = Literal["cursor-agent", "gemini", "crush", "q",
+AGENTS: TypeAlias = Literal["cursor-agent", "gemini", "crush", "q", "onlyPrepPromptFiles",
                             # warp terminal
                             ]
 TabConfig = dict[str, tuple[str, str]]  # tab name -> (cwd, command)
@@ -145,6 +145,10 @@ crush run {prompt_path}
             case "q":
                 cmd = f"""
 q chat --no-interactive --trust-all-tools {prompt_path}
+"""
+            case "onlyPrepPromptFiles":
+                cmd = f"""
+echo "Prepared prompt file at {prompt_path}"
 """
             case _:
                 raise ValueError(f"Unsupported agent type: {agent}")
