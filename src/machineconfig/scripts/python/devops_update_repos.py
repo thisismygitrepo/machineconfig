@@ -57,7 +57,7 @@ def run_uv_sync(repo_path: Path) -> bool:
         return False
 
 
-def update_repository(repo: git.Repo, auto_sync: bool = True) -> bool:
+def update_repository(repo: git.Repo, auto_sync: bool = True, allow_password_prompt: bool = False) -> bool:
     """Update a single repository and return True if pyproject.toml or uv.lock changed."""
     repo_path = Path(repo.working_dir)
     print(f"🔄 {'Updating ' + str(repo_path):.^80}")
@@ -87,13 +87,42 @@ def update_repository(repo: git.Repo, auto_sync: bool = True) -> bool:
             try:
                 print(f"📥 Fetching from {remote.name}...")
                 
+                # Set up environment for git commands
+                env = None
+                if not allow_password_prompt:
+                    # Disable interactive prompts
+                    import os
+                    env = os.environ.copy()
+                    env['GIT_TERMINAL_PROMPT'] = '0'
+                    env['GIT_ASKPASS'] = 'echo'  # Returns empty string for any credential request
+                
                 # First fetch to see what's available
                 fetch_result = subprocess.run(
                     ["git", "fetch", remote.name, "--verbose"],
                     cwd=repo_path,
                     capture_output=True,
-                    text=True
+                    text=True,
+                    env=env,
+                    timeout=30  # Add timeout to prevent hanging
                 )
+                
+                # Check if fetch failed due to authentication
+                if fetch_result.returncode != 0 and not allow_password_prompt:
+                    auth_error_indicators = [
+                        "Authentication failed",
+                        "Password for",
+                        "Username for",
+                        "could not read Username",
+                        "could not read Password",
+                        "fatal: Authentication failed",
+                        "fatal: could not read Username",
+                        "fatal: could not read Password"
+                    ]
+                    
+                    error_output = (fetch_result.stderr or "") + (fetch_result.stdout or "")
+                    if any(indicator in error_output for indicator in auth_error_indicators):
+                        print(f"⚠️  Skipping {remote.name} - authentication required but password prompts are disabled")
+                        continue
                 
                 if fetch_result.stdout:
                     print(f"📡 Fetch output: {fetch_result.stdout.strip()}")
@@ -106,8 +135,28 @@ def update_repository(repo: git.Repo, auto_sync: bool = True) -> bool:
                     ["git", "pull", remote.name, repo.active_branch.name, "--verbose"],
                     cwd=repo_path,
                     capture_output=True,
-                    text=True
+                    text=True,
+                    env=env,
+                    timeout=30
                 )
+                
+                # Check if pull failed due to authentication
+                if pull_result.returncode != 0 and not allow_password_prompt:
+                    auth_error_indicators = [
+                        "Authentication failed",
+                        "Password for",
+                        "Username for", 
+                        "could not read Username",
+                        "could not read Password",
+                        "fatal: Authentication failed",
+                        "fatal: could not read Username",
+                        "fatal: could not read Password"
+                    ]
+                    
+                    error_output = (pull_result.stderr or "") + (pull_result.stdout or "")
+                    if any(indicator in error_output for indicator in auth_error_indicators):
+                        print(f"⚠️  Skipping pull from {remote.name} - authentication required but password prompts are disabled")
+                        continue
                 
                 if pull_result.stdout:
                     print(f"📦 Pull output: {pull_result.stdout.strip()}")
@@ -170,7 +219,7 @@ def update_repository(repo: git.Repo, auto_sync: bool = True) -> bool:
         return False
 
 
-def main(verbose: bool = True) -> str:
+def main(verbose: bool = True, allow_password_prompt: bool = False) -> str:
     """Main function to update all configured repositories."""
     _ = verbose
     repos: list[str] = ["~/code/machineconfig", "~/code/crocodile"]
@@ -204,7 +253,7 @@ def main(verbose: bool = True) -> str:
             repo = git.Repo(str(expanded_path), search_parent_directories=True)
             
             # Update repository and check if dependencies changed
-            dependencies_changed = update_repository(repo)
+            dependencies_changed = update_repository(repo, allow_password_prompt=allow_password_prompt)
             
             if dependencies_changed:
                 repos_with_changes.append(Path(repo.working_dir))
