@@ -70,20 +70,61 @@ def update_repository(repo: git.Repo, auto_sync: bool = True) -> bool:
     pyproject_hash_before = get_file_hash(pyproject_path)
     uv_lock_hash_before = get_file_hash(uv_lock_path)
     
+    # Get current commit hash before pull
+    commit_before = repo.head.commit.hexsha
+    
     try:
-        # Perform git pull for each remote
+        # Use subprocess for git pull to get better output control
         dependencies_changed = False
-        for remote in repo.remotes:
+        
+        # Get list of remotes
+        remotes = list(repo.remotes)
+        if not remotes:
+            print("⚠️  No remotes configured for this repository")
+            return False
+            
+        for remote in remotes:
             try:
-                print(f"📥 Pulling from {remote.name} {repo.active_branch.name}")
-                pull_info = remote.pull(repo.active_branch.name)
-                for info in pull_info:
-                    if info.flags & info.FAST_FORWARD:
-                        print("✅ Fast-forward pull completed")
-                    elif info.flags & info.NEW_HEAD:
-                        print("✅ Repository updated")
+                print(f"📥 Fetching from {remote.name}...")
+                
+                # First fetch to see what's available
+                fetch_result = subprocess.run(
+                    ["git", "fetch", remote.name, "--verbose"],
+                    cwd=repo_path,
+                    capture_output=True,
+                    text=True
+                )
+                
+                if fetch_result.stdout:
+                    print(f"📡 Fetch output: {fetch_result.stdout.strip()}")
+                if fetch_result.stderr:
+                    print(f"📡 Fetch info: {fetch_result.stderr.strip()}")
+                
+                # Now pull with verbose output
+                print(f"📥 Pulling from {remote.name}/{repo.active_branch.name}...")
+                pull_result = subprocess.run(
+                    ["git", "pull", remote.name, repo.active_branch.name, "--verbose"],
+                    cwd=repo_path,
+                    capture_output=True,
+                    text=True
+                )
+                
+                if pull_result.stdout:
+                    print(f"📦 Pull output: {pull_result.stdout.strip()}")
+                if pull_result.stderr:
+                    print(f"📦 Pull info: {pull_result.stderr.strip()}")
+                
+                # Check if pull was successful
+                if pull_result.returncode == 0:
+                    # Check if commits changed
+                    commit_after = repo.head.commit.hexsha
+                    if commit_before != commit_after:
+                        print(f"✅ Repository updated: {commit_before[:8]} → {commit_after[:8]}")
                     else:
-                        print(f"✅ Pull completed: {info.flags}")
+                        print("✅ Already up to date")
+                else:
+                    print(f"❌ Pull failed with return code {pull_result.returncode}")
+                    
             except Exception as e:
                 print(f"⚠️  Failed to pull from {remote.name}: {e}")
                 continue
@@ -132,7 +173,7 @@ def update_repository(repo: git.Repo, auto_sync: bool = True) -> bool:
 def main(verbose: bool = True) -> str:
     """Main function to update all configured repositories."""
     _ = verbose
-    repos: list[str] = ["~/code/machineconfig", "~/code/machineconfig", ]
+    repos: list[str] = ["~/code/machineconfig", "~/code/crocodile"]
     try:
         tmp = read_ini(DEFAULTS_PATH)['general']['repos'].split(",")
         if tmp[-1] == "": 
