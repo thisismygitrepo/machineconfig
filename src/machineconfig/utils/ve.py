@@ -13,7 +13,10 @@ def get_ve_path_and_ipython_profile(init_path: PathExtended) -> tuple[Optional[s
         if tmp.joinpath(".ve.ini").exists():
             ini = read_ini(tmp.joinpath(".ve.ini"))
             if ve_path is None:
-                ve_path = ini["specs"]["ve_path"]
+                try:
+                    ve_path = ini["specs"]["ve_path"]
+                except KeyError:
+                    raise KeyError(f".ve.ini file at {tmp.joinpath('.ve.ini')} is missing the 've_path' key in the 'specs' section.")
                 print(f"🐍 Using Virtual Environment: {ve_path}. This is based on this file {tmp.joinpath('.ve.ini')}")
             if ipy_profile is None:
                 ipy_profile = ini["specs"]["ipy_profile"]
