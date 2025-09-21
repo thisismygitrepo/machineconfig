@@ -6,7 +6,7 @@ from rich.console import Console
 from rich.panel import Panel  # Added import
 
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
-from machineconfig.utils.utils import INSTALL_VERSION_ROOT
+from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT
 from machineconfig.utils.utils2 import read_json
 
 # from dataclasses import dataclass
@@ -171,7 +171,7 @@ def install_all(installers: list[Installer], safe: bool = False, jobs: int = 10,
     print(f"\n{'=' * 80}\n🚀 BULK INSTALLATION PROCESS 🚀\n{'=' * 80}")
     if fresh:
         print("🧹 Fresh install requested - clearing version cache...")
-        INSTALL_VERSION_ROOT.delete(sure=True)
+        PathExtended(INSTALL_VERSION_ROOT).delete(sure=True)
         print("✅ Version cache cleared")
 
     if safe:

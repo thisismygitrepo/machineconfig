@@ -1,7 +1,5 @@
 from pathlib import Path
 from typing import Optional, Any
-# import time
-# from typing import Callable, Literal, TypeVar, ParamSpec
 
 
 def randstr(length: int = 10, lower: bool = True, upper: bool = True, digits: bool = True, punctuation: bool = False, safe: bool = False, noun: bool = False) -> str:
@@ -51,6 +49,7 @@ def read_toml(path: "Path"):
 
 def pprint(obj: dict[Any, Any], title: str) -> None:
     from rich import inspect
+
     inspect(type("TempStruct", (object,), obj)(), value=False, title=title, docs=False, dunder=False, sort=False)
 
 

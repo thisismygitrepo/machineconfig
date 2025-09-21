@@ -3,7 +3,8 @@
 from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.path_reduced import PathExtended as PathExtended, modify_text
 from machineconfig.utils.terminal import Terminal
-from machineconfig.utils.utils import LIBRARY_ROOT, REPO_ROOT, display_options
+from machineconfig.utils.options import display_options
+from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT
 import platform
 import os
 from typing import Literal, Optional
@@ -27,9 +28,9 @@ def create_default_shell_profile() -> None:
     profile_path = get_shell_profile_path()
     profile = profile_path.read_text(encoding="utf-8")
     if system == "Windows":
-        source = f""". {str(LIBRARY_ROOT.joinpath("settings/shells/pwsh/init.ps1").collapseuser()).replace("~", "$HOME")}"""
+        source = f""". {str(PathExtended(LIBRARY_ROOT).joinpath("settings/shells/pwsh/init.ps1").collapseuser()).replace("~", "$HOME")}"""
     else:
-        source = f"""source {str(LIBRARY_ROOT.joinpath("settings/shells/bash/init.sh").collapseuser()).replace("~", "$HOME")}"""
+        source = f"""source {str(PathExtended(LIBRARY_ROOT).joinpath("settings/shells/bash/init.sh").collapseuser()).replace("~", "$HOME")}"""
 
     if source in profile:
         console.print(Panel("🔄 PROFILE | Skipping init script sourcing - already present in profile", title="[bold blue]Profile[/bold blue]", border_style="blue"))
@@ -172,7 +173,7 @@ def main_add_sources_to_shell_profile(profile_path: Optional[str], choice: Optio
 
 
 def main_add_patches_to_shell_profile(profile_path: Optional[str], choice: Optional[str]) -> None:
-    patches: list[str] = [item.as_posix() for item in LIBRARY_ROOT.joinpath(f"profile/patches/{system.lower()}").search()]
+    patches: list[str] = [item.as_posix() for item in PathExtended(LIBRARY_ROOT).joinpath(f"profile/patches/{system.lower()}").search()]
 
     console.print(Panel("🩹 Adding patches to shell profile", title="[bold blue]Patches[/bold blue]", border_style="blue"))
 

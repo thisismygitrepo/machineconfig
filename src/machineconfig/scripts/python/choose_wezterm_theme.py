@@ -2,7 +2,8 @@
 Choose a theme for Wezterm
 """
 
-from machineconfig.utils.utils import choose_one_option, PathExtended
+from machineconfig.utils.options import choose_one_option
+from machineconfig.utils.path_reduced import PathExtended
 from typing import Any
 import time
 from rich.panel import Panel
@@ -13,32 +14,32 @@ console = Console()
 
 
 schemes_list = [
-    'Pro',
-    'Spiderman',
-    'shades-of-purple',
-    'synthwave',
-    'Symfonic',
-    'PaulMillr',
-    'Neon',
-    'LiquidCarbonTransparentInverse',
-    'Laser',
-    'IR_Black',
-    'Hurtado',
-    'Homebrew',
-    'Hipster Green',
-    'Firefly Traditional',
-    'Elementary',
-    'deep',
-    'Dark Pastel',
-    'Bright Lights',
-    'Adventure',
-    'Nancy (terminal.sexy)',
-    'Bim (Gogh)',
-    'BlueDolphin',
-    'Borland',
-    'Grass (Gogh)',
-    'Greenscreen (light) (terminal.sexy)',
-    'Grayscale (dark) (terminal.sexy)',
+    "Pro",
+    "Spiderman",
+    "shades-of-purple",
+    "synthwave",
+    "Symfonic",
+    "PaulMillr",
+    "Neon",
+    "LiquidCarbonTransparentInverse",
+    "Laser",
+    "IR_Black",
+    "Hurtado",
+    "Homebrew",
+    "Hipster Green",
+    "Firefly Traditional",
+    "Elementary",
+    "deep",
+    "Dark Pastel",
+    "Bright Lights",
+    "Adventure",
+    "Nancy (terminal.sexy)",
+    "Bim (Gogh)",
+    "BlueDolphin",
+    "Borland",
+    "Grass (Gogh)",
+    "Greenscreen (light) (terminal.sexy)",
+    "Grayscale (dark) (terminal.sexy)",
 ]
 
 
@@ -54,10 +55,11 @@ def set_theme(theme: str):
     txt_lines = PathExtended("~/.config/wezterm/wezterm.lua").expanduser().read_text(encoding="utf-8").splitlines()
     res_lines = []
     for line in txt_lines:
-        if 'config.color_scheme = ' in line:
+        if "config.color_scheme = " in line:
             res_lines.append(f"config.color_scheme = '{theme}'")
-        else: res_lines.append(line)
-    PathExtended("~/.config/wezterm/wezterm.lua").expanduser().write_text('\n'.join(res_lines), encoding="utf-8")
+        else:
+            res_lines.append(line)
+    PathExtended("~/.config/wezterm/wezterm.lua").expanduser().write_text("\n".join(res_lines), encoding="utf-8")
     time.sleep(0.1)
     print("💾 Configuration saved")
 
@@ -69,6 +71,7 @@ def main():
 """)
     curses.wrapper(accessory)
     console.print(Panel("✅ Theme selection completed", title_align="left", border_style="green"))
+
 
 def accessory(stdscr: Any):
     options = schemes_list
@@ -90,7 +93,7 @@ def accessory(stdscr: Any):
                 stdscr.addstr(i, 0, f"  {option}")
 
         # Display status line
-        status_line = f"🔍 Theme {current_option+1}/{len(options)} | ↑/↓: Navigate | Enter: Select"
+        status_line = f"🔍 Theme {current_option + 1}/{len(options)} | ↑/↓: Navigate | Enter: Select"
         stdscr.addstr(page_size, 0, status_line)
 
         # Get key press
@@ -101,6 +104,6 @@ def accessory(stdscr: Any):
             current_option -= 1
         elif key == curses.KEY_DOWN and current_option < len(options) - 1:
             current_option += 1
-        elif key == ord('\n'):  # Enter key
+        elif key == ord("\n"):  # Enter key
             break  # Exit the loop
         set_theme(options[current_option])

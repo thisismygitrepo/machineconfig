@@ -149,20 +149,25 @@ T2 = TypeVar("T2")
 class PrintFunc(Protocol):
     def __call__(self, msg: str) -> Union[NoReturn, None]: ...
 
+
 def to_pickle(obj: Any, path: Path) -> None:
     import pickle
+
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(pickle.dumps(obj))
+
+
 def from_pickle(path: Path) -> Any:
     import pickle
+
     return pickle.loads(path.read_bytes())
 
 
 class Cache(Generic[T]):  # This class helps to accelrate access to latest data coming from expensive function. The class has two flavours, memory-based and disk-based variants."""
     # source_func: Callable[[], T]
-    def __init__(self, source_func: Callable[[], T],
-                 expire: timedelta, logger: Optional[PrintFunc] = None, path: Optional[Path] = None,
-                 saver: Callable[[T, Path], Any] = to_pickle, reader: Callable[[Path], T] = from_pickle, name: Optional[str] = None) -> None:
+    def __init__(
+        self, source_func: Callable[[], T], expire: timedelta, logger: Optional[PrintFunc] = None, path: Optional[Path] = None, saver: Callable[[T, Path], Any] = to_pickle, reader: Callable[[Path], T] = from_pickle, name: Optional[str] = None
+    ) -> None:
         self.cache: T
         self.source_func = source_func  # function which when called returns a fresh object to be frozen.
         self.path: Optional[PathExtended] = PathExtended(path) if path is not None else None  # if path is passed, it will function as disk-based flavour.
@@ -173,12 +178,14 @@ class Cache(Generic[T]):  # This class helps to accelrate access to latest data 
         self.expire = expire
         self.name = name if isinstance(name, str) else str(self.source_func)
         self.last_call_is_fresh = False
+
     @property
     def age(self):
         """Throws AttributeError if called before cache is populated and path doesn't exists"""
         if self.path is None:  # memory-based cache.
             return datetime.now() - self.time_produced
         return datetime.now() - datetime.fromtimestamp(self.path.stat().st_mtime)
+
     # def __setstate__(self, state: dict[str, Any]) -> None:
     #     self.__dict__.update(state)
     #     self.path = P.home() / self.path if self.path is not None else self.path
@@ -228,9 +235,11 @@ class Cache(Generic[T]):  # This class helps to accelrate access to latest data 
                 self.cache = self.source_func()  # fresh data.
                 self.last_call_is_fresh = True
                 self.time_produced = datetime.now()
-                if self.path is not None: self.save(self.cache, self.path)
+                if self.path is not None:
+                    self.save(self.cache, self.path)
         else:  # cache exists
-            try: age = self.age
+            try:
+                age = self.age
             except AttributeError:  # path doesn't exist (may be deleted) ==> need to repopulate cache form source_func.
                 return self(fresh=True)
             if age > self.expire:
@@ -243,7 +252,8 @@ class Cache(Generic[T]):  # This class helps to accelrate access to latest data 
                 self.cache = self.source_func()
                 self.last_call_is_fresh = True
                 self.time_produced = datetime.now()
-                if self.path is not None: self.save(self.cache, self.path)
+                if self.path is not None:
+                    self.save(self.cache, self.path)
             else:
                 if self.logger:
                     self.logger(f"""
@@ -252,15 +262,17 @@ class Cache(Generic[T]):  # This class helps to accelrate access to latest data 
 ⏱️  Lag = {age}
 ════════════════════════════════════════════════════════""")
         return self.cache
+
     @staticmethod
-    def as_decorator(expire: timedelta, logger: Optional[PrintFunc] = None, path: Optional[Path] = None,
-                     saver: Callable[[T2, Path], Any] = to_pickle,
-                     reader: Callable[[Path], T2] = from_pickle,
-                     name: Optional[str] = None):  # -> Callable[..., 'Cache[T2]']:
-        def decorator(source_func: Callable[[], T2]) -> Cache['T2']:
+    def as_decorator(
+        expire: timedelta, logger: Optional[PrintFunc] = None, path: Optional[Path] = None, saver: Callable[[T2, Path], Any] = to_pickle, reader: Callable[[Path], T2] = from_pickle, name: Optional[str] = None
+    ):  # -> Callable[..., 'Cache[T2]']:
+        def decorator(source_func: Callable[[], T2]) -> Cache["T2"]:
             res = Cache(source_func=source_func, expire=expire, logger=logger, path=path, name=name, reader=reader, saver=saver)
             return res
+
         return decorator
+
     def from_cloud(self, cloud: str, rel2home: bool = True, root: Optional[str] = None):
         assert self.path is not None
         exists = self.path.exists()

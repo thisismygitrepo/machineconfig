@@ -3,7 +3,7 @@
 import psutil
 from tqdm import tqdm
 from pytz import timezone
-from machineconfig.utils.utils import display_options
+from machineconfig.utils.options import display_options
 from typing import Optional, Any
 from rich.console import Console
 from rich.panel import Panel

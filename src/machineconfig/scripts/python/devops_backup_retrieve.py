@@ -1,10 +1,11 @@
-"""BR: Backup and Retrieve
-"""
+"""BR: Backup and Retrieve"""
 
 # import subprocess
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.utils2 import read_ini, read_toml
-from machineconfig.utils.utils import LIBRARY_ROOT, DEFAULTS_PATH, print_code, choose_cloud_interactively, choose_multiple_options
+from machineconfig.utils.source_of_truth import LIBRARY_ROOT, DEFAULTS_PATH
+from machineconfig.utils.code import print_code
+from machineconfig.utils.options import choose_cloud_interactively, choose_multiple_options
 from machineconfig.scripts.python.helpers.helpers2 import ES
 from platform import system
 from typing import Any, Literal, Optional
@@ -19,7 +20,7 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
     console = Console()
 
     try:
-        cloud: str = read_ini(DEFAULTS_PATH)['general']['rclone_config_name']
+        cloud: str = read_ini(DEFAULTS_PATH)["general"]["rclone_config_name"]
         console.print(Panel(f"⚠️  DEFAULT CLOUD CONFIGURATION\n🌥️  Using default cloud: {cloud}", title="[bold blue]Cloud Configuration[/bold blue]", border_style="blue"))
     except (FileNotFoundError, KeyError, IndexError):
         console.print(Panel("🔍 DEFAULT CLOUD NOT FOUND\n🔄 Please select a cloud configuration from the options below", title="[bold red]Error: Cloud Not Found[/bold red]", border_style="red"))
@@ -38,7 +39,7 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
 
     if which is None:
         console.print(Panel(f"🔍 SELECT {direction} ITEMS\n📋 Choose which configuration entries to process", title="[bold blue]Select Items[/bold blue]", border_style="blue"))
-        choices = choose_multiple_options(msg=f"WHICH FILE of the following do you want to {direction}?", options=['all'] + list(bu_file.keys()))
+        choices = choose_multiple_options(msg=f"WHICH FILE of the following do you want to {direction}?", options=["all"] + list(bu_file.keys()))
     else:
         choices = which.split(",") if which else []
         console.print(Panel(f"🔖 PRE-SELECTED ITEMS\n📝 Using: {', '.join(choices)}", title="[bold blue]Pre-selected Items[/bold blue]", border_style="blue"))
@@ -52,19 +53,20 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
     program = f"""$cloud = "{cloud}:{ES}" \n """ if system() == "Windows" else f"""cloud="{cloud}:{ES}" \n """
     console.print(Panel(f"🚀 GENERATING {direction} SCRIPT\n🌥️  Cloud: {cloud}\n🗂️  Items: {len(items)}", title="[bold blue]Script Generation[/bold blue]", border_style="blue"))
     for item_name, item in items.items():
-        flags = ''
-        flags += 'z' if item['zip'] == 'True' else ''
-        flags += 'e' if item['encrypt'] == 'True' else ''
-        flags += 'r' if item['rel2home'] == 'True' else ''
-        flags += 'o' if system().lower() in item_name else ''
+        flags = ""
+        flags += "z" if item["zip"] == "True" else ""
+        flags += "e" if item["encrypt"] == "True" else ""
+        flags += "r" if item["rel2home"] == "True" else ""
+        flags += "o" if system().lower() in item_name else ""
         console.print(Panel(f"📦 PROCESSING: {item_name}\n📂 Path: {PathExtended(item['path']).as_posix()}\n🏳️  Flags: {flags or 'None'}", title=f"[bold blue]Processing Item: {item_name}[/bold blue]", border_style="blue"))
-        if flags: flags = "-" + flags
+        if flags:
+            flags = "-" + flags
         if direction == "BACKUP":
-            program += f"""\ncloud_copy "{PathExtended(item['path']).as_posix()}" $cloud {flags}\n"""
+            program += f"""\ncloud_copy "{PathExtended(item["path"]).as_posix()}" $cloud {flags}\n"""
         elif direction == "RETRIEVE":
-            program += f"""\ncloud_copy $cloud "{PathExtended(item['path']).as_posix()}" {flags}\n"""
+            program += f"""\ncloud_copy $cloud "{PathExtended(item["path"]).as_posix()}" {flags}\n"""
         else:
-            console.print(Panel("❌ ERROR: INVALID DIRECTION\n⚠️  Direction must be either \"BACKUP\" or \"RETRIEVE\"", title="[bold red]Error: Invalid Direction[/bold red]", border_style="red"))
+            console.print(Panel('❌ ERROR: INVALID DIRECTION\n⚠️  Direction must be either "BACKUP" or "RETRIEVE"', title="[bold red]Error: Invalid Direction[/bold red]", border_style="red"))
             raise RuntimeError(f"Unknown direction: {direction}")
         if item_name == "dotfiles" and system() == "Linux":
             program += """\nchmod 700 ~/.ssh/*\n"""
@@ -80,7 +82,7 @@ def main(direction: OPTIONS, which: Optional[str] = None):
     console.print(Panel(f"🔄 {direction} OPERATION STARTED\n⏱️  {'-' * 58}", title="[bold blue]Operation Initiated[/bold blue]", border_style="blue"))
 
     code = main_backup_retrieve(direction=direction, which=which)
-    from machineconfig.utils.utils import write_shell_script_to_default_program_path
+    from machineconfig.utils.code import write_shell_script_to_default_program_path
 
     console.print(Panel("💾 GENERATING SHELL SCRIPT\n📄 Filename: backup_retrieve.sh", title="[bold blue]Shell Script Generation[/bold blue]", border_style="blue"))
 

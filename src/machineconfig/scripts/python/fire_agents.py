@@ -1,4 +1,3 @@
-
 """Utility to launch multiple AI agent prompts in a Zellij session.
 
 Improved design notes:
@@ -20,15 +19,17 @@ from machineconfig.utils.utils2 import randstr
 import random
 # import time
 
-AGENTS: TypeAlias = Literal["cursor-agent", "gemini", "crush", "q", "onlyPrepPromptFiles",
-                            # warp terminal
-                            ]
+AGENTS: TypeAlias = Literal[
+    "cursor-agent", "gemini", "crush", "q", "onlyPrepPromptFiles"
+    # warp terminal
+]
 TabConfig = dict[str, tuple[str, str]]  # tab name -> (cwd, command)
 DEFAULT_AGENT_CAP = 6
 
 
 def get_gemini_api_keys() -> list[str]:
     from machineconfig.utils.utils2 import read_ini
+
     config = read_ini(Path.home().joinpath("dotfiles/creds/llm/gemini/api_keys.ini"))
     res: list[str] = []
     for a_section_name in list(config.sections()):
@@ -68,6 +69,8 @@ def _search_python_files(repo_root: Path, keyword: str) -> list[Path]:
 def _write_list_file(target: Path, files: Iterable[Path]) -> None:
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text("\n".join(str(f) for f in files), encoding="utf-8")
+
+
 def _chunk_prompts(prompts: list[str], max_agents: int) -> list[str]:
     prompts = [p for p in prompts if p.strip() != ""]  # drop blank entries
     if len(prompts) <= max_agents:
@@ -78,6 +81,8 @@ def _chunk_prompts(prompts: list[str], max_agents: int) -> list[str]:
     for i in range(0, len(prompts), chunk_size):
         grouped.append("\nTargeted Locations:\n".join(prompts[i : i + chunk_size]))
     return grouped
+
+
 def _confirm(message: str, default_no: bool = True) -> bool:
     suffix = "[y/N]" if default_no else "[Y/n]"
     answer = input(f"{message} {suffix} ").strip().lower()
@@ -98,11 +103,7 @@ def launch_agents(repo_root: Path, prompts: list[str], agent: AGENTS, *, max_age
         raise ValueError("No prompts provided")
 
     if len(prompts) > max_agents:
-        proceed = _confirm(
-            message=(
-                f"You are about to launch {len(prompts)} agents which exceeds the cap ({max_agents}). Proceed?"
-            )
-        )
+        proceed = _confirm(message=(f"You are about to launch {len(prompts)} agents which exceeds the cap ({max_agents}). Proceed?"))
         if not proceed:
             print("Aborting per user choice.")
             return {}
@@ -170,7 +171,7 @@ sleep 0.1
 sleep 0.1
 echo "---------END OF AGENT OUTPUT---------"
 """
-        cmd_path.write_text(cmd_prefix+cmd+cmd_postfix, encoding="utf-8")
+        cmd_path.write_text(cmd_prefix + cmd + cmd_postfix, encoding="utf-8")
         fire_cmd = f"bash {shlex.quote(str(cmd_path))}"
         tab_config[f"Agent{idx}"] = (str(repo_root), fire_cmd)
 
@@ -217,18 +218,15 @@ def main():  # noqa: C901 - (complexity acceptable for CLI glue)
     combined_prompts = [prefix + "\n" + p for p in combined_prompts]
 
     from machineconfig.utils.options import choose_one_option
+
     agent_selected = choose_one_option(header="Select agent type", options=get_args(AGENTS))
 
-    tab_config = launch_agents(
-        repo_root=repo_root,
-        prompts=combined_prompts,
-        agent=agent_selected,
-        max_agents=DEFAULT_AGENT_CAP,
-    )
+    tab_config = launch_agents(repo_root=repo_root, prompts=combined_prompts, agent=agent_selected, max_agents=DEFAULT_AGENT_CAP)
     if not tab_config:
         return
 
     from machineconfig.utils.utils2 import randstr
+
     random_name = randstr(length=3)
     manager = ZellijLocalManager(session2zellij_tabs={"Agents": tab_config}, session_name_prefix=random_name)
     manager.start_all_sessions()

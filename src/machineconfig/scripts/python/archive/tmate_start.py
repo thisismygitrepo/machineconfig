@@ -1,5 +1,5 @@
-"""Tmate
-"""
+"""Tmate"""
+
 import argparse
 import configparser
 from pathlib import Path
@@ -17,10 +17,10 @@ def main():
 
     console.print("[bold yellow]Loading credentials...[/bold yellow]")
     creds = configparser.ConfigParser()
-    creds.read(Path.home().joinpath('dotfiles/creds/tmate/creds.ini'))
+    creds.read(Path.home().joinpath("dotfiles/creds/tmate/creds.ini"))
     console.print("[green]Credentials loaded[/green]")
 
-    parser = argparse.ArgumentParser(description='Tmate launcher')
+    parser = argparse.ArgumentParser(description="Tmate launcher")
     random_sess = random.choices(list(string.digits + string.ascii_letters), k=20)
     _ = random_sess
     parser.add_argument("sess_name", help="session name (new only with random string will be chosen if not passed)", default=None)
@@ -28,8 +28,8 @@ def main():
     args = parser.parse_args()
 
     console.print(f"🔍 Looking up session configuration: {args.sess_name}")
-    sess_name = creds['sessions_names'][args.sess_name]
-    api_key = creds['keys']['api_key']
+    sess_name = creds["sessions_names"][args.sess_name]
+    api_key = creds["keys"]["api_key"]
 
     console.print(Panel(f"🚀 Starting tmate session: {sess_name}", title="[bold green]Session Info[/bold green]"))
 
@@ -40,5 +40,5 @@ def main():
     console.print("[green]Tmate session ended[/green]")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

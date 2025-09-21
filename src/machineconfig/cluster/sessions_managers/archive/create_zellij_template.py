@@ -1,7 +1,8 @@
 """ZT"""
 
 import socket
-from machineconfig.utils.utils import choose_ssh_host, write_shell_script_to_default_program_path
+from machineconfig.utils.options import choose_ssh_host
+from machineconfig.utils.code import write_shell_script_to_default_program_path
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 
 prefix = """

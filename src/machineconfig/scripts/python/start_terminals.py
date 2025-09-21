@@ -1,8 +1,7 @@
-"""Script to start terminals on windows and wsl
-"""
+"""Script to start terminals on windows and wsl"""
 
-from machineconfig.utils.utils import PROGRAM_PATH, display_options
-from machineconfig.utils.options import get_ssh_hosts
+from machineconfig.utils.source_of_truth import PROGRAM_PATH
+from machineconfig.utils.options import display_options, get_ssh_hosts
 import platform
 from itertools import cycle
 from typing import Literal
@@ -23,15 +22,15 @@ THIS_MACHINE_HOSTNAME = platform.node()
 THIS_MACHINE_HOSTNAME_WSL = f"{THIS_MACHINE_HOSTNAME}wsl"
 
 
-def main_windows_and_wsl(window: int, hosts: list[str], orientation: ORIENTATION_TYPE = "vertical", mprocs: bool=False):
+def main_windows_and_wsl(window: int, hosts: list[str], orientation: ORIENTATION_TYPE = "vertical", mprocs: bool = False):
     print("\n🔧 Configuring terminal layout for Windows and WSL...")
     orientation_oposite = "horizontal" if orientation == "vertical" else "vertical"
-    orientation_swap                = "up" if orientation         == "horizontal" else "left"
+    orientation_swap = "up" if orientation == "horizontal" else "left"
     orientation_opposite_move_focus = "up" if orientation_oposite == "horizontal" else "left"
     orientation_opposite_move_focus_other = "down" if orientation_oposite == "horizontal" else "right"
     sleep = 3
     sep = f"\nsleep {sleep}; wt --window {window}"  # or '`;'
-    ssh_cmd = "-t 'mprocs'" if mprocs else ''  # 'wsl_ssh_windows_port_forwarding.ps1'
+    ssh_cmd = "-t 'mprocs'" if mprocs else ""  # 'wsl_ssh_windows_port_forwarding.ps1'
     split_per_machine = 1 / len(hosts)
     size = 0.3
     known_hosts = get_ssh_hosts()
@@ -48,26 +47,33 @@ wt --window {window} --title {hosts[0]} powershell -Command "ssh {host_linux} {s
 
     elif len(hosts) > 1:
         print("🖥️ Multiple hosts detected. Configuring layout...")
-        pane_cmd = f'powershell -Command "ssh {hosts[0]} {ssh_cmd}" ' if hosts[0] != THIS_MACHINE else ''
+        pane_cmd = f'powershell -Command "ssh {hosts[0]} {ssh_cmd}" ' if hosts[0] != THIS_MACHINE else ""
         cmd = f"""wt --window {window} --title {hosts[0]} {pane_cmd} """
         for a_host in hosts[1:]:
-            if a_host != THIS_MACHINE: pane_cmd = f'powershell -Command "ssh {a_host} {ssh_cmd}" '
-            else: pane_cmd = 'powershell'
+            if a_host != THIS_MACHINE:
+                pane_cmd = f'powershell -Command "ssh {a_host} {ssh_cmd}" '
+            else:
+                pane_cmd = "powershell"
             cmd += f"""{sep} split-pane --{orientation_oposite} --title {a_host}Windows --size {split_per_machine} {pane_cmd}  """
         for idx, a_host in enumerate(hosts[::-1]):
-            if f"{a_host}wsl" not in known_hosts and a_host != THIS_MACHINE: continue
-            pane_cmd = f'powershell -Command "ssh {a_host}wsl"' if a_host != THIS_MACHINE else 'wsl'
-            if idx == 0: tmp = ''
-            else: tmp = f"move-focus {orientation_opposite_move_focus}" if idx % 2 == 1 else f"move-focus {orientation_opposite_move_focus_other}"
+            if f"{a_host}wsl" not in known_hosts and a_host != THIS_MACHINE:
+                continue
+            pane_cmd = f'powershell -Command "ssh {a_host}wsl"' if a_host != THIS_MACHINE else "wsl"
+            if idx == 0:
+                tmp = ""
+            else:
+                tmp = f"move-focus {orientation_opposite_move_focus}" if idx % 2 == 1 else f"move-focus {orientation_opposite_move_focus_other}"
             cmd += f"""{sep} {tmp} split-pane --{orientation} --title {a_host}wsl --size {size} {pane_cmd} """
             cmd += f"""{sep} swap-pane {orientation_swap} """
-    else: raise NotImplementedError(f"❌ len(hosts) = {len(hosts)}. Only 1 or 2 hosts are supported.")
+    else:
+        raise NotImplementedError(f"❌ len(hosts) = {len(hosts)}. Only 1 or 2 hosts are supported.")
     print("✅ Terminal layout configured successfully!\n")
     return cmd
 
 
 def main():
     import argparse
+
     print("\n" + "=" * 50)
     print("🖥️ Welcome to the Terminal Starter Tool")
     print("=" * 50 + "\n")
@@ -109,5 +115,5 @@ def main():
     print("✅ Command saved successfully!\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

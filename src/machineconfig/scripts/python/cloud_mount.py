@@ -1,8 +1,7 @@
-"""Cloud mount script
-"""
+"""Cloud mount script"""
 
-
-from machineconfig.utils.utils import PROGRAM_PATH, choose_one_option
+from machineconfig.utils.source_of_truth import PROGRAM_PATH
+from machineconfig.utils.options import choose_one_option
 from machineconfig.utils.utils2 import read_ini
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 
@@ -19,9 +18,12 @@ DEFAULT_MOUNT = "~/data/rclone"
 
 
 def get_rclone_config():
-    if platform.system() == "Windows": config = read_ini(PathExtended.home().joinpath("AppData/Roaming/rclone/rclone.conf"))
-    elif platform.system() in ["Linux", "Darwin"]: config = read_ini(PathExtended.home().joinpath(".config/rclone/rclone.conf"))
-    else: raise ValueError("unsupported platform")
+    if platform.system() == "Windows":
+        config = read_ini(PathExtended.home().joinpath("AppData/Roaming/rclone/rclone.conf"))
+    elif platform.system() in ["Linux", "Darwin"]:
+        config = read_ini(PathExtended.home().joinpath(".config/rclone/rclone.conf"))
+    else:
+        raise ValueError("unsupported platform")
     return config
 
 
@@ -30,18 +32,22 @@ def get_mprocs_mount_txt(cloud: str, rclone_cmd: str, cloud_brand: str):  # clou
     if platform.system() == "Windows":
         sub_text_path = PathExtended.tmpfile(suffix=".ps1")
         sub_text_path.parent.mkdir(parents=True, exist_ok=True)
-        sub_text_path.write_text(f"""
+        sub_text_path.write_text(
+            f"""
 echo "{header}"
 iex 'rclone about {cloud}:'
 echo 'See {DEFAULT_MOUNT}/{cloud} for the mounted cloud'
 
 echo ''
-""", encoding="utf-8")
+""",
+            encoding="utf-8",
+        )
         txt = f"""
 cd ~
 mprocs "powershell {sub_text_path}" "{rclone_cmd}" "btm" "timeout 2 & cd {DEFAULT_MOUNT} & lf" "timeout 2 & cd {DEFAULT_MOUNT} & pwsh" "pwsh" --names "info,service,monitor,explorer,main,terminal"
 """
-    else: txt = f"""
+    else:
+        txt = f"""
 mprocs "echo 'see {DEFAULT_MOUNT}/{cloud} for the mounted cloud'; rclone about {cloud}:" "{rclone_cmd}" "btm" "cd {DEFAULT_MOUNT}; lf" "bash" "bash" --names "about,service,monitor,explorer,main,shell"
 """
     return txt
@@ -55,8 +61,10 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
     config = get_rclone_config()
     if cloud is None:
         res = choose_one_option(msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
-        if type(res) is str: cloud = res
-        else: raise ValueError("no cloud selected")
+        if type(res) is str:
+            cloud = res
+        else:
+            raise ValueError("no cloud selected")
         print(f"🌩️  Selected cloud: {cloud}")
 
     if network is None:
@@ -74,30 +82,33 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
         elif platform.system() in ["Linux", "Darwin"]:
             system_name = "Linux" if platform.system() == "Linux" else "macOS"
             print(f"🐧 Creating mount directory on {system_name}...")
-            try: mount_loc.mkdir(parents=True, exist_ok=True)
+            try:
+                mount_loc.mkdir(parents=True, exist_ok=True)
             except (FileExistsError, OSError) as err:
                 # We need a umount command here.
                 warning_line = "⚠️  WARNING: Mount directory issue"
                 err_line = f"{err}"
                 console.print(Panel(f"{warning_line}\n{err_line}", title="Warning", border_style="yellow"))
                 pass
-        else: raise ValueError("unsupported platform")
+        else:
+            raise ValueError("unsupported platform")
 
     elif network and platform.system() == "Windows":
         mount_loc = "X: --network-mode"
         print(f"🔌 Setting up network mount at {mount_loc}")
-    else: raise ValueError("network mount only supported on windows")
+    else:
+        raise ValueError("network mount only supported on windows")
 
     mount_cmd = f"rclone mount {cloud}: {mount_loc} --vfs-cache-mode full --file-perms=0777"
     console.print(Panel(f"🚀 Preparing mount command:\n{mount_cmd}", border_style="blue"))
 
     # txt = get_mprocs_mount_txt(cloud, mount_cmd)
     if platform.system() == "Windows":
-
         txt = f"""
 wt --window 0 --profile "Windows PowerShell" --startingDirectory "$HOME/data/rclone" `; split-pane --horizontal  --profile "Command Prompt" --size 0.2 powershell -Command "{mount_cmd}" `; split-pane --vertical --profile "Windows PowerShell" --size 0.2 powershell -NoExit -Command "rclone about {cloud}:"  `; move-focus up
 """
-    elif platform.system() in ["Linux", "Darwin"]: txt = f"""
+    elif platform.system() in ["Linux", "Darwin"]:
+        txt = f"""
 
 ZJ_SESSIONS=$(zellij list-sessions)
 
@@ -130,7 +141,8 @@ zellij run --direction up -- btm --default_widget_type net --expanded
 zellij run --in-place --cwd $HOME/data/rclone/{cloud} -- bash
 zellij action move-focus up
 """
-    else: raise ValueError("unsupported platform")
+    else:
+        raise ValueError("unsupported platform")
     # print(f"running command: \n{txt}")
     PROGRAM_PATH.write_text(txt, encoding="utf-8")
     # draw success box dynamically
@@ -144,13 +156,13 @@ def main():
     main_title = "☁️  RCLONE CLOUD MOUNT"
     console.print(Panel(main_title, title_align="left", border_style="blue"))
 
-    parser = argparse.ArgumentParser(description='mount cloud')
-    parser.add_argument('cloud', nargs='?', type=str, default=None, help='cloud to mount')
-    parser.add_argument('destination', nargs='?', type=str, default=None, help='destination to mount')
-    parser.add_argument('--network', type=str, default=None, help='mount network drive')
+    parser = argparse.ArgumentParser(description="mount cloud")
+    parser.add_argument("cloud", nargs="?", type=str, default=None, help="cloud to mount")
+    parser.add_argument("destination", nargs="?", type=str, default=None, help="destination to mount")
+    parser.add_argument("--network", type=str, default=None, help="mount network drive")
     args = parser.parse_args()
     mount(cloud=args.cloud, network=args.network, destination=args.destination)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

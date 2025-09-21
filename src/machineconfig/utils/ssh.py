@@ -239,7 +239,9 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             source_list: list[PathExtended] = source_obj.search("*", folders=False, files=True, r=True)
             remote_root = (
                 self.run_py(
-                    f"path=P(r'{PathExtended(target).as_posix()}').expanduser()\n{'path.delete(sure=True)' if overwrite else ''}\nprint(path.create())", desc=f"Creating Target directory `{PathExtended(target).as_posix()}` @ {self.get_remote_repr()}", verbose=False
+                    f"path=P(r'{PathExtended(target).as_posix()}').expanduser()\n{'path.delete(sure=True)' if overwrite else ''}\nprint(path.create())",
+                    desc=f"Creating Target directory `{PathExtended(target).as_posix()}` @ {self.get_remote_repr()}",
+                    verbose=False,
                 ).op
                 or ""
             )

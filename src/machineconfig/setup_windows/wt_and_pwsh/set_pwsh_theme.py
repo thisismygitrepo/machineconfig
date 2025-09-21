@@ -5,7 +5,7 @@ https://glitchbone.github.io/vscode-base16-term/#/3024
 """
 
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
-from machineconfig.utils.utils import LIBRARY_ROOT
+from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 from machineconfig.utils.installer_utils.installer_class import Installer
 import subprocess
 from typing import Iterable
@@ -23,10 +23,7 @@ nerd_fonts = {
 
 # Patterns to match any installed variant (NF, Nerd Font, Mono, Propo, style weights) of Cascadia/Caskaydia
 # We'll compile them at runtime for flexibility. Keep them simple to avoid false positives.
-REQUIRED_FONT_PATTERNS: tuple[str, ...] = (
-    r"caskaydiacove.*(nf|nerd ?font)",
-    r"cascadiacode.*(nf|nerd ?font)",
-)
+REQUIRED_FONT_PATTERNS: tuple[str, ...] = (r"caskaydiacove.*(nf|nerd ?font)", r"cascadiacode.*(nf|nerd ?font)")
 
 
 def _list_installed_fonts() -> list[str]:
@@ -37,13 +34,7 @@ def _list_installed_fonts() -> list[str]:
     """
     try:
         # Query only base names to make substring matching simpler; remove underscores like the PS script does.
-        cmd = [
-            "powershell.exe",
-            "-NoLogo",
-            "-NonInteractive",
-            "-Command",
-            "Get-ChildItem -Path C:/Windows/Fonts -File | Select-Object -ExpandProperty BaseName"
-        ]
+        cmd = ["powershell.exe", "-NoLogo", "-NonInteractive", "-Command", "Get-ChildItem -Path C:/Windows/Fonts -File | Select-Object -ExpandProperty BaseName"]
         res = subprocess.run(cmd, capture_output=True, text=True, check=True)  # noqa: S603 S607 (trusted command)
         fonts = [x.strip().replace("_", "") for x in res.stdout.splitlines() if x.strip() != ""]
         return fonts

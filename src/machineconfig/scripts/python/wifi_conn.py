@@ -43,59 +43,45 @@ from rich.table import Table
 
 console = Console()
 
+
 def get_available_networks() -> List[Dict[str, str]]:
     """Get list of available WiFi networks"""
     networks = []
 
     try:
         if platform.system() == "Windows":
-            result = subprocess.run(
-                ["netsh", "wlan", "show", "profiles"],
-                capture_output=True, text=True, check=True
-            )
+            result = subprocess.run(["netsh", "wlan", "show", "profiles"], capture_output=True, text=True, check=True)
 
-            for line in result.stdout.split('\n'):
-                if 'All User Profile' in line:
-                    ssid = line.split(':')[1].strip()
+            for line in result.stdout.split("\n"):
+                if "All User Profile" in line:
+                    ssid = line.split(":")[1].strip()
                     networks.append({"ssid": ssid, "signal": "Unknown"})
 
             # Also get available networks
-            result = subprocess.run(
-                ["netsh", "wlan", "show", "networks"],
-                capture_output=True, text=True, check=True
-            )
+            result = subprocess.run(["netsh", "wlan", "show", "networks"], capture_output=True, text=True, check=True)
 
             current_ssid = None
-            for line in result.stdout.split('\n'):
-                if 'SSID' in line and 'BSSID' not in line:
-                    current_ssid = line.split(':')[1].strip()
-                elif 'Signal' in line and current_ssid:
-                    signal = line.split(':')[1].strip()
+            for line in result.stdout.split("\n"):
+                if "SSID" in line and "BSSID" not in line:
+                    current_ssid = line.split(":")[1].strip()
+                elif "Signal" in line and current_ssid:
+                    signal = line.split(":")[1].strip()
                     # Avoid duplicates
-                    if not any(net['ssid'] == current_ssid for net in networks):
+                    if not any(net["ssid"] == current_ssid for net in networks):
                         networks.append({"ssid": current_ssid, "signal": signal})
                     current_ssid = None
 
         elif platform.system() in ["Linux", "Darwin"]:
             if platform.system() == "Linux":
-                result = subprocess.run(
-                    ["nmcli", "-t", "-f", "SSID,SIGNAL", "device", "wifi", "list"],
-                    capture_output=True, text=True, check=True
-                )
+                result = subprocess.run(["nmcli", "-t", "-f", "SSID,SIGNAL", "device", "wifi", "list"], capture_output=True, text=True, check=True)
             else:  # Darwin/macOS - using airport command
-                result = subprocess.run(
-                    ["/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport", "-s"],
-                    capture_output=True, text=True, check=True
-                )
+                result = subprocess.run(["/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport", "-s"], capture_output=True, text=True, check=True)
 
-            for line in result.stdout.strip().split('\n'):
-                if line and ':' in line:
-                    parts = line.split(':')
+            for line in result.stdout.strip().split("\n"):
+                if line and ":" in line:
+                    parts = line.split(":")
                     if len(parts) >= 2 and parts[0].strip():
-                        networks.append({
-                            "ssid": parts[0].strip(),
-                            "signal": f"{parts[1].strip()}%"
-                        })
+                        networks.append({"ssid": parts[0].strip(), "signal": f"{parts[1].strip()}%"})
 
     except subprocess.CalledProcessError as e:
         console.print(f"[red]❌ Error scanning networks: {e}[/red]")
@@ -106,12 +92,13 @@ def get_available_networks() -> List[Dict[str, str]]:
     seen = set()
     unique_networks = []
     for net in networks:
-        ssid = net['ssid']
+        ssid = net["ssid"]
         if ssid and ssid not in seen:
             seen.add(ssid)
             unique_networks.append(net)
 
     return unique_networks
+
 
 def display_and_select_network() -> Optional[Dict[str, str]]:
     """Display available networks and let user select one"""
@@ -130,18 +117,15 @@ def display_and_select_network() -> Optional[Dict[str, str]]:
     table.add_column("Signal Strength", style="yellow")
 
     for i, network in enumerate(networks, 1):
-        table.add_row(str(i), network['ssid'], network['signal'])
+        table.add_row(str(i), network["ssid"], network["signal"])
 
     console.print(table)
 
     # Let user select
     try:
-        choice = Prompt.ask(
-            "\n[blue]Select network number (or 'q' to quit)[/blue]",
-            default="q"
-        )
+        choice = Prompt.ask("\n[blue]Select network number (or 'q' to quit)[/blue]", default="q")
 
-        if choice.lower() == 'q':
+        if choice.lower() == "q":
             return None
 
         index = int(choice) - 1
@@ -154,16 +138,15 @@ def display_and_select_network() -> Optional[Dict[str, str]]:
     except ValueError:
         console.print("[red]❌ Invalid input. Please enter a number.[/red]")
         return None
+
+
 def connect(name: str, ssid: str):
     """Connect to a WiFi network"""
     console.print(f"\n[blue]🌐 Connecting to network: {name} (SSID: {ssid})[/blue]")
 
     try:
         if platform.system() == "Windows":
-            subprocess.run(
-                ["netsh", "wlan", "connect", f"name={name}", f"ssid={ssid}", "interface=Wi-Fi"],
-                capture_output=True, text=True, check=True
-            )
+            subprocess.run(["netsh", "wlan", "connect", f"name={name}", f"ssid={ssid}", "interface=Wi-Fi"], capture_output=True, text=True, check=True)
         elif platform.system() == "Linux":
             subprocess.run(f"nmcli connection up '{name}'", shell=True, check=True)
 
@@ -175,6 +158,7 @@ def connect(name: str, ssid: str):
     except Exception as e:
         console.print(f"[red]❌ Unexpected error: {e}[/red]")
         raise
+
 
 def connect_to_new_network(ssid: str, password: str):
     """Connect to a new network with SSID and password"""
@@ -199,6 +183,7 @@ def connect_to_new_network(ssid: str, password: str):
         console.print(f"[red]❌ Failed to connect to {ssid}: {e}[/red]")
         raise
 
+
 def display_available_networks():
     """Display available networks (legacy function for compatibility)"""
     console.print("\n[blue]📡 Scanning for available networks...[/blue]")
@@ -216,14 +201,11 @@ def display_available_networks():
     except Exception as e:
         console.print(f"[red]❌ Unexpected error: {e}[/red]")
 
+
 def try_config_connection(config_ssid: str) -> bool:
     """Try to connect using configuration file"""
     try:
-        config_paths = [
-            Path.home() / 'dotfiles/machineconfig/setup/wifi.ini',
-            Path.home() / '.config/wifi.ini',
-            Path.cwd() / 'wifi.ini'
-        ]
+        config_paths = [Path.home() / "dotfiles/machineconfig/setup/wifi.ini", Path.home() / ".config/wifi.ini", Path.cwd() / "wifi.ini"]
 
         creds = configparser.ConfigParser()
         config_found = False
@@ -245,8 +227,8 @@ def try_config_connection(config_ssid: str) -> bool:
                 console.print(f"[blue]Available configured networks: {', '.join(available_ssids)}[/blue]")
             return False
 
-        ssid = creds[config_ssid]['SSID']
-        password = creds[config_ssid]['pwd']
+        ssid = creds[config_ssid]["SSID"]
+        password = creds[config_ssid]["pwd"]
 
         console.print(f"[green]✅ Found configuration for {config_ssid}[/green]")
         connect_to_new_network(ssid, password)
@@ -256,6 +238,7 @@ def try_config_connection(config_ssid: str) -> bool:
         console.print(f"[red]❌ Error reading configuration: {e}[/red]")
         return False
 
+
 def manual_network_selection() -> bool:
     """Manual network selection and connection"""
     network = display_and_select_network()
@@ -263,7 +246,7 @@ def manual_network_selection() -> bool:
     if not network:
         return False
 
-    ssid = network['ssid']
+    ssid = network["ssid"]
     console.print(f"\n[blue]Selected network: {ssid}[/blue]")
 
     # Get password from user
@@ -279,18 +262,15 @@ def manual_network_selection() -> bool:
     except Exception:
         return False
 
+
 def main():
     """Main function with fallback network selection"""
-    console.print(Panel(
-        "📶 Welcome to the WiFi Connector Tool",
-        title="[bold blue]WiFi Connection[/bold blue]",
-        border_style="blue"
-    ))
+    console.print(Panel("📶 Welcome to the WiFi Connector Tool", title="[bold blue]WiFi Connection[/bold blue]", border_style="blue"))
 
-    parser = argparse.ArgumentParser(description='WiFi Connector')
-    parser.add_argument('-n', "--ssid", help="🔗 SSID of WiFi (from config)", default='MyPhoneHotSpot')
-    parser.add_argument('-m', "--manual", action='store_true', help="🔍 Manual network selection mode")
-    parser.add_argument('-l', "--list", action='store_true', help="📡 List available networks only")
+    parser = argparse.ArgumentParser(description="WiFi Connector")
+    parser.add_argument("-n", "--ssid", help="🔗 SSID of WiFi (from config)", default="MyPhoneHotSpot")
+    parser.add_argument("-m", "--manual", action="store_true", help="🔍 Manual network selection mode")
+    parser.add_argument("-l", "--list", action="store_true", help="📡 List available networks only")
 
     args = parser.parse_args()
 
@@ -326,16 +306,14 @@ def main():
     else:
         console.print("[blue]👋 Goodbye![/blue]")
 
+
 def get_current_wifi_name() -> str:
     """Get the name of the currently connected WiFi network"""
     console.print("\n[blue]🔍 Checking current WiFi connection...[/blue]")
 
     try:
         if platform.system() == "Windows":
-            result = subprocess.run(
-                ["netsh", "wlan", "show", "interface"],
-                capture_output=True, text=True, check=True
-            )
+            result = subprocess.run(["netsh", "wlan", "show", "interface"], capture_output=True, text=True, check=True)
 
             for line in result.stdout.split("\n"):
                 if "SSID" in line and "BSSID" not in line:
@@ -348,10 +326,7 @@ def get_current_wifi_name() -> str:
             return "Not connected to WiFi"
 
         elif platform.system() == "Linux":
-            result = subprocess.run(
-                ["iwgetid", "-r"],
-                capture_output=True, text=True, check=True
-            )
+            result = subprocess.run(["iwgetid", "-r"], capture_output=True, text=True, check=True)
 
             wifi_name = result.stdout.strip()
             if wifi_name:
@@ -370,6 +345,7 @@ def get_current_wifi_name() -> str:
 
     console.print("[yellow]⚠️  System not supported[/yellow]\n")
     return "System not supported"
+
 
 def create_new_connection(name: str, ssid: str, password: str):
     """Create a new WiFi connection profile"""
@@ -407,10 +383,7 @@ def create_new_connection(name: str, ssid: str, password: str):
             profile_path = f"{name}.xml"
             Path(profile_path).write_text(xml_config, encoding="utf-8")
 
-            subprocess.run(
-                ["netsh", "wlan", "add", "profile", f"filename={profile_path}", "interface=Wi-Fi"],
-                capture_output=True, text=True, check=True
-            )
+            subprocess.run(["netsh", "wlan", "add", "profile", f"filename={profile_path}", "interface=Wi-Fi"], capture_output=True, text=True, check=True)
 
             # Clean up the XML file
             try:
@@ -439,5 +412,6 @@ def create_new_connection(name: str, ssid: str, password: str):
         console.print(f"[red]❌ Unexpected error: {e}[/red]")
         raise
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

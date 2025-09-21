@@ -1,7 +1,7 @@
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.terminal import Terminal
 from machineconfig.scripts.python.get_zellij_cmd import get_zellij_cmd
-from machineconfig.utils.utils import CONFIG_PATH, DEFAULTS_PATH
+from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
 from machineconfig.utils.utils2 import read_ini
 from machineconfig.utils.code import write_shell_script_to_file
 import platform
@@ -19,10 +19,12 @@ def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cl
     print("🧹 Removed temporary remote copy")
     from git.remote import Remote
     from git.repo import Repo
+
     try:
         Remote.remove(Repo(repo_root_path), "originEnc")
         console.print(Panel("🔗 Removed originEnc remote reference", border_style="blue"))
-    except Exception: pass  # type: ignore
+    except Exception:
+        pass  # type: ignore
     console.print(Panel("📈 Deleting remote repository copy and pushing local changes", width=150, border_style="blue"))
 
     repo_root_path.to_cloud(cloud=cloud, zip=True, encrypt=True, rel2home=True, os_specific=False)
@@ -37,7 +39,7 @@ def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cl
 def get_wt_cmd(wd1: PathExtended, wd2: PathExtended) -> str:
     lines = [
         f"""wt --window 0 new-tab --profile pwsh --title "gitdiff" --tabColor `#3b04d1 --startingDirectory {wd1} ` --colorScheme "Solarized Dark" """,
-        f"""split-pane --horizontal --profile pwsh --startingDirectory {wd2} --size 0.5 --colorScheme "Tango Dark" -- pwsh -Interactive """
+        f"""split-pane --horizontal --profile pwsh --startingDirectory {wd2} --size 0.5 --colorScheme "Tango Dark" -- pwsh -Interactive """,
     ]
     return " `; ".join(lines)
 
@@ -53,24 +55,24 @@ def inspect_repos(repo_local_root: str, repo_remote_root: str):
         program = get_zellij_cmd(wd1=PathExtended(repo_local_root), wd2=PathExtended(repo_remote_root))
         write_shell_script_to_file(shell_script=program)
         return None
-    else: raise NotImplementedError(f"Platform {platform.system()} not implemented.")
+    else:
+        raise NotImplementedError(f"Platform {platform.system()} not implemented.")
 
 
 def fetch_dotfiles():
     console.print(Panel("📁 Fetching Dotfiles", title="[bold blue]Dotfiles[/bold blue]", border_style="blue"))
 
-    cloud_resolved = read_ini(DEFAULTS_PATH)['general']['rclone_config_name']
+    cloud_resolved = read_ini(DEFAULTS_PATH)["general"]["rclone_config_name"]
     console.print(Panel(f"⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}", width=150, border_style="yellow"))
 
     dotfiles_local = PathExtended.home().joinpath("dotfiles")
     CONFIG_PATH.joinpath("remote").mkdir(parents=True, exist_ok=True)
-    dotfiles_remote = CONFIG_PATH.joinpath("remote", dotfiles_local.rel2home())
+    dotfiles_remote = PathExtended(CONFIG_PATH).joinpath("remote", dotfiles_local.rel2home())
     remote_path = dotfiles_local.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
 
     console.print(Panel("📥 Downloading dotfiles from cloud...", width=150, border_style="blue"))
 
-    dotfiles_remote.from_cloud(remotepath=remote_path, cloud=cloud_resolved,
-        unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=None)
+    dotfiles_remote.from_cloud(remotepath=remote_path, cloud=cloud_resolved, unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=None)
 
     console.print(Panel("🗑️  Removing old dotfiles and replacing with cloud version...", width=150, border_style="blue"))
 
@@ -80,7 +82,8 @@ def fetch_dotfiles():
 # rm -rf {dotfiles_local}
 # mv {dotfiles_remote} {dotfiles_local}
 """
-    if platform.system() == "Linux": script += """
+    if platform.system() == "Linux":
+        script += """
 sudo chmod 600 $HOME/.ssh/*
 sudo chmod 700 $HOME/.ssh
 sudo chmod +x $HOME/dotfiles/scripts/linux -R
@@ -90,3 +93,22 @@ sudo chmod +x $HOME/dotfiles/scripts/linux -R
 
     console.print(Panel("✅ Dotfiles successfully fetched and installed", title="[bold green]Dotfiles[/bold green]", border_style="green"))
 
+
+def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool) -> bool:
+    dotfiles_path = str(PathExtended.home().joinpath("dotfiles"))
+    from git import Repo
+
+    repo = Repo(path=dotfiles_path)
+    last_commit = repo.head.commit
+    dtm = last_commit.committed_datetime
+    from datetime import datetime  # make it tz unaware
+
+    dtm = datetime(dtm.year, dtm.month, dtm.day, dtm.hour, dtm.minute, dtm.second)
+    res = dtm > datetime.fromisoformat(commit_dtm)
+    if res is False and update is True:
+        console = Console()
+        console.print(Panel(f"🔄 UPDATE REQUIRED | Updating dotfiles because {dtm} < {datetime.fromisoformat(commit_dtm)}", border_style="bold blue", expand=False))
+        from machineconfig.scripts.python.cloud_repo_sync import main
+
+        main(cloud=None, path=dotfiles_path)
+    return res

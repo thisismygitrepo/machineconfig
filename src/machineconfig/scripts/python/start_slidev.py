@@ -2,7 +2,8 @@
 slidev
 """
 
-from machineconfig.utils.utils import CONFIG_PATH, PROGRAM_PATH, print_code
+from machineconfig.utils.source_of_truth import CONFIG_PATH, PROGRAM_PATH
+from machineconfig.utils.code import print_code
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.terminal import Terminal
 import subprocess
@@ -10,11 +11,12 @@ import platform
 
 PORT_DEFAULT = 3030
 
-SLIDEV_REPO = CONFIG_PATH.joinpath(".cache/slidev")
+SLIDEV_REPO = PathExtended(CONFIG_PATH).joinpath(".cache/slidev")
 if not SLIDEV_REPO.joinpath("components").exists():
     print("📦 Initializing Slidev repository...")
     Terminal(stderr=subprocess.PIPE, stdin=subprocess.PIPE, stdout=subprocess.PIPE).run(f"cd {SLIDEV_REPO.parent};npm init slidev@latest")
     print("✅ Slidev repository initialized successfully!\n")
+
 
 def jupyter_to_markdown(file: PathExtended):
     op_dir = file.parent.joinpath("presentation")
@@ -36,13 +38,14 @@ def jupyter_to_markdown(file: PathExtended):
     Terminal().run(cmd, shell="powershell").print()
 
     op_file = op_dir.joinpath("slides_raw.md")
-    slide_separator = '\n\n---\n\n'
-    md = op_file.read_text(encoding="utf-8").replace('\n\n\n\n', slide_separator)
+    slide_separator = "\n\n---\n\n"
+    md = op_file.read_text(encoding="utf-8").replace("\n\n\n\n", slide_separator)
     md = slide_separator.join([item for item in md.split(slide_separator) if bool(item.strip())])
     op_file.with_name("slides.md").write_text(md, encoding="utf-8")
     print(f"✅ Conversion completed! Check the results at: {op_dir}\n")
 
     return op_dir
+
 
 def main() -> None:
     import argparse
@@ -85,6 +88,7 @@ def main() -> None:
         SLIDEV_REPO.joinpath(md_file.name).with_name(name="slides.md", inplace=True, overwrite=True)
 
     import socket
+
     try:
         local_ip_v4 = socket.gethostbyname(socket.gethostname() + ".local")
     except Exception:
@@ -100,5 +104,6 @@ def main() -> None:
     PROGRAM_PATH.write_text(program, encoding="utf-8")
     print_code(code=program, lexer="bash", desc="Run the following command to start the presentation")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

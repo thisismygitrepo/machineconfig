@@ -19,7 +19,7 @@ def main():
 ┃ 🚀 FTP File Transfer
 ┃ 📋 Starting transfer process...
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
-    parser = argparse.ArgumentParser(description='FTP client')
+    parser = argparse.ArgumentParser(description="FTP client")
 
     parser.add_argument("source", help="source path (machine:path)")
     parser.add_argument("target", help="target path (machine:path)")
@@ -38,36 +38,44 @@ def main():
         source_parts = args.source.split(":")
         machine = source_parts[0]
         if len(source_parts) > 1 and source_parts[1] == ES:  # the source path is to be inferred from target.
-            if args.target == ES: raise ValueError(f"""
+            if args.target == ES:
+                raise ValueError(f"""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ ❌ Configuration Error
 ┃    Cannot use expand symbol `{ES}` in both source and target
 ┃    This creates a cyclical inference dependency
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
-            else: target = PathExtended(args.target).expanduser().absolute()
+            else:
+                target = PathExtended(args.target).expanduser().absolute()
             source = target.collapseuser().as_posix()
         else:
             source = ":".join(args.source.split(":")[1:])
-            if args.target == ES: target = None
-            else: target = PathExtended(args.target).expanduser().absolute().as_posix()
+            if args.target == ES:
+                target = None
+            else:
+                target = PathExtended(args.target).expanduser().absolute().as_posix()
 
     elif ":" in args.target and (args.target[1] != ":" if len(args.target) > 1 else True):  # avoid the case of "C:/":
         source_is_remote = False
         target_parts = args.target.split(":")
         machine = target_parts[0]
         if len(target_parts) > 1 and target_parts[1] == ES:
-            if args.source == ES: raise ValueError(f"""
+            if args.source == ES:
+                raise ValueError(f"""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ ❌ Configuration Error
 ┃    Cannot use expand symbol `{ES}` in both source and target
 ┃    This creates a cyclical inference dependency
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
-            else: source = args.source
+            else:
+                source = args.source
             target = None
         else:
             target = ":".join(args.target.split(":")[1:])
-            if args.source == ES: source = None
-            else: source = PathExtended(args.source).expanduser().absolute()
+            if args.source == ES:
+                source = None
+            else:
+                source = PathExtended(args.source).expanduser().absolute()
 
     else:
         raise ValueError("""
@@ -80,8 +88,9 @@ def main():
     pprint({"source": str(source), "target": str(target), "machine": machine}, "CLI Resolution")
 
     from paramiko.ssh_exception import AuthenticationException  # type: ignore
+
     try:
-        ssh = SSH(rf'{machine}')
+        ssh = SSH(rf"{machine}")
     except AuthenticationException:
         print("""
 ┌────────────────────────────────────────────────────────────────
@@ -92,8 +101,9 @@ def main():
 │    This exception only handles password authentication
 └────────────────────────────────────────────────────────────────""")
         import getpass
+
         pwd = getpass.getpass()
-        ssh = SSH(rf'{machine}', pwd=pwd)
+        ssh = SSH(rf"{machine}", pwd=pwd)
 
     if args.cloud:
         print("""
@@ -118,7 +128,7 @@ def main():
 │ 📥 Transfer Mode: Remote → Local
 │    Source: {source}
 │    Target: {target}
-│    Options: {'ZIP compression' if args.zipFirst else 'No compression'}, {'Recursive' if args.recursive else 'Non-recursive'}
+│    Options: {"ZIP compression" if args.zipFirst else "No compression"}, {"Recursive" if args.recursive else "Non-recursive"}
 └────────────────────────────────────────────────────────────────""")
             received_file = ssh.copy_to_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
         else:
@@ -129,7 +139,7 @@ def main():
 │ 📤 Transfer Mode: Local → Remote
 │    Source: {source}
 │    Target: {target}
-│    Options: {'ZIP compression' if args.zipFirst else 'No compression'}, {'Recursive' if args.recursive else 'Non-recursive'}
+│    Options: {"ZIP compression" if args.zipFirst else "No compression"}, {"Recursive" if args.recursive else "Non-recursive"}
 └────────────────────────────────────────────────────────────────""")
             received_file = ssh.copy_from_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
 
@@ -147,5 +157,5 @@ def main():
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

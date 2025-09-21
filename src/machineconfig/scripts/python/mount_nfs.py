@@ -1,11 +1,12 @@
-"""NFS mounting script
-"""
+"""NFS mounting script"""
 
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.ssh import SSH
 from machineconfig.utils.terminal import Terminal
-from machineconfig.utils.utils import display_options, PROGRAM_PATH, choose_ssh_host
+from machineconfig.utils.options import display_options, choose_ssh_host
+from machineconfig.utils.source_of_truth import PROGRAM_PATH
 import platform
+
 
 def main():
     print("\n" + "=" * 50)
@@ -19,11 +20,7 @@ def main():
         assert isinstance(tmp, str)
         ssh = SSH(tmp)
         default = f"{ssh.hostname}:{ssh.run('echo $HOME').op}/data/share_nfs"
-        share_info = display_options(
-            "📂 Choose a share path:",
-            options=[f"{ssh.hostname}:{item.split(' ')[0]}" for item in ssh.run("cat /etc/exports").op.split("\n") if not item.startswith("#")] + [default],
-            default=default
-        )
+        share_info = display_options("📂 Choose a share path:", options=[f"{ssh.hostname}:{item.split(' ')[0]}" for item in ssh.run("cat /etc/exports").op.split("\n") if not item.startswith("#")] + [default], default=default)
         assert isinstance(share_info, str), f"❌ share_info must be a string. Got {type(share_info)}"
 
     remote_server = share_info.split(":")[0]
@@ -41,12 +38,7 @@ def main():
             mount_path_3 = mount_path_2
 
         print("🔧 Preparing mount paths...")
-        local_mount_point = display_options(
-            msg="📂 Choose mount path OR input custom one:",
-            options=[mount_path_1, mount_path_2, mount_path_3],
-            default=mount_path_2,
-            custom_input=True
-        )
+        local_mount_point = display_options(msg="📂 Choose mount path OR input custom one:", options=[mount_path_1, mount_path_2, mount_path_3], default=mount_path_2, custom_input=True)
         assert isinstance(local_mount_point, PathExtended), f"❌ local_mount_point must be a pathlib.Path. Got {type(local_mount_point)}"
         local_mount_point = PathExtended(local_mount_point).expanduser()
 
@@ -79,5 +71,6 @@ $driveLetter = "{driver_letter}"
 
     print("🎉 NFS Mounting Process Completed Successfully!\n")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -7,9 +7,7 @@ from rich.syntax import Syntax
 from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.ve import get_ve_activate_line
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
-
-
-PROGRAM_PATH = PathExtended.home().joinpath("tmp_results", "shells", "python_return_command") + (".ps1" if platform.system() == "Windows" else ".sh")
+from machineconfig.utils.source_of_truth import PROGRAM_PATH
 
 
 def get_shell_script_executing_python_file(python_file: str, func: Optional[str], ve_path: str, strict_execution: bool = True):

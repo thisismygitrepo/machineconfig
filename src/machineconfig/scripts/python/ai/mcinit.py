@@ -1,5 +1,3 @@
-
-
 from pathlib import Path
 from typing import Optional
 
@@ -9,8 +7,10 @@ uv add --upgrade-package pylint pyright mypy pyrefly ty --dev  # linters and typ
 uv add --upgrade-package pytest --dev
 """
 
+
 def get_repo_root(path: Path) -> Optional[Path]:
     from git import Repo, InvalidGitRepositoryError
+
     try:
         repo = Repo(path, search_parent_directories=True)
         root = repo.working_tree_dir
@@ -20,12 +20,15 @@ def get_repo_root(path: Path) -> Optional[Path]:
         pass
     return None
 
+
 def add_ai_configs(repo_root: Path):
     import machineconfig as mc
+
     mc_root = Path(mc.__file__).parent
 
     repo_root_resolved = get_repo_root(repo_root)
-    if repo_root_resolved is not None: repo_root = repo_root_resolved  # this means you can run the command from any subdirectory of the repo.
+    if repo_root_resolved is not None:
+        repo_root = repo_root_resolved  # this means you can run the command from any subdirectory of the repo.
 
     if repo_root.joinpath("pyproject.toml").exists() is False:
         uv_init = input(f"{repo_root} does not seem to be a python project (no pyproject.toml found), would you like to initialize one? (y/n) ")
@@ -35,6 +38,7 @@ uv init --python 3.13
 uv venv
 """
             import subprocess
+
             subprocess.run(command_to_run, shell=True, check=True)
         else:
             print("Terminating mcinit ...")
@@ -93,8 +97,7 @@ uv venv
     if dot_git_ignore_path.exists():
         dot_git_ignore_content = dot_git_ignore_path.read_text(encoding="utf-8")
         to_add: list[str] = []
-        to_check_for: list[str] = [".links", "notebooks", ".ai", ".scripts",
-                                   "GEMINI.md", "CLAUDE.md", ".cursor", ".github"]
+        to_check_for: list[str] = [".links", "notebooks", ".ai", ".scripts", "GEMINI.md", "CLAUDE.md", ".cursor", ".github"]
         for item in to_check_for:
             if item not in dot_git_ignore_content:
                 to_add.append(item)

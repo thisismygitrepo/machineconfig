@@ -5,7 +5,7 @@ TODO: use typer or typed-argument-parser to parse args
 from machineconfig.scripts.python.helpers.helpers2 import parse_cloud_source_target
 from machineconfig.scripts.python.helpers.cloud_helpers import Args
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
-from machineconfig.utils.utils import PROGRAM_PATH
+from machineconfig.utils.source_of_truth import PROGRAM_PATH
 import argparse
 from rich.console import Console
 from rich.panel import Panel
@@ -57,9 +57,9 @@ def args_parser():
         target_line = f"Target: {target}"
         console.print(Panel(f"{source_line}\n{arrow_line}\n{target_line}", title=title, border_style="blue"))
         if delete:
-            rclone_cmd = f"rclone sync -P \"{source}\" \"{target}\" --delete-during --transfers={transfers}"
+            rclone_cmd = f'rclone sync -P "{source}" "{target}" --delete-during --transfers={transfers}'
         else:
-            rclone_cmd = f"rclone sync -P \"{source}\" \"{target}\" --transfers={transfers}"
+            rclone_cmd = f'rclone sync -P "{source}" "{target}" --transfers={transfers}'
 
     rclone_cmd += f" --progress --transfers={transfers} --verbose"
     # rclone_cmd += f"  --vfs-cache-mode full"
@@ -78,5 +78,5 @@ def args_parser():
     PROGRAM_PATH.write_text(txt, encoding="utf-8")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args_parser()

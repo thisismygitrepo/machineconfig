@@ -1,5 +1,5 @@
 from machineconfig.scripts.python.helpers.cloud_helpers import Args, ArgsDefaults, absolute, find_cloud_config, get_secure_share_cloud_config
-from machineconfig.utils.utils import DEFAULTS_PATH
+from machineconfig.utils.source_of_truth import DEFAULTS_PATH
 from machineconfig.utils.utils2 import read_ini, pprint
 from typing import Optional
 from rich.console import Console
@@ -17,7 +17,8 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
     if config == "ss":
         cloud_maybe: Optional[str] = target.split(":")[0]
         # if cloud_maybe == "": cloud_maybe = source.split(":")[0]
-        if cloud_maybe == "": cloud_maybe = None
+        if cloud_maybe == "":
+            cloud_maybe = None
         print("cloud_maybe:", cloud_maybe)
         maybe_config = get_secure_share_cloud_config(interactive=True, cloud=cloud_maybe)
     elif config is not None:
@@ -27,13 +28,20 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         maybe_config = None
 
     if maybe_config is not None:
-        if args.zip == ArgsDefaults.zip_: args.zip = maybe_config.zip
-        if args.encrypt == ArgsDefaults.encrypt: args.encrypt = maybe_config.encrypt
-        if args.share == ArgsDefaults.share: args.share = maybe_config.share
-        if args.root == ArgsDefaults.root: args.root = maybe_config.root
-        if args.rel2home == ArgsDefaults.rel2home: args.rel2home = maybe_config.rel2home
-        if args.pwd == ArgsDefaults.pwd: args.pwd = maybe_config.pwd
-        if args.os_specific == ArgsDefaults.os_specific: args.os_specific = maybe_config.os_specific
+        if args.zip == ArgsDefaults.zip_:
+            args.zip = maybe_config.zip
+        if args.encrypt == ArgsDefaults.encrypt:
+            args.encrypt = maybe_config.encrypt
+        if args.share == ArgsDefaults.share:
+            args.share = maybe_config.share
+        if args.root == ArgsDefaults.root:
+            args.root = maybe_config.root
+        if args.rel2home == ArgsDefaults.rel2home:
+            args.rel2home = maybe_config.rel2home
+        if args.pwd == ArgsDefaults.pwd:
+            args.pwd = maybe_config.pwd
+        if args.os_specific == ArgsDefaults.os_specific:
+            args.os_specific = maybe_config.os_specific
 
     root = args.root
     rel2home = args.rel2home
@@ -53,7 +61,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
             maybe_config = tmp_maybe_config
 
         if maybe_config is None:
-            default_cloud: str=read_ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            default_cloud: str = read_ini(DEFAULTS_PATH)["general"]["rclone_config_name"]
             console.print(Panel(f"⚠️  No cloud config found. Using default cloud: {default_cloud}", width=150, border_style="yellow"))
             source = default_cloud + ":" + source[1:]
         else:
@@ -73,7 +81,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
             maybe_config = find_cloud_config(path)
 
         if maybe_config is None:
-            default_cloud = read_ini(DEFAULTS_PATH)['general']['rclone_config_name']
+            default_cloud = read_ini(DEFAULTS_PATH)["general"]["rclone_config_name"]
             console.print(Panel(f"⚠️  No cloud config found. Using default cloud: {default_cloud}", width=150, border_style="yellow"))
             target = default_cloud + ":" + target[1:]
             print("target mutated to:", target, f"because of default cloud being {default_cloud}")
@@ -88,7 +96,6 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
             zip_arg = tmp.zip
             share = tmp.share
 
-
     if ":" in source and (source[1] != ":" if len(source) > 1 else True):  # avoid the deceptive case of "C:/"
         source_parts: list[str] = source.split(":")
         cloud = source_parts[0]
@@ -97,6 +104,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
             assert ES not in target, f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised."
             target_obj = absolute(target)
             from machineconfig.utils.path_reduced import PathExtended as PathExtended
+
             remote_path = PathExtended(target_obj).get_remote_path(os_specific=os_specific, root=root, rel2home=rel2home, strict=False)
             source = f"{cloud}:{remote_path.as_posix()}"
         else:  # source path is mentioned, target? maybe.
@@ -116,6 +124,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
             assert ES not in source, "You can't use $ in both source and target. Cyclical inference dependency arised."
             source_obj = absolute(source)
             from machineconfig.utils.path_reduced import PathExtended as PathExtended
+
             remote_path = PathExtended(source_obj).get_remote_path(os_specific=os_specific, root=root, rel2home=rel2home, strict=False)
             target = f"{cloud}:{remote_path.as_posix()}"
         else:  # target path is mentioned, source? maybe.
@@ -124,8 +133,10 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
                 raise NotImplementedError("There is no .get_local_path method yet")
             else:
                 source_obj = absolute(source)
-        if zip_arg and ".zip" not in target: target += ".zip"
-        if encrypt and ".enc" not in target: target += ".enc"
+        if zip_arg and ".zip" not in target:
+            target += ".zip"
+        if encrypt and ".enc" not in target:
+            target += ".enc"
     else:
         console.print(Panel("❌ ERROR: Invalid path configuration\nEither source or target must be a remote path (i.e. machine:path)", title="[bold red]Error[/bold red]", border_style="red"))
         raise ValueError(f"Either source or target must be a remote path (i.e. machine:path)\nGot: source: `{source}`, target: `{target}`")

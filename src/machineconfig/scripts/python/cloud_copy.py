@@ -18,6 +18,7 @@ from machineconfig.utils.utils2 import pprint
 
 console = Console()
 
+
 @retry(stop=stop_after_attempt(3), wait=wait_chain(wait_fixed(1), wait_fixed(4), wait_fixed(9)))
 def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
     console.print(Panel("🚀 Secure File Downloader", title="[bold blue]Downloader[/bold blue]", border_style="blue"))
@@ -63,7 +64,7 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
 def arg_parser() -> None:
     console.print(Panel("☁️  Cloud Copy Utility", title="[bold blue]Cloud Copy[/bold blue]", border_style="blue", width=152))
 
-    parser = argparse.ArgumentParser(description='🚀 Cloud CLI. It wraps rclone with sane defaults for optimum type time.')
+    parser = argparse.ArgumentParser(description="🚀 Cloud CLI. It wraps rclone with sane defaults for optimum type time.")
 
     # positional argument
     parser.add_argument("source", help="📂 file/folder path to be taken from here.")
@@ -80,7 +81,7 @@ def arg_parser() -> None:
     parser.add_argument("--zip", "-z", help="📦 unzip after receiving.", action="store_true", default=ArgsDefaults.zip_)
     parser.add_argument("--os_specific", "-o", help="💻 choose path specific for this OS.", action="store_true", default=ArgsDefaults.os_specific)
 
-    parser.add_argument("--config", "-c",  help="⚙️ path to cloud.json file.", default=None)
+    parser.add_argument("--config", "-c", help="⚙️ path to cloud.json file.", default=None)
 
     args = parser.parse_args()
     args_dict = vars(args)
@@ -117,26 +118,34 @@ def arg_parser() -> None:
     if cloud in source:
         console.print(Panel(f"📥 DOWNLOADING FROM CLOUD\n☁️  Cloud: {cloud}\n📂 Source: {source.replace(cloud + ':', '')}\n🎯 Target: {target}", title="[bold blue]Download[/bold blue]", border_style="blue", width=152))
 
-        PathExtended(target).from_cloud(cloud=cloud, remotepath=source.replace(cloud + ":", ""),
-                            unzip=args_obj.zip, decrypt=args_obj.encrypt, pwd=args_obj.pwd,
-                            overwrite=args_obj.overwrite,
-                            rel2home=args_obj.rel2home, os_specific=args_obj.os_specific, root=args_obj.root, strict=False,
-                            )
+        PathExtended(target).from_cloud(
+            cloud=cloud,
+            remotepath=source.replace(cloud + ":", ""),
+            unzip=args_obj.zip,
+            decrypt=args_obj.encrypt,
+            pwd=args_obj.pwd,
+            overwrite=args_obj.overwrite,
+            rel2home=args_obj.rel2home,
+            os_specific=args_obj.os_specific,
+            root=args_obj.root,
+            strict=False,
+        )
         console.print(Panel("✅ Download completed successfully", title="[bold green]Success[/bold green]", border_style="green", width=152))
 
     elif cloud in target:
         console.print(Panel(f"📤 UPLOADING TO CLOUD\n☁️  Cloud: {cloud}\n📂 Source: {source}\n🎯 Target: {target.replace(cloud + ':', '')}", title="[bold blue]Upload[/bold blue]", border_style="blue", width=152))
 
-        res = PathExtended(source).to_cloud(cloud=cloud, remotepath=target.replace(cloud + ":", ""),
-                                    zip=args_obj.zip, encrypt=args_obj.encrypt, pwd=args_obj.pwd,
-                                    rel2home=args_obj.rel2home, root=args_obj.root, os_specific=args_obj.os_specific, strict=False,
-                                    share=args_obj.share)
+        res = PathExtended(source).to_cloud(
+            cloud=cloud, remotepath=target.replace(cloud + ":", ""), zip=args_obj.zip, encrypt=args_obj.encrypt, pwd=args_obj.pwd, rel2home=args_obj.rel2home, root=args_obj.root, os_specific=args_obj.os_specific, strict=False, share=args_obj.share
+        )
         console.print(Panel("✅ Upload completed successfully", title="[bold green]Success[/bold green]", border_style="green", width=152))
 
         if args_obj.share:
             fname = f".share_url_{cloud}"
-            if PathExtended(source).is_dir(): share_url_path = PathExtended(source).joinpath(fname)
-            else: share_url_path = PathExtended(source).with_suffix(fname)
+            if PathExtended(source).is_dir():
+                share_url_path = PathExtended(source).joinpath(fname)
+            else:
+                share_url_path = PathExtended(source).with_suffix(fname)
             share_url_path.write_text(res.as_url_str(), encoding="utf-8")
             console.print(Panel(f"🔗 SHARE URL GENERATED\n📝 URL file: {share_url_path}\n🌍 {res.as_url_str()}", title="[bold blue]Share[/bold blue]", border_style="blue", width=152))
     else:

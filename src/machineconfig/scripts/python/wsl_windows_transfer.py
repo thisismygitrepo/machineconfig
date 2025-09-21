@@ -1,5 +1,4 @@
-"""TWSL
-"""
+"""TWSL"""
 
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 import argparse
@@ -9,7 +8,7 @@ from pathlib import Path
 
 system = platform.system()  # e.g. "Windows", "Linux", "Darwin" (macOS)
 # HostName          = platform.node()  # e.g. "MY-SURFACE", os.env["COMPUTERNAME") only works for windows.
-UserName          = getpass.getuser()  # e.g: username, os.env["USERNAME") only works for windows.
+UserName = getpass.getuser()  # e.g: username, os.env["USERNAME") only works for windows.
 # UserDomain        = os.environ["USERDOMAIN"]  # e.g. HAD OR MY-SURFACE
 # UserDomainRoaming = PathExtended(os.environ["USERDOMAIN_ROAMINGPROFILE"])  # e.g. SURFACE
 # LogonServer       = os.environ["LOGONSERVER"]  # e.g. "\\MY-SURFACE"
@@ -26,9 +25,11 @@ def main():
     print("🔄 Welcome to the WSL-Windows File Transfer Tool")
     print("=" * 50 + "\n")
 
-    parser = argparse.ArgumentParser(description="""📂 Move and copy files across WSL & Windows.
+    parser = argparse.ArgumentParser(
+        description="""📂 Move and copy files across WSL & Windows.
 The direction is automatically determined by sensing the execution environment.
-Otherwise, a flag must be raised to indicate the direction.""")
+Otherwise, a flag must be raised to indicate the direction."""
+    )
 
     # positional argument
     parser.add_argument("path", help="📁 Path of file/folder to transfer over.")
@@ -57,6 +58,7 @@ Otherwise, a flag must be raised to indicate the direction.""")
     else:
         from machineconfig.utils.ssh import SSH
         import platform
+
         port = int(args.port) if args.port else (2222 if system == "Windows" else 22)
         username = UserName
         hostname = platform.node()
@@ -66,5 +68,5 @@ Otherwise, a flag must be raised to indicate the direction.""")
         print("✅ SSH transfer completed successfully!\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

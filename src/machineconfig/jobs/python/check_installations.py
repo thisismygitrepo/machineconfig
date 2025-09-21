@@ -9,7 +9,7 @@ import platform
 # from rich.console import Console
 # from machineconfig.utils.utils2 import pprint
 # # from rich.progress import track
-from machineconfig.utils.utils import LIBRARY_ROOT
+from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 # from machineconfig.utils.installer import get_installed_cli_apps
 
 # from tqdm import tqdm

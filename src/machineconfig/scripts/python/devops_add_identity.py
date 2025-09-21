@@ -1,6 +1,4 @@
-"""ID
-"""
-
+"""ID"""
 
 # from platform import system
 from machineconfig.utils.path_reduced import PathExtended as PathExtended, modify_text
@@ -62,26 +60,10 @@ def main():
     else:
         current = txt
         print(Panel("📄 Created new SSH config file", expand=False))
-    new_content = modify_text(
-        txt_raw=current,
-        txt_search=txt,
-        txt_alt=txt,
-        replace_line=True,
-        notfound_append=True,
-        prepend=True,
-    )
+    new_content = modify_text(txt_raw=current, txt_search=txt, txt_alt=txt, replace_line=True, notfound_append=True, prepend=True)
     config_path.write_text(new_content, encoding="utf-8")
 
-    panel_complete = Panel(
-        Text(
-            "✅ SSH IDENTITY CONFIGURATION COMPLETE\n"
-            "Identity added to SSH config file\n"
-            "Consider reloading the SSH config to apply changes",
-            justify="center"
-        ),
-        expand=False,
-        border_style="green"
-    )
+    panel_complete = Panel(Text("✅ SSH IDENTITY CONFIGURATION COMPLETE\nIdentity added to SSH config file\nConsider reloading the SSH config to apply changes", justify="center"), expand=False, border_style="green")
     program = f"echo '{panel_complete}'"
 
     success_message = f"🎉 CONFIGURATION SUCCESSFUL\nIdentity added: {path_to_key.name}\nConfig file: {config_path}"
@@ -90,5 +72,5 @@ def main():
     return program
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

@@ -1,4 +1,3 @@
-
 # def main():
 #     print("\n" + "=" * 50)
 #     print("📸 Welcome to the Snapshot Tool")

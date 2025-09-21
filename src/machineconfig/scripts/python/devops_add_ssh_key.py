@@ -1,13 +1,12 @@
-"""SSH
-"""
-
+"""SSH"""
 
 from platform import system
-from machineconfig.utils.utils import LIBRARY_ROOT, display_options
+from machineconfig.utils.source_of_truth import LIBRARY_ROOT
+from machineconfig.utils.options import display_options
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from rich.console import Console
 from rich.panel import Panel
-from rich import box # Import box
+from rich import box  # Import box
 
 
 console = Console()
@@ -46,7 +45,8 @@ def get_add_ssh_key_script(path_to_key: PathExtended):
                 assert place_holder in program, f"This section performs string manipulation on the script {program_path} to add the key to the authorized_keys file. The script has changed and the string {place_holder} is not found."
                 program = program.replace(place_holder, f'$sshfile = "{path_to_key}"')
                 console.print(Panel("🔧 Configured PowerShell script for Windows\n📝 Replaced placeholder with actual key path", title="[bold blue]Configuration[/bold blue]"))
-            else: raise NotImplementedError
+            else:
+                raise NotImplementedError
     else:
         console.print(Panel(f"📝 Creating new authorized_keys file\n🔑 Using key: {path_to_key.name}", title="[bold blue]Action[/bold blue]"))
         if system() == "Linux":
@@ -114,5 +114,5 @@ def main():
     return program
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

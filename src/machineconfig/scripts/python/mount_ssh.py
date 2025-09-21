@@ -1,11 +1,12 @@
-"""Mount a remote SSHFS share on a local directory
-"""
+"""Mount a remote SSHFS share on a local directory"""
 
 from platform import system
 from machineconfig.utils.ssh import SSH
 from machineconfig.utils.terminal import Terminal
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
-from machineconfig.utils.utils import PROGRAM_PATH, choose_ssh_host
+from machineconfig.utils.source_of_truth import PROGRAM_PATH
+from machineconfig.utils.options import choose_ssh_host
+
 
 def main():
     print("\n" + "=" * 50)
@@ -33,7 +34,7 @@ def main():
 
     mount_point = input(f"📂 Enter the mount point directory (e.g., /mnt/network) [Default: ~/data/mount_ssh/{ssh.hostname}]: ")
     if mount_point == "":
-        mount_point = PathExtended.home().joinpath(fr"data/mount_ssh/{ssh.hostname}")
+        mount_point = PathExtended.home().joinpath(rf"data/mount_ssh/{ssh.hostname}")
 
     print(f"\n📁 Mount Point: {mount_point}")
 
@@ -43,7 +44,7 @@ sshfs alex@:/media/dbhdd /media/dbhdd\
 """
         print("\n🔧 Preparing SSHFS mount command for Linux...")
     elif system() == "Windows":
-        txt = fr"""
+        txt = rf"""
 net use {driver_letter} {share_info}
 fusermount -u /mnt/dbhdd
 """
@@ -56,5 +57,6 @@ fusermount -u /mnt/dbhdd
 
     print("🎉 SSHFS Mounting Process Completed!\n")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -1,10 +1,10 @@
-"""Devops Devapps Install
-"""
+"""Devops Devapps Install"""
 
 # import subprocess
 from machineconfig.utils.installer_utils.installer_class import Installer
 from tqdm import tqdm
-from machineconfig.utils.utils import LIBRARY_ROOT, choose_multiple_options
+from machineconfig.utils.source_of_truth import LIBRARY_ROOT
+from machineconfig.utils.options import choose_multiple_options
 from machineconfig.utils.installer import get_installers, install_all, get_all_dicts
 from platform import system
 from typing import Any, Optional, Literal, TypeAlias, get_args
@@ -14,13 +14,12 @@ WHICH_CAT: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemIn
 
 
 def main(which: Optional[WHICH_CAT | str] = None):
-
     if which is not None and which in get_args(WHICH_CAT):  # install by category
         return get_programs_by_category(program_name=which)  # type: ignore
 
     if which is not None:  # install by name
         program_total = ""
-        for a_which in (which.split(",") if type(which) == str else which):
+        for a_which in which.split(",") if type(which) == str else which:
             kv = {}
             for _category, v in get_all_dicts(system=system()).items():
                 kv.update(v)
@@ -70,12 +69,14 @@ def get_programs_by_category(program_name: WHICH_CAT):
             program = ""
 
         case "SystemInstallers":
-            if system() == "Windows": options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text(encoding="utf-8"))
+            if system() == "Windows":
+                options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text(encoding="utf-8"))
             elif system() == "Linux":
                 options_system_1 = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps_dev.sh").read_text(encoding="utf-8"))
                 options_system_2 = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps.sh").read_text(encoding="utf-8"))
                 options_system = {**options_system_1, **options_system_2}
-            else: raise NotImplementedError(f"❌ System {system()} not supported")
+            else:
+                raise NotImplementedError(f"❌ System {system()} not supported")
             program_names = choose_multiple_options(msg="", options=sorted(list(options_system.keys())), header="🚀 CHOOSE DEV APP")
             program = ""
             for name in program_names:
@@ -84,7 +85,8 @@ def get_programs_by_category(program_name: WHICH_CAT):
 │ ⚙️  Installing: {name}
 └────────────────────────────────────────────────────""")
                 sub_program = options_system[name]
-                if sub_program.startswith("#winget"): sub_program = sub_program[1:]
+                if sub_program.startswith("#winget"):
+                    sub_program = sub_program[1:]
                 program += "\n" + sub_program
 
         # case "OtherDevApps":
@@ -105,7 +107,7 @@ def get_programs_by_category(program_name: WHICH_CAT):
         #         print(f"Installing {name}")
         #         sub_program = installers[idx].install_robust(version=None)  # finish the task
 
-        case  "PrecheckedCloudInstaller":
+        case "PrecheckedCloudInstaller":
             # from machineconfig.jobs.python.check_installations import PrecheckedCloudInstaller
             # ci = PrecheckedCloudInstaller()
             # ci.download_safe_apps(name="AllEssentials")
@@ -119,15 +121,15 @@ def parse_apps_installer_linux(txt: str) -> dict[str, Any]:
     res = {}
     for chunk in txts[1:]:
         try:
-            k = chunk.split('----')[0].rstrip().lstrip()
+            k = chunk.split("----")[0].rstrip().lstrip()
             v = "\n".join(chunk.split("\n")[1:])
             res[k] = v
         except IndexError as e:
             print(f"""
 ❌ Error parsing chunk:
-{'-' * 50}
+{"-" * 50}
 {chunk}
-{'-' * 50}""")
+{"-" * 50}""")
             raise e
     return res
 
@@ -135,28 +137,31 @@ def parse_apps_installer_linux(txt: str) -> dict[str, Any]:
 def parse_apps_installer_windows(txt: str) -> dict[str, Any]:
     chunks: list[str] = []
     for idx, item in enumerate(txt.split(sep="winget install")):
-        if idx == 0: continue
-        if idx == 1: chunks.append(item)
-        else: chunks.append("winget install" + item)
+        if idx == 0:
+            continue
+        if idx == 1:
+            chunks.append(item)
+        else:
+            chunks.append("winget install" + item)
     # progs = L(txt.splitlines()).filter(lambda x: x.startswith("winget ") or x.startswith("#winget"))
     res: dict[str, str] = {}
     for a_chunk in chunks:
         try:
-            name = a_chunk.split('--name ')[1]
+            name = a_chunk.split("--name ")[1]
             if "--Id" not in name:
                 print(f"⚠️  Warning: {name} does not have an Id, skipping")
                 continue
-            name = name.split(' --Id ', maxsplit=1)[0].strip('"').strip('"')
+            name = name.split(" --Id ", maxsplit=1)[0].strip('"').strip('"')
             res[name] = a_chunk
         except IndexError as e:
             print(f"""
 ❌ Error parsing chunk:
-{'-' * 50}
+{"-" * 50}
 {a_chunk}
-{'-' * 50}""")
+{"-" * 50}""")
             raise e
     return res
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

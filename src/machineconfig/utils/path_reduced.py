@@ -328,7 +328,16 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         return dest_path
 
     def _return(
-        self, res: Union["PathExtended", "Path"], operation: Literal["rename", "delete", "Whack"], inplace: bool = False, overwrite: bool = False, orig: bool = False, verbose: bool = False, strict: bool = True, msg: str = "", __delayed_msg__: str = ""
+        self,
+        res: Union["PathExtended", "Path"],
+        operation: Literal["rename", "delete", "Whack"],
+        inplace: bool = False,
+        overwrite: bool = False,
+        orig: bool = False,
+        verbose: bool = False,
+        strict: bool = True,
+        msg: str = "",
+        __delayed_msg__: str = "",
     ) -> "PathExtended":
         res = PathExtended(res)
         if inplace:
@@ -587,7 +596,9 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             else:
                 raw = glob(str(slf.joinpath(pattern)))  # glob ignroes dot and hidden files
         if ".zip" not in str(slf) and compressed:
-            filters_notin = [PathExtended(comp_file).search(pattern=pattern, r=r, files=files, folders=folders, compressed=True, dotfiles=dotfiles, filters_total=filters_total, not_in=not_in, win_order=win_order) for comp_file in self.search("*.zip", r=r)]
+            filters_notin = [
+                PathExtended(comp_file).search(pattern=pattern, r=r, files=files, folders=folders, compressed=True, dotfiles=dotfiles, filters_total=filters_total, not_in=not_in, win_order=win_order) for comp_file in self.search("*.zip", r=r)
+            ]
             from functools import reduce
 
             # haha = List(filters_notin).reduce(func=lambda x, y: x + y)
@@ -748,7 +759,9 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             res = self
         return res
 
-    def encrypt(self, key: Optional[bytes] = None, pwd: Optional[str] = None, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, verbose: bool = True, suffix: str = ".enc", inplace: bool = False, orig: bool = False) -> "PathExtended":
+    def encrypt(
+        self, key: Optional[bytes] = None, pwd: Optional[str] = None, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, verbose: bool = True, suffix: str = ".enc", inplace: bool = False, orig: bool = False
+    ) -> "PathExtended":
         # see: https://stackoverflow.com/questions/42568262/how-to-encrypt-text-with-a-password-in-python & https://stackoverflow.com/questions/2490334/simple-way-to-encode-a-string-according-to-a-password"""
         slf = self.expanduser().resolve()
         path = self._resolve_path(folder, name, path, slf.name + suffix)
