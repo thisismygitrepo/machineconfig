@@ -18,12 +18,10 @@ from machineconfig.utils.source_of_truth import PROGRAM_PATH
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.io_save import save_toml
 from machineconfig.utils.utils2 import randstr, read_toml
-from machineconfig.scripts.python.fire_jobs_args import get_args, FireJobArgs
+from machineconfig.scripts.python.fire_jobs_args import get_args, FireJobArgs, extract_kwargs
 import platform
 from typing import Optional
 import os
-
-str2obj = {"True": True, "False": False, "None": None}
 
 
 def main(args: FireJobArgs) -> None:
@@ -49,20 +47,8 @@ def main(args: FireJobArgs) -> None:
     if ipy_profile is None: ipy_profile = "default"
     activate_ve_line = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/machineconfig/.venv")
 
-    # Convert args.kw to dictionary
-    if choice_file.suffix == ".py":
-        if args.kw is not None:
-            assert len(args.kw) % 2 == 0, f"args.kw must be a list of even length. Got {len(args.kw)}"
-            kwargs = dict(zip(args.kw[::2], args.kw[1::2]))
-            for key, value in kwargs.items():
-                if value in str2obj:
-                    kwargs[key] = str2obj[value]
-            if args.function is None:  # if user passed arguments and forgot to pass function, then assume they want to run the main function.
-                args.choose_function = True
-        else:
-            kwargs = {}
-    else:
-        kwargs = {}
+    if choice_file.suffix == ".py": kwargs = extract_kwargs(args)
+    else: kwargs = {}
 
     # =========================  choosing function to run
     choice_function: Optional[str] = None  # Initialize to avoid unbound variable
@@ -101,7 +87,6 @@ def main(args: FireJobArgs) -> None:
     if choice_file.suffix == ".py":
         if args.streamlit:
             import socket
-
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             try:
                 s.connect(("8.8.8.8", 1))
@@ -150,7 +135,6 @@ def main(args: FireJobArgs) -> None:
             message = f"🚀 Streamlit app is running @:\n1- http://{local_ip_v4}:{port}\n2- http://{computer_name}:{port}\n3- http://localhost:{port}"
             from rich.panel import Panel
             from rich import print as rprint
-
             rprint(Panel(message))
             exe = f"streamlit run --server.address 0.0.0.0 --server.headless true --server.port {port}"
             # exe = f"cd '{choice_file.parent}'; " + exe
@@ -167,9 +151,7 @@ def main(args: FireJobArgs) -> None:
     else:
         raise NotImplementedError(f"File type {choice_file.suffix} not supported, in the sense that I don't know how to fire it.")
 
-    if (
-        args.module or (args.debug and args.choose_function)
-    ):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
+    if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file}"
         import_line = get_import_module_code(str(choice_file))
         if repo_root is not None:

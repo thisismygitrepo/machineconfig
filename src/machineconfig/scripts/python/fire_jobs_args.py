@@ -65,3 +65,19 @@ def get_args() -> FireJobArgs:
         raise ex
     args = FireJobArgs(**vars(args_raw))
     return args
+
+
+def extract_kwargs(args: FireJobArgs) -> dict[str, object]:
+    str2obj = {"True": True, "False": False, "None": None}
+    if args.kw is not None:
+        assert len(args.kw) % 2 == 0, f"args.kw must be a list of even length. Got {len(args.kw)}"
+        kwargs = dict(zip(args.kw[::2], args.kw[1::2]))
+        kwargs: dict[str, object]
+        for key, value in kwargs.items():
+            if value in str2obj:
+                kwargs[key] = str2obj[value]
+        if args.function is None:  # if user passed arguments and forgot to pass function, then assume they want to run the main function.
+            args.choose_function = True
+    else:
+        kwargs = {}
+    return kwargs

@@ -1,7 +1,12 @@
 
 from pathlib import Path
 from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig, LayoutsFile
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+from machineconfig.utils.path import match_file_name, sanitize_path
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
+
+if TYPE_CHECKING:
+    from machineconfig.scripts.python.fire_jobs_args import FireJobArgs
 
 
 def select_layout(layouts_json_file: Path, layout_name: Optional[str]):
@@ -20,5 +25,9 @@ def launch_layout(layout_config: LayoutConfig) -> Optional[Exception]:
     return None
 
 
-def handle_layout_args(args):
-        launch_layout(layout_config=select_layout(layouts_json_file=choice_file, layout_name=args.function))
+def handle_layout_args(args: "FireJobArgs") -> None:
+    path_obj = sanitize_path(args.path)
+    if not path_obj.exists():
+        choice_file = match_file_name(sub_string=args.path, search_root=PathExtended.cwd(), suffixes={".json"})
+    else: choice_file = path_obj
+    launch_layout(layout_config=select_layout(layouts_json_file=choice_file, layout_name=args.function))
