@@ -18,47 +18,15 @@ from machineconfig.utils.source_of_truth import PROGRAM_PATH
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.io_save import save_toml
 from machineconfig.utils.utils2 import randstr, read_toml
+from machineconfig.scripts.python.fire_jobs_args import get_args, FireJobArgs
 import platform
 from typing import Optional
-import argparse
 import os
-
 
 str2obj = {"True": True, "False": False, "None": None}
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("path", nargs="?", type=str, help="The directory containing the jobs", default=".")
-    parser.add_argument("function", nargs="?", type=str, help="Fuction to run", default=None)
-    parser.add_argument("--ve", "-v", type=str, help="virtual enviroment name", default="")
-    parser.add_argument("--cmd", "-B", action="store_true", help="Create a cmd fire command to launch the the job asynchronously.")
-    parser.add_argument("--interactive", "-i", action="store_true", help="Whether to run the job interactively using IPython")
-    parser.add_argument("--debug", "-d", action="store_true", help="debug")
-    parser.add_argument("--choose_function", "-c", action="store_true", help="debug")
-    parser.add_argument("--loop", "-l", action="store_true", help="infinite recusion (runs again after completion/interruption)")
-    parser.add_argument("--jupyter", "-j", action="store_true", help="open in a jupyter notebook")
-    parser.add_argument("--submit_to_cloud", "-C", action="store_true", help="submit to cloud compute")
-    parser.add_argument("--remote", "-r", action="store_true", help="launch on a remote machine")
-    parser.add_argument("--module", "-m", action="store_true", help="launch the main file")
-    parser.add_argument("--streamlit", "-S", action="store_true", help="run as streamlit app")
-    parser.add_argument("--environment", "-E", type=str, help="Choose ip, localhost, hostname or arbitrary url", default="")
-    parser.add_argument("--holdDirectory", "-D", action="store_true", help="hold current directory and avoid cd'ing to the script directory")
-    parser.add_argument("--PathExport", "-P", action="store_true", help="augment the PYTHONPATH with repo root.")
-    parser.add_argument("--git_pull", "-g", action="store_true", help="Start by pulling the git repo")
-    parser.add_argument("--optimized", "-O", action="store_true", help="Run the optimized version of the function")
-    parser.add_argument("--Nprocess", "-p", type=int, help="Number of processes to use", default=1)
-    parser.add_argument("--zellij_tab", "-z", type=str, dest="zellij_tab", help="open in a new zellij tab")
-    parser.add_argument("--watch", "-w", action="store_true", help="watch the file for changes")
-    parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ... (meaning k1=v1, k2=v2, etc)")
-    parser.add_argument("--layout", "-L", action="store_true", help="use layout configuration (Zellij Or WindowsTerminal)")
-
-    try: args = parser.parse_args()
-    except Exception as ex:
-        print(f"❌ Failed to parse arguments: {ex}")
-        parser.print_help()
-        raise ex
-
+def main(args: FireJobArgs) -> None:
     if args.layout:
         from machineconfig.scripts.python.fire_jobs_helper1 import handle_layout_args
         handle_layout_args(args)
@@ -367,4 +335,5 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
 
 if __name__ == "__main__":
     # options, func_args = parse_pyfile(file_path="C:/Users/aalsaf01/code/machineconfig/myresources/crocodile/core.py")
-    main()
+    args = get_args()
+    main(args)
