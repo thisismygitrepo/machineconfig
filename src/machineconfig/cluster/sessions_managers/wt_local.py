@@ -95,12 +95,12 @@ class WTLayoutGenerator:
             if not tab["startDir"].strip():
                 raise ValueError(f"Invalid startDir for tab '{tab['tabName']}': {tab['startDir']}")
 
-    def create_wt_layout(self, layout_config: LayoutConfig, output_dir: Optional[str] = None, session_name: Optional[str] = None) -> str:
+    def create_wt_layout(self, layout_config: LayoutConfig, output_dir: Optional[str] = None) -> str:
         WTLayoutGenerator._validate_layout_config(layout_config)
         logger.info(f"Creating Windows Terminal layout '{layout_config['layoutName']}' with {len(layout_config['layoutTabs'])} tabs")
 
         # Store session name and layout config for status checking
-        self.session_name = session_name or layout_config["layoutName"]
+        self.session_name = layout_config["layoutName"]
         self.layout_config = layout_config.copy()
 
         # Generate Windows Terminal command
@@ -380,17 +380,17 @@ def create_wt_layout(layout_config: LayoutConfig, output_dir: Optional[str] = No
     return generator.create_wt_layout(layout_config, output_dir)
 
 
-def run_wt_layout(layout_config: LayoutConfig, session_name: Optional[str] = None) -> str:
+def run_wt_layout(layout_config: LayoutConfig) -> str:
     """Create and run a Windows Terminal layout."""
     generator = WTLayoutGenerator()
-    script_path = generator.create_wt_layout(layout_config, session_name=session_name)
+    script_path = generator.create_wt_layout(layout_config)
 
     # Execute the script
     cmd = f'powershell -ExecutionPolicy Bypass -File "{script_path}"'
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
 
     if result.returncode == 0:
-        print(f"Windows Terminal layout is running @ {session_name}")
+        print(f"Windows Terminal layout is running @ {layout_config['layoutName']}")
         return script_path
     else:
         logger.error(f"Failed to run Windows Terminal layout: {result.stderr}")
@@ -414,7 +414,7 @@ if __name__ == "__main__":
     try:
         # Create layout using the generator
         generator = WTLayoutGenerator()
-        script_path = generator.create_wt_layout(sample_layout, session_name="test_session")
+        script_path = generator.create_wt_layout(sample_layout)
         print(f"✅ Windows Terminal layout created: {script_path}")
 
         # Show preview

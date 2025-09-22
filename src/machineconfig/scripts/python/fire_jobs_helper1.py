@@ -22,8 +22,17 @@ def select_layout(layouts_json_file: Path, layout_name: Optional[str]):
     return layout_chosen
 
 def launch_layout(layout_config: LayoutConfig) -> Optional[Exception]:
-    from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
-    run_zellij_layout(layout_config=layout_config)
+    import platform
+    if platform.system() == "Linux" or platform.system() == "Darwin":
+        print("🧑‍💻 Launching layout using Zellij terminal multiplexer...")
+        from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
+        run_zellij_layout(layout_config=layout_config)
+    elif platform.system() == "Windows":
+        print("🧑‍💻 Launching layout using Windows Terminal...")
+        from machineconfig.cluster.sessions_managers.wt_local import run_wt_layout
+        run_wt_layout(layout_config=layout_config)
+    else:
+        print(f"❌ Unsupported platform: {platform.system()}")
     return None
 
 

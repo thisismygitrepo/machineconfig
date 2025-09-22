@@ -19,7 +19,7 @@ TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "
 class WTLocalManager:
     """Manages multiple local Windows Terminal sessions and monitors their tabs and processes."""
 
-    def __init__(self, session_layouts: Dict[str, LayoutConfig], session_name_prefix: str = "LocalWTMgr"):
+    def __init__(self, session_layouts: list[LayoutConfig], session_name_prefix: str = "LocalWTMgr"):
         """
         Initialize the local Windows Terminal manager.
 
@@ -33,10 +33,9 @@ class WTLocalManager:
         self.managers: List[WTLayoutGenerator] = []
 
         # Create a WTLayoutGenerator for each session
-        for session_name, layout_config in session_layouts.items():
+        for layout_config in session_layouts:
             manager = WTLayoutGenerator()
-            full_session_name = f"{self.session_name_prefix}_{session_name}"
-            manager.create_wt_layout(layout_config=layout_config, session_name=full_session_name)
+            manager.create_wt_layout(layout_config=layout_config,)
             self.managers.append(manager)
 
         logger.info(f"Initialized WTLocalManager with {len(self.managers)} sessions")
@@ -294,7 +293,7 @@ class WTLocalManager:
         config_file.write_text(text, encoding="utf-8")
 
         # Save metadata
-        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "sessions": list(self.session_layouts.keys()), "manager_type": "WTLocalManager"}
+        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "sessions": [item["layoutName"] for item in self.session_layouts], "manager_type": "WTLocalManager"}
         metadata_file = session_dir / "metadata.json"
         text = json.dumps(metadata, indent=2, ensure_ascii=False)
         metadata_file.write_text(text, encoding="utf-8")
@@ -453,8 +452,8 @@ class WTLocalManager:
 
 if __name__ == "__main__":
     # Example usage with new schema
-    sample_sessions: Dict[str, LayoutConfig] = {
-        "development": {
+    sample_sessions: list[LayoutConfig] = [
+        {
             "layoutName": "DevelopmentEnv",
             "layoutTabs": [
                 {"tabName": "🚀Frontend", "startDir": "~/code/myapp/frontend", "command": "npm run dev"},
@@ -462,7 +461,7 @@ if __name__ == "__main__":
                 {"tabName": "📊Monitor", "startDir": "~", "command": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10"},
             ]
         },
-        "testing": {
+        {
             "layoutName": "TestingEnv", 
             "layoutTabs": [
                 {"tabName": "🧪Tests", "startDir": "~/code/myapp", "command": "pytest --watch"},
@@ -470,7 +469,7 @@ if __name__ == "__main__":
                 {"tabName": "📝Logs", "startDir": "~/logs", "command": "Get-Content app.log -Wait"},
             ]
         },
-        "deployment": {
+        {
             "layoutName": "DeploymentEnv",
             "layoutTabs": [
                 {"tabName": "🐳Docker", "startDir": "~/code/myapp", "command": "docker-compose up"},
@@ -478,7 +477,7 @@ if __name__ == "__main__":
                 {"tabName": "📈Metrics", "startDir": "~", "command": 'Get-Counter "\\Processor(_Total)\\% Processor Time" -SampleInterval 2 -MaxSamples 30'},
             ]
         },
-    }
+    ]
 
     try:
         # Create the local manager
