@@ -6,7 +6,6 @@ import sys
 import subprocess
 from platform import system
 from typing import Any, Optional, Union, Callable, TypeAlias, Literal
-import os
 # import warnings
 
 
@@ -99,129 +98,6 @@ def validate_name(astring: str, replace: str = "_") -> str:
 
 def timestamp(fmt: Optional[str] = None, name: Optional[str] = None) -> str:
     return ((name + "_") if name is not None else "") + datetime.now().strftime(fmt or "%Y-%m-%d-%I-%M-%S-%p-%f")  # isoformat is not compatible with file naming convention, fmt here is.
-
-
-def modify_text(txt_raw: str, txt_search: str, txt_alt: Union[str, Callable[[str], str]], replace_line: bool = True, notfound_append: bool = False, prepend: bool = False, strict: bool = False):
-    lines, bingo = txt_raw.split("\n"), False
-    if not replace_line:  # no need for line splitting
-        assert isinstance(txt_alt, str), f"txt_alt must be a string if notfound_append is True. It is not: {txt_alt}"
-        if txt_search in txt_raw:
-            return txt_raw.replace(txt_search, txt_alt)
-        return txt_raw + "\n" + txt_alt if notfound_append else txt_raw
-    for idx, line in enumerate(lines):
-        if txt_search in line:
-            if isinstance(txt_alt, str):
-                lines[idx] = txt_alt
-            elif callable(txt_alt):
-                lines[idx] = txt_alt(line)
-            bingo = True
-    if strict and not bingo:
-        raise ValueError(f"txt_search `{txt_search}` not found in txt_raw `{txt_raw}`")
-    if bingo is False and notfound_append is True:
-        assert isinstance(txt_alt, str), f"txt_alt must be a string if notfound_append is True. It is not: {txt_alt}"
-        if prepend:
-            lines.insert(0, txt_alt)
-        else:
-            lines.append(txt_alt)  # txt not found, add it anyway.
-    return "\n".join(lines)
-
-
-class Compression:
-    @staticmethod
-    def compress_folder(
-        root_dir: str, op_path: str, base_dir: str, fmt: SHUTIL_FORMATS = "zip", verbose: bool = False, **kwargs: Any
-    ) -> str:  # shutil works with folders nicely (recursion is done interally) # directory to be archived: root_dir\base_dir, unless base_dir is passed as absolute path. # when archive opened; base_dir will be found."""
-        base_name = op_path[:-4] if op_path.endswith(".zip") else op_path  # .zip is added automatically by library, hence we'd like to avoid repeating it if user sent it.
-        import shutil
-
-        return shutil.make_archive(base_name=base_name, format=fmt, root_dir=root_dir, base_dir=base_dir, verbose=verbose, **kwargs)  # returned path possible have added extension.
-
-    @staticmethod
-    def zip_file(ip_path: str, op_path: str, arcname: Optional[str] = None, password: Optional[bytes] = None, mode: FILE_MODE = "w", **kwargs: Any):
-        """arcname determines the directory of the file being archived inside the archive. Defaults to same as original directory except for drive.
-        When changed, it should still include the file path in its end. If arcname = filename without any path, then, it will be in the root of the archive."""
-        import zipfile
-
-        with zipfile.ZipFile(op_path, mode=mode) as jungle_zip:
-            if password is not None:
-                jungle_zip.setpassword(pwd=password)
-            jungle_zip.write(filename=str(ip_path), arcname=str(arcname) if arcname is not None else None, compress_type=zipfile.ZIP_DEFLATED, **kwargs)
-        return Path(op_path)
-
-    @staticmethod
-    def unzip(ip_path: str, op_path: str, fname: Optional[str] = None, password: Optional[bytes] = None, memory: bool = False, **kwargs: Any) -> Path | dict[str, bytes] | bytes:
-        import zipfile
-
-        with zipfile.ZipFile(str(ip_path), "r") as zipObj:
-            if memory:
-                return {name: zipObj.read(name) for name in zipObj.namelist()} if fname is None else zipObj.read(fname)
-            if fname is None:
-                zipObj.extractall(op_path, pwd=password, **kwargs)
-                return Path(op_path)
-            else:
-                zipObj.extract(member=str(fname), path=str(op_path), pwd=password)
-                return Path(op_path) / fname
-
-    @staticmethod
-    def gz(file: str, op_path: str):  # see this on what to use: https://stackoverflow.com/questions/10540935/what-is-the-difference-between-tar-and-zip
-        import shutil
-        import gzip
-
-        with open(file, "rb") as f_in:
-            with gzip.open(op_path, "wb") as f_out:
-                shutil.copyfileobj(f_in, f_out)
-        return Path(op_path)
-
-    @staticmethod
-    def ungz(path: str, op_path: str):
-        import gzip
-        import shutil
-
-        with gzip.open(path, "r") as f_in, open(op_path, "wb") as f_out:
-            shutil.copyfileobj(f_in, f_out)
-        return Path(op_path)
-
-    @staticmethod
-    def unbz(path: str, op_path: str):
-        import bz2
-        import shutil
-
-        with bz2.BZ2File(path, "r") as fr, open(str(op_path), "wb") as fw:
-            shutil.copyfileobj(fr, fw)
-        return Path(op_path)
-
-    @staticmethod
-    def xz(path: str, op_path: str):
-        import lzma
-
-        with lzma.open(op_path, "w") as f:
-            f.write(Path(path).read_bytes())
-
-    @staticmethod
-    def unxz(ip_path: str, op_path: str):
-        import lzma
-
-        with lzma.open(ip_path) as file:
-            Path(op_path).write_bytes(file.read())
-
-    @staticmethod
-    def tar(path: str, op_path: str):
-        import tarfile
-
-        with tarfile.open(op_path, "w:gz") as tar_:
-            tar_.add(str(path), arcname=os.path.basename(path))
-        return Path(op_path)
-
-    @staticmethod
-    def untar(path: str, op_path: str, fname: Optional[str] = None, mode: Literal["r", "w"] = "r", **kwargs: Any):
-        import tarfile
-
-        with tarfile.open(str(path), mode) as file:
-            if fname is None:
-                file.extractall(path=op_path, **kwargs)  # extract all files in the archive
-            else:
-                file.extract(fname, **kwargs)
-        return Path(op_path)
 
 
 class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
@@ -327,48 +203,6 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         dest_path.write_bytes(response.content)
         return dest_path
 
-    def _return(
-        self,
-        res: Union["PathExtended", "Path"],
-        operation: Literal["rename", "delete", "Whack"],
-        inplace: bool = False,
-        overwrite: bool = False,
-        orig: bool = False,
-        verbose: bool = False,
-        strict: bool = True,
-        msg: str = "",
-        __delayed_msg__: str = "",
-    ) -> "PathExtended":
-        res = PathExtended(res)
-        if inplace:
-            assert self.exists(), f"`inplace` flag is only relevant if the path exists. It doesn't {self}"
-            if operation == "rename":
-                if overwrite and res.exists():
-                    res.delete(sure=True, verbose=verbose)
-                if not overwrite and res.exists():
-                    if strict:
-                        raise FileExistsError(f"❌ RENAMING failed. File `{res}` already exists.")
-                    else:
-                        if verbose:
-                            print(f"⚠️ SKIPPED RENAMING {repr(self)} ➡️ {repr(res)} because FileExistsError and scrict=False policy.")
-                        return self if orig else res
-                self.rename(res)
-                msg = msg or f"RENAMED {repr(self)} ➡️ {repr(res)}"
-            elif operation == "delete":
-                self.delete(sure=True, verbose=False)
-                __delayed_msg__ = f"DELETED 🗑️❌ {repr(self)}."
-        if verbose and msg != "":
-            try:
-                print(msg)  # emojie print error.
-            except UnicodeEncodeError:
-                print("P._return warning: UnicodeEncodeError, could not print message.")
-        if verbose and __delayed_msg__ != "":
-            try:
-                print(__delayed_msg__)
-            except UnicodeEncodeError:
-                print("P._return warning: UnicodeEncodeError, could not print message.")
-        return self if orig else res
-
     def append(self, name: str = "", index: bool = False, suffix: Optional[str] = None, verbose: bool = True, **kwargs: Any) -> "PathExtended":
         """Returns a new path object with the name appended to the stem of the path. If `index` is True, the name will be the index of the path in the parent directory."""
         if index:
@@ -377,10 +211,59 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         full_name = name or ("_" + str(timestamp()))
         full_suffix = suffix or "".join(("bruh" + self).suffixes)
         subpath = self.name.split(".")[0] + full_name + full_suffix
-        return self._return(self.parent.joinpath(subpath), operation="rename", verbose=verbose, **kwargs)
+        dest = self.parent.joinpath(subpath)
+        res = PathExtended(dest)
+        inplace = bool(kwargs.get("inplace", False))
+        overwrite = bool(kwargs.get("overwrite", False))
+        orig = bool(kwargs.get("orig", False))
+        strict = bool(kwargs.get("strict", True))
+        if inplace:
+            assert self.exists(), f"`inplace` flag is only relevant if the path exists. It doesn't {self}"
+            if overwrite and res.exists():
+                res.delete(sure=True, verbose=verbose)
+            if not overwrite and res.exists():
+                if strict:
+                    raise FileExistsError(f"❌ RENAMING failed. File `{res}` already exists.")
+                else:
+                    if verbose:
+                        try:
+                            print(f"⚠️ SKIPPED RENAMING {repr(self)} ➡️ {repr(res)} because FileExistsError and scrict=False policy.")
+                        except UnicodeEncodeError:
+                            print("P._return warning: UnicodeEncodeError, could not print message.")
+                    return self if orig else res
+            self.rename(res)
+            if verbose:
+                try:
+                    print(f"RENAMED {repr(self)} ➡️ {repr(res)}")
+                except UnicodeEncodeError:
+                    print("P._return warning: UnicodeEncodeError, could not print message.")
+        return self if orig else res
 
     def with_name(self, name: str, verbose: bool = True, inplace: bool = False, overwrite: bool = False, **kwargs: Any):
-        return self._return(self.parent / name, verbose=verbose, operation="rename", inplace=inplace, overwrite=overwrite, **kwargs)
+        res = PathExtended(self.parent / name)
+        orig = bool(kwargs.get("orig", False))
+        strict = bool(kwargs.get("strict", True))
+        if inplace:
+            assert self.exists(), f"`inplace` flag is only relevant if the path exists. It doesn't {self}"
+            if overwrite and res.exists():
+                res.delete(sure=True, verbose=verbose)
+            if not overwrite and res.exists():
+                if strict:
+                    raise FileExistsError(f"❌ RENAMING failed. File `{res}` already exists.")
+                else:
+                    if verbose:
+                        try:
+                            print(f"⚠️ SKIPPED RENAMING {repr(self)} ➡️ {repr(res)} because FileExistsError and scrict=False policy.")
+                        except UnicodeEncodeError:
+                            print("P._return warning: UnicodeEncodeError, could not print message.")
+                    return self if orig else res
+            self.rename(res)
+            if verbose:
+                try:
+                    print(f"RENAMED {repr(self)} ➡️ {repr(res)}")
+                except UnicodeEncodeError:
+                    print("P._return warning: UnicodeEncodeError, could not print message.")
+        return self if orig else res
 
     def __deepcopy__(self, *args: Any, **kwargs: Any) -> "PathExtended":
         _ = args, kwargs
@@ -400,14 +283,14 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         return (res[1:] if str(res[0]) in {"\\", "/"} else res) if len(res.parts) else res  # paths starting with "/" are problematic. e.g ~ / "/path" doesn't work.
 
     def rel2home(self) -> "PathExtended":
-        return self._return(PathExtended(self.expanduser().absolute().relative_to(Path.home())), operation="Whack")  # very similat to collapseuser but without "~" being added so its consistent with rel2cwd.
+        return PathExtended(self.expanduser().absolute().relative_to(Path.home()))  # very similat to collapseuser but without "~" being added so its consistent with rel2cwd.
 
     def collapseuser(self, strict: bool = True, placeholder: str = "~") -> "PathExtended":  # opposite of `expanduser` resolve is crucial to fix Windows cases insensitivty problem.
         if strict:
             assert str(self.expanduser().absolute().resolve()).startswith(str(PathExtended.home())), ValueError(f"`{PathExtended.home()}` is not in the subpath of `{self}`")
         if str(self).startswith(placeholder) or PathExtended.home().as_posix() not in self.resolve().as_posix():
             return self
-        return self._return(res=PathExtended(placeholder) / (self.expanduser().absolute().resolve(strict=strict) - PathExtended.home()), operation="Whack")  # resolve also solves the problem of Windows case insensitivty.
+        return PathExtended(placeholder) / (self.expanduser().absolute().resolve(strict=strict) - PathExtended.home())  # resolve also solves the problem of Windows case insensitivty.
 
     def __getitem__(self, slici: Union[int, list[int], slice]):
         if isinstance(slici, list):
@@ -467,27 +350,9 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                 tmp = 1024**3
         return round(number=total_size / tmp, ndigits=1)
 
-    # def time(self, which: Literal["m", "c", "a"] = "m", **kwargs: Any):
-    #     """* `m`: last mofidication of content, i.e. the time it was created.
-    #     * `c`: last status change (its inode is changed, permissions, path, but not content)
-    #     * `a`: last access (read)
-    #     """
-    #     warnings.warn(
-    #         "The 'time' method is deprecated. Use 'datetime.fromtimestamp(self.stat().st_mtime)' for 'm', "
-    #         "'datetime.fromtimestamp(self.stat().st_ctime)' for 'c', or "
-    #         "'datetime.fromtimestamp(self.stat().st_atime)' for 'a' instead.",
-    #         DeprecationWarning,
-    #         stacklevel=2
-    #     )
-    #     match which:
-    #         case "m": tmp = self.stat().st_mtime
-    #         case "a": tmp = self.stat().st_atime
-    #         case "c": tmp = self.stat().st_ctime
-    #     return datetime.fromtimestamp(tmp, **kwargs)
-
     # ================================ String Nature management ====================================
     def clickable(self) -> "PathExtended":
-        return self._return(res=PathExtended(self.expanduser().resolve().as_uri()), operation="Whack")
+        return PathExtended(self.expanduser().resolve().as_uri())
 
     def as_url_str(self) -> "str":
         return self.as_posix().replace("https:/", "https://").replace("http:/", "http://")
@@ -536,7 +401,12 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             time.sleep(1)  # wait=True equivalent
         else:
             super(PathExtended, self.expanduser()).symlink_to(str(target_obj))
-        return self._return(target_obj, operation="Whack", inplace=False, orig=orig, verbose=verbose, msg=f"LINKED {repr(self)} ➡️ {repr(target_obj)}")
+        if verbose:
+            try:
+                print(f"LINKED {repr(self)} ➡️ {repr(target_obj)}")
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        return self if orig else target_obj
 
     def resolve(self, strict: bool = False):
         try:
@@ -575,7 +445,6 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         if ".zip" in str(slf) and compressed:  # the root (self) is itself a zip archive (as opposed to some search results are zip archives)
             import zipfile
             import fnmatch
-
             root = slf.as_zip_path()
             if not r:
                 raw = list(root.iterdir())
@@ -654,14 +523,40 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         if arcname_obj.name != slf.name:
             arcname_obj /= slf.name  # arcname has to start from somewhere and end with filename
         if slf.is_file():
-            path_resolved = Compression.zip_file(ip_path=str(slf), op_path=str(path_resolved + ".zip" if path_resolved.suffix != ".zip" else path_resolved), arcname=str(arcname_obj), mode=mode, **kwargs)
+            import zipfile
+
+            op_zip = str(path_resolved + ".zip" if path_resolved.suffix != ".zip" else path_resolved)
+            with zipfile.ZipFile(op_zip, mode=mode) as jungle_zip:
+                jungle_zip.write(filename=str(slf), arcname=str(arcname_obj), compress_type=zipfile.ZIP_DEFLATED, **kwargs)
+            path_resolved = PathExtended(op_zip)
         else:
+            import shutil
+
             if content:
                 root_dir, base_dir = slf, "."
             else:
                 root_dir, base_dir = slf.split(at=str(arcname_obj[0]), sep=1)[0], str(arcname_obj)
-            path_resolved = PathExtended(Compression.compress_folder(root_dir=str(root_dir), op_path=str(path_resolved), base_dir=base_dir, fmt="zip", **kwargs))  # TODO: see if this supports mode
-        return self._return(path_resolved, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"ZIPPED {repr(slf)} ==>  {repr(path)}")
+            base_name = str(path_resolved)[:-4] if str(path_resolved).endswith(".zip") else str(path_resolved)
+            op_zip = shutil.make_archive(base_name=base_name, format="zip", root_dir=str(root_dir), base_dir=str(base_dir), verbose=False, **kwargs)
+            path_resolved = PathExtended(op_zip)
+        msg = f"ZIPPED {repr(slf)} ==>  {repr(path)}"
+        res_out = PathExtended(path_resolved)
+        ret = self if orig else res_out
+        delayed_msg = ""
+        if inplace:
+            self.delete(sure=True, verbose=False)
+            delayed_msg = f"DELETED 🗑️❌ {repr(self)}."
+        if verbose:
+            try:
+                print(msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        if verbose and delayed_msg != "":
+            try:
+                print(delayed_msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        return ret
 
     def unzip(
         self,
@@ -716,29 +611,126 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                     # List().apply(lambda item: P(folder).joinpath(name or "", item.replace("/", "")).delete(sure=True, verbose=True))
                     for item in mylist:
                         PathExtended(folder).joinpath(name or "", item.replace("/", "")).delete(sure=True, verbose=True)
-            result = Compression.unzip(str(zipfile__), str(folder), None if name is None else PathExtended(name).as_posix())
-            assert isinstance(result, Path)
-        return self._return(PathExtended(result), inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNZIPPED {repr(zipfile__)} ==> {repr(result)}")
+            import zipfile
+
+            target_name = None if name is None else PathExtended(name).as_posix()
+            with zipfile.ZipFile(str(zipfile__), "r") as zipObj:
+                if target_name is None:
+                    zipObj.extractall(str(folder))
+                    result = Path(str(folder))
+                else:
+                    zipObj.extract(member=str(target_name), path=str(folder))
+                    result = Path(str(folder)) / target_name
+        res_path = PathExtended(result)
+        msg = f"UNZIPPED {repr(zipfile__)} ==> {repr(result)}"
+        ret = self if orig else PathExtended(res_path)
+        delayed_msg = ""
+        if inplace:
+            self.delete(sure=True, verbose=False)
+            delayed_msg = f"DELETED 🗑️❌ {repr(self)}."
+        if verbose:
+            try:
+                print(msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        if verbose and delayed_msg != "":
+            try:
+                print(delayed_msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        return ret
 
     def untar(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "PathExtended":
         op_path = self._resolve_path(folder, name, path, self.name.replace(".tar", "")).expanduser().resolve()
-        Compression.untar(str(self.expanduser().resolve()), op_path=str(op_path))
-        return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNTARRED {repr(self)} ==>  {repr(op_path)}")
+        import tarfile
+
+        with tarfile.open(str(self.expanduser().resolve()), "r") as tf:
+            tf.extractall(path=str(op_path))
+        msg = f"UNTARRED {repr(self)} ==>  {repr(op_path)}"
+        ret = self if orig else PathExtended(op_path)
+        delayed_msg = ""
+        if inplace:
+            self.delete(sure=True, verbose=False)
+            delayed_msg = f"DELETED 🗑️❌ {repr(self)}."
+        if verbose:
+            try:
+                print(msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        if verbose and delayed_msg != "":
+            try:
+                print(delayed_msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        return ret
 
     def ungz(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "PathExtended":
         op_path = self._resolve_path(folder, name, path, self.name.replace(".gz", "")).expanduser().resolve()
-        Compression.ungz(str(self.expanduser().resolve()), op_path=str(op_path))
-        return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNGZED {repr(self)} ==>  {repr(op_path)}")
+        import gzip
+        PathExtended(str(op_path)).write_bytes(gzip.decompress(PathExtended(str(self.expanduser().resolve())).read_bytes()))
+        msg = f"UNGZED {repr(self)} ==>  {repr(op_path)}"
+        ret = self if orig else PathExtended(op_path)
+        delayed_msg = ""
+        if inplace:
+            self.delete(sure=True, verbose=False)
+            delayed_msg = f"DELETED 🗑️❌ {repr(self)}."
+        if verbose:
+            try:
+                print(msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        if verbose and delayed_msg != "":
+            try:
+                print(delayed_msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        return ret
 
     def unxz(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "PathExtended":
         op_path = self._resolve_path(folder, name, path, self.name.replace(".xz", "")).expanduser().resolve()
-        Compression.unxz(str(self.expanduser().resolve()), op_path=str(op_path))
-        return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNXZED {repr(self)} ==>  {repr(op_path)}")
+        import lzma
+
+        PathExtended(str(op_path)).write_bytes(lzma.decompress(PathExtended(str(self.expanduser().resolve())).read_bytes()))
+        msg = f"UNXZED {repr(self)} ==>  {repr(op_path)}"
+        ret = self if orig else PathExtended(op_path)
+        delayed_msg = ""
+        if inplace:
+            self.delete(sure=True, verbose=False)
+            delayed_msg = f"DELETED 🗑️❌ {repr(self)}."
+        if verbose:
+            try:
+                print(msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        if verbose and delayed_msg != "":
+            try:
+                print(delayed_msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        return ret
 
     def unbz(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "PathExtended":
         op_path = self._resolve_path(folder=folder, name=name, path=path, default_name=self.name.replace(".bz", "").replace(".tbz", ".tar")).expanduser().resolve()
-        Compression.unbz(str(self.expanduser().resolve()), op_path=str(op_path))
-        return self._return(op_path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"UNBZED {repr(self)} ==>  {repr(op_path)}")
+        import bz2
+
+        PathExtended(str(op_path)).write_bytes(bz2.decompress(PathExtended(str(self.expanduser().resolve())).read_bytes()))
+        msg = f"UNBZED {repr(self)} ==>  {repr(op_path)}"
+        ret = self if orig else PathExtended(op_path)
+        delayed_msg = ""
+        if inplace:
+            self.delete(sure=True, verbose=False)
+            delayed_msg = f"DELETED 🗑️❌ {repr(self)}."
+        if verbose:
+            try:
+                print(msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        if verbose and delayed_msg != "":
+            try:
+                print(delayed_msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        return ret
 
     def decompress(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "PathExtended":
         if ".tar.gz" in str(self) or ".tgz" in str(self):
@@ -766,13 +758,45 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         path = self._resolve_path(folder, name, path, slf.name + suffix)
         assert slf.is_file(), f"Cannot encrypt a directory. You might want to try `zip_n_encrypt`. {self}"
         path.write_bytes(encrypt(msg=slf.read_bytes(), key=key, pwd=pwd))
-        return self._return(path, inplace=inplace, operation="delete", orig=orig, verbose=verbose, msg=f"🔒🔑 ENCRYPTED: {repr(slf)} ==> {repr(path)}.")
+        msg = f"🔒🔑 ENCRYPTED: {repr(slf)} ==> {repr(path)}."
+        ret = self if orig else PathExtended(path)
+        delayed_msg = ""
+        if inplace:
+            self.delete(sure=True, verbose=False)
+            delayed_msg = f"DELETED 🗑️❌ {repr(self)}."
+        if verbose:
+            try:
+                print(msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        if verbose and delayed_msg != "":
+            try:
+                print(delayed_msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        return ret
 
     def decrypt(self, key: Optional[bytes] = None, pwd: Optional[str] = None, path: OPLike = None, folder: OPLike = None, name: Optional[str] = None, verbose: bool = True, suffix: str = ".enc", inplace: bool = False) -> "PathExtended":
         slf = self.expanduser().resolve()
         path = self._resolve_path(folder=folder, name=name, path=path, default_name=slf.name.replace(suffix, "") if suffix in slf.name else "decrypted_" + slf.name)
         path.write_bytes(decrypt(token=slf.read_bytes(), key=key, pwd=pwd))
-        return self._return(path, operation="delete", verbose=verbose, msg=f"🔓🔑 DECRYPTED: {repr(slf)} ==> {repr(path)}.", inplace=inplace)
+        msg = f"🔓🔑 DECRYPTED: {repr(slf)} ==> {repr(path)}."
+        ret = PathExtended(path)
+        delayed_msg = ""
+        if inplace:
+            self.delete(sure=True, verbose=False)
+            delayed_msg = f"DELETED 🗑️❌ {repr(self)}."
+        if verbose:
+            try:
+                print(msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        if verbose and delayed_msg != "":
+            try:
+                print(delayed_msg)
+            except UnicodeEncodeError:
+                print("P._return warning: UnicodeEncodeError, could not print message.")
+        return ret
 
     def zip_n_encrypt(self, key: Optional[bytes] = None, pwd: Optional[str] = None, inplace: bool = False, verbose: bool = True, orig: bool = False, content: bool = False) -> "PathExtended":
         return self.zip(inplace=inplace, verbose=verbose, content=content).encrypt(key=key, pwd=pwd, verbose=verbose, inplace=True) if not orig else self

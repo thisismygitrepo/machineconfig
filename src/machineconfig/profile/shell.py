@@ -1,7 +1,7 @@
 """shell"""
 
 from machineconfig.utils.utils2 import randstr
-from machineconfig.utils.path_reduced import PathExtended as PathExtended, modify_text
+from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.terminal import Terminal
 from machineconfig.utils.options import display_options
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT
@@ -117,9 +117,9 @@ def main_env_path(choice: Optional[str], profile_path: Optional[str]) -> None:
     profile_path_obj = PathExtended(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
     profile_path_obj.copy(name=profile_path_obj.name + ".orig_" + randstr())
     console.print(f"💾 Created backup of profile: {profile_path_obj.name}.orig_*")
-    # Inline deprecated P.modify_text: if file missing, seed with search text before modification
+    # Inline deprecated modify_text: if file missing, seed with search text before modification
     current = profile_path_obj.read_text(encoding="utf-8") if profile_path_obj.exists() else addition
-    updated = modify_text(current, addition, addition, replace_line=False, notfound_append=True)
+    updated = current if addition in current else current + "\n" + addition
     profile_path_obj.write_text(updated, encoding="utf-8")
     console.print(Panel("✅ PATH variables added to profile successfully", title="[bold blue]Environment[/bold blue]", border_style="blue"))
 
