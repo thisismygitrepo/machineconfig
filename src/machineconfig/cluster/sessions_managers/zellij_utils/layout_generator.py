@@ -11,7 +11,7 @@ from pathlib import Path
 import logging
 
 from rich.console import Console
-from ..layout_types import LayoutConfig
+from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
 
 logger = logging.getLogger(__name__)
 console = Console()

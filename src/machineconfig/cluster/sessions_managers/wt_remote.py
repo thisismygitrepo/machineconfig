@@ -34,8 +34,6 @@ class WTRemoteLayoutGenerator:
 
     # Tabs are stored and used as List[TabConfig]; no legacy dict compatibility
 
-    
-
     def create_wt_layout(self, tabs: List[TabConfig], output_dir: Optional[str] = None) -> str:
         logger.info(f"Creating Windows Terminal layout with {len(tabs)} tabs for remote '{self.remote_name}'")
         self.tabs = tabs
@@ -46,38 +44,7 @@ class WTRemoteLayoutGenerator:
         self.script_path = self.layout_generator.create_wt_script(self.tabs, output_path, self.session_name)
         return self.script_path
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
     # Legacy methods for backward compatibility
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 
     def to_dict(self) -> Dict[str, Any]:
         return {"remote_name": self.remote_name, "session_name": self.session_name, "tabs": self.tabs, "script_path": self.script_path, "created_at": datetime.now().isoformat(), "class_name": self.__class__.__name__}
@@ -161,20 +128,6 @@ class WTRemoteLayoutGenerator:
 
         json_files = [f.name for f in dir_path.glob("*.json")]
         return sorted(json_files)
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 
 
 if __name__ == "__main__":

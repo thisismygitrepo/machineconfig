@@ -5,11 +5,60 @@ Windows Terminal session management utilities for local and remote operations.
 
 import logging
 import subprocess
-from typing import Dict, Any, Optional
+from typing import Optional, TypedDict, NotRequired
 from pathlib import Path
-from .remote_executor import WTRemoteExecutor
+from machineconfig.cluster.sessions_managers.wt_utils.remote_executor import WTRemoteExecutor
 
 logger = logging.getLogger(__name__)
+
+
+class WTProcessInfo(TypedDict, total=False):
+    Id: int
+    ProcessName: str
+    StartTime: str
+    MainWindowTitle: str
+
+
+class CheckWTSessionStatusResult(TypedDict):
+    wt_running: bool
+    session_exists: bool
+    session_name: str
+    location: str
+    all_windows: NotRequired[list[WTProcessInfo]]
+    session_windows: NotRequired[list[WTProcessInfo]]
+    error: NotRequired[str]
+
+
+class StartWTSessionResult(TypedDict):
+    success: bool
+    session_name: str
+    location: str
+    message: NotRequired[str]
+    error: NotRequired[str]
+
+
+class KillWTSessionResult(TypedDict):
+    success: bool
+    session_name: str
+    location: str
+    message: NotRequired[str]
+    error: NotRequired[str]
+
+
+class CreateNewTabResult(TypedDict):
+    success: bool
+    tab_name: str
+    command: str
+    location: str
+    message: NotRequired[str]
+    error: NotRequired[str]
+
+
+class GetWTVersionResult(TypedDict):
+    success: bool
+    location: str
+    version: NotRequired[str]
+    error: NotRequired[str]
 
 
 class WTSessionManager:
@@ -59,7 +108,7 @@ class WTSessionManager:
         logger.info(f"Windows Terminal script file copied to remote: {self.remote_executor.remote_name}:{remote_script_file}")
         return remote_script_file
 
-    def check_wt_session_status(self) -> Dict[str, Any]:
+    def check_wt_session_status(self) -> CheckWTSessionStatusResult:
         """Check if Windows Terminal windows exist and are running."""
         try:
             # Check for Windows Terminal processes
@@ -94,12 +143,12 @@ ConvertTo-Json -Depth 2
                 else:
                     return {"wt_running": False, "session_exists": False, "session_name": self.session_name, "all_windows": [], "location": self.location_name}
             else:
-                return {"wt_running": False, "error": result.stderr, "session_name": self.session_name, "location": self.location_name}
+                return {"wt_running": False, "session_exists": False, "error": result.stderr, "session_name": self.session_name, "location": self.location_name}
 
         except Exception as e:
-            return {"wt_running": False, "error": str(e), "session_name": self.session_name, "location": self.location_name}
+            return {"wt_running": False, "session_exists": False, "error": str(e), "session_name": self.session_name, "location": self.location_name}
 
-    def start_wt_session(self, script_file_path: Optional[str] = None, wt_command: Optional[str] = None) -> Dict[str, Any]:
+    def start_wt_session(self, script_file_path: Optional[str] = None, wt_command: Optional[str] = None) -> StartWTSessionResult:
         """Start a Windows Terminal session with the generated layout."""
         try:
             if script_file_path:
@@ -166,7 +215,7 @@ ConvertTo-Json -Depth 2
             logger.error(f"Failed to attach to Windows Terminal session: {e}")
             raise
 
-    def kill_wt_session(self, force: bool = True) -> Dict[str, Any]:
+    def kill_wt_session(self, force: bool = True) -> KillWTSessionResult:
         """Kill Windows Terminal processes related to this session."""
         try:
             if force:
@@ -185,7 +234,7 @@ ConvertTo-Json -Depth 2
             logger.error(f"Failed to kill Windows Terminal session: {e}")
             return {"success": False, "error": str(e), "session_name": self.session_name, "location": self.location_name}
 
-    def create_new_tab(self, tab_name: str, cwd: str, command: str, window_name: Optional[str] = None) -> Dict[str, Any]:
+    def create_new_tab(self, tab_name: str, cwd: str, command: str, window_name: Optional[str] = None) -> CreateNewTabResult:
         """Create a new tab in the Windows Terminal session."""
         try:
             # Build the new-tab command
@@ -208,9 +257,9 @@ ConvertTo-Json -Depth 2
 
         except Exception as e:
             logger.error(f"Failed to create new tab '{tab_name}': {e}")
-            return {"success": False, "error": str(e), "tab_name": tab_name, "location": self.location_name}
+            return {"success": False, "error": str(e), "tab_name": tab_name, "command": command, "location": self.location_name}
 
-    def get_wt_version(self) -> Dict[str, Any]:
+    def get_wt_version(self) -> GetWTVersionResult:
         """Get Windows Terminal version information."""
         try:
             version_cmd = "wt --version"

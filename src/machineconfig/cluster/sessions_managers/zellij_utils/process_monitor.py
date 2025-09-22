@@ -7,8 +7,8 @@ import json
 import shlex
 import logging
 from typing import Dict, Any
-from .remote_executor import RemoteExecutor
-from ..layout_types import LayoutConfig
+from machineconfig.cluster.sessions_managers.zellij_utils.remote_executor import RemoteExecutor
+from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
 
 logger = logging.getLogger(__name__)
 

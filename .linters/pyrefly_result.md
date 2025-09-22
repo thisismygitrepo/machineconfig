@@ -1,39 +1,3 @@
-ERROR Could not find import of `typer` [import-error]
-  --> .ai/tmp_scripts/argparse_typing_examples/approach3_modern_libs.py:15:16
-   |
-15 |         import typer
-   |                ^^^^^
-   |
-  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
-  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
-  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
-ERROR Could not find import of `click` [import-error]
-  --> .ai/tmp_scripts/argparse_typing_examples/approach3_modern_libs.py:80:16
-   |
-80 |         import click
-   |                ^^^^^
-   |
-  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
-  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
-  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
-ERROR Argument `dict[str, tuple[str, str]]` is not assignable to parameter `tabs` with type `list[TypedDict[TabConfig]]` in function `machineconfig.cluster.sessions_managers.wt_utils.layout_generator.WTLayoutGenerator.create_wt_script` [bad-argument-type]
-  --> .ai/tmp_scripts/test_layout_generator_ps1.py:24:46
-   |
-24 |     script_path = generator.create_wt_script(test_config, output_dir, "TestLayoutGen")
-   |                                              ^^^^^^^^^^^
-   |
-ERROR Could not import `P` from `machineconfig.utils.path_reduced` [missing-module-attribute]
-  --> .ai/tmp_scripts/test_repr_inline.py:10:46
-   |
-10 | from machineconfig.utils.path_reduced import P
-   |                                              ^
-   |
-ERROR Could not import `P` from `machineconfig.utils.path_reduced` [missing-module-attribute]
-  --> .ai/tmp_scripts/test_time_deprecation.py:11:46
-   |
-11 | from machineconfig.utils.path_reduced import P
-   |                                              ^
-   |
 ERROR Argument `str` is not assignable to parameter `object` with type `LiteralString` in function `list.append` [bad-argument-type]
    --> src/machineconfig/cluster/sessions_managers/wt_local_manager.py:117:33
     |
@@ -216,9 +180,9 @@ ERROR No matching overload found for function `dict.__init__` [no-matching-overl
   (iterable: Iterable[list[str]], /) -> None
   (iterable: Iterable[list[bytes]], /) -> None
 ERROR `T` is not assignable to `str` (caused by inconsistent types when breaking cycles) [bad-assignment]
-  --> src/machineconfig/utils/options.py:98:13
+  --> src/machineconfig/utils/options.py:96:13
    |
-98 |             choice_one: T = default
+96 |             choice_one: T = default
    |             ^^^^^^^^^^
    |
 ERROR Object of class `str` has no attribute `suffixes` [missing-attribute]

@@ -11,7 +11,7 @@ from typing import List, Tuple
 from pathlib import Path
 import logging
 
-from ..layout_types import TabConfig
+from machineconfig.cluster.sessions_managers.layout_types import TabConfig
 
 
 logger = logging.getLogger(__name__)

@@ -9,7 +9,7 @@ import logging
 import subprocess
 from typing import Dict, Any, Optional, List
 from machineconfig.cluster.sessions_managers.layout_types import TabConfig
-from .remote_executor import WTRemoteExecutor
+from machineconfig.cluster.sessions_managers.wt_utils.remote_executor import WTRemoteExecutor
 
 logger = logging.getLogger(__name__)
 

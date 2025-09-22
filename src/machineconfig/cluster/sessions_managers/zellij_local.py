@@ -315,8 +315,7 @@ def run_zellij_layout(layout_config: LayoutConfig):
     layout_path = created_zellij_layout(layout_config)
     session_name = layout_config["layoutName"]
     try:
-        from .enhanced_command_runner import enhanced_zellij_session_start
-
+        from machineconfig.cluster.sessions_managers.enhanced_command_runner import enhanced_zellij_session_start
         enhanced_zellij_session_start(session_name, layout_path)
     except ImportError:
         # Fallback to original implementation
