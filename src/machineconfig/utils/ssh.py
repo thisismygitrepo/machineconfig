@@ -159,7 +159,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
     def get_remote_distro(self):
         if self._remote_distro is None:
             self._remote_distro = self.run_py("print(install_n_import('distro').name(pretty=True))", verbose=False).op_if_successfull_or_default() or ""
-            # q.run("""~/.local/bin/uv run --with distro python -c "import distro; print(distro.name(pretty=True))" """)
+            # res = self.run("""~/.local/bin/uv run --with distro python -c "import distro; print(distro.name(pretty=True))" """)
         return self._remote_distro
 
     def restart_computer(self):

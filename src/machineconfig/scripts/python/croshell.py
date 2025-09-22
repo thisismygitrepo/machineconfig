@@ -164,7 +164,7 @@ def build_parser():
 from crocodile.croshell import *
 print_header()
 print_logo(logo="crocodile")
-print(f"🐊 Crocodile Shell | Running @ {Path.cwd()}")
+print(f"🐊 Crocodile Shell | Running @ {PathExtended.cwd()}")
 """
 
     pyfile = PathExtended.tmp().joinpath(f"tmp_scripts/python/croshell/{randstr()}.py")
