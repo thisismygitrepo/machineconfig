@@ -18,16 +18,13 @@ SHUTIL_FORMATS: TypeAlias = Literal["zip", "tar", "gztar", "bztar", "xztar"]
 
 def pwd2key(password: str, salt: Optional[bytes] = None, iterations: int = 10) -> bytes:  # Derive a secret key from a given password and salt"""
     import base64
-
     if salt is None:
         import hashlib
-
         m = hashlib.sha256()
         m.update(password.encode(encoding="utf-8"))
         return base64.urlsafe_b64encode(s=m.digest())  # make url-safe bytes required by Ferent.
     from cryptography.hazmat.primitives import hashes
     from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-
     return base64.urlsafe_b64encode(PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=iterations, backend=None).derive(password.encode()))
 
 

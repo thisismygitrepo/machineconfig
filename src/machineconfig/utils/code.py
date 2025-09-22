@@ -1,9 +1,11 @@
+
 import platform
 from typing import Optional
 import subprocess
 from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
+
 from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.ve import get_ve_activate_line
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
