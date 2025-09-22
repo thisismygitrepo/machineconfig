@@ -50,23 +50,61 @@ def symlink_func(this: PathExtended, to_this: PathExtended, prioritize_to_this: 
     """
     this = PathExtended(this).expanduser().absolute()
     to_this = PathExtended(to_this).expanduser().absolute()
-    if this.is_symlink():
-        this.delete(sure=True)  # delete if it exists as symblic link, not a concrete path.
-    if this.exists():  # this is a problem. It will be resolved via `overwrite`
-        if prioritize_to_this is True:  # it *can* be deleted, but let's look at target first.
-            if to_this.exists():  # this exists, to_this as well. to_this is prioritized.
-                this.append(f".orig_{randstr()}", inplace=True)  # rename is better than deletion
+    # Case analysis based on docstring
+    if this.exists():
+        if to_this.exists():
+            if this.is_symlink():
+                # Check if symlink already points to correct target
+                try:
+                    if this.readlink().resolve() == to_this.resolve():
+                        # Case: this exists AND to_this exists AND this is a symlink pointing to to_this
+                        console.print(Panel(f"✅ ALREADY LINKED | {this} ➡️  {to_this}", title="Already Linked", expand=False))
+                        return
+                    else:
+                        # Case: this exists AND to_this exists AND this is a symlink pointing to somewhere else
+                        console.print(Panel(f"🔄 RELINKING | Updating symlink from {this} ➡️  {to_this}", title="Relinking", expand=False))
+                        this.delete(sure=True)
+                except OSError:
+                    # Broken symlink case
+                    console.print(Panel(f"🔄 FIXING BROKEN LINK | Fixing broken symlink from {this} ➡️  {to_this}", title="Fixing Broken Link", expand=False))
+                    this.delete(sure=True)
             else:
-                this.move(path=to_this)  # this exists, to_this doesn't. to_this is prioritized.
-        elif prioritize_to_this is False:  # don't sacrefice this, sacrefice to_this.
-            if to_this.exists():
-                this.move(path=to_this, overwrite=True)  # this exists, to_this as well, this is prioritized.   # now we are readly to make the link
+                # Case: this exists AND to_this exists AND this is a concrete path
+                if prioritize_to_this:
+                    # prioritize `to_this`: `this` is backed up, `this` is deleted, symlink created
+                    backup_name = f"{this}.orig_{randstr()}"
+                    console.print(Panel(f"📦 BACKING UP | Moving {this} to {backup_name}, prioritizing {to_this}", title="Backing Up", expand=False))
+                    this.move(path=backup_name)
+                else:
+                    # prioritize `this`: to_this is backed up, to_this is deleted, this content moved to to_this location
+                    backup_name = f"{to_this}.orig_{randstr()}"
+                    console.print(Panel(f"📦 BACKING UP | Moving {to_this} to {backup_name}, prioritizing {this}", title="Backing Up", expand=False))
+                    to_this.move(path=backup_name)
+                    this.move(path=to_this)
+        else:
+            # to_this doesn't exist
+            if this.is_symlink():
+                # Case: this exists AND to_this doesn't exist AND this is a symlink (pointing anywhere)
+                console.print(Panel(f"🔄 RELINKING | Updating symlink from {this} ➡️  {to_this}", title="Relinking", expand=False))
+                this.delete(sure=True)
+                # Create to_this
+                to_this.parent.mkdir(parents=True, exist_ok=True)
+                to_this.touch()
             else:
-                this.move(path=to_this)  # this exists, to_this doesn't, this is prioritized.
-    else:  # this doesn't exist.
-        if not to_this.exists():
+                # Case: this exists AND to_this doesn't exist AND this is a concrete path
+                console.print(Panel(f"📁 MOVING | Moving {this} to {to_this}, then creating symlink", title="Moving", expand=False))
+                this.move(path=to_this)
+    else:
+        # this doesn't exist
+        if to_this.exists():
+            # Case: this doesn't exist AND to_this exists
+            console.print(Panel(f"🆕 NEW LINK | Creating new symlink from {this} ➡️  {to_this}", title="New Link", expand=False))
+        else:
+            # Case: this doesn't exist AND to_this doesn't exist
+            console.print(Panel(f"🆕 NEW LINK & TARGET | Creating {to_this} and symlink from {this} ➡️  {to_this}", title="New Link & Target", expand=False))
             to_this.parent.mkdir(parents=True, exist_ok=True)
-            to_this.touch()  # we have to touch it (file) or create it (folder)
+            to_this.touch()
+    # Create the symlink
     try:
         console.print(Panel(f"🔗 LINKING | Creating symlink from {this} ➡️  {to_this}", title="Linking", expand=False))
         PathExtended(this).symlink_to(target=to_this, verbose=True, overwrite=True)
