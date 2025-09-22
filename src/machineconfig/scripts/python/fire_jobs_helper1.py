@@ -28,6 +28,8 @@ def launch_layout(layout_config: LayoutConfig) -> Optional[Exception]:
 
 
 def handle_layout_args(args: "FireJobArgs") -> None:
+    args.function = args.path
+    args.path = "layout.json"
     path_obj = sanitize_path(args.path)
     if not path_obj.exists():
         choice_file = match_file_name(sub_string=args.path, search_root=PathExtended.cwd(), suffixes={".json"})

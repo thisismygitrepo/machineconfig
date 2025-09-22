@@ -27,7 +27,8 @@ import os
 def main(args: FireJobArgs) -> None:
     if args.layout:
         from machineconfig.scripts.python.fire_jobs_helper1 import handle_layout_args
-        handle_layout_args(args)
+        return handle_layout_args(args)
+
     path_obj = sanitize_path(args.path)
     if not path_obj.exists():
         suffixes = {".py", ".sh", ".ps1"}

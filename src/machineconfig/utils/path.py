@@ -74,7 +74,7 @@ def match_file_name(sub_string: str, search_root: PathExtended, suffixes: set[st
     filename_matches, partial_path_matches = find_scripts(search_root_obj, sub_string, suffixes)
     if len(filename_matches) == 1:
         return PathExtended(filename_matches[0])
-    console.print(Panel(f"Partial filename match with case-insensitivity failed. This generated #{len(filename_matches)} results.", title="Search", expand=False))
+    console.print(Panel(f"Partial filename {search_root_obj} match with case-insensitivity failed. This generated #{len(filename_matches)} results.", title="Search", expand=False))
     if len(filename_matches) < 10:
         print("\n".join([a_potential_match.as_posix() for a_potential_match in filename_matches]))
     if len(filename_matches) > 1:
@@ -112,7 +112,7 @@ def match_file_name(sub_string: str, search_root: PathExtended, suffixes: set[st
     if len(search_res) == 1:
         return search_root_obj.joinpath(search_res_raw)
 
-    print(f"⚠️ WARNING | Multiple search results found for `{sub_string}`\n'{search_res_raw}'")
+    print(f"⚠️ WARNING | Multiple search results found for `{sub_string}`:\n'{search_res}'")
     cmd = f"cd '{search_root_obj}'; fd --type file | fzf --select-1 --query={sub_string}"
     console.print(Panel(f"🔍 SEARCH STRATEGY | Trying with raw fzf search ...\n{cmd}", title="Search Strategy", expand=False))
     try:
