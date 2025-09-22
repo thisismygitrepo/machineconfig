@@ -34,8 +34,7 @@ class WTRemoteLayoutGenerator:
 
     # Tabs are stored and used as List[TabConfig]; no legacy dict compatibility
 
-    def copy_script_to_remote(self, local_script_file: Path, random_suffix: str) -> str:
-        return self.session_manager.copy_script_to_remote(local_script_file, random_suffix)
+    
 
     def create_wt_layout(self, tabs: List[TabConfig], output_dir: Optional[str] = None) -> str:
         logger.info(f"Creating Windows Terminal layout with {len(tabs)} tabs for remote '{self.remote_name}'")
@@ -47,61 +46,38 @@ class WTRemoteLayoutGenerator:
         self.script_path = self.layout_generator.create_wt_script(self.tabs, output_path, self.session_name)
         return self.script_path
 
-    def get_layout_preview(self, tabs: List[TabConfig]) -> str:
-        return self.layout_generator.generate_wt_command(tabs)
+    
 
-    def check_command_status(self, tab_name: str, use_verification: bool = True) -> Dict[str, Any]:
-        return self.process_monitor.check_command_status(tab_name, self.tabs, use_verification)
+    
 
-    def check_all_commands_status(self) -> Dict[str, Dict[str, Any]]:
-        return self.process_monitor.check_all_commands_status(self.tabs)
+    
 
-    def check_wt_session_status(self) -> Dict[str, Any]:
-        return self.session_manager.check_wt_session_status()
+    
 
-    def get_comprehensive_status(self) -> Dict[str, Any]:
-        return self.status_reporter.get_comprehensive_status(self.tabs)
+    
 
-    def print_status_report(self) -> None:
-        self.status_reporter.print_status_report(self.tabs)
+    
 
-    def start_wt_session(self, script_file_path: Optional[str] = None) -> Dict[str, Any]:
-        return self.session_manager.start_wt_session(script_file_path or self.script_path)
+    
 
-    def attach_to_session(self) -> None:
-        self.session_manager.attach_to_session()
+    
 
     # Legacy methods for backward compatibility
-    def force_fresh_process_check(self, tab_name: str) -> Dict[str, Any]:
-        return self.process_monitor.force_fresh_process_check(tab_name, self.tabs)
+    
 
-    def verify_process_alive(self, pid: int) -> bool:
-        return self.process_monitor.verify_process_alive(pid)
+    
 
-    def get_verified_process_status(self, tab_name: str) -> Dict[str, Any]:
-        return self.process_monitor.get_verified_process_status(tab_name, self.tabs)
+    
 
-    # Static methods for backward compatibility
-    @staticmethod
-    def run_remote_command(remote_name: str, command: str, timeout: int = 30):
-        executor = WTRemoteExecutor(remote_name)
-        return executor.run_command(command, timeout)
+    
 
-    def kill_wt_session(self, force: bool = True) -> Dict[str, Any]:
-        """Kill Windows Terminal processes on the remote machine."""
-        return self.session_manager.kill_wt_session(force)
+    
 
-    def create_new_tab(self, tab_name: str, cwd: str, command: str) -> Dict[str, Any]:
-        """Create a new tab in the Windows Terminal session."""
-        return self.session_manager.create_new_tab(tab_name, cwd, command, self.session_name)
+    
 
-    def get_wt_version(self) -> Dict[str, Any]:
-        """Get Windows Terminal version information on the remote machine."""
-        return self.session_manager.get_wt_version()
+    
 
-    def get_remote_windows_info(self) -> Dict[str, Any]:
-        """Get information about the remote Windows system."""
-        return self.remote_executor.get_remote_windows_info()
+    
 
     def to_dict(self) -> Dict[str, Any]:
         return {"remote_name": self.remote_name, "session_name": self.session_name, "tabs": self.tabs, "script_path": self.script_path, "created_at": datetime.now().isoformat(), "class_name": self.__class__.__name__}
@@ -186,33 +162,19 @@ class WTRemoteLayoutGenerator:
         json_files = [f.name for f in dir_path.glob("*.json")]
         return sorted(json_files)
 
-    def check_wt_available(self) -> bool:
-        """Check if Windows Terminal is available on the remote machine."""
-        return self.remote_executor.check_wt_available()
+    
 
-    def list_wt_processes(self) -> Dict[str, Any]:
-        """List Windows Terminal processes on the remote machine."""
-        return self.remote_executor.list_wt_processes()
+    
 
-    def kill_wt_processes(self, process_ids: Optional[List[Any]] = None) -> Dict[str, Any]:
-        """Kill Windows Terminal processes on the remote machine."""
-        return self.remote_executor.kill_wt_processes(process_ids)
+    
 
-    def get_windows_terminal_overview(self) -> Dict[str, Any]:
-        """Get overview of Windows Terminal on the remote machine."""
-        return self.status_reporter.get_windows_terminal_overview()
+    
 
-    def print_windows_terminal_overview(self) -> None:
-        """Print overview of Windows Terminal on the remote machine."""
-        self.status_reporter.print_windows_terminal_overview()
+    
 
-    def generate_status_summary(self) -> Dict[str, Any]:
-        """Generate a concise status summary for monitoring."""
-        return self.status_reporter.generate_status_summary(self.tabs)
+    
 
-    def check_tab_specific_status(self, tab_name: str) -> Dict[str, Any]:
-        """Get detailed status for a specific tab."""
-        return self.status_reporter.check_tab_specific_status(tab_name, self.tabs)
+    
 
 
 if __name__ == "__main__":
@@ -235,11 +197,11 @@ if __name__ == "__main__":
         print(f"✅ Remote layout created successfully: {script_path}")
 
         # Check if Windows Terminal is available on remote
-        wt_available = generator.check_wt_available()
+        wt_available = generator.remote_executor.check_wt_available()
         print(f"🖥️  Windows Terminal available on {remote_name}: {'✅' if wt_available else '❌'}")
 
         # Get remote Windows info
-        windows_info = generator.get_remote_windows_info()
+        windows_info = generator.remote_executor.get_remote_windows_info()
         if windows_info.get("wt_available"):
             print(f"📦 Remote system info: {windows_info.get('windows_info', 'Unknown')}")
 
@@ -258,28 +220,28 @@ if __name__ == "__main__":
         print(f"📊 Loaded tabs: {[tab['tabName'] for tab in loaded_generator.tabs]}")
 
         # Show command preview
-        preview = generator.get_layout_preview(sample_tabs)
+        preview = generator.layout_generator.generate_wt_command(sample_tabs)
         print(f"\n📋 Command Preview:\n{preview}")
 
         # Demonstrate status checking
         print(f"\n🔍 Checking command status on remote '{remote_name}':")
-        generator.print_status_report()
+        generator.status_reporter.print_status_report(generator.tabs)
 
         # Show Windows Terminal overview
         print("\n🖥️  Windows Terminal Overview:")
-        generator.print_windows_terminal_overview()
+        generator.status_reporter.print_windows_terminal_overview()
 
         # Start the session (uncomment to actually start)
-        # start_result = generator.start_wt_session()
+        # start_result = generator.session_manager.start_wt_session(generator.script_path)
         # print(f"Session start result: {start_result}")
 
         # Attach to session (uncomment to attach)
-        # generator.attach_to_session()
+        # generator.session_manager.attach_to_session()
 
         print("\n▶️  To start this session, run:")
-        print("   generator.start_wt_session()")
+        print("   generator.session_manager.start_wt_session(generator.script_path)")
         print("\n📎 To attach to this session, run:")
-        print("   generator.attach_to_session()")
+        print("   generator.session_manager.attach_to_session()")
 
     except Exception as e:
         print(f"❌ Error: {e}")

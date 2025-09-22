@@ -43,14 +43,14 @@ class WTSessionManager:
 
     def kill_all_sessions(self) -> None:
         for an_m in self.managers:
-            WTRemoteLayoutGenerator.run_remote_command(remote_name=an_m.remote_name, command="powershell -Command \"Get-Process -Name 'WindowsTerminal' -ErrorAction SilentlyContinue | Stop-Process -Force\"")
+            an_m.remote_executor.run_command("powershell -Command \"Get-Process -Name 'WindowsTerminal' -ErrorAction SilentlyContinue | Stop-Process -Force\"")
 
     def run_monitoring_routine(self, wait_ms: int = 60000) -> None:
         def routine(scheduler: Scheduler):
             if scheduler.cycle % 2 == 0:
                 statuses = []
                 for _idx, an_m in enumerate(self.managers):
-                    a_status = an_m.check_all_commands_status()
+                    a_status = an_m.process_monitor.check_all_commands_status(an_m.tabs)
                     statuses.append(a_status)
                 keys = []
                 for item in statuses:
@@ -75,7 +75,7 @@ class WTSessionManager:
             else:
                 statuses = []
                 for _idx, an_m in enumerate(self.managers):
-                    a_status = an_m.check_wt_session_status()
+                    a_status = an_m.session_manager.check_wt_session_status()
                     statuses.append(a_status)
 
                 # Print statuses
@@ -191,7 +191,7 @@ class WTSessionManager:
                 remote_name = manager.remote_name
 
                 # Start the Windows Terminal session on the remote machine
-                start_result = manager.start_wt_session()
+                start_result = manager.session_manager.start_wt_session(manager.script_path)
 
                 results[f"{remote_name}:{session_name}"] = start_result
 
@@ -215,10 +215,10 @@ class WTSessionManager:
 
             try:
                 # Get Windows Terminal session status
-                wt_status = manager.check_wt_session_status()
+                wt_status = manager.session_manager.check_wt_session_status()
 
                 # Get commands status for this session
-                commands_status = manager.check_all_commands_status()
+                commands_status = manager.process_monitor.check_all_commands_status(manager.tabs)
 
                 # Calculate summary for this session
                 running_count = sum(1 for status in commands_status.values() if status.get("running", False))
@@ -333,13 +333,13 @@ class WTSessionManager:
                 remote_name = manager.remote_name
 
                 # Get remote Windows info
-                windows_info = manager.get_remote_windows_info()
+                windows_info = manager.remote_executor.get_remote_windows_info()
 
                 # Get Windows Terminal processes
-                wt_processes = manager.list_wt_processes()
+                wt_processes = manager.remote_executor.list_wt_processes()
 
                 # Get Windows Terminal version
-                wt_version = manager.get_wt_version()
+                wt_version = manager.session_manager.get_wt_version()
 
                 overview[remote_name] = {"windows_info": windows_info, "wt_processes": wt_processes, "wt_version": wt_version, "session_name": manager.session_name, "tab_count": len(manager.tabs)}
 

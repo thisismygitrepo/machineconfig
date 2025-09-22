@@ -5,6 +5,8 @@ from rich.console import Console
 import platform
 import subprocess
 from typing import Optional, Union, TypeVar, Iterable
+from machineconfig.utils.source_of_truth import WINDOWS_INSTALL_PATH, LINUX_INSTALL_PATH
+
 
 T = TypeVar("T")
 
@@ -12,20 +14,16 @@ T = TypeVar("T")
 def check_tool_exists(tool_name: str) -> bool:
     if platform.system() == "Windows":
         tool_name = tool_name.replace(".exe", "") + ".exe"
-
-    from machineconfig.utils.source_of_truth import WINDOWS_INSTALL_PATH, LINUX_INSTALL_PATH
-
-    if platform.system() == "Windows":
         cmd = "where.exe"
         root_path = Path(WINDOWS_INSTALL_PATH)
     elif platform.system() in ["Linux", "Darwin"]:
         cmd = "which"
         root_path = Path(LINUX_INSTALL_PATH)
+        return any([Path("/usr/local/bin").joinpath(tool_name).is_file(), Path("/usr/bin").joinpath(tool_name).is_file(), root_path.joinpath(tool_name).is_file()])
     else:
         raise NotImplementedError(f"platform {platform.system()} not implemented")
-
     _ = cmd
-    # try:
+    # try:  # talking to terminal is too slow.
     #     _tmp = subprocess.check_output([cmd, tool_name], stderr=subprocess.DEVNULL)
     #     res: bool = True
     # except (subprocess.CalledProcessError, FileNotFoundError):
