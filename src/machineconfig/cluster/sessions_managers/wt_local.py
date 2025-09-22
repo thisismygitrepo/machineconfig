@@ -24,11 +24,11 @@ class WTLayoutGenerator:
     def __init__(self):
         self.session_name: Optional[str] = None
         self.layout_config: Optional[LayoutConfig] = None  # Store the complete layout config
-        self.script_path: Optional[str] = None  # Store the full path to the script file
+        self.script_path: Optional[str] = None  # Store the full path to the PowerShell script
 
     @staticmethod
     def _generate_random_suffix(length: int = 8) -> str:
-        """Generate a random string suffix for unique script file names."""
+        """Generate a random string suffix for unique PowerShell script names."""
         return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
     @staticmethod
@@ -111,32 +111,24 @@ class WTLayoutGenerator:
             if output_dir:
                 output_path = Path(output_dir)
                 output_path.mkdir(parents=True, exist_ok=True)
-                script_file = output_path / f"wt_layout_{random_suffix}.bat"
+                script_file = output_path / f"wt_layout_{random_suffix}.ps1"
             else:
                 # Use the predefined TMP_LAYOUT_DIR for temporary files
                 TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
-                script_file = TMP_LAYOUT_DIR / f"wt_layout_{self.session_name}_{random_suffix}.bat"
+                script_file = TMP_LAYOUT_DIR / f"wt_layout_{self.session_name}_{random_suffix}.ps1"
 
-            # Create batch script
-            text = f"""@echo off
-REM Windows Terminal layout for {self.session_name}
-{wt_command}
-"""
-            script_file.write_text(text, encoding="utf-8")
-
-            # Also create PowerShell script for better command handling
-            ps1_file = script_file.with_suffix(".ps1")
+            # Create PowerShell script
             text = f"""# Windows Terminal layout for {self.session_name}
 # Generated with random suffix: {random_suffix}
 {wt_command}
 """
-            ps1_file.write_text(text, encoding="utf-8")
+            script_file.write_text(text, encoding="utf-8")
 
             self.script_path = str(script_file.absolute())
-            logger.info(f"Windows Terminal script file created: {self.script_path}")
+            logger.info(f"Windows Terminal PowerShell script created: {self.script_path}")
             return self.script_path
         except OSError as e:
-            logger.error(f"Failed to create script file: {e}")
+            logger.error(f"Failed to create PowerShell script: {e}")
             raise
 
     def _generate_wt_command_string(self, layout_config: LayoutConfig, window_name: str) -> str:

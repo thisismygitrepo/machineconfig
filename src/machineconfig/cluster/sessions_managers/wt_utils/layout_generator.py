@@ -7,9 +7,12 @@ Based on Windows Terminal documentation: https://learn.microsoft.com/en-us/windo
 import shlex
 import random
 import string
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 from pathlib import Path
 import logging
+
+from ..layout_types import TabConfig
+
 
 logger = logging.getLogger(__name__)
 
@@ -78,21 +81,21 @@ class WTLayoutGenerator:
         return " ".join(tab_parts)
 
     @staticmethod
-    def validate_tab_config(tab_config: Dict[str, Tuple[str, str]]) -> None:
+    def validate_tab_config(tabs: List[TabConfig]) -> None:
         """Validate tab configuration format and content."""
-        if not tab_config:
+        if not tabs:
             raise ValueError("Tab configuration cannot be empty")
-        for tab_name, (cwd, command) in tab_config.items():
-            if not tab_name.strip():
-                raise ValueError(f"Invalid tab name: {tab_name}")
-            if not command.strip():
-                raise ValueError(f"Invalid command for tab '{tab_name}': {command}")
-            if not cwd.strip():
-                raise ValueError(f"Invalid cwd for tab '{tab_name}': {cwd}")
+        for tab in tabs:
+            if not tab["tabName"].strip():
+                raise ValueError(f"Invalid tab name: {tab['tabName']}")
+            if not tab["command"].strip():
+                raise ValueError(f"Invalid command for tab '{tab['tabName']}': {tab['command']}")
+            if not tab["startDir"].strip():
+                raise ValueError(f"Invalid startDir for tab '{tab['tabName']}': {tab['startDir']}")
 
-    def generate_wt_command(self, tab_config: Dict[str, Tuple[str, str]], window_name: str | None = None, maximized: bool = False, focus: bool = True) -> str:
+    def generate_wt_command(self, tabs: List[TabConfig], window_name: str | None = None, maximized: bool = False, focus: bool = True) -> str:
         """Generate complete Windows Terminal command string."""
-        self.validate_tab_config(tab_config)
+        self.validate_tab_config(tabs)
 
         # Start building the wt command
         wt_parts = ["wt"]
@@ -109,9 +112,9 @@ class WTLayoutGenerator:
 
         # Add tabs
         tab_commands = []
-        for i, (tab_name, (cwd, command)) in enumerate(tab_config.items()):
+        for i, tab in enumerate(tabs):
             is_first = i == 0
-            tab_cmd = self.create_tab_command(tab_name, cwd, command, is_first)
+            tab_cmd = self.create_tab_command(tab["tabName"], tab["startDir"], tab["command"], is_first)
             tab_commands.append(tab_cmd)
 
         # Join all parts with semicolons (Windows Terminal command separator)
@@ -127,46 +130,38 @@ class WTLayoutGenerator:
 
         return " ".join(wt_parts)
 
-    def create_wt_script(self, tab_config: Dict[str, Tuple[str, str]], output_dir: Path, session_name: str, window_name: str | None = None) -> str:
-        """Create a Windows Terminal script file and return its absolute path."""
-        self.validate_tab_config(tab_config)
+    def create_wt_script(self, tabs: List[TabConfig], output_dir: Path, session_name: str, window_name: str | None = None) -> str:
+        """Create a Windows Terminal PowerShell script and return its absolute path."""
+        self.validate_tab_config(tabs)
 
         # Generate unique suffix for this script
         random_suffix = self.generate_random_suffix()
-        wt_command = self.generate_wt_command(tab_config, window_name or session_name)
+        wt_command = self.generate_wt_command(tabs, window_name or session_name)
 
         try:
             # Create output directory if it doesn't exist
             output_dir.mkdir(parents=True, exist_ok=True)
 
-            # Create both .bat and .ps1 versions for flexibility
-            bat_file = output_dir / f"wt_layout_{session_name}_{random_suffix}.bat"
+            # Create PowerShell script
             ps1_file = output_dir / f"wt_layout_{session_name}_{random_suffix}.ps1"
 
-            # Create batch file
-            text = f"""@echo off
-REM Windows Terminal layout for {session_name}
-{wt_command}
-"""
-            bat_file.write_text(text, encoding="utf-8")
-
-            # Create PowerShell file (better for complex commands)
+            # Create PowerShell script content
             text = f"""# Windows Terminal layout for {session_name}
 # Generated on {random_suffix}
 {wt_command}
 """
             ps1_file.write_text(text, encoding="utf-8")
 
-            logger.info(f"Windows Terminal script files created: {bat_file.absolute()}")
-            return str(bat_file.absolute())
+            logger.info(f"Windows Terminal PowerShell script created: {ps1_file.absolute()}")
+            return str(ps1_file.absolute())
 
         except OSError as e:
-            logger.error(f"Failed to create script file: {e}")
+            logger.error(f"Failed to create PowerShell script: {e}")
             raise
 
-    def generate_split_pane_command(self, tab_config: Dict[str, Tuple[str, str]], window_name: str | None = None) -> str:
+    def generate_split_pane_command(self, tabs: List[TabConfig], window_name: str | None = None) -> str:
         """Generate Windows Terminal command with split panes instead of separate tabs."""
-        self.validate_tab_config(tab_config)
+        self.validate_tab_config(tabs)
 
         wt_parts = ["wt"]
 
@@ -174,8 +169,8 @@ REM Windows Terminal layout for {session_name}
             wt_parts.extend(["-w", WTLayoutGenerator.escape_for_wt(window_name)])
 
         # First pane (main tab)
-        first_tab = list(tab_config.items())[0]
-        tab_name, (cwd, command) = first_tab
+        first_tab = tabs[0]
+        tab_name, cwd, command = first_tab["tabName"], first_tab["startDir"], first_tab["command"]
 
         # Start with first tab
         wt_parts.extend(["-d", WTLayoutGenerator.escape_for_wt(cwd)])
@@ -183,7 +178,8 @@ REM Windows Terminal layout for {session_name}
         wt_parts.append(WTLayoutGenerator.escape_for_wt(command))
 
         # Add split panes for remaining tabs
-        for tab_name, (cwd, command) in list(tab_config.items())[1:]:
+        for tab in tabs[1:]:
+            tab_name, cwd, command = tab["tabName"], tab["startDir"], tab["command"]
             wt_parts.append(";")
             wt_parts.append("split-pane")
             wt_parts.extend(["-d", WTLayoutGenerator.escape_for_wt(cwd)])

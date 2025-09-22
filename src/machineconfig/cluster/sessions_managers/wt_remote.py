@@ -11,6 +11,7 @@ from machineconfig.cluster.sessions_managers.wt_utils.layout_generator import WT
 from machineconfig.cluster.sessions_managers.wt_utils.process_monitor import WTProcessMonitor
 from machineconfig.cluster.sessions_managers.wt_utils.session_manager import WTSessionManager
 from machineconfig.cluster.sessions_managers.wt_utils.status_reporter import WTStatusReporter
+from machineconfig.cluster.sessions_managers.layout_types import TabConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -21,7 +22,7 @@ class WTRemoteLayoutGenerator:
     def __init__(self, remote_name: str, session_name_prefix: str):
         self.remote_name = remote_name
         self.session_name = session_name_prefix + "_" + WTLayoutGenerator.generate_random_suffix()
-        self.tab_config: Dict[str, Tuple[str, str]] = {}
+        self.tabs: List[TabConfig] = []
         self.script_path: Optional[str] = None
 
         # Initialize modular components
@@ -34,18 +35,18 @@ class WTRemoteLayoutGenerator:
     def copy_script_to_remote(self, local_script_file: Path, random_suffix: str) -> str:
         return self.session_manager.copy_script_to_remote(local_script_file, random_suffix)
 
-    def create_wt_layout(self, tab_config: Dict[str, Tuple[str, str]], output_dir: Optional[str] = None) -> str:
-        logger.info(f"Creating Windows Terminal layout with {len(tab_config)} tabs for remote '{self.remote_name}'")
-        self.tab_config = tab_config.copy()
+    def create_wt_layout(self, tabs: List[TabConfig], output_dir: Optional[str] = None) -> str:
+        logger.info(f"Creating Windows Terminal layout with {len(tabs)} tabs for remote '{self.remote_name}'")
+        self.tabs = tabs
         if output_dir:
             output_path = Path(output_dir)
         else:
             output_path = TMP_LAYOUT_DIR
-        self.script_path = self.layout_generator.create_wt_script(tab_config, output_path, self.session_name)
+        self.script_path = self.layout_generator.create_wt_script(self.tabs, output_path, self.session_name)
         return self.script_path
 
-    def get_layout_preview(self, tab_config: Dict[str, Tuple[str, str]]) -> str:
-        return self.layout_generator.generate_wt_command(tab_config)
+    def get_layout_preview(self, tabs: List[TabConfig]) -> str:
+        return self.layout_generator.generate_wt_command(tabs)
 
     def check_command_status(self, tab_name: str, use_verification: bool = True) -> Dict[str, Any]:
         return self.process_monitor.check_command_status(tab_name, self.tab_config, use_verification)
@@ -101,7 +102,7 @@ class WTRemoteLayoutGenerator:
         return self.remote_executor.get_remote_windows_info()
 
     def to_dict(self) -> Dict[str, Any]:
-        return {"remote_name": self.remote_name, "session_name": self.session_name, "tab_config": self.tab_config, "script_path": self.script_path, "created_at": datetime.now().isoformat(), "class_name": self.__class__.__name__}
+        return {"remote_name": self.remote_name, "session_name": self.session_name, "tabs": self.tabs, "script_path": self.script_path, "created_at": datetime.now().isoformat(), "class_name": self.__class__.__name__}
 
     def to_json(self, file_path: Optional[str] = None) -> str:
         # Generate file path if not provided
@@ -160,7 +161,11 @@ class WTRemoteLayoutGenerator:
 
         # Restore state
         instance.session_name = data["session_name"]
-        instance.tab_config = data["tab_config"]
+        # Handle both old and new format for backward compatibility
+        if "tabs" in data:
+            instance.tabs = data["tabs"]
+        elif "tab_config" in data:
+            instance.tabs = instance._convert_legacy_format(data["tab_config"])
         instance.script_path = data["script_path"]
 
         logger.info(f"✅ Loaded WTRemoteLayoutGenerator from: {file_path}")
@@ -248,7 +253,7 @@ if __name__ == "__main__":
         # Demonstrate loading (using the full path)
         loaded_generator = WTRemoteLayoutGenerator.from_json(saved_path)
         print(f"✅ Session loaded successfully: {loaded_generator.session_name}")
-        print(f"📊 Loaded tabs: {list(loaded_generator.tab_config.keys())}")
+        print(f"📊 Loaded tabs: {[tab['tabName'] for tab in loaded_generator.tabs]}")
 
         # Show command preview
         preview = generator.get_layout_preview(sample_tabs)
