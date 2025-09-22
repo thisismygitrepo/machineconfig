@@ -43,9 +43,7 @@ def parse_pyfile(file_path: str):
 
     args_spec = NamedTuple("args_spec", [("name", str), ("type", str), ("default", Optional[str])])
     func_args: list[list[args_spec]] = [[]]  # this firt prepopulated dict is for the option 'RUN AS MAIN' which has no args
-
     import ast
-
     parsed_ast = ast.parse(PathExtended(file_path).read_text(encoding="utf-8"))
     functions = [node for node in ast.walk(parsed_ast) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))]
     module__doc__ = ast.get_docstring(parsed_ast)

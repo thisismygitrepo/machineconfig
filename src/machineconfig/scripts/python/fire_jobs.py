@@ -53,18 +53,21 @@ def main() -> None:
     parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ... (meaning k1=v1, k2=v2, etc)")
     parser.add_argument("--layout", "-L", action="store_true", help="use layout configuration (Zellij Or WindowsTerminal)")
 
-    try:
-        args = parser.parse_args()
+    try: args = parser.parse_args()
     except Exception as ex:
         print(f"❌ Failed to parse arguments: {ex}")
         parser.print_help()
         raise ex
+
+    if args.layout:
+        from machineconfig.scripts.python.fire_jobs_helper1 import handle_layout_args
+        handle_layout_args(args)
+
     path_obj = sanitize_path(args.path)
     if not path_obj.exists():
-        path_obj = match_file_name(sub_string=args.path, search_root=PathExtended.cwd(), suffixes={".py", ".sh", ".ps1"})
-    else:
-        pass
-    if path_obj.is_dir():
+        suffixes = {".py", ".sh", ".ps1"}
+        choice_file = match_file_name(sub_string=args.path, search_root=PathExtended.cwd(), suffixes=suffixes)
+    elif path_obj.is_dir():
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
         files = search_for_files_of_interest(path_obj)
         print(f"🔍 Got #{len(files)} results.")
@@ -74,10 +77,8 @@ def main() -> None:
         choice_file = path_obj
     repo_root = get_repo_root(str(choice_file))
     print(f"💾 Selected file: {choice_file}.\nRepo root: {repo_root}")
-
     ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
-    if ipy_profile is None:
-        ipy_profile = "default"
+    if ipy_profile is None: ipy_profile = "default"
     activate_ve_line = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/machineconfig/.venv")
 
     # Convert args.kw to dictionary
