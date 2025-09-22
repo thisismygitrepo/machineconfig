@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 def select_layout(layouts_json_file: Path, layout_name: Optional[str]):
     import json
-    layout_file: LayoutsFile = json.loads(layouts_json_file.read_text())
+    layout_file: LayoutsFile = json.loads(layouts_json_file.read_text(encoding="utf-8"))
     if layout_name is None:
         options = [layout["layoutName"] for layout in layout_file["layouts"]]
         from machineconfig.utils.options import choose_one_option
