@@ -4,9 +4,10 @@ Status reporting utilities for Windows Terminal layouts and sessions.
 """
 
 import logging
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, List
 from .process_monitor import WTProcessMonitor
 from .session_manager import WTSessionManager
+from machineconfig.cluster.sessions_managers.layout_types import TabConfig
 
 logger = logging.getLogger(__name__)
 
@@ -18,10 +19,10 @@ class WTStatusReporter:
         self.process_monitor = process_monitor
         self.session_manager = session_manager
 
-    def get_comprehensive_status(self, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
+    def get_comprehensive_status(self, tabs: List[TabConfig]) -> Dict[str, Any]:
         """Get comprehensive status including Windows Terminal session and all commands."""
         wt_status = self.session_manager.check_wt_session_status()
-        commands_status = self.process_monitor.check_all_commands_status(tab_config)
+        commands_status = self.process_monitor.check_all_commands_status(tabs)
 
         running_count = sum(1 for status in commands_status.values() if status.get("running", False))
         total_count = len(commands_status)
@@ -32,9 +33,9 @@ class WTStatusReporter:
             "summary": {"total_commands": total_count, "running_commands": running_count, "stopped_commands": total_count - running_count, "session_healthy": wt_status.get("session_exists", False), "location": wt_status.get("location", "unknown")},
         }
 
-    def print_status_report(self, tab_config: Dict[str, Tuple[str, str]]) -> None:
+    def print_status_report(self, tabs: List[TabConfig]) -> None:
         """Print a comprehensive status report for the Windows Terminal session."""
-        status = self.get_comprehensive_status(tab_config)
+        status = self.get_comprehensive_status(tabs)
         wt_session = status["wt_session"]
         commands = status["commands"]
         summary = status["summary"]
@@ -156,10 +157,10 @@ class WTStatusReporter:
 
         print("=" * 80)
 
-    def generate_status_summary(self, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
+    def generate_status_summary(self, tabs: List[TabConfig]) -> Dict[str, Any]:
         """Generate a concise status summary suitable for monitoring."""
         try:
-            comprehensive_status = self.get_comprehensive_status(tab_config)
+            comprehensive_status = self.get_comprehensive_status(tabs)
             wt_overview = self.get_windows_terminal_overview()
 
             summary = comprehensive_status["summary"]
@@ -182,17 +183,18 @@ class WTStatusReporter:
             logger.error(f"Failed to generate status summary: {e}")
             return {"error": str(e), "session_name": self.session_manager.session_name, "location": self.process_monitor.location_name}
 
-    def check_tab_specific_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
+    def check_tab_specific_status(self, tab_name: str, tabs: List[TabConfig]) -> Dict[str, Any]:
         """Get detailed status for a specific tab."""
-        if tab_name not in tab_config:
+        if next((t for t in tabs if t["tabName"] == tab_name), None) is None:
             return {"error": f"Tab '{tab_name}' not found in configuration", "tab_name": tab_name}
 
         try:
-            cmd_status = self.process_monitor.check_command_status(tab_name, tab_config)
+            cmd_status = self.process_monitor.check_command_status(tab_name, tabs)
 
             # Add additional context
-            cwd, command = tab_config[tab_name]
-            cmd_status["tab_config"] = {"working_directory": cwd, "command": command}
+            the_tab = next((t for t in tabs if t["tabName"] == tab_name), None)
+            if the_tab is not None:
+                cmd_status["tab_config"] = {"working_directory": the_tab["startDir"], "command": the_tab["command"]}
 
             return cmd_status
         except Exception as e:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from typing import Dict, Tuple, Optional, List, Any
+from typing import Dict, Optional, List, Any
 from pathlib import Path
 import logging
 import json
@@ -32,6 +32,8 @@ class WTRemoteLayoutGenerator:
         self.session_manager = WTSessionManager(self.remote_executor, self.session_name, TMP_LAYOUT_DIR)
         self.status_reporter = WTStatusReporter(self.process_monitor, self.session_manager)
 
+    # Tabs are stored and used as List[TabConfig]; no legacy dict compatibility
+
     def copy_script_to_remote(self, local_script_file: Path, random_suffix: str) -> str:
         return self.session_manager.copy_script_to_remote(local_script_file, random_suffix)
 
@@ -49,19 +51,19 @@ class WTRemoteLayoutGenerator:
         return self.layout_generator.generate_wt_command(tabs)
 
     def check_command_status(self, tab_name: str, use_verification: bool = True) -> Dict[str, Any]:
-        return self.process_monitor.check_command_status(tab_name, self.tab_config, use_verification)
+        return self.process_monitor.check_command_status(tab_name, self.tabs, use_verification)
 
     def check_all_commands_status(self) -> Dict[str, Dict[str, Any]]:
-        return self.process_monitor.check_all_commands_status(self.tab_config)
+        return self.process_monitor.check_all_commands_status(self.tabs)
 
     def check_wt_session_status(self) -> Dict[str, Any]:
         return self.session_manager.check_wt_session_status()
 
     def get_comprehensive_status(self) -> Dict[str, Any]:
-        return self.status_reporter.get_comprehensive_status(self.tab_config)
+        return self.status_reporter.get_comprehensive_status(self.tabs)
 
     def print_status_report(self) -> None:
-        self.status_reporter.print_status_report(self.tab_config)
+        self.status_reporter.print_status_report(self.tabs)
 
     def start_wt_session(self, script_file_path: Optional[str] = None) -> Dict[str, Any]:
         return self.session_manager.start_wt_session(script_file_path or self.script_path)
@@ -71,13 +73,13 @@ class WTRemoteLayoutGenerator:
 
     # Legacy methods for backward compatibility
     def force_fresh_process_check(self, tab_name: str) -> Dict[str, Any]:
-        return self.process_monitor.force_fresh_process_check(tab_name, self.tab_config)
+        return self.process_monitor.force_fresh_process_check(tab_name, self.tabs)
 
     def verify_process_alive(self, pid: int) -> bool:
         return self.process_monitor.verify_process_alive(pid)
 
     def get_verified_process_status(self, tab_name: str) -> Dict[str, Any]:
-        return self.process_monitor.get_verified_process_status(tab_name, self.tab_config)
+        return self.process_monitor.get_verified_process_status(tab_name, self.tabs)
 
     # Static methods for backward compatibility
     @staticmethod
@@ -161,11 +163,11 @@ class WTRemoteLayoutGenerator:
 
         # Restore state
         instance.session_name = data["session_name"]
-        # Handle both old and new format for backward compatibility
+        # New schema only
         if "tabs" in data:
             instance.tabs = data["tabs"]
-        elif "tab_config" in data:
-            instance.tabs = instance._convert_legacy_format(data["tab_config"])
+        else:
+            instance.tabs = []
         instance.script_path = data["script_path"]
 
         logger.info(f"✅ Loaded WTRemoteLayoutGenerator from: {file_path}")
@@ -206,21 +208,21 @@ class WTRemoteLayoutGenerator:
 
     def generate_status_summary(self) -> Dict[str, Any]:
         """Generate a concise status summary for monitoring."""
-        return self.status_reporter.generate_status_summary(self.tab_config)
+        return self.status_reporter.generate_status_summary(self.tabs)
 
     def check_tab_specific_status(self, tab_name: str) -> Dict[str, Any]:
         """Get detailed status for a specific tab."""
-        return self.status_reporter.check_tab_specific_status(tab_name, self.tab_config)
+        return self.status_reporter.check_tab_specific_status(tab_name, self.tabs)
 
 
 if __name__ == "__main__":
     # Example usage
-    sample_tabs = {
-        "🤖Bot1": ("~/code/bytesense/bithence", "python bot1.py --create_new_bot True"),
-        "🤖Bot2": ("~/code/bytesense/bithence", "python bot2.py --create_new_bot True"),
-        "📊Monitor": ("~", "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10"),
-        "📝Logs": ("C:/logs", "Get-Content app.log -Wait"),
-    }
+    sample_tabs: List[TabConfig] = [
+        {"tabName": "🤖Bot1", "startDir": "~/code/bytesense/bithence", "command": "python bot1.py --create_new_bot True"},
+        {"tabName": "🤖Bot2", "startDir": "~/code/bytesense/bithence", "command": "python bot2.py --create_new_bot True"},
+        {"tabName": "📊Monitor", "startDir": "~", "command": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10"},
+        {"tabName": "📝Logs", "startDir": "C:/logs", "command": "Get-Content app.log -Wait"},
+    ]
 
     # Replace 'myserver' with an actual SSH config alias for a Windows machine
     remote_name = "myserver"  # This should be in ~/.ssh/config

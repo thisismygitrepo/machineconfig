@@ -82,19 +82,19 @@ class LayoutGenerator:
         """Validate layout configuration format and content."""
         if not layout_config:
             raise ValueError("Layout configuration cannot be empty")
-        
+
         if not layout_config.get("layoutName", "").strip():
             raise ValueError("Layout name cannot be empty")
-            
+
         layout_tabs = layout_config.get("layoutTabs", [])
         if not layout_tabs:
             raise ValueError("Layout must have at least one tab")
-            
+
         for tab in layout_tabs:
             tab_name = tab.get("tabName", "")
             command = tab.get("command", "")
             start_dir = tab.get("startDir", "")
-            
+
             if not tab_name.strip():
                 raise ValueError(f"Invalid tab name: {tab_name}")
             if not command.strip():

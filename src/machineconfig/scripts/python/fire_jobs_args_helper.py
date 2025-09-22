@@ -1,5 +1,3 @@
-
-
 from dataclasses import dataclass
 from typing import Optional
 import argparse
@@ -8,6 +6,7 @@ import argparse
 @dataclass
 class FireJobArgs:
     """Type-safe dataclass for fire_jobs command line arguments."""
+
     path: str = "."
     function: Optional[str] = None
     ve: str = ""
@@ -31,6 +30,7 @@ class FireJobArgs:
     watch: bool = False
     kw: Optional[list[str]] = None
     layout: bool = False
+
 
 def get_args() -> FireJobArgs:
     parser = argparse.ArgumentParser()
@@ -58,7 +58,8 @@ def get_args() -> FireJobArgs:
     parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ... (meaning k1=v1, k2=v2, etc)")
     parser.add_argument("--layout", "-L", action="store_true", help="use layout configuration (Zellij Or WindowsTerminal)")
 
-    try: args_raw = parser.parse_args()
+    try:
+        args_raw = parser.parse_args()
     except Exception as ex:
         print(f"❌ Failed to parse arguments: {ex}")
         parser.print_help()

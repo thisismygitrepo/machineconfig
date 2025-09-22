@@ -187,7 +187,6 @@ def connect_to_new_network(ssid: str, password: str):
 def display_available_networks():
     """Display available networks (legacy function for compatibility)"""
     console.print("\n[blue]📡 Scanning for available networks...[/blue]")
-
     try:
         if platform.system() == "Windows":
             subprocess.run(["netsh", "wlan", "show", "networks", "interface=Wi-Fi"], check=True)

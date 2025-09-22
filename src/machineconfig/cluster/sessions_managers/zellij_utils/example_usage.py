@@ -12,13 +12,13 @@ def example_usage():
 
     # Sample layout configuration using new schema
     sample_layout: LayoutConfig = {
-        "layoutName": "ExampleRemoteSession", 
+        "layoutName": "ExampleRemoteSession",
         "layoutTabs": [
             {"tabName": "🤖Bot1", "startDir": "~/code/bytesense/bithence", "command": "~/scripts/fire -mO go1.py bot1 --kw create_new_bot True"},
             {"tabName": "🤖Bot2", "startDir": "~/code/bytesense/bithence", "command": "~/scripts/fire -mO go2.py bot2 --kw create_new_bot True"},
             {"tabName": "📊Monitor", "startDir": "~", "command": "htop"},
             {"tabName": "📝Logs", "startDir": "/var/log", "command": "tail -f /var/log/app.log"},
-        ]
+        ],
     }
 
     # Replace 'myserver' with an actual SSH config alias

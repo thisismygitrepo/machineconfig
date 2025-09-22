@@ -27,7 +27,7 @@ class ProcessMonitor:
             if tab["tabName"] == tab_name:
                 tab_config = tab
                 break
-        
+
         if tab_config is None:
             return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "pid": None, "command": None, "remote": self.remote_executor.remote_name}
 
@@ -45,7 +45,7 @@ class ProcessMonitor:
             if tab["tabName"] == tab_name:
                 tab_config = tab
                 break
-        
+
         if tab_config is None:
             return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "command": None, "remote": self.remote_executor.remote_name}
 
@@ -132,7 +132,7 @@ if __name__ == "__main__":
             if tab["tabName"] == tab_name:
                 tab_config = tab
                 break
-        
+
         if tab_config is None:
             return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "command": None, "remote": self.remote_executor.remote_name}
 

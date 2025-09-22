@@ -494,7 +494,7 @@ if __name__ == "__main__":
                 {"tabName": "☸️K8s", "startDir": "~/k8s", "command": "kubectl get pods --watch"},
                 {"tabName": "📈Metrics", "startDir": "~", "command": "k9s"},
             ],
-        }
+        },
     ]
     try:
         # Create the local manager

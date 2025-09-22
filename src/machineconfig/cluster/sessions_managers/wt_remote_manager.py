@@ -7,6 +7,7 @@ from typing import Optional, Any
 from machineconfig.utils.utils5 import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import run_command_in_wt_tab
 from machineconfig.cluster.sessions_managers.wt_remote import WTRemoteLayoutGenerator
+from machineconfig.cluster.sessions_managers.layout_types import TabConfig
 
 TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "wt", "remote_manager")
 
@@ -21,7 +22,9 @@ class WTSessionManager:
         self.managers: list[WTRemoteLayoutGenerator] = []
         for machine, tab_config in machine2wt_tabs.items():
             an_m = WTRemoteLayoutGenerator(remote_name=machine, session_name_prefix=self.session_name_prefix)
-            an_m.create_wt_layout(tab_config=tab_config)
+            # Convert legacy dict[str, tuple[str,str]] to List[TabConfig]
+            tabs: list[TabConfig] = [{"tabName": name, "startDir": cwd, "command": cmd} for name, (cwd, cmd) in tab_config.items()]
+            an_m.create_wt_layout(tabs=tabs)
             self.managers.append(an_m)
 
     def ssh_to_all_machines(self) -> str:
@@ -338,7 +341,7 @@ class WTSessionManager:
                 # Get Windows Terminal version
                 wt_version = manager.get_wt_version()
 
-                overview[remote_name] = {"windows_info": windows_info, "wt_processes": wt_processes, "wt_version": wt_version, "session_name": manager.session_name, "tab_count": len(manager.tab_config)}
+                overview[remote_name] = {"windows_info": windows_info, "wt_processes": wt_processes, "wt_version": wt_version, "session_name": manager.session_name, "tab_count": len(manager.tabs)}
 
             except Exception as e:
                 overview[manager.remote_name] = {"error": str(e), "session_name": manager.session_name}

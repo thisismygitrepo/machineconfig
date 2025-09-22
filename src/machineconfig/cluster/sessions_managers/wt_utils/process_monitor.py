@@ -7,7 +7,8 @@ Adapted from zellij process monitor but focused on Windows processes.
 import json
 import logging
 import subprocess
-from typing import Dict, Tuple, Any, Optional
+from typing import Dict, Any, Optional, List
+from machineconfig.cluster.sessions_managers.layout_types import TabConfig
 from .remote_executor import WTRemoteExecutor
 
 logger = logging.getLogger(__name__)
@@ -34,20 +35,22 @@ class WTProcessMonitor:
                 raise ValueError("Remote executor is None but is_local is False")
             return self.remote_executor.run_command(command, timeout)
 
-    def check_command_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]], use_verification: bool = True) -> Dict[str, Any]:
+    def check_command_status(self, tab_name: str, tabs: List[TabConfig], use_verification: bool = True) -> Dict[str, Any]:
         """Check command status with optional process verification."""
-        if tab_name not in tab_config:
+        the_tab = next((t for t in tabs if t["tabName"] == tab_name), None)
+        if the_tab is None:
             return {"status": "unknown", "error": f"Tab '{tab_name}' not found in tracked configuration", "running": False, "pid": None, "command": None, "location": self.location_name}
 
         # Use the verified method by default for more accurate results
         if use_verification:
-            return self.get_verified_process_status(tab_name, tab_config)
+            return self.get_verified_process_status(tab_name, tabs)
 
-        return self._basic_process_check(tab_name, tab_config)
+        return self._basic_process_check(tab_name, tabs)
 
-    def _basic_process_check(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
+    def _basic_process_check(self, tab_name: str, tabs: List[TabConfig]) -> Dict[str, Any]:
         """Basic process checking without verification."""
-        _, command = tab_config[tab_name]
+        the_tab = next((t for t in tabs if t["tabName"] == tab_name), None)
+        command = the_tab["command"] if the_tab is not None else ""
 
         try:
             check_script = self._create_process_check_script(command)
@@ -132,12 +135,13 @@ Get-Process | ForEach-Object {{
 }}
 """
 
-    def force_fresh_process_check(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
+    def force_fresh_process_check(self, tab_name: str, tabs: List[TabConfig]) -> Dict[str, Any]:
         """Force a fresh process check with additional validation."""
-        if tab_name not in tab_config:
+        the_tab = next((t for t in tabs if t["tabName"] == tab_name), None)
+        if the_tab is None:
             return {"status": "unknown", "error": f"Tab '{tab_name}' not found in tracked configuration", "running": False, "command": None, "location": self.location_name}
 
-        _, command = tab_config[tab_name]
+        command = the_tab["command"]
 
         try:
             # Get timestamp for freshness validation
@@ -262,9 +266,9 @@ Write-Output $result
         except Exception:
             return False
 
-    def get_verified_process_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
+    def get_verified_process_status(self, tab_name: str, tabs: List[TabConfig]) -> Dict[str, Any]:
         """Get process status with additional verification that processes are actually alive."""
-        status = self.force_fresh_process_check(tab_name, tab_config)
+        status = self.force_fresh_process_check(tab_name, tabs)
 
         if status.get("running") and status.get("processes"):
             verified_processes = []
@@ -284,15 +288,16 @@ Write-Output $result
 
         return status
 
-    def check_all_commands_status(self, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Dict[str, Any]]:
+    def check_all_commands_status(self, tabs: List[TabConfig]) -> Dict[str, Dict[str, Any]]:
         """Check status of all commands in the tab configuration."""
-        if not tab_config:
+        if not tabs:
             logger.warning("No tab configuration provided.")
             return {}
 
         status_report = {}
-        for tab_name in tab_config:
-            status_report[tab_name] = self.check_command_status(tab_name, tab_config)
+        for the_tab in tabs:
+            tab_name = the_tab["tabName"]
+            status_report[tab_name] = self.check_command_status(tab_name, tabs)
         return status_report
 
     def get_windows_terminal_windows(self) -> Dict[str, Any]:

@@ -1,3 +1,21 @@
+src/machineconfig/scripts/python/fire_jobs_args_helper.py: note: In function "extract_kwargs":
+src/machineconfig/scripts/python/fire_jobs_args_helper.py:76:9: error: Name
+"kwargs" already defined on line 75  [no-redef]
+            kwargs: dict[str, object]
+            ^~~~~~
+src/machineconfig/scripts/python/fire_jobs_args_helper.py:79:31: error:
+Incompatible types in assignment (expression has type "bool | None", target has
+type "str")  [assignment]
+                    kwargs[key] = str2obj[str(value)]
+                                  ^~~~~~~~~~~~~~~~~~~
+src/machineconfig/scripts/python/fire_jobs_args_helper.py:84:12: error:
+Incompatible return value type (got "dict[str, str]", expected
+"dict[str, object]")  [return-value]
+        return kwargs
+               ^~~~~~
+src/machineconfig/scripts/python/fire_jobs_args_helper.py:84:12: note: "dict" is invariant -- see https://mypy.readthedocs.io/en/stable/common_issues.html#variance
+src/machineconfig/scripts/python/fire_jobs_args_helper.py:84:12: note: Consider using "Mapping" instead, which is covariant in the value type
+src/machineconfig/scripts/python/fire_jobs_args_helper.py:84:12: note: Perhaps you need a type annotation for "kwargs"? Suggestion: "dict[str, object]"
 src/machineconfig/utils/path_reduced.py: note: In member "search" of class "PathExtended":
 src/machineconfig/utils/path_reduced.py:460:19: error: Incompatible types in
 assignment (expression has type "Any | Iterator[PathExtended]", variable has
@@ -30,4 +48,4 @@ src/machineconfig/profile/create.py:74:32: error: Module has no attribute
 "windll"  [attr-defined]
                         is_admin = ctypes.windll.shell32.IsUserAnAdmin()
                                    ^~~~~~~~~~~~~
-Found 6 errors in 3 files (checked 168 source files)
+Found 9 errors in 4 files (checked 170 source files)

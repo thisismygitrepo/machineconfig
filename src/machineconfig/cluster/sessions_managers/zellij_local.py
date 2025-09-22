@@ -316,11 +316,13 @@ def run_zellij_layout(layout_config: LayoutConfig):
     session_name = layout_config["layoutName"]
     try:
         from .enhanced_command_runner import enhanced_zellij_session_start
+
         enhanced_zellij_session_start(session_name, layout_path)
     except ImportError:
         # Fallback to original implementation
         cmd = f"zellij delete-session --force {session_name}; zellij --layout {layout_path} a -b {session_name}"
         import subprocess
+
         subprocess.run(cmd, shell=True, check=True)
         console.print(f"[bold green]🚀 Zellij layout is running[/bold green] [yellow]@[/yellow] [bold cyan]{session_name}[/bold cyan]")
 

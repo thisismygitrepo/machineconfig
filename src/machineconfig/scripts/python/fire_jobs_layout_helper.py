@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig, LayoutsFile
 from typing import Optional, TYPE_CHECKING
@@ -13,12 +12,14 @@ if TYPE_CHECKING:
 
 def select_layout(layouts_json_file: Path, layout_name: Optional[str]):
     import json
+
     layout_file: LayoutsFile = json.loads(layouts_json_file.read_text(encoding="utf-8"))
     if len(layout_file["layouts"]) == 0:
         raise ValueError(f"No layouts found in {layouts_json_file}")
     if layout_name is None:
         options = [layout["layoutName"] for layout in layout_file["layouts"]]
         from machineconfig.utils.options import choose_one_option
+
         layout_name = choose_one_option(options=options, prompt="Choose a layout configuration:", fzf=True)
     print(f"Selected layout: {layout_name}")
     layout_chosen = next((layout for layout in layout_file["layouts"] if layout["layoutName"] == layout_name), None)
@@ -29,15 +30,19 @@ def select_layout(layouts_json_file: Path, layout_name: Optional[str]):
         raise ValueError(f"Layout '{layout_name}' not found. Available layouts: {available_layouts}")
     return layout_chosen
 
+
 def launch_layout(layout_config: LayoutConfig) -> Optional[Exception]:
     import platform
+
     if platform.system() == "Linux" or platform.system() == "Darwin":
         print("🧑‍💻 Launching layout using Zellij terminal multiplexer...")
         from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
+
         run_zellij_layout(layout_config=layout_config)
     elif platform.system() == "Windows":
         print("🧑‍💻 Launching layout using Windows Terminal...")
         from machineconfig.cluster.sessions_managers.wt_local import run_wt_layout
+
         run_wt_layout(layout_config=layout_config)
     else:
         print(f"❌ Unsupported platform: {platform.system()}")

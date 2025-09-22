@@ -1,3 +1,27 @@
+ERROR Could not find import of `typer` [import-error]
+  --> .ai/tmp_scripts/argparse_typing_examples/approach3_modern_libs.py:15:16
+   |
+15 |         import typer
+   |                ^^^^^
+   |
+  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
+  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
+  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
+ERROR Could not find import of `click` [import-error]
+  --> .ai/tmp_scripts/argparse_typing_examples/approach3_modern_libs.py:80:16
+   |
+80 |         import click
+   |                ^^^^^
+   |
+  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
+  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
+  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
+ERROR Argument `dict[str, tuple[str, str]]` is not assignable to parameter `tabs` with type `list[TypedDict[TabConfig]]` in function `machineconfig.cluster.sessions_managers.wt_utils.layout_generator.WTLayoutGenerator.create_wt_script` [bad-argument-type]
+  --> .ai/tmp_scripts/test_layout_generator_ps1.py:24:46
+   |
+24 |     script_path = generator.create_wt_script(test_config, output_dir, "TestLayoutGen")
+   |                                              ^^^^^^^^^^^
+   |
 ERROR Could not import `P` from `machineconfig.utils.path_reduced` [missing-module-attribute]
   --> .ai/tmp_scripts/test_repr_inline.py:10:46
    |
@@ -10,18 +34,6 @@ ERROR Could not import `P` from `machineconfig.utils.path_reduced` [missing-modu
 11 | from machineconfig.utils.path_reduced import P
    |                                              ^
    |
-ERROR Missing argument `layout_config` in function `machineconfig.cluster.sessions_managers.wt_local.WTLayoutGenerator.create_wt_layout` [missing-argument]
-  --> src/machineconfig/cluster/sessions_managers/wt_local_manager.py:38:37
-   |
-38 |             manager.create_wt_layout(tab_config=tab_config, session_name=full_session_name)
-   |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   |
-ERROR Unexpected keyword argument `tab_config` in function `machineconfig.cluster.sessions_managers.wt_local.WTLayoutGenerator.create_wt_layout` [unexpected-keyword]
-  --> src/machineconfig/cluster/sessions_managers/wt_local_manager.py:38:38
-   |
-38 |             manager.create_wt_layout(tab_config=tab_config, session_name=full_session_name)
-   |                                      ^^^^^^^^^^
-   |
 ERROR Argument `str` is not assignable to parameter `object` with type `LiteralString` in function `list.append` [bad-argument-type]
    --> src/machineconfig/cluster/sessions_managers/wt_local_manager.py:117:33
     |
@@ -33,30 +45,6 @@ ERROR Argument `str` is not assignable to parameter `object` with type `LiteralS
     |
 118 |                 commands.append(f"wt -w {manager.session_name}")
     |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    |
-ERROR Object of class `WTLayoutGenerator` has no attribute `tab_config` [missing-attribute]
-   --> src/machineconfig/cluster/sessions_managers/wt_local_manager.py:306:81
-    |
-306 | ...   manager_data = {"session_name": manager.session_name, "tab_config": manager.tab_config, "script_path": manager.script_path}
-    |                                                                           ^^^^^^^^^^^^^^^^^^
-    |
-ERROR Object of class `WTLayoutGenerator` has no attribute `tab_config` [missing-attribute]
-   --> src/machineconfig/cluster/sessions_managers/wt_local_manager.py:355:21
-    |
-355 |                     manager.tab_config = manager_data["tab_config"]
-    |                     ^^^^^^^^^^^^^^^^^^
-    |
-ERROR Object of class `WTLayoutGenerator` has no attribute `tab_config` [missing-attribute]
-   --> src/machineconfig/cluster/sessions_managers/wt_local_manager.py:425:131
-    |
-425 | ...is_active": len(session_windows) > 0, "tab_count": len(manager.tab_config), "tabs": list(manager.tab_config.keys()), "windows": ...
-    |                                                           ^^^^^^^^^^^^^^^^^^
-    |
-ERROR Object of class `WTLayoutGenerator` has no attribute `tab_config` [missing-attribute]
-   --> src/machineconfig/cluster/sessions_managers/wt_local_manager.py:425:165
-    |
-425 | ... 0, "tab_count": len(manager.tab_config), "tabs": list(manager.tab_config.keys()), "windows": session_windows})
-    |                                                           ^^^^^^^^^^^^^^^^^^
     |
 ERROR Argument `str` is not assignable to parameter `object` with type `LiteralString` in function `list.append` [bad-argument-type]
   --> src/machineconfig/cluster/sessions_managers/zellij_local.py:61:39
@@ -125,99 +113,27 @@ ERROR Object of class `Process` has no attribute `info` [missing-attribute]
     |                                                               ^^^^^^^^^
     |
 ERROR Argument `str` is not assignable to parameter `object` with type `LiteralString` in function `list.append` [bad-argument-type]
-   --> src/machineconfig/cluster/sessions_managers/zellij_local_manager.py:163:33
+   --> src/machineconfig/cluster/sessions_managers/zellij_local_manager.py:164:33
     |
-163 |                 commands.append(f"# Attach to session '{manager.session_name}':")
+164 |                 commands.append(f"# Attach to session '{manager.session_name}':")
     |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     |
 ERROR Argument `str` is not assignable to parameter `object` with type `LiteralString` in function `list.append` [bad-argument-type]
-   --> src/machineconfig/cluster/sessions_managers/zellij_local_manager.py:164:33
+   --> src/machineconfig/cluster/sessions_managers/zellij_local_manager.py:165:33
     |
-164 |                 commands.append(f"zellij attach {manager.session_name}")
+165 |                 commands.append(f"zellij attach {manager.session_name}")
     |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     |
-ERROR Argument `TypedDict[LayoutConfig]` is not assignable to parameter `tab_config` with type `dict[str, tuple[str, str]]` in function `machineconfig.cluster.sessions_managers.zellij_utils.layout_generator.LayoutGenerator.create_layout_file` [bad-argument-type]
-  --> src/machineconfig/cluster/sessions_managers/zellij_remote.py:56:69
-   |
-56 |         self.layout_path = self.layout_generator.create_layout_file(layout_config, output_path, self.session_name)
-   |                                                                     ^^^^^^^^^^^^^
-   |
-ERROR Argument `TypedDict[LayoutConfig]` is not assignable to parameter `tab_config` with type `dict[str, tuple[str, str]]` in function `machineconfig.cluster.sessions_managers.zellij_utils.layout_generator.LayoutGenerator.generate_layout_content` [bad-argument-type]
-  --> src/machineconfig/cluster/sessions_managers/zellij_remote.py:60:62
-   |
-60 |         return self.layout_generator.generate_layout_content(layout_config)
-   |                                                              ^^^^^^^^^^^^^
-   |
-ERROR Argument `TypedDict[LayoutConfig]` is not assignable to parameter `tab_config` with type `dict[str, tuple[str, str]]` in function `machineconfig.cluster.sessions_managers.zellij_utils.process_monitor.ProcessMonitor.check_command_status` [bad-argument-type]
-  --> src/machineconfig/cluster/sessions_managers/zellij_remote.py:65:68
-   |
-65 |         return self.process_monitor.check_command_status(tab_name, self.layout_config, use_verification)
-   |                                                                    ^^^^^^^^^^^^^^^^^^
-   |
-ERROR Argument `TypedDict[LayoutConfig]` is not assignable to parameter `tab_config` with type `dict[str, tuple[str, str]]` in function `machineconfig.cluster.sessions_managers.zellij_utils.process_monitor.ProcessMonitor.check_all_commands_status` [bad-argument-type]
-  --> src/machineconfig/cluster/sessions_managers/zellij_remote.py:70:63
-   |
-70 |         return self.process_monitor.check_all_commands_status(self.layout_config)
-   |                                                               ^^^^^^^^^^^^^^^^^^
-   |
-ERROR Argument `TypedDict[LayoutConfig]` is not assignable to parameter `tab_config` with type `dict[str, tuple[str, str]]` in function `machineconfig.cluster.sessions_managers.zellij_utils.status_reporter.StatusReporter.get_comprehensive_status` [bad-argument-type]
-  --> src/machineconfig/cluster/sessions_managers/zellij_remote.py:78:62
-   |
-78 |         return self.status_reporter.get_comprehensive_status(self.layout_config)
-   |                                                              ^^^^^^^^^^^^^^^^^^
-   |
-ERROR Argument `TypedDict[LayoutConfig]` is not assignable to parameter `tab_config` with type `dict[str, tuple[str, str]]` in function `machineconfig.cluster.sessions_managers.zellij_utils.status_reporter.StatusReporter.print_status_report` [bad-argument-type]
-  --> src/machineconfig/cluster/sessions_managers/zellij_remote.py:84:50
-   |
-84 |         self.status_reporter.print_status_report(self.layout_config)
-   |                                                  ^^^^^^^^^^^^^^^^^^
-   |
-ERROR Argument `TypedDict[LayoutConfig]` is not assignable to parameter `tab_config` with type `dict[str, tuple[str, str]]` in function `machineconfig.cluster.sessions_managers.zellij_utils.process_monitor.ProcessMonitor.force_fresh_process_check` [bad-argument-type]
-  --> src/machineconfig/cluster/sessions_managers/zellij_remote.py:96:73
-   |
-96 |         return self.process_monitor.force_fresh_process_check(tab_name, self.layout_config)
-   |                                                                         ^^^^^^^^^^^^^^^^^^
-   |
-ERROR Argument `TypedDict[LayoutConfig]` is not assignable to parameter `tab_config` with type `dict[str, tuple[str, str]]` in function `machineconfig.cluster.sessions_managers.zellij_utils.process_monitor.ProcessMonitor.get_verified_process_status` [bad-argument-type]
-   --> src/machineconfig/cluster/sessions_managers/zellij_remote.py:104:75
-    |
-104 |         return self.process_monitor.get_verified_process_status(tab_name, self.layout_config)
-    |                                                                           ^^^^^^^^^^^^^^^^^^
-    |
-ERROR Missing argument `layout_config` in function `machineconfig.cluster.sessions_managers.zellij_remote.ZellijRemoteLayoutGenerator.create_zellij_layout` [missing-argument]
-  --> src/machineconfig/cluster/sessions_managers/zellij_remote_manager.py:23:38
-   |
-23 |             an_m.create_zellij_layout(tab_config=tab_config)
-   |                                      ^^^^^^^^^^^^^^^^^^^^^^^
-   |
-ERROR Unexpected keyword argument `tab_config` in function `machineconfig.cluster.sessions_managers.zellij_remote.ZellijRemoteLayoutGenerator.create_zellij_layout` [unexpected-keyword]
-  --> src/machineconfig/cluster/sessions_managers/zellij_remote_manager.py:23:39
-   |
-23 |             an_m.create_zellij_layout(tab_config=tab_config)
-   |                                       ^^^^^^^^^^
-   |
-ERROR Argument `dict[str, tuple[str, str]]` is not assignable to parameter `layout_config` with type `TypedDict[LayoutConfig]` in function `machineconfig.cluster.sessions_managers.zellij_remote.ZellijRemoteLayoutGenerator.create_zellij_layout` [bad-argument-type]
-  --> src/machineconfig/cluster/sessions_managers/zellij_utils/example_usage.py:29:54
-   |
-29 |         layout_path = generator.create_zellij_layout(sample_tabs)
-   |                                                      ^^^^^^^^^^^
-   |
-ERROR Argument `dict[str, tuple[str, str]]` is not assignable to parameter `layout_config` with type `TypedDict[LayoutConfig]` in function `machineconfig.cluster.sessions_managers.zellij_remote.ZellijRemoteLayoutGenerator.get_layout_preview` [bad-argument-type]
-  --> src/machineconfig/cluster/sessions_managers/zellij_utils/example_usage.py:33:48
-   |
-33 |         preview = generator.get_layout_preview(sample_tabs)
-   |                                                ^^^^^^^^^^^
-   |
 ERROR Argument `str` is not assignable to parameter `object` with type `LiteralString` in function `list.append` [bad-argument-type]
-  --> src/machineconfig/cluster/sessions_managers/zellij_utils/layout_generator.py:59:39
+  --> src/machineconfig/cluster/sessions_managers/zellij_utils/layout_generator.py:60:39
    |
-59 |                 formatted_args.append(f'"{escaped_arg}"')
+60 |                 formatted_args.append(f'"{escaped_arg}"')
    |                                       ^^^^^^^^^^^^^^^^^^
    |
 ERROR Argument `str` is not assignable to parameter `object` with type `LiteralString` in function `list.append` [bad-argument-type]
-  --> src/machineconfig/cluster/sessions_managers/zellij_utils/layout_generator.py:61:39
+  --> src/machineconfig/cluster/sessions_managers/zellij_utils/layout_generator.py:62:39
    |
-61 |                 formatted_args.append(f'"{arg}"')
+62 |                 formatted_args.append(f'"{arg}"')
    |                                       ^^^^^^^^^^
    |
 ERROR No attribute `windll` in module `ctypes` [missing-attribute]
@@ -244,45 +160,27 @@ ERROR Type `object` is not iterable [not-iterable]
 41 |     options = [x.get_description() for x in tqdm(installers, desc="✅ Checking installed programs")] + list(get_args(WHICH_CAT))
    |                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
-ERROR Missing argument `session_layouts` in function `machineconfig.cluster.sessions_managers.zellij_local_manager.ZellijLocalManager.__init__` [missing-argument]
-   --> src/machineconfig/scripts/python/fire_agents.py:231:33
-    |
-231 |     manager = ZellijLocalManager(session2zellij_tabs={"Agents": tab_config}, session_name_prefix=random_name)
-    |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    |
-ERROR Unexpected keyword argument `session2zellij_tabs` in function `machineconfig.cluster.sessions_managers.zellij_local_manager.ZellijLocalManager.__init__` [unexpected-keyword]
-   --> src/machineconfig/scripts/python/fire_agents.py:231:34
-    |
-231 |     manager = ZellijLocalManager(session2zellij_tabs={"Agents": tab_config}, session_name_prefix=random_name)
-    |                                  ^^^^^^^^^^^^^^^^^^^
-    |
-ERROR Missing argument `layout_config` in function `machineconfig.cluster.sessions_managers.zellij_local.run_zellij_layout` [missing-argument]
-   --> src/machineconfig/scripts/python/fire_jobs.py:314:26
-    |
-314 |         run_zellij_layout(tab_config=tab_config, session_name=None)
-    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    |
-ERROR Unexpected keyword argument `tab_config` in function `machineconfig.cluster.sessions_managers.zellij_local.run_zellij_layout` [unexpected-keyword]
-   --> src/machineconfig/scripts/python/fire_jobs.py:314:27
-    |
-314 |         run_zellij_layout(tab_config=tab_config, session_name=None)
-    |                           ^^^^^^^^^^
-    |
+ERROR Object of class `NoneType` has no attribute `lower` [missing-attribute]
+  --> src/machineconfig/scripts/python/fire_jobs_layout_helper.py:27:110
+   |
+27 | ...   layout_chosen = next((layout for layout in layout_file["layouts"] if layout["layoutName"].lower() == layout_name.lower()), None)
+   |                                                                                                            ^^^^^^^^^^^^^^^^^
+   |
 ERROR `str` is not assignable to `PathLike[str]` (caused by inconsistent types when breaking cycles) [bad-assignment]
-   --> src/machineconfig/scripts/python/helpers/helpers4.py:148:5
+   --> src/machineconfig/scripts/python/helpers/helpers4.py:147:5
     |
-148 | /     while path != root_path and trials < 20:
-149 | |         for root_file in root_files:
-150 | |             if os.path.exists(os.path.join(path, root_file)):
-151 | |                 # print(f"Found repo root path: {path}")
-152 | |                 return path
-153 | |         path = os.path.dirname(path)
+147 | /     while path != root_path and trials < 20:
+148 | |         for root_file in root_files:
+149 | |             if os.path.exists(os.path.join(path, root_file)):
+150 | |                 # print(f"Found repo root path: {path}")
+151 | |                 return path
+152 | |         path = os.path.dirname(path)
     | |_____________________________________^
     |
 ERROR Returned type `PathLike[str]` is not assignable to declared return type `str | None` [bad-return]
-   --> src/machineconfig/scripts/python/helpers/helpers4.py:152:24
+   --> src/machineconfig/scripts/python/helpers/helpers4.py:151:24
     |
-152 |                 return path
+151 |                 return path
     |                        ^^^^
     |
 ERROR `str | None` is not assignable to `None` (caused by inconsistent types when breaking cycles) [bad-assignment]

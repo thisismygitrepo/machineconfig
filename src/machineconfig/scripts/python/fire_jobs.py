@@ -27,6 +27,7 @@ import os
 def main(args: FireJobArgs) -> None:
     if args.layout:
         from machineconfig.scripts.python.fire_jobs_layout_helper import handle_layout_args
+
         return handle_layout_args(args)
 
     path_obj = sanitize_path(args.path)
@@ -44,11 +45,14 @@ def main(args: FireJobArgs) -> None:
     repo_root = get_repo_root(str(choice_file))
     print(f"💾 Selected file: {choice_file}.\nRepo root: {repo_root}")
     ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
-    if ipy_profile is None: ipy_profile = "default"
+    if ipy_profile is None:
+        ipy_profile = "default"
     activate_ve_line = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/machineconfig/.venv")
 
-    if choice_file.suffix == ".py": kwargs = extract_kwargs(args)
-    else: kwargs = {}
+    if choice_file.suffix == ".py":
+        kwargs = extract_kwargs(args)
+    else:
+        kwargs = {}
 
     # =========================  choosing function to run
     choice_function: Optional[str] = None  # Initialize to avoid unbound variable
@@ -87,6 +91,7 @@ def main(args: FireJobArgs) -> None:
     if choice_file.suffix == ".py":
         if args.streamlit:
             import socket
+
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             try:
                 s.connect(("8.8.8.8", 1))
@@ -135,6 +140,7 @@ def main(args: FireJobArgs) -> None:
             message = f"🚀 Streamlit app is running @:\n1- http://{local_ip_v4}:{port}\n2- http://{computer_name}:{port}\n3- http://localhost:{port}"
             from rich.panel import Panel
             from rich import print as rprint
+
             rprint(Panel(message))
             exe = f"streamlit run --server.address 0.0.0.0 --server.headless true --server.port {port}"
             # exe = f"cd '{choice_file.parent}'; " + exe
@@ -151,7 +157,9 @@ def main(args: FireJobArgs) -> None:
     else:
         raise NotImplementedError(f"File type {choice_file.suffix} not supported, in the sense that I don't know how to fire it.")
 
-    if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
+    if (
+        args.module or (args.debug and args.choose_function)
+    ):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file}"
         import_line = get_import_module_code(str(choice_file))
         if repo_root is not None:
@@ -250,6 +258,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
     if args.Nprocess > 1:
         from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
         from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
+
         layout: LayoutConfig = {"layoutName": "fireNprocess", "layoutTabs": []}
         for an_arg in range(args.Nprocess):
             layout["layoutTabs"].append({"tabName": f"tab{an_arg}", "startDir": str(PathExtended.cwd()), "command": f"uv run -m fire {choice_file} {choice_function} --idx={an_arg} --idx_max={args.Nprocess}"})

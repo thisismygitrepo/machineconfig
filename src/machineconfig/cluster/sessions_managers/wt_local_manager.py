@@ -35,7 +35,7 @@ class WTLocalManager:
         # Create a WTLayoutGenerator for each session
         for layout_config in session_layouts:
             manager = WTLayoutGenerator()
-            manager.create_wt_layout(layout_config=layout_config,)
+            manager.create_wt_layout(layout_config=layout_config)
             self.managers.append(manager)
 
         logger.info(f"Initialized WTLocalManager with {len(self.managers)} sessions")
@@ -422,7 +422,15 @@ class WTLocalManager:
                         if session_name in window_title or not window_title:
                             session_windows.append(proc)
 
-                    active_sessions.append({"session_name": session_name, "is_active": len(session_windows) > 0, "tab_count": len(manager.layout_config["layoutTabs"]) if manager.layout_config else 0, "tabs": [tab["tabName"] for tab in manager.layout_config["layoutTabs"]] if manager.layout_config else [], "windows": session_windows})
+                    active_sessions.append(
+                        {
+                            "session_name": session_name,
+                            "is_active": len(session_windows) > 0,
+                            "tab_count": len(manager.layout_config["layoutTabs"]) if manager.layout_config else 0,
+                            "tabs": [tab["tabName"] for tab in manager.layout_config["layoutTabs"]] if manager.layout_config else [],
+                            "windows": session_windows,
+                        }
+                    )
 
         except Exception as e:
             logger.error(f"Error listing active sessions: {e}")
@@ -459,15 +467,15 @@ if __name__ == "__main__":
                 {"tabName": "🚀Frontend", "startDir": "~/code/myapp/frontend", "command": "npm run dev"},
                 {"tabName": "⚙️Backend", "startDir": "~/code/myapp/backend", "command": "python manage.py runserver"},
                 {"tabName": "📊Monitor", "startDir": "~", "command": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10"},
-            ]
+            ],
         },
         {
-            "layoutName": "TestingEnv", 
+            "layoutName": "TestingEnv",
             "layoutTabs": [
                 {"tabName": "🧪Tests", "startDir": "~/code/myapp", "command": "pytest --watch"},
                 {"tabName": "🔍Coverage", "startDir": "~/code/myapp", "command": "python -m coverage run --source=. -m pytest"},
                 {"tabName": "📝Logs", "startDir": "~/logs", "command": "Get-Content app.log -Wait"},
-            ]
+            ],
         },
         {
             "layoutName": "DeploymentEnv",
@@ -475,7 +483,7 @@ if __name__ == "__main__":
                 {"tabName": "🐳Docker", "startDir": "~/code/myapp", "command": "docker-compose up"},
                 {"tabName": "☸️K8s", "startDir": "~/k8s", "command": "kubectl get pods --watch"},
                 {"tabName": "📈Metrics", "startDir": "~", "command": 'Get-Counter "\\Processor(_Total)\\% Processor Time" -SampleInterval 2 -MaxSamples 30'},
-            ]
+            ],
         },
     ]
 
