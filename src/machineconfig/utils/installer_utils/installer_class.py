@@ -366,7 +366,7 @@ class Installer:
             if existing_version == version_to_be_installed:
                 print(f"✅ {exe_name} is up to date (version {version_to_be_installed})")
                 print(f"📂 Version information stored at: {INSTALL_VERSION_ROOT}")
-                return ("✅ Uptodate", version.strip(), version_to_be_installed.strip())
+                return ("✅ Up to date", version.strip(), version_to_be_installed.strip())
             else:
                 print(f"🔄 {exe_name} needs update: {existing_version.rstrip()} → {version_to_be_installed}")
                 tmp_path.write_text(version_to_be_installed, encoding="utf-8")

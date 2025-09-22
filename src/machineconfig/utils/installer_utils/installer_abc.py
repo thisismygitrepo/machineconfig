@@ -1,11 +1,10 @@
+
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.source_of_truth import WINDOWS_INSTALL_PATH, LINUX_INSTALL_PATH
 from typing import Optional, TypeAlias, Literal
 import subprocess
 
-# LINUX_INSTALL_PATH = '/usr/local/bin'
-# LINUX_INSTALL_PATH = '~/.local/bin'
-LINUX_INSTALL_PATH = PathExtended.home().joinpath(".local/bin").__str__()
-WINDOWS_INSTALL_PATH = PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps").__str__()
+
 CATEGORY: TypeAlias = Literal["OS_SPECIFIC", "OS_GENERIC", "CUSTOM", "OS_SPECIFIC_DEV", "OS_GENERIC_DEV", "CUSTOM_DEV"]
 
 

@@ -9,34 +9,27 @@ from typing import Optional, Union, TypeVar, Iterable
 T = TypeVar("T")
 
 
-def check_tool_exists(tool_name: str, install_script: Optional[str] = None) -> bool:
-    if platform.system() == "Windows":
-        tool_name = tool_name.replace(".exe", "") + ".exe"
+def check_tool_exists(tool_name: str) -> bool:
+    if platform.system() == "Windows": tool_name = tool_name.replace(".exe", "") + ".exe"
+
+    from machineconfig.utils.source_of_truth import WINDOWS_INSTALL_PATH, LINUX_INSTALL_PATH
 
     if platform.system() == "Windows":
         cmd = "where.exe"
+        root_path = Path(WINDOWS_INSTALL_PATH)
     elif platform.system() in ["Linux", "Darwin"]:
         cmd = "which"
-    else:
-        raise NotImplementedError(f"platform {platform.system()} not implemented")
+        root_path = Path(LINUX_INSTALL_PATH)
+    else: raise NotImplementedError(f"platform {platform.system()} not implemented")
 
-    try:
-        _tmp = subprocess.check_output([cmd, tool_name], stderr=subprocess.DEVNULL)
-        res: bool = True
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        res = False
-    if res is False and install_script is not None:
-        console = Console()
-        console.print(Panel(f"📥 INSTALLING TOOL | Installing {tool_name}...", border_style="bold blue", expand=False))
-        result = subprocess.run(install_script, shell=True, capture_output=True, text=True)
-        print(f"Command: {install_script}")
-        if result.stdout:
-            print(f"STDOUT: {result.stdout}")
-        if result.stderr:
-            print(f"STDERR: {result.stderr}")
-        print(f"Return code: {result.returncode}")
-        return check_tool_exists(tool_name=tool_name, install_script=None)
-    return res
+    _ = cmd
+    # try:
+    #     _tmp = subprocess.check_output([cmd, tool_name], stderr=subprocess.DEVNULL)
+    #     res: bool = True
+    # except (subprocess.CalledProcessError, FileNotFoundError):
+    #     res = False
+    # return res
+    return root_path.joinpath(tool_name).is_file()
 
 
 def choose_one_option(options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "", default: Optional[T] = None, fzf: bool = False, custom_input: bool = False) -> T:

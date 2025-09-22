@@ -13,7 +13,7 @@ import imaplib
 # from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from typing import Optional, Any, Union, Literal
+from typing import Optional, Any, Union
 from markdown import markdown
 
 
