@@ -15,6 +15,7 @@ from math import ceil
 from typing import Literal, TypeAlias, get_args, Iterable
 
 from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
+from machineconfig.cluster.sessions_managers.layout_types import TabConfig, LayoutConfig
 from machineconfig.utils.utils2 import randstr
 import random
 # import time
@@ -23,7 +24,6 @@ AGENTS: TypeAlias = Literal[
     "cursor-agent", "gemini", "crush", "q", "onlyPrepPromptFiles"
     # warp terminal
 ]
-TabConfig = dict[str, tuple[str, str]]  # tab name -> (cwd, command)
 DEFAULT_AGENT_CAP = 6
 
 
@@ -93,7 +93,7 @@ def _confirm(message: str, default_no: bool = True) -> bool:
     return False
 
 
-def launch_agents(repo_root: Path, prompts: list[str], agent: AGENTS, *, max_agents: int = DEFAULT_AGENT_CAP) -> TabConfig:
+def launch_agents(repo_root: Path, prompts: list[str], agent: AGENTS, *, max_agents: int = DEFAULT_AGENT_CAP) -> list[TabConfig]:
     """Create tab configuration for a set of agent prompts.
 
     If number of prompts exceeds max_agents, ask user for confirmation.
@@ -106,9 +106,9 @@ def launch_agents(repo_root: Path, prompts: list[str], agent: AGENTS, *, max_age
         proceed = _confirm(message=(f"You are about to launch {len(prompts)} agents which exceeds the cap ({max_agents}). Proceed?"))
         if not proceed:
             print("Aborting per user choice.")
-            return {}
+            return []
 
-    tab_config: TabConfig = {}
+    tab_config: list[TabConfig] = []
     tmp_dir = repo_root / ".ai" / f"tmp_prompts/{randstr()}"
     tmp_dir.mkdir(parents=True, exist_ok=True)
 
@@ -173,7 +173,7 @@ echo "---------END OF AGENT OUTPUT---------"
 """
         cmd_path.write_text(cmd_prefix + cmd + cmd_postfix, encoding="utf-8")
         fire_cmd = f"bash {shlex.quote(str(cmd_path))}"
-        tab_config[f"Agent{idx}"] = (str(repo_root), fire_cmd)
+        tab_config.append(TabConfig(tabName=f"Agent{idx}", startDir=str(repo_root), command=fire_cmd))
 
     print(f"Launching a template with #{len(tab_config)} agents")
     return tab_config
@@ -228,7 +228,7 @@ def main():  # noqa: C901 - (complexity acceptable for CLI glue)
     from machineconfig.utils.utils2 import randstr
 
     random_name = randstr(length=3)
-    manager = ZellijLocalManager(session2zellij_tabs={"Agents": tab_config}, session_name_prefix=random_name)
+    manager = ZellijLocalManager(session_layouts=[LayoutConfig(layoutName="Agents", layoutTabs=tab_config)], session_name_prefix=random_name)
     manager.start_all_sessions()
     manager.run_monitoring_routine()
 

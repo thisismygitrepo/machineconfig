@@ -75,7 +75,7 @@ def extract_kwargs(args: FireJobArgs) -> dict[str, object]:
         kwargs: dict[str, object]
         for key, value in kwargs.items():
             if value in str2obj:
-                kwargs[key] = str2obj[value]
+                kwargs[key] = str2obj[str(value)]
         if args.function is None:  # if user passed arguments and forgot to pass function, then assume they want to run the main function.
             args.choose_function = True
     else:

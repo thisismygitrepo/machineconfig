@@ -26,14 +26,14 @@ def sanitize_path(a_path: str) -> PathExtended:
             skip_parts = 3 if path.as_posix().startswith("/home") else 3  # Both have 3 parts to skip
             path = PathExtended.home().joinpath(*path.parts[skip_parts:])
             assert path.exists(), f"File not found: {path}"
-            source_os = "Linux" if a_path.as_posix().startswith("/home") else "macOS"
+            source_os = "Linux" if path.as_posix().startswith("/home") else "macOS"
             console.print(Panel(f"🔗 PATH MAPPING | {source_os} → Windows: `{a_path}` ➡️ `{path}`", title="Path Mapping", expand=False))
         elif platform.system() in ["Linux", "Darwin"] and PathExtended.home().as_posix() not in path.as_posix():  # copied between Unix-like systems with different username
             skip_parts = 3  # Both /home/username and /Users/username have 3 parts to skip
             path = PathExtended.home().joinpath(*path.parts[skip_parts:])
             assert path.exists(), f"File not found: {path}"
             current_os = "Linux" if platform.system() == "Linux" else "macOS"
-            source_os = "Linux" if a_path.as_posix().startswith("/home") else "macOS"
+            source_os = "Linux" if path.as_posix().startswith("/home") else "macOS"
             console.print(Panel(f"🔗 PATH MAPPING | {source_os} → {current_os}: `{a_path}` ➡️ `{path}`", title="Path Mapping", expand=False))
     elif path.as_posix().startswith("C:"):
         if platform.system() in ["Linux", "Darwin"]:  # path copied from Windows to Linux/Mac

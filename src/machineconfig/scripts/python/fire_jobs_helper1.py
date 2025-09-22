@@ -2,6 +2,8 @@
 from pathlib import Path
 from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig, LayoutsFile
 from typing import Optional, TYPE_CHECKING
+from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_interest
+from machineconfig.utils.options import choose_one_option
 from machineconfig.utils.path import match_file_name, sanitize_path
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 
@@ -29,5 +31,12 @@ def handle_layout_args(args: "FireJobArgs") -> None:
     path_obj = sanitize_path(args.path)
     if not path_obj.exists():
         choice_file = match_file_name(sub_string=args.path, search_root=PathExtended.cwd(), suffixes={".json"})
-    else: choice_file = path_obj
+    elif path_obj.is_dir():
+        print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
+        files = search_for_files_of_interest(path_obj)
+        print(f"🔍 Got #{len(files)} results.")
+        choice_file = choose_one_option(options=files, fzf=True)
+        choice_file = PathExtended(choice_file)
+    else:
+        choice_file = path_obj
     launch_layout(layout_config=select_layout(layouts_json_file=choice_file, layout_name=args.function))

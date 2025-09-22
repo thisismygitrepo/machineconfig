@@ -24,7 +24,7 @@ TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "
 class ZellijLocalManager:
     """Manages multiple local zellij sessions and monitors their tabs and processes."""
 
-    def __init__(self, session_layouts: Dict[str, LayoutConfig], session_name_prefix: str = "LocalJobMgr"):
+    def __init__(self, session_layouts: list[LayoutConfig], session_name_prefix: str = "LocalJobMgr"):
         """
         Initialize the local zellij manager.
 
@@ -38,7 +38,8 @@ class ZellijLocalManager:
         self.managers: List[ZellijLayoutGenerator] = []
 
         # Create a ZellijLayoutGenerator for each session
-        for session_name, layout_config in session_layouts.items():
+        for layout_config in session_layouts:
+            session_name = layout_config["layoutName"].replace(" ", "_")
             manager = ZellijLayoutGenerator()
             full_session_name = f"{self.session_name_prefix}_{session_name}"
             manager.create_zellij_layout(layout_config=layout_config, session_name=full_session_name)
@@ -333,7 +334,7 @@ class ZellijLocalManager:
         config_file.write_text(text, encoding="utf-8")
 
         # Save metadata
-        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "sessions": list(self.session_layouts.keys()), "manager_type": "ZellijLocalManager"}
+        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "sessions": [item["layoutName"] for item in self.session_layouts], "manager_type": "ZellijLocalManager"}
         metadata_file = session_dir / "metadata.json"
         text = json.dumps(metadata, indent=2, ensure_ascii=False)
         metadata_file.write_text(text, encoding="utf-8")
@@ -469,8 +470,8 @@ class ZellijLocalManager:
 
 if __name__ == "__main__":
     # Example usage with new schema
-    sample_sessions: Dict[str, LayoutConfig] = {
-        "development": {
+    sample_sessions: list[LayoutConfig] = [
+        {
             "layoutName": "Development",
             "layoutTabs": [
                 {"tabName": "🚀Frontend", "startDir": "~/code/myapp/frontend", "command": "npm run dev"},
@@ -478,7 +479,7 @@ if __name__ == "__main__":
                 {"tabName": "📊Monitor", "startDir": "~", "command": "htop"},
             ],
         },
-        "testing": {
+        {
             "layoutName": "Testing",
             "layoutTabs": [
                 {"tabName": "🧪Tests", "startDir": "~/code/myapp", "command": "pytest --watch"},
@@ -486,16 +487,15 @@ if __name__ == "__main__":
                 {"tabName": "📝Logs", "startDir": "~/logs", "command": "tail -f app.log"},
             ],
         },
-        "deployment": {
+        {
             "layoutName": "Deployment",
             "layoutTabs": [
                 {"tabName": "🐳Docker", "startDir": "~/code/myapp", "command": "docker-compose up"},
                 {"tabName": "☸️K8s", "startDir": "~/k8s", "command": "kubectl get pods --watch"},
                 {"tabName": "📈Metrics", "startDir": "~", "command": "k9s"},
             ],
-        },
-    }
-
+        }
+    ]
     try:
         # Create the local manager
         manager = ZellijLocalManager(sample_sessions, session_name_prefix="DevEnv")
