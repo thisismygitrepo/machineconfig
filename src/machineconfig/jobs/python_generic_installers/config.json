@@ -219,7 +219,7 @@
     "doc": "🚀 Fly through your shell history. Great Scott!",
     "filename_template_linux_amd_64": "mcfly-v{}-x86_64-unknown-linux-musl.tar.gz",
     "filename_template_linux_arm_64": "mcfly-v{}-aarch64-unknown-linux-musl.tar.gz",
-    "filename_template_windows_amd_64": "mcfly-v{}-x86_64-pc-windows-msvc.zip",
+    "filename_template_windows_amd_64": "",
     "filename_template_macos_amd_64": "mcfly-v{}-x86_64-apple-darwin.tar.gz",
     "filename_template_macos_arm_64": "",
     "filename_template_windows_arm_64": "",
