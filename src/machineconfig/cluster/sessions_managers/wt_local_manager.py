@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Optional, Dict, List, Any
 from machineconfig.utils.utils5 import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import WTLayoutGenerator
+from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -18,24 +19,24 @@ TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "
 class WTLocalManager:
     """Manages multiple local Windows Terminal sessions and monitors their tabs and processes."""
 
-    def __init__(self, session2wt_tabs: Dict[str, Dict[str, tuple[str, str]]], session_name_prefix: str = "LocalWTMgr"):
+    def __init__(self, session_layouts: Dict[str, LayoutConfig], session_name_prefix: str = "LocalWTMgr"):
         """
         Initialize the local Windows Terminal manager.
 
         Args:
-            session2wt_tabs: Dict mapping session names to their tab configs
-                Format: {session_name: {tab_name: (cwd, command), ...}, ...}
+            session_layouts: Dict mapping session names to their layout configs
+                Format: {session_name: LayoutConfig, ...}
             session_name_prefix: Prefix for session names
         """
         self.session_name_prefix = session_name_prefix
-        self.session2wt_tabs = session2wt_tabs  # Store the original config
+        self.session_layouts = session_layouts  # Store the original config
         self.managers: List[WTLayoutGenerator] = []
 
         # Create a WTLayoutGenerator for each session
-        for session_name, tab_config in session2wt_tabs.items():
+        for session_name, layout_config in session_layouts.items():
             manager = WTLayoutGenerator()
             full_session_name = f"{self.session_name_prefix}_{session_name}"
-            manager.create_wt_layout(tab_config=tab_config, session_name=full_session_name)
+            manager.create_wt_layout(layout_config=layout_config, session_name=full_session_name)
             self.managers.append(manager)
 
         logger.info(f"Initialized WTLocalManager with {len(self.managers)} sessions")
@@ -288,12 +289,12 @@ class WTLocalManager:
         session_dir.mkdir(parents=True, exist_ok=True)
 
         # Save the session2wt_tabs configuration
-        config_file = session_dir / "session2wt_tabs.json"
-        text = json.dumps(self.session2wt_tabs, indent=2, ensure_ascii=False)
+        config_file = session_dir / "session_layouts.json"
+        text = json.dumps(self.session_layouts, indent=2, ensure_ascii=False)
         config_file.write_text(text, encoding="utf-8")
 
         # Save metadata
-        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "sessions": list(self.session2wt_tabs.keys()), "manager_type": "WTLocalManager"}
+        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "sessions": list(self.session_layouts.keys()), "manager_type": "WTLocalManager"}
         metadata_file = session_dir / "metadata.json"
         text = json.dumps(metadata, indent=2, ensure_ascii=False)
         metadata_file.write_text(text, encoding="utf-8")
@@ -303,7 +304,7 @@ class WTLocalManager:
         managers_dir.mkdir(exist_ok=True)
 
         for i, manager in enumerate(self.managers):
-            manager_data = {"session_name": manager.session_name, "tab_config": manager.tab_config, "script_path": manager.script_path}
+            manager_data = {"session_name": manager.session_name, "layout_config": manager.layout_config, "script_path": manager.script_path}
             manager_file = managers_dir / f"manager_{i}_{manager.session_name}.json"
             text = json.dumps(manager_data, indent=2, ensure_ascii=False)
             manager_file.write_text(text, encoding="utf-8")
@@ -320,12 +321,12 @@ class WTLocalManager:
             raise FileNotFoundError(f"Session directory not found: {session_dir}")
 
         # Load configuration
-        config_file = session_dir / "session2wt_tabs.json"
+        config_file = session_dir / "session_layouts.json"
         if not config_file.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_file}")
 
         with open(config_file, "r", encoding="utf-8") as f:
-            session2wt_tabs = json.load(f)
+            session_layouts = json.load(f)
 
         # Load metadata
         metadata_file = session_dir / "metadata.json"
@@ -336,7 +337,7 @@ class WTLocalManager:
                 session_name_prefix = metadata.get("session_name_prefix", "LocalWTMgr")
 
         # Create new instance
-        instance = cls(session2wt_tabs=session2wt_tabs, session_name_prefix=session_name_prefix)
+        instance = cls(session_layouts=session_layouts, session_name_prefix=session_name_prefix)
 
         # Load saved manager states
         managers_dir = session_dir / "managers"
@@ -352,7 +353,7 @@ class WTLocalManager:
                     # Recreate the manager
                     manager = WTLayoutGenerator()
                     manager.session_name = manager_data["session_name"]
-                    manager.tab_config = manager_data["tab_config"]
+                    manager.layout_config = manager_data["layout_config"]
                     manager.script_path = manager_data["script_path"]
 
                     instance.managers.append(manager)
@@ -422,7 +423,7 @@ class WTLocalManager:
                         if session_name in window_title or not window_title:
                             session_windows.append(proc)
 
-                    active_sessions.append({"session_name": session_name, "is_active": len(session_windows) > 0, "tab_count": len(manager.tab_config), "tabs": list(manager.tab_config.keys()), "windows": session_windows})
+                    active_sessions.append({"session_name": session_name, "is_active": len(session_windows) > 0, "tab_count": len(manager.layout_config["layoutTabs"]) if manager.layout_config else 0, "tabs": [tab["tabName"] for tab in manager.layout_config["layoutTabs"]] if manager.layout_config else [], "windows": session_windows})
 
         except Exception as e:
             logger.error(f"Error listing active sessions: {e}")
@@ -451,11 +452,32 @@ class WTLocalManager:
 
 
 if __name__ == "__main__":
-    # Example usage
-    sample_sessions = {
-        "development": {"🚀Frontend": ("~/code/myapp/frontend", "npm run dev"), "⚙️Backend": ("~/code/myapp/backend", "python manage.py runserver"), "📊Monitor": ("~", "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10")},
-        "testing": {"🧪Tests": ("~/code/myapp", "pytest --watch"), "🔍Coverage": ("~/code/myapp", "python -m coverage run --source=. -m pytest"), "📝Logs": ("~/logs", "Get-Content app.log -Wait")},
-        "deployment": {"🐳Docker": ("~/code/myapp", "docker-compose up"), "☸️K8s": ("~/k8s", "kubectl get pods --watch"), "📈Metrics": ("~", 'Get-Counter "\\Processor(_Total)\\% Processor Time" -SampleInterval 2 -MaxSamples 30')},
+    # Example usage with new schema
+    sample_sessions: Dict[str, LayoutConfig] = {
+        "development": {
+            "layoutName": "DevelopmentEnv",
+            "layoutTabs": [
+                {"tabName": "🚀Frontend", "startDir": "~/code/myapp/frontend", "command": "npm run dev"},
+                {"tabName": "⚙️Backend", "startDir": "~/code/myapp/backend", "command": "python manage.py runserver"},
+                {"tabName": "📊Monitor", "startDir": "~", "command": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10"},
+            ]
+        },
+        "testing": {
+            "layoutName": "TestingEnv", 
+            "layoutTabs": [
+                {"tabName": "🧪Tests", "startDir": "~/code/myapp", "command": "pytest --watch"},
+                {"tabName": "🔍Coverage", "startDir": "~/code/myapp", "command": "python -m coverage run --source=. -m pytest"},
+                {"tabName": "📝Logs", "startDir": "~/logs", "command": "Get-Content app.log -Wait"},
+            ]
+        },
+        "deployment": {
+            "layoutName": "DeploymentEnv",
+            "layoutTabs": [
+                {"tabName": "🐳Docker", "startDir": "~/code/myapp", "command": "docker-compose up"},
+                {"tabName": "☸️K8s", "startDir": "~/k8s", "command": "kubectl get pods --watch"},
+                {"tabName": "📈Metrics", "startDir": "~", "command": 'Get-Counter "\\Processor(_Total)\\% Processor Time" -SampleInterval 2 -MaxSamples 30'},
+            ]
+        },
     }
 
     try:

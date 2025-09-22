@@ -12,6 +12,7 @@ from rich.console import Console
 
 from machineconfig.utils.utils5 import Scheduler
 from machineconfig.cluster.sessions_managers.zellij_local import ZellijLayoutGenerator
+from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -23,24 +24,24 @@ TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "
 class ZellijLocalManager:
     """Manages multiple local zellij sessions and monitors their tabs and processes."""
 
-    def __init__(self, session2zellij_tabs: Dict[str, Dict[str, tuple[str, str]]], session_name_prefix: str = "LocalJobMgr"):
+    def __init__(self, session_layouts: Dict[str, LayoutConfig], session_name_prefix: str = "LocalJobMgr"):
         """
         Initialize the local zellij manager.
 
         Args:
-            session2zellij_tabs: Dict mapping session names to their tab configs
-                Format: {session_name: {tab_name: (cwd, command), ...}, ...}
+            session_layouts: Dict mapping session names to their layout configs
+                Format: {session_name: LayoutConfig, ...}
             session_name_prefix: Prefix for session names
         """
         self.session_name_prefix = session_name_prefix
-        self.session2zellij_tabs = session2zellij_tabs  # Store the original config
+        self.session_layouts = session_layouts  # Store the original config
         self.managers: List[ZellijLayoutGenerator] = []
 
         # Create a ZellijLayoutGenerator for each session
-        for session_name, tab_config in session2zellij_tabs.items():
+        for session_name, layout_config in session_layouts.items():
             manager = ZellijLayoutGenerator()
             full_session_name = f"{self.session_name_prefix}_{session_name}"
-            manager.create_zellij_layout(tab_config=tab_config, session_name=full_session_name)
+            manager.create_zellij_layout(layout_config=layout_config, session_name=full_session_name)
             self.managers.append(manager)
 
         # Enhanced Rich logging for initialization
@@ -326,13 +327,13 @@ class ZellijLocalManager:
         session_dir = TMP_SERIALIZATION_DIR / session_id
         session_dir.mkdir(parents=True, exist_ok=True)
 
-        # Save the session2zellij_tabs configuration
-        config_file = session_dir / "session2zellij_tabs.json"
-        text = json.dumps(self.session2zellij_tabs, indent=2, ensure_ascii=False)
+        # Save the session_layouts configuration
+        config_file = session_dir / "session_layouts.json"
+        text = json.dumps(self.session_layouts, indent=2, ensure_ascii=False)
         config_file.write_text(text, encoding="utf-8")
 
         # Save metadata
-        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "sessions": list(self.session2zellij_tabs.keys()), "manager_type": "ZellijLocalManager"}
+        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "sessions": list(self.session_layouts.keys()), "manager_type": "ZellijLocalManager"}
         metadata_file = session_dir / "metadata.json"
         text = json.dumps(metadata, indent=2, ensure_ascii=False)
         metadata_file.write_text(text, encoding="utf-8")
@@ -342,7 +343,7 @@ class ZellijLocalManager:
         managers_dir.mkdir(exist_ok=True)
 
         for i, manager in enumerate(self.managers):
-            manager_data = {"session_name": manager.session_name, "tab_config": manager.tab_config, "layout_path": manager.layout_path}
+            manager_data = {"session_name": manager.session_name, "layout_config": manager.layout_config, "layout_path": manager.layout_path}
             manager_file = managers_dir / f"manager_{i}_{manager.session_name}.json"
             text = json.dumps(manager_data, indent=2, ensure_ascii=False)
             manager_file.write_text(text, encoding="utf-8")
@@ -359,12 +360,12 @@ class ZellijLocalManager:
             raise FileNotFoundError(f"Session directory not found: {session_dir}")
 
         # Load configuration
-        config_file = session_dir / "session2zellij_tabs.json"
+        config_file = session_dir / "session_layouts.json"
         if not config_file.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_file}")
 
         with open(config_file, "r", encoding="utf-8") as f:
-            session2zellij_tabs = json.load(f)
+            session_layouts = json.load(f)
 
         # Load metadata
         metadata_file = session_dir / "metadata.json"
@@ -375,7 +376,7 @@ class ZellijLocalManager:
                 session_name_prefix = metadata.get("session_name_prefix", "LocalJobMgr")
 
         # Create new instance
-        instance = cls(session2zellij_tabs=session2zellij_tabs, session_name_prefix=session_name_prefix)
+        instance = cls(session_layouts=session_layouts, session_name_prefix=session_name_prefix)
 
         # Load saved manager states
         managers_dir = session_dir / "managers"
@@ -391,7 +392,7 @@ class ZellijLocalManager:
                     # Recreate the manager
                     manager = ZellijLayoutGenerator()
                     manager.session_name = manager_data["session_name"]
-                    manager.tab_config = manager_data["tab_config"]
+                    manager.layout_config = manager_data["layout_config"]
                     manager.layout_path = manager_data["layout_path"]
 
                     instance.managers.append(manager)
@@ -452,7 +453,13 @@ class ZellijLocalManager:
                         continue  # Skip managers without a session name
                     is_active = any(session_name in session for session in all_sessions)
 
-                    active_sessions.append({"session_name": session_name, "is_active": is_active, "tab_count": len(manager.tab_config), "tabs": list(manager.tab_config.keys())})
+                    tab_info = []
+                    tab_count = 0
+                    if manager.layout_config:
+                        tab_count = len(manager.layout_config["layoutTabs"])
+                        tab_info = [tab["tabName"] for tab in manager.layout_config["layoutTabs"]]
+
+                    active_sessions.append({"session_name": session_name, "is_active": is_active, "tab_count": tab_count, "tabs": tab_info})
 
         except Exception as e:
             logger.error(f"Error listing active sessions: {e}")
@@ -461,11 +468,32 @@ class ZellijLocalManager:
 
 
 if __name__ == "__main__":
-    # Example usage
-    sample_sessions = {
-        "development": {"🚀Frontend": ("~/code/myapp/frontend", "npm run dev"), "⚙️Backend": ("~/code/myapp/backend", "python manage.py runserver"), "📊Monitor": ("~", "htop")},
-        "testing": {"🧪Tests": ("~/code/myapp", "pytest --watch"), "🔍Coverage": ("~/code/myapp", "coverage run --source=. -m pytest"), "📝Logs": ("~/logs", "tail -f app.log")},
-        "deployment": {"🐳Docker": ("~/code/myapp", "docker-compose up"), "☸️K8s": ("~/k8s", "kubectl get pods --watch"), "📈Metrics": ("~", "k9s")},
+    # Example usage with new schema
+    sample_sessions: Dict[str, LayoutConfig] = {
+        "development": {
+            "layoutName": "Development",
+            "layoutTabs": [
+                {"tabName": "🚀Frontend", "startDir": "~/code/myapp/frontend", "command": "npm run dev"},
+                {"tabName": "⚙️Backend", "startDir": "~/code/myapp/backend", "command": "python manage.py runserver"},
+                {"tabName": "📊Monitor", "startDir": "~", "command": "htop"},
+            ],
+        },
+        "testing": {
+            "layoutName": "Testing",
+            "layoutTabs": [
+                {"tabName": "🧪Tests", "startDir": "~/code/myapp", "command": "pytest --watch"},
+                {"tabName": "🔍Coverage", "startDir": "~/code/myapp", "command": "coverage run --source=. -m pytest"},
+                {"tabName": "📝Logs", "startDir": "~/logs", "command": "tail -f app.log"},
+            ],
+        },
+        "deployment": {
+            "layoutName": "Deployment",
+            "layoutTabs": [
+                {"tabName": "🐳Docker", "startDir": "~/code/myapp", "command": "docker-compose up"},
+                {"tabName": "☸️K8s", "startDir": "~/k8s", "command": "kubectl get pods --watch"},
+                {"tabName": "📈Metrics", "startDir": "~", "command": "k9s"},
+            ],
+        },
     }
 
     try:

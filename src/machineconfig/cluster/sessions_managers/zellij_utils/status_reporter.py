@@ -4,9 +4,10 @@ Status reporting utilities for Zellij remote layouts.
 """
 
 import logging
-from typing import Dict, Any, Tuple
+from typing import Dict, Any
 from .process_monitor import ProcessMonitor
 from .session_manager import SessionManager
+from ..layout_types import LayoutConfig
 
 logger = logging.getLogger(__name__)
 
@@ -18,10 +19,10 @@ class StatusReporter:
         self.process_monitor = process_monitor
         self.session_manager = session_manager
 
-    def get_comprehensive_status(self, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
+    def get_comprehensive_status(self, layout_config: LayoutConfig) -> Dict[str, Any]:
         """Get comprehensive status including Zellij session and all commands."""
         zellij_status = self.session_manager.check_zellij_session_status()
-        commands_status = self.process_monitor.check_all_commands_status(tab_config)
+        commands_status = self.process_monitor.check_all_commands_status(layout_config)
 
         running_count = sum(1 for status in commands_status.values() if status.get("running", False))
         total_count = len(commands_status)
@@ -38,9 +39,9 @@ class StatusReporter:
             },
         }
 
-    def print_status_report(self, tab_config: Dict[str, Tuple[str, str]]) -> None:
+    def print_status_report(self, layout_config: LayoutConfig) -> None:
         """Print a formatted status report to console."""
-        status = self.get_comprehensive_status(tab_config)
+        status = self.get_comprehensive_status(layout_config)
         remote_name = self.session_manager.remote_executor.remote_name
         session_name = self.session_manager.session_name
 

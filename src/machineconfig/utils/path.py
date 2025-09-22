@@ -49,7 +49,7 @@ def sanitize_path(a_path: PathExtended) -> PathExtended:
     return path.expanduser().absolute()
 
 
-def find_scripts(root: Path, name_substring: str) -> tuple[list[Path], list[Path]]:
+def find_scripts(root: Path, name_substring: str, suffixes: set[str]) -> tuple[list[Path], list[Path]]:
     filename_matches = []
     partial_path_matches = []
     for entry in root.iterdir():
@@ -57,10 +57,10 @@ def find_scripts(root: Path, name_substring: str) -> tuple[list[Path], list[Path
             if entry.name in {".links", ".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__"}:
                 # prune this entire subtree
                 continue
-            tmp1, tmp2 = find_scripts(entry, name_substring)
+            tmp1, tmp2 = find_scripts(entry, name_substring, suffixes)
             filename_matches.extend(tmp1)
             partial_path_matches.extend(tmp2)
-        elif entry.is_file() and entry.suffix in {".py", ".sh", ".ps1"}:
+        elif entry.is_file() and entry.suffix in suffixes:
             if name_substring.lower() in entry.name.lower():
                 filename_matches.append(entry)
             elif name_substring.lower() in entry.as_posix().lower():
@@ -68,10 +68,10 @@ def find_scripts(root: Path, name_substring: str) -> tuple[list[Path], list[Path
     return filename_matches, partial_path_matches
 
 
-def match_file_name(sub_string: str, search_root: PathExtended) -> PathExtended:
+def match_file_name(sub_string: str, search_root: PathExtended, suffixes: set[str]) -> PathExtended:
     search_root_obj = search_root.absolute()
     # assume subscript is filename only, not a sub_path. There is no need to fzf over the paths.
-    filename_matches, partial_path_matches = find_scripts(search_root_obj, sub_string)
+    filename_matches, partial_path_matches = find_scripts(search_root_obj, sub_string, suffixes)
     if len(filename_matches) == 1:
         return PathExtended(filename_matches[0])
     console.print(Panel(f"Partial filename match with case-insensitivity failed. This generated #{len(filename_matches)} results.", title="Search", expand=False))

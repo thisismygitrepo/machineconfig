@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from typing import Dict, Tuple, Optional, List, Union, Any
+from typing import Dict, Optional, List, Union, Any
 from pathlib import Path
 import logging
 import json
@@ -13,6 +13,7 @@ from machineconfig.cluster.sessions_managers.zellij_utils.layout_generator impor
 from machineconfig.cluster.sessions_managers.zellij_utils.process_monitor import ProcessMonitor
 from machineconfig.cluster.sessions_managers.zellij_utils.session_manager import SessionManager
 from machineconfig.cluster.sessions_managers.zellij_utils.status_reporter import StatusReporter
+from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ class ZellijRemoteLayoutGenerator:
     def __init__(self, remote_name: str, session_name_prefix: str):
         self.remote_name = remote_name
         self.session_name = session_name_prefix + "_" + LayoutGenerator.generate_random_suffix()
-        self.tab_config: Dict[str, Tuple[str, str]] = {}
+        self.layout_config: Optional[LayoutConfig] = None
         self.layout_path: Optional[str] = None
 
         # Initialize modular components
@@ -37,40 +38,50 @@ class ZellijRemoteLayoutGenerator:
     def copy_layout_to_remote(self, local_layout_file: Path, random_suffix: str) -> str:
         return self.session_manager.copy_layout_to_remote(local_layout_file, random_suffix)
 
-    def create_zellij_layout(self, tab_config: Dict[str, Tuple[str, str]], output_dir: Optional[str] = None) -> str:
+    def create_zellij_layout(self, layout_config: LayoutConfig, output_dir: Optional[str] = None) -> str:
         # Enhanced Rich logging for remote layout creation
-        tab_count = len(tab_config)
-        console.print(f"[bold cyan]📋 Creating Zellij layout[/bold cyan] [bright_green]with {tab_count} tabs[/bright_green] [magenta]for remote[/magenta] [bold yellow]'{self.remote_name}'[/bold yellow]")
+        tab_count = len(layout_config["layoutTabs"])
+        layout_name = layout_config["layoutName"]
+        console.print(f"[bold cyan]📋 Creating Zellij layout[/bold cyan] [bright_green]'{layout_name}' with {tab_count} tabs[/bright_green] [magenta]for remote[/magenta] [bold yellow]'{self.remote_name}'[/bold yellow]")
 
         # Display tab summary for remote
-        for tab_name, (cwd, _) in tab_config.items():
-            console.print(f"  [yellow]→[/yellow] [bold]{tab_name}[/bold] [dim]in[/dim] [blue]{cwd}[/blue] [dim]on[/dim] [yellow]{self.remote_name}[/yellow]")
+        for tab in layout_config["layoutTabs"]:
+            console.print(f"  [yellow]→[/yellow] [bold]{tab['tabName']}[/bold] [dim]in[/dim] [blue]{tab['startDir']}[/blue] [dim]on[/dim] [yellow]{self.remote_name}[/yellow]")
 
-        self.tab_config = tab_config.copy()
+        self.layout_config = layout_config.copy()
         if output_dir:
             output_path = Path(output_dir)
         else:
             output_path = TMP_LAYOUT_DIR
-        self.layout_path = self.layout_generator.create_layout_file(tab_config, output_path, self.session_name)
+        self.layout_path = self.layout_generator.create_layout_file(layout_config, output_path, self.session_name)
         return self.layout_path
 
-    def get_layout_preview(self, tab_config: Dict[str, Tuple[str, str]]) -> str:
-        return self.layout_generator.generate_layout_content(tab_config)
+    def get_layout_preview(self, layout_config: LayoutConfig) -> str:
+        return self.layout_generator.generate_layout_content(layout_config)
 
     def check_command_status(self, tab_name: str, use_verification: bool = True) -> Dict[str, Any]:
-        return self.process_monitor.check_command_status(tab_name, self.tab_config, use_verification)
+        if not self.layout_config:
+            return {"status": "error", "error": "No layout config available", "running": False}
+        return self.process_monitor.check_command_status(tab_name, self.layout_config, use_verification)
 
     def check_all_commands_status(self) -> Dict[str, Dict[str, Any]]:
-        return self.process_monitor.check_all_commands_status(self.tab_config)
+        if not self.layout_config:
+            return {}
+        return self.process_monitor.check_all_commands_status(self.layout_config)
 
     def check_zellij_session_status(self) -> Dict[str, Any]:
         return self.session_manager.check_zellij_session_status()
 
     def get_comprehensive_status(self) -> Dict[str, Any]:
-        return self.status_reporter.get_comprehensive_status(self.tab_config)
+        if not self.layout_config:
+            return {"error": "No layout config available"}
+        return self.status_reporter.get_comprehensive_status(self.layout_config)
 
     def print_status_report(self) -> None:
-        self.status_reporter.print_status_report(self.tab_config)
+        if not self.layout_config:
+            console.print("[bold red]❌ No layout config available[/bold red]")
+            return
+        self.status_reporter.print_status_report(self.layout_config)
 
     def start_zellij_session(self, layout_file_path: Optional[str] = None) -> Dict[str, Any]:
         return self.session_manager.start_zellij_session(layout_file_path or self.layout_path)
@@ -80,13 +91,17 @@ class ZellijRemoteLayoutGenerator:
 
     # Legacy methods for backward compatibility
     def force_fresh_process_check(self, tab_name: str) -> Dict[str, Any]:
-        return self.process_monitor.force_fresh_process_check(tab_name, self.tab_config)
+        if not self.layout_config:
+            return {"error": "No layout config available"}
+        return self.process_monitor.force_fresh_process_check(tab_name, self.layout_config)
 
     def verify_process_alive(self, pid: int) -> bool:
         return self.process_monitor.verify_process_alive(pid)
 
     def get_verified_process_status(self, tab_name: str) -> Dict[str, Any]:
-        return self.process_monitor.get_verified_process_status(tab_name, self.tab_config)
+        if not self.layout_config:
+            return {"error": "No layout config available"}
+        return self.process_monitor.get_verified_process_status(tab_name, self.layout_config)
 
     # Static methods for backward compatibility
     @staticmethod
@@ -95,7 +110,7 @@ class ZellijRemoteLayoutGenerator:
         return executor.run_command(command, timeout)
 
     def to_dict(self) -> Dict[str, Any]:
-        return {"remote_name": self.remote_name, "session_name": self.session_name, "tab_config": self.tab_config, "layout_path": self.layout_path, "created_at": datetime.now().isoformat(), "class_name": self.__class__.__name__}
+        return {"remote_name": self.remote_name, "session_name": self.session_name, "layout_config": self.layout_config, "layout_path": self.layout_path, "created_at": datetime.now().isoformat(), "class_name": self.__class__.__name__}
 
     def to_json(self, file_path: Optional[Union[str, Path]] = None) -> str:
         # Generate file path if not provided
@@ -154,7 +169,7 @@ class ZellijRemoteLayoutGenerator:
 
         # Restore state
         instance.session_name = data["session_name"]
-        instance.tab_config = data["tab_config"]
+        instance.layout_config = data["layout_config"]
         instance.layout_path = data["layout_path"]
 
         logger.info(f"✅ Loaded ZellijRemoteLayoutGenerator from: {file_path}")
@@ -175,12 +190,15 @@ class ZellijRemoteLayoutGenerator:
 
 
 if __name__ == "__main__":
-    # Example usage
-    sample_tabs = {
-        "🤖Bot1": ("~/code/bytesense/bithence", "~/scripts/fire -mO go1.py bot1 --kw create_new_bot True"),
-        "🤖Bot2": ("~/code/bytesense/bithence", "~/scripts/fire -mO go2.py bot2 --kw create_new_bot True"),
-        "📊Monitor": ("~", "htop"),
-        "📝Logs": ("/var/log", "tail -f /var/log/app.log"),
+    # Example usage with new schema
+    sample_layout: LayoutConfig = {
+        "layoutName": "RemoteBots",
+        "layoutTabs": [
+            {"tabName": "🤖Bot1", "startDir": "~/code/bytesense/bithence", "command": "~/scripts/fire -mO go1.py bot1 --kw create_new_bot True"},
+            {"tabName": "🤖Bot2", "startDir": "~/code/bytesense/bithence", "command": "~/scripts/fire -mO go2.py bot2 --kw create_new_bot True"},
+            {"tabName": "📊Monitor", "startDir": "~", "command": "htop"},
+            {"tabName": "📝Logs", "startDir": "/var/log", "command": "tail -f /var/log/app.log"},
+        ],
     }
 
     # Replace 'myserver' with an actual SSH config alias
@@ -190,7 +208,7 @@ if __name__ == "__main__":
     try:
         # Create layout using the remote generator
         generator = ZellijRemoteLayoutGenerator(remote_name=remote_name, session_name_prefix=session_name)
-        layout_path = generator.create_zellij_layout(sample_tabs)
+        layout_path = generator.create_zellij_layout(sample_layout)
         print(f"✅ Remote layout created successfully: {layout_path}")
 
         # Demonstrate serialization
@@ -205,7 +223,9 @@ if __name__ == "__main__":
         # Demonstrate loading (using the full path)
         loaded_generator = ZellijRemoteLayoutGenerator.from_json(saved_path)
         print(f"✅ Session loaded successfully: {loaded_generator.session_name}")
-        print(f"📊 Loaded tabs: {list(loaded_generator.tab_config.keys())}")
+        if loaded_generator.layout_config:
+            tab_names = [tab["tabName"] for tab in loaded_generator.layout_config["layoutTabs"]]
+            print(f"📊 Loaded tabs: {tab_names}")
 
         # Demonstrate status checking
         print(f"\n🔍 Checking command status on remote '{remote_name}':")

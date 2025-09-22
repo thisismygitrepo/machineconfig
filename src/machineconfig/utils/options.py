@@ -10,7 +10,8 @@ T = TypeVar("T")
 
 
 def check_tool_exists(tool_name: str) -> bool:
-    if platform.system() == "Windows": tool_name = tool_name.replace(".exe", "") + ".exe"
+    if platform.system() == "Windows":
+        tool_name = tool_name.replace(".exe", "") + ".exe"
 
     from machineconfig.utils.source_of_truth import WINDOWS_INSTALL_PATH, LINUX_INSTALL_PATH
 
@@ -20,7 +21,8 @@ def check_tool_exists(tool_name: str) -> bool:
     elif platform.system() in ["Linux", "Darwin"]:
         cmd = "which"
         root_path = Path(LINUX_INSTALL_PATH)
-    else: raise NotImplementedError(f"platform {platform.system()} not implemented")
+    else:
+        raise NotImplementedError(f"platform {platform.system()} not implemented")
 
     _ = cmd
     # try:

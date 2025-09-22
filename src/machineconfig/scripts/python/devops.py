@@ -74,6 +74,7 @@ def display_task_success(success: str) -> None:
 
 def main(which: Optional[str] = None):
     from machineconfig.utils.path_reduced import PathExtended
+
     PathExtended(PROGRAM_PATH).delete(sure=True, verbose=False)
     console.print(Panel("🚀 Initializing DevOps operation...", width=BOX_WIDTH, border_style="blue"))
 

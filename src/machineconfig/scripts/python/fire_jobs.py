@@ -51,6 +51,8 @@ def main() -> None:
     parser.add_argument("--zellij_tab", "-z", type=str, dest="zellij_tab", help="open in a new zellij tab")
     parser.add_argument("--watch", "-w", action="store_true", help="watch the file for changes")
     parser.add_argument("--kw", nargs="*", default=None, help="keyword arguments to pass to the function in the form of k1 v1 k2 v2 ... (meaning k1=v1, k2=v2, etc)")
+    parser.add_argument("--layout", "-L", action="store_true", help="use layout configuration (Zellij Or WindowsTerminal)")
+
     try:
         args = parser.parse_args()
     except Exception as ex:
@@ -58,9 +60,8 @@ def main() -> None:
         parser.print_help()
         raise ex
     path_obj = sanitize_path(args.path)
-    # print(f"Passed path sanitied to {path_obj}")
     if not path_obj.exists():
-        path_obj = match_file_name(sub_string=args.path, search_root=PathExtended.cwd())
+        path_obj = match_file_name(sub_string=args.path, search_root=PathExtended.cwd(), suffixes={".py", ".sh", ".ps1"})
     else:
         pass
     if path_obj.is_dir():
@@ -296,22 +297,12 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
             command += f"--function {choice_function} "
 
     if args.Nprocess > 1:
-        # lines = [f""" zellij action new-tab --name nProcess{randstr(2)}"""]
-        # command = command.replace(". activate_ve", ". $HOME/scripts/activate_ve")
-        # for an_arg in range(args.Nprocess):
-        #     sub_command = f"{command} --idx={an_arg} --idx_max={args.Nprocess}"
-        #     if args.optimized:
-        #         sub_command = sub_command.replace("python ", "python -OO ")
-        #     sub_command_path = PathExtended.tmpfile(suffix=".sh").write_text(sub_command, encoding="utf-8")
-        #     lines.append(f"""zellij action new-pane -- bash {sub_command_path}  """)
-        #     lines.append("sleep 5")  # python tends to freeze if you launch instances within 1 microsecond of each other
-        # command = "\n".join(lines)
-        tab_config = {}
-        for an_arg in range(args.Nprocess):
-            tab_config[f"tab{an_arg}"] = (str(PathExtended.cwd()), f"uv run -m fire {choice_file} {choice_function} --idx={an_arg} --idx_max={args.Nprocess}")
         from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
-
-        run_zellij_layout(tab_config=tab_config, session_name=None)
+        from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
+        layout: LayoutConfig = {"layoutName": "fireNprocess", "layoutTabs": []}
+        for an_arg in range(args.Nprocess):
+            layout["layoutTabs"].append({"tabName": f"tab{an_arg}", "startDir": str(PathExtended.cwd()), "command": f"uv run -m fire {choice_file} {choice_function} --idx={an_arg} --idx_max={args.Nprocess}"})
+        run_zellij_layout(layout_config=layout)
         return None
 
     if args.optimized:

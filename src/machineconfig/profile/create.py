@@ -24,9 +24,12 @@ ERROR_LIST: list[Any] = []  # append to this after every exception captured.
 
 SYSTEM = system.lower()
 
+
 def get_other_systems(current_system: str) -> list[str]:
     all_systems = ["linux", "windows", "darwin"]
     return [s for s in all_systems if s != current_system.lower()]
+
+
 OTHER_SYSTEMS = get_other_systems(SYSTEM)
 
 
@@ -59,6 +62,7 @@ def main_symlinks(choice: Optional[str] = None):
             choice_selected = "all"  # i.e. program_keys = program_keys
         # overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
         from rich.prompt import Confirm
+
         overwrite = Confirm.ask("Overwrite existing source file?", default=True)
     else:
         choice_selected = choice

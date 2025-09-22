@@ -119,13 +119,16 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         def view_bar(slf: Any, a: Any, b: Any):
             slf.total = int(b)
             slf.update(int(a - slf.n))  # update pbar with increment
+
         from tqdm import tqdm
+
         self.tqdm_wrap = type("TqdmWrap", (tqdm,), {"view_bar": view_bar})
         self._local_distro: Optional[str] = None
         self._remote_distro: Optional[str] = None
         self._remote_machine: Optional[MACHINE] = None
         self.terminal_responses: list[Response] = []
         self.platform = platform
+
     def get_remote_machine(self) -> MACHINE:
         if self._remote_machine is None:
             if self.run("$env:OS", verbose=False, desc="Testing Remote OS Type").op == "Windows_NT" or self.run("echo %OS%", verbose=False, desc="Testing Remote OS Type Again").op == "Windows_NT":
@@ -138,10 +141,12 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         if self._local_distro is None:
             command = """uv run --with distro python -c "import distro; print(distro.name(pretty=True))" """
             import subprocess
+
             res = subprocess.run(command, shell=True, capture_output=True, text=True).stdout.strip()
             self._local_distro = res
             return res
         return self._local_distro
+
     def get_remote_distro(self):
         if self._remote_distro is None:
             res = self.run("""~/.local/bin/uv run --with distro python -c "import distro; print(distro.name(pretty=True))" """)
@@ -178,8 +183,10 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         res = Response(cmd=command)
         res.output.returncode = os.system(command)
         return res
+
     def get_ssh_conn_str(self, cmd: str = ""):
         return "ssh " + (f" -i {self.sshkey}" if self.sshkey else "") + self.get_remote_repr().replace(":", " -p ") + (f" -t {cmd} " if cmd != "" else " ")
+
     def run(self, cmd: str, verbose: bool = True, desc: str = "", strict_err: bool = False, strict_returncode: bool = False) -> Response:
         raw = self.ssh.exec_command(cmd)
         res = Response(stdin=raw[0], stdout=raw[1], stderr=raw[2], cmd=cmd, desc=desc)  # type: ignore
@@ -189,15 +196,18 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             res.print()
         self.terminal_responses.append(res)
         return res
+
     def run_py(self, cmd: str, desc: str = "", return_obj: bool = False, verbose: bool = True, strict_err: bool = False, strict_returncode: bool = False) -> Union[Any, Response]:
         assert '"' not in cmd, 'Avoid using `"` in your command. I dont know how to handle this when passing is as command to python in pwsh command.'
         if not return_obj:
             return self.run(
-                cmd=f"""uv run --with machineconfig -c "{Terminal.get_header(wdir=None, toolbox=True)}{cmd}\n""" + '"', desc=desc or f"run_py on {self.get_remote_repr()}", verbose=verbose, strict_err=strict_err, strict_returncode=strict_returncode)
+                cmd=f"""uv run --with machineconfig -c "{Terminal.get_header(wdir=None, toolbox=True)}{cmd}\n""" + '"', desc=desc or f"run_py on {self.get_remote_repr()}", verbose=verbose, strict_err=strict_err, strict_returncode=strict_returncode
+            )
         assert "obj=" in cmd, "The command sent to run_py must have `obj=` statement if return_obj is set to True"
         source_file = self.run_py(f"""{cmd}\npath = Save.pickle(obj=obj, path=P.tmpfile(suffix='.pkl'))\nprint(path)""", desc=desc, verbose=verbose, strict_err=True, strict_returncode=True).op.split("\n")[-1]
         res = self.copy_to_here(source=source_file, target=PathExtended.tmpfile(suffix=".pkl"))
         import pickle
+
         return pickle.loads(res.read_bytes())
 
     def copy_from_here(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False, overwrite: bool = False, init: bool = True) -> Union[PathExtended, list[PathExtended]]:

@@ -2,10 +2,11 @@ from datetime import datetime
 import json
 import uuid
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict
 from machineconfig.utils.utils5 import Scheduler
 from machineconfig.cluster.sessions_managers.zellij_local import run_command_in_zellij_tab
 from machineconfig.cluster.sessions_managers.zellij_remote import ZellijRemoteLayoutGenerator
+from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
 from machineconfig.logger import get_logger
 
 
@@ -14,13 +15,13 @@ logger = get_logger("cluster.sessions_managers.zellij_remote_manager")
 
 
 class ZellijSessionManager:
-    def __init__(self, machine2zellij_tabs: dict[str, dict[str, tuple[str, str]]], session_name_prefix: str = "JobMgr"):
+    def __init__(self, machine_layouts: Dict[str, LayoutConfig], session_name_prefix: str = "JobMgr"):
         self.session_name_prefix = session_name_prefix
-        self.machine2zellij_tabs = machine2zellij_tabs  # Store the original config
+        self.machine_layouts = machine_layouts  # Store the original config
         self.managers: list[ZellijRemoteLayoutGenerator] = []
-        for machine, tab_config in machine2zellij_tabs.items():
+        for machine, layout_config in machine_layouts.items():
             an_m = ZellijRemoteLayoutGenerator(remote_name=machine, session_name_prefix=self.session_name_prefix)
-            an_m.create_zellij_layout(tab_config=tab_config)
+            an_m.create_zellij_layout(layout_config=layout_config)
             self.managers.append(an_m)
 
     def ssh_to_all_machines(self) -> str:
@@ -93,13 +94,13 @@ class ZellijSessionManager:
         session_dir = TMP_SERIALIAZATION_DIR / session_id
         session_dir.mkdir(parents=True, exist_ok=True)
 
-        # Save the machine2zellij_tabs configuration
-        config_file = session_dir / "machine2zellij_tabs.json"
-        text = json.dumps(self.machine2zellij_tabs, indent=2, ensure_ascii=False)
+        # Save the machine_layouts configuration
+        config_file = session_dir / "machine_layouts.json"
+        text = json.dumps(self.machine_layouts, indent=2, ensure_ascii=False)
         config_file.write_text(text, encoding="utf-8")
 
         # Save session metadata
-        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "machines": list(self.machine2zellij_tabs.keys())}
+        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "machines": list(self.machine_layouts.keys())}
         metadata_file = session_dir / "metadata.json"
         text = json.dumps(metadata, indent=2, ensure_ascii=False)
         metadata_file.write_text(text, encoding="utf-8")
@@ -120,11 +121,11 @@ class ZellijSessionManager:
 
         if not session_dir.exists():
             raise FileNotFoundError(f"Session directory not found: {session_dir}")
-        config_file = session_dir / "machine2zellij_tabs.json"
+        config_file = session_dir / "machine_layouts.json"
         if not config_file.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_file}")
         with open(config_file, "r", encoding="utf-8") as f:
-            machine2zellij_tabs = json.load(f)
+            machine_layouts = json.load(f)
 
         # Load metadata
         metadata_file = session_dir / "metadata.json"
@@ -134,7 +135,7 @@ class ZellijSessionManager:
                 metadata = json.load(f)
                 session_name_prefix = metadata.get("session_name_prefix", "JobMgr")
         # Create new instance (this will create new managers)
-        instance = cls(machine2zellij_tabs=machine2zellij_tabs, session_name_prefix=session_name_prefix)
+        instance = cls(machine_layouts=machine_layouts, session_name_prefix=session_name_prefix)
         # Load saved managers to restore their states
         managers_dir = session_dir / "managers"
         if managers_dir.exists():

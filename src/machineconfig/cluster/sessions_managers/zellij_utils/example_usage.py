@@ -4,17 +4,21 @@ Example usage of the modularized Zellij remote layout generator.
 """
 
 from machineconfig.cluster.sessions_managers.zellij_remote import ZellijRemoteLayoutGenerator
+from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
 
 
 def example_usage():
     """Demonstrate the refactored modular usage."""
 
-    # Sample tab configuration
-    sample_tabs = {
-        "🤖Bot1": ("~/code/bytesense/bithence", "~/scripts/fire -mO go1.py bot1 --kw create_new_bot True"),
-        "🤖Bot2": ("~/code/bytesense/bithence", "~/scripts/fire -mO go2.py bot2 --kw create_new_bot True"),
-        "📊Monitor": ("~", "htop"),
-        "📝Logs": ("/var/log", "tail -f /var/log/app.log"),
+    # Sample layout configuration using new schema
+    sample_layout: LayoutConfig = {
+        "layoutName": "ExampleRemoteSession", 
+        "layoutTabs": [
+            {"tabName": "🤖Bot1", "startDir": "~/code/bytesense/bithence", "command": "~/scripts/fire -mO go1.py bot1 --kw create_new_bot True"},
+            {"tabName": "🤖Bot2", "startDir": "~/code/bytesense/bithence", "command": "~/scripts/fire -mO go2.py bot2 --kw create_new_bot True"},
+            {"tabName": "📊Monitor", "startDir": "~", "command": "htop"},
+            {"tabName": "📝Logs", "startDir": "/var/log", "command": "tail -f /var/log/app.log"},
+        ]
     }
 
     # Replace 'myserver' with an actual SSH config alias
@@ -26,11 +30,11 @@ def example_usage():
         generator = ZellijRemoteLayoutGenerator(remote_name=remote_name, session_name_prefix=session_name)
 
         # Create layout file
-        layout_path = generator.create_zellij_layout(sample_tabs)
+        layout_path = generator.create_zellij_layout(sample_layout)
         print(f"✅ Remote layout created successfully: {layout_path}")
 
         # Preview the layout content
-        preview = generator.get_layout_preview(sample_tabs)
+        preview = generator.get_layout_preview(sample_layout)
         print(f"📄 Layout preview:\n{preview}")
 
         # Check status using the modular components
@@ -44,11 +48,11 @@ def example_usage():
         print(f"Remote executor: {generator.remote_executor.remote_name}")
 
         # Use layout generator directly
-        layout_content = generator.layout_generator.generate_layout_content(sample_tabs)
+        layout_content = generator.layout_generator.generate_layout_content(sample_layout)
         print(f"Layout content length: {len(layout_content)} characters")
 
         # Use process monitor directly
-        status = generator.process_monitor.check_all_commands_status(sample_tabs)
+        status = generator.process_monitor.check_all_commands_status(sample_layout)
         print(f"Command status check completed for {len(status)} commands")
 
         print("\n✅ All modular components working correctly!")

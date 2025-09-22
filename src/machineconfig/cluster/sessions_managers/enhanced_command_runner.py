@@ -84,7 +84,6 @@ def enhanced_zellij_session_start(session_name: str, layout_path: str) -> Dict[s
     """
     console.print()
     console.print(Panel.fit(f"🚀 Starting Zellij Session: [bold cyan]{session_name}[/bold cyan]", style="green", box=box.ROUNDED))
-
     # Delete existing session first (suppress normal output)
     delete_cmd = f"zellij delete-session --force {session_name}"
     run_enhanced_command(
@@ -93,7 +92,6 @@ def enhanced_zellij_session_start(session_name: str, layout_path: str) -> Dict[s
         show_progress=False,
         timeout=5,  # Quick timeout for cleanup
     )
-
     # Start new session (use -b for background to avoid hanging)
     start_cmd = f"zellij --layout {layout_path} a -b {session_name}"
     start_result = run_enhanced_command(

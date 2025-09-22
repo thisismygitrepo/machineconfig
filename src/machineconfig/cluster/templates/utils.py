@@ -1,6 +1,6 @@
-
 from typing import Optional
 from machineconfig.utils.path_reduced import PathExtended, PLike
+
 
 def to_cloud(
     localpath: PLike,

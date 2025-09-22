@@ -6,8 +6,9 @@ Process monitoring and status checking utilities for remote commands.
 import json
 import shlex
 import logging
-from typing import Dict, Tuple, Any
+from typing import Dict, Any
 from .remote_executor import RemoteExecutor
+from ..layout_types import LayoutConfig
 
 logger = logging.getLogger(__name__)
 
@@ -18,20 +19,37 @@ class ProcessMonitor:
     def __init__(self, remote_executor: RemoteExecutor):
         self.remote_executor = remote_executor
 
-    def check_command_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]], use_verification: bool = True) -> Dict[str, Any]:
+    def check_command_status(self, tab_name: str, layout_config: LayoutConfig, use_verification: bool = True) -> Dict[str, Any]:
         """Check command status with optional process verification."""
-        if tab_name not in tab_config:
-            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in tracked configuration", "running": False, "pid": None, "command": None, "remote": self.remote_executor.remote_name}
+        # Find the tab with the given name
+        tab_config = None
+        for tab in layout_config["layoutTabs"]:
+            if tab["tabName"] == tab_name:
+                tab_config = tab
+                break
+        
+        if tab_config is None:
+            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "pid": None, "command": None, "remote": self.remote_executor.remote_name}
 
         # Use the verified method by default for more accurate results
         if use_verification:
-            return self.get_verified_process_status(tab_name, tab_config)
+            return self.get_verified_process_status(tab_name, layout_config)
 
-        return self._basic_process_check(tab_name, tab_config)
+        return self._basic_process_check(tab_name, layout_config)
 
-    def _basic_process_check(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
+    def _basic_process_check(self, tab_name: str, layout_config: LayoutConfig) -> Dict[str, Any]:
         """Basic process checking without verification."""
-        _, command = tab_config[tab_name]
+        # Find the tab with the given name
+        tab_config = None
+        for tab in layout_config["layoutTabs"]:
+            if tab["tabName"] == tab_name:
+                tab_config = tab
+                break
+        
+        if tab_config is None:
+            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "command": None, "remote": self.remote_executor.remote_name}
+
+        command = tab_config["command"]
 
         try:
             check_script = self._create_process_check_script(command)
@@ -106,12 +124,19 @@ if __name__ == "__main__":
     print(json.dumps(processes))
 """
 
-    def force_fresh_process_check(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
+    def force_fresh_process_check(self, tab_name: str, layout_config: LayoutConfig) -> Dict[str, Any]:
         """Force a fresh process check with additional validation."""
-        if tab_name not in tab_config:
-            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in tracked configuration", "running": False, "command": None, "remote": self.remote_executor.remote_name}
+        # Find the tab with the given name
+        tab_config = None
+        for tab in layout_config["layoutTabs"]:
+            if tab["tabName"] == tab_name:
+                tab_config = tab
+                break
+        
+        if tab_config is None:
+            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "command": None, "remote": self.remote_executor.remote_name}
 
-        _, command = tab_config[tab_name]
+        command = tab_config["command"]
 
         try:
             # Get timestamp for freshness validation
@@ -230,9 +255,9 @@ if __name__ == "__main__":
         except Exception:
             return False
 
-    def get_verified_process_status(self, tab_name: str, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Any]:
+    def get_verified_process_status(self, tab_name: str, layout_config: LayoutConfig) -> Dict[str, Any]:
         """Get process status with additional verification that processes are actually alive."""
-        status = self.force_fresh_process_check(tab_name, tab_config)
+        status = self.force_fresh_process_check(tab_name, layout_config)
 
         if status.get("running") and status.get("processes"):
             verified_processes = []
@@ -252,13 +277,14 @@ if __name__ == "__main__":
 
         return status
 
-    def check_all_commands_status(self, tab_config: Dict[str, Tuple[str, str]]) -> Dict[str, Dict[str, Any]]:
-        """Check status of all commands in the tab configuration."""
-        if not tab_config:
-            logger.warning("No tab configuration provided.")
+    def check_all_commands_status(self, layout_config: LayoutConfig) -> Dict[str, Dict[str, Any]]:
+        """Check status of all commands in the layout configuration."""
+        if not layout_config or not layout_config.get("layoutTabs"):
+            logger.warning("No layout configuration provided.")
             return {}
 
         status_report = {}
-        for tab_name in tab_config:
-            status_report[tab_name] = self.check_command_status(tab_name, tab_config)
+        for tab in layout_config["layoutTabs"]:
+            tab_name = tab["tabName"]
+            status_report[tab_name] = self.check_command_status(tab_name, layout_config)
         return status_report

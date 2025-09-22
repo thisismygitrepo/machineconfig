@@ -6,11 +6,12 @@ Zellij layout generation utilities for creating KDL layout files.
 import shlex
 import random
 import string
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 from pathlib import Path
 import logging
 
 from rich.console import Console
+from ..layout_types import LayoutConfig
 
 logger = logging.getLogger(__name__)
 console = Console()
@@ -77,36 +78,51 @@ class LayoutGenerator:
         return tab_section
 
     @staticmethod
-    def validate_tab_config(tab_config: Dict[str, Tuple[str, str]]) -> None:
-        """Validate tab configuration format and content."""
-        if not tab_config:
-            raise ValueError("Tab configuration cannot be empty")
-        for tab_name, (cwd, command) in tab_config.items():
+    def validate_tab_config(layout_config: LayoutConfig) -> None:
+        """Validate layout configuration format and content."""
+        if not layout_config:
+            raise ValueError("Layout configuration cannot be empty")
+        
+        if not layout_config.get("layoutName", "").strip():
+            raise ValueError("Layout name cannot be empty")
+            
+        layout_tabs = layout_config.get("layoutTabs", [])
+        if not layout_tabs:
+            raise ValueError("Layout must have at least one tab")
+            
+        for tab in layout_tabs:
+            tab_name = tab.get("tabName", "")
+            command = tab.get("command", "")
+            start_dir = tab.get("startDir", "")
+            
             if not tab_name.strip():
                 raise ValueError(f"Invalid tab name: {tab_name}")
             if not command.strip():
                 raise ValueError(f"Invalid command for tab '{tab_name}': {command}")
-            if not cwd.strip():
-                raise ValueError(f"Invalid cwd for tab '{tab_name}': {cwd}")
+            if not start_dir.strip():
+                raise ValueError(f"Invalid startDir for tab '{tab_name}': {start_dir}")
 
-    def generate_layout_content(self, tab_config: Dict[str, Tuple[str, str]]) -> str:
+    def generate_layout_content(self, layout_config: LayoutConfig) -> str:
         """Generate complete KDL layout content."""
-        self.validate_tab_config(tab_config)
+        self.validate_tab_config(layout_config)
 
         layout_content = self.LAYOUT_TEMPLATE
-        for tab_name, (cwd, command) in tab_config.items():
-            layout_content += "\n" + self.create_tab_section(tab_name, cwd, command)
+        for tab in layout_config["layoutTabs"]:
+            tab_name = tab["tabName"]
+            start_dir = tab["startDir"]
+            command = tab["command"]
+            layout_content += "\n" + self.create_tab_section(tab_name, start_dir, command)
         layout_content += "\n}\n"
 
         return layout_content
 
-    def create_layout_file(self, tab_config: Dict[str, Tuple[str, str]], output_dir: Path, session_name: str) -> str:
+    def create_layout_file(self, layout_config: LayoutConfig, output_dir: Path, session_name: str) -> str:
         """Create a layout file and return its absolute path."""
-        self.validate_tab_config(tab_config)
+        self.validate_tab_config(layout_config)
 
         # Generate unique suffix for this layout
         random_suffix = self.generate_random_suffix()
-        layout_content = self.generate_layout_content(tab_config)
+        layout_content = self.generate_layout_content(layout_config)
 
         try:
             # Create output directory if it doesn't exist

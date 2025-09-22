@@ -1,4 +1,3 @@
-
 from machineconfig.utils.utils2 import randstr
 
 from datetime import datetime
@@ -18,13 +17,16 @@ SHUTIL_FORMATS: TypeAlias = Literal["zip", "tar", "gztar", "bztar", "xztar"]
 
 def pwd2key(password: str, salt: Optional[bytes] = None, iterations: int = 10) -> bytes:  # Derive a secret key from a given password and salt"""
     import base64
+
     if salt is None:
         import hashlib
+
         m = hashlib.sha256()
         m.update(password.encode(encoding="utf-8"))
         return base64.urlsafe_b64encode(s=m.digest())  # make url-safe bytes required by Ferent.
     from cryptography.hazmat.primitives import hashes
     from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+
     return base64.urlsafe_b64encode(PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=iterations, backend=None).derive(password.encode()))
 
 
@@ -394,6 +396,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
 
         if system() == "Windows" and not Terminal.is_user_admin():  # you cannot create symlink without priviliages.
             import win32com.shell.shell
+
             _proce_info = win32com.shell.shell.ShellExecuteEx(lpVerb="runas", lpFile=sys.executable, lpParameters=f" -c \"from pathlib import Path; Path(r'{self.expanduser()}').symlink_to(r'{str(target_obj)}')\"")
             # TODO update PATH for this to take effect immediately.
             time.sleep(1)  # wait=True equivalent
@@ -443,6 +446,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         if ".zip" in str(slf) and compressed:  # the root (self) is itself a zip archive (as opposed to some search results are zip archives)
             import zipfile
             import fnmatch
+
             root = slf.as_zip_path()
             if not r:
                 raw = list(root.iterdir())
@@ -665,6 +669,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
     def ungz(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "PathExtended":
         op_path = self._resolve_path(folder, name, path, self.name.replace(".gz", "")).expanduser().resolve()
         import gzip
+
         PathExtended(str(op_path)).write_bytes(gzip.decompress(PathExtended(str(self.expanduser().resolve())).read_bytes()))
         msg = f"UNGZED {repr(self)} ==>  {repr(op_path)}"
         ret = self if orig else PathExtended(op_path)

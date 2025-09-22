@@ -13,6 +13,8 @@ from typing import Dict, List, Optional, Any
 from pathlib import Path
 import logging
 
+from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig, TabConfig
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "session_manager", "wt", "layout_manager")
@@ -21,7 +23,7 @@ TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "session_manager", "wt", "l
 class WTLayoutGenerator:
     def __init__(self):
         self.session_name: Optional[str] = None
-        self.tab_config: Dict[str, tuple[str, str]] = {}  # Store entire tab config (cwd, command) for status checking
+        self.layout_config: Optional[LayoutConfig] = None  # Store the complete layout config
         self.script_path: Optional[str] = None  # Store the full path to the script file
 
     @staticmethod
@@ -51,8 +53,12 @@ class WTLayoutGenerator:
         return text
 
     @staticmethod
-    def _create_tab_command(tab_name: str, cwd: str, command: str, is_first_tab: bool = False) -> str:
-        """Create a Windows Terminal tab command string."""
+    def _create_tab_command(tab_config: TabConfig, is_first_tab: bool = False) -> str:
+        """Create a Windows Terminal tab command string from tab config."""
+        tab_name = tab_config["tabName"]
+        cwd = tab_config["startDir"]
+        command = tab_config["command"]
+
         # Convert paths to Windows format if needed
         if cwd.startswith("~/"):
             cwd = cwd.replace("~/", f"{Path.home()}/")
@@ -77,28 +83,28 @@ class WTLayoutGenerator:
         return " ".join(tab_parts)
 
     @staticmethod
-    def _validate_tab_config(tab_config: Dict[str, tuple[str, str]]) -> None:
-        """Validate tab configuration format and content."""
-        if not tab_config:
-            raise ValueError("Tab configuration cannot be empty")
-        for tab_name, (cwd, command) in tab_config.items():
-            if not tab_name.strip():
-                raise ValueError(f"Invalid tab name: {tab_name}")
-            if not command.strip():
-                raise ValueError(f"Invalid command for tab '{tab_name}': {command}")
-            if not cwd.strip():
-                raise ValueError(f"Invalid cwd for tab '{tab_name}': {cwd}")
+    def _validate_layout_config(layout_config: LayoutConfig) -> None:
+        """Validate layout configuration format and content."""
+        if not layout_config["layoutTabs"]:
+            raise ValueError("Layout must contain at least one tab")
+        for tab in layout_config["layoutTabs"]:
+            if not tab["tabName"].strip():
+                raise ValueError(f"Invalid tab name: {tab['tabName']}")
+            if not tab["command"].strip():
+                raise ValueError(f"Invalid command for tab '{tab['tabName']}': {tab['command']}")
+            if not tab["startDir"].strip():
+                raise ValueError(f"Invalid startDir for tab '{tab['tabName']}': {tab['startDir']}")
 
-    def create_wt_layout(self, tab_config: Dict[str, tuple[str, str]], output_dir: Optional[str] = None, session_name: Optional[str] = None) -> str:
-        WTLayoutGenerator._validate_tab_config(tab_config)
-        logger.info(f"Creating Windows Terminal layout with {len(tab_config)} tabs")
+    def create_wt_layout(self, layout_config: LayoutConfig, output_dir: Optional[str] = None, session_name: Optional[str] = None) -> str:
+        WTLayoutGenerator._validate_layout_config(layout_config)
+        logger.info(f"Creating Windows Terminal layout '{layout_config['layoutName']}' with {len(layout_config['layoutTabs'])} tabs")
 
-        # Store session name and entire tab config for status checking
-        self.session_name = session_name or "default"
-        self.tab_config = tab_config.copy()
+        # Store session name and layout config for status checking
+        self.session_name = session_name or layout_config["layoutName"]
+        self.layout_config = layout_config.copy()
 
         # Generate Windows Terminal command
-        wt_command = self._generate_wt_command_string(tab_config, self.session_name)
+        wt_command = self._generate_wt_command_string(layout_config, self.session_name)
 
         try:
             random_suffix = WTLayoutGenerator._generate_random_suffix()
@@ -133,7 +139,7 @@ REM Windows Terminal layout for {self.session_name}
             logger.error(f"Failed to create script file: {e}")
             raise
 
-    def _generate_wt_command_string(self, tab_config: Dict[str, tuple[str, str]], window_name: str) -> str:
+    def _generate_wt_command_string(self, layout_config: LayoutConfig, window_name: str) -> str:
         """Generate complete Windows Terminal command string."""
         # Start building the wt command
         wt_parts = ["wt"]
@@ -143,9 +149,9 @@ REM Windows Terminal layout for {self.session_name}
 
         # Add tabs
         tab_commands = []
-        for i, (tab_name, (cwd, command)) in enumerate(tab_config.items()):
+        for i, tab in enumerate(layout_config["layoutTabs"]):
             is_first = i == 0
-            tab_cmd = self._create_tab_command(tab_name, cwd, command, is_first)
+            tab_cmd = self._create_tab_command(tab, is_first)
             tab_commands.append(tab_cmd)
 
         # Join all parts with semicolons (Windows Terminal command separator)
@@ -161,19 +167,20 @@ REM Windows Terminal layout for {self.session_name}
 
         return " ".join(wt_parts)
 
-    def get_wt_layout_preview(self, tab_config: Dict[str, tuple[str, str]]) -> str:
+    def get_wt_layout_preview(self, layout_config: LayoutConfig) -> str:
         """Generate preview of the Windows Terminal command that would be created."""
-        WTLayoutGenerator._validate_tab_config(tab_config)
-        return self._generate_wt_command_string(tab_config, "preview")
+        WTLayoutGenerator._validate_layout_config(layout_config)
+        return self._generate_wt_command_string(layout_config, "preview")
 
     def check_all_commands_status(self) -> Dict[str, Dict[str, Any]]:
-        if not self.tab_config:
-            logger.warning("No tab config tracked. Make sure to create a layout first.")
+        if not self.layout_config:
+            logger.warning("No layout config tracked. Make sure to create a layout first.")
             return {}
 
         status_report = {}
-        for tab_name in self.tab_config:
-            status_report[tab_name] = WTLayoutGenerator.check_command_status(tab_name, self.tab_config)
+        for tab in self.layout_config["layoutTabs"]:
+            tab_name = tab["tabName"]
+            status_report[tab_name] = WTLayoutGenerator.check_command_status(tab_name, self.layout_config)
 
         return status_report
 
@@ -218,12 +225,19 @@ REM Windows Terminal layout for {self.session_name}
             return {"wt_running": False, "error": str(e), "session_name": session_name}
 
     @staticmethod
-    def check_command_status(tab_name: str, tab_config: Dict[str, tuple[str, str]]) -> Dict[str, Any]:
+    def check_command_status(tab_name: str, layout_config: LayoutConfig) -> Dict[str, Any]:
         """Check if a command is running by looking for processes."""
-        if tab_name not in tab_config:
-            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in tracked configuration", "running": False, "pid": None, "command": None}
+        # Find the tab with the given name
+        tab_config = None
+        for tab in layout_config["layoutTabs"]:
+            if tab["tabName"] == tab_name:
+                tab_config = tab
+                break
 
-        _, command = tab_config[tab_name]
+        if tab_config is None:
+            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "pid": None, "command": None}
+
+        command = tab_config["command"]
 
         try:
             # Create PowerShell script to check for processes
@@ -361,15 +375,15 @@ Get-Process | ForEach-Object {{
         print("=" * 80)
 
 
-def create_wt_layout(tab_config: Dict[str, tuple[str, str]], output_dir: Optional[str] = None) -> str:
+def create_wt_layout(layout_config: LayoutConfig, output_dir: Optional[str] = None) -> str:
     generator = WTLayoutGenerator()
-    return generator.create_wt_layout(tab_config, output_dir)
+    return generator.create_wt_layout(layout_config, output_dir)
 
 
-def run_wt_layout(tab_config: Dict[str, tuple[str, str]], session_name: Optional[str] = None) -> str:
+def run_wt_layout(layout_config: LayoutConfig, session_name: Optional[str] = None) -> str:
     """Create and run a Windows Terminal layout."""
     generator = WTLayoutGenerator()
-    script_path = generator.create_wt_layout(tab_config, session_name=session_name)
+    script_path = generator.create_wt_layout(layout_config, session_name=session_name)
 
     # Execute the script
     cmd = f'powershell -ExecutionPolicy Bypass -File "{script_path}"'
@@ -394,17 +408,17 @@ wt new-tab --title "{tab_name}" {cwd_part} "{command}"
 
 
 if __name__ == "__main__":
-    # Example usage
-    sample_tabs = {"Frontend": ("~/code", "btm"), "Monitor": ("~", "lf")}
+    # Example usage with new schema
+    sample_layout: LayoutConfig = {"layoutName": "TestLayout", "layoutTabs": [{"tabName": "Frontend", "startDir": "~/code", "command": "btm"}, {"tabName": "Monitor", "startDir": "~", "command": "lf"}]}
 
     try:
         # Create layout using the generator
         generator = WTLayoutGenerator()
-        script_path = generator.create_wt_layout(sample_tabs, session_name="test_session")
+        script_path = generator.create_wt_layout(sample_layout, session_name="test_session")
         print(f"✅ Windows Terminal layout created: {script_path}")
 
         # Show preview
-        preview = generator.get_wt_layout_preview(sample_tabs)
+        preview = generator.get_wt_layout_preview(sample_layout)
         print(f"\n📋 Command Preview:\n{preview}")
 
         # Check status (won't find anything since we haven't run it)
