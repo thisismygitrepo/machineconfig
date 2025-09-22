@@ -57,5 +57,4 @@ fi
 
 cd $HOME/code/machineconfig
 $HOME/.local/bin/uv sync --no-dev
-$HOME/.local/bin/uv pip install -e ../crocodile
-# $HOME/.local/bin/uv cache clean
+$HOME/.local/bin/uv cache clean

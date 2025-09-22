@@ -1,8 +1,4 @@
 #!/usr/bin/bash
-#=======================================================================
-# 🔒 SSH SERVER SETUP SCRIPT
-#=======================================================================
-# This script sets up SSH server with public key authentication
 
 echo """#=======================================================================
 🔑 SSH KEY SETUP | Configuring SSH public key authentication

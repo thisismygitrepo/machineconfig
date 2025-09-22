@@ -62,7 +62,7 @@ echo """#=======================================================================
 #=======================================================================
 """
 echo "📥 Installing Node Version Manager (NVM)..."
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 
 # Set up NVM environment
 echo "🔧 Configuring NVM environment..."

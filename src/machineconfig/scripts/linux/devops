@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 
-source ~/code/machineconfig/.venv/bin/activate
-
 op_script=$HOME/tmp_results/shells/python_return_command.sh
 if [ -f "$op_script" ]; then
   rm $op_script
 fi
 
-# uv run --no-dev --project ~/code/machineconfig python -m machineconfig.scripts.python.devops "$@"
-python -m machineconfig.scripts.python.devops "$@"
+# source ~/code/machineconfig/.venv/bin/activate
+# python -m machineconfig.scripts.python.devops "$@"
+# echo "🔄 Running devops script..."
+uv run --no-dev --project $HOME/code/machineconfig python -m machineconfig.scripts.python.devops "$@"
+# uv run --with machineconfig python -m machineconfig.scripts.python.devops "$@"
+
 
 if [ -f "$op_script" ]; then
   chmod +x $op_script

@@ -137,10 +137,10 @@ choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     echo """    🔧 Installing development tools...
     """
-    . $HOME/code/machineconfig/.venv/bin/activate
     (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
     sudo nala install libssl-dev -y
     sudo nala install ffmpeg -y
+    . $HOME/code/machineconfig/.venv/bin/activate
     python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm,brave,code
 else
     echo """    ⏭️  Skipping development tools installation
