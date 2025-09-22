@@ -55,6 +55,9 @@ docs = [
 "Homepage" = "https://github.com/thisismygitrepo/machineconfig"
 "Bug Tracker" = "https://github.com/thisismygitrepo/machineconfig/issues"
 
+[project.scripts]
+devops = "machineconfig.scripts.python.devops:args_parser"
+
 [tool.setuptools]
 package-dir = {"" = "src"}
 license-files = []
