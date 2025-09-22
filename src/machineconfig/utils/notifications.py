@@ -163,27 +163,27 @@ encryption = ssl
             tmp.send_message(to=to, subject=subject, body=body)
             tmp.close()
 
-    @staticmethod
-    def send_m365(to: list[str], subject: str, body: Optional[str], body_file: Optional[str], body_content_type: Literal["HTML", "Text"], attachments: Optional[list[Path]] = None) -> None:
-        if body_file is not None:
-            assert body is None, "You cannot pass both body and body_file."
-            body_file_path = Path(body_file)
-            assert body_file_path.exists(), f"File not found: {body_file_path}"
-        else:
-            body_file_path = None
-            assert body is not None, "You must pass either body or body_file."
-        from crocodile.meta import Terminal
+    # @staticmethod
+    # def send_m365(to: list[str], subject: str, body: Optional[str], body_file: Optional[str], body_content_type: Literal["HTML", "Text"], attachments: Optional[list[Path]] = None) -> None:
+    #     if body_file is not None:
+    #         assert body is None, "You cannot pass both body and body_file."
+    #         body_file_path = Path(body_file)
+    #         assert body_file_path.exists(), f"File not found: {body_file_path}"
+    #     else:
+    #         body_file_path = None
+    #         assert body is not None, "You must pass either body or body_file."
+    #     from crocodile.meta import Terminal
 
-        to_str = ",".join(to)
-        attachments_str = " ".join([f"--attachment {str(p)}" for p in attachments]) if attachments is not None else ""
+    #     to_str = ",".join(to)
+    #     attachments_str = " ".join([f"--attachment {str(p)}" for p in attachments]) if attachments is not None else ""
 
-        if body_file is not None:
-            body_arg = f"--bodyContents @{body_file_path}"
-        else:
-            body_arg = f'"{body}"'
-        cmd = f"""m365 outlook mail send --verbose --saveToSentItems --importance normal --bodyContentType {body_content_type} --bodyContents {body_arg} --subject "{subject}" --to {to_str} {attachments_str}"""
-        response = Terminal().run(cmd, shell="powershell")
-        response.print(desc="Email sending response")
+    #     if body_file is not None:
+    #         body_arg = f"--bodyContents @{body_file_path}"
+    #     else:
+    #         body_arg = f'"{body}"'
+    #     cmd = f"""m365 outlook mail send --verbose --saveToSentItems --importance normal --bodyContentType {body_content_type} --bodyContents {body_arg} --subject "{subject}" --to {to_str} {attachments_str}"""
+    #     response = Terminal().run(cmd, shell="powershell")
+    #     response.print(desc="Email sending response")
 
 
 # class PhoneNotification:  # security concerns: avoid using this.
