@@ -8,7 +8,7 @@ from machineconfig.utils.path import match_file_name, sanitize_path
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 
 if TYPE_CHECKING:
-    from machineconfig.scripts.python.fire_jobs_args import FireJobArgs
+    from machineconfig.scripts.python.fire_jobs_args_helper import FireJobArgs
 
 
 def select_layout(layouts_json_file: Path, layout_name: Optional[str]):

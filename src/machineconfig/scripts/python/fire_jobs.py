@@ -18,7 +18,7 @@ from machineconfig.utils.source_of_truth import PROGRAM_PATH
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.io_save import save_toml
 from machineconfig.utils.utils2 import randstr, read_toml
-from machineconfig.scripts.python.fire_jobs_args import get_args, FireJobArgs, extract_kwargs
+from machineconfig.scripts.python.fire_jobs_args_helper import get_args, FireJobArgs, extract_kwargs
 import platform
 from typing import Optional
 import os
@@ -26,7 +26,7 @@ import os
 
 def main(args: FireJobArgs) -> None:
     if args.layout:
-        from machineconfig.scripts.python.fire_jobs_helper1 import handle_layout_args
+        from machineconfig.scripts.python.fire_jobs_layout_helper import handle_layout_args
         return handle_layout_args(args)
 
     path_obj = sanitize_path(args.path)
