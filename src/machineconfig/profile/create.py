@@ -21,9 +21,13 @@ from typing import Optional, Any, TypedDict
 
 system = platform.system()  # Linux or Windows
 ERROR_LIST: list[Any] = []  # append to this after every exception captured.
-CONFIG_ROOT = LIBRARY_ROOT.parent.parent.joinpath("settings")
-OTHER_SYSTEM = "windows" if system == "Linux" else "linux"
+
 SYSTEM = system.lower()
+
+def get_other_systems(current_system: str) -> list[str]:
+    all_systems = ["linux", "windows", "darwin"]
+    return [s for s in all_systems if s != current_system.lower()]
+OTHER_SYSTEMS = get_other_systems(SYSTEM)
 
 
 class SymlinkMapper(TypedDict):
@@ -40,7 +44,7 @@ def main_symlinks(choice: Optional[str] = None):
     program_keys_raw: list[str] = list(symlink_mapper.keys())
     program_keys: list[str] = []
     for program_key in program_keys_raw:
-        if program_key in exclude or OTHER_SYSTEM in program_key:
+        if program_key in exclude or any([another_system in program_key for another_system in OTHER_SYSTEMS]):
             continue
         else:
             program_keys.append(program_key)
@@ -55,7 +59,6 @@ def main_symlinks(choice: Optional[str] = None):
             choice_selected = "all"  # i.e. program_keys = program_keys
         # overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
         from rich.prompt import Confirm
-
         overwrite = Confirm.ask("Overwrite existing source file?", default=True)
     else:
         choice_selected = choice

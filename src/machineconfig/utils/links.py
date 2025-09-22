@@ -33,12 +33,21 @@ def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
         links_path.symlink_to(target=a_target_path)
 
 
-def symlink_func(this: PathExtended, to_this: PathExtended, prioritize_to_this: bool = True):
+def symlink_func(this: PathExtended, to_this: PathExtended, prioritize_to_this: bool):
     """helper function. creates a symlink from `this` to `to_this`.
-    What can go wrong?
-    depending on this and to_this existence, one will be prioretized depending on overwrite value.
-    True means this will potentially be overwritten (depending on whether to_this exists or not)
-    False means to_this will potentially be overwittten."""
+
+    this: exists           AND    to_this exists            AND this is a symlink pointing to to_this              ===> Resolution: AUTO: do nothing, already linked correctly.
+    this: exists           AND    to_this exists            AND this is a symlink pointing to somewhere else       ===> Resolution: AUTO: delete this symlink, create symlink to to_this
+    this: exists           AND    to_this exists            AND this is a concrete path                            ===> Resolution: DANGER: require user input to decide. Give two options: 1) prioritize `this`: to_this is backed up as to_this.orig_<randstr()>, to_this is deleted,  and symlink is created from this to to_this as normal; 2) prioritize `to_this`: `this` is backed up as this.orig_<randstr()>, `this` is deleted, and symlink is created from this to to_this as normal.
+
+    this: exists           AND    to_this doesn't exist     AND this is a symlink pointing to somewhere else       ===> Resolution: AUTO: delete this symlink, create symlink to to_this (touch to_this)
+    this: exists           AND    to_this doesn't exist     AND this is a symlink pointing to to_this              ===> Resolution: AUTO: delete this symlink, create symlink to to_this (touch to_this)
+    this: exists           AND    to_this doesn't exist     AND this is a concrete path                            ===> Resolution: AUTO: move this to to_this, then create symlink from this to to_this.
+
+    this: doesn't exist    AND    to_this exists                                                                   ===> Resolution: AUTO: create link from this to to_this
+    this: doesn't exist    AND    to_this doesn't exist                                                            ===> Resolution: AUTO: create link from this to to_this (touch to_this)
+
+    """
     this = PathExtended(this).expanduser().absolute()
     to_this = PathExtended(to_this).expanduser().absolute()
     if this.is_symlink():
