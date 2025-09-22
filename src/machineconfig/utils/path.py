@@ -54,7 +54,7 @@ def find_scripts(root: Path, name_substring: str, suffixes: set[str]) -> tuple[l
     partial_path_matches = []
     for entry in root.iterdir():
         if entry.is_dir():
-            if entry.name in {".links", ".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__"}:
+            if entry.name in {".links", ".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__", ".mypy_cache"}:
                 # prune this entire subtree
                 continue
             tmp1, tmp2 = find_scripts(entry, name_substring, suffixes)
@@ -75,7 +75,7 @@ def match_file_name(sub_string: str, search_root: PathExtended, suffixes: set[st
     if len(filename_matches) == 1:
         return PathExtended(filename_matches[0])
     console.print(Panel(f"Partial filename {search_root_obj} match with case-insensitivity failed. This generated #{len(filename_matches)} results.", title="Search", expand=False))
-    if len(filename_matches) < 10:
+    if len(filename_matches) < 20:
         print("\n".join([a_potential_match.as_posix() for a_potential_match in filename_matches]))
     if len(filename_matches) > 1:
         print("Try to narrow down filename_matches search by case-sensitivity.")
