@@ -13,7 +13,7 @@ from typing import Dict, List, Optional, Any
 from pathlib import Path
 import logging
 
-from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig, TabConfig
+from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, TabConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

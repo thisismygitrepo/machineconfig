@@ -15,7 +15,7 @@ from math import ceil
 from typing import Literal, TypeAlias, get_args, Iterable
 
 from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
-from machineconfig.cluster.sessions_managers.layout_types import TabConfig, LayoutConfig
+from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig
 from machineconfig.utils.utils2 import randstr
 import random
 # import time

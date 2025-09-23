@@ -7,7 +7,7 @@ import logging
 from typing import Dict, Any
 from machineconfig.cluster.sessions_managers.zellij_utils.process_monitor import ProcessMonitor
 from machineconfig.cluster.sessions_managers.zellij_utils.session_manager import SessionManager
-from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
+from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 
 logger = logging.getLogger(__name__)
 

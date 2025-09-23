@@ -4,7 +4,7 @@ Example usage of the modularized Zellij remote layout generator.
 """
 
 from machineconfig.cluster.sessions_managers.zellij_remote import ZellijRemoteLayoutGenerator
-from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
+from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 
 
 def example_usage():

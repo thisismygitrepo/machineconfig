@@ -13,7 +13,7 @@ from machineconfig.cluster.sessions_managers.zellij_utils.layout_generator impor
 from machineconfig.cluster.sessions_managers.zellij_utils.process_monitor import ProcessMonitor
 from machineconfig.cluster.sessions_managers.zellij_utils.session_manager import SessionManager
 from machineconfig.cluster.sessions_managers.zellij_utils.status_reporter import StatusReporter
-from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
+from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

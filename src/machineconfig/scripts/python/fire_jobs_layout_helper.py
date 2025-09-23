@@ -1,5 +1,5 @@
 from pathlib import Path
-from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig, LayoutsFile
+from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, LayoutsFile
 from typing import Optional, TYPE_CHECKING
 from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_interest
 from machineconfig.utils.options import choose_one_option

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Optional, Dict, List, Any
 from machineconfig.utils.utils5 import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import WTLayoutGenerator
-from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
+from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

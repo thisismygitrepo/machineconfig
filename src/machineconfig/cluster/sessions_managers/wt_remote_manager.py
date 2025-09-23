@@ -7,7 +7,7 @@ from typing import Optional, Any
 from machineconfig.utils.utils5 import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import run_command_in_wt_tab
 from machineconfig.cluster.sessions_managers.wt_remote import WTRemoteLayoutGenerator
-from machineconfig.cluster.sessions_managers.layout_types import TabConfig
+from machineconfig.utils.schemas.layouts.layout_types import TabConfig
 
 TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "wt", "remote_manager")
 

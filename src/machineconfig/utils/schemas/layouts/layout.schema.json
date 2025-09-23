@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bytesense.local/schemas/layout.schema.json",
+  "title": "Terminal Layouts Schema",
+  "description": "Schema for terminal layouts used by scripts/layout.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Optional link to the JSON Schema used for this file."
+    },
+    "version": {
+      "type": "string",
+      "description": "Schema or config version.",
+      "examples": ["0.1"]
+    },
+    "layouts": {
+      "type": "array",
+      "description": "List of terminal window layouts.",
+      "items": {
+        "$ref": "#/definitions/Layout"
+      },
+      "minItems": 1
+    }
+  },
+  "required": ["version", "layouts"],
+  "definitions": {
+    "Layout": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "layoutName": {
+          "type": "string",
+          "description": "Human-friendly layout name."
+        },
+        "layoutTabs": {
+          "type": "array",
+          "description": "Tabs to open for this layout.",
+          "items": {
+            "$ref": "#/definitions/LayoutTab"
+          },
+          "minItems": 1
+        }
+      },
+      "required": ["layoutName", "layoutTabs"]
+    },
+    "LayoutTab": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tabName": {
+          "type": "string",
+          "description": "Tab title shown in terminal."
+        },
+        "startDir": {
+          "type": "string",
+          "description": "Directory to start the tab in (supports ~ expansion).",
+          "examples": ["~/code/bytesense/bithence"]
+        },
+        "command": {
+          "type": "string",
+          "description": "Shell command to execute when the tab opens.",
+          "examples": ["~/scripts/fire -mO liveInf.py main --kw ..."]
+        }
+      },
+      "required": ["tabName", "startDir", "command"]
+    }
+  }
+}

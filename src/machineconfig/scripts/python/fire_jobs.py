@@ -257,7 +257,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
 
     if args.Nprocess > 1:
         from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
-        from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
+        from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 
         layout: LayoutConfig = {"layoutName": "fireNprocess", "layoutTabs": []}
         for an_arg in range(args.Nprocess):

@@ -5,7 +5,7 @@ in the event that username@github.com is not mentioned in the remote url.
 
 """
 
-from machineconfig.utils.schemas.repos_types import RepoRecordFile, RepoRecordDict, GitVersionInfo, RepoRemote
+from machineconfig.utils.schemas.repos.repos_types import RepoRecordFile, RepoRecordDict, GitVersionInfo, RepoRemote
 from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.io_save import save_json

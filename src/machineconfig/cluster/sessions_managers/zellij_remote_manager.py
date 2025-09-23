@@ -6,7 +6,7 @@ from typing import Optional, Dict
 from machineconfig.utils.utils5 import Scheduler
 from machineconfig.cluster.sessions_managers.zellij_local import run_command_in_zellij_tab
 from machineconfig.cluster.sessions_managers.zellij_remote import ZellijRemoteLayoutGenerator
-from machineconfig.cluster.sessions_managers.layout_types import LayoutConfig
+from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 from machineconfig.logger import get_logger
 
 

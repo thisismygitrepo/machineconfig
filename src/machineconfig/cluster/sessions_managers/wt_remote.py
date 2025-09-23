@@ -11,7 +11,7 @@ from machineconfig.cluster.sessions_managers.wt_utils.layout_generator import WT
 from machineconfig.cluster.sessions_managers.wt_utils.process_monitor import WTProcessMonitor
 from machineconfig.cluster.sessions_managers.wt_utils.session_manager import WTSessionManager
 from machineconfig.cluster.sessions_managers.wt_utils.status_reporter import WTStatusReporter
-from machineconfig.cluster.sessions_managers.layout_types import TabConfig
+from machineconfig.utils.schemas.layouts.layout_types import TabConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
