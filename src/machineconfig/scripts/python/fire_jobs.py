@@ -24,7 +24,7 @@ from typing import Optional
 # import os
 
 
-def main(args: FireJobArgs) -> None:
+def route(args: FireJobArgs) -> None:
     if args.layout:
         from machineconfig.scripts.python.fire_jobs_layout_helper import handle_layout_args
 
@@ -326,7 +326,12 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
     subprocess.run(command, shell=True, check=True)
 
 
+def main():
+    args = get_args()
+    route(args)
+
+
 if __name__ == "__main__":
     # options, func_args = parse_pyfile(file_path="C:/Users/aalsaf01/code/machineconfig/myresources/crocodile/core.py")
     args = get_args()
-    main(args)
+    route(args)

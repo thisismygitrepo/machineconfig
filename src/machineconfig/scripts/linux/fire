@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-uv run --python 3.13 --with machineconfig fire "$@"
+uv run --python 3.13 --no-cache --with machineconfig fire "$@"
