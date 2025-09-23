@@ -1,8 +1,2 @@
 #!/usr/bin/env bash
-
-source ~/code/machineconfig/.venv/bin/activate
-python $(dirname $(dirname $0))/python/ftpx.py "$@"
-if [ -n "$VIRTUAL_ENV" ]; then
-  deactivate || true
-
-fi
+uv run --python 3.13 --with machineconfig python $(dirname $(dirname $0))/python/ftpx.py "$@"

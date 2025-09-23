@@ -1,1 +1,1 @@
-uv run --no-dev --project $HOME/code/machineconfig python -m machineconfig.scripts.python.ai.mcinit $args
+uv run --python 3.13 --with machineconfig python -m machineconfig.scripts.python.ai.mcinit $args

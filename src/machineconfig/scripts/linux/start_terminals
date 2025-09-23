@@ -1,4 +1,3 @@
 #!/usr/bin/env bash
-
-uv run --no-dev --project $HOME/code/machineconfig python -m machineconfig.jobs.python.create_zellij_template
+uv run --python 3.13 --with machineconfig python -m machineconfig.jobs.python.create_zellij_template
 zellij --layout $HOME/tmp_results/tmp_files/templates/zellij_template.kdl

@@ -1,1 +1,1 @@
-uv run --no-dev --project $HOME/code/machineconfig python -i -m machineconfig.scripts.python.cloud_manager $args
+uv run --python 3.13 --with machineconfig python -i -m machineconfig.scripts.python.cloud_manager $args

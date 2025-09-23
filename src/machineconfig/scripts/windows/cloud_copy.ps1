@@ -1,1 +1,1 @@
-uv run --no-dev --project $HOME/code/machineconfig python -m machineconfig.scripts.python.cloud_copy $args
+uv run --python 3.13 --with machineconfig python -m machineconfig.scripts.python.cloud_copy $args

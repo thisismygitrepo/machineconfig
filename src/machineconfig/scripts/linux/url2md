@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-uv run --no-dev --project $HOME/code/machineconfig python -m machineconfig.utils.ai.url2md "$@"
+uv run --python 3.13 --with machineconfig python -m machineconfig.utils.ai.url2md "$@"

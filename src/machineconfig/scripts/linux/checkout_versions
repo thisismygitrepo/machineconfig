@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-uv run --no-dev --project $HOME/code/machineconfig python -m fire machineconfig.jobs.python.checkout_version main
+uv run --python 3.13 --with machineconfig python -m fire machineconfig.jobs.python.checkout_version main
