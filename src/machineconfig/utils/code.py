@@ -8,7 +8,7 @@ from rich.syntax import Syntax
 from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.ve import get_ve_activate_line
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
-from machineconfig.utils.source_of_truth import PROGRAM_PATH
+
 
 
 def get_shell_script_executing_python_file(python_file: str, func: Optional[str], ve_path: str, strict_execution: bool = True):
@@ -84,11 +84,11 @@ def write_shell_script_to_default_program_path(program: str, desc: str, preserve
         else:
             program = 'orig_path=$(cd -- "." && pwd)\n' + program + '\ncd "$orig_path" || exit'
     if display:
-        print_code(code=program, lexer="shell", desc=desc, subtitle=str(PROGRAM_PATH))
-    PROGRAM_PATH.parent.mkdir(parents=True, exist_ok=True)
-    PROGRAM_PATH.write_text(program, encoding="utf-8")
+        print_code(code=program, lexer="shell", desc=desc, subtitle="PROGRAM")
+    # PROGRAM_PATH.parent.mkdir(parents=True, exist_ok=True)
+    # PROGRAM_PATH.write_text(program, encoding="utf-8")
     if execute:
-        result = subprocess.run(f". {PROGRAM_PATH}", shell=True, capture_output=True, text=True)
+        result = subprocess.run(program, shell=True, capture_output=True, text=True)
         success = result.returncode == 0 and result.stderr == ""
         if not success:
             print("❌ 🛠️  EXECUTION | Shell script running failed")

@@ -1,4 +1,4 @@
-from machineconfig.utils.source_of_truth import PROGRAM_PATH
+
 from pathlib import Path
 import platform
 
@@ -25,16 +25,16 @@ def main():
 
     if platform.system() in ["Linux", "Darwin"]:
         print("\n🔧 Saving configuration for Linux...")
-        PROGRAM_PATH.write_text(
-            f"""
+        txt = f"""
 drive_location='{drive_location}'
 mount_point='{mount_point}'
 username='{username}'
 password='{password}'
 
-""",
-            encoding="utf-8",
-        )
+"""
+        # PROGRAM_PATH.write_text(txt, encoding="utf-8",)
+        import subprocess
+        subprocess.run(txt, shell=True, check=True)
         print("✅ Configuration saved successfully!\n")
 
     elif platform.system() == "Windows":

@@ -1,7 +1,7 @@
 """devops with emojis"""
 
 from machineconfig.utils.options import display_options
-from machineconfig.utils.source_of_truth import PROGRAM_PATH
+
 from machineconfig.utils.code import write_shell_script_to_default_program_path
 from platform import system
 from enum import Enum
@@ -75,7 +75,7 @@ def display_task_success(success: str) -> None:
 def main(which: Optional[str] = None):
     from machineconfig.utils.path_reduced import PathExtended
 
-    PathExtended(PROGRAM_PATH).delete(sure=True, verbose=False)
+    # PathExtended(PROGRAM_PATH).delete(sure=True, verbose=False)
     console.print(Panel("🚀 Initializing DevOps operation...", width=BOX_WIDTH, border_style="blue"))
 
     options = [op.value for op in Options]

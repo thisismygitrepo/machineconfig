@@ -1,8 +1,2 @@
 #!/usr/bin/env bash
-
-source ~/code/machineconfig/.venv/bin/activate
-python -m fire machineconfig.jobs.python.checkout_version main
-if [ -n "$VIRTUAL_ENV" ]; then
-  deactivate || true
-
-fi
+uv run --no-dev --project $HOME/code/machineconfig python -m fire machineconfig.jobs.python.checkout_version main

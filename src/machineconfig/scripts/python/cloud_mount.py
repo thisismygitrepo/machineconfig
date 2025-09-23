@@ -1,6 +1,6 @@
 """Cloud mount script"""
 
-from machineconfig.utils.source_of_truth import PROGRAM_PATH
+
 from machineconfig.utils.options import choose_one_option
 from machineconfig.utils.utils2 import read_ini
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
@@ -144,7 +144,9 @@ zellij action move-focus up
     else:
         raise ValueError("unsupported platform")
     # print(f"running command: \n{txt}")
-    PROGRAM_PATH.write_text(txt, encoding="utf-8")
+    # PROGRAM_PATH.write_text(txt, encoding="utf-8")
+    import subprocess
+    subprocess.run(txt, shell=True, check=True)
     # draw success box dynamically
     title1 = "✅ Cloud mount command prepared successfully"
     title2 = "🔄 Running mount process..."

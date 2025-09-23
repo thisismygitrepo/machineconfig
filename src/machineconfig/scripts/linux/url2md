@@ -1,10 +1,2 @@
 #!/usr/bin/env bash
-
-source ~/code/machineconfig/.venv/bin/activate
-
-python -m machineconfig.utils.ai.url2md "$@"
-
-if [ -n "$VIRTUAL_ENV" ]; then
-  deactivate || true
-
-fi
+uv run --no-dev --project $HOME/code/machineconfig python -m machineconfig.utils.ai.url2md "$@"

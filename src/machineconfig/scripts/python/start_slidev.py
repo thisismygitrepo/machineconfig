@@ -2,7 +2,7 @@
 slidev
 """
 
-from machineconfig.utils.source_of_truth import CONFIG_PATH, PROGRAM_PATH
+from machineconfig.utils.source_of_truth import CONFIG_PATH
 from machineconfig.utils.code import print_code
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.terminal import Terminal
@@ -101,7 +101,9 @@ def main() -> None:
     print(f"   - http://{local_ip_v4}:{port}\n")
 
     program = "npm run dev slides.md -- --remote"
-    PROGRAM_PATH.write_text(program, encoding="utf-8")
+    # PROGRAM_PATH.write_text(program, encoding="utf-8")
+    import subprocess
+    subprocess.run(program, shell=True, cwd=SLIDEV_REPO)
     print_code(code=program, lexer="bash", desc="Run the following command to start the presentation")
 
 

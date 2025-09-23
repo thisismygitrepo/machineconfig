@@ -1,10 +1,2 @@
 #!/usr/bin/env bash
-
-source ~/code/machineconfig/.venv/bin/activate
-
-python -c "from machineconfig.utils.procs import ProcessManager; ProcessManager().choose_and_kill()"
-
-if [ -n "$VIRTUAL_ENV" ]; then
-  deactivate || true
-
-fi
+uv run --no-dev --project $HOME/code/machineconfig python -c "from machineconfig.utils.procs import ProcessManager; ProcessManager().choose_and_kill()"

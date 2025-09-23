@@ -3,12 +3,12 @@ Utils
 """
 
 import machineconfig
-import platform
+# import platform
 from pathlib import Path
 
 LIBRARY_ROOT = Path(machineconfig.__file__).resolve().parent
 REPO_ROOT = LIBRARY_ROOT.parent.parent
-PROGRAM_PATH = Path(Path.home().joinpath("tmp_results", "shells", "python_return_command").__str__() + (".ps1" if platform.system() == "Windows" else ".sh"))
+# PROGRAM_PATH = Path(Path.home().joinpath("tmp_results", "shells", "python_return_command").__str__() + (".ps1" if platform.system() == "Windows" else ".sh"))
 CONFIG_PATH = Path.home().joinpath(".config/machineconfig")
 DEFAULTS_PATH = Path.home().joinpath("dotfiles/machineconfig/defaults.ini")
 

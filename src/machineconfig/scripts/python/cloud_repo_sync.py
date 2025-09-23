@@ -7,7 +7,7 @@ from machineconfig.utils.terminal import Terminal
 from machineconfig.utils.utils2 import randstr, read_ini
 
 from machineconfig.scripts.python.helpers.repo_sync_helpers import fetch_dotfiles
-from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH, PROGRAM_PATH
+from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
 from machineconfig.utils.options import choose_one_option
 from machineconfig.utils.code import get_shell_file_executing_python_script, write_shell_script_to_file
 import platform
@@ -161,7 +161,10 @@ git commit -am "finished merging"
                 program_content = program_4
             case _:
                 raise ValueError(f"Unknown action: {action}")
-        PROGRAM_PATH.write_text(program_content, encoding="utf-8")
+        # PROGRAM_PATH.write_text(program_content, encoding="utf-8")
+        import subprocess
+        subprocess.run(program_content, shell=True, check=True)
+
     return program_content
 
 

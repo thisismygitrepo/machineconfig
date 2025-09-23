@@ -7,7 +7,7 @@ croshell
 import argparse
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.utils2 import randstr
-from machineconfig.utils.source_of_truth import PROGRAM_PATH
+
 from machineconfig.utils.options import display_options
 from machineconfig.utils.ve import get_ve_activate_line
 from typing import Optional
@@ -204,11 +204,13 @@ print(f"🐊 Crocodile Shell | Running @ {Path.cwd()}")
     title = "🚀 LAUNCHING SCRIPT"
     text1 = f"📄 Script: {pyfile}"
     text2 = f"🔥 Command: {fire_line}"
-    launch_message = f"{title}   {PROGRAM_PATH}\n{text1}\n{text2}"
+    launch_message = f"{title}   \n{text1}\n{text2}"
     console.print(Panel(Text(launch_message, justify="left"), expand=False, border_style="blue"))
 
-    PROGRAM_PATH.write_text(data=final_program, encoding="utf-8")
+    # PROGRAM_PATH.write_text(data=final_program, encoding="utf-8")
     # (PROGRAM_PATH + ".py").write_text(str(pyfile), encoding='utf-8')
+    import subprocess
+    subprocess.run(final_program, shell=True, check=True)
 
     # if platform.system() == "Windows":
     # return subprocess.run([f"powershell", "-Command", res], shell=True, capture_output=False, text=True, check=True)

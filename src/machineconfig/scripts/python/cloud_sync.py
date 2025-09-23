@@ -5,7 +5,7 @@ TODO: use typer or typed-argument-parser to parse args
 from machineconfig.scripts.python.helpers.helpers2 import parse_cloud_source_target
 from machineconfig.scripts.python.helpers.cloud_helpers import Args
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
-from machineconfig.utils.source_of_truth import PROGRAM_PATH
+
 import argparse
 from rich.console import Console
 from rich.panel import Panel
@@ -75,7 +75,9 @@ def args_parser():
     cmd_line = f"{rclone_cmd[:65]}..."
     console.print(Panel(f"{title}\n{cmd_line}", title="[bold blue]Command[/bold blue]", expand=False))
 
-    PROGRAM_PATH.write_text(txt, encoding="utf-8")
+    # PROGRAM_PATH.write_text(txt, encoding="utf-8")
+    import subprocess
+    subprocess.run(txt, shell=True, check=True)
 
 
 if __name__ == "__main__":

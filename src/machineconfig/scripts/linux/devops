@@ -1,24 +1,3 @@
 #!/usr/bin/env bash
-
-op_script=$HOME/tmp_results/shells/python_return_command.sh
-if [ -f "$op_script" ]; then
-  rm $op_script
-fi
-
-# source ~/code/machineconfig/.venv/bin/activate
-# python -m machineconfig.scripts.python.devops "$@"
-# echo "🔄 Running devops script..."
 uv run --no-dev --project $HOME/code/machineconfig python -m machineconfig.scripts.python.devops "$@"
 # uv run --with machineconfig python -m machineconfig.scripts.python.devops "$@"
-
-
-if [ -f "$op_script" ]; then
-  chmod +x $op_script
-  source $op_script
-fi
-
-
-# check below if VIRTUAL_ENV enviroment variable exist, then deactivate it, other wise skip
-if [ -n "$VIRTUAL_ENV" ]; then
-  deactivate
-fi

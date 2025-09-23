@@ -14,14 +14,14 @@ from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
 from machineconfig.utils.ve import get_repo_root, get_ve_activate_line, get_ve_path_and_ipython_profile
 from machineconfig.utils.options import display_options, choose_one_option
 from machineconfig.utils.path import match_file_name, sanitize_path
-from machineconfig.utils.source_of_truth import PROGRAM_PATH
+
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.io_save import save_toml
 from machineconfig.utils.utils2 import randstr, read_toml
 from machineconfig.scripts.python.fire_jobs_args_helper import get_args, FireJobArgs, extract_kwargs
 import platform
 from typing import Optional
-import os
+# import os
 
 
 def main(args: FireJobArgs) -> None:
@@ -307,8 +307,8 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
             raise NotImplementedError(f"Platform {platform.system()} not supported.")
         command = export_line + "\n" + command
 
-    program_path = os.environ.get("op_script", None)
-    program_path = PathExtended(program_path) if program_path is not None else PROGRAM_PATH
+    # program_path = os.environ.get("op_script", None)
+    # program_path = PathExtended(program_path) if program_path is not None else PROGRAM_PATH
     if args.loop:
         if platform.system() in ["Linux", "Darwin"]:
             command = command + "\nsleep 0.5"
@@ -318,10 +318,12 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
             command = "$ErrorActionPreference = 'SilentlyContinue';\n" + command + "\nStart-Sleep -Seconds 0.5"
         else:
             raise NotImplementedError(f"Platform {platform.system()} not supported.")
-        command = command + f"\n. {program_path}"
-    console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {program_path}: "), style="bold red")
-    program_path.parent.mkdir(parents=True, exist_ok=True)
-    program_path.write_text(command, encoding="utf-8")
+        # command = command + f"\n. {program_path}"
+    console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {command}: "), style="bold red")
+    # program_path.parent.mkdir(parents=True, exist_ok=True)
+    # program_path.write_text(command, encoding="utf-8")
+    import subprocess
+    subprocess.run(command, shell=True, check=True)
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ from platform import system
 from machineconfig.utils.ssh import SSH
 from machineconfig.utils.terminal import Terminal
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
-from machineconfig.utils.source_of_truth import PROGRAM_PATH
+
 from machineconfig.utils.options import choose_ssh_host
 
 
@@ -52,7 +52,9 @@ fusermount -u /mnt/dbhdd
     else:
         raise ValueError(f"❌ Not implemented for this system: {system()}")
 
-    PROGRAM_PATH.write_text(txt, encoding="utf-8")
+    # PROGRAM_PATH.write_text(txt, encoding="utf-8")
+    import subprocess
+    subprocess.run(txt, shell=True, check=True)
     print("✅ Configuration saved successfully!\n")
 
     print("🎉 SSHFS Mounting Process Completed!\n")

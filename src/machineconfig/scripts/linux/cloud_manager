@@ -1,8 +1,2 @@
 #!/usr/bin/env bash
-
-source ~/code/machineconfig/.venv/bin/activate
-python -i -m machineconfig.scripts.python.cloud_manager "$@"
-
-if [ -n "$VIRTUAL_ENV" ]; then
-  deactivate || true
-fi
+uv run --no-dev --project $HOME/code/machineconfig python -i -m machineconfig.scripts.python.cloud_manager "$@"

@@ -1,22 +1,2 @@
 #!/usr/bin/env bash
-
-op_script=$HOME/tmp_results/shells/python_return_command.sh
-if [ -f "$op_script" ]; then
-  rm $op_script
-fi
-
-
-source ~/code/machineconfig/.venv/bin/activate
-
-python $(dirname $(dirname $0))/python/cloud_repo_sync.py "$@"
-
-if [ -f "$op_script" ]; then
-  chmod +x $op_script
-  source $op_script
-fi
-
-
-if [ -n "$VIRTUAL_ENV" ]; then
-  deactivate || true
-
-fi
+uv run --no-dev --project $HOME/code/machineconfig python $(dirname $(dirname $0))/python/cloud_repo_sync.py "$@"
