@@ -21,7 +21,8 @@ def get_repo_root(path: Path) -> Optional[Path]:
     return None
 
 
-def add_ai_configs(repo_root: Path):
+def add_ai_configs():
+    repo_root: Path = Path.cwd()
     import machineconfig as mc
 
     mc_root = Path(mc.__file__).parent
