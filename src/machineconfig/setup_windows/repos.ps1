@@ -48,5 +48,4 @@ if (Test-Path "machineconfig") {
 
 cd $HOME\code\machineconfig
 & "$HOME\.local\bin\uv.exe" sync --no-dev
-& "$HOME\.local\bin\uv.exe" pip install -e ../crocodile
 echo "Finished setting up repos"

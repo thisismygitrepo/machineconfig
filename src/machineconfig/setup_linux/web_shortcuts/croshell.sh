@@ -7,5 +7,5 @@ cd $HOME/code/machineconfig
 $HOME/.local/bin/uv sync --no-dev
 $HOME/.local/bin/uv pip install -e ../crocodile
 
-source $HOME/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
+uv run --no-dev --project $HOME/code/machineconfig -m fire machineconfig.profile.create main --choice=all
 . ~/.bashrc

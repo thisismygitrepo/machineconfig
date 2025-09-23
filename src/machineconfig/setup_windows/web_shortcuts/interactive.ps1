@@ -7,16 +7,16 @@ Write-Host "ℹ️  If you have execution policy issues, run:
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser"
 Write-Host "💡 To accept all prompts automatically, run: `$yesAll = `$true`n"
 
-# Set environment variable and execute scripts
-$ve_name = ".venv"
 
 Write-Host "🔄 Setting up Python environment..."
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/ve.ps1" -OutFile "ve.ps1"
 .\ve.ps1
+rm ve.ps1
 
 Write-Host "`n🔄 Setting up repositories..."
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/repos.ps1" -OutFile "repos.ps1"
 .\repos.ps1
+rm repos.ps1
 
 Write-Host "`n📂 ============================================
 🔄 DOTFILES MIGRATION OPTIONS
@@ -119,9 +119,7 @@ if (-not $yesAll) {
     }
     
 } else {
-    . $HOME\code\machineconfig\.venv\Scripts\activate.ps1
-    python -m fire machineconfig.scripts.python.devops_devapps_install main  --which=AllEssentials
-    deactivate    
+    uv run --with machineconfig python -m fire machineconfig.scripts.python.devops_devapps_install main  --which=AllEssentials
 }
 
 
@@ -146,8 +144,7 @@ if (-not $yesAll) {
 }
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
-    . ~\code\machineconfig\.venv\Scripts\Activate.ps1
-    python -m fire machineconfig.scripts.python.devops_backup_retrieve main --direction=RETRIEVE
+    uv run --with machineconfig python -m fire machineconfig.scripts.python.devops_backup_retrieve main --direction=RETRIEVE
 } else {
     Write-Host "Installation aborted."
 }
@@ -170,9 +167,8 @@ if ($choice -eq "y" -or $choice -eq "Y") {
     python -m fire machineconfig.setup_windows.wt_and_pwsh.set_wt_settings main
     winget install --no-upgrade --name "Brave"                        --Id "Brave.Brave"                --source winget --scope user --accept-package-agreements --accept-source-agreements
     winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements
-    . $HOME\code\machineconfig\.venv\Scripts\Activate.ps1
-    python -m fire machineconfig.setup_windows.wt_and_pwsh.set_pwsh_theme install_nerd_fonts
-    python -m fire machineconfig.setup_windows.wt_and_pwsh.set_wt_settings main
+    uv run --with machineconfig python -m fire machineconfig.setup_windows.wt_and_pwsh.set_pwsh_theme install_nerd_fonts
+    uv run --with machineconfig python -m fire machineconfig.setup_windows.wt_and_pwsh.set_wt_settings main
 
 } else {
     Write-Host "Installation aborted."

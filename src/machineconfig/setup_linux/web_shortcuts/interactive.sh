@@ -37,8 +37,7 @@ echo """#=======================================================================
 🐍 PYTHON ENVIRONMENT | Virtual environment setup
 #=======================================================================
 """
-read -p "🐍 Install Python virtual environment '.venv' [y]/n? " choice
-export ve_name=".venv"
+read -p "🐍 Install UV and repos [y]/n? " choice
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     echo """    🔧 Setting up Python environment...
     """
@@ -102,8 +101,7 @@ choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     echo """    🔧 Creating symlinks and setting permissions...
     """
-    source $HOME/code/machineconfig/.venv/bin/activate
-    python -m fire machineconfig.profile.create main --choice=all
+    uv run --with machineconfig python -m fire machineconfig.profile.create main --choice=all
     sudo chmod 600 $HOME/.ssh/*
     sudo chmod 700 $HOME/.ssh
 else
@@ -120,8 +118,7 @@ choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     echo """    🔧 Installing CLI applications...
     """
-    . $HOME/code/machineconfig/.venv/bin/activate
-    python -m fire machineconfig.scripts.python.devops_devapps_install main --which=AllEssentials
+    uv run --with machineconfig python -m fire machineconfig.scripts.python.devops_devapps_install main --which=AllEssentials
     . $HOME/.bashrc
 else
     echo """    ⏭️  Skipping CLI apps installation
@@ -132,16 +129,14 @@ echo """#=======================================================================
 🛠️  DEVELOPMENT TOOLS | Software development packages
 #=======================================================================
 """
-read -p "🛠️  Install Development Tools [y]/n? " choice
+read -p "🛠️  Install Development Tools (rust, libssql-dev, ffmpeg, wezterm, brave, code) [y]/n? " choice
 choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-    echo """    🔧 Installing development tools...
-    """
+    echo """    🔧 Installing development tools... """
     (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
     sudo nala install libssl-dev -y
     sudo nala install ffmpeg -y
-    . $HOME/code/machineconfig/.venv/bin/activate
-    python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm,brave,code
+    uv run --with machineconfig python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm,brave,code
 else
     echo """    ⏭️  Skipping development tools installation
     """
@@ -171,8 +166,7 @@ choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     echo """    🔄 Retrieving data...
     """
-    . $HOME/code/machineconfig/.venv/bin/activate
-    python -m fire machineconfig.scripts.python.devops_backup_retrieve main --direction=RETRIEVE
+    uv run --with machineconfig python -m fire machineconfig.scripts.python.devops_backup_retrieve main --direction=RETRIEVE
 else
     echo """    ⏭️  Skipping data retrieval
     """
