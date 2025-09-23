@@ -72,7 +72,6 @@
 #     return "\n".join([header, separator] + rows)
 
 
-# SCHEDULER_DEFAULT_ROOT = PathExtended.home().joinpath("dotfiles/scripts/.scheduler")
 # SUCCESS = "success"
 # DEFAULT_CONFIG = """
 # [specs]

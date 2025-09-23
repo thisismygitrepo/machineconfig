@@ -1,6 +1,5 @@
 """shell"""
 
-from machineconfig.utils.utils2 import randstr
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.terminal import Terminal
 from machineconfig.utils.options import display_options
@@ -92,36 +91,6 @@ def append_temporarily(dirs: list[str], kind: Literal["append", "prefix", "repla
     else:
         raise ValueError
     return result
-
-
-def main_env_path(choice: Optional[str], profile_path: Optional[str]) -> None:
-    from machineconfig.utils.utils2 import read_toml
-
-    env_path = read_toml(LIBRARY_ROOT.joinpath("profile/env_path.toml"))
-    # env_path = LIBRARY_ROOT.joinpath("profile/env_path.toml").readit()
-    dirs = env_path[f"path_{system.lower()}"]["extension"]
-
-    console.print(Panel("🔍 ENVIRONMENT | Current PATH variables:", title="[bold blue]Environment[/bold blue]", border_style="blue"))
-
-    if choice is None:
-        tmp = display_options(msg="Which directory to add?", options=dirs + ["all", "none(EXIT)"], default="none(EXIT)")
-        assert isinstance(tmp, str), f"Choice must be a string or a list of strings, not {type(choice)}"
-        choice = tmp
-        if str(choice) != "all":
-            dirs = [choice]
-    if choice == "none(EXIT)":
-        return
-
-    console.print(f"\n📌 Adding directories to PATH: {dirs}")
-    addition = append_temporarily(dirs=dirs, kind="append")
-    profile_path_obj = PathExtended(profile_path) if isinstance(profile_path, str) else get_shell_profile_path()
-    profile_path_obj.copy(name=profile_path_obj.name + ".orig_" + randstr())
-    console.print(f"💾 Created backup of profile: {profile_path_obj.name}.orig_*")
-    # Inline deprecated modify_text: if file missing, seed with search text before modification
-    current = profile_path_obj.read_text(encoding="utf-8") if profile_path_obj.exists() else addition
-    updated = current if addition in current else current + "\n" + addition
-    profile_path_obj.write_text(updated, encoding="utf-8")
-    console.print(Panel("✅ PATH variables added to profile successfully", title="[bold blue]Environment[/bold blue]", border_style="blue"))
 
 
 def main_add_sources_to_shell_profile(profile_path: Optional[str], choice: Optional[str]) -> None:

@@ -1,9 +1,5 @@
 
 
-
-# PATH extension =====================================================
-# $env:Path += ";$HOME\code\machineconfig\src\machineconfig\scripts\windows;$HOME\dotfiles\scripts\windows;C:\Program Files (x86)\GnuWin32\bin;C:\Program Files\CodeBlocks\MinGW\bin;C:\Program Files\nu\bin;C:\Program Files\Graphviz\bin"
-
 function Add-ToPathIfNotAlready {
     param (
         [Parameter(Mandatory=$true)]

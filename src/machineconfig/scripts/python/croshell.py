@@ -140,7 +140,6 @@ def build_parser():
             #             py_file_path = run(data_path=args.read, data=None, get_figure=None)
             #             final_program = f"""
             # #!/bin/bash
-            # . $HOME/scripts/activate_ve '.venv'
             # streamlit run {py_file_path}
             # """
             #             PROGRAM_PATH.write_text(data=final_program, encoding="utf-8")

@@ -27,7 +27,6 @@ def sync_remote(machine_name: str):
 """)
         raise ValueError(error_msg)
 
-    # this is template: code = """ssh -o "HostName=zgeby8zhe6ipftpad.alexsaffar.com" -o "User=alex" -o "ProxyCommand=cloudflared access ssh --hostname %h" -o "Port=443" -o "RequestTTY=yes" -o "RemoteCommand=bash ~/scripts/z_ls --attach; bash" tpadCF"""
     code = f"""
 ssh -o "HostName={machine_config["HostName"]}" -o "User={machine_config["User"]}" -o "ProxyCommand=cloudflared access ssh --hostname %h" -o "Port={machine_config["Port"]}" -o "RequestTTY=yes" -o "RemoteCommand=devops --which update; bash" {machine_name}
 """
