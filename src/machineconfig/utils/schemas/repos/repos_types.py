@@ -16,10 +16,11 @@ class RepoRemote(TypedDict):
 
 class RepoRecordDict(TypedDict):
     name: str
-    parent_dir: str
-    current_branch: str
+    parentDir: str
+    currentBranch: str
     remotes: list[RepoRemote]
     version: GitVersionInfo
+    isDirty: bool
 
 
 class RepoRecordFile(TypedDict):

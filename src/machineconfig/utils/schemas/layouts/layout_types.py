@@ -24,6 +24,5 @@ class LayoutConfig(TypedDict):
 
 class LayoutsFile(TypedDict):
     """Complete layout file structure."""
-
     version: str
     layouts: List[LayoutConfig]
