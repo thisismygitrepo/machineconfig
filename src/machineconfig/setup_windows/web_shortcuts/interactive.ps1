@@ -97,7 +97,8 @@ if ($createLinksChoice -eq "y" -or $createLinksChoice -eq "Y") {
     if ($linkTypeChoice -eq "s" -or $linkTypeChoice -eq "S") {
         python -m fire machineconfig.profile.create main --choice=all
     } elseif ($linkTypeChoice -eq "h" -or $linkTypeChoice -eq "H") {
-        python -m fire machineconfig.profile.create_hardlinks main --choice=all
+        # python -m fire machineconfig.profile.create_hardlinks main --choice=all
+        python -m fire machineconfig.profile.create main --choice=all
     } else {
         Write-Host "Invalid choice for link type. Installation aborted."
     }

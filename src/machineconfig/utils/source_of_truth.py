@@ -3,12 +3,11 @@ Utils
 """
 
 import machineconfig
-# import platform
 from pathlib import Path
 
 LIBRARY_ROOT = Path(machineconfig.__file__).resolve().parent
 REPO_ROOT = LIBRARY_ROOT.parent.parent
-# PROGRAM_PATH = Path(Path.home().joinpath("tmp_results", "shells", "python_return_command").__str__() + (".ps1" if platform.system() == "Windows" else ".sh"))
+
 CONFIG_PATH = Path.home().joinpath(".config/machineconfig")
 DEFAULTS_PATH = Path.home().joinpath("dotfiles/machineconfig/defaults.ini")
 
@@ -22,6 +21,4 @@ WINDOWS_INSTALL_PATH = Path.home().joinpath("AppData/Local/Microsoft/WindowsApps
 
 
 if __name__ == "__main__":
-    # import typer
-    # typer.run(check_tool_exists)
     pass

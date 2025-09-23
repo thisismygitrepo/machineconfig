@@ -112,10 +112,9 @@ def symlink_func(this: PathExtended, to_this: PathExtended, prioritize_to_this: 
         console.print(Panel(f"❌ ERROR | Failed at linking {this} ➡️  {to_this}. Reason: {ex}", title="Error", expand=False))
 
 
-def symlink_copy(this: PathExtended, to_this: PathExtended, prioritize_to_this: bool = True):
+def symlink_copy(this: PathExtended, to_this: PathExtended, prioritize_to_this: bool):
     this = PathExtended(this).expanduser().absolute()
     to_this = PathExtended(to_this).expanduser().absolute()
-    # Case analysis based on docstring of symlink_func
     if this.exists():
         if to_this.exists():
             if this.is_symlink():

@@ -3,6 +3,7 @@ This script Takes away all config files from the computer, place them in one dir
 `dotfiles`, and create symlinks to those files from thier original locations.
 
 """
+from rich.console import Console
 
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.links import symlink_func, symlink_copy
@@ -11,37 +12,28 @@ from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT
 from machineconfig.utils.utils2 import read_toml
 from machineconfig.profile.shell import create_default_shell_profile
 
-# import os
 import platform
 import os
 import ctypes
 import subprocess
-from rich.console import Console
 from typing import Optional, Any, TypedDict
 
 system = platform.system()  # Linux or Windows
 ERROR_LIST: list[Any] = []  # append to this after every exception captured.
-
 SYSTEM = system.lower()
-
-
 def get_other_systems(current_system: str) -> list[str]:
     all_systems = ["linux", "windows", "darwin"]
     return [s for s in all_systems if s != current_system.lower()]
-
-
 OTHER_SYSTEMS = get_other_systems(SYSTEM)
-
-
 class SymlinkMapper(TypedDict):
     this: str
     to_this: str
     contents: Optional[bool]
 
 
-def main_symlinks(choice: Optional[str] = None):
+def apply_mapper(choice: Optional[str] = None):
     symlink_mapper: dict[str, dict[str, SymlinkMapper]] = read_toml(LIBRARY_ROOT.joinpath("profile/mapper.toml"))
-    overwrite = True
+    prioritize_to_this = True
     exclude: list[str] = []  # "wsl_linux", "wsl_windows"
 
     program_keys_raw: list[str] = list(symlink_mapper.keys())
@@ -63,7 +55,7 @@ def main_symlinks(choice: Optional[str] = None):
         # overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
         from rich.prompt import Confirm
 
-        overwrite = Confirm.ask("Overwrite existing source file?", default=True)
+        prioritize_to_this = Confirm.ask("Overwrite existing source file?", default=True)
     else:
         choice_selected = choice
 
@@ -102,17 +94,17 @@ def main_symlinks(choice: Optional[str] = None):
             if "contents" in file_map:
                 try:
                     for a_target in to_this.expanduser().search("*"):
-                        symlink_func(this=this.joinpath(a_target.name), to_this=a_target, prioritize_to_this=overwrite)
+                        symlink_func(this=this.joinpath(a_target.name), to_this=a_target, prioritize_to_this=prioritize_to_this)
                 except Exception as ex:
                     print(f"❌ Config error: {program_key} | {file_key} | missing keys 'this ==> to_this'. {ex}")
             if "copy" in file_map:
                 try:
-                    symlink_copy(this=this, to_this=to_this, prioritize_to_this=overwrite)
+                    symlink_copy(this=this, to_this=to_this, prioritize_to_this=prioritize_to_this)
                 except Exception as ex:
                     print(f"❌ Config error: {program_key} | {file_key} | {ex}")
             else:
                 try:
-                    symlink_func(this=this, to_this=to_this, prioritize_to_this=overwrite)
+                    symlink_func(this=this, to_this=to_this, prioritize_to_this=prioritize_to_this)
                 except Exception as ex:
                     print(f"❌ Config error: {program_key} | {file_key} | missing keys 'this ==> to_this'. {ex}")
 
@@ -152,7 +144,7 @@ def main(choice: Optional[str] = None):
     console = Console()
     print("\n")
     console.rule("[bold blue]🔗 CREATING SYMLINKS 🔗")
-    main_symlinks(choice=choice)
+    apply_mapper(choice=choice)
 
     print("\n")
     console.rule("[bold green]🐚 CREATING SHELL PROFILE 🐚")
