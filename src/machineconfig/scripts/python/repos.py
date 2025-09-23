@@ -5,30 +5,24 @@ in the event that username@github.com is not mentioned in the remote url.
 
 """
 
-from rich import print as pprint
+from machineconfig.utils.schemas.repos_types import RepoRecordFile, RepoRecordDict, GitVersionInfo, RepoRemote
 from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.io_save import save_json
 from machineconfig.utils.utils2 import randstr, read_ini
 from machineconfig.scripts.python.devops_update_repos import update_repository
+
 import argparse
-from dataclasses import dataclass
 from enum import Enum
-from typing import Optional, Any
+from typing import Optional
+
+from rich import print as pprint
 
 
 class GitAction(Enum):
     commit = "commit"
     push = "push"
     pull = "pull"
-
-
-@dataclass
-class RepoRecord:
-    name: str
-    parent_dir: str
-    remotes: dict[str, str]
-    version: dict[str, str]
 
 
 def git_action(path: PathExtended, action: GitAction, mess: Optional[str] = None, r: bool = False, auto_sync: bool = True) -> bool:
@@ -120,7 +114,8 @@ def main():
 
     if args.record:
         print("\n📝 Recording repositories...")
-        res = record_repos(repos_root=str(repos_root))
+        reoos_records = record_repos(repos_root=str(repos_root))
+        res: RepoRecordFile = {"version": "0.1", "repos": reoos_records}
         pprint("✅ Recorded repositories:\n", res)
         save_path = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
         save_json(obj=res, path=save_path, indent=4)
@@ -166,12 +161,12 @@ def main():
         print("❌ No action specified. Try passing --push, --pull, --commit, or --all.")
 
 
-def record_repos(repos_root: str, r: bool = True) -> list[dict[str, Any]]:
+def record_repos(repos_root: str, r: bool = True) -> list[RepoRecordDict]:
     path_obj = PathExtended(repos_root).expanduser().absolute()
     if path_obj.is_file():
         return []
     search_res = path_obj.search("*", files=False, folders=True)
-    res: list[dict[str, Any]] = []
+    res: list[RepoRecordDict] = []
     for a_search_res in search_res:
         if a_search_res.joinpath(".git").exists():
             try:
@@ -184,15 +179,16 @@ def record_repos(repos_root: str, r: bool = True) -> list[dict[str, Any]]:
     return res
 
 
-def record_a_repo(path: PathExtended, search_parent_directories: bool = False, preferred_remote: Optional[str] = None):
+def record_a_repo(path: PathExtended, search_parent_directories: bool = False, preferred_remote: Optional[str] = None) -> RepoRecordDict:
     from git.repo import Repo
 
     repo = Repo(path, search_parent_directories=search_parent_directories)  # get list of remotes using git python
     repo_root = PathExtended(repo.working_dir).absolute()
-    remotes = {remote.name: remote.url for remote in repo.remotes}
+    # remotes: = {remote.name: remote.url for remote in repo.remotes}
+    remotes: list[RepoRemote] = [{"name": remote.name, "url": remote.url} for remote in repo.remotes]
     if preferred_remote is not None:
-        if preferred_remote in remotes:
-            remotes = {preferred_remote: remotes[preferred_remote]}
+        if preferred_remote in [remote["name"] for remote in remotes]:
+            remotes = [remote for remote in remotes if remote["name"] == preferred_remote]
         else:
             print(f"⚠️ `{preferred_remote=}` not found in {remotes}.")
             preferred_remote = None
@@ -200,13 +196,26 @@ def record_a_repo(path: PathExtended, search_parent_directories: bool = False, p
         commit = repo.head.commit.hexsha
     except ValueError:  # look at https://github.com/gitpython-developers/GitPython/issues/1016
         print(f"⚠️ Failed to get latest commit of {repo}")
-        commit = None
+        commit = "UNKNOWN"
     try:
         current_branch = repo.head.reference.name  # same as repo.active_branch.name
     except TypeError:
         print(f"⁉️ Failed to get current branch of {repo}. It is probably in a detached state.")
-        current_branch = None
-    res: dict[str, Any] = {"name": repo_root.name, "parent_dir": repo_root.parent.collapseuser().as_posix(), "current_branch": current_branch, "remotes": remotes, "version": {"branch": current_branch, "commit": commit}}
+        # current_branch = None
+        current_branch = "DETACHED"
+    
+    version_info: GitVersionInfo = {
+        "branch": current_branch,
+        "commit": commit
+    }
+    
+    res: RepoRecordDict = {
+        "name": repo_root.name, 
+        "parent_dir": repo_root.parent.collapseuser().as_posix(), 
+        "current_branch": current_branch, 
+        "remotes": remotes, 
+        "version": version_info
+    }
     return res
 
 

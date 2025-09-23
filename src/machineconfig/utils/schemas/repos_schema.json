@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/thisismygitrepo/machineconfig/schemas/repos_schema.json",
+  "title": "Repository Records Schema",
+  "description": "Schema for repository records file containing git repository information",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Version of the repository records format"
+    },
+    "repos": {
+      "type": "array",
+      "description": "List of repository records",
+      "items": {
+        "$ref": "#/$defs/RepoRecordDict"
+      }
+    }
+  },
+  "required": ["version", "repos"],
+  "additionalProperties": false,
+  "$defs": {
+    "GitVersionInfo": {
+      "type": "object",
+      "description": "Git version information containing branch and commit details",
+      "properties": {
+        "branch": {
+          "type": "string",
+          "description": "Current git branch name"
+        },
+        "commit": {
+          "type": "string",
+          "description": "Current git commit hash"
+        }
+      },
+      "required": ["branch", "commit"],
+      "additionalProperties": false
+    },
+    "RepoRemote": {
+      "type": "object",
+      "description": "Git remote repository configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the remote (e.g., 'origin', 'upstream')"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL of the remote repository"
+        }
+      },
+      "required": ["name", "url"],
+      "additionalProperties": false
+    },
+    "RepoRecordDict": {
+      "type": "object",
+      "description": "Individual repository record containing all relevant git information",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the repository"
+        },
+        "parent_dir": {
+          "type": "string",
+          "description": "Parent directory path where the repository is located"
+        },
+        "current_branch": {
+          "type": "string",
+          "description": "Currently checked out branch name"
+        },
+        "remotes": {
+          "type": "array",
+          "description": "List of configured git remotes",
+          "items": {
+            "$ref": "#/$defs/RepoRemote"
+          }
+        },
+        "version": {
+          "$ref": "#/$defs/GitVersionInfo",
+          "description": "Current git version information"
+        }
+      },
+      "required": ["name", "parent_dir", "current_branch", "remotes", "version"],
+      "additionalProperties": false
+    }
+  }
+}
