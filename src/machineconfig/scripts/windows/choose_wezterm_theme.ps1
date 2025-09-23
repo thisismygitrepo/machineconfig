@@ -1,1 +1,1 @@
-uv run --python 3.13 --with machineconfig python -m fire machineconfig.scripts.python.choose_wezterm_theme main2 $args[0]
+uv run --python 3.13 --no-dev --project $HOME/code/machineconfig choose_wezterm_theme $args[0]

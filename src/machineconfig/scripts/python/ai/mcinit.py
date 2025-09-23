@@ -21,8 +21,7 @@ def get_repo_root(path: Path) -> Optional[Path]:
     return None
 
 
-def add_ai_configs():
-    repo_root: Path = Path.cwd()
+def add_ai_configs(repo_root: Path) -> None:
     import machineconfig as mc
 
     mc_root = Path(mc.__file__).parent
@@ -106,6 +105,21 @@ uv venv
         if len(to_add) > 0:
             dot_git_ignore_path.write_text(data=dot_git_ignore_content + "\n" + "\n".join(to_add), encoding="utf-8")
 
+
+def main() -> None:
+    # import argparse
+
+    # parser = argparse.ArgumentParser(description="Add AI configurations to a Python project.")
+    # parser.add_argument(
+    #     "--repo-root",
+    #     type=str,
+    #     default=".",
+    #     help="Path to the root of the repository. Defaults to the current working directory.",
+    # )
+    # args = parser.parse_args()
+    # repo_root = Path(args.repo_root).resolve()
+    repo_root = Path.cwd()
+    add_ai_configs(repo_root=repo_root)
 
 if __name__ == "__main__":
     add_ai_configs(repo_root=Path.cwd())

@@ -230,5 +230,9 @@ def get_age(create_time: Any) -> str:
             return f"unknown due to {ee} and {e}"
 
 
+def main():
+    from machineconfig.utils.procs import ProcessManager; ProcessManager().choose_and_kill()
+
+
 if __name__ == "__main__":
-    pass
+    main()

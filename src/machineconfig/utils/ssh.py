@@ -201,7 +201,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         assert '"' not in cmd, 'Avoid using `"` in your command. I dont know how to handle this when passing is as command to python in pwsh command.'
         if not return_obj:
             return self.run(
-                cmd=f"""uv run --with machineconfig -c "{Terminal.get_header(wdir=None, toolbox=True)}{cmd}\n""" + '"', desc=desc or f"run_py on {self.get_remote_repr()}", verbose=verbose, strict_err=strict_err, strict_returncode=strict_returncode
+                cmd=f"""uv run --no-dev --project $HOME/code/machineconfig -c "{Terminal.get_header(wdir=None, toolbox=True)}{cmd}\n""" + '"', desc=desc or f"run_py on {self.get_remote_repr()}", verbose=verbose, strict_err=strict_err, strict_returncode=strict_returncode
             )
         assert "obj=" in cmd, "The command sent to run_py must have `obj=` statement if return_obj is set to True"
         source_file = self.run_py(f"""{cmd}\npath = Save.pickle(obj=obj, path=P.tmpfile(suffix='.pkl'))\nprint(path)""", desc=desc, verbose=verbose, strict_err=True, strict_returncode=True).op.split("\n")[-1]

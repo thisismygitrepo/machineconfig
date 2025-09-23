@@ -1,1 +1,1 @@
-uv run --python 3.13 --with machineconfig python -m machineconfig.scripts.python.dotfile $args
+uv run --python 3.13 --no-dev --project $HOME/code/machineconfig dotfile $args

@@ -1,1 +1,0 @@
-uv run --python 3.13 --with machineconfig python -m fire machineconfig.jobs.python.checkout_version main

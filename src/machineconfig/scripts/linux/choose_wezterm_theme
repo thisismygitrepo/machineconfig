@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-uv run --python 3.13 --with machineconfig python -m fire machineconfig.scripts.python.choose_wezterm_theme main
+uv run --python 3.13 --no-dev --project $HOME/code/machineconfig choose_wezterm_theme
 source ~/.bashrc  # reload the profile

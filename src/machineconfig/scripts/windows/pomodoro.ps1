@@ -1,1 +1,1 @@
-uv run --python 3.13 --with machineconfig  -m fire machineconfig.scripts.python.pomodoro pomodoro $args
+uv run --python 3.13 --no-dev --project $HOME/code/machineconfig pomodoro $args

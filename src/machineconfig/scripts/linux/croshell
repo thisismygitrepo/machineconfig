@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-uv run --python 3.13 --with machineconfig python -m machineconfig.scripts.python.croshell "$@"
+uv run --python 3.13 --no-dev --project $HOME/code/machineconfig croshell "$@"
+

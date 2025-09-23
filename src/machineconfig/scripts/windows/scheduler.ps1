@@ -1,1 +1,1 @@
-uv run --python 3.13 --with machineconfig python -m machineconfig.scripts.python.scheduler $Args
+uv run --python 3.13 --no-dev --project $HOME/code/machineconfig scheduler $Args

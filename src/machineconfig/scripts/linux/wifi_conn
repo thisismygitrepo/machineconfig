@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-uv run --python 3.13 --with machineconfig python machineconfig.scripts.python.wifi_conn
+uv run --python 3.13 --no-dev --project $HOME/code/machineconfig wifi_conn

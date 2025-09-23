@@ -1,1 +1,1 @@
-uv run --python 3.13 --with machineconfig python $PSScriptRoot/../python/ftpx.py $args
+uv run --python 3.13 --no-dev --project $HOME/code/machineconfig ftpx $args
