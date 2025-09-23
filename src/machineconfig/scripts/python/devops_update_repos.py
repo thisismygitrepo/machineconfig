@@ -20,7 +20,6 @@ def set_permissions_recursive(path: Path, executable: bool = True) -> None:
     """Set permissions recursively for a directory."""
     if not path.exists():
         return
-
     if path.is_file():
         if executable:
             path.chmod(0o755)
@@ -36,25 +35,49 @@ def run_uv_sync(repo_path: Path) -> bool:
     """Run uv sync in the given repository path. Returns True if successful."""
     try:
         print(f"🔄 Running uv sync in {repo_path}")
-        result = subprocess.run(["uv", "sync"], cwd=repo_path, capture_output=True, text=True, check=True)
+        # Run uv sync with output directly to terminal (no capture)
+        subprocess.run(["uv", "sync"], cwd=repo_path, check=True)
         print("✅ uv sync completed successfully")
-        if result.stdout:
-            print(f"📝 Output: {result.stdout}")
         return True
     except subprocess.CalledProcessError as e:
-        print(f"❌ uv sync failed: {e}")
-        if e.stderr:
-            print(f"📝 Error: {e.stderr}")
+        print(f"❌ uv sync failed with return code {e.returncode}")
         return False
     except FileNotFoundError:
         print("⚠️  uv command not found. Please install uv first.")
         return False
 
 
-def update_repository(repo: git.Repo, auto_sync: bool = True, allow_password_prompt: bool = False) -> bool:
+def update_repository(repo: git.Repo, auto_sync: bool, allow_password_prompt: bool) -> bool:
     """Update a single repository and return True if pyproject.toml or uv.lock changed."""
     repo_path = Path(repo.working_dir)
     print(f"🔄 {'Updating ' + str(repo_path):.^80}")
+
+    # Check git status first
+    print("📊 Checking git status...")
+    if repo.is_dirty():
+        # Get the list of modified files
+        changed_files_raw = [item.a_path for item in repo.index.diff(None)]
+        changed_files_raw.extend([item.a_path for item in repo.index.diff("HEAD")])
+        # Filter out None values and remove duplicates
+        changed_files = list(set(file for file in changed_files_raw if file is not None))
+        
+        print(f"⚠️  Repository has uncommitted changes: {', '.join(changed_files)}")
+        
+        # Check if the only change is uv.lock
+        if len(changed_files) == 1 and changed_files[0] == "uv.lock":
+            print("🔒 Only uv.lock has changes, resetting it...")
+            try:
+                # Reset uv.lock file
+                subprocess.run(["git", "checkout", "HEAD", "--", "uv.lock"], cwd=repo_path, check=True)
+                print("✅ uv.lock has been reset")
+            except subprocess.CalledProcessError as e:
+                print(f"❌ Failed to reset uv.lock: {e}")
+                return False
+        else:
+            # Multiple files or files other than uv.lock have changes
+            raise RuntimeError(f"❌ Cannot update repository - there are pending changes in: {', '.join(changed_files)}. Please commit or stash your changes first.")
+    else:
+        print("✅ Repository is clean")
 
     # Check if this repo has pyproject.toml or uv.lock
     pyproject_path = repo_path / "pyproject.toml"
@@ -210,12 +233,15 @@ def update_repository(repo: git.Repo, auto_sync: bool = True, allow_password_pro
 def main(verbose: bool = True, allow_password_prompt: bool = False) -> str:
     """Main function to update all configured repositories."""
     _ = verbose
-    repos: list[str] = ["~/code/machineconfig", "~/code/crocodile"]
+    repos: list[PathExtended] = [PathExtended.home() / "code/machineconfig", PathExtended.home() / "code/crocodile"]
     try:
         tmp = read_ini(DEFAULTS_PATH)["general"]["repos"].split(",")
         if tmp[-1] == "":
             tmp = tmp[:-1]
-        repos += tmp
+        for item in tmp:
+            item_obj = PathExtended(item).expanduser()
+            if item_obj not in repos:
+                repos.append(item_obj)
     except (FileNotFoundError, KeyError, IndexError):
         print(f"""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -235,26 +261,20 @@ def main(verbose: bool = True, allow_password_prompt: bool = False) -> str:
 
     # Process repositories
     repos_with_changes = []
-    for a_package_path in repos:
+    for expanded_path in repos:
         try:
-            expanded_path = PathExtended(a_package_path).expanduser()
             repo = git.Repo(str(expanded_path), search_parent_directories=True)
-
             # Update repository and check if dependencies changed
-            dependencies_changed = update_repository(repo, allow_password_prompt=allow_password_prompt)
-
+            dependencies_changed = update_repository(repo, allow_password_prompt=allow_password_prompt, auto_sync=True)
             if dependencies_changed:
                 repos_with_changes.append(Path(repo.working_dir))
-
         except Exception as ex:
-            print(f"""❌ Repository Error: Path: {a_package_path}
+            print(f"""❌ Repository Error: Path: {expanded_path}
 Exception: {ex}
 {"-" * 50}""")
-
     # Run uv sync for repositories where pyproject.toml or uv.lock changed
     for repo_path in repos_with_changes:
         run_uv_sync(repo_path)
-
     # print("\n🎉 All repositories updated successfully!")
     return """echo "🎉 All repositories updated successfully!" """
 

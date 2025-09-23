@@ -18,14 +18,13 @@ BOX_WIDTH = 150  # width for box drawing
 class Options(Enum):
     update = "🔄 UPDATE essential repos"
     cli_install = "⚙️ DEVAPPS install"
-    sym_path_shell = "🔗 SYMLINKS, PATH & SHELL PROFILE"
+    sym_path_shell = "🔗 SYMLINKS, SHELL PROFILE, FONT, TERMINAL SETTINGS."
     sym_new = "🆕 SYMLINKS new"
     ssh_add_pubkey = "🔑 SSH add pub key to this machine"
     ssh_add_id = "🗝️ SSH add identity (private key) to this machine"
     ssh_use_pair = "🔐 SSH use key pair to connect two machines"
     ssh_setup = "📡 SSH setup"
     ssh_setup_wsl = "🐧 SSH setup wsl"
-    dot_files_sync = "🔗 DOTFILES sync"
     backup = "💾 BACKUP"
     retreive = "📥 RETRIEVE"
     scheduler = "⏰ SCHEDULER"
@@ -93,9 +92,7 @@ def main(which: Optional[str] = None):
     if choice_key == Options.update.value:
         console.print(Panel("🔄 Updating essential repositories...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_update_repos as helper
-
         program = helper.main()
-
     elif choice_key == Options.cli_install.value:
         console.print(Panel("⚙️  Installing development applications...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_devapps_install as helper
@@ -158,12 +155,6 @@ def main(which: Optional[str] = None):
         # from machineconfig.scripts.python.scheduler import main as helper
         # program = helper()
         program = ""
-
-    elif choice_key == Options.dot_files_sync.value:
-        console.print(Panel("🔗 Synchronizing dotfiles...", width=BOX_WIDTH, border_style="blue"))
-        from machineconfig.scripts.python.cloud_repo_sync import main as helper, PathExtended
-
-        program = helper(cloud=None, path=str(PathExtended.home() / "dotfiles"), pwd=None, action="ask")
 
     else:
         console.print(Panel("❌ ERROR: Invalid choice", title_align="left", border_style="red", width=BOX_WIDTH))

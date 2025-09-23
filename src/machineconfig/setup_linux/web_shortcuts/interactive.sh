@@ -101,7 +101,7 @@ choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     echo """    🔧 Creating symlinks and setting permissions...
     """
-    uv run --with machineconfig python -m fire machineconfig.profile.create main --choice=all
+    uv run --python 3.13 --with machineconfig python -m fire machineconfig.profile.create main --choice=all
     sudo chmod 600 $HOME/.ssh/*
     sudo chmod 700 $HOME/.ssh
 else
@@ -118,7 +118,7 @@ choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     echo """    🔧 Installing CLI applications...
     """
-    uv run --with machineconfig python -m fire machineconfig.scripts.python.devops_devapps_install main --which=AllEssentials
+    uv run --python 3.13 --with machineconfig python -m fire machineconfig.scripts.python.devops_devapps_install main --which=AllEssentials
     . $HOME/.bashrc
 else
     echo """    ⏭️  Skipping CLI apps installation
@@ -136,7 +136,7 @@ if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
     sudo nala install libssl-dev -y
     sudo nala install ffmpeg -y
-    uv run --with machineconfig python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm,brave,code
+    uv run --python 3.13 --with machineconfig python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm,brave,code
 else
     echo """    ⏭️  Skipping development tools installation
     """
@@ -166,7 +166,7 @@ choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     echo """    🔄 Retrieving data...
     """
-    uv run --with machineconfig python -m fire machineconfig.scripts.python.devops_backup_retrieve main --direction=RETRIEVE
+    uv run --python 3.13 --with machineconfig python -m fire machineconfig.scripts.python.devops_backup_retrieve main --direction=RETRIEVE
 else
     echo """    ⏭️  Skipping data retrieval
     """
