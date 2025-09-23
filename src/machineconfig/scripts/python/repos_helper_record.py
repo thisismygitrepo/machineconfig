@@ -66,10 +66,18 @@ def build_tree_structure(repos: list[RepoRecordDict], repos_root: PathExtended) 
             if repo["currentBranch"] == "DETACHED":
                 status_indicators.append("🔀 DETACHED")
             
-            status_str = f" [{' | '.join(status_indicators)}]" if status_indicators else " [✅ CLEAN]"
+            status_str = f"[{' | '.join(status_indicators)}]" if status_indicators else "[✅ CLEAN]"
             branch_info = f" ({repo['currentBranch']})" if repo['currentBranch'] != "DETACHED" else ""
             
-            tree_lines.append(f"{repo_prefix}📦 {repo['name']}{branch_info}{status_str}")
+            # Build the base string without status
+            base_str = f"{repo_prefix}📦 {repo['name']}{branch_info}"
+            
+            # Calculate padding to align status at 75 characters
+            target_width = 45
+            current_length = len(base_str)
+            padding = max(1, target_width - current_length)  # At least 1 space
+            
+            tree_lines.append(f"{base_str}{' ' * padding}{status_str}")
     
     return "\n".join(tree_lines)
 
