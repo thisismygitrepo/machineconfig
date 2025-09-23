@@ -4,8 +4,7 @@ from machineconfig.utils.utils2 import randstr, read_json
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.io_save import save_json
 import platform
-from machineconfig.utils.source_of_truth import LIBRARY_ROOT
-from uuid import uuid4
+# from uuid import uuid4
 import os
 from typing import Any
 from rich.console import Console
@@ -100,65 +99,6 @@ class TerminalSettings(object):
         else:
             console.print(Panel("❌ PowerShell profile was not found in the list of profiles and therefore was not made the default.", title="[bold red]Terminal Settings[/bold red]", border_style="red"))
 
-    def add_croshell(self):
-        print("\n🐊 Adding croshell profile...")
-        croshell = dict(
-            name="croshell",
-            guid="{" + str(uuid4()) + "}",
-            commandline=f'powershell.exe -Command "{LIBRARY_ROOT.as_posix()}/scripts/windows/croshell.ps1"',
-            startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
-        )
-        # startingDirectory = None means: inheret from parent process, which will is the default, which point to /System32
-        # Launching a new profile with ctr+shift+2 is equivalent to: wt --profile croshell -d . --new-tab
-        for profile in self.profs:
-            if profile["name"] == "croshell":
-                profile.update(croshell)
-                console.print(Panel("✅ Updated existing croshell profile", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
-                break
-        else:
-            self.profs.append(croshell)
-            console.print(Panel("✅ Added new croshell profile", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
-
-    def add_ubuntu(self):
-        print("\n🐧 Adding Ubuntu WSL profile...")
-        # Add Ubunto if it is not there.
-        ubuntu = dict(
-            name="Ubuntu",
-            commandline="wsl -d Ubuntu -- cd ~",
-            hidden=False,
-            guid="{" + str(uuid4()) + "}",
-            startingDirectory="%USERPROFILE%",  # "%USERPROFILE%",   # None: inherent from parent process.
-        )
-        if not any(x.get("name") == "Ubuntu" for x in self.profs):
-            self.profs.append(ubuntu)
-            console.print(Panel("✅ Added Ubuntu WSL profile", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
-        else:
-            console.print(Panel("ℹ️ Ubuntu profile already exists", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
-
-    def standardize_profiles_order(self):
-        print("\n🔄 Standardizing profile order...")
-        # Changing order of profiles:
-        others = []
-        pwsh = croshell = ubuntu = wpwsh = cmd = azure = None
-        for profile in self.profs:
-            name = profile["name"]
-            if name == "PowerShell":
-                pwsh = profile
-            elif name == "croshell":
-                croshell = profile
-            elif name == "Ubuntu":
-                ubuntu = profile
-            elif name == "Windows PowerShell":
-                wpwsh = profile
-            elif name == "Command Prompt":
-                cmd = profile
-            elif name == "Azure Cloud Shell":
-                azure = profile
-            else:
-                others.append(profile)
-        self.profs = [item for item in [pwsh, croshell, ubuntu, wpwsh, cmd, azure] + others if item is not None]
-        console.print(Panel("✅ Profile order standardized", title="[bold blue]Terminal Settings[/bold blue]", border_style="blue"))
-
 
 def main():
     print(f"\n{'=' * 80}\n🖥️  WINDOWS TERMINAL SETUP 🖥️\n{'=' * 80}")
@@ -168,12 +108,7 @@ def main():
         ts = TerminalSettings()
         ts.update_default_settings()
         ts.customize_powershell(nerd_font=True)
-
         ts.make_powershell_default_profile()
-        ts.add_croshell()
-        ts.add_ubuntu()
-        ts.standardize_profiles_order()
-
         print("⌨️  Adding keyboard shortcut for pane zoom (ctrl+shift+z)...")
         ts.dat["actions"].append({"command": "togglePaneZoom", "keys": "ctrl+shift+z"})
 

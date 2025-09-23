@@ -14,22 +14,25 @@ T = TypeVar("T")
 def check_tool_exists(tool_name: str) -> bool:
     if platform.system() == "Windows":
         tool_name = tool_name.replace(".exe", "") + ".exe"
-        cmd = "where.exe"
-        root_path = Path(WINDOWS_INSTALL_PATH)
+        res1 = any([Path(WINDOWS_INSTALL_PATH).joinpath(tool_name).is_file(), Path.home().joinpath("AppData/Roaming/npm").joinpath(tool_name).is_file()])
+        tool_name = tool_name.replace(".exe", "") + ".exe"
+        res2 = any([Path(WINDOWS_INSTALL_PATH).joinpath(tool_name).is_file(), Path.home().joinpath("AppData/Roaming/npm").joinpath(tool_name).is_file()])
+        return res1 or res2
     elif platform.system() in ["Linux", "Darwin"]:
-        cmd = "which"
         root_path = Path(LINUX_INSTALL_PATH)
         return any([Path("/usr/local/bin").joinpath(tool_name).is_file(), Path("/usr/bin").joinpath(tool_name).is_file(), root_path.joinpath(tool_name).is_file()])
     else:
         raise NotImplementedError(f"platform {platform.system()} not implemented")
-    _ = cmd
+    # _ = cmd
+    #     cmd = "where.exe"
+    #     cmd = "which"
     # try:  # talking to terminal is too slow.
     #     _tmp = subprocess.check_output([cmd, tool_name], stderr=subprocess.DEVNULL)
     #     res: bool = True
     # except (subprocess.CalledProcessError, FileNotFoundError):
     #     res = False
     # return res
-    return root_path.joinpath(tool_name).is_file()
+    # return root_path.joinpath(tool_name).is_file()
 
 
 def choose_one_option(options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "", default: Optional[T] = None, fzf: bool = False, custom_input: bool = False) -> T:

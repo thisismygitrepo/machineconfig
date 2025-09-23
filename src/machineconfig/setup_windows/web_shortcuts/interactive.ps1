@@ -163,7 +163,7 @@ if ($choice -eq "y" -or $choice -eq "Y") {
     winget install --no-upgrade --name "Powershell"                   --Id "Microsoft.PowerShell"       --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
     winget install --no-upgrade --name "Brave"                        --Id "Brave.Brave"                --source winget --scope user --accept-package-agreements --accept-source-agreements
     winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements
-    uv run --with machineconfig python -m fire machineconfig.setup_windows.wt_and_pwsh.set_pwsh_theme install_nerd_fonts
+    uv run --with machineconfig python -m fire machineconfig.setup_windows.wt_and_pwsh.install_nerd_fonts main
     uv run --with machineconfig python -m fire machineconfig.setup_windows.wt_and_pwsh.set_wt_settings main
 } else {
     Write-Host "Installation aborted."
