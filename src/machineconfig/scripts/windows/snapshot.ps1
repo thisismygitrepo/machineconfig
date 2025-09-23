@@ -1,5 +1,1 @@
-
-. "$HOME\code\machineconfig\.venv\Scripts\activate.ps1"
-
-python $PSScriptRoot/../python/snapshot.py $args
-deactivate -ErrorAction SilentlyContinue
+uv run --no-dev --project $HOME/code/machineconfig python $PSScriptRoot/../python/snapshot.py $args

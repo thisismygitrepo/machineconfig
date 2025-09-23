@@ -1,6 +1,1 @@
-
-. "$HOME\code\machineconfig\.venv\Scripts\activate.ps1"
-
-python -m machineconfig.scripts.python.scheduler $Args
-
-deactivate -ErrorAction SilentlyContinue
+uv run --no-dev --project $HOME/code/machineconfig python -m machineconfig.scripts.python.scheduler $Args

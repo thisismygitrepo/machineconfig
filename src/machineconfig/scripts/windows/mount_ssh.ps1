@@ -7,11 +7,7 @@ $user = ''
 $sharePath = ''
 $driveLetter = ''
 
-# . activate_ve
-. $HOME/code/machineconfig/.venv/Scripts/activate.ps1
-
-python -m machineconfig.scripts.python.mount_ssh
-. $HOME/tmp_results/shells/python_return_command.ps1
+uv run --no-dev --project $HOME/code/machineconfig python -m machineconfig.scripts.python.mount_ssh
 
 net use T: \\sshfs.kr\$user@$host.local
 # this worked: net use T: \\sshfs\alex@alex-p51s-5.local
