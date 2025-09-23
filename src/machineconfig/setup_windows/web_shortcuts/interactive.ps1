@@ -158,18 +158,12 @@ if (-not $yesAll) {
 }
 if ([string]::IsNullOrEmpty($choice)) { $choice = "y" }
 if ($choice -eq "y" -or $choice -eq "Y") {
-    # python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm
-    # python -m fire machineconfig.scripts.python.devops_devapps_install main --which=brave
-    # python -m fire machineconfig.scripts.python.devops_devapps_install main --which=code
     winget install --no-upgrade --name "Windows Terminal"             --Id "Microsoft.WindowsTerminal"  --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W 11
     winget install --no-upgrade --name "Powershell"                   --Id "Microsoft.PowerShell"       --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
-    python -m fire machineconfig.setup_windows.wt_and_pwsh.set_pwsh_theme install_nerd_fonts
-    python -m fire machineconfig.setup_windows.wt_and_pwsh.set_wt_settings main
     winget install --no-upgrade --name "Brave"                        --Id "Brave.Brave"                --source winget --scope user --accept-package-agreements --accept-source-agreements
     winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements
     uv run --with machineconfig python -m fire machineconfig.setup_windows.wt_and_pwsh.set_pwsh_theme install_nerd_fonts
     uv run --with machineconfig python -m fire machineconfig.setup_windows.wt_and_pwsh.set_wt_settings main
-
 } else {
     Write-Host "Installation aborted."
 }
@@ -177,7 +171,7 @@ if ($choice -eq "y" -or $choice -eq "Y") {
 
 # Install Apps
 if (-not $yesAll) {
-    $choice = Read-Host "Install Apps [y]/n ? "
+    $choice = Read-Host "Install Windows Apps [y]/n ? "
 } else {
     $choice = "y"
 }
