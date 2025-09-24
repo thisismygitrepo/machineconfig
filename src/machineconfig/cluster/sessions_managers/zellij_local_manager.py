@@ -23,7 +23,6 @@ TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "
 
 class ZellijLocalManager:
     """Manages multiple local zellij sessions and monitors their tabs and processes."""
-
     def __init__(self, session_layouts: list[LayoutConfig], ):
         self.session_name_prefix = "LocalJobMgr"
         self.session_layouts = session_layouts  # Store the original config

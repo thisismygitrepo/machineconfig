@@ -15,8 +15,8 @@ import sys
 from machineconfig.scripts.python.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout, AGENTS
 from machineconfig.scripts.python.fire_agents_help_search import search_files_by_pattern, search_python_files
 from machineconfig.scripts.python.fire_agents_load_balancer import chunk_prompts, SPLITTING_STRATEGY, DEFAULT_AGENT_CAP
-from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
 from machineconfig.utils.options import choose_one_option
+from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
 from machineconfig.utils.ve import get_repo_root
 
 SEARCH_STRATEGIES: TypeAlias = Literal["file_path", "keyword_search", "filename_pattern"]
@@ -141,9 +141,21 @@ manager.run_monitoring_routine()
     if len(layoutfile["layouts"][0]["layoutTabs"]) > 25:
         print("Too many agents (>25) to launch. Skipping launch.")
         sys.exit(0)
+    from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
     manager = ZellijLocalManager(session_layouts=layoutfile["layouts"])
     manager.start_all_sessions()
     manager.run_monitoring_routine()
+
+
+def launch_sequentially(layoutfile: "LayoutsFile"):
+    from machineconfig.utils.utils2 import split
+    from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
+    for layout_chunk in split(layoutfile["layouts"], every=3):
+        manager = ZellijLocalManager(session_layouts=layout_chunk)
+        manager.start_all_sessions()
+        manager.run_monitoring_routine()
+
+
 
 
 if __name__ == "__main__":  # pragma: no cover
