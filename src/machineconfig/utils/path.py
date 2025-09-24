@@ -5,11 +5,9 @@ from rich.console import Console
 from rich.panel import Panel
 import platform
 import subprocess
-from typing import TypeVar
 from pathlib import Path
 
 
-T = TypeVar("T")
 console = Console()
 
 

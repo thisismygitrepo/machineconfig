@@ -18,6 +18,19 @@ def randstr(length: int = 10, lower: bool = True, upper: bool = True, digits: bo
     return "".join(random.choices(population, k=length))
 
 
+def split[T](iterable: list[T], every: int = 1, to: Optional[int] = None) -> list[list[T]]:
+    import math
+    every = every if to is None else math.ceil(len(iterable) / to)
+    res: list[list[T]] = []
+    for ix in range(0, len(iterable), every):
+        if ix + every < len(iterable):
+            tmp = iterable[ix : ix + every]
+        else:
+            tmp = iterable[ix : len(iterable)]
+        res.append(list(tmp))
+    return list(res)
+
+
 def read_ini(path: "Path", encoding: Optional[str] = None):
     if not Path(path).exists() or Path(path).is_dir():
         raise FileNotFoundError(f"File not found or is a directory: {path}")

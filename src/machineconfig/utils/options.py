@@ -4,11 +4,8 @@ from rich.panel import Panel
 from rich.console import Console
 import platform
 import subprocess
-from typing import Optional, Union, TypeVar, Iterable
+from typing import Optional, Union, Iterable
 from machineconfig.utils.source_of_truth import WINDOWS_INSTALL_PATH, LINUX_INSTALL_PATH
-
-
-T = TypeVar("T")
 
 
 def check_tool_exists(tool_name: str) -> bool:
@@ -35,20 +32,20 @@ def check_tool_exists(tool_name: str) -> bool:
     # return root_path.joinpath(tool_name).is_file()
 
 
-def choose_one_option(options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "", default: Optional[T] = None, fzf: bool = False, custom_input: bool = False) -> T:
+def choose_one_option[T](options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "", default: Optional[T] = None, fzf: bool = False, custom_input: bool = False) -> T:
     choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=False, custom_input=custom_input)
     assert not isinstance(choice_key, list)
     return choice_key
 
 
-def choose_multiple_options(options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "", default: Optional[T] = None, custom_input: bool = False) -> list[T]:
+def choose_multiple_options[T](options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "", default: Optional[T] = None, custom_input: bool = False) -> list[T]:
     choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=True, multi=True, custom_input=custom_input)
     if isinstance(choice_key, list):
         return choice_key
     return [choice_key]
 
 
-def display_options(msg: str, options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[T, list[T]]:
+def display_options[T](msg: str, options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[T, list[T]]:
     # TODO: replace with https://github.com/tmbo/questionary
     # # also see https://github.com/charmbracelet/gum
     tool_name = "fzf"
