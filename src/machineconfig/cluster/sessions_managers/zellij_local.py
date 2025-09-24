@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 import shlex
 import subprocess
+from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import CommandStatusResult,  ZellijSessionStatus, ComprehensiveStatus, ProcessInfo
 import psutil
 import random
 import string
-from typing import Dict, List, Optional, Any
+from typing import List, Optional
 from pathlib import Path
 import logging
 
 from rich.console import Console
 
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, TabConfig
+
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -154,7 +157,7 @@ class ZellijLayoutGenerator:
         return layout_content + "\n}\n"
 
     @staticmethod
-    def check_command_status(tab_name: str, layout_config: LayoutConfig) -> Dict[str, Any]:
+    def check_command_status(tab_name: str, layout_config: LayoutConfig) -> CommandStatusResult:
         # Find the tab with the given name
         tab_config = None
         for tab in layout_config["layoutTabs"]:
@@ -163,39 +166,99 @@ class ZellijLayoutGenerator:
                 break
 
         if tab_config is None:
-            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "pid": None, "command": None, "cwd": None}
+            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "command": "", "cwd": "", "tab_name": tab_name, "processes": []}
 
         command = tab_config["command"]
         cwd = tab_config["startDir"]
-        cmd, _ = ZellijLayoutGenerator._parse_command(command)
+        cmd, args = ZellijLayoutGenerator._parse_command(command)
 
         try:
-            # Look for processes matching the command
-            matching_processes = []
-            for proc in psutil.process_iter(["pid", "name", "cmdline", "status"]):
+            # Look for processes matching the command more accurately
+            matching_processes: list[ProcessInfo] = []
+            for proc in psutil.process_iter(["pid", "name", "cmdline", "status", "ppid"]):
                 try:
-                    if proc.info["cmdline"] and len(proc.info["cmdline"]) > 0:
-                        # Check if the command matches
-                        if proc.info["name"] == cmd or cmd in proc.info["cmdline"][0] or any(cmd in arg for arg in proc.info["cmdline"]):
-                            matching_processes.append({"pid": proc.info["pid"], "name": proc.info["name"], "cmdline": proc.info["cmdline"], "status": proc.info["status"]})
-                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    if not proc.info["cmdline"] or len(proc.info["cmdline"]) == 0:
+                        continue
+                    
+                    # Skip processes that are already dead/zombie/stopped
+                    if proc.info["status"] in ["zombie", "dead", "stopped"]:
+                        continue
+                    
+                    # Get the actual command from cmdline
+                    proc_cmdline = proc.info["cmdline"]
+                    proc_name = proc.info["name"]
+                    
+                    # More precise matching logic
+                    is_match = False
+                    
+                    # Check if this is the exact command we're looking for
+                    if proc_name == cmd:
+                        # For exact name matches, also check if arguments match or if it's a reasonable match
+                        if len(args) == 0 or any(arg in " ".join(proc_cmdline) for arg in args):
+                            is_match = True
+                    
+                    # Check if the command appears in the command line
+                    elif cmd in proc_cmdline[0]:
+                        is_match = True
+                    
+                    # For script-based commands, check if the script name appears
+                    elif any(cmd in arg for arg in proc_cmdline):
+                        is_match = True
+                    
+                    # Skip shell processes that are just wrappers unless they're running our specific command
+                    if is_match and proc_name in ["bash", "sh", "zsh", "fish"]:
+                        # Only count shell processes if they contain our specific command
+                        full_cmdline = " ".join(proc_cmdline)
+                        if cmd not in full_cmdline and not any(arg in full_cmdline for arg in args):
+                            is_match = False
+                    
+                    if is_match:
+                        # Additional check: make sure the process is actually running something meaningful
+                        try:
+                            # Check if process has been running for a reasonable time and is active
+                            proc_obj = psutil.Process(proc.info["pid"])
+                            if proc_obj.status() not in ["running", "sleeping"]:
+                                continue  # Skip inactive processes
+                                
+                            matching_processes.append({
+                                "pid": proc.info["pid"], 
+                                "name": proc.info["name"], 
+                                "cmdline": proc.info["cmdline"], 
+                                "status": proc.info["status"]
+                            })
+                        except (psutil.NoSuchProcess, psutil.AccessDenied):
+                            continue
+                            
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                     continue
 
-            if matching_processes:
-                return {"status": "running", "running": True, "processes": matching_processes, "command": command, "cwd": cwd, "tab_name": tab_name}
+            # Filter out clearly finished processes or parent shells
+            active_processes = []
+            for proc_info in matching_processes:
+                try:
+                    proc = psutil.Process(proc_info["pid"])
+                    # Double-check the process is still active
+                    if proc.status() in ["running", "sleeping"] and proc.is_running():
+                        active_processes.append(proc_info)
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                    # Process is gone, don't count it
+                    continue
+
+            if active_processes:
+                return {"status": "running", "running": True, "processes": active_processes, "command": command, "cwd": cwd, "tab_name": tab_name}
             else:
                 return {"status": "not_running", "running": False, "processes": [], "command": command, "cwd": cwd, "tab_name": tab_name}
 
         except Exception as e:
             logger.error(f"Error checking command status for tab '{tab_name}': {e}")
-            return {"status": "error", "error": str(e), "running": False, "command": command, "cwd": cwd, "tab_name": tab_name}
+            return {"status": "error", "error": str(e), "running": False, "command": command, "cwd": cwd, "tab_name": tab_name, "processes": []}
 
-    def check_all_commands_status(self) -> Dict[str, Dict[str, Any]]:
+    def check_all_commands_status(self) -> dict[str, CommandStatusResult]:
         if not self.layout_config:
             logger.warning("No layout config tracked. Make sure to create a layout first.")
             return {}
 
-        status_report = {}
+        status_report: dict[str, CommandStatusResult] = {}
         for tab in self.layout_config["layoutTabs"]:
             tab_name = tab["tabName"]
             status_report[tab_name] = ZellijLayoutGenerator.check_command_status(tab_name, self.layout_config)
@@ -203,7 +266,7 @@ class ZellijLayoutGenerator:
         return status_report
 
     @staticmethod
-    def check_zellij_session_status(session_name: str) -> Dict[str, Any]:
+    def check_zellij_session_status(session_name: str) -> ZellijSessionStatus:
         try:
             # Run zellij list-sessions command
             result = subprocess.run(["zellij", "list-sessions"], capture_output=True, text=True, timeout=10)
@@ -214,16 +277,16 @@ class ZellijLayoutGenerator:
 
                 return {"zellij_running": True, "session_exists": session_running, "session_name": session_name, "all_sessions": sessions}
             else:
-                return {"zellij_running": False, "error": result.stderr, "session_name": session_name}
+                return {"zellij_running": False, "session_name": session_name, "all_sessions": [], "error": result.stderr}
 
         except subprocess.TimeoutExpired:
-            return {"zellij_running": False, "error": "Timeout while checking Zellij sessions", "session_name": session_name}
+            return {"zellij_running": False, "session_name": session_name, "all_sessions": [], "error": "Timeout while checking Zellij sessions"}
         except FileNotFoundError:
-            return {"zellij_running": False, "error": "Zellij not found in PATH", "session_name": session_name}
+            return {"zellij_running": False, "session_name": session_name, "all_sessions": [], "error": "Zellij not found in PATH"}
         except Exception as e:
-            return {"zellij_running": False, "error": str(e), "session_name": session_name}
+            return {"zellij_running": False, "session_name": session_name, "all_sessions": [], "error": str(e)}
 
-    def get_comprehensive_status(self) -> Dict[str, Any]:
+    def get_comprehensive_status(self) -> ComprehensiveStatus:
         zellij_status = ZellijLayoutGenerator.check_zellij_session_status(self.session_name or "default")
         commands_status = self.check_all_commands_status()
 

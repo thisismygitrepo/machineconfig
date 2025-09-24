@@ -74,10 +74,10 @@ sleep 0.1
                 model = "gemini-2.5-pro"
                 # model = "gemini-2.5-flash-lite"
                 # model = None  # auto-select
-                if model is None:
-                    model_arg = ""
-                else:
-                    model_arg = f"--model {shlex.quote(model)}"
+                # if model is None:
+                #     model_arg = ""
+                # else:
+                model_arg = f"--model {shlex.quote(model)}"
                 # Need a real shell for the pipeline; otherwise '| gemini ...' is passed as args to 'cat'
                 safe_path = shlex.quote(str(prompt_path))
                 api_keys = get_gemini_api_keys()

@@ -6,13 +6,15 @@ import logging
 import subprocess
 import time
 from pathlib import Path
-from typing import Optional, Dict, List, Any
+from typing import Optional, List
 
 from rich.console import Console
 
+from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import SessionReport, GlobalSummary, StartResult, ActiveSessionInfo
 from machineconfig.utils.utils5 import Scheduler
 from machineconfig.cluster.sessions_managers.zellij_local import ZellijLayoutGenerator
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -23,7 +25,8 @@ TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "
 
 class ZellijLocalManager:
     """Manages multiple local zellij sessions and monitors their tabs and processes."""
-    def __init__(self, session_layouts: list[LayoutConfig], ):
+
+    def __init__(self, session_layouts: list[LayoutConfig]):
         self.session_name_prefix = "LocalJobMgr"
         self.session_layouts = session_layouts  # Store the original config
         self.managers: List[ZellijLayoutGenerator] = []
@@ -43,7 +46,7 @@ class ZellijLocalManager:
         """Get all managed session names."""
         return [manager.session_name for manager in self.managers if manager.session_name is not None]
 
-    def start_all_sessions(self, poll_seconds: float = 5.0, poll_interval: float = 0.25) -> Dict[str, Any]:
+    def start_all_sessions(self, poll_seconds: float = 5.0, poll_interval: float = 0.25) -> dict[str, StartResult]:
         """Start all zellij sessions with their layouts without blocking on the interactive TUI.
 
         Rationale:
@@ -59,7 +62,7 @@ class ZellijLocalManager:
         Returns:
             Dict mapping session name to success metadata.
         """
-        results: Dict[str, Any] = {}
+        results: dict[str, StartResult] = {}
         for manager in self.managers:
             session_name = manager.session_name
             try:
@@ -109,9 +112,9 @@ class ZellijLocalManager:
                 logger.error(f"❌ Exception starting session '{key}': {e}")
         return results
 
-    def kill_all_sessions(self) -> Dict[str, Any]:
+    def kill_all_sessions(self) -> dict[str, StartResult]:
         """Kill all managed zellij sessions."""
-        results = {}
+        results: dict[str, StartResult] = {}
         for manager in self.managers:
             try:
                 session_name = manager.session_name
@@ -157,9 +160,9 @@ class ZellijLocalManager:
                 commands.append("")
             return "\n".join(commands)
 
-    def check_all_sessions_status(self) -> Dict[str, Dict[str, Any]]:
+    def check_all_sessions_status(self) -> dict[str, SessionReport]:
         """Check the status of all sessions and their commands."""
-        status_report = {}
+        status_report: dict[str, SessionReport] = {}
 
         for manager in self.managers:
             session_name = manager.session_name
@@ -184,7 +187,7 @@ class ZellijLocalManager:
 
         return status_report
 
-    def get_global_summary(self) -> Dict[str, Any]:
+    def get_global_summary(self) -> GlobalSummary:
         """Get a global summary across all sessions."""
         all_status = self.check_all_sessions_status()
 
@@ -297,7 +300,8 @@ class ZellijLocalManager:
                     running_count = sum(1 for row in status_data if row.get("running", False))
                     if running_count == 0:
                         print("\n⚠️  All commands have stopped. Stopping monitoring.")
-                        scheduler.max_cycles = scheduler.cycle
+                        # Set max_cycles to current cycle + 1 to exit after this cycle
+                        scheduler.max_cycles = scheduler.cycle + 1
                         return
                 else:
                     print("No status data available")
@@ -419,9 +423,9 @@ class ZellijLocalManager:
             logger.error(f"Failed to delete session {session_id}: {e}")
             return False
 
-    def list_active_sessions(self) -> List[Dict[str, Any]]:
+    def list_active_sessions(self) -> list[ActiveSessionInfo]:
         """List currently active zellij sessions managed by this instance."""
-        active_sessions = []
+        active_sessions: list[ActiveSessionInfo] = []
 
         try:
             # Get all running zellij sessions
@@ -481,7 +485,7 @@ if __name__ == "__main__":
     ]
     try:
         # Create the local manager
-        manager = ZellijLocalManager(sample_sessions,)
+        manager = ZellijLocalManager(sample_sessions)
         print(f"✅ Local manager created with {len(manager.managers)} sessions")
 
         # Show session names
