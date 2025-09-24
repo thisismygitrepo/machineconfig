@@ -3,7 +3,7 @@ repos:
     hooks:
       - id: uv-sync
         name: UV Sync
-        entry: uv sync
+        entry: bash -c 'uv sync && git add uv.lock'
         language: system
         always_run: true
         pass_filenames: false
