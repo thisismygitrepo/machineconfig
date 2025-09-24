@@ -7,22 +7,17 @@ Improved design notes:
   * Preserves original core behavior & command generation for each agent type.
 """
 
-from __future__ import annotations
-
 from pathlib import Path
 from math import ceil
 from typing import Literal, TypeAlias, get_args, Iterable
 
-from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
-from machineconfig.scripts.python.fire_agents_help_launch import launch_agents
+from machineconfig.scripts.python.fire_agents_help_launch import launch_agents, AGENTS
 from machineconfig.scripts.python.fire_agents_help_search import search_files_by_pattern, search_python_files
+from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 # import time
 
-AGENTS: TypeAlias = Literal[
-    "cursor-agent", "gemini", "crush", "q", "onlyPrepPromptFiles"
-    # warp terminal
-]
+
 
 SPLITTING_STRATEGY: TypeAlias = Literal[
     "agent_cap",  # User decides number of agents, rows/tasks determined automatically
@@ -30,23 +25,6 @@ SPLITTING_STRATEGY: TypeAlias = Literal[
 ]
 
 DEFAULT_AGENT_CAP = 6
-
-
-def get_gemini_api_keys() -> list[str]:
-    from machineconfig.utils.utils2 import read_ini
-
-    config = read_ini(Path.home().joinpath("dotfiles/creds/llm/gemini/api_keys.ini"))
-    res: list[str] = []
-    for a_section_name in list(config.sections()):
-        a_section = config[a_section_name]
-        if "api_key" in a_section:
-            api_key = a_section["api_key"].strip()
-            if api_key:
-                res.append(api_key)
-    # res = [v for k, v in config.items("api_keys") if k.startswith("key") and v.strip() != ""]
-    print(f"Found {len(res)} Gemini API keys configured.")
-    return res
-
 
 def _write_list_file(target: Path, files: Iterable[Path]) -> None:
     target.parent.mkdir(parents=True, exist_ok=True)

@@ -1,11 +1,30 @@
-from machineconfig.scripts.python.fire_agents import AGENTS, get_gemini_api_keys
+
 from machineconfig.utils.schemas.layouts.layout_types import TabConfig
 from machineconfig.utils.utils2 import randstr
 
 import random
 import shlex
 from pathlib import Path
+from typing import Literal, TypeAlias
 
+
+AGENTS: TypeAlias = Literal[
+    "cursor-agent", "gemini", "crush", "q", "onlyPrepPromptFiles"
+    # warp terminal
+]
+
+def get_gemini_api_keys() -> list[str]:
+    from machineconfig.utils.utils2 import read_ini
+    config = read_ini(Path.home().joinpath("dotfiles/creds/llm/gemini/api_keys.ini"))
+    res: list[str] = []
+    for a_section_name in list(config.sections()):
+        a_section = config[a_section_name]
+        if "api_key" in a_section:
+            api_key = a_section["api_key"].strip()
+            if api_key:
+                res.append(api_key)
+    print(f"Found {len(res)} Gemini API keys configured.")
+    return res
 def _confirm(message: str, default_no: bool = False) -> bool:
     from rich.prompt import Confirm
     return Confirm.ask(message, default=not default_no)

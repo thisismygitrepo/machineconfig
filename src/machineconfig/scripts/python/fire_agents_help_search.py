@@ -1,6 +1,5 @@
+
 from machineconfig.utils.source_of_truth import EXCLUDE_DIRS
-
-
 import fnmatch
 from pathlib import Path
 
