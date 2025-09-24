@@ -61,8 +61,8 @@ jobs:
       with:
         enable-cache: true
 
-    - name: Set up Python
-      run: uv python install 3.13
+    # - name: Set up Python
+    #   run: uv python install 3.13
 
     - name: Clean previous build artifacts
       run: |
@@ -147,5 +147,7 @@ jobs:
     - name: Test package installation
       run: |
         echo "🧪 Testing package installation..."
-        uv pip install --system dist/*.whl
+        uv venv test-env
+        source test-env/bin/activate
+        uv pip install dist/*.whl
         python -c "import machineconfig; print('✅ Package imports successfully')"
