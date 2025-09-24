@@ -70,9 +70,9 @@ sleep 0.1
 """
         match agent:
             case "gemini":
-                # model = "gemini-2.5-pro"
+                model = "gemini-2.5-pro"
                 # model = "gemini-2.5-flash-lite"
-                model = None  # auto-select
+                # model = None  # auto-select
                 if model is None:
                     model_arg = ""
                 else:
@@ -83,10 +83,9 @@ sleep 0.1
                 api_key = api_keys[idx % len(api_keys)] if api_keys else ""
                 # Export the environment variable so it's available to subshells
                 cmd = f"""
-export GEMINI_API_KEY={shlex.quote(api_key)}
-echo "Using Gemini API key $GEMINI_API_KEY"
-cat {prompt_path}
-GEMINI_API_KEY={shlex.quote(api_key)} bash -lc 'cat {safe_path} | gemini {model_arg} --yolo --prompt'
+# export GEMINI_API_KEY={shlex.quote(api_key)}
+# echo "Using Gemini API key $GEMINI_API_KEY"
+bash -lc 'cat {safe_path} | gemini {model_arg} --yolo --prompt'
 """
             case "cursor-agent":
                 # As originally implemented
