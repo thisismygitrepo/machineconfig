@@ -14,7 +14,8 @@ import imaplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from typing import Optional, Any, Union
-from markdown import markdown
+from rich.console import Console
+from rich.markdown import Markdown
 
 
 def download_to_memory(path: Path, allow_redirects: bool = True, timeout: Optional[float] = None, params: Any = None) -> "Any":
@@ -30,8 +31,27 @@ def get_github_markdown_css() -> str:
     return download_to_memory(Path(pp)).text
 
 
-def md2html(body: str):
-    gh_style = Path(__file__).parent.joinpath("gh_style.css").read_text()
+def md2html(body: str) -> str:
+    """Convert markdown to HTML using Rich library."""
+    # Use Rich's HTML export functionality to convert markdown to HTML
+    console = Console(record=True, width=120)
+    markdown_obj = Markdown(body)
+    console.print(markdown_obj)
+    html_output = console.export_html(inline_styles=True)
+    
+    # Try to load GitHub CSS style, fallback to basic style if not found
+    gh_style_path = Path(__file__).parent.joinpath("gh_style.css")
+    if gh_style_path.exists():
+        gh_style = gh_style_path.read_text()
+    else:
+        # Fallback basic styling
+        gh_style = """
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { color: #0366d6; }
+        code { background-color: #f6f8fa; padding: 2px 4px; border-radius: 3px; }
+        pre { background-color: #f6f8fa; padding: 16px; border-radius: 6px; overflow: auto; }
+        """
+    
     return f"""
 <!DOCTYPE html>
 <html>
@@ -51,7 +71,7 @@ def md2html(body: str):
 </style>
 <body>
 <div class="markdown-body">
-{markdown(body)}
+{html_output}
 </div>
 </body>
 </html>"""

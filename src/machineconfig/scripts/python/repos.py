@@ -8,7 +8,7 @@ in the event that username@github.com is not mentioned in the remote url.
 from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.utils2 import randstr, read_ini
-from machineconfig.scripts.python.devops_update_repos import update_repository
+from machineconfig.scripts.python.repos_helper_update import update_repository
 from machineconfig.scripts.python.repos_helper_record import main as record_repos
 
 import argparse

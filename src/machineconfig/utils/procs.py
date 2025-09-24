@@ -2,12 +2,12 @@
 
 import psutil
 from rich.progress import Progress, SpinnerColumn, TextColumn
-from pytz import timezone
+from zoneinfo import ZoneInfo
 from machineconfig.utils.options import display_options
 from typing import Optional, Any
 from rich.console import Console
 from rich.panel import Panel
-from datetime import datetime
+from datetime import datetime, timezone
 from machineconfig.utils.utils2 import pprint
 
 console = Console()
@@ -72,8 +72,8 @@ class ProcessManager:
                 try:
                     mem_usage_mb = proc.memory_info().rss / (1024 * 1024)
                     # Convert create_time to local timezone
-                    create_time_utc = datetime.fromtimestamp(proc.create_time(), tz=timezone("UTC"))
-                    create_time_local = create_time_utc.astimezone(timezone("Australia/Adelaide"))
+                    create_time_utc = datetime.fromtimestamp(proc.create_time(), tz=timezone.utc)
+                    create_time_local = create_time_utc.astimezone(ZoneInfo("Australia/Adelaide"))
 
                     process_info.append(
                         {
@@ -222,13 +222,13 @@ def get_age(create_time: Any) -> str:
     try:
         if isinstance(create_time, (int, float)):
             # Handle timestampz
-            create_time_utc = datetime.fromtimestamp(create_time, tz=timezone("UTC"))
-            create_time_local = create_time_utc.astimezone(timezone("Australia/Adelaide"))
+            create_time_utc = datetime.fromtimestamp(create_time, tz=timezone.utc)
+            create_time_local = create_time_utc.astimezone(ZoneInfo("Australia/Adelaide"))
         else:
             # Already a datetime object
             create_time_local = create_time
 
-        now_local = datetime.now(tz=timezone("Australia/Adelaide"))
+        now_local = datetime.now(tz=ZoneInfo("Australia/Adelaide"))
         age = now_local - create_time_local
         return str(age)
     except Exception as e:

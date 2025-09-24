@@ -1,14 +1,12 @@
 from pathlib import Path
 from machineconfig.utils.utils2 import pprint, read_json, read_ini
-from pydantic import ConfigDict
-from pydantic.dataclasses import dataclass
 from typing import Optional
 import os
 from machineconfig.utils.source_of_truth import DEFAULTS_PATH
 from rich.console import Console
 from rich.panel import Panel
 from rich import box  # Import box
-
+from dataclasses import dataclass
 
 console = Console()
 
@@ -26,8 +24,7 @@ class ArgsDefaults:
     key = None
     pwd = None
 
-
-@dataclass(config=ConfigDict(extra="forbid", frozen=False))
+@dataclass
 class Args:
     cloud: Optional[str] = None
 
