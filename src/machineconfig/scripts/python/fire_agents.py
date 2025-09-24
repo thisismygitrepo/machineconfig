@@ -27,7 +27,7 @@ def _write_list_file(target: Path, files: Iterable[Path]) -> None:
     target.write_text("\n".join(str(f) for f in files), encoding="utf-8")
 
 
-def get_prompt_material(search_strategy: SEARCH_STRATEGIES, repo_root: Path) -> tuple[str, str]:
+def get_prompt_material(search_strategy: SEARCH_STRATEGIES, repo_root: Path) -> tuple[Path, str]:
     if search_strategy == "file_path":
         file_path_input = input("Enter path to target file: ").strip()
         if not file_path_input:
@@ -38,7 +38,6 @@ def get_prompt_material(search_strategy: SEARCH_STRATEGIES, repo_root: Path) -> 
             print(f"Invalid file path: {target_file_path}")
             sys.exit(1)
         separator = input("Enter separator [\\n]: ").strip() or "\n"
-        prompt_material = target_file_path.read_text(encoding="utf-8", errors="ignore")
     elif search_strategy == "keyword_search":
         keyword = input("Enter keyword to search recursively for all .py files containing it: ").strip()
         if not keyword:
@@ -51,10 +50,9 @@ def get_prompt_material(search_strategy: SEARCH_STRATEGIES, repo_root: Path) -> 
         for idx, mf in enumerate(matching_files):
             print(f"{idx:>3}: {mf}")
         print(f"\nFound {len(matching_files)} .py files containing keyword: {keyword}")
-        target_list_file = repo_root / ".ai" / "target_file.txt"
-        _write_list_file(target_list_file, matching_files)
+        target_file_path = repo_root / ".ai" / "target_file.txt"
+        _write_list_file(target_file_path, matching_files)
         separator = "\n"
-        prompt_material = target_list_file.read_text(encoding="utf-8", errors="ignore")
     elif search_strategy == "filename_pattern":
         pattern = input("Enter filename pattern (e.g., '*.py', '*test*', 'config.*'): ").strip()
         if not pattern:
@@ -67,13 +65,12 @@ def get_prompt_material(search_strategy: SEARCH_STRATEGIES, repo_root: Path) -> 
         for idx, mf in enumerate(matching_files):
             print(f"{idx:>3}: {mf}")
         print(f"\nFound {len(matching_files)} files matching pattern: {pattern}")
-        target_list_file = repo_root / ".ai" / "target_file.txt"
-        _write_list_file(target_list_file, matching_files)
+        target_file_path = repo_root / ".ai" / "target_file.txt"
+        _write_list_file(target_file_path, matching_files)
         separator = "\n"
-        prompt_material = target_list_file.read_text(encoding="utf-8", errors="ignore")        
     else:
         raise ValueError(f"Unknown search strategy: {search_strategy}")
-    return prompt_material, separator
+    return target_file_path, separator
 
 
 def main():  # noqa: C901 - (complexity acceptable for CLI glue)
@@ -84,32 +81,43 @@ def main():  # noqa: C901 - (complexity acceptable for CLI glue)
     print(f"Operating @ {repo_root}")
 
     search_strategy = cast(SEARCH_STRATEGIES, choose_one_option(header="Choose search strategy:", options=get_args(SEARCH_STRATEGIES)))
-    prompt_material, separator = get_prompt_material(search_strategy=search_strategy, repo_root=repo_root)
     splitting_strategy = cast(SPLITTING_STRATEGY, choose_one_option(header="Choose prompt splitting strategy:", options=get_args(SPLITTING_STRATEGY)))
-    prompt_material_re_splitted = redistribute_prompts(prompt_material=prompt_material, separator=separator, splitting_strategy=splitting_strategy)
     agent_selected = cast(AGENTS, choose_one_option(header="Select agent type", options=get_args(AGENTS)))
     print("Enter prefix prompt (end with Ctrl-D / Ctrl-Z):")
     prompt_prefix = "\n".join(sys.stdin.readlines())
     job_name = input("Enter job name [AI_AGENTS]: ") or "AI_Agents"
     keep_material_in_separate_file_input = input("Keep prompt material in separate file? [y/N]: ").strip().lower() == "y"
+
+    prompt_material_path, separator = get_prompt_material(search_strategy=search_strategy, repo_root=repo_root)
+    prompt_material_re_splitted = redistribute_prompts(prompt_material_path=prompt_material_path, separator=separator, splitting_strategy=splitting_strategy)
     agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, job_name=job_name)
     layout = get_agents_launch_layout(session_root=agents_dir)
 
     regenerate_py_code = f"""
 #!/usr/bin/env uv run --python 3.13 --with machineconfig
+#!/usr/bin/env uv run --project $HOME/code/machineconfig
+
 from machineconfig.scripts.python.fire_agents import *
 
 repo_root = Path("{repo_root}")
 search_strategy = "{search_strategy}"
-prompt_material, separator = get_prompt_material(search_strategy=search_strategy, repo_root=repo_root)
 splitting_strategy = "{splitting_strategy}"
-prompt_material_re_splitted = redistribute_prompts(prompt_material=prompt_material, separator=separator, splitting_strategy=splitting_strategy)
 agent_selected = "{agent_selected}"
 prompt_prefix = '''{prompt_prefix}'''
 job_name = "{job_name}"
 keep_material_in_separate_file_input = {keep_material_in_separate_file_input}
-agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, max_agents=25, job_name=job_name)
+
+prompt_material_path, separator = get_prompt_material(search_strategy=search_strategy, repo_root=repo_root)
+prompt_material_re_splitted = redistribute_prompts(prompt_material_path=prompt_material_path, separator=separator, splitting_strategy=splitting_strategy)
+agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, job_name=job_name)
 layout = get_agents_launch_layout(session_root=agents_dir)
+
+(agents_dir / "aa_agents_relaunch.py").write_text(data=regenerate_py_code, encoding="utf-8")
+(agents_dir / "layout.json").write_text(data=json.dumps(layout, indent=2), encoding="utf-8")
+
+if len(layout["layoutTabs"]) > 25:
+    print("Too many agents (>25) to launch. Skipping launch.")
+    sys.exit(0)
 manager = ZellijLocalManager(session_layouts=[layout])
 manager.start_all_sessions()
 manager.run_monitoring_routine()

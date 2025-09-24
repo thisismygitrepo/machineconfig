@@ -2,6 +2,7 @@
 
 from typing import Literal, TypeAlias
 from math import ceil
+from pathlib import Path
 
 
 SPLITTING_STRATEGY: TypeAlias = Literal[
@@ -50,8 +51,8 @@ def chunk_prompts(prompts: list[str], strategy: SPLITTING_STRATEGY, joiner: str,
     else:
         raise ValueError(f"Unknown splitting strategy: {strategy}")
 
-def redistribute_prompts(prompt_material: str, separator: str, splitting_strategy: SPLITTING_STRATEGY) -> list[str]:
-
+def redistribute_prompts(prompt_material_path: Path, separator: str, splitting_strategy: SPLITTING_STRATEGY) -> list[str]:
+    prompt_material = prompt_material_path.read_text(encoding="utf-8", errors="ignore")
     prompt_material_splitted = prompt_material.split(separator)
     print(f"Loaded {len(prompt_material_splitted)} raw prompts from source.")
     # Prompt user for splitting strategy
