@@ -1,0 +1,18 @@
+{
+  "$comment": "Example JSON for fire_agents input schema - file_path search strategy with agent_cap splitting",
+  "repo_root": "/home/alex/code/machineconfig",
+  "search_strategy": "file_path",
+  "splitting_strategy": "agent_cap",
+  "agent_selected": "gemini",
+  "prompt_prefix": "Please analyze the following code and suggest improvements:",
+  "job_name": "Code_Review_Session",
+  "keep_material_in_separate_file": true,
+  "max_agents": 15,
+  "file_path_input": {
+    "file_path": "/home/alex/code/machineconfig/src/machineconfig/scripts/python/fire_agents.py",
+    "separator": "\n\n"
+  },
+  "agent_cap_input": {
+    "agent_cap": 8
+  }
+}

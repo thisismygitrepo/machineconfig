@@ -1,0 +1,243 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.machineconfig.com/fire_agents_input.json",
+  "title": "Fire Agents Input Schema",
+  "description": "JSON schema for fire_agents.py main function inputs",
+  "type": "object",
+  "definitions": {
+    "searchStrategies": {
+      "type": "string",
+      "enum": ["file_path", "keyword_search", "filename_pattern"],
+      "description": "Available search strategies for finding prompt material"
+    },
+    "splittingStrategies": {
+      "type": "string", 
+      "enum": ["agent_cap", "task_rows"],
+      "description": "Available strategies for splitting prompts across agents"
+    },
+    "agents": {
+      "type": "string",
+      "enum": ["cursor-agent", "gemini", "crush", "q", "onlyPrepPromptFiles"],
+      "description": "Available AI agent types"
+    },
+    "filePathSearchInput": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "Path to target file"
+        },
+        "separator": {
+          "type": "string",
+          "default": "\n",
+          "description": "Separator for splitting file content"
+        }
+      },
+      "required": ["file_path", "separator"],
+      "additionalProperties": false
+    },
+    "keywordSearchInput": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string",
+          "description": "Keyword to search for in .py files"
+        }
+      },
+      "required": ["keyword"],
+      "additionalProperties": false
+    },
+    "filenamePatternInput": {
+      "type": "object", 
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Filename pattern to search for (e.g., '*.py', '*test*', 'config.*')"
+        }
+      },
+      "required": ["pattern"],
+      "additionalProperties": false
+    },
+    "agentCapSplittingInput": {
+      "type": "object",
+      "properties": {
+        "agent_cap": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 6,
+          "description": "Maximum number of agents/splits"
+        }
+      },
+      "required": ["agent_cap"],
+      "additionalProperties": false
+    },
+    "taskRowsSplittingInput": {
+      "type": "object",
+      "properties": {
+        "task_rows": {
+          "type": "integer",
+          "minimum": 1, 
+          "default": 13,
+          "description": "Number of rows/tasks per agent"
+        }
+      },
+      "required": ["task_rows"],
+      "additionalProperties": false
+    },
+    "runtimeData": {
+      "type": "object",
+      "properties": {
+        "prompt_material": {
+          "type": "string",
+          "description": "Raw prompt material content"
+        },
+        "separator": {
+          "type": "string",
+          "description": "Separator used for splitting content"
+        },
+        "prompt_material_re_splitted": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Prompts after redistribution based on splitting strategy"
+        },
+        "random_name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9]{3}$",
+          "description": "3-character random string for session naming"
+        }
+      },
+      "required": ["prompt_material", "separator", "prompt_material_re_splitted", "random_name"],
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "repo_root": {
+      "type": "string",
+      "description": "Repository root path"
+    },
+    "search_strategy": {
+      "$ref": "#/definitions/searchStrategies"
+    },
+    "splitting_strategy": {
+      "$ref": "#/definitions/splittingStrategies"
+    },
+    "agent_selected": {
+      "$ref": "#/definitions/agents"
+    },
+    "prompt_prefix": {
+      "type": "string",
+      "description": "Prefix to add to all prompts"
+    },
+    "job_name": {
+      "type": "string",
+      "default": "AI_Agents",
+      "description": "Name for the job/session"
+    },
+    "keep_material_in_separate_file": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to keep prompt material in separate files"
+    },
+    "max_agents": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 25,
+      "description": "Maximum number of agents allowed"
+    },
+    "file_path_input": {
+      "$ref": "#/definitions/filePathSearchInput",
+      "description": "Input for file_path search strategy (conditional)"
+    },
+    "keyword_search_input": {
+      "$ref": "#/definitions/keywordSearchInput", 
+      "description": "Input for keyword_search strategy (conditional)"
+    },
+    "filename_pattern_input": {
+      "$ref": "#/definitions/filenamePatternInput",
+      "description": "Input for filename_pattern search strategy (conditional)"
+    },
+    "agent_cap_input": {
+      "$ref": "#/definitions/agentCapSplittingInput",
+      "description": "Input for agent_cap splitting strategy (conditional)"
+    },
+    "task_rows_input": {
+      "$ref": "#/definitions/taskRowsSplittingInput",
+      "description": "Input for task_rows splitting strategy (conditional)"
+    }
+  },
+  "required": [
+    "repo_root",
+    "search_strategy", 
+    "splitting_strategy",
+    "agent_selected",
+    "prompt_prefix",
+    "job_name",
+    "keep_material_in_separate_file",
+    "max_agents"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "search_strategy": {
+            "const": "file_path"
+          }
+        }
+      },
+      "then": {
+        "required": ["file_path_input"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "search_strategy": {
+            "const": "keyword_search"
+          }
+        }
+      },
+      "then": {
+        "required": ["keyword_search_input"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "search_strategy": {
+            "const": "filename_pattern"
+          }
+        }
+      },
+      "then": {
+        "required": ["filename_pattern_input"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "splitting_strategy": {
+            "const": "agent_cap"
+          }
+        }
+      },
+      "then": {
+        "required": ["agent_cap_input"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "splitting_strategy": {
+            "const": "task_rows"
+          }
+        }
+      },
+      "then": {
+        "required": ["task_rows_input"]
+      }
+    }
+  ]
+}

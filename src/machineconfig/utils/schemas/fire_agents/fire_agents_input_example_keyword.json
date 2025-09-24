@@ -1,0 +1,17 @@
+{
+  "$comment": "Example JSON for fire_agents input schema - keyword search strategy with task_rows splitting",
+  "repo_root": "/home/alex/code/machineconfig",
+  "search_strategy": "keyword_search",
+  "splitting_strategy": "task_rows",
+  "agent_selected": "cursor-agent",
+  "prompt_prefix": "Debug and fix issues in these Python files:",
+  "job_name": "Bug_Fix_AI_Agents",
+  "keep_material_in_separate_file": false,
+  "max_agents": 25,
+  "keyword_search_input": {
+    "keyword": "def main"
+  },
+  "task_rows_input": {
+    "task_rows": 5
+  }
+}

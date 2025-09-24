@@ -30,28 +30,27 @@ def _confirm(message: str, default_no: bool = False) -> bool:
     return Confirm.ask(message, default=not default_no)
 
 
-def launch_agents(repo_root: Path, prompts: list[str], agent: AGENTS, *, max_agents: int) -> list[TabConfig]:
-    """Create tab configuration for a set of agent prompts.
-
-    If number of prompts exceeds max_agents, ask user for confirmation.
-    (Original behavior raised an error; now interactive override.)
-    """
-    if not prompts:
-        raise ValueError("No prompts provided")
-
-    if len(prompts) > max_agents:
-        proceed = _confirm(message=(f"You are about to launch {len(prompts)} agents which exceeds the cap ({max_agents}). Proceed?"), default_no=True)
+def launch_agents(repo_root: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool,  agent: AGENTS, *, max_agents: int, job_name: str) -> list[TabConfig]:
+    if len(prompts_material) > max_agents:
+        proceed = _confirm(message=(f"You are about to launch {len(prompts_material)} agents which exceeds the cap ({max_agents}). Proceed?"), default_no=True)
         if not proceed:
             print("Aborting per user choice.")
             return []
 
     tab_config: list[TabConfig] = []
-    tmp_dir = repo_root / ".ai" / f"tmp_prompts/{randstr()}"
+    tmp_dir = repo_root / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
     tmp_dir.mkdir(parents=True, exist_ok=True)
 
-    for idx, a_prompt in enumerate(prompts):
+    for idx, a_prompt_material in enumerate(prompts_material):
         prompt_path = tmp_dir / f"agent{idx}_prompt.txt"
-        prompt_path.write_text(a_prompt, encoding="utf-8")
+
+        if keep_material_in_separate_file:
+            prompt_material_path = tmp_dir / f"agent{idx}_material.txt"
+            prompt_material_path.write_text(a_prompt_material, encoding="utf-8")
+            prompt_path.write_text(prompt_prefix + f"""\nPlease only look @ {prompt_material_path}. You don't need to do any other work beside the content of this file.""", encoding="utf-8")
+        else:
+            prompt_path.write_text(prompt_prefix + "\n" + a_prompt_material, encoding="utf-8")
+
         cmd_path = tmp_dir / f"agent{idx}_cmd.sh"
         match agent:
             case "gemini":
