@@ -24,7 +24,7 @@ TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "
 class ZellijLocalManager:
     """Manages multiple local zellij sessions and monitors their tabs and processes."""
 
-    def __init__(self, session_layouts: list[LayoutConfig], session_name_prefix: str = "LocalJobMgr"):
+    def __init__(self, session_layouts: list[LayoutConfig], ):
         """
         Initialize the local zellij manager.
 
@@ -33,7 +33,7 @@ class ZellijLocalManager:
                 Format: {session_name: LayoutConfig, ...}
             session_name_prefix: Prefix for session names
         """
-        self.session_name_prefix = session_name_prefix
+        self.session_name_prefix = "LocalJobMgr"
         self.session_layouts = session_layouts  # Store the original config
         self.managers: List[ZellijLayoutGenerator] = []
 
@@ -368,16 +368,8 @@ class ZellijLocalManager:
         with open(config_file, "r", encoding="utf-8") as f:
             session_layouts = json.load(f)
 
-        # Load metadata
-        metadata_file = session_dir / "metadata.json"
-        session_name_prefix = "LocalJobMgr"  # default fallback
-        if metadata_file.exists():
-            with open(metadata_file, "r", encoding="utf-8") as f:
-                metadata = json.load(f)
-                session_name_prefix = metadata.get("session_name_prefix", "LocalJobMgr")
-
         # Create new instance
-        instance = cls(session_layouts=session_layouts, session_name_prefix=session_name_prefix)
+        instance = cls(session_layouts=session_layouts)
 
         # Load saved manager states
         managers_dir = session_dir / "managers"
@@ -498,7 +490,7 @@ if __name__ == "__main__":
     ]
     try:
         # Create the local manager
-        manager = ZellijLocalManager(sample_sessions, session_name_prefix="DevEnv")
+        manager = ZellijLocalManager(sample_sessions,)
         print(f"✅ Local manager created with {len(manager.managers)} sessions")
 
         # Show session names

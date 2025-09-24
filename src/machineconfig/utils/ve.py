@@ -1,7 +1,9 @@
+
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.utils2 import read_ini
 import platform
 from typing import Optional
+from pathlib import Path
 
 
 def get_ve_path_and_ipython_profile(init_path: PathExtended) -> tuple[Optional[str], Optional[str]]:
@@ -38,15 +40,17 @@ def get_ve_path_and_ipython_profile(init_path: PathExtended) -> tuple[Optional[s
     return ve_path, ipy_profile
 
 
-def get_repo_root(choice_file: str) -> Optional[str]:
+def get_repo_root(path: Path) -> Optional[Path]:
     from git import Repo, InvalidGitRepositoryError
 
     try:
-        repo = Repo(PathExtended(choice_file), search_parent_directories=True)
-        repo_root = str(repo.working_tree_dir) if repo.working_tree_dir else None
+        repo = Repo(str(path), search_parent_directories=True)
+        root = repo.working_tree_dir
+        if root is not None:
+            return Path(root)
     except InvalidGitRepositoryError:
-        repo_root = None
-    return repo_root
+        pass
+    return None
 
 
 def get_ve_activate_line(ve_root: str):

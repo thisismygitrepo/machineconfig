@@ -1,5 +1,4 @@
 
-from machineconfig.utils.schemas.layouts.layout_types import TabConfig
 from machineconfig.utils.utils2 import randstr
 
 import random
@@ -12,6 +11,8 @@ AGENTS: TypeAlias = Literal[
     "cursor-agent", "gemini", "crush", "q", "onlyPrepPromptFiles"
     # warp terminal
 ]
+AGENT_NAME_FORMATTER = "agent_{idx}_cmd.sh"  # e.g., agent_0_cmd.sh
+
 
 def get_gemini_api_keys() -> list[str]:
     from machineconfig.utils.utils2 import read_ini
@@ -30,14 +31,14 @@ def _confirm(message: str, default_no: bool = False) -> bool:
     return Confirm.ask(message, default=not default_no)
 
 
-def launch_agents(repo_root: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool,  agent: AGENTS, *, max_agents: int, job_name: str) -> list[TabConfig]:
+def prep_agent_launch(repo_root: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool,  agent: AGENTS, *, max_agents: int, job_name: str) -> Path:
     if len(prompts_material) > max_agents:
         proceed = _confirm(message=(f"You are about to launch {len(prompts_material)} agents which exceeds the cap ({max_agents}). Proceed?"), default_no=True)
         if not proceed:
             print("Aborting per user choice.")
-            return []
+            import sys
+            sys.exit(0)
 
-    tab_config: list[TabConfig] = []
     tmp_dir = repo_root / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
     tmp_dir.mkdir(parents=True, exist_ok=True)
 
@@ -51,7 +52,7 @@ def launch_agents(repo_root: Path, prompts_material: list[str], prompt_prefix: s
         else:
             prompt_path.write_text(prompt_prefix + "\n" + a_prompt_material, encoding="utf-8")
 
-        cmd_path = tmp_dir / f"agent{idx}_cmd.sh"
+        cmd_path = tmp_dir / AGENT_NAME_FORMATTER.format(idx=idx)  # e.g., agent_0_cmd.sh
         match agent:
             case "gemini":
                 # model = "gemini-2.5-pro"
@@ -108,8 +109,21 @@ sleep 0.1
 echo "---------END OF AGENT OUTPUT---------"
 """
         cmd_path.write_text(cmd_prefix + cmd + cmd_postfix, encoding="utf-8")
-        fire_cmd = f"bash {shlex.quote(str(cmd_path))}"
-        tab_config.append(TabConfig(tabName=f"Agent{idx}", startDir=str(repo_root), command=fire_cmd))
 
-    print(f"Launching a template with #{len(tab_config)} agents")
-    return tab_config
+
+    # print(f"Launching a template with #{len(tab_config)} agents")
+    return tmp_dir
+
+
+def get_agents_launch_layout(agents_root: Path):
+    from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig
+        #     fire_cmd = f"bash {shlex.quote(str(cmd_path))}"
+        # tab_config: list[TabConfig] = []
+        #     tab_config.append(TabConfig(tabName=f"Agent{idx}", startDir=str(repo_root), command=fire_cmd))
+    tab_config: list[TabConfig] = []
+    for agent_cmd_path in sorted(agents_root.glob("agent_*_cmd.sh")):
+        idx_str = agent_cmd_path.stem.split("_")[1]  # e.g., agent_0_cmd.sh -> "0"
+        fire_cmd = f"bash {shlex.quote(str(agent_cmd_path))}"
+        tab_config.append(TabConfig(tabName=f"Agent{idx_str}", startDir=str(agents_root.parent.parent.parent), command=fire_cmd))
+    layout = LayoutConfig(layoutName="Agents", layoutTabs=tab_config)
+    return layout

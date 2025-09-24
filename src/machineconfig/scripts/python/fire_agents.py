@@ -10,12 +10,14 @@ Improved design notes:
 from pathlib import Path
 from typing import cast, get_args, Iterable, TypeAlias, Literal
 
-from machineconfig.scripts.python.fire_agents_help_launch import launch_agents, AGENTS
+from machineconfig.scripts.python.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout, AGENTS
 from machineconfig.scripts.python.fire_agents_help_search import search_files_by_pattern, search_python_files
 from machineconfig.scripts.python.fire_agents_load_balancer import redistribute_prompts, SPLITTING_STRATEGY
 from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
-from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
-# import time
+from machineconfig.utils.options import choose_one_option
+from machineconfig.utils.ve import get_repo_root
+
+#  import time
 import sys
 
 
@@ -77,23 +79,46 @@ def get_prompt_material(search_strategy: SEARCH_STRATEGIES, repo_root: Path) -> 
 
 
 def main():  # noqa: C901 - (complexity acceptable for CLI glue)
-    repo_root = Path.cwd()
+    repo_root = get_repo_root(Path.cwd())
+    if repo_root is None:
+        print("💥 Could not determine the repository root. Please run this script from within a git repository.")
+        sys.exit(1)
     print(f"Operating @ {repo_root}")
-    from machineconfig.utils.options import choose_one_option
+
     search_strategy = cast(SEARCH_STRATEGIES, choose_one_option(header="Choose search strategy:", options=get_args(SEARCH_STRATEGIES)))
     prompt_material, separator = get_prompt_material(search_strategy=search_strategy, repo_root=repo_root)
     splitting_strategy = cast(SPLITTING_STRATEGY, choose_one_option(header="Choose prompt splitting strategy:", options=get_args(SPLITTING_STRATEGY)))
     prompt_material_re_splitted = redistribute_prompts(prompt_material=prompt_material, separator=separator, splitting_strategy=splitting_strategy)
     agent_selected = cast(AGENTS, choose_one_option(header="Select agent type", options=get_args(AGENTS)))
     prompt_prefix = input("Enter prefix prompt: ")
-    job_name = input("Enter job name ") or "AI_Agents"
+    job_name = input("Enter job name [AI_AGENTS]: ") or "AI_Agents"
     keep_material_in_separate_file_input = input("Keep prompt material in separate file? [y/N]: ").strip().lower() == "y"
-    tab_config = launch_agents(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, max_agents=25, job_name=job_name)
-    if not tab_config:
-        return
-    from machineconfig.utils.utils2 import randstr
-    random_name = randstr(length=3)
-    manager = ZellijLocalManager(session_layouts=[LayoutConfig(layoutName="Agents", layoutTabs=tab_config)], session_name_prefix=random_name)
+    agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, max_agents=25, job_name=job_name)
+    layout = get_agents_launch_layout(agents_root=agents_dir)
+
+    regenerate_py_code = f"""
+#!/usr/bin/env uv run --python 3.13 --with machineconfig
+from machineconfig.scripts.python.fire_agents import *
+
+repo_root = Path("{repo_root}")
+search_strategy = "{search_strategy}"
+prompt_material, separator = get_prompt_material(search_strategy=search_strategy, repo_root=repo_root)
+splitting_strategy = "{splitting_strategy}"
+prompt_material_re_splitted = redistribute_prompts(prompt_material=prompt_material, separator=separator, splitting_strategy=splitting_strategy)
+agent_selected = "{agent_selected}"
+prompt_prefix = '''{prompt_prefix}'''
+job_name = "{job_name}"
+keep_material_in_separate_file_input = {keep_material_in_separate_file_input}
+agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, max_agents=25, job_name=job_name)
+layout = get_agents_launch_layout(agents_root=agents_dir)
+manager = ZellijLocalManager(session_layouts=[layout])
+manager.start_all_sessions()
+manager.run_monitoring_routine()
+
+"""
+    (agents_dir / "aa_agents_relaunch.py").write_text(data=regenerate_py_code, encoding="utf-8")
+
+    manager = ZellijLocalManager(session_layouts=[layout])
     manager.start_all_sessions()
     manager.run_monitoring_routine()
 

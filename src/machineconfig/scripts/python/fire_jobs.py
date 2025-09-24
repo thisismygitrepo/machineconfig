@@ -21,6 +21,7 @@ from machineconfig.utils.utils2 import randstr, read_toml
 from machineconfig.scripts.python.fire_jobs_args_helper import get_args, FireJobArgs, extract_kwargs
 import platform
 from typing import Optional
+from pathlib import Path
 # import os
 
 
@@ -42,7 +43,7 @@ def route(args: FireJobArgs) -> None:
         choice_file = PathExtended(choice_file)
     else:
         choice_file = path_obj
-    repo_root = get_repo_root(str(choice_file))
+    repo_root = get_repo_root(Path(choice_file))
     print(f"💾 Selected file: {choice_file}.\nRepo root: {repo_root}")
     ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
     if ipy_profile is None:

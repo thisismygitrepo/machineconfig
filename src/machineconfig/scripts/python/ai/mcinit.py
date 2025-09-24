@@ -1,24 +1,12 @@
-from pathlib import Path
-from typing import Optional
 
+from pathlib import Path
+from machineconfig.utils.ve import get_repo_root
 
 installations = """
 uv add --upgrade-package pylint pyright mypy pyrefly ty --dev  # linters and type checkers
 uv add --upgrade-package pytest --dev
 """
 
-
-def get_repo_root(path: Path) -> Optional[Path]:
-    from git import Repo, InvalidGitRepositoryError
-
-    try:
-        repo = Repo(path, search_parent_directories=True)
-        root = repo.working_tree_dir
-        if root is not None:
-            return Path(root)
-    except InvalidGitRepositoryError:
-        pass
-    return None
 
 
 def add_ai_configs(repo_root: Path) -> None:
