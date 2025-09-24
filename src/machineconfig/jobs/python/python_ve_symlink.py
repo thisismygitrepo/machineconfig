@@ -22,7 +22,7 @@ def main():
 🎯 Target: {target}
 {"=" * 150}
 """)
-    return "echo '🔗 Finished creating symlink.'"
+    print('🔗 Finished creating symlink.')
 
 
 if __name__ == "__main__":

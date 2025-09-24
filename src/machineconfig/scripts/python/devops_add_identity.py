@@ -9,7 +9,7 @@ from rich.text import Text
 BOX_WIDTH = 150  # width for box drawing
 
 
-def main():
+def main() -> None:
     title = "🔑 SSH IDENTITY MANAGEMENT"
     print(Panel(Text(title, justify="center"), expand=False))
 
@@ -77,7 +77,11 @@ def main():
     success_message = f"🎉 CONFIGURATION SUCCESSFUL\nIdentity added: {path_to_key.name}\nConfig file: {config_path}"
     print(Panel(Text(success_message, justify="center"), expand=False, border_style="green"))
 
-    return program
+    import subprocess
+    # run program
+    subprocess.run(program, shell=True, check=True, text=True)
+    print(Panel("🔐 Identity added to SSH agent", expand=False, border_style="green"))
+    return None
 
 
 if __name__ == "__main__":

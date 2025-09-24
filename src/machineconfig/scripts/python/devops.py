@@ -7,7 +7,6 @@ from enum import Enum
 from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
-from rich import box  # Import box
 
 console = Console()
 
@@ -30,44 +29,13 @@ class Options(Enum):
 
 
 def args_parser():
-    # Print header
     console.print(Panel("🛠️  DevOps Tool Suite", title_align="left", border_style="blue", width=BOX_WIDTH))
-
     import argparse
-
     parser = argparse.ArgumentParser()
     new_line = "\n\n"
     parser.add_argument("-w", "--which", help=f"""which option to run\nChoose one of those:\n{new_line.join([f"{item.name}: {item.value}" for item in list(Options)])}""", type=str, default=None)  # , choices=[op.value for op in Options]
     args = parser.parse_args()
     main(which=args.which)
-
-
-def display_title(title: str) -> None:
-    console.print(Panel(title, box=box.DOUBLE_EDGE, title_align="left"))  # Replace print with Panel
-
-
-def display_task_title(title: str) -> None:
-    console.print(Panel(title, box=box.ROUNDED, title_align="left"))  # Replace print with Panel
-
-
-def display_task_status(status: str) -> None:
-    console.print(Panel(status, box=box.ROUNDED, title_align="left"))  # Replace print with Panel
-
-
-def display_task_result(result: str) -> None:
-    console.print(Panel(result, box=box.ROUNDED, title_align="left"))  # Replace print with Panel
-
-
-def display_task_error(error: str) -> None:
-    console.print(Panel(error, box=box.ROUNDED, border_style="red", title_align="left"))  # Replace print with Panel
-
-
-def display_task_warning(warning: str) -> None:
-    console.print(Panel(warning, box=box.ROUNDED, border_style="yellow", title_align="left"))  # Replace print with Panel
-
-
-def display_task_success(success: str) -> None:
-    console.print(Panel(success, box=box.ROUNDED, border_style="green", title_align="left"))  # Replace print with Panel
 
 
 def main(which: Optional[str] = None):
@@ -124,6 +92,8 @@ def main(which: Optional[str] = None):
         _program_windows = """Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""
         _program_linux = """curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash  # https://github.com/thisismygitrepo.keys"""
         _program_linux if system() == "Linux" else _program_windows
+        import subprocess
+        subprocess.run(_program_linux if system() == "Linux" else _program_windows, shell=True, check=True)
 
     elif choice_key == Options.ssh_setup_wsl.value:
         console.print(Panel("🐧 Setting up SSH for WSL...", width=BOX_WIDTH, border_style="blue"))

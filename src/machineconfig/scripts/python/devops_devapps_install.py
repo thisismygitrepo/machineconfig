@@ -13,7 +13,7 @@ from typing import Any, Optional, Literal, TypeAlias, get_args
 WHICH_CAT: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstallers", "PrecheckedCloudInstaller"]
 
 
-def main(which: Optional[WHICH_CAT | str] = None):
+def main(which: Optional[WHICH_CAT | str] = None) -> None:
     if which is not None and which in get_args(WHICH_CAT):  # install by category
         return get_programs_by_category(program_name=which)  # type: ignore
 
@@ -65,7 +65,8 @@ def main(which: Optional[WHICH_CAT | str] = None):
         else:
             an_installer = installers[options.index(a_program_name)]
             total_program += "\n" + an_installer.install_robust(version=None)  # finish the task
-    return total_program
+    import subprocess
+    subprocess.run(total_program, shell=True, check=True)
 
 
 def get_programs_by_category(program_name: WHICH_CAT):

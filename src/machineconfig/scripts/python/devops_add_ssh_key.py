@@ -68,7 +68,7 @@ sudo service ssh --full-restart
     return program
 
 
-def main():
+def main() -> None:
     console.print(Panel("🔐 SSH PUBLIC KEY AUTHORIZATION TOOL", box=box.DOUBLE_EDGE, title_align="left"))
 
     console.print(Panel("🔍 Searching for public keys...", title="[bold blue]SSH Setup[/bold blue]", border_style="blue"))
@@ -111,7 +111,10 @@ def main():
 
     console.print(Panel("🚀 SSH KEY AUTHORIZATION READY\nRun the generated script to apply changes", box=box.DOUBLE_EDGE, title_align="left"))
 
-    return program
+    # return program
+    import subprocess
+    subprocess.run(program, shell=True, check=True)
+    console.print(Panel("✅ SSH KEY AUTHORIZATION COMPLETED", box=box.DOUBLE_EDGE, title_align="left"))
 
 
 if __name__ == "__main__":

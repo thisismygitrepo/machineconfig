@@ -16,7 +16,7 @@ from rich.panel import Panel
 OPTIONS = Literal["BACKUP", "RETRIEVE"]
 
 
-def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
+def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None) -> None:
     console = Console()
 
     try:
@@ -73,20 +73,8 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None):
             console.print(Panel("🔒 SPECIAL HANDLING: SSH PERMISSIONS\n🛠️  Setting secure permissions for SSH files\n📝 Command: chmod 700 ~/.ssh/*", title="[bold blue]Special Handling: SSH Permissions[/bold blue]", border_style="blue"))
     print_code(program, lexer="shell", desc=f"{direction} script")
     console.print(Panel(f"✅ {direction} SCRIPT GENERATION COMPLETE\n🚀 Ready to execute the operations", title="[bold green]Script Generation Complete[/bold green]", border_style="green"))
-    return program
-
-
-def main(direction: OPTIONS, which: Optional[str] = None):
-    console = Console()
-
-    console.print(Panel(f"🔄 {direction} OPERATION STARTED\n⏱️  {'-' * 58}", title="[bold blue]Operation Initiated[/bold blue]", border_style="blue"))
-
-    code = main_backup_retrieve(direction=direction, which=which)
-    from machineconfig.utils.code import write_shell_script_to_default_program_path
-
-    console.print(Panel("💾 GENERATING SHELL SCRIPT\n📄 Filename: backup_retrieve.sh", title="[bold blue]Shell Script Generation[/bold blue]", border_style="blue"))
-
-    write_shell_script_to_default_program_path(program=code, desc="backup_retrieve.sh", preserve_cwd=True, display=True, execute=False)
+    import subprocess
+    subprocess.run(program, shell=True, check=True)
 
 
 if __name__ == "__main__":

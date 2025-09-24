@@ -230,7 +230,7 @@ def update_repository(repo: git.Repo, auto_sync: bool, allow_password_prompt: bo
         return False
 
 
-def main(verbose: bool = True, allow_password_prompt: bool = False) -> str:
+def main(verbose: bool = True, allow_password_prompt: bool = False) -> None:
     """Main function to update all configured repositories."""
     _ = verbose
     repos: list[PathExtended] = [PathExtended.home() / "code/machineconfig", PathExtended.home() / "code/crocodile"]
