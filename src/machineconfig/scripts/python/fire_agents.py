@@ -94,7 +94,7 @@ def main():  # noqa: C901 - (complexity acceptable for CLI glue)
     prompt_prefix = "\n".join(sys.stdin.readlines())
     job_name = input("Enter job name [AI_AGENTS]: ") or "AI_Agents"
     keep_material_in_separate_file_input = input("Keep prompt material in separate file? [y/N]: ").strip().lower() == "y"
-    agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, max_agents=25, job_name=job_name)
+    agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, job_name=job_name)
     layout = get_agents_launch_layout(agents_root=agents_dir)
 
     regenerate_py_code = f"""
@@ -119,6 +119,9 @@ manager.run_monitoring_routine()
 """
     (agents_dir / "aa_agents_relaunch.py").write_text(data=regenerate_py_code, encoding="utf-8")
 
+    if len(layout["layoutTabs"]) > 25:
+        print("Too many agents (>25) to launch. Skipping launch.")
+        sys.exit(0)
     manager = ZellijLocalManager(session_layouts=[layout])
     manager.start_all_sessions()
     manager.run_monitoring_routine()

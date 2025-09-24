@@ -26,19 +26,8 @@ def get_gemini_api_keys() -> list[str]:
                 res.append(api_key)
     print(f"Found {len(res)} Gemini API keys configured.")
     return res
-def _confirm(message: str, default_no: bool = False) -> bool:
-    from rich.prompt import Confirm
-    return Confirm.ask(message, default=not default_no)
 
-
-def prep_agent_launch(repo_root: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool,  agent: AGENTS, *, max_agents: int, job_name: str) -> Path:
-    if len(prompts_material) > max_agents:
-        proceed = _confirm(message=(f"You are about to launch {len(prompts_material)} agents which exceeds the cap ({max_agents}). Proceed?"), default_no=True)
-        if not proceed:
-            print("Aborting per user choice.")
-            import sys
-            sys.exit(0)
-
+def prep_agent_launch(repo_root: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool,  agent: AGENTS, *, job_name: str) -> Path:
     tmp_dir = repo_root / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
     tmp_dir.mkdir(parents=True, exist_ok=True)
 
