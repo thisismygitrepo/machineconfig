@@ -17,7 +17,6 @@ class TabConfig(TypedDict):
 
 class LayoutConfig(TypedDict):
     """Configuration for a complete layout with its tabs."""
-
     layoutName: str
     layoutTabs: List[TabConfig]
 

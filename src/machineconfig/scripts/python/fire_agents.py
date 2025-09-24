@@ -101,7 +101,7 @@ def main():  # noqa: C901 - (complexity acceptable for CLI glue)
     prompt_material_re_splitted = chunk_prompts(prompt_material_path, splitting_strategy, agent_cap=agent_cap, task_rows=task_rows, joiner=separator)
 
     agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, job_name=job_name)
-    layout = get_agents_launch_layout(session_root=agents_dir)
+    layoutfile = get_agents_launch_layout(session_root=agents_dir)
 
     regenerate_py_code = f"""
 #!/usr/bin/env uv run --python 3.13 --with machineconfig
@@ -137,11 +137,11 @@ manager.run_monitoring_routine()
 
 """
     (agents_dir / "aa_agents_relaunch.py").write_text(data=regenerate_py_code, encoding="utf-8")
-    (agents_dir / "layout.json").write_text(data=json.dumps(layout, indent=2), encoding="utf-8")
-    if len(layout["layoutTabs"]) > 25:
+    (agents_dir / "layout.json").write_text(data=json.dumps(layoutfile, indent=2), encoding="utf-8")
+    if len(layoutfile["layouts"][0]["layoutTabs"]) > 25:
         print("Too many agents (>25) to launch. Skipping launch.")
         sys.exit(0)
-    manager = ZellijLocalManager(session_layouts=[layout])
+    manager = ZellijLocalManager(session_layouts=layoutfile["layouts"])
     manager.start_all_sessions()
     manager.run_monitoring_routine()
 

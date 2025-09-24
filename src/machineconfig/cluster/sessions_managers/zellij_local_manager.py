@@ -25,14 +25,6 @@ class ZellijLocalManager:
     """Manages multiple local zellij sessions and monitors their tabs and processes."""
 
     def __init__(self, session_layouts: list[LayoutConfig], ):
-        """
-        Initialize the local zellij manager.
-
-        Args:
-            session_layouts: Dict mapping session names to their layout configs
-                Format: {session_name: LayoutConfig, ...}
-            session_name_prefix: Prefix for session names
-        """
         self.session_name_prefix = "LocalJobMgr"
         self.session_layouts = session_layouts  # Store the original config
         self.managers: List[ZellijLayoutGenerator] = []

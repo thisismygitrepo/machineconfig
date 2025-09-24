@@ -125,7 +125,7 @@ echo "---------END OF AGENT OUTPUT---------"
 
 
 def get_agents_launch_layout(session_root: Path):
-    from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig
+    from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig, LayoutsFile
     tab_config: list[TabConfig] = []
     prompt_root = session_root / "prompts"
     all_dirs_under_prompts = [d for d in prompt_root.iterdir() if d.is_dir()]
@@ -138,4 +138,5 @@ def get_agents_launch_layout(session_root: Path):
         launch_agents_squentially += f". {shlex.quote(str(agent_cmd_path))}\n"
     layout = LayoutConfig(layoutName="Agents", layoutTabs=tab_config)
     (session_root / "launch_all_agents_sequentially.sh").write_text(launch_agents_squentially, encoding="utf-8")
-    return layout
+    layouts_file: LayoutsFile = LayoutsFile(version="1.0", layouts=[layout])
+    return layouts_file
