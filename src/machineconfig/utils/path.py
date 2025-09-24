@@ -1,5 +1,6 @@
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.options import choose_one_option
+from machineconfig.utils.source_of_truth import EXCLUDE_DIRS
 from rich.console import Console
 from rich.panel import Panel
 import platform
@@ -54,7 +55,7 @@ def find_scripts(root: Path, name_substring: str, suffixes: set[str]) -> tuple[l
     partial_path_matches = []
     for entry in root.iterdir():
         if entry.is_dir():
-            if entry.name in {".links", ".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__", ".mypy_cache"}:
+            if entry.name in set(EXCLUDE_DIRS):
                 # prune this entire subtree
                 continue
             tmp1, tmp2 = find_scripts(entry, name_substring, suffixes)

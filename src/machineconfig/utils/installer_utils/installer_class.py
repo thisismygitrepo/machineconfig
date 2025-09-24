@@ -94,14 +94,14 @@ class Installer:
 
             if old_version_cli == new_version_cli:
                 print(f"ℹ️  Same version detected: {old_version_cli}")
-                return f"""echo "📦️ 😑 {self.exe_name}, same version: {old_version_cli}" """
+                return f"""📦️ 😑 {self.exe_name}, same version: {old_version_cli}"""
             else:
                 print(f"🚀 Update successful: {old_version_cli} ➡️ {new_version_cli}")
-                return f"""echo "📦️ 🤩 {self.exe_name} updated from {old_version_cli} ➡️ TO ➡️  {new_version_cli}" """
+                return f"""📦️ 🤩 {self.exe_name} updated from {old_version_cli} ➡️ TO ➡️  {new_version_cli}"""
 
         except Exception as ex:
             print(f"❌ ERROR: Installation failed for {self.exe_name}: {ex}")
-            return f"""echo "📦️ ❌ Failed to install `{self.name}` with error: {ex}" """
+            return f"""📦️ ❌ Failed to install `{self.name}` with error: {ex}"""
 
     def install(self, version: Optional[str]):
         print(f"\n{'=' * 80}\n🔧 INSTALLATION PROCESS: {self.exe_name} 🔧\n{'=' * 80}")

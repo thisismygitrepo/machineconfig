@@ -18,7 +18,7 @@ def main(which: Optional[WHICH_CAT | str] = None) -> None:
         return get_programs_by_category(program_name=which)  # type: ignore
 
     if which is not None:  # install by name
-        program_total = ""
+        total_messages: list[str] = []
         for a_which in which.split(",") if type(which) == str else which:
             kv = {}
             for _category, v in get_all_dicts(system=system()).items():
@@ -32,9 +32,10 @@ def main(which: Optional[WHICH_CAT | str] = None) -> None:
             installer = Installer.from_dict(name=a_which, d=kv[a_which])
             print(installer)
             program = installer.install_robust(version=None)  # finish the task
-            program = "echo 'Finished Installation'"  # write an empty program
-            program_total += "\n" + program
-        return program_total
+            total_messages.append(program)
+        for a_message in total_messages:
+            print(a_message)
+        return None
 
     # interactive installation
     installers = [Installer.from_dict(d=vd, name=name) for __kat, vds in get_all_dicts(system=system()).items() for name, vd in vds.items()]

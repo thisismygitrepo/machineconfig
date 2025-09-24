@@ -5,6 +5,8 @@ Utils
 import machineconfig
 from pathlib import Path
 
+EXCLUDE_DIRS = [".links", ".ai", ".scripts", ".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__", ".mypy_cache"]
+
 LIBRARY_ROOT = Path(machineconfig.__file__).resolve().parent
 REPO_ROOT = LIBRARY_ROOT.parent.parent
 
