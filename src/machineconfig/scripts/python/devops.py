@@ -2,7 +2,6 @@
 
 from machineconfig.utils.options import display_options
 
-from machineconfig.utils.code import write_shell_script_to_default_program_path
 from platform import system
 from enum import Enum
 from typing import Optional
@@ -72,7 +71,7 @@ def display_task_success(success: str) -> None:
 
 
 def main(which: Optional[str] = None):
-    # PathExtended(PROGRAM_PATH).delete(sure=True, verbose=False)
+    # PathExtended(_program_PATH).delete(sure=True, verbose=False)
     console.print(Panel("🚀 Initializing DevOps operation...", width=BOX_WIDTH, border_style="blue"))
     options = [op.value for op in Options]
     if which is None:
@@ -89,31 +88,27 @@ def main(which: Optional[str] = None):
     if choice_key == Options.update.value:
         console.print(Panel("🔄 Updating essential repositories...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_update_repos as helper
-        program = helper.main()
+        helper.main()
     elif choice_key == Options.cli_install.value:
         console.print(Panel("⚙️  Installing development applications...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_devapps_install as helper
-
-        program = helper.main()
+        helper.main()
 
     elif choice_key == Options.sym_new.value:
         console.print(Panel("🔄 Creating new symlinks...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.jobs.python.python_ve_symlink as helper
-
-        program = helper.main()
+        helper.main()
 
     elif choice_key == Options.sym_path_shell.value:
         console.print(Panel("🔗 Setting up symlinks, PATH, and shell profile...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.profile.create as helper
-
         helper.main()
-        program = "echo '✅ done with symlinks'"
+        "echo '✅ done with symlinks'"
 
     elif choice_key == Options.ssh_add_pubkey.value:
         console.print(Panel("🔑 Adding public SSH key to this machine...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_add_ssh_key as helper
-
-        program = helper.main()
+        helper.main()
 
     elif choice_key == Options.ssh_use_pair.value:
         console.print(Panel("❌ ERROR: Not Implemented\nSSH key pair connection feature is not yet implemented", title_align="left", border_style="red", width=BOX_WIDTH))
@@ -122,47 +117,36 @@ def main(which: Optional[str] = None):
     elif choice_key == Options.ssh_add_id.value:  # so that you can SSH directly withuot pointing to identity key.
         console.print(Panel("🗝️  Adding SSH identity (private key) to this machine...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_add_identity as helper
-
-        program = helper.main()
+        helper.main()
 
     elif choice_key == Options.ssh_setup.value:
         console.print(Panel("📡 Setting up SSH...", width=BOX_WIDTH, border_style="blue"))
-        program_windows = """Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""
-        program_linux = """curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash  # https://github.com/thisismygitrepo.keys"""
-        program = program_linux if system() == "Linux" else program_windows
+        _program_windows = """Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""
+        _program_linux = """curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash  # https://github.com/thisismygitrepo.keys"""
+        _program_linux if system() == "Linux" else _program_windows
 
     elif choice_key == Options.ssh_setup_wsl.value:
         console.print(Panel("🐧 Setting up SSH for WSL...", width=BOX_WIDTH, border_style="blue"))
-        program = """curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
+        """curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash"""
 
     elif choice_key == Options.backup.value:
         console.print(Panel("💾 Creating backup...", width=BOX_WIDTH, border_style="blue"))
-        from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve as helper
-
-        program = helper(direction="BACKUP")
+        from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve
+        main_backup_retrieve(direction="BACKUP")
 
     elif choice_key == Options.retreive.value:
         console.print(Panel("📥 Retrieving backup...", width=BOX_WIDTH, border_style="blue"))
-        from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve as helper
-
-        program = helper(direction="RETRIEVE")
+        from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve
+        main_backup_retrieve(direction="RETRIEVE")
 
     elif choice_key == Options.scheduler.value:
         console.print(Panel("⏰ Setting up scheduler...", width=BOX_WIDTH, border_style="blue"))
         # from machineconfig.scripts.python.scheduler import main as helper
-        # program = helper()
-        program = ""
+        # helper()
 
     else:
         console.print(Panel("❌ ERROR: Invalid choice", title_align="left", border_style="red", width=BOX_WIDTH))
         raise ValueError(f"Unimplemented choice: {choice_key}")
-
-    if program:
-        console.print(Panel("📜 Preparing shell script...", width=BOX_WIDTH, border_style="blue"))
-        write_shell_script_to_default_program_path(program=program, display=True, preserve_cwd=True, desc="🔧 Shell script prepared by Python.", execute=True if which is not None else False)
-    else:
-        write_shell_script_to_default_program_path(program="echo '✨ Done.'", display=False, desc="🔧 Shell script prepared by Python.", preserve_cwd=True, execute=False)
-
 
 if __name__ == "__main__":
     args_parser()

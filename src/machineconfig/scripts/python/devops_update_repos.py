@@ -275,9 +275,6 @@ Exception: {ex}
     # Run uv sync for repositories where pyproject.toml or uv.lock changed
     for repo_path in repos_with_changes:
         run_uv_sync(repo_path)
-    # print("\n🎉 All repositories updated successfully!")
-    return """echo "🎉 All repositories updated successfully!" """
-
 
 if __name__ == "__main__":
     main()
