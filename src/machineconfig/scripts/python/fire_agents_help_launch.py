@@ -44,6 +44,7 @@ def prep_agent_launch(repo_root: Path, prompts_material: list[str], prompt_prefi
             prompt_path.write_text(prompt_prefix + f"""\nPlease only look @ {prompt_material_path}. You don't need to do any other work beside the content of this material file.""", encoding="utf-8")
             all_materials_scripts.append(prompt_material_path)
         else:
+            prompt_material_path = prompt_path
             prompt_path.write_text(prompt_prefix + """\nPlease only look @ the following:\n""" + a_prompt_material, encoding="utf-8")
 
         agent_cmd_launch_path = prompt_root / AGENT_NAME_FORMATTER.format(idx=idx)  # e.g., agent_0_cmd.sh
@@ -57,13 +58,13 @@ def prep_agent_launch(repo_root: Path, prompts_material: list[str], prompt_prefi
 export FIRE_AGENTS_AGENT_NAME="{agent}"
 export FIRE_AGENTS_JOB_NAME="{job_name}"
 export FIRE_AGENTS_PROMPT_FILE="{prompt_path}"
-export FIRE_AGENTS_MATERIAL_FILE="{prompt_path if not keep_material_in_separate_file else prompt_material_path}"
+export FIRE_AGENTS_MATERIAL_FILE="{prompt_material_path}"
 export FIRE_AGENTS_AGENT_LAUNCHER="{agent_cmd_launch_path}"
 
 echo "Sleeping for {random_sleep_time:.2f} seconds to stagger agent startups..."
 sleep {random_sleep_time:.2f}
-echo "Launching `{agent}` with prompt from {prompt_path}"
-echo "Launching `{agent}` with command from {agent_cmd_launch_path}"
+echo "Launching agent {agent} with prompt from {prompt_path}"
+echo "Launching agent {agent} with command from {agent_cmd_launch_path}"
 echo "--------START OF AGENT OUTPUT--------"
 sleep 0.1
 
@@ -96,7 +97,6 @@ cursor-agent --print --output-format text < {prompt_path}
 """
             case "crush":
                 cmd = f"""
-# cat {prompt_path} | crush run
 crush run {prompt_path}
 """
             case "q":
