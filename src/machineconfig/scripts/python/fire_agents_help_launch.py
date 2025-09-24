@@ -84,8 +84,8 @@ sleep 0.1
                 api_key = api_keys[idx % len(api_keys)] if api_keys else ""
                 # Export the environment variable so it's available to subshells
                 cmd = f"""
-# export GEMINI_API_KEY={shlex.quote(api_key)}
-# echo "Using Gemini API key $GEMINI_API_KEY"
+export GEMINI_API_KEY={shlex.quote(api_key)}
+echo "Using Gemini API key $GEMINI_API_KEY"
 bash -lc 'cat {safe_path} | gemini {model_arg} --yolo --prompt'
 """
             case "cursor-agent":
