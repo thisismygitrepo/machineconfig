@@ -14,7 +14,7 @@ import sys
 
 from machineconfig.scripts.python.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout, AGENTS
 from machineconfig.scripts.python.fire_agents_help_search import search_files_by_pattern, search_python_files
-from machineconfig.scripts.python.fire_agents_load_balancer import redistribute_prompts, SPLITTING_STRATEGY
+from machineconfig.scripts.python.fire_agents_load_balancer import chunk_prompts, SPLITTING_STRATEGY, DEFAULT_AGENT_CAP
 from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
 from machineconfig.utils.options import choose_one_option
 from machineconfig.utils.ve import get_repo_root
@@ -89,7 +89,17 @@ def main():  # noqa: C901 - (complexity acceptable for CLI glue)
     keep_material_in_separate_file_input = input("Keep prompt material in separate file? [y/N]: ").strip().lower() == "y"
 
     prompt_material_path, separator = get_prompt_material(search_strategy=search_strategy, repo_root=repo_root)
-    prompt_material_re_splitted = redistribute_prompts(prompt_material_path=prompt_material_path, separator=separator, splitting_strategy=splitting_strategy)
+    match splitting_strategy:
+        case "agent_cap":
+            agent_cap_input = input(f"Enter maximum number of agents/splits [default: {DEFAULT_AGENT_CAP}]: ").strip()
+            agent_cap = int(agent_cap_input) if agent_cap_input else DEFAULT_AGENT_CAP
+            task_rows = None
+        case "task_rows":
+            task_rows_input: str = input("Enter number of rows/tasks per agent [13]: ").strip() or "13"
+            task_rows = int(task_rows_input)
+            agent_cap = None
+    prompt_material_re_splitted = chunk_prompts(prompt_material_path, splitting_strategy, agent_cap=agent_cap, task_rows=task_rows, joiner=separator)
+
     agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, job_name=job_name)
     layout = get_agents_launch_layout(session_root=agents_dir)
 
@@ -106,9 +116,12 @@ agent_selected = "{agent_selected}"
 prompt_prefix = '''{prompt_prefix}'''
 job_name = "{job_name}"
 keep_material_in_separate_file_input = {keep_material_in_separate_file_input}
+separator = "{separator}"
+prompt_material_path = Path("{prompt_material_path}")
+agent_cap = {agent_cap}
+task_rows = {task_rows}
 
-prompt_material_path, separator = get_prompt_material(search_strategy=search_strategy, repo_root=repo_root)
-prompt_material_re_splitted = redistribute_prompts(prompt_material_path=prompt_material_path, separator=separator, splitting_strategy=splitting_strategy)
+prompt_material_re_splitted = chunk_prompts(prompt_material_path, splitting_strategy, agent_cap=agent_cap, task_rows=task_rows, joiner=separator)
 agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, job_name=job_name)
 layout = get_agents_launch_layout(session_root=agents_dir)
 

@@ -12,7 +12,7 @@ SPLITTING_STRATEGY: TypeAlias = Literal[
 DEFAULT_AGENT_CAP = 6
 
 
-def chunk_prompts(prompts: list[str], strategy: SPLITTING_STRATEGY, joiner: str, *, agent_cap: int | None, task_rows: int | None) -> list[str]:
+def chunk_prompts(prompt_material_path: Path, strategy: SPLITTING_STRATEGY, joiner: str, *, agent_cap: int | None, task_rows: int | None) -> list[str]:
     """Chunk prompts based on splitting strategy.
     
     Args:
@@ -21,7 +21,7 @@ def chunk_prompts(prompts: list[str], strategy: SPLITTING_STRATEGY, joiner: str,
         agent_cap: Maximum number of agents (used with 'agent_cap' strategy)
         task_rows: Number of rows/tasks per agent (used with 'task_rows' strategy)
     """
-    prompts = [p for p in prompts if p.strip() != ""]  # drop blank entries
+    prompts = [p for p in prompt_material_path.read_text(encoding="utf-8", errors="ignore").split(joiner) if p.strip() != ""]  # drop blank entries
     
     if strategy == "agent_cap":
         if agent_cap is None:
@@ -50,24 +50,3 @@ def chunk_prompts(prompts: list[str], strategy: SPLITTING_STRATEGY, joiner: str,
     
     else:
         raise ValueError(f"Unknown splitting strategy: {strategy}")
-
-def redistribute_prompts(prompt_material_path: Path, separator: str, splitting_strategy: SPLITTING_STRATEGY) -> list[str]:
-    prompt_material = prompt_material_path.read_text(encoding="utf-8", errors="ignore")
-    prompt_material_splitted = prompt_material.split(separator)
-    print(f"Loaded {len(prompt_material_splitted)} raw prompts from source.")
-    # Prompt user for splitting strategy
-    # Get parameters based on strategy
-    if splitting_strategy == "agent_cap":
-        agent_cap_input = input(f"Enter maximum number of agents/splits [default: {DEFAULT_AGENT_CAP}]: ").strip()
-        agent_cap = int(agent_cap_input) if agent_cap_input else DEFAULT_AGENT_CAP
-        prompt_material_re_splitted = chunk_prompts(prompt_material_splitted, splitting_strategy, agent_cap=agent_cap, task_rows=None, joiner=separator)
-        max_agents_for_launch = agent_cap
-    elif splitting_strategy == "task_rows":
-        task_rows_input = input("Enter number of rows/tasks per agent [13]: ").strip() or "13"
-        task_rows = int(task_rows_input)
-        prompt_material_re_splitted = chunk_prompts(prompt_material_splitted, splitting_strategy, agent_cap=None, task_rows=task_rows, joiner=separator)
-        max_agents_for_launch = len(prompt_material_re_splitted)  # Number of agents determined by chunking
-    else:
-        raise ValueError(f"Unknown splitting strategy: {splitting_strategy}")
-    _ = max_agents_for_launch  # to be used later
-    return prompt_material_re_splitted
