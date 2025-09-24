@@ -9,6 +9,8 @@ Improved design notes:
 
 from pathlib import Path
 from typing import cast, get_args, Iterable, TypeAlias, Literal
+import json
+import sys
 
 from machineconfig.scripts.python.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout, AGENTS
 from machineconfig.scripts.python.fire_agents_help_search import search_files_by_pattern, search_python_files
@@ -16,10 +18,6 @@ from machineconfig.scripts.python.fire_agents_load_balancer import redistribute_
 from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
 from machineconfig.utils.options import choose_one_option
 from machineconfig.utils.ve import get_repo_root
-
-#  import time
-import sys
-
 
 SEARCH_STRATEGIES: TypeAlias = Literal["file_path", "keyword_search", "filename_pattern"]
 
@@ -111,14 +109,14 @@ prompt_prefix = '''{prompt_prefix}'''
 job_name = "{job_name}"
 keep_material_in_separate_file_input = {keep_material_in_separate_file_input}
 agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, max_agents=25, job_name=job_name)
-layout = get_agents_launch_layout(agents_root=agents_dir)
+layout = get_agents_launch_layout(session_root=agents_dir)
 manager = ZellijLocalManager(session_layouts=[layout])
 manager.start_all_sessions()
 manager.run_monitoring_routine()
 
 """
     (agents_dir / "aa_agents_relaunch.py").write_text(data=regenerate_py_code, encoding="utf-8")
-
+    (agents_dir / "layout.json").write_text(data=json.dumps(layout, indent=2), encoding="utf-8")
     if len(layout["layoutTabs"]) > 25:
         print("Too many agents (>25) to launch. Skipping launch.")
         sys.exit(0)
