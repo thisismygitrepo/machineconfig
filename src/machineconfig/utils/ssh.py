@@ -116,13 +116,35 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             print(f"""⚠️  WARNING: Failed to open SFTP connection to {hostname}.
    Error Details: {err}\nData transfer may be affected!""")
 
-        def view_bar(slf: Any, a: Any, b: Any):
-            slf.total = int(b)
-            slf.update(int(a - slf.n))  # update pbar with increment
+        from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, FileSizeColumn, TransferSpeedColumn
 
-        from tqdm import tqdm
+        class RichProgressWrapper:
+            def __init__(self, **kwargs: Any):
+                self.kwargs = kwargs
+                self.progress: Optional[Progress] = None
+                self.task: Optional[Any] = None
+                
+            def __enter__(self) -> "RichProgressWrapper":
+                self.progress = Progress(
+                    SpinnerColumn(),
+                    TextColumn("[bold blue]{task.description}"),
+                    BarColumn(),
+                    FileSizeColumn(),
+                    TransferSpeedColumn(),
+                )
+                self.progress.start()
+                self.task = self.progress.add_task("Transferring...", total=0)
+                return self
+                
+            def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+                if self.progress:
+                    self.progress.stop()
+                    
+            def view_bar(self, transferred: int, total: int) -> None:
+                if self.progress and self.task is not None:
+                    self.progress.update(self.task, completed=transferred, total=total)
 
-        self.tqdm_wrap = type("TqdmWrap", (tqdm,), {"view_bar": view_bar})
+        self.tqdm_wrap = RichProgressWrapper
         self._local_distro: Optional[str] = None
         self._remote_distro: Optional[str] = None
         self._remote_machine: Optional[MACHINE] = None

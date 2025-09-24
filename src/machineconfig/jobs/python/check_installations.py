@@ -11,8 +11,6 @@ import platform
 # # from rich.progress import track
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 # from machineconfig.utils.installer import get_installed_cli_apps
-
-# from tqdm import tqdm
 # from typing import Optional
 # from datetime import datetime
 # import csv

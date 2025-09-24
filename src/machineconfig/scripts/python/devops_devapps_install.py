@@ -2,7 +2,7 @@
 
 # import subprocess
 from machineconfig.utils.installer_utils.installer_class import Installer
-from tqdm import tqdm
+from rich.progress import Progress, SpinnerColumn, TextColumn
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 from machineconfig.utils.options import choose_multiple_options
 from machineconfig.utils.installer import get_installers, install_all, get_all_dicts
@@ -38,7 +38,19 @@ def main(which: Optional[WHICH_CAT | str] = None):
 
     # interactive installation
     installers = [Installer.from_dict(d=vd, name=name) for __kat, vds in get_all_dicts(system=system()).items() for name, vd in vds.items()]
-    options = [x.get_description() for x in tqdm(installers, desc="✅ Checking installed programs")] + list(get_args(WHICH_CAT))
+    
+    # Check installed programs with progress indicator
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+    ) as progress:
+        task = progress.add_task("✅ Checking installed programs...", total=len(installers))
+        options = []
+        for x in installers:
+            options.append(x.get_description())
+            progress.update(task, advance=1)
+    
+    options += list(get_args(WHICH_CAT))
     # print("s"*1000)
     program_names = choose_multiple_options(msg="", options=options, header="🚀 CHOOSE DEV APP", default="AllEssentials")
 

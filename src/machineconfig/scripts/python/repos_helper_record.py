@@ -9,6 +9,7 @@ from machineconfig.utils.io_save import save_json
 from typing import Optional
 
 from rich import print as pprint
+from rich.progress import Progress, TaskID, SpinnerColumn, TextColumn, BarColumn, TimeElapsedColumn, MofNCompleteColumn
 
 
 def build_tree_structure(repos: list[RepoRecordDict], repos_root: PathExtended) -> str:
@@ -82,7 +83,7 @@ def build_tree_structure(repos: list[RepoRecordDict], repos_root: PathExtended) 
     return "\n".join(tree_lines)
 
 
-def record_a_repo(path: PathExtended, search_parent_directories: bool = False, preferred_remote: Optional[str] = None) -> RepoRecordDict:
+def record_a_repo(path: PathExtended, search_parent_directories: bool, preferred_remote: Optional[str]) -> RepoRecordDict:
     from git.repo import Repo
 
     repo = Repo(path, search_parent_directories=search_parent_directories)  # get list of remotes using git python
@@ -126,27 +127,103 @@ def record_a_repo(path: PathExtended, search_parent_directories: bool = False, p
     return res
 
 
-def record_repos_recursively(repos_root: str, r: bool = True) -> list[RepoRecordDict]:
+def count_git_repositories(repos_root: str, r: bool) -> int:
+    """Count total git repositories for accurate progress tracking."""
+    path_obj = PathExtended(repos_root).expanduser().absolute()
+    if path_obj.is_file():
+        return 0
+    
+    search_res = path_obj.search("*", files=False, folders=True)
+    count = 0
+    
+    for a_search_res in search_res:
+        if a_search_res.joinpath(".git").exists():
+            count += 1
+        elif r:
+            count += count_git_repositories(str(a_search_res), r=r)
+    
+    return count
+
+
+def count_total_directories(repos_root: str, r: bool) -> int:
+    """Count total directories to scan for accurate progress tracking."""
+    path_obj = PathExtended(repos_root).expanduser().absolute()
+    if path_obj.is_file():
+        return 0
+    
+    search_res = path_obj.search("*", files=False, folders=True)
+    count = len(search_res)
+    
+    if r:
+        for a_search_res in search_res:
+            if not a_search_res.joinpath(".git").exists():
+                count += count_total_directories(str(a_search_res), r=r)
+    
+    return count
+
+
+def record_repos_recursively(repos_root: str, r: bool, progress: Progress | None, scan_task_id: TaskID | None, process_task_id: TaskID | None) -> list[RepoRecordDict]:
     path_obj = PathExtended(repos_root).expanduser().absolute()
     if path_obj.is_file():
         return []
+    
     search_res = path_obj.search("*", files=False, folders=True)
     res: list[RepoRecordDict] = []
+    
     for a_search_res in search_res:
+        if progress and scan_task_id:
+            progress.update(scan_task_id, description=f"Scanning: {a_search_res.name}")
+        
         if a_search_res.joinpath(".git").exists():
             try:
-                res.append(record_a_repo(a_search_res))
+                if progress and process_task_id:
+                    progress.update(process_task_id, description=f"Recording: {a_search_res.name}")
+                    
+                repo_record = record_a_repo(a_search_res, search_parent_directories=False, preferred_remote=None)
+                res.append(repo_record)
+                
+                if progress and process_task_id:
+                    progress.update(process_task_id, advance=1, description=f"Recorded: {repo_record['name']}")
             except Exception as e:
                 print(f"⚠️ Failed to record {a_search_res}: {e}")
         else:
             if r:
-                res += record_repos_recursively(str(a_search_res), r=r)
+                res += record_repos_recursively(str(a_search_res), r=r, progress=progress, scan_task_id=scan_task_id, process_task_id=process_task_id)
+        
+        if progress and scan_task_id:
+            progress.update(scan_task_id, advance=1)
+    
     return res
 
 
 def main(repos_root: PathExtended):
     print("\n📝 Recording repositories...")
-    repo_records = record_repos_recursively(repos_root=str(repos_root))
+    
+    # Count total directories and repositories for accurate progress tracking
+    print("🔍 Analyzing directory structure...")
+    total_dirs = count_total_directories(str(repos_root), r=True)
+    total_repos = count_git_repositories(str(repos_root), r=True)
+    print(f"📊 Found {total_dirs} directories to scan and {total_repos} git repositories to record")
+    
+    # Setup progress bars
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        MofNCompleteColumn(),
+        TimeElapsedColumn(),
+    ) as progress:
+        scan_task = progress.add_task("Scanning directories...", total=total_dirs)
+        process_task = progress.add_task("Recording repositories...", total=total_repos)
+        
+        repo_records = record_repos_recursively(
+            repos_root=str(repos_root), 
+            r=True,
+            progress=progress, 
+            scan_task_id=scan_task, 
+            process_task_id=process_task
+        )
+    
     res: RepoRecordFile = {"version": "0.1", "repos": repo_records}
     
     # Summary with warnings

@@ -1,7 +1,7 @@
 """Procs"""
 
 import psutil
-from tqdm import tqdm
+from rich.progress import Progress, SpinnerColumn, TextColumn
 from pytz import timezone
 from machineconfig.utils.options import display_options
 from typing import Optional, Any
@@ -20,14 +20,22 @@ def get_processes_accessing_file(path: str):
     title = "🔍  SEARCHING FOR PROCESSES ACCESSING FILE"
     console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
     res: dict[int, list[str]] = {}
-    for proc in tqdm(psutil.process_iter(), desc="🔎 Scanning processes"):
-        try:
-            files = proc.open_files()
-        except psutil.AccessDenied:
-            continue
-        tmp = [file.path for file in files if path in file.path]
-        if len(tmp) > 0:
-            res[proc.pid] = tmp
+    
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+    ) as progress:
+        progress.add_task("🔎 Scanning processes...", total=None)
+        
+        for proc in psutil.process_iter():
+            try:
+                files = proc.open_files()
+            except psutil.AccessDenied:
+                continue
+            tmp = [file.path for file in files if path in file.path]
+            if len(tmp) > 0:
+                res[proc.pid] = tmp
+                
     # Convert to list of dictionaries for consistent data structure
     result_data = [{"pid": pid, "files": files} for pid, files in res.items()]
     console.print(Panel(f"✅ Found {len(res)} processes accessing the specified file", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
@@ -53,27 +61,34 @@ class ProcessManager:
         title = "📊  INITIALIZING PROCESS MANAGER"
         console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
         process_info = []
-        for proc in tqdm(psutil.process_iter(), desc="🔍 Reading system processes"):
-            try:
-                mem_usage_mb = proc.memory_info().rss / (1024 * 1024)
-                # Convert create_time to local timezone
-                create_time_utc = datetime.fromtimestamp(proc.create_time(), tz=timezone("UTC"))
-                create_time_local = create_time_utc.astimezone(timezone("Australia/Adelaide"))
+        
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+        ) as progress:
+            progress.add_task("🔍 Reading system processes...", total=None)
+            
+            for proc in psutil.process_iter():
+                try:
+                    mem_usage_mb = proc.memory_info().rss / (1024 * 1024)
+                    # Convert create_time to local timezone
+                    create_time_utc = datetime.fromtimestamp(proc.create_time(), tz=timezone("UTC"))
+                    create_time_local = create_time_utc.astimezone(timezone("Australia/Adelaide"))
 
-                process_info.append(
-                    {
-                        "pid": proc.pid,
-                        "name": proc.name(),
-                        "username": proc.username(),
-                        "cpu_percent": proc.cpu_percent(),
-                        "memory_usage_mb": mem_usage_mb,
-                        "status": proc.status(),
-                        "create_time": create_time_local,
-                        "command": " ".join(proc.cmdline()),
-                    }
-                )
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                pass
+                    process_info.append(
+                        {
+                            "pid": proc.pid,
+                            "name": proc.name(),
+                            "username": proc.username(),
+                            "cpu_percent": proc.cpu_percent(),
+                            "memory_usage_mb": mem_usage_mb,
+                            "status": proc.status(),
+                            "create_time": create_time_local,
+                            "command": " ".join(proc.cmdline()),
+                        }
+                    )
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                    pass
 
         # Sort by memory usage (descending)
         process_info.sort(key=lambda x: x["memory_usage_mb"], reverse=True)
