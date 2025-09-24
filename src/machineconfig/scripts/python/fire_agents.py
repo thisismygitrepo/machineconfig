@@ -95,7 +95,7 @@ def main():  # noqa: C901 - (complexity acceptable for CLI glue)
     job_name = input("Enter job name [AI_AGENTS]: ") or "AI_Agents"
     keep_material_in_separate_file_input = input("Keep prompt material in separate file? [y/N]: ").strip().lower() == "y"
     agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, job_name=job_name)
-    layout = get_agents_launch_layout(agents_root=agents_dir)
+    layout = get_agents_launch_layout(session_root=agents_dir)
 
     regenerate_py_code = f"""
 #!/usr/bin/env uv run --python 3.13 --with machineconfig

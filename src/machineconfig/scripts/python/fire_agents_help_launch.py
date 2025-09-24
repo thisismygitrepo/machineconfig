@@ -28,20 +28,23 @@ def get_gemini_api_keys() -> list[str]:
     return res
 
 def prep_agent_launch(repo_root: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool,  agent: AGENTS, *, job_name: str) -> Path:
-    tmp_dir = repo_root / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
-    tmp_dir.mkdir(parents=True, exist_ok=True)
+    session_root = repo_root / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
+    session_root.mkdir(parents=True, exist_ok=True)
+    prompt_folder = session_root / "prompts"
+    prompt_folder.mkdir(parents=True, exist_ok=True)
 
     for idx, a_prompt_material in enumerate(prompts_material):
-        prompt_path = tmp_dir / f"agent{idx}_prompt.txt"
-
+        prompt_root = prompt_folder / f"agent_{idx}"
+        prompt_root.mkdir(parents=True, exist_ok=True)
+        prompt_path = prompt_root / f"agent_{idx}_prompt.txt"
         if keep_material_in_separate_file:
-            prompt_material_path = tmp_dir / f"agent{idx}_material.txt"
+            prompt_material_path = prompt_root / f"agent_{idx}_material.txt"
             prompt_material_path.write_text(a_prompt_material, encoding="utf-8")
             prompt_path.write_text(prompt_prefix + f"""\nPlease only look @ {prompt_material_path}. You don't need to do any other work beside the content of this file.""", encoding="utf-8")
         else:
             prompt_path.write_text(prompt_prefix + "\n" + a_prompt_material, encoding="utf-8")
 
-        cmd_path = tmp_dir / AGENT_NAME_FORMATTER.format(idx=idx)  # e.g., agent_0_cmd.sh
+        agent_cmd_launch_path = prompt_root / AGENT_NAME_FORMATTER.format(idx=idx)  # e.g., agent_0_cmd.sh
         match agent:
             case "gemini":
                 # model = "gemini-2.5-pro"
@@ -89,7 +92,7 @@ echo "Prepared prompt file at {prompt_path}"
 echo "Sleeping for {random_sleep_time:.2f} seconds to stagger agent startups..."
 sleep {random_sleep_time:.2f}
 echo "Launching `{agent}` with prompt from {prompt_path}"
-echo "Launching `{agent}` with command from {cmd_path}"
+echo "Launching `{agent}` with command from {agent_cmd_launch_path}"
 echo "--------START OF AGENT OUTPUT--------"
 sleep 0.1
 """
@@ -97,22 +100,21 @@ sleep 0.1
 sleep 0.1
 echo "---------END OF AGENT OUTPUT---------"
 """
-        cmd_path.write_text(cmd_prefix + cmd + cmd_postfix, encoding="utf-8")
+        agent_cmd_launch_path.write_text(cmd_prefix + cmd + cmd_postfix, encoding="utf-8")
 
 
     # print(f"Launching a template with #{len(tab_config)} agents")
-    return tmp_dir
+    return session_root
 
 
-def get_agents_launch_layout(agents_root: Path):
+def get_agents_launch_layout(session_root: Path):
     from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig
-        #     fire_cmd = f"bash {shlex.quote(str(cmd_path))}"
-        # tab_config: list[TabConfig] = []
-        #     tab_config.append(TabConfig(tabName=f"Agent{idx}", startDir=str(repo_root), command=fire_cmd))
     tab_config: list[TabConfig] = []
-    for agent_cmd_path in sorted(agents_root.glob("agent_*_cmd.sh")):
-        idx_str = agent_cmd_path.stem.split("_")[1]  # e.g., agent_0_cmd.sh -> "0"
+    prompt_root = session_root / "prompts"
+    all_dirs_under_prompts = [d for d in prompt_root.iterdir() if d.is_dir()]
+    for idx, a_prompt_dir in enumerate(all_dirs_under_prompts):
+        agent_cmd_path = a_prompt_dir / AGENT_NAME_FORMATTER.format(idx=idx)
         fire_cmd = f"bash {shlex.quote(str(agent_cmd_path))}"
-        tab_config.append(TabConfig(tabName=f"Agent{idx_str}", startDir=str(agents_root.parent.parent.parent), command=fire_cmd))
+        tab_config.append(TabConfig(tabName=f"Agent{idx}", startDir=str(session_root.parent.parent.parent), command=fire_cmd))
     layout = LayoutConfig(layoutName="Agents", layoutTabs=tab_config)
     return layout
