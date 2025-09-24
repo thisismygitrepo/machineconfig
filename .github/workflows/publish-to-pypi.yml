@@ -147,7 +147,7 @@ jobs:
     - name: Test package installation
       run: |
         echo "🧪 Testing package installation..."
-        uv venv test-env
-        source test-env/bin/activate
+        uv sync --no-dev
+        source .venv/bin/activate
         uv pip install dist/*.whl
         python -c "import machineconfig; print('✅ Package imports successfully')"
