@@ -131,7 +131,8 @@ def get_agents_launch_layout(session_root: Path):
     prompt_root = session_root / "prompts"
     all_dirs_under_prompts = [d for d in prompt_root.iterdir() if d.is_dir()]
     launch_agents_squentially = ""
-    for idx, a_prompt_dir in enumerate(all_dirs_under_prompts):
+    for a_prompt_dir in all_dirs_under_prompts:
+        idx = a_prompt_dir.name.split("_")[-1]  # e.g., agent_0 -> 0
         agent_cmd_path = a_prompt_dir / AGENT_NAME_FORMATTER.format(idx=idx)
         fire_cmd = f"bash {shlex.quote(str(agent_cmd_path))}"
         tab_config.append(TabConfig(tabName=f"Agent{idx}", startDir=str(session_root.parent.parent.parent), command=fire_cmd))
