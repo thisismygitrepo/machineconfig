@@ -85,7 +85,7 @@ uv venv
     if dot_git_ignore_path.exists():
         dot_git_ignore_content = dot_git_ignore_path.read_text(encoding="utf-8")
         to_add: list[str] = []
-        to_check_for: list[str] = [".links", "notebooks", ".ai", ".scripts", "GEMINI.md", "CLAUDE.md", ".cursor", ".github"]
+        to_check_for: list[str] = [".links", "notebooks", ".ai", ".scripts", "GEMINI.md", "CLAUDE.md", ".cursor", ".github/instructions", ".github/chatmodes", ".github/prompts"]
         for item in to_check_for:
             if item not in dot_git_ignore_content:
                 to_add.append(item)

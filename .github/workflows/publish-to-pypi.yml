@@ -126,8 +126,8 @@ jobs:
       with:
         enable-cache: true
 
-    - name: Set up Python
-      run: uv python install 3.13
+    - name: Set up venv
+      run: uv sync --no-dev
 
     - name: Clean previous build artifacts
       run: |
