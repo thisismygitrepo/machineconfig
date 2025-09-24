@@ -90,7 +90,8 @@ def main():  # noqa: C901 - (complexity acceptable for CLI glue)
     splitting_strategy = cast(SPLITTING_STRATEGY, choose_one_option(header="Choose prompt splitting strategy:", options=get_args(SPLITTING_STRATEGY)))
     prompt_material_re_splitted = redistribute_prompts(prompt_material=prompt_material, separator=separator, splitting_strategy=splitting_strategy)
     agent_selected = cast(AGENTS, choose_one_option(header="Select agent type", options=get_args(AGENTS)))
-    prompt_prefix = input("Enter prefix prompt: ")
+    print("Enter prefix prompt (end with Ctrl-D / Ctrl-Z):")
+    prompt_prefix = "\n".join(sys.stdin.readlines())
     job_name = input("Enter job name [AI_AGENTS]: ") or "AI_Agents"
     keep_material_in_separate_file_input = input("Keep prompt material in separate file? [y/N]: ").strip().lower() == "y"
     agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, max_agents=25, job_name=job_name)
