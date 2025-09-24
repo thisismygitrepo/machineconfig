@@ -73,8 +73,6 @@ def _display_summary(results: list[RepositoryUpdateResult]) -> None:
             changes = []
             if result["pyproject_changed"]:
                 changes.append("pyproject.toml")
-            if result["uv_lock_changed"]:
-                changes.append("uv.lock")
             print(f"      📋 Dependencies changed: {', '.join(changes)}")
             
         if result["uv_sync_ran"]:
@@ -156,7 +154,6 @@ def main(verbose: bool = True, allow_password_prompt: bool = False) -> None:
                 "commit_after": "",
                 "commits_changed": False,
                 "pyproject_changed": False,
-                "uv_lock_changed": False,
                 "dependencies_changed": False,
                 "uv_sync_ran": False,
                 "uv_sync_success": False,
@@ -171,7 +168,7 @@ def main(verbose: bool = True, allow_password_prompt: bool = False) -> None:
 Exception: {ex}
 {"-" * 50}""")
     
-    # Run uv sync for repositories where pyproject.toml or uv.lock changed but sync wasn't run yet
+    # Run uv sync for repositories where pyproject.toml changed but sync wasn't run yet
     for repo_path in repos_with_changes:
         run_uv_sync(repo_path)
     

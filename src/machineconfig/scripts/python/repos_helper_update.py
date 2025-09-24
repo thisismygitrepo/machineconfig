@@ -15,7 +15,6 @@ class RepositoryUpdateResult(TypedDict):
     commit_after: str
     commits_changed: bool
     pyproject_changed: bool
-    uv_lock_changed: bool
     dependencies_changed: bool
     uv_sync_ran: bool
     uv_sync_success: bool
@@ -80,7 +79,6 @@ def update_repository(repo: git.Repo, auto_sync: bool, allow_password_prompt: bo
         "commit_after": "",
         "commits_changed": False,
         "pyproject_changed": False,
-        "uv_lock_changed": False,
         "dependencies_changed": False,
         "uv_sync_ran": False,
         "uv_sync_success": False,
@@ -104,33 +102,18 @@ def update_repository(repo: git.Repo, auto_sync: bool, allow_password_prompt: bo
         result["uncommitted_files"] = changed_files
         print(f"⚠️  Repository has uncommitted changes: {', '.join(changed_files)}")
 
-        # Check if the only change is uv.lock
-        if len(changed_files) == 1 and changed_files[0] == "uv.lock":
-            print("🔒 Only uv.lock has changes, resetting it...")
-            try:
-                # Reset uv.lock file
-                subprocess.run(["git", "checkout", "HEAD", "--", "uv.lock"], cwd=repo_path, check=True)
-                print("✅ uv.lock has been reset")
-            except subprocess.CalledProcessError as e:
-                result["status"] = "error"
-                result["error_message"] = f"Failed to reset uv.lock: {e}"
-                print(f"❌ Failed to reset uv.lock: {e}")
-                return result
-        else:
-            # Multiple files or files other than uv.lock have changes
-            result["status"] = "error"
-            result["error_message"] = f"Cannot update repository - there are pending changes in: {', '.join(changed_files)}. Please commit or stash your changes first."
-            raise RuntimeError(result["error_message"])
+        # Repository has uncommitted changes - cannot update
+        result["status"] = "error"
+        result["error_message"] = f"Cannot update repository - there are pending changes in: {', '.join(changed_files)}. Please commit or stash your changes first."
+        raise RuntimeError(result["error_message"])
     else:
         print("✅ Repository is clean")
 
-    # Check if this repo has pyproject.toml or uv.lock
+    # Check if this repo has pyproject.toml
     pyproject_path = repo_path / "pyproject.toml"
-    uv_lock_path = repo_path / "uv.lock"
 
     # Get hashes before pull
     pyproject_hash_before = get_file_hash(pyproject_path)
-    uv_lock_hash_before = get_file_hash(uv_lock_path)
 
     # Get current commit hash before pull
     result["commit_before"] = repo.head.commit.hexsha
@@ -239,18 +222,12 @@ def update_repository(repo: git.Repo, auto_sync: bool, allow_password_prompt: bo
                 print(f"⚠️  Failed to pull from {remote.name}: {e}")
                 continue
 
-        # Check if pyproject.toml or uv.lock changed after pull
+        # Check if pyproject.toml changed after pull
         pyproject_hash_after = get_file_hash(pyproject_path)
-        uv_lock_hash_after = get_file_hash(uv_lock_path)
 
         if pyproject_hash_before != pyproject_hash_after:
             print("📋 pyproject.toml has changed")
             result["pyproject_changed"] = True
-            result["dependencies_changed"] = True
-
-        if uv_lock_hash_before != uv_lock_hash_after:
-            print("🔒 uv.lock has changed")
-            result["uv_lock_changed"] = True
             result["dependencies_changed"] = True
 
         # Special handling for machineconfig repository
