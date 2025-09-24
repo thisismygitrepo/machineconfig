@@ -160,5 +160,8 @@ notebooks
 GEMINI.md
 CLAUDE.md
 .cursor
-.github
 # scripts
+.github/instructions
+.github/chatmodes
+.github/prompts
+

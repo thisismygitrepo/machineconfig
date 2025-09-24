@@ -1,0 +1,151 @@
+name: Build and Publish to PyPI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    # For testing the workflow on PRs, but won't publish
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version-changed: ${{ steps.check-version.outputs.changed }}
+      current-version: ${{ steps.check-version.outputs.current-version }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch full history to compare versions
+
+    - name: Check if version changed
+      id: check-version
+      run: |
+        # Get current version from pyproject.toml
+        CURRENT_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+        echo "current-version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+        
+        # Check if this is the first commit or if we should compare versions
+        if git rev-parse HEAD~1 >/dev/null 2>&1; then
+          # Get previous version from the previous commit
+          PREVIOUS_VERSION=$(git show HEAD~1:pyproject.toml | grep '^version = ' | sed 's/version = "\(.*\)"/\1/' || echo "")
+          
+          echo "Current version: $CURRENT_VERSION"
+          echo "Previous version: $PREVIOUS_VERSION"
+          
+          if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ] && [ -n "$PREVIOUS_VERSION" ]; then
+            echo "Version changed from $PREVIOUS_VERSION to $CURRENT_VERSION"
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "Version unchanged: $CURRENT_VERSION"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+        else
+          # First commit, assume we want to publish
+          echo "First commit, will publish version: $CURRENT_VERSION"
+          echo "changed=true" >> $GITHUB_OUTPUT
+        fi
+
+  build-and-publish:
+    needs: check-version
+    runs-on: ubuntu-latest
+    if: needs.check-version.outputs.version-changed == 'true' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+
+    - name: Set up Python
+      run: uv python install 3.13
+
+    - name: Clean previous build artifacts
+      run: |
+        echo "🧹 Cleaning previous build artifacts..."
+        rm -rf dist/ build/ *.egg-info/
+
+    - name: Build package
+      run: |
+        echo "🔨 Building package..."
+        uv build
+
+    - name: List built artifacts
+      run: |
+        echo "📦 Listing built artifacts:"
+        ls -la dist/
+
+    - name: Publish to PyPI
+      env:
+        PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+      run: |
+        echo "🚀 Publishing to PyPI..."
+        uv publish --token $PYPI_TOKEN
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ needs.check-version.outputs.current-version }}
+        name: Release v${{ needs.check-version.outputs.current-version }}
+        body: |
+          ## Changes
+          
+          Version ${{ needs.check-version.outputs.current-version }} has been released and published to PyPI.
+          
+          Install with:
+          ```bash
+          pip install machineconfig==${{ needs.check-version.outputs.current-version }}
+          ```
+          
+          Or with uv:
+          ```bash
+          uv add machineconfig==${{ needs.check-version.outputs.current-version }}
+          ```
+        files: |
+          dist/*
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test-build:
+    needs: check-version
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && needs.check-version.outputs.version-changed == 'false')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+
+    - name: Set up Python
+      run: uv python install 3.13
+
+    - name: Clean previous build artifacts
+      run: |
+        echo "🧹 Cleaning previous build artifacts..."
+        rm -rf dist/ build/ *.egg-info/
+
+    - name: Test build package
+      run: |
+        echo "🔨 Testing package build..."
+        uv build
+
+    - name: List built artifacts
+      run: |
+        echo "📦 Listing built artifacts:"
+        ls -la dist/
+        
+    - name: Test package installation
+      run: |
+        echo "🧪 Testing package installation..."
+        uv pip install --system dist/*.whl
+        python -c "import machineconfig; print('✅ Package imports successfully')"
