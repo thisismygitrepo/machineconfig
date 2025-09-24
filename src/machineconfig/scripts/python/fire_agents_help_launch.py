@@ -33,6 +33,7 @@ def prep_agent_launch(repo_root: Path, prompts_material: list[str], prompt_prefi
     prompt_folder = session_root / "prompts"
     prompt_folder.mkdir(parents=True, exist_ok=True)
 
+    all_materials_scripts: list[Path] = []
     for idx, a_prompt_material in enumerate(prompts_material):
         prompt_root = prompt_folder / f"agent_{idx}"
         prompt_root.mkdir(parents=True, exist_ok=True)
@@ -40,9 +41,10 @@ def prep_agent_launch(repo_root: Path, prompts_material: list[str], prompt_prefi
         if keep_material_in_separate_file:
             prompt_material_path = prompt_root / f"agent_{idx}_material.txt"
             prompt_material_path.write_text(a_prompt_material, encoding="utf-8")
-            prompt_path.write_text(prompt_prefix + f"""\nPlease only look @ {prompt_material_path}. You don't need to do any other work beside the content of this file.""", encoding="utf-8")
+            prompt_path.write_text(prompt_prefix + f"""\nPlease only look @ {prompt_material_path}. You don't need to do any other work beside the content of this material file.""", encoding="utf-8")
+            all_materials_scripts.append(prompt_material_path)
         else:
-            prompt_path.write_text(prompt_prefix + "\n" + a_prompt_material, encoding="utf-8")
+            prompt_path.write_text(prompt_prefix + """\nPlease only look @ the following:\n""" + a_prompt_material, encoding="utf-8")
 
         agent_cmd_launch_path = prompt_root / AGENT_NAME_FORMATTER.format(idx=idx)  # e.g., agent_0_cmd.sh
         random_sleep_time = random.uniform(0, 5)
@@ -116,6 +118,10 @@ echo "---------END OF AGENT OUTPUT---------"
 
 
     # print(f"Launching a template with #{len(tab_config)} agents")
+    if len(all_materials_scripts) > 0:
+        all_materials_list_path = session_root / "all_materials_redistributed.txt"
+        all_materials_list_path.write_text("\n".join(str(p) for p in all_materials_scripts), encoding="utf-8")
+        print(f"All prompt materials listed @ {all_materials_list_path}")
     return session_root
 
 
@@ -124,9 +130,12 @@ def get_agents_launch_layout(session_root: Path):
     tab_config: list[TabConfig] = []
     prompt_root = session_root / "prompts"
     all_dirs_under_prompts = [d for d in prompt_root.iterdir() if d.is_dir()]
+    launch_agents_squentially = ""
     for idx, a_prompt_dir in enumerate(all_dirs_under_prompts):
         agent_cmd_path = a_prompt_dir / AGENT_NAME_FORMATTER.format(idx=idx)
         fire_cmd = f"bash {shlex.quote(str(agent_cmd_path))}"
         tab_config.append(TabConfig(tabName=f"Agent{idx}", startDir=str(session_root.parent.parent.parent), command=fire_cmd))
+        launch_agents_squentially += f". {shlex.quote(str(agent_cmd_path))}\n"
     layout = LayoutConfig(layoutName="Agents", layoutTabs=tab_config)
+    (session_root / "launch_all_agents_sequentially.sh").write_text(launch_agents_squentially, encoding="utf-8")
     return layout
