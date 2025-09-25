@@ -1,5 +1,5 @@
 from pathlib import Path
-from machineconfig.utils.source_of_truth import REPO_ROOT
+from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 
 def get_generic_instructions_path() -> Path:
-    return REPO_ROOT.joinpath("scripts/python/ai/instructions/python/dev.instructions.md")
+    return LIBRARY_ROOT.joinpath("scripts/python/ai/solutions/copilot/instructions/python/dev.instructions.md")

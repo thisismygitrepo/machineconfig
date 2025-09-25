@@ -1,6 +1,11 @@
 from pathlib import Path
 
-from machineconfig.scripts.python.ai.solutions import claude, cline, crush, cursors, github_copilot, generic
+from machineconfig.scripts.python.ai.solutions import generic
+from machineconfig.scripts.python.ai.solutions.claude import claude
+from machineconfig.scripts.python.ai.solutions.cline import cline
+from machineconfig.scripts.python.ai.solutions.copilot import github_copilot
+from machineconfig.scripts.python.ai.solutions.crush import crush
+from machineconfig.scripts.python.ai.solutions.cursor import cursors
 from machineconfig.scripts.python.ai.solutions.gemini import gemini
 from machineconfig.utils.ve import get_repo_root
 

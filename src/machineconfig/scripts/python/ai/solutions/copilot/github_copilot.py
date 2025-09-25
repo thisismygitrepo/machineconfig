@@ -1,14 +1,14 @@
 from pathlib import Path
 
 from machineconfig.scripts.python.ai.solutions._shared import get_generic_instructions_path
-from machineconfig.utils.source_of_truth import REPO_ROOT
+from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 
 
 
 def build_configuration(repo_root: Path) -> None:
-    instructions_repository_dir = REPO_ROOT.joinpath("scripts/python/ai/instructions")
-    chatmodes_dir = REPO_ROOT.joinpath("scripts/python/ai/chatmodes")
-    prompts_dir = REPO_ROOT.joinpath("scripts/python/ai/prompts")
+    instructions_repository_dir = LIBRARY_ROOT.joinpath("scripts/python/ai/solutions/copilot/instructions")
+    chatmodes_dir = LIBRARY_ROOT.joinpath("scripts/python/ai/solutions/copilot/chatmodes")
+    prompts_dir = LIBRARY_ROOT.joinpath("scripts/python/ai/solutions/copilot/prompts")
 
     github_dir = repo_root.joinpath(".github")
     chatmodes_target_dir = github_dir.joinpath("chatmodes")

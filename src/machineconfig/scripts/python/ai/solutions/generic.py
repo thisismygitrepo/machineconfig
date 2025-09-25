@@ -1,10 +1,10 @@
 from pathlib import Path
 
-from machineconfig.utils.source_of_truth import REPO_ROOT
+from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 
 
 def create_dot_scripts(repo_root: Path) -> None:
-    scripts_dir = REPO_ROOT.joinpath("scripts/python/ai/scripts")
+    scripts_dir = LIBRARY_ROOT.joinpath("scripts/python/ai/scripts")
     target_dir = repo_root.joinpath(".scripts")
     target_dir.mkdir(parents=True, exist_ok=True)
     for script_path in scripts_dir.iterdir():
