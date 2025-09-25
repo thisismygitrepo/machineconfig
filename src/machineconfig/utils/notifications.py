@@ -1,4 +1,5 @@
 """Notifications Module"""
+
 from pathlib import Path
 import smtplib
 import imaplib

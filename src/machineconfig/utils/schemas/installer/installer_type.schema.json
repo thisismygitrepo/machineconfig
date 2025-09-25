@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bytesense.local/schemas/installer_type.schema.json",
+  "title": "Installer Types Schema",
+  "description": "Schema for installer data structures",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema or config version."
+    },
+    "installers": {
+      "type": "array",
+      "description": "List of installer data.",
+      "items": {
+        "$ref": "#/definitions/InstallerData"
+      }
+    }
+  },
+  "required": ["version", "installers"],
+  "definitions": {
+    "CPU_ARCHITECTURES": {
+      "enum": ["amd64", "arm64"]
+    },
+    "OPERATING_SYSTEMS": {
+      "enum": ["windows", "linux", "macos"]
+    },
+    "InstallerData": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "appName": {
+          "type": "string",
+          "description": "Name of the application."
+        },
+        "repoURL": {
+          "type": "string",
+          "description": "URL of the repository."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Documentation string."
+        },
+        "filenameTemplate": {
+          "type": "object",
+          "description": "Template for filenames by architecture and OS.",
+          "additionalProperties": false,
+          "properties": {
+            "amd64": {
+              "$ref": "#/definitions/ArchTemplate"
+            },
+            "arm64": {
+              "$ref": "#/definitions/ArchTemplate"
+            }
+          },
+          "required": ["amd64", "arm64"]
+        },
+        "stripVersion": {
+          "type": "boolean",
+          "description": "Whether to strip version from filename."
+        },
+        "exeName": {
+          "type": "string",
+          "description": "Name of the executable."
+        }
+      },
+      "required": ["appName", "repoURL", "doc", "filenameTemplate", "stripVersion", "exeName"]
+    },
+    "ArchTemplate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "windows": {
+          "type": "string",
+          "description": "Filename template for Windows."
+        },
+        "linux": {
+          "type": "string",
+          "description": "Filename template for Linux."
+        },
+        "macos": {
+          "type": "string",
+          "description": "Filename template for macOS."
+        }
+      },
+      "required": ["windows", "linux", "macos"]
+    }
+  }
+}

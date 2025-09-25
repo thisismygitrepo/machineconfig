@@ -276,12 +276,6 @@ ERROR Argument `str` is not assignable to parameter `object` with type `LiteralS
 62 |                 formatted_args.append(f'"{arg}"')
    |                                       ^^^^^^^^^^
    |
-ERROR Class `Installer` has no class attribute `from_dict` [missing-attribute]
-  --> src/machineconfig/jobs/python_custom_installers/dev/espanso.py:71:17
-   |
-71 |     installer = Installer.from_dict(config_dict, name="espanso")
-   |                 ^^^^^^^^^^^^^^^^^^^
-   |
 ERROR No attribute `windll` in module `ctypes` [missing-attribute]
   --> src/machineconfig/profile/create.py:73:32
    |

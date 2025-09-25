@@ -106,7 +106,6 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 npm install -g easy-sharing
 npm install -g lolcatjs
 npm install -g figlet-cli
-npm install -g @google/gemini-cli
 # npm install -g @pnp/cli-microsoft365
 
 Write-Output "Finished installing apps"

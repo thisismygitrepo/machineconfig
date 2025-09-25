@@ -367,17 +367,6 @@
       "exeName": "mprocs"
     },
     {
-      "appName": "opencommit",
-      "repoURL": "npm install -g opencommit",
-      "doc": "📝 Opencommit is a cli tool to help you write better commit messages.",
-      "filenameTemplate": {
-        "amd64": {},
-        "arm64": {}
-      },
-      "stripVersion": false,
-      "exeName": "opencommit"
-    },
-    {
       "appName": "ouch",
       "repoURL": "https://github.com/ouch-org/ouch",
       "doc": "📦 A cli for extracting and creating archives in unified way.",

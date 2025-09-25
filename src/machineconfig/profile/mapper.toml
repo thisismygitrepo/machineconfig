@@ -248,9 +248,6 @@ token = {this = '~/.copilot-cli-access-token', to_this = '~/dotfiles/creds/llm/g
 [aider]
 config = {this = '~/.aider.conf.yml', to_this = '~/dotfiles/creds/llm/aider/.aider.conf.yml'}
 
-[opencommit]
-opencommit = {this = '~/.opencommit', to_this = '~/dotfiles/creds/llm/opencommit_cli/.opencommit'}
-
 [m365]
 config1 = {this = '~/.cli-m365-msal.json',            to_this = '~/dotfiles/creds/tokens/.cli-m365-msal.json'}
 config2 = {this = '~/.cli-m365-all-connections.json', to_this = '~/dotfiles/creds/tokens/.cli-m365-all-connections.json'}
