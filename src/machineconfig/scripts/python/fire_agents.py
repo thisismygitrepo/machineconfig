@@ -15,7 +15,7 @@ import sys
 from machineconfig.scripts.python.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout, AGENTS
 from machineconfig.scripts.python.fire_agents_help_search import search_files_by_pattern, search_python_files
 from machineconfig.scripts.python.fire_agents_load_balancer import chunk_prompts, SPLITTING_STRATEGY, DEFAULT_AGENT_CAP
-from machineconfig.utils.options import choose_one_option
+from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig
 from machineconfig.utils.accessories import get_repo_root
 
@@ -80,9 +80,9 @@ def main():  # noqa: C901 - (complexity acceptable for CLI glue)
         sys.exit(1)
     print(f"Operating @ {repo_root}")
 
-    search_strategy = cast(SEARCH_STRATEGIES, choose_one_option(header="Choose search strategy:", options=get_args(SEARCH_STRATEGIES)))
-    splitting_strategy = cast(SPLITTING_STRATEGY, choose_one_option(header="Choose prompt splitting strategy:", options=get_args(SPLITTING_STRATEGY)))
-    agent_selected = cast(AGENTS, choose_one_option(header="Select agent type", options=get_args(AGENTS)))
+    search_strategy = cast(SEARCH_STRATEGIES, choose_from_options(multi=False, msg="Choose one option", header="Choose search strategy:", options=get_args(SEARCH_STRATEGIES)))
+    splitting_strategy = cast(SPLITTING_STRATEGY, choose_from_options(multi=False, msg="Choose one option", header="Choose prompt splitting strategy:", options=get_args(SPLITTING_STRATEGY)))
+    agent_selected = cast(AGENTS, choose_from_options(multi=False, msg="Choose one option", header="Select agent type", options=get_args(AGENTS)))
     print("Enter prefix prompt (end with Ctrl-D / Ctrl-Z):")
     prompt_prefix = "\n".join(sys.stdin.readlines())
     job_name = input("Enter job name [AI_AGENTS]: ") or "AI_Agents"

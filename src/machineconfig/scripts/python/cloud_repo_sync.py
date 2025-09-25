@@ -9,7 +9,7 @@ from machineconfig.utils.accessories import randstr
 
 from machineconfig.scripts.python.helpers.repo_sync_helpers import fetch_dotfiles
 from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
-from machineconfig.utils.options import choose_one_option
+from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.code import get_shell_file_executing_python_script, write_shell_script_to_file
 import platform
 import argparse
@@ -141,7 +141,7 @@ git commit -am "finished merging"
         program_content = None
         match action:
             case "ask":
-                choice = choose_one_option(options=[option1, option2, option3, option4], fzf=False)
+                choice = choose_from_options(multi=False, msg="Choose one option", options=[option1, option2, option3, option4], fzf=False)
                 if choice == option1:
                     program_content = shell_file_1.read_text(encoding="utf-8")
                 elif choice == option2:

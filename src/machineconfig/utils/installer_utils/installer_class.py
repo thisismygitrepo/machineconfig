@@ -37,12 +37,12 @@ class Installer:
     @staticmethod
     def choose_app_and_install():
         print(f"\n{'=' * 80}\n🔍 SELECT APPLICATION TO INSTALL 🔍\n{'=' * 80}")
-        from machineconfig.utils.options import choose_one_option
+        from machineconfig.utils.options import choose_from_options
 
         print("📂 Searching for configuration files...")
         jobs_dir = Path(LIBRARY_ROOT.joinpath("jobs"))
         config_paths = [Path(p) for p in jobs_dir.rglob("config.json")]
-        path = choose_one_option(options=config_paths)
+        path = choose_from_options(multi=False, options=config_paths, msg="Choose one option")
         print(f"📄 Loading configuration from: {path}")
         config_data = read_json(path)
         installer_data_files = InstallerDataFiles(config_data)
@@ -50,7 +50,7 @@ class Installer:
         # Extract app names from the installers
         app_names = [installer["appName"] for installer in installer_data_files["installers"]]
         print("🔍 Select an application to install:")
-        app_name = choose_one_option(options=app_names, fzf=True)
+        app_name = choose_from_options(multi=False, options=app_names, fzf=True, msg="Choose one option")
 
         # Find the selected installer data
         selected_installer_data = None

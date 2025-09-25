@@ -2,7 +2,7 @@
 fire
 
 # https://github.com/pallets/click combine with fire. Consider
-# https://github.com/ceccopierangiolieugenio/pyTermTk for display_options build TUI
+# https://github.com/ceccopierangiolieugenio/pyTermTk for choose_from_options build TUI
 # https://github.com/chriskiehl/Gooey build commandline interface
 
 """
@@ -12,7 +12,7 @@ from machineconfig.scripts.python.helpers.helpers4 import convert_kwargs_to_fire
 from machineconfig.scripts.python.helpers.helpers4 import parse_pyfile
 from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
 from machineconfig.utils.ve import get_ve_activate_line, get_ve_path_and_ipython_profile
-from machineconfig.utils.options import display_options, choose_one_option
+from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.path_helper import match_file_name, sanitize_path
 
 from machineconfig.utils.path_extended import PathExtended as PathExtended
@@ -39,7 +39,7 @@ def route(args: FireJobArgs) -> None:
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
         files = search_for_files_of_interest(path_obj)
         print(f"🔍 Got #{len(files)} results.")
-        choice_file = choose_one_option(options=files, fzf=True)
+        choice_file = choose_from_options(multi=False, options=files, fzf=True, msg="Choose one option")
         choice_file = PathExtended(choice_file)
     else:
         choice_file = path_obj
@@ -60,7 +60,7 @@ def route(args: FireJobArgs) -> None:
     if args.choose_function or args.submit_to_cloud:
         if choice_file.suffix == ".py":
             options, func_args = parse_pyfile(file_path=str(choice_file))
-            choice_function_tmp = display_options(msg="Choose a function to run", options=options, fzf=True, multi=False)
+            choice_function_tmp = choose_from_options(msg="Choose a function to run", options=options, fzf=True, multi=False)
             assert isinstance(choice_function_tmp, str), f"choice_function must be a string. Got {type(choice_function_tmp)}"
             choice_index = options.index(choice_function_tmp)
             choice_function = choice_function_tmp.split(" -- ")[0]
@@ -81,7 +81,7 @@ def route(args: FireJobArgs) -> None:
                 if line.startswith("echo"):
                     continue
                 options.append(line)
-            chosen_lines = display_options(msg="Choose a line to run", options=options, fzf=True, multi=True)
+            chosen_lines = choose_from_options(msg="Choose a line to run", options=options, fzf=True, multi=True)
             choice_file = PathExtended.tmpfile(suffix=".sh")
             choice_file.parent.mkdir(parents=True, exist_ok=True)
             choice_file.write_text("\n".join(chosen_lines), encoding="utf-8")

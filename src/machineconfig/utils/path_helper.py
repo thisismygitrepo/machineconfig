@@ -1,5 +1,5 @@
 from machineconfig.utils.path_extended import PathExtended as PathExtended
-from machineconfig.utils.options import choose_one_option
+from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.source_of_truth import EXCLUDE_DIRS
 from rich.console import Console
 from rich.panel import Panel
@@ -83,7 +83,7 @@ def match_file_name(sub_string: str, search_root: PathExtended, suffixes: set[st
         if len(reduced_scripts) == 1:
             return PathExtended(reduced_scripts[0])
         elif len(reduced_scripts) > 1:
-            choice = choose_one_option(msg="Multiple matches found", options=reduced_scripts, fzf=True)
+            choice = choose_from_options(multi=False, msg="Multiple matches found", options=reduced_scripts, fzf=True)
             return PathExtended(choice)
         print(f"Result: This still generated {len(reduced_scripts)} results.")
         if len(reduced_scripts) < 10:

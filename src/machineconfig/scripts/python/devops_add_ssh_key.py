@@ -2,7 +2,7 @@
 
 from platform import system
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT
-from machineconfig.utils.options import display_options
+from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from rich.console import Console
 from rich.panel import Panel
@@ -84,9 +84,7 @@ def main() -> None:
     i_have_path_option = "I have the path to the key file"
     i_paste_option = "I want to paste the key itself"
 
-    res = display_options("Which public key to add? ", options=[str(x) for x in pub_keys] + [all_keys_option, i_have_path_option, i_paste_option])
-    assert isinstance(res, str), f"Got {res} of type {type(res)} instead of str."
-
+    res = choose_from_options("Which public key to add? ", options=[str(x) for x in pub_keys] + [all_keys_option, i_have_path_option, i_paste_option], multi=False)
     if res == all_keys_option:
         console.print(Panel(f"🔄 Processing all {len(pub_keys)} public keys...", title="[bold blue]Processing[/bold blue]", border_style="blue"))
         program = "\n\n\n".join([get_add_ssh_key_script(key) for key in pub_keys])

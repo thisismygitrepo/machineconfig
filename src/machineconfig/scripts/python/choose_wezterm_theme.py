@@ -2,7 +2,7 @@
 Choose a theme for Wezterm
 """
 
-from machineconfig.utils.options import choose_one_option
+from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.path_extended import PathExtended
 from typing import Any
 import time
@@ -45,7 +45,7 @@ schemes_list = [
 
 def main2():
     console.print(Panel("🎨 WezTerm Theme Selector", title_align="left", border_style="green"))
-    option = choose_one_option(options=schemes_list, header="Choose a theme for Wezterm", fzf=True)
+    option = choose_from_options(multi=False, options=schemes_list, header="Choose a theme for Wezterm", fzf=True, msg="Use arrow keys to navigate, Enter to select a theme")
     set_theme(option)
     print(f"✅ Theme set to: {option}")
 

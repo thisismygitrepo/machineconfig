@@ -207,12 +207,12 @@
 #     for a_dir in tasks_dirs:
 #         tasks.append(read_task_from_dir(a_dir))
 
-#     from machineconfig.utils.utils import choose_multiple_options
+#     from machineconfig.utils.utils import choose_from_options
 
 #     # Create data for tasks display
 #     task_data = [Report.from_path(path=a_task.report_path).__dict__ for a_task in tasks]
 #     task_display = format_table_markdown(task_data)
-#     tasks_chosen_raw = choose_multiple_options(task_display.splitlines(), "📋 Choose tasks to run")
+#     tasks_chosen_raw = choose_from_options(multi=True, task_display.splitlines(), "📋 Choose tasks to run")
 #     tasks_chosen = [tasks[int(a_task_chosen.split("|")[1])] for a_task_chosen in tasks_chosen_raw]
 
 #     print(f"""

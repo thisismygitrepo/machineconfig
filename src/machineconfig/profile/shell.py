@@ -94,7 +94,7 @@ def create_default_shell_profile() -> None:
 #     console.print(Panel("🔄 Adding sources to shell profile", title="[bold blue]Sources[/bold blue]", border_style="blue"))
 
 #     if choice is None:
-#         choice_obj = display_options(msg="Which patch to add?", options=sources + ["all", "none(EXIT)"], default="none(EXIT)", multi=True)
+#         choice_obj = choose_from_options(msg="Which patch to add?", options=sources + ["all", "none(EXIT)"], default="none(EXIT)", multi=True)
 #         if isinstance(choice_obj, str):
 #             if choice_obj == "all":
 #                 choice = choice_obj
@@ -139,7 +139,7 @@ def create_default_shell_profile() -> None:
 #     console.print(Panel("🩹 Adding patches to shell profile", title="[bold blue]Patches[/bold blue]", border_style="blue"))
 
 #     if choice is None:
-#         choice_chosen = display_options(msg="Which patch to add?", options=list(patches) + ["all", "none(EXIT)"], default="none(EXIT)", multi=False)
+#         choice_chosen = choose_from_options(msg="Which patch to add?", options=list(patches) + ["all", "none(EXIT)"], default="none(EXIT)", multi=False)
 #         assert isinstance(choice_chosen, str), f"Choice must be a string or a list of strings, not {type(choice)}"
 #         choice = choice_chosen
 #     if choice == "none(EXIT)":

@@ -2,7 +2,7 @@ from pathlib import Path
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, LayoutsFile
 from typing import Optional, TYPE_CHECKING
 from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_interest
-from machineconfig.utils.options import choose_one_option
+from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.path_helper import match_file_name, sanitize_path
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 
@@ -18,9 +18,9 @@ def select_layout(layouts_json_file: Path, layout_name: Optional[str]):
         raise ValueError(f"No layouts found in {layouts_json_file}")
     if layout_name is None:
         options = [layout["layoutName"] for layout in layout_file["layouts"]]
-        from machineconfig.utils.options import choose_one_option
+        from machineconfig.utils.options import choose_from_options
 
-        layout_name = choose_one_option(options=options, prompt="Choose a layout configuration:", fzf=True)
+        layout_name = choose_from_options(multi=False, options=options, prompt="Choose a layout configuration:", fzf=True, msg="Choose one option")
     print(f"Selected layout: {layout_name}")
     layout_chosen = next((layout for layout in layout_file["layouts"] if layout["layoutName"] == layout_name), None)
     if layout_chosen is None:
@@ -59,7 +59,7 @@ def handle_layout_args(args: "FireJobArgs") -> None:
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
         files = search_for_files_of_interest(path_obj)
         print(f"🔍 Got #{len(files)} results.")
-        choice_file = choose_one_option(options=files, fzf=True)
+        choice_file = choose_from_options(multi=False, options=files, fzf=True, msg="Choose one option")
         choice_file = PathExtended(choice_file)
     else:
         choice_file = path_obj

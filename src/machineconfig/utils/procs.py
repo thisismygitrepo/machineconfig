@@ -3,7 +3,7 @@
 import psutil
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from zoneinfo import ZoneInfo
-from machineconfig.utils.options import display_options
+from machineconfig.utils.options import choose_from_options
 from typing import Optional, Any
 from rich.console import Console
 from rich.panel import Panel
@@ -120,7 +120,7 @@ class ProcessManager:
         # Format data as table for display
         formatted_data = self._format_process_table()
         options = formatted_data.split("\n")[1:]  # Skip header
-        res = display_options(options=formatted_data.split("\n"), msg="📋 Select processes to manage:", fzf=True, multi=True)
+        res = choose_from_options(options=formatted_data.split("\n"), msg="📋 Select processes to manage:", fzf=True, multi=True)
         indices = [options.index(val) for val in res]
         selected_processes = [self.data[i] for i in indices]
 

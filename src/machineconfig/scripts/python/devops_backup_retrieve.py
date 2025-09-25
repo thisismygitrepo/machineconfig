@@ -5,7 +5,7 @@ from machineconfig.utils.io import read_ini
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT, DEFAULTS_PATH
 from machineconfig.utils.code import print_code
-from machineconfig.utils.options import choose_cloud_interactively, choose_multiple_options
+from machineconfig.utils.options import choose_cloud_interactively, choose_from_options
 from machineconfig.scripts.python.helpers.helpers2 import ES
 from platform import system
 from typing import Any, Literal, Optional
@@ -40,7 +40,7 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None) -> Non
 
     if which is None:
         console.print(Panel(f"🔍 SELECT {direction} ITEMS\n📋 Choose which configuration entries to process", title="[bold blue]Select Items[/bold blue]", border_style="blue"))
-        choices = choose_multiple_options(msg=f"WHICH FILE of the following do you want to {direction}?", options=["all"] + list(bu_file.keys()))
+        choices = choose_from_options(multi=True, msg=f"WHICH FILE of the following do you want to {direction}?", options=["all"] + list(bu_file.keys()))
     else:
         choices = which.split(",") if which else []
         console.print(Panel(f"🔖 PRE-SELECTED ITEMS\n📝 Using: {', '.join(choices)}", title="[bold blue]Pre-selected Items[/bold blue]", border_style="blue"))

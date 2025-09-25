@@ -1,6 +1,6 @@
 """devops with emojis"""
 
-from machineconfig.utils.options import display_options
+from machineconfig.utils.options import choose_from_options
 
 from platform import system
 from enum import Enum
@@ -45,7 +45,7 @@ def main(which: Optional[str] = None):
     options = [op.value for op in Options]
     if which is None:
         try:
-            choice_key = display_options(msg="", options=options, header="🛠️ DEVOPS", default=options[0])
+            choice_key = choose_from_options(msg="", options=options, header="🛠️ DEVOPS", default=options[0], multi=False)
         except KeyboardInterrupt:
             console.print(Panel("❌ Operation cancelled by user", title_align="left", border_style="red", width=BOX_WIDTH))
             return

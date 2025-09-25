@@ -3,7 +3,7 @@
 # import subprocess
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT
-from machineconfig.utils.options import choose_multiple_options
+from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.installer import get_installers, install_all
 from platform import system
 from typing import Any, Optional, Literal, TypeAlias, get_args
@@ -59,7 +59,7 @@ def main(which: Optional[WHICH_CAT | str]) -> None:
 
     options += list(get_args(WHICH_CAT))
     # print("s"*1000)
-    program_names = choose_multiple_options(msg="", options=options, header="🚀 CHOOSE DEV APP", default="AllEssentials")
+    program_names = choose_from_options(multi=True, msg="", options=options, header="🚀 CHOOSE DEV APP", default="AllEssentials")
 
     total_commands = ""
     installation_messages: list[str] = []
@@ -112,7 +112,7 @@ def get_programs_by_category(program_name: WHICH_CAT):
                 options_system = {**options_system_1, **options_system_2}
             else:
                 raise NotImplementedError(f"❌ System {system()} not supported")
-            program_names = choose_multiple_options(msg="", options=sorted(list(options_system.keys())), header="🚀 CHOOSE DEV APP")
+            program_names = choose_from_options(multi=True, msg="", options=sorted(list(options_system.keys())), header="🚀 CHOOSE DEV APP")
             program = ""
             for name in program_names:
                 print(f"""
@@ -127,7 +127,7 @@ def get_programs_by_category(program_name: WHICH_CAT):
         # case "OtherDevApps":
         #     installers = get_installers(dev=True, system=system())
         #     options__: list[str] = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")]
-        #     program_names = choose_multiple_options(msg="", options=sorted(options__) + ["all"], header="CHOOSE DEV APP")
+        #     program_names = choose_from_options(multi=True, msg="", options=sorted(options__) + ["all"], header="CHOOSE DEV APP")
         #     if "all" in program_names: program_names = options__
         #     program = ""
         #     print("Installing:")

@@ -1,6 +1,6 @@
 """Script to start terminals on windows and wsl"""
 
-from machineconfig.utils.options import display_options, get_ssh_hosts
+from machineconfig.utils.options import choose_from_options, get_ssh_hosts
 import platform
 from itertools import cycle
 from typing import Literal
@@ -98,7 +98,7 @@ def main():
     else:
         if args.hosts is None:
             print("🌐 No hosts provided. Displaying options...")
-            hosts = display_options(msg="Select hosts:", options=get_ssh_hosts() + [THIS_MACHINE], multi=True, fzf=True)
+            hosts = choose_from_options(msg="Select hosts:", options=get_ssh_hosts() + [THIS_MACHINE], multi=True, fzf=True)
         else:
             print("🌐 Using provided hosts:", args.hosts)
             hosts = args.hosts

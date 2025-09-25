@@ -1,6 +1,6 @@
 """Cloud mount script"""
 
-from machineconfig.utils.options import choose_one_option
+from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.io import read_ini
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 
@@ -59,7 +59,7 @@ def mount(cloud: Optional[str], network: Optional[str], destination: Optional[st
 
     config = get_rclone_config()
     if cloud is None:
-        res = choose_one_option(msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
+        res = choose_from_options(multi=False, msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
         if type(res) is str:
             cloud = res
         else:

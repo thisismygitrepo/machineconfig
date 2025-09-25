@@ -8,7 +8,7 @@ from rich.console import Console
 
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.links import symlink_func, symlink_copy
-from machineconfig.utils.options import display_options
+from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT
 from machineconfig.profile.shell import create_default_shell_profile
 
@@ -53,13 +53,13 @@ def apply_mapper(choice: Optional[str] = None):
 
     program_keys.sort()
     if choice is None:
-        choice_selected = display_options(msg="Which symlink to create?", options=program_keys + ["all", "none(EXIT)"], default="none(EXIT)", fzf=True, multi=True)
+        choice_selected = choose_from_options(msg="Which symlink to create?", options=program_keys + ["all", "none(EXIT)"], default="none(EXIT)", fzf=True, multi=True)
         assert isinstance(choice_selected, list)
         if len(choice_selected) == 1 and choice_selected[0] == "none(EXIT)":
             return  # terminate function.
         elif len(choice_selected) == 1 and choice_selected[0] == "all":
             choice_selected = "all"  # i.e. program_keys = program_keys
-        # overwrite = display_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
+        # overwrite = choose_from_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
         from rich.prompt import Confirm
 
         prioritize_to_this = Confirm.ask("Overwrite existing source file?", default=True)

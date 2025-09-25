@@ -243,7 +243,7 @@
 #         The reason it is not automated for remotes is because even though the server might have failed, the processes therein might be running, so there is no automated way to tell."""
 #         log = self.read_log()
 #         jobs_all: list[str] = [p.name for p in self.base_path.expanduser().joinpath("jobs").iterdir()]
-#         jobs_selected = display_options(options=jobs_all, msg="Select Jobs to Redo", multi=True, fzf=True)
+#         jobs_selected = choose_from_options(options=jobs_all, msg="Select Jobs to Redo", multi=True, fzf=True)
 #         for a_job in jobs_selected:
 #             # find in which log list does this job live:
 #             found_log_type = None

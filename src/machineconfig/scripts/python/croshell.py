@@ -8,7 +8,7 @@ import argparse
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.accessories import randstr
 
-from machineconfig.utils.options import display_options
+from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.ve import get_ve_activate_line
 from typing import Optional
 from rich.console import Console
@@ -121,7 +121,7 @@ def build_parser():
         text = "🔍 Searching for Python files..."
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
         options = [str(item) for item in PathExtended.cwd().search("*.py", r=True)]
-        file = display_options(msg="Choose a python file to run", options=options, fzf=True, multi=False)
+        file = choose_from_options(msg="Choose a python file to run", options=options, fzf=True, multi=False)
         assert isinstance(file, str)
         program = PathExtended(file).read_text(encoding="utf-8")
         text = f"📄 Selected file: {PathExtended(file).name}"

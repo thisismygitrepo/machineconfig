@@ -2,7 +2,7 @@
 
 # from platform import system
 from machineconfig.utils.path_extended import PathExtended as PathExtended
-from machineconfig.utils.options import display_options
+from machineconfig.utils.options import choose_from_options
 from rich.panel import Panel
 from rich.text import Text
 
@@ -22,7 +22,7 @@ def main() -> None:
     else:
         print(Panel("⚠️  No SSH private keys found", expand=False))
 
-    choice = display_options(msg="Path to private key to be used when ssh'ing: ", options=[str(x) for x in private_keys] + ["I have the path to the key file", "I want to paste the key itself"])
+    choice = choose_from_options(msg="Path to private key to be used when ssh'ing: ", options=[str(x) for x in private_keys] + ["I have the path to the key file", "I want to paste the key itself"], multi=False)
 
     if choice == "I have the path to the key file":
         print(Panel("📄 Please enter the path to your private key file", expand=False))
@@ -37,14 +37,9 @@ def main() -> None:
         path_to_key.write_text(input("🔑 Paste the private key here: "), encoding="utf-8")
         print(Panel(f"💾 Key saved to: {path_to_key}", expand=False))
 
-    elif isinstance(choice, str):
+    else:
         path_to_key = PathExtended(choice)
         print(Panel(f"🔑 Using selected key: {path_to_key.name}", expand=False))
-
-    else:
-        error_message = f"❌ ERROR: Invalid choice\nThe selected option is not supported: {choice}"
-        print(Panel(Text(error_message, justify="center"), expand=False, border_style="red"))
-        raise NotImplementedError(f"Choice {choice} not supported")
 
     txt = f"IdentityFile {path_to_key.collapseuser().as_posix()}"  # adds this id for all connections, no host specified.
     config_path = PathExtended.home().joinpath(".ssh/config")

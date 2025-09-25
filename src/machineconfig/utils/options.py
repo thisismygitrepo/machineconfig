@@ -4,7 +4,7 @@ from rich.panel import Panel
 from rich.console import Console
 import platform
 import subprocess
-from typing import Optional, Union, Iterable
+from typing import Optional, Union, Iterable, overload, Literal
 from machineconfig.utils.source_of_truth import WINDOWS_INSTALL_PATH, LINUX_INSTALL_PATH
 
 
@@ -32,20 +32,23 @@ def check_tool_exists(tool_name: str) -> bool:
     # return root_path.joinpath(tool_name).is_file()
 
 
-def choose_one_option[T](options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "", default: Optional[T] = None, fzf: bool = False, custom_input: bool = False) -> T:
-    choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=False, custom_input=custom_input)
-    assert not isinstance(choice_key, list)
-    return choice_key
+# def choose_from_options[T](options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "", default: Optional[T] = None, fzf: bool = False, custom_input: bool = False) -> T:
+#     choice_key = choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=False, custom_input=custom_input)
+#     assert not isinstance(choice_key, list)
+#     return choice_key
 
 
-def choose_multiple_options[T](options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "", default: Optional[T] = None, custom_input: bool = False) -> list[T]:
-    choice_key = display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=True, multi=True, custom_input=custom_input)
-    if isinstance(choice_key, list):
-        return choice_key
-    return [choice_key]
+# def choose_from_options[T](options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "", default: Optional[T] = None, custom_input: bool = False) -> list[T]:
+#     choice_key = choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=True, multi=True, custom_input=custom_input)
+#     if isinstance(choice_key, list):
+#         return choice_key
+#     return [choice_key]
 
-
-def display_options[T](msg: str, options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False, multi: bool = False, custom_input: bool = False) -> Union[T, list[T]]:
+@overload
+def choose_from_options[T](msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = False, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False) -> T: ...
+@overload
+def choose_from_options[T](msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False, ) -> list[T]: ...
+def choose_from_options[T](msg: str, options: Iterable[T], multi: bool, custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False, ) -> Union[T, list[T]]:
     # TODO: replace with https://github.com/tmbo/questionary
     # # also see https://github.com/charmbracelet/gum
     tool_name = "fzf"
@@ -90,7 +93,7 @@ def display_options[T](msg: str, options: Iterable[T], header: str = "", tail: s
         if choice_string == "":
             if default_string is None:
                 console.print(Panel("🧨 Default option not available!", title="Error", expand=False))
-                return display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
+                return choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
             choice_idx = options_strings.index(default_string)
             assert default is not None, "🧨 Default option not available!"
             choice_one: T = default
@@ -108,7 +111,7 @@ def display_options[T](msg: str, options: Iterable[T], header: str = "", tail: s
                     _ = ie
                     # raise ValueError(f"Unknown choice. {choice_string}") from ie
                     console.print(Panel(f"❓ Unknown choice: '{choice_string}'", title="Error", expand=False))
-                    return display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
+                    return choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
             except TypeError as te:  # int(choice_string) failed due to # either the number is invalid, or the input is custom.
                 if choice_string in options_strings:  # string input
                     choice_idx = options_strings.index(choice_one)  # type: ignore
@@ -119,7 +122,7 @@ def display_options[T](msg: str, options: Iterable[T], header: str = "", tail: s
                     _ = te
                     # raise ValueError(f"Unknown choice. {choice_string}") from te
                     console.print(Panel(f"❓ Unknown choice: '{choice_string}'", title="Error", expand=False))
-                    return display_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
+                    return choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
         console.print(Panel(f"✅ Selected option {choice_idx}: {choice_one}", title="Selected", expand=False))
         if multi:
             return [choice_one]
@@ -138,7 +141,7 @@ def choose_cloud_interactively() -> str:
         raise ValueError(f"Got {tmp} from rclone listremotes")
     if len(remotes) == 0:
         raise RuntimeError("You don't have remotes. Configure your rclone first to get cloud services access.")
-    cloud: str = choose_one_option(msg="WHICH CLOUD?", options=list(remotes), default=remotes[0], fzf=True)
+    cloud: str = choose_from_options(msg="WHICH CLOUD?", multi=False, options=list(remotes), default=remotes[0], fzf=True)
     console.print(Panel(f"✅ SELECTED CLOUD | {cloud}", border_style="bold blue", expand=False))
     return cloud
 
@@ -151,5 +154,9 @@ def get_ssh_hosts() -> list[str]:
     return list(c.get_hostnames())
 
 
-def choose_ssh_host(multi: bool = True):
-    return display_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
+@overload
+def choose_ssh_host(multi: Literal[False]) -> str: ...
+@overload
+def choose_ssh_host(multi: Literal[True]) -> list[str]: ...
+def choose_ssh_host(multi: bool):
+    return choose_from_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
