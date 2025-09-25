@@ -1,0 +1,110 @@
+{
+  "speedtest": {
+    "repo_url": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-x86_64.tgz",
+    "doc": "🚀 Test your internet connection speed and ping using speedtest.net from the CLI",
+    "filename_template_windows_amd_64": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-win64.zip",
+    "filename_template_windows_arm_64": "",
+    "filename_template_linux_amd_64": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-x86_64.tgz",
+    "filename_template_linux_arm_64": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-aarch64.tgz",
+    "filename_template_macos_amd_64": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-macosx-x86_64.tgz",
+    "filename_template_macos_arm_64": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-macosx-universal.tgz",
+    "strip_v": false,
+    "exe_name": "speedtest"
+  },
+  "pistol": {
+    "repo_url": "https://github.com/doronbehar/pistol",
+    "doc": "👁️ file previewer.",
+    "filename_template_windows_amd_64": "",
+    "filename_template_windows_arm_64": "",
+    "filename_template_linux_amd_64": "pistol-static-linux-x86_64",
+    "filename_template_linux_arm_64": "pistol-static-linux-aarch64",
+    "filename_template_macos_amd_64": "",
+    "filename_template_macos_arm_64": "",
+    "strip_v": true,
+    "exe_name": "pistol"
+  },
+  "devtunnel": {
+    "repo_url": "curl -sL https://aka.ms/DevTunnelCliInstall | bash",
+    "doc": "🔄 devtunnel secure introspectable tunnels to localhost",
+    "filename_template_windows_amd_64": "",
+    "filename_template_windows_arm_64": "",
+    "filename_template_linux_amd_64": "",
+    "filename_template_linux_arm_64": "",
+    "filename_template_macos_amd_64": "",
+    "filename_template_macos_arm_64": "",
+    "strip_v": false,
+    "exe_name": "devtunnel"
+  },
+  "diskonaut": {
+    "repo_url": "https://github.com/imsnif/diskonaut",
+    "doc": "💾 like dua, diskonaut is a terminal disk space navigator.",
+    "filename_template_windows_amd_64": "",
+    "filename_template_windows_arm_64": "",
+    "filename_template_linux_amd_64": "diskonaut-{}-unknown-linux-musl.tar.gz",
+    "filename_template_linux_arm_64": "",
+    "filename_template_macos_amd_64": "",
+    "filename_template_macos_arm_64": "",
+    "strip_v": true,
+    "exe_name": "diskonaut"
+  },
+    "xplr": {
+      "repo_url": "https://github.com/sayanarijit/xplr",
+      "doc": "📂 A terminal file explorer with vi keybindings",
+      "filename_template_windows_amd_64": "",
+      "filename_template_windows_arm_64": "",
+      "filename_template_linux_amd_64": "xplr-linux.tar.gz",
+      "filename_template_linux_arm_64": "xplr-linux-aarch64.tar.gz",
+      "filename_template_macos_amd_64": "xplr-macos.tar.gz",
+      "filename_template_macos_arm_64": "xplr-macos.tar.gz",
+      "strip_v": false,
+      "exe_name": "xplr"
+  },
+    "btop": {
+      "repo_url": "https://github.com/aristocratos/btop",
+      "doc": "📊 btop is a resource monitor for Linux, FreeBSD and MacOS.",
+      "filename_template_windows_amd_64": "",
+      "filename_template_windows_arm_64": "",
+      "filename_template_linux_amd_64": "btop-x86_64-linux-musl.tbz",
+      "filename_template_linux_arm_64": "btop-aarch64-linux-musl.tbz",
+      "filename_template_macos_amd_64": "",
+      "filename_template_macos_arm_64": "",
+      "strip_v": false,
+      "exe_name": "btop"
+    },
+    "gotty": {
+      "repo_url": "https://github.com/sorenisanerd/gotty",
+      "doc": "🌐 gotty is a simple command line tool that turns your CLI tools into web applications.",
+      "filename_template_windows_amd_64": "",
+      "filename_template_windows_arm_64": "",
+      "filename_template_linux_amd_64": "gotty_{}_linux_amd64.tar.gz",
+      "filename_template_linux_arm_64": "gotty_{}_linux_arm64.tar.gz",
+      "filename_template_macos_amd_64": "gotty_{}_darwin_amd64.tar.gz",
+      "filename_template_macos_arm_64": "gotty_{}_darwin_arm64.tar.gz",
+      "strip_v": false,
+      "exe_name": "gotty"
+    },
+    "joshuto": {
+      "repo_url": "https://github.com/kamiyaa/joshuto",
+      "doc": "📂 A terminal file manager written in Rust.",
+      "filename_template_windows_amd_64": "",
+      "filename_template_windows_arm_64": "",
+      "filename_template_linux_amd_64": "joshuto-{}-x86_64-unknown-linux-musl.tar.gz",
+      "filename_template_linux_arm_64": "joshuto-{}-aarch64-unknown-linux-musl.tar.gz",
+      "filename_template_macos_amd_64": "joshuto-{}-x86_64-apple-darwin.tar.gz",
+      "filename_template_macos_arm_64": "joshuto-{}-aarch64-apple-darwin.tar.gz",
+      "strip_v": false,
+      "exe_name": "joshuto"
+    },
+    "zellij": {
+      "repo_url": "https://github.com/zellij-org/zellij",
+      "doc": "🖥️ Zellij is a terminal workspace with support for multiple plugins, such as a terminal, status bar, tabs, splits, etc.",
+      "filename_template_windows_amd_64": "",
+      "filename_template_windows_arm_64": "",
+      "filename_template_linux_amd_64": "zellij-x86_64-unknown-linux-musl.tar.gz",
+      "filename_template_linux_arm_64": "zellij-aarch64-unknown-linux-musl.tar.gz",
+      "filename_template_macos_amd_64": "zellij-x86_64-apple-darwin.tar.gz",
+      "filename_template_macos_arm_64": "zellij-aarch64-apple-darwin.tar.gz",
+      "strip_v": false,
+      "exe_name": "zellij"
+    }
+}

@@ -1,206 +1,276 @@
 {
-    "ytui-music": {
-        "repo_url": "https://github.com/sudipghimire533/ytui-music",
-        "doc": "🎵 A terminal based YouTube music player written in Rust.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "ytui_music-linux-amd64",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "",
-        "filename_template_macos_arm_64": "",
-        "strip_v": true,
-        "exe_name": "ytui-music"
-    },
-    "youtube-tui": {
-        "repo_url": "https://github.com/Siriusmart/youtube-tui",
-        "doc": "🎵 A terminal based YouTube music player written in Rust.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "youtube-tui-full_arch-x86_64",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "",
-        "filename_template_macos_arm_64": "",
-        "strip_v": true,
-        "exe_name": "youtube-tui"
-    },
-    "termusic": {
-        "repo_url": "https://github.com/tramhao/termusic",
-        "doc": "🎵 A terminal-based music player written in Rust.",
-        "filename_template_windows_amd_64": "termusic-{}-x86_64-windows.zip",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "termusic-{}-x86_64-linux.tar.xz",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "termusic-{}-x86_64-macos.tar.xz",
-        "filename_template_macos_arm_64": "",
-        "strip_v": false,
-        "exe_name": "termusic"
-    },
-    "kronos": {
-        "repo_url": "https://github.com/TrevorSatori/kronos",
-        "doc": "🎵 A Customizable Terminal Music Player For Offline Listening",
-        "filename_template_windows_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "Kronos",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "",
-        "filename_template_macos_arm_64": "",
-        "strip_v": true,
-        "exe_name": "kronos"
-    },
-    "transmission": {
-        "repo_url": "https://github.com/transmission/transmission",
-        "doc": "📥 A fast, easy, and free BitTorrent client.",
-        "filename_template_windows_amd_64": "transmission-{}-x64.msi",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "transmission-{}.tar.xz",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "Transmission-{}.dmg",
-        "filename_template_macos_arm_64": "Transmission-{}.dmg",
-        "strip_v": true,
-        "exe_name": "transmission"
-    },
-    "nnn": {
-        "repo_url": "https://github.com/jarun/nnn",
-        "doc": "📂 A terminal-based file manager.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "",
-        "filename_template_macos_arm_64": "",
-        "strip_v": false,
-        "exe_name": "nnn"
+  "version": "1",
+  "installers": [
+    {
+      "appName": "ytui-music",
+      "repoURL": "https://github.com/sudipghimire533/ytui-music",
+      "doc": "🎵 A terminal based YouTube music player written in Rust.",
+      "filenameTemplate": {
+        "amd64": {
+          "linux": "ytui_music-linux-amd64"
+        },
+        "arm64": {}
       },
-    "exa": {
-        "repo_url": "https://github.com/ogham/exa",
-        "doc": "📂 A modern replacement for ls. lsd alternative.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "exa-linux-x86_64-{}.zip",
-        "filename_template_linux_arm_64": "exa-linux-armv7-{}.zip",
-        "filename_template_macos_amd_64": "exa-macos-x86_64-{}.zip",
-        "filename_template_macos_arm_64": "",
-        "strip_v": false,
-        "exe_name": "exa"
+      "stripVersion": true,
+      "exeName": "ytui-music"
     },
-    "bytehound": {
-        "repo_url": "https://github.com/koute/bytehound",
-        "doc": "🔍 Inspecting the memory usage of a running process",
-        "filename_template_windows_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "bytehound-x86_64-unknown-linux-gnu.tgz",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "",
-        "filename_template_macos_arm_64": "",
-        "strip_v": false,
-        "exe_name": "bytehound"
+    {
+      "appName": "youtube-tui",
+      "repoURL": "https://github.com/Siriusmart/youtube-tui",
+      "doc": "🎵 A terminal based YouTube music player written in Rust.",
+      "filenameTemplate": {
+        "amd64": {
+          "linux": "youtube-tui-full_arch-x86_64"
+        },
+        "arm64": {}
       },
-    "atuin": {
-        "repo_url": "https://github.com/atuinsh/atuin",
-        "doc": "🔍 Shell history search tool. Mcfly alternative",
-        "filename_template_windows_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "atuin-x86_64-unknown-linux-gnu.tar.gz",
-        "filename_template_linux_arm_64": "atuin-aarch64-unknown-linux-gnu.tar.gz",
-        "filename_template_macos_amd_64": "atuin-x86_64-apple-darwin.tar.gz",
-        "filename_template_macos_arm_64": "atuin-aarch64-apple-darwin.tar.gz",
-        "strip_v": false,
-        "exe_name": "atuin"
+      "stripVersion": true,
+      "exeName": "youtube-tui"
     },
-    "browsh": {
-        "repo_url": "https://github.com/browsh-org/browsh",
-        "doc": "🌐 browser in the shell",
-        "filename_template_windows_amd_64": "browsh_{}_windows_amd64.exe",
-        "filename_template_windows_arm_64": "browsh_{}_windows_arm64.exe",
-        "filename_template_linux_amd_64": "browsh_{}_linux_amd64",
-        "filename_template_linux_arm_64": "browsh_{}_linux_arm64",
-        "filename_template_macos_amd_64": "browsh_{}_darwin_amd64",
-        "filename_template_macos_arm_64": "browsh_{}_darwin_arm64",
-        "strip_v": true,
-        "exe_name": "browsh"
+    {
+      "appName": "termusic",
+      "repoURL": "https://github.com/tramhao/termusic",
+      "doc": "🎵 A terminal-based music player written in Rust.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "termusic-{}-x86_64-windows.zip",
+          "linux": "termusic-{}-x86_64-linux.tar.xz",
+          "macos": "termusic-{}-x86_64-macos.tar.xz"
+        },
+        "arm64": {}
+      },
+      "stripVersion": false,
+      "exeName": "termusic"
     },
-    "carbonyl": {
-        "repo_url": "https://github.com/fathyb/carbonyl",
-        "doc": "A Chromium based browser built to run in a terminal",
-        "filename_template_windows_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "carbonyl.linux-x86_64.zip",
-        "filename_template_linux_arm_64": "carbonyl.linux-arm64.zip",
-        "filename_template_macos_amd_64": "carbonyl.macos-x86_64.zip",
-        "filename_template_macos_arm_64": "carbonyl.macos-arm64.zip",
-        "strip_v": true,
-        "exe_name": "carbonyl"
+    {
+      "appName": "kronos",
+      "repoURL": "https://github.com/TrevorSatori/kronos",
+      "doc": "🎵 A Customizable Terminal Music Player For Offline Listening",
+      "filenameTemplate": {
+        "amd64": {
+          "linux": "Kronos"
+        },
+        "arm64": {}
+      },
+      "stripVersion": true,
+      "exeName": "kronos"
     },
-    "patat": {
-        "repo_url": "https://github.com/jaspervdj/patat",
-        "doc": "🎯 Terminal-based presentations using Pandoc. Presenterm alternative.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "patat-{}-linux-x86_64.tar.gz",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "",
-        "filename_template_macos_arm_64": "patat-{}-darwin-arm64.zip",
-        "strip_v": false,
-        "exe_name": "patat"
+    {
+      "appName": "transmission",
+      "repoURL": "https://github.com/transmission/transmission",
+      "doc": "📥 A fast, easy, and free BitTorrent client.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "transmission-{}-x64.msi",
+          "linux": "transmission-{}.tar.xz",
+          "macos": "Transmission-{}.dmg"
+        },
+        "arm64": {
+          "macos": "Transmission-{}.dmg"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "transmission"
     },
-    "SqliteBrowser": {
-        "repo_url": "https://github.com/sqlitebrowser/sqlitebrowser",
-        "doc": "🗃️ A visual tool to create, design, and edit database files compatible with SQLite.",
-        "filename_template_windows_amd_64": "DB.Browser.for.SQLite-{}-win64.zip",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "DB.Browser.for.SQLite-{}-x86.64-v2.AppImage",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "DB.Browser.for.SQLite-{}.dmg",
-        "filename_template_macos_arm_64": "DB.Browser.for.SQLite-{}.dmg",
-        "strip_v": false,
-        "exe_name": "sqlite_browser"
+    {
+      "appName": "nnn",
+      "repoURL": "https://github.com/jarun/nnn",
+      "doc": "📂 A terminal-based file manager.",
+      "filenameTemplate": {
+        "amd64": {},
+        "arm64": {}
+      },
+      "stripVersion": false,
+      "exeName": "nnn"
     },
-    "DBeaver": {
-        "repo_url": "https://github.com/dbeaver/dbeaver",
-        "doc": "🗃️ Free universal database tool and SQL client.",
-        "filename_template_windows_amd_64": "dbeaver-ce-{}-win32.win32.x86_64.zip",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "dbeaver-ce-{}-linux.gtk.x86_64.tar.gz",
-        "filename_template_linux_arm_64": "dbeaver-ce-{}-linux.gtk.aarch64.tar.gz",
-        "filename_template_macos_amd_64": "dbeaver-ce-{}-macos-cocoa.x86_64.tar.gz",
-        "filename_template_macos_arm_64": "dbeaver-ce-{}-macos-cocoa.aarch64.tar.gz",
-        "strip_v": true,
-        "exe_name": "dbeaver"
+    {
+      "appName": "exa",
+      "repoURL": "https://github.com/ogham/exa",
+      "doc": "📂 A modern replacement for ls. lsd alternative.",
+      "filenameTemplate": {
+        "amd64": {
+          "linux": "exa-linux-x86_64-{}.zip",
+          "macos": "exa-macos-x86_64-{}.zip"
+        },
+        "arm64": {
+          "linux": "exa-linux-armv7-{}.zip"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "exa"
     },
-    "rainfrog": {
-        "repo_url": "https://github.com/achristmascarl/rainfrog",
-        "doc": "🗃️ TUI DB Visualizer",
-        "filename_template_windows_amd_64": "rainfrog-{}-x86_64-pc-windows-msvc.tar.gz",
-        "filename_template_windows_arm_64": "rainfrog-{}-aarch64-pc-windows-msvc.tar.gz",
-        "filename_template_linux_amd_64": "rainfrog-{}-x86_64-unknown-linux-musl.tar.gz",
-        "filename_template_linux_arm_64": "rainfrog-{}-aarch64-unknown-linux-musl.tar.gz",
-        "filename_template_macos_amd_64": "rainfrog-{}-x86_64-apple-darwin.tar.gz",
-        "filename_template_macos_arm_64": "rainfrog-{}-aarch64-apple-darwin.tar.gz",
-        "strip_v": false,
-        "exe_name": "rainfrog"
+    {
+      "appName": "bytehound",
+      "repoURL": "https://github.com/koute/bytehound",
+      "doc": "🔍 Inspecting the memory usage of a running process",
+      "filenameTemplate": {
+        "amd64": {
+          "linux": "bytehound-x86_64-unknown-linux-gnu.tgz"
+        },
+        "arm64": {}
+      },
+      "stripVersion": false,
+      "exeName": "bytehound"
     },
-    "cpz": {
-        "repo_url": "https://github.com/SUPERCILEX/fuc",
-        "doc": "📋 Fast copy",
-        "filename_template_windows_amd_64": "x86_64-pc-windows-msvc-cpz.exe",
-        "filename_template_windows_arm_64": "aarch64-pc-windows-msvc-cpz.exe",
-        "filename_template_linux_amd_64": "x86_64-unknown-linux-musl-cpz",
-        "filename_template_linux_arm_64": "aarch64-unknown-linux-gnu-cpz",
-        "filename_template_macos_amd_64": "x86_64-apple-darwin-cpz",
-        "filename_template_macos_arm_64": "aarch64-apple-darwin-cpz",
-        "strip_v": true,
-        "exe_name": "cpz"
+    {
+      "appName": "atuin",
+      "repoURL": "https://github.com/atuinsh/atuin",
+      "doc": "🔍 Shell history search tool. Mcfly alternative",
+      "filenameTemplate": {
+        "amd64": {
+          "linux": "atuin-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "atuin-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "linux": "atuin-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "atuin-aarch64-apple-darwin.tar.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "atuin"
     },
-    "rmz": {
-        "repo_url": "https://github.com/SUPERCILEX/fuc",
-        "doc": "🗑️ Fast remove",
-        "filename_template_windows_amd_64": "x86_64-pc-windows-msvc-rmz.exe",
-        "filename_template_windows_arm_64": "aarch64-pc-windows-msvc-rmz.exe",
-        "filename_template_linux_amd_64": "x86_64-unknown-linux-musl-rmz",
-        "filename_template_linux_arm_64": "aarch64-unknown-linux-gnu-rmz",
-        "filename_template_macos_amd_64": "x86_64-apple-darwin-rmz",
-        "filename_template_macos_arm_64": "aarch64-apple-darwin-rmz",
-        "strip_v": true,
-        "exe_name": "rmz"
+    {
+      "appName": "browsh",
+      "repoURL": "https://github.com/browsh-org/browsh",
+      "doc": "🌐 browser in the shell",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "browsh_{}_windows_amd64.exe",
+          "linux": "browsh_{}_linux_amd64",
+          "macos": "browsh_{}_darwin_amd64"
+        },
+        "arm64": {
+          "windows": "browsh_{}_windows_arm64.exe",
+          "linux": "browsh_{}_linux_arm64",
+          "macos": "browsh_{}_darwin_arm64"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "browsh"
+    },
+    {
+      "appName": "carbonyl",
+      "repoURL": "https://github.com/fathyb/carbonyl",
+      "doc": "A Chromium based browser built to run in a terminal",
+      "filenameTemplate": {
+        "amd64": {
+          "linux": "carbonyl.linux-x86_64.zip",
+          "macos": "carbonyl.macos-x86_64.zip"
+        },
+        "arm64": {
+          "linux": "carbonyl.linux-arm64.zip",
+          "macos": "carbonyl.macos-arm64.zip"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "carbonyl"
+    },
+    {
+      "appName": "patat",
+      "repoURL": "https://github.com/jaspervdj/patat",
+      "doc": "🎯 Terminal-based presentations using Pandoc. Presenterm alternative.",
+      "filenameTemplate": {
+        "amd64": {
+          "linux": "patat-{}-linux-x86_64.tar.gz"
+        },
+        "arm64": {
+          "macos": "patat-{}-darwin-arm64.zip"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "patat"
+    },
+    {
+      "appName": "SqliteBrowser",
+      "repoURL": "https://github.com/sqlitebrowser/sqlitebrowser",
+      "doc": "🗃️ A visual tool to create, design, and edit database files compatible with SQLite.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "DB.Browser.for.SQLite-{}-win64.zip",
+          "linux": "DB.Browser.for.SQLite-{}-x86.64-v2.AppImage",
+          "macos": "DB.Browser.for.SQLite-{}.dmg"
+        },
+        "arm64": {
+          "macos": "DB.Browser.for.SQLite-{}.dmg"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "sqlite_browser"
+    },
+    {
+      "appName": "DBeaver",
+      "repoURL": "https://github.com/dbeaver/dbeaver",
+      "doc": "🗃️ Free universal database tool and SQL client.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "dbeaver-ce-{}-win32.win32.x86_64.zip",
+          "linux": "dbeaver-ce-{}-linux.gtk.x86_64.tar.gz",
+          "macos": "dbeaver-ce-{}-macos-cocoa.x86_64.tar.gz"
+        },
+        "arm64": {
+          "linux": "dbeaver-ce-{}-linux.gtk.aarch64.tar.gz",
+          "macos": "dbeaver-ce-{}-macos-cocoa.aarch64.tar.gz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "dbeaver"
+    },
+    {
+      "appName": "rainfrog",
+      "repoURL": "https://github.com/achristmascarl/rainfrog",
+      "doc": "🗃️ TUI DB Visualizer",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "rainfrog-{}-x86_64-pc-windows-msvc.tar.gz",
+          "linux": "rainfrog-{}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "rainfrog-{}-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "windows": "rainfrog-{}-aarch64-pc-windows-msvc.tar.gz",
+          "linux": "rainfrog-{}-aarch64-unknown-linux-musl.tar.gz",
+          "macos": "rainfrog-{}-aarch64-apple-darwin.tar.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "rainfrog"
+    },
+    {
+      "appName": "cpz",
+      "repoURL": "https://github.com/SUPERCILEX/fuc",
+      "doc": "📋 Fast copy",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "x86_64-pc-windows-msvc-cpz.exe",
+          "linux": "x86_64-unknown-linux-musl-cpz",
+          "macos": "x86_64-apple-darwin-cpz"
+        },
+        "arm64": {
+          "windows": "aarch64-pc-windows-msvc-cpz.exe",
+          "linux": "aarch64-unknown-linux-gnu-cpz",
+          "macos": "aarch64-apple-darwin-cpz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "cpz"
+    },
+    {
+      "appName": "rmz",
+      "repoURL": "https://github.com/SUPERCILEX/fuc",
+      "doc": "🗑️ Fast remove",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "x86_64-pc-windows-msvc-rmz.exe",
+          "linux": "x86_64-unknown-linux-musl-rmz",
+          "macos": "x86_64-apple-darwin-rmz"
+        },
+        "arm64": {
+          "windows": "aarch64-pc-windows-msvc-rmz.exe",
+          "linux": "aarch64-unknown-linux-gnu-rmz",
+          "macos": "aarch64-apple-darwin-rmz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "rmz"
     }
+  ]
 }

@@ -1,565 +1,825 @@
 {
-    "mermaid-cli": {
-        "repo_url": "npm install -g @mermaid-js/mermaid-cli",
-        "doc": "📊 Generate diagrams and flowcharts from text in a similar manner as markdown",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "",
-        "filename_template_macos_arm_64": "",
-        "strip_v": false,
-        "exe_name": "mmdc"
+  "version": "1",
+  "installers": [
+    {
+      "appName": "mermaid-cli",
+      "repoURL": "npm install -g @mermaid-js/mermaid-cli",
+      "doc": "📊 Generate diagrams and flowcharts from text in a similar manner as markdown",
+      "filenameTemplate": {
+        "amd64": {},
+        "arm64": {}
+      },
+      "stripVersion": false,
+      "exeName": "mmdc"
     },
-    "html2markdown": {
-        "repo_url": "https://github.com/JohannesKaufmann/html-to-markdown",
-        "doc": "📜 Convert HTML to Markdown (no LLM, very fast, very cheap)",
-        "filename_template_windows_amd_64": "html-to-markdown_{}_Windows_x86_64.zip",
-        "filename_template_linux_amd_64": "html-to-markdown_{}_Linux_x86_64.tar.gz",
-        "filename_template_windows_arm_64": "html-to-markdown_{}_Windows_arm64.zip",
-        "filename_template_linux_arm_64": "html-to-markdown_{}_Linux_arm64.tar.gz",
-        "filename_template_macos_amd_64": "html-to-markdown_{}_Darwin_x86_64.tar.gz",
-        "filename_template_macos_arm_64": "html-to-markdown_{}_Darwin_arm64.tar.gz",
-        "strip_v": true,
-        "exe_name": "html2markdown"
+    {
+      "appName": "html2markdown",
+      "repoURL": "https://github.com/JohannesKaufmann/html-to-markdown",
+      "doc": "📜 Convert HTML to Markdown (no LLM, very fast, very cheap)",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "html-to-markdown_{}_Windows_x86_64.zip",
+          "linux": "html-to-markdown_{}_Linux_x86_64.tar.gz",
+          "macos": "html-to-markdown_{}_Darwin_x86_64.tar.gz"
+        },
+        "arm64": {
+          "windows": "html-to-markdown_{}_Windows_arm64.zip",
+          "linux": "html-to-markdown_{}_Linux_arm64.tar.gz",
+          "macos": "html-to-markdown_{}_Darwin_arm64.tar.gz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "html2markdown"
     },
-    "xcrawl3r": {
-        "repo_url": "https://github.com/hueristiq/xcrawl3r",
-        "doc": "🕷️ A command line tool to crawl and scrape websites",
-        "filename_template_windows_amd_64": "xcrawl3r_{}_windows_amd64.zip",
-        "filename_template_linux_amd_64": "xcrawl3r_{}_linux_amd64.tar.gz",
-        "filename_template_windows_arm_64": "xcrawl3r_{}_windows_arm64.zip",
-        "filename_template_linux_arm_64": "xcrawl3r_{}_linux_arm64.tar.gz",
-        "filename_template_macos_amd_64": "xcrawl3r_{}_macOS_amd64.tar.gz",
-        "filename_template_macos_arm_64": "xcrawl3r_{}_macOS_arm64.tar.gz",
-        "strip_v": true,
-        "exe_name": "xcrawl3r"
+    {
+      "appName": "xcrawl3r",
+      "repoURL": "https://github.com/hueristiq/xcrawl3r",
+      "doc": "🕷️ A command line tool to crawl and scrape websites",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "xcrawl3r_{}_windows_amd64.zip",
+          "linux": "xcrawl3r_{}_linux_amd64.tar.gz",
+          "macos": "xcrawl3r_{}_macOS_amd64.tar.gz"
+        },
+        "arm64": {
+          "windows": "xcrawl3r_{}_windows_arm64.zip",
+          "linux": "xcrawl3r_{}_linux_arm64.tar.gz",
+          "macos": "xcrawl3r_{}_macOS_arm64.tar.gz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "xcrawl3r"
     },
-    "obsidian": {
-        "repo_url": "https://github.com/obsidianmd/obsidian-releases",
-        "doc": "🧠 Obsidian is a powerful knowledge base that works on top of a local folder of plain text Markdown files.",
-        "filename_template_windows_amd_64": "Obsidian.{}.exe",
-        "filename_template_linux_amd_64": "obsidian_{}_amd64.deb",
-        "filename_template_windows_arm_64": "Obsidian.{}.arm64.exe",
-        "filename_template_linux_arm_64": "obsidian_{}_arm64.deb",
-        "filename_template_macos_amd_64": "Obsidian-{}.dmg",
-        "filename_template_macos_arm_64": "Obsidian-{}-arm64.dmg",
-        "strip_v": true,
-        "exe_name": "obsidian"
+    {
+      "appName": "obsidian",
+      "repoURL": "https://github.com/obsidianmd/obsidian-releases",
+      "doc": "🧠 Obsidian is a powerful knowledge base that works on top of a local folder of plain text Markdown files.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "Obsidian.{}.exe",
+          "linux": "obsidian_{}_amd64.deb",
+          "macos": "Obsidian-{}.dmg"
+        },
+        "arm64": {
+          "windows": "Obsidian.{}.arm64.exe",
+          "linux": "obsidian_{}_arm64.deb",
+          "macos": "Obsidian-{}-arm64.dmg"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "obsidian"
     },
-    "marp": {
-        "repo_url": "npm install -g @marp-team/marp-cli",
-        "doc": "🎯 Markdown presentation writer",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "",
-        "filename_template_macos_arm_64": "",
-        "strip_v": false,
-        "exe_name": "marp"
+    {
+      "appName": "marp",
+      "repoURL": "npm install -g @marp-team/marp-cli",
+      "doc": "🎯 Markdown presentation writer",
+      "filenameTemplate": {
+        "amd64": {},
+        "arm64": {}
+      },
+      "stripVersion": false,
+      "exeName": "marp"
     },
-    "presenterm": {
-        "repo_url": "https://github.com/mfontanini/presenterm",
-        "doc": "🎭 present from temrinal",
-        "filename_template_windows_amd_64": "presenterm-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "presenterm-{}-x86_64-unknown-linux-gnu.tar.gz",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "presenterm-{}-aarch64-unknown-linux-gnu.tar.gz",
-        "filename_template_macos_amd_64": "presenterm-{}-x86_64-apple-darwin.tar.gz",
-        "filename_template_macos_arm_64": "presenterm-{}-aarch64-apple-darwin.tar.gz",
-        "strip_v": true,
-        "exe_name": "presenterm"
+    {
+      "appName": "presenterm",
+      "repoURL": "https://github.com/mfontanini/presenterm",
+      "doc": "🎭 present from temrinal",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "presenterm-{}-x86_64-pc-windows-msvc.zip",
+          "linux": "presenterm-{}-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "presenterm-{}-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "linux": "presenterm-{}-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "presenterm-{}-aarch64-apple-darwin.tar.gz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "presenterm"
     },
-    "pandoc": {
-        "repo_url": "https://github.com/jgm/pandoc",
-        "doc": "📝 The universal markup converter",
-        "filename_template_windows_amd_64": "pandoc-{}-windows-x86_64.zip",
-        "filename_template_linux_amd_64": "pandoc-{}-linux-amd64.tar.gz",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "pandoc-{}-linux-arm64.tar.gz",
-        "filename_template_macos_amd_64": "pandoc-{}-x86_64-macOS.zip",
-        "filename_template_macos_arm_64": "pandoc-{}-arm64-macOS.zip",
-        "strip_v": true,
-        "exe_name": "pandoc"
+    {
+      "appName": "pandoc",
+      "repoURL": "https://github.com/jgm/pandoc",
+      "doc": "📝 The universal markup converter",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "pandoc-{}-windows-x86_64.zip",
+          "linux": "pandoc-{}-linux-amd64.tar.gz",
+          "macos": "pandoc-{}-x86_64-macOS.zip"
+        },
+        "arm64": {
+          "linux": "pandoc-{}-linux-arm64.tar.gz",
+          "macos": "pandoc-{}-arm64-macOS.zip"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "pandoc"
     },
-    "devcontainer": {
-        "repo_url": "npm install -g @devcontainers/cli",
-        "doc": "🐋 Devcontainer is a command-line tool to manage development containers",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "",
-        "filename_template_macos_arm_64": "",
-        "strip_v": false,
-        "exe_name": "devcontainer"
+    {
+      "appName": "devcontainer",
+      "repoURL": "npm install -g @devcontainers/cli",
+      "doc": "🐋 Devcontainer is a command-line tool to manage development containers",
+      "filenameTemplate": {
+        "amd64": {},
+        "arm64": {}
+      },
+      "stripVersion": false,
+      "exeName": "devcontainer"
     },
-    "bitwarden": {
-        "repo_url": "npm install -g @bitwarden/cli",
-        "doc": "🔐 bw is a password manager.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "",
-        "filename_template_macos_arm_64": "",
-        "strip_v": false,
-        "exe_name": "bw"
+    {
+      "appName": "bitwarden",
+      "repoURL": "npm install -g @bitwarden/cli",
+      "doc": "🔐 bw is a password manager.",
+      "filenameTemplate": {
+        "amd64": {},
+        "arm64": {}
+      },
+      "stripVersion": false,
+      "exeName": "bw"
     },
-    "OBS Background removal": {
-        "repo_url": "https://github.com/royshil/obs-backgroundremoval",
-        "doc": "🎥 A plugin for OBS Studio to remove background from a video",
-        "filename_template_windows_amd_64": "obs-backgroundremoval-{}-windows-x64.zip",
-        "filename_template_linux_amd_64": "obs-backgroundremoval-{}-x86_64-linux-gnu.deb",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "obs-backgroundremoval-{}-macos-universal.pkg",
-        "filename_template_macos_arm_64": "obs-backgroundremoval-{}-macos-universal.pkg",
-        "strip_v": true,
-        "exe_name": "obs-backgroundremoval"
+    {
+      "appName": "OBS Background removal",
+      "repoURL": "https://github.com/royshil/obs-backgroundremoval",
+      "doc": "🎥 A plugin for OBS Studio to remove background from a video",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "obs-backgroundremoval-{}-windows-x64.zip",
+          "linux": "obs-backgroundremoval-{}-x86_64-linux-gnu.deb",
+          "macos": "obs-backgroundremoval-{}-macos-universal.pkg"
+        },
+        "arm64": {
+          "macos": "obs-backgroundremoval-{}-macos-universal.pkg"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "obs-backgroundremoval"
     },
-    "rustdesk": {
-        "repo_url": "https://github.com/rustdesk/rustdesk",
-        "doc": "🖥️ Yet another remote desktop software, written in Rust. Works out of the box, no configuration required",
-        "filename_template_windows_amd_64": "rustdesk-{}-x86_64.exe",
-        "filename_template_linux_amd_64": "rustdesk-{}-x86_64.deb",
-        "filename_template_windows_arm_64": "rustdesk-{}-aarch64.exe",
-        "filename_template_linux_arm_64": "rustdesk-{}-aarch64.deb",
-        "filename_template_macos_amd_64": "rustdesk-{}-x86_64.dmg",
-        "filename_template_macos_arm_64": "rustdesk-{}-aarch64.dmg",
-        "strip_v": true,
-        "exe_name": "rustdesk"
+    {
+      "appName": "rustdesk",
+      "repoURL": "https://github.com/rustdesk/rustdesk",
+      "doc": "🖥️ Yet another remote desktop software, written in Rust. Works out of the box, no configuration required",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "rustdesk-{}-x86_64.exe",
+          "linux": "rustdesk-{}-x86_64.deb",
+          "macos": "rustdesk-{}-x86_64.dmg"
+        },
+        "arm64": {
+          "windows": "rustdesk-{}-aarch64.exe",
+          "linux": "rustdesk-{}-aarch64.deb",
+          "macos": "rustdesk-{}-aarch64.dmg"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "rustdesk"
     },
-    "evcxr": {
-        "repo_url": "https://github.com/evcxr/evcxr",
-        "doc": "🧪 A Jupyter Kernel for Rust",
-        "filename_template_windows_amd_64": "evcxr-{}_x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "evcxr-{}_x86_64-unknown-linux-gnu.tar.gz",
-        "filename_template_windows_arm_64": "evcxr-{}_aarch64-pc-windows-msvc.zip",
-        "filename_template_linux_arm_64": "evcxr-{}_aarch64-unknown-linux-gnu.tar.gz",
-        "filename_template_macos_amd_64": "evcxr-{}_x86_64-apple-darwin.tar.gz",
-        "filename_template_macos_arm_64": "evcxr-{}_aarch64-apple-darwin.tar.gz",
-        "strip_v": true,
-        "exe_name": "evcxr"
+    {
+      "appName": "evcxr",
+      "repoURL": "https://github.com/evcxr/evcxr",
+      "doc": "🧪 A Jupyter Kernel for Rust",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "evcxr-{}_x86_64-pc-windows-msvc.zip",
+          "linux": "evcxr-{}_x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "evcxr-{}_x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "windows": "evcxr-{}_aarch64-pc-windows-msvc.zip",
+          "linux": "evcxr-{}_aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "evcxr-{}_aarch64-apple-darwin.tar.gz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "evcxr"
     },
-    "forward-cli": {
-        "repo_url": "https://github.com/axetroy/forward-cli",
-        "doc": "🔄 Reverse Proxy port forwarding cli tool",
-        "filename_template_windows_amd_64": "forward_windows_amd64.tar.gz",
-        "filename_template_linux_amd_64": "forward_linux_amd64.tar.gz",
-        "filename_template_windows_arm_64": "forward_windows_arm64.tar.gz",
-        "filename_template_linux_arm_64": "forward_linux_arm64.tar.gz",
-        "filename_template_macos_amd_64": "forward_darwin_amd64.tar.gz",
-        "filename_template_macos_arm_64": "forward_darwin_arm64.tar.gz",
-        "strip_v": false,
-        "exe_name": "forward"
+    {
+      "appName": "forward-cli",
+      "repoURL": "https://github.com/axetroy/forward-cli",
+      "doc": "🔄 Reverse Proxy port forwarding cli tool",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "forward_windows_amd64.tar.gz",
+          "linux": "forward_linux_amd64.tar.gz",
+          "macos": "forward_darwin_amd64.tar.gz"
+        },
+        "arm64": {
+          "windows": "forward_windows_arm64.tar.gz",
+          "linux": "forward_linux_arm64.tar.gz",
+          "macos": "forward_darwin_arm64.tar.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "forward"
     },
-    "bandwhich": {
-        "repo_url": "https://github.com/imsnif/bandwhich",
-        "doc": "📊 monitor network usage from cli",
-        "filename_template_windows_amd_64": "bandwhich-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "bandwhich-{}-x86_64-unknown-linux-musl.tar.gz",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "bandwhich-{}-aarch64-unknown-linux-musl.tar.gz",
-        "filename_template_macos_amd_64": "bandwhich-{}-x86_64-apple-darwin.tar.gz",
-        "filename_template_macos_arm_64": "bandwhich-{}-aarch64-apple-darwin.tar.gz",
-        "strip_v": false,
-        "exe_name": "bandwhich"
+    {
+      "appName": "bandwhich",
+      "repoURL": "https://github.com/imsnif/bandwhich",
+      "doc": "📊 monitor network usage from cli",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "bandwhich-{}-x86_64-pc-windows-msvc.zip",
+          "linux": "bandwhich-{}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "bandwhich-{}-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "linux": "bandwhich-{}-aarch64-unknown-linux-musl.tar.gz",
+          "macos": "bandwhich-{}-aarch64-apple-darwin.tar.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "bandwhich"
     },
-    "ipinfo": {
-        "repo_url": "https://github.com/ipinfo/cli",
-        "doc": "🌐 cli to get info of ips",
-        "filename_template_windows_amd_64": "ipinfo_{}_windows_amd64.zip",
-        "filename_template_linux_amd_64": "ipinfo_{}_linux_amd64.deb",
-        "filename_template_windows_arm_64": "ipinfo_{}_windows_arm64.zip",
-        "filename_template_linux_arm_64": "ipinfo_{}_linux_arm64.deb",
-        "filename_template_macos_amd_64": "ipinfo_{}_darwin_amd64.tar.gz",
-        "filename_template_macos_arm_64": "ipinfo_{}_darwin_arm64.tar.gz",
-        "strip_v": true,
-        "exe_name": "ipinfo"
+    {
+      "appName": "ipinfo",
+      "repoURL": "https://github.com/ipinfo/cli",
+      "doc": "🌐 cli to get info of ips",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "ipinfo_{}_windows_amd64.zip",
+          "linux": "ipinfo_{}_linux_amd64.deb",
+          "macos": "ipinfo_{}_darwin_amd64.tar.gz"
+        },
+        "arm64": {
+          "windows": "ipinfo_{}_windows_arm64.zip",
+          "linux": "ipinfo_{}_linux_arm64.deb",
+          "macos": "ipinfo_{}_darwin_arm64.tar.gz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "ipinfo"
     },
-    "dust": {
-        "repo_url": "https://github.com/bootandy/dust",
-        "doc": "📊 A more intuitive version of du in rust. It is a dua alternative.",
-        "filename_template_windows_amd_64": "dust-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "dust-{}-x86_64-unknown-linux-musl.tar.gz",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "dust-{}-aarch64-unknown-linux-musl.tar.gz",
-        "filename_template_macos_amd_64": "dust-{}-x86_64-apple-darwin.tar.gz",
-        "filename_template_macos_arm_64": "",
-        "strip_v": false,
-        "exe_name": "dust"
+    {
+      "appName": "dust",
+      "repoURL": "https://github.com/bootandy/dust",
+      "doc": "📊 A more intuitive version of du in rust. It is a dua alternative.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "dust-{}-x86_64-pc-windows-msvc.zip",
+          "linux": "dust-{}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "dust-{}-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "linux": "dust-{}-aarch64-unknown-linux-musl.tar.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "dust"
     },
-    "ots": {
-        "repo_url": "https://github.com/Luzifer/ots",
-        "doc": "🔒 A command line tool for generating and verifying one-time secrets.",
-        "filename_template_windows_amd_64": "ots_windows_amd64.zip",
-        "filename_template_linux_amd_64": "ots_linux_amd64.tgz",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "ots_linux_arm64.tgz",
-        "filename_template_macos_amd_64": "ots_darwin_amd64.zip",
-        "filename_template_macos_arm_64": "ots_darwin_arm64.zip",
-        "strip_v": false,
-        "exe_name": "ots"
+    {
+      "appName": "ots",
+      "repoURL": "https://github.com/Luzifer/ots",
+      "doc": "🔒 A command line tool for generating and verifying one-time secrets.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "ots_windows_amd64.zip",
+          "linux": "ots_linux_amd64.tgz",
+          "macos": "ots_darwin_amd64.zip"
+        },
+        "arm64": {
+          "linux": "ots_linux_arm64.tgz",
+          "macos": "ots_darwin_arm64.zip"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "ots"
     },
-    "ffsend": {
-        "repo_url": "https://github.com/timvisee/ffsend",
-        "doc": "📤 Send files in secure encrypted way over the internet.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "ffsend-{}-linux-x64",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "",
-        "filename_template_macos_arm_64": "",
-        "strip_v": false,
-        "exe_name": "ffsend"
+    {
+      "appName": "ffsend",
+      "repoURL": "https://github.com/timvisee/ffsend",
+      "doc": "📤 Send files in secure encrypted way over the internet.",
+      "filenameTemplate": {
+        "amd64": {
+          "linux": "ffsend-{}-linux-x64"
+        },
+        "arm64": {}
+      },
+      "stripVersion": false,
+      "exeName": "ffsend"
     },
-    "portal": {
-        "repo_url": "https://github.com/SpatiumPortae/portal",
-        "doc": "🔄 A terminal-based file transfer between two computers.",
-        "filename_template_windows_amd_64": "portal_{}_Windows_x86_64.zip",
-        "filename_template_linux_amd_64": "portal_{}_Linux_x86_64.tar.gz",
-        "filename_template_windows_arm_64": "portal_{}_Windows_arm64.zip",
-        "filename_template_linux_arm_64": "portal_{}_Linux_arm64.tar.gz",
-        "filename_template_macos_amd_64": "portal_{}_macOS_x86_64.tar.gz",
-        "filename_template_macos_arm_64": "portal_{}_macOS_arm64.tar.gz",
-        "strip_v": true,
-        "exe_name": "portal"
+    {
+      "appName": "portal",
+      "repoURL": "https://github.com/SpatiumPortae/portal",
+      "doc": "🔄 A terminal-based file transfer between two computers.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "portal_{}_Windows_x86_64.zip",
+          "linux": "portal_{}_Linux_x86_64.tar.gz",
+          "macos": "portal_{}_macOS_x86_64.tar.gz"
+        },
+        "arm64": {
+          "windows": "portal_{}_Windows_arm64.zip",
+          "linux": "portal_{}_Linux_arm64.tar.gz",
+          "macos": "portal_{}_macOS_arm64.tar.gz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "portal"
     },
-    "qrcp": {
-        "repo_url": "https://github.com/claudiodangelis/qrcp",
-        "doc": "� Transfer files over WiFi from your computer to mobile device by scanning a QR code without leaving the terminal.",
-        "filename_template_windows_amd_64": "qrcp_{}_windows_amd64.zip",
-        "filename_template_linux_amd_64": "qrcp_{}_linux_amd64.tar.gz",
-        "filename_template_windows_arm_64": "qrcp_{}_windows_arm64.zip",
-        "filename_template_linux_arm_64": "qrcp_{}_linux_arm64.tar.gz",
-        "filename_template_macos_amd_64": "qrcp_{}_darwin_amd64.tar.gz",
-        "filename_template_macos_arm_64": "qrcp_{}_darwin_arm64.tar.gz",
-        "strip_v": true,
-        "exe_name": "qrcp"
+    {
+      "appName": "qrcp",
+      "repoURL": "https://github.com/claudiodangelis/qrcp",
+      "doc": "� Transfer files over WiFi from your computer to mobile device by scanning a QR code without leaving the terminal.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "qrcp_{}_windows_amd64.zip",
+          "linux": "qrcp_{}_linux_amd64.tar.gz",
+          "macos": "qrcp_{}_darwin_amd64.tar.gz"
+        },
+        "arm64": {
+          "windows": "qrcp_{}_windows_arm64.zip",
+          "linux": "qrcp_{}_linux_arm64.tar.gz",
+          "macos": "qrcp_{}_darwin_arm64.tar.gz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "qrcp"
     },
-    "qrscan": {
-        "repo_url": "https://github.com/sayanarijit/qrscan",
-        "doc": "📷 qr code scanner",
-        "filename_template_windows_amd_64": "qrscan-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "qrscan-{}-x86_64-unknown-linux-gnu.tar.gz",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "qrscan-{}-x86_64-apple-darwin.tar.gz",
-        "filename_template_macos_arm_64": "",
-        "strip_v": true,
-        "exe_name": "qrscan"
+    {
+      "appName": "qrscan",
+      "repoURL": "https://github.com/sayanarijit/qrscan",
+      "doc": "📷 qr code scanner",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "qrscan-{}-x86_64-pc-windows-msvc.zip",
+          "linux": "qrscan-{}-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "qrscan-{}-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {}
+      },
+      "stripVersion": true,
+      "exeName": "qrscan"
     },
-    "termscp": {
-        "repo_url": "https://github.com/veeso/termscp",
-        "doc": "📂 A TUI like winscp",
-        "filename_template_windows_amd_64": "termscp-v{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "termscp-v{}-x86_64-unknown-linux-gnu.tar.gz",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "termscp-{}-aarch64-unknown-linux-gnu.tar.gz",
-        "filename_template_macos_amd_64": "termscp-v{}-x86_64-apple-darwin.tar.gz",
-        "filename_template_macos_arm_64": "termscp-v{}-arm64-apple-darwin.tar.gz",
-        "strip_v": false,
-        "exe_name": "termscp"
+    {
+      "appName": "termscp",
+      "repoURL": "https://github.com/veeso/termscp",
+      "doc": "📂 A TUI like winscp",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "termscp-v{}-x86_64-pc-windows-msvc.zip",
+          "linux": "termscp-v{}-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "termscp-v{}-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "linux": "termscp-{}-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "termscp-v{}-arm64-apple-darwin.tar.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "termscp"
     },
-    "qr": {
-        "repo_url": "pip install qrcode",
-        "doc": "🔲 qr code generator. String to qr code.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_linux_amd_64": "",
-        "strip_v": false,
-        "exe_name": "qr"
+    {
+      "appName": "qr",
+      "repoURL": "pip install qrcode",
+      "doc": "🔲 qr code generator. String to qr code.",
+      "filenameTemplate": {
+        "amd64": {},
+        "arm64": {}
+      },
+      "stripVersion": false,
+      "exeName": "qr"
     },
-    "filebrowser": {
-        "repo_url": "https://github.com/filebrowser/filebrowser",
-        "doc": "🗂️ filebrowser provides a file managing interface within a specified directory",
-        "filename_template_windows_amd_64": "windows-amd64-filebrowser.zip",
-        "filename_template_linux_amd_64": "linux-amd64-filebrowser.tar.gz",
-        "filename_template_windows_arm_64": "windows-arm64-filebrowser.zip",
-        "filename_template_linux_arm_64": "linux-arm64-filebrowser.tar.gz",
-        "filename_template_macos_amd_64": "darwin-amd64-filebrowser.tar.gz",
-        "filename_template_macos_arm_64": "darwin-arm64-filebrowser.tar.gz",
-        "strip_v": false,
-        "exe_name": "filebrowser"
+    {
+      "appName": "filebrowser",
+      "repoURL": "https://github.com/filebrowser/filebrowser",
+      "doc": "🗂️ filebrowser provides a file managing interface within a specified directory",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "windows-amd64-filebrowser.zip",
+          "linux": "linux-amd64-filebrowser.tar.gz",
+          "macos": "darwin-amd64-filebrowser.tar.gz"
+        },
+        "arm64": {
+          "windows": "windows-arm64-filebrowser.zip",
+          "linux": "linux-arm64-filebrowser.tar.gz",
+          "macos": "darwin-arm64-filebrowser.tar.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "filebrowser"
     },
-    "cloudreve": {
-        "repo_url": "https://github.com/cloudreve/Cloudreve",
-        "doc": "☁️ Self-hosted file management system with muilt-cloud support.",
-        "filename_template_windows_amd_64": "cloudreve_{}_windows_amd64.zip",
-        "filename_template_linux_amd_64": "cloudreve_{}_linux_amd64.tar.gz",
-        "filename_template_windows_arm_64": "cloudreve_{}_windows_arm64.zip",
-        "filename_template_linux_arm_64": "cloudreve_{}_linux_arm64.tar.gz",
-        "filename_template_macos_amd_64": "cloudreve_{}_darwin_amd64.tar.gz",
-        "filename_template_macos_arm_64": "cloudreve_{}_darwin_arm64.tar.gz",
-        "strip_v": false,
-        "exe_name": "cloudreve"
+    {
+      "appName": "cloudreve",
+      "repoURL": "https://github.com/cloudreve/Cloudreve",
+      "doc": "☁️ Self-hosted file management system with muilt-cloud support.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "cloudreve_{}_windows_amd64.zip",
+          "linux": "cloudreve_{}_linux_amd64.tar.gz",
+          "macos": "cloudreve_{}_darwin_amd64.tar.gz"
+        },
+        "arm64": {
+          "windows": "cloudreve_{}_windows_arm64.zip",
+          "linux": "cloudreve_{}_linux_arm64.tar.gz",
+          "macos": "cloudreve_{}_darwin_arm64.tar.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "cloudreve"
     },
-    "restic": {
-        "repo_url": "https://github.com/restic/restic",
-        "doc": "💾 backup program that is fast, efficient and secure. It supports the three major operating systems",
-        "filename_template_windows_amd_64": "restic_{}_windows_amd64.zip",
-        "filename_template_linux_amd_64": "restic_{}_linux_amd64.bz2",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "restic_{}_linux_arm64.bz2",
-        "filename_template_macos_amd_64": "restic_{}_darwin_amd64.bz2",
-        "filename_template_macos_arm_64": "restic_{}_darwin_arm64.bz2",
-        "strip_v": true,
-        "exe_name": "restic"
+    {
+      "appName": "restic",
+      "repoURL": "https://github.com/restic/restic",
+      "doc": "💾 backup program that is fast, efficient and secure. It supports the three major operating systems",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "restic_{}_windows_amd64.zip",
+          "linux": "restic_{}_linux_amd64.bz2",
+          "macos": "restic_{}_darwin_amd64.bz2"
+        },
+        "arm64": {
+          "linux": "restic_{}_linux_arm64.bz2",
+          "macos": "restic_{}_darwin_arm64.bz2"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "restic"
     },
-    "syncthing": {
-        "repo_url": "https://github.com/syncthing/syncthing",
-        "doc": "🔄 Syncthing is a continuous file synchronization program. It synchronizes files between two or more computers.",
-        "filename_template_windows_amd_64": "syncthing-windows-amd64-{}.zip",
-        "filename_template_linux_amd_64": "syncthing-linux-amd64-{}.tar.gz",
-        "filename_template_windows_arm_64": "syncthing-windows-arm64-{}.zip",
-        "filename_template_linux_arm_64": "syncthing-linux-arm64-{}.tar.gz",
-        "filename_template_macos_amd_64": "syncthing-macos-amd64-{}.zip",
-        "filename_template_macos_arm_64": "syncthing-macos-arm64-{}.zip",
-        "strip_v": false,
-        "exe_name": "syncthing"
+    {
+      "appName": "syncthing",
+      "repoURL": "https://github.com/syncthing/syncthing",
+      "doc": "🔄 Syncthing is a continuous file synchronization program. It synchronizes files between two or more computers.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "syncthing-windows-amd64-{}.zip",
+          "linux": "syncthing-linux-amd64-{}.tar.gz",
+          "macos": "syncthing-macos-amd64-{}.zip"
+        },
+        "arm64": {
+          "windows": "syncthing-windows-arm64-{}.zip",
+          "linux": "syncthing-linux-arm64-{}.tar.gz",
+          "macos": "syncthing-macos-arm64-{}.zip"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "syncthing"
     },
-    "istio": {
-        "repo_url": "https://github.com/istio/istio",
-        "doc": "🌐 Istio is an open source service mesh that layers transparently onto existing distributed applications",
-        "filename_template_windows_amd_64": "istioctl-{}-win-amd64.zip",
-        "filename_template_linux_amd_64": "istio-{}-linux-amd64.tar.gz",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "istio-{}-linux-arm64.tar.gz",
-        "filename_template_macos_amd_64": "istio-{}-osx-amd64.tar.gz",
-        "filename_template_macos_arm_64": "istio-{}-osx-arm64.tar.gz",
-        "strip_v": true,
-        "exe_name": "istioctl"
+    {
+      "appName": "istio",
+      "repoURL": "https://github.com/istio/istio",
+      "doc": "🌐 Istio is an open source service mesh that layers transparently onto existing distributed applications",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "istioctl-{}-win-amd64.zip",
+          "linux": "istio-{}-linux-amd64.tar.gz",
+          "macos": "istio-{}-osx-amd64.tar.gz"
+        },
+        "arm64": {
+          "linux": "istio-{}-linux-arm64.tar.gz",
+          "macos": "istio-{}-osx-arm64.tar.gz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "istioctl"
     },
-    "openpomodoro-cli": {
-        "repo_url": "https://github.com/open-pomodoro/openpomodoro-cli",
-        "doc": "⏲️ Pomodoro timer for the command-line",
-        "filename_template_windows_amd_64": "openpomodoro-cli_{}_windows_amd64.tar.gz",
-        "filename_template_linux_amd_64": "openpomodoro-cli_{}_linux_amd64.tar.gz",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "openpomodoro-cli_{}_linux_arm64.tar.gz",
-        "filename_template_macos_amd_64": "openpomodoro-cli_{}_darwin_amd64.tar.gz",
-        "filename_template_macos_arm_64": "",
-        "strip_v": true,
-        "exe_name": "pomodoro"
+    {
+      "appName": "openpomodoro-cli",
+      "repoURL": "https://github.com/open-pomodoro/openpomodoro-cli",
+      "doc": "⏲️ Pomodoro timer for the command-line",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "openpomodoro-cli_{}_windows_amd64.tar.gz",
+          "linux": "openpomodoro-cli_{}_linux_amd64.tar.gz",
+          "macos": "openpomodoro-cli_{}_darwin_amd64.tar.gz"
+        },
+        "arm64": {
+          "linux": "openpomodoro-cli_{}_linux_arm64.tar.gz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "pomodoro"
     },
-    "rust-analyzer": {
-        "repo_url": "https://github.com/rust-lang/rust-analyzer",
-        "doc": "🦀 Rust Language Server (LSP)",
-        "filename_template_windows_amd_64": "rust-analyzer-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "rust-analyzer-x86_64-unknown-linux-gnu.gz",
-        "filename_template_windows_arm_64": "rust-analyzer-aarch64-pc-windows-msvc.zip",
-        "filename_template_linux_arm_64": "rust-analyzer-aarch64-unknown-linux-gnu.gz",
-        "filename_template_macos_amd_64": "rust-analyzer-x86_64-apple-darwin.gz",
-        "filename_template_macos_arm_64": "rust-analyzer-aarch64-apple-darwin.gz",
-        "strip_v": false,
-        "exe_name": "rust-analyzer"
+    {
+      "appName": "rust-analyzer",
+      "repoURL": "https://github.com/rust-lang/rust-analyzer",
+      "doc": "🦀 Rust Language Server (LSP)",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "rust-analyzer-x86_64-pc-windows-msvc.zip",
+          "linux": "rust-analyzer-x86_64-unknown-linux-gnu.gz",
+          "macos": "rust-analyzer-x86_64-apple-darwin.gz"
+        },
+        "arm64": {
+          "windows": "rust-analyzer-aarch64-pc-windows-msvc.zip",
+          "linux": "rust-analyzer-aarch64-unknown-linux-gnu.gz",
+          "macos": "rust-analyzer-aarch64-apple-darwin.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "rust-analyzer"
     },
-    "kondo": {
-        "repo_url": "https://github.com/tbillington/kondo",
-        "doc": "🧹 cleans projects from litter files.",
-        "filename_template_windows_amd_64": "kondo-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "kondo-x86_64-unknown-linux-gnu.tar.gz",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "kondo-x86_64-apple-darwin.tar.gz",
-        "filename_template_macos_arm_64": "kondo-aarch64-apple-darwin.tar.gz",
-        "strip_v": false,
-        "exe_name": "kondo"
+    {
+      "appName": "kondo",
+      "repoURL": "https://github.com/tbillington/kondo",
+      "doc": "🧹 cleans projects from litter files.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "kondo-x86_64-pc-windows-msvc.zip",
+          "linux": "kondo-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "kondo-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "macos": "kondo-aarch64-apple-darwin.tar.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "kondo"
     },
-    "tokei": {
-        "repo_url": "https://github.com/XAMPPRocky/tokei",
-        "doc": "📊 Counts the number of lines of code, comments, and blanks in a project.",
-        "filename_template_windows_amd_64": "tokei-x86_64-pc-windows-msvc.exe",
-        "filename_template_linux_amd_64": "tokei-x86_64-unknown-linux-gnu.tar.gz",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "tokei-aarch64-unknown-linux-gnu.tar.gz",
-        "filename_template_macos_amd_64": "tokei-x86_64-apple-darwin.tar.gz",
-        "filename_template_macos_arm_64": "",
-        "strip_v": false,
-        "exe_name": "tokei"
+    {
+      "appName": "tokei",
+      "repoURL": "https://github.com/XAMPPRocky/tokei",
+      "doc": "📊 Counts the number of lines of code, comments, and blanks in a project.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "tokei-x86_64-pc-windows-msvc.exe",
+          "linux": "tokei-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "tokei-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "linux": "tokei-aarch64-unknown-linux-gnu.tar.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "tokei"
     },
-    "lazygit": {
-        "repo_url": "https://github.com/jesseduffield/lazygit",
-        "doc": "🐙 A simple terminal UI for git commands",
-        "filename_template_windows_amd_64": "lazygit_{}_Windows_x86_64.zip",
-        "filename_template_linux_amd_64": "lazygit_{}_Linux_x86_64.tar.gz",
-        "filename_template_windows_arm_64": "lazygit_{}_Windows_arm64.zip",
-        "filename_template_linux_arm_64": "lazygit_{}_Linux_arm64.tar.gz",
-        "filename_template_macos_amd_64": "lazygit_{}_Darwin_x86_64.tar.gz",
-        "filename_template_macos_arm_64": "lazygit_{}_Darwin_arm64.tar.gz",
-        "strip_v": true,
-        "exe_name": "lazygit"
+    {
+      "appName": "lazygit",
+      "repoURL": "https://github.com/jesseduffield/lazygit",
+      "doc": "🐙 A simple terminal UI for git commands",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "lazygit_{}_Windows_x86_64.zip",
+          "linux": "lazygit_{}_Linux_x86_64.tar.gz",
+          "macos": "lazygit_{}_Darwin_x86_64.tar.gz"
+        },
+        "arm64": {
+          "windows": "lazygit_{}_Windows_arm64.zip",
+          "linux": "lazygit_{}_Linux_arm64.tar.gz",
+          "macos": "lazygit_{}_Darwin_arm64.tar.gz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "lazygit"
     },
-    "lazydocker": {
-        "repo_url": "https://github.com/jesseduffield/lazydocker/",
-        "doc": "🐋 A simple terminal UI for both docker and docker-compose",
-        "filename_template_windows_amd_64": "lazydocker_{}_Windows_x86_64.zip",
-        "filename_template_linux_amd_64": "lazydocker_{}_Linux_x86_64.tar.gz",
-        "filename_template_windows_arm_64": "lazydocker_{}_Windows_arm64.zip",
-        "filename_template_linux_arm_64": "lazydocker_{}_Linux_arm64.tar.gz",
-        "filename_template_macos_amd_64": "lazydocker_{}_Darwin_x86_64.tar.gz",
-        "filename_template_macos_arm_64": "lazydocker_{}_Darwin_arm64.tar.gz",
-        "strip_v": true,
-        "exe_name": "lazydocker"
+    {
+      "appName": "lazydocker",
+      "repoURL": "https://github.com/jesseduffield/lazydocker/",
+      "doc": "🐋 A simple terminal UI for both docker and docker-compose",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "lazydocker_{}_Windows_x86_64.zip",
+          "linux": "lazydocker_{}_Linux_x86_64.tar.gz",
+          "macos": "lazydocker_{}_Darwin_x86_64.tar.gz"
+        },
+        "arm64": {
+          "windows": "lazydocker_{}_Windows_arm64.zip",
+          "linux": "lazydocker_{}_Linux_arm64.tar.gz",
+          "macos": "lazydocker_{}_Darwin_arm64.tar.gz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "lazydocker"
     },
-    "onefetch": {
-        "repo_url": "https://github.com/o2sh/onefetch",
-        "doc": "📊 Git repository summary on your terminal",
-        "filename_template_windows_amd_64": "onefetch-win.tar.gz",
-        "filename_template_linux_amd_64": "onefetch-linux.tar.gz",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "onefetch-mac.tar.gz",
-        "filename_template_macos_arm_64": "",
-        "strip_v": true,
-        "exe_name": "onefetch"
+    {
+      "appName": "onefetch",
+      "repoURL": "https://github.com/o2sh/onefetch",
+      "doc": "📊 Git repository summary on your terminal",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "onefetch-win.tar.gz",
+          "linux": "onefetch-linux.tar.gz",
+          "macos": "onefetch-mac.tar.gz"
+        },
+        "arm64": {}
+      },
+      "stripVersion": true,
+      "exeName": "onefetch"
     },
-    "gitcs": {
-        "repo_url": "https://github.com/knbr13/gitcs",
-        "doc": "📈 analyze Git repositories and generate a visual contributions graph",
-        "filename_template_windows_amd_64": "gitcs_windows_amd64.exe",
-        "filename_template_linux_amd_64": "gitcs_linux_amd64",
-        "filename_template_macos_amd_64": "gitcs_darwin_amd64",
-        "strip_v": false,
-        "exe_name": "gitcs"
+    {
+      "appName": "gitcs",
+      "repoURL": "https://github.com/knbr13/gitcs",
+      "doc": "📈 analyze Git repositories and generate a visual contributions graph",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "gitcs_windows_amd64.exe",
+          "linux": "gitcs_linux_amd64",
+          "macos": "gitcs_darwin_amd64"
+        },
+        "arm64": {}
+      },
+      "stripVersion": false,
+      "exeName": "gitcs"
     },
-    "just": {
-        "repo_url": "https://github.com/casey/just",
-        "doc": "🎯 A command runner",
-        "filename_template_windows_amd_64": "just-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_windows_arm_64": "just-{}-aarch64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "just-{}-x86_64-unknown-linux-musl.tar.gz",
-        "filename_template_linux_arm_64": "just-{}-aarch64-unknown-linux-musl.tar.gz",
-        "filename_template_macos_amd_64": "just-{}-x86_64-apple-darwin.tar.gz",
-        "filename_template_macos_arm_64": "just-{}-aarch64-apple-darwin.tar.gz",
-        "strip_v": false,
-        "exe_name": "just"
+    {
+      "appName": "just",
+      "repoURL": "https://github.com/casey/just",
+      "doc": "🎯 A command runner",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "just-{}-x86_64-pc-windows-msvc.zip",
+          "linux": "just-{}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "just-{}-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "windows": "just-{}-aarch64-pc-windows-msvc.zip",
+          "linux": "just-{}-aarch64-unknown-linux-musl.tar.gz",
+          "macos": "just-{}-aarch64-apple-darwin.tar.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "just"
     },
-    "navi": {
-        "repo_url": "https://github.com/denisidoro/navi",
-        "doc": "📚 An interactive cheatsheet tool for the command-line",
-        "filename_template_windows_amd_64": "navi-v{}-x86_64-pc-windows-gnu.zip",
-        "filename_template_linux_amd_64": "navi-v{}-x86_64-unknown-linux-musl.tar.gz",
-        "filename_template_linux_arm_64": "navi-v{}-aarch64-unknown-linux-gnu.tar.gz",
-        "strip_v": false,
-        "exe_name": "navi"
+    {
+      "appName": "navi",
+      "repoURL": "https://github.com/denisidoro/navi",
+      "doc": "📚 An interactive cheatsheet tool for the command-line",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "navi-v{}-x86_64-pc-windows-gnu.zip",
+          "linux": "navi-v{}-x86_64-unknown-linux-musl.tar.gz"
+        },
+        "arm64": {
+          "linux": "navi-v{}-aarch64-unknown-linux-gnu.tar.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "navi"
     },
-    "tealdeer": {
-        "repo_url": "https://github.com/dbrgn/tealdeer",
-        "doc": "� A very fast implementation of tldr in Rust",
-        "filename_template_windows_amd_64": "tealdeer-windows-x86_64-msvc.exe",
-        "filename_template_linux_amd_64": "tealdeer-linux-x86_64-musl",
-        "filename_template_linux_arm_64": "tealdeer-linux-aarch64-musl",
-        "filename_template_macos_amd_64": "tealdeer-macos-x86_64",
-        "filename_template_macos_arm_64": "tealdeer-macos-aarch64",
-        "strip_v": true,
-        "exe_name": "tldr"
+    {
+      "appName": "tealdeer",
+      "repoURL": "https://github.com/dbrgn/tealdeer",
+      "doc": "� A very fast implementation of tldr in Rust",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "tealdeer-windows-x86_64-msvc.exe",
+          "linux": "tealdeer-linux-x86_64-musl",
+          "macos": "tealdeer-macos-x86_64"
+        },
+        "arm64": {
+          "linux": "tealdeer-linux-aarch64-musl",
+          "macos": "tealdeer-macos-aarch64"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "tldr"
     },
-    "sniffnet": {
-        "repo_url": "https://github.com/GyulyVGC/sniffnet",
-        "doc": "🔍 A simple network sniffer in Rust",
-        "filename_template_windows_amd_64": "Sniffnet_Windows_64-bit.msi",
-        "filename_template_linux_amd_64": "Sniffnet_LinuxDEB_amd64.deb",
-        "filename_template_linux_arm_64": "Sniffnet_LinuxDEB_arm64.deb",
-        "filename_template_macos_amd_64": "Sniffnet_macOS_Intel.dmg",
-        "filename_template_macos_arm_64": "Sniffnet_macOS_AppleSilicon.dmg",
-        "strip_v": true,
-        "exe_name": "sniffnet"
+    {
+      "appName": "sniffnet",
+      "repoURL": "https://github.com/GyulyVGC/sniffnet",
+      "doc": "🔍 A simple network sniffer in Rust",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "Sniffnet_Windows_64-bit.msi",
+          "linux": "Sniffnet_LinuxDEB_amd64.deb",
+          "macos": "Sniffnet_macOS_Intel.dmg"
+        },
+        "arm64": {
+          "linux": "Sniffnet_LinuxDEB_arm64.deb",
+          "macos": "Sniffnet_macOS_AppleSilicon.dmg"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "sniffnet"
     },
-    "hyperfine": {
-        "repo_url": "https://github.com/sharkdp/hyperfine",
-        "doc": "⚡ A command-line benchmarking tool",
-        "filename_template_windows_amd_64": "hyperfine-v{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "hyperfine-v{}-x86_64-unknown-linux-gnu.tar.gz",
-        "filename_template_linux_arm_64": "hyperfine-v{}-aarch64-unknown-linux-gnu.tar.gz",
-        "filename_template_macos_amd_64": "hyperfine-v{}-x86_64-apple-darwin.tar.gz",
-        "filename_template_macos_arm_64": "hyperfine-v{}-aarch64-apple-darwin.tar.gz",
-        "strip_v": false,
-        "exe_name": "hyperfine"
+    {
+      "appName": "hyperfine",
+      "repoURL": "https://github.com/sharkdp/hyperfine",
+      "doc": "⚡ A command-line benchmarking tool",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "hyperfine-v{}-x86_64-pc-windows-msvc.zip",
+          "linux": "hyperfine-v{}-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "hyperfine-v{}-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "linux": "hyperfine-v{}-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "hyperfine-v{}-aarch64-apple-darwin.tar.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "hyperfine"
     },
-    "ollama": {
-        "repo_url": "https://github.com/ollama/ollama",
-        "doc": "🤖 Get up and running with large language models locally.",
-        "filename_template_windows_amd_64": "ollama-windows-amd64.zip",
-        "filename_template_windows_arm_64": "ollama-windows-arm64.zip",
-        "filename_template_linux_amd_64": "ollama-linux-amd64.tgz",
-        "filename_template_linux_arm_64": "ollama-linux-arm64.tgz",
-        "filename_template_macos_amd_64": "ollama-darwin.tgz",
-        "filename_template_macos_arm_64": "ollama-darwin.tgz",
-        "strip_v": false,
-        "exe_name": "ollama"
+    {
+      "appName": "ollama",
+      "repoURL": "https://github.com/ollama/ollama",
+      "doc": "🤖 Get up and running with large language models locally.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "ollama-windows-amd64.zip",
+          "linux": "ollama-linux-amd64.tgz",
+          "macos": "ollama-darwin.tgz"
+        },
+        "arm64": {
+          "windows": "ollama-windows-arm64.zip",
+          "linux": "ollama-linux-arm64.tgz",
+          "macos": "ollama-darwin.tgz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "ollama"
     },
-    "cointop": {
-        "repo_url": "https://github.com/cointop-sh/cointop",
-        "doc": "💰 Cointop is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.",
-        "filename_template_windows_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "cointop_{}_linux_amd64.tar.gz",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "cointop_{}_darwin_amd64.tar.gz",
-        "filename_template_macos_arm_64": "",
-        "strip_v": true,
-        "exe_name": "cointop"
+    {
+      "appName": "cointop",
+      "repoURL": "https://github.com/cointop-sh/cointop",
+      "doc": "💰 Cointop is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.",
+      "filenameTemplate": {
+        "amd64": {
+          "linux": "cointop_{}_linux_amd64.tar.gz",
+          "macos": "cointop_{}_darwin_amd64.tar.gz"
+        },
+        "arm64": {}
+      },
+      "stripVersion": true,
+      "exeName": "cointop"
     },
-    "vtm": {
-        "repo_url": "https://github.com/netxs-group/vtm",
-        "doc": "🖥️ Text-based desktop environment inside your terminal",
-        "filename_template_windows_amd_64": "vtm_windows_x86_64.zip",
-        "filename_template_windows_arm_64": "vtm_windows_arm64.zip",
-        "filename_template_linux_amd_64": "vtm_linux_x86_64.zip",
-        "filename_template_linux_arm_64": "vtm_linux_arm64.zip",
-        "filename_template_macos_amd_64": "vtm_macos_any.zip",
-        "filename_template_macos_arm_64": "vtm_macos_any.zip",
-        "strip_v": false,
-        "exe_name": "vtm"
+    {
+      "appName": "vtm",
+      "repoURL": "https://github.com/netxs-group/vtm",
+      "doc": "🖥️ Text-based desktop environment inside your terminal",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "vtm_windows_x86_64.zip",
+          "linux": "vtm_linux_x86_64.zip",
+          "macos": "vtm_macos_any.zip"
+        },
+        "arm64": {
+          "windows": "vtm_windows_arm64.zip",
+          "linux": "vtm_linux_arm64.zip",
+          "macos": "vtm_macos_any.zip"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "vtm"
     },
-    "edex-ui": {
-        "repo_url": "https://github.com/GitSquared/edex-ui",
-        "doc": "🚀 fullscreen, cross-platform terminal emulator and system monitor that looks and feels like a sci-fi computer interface",
-        "filename_template_windows_amd_64": "eDEX-UI-Windows-x64.exe",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "eDEX-UI-Linux-x86_64.AppImage",
-        "filename_template_linux_arm_64": "eDEX-UI-Linux-arm64.AppImage",
-        "filename_template_macos_amd_64": "eDEX-UI-macOS-x64.dmg",
-        "filename_template_macos_arm_64": "",
-        "strip_v": true,
-        "exe_name": "edex"
+    {
+      "appName": "edex-ui",
+      "repoURL": "https://github.com/GitSquared/edex-ui",
+      "doc": "🚀 fullscreen, cross-platform terminal emulator and system monitor that looks and feels like a sci-fi computer interface",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "eDEX-UI-Windows-x64.exe",
+          "linux": "eDEX-UI-Linux-x86_64.AppImage",
+          "macos": "eDEX-UI-macOS-x64.dmg"
+        },
+        "arm64": {
+          "linux": "eDEX-UI-Linux-arm64.AppImage"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "edex"
     },
-    "extraterm": {
-        "repo_url": "https://github.com/sedwards2009/extraterm/",
-        "doc": "💻 Terminal emulator",
-        "filename_template_windows_amd_64": "extratermqt-{}-windows-x64.zip",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "extratermqt-{}-linux-x64.zip",
-        "filename_template_linux_arm_64": "",
-        "filename_template_macos_amd_64": "extratermqt-{}-macos-x64.zip",
-        "filename_template_macos_arm_64": "",
-        "strip_v": true,
-        "exe_name": "extraterm"
+    {
+      "appName": "extraterm",
+      "repoURL": "https://github.com/sedwards2009/extraterm/",
+      "doc": "💻 Terminal emulator",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "extratermqt-{}-windows-x64.zip",
+          "linux": "extratermqt-{}-linux-x64.zip",
+          "macos": "extratermqt-{}-macos-x64.zip"
+        },
+        "arm64": {}
+      },
+      "stripVersion": true,
+      "exeName": "extraterm"
     },
-    "nushell": {
-        "repo_url": "https://github.com/nushell/nushell",
-        "doc": "🐚 A cross-platform shell in Rust.",
-        "filename_template_windows_amd_64": "nu-{}-x86_64-pc-windows-msvc.zip",
-        "filename_template_windows_arm_64": "nu-{}-aarch64-pc-windows-msvc.zip",
-        "filename_template_linux_amd_64": "nu-{}-x86_64-unknown-linux-gnu.tar.gz",
-        "filename_template_linux_arm_64": "nu-{}-aarch64-unknown-linux-gnu.tar.gz",
-        "filename_template_macos_amd_64": "nu-{}-x86_64-apple-darwin.tar.gz",
-        "filename_template_macos_arm_64": "nu-{}-aarch64-apple-darwin.tar.gz",
-        "strip_v": true,
-        "exe_name": "nu"
+    {
+      "appName": "nushell",
+      "repoURL": "https://github.com/nushell/nushell",
+      "doc": "🐚 A cross-platform shell in Rust.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "nu-{}-x86_64-pc-windows-msvc.zip",
+          "linux": "nu-{}-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "nu-{}-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "windows": "nu-{}-aarch64-pc-windows-msvc.zip",
+          "linux": "nu-{}-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "nu-{}-aarch64-apple-darwin.tar.gz"
+        }
+      },
+      "stripVersion": true,
+      "exeName": "nu"
     },
-    "geckodriver": {
-        "repo_url": "https://github.com/mozilla/geckodriver",
-        "doc": "🦊 WebDriver for Firefox.",
-        "filename_template_windows_amd_64": "geckodriver-{}-win64.zip",
-        "filename_template_windows_arm_64": "geckodriver-{}-win-aarch64.zip",
-        "filename_template_linux_amd_64": "geckodriver-{}-linux64.tar.gz",
-        "filename_template_linux_arm_64": "geckodriver-{}-linux-aarch64.tar.gz",
-        "filename_template_macos_amd_64": "geckodriver-{}-macos.tar.gz",
-        "filename_template_macos_arm_64": "geckodriver-{}-macos-aarch64.tar.gz",
-        "strip_v": false,
-        "exe_name": "geckodriver"
+    {
+      "appName": "geckodriver",
+      "repoURL": "https://github.com/mozilla/geckodriver",
+      "doc": "🦊 WebDriver for Firefox.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "geckodriver-{}-win64.zip",
+          "linux": "geckodriver-{}-linux64.tar.gz",
+          "macos": "geckodriver-{}-macos.tar.gz"
+        },
+        "arm64": {
+          "windows": "geckodriver-{}-win-aarch64.zip",
+          "linux": "geckodriver-{}-linux-aarch64.tar.gz",
+          "macos": "geckodriver-{}-macos-aarch64.tar.gz"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "geckodriver"
     }
+  ]
 }

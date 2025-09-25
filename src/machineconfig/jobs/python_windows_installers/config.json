@@ -1,56 +1,82 @@
 {
-    "speedtest": {
-        "repo_url": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-win64.zip",
-        "doc": "🚀 Test your internet connection speed and ping using speedtest.net from the CLI",
-        "filename_template_windows_amd_64": "speedtest",
-        "filename_template_windows_arm_64": "speedtest",
-        "filename_template_linux_amd_64": "speedtest",
-        "strip_v": false,
-        "exe_name": "speedtest"
+  "version": "1",
+  "installers": [
+    {
+      "appName": "speedtest",
+      "repoURL": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-win64.zip",
+      "doc": "🚀 Test your internet connection speed and ping using speedtest.net from the CLI",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "speedtest",
+          "linux": "speedtest"
+        },
+        "arm64": {
+          "windows": "speedtest"
+        }
+      },
+      "stripVersion": false,
+      "exeName": "speedtest"
     },
-    "boxes": {
-        "repo_url": "https://github.com/ascii-boxes/boxes",
-        "doc": "📦 ASCI draws boxes around text.",
-        "filename_template_windows_amd_64": "boxes-{}-intel-win32.zip",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "",
-        "strip_v": true,
-        "exe_name": "boxes"
+    {
+      "appName": "boxes",
+      "repoURL": "https://github.com/ascii-boxes/boxes",
+      "doc": "📦 ASCI draws boxes around text.",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "boxes-{}-intel-win32.zip"
+        },
+        "arm64": {}
+      },
+      "stripVersion": true,
+      "exeName": "boxes"
     },
-    "ugrep": {
-        "repo_url": "https://github.com/Genivia/ugrep",
-        "doc": "🔍 A fast, portable, feature-rich command-line search tool",
-        "filename_template_windows_amd_64": "ugrep-windows-x64.zip",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "",
-        "strip_v": true,
-        "exe_name": "ugrep"
+    {
+      "appName": "ugrep",
+      "repoURL": "https://github.com/Genivia/ugrep",
+      "doc": "🔍 A fast, portable, feature-rich command-line search tool",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "ugrep-windows-x64.zip"
+        },
+        "arm64": {}
+      },
+      "stripVersion": true,
+      "exeName": "ugrep"
     },
-    "zoomit": {
-        "repo_url": "https://download.sysinternals.com/files/ZoomIt.zip",
-        "doc": "🔍 A screen zoom and annotation tool for presentations",
-        "filename_template_windows_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "",
-        "strip_v": false,
-        "exe_name": "ZoomIt.exe"
+    {
+      "appName": "zoomit",
+      "repoURL": "https://download.sysinternals.com/files/ZoomIt.zip",
+      "doc": "🔍 A screen zoom and annotation tool for presentations",
+      "filenameTemplate": {
+        "amd64": {},
+        "arm64": {}
+      },
+      "stripVersion": false,
+      "exeName": "ZoomIt.exe"
     },
-    "ntop": {
-        "repo_url": "https://github.com/gsass1/NTop",
-        "doc": "📊 Like htop, for Windows",
-        "filename_template_windows_amd_64": "ntop.exe",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "",
-        "strip_v": false,
-        "exe_name": "ntop.exe"
+    {
+      "appName": "ntop",
+      "repoURL": "https://github.com/gsass1/NTop",
+      "doc": "📊 Like htop, for Windows",
+      "filenameTemplate": {
+        "amd64": {
+          "windows": "ntop.exe"
+        },
+        "arm64": {}
+      },
+      "stripVersion": false,
+      "exeName": "ntop.exe"
     },
-    "devtunnel": {
-        "repo_url": "winget install --Id Microsoft.devtunnel --scope user",
-        "doc": "🔄 devtunnel secure introspectable tunnels to localhost",
-        "filename_template_windows_amd_64": "",
-        "filename_template_windows_arm_64": "",
-        "filename_template_linux_amd_64": "",
-        "strip_v": false,
-        "exe_name": "devtunnel"
+    {
+      "appName": "devtunnel",
+      "repoURL": "winget install --Id Microsoft.devtunnel --scope user",
+      "doc": "🔄 devtunnel secure introspectable tunnels to localhost",
+      "filenameTemplate": {
+        "amd64": {},
+        "arm64": {}
+      },
+      "stripVersion": false,
+      "exeName": "devtunnel"
     }
+  ]
 }

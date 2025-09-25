@@ -1,0 +1,10 @@
+{
+    "bitwarden": {
+        "repo_url": "https://vault.bitwarden.com/download/?app=cli&platform=linux",
+        "doc": "🔐 password manager cli",
+        "filename_template_windows_amd_64": "",
+        "filename_template_linux_amd_64": "bw",
+        "strip_v": true,
+        "exe_name": "bw"
+    }
+}
