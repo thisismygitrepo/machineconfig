@@ -21,7 +21,7 @@ def main(which: Optional[WHICH_CAT | str]) -> None:
         for a_which in which.split(",") if type(which) == str else which:
             # Use get_installers to get properly converted installer objects
             all_installers = get_installers(system=system(), dev=False) + get_installers(system=system(), dev=True)
-            
+
             # Find installer by exe_name or name
             selected_installer = None
             for installer in all_installers:
@@ -30,11 +30,11 @@ def main(which: Optional[WHICH_CAT | str]) -> None:
                 if exe_name == a_which or app_name == a_which:
                     selected_installer = installer
                     break
-            
+
             if selected_installer is None:
                 available_names = [f"{inst.installer_data.get('exeName', 'unknown')} ({inst.installer_data.get('appName', 'unknown')})" for inst in all_installers[:10]]  # Show first 10
                 raise ValueError(f"{a_which=} not found. Available installers include: {available_names}")
-            
+
             print(f"""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ 🔧 Installing: {a_which}
@@ -75,16 +75,17 @@ def main(which: Optional[WHICH_CAT | str]) -> None:
             an_installer = installers[options.index(a_program_name)]
             status_message = an_installer.install_robust(version=None)  # finish the task - this returns a status message, not a command
             installation_messages.append(status_message)
-    
+
     # Print all installation status messages
     print("\n📊 INSTALLATION SUMMARY:")
     print("=" * 50)
     for message in installation_messages:
         print(message)
-    
+
     # Only run shell commands if there are any (from category installations)
     if total_commands.strip():
         import subprocess
+
         print("\n🚀 Running additional shell commands...")
         subprocess.run(total_commands, shell=True, check=True)
 

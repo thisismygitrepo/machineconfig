@@ -2,9 +2,9 @@
 
 import platform
 from typing import Optional
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
-
-config_dict = {"repo_url": "CUSTOM", "doc": "submillisecond fast key-value db", "filename_template_windows_amd_64": "", "filename_template_linux_amd_64": "", "strip_v": False, "exe_name": "redis"}
+config_dict: InstallerData = {"appName": "Redis", "repoURL": "CUSTOM", "doc": "submillisecond fast key-value db", "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}}, "stripVersion": False, "exeName": "redis"}
 
 
 def main(version: Optional[str]):

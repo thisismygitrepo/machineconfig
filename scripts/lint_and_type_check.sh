@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 # gotch1: make sure we are in the right directory: repo root. Solution: check if .pyproject.toml exists, otherwise stop.
 if [ ! -f "./pyproject.toml" ]; then

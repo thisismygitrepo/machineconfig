@@ -4,6 +4,7 @@ Installer
 
 # from machineconfig.utils.installer import get_latest_release
 from typing import Optional
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 # https://docs.docker.com/desktop/install/ubuntu/
 # https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
@@ -14,13 +15,13 @@ from typing import Optional
 # fname = r"bytehound-x86_64-unknown-linux-gnu.tgz"
 
 
-config_dict = {
-    "repo_url": "CUSTOM",
+config_dict: InstallerData = {
+    "appName": "docker_desktop",
+    "repoURL": "CUSTOM",
     "doc": """Docker Desktop for Ubuntu as per https://docs.docker.com/desktop/install/ubuntu/""",
-    "filename_template_windows_amd_64": "gh_{}_windows_amd64.zip",
-    "filename_template_linux_amd_64": "gh_{}_linux_amd64.tar.gz",
-    "strip_v": True,
-    "exe_name": "docker",
+    "filenameTemplate": {"amd64": {"windows": "gh_{}_windows_amd64.zip", "linux": "gh_{}_linux_amd64.tar.gz", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
+    "stripVersion": True,
+    "exeName": "docker",
 }
 
 

@@ -27,7 +27,7 @@ class Installer:
         exe_name = self.installer_data.get("exeName", "")
         if not exe_name:
             return "Invalid installer: missing exeName"
-        
+
         old_version_cli: bool = check_tool_exists(tool_name=exe_name)
         old_version_cli_str = "✅" if old_version_cli else "❌"
         # name_version = f"{self.exe_name} {old_version_cli_str}"
@@ -98,7 +98,7 @@ class Installer:
     def install(self, version: Optional[str]):
         exe_name = self.installer_data.get("exeName", "unknown")
         repo_url = self.installer_data.get("repoURL", "")
-        
+
         print(f"\n{'=' * 80}\n🔧 INSTALLATION PROCESS: {exe_name} 🔧\n{'=' * 80}")
         if repo_url == "CUSTOM":
             print(f"🧩 Using custom installer for {exe_name}")
@@ -203,7 +203,7 @@ class Installer:
         repo_url = self.installer_data.get("repoURL", "")
         app_name = self.installer_data.get("appName", "unknown")
         strip_v = self.installer_data.get("stripVersion", False)
-        
+
         print(f"\n{'=' * 80}\n📥 DOWNLOADING: {exe_name} 📥\n{'=' * 80}")
         download_link: Optional[Path] = None
         version_to_be_installed: Optional[str] = None
@@ -260,6 +260,7 @@ class Installer:
         if arch_raw in ("aarch64", "arm64", "armv8", "armv8l"):
             return "arm64"
         return arch_raw
+
     def _system_name(self) -> str:
         sys_ = platform.system()
         if sys_ == "Darwin":
@@ -269,26 +270,26 @@ class Installer:
     def _any_direct_http_template(self) -> bool:
         filename_templates = self.installer_data.get("filenameTemplate", {})
         templates: list[str] = []
-        
+
         for arch_templates in filename_templates.values():
             templates.extend([t for t in arch_templates.values() if t])
-        
+
         return any(t for t in templates if t.startswith("http"))
 
     def _select_template(self) -> tuple[str, str]:
         sys_name = platform.system()
         arch = self._normalized_arch()
-        
+
         filename_templates = self.installer_data.get("filenameTemplate", {})
-        
+
         # Get templates for each architecture
         amd64_templates = filename_templates.get("amd64", {})
         arm64_templates = filename_templates.get("arm64", {})
-        
+
         # mapping logic
         candidates: list[str] = []
         template: Optional[str] = None
-        
+
         if sys_name == "Windows":
             if arch == "arm64" and arm64_templates.get("windows"):
                 template = arm64_templates["windows"]

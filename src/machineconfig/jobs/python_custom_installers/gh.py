@@ -3,10 +3,12 @@
 import platform
 from typing import Optional
 from machineconfig.utils.installer_utils.installer_class import Installer
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 from machineconfig.utils.terminal import Terminal
 
 r"""
 https://github.com/cli/cli
+
 
 # as per https://docs.github.com/en/copilot/github-copilot-in-the-cli/using-github-copilot-in-the-cli
 # gh auth login
@@ -17,7 +19,14 @@ https://github.com/cli/cli
 
 """
 
-config_dict = {"repo_url": "https://github.com/cli/cli", "doc": "GitHub CLI", "filename_template_windows_amd_64": "gh_{}_windows_amd64.zip", "filename_template_linux_amd_64": "gh_{}_linux_amd64.tar.gz", "strip_v": True, "exe_name": "gh"}
+config_dict: InstallerData = {
+    "appName": "gh",
+    "repoURL": "https://github.com/cli/cli",
+    "doc": "GitHub CLI",
+    "filenameTemplate": {"amd64": {"windows": "gh_{}_windows_amd64.zip", "linux": "gh_{}_linux_amd64.tar.gz", "macos": "gh_{}_macOS_amd64.tar.gz"}},
+    "stripVersion": True,
+    "exeName": "gh",
+}
 
 
 def main(version: Optional[str]):
@@ -30,7 +39,7 @@ def main(version: Optional[str]):
 """)
 
     _ = version
-    inst = Installer.from_dict(d=config_dict, name="gh")
+    inst = Installer(installer_data=config_dict)
     print("""
 📦 INSTALLATION | Installing GitHub CLI base package...
 """)

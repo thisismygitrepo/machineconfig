@@ -4,9 +4,10 @@ from pathlib import Path
 import platform
 import subprocess
 from typing import Optional
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-config_dict = {"repo_url": "CUSTOM", "doc": "Cursor", "filename_template_windows_amd_64": "VSCodeSetup-{}.exe", "filename_template_linux_amd_64": "code_{}.deb", "strip_v": True, "exe_name": "cursor"}
+config_dict: InstallerData = {"appName": "Cursor", "repoURL": "CUSTOM", "doc": "Cursor", "filenameTemplate": {"amd64": {"windows": "VSCodeSetup-{}.exe", "linux": "code_{}.deb", "macos": ""}}, "stripVersion": True, "exeName": "cursor"}
 
 
 def install_linux(version: Optional[str] = None):

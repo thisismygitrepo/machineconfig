@@ -3,8 +3,17 @@
 import platform
 from typing import Optional
 
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
-config_dict = {"repo_url": "CUSTOM", "doc": "Chrome with no ads", "filename_template_windows_amd_64": "", "filename_template_linux_amd_64": "", "strip_v": False, "exe_name": "brave"}
+
+config_dict: InstallerData = {
+    "appName": "Brave",
+    "repoURL": "CUSTOM",
+    "doc": "Privacy-focused web browser with built-in ad blocking",
+    "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}},
+    "stripVersion": False,
+    "exeName": "brave",
+}
 
 
 def main(version: Optional[str]):

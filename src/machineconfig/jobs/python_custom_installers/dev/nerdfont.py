@@ -2,9 +2,17 @@
 
 import platform
 from typing import Optional
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-config_dict = {"repo_url": "CUSTOM", "doc": "lightweight containerization", "filename_template_windows_amd_64": "", "filename_template_linux_amd_64": "", "strip_v": False, "exe_name": "nerdfont"}
+config_dict: InstallerData = {
+    "appName": "nerdfont",
+    "repoURL": "CUSTOM",
+    "doc": "lightweight containerization",
+    "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
+    "stripVersion": False,
+    "exeName": "nerdfont",
+}
 
 
 def main(version: Optional[str]):

@@ -1,3 +1,4 @@
-/home/alex/code/machineconfig/src/machineconfig/scripts/python/devops_devapps_install.py
-  /home/alex/code/machineconfig/src/machineconfig/scripts/python/devops_devapps_install.py:8:72 - error: "get_all_dicts" is unknown import symbol (reportAttributeAccessIssue)
+/home/alex/code/machineconfig/src/machineconfig/jobs/python_custom_installers/dev/espanso.py
+  /home/alex/code/machineconfig/src/machineconfig/jobs/python_custom_installers/dev/espanso.py:71:27 - error: Cannot access attribute "from_dict" for class "type[Installer]"
+    Attribute "from_dict" is unknown (reportAttributeAccessIssue)
 1 error, 0 warnings, 0 informations

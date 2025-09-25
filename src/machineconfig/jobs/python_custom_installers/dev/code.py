@@ -2,9 +2,16 @@
 
 from typing import Optional
 import platform
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
-
-config_dict = {"repo_url": "CUSTOM", "doc": "Visual Studio Code", "filename_template_windows_amd_64": "VSCodeSetup-{}.exe", "filename_template_linux_amd_64": "code_{}.deb", "strip_v": True, "exe_name": "code"}
+config_dict: InstallerData = {
+    "appName": "Visual Studio Code",
+    "repoURL": "CUSTOM",
+    "doc": "Visual Studio Code",
+    "filenameTemplate": {"amd64": {"windows": "VSCodeSetup-{}.exe", "linux": "code_{}.deb", "macos": ""}},
+    "stripVersion": True,
+    "exeName": "code",
+}
 
 
 def main(version: Optional[str] = None):

@@ -1,3 +1,47 @@
+ERROR Parse error: missing closing quote in string literal [parse-error]
+  --> .ai/tmp_prompts/AI_Agents_K3dtsb6BoD/aa_agents_relaunch.py:21:13
+   |
+21 | separator = "
+   |             ^
+   |
+ERROR Parse error: Expected a statement [parse-error]
+  --> .ai/tmp_prompts/AI_Agents_K3dtsb6BoD/aa_agents_relaunch.py:21:14
+   |
+21 | separator = "
+   |              ^
+22 | "
+   |
+ERROR Parse error: missing closing quote in string literal [parse-error]
+  --> .ai/tmp_prompts/AI_Agents_K3dtsb6BoD/aa_agents_relaunch.py:22:1
+   |
+22 | "
+   | ^
+   |
+ERROR Parse error: Expected a statement [parse-error]
+  --> .ai/tmp_prompts/AI_Agents_K3dtsb6BoD/aa_agents_relaunch.py:22:2
+   |
+22 | "
+   |  ^
+23 | prompt_material_path = Path("/home/alex/code/machineconfig/.ai/target_file.txt")
+   |
+ERROR Could not find name `regenerate_py_code` [unknown-name]
+  --> .ai/tmp_prompts/AI_Agents_K3dtsb6BoD/aa_agents_relaunch.py:31:56
+   |
+31 | (agents_dir / "aa_agents_relaunch.py").write_text(data=regenerate_py_code, encoding="utf-8")
+   |                                                        ^^^^^^^^^^^^^^^^^^
+   |
+ERROR TypedDict `LayoutsFile` does not have key `layoutTabs` [typed-dict-key-error]
+  --> .ai/tmp_prompts/AI_Agents_K3dtsb6BoD/aa_agents_relaunch.py:34:15
+   |
+34 | if len(layout["layoutTabs"]) > 25:
+   |               ^^^^^^^^^^^^
+   |
+ERROR Could not find name `ZellijLocalManager` [unknown-name]
+  --> .ai/tmp_prompts/AI_Agents_K3dtsb6BoD/aa_agents_relaunch.py:37:11
+   |
+37 | manager = ZellijLocalManager(session_layouts=[layout])
+   |           ^^^^^^^^^^^^^^^^^^
+   |
 ERROR Could not find import of `typer` [import-error]
   --> .ai/tmp_scripts/argparse_typing_examples/approach3_modern_libs.py:15:16
    |
@@ -25,6 +69,72 @@ ERROR Could not find import of `pydantic` [import-error]
   Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
   Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
   Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
+ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:28:46
+   |
+28 |     installer_data_files = InstallerDataFiles(config_data)
+   |                                              ^^^^^^^^^^^^^
+   |
+ERROR Expected argument `version` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [unexpected-positional-argument]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:28:47
+   |
+28 |     installer_data_files = InstallerDataFiles(config_data)
+   |                                               ^^^^^^^^^^^
+   |
+ERROR Missing argument `repoURL` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:35:35
+   |
+35 |     installer_data = InstallerData(first_installer)
+   |                                   ^^^^^^^^^^^^^^^^^
+   |
+ERROR Missing argument `doc` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:35:35
+   |
+35 |     installer_data = InstallerData(first_installer)
+   |                                   ^^^^^^^^^^^^^^^^^
+   |
+ERROR Missing argument `filenameTemplate` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:35:35
+   |
+35 |     installer_data = InstallerData(first_installer)
+   |                                   ^^^^^^^^^^^^^^^^^
+   |
+ERROR Missing argument `stripVersion` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:35:35
+   |
+35 |     installer_data = InstallerData(first_installer)
+   |                                   ^^^^^^^^^^^^^^^^^
+   |
+ERROR Missing argument `exeName` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:35:35
+   |
+35 |     installer_data = InstallerData(first_installer)
+   |                                   ^^^^^^^^^^^^^^^^^
+   |
+ERROR Expected argument `appName` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [unexpected-positional-argument]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:35:36
+   |
+35 |     installer_data = InstallerData(first_installer)
+   |                                    ^^^^^^^^^^^^^^^
+   |
+ERROR Class `Installer` has no class attribute `from_installer_data` [missing-attribute]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:49:17
+   |
+49 |     installer = Installer.from_installer_data(installer_data=first_installer_data)
+   |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+ERROR Object of class `Installer` has no attribute `exe_name` [missing-attribute]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:84:22
+   |
+84 |         print(f"  - {installer.exe_name}: {installer.doc[:50]}...")
+   |                      ^^^^^^^^^^^^^^^^^^
+   |
+ERROR Object of class `Installer` has no attribute `doc` [missing-attribute]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:84:44
+   |
+84 |         print(f"  - {installer.exe_name}: {installer.doc[:50]}...")
+   |                                            ^^^^^^^^^^^^^
+   |
 ERROR Could not import `_search_python_files` from `machineconfig.scripts.python.fire_agents` [missing-module-attribute]
   --> .ai/tmp_scripts/test_fire_agents.py:10:54
    |
@@ -166,6 +276,12 @@ ERROR Argument `str` is not assignable to parameter `object` with type `LiteralS
 62 |                 formatted_args.append(f'"{arg}"')
    |                                       ^^^^^^^^^^
    |
+ERROR Class `Installer` has no class attribute `from_dict` [missing-attribute]
+  --> src/machineconfig/jobs/python_custom_installers/dev/espanso.py:71:17
+   |
+71 |     installer = Installer.from_dict(config_dict, name="espanso")
+   |                 ^^^^^^^^^^^^^^^^^^^
+   |
 ERROR No attribute `windll` in module `ctypes` [missing-attribute]
   --> src/machineconfig/profile/create.py:73:32
    |
@@ -183,12 +299,6 @@ ERROR Argument `str` is not assignable to parameter `object` with type `LiteralS
    |
 61 |             res_lines.append(line)
    |                              ^^^^
-   |
-ERROR Could not find name `get_all_dicts` [unknown-name]
-  --> src/machineconfig/scripts/python/devops_devapps_install.py:45:74
-   |
-45 |     installers = [Installer.from_dict(d=vd, name=name) for __kat, vds in get_all_dicts(system=system()).items() for name, vd in vds....
-   |                                                                          ^^^^^^^^^^^^^
    |
 ERROR Object of class `NoneType` has no attribute `lower` [missing-attribute]
   --> src/machineconfig/scripts/python/fire_jobs_layout_helper.py:27:110
@@ -225,124 +335,52 @@ ERROR `str | None` is not assignable to `None` (caused by inconsistent types whe
    | |_______________________________________^
    |
 ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:132:50
+   --> src/machineconfig/utils/installer.py:136:50
     |
-132 |     res_final["OS_SPECIFIC"] = InstallerDataFiles(os_specific_data)
+136 |     res_final["OS_SPECIFIC"] = InstallerDataFiles(os_specific_data)
     |                                                  ^^^^^^^^^^^^^^^^^^
     |
 ERROR Expected argument `version` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [unexpected-positional-argument]
-   --> src/machineconfig/utils/installer.py:132:51
+   --> src/machineconfig/utils/installer.py:136:51
     |
-132 |     res_final["OS_SPECIFIC"] = InstallerDataFiles(os_specific_data)
+136 |     res_final["OS_SPECIFIC"] = InstallerDataFiles(os_specific_data)
     |                                                   ^^^^^^^^^^^^^^^^
     |
 ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:136:49
+   --> src/machineconfig/utils/installer.py:140:49
     |
-136 |     res_final["OS_GENERIC"] = InstallerDataFiles(os_generic_data)
+140 |     res_final["OS_GENERIC"] = InstallerDataFiles(os_generic_data)
     |                                                 ^^^^^^^^^^^^^^^^^
     |
 ERROR Expected argument `version` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [unexpected-positional-argument]
-   --> src/machineconfig/utils/installer.py:136:50
+   --> src/machineconfig/utils/installer.py:140:50
     |
-136 |     res_final["OS_GENERIC"] = InstallerDataFiles(os_generic_data)
+140 |     res_final["OS_GENERIC"] = InstallerDataFiles(os_generic_data)
     |                                                  ^^^^^^^^^^^^^^^
     |
 ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:140:54
+   --> src/machineconfig/utils/installer.py:144:54
     |
-140 |     res_final["OS_SPECIFIC_DEV"] = InstallerDataFiles(os_specific_dev_data)
+144 |     res_final["OS_SPECIFIC_DEV"] = InstallerDataFiles(os_specific_dev_data)
     |                                                      ^^^^^^^^^^^^^^^^^^^^^^
     |
 ERROR Expected argument `version` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [unexpected-positional-argument]
-   --> src/machineconfig/utils/installer.py:140:55
+   --> src/machineconfig/utils/installer.py:144:55
     |
-140 |     res_final["OS_SPECIFIC_DEV"] = InstallerDataFiles(os_specific_dev_data)
+144 |     res_final["OS_SPECIFIC_DEV"] = InstallerDataFiles(os_specific_dev_data)
     |                                                       ^^^^^^^^^^^^^^^^^^^^
     |
 ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:144:53
+   --> src/machineconfig/utils/installer.py:148:53
     |
-144 |     res_final["OS_GENERIC_DEV"] = InstallerDataFiles(os_generic_dev_data)
+148 |     res_final["OS_GENERIC_DEV"] = InstallerDataFiles(os_generic_dev_data)
     |                                                     ^^^^^^^^^^^^^^^^^^^^^
     |
 ERROR Expected argument `version` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [unexpected-positional-argument]
-   --> src/machineconfig/utils/installer.py:144:54
+   --> src/machineconfig/utils/installer.py:148:54
     |
-144 |     res_final["OS_GENERIC_DEV"] = InstallerDataFiles(os_generic_dev_data)
+148 |     res_final["OS_GENERIC_DEV"] = InstallerDataFiles(os_generic_dev_data)
     |                                                      ^^^^^^^^^^^^^^^^^^^
-    |
-ERROR Missing argument `repoURL` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:158:43
-    |
-158 |             installer_data = InstallerData(config_dict)
-    |                                           ^^^^^^^^^^^^^
-    |
-ERROR Missing argument `doc` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:158:43
-    |
-158 |             installer_data = InstallerData(config_dict)
-    |                                           ^^^^^^^^^^^^^
-    |
-ERROR Missing argument `filenameTemplate` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:158:43
-    |
-158 |             installer_data = InstallerData(config_dict)
-    |                                           ^^^^^^^^^^^^^
-    |
-ERROR Missing argument `stripVersion` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:158:43
-    |
-158 |             installer_data = InstallerData(config_dict)
-    |                                           ^^^^^^^^^^^^^
-    |
-ERROR Missing argument `exeName` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:158:43
-    |
-158 |             installer_data = InstallerData(config_dict)
-    |                                           ^^^^^^^^^^^^^
-    |
-ERROR Expected argument `appName` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [unexpected-positional-argument]
-   --> src/machineconfig/utils/installer.py:158:44
-    |
-158 |             installer_data = InstallerData(config_dict)
-    |                                            ^^^^^^^^^^^
-    |
-ERROR Missing argument `repoURL` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:170:43
-    |
-170 |             installer_data = InstallerData(config_dict)
-    |                                           ^^^^^^^^^^^^^
-    |
-ERROR Missing argument `doc` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:170:43
-    |
-170 |             installer_data = InstallerData(config_dict)
-    |                                           ^^^^^^^^^^^^^
-    |
-ERROR Missing argument `filenameTemplate` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:170:43
-    |
-170 |             installer_data = InstallerData(config_dict)
-    |                                           ^^^^^^^^^^^^^
-    |
-ERROR Missing argument `stripVersion` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:170:43
-    |
-170 |             installer_data = InstallerData(config_dict)
-    |                                           ^^^^^^^^^^^^^
-    |
-ERROR Missing argument `exeName` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:170:43
-    |
-170 |             installer_data = InstallerData(config_dict)
-    |                                           ^^^^^^^^^^^^^
-    |
-ERROR Expected argument `appName` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [unexpected-positional-argument]
-   --> src/machineconfig/utils/installer.py:170:44
-    |
-170 |             installer_data = InstallerData(config_dict)
-    |                                            ^^^^^^^^^^^
     |
 ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
    --> src/machineconfig/utils/installer.py:175:45
@@ -369,17 +407,17 @@ ERROR Expected argument `version` to be passed by name in function `machineconfi
     |                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     |
 ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer_utils/installer_class.py:102:50
-    |
-102 |         installer_data_files = InstallerDataFiles(config_data)
-    |                                                  ^^^^^^^^^^^^^
-    |
+  --> src/machineconfig/utils/installer_utils/installer_class.py:48:50
+   |
+48 |         installer_data_files = InstallerDataFiles(config_data)
+   |                                                  ^^^^^^^^^^^^^
+   |
 ERROR Expected argument `version` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [unexpected-positional-argument]
-   --> src/machineconfig/utils/installer_utils/installer_class.py:102:51
-    |
-102 |         installer_data_files = InstallerDataFiles(config_data)
-    |                                                   ^^^^^^^^^^^
-    |
+  --> src/machineconfig/utils/installer_utils/installer_class.py:48:51
+   |
+48 |         installer_data_files = InstallerDataFiles(config_data)
+   |                                                   ^^^^^^^^^^^
+   |
 ERROR `T` is not assignable to `str` (caused by inconsistent types when breaking cycles) [bad-assignment]
   --> src/machineconfig/utils/options.py:96:13
    |

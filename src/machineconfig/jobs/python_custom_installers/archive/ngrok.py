@@ -5,15 +5,16 @@ flagged as virus by 35% of antivirus engines
 
 import platform
 from typing import Optional
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-config_dict = {
-    "repo_url": "CUSTOM",
+config_dict: InstallerData = {
+    "appName": "ngrok",
+    "repoURL": "CUSTOM",
     "doc": "ngrok secure introspectable tunnels to localhost",
-    "filename_template_windows_amd_64": "ngrok-stable-windows-amd64.zip",
-    "filename_template_linux_amd_64": "ngrok-stable-linux-amd64.zip",
-    "strip_v": False,
-    "exe_name": "ngrok",
+    "filenameTemplate": {"amd64": {"windows": "ngrok-stable-windows-amd64.zip", "linux": "ngrok-stable-linux-amd64.zip", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
+    "stripVersion": False,
+    "exeName": "ngrok",
 }
 
 

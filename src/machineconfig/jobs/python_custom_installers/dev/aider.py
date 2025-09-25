@@ -1,7 +1,15 @@
 from typing import Optional
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 import platform
 
-config_dict = {"repo_url": "CUSTOM", "doc": "Aider Chat", "filename_template_windows_amd_64": "aider-chat-{}.exe", "filename_template_linux_amd_64": "aider-chat-{}.deb", "strip_v": True, "exe_name": "aider-chat"}
+config_dict: InstallerData = {
+    "appName": "aider-chat",
+    "repoURL": "https://github.com/paul-gauthier/aider",
+    "doc": "Aider Chat",
+    "filenameTemplate": {"amd64": {"windows": "aider-chat-{}.exe", "linux": "aider-chat-{}.deb", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
+    "stripVersion": True,
+    "exeName": "aider-chat",
+}
 
 
 def main(version: Optional[str] = None):

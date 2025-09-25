@@ -52,9 +52,14 @@ src/machineconfig/utils/path_reduced.py:475:40: error: Unsupported left operand
 type for + ("Callable[[Any], bool]")  [operator]
                 haha = reduce(lambda x, y: x + y, filters_notin) if len(fi...
                                            ^~~~~
+src/machineconfig/utils/installer.py: note: In function "get_all_installer_data_files":
+src/machineconfig/utils/installer.py:170:13: error: Name "installer_data"
+already defined on line 160  [no-redef]
+                installer_data: InstallerData = runpy.run_path(str(item), ...
+                ^~~~~~~~~~~~~~
 src/machineconfig/profile/create.py: note: In function "apply_mapper":
 src/machineconfig/profile/create.py:73:32: error: Module has no attribute
 "windll"  [attr-defined]
                         is_admin = ctypes.windll.shell32.IsUserAnAdmin()
                                    ^~~~~~~~~~~~~
-Found 11 errors in 5 files (checked 176 source files)
+Found 12 errors in 6 files (checked 176 source files)

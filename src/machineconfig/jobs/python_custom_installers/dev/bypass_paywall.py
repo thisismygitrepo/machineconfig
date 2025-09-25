@@ -2,10 +2,18 @@
 
 # from platform import system
 from typing import Optional
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 
 
-config_dict = {"repo_url": "CUSTOM", "doc": """Plugin for chrome to bypass paywalls""", "filename_template_windows_amd_64": "VSCodeSetup-{}.exe", "filename_template_linux_amd_64": "code_{}.deb", "strip_v": True, "exe_name": "pluginName"}
+config_dict: InstallerData = {
+    "appName": "bypass-paywalls-chrome",
+    "repoURL": "https://github.com/iamadamdev/bypass-paywalls-chrome",
+    "doc": """Plugin for chrome to bypass paywalls""",
+    "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
+    "stripVersion": True,
+    "exeName": "",
+}
 
 
 def main(version: Optional[str] = None):

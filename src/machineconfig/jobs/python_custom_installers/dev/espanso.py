@@ -5,8 +5,16 @@ https://github.com/espanso/espanso
 """
 
 from typing import Optional
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
-config_dict = {"repo_url": "CUSTOM", "doc": "A text expander.", "filename_template_windows_amd_64": "Espanso-Win-Installer-x86_64.exe", "filename_template_linux_amd_64": "", "strip_v": False, "exe_name": "espanso"}
+config_dict: InstallerData = {
+    "appName": "espanso",
+    "repoURL": "CUSTOM",
+    "doc": "A text expander.",
+    "filenameTemplate": {"amd64": {"windows": "Espanso-Win-Installer-x86_64.exe", "linux": "", "macos": "Espanso.dmg"}, "arm64": {"windows": "", "linux": "", "macos": ""}},
+    "stripVersion": False,
+    "exeName": "espanso",
+}
 
 
 def main(version: Optional[str]):
@@ -21,7 +29,7 @@ def main(version: Optional[str]):
     _ = version
     import platform
 
-    config_dict["repo_url"] = "https://github.com/espanso/espanso"
+    config_dict["repoURL"] = "https://github.com/espanso/espanso"
     if platform.system() == "Windows":
         print("🪟 Installing Espanso on Windows...")
     elif platform.system() in ["Linux", "Darwin"]:
@@ -36,7 +44,7 @@ def main(version: Optional[str]):
 📦 Using Wayland-specific package
 {"=" * 150}
 """)
-                config_dict["filename_template_linux_amd_64"] = "espanso-debian-wayland-amd64.deb"
+                config_dict["filenameTemplate"]["amd64"]["linux"] = "espanso-debian-wayland-amd64.deb"
             else:
                 print(f"""
 {"=" * 150}
@@ -44,10 +52,10 @@ def main(version: Optional[str]):
 📦 Using X11-specific package
 {"=" * 150}
 """)
-                config_dict["filename_template_linux_amd_64"] = "espanso-debian-x11-amd64.deb"
+                config_dict["filenameTemplate"]["amd64"]["linux"] = "espanso-debian-x11-amd64.deb"
         else:  # Darwin/macOS
             print("🍎 Installing Espanso on macOS...")
-            config_dict["filename_template_linux_amd_64"] = "Espanso.dmg"
+            config_dict["filenameTemplate"]["amd64"]["macos"] = "Espanso.dmg"
     else:
         error_msg = f"Unsupported platform: {platform.system()}"
         print(f"""

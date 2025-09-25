@@ -9,15 +9,16 @@ from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 from machineconfig.utils.installer_utils.installer_class import Installer
 import subprocess
 from typing import Iterable
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-nerd_fonts = {
-    "repo_url": "https://github.com/ryanoasis/nerd-fonts",
+nerd_fonts: InstallerData = {
+    "appName": "Cascadia Code Nerd Font",
+    "repoURL": "https://github.com/ryanoasis/nerd-fonts",
     "doc": "Nerd Fonts is a project that patches developer targeted fonts with a high number of glyphs (icons)",
-    "filename_template_windows_amd_64": "CascadiaCode.zip",
-    "filename_template_linux_amd_64": "CascadiaCode.zip",
-    "strip_v": False,
-    "exe_name": "nerd_fonts",
+    "filenameTemplate": {"amd64": {"windows": "CascadiaCode.zip", "linux": "CascadiaCode.zip", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
+    "stripVersion": False,
+    "exeName": "nerd_fonts",
 }
 
 
@@ -64,7 +65,7 @@ def install_nerd_fonts() -> None:
         return
     print(f"🔍 Missing fonts detected: {', '.join(missing)}. Proceeding with installation...")
     print("🔍 Downloading Nerd Fonts package...")
-    folder, _version_to_be_installed = Installer.from_dict(d=nerd_fonts, name="nerd_fonts").download(version=None)
+    folder, _version_to_be_installed = Installer(installer_data=nerd_fonts).download(version=None)
 
     print("🧹 Cleaning up unnecessary files...")
     [p.delete(sure=True) for p in folder.search("*Windows*")]

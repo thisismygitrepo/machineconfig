@@ -3,8 +3,10 @@
 import platform
 from typing import Optional
 
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
-config_dict = {"repo_url": "CUSTOM", "doc": "cli for wezterm", "filename_template_windows_amd_64": "", "filename_template_linux_amd_64": "", "strip_v": False, "exe_name": "wezterm"}
+
+config_dict: InstallerData = {"appName": "Wezterm", "repoURL": "CUSTOM", "doc": "Modern, GPU-accelerated terminal emulator", "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}}, "stripVersion": False, "exeName": "wezterm"}
 
 
 def main(version: Optional[str]):

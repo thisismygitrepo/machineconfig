@@ -11,15 +11,16 @@ from machineconfig.utils.installer_utils.installer_abc import LINUX_INSTALL_PATH
 from machineconfig.utils.installer_utils.installer_class import Installer
 from rich.console import Console
 from rich.panel import Panel
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-config_dict = {
-    "repo_url": "CUSTOM",
+config_dict: InstallerData = {
+    "appName": "hx",
+    "repoURL": "CUSTOM",
     "doc": "Helix is a post-modern modal text editor.",
-    "filename_template_windows_amd_64": "helix-{}-x86_64-windows.zip",
-    "filename_template_linux_amd_64": "helix-{}-x86_64-linux.tar.xz",
-    "strip_v": False,
-    "exe_name": "hx",
+    "filenameTemplate": {"amd64": {"windows": "helix-{}-x86_64-windows.zip", "linux": "helix-{}-x86_64-linux.tar.xz", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
+    "stripVersion": False,
+    "exeName": "hx",
 }
 
 
@@ -29,8 +30,8 @@ def main(version: Optional[str], install_lib: bool = False):
     console.print(Panel(f"HELIX EDITOR INSTALLER 🧬\nPlatform: {platform.system()}\nVersion:  {'latest' if version is None else version}", title="Installer", expand=False))
 
     config_dict_copy = config_dict.copy()
-    config_dict_copy["repo_url"] = "https://github.com/helix-editor/helix"
-    inst = Installer.from_dict(d=config_dict_copy, name="hx")
+    config_dict_copy["repoURL"] = "https://github.com/helix-editor/helix"
+    inst = Installer(installer_data=config_dict_copy)
 
     print("\n📥 [Step 1/5] Downloading Helix editor...")
     downloaded, _version_to_be_installed = inst.download(version=version)

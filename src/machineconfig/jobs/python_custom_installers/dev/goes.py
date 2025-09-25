@@ -5,7 +5,16 @@ https://github.com/ShishirPatil/gorilla
 
 # import subprocess
 
-config_dict = {"repo_url": "CUSTOM", "doc": "natural language to API", "filename_template_windows_amd_64": "", "filename_template_linux_amd_64": "", "strip_v": False, "exe_name": "goex"}
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
+
+config_dict: InstallerData = {
+    "appName": "Gorilla",
+    "repoURL": "https://github.com/ShishirPatil/gorilla",
+    "doc": "natural language to API",
+    "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}},
+    "stripVersion": False,
+    "exeName": "goex",
+}
 
 ve_name = "goex"
 
