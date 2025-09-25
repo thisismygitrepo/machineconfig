@@ -75,9 +75,6 @@ license-files = []
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[tool.uv.sources]
-crocodile = { path = "../crocodile", editable = true }
-
 [dependency-groups]
 dev = [
     "aider>=0.2.6",
