@@ -150,6 +150,7 @@ def apply_mapper(choice: Optional[str] = None):
 def main(choice: Optional[str] = None):
     console = Console()
     print("\n")
+
     console.rule("[bold blue]🔗 CREATING SYMLINKS 🔗")
     apply_mapper(choice=choice)
 

@@ -24,11 +24,10 @@ RUN /app/setup_linux/apps_dev.sh
 
 # RUN /app/setup_linux/ve.sh
 # ENV PATH="/root/.local/bin:${PATH}"
-RUN /root/.local/bin/uv venv $HOME/code/machineconfig/.venv --python 3.13 --python-preference only-managed
+# RUN /root/.local/bin/uv venv $HOME/code/machineconfig/.venv --python 3.13 --python-preference only-managed
 # Warning: does not come with pip
-RUN source $HOME/code/machineconfig/.venv/bin/activate
+# RUN source $HOME/code/machineconfig/.venv/bin/activate
 #  && \/root/.local/bin/uv pip install --upgrade pip
-
 # ENV CROCODILE_EXRA="full"
 # RUN /app/setup_linux/repos.sh
 RUN cd $HOME && \
@@ -37,15 +36,14 @@ RUN cd $HOME && \
     git clone https://github.com/thisismygitrepo/crocodile.git --depth 4 && \
     git clone https://github.com/thisismygitrepo/machineconfig --depth 4 && \
     cd $HOME/code/machineconfig && \
-    source $HOME/code/machineconfig/.venv/bin/activate && \
-    /root/.local/bin/uv pip install -e . && \
-    cd $HOME/code/machineconfig && \
-    /root/.local/bin/uv pip install -e . && \
+    /root/.local/bin/uv sync --no-dev && \
     echo "Finished setting up repos"
+    # source $HOME/code/machineconfig/.venv/bin/activate && \
+    # cd $HOME/code/machineconfig && \
+    # /root/.local/bin/uv pip install -e . && \
 
-RUN /app/setup_linux/symlinks.sh
-RUN /app/setup_linux/devapps.sh
-
+/root/.local/bin/uv run --project $HOME/code/machineconfig python -m fire machineconfig.profile.create main --choice=all
+/root/.local/bin/uv run --project $HOME/code/machineconfig python -c "import machineconfig.scripts.python.devops_devapps_install as helper; helper.main('AllEssentials')"
 COPY ./src/machineconfig/settings/shells/ipy/profiles/default/startup/playext.py /root/.ipython/profile_default/startup/playext.py
 
 

@@ -53,6 +53,7 @@ docs = [
 
 [project.scripts]
 devops = "machineconfig.scripts.python.devops:args_parser"
+# machineconfig.scripts.python.devops_devapps_install
 choose_wezterm_theme = "machineconfig.scripts.python.choose_wezterm_theme:main"
 cloud_copy = "machineconfig.scripts.python.cloud_copy:arg_parser"
 cloud_mount = "machineconfig.scripts.python.cloud_mount:main"

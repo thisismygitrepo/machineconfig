@@ -13,7 +13,7 @@ from typing import Any, Optional, Literal, TypeAlias, get_args
 WHICH_CAT: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstallers", "PrecheckedCloudInstaller"]
 
 
-def main(which: Optional[WHICH_CAT | str] = None) -> None:
+def main(which: Optional[WHICH_CAT | str]) -> None:
     if which is not None and which in get_args(WHICH_CAT):  # install by category
         return get_programs_by_category(program_name=which)  # type: ignore
 
