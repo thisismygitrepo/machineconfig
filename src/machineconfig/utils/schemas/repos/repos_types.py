@@ -1,7 +1,4 @@
-
-
 from typing import TypedDict
-
 
 
 class GitVersionInfo(TypedDict):

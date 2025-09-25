@@ -68,6 +68,7 @@ mount_nw_drive = "machineconfig.scripts.python.mount_nw_drive:main"
 repos = "machineconfig.scripts.python.repos:main"
 start_slidev = "machineconfig.scripts.python.start_slidev:main"
 wifi_conn = "machineconfig.scripts.python.wifi_conn:main"
+kill_process = "machineconfig.utils.procs:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

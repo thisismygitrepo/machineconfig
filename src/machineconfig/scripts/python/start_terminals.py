@@ -1,6 +1,5 @@
 """Script to start terminals on windows and wsl"""
 
-
 from machineconfig.utils.options import display_options, get_ssh_hosts
 import platform
 from itertools import cycle
@@ -113,6 +112,7 @@ def main():
 
     # PROGRAM_PATH.write_text(cmd, encoding="utf-8")
     import subprocess
+
     subprocess.run(cmd, shell=True)
     print("✅ Command saved successfully!\n")
 

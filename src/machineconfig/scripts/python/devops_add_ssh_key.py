@@ -113,6 +113,7 @@ def main() -> None:
 
     # return program
     import subprocess
+
     subprocess.run(program, shell=True, check=True)
     console.print(Panel("✅ SSH KEY AUTHORIZATION COMPLETED", box=box.DOUBLE_EDGE, title_align="left"))
 

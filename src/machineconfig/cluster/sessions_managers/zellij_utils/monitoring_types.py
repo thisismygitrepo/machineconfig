@@ -11,6 +11,7 @@ class ProcessInfo(TypedDict):
     cmdline: list[str]
     status: str
 
+
 class CommandStatus(TypedDict):
     status: str
     running: bool
@@ -37,15 +38,8 @@ class CommandSummary(TypedDict):
     session_healthy: bool
 
 
-class CommandStatusResult(TypedDict):
-    status: str
-    running: bool
-    processes: list[ProcessInfo]
-    command: str
-    cwd: str
-    tab_name: str
-    error: NotRequired[str]
-    pid: NotRequired[int]
+# Alias: identical to CommandStatus, keep single source of truth
+CommandStatusResult = CommandStatus
 
 
 class ZellijSessionStatus(TypedDict):
@@ -58,7 +52,7 @@ class ZellijSessionStatus(TypedDict):
 
 class SessionReport(TypedDict):
     session_status: ZellijSessionStatus  # ZellijSessionStatus from zellij_local
-    commands_status: dict[str, CommandStatusResult]  # dict[str, CommandStatusResult from zellij_local]  
+    commands_status: dict[str, CommandStatusResult]  # dict[str, CommandStatusResult from zellij_local]
     summary: CommandSummary
 
 
@@ -108,11 +102,8 @@ class ActiveSessionInfo(TypedDict):
     tabs: list[str]
 
 
-class StatusSummary(TypedDict):
-    total_commands: int
-    running_commands: int
-    stopped_commands: int
-    session_healthy: bool
+# Alias: identical to CommandSummary
+StatusSummary = CommandSummary
 
 
 class ComprehensiveStatus(TypedDict):

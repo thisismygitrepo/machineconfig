@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from machineconfig.utils.ve import get_repo_root
 
@@ -6,7 +5,6 @@ installations = """
 uv add --upgrade-package pylint pyright mypy pyrefly ty --dev  # linters and type checkers
 uv add --upgrade-package pytest --dev
 """
-
 
 
 def add_ai_configs(repo_root: Path) -> None:
@@ -108,6 +106,7 @@ def main() -> None:
     # repo_root = Path(args.repo_root).resolve()
     repo_root = Path.cwd()
     add_ai_configs(repo_root=repo_root)
+
 
 if __name__ == "__main__":
     add_ai_configs(repo_root=Path.cwd())

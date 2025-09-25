@@ -4,9 +4,9 @@ import subprocess
 import git
 
 
-
 class RepositoryUpdateResult(TypedDict):
     """Result of updating a single repository."""
+
     repo_path: str
     status: str  # "success", "error", "skipped", "auth_failed"
     had_uncommitted_changes: bool
@@ -61,6 +61,7 @@ def get_file_hash(file_path: Path) -> str | None:
     if not file_path.exists():
         return None
     import hashlib
+
     return hashlib.sha256(file_path.read_bytes()).hexdigest()
 
 

@@ -116,7 +116,6 @@ def main():
         if args.cloud is not None:
             PathExtended(save_path).to_cloud(rel2home=True, cloud=args.cloud)
 
-
     elif args.clone or args.checkout or args.checkout_to_branch:
         print("\n📥 Cloning or checking out repositories...")
         print(">>>>>>>>> Cloning Repos")
@@ -152,7 +151,6 @@ def main():
             print("⚠️ Some git operations encountered issues")
     else:
         print("❌ No action specified. Try passing --push, --pull, --commit, or --all.")
-
 
 
 if __name__ == "__main__":

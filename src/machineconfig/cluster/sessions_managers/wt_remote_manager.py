@@ -24,7 +24,7 @@ class WTSessionManager:
             an_m = WTRemoteLayoutGenerator(remote_name=machine, session_name_prefix=self.session_name_prefix)
             # Convert legacy dict[str, tuple[str,str]] to List[TabConfig]
             tabs: list[TabConfig] = [{"tabName": name, "startDir": cwd, "command": cmd} for name, (cwd, cmd) in tab_config.items()]
-            an_m.create_wt_layout(tabs=tabs)
+            an_m.create_wt_layout(tabs=tabs, output_dir=None)
             self.managers.append(an_m)
 
     def ssh_to_all_machines(self) -> str:
@@ -124,16 +124,16 @@ class WTSessionManager:
         config_file = session_dir / "machine2wt_tabs.json"
         if not config_file.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_file}")
-        with open(config_file, "r", encoding="utf-8") as f:
-            machine2wt_tabs = json.load(f)
+        text = config_file.read_text(encoding="utf-8")
+        machine2wt_tabs = json.loads(text)
 
         # Load metadata
         metadata_file = session_dir / "metadata.json"
         session_name_prefix = "WTJobMgr"  # default fallback
         if metadata_file.exists():
-            with open(metadata_file, "r", encoding="utf-8") as f:
-                metadata = json.load(f)
-                session_name_prefix = metadata.get("session_name_prefix", "WTJobMgr")
+            text = metadata_file.read_text(encoding="utf-8")
+            metadata = json.loads(text)
+            session_name_prefix = metadata.get("session_name_prefix", "WTJobMgr")
         # Create new instance (this will create new managers)
         instance = cls(machine2wt_tabs=machine2wt_tabs, session_name_prefix=session_name_prefix)
         # Load saved managers to restore their states

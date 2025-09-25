@@ -324,6 +324,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
     # program_path.parent.mkdir(parents=True, exist_ok=True)
     # program_path.write_text(command, encoding="utf-8")
     import subprocess
+
     subprocess.run(command, shell=True, check=True)
 
 

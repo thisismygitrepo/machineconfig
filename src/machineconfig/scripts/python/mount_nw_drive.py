@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import platform
 
@@ -34,6 +33,7 @@ password='{password}'
 """
         # PROGRAM_PATH.write_text(txt, encoding="utf-8",)
         import subprocess
+
         subprocess.run(txt, shell=True, check=True)
         print("✅ Configuration saved successfully!\n")
 

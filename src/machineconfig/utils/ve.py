@@ -1,4 +1,3 @@
-
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.utils2 import read_ini
 import platform

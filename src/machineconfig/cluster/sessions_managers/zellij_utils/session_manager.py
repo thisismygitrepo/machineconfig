@@ -57,7 +57,7 @@ class SessionManager:
         except Exception as e:
             return {"zellij_running": False, "error": str(e), "session_name": self.session_name, "remote": self.remote_executor.remote_name}
 
-    def start_zellij_session(self, layout_file_path: Optional[str] = None) -> Dict[str, Any]:
+    def start_zellij_session(self, layout_file_path: Optional[str]) -> Dict[str, Any]:
         """Start a Zellij session on the remote machine with the generated layout."""
         try:
             if layout_file_path:

@@ -1,4 +1,3 @@
-
 from machineconfig.utils.utils2 import randstr
 
 import random
@@ -16,6 +15,7 @@ AGENT_NAME_FORMATTER = "agent_{idx}_cmd.sh"  # e.g., agent_0_cmd.sh
 
 def get_gemini_api_keys() -> list[str]:
     from machineconfig.utils.utils2 import read_ini
+
     config = read_ini(Path.home().joinpath("dotfiles/creds/llm/gemini/api_keys.ini"))
     res: list[str] = []
     for a_section_name in list(config.sections()):
@@ -27,7 +27,8 @@ def get_gemini_api_keys() -> list[str]:
     print(f"Found {len(res)} Gemini API keys configured.")
     return res
 
-def prep_agent_launch(repo_root: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool,  agent: AGENTS, *, job_name: str) -> Path:
+
+def prep_agent_launch(repo_root: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool, agent: AGENTS, *, job_name: str) -> Path:
     session_root = repo_root / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
     session_root.mkdir(parents=True, exist_ok=True)
     prompt_folder = session_root / "prompts"
@@ -115,7 +116,6 @@ echo "---------END OF AGENT OUTPUT---------"
 """
         agent_cmd_launch_path.write_text(cmd_prefix + cmd + cmd_postfix, encoding="utf-8")
 
-
     # print(f"Launching a template with #{len(tab_config)} agents")
     if len(all_materials_scripts) > 0:
         all_materials_list_path = session_root / "all_materials_redistributed.txt"
@@ -126,6 +126,7 @@ echo "---------END OF AGENT OUTPUT---------"
 
 def get_agents_launch_layout(session_root: Path):
     from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig, LayoutsFile
+
     tab_config: list[TabConfig] = []
     prompt_root = session_root / "prompts"
     all_dirs_under_prompts = [d for d in prompt_root.iterdir() if d.is_dir()]

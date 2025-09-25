@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import shlex
 import subprocess
-from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import CommandStatusResult,  ZellijSessionStatus, ComprehensiveStatus, ProcessInfo
+from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import CommandStatusResult, ZellijSessionStatus, ComprehensiveStatus, ProcessInfo
 import psutil
 import random
 import string
@@ -12,7 +12,6 @@ import logging
 from rich.console import Console
 
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, TabConfig
-
 
 
 logging.basicConfig(level=logging.INFO)
@@ -37,7 +36,7 @@ class ZellijLayoutGenerator:
 """
 
     @staticmethod
-    def _generate_random_suffix(length: int = 8) -> str:
+    def _generate_random_suffix(length: int) -> str:
         """Generate a random string suffix for unique layout file names."""
         return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
@@ -71,7 +70,6 @@ class ZellijLayoutGenerator:
         tab_name = tab_config["tabName"]
         cwd = tab_config["startDir"]
         command = tab_config["command"]
-
         cmd, args = ZellijLayoutGenerator._parse_command(command)
         args_str = ZellijLayoutGenerator._format_args_for_kdl(args)
         tab_cwd = cwd or "~"
@@ -95,7 +93,7 @@ class ZellijLayoutGenerator:
             if not tab["startDir"].strip():
                 raise ValueError(f"Invalid startDir for tab '{tab['tabName']}': {tab['startDir']}")
 
-    def create_zellij_layout(self, layout_config: LayoutConfig, output_dir: Optional[str] = None, session_name: Optional[str] = None) -> str:
+    def create_zellij_layout(self, layout_config: LayoutConfig, output_dir: Optional[str], session_name: Optional[str]) -> str:
         ZellijLayoutGenerator._validate_layout_config(layout_config)
 
         # Enhanced Rich logging
@@ -117,7 +115,7 @@ class ZellijLayoutGenerator:
         layout_content += "\n}\n"
 
         try:
-            random_suffix = ZellijLayoutGenerator._generate_random_suffix()
+            random_suffix = ZellijLayoutGenerator._generate_random_suffix(8)
             if output_dir:
                 output_path = Path(output_dir)
                 output_path.mkdir(parents=True, exist_ok=True)
@@ -139,7 +137,7 @@ class ZellijLayoutGenerator:
             raise
 
     @staticmethod
-    def get_layout_preview(layout_config: LayoutConfig, layout_template: str | None = None) -> str:
+    def get_layout_preview(layout_config: LayoutConfig, layout_template: str | None) -> str:
         if layout_template is None:
             layout_template = """layout {
     default_tab_template {
@@ -171,83 +169,156 @@ class ZellijLayoutGenerator:
         command = tab_config["command"]
         cwd = tab_config["startDir"]
         cmd, args = ZellijLayoutGenerator._parse_command(command)
-
         try:
-            # Look for processes matching the command more accurately
+            shells = {"bash", "sh", "zsh", "fish"}
             matching_processes: list[ProcessInfo] = []
             for proc in psutil.process_iter(["pid", "name", "cmdline", "status", "ppid"]):
                 try:
-                    if not proc.info["cmdline"] or len(proc.info["cmdline"]) == 0:
+                    info = proc.info
+                    proc_cmdline: list[str] | None = info.get("cmdline")  # type: ignore[assignment]
+                    if not proc_cmdline:
                         continue
-                    
-                    # Skip processes that are already dead/zombie/stopped
-                    if proc.info["status"] in ["zombie", "dead", "stopped"]:
+                    if info.get("status") in ["zombie", "dead", "stopped"]:
                         continue
-                    
-                    # Get the actual command from cmdline
-                    proc_cmdline = proc.info["cmdline"]
-                    proc_name = proc.info["name"]
-                    
-                    # More precise matching logic
+                    proc_name = info.get("name", "")
                     is_match = False
-                    
-                    # Check if this is the exact command we're looking for
-                    if proc_name == cmd:
-                        # For exact name matches, also check if arguments match or if it's a reasonable match
-                        if len(args) == 0 or any(arg in " ".join(proc_cmdline) for arg in args):
+                    joined_cmdline = " ".join(proc_cmdline)
+                    # Primary matching heuristics - more precise matching
+                    if proc_name == cmd and cmd not in shells:
+                        # For non-shell commands, match if args appear in cmdline
+                        if not args or any(arg in joined_cmdline for arg in args):
                             is_match = True
-                    
-                    # Check if the command appears in the command line
-                    elif cmd in proc_cmdline[0]:
+                    elif proc_name == cmd and cmd in shells:
+                        # For shell commands, require more precise matching to avoid false positives
+                        if args:
+                            # Check if all args appear as separate cmdline arguments (not just substrings)
+                            args_found = 0
+                            for arg in args:
+                                for cmdline_arg in proc_cmdline[1:]:  # Skip shell name
+                                    if arg == cmdline_arg or (len(arg) > 3 and arg in cmdline_arg):
+                                        args_found += 1
+                                        break
+                            # Require at least as many args found as we're looking for
+                            if args_found >= len(args):
+                                is_match = True
+                    elif cmd in proc_cmdline[0] and cmd not in shells:
+                        # Non-shell command in first argument
                         is_match = True
                     
-                    # For script-based commands, check if the script name appears
-                    elif any(cmd in arg for arg in proc_cmdline):
-                        is_match = True
-                    
-                    # Skip shell processes that are just wrappers unless they're running our specific command
-                    if is_match and proc_name in ["bash", "sh", "zsh", "fish"]:
-                        # Only count shell processes if they contain our specific command
-                        full_cmdline = " ".join(proc_cmdline)
-                        if cmd not in full_cmdline and not any(arg in full_cmdline for arg in args):
+                    # Additional shell wrapper filter - be more restrictive for shells
+                    if is_match and proc_name in shells and args:
+                        # For shell processes, ensure the match is actually meaningful
+                        # Don't match generic shell sessions just because they contain common paths
+                        meaningful_match = False
+                        for arg in args:
+                            # Only consider it meaningful if the arg is substantial (not just a common path)
+                            if len(arg) > 10 and any(arg == cmdline_arg for cmdline_arg in proc_cmdline[1:]):
+                                meaningful_match = True
+                                break
+                            # Or if it's an exact script name match
+                            elif arg.endswith('.py') or arg.endswith('.sh') or arg.endswith('.rb'):
+                                if any(arg in cmdline_arg for cmdline_arg in proc_cmdline[1:]):
+                                    meaningful_match = True
+                                    break
+                        if not meaningful_match:
                             is_match = False
-                    
-                    if is_match:
-                        # Additional check: make sure the process is actually running something meaningful
-                        try:
-                            # Check if process has been running for a reasonable time and is active
-                            proc_obj = psutil.Process(proc.info["pid"])
-                            if proc_obj.status() not in ["running", "sleeping"]:
-                                continue  # Skip inactive processes
-                                
-                            matching_processes.append({
-                                "pid": proc.info["pid"], 
-                                "name": proc.info["name"], 
-                                "cmdline": proc.info["cmdline"], 
-                                "status": proc.info["status"]
-                            })
-                        except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    if not is_match:
+                        continue
+                    try:
+                        proc_obj = psutil.Process(info["pid"])  # type: ignore[index]
+                        if proc_obj.status() not in ["running", "sleeping"]:
                             continue
-                            
+                        matching_processes.append(
+                            {
+                                "pid": info["pid"],  # type: ignore[index]
+                                "name": proc_name,
+                                "cmdline": proc_cmdline,
+                                "status": info.get("status", "unknown"),
+                            }
+                        )
+                    except (psutil.NoSuchProcess, psutil.AccessDenied):
+                        continue
                 except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                     continue
 
-            # Filter out clearly finished processes or parent shells
-            active_processes = []
+            # Second-pass filtering: remove idle wrapper shells that have no meaningful (non-shell) descendants
+            filtered_active: list[ProcessInfo] = []
             for proc_info in matching_processes:
                 try:
-                    proc = psutil.Process(proc_info["pid"])
-                    # Double-check the process is still active
-                    if proc.status() in ["running", "sleeping"] and proc.is_running():
-                        active_processes.append(proc_info)
+                    proc_obj = psutil.Process(proc_info["pid"])  # type: ignore[index]
+                    if not proc_obj.is_running():
+                        continue
+                    status_val = proc_obj.status()
+                    if status_val not in ["running", "sleeping"]:
+                        continue
+                    proc_name = proc_info.get("name", "")
+                    if proc_name in shells:
+                        descendants = proc_obj.children(recursive=True)
+                        # Keep shell only if there exists a non-shell alive descendant OR descendant cmdline still includes our command token
+                        meaningful = False
+                        for child in descendants:
+                            try:
+                                if not child.is_running():
+                                    continue
+                                child_name = child.name()
+                                child_cmdline = " ".join(child.cmdline())
+                                if child_name not in shells:
+                                    meaningful = True
+                                    break
+                                if cmd in child_cmdline or any(arg in child_cmdline for arg in args):
+                                    meaningful = True
+                                    break
+                            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                                continue
+                        if not meaningful:
+                            continue  # discard idle wrapper shell
+                    filtered_active.append(proc_info)
                 except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                    # Process is gone, don't count it
                     continue
 
-            if active_processes:
-                return {"status": "running", "running": True, "processes": active_processes, "command": command, "cwd": cwd, "tab_name": tab_name}
-            else:
-                return {"status": "not_running", "running": False, "processes": [], "command": command, "cwd": cwd, "tab_name": tab_name}
+            if filtered_active:
+                # Heuristic: if the only remaining processes are wrapper shells invoking a script that already completed, mark as not running.
+                # Case: layout launches 'bash <script.sh>' where script finishes and leaves an idle shell whose cmdline still shows the script path.
+                try:
+                    if all(p.get("name") in shells for p in filtered_active):
+                        script_paths = [arg for arg in args if arg.endswith(".sh")]
+                        shell_only = True
+                        stale_script_overall = False
+                        for p in filtered_active:
+                            proc_shell = psutil.Process(p["pid"])  # type: ignore[index]
+                            create_time = getattr(proc_shell, "create_time", lambda: None)()
+                            cmdline_joined = " ".join(p.get("cmdline", []))
+                            stale_script = False
+                            for spath in script_paths:
+                                script_file = Path(spath)
+                                if script_file.exists():
+                                    try:
+                                        # If script mtime older than process start AND no non-shell descendants -> likely finished
+                                        if create_time and script_file.stat().st_mtime < create_time:
+                                            stale_script = True
+                                    except OSError:
+                                        pass
+                                if spath not in cmdline_joined:
+                                    stale_script = False
+                            # If shell has any alive non-shell descendants, treat as running
+                            descendants = proc_shell.children(recursive=True)
+                            for d in descendants:
+                                try:
+                                    if d.is_running() and d.name() not in shells:
+                                        shell_only = False
+                                        break
+                                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                                    continue
+                            if not shell_only:
+                                break
+                            if stale_script:
+                                stale_script_overall = True
+                        if shell_only and stale_script_overall:
+                            return {"status": "not_running", "running": False, "processes": [], "command": command, "cwd": cwd, "tab_name": tab_name}
+                except Exception:
+                    pass
+                return {"status": "running", "running": True, "processes": filtered_active, "command": command, "cwd": cwd, "tab_name": tab_name}
+            return {"status": "not_running", "running": False, "processes": [], "command": command, "cwd": cwd, "tab_name": tab_name}
 
         except Exception as e:
             logger.error(f"Error checking command status for tab '{tab_name}': {e}")
@@ -289,10 +360,8 @@ class ZellijLayoutGenerator:
     def get_comprehensive_status(self) -> ComprehensiveStatus:
         zellij_status = ZellijLayoutGenerator.check_zellij_session_status(self.session_name or "default")
         commands_status = self.check_all_commands_status()
-
         running_count = sum(1 for status in commands_status.values() if status.get("running", False))
         total_count = len(commands_status)
-
         return {
             "zellij_session": zellij_status,
             "commands": commands_status,
@@ -369,16 +438,17 @@ class ZellijLayoutGenerator:
         console.print(Panel(summary_text, title="📊 Summary", style="blue"))
 
 
-def created_zellij_layout(layout_config: LayoutConfig, output_dir: Optional[str] = None) -> str:
+def created_zellij_layout(layout_config: LayoutConfig, output_dir: Optional[str]) -> str:
     generator = ZellijLayoutGenerator()
-    return generator.create_zellij_layout(layout_config, output_dir)
+    return generator.create_zellij_layout(layout_config, output_dir, None)
 
 
 def run_zellij_layout(layout_config: LayoutConfig):
-    layout_path = created_zellij_layout(layout_config)
+    layout_path = created_zellij_layout(layout_config, None)
     session_name = layout_config["layoutName"]
     try:
         from machineconfig.cluster.sessions_managers.enhanced_command_runner import enhanced_zellij_session_start
+
         enhanced_zellij_session_start(session_name, layout_path)
     except ImportError:
         # Fallback to original implementation
@@ -425,7 +495,7 @@ if __name__ == "__main__":
     try:
         # Create layout using the generator directly to access status methods
         generator = ZellijLayoutGenerator()
-        layout_path = generator.create_zellij_layout(sample_layout, session_name="test_session")
+        layout_path = generator.create_zellij_layout(sample_layout, None, "test_session")
         print(f"✅ Layout created successfully: {layout_path}")
 
         # Demonstrate status checking

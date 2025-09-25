@@ -78,6 +78,7 @@ def main() -> None:
     print(Panel(Text(success_message, justify="center"), expand=False, border_style="green"))
 
     import subprocess
+
     # run program
     subprocess.run(program, shell=True, check=True, text=True)
     print(Panel("🔐 Identity added to SSH agent", expand=False, border_style="green"))

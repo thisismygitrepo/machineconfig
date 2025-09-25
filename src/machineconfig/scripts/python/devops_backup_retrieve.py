@@ -74,6 +74,7 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None) -> Non
     print_code(program, lexer="shell", desc=f"{direction} script")
     console.print(Panel(f"✅ {direction} SCRIPT GENERATION COMPLETE\n🚀 Ready to execute the operations", title="[bold green]Script Generation Complete[/bold green]", border_style="green"))
     import subprocess
+
     subprocess.run(program, shell=True, check=True)
 
 

@@ -15,13 +15,13 @@ logger = get_logger("cluster.sessions_managers.zellij_remote_manager")
 
 
 class ZellijSessionManager:
-    def __init__(self, machine_layouts: Dict[str, LayoutConfig], session_name_prefix: str = "JobMgr"):
+    def __init__(self, machine_layouts: Dict[str, LayoutConfig], session_name_prefix: str):
         self.session_name_prefix = session_name_prefix
         self.machine_layouts = machine_layouts  # Store the original config
         self.managers: list[ZellijRemoteLayoutGenerator] = []
         for machine, layout_config in machine_layouts.items():
             an_m = ZellijRemoteLayoutGenerator(remote_name=machine, session_name_prefix=self.session_name_prefix)
-            an_m.create_zellij_layout(layout_config=layout_config)
+            an_m.create_zellij_layout(layout_config=layout_config, output_dir=None)
             self.managers.append(an_m)
 
     def ssh_to_all_machines(self) -> str:
@@ -40,18 +40,21 @@ class ZellijSessionManager:
 
     def kill_all_sessions(self) -> None:
         for an_m in self.managers:
-            ZellijRemoteLayoutGenerator.run_remote_command(remote_name=an_m.remote_name, command="zellij kill-all-sessions --yes")
+            ZellijRemoteLayoutGenerator.run_remote_command(remote_name=an_m.remote_name, command="zellij kill-all-sessions --yes", timeout=30)
 
     def start_zellij_sessions(self) -> None:
         for an_m in self.managers:
-            an_m.start_zellij_session()
+            an_m.session_manager.start_zellij_session(an_m.layout_path)
 
     def run_monitoring_routine(self) -> None:
         def routine(scheduler: Scheduler):
             if scheduler.cycle % 2 == 0:
                 statuses = []
                 for _idx, an_m in enumerate(self.managers):
-                    a_status = an_m.check_all_commands_status()
+                    if not an_m.layout_config:
+                        a_status = {}
+                    else:
+                        a_status = an_m.process_monitor.check_all_commands_status(an_m.layout_config)
                     statuses.append(a_status)
                 keys = []
                 for item in statuses:
@@ -76,7 +79,7 @@ class ZellijSessionManager:
             else:
                 statuses = []
                 for _idx, an_m in enumerate(self.managers):
-                    a_status = an_m.check_zellij_session_status()
+                    a_status = an_m.session_manager.check_zellij_session_status()
                     statuses.append(a_status)
 
                 # Print statuses
@@ -86,7 +89,7 @@ class ZellijSessionManager:
         sched = Scheduler(routine=routine, wait_ms=60_000, logger=logger)
         sched.run()
 
-    def save(self, session_id: Optional[str] = None) -> str:
+    def save(self, session_id: Optional[str]) -> str:
         if session_id is None:
             session_id = str(uuid.uuid4())[:8]
 
@@ -124,16 +127,16 @@ class ZellijSessionManager:
         config_file = session_dir / "machine_layouts.json"
         if not config_file.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_file}")
-        with open(config_file, "r", encoding="utf-8") as f:
-            machine_layouts = json.load(f)
+        text = config_file.read_text(encoding="utf-8")
+        machine_layouts = json.loads(text)
 
         # Load metadata
         metadata_file = session_dir / "metadata.json"
         session_name_prefix = "JobMgr"  # default fallback
         if metadata_file.exists():
-            with open(metadata_file, "r", encoding="utf-8") as f:
-                metadata = json.load(f)
-                session_name_prefix = metadata.get("session_name_prefix", "JobMgr")
+            text = metadata_file.read_text(encoding="utf-8")
+            metadata = json.loads(text)
+            session_name_prefix = metadata.get("session_name_prefix", "JobMgr")
         # Create new instance (this will create new managers)
         instance = cls(machine_layouts=machine_layouts, session_name_prefix=session_name_prefix)
         # Load saved managers to restore their states

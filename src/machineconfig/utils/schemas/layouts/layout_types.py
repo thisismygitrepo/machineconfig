@@ -17,11 +17,13 @@ class TabConfig(TypedDict):
 
 class LayoutConfig(TypedDict):
     """Configuration for a complete layout with its tabs."""
+
     layoutName: str
     layoutTabs: List[TabConfig]
 
 
 class LayoutsFile(TypedDict):
     """Complete layout file structure."""
+
     version: str
     layouts: List[LayoutConfig]

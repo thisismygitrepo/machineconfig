@@ -3,6 +3,7 @@ This script Takes away all config files from the computer, place them in one dir
 `dotfiles`, and create symlinks to those files from thier original locations.
 
 """
+
 from rich.console import Console
 
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
@@ -21,10 +22,16 @@ from typing import Optional, Any, TypedDict
 system = platform.system()  # Linux or Windows
 ERROR_LIST: list[Any] = []  # append to this after every exception captured.
 SYSTEM = system.lower()
+
+
 def get_other_systems(current_system: str) -> list[str]:
     all_systems = ["linux", "windows", "darwin"]
     return [s for s in all_systems if s != current_system.lower()]
+
+
 OTHER_SYSTEMS = get_other_systems(SYSTEM)
+
+
 class SymlinkMapper(TypedDict):
     this: str
     to_this: str

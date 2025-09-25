@@ -163,6 +163,7 @@ git commit -am "finished merging"
                 raise ValueError(f"Unknown action: {action}")
         # PROGRAM_PATH.write_text(program_content, encoding="utf-8")
         import subprocess
+
         subprocess.run(program_content, shell=True, check=True)
 
     return program_content

@@ -19,7 +19,7 @@ class ProcessMonitor:
     def __init__(self, remote_executor: RemoteExecutor):
         self.remote_executor = remote_executor
 
-    def check_command_status(self, tab_name: str, layout_config: LayoutConfig, use_verification: bool = True) -> Dict[str, Any]:
+    def check_command_status(self, tab_name: str, layout_config: LayoutConfig, use_verification: bool) -> Dict[str, Any]:
         """Check command status with optional process verification."""
         # Find the tab with the given name
         tab_config = None
@@ -286,5 +286,5 @@ if __name__ == "__main__":
         status_report = {}
         for tab in layout_config["layoutTabs"]:
             tab_name = tab["tabName"]
-            status_report[tab_name] = self.check_command_status(tab_name, layout_config)
+            status_report[tab_name] = self.check_command_status(tab_name, layout_config, True)
         return status_report

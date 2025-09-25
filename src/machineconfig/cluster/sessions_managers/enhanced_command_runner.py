@@ -14,7 +14,7 @@ from rich import box
 console = Console()
 
 
-def run_enhanced_command(command: str, description: Optional[str] = None, show_progress: bool = True, timeout: Optional[int] = None) -> Dict[str, Any]:
+def run_enhanced_command(command: str, description: Optional[str], show_progress: bool, timeout: Optional[int]) -> Dict[str, Any]:
     """
     Run a command with enhanced Rich formatting and user feedback.
 
@@ -89,16 +89,16 @@ def enhanced_zellij_session_start(session_name: str, layout_path: str) -> Dict[s
     run_enhanced_command(
         delete_cmd,
         f"Cleaning up existing session '{session_name}'",
-        show_progress=False,
-        timeout=5,  # Quick timeout for cleanup
+        False,
+        5,  # Quick timeout for cleanup
     )
     # Start new session (use -b for background to avoid hanging)
     start_cmd = f"zellij --layout {layout_path} a -b {session_name}"
     start_result = run_enhanced_command(
         start_cmd,
         f"Starting session '{session_name}' with layout",
-        show_progress=False,
-        timeout=10,  # Add timeout to prevent hanging
+        False,
+        10,  # Add timeout to prevent hanging
     )
 
     if start_result["success"]:
@@ -114,5 +114,5 @@ if __name__ == "__main__":
     console.print(Panel.fit("🎨 Enhanced Command Execution Demo", style="bold cyan"))
 
     # Test with a simple command
-    result = run_enhanced_command("echo 'Hello, Rich world!'", "Testing enhanced output")
+    result = run_enhanced_command("echo 'Hello, Rich world!'", "Testing enhanced output", True, None)
     console.print(f"Result: {result}")

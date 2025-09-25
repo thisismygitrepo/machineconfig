@@ -31,7 +31,7 @@ class LayoutGenerator:
 """
 
     @staticmethod
-    def generate_random_suffix(length: int = 8) -> str:
+    def generate_random_suffix(length: int) -> str:
         """Generate a random string suffix for unique layout file names."""
         return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
@@ -121,7 +121,7 @@ class LayoutGenerator:
         self.validate_tab_config(layout_config)
 
         # Generate unique suffix for this layout
-        random_suffix = self.generate_random_suffix()
+        random_suffix = self.generate_random_suffix(8)
         layout_content = self.generate_layout_content(layout_config)
 
         try:

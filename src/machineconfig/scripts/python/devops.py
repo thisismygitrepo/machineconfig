@@ -31,6 +31,7 @@ class Options(Enum):
 def args_parser():
     console.print(Panel("🛠️  DevOps Tool Suite", title_align="left", border_style="blue", width=BOX_WIDTH))
     import argparse
+
     parser = argparse.ArgumentParser()
     new_line = "\n\n"
     parser.add_argument("-w", "--which", help=f"""which option to run\nChoose one of those:\n{new_line.join([f"{item.name}: {item.value}" for item in list(Options)])}""", type=str, default=None)  # , choices=[op.value for op in Options]
@@ -56,26 +57,31 @@ def main(which: Optional[str] = None):
     if choice_key == Options.update.value:
         console.print(Panel("🔄 Updating essential repositories...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_update_repos as helper
+
         helper.main()
     elif choice_key == Options.cli_install.value:
         console.print(Panel("⚙️  Installing development applications...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_devapps_install as helper
+
         helper.main()
 
     elif choice_key == Options.sym_new.value:
         console.print(Panel("🔄 Creating new symlinks...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.jobs.python.python_ve_symlink as helper
+
         helper.main()
 
     elif choice_key == Options.sym_path_shell.value:
         console.print(Panel("🔗 Setting up symlinks, PATH, and shell profile...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.profile.create as helper
+
         helper.main()
         "echo '✅ done with symlinks'"
 
     elif choice_key == Options.ssh_add_pubkey.value:
         console.print(Panel("🔑 Adding public SSH key to this machine...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_add_ssh_key as helper
+
         helper.main()
 
     elif choice_key == Options.ssh_use_pair.value:
@@ -85,6 +91,7 @@ def main(which: Optional[str] = None):
     elif choice_key == Options.ssh_add_id.value:  # so that you can SSH directly withuot pointing to identity key.
         console.print(Panel("🗝️  Adding SSH identity (private key) to this machine...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_add_identity as helper
+
         helper.main()
 
     elif choice_key == Options.ssh_setup.value:
@@ -93,6 +100,7 @@ def main(which: Optional[str] = None):
         _program_linux = """curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash  # https://github.com/thisismygitrepo.keys"""
         _program_linux if system() == "Linux" else _program_windows
         import subprocess
+
         subprocess.run(_program_linux if system() == "Linux" else _program_windows, shell=True, check=True)
 
     elif choice_key == Options.ssh_setup_wsl.value:
@@ -102,11 +110,13 @@ def main(which: Optional[str] = None):
     elif choice_key == Options.backup.value:
         console.print(Panel("💾 Creating backup...", width=BOX_WIDTH, border_style="blue"))
         from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve
+
         main_backup_retrieve(direction="BACKUP")
 
     elif choice_key == Options.retreive.value:
         console.print(Panel("📥 Retrieving backup...", width=BOX_WIDTH, border_style="blue"))
         from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve
+
         main_backup_retrieve(direction="RETRIEVE")
 
     elif choice_key == Options.scheduler.value:
@@ -117,6 +127,7 @@ def main(which: Optional[str] = None):
     else:
         console.print(Panel("❌ ERROR: Invalid choice", title_align="left", border_style="red", width=BOX_WIDTH))
         raise ValueError(f"Unimplemented choice: {choice_key}")
+
 
 if __name__ == "__main__":
     args_parser()

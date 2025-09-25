@@ -1,0 +1,81 @@
+{
+  // Appearance
+  "theme": "Default",          // Could also be "GitHub", "Dracula", etc.
+
+  // Authentication
+  "selectedAuthType": "gemini-api-key",  // Options: "gemini-api-key", "oauth-personal", "vertex-ai"
+
+  // Tool usage and safety
+  "sandbox": false,                    // Enable with true or specify backend ("docker", "podman")
+  "autoAccept": true,                 // Auto-approve safe tool calls
+  "usageStatisticsEnabled": false,      // Collect anonymized usage stats
+  "telemetry": {
+    "enabled": false,
+    "target": "remote",               // or "local"
+    "logPrompts": false
+  },
+
+  // Work environment configuration
+  "preferredEditor": "vim",            // or "vscode", "nano", etc.
+  "fileFiltering": {
+    "respectGitIgnore": true,
+    "enableRecursiveFileSearch": true
+  },
+
+  // Context and workspace behavior
+  "contextFileName": "GEMINI.md",      // Can also be an array of filenames
+  "includeDirectories": [],            // e.g., ["../shared", "~/common-utils"]
+  "chatCompression": {
+    "contextPercentageThreshold": 0.5   // Threshold for compressing history
+  },
+
+  // Bug reporting customization
+  "bugCommand": {
+    "urlTemplate": "https://github.com/google-gemini/gemini-cli/issues/new?template=bug_report.yml&title={title}&info={info}"
+  },
+
+  // Extensions and integrations via MCP servers
+  "mcpServers": {
+    // Example structure; override or extend as needed
+    // "myServer": {
+    //   "command": "my_mcp_tool",
+    //   "args": [],
+    //   "httpUrl": "http://localhost:####/mcp",
+    //   "headers": {},
+    //   "timeout": 10000,
+    //   "trust": false,
+    //   "includeTools": [],
+    //   "excludeTools": []
+    // }
+  },
+
+  // Control which tools are available
+  "coreTools": [
+    "EditTool",
+    "GlobTool",
+    "WebSearchTool",
+    "ReadFileTool",
+    "LSTool",
+    "ReadManyFilesTool",
+    "MemoryTool",
+    "GrepTool",
+    "ShellTool",
+    "WebFetchTool",
+    "WriteFileTool"
+  ],
+  "excludeTools": [],
+
+  // Custom color themes (optional)
+  "customThemes": {
+    "MyCustomTheme": {
+      "name": "MyCustomTheme",
+      "type": "custom",
+      "Background": "#181818",
+      "Foreground": "#F8F8F2",
+      "AccentBlue": "#61AFEF",
+      "AccentPurple": "#C678DD",
+      "AccentGreen": "#98C379"
+      // Add more as desired
+    }
+  }
+}

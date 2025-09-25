@@ -38,7 +38,7 @@ def md2html(body: str) -> str:
     markdown_obj = Markdown(body)
     console.print(markdown_obj)
     html_output = console.export_html(inline_styles=True)
-    
+
     # Try to load GitHub CSS style, fallback to basic style if not found
     gh_style_path = Path(__file__).parent.joinpath("gh_style.css")
     if gh_style_path.exists():
@@ -51,7 +51,7 @@ def md2html(body: str) -> str:
         code { background-color: #f6f8fa; padding: 2px 4px; border-radius: 3px; }
         pre { background-color: #f6f8fa; padding: 16px; border-radius: 6px; overflow: auto; }
         """
-    
+
     return f"""
 <!DOCTYPE html>
 <html>

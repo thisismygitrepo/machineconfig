@@ -24,7 +24,7 @@ TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "zellij_layouts", "layout_m
 class ZellijRemoteLayoutGenerator:
     def __init__(self, remote_name: str, session_name_prefix: str):
         self.remote_name = remote_name
-        self.session_name = session_name_prefix + "_" + LayoutGenerator.generate_random_suffix()
+        self.session_name = session_name_prefix + "_" + LayoutGenerator.generate_random_suffix(8)
         self.layout_config: Optional[LayoutConfig] = None
         self.layout_path: Optional[str] = None
 
@@ -35,10 +35,7 @@ class ZellijRemoteLayoutGenerator:
         self.session_manager = SessionManager(self.remote_executor, self.session_name, TMP_LAYOUT_DIR)
         self.status_reporter = StatusReporter(self.process_monitor, self.session_manager)
 
-    def copy_layout_to_remote(self, local_layout_file: Path, random_suffix: str) -> str:
-        return self.session_manager.copy_layout_to_remote(local_layout_file, random_suffix)
-
-    def create_zellij_layout(self, layout_config: LayoutConfig, output_dir: Optional[str] = None) -> str:
+    def create_zellij_layout(self, layout_config: LayoutConfig, output_dir: Optional[str]) -> str:
         # Enhanced Rich logging for remote layout creation
         tab_count = len(layout_config["layoutTabs"])
         layout_name = layout_config["layoutName"]
@@ -56,63 +53,16 @@ class ZellijRemoteLayoutGenerator:
         self.layout_path = self.layout_generator.create_layout_file(layout_config, output_path, self.session_name)
         return self.layout_path
 
-    def get_layout_preview(self, layout_config: LayoutConfig) -> str:
-        return self.layout_generator.generate_layout_content(layout_config)
-
-    def check_command_status(self, tab_name: str, use_verification: bool = True) -> Dict[str, Any]:
-        if not self.layout_config:
-            return {"status": "error", "error": "No layout config available", "running": False}
-        return self.process_monitor.check_command_status(tab_name, self.layout_config, use_verification)
-
-    def check_all_commands_status(self) -> Dict[str, Dict[str, Any]]:
-        if not self.layout_config:
-            return {}
-        return self.process_monitor.check_all_commands_status(self.layout_config)
-
-    def check_zellij_session_status(self) -> Dict[str, Any]:
-        return self.session_manager.check_zellij_session_status()
-
-    def get_comprehensive_status(self) -> Dict[str, Any]:
-        if not self.layout_config:
-            return {"error": "No layout config available"}
-        return self.status_reporter.get_comprehensive_status(self.layout_config)
-
-    def print_status_report(self) -> None:
-        if not self.layout_config:
-            console.print("[bold red]❌ No layout config available[/bold red]")
-            return
-        self.status_reporter.print_status_report(self.layout_config)
-
-    def start_zellij_session(self, layout_file_path: Optional[str] = None) -> Dict[str, Any]:
-        return self.session_manager.start_zellij_session(layout_file_path or self.layout_path)
-
-    def attach_to_session(self) -> None:
-        self.session_manager.attach_to_session()
-
-    # Legacy methods for backward compatibility
-    def force_fresh_process_check(self, tab_name: str) -> Dict[str, Any]:
-        if not self.layout_config:
-            return {"error": "No layout config available"}
-        return self.process_monitor.force_fresh_process_check(tab_name, self.layout_config)
-
-    def verify_process_alive(self, pid: int) -> bool:
-        return self.process_monitor.verify_process_alive(pid)
-
-    def get_verified_process_status(self, tab_name: str) -> Dict[str, Any]:
-        if not self.layout_config:
-            return {"error": "No layout config available"}
-        return self.process_monitor.get_verified_process_status(tab_name, self.layout_config)
-
     # Static methods for backward compatibility
     @staticmethod
-    def run_remote_command(remote_name: str, command: str, timeout: int = 30):
+    def run_remote_command(remote_name: str, command: str, timeout: int):
         executor = RemoteExecutor(remote_name)
         return executor.run_command(command, timeout)
 
     def to_dict(self) -> Dict[str, Any]:
         return {"remote_name": self.remote_name, "session_name": self.session_name, "layout_config": self.layout_config, "layout_path": self.layout_path, "created_at": datetime.now().isoformat(), "class_name": self.__class__.__name__}
 
-    def to_json(self, file_path: Optional[Union[str, Path]] = None) -> str:
+    def to_json(self, file_path: Optional[Union[str, Path]]) -> str:
         # Generate file path if not provided
         if file_path is None:
             random_id = str(uuid.uuid4())[:8]
@@ -150,8 +100,8 @@ class ZellijRemoteLayoutGenerator:
             raise FileNotFoundError(f"JSON file not found: {file_path}")
 
         # Load JSON data
-        with open(file_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        text = Path(file_path).read_text(encoding="utf-8")
+        data = json.loads(text)
 
         # Validate that it's the correct class
         if data.get("class_name") != cls.__name__:
@@ -176,7 +126,7 @@ class ZellijRemoteLayoutGenerator:
         return instance
 
     @staticmethod
-    def list_saved_sessions(directory_path: Optional[Union[str, Path]] = None) -> List[str]:
+    def list_saved_sessions(directory_path: Optional[Union[str, Path]]) -> List[str]:
         if directory_path is None:
             directory_path = Path.home() / "tmp_results" / "zellij_sessions" / "serialized"
         else:
@@ -208,16 +158,16 @@ if __name__ == "__main__":
     try:
         # Create layout using the remote generator
         generator = ZellijRemoteLayoutGenerator(remote_name=remote_name, session_name_prefix=session_name)
-        layout_path = generator.create_zellij_layout(sample_layout)
+        layout_path = generator.create_zellij_layout(sample_layout, None)
         print(f"✅ Remote layout created successfully: {layout_path}")
 
         # Demonstrate serialization
         print("\n💾 Demonstrating serialization...")
-        saved_path = generator.to_json()
+        saved_path = generator.to_json(None)
         print(f"✅ Session saved to: {saved_path}")
 
         # List all saved sessions
-        saved_sessions = ZellijRemoteLayoutGenerator.list_saved_sessions()
+        saved_sessions = ZellijRemoteLayoutGenerator.list_saved_sessions(None)
         print(f"📋 Available saved sessions: {saved_sessions}")
 
         # Demonstrate loading (using the full path)
@@ -229,7 +179,10 @@ if __name__ == "__main__":
 
         # Demonstrate status checking
         print(f"\n🔍 Checking command status on remote '{remote_name}':")
-        generator.print_status_report()
+        if not generator.layout_config:
+            console.print("[bold red]❌ No layout config available[/bold red]")
+        else:
+            generator.status_reporter.print_status_report(generator.layout_config)
 
         # Start the session (uncomment to actually start)
         # start_result = generator.start_zellij_session()

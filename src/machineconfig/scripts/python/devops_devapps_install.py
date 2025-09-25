@@ -39,18 +39,15 @@ def main(which: Optional[WHICH_CAT | str] = None) -> None:
 
     # interactive installation
     installers = [Installer.from_dict(d=vd, name=name) for __kat, vds in get_all_dicts(system=system()).items() for name, vd in vds.items()]
-    
+
     # Check installed programs with progress indicator
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-    ) as progress:
+    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
         task = progress.add_task("✅ Checking installed programs...", total=len(installers))
         options = []
         for x in installers:
             options.append(x.get_description())
             progress.update(task, advance=1)
-    
+
     options += list(get_args(WHICH_CAT))
     # print("s"*1000)
     program_names = choose_multiple_options(msg="", options=options, header="🚀 CHOOSE DEV APP", default="AllEssentials")
@@ -67,6 +64,7 @@ def main(which: Optional[WHICH_CAT | str] = None) -> None:
             an_installer = installers[options.index(a_program_name)]
             total_program += "\n" + an_installer.install_robust(version=None)  # finish the task
     import subprocess
+
     subprocess.run(total_program, shell=True, check=True)
 
 

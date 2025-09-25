@@ -10,7 +10,6 @@ from machineconfig.utils.ve import get_ve_activate_line
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 
 
-
 def get_shell_script_executing_python_file(python_file: str, func: Optional[str], ve_path: str, strict_execution: bool = True):
     if func is None:
         exec_line = f"""python {python_file}"""

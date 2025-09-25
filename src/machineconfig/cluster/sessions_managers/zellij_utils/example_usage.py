@@ -3,8 +3,11 @@
 Example usage of the modularized Zellij remote layout generator.
 """
 
+from rich.console import Console
 from machineconfig.cluster.sessions_managers.zellij_remote import ZellijRemoteLayoutGenerator
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
+
+console = Console()
 
 
 def example_usage():
@@ -30,16 +33,19 @@ def example_usage():
         generator = ZellijRemoteLayoutGenerator(remote_name=remote_name, session_name_prefix=session_name)
 
         # Create layout file
-        layout_path = generator.create_zellij_layout(sample_layout)
+        layout_path = generator.create_zellij_layout(sample_layout, None)
         print(f"✅ Remote layout created successfully: {layout_path}")
 
         # Preview the layout content
-        preview = generator.get_layout_preview(sample_layout)
+        preview = generator.layout_generator.generate_layout_content(sample_layout)
         print(f"📄 Layout preview:\n{preview}")
 
         # Check status using the modular components
         print(f"\n🔍 Checking command status on remote '{remote_name}':")
-        generator.print_status_report()
+        if not generator.layout_config:
+            console.print("[bold red]❌ No layout config available[/bold red]")
+        else:
+            generator.status_reporter.print_status_report(generator.layout_config)
 
         # The individual components can also be used directly:
         print("\n🔧 Direct component usage examples:")

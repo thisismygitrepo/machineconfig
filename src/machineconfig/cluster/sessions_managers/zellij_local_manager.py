@@ -10,7 +10,7 @@ from typing import Optional, List
 
 from rich.console import Console
 
-from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import SessionReport, GlobalSummary, StartResult, ActiveSessionInfo
+from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import SessionReport, GlobalSummary, StartResult, ActiveSessionInfo, StatusRow
 from machineconfig.utils.utils5 import Scheduler
 from machineconfig.cluster.sessions_managers.zellij_local import ZellijLayoutGenerator
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
@@ -36,7 +36,7 @@ class ZellijLocalManager:
             session_name = layout_config["layoutName"].replace(" ", "_")
             manager = ZellijLayoutGenerator()
             full_session_name = f"{self.session_name_prefix}_{session_name}"
-            manager.create_zellij_layout(layout_config=layout_config, session_name=full_session_name)
+            manager.create_zellij_layout(layout_config=layout_config, output_dir=None, session_name=full_session_name)
             self.managers.append(manager)
 
         # Enhanced Rich logging for initialization
@@ -46,7 +46,7 @@ class ZellijLocalManager:
         """Get all managed session names."""
         return [manager.session_name for manager in self.managers if manager.session_name is not None]
 
-    def start_all_sessions(self, poll_seconds: float = 5.0, poll_interval: float = 0.25) -> dict[str, StartResult]:
+    def start_all_sessions(self, poll_seconds: float, poll_interval: float) -> dict[str, StartResult]:
         """Start all zellij sessions with their layouts without blocking on the interactive TUI.
 
         Rationale:
@@ -135,7 +135,7 @@ class ZellijLocalManager:
 
         return results
 
-    def attach_to_session(self, session_name: Optional[str] = None) -> str:
+    def attach_to_session(self, session_name: Optional[str]) -> str:
         """
         Generate command to attach to a specific session or list attachment commands for all.
 
@@ -153,7 +153,7 @@ class ZellijLocalManager:
             raise ValueError(f"Session '{session_name}' not found")
         else:
             # Return commands for all sessions
-            commands = []
+            commands: list[str] = []
             for manager in self.managers:
                 commands.append(f"# Attach to session '{manager.session_name}':")
                 commands.append(f"zellij attach {manager.session_name}")
@@ -253,12 +253,13 @@ class ZellijLocalManager:
 
         print("=" * 80)
 
-    def run_monitoring_routine(self, wait_ms: int = 30000) -> None:
+    def run_monitoring_routine(self, wait_ms: int) -> None:
         """
         Run a continuous monitoring routine that checks status periodically.
 
         Args:
-            wait_ms: How long to wait between checks in milliseconds (default: 30000ms = 30s)
+            wait_ms: How long to wait between checks in milliseconds
+            kill_sessions_on_completion: If True, kill all managed zellij sessions when monitoring stops
         """
 
         def routine(scheduler: Scheduler):
@@ -270,7 +271,7 @@ class ZellijLocalManager:
                 all_status = self.check_all_sessions_status()
 
                 # Create DataFrame for easier viewing
-                status_data = []
+                status_data: list[StatusRow] = []
                 for session_name, status in all_status.items():
                     for tab_name, cmd_status in status["commands_status"].items():
                         status_data.append(
@@ -314,7 +315,7 @@ class ZellijLocalManager:
         sched = Scheduler(routine=routine, wait_ms=wait_ms, logger=logger)
         sched.run()
 
-    def save(self, session_id: Optional[str] = None) -> str:
+    def save(self, session_id: Optional[str]) -> str:
         """Save the manager state to disk."""
         if session_id is None:
             session_id = str(uuid.uuid4())[:8]
@@ -360,8 +361,8 @@ class ZellijLocalManager:
         if not config_file.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_file}")
 
-        with open(config_file, "r", encoding="utf-8") as f:
-            session_layouts = json.load(f)
+        text = config_file.read_text(encoding="utf-8")
+        session_layouts = json.loads(text)
 
         # Create new instance
         instance = cls(session_layouts=session_layouts)
@@ -374,8 +375,8 @@ class ZellijLocalManager:
 
             for manager_file in manager_files:
                 try:
-                    with open(manager_file, "r", encoding="utf-8") as f:
-                        manager_data = json.load(f)
+                    text = manager_file.read_text(encoding="utf-8")
+                    manager_data = json.loads(text)
 
                     # Recreate the manager
                     manager = ZellijLayoutGenerator()
@@ -493,7 +494,7 @@ if __name__ == "__main__":
 
         # Print attachment commands (without actually starting)
         print("\n📎 Attachment commands:")
-        print(manager.attach_to_session())
+        print(manager.attach_to_session(None))
 
         # Show current status
         print("\n🔍 Current status:")
@@ -501,7 +502,7 @@ if __name__ == "__main__":
 
         # Demonstrate save/load
         print("\n💾 Demonstrating save/load...")
-        session_id = manager.save()
+        session_id = manager.save(None)
         print(f"✅ Saved session: {session_id}")
 
         # List saved sessions
@@ -515,6 +516,8 @@ if __name__ == "__main__":
         # Show how to start monitoring (commented out to prevent infinite loop in demo)
         print("\n⏰ To start monitoring, run:")
         print("manager.run_monitoring_routine(wait_ms=30000)  # 30 seconds")
+        print("# Or with session cleanup:")
+        print("manager.run_monitoring_routine(wait_ms=30000, kill_sessions_on_completion=True)")
 
     except Exception as e:
         print(f"❌ Error: {e}")

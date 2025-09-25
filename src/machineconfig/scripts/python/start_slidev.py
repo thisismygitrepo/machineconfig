@@ -103,6 +103,7 @@ def main() -> None:
     program = "npm run dev slides.md -- --remote"
     # PROGRAM_PATH.write_text(program, encoding="utf-8")
     import subprocess
+
     subprocess.run(program, shell=True, cwd=SLIDEV_REPO)
     print_code(code=program, lexer="bash", desc="Run the following command to start the presentation")
 

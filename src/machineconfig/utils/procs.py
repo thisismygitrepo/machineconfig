@@ -20,13 +20,10 @@ def get_processes_accessing_file(path: str):
     title = "🔍  SEARCHING FOR PROCESSES ACCESSING FILE"
     console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
     res: dict[int, list[str]] = {}
-    
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-    ) as progress:
+
+    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
         progress.add_task("🔎 Scanning processes...", total=None)
-        
+
         for proc in psutil.process_iter():
             try:
                 files = proc.open_files()
@@ -35,7 +32,7 @@ def get_processes_accessing_file(path: str):
             tmp = [file.path for file in files if path in file.path]
             if len(tmp) > 0:
                 res[proc.pid] = tmp
-                
+
     # Convert to list of dictionaries for consistent data structure
     result_data = [{"pid": pid, "files": files} for pid, files in res.items()]
     console.print(Panel(f"✅ Found {len(res)} processes accessing the specified file", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
@@ -61,13 +58,10 @@ class ProcessManager:
         title = "📊  INITIALIZING PROCESS MANAGER"
         console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
         process_info = []
-        
-        with Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
-        ) as progress:
+
+        with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
             progress.add_task("🔍 Reading system processes...", total=None)
-            
+
             for proc in psutil.process_iter():
                 try:
                     mem_usage_mb = proc.memory_info().rss / (1024 * 1024)
@@ -246,8 +240,9 @@ def get_age(create_time: Any) -> str:
 
 
 def main():
-    from machineconfig.utils.procs import ProcessManager; ProcessManager().choose_and_kill()
+    from machineconfig.utils.procs import ProcessManager
+    ProcessManager().choose_and_kill()
 
 
 if __name__ == "__main__":
-    main()
+    pass

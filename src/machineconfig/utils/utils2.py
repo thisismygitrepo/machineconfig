@@ -20,6 +20,7 @@ def randstr(length: int = 10, lower: bool = True, upper: bool = True, digits: bo
 
 def split[T](iterable: list[T], every: int = 1, to: Optional[int] = None) -> list[list[T]]:
     import math
+
     every = every if to is None else math.ceil(len(iterable) / to)
     res: list[list[T]] = []
     for ix in range(0, len(iterable), every):

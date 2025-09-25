@@ -34,7 +34,7 @@ class WTRemoteLayoutGenerator:
 
     # Tabs are stored and used as List[TabConfig]; no legacy dict compatibility
 
-    def create_wt_layout(self, tabs: List[TabConfig], output_dir: Optional[str] = None) -> str:
+    def create_wt_layout(self, tabs: List[TabConfig], output_dir: Optional[str]) -> str:
         logger.info(f"Creating Windows Terminal layout with {len(tabs)} tabs for remote '{self.remote_name}'")
         self.tabs = tabs
         if output_dir:
@@ -49,7 +49,7 @@ class WTRemoteLayoutGenerator:
     def to_dict(self) -> Dict[str, Any]:
         return {"remote_name": self.remote_name, "session_name": self.session_name, "tabs": self.tabs, "script_path": self.script_path, "created_at": datetime.now().isoformat(), "class_name": self.__class__.__name__}
 
-    def to_json(self, file_path: Optional[str] = None) -> str:
+    def to_json(self, file_path: Optional[str]) -> str:
         # Generate file path if not provided
         if file_path is None:
             random_id = str(uuid.uuid4())[:8]
@@ -87,8 +87,8 @@ class WTRemoteLayoutGenerator:
             raise FileNotFoundError(f"JSON file not found: {path_obj}")
 
         # Load JSON data
-        with open(path_obj, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        text = path_obj.read_text(encoding="utf-8")
+        data = json.loads(text)
 
         # Validate that it's the correct class
         if data.get("class_name") != cls.__name__:
@@ -117,7 +117,7 @@ class WTRemoteLayoutGenerator:
         return instance
 
     @staticmethod
-    def list_saved_sessions(directory_path: Optional[str] = None) -> List[str]:
+    def list_saved_sessions(directory_path: Optional[str]) -> List[str]:
         if directory_path is None:
             dir_path = Path.home() / "tmp_results" / "wt_sessions" / "serialized"
         else:
@@ -146,7 +146,7 @@ if __name__ == "__main__":
     try:
         # Create layout using the remote generator
         generator = WTRemoteLayoutGenerator(remote_name=remote_name, session_name_prefix=session_name)
-        script_path = generator.create_wt_layout(sample_tabs)
+        script_path = generator.create_wt_layout(sample_tabs, None)
         print(f"✅ Remote layout created successfully: {script_path}")
 
         # Check if Windows Terminal is available on remote
@@ -160,11 +160,11 @@ if __name__ == "__main__":
 
         # Demonstrate serialization
         print("\n💾 Demonstrating serialization...")
-        saved_path = generator.to_json()
+        saved_path = generator.to_json(None)
         print(f"✅ Session saved to: {saved_path}")
 
         # List all saved sessions
-        saved_sessions = WTRemoteLayoutGenerator.list_saved_sessions()
+        saved_sessions = WTRemoteLayoutGenerator.list_saved_sessions(None)
         print(f"📋 Available saved sessions: {saved_sessions}")
 
         # Demonstrate loading (using the full path)

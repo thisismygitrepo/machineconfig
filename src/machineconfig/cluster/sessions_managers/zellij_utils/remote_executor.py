@@ -16,7 +16,7 @@ class RemoteExecutor:
     def __init__(self, remote_name: str):
         self.remote_name = remote_name
 
-    def run_command(self, command: str, timeout: int = 30) -> subprocess.CompletedProcess[str]:
+    def run_command(self, command: str, timeout: int) -> subprocess.CompletedProcess[str]:
         """Execute a command on the remote machine via SSH."""
         ssh_cmd = ["ssh", self.remote_name, command]
         try:
@@ -47,7 +47,7 @@ class RemoteExecutor:
     def create_remote_directory(self, remote_dir: str) -> bool:
         """Create a directory on the remote machine."""
         try:
-            result = self.run_command(f"mkdir -p {remote_dir}")
+            result = self.run_command(f"mkdir -p {remote_dir}", 30)
             return result.returncode == 0
         except Exception as e:
             logger.error(f"Failed to create remote directory {remote_dir}: {e}")

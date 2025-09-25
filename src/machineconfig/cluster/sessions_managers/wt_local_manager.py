@@ -35,7 +35,7 @@ class WTLocalManager:
         # Create a WTLayoutGenerator for each session
         for layout_config in session_layouts:
             manager = WTLayoutGenerator()
-            manager.create_wt_layout(layout_config=layout_config)
+            manager.create_wt_layout(layout_config=layout_config, output_dir=None)
             self.managers.append(manager)
 
         logger.info(f"Initialized WTLocalManager with {len(self.managers)} sessions")
@@ -324,16 +324,16 @@ class WTLocalManager:
         if not config_file.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_file}")
 
-        with open(config_file, "r", encoding="utf-8") as f:
-            session_layouts = json.load(f)
+        text = config_file.read_text(encoding="utf-8")
+        session_layouts = json.loads(text)
 
         # Load metadata
         metadata_file = session_dir / "metadata.json"
         session_name_prefix = "LocalWTMgr"  # default fallback
         if metadata_file.exists():
-            with open(metadata_file, "r", encoding="utf-8") as f:
-                metadata = json.load(f)
-                session_name_prefix = metadata.get("session_name_prefix", "LocalWTMgr")
+            text = metadata_file.read_text(encoding="utf-8")
+            metadata = json.loads(text)
+            session_name_prefix = metadata.get("session_name_prefix", "LocalWTMgr")
 
         # Create new instance
         instance = cls(session_layouts=session_layouts, session_name_prefix=session_name_prefix)
@@ -346,8 +346,8 @@ class WTLocalManager:
 
             for manager_file in manager_files:
                 try:
-                    with open(manager_file, "r", encoding="utf-8") as f:
-                        manager_data = json.load(f)
+                    text = manager_file.read_text(encoding="utf-8")
+                    manager_data = json.loads(text)
 
                     # Recreate the manager
                     manager = WTLayoutGenerator()

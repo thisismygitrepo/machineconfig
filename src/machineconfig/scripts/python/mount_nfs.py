@@ -50,6 +50,7 @@ local_mount_point={local_mount_point}
         """
         # PROGRAM_PATH.write_text(txt)
         import subprocess
+
         subprocess.run(txt, shell=True, check=True)
 
         print("✅ Mount paths prepared successfully!\n")
@@ -65,6 +66,7 @@ $driveLetter = "{driver_letter}"
 """
         # PROGRAM_PATH.write_text(txt)
         import subprocess
+
         subprocess.run(txt, shell=True, check=True)
         print("✅ Drive letter selected and configuration saved!\n")
 
