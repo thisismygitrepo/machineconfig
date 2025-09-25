@@ -68,7 +68,7 @@ def main(version: Optional[str]):
     print("🚀 Installing Espanso using installer...")
     from machineconfig.utils.installer_utils.installer_class import Installer
 
-    installer = Installer.from_dict(config_dict, name="espanso")
+    installer = Installer(config_dict)
     installer.install(version=None)
 
     config = """

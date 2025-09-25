@@ -83,6 +83,7 @@ crocodile = { path = "../crocodile", editable = true }
 
 [dependency-groups]
 dev = [
+    "aider>=0.2.6",
     "cleanpy>=0.5.1",
     "ipdb>=0.13.13",
     "ipykernel>=6.30.1",

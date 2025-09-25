@@ -1,16 +1,7 @@
 """Notifications Module"""
-
-# from crocodile.core import install_n_import
-# from crocodile.file_management import P, Read
 from pathlib import Path
-
-# from crocodile.meta import RepeatUntilNoException
 import smtplib
 import imaplib
-
-# from email import message
-# from email import encoders
-# from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from typing import Optional, Any, Union
@@ -192,7 +183,6 @@ encryption = ssl
     #     else:
     #         body_file_path = None
     #         assert body is not None, "You must pass either body or body_file."
-    #     from crocodile.meta import Terminal
 
     #     to_str = ",".join(to)
     #     attachments_str = " ".join([f"--attachment {str(p)}" for p in attachments]) if attachments is not None else ""

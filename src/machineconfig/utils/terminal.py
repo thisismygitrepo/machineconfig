@@ -219,9 +219,19 @@ class Terminal:
 
     @staticmethod
     def get_header(wdir: OPLike, toolbox: bool):
+        if toolbox:
+            toobox_code = """
+try:
+    from crocodile.toolbox import *
+except ImportError:
+    print("Crocodile not found, skipping import.")
+    pass
+"""
+        else:
+            toobox_code = "# No toolbox import."
         return f"""
 # >> Code prepended
-{"from crocodile.toolbox import *" if toolbox else "# No toolbox import."}
+{toobox_code}
 {'''sys.path.insert(0, r'{wdir}') ''' if wdir is not None else "# No path insertion."}
 # >> End of header, start of script passed
 """

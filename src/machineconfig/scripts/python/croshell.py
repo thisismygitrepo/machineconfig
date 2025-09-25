@@ -21,8 +21,10 @@ console = Console()
 
 def add_print_header_pycode(path: str, title: str):
     return f"""
-# from machineconfig.utils.path_reduced import P as PathExtended
-from crocodile.file_management import P as PathExtended
+try:
+    from crocodile.file_management import P as PathExtended
+except ImportError:
+    from machineconfig.utils.path_reduced import PathExtended
 pycode = PathExtended(r'{path}').read_text(encoding="utf-8")
 pycode = pycode.split("except Exception: print(pycode)")[2]
 
@@ -160,10 +162,13 @@ def build_parser():
     preprogram = """
 
 #%%
-from crocodile.croshell import *
+try:
+    from crocodile.croshell import *
+    print_header()
+    print_logo(logo="crocodile")
+except ImportError:
+    print("Crocodile not found, skipping import.")
 from pathlib import Path
-print_header()
-print_logo(logo="crocodile")
 print(f"🐊 Crocodile Shell | Running @ {Path.cwd()}")
 """
 
