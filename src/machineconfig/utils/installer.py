@@ -1,7 +1,8 @@
 """package manager"""
 
-from machineconfig.utils.installer_utils.installer_abc import LINUX_INSTALL_PATH, CATEGORY
+from machineconfig.utils.installer_utils.installer_abc import LINUX_INSTALL_PATH
 from machineconfig.utils.installer_utils.installer_class import Installer
+from machineconfig.utils.schemas.installer.installer_types import CATEGORY
 from rich.console import Console
 from rich.panel import Panel  # Added import
 

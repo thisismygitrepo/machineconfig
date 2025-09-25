@@ -1,10 +1,7 @@
 from machineconfig.utils.path_reduced import PathExtended as PathExtended
 from machineconfig.utils.source_of_truth import WINDOWS_INSTALL_PATH, LINUX_INSTALL_PATH
-from typing import Optional, TypeAlias, Literal
+from typing import Optional
 import subprocess
-
-
-CATEGORY: TypeAlias = Literal["OS_SPECIFIC", "OS_GENERIC", "CUSTOM", "OS_SPECIFIC_DEV", "OS_GENERIC_DEV", "CUSTOM_DEV"]
 
 
 def find_move_delete_windows(downloaded_file_path: PathExtended, exe_name: Optional[str] = None, delete: bool = True, rename_to: Optional[str] = None):
