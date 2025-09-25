@@ -2,7 +2,7 @@
 
 from machineconfig.utils.installer_utils.installer_abc import LINUX_INSTALL_PATH
 from machineconfig.utils.installer_utils.installer_class import Installer
-from machineconfig.utils.schemas.installer.installer_types import APP_INSTALLER_CATEGORY
+from machineconfig.utils.schemas.installer.installer_types import APP_INSTALLER_CATEGORY, InstallerData, InstallerDataFiles
 from rich.console import Console
 from rich.panel import Panel  # Added import
 
@@ -22,21 +22,25 @@ def check_latest():
     # installers += get_installers(system=platform.system(), dev=True)
     installers_github = []
     for inst__ in installers:
-        if "ntop" in inst__.name:
-            print(f"⏭️  Skipping {inst__.name} (ntop)")
+        app_name = inst__.installer_data.get("appName", "unknown")
+        repo_url = inst__.installer_data.get("repoURL", "")
+        if "ntop" in app_name:
+            print(f"⏭️  Skipping {app_name} (ntop)")
             continue
-        if "github" not in inst__.repo_url:
-            print(f"⏭️  Skipping {inst__.name} (not a GitHub release)")
+        if "github" not in repo_url:
+            print(f"⏭️  Skipping {app_name} (not a GitHub release)")
             continue
         installers_github.append(inst__)
 
     print(f"\n🔍 Checking {len(installers_github)} GitHub-based installers...\n")
 
     def func(inst: Installer):
-        print(f"🔎 Checking {inst.exe_name}...")
-        _release_url, version_to_be_installed = inst.get_github_release(repo_url=inst.repo_url, version=None)
-        verdict, current_ver, new_ver = inst.check_if_installed_already(exe_name=inst.exe_name, version=version_to_be_installed, use_cache=False)
-        return inst.exe_name, verdict, current_ver, new_ver
+        exe_name = inst.installer_data.get("exeName", "unknown")
+        repo_url = inst.installer_data.get("repoURL", "")
+        print(f"🔎 Checking {exe_name}...")
+        _release_url, version_to_be_installed = inst.get_github_release(repo_url=repo_url, version=None)
+        verdict, current_ver, new_ver = inst.check_if_installed_already(exe_name=exe_name, version=version_to_be_installed, use_cache=False)
+        return exe_name, verdict, current_ver, new_ver
 
     print("\n⏳ Processing installers...\n")
     res = [func(inst) for inst in installers_github]
@@ -90,20 +94,23 @@ def get_installed_cli_apps():
 
 def get_installers(system: str, dev: bool) -> list[Installer]:
     print(f"\n{'=' * 80}\n🔍 LOADING INSTALLER CONFIGURATIONS 🔍\n{'=' * 80}")
-    res_all = get_all_dicts(system=system)
+    res_all = get_all_installer_data_files(system=system)
     if not dev:
         print("ℹ️  Excluding development installers...")
         del res_all["CUSTOM_DEV"]
         del res_all["OS_SPECIFIC_DEV"]
         del res_all["OS_GENERIC_DEV"]
-    res_final = {}
-    for _k, v in res_all.items():
-        res_final.update(v)
-    print(f"✅ Loaded {len(res_final)} installer configurations\n{'=' * 80}")
-    return [Installer.from_dict(d=vd, name=k) for k, vd in res_final.items()]
+
+    # Flatten the installer data from all categories
+    all_installers: list[InstallerData] = []
+    for _category, installer_data_files in res_all.items():
+        all_installers.extend(installer_data_files["installers"])
+
+    print(f"✅ Loaded {len(all_installers)} installer configurations\n{'=' * 80}")
+    return [Installer(installer_data=installer_data) for installer_data in all_installers]
 
 
-def get_all_dicts(system: str) -> dict[APP_INSTALLER_CATEGORY, dict[str, dict[str, Any]]]:
+def get_all_installer_data_files(system: str) -> dict[APP_INSTALLER_CATEGORY, InstallerDataFiles]:
     print(f"\n{'=' * 80}\n📂 LOADING CONFIGURATION FILES 📂\n{'=' * 80}")
 
     print(f"🔍 Importing OS-specific installers for {system}...")
@@ -122,18 +129,23 @@ def get_all_dicts(system: str) -> dict[APP_INSTALLER_CATEGORY, dict[str, dict[st
     path_os_generic_dev = path_os_generic.joinpath("dev")
 
     print("📂 Loading configuration files...")
-    res_final: dict[APP_INSTALLER_CATEGORY, dict[str, dict[str, Any]]] = {}
+    res_final: dict[APP_INSTALLER_CATEGORY, InstallerDataFiles] = {}
+
     print(f"""📄 Loading OS-specific config from: {path_os_specific.joinpath("config.json")}""")
-    res_final["OS_SPECIFIC"] = read_json(path=path_os_specific.joinpath("config.json"))
+    os_specific_data = read_json(path=path_os_specific.joinpath("config.json"))
+    res_final["OS_SPECIFIC"] = InstallerDataFiles(os_specific_data)
 
     print(f"""📄 Loading OS-generic config from: {path_os_generic.joinpath("config.json")}""")
-    res_final["OS_GENERIC"] = read_json(path=path_os_generic.joinpath("config.json"))
+    os_generic_data = read_json(path=path_os_generic.joinpath("config.json"))
+    res_final["OS_GENERIC"] = InstallerDataFiles(os_generic_data)
 
     print(f"""📄 Loading OS-specific dev config from: {path_os_specific_dev.joinpath("config.json")}""")
-    res_final["OS_SPECIFIC_DEV"] = read_json(path=path_os_specific_dev.joinpath("config.json"))
+    os_specific_dev_data = read_json(path=path_os_specific_dev.joinpath("config.json"))
+    res_final["OS_SPECIFIC_DEV"] = InstallerDataFiles(os_specific_dev_data)
 
     print(f"""📄 Loading OS-generic dev config from: {path_os_generic_dev.joinpath("config.json")}""")
-    res_final["OS_GENERIC_DEV"] = read_json(path=path_os_generic_dev.joinpath("config.json"))
+    os_generic_dev_data = read_json(path=path_os_generic_dev.joinpath("config.json"))
+    res_final["OS_GENERIC_DEV"] = InstallerDataFiles(os_generic_dev_data)
 
     path_custom_installer = path_os_generic.with_name("python_custom_installers")
     path_custom_installer_dev = path_custom_installer.joinpath("dev")
@@ -141,29 +153,31 @@ def get_all_dicts(system: str) -> dict[APP_INSTALLER_CATEGORY, dict[str, dict[st
     print(f"🔍 Loading custom installers from: {path_custom_installer}")
     import runpy
 
-    res_custom: dict[str, dict[str, Any]] = {}
+    res_custom_installers: list[InstallerData] = []
     for item in path_custom_installer.search("*.py", r=False, not_in=["__init__"]):
         try:
             print(f"📄 Loading custom installer: {item.name}")
-            config_dict = runpy.run_path(str(item), run_name=None)["config_dict"]
-            res_custom[item.stem] = config_dict
+            installer_data: InstallerData = runpy.run_path(str(item), run_name=None)["config_dict"]
+            res_custom_installers.append(installer_data)
         except Exception as ex:
             print(f"❌ Failed to load {item}: {ex}")
 
     print(f"🔍 Loading custom dev installers from: {path_custom_installer_dev}")
-    res_custom_dev: dict[str, dict[str, Any]] = {}
+    res_custom_dev_installers: list[InstallerData] = []
     for item in path_custom_installer_dev.search("*.py", r=False, not_in=["__init__"]):
         try:
             print(f"📄 Loading custom dev installer: {item.name}")
-            config_dict = runpy.run_path(str(item), run_name=None)["config_dict"]
-            res_custom_dev[item.stem] = config_dict
+            installer_data: InstallerData = runpy.run_path(str(item), run_name=None)["config_dict"]
+            res_custom_dev_installers.append(installer_data)
         except Exception as ex:
             print(f"❌ Failed to load {item}: {ex}")
 
-    res_final["CUSTOM"] = res_custom
-    res_final["CUSTOM_DEV"] = res_custom_dev
+    res_final["CUSTOM"] = InstallerDataFiles({"version": "1", "installers": res_custom_installers})
+    res_final["CUSTOM_DEV"] = InstallerDataFiles({"version": "1", "installers": res_custom_dev_installers})
 
-    print(f"✅ Configuration loading complete:\n - OS_SPECIFIC: {len(res_final['OS_SPECIFIC'])} items\n - OS_GENERIC: {len(res_final['OS_GENERIC'])} items\n - CUSTOM: {len(res_final['CUSTOM'])} items\n{'=' * 80}")
+    print(
+        f"✅ Configuration loading complete:\n - OS_SPECIFIC: {len(res_final['OS_SPECIFIC']['installers'])} items\n - OS_GENERIC: {len(res_final['OS_GENERIC']['installers'])} items\n - CUSTOM: {len(res_final['CUSTOM']['installers'])} items\n{'=' * 80}"
+    )
     return res_final
 
 

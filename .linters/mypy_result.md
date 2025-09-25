@@ -21,6 +21,17 @@ src/machineconfig/scripts/python/fire_agents_load_balancer.py:44:9: error: Name
 "grouped" already defined on line 33  [no-redef]
             grouped: list[str] = []
             ^~~~~~~
+src/machineconfig/cluster/sessions_managers/zellij_remote_manager.py: note: In function "run_monitoring_routine":
+src/machineconfig/cluster/sessions_managers/zellij_remote_manager.py:59:17: error:
+Need type annotation for "keys" (hint: "keys: list[<type>] = ...") 
+[var-annotated]
+                    keys = []
+                    ^~~~
+src/machineconfig/cluster/sessions_managers/zellij_remote_manager.py:62:17: error:
+Need type annotation for "values" (hint: "values: list[<type>] = ...") 
+[var-annotated]
+                    values = []
+                    ^~~~~~
 src/machineconfig/utils/path_reduced.py: note: In member "search" of class "PathExtended":
 src/machineconfig/utils/path_reduced.py:460:19: error: Incompatible types in
 assignment (expression has type "Any | Iterator[PathExtended]", variable has
@@ -46,4 +57,4 @@ src/machineconfig/profile/create.py:73:32: error: Module has no attribute
 "windll"  [attr-defined]
                         is_admin = ctypes.windll.shell32.IsUserAnAdmin()
                                    ^~~~~~~~~~~~~
-Found 9 errors in 4 files (checked 175 source files)
+Found 11 errors in 5 files (checked 176 source files)

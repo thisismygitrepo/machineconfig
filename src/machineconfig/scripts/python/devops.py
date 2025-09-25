@@ -62,6 +62,7 @@ def main(which: Optional[str] = None):
     elif choice_key == Options.cli_install.value:
         console.print(Panel("⚙️  Installing development applications...", width=BOX_WIDTH, border_style="blue"))
         import machineconfig.scripts.python.devops_devapps_install as helper
+
         helper.main(which=None)
 
     elif choice_key == Options.sym_new.value:

@@ -241,6 +241,7 @@ def get_age(create_time: Any) -> str:
 
 def main():
     from machineconfig.utils.procs import ProcessManager
+
     ProcessManager().choose_and_kill()
 
 

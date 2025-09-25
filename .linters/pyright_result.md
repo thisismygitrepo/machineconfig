@@ -1,3 +1,3 @@
-/home/alex/code/machineconfig/src/machineconfig/utils/path_reduced.py
-  /home/alex/code/machineconfig/src/machineconfig/utils/path_reduced.py:398:20 - warning: Import "win32com.shell.shell" could not be resolved from source (reportMissingModuleSource)
-0 errors, 1 warning, 0 informations
+/home/alex/code/machineconfig/src/machineconfig/scripts/python/devops_devapps_install.py
+  /home/alex/code/machineconfig/src/machineconfig/scripts/python/devops_devapps_install.py:8:72 - error: "get_all_dicts" is unknown import symbol (reportAttributeAccessIssue)
+1 error, 0 warnings, 0 informations

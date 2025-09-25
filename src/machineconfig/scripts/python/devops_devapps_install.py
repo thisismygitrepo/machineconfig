@@ -1,11 +1,10 @@
 """Devops Devapps Install"""
 
 # import subprocess
-from machineconfig.utils.installer_utils.installer_class import Installer
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 from machineconfig.utils.options import choose_multiple_options
-from machineconfig.utils.installer import get_installers, install_all, get_all_dicts
+from machineconfig.utils.installer import get_installers, install_all
 from platform import system
 from typing import Any, Optional, Literal, TypeAlias, get_args
 
@@ -20,25 +19,35 @@ def main(which: Optional[WHICH_CAT | str]) -> None:
     if which is not None:  # install by name
         total_messages: list[str] = []
         for a_which in which.split(",") if type(which) == str else which:
-            kv = {}
-            for _category, v in get_all_dicts(system=system()).items():
-                kv.update(v)
-            if a_which not in kv:
-                raise ValueError(f"{a_which=} not found in {kv.keys()}")
+            # Use get_installers to get properly converted installer objects
+            all_installers = get_installers(system=system(), dev=False) + get_installers(system=system(), dev=True)
+            
+            # Find installer by exe_name or name
+            selected_installer = None
+            for installer in all_installers:
+                exe_name = installer.installer_data.get("exeName", "")
+                app_name = installer.installer_data.get("appName", "")
+                if exe_name == a_which or app_name == a_which:
+                    selected_installer = installer
+                    break
+            
+            if selected_installer is None:
+                available_names = [f"{inst.installer_data.get('exeName', 'unknown')} ({inst.installer_data.get('appName', 'unknown')})" for inst in all_installers[:10]]  # Show first 10
+                raise ValueError(f"{a_which=} not found. Available installers include: {available_names}")
+            
             print(f"""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ 🔧 Installing: {a_which}
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
-            installer = Installer.from_dict(name=a_which, d=kv[a_which])
-            print(installer)
-            program = installer.install_robust(version=None)  # finish the task
-            total_messages.append(program)
+            print(selected_installer)
+            message = selected_installer.install_robust(version=None)  # finish the task
+            total_messages.append(message)
         for a_message in total_messages:
             print(a_message)
         return None
 
     # interactive installation
-    installers = [Installer.from_dict(d=vd, name=name) for __kat, vds in get_all_dicts(system=system()).items() for name, vd in vds.items()]
+    installers = get_installers(system=system(), dev=False) + get_installers(system=system(), dev=True)
 
     # Check installed programs with progress indicator
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
@@ -52,20 +61,32 @@ def main(which: Optional[WHICH_CAT | str]) -> None:
     # print("s"*1000)
     program_names = choose_multiple_options(msg="", options=options, header="🚀 CHOOSE DEV APP", default="AllEssentials")
 
-    total_program = ""
+    total_commands = ""
+    installation_messages: list[str] = []
     for _an_idx, a_program_name in enumerate(program_names):
         print(f"""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ 🔄 Processing: {a_program_name}
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
         if a_program_name in get_args(WHICH_CAT):
-            total_program += "\n" + get_programs_by_category(program_name=a_program_name)  # type: ignore
+            shell_commands = get_programs_by_category(program_name=a_program_name)  # type: ignore
+            total_commands += "\n" + shell_commands
         else:
             an_installer = installers[options.index(a_program_name)]
-            total_program += "\n" + an_installer.install_robust(version=None)  # finish the task
-    import subprocess
-
-    subprocess.run(total_program, shell=True, check=True)
+            status_message = an_installer.install_robust(version=None)  # finish the task - this returns a status message, not a command
+            installation_messages.append(status_message)
+    
+    # Print all installation status messages
+    print("\n📊 INSTALLATION SUMMARY:")
+    print("=" * 50)
+    for message in installation_messages:
+        print(message)
+    
+    # Only run shell commands if there are any (from category installations)
+    if total_commands.strip():
+        import subprocess
+        print("\n🚀 Running additional shell commands...")
+        subprocess.run(total_commands, shell=True, check=True)
 
 
 def get_programs_by_category(program_name: WHICH_CAT):

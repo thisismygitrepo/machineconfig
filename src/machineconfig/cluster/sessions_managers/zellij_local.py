@@ -204,7 +204,7 @@ class ZellijLayoutGenerator:
                     elif cmd in proc_cmdline[0] and cmd not in shells:
                         # Non-shell command in first argument
                         is_match = True
-                    
+
                     # Additional shell wrapper filter - be more restrictive for shells
                     if is_match and proc_name in shells and args:
                         # For shell processes, ensure the match is actually meaningful
@@ -216,7 +216,7 @@ class ZellijLayoutGenerator:
                                 meaningful_match = True
                                 break
                             # Or if it's an exact script name match
-                            elif arg.endswith('.py') or arg.endswith('.sh') or arg.endswith('.rb'):
+                            elif arg.endswith(".py") or arg.endswith(".sh") or arg.endswith(".rb"):
                                 if any(arg in cmdline_arg for cmdline_arg in proc_cmdline[1:]):
                                     meaningful_match = True
                                     break

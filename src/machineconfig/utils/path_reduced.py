@@ -396,6 +396,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
 
         if system() == "Windows" and not Terminal.is_user_admin():  # you cannot create symlink without priviliages.
             import win32com.shell.shell  # type: ignore # pylint: disable=E0401
+
             _proce_info = win32com.shell.shell.ShellExecuteEx(lpVerb="runas", lpFile=sys.executable, lpParameters=f" -c \"from pathlib import Path; Path(r'{self.expanduser()}').symlink_to(r'{str(target_obj)}')\"")
             # TODO update PATH for this to take effect immediately.
             time.sleep(1)  # wait=True equivalent
@@ -445,6 +446,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         if ".zip" in str(slf) and compressed:  # the root (self) is itself a zip archive (as opposed to some search results are zip archives)
             import zipfile
             import fnmatch
+
             root = slf.as_zip_path()
             if not r:
                 raw = list(root.iterdir())
