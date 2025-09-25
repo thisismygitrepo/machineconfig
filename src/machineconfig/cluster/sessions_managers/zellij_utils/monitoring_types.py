@@ -1,7 +1,5 @@
-# TypedDict definitions for better type safety
-from typing import NotRequired, TypedDict, Optional
 
-# Import concrete types to replace Any usage
+from typing import NotRequired, TypedDict, Optional
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 
 
@@ -10,41 +8,37 @@ class ProcessInfo(TypedDict):
     name: str
     cmdline: list[str]
     status: str
+    cmdline_str: NotRequired[str]
+    create_time: NotRequired[float]
+    is_direct_command: NotRequired[bool]
+    verified_alive: NotRequired[bool]
+    memory_mb: NotRequired[float]
 
 
 class CommandStatus(TypedDict):
-    status: str
-    running: bool
-    processes: list[ProcessInfo]
-    command: str
-    cwd: str
-    tab_name: str
+    status: str                   # e.g. running | not_running | unknown | error
+    running: bool                 # Convenience boolean
+    processes: list[ProcessInfo]  # Matching processes (can be empty)
+    command: str                  # Original command string ('' if unknown)
+    tab_name: str                 # Tab identifier
+    # Optional / contextual fields
+    cwd: NotRequired[str]
     error: NotRequired[str]
     pid: NotRequired[int]
-
-
-class SessionStatus(TypedDict):
-    session_exists: bool
-    zellij_running: bool
-    session_name: str
-    all_sessions: list[str]
-    error: NotRequired[str]
-
-
+    remote: NotRequired[str]
+    check_timestamp: NotRequired[str | float]
+    method: NotRequired[str]
+    raw_output: NotRequired[str]
+    verification_method: NotRequired[str]
 class CommandSummary(TypedDict):
     total_commands: int
     running_commands: int
     stopped_commands: int
     session_healthy: bool
 
-
-# Alias: identical to CommandStatus, keep single source of truth
-CommandStatusResult = CommandStatus
-
-
 class ZellijSessionStatus(TypedDict):
     zellij_running: bool
-    session_exists: NotRequired[bool]
+    session_exists: bool
     session_name: str
     all_sessions: list[str]
     error: NotRequired[str]
@@ -52,8 +46,27 @@ class ZellijSessionStatus(TypedDict):
 
 class SessionReport(TypedDict):
     session_status: ZellijSessionStatus  # ZellijSessionStatus from zellij_local
-    commands_status: dict[str, CommandStatusResult]  # dict[str, CommandStatusResult from zellij_local]
+    commands_status: dict[str, CommandStatus]  # dict[str, CommandStatus from zellij_local]
     summary: CommandSummary
+class ComprehensiveStatus(TypedDict):
+    zellij_session: ZellijSessionStatus
+    commands: dict[str, CommandStatus]
+    summary: CommandSummary
+class SessionMetadata(TypedDict):
+    session_name_prefix: str
+    created_at: str
+    num_managers: int
+    sessions: list[str]
+    manager_type: str
+class ManagerData(TypedDict):
+    session_name: Optional[str]
+    layout_config: Optional[LayoutConfig]  # Will be LayoutConfig from layout_types
+    layout_path: Optional[str]
+class ActiveSessionInfo(TypedDict):
+    session_name: str
+    is_active: bool
+    tab_count: int
+    tabs: list[str]
 
 
 class GlobalSummary(TypedDict):
@@ -71,8 +84,6 @@ class StartResult(TypedDict):
     success: bool
     message: NotRequired[str]
     error: NotRequired[str]
-
-
 class StatusRow(TypedDict):
     session: str
     tab: str
@@ -81,32 +92,3 @@ class StatusRow(TypedDict):
     processes: int
 
 
-class SessionMetadata(TypedDict):
-    session_name_prefix: str
-    created_at: str
-    num_managers: int
-    sessions: list[str]
-    manager_type: str
-
-
-class ManagerData(TypedDict):
-    session_name: Optional[str]
-    layout_config: Optional[LayoutConfig]  # Will be LayoutConfig from layout_types
-    layout_path: Optional[str]
-
-
-class ActiveSessionInfo(TypedDict):
-    session_name: str
-    is_active: bool
-    tab_count: int
-    tabs: list[str]
-
-
-# Alias: identical to CommandSummary
-StatusSummary = CommandSummary
-
-
-class ComprehensiveStatus(TypedDict):
-    zellij_session: ZellijSessionStatus
-    commands: dict[str, CommandStatusResult]
-    summary: StatusSummary

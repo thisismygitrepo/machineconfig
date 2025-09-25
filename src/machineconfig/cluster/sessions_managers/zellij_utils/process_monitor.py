@@ -6,9 +6,10 @@ Process monitoring and status checking utilities for remote commands.
 import json
 import shlex
 import logging
-from typing import Dict, Any
+from typing import Dict
 from machineconfig.cluster.sessions_managers.zellij_utils.remote_executor import RemoteExecutor
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
+from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import CommandStatus, ProcessInfo
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ class ProcessMonitor:
     def __init__(self, remote_executor: RemoteExecutor):
         self.remote_executor = remote_executor
 
-    def check_command_status(self, tab_name: str, layout_config: LayoutConfig, use_verification: bool) -> Dict[str, Any]:
+    def check_command_status(self, tab_name: str, layout_config: LayoutConfig, use_verification: bool) -> CommandStatus:
         """Check command status with optional process verification."""
         # Find the tab with the given name
         tab_config = None
@@ -29,7 +30,7 @@ class ProcessMonitor:
                 break
 
         if tab_config is None:
-            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "pid": None, "command": None, "remote": self.remote_executor.remote_name}
+            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "command": "", "tab_name": tab_name, "processes": [], "remote": self.remote_executor.remote_name}
 
         # Use the verified method by default for more accurate results
         if use_verification:
@@ -37,7 +38,7 @@ class ProcessMonitor:
 
         return self._basic_process_check(tab_name, layout_config)
 
-    def _basic_process_check(self, tab_name: str, layout_config: LayoutConfig) -> Dict[str, Any]:
+    def _basic_process_check(self, tab_name: str, layout_config: LayoutConfig) -> CommandStatus:
         """Basic process checking without verification."""
         # Find the tab with the given name
         tab_config = None
@@ -47,7 +48,7 @@ class ProcessMonitor:
                 break
 
         if tab_config is None:
-            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "command": None, "remote": self.remote_executor.remote_name}
+            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "command": "", "tab_name": tab_name, "processes": [], "remote": self.remote_executor.remote_name}
 
         command = tab_config["command"]
 
@@ -66,13 +67,13 @@ class ProcessMonitor:
                         return {"status": "not_running", "running": False, "processes": [], "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
                 except json.JSONDecodeError as e:
                     logger.error(f"Failed to parse remote process check output: {e}")
-                    return {"status": "error", "error": f"Failed to parse remote output: {e}", "running": False, "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
+                    return {"status": "error", "error": f"Failed to parse remote output: {e}", "running": False, "processes": [], "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
             else:
-                return {"status": "error", "error": f"Remote command failed: {result.stderr}", "running": False, "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
+                return {"status": "error", "error": f"Remote command failed: {result.stderr}", "running": False, "processes": [], "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
 
         except Exception as e:
             logger.error(f"Error checking command status for tab '{tab_name}': {e}")
-            return {"status": "error", "error": str(e), "running": False, "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
+            return {"status": "error", "error": str(e), "running": False, "processes": [], "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
 
     def _create_process_check_script(self, command: str) -> str:
         """Create Python script for checking processes on remote machine."""
@@ -124,7 +125,7 @@ if __name__ == "__main__":
     print(json.dumps(processes))
 """
 
-    def force_fresh_process_check(self, tab_name: str, layout_config: LayoutConfig) -> Dict[str, Any]:
+    def force_fresh_process_check(self, tab_name: str, layout_config: LayoutConfig) -> CommandStatus:
         """Force a fresh process check with additional validation."""
         # Find the tab with the given name
         tab_config = None
@@ -134,7 +135,7 @@ if __name__ == "__main__":
                 break
 
         if tab_config is None:
-            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "command": None, "remote": self.remote_executor.remote_name}
+            return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "command": "", "tab_name": tab_name, "processes": [], "remote": self.remote_executor.remote_name}
 
         command = tab_config["command"]
 
@@ -150,7 +151,8 @@ if __name__ == "__main__":
             if result.returncode == 0:
                 try:
                     check_result = json.loads(result.stdout.strip())
-                    matching_processes = check_result.get("processes", [])
+                    raw_processes = check_result.get("processes", [])
+                    matching_processes: list[ProcessInfo] = raw_processes  # runtime JSON provides shape
 
                     return {
                         "status": "running" if matching_processes else "not_running",
@@ -164,13 +166,13 @@ if __name__ == "__main__":
                     }
                 except json.JSONDecodeError as e:
                     logger.error(f"Failed to parse fresh check output: {e}")
-                    return {"status": "error", "error": f"Failed to parse output: {e}", "running": False, "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name, "raw_output": result.stdout}
+                    return {"status": "error", "error": f"Failed to parse output: {e}", "running": False, "processes": [], "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name, "raw_output": result.stdout}
             else:
-                return {"status": "error", "error": f"Remote command failed: {result.stderr}", "running": False, "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
+                return {"status": "error", "error": f"Remote command failed: {result.stderr}", "running": False, "processes": [], "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
 
         except Exception as e:
             logger.error(f"Error in fresh process check for tab '{tab_name}': {e}")
-            return {"status": "error", "error": str(e), "running": False, "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
+            return {"status": "error", "error": str(e), "running": False, "processes": [], "command": command, "tab_name": tab_name, "remote": self.remote_executor.remote_name}
 
     def _create_fresh_check_script(self, command: str) -> str:
         """Create enhanced process checking script with freshness validation."""
@@ -255,7 +257,7 @@ if __name__ == "__main__":
         except Exception:
             return False
 
-    def get_verified_process_status(self, tab_name: str, layout_config: LayoutConfig) -> Dict[str, Any]:
+    def get_verified_process_status(self, tab_name: str, layout_config: LayoutConfig) -> CommandStatus:
         """Get process status with additional verification that processes are actually alive."""
         status = self.force_fresh_process_check(tab_name, layout_config)
 
@@ -277,7 +279,7 @@ if __name__ == "__main__":
 
         return status
 
-    def check_all_commands_status(self, layout_config: LayoutConfig) -> Dict[str, Dict[str, Any]]:
+    def check_all_commands_status(self, layout_config: LayoutConfig) -> Dict[str, CommandStatus]:
         """Check status of all commands in the layout configuration."""
         if not layout_config or not layout_config.get("layoutTabs"):
             logger.warning("No layout configuration provided.")

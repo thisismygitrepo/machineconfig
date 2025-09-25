@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import shlex
 import subprocess
-from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import CommandStatusResult, ZellijSessionStatus, ComprehensiveStatus, ProcessInfo
+from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import CommandStatus, ZellijSessionStatus, ComprehensiveStatus, ProcessInfo
 import psutil
 import random
 import string
@@ -155,7 +155,7 @@ class ZellijLayoutGenerator:
         return layout_content + "\n}\n"
 
     @staticmethod
-    def check_command_status(tab_name: str, layout_config: LayoutConfig) -> CommandStatusResult:
+    def check_command_status(tab_name: str, layout_config: LayoutConfig) -> CommandStatus:
         # Find the tab with the given name
         tab_config = None
         for tab in layout_config["layoutTabs"]:
@@ -172,7 +172,7 @@ class ZellijLayoutGenerator:
         try:
             shells = {"bash", "sh", "zsh", "fish"}
             matching_processes: list[ProcessInfo] = []
-            for proc in psutil.process_iter(["pid", "name", "cmdline", "status", "ppid"]):
+            for proc in psutil.process_iter(["pid", "name", "cmdline", "status", "ppid", "create_time", "memory_info"]):
                 try:
                     info = proc.info
                     proc_cmdline: list[str] | None = info.get("cmdline")  # type: ignore[assignment]
@@ -228,12 +228,21 @@ class ZellijLayoutGenerator:
                         proc_obj = psutil.Process(info["pid"])  # type: ignore[index]
                         if proc_obj.status() not in ["running", "sleeping"]:
                             continue
+                        mem_info = None
+                        try:
+                            mem = proc_obj.memory_info()
+                            mem_info = mem.rss / (1024 * 1024)
+                        except (psutil.NoSuchProcess, psutil.AccessDenied):
+                            pass
                         matching_processes.append(
                             {
                                 "pid": info["pid"],  # type: ignore[index]
                                 "name": proc_name,
                                 "cmdline": proc_cmdline,
                                 "status": info.get("status", "unknown"),
+                                "cmdline_str": joined_cmdline,
+                                "create_time": info.get("create_time", 0.0),
+                                **({"memory_mb": float(mem_info)} if mem_info is not None else {}),
                             }
                         )
                     except (psutil.NoSuchProcess, psutil.AccessDenied):
@@ -324,12 +333,12 @@ class ZellijLayoutGenerator:
             logger.error(f"Error checking command status for tab '{tab_name}': {e}")
             return {"status": "error", "error": str(e), "running": False, "command": command, "cwd": cwd, "tab_name": tab_name, "processes": []}
 
-    def check_all_commands_status(self) -> dict[str, CommandStatusResult]:
+    def check_all_commands_status(self) -> dict[str, CommandStatus]:
         if not self.layout_config:
             logger.warning("No layout config tracked. Make sure to create a layout first.")
             return {}
 
-        status_report: dict[str, CommandStatusResult] = {}
+        status_report: dict[str, CommandStatus] = {}
         for tab in self.layout_config["layoutTabs"]:
             tab_name = tab["tabName"]
             status_report[tab_name] = ZellijLayoutGenerator.check_command_status(tab_name, self.layout_config)
@@ -348,14 +357,14 @@ class ZellijLayoutGenerator:
 
                 return {"zellij_running": True, "session_exists": session_running, "session_name": session_name, "all_sessions": sessions}
             else:
-                return {"zellij_running": False, "session_name": session_name, "all_sessions": [], "error": result.stderr}
+                return {"zellij_running": False, "session_exists": False, "session_name": session_name, "all_sessions": [], "error": result.stderr}
 
         except subprocess.TimeoutExpired:
-            return {"zellij_running": False, "session_name": session_name, "all_sessions": [], "error": "Timeout while checking Zellij sessions"}
+            return {"zellij_running": False, "session_exists": False, "session_name": session_name, "all_sessions": [], "error": "Timeout while checking Zellij sessions"}
         except FileNotFoundError:
-            return {"zellij_running": False, "session_name": session_name, "all_sessions": [], "error": "Zellij not found in PATH"}
+            return {"zellij_running": False, "session_exists": False, "session_name": session_name, "all_sessions": [], "error": "Zellij not found in PATH"}
         except Exception as e:
-            return {"zellij_running": False, "session_name": session_name, "all_sessions": [], "error": str(e)}
+            return {"zellij_running": False, "session_exists": False, "session_name": session_name, "all_sessions": [], "error": str(e)}
 
     def get_comprehensive_status(self) -> ComprehensiveStatus:
         zellij_status = ZellijLayoutGenerator.check_zellij_session_status(self.session_name or "default")
