@@ -2,7 +2,7 @@
 
 from machineconfig.utils.installer_utils.installer_abc import LINUX_INSTALL_PATH
 from machineconfig.utils.installer_utils.installer_class import Installer
-from machineconfig.utils.schemas.installer.installer_types import CATEGORY
+from machineconfig.utils.schemas.installer.installer_types import APP_INSTALLER_CATEGORY
 from rich.console import Console
 from rich.panel import Panel  # Added import
 
@@ -104,7 +104,7 @@ def get_installers(system: str, dev: bool) -> list[Installer]:
     return [Installer.from_dict(d=vd, name=k) for k, vd in res_final.items()]
 
 
-def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
+def get_all_dicts(system: str) -> dict[APP_INSTALLER_CATEGORY, dict[str, dict[str, Any]]]:
     print(f"\n{'=' * 80}\n📂 LOADING CONFIGURATION FILES 📂\n{'=' * 80}")
 
     print(f"🔍 Importing OS-specific installers for {system}...")
@@ -123,7 +123,7 @@ def get_all_dicts(system: str) -> dict[CATEGORY, dict[str, dict[str, Any]]]:
     path_os_generic_dev = path_os_generic.joinpath("dev")
 
     print("📂 Loading configuration files...")
-    res_final: dict[CATEGORY, dict[str, dict[str, Any]]] = {}
+    res_final: dict[APP_INSTALLER_CATEGORY, dict[str, dict[str, Any]]] = {}
     print(f"""📄 Loading OS-specific config from: {path_os_specific.joinpath("config.json")}""")
     res_final["OS_SPECIFIC"] = read_json(path=path_os_specific.joinpath("config.json"))
 
