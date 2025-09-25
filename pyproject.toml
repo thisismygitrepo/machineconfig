@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "3.7"
+version = "3.8"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -60,7 +60,7 @@ croshell = "machineconfig.scripts.python.croshell:build_parser"
 fire = "machineconfig.scripts.python.fire_jobs:main"
 fire_agents = "machineconfig.scripts.python.fire_agents:main"
 ftpx = "machineconfig.scripts.python.ftpx:main"
-mcinit = "machineconfig.scripts.python.ai.mcinit:main"
+initai = "machineconfig.scripts.python.ai.initai:main"
 mount_nfs = "machineconfig.scripts.python.mount_nfs:main"
 mount_nw_drive = "machineconfig.scripts.python.mount_nw_drive:main"
 repos = "machineconfig.scripts.python.repos:main"

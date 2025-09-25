@@ -29,7 +29,7 @@ uv add --upgrade-package pytest --dev
 
             subprocess.run(command_to_run, shell=True, check=True)
         else:
-            print("Terminating mcinit ...")
+            print("Terminating initai ...")
             return
 
     dot_ai_dir = repo_root.joinpath(".ai")
