@@ -2,7 +2,7 @@
 CC
 """
 
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 from tenacity import retry, stop_after_attempt, wait_chain, wait_fixed
 import getpass
 import argparse
@@ -14,7 +14,7 @@ from machineconfig.scripts.python.helpers.cloud_helpers import ArgsDefaults, Arg
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress
-from machineconfig.utils.utils2 import pprint
+from machineconfig.utils.accessories import pprint
 
 console = Console()
 

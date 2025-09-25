@@ -7,7 +7,7 @@ from machineconfig.scripts.python.ai.solutions.copilot import github_copilot
 from machineconfig.scripts.python.ai.solutions.crush import crush
 from machineconfig.scripts.python.ai.solutions.cursor import cursors
 from machineconfig.scripts.python.ai.solutions.gemini import gemini
-from machineconfig.utils.ve import get_repo_root
+from machineconfig.utils.accessories import get_repo_root
 
 
 def add_ai_configs(repo_root: Path) -> None:

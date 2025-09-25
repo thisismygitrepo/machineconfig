@@ -1,6 +1,6 @@
 """TWSL"""
 
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 import argparse
 import platform
 import getpass

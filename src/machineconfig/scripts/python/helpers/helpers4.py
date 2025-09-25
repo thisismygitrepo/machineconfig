@@ -3,7 +3,7 @@ import inspect
 import os
 
 # import argparse
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 # from machineconfig.utils.utils import choose_ssh_host
 
 

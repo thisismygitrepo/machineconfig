@@ -17,7 +17,7 @@ from machineconfig.scripts.python.fire_agents_help_search import search_files_by
 from machineconfig.scripts.python.fire_agents_load_balancer import chunk_prompts, SPLITTING_STRATEGY, DEFAULT_AGENT_CAP
 from machineconfig.utils.options import choose_one_option
 from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig
-from machineconfig.utils.ve import get_repo_root
+from machineconfig.utils.accessories import get_repo_root
 
 SEARCH_STRATEGIES: TypeAlias = Literal["file_path", "keyword_search", "filename_pattern"]
 
@@ -151,7 +151,7 @@ manager.run_monitoring_routine()
 
 
 def split_too_many_tabs_to_run_in_sequential_sessions(layout_tabs: list[TabConfig], every: int):
-    from machineconfig.utils.utils2 import split
+    from machineconfig.utils.accessories import split
     from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
 
     for idx, layout_tabs_chunk in enumerate(split(layout_tabs, every=every)):
@@ -163,7 +163,7 @@ def split_too_many_tabs_to_run_in_sequential_sessions(layout_tabs: list[TabConfi
 
 
 def split_too_many_layouts_to_run_in_sequential_sessions(layouts: list[LayoutConfig], every: int):
-    from machineconfig.utils.utils2 import split
+    from machineconfig.utils.accessories import split
     from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
 
     for _idx, layout_chunk in enumerate(split(layouts, every=every)):

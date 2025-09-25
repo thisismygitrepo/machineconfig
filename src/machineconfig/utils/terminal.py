@@ -1,4 +1,4 @@
-from machineconfig.utils.path_reduced import PathExtended, OPLike
+from machineconfig.utils.path_extended import PathExtended, OPLike
 import subprocess
 from typing import Any, BinaryIO, Optional, Union
 import platform

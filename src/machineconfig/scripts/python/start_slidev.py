@@ -4,7 +4,7 @@ slidev
 
 from machineconfig.utils.source_of_truth import CONFIG_PATH
 from machineconfig.utils.code import print_code
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.terminal import Terminal
 import subprocess
 import platform

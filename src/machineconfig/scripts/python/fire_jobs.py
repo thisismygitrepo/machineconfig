@@ -11,17 +11,17 @@ from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_in
 from machineconfig.scripts.python.helpers.helpers4 import convert_kwargs_to_fire_kwargs_str
 from machineconfig.scripts.python.helpers.helpers4 import parse_pyfile
 from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
-from machineconfig.utils.ve import get_repo_root, get_ve_activate_line, get_ve_path_and_ipython_profile
+from machineconfig.utils.ve import get_ve_activate_line, get_ve_path_and_ipython_profile
 from machineconfig.utils.options import display_options, choose_one_option
-from machineconfig.utils.path import match_file_name, sanitize_path
+from machineconfig.utils.path_helper import match_file_name, sanitize_path
 
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
-from machineconfig.utils.io_save import save_toml
-from machineconfig.utils.utils2 import randstr, read_toml
+from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.accessories import get_repo_root, randstr
 from machineconfig.scripts.python.fire_jobs_args_helper import get_args, FireJobArgs, extract_kwargs
 import platform
 from typing import Optional
 from pathlib import Path
+import tomllib
 # import os
 
 
@@ -113,7 +113,7 @@ def route(args: FireJobArgs) -> None:
                     toml_path = toml_path_maybe
             if toml_path is not None:
                 print(f"📄 Reading config.toml @ {toml_path}")
-                config = read_toml(toml_path)
+                config = tomllib.loads(toml_path.read_text(encoding="utf-8"))
                 if "server" in config:
                     if "port" in config["server"]:
                         port = config["server"]["port"]
@@ -121,7 +121,7 @@ def route(args: FireJobArgs) -> None:
                 if repo_root is not None:
                     secrets_template_path = PathExtended.home().joinpath(f"dotfiles/creds/streamlit/{PathExtended(repo_root).name}/{choice_file.name}/secrets.toml")
                     if args.environment != "" and not secrets_path.exists() and secrets_template_path.exists():
-                        secrets_template = read_toml(secrets_template_path)
+                        secrets_template = tomllib.loads(secrets_template_path.read_text(encoding="utf-8"))
                         if args.environment == "ip":
                             host_url = f"http://{local_ip_v4}:{port}/oauth2callback"
                         elif args.environment == "localhost":
@@ -134,7 +134,7 @@ def route(args: FireJobArgs) -> None:
                             secrets_template["auth"]["redirect_uri"] = host_url
                             secrets_template["auth"]["cookie_secret"] = randstr(35)
                             secrets_template["auth"]["auth0"]["redirect_uri"] = host_url
-                            save_toml(obj=secrets_template, path=secrets_path)
+                            # save_toml(obj=secrets_template, path=secrets_path)
                         except Exception as ex:
                             print(ex)
                             raise ex

@@ -1,8 +1,8 @@
 """BR: Backup and Retrieve"""
 
 # import subprocess
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
-from machineconfig.utils.utils2 import read_ini, read_toml
+from machineconfig.utils.io import read_ini
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT, DEFAULTS_PATH
 from machineconfig.utils.code import print_code
 from machineconfig.utils.options import choose_cloud_interactively, choose_multiple_options
@@ -11,6 +11,7 @@ from platform import system
 from typing import Any, Literal, Optional
 from rich.console import Console
 from rich.panel import Panel
+import tomllib
 
 
 OPTIONS = Literal["BACKUP", "RETRIEVE"]
@@ -26,7 +27,7 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None) -> Non
         console.print(Panel("🔍 DEFAULT CLOUD NOT FOUND\n🔄 Please select a cloud configuration from the options below", title="[bold red]Error: Cloud Not Found[/bold red]", border_style="red"))
         cloud = choose_cloud_interactively()
 
-    bu_file: dict[str, Any] = read_toml(LIBRARY_ROOT.joinpath("profile/backup.toml"))
+    bu_file: dict[str, Any] = tomllib.loads(LIBRARY_ROOT.joinpath("profile/backup.toml").read_text(encoding="utf-8"))
 
     console.print(Panel(f"🧰 LOADING BACKUP CONFIGURATION\n📄 File: {LIBRARY_ROOT.joinpath('profile/backup.toml')}", title="[bold blue]Backup Configuration[/bold blue]", border_style="blue"))
 

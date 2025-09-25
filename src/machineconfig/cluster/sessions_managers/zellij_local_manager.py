@@ -11,7 +11,7 @@ from typing import Optional, List
 from rich.console import Console
 
 from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import SessionReport, GlobalSummary, StartResult, ActiveSessionInfo, StatusRow
-from machineconfig.utils.utils5 import Scheduler
+from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.zellij_local import ZellijLayoutGenerator
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 

@@ -32,35 +32,6 @@ def split[T](iterable: list[T], every: int = 1, to: Optional[int] = None) -> lis
     return list(res)
 
 
-def read_ini(path: "Path", encoding: Optional[str] = None):
-    if not Path(path).exists() or Path(path).is_dir():
-        raise FileNotFoundError(f"File not found or is a directory: {path}")
-    import configparser
-
-    res = configparser.ConfigParser()
-    res.read(filenames=[str(path)], encoding=encoding)
-    return res
-
-
-def read_json(path: "Path", r: bool = False, **kwargs: Any) -> Any:  # return could be list or dict etc
-    import json
-
-    try:
-        mydict = json.loads(Path(path).read_text(encoding="utf-8"), **kwargs)
-    except Exception:
-        import pyjson5
-
-        mydict = pyjson5.loads(Path(path).read_text(encoding="utf-8"), **kwargs)  # file has C-style comments.
-    _ = r
-    return mydict
-
-
-def read_toml(path: "Path"):
-    import tomli
-
-    return tomli.loads(path.read_text(encoding="utf-8"))
-
-
 def pprint(obj: dict[Any, Any], title: str) -> None:
     from rich import inspect
 
@@ -86,3 +57,16 @@ def human_friendly_dict(d: dict[str, Any]) -> dict[str, Any]:
         else:
             result[k] = v
     return result
+
+
+def get_repo_root(path: Path) -> Optional[Path]:
+    from git import Repo, InvalidGitRepositoryError
+
+    try:
+        repo = Repo(str(path), search_parent_directories=True)
+        root = repo.working_tree_dir
+        if root is not None:
+            return Path(root)
+    except InvalidGitRepositoryError:
+        pass
+    return None

@@ -3,7 +3,7 @@
 # from platform import system
 from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 
 
 config_dict: InstallerData = {

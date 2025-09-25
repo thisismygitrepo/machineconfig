@@ -5,8 +5,8 @@ croshell
 """
 
 import argparse
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
-from machineconfig.utils.utils2 import randstr
+from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.accessories import randstr
 
 from machineconfig.utils.options import display_options
 from machineconfig.utils.ve import get_ve_activate_line

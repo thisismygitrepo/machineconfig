@@ -3,7 +3,7 @@
 from platform import system
 from machineconfig.utils.ssh import SSH
 from machineconfig.utils.terminal import Terminal
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 
 from machineconfig.utils.options import choose_ssh_host
 

@@ -1,4 +1,4 @@
-from machineconfig.utils.utils2 import randstr
+from machineconfig.utils.accessories import randstr
 
 from datetime import datetime
 import time

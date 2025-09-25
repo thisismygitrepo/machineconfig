@@ -3,8 +3,8 @@ import os
 from dataclasses import dataclass
 import rich.console
 from machineconfig.utils.terminal import Terminal, Response, MACHINE
-from machineconfig.utils.path_reduced import PathExtended, PLike, OPLike
-from machineconfig.utils.utils2 import pprint
+from machineconfig.utils.path_extended import PathExtended, PLike, OPLike
+from machineconfig.utils.accessories import pprint
 # from machineconfig.utils.ve import get_ve_activate_line
 
 

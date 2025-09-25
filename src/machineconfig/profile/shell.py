@@ -1,6 +1,6 @@
 """shell"""
 
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 
 import platform

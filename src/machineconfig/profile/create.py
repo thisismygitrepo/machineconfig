@@ -6,17 +6,17 @@ This script Takes away all config files from the computer, place them in one dir
 
 from rich.console import Console
 
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.links import symlink_func, symlink_copy
 from machineconfig.utils.options import display_options
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT
-from machineconfig.utils.utils2 import read_toml
 from machineconfig.profile.shell import create_default_shell_profile
 
 import platform
 import os
 import ctypes
 import subprocess
+import tomllib
 from typing import Optional, Any, TypedDict
 
 system = platform.system()  # Linux or Windows
@@ -39,7 +39,7 @@ class SymlinkMapper(TypedDict):
 
 
 def apply_mapper(choice: Optional[str] = None):
-    symlink_mapper: dict[str, dict[str, SymlinkMapper]] = read_toml(LIBRARY_ROOT.joinpath("profile/mapper.toml"))
+    symlink_mapper: dict[str, dict[str, SymlinkMapper]] = tomllib.loads(LIBRARY_ROOT.joinpath("profile/mapper.toml").read_text(encoding="utf-8"))
     prioritize_to_this = True
     exclude: list[str] = []  # "wsl_linux", "wsl_windows"
 

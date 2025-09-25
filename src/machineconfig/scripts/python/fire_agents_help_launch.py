@@ -1,4 +1,4 @@
-from machineconfig.utils.utils2 import randstr
+from machineconfig.utils.accessories import randstr
 
 import random
 import shlex
@@ -14,7 +14,7 @@ AGENT_NAME_FORMATTER = "agent_{idx}_cmd.sh"  # e.g., agent_0_cmd.sh
 
 
 def get_gemini_api_keys() -> list[str]:
-    from machineconfig.utils.utils2 import read_ini
+    from machineconfig.utils.io import read_ini
 
     config = read_ini(Path.home().joinpath("dotfiles/creds/llm/gemini/api_keys.ini"))
     res: list[str] = []

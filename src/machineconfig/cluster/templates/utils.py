@@ -1,5 +1,5 @@
 from typing import Optional
-from machineconfig.utils.path_reduced import PathExtended, PLike
+from machineconfig.utils.path_extended import PathExtended, PLike
 
 
 def to_cloud(

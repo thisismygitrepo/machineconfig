@@ -8,7 +8,7 @@ from typing import Optional, Any
 from rich.console import Console
 from rich.panel import Panel
 from datetime import datetime, timezone
-from machineconfig.utils.utils2 import pprint
+from machineconfig.utils.accessories import pprint
 
 console = Console()
 

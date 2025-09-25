@@ -3,9 +3,9 @@
 import git
 from pathlib import Path
 from machineconfig.scripts.python.repos_helper_update import RepositoryUpdateResult, run_uv_sync, update_repository
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.source_of_truth import DEFAULTS_PATH
-from machineconfig.utils.utils2 import read_ini
+from machineconfig.utils.io import read_ini
 
 
 def _display_summary(results: list[RepositoryUpdateResult]) -> None:

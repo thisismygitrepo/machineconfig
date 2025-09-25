@@ -1,8 +1,8 @@
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.terminal import Terminal
 from machineconfig.scripts.python.get_zellij_cmd import get_zellij_cmd
 from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
-from machineconfig.utils.utils2 import read_ini
+from machineconfig.utils.io import read_ini
 from machineconfig.utils.code import write_shell_script_to_file
 import platform
 from rich.console import Console

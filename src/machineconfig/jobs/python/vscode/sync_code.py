@@ -1,6 +1,6 @@
 from pathlib import Path
 from configparser import SectionProxy
-from machineconfig.utils.utils2 import read_ini
+from machineconfig.utils.io import read_ini
 
 config = read_ini(Path.home().joinpath(".ssh", "config"))
 

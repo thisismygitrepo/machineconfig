@@ -3,7 +3,7 @@ Choose a theme for Wezterm
 """
 
 from machineconfig.utils.options import choose_one_option
-from machineconfig.utils.path_reduced import PathExtended
+from machineconfig.utils.path_extended import PathExtended
 from typing import Any
 import time
 from rich.panel import Panel

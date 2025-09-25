@@ -6,9 +6,9 @@ from machineconfig.utils.schemas.installer.installer_types import APP_INSTALLER_
 from rich.console import Console
 from rich.panel import Panel  # Added import
 
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT
-from machineconfig.utils.utils2 import read_json
+from machineconfig.utils.io import read_json
 
 from typing import Any
 import platform

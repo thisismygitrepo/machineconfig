@@ -3,8 +3,8 @@
 # import os
 # import json
 from pathlib import Path
-from machineconfig.utils.io_save import save_json
-from machineconfig.utils.utils2 import read_json
+from machineconfig.utils.io import save_json
+from machineconfig.utils.io import read_json
 import argparse
 import platform
 

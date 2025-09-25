@@ -1,5 +1,5 @@
 from pathlib import Path
-from machineconfig.utils.utils2 import randstr
+from machineconfig.utils.accessories import randstr
 
 
 def open_file_in_new_instance(file_path: str):

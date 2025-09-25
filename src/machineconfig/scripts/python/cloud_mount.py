@@ -1,8 +1,8 @@
 """Cloud mount script"""
 
 from machineconfig.utils.options import choose_one_option
-from machineconfig.utils.utils2 import read_ini
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.io import read_ini
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 
 import platform
 import argparse

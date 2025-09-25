@@ -3,8 +3,8 @@ from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, Layou
 from typing import Optional, TYPE_CHECKING
 from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_interest
 from machineconfig.utils.options import choose_one_option
-from machineconfig.utils.path import match_file_name, sanitize_path
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.path_helper import match_file_name, sanitize_path
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 
 if TYPE_CHECKING:
     from machineconfig.scripts.python.fire_jobs_args_helper import FireJobArgs

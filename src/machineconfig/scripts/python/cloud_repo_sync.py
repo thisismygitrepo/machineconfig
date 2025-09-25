@@ -2,9 +2,10 @@
 
 from pathlib import Path
 import git
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.io import read_ini
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.terminal import Terminal
-from machineconfig.utils.utils2 import randstr, read_ini
+from machineconfig.utils.accessories import randstr
 
 from machineconfig.scripts.python.helpers.repo_sync_helpers import fetch_dotfiles
 from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH

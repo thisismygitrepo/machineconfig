@@ -4,7 +4,7 @@ import uuid
 import logging
 from pathlib import Path
 from typing import Optional, Any
-from machineconfig.utils.utils5 import Scheduler
+from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import run_command_in_wt_tab
 from machineconfig.cluster.sessions_managers.wt_remote import WTRemoteLayoutGenerator
 from machineconfig.utils.schemas.layouts.layout_types import TabConfig

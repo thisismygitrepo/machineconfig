@@ -3,7 +3,8 @@ from typing import Callable, Optional, Union, Any, NoReturn, TypeVar, Protocol, 
 import logging
 import time
 from datetime import datetime, timezone, timedelta
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.io import from_pickle
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 
 
 class LoggerTemplate(Protocol):
@@ -108,7 +109,7 @@ class Scheduler:
             # "logfile": self.logger.file_path
         }
         summ.update(sess_stats)
-        from machineconfig.utils.utils2 import get_repr
+        from machineconfig.utils.accessories import get_repr
 
         tmp = get_repr(summ)
         self.logger.critical("\n--> Scheduler has finished running a session. \n" + tmp + "\n" + "-" * 100)
@@ -155,12 +156,6 @@ def to_pickle(obj: Any, path: Path) -> None:
 
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(pickle.dumps(obj))
-
-
-def from_pickle(path: Path) -> Any:
-    import pickle
-
-    return pickle.loads(path.read_bytes())
 
 
 class Cache(Generic[T]):  # This class helps to accelrate access to latest data coming from expensive function. The class has two flavours, memory-based and disk-based variants."""

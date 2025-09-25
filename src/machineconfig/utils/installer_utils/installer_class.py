@@ -1,8 +1,8 @@
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.installer_utils.installer_abc import find_move_delete_linux, find_move_delete_windows
 from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT, LIBRARY_ROOT
 from machineconfig.utils.options import check_tool_exists
-from machineconfig.utils.utils2 import read_json
+from machineconfig.utils.io import read_json
 from machineconfig.utils.schemas.installer.installer_types import InstallerData, InstallerDataFiles
 
 import platform

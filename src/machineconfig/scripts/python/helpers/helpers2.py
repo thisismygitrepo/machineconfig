@@ -1,6 +1,7 @@
 from machineconfig.scripts.python.helpers.cloud_helpers import Args, ArgsDefaults, absolute, find_cloud_config, get_secure_share_cloud_config
+from machineconfig.utils.io import read_ini
 from machineconfig.utils.source_of_truth import DEFAULTS_PATH
-from machineconfig.utils.utils2 import read_ini, pprint
+from machineconfig.utils.accessories import pprint
 from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
@@ -103,7 +104,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         if len(source_parts) > 1 and source_parts[1] == ES:  # the source path is to be inferred from target.
             assert ES not in target, f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised."
             target_obj = absolute(target)
-            from machineconfig.utils.path_reduced import PathExtended as PathExtended
+            from machineconfig.utils.path_extended import PathExtended as PathExtended
 
             remote_path = PathExtended(target_obj).get_remote_path(os_specific=os_specific, root=root, rel2home=rel2home, strict=False)
             source = f"{cloud}:{remote_path.as_posix()}"
@@ -123,7 +124,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
         if len(target_parts) > 1 and target_parts[1] == ES:  # the target path is to be inferred from source.
             assert ES not in source, "You can't use $ in both source and target. Cyclical inference dependency arised."
             source_obj = absolute(source)
-            from machineconfig.utils.path_reduced import PathExtended as PathExtended
+            from machineconfig.utils.path_extended import PathExtended as PathExtended
 
             remote_path = PathExtended(source_obj).get_remote_path(os_specific=os_specific, root=root, rel2home=rel2home, strict=False)
             target = f"{cloud}:{remote_path.as_posix()}"

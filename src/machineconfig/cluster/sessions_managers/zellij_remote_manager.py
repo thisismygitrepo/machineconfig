@@ -3,7 +3,7 @@ import json
 import uuid
 from pathlib import Path
 from typing import Optional, Dict
-from machineconfig.utils.utils5 import Scheduler
+from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.zellij_local import run_command_in_zellij_tab
 from machineconfig.cluster.sessions_managers.zellij_remote import ZellijRemoteLayoutGenerator
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig

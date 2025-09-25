@@ -1,8 +1,7 @@
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
-from machineconfig.utils.utils2 import read_ini
+from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.io import read_ini
 import platform
 from typing import Optional
-from pathlib import Path
 
 
 def get_ve_path_and_ipython_profile(init_path: PathExtended) -> tuple[Optional[str], Optional[str]]:
@@ -37,19 +36,6 @@ def get_ve_path_and_ipython_profile(init_path: PathExtended) -> tuple[Optional[s
     else:
         print("🔍 No Virtual Environment or IPython profile found.")
     return ve_path, ipy_profile
-
-
-def get_repo_root(path: Path) -> Optional[Path]:
-    from git import Repo, InvalidGitRepositoryError
-
-    try:
-        repo = Repo(str(path), search_parent_directories=True)
-        root = repo.working_tree_dir
-        if root is not None:
-            return Path(root)
-    except InvalidGitRepositoryError:
-        pass
-    return None
 
 
 def get_ve_activate_line(ve_root: str):

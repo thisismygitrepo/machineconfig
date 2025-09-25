@@ -1,6 +1,6 @@
 """Like yadm and dotter."""
 
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.links import symlink_func
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT
 import argparse

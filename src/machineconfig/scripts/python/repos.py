@@ -5,11 +5,13 @@ in the event that username@github.com is not mentioned in the remote url.
 
 """
 
+from machineconfig.utils.io import read_ini
 from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
-from machineconfig.utils.path_reduced import PathExtended as PathExtended
-from machineconfig.utils.utils2 import randstr, read_ini
+from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.accessories import randstr
 from machineconfig.scripts.python.repos_helper_update import update_repository
 from machineconfig.scripts.python.repos_helper_record import main as record_repos
+from machineconfig.scripts.python.repos_helper_clone import clone_repos
 
 import argparse
 from enum import Enum
@@ -119,7 +121,7 @@ def main():
     elif args.clone or args.checkout or args.checkout_to_branch:
         print("\n📥 Cloning or checking out repositories...")
         print(">>>>>>>>> Cloning Repos")
-        if not repos_root.exists() or repos_root.name != "repos.json":  # Fixed: use name instead of stem
+        if not repos_root.exists() or repos_root.name != "repos.json":
             repos_root = PathExtended(CONFIG_PATH).joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
             if not repos_root.exists():
                 if args.cloud is None:
@@ -130,6 +132,7 @@ def main():
                     assert cloud is not None, f"Path {repos_root} does not exist and cloud was not passed. You can't clone without one of them."
                 repos_root.from_cloud(cloud=cloud, rel2home=True)
         assert (repos_root.exists() and repos_root.name == "repos.json") or args.cloud is not None, f"Path {repos_root} does not exist and cloud was not passed. You can't clone without one of them."
+        clone_repos(spec_path=repos_root, preferred_remote=None, checkout_branch_flag=args.checkout_to_branch, checkout_commit_flag=args.checkout)
 
     elif args.all or args.commit or args.pull or args.push:
         print(f"\n🔄 Performing Git actions on repositories @ `{repos_root}`...")
