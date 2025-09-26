@@ -384,9 +384,16 @@ def main(
 
 
 def main_from_parser():
-    typer.run(main)
+    # from trogon.typer import init_tui
+    from trogon.typer import init_tui
+    from typer import Typer
+    app = Typer(add_completion=False)
+    app.command()(main)
+    # typer.run(main)
+    # init_tui(app)
+    app()
 
 
 if __name__ == "__main__":
     # options, func_args = parse_pyfile(file_path="C:/Users/aalsaf01/code/machineconfig/myresources/crocodile/core.py")
-    pass
+    main_from_parser()
