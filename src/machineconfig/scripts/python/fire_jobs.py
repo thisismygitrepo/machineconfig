@@ -380,7 +380,16 @@ def main(
         watch=watch,
         layout=layout,
     )
-    route(args, fire_args)
+    try:
+        route(args, fire_args)
+    except SystemExit:
+        # Re-raise SystemExit to preserve exit codes and allow clean exits
+        raise
+    except Exception as e:
+        # For other exceptions, print clean error message and exit
+        import sys
+        print(f"❌ Error: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 def main_from_parser():

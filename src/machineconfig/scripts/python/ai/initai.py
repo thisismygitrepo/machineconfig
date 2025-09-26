@@ -23,6 +23,7 @@ uv init --python 3.13
 uv venv
 uv add --upgrade-package pylint pyright mypy pyrefly ty --dev  # linters and type checkers
 uv add --upgrade-package pytest --dev
+# uv add typer --dev
 
 """
             import subprocess
