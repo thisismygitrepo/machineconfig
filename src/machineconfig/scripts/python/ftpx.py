@@ -6,39 +6,40 @@ Currently, the only way to work around this is to predifine the host in ~/.ssh/c
 
 """
 
-import argparse
+import typer
+from typing_extensions import Annotated
 from machineconfig.utils.ssh import SSH
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.scripts.python.helpers.helpers2 import ES
 from machineconfig.utils.accessories import pprint
 
 
-def main():
+def main(
+    source: Annotated[str, typer.Argument(help="Source path (machine:path)")],
+    target: Annotated[str, typer.Argument(help="Target path (machine:path)")],
+    recursive: Annotated[bool, typer.Option("--recursive", "-r", help="Send recursively.")] = False,
+    zipFirst: Annotated[bool, typer.Option("--zipFirst", "-z", help="Zip before sending.")] = False,
+    cloud: Annotated[bool, typer.Option("--cloud", "-c", help="Transfer through the cloud.")] = False,
+) -> None:
     print("""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ 🚀 FTP File Transfer
 ┃ 📋 Starting transfer process...
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
-    parser = argparse.ArgumentParser(description="FTP client")
-
-    parser.add_argument("source", help="source path (machine:path)")
-    parser.add_argument("target", help="target path (machine:path)")
-
-    # FLAGS
-    parser.add_argument("--recursive", "-r", help="Send recursively.", action="store_true")  # default is False
-    parser.add_argument("--zipFirst", "-z", help="Zip before sending.", action="store_true")  # default is False
-    parser.add_argument("--cloud", "-c", help="Transfer through the cloud.", action="store_true")  # default is False
-
-    args = parser.parse_args()
-
-    if ":" in args.source and (args.source[1] != ":" if len(args.source) > 1 else True):  # avoid the case of "C:/":
+    
+    # Initialize variables
+    resolved_source: str | None = None
+    resolved_target: str | None = None
+    machine: str = ""
+    
+    if ":" in source and (source[1] != ":" if len(source) > 1 else True):  # avoid the case of "C:/":
         source_is_remote = True
 
         # calculating source:
-        source_parts = args.source.split(":")
+        source_parts = source.split(":")
         machine = source_parts[0]
         if len(source_parts) > 1 and source_parts[1] == ES:  # the source path is to be inferred from target.
-            if args.target == ES:
+            if target == ES:
                 raise ValueError(f"""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ ❌ Configuration Error
@@ -46,21 +47,22 @@ def main():
 ┃    This creates a cyclical inference dependency
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
             else:
-                target = PathExtended(args.target).expanduser().absolute()
-            source = target.collapseuser().as_posix()
+                target_path_obj = PathExtended(target).expanduser().absolute()
+            resolved_source = target_path_obj.collapseuser().as_posix()
+            resolved_target = target
         else:
-            source = ":".join(args.source.split(":")[1:])
-            if args.target == ES:
-                target = None
+            resolved_source = ":".join(source.split(":")[1:])
+            if target == ES:
+                resolved_target = None
             else:
-                target = PathExtended(args.target).expanduser().absolute().as_posix()
+                resolved_target = PathExtended(target).expanduser().absolute().as_posix()
 
-    elif ":" in args.target and (args.target[1] != ":" if len(args.target) > 1 else True):  # avoid the case of "C:/":
+    elif ":" in target and (target[1] != ":" if len(target) > 1 else True):  # avoid the case of "C:/":
         source_is_remote = False
-        target_parts = args.target.split(":")
+        target_parts = target.split(":")
         machine = target_parts[0]
         if len(target_parts) > 1 and target_parts[1] == ES:
-            if args.source == ES:
+            if source == ES:
                 raise ValueError(f"""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ ❌ Configuration Error
@@ -68,14 +70,14 @@ def main():
 ┃    This creates a cyclical inference dependency
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
             else:
-                source = args.source
-            target = None
+                resolved_source = source
+            resolved_target = None
         else:
-            target = ":".join(args.target.split(":")[1:])
-            if args.source == ES:
-                source = None
+            resolved_target = ":".join(target.split(":")[1:])
+            if source == ES:
+                resolved_source = None
             else:
-                source = PathExtended(args.source).expanduser().absolute()
+                resolved_source = PathExtended(source).expanduser().absolute().as_posix()
 
     else:
         raise ValueError("""
@@ -85,7 +87,7 @@ def main():
 ┃    Format should be: machine:path
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
 
-    pprint({"source": str(source), "target": str(target), "machine": machine}, "CLI Resolution")
+    pprint({"source": str(resolved_source), "target": str(resolved_target), "machine": machine}, "CLI Resolution")
 
     from paramiko.ssh_exception import AuthenticationException  # type: ignore
 
@@ -105,43 +107,43 @@ def main():
         pwd = getpass.getpass()
         ssh = SSH(rf"{machine}", pwd=pwd)
 
-    if args.cloud:
+    if cloud:
         print("""
 ┌────────────────────────────────────────────────────────────────
 │ ☁️  Cloud Transfer Mode
 │    Uploading from remote to cloud...
 └────────────────────────────────────────────────────────────────""")
-        ssh.run(f"cloud_copy {source} :^", desc="Uploading from remote to the cloud.").print()
+        ssh.run(f"cloud_copy {resolved_source} :^", desc="Uploading from remote to the cloud.").print()
         print("""
 ┌────────────────────────────────────────────────────────────────
 │ ⬇️  Cloud Transfer Mode
 │    Downloading from cloud to local...
 └────────────────────────────────────────────────────────────────""")
-        ssh.run_locally(f"cloud_copy :^ {target}").print()
-        received_file = PathExtended(target)  # type: ignore
+        ssh.run_locally(f"cloud_copy :^ {resolved_target}").print()
+        received_file = PathExtended(resolved_target)  # type: ignore
     else:
         if source_is_remote:
-            assert source is not None, """
+            assert resolved_source is not None, """
 ❌ Path Error: Source must be a remote path (machine:path)"""
             print(f"""
 ┌────────────────────────────────────────────────────────────────
 │ 📥 Transfer Mode: Remote → Local
-│    Source: {source}
-│    Target: {target}
-│    Options: {"ZIP compression" if args.zipFirst else "No compression"}, {"Recursive" if args.recursive else "Non-recursive"}
+│    Source: {resolved_source}
+│    Target: {resolved_target}
+│    Options: {"ZIP compression" if zipFirst else "No compression"}, {"Recursive" if recursive else "Non-recursive"}
 └────────────────────────────────────────────────────────────────""")
-            received_file = ssh.copy_to_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
+            received_file = ssh.copy_to_here(source=resolved_source, target=resolved_target, z=zipFirst, r=recursive)
         else:
-            assert source is not None, """
+            assert resolved_source is not None, """
 ❌ Path Error: Target must be a remote path (machine:path)"""
             print(f"""
 ┌────────────────────────────────────────────────────────────────
 │ 📤 Transfer Mode: Local → Remote
-│    Source: {source}
-│    Target: {target}
-│    Options: {"ZIP compression" if args.zipFirst else "No compression"}, {"Recursive" if args.recursive else "Non-recursive"}
+│    Source: {resolved_source}
+│    Target: {resolved_target}
+│    Options: {"ZIP compression" if zipFirst else "No compression"}, {"Recursive" if recursive else "Non-recursive"}
 └────────────────────────────────────────────────────────────────""")
-            received_file = ssh.copy_from_here(source=source, target=target, z=args.zipFirst, r=args.recursive)
+            received_file = ssh.copy_from_here(source=resolved_source, target=resolved_target, z=zipFirst, r=recursive)
 
     if source_is_remote and isinstance(received_file, PathExtended):
         print(f"""
@@ -157,5 +159,10 @@ def main():
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
 
 
+def main_from_parser() -> None:
+    """Entry point function that uses typer to parse arguments and call main."""
+    typer.run(main)
+
+
 if __name__ == "__main__":
-    main()
+    main_from_parser()

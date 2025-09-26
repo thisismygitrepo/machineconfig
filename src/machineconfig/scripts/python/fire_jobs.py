@@ -17,11 +17,12 @@ from machineconfig.utils.path_helper import match_file_name, sanitize_path
 
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.accessories import get_repo_root, randstr
-from machineconfig.scripts.python.fire_jobs_args_helper import get_args, FireJobArgs, extract_kwargs
+from machineconfig.scripts.python.fire_jobs_args_helper import FireJobArgs, extract_kwargs
 import platform
-from typing import Optional
+from typing import Optional, Annotated
 from pathlib import Path
 import tomllib
+import typer
 # import os
 
 
@@ -328,12 +329,64 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
     subprocess.run(command, shell=True, check=True)
 
 
-def main():
-    args = get_args()
+def main(
+    path: Annotated[str, typer.Argument(help="The directory containing the jobs")] = ".",
+    function: Annotated[Optional[str], typer.Argument(help="Function to run")] = None,
+    ve: Annotated[str, typer.Option("--ve", "-v", help="Virtual environment name")] = "",
+    cmd: Annotated[bool, typer.Option("--cmd", "-B", help="Create a cmd fire command to launch the job asynchronously")] = False,
+    interactive: Annotated[bool, typer.Option("--interactive", "-i", help="Whether to run the job interactively using IPython")] = False,
+    debug: Annotated[bool, typer.Option("--debug", "-d", help="Enable debug mode")] = False,
+    choose_function: Annotated[bool, typer.Option("--choose_function", "-c", help="Choose function interactively")] = False,
+    loop: Annotated[bool, typer.Option("--loop", "-l", help="Infinite recursion (runs again after completion/interruption)")] = False,
+    jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="Open in a jupyter notebook")] = False,
+    submit_to_cloud: Annotated[bool, typer.Option("--submit_to_cloud", "-C", help="Submit to cloud compute")] = False,
+    remote: Annotated[bool, typer.Option("--remote", "-r", help="Launch on a remote machine")] = False,
+    module: Annotated[bool, typer.Option("--module", "-m", help="Launch the main file")] = False,
+    streamlit: Annotated[bool, typer.Option("--streamlit", "-S", help="Run as streamlit app")] = False,
+    environment: Annotated[str, typer.Option("--environment", "-E", help="Choose ip, localhost, hostname or arbitrary url")] = "",
+    holdDirectory: Annotated[bool, typer.Option("--holdDirectory", "-D", help="Hold current directory and avoid cd'ing to the script directory")] = False,
+    PathExport: Annotated[bool, typer.Option("--PathExport", "-P", help="Augment the PYTHONPATH with repo root")] = False,
+    git_pull: Annotated[bool, typer.Option("--git_pull", "-g", help="Start by pulling the git repo")] = False,
+    optimized: Annotated[bool, typer.Option("--optimized", "-O", help="Run the optimized version of the function")] = False,
+    Nprocess: Annotated[int, typer.Option("--Nprocess", "-p", help="Number of processes to use")] = 1,
+    zellij_tab: Annotated[Optional[str], typer.Option("--zellij_tab", "-z", help="Open in a new zellij tab")] = None,
+    watch: Annotated[bool, typer.Option("--watch", "-w", help="Watch the file for changes")] = False,
+    kw: Annotated[Optional[list[str]], typer.Option("--kw", help="Keyword arguments to pass to the function in the form of k1 v1 k2 v2 ... (meaning k1=v1, k2=v2, etc)")] = None,
+    layout: Annotated[bool, typer.Option("--layout", "-L", help="Use layout configuration (Zellij Or WindowsTerminal)")] = False,
+) -> None:
+    """Main function to process fire jobs arguments."""
+    args = FireJobArgs(
+        path=path,
+        function=function,
+        ve=ve,
+        cmd=cmd,
+        interactive=interactive,
+        debug=debug,
+        choose_function=choose_function,
+        loop=loop,
+        jupyter=jupyter,
+        submit_to_cloud=submit_to_cloud,
+        remote=remote,
+        module=module,
+        streamlit=streamlit,
+        environment=environment,
+        holdDirectory=holdDirectory,
+        PathExport=PathExport,
+        git_pull=git_pull,
+        optimized=optimized,
+        Nprocess=Nprocess,
+        zellij_tab=zellij_tab,
+        watch=watch,
+        kw=kw,
+        layout=layout,
+    )
     route(args)
+
+
+def main_from_parser():
+    typer.run(main)
 
 
 if __name__ == "__main__":
     # options, func_args = parse_pyfile(file_path="C:/Users/aalsaf01/code/machineconfig/myresources/crocodile/core.py")
-    args = get_args()
-    route(args)
+    pass
