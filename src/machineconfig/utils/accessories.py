@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Optional, Any
 
+from datetime import datetime, timezone, timedelta
+
 
 def randstr(length: int = 10, lower: bool = True, upper: bool = True, digits: bool = True, punctuation: bool = False, safe: bool = False, noun: bool = False) -> str:
     if safe:
@@ -18,16 +20,52 @@ def randstr(length: int = 10, lower: bool = True, upper: bool = True, digits: bo
     return "".join(random.choices(population, k=length))
 
 
-def split[T](iterable: list[T], every: int = 1, to: Optional[int] = None) -> list[list[T]]:
+def split_timeframe(start_dt: str, end_dt: str, resolution_ms: int, to: Optional[int]=None, every_ms: Optional[int]=None) -> list[tuple[datetime, datetime]]:
+    if (to is None) == (every_ms is None):
+        raise ValueError("Exactly one of 'to' or 'every_ms' must be provided, not both or neither")    
+    start_dt_obj = datetime.fromisoformat(start_dt).replace(tzinfo=timezone.utc)
+    end_dt_obj = datetime.fromisoformat(end_dt).replace(tzinfo=timezone.utc)
+    delta = end_dt_obj - start_dt_obj
+    resolution = timedelta(milliseconds=resolution_ms)
+    res: list[tuple[datetime, datetime]] = []    
+    if to is not None:
+        split_size_seconds: float = delta.total_seconds() / to
+        split_size_rounded: float = round(split_size_seconds / 60) * 60
+        split_size = timedelta(seconds=split_size_rounded)
+        
+        for idx in range(to):
+            start = start_dt_obj + split_size * idx
+            assert start < end_dt_obj
+            if idx == to - 1:
+                end = end_dt_obj
+            else:
+                end = start_dt_obj + split_size * (idx + 1) - resolution
+            res.append((start, end))
+    else:
+        if every_ms is None:
+            raise ValueError("every_ms cannot be None when to is None")
+        split_size = timedelta(milliseconds=every_ms)
+        current_start = start_dt_obj
+        while current_start < end_dt_obj:
+            current_end = min(current_start + split_size - resolution, end_dt_obj)
+            res.append((current_start, current_end))
+            current_start += split_size
+    return res
+def split_list[T](sequence: list[T], every: Optional[int]=None, to: Optional[int]=None) -> list[list[T]]:
+    if (every is None) == (to is None):
+        raise ValueError("Exactly one of 'every' or 'to' must be provided, not both or neither")
+    if len(sequence) == 0:
+        return []
     import math
-
-    every = every if to is None else math.ceil(len(iterable) / to)
+    if to is not None:
+        every = math.ceil(len(sequence) / to)
+    assert every is not None
     res: list[list[T]] = []
-    for ix in range(0, len(iterable), every):
-        if ix + every < len(iterable):
-            tmp = iterable[ix : ix + every]
+    for ix in range(0, len(sequence), every):
+        if ix + every < len(sequence):
+            tmp = sequence[ix : ix + every]
         else:
-            tmp = iterable[ix : len(iterable)]
+            tmp = sequence[ix : len(sequence)]
         res.append(list(tmp))
     return list(res)
 

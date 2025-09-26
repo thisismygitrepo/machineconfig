@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
 {
-	"name": "MAC_DEV",
+	"name": "MAC_CFG",
 	// "build": {
 	// 	// Sets the run context to one level up instead of the .devcontainer folder.
 	// 	"context": "..",
@@ -9,7 +9,6 @@
 	// 	"dockerfile": "../Dockerfile"
 	// }
 	"image": "statistician/alim-slim:latest",
-
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {
 
@@ -33,15 +32,11 @@
 				"ms-toolsai.jupyter-renderers",
 				"ms-toolsai.vscode-jupyter-slideshow",
 				"ms-python.mypy-type-checker",
-				"zhuangtongfa.material-theme",
 				"ms-python.vscode-pylance",
 				"ms-python.pylint",
 				"ms-python.python",
 				"ms-python.debugpy",
-				"charliermarsh.ruff",
 				"ahmadawais.shades-of-purple",
-				"alexcvzz.vscode-sqlite",
-				"qwtel.sqlite-viewer",
 				"ms-vscode.vscode-speech",
 				"ms-vscode-remote.remote-containers",
 				"ms-azuretools.vscode-docker",
@@ -60,11 +55,9 @@
 	// "remoteUser": "devcontainer"
 	"remoteUser": "root",
 	// changing this complicates the process: https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user
-
 	"mounts": [
 		"source=${localEnv:HOME}/data,target=/root/data,type=bind,consistency=cached",
 		"source=${localEnv:HOME}/dotfiles,target=/root/dotfiles,type=bind,consistency=cached"
-
 		// "source=/home/alex/data,target=/root/data,type=bind,consistency=cached",
 		// "target=/root/.vscode-server,type=volume"
 	]

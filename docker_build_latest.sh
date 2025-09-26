@@ -23,14 +23,18 @@ if [[ "$answer" =~ ^[Yy]$ ]] ; then
     docker tag "statistician/$IMAGE_NAME:latest" "statistician/$IMAGE_NAME:$DATE"
     docker push "statistician/$IMAGE_NAME:$DATE"
 else
-    echo """    ❌ PUSH ABORTED | Registry upload canceled
+    echo """    ❌ PUSH ABORTED | Registry upload canceled"""
+    echo """    You can push later using:
+    docker push statistician/$IMAGE_NAME:latest
+    docker tag statistician/$IMAGE_NAME:latest statistician/$IMAGE_NAME:$DATE
+    docker push statistician/$IMAGE_NAME:$DATE
     """
 fi
 
-echo """✨ FINISHED | Try it out using: docker run --rm -it statistician/$IMAGE_NAME:latest """
-
-# 🧰 HELPFUL CLEANUP COMMANDS:
-# Use this to clean instances: docker ps --all -q | xargs docker rm
-# delete images: docker rmi -f $(docker images -q)
-# docker ps --all -q | xargs docker rm; docker rmi -f $(docker images -q)
-# docker run --rm -it statistician/alim-slim:latest /bin/bash hollywood
+echo """✨ FINISHED | Try it out using: docker run --rm -it statistician/$IMAGE_NAME:latest
+🧰 HELPFUL CLEANUP COMMANDS:
+Use this to clean instances: docker ps --all -q | xargs docker rm
+Delete images: docker rmi -f $(docker images -q)
+docker ps --all -q | xargs docker rm; docker rmi -f $(docker images -q)
+docker run --rm -it statistician/alim-slim:latest /bin/bash hollywood
+"""

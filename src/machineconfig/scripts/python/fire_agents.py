@@ -151,10 +151,10 @@ manager.run_monitoring_routine()
 
 
 def split_too_many_tabs_to_run_in_sequential_sessions(layout_tabs: list[TabConfig], every: int):
-    from machineconfig.utils.accessories import split
+    from machineconfig.utils.accessories import split_list
     from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
 
-    for idx, layout_tabs_chunk in enumerate(split(layout_tabs, every=every)):
+    for idx, layout_tabs_chunk in enumerate(split_list(layout_tabs, every=every, to=None)):
         a_layout_file: LayoutConfig = {"layoutName": f"split_{idx}", "layoutTabs": layout_tabs_chunk}
         manager = ZellijLocalManager(session_layouts=[a_layout_file])
         manager.start_all_sessions(poll_interval=2, poll_seconds=2)
@@ -163,10 +163,9 @@ def split_too_many_tabs_to_run_in_sequential_sessions(layout_tabs: list[TabConfi
 
 
 def split_too_many_layouts_to_run_in_sequential_sessions(layouts: list[LayoutConfig], every: int):
-    from machineconfig.utils.accessories import split
+    from machineconfig.utils.accessories import split_list
     from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
-
-    for _idx, layout_chunk in enumerate(split(layouts, every=every)):
+    for _idx, layout_chunk in enumerate(split_list(layouts, every=every)):
         manager = ZellijLocalManager(session_layouts=layout_chunk)
         manager.start_all_sessions(poll_interval=2, poll_seconds=2)
         manager.run_monitoring_routine(wait_ms=2000)
