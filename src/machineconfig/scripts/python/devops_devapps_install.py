@@ -6,7 +6,7 @@ from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.installer import get_installers, install_all
 from platform import system
-from typing import Any, Optional, Literal, TypeAlias, get_args
+from typing import Any, Optional, Literal, TypeAlias, get_args, Annotated
 
 WHICH_CAT: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstallers", "PrecheckedCloudInstaller", "CHOOSE"]
 
@@ -16,7 +16,7 @@ def main_with_parser():
     typer.run(main)
 
 
-def main(which: Optional[str]) -> None:
+def main(which: Annotated[Optional[str], f"Choose a category or program to install, {list(get_args(WHICH_CAT))} or <program_name>"]) -> None:
     if which is not None and which in get_args(WHICH_CAT):  # install by category
         return get_programs_by_category(program_name=which)  # type: ignore
 
