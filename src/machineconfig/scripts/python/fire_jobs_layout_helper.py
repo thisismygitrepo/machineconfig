@@ -10,34 +10,39 @@ if TYPE_CHECKING:
     from machineconfig.scripts.python.fire_jobs_args_helper import FireJobArgs
 
 
-def select_layout(layouts_json_file: Path, layout_name: Optional[str]):
+def select_layout(layouts_json_file: Path, layouts_name: Optional[list[str]]) -> list[LayoutConfig]:
     import json
-
     layout_file: LayoutsFile = json.loads(layouts_json_file.read_text(encoding="utf-8"))
     if len(layout_file["layouts"]) == 0:
         raise ValueError(f"No layouts found in {layouts_json_file}")
-    if layout_name is None:
+    if layouts_name is None:
         options = [layout["layoutName"] for layout in layout_file["layouts"]]
         from machineconfig.utils.options import choose_from_options
-
-        layout_name = choose_from_options(multi=False, options=options, prompt="Choose a layout configuration:", fzf=True, msg="Choose one option")
-    print(f"Selected layout: {layout_name}")
-    layout_chosen = next((layout for layout in layout_file["layouts"] if layout["layoutName"] == layout_name), None)
-    if layout_chosen is None:
-        layout_chosen = next((layout for layout in layout_file["layouts"] if layout["layoutName"].lower() == layout_name.lower()), None)
-    if layout_chosen is None:
-        available_layouts = [layout["layoutName"] for layout in layout_file["layouts"]]
-        raise ValueError(f"Layout '{layout_name}' not found. Available layouts: {available_layouts}")
-    return layout_chosen
+        layouts_name = choose_from_options(multi=True, options=options, prompt="Choose a layout configuration:", fzf=True, msg="Choose one option")
+    print(f"Selected layout(s): {layouts_name}")
+    # layout_chosen = next((layout for layout in layout_file["layouts"] if layout["layoutName"] == layouts_name), None)
+    # if layout_chosen is None:
+        # layout_chosen = next((layout for layout in layout_file["layouts"] if layout["layoutName"].lower() == layouts_name.lower()), None)
+    # if layout_chosen is None:
+        # available_layouts = [layout["layoutName"] for layout in layout_file["layouts"]]
+        # raise ValueError(f"Layout '{layouts_name}' not found. Available layouts: {available_layouts}")
+    layouts_chosen: list[LayoutConfig] = []
+    for name in layouts_name:
+        layout_chosen = next((layout for layout in layout_file["layouts"] if layout["layoutName"] == name), None)
+        if layout_chosen is None:
+            layout_chosen = next((layout for layout in layout_file["layouts"] if layout["layoutName"].lower() == name.lower()), None)
+        if layout_chosen is None:
+            available_layouts = [layout["layoutName"] for layout in layout_file["layouts"]]
+            raise ValueError(f"Layout '{name}' not found. Available layouts: {available_layouts}")
+        layouts_chosen.append(layout_chosen)
+    return layouts_chosen
 
 
 def launch_layout(layout_config: LayoutConfig) -> Optional[Exception]:
     import platform
-
     if platform.system() == "Linux" or platform.system() == "Darwin":
         print("🧑‍💻 Launching layout using Zellij terminal multiplexer...")
         from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
-
         run_zellij_layout(layout_config=layout_config)
     elif platform.system() == "Windows":
         print("🧑‍💻 Launching layout using Windows Terminal...")
@@ -63,4 +68,7 @@ def handle_layout_args(args: "FireJobArgs") -> None:
         choice_file = PathExtended(choice_file)
     else:
         choice_file = path_obj
-    launch_layout(layout_config=select_layout(layouts_json_file=choice_file, layout_name=args.function))
+    if args.function is None: layouts_name = None
+    else: layouts_name = args.function.split(",")
+    for a_layout_config in select_layout(layouts_json_file=choice_file, layouts_name=layouts_name):
+        launch_layout(layout_config=a_layout_config)
