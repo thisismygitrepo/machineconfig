@@ -24,7 +24,7 @@ def add_print_header_pycode(path: str, title: str):
 try:
     from crocodile.file_management import P as PathExtended
 except ImportError:
-    from machineconfig.utils.path_reduced import PathExtended
+    from machineconfig.utils.path_extended import PathExtended
 pycode = PathExtended(r'{path}').read_text(encoding="utf-8")
 pycode = pycode.split("except Exception: print(pycode)")[2]
 
