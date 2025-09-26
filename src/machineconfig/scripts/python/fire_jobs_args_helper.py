@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Annotated
-import typer
+from typing import Optional
 
 
 @dataclass

@@ -49,11 +49,12 @@ def route(args: FireJobArgs) -> None:
     ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
     if ipy_profile is None:
         ipy_profile = "default"
-    activate_ve_line = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/machineconfig/.venv")
 
     if choice_file.suffix == ".py":
         kwargs = extract_kwargs(args)
+        activate_ve_line = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/machineconfig/.venv")
     else:
+        activate_ve_line = ""
         kwargs = {}
 
     # =========================  choosing function to run
@@ -93,7 +94,6 @@ def route(args: FireJobArgs) -> None:
     if choice_file.suffix == ".py":
         if args.streamlit:
             import socket
-
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             try:
                 s.connect(("8.8.8.8", 1))
