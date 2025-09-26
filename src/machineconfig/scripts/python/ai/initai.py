@@ -49,17 +49,6 @@ uv add --upgrade-package pytest --dev
 
 
 def main() -> None:
-    # import argparse
-
-    # parser = argparse.ArgumentParser(description="Add AI configurations to a Python project.")
-    # parser.add_argument(
-    #     "--repo-root",
-    #     type=str,
-    #     default=".",
-    #     help="Path to the root of the repository. Defaults to the current working directory.",
-    # )
-    # args = parser.parse_args()
-    # repo_root = Path(args.repo_root).resolve()
     repo_root = Path.cwd()
     add_ai_configs(repo_root=repo_root)
 

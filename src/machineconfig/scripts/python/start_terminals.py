@@ -3,7 +3,8 @@
 from machineconfig.utils.options import choose_from_options, get_ssh_hosts
 import platform
 from itertools import cycle
-from typing import Literal
+from typing import Literal, Optional, Annotated
+import typer
 
 
 COLOR_SCHEMES = ["Campbell", "Campbell Powershell", "Solarized Dark", "Ubuntu-ColorScheme", "Retro"]
@@ -70,40 +71,35 @@ wt --window {window} --title {hosts[0]} powershell -Command "ssh {host_linux} {s
     return cmd
 
 
-def main():
-    import argparse
-
+def main(
+    panes: Annotated[Optional[int], typer.Option("--panes", "-p", help="🔲 The number of panes to open.")] = 4,
+    vertical: Annotated[bool, typer.Option("--vertical", "-V", help="↕️ Switch orientation to vertical from default horizontal.")] = False,
+    window: Annotated[int, typer.Option("--window", "-w", help="🪟 The window ID to use.")] = 0,
+    hosts: Annotated[Optional[list[str]], typer.Option("--hosts", "-H", help="🌐 The hosts to connect to.")] = None,
+) -> None:
     print("\n" + "=" * 50)
     print("🖥️ Welcome to the Terminal Starter Tool")
     print("=" * 50 + "\n")
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--panes", "-p", type=int, help="🔲 The number of panes to open.", default=4)
-    parser.add_argument("--vertical", "-V", action="store_true", help="↕️ Switch orientation to vertical from default horizontal.")
-    parser.add_argument("--window", "-w", type=int, help="🪟 The window ID to use.", default=0)  # 0 refers to this window.
-    parser.add_argument("--hosts", "-H", type=str, nargs="*", help="🌐 The hosts to connect to.", default=None)
-    args = parser.parse_args()
-
-    if args.panes:
+    if panes:
         print("🔲 Configuring panes...")
-        cmd = f"wt --window {args.window} --colorScheme '{next(THEMES_ITER)}' pwsh -NoExit -Command '{next(INIT_COMMANDS_ITER)}' "
+        cmd = f"wt --window {window} --colorScheme '{next(THEMES_ITER)}' pwsh -NoExit -Command '{next(INIT_COMMANDS_ITER)}' "
         cmd += f" `; new-tab --colorScheme '{next(THEMES_ITER)}' --profile pwsh --title 't2' --tabColor '#f59218' "
         cmd += f" `; new-tab --colorScheme '{next(THEMES_ITER)}' --profile pwsh --title 't3' --tabColor '#009999' "
-        for idx in range(args.panes):
+        for idx in range(panes):
             if idx % 2 == 0:
                 cmd += f" `; move-focus down split-pane --horizontal --size {next(SIZE_ITER)} --colorScheme '{next(THEMES_ITER)}'  pwsh -NoExit -Command '{next(INIT_COMMANDS_ITER)}' "
             else:
                 cmd += f" `; move-focus up split-pane --vertical --size {next(SIZE_ITER)} --colorScheme '{next(THEMES_ITER)}' pwsh -NoExit -Command '{next(INIT_COMMANDS_ITER)}' "
 
     else:
-        if args.hosts is None:
+        if hosts is None:
             print("🌐 No hosts provided. Displaying options...")
             hosts = choose_from_options(msg="Select hosts:", options=get_ssh_hosts() + [THIS_MACHINE], multi=True, fzf=True)
         else:
-            print("🌐 Using provided hosts:", args.hosts)
-            hosts = args.hosts
+            print("🌐 Using provided hosts:", hosts)
         assert isinstance(hosts, list)
-        cmd = main_windows_and_wsl(window=args.window, hosts=hosts, orientation="vertical" if args.vertical else "horizontal")
+        cmd = main_windows_and_wsl(window=window, hosts=hosts, orientation="vertical" if vertical else "horizontal")
 
     print("\n📋 Generated Command:")
     print("-" * 50)
@@ -117,5 +113,9 @@ def main():
     print("✅ Command saved successfully!\n")
 
 
+def arg_parser() -> None:
+    typer.run(main)
+
+
 if __name__ == "__main__":
-    main()
+    arg_parser()

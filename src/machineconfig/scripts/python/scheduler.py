@@ -4,7 +4,6 @@
 # from machineconfig.utils.scheduling import PathExtended, Report, DEFAULT_CONFIG, read_task_from_dir, main
 
 # def main_parse():
-#     import argparse
 #     print("\n" + "=" * 50)
 #     print("📅 Welcome to the Scheduler CLI")
 #     print("=" * 50 + "\n")

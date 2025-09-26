@@ -1,5 +1,7 @@
 from pathlib import Path
 from machineconfig.utils.accessories import randstr
+from typing import Annotated
+import typer
 
 
 def open_file_in_new_instance(file_path: str):
@@ -35,14 +37,13 @@ code --profile bitProfile --new-window {file_path}
     subprocess.run([str(code_path)], shell=True, check=True)
 
 
-def main():
-    import argparse
+def main(file_path: Annotated[str, typer.Argument(help="Path to the file to open")]) -> None:
+    open_file_in_new_instance(file_path)
 
-    parser = argparse.ArgumentParser(description="Open file in new vscode instance")
-    parser.add_argument("file_path", type=str, help="Path to the file to open")
-    args = parser.parse_args()
-    open_file_in_new_instance(args.file_path)
+
+def arg_parser() -> None:
+    typer.run(main)
 
 
 if __name__ == "__main__":
-    main()
+    arg_parser()

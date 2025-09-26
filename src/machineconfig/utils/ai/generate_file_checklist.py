@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Annotated
 from rich.console import Console
 from rich.panel import Panel
 
+import typer
 
 def generate_file_checklist(repo_root: Union[str, Path], exclude_dirs: Optional[List[str]] = None) -> Path:
     actual_exclude_dirs: List[str] = [".venv", ".git", "__pycache__", "build", "dist", "*.egg-info"]
@@ -41,28 +42,27 @@ def generate_file_checklist(repo_root: Union[str, Path], exclude_dirs: Optional[
 
     print(f"📋 Checklist generated at: {output_path}")
     return output_path
-
-
-def main() -> None:
-    import argparse
-
-    parser = argparse.ArgumentParser(description="Generate a markdown file with checkboxes for all .py and .sh files.")
-    parser.add_argument("--repo", "-r", type=str, default=str(Path.cwd()), help="Repository root path. Defaults to current working directory.")
-    parser.add_argument("--exclude", "-e", nargs="+", type=str, help="Additional directories to exclude (by default excludes .venv, .git, __pycache__, build, dist, *.egg-info)")
-
-    args = parser.parse_args()
-
+def main(
+    repo: Annotated[str, typer.Argument(help="Repository root path. Defaults to current working directory.")] = str(Path.cwd()),
+    exclude: Annotated[Optional[List[str]], typer.Option("--exclude", "-e", help="Additional directories to exclude (by default excludes .venv, .git, __pycache__, build, dist, *.egg-info)")] = None,
+) -> None:
     exclude_dirs: List[str] = [".venv", ".git", "__pycache__", "build", "dist", "*.egg-info"]
-    if args.exclude:
-        exclude_dirs.extend(args.exclude)
-    if args.repo == "":
+    if exclude:
+        exclude_dirs.extend(exclude)
+    if repo == "":
         print("Error: Repository path cannot be empty.")
         return
 
-    output_path = generate_file_checklist(args.repo, exclude_dirs)
+    output_path = generate_file_checklist(repo, exclude_dirs)
     console = Console()
     console.print(Panel(f"✅ SUCCESS | Markdown checklist generated successfully!\n📄 File Location: {output_path}", border_style="bold blue", expand=False))
 
 
+def main_from_parser():
+    typer.run(main)
+
+
+
+
 if __name__ == "__main__":
-    main()
+    main_from_parser()

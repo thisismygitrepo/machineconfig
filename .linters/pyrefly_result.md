@@ -42,30 +42,30 @@ ERROR Could not find name `ZellijLocalManager` [unknown-name]
 37 | manager = ZellijLocalManager(session_layouts=[layout])
    |           ^^^^^^^^^^^^^^^^^^
    |
-ERROR Could not find import of `typer` [import-error]
-  --> .ai/tmp_scripts/argparse_typing_examples/approach3_modern_libs.py:15:16
-   |
-15 |         import typer
-   |                ^^^^^
-   |
-  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
-  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
-  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
-ERROR Could not find import of `click` [import-error]
-  --> .ai/tmp_scripts/argparse_typing_examples/approach3_modern_libs.py:80:16
-   |
-80 |         import click
-   |                ^^^^^
-   |
-  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
-  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
-  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
 ERROR Could not find import of `pydantic` [import-error]
    --> .ai/tmp_scripts/argparse_typing_examples/approach3_modern_libs.py:127:9
     |
 127 |         from pydantic import BaseModel, Field
     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     |
+  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
+  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
+  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
+ERROR Could not find import of `machineconfig.utils.path_reduced` [import-error]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:13:1
+   |
+13 | from machineconfig.utils.path_reduced import PathExtended
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
+  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
+  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
+ERROR Could not find import of `machineconfig.utils.utils2` [import-error]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:24:5
+   |
+24 |     from machineconfig.utils.utils2 import read_json
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
   Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
   Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
   Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
@@ -168,18 +168,36 @@ ERROR Missing argument `output_dir` in function `machineconfig.cluster.sessions_
 25 |     script_path = generator.create_wt_layout(test_layout)
    |                                             ^^^^^^^^^^^^^
    |
-ERROR Could not import `P` from `machineconfig.utils.path_reduced` [missing-module-attribute]
-  --> .ai/tmp_scripts/test_repr_inline.py:10:46
+ERROR Could not import `main` from `machineconfig.scripts.python.fire_jobs_args_helper` [missing-module-attribute]
+  --> .ai/tmp_scripts/test_refactored_fire_args.py:10:64
+   |
+10 | from machineconfig.scripts.python.fire_jobs_args_helper import main, FireJobArgs
+   |                                                                ^^^^
+   |
+ERROR Could not import `main_from_parser` from `machineconfig.scripts.python.fire_jobs_args_helper` [missing-module-attribute]
+  --> .ai/tmp_scripts/test_refactored_fire_args.py:51:72
+   |
+51 |         from machineconfig.scripts.python.fire_jobs_args_helper import main_from_parser
+   |                                                                        ^^^^^^^^^^^^^^^^
+   |
+ERROR Could not find import of `machineconfig.utils.path_reduced` [import-error]
+  --> .ai/tmp_scripts/test_repr_inline.py:10:1
    |
 10 | from machineconfig.utils.path_reduced import P
-   |                                              ^
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
-ERROR Could not import `P` from `machineconfig.utils.path_reduced` [missing-module-attribute]
-  --> .ai/tmp_scripts/test_time_deprecation.py:11:46
+  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
+  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
+  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
+ERROR Could not find import of `machineconfig.utils.path_reduced` [import-error]
+  --> .ai/tmp_scripts/test_time_deprecation.py:11:1
    |
 11 | from machineconfig.utils.path_reduced import P
-   |                                              ^
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
+  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
+  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
+  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
 ERROR Argument `str` is not assignable to parameter `object` with type `LiteralString` in function `list.append` [bad-argument-type]
    --> src/machineconfig/cluster/sessions_managers/wt_local_manager.py:117:33
     |
@@ -294,6 +312,12 @@ ERROR Argument `str` is not assignable to parameter `object` with type `LiteralS
 61 |             res_lines.append(line)
    |                              ^^^^
    |
+ERROR TODO: Expr::attr_infer_for_type attribute base undefined for type: TypeAlias[Options, type[Literal['⏰ SCHEDULER', '⚙️ DEVAPPS install', '🆕 SYMLINKS new', '🐧 SSH setup wsl', '💾 BACKUP', '📡 SSH setup', '📥 RETRIEVE', '🔄 UPDATE essential repos', '🔐 SSH use key pair to connect two machines', '🔑 SSH add pub key to this machine', '🔗 SYMLINKS, SHELL PROFILE, FONT, TERMINAL SETTINGS.', '🗝️ SSH add identity (private key) to this machine']]] (trying to access __args__) [missing-attribute]
+  --> src/machineconfig/scripts/python/devops.py:17:21
+   |
+17 | options_list = list(Options.__args__)
+   |                     ^^^^^^^^^^^^^^^^
+   |
 ERROR Object of class `NoneType` has no attribute `lower` [missing-attribute]
   --> src/machineconfig/scripts/python/fire_jobs_layout_helper.py:27:110
    |
@@ -301,31 +325,31 @@ ERROR Object of class `NoneType` has no attribute `lower` [missing-attribute]
    |                                                                                                            ^^^^^^^^^^^^^^^^^
    |
 ERROR `str` is not assignable to `PathLike[str]` (caused by inconsistent types when breaking cycles) [bad-assignment]
-   --> src/machineconfig/scripts/python/helpers/helpers4.py:147:5
+   --> src/machineconfig/scripts/python/helpers/helpers4.py:145:5
     |
-147 | /     while path != root_path and trials < 20:
-148 | |         for root_file in root_files:
-149 | |             if os.path.exists(os.path.join(path, root_file)):
-150 | |                 # print(f"Found repo root path: {path}")
-151 | |                 return path
-152 | |         path = os.path.dirname(path)
+145 | /     while path != root_path and trials < 20:
+146 | |         for root_file in root_files:
+147 | |             if os.path.exists(os.path.join(path, root_file)):
+148 | |                 # print(f"Found repo root path: {path}")
+149 | |                 return path
+150 | |         path = os.path.dirname(path)
     | |_____________________________________^
     |
 ERROR Returned type `PathLike[str]` is not assignable to declared return type `str | None` [bad-return]
-   --> src/machineconfig/scripts/python/helpers/helpers4.py:151:24
+   --> src/machineconfig/scripts/python/helpers/helpers4.py:149:24
     |
-151 |                 return path
+149 |                 return path
     |                        ^^^^
     |
 ERROR `str | None` is not assignable to `None` (caused by inconsistent types when breaking cycles) [bad-assignment]
-  --> src/machineconfig/scripts/python/wifi_conn.py:64:13
+  --> src/machineconfig/scripts/python/wifi_conn.py:65:13
    |
-64 | /             for line in result.stdout.split("\n"):
-65 | |                 if "SSID" in line and "BSSID" not in line:
-66 | |                     current_ssid = line.split(":")[1].strip()
-67 | |                 elif "Signal" in line and current_ssid:
-68 | |                     signal = line.split(":")[1].strip()
-69 | |                     # Avoid duplicates
+65 | /             for line in result.stdout.split("\n"):
+66 | |                 if "SSID" in line and "BSSID" not in line:
+67 | |                     current_ssid = line.split(":")[1].strip()
+68 | |                 elif "Signal" in line and current_ssid:
+69 | |                     signal = line.split(":")[1].strip()
+70 | |                     # Avoid duplicates
    | |_______________________________________^
    |
 ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
@@ -412,14 +436,50 @@ ERROR Expected argument `version` to be passed by name in function `machineconfi
 48 |         installer_data_files = InstallerDataFiles(config_data)
    |                                                   ^^^^^^^^^^^
    |
-ERROR `T` is not assignable to `str` (caused by inconsistent types when breaking cycles) [bad-assignment]
-  --> src/machineconfig/utils/options.py:96:13
+ERROR No matching overload found for function `choose_from_options` [no-matching-overload]
+  --> src/machineconfig/utils/options.py:96:43
    |
-96 |             choice_one: T = default
+96 | ...ons(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+  Possible overloads:
+  (msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = False, header: str = '', tail: str = '', prompt: str = '', default: T | None = None, fzf: bool = False) -> T [closest match]
+  (msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = True, header: str = '', tail: str = '', prompt: str = '', default: T | None = None, fzf: bool = False) -> list[T]
+ERROR `T` is not assignable to `str` (caused by inconsistent types when breaking cycles) [bad-assignment]
+  --> src/machineconfig/utils/options.py:99:13
+   |
+99 |             choice_one: T = default
    |             ^^^^^^^^^^
    |
+ERROR No matching overload found for function `choose_from_options` [no-matching-overload]
+   --> src/machineconfig/utils/options.py:114:47
+    |
+114 | ...ons(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
+    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+  Possible overloads:
+  (msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = False, header: str = '', tail: str = '', prompt: str = '', default: T | None = None, fzf: bool = False) -> T [closest match]
+  (msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = True, header: str = '', tail: str = '', prompt: str = '', default: T | None = None, fzf: bool = False) -> list[T]
+ERROR No matching overload found for function `choose_from_options` [no-matching-overload]
+   --> src/machineconfig/utils/options.py:125:47
+    |
+125 | ...ons(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
+    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+  Possible overloads:
+  (msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = False, header: str = '', tail: str = '', prompt: str = '', default: T | None = None, fzf: bool = False) -> T [closest match]
+  (msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = True, header: str = '', tail: str = '', prompt: str = '', default: T | None = None, fzf: bool = False) -> list[T]
+ERROR No matching overload found for function `choose_from_options` [no-matching-overload]
+   --> src/machineconfig/utils/options.py:162:31
+    |
+162 |     return choose_from_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
+    |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+  Possible overloads:
+  (msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = False, header: str = '', tail: str = '', prompt: str = '', default: T | None = None, fzf: bool = False) -> T [closest match]
+  (msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = True, header: str = '', tail: str = '', prompt: str = '', default: T | None = None, fzf: bool = False) -> list[T]
 ERROR Object of class `str` has no attribute `suffixes` [missing-attribute]
-   --> src/machineconfig/utils/path_reduced.py:212:41
+   --> src/machineconfig/utils/path_extended.py:212:41
     |
 212 |         full_suffix = suffix or "".join(("bruh" + self).suffixes)
     |                                         ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -436,12 +496,3 @@ ERROR Could not import `ProcessManager` from `machineconfig.utils.procs` [missin
 243 |     from machineconfig.utils.procs import ProcessManager
     |                                           ^^^^^^^^^^^^^^
     |
-ERROR No matching overload found for function `type.__new__` [no-matching-overload]
-  --> src/machineconfig/utils/utils2.py:67:17
-   |
-67 |     inspect(type("TempStruct", (object,), obj)(), value=False, title=title, docs=False, dunder=False, sort=False)
-   |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   |
-  Possible overloads:
-  (cls: type[type], o: object, /) -> type [closest match]
-  (cls: type[TypeVar[Self]], name: str, bases: tuple[type, ...], namespace: dict[str, Any], /, **kwds: Any) -> TypeVar[Self]

@@ -4,7 +4,6 @@
 # from machineconfig.cluster.cloud_manager import CloudManager
 # from rich.console import Console  # Add import for Console
 # from rich.panel import Panel  # Add import for Panel
-# import argparse
 
 # console = Console()
 
@@ -21,7 +20,6 @@
 #     console = Console() # Add console initialization
 #     console.print(Panel("☁️  Cloud Manager", title_align="left", expand=False))
 
-#     parser = argparse.ArgumentParser()
 #     parser.add_argument("-c", "--cloud", help="Rclone Config Name", action="store", type=str, default=None)
 #     parser.add_argument("-s", "--serve", help="Start job server", action="store_true", default=False)
 #     parser.add_argument("-R", "--reset_local", help="Clear local cache", action="store_true", default=False)

@@ -6,6 +6,8 @@ from machineconfig.utils.source_of_truth import CONFIG_PATH
 from machineconfig.utils.code import print_code
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.terminal import Terminal
+from typing import Annotated, Optional
+import typer
 import subprocess
 import platform
 
@@ -47,28 +49,24 @@ def jupyter_to_markdown(file: PathExtended):
     return op_dir
 
 
-def main() -> None:
-    import argparse
-
+def main(
+    directory: Annotated[Optional[str], typer.Option("-d", "--directory", help="📁 Directory of the report.")] = None,
+    jupyter_file: Annotated[Optional[str], typer.Option("-j", "--jupyter-file", help="📓 Jupyter notebook file to convert to slides. If not provided, slides.md is used.")] = None,
+) -> None:
     print("\n" + "=" * 50)
     print("🎥 Welcome to the Slidev Presentation Tool")
     print("=" * 50 + "\n")
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--directory", default=None, help="📁 Directory of the report.")
-    parser.add_argument("-j", "--jupyter-file", default=None, help="📓 Jupyter notebook file to convert to slides. If not provided, slides.md is used.")
-    args = parser.parse_args()
-
     port = PORT_DEFAULT
 
-    if args.jupyter_file is not None:
+    if jupyter_file is not None:
         print("📓 Jupyter file provided. Converting to markdown...")
-        report_dir = jupyter_to_markdown(PathExtended(args.jupyter_file))
+        report_dir = jupyter_to_markdown(PathExtended(jupyter_file))
     else:
-        if args.directory is None:
+        if directory is None:
             report_dir = PathExtended.cwd()
         else:
-            report_dir = PathExtended(args.directory)
+            report_dir = PathExtended(directory)
 
     assert report_dir.exists(), f"❌ Directory {report_dir} does not exist."
     assert report_dir.is_dir(), f"❌ {report_dir} is not a directory."
@@ -108,5 +106,9 @@ def main() -> None:
     print_code(code=program, lexer="bash", desc="Run the following command to start the presentation")
 
 
+def arg_parser() -> None:
+    typer.run(main)
+
+
 if __name__ == "__main__":
-    main()
+    arg_parser()

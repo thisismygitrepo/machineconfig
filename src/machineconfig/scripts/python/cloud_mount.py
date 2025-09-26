@@ -5,8 +5,8 @@ from machineconfig.utils.io import read_ini
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 
 import platform
-import argparse
-from typing import Optional
+from typing import Optional, Annotated
+import typer
 from rich.console import Console
 from rich.panel import Panel
 
@@ -153,18 +153,21 @@ zellij action move-focus up
     console.print(Panel(f"{title1}\n{title2}", title="Success", border_style="green"))
 
 
-def main():
+def main(
+    cloud: Annotated[Optional[str], typer.Option(help="cloud to mount")] = None,
+    destination: Annotated[Optional[str], typer.Option(help="destination to mount")] = None,
+    network: Annotated[Optional[str], typer.Option(help="mount network drive")] = None,
+) -> None:
     # draw main title box dynamically
     main_title = "☁️  RCLONE CLOUD MOUNT"
     console.print(Panel(main_title, title_align="left", border_style="blue"))
 
-    parser = argparse.ArgumentParser(description="mount cloud")
-    parser.add_argument("cloud", nargs="?", type=str, default=None, help="cloud to mount")
-    parser.add_argument("destination", nargs="?", type=str, default=None, help="destination to mount")
-    parser.add_argument("--network", type=str, default=None, help="mount network drive")
-    args = parser.parse_args()
-    mount(cloud=args.cloud, network=args.network, destination=args.destination)
+    mount(cloud=cloud, network=network, destination=destination)
+
+
+def arg_parser() -> None:
+    typer.run(main)
 
 
 if __name__ == "__main__":
-    main()
+    arg_parser()

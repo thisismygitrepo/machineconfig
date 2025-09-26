@@ -28,7 +28,8 @@ Usage examples:
 
 """
 
-import argparse
+from typing import Annotated
+import typer
 import configparser
 from pathlib import Path
 import os
@@ -262,24 +263,21 @@ def manual_network_selection() -> bool:
         return False
 
 
-def main():
+def main(
+    ssid: Annotated[str, typer.Option("-n", "--ssid", help="🔗 SSID of WiFi (from config)")] = "MyPhoneHotSpot",
+    manual: Annotated[bool, typer.Option("-m", "--manual", help="🔍 Manual network selection mode")] = False,
+    list_: Annotated[bool, typer.Option("-l", "--list", help="📡 List available networks only")] = False,
+) -> None:
     """Main function with fallback network selection"""
     console.print(Panel("📶 Welcome to the WiFi Connector Tool", title="[bold blue]WiFi Connection[/bold blue]", border_style="blue"))
 
-    parser = argparse.ArgumentParser(description="WiFi Connector")
-    parser.add_argument("-n", "--ssid", help="🔗 SSID of WiFi (from config)", default="MyPhoneHotSpot")
-    parser.add_argument("-m", "--manual", action="store_true", help="🔍 Manual network selection mode")
-    parser.add_argument("-l", "--list", action="store_true", help="📡 List available networks only")
-
-    args = parser.parse_args()
-
     # If user just wants to list networks
-    if args.list:
+    if list_:
         display_available_networks()
         return
 
     # If user wants manual mode, skip config and go straight to selection
-    if args.manual:
+    if manual:
         console.print("[blue]🔍 Manual network selection mode[/blue]")
         if manual_network_selection():
             console.print("[green]🎉 Successfully connected![/green]")
@@ -288,9 +286,9 @@ def main():
         return
 
     # Try to connect using configuration first
-    console.print(f"[blue]🔍 Attempting to connect to configured network: {args.ssid}[/blue]")
+    console.print(f"[blue]🔍 Attempting to connect to configured network: {ssid}[/blue]")
 
-    if try_config_connection(args.ssid):
+    if try_config_connection(ssid):
         console.print("[green]🎉 Successfully connected using configuration![/green]")
         return
 
@@ -304,6 +302,10 @@ def main():
             console.print("[red]❌ Failed to connect[/red]")
     else:
         console.print("[blue]👋 Goodbye![/blue]")
+
+
+def arg_parser() -> None:
+    typer.run(main)
 
 
 def get_current_wifi_name() -> str:
@@ -413,4 +415,4 @@ def create_new_connection(name: str, ssid: str, password: str):
 
 
 if __name__ == "__main__":
-    main()
+    arg_parser()

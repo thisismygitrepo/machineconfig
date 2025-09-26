@@ -3,21 +3,17 @@
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.links import symlink_func
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT
-import argparse
+from typing import Annotated
+import typer
 
 
-def main():
-    parser = argparse.ArgumentParser(description="FTP client")
-
-    parser.add_argument("file", help="file/folder path.", default="")
-    # FLAGS
-    parser.add_argument("--overwrite", "-o", help="Overwrite.", action="store_true")  # default is False
-    # optional
-    parser.add_argument("-d", "--dest", help="destination folder", default="")
-
-    args = parser.parse_args()
-    orig_path = PathExtended(args.file).expanduser().absolute()
-    if args.dest == "":
+def main(
+    file: Annotated[str, typer.Argument(help="file/folder path.")],
+    overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="Overwrite.")] = False,
+    dest: Annotated[str, typer.Option("--dest", "-d", help="destination folder")] = "",
+) -> None:
+    orig_path = PathExtended(file).expanduser().absolute()
+    if dest == "":
         if "Local" in str(orig_path):
             junction = orig_path.split(at="Local", sep=-1)[1]
         elif "Roaming" in str(orig_path):
@@ -28,11 +24,11 @@ def main():
             junction = orig_path.rel2home()
         new_path = PathExtended(REPO_ROOT).joinpath(junction)
     else:
-        dest_path = PathExtended(args.dest).expanduser().absolute()
+        dest_path = PathExtended(dest).expanduser().absolute()
         dest_path.mkdir(parents=True, exist_ok=True)
         new_path = dest_path.joinpath(orig_path.name)
 
-    symlink_func(this=orig_path, to_this=new_path, prioritize_to_this=args.overwrite)
+    symlink_func(this=orig_path, to_this=new_path, prioritize_to_this=overwrite)
 
     print("""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -48,5 +44,9 @@ def main():
 """)
 
 
+def arg_parser() -> None:
+    typer.run(main)
+
+
 if __name__ == "__main__":
-    main()
+    arg_parser()

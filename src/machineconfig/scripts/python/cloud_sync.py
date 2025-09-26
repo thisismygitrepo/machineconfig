@@ -6,41 +6,39 @@ from machineconfig.scripts.python.helpers.helpers2 import parse_cloud_source_tar
 from machineconfig.scripts.python.helpers.cloud_helpers import Args
 from machineconfig.scripts.python.cloud_mount import get_mprocs_mount_txt
 
-import argparse
+from typing import Annotated, Optional
+import typer
 from rich.console import Console
 from rich.panel import Panel
 
 console = Console()
 
 
-def args_parser():
+def main(
+    source: Annotated[str, typer.Argument(help="source")],
+    target: Annotated[str, typer.Argument(help="target")],
+    transfers: Annotated[int, typer.Option("--transfers", "-t", help="Number of threads in syncing.")] = 10,
+    root: Annotated[str, typer.Option("--root", "-R", help="Remote root.")] = "myhome",
+    key: Annotated[Optional[str], typer.Option("--key", "-k", help="Key for encryption")] = None,
+    pwd: Annotated[Optional[str], typer.Option("--pwd", "-P", help="Password for encryption")] = None,
+    encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="Decrypt after receiving.")] = False,
+    zip_: Annotated[bool, typer.Option("--zip", "-z", help="unzip after receiving.")] = False,
+    bisync: Annotated[bool, typer.Option("--bisync", "-b", help="Bidirectional sync.")] = False,
+    delete: Annotated[bool, typer.Option("--delete", "-D", help="Delete files in remote that are not in local.")] = False,
+    verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.")] = False,
+) -> None:
     title = "☁️  Cloud Sync Utility"
     console.print(Panel(title, title_align="left", border_style="blue"))
-    parser = argparse.ArgumentParser(description="""A wrapper for rclone sync and rclone bisync, with some extra features.""")
-    parser.add_argument("source", help="source", default=None)
-    parser.add_argument("target", help="target", default=None)
-    parser.add_argument("--transfers", "-t", help="Number of threads in syncing.", default=10)  # default is False
-    parser.add_argument("--root", "-R", help="Remote root.", default="myhome")  # default is False
-    parser.add_argument("--key", "-k", help="Key for encryption", default=None)
-    parser.add_argument("--pwd", "-P", help="Password for encryption", default=None)
-    parser.add_argument("--encrypt", "-e", help="Decrypt after receiving.", action="store_true")  # default is False
-    parser.add_argument("--zip", "-z", help="unzip after receiving.", action="store_true")  # default is False
-    parser.add_argument("--bisync", "-b", help="Bidirectional sync.", action="store_true")  # default is False
-    parser.add_argument("--delete", "-D", help="Delete files in remote that are not in local.", action="store_true")  # default is False
-    parser.add_argument("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.", action="store_true")  # default is False
 
-    args = parser.parse_args()
-    args_dict = vars(args)
-    source: str = args_dict.pop("source")
-    target: str = args_dict.pop("target")
-    verbose: bool = args_dict.pop("verbose")
-    delete: bool = args_dict.pop("delete")
-    bisync: bool = args_dict.pop("bisync")
-    transfers: int = args_dict.pop("transfers")
-    args_obj = Args(**args_dict)
-
-    args_obj.os_specific = False
-    args_obj.rel2home = True
+    args_obj = Args(
+        root=root,
+        key=key,
+        pwd=pwd,
+        encrypt=encrypt,
+        zip=zip_,
+        rel2home=True,
+        os_specific=False,
+    )
 
     cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
     # map short flags to long flags (-u -> --upload), for easier use in the script
@@ -81,5 +79,9 @@ def args_parser():
     subprocess.run(txt, shell=True, check=True)
 
 
+def arg_parser() -> None:
+    typer.run(main)
+
+
 if __name__ == "__main__":
-    args_parser()
+    arg_parser()

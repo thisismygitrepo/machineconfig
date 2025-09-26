@@ -2,9 +2,7 @@ from typing import Any, Callable, Optional
 import inspect
 import os
 
-# import argparse
 from machineconfig.utils.path_extended import PathExtended as PathExtended
-# from machineconfig.utils.utils import choose_ssh_host
 
 
 def search_for_files_of_interest(path_obj: PathExtended):

@@ -5,9 +5,10 @@ CC
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from tenacity import retry, stop_after_attempt, wait_chain, wait_fixed
 import getpass
-import argparse
 import os
-from typing import Optional
+from typing import Optional, Annotated
+
+import typer
 
 from machineconfig.scripts.python.helpers.helpers2 import parse_cloud_source_target
 from machineconfig.scripts.python.helpers.cloud_helpers import ArgsDefaults, Args
@@ -61,33 +62,34 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
                 tmp_folder.delete()
 
 
-def arg_parser() -> None:
+def main(
+    source: Annotated[str, typer.Argument(help="📂 file/folder path to be taken from here.")],
+    target: Annotated[str, typer.Argument(help="🎯 file/folder path to be be sent to here.")],
+    overwrite: Annotated[bool, typer.Option(help="✍️ Overwrite existing file.")] = ArgsDefaults.overwrite,
+    share: Annotated[bool, typer.Option(help="🔗 Share file / directory")] = ArgsDefaults.share,
+    rel2home: Annotated[bool, typer.Option(help="🏠 Relative to `myhome` folder")] = ArgsDefaults.rel2home,
+    root: Annotated[Optional[str], typer.Option(help="🌳 Remote root. None is the default, unless rel2home is raied, making the default `myhome`.")] = ArgsDefaults.root,
+    key: Annotated[Optional[str], typer.Option(help="🔑 Key for encryption")] = ArgsDefaults.key,
+    pwd: Annotated[Optional[str], typer.Option(help="🔒 Password for encryption")] = ArgsDefaults.pwd,
+    encrypt: Annotated[bool, typer.Option(help="🔐 Encrypt before sending.")] = ArgsDefaults.encrypt,
+    zip_: Annotated[bool, typer.Option("--zip", "-z", help="📦 unzip after receiving.")] = ArgsDefaults.zip_,
+    os_specific: Annotated[bool, typer.Option(help="💻 choose path specific for this OS.")] = ArgsDefaults.os_specific,
+    config: Annotated[Optional[str], typer.Option(help="⚙️ path to cloud.json file.")] = None,
+) -> None:
     console.print(Panel("☁️  Cloud Copy Utility", title="[bold blue]Cloud Copy[/bold blue]", border_style="blue", width=152))
 
-    parser = argparse.ArgumentParser(description="🚀 Cloud CLI. It wraps rclone with sane defaults for optimum type time.")
-
-    # positional argument
-    parser.add_argument("source", help="📂 file/folder path to be taken from here.")
-    parser.add_argument("target", help="🎯 file/folder path to be be sent to here.")
-
-    parser.add_argument("--overwrite", "-w", help="✍️ Overwrite existing file.", action="store_true", default=ArgsDefaults.overwrite)
-    parser.add_argument("--share", "-s", help="🔗 Share file / directory", action="store_true", default=ArgsDefaults.share)
-    parser.add_argument("--rel2home", "-r", help="🏠 Relative to `myhome` folder", action="store_true", default=ArgsDefaults.rel2home)
-    parser.add_argument("--root", "-R", help="🌳 Remote root. None is the default, unless rel2home is raied, making the default `myhome`.", default=ArgsDefaults.root)
-
-    parser.add_argument("--key", "-k", help="🔑 Key for encryption", type=str, default=ArgsDefaults.key)
-    parser.add_argument("--pwd", "-p", help="🔒 Password for encryption", type=str, default=ArgsDefaults.pwd)
-    parser.add_argument("--encrypt", "-e", help="🔐 Encrypt before sending.", action="store_true", default=ArgsDefaults.encrypt)
-    parser.add_argument("--zip", "-z", help="📦 unzip after receiving.", action="store_true", default=ArgsDefaults.zip_)
-    parser.add_argument("--os_specific", "-o", help="💻 choose path specific for this OS.", action="store_true", default=ArgsDefaults.os_specific)
-
-    parser.add_argument("--config", "-c", help="⚙️ path to cloud.json file.", default=None)
-
-    args = parser.parse_args()
-    args_dict = vars(args)
-    source: str = args_dict.pop("source")
-    target: str = args_dict.pop("target")
-    args_obj = Args(**args_dict)
+    args_obj = Args(
+        overwrite=overwrite,
+        share=share,
+        rel2home=rel2home,
+        root=root,
+        key=key,
+        pwd=pwd,
+        encrypt=encrypt,
+        zip=zip_,
+        os_specific=os_specific,
+        config=config,
+    )
 
     if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")):
         console.print(Panel("🔒 Detected secure share link", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
@@ -151,6 +153,10 @@ def arg_parser() -> None:
     else:
         console.print(Panel(f"❌ ERROR: Cloud '{cloud}' not found in source or target", title="[bold red]Error[/bold red]", border_style="red", width=152))
         raise ValueError(f"Cloud `{cloud}` not found in source or target.")
+
+
+def arg_parser() -> None:
+    typer.run(main)
 
 
 if __name__ == "__main__":
