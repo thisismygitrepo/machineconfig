@@ -8,11 +8,15 @@ from machineconfig.utils.installer import get_installers, install_all
 from platform import system
 from typing import Any, Optional, Literal, TypeAlias, get_args
 
+WHICH_CAT: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstallers", "PrecheckedCloudInstaller", "CHOOSE"]
 
-WHICH_CAT: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstallers", "PrecheckedCloudInstaller"]
+
+def main_with_parser():
+    import typer
+    typer.run(main)
 
 
-def main(which: Optional[WHICH_CAT | str]) -> None:
+def main(which: Optional[str]) -> None:
     if which is not None and which in get_args(WHICH_CAT):  # install by category
         return get_programs_by_category(program_name=which)  # type: ignore
 
@@ -123,7 +127,7 @@ def get_programs_by_category(program_name: WHICH_CAT):
                 if sub_program.startswith("#winget"):
                     sub_program = sub_program[1:]
                 program += "\n" + sub_program
-
+        case "CHOOSE": raise NotImplementedError("CHOOSE is not implemented yet.")
         # case "OtherDevApps":
         #     installers = get_installers(dev=True, system=system())
         #     options__: list[str] = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")]

@@ -5,14 +5,12 @@ import git
 from machineconfig.utils.io import read_ini
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.terminal import Terminal
-from machineconfig.utils.accessories import randstr
 
 from machineconfig.scripts.python.helpers.repo_sync_helpers import fetch_dotfiles
 from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
 from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.code import get_shell_file_executing_python_script, write_shell_script_to_file
 import platform
-import argparse
 from typing import Optional, Literal
 from rich.console import Console
 from rich.panel import Panel
@@ -171,21 +169,17 @@ git commit -am "finished merging"
 
 
 def args_parser():
-    console.print(Panel("🔄 Repository Synchronization Utility", title_align="left", border_style="blue"))
-
-    parser = argparse.ArgumentParser(description="Secure Repo CLI.")
-    # parser.add_argument("cmd", help="command to run", choices=["pull", "push"])
-    parser.add_argument("path", nargs="?", type=str, help="Repository path, defaults to cwd.", default=None)
-    # parser.add_argument("--share", help="Repository path, defaults to cwd.", action="store_true", default=False)
-    parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
-    parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {randstr()}")
-    # parser.add_argument("--skip_confirmation", "-s", help="Skip confirmation.", action="store_true", default=False)
-    # parser.add_argument("--key", "-k", help="Key for encryption", default=None)
-    parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
-    # parser.add_argument("--no_push", "-u", help="push to reomte.", action="store_true")  # default is False
-    parser.add_argument("--action", "-a", help="Action to take if merge fails.", choices=["ask", "pushLocalMerge", "overwriteLocal", "InspectRepos", "RemoveLocalRclone"], default="ask")
-    args = parser.parse_args()
-    main(cloud=args.cloud, path=args.path, message=args.message, action=args.action)
+    # console.print(Panel("🔄 Repository Synchronization Utility", title_align="left", border_style="blue"))
+    # parser = argparse.ArgumentParser(description="Secure Repo CLI.")
+    # parser.add_argument("path", nargs="?", type=str, help="Repository path, defaults to cwd.", default=None)
+    # parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
+    # parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {randstr()}")
+    # parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
+    # parser.add_argument("--action", "-a", help="Action to take if merge fails.", choices=["ask", "pushLocalMerge", "overwriteLocal", "InspectRepos", "RemoveLocalRclone"], default="ask")
+    # args = parser.parse_args()
+    # main(cloud=args.cloud, path=args.path, message=args.message, action=args.action)
+    import typer
+    typer.run(main)
 
 
 if __name__ == "__main__":

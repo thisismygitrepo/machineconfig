@@ -13,8 +13,7 @@ from machineconfig.utils.ve import get_ve_activate_line
 from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
-from rich.text import Text  # Added import for rich.text
-# from machineconfig.utils.utils2 import pprint
+from rich.text import Text
 
 console = Console()
 
