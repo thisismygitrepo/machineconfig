@@ -61,7 +61,7 @@
         "command": {
           "type": "string",
           "description": "Shell command to execute when the tab opens.",
-          "examples": ["~/scripts/fire -mO liveInf.py main --kw ..."]
+          "examples": ["~/scripts/fire -mO liveInf.py main -- --arg1=val1"]
         }
       },
       "required": ["tabName", "startDir", "command"]

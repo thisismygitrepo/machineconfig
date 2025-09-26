@@ -494,8 +494,8 @@ if __name__ == "__main__":
     sample_layout: LayoutConfig = {
         "layoutName": "SampleBots",
         "layoutTabs": [
-            {"tabName": "🤖Bot1", "startDir": "~/code/bytesense/bithence", "command": "~/scripts/fire -mO go1.py bot1 --kw create_new_bot True"},
-            {"tabName": "🤖Bot2", "startDir": "~/code/bytesense/bithence", "command": "~/scripts/fire -mO go2.py bot2 --kw create_new_bot True"},
+            {"tabName": "🤖Bot1", "startDir": "~/code/bytesense/bithence", "command": "~/scripts/fire -mO go1.py bot1 -- --create_new_bot=True"},
+            {"tabName": "🤖Bot2", "startDir": "~/code/bytesense/bithence", "command": "~/scripts/fire -mO go2.py bot2 -- --create_new_bot=True"},
             {"tabName": "📊Monitor", "startDir": "~", "command": "htop"},
             {"tabName": "📝Logs", "startDir": "/var/log", "command": "tail -f /var/log/app.log"},
         ],

@@ -8,7 +8,6 @@ fire
 """
 
 from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_interest
-from machineconfig.scripts.python.helpers.helpers4 import convert_kwargs_to_fire_kwargs_str
 from machineconfig.scripts.python.helpers.helpers4 import parse_pyfile
 from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
 from machineconfig.utils.ve import get_ve_activate_line, get_ve_path_and_ipython_profile
@@ -17,7 +16,7 @@ from machineconfig.utils.path_helper import match_file_name, sanitize_path
 
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.accessories import get_repo_root, randstr
-from machineconfig.scripts.python.fire_jobs_args_helper import FireJobArgs, extract_kwargs
+from machineconfig.scripts.python.fire_jobs_args_helper import FireJobArgs, extract_kwargs, parse_fire_args_from_context
 import platform
 from typing import Optional, Annotated
 from pathlib import Path
@@ -26,7 +25,7 @@ import typer
 # import os
 
 
-def route(args: FireJobArgs) -> None:
+def route(args: FireJobArgs, fire_args: str = "") -> None:
     if args.layout:
         from machineconfig.scripts.python.fire_jobs_layout_helper import handle_layout_args
 
@@ -51,7 +50,7 @@ def route(args: FireJobArgs) -> None:
         ipy_profile = "default"
 
     if choice_file.suffix == ".py":
-        kwargs = extract_kwargs(args)
+        kwargs = extract_kwargs(args)  # This now returns empty dict, but kept for compatibility
         activate_ve_line = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/machineconfig/.venv")
     else:
         activate_ve_line = ""
@@ -217,8 +216,7 @@ except ImportError as _ex:
         # both selected function and kwargs are mentioned in the made up script, therefore no need for fire module.
         command = f"{exe} {choice_file} "
     elif choice_function is not None:
-        kwargs_str = convert_kwargs_to_fire_kwargs_str(kwargs)
-        command = f"{exe} -m fire {choice_file} {choice_function} {kwargs_str}"
+        command = f"{exe} -m fire {choice_file} {choice_function} {fire_args}"
     elif args.streamlit:
         # for .streamlit config to work, it needs to be in the current directory.
         if args.holdDirectory:
@@ -230,8 +228,7 @@ except ImportError as _ex:
         command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
     else:
         if choice_file.suffix == "":
-            kwargs_raw = " ".join(args.kw) if args.kw is not None else ""
-            command = f"{exe} {choice_file} {kwargs_raw}"
+            command = f"{exe} {choice_file} {fire_args}"
         else:
             # command = f"cd {choice_file.parent}\n{exe} {choice_file.name}\ncd {PathExtended.cwd()}"
             command = f"{exe} {choice_file} "
@@ -330,7 +327,8 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
 
 
 def main(
-    path: Annotated[str, typer.Argument(help="The directory containing the jobs")] = ".",
+    ctx: typer.Context,
+    path: Annotated[str, typer.Argument(help="Path to the Python file to run")] = ".",
     function: Annotated[Optional[str], typer.Argument(help="Function to run")] = None,
     ve: Annotated[str, typer.Option("--ve", "-v", help="Virtual environment name")] = "",
     cmd: Annotated[bool, typer.Option("--cmd", "-B", help="Create a cmd fire command to launch the job asynchronously")] = False,
@@ -351,10 +349,13 @@ def main(
     Nprocess: Annotated[int, typer.Option("--Nprocess", "-p", help="Number of processes to use")] = 1,
     zellij_tab: Annotated[Optional[str], typer.Option("--zellij_tab", "-z", help="Open in a new zellij tab")] = None,
     watch: Annotated[bool, typer.Option("--watch", "-w", help="Watch the file for changes")] = False,
-    kw: Annotated[Optional[list[str]], typer.Option("--kw", help="Keyword arguments to pass to the function in the form of k1 v1 k2 v2 ... (meaning k1=v1, k2=v2, etc)")] = None,
     layout: Annotated[bool, typer.Option("--layout", "-L", help="Use layout configuration (Zellij Or WindowsTerminal)")] = False,
 ) -> None:
     """Main function to process fire jobs arguments."""
+    
+    # Get Fire arguments from context
+    fire_args = parse_fire_args_from_context(ctx)
+    
     args = FireJobArgs(
         path=path,
         function=function,
@@ -377,18 +378,17 @@ def main(
         Nprocess=Nprocess,
         zellij_tab=zellij_tab,
         watch=watch,
-        kw=kw,
         layout=layout,
     )
-    route(args)
+    route(args, fire_args)
 
 
 def main_from_parser():
     # from trogon.typer import init_tui
-    from trogon.typer import init_tui
+    # from trogon.typer import init_tui
     from typer import Typer
     app = Typer(add_completion=False)
-    app.command()(main)
+    app.command(context_settings={"allow_extra_args": True, "allow_interspersed_args": False})(main)
     # typer.run(main)
     # init_tui(app)
     app()

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Any
 
 
 @dataclass
@@ -27,21 +27,49 @@ class FireJobArgs:
     Nprocess: int = 1
     zellij_tab: Optional[str] = None
     watch: bool = False
-    kw: Optional[list[str]] = None
     layout: bool = False
 
 
 def extract_kwargs(args: FireJobArgs) -> dict[str, object]:
-    str2obj = {"True": True, "False": False, "None": None}
-    if args.kw is not None:
-        assert len(args.kw) % 2 == 0, f"args.kw must be a list of even length. Got {len(args.kw)}"
-        kwargs = dict(zip(args.kw[::2], args.kw[1::2]))
-        kwargs: dict[str, object]
-        for key, value in kwargs.items():
-            if value in str2obj:
-                kwargs[key] = str2obj[str(value)]
-        if args.function is None:  # if user passed arguments and forgot to pass function, then assume they want to run the main function.
-            args.choose_function = True
-    else:
-        kwargs = {}
-    return kwargs
+    """Extract kwargs from command line using -- separator.
+    
+    Returns empty dict since kwargs are now parsed directly from sys.argv
+    using the -- separator pattern in the main function.
+    """
+    return {}
+
+
+def parse_fire_args_from_argv() -> str:
+    """Parse arguments after -- separator for Fire compatibility.
+    
+    Returns:
+        String of Fire-compatible arguments to append to command
+    """
+    import sys
+    
+    if '--' in sys.argv:
+        separator_index = sys.argv.index('--')
+        fire_args = sys.argv[separator_index + 1:]
+        # Join all Fire arguments - they should already be in Fire format
+        return ' '.join(fire_args) if fire_args else ''
+    
+    return ''
+
+
+def parse_fire_args_from_context(ctx: Any) -> str:
+    """Parse Fire arguments from typer context.
+    
+    Args:
+        ctx: Typer context containing raw arguments
+        
+    Returns:
+        String of Fire-compatible arguments to append to command
+    """
+    # Get remaining args that weren't consumed by typer
+    if hasattr(ctx, 'args') and ctx.args:
+        args = ctx.args
+        # Filter out the -- separator if present
+        if args and args[0] == '--':
+            args = args[1:]
+        return ' '.join(args)
+    return ''
