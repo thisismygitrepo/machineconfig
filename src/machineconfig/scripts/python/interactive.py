@@ -19,6 +19,8 @@ for better user experience with checkbox selections.
 
 import subprocess
 import sys
+from pathlib import Path
+from platform import system
 
 import questionary
 from questionary import Choice
@@ -75,6 +77,31 @@ def display_dotfiles_instructions() -> None:
     console.print(Panel(f"📂 {header_text}\n{subtitle_text}\n\n{instructions}", border_style="yellow", padding=(1, 2)))
 
 
+def install_windows_desktop_apps() -> bool:
+    """Install Windows desktop applications using winget."""
+    if system() != "Windows":
+        console.print("❌ This function is only available on Windows systems.", style="bold red")
+        return False
+    
+    console.print(Panel("💻 [bold cyan]WINDOWS DESKTOP APPS[/bold cyan]\n[italic]Installing Brave, Windows Terminal, PowerShell, and VSCode[/italic]", border_style="cyan"))
+    
+    commands = [
+        ('winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --source winget --scope user --accept-package-agreements --accept-source-agreements', "Installing Windows Terminal"),
+        ('winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --source winget --scope user --accept-package-agreements --accept-source-agreements', "Installing PowerShell"),
+        ('winget install --no-upgrade --name "Brave" --Id "Brave.Brave" --source winget --scope user --accept-package-agreements --accept-source-agreements', "Installing Brave Browser"),
+        ('winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements', "Installing Visual Studio Code"),
+        ('uv run --python 3.13 --with machineconfig python -m fire machineconfig.setup_windows.wt_and_pwsh.install_nerd_fonts main', "Installing Nerd Fonts"),
+        ('uv run --python 3.13 --with machineconfig python -m fire machineconfig.setup_windows.wt_and_pwsh.set_wt_settings main', "Setting Windows Terminal settings")
+    ]
+    
+    success = True
+    for command, description in commands:
+        if not run_command(command, description):
+            success = False
+    
+    return success
+
+
 def get_installation_choices() -> list[str]:
     """Get user choices for installation options."""
     choices = [
@@ -89,6 +116,9 @@ def get_installation_choices() -> list[str]:
         Choice(value="retrieve_data", title="💾 Retrieve Data                  - Backup restoration", checked=False),
         Choice(value="install_ascii_art", title="🎨 Install ASCII Art Libraries    - Terminal visualization tools", checked=False),
     ]
+    # Add Windows-specific options
+    if system() == "Windows":
+        choices.append(Choice(value="install_windows_desktop", title="💻 Install Windows Desktop Apps   - Brave, Windows Terminal, PowerShell, VSCode (Windows only)", checked=False))
     selected = questionary.checkbox("Select the installation options you want to execute:", choices=choices, show_description=True).ask()
     return selected or []
 
@@ -101,10 +131,16 @@ def execute_installations(selected_options: list[str]) -> None:
 
     if "install_apps" in selected_options:
         console.print(Panel("📦 [bold blue]APPLICATIONS[/bold blue]\n[italic]Installing base system applications[/italic]", border_style="blue"))
-        from machineconfig import setup_linux as module
-        from pathlib import Path
-        script = Path(module.__file__).parent / "apps.sh"
-        run_command(f"bash {script}", "Installing base system applications")
+        if system() == "Windows":
+            # Windows: Use PowerShell to execute local apps.ps1 script
+            from machineconfig import setup_windows as module
+            script = Path(module.__file__).parent / "apps.ps1"
+            run_command(f'powershell -ExecutionPolicy Bypass -File "{script}"', "Installing Windows applications")
+        else:
+            # Linux: Use existing bash script approach
+            from machineconfig import setup_linux as module
+            script = Path(module.__file__).parent / "apps.sh"
+            run_command(f"bash {script}", "Installing Linux base system applications")
 
     if "upgrade_system" in selected_options:
         console.print(Panel("🔄 [bold magenta]SYSTEM UPDATE[/bold magenta]\n[italic]Package management[/italic]", border_style="magenta"))
@@ -113,13 +149,19 @@ def execute_installations(selected_options: list[str]) -> None:
     if "install_uv_repos" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
         from machineconfig import setup_linux as module
-        from pathlib import Path
         script = Path(module.__file__).parent / "repos.sh"
         run_command(f"bash {script}", "Setting up Python environment and repositories")
 
     if "install_ssh_server" in selected_options:
         console.print(Panel("🔒 [bold red]SSH SERVER[/bold red]\n[italic]Remote access setup[/italic]", border_style="red"))
-        run_command("sudo nala install openssh-server -y", "Installing SSH server")
+        if system() == "Windows":
+            powershell_script = """Write-Host "🔧 Installing and configuring SSH server..."
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+Start-Service sshd
+Set-Service -Name sshd -StartupType 'Automatic'"""
+            run_command(f'powershell -Command "{powershell_script}"', "Installing and configuring SSH server")
+        else:
+            run_command("sudo nala install openssh-server -y", "Installing SSH server")
 
     if "create_symlinks" in selected_options:
         display_dotfiles_instructions()
@@ -155,6 +197,9 @@ def execute_installations(selected_options: list[str]) -> None:
     if "install_ascii_art" in selected_options:
         console.print(Panel("🎨 [bold bright_green]ASCII ART[/bold bright_green]\n[italic]Terminal visualization tools[/italic]", border_style="bright_green"))
         run_command("curl bit.ly/cfgasciiartlinux -L | sudo bash", "Installing ASCII art libraries")
+
+    if "install_windows_desktop" in selected_options:
+        install_windows_desktop_apps()
 
 
 def main() -> None:

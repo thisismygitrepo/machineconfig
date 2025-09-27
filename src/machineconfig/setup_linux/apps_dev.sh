@@ -1,6 +1,27 @@
-#!/usr/bin/bash
-#=======================================================================
-# 🛠️ DEVELOPMENT TOOLS AND FUN UTILITIES INSTALLATION SCRIPT
+#!/usr/bin/b# --BLOCK:TEXT_STYLE_TOOLS--
+echo """#=======================================================================
+🎨 TEXT STYLE TOOLS | Installing terminal text formatters
+#======================================================================="""
+#================# --BLOCK:FUN_TERMINAL_TOOLS--
+echo """#=======================================================================
+🎮 FUN TERMINAL TOOLS | Installing amusing terminal animations
+#======================================================================="""============# --BLOCK:FILE_SHARING_TOOLS--
+echo """#=======================================================================
+🔄 FILE SHARING TOOLS | Installing network sharing utilities
+#======================================================================="""===================# --BLOCK:DEV_TOOLS--
+echo """#=======================================================================
+📊 DEVELOPMENT TOOLS | Installing programming utilities
+#======================================================================="""===============
+# 🛠️ DE# --BLOCK:TERMINAL_EYE_CANDY--
+echo """#=======================================================================
+🎬 TERMINAL EYE CANDY | Installing visual terminal effects
+#======================================================================="""OPMENT TOOLS AND F# --BLOCK:DATABASE_TOOLS--
+echo """#=======================================================================
+💾 DATABASE TOOLS | Installing database clients
+#======================================================================="""UTILITI# --BLOCK:IMAGE_TOOLS--
+echo """#=======================================================================
+🎨 IMAGE TOOLS | Installing terminal image viewers
+#======================================================================="""INSTALLATION SCRIPT
 #=======================================================================
 # This script installs various development tools and fun terminal utilities
 

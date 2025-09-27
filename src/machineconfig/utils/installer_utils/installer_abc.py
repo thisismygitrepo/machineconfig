@@ -167,6 +167,33 @@ def check_if_installed_already(exe_name: str, version: Optional[str], use_cache:
 
 
 def parse_apps_installer_linux(txt: str) -> dict[str, Any]:
+    """Parse Linux shell installation scripts into logical chunks.
+    
+    Supports two formats:
+    1. Legacy format with 'yes '' | sed 3q; echo "----------------------------- installing' delimiter
+    2. New format with # --BLOCK:<name>-- comment signatures
+    
+    Returns:
+        dict[str, str]: Dictionary mapping block/section names to their installation scripts
+    """
+    # Try new block format first
+    if "# --BLOCK:" in txt:
+        import re
+        # Split by block signatures: # --BLOCK:<name>--
+        blocks = re.split(r'# --BLOCK:([^-]+)--', txt)
+        res: dict[str, str] = {}
+        
+        # Process blocks in pairs (block_name, block_content)
+        for i in range(1, len(blocks), 2):
+            if i + 1 < len(blocks):
+                block_name = blocks[i].strip()
+                block_content = blocks[i + 1].strip()
+                if block_content:
+                    res[block_name] = block_content
+        
+        return res
+    
+    # Legacy format fallback
     txts = txt.split("""yes '' | sed 3q; echo "----------------------------- installing """)
     res = {}
     for chunk in txts[1:]:

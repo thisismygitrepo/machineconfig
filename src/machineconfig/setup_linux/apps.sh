@@ -1,5 +1,20 @@
-#!/usr/bin/bash
-#=======================================================================
+#!/usr# --BLOCK:PACKAGE_MANAGERS--
+echo """#=======================================================================
+📥 PACKAGE MANAGERS | Installing and configuring system package managers
+#======================================================================="""n/bash
+#=====# --BLOCK:NIX_PACKAGE_MANAGER--
+echo """#=======================================================================
+❄️ NIX PACKAGE MANAGER | Installing cross-platform package manager
+#======================================================================="""==============# --BLOCK:SYSTEM_UTILITIES--
+echo """#=======================================================================
+🛠️ SYSTEM UTILITIES | Installing essential system tools
+#======================================================================="""=========# --BLOCK:UV_PYTHON_INSTALLER--
+echo """#=======================================================================
+⚡ UV PYTHON INSTALLER | Installing fast Python package manager
+#======================================================================="""=======================# --BLOCK:DEVELOPMENT_TOOLS--
+echo """#=======================================================================
+🔧 DEVELOPMENT TOOLS | Installing git and system utilities
+#======================================================================="""========
 # 📦 SYSTEM PACKAGE MANAGERS AND UTILITIES SETUP
 #=======================================================================
 # This script installs and configures essential package managers and utilities
@@ -57,10 +72,12 @@ echo "📥 Installing uv Python package installer..."
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Node.js via NVM
-echo """#=======================================================================
-📝 NODE.JS ENVIRONMENT | Installing Node Version Manager
+# --BLOCK:NODE_JS_ENVIRONMENT--
+echo """
 #=======================================================================
-"""
+📝 NODE.JS ENVIRONMENT | Installing Node Version Manager
+#======================================================================="""
+
 echo "📥 Installing Node Version Manager (NVM)..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 
