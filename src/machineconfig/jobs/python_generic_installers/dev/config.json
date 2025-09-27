@@ -4,82 +4,274 @@
     {
       "appName": "mermaid-cli",
       "repoURL": "npm install -g @mermaid-js/mermaid-cli",
-      "doc": "📊 Generate diagrams and flowcharts from text in a similar manner as markdown"
+      "doc": "📊 Generate diagrams and flowcharts from text in a similar manner as markdown",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "",
+          "windows": "",
+          "macos": ""
+        },
+        "arm64": {
+          "linux": "",
+          "windows": "",
+          "macos": ""
+        }
+      }
     },
     {
       "appName": "html2markdown",
       "repoURL": "https://github.com/JohannesKaufmann/html-to-markdown",
-      "doc": "📜 Convert HTML to Markdown (no LLM, very fast, very cheap)"
+      "doc": "📜 Convert HTML to Markdown (no LLM, very fast, very cheap)",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "html-to-markdown_Linux_x86_64.tar.gz",
+          "windows": "html-to-markdown_Windows_x86_64.zip",
+          "macos": "html-to-markdown_Darwin_x86_64.tar.gz"
+        },
+        "arm64": {
+          "linux": "html-to-markdown_Linux_arm64.tar.gz",
+          "windows": "html-to-markdown_Windows_arm64.zip",
+          "macos": "html-to-markdown_Darwin_arm64.tar.gz"
+        }
+      }
     },
     {
       "appName": "xcrawl3r",
       "repoURL": "https://github.com/hueristiq/xcrawl3r",
-      "doc": "🕷️ A command line tool to crawl and scrape websites"
+      "doc": "🕷️ A command line tool to crawl and scrape websites",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "xcrawl3r_{version}_linux_amd64.tar.gz",
+          "windows": "xcrawl3r_{version}_windows_amd64.zip",
+          "macos": "xcrawl3r_{version}_darwin_amd64.tar.gz"
+        },
+        "arm64": {
+          "linux": "xcrawl3r_{version}_linux_arm64.tar.gz",
+          "windows": "",
+          "macos": "xcrawl3r_{version}_darwin_arm64.tar.gz"
+        }
+      }
     },
     {
       "appName": "obsidian",
       "repoURL": "https://github.com/obsidianmd/obsidian-releases",
-      "doc": "🧠 Obsidian is a powerful knowledge base that works on top of a local folder of plain text Markdown files."
+      "doc": "🧠 Obsidian is a powerful knowledge base that works on top of a local folder of plain text Markdown files.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "Obsidian-{version}.AppImage",
+          "windows": "Obsidian-{version}.exe",
+          "macos": "Obsidian-{version}.dmg"
+        },
+        "arm64": {
+          "linux": "Obsidian-{version}-arm64.AppImage",
+          "windows": "",
+          "macos": "Obsidian-{version}.dmg"
+        }
+      }
     },
     {
       "appName": "marp",
       "repoURL": "npm install -g @marp-team/marp-cli",
-      "doc": "🎯 Markdown presentation writer"
+      "doc": "🎯 Markdown presentation writer",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "",
+          "windows": "",
+          "macos": ""
+        },
+        "arm64": {
+          "linux": "",
+          "windows": "",
+          "macos": ""
+        }
+      }
     },
     {
       "appName": "presenterm",
       "repoURL": "https://github.com/mfontanini/presenterm",
-      "doc": "🎭 present from temrinal"
+      "doc": "🎭 present from temrinal",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "presenterm-{version}-x86_64-unknown-linux-gnu.tar.gz",
+          "windows": "presenterm-{version}-x86_64-pc-windows-msvc.zip",
+          "macos": "presenterm-{version}-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "linux": "presenterm-{version}-aarch64-unknown-linux-gnu.tar.gz",
+          "windows": "",
+          "macos": "presenterm-{version}-aarch64-apple-darwin.tar.gz"
+        }
+      }
     },
     {
       "appName": "pandoc",
       "repoURL": "https://github.com/jgm/pandoc",
-      "doc": "📝 The universal markup converter"
+      "doc": "📝 The universal markup converter",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "pandoc-{version}-linux-amd64.tar.gz",
+          "windows": "pandoc-{version}-windows-x86_64.zip",
+          "macos": "pandoc-{version}-x86_64-macOS.pkg"
+        },
+        "arm64": {
+          "linux": "pandoc-{version}-linux-arm64.tar.gz",
+          "windows": "",
+          "macos": "pandoc-{version}-arm64-macOS.pkg"
+        }
+      }
     },
     {
       "appName": "devcontainer",
       "repoURL": "npm install -g @devcontainers/cli",
-      "doc": "🐋 Devcontainer is a command-line tool to manage development containers"
+      "doc": "🐋 Devcontainer is a command-line tool to manage development containers",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "",
+          "windows": "",
+          "macos": ""
+        },
+        "arm64": {
+          "linux": "",
+          "windows": "",
+          "macos": ""
+        }
+      }
     },
     {
       "appName": "bitwarden",
       "repoURL": "npm install -g @bitwarden/cli",
-      "doc": "🔐 bw is a password manager."
+      "doc": "🔐 bw is a password manager.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "",
+          "windows": "",
+          "macos": ""
+        },
+        "arm64": {
+          "linux": "",
+          "windows": "",
+          "macos": ""
+        }
+      }
     },
     {
       "appName": "OBS Background removal",
       "repoURL": "https://github.com/royshil/obs-backgroundremoval",
-      "doc": "🎥 A plugin for OBS Studio to remove background from a video"
+      "doc": "🎥 A plugin for OBS Studio to remove background from a video",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "obs-backgroundremoval-{version}-x86_64-linux-gnu.deb",
+          "windows": "obs-backgroundremoval-{version}-windows-x64-Installer.exe",
+          "macos": "obs-backgroundremoval-{version}-macos-universal.pkg"
+        },
+        "arm64": {
+          "linux": "",
+          "windows": "",
+          "macos": "obs-backgroundremoval-{version}-macos-universal.pkg"
+        }
+      }
     },
     {
       "appName": "rustdesk",
       "repoURL": "https://github.com/rustdesk/rustdesk",
-      "doc": "🖥️ Yet another remote desktop software, written in Rust. Works out of the box, no configuration required"
+      "doc": "🖥️ Yet another remote desktop software, written in Rust. Works out of the box, no configuration required",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "rustdesk-{version}-x86_64.AppImage",
+          "windows": "rustdesk-{version}-x86_64.msi",
+          "macos": "rustdesk-{version}-x86_64.dmg"
+        },
+        "arm64": {
+          "linux": "rustdesk-{version}-aarch64.AppImage",
+          "windows": "",
+          "macos": "rustdesk-{version}-aarch64.dmg"
+        }
+      }
     },
     {
       "appName": "evcxr",
       "repoURL": "https://github.com/evcxr/evcxr",
-      "doc": "🧪 A Jupyter Kernel for Rust"
+      "doc": "🧪 A Jupyter Kernel for Rust",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "evcxr-v{version}-x86_64-unknown-linux-gnu.tar.gz",
+          "windows": "evcxr-v{version}-x86_64-pc-windows-msvc.zip",
+          "macos": ""
+        },
+        "arm64": {
+          "linux": "",
+          "windows": "",
+          "macos": "evcxr-v{version}-aarch64-apple-darwin.tar.gz"
+        }
+      }
     },
     {
       "appName": "forward-cli",
       "repoURL": "https://github.com/axetroy/forward-cli",
-      "doc": "🔄 Reverse Proxy port forwarding cli tool"
+      "doc": "🔄 Reverse Proxy port forwarding cli tool",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "forward_linux_amd64.tar.gz",
+          "windows": "forward_windows_amd64.tar.gz",
+          "macos": "forward_darwin_amd64.tar.gz"
+        },
+        "arm64": {
+          "linux": "forward_linux_arm64.tar.gz",
+          "windows": "forward_windows_arm64.tar.gz",
+          "macos": "forward_darwin_arm64.tar.gz"
+        }
+      }
     },
     {
       "appName": "bandwhich",
       "repoURL": "https://github.com/imsnif/bandwhich",
-      "doc": "📊 monitor network usage from cli"
+      "doc": "📊 monitor network usage from cli",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "bandwhich-v{version}-x86_64-unknown-linux-gnu.tar.gz",
+          "windows": "bandwhich-v{version}-x86_64-pc-windows-msvc.zip",
+          "macos": "bandwhich-v{version}-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "linux": "bandwhich-v{version}-aarch64-unknown-linux-gnu.tar.gz",
+          "windows": "",
+          "macos": "bandwhich-v{version}-aarch64-apple-darwin.tar.gz"
+        }
+      }
     },
     {
       "appName": "ipinfo",
       "repoURL": "https://github.com/ipinfo/cli",
-      "doc": "🌐 cli to get info of ips"
+      "doc": "🌐 cli to get info of ips",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "ipinfo_{version}_linux_amd64.tar.gz",
+          "windows": "ipinfo_{version}_windows_amd64.zip",
+          "macos": "ipinfo_{version}_darwin_amd64.tar.gz"
+        },
+        "arm64": {
+          "linux": "ipinfo_{version}_linux_arm64.tar.gz",
+          "windows": "ipinfo_{version}_windows_arm64.zip",
+          "macos": "ipinfo_{version}_darwin_arm64.tar.gz"
+        }
+      }
     },
     {
       "appName": "dust",
       "repoURL": "https://github.com/bootandy/dust",
-      "doc": "📊 A more intuitive version of du in rust. It is a dua alternative."
+      "doc": "📊 A more intuitive version of du in rust. It is a dua alternative.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "dust-v{version}-x86_64-unknown-linux-gnu.tar.gz",
+          "windows": "dust-v{version}-x86_64-pc-windows-msvc.zip",
+          "macos": "dust-v{version}-x86_64-apple-darwin.tar.gz"
+        },
+        "arm64": {
+          "linux": "dust-v{version}-aarch64-unknown-linux-gnu.tar.gz",
+          "windows": "",
+          "macos": ""
+        }
+      }
     },
     {
       "appName": "ots",
