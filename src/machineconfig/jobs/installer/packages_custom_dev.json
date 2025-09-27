@@ -2,6 +2,24 @@
   "version": "1",
   "installers": [
     {
+      "appName": "ngrok",
+      "repoURL": "CMD",
+      "doc": "Secure introspectable tunnels to localhost",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "ngrok.sh",
+          "windows": "winget install ngrok -s msstore",
+          "macos": "brew install ngrok"
+        },
+        "arm64": {
+          "linux": "ngrok.sh",
+          "windows": "winget install ngrok -s msstore",
+          "macos": "brew install ngrok"
+        }
+      }
+
+    },
+    {
       "appName": "Visual Studio Code",
       "repoURL": "CMD",
       "doc": "Visual Studio Code",
