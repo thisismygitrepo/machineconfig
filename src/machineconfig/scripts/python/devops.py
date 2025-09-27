@@ -1,6 +1,8 @@
 """devops with emojis"""
 
 from machineconfig.utils.options import choose_from_options
+from machineconfig.scripts.python.share_terminal import main as share_terminal_main
+import machineconfig.scripts.python.devops_devapps_install as installer_entry_point
 
 from platform import system
 from typing import Optional, Literal, TypeAlias
@@ -9,7 +11,7 @@ from rich.panel import Panel
 import typer
 
 console = Console()
-app = typer.Typer(help="🛠️ DevOps operations with emojis", invoke_without_command=True, no_args_is_help=True)
+app = typer.Typer(help="🛠️ DevOps operations with emojis", no_args_is_help=True)
 
 BOX_WIDTH = 150  # width for box drawing
 
@@ -27,12 +29,9 @@ def update():
     helper.main()
 
 
-@app.command()
-def install():
-    """⚙️ DEVAPPS install"""
-    console.print(Panel("⚙️  Installing development applications...", width=BOX_WIDTH, border_style="blue"))
-    import machineconfig.scripts.python.devops_devapps_install as helper
-    helper.main(which=None)
+app.command(name="install")(installer_entry_point.main)
+app.command(name="share-terminal", help="📡 Share terminal via web browser")(share_terminal_main)
+
 
 
 @app.command()
@@ -147,7 +146,7 @@ def interactive(which: Optional[COMMANDS] = None):
     if choice_key == "🔄 UPDATE essential repos":
         update()
     elif choice_key == "⚙️ DEVAPPS install":
-        install()
+        installer_entry_point.main(which="ia")
     elif choice_key == "🆕 SYMLINKS new":
         symlinks_new()
     elif choice_key == "🔗 SYMLINKS, SHELL PROFILE, FONT, TERMINAL SETTINGS.":
@@ -171,6 +170,20 @@ def interactive(which: Optional[COMMANDS] = None):
     else:
         console.print(Panel("❌ ERROR: Invalid choice", title_align="left", border_style="red", width=BOX_WIDTH))
         raise ValueError(f"Unimplemented choice: {choice_key}")
+
+
+@app.command(name="ia")
+def interactive_alias(which: Optional[COMMANDS] = None):
+    """🛠️ Interactive menu mode (alias for interactive)"""
+    interactive(which)
+
+
+@app.command()
+def install_ia():
+    """⚙️ DEVAPPS install (interactive mode)"""
+    console.print(Panel("⚙️  Installing development applications (interactive)...", width=BOX_WIDTH, border_style="blue"))
+    import machineconfig.scripts.python.devops_devapps_install as helper
+    helper.main(which=None)
 
 
 if __name__ == "__main__":

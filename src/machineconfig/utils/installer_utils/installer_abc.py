@@ -1,7 +1,11 @@
+
 from machineconfig.utils.path_extended import PathExtended as PathExtended
-from machineconfig.utils.source_of_truth import WINDOWS_INSTALL_PATH, LINUX_INSTALL_PATH
-from typing import Optional
+from machineconfig.utils.source_of_truth import WINDOWS_INSTALL_PATH, LINUX_INSTALL_PATH, INSTALL_VERSION_ROOT
+
+from pathlib import Path
+from typing import Any, Optional
 import subprocess
+import platform
 
 
 def find_move_delete_windows(downloaded_file_path: PathExtended, exe_name: Optional[str] = None, delete: bool = True, rename_to: Optional[str] = None):
@@ -106,3 +110,104 @@ def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: Opt
     exe_new_location = PathExtended(LINUX_INSTALL_PATH).joinpath(exe.name)
     print(f"✅ Executable installed at: {exe_new_location}\n{'=' * 80}")
     return exe_new_location
+
+
+def check_tool_exists(tool_name: str) -> bool:
+    if platform.system() == "Windows":
+        tool_name = tool_name.replace(".exe", "") + ".exe"
+        res1 = any([Path(WINDOWS_INSTALL_PATH).joinpath(tool_name).is_file(), Path.home().joinpath("AppData/Roaming/npm").joinpath(tool_name).is_file()])
+        tool_name = tool_name.replace(".exe", "") + ".exe"
+        res2 = any([Path(WINDOWS_INSTALL_PATH).joinpath(tool_name).is_file(), Path.home().joinpath("AppData/Roaming/npm").joinpath(tool_name).is_file()])
+        return res1 or res2
+    elif platform.system() in ["Linux", "Darwin"]:
+        root_path = Path(LINUX_INSTALL_PATH)
+        return any([Path("/usr/local/bin").joinpath(tool_name).is_file(), Path("/usr/bin").joinpath(tool_name).is_file(), root_path.joinpath(tool_name).is_file()])
+    else:
+        raise NotImplementedError(f"platform {platform.system()} not implemented")
+
+
+def check_if_installed_already(exe_name: str, version: Optional[str], use_cache: bool) -> tuple[str, str, str]:
+    print(f"\n{'=' * 80}\n🔍 CHECKING INSTALLATION STATUS: {exe_name} 🔍\n{'=' * 80}")
+    INSTALL_VERSION_ROOT.joinpath(exe_name).parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = INSTALL_VERSION_ROOT.joinpath(exe_name)
+
+    if use_cache:
+        print("🗂️  Using cached version information...")
+        if tmp_path.exists():
+            existing_version = tmp_path.read_text(encoding="utf-8").rstrip()
+            print(f"📄 Found cached version: {existing_version}")
+        else:
+            existing_version = None
+            print("ℹ️  No cached version information found")
+    else:
+        print("🔍 Checking installed version directly...")
+        result = subprocess.run([exe_name, "--version"], check=False, capture_output=True, text=True)
+        if result.stdout.strip() == "":
+            existing_version = None
+            print("ℹ️  Could not detect installed version")
+        else:
+            existing_version = result.stdout.strip()
+            print(f"📄 Detected installed version: {existing_version}")
+
+    if existing_version is not None and version is not None:
+        if existing_version == version:
+            print(f"✅ {exe_name} is up to date (version {version})")
+            print(f"📂 Version information stored at: {INSTALL_VERSION_ROOT}")
+            return ("✅ Up to date", version.strip(), version.strip())
+        else:
+            print(f"🔄 {exe_name} needs update: {existing_version.rstrip()} → {version}")
+            tmp_path.write_text(version, encoding="utf-8")
+            return ("❌ Outdated", existing_version.strip(), version.strip())
+    else:
+        print(f"📦 {exe_name} is not installed. Will install version: {version}")
+        # tmp_path.write_text(version, encoding="utf-8")
+
+    print(f"{'=' * 80}")
+    return ("⚠️ NotInstalled", "None", version or "unknown")
+
+
+def parse_apps_installer_linux(txt: str) -> dict[str, Any]:
+    txts = txt.split("""yes '' | sed 3q; echo "----------------------------- installing """)
+    res = {}
+    for chunk in txts[1:]:
+        try:
+            k = chunk.split("----")[0].rstrip().lstrip()
+            v = "\n".join(chunk.split("\n")[1:])
+            res[k] = v
+        except IndexError as e:
+            print(f"""
+❌ Error parsing chunk:
+{"-" * 50}
+{chunk}
+{"-" * 50}""")
+            raise e
+    return res
+
+
+def parse_apps_installer_windows(txt: str) -> dict[str, Any]:
+    chunks: list[str] = []
+    for idx, item in enumerate(txt.split(sep="winget install")):
+        if idx == 0:
+            continue
+        if idx == 1:
+            chunks.append(item)
+        else:
+            chunks.append("winget install" + item)
+    # progs = L(txt.splitlines()).filter(lambda x: x.startswith("winget ") or x.startswith("#winget"))
+    res: dict[str, str] = {}
+    for a_chunk in chunks:
+        try:
+            name = a_chunk.split("--name ")[1]
+            if "--Id" not in name:
+                print(f"⚠️  Warning: {name} does not have an Id, skipping")
+                continue
+            name = name.split(" --Id ", maxsplit=1)[0].strip('"').strip('"')
+            res[name] = a_chunk
+        except IndexError as e:
+            print(f"""
+❌ Error parsing chunk:
+{"-" * 50}
+{a_chunk}
+{"-" * 50}""")
+            raise e
+    return res

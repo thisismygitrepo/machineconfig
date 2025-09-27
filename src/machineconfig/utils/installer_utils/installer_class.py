@@ -1,7 +1,7 @@
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.installer_utils.installer_abc import find_move_delete_linux, find_move_delete_windows
 from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT, LIBRARY_ROOT
-from machineconfig.utils.options import check_tool_exists
+from machineconfig.utils.installer_utils.installer_abc import check_tool_exists
 from machineconfig.utils.io import read_json
 from machineconfig.utils.schemas.installer.installer_types import InstallerData, InstallerDataFiles, get_os_name, get_normalized_arch
 
@@ -356,43 +356,3 @@ class Installer:
                 return None, None
         browser_download_url = f"{repo_url}/releases/download/{actual_version}/{filename}"
         return browser_download_url, actual_version
-
-    @staticmethod
-    def check_if_installed_already(exe_name: str, version: Optional[str], use_cache: bool) -> tuple[str, str, str]:
-        print(f"\n{'=' * 80}\n🔍 CHECKING INSTALLATION STATUS: {exe_name} 🔍\n{'=' * 80}")
-        INSTALL_VERSION_ROOT.joinpath(exe_name).parent.mkdir(parents=True, exist_ok=True)
-        tmp_path = INSTALL_VERSION_ROOT.joinpath(exe_name)
-
-        if use_cache:
-            print("🗂️  Using cached version information...")
-            if tmp_path.exists():
-                existing_version = tmp_path.read_text(encoding="utf-8").rstrip()
-                print(f"📄 Found cached version: {existing_version}")
-            else:
-                existing_version = None
-                print("ℹ️  No cached version information found")
-        else:
-            print("🔍 Checking installed version directly...")
-            result = subprocess.run([exe_name, "--version"], check=False, capture_output=True, text=True)
-            if result.stdout.strip() == "":
-                existing_version = None
-                print("ℹ️  Could not detect installed version")
-            else:
-                existing_version = result.stdout.strip()
-                print(f"📄 Detected installed version: {existing_version}")
-
-        if existing_version is not None and version is not None:
-            if existing_version == version:
-                print(f"✅ {exe_name} is up to date (version {version})")
-                print(f"📂 Version information stored at: {INSTALL_VERSION_ROOT}")
-                return ("✅ Up to date", version.strip(), version.strip())
-            else:
-                print(f"🔄 {exe_name} needs update: {existing_version.rstrip()} → {version}")
-                tmp_path.write_text(version, encoding="utf-8")
-                return ("❌ Outdated", existing_version.strip(), version.strip())
-        else:
-            print(f"📦 {exe_name} is not installed. Will install version: {version}")
-            # tmp_path.write_text(version, encoding="utf-8")
-
-        print(f"{'=' * 80}")
-        return ("⚠️ NotInstalled", "None", version or "unknown")

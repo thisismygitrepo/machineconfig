@@ -1,16 +1,11 @@
 """Devops Devapps Install"""
 
-# import subprocess
 import typer
 from rich.progress import Progress, SpinnerColumn, TextColumn
-from machineconfig.utils.source_of_truth import LIBRARY_ROOT
-from machineconfig.utils.options import choose_from_options
-from machineconfig.utils.installer import get_installers, install_all
-from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
 from platform import system
-from typing import Any, Optional, Literal, TypeAlias, get_args, Annotated
+from typing import Optional, Literal, TypeAlias, cast, get_args, Annotated
 
-WHICH_CAT: TypeAlias = Literal["essentials", "essentialsDev", "systymPackages", "precheckedPackages"]
+WHICH_CAT: TypeAlias = Literal["essentials", "essentialsDev", "systymPackages", "precheckedPackages", "ia"]
 
 
 def main_with_parser():
@@ -20,11 +15,12 @@ def main_with_parser():
     app()
 
 
-def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category or program to install, {list(get_args(WHICH_CAT))} or <program_name>")]) -> None:
-    if which is not None and which in get_args(WHICH_CAT):  # install by category
+def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category or program to install, {list(get_args(WHICH_CAT))} or <program_name> or list of programs names separated by comma.")]) -> None:
+    if which in get_args(WHICH_CAT):  # install by category
         return get_programs_by_category(program_name=which)  # type: ignore
-
-    if which is not None:  # install by name
+    from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
+    from machineconfig.utils.installer import get_installers
+    if which != "ia" and which is not None:  # install by name
         total_messages: list[str] = []
         for a_which in which.split(",") if type(which) == str else which:
             all_installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL", "GITHUB_DEV", "CUSTOM_DEV"])
@@ -53,6 +49,12 @@ def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category
             print(a_message)
         return None
 
+
+
+def install_interactively():
+    from machineconfig.utils.options import choose_from_options
+    from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
+    from machineconfig.utils.installer import get_installers
     installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL", "GITHUB_DEV", "CUSTOM_DEV"])
     # Check installed programs with progress indicator
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
@@ -84,8 +86,7 @@ def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category
         if a_program_name.startswith("📦 "):
             category_name = a_program_name[2:]  # Remove "📦 " prefix
             if category_name in get_args(WHICH_CAT):
-                shell_commands = get_programs_by_category(program_name=category_name)  # type: ignore
-                total_commands += "\n" + shell_commands
+                get_programs_by_category(program_name=cast(WHICH_CAT, category_name))
         else:
             # Handle individual installer options
             installer_idx = installer_options.index(a_program_name)
@@ -112,15 +113,18 @@ def get_programs_by_category(program_name: WHICH_CAT):
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ 📦 Installing Category: {program_name}
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
+    from machineconfig.utils.source_of_truth import LIBRARY_ROOT
+    from machineconfig.utils.installer import get_installers, install_all
+    from machineconfig.utils.installer_utils.installer_abc import parse_apps_installer_linux, parse_apps_installer_windows
+    from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
+    from machineconfig.utils.options import choose_from_options
     match program_name:
         case "essentials":
             installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL"])
             install_all(installers=installers_)
-            program = ""
         case "essentialsDev":
             installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_DEV", "CUSTOM_DEV", "GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL"])
             install_all(installers=installers_)
-            program = ""
         case "systymPackages":
             if system() == "Windows":
                 options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text(encoding="utf-8"))
@@ -141,79 +145,14 @@ def get_programs_by_category(program_name: WHICH_CAT):
                 if sub_program.startswith("#winget"):
                     sub_program = sub_program[1:]
                 program += "\n" + sub_program
-        # case "CHOOSE": raise NotImplementedError("CHOOSE is not implemented yet.")
-        # case "OtherDevApps":
-        #     installers = get_installers(dev=True, system=system())
-        #     options__: list[str] = [x.get_description() for x in tqdm(installers, desc="Checking installed programs")]
-        #     program_names = choose_from_options(multi=True, msg="", options=sorted(options__) + ["all"], header="CHOOSE DEV APP")
-        #     if "all" in program_names: program_names = options__
-        #     program = ""
-        #     print("Installing:")
-        #     L(program_names).print()
-        #     for name in program_names:
-        #         try:
-        #             idx = options__.index(name)
-        #         except ValueError as ve:
-        #             print(f"{name=}")
-        #             print(f"{options__=}")
-        #             raise ve
-        #         print(f"Installing {name}")
-        #         sub_program = installers[idx].install_robust(version=None)  # finish the task
-
+        case "ia":
+            install_interactively()
         case "precheckedPackages":
             # from machineconfig.jobs.python.check_installations import precheckedPackages
             # ci = precheckedPackages()
             # ci.download_safe_apps(name="essentials")
             # program = ""
             raise NotImplementedError("precheckedPackages is not implemented yet.")
-    return program
-
-
-def parse_apps_installer_linux(txt: str) -> dict[str, Any]:
-    txts = txt.split("""yes '' | sed 3q; echo "----------------------------- installing """)
-    res = {}
-    for chunk in txts[1:]:
-        try:
-            k = chunk.split("----")[0].rstrip().lstrip()
-            v = "\n".join(chunk.split("\n")[1:])
-            res[k] = v
-        except IndexError as e:
-            print(f"""
-❌ Error parsing chunk:
-{"-" * 50}
-{chunk}
-{"-" * 50}""")
-            raise e
-    return res
-
-
-def parse_apps_installer_windows(txt: str) -> dict[str, Any]:
-    chunks: list[str] = []
-    for idx, item in enumerate(txt.split(sep="winget install")):
-        if idx == 0:
-            continue
-        if idx == 1:
-            chunks.append(item)
-        else:
-            chunks.append("winget install" + item)
-    # progs = L(txt.splitlines()).filter(lambda x: x.startswith("winget ") or x.startswith("#winget"))
-    res: dict[str, str] = {}
-    for a_chunk in chunks:
-        try:
-            name = a_chunk.split("--name ")[1]
-            if "--Id" not in name:
-                print(f"⚠️  Warning: {name} does not have an Id, skipping")
-                continue
-            name = name.split(" --Id ", maxsplit=1)[0].strip('"').strip('"')
-            res[name] = a_chunk
-        except IndexError as e:
-            print(f"""
-❌ Error parsing chunk:
-{"-" * 50}
-{a_chunk}
-{"-" * 50}""")
-            raise e
-    return res
 
 
 if __name__ == "__main__":

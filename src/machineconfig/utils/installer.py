@@ -1,13 +1,13 @@
 """package manager"""
 
-from machineconfig.utils.installer_utils.installer_abc import LINUX_INSTALL_PATH
+from machineconfig.utils.installer_utils.installer_abc import check_if_installed_already
 from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import APP_INSTALLER_CATEGORY, InstallerData, InstallerDataFiles, get_normalized_arch, get_os_name, OPERATING_SYSTEMS, CPU_ARCHITECTURES
 from rich.console import Console
-from rich.panel import Panel  # Added import
+from rich.panel import Panel
 
 from machineconfig.utils.path_extended import PathExtended as PathExtended
-from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT
+from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT, LINUX_INSTALL_PATH
 from machineconfig.utils.io import read_json
 
 from typing import Any
@@ -38,7 +38,7 @@ def check_latest():
         repo_url = inst.installer_data.get("repoURL", "")
         print(f"🔎 Checking {exe_name}...")
         _release_url, version_to_be_installed = inst.get_github_release(repo_url=repo_url, version=None)
-        verdict, current_ver, new_ver = inst.check_if_installed_already(exe_name=exe_name, version=version_to_be_installed, use_cache=False)
+        verdict, current_ver, new_ver = check_if_installed_already(exe_name=exe_name, version=version_to_be_installed, use_cache=False)
         return exe_name, verdict, current_ver, new_ver
 
     print("\n⏳ Processing installers...\n")
@@ -188,5 +188,4 @@ def install_all(installers: list[Installer], safe: bool = False, jobs: int = 10,
     print("\n" * 2)
 
 
-if __name__ == "__main__":
-    pass
+
