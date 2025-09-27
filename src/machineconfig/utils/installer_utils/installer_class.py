@@ -388,9 +388,8 @@ class Installer:
         return None, actual_version
 
     @staticmethod
-    def check_if_installed_already(exe_name: str, version: str, use_cache: bool) -> tuple[str, str, str]:
+    def check_if_installed_already(exe_name: str, version: Optional[str], use_cache: bool) -> tuple[str, str, str]:
         print(f"\n{'=' * 80}\n🔍 CHECKING INSTALLATION STATUS: {exe_name} 🔍\n{'=' * 80}")
-        version_to_be_installed = version
         INSTALL_VERSION_ROOT.joinpath(exe_name).parent.mkdir(parents=True, exist_ok=True)
         tmp_path = INSTALL_VERSION_ROOT.joinpath(exe_name)
 
@@ -412,18 +411,18 @@ class Installer:
                 existing_version = result.stdout.strip()
                 print(f"📄 Detected installed version: {existing_version}")
 
-        if existing_version is not None:
-            if existing_version == version_to_be_installed:
-                print(f"✅ {exe_name} is up to date (version {version_to_be_installed})")
+        if existing_version is not None and version is not None:
+            if existing_version == version:
+                print(f"✅ {exe_name} is up to date (version {version})")
                 print(f"📂 Version information stored at: {INSTALL_VERSION_ROOT}")
-                return ("✅ Up to date", version.strip(), version_to_be_installed.strip())
+                return ("✅ Up to date", version.strip(), version.strip())
             else:
-                print(f"🔄 {exe_name} needs update: {existing_version.rstrip()} → {version_to_be_installed}")
-                tmp_path.write_text(version_to_be_installed, encoding="utf-8")
-                return ("❌ Outdated", existing_version.strip(), version_to_be_installed.strip())
+                print(f"🔄 {exe_name} needs update: {existing_version.rstrip()} → {version}")
+                tmp_path.write_text(version, encoding="utf-8")
+                return ("❌ Outdated", existing_version.strip(), version.strip())
         else:
-            print(f"📦 {exe_name} is not installed. Will install version: {version_to_be_installed}")
-            tmp_path.write_text(version_to_be_installed, encoding="utf-8")
+            print(f"📦 {exe_name} is not installed. Will install version: {version}")
+            # tmp_path.write_text(version, encoding="utf-8")
 
         print(f"{'=' * 80}")
-        return ("⚠️ NotInstalled", "None", version_to_be_installed.strip())
+        return ("⚠️ NotInstalled", "None")
