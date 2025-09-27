@@ -1,6 +1,5 @@
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.installer_utils.installer_abc import find_move_delete_linux, find_move_delete_windows
-from machineconfig.utils.installer_utils.github_release_parser import get_github_download_link
 from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT, LIBRARY_ROOT
 from machineconfig.utils.options import check_tool_exists
 from machineconfig.utils.io import read_json
@@ -101,37 +100,26 @@ class Installer:
 
         print(f"\n{'=' * 80}\n🔧 INSTALLATION PROCESS: {exe_name} 🔧\n{'=' * 80}")
         if repo_url == "CUSTOM":
-            print(f"🧩 Using custom installer for {exe_name}")
-            import machineconfig.jobs.custom_installers as custom_installers
-
-            installer_path = Path(custom_installers.__file__).parent.joinpath(exe_name + ".py")
-            if not installer_path.exists():
-                installer_path = Path(custom_installers.__file__).parent.joinpath("dev", exe_name + ".py")
-                print(f"🔍 Looking for installer in dev folder: {installer_path}")
-            else:
-                print(f"🔍 Found installer at: {installer_path}")
-
-            import runpy
-
-            print(f"⚙️  Executing function 'main' from '{installer_path}'...")
-            program: str = runpy.run_path(str(installer_path), run_name=None)["main"](version=version)
-            # print(program)
-            print("🚀 Running installation script...")
-            if platform.system() == "Linux":
-                script = "#!/bin/bash" + "\n" + program
-            else:
-                script = program
-            script_file = PathExtended.tmpfile(name="tmp_shell_script", suffix=".ps1" if platform.system() == "Windows" else ".sh", folder="tmp_scripts")
-            script_file.write_text(script, newline=None if platform.system() == "Windows" else "\n")
-            if platform.system() == "Windows":
-                start_cmd = "powershell"
-                full_command = f"{start_cmd} {script_file}"
-            else:
-                start_cmd = "bash"
-                full_command = f"{start_cmd} {script_file}"
-            subprocess.run(full_command, stdin=None, stdout=None, stderr=None, shell=True, text=True)
-            version_to_be_installed = str(version)
-            print(f"✅ Custom installation completed\n{'=' * 80}")
+            pass
+            # import runpy
+            # program: str = runpy.run_path(str(installer_path), run_name=None)["main"](version=version)
+            # # print(program)
+            # print("🚀 Running installation script...")
+            # if platform.system() == "Linux":
+            #     script = "#!/bin/bash" + "\n" + program
+            # else:
+            #     script = program
+            # script_file = PathExtended.tmpfile(name="tmp_shell_script", suffix=".ps1" if platform.system() == "Windows" else ".sh", folder="tmp_scripts")
+            # script_file.write_text(script, newline=None if platform.system() == "Windows" else "\n")
+            # if platform.system() == "Windows":
+            #     start_cmd = "powershell"
+            #     full_command = f"{start_cmd} {script_file}"
+            # else:
+            #     start_cmd = "bash"
+            #     full_command = f"{start_cmd} {script_file}"
+            # subprocess.run(full_command, stdin=None, stdout=None, stderr=None, shell=True, text=True)
+            # version_to_be_installed = str(version)
+            # print(f"✅ Custom installation completed\n{'=' * 80}")
 
         elif "npm " in repo_url or "pip " in repo_url or "winget " in repo_url:
             package_manager = repo_url.split(" ", maxsplit=1)[0]

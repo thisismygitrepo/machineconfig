@@ -160,12 +160,12 @@
       "doc": "🌐 browser in the shell",
       "fileNamePattern": {
         "amd64": {
-          "linux": "browsh_{version}_linux_amd64",
+          "linux": null,
           "macos": null,
           "windows": null
         },
         "arm64": {
-          "linux": "browsh_{version}_linux_arm64",
+          "linux": null,
           "macos": null,
           "windows": null
         }
