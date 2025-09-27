@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "3.94"
+version = "3.95"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -34,6 +34,7 @@ dependencies = [
     "rclone-python>=0.1.23",
     "pyjson5>=1.6.9",
     "typer-slim>=0.19.2",
+    "questionary>=2.1.1",
 ]
 
 [project.optional-dependencies]
