@@ -68,9 +68,6 @@ repos = "machineconfig.scripts.python.repos:main_from_parser"
 start_slidev = "machineconfig.scripts.python.start_slidev:arg_parser"
 wifi_conn = "machineconfig.scripts.python.wifi_conn:arg_parser"
 kill_process = "machineconfig.utils.procs:main"
-# ia = "machineconfig.scripts.python.interactive:main"  # Used 
-# install = "machineconfig.scripts.python.devops_devapps_install:main_with_parser"
-# share_terminal = "machineconfig.scripts.python.share_terminal:main_with_parser"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

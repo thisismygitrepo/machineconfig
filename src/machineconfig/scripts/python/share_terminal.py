@@ -19,12 +19,12 @@ reference:
 """
 
 
-def display_terminal_url(local_ip_v4: str, port: int) -> None:
+def display_terminal_url(local_ip_v4: str, port: int, protocol: str = "http") -> None:
     """Display a flashy, unmissable terminal URL announcement."""
     console = Console()
     
     # Create the main message with styling
-    url_text = Text(f"http://{local_ip_v4}:{port}", style="bold bright_cyan underline")
+    url_text = Text(f"{protocol}://{local_ip_v4}:{port}", style="bold bright_cyan underline")
     message = Text.assemble(
         ("🚀 ", "bright_red"),
         ("Terminal is now accessible at: ", "bright_white bold"),
@@ -64,7 +64,11 @@ def install_ttyd():
 def main(
     port: Annotated[Optional[int], typer.Option("--port", "-p", help="Port to run the terminal server on (default: 7681)")] = None,
     username: Annotated[Optional[str], typer.Option("--username", "-u", help="Username for terminal access (default: current user)")] = None,
-    password: Annotated[Optional[str], typer.Option("--password", "-w", help="Password for terminal access (default: from ~/dotfiles/creds/passwords/quick_password)")] = None
+    password: Annotated[Optional[str], typer.Option("--password", "-w", help="Password for terminal access (default: from ~/dotfiles/creds/passwords/quick_password)")] = None,
+    ssl: Annotated[bool, typer.Option("--ssl", "-S", help="Enable SSL")] = False,
+    ssl_cert: Annotated[Optional[str], typer.Option("--ssl-cert", "-C", help="SSL certificate file path")] = None,
+    ssl_key: Annotated[Optional[str], typer.Option("--ssl-key", "-K", help="SSL key file path")] = None,
+    ssl_ca: Annotated[Optional[str], typer.Option("--ssl-ca", "-A", help="SSL CA file path for client certificate verification")] = None
 ) -> None:
     install_ttyd()
     if username is None:
@@ -80,17 +84,44 @@ def main(
     if port is None:
         port = 7681  # Default port for ttyd
 
+    # Handle SSL certificate defaults
+    if ssl:
+        if ssl_cert is None:
+            ssl_cert = str(Path.home().joinpath("dotfiles/creds/passwords/ssl/origin_server/cert.pem"))
+        if ssl_key is None:
+            ssl_key = str(Path.home().joinpath("dotfiles/creds/passwords/ssl/origin_server/key.pem"))
+        
+        # Verify SSL files exist
+        cert_path = Path(ssl_cert)
+        key_path = Path(ssl_key)
+        
+        if not cert_path.exists():
+            raise FileNotFoundError(f"SSL certificate file not found: {ssl_cert}")
+        if not key_path.exists():
+            raise FileNotFoundError(f"SSL key file not found: {ssl_key}")
+        
+        if ssl_ca and not Path(ssl_ca).exists():
+            raise FileNotFoundError(f"SSL CA file not found: {ssl_ca}")
+
     import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(('8.8.8.8',80))
     local_ip_v4 = s.getsockname()[0]
     s.close()
 
-    # Display the flashy terminal announcement
-    display_terminal_url(local_ip_v4, port)
+    # Display the flashy terminal announcement  
+    protocol = "https" if ssl else "http"
+    display_terminal_url(local_ip_v4, port, protocol)
+    
+    # Build ttyd command with SSL options
+    ssl_args = ""
+    if ssl:
+        ssl_args = f"--ssl --ssl-cert {ssl_cert} --ssl-key {ssl_key}"
+        if ssl_ca:
+            ssl_args += f" --ssl-ca {ssl_ca}"
     
     code = f"""#!/bin/bash
-ttyd --writable -t enableSixel=true --port {port} --credential "{username}:{password}" -t 'theme={{"background": "black"}}' bash
+ttyd --writable -t enableSixel=true {ssl_args} --port {port} --credential "{username}:{password}" -t 'theme={{"background": "black"}}' bash
 """
     import subprocess
     subprocess.run(code, shell=True, check=True)
