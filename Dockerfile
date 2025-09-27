@@ -52,8 +52,8 @@ RUN cd $HOME && \
     # cd $HOME/code/machineconfig && \
     # /root/.local/bin/uv pip install -e . && \
 
-RUN /root/.local/bin/uv run --project $HOME/code/machineconfig python -m fire machineconfig.profile.create main --choice=all
-RUN /root/.local/bin/uv run --project $HOME/code/machineconfig install essentials
+RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig python -m fire machineconfig.profile.create main --choice=all
+RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig install essentials
 COPY ./src/machineconfig/settings/shells/ipy/profiles/default/startup/playext.py /root/.ipython/profile_default/startup/playext.py
 
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S uv run --project /home/alex/code/machineconfig --script
+#!/usr/bin/env -S uv run --no-dev --project /home/alex/code/machineconfig --script
 """Sx & Rx
 
 TODO: add support for cases in which source or target has non 22 default port number and is defineda as user@host:port:path which makes 2 colons in the string.

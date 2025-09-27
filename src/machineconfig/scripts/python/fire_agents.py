@@ -105,7 +105,7 @@ def main():  # noqa: C901 - (complexity acceptable for CLI glue)
 
     regenerate_py_code = f"""
 #!/usr/bin/env uv run --python 3.13 --with machineconfig
-#!/usr/bin/env uv run --project $HOME/code/machineconfig
+#!/usr/bin/env uv run --no-dev --project $HOME/code/machineconfig
 
 from machineconfig.scripts.python.fire_agents import *
 

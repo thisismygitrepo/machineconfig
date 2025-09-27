@@ -1,4 +1,4 @@
-#!/usr/bin/env -S uv run --project
+#!/usr/bin/env -S uv run --no-dev --project
 
 """
 croshell
