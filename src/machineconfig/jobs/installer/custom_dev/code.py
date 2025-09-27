@@ -2,6 +2,7 @@
 
 from typing import Optional
 import platform
+import subprocess
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
@@ -36,7 +37,18 @@ def main(installer_data: InstallerData, version: Optional[str] = None):
 """)
         raise NotImplementedError(error_msg)
     _ = version
-    return install_script
+    
+    print("🔄 EXECUTING | Running VS Code installation...")
+    try:
+        result = subprocess.run(install_script, shell=True, capture_output=True, text=True, check=True)
+        print("✅ VS Code installation completed successfully")
+        if result.stdout:
+            print(f"📤 Output: {result.stdout.strip()}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Installation failed with exit code {e.returncode}")
+        if e.stderr:
+            print(f"📥 Error: {e.stderr.strip()}")
+        raise
 
 
 if __name__ == "__main__":

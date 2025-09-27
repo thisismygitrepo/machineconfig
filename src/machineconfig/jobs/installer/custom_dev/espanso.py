@@ -1,10 +1,10 @@
-"""
-A text expander is a program that detects when you type a specific keyword and replaces it with something else
+"""A text expander is a program that detects when you type a specific keyword and replaces it with something else
 
 https://github.com/espanso/espanso
 """
 
 from typing import Optional
+import subprocess
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 # config_dict: InstallerData = {
@@ -85,4 +85,14 @@ espanso install actually-all-emojis
 {"=" * 150}
 """)
 
-    return config
+    print("🔄 EXECUTING | Running Espanso post-installation configuration...")
+    try:
+        result = subprocess.run(config, shell=True, capture_output=True, text=True, check=True)
+        print("✅ Espanso post-installation configuration completed successfully")
+        if result.stdout:
+            print(f"📤 Output: {result.stdout.strip()}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Post-installation configuration failed with exit code {e.returncode}")
+        if e.stderr:
+            print(f"📥 Error: {e.stderr.strip()}")
+        raise

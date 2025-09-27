@@ -1,10 +1,8 @@
-"""
-natural language to API
+"""natural language to API
 https://github.com/ShishirPatil/gorilla
 """
 
-# import subprocess
-
+import subprocess
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 # config_dict: InstallerData = {
@@ -46,7 +44,17 @@ uv sync
 ✅ Installation script prepared successfully!
 """)
 
-    return install_script
+    print("🔄 EXECUTING | Running Gorilla installation...")
+    try:
+        result = subprocess.run(install_script, shell=True, capture_output=True, text=True, check=True)
+        print("✅ Gorilla installation completed successfully")
+        if result.stdout:
+            print(f"📤 Output: {result.stdout.strip()}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Installation failed with exit code {e.returncode}")
+        if e.stderr:
+            print(f"📥 Error: {e.stderr.strip()}")
+        raise
 
 
 if __name__ == "__main__":

@@ -1,11 +1,7 @@
-/home/alex/code/machineconfig/src/machineconfig/jobs/python_custom_installers/dev/espanso.py
-  /home/alex/code/machineconfig/src/machineconfig/jobs/python_custom_installers/dev/espanso.py:44:17 - error: Could not access item in TypedDict
-    "filenameTemplate" is not a defined key in "InstallerData" (reportGeneralTypeIssues)
-  /home/alex/code/machineconfig/src/machineconfig/jobs/python_custom_installers/dev/espanso.py:52:17 - error: Could not access item in TypedDict
-    "filenameTemplate" is not a defined key in "InstallerData" (reportGeneralTypeIssues)
-  /home/alex/code/machineconfig/src/machineconfig/jobs/python_custom_installers/dev/espanso.py:55:13 - error: Could not access item in TypedDict
-    "filenameTemplate" is not a defined key in "InstallerData" (reportGeneralTypeIssues)
-/home/alex/code/machineconfig/src/machineconfig/utils/installer.py
-  /home/alex/code/machineconfig/src/machineconfig/utils/installer.py:41:54 - error: Cannot access attribute "get_github_release" for class "Installer"
-    Attribute "get_github_release" is unknown (reportAttributeAccessIssue)
-4 errors, 0 warnings, 0 informations
+/home/alex/code/machineconfig/src/machineconfig/utils/installer_utils/installer_class.py
+  /home/alex/code/machineconfig/src/machineconfig/utils/installer_utils/installer_class.py:203:60 - error: "version_to_be_installed" is possibly unbound (reportPossiblyUnboundVariable)
+  /home/alex/code/machineconfig/src/machineconfig/utils/installer_utils/installer_class.py:227:29 - error: "get_github_download_link" is not defined (reportUndefinedVariable)
+  /home/alex/code/machineconfig/src/machineconfig/utils/installer_utils/installer_class.py:443:16 - error: Type "tuple[Literal['⚠️ NotInstalled'], Literal['None']]" is not assignable to return type "tuple[str, str, str]"
+    "tuple[Literal['⚠️ NotInstalled'], Literal['None']]" is not assignable to "tuple[str, str, str]"
+      Tuple size mismatch; expected 3 but received 2 (reportReturnType)
+3 errors, 0 warnings, 0 informations

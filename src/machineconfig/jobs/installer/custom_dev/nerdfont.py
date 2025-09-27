@@ -1,20 +1,17 @@
 """Nerd Fonts installer - Cross-platform font installation"""
 
 import platform
+import subprocess
 from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-def main(installer_data: InstallerData, version: Optional[str]) -> Optional[str]:
+def main(installer_data: InstallerData, version: Optional[str]) -> None:
     """Main entry point for Nerd Fonts installation.
     
     Args:
         installer_data: Installation configuration data
         version: Specific version to install (None for latest)
-        
-    Returns:
-        For Linux/Darwin: Shell script content to execute
-        For Windows: None (installation handled directly)
     """
     _ = installer_data
     print(f"""
@@ -40,7 +37,6 @@ def main(installer_data: InstallerData, version: Optional[str]) -> Optional[str]
 💡 TIP: Restart your terminal applications to see the new fonts
 {"=" * 150}
 """)
-            return None
         except Exception as e:
             error_msg = f"Windows Nerd Fonts installation failed: {e}"
             print(f"""
@@ -68,8 +64,17 @@ def main(installer_data: InstallerData, version: Optional[str]) -> Optional[str]
 {"=" * 150}
 """)
         
-        # Script will be executed by caller (requires user input)
-        return program
+        print("🔄 EXECUTING | Running Nerd Fonts installation...")
+        try:
+            result = subprocess.run(program, shell=True, capture_output=True, text=True, check=True)
+            print("✅ Nerd Fonts installation completed successfully")
+            if result.stdout:
+                print(f"📤 Output: {result.stdout.strip()}")
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Installation failed with exit code {e.returncode}")
+            if e.stderr:
+                print(f"📥 Error: {e.stderr.strip()}")
+            raise
         
     else:
         error_msg = f"Unsupported platform: {current_platform}"

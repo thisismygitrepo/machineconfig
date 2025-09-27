@@ -59,9 +59,14 @@ LV_BRANCH='release-1.4/neovim-0.9' bash <(curl -s https://raw.githubusercontent.
 ⚠️  NOTE: The installer will prompt for user input during installation.
 """)
 
-    # _res = Terminal(stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)
-    # run script here as it requires user input
-    return program
+    print("🔄 EXECUTING | Running LunarVim installation...")
+    try:
+        # Run with shell=True and allow interaction for user input
+        subprocess.run(program, shell=True, check=True)
+        print("✅ LunarVim installation completed successfully")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Installation failed with exit code {e.returncode}")
+        raise
 
 
 if __name__ == "__main__":

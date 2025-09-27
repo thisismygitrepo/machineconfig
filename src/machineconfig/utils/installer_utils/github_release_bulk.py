@@ -186,7 +186,7 @@ def main() -> None:
         json.dump(output_data, f, indent=2, ensure_ascii=False)
     
     successful = len([v for v in release_mapping.values() if v])
-    print(f"\n📊 Summary:")
+    print("\n📊 Summary:")
     print(f"   Total repositories processed: {len(all_github_repos)}")
     print(f"   Successful fetches: {successful}")
     print(f"   Failed fetches: {len(all_github_repos) - successful}")

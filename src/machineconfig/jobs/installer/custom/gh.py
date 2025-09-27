@@ -94,7 +94,7 @@ gh auth login --with-token $HOME/dotfiles/creds/git/gh_token.txt
 """)
     try:
         result = subprocess.run(program, shell=True, capture_output=True, text=True, check=True)
-        print(f"✅ Command executed successfully")
+        print("✅ Command executed successfully")
         if result.stdout:
             print(f"📤 Output: {result.stdout.strip()}")
     except subprocess.CalledProcessError as e:

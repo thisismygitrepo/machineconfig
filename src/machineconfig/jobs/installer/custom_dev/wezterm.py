@@ -1,6 +1,7 @@
 """wezterm installer"""
 
 import platform
+import subprocess
 from typing import Optional
 
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
@@ -62,9 +63,17 @@ def main(installer_data: InstallerData, version: Optional[str]):
 {"═" * 150}
 """)
 
-    # _res = Terminal(stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).run_script(script=program, shell="default").print(desc="Running custom installer", capture=True)
-    # run script here as it requires user input
-    return program
+    print("🔄 EXECUTING | Running WezTerm installation...")
+    try:
+        result = subprocess.run(program, shell=True, capture_output=True, text=True, check=True)
+        print("✅ WezTerm installation completed successfully")
+        if result.stdout:
+            print(f"📤 Output: {result.stdout.strip()}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Installation failed with exit code {e.returncode}")
+        if e.stderr:
+            print(f"📥 Error: {e.stderr.strip()}")
+        raise
 
 
 if __name__ == "__main__":

@@ -51,6 +51,15 @@ ERROR Could not find import of `pydantic` [import-error]
   Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
   Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
   Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
+ERROR Could not find import of `machineconfig.utils.installer_utils.github_release_parser` [import-error]
+ --> .ai/tmp_scripts/debug_viu_parser.py:3:1
+  |
+3 | from machineconfig.utils.installer_utils.github_release_parser import get_github_download_link
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
+  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
+  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
 ERROR Could not find import of `src.machineconfig.utils.github_release_parser` [import-error]
   --> .ai/tmp_scripts/github_download_example.py:16:1
    |
@@ -102,6 +111,12 @@ ERROR Missing argument `repoURL` in function `machineconfig.utils.schemas.instal
 35 |     installer_data = InstallerData(first_installer)
    |                                   ^^^^^^^^^^^^^^^^^
    |
+ERROR Missing argument `fileNamePattern` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:35:35
+   |
+35 |     installer_data = InstallerData(first_installer)
+   |                                   ^^^^^^^^^^^^^^^^^
+   |
 ERROR Expected argument `appName` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [unexpected-positional-argument]
   --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:35:36
    |
@@ -132,6 +147,15 @@ ERROR Object of class `Installer` has no attribute `doc` [missing-attribute]
 84 |         print(f"  - {installer.exe_name}: {installer.doc[:50]}...")
    |                                            ^^^^^^^^^^^^^
    |
+ERROR Could not find import of `machineconfig.utils.installer_utils.github_release_parser` [import-error]
+ --> .ai/tmp_scripts/test_carbonyl_parser.py:6:1
+  |
+6 | from machineconfig.utils.installer_utils.github_release_parser import get_github_download_link
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
+  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
+  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
 ERROR Could not import `_search_python_files` from `machineconfig.scripts.python.fire_agents` [missing-module-attribute]
   --> .ai/tmp_scripts/test_fire_agents.py:10:54
    |
@@ -144,12 +168,12 @@ ERROR Could not import `_search_files_by_pattern` from `machineconfig.scripts.py
 10 | from machineconfig.scripts.python.fire_agents import _search_python_files, _search_files_by_pattern
    |                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^
    |
-ERROR Could not find import of `src.machineconfig.utils.github_release_parser` [import-error]
-  --> .ai/tmp_scripts/test_github_parser.py:10:1
-   |
-10 | from src.machineconfig.utils.github_release_parser import get_download_link, get_github_download_link
-   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   |
+ERROR Could not find import of `machineconfig.utils.installer_utils.github_release_parser` [import-error]
+ --> .ai/tmp_scripts/test_github_parser.py:9:1
+  |
+9 | from machineconfig.utils.installer_utils.github_release_parser import get_github_download_link
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
   Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
   Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
   Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
@@ -198,6 +222,24 @@ ERROR Argument `dict[str, tuple[str, str]]` is not assignable to parameter `tabs
 24 |     script_path = generator.create_wt_script(test_config, output_dir, "TestLayoutGen")
    |                                              ^^^^^^^^^^^
    |
+ERROR Could not find import of `machineconfig.utils.installer_utils.github_release_parser` [import-error]
+  --> .ai/tmp_scripts/test_mcfly_parsing.py:10:1
+   |
+10 | from machineconfig.utils.installer_utils.github_release_parser import get_github_download_link
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
+  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
+  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
+ERROR Could not find import of `machineconfig.utils.installer_utils.github_release_parser` [import-error]
+ --> .ai/tmp_scripts/test_multiple_repos.py:7:1
+  |
+7 | from machineconfig.utils.installer_utils.github_release_parser import get_github_download_link
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
+  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
+  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
 ERROR Could not find import of `machineconfig.cluster.sessions_managers.layout_types` [import-error]
   --> .ai/tmp_scripts/test_ps1_changes.py:10:1
    |
@@ -240,6 +282,15 @@ ERROR Could not find import of `machineconfig.utils.path_reduced` [import-error]
 11 | from machineconfig.utils.path_reduced import P
    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
+  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
+  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
+  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
+ERROR Could not find import of `machineconfig.utils.installer_utils.github_release_parser` [import-error]
+ --> .ai/tmp_scripts/test_ttyd_parser.py:7:1
+  |
+7 | from machineconfig.utils.installer_utils.github_release_parser import get_github_download_link
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
   Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
   Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
   Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
@@ -339,24 +390,6 @@ ERROR Argument `str` is not assignable to parameter `object` with type `LiteralS
 62 |                 formatted_args.append(f'"{arg}"')
    |                                       ^^^^^^^^^^
    |
-ERROR TypedDict `InstallerData` does not have key `filenameTemplate` [typed-dict-key-error]
-  --> src/machineconfig/jobs/python_custom_installers/dev/espanso.py:44:29
-   |
-44 |                 config_dict["filenameTemplate"]["amd64"]["linux"] = "espanso-debian-wayland-amd64.deb"
-   |                             ^^^^^^^^^^^^^^^^^^
-   |
-ERROR TypedDict `InstallerData` does not have key `filenameTemplate` [typed-dict-key-error]
-  --> src/machineconfig/jobs/python_custom_installers/dev/espanso.py:52:29
-   |
-52 |                 config_dict["filenameTemplate"]["amd64"]["linux"] = "espanso-debian-x11-amd64.deb"
-   |                             ^^^^^^^^^^^^^^^^^^
-   |
-ERROR TypedDict `InstallerData` does not have key `filenameTemplate` [typed-dict-key-error]
-  --> src/machineconfig/jobs/python_custom_installers/dev/espanso.py:55:25
-   |
-55 |             config_dict["filenameTemplate"]["amd64"]["macos"] = "Espanso.dmg"
-   |                         ^^^^^^^^^^^^^^^^^^
-   |
 ERROR No attribute `windll` in module `ctypes` [missing-attribute]
   --> src/machineconfig/profile/create.py:73:32
    |
@@ -415,12 +448,6 @@ ERROR `str | None` is not assignable to `None` (caused by inconsistent types whe
 70 | |                     # Avoid duplicates
    | |_______________________________________^
    |
-ERROR Object of class `Installer` has no attribute `get_github_release` [missing-attribute]
-  --> src/machineconfig/utils/installer.py:41:49
-   |
-41 |         _release_url, version_to_be_installed = inst.get_github_release(repo_url=repo_url, version=None)
-   |                                                 ^^^^^^^^^^^^^^^^^^^^^^^
-   |
 ERROR Argument `object | str` is not assignable to parameter `exe_name` with type `str` in function `machineconfig.utils.installer_utils.installer_class.Installer.check_if_installed_already` [bad-argument-type]
   --> src/machineconfig/utils/installer.py:42:82
    |
@@ -428,89 +455,53 @@ ERROR Argument `object | str` is not assignable to parameter `exe_name` with typ
    |                                                                                ^^^^^^^^
    |
 ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:136:50
+   --> src/machineconfig/utils/installer.py:132:54
     |
-136 |     res_final["OS_SPECIFIC"] = InstallerDataFiles(os_specific_data)
-    |                                                  ^^^^^^^^^^^^^^^^^^
-    |
-ERROR Expected argument `version` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [unexpected-positional-argument]
-   --> src/machineconfig/utils/installer.py:136:51
-    |
-136 |     res_final["OS_SPECIFIC"] = InstallerDataFiles(os_specific_data)
-    |                                                   ^^^^^^^^^^^^^^^^
-    |
-ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:140:49
-    |
-140 |     res_final["OS_GENERIC"] = InstallerDataFiles(os_generic_data)
-    |                                                 ^^^^^^^^^^^^^^^^^
+132 |     res_final["CUSTOM_STANDARD"] = InstallerDataFiles({"version": "1", "installers": res_custom_installers})
+    |                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     |
 ERROR Expected argument `version` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [unexpected-positional-argument]
-   --> src/machineconfig/utils/installer.py:140:50
+   --> src/machineconfig/utils/installer.py:132:55
     |
-140 |     res_final["OS_GENERIC"] = InstallerDataFiles(os_generic_data)
-    |                                                  ^^^^^^^^^^^^^^^
-    |
-ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:144:54
-    |
-144 |     res_final["OS_SPECIFIC_DEV"] = InstallerDataFiles(os_specific_dev_data)
-    |                                                      ^^^^^^^^^^^^^^^^^^^^^^
-    |
-ERROR Expected argument `version` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [unexpected-positional-argument]
-   --> src/machineconfig/utils/installer.py:144:55
-    |
-144 |     res_final["OS_SPECIFIC_DEV"] = InstallerDataFiles(os_specific_dev_data)
-    |                                                       ^^^^^^^^^^^^^^^^^^^^
+132 |     res_final["CUSTOM_STANDARD"] = InstallerDataFiles({"version": "1", "installers": res_custom_installers})
+    |                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     |
 ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:148:53
+   --> src/machineconfig/utils/installer.py:143:49
     |
-148 |     res_final["OS_GENERIC_DEV"] = InstallerDataFiles(os_generic_dev_data)
-    |                                                     ^^^^^^^^^^^^^^^^^^^^^
-    |
-ERROR Expected argument `version` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [unexpected-positional-argument]
-   --> src/machineconfig/utils/installer.py:148:54
-    |
-148 |     res_final["OS_GENERIC_DEV"] = InstallerDataFiles(os_generic_dev_data)
-    |                                                      ^^^^^^^^^^^^^^^^^^^
-    |
-ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:175:45
-    |
-175 |     res_final["CUSTOM"] = InstallerDataFiles({"version": "1", "installers": res_custom_installers})
-    |                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    |
-ERROR Expected argument `version` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [unexpected-positional-argument]
-   --> src/machineconfig/utils/installer.py:175:46
-    |
-175 |     res_final["CUSTOM"] = InstallerDataFiles({"version": "1", "installers": res_custom_installers})
-    |                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    |
-ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
-   --> src/machineconfig/utils/installer.py:176:49
-    |
-176 |     res_final["CUSTOM_DEV"] = InstallerDataFiles({"version": "1", "installers": res_custom_dev_installers})
+143 |     res_final["CUSTOM_DEV"] = InstallerDataFiles({"version": "1", "installers": res_custom_dev_installers})
     |                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     |
 ERROR Expected argument `version` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [unexpected-positional-argument]
-   --> src/machineconfig/utils/installer.py:176:50
+   --> src/machineconfig/utils/installer.py:143:50
     |
-176 |     res_final["CUSTOM_DEV"] = InstallerDataFiles({"version": "1", "installers": res_custom_dev_installers})
+143 |     res_final["CUSTOM_DEV"] = InstallerDataFiles({"version": "1", "installers": res_custom_dev_installers})
     |                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     |
 ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
-  --> src/machineconfig/utils/installer_utils/installer_class.py:59:50
+  --> src/machineconfig/utils/installer_utils/installer_class.py:48:50
    |
-59 |         installer_data_files = InstallerDataFiles(config_data)
+48 |         installer_data_files = InstallerDataFiles(config_data)
    |                                                  ^^^^^^^^^^^^^
    |
 ERROR Expected argument `version` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [unexpected-positional-argument]
-  --> src/machineconfig/utils/installer_utils/installer_class.py:59:51
+  --> src/machineconfig/utils/installer_utils/installer_class.py:48:51
    |
-59 |         installer_data_files = InstallerDataFiles(config_data)
+48 |         installer_data_files = InstallerDataFiles(config_data)
    |                                                   ^^^^^^^^^^^
    |
+ERROR Could not find name `get_github_download_link` [unknown-name]
+   --> src/machineconfig/utils/installer_utils/installer_class.py:227:29
+    |
+227 |             download_link = get_github_download_link(
+    |                             ^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+ERROR Returned type `tuple[Literal['⚠️ NotInstalled'], Literal['None']]` is not assignable to declared return type `tuple[str, str, str]` [bad-return]
+   --> src/machineconfig/utils/installer_utils/installer_class.py:443:16
+    |
+443 |         return ("⚠️ NotInstalled", "None")
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
 ERROR No matching overload found for function `choose_from_options` [no-matching-overload]
   --> src/machineconfig/utils/options.py:96:43
    |
