@@ -861,6 +861,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         transfers: int = 10,
         root: Optional[str] = "myhome",
     ) -> "PathExtended":
+        _ = transfers
         to_del = []
         localpath = self.expanduser().absolute() if not self.exists() else self
         if zip:
@@ -873,21 +874,17 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             rp = localpath.get_remote_path(root=root, os_specific=os_specific, rel2home=rel2home, strict=strict)  # if rel2home else (P(root) / localpath if root is not None else localpath)
         else:
             rp = PathExtended(remotepath)
-        rclone_cmd = f"""rclone copyto '{localpath.as_posix()}' '{cloud}:{rp.as_posix()}' {"--progress" if verbose else ""} --transfers={transfers}"""
-        from machineconfig.utils.terminal import Terminal
 
-        if verbose:
-            print(f"{'⬆️' * 5} UPLOADING with `{rclone_cmd}`")
-        shell_to_use = "powershell" if sys.platform == "win32" else "bash"
-        res = Terminal(stdout=None if verbose else subprocess.PIPE).run(rclone_cmd, shell=shell_to_use).capture()
+        from rclone_python import rclone
+        rclone.copyto(in_path=localpath.as_posix(), out_path=f"{cloud}:{rp.as_posix()}", )
         _ = [item.delete(sure=True) for item in to_del]
-        assert res.is_successful(strict_err=False, strict_returcode=True), res.print(capture=False, desc="Cloud Storage Operation")
         if verbose:
             print(f"{'⬆️' * 5} UPLOAD COMPLETED.")
         if share:
             if verbose:
                 print("🔗 SHARING FILE")
             shell_to_use = "powershell" if sys.platform == "win32" else "bash"
+            from machineconfig.utils.terminal import Terminal
             res = Terminal().run(f"""rclone link '{cloud}:{rp.as_posix()}'""", shell=shell_to_use).capture()
             tmp = res.op2path(strict_err=False, strict_returncode=False)
             if tmp is None:
@@ -916,6 +913,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         overwrite: bool = True,
         merge: bool = False,
     ):
+        _ = verbose, transfers
         if remotepath is None:
             remotepath = self.get_remote_path(root=root, os_specific=os_specific, rel2home=rel2home, strict=strict)
             remotepath += ".zip" if unzip else ""
@@ -925,16 +923,11 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         localpath = self.expanduser().absolute()
         localpath += ".zip" if unzip else ""
         localpath += ".enc" if decrypt else ""
-        rclone_cmd = f"""rclone copyto '{cloud}:{remotepath.as_posix()}' '{localpath.as_posix()}' {"--progress" if verbose else ""} --transfers={transfers}"""
-        from machineconfig.utils.terminal import Terminal
-
-        if verbose:
-            print(f"{'⬇️' * 5} DOWNLOADING with `{rclone_cmd}`")
-        shell_to_use = "powershell" if sys.platform == "win32" else "bash"
-        res = Terminal(stdout=None if verbose else subprocess.PIPE).run(rclone_cmd, shell=shell_to_use)
-        success = res.is_successful(strict_err=False, strict_returcode=True)
-        if not success:
-            res.print(capture=False, desc="Cloud Storage Operation")
+        from rclone_python import rclone
+        try:
+            rclone.copyto(in_path=f"{cloud}:{remotepath.as_posix()}", out_path=localpath.as_posix(), )
+        except Exception as e:
+            print("to_cloud error", e)
             return None
         if decrypt:
             localpath = localpath.decrypt(key=key, pwd=pwd, inplace=True)
@@ -946,17 +939,23 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         tmp_path_obj = self.expanduser().absolute()
         tmp_path_obj.parent.mkdir(parents=True, exist_ok=True)
         tmp1, tmp2 = tmp_path_obj.as_posix(), self.get_remote_path(root=root, os_specific=os_specific).as_posix()
-        source, target = (tmp1, f"{cloud}:{tmp2 if rel2home else tmp1}") if sync_up else (f"{cloud}:{tmp2 if rel2home else tmp1}", tmp1)  # in bisync direction is irrelavent.
+        if sync_up:
+            source = tmp1
+            target = f"{cloud}:{tmp2 if rel2home else tmp1}"
+        else:
+            source = f"{cloud}:{tmp2 if rel2home else tmp1}"   # in bisync direction is irrelavent.
+            target = tmp1
+
         if not sync_down and not sync_up:
             _ = print(f"SYNCING 🔄️ {source} {'<>' * 7} {target}`") if verbose else None
             rclone_cmd = f"""rclone bisync '{source}' '{target}' --resync --remove-empty-dirs """
         else:
             print(f"SYNCING 🔄️ {source} {'>' * 15} {target}`")
             rclone_cmd = f"""rclone sync '{source}' '{target}' """
+
         rclone_cmd += f" --progress --transfers={transfers} --verbose"
         rclone_cmd += " --delete-during" if delete else ""
         from machineconfig.utils.terminal import Terminal
-
         if verbose:
             print(rclone_cmd)
         shell_to_use = "powershell" if sys.platform == "win32" else "bash"
@@ -965,4 +964,5 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         if not success:
             res.print(capture=False, desc="Cloud Storage Operation")
             return None
+
         return self
