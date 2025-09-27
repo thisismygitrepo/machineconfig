@@ -11,7 +11,7 @@
         },
         "arm64": {}
       },
-      "stripVersion": true,
+      
       "exeName": "bw"
     }
   ]

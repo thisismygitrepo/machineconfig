@@ -6,7 +6,7 @@ from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-config_dict: InstallerData = {"appName": "winget", "repoURL": "CUSTOM", "doc": "winget installer", "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}}, "stripVersion": False, "exeName": "winget"}
+config_dict: InstallerData = {"appName": "winget", "repoURL": "CUSTOM", "doc": "winget installer", "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}},  "exeName": "winget"}
 
 
 def is_winget_available() -> bool:

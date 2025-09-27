@@ -8,11 +8,8 @@ OPERATING_SYSTEMS: TypeAlias = Literal["windows", "linux", "macos"]
 
 class InstallerData(TypedDict):
     appName: str
-    repoURL: str
     doc: str
-    filenameTemplate: dict[CPU_ARCHITECTURES, dict[OPERATING_SYSTEMS, str]]
-    stripVersion: bool
-    exeName: str
+    repoURL: str
 
 
 class InstallerDataFiles(TypedDict):

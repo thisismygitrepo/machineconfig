@@ -5,7 +5,7 @@ from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-config_dict: InstallerData = {"appName": "Alacritty", "repoURL": "CUSTOM", "doc": "Terminal Console", "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}}, "stripVersion": False, "exeName": "alacritty"}
+config_dict: InstallerData = {"appName": "Alacritty", "repoURL": "CUSTOM", "doc": "Terminal Console", "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}},  "exeName": "alacritty"}
 
 
 def main(version: Optional[str]):

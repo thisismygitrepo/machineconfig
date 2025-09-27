@@ -20,7 +20,7 @@ config_dict: InstallerData = {
     "repoURL": "CUSTOM",
     "doc": """Docker Desktop for Ubuntu as per https://docs.docker.com/desktop/install/ubuntu/""",
     "filenameTemplate": {"amd64": {"windows": "gh_{version}_windows_amd64.zip", "linux": "gh_{version}_linux_amd64.tar.gz", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
-    "stripVersion": True,
+    
     "exeName": "docker",
 }
 

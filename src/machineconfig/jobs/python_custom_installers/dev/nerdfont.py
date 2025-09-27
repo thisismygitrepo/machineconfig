@@ -10,7 +10,7 @@ config_dict: InstallerData = {
     "repoURL": "CUSTOM",
     "doc": "lightweight containerization",
     "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
-    "stripVersion": False,
+    
     "exeName": "nerdfont",
 }
 

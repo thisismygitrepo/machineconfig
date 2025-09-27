@@ -11,7 +11,7 @@ config_dict: InstallerData = {
     "repoURL": "https://github.com/iamadamdev/bypass-paywalls-chrome",
     "doc": """Plugin for chrome to bypass paywalls""",
     "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
-    "stripVersion": True,
+    
     "exeName": "",
 }
 

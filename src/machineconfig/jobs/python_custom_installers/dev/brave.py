@@ -11,7 +11,7 @@ config_dict: InstallerData = {
     "repoURL": "CUSTOM",
     "doc": "Privacy-focused web browser with built-in ad blocking",
     "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}},
-    "stripVersion": False,
+    
     "exeName": "brave",
 }
 

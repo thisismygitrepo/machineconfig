@@ -4,600 +4,172 @@
     {
       "appName": "bat",
       "repoURL": "https://github.com/sharkdp/bat",
-      "doc": "🦇 A cat(1) clone with wings.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "bat-{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "bat-{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "bat-{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "linux": "bat-{version}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "bat-{version}-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "bat"
+      "doc": "\ud83e\udd87 A cat(1) clone with wings."
     },
     {
       "appName": "broot",
       "repoURL": "https://github.com/Canop/broot",
-      "doc": "🌳 broot is an fzf variant for folder structure and layered search.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "https://dystroy.org/broot/download/x86_64-pc-windows-gnu/broot.exe",
-          "linux": "https://dystroy.org/broot/download/x86_64-unknown-linux-gnu/broot",
-          "macos": "https://dystroy.org/broot/download/x86_64-apple-darwin/broot"
-        },
-        "arm64": {
-          "linux": "https://dystroy.org/broot/download/aarch64-unknown-linux-musl/broot",
-          "macos": "https://dystroy.org/broot/download/aarch64-apple-darwin/broot"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "broot"
+      "doc": "\ud83c\udf33 broot is an fzf variant for folder structure and layered search."
     },
     {
       "appName": "btm",
       "repoURL": "https://github.com/ClementTsang/bottom",
-      "doc": "📊 bottom is a cross-platform graphical process/system monitor with a customizable interface and a multitude of features.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "bottom_x86_64-pc-windows-msvc.zip",
-          "linux": "bottom_x86_64-unknown-linux-musl.tar.gz",
-          "macos": "bottom_x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "windows": "bottom_aarch64-pc-windows-msvc.tar.gz",
-          "linux": "bottom_aarch64-unknown-linux-musl.tar.gz",
-          "macos": "bottom_aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "btm"
+      "doc": "\ud83d\udcca bottom is a cross-platform graphical process/system monitor with a customizable interface and a multitude of features."
     },
     {
       "appName": "chatgpt",
       "repoURL": "https://github.com/j178/chatgpt",
-      "doc": "🤖 chagpt cli",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "chatgpt_Windows_x86_64.zip",
-          "linux": "chatgpt_Linux_x86_64.tar.gz",
-          "macos": "chatgpt_Darwin_x86_64.tar.gz"
-        },
-        "arm64": {
-          "windows": "chatgpt_Windows_arm64.zip",
-          "linux": "chatgpt_Linux_arm64.tar.gz",
-          "macos": "chatgpt_Darwin_arm64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "chatgpt"
+      "doc": "\ud83e\udd16 chagpt cli"
     },
     {
       "appName": "cloudflared",
       "repoURL": "https://github.com/cloudflare/cloudflared",
-      "doc": "☁️ Cloudflared installer. Should only be installed at main computer and servers of tunnels.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "cloudflared-windows-amd64.exe",
-          "linux": "cloudflared-linux-amd64",
-          "macos": "cloudflared-darwin-amd64.tgz"
-        },
-        "arm64": {
-          "linux": "cloudflared-linux-arm64",
-          "macos": "cloudflared-darwin-arm64.tgz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "cloudflared"
+      "doc": "\u2601\ufe0f Cloudflared installer. Should only be installed at main computer and servers of tunnels."
     },
     {
       "appName": "cpufetch",
       "repoURL": "https://github.com/Dr-Noob/cpufetch",
-      "doc": "💻 cpufetch is a small yet fancy CPU architecture fetching tool, like fastfetch but for CPUs.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "cpufetch_x86-64_windows.exe",
-          "linux": "cpufetch_x86-64_linux"
-        },
-        "arm64": {
-          "linux": "cpufetch_arm64_linux"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "cpufetch"
+      "doc": "\ud83d\udcbb cpufetch is a small yet fancy CPU architecture fetching tool, like fastfetch but for CPUs."
     },
     {
       "appName": "delta",
       "repoURL": "https://github.com/dandavison/delta",
-      "doc": "👀 A viewer for git and diff output",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "delta-{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "delta-{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "delta-{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "linux": "delta-{version}-aarch64-unknown-linux-gnu.tar.gz",
-          "macos": "delta-{version}-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "delta"
+      "doc": "\ud83d\udc40 A viewer for git and diff output"
     },
     {
       "appName": "dua",
       "repoURL": "https://github.com/Byron/dua-cli",
-      "doc": "💾 Rust-based cli tool to get a quick overview of disk usage.",
-      "filenameTemplate": {
-        "amd64": {
-          "linux": "dua-{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "dua-{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "linux": "dua-{version}-aarch64-unknown-linux-musl.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "dua"
+      "doc": "\ud83d\udcbe Rust-based cli tool to get a quick overview of disk usage."
     },
     {
       "appName": "fastfetch",
       "repoURL": "https://github.com/fastfetch-cli/fastfetch",
-      "doc": "💻 fastfetch is a system information tool written in C.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "fastfetch-windows-amd64.zip",
-          "linux": "fastfetch-linux-amd64.tar.gz",
-          "macos": "fastfetch-macos-amd64.tar.gz"
-        },
-        "arm64": {
-          "windows": "fastfetch-windows-aarch64.zip",
-          "linux": "fastfetch-linux-aarch64.tar.gz",
-          "macos": "fastfetch-macos-aarch64.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "fastfetch"
+      "doc": "\ud83d\udcbb fastfetch is a system information tool written in C."
     },
     {
       "appName": "fd",
       "repoURL": "https://github.com/sharkdp/fd",
-      "doc": "🔍 fd is a simple, fast and user-friendly alternative to find.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "fd-v{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "fd-v{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "fd-v{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "windows": "fd-v{version}-aarch64-pc-windows-msvc.zip",
-          "linux": "fd-v{version}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "fd-v{version}-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "fd"
+      "doc": "\ud83d\udd0d fd is a simple, fast and user-friendly alternative to find."
     },
     {
       "appName": "fzf",
       "repoURL": "https://github.com/junegunn/fzf",
-      "doc": "🔍 a general-purpose cli fuzzy finder.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "fzf-{version}-windows_amd64.zip",
-          "linux": "fzf-{version}-linux_amd64.tar.gz",
-          "macos": "fzf-{version}-darwin_amd64.tar.gz"
-        },
-        "arm64": {
-          "windows": "fzf-{version}-windows_arm64.zip",
-          "linux": "fzf-{version}-linux_arm64.tar.gz",
-          "macos": "fzf-{version}-darwin_arm64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "fzf"
+      "doc": "\ud83d\udd0d a general-purpose cli fuzzy finder."
     },
     {
       "appName": "gemini-cli",
       "repoURL": "npm install -g @google/gemini-cli",
-      "doc": "🤖 Gemini CLI is a command line interface for Google Gemini AI.",
-      "filenameTemplate": {
-        "amd64": {},
-        "arm64": {}
-      },
-      "stripVersion": false,
-      "exeName": "gemini"
+      "doc": "\ud83e\udd16 Gemini CLI is a command line interface for Google Gemini AI."
     },
     {
       "appName": "gitui",
       "repoURL": "https://github.com/gitui-org/gitui",
-      "doc": "🐙 gitui is a terminal ui for git written in rust.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "gitui-win.tar.gz",
-          "linux": "gitui-linux-x86_64.tar.gz",
-          "macos": "gitui-mac-x86.tar.gz"
-        },
-        "arm64": {
-          "windows": "gitui-win-arm64.tar.gz",
-          "linux": "gitui-linux-aarch64.tar.gz",
-          "macos": "gitui-mac.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "gitui"
+      "doc": "\ud83d\udc19 gitui is a terminal ui for git written in rust."
     },
     {
       "appName": "glow",
       "repoURL": "https://github.com/charmbracelet/glow/",
-      "doc": "✨ Render markdown on the CLI, with pizzazz!",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "glow_{version}_Windows_x86_64.zip",
-          "linux": "glow_{version}_Linux_x86_64.tar.gz",
-          "macos": "glow_{version}_Darwin_x86_64.tar.gz"
-        },
-        "arm64": {
-          "linux": "glow_{version}_Linux_arm64.tar.gz",
-          "macos": "glow_{version}_Darwin_arm64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "glow"
+      "doc": "\u2728 Render markdown on the CLI, with pizzazz!"
     },
     {
       "appName": "gum",
       "repoURL": "https://github.com/charmbracelet/gum",
-      "doc": "🎯 Prompt user to select from options, written in golang.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "gum_{version}_Windows_x86_64.zip",
-          "linux": "gum_{version}_Linux_x86_64.tar.gz",
-          "macos": "gum_{version}_Darwin_x86_64.tar.gz"
-        },
-        "arm64": {
-          "linux": "gum_{version}_Linux_arm64.tar.gz",
-          "macos": "gum_{version}_Darwin_arm64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "gum"
+      "doc": "\ud83c\udfaf Prompt user to select from options, written in golang."
     },
     {
       "appName": "lf",
       "repoURL": "https://github.com/gokcehan/lf",
-      "doc": "📂 lf is a terminal file manager written in go.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "lf-windows-amd64.zip",
-          "linux": "lf-linux-amd64.tar.gz",
-          "macos": "lf-darwin-amd64.tar.gz"
-        },
-        "arm64": {
-          "linux": "lf-linux-arm64.tar.gz",
-          "macos": "lf-darwin-arm64.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "lf"
+      "doc": "\ud83d\udcc2 lf is a terminal file manager written in go."
     },
     {
       "appName": "lsd",
       "repoURL": "https://github.com/lsd-rs/lsd",
-      "doc": "📂 A modern replacement for ls written in Rust.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "lsd-v{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "lsd-v{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "lsd-v{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "linux": "lsd-v{version}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "lsd-v{version}-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "lsd"
+      "doc": "\ud83d\udcc2 A modern replacement for ls written in Rust."
     },
     {
       "appName": "m365",
       "repoURL": "npm install -g @pnp/cli-microsoft365",
-      "doc": "☁️ CLI for Microsoft 365",
-      "filenameTemplate": {
-        "amd64": {},
-        "arm64": {}
-      },
-      "stripVersion": false,
-      "exeName": "m365"
+      "doc": "\u2601\ufe0f CLI for Microsoft 365"
     },
     {
       "appName": "mcfly",
       "repoURL": "https://github.com/cantino/mcfly",
-      "doc": "🚀 Fly through your shell history. Great Scott!",
-      "filenameTemplate": {
-        "amd64": {
-          "linux": "mcfly-v{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "mcfly-v{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "linux": "mcfly-v{version}-aarch64-unknown-linux-musl.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "mcfly"
+      "doc": "\ud83d\ude80 Fly through your shell history. Great Scott!"
     },
     {
       "appName": "mods",
       "repoURL": "https://github.com/charmbracelet/mods/",
-      "doc": "🤖 AI for the command line, built for pipelines",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "mods_{version}_Windows_x86_64.zip",
-          "linux": "mods_{version}_Linux_x86_64.tar.gz",
-          "macos": "mods_{version}_Darwin_x86_64.tar.gz"
-        },
-        "arm64": {
-          "windows": "mods_{version}_Windows_arm64.zip",
-          "linux": "mods_{version}_Linux_arm64.tar.gz",
-          "macos": "mods_{version}_Darwin_arm64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "mods"
+      "doc": "\ud83e\udd16 AI for the command line, built for pipelines"
     },
     {
       "appName": "mprocs",
       "repoURL": "https://github.com/pvolok/mprocs",
-      "doc": "🖥️ Windows/Linux/macOS poorman's zellij",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "mprocs-{version}-windows-x86_64.zip",
-          "linux": "mprocs-{version}-linux-x86_64-musl.tar.gz",
-          "macos": "mprocs-{version}-darwin-x86_64.tar.gz"
-        },
-        "arm64": {
-          "linux": "mprocs-{version}-linux-aarch64-musl.tar.gz",
-          "macos": "mprocs-{version}-darwin-aarch64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "mprocs"
+      "doc": "\ud83d\udda5\ufe0f Windows/Linux/macOS poorman's zellij"
     },
     {
       "appName": "ouch",
       "repoURL": "https://github.com/ouch-org/ouch",
-      "doc": "📦 A cli for extracting and creating archives in unified way.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "ouch-x86_64-pc-windows-msvc.zip",
-          "linux": "ouch-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "ouch-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "windows": "ouch-aarch64-pc-windows-msvc.zip",
-          "linux": "ouch-aarch64-unknown-linux-musl.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "ouch"
+      "doc": "\ud83d\udce6 A cli for extracting and creating archives in unified way."
     },
     {
       "appName": "procs",
       "repoURL": "https://github.com/dalance/procs/",
-      "doc": "📊 procs is a modern replacement for ps written in Rust.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "procs-{version}-x86_64-windows.zip",
-          "linux": "procs-{version}-x86_64-linux.zip",
-          "macos": "procs-{version}-x86_64-mac.zip"
-        },
-        "arm64": {
-          "linux": "procs-{version}-aarch64-linux.zip",
-          "macos": "procs-{version}-aarch64-mac.zip"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "procs"
+      "doc": "\ud83d\udcca procs is a modern replacement for ps written in Rust."
     },
     {
       "appName": "rclone",
       "repoURL": "https://github.com/rclone/rclone",
-      "doc": "☁️ cli to sync to cloud storage providers.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "rclone-v{version}-windows-amd64.zip",
-          "linux": "rclone-v{version}-linux-amd64.zip",
-          "macos": "rclone-v{version}-osx-amd64.zip"
-        },
-        "arm64": {
-          "windows": "rclone-v{version}-windows-arm64.zip",
-          "linux": "rclone-v{version}-linux-arm64.zip",
-          "macos": "rclone-v{version}-osx-arm64.zip"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "rclone"
+      "doc": "\u2601\ufe0f cli to sync to cloud storage providers."
     },
     {
       "appName": "rg",
       "repoURL": "https://github.com/BurntSushi/ripgrep",
-      "doc": "🔍 recursively searches directories for a regex pattern while respecting your gitignore rules",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "ripgrep-{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "ripgrep-{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "ripgrep-{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "linux": "ripgrep-{version}-aarch64-unknown-linux-gnu.tar.gz",
-          "macos": "ripgrep-{version}-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "rg"
+      "doc": "\ud83d\udd0d recursively searches directories for a regex pattern while respecting your gitignore rules"
     },
     {
       "appName": "rga",
       "repoURL": "https://github.com/phiresky/ripgrep-all",
-      "doc": "🔍 ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz, etc.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "ripgrep_all-v{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "ripgrep_all-v{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "ripgrep_all-v{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {}
-      },
-      "stripVersion": true,
-      "exeName": "rga"
+      "doc": "\ud83d\udd0d ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz, etc."
     },
     {
       "appName": "starship",
       "repoURL": "https://github.com/starship/starship",
-      "doc": "⭐️ The minimal, blazing-fast, and infinitely customizable prompt for any shell!",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "starship-x86_64-pc-windows-msvc.zip",
-          "linux": "starship-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "starship-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "windows": "starship-aarch64-pc-windows-msvc.zip",
-          "linux": "starship-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "starship-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "starship"
+      "doc": "\u2b50\ufe0f The minimal, blazing-fast, and infinitely customizable prompt for any shell!"
     },
     {
       "appName": "tere",
       "repoURL": "https://github.com/mgunyho/tere",
-      "doc": "📂 Tere is a terminal file explorer written in Rust. No more ls + cd",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "tere-{version}-x86_64-pc-windows-gnu.zip",
-          "linux": "tere-{version}-x86_64-unknown-linux-gnu.zip"
-        },
-        "arm64": {
-          "linux": "tere-{version}-aarch64-unknown-linux-gnu.zip"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "tere"
+      "doc": "\ud83d\udcc2 Tere is a terminal file explorer written in Rust. No more ls + cd"
     },
     {
       "appName": "topgrade",
       "repoURL": "https://github.com/topgrade-rs/topgrade",
-      "doc": "⬆️ Keeping your system up to date usually involves invoking multiple package managers.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "topgrade-v{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "topgrade-v{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "topgrade-v{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "linux": "topgrade-v{version}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "topgrade-v{version}-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "topgrade"
+      "doc": "\u2b06\ufe0f Keeping your system up to date usually involves invoking multiple package managers."
     },
     {
       "appName": "ttyd",
       "repoURL": "https://github.com/tsl0922/ttyd",
-      "doc": "🌐 ttyd shares your terminal on the web.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "ttyd.win32.exe",
-          "linux": "ttyd.x86_64",
-          "macos": "ttyd.x86_64"
-        },
-        "arm64": {
-          "linux": "ttyd.aarch64",
-          "macos": "ttyd.aarch64"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "ttyd"
+      "doc": "\ud83c\udf10 ttyd shares your terminal on the web."
     },
     {
       "appName": "viu",
       "repoURL": "https://github.com/atanunq/viu",
-      "doc": "🖼️ A cli image viewer for the terminal (like chafa but in Rust)",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "viu-x86_64-pc-windows-msvc.exe",
-          "linux": "viu-x86_64-unknown-linux-musl",
-          "macos": "viu-x86_64-apple-darwin"
-        },
-        "arm64": {
-          "linux": "viu-aarch64-unknown-linux-musl",
-          "macos": "viu-aarch64-apple-darwin"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "viu"
+      "doc": "\ud83d\uddbc\ufe0f A cli image viewer for the terminal (like chafa but in Rust)"
     },
     {
       "appName": "watchexec",
       "repoURL": "https://github.com/watchexec/watchexec",
-      "doc": "👀 Executes commands in response to file modifications.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "watchexec-{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "watchexec-{version}-x86_64-unknown-linux-musl.tar.xz",
-          "macos": "watchexec-{version}-x86_64-apple-darwin.tar.xz"
-        },
-        "arm64": {
-          "linux": "watchexec-{version}-aarch64-unknown-linux-musl.tar.xz",
-          "macos": "watchexec-{version}-aarch64-apple-darwin.tar.xz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "watchexec"
+      "doc": "\ud83d\udc40 Executes commands in response to file modifications."
     },
     {
       "appName": "yazi",
       "repoURL": "https://github.com/sxyazi/yazi",
-      "doc": "⚡️ Blazing Fast Terminal File Manager.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "yazi-x86_64-pc-windows-msvc.zip",
-          "linux": "yazi-x86_64-unknown-linux-musl.zip",
-          "macos": "yazi-x86_64-apple-darwin.zip"
-        },
-        "arm64": {
-          "windows": "yazi-aarch64-pc-windows-msvc.zip",
-          "linux": "yazi-aarch64-unknown-linux-musl.zip",
-          "macos": "yazi-aarch64-apple-darwin.zip"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "yazi"
+      "doc": "\u26a1\ufe0f Blazing Fast Terminal File Manager."
     },
     {
       "appName": "zoxide",
       "repoURL": "https://github.com/ajeetdsouza/zoxide",
-      "doc": "🚀 A cd command that learns - easily navigate directories from the command-line",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "zoxide-{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "zoxide-{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "zoxide-{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "windows": "zoxide-{version}-aarch64-pc-windows-msvc.zip",
-          "linux": "zoxide-{version}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "zoxide-{version}-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "zoxide"
+      "doc": "\ud83d\ude80 A cd command that learns - easily navigate directories from the command-line"
     }
   ]
 }

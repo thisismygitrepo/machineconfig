@@ -12,7 +12,7 @@ config_dict: InstallerData = {
     "repoURL": "CUSTOM",
     "doc": "A text expander.",
     "filenameTemplate": {"amd64": {"windows": "Espanso-Win-Installer-x86_64.exe", "linux": "", "macos": "Espanso.dmg"}, "arm64": {"windows": "", "linux": "", "macos": ""}},
-    "stripVersion": False,
+    
     "exeName": "espanso",
 }
 

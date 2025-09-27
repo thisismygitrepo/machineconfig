@@ -4,822 +4,242 @@
     {
       "appName": "mermaid-cli",
       "repoURL": "npm install -g @mermaid-js/mermaid-cli",
-      "doc": "📊 Generate diagrams and flowcharts from text in a similar manner as markdown",
-      "filenameTemplate": {
-        "amd64": {},
-        "arm64": {}
-      },
-      "stripVersion": false,
-      "exeName": "mmdc"
+      "doc": "\ud83d\udcca Generate diagrams and flowcharts from text in a similar manner as markdown"
     },
     {
       "appName": "html2markdown",
       "repoURL": "https://github.com/JohannesKaufmann/html-to-markdown",
-      "doc": "📜 Convert HTML to Markdown (no LLM, very fast, very cheap)",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "html-to-markdown_{version}_Windows_x86_64.zip",
-          "linux": "html-to-markdown_{version}_Linux_x86_64.tar.gz",
-          "macos": "html-to-markdown_{version}_Darwin_x86_64.tar.gz"
-        },
-        "arm64": {
-          "windows": "html-to-markdown_{version}_Windows_arm64.zip",
-          "linux": "html-to-markdown_{version}_Linux_arm64.tar.gz",
-          "macos": "html-to-markdown_{version}_Darwin_arm64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "html2markdown"
+      "doc": "\ud83d\udcdc Convert HTML to Markdown (no LLM, very fast, very cheap)"
     },
     {
       "appName": "xcrawl3r",
       "repoURL": "https://github.com/hueristiq/xcrawl3r",
-      "doc": "🕷️ A command line tool to crawl and scrape websites",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "xcrawl3r_{version}_windows_amd64.zip",
-          "linux": "xcrawl3r_{version}_linux_amd64.tar.gz",
-          "macos": "xcrawl3r_{version}_macOS_amd64.tar.gz"
-        },
-        "arm64": {
-          "windows": "xcrawl3r_{version}_windows_arm64.zip",
-          "linux": "xcrawl3r_{version}_linux_arm64.tar.gz",
-          "macos": "xcrawl3r_{version}_macOS_arm64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "xcrawl3r"
+      "doc": "\ud83d\udd77\ufe0f A command line tool to crawl and scrape websites"
     },
     {
       "appName": "obsidian",
       "repoURL": "https://github.com/obsidianmd/obsidian-releases",
-      "doc": "🧠 Obsidian is a powerful knowledge base that works on top of a local folder of plain text Markdown files.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "Obsidian.{version}.exe",
-          "linux": "obsidian_{version}_amd64.deb",
-          "macos": "Obsidian-{version}.dmg"
-        },
-        "arm64": {
-          "windows": "Obsidian.{version}.arm64.exe",
-          "linux": "obsidian_{version}_arm64.deb",
-          "macos": "Obsidian-{version}-arm64.dmg"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "obsidian"
+      "doc": "\ud83e\udde0 Obsidian is a powerful knowledge base that works on top of a local folder of plain text Markdown files."
     },
     {
       "appName": "marp",
       "repoURL": "npm install -g @marp-team/marp-cli",
-      "doc": "🎯 Markdown presentation writer",
-      "filenameTemplate": {
-        "amd64": {},
-        "arm64": {}
-      },
-      "stripVersion": false,
-      "exeName": "marp"
+      "doc": "\ud83c\udfaf Markdown presentation writer"
     },
     {
       "appName": "presenterm",
       "repoURL": "https://github.com/mfontanini/presenterm",
-      "doc": "🎭 present from temrinal",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "presenterm-{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "presenterm-{version}-x86_64-unknown-linux-gnu.tar.gz",
-          "macos": "presenterm-{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "linux": "presenterm-{version}-aarch64-unknown-linux-gnu.tar.gz",
-          "macos": "presenterm-{version}-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "presenterm"
+      "doc": "\ud83c\udfad present from temrinal"
     },
     {
       "appName": "pandoc",
       "repoURL": "https://github.com/jgm/pandoc",
-      "doc": "📝 The universal markup converter",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "pandoc-{version}-windows-x86_64.zip",
-          "linux": "pandoc-{version}-linux-amd64.tar.gz",
-          "macos": "pandoc-{version}-x86_64-macOS.zip"
-        },
-        "arm64": {
-          "linux": "pandoc-{version}-linux-arm64.tar.gz",
-          "macos": "pandoc-{version}-arm64-macOS.zip"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "pandoc"
+      "doc": "\ud83d\udcdd The universal markup converter"
     },
     {
       "appName": "devcontainer",
       "repoURL": "npm install -g @devcontainers/cli",
-      "doc": "🐋 Devcontainer is a command-line tool to manage development containers",
-      "filenameTemplate": {
-        "amd64": {},
-        "arm64": {}
-      },
-      "stripVersion": false,
-      "exeName": "devcontainer"
+      "doc": "\ud83d\udc0b Devcontainer is a command-line tool to manage development containers"
     },
     {
       "appName": "bitwarden",
       "repoURL": "npm install -g @bitwarden/cli",
-      "doc": "🔐 bw is a password manager.",
-      "filenameTemplate": {
-        "amd64": {},
-        "arm64": {}
-      },
-      "stripVersion": false,
-      "exeName": "bw"
+      "doc": "\ud83d\udd10 bw is a password manager."
     },
     {
       "appName": "OBS Background removal",
       "repoURL": "https://github.com/royshil/obs-backgroundremoval",
-      "doc": "🎥 A plugin for OBS Studio to remove background from a video",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "obs-backgroundremoval-{version}-windows-x64.zip",
-          "linux": "obs-backgroundremoval-{version}-x86_64-linux-gnu.deb",
-          "macos": "obs-backgroundremoval-{version}-macos-universal.pkg"
-        },
-        "arm64": {
-          "macos": "obs-backgroundremoval-{version}-macos-universal.pkg"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "obs-backgroundremoval"
+      "doc": "\ud83c\udfa5 A plugin for OBS Studio to remove background from a video"
     },
     {
       "appName": "rustdesk",
       "repoURL": "https://github.com/rustdesk/rustdesk",
-      "doc": "🖥️ Yet another remote desktop software, written in Rust. Works out of the box, no configuration required",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "rustdesk-{version}-x86_64.exe",
-          "linux": "rustdesk-{version}-x86_64.deb",
-          "macos": "rustdesk-{version}-x86_64.dmg"
-        },
-        "arm64": {
-          "windows": "rustdesk-{version}-aarch64.exe",
-          "linux": "rustdesk-{version}-aarch64.deb",
-          "macos": "rustdesk-{version}-aarch64.dmg"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "rustdesk"
+      "doc": "\ud83d\udda5\ufe0f Yet another remote desktop software, written in Rust. Works out of the box, no configuration required"
     },
     {
       "appName": "evcxr",
       "repoURL": "https://github.com/evcxr/evcxr",
-      "doc": "🧪 A Jupyter Kernel for Rust",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "evcxr-{version}_x86_64-pc-windows-msvc.zip",
-          "linux": "evcxr-{version}_x86_64-unknown-linux-gnu.tar.gz",
-          "macos": "evcxr-{version}_x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "windows": "evcxr-{version}_aarch64-pc-windows-msvc.zip",
-          "linux": "evcxr-{version}_aarch64-unknown-linux-gnu.tar.gz",
-          "macos": "evcxr-{version}_aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "evcxr"
+      "doc": "\ud83e\uddea A Jupyter Kernel for Rust"
     },
     {
       "appName": "forward-cli",
       "repoURL": "https://github.com/axetroy/forward-cli",
-      "doc": "🔄 Reverse Proxy port forwarding cli tool",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "forward_windows_amd64.tar.gz",
-          "linux": "forward_linux_amd64.tar.gz",
-          "macos": "forward_darwin_amd64.tar.gz"
-        },
-        "arm64": {
-          "windows": "forward_windows_arm64.tar.gz",
-          "linux": "forward_linux_arm64.tar.gz",
-          "macos": "forward_darwin_arm64.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "forward"
+      "doc": "\ud83d\udd04 Reverse Proxy port forwarding cli tool"
     },
     {
       "appName": "bandwhich",
       "repoURL": "https://github.com/imsnif/bandwhich",
-      "doc": "📊 monitor network usage from cli",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "bandwhich-{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "bandwhich-{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "bandwhich-{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "linux": "bandwhich-{version}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "bandwhich-{version}-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "bandwhich"
+      "doc": "\ud83d\udcca monitor network usage from cli"
     },
     {
       "appName": "ipinfo",
       "repoURL": "https://github.com/ipinfo/cli",
-      "doc": "🌐 cli to get info of ips",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "ipinfo_{version}_windows_amd64.zip",
-          "linux": "ipinfo_{version}_linux_amd64.deb",
-          "macos": "ipinfo_{version}_darwin_amd64.tar.gz"
-        },
-        "arm64": {
-          "windows": "ipinfo_{version}_windows_arm64.zip",
-          "linux": "ipinfo_{version}_linux_arm64.deb",
-          "macos": "ipinfo_{version}_darwin_arm64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "ipinfo"
+      "doc": "\ud83c\udf10 cli to get info of ips"
     },
     {
       "appName": "dust",
       "repoURL": "https://github.com/bootandy/dust",
-      "doc": "📊 A more intuitive version of du in rust. It is a dua alternative.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "dust-{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "dust-{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "dust-{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "linux": "dust-{version}-aarch64-unknown-linux-musl.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "dust"
+      "doc": "\ud83d\udcca A more intuitive version of du in rust. It is a dua alternative."
     },
     {
       "appName": "ots",
       "repoURL": "https://github.com/Luzifer/ots",
-      "doc": "🔒 A command line tool for generating and verifying one-time secrets.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "ots_windows_amd64.zip",
-          "linux": "ots_linux_amd64.tgz",
-          "macos": "ots_darwin_amd64.zip"
-        },
-        "arm64": {
-          "linux": "ots_linux_arm64.tgz",
-          "macos": "ots_darwin_arm64.zip"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "ots"
+      "doc": "\ud83d\udd12 A command line tool for generating and verifying one-time secrets."
     },
     {
       "appName": "ffsend",
       "repoURL": "https://github.com/timvisee/ffsend",
-      "doc": "📤 Send files in secure encrypted way over the internet.",
-      "filenameTemplate": {
-        "amd64": {
-          "linux": "ffsend-{version}-linux-x64"
-        },
-        "arm64": {}
-      },
-      "stripVersion": false,
-      "exeName": "ffsend"
+      "doc": "\ud83d\udce4 Send files in secure encrypted way over the internet."
     },
     {
       "appName": "portal",
       "repoURL": "https://github.com/SpatiumPortae/portal",
-      "doc": "🔄 A terminal-based file transfer between two computers.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "portal_{version}_Windows_x86_64.zip",
-          "linux": "portal_{version}_Linux_x86_64.tar.gz",
-          "macos": "portal_{version}_macOS_x86_64.tar.gz"
-        },
-        "arm64": {
-          "windows": "portal_{version}_Windows_arm64.zip",
-          "linux": "portal_{version}_Linux_arm64.tar.gz",
-          "macos": "portal_{version}_macOS_arm64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "portal"
+      "doc": "\ud83d\udd04 A terminal-based file transfer between two computers."
     },
     {
       "appName": "qrcp",
       "repoURL": "https://github.com/claudiodangelis/qrcp",
-      "doc": "� Transfer files over WiFi from your computer to mobile device by scanning a QR code without leaving the terminal.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "qrcp_{version}_windows_amd64.zip",
-          "linux": "qrcp_{version}_linux_amd64.tar.gz",
-          "macos": "qrcp_{version}_darwin_amd64.tar.gz"
-        },
-        "arm64": {
-          "windows": "qrcp_{version}_windows_arm64.zip",
-          "linux": "qrcp_{version}_linux_arm64.tar.gz",
-          "macos": "qrcp_{version}_darwin_arm64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "qrcp"
+      "doc": "\ufffd Transfer files over WiFi from your computer to mobile device by scanning a QR code without leaving the terminal."
     },
     {
       "appName": "qrscan",
       "repoURL": "https://github.com/sayanarijit/qrscan",
-      "doc": "📷 qr code scanner",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "qrscan-{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "qrscan-{version}-x86_64-unknown-linux-gnu.tar.gz",
-          "macos": "qrscan-{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {}
-      },
-      "stripVersion": true,
-      "exeName": "qrscan"
+      "doc": "\ud83d\udcf7 qr code scanner"
     },
     {
       "appName": "termscp",
       "repoURL": "https://github.com/veeso/termscp",
-      "doc": "📂 A TUI like winscp",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "termscp-v{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "termscp-v{version}-x86_64-unknown-linux-gnu.tar.gz",
-          "macos": "termscp-v{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "linux": "termscp-{version}-aarch64-unknown-linux-gnu.tar.gz",
-          "macos": "termscp-v{version}-arm64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "termscp"
+      "doc": "\ud83d\udcc2 A TUI like winscp"
     },
     {
       "appName": "qr",
       "repoURL": "pip install qrcode",
-      "doc": "🔲 qr code generator. String to qr code.",
-      "filenameTemplate": {
-        "amd64": {},
-        "arm64": {}
-      },
-      "stripVersion": false,
-      "exeName": "qr"
+      "doc": "\ud83d\udd32 qr code generator. String to qr code."
     },
     {
       "appName": "filebrowser",
       "repoURL": "https://github.com/filebrowser/filebrowser",
-      "doc": "🗂️ filebrowser provides a file managing interface within a specified directory",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "windows-amd64-filebrowser.zip",
-          "linux": "linux-amd64-filebrowser.tar.gz",
-          "macos": "darwin-amd64-filebrowser.tar.gz"
-        },
-        "arm64": {
-          "windows": "windows-arm64-filebrowser.zip",
-          "linux": "linux-arm64-filebrowser.tar.gz",
-          "macos": "darwin-arm64-filebrowser.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "filebrowser"
+      "doc": "\ud83d\uddc2\ufe0f filebrowser provides a file managing interface within a specified directory"
     },
     {
       "appName": "cloudreve",
       "repoURL": "https://github.com/cloudreve/Cloudreve",
-      "doc": "☁️ Self-hosted file management system with muilt-cloud support.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "cloudreve_{version}_windows_amd64.zip",
-          "linux": "cloudreve_{version}_linux_amd64.tar.gz",
-          "macos": "cloudreve_{version}_darwin_amd64.tar.gz"
-        },
-        "arm64": {
-          "windows": "cloudreve_{version}_windows_arm64.zip",
-          "linux": "cloudreve_{version}_linux_arm64.tar.gz",
-          "macos": "cloudreve_{version}_darwin_arm64.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "cloudreve"
+      "doc": "\u2601\ufe0f Self-hosted file management system with muilt-cloud support."
     },
     {
       "appName": "restic",
       "repoURL": "https://github.com/restic/restic",
-      "doc": "💾 backup program that is fast, efficient and secure. It supports the three major operating systems",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "restic_{version}_windows_amd64.zip",
-          "linux": "restic_{version}_linux_amd64.bz2",
-          "macos": "restic_{version}_darwin_amd64.bz2"
-        },
-        "arm64": {
-          "linux": "restic_{version}_linux_arm64.bz2",
-          "macos": "restic_{version}_darwin_arm64.bz2"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "restic"
+      "doc": "\ud83d\udcbe backup program that is fast, efficient and secure. It supports the three major operating systems"
     },
     {
       "appName": "syncthing",
       "repoURL": "https://github.com/syncthing/syncthing",
-      "doc": "🔄 Syncthing is a continuous file synchronization program. It synchronizes files between two or more computers.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "syncthing-windows-amd64-{version}.zip",
-          "linux": "syncthing-linux-amd64-{version}.tar.gz",
-          "macos": "syncthing-macos-amd64-{version}.zip"
-        },
-        "arm64": {
-          "windows": "syncthing-windows-arm64-{version}.zip",
-          "linux": "syncthing-linux-arm64-{version}.tar.gz",
-          "macos": "syncthing-macos-arm64-{version}.zip"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "syncthing"
+      "doc": "\ud83d\udd04 Syncthing is a continuous file synchronization program. It synchronizes files between two or more computers."
     },
     {
       "appName": "istio",
       "repoURL": "https://github.com/istio/istio",
-      "doc": "🌐 Istio is an open source service mesh that layers transparently onto existing distributed applications",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "istioctl-{version}-win-amd64.zip",
-          "linux": "istio-{version}-linux-amd64.tar.gz",
-          "macos": "istio-{version}-osx-amd64.tar.gz"
-        },
-        "arm64": {
-          "linux": "istio-{version}-linux-arm64.tar.gz",
-          "macos": "istio-{version}-osx-arm64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "istioctl"
+      "doc": "\ud83c\udf10 Istio is an open source service mesh that layers transparently onto existing distributed applications"
     },
     {
       "appName": "openpomodoro-cli",
       "repoURL": "https://github.com/open-pomodoro/openpomodoro-cli",
-      "doc": "⏲️ Pomodoro timer for the command-line",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "openpomodoro-cli_{version}_windows_amd64.tar.gz",
-          "linux": "openpomodoro-cli_{version}_linux_amd64.tar.gz",
-          "macos": "openpomodoro-cli_{version}_darwin_amd64.tar.gz"
-        },
-        "arm64": {
-          "linux": "openpomodoro-cli_{version}_linux_arm64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "pomodoro"
+      "doc": "\u23f2\ufe0f Pomodoro timer for the command-line"
     },
     {
       "appName": "rust-analyzer",
       "repoURL": "https://github.com/rust-lang/rust-analyzer",
-      "doc": "🦀 Rust Language Server (LSP)",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "rust-analyzer-x86_64-pc-windows-msvc.zip",
-          "linux": "rust-analyzer-x86_64-unknown-linux-gnu.gz",
-          "macos": "rust-analyzer-x86_64-apple-darwin.gz"
-        },
-        "arm64": {
-          "windows": "rust-analyzer-aarch64-pc-windows-msvc.zip",
-          "linux": "rust-analyzer-aarch64-unknown-linux-gnu.gz",
-          "macos": "rust-analyzer-aarch64-apple-darwin.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "rust-analyzer"
+      "doc": "\ud83e\udd80 Rust Language Server (LSP)"
     },
     {
       "appName": "kondo",
       "repoURL": "https://github.com/tbillington/kondo",
-      "doc": "🧹 cleans projects from litter files.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "kondo-x86_64-pc-windows-msvc.zip",
-          "linux": "kondo-x86_64-unknown-linux-gnu.tar.gz",
-          "macos": "kondo-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "macos": "kondo-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "kondo"
+      "doc": "\ud83e\uddf9 cleans projects from litter files."
     },
     {
       "appName": "tokei",
       "repoURL": "https://github.com/XAMPPRocky/tokei",
-      "doc": "📊 Counts the number of lines of code, comments, and blanks in a project.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "tokei-x86_64-pc-windows-msvc.exe",
-          "linux": "tokei-x86_64-unknown-linux-gnu.tar.gz",
-          "macos": "tokei-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "linux": "tokei-aarch64-unknown-linux-gnu.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "tokei"
+      "doc": "\ud83d\udcca Counts the number of lines of code, comments, and blanks in a project."
     },
     {
       "appName": "lazygit",
       "repoURL": "https://github.com/jesseduffield/lazygit",
-      "doc": "🐙 A simple terminal UI for git commands",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "lazygit_{version}_Windows_x86_64.zip",
-          "linux": "lazygit_{version}_Linux_x86_64.tar.gz",
-          "macos": "lazygit_{version}_Darwin_x86_64.tar.gz"
-        },
-        "arm64": {
-          "windows": "lazygit_{version}_Windows_arm64.zip",
-          "linux": "lazygit_{version}_Linux_arm64.tar.gz",
-          "macos": "lazygit_{version}_Darwin_arm64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "lazygit"
+      "doc": "\ud83d\udc19 A simple terminal UI for git commands"
     },
     {
       "appName": "lazydocker",
       "repoURL": "https://github.com/jesseduffield/lazydocker/",
-      "doc": "🐋 A simple terminal UI for both docker and docker-compose",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "lazydocker_{version}_Windows_x86_64.zip",
-          "linux": "lazydocker_{version}_Linux_x86_64.tar.gz",
-          "macos": "lazydocker_{version}_Darwin_x86_64.tar.gz"
-        },
-        "arm64": {
-          "windows": "lazydocker_{version}_Windows_arm64.zip",
-          "linux": "lazydocker_{version}_Linux_arm64.tar.gz",
-          "macos": "lazydocker_{version}_Darwin_arm64.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "lazydocker"
+      "doc": "\ud83d\udc0b A simple terminal UI for both docker and docker-compose"
     },
     {
       "appName": "onefetch",
       "repoURL": "https://github.com/o2sh/onefetch",
-      "doc": "📊 Git repository summary on your terminal",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "onefetch-win.tar.gz",
-          "linux": "onefetch-linux.tar.gz",
-          "macos": "onefetch-mac.tar.gz"
-        },
-        "arm64": {}
-      },
-      "stripVersion": true,
-      "exeName": "onefetch"
+      "doc": "\ud83d\udcca Git repository summary on your terminal"
     },
     {
       "appName": "gitcs",
       "repoURL": "https://github.com/knbr13/gitcs",
-      "doc": "📈 analyze Git repositories and generate a visual contributions graph",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "gitcs_windows_amd64.exe",
-          "linux": "gitcs_linux_amd64",
-          "macos": "gitcs_darwin_amd64"
-        },
-        "arm64": {}
-      },
-      "stripVersion": false,
-      "exeName": "gitcs"
+      "doc": "\ud83d\udcc8 analyze Git repositories and generate a visual contributions graph"
     },
     {
       "appName": "just",
       "repoURL": "https://github.com/casey/just",
-      "doc": "🎯 A command runner",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "just-{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "just-{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "just-{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "windows": "just-{version}-aarch64-pc-windows-msvc.zip",
-          "linux": "just-{version}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "just-{version}-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "just"
+      "doc": "\ud83c\udfaf A command runner"
     },
     {
       "appName": "navi",
       "repoURL": "https://github.com/denisidoro/navi",
-      "doc": "📚 An interactive cheatsheet tool for the command-line",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "navi-v{version}-x86_64-pc-windows-gnu.zip",
-          "linux": "navi-v{version}-x86_64-unknown-linux-musl.tar.gz"
-        },
-        "arm64": {
-          "linux": "navi-v{version}-aarch64-unknown-linux-gnu.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "navi"
+      "doc": "\ud83d\udcda An interactive cheatsheet tool for the command-line"
     },
     {
       "appName": "tealdeer",
       "repoURL": "https://github.com/dbrgn/tealdeer",
-      "doc": "� A very fast implementation of tldr in Rust",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "tealdeer-windows-x86_64-msvc.exe",
-          "linux": "tealdeer-linux-x86_64-musl",
-          "macos": "tealdeer-macos-x86_64"
-        },
-        "arm64": {
-          "linux": "tealdeer-linux-aarch64-musl",
-          "macos": "tealdeer-macos-aarch64"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "tldr"
+      "doc": "\ufffd A very fast implementation of tldr in Rust"
     },
     {
       "appName": "sniffnet",
       "repoURL": "https://github.com/GyulyVGC/sniffnet",
-      "doc": "🔍 A simple network sniffer in Rust",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "Sniffnet_Windows_64-bit.msi",
-          "linux": "Sniffnet_LinuxDEB_amd64.deb",
-          "macos": "Sniffnet_macOS_Intel.dmg"
-        },
-        "arm64": {
-          "linux": "Sniffnet_LinuxDEB_arm64.deb",
-          "macos": "Sniffnet_macOS_AppleSilicon.dmg"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "sniffnet"
+      "doc": "\ud83d\udd0d A simple network sniffer in Rust"
     },
     {
       "appName": "hyperfine",
       "repoURL": "https://github.com/sharkdp/hyperfine",
-      "doc": "⚡ A command-line benchmarking tool",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "hyperfine-v{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "hyperfine-v{version}-x86_64-unknown-linux-gnu.tar.gz",
-          "macos": "hyperfine-v{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "linux": "hyperfine-v{version}-aarch64-unknown-linux-gnu.tar.gz",
-          "macos": "hyperfine-v{version}-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "hyperfine"
+      "doc": "\u26a1 A command-line benchmarking tool"
     },
     {
       "appName": "ollama",
       "repoURL": "https://github.com/ollama/ollama",
-      "doc": "🤖 Get up and running with large language models locally.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "ollama-windows-amd64.zip",
-          "linux": "ollama-linux-amd64.tgz",
-          "macos": "ollama-darwin.tgz"
-        },
-        "arm64": {
-          "windows": "ollama-windows-arm64.zip",
-          "linux": "ollama-linux-arm64.tgz",
-          "macos": "ollama-darwin.tgz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "ollama"
+      "doc": "\ud83e\udd16 Get up and running with large language models locally."
     },
     {
       "appName": "cointop",
       "repoURL": "https://github.com/cointop-sh/cointop",
-      "doc": "💰 Cointop is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.",
-      "filenameTemplate": {
-        "amd64": {
-          "linux": "cointop_{version}_linux_amd64.tar.gz",
-          "macos": "cointop_{version}_darwin_amd64.tar.gz"
-        },
-        "arm64": {}
-      },
-      "stripVersion": true,
-      "exeName": "cointop"
+      "doc": "\ud83d\udcb0 Cointop is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time."
     },
     {
       "appName": "vtm",
       "repoURL": "https://github.com/netxs-group/vtm",
-      "doc": "🖥️ Text-based desktop environment inside your terminal",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "vtm_windows_x86_64.zip",
-          "linux": "vtm_linux_x86_64.zip",
-          "macos": "vtm_macos_any.zip"
-        },
-        "arm64": {
-          "windows": "vtm_windows_arm64.zip",
-          "linux": "vtm_linux_arm64.zip",
-          "macos": "vtm_macos_any.zip"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "vtm"
+      "doc": "\ud83d\udda5\ufe0f Text-based desktop environment inside your terminal"
     },
     {
       "appName": "edex-ui",
       "repoURL": "https://github.com/GitSquared/edex-ui",
-      "doc": "🚀 fullscreen, cross-platform terminal emulator and system monitor that looks and feels like a sci-fi computer interface",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "eDEX-UI-Windows-x64.exe",
-          "linux": "eDEX-UI-Linux-x86_64.AppImage",
-          "macos": "eDEX-UI-macOS-x64.dmg"
-        },
-        "arm64": {
-          "linux": "eDEX-UI-Linux-arm64.AppImage"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "edex"
+      "doc": "\ud83d\ude80 fullscreen, cross-platform terminal emulator and system monitor that looks and feels like a sci-fi computer interface"
     },
     {
       "appName": "extraterm",
       "repoURL": "https://github.com/sedwards2009/extraterm/",
-      "doc": "💻 Terminal emulator",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "extratermqt-{version}-windows-x64.zip",
-          "linux": "extratermqt-{version}-linux-x64.zip",
-          "macos": "extratermqt-{version}-macos-x64.zip"
-        },
-        "arm64": {}
-      },
-      "stripVersion": true,
-      "exeName": "extraterm"
+      "doc": "\ud83d\udcbb Terminal emulator"
     },
     {
       "appName": "nushell",
       "repoURL": "https://github.com/nushell/nushell",
-      "doc": "🐚 A cross-platform shell in Rust.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "nu-{version}-x86_64-pc-windows-msvc.zip",
-          "linux": "nu-{version}-x86_64-unknown-linux-gnu.tar.gz",
-          "macos": "nu-{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "windows": "nu-{version}-aarch64-pc-windows-msvc.zip",
-          "linux": "nu-{version}-aarch64-unknown-linux-gnu.tar.gz",
-          "macos": "nu-{version}-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      "stripVersion": true,
-      "exeName": "nu"
+      "doc": "\ud83d\udc1a A cross-platform shell in Rust."
     },
     {
       "appName": "geckodriver",
       "repoURL": "https://github.com/mozilla/geckodriver",
-      "doc": "🦊 WebDriver for Firefox.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "geckodriver-{version}-win64.zip",
-          "linux": "geckodriver-{version}-linux64.tar.gz",
-          "macos": "geckodriver-{version}-macos.tar.gz"
-        },
-        "arm64": {
-          "windows": "geckodriver-{version}-win-aarch64.zip",
-          "linux": "geckodriver-{version}-linux-aarch64.tar.gz",
-          "macos": "geckodriver-{version}-macos-aarch64.tar.gz"
-        }
-      },
-      "stripVersion": false,
-      "exeName": "geckodriver"
+      "doc": "\ud83e\udd8a WebDriver for Firefox."
     }
   ]
 }

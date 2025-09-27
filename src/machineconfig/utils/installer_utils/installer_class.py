@@ -7,7 +7,7 @@ from machineconfig.utils.schemas.installer.installer_types import InstallerData,
 
 import platform
 import subprocess
-from typing import Optional
+from typing import Optional, Any, cast
 from pathlib import Path
 
 
@@ -203,7 +203,6 @@ class Installer:
         repo_url = self.installer_data.get("repoURL", "")
         app_name = self.installer_data.get("appName", "unknown")
         strip_v = self.installer_data.get("stripVersion", False)
-
         print(f"\n{'=' * 80}\n📥 DOWNLOADING: {exe_name} 📥\n{'=' * 80}")
         download_link: Optional[Path] = None
         version_to_be_installed: Optional[str] = None
@@ -225,11 +224,12 @@ class Installer:
                 print(f"🔗 Using architecture-specific direct URL: {download_link}")
                 print(f"📦 Version to be installed: {version_to_be_installed}")
                 # continue to unified download logic below
-
         else:
             print("🌐 Retrieving release information from GitHub...")
-            release_url, version_to_be_installed = Installer.get_github_release(repo_url=repo_url, version=version)
+            release_data = Installer.get_github_release(repo_url=repo_url, version=version)
+            version_to_be_installed = cast(str, release_data["tag_name"])
             print(f"📦 Version to be installed: {version_to_be_installed}")
+            release_url = Path(repo_url + "/releases/download/" + version_to_be_installed)
             print(f"📦 Release URL: {release_url}")
 
             version_to_be_installed_stripped = version_to_be_installed.replace("v", "") if strip_v else version_to_be_installed
@@ -320,28 +320,23 @@ class Installer:
         return template, arch
 
     @staticmethod
-    def get_github_release(repo_url: str, version: Optional[str] = None):
-        print(f"\n{'=' * 80}\n🔍 GITHUB RELEASE DETECTION 🔍\n{'=' * 80}")
-        print(f"🌐 Inspecting releases at: {repo_url}")
-        # with console.status("Installing..."):  # makes troubles on linux when prompt asks for password to move file to /usr/bin
+    def get_github_release(repo_url: str, version: Optional[str] = None) -> dict[str, Any]:
+        """
+        Get the latest release info of a GitHub repo.
+        :param repo_url: Repository URL, e.g. "https://github.com/cantino/mcfly"
+        :param version: Specific version tag, if None gets latest
+        :return: Release data as dict
+        """
+        # Extract owner/repo from URL
+        repo = repo_url.split("github.com/")[1]
         if version is None:
-            # see this: https://api.github.com/repos/cointop-sh/cointop/releases/latest
-            print("🔍 Finding latest version...")
-            import requests  # https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
-
-            _latest_version = requests.get(str(repo_url) + "/releases/latest", timeout=10).url.split("/")[
-                -1
-            ]  # this is to resolve the redirection that occures: https://stackoverflow.com/questions/36070821/how-to-get-redirect-url-using-python-requests
-            version_to_be_installed = _latest_version
-            print(f"✅ Latest version detected: {version_to_be_installed}")
-            # print(version_to_be_installed)
+            url = f"https://api.github.com/repos/{repo}/releases/latest"
         else:
-            version_to_be_installed = version
-            print(f"📝 Using specified version: {version_to_be_installed}")
-
-        release_url = Path(repo_url + "/releases/download/" + version_to_be_installed)
-        print(f"🔗 Release download URL: {release_url}\n{'=' * 80}")
-        return release_url, version_to_be_installed
+            url = f"https://api.github.com/repos/{repo}/releases/tags/{version}"
+        import requests
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        return response.json()
 
     @staticmethod
     def check_if_installed_already(exe_name: str, version: str, use_cache: bool):

@@ -16,7 +16,7 @@ config_dict: InstallerData = {
     "repoURL": "CUSTOM",
     "doc": "Terminal text editor based on neovim.",
     "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
-    "stripVersion": False,
+    
     "exeName": "lvim",
 }
 

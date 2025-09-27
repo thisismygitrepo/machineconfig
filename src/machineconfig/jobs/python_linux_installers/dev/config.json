@@ -11,7 +11,7 @@
         },
         "arm64": {}
       },
-      "stripVersion": true,
+      
       "exeName": "ytui-music"
     },
     {
@@ -24,7 +24,7 @@
         },
         "arm64": {}
       },
-      "stripVersion": true,
+      
       "exeName": "youtube-tui"
     },
     {
@@ -39,7 +39,7 @@
         },
         "arm64": {}
       },
-      "stripVersion": false,
+      
       "exeName": "termusic"
     },
     {
@@ -52,7 +52,7 @@
         },
         "arm64": {}
       },
-      "stripVersion": true,
+      
       "exeName": "kronos"
     },
     {
@@ -69,7 +69,7 @@
           "macos": "Transmission-{version}.dmg"
         }
       },
-      "stripVersion": true,
+      
       "exeName": "transmission"
     },
     {
@@ -80,7 +80,7 @@
         "amd64": {},
         "arm64": {}
       },
-      "stripVersion": false,
+      
       "exeName": "nnn"
     },
     {
@@ -96,7 +96,7 @@
           "linux": "exa-linux-armv7-{version}.zip"
         }
       },
-      "stripVersion": false,
+      
       "exeName": "exa"
     },
     {
@@ -109,7 +109,7 @@
         },
         "arm64": {}
       },
-      "stripVersion": false,
+      
       "exeName": "bytehound"
     },
     {
@@ -126,7 +126,7 @@
           "macos": "atuin-aarch64-apple-darwin.tar.gz"
         }
       },
-      "stripVersion": false,
+      
       "exeName": "atuin"
     },
     {
@@ -145,7 +145,7 @@
           "macos": "browsh_{version}_darwin_arm64"
         }
       },
-      "stripVersion": true,
+      
       "exeName": "browsh"
     },
     {
@@ -162,7 +162,7 @@
           "macos": "carbonyl.macos-arm64.zip"
         }
       },
-      "stripVersion": true,
+      
       "exeName": "carbonyl"
     },
     {
@@ -177,7 +177,7 @@
           "macos": "patat-{version}-darwin-arm64.zip"
         }
       },
-      "stripVersion": false,
+      
       "exeName": "patat"
     },
     {
@@ -194,7 +194,7 @@
           "macos": "DB.Browser.for.SQLite-{version}.dmg"
         }
       },
-      "stripVersion": false,
+      
       "exeName": "sqlite_browser"
     },
     {
@@ -212,7 +212,7 @@
           "macos": "dbeaver-ce-{version}-macos-cocoa.aarch64.tar.gz"
         }
       },
-      "stripVersion": true,
+      
       "exeName": "dbeaver"
     },
     {
@@ -231,7 +231,7 @@
           "macos": "rainfrog-{version}-aarch64-apple-darwin.tar.gz"
         }
       },
-      "stripVersion": false,
+      
       "exeName": "rainfrog"
     },
     {
@@ -250,7 +250,7 @@
           "macos": "aarch64-apple-darwin-cpz"
         }
       },
-      "stripVersion": true,
+      
       "exeName": "cpz"
     },
     {
@@ -269,7 +269,7 @@
           "macos": "aarch64-apple-darwin-rmz"
         }
       },
-      "stripVersion": true,
+      
       "exeName": "rmz"
     }
   ]

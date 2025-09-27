@@ -12,7 +12,7 @@ config_dict: InstallerData = {
     "repoURL": "https://github.com/ShishirPatil/gorilla",
     "doc": "natural language to API",
     "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}},
-    "stripVersion": False,
+    
     "exeName": "goex",
 }
 

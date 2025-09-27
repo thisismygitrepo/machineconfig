@@ -17,7 +17,7 @@ nerd_fonts: InstallerData = {
     "repoURL": "https://github.com/ryanoasis/nerd-fonts",
     "doc": "Nerd Fonts is a project that patches developer targeted fonts with a high number of glyphs (icons)",
     "filenameTemplate": {"amd64": {"windows": "CascadiaCode.zip", "linux": "CascadiaCode.zip", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
-    "stripVersion": False,
+    
     "exeName": "nerd_fonts",
 }
 
