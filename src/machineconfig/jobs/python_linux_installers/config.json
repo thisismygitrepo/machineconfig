@@ -28,7 +28,7 @@
           "linux": "pistol-static-linux-x86_64"
         },
         "arm64": {
-          "linux": "pistol-static-linux-aarch64"
+          "linux": "pistol-static-linux-aarch64"please
         }
       },
       "stripVersion": true,

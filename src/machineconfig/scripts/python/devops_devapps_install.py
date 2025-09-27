@@ -53,8 +53,8 @@ def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category
             print(a_message)
         return None
 
-    # interactive installation
-    installers = get_installers(system=system(), dev=False) + get_installers(system=system(), dev=True)
+    # interactive installation - get all installers including dev ones
+    installers = get_installers(system=system(), dev=True)
 
     # Check installed programs with progress indicator
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:

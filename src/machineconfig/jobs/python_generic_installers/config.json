@@ -456,7 +456,7 @@
     },
     {
       "appName": "starship",
-      "repoURL": "starship/starship",
+      "repoURL": "https://github.com/starship/starship",
       "doc": "⭐️ The minimal, blazing-fast, and infinitely customizable prompt for any shell!",
       "filenameTemplate": {
         "amd64": {
