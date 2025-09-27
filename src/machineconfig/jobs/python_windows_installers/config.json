@@ -23,7 +23,7 @@
       "doc": "📦 ASCI draws boxes around text.",
       "filenameTemplate": {
         "amd64": {
-          "windows": "boxes-{}-intel-win32.zip"
+          "windows": "boxes-{version}-intel-win32.zip"
         },
         "arm64": {}
       },

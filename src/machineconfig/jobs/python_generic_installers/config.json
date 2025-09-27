@@ -7,13 +7,13 @@
       "doc": "🦇 A cat(1) clone with wings.",
       "filenameTemplate": {
         "amd64": {
-          "windows": "bat-{}-x86_64-pc-windows-msvc.zip",
-          "linux": "bat-{}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "bat-{}-x86_64-apple-darwin.tar.gz"
+          "windows": "bat-{version}-x86_64-pc-windows-msvc.zip",
+          "linux": "bat-{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "bat-{version}-x86_64-apple-darwin.tar.gz"
         },
         "arm64": {
-          "linux": "bat-{}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "bat-{}-aarch64-apple-darwin.tar.gz"
+          "linux": "bat-{version}-aarch64-unknown-linux-musl.tar.gz",
+          "macos": "bat-{version}-aarch64-apple-darwin.tar.gz"
         }
       },
       "stripVersion": false,
@@ -115,13 +115,13 @@
       "doc": "👀 A viewer for git and diff output",
       "filenameTemplate": {
         "amd64": {
-          "windows": "delta-{}-x86_64-pc-windows-msvc.zip",
-          "linux": "delta-{}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "delta-{}-x86_64-apple-darwin.tar.gz"
+          "windows": "delta-{version}-x86_64-pc-windows-msvc.zip",
+          "linux": "delta-{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "delta-{version}-x86_64-apple-darwin.tar.gz"
         },
         "arm64": {
-          "linux": "delta-{}-aarch64-unknown-linux-gnu.tar.gz",
-          "macos": "delta-{}-aarch64-apple-darwin.tar.gz"
+          "linux": "delta-{version}-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "delta-{version}-aarch64-apple-darwin.tar.gz"
         }
       },
       "stripVersion": true,
@@ -133,11 +133,11 @@
       "doc": "💾 Rust-based cli tool to get a quick overview of disk usage.",
       "filenameTemplate": {
         "amd64": {
-          "linux": "dua-{}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "dua-{}-x86_64-apple-darwin.tar.gz"
+          "linux": "dua-{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "dua-{version}-x86_64-apple-darwin.tar.gz"
         },
         "arm64": {
-          "linux": "dua-{}-aarch64-unknown-linux-musl.tar.gz"
+          "linux": "dua-{version}-aarch64-unknown-linux-musl.tar.gz"
         }
       },
       "stripVersion": false,
@@ -168,14 +168,14 @@
       "doc": "🔍 fd is a simple, fast and user-friendly alternative to find.",
       "filenameTemplate": {
         "amd64": {
-          "windows": "fd-v{}-x86_64-pc-windows-msvc.zip",
-          "linux": "fd-v{}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "fd-v{}-x86_64-apple-darwin.tar.gz"
+          "windows": "fd-v{version}-x86_64-pc-windows-msvc.zip",
+          "linux": "fd-v{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "fd-v{version}-x86_64-apple-darwin.tar.gz"
         },
         "arm64": {
-          "windows": "fd-v{}-aarch64-pc-windows-msvc.zip",
-          "linux": "fd-v{}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "fd-v{}-aarch64-apple-darwin.tar.gz"
+          "windows": "fd-v{version}-aarch64-pc-windows-msvc.zip",
+          "linux": "fd-v{version}-aarch64-unknown-linux-musl.tar.gz",
+          "macos": "fd-v{version}-aarch64-apple-darwin.tar.gz"
         }
       },
       "stripVersion": true,
@@ -187,14 +187,14 @@
       "doc": "🔍 a general-purpose cli fuzzy finder.",
       "filenameTemplate": {
         "amd64": {
-          "windows": "fzf-{}-windows_amd64.zip",
-          "linux": "fzf-{}-linux_amd64.tar.gz",
-          "macos": "fzf-{}-darwin_amd64.tar.gz"
+          "windows": "fzf-{version}-windows_amd64.zip",
+          "linux": "fzf-{version}-linux_amd64.tar.gz",
+          "macos": "fzf-{version}-darwin_amd64.tar.gz"
         },
         "arm64": {
-          "windows": "fzf-{}-windows_arm64.zip",
-          "linux": "fzf-{}-linux_arm64.tar.gz",
-          "macos": "fzf-{}-darwin_arm64.tar.gz"
+          "windows": "fzf-{version}-windows_arm64.zip",
+          "linux": "fzf-{version}-linux_arm64.tar.gz",
+          "macos": "fzf-{version}-darwin_arm64.tar.gz"
         }
       },
       "stripVersion": true,
@@ -236,13 +236,13 @@
       "doc": "✨ Render markdown on the CLI, with pizzazz!",
       "filenameTemplate": {
         "amd64": {
-          "windows": "glow_{}_Windows_x86_64.zip",
-          "linux": "glow_{}_Linux_x86_64.tar.gz",
-          "macos": "glow_{}_Darwin_x86_64.tar.gz"
+          "windows": "glow_{version}_Windows_x86_64.zip",
+          "linux": "glow_{version}_Linux_x86_64.tar.gz",
+          "macos": "glow_{version}_Darwin_x86_64.tar.gz"
         },
         "arm64": {
-          "linux": "glow_{}_Linux_arm64.tar.gz",
-          "macos": "glow_{}_Darwin_arm64.tar.gz"
+          "linux": "glow_{version}_Linux_arm64.tar.gz",
+          "macos": "glow_{version}_Darwin_arm64.tar.gz"
         }
       },
       "stripVersion": true,
@@ -254,13 +254,13 @@
       "doc": "🎯 Prompt user to select from options, written in golang.",
       "filenameTemplate": {
         "amd64": {
-          "windows": "gum_{}_Windows_x86_64.zip",
-          "linux": "gum_{}_Linux_x86_64.tar.gz",
-          "macos": "gum_{}_Darwin_x86_64.tar.gz"
+          "windows": "gum_{version}_Windows_x86_64.zip",
+          "linux": "gum_{version}_Linux_x86_64.tar.gz",
+          "macos": "gum_{version}_Darwin_x86_64.tar.gz"
         },
         "arm64": {
-          "linux": "gum_{}_Linux_arm64.tar.gz",
-          "macos": "gum_{}_Darwin_arm64.tar.gz"
+          "linux": "gum_{version}_Linux_arm64.tar.gz",
+          "macos": "gum_{version}_Darwin_arm64.tar.gz"
         }
       },
       "stripVersion": true,
@@ -319,11 +319,11 @@
       "doc": "🚀 Fly through your shell history. Great Scott!",
       "filenameTemplate": {
         "amd64": {
-          "linux": "mcfly-v{}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "mcfly-v{}-x86_64-apple-darwin.tar.gz"
+          "linux": "mcfly-v{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "mcfly-v{version}-x86_64-apple-darwin.tar.gz"
         },
         "arm64": {
-          "linux": "mcfly-v{}-aarch64-unknown-linux-musl.tar.gz"
+          "linux": "mcfly-v{version}-aarch64-unknown-linux-musl.tar.gz"
         }
       },
       "stripVersion": false,
@@ -335,14 +335,14 @@
       "doc": "🤖 AI for the command line, built for pipelines",
       "filenameTemplate": {
         "amd64": {
-          "windows": "mods_{}_Windows_x86_64.zip",
-          "linux": "mods_{}_Linux_x86_64.tar.gz",
-          "macos": "mods_{}_Darwin_x86_64.tar.gz"
+          "windows": "mods_{version}_Windows_x86_64.zip",
+          "linux": "mods_{version}_Linux_x86_64.tar.gz",
+          "macos": "mods_{version}_Darwin_x86_64.tar.gz"
         },
         "arm64": {
-          "windows": "mods_{}_Windows_arm64.zip",
-          "linux": "mods_{}_Linux_arm64.tar.gz",
-          "macos": "mods_{}_Darwin_arm64.tar.gz"
+          "windows": "mods_{version}_Windows_arm64.zip",
+          "linux": "mods_{version}_Linux_arm64.tar.gz",
+          "macos": "mods_{version}_Darwin_arm64.tar.gz"
         }
       },
       "stripVersion": true,
@@ -390,13 +390,13 @@
       "doc": "📊 procs is a modern replacement for ps written in Rust.",
       "filenameTemplate": {
         "amd64": {
-          "windows": "procs-{}-x86_64-windows.zip",
-          "linux": "procs-{}-x86_64-linux.zip",
-          "macos": "procs-{}-x86_64-mac.zip"
+          "windows": "procs-{version}-x86_64-windows.zip",
+          "linux": "procs-{version}-x86_64-linux.zip",
+          "macos": "procs-{version}-x86_64-mac.zip"
         },
         "arm64": {
-          "linux": "procs-{}-aarch64-linux.zip",
-          "macos": "procs-{}-aarch64-mac.zip"
+          "linux": "procs-{version}-aarch64-linux.zip",
+          "macos": "procs-{version}-aarch64-mac.zip"
         }
       },
       "stripVersion": false,
@@ -427,13 +427,13 @@
       "doc": "🔍 recursively searches directories for a regex pattern while respecting your gitignore rules",
       "filenameTemplate": {
         "amd64": {
-          "windows": "ripgrep-{}-x86_64-pc-windows-msvc.zip",
-          "linux": "ripgrep-{}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "ripgrep-{}-x86_64-apple-darwin.tar.gz"
+          "windows": "ripgrep-{version}-x86_64-pc-windows-msvc.zip",
+          "linux": "ripgrep-{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "ripgrep-{version}-x86_64-apple-darwin.tar.gz"
         },
         "arm64": {
-          "linux": "ripgrep-{}-aarch64-unknown-linux-gnu.tar.gz",
-          "macos": "ripgrep-{}-aarch64-apple-darwin.tar.gz"
+          "linux": "ripgrep-{version}-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "ripgrep-{version}-aarch64-apple-darwin.tar.gz"
         }
       },
       "stripVersion": true,
@@ -445,9 +445,9 @@
       "doc": "🔍 ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz, etc.",
       "filenameTemplate": {
         "amd64": {
-          "windows": "ripgrep_all-v{}-x86_64-pc-windows-msvc.zip",
-          "linux": "ripgrep_all-v{}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "ripgrep_all-v{}-x86_64-apple-darwin.tar.gz"
+          "windows": "ripgrep_all-v{version}-x86_64-pc-windows-msvc.zip",
+          "linux": "ripgrep_all-v{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "ripgrep_all-v{version}-x86_64-apple-darwin.tar.gz"
         },
         "arm64": {}
       },
@@ -479,11 +479,11 @@
       "doc": "📂 Tere is a terminal file explorer written in Rust. No more ls + cd",
       "filenameTemplate": {
         "amd64": {
-          "windows": "tere-{}-x86_64-pc-windows-gnu.zip",
-          "linux": "tere-{}-x86_64-unknown-linux-gnu.zip"
+          "windows": "tere-{version}-x86_64-pc-windows-gnu.zip",
+          "linux": "tere-{version}-x86_64-unknown-linux-gnu.zip"
         },
         "arm64": {
-          "linux": "tere-{}-aarch64-unknown-linux-gnu.zip"
+          "linux": "tere-{version}-aarch64-unknown-linux-gnu.zip"
         }
       },
       "stripVersion": true,
@@ -495,13 +495,13 @@
       "doc": "⬆️ Keeping your system up to date usually involves invoking multiple package managers.",
       "filenameTemplate": {
         "amd64": {
-          "windows": "topgrade-v{}-x86_64-pc-windows-msvc.zip",
-          "linux": "topgrade-v{}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "topgrade-v{}-x86_64-apple-darwin.tar.gz"
+          "windows": "topgrade-v{version}-x86_64-pc-windows-msvc.zip",
+          "linux": "topgrade-v{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "topgrade-v{version}-x86_64-apple-darwin.tar.gz"
         },
         "arm64": {
-          "linux": "topgrade-v{}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "topgrade-v{}-aarch64-apple-darwin.tar.gz"
+          "linux": "topgrade-v{version}-aarch64-unknown-linux-musl.tar.gz",
+          "macos": "topgrade-v{version}-aarch64-apple-darwin.tar.gz"
         }
       },
       "stripVersion": true,
@@ -586,14 +586,14 @@
       "doc": "🚀 A cd command that learns - easily navigate directories from the command-line",
       "filenameTemplate": {
         "amd64": {
-          "windows": "zoxide-{}-x86_64-pc-windows-msvc.zip",
-          "linux": "zoxide-{}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "zoxide-{}-x86_64-apple-darwin.tar.gz"
+          "windows": "zoxide-{version}-x86_64-pc-windows-msvc.zip",
+          "linux": "zoxide-{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "zoxide-{version}-x86_64-apple-darwin.tar.gz"
         },
         "arm64": {
-          "windows": "zoxide-{}-aarch64-pc-windows-msvc.zip",
-          "linux": "zoxide-{}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "zoxide-{}-aarch64-apple-darwin.tar.gz"
+          "windows": "zoxide-{version}-aarch64-pc-windows-msvc.zip",
+          "linux": "zoxide-{version}-aarch64-unknown-linux-musl.tar.gz",
+          "macos": "zoxide-{version}-aarch64-apple-darwin.tar.gz"
         }
       },
       "stripVersion": true,

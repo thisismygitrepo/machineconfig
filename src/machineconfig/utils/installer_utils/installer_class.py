@@ -237,7 +237,7 @@ class Installer:
 
             template, arch = self._select_template()
             system_name = self._system_name()
-            file_name = template.format(version_to_be_installed_stripped)
+            file_name = template.format(version=version_to_be_installed_stripped)
             print(f"🧭 Detected system={system_name} arch={arch}")
             print(f"📄 Using template: {template}")
             print(f"🗂️  Resolved file name: {file_name}")

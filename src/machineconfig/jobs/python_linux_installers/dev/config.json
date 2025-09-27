@@ -33,9 +33,9 @@
       "doc": "🎵 A terminal-based music player written in Rust.",
       "filenameTemplate": {
         "amd64": {
-          "windows": "termusic-{}-x86_64-windows.zip",
-          "linux": "termusic-{}-x86_64-linux.tar.xz",
-          "macos": "termusic-{}-x86_64-macos.tar.xz"
+          "windows": "termusic-{version}-x86_64-windows.zip",
+          "linux": "termusic-{version}-x86_64-linux.tar.xz",
+          "macos": "termusic-{version}-x86_64-macos.tar.xz"
         },
         "arm64": {}
       },
@@ -61,12 +61,12 @@
       "doc": "📥 A fast, easy, and free BitTorrent client.",
       "filenameTemplate": {
         "amd64": {
-          "windows": "transmission-{}-x64.msi",
-          "linux": "transmission-{}.tar.xz",
-          "macos": "Transmission-{}.dmg"
+          "windows": "transmission-{version}-x64.msi",
+          "linux": "transmission-{version}.tar.xz",
+          "macos": "Transmission-{version}.dmg"
         },
         "arm64": {
-          "macos": "Transmission-{}.dmg"
+          "macos": "Transmission-{version}.dmg"
         }
       },
       "stripVersion": true,
@@ -89,11 +89,11 @@
       "doc": "📂 A modern replacement for ls. lsd alternative.",
       "filenameTemplate": {
         "amd64": {
-          "linux": "exa-linux-x86_64-{}.zip",
-          "macos": "exa-macos-x86_64-{}.zip"
+          "linux": "exa-linux-x86_64-{version}.zip",
+          "macos": "exa-macos-x86_64-{version}.zip"
         },
         "arm64": {
-          "linux": "exa-linux-armv7-{}.zip"
+          "linux": "exa-linux-armv7-{version}.zip"
         }
       },
       "stripVersion": false,
@@ -135,14 +135,14 @@
       "doc": "🌐 browser in the shell",
       "filenameTemplate": {
         "amd64": {
-          "windows": "browsh_{}_windows_amd64.exe",
-          "linux": "browsh_{}_linux_amd64",
-          "macos": "browsh_{}_darwin_amd64"
+          "windows": "browsh_{version}_windows_amd64.exe",
+          "linux": "browsh_{version}_linux_amd64",
+          "macos": "browsh_{version}_darwin_amd64"
         },
         "arm64": {
-          "windows": "browsh_{}_windows_arm64.exe",
-          "linux": "browsh_{}_linux_arm64",
-          "macos": "browsh_{}_darwin_arm64"
+          "windows": "browsh_{version}_windows_arm64.exe",
+          "linux": "browsh_{version}_linux_arm64",
+          "macos": "browsh_{version}_darwin_arm64"
         }
       },
       "stripVersion": true,
@@ -171,10 +171,10 @@
       "doc": "🎯 Terminal-based presentations using Pandoc. Presenterm alternative.",
       "filenameTemplate": {
         "amd64": {
-          "linux": "patat-{}-linux-x86_64.tar.gz"
+          "linux": "patat-{version}-linux-x86_64.tar.gz"
         },
         "arm64": {
-          "macos": "patat-{}-darwin-arm64.zip"
+          "macos": "patat-{version}-darwin-arm64.zip"
         }
       },
       "stripVersion": false,
@@ -186,12 +186,12 @@
       "doc": "🗃️ A visual tool to create, design, and edit database files compatible with SQLite.",
       "filenameTemplate": {
         "amd64": {
-          "windows": "DB.Browser.for.SQLite-{}-win64.zip",
-          "linux": "DB.Browser.for.SQLite-{}-x86.64-v2.AppImage",
-          "macos": "DB.Browser.for.SQLite-{}.dmg"
+          "windows": "DB.Browser.for.SQLite-{version}-win64.zip",
+          "linux": "DB.Browser.for.SQLite-{version}-x86.64-v2.AppImage",
+          "macos": "DB.Browser.for.SQLite-{version}.dmg"
         },
         "arm64": {
-          "macos": "DB.Browser.for.SQLite-{}.dmg"
+          "macos": "DB.Browser.for.SQLite-{version}.dmg"
         }
       },
       "stripVersion": false,
@@ -203,13 +203,13 @@
       "doc": "🗃️ Free universal database tool and SQL client.",
       "filenameTemplate": {
         "amd64": {
-          "windows": "dbeaver-ce-{}-win32.win32.x86_64.zip",
-          "linux": "dbeaver-ce-{}-linux.gtk.x86_64.tar.gz",
-          "macos": "dbeaver-ce-{}-macos-cocoa.x86_64.tar.gz"
+          "windows": "dbeaver-ce-{version}-win32.win32.x86_64.zip",
+          "linux": "dbeaver-ce-{version}-linux.gtk.x86_64.tar.gz",
+          "macos": "dbeaver-ce-{version}-macos-cocoa.x86_64.tar.gz"
         },
         "arm64": {
-          "linux": "dbeaver-ce-{}-linux.gtk.aarch64.tar.gz",
-          "macos": "dbeaver-ce-{}-macos-cocoa.aarch64.tar.gz"
+          "linux": "dbeaver-ce-{version}-linux.gtk.aarch64.tar.gz",
+          "macos": "dbeaver-ce-{version}-macos-cocoa.aarch64.tar.gz"
         }
       },
       "stripVersion": true,
@@ -221,14 +221,14 @@
       "doc": "🗃️ TUI DB Visualizer",
       "filenameTemplate": {
         "amd64": {
-          "windows": "rainfrog-{}-x86_64-pc-windows-msvc.tar.gz",
-          "linux": "rainfrog-{}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "rainfrog-{}-x86_64-apple-darwin.tar.gz"
+          "windows": "rainfrog-{version}-x86_64-pc-windows-msvc.tar.gz",
+          "linux": "rainfrog-{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "rainfrog-{version}-x86_64-apple-darwin.tar.gz"
         },
         "arm64": {
-          "windows": "rainfrog-{}-aarch64-pc-windows-msvc.tar.gz",
-          "linux": "rainfrog-{}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "rainfrog-{}-aarch64-apple-darwin.tar.gz"
+          "windows": "rainfrog-{version}-aarch64-pc-windows-msvc.tar.gz",
+          "linux": "rainfrog-{version}-aarch64-unknown-linux-musl.tar.gz",
+          "macos": "rainfrog-{version}-aarch64-apple-darwin.tar.gz"
         }
       },
       "stripVersion": false,
