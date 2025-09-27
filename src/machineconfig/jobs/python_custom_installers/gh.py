@@ -23,7 +23,7 @@ config_dict: InstallerData = {
     "appName": "gh",
     "repoURL": "https://github.com/cli/cli",
     "doc": "GitHub CLI",
-    "filenameTemplate": {"amd64": {"windows": "gh_{}_windows_amd64.zip", "linux": "gh_{}_linux_amd64.tar.gz", "macos": "gh_{}_macOS_amd64.tar.gz"}},
+    "filenameTemplate": {"amd64": {"windows": "gh_{version}_windows_amd64.zip", "linux": "gh_{version}_linux_amd64.tar.gz", "macos": "gh_{version}_macOS_amd64.tar.gz"}},
     "stripVersion": True,
     "exeName": "gh",
 }
