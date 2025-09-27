@@ -7,10 +7,14 @@
       "doc": "🎵 A terminal based YouTube music player written in Rust.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "ytui_music-linux-amd64"
+          "linux": "ytui_music-linux-amd64",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": ""
+          "linux": "",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -20,10 +24,14 @@
       "doc": "🎵 A terminal based YouTube music player written in Rust.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "youtube-tui-full_arch-x86_64"
+          "linux": "youtube-tui-full_arch-x86_64",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": ""
+          "linux": "",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -33,10 +41,14 @@
       "doc": "🎵 A terminal-based music player written in Rust.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "termusic-v{version}-x86_64-linux.tar.xz"
+          "linux": "termusic-v{version}-x86_64-linux.tar.xz",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": ""
+          "linux": "",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -46,10 +58,14 @@
       "doc": "🎵 A Customizable Terminal Music Player For Offline Listening",
       "fileNamePattern": {
         "amd64": {
-          "linux": "Kronos"
+          "linux": "Kronos",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": ""
+          "linux": "",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -59,10 +75,14 @@
       "doc": "📥 A fast, easy, and free BitTorrent client.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "transmission-{version}.tar.xz"
+          "linux": "transmission-{version}.tar.xz",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": ""
+          "linux": "",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -72,10 +92,14 @@
       "doc": "📂 A terminal-based file manager.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "nnn-static-{version}.x86_64.tar.gz"
+          "linux": "nnn-static-{version}.x86_64.tar.gz",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": ""
+          "linux": "",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -85,10 +109,14 @@
       "doc": "📂 A modern replacement for ls. lsd alternative.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "exa-linux-x86_64-v{version}.zip"
+          "linux": "exa-linux-x86_64-v{version}.zip",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": ""
+          "linux": "",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -98,10 +126,14 @@
       "doc": "🔍 Inspecting the memory usage of a running process",
       "fileNamePattern": {
         "amd64": {
-          "linux": "bytehound-x86_64-unknown-linux-gnu.tgz"
+          "linux": "bytehound-x86_64-unknown-linux-gnu.tgz",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": ""
+          "linux": "",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -111,10 +143,14 @@
       "doc": "🔍 Shell history search tool. Mcfly alternative",
       "fileNamePattern": {
         "amd64": {
-          "linux": "atuin-x86_64-unknown-linux-gnu.tar.gz"
+          "linux": "atuin-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": "atuin-aarch64-unknown-linux-gnu.tar.gz"
+          "linux": "atuin-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -124,10 +160,14 @@
       "doc": "🌐 browser in the shell",
       "fileNamePattern": {
         "amd64": {
-          "linux": "browsh_{version}_linux_amd64"
+          "linux": "browsh_{version}_linux_amd64",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": "browsh_{version}_linux_arm64"
+          "linux": "browsh_{version}_linux_arm64",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -137,10 +177,14 @@
       "doc": "A Chromium based browser built to run in a terminal",
       "fileNamePattern": {
         "amd64": {
-          "linux": "carbonyl.linux-amd64.zip"
+          "linux": "carbonyl.linux-amd64.zip",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": "carbonyl.linux-arm64.zip"
+          "linux": "carbonyl.linux-arm64.zip",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -150,10 +194,14 @@
       "doc": "🎯 Terminal-based presentations using Pandoc. Presenterm alternative.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "patat-v{version}-linux-x86_64.tar.gz"
+          "linux": "patat-v{version}-linux-x86_64.tar.gz",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": ""
+          "linux": "",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -163,10 +211,14 @@
       "doc": "🗃️ A visual tool to create, design, and edit database files compatible with SQLite.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "DB.Browser.for.SQLite-v{version}-x86.64-v2.AppImage"
+          "linux": "DB.Browser.for.SQLite-v{version}-x86.64-v2.AppImage",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": ""
+          "linux": "",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -176,10 +228,14 @@
       "doc": "🗃️ Free universal database tool and SQL client.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "dbeaver-ce-{version}-linux.gtk.x86_64.tar.gz"
+          "linux": "dbeaver-ce-{version}-linux.gtk.x86_64.tar.gz",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": "dbeaver-ce-{version}-linux.gtk.aarch64.tar.gz"
+          "linux": "dbeaver-ce-{version}-linux.gtk.aarch64.tar.gz",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -189,10 +245,14 @@
       "doc": "🗃️ TUI DB Visualizer",
       "fileNamePattern": {
         "amd64": {
-          "linux": "rainfrog-{version}-x86_64-unknown-linux-gnu.tar.gz"
+          "linux": "rainfrog-{version}-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": "rainfrog-{version}-aarch64-unknown-linux-gnu.tar.gz"
+          "linux": "rainfrog-{version}-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -203,7 +263,7 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "x86_64-unknown-linux-gnu-cpz",
-          "windows": "x86_64-pc-windows-msvc-cpz.exe", 
+          "windows": "x86_64-pc-windows-msvc-cpz.exe",
           "macos": "x86_64-apple-darwin-cpz"
         },
         "arm64": {
@@ -224,7 +284,7 @@
           "macos": "x86_64-apple-darwin-rmz"
         },
         "arm64": {
-          "linux": "aarch64-unknown-linux-gnu-rmz", 
+          "linux": "aarch64-unknown-linux-gnu-rmz",
           "windows": "aarch64-pc-windows-msvc-rmz.exe",
           "macos": "aarch64-apple-darwin-rmz"
         }
@@ -573,142 +633,478 @@
     {
       "appName": "qrscan",
       "repoURL": "https://github.com/sayanarijit/qrscan",
-      "doc": "📷 qr code scanner"
+      "doc": "📷 qr code scanner",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "termscp",
       "repoURL": "https://github.com/veeso/termscp",
-      "doc": "📂 A TUI like winscp"
+      "doc": "📂 A TUI like winscp",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "qr",
       "repoURL": "pip install qrcode",
-      "doc": "🔲 qr code generator. String to qr code."
+      "doc": "🔲 qr code generator. String to qr code.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "filebrowser",
       "repoURL": "https://github.com/filebrowser/filebrowser",
-      "doc": "🗂️ filebrowser provides a file managing interface within a specified directory"
+      "doc": "🗂️ filebrowser provides a file managing interface within a specified directory",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "cloudreve",
       "repoURL": "https://github.com/cloudreve/Cloudreve",
-      "doc": "☁️ Self-hosted file management system with muilt-cloud support."
+      "doc": "☁️ Self-hosted file management system with muilt-cloud support.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "restic",
       "repoURL": "https://github.com/restic/restic",
-      "doc": "💾 backup program that is fast, efficient and secure. It supports the three major operating systems"
+      "doc": "💾 backup program that is fast, efficient and secure. It supports the three major operating systems",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "syncthing",
       "repoURL": "https://github.com/syncthing/syncthing",
-      "doc": "🔄 Syncthing is a continuous file synchronization program. It synchronizes files between two or more computers."
+      "doc": "🔄 Syncthing is a continuous file synchronization program. It synchronizes files between two or more computers.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "istio",
       "repoURL": "https://github.com/istio/istio",
-      "doc": "🌐 Istio is an open source service mesh that layers transparently onto existing distributed applications"
+      "doc": "🌐 Istio is an open source service mesh that layers transparently onto existing distributed applications",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "openpomodoro-cli",
       "repoURL": "https://github.com/open-pomodoro/openpomodoro-cli",
-      "doc": "⏲️ Pomodoro timer for the command-line"
+      "doc": "⏲️ Pomodoro timer for the command-line",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "rust-analyzer",
       "repoURL": "https://github.com/rust-lang/rust-analyzer",
-      "doc": "🦀 Rust Language Server (LSP)"
+      "doc": "🦀 Rust Language Server (LSP)",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "kondo",
       "repoURL": "https://github.com/tbillington/kondo",
-      "doc": "🧹 cleans projects from litter files."
+      "doc": "🧹 cleans projects from litter files.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "tokei",
       "repoURL": "https://github.com/XAMPPRocky/tokei",
-      "doc": "📊 Counts the number of lines of code, comments, and blanks in a project."
+      "doc": "📊 Counts the number of lines of code, comments, and blanks in a project.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "lazygit",
       "repoURL": "https://github.com/jesseduffield/lazygit",
-      "doc": "🐙 A simple terminal UI for git commands"
+      "doc": "🐙 A simple terminal UI for git commands",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "lazydocker",
       "repoURL": "https://github.com/jesseduffield/lazydocker",
-      "doc": "🐋 A simple terminal UI for both docker and docker-compose"
+      "doc": "🐋 A simple terminal UI for both docker and docker-compose",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "onefetch",
       "repoURL": "https://github.com/o2sh/onefetch",
-      "doc": "📊 Git repository summary on your terminal"
+      "doc": "📊 Git repository summary on your terminal",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "gitcs",
       "repoURL": "https://github.com/knbr13/gitcs",
-      "doc": "📈 analyze Git repositories and generate a visual contributions graph"
+      "doc": "📈 analyze Git repositories and generate a visual contributions graph",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "just",
       "repoURL": "https://github.com/casey/just",
-      "doc": "🎯 A command runner"
+      "doc": "🎯 A command runner",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "navi",
       "repoURL": "https://github.com/denisidoro/navi",
-      "doc": "📚 An interactive cheatsheet tool for the command-line"
+      "doc": "📚 An interactive cheatsheet tool for the command-line",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "tealdeer",
       "repoURL": "https://github.com/dbrgn/tealdeer",
-      "doc": "⚡ A very fast implementation of tldr in Rust"
+      "doc": "⚡ A very fast implementation of tldr in Rust",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "sniffnet",
       "repoURL": "https://github.com/GyulyVGC/sniffnet",
-      "doc": "🔍 A simple network sniffer in Rust"
+      "doc": "🔍 A simple network sniffer in Rust",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "hyperfine",
       "repoURL": "https://github.com/sharkdp/hyperfine",
-      "doc": "⚡ A command-line benchmarking tool"
+      "doc": "⚡ A command-line benchmarking tool",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "ollama",
       "repoURL": "https://github.com/ollama/ollama",
-      "doc": "🤖 Get up and running with large language models locally."
+      "doc": "🤖 Get up and running with large language models locally.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "cointop",
       "repoURL": "https://github.com/cointop-sh/cointop",
-      "doc": "💰 Cointop is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time."
+      "doc": "💰 Cointop is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "vtm",
       "repoURL": "https://github.com/netxs-group/vtm",
-      "doc": "🖥️ Text-based desktop environment inside your terminal"
+      "doc": "🖥️ Text-based desktop environment inside your terminal",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "edex-ui",
       "repoURL": "https://github.com/GitSquared/edex-ui",
-      "doc": "🚀 fullscreen, cross-platform terminal emulator and system monitor that looks and feels like a sci-fi computer interface"
+      "doc": "🚀 fullscreen, cross-platform terminal emulator and system monitor that looks and feels like a sci-fi computer interface",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "extraterm",
       "repoURL": "https://github.com/sedwards2009/extraterm/",
-      "doc": "💻 Terminal emulator"
+      "doc": "💻 Terminal emulator",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "nushell",
       "repoURL": "https://github.com/nushell/nushell",
-      "doc": "🐚 A cross-platform shell in Rust."
+      "doc": "🐚 A cross-platform shell in Rust.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "geckodriver",
       "repoURL": "https://github.com/mozilla/geckodriver",
-      "doc": "🦊 WebDriver for Firefox."
+      "doc": "🦊 WebDriver for Firefox.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     }
   ]
 }

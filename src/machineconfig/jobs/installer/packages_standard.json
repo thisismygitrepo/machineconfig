@@ -144,11 +144,13 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "zellij-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "zellij-x86_64-apple-darwin.tar.gz"
+          "macos": "zellij-x86_64-apple-darwin.tar.gz",
+          "windows": null
         },
         "arm64": {
           "linux": "zellij-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "zellij-aarch64-apple-darwin.tar.gz"
+          "macos": "zellij-aarch64-apple-darwin.tar.gz",
+          "windows": null
         }
       }
     },
@@ -158,7 +160,14 @@
       "doc": "🚀 Test your internet connection speed and ping using speedtest.net from the CLI",
       "fileNamePattern": {
         "amd64": {
-          "windows": "ookla-speedtest-{version}-win64.zip"
+          "windows": "ookla-speedtest-{version}-win64.zip",
+          "linux": null,
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -168,7 +177,14 @@
       "doc": "📦 ASCI draws boxes around text.",
       "fileNamePattern": {
         "amd64": {
-          "windows": "boxes-{version}-intel-win32.zip"
+          "windows": "boxes-{version}-intel-win32.zip",
+          "linux": null,
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -178,7 +194,14 @@
       "doc": "🔍 A fast, portable, feature-rich command-line search tool",
       "fileNamePattern": {
         "amd64": {
-          "windows": "ugrep-windows-x64.zip"
+          "windows": "ugrep-windows-x64.zip",
+          "linux": null,
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -188,7 +211,14 @@
       "doc": "🔍 A screen zoom and annotation tool for presentations",
       "fileNamePattern": {
         "amd64": {
-          "windows": "ZoomIt.zip"
+          "windows": "ZoomIt.zip",
+          "linux": null,
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -198,7 +228,14 @@
       "doc": "📊 Like htop, for Windows",
       "fileNamePattern": {
         "amd64": {
-          "windows": "NTop.exe"
+          "windows": "NTop.exe",
+          "linux": null,
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -208,7 +245,14 @@
       "doc": "🔄 devtunnel secure introspectable tunnels to localhost",
       "fileNamePattern": {
         "amd64": {
-          "windows": "devtunnel.exe"
+          "windows": "devtunnel.exe",
+          "linux": null,
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -402,7 +446,19 @@
     {
       "appName": "gemini-cli",
       "repoURL": "npm install -g @google/gemini-cli",
-      "doc": "🤖 Gemini CLI is a command line interface for Google Gemini AI."
+      "doc": "🤖 Gemini CLI is a command line interface for Google Gemini AI.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "gitui",
@@ -492,7 +548,19 @@
     {
       "appName": "m365",
       "repoURL": "npm install -g @pnp/cli-microsoft365",
-      "doc": "☁️ CLI for Microsoft 365"
+      "doc": "☁️ CLI for Microsoft 365",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "mcfly",
