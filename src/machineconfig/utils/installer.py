@@ -114,38 +114,36 @@ def get_all_installer_data_files(system: str) -> dict[APP_INSTALLER_CATEGORY, In
     print("📂 Loading configuration files...")
     res_final: dict[APP_INSTALLER_CATEGORY, InstallerDataFiles] = {}
     data: InstallerDataFiles = read_json(Path(module.__file__).parent.joinpath("packages_standard.json"))
-    res_final["STANDARD_GITHUB"] = data
+    res_final["GITHUB_STANDARD"] = data
     data = read_json(Path(module.__file__).parent.joinpath("packages_dev.json"))
-    res_final["DEV_GITHUB"] = data
+    res_final["GITHUB_DEV"] = data
 
     print("🔍 Loading custom installers ")
     import runpy
-
     res_custom_installers: list[InstallerData] = []
-    for item in path_custom_installer.search("*.py", r=False, not_in=["__init__"]):
+    for item in Path(module.__file__).parent.joinpath("custom_standard").glob("*.py"):
+        if item.name == "__init__.py": continue
         try:
             print(f"📄 Loading custom installer: {item.name}")
             installer_data: InstallerData = runpy.run_path(str(item), run_name=None)["config_dict"]
             res_custom_installers.append(installer_data)
         except Exception as ex:
             print(f"❌ Failed to load {item}: {ex}")
+    res_final["CUSTOM_STANDARD"] = InstallerDataFiles({"version": "1", "installers": res_custom_installers})
 
-    print(f"🔍 Loading custom dev installers from: {path_custom_installer_dev}")
     res_custom_dev_installers: list[InstallerData] = []
-    for item in path_custom_installer_dev.search("*.py", r=False, not_in=["__init__"]):
+    for item in Path(module.__file__).parent.joinpath("custom_dev").glob("*.py"):
+        if item.name == "__init__.py": continue
         try:
             print(f"📄 Loading custom dev installer: {item.name}")
             installer_data: InstallerData = runpy.run_path(str(item), run_name=None)["config_dict"]
             res_custom_dev_installers.append(installer_data)
         except Exception as ex:
             print(f"❌ Failed to load {item}: {ex}")
-
-    res_final["CUSTOM"] = InstallerDataFiles({"version": "1", "installers": res_custom_installers})
     res_final["CUSTOM_DEV"] = InstallerDataFiles({"version": "1", "installers": res_custom_dev_installers})
-
-    print(
-        f"✅ Configuration loading complete:\n - OS_SPECIFIC: {len(res_final['OS_SPECIFIC']['installers'])} items\n - OS_GENERIC: {len(res_final['OS_GENERIC']['installers'])} items\n - CUSTOM: {len(res_final['CUSTOM']['installers'])} items\n{'=' * 80}"
-    )
+    print(f"Loaded: {len(res_final)} installer categories")
+    for k, v in res_final.items():
+        print(f" - {k}: {len(v['installers'])} items")
     return res_final
 
 
