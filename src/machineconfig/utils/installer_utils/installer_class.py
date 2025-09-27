@@ -256,7 +256,9 @@ class Installer:
 
     @staticmethod
     def _fetch_github_release_data(repo_name: str, version: Optional[str] = None) -> Optional[dict[str, Any]]:
-        """Fetch release data from GitHub API using curl."""
+        """Fetch release data from GitHub API using requests."""
+        import requests
+        
         try:
             if version and version.lower() != "latest":
                 # Fetch specific version
@@ -265,20 +267,13 @@ class Installer:
                 # Fetch latest release
                 url = f"https://api.github.com/repos/{repo_name}/releases/latest"
             
-            cmd = ["curl", "-s", url]
+            response = requests.get(url, timeout=30)
             
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=30
-            )
-            
-            if result.returncode != 0:
-                print(f"❌ Failed to fetch data for {repo_name}: {result.stderr}")
+            if response.status_code != 200:
+                print(f"❌ Failed to fetch data for {repo_name}: HTTP {response.status_code}")
                 return None
                 
-            response_data = json.loads(result.stdout)
+            response_data = response.json()
             
             # Check if API returned an error
             if "message" in response_data:
@@ -291,7 +286,7 @@ class Installer:
                     
             return response_data
             
-        except (subprocess.TimeoutExpired, json.JSONDecodeError, subprocess.SubprocessError) as e:
+        except (requests.RequestException, requests.Timeout, json.JSONDecodeError) as e:
             print(f"❌ Error fetching {repo_name}: {e}")
             return None
 
@@ -312,9 +307,15 @@ class Installer:
         release_data = self._fetch_github_release_data(repo_name, version)
         if not release_data:
             return None, None        
+        # print(release_data)
         actual_version = release_data.get("tag_name", "unknown")
-        asset = filename_pattern.format(version=actual_version)
-        return asset, actual_version
+        filename = filename_pattern.format(version=actual_version)
+        browser_download_url = f"https://github.com/cantino/mcfly/releases/download/{actual_version}/{filename}"
+
+        for asset in release_data.get("assets", []):
+            browser_download_url = asset.get("browser_download_url", "NA")
+            print(f"-- {browser_download_url}")
+        return browser_download_url, actual_version
 
     @staticmethod
     def check_if_installed_already(exe_name: str, version: Optional[str], use_cache: bool) -> tuple[str, str, str]:
