@@ -12,7 +12,7 @@
           "windows": null
         },
         "arm64": {
-          "linux": "",
+          "linux": null,
           "macos": null,
           "windows": null
         }
@@ -29,7 +29,7 @@
           "windows": null
         },
         "arm64": {
-          "linux": "",
+          "linux": null,
           "macos": null,
           "windows": null
         }
@@ -46,7 +46,7 @@
           "windows": null
         },
         "arm64": {
-          "linux": "",
+          "linux": null,
           "macos": null,
           "windows": null
         }
@@ -63,7 +63,7 @@
           "windows": null
         },
         "arm64": {
-          "linux": "",
+          "linux": null,
           "macos": null,
           "windows": null
         }
@@ -80,7 +80,7 @@
           "windows": null
         },
         "arm64": {
-          "linux": "",
+          "linux": null,
           "macos": null,
           "windows": null
         }
@@ -97,7 +97,7 @@
           "windows": null
         },
         "arm64": {
-          "linux": "",
+          "linux": null,
           "macos": null,
           "windows": null
         }
@@ -114,7 +114,7 @@
           "windows": null
         },
         "arm64": {
-          "linux": "",
+          "linux": null,
           "macos": null,
           "windows": null
         }
@@ -131,7 +131,7 @@
           "windows": null
         },
         "arm64": {
-          "linux": "",
+          "linux": null,
           "macos": null,
           "windows": null
         }
@@ -199,7 +199,7 @@
           "windows": null
         },
         "arm64": {
-          "linux": "",
+          "linux": null,
           "macos": null,
           "windows": null
         }
@@ -216,7 +216,7 @@
           "windows": null
         },
         "arm64": {
-          "linux": "",
+          "linux": null,
           "macos": null,
           "windows": null
         }
@@ -296,14 +296,14 @@
       "doc": "📊 Generate diagrams and flowcharts from text in a similar manner as markdown",
       "fileNamePattern": {
         "amd64": {
-          "linux": "",
-          "windows": "",
-          "macos": ""
+          "linux": null,
+          "windows": null,
+          "macos": null
         },
         "arm64": {
-          "linux": "",
-          "windows": "",
-          "macos": ""
+          "linux": null,
+          "windows": null,
+          "macos": null
         }
       }
     },
@@ -336,7 +336,7 @@
         },
         "arm64": {
           "linux": "xcrawl3r_{version}_linux_arm64.tar.gz",
-          "windows": "",
+          "windows": null,
           "macos": "xcrawl3r_{version}_darwin_arm64.tar.gz"
         }
       }
@@ -353,7 +353,7 @@
         },
         "arm64": {
           "linux": "Obsidian-{version}-arm64.AppImage",
-          "windows": "",
+          "windows": null,
           "macos": "Obsidian-{version}.dmg"
         }
       }
@@ -364,14 +364,14 @@
       "doc": "🎯 Markdown presentation writer",
       "fileNamePattern": {
         "amd64": {
-          "linux": "",
-          "windows": "",
-          "macos": ""
+          "linux": null,
+          "windows": null,
+          "macos": null
         },
         "arm64": {
-          "linux": "",
-          "windows": "",
-          "macos": ""
+          "linux": null,
+          "windows": null,
+          "macos": null
         }
       }
     },
@@ -387,7 +387,7 @@
         },
         "arm64": {
           "linux": "presenterm-{version}-aarch64-unknown-linux-gnu.tar.gz",
-          "windows": "",
+          "windows": null,
           "macos": "presenterm-{version}-aarch64-apple-darwin.tar.gz"
         }
       }
@@ -404,7 +404,7 @@
         },
         "arm64": {
           "linux": "pandoc-{version}-linux-arm64.tar.gz",
-          "windows": "",
+          "windows": null,
           "macos": "pandoc-{version}-arm64-macOS.pkg"
         }
       }
@@ -415,14 +415,14 @@
       "doc": "🐋 Devcontainer is a command-line tool to manage development containers",
       "fileNamePattern": {
         "amd64": {
-          "linux": "",
-          "windows": "",
-          "macos": ""
+          "linux": null,
+          "windows": null,
+          "macos": null
         },
         "arm64": {
-          "linux": "",
-          "windows": "",
-          "macos": ""
+          "linux": null,
+          "windows": null,
+          "macos": null
         }
       }
     },
@@ -432,14 +432,14 @@
       "doc": "🔐 bw is a password manager.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "",
-          "windows": "",
-          "macos": ""
+          "linux": null,
+          "windows": null,
+          "macos": null
         },
         "arm64": {
-          "linux": "",
-          "windows": "",
-          "macos": ""
+          "linux": null,
+          "windows": null,
+          "macos": null
         }
       }
     },
@@ -454,8 +454,8 @@
           "macos": "obs-backgroundremoval-{version}-macos-universal.pkg"
         },
         "arm64": {
-          "linux": "",
-          "windows": "",
+          "linux": null,
+          "windows": null,
           "macos": "obs-backgroundremoval-{version}-macos-universal.pkg"
         }
       }
@@ -472,7 +472,7 @@
         },
         "arm64": {
           "linux": "rustdesk-{version}-aarch64.AppImage",
-          "windows": "",
+          "windows": null,
           "macos": "rustdesk-{version}-aarch64.dmg"
         }
       }
@@ -485,11 +485,11 @@
         "amd64": {
           "linux": "evcxr-v{version}-x86_64-unknown-linux-gnu.tar.gz",
           "windows": "evcxr-v{version}-x86_64-pc-windows-msvc.zip",
-          "macos": ""
+          "macos": null
         },
         "arm64": {
-          "linux": "",
-          "windows": "",
+          "linux": null,
+          "windows": null,
           "macos": "evcxr-v{version}-aarch64-apple-darwin.tar.gz"
         }
       }
@@ -523,7 +523,7 @@
         },
         "arm64": {
           "linux": "bandwhich-v{version}-aarch64-unknown-linux-gnu.tar.gz",
-          "windows": "",
+          "windows": null,
           "macos": "bandwhich-v{version}-aarch64-apple-darwin.tar.gz"
         }
       }
@@ -557,8 +557,8 @@
         },
         "arm64": {
           "linux": "dust-v{version}-aarch64-unknown-linux-gnu.tar.gz",
-          "windows": "",
-          "macos": ""
+          "windows": null,
+          "macos": null
         }
       }
     },
@@ -574,7 +574,7 @@
         },
         "arm64": {
           "linux": "ots_linux_arm64.tgz",
-          "windows": "",
+          "windows": null,
           "macos": "ots_darwin_arm64.zip"
         }
       }
@@ -586,13 +586,13 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "ffsend-v{version}-linux-x64",
-          "windows": "",
-          "macos": ""
+          "windows": null,
+          "macos": null
         },
         "arm64": {
-          "linux": "",
-          "windows": "",
-          "macos": ""
+          "linux": null,
+          "windows": null,
+          "macos": null
         }
       }
     },

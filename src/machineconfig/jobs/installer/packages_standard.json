@@ -47,7 +47,7 @@
         },
         "arm64": {
           "linux": "linux-arm64-devtunnel",
-          "windows": "",
+          "windows": null,
           "macos": "osx-arm64-devtunnel-zip"
         }
       }
