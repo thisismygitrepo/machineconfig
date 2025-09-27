@@ -240,28 +240,18 @@ def execute_installations(selected_options: list[str]) -> None:
 def main() -> None:
     """Main function to run the interactive installation."""
     display_header()
-    
-    # Get user selections
-    selected_options = get_installation_choices()
-    
+    selected_options = get_installation_choices()    
     if not selected_options:
         console.print("❌ No options selected. Exiting...", style="bold red")
         sys.exit(0)
-    
     console.print(f"\n✅ Selected options: {', '.join(selected_options)}", style="bold green")
-    
-    # Confirm before proceeding
-    proceed = questionary.confirm("🚀 Proceed with installation?", default=True).ask()
-    
+    proceed = questionary.confirm("🚀 Proceed with installation?", default=True).ask()    
     if not proceed:
         console.print("❌ Installation cancelled.", style="bold red")
         sys.exit(0)
-    
-    # Execute installations
-    execute_installations(selected_options)
-    
+    execute_installations(selected_options)    
     display_completion_message()
 
 
 if __name__ == "__main__":
-    main()
+    pass
