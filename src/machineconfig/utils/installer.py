@@ -2,7 +2,7 @@
 
 from machineconfig.utils.installer_utils.installer_abc import LINUX_INSTALL_PATH
 from machineconfig.utils.installer_utils.installer_class import Installer
-from machineconfig.utils.schemas.installer.installer_types import APP_INSTALLER_CATEGORY, InstallerData, InstallerDataFiles
+from machineconfig.utils.schemas.installer.installer_types import APP_INSTALLER_CATEGORY, InstallerData, InstallerDataFiles, get_normalized_arch, get_os_name, OPERATING_SYSTEMS, CPU_ARCHITECTURES
 from rich.console import Console
 from rich.panel import Panel  # Added import
 
@@ -18,8 +18,7 @@ from joblib import Parallel, delayed
 def check_latest():
     console = Console()  # Added console initialization
     console.print(Panel("🔍  CHECKING FOR LATEST VERSIONS", title="Status", expand=False))  # Replaced print with Panel
-    installers = get_installers(system=platform.system(), dev=False)
-    # installers += get_installers(system=platform.system(), dev=True)
+    installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL"])
     installers_github = []
     for inst__ in installers:
         app_name = inst__.installer_data.get("appName", "unknown")
@@ -92,55 +91,27 @@ def get_installed_cli_apps():
     return apps
 
 
-def get_installers(system: str, dev: bool) -> list[Installer]:
+def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: list[APP_INSTALLER_CATEGORY]) -> list[Installer]:
     print(f"\n{'=' * 80}\n🔍 LOADING INSTALLER CONFIGURATIONS 🔍\n{'=' * 80}")
-    res_all = get_all_installer_data_files(system=system)
-    # Flatten the installer data from all categories
+    res_all = get_all_installer_data_files(which_cats=which_cats)
     all_installers: list[InstallerData] = []
     for _category, installer_data_files in res_all.items():
-        all_installers.extend(installer_data_files["installers"])
-
+        suitable_installers = []
+        for an_installer in installer_data_files["installers"]:
+            if an_installer["fileNamePattern"][arch][os] is None:
+                continue
+            suitable_installers.append(an_installer)
+        all_installers.extend(suitable_installers)
     print(f"✅ Loaded {len(all_installers)} installer configurations\n{'=' * 80}")
     return [Installer(installer_data=installer_data) for installer_data in all_installers]
 
 
-def get_all_installer_data_files(system: str) -> dict[APP_INSTALLER_CATEGORY, InstallerDataFiles]:
+def get_all_installer_data_files(which_cats: list[APP_INSTALLER_CATEGORY]) -> dict[APP_INSTALLER_CATEGORY, InstallerDataFiles]:
     print(f"\n{'=' * 80}\n📂 LOADING CONFIGURATION FILES 📂\n{'=' * 80}")
-
-    print(f"🔍 Importing OS-specific installers for {system}...")
     import machineconfig.jobs.installer as module
     from pathlib import Path
-
     print("📂 Loading configuration files...")
-    res_final: dict[APP_INSTALLER_CATEGORY, InstallerDataFiles] = {}
-    data: InstallerDataFiles = read_json(Path(module.__file__).parent.joinpath("packages_standard.json"))
-    res_final["GITHUB_STANDARD"] = data
-    data = read_json(Path(module.__file__).parent.joinpath("packages_dev.json"))
-    res_final["GITHUB_DEV"] = data
-
-    print("🔍 Loading custom installers ")
-    import runpy
-    res_custom_installers: list[InstallerData] = []
-    for item in Path(module.__file__).parent.joinpath("custom_standard").glob("*.py"):
-        if item.name == "__init__.py": continue
-        try:
-            print(f"📄 Loading custom installer: {item.name}")
-            installer_data: InstallerData = runpy.run_path(str(item), run_name=None)["config_dict"]
-            res_custom_installers.append(installer_data)
-        except Exception as ex:
-            print(f"❌ Failed to load {item}: {ex}")
-    res_final["CUSTOM_STANDARD"] = InstallerDataFiles({"version": "1", "installers": res_custom_installers})
-
-    res_custom_dev_installers: list[InstallerData] = []
-    for item in Path(module.__file__).parent.joinpath("custom_dev").glob("*.py"):
-        if item.name == "__init__.py": continue
-        try:
-            print(f"📄 Loading custom dev installer: {item.name}")
-            installer_data: InstallerData = runpy.run_path(str(item), run_name=None)["config_dict"]
-            res_custom_dev_installers.append(installer_data)
-        except Exception as ex:
-            print(f"❌ Failed to load {item}: {ex}")
-    res_final["CUSTOM_DEV"] = InstallerDataFiles({"version": "1", "installers": res_custom_dev_installers})
+    res_final: dict[APP_INSTALLER_CATEGORY, InstallerDataFiles] = {key: read_json(Path(module.__file__).parent.joinpath(f"packages_{key.lower()}.json")) for key in which_cats}
     print(f"Loaded: {len(res_final)} installer categories")
     for k, v in res_final.items():
         print(f" - {k}: {len(v['installers'])} items")

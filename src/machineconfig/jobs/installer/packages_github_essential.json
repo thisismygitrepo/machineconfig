@@ -534,14 +534,14 @@
       "doc": "🚀 Fly through your shell history. Great Scott!",
       "fileNamePattern": {
         "amd64": {
-          "linux": "mcfly-v{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "mcfly-v{version}-x86_64-apple-darwin.tar.gz",
-          "windows": "mcfly-v{version}-x86_64-pc-windows-msvc.zip"
+          "linux": "mcfly-{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "mcfly-{version}-x86_64-apple-darwin.tar.gz",
+          "windows": "mcfly-{version}-x86_64-pc-windows-msvc.zip"
         },
         "arm64": {
-          "linux": "mcfly-v{version}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "mcfly-v{version}-x86_64-apple-darwin.tar.gz",
-          "windows": "mcfly-v{version}-x86_64-pc-windows-msvc.zip"
+          "linux": "mcfly-{version}-aarch64-unknown-linux-musl.tar.gz",
+          "macos": "mcfly-{version}-aarch64-apple-darwin.tar.gz",
+          "windows": "mcfly-{version}-aarch64-pc-windows-msvc.zip"
         }
       }
     },

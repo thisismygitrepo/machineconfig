@@ -6,6 +6,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.installer import get_installers, install_all
+from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
 from platform import system
 from typing import Any, Optional, Literal, TypeAlias, get_args, Annotated
 
@@ -26,8 +27,7 @@ def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category
     if which is not None:  # install by name
         total_messages: list[str] = []
         for a_which in which.split(",") if type(which) == str else which:
-            # Use get_installers to get properly converted installer objects
-            all_installers = get_installers(system=system(), dev=False) + get_installers(system=system(), dev=True)
+            all_installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL", "GITHUB_DEV", "CUSTOM_DEV"])
 
             # Find installer by exe_name or name
             selected_installer = None
@@ -53,9 +53,7 @@ def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category
             print(a_message)
         return None
 
-    # interactive installation - get all installers including dev ones
-    installers = get_installers(system=system(), dev=True)
-
+    installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL", "GITHUB_DEV", "CUSTOM_DEV"])
     # Check installed programs with progress indicator
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
         task = progress.add_task("✅ Checking installed programs...", total=len(installers))
@@ -115,13 +113,14 @@ def get_programs_by_category(program_name: WHICH_CAT):
 ┃ 📦 Installing Category: {program_name}
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
     match program_name:
-        case "essentials" | "essentialsDev":
-            installers_ = get_installers(dev=False, system=system())
-            if program_name == "essentialsDev":
-                installers_ += get_installers(dev=True, system=system())
+        case "essentials":
+            installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL"])
             install_all(installers=installers_)
             program = ""
-
+        case "essentialsDev":
+            installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_DEV", "CUSTOM_DEV", "GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL"])
+            install_all(installers=installers_)
+            program = ""
         case "systymPackages":
             if system() == "Windows":
                 options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text(encoding="utf-8"))
