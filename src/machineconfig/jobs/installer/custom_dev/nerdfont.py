@@ -5,14 +5,15 @@ from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-config_dict: InstallerData = {
-    "appName": "nerdfont",
-    "repoURL": "CUSTOM",
-    "doc": "lightweight containerization",
-}
+# config_dict: InstallerData = {
+#     "appName": "nerdfont",
+#     "repoURL": "CMD",
+#     "doc": "lightweight containerization",
+# }
 
 
-def main(version: Optional[str]):
+def main(installer_data: InstallerData, version: Optional[str]):
+    _ = installer_data
     print(f"""
 {"=" * 150}
 🔤 NERD FONTS INSTALLER | Installing programming fonts with icons

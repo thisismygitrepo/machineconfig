@@ -7,14 +7,15 @@ https://github.com/espanso/espanso
 from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
-config_dict: InstallerData = {
-    "appName": "espanso",
-    "repoURL": "CUSTOM",
-    "doc": "A text expander.",
-}
+# config_dict: InstallerData = {
+#     "appName": "espanso",
+#     "repoURL": "CMD",
+#     "doc": "A text expander.",
+# }
 
 
-def main(version: Optional[str]):
+def main(installer_data: InstallerData, version: Optional[str]):
+    _ = installer_data
     print(f"""
 {"=" * 150}
 ⚡ ESPANSO INSTALLER | Setting up text expansion tool
@@ -26,7 +27,7 @@ def main(version: Optional[str]):
     _ = version
     import platform
 
-    config_dict["repoURL"] = "https://github.com/espanso/espanso"
+    installer_data["repoURL"] = "https://github.com/espanso/espanso"
     if platform.system() == "Windows":
         print("🪟 Installing Espanso on Windows...")
     elif platform.system() in ["Linux", "Darwin"]:
@@ -41,7 +42,7 @@ def main(version: Optional[str]):
 📦 Using Wayland-specific package
 {"=" * 150}
 """)
-                config_dict["filenameTemplate"]["amd64"]["linux"] = "espanso-debian-wayland-amd64.deb"
+                installer_data["fileNamePattern"]["amd64"]["linux"] = "espanso-debian-wayland-amd64.deb"
             else:
                 print(f"""
 {"=" * 150}
@@ -49,10 +50,10 @@ def main(version: Optional[str]):
 📦 Using X11-specific package
 {"=" * 150}
 """)
-                config_dict["filenameTemplate"]["amd64"]["linux"] = "espanso-debian-x11-amd64.deb"
+                installer_data["fileNamePattern"]["amd64"]["linux"] = "espanso-debian-x11-amd64.deb"
         else:  # Darwin/macOS
             print("🍎 Installing Espanso on macOS...")
-            config_dict["filenameTemplate"]["amd64"]["macos"] = "Espanso.dmg"
+            installer_data["fileNamePattern"]["amd64"]["macos"] = "Espanso.dmg"
     else:
         error_msg = f"Unsupported platform: {platform.system()}"
         print(f"""
@@ -65,7 +66,7 @@ def main(version: Optional[str]):
     print("🚀 Installing Espanso using installer...")
     from machineconfig.utils.installer_utils.installer_class import Installer
 
-    installer = Installer(config_dict)
+    installer = Installer(installer_data)
     installer.install(version=None)
 
     config = """

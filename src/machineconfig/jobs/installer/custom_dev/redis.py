@@ -4,10 +4,11 @@ import platform
 from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
-config_dict: InstallerData = {"appName": "Redis", "repoURL": "CUSTOM", "doc": "submillisecond fast key-value db"}
+# config_dict: InstallerData = {"appName": "Redis", "repoURL": "CMD", "doc": "submillisecond fast key-value db"}
 
 
-def main(version: Optional[str]):
+def main(installer_data: InstallerData, version: Optional[str]):
+    _ = installer_data
     print(f"""
 {"=" * 150}
 🗃️  REDIS INSTALLER | Setting up in-memory database

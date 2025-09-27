@@ -7,7 +7,7 @@ from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-config_dict: InstallerData = {"appName": "Cursor", "repoURL": "CUSTOM", "doc": "Cursor"}
+# config_dict: InstallerData = {"appName": "Cursor", "repoURL": "CMD", "doc": "Cursor"}
 
 
 def install_linux(version: Optional[str] = None):
@@ -102,8 +102,9 @@ def install_windows(version: Optional[str] = None):
     print("Cursor installation completed. Check your Start Menu or Desktop for Cursor.")
 
 
-def main(version: Optional[str] = None):
+def main(installer_data: InstallerData, version: Optional[str] = None):
     """Main installation function that handles both Linux and Windows."""
+    _ = installer_data
     system = platform.system()
 
     if system == "Linux":
@@ -115,4 +116,5 @@ def main(version: Optional[str] = None):
 
 
 if __name__ == "__main__":
-    main()
+    pass
+    # main()

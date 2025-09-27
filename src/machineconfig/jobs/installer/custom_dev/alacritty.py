@@ -5,10 +5,11 @@ from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-config_dict: InstallerData = {"appName": "Alacritty", "repoURL": "CUSTOM", "doc": "Terminal Console"}
+# config_dict: InstallerData = {"appName": "Alacritty", "repoURL": "CMD", "doc": "Terminal Console"}
 
 
-def main(version: Optional[str]):
+def main(installer_data: InstallerData, version: Optional[str]):
+    _ = installer_data
     print(f"""
 {"=" * 150}
 🖥️  ALACRITTY INSTALLER | Installing GPU-accelerated terminal emulator

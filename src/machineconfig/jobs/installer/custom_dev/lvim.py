@@ -11,14 +11,15 @@ _ = Terminal, subprocess
 # as per https://www.lunarvim.org/docs/installation
 
 
-config_dict: InstallerData = {
-    "appName": "lvim",
-    "repoURL": "CUSTOM",
-    "doc": "Terminal text editor based on neovim.",
-}
+# config_dict: InstallerData = {
+#     "appName": "lvim",
+#     "repoURL": "CMD",
+#     "doc": "Terminal text editor based on neovim.",
+# }
 
 
-def main(version: Optional[str]):
+def main(installer_data: InstallerData, version: Optional[str]):
+    _ = installer_data
     print(f"""
 {"=" * 150}
 🌙 LUNARVIM INSTALLER | Setting up Neovim-based IDE

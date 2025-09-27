@@ -6,14 +6,15 @@ from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-config_dict: InstallerData = {
-    "appName": "Brave",
-    "repoURL": "CUSTOM",
-    "doc": "Privacy-focused web browser with built-in ad blocking",
-}
+# config_dict: InstallerData = {
+#     "appName": "Brave",
+#     "repoURL": "CMD",
+#     "doc": "Privacy-focused web browser with built-in ad blocking",
+# }
 
 
-def main(version: Optional[str]):
+def main(installer_data: InstallerData, version: Optional[str]):
+    _ = installer_data
     print(f"""
 {"=" * 150}
 🦁 BRAVE BROWSER | Installing privacy-focused web browser

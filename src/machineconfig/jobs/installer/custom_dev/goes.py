@@ -7,16 +7,17 @@ https://github.com/ShishirPatil/gorilla
 
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
-config_dict: InstallerData = {
-    "appName": "Gorilla",
-    "repoURL": "https://github.com/ShishirPatil/gorilla",
-    "doc": "natural language to API",
-}
+# config_dict: InstallerData = {
+#     "appName": "Gorilla",
+#     "repoURL": "https://github.com/ShishirPatil/gorilla",
+#     "doc": "natural language to API",
+# }
 
 ve_name = "goex"
 
 
-def main():
+def main(installer_data: InstallerData):
+    _ = installer_data
     print(f"""
 {"=" * 150}
 🦍 GORILLA INSTALLER | Natural language to API converter

@@ -2,14 +2,15 @@ from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 import platform
 
-config_dict: InstallerData = {
-    "appName": "aider-chat",
-    "repoURL": "https://github.com/paul-gauthier/aider",
-    "doc": "Aider Chat",
-}
+# config_dict: InstallerData = {
+#     "appName": "aider-chat",
+#     "repoURL": "https://github.com/paul-gauthier/aider",
+#     "doc": "Aider Chat",
+# }
 
 
-def main(version: Optional[str] = None):
+def main(installer_data: InstallerData, version: Optional[str] = None):
+    _ = installer_data
     print(f"""
 {"=" * 150}
 🤖 AIDER INSTALLER | Installing AI code assistant

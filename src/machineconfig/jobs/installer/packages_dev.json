@@ -292,18 +292,18 @@
     },
     {
       "appName": "mermaid-cli",
-      "repoURL": "npm install -g @mermaid-js/mermaid-cli",
+      "repoURL": "CMD",
       "doc": "📊 Generate diagrams and flowcharts from text in a similar manner as markdown",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "windows": null,
-          "macos": null
+          "linux": "npm install -g @mermaid-js/mermaid-cli",
+          "windows": "npm install -g @mermaid-js/mermaid-cli",
+          "macos": "npm install -g @mermaid-js/mermaid-cli"
         },
         "arm64": {
-          "linux": null,
-          "windows": null,
-          "macos": null
+          "linux": "npm install -g @mermaid-js/mermaid-cli",
+          "windows": "npm install -g @mermaid-js/mermaid-cli",
+          "macos": "npm install -g @mermaid-js/mermaid-cli"
         }
       }
     },
@@ -360,18 +360,18 @@
     },
     {
       "appName": "marp",
-      "repoURL": "npm install -g @marp-team/marp-cli",
+      "repoURL": "CMD",
       "doc": "🎯 Markdown presentation writer",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "windows": null,
-          "macos": null
+          "linux": "npm install -g @marp-team/marp-cli",
+          "windows": "npm install -g @marp-team/marp-cli",
+          "macos": "npm install -g @marp-team/marp-cli"
         },
         "arm64": {
-          "linux": null,
-          "windows": null,
-          "macos": null
+          "linux": "npm install -g @marp-team/marp-cli",
+          "windows": "npm install -g @marp-team/marp-cli",
+          "macos": "npm install -g @marp-team/marp-cli"
         }
       }
     },
@@ -411,35 +411,35 @@
     },
     {
       "appName": "devcontainer",
-      "repoURL": "npm install -g @devcontainers/cli",
+      "repoURL": "CMD",
       "doc": "🐋 Devcontainer is a command-line tool to manage development containers",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "windows": null,
-          "macos": null
+          "linux": "npm install -g @devcontainers/cli",
+          "windows": "npm install -g @devcontainers/cli",
+          "macos": "npm install -g @devcontainers/cli"
         },
         "arm64": {
-          "linux": null,
-          "windows": null,
-          "macos": null
+          "linux": "npm install -g @devcontainers/cli",
+          "windows": "npm install -g @devcontainers/cli",
+          "macos": "npm install -g @devcontainers/cli"
         }
       }
     },
     {
       "appName": "bitwarden",
-      "repoURL": "npm install -g @bitwarden/cli",
+      "repoURL": "CMD",
       "doc": "🔐 bw is a password manager.",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "windows": null,
-          "macos": null
+          "linux": "npm install -g @bitwarden/cli",
+          "windows": "npm install -g @bitwarden/cli",
+          "macos": "npm install -g @bitwarden/cli"
         },
         "arm64": {
-          "linux": null,
-          "windows": null,
-          "macos": null
+          "linux": "npm install -g @bitwarden/cli",
+          "windows": "npm install -g @bitwarden/cli",
+          "macos": "npm install -g @bitwarden/cli"
         }
       }
     },

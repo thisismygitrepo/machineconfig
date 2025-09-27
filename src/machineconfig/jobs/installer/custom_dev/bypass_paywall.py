@@ -6,14 +6,15 @@ from machineconfig.utils.schemas.installer.installer_types import InstallerData
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 
 
-config_dict: InstallerData = {
-    "appName": "bypass-paywalls-chrome",
-    "repoURL": "https://github.com/iamadamdev/bypass-paywalls-chrome",
-    "doc": """Plugin for chrome to bypass paywalls""",
-}
+# config_dict: InstallerData = {
+#     "appName": "bypass-paywalls-chrome",
+#     "repoURL": "https://github.com/iamadamdev/bypass-paywalls-chrome",
+#     "doc": """Plugin for chrome to bypass paywalls""",
+# }
 
 
-def main(version: Optional[str] = None):
+def main(installer_data: InstallerData, version: Optional[str] = None):
+    _ = installer_data
     print(f"""
 {"=" * 150}
 🔓 BYPASS PAYWALL | Installing paywall bypass extension for Chrome

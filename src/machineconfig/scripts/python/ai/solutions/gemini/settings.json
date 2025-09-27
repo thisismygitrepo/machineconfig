@@ -69,7 +69,7 @@
   "customThemes": {
     "MyCustomTheme": {
       "name": "MyCustomTheme",
-      "type": "custom",
+      "type": "CMD",
       "Background": "#181818",
       "Foreground": "#F8F8F2",
       "AccentBlue": "#61AFEF",

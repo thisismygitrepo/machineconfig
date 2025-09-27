@@ -4,14 +4,9 @@ from typing import Optional
 import platform
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
-config_dict: InstallerData = {
-    "appName": "Visual Studio Code",
-    "repoURL": "CUSTOM",
-    "doc": "Visual Studio Code",
-}
 
-
-def main(version: Optional[str] = None):
+def main(installer_data: InstallerData, version: Optional[str] = None):
+    _ = installer_data
     print(f"""
 {"=" * 150}
 💻 VS CODE INSTALLER | Setting up Visual Studio Code
@@ -22,10 +17,10 @@ def main(version: Optional[str] = None):
 
     if platform.system() == "Linux":
         print("🐧 Installing VS Code on Linux using official script...")
-        import machineconfig.jobs.custom_installers as module
+        import machineconfig.jobs.installer.custom_dev as module
         from pathlib import Path
 
-        install_script = Path(module.__file__).parent.joinpath("scripts/linux/vscode.sh").read_text(encoding="utf-8")
+        install_script = Path(module.__file__).parent.parent.joinpath("linux_scripts/vscode.sh").read_text(encoding="utf-8")
     elif platform.system() == "Darwin":
         print("🍎 Installing VS Code on macOS using Homebrew...")
         install_script = """brew install --cask visual-studio-code"""
