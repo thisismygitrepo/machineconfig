@@ -7,8 +7,10 @@ from machineconfig.utils.schemas.installer.installer_types import InstallerData,
 
 import platform
 import subprocess
-from typing import Optional
+import json
+from typing import Optional, Any
 from pathlib import Path
+from urllib.parse import urlparse
 
 
 class Installer:
@@ -235,6 +237,155 @@ class Installer:
         return downloaded, version_to_be_installed
 
     # --------------------------- Arch / template helpers ---------------------------
+
+    @staticmethod
+    def _get_repo_name_from_url(repo_url: str) -> str:
+        """Extract owner/repo from GitHub URL."""
+        try:
+            parsed = urlparse(repo_url)
+            path_parts = parsed.path.strip("/").split("/")
+            return f"{path_parts[0]}/{path_parts[1]}"
+        except (IndexError, AttributeError):
+            return ""
+
+    @staticmethod
+    def _fetch_github_release_data(repo_name: str, version: Optional[str] = None) -> Optional[dict[str, Any]]:
+        """Fetch release data from GitHub API using curl."""
+        try:
+            if version and version.lower() != "latest":
+                # Fetch specific version
+                url = f"https://api.github.com/repos/{repo_name}/releases/tags/{version}"
+            else:
+                # Fetch latest release
+                url = f"https://api.github.com/repos/{repo_name}/releases/latest"
+            
+            cmd = ["curl", "-s", url]
+            
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            
+            if result.returncode != 0:
+                print(f"❌ Failed to fetch data for {repo_name}: {result.stderr}")
+                return None
+                
+            response_data = json.loads(result.stdout)
+            
+            # Check if API returned an error
+            if "message" in response_data:
+                if "API rate limit exceeded" in response_data.get("message", ""):
+                    print(f"🚫 Rate limit exceeded for {repo_name}")
+                    return None
+                elif "Not Found" in response_data.get("message", ""):
+                    print(f"🔍 No releases found for {repo_name}")
+                    return None
+                    
+            return response_data
+            
+        except (subprocess.TimeoutExpired, json.JSONDecodeError, subprocess.SubprocessError) as e:
+            print(f"❌ Error fetching {repo_name}: {e}")
+            return None
+
+    @staticmethod
+    def _find_asset_by_pattern(release_data: dict[str, Any], filename_pattern: str, fallback_patterns: Optional[list[str]] = None) -> Optional[dict[str, Any]]:
+        """Find asset that matches the filename pattern."""
+        assets = release_data.get("assets", [])
+        
+        # Try exact match first
+        for asset in assets:
+            asset_name = asset["name"]
+            if asset_name == filename_pattern:
+                return asset
+        
+        # Try fallback patterns if provided
+        if fallback_patterns:
+            for fallback_pattern in fallback_patterns:
+                for asset in assets:
+                    asset_name = asset["name"]
+                    if asset_name == fallback_pattern:
+                        return asset
+        
+        # Try fuzzy matching - look for assets that contain key parts of the pattern
+        pattern_parts = filename_pattern.replace(".tar.gz", "").replace(".zip", "").replace(".exe", "").replace(".deb", "").split("-")
+        for asset in assets:
+            asset_name = asset["name"]
+            matches = sum(1 for part in pattern_parts if part in asset_name and len(part) > 2)
+            if matches >= len(pattern_parts) - 2:  # Allow some flexibility
+                return asset
+        
+        return None
+
+    def get_github_release(self, repo_url: str, version: Optional[str]) -> tuple[Optional[str], Optional[str]]:
+        """
+        Get download link and version from GitHub release based on fileNamePattern.
+        Returns (download_url, actual_version)
+        """
+        # Get current system info
+        arch = get_normalized_arch()
+        os_name = get_os_name()
+        
+        # Get filename pattern from installer data
+        file_name_patterns = self.installer_data.get("fileNamePattern", {})
+        
+        if not file_name_patterns:
+            print("❌ No fileNamePattern defined in installer data")
+            return None, None
+        
+        # Get the pattern for current architecture and OS
+        arch_patterns = file_name_patterns.get(arch, {})
+        if not arch_patterns:
+            print(f"❌ No patterns defined for architecture: {arch}")
+            return None, None
+        
+        filename_pattern = arch_patterns.get(os_name)
+        if not filename_pattern:
+            print(f"❌ No pattern defined for OS: {os_name} on architecture: {arch}")
+            return None, None
+        
+        print(f"🔍 Using pattern: {filename_pattern} for {os_name} {arch}")
+        
+        # Get repository name
+        repo_name = self._get_repo_name_from_url(repo_url)
+        if not repo_name:
+            print(f"❌ Invalid repository URL: {repo_url}")
+            return None, None
+        
+        # Fetch release data
+        release_data = self._fetch_github_release_data(repo_name, version)
+        if not release_data:
+            return None, None
+        
+        actual_version = release_data.get("tag_name", "unknown")
+        
+        # Substitute version in pattern if needed
+        if "{version}" in filename_pattern:
+            # Try different version formats
+            version_variations = [
+                actual_version,
+                actual_version.lstrip("v"),  # Remove 'v' prefix if present
+                actual_version.lstrip("v").split("-")[0],  # Remove suffixes like -alpha, -beta
+            ]
+            
+            patterns_to_try = []
+            for version_variant in version_variations:
+                patterns_to_try.append(filename_pattern.replace("{version}", version_variant))
+            
+            asset = self._find_asset_by_pattern(release_data, patterns_to_try[0], patterns_to_try[1:])
+            if asset:
+                print(f"✅ Found asset: {asset['name']}")
+                return asset["browser_download_url"], actual_version
+        else:
+            # Pattern doesn't contain version placeholder
+            asset = self._find_asset_by_pattern(release_data, filename_pattern)
+            if asset:
+                print(f"✅ Found asset: {asset['name']}")
+                return asset["browser_download_url"], actual_version
+        
+        print(f"❌ No matching asset found for pattern: {filename_pattern}")
+        return None, actual_version
 
     @staticmethod
     def check_if_installed_already(exe_name: str, version: str, use_cache: bool) -> tuple[str, str, str]:

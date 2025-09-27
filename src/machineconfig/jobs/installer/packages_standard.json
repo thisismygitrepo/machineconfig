@@ -25,13 +25,13 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "pistol-static-linux-x86_64",
-          "windows": "pistol-static-windows-x86_64.exe",
-          "macos": "pistol-static-darwin-x86_64"
+          "windows": null,
+          "macos": null
         },
         "arm64": {
           "linux": "pistol-static-linux-aarch64",
-          "windows": "pistol-static-windows-arm64.exe",
-          "macos": "pistol-static-darwin-arm64"
+          "windows": null,
+          "macos": null
         }
       }
     },
@@ -58,14 +58,14 @@
       "doc": "💾 like dua, diskonaut is a terminal disk space navigator.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "diskonaut-{version}-x86_64-unknown-linux-musl.tar.gz",
-          "windows": "diskonaut-{version}-x86_64-pc-windows-gnu.tar.gz",
-          "macos": "diskonaut-{version}-x86_64-apple-darwin.tar.gz"
+          "linux": "diskonaut-{version}-unknown-linux-musl.tar.gz",
+          "windows": null,
+          "macos": null
         },
         "arm64": {
-          "linux": "diskonaut-{version}-aarch64-unknown-linux-musl.tar.gz",
-          "windows": "diskonaut-{version}-x86_64-pc-windows-gnu.tar.gz",
-          "macos": "diskonaut-{version}-aarch64-apple-darwin.tar.gz"
+          "linux": null,
+          "windows": null,
+          "macos": null
         }
       }
     },
@@ -76,12 +76,12 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "xplr-linux.tar.gz",
-          "windows": "xplr-windows.tar.gz",
+          "windows": null,
           "macos": "xplr-macos.tar.gz"
         },
         "arm64": {
           "linux": "xplr-linux-aarch64.tar.gz",
-          "windows": "xplr-windows.tar.gz",
+          "windows": null,
           "macos": "xplr-macos-aarch64.tar.gz"
         }
       }
@@ -150,23 +150,6 @@
         "arm64": {
           "linux": "zellij-aarch64-unknown-linux-musl.tar.gz",
           "macos": "zellij-aarch64-apple-darwin.tar.gz",
-          "windows": null
-        }
-      }
-    },
-    {
-      "appName": "speedtest",
-      "repoURL": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-win64.zip",
-      "doc": "🚀 Test your internet connection speed and ping using speedtest.net from the CLI",
-      "fileNamePattern": {
-        "amd64": {
-          "windows": "ookla-speedtest-{version}-win64.zip",
-          "linux": null,
-          "macos": null
-        },
-        "arm64": {
-          "linux": null,
-          "macos": null,
           "windows": null
         }
       }
