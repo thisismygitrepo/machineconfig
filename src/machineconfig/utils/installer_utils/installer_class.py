@@ -310,11 +310,17 @@ class Installer:
         # print(release_data)
         actual_version = release_data.get("tag_name", "unknown")
         filename = filename_pattern.format(version=actual_version)
-        browser_download_url = f"https://github.com/cantino/mcfly/releases/download/{actual_version}/{filename}"
 
+        available_filenames: list[str] = []
         for asset in release_data.get("assets", []):
-            browser_download_url = asset.get("browser_download_url", "NA")
-            print(f"-- {browser_download_url}")
+            an_dl = asset.get("browser_download_url", "NA")
+            available_filenames.append(an_dl.split("/")[-1])
+        if filename not in available_filenames:
+            filename = filename_pattern.format(version=actual_version.replace("v", ""))
+            if filename not in available_filenames:
+                print(f"❌ Filename {filename} not found in assets: {available_filenames}")
+                return None, None
+        browser_download_url = f"{repo_url}/releases/download/{actual_version}/{filename}"
         return browser_download_url, actual_version
 
     @staticmethod
