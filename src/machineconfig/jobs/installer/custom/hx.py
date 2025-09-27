@@ -18,6 +18,18 @@ config_dict: InstallerData = {
     "appName": "hx",
     "repoURL": "CMD",
     "doc": "Helix is a post-modern modal text editor.",
+    "fileNamePattern": {
+        "amd64": {
+            "linux": "hx-linux-amd64.tar.xz",
+            "macos": "hx-macos-amd64.tar.xz",
+            "windows": "hx-windows-amd64.zip",
+        },
+        "arm64": {
+            "linux": "hx-linux-arm64.tar.xz",
+            "macos": "hx-macos-arm64.tar.xz",
+            "windows": "hx-windows-arm64.zip",
+        },
+    },
 }
 
 

@@ -1,4 +1,4 @@
-from typing import TypedDict, Literal, TypeAlias
+from typing import TypedDict, Literal, TypeAlias, Optional
 import platform
 
 
@@ -11,7 +11,7 @@ class InstallerData(TypedDict):
     appName: str
     doc: str
     repoURL: str
-    fileNamePattern: dict[CPU_ARCHITECTURES, dict[OPERATING_SYSTEMS, str]]
+    fileNamePattern: dict[CPU_ARCHITECTURES, dict[OPERATING_SYSTEMS, Optional[str]]]
 
 
 class InstallerDataFiles(TypedDict):

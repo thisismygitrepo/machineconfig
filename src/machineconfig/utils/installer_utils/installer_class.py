@@ -99,48 +99,63 @@ class Installer:
     def install(self, version: Optional[str]) -> None:
         exe_name = self._get_exe_name()
         repo_url = self.installer_data["repoURL"]
+        os_name = get_os_name()
+        arch = get_normalized_arch()
+        installer_arch_os = self.installer_data["fileNamePattern"][arch][os_name]
+        if installer_arch_os is None:
+            raise ValueError(f"No installation pattern for {exe_name} on {os_name} {arch}")
 
         print(f"\n{'=' * 80}\n🔧 INSTALLATION PROCESS: {exe_name} 🔧\n{'=' * 80}")
-        if repo_url == "CUSTOM":
-            pass
-            # import runpy
-            # program: str = runpy.run_path(str(installer_path), run_name=None)["main"](version=version)
-            # # print(program)
-            # print("🚀 Running installation script...")
-            # if platform.system() == "Linux":
-            #     script = "#!/bin/bash" + "\n" + program
-            # else:
-            #     script = program
-            # script_file = PathExtended.tmpfile(name="tmp_shell_script", suffix=".ps1" if platform.system() == "Windows" else ".sh", folder="tmp_scripts")
-            # script_file.write_text(script, newline=None if platform.system() == "Windows" else "\n")
-            # if platform.system() == "Windows":
-            #     start_cmd = "powershell"
-            #     full_command = f"{start_cmd} {script_file}"
-            # else:
-            #     start_cmd = "bash"
-            #     full_command = f"{start_cmd} {script_file}"
-            # subprocess.run(full_command, stdin=None, stdout=None, stderr=None, shell=True, text=True)
-            # version_to_be_installed = str(version)
-            # print(f"✅ Custom installation completed\n{'=' * 80}")
-
-        elif "npm " in repo_url or "pip " in repo_url or "winget " in repo_url:
-            package_manager = repo_url.split(" ", maxsplit=1)[0]
-            print(f"📦 Using package manager: {package_manager}")
-            desc = package_manager + " installation"
-            version_to_be_installed = package_manager + "Latest"
-            print(f"🚀 Running: {repo_url}")
-            result = subprocess.run(repo_url, shell=True, capture_output=True, text=True)
-            success = result.returncode == 0 and result.stderr == ""
-            if not success:
-                print(f"❌ {desc} failed")
-                if result.stdout:
-                    print(f"STDOUT: {result.stdout}")
-                if result.stderr:
-                    print(f"STDERR: {result.stderr}")
-                print(f"Return code: {result.returncode}")
-            print(f"✅ Package manager installation completed\n{'=' * 80}")
-
+        if repo_url == "CMD":
+            if "npm " in installer_arch_os or "pip " in installer_arch_os or "winget " in installer_arch_os:
+                package_manager = installer_arch_os.split(" ", maxsplit=1)[0]
+                print(f"📦 Using package manager: {package_manager}")
+                desc = package_manager + " installation"
+                version_to_be_installed = package_manager + "Latest"
+                print(f"🚀 Running: {installer_arch_os}")
+                result = subprocess.run(installer_arch_os, shell=True, capture_output=True, text=True)
+                success = result.returncode == 0 and result.stderr == ""
+                if not success:
+                    print(f"❌ {desc} failed")
+                    if result.stdout:
+                        print(f"STDOUT: {result.stdout}")
+                    if result.stderr:
+                        print(f"STDERR: {result.stderr}")
+                    print(f"Return code: {result.returncode}")
+                print(f"✅ Package manager installation completed\n{'=' * 80}")
+            elif installer_arch_os.endswith((".sh", ".py", ".ps1")):
+                # search for the script, see which path ends with the script name
+                import machineconfig.jobs.installer as module
+                from pathlib import Path
+                search_root = Path(module.__file__).parent
+                search_results = list(search_root.rglob(installer_arch_os))
+                if len(search_results) == 0:
+                    raise FileNotFoundError(f"Could not find installation script: {installer_arch_os}")
+                elif len(search_results) > 1:
+                    raise ValueError(f"Multiple installation scripts found for {installer_arch_os}: {search_results}")
+                installer_path = search_results[0]
+                print(f"📄 Found installation script: {installer_path}")
+                if installer_arch_os.endswith(".sh"):
+                    if platform.system() not in ["Linux", "Darwin"]:
+                        raise NotImplementedError(f"Shell script installation not supported on {platform.system()}")
+                    print(f"🚀 Running shell script: {installer_path}")
+                    subprocess.run(f"bash {installer_path}", shell=True, check=True)
+                    version_to_be_installed = "scripted_installation"
+                    print(f"✅ Shell script installation completed\n{'=' * 80}")
+                elif installer_arch_os.endswith(".ps1"):
+                    if platform.system() != "Windows":
+                        raise NotImplementedError(f"PowerShell script installation not supported on {platform.system()}")
+                    print(f"🚀 Running PowerShell script: {installer_path}")
+                    subprocess.run(f"powershell -ExecutionPolicy Bypass -File {installer_path}", shell=True, check=True)
+                    version_to_be_installed = "scripted_installation"
+                    print(f"✅ PowerShell script installation completed\n{'=' * 80}")
+                elif installer_arch_os.endswith(".py"):
+                    import runpy
+                    runpy.run_path(str(installer_path), run_name=None)["main"](self.installer_data, version=version)
+                    version_to_be_installed = str(version)
+                    print(f"✅ Custom installation completed\n{'=' * 80}")
         else:
+            assert repo_url.startswith("http//github.com/"), "repoURL must be a GitHub URL"
             print("📥 Downloading from repository...")
             downloaded, version_to_be_installed = self.download(version=version)
             if str(downloaded).endswith(".deb"):

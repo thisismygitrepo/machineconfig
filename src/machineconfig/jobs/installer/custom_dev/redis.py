@@ -30,11 +30,10 @@ def main(installer_data: InstallerData, version: Optional[str]):
     elif platform.system() in ["Linux", "Darwin"]:
         system_name = "Linux" if platform.system() == "Linux" else "macOS"
         print(f"🐧 Installing Redis on {system_name} using installation script...")
-        import machineconfig.jobs.custom_installers as module
+        import machineconfig.jobs.installer as module
         from pathlib import Path
-
         if platform.system() == "Linux":
-            program = Path(module.__file__).parent.joinpath("scripts/linux/redis.sh").read_text(encoding="utf-8")
+            program = Path(module.__file__).parent.joinpath("linux_scripts/redis.sh").read_text(encoding="utf-8")
         else:  # Darwin/macOS
             program = "brew install redis"
     else:

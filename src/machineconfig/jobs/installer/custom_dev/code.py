@@ -17,10 +17,10 @@ def main(installer_data: InstallerData, version: Optional[str] = None):
 
     if platform.system() == "Linux":
         print("🐧 Installing VS Code on Linux using official script...")
-        import machineconfig.jobs.installer.custom_dev as module
+        import machineconfig.jobs.installer as module
         from pathlib import Path
 
-        install_script = Path(module.__file__).parent.parent.joinpath("linux_scripts/vscode.sh").read_text(encoding="utf-8")
+        install_script = Path(module.__file__).parent.joinpath("linux_scripts/vscode.sh").read_text(encoding="utf-8")
     elif platform.system() == "Darwin":
         print("🍎 Installing VS Code on macOS using Homebrew...")
         install_script = """brew install --cask visual-studio-code"""

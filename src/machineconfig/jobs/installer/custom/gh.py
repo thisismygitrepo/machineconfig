@@ -1,10 +1,10 @@
 """gh-cli installer"""
 
 import platform
+import subprocess
 from typing import Optional
 from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
-from machineconfig.utils.terminal import Terminal
 
 r"""
 https://github.com/cli/cli
@@ -23,6 +23,18 @@ config_dict: InstallerData = {
     "appName": "gh",
     "repoURL": "https://github.com/cli/cli",
     "doc": "GitHub CLI",
+    "fileNamePattern": {
+        "amd64": {
+            "windows": "gh_{version}_windows_amd64.msi",
+            "linux": "gh_{version}_linux_amd64.deb",
+            "macos": "gh_{version}_macOS_amd64.pkg",
+        },
+        "arm64": {
+            "windows": "gh_{version}_windows_arm64.msi",
+            "linux": "gh_{version}_linux_arm64.deb",
+            "macos": "gh_{version}_macOS_arm64.pkg",
+        },
+    },
 }
 
 
@@ -77,7 +89,19 @@ gh auth login --with-token $HOME/dotfiles/creds/git/gh_token.txt
 🔐 AUTHENTICATION | Setting up GitHub authentication with token...
 """)
 
-    Terminal().run(program, shell="default").print(desc="Installing GitHub Copilot extension", capture=True)
+    print("""
+🔄 EXECUTING | Running GitHub Copilot extension installation and authentication...
+""")
+    try:
+        result = subprocess.run(program, shell=True, capture_output=True, text=True, check=True)
+        print(f"✅ Command executed successfully")
+        if result.stdout:
+            print(f"📤 Output: {result.stdout.strip()}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Command failed with exit code {e.returncode}")
+        if e.stderr:
+            print(f"📥 Error: {e.stderr.strip()}")
+        raise
 
     print(f"""
 {"═" * 150}
@@ -86,8 +110,6 @@ gh auth login --with-token $HOME/dotfiles/creds/git/gh_token.txt
 🔑 Authentication configured with token
 {"═" * 150}
 """)
-
-    return program
 
 
 if __name__ == "__main__":

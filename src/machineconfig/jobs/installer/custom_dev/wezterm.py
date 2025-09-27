@@ -34,11 +34,11 @@ def main(installer_data: InstallerData, version: Optional[str]):
         print(f"""
 🐧 {system_name} SETUP | Installing WezTerm terminal emulator...
 """)
-        import machineconfig.jobs.custom_installers as module
+        import machineconfig.jobs.installer as module
         from pathlib import Path
 
         if platform.system() == "Linux":
-            program = Path(module.__file__).parent.joinpath("scripts/linux/wezterm.sh").read_text(encoding="utf-8")
+            program = Path(module.__file__).parent.joinpath("linux_scripts/wezterm.sh").read_text(encoding="utf-8")
         else:  # Darwin/macOS
             program = "brew install --cask wezterm"
     else:

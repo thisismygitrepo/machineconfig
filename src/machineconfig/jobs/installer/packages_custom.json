@@ -1,0 +1,39 @@
+{
+  "version": "1",
+  "installers": [
+    {
+      "appName": "gh",
+      "repoURL": "CMD",
+      "doc": "GitHub CLI",
+      "fileNamePattern": {
+        "amd64": {
+          "windows": "gh.py",
+          "linux": "gh.py",
+          "macos": "gh.py"
+        },
+        "arm64": {
+          "windows": "gh.py",
+          "linux": "gh.py",
+          "macos": "gh.py"
+        }
+      }
+    },
+    {
+      "appName": "hx",
+      "repoURL": "CMD",
+      "doc": "Helix is a post-modern modal text editor.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "hx.py",
+          "windows": "hx.py",
+          "macos": "hx.py"
+        },
+        "arm64": {
+          "linux": "hx.py",
+          "windows": "hx.py",
+          "macos": "hx.py"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,226 @@
+{
+  "version": "1",
+  "installers": [
+    {
+      "appName": "Visual Studio Code",
+      "repoURL": "CMD",
+      "doc": "Visual Studio Code",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "code.py",
+          "windows": "code.py",
+          "macos": "code.py"
+        },
+        "arm64": {
+          "linux": "code.py",
+          "windows": "code.py",
+          "macos": "code.py"
+        }
+      }
+    },
+    {
+      "appName": "aider-chat",
+      "repoURL": "CMD",
+      "doc": "Aider Chat",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "uv tool install --force --python python3.13 aider-chat@latest",
+          "windows": "uv tool install --force --python python3.13 aider-chat@latest",
+          "macos": "uv tool install --force --python python3.13 aider-chat@latest"
+        },
+        "arm64": {
+          "linux": "uv tool install --force --python python3.13 aider-chat@latest",
+          "windows": "uv tool install --force --python python3.13 aider-chat@latest",
+          "macos": "uv tool install --force --python python3.13 aider-chat@latest"
+        }
+      }
+    },
+    {
+      "appName": "Alacritty",
+      "repoURL": "CMD",
+      "doc": "Terminal Console",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "alacritty.py",
+          "windows": "alacritty.py",
+          "macos": "alacritty.py"
+        },
+        "arm64": {
+          "linux": "alacritty.py",
+          "windows": "alacritty.py",
+          "macos": "alacritty.py"
+        }
+      }
+    },
+    {
+      "appName": "Brave",
+      "repoURL": "CMD",
+      "doc": "Privacy-focused web browser with built-in ad blocking",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "brave.py",
+          "windows": "brave.py",
+          "macos": "brave.py"
+        },
+        "arm64": {
+          "linux": "brave.py",
+          "windows": "brave.py",
+          "macos": "brave.py"
+        }
+      }
+    },
+    {
+      "appName": "bypass-paywalls-chrome",
+      "repoURL": "https://github.com/iamadamdev/bypass-paywalls-chrome",
+      "doc": "Plugin for chrome to bypass paywalls",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "bypass_paywall.py",
+          "windows": "bypass_paywall.py",
+          "macos": "bypass_paywall.py"
+        },
+        "arm64": {
+          "linux": "bypass_paywall.py",
+          "windows": "bypass_paywall.py",
+          "macos": "bypass_paywall.py"
+        }
+      }
+    },
+    {
+      "appName": "Cursor",
+      "repoURL": "CMD",
+      "doc": "Cursor",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "cursor.py",
+          "windows": "cursor.py",
+          "macos": "cursor.py"
+        },
+        "arm64": {
+          "linux": "cursor.py",
+          "windows": "cursor.py",
+          "macos": "cursor.py"
+        }
+      }
+    },
+    {
+      "appName": "espanso",
+      "repoURL": "CMD",
+      "doc": "A text expander.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "espanso.py",
+          "windows": "espanso.py",
+          "macos": "espanso.py"
+        },
+        "arm64": {
+          "linux": "espanso.py",
+          "windows": "espanso.py",
+          "macos": "espanso.py"
+        }
+      }
+    },
+    {
+      "appName": "Gorilla",
+      "repoURL": "https://github.com/ShishirPatil/gorilla",
+      "doc": "natural language to API",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "goes.py",
+          "windows": "goes.py",
+          "macos": "goes.py"
+        },
+        "arm64": {
+          "linux": "goes.py",
+          "windows": "goes.py",
+          "macos": "goes.py"
+        }
+      }
+    },
+    {
+      "appName": "lvim",
+      "repoURL": "CMD",
+      "doc": "Terminal text editor based on neovim.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "lvim.py",
+          "windows": "lvim.py",
+          "macos": "lvim.py"
+        },
+        "arm64": {
+          "linux": "lvim.py",
+          "windows": "lvim.py",
+          "macos": "lvim.py"
+        }
+      }
+    },
+    {
+      "appName": "nerdfont",
+      "repoURL": "CMD",
+      "doc": "lightweight containerization",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "nerdfont.py",
+          "windows": "nerdfont.py",
+          "macos": "nerdfont.py"
+        },
+        "arm64": {
+          "linux": "nerdfont.py",
+          "windows": "nerdfont.py",
+          "macos": "nerdfont.py"
+        }
+      }
+    },
+    {
+      "appName": "Redis",
+      "repoURL": "CMD",
+      "doc": "submillisecond fast key-value db",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "redis.py",
+          "windows": "redis.py",
+          "macos": "redis.py"
+        },
+        "arm64": {
+          "linux": "redis.py",
+          "windows": "redis.py",
+          "macos": "redis.py"
+        }
+      }
+    },
+    {
+      "appName": "Wezterm",
+      "repoURL": "CMD",
+      "doc": "Modern, GPU-accelerated terminal emulator",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "wezterm.py",
+          "windows": "wezterm.py",
+          "macos": "wezterm.py"
+        },
+        "arm64": {
+          "linux": "wezterm.py",
+          "windows": "wezterm.py",
+          "macos": "wezterm.py"
+        }
+      }
+    },
+    {
+      "appName": "winget",
+      "repoURL": "CMD",
+      "doc": "winget installer",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "winget.py",
+          "windows": "winget.py",
+          "macos": "winget.py"
+        },
+        "arm64": {
+          "linux": "winget.py",
+          "windows": "winget.py",
+          "macos": "winget.py"
+        }
+      }
+    }
+  ]
+}
