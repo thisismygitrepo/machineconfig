@@ -3,18 +3,18 @@
   "installers": [
     {
       "appName": "speedtest",
-      "repoURL": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-x86_64.tgz",
+      "repoURL": "CMD",
       "doc": "🚀 Test your internet connection speed and ping using speedtest.net from the CLI",
       "fileNamePattern": {
         "amd64": {
-          "linux": "ookla-speedtest-{version}-linux-x86_64.tgz",
-          "windows": "ookla-speedtest-{version}-win64.zip",
-          "macos": "ookla-speedtest-{version}-macosx-universal.tgz"
+          "linux": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-x86_64.tgz",
+          "windows": null,
+          "macos": null
         },
         "arm64": {
-          "linux": "ookla-speedtest-{version}-linux-aarch64.tgz",
-          "windows": "ookla-speedtest-{version}-win64.zip",
-          "macos": "ookla-speedtest-{version}-macosx-universal.tgz"
+          "linux": null,
+          "windows": null,
+          "macos": null
         }
       }
     },

@@ -155,6 +155,40 @@ class Installer:
                     runpy.run_path(str(installer_path), run_name=None)["main"](self.installer_data, version=version)
                     version_to_be_installed = str(version)
                     print(f"✅ Custom installation completed\n{'=' * 80}")
+            elif installer_arch_os.startswith("https://"):  # its a url to be downloaded
+                print(f"📥 Downloading object from URL: {installer_arch_os}")
+                downloaded_object = PathExtended(installer_arch_os).download(folder=INSTALL_TMP_DIR)
+                # object is either a zip containing a binary or a straight out binary.
+                if downloaded_object.suffix in [".zip", ".tar.gz"]:
+                    print(f"📦 Decompressing downloaded archive: {downloaded_object}")
+                    downloaded_object = downloaded_object.decompress()
+                    print(f"✅ Decompression completed to: {downloaded_object}")
+                if downloaded_object.suffix in [".exe", ""]:  # likely an executable
+                    if platform.system() == "Windows":
+                        print("🪟 Installing on Windows...")
+                        exe = find_move_delete_windows(downloaded_file_path=downloaded_object, exe_name=exe_name, delete=True, rename_to=exe_name.replace(".exe", "") + ".exe")
+                    elif platform.system() in ["Linux", "Darwin"]:
+                        system_name = "Linux" if platform.system() == "Linux" else "macOS"
+                        print(f"🐧 Installing on {system_name}...")
+                        exe = find_move_delete_linux(downloaded=downloaded_object, tool_name=exe_name, delete=True, rename_to=exe_name)
+                    else:
+                        error_msg = f"❌ ERROR: System {platform.system()} not supported"
+                        print(error_msg)
+                        raise NotImplementedError(error_msg)
+
+                    _ = exe
+                    if exe.name.replace(".exe", "") != exe_name.replace(".exe", ""):
+                        from rich import print as pprint
+                        from rich.panel import Panel
+                        print("⚠️  Warning: Executable name mismatch")
+                        pprint(Panel(f"Expected exe name: [red]{exe_name}[/red] \nAttained name: [red]{exe.name.replace('.exe', '')}[/red]", title="exe name mismatch", subtitle=repo_url))
+                        new_exe_name = exe_name + ".exe" if platform.system() == "Windows" else exe_name
+                        print(f"🔄 Renaming to correct name: {new_exe_name}")
+                        exe.with_name(name=new_exe_name, inplace=True, overwrite=True)
+                    version_to_be_installed = "downloaded_binary"
+                    print(f"✅ Downloaded binary installation completed\n{'=' * 80}")
+            else:
+                raise NotImplementedError(f"CMD installation method not implemented for: {installer_arch_os}")
         else:
             assert repo_url.startswith("https://github.com/"), f"repoURL must be a GitHub URL, got {repo_url}"
             print("📥 Downloading from repository...")
