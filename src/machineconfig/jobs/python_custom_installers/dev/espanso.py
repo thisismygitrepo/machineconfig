@@ -4,7 +4,7 @@ A text expander is a program that detects when you type a specific keyword and r
 https://github.com/espanso/espanso
 """
 
-from typing import Optional, Dict, Any
+from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 config_dict: InstallerData = {

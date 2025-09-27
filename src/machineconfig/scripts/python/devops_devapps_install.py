@@ -59,27 +59,39 @@ def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category
     # Check installed programs with progress indicator
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
         task = progress.add_task("✅ Checking installed programs...", total=len(installers))
-        options = []
+        installer_options = []
         for x in installers:
-            options.append(x.get_description())
+            installer_options.append(x.get_description())
             progress.update(task, advance=1)
 
-    options += list(get_args(WHICH_CAT))
-    # print("s"*1000)
-    program_names = choose_from_options(multi=True, msg="", options=options, header="🚀 CHOOSE DEV APP", default="essentials", fzf=True)
+    # Add category options at the beginning for better visibility
+    category_options = [f"📦 {cat}" for cat in get_args(WHICH_CAT)]
+    options = category_options + ["─" * 50] + installer_options
+    
+    program_names = choose_from_options(multi=True, msg="Categories are prefixed with 📦", options=options, header="🚀 CHOOSE DEV APP OR CATEGORY", default="📦 essentials", fzf=True)
 
     total_commands = ""
     installation_messages: list[str] = []
     for _an_idx, a_program_name in enumerate(program_names):
+        # Skip separator lines
+        if a_program_name.startswith("─"):
+            continue
+            
         print(f"""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ┃ 🔄 Processing: {a_program_name}
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
-        if a_program_name in get_args(WHICH_CAT):
-            shell_commands = get_programs_by_category(program_name=a_program_name)  # type: ignore
-            total_commands += "\n" + shell_commands
+        
+        # Handle category options (remove emoji prefix)
+        if a_program_name.startswith("📦 "):
+            category_name = a_program_name[2:]  # Remove "📦 " prefix
+            if category_name in get_args(WHICH_CAT):
+                shell_commands = get_programs_by_category(program_name=category_name)  # type: ignore
+                total_commands += "\n" + shell_commands
         else:
-            an_installer = installers[options.index(a_program_name)]
+            # Handle individual installer options
+            installer_idx = installer_options.index(a_program_name)
+            an_installer = installers[installer_idx]
             status_message = an_installer.install_robust(version=None)  # finish the task - this returns a status message, not a command
             installation_messages.append(status_message)
 

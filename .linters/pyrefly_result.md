@@ -51,6 +51,15 @@ ERROR Could not find import of `pydantic` [import-error]
   Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
   Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
   Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
+ERROR Could not find import of `src.machineconfig.utils.github_release_parser` [import-error]
+  --> .ai/tmp_scripts/github_download_example.py:16:1
+   |
+16 | from src.machineconfig.utils.github_release_parser import get_github_download_link
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
+  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
+  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
 ERROR Could not find import of `machineconfig.utils.path_reduced` [import-error]
   --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:13:1
    |
@@ -81,31 +90,13 @@ ERROR Expected argument `version` to be passed by name in function `machineconfi
 28 |     installer_data_files = InstallerDataFiles(config_data)
    |                                               ^^^^^^^^^^^
    |
-ERROR Missing argument `repoURL` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
-  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:35:35
-   |
-35 |     installer_data = InstallerData(first_installer)
-   |                                   ^^^^^^^^^^^^^^^^^
-   |
 ERROR Missing argument `doc` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
   --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:35:35
    |
 35 |     installer_data = InstallerData(first_installer)
    |                                   ^^^^^^^^^^^^^^^^^
    |
-ERROR Missing argument `filenameTemplate` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
-  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:35:35
-   |
-35 |     installer_data = InstallerData(first_installer)
-   |                                   ^^^^^^^^^^^^^^^^^
-   |
-ERROR Missing argument `stripVersion` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
-  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:35:35
-   |
-35 |     installer_data = InstallerData(first_installer)
-   |                                   ^^^^^^^^^^^^^^^^^
-   |
-ERROR Missing argument `exeName` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
+ERROR Missing argument `repoURL` in function `machineconfig.utils.schemas.installer.installer_types.InstallerData.__init__` [missing-argument]
   --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:35:35
    |
 35 |     installer_data = InstallerData(first_installer)
@@ -116,6 +107,12 @@ ERROR Expected argument `appName` to be passed by name in function `machineconfi
    |
 35 |     installer_data = InstallerData(first_installer)
    |                                    ^^^^^^^^^^^^^^^
+   |
+ERROR TypedDict `InstallerData` does not have key `exeName` [typed-dict-key-error]
+  --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:36:77
+   |
+36 |     print(f"✅ First installer: {installer_data['appName']} ({installer_data['exeName']})")
+   |                                                                              ^^^^^^^^^
    |
 ERROR Class `Installer` has no class attribute `from_installer_data` [missing-attribute]
   --> .ai/tmp_scripts/installer_refactor/test_new_installer_types.py:49:17
@@ -146,6 +143,54 @@ ERROR Could not import `_search_files_by_pattern` from `machineconfig.scripts.py
    |
 10 | from machineconfig.scripts.python.fire_agents import _search_python_files, _search_files_by_pattern
    |                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+ERROR Could not find import of `src.machineconfig.utils.github_release_parser` [import-error]
+  --> .ai/tmp_scripts/test_github_parser.py:10:1
+   |
+10 | from src.machineconfig.utils.github_release_parser import get_download_link, get_github_download_link
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
+  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
+  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
+ERROR Could not find import of `src.machineconfig.utils.github_installer_generator` [import-error]
+  --> .ai/tmp_scripts/test_installer_generator.py:11:1
+   |
+11 | from src.machineconfig.utils.github_installer_generator import generate_installer_data_from_github
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+  Looked in these locations (from default config for project root marked by `/home/alex/code/machineconfig/pyproject.toml`):
+  Import root (inferred from project layout): "/home/alex/code/machineconfig/src"
+  Site package path queried from interpreter: ["/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13", "/home/alex/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/lib-dynload", "/home/alex/code/machineconfig/.venv/lib/python3.13/site-packages", "/home/alex/code/machineconfig/src"]
+ERROR Unexpected keyword argument `kw` in function `machineconfig.scripts.python.fire_jobs_args_helper.FireJobArgs.__init__` [unexpected-keyword]
+  --> .ai/tmp_scripts/test_kw_format.py:10:24
+   |
+10 |     args = FireJobArgs(kw=["--arg1=value1", "--arg2=True", "--arg3=None"])
+   |                        ^^
+   |
+ERROR Unexpected keyword argument `kw` in function `machineconfig.scripts.python.fire_jobs_args_helper.FireJobArgs.__init__` [unexpected-keyword]
+  --> .ai/tmp_scripts/test_kw_format.py:18:24
+   |
+18 |     args = FireJobArgs(kw=["--url=https://example.com/api?param=value"])
+   |                        ^^
+   |
+ERROR Unexpected keyword argument `kw` in function `machineconfig.scripts.python.fire_jobs_args_helper.FireJobArgs.__init__` [unexpected-keyword]
+  --> .ai/tmp_scripts/test_kw_format.py:26:24
+   |
+26 |     args = FireJobArgs(kw=None)
+   |                        ^^
+   |
+ERROR Unexpected keyword argument `kw` in function `machineconfig.scripts.python.fire_jobs_args_helper.FireJobArgs.__init__` [unexpected-keyword]
+  --> .ai/tmp_scripts/test_kw_format.py:35:28
+   |
+35 |         args = FireJobArgs(kw=["invalid_format"])
+   |                            ^^
+   |
+ERROR Unexpected keyword argument `kw` in function `machineconfig.scripts.python.fire_jobs_args_helper.FireJobArgs.__init__` [unexpected-keyword]
+  --> .ai/tmp_scripts/test_kw_format.py:43:28
+   |
+43 |         args = FireJobArgs(kw=["--invalid"])
+   |                            ^^
    |
 ERROR Argument `dict[str, tuple[str, str]]` is not assignable to parameter `tabs` with type `list[TypedDict[TabConfig]]` in function `machineconfig.cluster.sessions_managers.wt_utils.layout_generator.WTLayoutGenerator.create_wt_script` [bad-argument-type]
   --> .ai/tmp_scripts/test_layout_generator_ps1.py:24:46
@@ -294,6 +339,24 @@ ERROR Argument `str` is not assignable to parameter `object` with type `LiteralS
 62 |                 formatted_args.append(f'"{arg}"')
    |                                       ^^^^^^^^^^
    |
+ERROR TypedDict `InstallerData` does not have key `filenameTemplate` [typed-dict-key-error]
+  --> src/machineconfig/jobs/python_custom_installers/dev/espanso.py:44:29
+   |
+44 |                 config_dict["filenameTemplate"]["amd64"]["linux"] = "espanso-debian-wayland-amd64.deb"
+   |                             ^^^^^^^^^^^^^^^^^^
+   |
+ERROR TypedDict `InstallerData` does not have key `filenameTemplate` [typed-dict-key-error]
+  --> src/machineconfig/jobs/python_custom_installers/dev/espanso.py:52:29
+   |
+52 |                 config_dict["filenameTemplate"]["amd64"]["linux"] = "espanso-debian-x11-amd64.deb"
+   |                             ^^^^^^^^^^^^^^^^^^
+   |
+ERROR TypedDict `InstallerData` does not have key `filenameTemplate` [typed-dict-key-error]
+  --> src/machineconfig/jobs/python_custom_installers/dev/espanso.py:55:25
+   |
+55 |             config_dict["filenameTemplate"]["amd64"]["macos"] = "Espanso.dmg"
+   |                         ^^^^^^^^^^^^^^^^^^
+   |
 ERROR No attribute `windll` in module `ctypes` [missing-attribute]
   --> src/machineconfig/profile/create.py:73:32
    |
@@ -318,12 +381,6 @@ ERROR TODO: Expr::attr_infer_for_type attribute base undefined for type: TypeAli
 17 | options_list = list(Options.__args__)
    |                     ^^^^^^^^^^^^^^^^
    |
-ERROR Object of class `NoneType` has no attribute `lower` [missing-attribute]
-  --> src/machineconfig/scripts/python/fire_jobs_layout_helper.py:27:110
-   |
-27 | ...   layout_chosen = next((layout for layout in layout_file["layouts"] if layout["layoutName"].lower() == layout_name.lower()), None)
-   |                                                                                                            ^^^^^^^^^^^^^^^^^
-   |
 ERROR `str` is not assignable to `PathLike[str]` (caused by inconsistent types when breaking cycles) [bad-assignment]
    --> src/machineconfig/scripts/python/helpers/helpers4.py:145:5
     |
@@ -341,6 +398,12 @@ ERROR Returned type `PathLike[str]` is not assignable to declared return type `s
 149 |                 return path
     |                        ^^^^
     |
+ERROR Argument `str` is not assignable to parameter `object` with type `LiteralString` in function `list.append` [bad-argument-type]
+   --> src/machineconfig/scripts/python/repos_helper_action.py:139:43
+    |
+139 |                     failed_remotes.append(f"{remote.name}: {str(e)}")
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
 ERROR `str | None` is not assignable to `None` (caused by inconsistent types when breaking cycles) [bad-assignment]
   --> src/machineconfig/scripts/python/wifi_conn.py:65:13
    |
@@ -351,6 +414,18 @@ ERROR `str | None` is not assignable to `None` (caused by inconsistent types whe
 69 | |                     signal = line.split(":")[1].strip()
 70 | |                     # Avoid duplicates
    | |_______________________________________^
+   |
+ERROR Object of class `Installer` has no attribute `get_github_release` [missing-attribute]
+  --> src/machineconfig/utils/installer.py:41:49
+   |
+41 |         _release_url, version_to_be_installed = inst.get_github_release(repo_url=repo_url, version=None)
+   |                                                 ^^^^^^^^^^^^^^^^^^^^^^^
+   |
+ERROR Argument `object | str` is not assignable to parameter `exe_name` with type `str` in function `machineconfig.utils.installer_utils.installer_class.Installer.check_if_installed_already` [bad-argument-type]
+  --> src/machineconfig/utils/installer.py:42:82
+   |
+42 | ...   verdict, current_ver, new_ver = inst.check_if_installed_already(exe_name=exe_name, version=version_to_be_installed, use_cache=...
+   |                                                                                ^^^^^^^^
    |
 ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
    --> src/machineconfig/utils/installer.py:136:50
@@ -425,15 +500,15 @@ ERROR Expected argument `version` to be passed by name in function `machineconfi
     |                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     |
 ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
-  --> src/machineconfig/utils/installer_utils/installer_class.py:48:50
+  --> src/machineconfig/utils/installer_utils/installer_class.py:59:50
    |
-48 |         installer_data_files = InstallerDataFiles(config_data)
+59 |         installer_data_files = InstallerDataFiles(config_data)
    |                                                  ^^^^^^^^^^^^^
    |
 ERROR Expected argument `version` to be passed by name in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [unexpected-positional-argument]
-  --> src/machineconfig/utils/installer_utils/installer_class.py:48:51
+  --> src/machineconfig/utils/installer_utils/installer_class.py:59:51
    |
-48 |         installer_data_files = InstallerDataFiles(config_data)
+59 |         installer_data_files = InstallerDataFiles(config_data)
    |                                                   ^^^^^^^^^^^
    |
 ERROR No matching overload found for function `choose_from_options` [no-matching-overload]

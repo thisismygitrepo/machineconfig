@@ -1,13 +1,14 @@
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.installer_utils.installer_abc import find_move_delete_linux, find_move_delete_windows
+from machineconfig.utils.installer_utils.github_release_parser import get_github_download_link
 from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT, LIBRARY_ROOT
 from machineconfig.utils.options import check_tool_exists
 from machineconfig.utils.io import read_json
-from machineconfig.utils.schemas.installer.installer_types import InstallerData, InstallerDataFiles
+from machineconfig.utils.schemas.installer.installer_types import InstallerData, InstallerDataFiles, get_os_name, get_normalized_arch
 
 import platform
 import subprocess
-from typing import Optional, Any, cast
+from typing import Optional
 from pathlib import Path
 
 
@@ -16,23 +17,21 @@ class Installer:
         self.installer_data: InstallerData = installer_data
 
     def __repr__(self) -> str:
-        exe_name = self.installer_data.get("exeName", "unknown")
-        app_name = self.installer_data.get("appName", "unknown")
-        repo_url = self.installer_data.get("repoURL", "unknown")
-        return f"Installer of {exe_name} {app_name} @ {repo_url}"
+        app_name = self.installer_data["appName"]
+        repo_url = self.installer_data["repoURL"]
+        return f"Installer of {app_name} @ {repo_url}"
 
-    def get_description(self):
-        # old_version_cli = Terminal().run(f"{self.exe_name} --version").op.replace("\n", "")
-        # old_version_cli = os.system(f"{self.exe_name} --version").replace("\n", "")
-        exe_name = self.installer_data.get("exeName", "")
-        if not exe_name:
-            return "Invalid installer: missing exeName"
-
+    def get_description(self) -> str:
+        exe_name = self._get_exe_name()
+        
         old_version_cli: bool = check_tool_exists(tool_name=exe_name)
         old_version_cli_str = "✅" if old_version_cli else "❌"
-        # name_version = f"{self.exe_name} {old_version_cli_str}"
-        doc = self.installer_data.get("doc", "No description")
+        doc = self.installer_data["doc"]
         return f"{exe_name:<12} {old_version_cli_str} {doc}"
+    
+    def _get_exe_name(self) -> str:
+        """Derive executable name from app name by converting to lowercase and removing spaces."""
+        return self.installer_data["appName"].lower().replace(" ", "").replace("-", "")
 
     @staticmethod
     def choose_app_and_install():
@@ -63,14 +62,15 @@ class Installer:
             raise ValueError(f"Could not find installer data for {app_name}")
 
         installer = Installer(installer_data=selected_installer_data)
-        print(f"📦 Selected application: {selected_installer_data.get('exeName', 'unknown')}")
-        version = input(f"📝 Enter version to install for {selected_installer_data.get('exeName', 'unknown')} [latest]: ") or None
-        print(f"\n{'=' * 80}\n🚀 INSTALLING {selected_installer_data.get('exeName', 'UNKNOWN').upper()} 🚀\n{'=' * 80}")
+        exe_name = installer._get_exe_name()
+        print(f"📦 Selected application: {exe_name}")
+        version = input(f"📝 Enter version to install for {exe_name} [latest]: ") or None
+        print(f"\n{'=' * 80}\n🚀 INSTALLING {exe_name.upper()} 🚀\n{'=' * 80}")
         installer.install(version=version)
 
-    def install_robust(self, version: Optional[str]):
+    def install_robust(self, version: Optional[str]) -> str:
         try:
-            exe_name = self.installer_data.get("exeName", "unknown")
+            exe_name = self._get_exe_name()
             print(f"\n{'=' * 80}\n🚀 INSTALLING {exe_name.upper()} 🚀\n{'=' * 80}")
             result_old = subprocess.run(f"{exe_name} --version", shell=True, capture_output=True, text=True)
             old_version_cli = result_old.stdout.strip()
@@ -90,14 +90,14 @@ class Installer:
                 return f"""📦️ 🤩 {exe_name} updated from {old_version_cli} ➡️ TO ➡️  {new_version_cli}"""
 
         except Exception as ex:
-            exe_name = self.installer_data.get("exeName", "unknown")
-            app_name = self.installer_data.get("appName", "unknown")
+            exe_name = self._get_exe_name()
+            app_name = self.installer_data["appName"]
             print(f"❌ ERROR: Installation failed for {exe_name}: {ex}")
             return f"""📦️ ❌ Failed to install `{app_name}` with error: {ex}"""
 
-    def install(self, version: Optional[str]):
-        exe_name = self.installer_data.get("exeName", "unknown")
-        repo_url = self.installer_data.get("repoURL", "")
+    def install(self, version: Optional[str]) -> None:
+        exe_name = self._get_exe_name()
+        repo_url = self.installer_data["repoURL"]
 
         print(f"\n{'=' * 80}\n🔧 INSTALLATION PROCESS: {exe_name} 🔧\n{'=' * 80}")
         if repo_url == "CUSTOM":
@@ -198,52 +198,46 @@ class Installer:
         INSTALL_VERSION_ROOT.joinpath(exe_name).write_text(version_to_be_installed, encoding="utf-8")
         print(f"✅ Installation completed successfully!\n{'=' * 80}")
 
-    def download(self, version: Optional[str]):
-        exe_name = self.installer_data.get("exeName", "unknown")
-        repo_url = self.installer_data.get("repoURL", "")
-        app_name = self.installer_data.get("appName", "unknown")
-        strip_v = self.installer_data.get("stripVersion", False)
+    def download(self, version: Optional[str]) -> tuple[PathExtended, str]:
+        exe_name = self._get_exe_name()
+        repo_url = self.installer_data["repoURL"]
+        app_name = self.installer_data["appName"]
         print(f"\n{'=' * 80}\n📥 DOWNLOADING: {exe_name} 📥\n{'=' * 80}")
-        download_link: Optional[Path] = None
+        
+        download_link: Optional[str] = None
         version_to_be_installed: Optional[str] = None
+        
         if "github" not in repo_url or ".zip" in repo_url or ".tar.gz" in repo_url:
-            download_link = Path(repo_url)
+            # Direct download URL
+            download_link = repo_url
             version_to_be_installed = "predefined_url"
             print(f"🔗 Using direct download URL: {download_link}")
             print(f"📦 Version to be installed: {version_to_be_installed}")
-        elif self._any_direct_http_template():
-            template, arch = self._select_template()
-            if not template.startswith("http"):
-                # Fall back to github-style handling below
-                pass
-            else:
-                download_link = Path(template)
-                version_to_be_installed = "predefined_url"
-                system_name = self._system_name()
-                print(f"🧭 Detected system={system_name} arch={arch}")
-                print(f"🔗 Using architecture-specific direct URL: {download_link}")
-                print(f"📦 Version to be installed: {version_to_be_installed}")
-                # continue to unified download logic below
         else:
+            # GitHub repository
             print("🌐 Retrieving release information from GitHub...")
-            release_data = Installer.get_github_release(repo_url=repo_url, version=version)
-            version_to_be_installed = cast(str, release_data["tag_name"])
-            print(f"📦 Version to be installed: {version_to_be_installed}")
-            release_url = Path(repo_url + "/releases/download/" + version_to_be_installed)
-            print(f"📦 Release URL: {release_url}")
-
-            version_to_be_installed_stripped = version_to_be_installed.replace("v", "") if strip_v else version_to_be_installed
-            version_to_be_installed_stripped = version_to_be_installed_stripped.replace("ipinfo-", "")
-
-            template, arch = self._select_template()
-            system_name = self._system_name()
-            file_name = template.format(version=version_to_be_installed_stripped)
-            print(f"🧭 Detected system={system_name} arch={arch}")
-            print(f"📄 Using template: {template}")
-            print(f"🗂️  Resolved file name: {file_name}")
-
-            print(f"📄 File name: {file_name}")
-            download_link = release_url.joinpath(file_name)
+            arch = get_normalized_arch()
+            os_name = get_os_name()
+            
+            download_link = get_github_download_link(
+                repo_url=repo_url, 
+                arch=arch, 
+                os=os_name, 
+                version=version
+            )
+            
+            if download_link is None:
+                raise ValueError(f"Could not find suitable download for {app_name} on {os_name} {arch}")
+            
+            # Extract version from GitHub API if possible
+            if version:
+                version_to_be_installed = version
+            else:
+                version_to_be_installed = "latest"
+            
+            print(f"🧭 Detected system={os_name} arch={arch}")
+            print(f"� Version to be installed: {version_to_be_installed}")
+            print(f"� Download URL: {download_link}")
 
         assert download_link is not None, "download_link must be set"
         assert version_to_be_installed is not None, "version_to_be_installed must be set"
@@ -253,93 +247,9 @@ class Installer:
         return downloaded, version_to_be_installed
 
     # --------------------------- Arch / template helpers ---------------------------
-    def _normalized_arch(self) -> str:
-        arch_raw = platform.machine().lower()
-        if arch_raw in ("x86_64", "amd64"):
-            return "amd64"
-        if arch_raw in ("aarch64", "arm64", "armv8", "armv8l"):
-            return "arm64"
-        return arch_raw
-
-    def _system_name(self) -> str:
-        sys_ = platform.system()
-        if sys_ == "Darwin":
-            return "macOS"
-        return sys_
-
-    def _any_direct_http_template(self) -> bool:
-        filename_templates = self.installer_data.get("filenameTemplate", {})
-        templates: list[str] = []
-
-        for arch_templates in filename_templates.values():
-            templates.extend([t for t in arch_templates.values() if t])
-
-        return any(t for t in templates if t.startswith("http"))
-
-    def _select_template(self) -> tuple[str, str]:
-        sys_name = platform.system()
-        arch = self._normalized_arch()
-
-        filename_templates = self.installer_data.get("filenameTemplate", {})
-
-        # Get templates for each architecture
-        amd64_templates = filename_templates.get("amd64", {})
-        arm64_templates = filename_templates.get("arm64", {})
-
-        # mapping logic
-        candidates: list[str] = []
-        template: Optional[str] = None
-
-        if sys_name == "Windows":
-            if arch == "arm64" and arm64_templates.get("windows"):
-                template = arm64_templates["windows"]
-            else:
-                template = amd64_templates.get("windows", "")
-            candidates = ["arm64.windows", "amd64.windows"]
-        elif sys_name == "Linux":
-            if arch == "arm64" and arm64_templates.get("linux"):
-                template = arm64_templates["linux"]
-            else:
-                template = amd64_templates.get("linux", "")
-            candidates = ["arm64.linux", "amd64.linux"]
-        elif sys_name == "Darwin":
-            if arch == "arm64" and arm64_templates.get("macos"):
-                template = arm64_templates["macos"]
-            elif arch == "amd64" and amd64_templates.get("macos"):
-                template = amd64_templates["macos"]
-            else:
-                # fallback between available mac templates
-                template = arm64_templates.get("macos") or amd64_templates.get("macos") or ""
-            candidates = ["arm64.macos", "amd64.macos"]
-        else:
-            raise NotImplementedError(f"System {sys_name} not supported")
-
-        if not template:
-            raise ValueError(f"No filename template available for system={sys_name} arch={arch}. Checked {candidates}")
-
-        return template, arch
 
     @staticmethod
-    def get_github_release(repo_url: str, version: Optional[str] = None) -> dict[str, Any]:
-        """
-        Get the latest release info of a GitHub repo.
-        :param repo_url: Repository URL, e.g. "https://github.com/cantino/mcfly"
-        :param version: Specific version tag, if None gets latest
-        :return: Release data as dict
-        """
-        # Extract owner/repo from URL
-        repo = repo_url.split("github.com/")[1]
-        if version is None:
-            url = f"https://api.github.com/repos/{repo}/releases/latest"
-        else:
-            url = f"https://api.github.com/repos/{repo}/releases/tags/{version}"
-        import requests
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        return response.json()
-
-    @staticmethod
-    def check_if_installed_already(exe_name: str, version: str, use_cache: bool):
+    def check_if_installed_already(exe_name: str, version: str, use_cache: bool) -> tuple[str, str, str]:
         print(f"\n{'=' * 80}\n🔍 CHECKING INSTALLATION STATUS: {exe_name} 🔍\n{'=' * 80}")
         version_to_be_installed = version
         INSTALL_VERSION_ROOT.joinpath(exe_name).parent.mkdir(parents=True, exist_ok=True)

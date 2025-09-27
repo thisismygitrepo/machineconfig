@@ -1,21 +1,3 @@
-src/machineconfig/scripts/python/fire_jobs_args_helper.py: note: In function "extract_kwargs":
-src/machineconfig/scripts/python/fire_jobs_args_helper.py:39:9: error: Name
-"kwargs" already defined on line 38  [no-redef]
-            kwargs: dict[str, object]
-            ^~~~~~
-src/machineconfig/scripts/python/fire_jobs_args_helper.py:42:31: error:
-Incompatible types in assignment (expression has type "bool | None", target has
-type "str")  [assignment]
-                    kwargs[key] = str2obj[str(value)]
-                                  ^~~~~~~~~~~~~~~~~~~
-src/machineconfig/scripts/python/fire_jobs_args_helper.py:47:12: error:
-Incompatible return value type (got "dict[str, str]", expected
-"dict[str, object]")  [return-value]
-        return kwargs
-               ^~~~~~
-src/machineconfig/scripts/python/fire_jobs_args_helper.py:47:12: note: "dict" is invariant -- see https://mypy.readthedocs.io/en/stable/common_issues.html#variance
-src/machineconfig/scripts/python/fire_jobs_args_helper.py:47:12: note: Consider using "Mapping" instead, which is covariant in the value type
-src/machineconfig/scripts/python/fire_jobs_args_helper.py:47:12: note: Perhaps you need a type annotation for "kwargs"? Suggestion: "dict[str, object]"
 src/machineconfig/scripts/python/fire_agents_load_balancer.py: note: In function "chunk_prompts":
 src/machineconfig/scripts/python/fire_agents_load_balancer.py:44:9: error: Name
 "grouped" already defined on line 33  [no-redef]
@@ -57,6 +39,12 @@ src/machineconfig/utils/installer.py:170:13: error: Name "installer_data"
 already defined on line 160  [no-redef]
                 installer_data: InstallerData = runpy.run_path(str(item), ...
                 ^~~~~~~~~~~~~~
+src/machineconfig/scripts/python/repos_helper_action.py: note: In function "print_git_operations_summary":
+src/machineconfig/scripts/python/repos_helper_action.py:235:9: error: Need type
+annotation for "failed_by_action" (hint:
+"failed_by_action: dict[<type>, <type>] = ...")  [var-annotated]
+            failed_by_action = {}
+            ^~~~~~~~~~~~~~~~
 src/machineconfig/scripts/python/devops.py:17:21: error:
 "<typing special form>" has no attribute "__args__"  [attr-defined]
     options_list = list(Options.__args__)
@@ -100,4 +88,4 @@ src/machineconfig/utils/options.py:162:12: error: No overload variant of
 src/machineconfig/utils/options.py:162:12: note: Possible overload variants:
 src/machineconfig/utils/options.py:162:12: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> T
 src/machineconfig/utils/options.py:162:12: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> list[T]
-Found 17 errors in 8 files (checked 181 source files)
+Found 15 errors in 8 files (checked 183 source files)
