@@ -193,7 +193,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #     else: return None
 
 
-# class PrecheckedCloudInstaller:
+# class precheckedPackages:
 #     def __init__(self):
 #         # Read CSV using standard library
 #         self.data = []
@@ -214,7 +214,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #     @staticmethod
 #     def install_cli_apps(app_url: str):
 #         try:
-#             exe = PrecheckedCloudInstaller.download_google_links(app_url)
+#             exe = precheckedPackages.download_google_links(app_url)
 #         except Exception as ex:  # type: ignore
 #             print(f"❌ ERROR | Failed downloading {app_url}: {ex}")
 #             return None
@@ -225,7 +225,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #             exe.move(folder=PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps"), overwrite=True)
 #         return True
 
-#     def download_safe_apps(self, name: str="AllEssentials"):
+#     def download_safe_apps(self, name: str="essentials"):
 #         # if platform.system().lower() == "windows":
 #         #     from machineconfig.jobs.python.python_windows_installers_all import get_cli_py_installers
 #         #     cli_installers = get_cli_py_installers()
@@ -234,7 +234,7 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #         #     cli_installers = get_cli_py_installers()
 #         # else: raise NotImplementedError(f"Platform {platform.system().lower()} is not supported yet.")
 
-#         if name == "AllEssentials":
+#         if name == "essentials":
 #             print(f"""
 # {'=' * 150}
 # 📥 DOWNLOAD | Downloading {len(self.data)} apps...
@@ -244,13 +244,13 @@ APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lo
 #             app_urls = [item['app_url'] for item in self.data]
 #             from concurrent.futures import ThreadPoolExecutor
 #             with ThreadPoolExecutor(max_workers=20) as executor:
-#                 _res = list(executor.map(PrecheckedCloudInstaller.install_cli_apps, app_urls))
+#                 _res = list(executor.map(precheckedPackages.install_cli_apps, app_urls))
 #         else:
 #             app_items = [item for item in self.data if item['app_name'] == name]
 #             if not app_items:
 #                 raise ValueError(f"App '{name}' not found in data")
 #             app_url = app_items[0]['app_url']
-#             _res = PrecheckedCloudInstaller.install_cli_apps(app_url=app_url)
+#             _res = precheckedPackages.install_cli_apps(app_url=app_url)
 
 #         # print("\n" * 3)
 #         # for item_flag, item_name in zip(res, self.df["app_name"]):

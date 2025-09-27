@@ -120,7 +120,7 @@ if (-not $yesAll) {
     }
     
 } else {
-    uv run --python 3.13 --with machineconfig python -m fire machineconfig.scripts.python.devops_devapps_install main  --which=AllEssentials
+    uv run --python 3.13 --with machineconfig python -m fire machineconfig.scripts.python.devops_devapps_install main  --which=essentials
 }
 
 

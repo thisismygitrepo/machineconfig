@@ -9,7 +9,7 @@ from machineconfig.utils.installer import get_installers, install_all
 from platform import system
 from typing import Any, Optional, Literal, TypeAlias, get_args, Annotated
 
-WHICH_CAT: TypeAlias = Literal["AllEssentials", "EssentialsAndOthers", "SystemInstallers", "PrecheckedCloudInstaller"]
+WHICH_CAT: TypeAlias = Literal["essentials", "essentialsPlus", "systymPackages", "precheckedPackages"]
 
 
 def main_with_parser():
@@ -66,7 +66,7 @@ def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category
 
     options += list(get_args(WHICH_CAT))
     # print("s"*1000)
-    program_names = choose_from_options(multi=True, msg="", options=options, header="🚀 CHOOSE DEV APP", default="AllEssentials", fzf=True)
+    program_names = choose_from_options(multi=True, msg="", options=options, header="🚀 CHOOSE DEV APP", default="essentials", fzf=True)
 
     total_commands = ""
     installation_messages: list[str] = []
@@ -103,14 +103,14 @@ def get_programs_by_category(program_name: WHICH_CAT):
 ┃ 📦 Installing Category: {program_name}
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
     match program_name:
-        case "AllEssentials" | "EssentialsAndOthers":
+        case "essentials" | "essentialsPlus":
             installers_ = get_installers(dev=False, system=system())
-            if program_name == "EssentialsAndOthers":
+            if program_name == "essentialsPlus":
                 installers_ += get_installers(dev=True, system=system())
             install_all(installers=installers_)
             program = ""
 
-        case "SystemInstallers":
+        case "systymPackages":
             if system() == "Windows":
                 options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text(encoding="utf-8"))
             elif system() == "Linux":
@@ -149,12 +149,12 @@ def get_programs_by_category(program_name: WHICH_CAT):
         #         print(f"Installing {name}")
         #         sub_program = installers[idx].install_robust(version=None)  # finish the task
 
-        case "PrecheckedCloudInstaller":
-            # from machineconfig.jobs.python.check_installations import PrecheckedCloudInstaller
-            # ci = PrecheckedCloudInstaller()
-            # ci.download_safe_apps(name="AllEssentials")
+        case "precheckedPackages":
+            # from machineconfig.jobs.python.check_installations import precheckedPackages
+            # ci = precheckedPackages()
+            # ci.download_safe_apps(name="essentials")
             # program = ""
-            raise NotImplementedError("PrecheckedCloudInstaller is not implemented yet.")
+            raise NotImplementedError("precheckedPackages is not implemented yet.")
     return program
 
 

@@ -77,7 +77,6 @@ def read_ini(path: "Path", encoding: Optional[str] = None):
 
 def read_json(path: "Path", r: bool = False, **kwargs: Any) -> Any:  # return could be list or dict etc
     import json
-
     try:
         mydict = json.loads(Path(path).read_text(encoding="utf-8"), **kwargs)
     except Exception:

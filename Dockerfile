@@ -22,6 +22,16 @@ ENV package_manager="nala"
 RUN /app/setup_linux/apps.sh
 RUN /app/setup_linux/apps_dev.sh
 
+
+# # =================== INSTALL DOCKER SO WE RUN DATABASES IN CONTAINERS ===================
+# RUN chmod +x $HOME/code/machineconfig/src/machineconfig/jobs/python_custom_installers/scripts/linux/docker.sh
+# RUN bash     $HOME/code/machineconfig/src/machineconfig/jobs/python_custom_installers/scripts/linux/docker.sh
+
+RUN nala install -y redis-tools
+# this gives redis-cli, which is needed to talk to the redis-server that is running in the docker container.
+# same for pgsq, when the server runs, we will need the client to talk to it.
+RUN nala install -y postgresql-client
+
 # RUN /app/setup_linux/ve.sh
 # ENV PATH="/root/.local/bin:${PATH}"
 # RUN /root/.local/bin/uv venv $HOME/code/machineconfig/.venv --python 3.13 --python-preference only-managed
@@ -43,7 +53,7 @@ RUN cd $HOME && \
     # /root/.local/bin/uv pip install -e . && \
 
 RUN /root/.local/bin/uv run --project $HOME/code/machineconfig python -m fire machineconfig.profile.create main --choice=all
-RUN /root/.local/bin/uv run --project $HOME/code/machineconfig python -m fire machineconfig.scripts.python.devops_devapps_install main --which=AllEssentials
+RUN /root/.local/bin/uv run --project $HOME/code/machineconfig install essentials
 COPY ./src/machineconfig/settings/shells/ipy/profiles/default/startup/playext.py /root/.ipython/profile_default/startup/playext.py
 
 

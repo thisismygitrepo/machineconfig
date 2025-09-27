@@ -98,7 +98,7 @@ echo "🚀 Activating Python virtual environment..."
 
 # Install all essential development applications
 echo "📥 Installing essential development applications..."
-python -m fire machineconfig.scripts.python.devops_devapps_install main --which=AllEssentials
+python -m fire machineconfig.scripts.python.devops_devapps_install main --which=essentials
 
 # Reload shell configuration
 echo "🔄 Reloading shell configuration..."

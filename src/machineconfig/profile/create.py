@@ -147,17 +147,14 @@ def apply_mapper(choice: Optional[str] = None):
 """)
 
 
-def main(choice: Optional[str] = None):
+def main():
     console = Console()
     print("\n")
-
     console.rule("[bold blue]🔗 CREATING SYMLINKS 🔗")
-    apply_mapper(choice=choice)
-
+    apply_mapper(choice=None)
     print("\n")
     console.rule("[bold green]🐚 CREATING SHELL PROFILE 🐚")
     create_default_shell_profile()
-
     print(f"""
 {"=" * 80}
 ✨ Configuration setup complete! ✨

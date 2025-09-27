@@ -118,7 +118,7 @@ choice=${choice:-y}
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
     echo """    🔧 Installing CLI applications...
     """
-    uv run --python 3.13 --with machineconfig python -m fire machineconfig.scripts.python.devops_devapps_install main --which=AllEssentials
+    uv run --python 3.13 --with machineconfig python -m fire machineconfig.scripts.python.devops_devapps_install main --which=essentials
     . $HOME/.bashrc
 else
     echo """    ⏭️  Skipping CLI apps installation
