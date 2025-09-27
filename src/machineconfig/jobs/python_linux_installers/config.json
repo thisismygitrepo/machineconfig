@@ -92,10 +92,14 @@
       "doc": "📊 btop is a resource monitor for Linux, FreeBSD and MacOS.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "btop-x86_64-linux-musl"
+          "linux": "btop-x86_64-linux-musl.tbz",
+          "macos": null,
+          "windows": null
         },
         "arm64": {
-          "linux": "btop-aarch64-linux-musl"
+          "linux": "btop-aarch64-linux-musl.tbz",
+          "macos": null,
+          "windows": null
         }
       }
     },
@@ -106,11 +110,13 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "gotty_v{version}_linux_amd64.tar.gz",
-          "macos": "gotty_v{version}_darwin_amd64.tar.gz"
+          "macos": "gotty_v{version}_darwin_amd64.tar.gz",
+          "windows": null
         },
         "arm64": {
           "linux": "gotty_v{version}_linux_arm64.tar.gz",
-          "macos": "gotty_v{version}_darwin_arm64.tar.gz"
+          "macos": "gotty_v{version}_darwin_arm64.tar.gz",
+          "windows": null
         }
       }
     },
@@ -121,11 +127,13 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "joshuto-v{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "joshuto-v{version}-x86_64-apple-darwin.tar.gz"
+          "macos": "joshuto-v{version}-x86_64-apple-darwin.tar.gz",
+          "windows": null
         },
         "arm64": {
           "linux": "joshuto-v{version}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "joshuto-v{version}-aarch64-apple-darwin.tar.gz"
+          "macos": "joshuto-v{version}-aarch64-apple-darwin.tar.gz",
+          "windows": null
         }
       }
     },

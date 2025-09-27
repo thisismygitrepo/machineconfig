@@ -303,7 +303,19 @@
     {
       "appName": "mods",
       "repoURL": "https://github.com/charmbracelet/mods/",
-      "doc": "🤖 AI for the command line, built for pipelines"
+      "doc": "🤖 AI for the command line, built for pipelines",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "mods_{version}_Linux_x86_64.tar.gz",
+          "macos": "mods_{version}_Darwin_x86_64.tar.gz",
+          "windows": "mods_{version}_Windows_x86_64.zip"
+        },
+        "arm64": {
+          "linux": "mods_{version}_Linux_arm64.tar.gz",
+          "macos": "mods_{version}_Darwin_arm64.tar.gz",
+          "windows": "mods_{version}_Windows_arm64.zip"
+        }
+      }
     },
     {
       "appName": "mprocs",
@@ -325,17 +337,53 @@
     {
       "appName": "ouch",
       "repoURL": "https://github.com/ouch-org/ouch",
-      "doc": "📦 A cli for extracting and creating archives in unified way."
+      "doc": "📦 A cli for extracting and creating archives in unified way.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "ouch-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "ouch-x86_64-apple-darwin.tar.gz",
+          "windows": "ouch-x86_64-pc-windows-msvc.zip"
+        },
+        "arm64": {
+          "linux": "ouch-aarch64-unknown-linux-musl.tar.gz",
+          "macos": "ouch-aarch64-apple-darwin.tar.gz",
+          "windows": "ouch-aarch64-pc-windows-msvc.zip"
+        }
+      }
     },
     {
       "appName": "procs",
       "repoURL": "https://github.com/dalance/procs/",
-      "doc": "📊 procs is a modern replacement for ps written in Rust."
+      "doc": "📊 procs is a modern replacement for ps written in Rust.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "procs-v{version}-x86_64-linux.zip",
+          "macos": "procs-v{version}-x86_64-mac.zip",
+          "windows": "procs-v{version}-x86_64-windows.zip"
+        },
+        "arm64": {
+          "linux": "procs-v{version}-aarch64-linux.zip",
+          "macos": "procs-v{version}-aarch64-mac.zip",
+          "windows": "procs-v{version}-aarch64-windows.zip"
+        }
+      }
     },
     {
       "appName": "rclone",
       "repoURL": "https://github.com/rclone/rclone",
-      "doc": "☁️ cli to sync to cloud storage providers."
+      "doc": "☁️ cli to sync to cloud storage providers.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "rclone-v{version}-linux-amd64.zip",
+          "macos": "rclone-v{version}-osx-amd64.zip",
+          "windows": "rclone-v{version}-windows-amd64.zip"
+        },
+        "arm64": {
+          "linux": "rclone-v{version}-linux-arm64.zip",
+          "macos": "rclone-v{version}-osx-arm64.zip",
+          "windows": "rclone-v{version}-windows-arm64.zip"
+        }
+      }
     },
     {
       "appName": "rg",
@@ -357,7 +405,19 @@
     {
       "appName": "rga",
       "repoURL": "https://github.com/phiresky/ripgrep-all",
-      "doc": "🔍 ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz, etc."
+      "doc": "🔍 ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz, etc.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "ripgrep_all-v{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "ripgrep_all-v{version}-x86_64-apple-darwin.tar.gz",
+          "windows": "ripgrep_all-v{version}-x86_64-pc-windows-msvc.zip"
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "starship",
@@ -379,27 +439,87 @@
     {
       "appName": "tere",
       "repoURL": "https://github.com/mgunyho/tere",
-      "doc": "📂 Tere is a terminal file explorer written in Rust. No more ls + cd"
+      "doc": "📂 Tere is a terminal file explorer written in Rust. No more ls + cd",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "tere-{version}-x86_64-unknown-linux-gnu.zip",
+          "macos": "tere-{version}-x86_64-apple-darwin.zip",
+          "windows": "tere-{version}-x86_64-pc-windows-gnu.zip"
+        },
+        "arm64": {
+          "linux": "tere-{version}-aarch64-unknown-linux-gnu.zip",
+          "macos": "tere-{version}-aarch64-apple-darwin.zip",
+          "windows": "tere-{version}-aarch64-pc-windows-gnu.zip"
+        }
+      }
     },
     {
       "appName": "topgrade",
       "repoURL": "https://github.com/topgrade-rs/topgrade",
-      "doc": "⬆️ Keeping your system up to date usually involves invoking multiple package managers."
+      "doc": "⬆️ Keeping your system up to date usually involves invoking multiple package managers.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "topgrade-v{version}-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "topgrade-v{version}-x86_64-apple-darwin.tar.gz",
+          "windows": "topgrade-v{version}-x86_64-pc-windows-msvc.zip"
+        },
+        "arm64": {
+          "linux": "topgrade-v{version}-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "topgrade-v{version}-aarch64-apple-darwin.tar.gz",
+          "windows": "topgrade-v{version}-aarch64-pc-windows-msvc.zip"
+        }
+      }
     },
     {
       "appName": "ttyd",
       "repoURL": "https://github.com/tsl0922/ttyd",
-      "doc": "🌐 ttyd shares your terminal on the web."
+      "doc": "🌐 ttyd shares your terminal on the web.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "ttyd.x86_64",
+          "macos": null,
+          "windows": "ttyd.win32.exe"
+        },
+        "arm64": {
+          "linux": "ttyd.aarch64",
+          "macos": null,
+          "windows": null
+        }
+      }
     },
     {
       "appName": "viu",
       "repoURL": "https://github.com/atanunq/viu",
-      "doc": "🖼️ A cli image viewer for the terminal (like chafa but in Rust)"
+      "doc": "🖼️ A cli image viewer for the terminal (like chafa but in Rust)",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "viu-x86_64-unknown-linux-musl",
+          "macos": "viu-x86_64-apple-darwin",
+          "windows": "viu-x86_64-pc-windows-msvc.exe"
+        },
+        "arm64": {
+          "linux": "viu-aarch64-unknown-linux-musl",
+          "macos": "viu-x86_64-apple-darwin",
+          "windows": "viu-x86_64-pc-windows-msvc.exe"
+        }
+      }
     },
     {
       "appName": "watchexec",
       "repoURL": "https://github.com/watchexec/watchexec",
-      "doc": "👀 Executes commands in response to file modifications."
+      "doc": "👀 Executes commands in response to file modifications.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "watchexec-{version}-x86_64-unknown-linux-gnu.tar.xz",
+          "macos": "watchexec-{version}-x86_64-apple-darwin.tar.xz",
+          "windows": "watchexec-{version}-x86_64-pc-windows-msvc.zip"
+        },
+        "arm64": {
+          "linux": "watchexec-{version}-aarch64-unknown-linux-gnu.tar.xz",
+          "macos": "watchexec-{version}-aarch64-apple-darwin.tar.xz",
+          "windows": "watchexec-{version}-x86_64-pc-windows-msvc.zip"
+        }
+      }
     },
     {
       "appName": "yazi",

@@ -408,7 +408,7 @@
     },
     {
       "appName": "lazydocker",
-      "repoURL": "https://github.com/jesseduffield/lazydocker/",
+      "repoURL": "https://github.com/jesseduffield/lazydocker",
       "doc": "🐋 A simple terminal UI for both docker and docker-compose"
     },
     {
