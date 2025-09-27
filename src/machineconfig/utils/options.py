@@ -51,13 +51,13 @@ def choose_from_options[T](msg: str, options: Iterable[T], multi: Literal[True],
 def choose_from_options[T](msg: str, options: Iterable[T], multi: bool, custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False, ) -> Union[T, list[T]]:
     # TODO: replace with https://github.com/tmbo/questionary
     # # also see https://github.com/charmbracelet/gum
-    tool_name = "fzf"
     options_strings: list[str] = [str(x) for x in options]
     default_string = str(default) if default is not None else None
     console = Console()
-    if fzf and check_tool_exists(tool_name):
+    fzf_exists = check_tool_exists("fzf")
+    # print("\n" * 10, f"{fzf=}, {fzf_exists=}", "\n" * 10)
+    if fzf and fzf_exists:
         from pyfzf.pyfzf import FzfPrompt
-
         fzf_prompt = FzfPrompt()
         nl = "\n"
         choice_string_multi: list[str] = fzf_prompt.prompt(choices=options_strings, fzf_options=("--multi" if multi else "") + f' --prompt "{prompt.replace(nl, " ")}" ')  # --border-label={msg.replace(nl, ' ')}")
@@ -86,9 +86,9 @@ def choose_from_options[T](msg: str, options: Iterable[T], multi: bool, custom_i
 
         console.print(txt_panel)
         if default is not None:
-            choice_string = input(f"{prompt}\nEnter option number or hit enter for default choice: ")
+            choice_string = input(f"{prompt}\nEnter option number/name or hit enter for default choice: ")
         else:
-            choice_string = input(f"{prompt}\nEnter option number: ")
+            choice_string = input(f"{prompt}\nEnter option number/name: ")
 
         if choice_string == "":
             if default_string is None:
@@ -112,7 +112,7 @@ def choose_from_options[T](msg: str, options: Iterable[T], multi: bool, custom_i
                     # raise ValueError(f"Unknown choice. {choice_string}") from ie
                     console.print(Panel(f"❓ Unknown choice: '{choice_string}'", title="Error", expand=False))
                     return choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
-            except TypeError as te:  # int(choice_string) failed due to # either the number is invalid, or the input is custom.
+            except (TypeError, ValueError) as te:  # int(choice_string) failed due to # either the number is invalid, or the input is custom.
                 if choice_string in options_strings:  # string input
                     choice_idx = options_strings.index(choice_one)  # type: ignore
                     choice_one = list(options)[choice_idx]

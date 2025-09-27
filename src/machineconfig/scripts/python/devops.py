@@ -28,7 +28,7 @@ def main(which: Optional[Options] = None):
     options = options_list
     if which is None:
         try:
-            choice_key = choose_from_options(msg="", options=options, header="🛠️ DEVOPS", default=options[0], multi=False)
+            choice_key = choose_from_options(msg="", options=options, header="🛠️ DEVOPS", default=options[0], multi=False, fzf=False)
         except KeyboardInterrupt:
             console.print(Panel("❌ Operation cancelled by user", title_align="left", border_style="red", width=BOX_WIDTH))
             return

@@ -66,7 +66,7 @@ def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category
 
     options += list(get_args(WHICH_CAT))
     # print("s"*1000)
-    program_names = choose_from_options(multi=True, msg="", options=options, header="🚀 CHOOSE DEV APP", default="AllEssentials")
+    program_names = choose_from_options(multi=True, msg="", options=options, header="🚀 CHOOSE DEV APP", default="AllEssentials", fzf=True)
 
     total_commands = ""
     installation_messages: list[str] = []
@@ -119,7 +119,7 @@ def get_programs_by_category(program_name: WHICH_CAT):
                 options_system = {**options_system_1, **options_system_2}
             else:
                 raise NotImplementedError(f"❌ System {system()} not supported")
-            program_names = choose_from_options(multi=True, msg="", options=sorted(list(options_system.keys())), header="🚀 CHOOSE DEV APP")
+            program_names = choose_from_options(multi=True, msg="", options=sorted(list(options_system.keys())), header="🚀 CHOOSE DEV APP", fzf=True)
             program = ""
             for name in program_names:
                 print(f"""
