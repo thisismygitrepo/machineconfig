@@ -1,11 +1,9 @@
 """devops with emojis"""
 
-from machineconfig.utils.options import choose_from_options
 from machineconfig.scripts.python.share_terminal import main as share_terminal_main
 import machineconfig.scripts.python.devops_devapps_install as installer_entry_point
 
 from platform import system
-from typing import Optional, Literal, TypeAlias
 from rich.console import Console
 from rich.panel import Panel
 import typer
@@ -13,12 +11,8 @@ import typer
 console = Console()
 app = typer.Typer(help="🛠️ DevOps operations with emojis", no_args_is_help=True)
 
+
 BOX_WIDTH = 150  # width for box drawing
-
-
-COMMANDS: TypeAlias = Literal["🔄 UPDATE essential repos", "⚙️ DEVAPPS install", "🔗 SYMLINKS, SHELL PROFILE, FONT, TERMINAL SETTINGS.", "🆕 SYMLINKS new", "🔑 SSH add pub key to this machine", "🗝️ SSH add identity (private key) to this machine", "🔐 SSH use key pair to connect two machines", "📡 SSH setup", "🐧 SSH setup wsl", "💾 BACKUP", "📥 RETRIEVE", "⏰ SCHEDULER"]
-
-options_list = list(COMMANDS.__args__)
 
 
 @app.command()
@@ -122,69 +116,11 @@ def scheduler():
     # from machineconfig.scripts.python.scheduler import main as helper
     # helper()
 
-
-def args_parser():
-    app()
-
-
-@app.command()
-def interactive(which: Optional[COMMANDS] = None):
-    """🛠️ Interactive menu mode (legacy)"""
-    console.print(Panel("🚀 Initializing DevOps operation...", width=BOX_WIDTH, border_style="blue"))
-    options = options_list
-    if which is None:
-        try:
-            choice_key = choose_from_options(msg="", options=options, header="🛠️ DEVOPS", default=options[0], multi=False, fzf=False)
-        except KeyboardInterrupt:
-            console.print(Panel("❌ Operation cancelled by user", title_align="left", border_style="red", width=BOX_WIDTH))
-            return
-    else:
-        choice_key = which
-
-    console.print(Panel(f"🔧 SELECTED OPERATION\n{choice_key}", title_align="left", border_style="green", width=BOX_WIDTH))
-
-    if choice_key == "🔄 UPDATE essential repos":
-        update()
-    elif choice_key == "⚙️ DEVAPPS install":
-        installer_entry_point.main(which="ia")
-    elif choice_key == "🆕 SYMLINKS new":
-        symlinks_new()
-    elif choice_key == "🔗 SYMLINKS, SHELL PROFILE, FONT, TERMINAL SETTINGS.":
-        symlinks()
-    elif choice_key == "🔑 SSH add pub key to this machine":
-        ssh_add_key()
-    elif choice_key == "🔐 SSH use key pair to connect two machines":
-        ssh_connect()
-    elif choice_key == "🗝️ SSH add identity (private key) to this machine":
-        ssh_add_identity()
-    elif choice_key == "📡 SSH setup":
-        ssh_setup()
-    elif choice_key == "🐧 SSH setup wsl":
-        ssh_setup_wsl()
-    elif choice_key == "💾 BACKUP":
-        backup()
-    elif choice_key == "📥 RETRIEVE":
-        retrieve()
-    elif choice_key == "⏰ SCHEDULER":
-        scheduler()
-    else:
-        console.print(Panel("❌ ERROR: Invalid choice", title_align="left", border_style="red", width=BOX_WIDTH))
-        raise ValueError(f"Unimplemented choice: {choice_key}")
-
-
-@app.command(name="ia")
-def interactive_alias(which: Optional[COMMANDS] = None):
-    """🛠️ Interactive menu mode (alias for interactive)"""
-    interactive(which)
-
-
-@app.command()
-def install_ia():
-    """⚙️ DEVAPPS install (interactive mode)"""
-    console.print(Panel("⚙️  Installing development applications (interactive)...", width=BOX_WIDTH, border_style="blue"))
-    import machineconfig.scripts.python.devops_devapps_install as helper
-    helper.main(which=None)
+@app.command("ia")
+def interactive():
+    from machineconfig.scripts.python.interactive import main
+    main()
 
 
 if __name__ == "__main__":
-    args_parser()
+    pass

@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "3.97"
+version = "3.98"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -51,10 +51,7 @@ docs = [
 "Bug Tracker" = "https://github.com/thisismygitrepo/machineconfig/issues"
 
 [project.scripts]
-devops = "machineconfig.scripts.python.devops:args_parser"
-ia = "machineconfig.scripts.python.interactive:main"
-install = "machineconfig.scripts.python.devops_devapps_install:main_with_parser"
-share_terminal = "machineconfig.scripts.python.share_terminal:main_with_parser"
+devops = "machineconfig.scripts.python.devops:app"
 choose_wezterm_theme = "machineconfig.scripts.python.choose_wezterm_theme:main"
 cloud_copy = "machineconfig.scripts.python.cloud_copy:arg_parser"
 cloud_mount = "machineconfig.scripts.python.cloud_mount:arg_parser"
@@ -71,6 +68,9 @@ repos = "machineconfig.scripts.python.repos:main_from_parser"
 start_slidev = "machineconfig.scripts.python.start_slidev:arg_parser"
 wifi_conn = "machineconfig.scripts.python.wifi_conn:arg_parser"
 kill_process = "machineconfig.utils.procs:main"
+# ia = "machineconfig.scripts.python.interactive:main"  # Used 
+# install = "machineconfig.scripts.python.devops_devapps_install:main_with_parser"
+# share_terminal = "machineconfig.scripts.python.share_terminal:main_with_parser"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
