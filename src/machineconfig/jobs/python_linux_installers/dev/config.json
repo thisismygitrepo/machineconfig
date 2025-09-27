@@ -46,7 +46,7 @@
       "doc": "🎵 A Customizable Terminal Music Player For Offline Listening",
       "fileNamePattern": {
         "amd64": {
-          "linux": ""
+          "linux": "Kronos"
         },
         "arm64": {
           "linux": ""
@@ -124,10 +124,10 @@
       "doc": "🌐 browser in the shell",
       "fileNamePattern": {
         "amd64": {
-          "linux": ""
+          "linux": "browsh_{version}_linux_amd64"
         },
         "arm64": {
-          "linux": ""
+          "linux": "browsh_{version}_linux_arm64"
         }
       }
     },
@@ -173,22 +173,62 @@
     {
       "appName": "DBeaver",
       "repoURL": "https://github.com/dbeaver/dbeaver",
-      "doc": "🗃️ Free universal database tool and SQL client."
+      "doc": "🗃️ Free universal database tool and SQL client.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "dbeaver-ce-{version}-linux.gtk.x86_64.tar.gz"
+        },
+        "arm64": {
+          "linux": "dbeaver-ce-{version}-linux.gtk.aarch64.tar.gz"
+        }
+      }
     },
     {
       "appName": "rainfrog",
       "repoURL": "https://github.com/achristmascarl/rainfrog",
-      "doc": "🗃️ TUI DB Visualizer"
+      "doc": "🗃️ TUI DB Visualizer",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "rainfrog-{version}-x86_64-unknown-linux-gnu.tar.gz"
+        },
+        "arm64": {
+          "linux": "rainfrog-{version}-aarch64-unknown-linux-gnu.tar.gz"
+        }
+      }
     },
     {
       "appName": "cpz",
       "repoURL": "https://github.com/SUPERCILEX/fuc",
-      "doc": "📋 Fast copy"
+      "doc": "📋 Fast copy",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "x86_64-unknown-linux-gnu-cpz",
+          "windows": "x86_64-pc-windows-msvc-cpz.exe", 
+          "macos": "x86_64-apple-darwin-cpz"
+        },
+        "arm64": {
+          "linux": "aarch64-unknown-linux-gnu-cpz",
+          "windows": "aarch64-pc-windows-msvc-cpz.exe",
+          "macos": "aarch64-apple-darwin-cpz"
+        }
+      }
     },
     {
       "appName": "rmz",
       "repoURL": "https://github.com/SUPERCILEX/fuc",
-      "doc": "🗑️ Fast remove"
+      "doc": "🗑️ Fast remove",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "x86_64-unknown-linux-gnu-rmz",
+          "windows": "x86_64-pc-windows-msvc-rmz.exe",
+          "macos": "x86_64-apple-darwin-rmz"
+        },
+        "arm64": {
+          "linux": "aarch64-unknown-linux-gnu-rmz", 
+          "windows": "aarch64-pc-windows-msvc-rmz.exe",
+          "macos": "aarch64-apple-darwin-rmz"
+        }
+      }
     }
   ]
 }

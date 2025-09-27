@@ -276,22 +276,70 @@
     {
       "appName": "ots",
       "repoURL": "https://github.com/Luzifer/ots",
-      "doc": "🔒 A command line tool for generating and verifying one-time secrets."
+      "doc": "🔒 A command line tool for generating and verifying one-time secrets.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "ots_linux_amd64.tgz",
+          "windows": "ots_windows_amd64.zip",
+          "macos": "ots_darwin_amd64.zip"
+        },
+        "arm64": {
+          "linux": "ots_linux_arm64.tgz",
+          "windows": "",
+          "macos": "ots_darwin_arm64.zip"
+        }
+      }
     },
     {
       "appName": "ffsend",
       "repoURL": "https://github.com/timvisee/ffsend",
-      "doc": "📤 Send files in secure encrypted way over the internet."
+      "doc": "📤 Send files in secure encrypted way over the internet.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "ffsend-v{version}-linux-x64",
+          "windows": "",
+          "macos": ""
+        },
+        "arm64": {
+          "linux": "",
+          "windows": "",
+          "macos": ""
+        }
+      }
     },
     {
       "appName": "portal",
       "repoURL": "https://github.com/SpatiumPortae/portal",
-      "doc": "🔄 A terminal-based file transfer between two computers."
+      "doc": "🔄 A terminal-based file transfer between two computers.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "portal_{version}_Linux_x86_64.tar.gz",
+          "windows": "portal_{version}_Windows_x86_64.zip",
+          "macos": "portal_{version}_macOS_x86_64.tar.gz"
+        },
+        "arm64": {
+          "linux": "portal_{version}_Linux_arm64.tar.gz",
+          "windows": "portal_{version}_Windows_arm64.zip",
+          "macos": "portal_{version}_macOS_arm64.tar.gz"
+        }
+      }
     },
     {
       "appName": "qrcp",
       "repoURL": "https://github.com/claudiodangelis/qrcp",
-      "doc": "📱 Transfer files over WiFi from your computer to mobile device by scanning a QR code without leaving the terminal."
+      "doc": "📱 Transfer files over WiFi from your computer to mobile device by scanning a QR code without leaving the terminal.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "qrcp_{version}_linux_amd64.tar.gz",
+          "windows": "qrcp_{version}_windows_amd64.zip",
+          "macos": "qrcp_{version}_darwin_amd64.tar.gz"
+        },
+        "arm64": {
+          "linux": "qrcp_{version}_linux_arm64.tar.gz",
+          "windows": "qrcp_{version}_windows_arm64.zip",
+          "macos": "qrcp_{version}_darwin_arm64.tar.gz"
+        }
+      }
     },
     {
       "appName": "qrscan",
