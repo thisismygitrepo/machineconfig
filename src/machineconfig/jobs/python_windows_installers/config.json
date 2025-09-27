@@ -4,32 +4,62 @@
     {
       "appName": "speedtest",
       "repoURL": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-win64.zip",
-      "doc": "🚀 Test your internet connection speed and ping using speedtest.net from the CLI"
+      "doc": "🚀 Test your internet connection speed and ping using speedtest.net from the CLI",
+      "fileNamePattern": {
+        "amd64": {
+          "windows": "ookla-speedtest-{version}-win64.zip"
+        }
+      }
     },
     {
       "appName": "boxes",
       "repoURL": "https://github.com/ascii-boxes/boxes",
-      "doc": "📦 ASCI draws boxes around text."
+      "doc": "📦 ASCI draws boxes around text.",
+      "fileNamePattern": {
+        "amd64": {
+          "windows": "boxes-{version}-intel-win32.zip"
+        }
+      }
     },
     {
       "appName": "ugrep",
       "repoURL": "https://github.com/Genivia/ugrep",
-      "doc": "🔍 A fast, portable, feature-rich command-line search tool"
+      "doc": "🔍 A fast, portable, feature-rich command-line search tool",
+      "fileNamePattern": {
+        "amd64": {
+          "windows": "ugrep-windows-x64.zip"
+        }
+      }
     },
     {
       "appName": "zoomit",
       "repoURL": "https://download.sysinternals.com/files/ZoomIt.zip",
-      "doc": "🔍 A screen zoom and annotation tool for presentations"
+      "doc": "🔍 A screen zoom and annotation tool for presentations",
+      "fileNamePattern": {
+        "amd64": {
+          "windows": "ZoomIt.zip"
+        }
+      }
     },
     {
       "appName": "ntop",
       "repoURL": "https://github.com/gsass1/NTop",
-      "doc": "📊 Like htop, for Windows"
+      "doc": "📊 Like htop, for Windows",
+      "fileNamePattern": {
+        "amd64": {
+          "windows": "NTop.exe"
+        }
+      }
     },
     {
       "appName": "devtunnel",
       "repoURL": "winget install --Id Microsoft.devtunnel --scope user",
-      "doc": "🔄 devtunnel secure introspectable tunnels to localhost"
+      "doc": "🔄 devtunnel secure introspectable tunnels to localhost",
+      "fileNamePattern": {
+        "amd64": {
+          "windows": "devtunnel.exe"
+        }
+      }
     }
   ]
 }
