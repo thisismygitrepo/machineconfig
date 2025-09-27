@@ -40,14 +40,10 @@ def main(installer_data: InstallerData, version: Optional[str] = None):
     
     print("🔄 EXECUTING | Running VS Code installation...")
     try:
-        result = subprocess.run(install_script, shell=True, capture_output=True, text=True, check=True)
+        subprocess.run(install_script, shell=True, text=True, check=True)
         print("✅ VS Code installation completed successfully")
-        if result.stdout:
-            print(f"📤 Output: {result.stdout.strip()}")
     except subprocess.CalledProcessError as e:
         print(f"❌ Installation failed with exit code {e.returncode}")
-        if e.stderr:
-            print(f"📥 Error: {e.stderr.strip()}")
         raise
 
 

@@ -34,22 +34,6 @@ src/machineconfig/utils/path_extended.py:475:40: error: Unsupported left
 operand type for + ("Callable[[Any], bool]")  [operator]
                 haha = reduce(lambda x, y: x + y, filters_notin) if len(fi...
                                            ^~~~~
-src/machineconfig/utils/installer.py: note: In function "get_all_installer_data_files":
-src/machineconfig/utils/installer.py:139:13: error: Name "installer_data"
-already defined on line 128  [no-redef]
-                installer_data: InstallerData = runpy.run_path(str(item), ...
-                ^~~~~~~~~~~~~~
-src/machineconfig/utils/installer_utils/installer_class.py: note: In member "download" of class "Installer":
-src/machineconfig/utils/installer_utils/installer_class.py:227:29: error: Name
-"get_github_download_link" is not defined  [name-defined]
-                download_link = get_github_download_link(
-                                ^~~~~~~~~~~~~~~~~~~~~~~~
-src/machineconfig/utils/installer_utils/installer_class.py: note: In member "check_if_installed_already" of class "Installer":
-src/machineconfig/utils/installer_utils/installer_class.py:443:16: error:
-Incompatible return value type (got "tuple[str, str]", expected
-"tuple[str, str, str]")  [return-value]
-            return ("⚠️ NotInstalled", "None")
-                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
 src/machineconfig/scripts/python/repos_helper_action.py: note: In function "print_git_operations_summary":
 src/machineconfig/scripts/python/repos_helper_action.py:235:9: error: Need type
 annotation for "failed_by_action" (hint:
@@ -99,4 +83,4 @@ src/machineconfig/utils/options.py:162:12: error: No overload variant of
 src/machineconfig/utils/options.py:162:12: note: Possible overload variants:
 src/machineconfig/utils/options.py:162:12: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> T
 src/machineconfig/utils/options.py:162:12: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> list[T]
-Found 17 errors in 9 files (checked 173 source files)
+Found 14 errors in 7 files (checked 173 source files)

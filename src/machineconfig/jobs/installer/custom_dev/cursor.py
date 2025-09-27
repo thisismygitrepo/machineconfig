@@ -75,19 +75,17 @@ def install_windows(version: Optional[str] = None):
     # Run the installer silently
     try:
         print("Running Cursor installer...")
-        subprocess.run([str(cursor_installer), "/SILENT"], capture_output=True, text=True, check=True)
+        subprocess.run([str(cursor_installer), "/SILENT"], text=True, check=True)
         print("Cursor installer completed successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Installer failed with exit code {e.returncode}")
-        print(f"Error output: {e.stderr}")
         # Try alternative silent install flags
         try:
             print("Trying alternative silent install...")
-            subprocess.run([str(cursor_installer), "/S"], capture_output=True, text=True, check=True)
+            subprocess.run([str(cursor_installer), "/S"], text=True, check=True)
             print("Cursor installer completed successfully with /S flag.")
         except subprocess.CalledProcessError as e2:
             print(f"Alternative installer also failed with exit code {e2.returncode}")
-            print(f"Error output: {e2.stderr}")
             # If silent install fails, run normally and let user handle it
             print("Running installer in normal mode (user interaction required)...")
             subprocess.run([str(cursor_installer)])

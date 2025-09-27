@@ -92,7 +92,6 @@ def install_msix_package(package_path: Path) -> bool:
 
         result = subprocess.run(
             powershell_cmd,
-            capture_output=True,
             text=True,
             timeout=300,  # 5 minutes timeout
         )

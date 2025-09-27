@@ -60,14 +60,10 @@ git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/theme
 
     print("🔄 EXECUTING | Running Alacritty installation...")
     try:
-        result = subprocess.run(program, shell=True, capture_output=True, text=True, check=True)
+        subprocess.run(program, shell=True, text=True, check=True)
         print("✅ Alacritty installation completed successfully")
-        if result.stdout:
-            print(f"📤 Output: {result.stdout.strip()}")
     except subprocess.CalledProcessError as e:
         print(f"❌ Installation failed with exit code {e.returncode}")
-        if e.stderr:
-            print(f"📥 Error: {e.stderr.strip()}")
         raise
 
 

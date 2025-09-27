@@ -1,5 +1,11 @@
 """natural language to API
-https://github.com/ShishirPatil/gorilla
+https://github.com/    print("🔄 EXECUTING | Running Go installation...")
+    try:
+        subprocess.run(install_script, shell=True, text=True, check=True)
+        print("✅ Go installation completed successfully")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Installation failed with exit code {e.returncode}")
+        raisel/gorilla
 """
 
 import subprocess
@@ -46,14 +52,10 @@ uv sync
 
     print("🔄 EXECUTING | Running Gorilla installation...")
     try:
-        result = subprocess.run(install_script, shell=True, capture_output=True, text=True, check=True)
+        subprocess.run(install_script, shell=True, text=True, check=True)
         print("✅ Gorilla installation completed successfully")
-        if result.stdout:
-            print(f"📤 Output: {result.stdout.strip()}")
     except subprocess.CalledProcessError as e:
         print(f"❌ Installation failed with exit code {e.returncode}")
-        if e.stderr:
-            print(f"📥 Error: {e.stderr.strip()}")
         raise
 
 

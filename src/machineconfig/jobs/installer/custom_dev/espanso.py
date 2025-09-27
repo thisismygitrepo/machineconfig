@@ -85,14 +85,10 @@ espanso install actually-all-emojis
 {"=" * 150}
 """)
 
-    print("🔄 EXECUTING | Running Espanso post-installation configuration...")
+    print("🔄 EXECUTING | Running Espanso configuration...")
     try:
-        result = subprocess.run(config, shell=True, capture_output=True, text=True, check=True)
-        print("✅ Espanso post-installation configuration completed successfully")
-        if result.stdout:
-            print(f"📤 Output: {result.stdout.strip()}")
+        subprocess.run(config, shell=True, text=True, check=True)
+        print("✅ Espanso configuration completed successfully")
     except subprocess.CalledProcessError as e:
-        print(f"❌ Post-installation configuration failed with exit code {e.returncode}")
-        if e.stderr:
-            print(f"📥 Error: {e.stderr.strip()}")
+        print(f"❌ Configuration failed with exit code {e.returncode}")
         raise

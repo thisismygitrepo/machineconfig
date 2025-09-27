@@ -2,10 +2,14 @@
 
 
 # Terminal-based CLI agents and tools for productivity and coding.
+npm install -g @github/copilot
 npm install -g @google/gemini-cli
 npm install -g @charmland/crush
 npm install -g opencode-ai@latest  # or curl -fsSL https://opencode.ai/install | bash
 uv tool install --force --python python3.12 --with pip aider-chat@latest
+curl -fsSL https://app.factory.ai/cli | sh
+# WARP TERMINAL CLI
+# droid
 
 
 # cursor-cli
@@ -29,4 +33,5 @@ rm -rfd q
 # Editors based on AI
 # Kiro
 # Cursor
+# Warp
 

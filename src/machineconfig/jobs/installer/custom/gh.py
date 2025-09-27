@@ -93,14 +93,10 @@ gh auth login --with-token $HOME/dotfiles/creds/git/gh_token.txt
 🔄 EXECUTING | Running GitHub Copilot extension installation and authentication...
 """)
     try:
-        result = subprocess.run(program, shell=True, capture_output=True, text=True, check=True)
+        subprocess.run(program, shell=True, text=True, check=True)
         print("✅ Command executed successfully")
-        if result.stdout:
-            print(f"📤 Output: {result.stdout.strip()}")
     except subprocess.CalledProcessError as e:
         print(f"❌ Command failed with exit code {e.returncode}")
-        if e.stderr:
-            print(f"📥 Error: {e.stderr.strip()}")
         raise
 
     print(f"""

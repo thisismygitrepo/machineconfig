@@ -65,14 +65,10 @@ def main(installer_data: InstallerData, version: Optional[str]):
 
     print("🔄 EXECUTING | Running WezTerm installation...")
     try:
-        result = subprocess.run(program, shell=True, capture_output=True, text=True, check=True)
+        subprocess.run(program, shell=True, text=True, check=True)
         print("✅ WezTerm installation completed successfully")
-        if result.stdout:
-            print(f"📤 Output: {result.stdout.strip()}")
     except subprocess.CalledProcessError as e:
         print(f"❌ Installation failed with exit code {e.returncode}")
-        if e.stderr:
-            print(f"📥 Error: {e.stderr.strip()}")
         raise
 
 
