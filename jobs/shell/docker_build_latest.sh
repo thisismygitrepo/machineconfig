@@ -1,5 +1,5 @@
 #!/bin/bash
-IMAGE_NAME="alim-slim"
+IMAGE_NAME="machineconfig"
 DATE=$(date +%y-%m)
 
 echo """🚀 STARTING DOCKER BUILD | Building image ${IMAGE_NAME}:${DATE} """
@@ -15,21 +15,25 @@ echo """📝 STATUS | Current docker images"""
 docker images
 
 echo """📤 REGISTRY | Push to docker registry"""
-read -p "❓ Do you want to push to the registry? (y/n): " answer
-if [[ "$answer" =~ ^[Yy]$ ]] ; then
-    echo """    ✅ PUSHING IMAGES | Uploading to docker registry
+printf "❓ Do you want to push to the registry? (y/n): "
+read answer
+case "$answer" in
+    [Yy]* )
+        echo """    ✅ PUSHING IMAGES | Uploading to docker registry
     """
-    docker push "statistician/$IMAGE_NAME:latest"
-    docker tag "statistician/$IMAGE_NAME:latest" "statistician/$IMAGE_NAME:$DATE"
-    docker push "statistician/$IMAGE_NAME:$DATE"
-else
-    echo """    ❌ PUSH ABORTED | Registry upload canceled"""
-    echo """    You can push later using:
+        docker push "statistician/$IMAGE_NAME:latest"
+        docker tag "statistician/$IMAGE_NAME:latest" "statistician/$IMAGE_NAME:$DATE"
+        docker push "statistician/$IMAGE_NAME:$DATE"
+        ;;
+    * )
+        echo """    ❌ PUSH ABORTED | Registry upload canceled"""
+        echo """    You can push later using:
     docker push statistician/$IMAGE_NAME:latest
     docker tag statistician/$IMAGE_NAME:latest statistician/$IMAGE_NAME:$DATE
     docker push statistician/$IMAGE_NAME:$DATE
     """
-fi
+        ;;
+esac
 
 echo """✨ FINISHED | Try it out using: docker run --rm -it statistician/$IMAGE_NAME:latest
 🧰 HELPFUL CLEANUP COMMANDS:

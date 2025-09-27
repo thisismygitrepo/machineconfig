@@ -9,7 +9,7 @@ from machineconfig.utils.installer import get_installers, install_all
 from platform import system
 from typing import Any, Optional, Literal, TypeAlias, get_args, Annotated
 
-WHICH_CAT: TypeAlias = Literal["essentials", "essentialsPlus", "systymPackages", "precheckedPackages"]
+WHICH_CAT: TypeAlias = Literal["essentials", "essentialsDev", "systymPackages", "precheckedPackages"]
 
 
 def main_with_parser():
@@ -103,9 +103,9 @@ def get_programs_by_category(program_name: WHICH_CAT):
 ┃ 📦 Installing Category: {program_name}
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
     match program_name:
-        case "essentials" | "essentialsPlus":
+        case "essentials" | "essentialsDev":
             installers_ = get_installers(dev=False, system=system())
-            if program_name == "essentialsPlus":
+            if program_name == "essentialsDev":
                 installers_ += get_installers(dev=True, system=system())
             install_all(installers=installers_)
             program = ""

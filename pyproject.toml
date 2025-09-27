@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "3.92"
+version = "3.93"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}

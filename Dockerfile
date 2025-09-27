@@ -32,29 +32,22 @@ RUN nala install -y redis-tools
 # same for pgsq, when the server runs, we will need the client to talk to it.
 RUN nala install -y postgresql-client
 
-# RUN /app/setup_linux/ve.sh
-# ENV PATH="/root/.local/bin:${PATH}"
-# RUN /root/.local/bin/uv venv $HOME/code/machineconfig/.venv --python 3.13 --python-preference only-managed
-# Warning: does not come with pip
-# RUN source $HOME/code/machineconfig/.venv/bin/activate
-#  && \/root/.local/bin/uv pip install --upgrade pip
-# ENV CROCODILE_EXRA="full"
-# RUN /app/setup_linux/repos.sh
-RUN cd $HOME && \
-    mkdir code && \
-    cd $HOME/code && \
-    git clone https://github.com/thisismygitrepo/crocodile.git --depth 4 && \
-    git clone https://github.com/thisismygitrepo/machineconfig --depth 4 && \
-    cd $HOME/code/machineconfig && \
-    /root/.local/bin/uv sync --no-dev && \
-    echo "Finished setting up repos"
-    # source $HOME/code/machineconfig/.venv/bin/activate && \
-    # cd $HOME/code/machineconfig && \
+# RUN cd $HOME && \
+#     mkdir code && \
+#     cd $HOME/code && \
+#     git clone https://github.com/thisismygitrepo/crocodile.git --depth 4 && \
+#     git clone https://github.com/thisismygitrepo/machineconfig --depth 4 && \
+#     cd $HOME/code/machineconfig && \
     # /root/.local/bin/uv pip install -e . && \
 
-RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig python -m fire machineconfig.profile.create main --choice=all
-RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig install essentials
+
+WORKDIR /root/code/machineconfig
+COPY . .
 COPY ./src/machineconfig/settings/shells/ipy/profiles/default/startup/playext.py /root/.ipython/profile_default/startup/playext.py
+
+RUN /root/.local/bin/uv sync --no-dev
+RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig python -m fire machineconfig.profile.create main
+RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig install essentials
 
 
 RUN touch /root/.bash_history

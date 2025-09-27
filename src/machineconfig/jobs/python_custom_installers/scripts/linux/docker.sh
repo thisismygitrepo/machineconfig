@@ -105,7 +105,7 @@ docker run hello-world || echo "⚠️ Docker hello-world test failed (you may n
 
 echo "👥 Adding current user to docker group..."
 sudo groupadd docker 2>/dev/null || echo "ℹ️ Docker group already exists"
-sudo usermod -aG docker $USER || echo "⚠️ Failed to add user to docker group"
+sudo usermod -aG docker $(whoami) || echo "⚠️ Failed to add user to docker group"
 
 echo """#=======================================================================
 ✅ INSTALLATION COMPLETE | Docker has been installed successfully
