@@ -9,9 +9,6 @@ config_dict: InstallerData = {
     "appName": "warp-cli",
     "repoURL": "CUSTOM",
     "doc": "cli for warp from cloudflare",
-    "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
-    
-    "exeName": "warp-cli",
 }
 
 

@@ -6,7 +6,7 @@ from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-config_dict: InstallerData = {"appName": "Wezterm", "repoURL": "CUSTOM", "doc": "Modern, GPU-accelerated terminal emulator", "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}},  "exeName": "wezterm"}
+config_dict: InstallerData = {"appName": "Wezterm", "repoURL": "CUSTOM", "doc": "Modern, GPU-accelerated terminal emulator"}
 
 
 def main(version: Optional[str]):

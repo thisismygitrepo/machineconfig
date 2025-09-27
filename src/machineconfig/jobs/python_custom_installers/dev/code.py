@@ -8,9 +8,6 @@ config_dict: InstallerData = {
     "appName": "Visual Studio Code",
     "repoURL": "CUSTOM",
     "doc": "Visual Studio Code",
-    "filenameTemplate": {"amd64": {"windows": "VSCodeSetup-{version}.exe", "linux": "code_{version}.deb", "macos": ""}},
-    
-    "exeName": "code",
 }
 
 

@@ -4,172 +4,172 @@
     {
       "appName": "bat",
       "repoURL": "https://github.com/sharkdp/bat",
-      "doc": "\ud83e\udd87 A cat(1) clone with wings."
+      "doc": "🦇 A cat(1) clone with wings."
     },
     {
       "appName": "broot",
       "repoURL": "https://github.com/Canop/broot",
-      "doc": "\ud83c\udf33 broot is an fzf variant for folder structure and layered search."
+      "doc": "🌳 broot is an fzf variant for folder structure and layered search."
     },
     {
       "appName": "btm",
       "repoURL": "https://github.com/ClementTsang/bottom",
-      "doc": "\ud83d\udcca bottom is a cross-platform graphical process/system monitor with a customizable interface and a multitude of features."
+      "doc": "📊 bottom is a cross-platform graphical process/system monitor with a customizable interface and a multitude of features."
     },
     {
       "appName": "chatgpt",
       "repoURL": "https://github.com/j178/chatgpt",
-      "doc": "\ud83e\udd16 chagpt cli"
+      "doc": "🤖 chagpt cli"
     },
     {
       "appName": "cloudflared",
       "repoURL": "https://github.com/cloudflare/cloudflared",
-      "doc": "\u2601\ufe0f Cloudflared installer. Should only be installed at main computer and servers of tunnels."
+      "doc": "☁️ Cloudflared installer. Should only be installed at main computer and servers of tunnels."
     },
     {
       "appName": "cpufetch",
       "repoURL": "https://github.com/Dr-Noob/cpufetch",
-      "doc": "\ud83d\udcbb cpufetch is a small yet fancy CPU architecture fetching tool, like fastfetch but for CPUs."
+      "doc": "💻 cpufetch is a small yet fancy CPU architecture fetching tool, like fastfetch but for CPUs."
     },
     {
       "appName": "delta",
       "repoURL": "https://github.com/dandavison/delta",
-      "doc": "\ud83d\udc40 A viewer for git and diff output"
+      "doc": "👀 A viewer for git and diff output"
     },
     {
       "appName": "dua",
       "repoURL": "https://github.com/Byron/dua-cli",
-      "doc": "\ud83d\udcbe Rust-based cli tool to get a quick overview of disk usage."
+      "doc": "💾 Rust-based cli tool to get a quick overview of disk usage."
     },
     {
       "appName": "fastfetch",
       "repoURL": "https://github.com/fastfetch-cli/fastfetch",
-      "doc": "\ud83d\udcbb fastfetch is a system information tool written in C."
+      "doc": "💻 fastfetch is a system information tool written in C."
     },
     {
       "appName": "fd",
       "repoURL": "https://github.com/sharkdp/fd",
-      "doc": "\ud83d\udd0d fd is a simple, fast and user-friendly alternative to find."
+      "doc": "🔍 fd is a simple, fast and user-friendly alternative to find."
     },
     {
       "appName": "fzf",
       "repoURL": "https://github.com/junegunn/fzf",
-      "doc": "\ud83d\udd0d a general-purpose cli fuzzy finder."
+      "doc": "🔍 a general-purpose cli fuzzy finder."
     },
     {
       "appName": "gemini-cli",
       "repoURL": "npm install -g @google/gemini-cli",
-      "doc": "\ud83e\udd16 Gemini CLI is a command line interface for Google Gemini AI."
+      "doc": "🤖 Gemini CLI is a command line interface for Google Gemini AI."
     },
     {
       "appName": "gitui",
       "repoURL": "https://github.com/gitui-org/gitui",
-      "doc": "\ud83d\udc19 gitui is a terminal ui for git written in rust."
+      "doc": "🐙 gitui is a terminal ui for git written in rust."
     },
     {
       "appName": "glow",
       "repoURL": "https://github.com/charmbracelet/glow/",
-      "doc": "\u2728 Render markdown on the CLI, with pizzazz!"
+      "doc": "✨ Render markdown on the CLI, with pizzazz!"
     },
     {
       "appName": "gum",
       "repoURL": "https://github.com/charmbracelet/gum",
-      "doc": "\ud83c\udfaf Prompt user to select from options, written in golang."
+      "doc": "🎯 Prompt user to select from options, written in golang."
     },
     {
       "appName": "lf",
       "repoURL": "https://github.com/gokcehan/lf",
-      "doc": "\ud83d\udcc2 lf is a terminal file manager written in go."
+      "doc": "📂 lf is a terminal file manager written in go."
     },
     {
       "appName": "lsd",
       "repoURL": "https://github.com/lsd-rs/lsd",
-      "doc": "\ud83d\udcc2 A modern replacement for ls written in Rust."
+      "doc": "📂 A modern replacement for ls written in Rust."
     },
     {
       "appName": "m365",
       "repoURL": "npm install -g @pnp/cli-microsoft365",
-      "doc": "\u2601\ufe0f CLI for Microsoft 365"
+      "doc": "☁️ CLI for Microsoft 365"
     },
     {
       "appName": "mcfly",
       "repoURL": "https://github.com/cantino/mcfly",
-      "doc": "\ud83d\ude80 Fly through your shell history. Great Scott!"
+      "doc": "🚀 Fly through your shell history. Great Scott!"
     },
     {
       "appName": "mods",
       "repoURL": "https://github.com/charmbracelet/mods/",
-      "doc": "\ud83e\udd16 AI for the command line, built for pipelines"
+      "doc": "🤖 AI for the command line, built for pipelines"
     },
     {
       "appName": "mprocs",
       "repoURL": "https://github.com/pvolok/mprocs",
-      "doc": "\ud83d\udda5\ufe0f Windows/Linux/macOS poorman's zellij"
+      "doc": "🖥️ Windows/Linux/macOS poorman's zellij"
     },
     {
       "appName": "ouch",
       "repoURL": "https://github.com/ouch-org/ouch",
-      "doc": "\ud83d\udce6 A cli for extracting and creating archives in unified way."
+      "doc": "📦 A cli for extracting and creating archives in unified way."
     },
     {
       "appName": "procs",
       "repoURL": "https://github.com/dalance/procs/",
-      "doc": "\ud83d\udcca procs is a modern replacement for ps written in Rust."
+      "doc": "📊 procs is a modern replacement for ps written in Rust."
     },
     {
       "appName": "rclone",
       "repoURL": "https://github.com/rclone/rclone",
-      "doc": "\u2601\ufe0f cli to sync to cloud storage providers."
+      "doc": "☁️ cli to sync to cloud storage providers."
     },
     {
       "appName": "rg",
       "repoURL": "https://github.com/BurntSushi/ripgrep",
-      "doc": "\ud83d\udd0d recursively searches directories for a regex pattern while respecting your gitignore rules"
+      "doc": "🔍 recursively searches directories for a regex pattern while respecting your gitignore rules"
     },
     {
       "appName": "rga",
       "repoURL": "https://github.com/phiresky/ripgrep-all",
-      "doc": "\ud83d\udd0d ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz, etc."
+      "doc": "🔍 ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz, etc."
     },
     {
       "appName": "starship",
       "repoURL": "https://github.com/starship/starship",
-      "doc": "\u2b50\ufe0f The minimal, blazing-fast, and infinitely customizable prompt for any shell!"
+      "doc": "⭐ The minimal, blazing-fast, and infinitely customizable prompt for any shell!"
     },
     {
       "appName": "tere",
       "repoURL": "https://github.com/mgunyho/tere",
-      "doc": "\ud83d\udcc2 Tere is a terminal file explorer written in Rust. No more ls + cd"
+      "doc": "📂 Tere is a terminal file explorer written in Rust. No more ls + cd"
     },
     {
       "appName": "topgrade",
       "repoURL": "https://github.com/topgrade-rs/topgrade",
-      "doc": "\u2b06\ufe0f Keeping your system up to date usually involves invoking multiple package managers."
+      "doc": "⬆️ Keeping your system up to date usually involves invoking multiple package managers."
     },
     {
       "appName": "ttyd",
       "repoURL": "https://github.com/tsl0922/ttyd",
-      "doc": "\ud83c\udf10 ttyd shares your terminal on the web."
+      "doc": "🌐 ttyd shares your terminal on the web."
     },
     {
       "appName": "viu",
       "repoURL": "https://github.com/atanunq/viu",
-      "doc": "\ud83d\uddbc\ufe0f A cli image viewer for the terminal (like chafa but in Rust)"
+      "doc": "🖼️ A cli image viewer for the terminal (like chafa but in Rust)"
     },
     {
       "appName": "watchexec",
       "repoURL": "https://github.com/watchexec/watchexec",
-      "doc": "\ud83d\udc40 Executes commands in response to file modifications."
+      "doc": "👀 Executes commands in response to file modifications."
     },
     {
       "appName": "yazi",
       "repoURL": "https://github.com/sxyazi/yazi",
-      "doc": "\u26a1\ufe0f Blazing Fast Terminal File Manager."
+      "doc": "⚡ Blazing Fast Terminal File Manager."
     },
     {
       "appName": "zoxide",
       "repoURL": "https://github.com/ajeetdsouza/zoxide",
-      "doc": "\ud83d\ude80 A cd command that learns - easily navigate directories from the command-line"
+      "doc": "🚀 A cd command that learns - easily navigate directories from the command-line"
     }
   ]
 }

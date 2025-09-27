@@ -11,9 +11,6 @@ config_dict: InstallerData = {
     "appName": "Gorilla",
     "repoURL": "https://github.com/ShishirPatil/gorilla",
     "doc": "natural language to API",
-    "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}},
-    
-    "exeName": "goex",
 }
 
 ve_name = "goex"

@@ -9,9 +9,6 @@ config_dict: InstallerData = {
     "appName": "nerdfont",
     "repoURL": "CUSTOM",
     "doc": "lightweight containerization",
-    "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
-    
-    "exeName": "nerdfont",
 }
 
 

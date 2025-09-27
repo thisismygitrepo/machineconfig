@@ -18,9 +18,6 @@ config_dict: InstallerData = {
     "appName": "hx",
     "repoURL": "CUSTOM",
     "doc": "Helix is a post-modern modal text editor.",
-    "filenameTemplate": {"amd64": {"windows": "helix-{version}-x86_64-windows.zip", "linux": "helix-{version}-x86_64-linux.tar.xz", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
-    
-    "exeName": "hx",
 }
 
 

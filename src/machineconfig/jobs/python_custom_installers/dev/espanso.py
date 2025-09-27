@@ -4,16 +4,13 @@ A text expander is a program that detects when you type a specific keyword and r
 https://github.com/espanso/espanso
 """
 
-from typing import Optional
+from typing import Optional, Dict, Any
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 config_dict: InstallerData = {
     "appName": "espanso",
     "repoURL": "CUSTOM",
     "doc": "A text expander.",
-    "filenameTemplate": {"amd64": {"windows": "Espanso-Win-Installer-x86_64.exe", "linux": "", "macos": "Espanso.dmg"}, "arm64": {"windows": "", "linux": "", "macos": ""}},
-    
-    "exeName": "espanso",
 }
 
 

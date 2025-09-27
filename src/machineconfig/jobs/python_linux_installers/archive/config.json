@@ -4,15 +4,7 @@
     {
       "appName": "bitwarden",
       "repoURL": "https://vault.bitwarden.com/download/?app=cli&platform=linux",
-      "doc": "🔐 password manager cli",
-      "filenameTemplate": {
-        "amd64": {
-          "linux": "bw"
-        },
-        "arm64": {}
-      },
-      
-      "exeName": "bw"
+      "doc": "🔐 password manager cli"
     }
   ]
 }

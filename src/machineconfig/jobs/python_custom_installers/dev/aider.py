@@ -6,9 +6,6 @@ config_dict: InstallerData = {
     "appName": "aider-chat",
     "repoURL": "https://github.com/paul-gauthier/aider",
     "doc": "Aider Chat",
-    "filenameTemplate": {"amd64": {"windows": "aider-chat-{version}.exe", "linux": "aider-chat-{version}.deb", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
-    
-    "exeName": "aider-chat",
 }
 
 

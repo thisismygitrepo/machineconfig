@@ -7,7 +7,7 @@ from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-config_dict: InstallerData = {"appName": "Cursor", "repoURL": "CUSTOM", "doc": "Cursor", "filenameTemplate": {"amd64": {"windows": "VSCodeSetup-{version}.exe", "linux": "code_{version}.deb", "macos": ""}},  "exeName": "cursor"}
+config_dict: InstallerData = {"appName": "Cursor", "repoURL": "CUSTOM", "doc": "Cursor"}
 
 
 def install_linux(version: Optional[str] = None):

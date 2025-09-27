@@ -10,9 +10,6 @@ config_dict: InstallerData = {
     "appName": "Brave",
     "repoURL": "CUSTOM",
     "doc": "Privacy-focused web browser with built-in ad blocking",
-    "filenameTemplate": {"amd64": {"windows": "", "linux": "", "macos": ""}},
-    
-    "exeName": "brave",
 }
 
 

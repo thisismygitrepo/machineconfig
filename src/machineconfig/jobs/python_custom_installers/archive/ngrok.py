@@ -12,9 +12,6 @@ config_dict: InstallerData = {
     "appName": "ngrok",
     "repoURL": "CUSTOM",
     "doc": "ngrok secure introspectable tunnels to localhost",
-    "filenameTemplate": {"amd64": {"windows": "ngrok-stable-windows-amd64.zip", "linux": "ngrok-stable-linux-amd64.zip", "macos": ""}, "arm64": {"windows": "", "linux": "", "macos": ""}},
-    
-    "exeName": "ngrok",
 }
 
 

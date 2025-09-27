@@ -4,273 +4,87 @@
     {
       "appName": "ytui-music",
       "repoURL": "https://github.com/sudipghimire533/ytui-music",
-      "doc": "🎵 A terminal based YouTube music player written in Rust.",
-      "filenameTemplate": {
-        "amd64": {
-          "linux": "ytui_music-linux-amd64"
-        },
-        "arm64": {}
-      },
-      
-      "exeName": "ytui-music"
+      "doc": "🎵 A terminal based YouTube music player written in Rust."
     },
     {
       "appName": "youtube-tui",
       "repoURL": "https://github.com/Siriusmart/youtube-tui",
-      "doc": "🎵 A terminal based YouTube music player written in Rust.",
-      "filenameTemplate": {
-        "amd64": {
-          "linux": "youtube-tui-full_arch-x86_64"
-        },
-        "arm64": {}
-      },
-      
-      "exeName": "youtube-tui"
+      "doc": "🎵 A terminal based YouTube music player written in Rust."
     },
     {
       "appName": "termusic",
       "repoURL": "https://github.com/tramhao/termusic",
-      "doc": "🎵 A terminal-based music player written in Rust.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "termusic-{version}-x86_64-windows.zip",
-          "linux": "termusic-{version}-x86_64-linux.tar.xz",
-          "macos": "termusic-{version}-x86_64-macos.tar.xz"
-        },
-        "arm64": {}
-      },
-      
-      "exeName": "termusic"
+      "doc": "🎵 A terminal-based music player written in Rust."
     },
     {
       "appName": "kronos",
       "repoURL": "https://github.com/TrevorSatori/kronos",
-      "doc": "🎵 A Customizable Terminal Music Player For Offline Listening",
-      "filenameTemplate": {
-        "amd64": {
-          "linux": "Kronos"
-        },
-        "arm64": {}
-      },
-      
-      "exeName": "kronos"
+      "doc": "🎵 A Customizable Terminal Music Player For Offline Listening"
     },
     {
       "appName": "transmission",
       "repoURL": "https://github.com/transmission/transmission",
-      "doc": "📥 A fast, easy, and free BitTorrent client.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "transmission-{version}-x64.msi",
-          "linux": "transmission-{version}.tar.xz",
-          "macos": "Transmission-{version}.dmg"
-        },
-        "arm64": {
-          "macos": "Transmission-{version}.dmg"
-        }
-      },
-      
-      "exeName": "transmission"
+      "doc": "📥 A fast, easy, and free BitTorrent client."
     },
     {
       "appName": "nnn",
       "repoURL": "https://github.com/jarun/nnn",
-      "doc": "📂 A terminal-based file manager.",
-      "filenameTemplate": {
-        "amd64": {},
-        "arm64": {}
-      },
-      
-      "exeName": "nnn"
+      "doc": "📂 A terminal-based file manager."
     },
     {
       "appName": "exa",
       "repoURL": "https://github.com/ogham/exa",
-      "doc": "📂 A modern replacement for ls. lsd alternative.",
-      "filenameTemplate": {
-        "amd64": {
-          "linux": "exa-linux-x86_64-{version}.zip",
-          "macos": "exa-macos-x86_64-{version}.zip"
-        },
-        "arm64": {
-          "linux": "exa-linux-armv7-{version}.zip"
-        }
-      },
-      
-      "exeName": "exa"
+      "doc": "📂 A modern replacement for ls. lsd alternative."
     },
     {
       "appName": "bytehound",
       "repoURL": "https://github.com/koute/bytehound",
-      "doc": "🔍 Inspecting the memory usage of a running process",
-      "filenameTemplate": {
-        "amd64": {
-          "linux": "bytehound-x86_64-unknown-linux-gnu.tgz"
-        },
-        "arm64": {}
-      },
-      
-      "exeName": "bytehound"
+      "doc": "🔍 Inspecting the memory usage of a running process"
     },
     {
       "appName": "atuin",
       "repoURL": "https://github.com/atuinsh/atuin",
-      "doc": "🔍 Shell history search tool. Mcfly alternative",
-      "filenameTemplate": {
-        "amd64": {
-          "linux": "atuin-x86_64-unknown-linux-gnu.tar.gz",
-          "macos": "atuin-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "linux": "atuin-aarch64-unknown-linux-gnu.tar.gz",
-          "macos": "atuin-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      
-      "exeName": "atuin"
+      "doc": "🔍 Shell history search tool. Mcfly alternative"
     },
     {
       "appName": "browsh",
       "repoURL": "https://github.com/browsh-org/browsh",
-      "doc": "🌐 browser in the shell",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "browsh_{version}_windows_amd64.exe",
-          "linux": "browsh_{version}_linux_amd64",
-          "macos": "browsh_{version}_darwin_amd64"
-        },
-        "arm64": {
-          "windows": "browsh_{version}_windows_arm64.exe",
-          "linux": "browsh_{version}_linux_arm64",
-          "macos": "browsh_{version}_darwin_arm64"
-        }
-      },
-      
-      "exeName": "browsh"
+      "doc": "🌐 browser in the shell"
     },
     {
       "appName": "carbonyl",
       "repoURL": "https://github.com/fathyb/carbonyl",
-      "doc": "A Chromium based browser built to run in a terminal",
-      "filenameTemplate": {
-        "amd64": {
-          "linux": "carbonyl.linux-x86_64.zip",
-          "macos": "carbonyl.macos-x86_64.zip"
-        },
-        "arm64": {
-          "linux": "carbonyl.linux-arm64.zip",
-          "macos": "carbonyl.macos-arm64.zip"
-        }
-      },
-      
-      "exeName": "carbonyl"
+      "doc": "A Chromium based browser built to run in a terminal"
     },
     {
       "appName": "patat",
       "repoURL": "https://github.com/jaspervdj/patat",
-      "doc": "🎯 Terminal-based presentations using Pandoc. Presenterm alternative.",
-      "filenameTemplate": {
-        "amd64": {
-          "linux": "patat-{version}-linux-x86_64.tar.gz"
-        },
-        "arm64": {
-          "macos": "patat-{version}-darwin-arm64.zip"
-        }
-      },
-      
-      "exeName": "patat"
+      "doc": "🎯 Terminal-based presentations using Pandoc. Presenterm alternative."
     },
     {
       "appName": "SqliteBrowser",
       "repoURL": "https://github.com/sqlitebrowser/sqlitebrowser",
-      "doc": "🗃️ A visual tool to create, design, and edit database files compatible with SQLite.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "DB.Browser.for.SQLite-{version}-win64.zip",
-          "linux": "DB.Browser.for.SQLite-{version}-x86.64-v2.AppImage",
-          "macos": "DB.Browser.for.SQLite-{version}.dmg"
-        },
-        "arm64": {
-          "macos": "DB.Browser.for.SQLite-{version}.dmg"
-        }
-      },
-      
-      "exeName": "sqlite_browser"
+      "doc": "🗃️ A visual tool to create, design, and edit database files compatible with SQLite."
     },
     {
       "appName": "DBeaver",
       "repoURL": "https://github.com/dbeaver/dbeaver",
-      "doc": "🗃️ Free universal database tool and SQL client.",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "dbeaver-ce-{version}-win32.win32.x86_64.zip",
-          "linux": "dbeaver-ce-{version}-linux.gtk.x86_64.tar.gz",
-          "macos": "dbeaver-ce-{version}-macos-cocoa.x86_64.tar.gz"
-        },
-        "arm64": {
-          "linux": "dbeaver-ce-{version}-linux.gtk.aarch64.tar.gz",
-          "macos": "dbeaver-ce-{version}-macos-cocoa.aarch64.tar.gz"
-        }
-      },
-      
-      "exeName": "dbeaver"
+      "doc": "🗃️ Free universal database tool and SQL client."
     },
     {
       "appName": "rainfrog",
       "repoURL": "https://github.com/achristmascarl/rainfrog",
-      "doc": "🗃️ TUI DB Visualizer",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "rainfrog-{version}-x86_64-pc-windows-msvc.tar.gz",
-          "linux": "rainfrog-{version}-x86_64-unknown-linux-musl.tar.gz",
-          "macos": "rainfrog-{version}-x86_64-apple-darwin.tar.gz"
-        },
-        "arm64": {
-          "windows": "rainfrog-{version}-aarch64-pc-windows-msvc.tar.gz",
-          "linux": "rainfrog-{version}-aarch64-unknown-linux-musl.tar.gz",
-          "macos": "rainfrog-{version}-aarch64-apple-darwin.tar.gz"
-        }
-      },
-      
-      "exeName": "rainfrog"
+      "doc": "🗃️ TUI DB Visualizer"
     },
     {
       "appName": "cpz",
       "repoURL": "https://github.com/SUPERCILEX/fuc",
-      "doc": "📋 Fast copy",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "x86_64-pc-windows-msvc-cpz.exe",
-          "linux": "x86_64-unknown-linux-musl-cpz",
-          "macos": "x86_64-apple-darwin-cpz"
-        },
-        "arm64": {
-          "windows": "aarch64-pc-windows-msvc-cpz.exe",
-          "linux": "aarch64-unknown-linux-gnu-cpz",
-          "macos": "aarch64-apple-darwin-cpz"
-        }
-      },
-      
-      "exeName": "cpz"
+      "doc": "📋 Fast copy"
     },
     {
       "appName": "rmz",
       "repoURL": "https://github.com/SUPERCILEX/fuc",
-      "doc": "🗑️ Fast remove",
-      "filenameTemplate": {
-        "amd64": {
-          "windows": "x86_64-pc-windows-msvc-rmz.exe",
-          "linux": "x86_64-unknown-linux-musl-rmz",
-          "macos": "x86_64-apple-darwin-rmz"
-        },
-        "arm64": {
-          "windows": "aarch64-pc-windows-msvc-rmz.exe",
-          "linux": "aarch64-unknown-linux-gnu-rmz",
-          "macos": "aarch64-apple-darwin-rmz"
-        }
-      },
-      
-      "exeName": "rmz"
+      "doc": "🗑️ Fast remove"
     }
   ]
 }
