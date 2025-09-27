@@ -33,7 +33,7 @@ winget install --Name "Brave Browser" --Id Brave.Brave --source winget --accept-
     elif platform.system() in ["Linux", "Darwin"]:
         system_name = "Linux" if platform.system() == "Linux" else "macOS"
         print(f"🐧 Installing Brave Browser on {system_name}...")
-        import machineconfig.jobs.python_custom_installers as module
+        import machineconfig.jobs.custom_installers as module
         from pathlib import Path
 
         if platform.system() == "Linux":

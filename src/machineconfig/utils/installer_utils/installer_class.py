@@ -102,11 +102,11 @@ class Installer:
         print(f"\n{'=' * 80}\n🔧 INSTALLATION PROCESS: {exe_name} 🔧\n{'=' * 80}")
         if repo_url == "CUSTOM":
             print(f"🧩 Using custom installer for {exe_name}")
-            import machineconfig.jobs.python_custom_installers as python_custom_installers
+            import machineconfig.jobs.custom_installers as custom_installers
 
-            installer_path = Path(python_custom_installers.__file__).parent.joinpath(exe_name + ".py")
+            installer_path = Path(custom_installers.__file__).parent.joinpath(exe_name + ".py")
             if not installer_path.exists():
-                installer_path = Path(python_custom_installers.__file__).parent.joinpath("dev", exe_name + ".py")
+                installer_path = Path(custom_installers.__file__).parent.joinpath("dev", exe_name + ".py")
                 print(f"🔍 Looking for installer in dev folder: {installer_path}")
             else:
                 print(f"🔍 Found installer at: {installer_path}")

@@ -35,7 +35,7 @@ def main(version: Optional[str]):
         print("""
 🐧 LINUX SETUP | Installing Cloudflare WARP CLI using installation script...
 """)
-        import machineconfig.jobs.python_custom_installers as module
+        import machineconfig.jobs.custom_installers as module
         from pathlib import Path
 
         program = Path(module.__file__).parent.joinpath("scripts/linux/warp-cli.sh").read_text(encoding="utf-8")

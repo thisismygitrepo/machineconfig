@@ -22,7 +22,7 @@ def main(version: Optional[str] = None):
 
     if platform.system() == "Linux":
         print("🐧 Installing VS Code on Linux using official script...")
-        import machineconfig.jobs.python_custom_installers as module
+        import machineconfig.jobs.custom_installers as module
         from pathlib import Path
 
         install_script = Path(module.__file__).parent.joinpath("scripts/linux/vscode.sh").read_text(encoding="utf-8")

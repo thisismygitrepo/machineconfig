@@ -2,6 +2,235 @@
   "version": "1",
   "installers": [
     {
+      "appName": "ytui-music",
+      "repoURL": "https://github.com/sudipghimire533/ytui-music",
+      "doc": "🎵 A terminal based YouTube music player written in Rust.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "ytui_music-linux-amd64"
+        },
+        "arm64": {
+          "linux": ""
+        }
+      }
+    },
+    {
+      "appName": "youtube-tui",
+      "repoURL": "https://github.com/Siriusmart/youtube-tui",
+      "doc": "🎵 A terminal based YouTube music player written in Rust.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "youtube-tui-full_arch-x86_64"
+        },
+        "arm64": {
+          "linux": ""
+        }
+      }
+    },
+    {
+      "appName": "termusic",
+      "repoURL": "https://github.com/tramhao/termusic",
+      "doc": "🎵 A terminal-based music player written in Rust.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "termusic-v{version}-x86_64-linux.tar.xz"
+        },
+        "arm64": {
+          "linux": ""
+        }
+      }
+    },
+    {
+      "appName": "kronos",
+      "repoURL": "https://github.com/TrevorSatori/kronos",
+      "doc": "🎵 A Customizable Terminal Music Player For Offline Listening",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "Kronos"
+        },
+        "arm64": {
+          "linux": ""
+        }
+      }
+    },
+    {
+      "appName": "transmission",
+      "repoURL": "https://github.com/transmission/transmission",
+      "doc": "📥 A fast, easy, and free BitTorrent client.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "transmission-{version}.tar.xz"
+        },
+        "arm64": {
+          "linux": ""
+        }
+      }
+    },
+    {
+      "appName": "nnn",
+      "repoURL": "https://github.com/jarun/nnn",
+      "doc": "📂 A terminal-based file manager.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "nnn-static-{version}.x86_64.tar.gz"
+        },
+        "arm64": {
+          "linux": ""
+        }
+      }
+    },
+    {
+      "appName": "exa",
+      "repoURL": "https://github.com/ogham/exa",
+      "doc": "📂 A modern replacement for ls. lsd alternative.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "exa-linux-x86_64-v{version}.zip"
+        },
+        "arm64": {
+          "linux": ""
+        }
+      }
+    },
+    {
+      "appName": "bytehound",
+      "repoURL": "https://github.com/koute/bytehound",
+      "doc": "🔍 Inspecting the memory usage of a running process",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "bytehound-x86_64-unknown-linux-gnu.tgz"
+        },
+        "arm64": {
+          "linux": ""
+        }
+      }
+    },
+    {
+      "appName": "atuin",
+      "repoURL": "https://github.com/atuinsh/atuin",
+      "doc": "🔍 Shell history search tool. Mcfly alternative",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "atuin-x86_64-unknown-linux-gnu.tar.gz"
+        },
+        "arm64": {
+          "linux": "atuin-aarch64-unknown-linux-gnu.tar.gz"
+        }
+      }
+    },
+    {
+      "appName": "browsh",
+      "repoURL": "https://github.com/browsh-org/browsh",
+      "doc": "🌐 browser in the shell",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "browsh_{version}_linux_amd64"
+        },
+        "arm64": {
+          "linux": "browsh_{version}_linux_arm64"
+        }
+      }
+    },
+    {
+      "appName": "carbonyl",
+      "repoURL": "https://github.com/fathyb/carbonyl",
+      "doc": "A Chromium based browser built to run in a terminal",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "carbonyl.linux-amd64.zip"
+        },
+        "arm64": {
+          "linux": "carbonyl.linux-arm64.zip"
+        }
+      }
+    },
+    {
+      "appName": "patat",
+      "repoURL": "https://github.com/jaspervdj/patat",
+      "doc": "🎯 Terminal-based presentations using Pandoc. Presenterm alternative.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "patat-v{version}-linux-x86_64.tar.gz"
+        },
+        "arm64": {
+          "linux": ""
+        }
+      }
+    },
+    {
+      "appName": "SqliteBrowser",
+      "repoURL": "https://github.com/sqlitebrowser/sqlitebrowser",
+      "doc": "🗃️ A visual tool to create, design, and edit database files compatible with SQLite.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "DB.Browser.for.SQLite-v{version}-x86.64-v2.AppImage"
+        },
+        "arm64": {
+          "linux": ""
+        }
+      }
+    },
+    {
+      "appName": "DBeaver",
+      "repoURL": "https://github.com/dbeaver/dbeaver",
+      "doc": "🗃️ Free universal database tool and SQL client.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "dbeaver-ce-{version}-linux.gtk.x86_64.tar.gz"
+        },
+        "arm64": {
+          "linux": "dbeaver-ce-{version}-linux.gtk.aarch64.tar.gz"
+        }
+      }
+    },
+    {
+      "appName": "rainfrog",
+      "repoURL": "https://github.com/achristmascarl/rainfrog",
+      "doc": "🗃️ TUI DB Visualizer",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "rainfrog-{version}-x86_64-unknown-linux-gnu.tar.gz"
+        },
+        "arm64": {
+          "linux": "rainfrog-{version}-aarch64-unknown-linux-gnu.tar.gz"
+        }
+      }
+    },
+    {
+      "appName": "cpz",
+      "repoURL": "https://github.com/SUPERCILEX/fuc",
+      "doc": "📋 Fast copy",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "x86_64-unknown-linux-gnu-cpz",
+          "windows": "x86_64-pc-windows-msvc-cpz.exe", 
+          "macos": "x86_64-apple-darwin-cpz"
+        },
+        "arm64": {
+          "linux": "aarch64-unknown-linux-gnu-cpz",
+          "windows": "aarch64-pc-windows-msvc-cpz.exe",
+          "macos": "aarch64-apple-darwin-cpz"
+        }
+      }
+    },
+    {
+      "appName": "rmz",
+      "repoURL": "https://github.com/SUPERCILEX/fuc",
+      "doc": "🗑️ Fast remove",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "x86_64-unknown-linux-gnu-rmz",
+          "windows": "x86_64-pc-windows-msvc-rmz.exe",
+          "macos": "x86_64-apple-darwin-rmz"
+        },
+        "arm64": {
+          "linux": "aarch64-unknown-linux-gnu-rmz", 
+          "windows": "aarch64-pc-windows-msvc-rmz.exe",
+          "macos": "aarch64-apple-darwin-rmz"
+        }
+      }
+    },
+    {
       "appName": "mermaid-cli",
       "repoURL": "npm install -g @mermaid-js/mermaid-cli",
       "doc": "📊 Generate diagrams and flowcharts from text in a similar manner as markdown",

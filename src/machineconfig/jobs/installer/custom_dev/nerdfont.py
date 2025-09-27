@@ -33,7 +33,7 @@ def main(version: Optional[str]):
         raise NotImplementedError(error_msg)
     elif platform.system() in ["Linux", "Darwin"]:
         print("🐧 Installing Nerd Fonts on Linux using installation script...")
-        import machineconfig.jobs.python_custom_installers as module
+        import machineconfig.jobs.custom_installers as module
         from pathlib import Path
 
         program = Path(module.__file__).parent.joinpath("scripts/linux/nerdfont.sh").read_text(encoding="utf-8")

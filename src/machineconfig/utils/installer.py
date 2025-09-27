@@ -95,12 +95,6 @@ def get_installed_cli_apps():
 def get_installers(system: str, dev: bool) -> list[Installer]:
     print(f"\n{'=' * 80}\n🔍 LOADING INSTALLER CONFIGURATIONS 🔍\n{'=' * 80}")
     res_all = get_all_installer_data_files(system=system)
-    if not dev:
-        print("ℹ️  Excluding development installers...")
-        del res_all["CUSTOM_DEV"]
-        del res_all["OS_SPECIFIC_DEV"]
-        del res_all["OS_GENERIC_DEV"]
-
     # Flatten the installer data from all categories
     all_installers: list[InstallerData] = []
     for _category, installer_data_files in res_all.items():
@@ -114,43 +108,17 @@ def get_all_installer_data_files(system: str) -> dict[APP_INSTALLER_CATEGORY, In
     print(f"\n{'=' * 80}\n📂 LOADING CONFIGURATION FILES 📂\n{'=' * 80}")
 
     print(f"🔍 Importing OS-specific installers for {system}...")
-    if system == "Windows":
-        import machineconfig.jobs.python_windows_installers as os_specific_installer
-    else:
-        import machineconfig.jobs.python_linux_installers as os_specific_installer
-
-    print("🔍 Importing generic installers...")
-    import machineconfig.jobs.python_generic_installers as generic_installer
-
-    path_os_specific = PathExtended(os_specific_installer.__file__).parent
-    path_os_generic = PathExtended(generic_installer.__file__).parent
-
-    path_os_specific_dev = path_os_specific.joinpath("dev")
-    path_os_generic_dev = path_os_generic.joinpath("dev")
+    import machineconfig.jobs.installer as module
+    from pathlib import Path
 
     print("📂 Loading configuration files...")
     res_final: dict[APP_INSTALLER_CATEGORY, InstallerDataFiles] = {}
+    data: InstallerDataFiles = read_json(Path(module.__file__).parent.joinpath("packages_standard.json"))
+    res_final["STANDARD_GITHUB"] = data
+    data = read_json(Path(module.__file__).parent.joinpath("packages_dev.json"))
+    res_final["DEV_GITHUB"] = data
 
-    print(f"""📄 Loading OS-specific config from: {path_os_specific.joinpath("config.json")}""")
-    os_specific_data = read_json(path=path_os_specific.joinpath("config.json"))
-    res_final["OS_SPECIFIC"] = InstallerDataFiles(os_specific_data)
-
-    print(f"""📄 Loading OS-generic config from: {path_os_generic.joinpath("config.json")}""")
-    os_generic_data = read_json(path=path_os_generic.joinpath("config.json"))
-    res_final["OS_GENERIC"] = InstallerDataFiles(os_generic_data)
-
-    print(f"""📄 Loading OS-specific dev config from: {path_os_specific_dev.joinpath("config.json")}""")
-    os_specific_dev_data = read_json(path=path_os_specific_dev.joinpath("config.json"))
-    res_final["OS_SPECIFIC_DEV"] = InstallerDataFiles(os_specific_dev_data)
-
-    print(f"""📄 Loading OS-generic dev config from: {path_os_generic_dev.joinpath("config.json")}""")
-    os_generic_dev_data = read_json(path=path_os_generic_dev.joinpath("config.json"))
-    res_final["OS_GENERIC_DEV"] = InstallerDataFiles(os_generic_dev_data)
-
-    path_custom_installer = path_os_generic.with_name("python_custom_installers")
-    path_custom_installer_dev = path_custom_installer.joinpath("dev")
-
-    print(f"🔍 Loading custom installers from: {path_custom_installer}")
+    print("🔍 Loading custom installers ")
     import runpy
 
     res_custom_installers: list[InstallerData] = []
