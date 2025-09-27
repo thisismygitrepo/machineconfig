@@ -85,19 +85,38 @@ def install_windows_desktop_apps() -> bool:
     
     console.print(Panel("💻 [bold cyan]WINDOWS DESKTOP APPS[/bold cyan]\n[italic]Installing Brave, Windows Terminal, PowerShell, and VSCode[/italic]", border_style="cyan"))
     
-    commands = [
+    # Install winget applications
+    winget_commands = [
         ('winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --source winget --scope user --accept-package-agreements --accept-source-agreements', "Installing Windows Terminal"),
         ('winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --source winget --scope user --accept-package-agreements --accept-source-agreements', "Installing PowerShell"),
         ('winget install --no-upgrade --name "Brave" --Id "Brave.Brave" --source winget --scope user --accept-package-agreements --accept-source-agreements', "Installing Brave Browser"),
         ('winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements', "Installing Visual Studio Code"),
-        ('uv run --python 3.13 --with machineconfig python -m fire machineconfig.setup_windows.wt_and_pwsh.install_nerd_fonts main', "Installing Nerd Fonts"),
-        ('uv run --python 3.13 --with machineconfig python -m fire machineconfig.setup_windows.wt_and_pwsh.set_wt_settings main', "Setting Windows Terminal settings")
     ]
     
     success = True
-    for command, description in commands:
+    for command, description in winget_commands:
         if not run_command(command, description):
             success = False
+    
+    # Install Nerd Fonts via Python
+    console.print("🔧 Installing Nerd Fonts", style="bold cyan")
+    try:
+        from machineconfig.jobs.installer.custom_dev.nerfont_windows_helper import install_nerd_fonts
+        install_nerd_fonts()
+        console.print("✅ Nerd Fonts installed successfully", style="bold green")
+    except Exception as e:
+        console.print(f"❌ Error installing Nerd Fonts: {e}", style="bold red")
+        success = False
+    
+    # Set Windows Terminal settings via Python
+    console.print("🔧 Setting Windows Terminal settings", style="bold cyan")
+    try:
+        from machineconfig.setup_windows.wt_and_pwsh.set_wt_settings import main as set_wt_settings_main
+        set_wt_settings_main()
+        console.print("✅ Windows Terminal settings configured successfully", style="bold green")
+    except Exception as e:
+        console.print(f"❌ Error setting Windows Terminal settings: {e}", style="bold red")
+        success = False
     
     return success
 
@@ -168,7 +187,13 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
         dotfiles_ready = questionary.confirm("📂 Have you finished copying dotfiles?", default=True).ask()
         if dotfiles_ready:
             console.print(Panel("🔗 [bold cyan]SYMLINK CREATION[/bold cyan]\n[italic]Configuration setup[/italic]", border_style="cyan"))
-            run_command("uv run --python 3.13 --with machineconfig python -m fire machineconfig.profile.create main_symlinks --choice=all", "Creating symlinks")
+            console.print("🔧 Creating symlinks", style="bold cyan")
+            try:
+                from machineconfig.profile.create import main_symlinks
+                main_symlinks()
+                console.print("✅ Symlinks created successfully", style="bold green")
+            except Exception as e:
+                console.print(f"❌ Error creating symlinks: {e}", style="bold red")
             run_command("sudo chmod 600 $HOME/.ssh/*", "Setting SSH key permissions")
             run_command("sudo chmod 700 $HOME/.ssh", "Setting SSH directory permissions")
         else:
@@ -176,7 +201,13 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
 
     if "install_cli_apps" in selected_options:
         console.print(Panel("⚡ [bold bright_yellow]CLI APPLICATIONS[/bold bright_yellow]\n[italic]Command-line tools installation[/italic]", border_style="bright_yellow"))
-        run_command("uv run --python 3.13 --with machineconfig python -m fire machineconfig.scripts.python.devops_devapps_install main --which=essentials", "Installing CLI applications")
+        console.print("🔧 Installing CLI applications", style="bold cyan")
+        try:
+            from machineconfig.scripts.python.devops_devapps_install import main as devops_devapps_install_main
+            devops_devapps_install_main(which="essentials")
+            console.print("✅ CLI applications installed successfully", style="bold green")
+        except Exception as e:
+            console.print(f"❌ Error installing CLI applications: {e}", style="bold red")
         run_command(". $HOME/.bashrc", "Reloading bash configuration")
 
     if "install_dev_tools" in selected_options:
@@ -184,19 +215,34 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
         run_command("(curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true", "Installing Rust toolchain")
         run_command("sudo nala install libssl-dev -y", "Installing libssl-dev")
         run_command("sudo nala install ffmpeg -y", "Installing ffmpeg")
-        run_command("uv run --python 3.13 --with machineconfig python -m fire machineconfig.scripts.python.devops_devapps_install main --which=wezterm,brave,code", "Installing development applications")
+        console.print("🔧 Installing development applications", style="bold cyan")
+        try:
+            from machineconfig.scripts.python.devops_devapps_install import main as devops_devapps_install_main
+            devops_devapps_install_main(which="wezterm,brave,code")
+            console.print("✅ Development applications installed successfully", style="bold green")
+        except Exception as e:
+            console.print(f"❌ Error installing development applications: {e}", style="bold red")
 
     if "retrieve_repositories" in selected_options:
         console.print(Panel("📚 [bold bright_magenta]REPOSITORIES[/bold bright_magenta]\n[italic]Project code retrieval[/italic]", border_style="bright_magenta"))
-        run_command("repos ~/code --clone --cloud odg1", "Cloning repositories")
+        from machineconfig.scripts.python import repos as module
+        module.main(directory=str(Path.home() / "code"), clone=True, cloud="odg1")
 
     if "retrieve_data" in selected_options:
         console.print(Panel("💾 [bold bright_cyan]DATA RETRIEVAL[/bold bright_cyan]\n[italic]Backup restoration[/italic]", border_style="bright_cyan"))
-        run_command("uv run --python 3.13 --with machineconfig python -m fire machineconfig.scripts.python.devops_backup_retrieve main --direction=RETRIEVE", "Retrieving backup data")
+        console.print("🔧 Retrieving backup data", style="bold cyan")
+        try:
+            from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve
+            main_backup_retrieve(direction="RETRIEVE")
+            console.print("✅ Backup data retrieved successfully", style="bold green")
+        except Exception as e:
+            console.print(f"❌ Error retrieving backup data: {e}", style="bold red")
 
     if "install_ascii_art" in selected_options:
         console.print(Panel("🎨 [bold bright_green]ASCII ART[/bold bright_green]\n[italic]Terminal visualization tools[/italic]", border_style="bright_green"))
-        run_command("curl bit.ly/cfgasciiartlinux -L | sudo bash", "Installing ASCII art libraries")
+        from machineconfig import setup_linux as module
+        script = Path(module.__file__).parent / "web_shortcuts" / "ascii_art.sh"
+        run_command(f"bash {script}", "Installing ASCII art libraries")
 
     if "install_windows_desktop" in selected_options:
         install_windows_desktop_apps()

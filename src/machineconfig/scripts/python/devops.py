@@ -23,7 +23,7 @@ def update():
     helper.main()
 
 
-app.command(name="install")(installer_entry_point.main)
+app.command(name="install", help="📦 Install essential packages")(installer_entry_point.main)
 app.command(name="share-terminal", help="📡 Share terminal via web browser")(share_terminal_main)
 
 
@@ -118,6 +118,7 @@ def scheduler():
 
 @app.command("ia")
 def interactive():
+    """🤖 INTERACTIVE configuration of machine."""
     from machineconfig.scripts.python.interactive import main
     main()
 

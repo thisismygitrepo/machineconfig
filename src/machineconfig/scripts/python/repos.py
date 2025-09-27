@@ -60,7 +60,6 @@ def main(
         clone_repos(spec_path=repos_root, preferred_remote=None, checkout_branch_flag=checkout_to_branch, checkout_commit_flag=checkout)
 
     elif all or commit or pull or push:
-        # Use the new helper function for git operations
         perform_git_operations(
             repos_root=repos_root,
             pull=pull or all,
