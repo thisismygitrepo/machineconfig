@@ -6,7 +6,6 @@ capturing all user inputs collected during interactive execution.
 
 from pathlib import Path
 from typing import TypedDict, Literal, NotRequired
-from machineconfig.scripts.python.fire_agents_load_balancer import SPLITTING_STRATEGY
 from machineconfig.scripts.python.fire_agents_help_launch import AGENTS
 
 SEARCH_STRATEGIES = Literal["file_path", "keyword_search", "filename_pattern"]
@@ -21,26 +20,17 @@ class FilePathSearchInput(TypedDict):
 
 class KeywordSearchInput(TypedDict):
     """Input for keyword_search strategy."""
-
     keyword: str
 
 
 class FilenamePatternSearchInput(TypedDict):
     """Input for filename_pattern search strategy."""
-
     pattern: str  # e.g., '*.py', '*test*', 'config.*'
 
 
-class AgentCapSplittingInput(TypedDict):
-    """Input for agent_cap splitting strategy."""
-
-    agent_cap: int  # Default: 6
-
-
-class TaskRowsSplittingInput(TypedDict):
-    """Input for task_rows splitting strategy."""
-
-    task_rows: int  # Default: 13
+class TasksPerPromptSplittingInput(TypedDict):
+    """Input for tasks_per_prompt splitting strategy."""
+    tasks_per_prompt: int  # Default: 13
 
 
 class FireAgentsMainInput(TypedDict):
@@ -49,7 +39,6 @@ class FireAgentsMainInput(TypedDict):
     # Core configuration
     repo_root: Path
     search_strategy: SEARCH_STRATEGIES
-    splitting_strategy: SPLITTING_STRATEGY
     agent_selected: AGENTS
     prompt_prefix: str
     job_name: str  # Default: "AI_Agents"
@@ -62,8 +51,7 @@ class FireAgentsMainInput(TypedDict):
     filename_pattern_input: NotRequired[FilenamePatternSearchInput]
 
     # Splitting strategy specific inputs (only one will be present based on splitting_strategy)
-    agent_cap_input: NotRequired[AgentCapSplittingInput]
-    task_rows_input: NotRequired[TaskRowsSplittingInput]
+    tasks_per_prompt: TasksPerPromptSplittingInput
 
 
 class FireAgentsRuntimeData(TypedDict):

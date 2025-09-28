@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "4.02"
+version = "4.04"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -35,6 +35,7 @@ dependencies = [
     "pyjson5>=1.6.9",
     "typer-slim>=0.19.2",
     "questionary>=2.1.1",
+    "typer>=0.19.2",
 ]
 
 [project.optional-dependencies]
@@ -53,7 +54,7 @@ docs = [
 [project.scripts]
 devops = "machineconfig.scripts.python.devops:app"
 fire = "machineconfig.scripts.python.fire_jobs:main_from_parser"
-fire_agents = "machineconfig.scripts.python.fire_agents:main"
+fire_agents = "machineconfig.scripts.python.fire_agents:app"
 initai = "machineconfig.scripts.python.ai.initai:main"
 
 choose_wezterm_theme = "machineconfig.scripts.python.choose_wezterm_theme:main"

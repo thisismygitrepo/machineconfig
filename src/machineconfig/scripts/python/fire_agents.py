@@ -1,4 +1,12 @@
-"""Utility to launch multiple AI agent prompts in a Zellij session.
+"""Utilitfrom pathlib import Path
+from typing import cast, get_args, Iterable, Optional, TypeAlias, Literal
+import json
+import typer
+
+from machineconfig.scripts.python.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout, AGENTS
+from machineconfig.scripts.python.fire_agents_help_search import search_files_by_pattern, search_python_files
+from machineconfig.scripts.python.fire_agents_load_balancer import chunk_prompts
+from machineconfig.utils.accessories import get_repo_rootch multiple AI agent prompts in a Zellij session.
 
 Improved design notes:
   * Clear separation of: input collection, prompt preparation, agent launch.
@@ -8,17 +16,20 @@ Improved design notes:
 """
 
 from pathlib import Path
-from typing import cast, get_args, Iterable, TypeAlias, Literal
+from typing import cast, Iterable, Optional, TypeAlias, Literal, get_args
 import json
-import sys
+import time
+import typer
 
 from machineconfig.scripts.python.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout, AGENTS
 from machineconfig.scripts.python.fire_agents_help_search import search_files_by_pattern, search_python_files
-from machineconfig.scripts.python.fire_agents_load_balancer import chunk_prompts, SPLITTING_STRATEGY, DEFAULT_AGENT_CAP
-from machineconfig.utils.options import choose_from_options
+from machineconfig.scripts.python.fire_agents_load_balancer import chunk_prompts
+from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
 from machineconfig.utils.accessories import get_repo_root
 
 SEARCH_STRATEGIES: TypeAlias = Literal["file_path", "keyword_search", "filename_pattern"]
+
+app = typer.Typer()
 
 
 def _write_list_file(target: Path, files: Iterable[Path]) -> None:
@@ -26,128 +37,124 @@ def _write_list_file(target: Path, files: Iterable[Path]) -> None:
     target.write_text("\n".join(str(f) for f in files), encoding="utf-8")
 
 
-def get_prompt_material(search_strategy: SEARCH_STRATEGIES, repo_root: Path) -> tuple[Path, str]:
-    if search_strategy == "file_path":
-        file_path_input = input("Enter path to target file: ").strip()
-        if not file_path_input:
-            print("No file path provided. Exiting.")
-            sys.exit(1)
-        target_file_path = Path(file_path_input).expanduser().resolve()
-        if not target_file_path.exists() or not target_file_path.is_file():
-            print(f"Invalid file path: {target_file_path}")
-            sys.exit(1)
-        separator = input("Enter separator [\\n]: ").strip() or "\n"
-    elif search_strategy == "keyword_search":
-        keyword = input("Enter keyword to search recursively for all .py files containing it: ").strip()
-        if not keyword:
-            print("No keyword supplied. Exiting.")
-            sys.exit(1)
-        matching_files = search_python_files(repo_root, keyword)
-        if not matching_files:
-            print(f"💥 No .py files found containing keyword: {keyword}")
-            sys.exit(1)
-        for idx, mf in enumerate(matching_files):
-            print(f"{idx:>3}: {mf}")
-        print(f"\nFound {len(matching_files)} .py files containing keyword: {keyword}")
-        target_file_path = repo_root / ".ai" / "target_file.txt"
-        _write_list_file(target_file_path, matching_files)
-        separator = "\n"
-    elif search_strategy == "filename_pattern":
-        pattern = input("Enter filename pattern (e.g., '*.py', '*test*', 'config.*'): ").strip()
-        if not pattern:
-            print("No pattern supplied. Exiting.")
-            sys.exit(1)
-        matching_files = search_files_by_pattern(repo_root, pattern)
-        if not matching_files:
-            print(f"💥 No files found matching pattern: {pattern}")
-            sys.exit(1)
-        for idx, mf in enumerate(matching_files):
-            print(f"{idx:>3}: {mf}")
-        print(f"\nFound {len(matching_files)} files matching pattern: {pattern}")
-        target_file_path = repo_root / ".ai" / "target_file.txt"
-        _write_list_file(target_file_path, matching_files)
-        separator = "\n"
-    else:
-        raise ValueError(f"Unknown search strategy: {search_strategy}")
-    return target_file_path, separator
-
-
-def main():  # noqa: C901 - (complexity acceptable for CLI glue)
+@app.command()
+def create(
+    context_path: Optional[Path] = typer.Option(None, help="Path to the context file"),
+    keyword_search: Optional[str] = typer.Option(None, help="Keyword to search in Python files"),
+    filename_pattern: Optional[str] = typer.Option(None, help="Filename pattern to match"),
+    separator: str = typer.Option("\n", help="Separator for context"),
+    tasks_per_prompt: int = typer.Option(13, help="Number of tasks per prompt"),
+    agent: AGENTS = typer.Option(..., help=f"Agent type. One of {', '.join(get_args(AGENTS))}"),
+    prompt: Optional[str] = typer.Option(None, help="Prompt prefix as string"),
+    prompt_path: Optional[Path] = typer.Option(None, help="Path to prompt file"),
+    job_name: str = typer.Option("AI_Agents", help="Job name"),
+    keep_separate: bool = typer.Option(True, help="Keep prompt material in separate file to the context."),
+    output_path: Optional[Path] = typer.Option(None, help="Path to write the layout.json file"),
+):
+    # validate mutual exclusive
+    context_options = [context_path, keyword_search, filename_pattern]
+    provided_context = [opt for opt in context_options if opt is not None]
+    if len(provided_context) != 1:
+        raise typer.BadParameter("Exactly one of --context-path, --keyword-search, --filename-pattern must be provided")
+    
+    prompt_options = [prompt, prompt_path]
+    provided_prompt = [opt for opt in prompt_options if opt is not None]
+    if len(provided_prompt) != 1:
+        raise typer.BadParameter("Exactly one of --prompt or --prompt-path must be provided")
+    
     repo_root = get_repo_root(Path.cwd())
     if repo_root is None:
-        print("💥 Could not determine the repository root. Please run this script from within a git repository.")
-        sys.exit(1)
-    print(f"Operating @ {repo_root}")
-
-    search_strategy = cast(SEARCH_STRATEGIES, choose_from_options(multi=False, msg="Choose one option", header="Choose search strategy:", options=get_args(SEARCH_STRATEGIES)))
-    splitting_strategy = cast(SPLITTING_STRATEGY, choose_from_options(multi=False, msg="Choose one option", header="Choose prompt splitting strategy:", options=get_args(SPLITTING_STRATEGY)))
-    agent_selected = cast(AGENTS, choose_from_options(multi=False, msg="Choose one option", header="Select agent type", options=get_args(AGENTS)))
-    print("Enter prefix prompt (end with Ctrl-D / Ctrl-Z):")
-    prompt_prefix = "\n".join(sys.stdin.readlines())
-    job_name = input("Enter job name [AI_AGENTS]: ") or "AI_Agents"
-    keep_material_in_separate_file_input = input("Keep prompt material in separate file? [y/N]: ").strip().lower() == "y"
-
-    prompt_material_path, separator = get_prompt_material(search_strategy=search_strategy, repo_root=repo_root)
-    match splitting_strategy:
-        case "agent_cap":
-            agent_cap_input = input(f"Enter maximum number of agents/splits [default: {DEFAULT_AGENT_CAP}]: ").strip()
-            agent_cap = int(agent_cap_input) if agent_cap_input else DEFAULT_AGENT_CAP
-            task_rows = None
-        case "task_rows":
-            task_rows_input: str = input("Enter number of rows/tasks per agent [13]: ").strip() or "13"
-            task_rows = int(task_rows_input)
-            agent_cap = None
-    prompt_material_re_splitted = chunk_prompts(prompt_material_path, splitting_strategy, agent_cap=agent_cap, task_rows=task_rows, joiner=separator)
-
+        typer.echo("💥 Could not determine the repository root. Please run this script from within a git repository.")
+        raise typer.Exit(1)
+    typer.echo(f"Operating @ {repo_root}")
+    
+    search_strategy = ""
+    prompt_material_path = Path("")
+    
+    if context_path is not None:
+        search_strategy = "file_path"
+        target_file_path = context_path.expanduser().resolve()
+        if not target_file_path.exists() or not target_file_path.is_file():
+            raise typer.BadParameter(f"Invalid file path: {target_file_path}")
+        prompt_material_path = target_file_path
+    elif keyword_search is not None:
+        search_strategy = "keyword_search"
+        matching_files = search_python_files(repo_root, keyword_search)
+        if not matching_files:
+            typer.echo(f"💥 No .py files found containing keyword: {keyword_search}")
+            raise typer.Exit(1)
+        target_file_path = repo_root / ".ai" / "target_file.txt"
+        _write_list_file(target_file_path, matching_files)
+        prompt_material_path = target_file_path
+    elif filename_pattern is not None:
+        search_strategy = "filename_pattern"
+        matching_files = search_files_by_pattern(repo_root, filename_pattern)
+        if not matching_files:
+            typer.echo(f"💥 No files found matching pattern: {filename_pattern}")
+            raise typer.Exit(1)
+        target_file_path = repo_root / ".ai" / "target_file.txt"
+        _write_list_file(target_file_path, matching_files)
+        prompt_material_path = target_file_path
+    
+    if prompt_path is not None:
+        prompt_prefix = prompt_path.read_text(encoding="utf-8")
+    else:
+        prompt_prefix = cast(str, prompt)
+    agent_selected = agent
+    keep_material_in_separate_file_input = keep_separate
+    prompt_material_re_splitted = chunk_prompts(prompt_material_path, tasks_per_prompt=tasks_per_prompt, joiner=separator)
     agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, job_name=job_name)
-    layoutfile = get_agents_launch_layout(session_root=agents_dir)
-
+    layoutfile = get_agents_launch_layout(session_root=agents_dir)    
     regenerate_py_code = f"""
 #!/usr/bin/env uv run --python 3.13 --with machineconfig
 #!/usr/bin/env uv run --no-dev --project $HOME/code/machineconfig
-
-from machineconfig.scripts.python.fire_agents import *
-
-repo_root = Path("{repo_root}")
-search_strategy = "{search_strategy}"
-splitting_strategy = "{splitting_strategy}"
-agent_selected = "{agent_selected}"
-prompt_prefix = '''{prompt_prefix}'''
-job_name = "{job_name}"
-keep_material_in_separate_file_input = {keep_material_in_separate_file_input}
-separator = "{separator}"
-prompt_material_path = Path("{prompt_material_path}")
-agent_cap = {agent_cap}
-task_rows = {task_rows}
-
-prompt_material_re_splitted = chunk_prompts(prompt_material_path, splitting_strategy, agent_cap=agent_cap, task_rows=task_rows, joiner=separator)
-agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, job_name=job_name)
-layout = get_agents_launch_layout(session_root=agents_dir)
-
-(agents_dir / "aa_agents_relaunch.py").write_text(data=regenerate_py_code, encoding="utf-8")
-(agents_dir / "layout.json").write_text(data=json.dumps(layout, indent=2), encoding="utf-8")
-
-if len(layout["layoutTabs"]) > 25:
-    print("Too many agents (>25) to launch. Skipping launch.")
-    sys.exit(0)
-manager = ZellijLocalManager(session_layouts=[layout])
-manager.start_all_sessions()
-manager.run_monitoring_routine()
-
+fire_agents create --context-path "{prompt_material_path}" \\
+    --{search_strategy} "{context_path or keyword_search or filename_pattern}" \\
+    --prompt-path "{prompt_path or ''}" \\
+    --agent "{agent_selected}" \\
+    --job-name "{job_name}" \\
+    --tasks-per-prompt {tasks_per_prompt} \\
+    --separator "{separator}" \\
+    {"--keep-separate" if keep_material_in_separate_file_input else ""}
 """
     (agents_dir / "aa_agents_relaunch.py").write_text(data=regenerate_py_code, encoding="utf-8")
-    (agents_dir / "layout.json").write_text(data=json.dumps(layoutfile, indent=2), encoding="utf-8")
+    layout_output_path = output_path if output_path is not None else agents_dir / "layout.json"
+    layout_output_path.write_text(data=json.dumps(layoutfile, indent=4), encoding="utf-8")
+    typer.echo(f"Created agents in {agents_dir}")
 
-    MAX_TABS = 10
-    if len(layoutfile["layouts"][0]["layoutTabs"]) > MAX_TABS:
-        print(f"Too many tabs (>{MAX_TABS}) to launch. Skipping launch.")
-        sys.exit(0)
+
+@app.command()
+def run(layout_path: Path = typer.Argument(..., help="Path to the layout.json file"),
+        max_tabs: int = typer.Option(6, help="Maximum number of tabs to launch"),
+        sleep_between_layouts: float = typer.Option(1.0, help="Sleep time in seconds between launching layouts")):
+    layoutfile: LayoutsFile = json.loads(layout_path.read_text())
+    if len(layoutfile["layouts"][0]["layoutTabs"]) > max_tabs:
+        typer.echo(f"Too many tabs (>{max_tabs}) to launch. Skipping launch.")
+        raise typer.Exit(0)
     from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
+    for i, a_layouts in enumerate(layoutfile["layouts"]):
+        manager = ZellijLocalManager(session_layouts=[a_layouts])
+        manager.start_all_sessions(poll_interval=2, poll_seconds=2)
+        manager.run_monitoring_routine(wait_ms=2000)
+        if i < len(layoutfile["layouts"]) - 1:  # Don't sleep after the last layout
+            time.sleep(sleep_between_layouts)
 
-    manager = ZellijLocalManager(session_layouts=layoutfile["layouts"])
-    manager.start_all_sessions(poll_interval=2, poll_seconds=2)
-    manager.run_monitoring_routine(wait_ms=2000)
+
+@app.command(help="Adjust layout file to limit max tabs per layout, etc.")
+def load_balance(layout_path: Path = typer.Argument(..., help="Path to the layout.json file"),
+           max_thresh: int = typer.Option(..., help="Maximum tabs per layout"),
+           thresh_type: Literal['number', 'weight'] = typer.Option(..., help="Threshold type"),
+           breaking_method: Literal['moreLayouts', 'combineTabs'] = typer.Option(..., help="Breaking method"),
+           output_path: Optional[Path] = typer.Option(None, help="Path to write the adjusted layout.json file")):
+    layoutfile: LayoutsFile = json.loads(layout_path.read_text())
+    layout_configs = layoutfile["layouts"]
+    from machineconfig.cluster.sessions_managers.utils.load_balancer import limit_tab_num
+    new_layouts = limit_tab_num(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type=thresh_type, breaking_method=breaking_method)
+    layoutfile["layouts"] = new_layouts
+    target_file = output_path if output_path is not None else layout_path.parent / f'{layout_path.stem}_adjusted_{max_thresh}_{thresh_type}_{breaking_method}.json'
+    target_file.write_text(data=json.dumps(layoutfile, indent=4), encoding="utf-8")
+    typer.echo(f"Adjusted layout saved to {target_file}")
 
 
 if __name__ == "__main__":  # pragma: no cover
-    main()
+    app()

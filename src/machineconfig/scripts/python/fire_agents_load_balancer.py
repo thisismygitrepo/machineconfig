@@ -1,16 +1,8 @@
-from typing import Literal, TypeAlias
-from math import ceil
+# from math import ceil
 from pathlib import Path
 
 
-SPLITTING_STRATEGY: TypeAlias = Literal[
-    "agent_cap",  # User decides number of agents, rows/tasks determined automatically
-    "task_rows",  # User decides number of rows/tasks, number of agents determined automatically
-]
-DEFAULT_AGENT_CAP = 6
-
-
-def chunk_prompts(prompt_material_path: Path, strategy: SPLITTING_STRATEGY, joiner: str, *, agent_cap: int | None, task_rows: int | None) -> list[str]:
+def chunk_prompts(prompt_material_path: Path, joiner: str, *, tasks_per_prompt: int) -> list[str]:
     """Chunk prompts based on splitting strategy.
 
     Args:
@@ -20,31 +12,11 @@ def chunk_prompts(prompt_material_path: Path, strategy: SPLITTING_STRATEGY, join
         task_rows: Number of rows/tasks per agent (used with 'task_rows' strategy)
     """
     prompts = [p for p in prompt_material_path.read_text(encoding="utf-8", errors="ignore").split(joiner) if p.strip() != ""]  # drop blank entries
-
-    if strategy == "agent_cap":
-        if agent_cap is None:
-            raise ValueError("agent_cap must be provided when using 'agent_cap' strategy")
-
-        if len(prompts) <= agent_cap:
-            return prompts
-
-        print(f"Chunking {len(prompts)} prompts into groups for up to {agent_cap} agents because it exceeds the cap.")
-        chunk_size = ceil(len(prompts) / agent_cap)
-        grouped: list[str] = []
-        for i in range(0, len(prompts), chunk_size):
-            grouped.append(joiner.join(prompts[i : i + chunk_size]))
-        return grouped
-
-    elif strategy == "task_rows":
-        if task_rows is None:
-            raise ValueError("task_rows must be provided when using 'task_rows' strategy")
-        if task_rows >= len(prompts):
-            return prompts
-        print(f"Chunking {len(prompts)} prompts into groups of {task_rows} rows/tasks each.")
-        grouped: list[str] = []
-        for i in range(0, len(prompts), task_rows):
-            grouped.append(joiner.join(prompts[i : i + task_rows]))
-        return grouped
-
-    else:
-        raise ValueError(f"Unknown splitting strategy: {strategy}")
+    if tasks_per_prompt >= len(prompts):
+        print("No need to chunk prompts, as tasks_per_prompt >= total prompts.", f"({tasks_per_prompt} >= {len(prompts)})")
+        return prompts
+    print(f"Chunking {len(prompts)} prompts into groups of {tasks_per_prompt} rows/tasks each.")
+    grouped: list[str] = []
+    for i in range(0, len(prompts), tasks_per_prompt):
+        grouped.append(joiner.join(prompts[i : i + tasks_per_prompt]))
+    return grouped
