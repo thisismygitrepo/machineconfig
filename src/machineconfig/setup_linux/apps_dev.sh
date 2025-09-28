@@ -1,35 +1,9 @@
-#!/usr/bin/b# --BLOCK:TEXT_STYLE_TOOLS--
-echo """#=======================================================================
-🎨 TEXT STYLE TOOLS | Installing terminal text formatters
-#======================================================================="""
-#================# --BLOCK:FUN_TERMINAL_TOOLS--
-echo """#=======================================================================
-🎮 FUN TERMINAL TOOLS | Installing amusing terminal animations
-#======================================================================="""============# --BLOCK:FILE_SHARING_TOOLS--
-echo """#=======================================================================
-🔄 FILE SHARING TOOLS | Installing network sharing utilities
-#======================================================================="""===================# --BLOCK:DEV_TOOLS--
-echo """#=======================================================================
-📊 DEVELOPMENT TOOLS | Installing programming utilities
-#======================================================================="""===============
-# 🛠️ DE# --BLOCK:TERMINAL_EYE_CANDY--
-echo """#=======================================================================
-🎬 TERMINAL EYE CANDY | Installing visual terminal effects
-#======================================================================="""OPMENT TOOLS AND F# --BLOCK:DATABASE_TOOLS--
-echo """#=======================================================================
-💾 DATABASE TOOLS | Installing database clients
-#======================================================================="""UTILITI# --BLOCK:IMAGE_TOOLS--
-echo """#=======================================================================
-🎨 IMAGE TOOLS | Installing terminal image viewers
-#======================================================================="""INSTALLATION SCRIPT
-#=======================================================================
-# This script installs various development tools and fun terminal utilities
+#!/usr/bin/bash
 
-# Set default package manager if not defined
-if [ -z "$package_manager" ]; then
-  package_manager="nala"  # 📦 Default package manager
-  echo "ℹ️ Using default package manager: $package_manager"
-fi
+
+# --BLOCK:TEXT_STYLE_TOOLS--
+# Using nala package manager
+echo "ℹ️ Using nala package manager"
 
 echo """#=======================================================================
 🎨 TEXT STYLE TOOLS | Installing terminal text formatters
@@ -37,18 +11,10 @@ echo """#=======================================================================
 """
 
 echo "📥 Installing fortune - random wisdom generator..."
-if [ "$package_manager" = "nala" ]; then
-  sudo nala install fortune -y || true
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.fortune || true
-fi
+sudo nala install fortune -y || true
 
 echo "📥 Installing toilet - large ASCII text generator..."
-if [ "$package_manager" = "nala" ]; then
-  sudo nala install toilet -y || true
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.toilet || true
-fi
+sudo nala install toilet -y || true
 # More fun terminal tools: https://linoxide.com/linux-fun-terminal-crazy-output/
 # Examples: midnight commander, Asciiquarium, https://github.com/bartobri/no-more-secrets
 
@@ -58,11 +24,7 @@ echo """#=======================================================================
 """
 
 echo "📥 Installing sl - steam locomotive animation..."
-if [ "$package_manager" = "nala" ]; then
-  sudo nala install sl -y || true
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.sl || true
-fi
+sudo nala install sl -y || true
 
 echo "📥 Installing aafire - ASCII art fire animation..."
 sudo nala install libaa-bin -y
@@ -95,11 +57,7 @@ echo """#=======================================================================
 """
 
 echo "📥 Installing Graphviz - graph visualization software..."
-if [ "$package_manager" = "nala" ]; then
-  sudo nala install graphviz -y || true
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.graphviz || true
-fi
+sudo nala install graphviz -y || true
 
 echo "📥 Installing make - build automation tool..."
 sudo nala install make -y || true  # Required by LunarVim and SpaceVim
@@ -122,20 +80,12 @@ echo """#=======================================================================
 """
 
 echo "📥 Installing cmatrix - Matrix-style terminal animation..."
-if [ "$package_manager" = "nala" ]; then
-  echo 'keyboard-configuration keyboard-configuration/layout select US English' | sudo debconf-set-selections
-  echo 'keyboard-configuration keyboard-configuration/layoutcode string us' | sudo debconf-set-selections
-  sudo DEBIAN_FRONTEND=noninteractive nala install -y cmatrix
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.cmatrix || true
-fi
+echo 'keyboard-configuration keyboard-configuration/layout select US English' | sudo debconf-set-selections
+echo 'keyboard-configuration keyboard-configuration/layoutcode string us' | sudo debconf-set-selections
+sudo DEBIAN_FRONTEND=noninteractive nala install -y cmatrix
 
 echo "📥 Installing hollywood - Hollywood hacker terminal effect..."
-if [ "$package_manager" = "nala" ]; then
-  sudo nala install hollywood -y || true
-else
-  ~/.nix-profile/bin/nix-env -iA nixpkgs.hollywood || true
-fi
+sudo nala install hollywood -y || true
 
 echo """#=======================================================================
 💾 DATABASE TOOLS | Installing database clients

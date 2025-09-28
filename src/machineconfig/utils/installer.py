@@ -21,8 +21,8 @@ def check_latest():
     installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL"])
     installers_github = []
     for inst__ in installers:
-        app_name = inst__.installer_data.get("appName", "unknown")
-        repo_url = inst__.installer_data.get("repoURL", "")
+        app_name = inst__["appName"]
+        repo_url = inst__["repoURL"]
         if "ntop" in app_name:
             print(f"⏭️  Skipping {app_name} (ntop)")
             continue
@@ -91,7 +91,7 @@ def get_installed_cli_apps():
     return apps
 
 
-def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: list[APP_INSTALLER_CATEGORY]) -> list[Installer]:
+def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: list[APP_INSTALLER_CATEGORY]) -> list[InstallerData]:
     print(f"\n{'=' * 80}\n🔍 LOADING INSTALLER CONFIGURATIONS 🔍\n{'=' * 80}")
     res_all = get_all_installer_data_files(which_cats=which_cats)
     all_installers: list[InstallerData] = []
@@ -103,7 +103,7 @@ def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: l
             suitable_installers.append(an_installer)
         all_installers.extend(suitable_installers)
     print(f"✅ Loaded {len(all_installers)} installer configurations\n{'=' * 80}")
-    return [Installer(installer_data=installer_data) for installer_data in all_installers]
+    return all_installers
 
 
 def get_all_installer_data_files(which_cats: list[APP_INSTALLER_CATEGORY]) -> dict[APP_INSTALLER_CATEGORY, InstallerDataFiles]:
@@ -118,7 +118,7 @@ def get_all_installer_data_files(which_cats: list[APP_INSTALLER_CATEGORY]) -> di
     return res_final
 
 
-def install_all(installers: list[Installer], safe: bool = False, jobs: int = 10, fresh: bool = False):
+def install_all(installers_data: list[InstallerData], safe: bool = False, jobs: int = 10, fresh: bool = False):
     print(f"\n{'=' * 80}\n🚀 BULK INSTALLATION PROCESS 🚀\n{'=' * 80}")
     if fresh:
         print("🧹 Fresh install requested - clearing version cache...")
@@ -151,14 +151,14 @@ def install_all(installers: list[Installer], safe: bool = False, jobs: int = 10,
         # print(f"✅ Safe installation completed\n{'='*80}")
         # return None
 
-    print(f"🚀 Starting installation of {len(installers)} packages...")
+    print(f"🚀 Starting installation of {len(installers_data)} packages...")
     print(f"\n{'=' * 80}\n📦 INSTALLING FIRST PACKAGE 📦\n{'=' * 80}")
-    installers[0].install(version=None)
-    installers_remaining = installers[1:]
+    Installer(installers_data[0]).install(version=None)
+    installers_remaining = installers_data[1:]
     print(f"\n{'=' * 80}\n📦 INSTALLING REMAINING PACKAGES 📦\n{'=' * 80}")
 
     # Use joblib for parallel processing of remaining installers
-    res = Parallel(n_jobs=jobs)(delayed(lambda x: x.install_robust(version=None))(installer) for installer in installers_remaining)
+    res = Parallel(n_jobs=jobs)(delayed(lambda x: Installer(x).install_robust(version=None))(installer) for installer in installers_remaining)
 
     console = Console()
 

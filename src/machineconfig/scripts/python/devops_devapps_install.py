@@ -8,6 +8,42 @@ from typing import Optional, Literal, TypeAlias, cast, get_args, Annotated
 WHICH_CAT: TypeAlias = Literal["essentials", "essentialsDev", "systymPackages", "precheckedPackages", "ia"]
 
 
+def _handle_installer_not_found(search_term: str, all_installers: list["InstallerData"]) -> None:  # type: ignore
+    """Handle installer not found with friendly suggestions using fuzzy matching."""
+    from difflib import get_close_matches
+    
+    # Get all possible names (both exe names and app names)
+    all_names = []
+    for inst in all_installers:
+        exe_name = inst["appName"]
+        all_names.append(exe_name)
+    
+    # Find close matches using fuzzy matching
+    close_matches = get_close_matches(search_term, all_names, n=5, cutoff=0.4)
+    
+    print(f"\n❌ '{search_term}' was not found.")
+    
+    if close_matches:
+        print("🤔 Did you mean one of these?")
+        for i, match in enumerate(close_matches, 1):
+            print(f"   {i}. {match}")
+    else:
+        print("📋 Here are some available options:")
+        # Show first 10 installers as examples
+        sample_names = []
+        for inst in all_installers[:10]:
+            exe_name = inst["appName"]
+            sample_names.append(exe_name)        
+        for i, name in enumerate(sample_names, 1):
+            print(f"   {i}. {name}")
+        
+        if len(all_installers) > 10:
+            print(f"   ... and {len(all_installers) - 10} more")
+    
+    print("\n💡 Use 'ia' to interactively browse all available installers.")
+    print(f"💡 Use one of the categories: {list(get_args(WHICH_CAT))}")
+
+
 def main_with_parser():
     import typer
     app = typer.Typer()
@@ -28,15 +64,15 @@ def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category
             # Find installer by exe_name or name
             selected_installer = None
             for installer in all_installers:
-                exe_name = installer.installer_data.get("exeName", "")
-                app_name = installer.installer_data.get("appName", "")
+                exe_name = installer["appName"]
+                app_name = installer["appName"]
                 if exe_name == a_which or app_name == a_which:
                     selected_installer = installer
                     break
 
             if selected_installer is None:
-                available_names = [f"{inst.installer_data.get('exeName', 'unknown')} ({inst.installer_data.get('appName', 'unknown')})" for inst in all_installers[:10]]  # Show first 10
-                raise ValueError(f"{a_which=} not found. Available installers include: {available_names}")
+                _handle_installer_not_found(a_which, all_installers)
+                return None
 
             print(f"""
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -61,7 +97,7 @@ def install_interactively():
         task = progress.add_task("✅ Checking installed programs...", total=len(installers))
         installer_options = []
         for x in installers:
-            installer_options.append(x.get_description())
+            installer_options.append(Installer(installer_data=x).get_description())
             progress.update(task, advance=1)
 
     # Add category options at the beginning for better visibility
@@ -90,8 +126,8 @@ def install_interactively():
         else:
             # Handle individual installer options
             installer_idx = installer_options.index(a_program_name)
-            an_installer = installers[installer_idx]
-            status_message = an_installer.install_robust(version=None)  # finish the task - this returns a status message, not a command
+            an_installer_data = installers[installer_idx]
+            status_message = Installer(an_installer_data).install_robust(version=None)  # finish the task - this returns a status message, not a command
             installation_messages.append(status_message)
 
     # Print all installation status messages
@@ -121,10 +157,10 @@ def get_programs_by_category(program_name: WHICH_CAT):
     match program_name:
         case "essentials":
             installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL"])
-            install_all(installers=installers_)
+            install_all(installers_data=installers_)
         case "essentialsDev":
             installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_DEV", "CUSTOM_DEV", "GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL"])
-            install_all(installers=installers_)
+            install_all(installers_data=installers_)
         case "systymPackages":
             if system() == "Windows":
                 options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text(encoding="utf-8"))
@@ -156,4 +192,7 @@ def get_programs_by_category(program_name: WHICH_CAT):
 
 
 if __name__ == "__main__":
+    from machineconfig.utils.schemas.installer.installer_types import InstallerData
+    from machineconfig.utils.installer_utils.installer_class import Installer
+    _ = InstallerData
     pass

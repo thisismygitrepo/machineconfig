@@ -410,23 +410,6 @@
       }
     },
     {
-      "appName": "gemini-cli",
-      "repoURL": "CMD",
-      "doc": "🤖 Gemini CLI is a command line interface for Google Gemini AI.",
-      "fileNamePattern": {
-        "amd64": {
-          "linux": "npm install -g @google/gemini-cli",
-          "macos": "npm install -g @google/gemini-cli",
-          "windows": "npm install -g @google/gemini-cli"
-        },
-        "arm64": {
-          "linux": "npm install -g @google/gemini-cli",
-          "macos": "npm install -g @google/gemini-cli",
-          "windows": "npm install -g @google/gemini-cli"
-        }
-      }
-    },
-    {
       "appName": "gitui",
       "repoURL": "https://github.com/gitui-org/gitui",
       "doc": "🐙 gitui is a terminal ui for git written in rust.",

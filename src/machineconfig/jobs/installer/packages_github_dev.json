@@ -257,6 +257,23 @@
       }
     },
     {
+      "appName": "duckdb",
+      "repoURL": "https://github.com/duckdb/duckdb",
+      "doc": "🗃️ An in-process SQL OLAP database management system",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "duckdb_cli-linux-amd64.zip",
+          "macos": "duckdb_cli-osx-universal.zip",
+          "windows": "duckdb_cli-windows-amd64.zip"
+        },
+        "arm64": {
+          "linux": "duckdb_cli-linux-arm64.zip",  
+          "macos": "duckdb_cli-osx-universal.zip",
+          "windows": "duckdb_cli-windows-arm64.zip"
+        }
+      }
+    },
+    {
       "appName": "cpz",
       "repoURL": "https://github.com/SUPERCILEX/fuc",
       "doc": "📋 Fast copy",
