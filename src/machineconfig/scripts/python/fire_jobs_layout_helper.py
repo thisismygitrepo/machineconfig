@@ -74,15 +74,15 @@ def launch(layout_path: str = typer.Argument(..., help="Path to the layout.json 
         max_tabs: int = typer.Option(10, help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch."),
         max_layouts: int = typer.Option(10, help="A Sanity checker that throws an error if the total number of layouts exceeds this number."),
         sleep_inbetween: float = typer.Option(1.0, help="Sleep time in seconds between launching layouts"),
-        monitor: bool = typer.Option(True, help="Monitor the layout sessions for completion"),
+        monitor: bool = typer.Option(False, help="Monitor the layout sessions for completion"),
         parallel: bool = typer.Option(False, help="Launch multiple layouts in parallel"),
-        kill_upon_completion: bool = typer.Option(False, help="Kill the layout sessions upon completion (only relevant if monitor flag is set)"),
-        select_layouts: Optional[str] = typer.Option(None, help="Comma separated names of layouts to be selected from the layout file"),
+        kill_upon_completion: bool = typer.Option(False, help="Kill session(s) upon completion (only relevant if monitor flag is set)"),
+        select: Optional[str] = typer.Option(None, help="Comma separated names of layouts to be selected from the layout file passed"),
         select_interactively: bool = typer.Option(False, help="Select layouts interactively")
         ):
     """
     """
-    layouts_selected = handle_layout_args(layout_path=layout_path, select_layouts=select_layouts, select_interactively=select_interactively)
+    layouts_selected = handle_layout_args(layout_path=layout_path, select_layouts=select, select_interactively=select_interactively)
 
     # ============= Basic sanity checks =============
     if len(layouts_selected) > max_layouts:

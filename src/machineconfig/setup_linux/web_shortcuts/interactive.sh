@@ -6,4 +6,4 @@ echo """
 ======================================================================="""
 
 curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash
-$HOME/.local/bin/uv run --python 3.13 --with machineconfig devops ia
+$HOME/.local/bin/uv run --python 3.13 --with machineconfig devops interactive

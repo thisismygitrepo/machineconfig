@@ -5,12 +5,6 @@ in the event that username@github.com is not mentioned in the remote url.
 
 """
 
-from machineconfig.utils.io import read_ini
-from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
-from machineconfig.utils.path_extended import PathExtended as PathExtended
-from machineconfig.scripts.python.repos_helper_record import main as record_repos
-from machineconfig.scripts.python.repos_helper_clone import clone_repos
-from machineconfig.scripts.python.repos_helper_action import perform_git_operations
 
 import typer
 from typing import Annotated, Optional
@@ -33,6 +27,13 @@ def main(
     print("\n" + "=" * 50)
     print("📂 Welcome to the Repository Manager")
     print("=" * 50 + "\n")
+
+    from machineconfig.utils.io import read_ini
+    from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
+    from machineconfig.utils.path_extended import PathExtended as PathExtended
+    from machineconfig.scripts.python.repos_helper_record import main as record_repos
+    from machineconfig.scripts.python.repos_helper_clone import clone_repos
+    from machineconfig.scripts.python.repos_helper_action import perform_git_operations
 
     if directory == "":
         repos_root = PathExtended.home().joinpath("code")  # it is a positional argument, can never be empty.

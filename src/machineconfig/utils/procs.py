@@ -58,10 +58,8 @@ class ProcessManager:
         title = "📊  INITIALIZING PROCESS MANAGER"
         console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
         process_info = []
-
         with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
             progress.add_task("🔍 Reading system processes...", total=None)
-
             for proc in psutil.process_iter():
                 try:
                     mem_usage_mb = proc.memory_info().rss / (1024 * 1024)
@@ -162,7 +160,6 @@ class ProcessManager:
         console.print(Panel("", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
     def kill(self, names: Optional[list[str]] = None, pids: Optional[list[int]] = None, commands: Optional[list[str]] = None):
-        # header for process termination
         title = "💀  PROCESS TERMINATION"
         console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
         if names is None and pids is None and commands is None:
@@ -241,7 +238,6 @@ def get_age(create_time: Any) -> str:
 
 def main():
     from machineconfig.utils.procs import ProcessManager
-
     ProcessManager().choose_and_kill()
 
 
