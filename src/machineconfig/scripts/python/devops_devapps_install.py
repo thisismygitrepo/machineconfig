@@ -73,13 +73,7 @@ def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category
             if selected_installer is None:
                 _handle_installer_not_found(a_which, all_installers)
                 return None
-
-            print(f"""
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-┃ 🔧 Installing: {a_which}
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
-            print(selected_installer)
-            message = selected_installer.install_robust(version=None)  # finish the task
+            message = Installer(selected_installer).install_robust(version=None)  # finish the task
             total_messages.append(message)
         for a_message in total_messages:
             print(a_message)
@@ -91,57 +85,34 @@ def install_interactively():
     from machineconfig.utils.options import choose_from_options
     from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
     from machineconfig.utils.installer import get_installers
+    from machineconfig.utils.installer_utils.installer_class import Installer
     installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL", "GITHUB_DEV", "CUSTOM_DEV"])
-    # Check installed programs with progress indicator
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
         task = progress.add_task("✅ Checking installed programs...", total=len(installers))
         installer_options = []
         for x in installers:
             installer_options.append(Installer(installer_data=x).get_description())
             progress.update(task, advance=1)
-
-    # Add category options at the beginning for better visibility
     category_options = [f"📦 {cat}" for cat in get_args(WHICH_CAT)]
-    options = category_options + ["─" * 50] + installer_options
-    
+    options = category_options + ["─" * 50] + installer_options    
     program_names = choose_from_options(multi=True, msg="Categories are prefixed with 📦", options=options, header="🚀 CHOOSE DEV APP OR CATEGORY", default="📦 essentials", fzf=True)
-
-    total_commands = ""
     installation_messages: list[str] = []
     for _an_idx, a_program_name in enumerate(program_names):
-        # Skip separator lines
         if a_program_name.startswith("─"):
             continue
-            
-        print(f"""
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-┃ 🔄 Processing: {a_program_name}
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
-        
-        # Handle category options (remove emoji prefix)
         if a_program_name.startswith("📦 "):
             category_name = a_program_name[2:]  # Remove "📦 " prefix
             if category_name in get_args(WHICH_CAT):
                 get_programs_by_category(program_name=cast(WHICH_CAT, category_name))
         else:
-            # Handle individual installer options
             installer_idx = installer_options.index(a_program_name)
             an_installer_data = installers[installer_idx]
             status_message = Installer(an_installer_data).install_robust(version=None)  # finish the task - this returns a status message, not a command
             installation_messages.append(status_message)
-
-    # Print all installation status messages
     print("\n📊 INSTALLATION SUMMARY:")
     print("=" * 50)
     for message in installation_messages:
         print(message)
-
-    # Only run shell commands if there are any (from category installations)
-    if total_commands.strip():
-        import subprocess
-
-        print("\n🚀 Running additional shell commands...")
-        subprocess.run(total_commands, shell=True, check=True)
 
 
 def get_programs_by_category(program_name: WHICH_CAT):
