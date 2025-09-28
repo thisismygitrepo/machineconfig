@@ -37,7 +37,7 @@
       }
     },
     {
-      "appName": "aider-chat",
+      "appName": "aider",
       "repoURL": "CMD",
       "doc": "Aider Chat",
       "fileNamePattern": {
@@ -50,6 +50,142 @@
           "linux": "uv tool install --force --python python3.13 aider-chat@latest",
           "windows": "uv tool install --force --python python3.13 aider-chat@latest",
           "macos": "uv tool install --force --python python3.13 aider-chat@latest"
+        }
+      }
+    },
+    {
+      "appName": "github-copilot-cli",
+      "repoURL": "CMD",
+      "doc": "Terminal-based CLI agents and tools for productivity and coding.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "npm install -g @github/copilot",
+          "windows": "npm install -g @github/copilot",
+          "macos": "npm install -g @github/copilot"
+        },
+        "arm64": {
+          "linux": "npm install -g @github/copilot",
+          "windows": "npm install -g @github/copilot",
+          "macos": "npm install -g @github/copilot"
+        }
+      }
+    },
+    {
+      "appName": "gemini-cli",
+      "repoURL": "CMD",
+      "doc": "Terminal-based CLI agents and tools for productivity and coding.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "npm install -g @google/gemini-cli",
+          "windows": "npm install -g @google/gemini-cli",
+          "macos": "npm install -g @google/gemini-cli"
+        },
+        "arm64": {
+          "linux": "npm install -g @google/gemini-cli",
+          "windows": "npm install -g @google/gemini-cli",
+          "macos": "npm install -g @google/gemini-cli"
+        }
+      }
+    },
+    {
+      "appName": "crush",
+      "repoURL": "CMD",
+      "doc": "Terminal-based CLI agents and tools for productivity and coding.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "npm install -g @charmland/crush",
+          "windows": "npm install -g @charmland/crush",
+          "macos": "npm install -g @charmland/crush"
+        },
+        "arm64": {
+          "linux": "npm install -g @charmland/crush",
+          "windows": "npm install -g @charmland/crush",
+          "macos": "npm install -g @charmland/crush"
+        }
+      }
+    },
+    {
+      "appName": "opencode-ai",
+      "repoURL": "CMD",
+      "doc": "Terminal-based CLI agents and tools for productivity and coding.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "npm install -g opencode-ai@latest",
+          "windows": "npm install -g opencode-ai@latest",
+          "macos": "npm install -g opencode-ai@latest"
+        },
+        "arm64": {
+          "linux": "npm install -g opencode-ai@latest",
+          "windows": "npm install -g opencode-ai@latest",
+          "macos": "npm install -g opencode-ai@latest"
+        }
+      }
+    },
+    {
+      "appName": "warp",
+      "repoURL": "CMD",
+      "doc": "Modern terminal with AI-powered features",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "https://app.warp.dev/download/cli?os=linux&package=deb&arch=x86_64",
+          "windows": null,
+          "macos": null
+        },
+        "arm64": {
+          "linux": "https://app.warp.dev/download/cli?os=linux&package=deb&arch=aarch64",
+          "windows": null,
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "q",
+      "repoURL": "CMD",
+      "doc": "Q desktop application",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "q.sh",
+          "windows": null,
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": null,
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "cursor-cli",
+      "repoURL": "CMD",
+      "doc": "Cursor CLI installer",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "curl https://cursor.com/install -fsS | bash",
+          "windows": null,
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": null,
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "droid",
+      "repoURL": "CMD",
+      "doc": "Factory AI CLI installer",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "curl -fsSL https://app.factory.ai/cli | sh",
+          "windows": null,
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": null,
+          "macos": null
         }
       }
     },
