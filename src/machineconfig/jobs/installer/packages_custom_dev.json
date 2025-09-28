@@ -71,7 +71,7 @@
       }
     },
     {
-      "appName": "gemini-cli",
+      "appName": "gemini",
       "repoURL": "CMD",
       "doc": "Terminal-based CLI agents and tools for productivity and coding.",
       "fileNamePattern": {
