@@ -27,7 +27,6 @@ class FireJobArgs:
     Nprocess: int = 1
     zellij_tab: Optional[str] = None
     watch: bool = False
-    layout: bool = False
 
 
 def extract_kwargs(args: FireJobArgs) -> dict[str, object]:

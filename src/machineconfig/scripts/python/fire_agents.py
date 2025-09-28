@@ -1,35 +1,11 @@
 """Utilitfrom pathlib import Path
-from typing import cast, get_args, Iterable, Optional, TypeAlias, Literal
-import json
-import typer
 
-from machineconfig.scripts.python.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout, AGENTS
-from machineconfig.scripts.python.fire_agents_help_search import search_files_by_pattern, search_python_files
-from machineconfig.scripts.python.fire_agents_load_balancer import chunk_prompts
-from machineconfig.utils.accessories import get_repo_rootch multiple AI agent prompts in a Zellij session.
-
-Improved design notes:
-  * Clear separation of: input collection, prompt preparation, agent launch.
-  * Configurable max agent cap (default 15) with interactive confirmation if exceeded.
-  * Added type aliases + docstrings for maintainability.
-  * Preserves original core behavior & command generation for each agent type.
 """
 
 from pathlib import Path
-from typing import cast, Iterable, Optional, TypeAlias, Literal, get_args
-import json
-import time
+from typing import cast, Iterable, Optional, get_args
 import typer
-
-from machineconfig.scripts.python.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout, AGENTS
-from machineconfig.scripts.python.fire_agents_help_search import search_files_by_pattern, search_python_files
-from machineconfig.scripts.python.fire_agents_load_balancer import chunk_prompts
-from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
-from machineconfig.utils.accessories import get_repo_root, randstr
-
-SEARCH_STRATEGIES: TypeAlias = Literal["file_path", "keyword_search", "filename_pattern"]
-
-app = typer.Typer()
+from machineconfig.scripts.python.fire_agents_helper_types import AGENTS
 
 
 def _write_list_file(target: Path, files: Iterable[Path]) -> None:
@@ -37,7 +13,6 @@ def _write_list_file(target: Path, files: Iterable[Path]) -> None:
     target.write_text("\n".join(str(f) for f in files), encoding="utf-8")
 
 
-@app.command()
 def create(
     context_path: Optional[Path] = typer.Option(None, help="Path to the context file"),
     keyword_search: Optional[str] = typer.Option(None, help="Keyword to search in Python files"),
@@ -52,6 +27,13 @@ def create(
     output_path: Optional[Path] = typer.Option(None, help="Path to write the layout.json file"),
     agents_dir: Optional[Path] = typer.Option(None, help="Directory to store agent files. If not provided, will be constructed automatically."),
 ):
+
+    from machineconfig.scripts.python.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout
+    from machineconfig.scripts.python.fire_agents_help_search import search_files_by_pattern, search_python_files
+    from machineconfig.scripts.python.fire_agents_load_balancer import chunk_prompts
+    from machineconfig.utils.accessories import get_repo_root, randstr
+    import json
+
     # validate mutual exclusive
     context_options = [context_path, keyword_search, filename_pattern]
     provided_context = [opt for opt in context_options if opt is not None]
@@ -131,48 +113,6 @@ fire_agents create --context-path "{prompt_material_path}" \\
     typer.echo(f"Ceated layout in {layout_output_path}")
 
 
-@app.command()
-def run(layout_path: Path = typer.Argument(..., help="Path to the layout.json file"),
-        max_tabs: int = typer.Option(6, help="Maximum number of tabs to launch"),
-        sleep_inbetween: float = typer.Option(1.0, help="Sleep time in seconds between launching layouts"),
-        kill_upon_completion: bool = typer.Option(False, help="Kill the layout sessions upon completion")):
-    layoutfile: LayoutsFile = json.loads(layout_path.read_text())
-    for a_layout in layoutfile["layouts"]:
-        if len(a_layout["layoutTabs"]) > max_tabs:
-            typer.echo(f"Layout '{a_layout.get('layoutName', 'Unnamed')}' has {len(a_layout['layoutTabs'])} tabs which exceeds the max of {max_tabs}.")
-            confirm = typer.confirm("Do you want to proceed with launching this layout?", default=False)
-            if not confirm:
-                typer.echo("Aborting launch.")
-                raise typer.Exit(0)
-    from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
-    for i, a_layouts in enumerate(layoutfile["layouts"]):
-        manager = ZellijLocalManager(session_layouts=[a_layouts])
-        manager.start_all_sessions(poll_interval=2, poll_seconds=2)
-        manager.run_monitoring_routine(wait_ms=2000)
-        if kill_upon_completion:
-            manager.kill_all_sessions()
-        if i < len(layoutfile["layouts"]) - 1:  # Don't sleep after the last layout
-            time.sleep(sleep_inbetween)
-
-
-@app.command(help="Adjust layout file to limit max tabs per layout, etc.")
-def load_balance(layout_path: Path = typer.Argument(..., help="Path to the layout.json file"),
-           max_thresh: int = typer.Option(..., help="Maximum tabs per layout"),
-           thresh_type: Literal['number', 'weight'] = typer.Option(..., help="Threshold type"),
-           breaking_method: Literal['moreLayouts', 'combineTabs'] = typer.Option(..., help="Breaking method"),
-           output_path: Optional[Path] = typer.Option(None, help="Path to write the adjusted layout.json file")):
-    layoutfile: LayoutsFile = json.loads(layout_path.read_text())
-    layout_configs = layoutfile["layouts"]
-    from machineconfig.cluster.sessions_managers.utils.load_balancer import limit_tab_num
-    new_layouts = limit_tab_num(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type=thresh_type, breaking_method=breaking_method)
-    layoutfile["layouts"] = new_layouts
-    target_file = output_path if output_path is not None else layout_path.parent / f'{layout_path.stem}_adjusted_{max_thresh}_{thresh_type}_{breaking_method}.json'
-    target_file.parent.mkdir(parents=True, exist_ok=True)
-    target_file.write_text(data=json.dumps(layoutfile, indent=4), encoding="utf-8")
-    typer.echo(f"Adjusted layout saved to {target_file}")
-
-
-@app.command()
 def collect(
     agent_dir: Path = typer.Argument(..., help="Path to the agent directory containing the prompts folder"),
     output_path: Path = typer.Argument(..., help="Path to write the concatenated material files"),
@@ -214,5 +154,44 @@ def collect(
     typer.echo(f"Concatenated material written to {output_path}")
 
 
+def template():
+    template_bash = """#!/bin/bash
+JOB_NAME="outpatient_mapping"
+REPO_ROOT="$HOME/code/work/winter_planning/"
+CONTEXT_PATH="$REPO_ROOT/data/outpatient_mapping/op_services_collected.csv"
+PROMPT_PATH="$REPO_ROOT/data/outpatient_mapping/prompt"
+
+AGENTS_DIR="$REPO_ROOT/.ai/agents/$JOB_NAME"
+LAYOUT_PATH="$REPO_ROOT/.ai/agents/$JOB_NAME/layout_unbalanced.json"
+LAYOUT_BALANCED_PATH="$REPO_ROOT/.ai/agents/$JOB_NAME/layout_balanced.json"
+
+fire_agents create --context-path $CONTEXT_PATH --tasks-per-prompt 10 --agent crush --prompt-path $PROMPT_PATH --keep-separate --output-path $LAYOUT_PATH --agents-dir $AGENTS_DIR
+fire_agents load-balance $LAYOUT_PATH --max-thresh 6 --breaking-method moreLayouts --thresh-type number  --output-path $LAYOUT_BALANCED_PATH
+
+fire_agents run $LAYOUT_BALANCED_PATH --kill-upon-completion
+fire_agents collect $AGENTS_DIR "$REPO_ROOT/.ai/agents/$JOB_NAME/collected.txt"
+"""
+    template_powershell = """
+
+"""
+    from platform import system
+    if system() == "Linux":
+        template = template_bash
+    elif system() == "Windows":
+        template = template_powershell
+    else:
+        raise typer.BadParameter(f"Unsupported OS: {system()}")
+
+    from machineconfig.utils.accessories import get_repo_root
+    repo_root = get_repo_root(Path.cwd())
+    if repo_root is None:
+        typer.echo("💥 Could not determine the repository root. Please run this script from within a git repository.")
+        raise typer.Exit(1)
+    save_path = repo_root / ".ai" / "agents" / "template_fire_agents.sh"
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    save_path.write_text(template, encoding="utf-8")
+    typer.echo(f"Template bash script written to {save_path}")
+
+
 if __name__ == "__main__":  # pragma: no cover
-    app()
+    pass

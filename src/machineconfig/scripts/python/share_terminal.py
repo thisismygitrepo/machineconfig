@@ -3,10 +3,7 @@
 from pathlib import Path
 from typing import Optional, Annotated
 import typer
-from rich.console import Console
-from rich.panel import Panel
-from rich.text import Text
-from rich.align import Align
+
 
 
 """
@@ -21,6 +18,11 @@ reference:
 
 def display_terminal_url(local_ip_v4: str, port: int, protocol: str = "http") -> None:
     """Display a flashy, unmissable terminal URL announcement."""
+
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.text import Text
+    from rich.align import Align
     console = Console()
     
     # Create the main message with styling

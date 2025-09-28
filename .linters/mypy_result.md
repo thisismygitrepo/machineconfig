@@ -1,8 +1,3 @@
-src/machineconfig/scripts/python/fire_agents_load_balancer.py: note: In function "chunk_prompts":
-src/machineconfig/scripts/python/fire_agents_load_balancer.py:44:9: error: Name
-"grouped" already defined on line 33  [no-redef]
-            grouped: list[str] = []
-            ^~~~~~~
 src/machineconfig/cluster/sessions_managers/zellij_remote_manager.py: note: In function "run_monitoring_routine":
 src/machineconfig/cluster/sessions_managers/zellij_remote_manager.py:59:17: error:
 Need type annotation for "keys" (hint: "keys: list[<type>] = ...") 
@@ -14,6 +9,12 @@ Need type annotation for "values" (hint: "values: list[<type>] = ...")
 [var-annotated]
                     values = []
                     ^~~~~~
+src/machineconfig/cluster/sessions_managers/wt_local_manager.py: note: In member "check_all_sessions_status" of class "WTLocalManager":
+src/machineconfig/cluster/sessions_managers/wt_local_manager.py:154:16: error:
+Incompatible return value type (got "dict[Any | str, dict[str, Any]]", expected
+"dict[str, WTSessionReport]")  [return-value]
+            return status_report
+                   ^~~~~~~~~~~~~
 src/machineconfig/utils/path_extended.py: note: In member "search" of class "PathExtended":
 src/machineconfig/utils/path_extended.py:460:19: error: Incompatible types in
 assignment (expression has type "Any | Iterator[PathExtended]", variable has
@@ -79,4 +80,4 @@ src/machineconfig/utils/options.py:149:12: error: No overload variant of
 src/machineconfig/utils/options.py:149:12: note: Possible overload variants:
 src/machineconfig/utils/options.py:149:12: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> T
 src/machineconfig/utils/options.py:149:12: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> list[T]
-Found 13 errors in 6 files (checked 176 source files)
+Found 13 errors in 6 files (checked 178 source files)

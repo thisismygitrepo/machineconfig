@@ -26,10 +26,6 @@ import typer
 
 
 def route(args: FireJobArgs, fire_args: str = "") -> None:
-    if args.layout:
-        from machineconfig.scripts.python.fire_jobs_layout_helper import handle_layout_args
-        return handle_layout_args(args.path, args.function)
-
     path_obj = sanitize_path(args.path)
     if not path_obj.exists():
         suffixes = {".py", ".sh", ".ps1"}
@@ -348,7 +344,6 @@ def main(
     Nprocess: Annotated[int, typer.Option("--Nprocess", "-p", help="Number of processes to use")] = 1,
     zellij_tab: Annotated[Optional[str], typer.Option("--zellij_tab", "-z", help="Open in a new zellij tab")] = None,
     watch: Annotated[bool, typer.Option("--watch", "-w", help="Watch the file for changes")] = False,
-    layout: Annotated[bool, typer.Option("--layout", "-L", help="Use layout configuration (Zellij Or WindowsTerminal)")] = False,
 ) -> None:
     """Main function to process fire jobs arguments."""
     
@@ -377,7 +372,6 @@ def main(
         Nprocess=Nprocess,
         zellij_tab=zellij_tab,
         watch=watch,
-        layout=layout,
     )
     try:
         route(args, fire_args)

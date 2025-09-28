@@ -2,14 +2,7 @@
 import random
 import shlex
 from pathlib import Path
-from typing import Literal, TypeAlias
-
-
-AGENTS: TypeAlias = Literal[
-    "cursor-agent", "gemini", "crush", "q"
-    # warp terminal
-]
-AGENT_NAME_FORMATTER = "agent_{idx}_cmd.sh"  # e.g., agent_0_cmd.sh
+from machineconfig.scripts.python.fire_agents_helper_types import AGENTS, AGENT_NAME_FORMATTER
 
 
 def get_gemini_api_keys() -> list[str]:

@@ -54,7 +54,6 @@ docs = [
 [project.scripts]
 devops = "machineconfig.scripts.python.devops:app"
 fire = "machineconfig.scripts.python.fire_jobs:main_from_parser"
-fire_agents = "machineconfig.scripts.python.fire_agents:app"
 initai = "machineconfig.scripts.python.ai.initai:main"
 
 choose_wezterm_theme = "machineconfig.scripts.python.choose_wezterm_theme:main"
