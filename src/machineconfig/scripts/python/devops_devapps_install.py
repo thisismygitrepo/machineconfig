@@ -166,5 +166,5 @@ def get_programs_by_category(program_name: WHICH_CAT):
 if __name__ == "__main__":
     from machineconfig.utils.schemas.installer.installer_types import InstallerData
     from machineconfig.utils.installer_utils.installer_class import Installer
-    _ = InstallerData
+    _ = InstallerData, Installer
     pass

@@ -40,47 +40,43 @@ annotation for "failed_by_action" (hint:
 "failed_by_action: dict[<type>, <type>] = ...")  [var-annotated]
             failed_by_action = {}
             ^~~~~~~~~~~~~~~~
-src/machineconfig/scripts/python/devops.py:17:21: error:
-"<typing special form>" has no attribute "__args__"  [attr-defined]
-    options_list = list(Options.__args__)
-                        ^~~~~~~~~~~~~~~~
 src/machineconfig/profile/create.py: note: In function "apply_mapper":
 src/machineconfig/profile/create.py:73:32: error: Module has no attribute
 "windll"  [attr-defined]
                         is_admin = ctypes.windll.shell32.IsUserAnAdmin()
                                    ^~~~~~~~~~~~~
 src/machineconfig/utils/options.py: note: In function "choose_from_options":
-src/machineconfig/utils/options.py:96:24: error: No overload variant of
+src/machineconfig/utils/options.py:83:24: error: No overload variant of
 "choose_from_options" matches argument types "str", "Iterable[T]", "str", "str",
 "str", "T | None", "bool", "bool", "bool"  [call-overload]
                     return choose_from_options(msg=msg, options=options, h...
                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~...
-src/machineconfig/utils/options.py:96:24: note: Possible overload variants:
-src/machineconfig/utils/options.py:96:24: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> T
-src/machineconfig/utils/options.py:96:24: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> list[T]
-src/machineconfig/utils/options.py:114:28: error: No overload variant of
+src/machineconfig/utils/options.py:83:24: note: Possible overload variants:
+src/machineconfig/utils/options.py:83:24: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> T
+src/machineconfig/utils/options.py:83:24: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> list[T]
+src/machineconfig/utils/options.py:101:28: error: No overload variant of
 "choose_from_options" matches argument types "str", "Iterable[T]", "str", "str",
 "str", "T | None", "bool", "bool", "Literal[False]"  [call-overload]
                         return choose_from_options(msg=msg, options=option...
                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~...
-src/machineconfig/utils/options.py:114:28: note: Possible overload variants:
-src/machineconfig/utils/options.py:114:28: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> T
-src/machineconfig/utils/options.py:114:28: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> list[T]
-src/machineconfig/utils/options.py:125:28: error: No overload variant of
+src/machineconfig/utils/options.py:101:28: note: Possible overload variants:
+src/machineconfig/utils/options.py:101:28: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> T
+src/machineconfig/utils/options.py:101:28: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> list[T]
+src/machineconfig/utils/options.py:112:28: error: No overload variant of
 "choose_from_options" matches argument types "str", "Iterable[T]", "str", "str",
 "str", "T | None", "bool", "bool", "Literal[False]"  [call-overload]
                         return choose_from_options(msg=msg, options=option...
                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~...
-src/machineconfig/utils/options.py:125:28: note: Possible overload variants:
-src/machineconfig/utils/options.py:125:28: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> T
-src/machineconfig/utils/options.py:125:28: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> list[T]
+src/machineconfig/utils/options.py:112:28: note: Possible overload variants:
+src/machineconfig/utils/options.py:112:28: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> T
+src/machineconfig/utils/options.py:112:28: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> list[T]
 src/machineconfig/utils/options.py: note: In function "choose_ssh_host":
-src/machineconfig/utils/options.py:162:12: error: No overload variant of
+src/machineconfig/utils/options.py:149:12: error: No overload variant of
 "choose_from_options" matches argument types "str", "list[str]", "bool", "bool" 
 [call-overload]
         return choose_from_options(msg="", options=get_ssh_hosts(), multi=...
                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~...
-src/machineconfig/utils/options.py:162:12: note: Possible overload variants:
-src/machineconfig/utils/options.py:162:12: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> T
-src/machineconfig/utils/options.py:162:12: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> list[T]
-Found 14 errors in 7 files (checked 173 source files)
+src/machineconfig/utils/options.py:149:12: note: Possible overload variants:
+src/machineconfig/utils/options.py:149:12: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> T
+src/machineconfig/utils/options.py:149:12: note:     def [T] choose_from_options(msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = ..., header: str = ..., tail: str = ..., prompt: str = ..., default: T | None = ..., fzf: bool = ...) -> list[T]
+Found 13 errors in 6 files (checked 176 source files)

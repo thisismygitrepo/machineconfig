@@ -1,3 +1,51 @@
+ERROR Argument `Literal['number', 'weight']` is not assignable to parameter `threshold_type` with type `Literal['number']` in function `_restrict_num_tabs_helper1` [bad-argument-type]
+  --> src/machineconfig/cluster/sessions_managers/utils/load_balancer.py:79:116
+   |
+79 | ...   return _restrict_num_tabs_helper1(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type=threshold_type, breakin...
+   |                                                                                                              ^^^^^^^^^^^^^^
+   |
+ERROR Argument `Literal['combineTabs', 'moreLayouts']` is not assignable to parameter `breaking_method` with type `Literal['moreLayouts']` in function `_restrict_num_tabs_helper1` [bad-argument-type]
+  --> src/machineconfig/cluster/sessions_managers/utils/load_balancer.py:79:148
+   |
+79 | ...x_thresh, threshold_type=threshold_type, breaking_method=breaking_method)
+   |                                                             ^^^^^^^^^^^^^^^
+   |
+ERROR Argument `Literal['number', 'weight']` is not assignable to parameter `threshold_type` with type `Literal['number']` in function `_restrict_num_tabs_helper2` [bad-argument-type]
+  --> src/machineconfig/cluster/sessions_managers/utils/load_balancer.py:81:116
+   |
+81 | ...   return _restrict_num_tabs_helper2(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type=threshold_type, breakin...
+   |                                                                                                              ^^^^^^^^^^^^^^
+   |
+ERROR Argument `Literal['combineTabs', 'moreLayouts']` is not assignable to parameter `breaking_method` with type `Literal['combineTabs']` in function `_restrict_num_tabs_helper2` [bad-argument-type]
+  --> src/machineconfig/cluster/sessions_managers/utils/load_balancer.py:81:148
+   |
+81 | ...x_thresh, threshold_type=threshold_type, breaking_method=breaking_method)
+   |                                                             ^^^^^^^^^^^^^^^
+   |
+ERROR Argument `Literal['number', 'weight']` is not assignable to parameter `threshold_type` with type `Literal['weight']` in function `_restrict_num_tabs_helper3` [bad-argument-type]
+  --> src/machineconfig/cluster/sessions_managers/utils/load_balancer.py:83:116
+   |
+83 | ...   return _restrict_num_tabs_helper3(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type=threshold_type, breakin...
+   |                                                                                                              ^^^^^^^^^^^^^^
+   |
+ERROR Argument `Literal['combineTabs', 'moreLayouts']` is not assignable to parameter `breaking_method` with type `Literal['moreLayouts']` in function `_restrict_num_tabs_helper3` [bad-argument-type]
+  --> src/machineconfig/cluster/sessions_managers/utils/load_balancer.py:83:148
+   |
+83 | ...x_thresh, threshold_type=threshold_type, breaking_method=breaking_method)
+   |                                                             ^^^^^^^^^^^^^^^
+   |
+ERROR Argument `Literal['number', 'weight']` is not assignable to parameter `threshold_type` with type `Literal['weight']` in function `_restrict_num_tabs_helper4` [bad-argument-type]
+  --> src/machineconfig/cluster/sessions_managers/utils/load_balancer.py:85:116
+   |
+85 | ...   return _restrict_num_tabs_helper4(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type=threshold_type, breakin...
+   |                                                                                                              ^^^^^^^^^^^^^^
+   |
+ERROR Argument `Literal['combineTabs', 'moreLayouts']` is not assignable to parameter `breaking_method` with type `Literal['combineTabs']` in function `_restrict_num_tabs_helper4` [bad-argument-type]
+  --> src/machineconfig/cluster/sessions_managers/utils/load_balancer.py:85:148
+   |
+85 | ...x_thresh, threshold_type=threshold_type, breaking_method=breaking_method)
+   |                                                             ^^^^^^^^^^^^^^^
+   |
 ERROR Argument `str` is not assignable to parameter `object` with type `LiteralString` in function `list.append` [bad-argument-type]
    --> src/machineconfig/cluster/sessions_managers/wt_local_manager.py:117:33
     |
@@ -112,12 +160,6 @@ ERROR Argument `str` is not assignable to parameter `object` with type `LiteralS
 61 |             res_lines.append(line)
    |                              ^^^^
    |
-ERROR TODO: Expr::attr_infer_for_type attribute base undefined for type: TypeAlias[Options, type[Literal['⏰ SCHEDULER', '⚙️ DEVAPPS install', '🆕 SYMLINKS new', '🐧 SSH setup wsl', '💾 BACKUP', '📡 SSH setup', '📥 RETRIEVE', '🔄 UPDATE essential repos', '🔐 SSH use key pair to connect two machines', '🔑 SSH add pub key to this machine', '🔗 SYMLINKS, SHELL PROFILE, FONT, TERMINAL SETTINGS.', '🗝️ SSH add identity (private key) to this machine']]] (trying to access __args__) [missing-attribute]
-  --> src/machineconfig/scripts/python/devops.py:17:21
-   |
-17 | options_list = list(Options.__args__)
-   |                     ^^^^^^^^^^^^^^^^
-   |
 ERROR `str` is not assignable to `PathLike[str]` (caused by inconsistent types when breaking cycles) [bad-assignment]
    --> src/machineconfig/scripts/python/helpers/helpers4.py:145:5
     |
@@ -152,11 +194,11 @@ ERROR `str | None` is not assignable to `None` (caused by inconsistent types whe
 70 | |                     # Avoid duplicates
    | |_______________________________________^
    |
-ERROR Argument `object | str` is not assignable to parameter `exe_name` with type `str` in function `machineconfig.utils.installer_utils.installer_class.Installer.check_if_installed_already` [bad-argument-type]
-  --> src/machineconfig/utils/installer.py:41:82
+ERROR Argument `object | str` is not assignable to parameter `exe_name` with type `str` in function `machineconfig.utils.installer_utils.installer_abc.check_if_installed_already` [bad-argument-type]
+  --> src/machineconfig/utils/installer.py:41:77
    |
-41 | ...   verdict, current_ver, new_ver = inst.check_if_installed_already(exe_name=exe_name, version=version_to_be_installed, use_cache=...
-   |                                                                                ^^^^^^^^
+41 |         verdict, current_ver, new_ver = check_if_installed_already(exe_name=exe_name, version=version_to_be_installed, use_cache=False)
+   |                                                                             ^^^^^^^^
    |
 ERROR Missing argument `installers` in function `machineconfig.utils.schemas.installer.installer_types.InstallerDataFiles.__init__` [missing-argument]
   --> src/machineconfig/utils/installer_utils/installer_class.py:48:50
@@ -171,42 +213,42 @@ ERROR Expected argument `version` to be passed by name in function `machineconfi
    |                                                   ^^^^^^^^^^^
    |
 ERROR No matching overload found for function `choose_from_options` [no-matching-overload]
-  --> src/machineconfig/utils/options.py:96:43
+  --> src/machineconfig/utils/options.py:83:43
    |
-96 | ...ons(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
+83 | ...ons(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
   Possible overloads:
   (msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = False, header: str = '', tail: str = '', prompt: str = '', default: T | None = None, fzf: bool = False) -> T [closest match]
   (msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = True, header: str = '', tail: str = '', prompt: str = '', default: T | None = None, fzf: bool = False) -> list[T]
 ERROR `T` is not assignable to `str` (caused by inconsistent types when breaking cycles) [bad-assignment]
-  --> src/machineconfig/utils/options.py:99:13
+  --> src/machineconfig/utils/options.py:86:13
    |
-99 |             choice_one: T = default
+86 |             choice_one: T = default
    |             ^^^^^^^^^^
    |
 ERROR No matching overload found for function `choose_from_options` [no-matching-overload]
-   --> src/machineconfig/utils/options.py:114:47
+   --> src/machineconfig/utils/options.py:101:47
     |
-114 | ...ons(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
+101 | ...ons(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
     |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     |
   Possible overloads:
   (msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = False, header: str = '', tail: str = '', prompt: str = '', default: T | None = None, fzf: bool = False) -> T [closest match]
   (msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = True, header: str = '', tail: str = '', prompt: str = '', default: T | None = None, fzf: bool = False) -> list[T]
 ERROR No matching overload found for function `choose_from_options` [no-matching-overload]
-   --> src/machineconfig/utils/options.py:125:47
+   --> src/machineconfig/utils/options.py:112:47
     |
-125 | ...ons(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
+112 | ...ons(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
     |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     |
   Possible overloads:
   (msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = False, header: str = '', tail: str = '', prompt: str = '', default: T | None = None, fzf: bool = False) -> T [closest match]
   (msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = True, header: str = '', tail: str = '', prompt: str = '', default: T | None = None, fzf: bool = False) -> list[T]
 ERROR No matching overload found for function `choose_from_options` [no-matching-overload]
-   --> src/machineconfig/utils/options.py:162:31
+   --> src/machineconfig/utils/options.py:149:31
     |
-162 |     return choose_from_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
+149 |     return choose_from_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
     |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     |
   Possible overloads:

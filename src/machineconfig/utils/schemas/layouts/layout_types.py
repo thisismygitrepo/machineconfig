@@ -4,7 +4,7 @@ Type definitions for the standardized layout configuration schema.
 This module defines the data structures that match the layout.json schema.
 """
 
-from typing import TypedDict, List, Literal
+from typing import TypedDict, List, Literal, NotRequired
 
 
 class TabConfig(TypedDict):
@@ -13,6 +13,7 @@ class TabConfig(TypedDict):
     tabName: str
     startDir: str
     command: str
+    tabWeight: NotRequired[int]  # Optional, defaults to 1 if not provided
 
 
 class LayoutConfig(TypedDict):
