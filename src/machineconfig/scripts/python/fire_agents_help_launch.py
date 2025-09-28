@@ -1,4 +1,3 @@
-from machineconfig.utils.accessories import randstr
 
 import random
 import shlex
@@ -28,10 +27,9 @@ def get_gemini_api_keys() -> list[str]:
     return res
 
 
-def prep_agent_launch(repo_root: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool, agent: AGENTS, *, job_name: str) -> Path:
-    session_root = repo_root / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
-    session_root.mkdir(parents=True, exist_ok=True)
-    prompt_folder = session_root / "prompts"
+def prep_agent_launch(agents_dir: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool, agent: AGENTS, *, job_name: str) -> None:
+    agents_dir.mkdir(parents=True, exist_ok=True)
+    prompt_folder = agents_dir / "prompts"
     prompt_folder.mkdir(parents=True, exist_ok=True)
 
     for idx, a_prompt_material in enumerate(prompts_material):
@@ -110,7 +108,7 @@ echo "---------END OF AGENT OUTPUT---------"
 """
         agent_cmd_launch_path.write_text(cmd_prefix + cmd + cmd_postfix, encoding="utf-8")
 
-    return session_root
+    return None
 
 
 def get_agents_launch_layout(session_root: Path):

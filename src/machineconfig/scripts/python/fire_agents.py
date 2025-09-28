@@ -25,7 +25,7 @@ from machineconfig.scripts.python.fire_agents_help_launch import prep_agent_laun
 from machineconfig.scripts.python.fire_agents_help_search import search_files_by_pattern, search_python_files
 from machineconfig.scripts.python.fire_agents_load_balancer import chunk_prompts
 from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
-from machineconfig.utils.accessories import get_repo_root
+from machineconfig.utils.accessories import get_repo_root, randstr
 
 SEARCH_STRATEGIES: TypeAlias = Literal["file_path", "keyword_search", "filename_pattern"]
 
@@ -50,6 +50,7 @@ def create(
     job_name: str = typer.Option("AI_Agents", help="Job name"),
     keep_separate: bool = typer.Option(True, help="Keep prompt material in separate file to the context."),
     output_path: Optional[Path] = typer.Option(None, help="Path to write the layout.json file"),
+    agents_dir: Optional[Path] = typer.Option(None, help="Directory to store agent files. If not provided, will be constructed automatically."),
 ):
     # validate mutual exclusive
     context_options = [context_path, keyword_search, filename_pattern]
@@ -103,7 +104,12 @@ def create(
     agent_selected = agent
     keep_material_in_separate_file_input = keep_separate
     prompt_material_re_splitted = chunk_prompts(prompt_material_path, tasks_per_prompt=tasks_per_prompt, joiner=separator)
-    agents_dir = prep_agent_launch(repo_root=repo_root, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, job_name=job_name)
+    if agents_dir is None: agents_dir = repo_root / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
+    else:
+        import shutil
+        if agents_dir.exists():
+            shutil.rmtree(agents_dir)
+    prep_agent_launch(agents_dir=agents_dir, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, job_name=job_name)
     layoutfile = get_agents_launch_layout(session_root=agents_dir)    
     regenerate_py_code = f"""
 #!/usr/bin/env uv run --python 3.13 --with machineconfig
@@ -119,25 +125,34 @@ fire_agents create --context-path "{prompt_material_path}" \\
 """
     (agents_dir / "aa_agents_relaunch.py").write_text(data=regenerate_py_code, encoding="utf-8")
     layout_output_path = output_path if output_path is not None else agents_dir / "layout.json"
+    layout_output_path.parent.mkdir(parents=True, exist_ok=True)
     layout_output_path.write_text(data=json.dumps(layoutfile, indent=4), encoding="utf-8")
     typer.echo(f"Created agents in {agents_dir}")
+    typer.echo(f"Ceated layout in {layout_output_path}")
 
 
 @app.command()
 def run(layout_path: Path = typer.Argument(..., help="Path to the layout.json file"),
         max_tabs: int = typer.Option(6, help="Maximum number of tabs to launch"),
-        sleep_between_layouts: float = typer.Option(1.0, help="Sleep time in seconds between launching layouts")):
+        sleep_inbetween: float = typer.Option(1.0, help="Sleep time in seconds between launching layouts"),
+        kill_upon_completion: bool = typer.Option(False, help="Kill the layout sessions upon completion")):
     layoutfile: LayoutsFile = json.loads(layout_path.read_text())
-    if len(layoutfile["layouts"][0]["layoutTabs"]) > max_tabs:
-        typer.echo(f"Too many tabs (>{max_tabs}) to launch. Skipping launch.")
-        raise typer.Exit(0)
+    for a_layout in layoutfile["layouts"]:
+        if len(a_layout["layoutTabs"]) > max_tabs:
+            typer.echo(f"Layout '{a_layout.get('layoutName', 'Unnamed')}' has {len(a_layout['layoutTabs'])} tabs which exceeds the max of {max_tabs}.")
+            confirm = typer.confirm("Do you want to proceed with launching this layout?", default=False)
+            if not confirm:
+                typer.echo("Aborting launch.")
+                raise typer.Exit(0)
     from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
     for i, a_layouts in enumerate(layoutfile["layouts"]):
         manager = ZellijLocalManager(session_layouts=[a_layouts])
         manager.start_all_sessions(poll_interval=2, poll_seconds=2)
         manager.run_monitoring_routine(wait_ms=2000)
+        if kill_upon_completion:
+            manager.kill_all_sessions()
         if i < len(layoutfile["layouts"]) - 1:  # Don't sleep after the last layout
-            time.sleep(sleep_between_layouts)
+            time.sleep(sleep_inbetween)
 
 
 @app.command(help="Adjust layout file to limit max tabs per layout, etc.")
@@ -152,8 +167,51 @@ def load_balance(layout_path: Path = typer.Argument(..., help="Path to the layou
     new_layouts = limit_tab_num(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type=thresh_type, breaking_method=breaking_method)
     layoutfile["layouts"] = new_layouts
     target_file = output_path if output_path is not None else layout_path.parent / f'{layout_path.stem}_adjusted_{max_thresh}_{thresh_type}_{breaking_method}.json'
+    target_file.parent.mkdir(parents=True, exist_ok=True)
     target_file.write_text(data=json.dumps(layoutfile, indent=4), encoding="utf-8")
     typer.echo(f"Adjusted layout saved to {target_file}")
+
+
+@app.command()
+def collect(
+    agent_dir: Path = typer.Argument(..., help="Path to the agent directory containing the prompts folder"),
+    output_path: Path = typer.Argument(..., help="Path to write the concatenated material files"),
+    separator: str = typer.Option("\n", help="Separator to use when concatenating material files"),
+) -> None:
+    """Collect all material files from an agent directory and concatenate them."""
+    if not agent_dir.exists() or not agent_dir.is_dir():
+        raise typer.BadParameter(f"Agent directory does not exist or is not a directory: {agent_dir}")
+    
+    prompts_dir = agent_dir / "prompts"
+    if not prompts_dir.exists():
+        raise typer.BadParameter(f"Prompts directory not found: {prompts_dir}")
+    
+    material_files = []
+    for agent_subdir in prompts_dir.iterdir():
+        if agent_subdir.is_dir() and agent_subdir.name.startswith("agent_"):
+            material_file = agent_subdir / f"{agent_subdir.name}_material.txt"
+            if material_file.exists():
+                material_files.append(material_file)
+    
+    if not material_files:
+        typer.echo("No material files found in the agent directory.")
+        return
+    
+    # Sort by agent index for consistent ordering
+    material_files.sort(key=lambda x: int(x.parent.name.split("_")[-1]))
+    
+    # Read and concatenate all material files
+    concatenated_content = []
+    for material_file in material_files:
+        content = material_file.read_text(encoding="utf-8")
+        concatenated_content.append(content)
+    
+    result = separator.join(concatenated_content)
+    
+    # Write to output file
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(result, encoding="utf-8")
+    typer.echo(f"Concatenated material written to {output_path}")
 
 
 if __name__ == "__main__":  # pragma: no cover

@@ -120,12 +120,9 @@ class ZellijLocalManager:
                 session_name = manager.session_name
                 if session_name is None:
                     continue  # Skip managers without a session name
-
                 cmd = f"zellij delete-session --force {session_name}"
-
                 logger.info(f"Killing session '{session_name}'")
                 result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
-
                 results[session_name] = {"success": result.returncode == 0, "message": "Session killed" if result.returncode == 0 else result.stderr}
 
             except Exception as e:
