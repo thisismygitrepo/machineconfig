@@ -28,8 +28,7 @@ import typer
 def route(args: FireJobArgs, fire_args: str = "") -> None:
     if args.layout:
         from machineconfig.scripts.python.fire_jobs_layout_helper import handle_layout_args
-
-        return handle_layout_args(args)
+        return handle_layout_args(args.path, args.function)
 
     path_obj = sanitize_path(args.path)
     if not path_obj.exists():

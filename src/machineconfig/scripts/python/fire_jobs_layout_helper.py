@@ -1,13 +1,10 @@
 from pathlib import Path
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, LayoutsFile
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
 from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_interest
 from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.path_helper import match_file_name, sanitize_path
 from machineconfig.utils.path_extended import PathExtended as PathExtended
-
-if TYPE_CHECKING:
-    from machineconfig.scripts.python.fire_jobs_args_helper import FireJobArgs
 
 
 def select_layout(layouts_json_file: Path, layouts_name: Optional[list[str]]) -> list[LayoutConfig]:
@@ -54,12 +51,10 @@ def launch_layout(layout_config: LayoutConfig) -> Optional[Exception]:
     return None
 
 
-def handle_layout_args(args: "FireJobArgs") -> None:
-    # args.function = args.path
-    # args.path = "layout.json"
-    path_obj = sanitize_path(args.path)
+def handle_layout_args(layout_path: str, layouts: Optional[str]) -> None:
+    path_obj = sanitize_path(layout_path)
     if not path_obj.exists():
-        choice_file = match_file_name(sub_string=args.path, search_root=PathExtended.cwd(), suffixes={".json"})
+        choice_file = match_file_name(sub_string=layout_path, search_root=PathExtended.cwd(), suffixes={".json"})
     elif path_obj.is_dir():
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
         files = search_for_files_of_interest(path_obj)
@@ -68,7 +63,5 @@ def handle_layout_args(args: "FireJobArgs") -> None:
         choice_file = PathExtended(choice_file)
     else:
         choice_file = path_obj
-    if args.function is None: layouts_name = None
-    else: layouts_name = args.function.split(",")
-    for a_layout_config in select_layout(layouts_json_file=choice_file, layouts_name=layouts_name):
+    for a_layout_config in select_layout(layouts_json_file=choice_file, layouts_name=layouts.split(",") if layouts else None):
         launch_layout(layout_config=a_layout_config)
