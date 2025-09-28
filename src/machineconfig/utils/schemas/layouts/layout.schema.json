@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://bytesense.local/schemas/layout.schema.json",
   "title": "Terminal Layouts Schema",
+  "version": "0.1.0",
   "description": "Schema for terminal layouts used by scripts/layout.json",
   "type": "object",
   "additionalProperties": false,
@@ -62,6 +63,10 @@
           "type": "string",
           "description": "Shell command to execute when the tab opens.",
           "examples": ["~/scripts/fire -mO liveInf.py main -- --arg1=val1"]
+        },
+        "tabWeight": {
+          "type": "integer",
+          "description": "Optional weight for tab sizing, defaults to 1 if not provided."
         }
       },
       "required": ["tabName", "startDir", "command"]
