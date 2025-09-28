@@ -56,6 +56,7 @@ def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category
         return get_programs_by_category(program_name=which)  # type: ignore
     from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
     from machineconfig.utils.installer import get_installers
+    from machineconfig.utils.installer_utils.installer_class import Installer
     if which != "ia" and which is not None:  # install by name
         total_messages: list[str] = []
         for a_which in which.split(",") if type(which) == str else which:
