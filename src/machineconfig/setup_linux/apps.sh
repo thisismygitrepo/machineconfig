@@ -7,7 +7,7 @@ echo "📥 Installing nala package manager..."
 echo "📥 Installing essential network tools..."
 echo "📥 Installing Node Version Manager (NVM)..."
 sudo apt update -y || true
-sudo apt install nala -y || true  # 🚀 Fast parallel apt manager
+sudo apt install nala -y || true
 sudo nala install curl wget gpg lsb-release apt-transport-https -y || true
 sudo nala install git net-tools htop nano -y || true
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash

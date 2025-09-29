@@ -10,10 +10,10 @@ from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.accessories import randstr
 
 from machineconfig.utils.options import choose_from_options
-from machineconfig.utils.ve import get_ve_activate_line
+# from machineconfig.utils.ve import get_ve_activate_line
 from rich.console import Console
 from rich.panel import Panel
-from rich.text import Text
+# from rich.text import Text
 
 console = Console()
 
@@ -173,41 +173,27 @@ print(f"🐊 Crocodile Shell | Running @ {Path.cwd()}")
         title = "Running Python File"
     else:
         title = "Executed code"
-    total_program = preprogram + add_print_header_pycode(str(pyfile), title=title) + program
-
-    pyfile.write_text(total_program, encoding="utf-8")
-
+    python_program = preprogram + add_print_header_pycode(str(pyfile), title=title) + program
+    pyfile.write_text(python_program, encoding="utf-8")
     # ve_root_from_file, ipython_profile = get_ve_path_and_ipython_profile(PathExtended(file))
     ipython_profile = ipython_profile if ipython_profile is not None else "default"
     # ve_activateion_line = get_ve_activate_line(ve_name=args.ve or ve_profile_suggested, a_path=str(PathExtended.cwd()))
-    activate_ve_line = get_ve_activate_line(ve_root="$HOME/code/machineconfig/.venv")
-    final_program = f"""
+    shell_program = """
 #!/bin/bash
-
-{activate_ve_line}
 
 """
     if jupyter:
         fire_line = f"code --new-window {str(pyfile)}"
     else:
-        fire_line = interpreter
-        if interpreter == "ipython":
-            fire_line += f" {interactivity} --profile {ipython_profile} --no-banner"
-        fire_line += f" {str(pyfile)}"
-
-    final_program += fire_line
-
-    title = "🚀 LAUNCHING SCRIPT"
-    text1 = f"📄 Script: {pyfile}"
-    text2 = f"🔥 Command: {fire_line}"
-    launch_message = f"{title}   \n{text1}\n{text2}"
-    console.print(Panel(Text(launch_message, justify="left"), expand=False, border_style="blue"))
-
-    # PROGRAM_PATH.write_text(data=final_program, encoding="utf-8")
-    # (PROGRAM_PATH + ".py").write_text(str(pyfile), encoding='utf-8')
+        fire_line = f"uv run --project $HOME/code/machineconfig/.venv {interpreter} {interactivity} "
+        if interpreter == "ipython": fire_line += f" --profile {ipython_profile} --no-banner"
+        fire_line += " " + str(pyfile)
+    shell_program += fire_line
+    from rich.syntax import Syntax
+    console.print(Syntax(shell_program, lexer="bash"))
+    print()
     import subprocess
-
-    subprocess.run(final_program, shell=True, check=True)
+    subprocess.run(shell_program, shell=True, check=True)
 
 
 def arg_parser() -> None:
