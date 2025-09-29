@@ -40,7 +40,8 @@ def get_ve_path_and_ipython_profile(init_path: PathExtended) -> tuple[Optional[s
 
 def get_ve_activate_line(ve_root: str):
     if platform.system() == "Windows":
-        activate_ve_line = f"powershell {ve_root}/Scripts/activate.ps1"
+        q = PathExtended(ve_root).expanduser().relative_to(PathExtended.home())
+        activate_ve_line = f". $HOME/{q}/Scripts/activate.ps1"
     elif platform.system() in ["Linux", "Darwin"]:
         activate_ve_line = f". {ve_root}/bin/activate"
     else:

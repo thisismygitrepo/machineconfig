@@ -9,6 +9,7 @@ import subprocess
 import random
 import string
 import json
+import platform
 from typing import Dict, List, Optional, Any
 from pathlib import Path
 import logging
@@ -18,6 +19,10 @@ from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, TabCo
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "session_manager", "wt", "layout_manager")
+
+# Check if we're on Windows
+IS_WINDOWS = platform.system().lower() == "windows"
+POWERSHELL_CMD = "powershell" if IS_WINDOWS else "pwsh"  # Use pwsh on non-Windows systems
 
 
 class WTLayoutGenerator:
@@ -179,29 +184,45 @@ class WTLayoutGenerator:
     @staticmethod
     def check_wt_session_status(session_name: str) -> Dict[str, Any]:
         try:
-            # Check for Windows Terminal processes
-            wt_check_cmd = ["powershell", "-Command", "Get-Process -Name 'WindowsTerminal' -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, StartTime, MainWindowTitle | ConvertTo-Json -Depth 2"]
+            # Simplified Windows Terminal process check
+            ps_script = """
+try {
+    $wtProcesses = Get-Process -Name 'WindowsTerminal' -ErrorAction SilentlyContinue
+    if ($wtProcesses) {
+        $processInfo = @()
+        $wtProcesses | ForEach-Object {
+            $info = @{
+                "Id" = $_.Id
+                "ProcessName" = $_.ProcessName
+                "StartTime" = $_.StartTime.ToString()
+            }
+            $processInfo += $info
+        }
+        $processInfo | ConvertTo-Json -Depth 2
+    }
+} catch {
+    # No Windows Terminal processes found
+}
+"""
 
-            result = subprocess.run(wt_check_cmd, capture_output=True, text=True, timeout=10)
+            result = subprocess.run([POWERSHELL_CMD, "-Command", ps_script], capture_output=True, text=True, timeout=5)
 
             if result.returncode == 0:
                 output = result.stdout.strip()
                 if output and output != "":
                     try:
-                        import json
-
                         processes = json.loads(output)
                         if not isinstance(processes, list):
                             processes = [processes]
 
-                        # Look for windows that might belong to our session
-                        session_windows = []
-                        for proc in processes:
-                            window_title = proc.get("MainWindowTitle", "")
-                            if session_name in window_title or not window_title:
-                                session_windows.append(proc)
-
-                        return {"wt_running": True, "session_exists": len(session_windows) > 0, "session_name": session_name, "all_windows": processes, "session_windows": session_windows}
+                        # For simplicity, assume session exists if WT is running
+                        return {
+                            "wt_running": True, 
+                            "session_exists": len(processes) > 0, 
+                            "session_name": session_name, 
+                            "all_windows": processes, 
+                            "session_windows": processes  # Simplified - assume all windows could be session windows
+                        }
                     except Exception as e:
                         return {"wt_running": True, "session_exists": False, "error": f"Failed to parse process info: {e}", "session_name": session_name}
                 else:
@@ -212,7 +233,7 @@ class WTLayoutGenerator:
         except subprocess.TimeoutExpired:
             return {"wt_running": False, "error": "Timeout while checking Windows Terminal processes", "session_name": session_name}
         except FileNotFoundError:
-            return {"wt_running": False, "error": "PowerShell not found in PATH", "session_name": session_name}
+            return {"wt_running": False, "error": f"PowerShell ({POWERSHELL_CMD}) not found in PATH", "session_name": session_name}
         except Exception as e:
             return {"wt_running": False, "error": str(e), "session_name": session_name}
 
@@ -232,55 +253,31 @@ class WTLayoutGenerator:
         command = tab_config["command"]
 
         try:
-            # Create PowerShell script to check for processes
-            cmd_parts = [part for part in command.split() if len(part) > 2]
-            primary_cmd = cmd_parts[0] if cmd_parts else ""
+            # Extract the primary executable name from command
+            primary_cmd = command.split()[0] if command.strip() else ""
+            if not primary_cmd:
+                return {"status": "error", "error": "Empty command", "running": False, "command": command, "tab_name": tab_name}
 
+            # Use a much simpler PowerShell script that just checks for process names
             ps_script = f"""
-$targetCommand = '{command.replace("'", "''")}'
-$cmdParts = @({", ".join([f"'{part}'" for part in cmd_parts])})
-$primaryCmd = '{primary_cmd}'
-$currentPid = $PID
-$matchingProcesses = @()
-
-Get-Process | ForEach-Object {{
-    try {{
-        if ($_.Id -eq $currentPid) {{ return }}
-
-        $cmdline = ""
-        try {{
-            $cmdline = (Get-WmiObject Win32_Process -Filter "ProcessId = $($_.Id)").CommandLine
-        }} catch {{
-            $cmdline = $_.ProcessName
-        }}
-
-        if ($cmdline -and $cmdline -ne "") {{
-            if ($cmdline -like "*PowerShell*" -and $cmdline -like "*Get-Process*") {{ return }}
-
-            $matchesPrimary = $cmdline -like "*$primaryCmd*" -and $primaryCmd -ne "powershell"
-            $matchCount = 0
-            foreach ($part in $cmdParts[1..($cmdParts.Length-1)]) {{
-                if ($cmdline -like "*$part*") {{ $matchCount++ }}
+try {{
+    $processes = Get-Process -Name '{primary_cmd}' -ErrorAction SilentlyContinue
+    if ($processes) {{
+        $processes | ForEach-Object {{
+            $procInfo = @{{
+                "pid" = $_.Id
+                "name" = $_.ProcessName
+                "start_time" = $_.StartTime.ToString()
             }}
-
-            if ($matchesPrimary -and $matchCount -ge 1) {{
-                $procInfo = @{{
-                    "pid" = $_.Id
-                    "name" = $_.ProcessName
-                    "cmdline" = $cmdline
-                    "status" = $_.Status
-                    "start_time" = $_.StartTime
-                }} | ConvertTo-Json -Compress
-                Write-Output $procInfo
-            }}
+            Write-Output ($procInfo | ConvertTo-Json -Compress)
         }}
-    }} catch {{
-        # Ignore processes we can't access
     }}
+}} catch {{
+    # No processes found or other error
 }}
 """
 
-            result = subprocess.run(["powershell", "-Command", ps_script], capture_output=True, text=True, timeout=15)
+            result = subprocess.run([POWERSHELL_CMD, "-Command", ps_script], capture_output=True, text=True, timeout=5)
 
             if result.returncode == 0:
                 output_lines = [line.strip() for line in result.stdout.strip().split("\n") if line.strip()]
@@ -301,6 +298,9 @@ Get-Process | ForEach-Object {{
             else:
                 return {"status": "error", "error": f"Command failed: {result.stderr}", "running": False, "command": command, "tab_name": tab_name}
 
+        except subprocess.TimeoutExpired:
+            logger.error(f"Timeout checking command status for tab '{tab_name}'")
+            return {"status": "timeout", "error": "Timeout checking process status", "running": False, "command": command, "tab_name": tab_name}
         except Exception as e:
             logger.error(f"Error checking command status for tab '{tab_name}': {e}")
             return {"status": "error", "error": str(e), "running": False, "command": command, "tab_name": tab_name}
@@ -407,13 +407,13 @@ if __name__ == "__main__":
             ]}
     try:
         generator = WTLayoutGenerator()
-        script_path = generator.create_wt_layout(sample_layout, None)
+        script_path = generator.create_wt_layout(layout_config=sample_layout, output_dir=None)
         print(f"✅ Windows Terminal layout created: {script_path}")
-        preview = generator.get_wt_layout_preview(sample_layout)
-        print(f"\n📋 Command Preview:\n{preview}")
-        print("\n🔍 Current status:")
+        preview = generator.get_wt_layout_preview(layout_config=sample_layout)
+        print(f"📋 Command Preview:\n{preview}")
+        print("🔍 Current status:")
         generator.print_status_report()
-        print("\n▶️  To run this layout, execute:")
+        print("▶️  To run this layout, execute:")
         print(f'   powershell -ExecutionPolicy Bypass -File "{script_path}"')
     except Exception as e:
         print(f"❌ Error: {e}")
