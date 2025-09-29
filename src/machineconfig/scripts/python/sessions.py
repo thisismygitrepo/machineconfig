@@ -50,7 +50,7 @@ def select_layout(layouts_json_file: Path, selected_layouts_names: Optional[list
     return layouts_chosen
 
 
-def handle_layout_args(layout_path: str, select_layouts: Optional[str], select_interactively: bool) -> list["LayoutConfig"]:
+def find_layout_file(layout_path: str, ) -> Path:
     from machineconfig.utils.path_extended import PathExtended
     from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_interest
     from machineconfig.utils.options import choose_from_options
@@ -66,23 +66,24 @@ def handle_layout_args(layout_path: str, select_layouts: Optional[str], select_i
         choice_file = PathExtended(choice_file)
     else:
         choice_file = path_obj
-    selected_layouts = select_layout(layouts_json_file=choice_file, selected_layouts_names=select_layouts.split(",") if select_layouts else None, select_interactively=select_interactively)
-    return selected_layouts
+    return choice_file
 
 
 def launch(layout_path: str = typer.Argument(..., help="Path to the layout.json file"),
         max_tabs: int = typer.Option(10, help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch."),
         max_layouts: int = typer.Option(10, help="A Sanity checker that throws an error if the total number of layouts exceeds this number."),
         sleep_inbetween: float = typer.Option(1.0, help="Sleep time in seconds between launching layouts"),
-        monitor: bool = typer.Option(False, help="Monitor the layout sessions for completion"),
-        parallel: bool = typer.Option(False, help="Launch multiple layouts in parallel"),
-        kill_upon_completion: bool = typer.Option(False, help="Kill session(s) upon completion (only relevant if monitor flag is set)"),
-        select: Optional[str] = typer.Option(None, help="Comma separated names of layouts to be selected from the layout file passed"),
-        select_interactively: bool = typer.Option(False, help="Select layouts interactively")
+        monitor: bool = typer.Option(False, "--monitor", "-m", help="Monitor the layout sessions for completion"),
+        parallel: bool = typer.Option(False, "--parallel", "-p", help="Launch multiple layouts in parallel"),
+        kill_upon_completion: bool = typer.Option(False, "--kill-upon-completion", "-k", help="Kill session(s) upon completion (only relevant if monitor flag is set)"),
+        choose: Optional[str] = typer.Option(None, "--choose", "-c", help="Comma separated names of layouts to be selected from the layout file passed"),
+        choose_interactively: bool = typer.Option(False, "--choose-interactively", "-ia", help="Select layouts interactively")
         ):
     """
+    Launch terminal sessions based on a layout configuration file.
     """
-    layouts_selected = handle_layout_args(layout_path=layout_path, select_layouts=select, select_interactively=select_interactively)
+    layout_path_resolved = find_layout_file(layout_path=layout_path)
+    layouts_selected = select_layout(layouts_json_file=layout_path_resolved, selected_layouts_names=choose.split(",") if choose else None, select_interactively=choose_interactively)
 
     # ============= Basic sanity checks =============
     if len(layouts_selected) > max_layouts:
