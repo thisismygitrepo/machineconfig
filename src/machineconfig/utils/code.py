@@ -115,8 +115,8 @@ def run_script(program: str):
     console.print(Panel(Syntax(code=program, lexer=lexer), title=f"📄script @ {temp_script_path}", subtitle="shell code"), style="bold red")
     if platform.system() == "Windows":
         import subprocess
-        subprocess.run(["powershell", "-ExecutionPolicy", "Bypass", "-File", str(temp_script_path)], check=True, shell=True)
+        subprocess.run(f'powershell -ExecutionPolicy Bypass -File "{temp_script_path}"', check=True, shell=True)
     elif platform.system() == "Linux" or platform.system() == "Darwin":
         import subprocess
-        subprocess.run(["bash", str(temp_script_path)], check=True, shell=True)
+        subprocess.run(f"bash {str(temp_script_path)}", check=True, shell=True)
     temp_script_path.unlink(missing_ok=True)

@@ -8,6 +8,10 @@ using PowerShell scripts and font enumeration.
 import subprocess
 from typing import Iterable
 
+from rich import box
+from rich.console import Console
+from rich.panel import Panel
+
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 from machineconfig.utils.installer_utils.installer_class import Installer
@@ -42,6 +46,13 @@ REQUIRED_FONT_PATTERNS: tuple[str, ...] = (
 )
 
 
+console = Console()
+
+
+def render_banner(message: str, title: str, border_style: str, box_style: box.Box) -> None:
+    console.print(Panel.fit(message, title=title, border_style=border_style, box=box_style, padding=(1, 4)))
+
+
 def _list_installed_fonts() -> list[str]:
     """Return list of installed font file base names (without extension) on Windows.
 
@@ -64,7 +75,7 @@ def _list_installed_fonts() -> list[str]:
         fonts = [x.strip().replace("_", "") for x in res.stdout.splitlines() if x.strip() != ""]
         return fonts
     except Exception as exc:  # noqa: BLE001
-        print(f"⚠️ Could not enumerate installed fonts (continuing with install). Reason: {exc}")
+        console.print(f"⚠️ Could not enumerate installed fonts (continuing with install). Reason: {exc}")
         return []
 
 
@@ -100,26 +111,28 @@ def install_nerd_fonts() -> None:
     Raises:
         subprocess.CalledProcessError: If PowerShell installation fails
     """
-    print(f"\n{'=' * 80}\n📦 INSTALLING NERD FONTS 📦\n{'=' * 80}")
+    console.print()
+    render_banner("📦 INSTALLING NERD FONTS 📦", "Nerd Fonts Installer", "magenta", box.DOUBLE)
+    console.print()
     
     installed = _list_installed_fonts()
     missing = _missing_required_fonts(installed)
     
     if len(missing) == 0:
-        print("✅ Required Nerd Fonts already installed. Skipping download & install.")
+        console.print("✅ Required Nerd Fonts already installed. Skipping download & install.")
         return
         
-    print(f"🔍 Missing fonts detected: {', '.join(missing)}. Proceeding with installation...")
-    print("🔍 Downloading Nerd Fonts package...")
+    console.print(f"🔍 Missing fonts detected: {', '.join(missing)}. Proceeding with installation...")
+    console.print("🔍 Downloading Nerd Fonts package...")
     
     folder, _version_to_be_installed = Installer(installer_data=nerd_fonts).download(version=None)
 
-    print("🧹 Cleaning up unnecessary files...")
+    console.print("🧹 Cleaning up unnecessary files...")
     [p.delete(sure=True) for p in folder.search("*Windows*")]
     [p.delete(sure=True) for p in folder.search("*readme*")]
     [p.delete(sure=True) for p in folder.search("*LICENSE*")]
 
-    print("⚙️  Installing fonts via PowerShell...")
+    console.print("⚙️  Installing fonts via PowerShell...")
     file = PathExtended.tmpfile(suffix=".ps1")
     file.parent.mkdir(parents=True, exist_ok=True)
     
@@ -131,13 +144,15 @@ def install_nerd_fonts() -> None:
     try:
         subprocess.run(rf"powershell.exe -executionpolicy Bypass -nologo -noninteractive -File {str(file)}", check=True)
     except subprocess.CalledProcessError as cpe:
-        print(f"💥 Font installation script failed: {cpe}")
+        console.print(f"💥 Font installation script failed: {cpe}")
         raise
     finally:
-        print("🗑️  Cleaning up temporary files...")
+        console.print("🗑️  Cleaning up temporary files...")
         if folder.exists():
             folder.delete(sure=True)
         if file.exists():
             file.delete(sure=True)
 
-    print(f"\n✅ Nerd Fonts installation complete! ✅\n{'=' * 80}")
+    console.print()
+    render_banner("✅ Nerd Fonts installation complete! ✅", "Nerd Fonts Installer", "green", box.DOUBLE)
+    console.print()

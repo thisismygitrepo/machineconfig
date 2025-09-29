@@ -44,6 +44,10 @@ def extract_kwargs(args: FireJobArgs) -> dict[str, object]:
     
     # Look for Fire-style arguments in sys.argv
     for arg in sys.argv:
+        # Skip the -- separator
+        if arg == '--':
+            continue
+            
         # Match patterns like --key=value or --key value (but we'll focus on --key=value)
         if arg.startswith('--') and '=' in arg:
             key, value = arg[2:].split('=', 1)  # Remove -- prefix and split on first =
@@ -53,6 +57,11 @@ def extract_kwargs(args: FireJobArgs) -> dict[str, object]:
         elif arg.startswith('--') and '=' not in arg:
             # Handle boolean flags like --debug
             key = arg[2:]  # Remove -- prefix
+            
+            # Skip empty key (this would happen if someone just used '--')
+            if not key:
+                continue
+                
             # Check if next argument exists and doesn't start with --
             arg_index = sys.argv.index(arg)
             if arg_index + 1 < len(sys.argv) and not sys.argv[arg_index + 1].startswith('--'):

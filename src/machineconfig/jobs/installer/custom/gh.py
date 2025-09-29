@@ -23,18 +23,7 @@ config_dict: InstallerData = {
     "appName": "gh",
     "repoURL": "https://github.com/cli/cli",
     "doc": "GitHub CLI",
-    "fileNamePattern": {
-        "amd64": {
-            "windows": "gh_{version}_windows_amd64.msi",
-            "linux": "gh_{version}_linux_amd64.deb",
-            "macos": "gh_{version}_macOS_amd64.pkg",
-        },
-        "arm64": {
-            "windows": "gh_{version}_windows_arm64.msi",
-            "linux": "gh_{version}_linux_arm64.deb",
-            "macos": "gh_{version}_macOS_arm64.pkg",
-        },
-    },
+    "fileNamePattern": {"amd64": {"windows": "gh_{version}_windows_amd64.msi", "linux": "gh_{version}_linux_amd64.deb", "macos": "gh_{version}_macOS_amd64.pkg"}, "arm64": {"windows": "gh_{version}_windows_arm64.msi", "linux": "gh_{version}_linux_arm64.deb", "macos": "gh_{version}_macOS_arm64.pkg"}},
 }
 
 
@@ -49,9 +38,7 @@ def main(version: Optional[str]):
 
     _ = version
     inst = Installer(installer_data=config_dict)
-    print("""
-📦 INSTALLATION | Installing GitHub CLI base package...
-""")
+    print("""📦 INSTALLATION | Installing GitHub CLI base package...""")
     inst.install(version=version)
 
     print(f"""
