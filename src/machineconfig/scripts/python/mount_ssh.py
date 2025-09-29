@@ -1,8 +1,8 @@
 """Mount a remote SSHFS share on a local directory"""
 
 from platform import system
+import subprocess
 from machineconfig.utils.ssh import SSH
-from machineconfig.utils.terminal import Terminal
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 
 from machineconfig.utils.options import choose_ssh_host
@@ -27,7 +27,8 @@ def main():
 
     if system() == "Windows":
         print("\n🔍 Checking existing drives...")
-        print(Terminal().run("net use", shell="powershell").op)
+        completed = subprocess.run(["powershell", "-Command", "net use"], capture_output=True, check=False, text=True)
+        print((completed.stdout or "").strip())
         driver_letter = input(r"🖥️ Choose driver letter (e.g., Z:\\) [Avoid already used ones]: ") or "Z:\\"
     else:
         driver_letter = None
@@ -53,8 +54,6 @@ fusermount -u /mnt/dbhdd
         raise ValueError(f"❌ Not implemented for this system: {system()}")
 
     # PROGRAM_PATH.write_text(txt, encoding="utf-8")
-    import subprocess
-
     subprocess.run(txt, shell=True, check=True)
     print("✅ Configuration saved successfully!\n")
 

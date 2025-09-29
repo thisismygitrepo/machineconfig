@@ -5,14 +5,55 @@ import time
 from pathlib import Path
 import sys
 import subprocess
+import os
 from platform import system
 from typing import Any, Optional, Union, Callable, TypeAlias, Literal
+
+from machineconfig.utils.terminal import Response
 
 
 OPLike: TypeAlias = Union[str, "PathExtended", Path, None]
 PLike: TypeAlias = Union[str, "PathExtended", Path]
 FILE_MODE: TypeAlias = Literal["r", "w", "x", "a"]
 SHUTIL_FORMATS: TypeAlias = Literal["zip", "tar", "gztar", "bztar", "xztar"]
+
+
+def _is_user_admin() -> bool:
+    if os.name == "nt":
+        try:
+            return __import__("ctypes").windll.shell32.IsUserAnAdmin()
+        except Exception:  # noqa: BLE001
+            import traceback
+
+            traceback.print_exc()
+            print("Admin check failed, assuming not an admin.")
+            return False
+    return os.getuid() == 0
+
+
+def _run_shell_command(
+    command: str,
+    shell_name: str,
+    *,
+    stdout: Optional[int] = subprocess.PIPE,
+    stderr: Optional[int] = subprocess.PIPE,
+    stdin: Optional[int] = None,
+    check: bool = False,
+) -> subprocess.CompletedProcess[str]:
+    if shell_name in {"powershell", "pwsh"} and sys.platform == "win32":
+        args: list[str] = [shell_name, "-Command", command]
+        return subprocess.run(args, check=check, text=True, stdout=stdout, stderr=stderr, stdin=stdin)
+    executable = "/bin/bash" if shell_name == "bash" and sys.platform != "win32" else None
+    return subprocess.run(
+        command,
+        check=check,
+        text=True,
+        stdout=stdout,
+        stderr=stderr,
+        stdin=stdin,
+        shell=True,
+        executable=executable,
+    )
 
 
 def pwd2key(password: str, salt: Optional[bytes] = None, iterations: int = 10) -> bytes:  # Derive a secret key from a given password and salt"""
@@ -392,9 +433,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             assert target_obj.exists(), f"Target path `{target}` (aka `{target_obj}`) doesn't exist. This will create a broken link."
         if overwrite and (self.is_symlink() or self.exists()):
             self.delete(sure=True, verbose=verbose)
-        from machineconfig.utils.terminal import Terminal
-
-        if system() == "Windows" and not Terminal.is_user_admin():  # you cannot create symlink without priviliages.
+        if system() == "Windows" and not _is_user_admin():  # you cannot create symlink without priviliages.
             import win32com.shell.shell  # type: ignore # pylint: disable=E0401
 
             _proce_info = win32com.shell.shell.ShellExecuteEx(lpVerb="runas", lpFile=sys.executable, lpParameters=f" -c \"from pathlib import Path; Path(r'{self.expanduser()}').symlink_to(r'{str(target_obj)}')\"")
@@ -884,8 +923,9 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             if verbose:
                 print("🔗 SHARING FILE")
             shell_to_use = "powershell" if sys.platform == "win32" else "bash"
-            from machineconfig.utils.terminal import Terminal
-            res = Terminal().run(f"""rclone link '{cloud}:{rp.as_posix()}'""", shell=shell_to_use).capture()
+            command = f"rclone link '{cloud}:{rp.as_posix()}'"
+            completed = _run_shell_command(command, shell_to_use)
+            res = Response.from_completed_process(completed).capture()
             tmp = res.op2path(strict_err=False, strict_returncode=False)
             if tmp is None:
                 res.print()
@@ -955,11 +995,13 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
 
         rclone_cmd += f" --progress --transfers={transfers} --verbose"
         rclone_cmd += " --delete-during" if delete else ""
-        from machineconfig.utils.terminal import Terminal
         if verbose:
             print(rclone_cmd)
         shell_to_use = "powershell" if sys.platform == "win32" else "bash"
-        res = Terminal(stdout=None if verbose else subprocess.PIPE).run(rclone_cmd, shell=shell_to_use)
+        stdout_target: Optional[int] = None if verbose else subprocess.PIPE
+        stderr_target: Optional[int] = None if verbose else subprocess.PIPE
+        completed = _run_shell_command(rclone_cmd, shell_to_use, stdout=stdout_target, stderr=stderr_target)
+        res = Response.from_completed_process(completed)
         success = res.is_successful(strict_err=False, strict_returcode=True)
         if not success:
             res.print(capture=False, desc="Cloud Storage Operation")

@@ -1,10 +1,11 @@
 from machineconfig.utils.path_extended import PathExtended as PathExtended
-from machineconfig.utils.terminal import Terminal
+from machineconfig.utils.terminal import Response
 from machineconfig.scripts.python.get_zellij_cmd import get_zellij_cmd
 from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
 from machineconfig.utils.io import read_ini
 from machineconfig.utils.code import write_shell_script_to_file
 import platform
+import subprocess
 from rich.console import Console
 from rich.panel import Panel
 
@@ -89,7 +90,8 @@ sudo chmod 700 $HOME/.ssh
 sudo chmod +x $HOME/dotfiles/scripts/linux -R
 """
     shell_path = write_shell_script_to_file(shell_script=script)
-    Terminal().run(f". {shell_path}", shell="bash").capture().print()
+    completed = subprocess.run(f". {shell_path}", capture_output=True, check=False, text=True, shell=True)
+    Response.from_completed_process(completed).capture().print()
 
     console.print(Panel("✅ Dotfiles successfully fetched and installed", title="[bold green]Dotfiles[/bold green]", border_style="green"))
 

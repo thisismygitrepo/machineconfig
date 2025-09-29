@@ -120,3 +120,12 @@ def run_script(program: str):
         import subprocess
         subprocess.run(f"bash {str(temp_script_path)}", check=True, shell=True)
     temp_script_path.unlink(missing_ok=True)
+# def run_command(command: str, description: str) -> bool:
+#     """Execute a shell command and return success status."""
+#     console.print(f"\n🔧 {description}", style="bold cyan")
+#     try:
+#         result = subprocess.run(command, shell=True, check=True, capture_output=False)
+#         return result.returncode == 0
+#     except subprocess.CalledProcessError as e:
+#         console.print(f"❌ Error executing command: {e}", style="bold red")
+#         return False

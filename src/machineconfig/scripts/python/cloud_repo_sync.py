@@ -4,13 +4,14 @@ from pathlib import Path
 import git
 from machineconfig.utils.io import read_ini
 from machineconfig.utils.path_extended import PathExtended as PathExtended
-from machineconfig.utils.terminal import Terminal
+from machineconfig.utils.terminal import Response
 
 from machineconfig.scripts.python.helpers.repo_sync_helpers import fetch_dotfiles
 from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
 from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.code import get_shell_file_executing_python_script, write_shell_script_to_file
 import platform
+import subprocess
 from typing import Optional, Literal
 from rich.console import Console
 from rich.panel import Panel
@@ -73,7 +74,12 @@ git pull originEnc master
 """
 
     shell_path = write_shell_script_to_file(shell_script=script)
-    res = Terminal().run(f". {shell_path}", shell="powershell").capture().print()
+    command = f". {shell_path}"
+    if platform.system() == "Windows":
+        completed = subprocess.run(["powershell", "-Command", command], capture_output=True, check=False, text=True)
+    else:
+        completed = subprocess.run(command, shell=True, capture_output=True, check=False, text=True)
+    res = Response.from_completed_process(completed).capture().print()
 
     if res.is_successful(strict_err=True, strict_returcode=True):
         console.print(Panel("✅ Pull succeeded!\n🧹 Removing originEnc remote and local copy\n📤 Pushing merged repository to cloud storage", title="Success", border_style="green"))
@@ -161,8 +167,6 @@ git commit -am "finished merging"
             case _:
                 raise ValueError(f"Unknown action: {action}")
         # PROGRAM_PATH.write_text(program_content, encoding="utf-8")
-        import subprocess
-
         subprocess.run(program_content, shell=True, check=True)
 
     return program_content

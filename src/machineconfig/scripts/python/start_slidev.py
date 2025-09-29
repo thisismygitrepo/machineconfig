@@ -5,7 +5,7 @@ slidev
 from machineconfig.utils.source_of_truth import CONFIG_PATH
 from machineconfig.utils.code import print_code
 from machineconfig.utils.path_extended import PathExtended as PathExtended
-from machineconfig.utils.terminal import Terminal
+from machineconfig.utils.terminal import Response
 from typing import Annotated, Optional
 import typer
 import subprocess
@@ -16,8 +16,18 @@ PORT_DEFAULT = 3030
 SLIDEV_REPO = PathExtended(CONFIG_PATH).joinpath(".cache/slidev")
 if not SLIDEV_REPO.joinpath("components").exists():
     print("📦 Initializing Slidev repository...")
-    Terminal(stderr=subprocess.PIPE, stdin=subprocess.PIPE, stdout=subprocess.PIPE).run(f"cd {SLIDEV_REPO.parent};npm init slidev@latest")
+    subprocess.run(f"cd {SLIDEV_REPO.parent};npm init slidev@latest", check=False, shell=True, text=True)
     print("✅ Slidev repository initialized successfully!\n")
+
+
+def _execute_with_shell(command: str) -> Response:
+    if platform.system() == "Windows":
+        completed = subprocess.run(["powershell", "-Command", command], capture_output=True, check=False, text=True)
+    else:
+        completed = subprocess.run(command, capture_output=True, check=False, text=True, shell=True)
+    response = Response.from_completed_process(completed)
+    response.print()
+    return response
 
 
 def jupyter_to_markdown(file: PathExtended):
@@ -35,9 +45,9 @@ def jupyter_to_markdown(file: PathExtended):
     # for key, value in resources['outputs'].items():
 
     cmd = f"jupyter nbconvert --to markdown --no-prompt --no-input --output-dir {op_dir} --output slides_raw.md {file}"
-    Terminal().run(cmd, shell="powershell").print()
+    _execute_with_shell(cmd)
     cmd = f"jupyter nbconvert --to html --no-prompt --no-input --output-dir {op_dir} {file}"
-    Terminal().run(cmd, shell="powershell").print()
+    _execute_with_shell(cmd)
 
     op_file = op_dir.joinpath("slides_raw.md")
     slide_separator = "\n\n---\n\n"

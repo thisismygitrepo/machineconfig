@@ -2,7 +2,6 @@
 cargo install
 """
 
-# from machineconfig.utils.terminal import Terminal
 # from machineconfig.utils.path_reduced import P as PathExtended
 # import platform
 

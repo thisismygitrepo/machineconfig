@@ -2,10 +2,29 @@ from typing import Optional, Any, Union, List
 import os
 from dataclasses import dataclass
 import rich.console
-from machineconfig.utils.terminal import Terminal, Response, MACHINE
+from machineconfig.utils.terminal import Response, MACHINE
 from machineconfig.utils.path_extended import PathExtended, PLike, OPLike
 from machineconfig.utils.accessories import pprint
 # from machineconfig.utils.ve import get_ve_activate_line
+
+
+def get_header(wdir: OPLike, toolbox: bool):
+    if toolbox:
+        toobox_code = """
+try:
+from crocodile.toolbox import *
+except ImportError:
+print("Crocodile not found, skipping import.")
+pass
+"""
+    else:
+        toobox_code = "# No toolbox import."
+    return f"""
+# >> Code prepended
+{toobox_code}
+{'''sys.path.insert(0, r'{wdir}') ''' if wdir is not None else "# No path insertion."}
+# >> End of header, start of script passed
+"""
 
 
 @dataclass
@@ -217,7 +236,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         assert '"' not in cmd, 'Avoid using `"` in your command. I dont know how to handle this when passing is as command to python in pwsh command.'
         if not return_obj:
             return self.run(
-                cmd=f"""uv run --no-dev --project $HOME/code/machineconfig -c "{Terminal.get_header(wdir=None, toolbox=True)}{cmd}\n""" + '"',
+                cmd=f"""uv run --no-dev --project $HOME/code/machineconfig -c "{get_header(wdir=None, toolbox=True)}{cmd}\n""" + '"',
                 desc=desc or f"run_py on {self.get_remote_repr()}",
                 verbose=verbose,
                 strict_err=strict_err,
@@ -350,12 +369,3 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             self.run_py(f"P(r'{source.as_posix()}').delete(sure=True)", desc="Cleaning temp zip files @ remote.", strict_returncode=True, strict_err=True)
         print("\n")
         return target
-
-    # def print_summary(self):
-    #     import polars as pl
-    #     df = pl.DataFrame(List(self.terminal_responses).apply(lambda rsp: dict(desc=rsp.desc, err=rsp.err, returncode=rsp.returncode)).list)
-    #     print("\nSummary of operations performed:")
-    #     print(df.to_pandas().to_markdown())
-    #     if ((df.select('returncode').to_series().to_list()[2:] == [None] * (len(df) - 2)) and (df.select('err').to_series().to_list()[2:] == [''] * (len(df) - 2))): print("\nAll operations completed successfully.\n")
-    #     else: print("\nSome operations failed. \n")
-    #     return df

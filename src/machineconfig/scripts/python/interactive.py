@@ -17,7 +17,6 @@ for better user experience with checkbox selections.
 
 """
 
-import subprocess
 import sys
 from pathlib import Path
 from platform import system
@@ -28,21 +27,12 @@ from questionary import Choice
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
-
+from machineconfig.utils.code import run_script as run_command
 
 _ = cast
 console = Console()
 
 
-def run_command(command: str, description: str) -> bool:
-    """Execute a shell command and return success status."""
-    console.print(f"\n🔧 {description}", style="bold cyan")
-    try:
-        result = subprocess.run(command, shell=True, check=True, capture_output=False)
-        return result.returncode == 0
-    except subprocess.CalledProcessError as e:
-        console.print(f"❌ Error executing command: {e}", style="bold red")
-        return False
 def display_header() -> None:
     """Display the script header."""
     header_text = Text("MACHINE CONFIGURATION", style="bold magenta")
@@ -111,6 +101,7 @@ def get_installation_choices() -> list[str]:
         Choice(value="TerminalEyeCandy", title="🎨 Install ASCII Art Libraries    - Terminal visualization tools", checked=False),
         Choice(value="install_repos", title="🐍 Install Repos                - Set up Python environment and repositories permanently.", checked=False),
         Choice(value="install_ssh_server", title="🔒 Install SSH Server             - Set up remote access", checked=False),
+        Choice(value="install_shell_profile", title="🐚 Configure Shell Profile         - Source machineconfig shell initialization", checked=False),
         Choice(value="create_symlinks", title="🔗 Create Symlinks                - Set up configuration symlinks (finish dotfiles transfer first)", checked=False),
         Choice(value="retrieve_repositories", title="📚 Retrieve Repositories          - Clone repositories to ~/code", checked=False),
         Choice(value="retrieve_data", title="💾 Retrieve Data                  - Backup restoration", checked=False),
@@ -124,36 +115,35 @@ def get_installation_choices() -> list[str]:
 
 def execute_installations(selected_options: list[str]) -> None:
     """Execute the selected installation options."""
-    # Always start with VE setup
-    console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Setting up base virtual environment[/italic]", border_style="green"))
-    run_command("curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash", "Setting up base virtual environment")
-
+    if system() == "Windows":
+        run_command("$HOME/.local/bin/uv.exe self update")
+    else:
+        run_command("$HOME/.local/bin/uv self update")
     for maybe_a_group in selected_options:
         if maybe_a_group in ("ESSENTIAL", "DEV", "ESSENTIAL_SYSTEM", "DEV_SYSTEM", "TerminalEyeCandy"):
             console.print(Panel("⚡ [bold bright_yellow]CLI APPLICATIONS[/bold bright_yellow]\n[italic]Command-line tools installation[/italic]", border_style="bright_yellow"))
             console.print("🔧 Installing CLI applications", style="bold cyan")
             try:
                 from machineconfig.scripts.python.devops_devapps_install import main as devops_devapps_install_main
-                # maybe_a_group = cast(PA, maybe_a_group)
                 devops_devapps_install_main(group=maybe_a_group)  # type: ignore
                 console.print("✅ CLI applications installed successfully", style="bold green")
             except Exception as e:
                 console.print(f"❌ Error installing CLI applications: {e}", style="bold red")
-            run_command(". $HOME/.bashrc", "Reloading bash configuration")
+            run_command(". $HOME/.bashrc")
 
     if "upgrade_system" in selected_options:
         if system() == "Windows":
             console.print("❌ System upgrade is not applicable on Windows via this script.", style="bold red")
         elif system() == "Linux":
             console.print(Panel("🔄 [bold magenta]SYSTEM UPDATE[/bold magenta]\n[italic]Package management[/italic]", border_style="magenta"))
-            run_command("sudo nala upgrade -y", "Upgrading system packages")
+            run_command("sudo nala upgrade -y")
         else:
             console.print(f"❌ System upgrade not supported on {system()}.", style="bold red")
     if "install_repos" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
         from machineconfig import setup_linux as module
         script = Path(module.__file__).parent / "repos.sh"
-        run_command(f"bash {script}", "Setting up Python environment and repositories")
+        run_command(f"bash {script}")
 
     if "install_ssh_server" in selected_options:
         console.print(Panel("🔒 [bold red]SSH SERVER[/bold red]\n[italic]Remote access setup[/italic]", border_style="red"))
@@ -162,9 +152,20 @@ def execute_installations(selected_options: list[str]) -> None:
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 Start-Service sshd
 Set-Service -Name sshd -StartupType 'Automatic'"""
-            run_command(f'powershell -Command "{powershell_script}"', "Installing and configuring SSH server")
+            run_command(f'powershell -Command "{powershell_script}"')
         else:
-            run_command("sudo nala install openssh-server -y", "Installing SSH server")
+            run_command("sudo nala install openssh-server -y")
+
+    if "install_shell_profile" in selected_options:
+        console.print(Panel("🐚 [bold green]SHELL PROFILE[/bold green]\n[italic]Shell configuration setup[/italic]", border_style="green"))
+        console.print("🔧 Configuring shell profile", style="bold cyan")
+        try:
+            from machineconfig.profile.create import main_profile
+
+            main_profile()
+            console.print("✅ Shell profile configured successfully", style="bold green")
+        except Exception as e:
+            console.print(f"❌ Error configuring shell profile: {e}", style="bold red")
 
     if "create_symlinks" in selected_options:
         display_dotfiles_instructions()
@@ -178,8 +179,8 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
                 console.print("✅ Symlinks created successfully", style="bold green")
             except Exception as e:
                 console.print(f"❌ Error creating symlinks: {e}", style="bold red")
-            run_command("sudo chmod 600 $HOME/.ssh/*", "Setting SSH key permissions")
-            run_command("sudo chmod 700 $HOME/.ssh", "Setting SSH directory permissions")
+            run_command("sudo chmod 600 $HOME/.ssh/*")
+            run_command("sudo chmod 700 $HOME/.ssh")
         else:
             console.print("⏭️  Skipping symlink creation - finish dotfiles transfer first", style="yellow")
 

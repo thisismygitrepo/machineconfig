@@ -3,14 +3,12 @@
 from rich import box
 from rich.console import Console
 from rich.panel import Panel
-from machineconfig.utils.terminal import Terminal
 import subprocess
 import platform
 from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-_ = Terminal, subprocess
 # as per https://www.lunarvim.org/docs/installation
 
 

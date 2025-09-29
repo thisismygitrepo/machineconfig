@@ -2,10 +2,10 @@
 
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.ssh import SSH
-from machineconfig.utils.terminal import Terminal
 from machineconfig.utils.options import choose_from_options, choose_ssh_host
 
 import platform
+import subprocess
 
 
 def main():
@@ -49,15 +49,14 @@ share_path={share_path}
 local_mount_point={local_mount_point}
         """
         # PROGRAM_PATH.write_text(txt)
-        import subprocess
-
         subprocess.run(txt, shell=True, check=True)
 
         print("✅ Mount paths prepared successfully!\n")
 
     elif platform.system() == "Windows":
         print("\n🔍 Checking existing drives...")
-        print(Terminal().run("Get-PSDrive -PSProvider 'FileSystem'", shell="powershell").op)
+        completed = subprocess.run(["powershell", "-Command", "Get-PSDrive -PSProvider 'FileSystem'"], capture_output=True, check=False, text=True)
+        print((completed.stdout or "").strip())
         driver_letter = input(r"🖥️ Choose driver letter (e.g., Z:\\) [Avoid already used ones]: ") or "Z:\\"
         txt = f"""
 $server = "{remote_server}"
@@ -65,8 +64,6 @@ $sharePath = "{share_path}"
 $driveLetter = "{driver_letter}"
 """
         # PROGRAM_PATH.write_text(txt)
-        import subprocess
-
         subprocess.run(txt, shell=True, check=True)
         print("✅ Drive letter selected and configuration saved!\n")
 
