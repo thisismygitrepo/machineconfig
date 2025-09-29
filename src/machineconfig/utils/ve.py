@@ -1,10 +1,10 @@
-from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.io import read_ini
 import platform
 from typing import Optional
+from pathlib import Path
 
 
-def get_ve_path_and_ipython_profile(init_path: PathExtended) -> tuple[Optional[str], Optional[str]]:
+def get_ve_path_and_ipython_profile(init_path: Path) -> tuple[Optional[str], Optional[str]]:
     """Works with .ve.ini .venv and .ve_path"""
     ve_path: Optional[str] = None
     ipy_profile: Optional[str] = None
@@ -40,7 +40,7 @@ def get_ve_path_and_ipython_profile(init_path: PathExtended) -> tuple[Optional[s
 
 def get_ve_activate_line(ve_root: str):
     if platform.system() == "Windows":
-        q = PathExtended(ve_root).expanduser().relative_to(PathExtended.home())
+        q = Path(ve_root).expanduser().relative_to(Path.home()).as_posix()
         activate_ve_line = f". $HOME/{q}/Scripts/activate.ps1"
     elif platform.system() in ["Linux", "Darwin"]:
         activate_ve_line = f". {ve_root}/bin/activate"

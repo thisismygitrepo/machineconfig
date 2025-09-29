@@ -21,13 +21,11 @@ echo "Executing `{exec_line}`"
 {exec_line}
 deactivate || true
 """
-
     if strict_execution:
         if platform.system() == "Windows":
             shell_script = """$ErrorActionPreference = "Stop" """ + "\n" + shell_script
         if platform.system() in ["Linux", "Darwin"]:
             shell_script = "set -e" + "\n" + shell_script
-
     if platform.system() in ["Linux", "Darwin"]:
         shell_script = "#!/bin/bash" + "\n" + shell_script  # vs #!/usr/bin/env bash
     return shell_script
@@ -35,10 +33,8 @@ deactivate || true
 
 def get_shell_file_executing_python_script(python_script: str, ve_path: str, verbose: bool = True):
     if verbose:
-        python_script = (
-            f"""
-code = r'''{python_script}''' """
-            + """
+        python_script = f"""
+code = r'''{python_script}'''
 try:
     from machineconfig.utils.utils import print_code
     print_code(code=code, lexer="python", desc="Python Script")
@@ -47,9 +43,7 @@ except ImportError:
     from rich.panel import Panel
     console = Console()
     console.print(Panel(f'''📜 PYTHON SCRIPT:\n\n{{code}}''', title="Python Script", expand=False))
-"""
-            + python_script
-        )
+""" + python_script
     python_file = PathExtended.tmp().joinpath("tmp_scripts", "python", randstr() + ".py")
     python_file.parent.mkdir(parents=True, exist_ok=True)
     python_file.write_text(python_script, encoding="utf-8")
@@ -71,11 +65,6 @@ def write_shell_script_to_file(shell_script: str):
     return shell_file
 
 
-# Enhanced print/log/error/exception statements for better clarity and consistency
-# Improved formatting and language of messages
-# Ensured consistent use of f-strings with triple quotes where applicable
-
-
 def write_shell_script_to_default_program_path(program: str, desc: str, preserve_cwd: bool, display: bool, execute: bool):
     if preserve_cwd:
         if platform.system() == "Windows":
@@ -84,8 +73,6 @@ def write_shell_script_to_default_program_path(program: str, desc: str, preserve
             program = 'orig_path=$(cd -- "." && pwd)\n' + program + '\ncd "$orig_path" || exit'
     if display:
         print_code(code=program, lexer="shell", desc=desc, subtitle="PROGRAM")
-    # PROGRAM_PATH.parent.mkdir(parents=True, exist_ok=True)
-    # PROGRAM_PATH.write_text(program, encoding="utf-8")
     if execute:
         result = subprocess.run(program, shell=True, capture_output=True, text=True)
         success = result.returncode == 0 and result.stderr == ""
@@ -109,3 +96,27 @@ def print_code(code: str, lexer: str, desc: str, subtitle: str = ""):
             raise NotImplementedError(f"Platform {platform.system()} not supported for lexer {lexer}")
     console = Console()
     console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}", subtitle=subtitle), style="bold red")
+
+
+def run_script(program: str):
+    import tempfile
+    if platform.system() == "Windows":
+        suffix = ".ps1"
+        lexer = "powershell"
+    else:
+        suffix = ".sh"
+        lexer = "bash"
+    with tempfile.NamedTemporaryFile(mode='w', suffix=suffix, delete=False, encoding='utf-8') as temp_file:
+        temp_file.write(program)
+        temp_script_path = PathExtended(temp_file.name)
+    console = Console()
+    # console.print(f"📝 [blue]Temporary script written to:[/blue] [green]{temp_script_path}[/green]")
+    from rich.syntax import Syntax
+    console.print(Panel(Syntax(code=program, lexer=lexer), title=f"📄script @ {temp_script_path}", subtitle="shell code"), style="bold red")
+    if platform.system() == "Windows":
+        import subprocess
+        subprocess.run(["powershell", "-ExecutionPolicy", "Bypass", "-File", str(temp_script_path)], check=True, shell=True)
+    elif platform.system() == "Linux" or platform.system() == "Darwin":
+        import subprocess
+        subprocess.run(["bash", str(temp_script_path)], check=True, shell=True)
+    temp_script_path.unlink(missing_ok=True)

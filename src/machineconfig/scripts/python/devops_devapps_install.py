@@ -5,7 +5,6 @@ import typer
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from platform import system
 from typing import Optional, cast, get_args
 from machineconfig.jobs.installer.package_groups import PACKAGE_GROUPS
 
@@ -45,15 +44,12 @@ def _handle_installer_not_found(search_term: str, all_installers: list["Installe
         if len(all_installers) > 10:
             console.print(f"   [dim]... and {len(all_installers) - 10} more[/dim]")
 
-    panel = Panel(
-        f"[bold blue]💡 Use 'ia' to interactively browse all available installers.[/bold blue]\n[bold blue]💡 Use one of the categories: {list(get_args(PACKAGE_GROUPS))}[/bold blue]", title="[yellow]Helpful Tips[/yellow]", border_style="yellow"
-    )
+    panel = Panel(f"[bold blue]💡 Use 'ia' to interactively browse all available installers.[/bold blue]\n[bold blue]💡 Use one of the categories: {list(get_args(PACKAGE_GROUPS))}[/bold blue]", title="[yellow]Helpful Tips[/yellow]", border_style="yellow")
     console.print(panel)
 
 
 def main_with_parser():
     import typer
-
     app = typer.Typer()
     app.command()(main)
     app()
@@ -122,11 +118,12 @@ def get_programs_by_category(package_group: PACKAGE_GROUPS):
         case "DEV_SYSTEM" | "ESSENTIAL_SYSTEM":
             options_system = get_installers_system_groups()
             from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
+            from machineconfig.utils.code import run_script
             for an_item in options_system:
                 if an_item["appName"] == package_group:
                     program = an_item["fileNamePattern"][get_normalized_arch()][get_os_name()]
                     if program is not None:
-                        install_terminal_packages(program)
+                        run_script(program)
 
 
 def choose_from_system_package_groups(options_system: dict[str, tuple[str, str]]) -> str:
@@ -148,33 +145,6 @@ def choose_from_system_package_groups(options_system: dict[str, tuple[str, str]]
             sub_program = sub_program[1:]
         program += "\n" + sub_program
     return program
-
-
-def install_terminal_packages(program: str):
-    from pathlib import Path
-
-    if system() == "Windows":
-        temp_script_path = Path("C:/Windows/Temp/temp_install_script.ps1")
-        lexer = "powershell"
-    else:
-        temp_script_path = Path("/tmp/temp_install_script.sh")
-        lexer = "bash"
-    temp_script_path.write_text(program, encoding="utf-8")
-    console.print(f"📝 [blue]Temporary script written to:[/blue] [green]{temp_script_path}[/green]")
-    from rich.syntax import Syntax
-
-    console.print(Panel(Syntax(code=program, lexer=lexer), title="📄 Installation Program", subtitle="shell code"), style="bold red")
-    console.print("🚀 [bold yellow]Starting installation...[/bold yellow]")
-    if system() == "Windows":
-        import subprocess
-
-        subprocess.run(["powershell", "-ExecutionPolicy", "Bypass", "-File", str(temp_script_path)], check=True)
-    elif system() == "Linux":
-        import subprocess
-
-        subprocess.run(["bash", str(temp_script_path)], check=True)
-    console.print("✅ [bold green]Installation completed.[/bold green]")
-    temp_script_path.unlink(missing_ok=True)
 
 
 def install_clis(clis_names: list[str]):
