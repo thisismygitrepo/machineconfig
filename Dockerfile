@@ -20,7 +20,6 @@ RUN chmod +x /app/setup_linux/*
 
 ENV package_manager="nala"
 RUN /app/setup_linux/apps.sh
-RUN /app/setup_linux/apps_dev.sh
 
 
 # # =================== INSTALL DOCKER SO WE RUN DATABASES IN CONTAINERS ===================

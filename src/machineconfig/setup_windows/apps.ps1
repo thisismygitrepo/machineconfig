@@ -30,36 +30,32 @@ winget install --no-upgrade --name "Node.js"                       --Id "OpenJS.
 winget install --no-upgrade --name "Rustup"                        --Id "Rustlang.Rustup"                        --source winget --scope user --accept-package-agreements --accept-source-agreements  # rust compiler, necessary for some nvim plugins
 winget install --no-upgrade --name "Cloudflare"                    --Id "Cloudflare.cloudflared"                 --source winget --scope user --accept-package-agreements --accept-source-agreements  # cloudflare tunnel client, alternative to ngrok
 winget install --no-upgrade --name "Cloudflare WARP"               --Id "Cloudflare.Warp"                        --source winget --scope user --accept-package-agreements --accept-source-agreements
-$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+winget install --no-upgrade --name "Microsoft Garage Mouse without Borders" --Id "Microsoft.MouseWithoutBorders" --source winget --scope user --accept-package-agreements --accept-source-agreements
 
 
-# ---OTHER
-#winget install --no-upgrade --name "nu"                                 --Id "Nushell.Nushell"                   --source winget --scope user --accept-package-agreements --accept-source-agreements  # add to userpath C:\Program Files\nu\bin, done in symlinks
-#winget install --no-upgrade --name "Google Chrome"                      --Id "Google.Chrome"                     --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "Chrome Remote Desktop Host"         --Id "Google.ChromeRemoteDesktop"        --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "Zoom"                               --Id "Zoom.Zoom"                         --source winget    --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "7-zip"                              --Id "7zip.7zip"                         --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "Mozilla Firefox"                    --Id "Mozilla.Firefox" --source winget   --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "Mozilla Thunderbird (en-US)"        --Id "Mozilla.Thunderbird"               --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "StreamlabsOBS"                      --Id "Streamlabs.StreamlabsOBS"          --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "OBSStudio"                          --Id "OBSProject.OBSStudio"              --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "MiKTeX"                             --Id "MiKTeX.MiKTeX"                     --source winget   --scope user  # library / lanugage
-#winget install --no-upgrade --name "TexMaker"                           --Id "Texmaker.Texmaker"                 --source winget --scope user  # IDE better than simple TexWorks shipped with MikTex. IDE is basically GUI for cmd interface of Tex
-#winget install --no-upgrade --name "notepad++"                          --Id "Notepad++.Notepad++"               --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "Lapce"                              --Id "Lapce.Lapce"                       --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "TesseractOCR"                       --Id "UB-Mannheim.TesseractOCR"          --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "Microsoft Garage Mouse without Borders" --Id "Microsoft.MouseWithoutBorders" --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "perl" -e                            --Id "StrawbgnogerryPerl.StrawberryPerl"     --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "DB Browser for SQLite"              --Id "DBBrowserForSQLite.DBBrowserForSQLite" --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "sql server management studio"       --Id "Microsoft.SQLServerManagementStudio"   --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "Adobe Acrobat Reader DC"            --Id "Adobe.Acrobat.Reader.64-bit"       --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "anaconda3"  --source winget --scope user
-#winget install --no-upgrade --name "miniconda3" --source winget --scope user
-#winget install --no-upgrade --name "julia"                               --Id "Julialang.Julia" --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "Chafa"                               --Id "hpjansson.Chafa" --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "bottom"                              --Id "Clement.bottom" --source winget --scope user --accept-package-agreements --accept-source-agreements
-#winget install --no-upgrade --name "onefetch"                            --Id "o2sh.onefetch" --source winget --scope user  # repo-version of system fastfetch, see also tokei
-#winget install --no-upgrade --name "Just"                               --Id "Casey.Just" --source winget --scope user  # commandline runner
-#winget install --no-upgrade --name "gitui"                              --Id "gitui" --source winget --scope user
-#winget install --no-upgrade --name "hyperfine"                          --Id "sharkdp.hyperfine" --source winget --scope user  # benchmarking tool
-#winget install --no-upgrade --name "AWS Command Line Interface"         --Id "Amazon.AWSCLI" --source winget --scope user --accept-package-agreements --accept-source-agreements
+# --GROUP:OTHER
+winget install --no-upgrade --name "nu"                                 --Id "Nushell.Nushell"                   --source winget --scope user --accept-package-agreements --accept-source-agreements  # add to userpath C:\Program Files\nu\bin, done in symlinks
+winget install --no-upgrade --name "Google Chrome"                      --Id "Google.Chrome"                     --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Chrome Remote Desktop Host"         --Id "Google.ChromeRemoteDesktop"        --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Zoom"                               --Id "Zoom.Zoom"                         --source winget    --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "7-zip"                              --Id "7zip.7zip"                         --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Mozilla Firefox"                    --Id "Mozilla.Firefox" --source winget   --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Mozilla Thunderbird (en-US)"        --Id "Mozilla.Thunderbird"               --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "StreamlabsOBS"                      --Id "Streamlabs.StreamlabsOBS"          --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "OBSStudio"                          --Id "OBSProject.OBSStudio"              --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "MiKTeX"                             --Id "MiKTeX.MiKTeX"                     --source winget   --scope user  # library / lanugage
+winget install --no-upgrade --name "TexMaker"                           --Id "Texmaker.Texmaker"                 --source winget --scope user  # IDE better than simple TexWorks shipped with MikTex. IDE is basically GUI for cmd interface of Tex
+winget install --no-upgrade --name "notepad++"                          --Id "Notepad++.Notepad++"               --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Lapce"                              --Id "Lapce.Lapce"                       --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "TesseractOCR"                       --Id "UB-Mannheim.TesseractOCR"          --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "perl"                               --Id "StrawbgnogerryPerl.StrawberryPerl"     --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "DB Browser for SQLite"              --Id "DBBrowserForSQLite.DBBrowserForSQLite" --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "sql server management studio"       --Id "Microsoft.SQLServerManagementStudio"   --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Adobe Acrobat Reader DC"            --Id "Adobe.Acrobat.Reader.64-bit"       --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "julia"                               --Id "Julialang.Julia" --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Chafa"                               --Id "hpjansson.Chafa" --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "bottom"                              --Id "Clement.bottom" --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "onefetch"                            --Id "o2sh.onefetch" --source winget --scope user  # repo-version of system fastfetch, see also tokei
+winget install --no-upgrade --name "Just"                               --Id "Casey.Just" --source winget --scope user  # commandline runner
+winget install --no-upgrade --name "hyperfine"                          --Id "sharkdp.hyperfine" --source winget --scope user  # benchmarking tool
+winget install --no-upgrade --name "AWS Command Line Interface"         --Id "Amazon.AWSCLI" --source winget --scope user --accept-package-agreements --accept-source-agreements
