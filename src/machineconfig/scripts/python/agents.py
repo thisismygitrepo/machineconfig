@@ -165,11 +165,11 @@ AGENTS_DIR="$REPO_ROOT/.ai/agents/$JOB_NAME"
 LAYOUT_PATH="$REPO_ROOT/.ai/agents/$JOB_NAME/layout_unbalanced.json"
 LAYOUT_BALANCED_PATH="$REPO_ROOT/.ai/agents/$JOB_NAME/layout_balanced.json"
 
-fire_agents create --context-path $CONTEXT_PATH --tasks-per-prompt 10 --agent crush --prompt-path $PROMPT_PATH --keep-separate --output-path $LAYOUT_PATH --agents-dir $AGENTS_DIR
-fire_agents load-balance $LAYOUT_PATH --max-thresh 6 --breaking-method moreLayouts --thresh-type number  --output-path $LAYOUT_BALANCED_PATH
+agents create --context-path $CONTEXT_PATH --tasks-per-prompt 10 --agent crush --prompt-path $PROMPT_PATH --keep-separate --output-path $LAYOUT_PATH --agents-dir $AGENTS_DIR
+sessions balance-load $LAYOUT_PATH --max-thresh 6 --breaking-method moreLayouts --thresh-type number  --output-path $LAYOUT_BALANCED_PATH
 
-fire_agents run $LAYOUT_BALANCED_PATH --kill-upon-completion
-fire_agents collect $AGENTS_DIR "$REPO_ROOT/.ai/agents/$JOB_NAME/collected.txt"
+sessions run $LAYOUT_BALANCED_PATH --kill-upon-completion
+agents collect $AGENTS_DIR "$REPO_ROOT/.ai/agents/$JOB_NAME/collected.txt"
 """
     template_powershell = """
 
@@ -194,11 +194,16 @@ fire_agents collect $AGENTS_DIR "$REPO_ROOT/.ai/agents/$JOB_NAME/collected.txt"
 
 
 def main_from_parser():
+    import sys
     agents_app = typer.Typer(help="🤖 AI Agents management subcommands")
     agents_app.command("create")(create)
     agents_app.command("collect")(collect)
     agents_app.command("template")(template)
-    return agents_app()
+    if len(sys.argv) == 1:
+        agents_app(["--help"])
+    else:
+        agents_app()
+
 
 if __name__ == "__main__":  # pragma: no cover
     pass

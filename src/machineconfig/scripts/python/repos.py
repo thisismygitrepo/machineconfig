@@ -70,7 +70,12 @@ def main(
             auto_sync=auto_sync
         )
     else:
-        print("❌ No action specified. Try passing --push, --pull, --commit, or --all.")
+        # print("❌ No action specified. Try passing --push, --pull, --commit, or --all.")
+        typer.echo("❌ No action specified. Try passing --push, --pull, --commit, or --all.")
+        import click
+        ctx = click.get_current_context()
+        typer.echo(ctx.get_help())
+        raise typer.Exit(1)
 
 
 def main_from_parser() -> None:

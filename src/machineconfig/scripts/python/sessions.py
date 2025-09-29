@@ -4,7 +4,7 @@ from typing import Optional, Literal
 import typer
 
 
-def load_balance(layout_path: Path = typer.Argument(..., help="Path to the layout.json file"),
+def balance_load(layout_path: Path = typer.Argument(..., help="Path to the layout.json file"),
            max_thresh: int = typer.Option(..., help="Maximum tabs per layout"),
            thresh_type: Literal['number', 'weight'] = typer.Option(..., help="Threshold type"),
            breaking_method: Literal['moreLayouts', 'combineTabs'] = typer.Option(..., help="Breaking method"),
@@ -129,9 +129,13 @@ def launch(layout_path: str = typer.Argument(..., help="Path to the layout.json 
 
 def main_from_parser():
     layouts_app = typer.Typer(help="Layouts management subcommands")
-    layouts_app.command("launch")(launch)
-    layouts_app.command("load-balance")(load_balance)
-    return layouts_app()
+    layouts_app.command("run")(launch)
+    layouts_app.command("balance-load")(balance_load)
+    import sys
+    if len(sys.argv) == 1:
+        layouts_app(["--help"])
+    else:
+        layouts_app()
 
 
 if __name__ == "__main__":

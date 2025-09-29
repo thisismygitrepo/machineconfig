@@ -2,7 +2,6 @@
 
 from machineconfig.utils.installer import get_installers_system_groups
 import typer
-from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -72,7 +71,9 @@ def main(
     if interactive:
         return install_interactively()
     typer.echo("❌ You must provide either --which, --group, or --interactive/-ia option.")
-    # typer.help(main)
+    import click
+    ctx = click.get_current_context()
+    typer.echo(ctx.get_help())
     raise typer.Exit(1)
 
 
