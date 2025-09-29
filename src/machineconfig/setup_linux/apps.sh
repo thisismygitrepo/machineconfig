@@ -24,7 +24,6 @@ echo """#=======================================================================
 echo "📂 Installing filesystem utilities..."
 sudo nala install fuse3 -y || true
 sudo nala install nfs-common -y || true
-sudo nala install redis-tools -y || true
 
 # Node.js via NVM
 # --BLOCK:NODE_JS_ENVIRONMENT--

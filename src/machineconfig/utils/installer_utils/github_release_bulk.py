@@ -109,8 +109,7 @@ def main() -> None:
     current_dir = Path(__file__).parent
     installer_dir = current_dir.parent.parent / "jobs" / "installer"
     
-    standard_json = installer_dir / "packages_standard.json"
-    dev_json = installer_dir / "packages_dev.json"
+    standard_json = installer_dir / "installer_data.json"
     output_json = current_dir / "github_releases.json"
     
     print("🔍 Starting GitHub release data extraction...")
@@ -125,16 +124,7 @@ def main() -> None:
         all_github_repos.update(repos)
         print(f"   Found {len(repos)} GitHub repos")
     else:
-        print(f"⚠️  File not found: {standard_json}")
-        
-    if dev_json.exists():
-        print(f"📄 Reading {dev_json.name}...")
-        repos = extract_github_repos_from_json(dev_json)
-        all_github_repos.update(repos)
-        print(f"   Found {len(repos)} GitHub repos")
-    else:
-        print(f"⚠️  File not found: {dev_json}")
-    
+        print(f"⚠️  File not found: {standard_json}")    
     print(f"🎯 Total unique GitHub repositories found: {len(all_github_repos)}")
     
     if not all_github_repos:

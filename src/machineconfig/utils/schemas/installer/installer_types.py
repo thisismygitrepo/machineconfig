@@ -2,7 +2,6 @@ from typing import TypedDict, Literal, TypeAlias, Optional
 import platform
 
 
-APP_INSTALLER_CATEGORY: TypeAlias = Literal["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL", "GITHUB_DEV", "CUSTOM_DEV"]
 CPU_ARCHITECTURES: TypeAlias = Literal["amd64", "arm64"]
 OPERATING_SYSTEMS: TypeAlias = Literal["windows", "linux", "macos"]
 

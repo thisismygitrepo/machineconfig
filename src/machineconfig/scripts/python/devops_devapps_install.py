@@ -5,7 +5,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from platform import system
 from typing import Optional, Literal, TypeAlias, cast, get_args, Annotated
 
-WHICH_CAT: TypeAlias = Literal["essentials", "essentialsDev", "systymPackages", "precheckedPackages", "ia"]
+WHICH_CAT: TypeAlias = Literal["essentials", "essentialsDev", "systemPackages", "precheckedPackages", "ia"]
 
 
 def _handle_installer_not_found(search_term: str, all_installers: list["InstallerData"]) -> None:  # type: ignore
@@ -60,7 +60,7 @@ def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category
     if which != "ia" and which is not None:  # install by name
         total_messages: list[str] = []
         for a_which in which.split(",") if type(which) == str else which:
-            all_installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL", "GITHUB_DEV", "CUSTOM_DEV"])
+            all_installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["ESSENTIAL", "DEV"])
 
             # Find installer by exe_name or name
             selected_installer = None
@@ -87,7 +87,7 @@ def install_interactively():
     from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
     from machineconfig.utils.installer import get_installers
     from machineconfig.utils.installer_utils.installer_class import Installer
-    installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL", "GITHUB_DEV", "CUSTOM_DEV"])
+    installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["ESSENTIAL", "DEV"])
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
         task = progress.add_task("✅ Checking installed programs...", total=len(installers))
         installer_options = []
@@ -128,12 +128,12 @@ def get_programs_by_category(program_name: WHICH_CAT):
     from machineconfig.utils.options import choose_from_options
     match program_name:
         case "essentials":
-            installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL"])
+            installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["ESSENTIAL"])
             install_all(installers_data=installers_)
         case "essentialsDev":
-            installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_DEV", "CUSTOM_DEV", "GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL"])
+            installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["DEV", "ESSENTIAL"])
             install_all(installers_data=installers_)
-        case "systymPackages":
+        case "systemPackages":
             if system() == "Windows":
                 options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text(encoding="utf-8"))
             elif system() == "Linux":

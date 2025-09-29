@@ -162,9 +162,13 @@ def execute_installations(selected_options: list[str]) -> None:
             run_command(f"bash {script}", "Installing Linux base system applications")
 
     if "upgrade_system" in selected_options:
-        console.print(Panel("🔄 [bold magenta]SYSTEM UPDATE[/bold magenta]\n[italic]Package management[/italic]", border_style="magenta"))
-        run_command("sudo nala upgrade -y", "Upgrading system packages")
-
+        if system() == "Windows":
+            console.print("❌ System upgrade is not applicable on Windows via this script.", style="bold red")
+        elif system() == "Linux":
+            console.print(Panel("🔄 [bold magenta]SYSTEM UPDATE[/bold magenta]\n[italic]Package management[/italic]", border_style="magenta"))
+            run_command("sudo nala upgrade -y", "Upgrading system packages")
+        else:
+            console.print(f"❌ System upgrade not supported on {system()}.", style="bold red")
     if "install_uv_repos" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
         from machineconfig import setup_linux as module

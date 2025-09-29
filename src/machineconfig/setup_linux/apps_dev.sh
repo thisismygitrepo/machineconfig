@@ -62,17 +62,6 @@ sudo nala install graphviz -y || true
 echo "📥 Installing make - build automation tool..."
 sudo nala install make -y || true  # Required by LunarVim and SpaceVim
 
-# echo "📥 Installing lynx - text-based web browser..."
-# if [ "$package_manager" = "nala" ]; then
-#   sudo nala install lynx -y || true
-# else
-#   ~/.nix-profile/bin/nix-env -iA nixpkgs.lynx || true
-# fi
-
-# echo "📥 Installing SpaceVim - Vim distribution with plugins..."
-# # https://spacevim.org/quick-start-guide/#linux-and-macos
-# (curl -sLf https://spacevim.org/install.sh | bash) || true
-
 
 echo """#=======================================================================
 🎬 TERMINAL EYE CANDY | Installing visual terminal effects
@@ -93,9 +82,11 @@ echo """#=======================================================================
 """
 
 echo "📥 Installing SQLite - lightweight SQL database..."
-sudo nala install sqlite3 -y || true
 echo "📥 Installing PostgreSQL client..."
+echo "📥 Installing Redis command-line tools..."
+sudo nala install sqlite3 -y || true
 sudo nala install postgresql-client -y || true
+sudo nala install redis-tools -y || true
 
 echo """#=======================================================================
 🎨 IMAGE TOOLS | Installing terminal image viewers

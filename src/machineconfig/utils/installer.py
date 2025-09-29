@@ -2,7 +2,8 @@
 
 from machineconfig.utils.installer_utils.installer_abc import check_if_installed_already
 from machineconfig.utils.installer_utils.installer_class import Installer
-from machineconfig.utils.schemas.installer.installer_types import APP_INSTALLER_CATEGORY, InstallerData, InstallerDataFiles, get_normalized_arch, get_os_name, OPERATING_SYSTEMS, CPU_ARCHITECTURES
+from machineconfig.utils.schemas.installer.installer_types import InstallerData, InstallerDataFiles, get_normalized_arch, get_os_name, OPERATING_SYSTEMS, CPU_ARCHITECTURES
+from machineconfig.jobs.installer.package_groups import PACKAGE_GROUPS, PACKAGE_GROUP2NAMES
 from rich.console import Console
 from rich.panel import Panel
 
@@ -18,7 +19,7 @@ from joblib import Parallel, delayed
 def check_latest():
     console = Console()  # Added console initialization
     console.print(Panel("🔍  CHECKING FOR LATEST VERSIONS", title="Status", expand=False))  # Replaced print with Panel
-    installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["GITHUB_ESSENTIAL", "CUSTOM_ESSENTIAL"])
+    installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["ESSENTIAL"])
     installers_github = []
     for inst__ in installers:
         app_name = inst__["appName"]
@@ -91,30 +92,30 @@ def get_installed_cli_apps():
     return apps
 
 
-def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: list[APP_INSTALLER_CATEGORY]) -> list[InstallerData]:
+def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: list[PACKAGE_GROUPS]) -> list[InstallerData]:
     print(f"\n{'=' * 80}\n🔍 LOADING INSTALLER CONFIGURATIONS 🔍\n{'=' * 80}")
-    res_all = get_all_installer_data_files(which_cats=which_cats)
+    res_all = get_all_installer_data_files()
+    acceptable_apps_names: list[str] = []
+    for cat in which_cats:
+        acceptable_apps_names += PACKAGE_GROUP2NAMES[cat]
     all_installers: list[InstallerData] = []
-    for _category, installer_data_files in res_all.items():
-        suitable_installers = []
-        for an_installer in installer_data_files["installers"]:
-            if an_installer["fileNamePattern"][arch][os] is None:
+    for installer_data in res_all:
+        if installer_data["appName"] in acceptable_apps_names:
+            if installer_data["fileNamePattern"][arch][os] is None:
                 continue
-            suitable_installers.append(an_installer)
-        all_installers.extend(suitable_installers)
+            all_installers.append(installer_data)
     print(f"✅ Loaded {len(all_installers)} installer configurations\n{'=' * 80}")
     return all_installers
 
 
-def get_all_installer_data_files(which_cats: list[APP_INSTALLER_CATEGORY]) -> dict[APP_INSTALLER_CATEGORY, InstallerDataFiles]:
+def get_all_installer_data_files() -> list[InstallerData]:
     print(f"\n{'=' * 80}\n📂 LOADING CONFIGURATION FILES 📂\n{'=' * 80}")
     import machineconfig.jobs.installer as module
     from pathlib import Path
     print("📂 Loading configuration files...")
-    res_final: dict[APP_INSTALLER_CATEGORY, InstallerDataFiles] = {key: read_json(Path(module.__file__).parent.joinpath(f"packages_{key.lower()}.json")) for key in which_cats}
+    res_raw: InstallerDataFiles = read_json(Path(module.__file__).parent.joinpath("installer_data.json"))
+    res_final: list[InstallerData] = res_raw["installers"]
     print(f"Loaded: {len(res_final)} installer categories")
-    for k, v in res_final.items():
-        print(f" - {k}: {len(v['installers'])} items")
     return res_final
 
 
