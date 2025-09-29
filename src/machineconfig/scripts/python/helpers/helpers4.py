@@ -1,7 +1,6 @@
-from typing import Any, Callable, Optional
-import inspect
-import os
 
+from typing import Optional
+import os
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 
 
@@ -20,19 +19,6 @@ def search_for_files_of_interest(path_obj: PathExtended):
     files = py_files + ps_files + sh_files
     return files
 
-
-def convert_kwargs_to_fire_kwargs_str(kwargs: dict[str, Any]) -> str:
-    # https://google.github.io/python-fire/guide/
-    # https://github.com/google/python-fire/blob/master/docs/guide.md#argument-parsing
-    if not kwargs:  # empty dict
-        kwargs_str = ""
-    else:
-        # For fire module, all keyword arguments should be passed as --key value pairs
-        tmp_list: list[str] = []
-        for k, v in kwargs.items():
-            tmp_list.append(f"--{k} {v}")
-        kwargs_str = " " + " ".join(tmp_list) + " "
-    return kwargs_str
 
 
 def parse_pyfile(file_path: str):
@@ -83,58 +69,6 @@ def parse_pyfile(file_path: str):
         func_args.append(tmp)
     return options, func_args
 
-
-def interactively_run_function(func: Callable[[Any], Any]):
-    sig = inspect.signature(func)
-    params = list(sig.parameters.values())
-    args = []
-    kwargs = {}
-    for param in params:
-        if param.annotation is not inspect.Parameter.empty:
-            hint = f" ({param.annotation.__name__})"
-        else:
-            hint = ""
-        if param.default is not inspect.Parameter.empty:
-            default = param.default
-            value = input(f"Please enter a value for argument `{param.name}` (type = {hint}) (default = {default}) : ")
-            if value == "":
-                value = default
-        else:
-            value = input(f"Please enter a value for argument `{param.name}` (type = {hint}) : ")
-        try:
-            if param.annotation is not inspect.Parameter.empty:
-                value = param.annotation
-        except (TypeError, ValueError) as err:
-            raise ValueError(f"Invalid input: {value} is not of type {param.annotation}") from err
-        if param.kind == inspect.Parameter.KEYWORD_ONLY:
-            kwargs[param.name] = value
-        else:
-            args.append((param.name, value))
-    args_to_kwargs = dict(args)
-    return args_to_kwargs, kwargs
-
-
-def get_attrs_recursively(obj: Any):
-    if hasattr(obj, "__dict__"):
-        res = {}
-        for k, v in obj.__dict__.items():
-            res[k] = get_attrs_recursively(v)
-        return res
-    return obj
-
-
-# def run_on_remote(func_file: str, args: argparse.Namespace):
-#     host = choose_ssh_host(multi=False)
-#     assert isinstance(host, str), f"host must be a string. Got {type(host)}"
-#     from machineconfig.cluster.remote_machine import RemoteMachine, RemoteMachineConfig
-#     config = RemoteMachineConfig(copy_repo=True, update_repo=False, update_essential_repos=True,
-#                                  notify_upon_completion=True, ssh_params=dict(host=host),
-#                                  # to_email=None, email_config_name='enaut',
-#                                  data=[],
-#                                  ipython=False, interactive=args.interactive, pdb=False, pudb=args.debug, wrap_in_try_except=False,
-#                                  transfer_method="sftp")
-#     m = RemoteMachine(func=func_file, func_kwargs=None, config=config)
-#     m.run()
 
 
 def find_repo_root_path(start_path: str) -> Optional[str]:
