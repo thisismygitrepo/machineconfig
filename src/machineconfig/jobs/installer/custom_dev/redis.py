@@ -3,34 +3,42 @@
 import platform
 import subprocess
 from typing import Optional
+from rich import box
+from rich.console import Console
+from rich.panel import Panel
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 # config_dict: InstallerData = {"appName": "Redis", "repoURL": "CMD", "doc": "submillisecond fast key-value db"}
 
 
-def main(installer_data: InstallerData, version: Optional[str]):
+def main(installer_data: InstallerData, version: Optional[str]) -> None:
+    console = Console()
     _ = installer_data
-    print(f"""
-{"=" * 150}
-🗃️  REDIS INSTALLER | Setting up in-memory database
-💻 Platform: {platform.system()}
-🔄 Version: {"latest" if version is None else version}
-{"=" * 150}
-""")
+    console.print(
+        Panel.fit(
+            "\n".join([f"💻 Platform: {platform.system()}", f"🔄 Version: {'latest' if version is None else version}"]),
+            title="🗃️  Redis Installer",
+            border_style="red",
+            box=box.ROUNDED,
+        )
+    )
 
     _ = version
     if platform.system() == "Windows":
         error_msg = "Redis installation not supported on Windows through this installer"
-        print(f"""
-{"⚠️" * 20}
-❌ ERROR | {error_msg}
-💡 TIP: Consider using WSL2 or Docker to run Redis on Windows
-{"⚠️" * 20}
-""")
+        console.print(
+            Panel.fit(
+                "\n".join([error_msg, "💡 Consider using WSL2 or Docker to run Redis on Windows"]),
+                title="❌ Error",
+                subtitle="⚠️ Unsupported platform",
+                border_style="red",
+                box=box.ROUNDED,
+            )
+        )
         raise NotImplementedError(error_msg)
     elif platform.system() in ["Linux", "Darwin"]:
         system_name = "Linux" if platform.system() == "Linux" else "macOS"
-        print(f"🐧 Installing Redis on {system_name} using installation script...")
+        console.print(f"🐧 Installing Redis on {system_name} using installation script...", style="bold")
         import machineconfig.jobs.installer as module
         from pathlib import Path
         if platform.system() == "Linux":
@@ -39,30 +47,40 @@ def main(installer_data: InstallerData, version: Optional[str]):
             program = "brew install redis"
     else:
         error_msg = f"Unsupported platform: {platform.system()}"
-        print(f"""
-{"⚠️" * 20}
-❌ ERROR | {error_msg}
-{"⚠️" * 20}
-""")
+        console.print(
+            Panel.fit(
+                "\n".join([error_msg]),
+                title="❌ Error",
+                subtitle="⚠️ Unsupported platform",
+                border_style="red",
+                box=box.ROUNDED,
+            )
+        )
         raise NotImplementedError(error_msg)
 
-    print(f"""
-{"=" * 150}
-ℹ️  INFO | Redis features:
-⚡ In-memory data structure store
-🔑 Key-value database with optional persistence
-🚀 Sub-millisecond response times
-💾 Supports strings, lists, sets, sorted sets, hashes
-🔄 Built-in replication and Lua scripting
-{"=" * 150}
-""")
+    console.print(
+        Panel.fit(
+            "\n".join(
+                [
+                    "⚡ In-memory data structure store",
+                    "🔑 Key-value database with optional persistence",
+                    "🚀 Sub-millisecond response times",
+                    "💾 Supports strings, lists, sets, sorted sets, hashes",
+                    "🔄 Built-in replication and Lua scripting",
+                ]
+            ),
+            title="ℹ️  Redis Features",
+            border_style="magenta",
+            box=box.ROUNDED,
+        )
+    )
 
-    print("🔄 EXECUTING | Running Redis installation...")
+    console.print("🔄 EXECUTING | Running Redis installation...", style="bold yellow")
     try:
         subprocess.run(program, shell=True, text=True, check=True)
-        print("✅ Redis installation completed successfully")
+        console.print("✅ Redis installation completed successfully", style="bold green")
     except subprocess.CalledProcessError as e:
-        print(f"❌ Installation failed with exit code {e.returncode}")
+        console.print(f"❌ Installation failed with exit code {e.returncode}", style="bold red")
         raise
 
 

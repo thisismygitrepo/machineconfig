@@ -1,7 +1,13 @@
 from pathlib import Path
-from machineconfig.utils.accessories import randstr
 from typing import Annotated
+
 import typer
+from rich import box
+from rich.console import Console
+from rich.panel import Panel
+from rich.syntax import Syntax
+
+from machineconfig.utils.accessories import randstr
 
 
 def open_file_in_new_instance(file_path: str):
@@ -19,14 +25,16 @@ ln -s {repo_path} {copy_path}
 cd {copy_path}
 code --profile bitProfile --new-window {file_path}
 """
-    from rich.console import Console
-    from rich.syntax import Syntax
-    from rich.panel import Panel
-
     console = Console()
-    console.print(f"\n{'=' * 150}")
-    console.print(Panel(Syntax(code, lexer="bash"), title="🔍 VS CODE API | Opening file in new instance", subtitle=f"📂 {file_path}"), style="bold blue")
-    console.print(f"{'=' * 150}\n")
+    panel = Panel(
+        Syntax(code, lexer="bash"),
+        title="🔍 VS CODE API | Opening file in new instance",
+        subtitle=f"📂 {file_path}",
+        border_style="bright_blue",
+        box=box.DOUBLE,
+        padding=(1, 2),
+    )
+    console.print(panel)
 
     code_path = Path.home().joinpath(".config", "machingconfig", "vscode_api", "code_temp")
     code_path.parent.mkdir(parents=True, exist_ok=True)

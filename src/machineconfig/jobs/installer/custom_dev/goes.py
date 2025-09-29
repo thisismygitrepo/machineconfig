@@ -1,14 +1,11 @@
 """natural language to API
-https://github.com/    print("🔄 EXECUTING | Running Go installation...")
-    try:
-        subprocess.run(install_script, shell=True, text=True, check=True)
-        print("✅ Go installation completed successfully")
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Installation failed with exit code {e.returncode}")
-        raisel/gorilla
+https://github.com/ShishirPatil/gorilla
 """
 
 import subprocess
+from rich import box
+from rich.console import Console
+from rich.panel import Panel
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 # config_dict: InstallerData = {
@@ -20,44 +17,52 @@ from machineconfig.utils.schemas.installer.installer_types import InstallerData
 ve_name = "goex"
 
 
-def main(installer_data: InstallerData):
+def main(installer_data: InstallerData) -> None:
+    console = Console()
     _ = installer_data
-    print(f"""
-{"=" * 150}
-🦍 GORILLA INSTALLER | Natural language to API converter
-🌐 Source: https://github.com/ShishirPatil/gorilla
-📦 Virtual Environment: {ve_name}
-{"=" * 150}
-""")
+    console.print(
+        Panel.fit(
+            "\n".join(
+                [
+                    "Natural language to API converter",
+                    "🌐 Source: https://github.com/ShishirPatil/gorilla",
+                    f"📦 Virtual Environment: {ve_name}",
+                ]
+            ),
+            title="🦍 Gorilla Installer",
+            border_style="blue",
+            box=box.ROUNDED,
+        )
+    )
 
-    print("🔄 Preparing installation script...")
+    console.print("🔄 Preparing installation script...", style="bold")
     install_script = """
-
 cd ~/code/foreign
 git clone https://github.com/ShishirPatil/gorilla --depth 1
 cd gorilla/goex
 uv sync
-    """
+"""
 
-    print(f"""
-{"=" * 150}
-📋 INSTALLATION STEPS:
-1️⃣  Creating Python 3.13 virtual environment: {ve_name}
-2️⃣  Cloning Gorilla repository to ~/code/foreign
-3️⃣  Installing Gorilla in development mode
-{"=" * 150}
+    console.print(
+        Panel.fit(
+            "\n".join(
+                [
+                    f"1️⃣  Create Python 3.13 virtual environment: {ve_name}",
+                    "2️⃣  Clone Gorilla repository to ~/code/foreign",
+                    "3️⃣  Install Gorilla in development mode",
+                ]
+            ),
+            title="📋 Installation Steps",
+            subtitle="✅ Installation script prepared successfully!",
+            border_style="magenta",
+            box=box.ROUNDED,
+        )
+    )
 
-✅ Installation script prepared successfully!
-""")
-
-    print("🔄 EXECUTING | Running Gorilla installation...")
+    console.print("🔄 EXECUTING | Running Gorilla installation...", style="bold yellow")
     try:
         subprocess.run(install_script, shell=True, text=True, check=True)
-        print("✅ Gorilla installation completed successfully")
+        console.print("✅ Gorilla installation completed successfully", style="bold green")
     except subprocess.CalledProcessError as e:
-        print(f"❌ Installation failed with exit code {e.returncode}")
+        console.print(f"❌ Installation failed with exit code {e.returncode}", style="bold red")
         raise
-
-
-if __name__ == "__main__":
-    pass
