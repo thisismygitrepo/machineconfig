@@ -6,7 +6,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from typing import Optional, cast, get_args
-from machineconfig.jobs.installer.package_groups import PACKAGE_GROUPS
+from machineconfig.jobs.installer.package_groups import PACKAGE_GROUPS, PACKAGE_GROUP2NAMES
 
 console = Console()
 
@@ -63,7 +63,7 @@ def main(
     if which is not None:
         return install_clis(clis_names=[x.strip() for x in which.split(",") if x.strip() != ""])
     if group is not None:
-        return get_programs_by_category(package_group=group)
+        return install_group(package_group=group)
     if interactive:
         return install_interactively()
     typer.echo("❌ You must provide either --which, --group, or --interactive/-ia option.")
@@ -78,21 +78,32 @@ def install_interactively():
     from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
     from machineconfig.utils.installer import get_installers
     from machineconfig.utils.installer_utils.installer_class import Installer
-    installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["ESSENTIAL", "DEV"])
+    installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=None)
     installer_options = []
     for x in installers:
         installer_options.append(Installer(installer_data=x).get_description())
-    category_options = [f"📦 {cat}" for cat in get_args(PACKAGE_GROUPS)]
-    options = category_options + ["─" * 50] + installer_options
+    
+    # Build category options and maintain a mapping from display text to actual category name
+    category_display_to_name: dict[str, str] = {}
+    for group_name, group_values in PACKAGE_GROUP2NAMES.items():
+        display = f"📦 {group_name:<20}" + "   --   " + f"{'|'.join(group_values):<60}"
+        category_display_to_name[display] = group_name
+    
+    options_system = get_installers_system_groups()
+    for item in options_system:
+        display = f"📦 {item['appName']:<20}   --   {item['doc']:<60}"
+        category_display_to_name[display] = item['appName']
+    
+    options = list(category_display_to_name.keys()) + ["─" * 50] + installer_options
     program_names = choose_from_options(multi=True, msg="Categories are prefixed with 📦", options=options, header="🚀 CHOOSE DEV APP OR CATEGORY", default="📦 essentials", fzf=True)
     installation_messages: list[str] = []
     for _an_idx, a_program_name in enumerate(program_names):
         if a_program_name.startswith("─"):  # 50 dashes separator
             continue
         if a_program_name.startswith("📦 "):
-            category_name = a_program_name[2:]  # Remove "📦 " prefix
-            if category_name in get_args(PACKAGE_GROUPS):
-                get_programs_by_category(package_group=cast(PACKAGE_GROUPS, category_name))
+            category_name = category_display_to_name.get(a_program_name)
+            if category_name:
+                install_group(package_group=cast(PACKAGE_GROUPS, category_name))
         else:
             installer_idx = installer_options.index(a_program_name)
             an_installer_data = installers[installer_idx]
@@ -103,27 +114,24 @@ def install_interactively():
         console.print(panel)
 
 
-def get_programs_by_category(package_group: PACKAGE_GROUPS):
+def install_group(package_group: PACKAGE_GROUPS):
     panel = Panel(f"[bold yellow]Installing programs from category: [green]{package_group}[/green][/bold yellow]", title="[bold blue]📦 Category Installation[/bold blue]", border_style="blue", padding=(1, 2))
     console.print(panel)
-    from machineconfig.utils.installer import get_installers, install_all
+    from machineconfig.utils.installer import get_installers, install_bulk
     from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
-    match package_group:
-        case "ESSENTIAL":
-            installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["ESSENTIAL"])
-            install_all(installers_data=installers_)
-        case "DEV":
-            installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["DEV", "ESSENTIAL"])
-            install_all(installers_data=installers_)
-        case "DEV_SYSTEM" | "ESSENTIAL_SYSTEM":
-            options_system = get_installers_system_groups()
-            from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
-            from machineconfig.utils.code import run_script
-            for an_item in options_system:
-                if an_item["appName"] == package_group:
-                    program = an_item["fileNamePattern"][get_normalized_arch()][get_os_name()]
-                    if program is not None:
-                        run_script(program)
+    if package_group in PACKAGE_GROUP2NAMES:
+        installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=[package_group])
+        install_bulk(installers_data=installers_)
+    else:
+        options_system = get_installers_system_groups()
+        from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
+        from machineconfig.utils.code import run_script
+        for an_item in options_system:
+            if an_item["appName"] == package_group:
+                program = an_item["fileNamePattern"][get_normalized_arch()][get_os_name()]
+                if program is not None:
+                    run_script(program)
+                    break
 
 
 def choose_from_system_package_groups(options_system: dict[str, tuple[str, str]]) -> str:

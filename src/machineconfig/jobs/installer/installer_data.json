@@ -2111,6 +2111,23 @@
       }
     },
     {
+      "appName": "auggie",
+      "repoURL": "CMD",
+      "doc": "Terminal-based CLI agents and tools for productivity and coding.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "npm install -g @augmentcode/auggie",
+          "windows": "npm install -g @augmentcode/auggie",
+          "macos": "npm install -g @augmentcode/auggie"
+        },
+        "arm64": {
+          "linux": "npm install -g @augmentcode/auggie",
+          "windows": "npm install -g @augmentcode/auggie",
+          "macos": "npm install -g @augmentcode/auggie"
+        }
+      }
+    },
+    {
       "appName": "warp",
       "repoURL": "CMD",
       "doc": "Modern terminal with AI-powered features",

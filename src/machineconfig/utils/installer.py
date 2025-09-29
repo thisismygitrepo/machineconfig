@@ -12,7 +12,7 @@ from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT, LINUX_INSTALL_PATH, LIBRARY_ROOT
 from machineconfig.utils.io import read_json
 
-from typing import Any
+from typing import Any, Optional
 import platform
 from joblib import Parallel, delayed
 
@@ -93,18 +93,24 @@ def get_installed_cli_apps():
     return apps
 
 
-def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: list[PACKAGE_GROUPS]) -> list[InstallerData]:
+def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: Optional[list[PACKAGE_GROUPS]]) -> list[InstallerData]:
     print(f"\n{'=' * 80}\n🔍 LOADING INSTALLER CONFIGURATIONS 🔍\n{'=' * 80}")
     res_all = get_all_installer_data_files()
-    acceptable_apps_names: list[str] = []
-    for cat in which_cats:
-        acceptable_apps_names += PACKAGE_GROUP2NAMES[cat]
+    acceptable_apps_names: list[str] | None = None
+    if which_cats is not None:
+        acceptable_apps_names = []
+        for cat in which_cats:
+            acceptable_apps_names += PACKAGE_GROUP2NAMES[cat]
+    else:
+        acceptable_apps_names = None
     all_installers: list[InstallerData] = []
     for installer_data in res_all:
-        if installer_data["appName"] in acceptable_apps_names:
-            if installer_data["fileNamePattern"][arch][os] is None:
+        if acceptable_apps_names is not None:
+            if installer_data["appName"] not in acceptable_apps_names:
                 continue
-            all_installers.append(installer_data)
+        if installer_data["fileNamePattern"][arch][os] is None:
+            continue
+        all_installers.append(installer_data)
     print(f"✅ Loaded {len(all_installers)} installer configurations\n{'=' * 80}")
     return all_installers
 
@@ -142,7 +148,7 @@ def get_installers_system_groups():
     return res_final
 
 
-def install_all(installers_data: list[InstallerData], safe: bool = False, jobs: int = 10, fresh: bool = False):
+def install_bulk(installers_data: list[InstallerData], safe: bool = False, jobs: int = 10, fresh: bool = False):
     print(f"\n{'=' * 80}\n🚀 BULK INSTALLATION PROCESS 🚀\n{'=' * 80}")
     if fresh:
         print("🧹 Fresh install requested - clearing version cache...")
