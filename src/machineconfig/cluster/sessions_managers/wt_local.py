@@ -14,7 +14,7 @@ from typing import Dict, List, Optional, Any
 from pathlib import Path
 import logging
 
-from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, TabConfig
+from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -57,35 +57,7 @@ class WTLayoutGenerator:
             return f'"{text}"'
         return text
 
-    @staticmethod
-    def _create_tab_command(tab_config: TabConfig, is_first_tab: bool) -> str:
-        """Create a Windows Terminal tab command string from tab config."""
-        tab_name = tab_config["tabName"]
-        cwd = tab_config["startDir"]
-        command = tab_config["command"]
 
-        # Convert paths to Windows format if needed
-        if cwd.startswith("~/"):
-            cwd = cwd.replace("~/", f"{Path.home()}/")
-        elif cwd == "~":
-            cwd = str(Path.home())
-
-        # Build the wt command parts
-        tab_parts = []
-
-        if not is_first_tab:
-            tab_parts.append("new-tab")
-
-        # Add starting directory
-        tab_parts.extend(["-d", WTLayoutGenerator._escape_for_wt(cwd)])
-
-        # Add tab title
-        tab_parts.extend(["--title", WTLayoutGenerator._escape_for_wt(tab_name)])
-
-        # Add the command to execute
-        tab_parts.append(WTLayoutGenerator._escape_for_wt(command))
-
-        return " ".join(tab_parts)
 
     @staticmethod
     def _validate_layout_config(layout_config: LayoutConfig) -> None:
@@ -138,31 +110,39 @@ class WTLayoutGenerator:
 
     def _generate_wt_command_string(self, layout_config: LayoutConfig, window_name: str) -> str:
         """Generate complete Windows Terminal command string."""
-        # Start building the wt command
-        wt_parts = ["wt"]
-
-        # Add window name
-        wt_parts.extend(["-w", WTLayoutGenerator._escape_for_wt(window_name)])
-
-        # Add tabs
-        tab_commands = []
+        # Build the complete Windows Terminal command
+        command_parts = []
+        
         for i, tab in enumerate(layout_config["layoutTabs"]):
             is_first = i == 0
-            tab_cmd = self._create_tab_command(tab, is_first)
-            tab_commands.append(tab_cmd)
-
-        # Join all parts with semicolons (Windows Terminal command separator)
-        if tab_commands:
-            if len(tab_commands) == 1:
-                # Single tab - just add to the main command
-                wt_parts.extend(tab_commands[0].split())
+            
+            if is_first:
+                # First tab: start with wt command and window name
+                tab_parts = ["wt", "-w", WTLayoutGenerator._escape_for_wt(window_name)]
             else:
-                # Multiple tabs - join with semicolons
-                wt_parts.append(tab_commands[0])  # First tab
-                for tab_cmd in tab_commands[1:]:
-                    wt_parts.extend([";", tab_cmd])
-
-        return " ".join(wt_parts)
+                # Subsequent tabs: use new-tab
+                tab_parts = ["new-tab"]
+            
+            # Add common tab arguments
+            tab_name = tab["tabName"]
+            cwd = tab["startDir"]
+            command = tab["command"]
+            
+            # Convert paths to Windows format if needed
+            if cwd.startswith("~/"):
+                cwd = cwd.replace("~/", f"{Path.home()}/")
+            elif cwd == "~":
+                cwd = str(Path.home())
+            
+            # Add arguments in the correct order
+            tab_parts.extend(["-d", WTLayoutGenerator._escape_for_wt(cwd)])
+            tab_parts.extend(["--title", WTLayoutGenerator._escape_for_wt(tab_name)])
+            tab_parts.append(WTLayoutGenerator._escape_for_wt(command))
+            
+            command_parts.append(" ".join(tab_parts))
+        
+        # Join all tab commands with escaped semicolons for PowerShell
+        return " `; ".join(command_parts)
 
     def get_wt_layout_preview(self, layout_config: LayoutConfig) -> str:
         """Generate preview of the Windows Terminal command that would be created."""

@@ -7,6 +7,7 @@ fire
 
 """
 
+from machineconfig.scripts.python.fire_jobs_route_helper import get_command_streamlit
 from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_interest
 from machineconfig.scripts.python.helpers.helpers4 import parse_pyfile
 from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
@@ -20,9 +21,7 @@ from machineconfig.scripts.python.fire_jobs_args_helper import FireJobArgs, extr
 import platform
 from typing import Optional, Annotated
 from pathlib import Path
-import tomllib
 import typer
-# import os
 
 
 def route(args: FireJobArgs, fire_args: str = "") -> None:
@@ -86,73 +85,13 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
         choice_function = args.function
 
     if choice_file.suffix == ".py":
-        if args.streamlit:
-            import socket
-
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            try:
-                s.connect(("8.8.8.8", 1))
-                local_ip_v4 = s.getsockname()[0]
-            except Exception:
-                local_ip_v4 = socket.gethostbyname(socket.gethostname())
-            finally:
-                s.close()
-            computer_name = platform.node()
-            port = 8501
-            toml_path: Optional[PathExtended] = None
-            toml_path_maybe = choice_file.parent.joinpath(".streamlit/config.toml")
-            if toml_path_maybe.exists():
-                toml_path = toml_path_maybe
-            elif choice_file.parent.name == "pages":
-                toml_path_maybe = choice_file.parent.parent.joinpath(".streamlit/config.toml")
-                if toml_path_maybe.exists():
-                    toml_path = toml_path_maybe
-            if toml_path is not None:
-                print(f"📄 Reading config.toml @ {toml_path}")
-                config = tomllib.loads(toml_path.read_text(encoding="utf-8"))
-                if "server" in config:
-                    if "port" in config["server"]:
-                        port = config["server"]["port"]
-                secrets_path = toml_path.with_name("secrets.toml")
-                if repo_root is not None:
-                    secrets_template_path = PathExtended.home().joinpath(f"dotfiles/creds/streamlit/{PathExtended(repo_root).name}/{choice_file.name}/secrets.toml")
-                    if args.environment != "" and not secrets_path.exists() and secrets_template_path.exists():
-                        secrets_template = tomllib.loads(secrets_template_path.read_text(encoding="utf-8"))
-                        if args.environment == "ip":
-                            host_url = f"http://{local_ip_v4}:{port}/oauth2callback"
-                        elif args.environment == "localhost":
-                            host_url = f"http://localhost:{port}/oauth2callback"
-                        elif args.environment == "hostname":
-                            host_url = f"http://{computer_name}:{port}/oauth2callback"
-                        else:
-                            host_url = f"http://{args.environment}:{port}/oauth2callback"
-                        try:
-                            secrets_template["auth"]["redirect_uri"] = host_url
-                            secrets_template["auth"]["cookie_secret"] = randstr(35)
-                            secrets_template["auth"]["auth0"]["redirect_uri"] = host_url
-                            # save_toml(obj=secrets_template, path=secrets_path)
-                        except Exception as ex:
-                            print(ex)
-                            raise ex
-            message = f"🚀 Streamlit app is running @:\n1- http://{local_ip_v4}:{port}\n2- http://{computer_name}:{port}\n3- http://localhost:{port}"
-            from rich.panel import Panel
-            from rich import print as rprint
-
-            rprint(Panel(message))
-            exe = f"streamlit run --server.address 0.0.0.0 --server.headless true --server.port {port}"
-            # exe = f"cd '{choice_file.parent}'; " + exe
-        elif args.interactive is False:
-            exe = "python"
-        elif args.jupyter:
-            exe = "jupyter-lab"
-        else:
-            exe = f"ipython -i --no-banner --profile {ipy_profile} "
-    elif choice_file.suffix == ".ps1" or choice_file.suffix == ".sh":
-        exe = "."
-    elif choice_file.suffix == "":
-        exe = ""
-    else:
-        raise NotImplementedError(f"File type {choice_file.suffix} not supported, in the sense that I don't know how to fire it.")
+        if args.streamlit:  exe = get_command_streamlit(choice_file, args.environment, repo_root)
+        elif args.interactive is False: exe = "python"
+        elif args.jupyter: exe = "jupyter-lab"
+        else: exe = f"ipython -i --no-banner --profile {ipy_profile} "
+    elif choice_file.suffix == ".ps1" or choice_file.suffix == ".sh": exe = "."
+    elif choice_file.suffix == "": exe = ""
+    else: raise NotImplementedError(f"File type {choice_file.suffix} not supported, in the sense that I don't know how to fire it.")
 
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file}"
@@ -226,21 +165,10 @@ except ImportError as _ex:
         else:
             # command = f"cd {choice_file.parent}\n{exe} {choice_file.name}\ncd {PathExtended.cwd()}"
             command = f"{exe} {choice_file} "
-    if not args.cmd:
-        if "ipdb" in command:
-            command = f"pip install ipdb\n{command}"
-        if "pudb" in command:
-            command = f"pip install pudb\n{command}"
-        command = f"{activate_ve_line}\n{command}"
+    if not args.cmd: command = f"{activate_ve_line}\n{command}"
     else:
-        # CMD equivalent
-        if "ipdb" in command:
-            command = f"pip install ipdb & {command}"
-        if "pudb" in command:
-            command = f"pip install pudb & {command}"
         new_line = "\n"
         command = rf"""start cmd -Argument "/k {activate_ve_line.replace(".ps1", ".bat").replace(". ", "")} & {command.replace(new_line, " & ")} " """  # this works from powershell
-
     if args.submit_to_cloud:
         command = f"""
 {activate_ve_line}
@@ -251,7 +179,6 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
     if args.Nprocess > 1:
         from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
         from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
-
         layout: LayoutConfig = {"layoutName": "fireNprocess", "layoutTabs": []}
         for an_arg in range(args.Nprocess):
             layout["layoutTabs"].append({"tabName": f"tab{an_arg}", "startDir": str(PathExtended.cwd()), "command": f"uv run -m fire {choice_file} {choice_function} --idx={an_arg} --idx_max={args.Nprocess}"})
@@ -259,15 +186,10 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
         return None
     if args.optimized:
         command = command.replace("python ", "python -OO ")
-    # if platform.system() == "Linux":
-    #     command = "timeout 1s aafire -driver slang\nclear\n" + command
-
     from rich.panel import Panel
     from rich.console import Console
     from rich.syntax import Syntax
-
     console = Console()
-
     if args.zellij_tab is not None:
         comman_path__ = PathExtended.tmpfile(suffix=".sh")
         comman_path__.parent.mkdir(parents=True, exist_ok=True)
@@ -299,9 +221,8 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
             command = "$ErrorActionPreference = 'SilentlyContinue';\n" + command + "\nStart-Sleep -Seconds 0.5"
         else:
             raise NotImplementedError(f"Platform {platform.system()} not supported.")
-    console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {command}: "), style="bold red")
-    import subprocess
-    subprocess.run(command, shell=True, check=True)
+    from machineconfig.utils.code import run_script
+    run_script(command)
 
 
 def main(
