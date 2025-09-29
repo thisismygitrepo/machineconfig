@@ -400,29 +400,22 @@ wt new-tab --title "{tab_name}" {cwd_part} "{command}"
 
 
 if __name__ == "__main__":
-    # Example usage with new schema
-    sample_layout: LayoutConfig = {"layoutName": "TestLayout", "layoutTabs": [{"tabName": "Frontend", "startDir": "~/code", "command": "btm"}, {"tabName": "Monitor", "startDir": "~", "command": "lf"}]}
-
+    sample_layout: LayoutConfig = {"layoutName": "TestLayout",
+                                   "layoutTabs": [
+            {"tabName": "Frontend", "startDir": "~/code", "command": "btm"},
+            {"tabName": "Monitor", "startDir": "~", "command": "lf"}
+            ]}
     try:
-        # Create layout using the generator
         generator = WTLayoutGenerator()
         script_path = generator.create_wt_layout(sample_layout, None)
         print(f"✅ Windows Terminal layout created: {script_path}")
-
-        # Show preview
         preview = generator.get_wt_layout_preview(sample_layout)
         print(f"\n📋 Command Preview:\n{preview}")
-
-        # Check status (won't find anything since we haven't run it)
         print("\n🔍 Current status:")
         generator.print_status_report()
-
-        # Show how to run the layout
         print("\n▶️  To run this layout, execute:")
         print(f'   powershell -ExecutionPolicy Bypass -File "{script_path}"')
-
     except Exception as e:
         print(f"❌ Error: {e}")
         import traceback
-
         traceback.print_exc()

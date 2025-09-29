@@ -257,9 +257,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
             layout["layoutTabs"].append({"tabName": f"tab{an_arg}", "startDir": str(PathExtended.cwd()), "command": f"uv run -m fire {choice_file} {choice_function} --idx={an_arg} --idx_max={args.Nprocess}"})
         run_zellij_layout(layout_config=layout)
         return None
-
     if args.optimized:
-        # note that in ipython, optimization is meaningless.
         command = command.replace("python ", "python -OO ")
     # if platform.system() == "Linux":
     #     command = "timeout 1s aafire -driver slang\nclear\n" + command
@@ -276,14 +274,11 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
         comman_path__.write_text(command, encoding="utf-8")
         console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {comman_path__}: "), style="bold red")
         import subprocess
-
         existing_tab_names = subprocess.run(["zellij", "action", "query-tab-names"], capture_output=True, text=True, check=True).stdout.splitlines()
         if args.zellij_tab in existing_tab_names:
             print(f"⚠️ Tab name `{args.zellij_tab}` already exists. Please choose a different name.")
-            # args.zellij_tab = input("Please enter a new tab name: ")
             args.zellij_tab += f"_{randstr(3)}"
         from machineconfig.cluster.sessions_managers.zellij_local import run_command_in_zellij_tab
-
         command = run_command_in_zellij_tab(command=str(comman_path__), tab_name=args.zellij_tab, cwd=None)
     if args.watch:
         command = "watchexec --restart --exts py,sh,ps1 " + command
@@ -293,30 +288,19 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
         if platform.system() in ["Linux", "Darwin"]:
             export_line = f"""export PYTHONPATH="{repo_root}""" + """:${PYTHONPATH}" """
         elif platform.system() == "Windows":
-            # export_line = f"""set PYTHONPATH="{repo_root}""" + """:%PYTHONPATH%" """
-            # powershell equivalent
             export_line = f"""$env:PYTHONPATH="{repo_root}""" + """:$env:PYTHONPATH" """
         else:
             raise NotImplementedError(f"Platform {platform.system()} not supported.")
         command = export_line + "\n" + command
-
-    # program_path = os.environ.get("op_script", None)
-    # program_path = PathExtended(program_path) if program_path is not None else PROGRAM_PATH
     if args.loop:
         if platform.system() in ["Linux", "Darwin"]:
             command = command + "\nsleep 0.5"
         elif platform.system() == "Windows":
-            # command = command + "timeout 0.5\n"
-            # pwsh equivalent
             command = "$ErrorActionPreference = 'SilentlyContinue';\n" + command + "\nStart-Sleep -Seconds 0.5"
         else:
             raise NotImplementedError(f"Platform {platform.system()} not supported.")
-        # command = command + f"\n. {program_path}"
     console.print(Panel(Syntax(command, lexer="shell"), title=f"🔥 fire command @ {command}: "), style="bold red")
-    # program_path.parent.mkdir(parents=True, exist_ok=True)
-    # program_path.write_text(command, encoding="utf-8")
     import subprocess
-
     subprocess.run(command, shell=True, check=True)
 
 
