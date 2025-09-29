@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-# --GROUP:ESSENTIAL:git,nano,net-utils,wget,curl,nala,nvm,nodejs
+# --GROUP:ESSENTIAL_SYSTEM:git,nano,net-utils,wget,curl,nala,nvm,nodejs
 echo "🔄 Updating apt package lists..."
 echo "📥 Installing nala package manager..."
 echo "📥 Installing essential network tools..."
@@ -26,15 +26,19 @@ echo "📥 Installing aafire - ASCII art fire animation..."
 echo "📥 Installing cmatrix - Matrix-style terminal animation..."
 echo "📥 Installing hollywood - Hollywood hacker terminal effect..."
 echo "📥 Installing chafa - terminal image viewer..."
+sudo nala install cowsay -y || true
+sudo nala install lolcat -y || true
+sudo nala install boxes -y || true
+sudo nala install figlet -y || true
 sudo nala install fortune -y || true
 sudo nala install toilet -y || true
+sudo nala install chafa -y
 sudo nala install sl -y || true
 sudo nala install libaa-bin -y
 echo 'keyboard-configuration keyboard-configuration/layout select US English' | sudo debconf-set-selections
 echo 'keyboard-configuration keyboard-configuration/layoutcode string us' | sudo debconf-set-selections
 sudo DEBIAN_FRONTEND=noninteractive nala install -y cmatrix
 sudo nala install hollywood -y || true
-sudo nala install chafa -y
 
 # --GROUP:NetworkTools: sshfs,samba,fuse3,nfs-common
 echo "📥 Installing sshfs - mount remote filesystems over SSH..."
@@ -44,7 +48,7 @@ sudo nala install samba
 sudo nala install fuse3 -y || true
 sudo nala install nfs-common -y || true
 
-# --GROUP:DEV: graphviz,make,rust,libssl-dev,sqlite3,postgresql-client,redis-tools
+# --GROUP:DEV_SYSTEM: graphviz,make,rust,libssl-dev,sqlite3,postgresql-client,redis-tools
 echo "📥 Installing Graphviz - graph visualization software..."
 echo "📥 Installing make - build automation tool..."
 echo "📥 Installing SSL development libraries for Rust..."

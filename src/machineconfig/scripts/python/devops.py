@@ -1,7 +1,5 @@
 """devops with emojis"""
 
-import machineconfig.scripts.python.fire_agents as fire_agents
-import machineconfig.scripts.python.fire_jobs_layout_helper as fire_jobs_layout_helper
 import machineconfig.scripts.python.devops_devapps_install as installer_entry_point
 import machineconfig.scripts.python.share_terminal as share_terminal
 import machineconfig.scripts.python.repos as repos
@@ -9,17 +7,6 @@ import machineconfig.scripts.python.repos as repos
 import typer
 
 app = typer.Typer(help="🛠️ DevOps operations with emojis", no_args_is_help=True)
-
-
-agents_app = typer.Typer(help="🤖 AI Agents management subcommands")
-agents_app.command("create")(fire_agents.create)
-agents_app.command("collect")(fire_agents.collect)
-app.add_typer(agents_app, name="agents")
-
-layouts_app = typer.Typer(help="Layouts management subcommands")
-layouts_app.command("launch")(fire_jobs_layout_helper.launch)
-layouts_app.command("load-balance")(fire_jobs_layout_helper.load_balance)
-app.add_typer(layouts_app, name="session")
 
 app.command(name="install", help="📦 Install essential packages")(installer_entry_point.main)
 app.command(name="share-terminal", help="📡 Share terminal via web browser")(share_terminal.main)

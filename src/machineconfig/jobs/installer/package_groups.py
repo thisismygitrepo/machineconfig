@@ -146,9 +146,12 @@ PACKAGES_NAMES_ESSENTIAL = Literal[
     "zoxide",
 ]
 
-PACKAGE_GROUPS: TypeAlias = Literal["ESSENTIAL", "DEV"]
+PACKAGE_GROUPS: TypeAlias = Literal["ESSENTIAL", "DEV", "ESSENTIAL_SYSTEM", "DEV_SYSTEM"]
 PACKAGE_GROUP2NAMES: dict[PACKAGE_GROUPS, list[str]] = {
     "ESSENTIAL": list(PACKAGES_NAMES_ESSENTIAL.__args__),
     "DEV": list(PACKAGES_NAMES_DEV.__args__),
+    "ESSENTIAL_SYSTEM": [],
+    "DEV_SYSTEM": [],
 }
+
 _ = Union

@@ -127,5 +127,12 @@ def launch(layout_path: str = typer.Argument(..., help="Path to the layout.json 
         print(f"❌ Unsupported platform: {platform.system()}")
 
 
+def main_from_parser():
+    layouts_app = typer.Typer(help="Layouts management subcommands")
+    layouts_app.command("launch")(launch)
+    layouts_app.command("load-balance")(load_balance)
+    return layouts_app()
+
+
 if __name__ == "__main__":
     from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig

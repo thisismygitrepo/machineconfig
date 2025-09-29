@@ -193,5 +193,12 @@ fire_agents collect $AGENTS_DIR "$REPO_ROOT/.ai/agents/$JOB_NAME/collected.txt"
     typer.echo(f"Template bash script written to {save_path}")
 
 
+def main_from_parser():
+    agents_app = typer.Typer(help="🤖 AI Agents management subcommands")
+    agents_app.command("create")(create)
+    agents_app.command("collect")(collect)
+    agents_app.command("template")(template)
+    return agents_app()
+
 if __name__ == "__main__":  # pragma: no cover
     pass

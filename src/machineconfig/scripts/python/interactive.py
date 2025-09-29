@@ -21,6 +21,7 @@ import subprocess
 import sys
 from pathlib import Path
 from platform import system
+from typing import cast
 
 import questionary
 from questionary import Choice
@@ -29,6 +30,7 @@ from rich.panel import Panel
 from rich.text import Text
 
 
+_ = cast
 console = Console()
 
 
@@ -102,16 +104,16 @@ def install_windows_desktop_apps() -> bool:
 def get_installation_choices() -> list[str]:
     """Get user choices for installation options."""
     choices = [
-        Choice(value="install_apps", title="📥 Install Apps                    - Install base system applications", checked=False),
         Choice(value="upgrade_system", title="🔄 Upgrade System Packages        - Update all system packages", checked=False),
-        Choice(value="install_uv_repos", title="🐍 Install Repos                - Set up Python environment and repositories permanently.", checked=False),
+        Choice(value="ESSENTIAL_SYSTEM", title="📥 Install Apps                    - Install base system applications", checked=False),
+        Choice(value="ESSENTIAL", title="⚡ Install CLI Apps               - Command-line tools installation", checked=False),
+        Choice(value="DEV_SYSTEM", title="🛠️  Install Development Tools      - rust, libssl-dev, ffmpeg, wezterm, brave, code", checked=False),
+        Choice(value="TerminalEyeCandy", title="🎨 Install ASCII Art Libraries    - Terminal visualization tools", checked=False),
+        Choice(value="install_repos", title="🐍 Install Repos                - Set up Python environment and repositories permanently.", checked=False),
         Choice(value="install_ssh_server", title="🔒 Install SSH Server             - Set up remote access", checked=False),
         Choice(value="create_symlinks", title="🔗 Create Symlinks                - Set up configuration symlinks (finish dotfiles transfer first)", checked=False),
-        Choice(value="install_cli_apps", title="⚡ Install CLI Apps               - Command-line tools installation", checked=False),
-        Choice(value="install_dev_tools", title="🛠️  Install Development Tools      - rust, libssl-dev, ffmpeg, wezterm, brave, code", checked=False),
         Choice(value="retrieve_repositories", title="📚 Retrieve Repositories          - Clone repositories to ~/code", checked=False),
         Choice(value="retrieve_data", title="💾 Retrieve Data                  - Backup restoration", checked=False),
-        Choice(value="install_ascii_art", title="🎨 Install ASCII Art Libraries    - Terminal visualization tools", checked=False),
     ]
     # Add Windows-specific options
     if system() == "Windows":
@@ -126,18 +128,18 @@ def execute_installations(selected_options: list[str]) -> None:
     console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Setting up base virtual environment[/italic]", border_style="green"))
     run_command("curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/ve.sh | bash", "Setting up base virtual environment")
 
-    if "install_apps" in selected_options:
-        console.print(Panel("📦 [bold blue]APPLICATIONS[/bold blue]\n[italic]Installing base system applications[/italic]", border_style="blue"))
-        if system() == "Windows":
-            # Windows: Use PowerShell to execute local apps.ps1 script
-            from machineconfig import setup_windows as module
-            script = Path(module.__file__).parent / "apps.ps1"
-            run_command(f'powershell -ExecutionPolicy Bypass -File "{script}"', "Installing Windows applications")
-        else:
-            # Linux: Use existing bash script approach
-            from machineconfig import setup_linux as module
-            script = Path(module.__file__).parent / "apps.sh"
-            run_command(f"bash {script}", "Installing Linux base system applications")
+    for maybe_a_group in selected_options:
+        if maybe_a_group in ("ESSENTIAL", "DEV", "ESSENTIAL_SYSTEM", "DEV_SYSTEM", "TerminalEyeCandy"):
+            console.print(Panel("⚡ [bold bright_yellow]CLI APPLICATIONS[/bold bright_yellow]\n[italic]Command-line tools installation[/italic]", border_style="bright_yellow"))
+            console.print("🔧 Installing CLI applications", style="bold cyan")
+            try:
+                from machineconfig.scripts.python.devops_devapps_install import main as devops_devapps_install_main
+                # maybe_a_group = cast(PA, maybe_a_group)
+                devops_devapps_install_main(group=maybe_a_group)  # type: ignore
+                console.print("✅ CLI applications installed successfully", style="bold green")
+            except Exception as e:
+                console.print(f"❌ Error installing CLI applications: {e}", style="bold red")
+            run_command(". $HOME/.bashrc", "Reloading bash configuration")
 
     if "upgrade_system" in selected_options:
         if system() == "Windows":
@@ -147,7 +149,7 @@ def execute_installations(selected_options: list[str]) -> None:
             run_command("sudo nala upgrade -y", "Upgrading system packages")
         else:
             console.print(f"❌ System upgrade not supported on {system()}.", style="bold red")
-    if "install_uv_repos" in selected_options:
+    if "install_repos" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
         from machineconfig import setup_linux as module
         script = Path(module.__file__).parent / "repos.sh"
@@ -181,27 +183,6 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
         else:
             console.print("⏭️  Skipping symlink creation - finish dotfiles transfer first", style="yellow")
 
-    if "install_cli_apps" in selected_options:
-        console.print(Panel("⚡ [bold bright_yellow]CLI APPLICATIONS[/bold bright_yellow]\n[italic]Command-line tools installation[/italic]", border_style="bright_yellow"))
-        console.print("🔧 Installing CLI applications", style="bold cyan")
-        try:
-            from machineconfig.scripts.python.devops_devapps_install import main as devops_devapps_install_main
-            devops_devapps_install_main(which="essentials")
-            console.print("✅ CLI applications installed successfully", style="bold green")
-        except Exception as e:
-            console.print(f"❌ Error installing CLI applications: {e}", style="bold red")
-        run_command(". $HOME/.bashrc", "Reloading bash configuration")
-
-    if "install_dev_tools" in selected_options:
-        console.print(Panel("🛠️  [bold bright_blue]DEVELOPMENT TOOLS[/bold bright_blue]\n[italic]Software development packages[/italic]", border_style="bright_blue"))
-        console.print("🔧 Installing development applications", style="bold cyan")
-        try:
-            from machineconfig.scripts.python.devops_devapps_install import main as devops_devapps_install_main
-            devops_devapps_install_main(which="wezterm,brave,code")
-            console.print("✅ Development applications installed successfully", style="bold green")
-        except Exception as e:
-            console.print(f"❌ Error installing development applications: {e}", style="bold red")
-
     if "retrieve_repositories" in selected_options:
         console.print(Panel("📚 [bold bright_magenta]REPOSITORIES[/bold bright_magenta]\n[italic]Project code retrieval[/italic]", border_style="bright_magenta"))
         from machineconfig.scripts.python import repos as module
@@ -216,12 +197,6 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             console.print("✅ Backup data retrieved successfully", style="bold green")
         except Exception as e:
             console.print(f"❌ Error retrieving backup data: {e}", style="bold red")
-
-    if "install_ascii_art" in selected_options:
-        console.print(Panel("🎨 [bold bright_green]ASCII ART[/bold bright_green]\n[italic]Terminal visualization tools[/italic]", border_style="bright_green"))
-        from machineconfig import setup_linux as module
-        script = Path(module.__file__).parent / "web_shortcuts" / "ascii_art.sh"
-        run_command(f"bash {script}", "Installing ASCII art libraries")
 
     if "install_windows_desktop" in selected_options:
         install_windows_desktop_apps()

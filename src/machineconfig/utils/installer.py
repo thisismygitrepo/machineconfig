@@ -1,6 +1,7 @@
 """package manager"""
 
-from machineconfig.utils.installer_utils.installer_abc import check_if_installed_already
+from machineconfig.utils.installer_utils.installer_abc import check_if_installed_already, parse_apps_installer_linux, parse_apps_installer_windows
+
 from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import InstallerData, InstallerDataFiles, get_normalized_arch, get_os_name, OPERATING_SYSTEMS, CPU_ARCHITECTURES
 from machineconfig.jobs.installer.package_groups import PACKAGE_GROUPS, PACKAGE_GROUP2NAMES
@@ -8,7 +9,7 @@ from rich.console import Console
 from rich.panel import Panel
 
 from machineconfig.utils.path_extended import PathExtended as PathExtended
-from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT, LINUX_INSTALL_PATH
+from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT, LINUX_INSTALL_PATH, LIBRARY_ROOT
 from machineconfig.utils.io import read_json
 
 from typing import Any
@@ -116,6 +117,28 @@ def get_all_installer_data_files() -> list[InstallerData]:
     res_raw: InstallerDataFiles = read_json(Path(module.__file__).parent.joinpath("installer_data.json"))
     res_final: list[InstallerData] = res_raw["installers"]
     print(f"Loaded: {len(res_final)} installer categories")
+    return res_final
+
+
+def get_installers_system_groups():
+    res_final: list[InstallerData] = []
+    from platform import system
+    if system() == "Windows":
+        options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text(encoding="utf-8"))
+    elif system() == "Linux" or system() == "Darwin":
+        options_system = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps.sh").read_text(encoding="utf-8"))
+    else:
+        raise NotImplementedError(f"❌ System {system()} not supported")
+    os_name = get_os_name()
+    for group_name, (docs, script) in options_system.items():
+        item: InstallerData = {
+            "appName": group_name,
+            "doc": docs,
+            "repoURL": "CMD",
+            "fileNamePattern": {
+                "amd64": {os_name: script,},
+                "arm64": {os_name: script,},}}
+        res_final.append(item)  
     return res_final
 
 
