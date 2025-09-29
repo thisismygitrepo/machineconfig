@@ -16,7 +16,7 @@ Install-Module -Name Terminal-Icons -Repository PSGallery -Force -AcceptLicense 
 Install-Module -Name PSFzf  -SkipPublisherCheck  # -AcceptLicense -PassThru -Confirm  #  -RequiredVersion 2.5.10
 
 
-# --GROUP: DEV
+# --GROUP:DEV:VSRedistrib+VSBuildTools+Codeblocks+GnuWin32: Make+GnuPG+graphviz+WinFsp+SSHFS-win+xming+Node.js+Rustup+Cloudflare+Cloudflare WARP+Microsoft Garage Mouse without Borders
 winget install --no-upgrade --name "VSRedistrib"                   --Id "Microsoft.VC++2015-2022Redist-x64"      --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "VSBuildTools"                  --Id "Microsoft.VisualStudio.2022.BuildTools" --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Codeblocks"                    --Id "Codeblocks.Codeblocks"                  --source winget --scope user --accept-package-agreements --accept-source-agreements  # IDE for C/C++
@@ -33,7 +33,7 @@ winget install --no-upgrade --name "Cloudflare WARP"               --Id "Cloudfl
 winget install --no-upgrade --name "Microsoft Garage Mouse without Borders" --Id "Microsoft.MouseWithoutBorders" --source winget --scope user --accept-package-agreements --accept-source-agreements
 
 
-# --GROUP:OTHER
+# --GROUP:OTHER:nu+Chrome+ChromeRemoteDesktop+Zoom+7zip+Firefox+Thunderbird+StreamlabsOBS+OBSStudio+MiKTeX+TexMaker+notepad+++Lapce+TesseractOCR+perl+DB Browser for SQLite+sql server management studio+Adobe Acrobat Reader DC+julia+Chafa+bottom+onefetch+Just+hyperfine+AWS CLI
 winget install --no-upgrade --name "nu"                                 --Id "Nushell.Nushell"                   --source winget --scope user --accept-package-agreements --accept-source-agreements  # add to userpath C:\Program Files\nu\bin, done in symlinks
 winget install --no-upgrade --name "Google Chrome"                      --Id "Google.Chrome"                     --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Chrome Remote Desktop Host"         --Id "Google.ChromeRemoteDesktop"        --source winget --scope user --accept-package-agreements --accept-source-agreements

@@ -2,8 +2,13 @@
 
 import typer
 from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
 from platform import system
 from typing import Optional, Literal, TypeAlias, cast, get_args, Annotated
+
+console = Console()
 
 WHICH_CAT: TypeAlias = Literal["essentials", "essentialsDev", "systemPackages", "precheckedPackages", "ia"]
 
@@ -21,27 +26,37 @@ def _handle_installer_not_found(search_term: str, all_installers: list["Installe
     # Find close matches using fuzzy matching
     close_matches = get_close_matches(search_term, all_names, n=5, cutoff=0.4)
     
-    print(f"\n❌ '{search_term}' was not found.")
+    console.print(f"\n❌ '[red]{search_term}[/red]' was not found.", style="bold")
     
     if close_matches:
-        print("🤔 Did you mean one of these?")
+        console.print("🤔 Did you mean one of these?", style="yellow")
+        table = Table(show_header=False, box=None, pad_edge=False)
         for i, match in enumerate(close_matches, 1):
-            print(f"   {i}. {match}")
+            table.add_row(f"[cyan]{i}.[/cyan]", f"[green]{match}[/green]")
+        console.print(table)
     else:
-        print("📋 Here are some available options:")
+        console.print("📋 Here are some available options:", style="blue")
         # Show first 10 installers as examples
         sample_names = []
         for inst in all_installers[:10]:
             exe_name = inst["appName"]
             sample_names.append(exe_name)        
+        
+        table = Table(show_header=False, box=None, pad_edge=False)
         for i, name in enumerate(sample_names, 1):
-            print(f"   {i}. {name}")
+            table.add_row(f"[cyan]{i}.[/cyan]", f"[green]{name}[/green]")
+        console.print(table)
         
         if len(all_installers) > 10:
-            print(f"   ... and {len(all_installers) - 10} more")
+            console.print(f"   [dim]... and {len(all_installers) - 10} more[/dim]")
     
-    print("\n💡 Use 'ia' to interactively browse all available installers.")
-    print(f"💡 Use one of the categories: {list(get_args(WHICH_CAT))}")
+    panel = Panel(
+        "[bold blue]💡 Use 'ia' to interactively browse all available installers.[/bold blue]\n"
+        f"[bold blue]💡 Use one of the categories: {list(get_args(WHICH_CAT))}[/bold blue]",
+        title="[yellow]Helpful Tips[/yellow]",
+        border_style="yellow"
+    )
+    console.print(panel)
 
 
 def main_with_parser():
@@ -76,8 +91,11 @@ def main(which: Annotated[Optional[str], typer.Argument(help=f"Choose a category
                 return None
             message = Installer(selected_installer).install_robust(version=None)  # finish the task
             total_messages.append(message)
-        for a_message in total_messages:
-            print(a_message)
+        
+        if total_messages:
+            console.print("\n[bold green]📊 Installation Results:[/bold green]")
+            for a_message in total_messages:
+                console.print(f"[blue]• {a_message}[/blue]")
         return None
 
 
@@ -110,17 +128,24 @@ def install_interactively():
             an_installer_data = installers[installer_idx]
             status_message = Installer(an_installer_data).install_robust(version=None)  # finish the task - this returns a status message, not a command
             installation_messages.append(status_message)
-    print("\n📊 INSTALLATION SUMMARY:")
-    print("=" * 50)
-    for message in installation_messages:
-        print(message)
+    if installation_messages:
+        panel = Panel(
+            "\n".join([f"[blue]• {message}[/blue]" for message in installation_messages]),
+            title="[bold green]📊 Installation Summary[/bold green]",
+            border_style="green",
+            padding=(1, 2)
+        )
+        console.print(panel)
 
 
 def get_programs_by_category(program_name: WHICH_CAT):
-    print(f"""
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-┃ 📦 Installing Category: {program_name}
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
+    panel = Panel(
+        f"[bold yellow]Installing programs from category: [green]{program_name}[/green][/bold yellow]",
+        title="[bold blue]📦 Category Installation[/bold blue]",
+        border_style="blue",
+        padding=(1, 2)
+    )
+    console.print(panel)
     from machineconfig.utils.source_of_truth import LIBRARY_ROOT
     from machineconfig.utils.installer import get_installers, install_all
     from machineconfig.utils.installer_utils.installer_abc import parse_apps_installer_linux, parse_apps_installer_windows
@@ -140,17 +165,47 @@ def get_programs_by_category(program_name: WHICH_CAT):
                 options_system = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps.sh").read_text(encoding="utf-8"))
             else:
                 raise NotImplementedError(f"❌ System {system()} not supported")
-            program_names = choose_from_options(multi=True, msg="", options=sorted(list(options_system.keys())), header="🚀 CHOOSE DEV APP", fzf=True)
+            
+            # Create display options that include descriptions for user selection
+            display_options = []
+            for group_name, (description, _) in options_system.items():
+                if description:
+                    display_options.append(f"{group_name:<20} - {description}")
+                else:
+                    display_options.append(group_name)
+            
+            program_names = choose_from_options(multi=True, msg="", options=sorted(display_options), header="🚀 CHOOSE DEV APP", fzf=True)
             program = ""
-            for name in program_names:
-                print(f"""
-┌────────────────────────────────────────────────────
-│ ⚙️  Installing: {name}
-└────────────────────────────────────────────────────""")
-                sub_program = options_system[name]
+            for display_name in program_names:
+                # Extract the actual group name (everything before " - " if present)
+                group_name = display_name.split(" - ")[0].strip() if " - " in display_name else display_name.strip()
+                
+                console.print(f"\n[bold cyan]⚙️  Installing: [yellow]{group_name}[/yellow][/bold cyan]", style="bold")
+                
+                _, sub_program = options_system[group_name]  # Extract content from tuple
                 if sub_program.startswith("#winget"):
                     sub_program = sub_program[1:]
                 program += "\n" + sub_program
+            from pathlib import Path
+            if system() == "Windows":
+                temp_script_path = Path("C:/Windows/Temp/temp_install_script.ps1")
+                lexer = "powershell"
+            else:
+                temp_script_path = Path("/tmp/temp_install_script.sh")
+                lexer = "bash"
+            temp_script_path.write_text(program, encoding="utf-8")
+            console.print(f"📝 [blue]Temporary script written to:[/blue] [green]{temp_script_path}[/green]")
+            from rich.syntax import Syntax
+            console.print(Panel(Syntax(code=program, lexer=lexer), title="📄 Installation Program", subtitle="shell code"), style="bold red")
+            console.print("🚀 [bold yellow]Starting installation...[/bold yellow]")
+            if system() == "Windows":
+                import subprocess
+                subprocess.run(["powershell", "-ExecutionPolicy", "Bypass", "-File", str(temp_script_path)], check=True)
+            elif system() == "Linux":
+                import subprocess
+                subprocess.run(["bash", str(temp_script_path)], check=True)
+            console.print("✅ [bold green]Installation completed.[/bold green]")
+            temp_script_path.unlink(missing_ok=True)
         case "ia":
             install_interactively()
         case "precheckedPackages":

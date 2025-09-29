@@ -81,24 +81,7 @@ def install_windows_desktop_apps() -> bool:
     """Install Windows desktop applications using winget."""
     if system() != "Windows":
         console.print("❌ This function is only available on Windows systems.", style="bold red")
-        return False
-    
-    console.print(Panel("💻 [bold cyan]WINDOWS DESKTOP APPS[/bold cyan]\n[italic]Installing Brave, Windows Terminal, PowerShell, and VSCode[/italic]", border_style="cyan"))
-    
-    # Install winget applications
-    winget_commands = [
-        ('winget install --no-upgrade --name "Windows Terminal" --Id "Microsoft.WindowsTerminal" --source winget --scope user --accept-package-agreements --accept-source-agreements', "Installing Windows Terminal"),
-        ('winget install --no-upgrade --name "Powershell" --Id "Microsoft.PowerShell" --source winget --scope user --accept-package-agreements --accept-source-agreements', "Installing PowerShell"),
-        ('winget install --no-upgrade --name "Brave" --Id "Brave.Brave" --source winget --scope user --accept-package-agreements --accept-source-agreements', "Installing Brave Browser"),
-        ('winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements', "Installing Visual Studio Code"),
-    ]
-    
-    success = True
-    for command, description in winget_commands:
-        if not run_command(command, description):
-            success = False
-    
-    # Install Nerd Fonts via Python
+        return False   
     console.print("🔧 Installing Nerd Fonts", style="bold cyan")
     try:
         from machineconfig.jobs.installer.custom_dev.nerfont_windows_helper import install_nerd_fonts
@@ -106,19 +89,14 @@ def install_windows_desktop_apps() -> bool:
         console.print("✅ Nerd Fonts installed successfully", style="bold green")
     except Exception as e:
         console.print(f"❌ Error installing Nerd Fonts: {e}", style="bold red")
-        success = False
-    
-    # Set Windows Terminal settings via Python
     console.print("🔧 Setting Windows Terminal settings", style="bold cyan")
     try:
         from machineconfig.setup_windows.wt_and_pwsh.set_wt_settings import main as set_wt_settings_main
         set_wt_settings_main()
         console.print("✅ Windows Terminal settings configured successfully", style="bold green")
     except Exception as e:
-        console.print(f"❌ Error setting Windows Terminal settings: {e}", style="bold red")
-        success = False
-    
-    return success
+        console.print(f"❌ Error setting Windows Terminal settings: {e}", style="bold red")    
+    return True
 
 
 def get_installation_choices() -> list[str]:
@@ -216,9 +194,6 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
 
     if "install_dev_tools" in selected_options:
         console.print(Panel("🛠️  [bold bright_blue]DEVELOPMENT TOOLS[/bold bright_blue]\n[italic]Software development packages[/italic]", border_style="bright_blue"))
-        run_command("(curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true", "Installing Rust toolchain")
-        run_command("sudo nala install libssl-dev -y", "Installing libssl-dev")
-        run_command("sudo nala install ffmpeg -y", "Installing ffmpeg")
         console.print("🔧 Installing development applications", style="bold cyan")
         try:
             from machineconfig.scripts.python.devops_devapps_install import main as devops_devapps_install_main

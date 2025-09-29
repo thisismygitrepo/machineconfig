@@ -3,7 +3,7 @@ from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.source_of_truth import WINDOWS_INSTALL_PATH, LINUX_INSTALL_PATH, INSTALL_VERSION_ROOT
 
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 import subprocess
 import platform
 
@@ -166,75 +166,71 @@ def check_if_installed_already(exe_name: str, version: Optional[str], use_cache:
     return ("⚠️ NotInstalled", "None", version or "unknown")
 
 
-def parse_apps_installer_linux(txt: str) -> dict[str, Any]:
+def parse_apps_installer_linux(txt: str) -> dict[str, tuple[str, str]]:
     """Parse Linux shell installation scripts into logical chunks.
     
-    Supports two formats:
-    1. Legacy format with 'yes '' | sed 3q; echo "----------------------------- installing' delimiter
-    2. New format with # --GROUP:<name>-- comment signatures
+    Splits scripts by # --GROUP:<name>:<description> comment signatures into a dictionary
+    mapping block names to (description, shell script content) tuples.
     
     Returns:
-        dict[str, str]: Dictionary mapping block/section names to their installation scripts
+        dict[str, tuple[str, str]]: Dictionary mapping block/section names to (description, installation_script) tuples
     """
-    # Try new block format first
-    if "# --GROUP:" in txt:
-        import re
-        # Split by block signatures: # --GROUP:<name>--
-        blocks = re.split(r'# --GROUP:([^-]+)--', txt)
-        res: dict[str, str] = {}
-        
-        # Process blocks in pairs (block_name, block_content)
-        for i in range(1, len(blocks), 2):
-            if i + 1 < len(blocks):
-                block_name = blocks[i].strip()
-                block_content = blocks[i + 1].strip()
-                if block_content:
-                    res[block_name] = block_content
-        
-        return res
+    chunks = txt.split('# --GROUP:')
+    res: dict[str, tuple[str, str]] = {}
     
-    # Legacy format fallback
-    txts = txt.split("""yes '' | sed 3q; echo "----------------------------- installing """)
-    res = {}
-    for chunk in txts[1:]:
-        try:
-            k = chunk.split("----")[0].rstrip().lstrip()
-            v = "\n".join(chunk.split("\n")[1:])
-            res[k] = v
-        except IndexError as e:
-            print(f"""
-❌ Error parsing chunk:
-{"-" * 50}
-{chunk}
-{"-" * 50}""")
-            raise e
+    for chunk in chunks[1:]:  # Skip first empty chunk before first group
+        lines = chunk.split('\n')
+        # First line contains the group name and description in format "NAME:DESCRIPTION"
+        group_line = lines[0].strip()
+        
+        # Extract group name and description
+        if ':' in group_line:
+            parts = group_line.split(':', 1)  # Split only on first colon
+            group_name = parts[0].strip()
+            group_description = parts[1].strip() if len(parts) > 1 else ""
+        else:
+            group_name = group_line
+            group_description = ""
+        
+        # Rest is the content
+        content = '\n'.join(lines[1:]).strip()
+        
+        if group_name and content:
+            res[group_name] = (group_description, content)
+    
     return res
 
 
-def parse_apps_installer_windows(txt: str) -> dict[str, Any]:
-    chunks: list[str] = []
-    for idx, item in enumerate(txt.split(sep="winget install")):
-        if idx == 0:
-            continue
-        if idx == 1:
-            chunks.append(item)
+def parse_apps_installer_windows(txt: str) -> dict[str, tuple[str, str]]:
+    """Parse Windows PowerShell installation scripts into logical chunks.
+    
+    Splits scripts by # --GROUP:<name>:<description> comment signatures into a dictionary
+    mapping block names to (description, PowerShell script content) tuples.
+    
+    Returns:
+        dict[str, tuple[str, str]]: Dictionary mapping block/section names to (description, installation_script) tuples
+    """
+    chunks = txt.split('# --GROUP:')
+    res: dict[str, tuple[str, str]] = {}
+    
+    for chunk in chunks[1:]:  # Skip first chunk before first group
+        lines = chunk.split('\n')
+        # First line contains the group name and description in format "NAME:DESCRIPTION"
+        group_line = lines[0].strip()
+        
+        # Extract group name and description
+        if ':' in group_line:
+            parts = group_line.split(':', 1)  # Split only on first colon
+            group_name = parts[0].strip()
+            group_description = parts[1].strip() if len(parts) > 1 else ""
         else:
-            chunks.append("winget install" + item)
-    # progs = L(txt.splitlines()).filter(lambda x: x.startswith("winget ") or x.startswith("#winget"))
-    res: dict[str, str] = {}
-    for a_chunk in chunks:
-        try:
-            name = a_chunk.split("--name ")[1]
-            if "--Id" not in name:
-                print(f"⚠️  Warning: {name} does not have an Id, skipping")
-                continue
-            name = name.split(" --Id ", maxsplit=1)[0].strip('"').strip('"')
-            res[name] = a_chunk
-        except IndexError as e:
-            print(f"""
-❌ Error parsing chunk:
-{"-" * 50}
-{a_chunk}
-{"-" * 50}""")
-            raise e
+            group_name = group_line
+            group_description = ""
+        
+        # Rest is the content
+        content = '\n'.join(lines[1:]).strip()
+        
+        if group_name and content:
+            res[group_name] = (group_description, content)
+    
     return res

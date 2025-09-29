@@ -1,18 +1,15 @@
 #!/usr/bin/env bash
 
 
-# --GROUP:PACKAGE_MANAGERS & ABC: git,nano,net-utils,wget--
+# --GROUP:ESSENTIAL:git,nano,net-utils,wget,curl,nala,nvm,nodejs
 echo "🔄 Updating apt package lists..."
 echo "📥 Installing nala package manager..."
 echo "📥 Installing essential network tools..."
+echo "📥 Installing Node Version Manager (NVM)..."
 sudo apt update -y || true
 sudo apt install nala -y || true  # 🚀 Fast parallel apt manager
 sudo nala install curl wget gpg lsb-release apt-transport-https -y || true
 sudo nala install git net-tools htop nano -y || true
-
-
-# --GROUP:NODE_JS_ENVIRONMENT via NVM
-echo "📥 Installing Node Version Manager (NVM)..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 echo "🔧 Configuring NVM environment..."
 export NVM_DIR="$HOME/.nvm"
@@ -21,7 +18,7 @@ export NVM_DIR="$HOME/.nvm"
 echo "📥 Installing latest Node.js..."
 nvm install node || true
 
-# --GROUP:Terminal eye-candy
+# --GROUP:TerminalEyeCandy:fortune,toilet,sl,aafire,cmatrix,hollywood,chafa
 echo "📥 Installing fortune - random wisdom generator..."
 echo "📥 Installing toilet - large ASCII text generator..."
 echo "📥 Installing sl - steam locomotive animation..."
@@ -39,8 +36,7 @@ sudo DEBIAN_FRONTEND=noninteractive nala install -y cmatrix
 sudo nala install hollywood -y || true
 sudo nala install chafa -y
 
-
-# --GROUP:Network tools: sshfs,samba,fuse3,nfs-common
+# --GROUP:NetworkTools: sshfs,samba,fuse3,nfs-common
 echo "📥 Installing sshfs - mount remote filesystems over SSH..."
 echo "📥 Installing Samba - LAN-based file sharing..."
 sudo nala install sshfs
@@ -48,18 +44,19 @@ sudo nala install samba
 sudo nala install fuse3 -y || true
 sudo nala install nfs-common -y || true
 
-# --GROUP:Dev tools: graphviz,make,rust,libssl-dev,sqlite3,postgresql-client,redis-tools
+# --GROUP:DEV: graphviz,make,rust,libssl-dev,sqlite3,postgresql-client,redis-tools
 echo "📥 Installing Graphviz - graph visualization software..."
 echo "📥 Installing make - build automation tool..."
 echo "📥 Installing SSL development libraries for Rust..."
 echo "📥 Installing Rust programming language and toolchain..."
 sudo nala install graphviz -y || true
+sudo nala install ffmpeg -y || true  # Required by some dev tools
 sudo nala install make -y || true  # Required by LunarVim and SpaceVim
 (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
 sudo nala install libssl-dev -y
 
 
-# --GROUP:Databases: sqlite3,postgresql-client,redis-tools
+# --GROUP:DATABASES: sqlite3,postgresql-client,redis-tools
 echo "📥 Installing SQLite - lightweight SQL database..."
 echo "📥 Installing PostgreSQL client..."
 echo "📥 Installing Redis command-line tools..."
