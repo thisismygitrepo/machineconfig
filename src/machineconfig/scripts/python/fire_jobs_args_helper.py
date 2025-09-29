@@ -30,12 +30,70 @@ class FireJobArgs:
 
 
 def extract_kwargs(args: FireJobArgs) -> dict[str, object]:
-    """Extract kwargs from command line using -- separator.
+    """Extract kwargs from command line arguments in Fire format.
     
-    Returns empty dict since kwargs are now parsed directly from sys.argv
-    using the -- separator pattern in the main function.
+    Parses Fire-like arguments (e.g., --a=2, --name=value) from sys.argv
+    and returns them as a dictionary.
+    
+    Returns:
+        Dictionary mapping argument names to their values
     """
-    return {}
+    import sys
+    
+    kwargs: dict[str, object] = {}
+    
+    # Look for Fire-style arguments in sys.argv
+    for arg in sys.argv:
+        # Match patterns like --key=value or --key value (but we'll focus on --key=value)
+        if arg.startswith('--') and '=' in arg:
+            key, value = arg[2:].split('=', 1)  # Remove -- prefix and split on first =
+            
+            # Try to convert value to appropriate type
+            kwargs[key] = _convert_value_type(value)
+        elif arg.startswith('--') and '=' not in arg:
+            # Handle boolean flags like --debug
+            key = arg[2:]  # Remove -- prefix
+            # Check if next argument exists and doesn't start with --
+            arg_index = sys.argv.index(arg)
+            if arg_index + 1 < len(sys.argv) and not sys.argv[arg_index + 1].startswith('--'):
+                # Next argument is the value
+                value = sys.argv[arg_index + 1]
+                kwargs[key] = _convert_value_type(value)
+            else:
+                # It's a boolean flag
+                kwargs[key] = True
+                
+    return kwargs
+
+
+def _convert_value_type(value: str) -> object:
+    """Convert string value to appropriate Python type."""
+    # Try to convert to int
+    try:
+        if '.' not in value and 'e' not in value.lower():
+            return int(value)
+    except ValueError:
+        pass
+    
+    # Try to convert to float
+    try:
+        return float(value)
+    except ValueError:
+        pass
+    
+    # Try to convert boolean strings
+    if value.lower() in ('true', '1', 'yes', 'on'):
+        return True
+    elif value.lower() in ('false', '0', 'no', 'off'):
+        return False
+    
+    # Try to parse as list (comma-separated values)
+    if ',' in value:
+        items = [_convert_value_type(item.strip()) for item in value.split(',')]
+        return items
+    
+    # Return as string if no conversion possible
+    return value
 
 
 def parse_fire_args_from_argv() -> str:

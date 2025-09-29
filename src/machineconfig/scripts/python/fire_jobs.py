@@ -45,11 +45,11 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
         ipy_profile = "default"
 
     if choice_file.suffix == ".py":
-        kwargs = extract_kwargs(args)  # This now returns empty dict, but kept for compatibility
+        kwargs_dict = extract_kwargs(args)  # This now returns empty dict, but kept for compatibility
         activate_ve_line = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/machineconfig/.venv")
     else:
         activate_ve_line = ""
-        kwargs = {}
+        kwargs_dict = {}
 
     # =========================  choosing function to run
     choice_function: Optional[str] = None  # Initialize to avoid unbound variable
@@ -64,9 +64,9 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
 
             if choice_function == "RUN AS MAIN":
                 choice_function = None
-            if len(choice_function_args) > 0 and len(kwargs) == 0:
+            if len(choice_function_args) > 0 and len(kwargs_dict) == 0:
                 for item in choice_function_args:
-                    kwargs[item.name] = input(f"Please enter a value for argument `{item.name}` (type = {item.type}) (default = {item.default}) : ") or item.default
+                    kwargs_dict[item.name] = input(f"Please enter a value for argument `{item.name}` (type = {item.type}) (default = {item.default}) : ") or item.default
         elif choice_file.suffix == ".sh":  # in this case, we choos lines.
             options = []
             for line in choice_file.read_text(encoding="utf-8").splitlines():
@@ -88,6 +88,7 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
     if choice_file.suffix == ".py":
         if args.streamlit:
             import socket
+
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             try:
                 s.connect(("8.8.8.8", 1))
@@ -153,9 +154,7 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
     else:
         raise NotImplementedError(f"File type {choice_file.suffix} not supported, in the sense that I don't know how to fire it.")
 
-    if (
-        args.module or (args.debug and args.choose_function)
-    ):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
+    if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file}"
         import_line = get_import_module_code(str(choice_file))
         if repo_root is not None:
@@ -178,7 +177,7 @@ except (ImportError, ModuleNotFoundError) as ex:
             txt = (
                 txt
                 + f"""
-res = {choice_function}({("**" + str(kwargs)) if kwargs else ""})
+res = {choice_function}({("**" + str(kwargs_dict)) if kwargs_dict else ""})
 """
             )
 
@@ -346,10 +345,10 @@ def main(
     watch: Annotated[bool, typer.Option("--watch", "-w", help="Watch the file for changes")] = False,
 ) -> None:
     """Main function to process fire jobs arguments."""
-    
+
     # Get Fire arguments from context
     fire_args = parse_fire_args_from_context(ctx)
-    
+
     args = FireJobArgs(
         path=path,
         function=function,
@@ -381,6 +380,7 @@ def main(
     except Exception as e:
         # For other exceptions, print clean error message and exit
         import sys
+
         print(f"❌ Error: {e}", file=sys.stderr)
         sys.exit(1)
 
@@ -389,6 +389,7 @@ def main_from_parser():
     # from trogon.typer import init_tui
     # from trogon.typer import init_tui
     from typer import Typer
+
     app = Typer(add_completion=False)
     app.command(context_settings={"allow_extra_args": True, "allow_interspersed_args": False})(main)
     # typer.run(main)
