@@ -11,8 +11,6 @@ echo """#=======================================================================
 
 # echo "📥 Installing Nautilus file manager..."
 # sudo nala install nautilus -y  # 📂 graphical file manager
-
-# echo "📥 Installing X11 test applications..."
 # sudo nala install x11-apps  # 🎨 few graphical test apps like xeyes
 
 echo "📥 Installing XRDP - Remote Desktop Protocol server..."

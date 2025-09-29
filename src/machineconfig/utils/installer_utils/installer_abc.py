@@ -171,16 +171,16 @@ def parse_apps_installer_linux(txt: str) -> dict[str, Any]:
     
     Supports two formats:
     1. Legacy format with 'yes '' | sed 3q; echo "----------------------------- installing' delimiter
-    2. New format with # --BLOCK:<name>-- comment signatures
+    2. New format with # --GROUP:<name>-- comment signatures
     
     Returns:
         dict[str, str]: Dictionary mapping block/section names to their installation scripts
     """
     # Try new block format first
-    if "# --BLOCK:" in txt:
+    if "# --GROUP:" in txt:
         import re
-        # Split by block signatures: # --BLOCK:<name>--
-        blocks = re.split(r'# --BLOCK:([^-]+)--', txt)
+        # Split by block signatures: # --GROUP:<name>--
+        blocks = re.split(r'# --GROUP:([^-]+)--', txt)
         res: dict[str, str] = {}
         
         # Process blocks in pairs (block_name, block_content)

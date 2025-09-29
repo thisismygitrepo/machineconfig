@@ -189,6 +189,23 @@
       }
     },
     {
+      "appName": "ezshare",
+      "repoURL": "CMD",
+      "doc": "🔗 Easy file sharing tool",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "npm install -g ezshare",
+          "windows": "npm install -g ezshare",
+          "macos": "npm install -g ezshare"
+        },
+        "arm64": {
+          "linux": "npm install -g ezshare",
+          "windows": "npm install -g ezshare",
+          "macos": "npm install -g ezshare"
+        }
+      }
+    },
+    {
       "appName": "lolcatjs",
       "repoURL": "CMD",
       "doc": "🌈 Rainbow colored text output for terminal",

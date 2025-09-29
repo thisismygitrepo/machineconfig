@@ -1,7 +1,7 @@
 #!/usr#
 
 
-# --BLOCK:PACKAGE_MANAGERS & ABC: git,nano,net-utils,wget--
+# --GROUP:PACKAGE_MANAGERS & ABC: git,nano,net-utils,wget--
 echo """#=======================================================================
 📥 PACKAGE MANAGERS | Installing and configuring system package managers
 #=======================================================================
@@ -16,7 +16,7 @@ sudo nala install curl wget gpg lsb-release apt-transport-https -y || true
 sudo nala install git net-tools htop nano -y || true
 
 
-# --BLOCK:SYSTEM UTILS: fuse3,nfs-common,redis-tools--
+# --GROUP:SYSTEM UTILS: fuse3,nfs-common,redis-tools--
 echo """#=======================================================================
 🛠️ SYSTEM UTILITIES | Installing essential system tools
 #=======================================================================
@@ -25,8 +25,7 @@ echo "📂 Installing filesystem utilities..."
 sudo nala install fuse3 -y || true
 sudo nala install nfs-common -y || true
 
-# Node.js via NVM
-# --BLOCK:NODE_JS_ENVIRONMENT--
+# --GROUP:NODE_JS_ENVIRONMENT via NVM
 echo """
 #=======================================================================
 📝 NODE.JS ENVIRONMENT | Installing Node Version Manager
