@@ -1,5 +1,7 @@
 
 
+# =================== PRIVATE ================================
+
 # [git]
 # gitconfig = {this = '~/.gitconfig', to_this = '~/dotfiles/creds/git/.gitconfig'}
 # gitcred = {this = '~/.git-credentials', to_this = '~/dotfiles/creds/git/.git-credentials'}
@@ -19,11 +21,70 @@ config = {this = '~/AppData/Roaming/rclone/rclone.conf', to_this = '~/dotfiles/c
 [cloudflare]
 config = {this = '~/.cloudflared', to_this = '~/dotfiles/creds/cloudflare/.cloudflared'}
 
-[presenterm]
-config = {this = '~/.config/presenterm/config.yaml', to_this = 'LIBRARY_ROOT/settings/presenterm/config.yaml'}
+[ngrok_linux]
+config = {this = '~/.config/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
+
+[ngrok_windows]
+config = {this = '~/AppData/Local/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
+
+[m365]
+config1 = {this = '~/.cli-m365-msal.json',            to_this = '~/dotfiles/creds/tokens/.cli-m365-msal.json'}
+config2 = {this = '~/.cli-m365-all-connections.json', to_this = '~/dotfiles/creds/tokens/.cli-m365-all-connections.json'}
+config3 = {this = '~/.cli-m365-connection.json',      to_this = '~/dotfiles/creds/tokens/.cli-m365-connection.json'}
+# config2 = {this = '~/.cli-m365-tokens.json',        to_this = '~/dotfiles/creds/tokens/.cli-m365-tokens.json'}
+
+[bash_linux]
+bashrc = {this = '~/.inputrc', to_this = '~/dotfiles/shells/bash/.inputrc'}
+[remmina]
+data = {this = '~/.var/app/org.remmina.Remmina/data/remmina', to_this = '~/dotfiles/creds/RDP/remmina/data/remmina'}
+
+[webapp_linux]
+brave = {this = '~/.local/share/applications', to_this = '~/dotfiles/config/webapps/linux/brave', contents = true}
+
+# [startup_windows]
+# startup = {this = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup', to_this = '~/dotfiles/scripts/windows_startup', contents = true}
+
+# [aws]
+# config = {this = '~/.aws/config', to_this = '~/dotfiles/aws/.aws', contents = true}
+
+[wt_windows]
+settings = { this = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', to_this = 'LIBRARY_ROOT/settings/shells/wt/settings.json' }
+
+# [wsl_windows]
+# home = {this = '~/wsl', to_this = '\\wsl.localhost\Ubuntu-22.04\home\username'}
+# see \\wsl$ and ~\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState
+# config = {this = '~/.wslconfig', to_this = 'LIBRARY_ROOT/settings/wsl/.wslconfig'}
+
+# [wsl_linux]
+# home = {this = '~/win', to_this = '/mnt/c/Users/username'}
+
+
+# =================== LLMs ============================
+
+[chatgpt]
+config = { this = '~/.config/chatgpt/config.json', to_this = '~/dotfiles/creds/llm/chatgpt_cli/config.json' }
+
+[mods]
+config = {this = '~/.config/mods/mods.yml', to_this = '~/dotfiles/creds/llm/mods_cli/mods.yml'}
+
+[github_cli_token]
+token = {this = '~/.copilot-cli-access-token', to_this = '~/dotfiles/creds/llm/github_cli/.copilot-cli-access-token'}
+
+[aider]
+config = {this = '~/.aider.conf.yml', to_this = '~/dotfiles/creds/llm/aider/.aider.conf.yml'}
+
+[marvin]
+config = {this = '~/.marvin/.env', to_this = '~/dotfiles/creds/llm/marvin/.env'}
+threads = {this = '~/.marvin/cli/threads/default.json', to_this = '~/dotfiles/creds/llm/marvin/threads/default.json'}
 
 [docker]
 config = {this = '~/.docker/config.json', to_this = '~/dotfiles/creds/docker/config.json'}
+
+
+# =========================== PUBLIC ======================================
+
+[presenterm]
+config = {this = '~/.config/presenterm/config.yaml', to_this = 'LIBRARY_ROOT/settings/presenterm/config.yaml'}
 
 [keras]
 config = {this = '~/.keras/keras.json', to_this = 'LIBRARY_ROOT/settings/keras/keras.json'}
@@ -85,12 +146,6 @@ config = {this = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg
 config = {this = '~/.config/starship.toml', to_this = 'LIBRARY_ROOT/settings/shells/starship/starship.toml'}
 
 
-[ngrok_linux]
-config = {this = '~/.config/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
-
-[ngrok_windows]
-config = {this = '~/AppData/Local/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
-
 [kanata]
 config = {this = '~/.config/kanata/kanata.kbd', to_this = 'LIBRARY_ROOT/settings/keyboard/kanata/kanata.kbd'}
 
@@ -98,8 +153,6 @@ config = {this = '~/.config/kanata/kanata.kbd', to_this = 'LIBRARY_ROOT/settings
 config = {this = '~/.config/espanso/config/default.yml', to_this = 'LIBRARY_ROOT/settings/keyboard/espanso/config/default.yml'}
 match = {this = '~/.config/espanso/match/base.yml', to_this = 'LIBRARY_ROOT/settings/keyboard/espanso/match/base.yml', copy = true}
 
-[remmina]
-data = {this = '~/.var/app/org.remmina.Remmina/data/remmina', to_this = '~/dotfiles/creds/RDP/remmina/data/remmina'}
 
 [pudb]
 config = {this = '~/.config/pudb/pudb.cfg', to_this = 'LIBRARY_ROOT/settings/pudb/pudb.cfg'}
@@ -118,9 +171,6 @@ CurrentUserCurrentHost = {this = '~/Documents/PowerShell/Microsoft.PowerShell_pr
 CurrentUserAllHosts = {this = '~/Documents/PowerShell/profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/profile.ps1'}
 AllUsersCurrentHost = {this = 'C:\Program Files\PowerShell\7\Microsoft.PowerShell_profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/init.ps1'}
 AllUsersAllHosts = {this = 'C:\Program Files\PowerShell\7\profile.ps1', to_this = 'LIBRARY_ROOT/settings/shells/pwsh/init.ps1'}
-
-[bash_linux]
-bashrc = {this = '~/.inputrc', to_this = '~/dotfiles/shells/bash/.inputrc'}
 
 [nushell_windows]
 config = {this = '~/AppData/Roaming/nushell/config.nu', to_this = 'LIBRARY_ROOT/settings/shells/nushell/config.nu'}
@@ -207,25 +257,6 @@ pylint = {this = '~/.pylintrc', to_this = 'LIBRARY_ROOT/settings/linters/.pylint
 notepadpp = {this = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', to_this = 'C:/Program Files/Notepad++/notepad++.exe'}
 # tesseract = {this = '~/AppData/Local/Microsoft/WindowsApps/tesseract.exe', to_this = '~/AppData/Local/Tesseract-OCR/tesseract.exe'}  # doesn't work without whole installation dir is on PATH.
 
-[webapp_linux]
-brave = {this = '~/.local/share/applications', to_this = '~/dotfiles/config/webapps/linux/brave', contents = true}
-
-# [startup_windows]
-# startup = {this = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup', to_this = '~/dotfiles/scripts/windows_startup', contents = true}
-
-# [aws]
-# config = {this = '~/.aws/config', to_this = '~/dotfiles/aws/.aws', contents = true}
-
-[wt_windows]
-settings = { this = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', to_this = 'LIBRARY_ROOT/settings/shells/wt/settings.json' }
-
-# [wsl_windows]
-# home = {this = '~/wsl', to_this = '\\wsl.localhost\Ubuntu-22.04\home\username'}
-# see \\wsl$ and ~\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState
-# config = {this = '~/.wslconfig', to_this = 'LIBRARY_ROOT/settings/wsl/.wslconfig'}
-
-# [wsl_linux]
-# home = {this = '~/win', to_this = '/mnt/c/Users/username'}
 
 [scripts_linux]
 public = {this = '~/scripts', to_this = 'LIBRARY_ROOT/scripts/linux'}
@@ -234,27 +265,4 @@ public = {this = '~/scripts', to_this = 'LIBRARY_ROOT/scripts/linux'}
 public = {this = '~/scripts', to_this = 'LIBRARY_ROOT/scripts/windows'}
 
 
-# =================== LLMs ============================
-
-[chatgpt]
-config = { this = '~/.config/chatgpt/config.json', to_this = '~/dotfiles/creds/llm/chatgpt_cli/config.json' }
-
-[mods]
-config = {this = '~/.config/mods/mods.yml', to_this = '~/dotfiles/creds/llm/mods_cli/mods.yml'}
-
-[github_cli_token]
-token = {this = '~/.copilot-cli-access-token', to_this = '~/dotfiles/creds/llm/github_cli/.copilot-cli-access-token'}
-
-[aider]
-config = {this = '~/.aider.conf.yml', to_this = '~/dotfiles/creds/llm/aider/.aider.conf.yml'}
-
-[m365]
-config1 = {this = '~/.cli-m365-msal.json',            to_this = '~/dotfiles/creds/tokens/.cli-m365-msal.json'}
-config2 = {this = '~/.cli-m365-all-connections.json', to_this = '~/dotfiles/creds/tokens/.cli-m365-all-connections.json'}
-config3 = {this = '~/.cli-m365-connection.json',      to_this = '~/dotfiles/creds/tokens/.cli-m365-connection.json'}
-# config2 = {this = '~/.cli-m365-tokens.json',        to_this = '~/dotfiles/creds/tokens/.cli-m365-tokens.json'}
-
-[marvin]
-config = {this = '~/.marvin/.env', to_this = '~/dotfiles/creds/llm/marvin/.env'}
-threads = {this = '~/.marvin/cli/threads/default.json', to_this = '~/dotfiles/creds/llm/marvin/threads/default.json'}
 
