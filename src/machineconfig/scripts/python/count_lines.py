@@ -37,9 +37,23 @@ def count_historical_loc(repo_path: str) -> int:
     for i, commit in enumerate(repo.iter_commits(), 1):
         if i % 100 == 0 or i == total_commits:
             print(f"Processing commit {i}/{total_commits} ({i / total_commits:.1%})")
-        for file in commit.stats.files:
-            if str(file).endswith(".py"):
-                file_line_counts[str(file)] += commit.stats.files[file]["insertions"]
+        try:
+            # Handle initial commits that have no parents
+            if not commit.parents:
+                # For initial commit, count all lines in Python files
+                for file in commit.stats.files:
+                    if str(file).endswith(".py"):
+                        file_line_counts[str(file)] += commit.stats.files[file]["insertions"]
+            else:
+                # For commits with parents, use stats
+                for file in commit.stats.files:
+                    if str(file).endswith(".py"):
+                        file_line_counts[str(file)] += commit.stats.files[file]["insertions"]
+        except Exception:
+            # If stats fail (e.g., corrupted parent), skip this commit
+            print(f"Warning: Could not get stats for commit {commit.hexsha[:8]}, skipping")
+            continue
+
     print(f"\nProcessed files: {len(file_line_counts)}")
     return sum(file_line_counts.values())
 
