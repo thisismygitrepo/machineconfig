@@ -34,20 +34,16 @@ console = Console()
 
 
 def display_header() -> None:
-    """Display the script header."""
     header_text = Text("MACHINE CONFIGURATION", style="bold magenta")
     subtitle_text = Text("Interactive Installation Script", style="italic cyan")
     console.print(Panel(f"📦 {header_text}\n{subtitle_text}", border_style="blue", padding=(1, 2)))
 def display_completion_message() -> None:
-    """Display completion message."""
     completion_text = Text("INSTALLATION COMPLETE", style="bold green")
     subtitle_text = Text("System setup finished successfully", style="italic green")
     console.print(Panel(f"✨ {completion_text}\n{subtitle_text}\n\n🎉 Your system has been configured successfully!\n🔄 You may need to reboot to apply all changes.", border_style="green", padding=(1, 2)))
 def display_dotfiles_instructions() -> None:
-    """Display instructions for dotfiles migration."""
     header_text = Text("DOTFILES MIGRATION", style="bold yellow")
     subtitle_text = Text("Configuration transfer options", style="italic yellow")
-
     instructions = """
 🖱️  [bold blue]Method 1: USING MOUSE WITHOUT KB OR BROWSER SHARE[/bold blue]
     On original machine, run:
@@ -65,30 +61,7 @@ def display_dotfiles_instructions() -> None:
     [dim]cd ~
     cloud_copy SHARE_URL . --config ss[/dim]
     (requires symlinks to be created first)"""
-
     console.print(Panel(f"📂 {header_text}\n{subtitle_text}\n\n{instructions}", border_style="yellow", padding=(1, 2)))
-
-
-def install_windows_desktop_apps() -> bool:
-    """Install Windows desktop applications using winget."""
-    if system() != "Windows":
-        console.print("❌ This function is only available on Windows systems.", style="bold red")
-        return False   
-    console.print("🔧 Installing Nerd Fonts", style="bold cyan")
-    try:
-        from machineconfig.jobs.installer.custom_dev.nerfont_windows_helper import install_nerd_fonts
-        install_nerd_fonts()
-        console.print("✅ Nerd Fonts installed successfully", style="bold green")
-    except Exception as e:
-        console.print(f"❌ Error installing Nerd Fonts: {e}", style="bold red")
-    console.print("🔧 Setting Windows Terminal settings", style="bold cyan")
-    try:
-        from machineconfig.setup_windows.wt_and_pwsh.set_wt_settings import main as set_wt_settings_main
-        set_wt_settings_main()
-        console.print("✅ Windows Terminal settings configured successfully", style="bold green")
-    except Exception as e:
-        console.print(f"❌ Error setting Windows Terminal settings: {e}", style="bold red")    
-    return True
 
 
 def get_installation_choices() -> list[str]:
@@ -208,7 +181,10 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             console.print(f"❌ Error retrieving backup data: {e}", style="bold red")
 
     if "install_windows_desktop" in selected_options:
-        install_windows_desktop_apps()
+        from machineconfig.jobs.installer.custom_dev.nerfont_windows_helper import install_nerd_fonts
+        install_nerd_fonts()
+        from machineconfig.setup_windows.wt_and_pwsh.set_wt_settings import main as set_wt_settings_main
+        set_wt_settings_main()
 
 
 def main() -> None:
@@ -218,7 +194,7 @@ def main() -> None:
     if not selected_options:
         console.print("❌ No options selected. Exiting...", style="bold red")
         sys.exit(0)
-    console.print(f"\n✅ Selected options: {', '.join(selected_options)}", style="bold green")
+    console.print(f"\n✅ Selected options: {'\n'.join(selected_options)}", style="bold green")
     proceed = questionary.confirm("🚀 Proceed with installation?", default=True).ask()
     if not proceed:
         console.print("❌ Installation cancelled.", style="bold red")

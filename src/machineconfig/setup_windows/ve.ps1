@@ -1,6 +1,5 @@
 
 
-# install uv package manager if not present, else, run an update using `uv self update`
 if (-not (Test-Path -Path "$HOME\.local\bin\uv.exe")) {
     Write-Output "uv binary not found, installing..."
     irm https://astral.sh/uv/install.ps1 | iex
@@ -10,4 +9,3 @@ if (-not (Test-Path -Path "$HOME\.local\bin\uv.exe")) {
 }
 
 & "$HOME\.local\bin\uv.exe" python install 3.13
-

@@ -10,3 +10,4 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/thisismygitrepo/machin
 rm ve.ps1
 
 uv run --python 3.13 --with machineconfig devops interactive
+# uv run --python 3.13 --with machineconfig https://raw.githubusercontent.com/thisismygitrepo/machineconfig/ee4f69e838e1acbb275bfb5a3d3faee23345f2a8/src/machineconfig/scripts/python/devops.py
