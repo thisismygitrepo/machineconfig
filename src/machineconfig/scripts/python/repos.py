@@ -30,7 +30,7 @@ def main(
 
     from machineconfig.utils.io import read_ini
     from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
-    from machineconfig.utils.path_extended import PathExtended as PathExtended
+    from machineconfig.utils.path_extended import PathExtended
     from machineconfig.scripts.python.repos_helper_record import main as record_repos
     from machineconfig.scripts.python.repos_helper_clone import clone_repos
     from machineconfig.scripts.python.repos_helper_action import perform_git_operations

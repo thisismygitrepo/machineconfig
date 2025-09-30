@@ -1,7 +1,7 @@
 """Set Windows Terminal Settings"""
 
 from machineconfig.utils.accessories import randstr
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.io import read_json, save_json
 import platform
 

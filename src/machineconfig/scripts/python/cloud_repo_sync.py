@@ -3,7 +3,7 @@
 from pathlib import Path
 import git
 from machineconfig.utils.io import read_ini
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.terminal import Response
 
 from machineconfig.scripts.python.helpers.repo_sync_helpers import fetch_dotfiles

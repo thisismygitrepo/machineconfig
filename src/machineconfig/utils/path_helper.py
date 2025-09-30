@@ -1,4 +1,4 @@
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.source_of_truth import EXCLUDE_DIRS
 from rich.console import Console

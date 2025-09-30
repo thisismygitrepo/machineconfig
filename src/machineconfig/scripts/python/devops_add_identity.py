@@ -1,7 +1,7 @@
 """ID"""
 
 # from platform import system
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.options import choose_from_options
 from rich.panel import Panel
 from rich.text import Text

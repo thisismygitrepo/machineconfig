@@ -1,6 +1,7 @@
 """NFS mounting script"""
 
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from pathlib import Path
+
 from machineconfig.utils.ssh import SSH
 from machineconfig.utils.options import choose_from_options, choose_ssh_host
 
@@ -30,17 +31,22 @@ def main():
     print(f"📁 Share Path: {share_path}\n")
 
     if platform.system() in ["Linux", "Darwin"]:
-        mount_path_1 = PathExtended(share_path)
-        mount_path_2 = PathExtended.home().joinpath(f"data/mount_nfs/{remote_server}")
+        mount_path_1 = Path(share_path)
+        mount_path_2 = Path.home().joinpath("data/mount_nfs", remote_server)
         if str(mount_path_1).startswith("/home"):
-            mount_path_3 = PathExtended.home().joinpath(*mount_path_1.parts[3:])
+            mount_path_3 = Path.home().joinpath(*mount_path_1.parts[3:])
         else:
             mount_path_3 = mount_path_2
 
         print("🔧 Preparing mount paths...")
-        local_mount_point = choose_from_options(msg="📂 Choose mount path OR input custom one:", options=[mount_path_1, mount_path_2, mount_path_3], default=mount_path_2, custom_input=True, multi=False)
-        assert isinstance(local_mount_point, PathExtended), f"❌ local_mount_point must be a pathlib.Path. Got {type(local_mount_point)}"
-        local_mount_point = PathExtended(local_mount_point).expanduser()
+        local_mount_point_choice = choose_from_options(
+            msg="📂 Choose mount path OR input custom one:",
+            options=[mount_path_1, mount_path_2, mount_path_3],
+            default=mount_path_2,
+            custom_input=True,
+            multi=False,
+        )
+        local_mount_point = Path(local_mount_point_choice).expanduser()
 
         txt = f"""
 share_info={share_info}

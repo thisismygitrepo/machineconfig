@@ -9,7 +9,7 @@ from rich.panel import Panel
 from rich.pretty import Pretty
 from rich.text import Text
 
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.links import symlink_func, symlink_copy
 from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT

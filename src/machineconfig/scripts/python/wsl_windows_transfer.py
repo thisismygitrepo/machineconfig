@@ -1,6 +1,6 @@
 """TWSL"""
 
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended
 from typing import Annotated, Optional
 import typer
 import platform

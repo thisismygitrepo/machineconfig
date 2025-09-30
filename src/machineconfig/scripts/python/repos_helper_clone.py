@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Literal, Optional, cast
 
 from git import Repo as GitRepo
@@ -7,7 +8,6 @@ from git.exc import GitCommandError
 from rich import print as pprint
 from rich.progress import BarColumn, MofNCompleteColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 
-from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.schemas.repos.repos_types import RepoRecordDict, RepoRecordFile, RepoRemote
 from machineconfig.utils.io import read_json
 
@@ -26,8 +26,8 @@ def choose_remote(remotes: list[RepoRemote], preferred_remote: Optional[str]) ->
     return remotes[0] if len(remotes) > 0 else None
 
 
-def ensure_destination(parent_dir: str, name: str) -> PathExtended:
-    parent_path = PathExtended(parent_dir).expanduser().absolute()
+def ensure_destination(parent_dir: str, name: str) -> Path:
+    parent_path = Path(parent_dir).expanduser().absolute()
     parent_path.mkdir(parents=True, exist_ok=True)
     return parent_path.joinpath(name)
 
@@ -94,7 +94,7 @@ def clone_single_repo(repo_spec: RepoRecordDict, preferred_remote: Optional[str]
     return (status, message)
 
 
-def clone_repos(spec_path: PathExtended, preferred_remote: Optional[str], checkout_branch_flag: bool, checkout_commit_flag: bool) -> list[tuple[CloneStatus, str]]:
+def clone_repos(spec_path: Path, preferred_remote: Optional[str], checkout_branch_flag: bool, checkout_commit_flag: bool) -> list[tuple[CloneStatus, str]]:
     data = cast(RepoRecordFile, read_json(path=spec_path))
     repos = data["repos"]
     results: list[tuple[CloneStatus, str]] = []

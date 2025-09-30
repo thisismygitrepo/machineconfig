@@ -10,7 +10,6 @@ from rich.text import Text
 
 from machineconfig.scripts.python.repos_helper_update import RepositoryUpdateResult, run_uv_sync, update_repository
 from machineconfig.utils.io import read_ini
-from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.source_of_truth import DEFAULTS_PATH
 
 
@@ -149,13 +148,13 @@ def _display_summary(results: list[RepositoryUpdateResult]) -> None:
 def main(verbose: bool = True, allow_password_prompt: bool = False) -> None:
     """Main function to update all configured repositories."""
     _ = verbose
-    repos: list[PathExtended] = [PathExtended.home() / "code/machineconfig", PathExtended.home() / "code/crocodile"]
+    repos: list[Path] = [Path.home() / "code/machineconfig", Path.home() / "code/crocodile"]
     try:
         tmp = read_ini(DEFAULTS_PATH)["general"]["repos"].split(",")
         if tmp[-1] == "":
             tmp = tmp[:-1]
         for item in tmp:
-            item_obj = PathExtended(item).expanduser()
+            item_obj = Path(item).expanduser()
             if item_obj not in repos:
                 repos.append(item_obj)
     except (FileNotFoundError, KeyError, IndexError):

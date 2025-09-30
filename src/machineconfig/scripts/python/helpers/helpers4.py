@@ -1,7 +1,7 @@
 
 from typing import Optional
 import os
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended
 
 
 def search_for_files_of_interest(path_obj: PathExtended):

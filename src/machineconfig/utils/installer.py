@@ -8,7 +8,7 @@ from machineconfig.jobs.installer.package_groups import PACKAGE_GROUPS, PACKAGE_
 from rich.console import Console
 from rich.panel import Panel
 
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT, LINUX_INSTALL_PATH, LIBRARY_ROOT
 from machineconfig.utils.io import read_json
 

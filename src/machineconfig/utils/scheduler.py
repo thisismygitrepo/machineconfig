@@ -4,7 +4,7 @@ import logging
 import time
 from datetime import datetime, timezone, timedelta
 from machineconfig.utils.io import from_pickle
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended
 
 
 class LoggerTemplate(Protocol):

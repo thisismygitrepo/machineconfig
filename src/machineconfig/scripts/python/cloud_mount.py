@@ -2,7 +2,7 @@
 
 from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.io import read_ini
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended
 
 import platform
 from typing import Optional, Annotated

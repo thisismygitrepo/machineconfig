@@ -7,7 +7,7 @@ from rich.syntax import Syntax
 
 from machineconfig.utils.accessories import randstr
 from machineconfig.utils.ve import get_ve_activate_line
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended
 
 
 def get_shell_script_executing_python_file(python_file: str, func: Optional[str], ve_path: str, strict_execution: bool = True):

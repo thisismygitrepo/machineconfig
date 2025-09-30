@@ -15,7 +15,7 @@ from machineconfig.utils.ve import get_ve_activate_line, get_ve_path_and_ipython
 from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.path_helper import match_file_name, sanitize_path
 
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.accessories import get_repo_root, randstr
 from machineconfig.scripts.python.fire_jobs_args_helper import FireJobArgs, extract_kwargs, parse_fire_args_from_context
 import platform

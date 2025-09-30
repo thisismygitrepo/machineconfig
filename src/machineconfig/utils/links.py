@@ -1,4 +1,4 @@
-from machineconfig.utils.path_extended import PathExtended as PathExtended, PLike
+from machineconfig.utils.path_extended import PathExtended, PLike
 from machineconfig.utils.accessories import randstr
 from rich.console import Console
 from rich.panel import Panel

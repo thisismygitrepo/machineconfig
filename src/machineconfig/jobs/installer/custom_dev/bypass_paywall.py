@@ -6,7 +6,7 @@ from rich import box
 from rich.console import Console
 from rich.panel import Panel
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended
 
 
 # config_dict: InstallerData = {

@@ -4,7 +4,7 @@ from rich import box
 from rich.console import Console
 from rich.panel import Panel
 
-from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.path_extended import PathExtended
 
 
 def main() -> None:
