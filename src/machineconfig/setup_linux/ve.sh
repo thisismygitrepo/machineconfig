@@ -17,5 +17,4 @@ if ! command -v uv &> /dev/null; then
 fi
 echo """✅ uv is installed and ready to use."""
 
-# $HOME/.local/bin/uv python upgrade 3.13
-# $HOME/.local/bin/uv venv $HOME/code/machineconfig/$ve_name --python $py_version --python-preference only-managed
+$HOME/.local/bin/uv python install 3.13

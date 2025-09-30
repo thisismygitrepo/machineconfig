@@ -9,6 +9,5 @@ if (-not (Test-Path -Path "$HOME\.local\bin\uv.exe")) {
     & "$HOME\.local\bin\uv.exe" self update
 }
 
-# ~\.local\bin\uv.exe python upgrade $py_version
-# ~\.local\bin\uv.exe pip install --upgrade pip
+& "$HOME\.local\bin\uv.exe" python install 3.13
 
