@@ -8,6 +8,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.pretty import Pretty
 from rich.text import Text
+from rich.table import Table
 
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.links import symlink_func, symlink_copy
@@ -20,7 +21,7 @@ import os
 import ctypes
 import subprocess
 import tomllib
-from typing import Optional, Any, TypedDict
+from typing import Optional, Any, TypedDict, Literal
 
 system = platform.system()  # Linux or Windows
 ERROR_LIST: list[Any] = []  # append to this after every exception captured.
@@ -43,10 +44,35 @@ class SymlinkMapper(TypedDict):
     contents: Optional[bool]
 
 
-def apply_mapper(choice: Optional[str] = None):
+class OperationRecord(TypedDict):
+    program: str
+    file_key: str
+    source: str
+    target: str
+    operation: str
+    action: Literal[
+        "already_linked",
+        "relinking", 
+        "fixing_broken_link",
+        "identical_files",
+        "backing_up_source",
+        "backing_up_target", 
+        "relinking_to_new_target",
+        "moving_to_target",
+        "new_link",
+        "new_link_and_target",
+        "linking",
+        "copying",
+        "error"
+    ]
+    details: str
+    status: str
+
+
+def apply_mapper(choice: Optional[str], prioritize_to_this: bool):
     symlink_mapper: dict[str, dict[str, SymlinkMapper]] = tomllib.loads(LIBRARY_ROOT.joinpath("profile/mapper.toml").read_text(encoding="utf-8"))
-    prioritize_to_this = True
     exclude: list[str] = []  # "wsl_linux", "wsl_windows"
+    operation_records: list[OperationRecord] = []
 
     program_keys_raw: list[str] = list(symlink_mapper.keys())
     program_keys: list[str] = []
@@ -64,8 +90,6 @@ def apply_mapper(choice: Optional[str] = None):
             return  # terminate function.
         elif len(choice_selected) == 1 and choice_selected[0] == "all":
             choice_selected = "all"  # i.e. program_keys = program_keys
-        from rich.prompt import Confirm
-        prioritize_to_this = Confirm.ask("Overwrite existing source file?", default=True)
     else:
         choice_selected = choice
 
@@ -112,22 +136,85 @@ def apply_mapper(choice: Optional[str] = None):
         for file_key, file_map in symlink_mapper[program_key].items():
             this = PathExtended(file_map["this"])
             to_this = PathExtended(file_map["to_this"].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()))
+            
             if "contents" in file_map:
                 try:
-                    for a_target in to_this.expanduser().search("*"):
-                        symlink_func(this=this.joinpath(a_target.name), to_this=a_target, prioritize_to_this=prioritize_to_this)
+                    targets = list(to_this.expanduser().search("*"))
+                    for a_target in targets:
+                        result = symlink_func(this=this.joinpath(a_target.name), to_this=a_target, prioritize_to_this=prioritize_to_this)
+                        operation_records.append({
+                            "program": program_key,
+                            "file_key": file_key,
+                            "source": str(this.joinpath(a_target.name)),
+                            "target": str(a_target),
+                            "operation": "contents_symlink",
+                            "action": result["action"],
+                            "details": result["details"],
+                            "status": "success"
+                        })
                 except Exception as ex:
                     console.print(f"❌ [red]Config error[/red]: {program_key} | {file_key} | missing keys 'this ==> to_this'. {ex}")
-            if "copy" in file_map:
+                    operation_records.append({
+                        "program": program_key,
+                        "file_key": file_key,
+                        "source": str(this),
+                        "target": str(to_this),
+                        "operation": "contents_symlink",
+                        "action": "error",
+                        "details": f"Failed to process contents: {str(ex)}",
+                        "status": f"error: {str(ex)}"
+                    })
+                    
+            elif "copy" in file_map:
                 try:
-                    symlink_copy(this=this, to_this=to_this, prioritize_to_this=prioritize_to_this)
+                    result = symlink_copy(this=this, to_this=to_this, prioritize_to_this=prioritize_to_this)
+                    operation_records.append({
+                        "program": program_key,
+                        "file_key": file_key,
+                        "source": str(this),
+                        "target": str(to_this),
+                        "operation": "copy",
+                        "action": result["action"],
+                        "details": result["details"],
+                        "status": "success"
+                    })
                 except Exception as ex:
                     console.print(f"❌ [red]Config error[/red]: {program_key} | {file_key} | {ex}")
+                    operation_records.append({
+                        "program": program_key,
+                        "file_key": file_key,
+                        "source": str(this),
+                        "target": str(to_this),
+                        "operation": "copy",
+                        "action": "error",
+                        "details": f"Failed to copy: {str(ex)}",
+                        "status": f"error: {str(ex)}"
+                    })
             else:
                 try:
-                    symlink_func(this=this, to_this=to_this, prioritize_to_this=prioritize_to_this)
+                    result = symlink_func(this=this, to_this=to_this, prioritize_to_this=prioritize_to_this)
+                    operation_records.append({
+                        "program": program_key,
+                        "file_key": file_key,
+                        "source": str(this),
+                        "target": str(to_this),
+                        "operation": "symlink",
+                        "action": result["action"],
+                        "details": result["details"],
+                        "status": "success"
+                    })
                 except Exception as ex:
                     console.print(f"❌ [red]Config error[/red]: {program_key} | {file_key} | missing keys 'this ==> to_this'. {ex}")
+                    operation_records.append({
+                        "program": program_key,
+                        "file_key": file_key,
+                        "source": str(this),
+                        "target": str(to_this),
+                        "operation": "symlink",
+                        "action": "error",
+                        "details": f"Failed to create symlink: {str(ex)}",
+                        "status": f"error: {str(ex)}"
+                    })
 
             if program_key == "ssh" and system == "Linux":  # permissions of ~/dotfiles/.ssh should be adjusted
                 try:
@@ -144,6 +231,35 @@ def apply_mapper(choice: Optional[str] = None):
         console.print("\n[bold]📜 Setting executable permissions for scripts...[/bold]")
         subprocess.run(f"chmod +x {LIBRARY_ROOT.joinpath(f'scripts/{system.lower()}')} -R", shell=True, capture_output=True, text=True)
         console.print("[green]✅ Script permissions updated[/green]")
+
+    # Display operation summary table
+    if operation_records:
+        table = Table(title="🔗 Symlink Operations Summary", show_header=True, header_style="bold magenta")
+        table.add_column("Program", style="cyan", no_wrap=True)
+        table.add_column("File Key", style="blue", no_wrap=True)
+        table.add_column("Source", style="green")
+        table.add_column("Target", style="yellow")
+        table.add_column("Operation", style="magenta", no_wrap=True)
+        table.add_column("Action", style="red", no_wrap=True)
+        table.add_column("Details", style="white")
+        table.add_column("Status", style="red", no_wrap=True)
+        
+        for record in operation_records:
+            status_style = "green" if record["status"] == "success" else "red"
+            action_style = "green" if record["action"] != "error" else "red"
+            table.add_row(
+                record["program"],
+                record["file_key"],
+                record["source"],
+                record["target"],
+                record["operation"],
+                f"[{action_style}]{record['action']}[/{action_style}]",
+                record["details"],
+                f"[{status_style}]{record['status']}[/{status_style}]"
+            )
+        
+        console.print("\n")
+        console.print(table)
 
     if len(ERROR_LIST) > 0:
         console.print(
@@ -167,7 +283,7 @@ def apply_mapper(choice: Optional[str] = None):
 def main_symlinks():
     console.print("")
     console.rule("[bold blue]🔗 CREATING SYMLINKS 🔗")
-    apply_mapper(choice="all")
+    apply_mapper(choice="all", prioritize_to_this=True)
 
 
 def main_profile():
