@@ -40,8 +40,6 @@ except Exception: print(pycode)
 
 
 def get_read_data_pycode(path: str):
-    # We need to be careful here since we're generating Python code as a string
-    # that will use f-strings itself
     return f"""
 from rich.panel import Panel
 from rich.text import Text
@@ -49,7 +47,8 @@ from rich.console import Console
 console = Console()
 p = PathExtended(r'{path}').absolute()
 try:
-    dat = p.readit()
+    from machineconfig.utils.files.read import Read
+    dat = Read.read(p)
     if isinstance(dat, dict):
         panel_title = f"📄 File Data: {{p.name}}"
         console.print(Panel(Text(str(dat), justify="left"), title=panel_title, expand=False))
@@ -63,54 +62,25 @@ except Exception as e:
 """
 
 
-def get_read_pyfile_pycode(path: PathExtended, as_module: bool, cmd: str = ""):
-    if as_module:
-        pycode = rf"""
-import sys
-sys.path.append(r'{path.parent}')
-from {path.stem} import *
-{cmd}
-"""
-    else:
-        pycode = f"""
-__file__ = PathExtended(r'{path}')
-{path.read_text(encoding="utf-8")}
-"""
-    return pycode
-
 
 def main(
-    module: Annotated[bool, typer.Option("--module", "-m", help="flag to run the file as a module as opposed to main.")] = False,
-    newWindow: Annotated[bool, typer.Option("--newWindow", "-w", help="flag for running in new window.")] = False,
-    nonInteratctive: Annotated[bool, typer.Option("--nonInteratctive", "-N", help="flag for a non-interactive session.")] = False,
     python: Annotated[bool, typer.Option("--python", "-p", help="flag to use python over IPython.")] = False,
     fzf: Annotated[bool, typer.Option("--fzf", "-F", help="search with fuzzy finder for python scripts and run them")] = False,
     ve: Annotated[Optional[str], typer.Option("--ve", "-v", help="virtual enviroment to use, defaults to activated ve, if existed, else ve.")] = None,
     profile: Annotated[Optional[str], typer.Option("--profile", "-P", help="ipython profile to use, defaults to default profile.")] = None,
     read: Annotated[str, typer.Option("--read", "-r", help="read a binary file.")] = "",
-    file: Annotated[str, typer.Option("--file", "-f", help="python file path to interpret")] = "",
-    cmd: Annotated[str, typer.Option("--cmd", "-c", help="python command to interpret")] = "",
-    terminal: Annotated[str, typer.Option("--terminal", "-t", help="specify which terminal to be used. Default console host.")] = "",
-    shell: Annotated[str, typer.Option("--shell", "-S", help="specify which shell to be used. Defaults to CMD.")] = "",
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="run in jupyter interactive console")] = False,
     streamlit_viewer: Annotated[bool, typer.Option("--stViewer", "-s", help="view in streamlit app")] = False,
-    # visitdata option: uv run --with visidata,pyarrow vd $file
+    visidata: Annotated[bool, typer.Option("--visidata", "-V", help="open data file in visidata")] = False,
 ) -> None:
     # ==================================================================================
     # flags processing
-    interactivity = "" if nonInteratctive else "-i"
+    interactivity = "-i"
     interpreter = "python" if python else "ipython"
     ipython_profile: Optional[str] = profile
     file_obj = PathExtended.cwd()  # initialization value, could be modified according to args.
 
-    if cmd != "":
-        text = "🖥️  Executing command from CLI argument"
-        console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
-        import textwrap
-
-        program = textwrap.dedent(cmd)
-
-    elif fzf:
+    if fzf:
         text = "🔍 Searching for Python files..."
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
         options = [str(item) for item in PathExtended.cwd().search("*.py", r=True)]
@@ -119,13 +89,6 @@ def main(
         program = PathExtended(file_selected).read_text(encoding="utf-8")
         text = f"📄 Selected file: {PathExtended(file_selected).name}"
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
-
-    elif file != "":
-        file_obj = PathExtended(file.lstrip()).expanduser().absolute()
-        program = get_read_pyfile_pycode(file_obj, as_module=module, cmd=cmd)
-        text1 = f"📄 Loading file: {file_obj.name}"
-        text2 = f"🔄 Mode: {'Module' if module else 'Script'}"
-        console.print(Panel(f"{text1}\n{text2}", title="[bold blue]Info[/bold blue]"))
 
     elif read != "":
         if streamlit_viewer:
@@ -155,46 +118,35 @@ def main(
     preprogram = """
 
 #%%
-try:
-    from crocodile.croshell import *
-    print_header()
-    print_logo(logo="crocodile")
-except ImportError:
-    print("Crocodile not found, skipping import.")
+
+from machineconfig.utils.files.headers import print_header, print_logo
+print_header()
+print_logo("CROCODILE")
 from pathlib import Path
-print(f"🐊 Crocodile Shell | Running @ {Path.cwd()}")
+
 """
 
     pyfile = PathExtended.tmp().joinpath(f"tmp_scripts/python/croshell/{randstr()}.py")
     pyfile.parent.mkdir(parents=True, exist_ok=True)
 
-    if read != "":
-        title = "Reading Data"
-    elif file != "":
-        title = "Running Python File"
-    else:
-        title = "Executed code"
+    title = "Reading Data"
     python_program = preprogram + add_print_header_pycode(str(pyfile), title=title) + program
     pyfile.write_text(python_program, encoding="utf-8")
     # ve_root_from_file, ipython_profile = get_ve_path_and_ipython_profile(PathExtended(file))
     ipython_profile = ipython_profile if ipython_profile is not None else "default"
     # ve_activateion_line = get_ve_activate_line(ve_name=args.ve or ve_profile_suggested, a_path=str(PathExtended.cwd()))
-    shell_program = """
-#!/bin/bash
 
-"""
-    if jupyter:
+    if visidata:
+        fire_line = f"uv run --with visidata,pyarrow vd {str(file_obj)}"
+    elif jupyter:
         fire_line = f"code --new-window {str(pyfile)}"
     else:
-        fire_line = f"uv run --project $HOME/code/machineconfig/.venv {interpreter} {interactivity} "
-        if interpreter == "ipython": fire_line += f" --profile {ipython_profile} --no-banner"
-        fire_line += " " + str(pyfile)
-    shell_program += fire_line
-    from rich.syntax import Syntax
-    console.print(Syntax(shell_program, lexer="bash"))
-    print()
-    import subprocess
-    subprocess.run(shell_program, shell=True, check=True)
+        if interpreter == "ipython": profile = f" --profile {ipython_profile} --no-banner"
+        else: profile = ""
+        fire_line = f"uv run --python 3.13 --with machineconfig[plot] {interpreter} {interactivity} {profile} {str(pyfile)}"
+
+    from machineconfig.utils.code import run_script
+    run_script(fire_line)
 
 
 def arg_parser() -> None:
