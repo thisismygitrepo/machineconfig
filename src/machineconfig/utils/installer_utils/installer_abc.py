@@ -124,6 +124,13 @@ def check_tool_exists(tool_name: str) -> bool:
         return any([Path("/usr/local/bin").joinpath(tool_name).is_file(), Path("/usr/bin").joinpath(tool_name).is_file(), root_path.joinpath(tool_name).is_file()])
     else:
         raise NotImplementedError(f"platform {platform.system()} not implemented")
+def is_executable_in_path(executable_name: str) -> bool:
+    import os
+    path_dirs = os.environ['PATH'].split(os.pathsep)
+    for path_dir in path_dirs:
+        path_to_executable = os.path.join(path_dir, executable_name)
+        if os.path.isfile(path_to_executable) and os.access(path_to_executable, os.X_OK): return True
+    return False
 
 
 def check_if_installed_already(exe_name: str, version: Optional[str], use_cache: bool) -> tuple[str, str, str]:

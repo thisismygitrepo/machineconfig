@@ -6,31 +6,6 @@ from rich.console import Console
 import subprocess
 from typing import Optional, Union, Iterable, overload, Literal
 
-
-    # _ = cmd
-    #     cmd = "where.exe"
-    #     cmd = "which"
-    # try:  # talking to terminal is too slow.
-    #     _tmp = subprocess.check_output([cmd, tool_name], stderr=subprocess.DEVNULL)
-    #     res: bool = True
-    # except (subprocess.CalledProcessError, FileNotFoundError):
-    #     res = False
-    # return res
-    # return root_path.joinpath(tool_name).is_file()
-
-
-# def choose_from_options[T](options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "", default: Optional[T] = None, fzf: bool = False, custom_input: bool = False) -> T:
-#     choice_key = choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=False, custom_input=custom_input)
-#     assert not isinstance(choice_key, list)
-#     return choice_key
-
-
-# def choose_from_options[T](options: Iterable[T], header: str = "", tail: str = "", prompt: str = "", msg: str = "", default: Optional[T] = None, custom_input: bool = False) -> list[T]:
-#     choice_key = choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=True, multi=True, custom_input=custom_input)
-#     if isinstance(choice_key, list):
-#         return choice_key
-#     return [choice_key]
-
 @overload
 def choose_from_options[T](msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = False, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False) -> T: ...
 @overload

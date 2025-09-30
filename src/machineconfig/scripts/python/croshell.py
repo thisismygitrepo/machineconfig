@@ -94,6 +94,7 @@ def main(
     shell: Annotated[str, typer.Option("--shell", "-S", help="specify which shell to be used. Defaults to CMD.")] = "",
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="run in jupyter interactive console")] = False,
     streamlit_viewer: Annotated[bool, typer.Option("--stViewer", "-s", help="view in streamlit app")] = False,
+    # visitdata option: uv run --with visidata,pyarrow vd $file
 ) -> None:
     # ==================================================================================
     # flags processing

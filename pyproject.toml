@@ -112,8 +112,14 @@ docs = [
     "pdoc>=15.0.2",
 ]
 plot = [
+    "duckdb-engine>=0.17.0",
+    "ipykernel>=6.30.1",
+    "jupyterlab>=4.4.9",
     "kaleido>=1.1.0",
+    "matplotlib>=3.10.6",
+    "nbformat>=5.10.4",
     "numpy>=2.3.3",
     "plotly>=6.3.0",
     "polars>=1.33.1",
+    "sqlalchemy>=2.0.43",
 ]
