@@ -124,7 +124,7 @@ def main(
     
     code = f"""
 #!/bin/bash
-ttyd start --writable -t enableSixel=true {ssl_args} --port {port} --credential "{username}:{password}" -t 'theme={{"background": "black"}}' bash
+ttyd --writable -t enableSixel=true {ssl_args} --port {port} --credential "{username}:{password}" -t 'theme={{"background": "black"}}' bash
 """
     from machineconfig.utils.code import run_script
     run_script(code)
