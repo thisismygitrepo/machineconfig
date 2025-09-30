@@ -9,8 +9,6 @@ import os
 from platform import system
 from typing import Any, Optional, Union, Callable, TypeAlias, Literal
 
-from machineconfig.utils.terminal import Response
-
 
 OPLike: TypeAlias = Union[str, "PathExtended", Path, None]
 PLike: TypeAlias = Union[str, "PathExtended", Path]
@@ -925,6 +923,8 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             shell_to_use = "powershell" if sys.platform == "win32" else "bash"
             command = f"rclone link '{cloud}:{rp.as_posix()}'"
             completed = _run_shell_command(command, shell_to_use)
+            from machineconfig.utils.terminal import Response
+
             res = Response.from_completed_process(completed).capture()
             tmp = res.op2path(strict_err=False, strict_returncode=False)
             if tmp is None:
@@ -1001,6 +1001,8 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         stdout_target: Optional[int] = None if verbose else subprocess.PIPE
         stderr_target: Optional[int] = None if verbose else subprocess.PIPE
         completed = _run_shell_command(rclone_cmd, shell_to_use, stdout=stdout_target, stderr=stderr_target)
+        from machineconfig.utils.terminal import Response
+
         res = Response.from_completed_process(completed)
         success = res.is_successful(strict_err=False, strict_returcode=True)
         if not success:

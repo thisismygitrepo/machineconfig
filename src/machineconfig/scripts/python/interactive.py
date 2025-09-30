@@ -124,7 +124,7 @@ def execute_installations(selected_options: list[str]) -> None:
             console.print(Panel("⚡ [bold bright_yellow]CLI APPLICATIONS[/bold bright_yellow]\n[italic]Command-line tools installation[/italic]", border_style="bright_yellow"))
             console.print("🔧 Installing CLI applications", style="bold cyan")
             try:
-                from machineconfig.scripts.python.devops_devapps_install import main as devops_devapps_install_main
+                from machineconfig.utils.installer_utils.installer import main as devops_devapps_install_main
                 devops_devapps_install_main(group=maybe_a_group)  # type: ignore
                 console.print("✅ CLI applications installed successfully", style="bold green")
             except Exception as e:

@@ -58,7 +58,7 @@ def install_ttyd():
         print("✅ ttyd is already installed.")
         return
     print("⏳ ttyd not found. Installing...")
-    from machineconfig.scripts.python.devops_devapps_install import main
+    from machineconfig.utils.installer_utils.installer import main
     main(which="ttyd")
 
 

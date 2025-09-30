@@ -1,6 +1,6 @@
 """devops with emojis"""
 
-import machineconfig.scripts.python.devops_devapps_install as installer_entry_point
+import machineconfig.utils.installer_utils.installer as installer_entry_point
 import machineconfig.scripts.python.share_terminal as share_terminal
 import machineconfig.scripts.python.repos as repos
 

@@ -162,12 +162,11 @@ def install_clis(clis_names: list[str]):
 
     total_messages: list[str] = []
     for a_which in clis_names:
-        all_installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["ESSENTIAL", "DEV"])
+        all_installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=None)
         selected_installer = None
         for installer in all_installers:
-            exe_name = installer["appName"]
             app_name = installer["appName"]
-            if exe_name == a_which or app_name == a_which:
+            if app_name.lower() == a_which.lower():
                 selected_installer = installer
                 break
         if selected_installer is None:
