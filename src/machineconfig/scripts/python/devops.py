@@ -3,6 +3,7 @@
 import machineconfig.utils.installer_utils.installer as installer_entry_point
 import machineconfig.scripts.python.share_terminal as share_terminal
 import machineconfig.scripts.python.repos as repos
+
 from machineconfig import __version__
 import typer
 

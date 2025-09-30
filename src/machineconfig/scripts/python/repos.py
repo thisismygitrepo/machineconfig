@@ -11,6 +11,12 @@ from typing import Annotated, Optional
 from pathlib import Path
 
 
+def analyze_repo_development(repo_path: str = typer.Argument(..., help="Path to the git repository")):
+    cmd = f"""uv run --python 3.13 --with machineconfig machineconfig.scripts.python.count_lines analyze-over-time {repo_path}"""
+    from machineconfig.utils.code import run_script
+    run_script(cmd)
+
+
 def main(
     directory: Annotated[Optional[str], typer.Argument(help="📁 Folder containing repos to record or a specs JSON file to follow.")] = None,
     push: Annotated[bool, typer.Option("--push", help="🚀 Push changes.")] = False,
@@ -24,10 +30,17 @@ def main(
     recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recursive flag.")] = False,
     no_sync: Annotated[bool, typer.Option("--no-sync", help="🚫 Disable automatic uv sync after pulls.")] = False,
     cloud: Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁️ Cloud storage option.")] = None,
+    analyze: Annotated[bool, typer.Option("--analyze", help="📊 Analyze repository development over time.")] = False,
 ) -> None:
     print("\n" + "=" * 50)
     print("📂 Welcome to the Repository Manager")
     print("=" * 50 + "\n")
+
+    if analyze:
+        from machineconfig.scripts.python.count_lines_frontend import analyze_repo_development
+        analyze_repo_development(repo_path=directory if directory is not None else ".")
+        return
+    # app.command(name="analyze-repo", help="📊 Analyze code repository over time")(analyze_repo_development)
 
     from machineconfig.utils.io import read_ini
     from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
