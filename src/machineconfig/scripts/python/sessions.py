@@ -69,7 +69,8 @@ def find_layout_file(layout_path: str, ) -> Path:
     return choice_file
 
 
-def launch(layout_path: str = typer.Argument(..., help="Path to the layout.json file"),
+def launch(ctx: typer.Context,
+           layout_path: Optional[str] = typer.Argument(None, help="Path to the layout.json file"),
         max_tabs: int = typer.Option(10, help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch."),
         max_layouts: int = typer.Option(10, help="A Sanity checker that throws an error if the total number of layouts exceeds this number."),
         sleep_inbetween: float = typer.Option(1.0, help="Sleep time in seconds between launching layouts"),
@@ -82,6 +83,9 @@ def launch(layout_path: str = typer.Argument(..., help="Path to the layout.json 
     """
     Launch terminal sessions based on a layout configuration file.
     """
+    if layout_path is None:
+        typer.echo(ctx.get_help())
+        raise typer.Exit()
     layout_path_resolved = find_layout_file(layout_path=layout_path)
     layouts_selected = select_layout(layouts_json_file=layout_path_resolved, selected_layouts_names=choose.split(",") if choose else None, select_interactively=choose_interactively)
 
