@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from git import Repo
@@ -7,15 +6,12 @@ from datetime import datetime
 
 from pathlib import Path
 from rich.progress import track
-import polars as pl
-import plotly.graph_objects as go
-
-import plotly.express as px
 import typer
 
 
 if TYPE_CHECKING:
     from typing import Any, Dict, List, Optional, Union
+    import polars as pl
 
 
 app = typer.Typer()
@@ -110,6 +106,10 @@ def analyze_over_time(repo_path: str = typer.Argument(..., help="Path to the git
     except Exception as e:
         print(f"❌ Error analyzing commits: {str(e)}")
         return
+
+    import polars as pl
+    import plotly.graph_objects as go
+
     df = pl.DataFrame(commit_data)
     df = df.sort("dtmExit")
     # Create interactive plotly figure with dark theme and all bells and whistles
@@ -184,6 +184,10 @@ def analyze_over_time(repo_path: str = typer.Argument(..., help="Path to the git
 
 
 def _print_python_files_by_size_impl(repo_path: str) -> "Union[pl.DataFrame, Exception]":
+    import polars as pl
+    import plotly.graph_objects as go
+    import plotly.express as px
+
     try:
         import os
         if not os.path.exists(repo_path):

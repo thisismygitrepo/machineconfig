@@ -73,7 +73,7 @@ def all(
 
 
 @sync_app.command()
-def record(
+def capture(
     directory: DirectoryArgument = None,
     cloud: CloudOption = None,
 ) -> None:
@@ -87,7 +87,7 @@ def record(
     if cloud is not None:
         PathExtended(save_path).to_cloud(rel2home=True, cloud=cloud)
 @sync_app.command()
-def capture(
+def clone(
     directory: DirectoryArgument = None,
     cloud: CloudOption = None,
 ) -> None:
