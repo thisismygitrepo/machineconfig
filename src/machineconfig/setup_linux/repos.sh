@@ -1,17 +1,5 @@
 #!/usr/bin/bash
 
-# Remove .venv folders if they exist
-if [ -d "$HOME/code/machineconfig/.venv" ]; then
-    echo """  🗑️  Removing existing .venv folder in machineconfig...
-    """
-    rm -rf "$HOME/code/machineconfig/.venv"
-fi
-
-if [ -d "$HOME/code/machineconfig/.venv" ]; then
-    echo """  🗑️  Removing existing .venv folder in crocodile...
-    """
-    rm -rf "$HOME/code/machineconfig/.venv"
-fi
 
 echo """
 #=======================================================================

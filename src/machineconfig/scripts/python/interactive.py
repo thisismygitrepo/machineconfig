@@ -114,11 +114,15 @@ def get_installation_choices() -> list[str]:
 
 
 def execute_installations(selected_options: list[str]) -> None:
-    """Execute the selected installation options."""
     if system() == "Windows":
-        run_shell_script("& $HOME/.local/bin/uv self update")
+        from machineconfig import setup_windows as module
+        script_path = Path(module.__file__).parent / "ve.ps1"
+        run_shell_script(script_path.read_text(encoding="utf-8"))
     else:
-        run_shell_script("$HOME/.local/bin/uv self update")
+        from machineconfig import setup_linux as module
+        script_path = Path(module.__file__).parent / "ve.sh"
+        run_shell_script(script_path.read_text(encoding="utf-8"))
+
     for maybe_a_group in selected_options:
         if maybe_a_group in ("ESSENTIAL", "DEV", "ESSENTIAL_SYSTEM", "DEV_SYSTEM", "TerminalEyeCandy"):
             console.print(Panel("⚡ [bold bright_yellow]CLI APPLICATIONS[/bold bright_yellow]\n[italic]Command-line tools installation[/italic]", border_style="bright_yellow"))
