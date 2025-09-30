@@ -34,7 +34,8 @@ console = Console()
 
 
 def display_header() -> None:
-    header_text = Text("MACHINE CONFIGURATION", style="bold magenta")
+    from machineconfig.utils.installer import get_machineconfig_version
+    header_text = Text(f"MACHINE CONFIGURATION {get_machineconfig_version()}", style="bold magenta")
     subtitle_text = Text("Interactive Installation Script", style="italic cyan")
     console.print(Panel(f"📦 {header_text}\n{subtitle_text}", border_style="blue", padding=(1, 2)))
 def display_completion_message() -> None:
@@ -188,7 +189,6 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
 
 
 def main() -> None:
-    """Main function to run the interactive installation."""
     display_header()
     selected_options = get_installation_choices()
     if not selected_options:

@@ -4,11 +4,11 @@ import machineconfig.utils.installer_utils.installer as installer_entry_point
 import machineconfig.scripts.python.share_terminal as share_terminal
 import machineconfig.scripts.python.repos as repos
 
-from machineconfig import __version__
+from machineconfig.utils.installer import get_machineconfig_version
 import typer
 
 
-app = typer.Typer(help=f"🛠️ DevOps operations @ machineconfig {__version__}", no_args_is_help=True)
+app = typer.Typer(help=f"🛠️ DevOps operations @ machineconfig {get_machineconfig_version()}", no_args_is_help=True)
 app.command(name="install", help="📦 Install essential packages")(installer_entry_point.main)
 app.command(name="share-terminal", help="📡 Share terminal via web browser")(share_terminal.main)
 app.add_typer(repos.app, name="repos", help="📁 Manage git repositories")
