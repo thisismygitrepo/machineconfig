@@ -66,6 +66,7 @@ def main(
     port: Annotated[Optional[int], typer.Option("--port", "-p", help="Port to run the terminal server on (default: 7681)")] = None,
     username: Annotated[Optional[str], typer.Option("--username", "-u", help="Username for terminal access (default: current user)")] = None,
     password: Annotated[Optional[str], typer.Option("--password", "-w", help="Password for terminal access (default: from ~/dotfiles/creds/passwords/quick_password)")] = None,
+    start_command: Annotated[Optional[str], typer.Option("--start-command", "-s", help="Command to run on terminal start (default: bash/powershell)")] = None,
     ssl: Annotated[bool, typer.Option("--ssl", "-S", help="Enable SSL")] = False,
     ssl_cert: Annotated[Optional[str], typer.Option("--ssl-cert", "-C", help="SSL certificate file path")] = None,
     ssl_key: Annotated[Optional[str], typer.Option("--ssl-key", "-K", help="SSL key file path")] = None,
@@ -120,10 +121,16 @@ def main(
         ssl_args = f"--ssl --ssl-cert {ssl_cert} --ssl-key {ssl_key}"
         if ssl_ca:
             ssl_args += f" --ssl-ca {ssl_ca}"
-    
+
+    if start_command is None:
+        import platform
+        if platform.system().lower() == "windows":
+            start_command = "powershell"
+        else:
+            start_command = "bash"
     code = f"""
 #!/bin/bash
-ttyd --writable -t enableSixel=true {ssl_args} --port {port} --credential "{username}:{password}" -t 'theme={{"background": "black"}}' bash
+ttyd --writable -t enableSixel=true {ssl_args} --port {port} --credential "{username}:{password}" -t 'theme={{"background": "black"}}' {start_command}
 """
     from machineconfig.utils.code import run_script
     run_script(code)

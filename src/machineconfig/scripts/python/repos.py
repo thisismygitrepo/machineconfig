@@ -8,10 +8,11 @@ in the event that username@github.com is not mentioned in the remote url.
 
 import typer
 from typing import Annotated, Optional
+from pathlib import Path
 
 
 def main(
-    directory: Annotated[str, typer.Argument(help="📁 Folder containing repos to record or a specs JSON file to follow.")] = "",
+    directory: Annotated[Optional[str], typer.Argument(help="📁 Folder containing repos to record or a specs JSON file to follow.")] = None,
     push: Annotated[bool, typer.Option("--push", help="🚀 Push changes.")] = False,
     pull: Annotated[bool, typer.Option("--pull", help="⬇️ Pull changes.")] = False,
     commit: Annotated[bool, typer.Option("--commit", help="💾 Commit changes.")] = False,
@@ -35,10 +36,10 @@ def main(
     from machineconfig.scripts.python.repos_helper_clone import clone_repos
     from machineconfig.scripts.python.repos_helper_action import perform_git_operations
 
-    if directory == "":
-        repos_root = PathExtended.home().joinpath("code")  # it is a positional argument, can never be empty.
-    else:
-        repos_root = PathExtended(directory).expanduser().absolute()
+    if directory is None:
+        directory = Path.cwd().as_posix()
+        print(f"📁 Using directory: {directory}")
+    repos_root = PathExtended(directory).expanduser().absolute()
     auto_sync = not no_sync  # Enable auto sync by default, disable with --no-sync
     if record:
         save_path = record_repos(repos_root=repos_root)
