@@ -1,0 +1,12 @@
+
+# Minimal Dockerfile for Gemini CLI
+FROM node:24-alpine
+
+# Install the Gemini CLI globally
+RUN npm install -g @google/gemini-cli
+
+# Set working directory
+WORKDIR /app
+
+# Set default command to run gemini
+CMD ["gemini"]

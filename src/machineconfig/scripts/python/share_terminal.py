@@ -7,7 +7,6 @@ import typer
 
 
 """
-uv run --python 3.13 --with machineconfig 
 reference:
 # https://github.com/tsl0922/ttyd/wiki/Serving-web-fonts
 # -t "fontFamily=CaskaydiaCove" bash
