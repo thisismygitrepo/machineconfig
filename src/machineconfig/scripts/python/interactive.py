@@ -116,7 +116,7 @@ def get_installation_choices() -> list[str]:
 def execute_installations(selected_options: list[str]) -> None:
     """Execute the selected installation options."""
     if system() == "Windows":
-        run_command("$HOME/.local/bin/uv.exe self update")
+        run_command("& $HOME/.local/bin/uv self update")
     else:
         run_command("$HOME/.local/bin/uv self update")
     for maybe_a_group in selected_options:

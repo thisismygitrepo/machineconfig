@@ -6,21 +6,28 @@ import random
 from pathlib import Path
 from rich import pretty
 from rich.console import Console
-from rich.text import Text
 from typing import Optional
 
 
 def print_header():
     console = Console()
     pretty.install()
-    _header = f"🐍 Python {platform.python_version()} in VE `{os.getenv('VIRTUAL_ENV')}` On {platform.system()} 🐍"
-    _header = Text(_header)
-    _header.stylize("bold blue")
-    console.rule(_header, style="bold red", align="center")
-    version = "14.5"
-    _ = Text(f"✨ 🐊 Crocodile Shell {version} ✨" + f" Made with 🐍 | Built with ❤️. Running @ {Path.cwd()}")
-    _.stylize("#05f8fc on #293536")
-    console.print(_)
+
+    # Environment Information Panel
+    from rich.panel import Panel
+    from rich.table import Table
+
+    table = Table(show_header=False, show_edge=False, pad_edge=False)
+    table.add_column("Label", style="cyan", no_wrap=True)
+    table.add_column("Value", style="white")
+
+    table.add_row("Python Version", platform.python_version())
+    table.add_row("Operating System", platform.system())
+    table.add_row("Virtual Environment", os.getenv('VIRTUAL_ENV', 'None'))
+    table.add_row("Running @", str(Path.cwd()))
+
+
+    console.print(Panel(table, title="[bold blue]✨ 🐊 Crocodile Shell 14.5 ✨ Made with 🐍 | Built with ❤️[/bold blue]", border_style="blue"))
 def print_logo(logo: str):
     from machineconfig.utils.files.ascii_art import font_box_color, character_color, character_or_box_color
     if platform.system() == "Windows":

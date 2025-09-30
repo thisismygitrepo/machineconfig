@@ -23,6 +23,7 @@ RUN npm install -g @google/gemini-cli
 # Create a non-root user for running the CLI
 RUN useradd -m -s /bin/bash gemini
 
+COPY settings.json /root/.gemini/settings.json
 # Set working directory
 WORKDIR /home/gemini
 
