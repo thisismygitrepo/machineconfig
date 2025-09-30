@@ -1,10 +1,17 @@
 """Like yadm and dotter."""
 
-from machineconfig.utils.path_extended import PathExtended as PathExtended
-from machineconfig.utils.links import symlink_func
-from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT
 from typing import Annotated
+
 import typer
+from rich.console import Console
+from rich.panel import Panel
+
+from machineconfig.utils.links import symlink_func
+from machineconfig.utils.path_extended import PathExtended as PathExtended
+from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT
+
+
+console = Console()
 
 
 def main(
@@ -30,18 +37,37 @@ def main(
 
     symlink_func(this=orig_path, to_this=new_path, prioritize_to_this=overwrite)
 
-    print("""
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-┃ ✅ Symbolic Link Created Successfully
-┃
-┃ 🔄 To enshrine this mapping, add the following to mapper.toml:
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
-    print(f"""
-📝 Edit configuration file: nano {PathExtended(LIBRARY_ROOT)}/symlinks/mapper.toml
+    console.print(
+        Panel(
+            "\n".join(
+                [
+                    "✅ Symbolic link created successfully!",
+                    "🔄 Add the following snippet to mapper.toml to persist this mapping:",
+                ]
+            ),
+            title="Symlink Created",
+            border_style="green",
+            padding=(1, 2),
+        )
+    )
 
-[{new_path.parent.name}]
-{orig_path.name.split(".")[0]} = {{ this = '{orig_path.collapseuser().as_posix()}', to_this = '{new_path.collapseuser().as_posix()}' }}
-""")
+    mapper_snippet = "\n".join(
+        [
+            f"[bold]📝 Edit configuration file:[/] [cyan]nano {PathExtended(LIBRARY_ROOT)}/symlinks/mapper.toml[/cyan]",
+            "",
+            f"[{new_path.parent.name}]",
+            f"{orig_path.name.split('.')[0]} = {{ this = '{orig_path.collapseuser().as_posix()}', to_this = '{new_path.collapseuser().as_posix()}' }}",
+        ]
+    )
+
+    console.print(
+        Panel(
+            mapper_snippet,
+            title="Mapper Entry",
+            border_style="cyan",
+            padding=(1, 2),
+        )
+    )
 
 
 def arg_parser() -> None:

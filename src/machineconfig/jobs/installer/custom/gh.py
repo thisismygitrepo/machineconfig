@@ -3,6 +3,10 @@
 import platform
 import subprocess
 from typing import Optional
+
+from rich.console import Console
+from rich.panel import Panel
+
 from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
@@ -27,72 +31,97 @@ config_dict: InstallerData = {
 }
 
 
+console = Console()
+
+
 def main(version: Optional[str]):
-    print(f"""
-{"═" * 150}
-🔱 GITHUB CLI INSTALLER | Command line tool for GitHub
-💻 Platform: {platform.system()}
-🔄 Version: {"latest" if version is None else version}
-{"═" * 150}
-""")
+    console.print(
+        Panel.fit(
+            "\n".join(
+                [
+                    "[bold magenta]GitHub CLI Installer[/bold magenta]",
+                    f"💻 Platform: {platform.system()}",
+                    f"🔄 Version: {version or 'latest'}",
+                ]
+            ),
+            title="🔱 GitHub CLI",
+            border_style="magenta",
+            padding=(1, 2),
+        )
+    )
 
     _ = version
     inst = Installer(installer_data=config_dict)
-    print("""📦 INSTALLATION | Installing GitHub CLI base package...""")
+    console.print("[bold cyan]📦 INSTALLATION | Installing GitHub CLI base package...[/bold cyan]")
     inst.install(version=version)
 
-    print(f"""
-{"─" * 150}
-🤖 GITHUB COPILOT | Setting up GitHub Copilot CLI extension
-{"─" * 150}
-""")
+    console.print(
+        Panel.fit(
+            "🤖 GITHUB COPILOT | Setting up GitHub Copilot CLI extension",
+            title="Extension Setup",
+            border_style="cyan",
+        )
+    )
 
     if platform.system() == "Windows":
-        print("""
-🪟 WINDOWS SETUP | Configuring GitHub CLI for Windows...
-""")
+        console.print(
+            Panel.fit(
+                "🪟 WINDOWS SETUP | Configuring GitHub CLI for Windows...",
+                border_style="blue",
+                title="Platform Setup",
+            )
+        )
         program = "gh extension install github/gh-copilot"
     elif platform.system() in ["Linux", "Darwin"]:
         system_name = "LINUX" if platform.system() == "Linux" else "MACOS"
-        print(f"""
-🐧 {system_name} SETUP | Configuring GitHub CLI for {platform.system()}...
-""")
+        console.print(
+            Panel.fit(
+                f"🐧 {system_name} SETUP | Configuring GitHub CLI for {platform.system()}...",
+                border_style="blue",
+                title="Platform Setup",
+            )
+        )
         program = """
 gh extension install github/gh-copilot
 """
     else:
         error_msg = f"Unsupported platform: {platform.system()}"
-        print(f"""
-{"⚠️" * 20}
-❌ ERROR | {error_msg}
-{"⚠️" * 20}
-""")
+        console.print(
+            Panel.fit(
+                f"❌ ERROR | {error_msg}",
+                title="Unsupported Platform",
+                border_style="red",
+            )
+        )
         raise NotImplementedError(error_msg)
 
     program += """
 gh auth login --with-token $HOME/dotfiles/creds/git/gh_token.txt
 """
-    print("""
-🔐 AUTHENTICATION | Setting up GitHub authentication with token...
-""")
+    console.print("[bold]🔐 AUTHENTICATION | Setting up GitHub authentication with token...[/bold]")
 
-    print("""
-🔄 EXECUTING | Running GitHub Copilot extension installation and authentication...
-""")
+    console.print("[bold]🔄 EXECUTING | Running GitHub Copilot extension installation and authentication...[/bold]")
     try:
         subprocess.run(program, shell=True, text=True, check=True)
-        print("✅ Command executed successfully")
+        console.print("[green]✅ Command executed successfully[/green]")
     except subprocess.CalledProcessError as e:
-        print(f"❌ Command failed with exit code {e.returncode}")
+        console.print(f"❌ [red]Command failed with exit code {e.returncode}[/red]")
         raise
 
-    print(f"""
-{"═" * 150}
-✅ SUCCESS | GitHub CLI installation completed
-🚀 GitHub Copilot CLI extension installed
-🔑 Authentication configured with token
-{"═" * 150}
-""")
+    console.print(
+        Panel.fit(
+            "\n".join(
+                [
+                    "✅ SUCCESS | GitHub CLI installation completed",
+                    "🚀 GitHub Copilot CLI extension installed",
+                    "🔑 Authentication configured with token",
+                ]
+            ),
+            title="Installation Complete",
+            border_style="green",
+            padding=(1, 2),
+        )
+    )
 
 
 if __name__ == "__main__":

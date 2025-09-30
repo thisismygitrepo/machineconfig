@@ -1,20 +1,27 @@
 """Update repositories with fancy output"""
 
-import git
 from pathlib import Path
+
+import git
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text
+
 from machineconfig.scripts.python.repos_helper_update import RepositoryUpdateResult, run_uv_sync, update_repository
+from machineconfig.utils.io import read_ini
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.utils.source_of_truth import DEFAULTS_PATH
-from machineconfig.utils.io import read_ini
+
+
+console = Console()
 
 
 def _display_summary(results: list[RepositoryUpdateResult]) -> None:
     """Display a comprehensive summary of all repository update operations."""
-    print("\n" + "=" * 80)
-    print("📊 REPOSITORY UPDATE SUMMARY")
-    print("=" * 80)
 
-    # Calculate statistics
+    console.rule("[bold blue]📊 Repository Update Summary[/bold blue]")
+
     total_repos = len(results)
     successful_repos = sum(1 for r in results if r["status"] == "success")
     error_repos = sum(1 for r in results if r["status"] == "error")
@@ -27,76 +34,116 @@ def _display_summary(results: list[RepositoryUpdateResult]) -> None:
     uv_sync_runs = sum(1 for r in results if r["uv_sync_ran"])
     uv_sync_successes = sum(1 for r in results if r["uv_sync_ran"] and r["uv_sync_success"])
 
-    # Overview statistics
-    print("📈 OVERVIEW:")
-    print(f"   Total repositories processed: {total_repos}")
-    print(f"   ✅ Successful updates: {successful_repos}")
-    print(f"   ❌ Failed updates: {error_repos}")
-    print(f"   ⏭️  Skipped: {skipped_repos}")
+    overview_lines = [
+        f"[bold]Total repositories processed:[/] {total_repos}",
+        f"✅ Successful updates: {successful_repos}",
+        f"❌ Failed updates: {error_repos}",
+        f"⏭️  Skipped: {skipped_repos}",
+    ]
     if auth_failed_repos > 0:
-        print(f"   🔐 Authentication failed: {auth_failed_repos}")
-    print()
+        overview_lines.append(f"🔐 Authentication failed: {auth_failed_repos}")
 
-    print("🔄 CHANGES:")
-    print(f"   Repositories with new commits: {repos_with_changes}")
-    print(f"   Repositories with dependency changes: {repos_with_dep_changes}")
-    print(f"   Repositories with uncommitted changes: {repos_with_uncommitted}")
-    print()
+    console.print(
+        Panel(
+            "\n".join(overview_lines),
+            title="� Overview",
+            border_style="blue",
+            padding=(1, 2),
+        )
+    )
 
-    print("📦 UV SYNC:")
-    print(f"   uv sync operations attempted: {uv_sync_runs}")
-    print(f"   uv sync operations successful: {uv_sync_successes}")
+    changes_lines = [
+        f"Repositories with new commits: {repos_with_changes}",
+        f"Repositories with dependency changes: {repos_with_dep_changes}",
+        f"Repositories with uncommitted changes: {repos_with_uncommitted}",
+    ]
+    console.print(
+        Panel(
+            "\n".join(changes_lines),
+            title="� Changes",
+            border_style="magenta",
+            padding=(1, 2),
+        )
+    )
+
+    uv_sync_lines = [
+        f"uv sync operations attempted: {uv_sync_runs}",
+        f"uv sync operations successful: {uv_sync_successes}",
+    ]
     if uv_sync_runs > uv_sync_successes:
-        print(f"   uv sync operations failed: {uv_sync_runs - uv_sync_successes}")
-    print()
+        uv_sync_lines.append(f"uv sync operations failed: {uv_sync_runs - uv_sync_successes}")
 
-    # Detailed results per repository
-    print("📋 DETAILED RESULTS:")
+    console.print(
+        Panel(
+            "\n".join(uv_sync_lines),
+            title="📦 uv sync",
+            border_style="cyan",
+            padding=(1, 2),
+        )
+    )
+
+    table = Table(title="📋 Detailed Results", show_lines=True, header_style="bold blue")
+    table.add_column("Repository", style="bold")
+    table.add_column("Status")
+    table.add_column("Details", overflow="fold")
+
     for result in results:
         repo_name = Path(result["repo_path"]).name
         status_icon = {"success": "✅", "error": "❌", "skipped": "⏭️", "auth_failed": "🔐"}.get(result["status"], "❓")
-        print(f"   {status_icon} {repo_name}")
+        status_label = result["status"].replace("_", " ").title()
+
+        detail_lines: list[str] = []
 
         if result["status"] == "error" and result["error_message"]:
-            print(f"      💥 Error: {result['error_message']}")
+            detail_lines.append(f"💥 Error: {result['error_message']}")
 
         if result["commits_changed"]:
-            print(f"      🔄 Updated: {result['commit_before'][:8]} → {result['commit_after'][:8]}")
+            detail_lines.append(f"🔄 Updated: {result['commit_before'][:8]} → {result['commit_after'][:8]}")
         elif result["status"] == "success":
-            print("      📍 Already up to date")
+            detail_lines.append("📍 Already up to date")
 
         if result["had_uncommitted_changes"]:
             files_str = ", ".join(result["uncommitted_files"])
-            print(f"      ⚠️  Had uncommitted changes: {files_str}")
+            detail_lines.append(f"⚠️  Uncommitted changes: {files_str}")
 
         if result["dependencies_changed"]:
             changes = []
             if result["pyproject_changed"]:
                 changes.append("pyproject.toml")
-            print(f"      📋 Dependencies changed: {', '.join(changes)}")
+            if changes:
+                detail_lines.append(f"📋 Dependencies changed: {', '.join(changes)}")
 
         if result["uv_sync_ran"]:
             sync_status = "✅" if result["uv_sync_success"] else "❌"
-            print(f"      📦 uv sync: {sync_status}")
+            detail_lines.append(f"📦 uv sync: {sync_status}")
 
         if result["is_machineconfig_repo"] and result["permissions_updated"]:
-            print("      🛠  Updated permissions for machineconfig files")
+            detail_lines.append("🛠  Updated permissions for machineconfig files")
 
         if result["remotes_processed"]:
-            print(f"      📡 Processed remotes: {', '.join(result['remotes_processed'])}")
+            detail_lines.append(f"📡 Processed remotes: {', '.join(result['remotes_processed'])}")
         if result["remotes_skipped"]:
-            print(f"      ⏭️  Skipped remotes: {', '.join(result['remotes_skipped'])}")
+            detail_lines.append(f"⏭️  Skipped remotes: {', '.join(result['remotes_skipped'])}")
 
-    print("\n" + "=" * 80)
+        table.add_row(f"{status_icon} {repo_name}", status_label, "\n".join(detail_lines) or "—")
 
-    # Final status
+    console.print(table)
+
     if error_repos == 0 and auth_failed_repos == 0:
-        print("🎉 All repositories processed successfully!")
+        summary_text = Text("🎉 All repositories processed successfully!", style="green", justify="center")
+        border = "green"
     elif successful_repos > 0:
-        print(f"⚠️  {successful_repos}/{total_repos} repositories processed successfully")
+        summary_text = Text(
+            f"⚠️  {successful_repos}/{total_repos} repositories processed successfully",
+            style="yellow",
+            justify="center",
+        )
+        border = "yellow"
     else:
-        print("❌ No repositories were successfully processed")
-    print("=" * 80)
+        summary_text = Text("❌ No repositories were successfully processed", style="red", justify="center")
+        border = "red"
+
+    console.print(Panel(summary_text, title="Summary", border_style=border, padding=(1, 2)))
 
 
 def main(verbose: bool = True, allow_password_prompt: bool = False) -> None:
@@ -112,21 +159,36 @@ def main(verbose: bool = True, allow_password_prompt: bool = False) -> None:
             if item_obj not in repos:
                 repos.append(item_obj)
     except (FileNotFoundError, KeyError, IndexError):
-        print(f"""
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-┃ 🚫 Configuration Error: Missing {DEFAULTS_PATH} or section [general] or key repos
-┃ ℹ️  Using default repositories instead
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
-        print("""
-┌────────────────────────────────────────────────────────────────
-│ ✨ Example Configuration:
-│
-│ [general]
-│ repos = ~/code/repo1,~/code/repo2
-│ rclone_config_name = onedrivePersonal
-│ email_config_name = Yahoo3
-│ to_email = myemail@email.com
-└────────────────────────────────────────────────────────────────""")
+        console.print(
+            Panel(
+                "\n".join(
+                    [
+                        f"🚫 Configuration error: missing {DEFAULTS_PATH} or the [general] section / repos key.",
+                        "ℹ️  Using default repositories instead.",
+                    ]
+                ),
+                title="Configuration Missing",
+                border_style="red",
+                padding=(1, 2),
+            )
+        )
+        console.print(
+            Panel(
+                "\n".join(
+                    [
+                        "✨ Example configuration:",
+                        "",
+                        "[general]",
+                        "repos = ~/code/repo1,~/code/repo2",
+                        "rclone_config_name = onedrivePersonal",
+                        "email_config_name = Yahoo3",
+                        "to_email = myemail@email.com",
+                    ]
+                ),
+                border_style="cyan",
+                padding=(1, 2),
+            )
+        )
 
     # Process repositories
     results: list[RepositoryUpdateResult] = []
@@ -164,9 +226,18 @@ def main(verbose: bool = True, allow_password_prompt: bool = False) -> None:
                 "permissions_updated": False,
             }
             results.append(error_result)
-            print(f"""❌ Repository Error: Path: {expanded_path}
-Exception: {ex}
-{"-" * 50}""")
+            console.print(
+                Panel(
+                    "\n".join(
+                        [
+                            f"❌ Repository error: {expanded_path}",
+                            f"Exception: {ex}",
+                        ]
+                    ),
+                    border_style="red",
+                    padding=(1, 2),
+                )
+            )
 
     # Run uv sync for repositories where pyproject.toml changed but sync wasn't run yet
     for repo_path in repos_with_changes:

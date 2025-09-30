@@ -8,10 +8,16 @@ Currently, the only way to work around this is to predifine the host in ~/.ssh/c
 
 import typer
 from typing_extensions import Annotated
+from rich.console import Console
+from rich.panel import Panel
+
 from machineconfig.utils.ssh import SSH
 from machineconfig.utils.path_extended import PathExtended as PathExtended
 from machineconfig.scripts.python.helpers.helpers2 import ES
 from machineconfig.utils.accessories import pprint
+
+
+console = Console()
 
 
 def main(
@@ -21,11 +27,19 @@ def main(
     zipFirst: Annotated[bool, typer.Option("--zipFirst", "-z", help="Zip before sending.")] = False,
     cloud: Annotated[bool, typer.Option("--cloud", "-c", help="Transfer through the cloud.")] = False,
 ) -> None:
-    print("""
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-┃ 🚀 FTP File Transfer
-┃ 📋 Starting transfer process...
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
+    console.print(
+        Panel(
+            "\n".join(
+                [
+                    "🚀 FTP File Transfer",
+                    "📋 Starting transfer process...",
+                ]
+            ),
+            title="Transfer Initialisation",
+            border_style="blue",
+            padding=(1, 2),
+        )
+    )
     
     # Initialize variables
     resolved_source: str | None = None
@@ -94,69 +108,107 @@ def main(
     try:
         ssh = SSH(rf"{machine}")
     except AuthenticationException:
-        print("""
-┌────────────────────────────────────────────────────────────────
-│ 🔑 Authentication Failed
-│    Trying manual authentication...
-│
-│ ⚠️  Caution: Ensure that username is passed appropriately
-│    This exception only handles password authentication
-└────────────────────────────────────────────────────────────────""")
+        console.print(
+            Panel(
+                "\n".join(
+                    [
+                        "🔑 Authentication failed. Trying manual authentication...",
+                        "⚠️  Ensure that the username is provided correctly; only password prompts are handled here.",
+                    ]
+                ),
+                title="Authentication Required",
+                border_style="yellow",
+                padding=(1, 2),
+            )
+        )
         import getpass
 
         pwd = getpass.getpass()
         ssh = SSH(rf"{machine}", pwd=pwd)
 
     if cloud:
-        print("""
-┌────────────────────────────────────────────────────────────────
-│ ☁️  Cloud Transfer Mode
-│    Uploading from remote to cloud...
-└────────────────────────────────────────────────────────────────""")
+        console.print(
+            Panel.fit(
+                "☁️  Cloud transfer mode — uploading from remote to cloud...",
+                title="Cloud Upload",
+                border_style="cyan",
+            )
+        )
         ssh.run(f"cloud_copy {resolved_source} :^", desc="Uploading from remote to the cloud.").print()
-        print("""
-┌────────────────────────────────────────────────────────────────
-│ ⬇️  Cloud Transfer Mode
-│    Downloading from cloud to local...
-└────────────────────────────────────────────────────────────────""")
+        console.print(
+            Panel.fit(
+                "⬇️  Cloud transfer mode — downloading from cloud to local...",
+                title="Cloud Download",
+                border_style="cyan",
+            )
+        )
         ssh.run_locally(f"cloud_copy :^ {resolved_target}").print()
         received_file = PathExtended(resolved_target)  # type: ignore
     else:
         if source_is_remote:
             assert resolved_source is not None, """
 ❌ Path Error: Source must be a remote path (machine:path)"""
-            print(f"""
-┌────────────────────────────────────────────────────────────────
-│ 📥 Transfer Mode: Remote → Local
-│    Source: {resolved_source}
-│    Target: {resolved_target}
-│    Options: {"ZIP compression" if zipFirst else "No compression"}, {"Recursive" if recursive else "Non-recursive"}
-└────────────────────────────────────────────────────────────────""")
+            target_display = resolved_target or "<auto>"
+            console.print(
+                Panel(
+                    "\n".join(
+                        [
+                            "📥 Transfer Mode: Remote → Local",
+                            f"Source: [cyan]{resolved_source}[/cyan]",
+                            f"Target: [cyan]{target_display}[/cyan]",
+                            f"Options: {'ZIP compression' if zipFirst else 'No compression'}, {'Recursive' if recursive else 'Non-recursive'}",
+                        ]
+                    ),
+                    title="Transfer Details",
+                    border_style="cyan",
+                    padding=(1, 2),
+                )
+            )
             received_file = ssh.copy_to_here(source=resolved_source, target=resolved_target, z=zipFirst, r=recursive)
         else:
             assert resolved_source is not None, """
 ❌ Path Error: Target must be a remote path (machine:path)"""
-            print(f"""
-┌────────────────────────────────────────────────────────────────
-│ 📤 Transfer Mode: Local → Remote
-│    Source: {resolved_source}
-│    Target: {resolved_target}
-│    Options: {"ZIP compression" if zipFirst else "No compression"}, {"Recursive" if recursive else "Non-recursive"}
-└────────────────────────────────────────────────────────────────""")
+            target_display = resolved_target or "<auto>"
+            console.print(
+                Panel(
+                    "\n".join(
+                        [
+                            "📤 Transfer Mode: Local → Remote",
+                            f"Source: [cyan]{resolved_source}[/cyan]",
+                            f"Target: [cyan]{target_display}[/cyan]",
+                            f"Options: {'ZIP compression' if zipFirst else 'No compression'}, {'Recursive' if recursive else 'Non-recursive'}",
+                        ]
+                    ),
+                    title="Transfer Details",
+                    border_style="cyan",
+                    padding=(1, 2),
+                )
+            )
             received_file = ssh.copy_from_here(source=resolved_source, target=resolved_target, z=zipFirst, r=recursive)
 
     if source_is_remote and isinstance(received_file, PathExtended):
-        print(f"""
-┌────────────────────────────────────────────────────────────────
-│ 📁 File Received
-│    Parent: {repr(received_file.parent)}
-│    File: {repr(received_file)}
-└────────────────────────────────────────────────────────────────""")
-    print("""
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-┃ ✅ Transfer Complete
-┃    File transfer process finished successfully
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
+        console.print(
+            Panel(
+                "\n".join(
+                    [
+                        "📁 File Received",
+                        f"Parent: [cyan]{repr(received_file.parent)}[/cyan]",
+                        f"File: [cyan]{repr(received_file)}[/cyan]",
+                    ]
+                ),
+                title="Transfer Result",
+                border_style="green",
+                padding=(1, 2),
+            )
+        )
+    console.print(
+        Panel(
+            "File transfer process finished successfully",
+            title="✅ Transfer Complete",
+            border_style="green",
+            padding=(1, 2),
+        )
+    )
 
 
 def main_from_parser() -> None:

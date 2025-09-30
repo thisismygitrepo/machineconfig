@@ -4,37 +4,61 @@ import platform
 import subprocess
 from typing import Optional
 
+from rich.console import Console
+from rich.panel import Panel
+
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
 # config_dict: InstallerData = {"appName": "Wezterm", "repoURL": "CMD", "doc": "Modern, GPU-accelerated terminal emulator"}
 
 
+console = Console()
+
+
 def main(installer_data: InstallerData, version: Optional[str]):
     _ = installer_data
-    print(f"""
-{"═" * 150}
-🖥️  WEZTERM INSTALLER | Modern, GPU-accelerated terminal emulator
-💻 Platform: {platform.system()}
-🔄 Version: {"latest" if version is None else version}
-{"═" * 150}
-""")
+    console.print(
+        Panel.fit(
+            "\n".join(
+                [
+                    "🖥️  WEZTERM INSTALLER | Modern, GPU-accelerated terminal emulator",
+                    f"💻 Platform: {platform.system()}",
+                    f"🔄 Version: {version or 'latest'}",
+                ]
+            ),
+            title="WezTerm Setup",
+            border_style="magenta",
+            padding=(1, 2),
+        )
+    )
 
     _ = version
     if platform.system() == "Windows":
         error_msg = "WezTerm installation not supported on Windows through this installer"
-        print(f"""
-{"⚠️" * 20}
-❌ ERROR | {error_msg}
-💡 TIP: Please download and install manually from the WezTerm website
-{"⚠️" * 20}
-""")
+        console.print(
+            Panel.fit(
+                "\n".join(
+                    [
+                        f"❌ ERROR | {error_msg}",
+                        "💡 TIP: Please download and install manually from the WezTerm website",
+                    ]
+                ),
+                title="Unsupported Platform",
+                border_style="red",
+                padding=(1, 2),
+            )
+        )
         raise NotImplementedError(error_msg)
     elif platform.system() in ["Linux", "Darwin"]:
         system_name = "LINUX" if platform.system() == "Linux" else "MACOS"
-        print(f"""
-🐧 {system_name} SETUP | Installing WezTerm terminal emulator...
-""")
+        console.print(
+            Panel.fit(
+                f"🐧 {system_name} SETUP | Installing WezTerm terminal emulator...",
+                title="Platform Setup",
+                border_style="cyan",
+            )
+        )
         import machineconfig.jobs.installer as module
         from pathlib import Path
 
@@ -44,31 +68,40 @@ def main(installer_data: InstallerData, version: Optional[str]):
             program = "brew install --cask wezterm"
     else:
         error_msg = f"Unsupported platform: {platform.system()}"
-        print(f"""
-{"⚠️" * 20}
-❌ ERROR | {error_msg}
-{"⚠️" * 20}
-""")
+        console.print(
+            Panel.fit(
+                f"❌ ERROR | {error_msg}",
+                title="Unsupported Platform",
+                border_style="red",
+            )
+        )
         raise NotImplementedError(error_msg)
 
-    print(f"""
-{"═" * 150}
-ℹ️  INFO | WezTerm Features:
-⚡ GPU-accelerated rendering
-🎨 Full color emoji support
-🧩 Multiplexing with panes and tabs
-⚙️  Lua configuration
-📦 Cross-platform support
-🔌 Plugin system
-{"═" * 150}
-""")
+    console.print(
+        Panel(
+            "\n".join(
+                [
+                    "ℹ️  INFO | WezTerm Features:",
+                    "⚡ GPU-accelerated rendering",
+                    "🎨 Full color emoji support",
+                    "🧩 Multiplexing with panes and tabs",
+                    "⚙️  Lua configuration",
+                    "📦 Cross-platform support",
+                    "🔌 Plugin system",
+                ]
+            ),
+            title="Why WezTerm?",
+            border_style="magenta",
+            padding=(1, 2),
+        )
+    )
 
-    print("🔄 EXECUTING | Running WezTerm installation...")
+    console.print("[bold]🔄 EXECUTING | Running WezTerm installation...[/bold]")
     try:
         subprocess.run(program, shell=True, text=True, check=True)
-        print("✅ WezTerm installation completed successfully")
+        console.print("[green]✅ WezTerm installation completed successfully[/green]")
     except subprocess.CalledProcessError as e:
-        print(f"❌ Installation failed with exit code {e.returncode}")
+        console.print(f"❌ [red]Installation failed with exit code {e.returncode}[/red]")
         raise
 
 
