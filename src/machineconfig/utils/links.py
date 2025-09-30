@@ -2,9 +2,25 @@ from machineconfig.utils.path_extended import PathExtended, PLike
 from machineconfig.utils.accessories import randstr
 from rich.console import Console
 from rich.panel import Panel
+import hashlib
 
 
 console = Console()
+
+
+def files_are_identical(file1: PathExtended, file2: PathExtended) -> bool:
+    """Check if two files are identical by comparing their SHA256 hashes."""
+    def get_file_hash(path: PathExtended) -> str:
+        hash_sha256 = hashlib.sha256()
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(4096), b""):
+                hash_sha256.update(chunk)
+        return hash_sha256.hexdigest()
+    
+    try:
+        return get_file_hash(file1) == get_file_hash(file2)
+    except (OSError, IOError):
+        return False
 
 
 def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
@@ -38,7 +54,7 @@ def symlink_func(this: PathExtended, to_this: PathExtended, prioritize_to_this: 
 
     this: exists           AND    to_this exists            AND this is a symlink pointing to to_this              ===> Resolution: AUTO: do nothing, already linked correctly.
     this: exists           AND    to_this exists            AND this is a symlink pointing to somewhere else       ===> Resolution: AUTO: delete this symlink, create symlink to to_this
-    this: exists           AND    to_this exists            AND this is a concrete path                            ===> Resolution: DANGER: require user input to decide (param prioritize_to_this). Give two options: 1) prioritize `this`: to_this is backed up as to_this.orig_<randstr()>, to_this is deleted,  and symlink is created from this to to_this as normal; 2) prioritize `to_this`: `this` is backed up as this.orig_<randstr()>, `this` is deleted, and symlink is created from this to to_this as normal.
+    this: exists           AND    to_this exists            AND this is a concrete path                            ===> Resolution: DANGER: If files are identical (same hash), delete `this` and create symlink to `to_this`. Otherwise, two options: 1) prioritize `this`: to_this is backed up as to_this.orig_<randstr()>, to_this is deleted,  and symlink is created from this to to_this as normal; 2) prioritize `to_this`: `this` is backed up as this.orig_<randstr()>, `this` is deleted, and symlink is created from this to to_this as normal.
 
     this: exists           AND    to_this doesn't exist     AND this is a symlink pointing to somewhere else       ===> Resolution: AUTO: delete this symlink, create symlink to to_this (touch to_this)
     this: exists           AND    to_this doesn't exist     AND this is a symlink pointing to to_this              ===> Resolution: AUTO: delete this symlink, create symlink to to_this (touch to_this)
@@ -70,17 +86,23 @@ def symlink_func(this: PathExtended, to_this: PathExtended, prioritize_to_this: 
                     this.delete(sure=True)
             else:
                 # Case: this exists AND to_this exists AND this is a concrete path
-                if prioritize_to_this:
-                    # prioritize `to_this`: `this` is backed up, `this` is deleted, symlink created
-                    backup_name = f"{this}.orig_{randstr()}"
-                    console.print(Panel(f"📦 BACKING UP | Moving {this} to {backup_name}, prioritizing {to_this}", title="Backing Up", expand=False))
-                    this.move(path=backup_name)
+                if files_are_identical(this, to_this):
+                    # Files are identical, just delete this and create symlink
+                    console.print(Panel(f"🔗 IDENTICAL FILES | Files are identical, deleting {this} and creating symlink to {to_this}", title="Identical Files", expand=False))
+                    this.delete(sure=True)
                 else:
-                    # prioritize `this`: to_this is backed up, to_this is deleted, this content moved to to_this location
-                    backup_name = f"{to_this}.orig_{randstr()}"
-                    console.print(Panel(f"📦 BACKING UP | Moving {to_this} to {backup_name}, prioritizing {this}", title="Backing Up", expand=False))
-                    to_this.move(path=backup_name)
-                    this.move(path=to_this)
+                    # Files are different, use prioritization logic
+                    if prioritize_to_this:
+                        # prioritize `to_this`: `this` is backed up, `this` is deleted, symlink created
+                        backup_name = f"{this}.orig_{randstr()}"
+                        console.print(Panel(f"📦 BACKING UP | Moving {this} to {backup_name}, prioritizing {to_this}", title="Backing Up", expand=False))
+                        this.move(path=backup_name)
+                    else:
+                        # prioritize `this`: to_this is backed up, to_this is deleted, this content moved to to_this location
+                        backup_name = f"{to_this}.orig_{randstr()}"
+                        console.print(Panel(f"📦 BACKING UP | Moving {to_this} to {backup_name}, prioritizing {this}", title="Backing Up", expand=False))
+                        to_this.move(path=backup_name)
+                        this.move(path=to_this)
         else:
             # to_this doesn't exist
             if this.is_symlink():

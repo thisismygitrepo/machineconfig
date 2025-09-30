@@ -1,19 +1,6 @@
-# """CI
-# """
 
-
-# import time
 import platform
-
-# from typing import Any
-# from rich.console import Console
-# from machineconfig.utils.utils2 import pprint
-# # from rich.progress import track
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT
-# from machineconfig.utils.installer import get_installed_cli_apps
-# from typing import Optional
-# from datetime import datetime
-# import csv
 
 
 APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")

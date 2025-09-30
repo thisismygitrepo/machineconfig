@@ -64,9 +64,7 @@ def apply_mapper(choice: Optional[str] = None):
             return  # terminate function.
         elif len(choice_selected) == 1 and choice_selected[0] == "all":
             choice_selected = "all"  # i.e. program_keys = program_keys
-        # overwrite = choose_from_options(msg="Overwrite existing source file?", options=["yes", "no"], default="yes") == "yes"
         from rich.prompt import Confirm
-
         prioritize_to_this = Confirm.ask("Overwrite existing source file?", default=True)
     else:
         choice_selected = choice
