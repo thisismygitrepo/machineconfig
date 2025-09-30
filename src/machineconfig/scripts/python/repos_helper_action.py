@@ -7,6 +7,9 @@ from dataclasses import dataclass
 from enum import Enum
 
 from rich import print as pprint
+from rich.table import Table
+from rich.panel import Panel
+from rich.columns import Columns
 
 
 class GitAction(Enum):
@@ -191,87 +194,127 @@ def git_action(path: PathExtended, action: GitAction, mess: Optional[str] = None
 
 
 def print_git_operations_summary(summary: GitOperationSummary, operations_performed: list[str]) -> None:
-    """Print a detailed summary of git operations similar to repos_helper_record.py."""
-    print("\n📊 Git Operations Summary:")
-    print(f"   Total paths processed: {summary.total_paths_processed}")
-    print(f"   Git repositories found: {summary.git_repos_found}")
-    print(f"   Non-git paths skipped: {summary.non_git_paths}")
-    
-    # Show per-operation statistics
+    """Print a detailed summary of git operations with rich formatting and tables."""
+    from rich.console import Console
+    console = Console()
+
+    # Main summary panel
+    summary_stats = [
+        f"Total paths processed: {summary.total_paths_processed}",
+        f"Git repositories found: {summary.git_repos_found}",
+        f"Non-git paths skipped: {summary.non_git_paths}"
+    ]
+
+    console.print(Panel.fit(
+        "\n".join(summary_stats),
+        title="[bold blue]📊 Git Operations Summary[/bold blue]",
+        border_style="blue"
+    ))
+
+    # Statistics panels in columns
+    stat_panels = []
+
     if "commit" in operations_performed:
-        print("\n💾 Commit Operations:")
-        print(f"   Attempted: {summary.commits_attempted}")
-        print(f"   Successful: {summary.commits_successful}")
-        print(f"   No changes: {summary.commits_no_changes}")
-        print(f"   Failed: {summary.commits_failed}")
-        
+        commit_stats = [
+            f"Attempted: {summary.commits_attempted}",
+            f"Successful: {summary.commits_successful}",
+            f"No changes: {summary.commits_no_changes}",
+            f"Failed: {summary.commits_failed}"
+        ]
+        stat_panels.append(Panel.fit(
+            "\n".join(commit_stats),
+            title="[bold green]💾 Commit Operations[/bold green]",
+            border_style="green"
+        ))
+
     if "pull" in operations_performed:
-        print("\n⬇️ Pull Operations:")
-        print(f"   Attempted: {summary.pulls_attempted}")
-        print(f"   Successful: {summary.pulls_successful}")
-        print(f"   Failed: {summary.pulls_failed}")
-        
+        pull_stats = [
+            f"Attempted: {summary.pulls_attempted}",
+            f"Successful: {summary.pulls_successful}",
+            f"Failed: {summary.pulls_failed}"
+        ]
+        stat_panels.append(Panel.fit(
+            "\n".join(pull_stats),
+            title="[bold cyan]⬇️ Pull Operations[/bold cyan]",
+            border_style="cyan"
+        ))
+
     if "push" in operations_performed:
-        print("\n🚀 Push Operations:")
-        print(f"   Attempted: {summary.pushes_attempted}")
-        print(f"   Successful: {summary.pushes_successful}")
-        print(f"   Failed: {summary.pushes_failed}")
+        push_stats = [
+            f"Attempted: {summary.pushes_attempted}",
+            f"Successful: {summary.pushes_successful}",
+            f"Failed: {summary.pushes_failed}"
+        ]
+        stat_panels.append(Panel.fit(
+            "\n".join(push_stats),
+            title="[bold magenta]🚀 Push Operations[/bold magenta]",
+            border_style="magenta"
+        ))
 
-    # Show repositories without remotes (important for push operations)
+    if stat_panels:
+        console.print(Columns(stat_panels, equal=True, expand=True))
+
+    # Repositories without remotes warning
     if summary.repos_without_remotes:
-        print(f"\n⚠️  WARNING: {len(summary.repos_without_remotes)} repositories have no remote configurations:")
-        for repo_path in summary.repos_without_remotes:
-            print(f"   • {repo_path.name} ({repo_path})")
-        print("   These repositories cannot be pushed to remote servers.")
-    else:
-        if "push" in operations_performed:
-            print("\n✅ All repositories have remote configurations.")
+        repos_table = Table(title="[bold yellow]⚠️ Repositories Without Remotes[/bold yellow]")
+        repos_table.add_column("Repository Name", style="cyan", no_wrap=True)
+        repos_table.add_column("Full Path", style="dim")
 
-    # Show failed operations
+        for repo_path in summary.repos_without_remotes:
+            repos_table.add_row(repo_path.name, str(repo_path))
+
+        console.print(repos_table)
+        console.print("[yellow]These repositories cannot be pushed to remote servers.[/yellow]")
+    elif "push" in operations_performed:
+        console.print("[green]✅ All repositories have remote configurations.[/green]")
+
+    # Failed operations table
     if summary.failed_operations:
-        print(f"\n❌ FAILED OPERATIONS ({len(summary.failed_operations)} total):")
-        
-        # Group failed operations by type
+        failed_table = Table(title=f"[bold red]❌ Failed Operations ({len(summary.failed_operations)} total)[/bold red]")
+        failed_table.add_column("Action", style="bold red", no_wrap=True)
+        failed_table.add_column("Repository", style="cyan", no_wrap=True)
+        failed_table.add_column("Problem", style="red")
+
+        # Group failed operations by type for better organization
         failed_by_action = {}
         for failed_op in summary.failed_operations:
             if failed_op.action not in failed_by_action:
                 failed_by_action[failed_op.action] = []
             failed_by_action[failed_op.action].append(failed_op)
-            
+
         for action, failures in failed_by_action.items():
-            print(f"\n   {action.upper()} failures ({len(failures)}):")
             for failure in failures:
-                if not failure.is_git_repo:
-                    print(f"   • {failure.repo_path.name} ({failure.repo_path}) - Not a git repository")
-                else:
-                    print(f"   • {failure.repo_path.name} ({failure.repo_path}) - {failure.message}")
+                repo_name = failure.repo_path.name if failure.is_git_repo else f"{failure.repo_path.name} (not git repo)"
+                problem = failure.message if failure.is_git_repo else "Not a git repository"
+                failed_table.add_row(action.upper(), repo_name, problem)
+
+        console.print(failed_table)
     else:
-        print("\n✅ All git operations completed successfully!")
+        console.print("[green]✅ All git operations completed successfully![/green]")
 
     # Overall success assessment
     total_failed = len(summary.failed_operations)
-    total_operations = (summary.commits_attempted + summary.pulls_attempted + 
+    total_operations = (summary.commits_attempted + summary.pulls_attempted +
                        summary.pushes_attempted)
-    
+
     if total_failed == 0 and total_operations > 0:
-        print(f"\n🎉 SUCCESS: All {total_operations} operations completed successfully!")
+        console.print(f"\n[bold green]🎉 SUCCESS: All {total_operations} operations completed successfully![/bold green]")
     elif total_operations == 0:
-        print("\n📝 No git operations were performed.")
+        console.print("\n[blue]📝 No git operations were performed.[/blue]")
     else:
         success_rate = ((total_operations - total_failed) / total_operations * 100) if total_operations > 0 else 0
-        print(f"\n⚖️  SUMMARY: {total_operations - total_failed}/{total_operations} operations succeeded ({success_rate:.1f}% success rate)")
         if total_failed > 0:
-            print("   Review the failed operations above for details on what needs attention.")
+            console.print(f"\n[bold yellow]⚖️ SUMMARY: {total_operations - total_failed}/{total_operations} operations succeeded ({success_rate:.1f}% success rate)[/bold yellow]")
+            console.print("[yellow]Review the failed operations table above for details on what needs attention.[/yellow]")
+        else:
+            console.print(f"\n[bold green]⚖️ SUMMARY: {total_operations}/{total_operations} operations succeeded (100% success rate)[/bold green]")
 
 
 def perform_git_operations(repos_root: PathExtended, pull: bool, commit: bool, push: bool, recursive: bool, auto_sync: bool) -> None:
     """Perform git operations on all repositories and provide detailed summary."""
     print(f"\n🔄 Performing Git actions on repositories @ `{repos_root}`...")
-    
-    # Initialize summary tracking
     summary = GitOperationSummary()
-    operations_performed = []
-    
+    operations_performed = []    
     # Determine which operations to perform
     if pull:
         operations_performed.append("pull")

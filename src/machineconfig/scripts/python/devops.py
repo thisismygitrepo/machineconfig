@@ -9,7 +9,6 @@ import typer
 
 
 app = typer.Typer(help=f"🛠️ DevOps operations @ machineconfig {__version__}", no_args_is_help=True)
-
 app.command(name="install", help="📦 Install essential packages")(installer_entry_point.main)
 app.command(name="share-terminal", help="📡 Share terminal via web browser")(share_terminal.main)
 app.add_typer(repos.app, name="repos", help="📁 Manage git repositories")

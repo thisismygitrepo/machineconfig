@@ -9,6 +9,7 @@ from pathlib import Path
 from rich.progress import track
 import polars as pl
 import plotly.graph_objects as go
+
 import plotly.express as px
 import typer
 
