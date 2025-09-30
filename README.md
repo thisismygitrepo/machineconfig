@@ -127,6 +127,26 @@ curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/ma
 short `curl bit.ly/cfgcroshelllinux -L | bash`
 
 
+## Repository management CLI
+
+The DevOps CLI now exposes rich subcommands for working with git repositories. Run `python -m machineconfig.scripts.python.devops repos --help` to explore the hierarchy:
+
+* Top-level actions: `push`, `pull`, `commit`, `all`, and `analyze`.
+	* These commands accept `--recursive/-r` and `--no-sync` to control nested repos and automatic `uv sync`.
+* Sync workflows live under `sync`:
+	* `record` captures the current machine state into a `repos.json`.
+	* `capture` clones repos from a specification without changing commits.
+	* `checkout` aligns repositories to commits stored in the spec.
+	* `checkout-to-branch` switches repositories to the tracked branch.
+	* Each sync subcommand accepts `--cloud/-c` for fetching/saving specs from remote storage.
+
+Example:
+
+```bash
+python -m machineconfig.scripts.python.devops repos sync record ~/code --cloud my_remote
+python -m machineconfig.scripts.python.devops repos pull ~/code --recursive
+```
+
 # Author
 Alex Al-Saffar. [email](mailto:programmer@usa.com)
 

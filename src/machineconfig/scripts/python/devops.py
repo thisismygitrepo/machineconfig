@@ -12,7 +12,7 @@ app = typer.Typer(help=f"🛠️ DevOps operations @ machineconfig {__version__}
 
 app.command(name="install", help="📦 Install essential packages")(installer_entry_point.main)
 app.command(name="share-terminal", help="📡 Share terminal via web browser")(share_terminal.main)
-app.command(name="repos", help="📁 Manage git repositories")(repos.main)
+app.add_typer(repos.app, name="repos", help="📁 Manage git repositories")
 
 ssh_app = typer.Typer(help="🔐 SSH operations subcommands", no_args_is_help=True)
 app.add_typer(ssh_app, name="ssh")

@@ -1,4 +1,5 @@
 from machineconfig.utils.path_extended import PathExtended
+from pathlib import Path
 from machineconfig.utils.schemas.repos.repos_types import GitVersionInfo, RepoRecordDict, RepoRemote
 
 from machineconfig.utils.schemas.repos.repos_types import RepoRecordFile
@@ -185,8 +186,9 @@ def record_repos_recursively(repos_root: str, r: bool, progress: Progress | None
     return res
 
 
-def main(repos_root: PathExtended):
+def main(repos_root: Path):
     print("\n📝 Recording repositories...")
+    repos_root = PathExtended(repos_root).expanduser().absolute()
 
     # Count total directories and repositories for accurate progress tracking
     print("🔍 Analyzing directory structure...")
