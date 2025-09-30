@@ -221,8 +221,8 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
             command = "$ErrorActionPreference = 'SilentlyContinue';\n" + command + "\nStart-Sleep -Seconds 0.5"
         else:
             raise NotImplementedError(f"Platform {platform.system()} not supported.")
-    from machineconfig.utils.code import run_script
-    run_script(command)
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(command)
 
 
 def main(

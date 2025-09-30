@@ -8,8 +8,8 @@ def analyze_repo_development(repo_path: str = typer.Argument(..., help="Path to 
     count_lines_path = Path(count_lines.__file__)
     # --project $HOME/code/machineconfig 
     cmd = f"""uv run --python 3.13 --with machineconfig[plot] {count_lines_path} analyze-over-time {repo_path}"""
-    from machineconfig.utils.code import run_script
-    run_script(cmd)
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(cmd)
 
 
 if __name__ == "__main__":

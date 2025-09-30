@@ -132,8 +132,8 @@ def main(
 #!/bin/bash
 ttyd --writable -t enableSixel=true {ssl_args} --port {port} --credential "{username}:{password}" -t 'theme={{"background": "black"}}' {start_command}
 """
-    from machineconfig.utils.code import run_script
-    run_script(code)
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(code)
 
 
 def main_with_parser():

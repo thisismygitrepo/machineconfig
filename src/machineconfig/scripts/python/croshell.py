@@ -145,8 +145,8 @@ from pathlib import Path
         else: profile = ""
         fire_line = f"uv run --python 3.13 --with machineconfig[plot] {interpreter} {interactivity} {profile} {str(pyfile)}"
 
-    from machineconfig.utils.code import run_script
-    run_script(fire_line)
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(fire_line)
 
 
 def arg_parser() -> None:

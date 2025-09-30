@@ -125,12 +125,12 @@ def install_group(package_group: PACKAGE_GROUPS):
     else:
         options_system = get_installers_system_groups()
         from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
-        from machineconfig.utils.code import run_script
+        from machineconfig.utils.code import run_shell_script
         for an_item in options_system:
             if an_item["appName"] == package_group:
                 program = an_item["fileNamePattern"][get_normalized_arch()][get_os_name()]
                 if program is not None:
-                    run_script(program)
+                    run_shell_script(program)
                     break
 
 

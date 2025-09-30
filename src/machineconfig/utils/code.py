@@ -98,7 +98,7 @@ def print_code(code: str, lexer: str, desc: str, subtitle: str = ""):
     console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}", subtitle=subtitle), style="bold red")
 
 
-def run_script(program: str):
+def run_shell_script(program: str):
     import tempfile
     if platform.system() == "Windows":
         suffix = ".ps1"

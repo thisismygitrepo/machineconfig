@@ -27,7 +27,7 @@ from questionary import Choice
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
-from machineconfig.utils.code import run_script as run_command
+from machineconfig.utils.code import run_shell_script
 
 _ = cast
 console = Console()
@@ -116,9 +116,9 @@ def get_installation_choices() -> list[str]:
 def execute_installations(selected_options: list[str]) -> None:
     """Execute the selected installation options."""
     if system() == "Windows":
-        run_command("& $HOME/.local/bin/uv self update")
+        run_shell_script("& $HOME/.local/bin/uv self update")
     else:
-        run_command("$HOME/.local/bin/uv self update")
+        run_shell_script("$HOME/.local/bin/uv self update")
     for maybe_a_group in selected_options:
         if maybe_a_group in ("ESSENTIAL", "DEV", "ESSENTIAL_SYSTEM", "DEV_SYSTEM", "TerminalEyeCandy"):
             console.print(Panel("⚡ [bold bright_yellow]CLI APPLICATIONS[/bold bright_yellow]\n[italic]Command-line tools installation[/italic]", border_style="bright_yellow"))
@@ -129,21 +129,25 @@ def execute_installations(selected_options: list[str]) -> None:
                 console.print("✅ CLI applications installed successfully", style="bold green")
             except Exception as e:
                 console.print(f"❌ Error installing CLI applications: {e}", style="bold red")
-            run_command(". $HOME/.bashrc")
+            run_shell_script(". $HOME/.bashrc")
 
     if "upgrade_system" in selected_options:
         if system() == "Windows":
             console.print("❌ System upgrade is not applicable on Windows via this script.", style="bold red")
         elif system() == "Linux":
             console.print(Panel("🔄 [bold magenta]SYSTEM UPDATE[/bold magenta]\n[italic]Package management[/italic]", border_style="magenta"))
-            run_command("sudo nala upgrade -y")
+            run_shell_script("sudo nala upgrade -y")
         else:
             console.print(f"❌ System upgrade not supported on {system()}.", style="bold red")
     if "install_repos" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
-        from machineconfig import setup_linux as module
-        script = Path(module.__file__).parent / "repos.sh"
-        run_command(f"bash {script}")
+        if system() == "Windows":
+            from machineconfig import setup_windows as module
+            script_path = Path(module.__file__).parent / "repos.ps1"
+        else:
+            from machineconfig import setup_linux as module
+            script_path = Path(module.__file__).parent / "repos.sh"
+        run_shell_script(script_path.read_text(encoding="utf-8"))
 
     if "install_ssh_server" in selected_options:
         console.print(Panel("🔒 [bold red]SSH SERVER[/bold red]\n[italic]Remote access setup[/italic]", border_style="red"))
@@ -152,9 +156,9 @@ def execute_installations(selected_options: list[str]) -> None:
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 Start-Service sshd
 Set-Service -Name sshd -StartupType 'Automatic'"""
-            run_command(f'powershell -Command "{powershell_script}"')
+            run_shell_script(f'powershell -Command "{powershell_script}"')
         else:
-            run_command("sudo nala install openssh-server -y")
+            run_shell_script("sudo nala install openssh-server -y")
 
     if "install_shell_profile" in selected_options:
         console.print(Panel("🐚 [bold green]SHELL PROFILE[/bold green]\n[italic]Shell configuration setup[/italic]", border_style="green"))
@@ -179,8 +183,8 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
                 console.print("✅ Symlinks created successfully", style="bold green")
             except Exception as e:
                 console.print(f"❌ Error creating symlinks: {e}", style="bold red")
-            run_command("sudo chmod 600 $HOME/.ssh/*")
-            run_command("sudo chmod 700 $HOME/.ssh")
+            run_shell_script("sudo chmod 600 $HOME/.ssh/*")
+            run_shell_script("sudo chmod 700 $HOME/.ssh")
         else:
             console.print("⏭️  Skipping symlink creation - finish dotfiles transfer first", style="yellow")
 

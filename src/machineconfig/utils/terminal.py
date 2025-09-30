@@ -147,7 +147,7 @@ class Terminal:
             return os.getuid() == 0  # Check for root on Posix
 '''
 
-    # def run_script(self, script: str, shell: SHELLS = "default", verbose: bool = False):
+    # def run_shell_script(self, script: str, shell: SHELLS = "default", verbose: bool = False):
     #     if self.machine == "Linux":
     #         script = "#!/bin/bash" + "\n" + script  # `source` is only available in bash.
     #     script_file = PathExtended.tmpfile(name="tmp_shell_script", suffix=".ps1" if self.machine == "Windows" else ".sh", folder="tmp_scripts")
