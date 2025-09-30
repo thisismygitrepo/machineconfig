@@ -122,11 +122,12 @@ def main(
         if ssl_ca:
             ssl_args += f" --ssl-ca {ssl_ca}"
     
-    code = f"""#!/bin/bash
-ttyd --writable -t enableSixel=true {ssl_args} --port {port} --credential "{username}:{password}" -t 'theme={{"background": "black"}}' bash
+    code = f"""
+#!/bin/bash
+ttyd start --writable -t enableSixel=true {ssl_args} --port {port} --credential "{username}:{password}" -t 'theme={{"background": "black"}}' bash
 """
-    import subprocess
-    subprocess.run(code, shell=True, check=True)
+    from machineconfig.utils.code import run_script
+    run_script(code)
 
 
 def main_with_parser():
