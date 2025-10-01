@@ -1,7 +1,8 @@
 """shell"""
 
+from typing import Literal
 from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.source_of_truth import LIBRARY_ROOT
+from machineconfig.utils.source_of_truth import LIBRARY_ROOT, CONFIG_PATH
 
 import platform
 import os
@@ -35,29 +36,63 @@ def get_shell_profile_path() -> PathExtended:
     return profile_path
 
 
-def create_default_shell_profile() -> None:
+def create_default_shell_profile(method: Literal["copyInitScript", "referenceMachineConfig"]) -> None:
+    if method == "referenceMachineConfig":
+        machineconfig_repo_path = PathExtended.home().joinpath("code/machineconfig")
+        if not machineconfig_repo_path.exists() or not machineconfig_repo_path.is_dir():
+            raise FileNotFoundError(f"machineconfig repo not found at {machineconfig_repo_path}. Cannot create symlinks to non-existing source files.")
+
     shell_profile_path = get_shell_profile_path()
     shell_profile = shell_profile_path.read_text(encoding="utf-8")
+
     if system == "Windows":
-        source = f""". {str(PathExtended(LIBRARY_ROOT).joinpath("settings/shells/pwsh/init.ps1").collapseuser()).replace("~", "$HOME")}"""
+        init_script = PathExtended(LIBRARY_ROOT).joinpath("settings/shells/pwsh/init.ps1")
+
+        init_script_copy_path = PathExtended(CONFIG_PATH).joinpath("profile/init.ps1").collapseuser()
+        init_script_copy_path.parent.mkdir(parents=True, exist_ok=True)
+        init_script.copy(path=init_script_copy_path, overwrite=True)
+
+        source_using_copy = f""". {str(init_script_copy_path).replace("~", "$HOME")}"""
+        source_using_reference = f""". {str(init_script.collapseuser()).replace("~", "$HOME")}"""
     else:
-        source = f"""source {str(PathExtended(LIBRARY_ROOT).joinpath("settings/shells/bash/init.sh").collapseuser()).replace("~", "$HOME")}"""
-    if source in shell_profile:
-        console.print(Panel("🔄 PROFILE | Skipping init script sourcing - already present in profile", title="[bold blue]Profile[/bold blue]", border_style="blue"))
+        init_script = PathExtended(LIBRARY_ROOT).joinpath("settings/shells/bash/init.sh")
+        init_script_copy_path = PathExtended(CONFIG_PATH).joinpath("profile/init.sh").collapseuser()
+        init_script_copy_path.parent.mkdir(parents=True, exist_ok=True)
+        init_script.copy(path=init_script_copy_path, overwrite=True)
+
+        source_using_reference = f"""source {str(init_script.collapseuser()).replace("~", "$HOME")}"""
+        source_using_copy = f"""source {str(init_script_copy_path).replace("~", "$HOME")}"""
+
+    match method:
+        case "copyInitScript":
+            line_of_interest = source_using_copy
+            line_other = source_using_reference
+        case "referenceMachineConfig":
+            line_of_interest = source_using_reference
+            line_other = source_using_copy
+
+    was_shell_updated = False
+    if line_other in shell_profile:  # always remove this irrelevant line
+        shell_profile = shell_profile.replace(line_other, "")
+        was_shell_updated = True
+
+    if line_of_interest in shell_profile:
+        console.print(Panel("🔄 PROFILE | Skipping init script sourcing - already present in profile", title="[bold blue]Profile[/bold blue]", border_style="blue"))        
     else:
         console.print(Panel("📝 PROFILE | Adding init script sourcing to profile", title="[bold blue]Profile[/bold blue]", border_style="blue"))
-        shell_profile += "\n" + source + "\n"
+        shell_profile += "\n" + line_of_interest + "\n"
         if system == "Linux":
             result = subprocess.run(["cat", "/proc/version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False)
             if result.returncode == 0 and result.stdout:
                 version_info = result.stdout.lower()
                 if "microsoft" in version_info or "wsl" in version_info:
-                    shell_profile += "\ncd ~"
-                    console.print("📌 WSL detected - adding 'cd ~' to profile to avoid Windows filesystem")
+                    shell_profile += "\ncd $HOME"
+                    console.print("📌 WSL detected - adding 'cd $HOME' to profile to avoid Windows filesystem")
+        was_shell_updated = True
+    if was_shell_updated:
         shell_profile_path.parent.mkdir(parents=True, exist_ok=True)
         shell_profile_path.write_text(shell_profile, encoding="utf-8")
         console.print(Panel("✅ Profile updated successfully", title="[bold blue]Profile[/bold blue]", border_style="blue"))
-
 
 
 # def append_temporarily(dirs: list[str], kind: Literal["append", "prefix", "replace"]) -> str:

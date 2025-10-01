@@ -40,10 +40,7 @@ def main_private_from_parser(method: Literal["symlink", "copy"] = typer.Option(.
                              which: Optional[str] = typer.Option(None, help="Specific items to process"),
                              interactive: bool = typer.Option(False, help="Run in interactive mode")):
     from machineconfig.profile.create import ConfigMapper, read_mapper
-    if method == "symlink":
-        machineconfig_repo_path = Path.home().joinpath("code/machineconfig")
-        if not machineconfig_repo_path.exists() or not machineconfig_repo_path.is_dir():
-            raise FileNotFoundError(f"machineconfig repo not found at {machineconfig_repo_path}. Cannot create symlinks to non-existing source files.")
+
     mapper_full = read_mapper()["private"]
     if which is None:
         assert interactive is True
