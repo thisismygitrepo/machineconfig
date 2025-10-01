@@ -47,14 +47,18 @@ def status():
     pass
 @self_app.command()
 def clone():
-    """📋 CLONE machienconfig locally for faster execution and nightly updates. """
+    """📋 CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates."""
     import platform
     from machineconfig.utils.code import run_shell_script
+    from machineconfig.profile.shell import create_default_shell_profile
     if platform.system() == "Windows":
         from machineconfig.setup_windows import REPOS
+        create_default_shell_profile(method="copy")
     else:
         from machineconfig.setup_linux import REPOS
+        create_default_shell_profile(method="reference")
     run_shell_script(REPOS.read_text(encoding="utf-8"))
+
 
 
 @config_apps.command(no_args_is_help=True)
