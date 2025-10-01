@@ -19,8 +19,8 @@ for better user experience with checkbox selections.
 
 import sys
 from pathlib import Path
-from platform import system
 from typing import cast
+import platform
 
 import questionary
 from questionary import Choice
@@ -80,14 +80,14 @@ def get_installation_choices() -> list[str]:
         Choice(value="retrieve_data", title="💾 Retrieve Data                  - Backup restoration", checked=False),
     ]
     # Add Windows-specific options
-    if system() == "Windows":
+    if platform.system() == "Windows":
         choices.append(Choice(value="install_windows_desktop", title="💻 Install Windows Desktop Apps   - Brave, Windows Terminal, PowerShell, VSCode (Windows only)", checked=False))
     selected = questionary.checkbox("Select the installation options you want to execute:", choices=choices, show_description=True).ask()
     return selected or []
 
 
 def execute_installations(selected_options: list[str]) -> None:
-    if system() == "Windows":
+    if platform.system() == "Windows":
         from machineconfig import setup_windows as module
         script_path = Path(module.__file__).parent / "ve.ps1"
         run_shell_script(script_path.read_text(encoding="utf-8"))
@@ -109,26 +109,24 @@ def execute_installations(selected_options: list[str]) -> None:
             run_shell_script(". $HOME/.bashrc")
 
     if "upgrade_system" in selected_options:
-        if system() == "Windows":
+        if platform.system() == "Windows":
             console.print("❌ System upgrade is not applicable on Windows via this script.", style="bold red")
-        elif system() == "Linux":
+        elif platform.system() == "Linux":
             console.print(Panel("🔄 [bold magenta]SYSTEM UPDATE[/bold magenta]\n[italic]Package management[/italic]", border_style="magenta"))
             run_shell_script("sudo nala upgrade -y")
         else:
-            console.print(f"❌ System upgrade not supported on {system()}.", style="bold red")
+            console.print(f"❌ System upgrade not supported on {platform.system()}.", style="bold red")
     if "install_repos" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
-        if system() == "Windows":
-            from machineconfig import setup_windows as module
-            script_path = Path(module.__file__).parent / "repos.ps1"
+        if platform.system() == "Windows":
+            from machineconfig.setup_windows import REPOS
         else:
-            from machineconfig import setup_linux as module
-            script_path = Path(module.__file__).parent / "repos.sh"
-        run_shell_script(script_path.read_text(encoding="utf-8"))
+            from machineconfig.setup_linux import REPOS
+        run_shell_script(REPOS.read_text(encoding="utf-8"))
 
     if "install_ssh_server" in selected_options:
         console.print(Panel("🔒 [bold red]SSH SERVER[/bold red]\n[italic]Remote access setup[/italic]", border_style="red"))
-        if system() == "Windows":
+        if platform.system() == "Windows":
             powershell_script = """Write-Host "🔧 Installing and configuring SSH server..."
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 Start-Service sshd

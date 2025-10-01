@@ -45,6 +45,16 @@ def interactive():
 def status():
     """📊 STATUS of machine, shell profile, apps, symlinks, dotfiles, etc."""
     pass
+@self_app.command()
+def clone():
+    """📋 CLONE machienconfig locally for faster execution and nightly updates. """
+    import platform
+    from machineconfig.utils.code import run_shell_script
+    if platform.system() == "Windows":
+        from machineconfig.setup_windows import REPOS
+    else:
+        from machineconfig.setup_linux import REPOS
+    run_shell_script(REPOS.read_text(encoding="utf-8"))
 
 
 @config_apps.command(no_args_is_help=True)
