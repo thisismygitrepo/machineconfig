@@ -76,7 +76,6 @@ def get_installation_choices() -> list[str]:
         Choice(value="install_repos", title="🐍 Install Repos                - Set up Python environment and repositories permanently.", checked=False),
         Choice(value="install_ssh_server", title="🔒 Install SSH Server             - Set up remote access", checked=False),
         Choice(value="install_shell_profile", title="🐚 Configure Shell Profile         - Source machineconfig shell initialization", checked=False),
-        Choice(value="create_symlinks", title="🔗 Create Symlinks                - Set up configuration symlinks (finish dotfiles transfer first)", checked=False),
         Choice(value="retrieve_repositories", title="📚 Retrieve Repositories          - Clone repositories to ~/code", checked=False),
         Choice(value="retrieve_data", title="💾 Retrieve Data                  - Backup restoration", checked=False),
     ]
@@ -142,29 +141,11 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
         console.print(Panel("🐚 [bold green]SHELL PROFILE[/bold green]\n[italic]Shell configuration setup[/italic]", border_style="green"))
         console.print("🔧 Configuring shell profile", style="bold cyan")
         try:
-            from machineconfig.profile.create import main_profile
-
-            main_profile()
+            from machineconfig.profile.shell import create_default_shell_profile
+            create_default_shell_profile()
             console.print("✅ Shell profile configured successfully", style="bold green")
         except Exception as e:
             console.print(f"❌ Error configuring shell profile: {e}", style="bold red")
-
-    if "create_symlinks" in selected_options:
-        display_dotfiles_instructions()
-        dotfiles_ready = questionary.confirm("📂 Have you finished copying dotfiles?", default=True).ask()
-        if dotfiles_ready:
-            console.print(Panel("🔗 [bold cyan]SYMLINK CREATION[/bold cyan]\n[italic]Configuration setup[/italic]", border_style="cyan"))
-            console.print("🔧 Creating symlinks", style="bold cyan")
-            try:
-                from machineconfig.profile.create import main_symlinks
-                main_symlinks()
-                console.print("✅ Symlinks created successfully", style="bold green")
-            except Exception as e:
-                console.print(f"❌ Error creating symlinks: {e}", style="bold red")
-            run_shell_script("sudo chmod 600 $HOME/.ssh/*")
-            run_shell_script("sudo chmod 700 $HOME/.ssh")
-        else:
-            console.print("⏭️  Skipping symlink creation - finish dotfiles transfer first", style="yellow")
 
     if "retrieve_repositories" in selected_options:
         console.print(Panel("📚 [bold bright_magenta]REPOSITORIES[/bold bright_magenta]\n[italic]Project code retrieval[/italic]", border_style="bright_magenta"))
@@ -200,6 +181,7 @@ def main() -> None:
         console.print("❌ Installation cancelled.", style="bold red")
         sys.exit(0)
     execute_installations(selected_options)
+    display_dotfiles_instructions()
     display_completion_message()
 
 

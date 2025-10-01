@@ -21,7 +21,7 @@ def main(
     from rich.console import Console
     from rich.panel import Panel
 
-    from machineconfig.utils.links import symlink_func
+    from machineconfig.utils.links import symlink_map
     from machineconfig.utils.path_extended import PathExtended
     from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT
     console = Console()
@@ -41,7 +41,7 @@ def main(
         dest_path.mkdir(parents=True, exist_ok=True)
         new_path = dest_path.joinpath(orig_path.name)
 
-    symlink_func(config_file_default_path=orig_path, self_managed_config_file_path=new_path, prioritize_to_this=overwrite)
+    symlink_map(config_file_default_path=orig_path, self_managed_config_file_path=new_path, on_conflict="throwError")
 
     console.print(
         Panel(

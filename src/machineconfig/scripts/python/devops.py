@@ -4,10 +4,8 @@ import machineconfig.utils.installer_utils.installer as installer_entry_point
 import machineconfig.scripts.python.share_terminal as share_terminal
 import machineconfig.scripts.python.repos as repos
 
-import machineconfig.profile.creator_frontend as creator_frontend
+import machineconfig.profile.create_frontend as create_frontend
 from machineconfig.scripts.python import dotfile
-
-from machineconfig.utils.installer import get_machineconfig_version
 import typer
 
 
@@ -49,8 +47,8 @@ def status():
     pass
 
 
-config_apps.command(name="private", help="🔗 Manage private configuration files.")(creator_frontend.mail_private_from_parser)
-config_apps.command(name="public", help="🔗 Manage public configuration files.")(creator_frontend.mail_public_from_parser)
+config_apps.command(name="private", help="🔗 Manage private configuration files.")(create_frontend.main_private_from_parser)
+config_apps.command(name="public", help="🔗 Manage public configuration files.")(create_frontend.main_public_from_parser)
 config_apps.command(name="dotfile", help="🔗 Manage dotfiles.")(dotfile.main)
 
 

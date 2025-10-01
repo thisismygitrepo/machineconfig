@@ -84,7 +84,7 @@ def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
         links_path.symlink_to(target=a_target_path)
 
 
-def symlink_func(config_file_default_path: PathExtended, self_managed_config_file_path: PathExtended,
+def symlink_map(config_file_default_path: PathExtended, self_managed_config_file_path: PathExtended,
                  on_conflict: Literal["throwError", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"]
                  ) -> SymlinkResult:
     """helper function. creates a symlink from `config_file_default_path` to `self_managed_config_file_path`.
@@ -212,7 +212,7 @@ def symlink_func(config_file_default_path: PathExtended, self_managed_config_fil
         return {"action": action_taken, "details": details}
 
 
-def symlink_copy(config_file_default_path: PathExtended, self_managed_config_file_path: PathExtended, on_conflict: Literal["throwError", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"]) -> CopyResult:
+def copy_map(config_file_default_path: PathExtended, self_managed_config_file_path: PathExtended, on_conflict: Literal["throwError", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"]) -> CopyResult:
     config_file_default_path = PathExtended(config_file_default_path).expanduser().absolute()
     self_managed_config_file_path = PathExtended(self_managed_config_file_path).expanduser().absolute()
     action_taken = ""
