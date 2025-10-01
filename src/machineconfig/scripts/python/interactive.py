@@ -142,7 +142,7 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
         console.print("🔧 Configuring shell profile", style="bold cyan")
         try:
             from machineconfig.profile.shell import create_default_shell_profile
-            create_default_shell_profile()
+            create_default_shell_profile(method="copy")
             console.print("✅ Shell profile configured successfully", style="bold green")
         except Exception as e:
             console.print(f"❌ Error configuring shell profile: {e}", style="bold red")
