@@ -237,11 +237,9 @@ def main(verbose: bool = True, allow_password_prompt: bool = False) -> None:
                     padding=(1, 2),
                 )
             )
-
     # Run uv sync for repositories where pyproject.toml changed but sync wasn't run yet
     for repo_path in repos_with_changes:
         run_uv_sync(repo_path)
-
     # Generate and display summary
     _display_summary(results)
 

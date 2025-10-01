@@ -1,11 +1,11 @@
 """devops with emojis"""
 
+import typer
+from typing import Literal, Annotated, Optional, get_args
+
 import machineconfig.scripts.python.share_terminal as share_terminal
 import machineconfig.scripts.python.repos as repos
 from machineconfig.jobs.installer.package_groups import PACKAGE_GROUPS
-# import machineconfig.scripts.python.dotfile as dotfile_module
-import typer
-from typing import Literal, Annotated, Optional, get_args
 
 
 app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True)
@@ -75,10 +75,14 @@ def public(method: Literal["symlink", "copy"] = typer.Option(..., "--method", "-
     import machineconfig.profile.create_frontend as create_frontend
     create_frontend.main_public_from_parser(method=method, on_conflict=on_conflict, which=which, interactive=interactive)
 
-# @config_apps.command(no_args_is_help=True)
-# def dotfile():
-#     """🔗 Manage dotfiles."""
-#     dotfile_module.main()
+@config_apps.command(no_args_is_help=True)
+def dotfile(file: Annotated[str, typer.Argument(help="file/folder path.")],
+    overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="Overwrite.")] = False,
+    dest: Annotated[str, typer.Option("--dest", "-d", help="destination folder")] = "",
+    ):
+    """🔗 Manage dotfiles."""
+    import machineconfig.scripts.python.dotfile as dotfile_module
+    dotfile_module.main(file=file, overwrite=overwrite, dest=dest)
 
 
 @config_apps.command(no_args_is_help=True)

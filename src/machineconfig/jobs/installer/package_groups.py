@@ -75,8 +75,6 @@ PACKAGES_DOC_CONVERSION = [
     "mermaid-cli",
     "html2markdown",
     "pandoc",
-    "cpz",
-    "rmz",
 ]
 
 # Media & Entertainment - Music players and media tools
@@ -90,6 +88,8 @@ PACKAGES_MEDIA = [
 
 # File Sharing & Cloud - File sharing, transfer, backup, sync, and QR tools
 PACKAGES_FILE_SHARING = [
+    "cpz",
+    "rmz",
     "ffsend",
     "portal",
     "qrcp",
@@ -104,6 +104,7 @@ PACKAGES_FILE_SHARING = [
     "restic",
     "syncthing",
     "cloudreve",
+    "ots",
 ]
 
 
@@ -121,11 +122,11 @@ PACKAGES_DEV_UTILS = [
     "rust-analyzer",
     "evcxr",
     "geckodriver",
-    "hyperfine",
 ]
 
 # Code Analysis, Git & Docs - Code analysis, statistics, documentation, and Git tools
 PACKAGES_CODE_ANALYSIS = [
+    "hyperfine",
     "kondo",
     "tokei",
     "navi",
@@ -142,9 +143,6 @@ PACKAGES_PRODUCTIVITY = [
     "openpomodoro-cli",
     "just",
     "rustdesk",
-    "ots",
-    "lolcatjs",
-    "figlet-cli",
 ]
 
 # Miscellaneous Tools - Other tools
@@ -237,8 +235,14 @@ PACKAGES_TERMINAL_SHELL = [
     "mprocs",
     "mcfly",
     "starship",
+    "lolcatjs",
+    "figlet-cli",
 ]
-
+# Web Sharing - Share terminal over web
+PACKAGES_WEB_TERMINAL = [
+    "gotty",
+    "ttyd",
+]
 
 
 # Cloud & Utilities - Cloud storage, file watching, web terminal, and presentation tools
@@ -250,11 +254,7 @@ PACKAGES_CLOUD_UTILS = [
     "speedtest",
 ]
 
-# Web Sharing - Share terminal over web
-PACKAGES_WEB_TERMINAL = [
-    "gotty",
-    "ttyd",
-]
+
 
 
 # Main ESSENTIAL package list - combines all subgroups

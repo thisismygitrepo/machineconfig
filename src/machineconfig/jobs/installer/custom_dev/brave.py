@@ -9,12 +9,6 @@ from rich.panel import Panel
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-# config_dict: InstallerData = {
-#     "appName": "Brave",
-#     "repoURL": "CMD",
-#     "doc": "Privacy-focused web browser with built-in ad blocking",
-# }
-
 
 def main(installer_data: InstallerData, version: Optional[str]) -> None:
     console = Console()
