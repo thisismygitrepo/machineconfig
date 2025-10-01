@@ -1,0 +1,56 @@
+
+
+from typing import Optional, Annotated
+from pathlib import Path
+import typer
+
+
+def create_from_function(
+        num_process: Annotated[int, typer.Argument(..., help="Number of parallel processes to run")],
+        path: Annotated[str, typer.Option(default=".", help="Path to a Python or Shell script file or a directory containing such files")],
+        function: Annotated[Optional[str], typer.Option(None, "--function", "-f", help="Function to run from the Python file. If not provided, you will be prompted to choose.")],
+):
+    from machineconfig.utils.ve import get_ve_activate_line, get_ve_path_and_ipython_profile
+    from machineconfig.utils.options import choose_from_options
+    from machineconfig.utils.path_helper import match_file_name, sanitize_path
+    from machineconfig.utils.path_extended import PathExtended
+    from machineconfig.utils.accessories import get_repo_root
+
+    path_obj = sanitize_path(path)
+    if not path_obj.exists():
+        suffixes = {".py"}
+        choice_file = match_file_name(sub_string=path, search_root=PathExtended.cwd(), suffixes=suffixes)
+    elif path_obj.is_dir():
+        from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_interest
+        print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
+        files = search_for_files_of_interest(path_obj)
+        print(f"🔍 Got #{len(files)} results.")
+        choice_file = choose_from_options(multi=False, options=files, fzf=True, msg="Choose one option")
+        choice_file = PathExtended(choice_file)
+    else:
+        choice_file = path_obj
+
+
+    repo_root = get_repo_root(Path(choice_file))
+    print(f"💾 Selected file: {choice_file}.\nRepo root: {repo_root}")
+    ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
+    if ipy_profile is None:
+        ipy_profile = "default"
+
+    _activate_ve_line = get_ve_activate_line(ve_root=ve_root_from_file or "$HOME/code/machineconfig/.venv")
+
+    # =========================  choosing function to run
+    choice_function: Optional[str] = None  # Initialize to avoid unbound variable
+    if function:
+        from machineconfig.scripts.python.fire_jobs_route_helper import choose_function_or_lines
+        choice_function, choice_file, _kwargs_dict = choose_function_or_lines(choice_file, kwargs_dict={})
+    else:
+        choice_function = function
+
+    from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
+    from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
+    layout: LayoutConfig = {"layoutName": "fireNprocess", "layoutTabs": []}
+    for an_arg in range(num_process):
+        layout["layoutTabs"].append({"tabName": f"tab{an_arg}", "startDir": str(PathExtended.cwd()), "command": f"uv run -m fire {choice_file} {choice_function} --idx={an_arg} --idx_max={num_process}"})
+    print(layout)
+    run_zellij_layout(layout_config=layout)

@@ -7,17 +7,13 @@ fire
 
 """
 
-from machineconfig.scripts.python.fire_jobs_route_helper import get_command_streamlit
-from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_interest
-from machineconfig.scripts.python.helpers.helpers4 import parse_pyfile
-from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
 from machineconfig.utils.ve import get_ve_activate_line, get_ve_path_and_ipython_profile
 from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.path_helper import match_file_name, sanitize_path
-
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.accessories import get_repo_root, randstr
 from machineconfig.scripts.python.fire_jobs_args_helper import FireJobArgs, extract_kwargs, parse_fire_args_from_context
+
 import platform
 from typing import Optional, Annotated
 from pathlib import Path
@@ -30,6 +26,7 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
         suffixes = {".py", ".sh", ".ps1"}
         choice_file = match_file_name(sub_string=args.path, search_root=PathExtended.cwd(), suffixes=suffixes)
     elif path_obj.is_dir():
+        from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_interest
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
         files = search_for_files_of_interest(path_obj)
         print(f"🔍 Got #{len(files)} results.")
@@ -37,12 +34,16 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
         choice_file = PathExtended(choice_file)
     else:
         choice_file = path_obj
+
+
     repo_root = get_repo_root(Path(choice_file))
     print(f"💾 Selected file: {choice_file}.\nRepo root: {repo_root}")
     ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
     if ipy_profile is None:
         ipy_profile = "default"
 
+
+    # =========================  preparing kwargs_dict
     if choice_file.suffix == ".py":
         kwargs_dict = extract_kwargs(args)  # This now returns empty dict, but kept for compatibility
         activate_ve_line = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/machineconfig/.venv")
@@ -50,41 +51,17 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
         activate_ve_line = ""
         kwargs_dict = {}
 
+
     # =========================  choosing function to run
     choice_function: Optional[str] = None  # Initialize to avoid unbound variable
-    if args.choose_function or args.submit_to_cloud:
-        if choice_file.suffix == ".py":
-            options, func_args = parse_pyfile(file_path=str(choice_file))
-            choice_function_tmp = choose_from_options(msg="Choose a function to run", options=options, fzf=True, multi=False)
-            assert isinstance(choice_function_tmp, str), f"choice_function must be a string. Got {type(choice_function_tmp)}"
-            choice_index = options.index(choice_function_tmp)
-            choice_function = choice_function_tmp.split(" -- ")[0]
-            choice_function_args = func_args[choice_index]
-
-            if choice_function == "RUN AS MAIN":
-                choice_function = None
-            if len(choice_function_args) > 0 and len(kwargs_dict) == 0:
-                for item in choice_function_args:
-                    kwargs_dict[item.name] = input(f"Please enter a value for argument `{item.name}` (type = {item.type}) (default = {item.default}) : ") or item.default
-        elif choice_file.suffix == ".sh":  # in this case, we choos lines.
-            options = []
-            for line in choice_file.read_text(encoding="utf-8").splitlines():
-                if line.startswith("#"):
-                    continue
-                if line == "":
-                    continue
-                if line.startswith("echo"):
-                    continue
-                options.append(line)
-            chosen_lines = choose_from_options(msg="Choose a line to run", options=options, fzf=True, multi=True)
-            choice_file = PathExtended.tmpfile(suffix=".sh")
-            choice_file.parent.mkdir(parents=True, exist_ok=True)
-            choice_file.write_text("\n".join(chosen_lines), encoding="utf-8")
-            choice_function = None
+    if args.choose_function:
+        from machineconfig.scripts.python.fire_jobs_route_helper import choose_function_or_lines
+        choice_function, choice_file, kwargs_dict = choose_function_or_lines(choice_file, kwargs_dict)
     else:
         choice_function = args.function
 
     if choice_file.suffix == ".py":
+        from machineconfig.scripts.python.fire_jobs_route_helper import get_command_streamlit
         if args.streamlit:  exe = get_command_streamlit(choice_file, args.environment, repo_root)
         elif args.interactive is False: exe = "python"
         elif args.jupyter: exe = "jupyter-lab"
@@ -95,6 +72,7 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
 
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file}"
+        from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
         import_line = get_import_module_code(str(choice_file))
         if repo_root is not None:
             repo_root_add = f"""sys.path.append(r'{repo_root}')"""
@@ -160,11 +138,9 @@ except ImportError as _ex:
     elif args.cmd:
         command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
     else:
-        if choice_file.suffix == "":
-            command = f"{exe} {choice_file} {fire_args}"
-        else:
-            # command = f"cd {choice_file.parent}\n{exe} {choice_file.name}\ncd {PathExtended.cwd()}"
-            command = f"{exe} {choice_file} "
+        if choice_file.suffix == "": command = f"{exe} {choice_file} {fire_args}"
+        else: command = f"{exe} {choice_file} "
+
     if not args.cmd: command = f"{activate_ve_line}\n{command}"
     else:
         new_line = "\n"
@@ -176,14 +152,6 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
         if choice_function is not None:
             command += f"--function {choice_function} "
 
-    if args.Nprocess > 1:
-        from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
-        from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
-        layout: LayoutConfig = {"layoutName": "fireNprocess", "layoutTabs": []}
-        for an_arg in range(args.Nprocess):
-            layout["layoutTabs"].append({"tabName": f"tab{an_arg}", "startDir": str(PathExtended.cwd()), "command": f"uv run -m fire {choice_file} {choice_function} --idx={an_arg} --idx_max={args.Nprocess}"})
-        run_zellij_layout(layout_config=layout)
-        return None
     if args.optimized:
         command = command.replace("python ", "python -OO ")
     from rich.panel import Panel
@@ -245,7 +213,6 @@ def main(
     PathExport: Annotated[bool, typer.Option("--PathExport", "-P", help="Augment the PYTHONPATH with repo root")] = False,
     git_pull: Annotated[bool, typer.Option("--git_pull", "-g", help="Start by pulling the git repo")] = False,
     optimized: Annotated[bool, typer.Option("--optimized", "-O", help="Run the optimized version of the function")] = False,
-    Nprocess: Annotated[int, typer.Option("--Nprocess", "-p", help="Number of processes to use")] = 1,
     zellij_tab: Annotated[Optional[str], typer.Option("--zellij_tab", "-z", help="Open in a new zellij tab")] = None,
     watch: Annotated[bool, typer.Option("--watch", "-w", help="Watch the file for changes")] = False,
 ) -> None:
@@ -273,7 +240,6 @@ def main(
         PathExport=PathExport,
         git_pull=git_pull,
         optimized=optimized,
-        Nprocess=Nprocess,
         zellij_tab=zellij_tab,
         watch=watch,
     )
@@ -303,5 +269,4 @@ def main_from_parser():
 
 
 if __name__ == "__main__":
-    # options, func_args = parse_pyfile(file_path="C:/Users/aalsaf01/code/machineconfig/myresources/crocodile/core.py")
     main_from_parser()

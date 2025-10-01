@@ -6,6 +6,52 @@ import tomllib
 from pathlib import Path
 from machineconfig.utils.accessories import randstr
 from machineconfig.utils.path_extended import PathExtended
+from machineconfig.utils.options import choose_from_options
+
+
+def choose_function_or_lines(choice_file: PathExtended, kwargs_dict: dict[str, object]) -> tuple[Optional[str], PathExtended, dict[str, object]]:
+    """
+    Choose a function to run from a Python file or lines from a shell script.
+    
+    Returns:
+        tuple: (choice_function, choice_file, kwargs_dict)
+        - choice_function: The selected function name or None
+        - choice_file: The file path (potentially modified for shell scripts)
+        - kwargs_dict: Updated kwargs dictionary with user-provided arguments
+    """
+    choice_function: Optional[str] = None
+    
+    if choice_file.suffix == ".py":
+        from machineconfig.scripts.python.helpers.helpers4 import parse_pyfile
+        options, func_args = parse_pyfile(file_path=str(choice_file))
+        choice_function_tmp = choose_from_options(msg="Choose a function to run", options=options, fzf=True, multi=False)
+        assert isinstance(choice_function_tmp, str), f"choice_function must be a string. Got {type(choice_function_tmp)}"
+        choice_index = options.index(choice_function_tmp)
+        choice_function = choice_function_tmp.split(" -- ")[0]
+        choice_function_args = func_args[choice_index]
+
+        if choice_function == "RUN AS MAIN":
+            choice_function = None
+        if len(choice_function_args) > 0 and len(kwargs_dict) == 0:
+            for item in choice_function_args:
+                kwargs_dict[item.name] = input(f"Please enter a value for argument `{item.name}` (type = {item.type}) (default = {item.default}) : ") or item.default
+    elif choice_file.suffix == ".sh":
+        options = []
+        for line in choice_file.read_text(encoding="utf-8").splitlines():
+            if line.startswith("#"):
+                continue
+            if line == "":
+                continue
+            if line.startswith("echo"):
+                continue
+            options.append(line)
+        chosen_lines = choose_from_options(msg="Choose a line to run", options=options, fzf=True, multi=True)
+        choice_file = PathExtended.tmpfile(suffix=".sh")
+        choice_file.parent.mkdir(parents=True, exist_ok=True)
+        choice_file.write_text("\n".join(chosen_lines), encoding="utf-8")
+        choice_function = None
+    
+    return choice_function, choice_file, kwargs_dict
 
 
 def get_command_streamlit(choice_file: Path, environment: str, repo_root: Optional[Path]) -> str:

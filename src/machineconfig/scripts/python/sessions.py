@@ -2,7 +2,7 @@
 from pathlib import Path
 from typing import Optional, Literal
 import typer
-
+from machineconfig.scripts.python.sessions_multiprocess import create_from_function
 
 def balance_load(layout_path: Path = typer.Argument(..., help="Path to the layout.json file"),
            max_thresh: int = typer.Option(..., help="Maximum tabs per layout"),
@@ -69,7 +69,7 @@ def find_layout_file(layout_path: str, ) -> Path:
     return choice_file
 
 
-def launch(ctx: typer.Context,
+def run(ctx: typer.Context,
            layout_path: Optional[str] = typer.Argument(None, help="Path to the layout.json file"),
         max_tabs: int = typer.Option(10, help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch."),
         max_layouts: int = typer.Option(10, help="A Sanity checker that throws an error if the total number of layouts exceeds this number."),
@@ -133,14 +133,11 @@ def launch(ctx: typer.Context,
 
 
 def main_from_parser():
-    layouts_app = typer.Typer(help="Layouts management subcommands")
-    layouts_app.command("run")(launch)
+    layouts_app = typer.Typer(help="Layouts management subcommands", no_args_is_help=True)
+    layouts_app.command("run")(run)
     layouts_app.command("balance-load")(balance_load)
-    import sys
-    if len(sys.argv) == 1:
-        layouts_app(["--help"])
-    else:
-        layouts_app()
+    layouts_app.command("create-from-function")(create_from_function)
+    layouts_app()
 
 
 if __name__ == "__main__":
