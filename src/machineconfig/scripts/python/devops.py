@@ -44,7 +44,8 @@ def interactive():
 @self_app.command()
 def status():
     """📊 STATUS of machine, shell profile, apps, symlinks, dotfiles, etc."""
-    pass
+    import machineconfig.scripts.python.devops_status as helper
+    helper.main()
 @self_app.command()
 def clone():
     """📋 CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates."""
