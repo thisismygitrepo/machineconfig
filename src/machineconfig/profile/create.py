@@ -23,6 +23,7 @@ import subprocess
 import tomllib
 from typing import Optional, Any, TypedDict, Literal
 
+
 system = platform.system()  # Linux or Windows
 ERROR_LIST: list[Any] = []  # append to this after every exception captured.
 SYSTEM = system.lower()
@@ -316,22 +317,6 @@ def main_profile():
             border_style="green",
         )
     )
-
-
-def mail_public_from_parser(which: Optional[str], interactive: bool = False):
-    mapper = read_mapper()["public"]
-    if which is None:
-        assert interactive is True
-        items = choose_from_options(msg="Which symlink to create?", options=list(mapper.keys()), fzf=True, multi=True)
-    else:
-        assert interactive is False
-        if which == "all":
-            items = list(mapper.keys())
-        else:
-            items = which.split(",")
-    items_objections: list[dict[str, SymlinkMapper]] = [mapper[item] for item in items if item in mapper]
-    return items_objections
-
 
 
 if __name__ == "__main__":

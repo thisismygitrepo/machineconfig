@@ -63,8 +63,8 @@ class Read:
         return res
     @staticmethod
     def toml(path: 'Path'):
-        import toml
-        return toml.loads(Path(path).read_text(encoding='utf-8'))
+        import tomllib
+        return tomllib.loads(Path(path).read_text(encoding='utf-8'))
     @staticmethod
     def npy(path: 'Path', **kwargs: Any):
         import numpy as np

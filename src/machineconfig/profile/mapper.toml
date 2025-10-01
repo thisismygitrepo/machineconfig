@@ -2,9 +2,9 @@
 
 # =================== PRIVATE ================================
 
-# [git]
-# gitconfig = {this = '~/.gitconfig', to_this = '~/dotfiles/creds/git/.gitconfig'}
-# gitcred = {this = '~/.git-credentials', to_this = '~/dotfiles/creds/git/.git-credentials'}
+[git]
+gitconfig = {this = '~/.gitconfig', to_this = '~/dotfiles/creds/git/.gitconfig'}
+gitcred = {this = '~/.git-credentials', to_this = '~/dotfiles/creds/git/.git-credentials'}
 
 [ssh]
 keys = {this = '~/.ssh', to_this = '~/dotfiles/creds/.ssh', contents = true}

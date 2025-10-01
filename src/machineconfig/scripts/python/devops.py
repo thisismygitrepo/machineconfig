@@ -1,8 +1,10 @@
 """devops with emojis"""
 
+import machineconfig.profile.creator_frontend
 import machineconfig.utils.installer_utils.installer as installer_entry_point
 import machineconfig.scripts.python.share_terminal as share_terminal
 import machineconfig.scripts.python.repos as repos
+import machineconfig.profile.creator_frontend as config_frontend
 
 from machineconfig.utils.installer import get_machineconfig_version
 import typer
@@ -44,11 +46,20 @@ def interactive():
     main()
 
 
-@config_apps.command()
-def config():
-    """🔗 SYMLINKS of dotfiles."""
-    import machineconfig.profile.create as helper
-    helper.main_symlinks()
+# @config_apps.command()
+# def private():
+#     """🔗 Manage private configuration files."""
+#     import machineconfig.profile.creator_frontend as helper
+#     machineconfig.profile.creator_frontend.mail_private_from_parser()
+
+# @config_apps.command()
+# def public():
+#     """🔗 Manage public configuration files."""
+#     import machineconfig.profile.create as helper
+#     machineconfig.profile.creator_frontend.mail_public_from_parser()
+config_apps.command(name="private", help="🔗 Manage private configuration files.")(machineconfig.profile.creator_frontend.mail_private_from_parser)
+config_apps.command(name="public", help="🔗 Manage public configuration files.")(machineconfig.profile.creator_frontend.mail_public_from_parser)
+
 """    has two subommands: private and public. both offer a mandatory --if-target-exists option in which user chooses one of the following strategies: 
     throwError (force the program to stop when this is encountered and ask the user to resolve conflict manually),
     overrideTarget,
@@ -59,8 +70,8 @@ def config():
 """
 
 @config_apps.command()
-def profile():
-    """🔗 Update shell profile."""
+def shell():
+    """🔗 Configure your shell profile."""
     import machineconfig.profile.create as helper
     helper.main_profile()
 
