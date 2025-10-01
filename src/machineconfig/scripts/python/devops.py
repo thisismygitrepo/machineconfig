@@ -5,8 +5,9 @@ import machineconfig.scripts.python.share_terminal as share_terminal
 import machineconfig.scripts.python.repos as repos
 
 import machineconfig.profile.create_frontend as create_frontend
-from machineconfig.scripts.python import dotfile
+# import machineconfig.scripts.python.dotfile as dotfile_module
 import typer
+from typing import Literal, Annotated
 
 
 app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True)
@@ -47,16 +48,27 @@ def status():
     pass
 
 
-config_apps.command(name="private", help="🔗 Manage private configuration files.")(create_frontend.main_private_from_parser)
-config_apps.command(name="public", help="🔗 Manage public configuration files.")(create_frontend.main_public_from_parser)
-config_apps.command(name="dotfile", help="🔗 Manage dotfiles.")(dotfile.main)
+@config_apps.command(no_args_is_help=True)
+def private():
+    """🔗 Manage private configuration files."""
+    create_frontend.main_private_from_parser()
+
+@config_apps.command(no_args_is_help=True)
+def public():
+    """🔗 Manage public configuration files."""
+    create_frontend.main_public_from_parser()
+
+# @config_apps.command(no_args_is_help=True)
+# def dotfile():
+#     """🔗 Manage dotfiles."""
+#     dotfile_module.main()
 
 
-@config_apps.command()
-def shell():
+@config_apps.command(no_args_is_help=True)
+def shell(method: Annotated[Literal["copy", "reference"], typer.Argument(help="Choose the method to configure the shell profile: 'copy' copies the init script directly, 'reference' references machineconfig for dynamic updates.")]):
     """🔗 Configure your shell profile."""
     from machineconfig.profile.shell import create_default_shell_profile
-    create_default_shell_profile()
+    create_default_shell_profile(method=method)
 
 
 @nw_apps.command()
@@ -117,10 +129,6 @@ def retrieve():
 #     """⏰ SCHEDULER"""
 #     # from machineconfig.scripts.python.scheduler import main as helper
 #     # helper()
-
-
-if __name__ == "__main__":
-    pass
 
 
 if __name__ == "__main__":

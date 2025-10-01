@@ -36,8 +36,8 @@ def get_shell_profile_path() -> PathExtended:
     return profile_path
 
 
-def create_default_shell_profile(method: Literal["copyInitScript", "referenceMachineConfig"]) -> None:
-    if method == "referenceMachineConfig":
+def create_default_shell_profile(method: Literal["copy", "reference"]) -> None:
+    if method == "reference":
         machineconfig_repo_path = PathExtended.home().joinpath("code/machineconfig")
         if not machineconfig_repo_path.exists() or not machineconfig_repo_path.is_dir():
             raise FileNotFoundError(f"machineconfig repo not found at {machineconfig_repo_path}. Cannot create symlinks to non-existing source files.")
@@ -64,10 +64,10 @@ def create_default_shell_profile(method: Literal["copyInitScript", "referenceMac
         source_using_copy = f"""source {str(init_script_copy_path).replace("~", "$HOME")}"""
 
     match method:
-        case "copyInitScript":
+        case "copy":
             line_of_interest = source_using_copy
             line_other = source_using_reference
-        case "referenceMachineConfig":
+        case "reference":
             line_of_interest = source_using_reference
             line_other = source_using_copy
 
