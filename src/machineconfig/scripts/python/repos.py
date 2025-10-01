@@ -35,7 +35,7 @@ CloudOption = Annotated[
 
 
 
-@app.command()
+@app.command(no_args_is_help=True)
 def push(directory: DirectoryArgument = None,
     recursive: RecursiveOption = False,
     no_sync: NoSyncOption = False,
@@ -43,7 +43,7 @@ def push(directory: DirectoryArgument = None,
     """🚀 Push changes across repositories."""
     from machineconfig.scripts.python.repos_helper import git_operations
     git_operations(directory, pull=False, commit=False, push=True, recursive=recursive, no_sync=no_sync)
-@app.command()
+@app.command(no_args_is_help=True)
 def pull(
     directory: DirectoryArgument = None,
     recursive: RecursiveOption = False,
@@ -52,7 +52,7 @@ def pull(
     """⬇️ Pull changes across repositories."""
     from machineconfig.scripts.python.repos_helper import git_operations
     git_operations(directory, pull=True, commit=False, push=False, recursive=recursive, no_sync=no_sync)
-@app.command()
+@app.command(no_args_is_help=True)
 def commit(
     directory: DirectoryArgument = None,
     recursive: RecursiveOption = False,
@@ -61,8 +61,8 @@ def commit(
     """💾 Commit changes across repositories."""
     from machineconfig.scripts.python.repos_helper import git_operations
     git_operations(directory, pull=False, commit=True, push=False, recursive=recursive, no_sync=no_sync)
-@app.command()
-def all(
+@app.command(no_args_is_help=True)
+def cleanup(
     directory: DirectoryArgument = None,
     recursive: RecursiveOption = False,
     no_sync: NoSyncOption = False,
@@ -72,7 +72,7 @@ def all(
     git_operations(directory, pull=True, commit=True, push=True, recursive=recursive, no_sync=no_sync)
 
 
-@sync_app.command()
+@sync_app.command(no_args_is_help=True)
 def capture(
     directory: DirectoryArgument = None,
     cloud: CloudOption = None,
@@ -86,7 +86,7 @@ def capture(
     from machineconfig.utils.path_extended import PathExtended
     if cloud is not None:
         PathExtended(save_path).to_cloud(rel2home=True, cloud=cloud)
-@sync_app.command()
+@sync_app.command(no_args_is_help=True)
 def clone(
     directory: DirectoryArgument = None,
     cloud: CloudOption = None,
@@ -97,7 +97,7 @@ def clone(
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=False)
 
 
-@sync_app.command(name="checkout-to-commit")
+@sync_app.command(name="checkout-to-commit", no_args_is_help=True)
 def checkout_command(
     directory: DirectoryArgument = None,
     cloud: CloudOption = None,
@@ -108,7 +108,7 @@ def checkout_command(
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=True)
 
 
-@sync_app.command(name="checkout-to-branch")
+@sync_app.command(name="checkout-to-branch", no_args_is_help=True)
 def checkout_to_branch_command(
     directory: DirectoryArgument = None,
     cloud: CloudOption = None,
@@ -119,7 +119,7 @@ def checkout_to_branch_command(
     clone_from_specs(directory, cloud, checkout_branch_flag=True, checkout_commit_flag=False)
 
 
-@app.command()
+@app.command(no_args_is_help=True)
 def analyze(
     directory: DirectoryArgument = None,
 ) -> None:
