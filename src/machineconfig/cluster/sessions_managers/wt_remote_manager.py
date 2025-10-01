@@ -4,6 +4,7 @@ import uuid
 import logging
 from pathlib import Path
 from typing import Optional, Any
+from rich.console import Console
 from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import run_command_in_wt_tab
 from machineconfig.cluster.sessions_managers.wt_remote import WTRemoteLayoutGenerator
@@ -13,6 +14,7 @@ TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "
 
 # Module-level logger to be used throughout this module
 logger = logging.getLogger(__name__)
+console = Console()
 
 
 class WTSessionManager:
@@ -315,11 +317,11 @@ class WTSessionManager:
                 cmd_text = cmd_status.get("command", "Unknown")[:50]
                 if len(cmd_status.get("command", "")) > 50:
                     cmd_text += "..."
-                print(f"     {status_icon} {tab_name}: {cmd_text}")
+                console.print(f"     {status_icon} {tab_name}: {cmd_text}")
 
                 if cmd_status.get("processes"):
                     for proc in cmd_status["processes"][:2]:  # Show first 2 processes
-                        print(f"        └─ PID {proc.get('pid', 'Unknown')}: {proc.get('name', 'Unknown')}")
+                        console.print(f"        [dim]└─[/dim] PID {proc.get('pid', 'Unknown')}: {proc.get('name', 'Unknown')}")
             print()
 
         print("=" * 80)

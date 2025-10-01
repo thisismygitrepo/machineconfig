@@ -5,11 +5,13 @@ Status reporting utilities for Zellij remote layouts.
 
 import logging
 from typing import Dict, Any
+from rich.console import Console
 from machineconfig.cluster.sessions_managers.zellij_utils.process_monitor import ProcessMonitor
 from machineconfig.cluster.sessions_managers.zellij_utils.session_manager import SessionManager
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 
 logger = logging.getLogger(__name__)
+console = Console()
 
 
 class StatusReporter:
@@ -70,7 +72,7 @@ class StatusReporter:
                 print(f"✅ {tab_name}: Running on {remote_name}")
                 if cmd_status.get("processes"):
                     for proc in cmd_status["processes"][:2]:  # Show first 2 processes
-                        print(f"   └─ PID {proc['pid']}: {proc['name']} ({proc['status']})")
+                        console.print(f"   [dim]└─[/dim] PID {proc['pid']}: {proc['name']} ({proc['status']})")
             else:
                 print(f"❌ {tab_name}: Not running on {remote_name}")
             print(f"   Command: {cmd_status.get('command', 'Unknown')}")

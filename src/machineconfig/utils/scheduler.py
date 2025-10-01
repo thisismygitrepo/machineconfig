@@ -1,5 +1,6 @@
+
 from pathlib import Path
-from typing import Callable, Optional, Union, Any, NoReturn, TypeVar, Protocol, List, Generic
+from typing import Callable, Optional, Union, Any, TypeVar, Protocol, List, Generic
 import logging
 import time
 from datetime import datetime, timezone, timedelta
@@ -147,10 +148,6 @@ T = TypeVar("T")
 T2 = TypeVar("T2")
 
 
-class PrintFunc(Protocol):
-    def __call__(self, msg: str) -> Union[NoReturn, None]: ...
-
-
 def to_pickle(obj: Any, path: Path) -> None:
     import pickle
 
@@ -159,9 +156,8 @@ def to_pickle(obj: Any, path: Path) -> None:
 
 
 class Cache(Generic[T]):  # This class helps to accelrate access to latest data coming from expensive function. The class has two flavours, memory-based and disk-based variants."""
-    # source_func: Callable[[], T]
     def __init__(
-        self, source_func: Callable[[], T], expire: timedelta, logger: Optional[PrintFunc] = None, path: Optional[Path] = None, saver: Callable[[T, Path], Any] = to_pickle, reader: Callable[[Path], T] = from_pickle, name: Optional[str] = None
+        self, source_func: Callable[[], T], expire: timedelta, logger: LoggerTemplate, path: Optional[Path] = None, saver: Callable[[T, Path], Any] = to_pickle, reader: Callable[[Path], T] = from_pickle, name: Optional[str] = None
     ) -> None:
         self.cache: T
         self.source_func = source_func  # function which when called returns a fresh object to be frozen.
@@ -209,7 +205,7 @@ class Cache(Generic[T]):  # This class helps to accelrate access to latest data 
 🔍 Error: {ex}
 ════════════════════════════════════════════════════════
 """
-                        self.logger(msg1 + msg2)
+                        self.logger.warning(msg1 + msg2)
                     self.cache = self.source_func()
                     self.last_call_is_fresh = True
                     self.time_produced = datetime.now()
@@ -221,7 +217,7 @@ class Cache(Generic[T]):  # This class helps to accelrate access to latest data 
                 if self.logger:
                     # Previous cache never existed or there was an explicit fresh order.
                     why = "There was an explicit fresh order." if fresh else "Previous cache never existed or is corrupted."
-                    self.logger(f"""
+                    self.logger.warning(f"""
 🆕 ════════════════════ NEW CACHE ════════════════════
 🔄 {self.name} cache: Populating fresh cache from source func
 ℹ️  Reason: {why}
@@ -239,7 +235,7 @@ class Cache(Generic[T]):  # This class helps to accelrate access to latest data 
                 return self(fresh=True)
             if age > self.expire:
                 if self.logger:
-                    self.logger(f"""
+                    self.logger.warning(f"""
 🔄 ════════════════════ CACHE UPDATE ════════════════════
 ⚠️  {self.name} cache: Updating cache from source func
 ⏱️  Age = {age} > {self.expire}
@@ -251,7 +247,7 @@ class Cache(Generic[T]):  # This class helps to accelrate access to latest data 
                     self.save(self.cache, self.path)
             else:
                 if self.logger:
-                    self.logger(f"""
+                    self.logger.warning(f"""
 ✅ ════════════════════ USING CACHE ════════════════════
 📦 {self.name} cache: Using cached values
 ⏱️  Lag = {age}
@@ -260,7 +256,7 @@ class Cache(Generic[T]):  # This class helps to accelrate access to latest data 
 
     @staticmethod
     def as_decorator(
-        expire: timedelta, logger: Optional[PrintFunc] = None, path: Optional[Path] = None, saver: Callable[[T2, Path], Any] = to_pickle, reader: Callable[[Path], T2] = from_pickle, name: Optional[str] = None
+        expire: timedelta, logger: LoggerTemplate, path: Optional[Path] = None, saver: Callable[[T2, Path], Any] = to_pickle, reader: Callable[[Path], T2] = from_pickle, name: Optional[str] = None
     ):  # -> Callable[..., 'Cache[T2]']:
         def decorator(source_func: Callable[[], T2]) -> Cache["T2"]:
             res = Cache(source_func=source_func, expire=expire, logger=logger, path=path, name=name, reader=reader, saver=saver)
@@ -276,8 +272,8 @@ class Cache(Generic[T]):  # This class helps to accelrate access to latest data 
             returned_path = self.path.from_cloud(cloud=cloud, rel2home=rel2home, root=root)
             if returned_path is None and not exists:
                 raise FileNotFoundError(f"❌ Failed to get @ {self.path}. Build the cache first with signed API.")
-            elif returned_path is None and exists and self.logger is not None:
-                self.logger(f"""
+            elif returned_path is None and exists:
+                self.logger.warning(f"""
 ⚠️ ════════════════════ CLOUD FETCH WARNING ════════════════════
 🔄 Failed to get fresh data from cloud
 📦 Using old cache @ {self.path}

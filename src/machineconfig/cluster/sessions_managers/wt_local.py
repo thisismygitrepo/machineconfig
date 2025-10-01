@@ -16,11 +16,13 @@ import platform
 from typing import Dict, List, Optional, Any
 from pathlib import Path
 import logging
+from rich.console import Console
 
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+console = Console()
 TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "session_manager", "wt", "layout_manager")
 
 # Check if we're on Windows
@@ -344,7 +346,7 @@ try {{
                 for proc in cmd_status["processes"][:2]:  # Show first 2 processes
                     pid = proc.get("pid", "Unknown")
                     name = proc.get("name", "Unknown")
-                    print(f"      └─ PID {pid}: {name}")
+                    console.print(f"      [dim]└─[/dim] PID {pid}: {name}")
         print()
 
         print("=" * 80)

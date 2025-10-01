@@ -5,11 +5,13 @@ Status reporting utilities for Windows Terminal layouts and sessions.
 
 import logging
 from typing import Dict, Any, List
+from rich.console import Console
 from machineconfig.cluster.sessions_managers.wt_utils.process_monitor import WTProcessMonitor
 from machineconfig.cluster.sessions_managers.wt_utils.session_manager import WTSessionManager
 from machineconfig.utils.schemas.layouts.layout_types import TabConfig
 
 logger = logging.getLogger(__name__)
+console = Console()
 
 
 class WTStatusReporter:
@@ -82,11 +84,11 @@ class WTStatusReporter:
                 for proc in processes:
                     pid = proc.get("pid", "Unknown")
                     name = proc.get("name", "Unknown")
-                    print(f"       └─ PID {pid}: {name}")
+                    console.print(f"       [dim]└─[/dim] PID {pid}: {name}")
 
                 if len(cmd_status["processes"]) > 3:
                     remaining = len(cmd_status["processes"]) - 3
-                    print(f"       └─ ... and {remaining} more processes")
+                    console.print(f"       [dim]└─[/dim] ... and {remaining} more processes")
 
             if cmd_status.get("error"):
                 print(f"     Error: {cmd_status['error']}")

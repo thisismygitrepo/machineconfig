@@ -245,7 +245,7 @@ class ZellijLocalManager:
 
                 if cmd_status.get("processes"):
                     for proc in cmd_status["processes"][:2]:  # Show first 2 processes
-                        print(f"        └─ PID {proc['pid']}: {proc['name']} ({proc['status']})")
+                        console.print(f"        [dim]└─[/dim] PID {proc['pid']}: {proc['name']} ({proc['status']})")
             print()
 
         print("=" * 80)

@@ -40,16 +40,16 @@ def get_processes_accessing_file(path: str):
 
 
 def kill_process(name: str):
-    print(f"⚠️  Attempting to kill process: {name}...")
+    console.print(f"⚠️  Attempting to kill process: {name}...", style="yellow")
     killed = False
     for proc in psutil.process_iter():
         if proc.name() == name:
             proc.kill()
-            print(f"💀 Process {name} (PID: {proc.pid}) terminated successfully")
+            console.print(f"💀 Process {name} (PID: {proc.pid}) terminated successfully", style="green")
             killed = True
     if not killed:
-        print(f"❓ No process with name '{name}' was found")
-    print(f"{'─' * 80}\n")
+        console.print(f"❓ No process with name '{name}' was found", style="red")
+    console.rule(style="dim")
 
 
 class ProcessManager:

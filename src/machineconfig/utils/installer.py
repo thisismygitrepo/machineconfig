@@ -65,12 +65,12 @@ def check_latest():
 
     # Print each group
     for status, items in grouped_data.items():
-        print(f"\n{status.upper()}:")
-        print("-" * 60)
+        console.print(f"\n[bold]{status.upper()}:[/bold]")
+        console.rule(style="dim")
         for item in items:
-            print(f"  {item['Tool']:<20} | Current: {item['Current Version']:<15} | New: {item['New Version']}")
-    print("-" * 60)
-    print(f"{'═' * 80}")
+            console.print(f"  {item['Tool']:<20} | Current: {item['Current Version']:<15} | New: {item['New Version']}")
+    console.rule(style="dim")
+    console.rule(style="bold blue")
 
 
 def get_installed_cli_apps():
