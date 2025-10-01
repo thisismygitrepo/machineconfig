@@ -12,6 +12,7 @@ winget install --no-upgrade --name "Starship"                     --Id "Starship
 winget install --no-upgrade --name "Git"                          --Id "Git.Git"                    --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Neovim"                       --Id "Neovim.Neovim"              --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "GNU Nano"                     --Id "GNU.Nano"                   --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade                                       --Id CoreyButler.NVMforWindows    --source winget --scope user --accept-package-agreements --accept-source-agreements
 Install-Module -Name Terminal-Icons -Repository PSGallery -Force -AcceptLicense -PassThru -Confirm  # -RequiredVersion 2.5.10
 Install-Module -Name PSFzf  -SkipPublisherCheck  # -AcceptLicense -PassThru -Confirm  #  -RequiredVersion 2.5.10
 
