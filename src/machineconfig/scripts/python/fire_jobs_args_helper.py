@@ -24,7 +24,6 @@ class FireJobArgs:
     PathExport: bool = False
     git_pull: bool = False
     optimized: bool = False
-    Nprocess: int = 1
     zellij_tab: Optional[str] = None
     watch: bool = False
 

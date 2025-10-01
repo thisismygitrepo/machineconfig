@@ -1,12 +1,9 @@
-"""utils"""
-
-from pathlib import Path
+import sys
 import git
 from machineconfig.utils.io import read_ini
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.terminal import Response
 
-from machineconfig.scripts.python.helpers.repo_sync_helpers import fetch_dotfiles
 from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
 from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.code import get_shell_file_executing_python_script, write_shell_script_to_file
@@ -15,13 +12,18 @@ import subprocess
 from typing import Optional, Literal
 from rich.console import Console
 from rich.panel import Panel
+import typer
 
 console = Console()
 
-_ = fetch_dotfiles
 
-
-def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optional[str] = None, action: Literal["ask", "pushLocalMerge", "overwriteLocal", "InspectRepos", "RemoveLocalRclone"] = "ask", pwd: Optional[str] = None):
+def main(
+    cloud: Optional[str] = typer.Option(None, "--cloud", "-c", help="Cloud storage profile name. If not provided, uses default from config."),
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Path to the local repository. Defaults to current working directory."),
+    message: Optional[str] = typer.Option(None, "--message", "-m", help="Commit message for local changes."),
+    on_conflict: Literal["ask", "pushLocalMerge", "overwriteLocal", "InspectRepos", "RemoveLocalRclone"] = typer.Option("ask", "--on-conflict", "-oc", help="Action to take on merge conflict. Default is 'ask'."),
+    pwd: Optional[str] = typer.Option(None, "--password", help="Password for encryption/decryption of the remote repository."),
+):
     if cloud is None:
         try:
             cloud_resolved = read_ini(DEFAULTS_PATH)["general"]["rclone_config_name"]
@@ -31,8 +33,6 @@ def main(cloud: Optional[str] = None, path: Optional[str] = None, message: Optio
             return ""
     else:
         cloud_resolved = cloud
-
-    # repo_root = PathExtended(args.repo).expanduser().absolute()
     repo_local_root = PathExtended.cwd() if path is None else PathExtended(path).expanduser().absolute()
     repo_local_obj = git.Repo(repo_local_root, search_parent_directories=True)
     repo_local_root = PathExtended(repo_local_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
@@ -143,7 +143,7 @@ git commit -am "finished merging"
         print(f"• 4️⃣  {option4:75} 👉 {shell_file_4}")
 
         program_content = None
-        match action:
+        match on_conflict:
             case "ask":
                 choice = choose_from_options(multi=False, msg="Choose one option", options=[option1, option2, option3, option4], fzf=False)
                 if choice == option1:
@@ -165,7 +165,7 @@ git commit -am "finished merging"
             case "RemoveLocalRclone":
                 program_content = program_4
             case _:
-                raise ValueError(f"Unknown action: {action}")
+                raise ValueError(f"Unknown action: {on_conflict}")
         # PROGRAM_PATH.write_text(program_content, encoding="utf-8")
         subprocess.run(program_content, shell=True, check=True)
 
@@ -173,17 +173,16 @@ git commit -am "finished merging"
 
 
 def args_parser():
-    # console.print(Panel("🔄 Repository Synchronization Utility", title_align="left", border_style="blue"))
-    # parser = argparse.ArgumentParser(description="Secure Repo CLI.")
-    # parser.add_argument("path", nargs="?", type=str, help="Repository path, defaults to cwd.", default=None)
-    # parser.add_argument("--cloud", "-c", help="rclone cloud profile name.", default=None)
-    # parser.add_argument("--message", "-m", help="Commit Message", default=f"new message {randstr()}")
-    # parser.add_argument("--pwd", "-p", help="Password for encryption", default=None)
-    # parser.add_argument("--action", "-a", help="Action to take if merge fails.", choices=["ask", "pushLocalMerge", "overwriteLocal", "InspectRepos", "RemoveLocalRclone"], default="ask")
-    # args = parser.parse_args()
-    # main(cloud=args.cloud, path=args.path, message=args.message, action=args.action)
-    import typer
-    typer.run(main)
+    # Check if no arguments provided (excluding the script name)
+    if len(sys.argv) == 1:
+        app = typer.Typer(add_completion=False, help="Sync a local git repository with a remote encrypted cloud copy.")
+        app.command()(main)
+        app(["--help"])
+        return
+
+    app = typer.Typer(add_completion=False, no_args_is_help=True, help="Sync a local git repository with a remote encrypted cloud copy.")
+    app.command()(main)
+    app()
 
 
 if __name__ == "__main__":
