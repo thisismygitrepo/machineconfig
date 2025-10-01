@@ -134,9 +134,9 @@ def run(ctx: typer.Context,
 
 def main_from_parser():
     layouts_app = typer.Typer(help="Layouts management subcommands", no_args_is_help=True)
-    layouts_app.command("run")(run)
-    layouts_app.command("balance-load")(balance_load)
-    layouts_app.command("create-from-function")(create_from_function)
+    layouts_app.command("create-from-function", no_args_is_help=True)(create_from_function)
+    layouts_app.command("run", no_args_is_help=True)(run)
+    layouts_app.command("balance-load", no_args_is_help=True)(balance_load)
     layouts_app()
 
 

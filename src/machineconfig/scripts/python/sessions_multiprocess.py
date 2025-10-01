@@ -1,14 +1,14 @@
 
 
-from typing import Optional, Annotated
+from typing import Optional
 from pathlib import Path
 import typer
 
 
 def create_from_function(
-        num_process: Annotated[int, typer.Argument(..., help="Number of parallel processes to run")],
-        path: Annotated[str, typer.Option(default=".", help="Path to a Python or Shell script file or a directory containing such files")],
-        function: Annotated[Optional[str], typer.Option(None, "--function", "-f", help="Function to run from the Python file. If not provided, you will be prompted to choose.")],
+        num_process: int = typer.Option(..., "--num-process", "-n", help="Number of parallel processes to run"),
+        path: str = typer.Option(".", "--path", "-p", help="Path to a Python or Shell script file or a directory containing such files"),
+        function: Optional[str] = typer.Option(None, "--function", "-f", help="Function to run from the Python file. If not provided, you will be prompted to choose."),
 ):
     from machineconfig.utils.ve import get_ve_activate_line, get_ve_path_and_ipython_profile
     from machineconfig.utils.options import choose_from_options
@@ -40,8 +40,7 @@ def create_from_function(
     _activate_ve_line = get_ve_activate_line(ve_root=ve_root_from_file or "$HOME/code/machineconfig/.venv")
 
     # =========================  choosing function to run
-    choice_function: Optional[str] = None  # Initialize to avoid unbound variable
-    if function:
+    if function is None or function.strip() == "":
         from machineconfig.scripts.python.fire_jobs_route_helper import choose_function_or_lines
         choice_function, choice_file, _kwargs_dict = choose_function_or_lines(choice_file, kwargs_dict={})
     else:
@@ -54,3 +53,4 @@ def create_from_function(
         layout["layoutTabs"].append({"tabName": f"tab{an_arg}", "startDir": str(PathExtended.cwd()), "command": f"uv run -m fire {choice_file} {choice_function} --idx={an_arg} --idx_max={num_process}"})
     print(layout)
     run_zellij_layout(layout_config=layout)
+
