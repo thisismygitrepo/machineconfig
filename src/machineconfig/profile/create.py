@@ -13,7 +13,7 @@ from rich.table import Table
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.links import symlink_func, symlink_copy
 from machineconfig.utils.options import choose_from_options
-from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT
+from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 from machineconfig.profile.shell import create_default_shell_profile
 
 import platform
@@ -42,6 +42,26 @@ class SymlinkMapper(TypedDict):
     this: str
     to_this: str
     contents: Optional[bool]
+class SymlinkMapperFileKey(TypedDict):
+    public: dict[str, dict[str, SymlinkMapper]]
+    private: dict[str, dict[str, SymlinkMapper]]
+def read_mapper() -> SymlinkMapperFileKey:
+    # read to_this, if it contains LIBRARY_ROOT, then its public, else private.
+    symlink_mapper: dict[str, dict[str, SymlinkMapper]] = tomllib.loads(LIBRARY_ROOT.joinpath("profile/mapper.toml").read_text(encoding="utf-8"))
+    public: dict[str, dict[str, SymlinkMapper]] = {}
+    private: dict[str, dict[str, SymlinkMapper]] = {}
+    for program_key, program_map in symlink_mapper.items():
+        for file_key, file_map in program_map.items():
+            to_this = file_map["to_this"]
+            if "LIBRARY_ROOT" in to_this:
+                if program_key not in public:
+                    public[program_key] = {}
+                public[program_key][file_key] = file_map
+            else:
+                if program_key not in private:
+                    private[program_key] = {}
+                private[program_key][file_key] = file_map
+    return {"public": public, "private": private}
 
 
 class OperationRecord(TypedDict):
@@ -135,7 +155,7 @@ def apply_mapper(choice: Optional[str], prioritize_to_this: bool):
         console.rule(f"🔄 Processing [bold]{program_key}[/] symlinks", style="cyan")
         for file_key, file_map in symlink_mapper[program_key].items():
             this = PathExtended(file_map["this"])
-            to_this = PathExtended(file_map["to_this"].replace("REPO_ROOT", REPO_ROOT.as_posix()).replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()))
+            to_this = PathExtended(file_map["to_this"].replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()))
             
             if "contents" in file_map:
                 try:
@@ -163,8 +183,7 @@ def apply_mapper(choice: Optional[str], prioritize_to_this: bool):
                         "action": "error",
                         "details": f"Failed to process contents: {str(ex)}",
                         "status": f"error: {str(ex)}"
-                    })
-                    
+                    })                    
             elif "copy" in file_map:
                 try:
                     result = symlink_copy(this=this, to_this=to_this, prioritize_to_this=prioritize_to_this)
@@ -297,6 +316,22 @@ def main_profile():
             border_style="green",
         )
     )
+
+
+def mail_public_from_parser(which: Optional[str], interactive: bool = False):
+    mapper = read_mapper()["public"]
+    if which is None:
+        assert interactive is True
+        items = choose_from_options(msg="Which symlink to create?", options=list(mapper.keys()), fzf=True, multi=True)
+    else:
+        assert interactive is False
+        if which == "all":
+            items = list(mapper.keys())
+        else:
+            items = which.split(",")
+    items_objections: list[dict[str, SymlinkMapper]] = [mapper[item] for item in items if item in mapper]
+    return items_objections
+
 
 
 if __name__ == "__main__":

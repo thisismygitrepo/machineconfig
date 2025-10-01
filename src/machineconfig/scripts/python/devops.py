@@ -12,12 +12,19 @@ app = typer.Typer(help=f"🛠️ DevOps operations @ machineconfig {get_machinec
 app.command(name="install", help="📦 Install essential packages")(installer_entry_point.main)
 app.add_typer(repos.app, name="repos", help="📁 Manage git repositories")
 
+
+config_apps = typer.Typer(help="⚙️ Configuration subcommands", no_args_is_help=True)
+app.add_typer(config_apps, name="config")
+
+
+
+app_data = typer.Typer(help="💾 Data subcommands", no_args_is_help=True)
+app.add_typer(app_data, name="data")
+
 nw_apps = typer.Typer(help="🔐 Network subcommands", no_args_is_help=True)
 nw_apps.command(name="share-terminal", help="📡 Share terminal via web browser")(share_terminal.main)
 app.add_typer(nw_apps, name="network")
 
-app_data = typer.Typer(help="💾 Data subcommands", no_args_is_help=True)
-app.add_typer(app_data, name="data")
 
 self_app = typer.Typer(help="🔄 SELF operations subcommands", no_args_is_help=True)
 app.add_typer(self_app, name="self")
@@ -37,7 +44,7 @@ def interactive():
     main()
 
 
-@app.command()
+@config_apps.command()
 def config():
     """🔗 SYMLINKS of dotfiles."""
     import machineconfig.profile.create as helper
@@ -51,7 +58,7 @@ def config():
     in both commands there is --which, which is by default, all, but can be interactive or set of choices staticlly passed with comma separation.
 """
 
-@app.command()
+@config_apps.command()
 def profile():
     """🔗 Update shell profile."""
     import machineconfig.profile.create as helper

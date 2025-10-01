@@ -2,6 +2,9 @@
 """
 Windows Terminal local layout generator and session manager.
 Equivalent to zellij_local.py but for Windows Terminal.
+
+https://github.com/ruby9455/app_management/tree/main/app_management
+
 """
 
 import shlex
