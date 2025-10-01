@@ -59,6 +59,7 @@ def create_default_shell_profile() -> None:
         console.print(Panel("✅ Profile updated successfully", title="[bold blue]Profile[/bold blue]", border_style="blue"))
 
 
+
 # def append_temporarily(dirs: list[str], kind: Literal["append", "prefix", "replace"]) -> str:
 #     dirs_ = []
 #     for path in dirs:

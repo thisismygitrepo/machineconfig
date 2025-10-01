@@ -12,13 +12,9 @@ from rich.table import Table
 
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.links import symlink_func, symlink_copy
-from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT
-from machineconfig.profile.shell import create_default_shell_profile
 
 import platform
-import os
-import ctypes
 import subprocess
 import tomllib
 from typing import Optional, Any, TypedDict, Literal
@@ -39,29 +35,42 @@ def get_other_systems(current_system: str) -> list[str]:
 OTHER_SYSTEMS = get_other_systems(SYSTEM)
 
 
-class SymlinkMapper(TypedDict):
+class Base(TypedDict):
     this: str
     to_this: str
     contents: Optional[bool]
+    copy: Optional[bool]
+
+class SymlinkMapper(TypedDict):
+    file_name: str
+    config_file_default_path: str
+    self_managed_config_file_path: str
+    contents: Optional[bool]
+    copy: Optional[bool]
 class SymlinkMapperFileKey(TypedDict):
-    public: dict[str, dict[str, SymlinkMapper]]
-    private: dict[str, dict[str, SymlinkMapper]]
+    public: dict[str, list[SymlinkMapper]]
+    private: dict[str, list[SymlinkMapper]]
 def read_mapper() -> SymlinkMapperFileKey:
-    # read to_this, if it contains LIBRARY_ROOT, then its public, else private.
-    symlink_mapper: dict[str, dict[str, SymlinkMapper]] = tomllib.loads(LIBRARY_ROOT.joinpath("profile/mapper.toml").read_text(encoding="utf-8"))
-    public: dict[str, dict[str, SymlinkMapper]] = {}
-    private: dict[str, dict[str, SymlinkMapper]] = {}
+    symlink_mapper: dict[str, dict[str, Base]] = tomllib.loads(LIBRARY_ROOT.joinpath("profile/mapper.toml").read_text(encoding="utf-8"))
+    public: dict[str, list[SymlinkMapper]] = {}
+    private: dict[str, list[SymlinkMapper]] = {}
     for program_key, program_map in symlink_mapper.items():
-        for file_key, file_map in program_map.items():
-            to_this = file_map["to_this"]
-            if "LIBRARY_ROOT" in to_this:
+        for file_name, file_base in program_map.items():
+            file_map: SymlinkMapper = {
+                "file_name": file_name,
+                "config_file_default_path": file_base["this"],
+                "self_managed_config_file_path": file_base["to_this"],
+                "contents": file_base.get("contents"),
+                "copy": file_base.get("copy"),
+            }
+            if "LIBRARY_ROOT" in file_map["self_managed_config_file_path"]:
                 if program_key not in public:
-                    public[program_key] = {}
-                public[program_key][file_key] = file_map
+                    public[program_key] = []
+                public[program_key].append(file_map)
             else:
                 if program_key not in private:
-                    private[program_key] = {}
-                private[program_key][file_key] = file_map
+                    private[program_key] = []
+                private[program_key].append(file_map)
     return {"public": public, "private": private}
 
 
@@ -90,83 +99,46 @@ class OperationRecord(TypedDict):
     status: str
 
 
-def apply_mapper(choice: Optional[str], prioritize_to_this: bool):
-    symlink_mapper: dict[str, dict[str, SymlinkMapper]] = tomllib.loads(LIBRARY_ROOT.joinpath("profile/mapper.toml").read_text(encoding="utf-8"))
-    exclude: list[str] = []  # "wsl_linux", "wsl_windows"
+def apply_mapper(maps: dict[str, list[SymlinkMapper]], on_conflict: Literal["throwError", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"]):
+    # exclude: list[str] = []  # "wsl_linux", "wsl_windows"
     operation_records: list[OperationRecord] = []
+    # if os.name == "nt":
+    #     try:
+    #         is_admin = ctypes.windll.shell32.IsUserAnAdmin()
+    #     except Exception:
+    #         is_admin = False
+    # else:
+    #     is_admin = False
+    # if not is_admin:
+    #     warning_body = "\n".join([
+    #         "[bold yellow]Administrator privileges required[/]",
+    #         "Run the terminal as admin and try again to avoid repeated elevation prompts.",
+    #     ])
+    #     console.print(
+    #         Panel.fit(
+    #             warning_body,
+    #             title="⚠️ Permission Needed",
+    #             border_style="yellow",
+    #             padding=(1, 2),
+    #         )
+    #     )
+    #     raise RuntimeError("Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
 
-    program_keys_raw: list[str] = list(symlink_mapper.keys())
-    program_keys: list[str] = []
-    for program_key in program_keys_raw:
-        if program_key in exclude or any([another_system in program_key for another_system in OTHER_SYSTEMS]):
-            continue
-        else:
-            program_keys.append(program_key)
 
-    program_keys.sort()
-    if choice is None:
-        choice_selected = choose_from_options(msg="Which symlink to create?", options=program_keys + ["all", "none(EXIT)"], default="none(EXIT)", fzf=True, multi=True)
-        assert isinstance(choice_selected, list)
-        if len(choice_selected) == 1 and choice_selected[0] == "none(EXIT)":
-            return  # terminate function.
-        elif len(choice_selected) == 1 and choice_selected[0] == "all":
-            choice_selected = "all"  # i.e. program_keys = program_keys
-    else:
-        choice_selected = choice
-
-    if isinstance(choice_selected, str):
-        if str(choice_selected) == "all" and system == "Windows":
-            if os.name == "nt":
+    for program_name, program_files in maps.items():
+        console.rule(f"🔄 Processing [bold]{program_name}[/] symlinks", style="cyan")
+        for a_symlink_data in program_files:
+            config_file_default_path = PathExtended(a_symlink_data["config_file_default_path"])
+            self_managed_config_file_path = PathExtended(a_symlink_data["self_managed_config_file_path"].replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()))
+            if "contents" in a_symlink_data:
                 try:
-                    is_admin = ctypes.windll.shell32.IsUserAnAdmin()
-                except Exception:
-                    is_admin = False
-            else:
-                is_admin = False
-            if not is_admin:
-                warning_body = "\n".join([
-                    "[bold yellow]Administrator privileges required[/]",
-                    "Run the terminal as admin and try again to avoid repeated elevation prompts.",
-                ])
-                console.print(
-                    Panel.fit(
-                        warning_body,
-                        title="⚠️ Permission Needed",
-                        border_style="yellow",
-                        padding=(1, 2),
-                    )
-                )
-                raise RuntimeError("Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
-        elif choice_selected == "all":
-            console.print(
-                Panel(
-                    Pretty(program_keys),
-                    title="🔍 Processing All Program Keys",
-                    border_style="cyan",
-                    padding=(1, 2),
-                )
-            )
-            pass  # i.e. program_keys = program_keys
-        else:
-            program_keys = [choice_selected]
-    else:
-        program_keys = choice_selected
-
-    for program_key in program_keys:
-        console.rule(f"🔄 Processing [bold]{program_key}[/] symlinks", style="cyan")
-        for file_key, file_map in symlink_mapper[program_key].items():
-            this = PathExtended(file_map["this"])
-            to_this = PathExtended(file_map["to_this"].replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()))
-            
-            if "contents" in file_map:
-                try:
-                    targets = list(to_this.expanduser().search("*"))
+                    targets = list(self_managed_config_file_path.expanduser().search("*"))
                     for a_target in targets:
-                        result = symlink_func(this=this.joinpath(a_target.name), to_this=a_target, prioritize_to_this=prioritize_to_this)
+                        result = symlink_func(config_file_default_path=config_file_default_path.joinpath(a_target.name), self_managed_config_file_path=a_target, on_conflict=on_conflict)
                         operation_records.append({
-                            "program": program_key,
-                            "file_key": file_key,
-                            "source": str(this.joinpath(a_target.name)),
+                            "program": program_name,
+                            "file_key": a_symlink_data["file_name"],
+                            "source": str(config_file_default_path.joinpath(a_target.name)),
                             "target": str(a_target),
                             "operation": "contents_symlink",
                             "action": result["action"],
@@ -174,37 +146,37 @@ def apply_mapper(choice: Optional[str], prioritize_to_this: bool):
                             "status": "success"
                         })
                 except Exception as ex:
-                    console.print(f"❌ [red]Config error[/red]: {program_key} | {file_key} | missing keys 'this ==> to_this'. {ex}")
+                    console.print(f"❌ [red]Config error[/red]: {program_name} | {a_symlink_data['file_name']} | missing keys 'config_file_default_path ==> self_managed_config_file_path'. {ex}")
                     operation_records.append({
-                        "program": program_key,
-                        "file_key": file_key,
-                        "source": str(this),
-                        "target": str(to_this),
+                        "program": program_name,
+                        "file_key": a_symlink_data["file_name"],
+                        "source": str(config_file_default_path),
+                        "target": str(self_managed_config_file_path),
                         "operation": "contents_symlink",
                         "action": "error",
                         "details": f"Failed to process contents: {str(ex)}",
                         "status": f"error: {str(ex)}"
                     })                    
-            elif "copy" in file_map:
+            elif "copy" in a_symlink_data:
                 try:
-                    result = symlink_copy(this=this, to_this=to_this, prioritize_to_this=prioritize_to_this)
+                    result = symlink_copy(config_file_default_path=config_file_default_path, self_managed_config_file_path=self_managed_config_file_path, on_conflict=on_conflict)
                     operation_records.append({
-                        "program": program_key,
-                        "file_key": file_key,
-                        "source": str(this),
-                        "target": str(to_this),
+                        "program": program_name,
+                        "file_key": a_symlink_data["file_name"],
+                        "source": str(config_file_default_path),
+                        "target": str(self_managed_config_file_path),
                         "operation": "copy",
                         "action": result["action"],
                         "details": result["details"],
                         "status": "success"
                     })
                 except Exception as ex:
-                    console.print(f"❌ [red]Config error[/red]: {program_key} | {file_key} | {ex}")
+                    console.print(f"❌ [red]Config error[/red]: {program_name} | {a_symlink_data['file_name']} | {ex}")
                     operation_records.append({
-                        "program": program_key,
-                        "file_key": file_key,
-                        "source": str(this),
-                        "target": str(to_this),
+                        "program": program_name,
+                        "file_key": a_symlink_data["file_name"],
+                        "source": str(config_file_default_path),
+                        "target": str(self_managed_config_file_path),
                         "operation": "copy",
                         "action": "error",
                         "details": f"Failed to copy: {str(ex)}",
@@ -212,31 +184,31 @@ def apply_mapper(choice: Optional[str], prioritize_to_this: bool):
                     })
             else:
                 try:
-                    result = symlink_func(this=this, to_this=to_this, prioritize_to_this=prioritize_to_this)
+                    result = symlink_func(config_file_default_path=config_file_default_path, self_managed_config_file_path=self_managed_config_file_path, on_conflict=on_conflict)
                     operation_records.append({
-                        "program": program_key,
-                        "file_key": file_key,
-                        "source": str(this),
-                        "target": str(to_this),
+                        "program": program_name,
+                        "file_key": a_symlink_data["file_name"],
+                        "source": str(config_file_default_path),
+                        "target": str(self_managed_config_file_path),
                         "operation": "symlink",
                         "action": result["action"],
                         "details": result["details"],
                         "status": "success"
                     })
                 except Exception as ex:
-                    console.print(f"❌ [red]Config error[/red]: {program_key} | {file_key} | missing keys 'this ==> to_this'. {ex}")
+                    console.print(f"❌ [red]Config error[/red]: {program_name} | {a_symlink_data['file_name']} | missing keys 'config_file_default_path ==> self_managed_config_file_path'. {ex}")
                     operation_records.append({
-                        "program": program_key,
-                        "file_key": file_key,
-                        "source": str(this),
-                        "target": str(to_this),
+                        "program": program_name,
+                        "file_key": a_symlink_data["file_name"],
+                        "source": str(config_file_default_path),
+                        "target": str(self_managed_config_file_path),
                         "operation": "symlink",
                         "action": "error",
                         "details": f"Failed to create symlink: {str(ex)}",
                         "status": f"error: {str(ex)}"
                     })
 
-            if program_key == "ssh" and system == "Linux":  # permissions of ~/dotfiles/.ssh should be adjusted
+            if program_name == "ssh" and system == "Linux":  # permissions of ~/dotfiles/.ssh should be adjusted
                 try:
                     console.print("\n[bold]🔒 Setting secure permissions for SSH files...[/bold]")
                     subprocess.run("chmod 700 ~/.ssh/", check=True)
@@ -298,25 +270,6 @@ def apply_mapper(choice: Optional[str], prioritize_to_this: bool):
                 border_style="green",
             )
         )
-
-
-def main_symlinks():
-    console.print("")
-    console.rule("[bold blue]🔗 CREATING SYMLINKS 🔗")
-    apply_mapper(choice="all", prioritize_to_this=True)
-
-
-def main_profile():
-    console.print("")
-    console.rule("[bold green]🐚 CREATING SHELL PROFILE 🐚")
-    create_default_shell_profile()
-    console.print(
-        Panel.fit(
-            Text("✨ Configuration setup complete! ✨", justify="center"),
-            title="Profile Setup",
-            border_style="green",
-        )
-    )
 
 
 if __name__ == "__main__":

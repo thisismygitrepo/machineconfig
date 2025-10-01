@@ -41,7 +41,7 @@ def main(
         dest_path.mkdir(parents=True, exist_ok=True)
         new_path = dest_path.joinpath(orig_path.name)
 
-    symlink_func(this=orig_path, to_this=new_path, prioritize_to_this=overwrite)
+    symlink_func(config_file_default_path=orig_path, self_managed_config_file_path=new_path, prioritize_to_this=overwrite)
 
     console.print(
         Panel(

@@ -15,7 +15,6 @@ echo $pubkey_string >> $HOME/.ssh/authorized_keys
 echo $pubkey_string > $HOME/.ssh/pubkey.pub
 
 Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh-server_add-sshkey.ps1 | Invoke-Expression
-
 ipconfig.exe
 
 echo "Done"

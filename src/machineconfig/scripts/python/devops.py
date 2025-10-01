@@ -11,7 +11,7 @@ from machineconfig.utils.installer import get_machineconfig_version
 import typer
 
 
-app = typer.Typer(help=f"🛠️ DevOps operations @ machineconfig {get_machineconfig_version()}", no_args_is_help=True)
+app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True)
 app.command(name="install", help="📦 Install essential packages")(installer_entry_point.main)
 app.add_typer(repos.app, name="repos", help="📁 Manage git repositories")
 
@@ -57,8 +57,8 @@ config_apps.command(name="dotfile", help="🔗 Manage dotfiles.")(dotfile.main)
 @config_apps.command()
 def shell():
     """🔗 Configure your shell profile."""
-    import machineconfig.profile.create as helper
-    helper.main_profile()
+    from machineconfig.profile.shell import create_default_shell_profile
+    create_default_shell_profile()
 
 
 @nw_apps.command()
@@ -75,19 +75,21 @@ def add_identity():
 def connect():
     """🔐 SSH use key pair to connect two machines"""
     raise NotImplementedError
+
 @nw_apps.command()
 def setup():
     """📡 SSH setup"""
-    _program_windows = """Invoke-WebRequest https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/openssh_all.ps1 | Invoke-Expression  # https://github.com/thisismygitrepo.keys"""
-    _program_linux = """curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_all.sh | sudo bash  # https://github.com/thisismygitrepo.keys"""
-    import subprocess
-    from platform import system
-    subprocess.run(_program_linux if system() == "Linux" else _program_windows, shell=True, check=True)
-@nw_apps.command()
-def setup_wsl():
-    """🐧 SSH setup wsl"""
-    import subprocess
-    subprocess.run("curl https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/openssh_wsl.sh | sudo bash", shell=True, check=True)
+    import platform
+    if platform.system() == "Windows":
+        from machineconfig.setup_windows import SSH_SERVER
+        program = SSH_SERVER.read_text(encoding="utf-8")
+    elif platform.system() == "Linux" or platform.system() == "Darwin":
+        from machineconfig.setup_linux import SSH_SERVER
+        program = SSH_SERVER.read_text(encoding="utf-8")
+    else:
+        raise NotImplementedError(f"Platform {platform.system()} is not supported.")
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(program=program)
 
 
 @app_data.command()

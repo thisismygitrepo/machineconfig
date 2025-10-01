@@ -84,195 +84,219 @@ def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
         links_path.symlink_to(target=a_target_path)
 
 
-def symlink_func(this: PathExtended, to_this: PathExtended, prioritize_to_this: bool) -> SymlinkResult:
-    """helper function. creates a symlink from `this` to `to_this`.
+def symlink_func(config_file_default_path: PathExtended, self_managed_config_file_path: PathExtended,
+                 on_conflict: Literal["throwError", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"]
+                 ) -> SymlinkResult:
+    """helper function. creates a symlink from `config_file_default_path` to `self_managed_config_file_path`.
 
     Returns a dict with 'action' and 'details' keys describing what was done.
 
-    this: exists           AND    to_this exists            AND this is a symlink pointing to to_this              ===> Resolution: AUTO: do nothing, already linked correctly.
-    this: exists           AND    to_this exists            AND this is a symlink pointing to somewhere else       ===> Resolution: AUTO: delete this symlink, create symlink to to_this
-    this: exists           AND    to_this exists            AND this is a concrete path                            ===> Resolution: DANGER: If files are identical (same hash), delete `this` and create symlink to `to_this`. Otherwise, two options: 1) prioritize `this`: to_this is backed up as to_this.orig_<randstr()>, to_this is deleted,  and symlink is created from this to to_this as normal; 2) prioritize `to_this`: `this` is backed up as this.orig_<randstr()>, `this` is deleted, and symlink is created from this to to_this as normal.
+    on_conflict strategies:
+    - throwError: Raise exception when files differ
+    - overwriteSelfManaged: Delete self_managed_config_file_path (self-managed), move config_file_default_path to self_managed_config_file_path, create symlink
+    - backupSelfManaged: Backup self_managed_config_file_path (self-managed), move config_file_default_path to self_managed_config_file_path, create symlink
+    - overwriteDefaultPath: Delete config_file_default_path (default path), create symlink to self_managed_config_file_path
+    - backupDefaultPath: Backup config_file_default_path (default path), create symlink to self_managed_config_file_path
 
-    this: exists           AND    to_this doesn't exist     AND this is a symlink pointing to somewhere else       ===> Resolution: AUTO: delete this symlink, create symlink to to_this (touch to_this)
-    this: exists           AND    to_this doesn't exist     AND this is a symlink pointing to to_this              ===> Resolution: AUTO: delete this symlink, create symlink to to_this (touch to_this)
-    this: exists           AND    to_this doesn't exist     AND this is a concrete path                            ===> Resolution: AUTO: move this to to_this, then create symlink from this to to_this.
-
-    this: doesn't exist    AND    to_this exists                                                                   ===> Resolution: AUTO: create link from this to to_this
-    this: doesn't exist    AND    to_this doesn't exist                                                            ===> Resolution: AUTO: create link from this to to_this (touch to_this)
+    Note: `config_file_default_path` is the default system location, `self_managed_config_file_path` is the self-managed config location
 
     """
-    this = PathExtended(this).expanduser().absolute()
-    to_this = PathExtended(to_this).expanduser().absolute()
+    config_file_default_path = PathExtended(config_file_default_path).expanduser().absolute()
+    self_managed_config_file_path = PathExtended(self_managed_config_file_path).expanduser().absolute()
     action_taken = ""
     details = ""
     
     # Case analysis based on docstring
-    if this.exists():
-        if to_this.exists():
-            if this.is_symlink():
+    if config_file_default_path.exists():
+        if self_managed_config_file_path.exists():
+            if config_file_default_path.is_symlink():
                 # Check if symlink already points to correct target
                 try:
-                    if this.readlink().resolve() == to_this.resolve():
-                        # Case: this exists AND to_this exists AND this is a symlink pointing to to_this
+                    if config_file_default_path.readlink().resolve() == self_managed_config_file_path.resolve():
+                        # Case: config_file_default_path exists AND self_managed_config_file_path exists AND config_file_default_path is a symlink pointing to self_managed_config_file_path
                         action_taken = "already_linked"
                         details = "Symlink already correctly points to target"
-                        console.print(Panel(f"✅ ALREADY LINKED | {this} ➡️  {to_this}", title="Already Linked", expand=False))
+                        console.print(Panel(f"✅ ALREADY LINKED | {config_file_default_path} ➡️  {self_managed_config_file_path}", title="Already Linked", expand=False))
                         return {"action": action_taken, "details": details}
                     else:
-                        # Case: this exists AND to_this exists AND this is a symlink pointing to somewhere else
+                        # Case: config_file_default_path exists AND self_managed_config_file_path exists AND config_file_default_path is a symlink pointing to somewhere else
                         action_taken = "relinking"
                         details = "Updated existing symlink to point to new target"
-                        console.print(Panel(f"🔄 RELINKING | Updating symlink from {this} ➡️  {to_this}", title="Relinking", expand=False))
-                        this.delete(sure=True)
+                        console.print(Panel(f"🔄 RELINKING | Updating symlink from {config_file_default_path} ➡️  {self_managed_config_file_path}", title="Relinking", expand=False))
+                        config_file_default_path.delete(sure=True)
                 except OSError:
                     # Broken symlink case
                     action_taken = "fixing_broken_link"
                     details = "Removed broken symlink and will create new one"
-                    console.print(Panel(f"🔄 FIXING BROKEN LINK | Fixing broken symlink from {this} ➡️  {to_this}", title="Fixing Broken Link", expand=False))
-                    this.delete(sure=True)
+                    console.print(Panel(f"🔄 FIXING BROKEN LINK | Fixing broken symlink from {config_file_default_path} ➡️  {self_managed_config_file_path}", title="Fixing Broken Link", expand=False))
+                    config_file_default_path.delete(sure=True)
             else:
-                # Case: this exists AND to_this exists AND this is a concrete path
-                if files_are_identical(this, to_this):
+                # Case: config_file_default_path exists AND self_managed_config_file_path exists AND config_file_default_path is a concrete path
+                if files_are_identical(config_file_default_path, self_managed_config_file_path):
                     # Files are identical, just delete this and create symlink
                     action_taken = "identical_files"
                     details = "Files identical, removed source and will create symlink"
-                    console.print(Panel(f"🔗 IDENTICAL FILES | Files are identical, deleting {this} and creating symlink to {to_this}", title="Identical Files", expand=False))
-                    this.delete(sure=True)
+                    console.print(Panel(f"🔗 IDENTICAL FILES | Files are identical, deleting {config_file_default_path} and creating symlink to {self_managed_config_file_path}", title="Identical Files", expand=False))
+                    config_file_default_path.delete(sure=True)
                 else:
-                    # Files are different, use prioritization logic
-                    if prioritize_to_this:
-                        # prioritize `to_this`: `this` is backed up, `this` is deleted, symlink created
-                        backup_name = f"{this}.orig_{randstr()}"
-                        action_taken = "backing_up_source"
-                        details = f"Backed up source to {backup_name}, prioritizing target"
-                        console.print(Panel(f"📦 BACKING UP | Moving {this} to {backup_name}, prioritizing {to_this}", title="Backing Up", expand=False))
-                        this.move(path=backup_name)
-                    else:
-                        # prioritize `this`: to_this is backed up, to_this is deleted, this content moved to to_this location
-                        backup_name = f"{to_this}.orig_{randstr()}"
+                    # Files are different, use on_conflict strategy
+                    if on_conflict == "throwError":
+                        raise RuntimeError(f"Conflict detected: {config_file_default_path} and {self_managed_config_file_path} both exist with different content")
+                    elif on_conflict == "overwriteSelfManaged":
                         action_taken = "backing_up_target"
-                        details = f"Backed up target to {backup_name}, prioritizing source"
-                        console.print(Panel(f"📦 BACKING UP | Moving {to_this} to {backup_name}, prioritizing {this}", title="Backing Up", expand=False))
-                        to_this.move(path=backup_name)
-                        this.move(path=to_this)
+                        details = "Overwriting self-managed config, moving default path to self-managed location"
+                        console.print(Panel(f"📦 OVERWRITE SELF-MANAGED | Deleting {self_managed_config_file_path}, moving {config_file_default_path} to {self_managed_config_file_path}", title="Overwrite Self-Managed", expand=False))
+                        self_managed_config_file_path.delete(sure=True)
+                        config_file_default_path.move(path=self_managed_config_file_path)
+                    elif on_conflict == "backupSelfManaged":
+                        backup_name = f"{self_managed_config_file_path}.orig_{randstr()}"
+                        action_taken = "backing_up_target"
+                        details = f"Backed up self-managed config to {backup_name}"
+                        console.print(Panel(f"📦 BACKUP SELF-MANAGED | Moving {self_managed_config_file_path} to {backup_name}, moving {config_file_default_path} to {self_managed_config_file_path}", title="Backup Self-Managed", expand=False))
+                        self_managed_config_file_path.move(path=backup_name)
+                        config_file_default_path.move(path=self_managed_config_file_path)
+                    elif on_conflict == "overwriteDefaultPath":
+                        action_taken = "backing_up_source"
+                        details = "Overwriting default path, creating symlink to self-managed config"
+                        console.print(Panel(f"📦 OVERWRITE DEFAULT | Deleting {config_file_default_path}, creating symlink to {self_managed_config_file_path}", title="Overwrite Default", expand=False))
+                        config_file_default_path.delete(sure=True)
+                    elif on_conflict == "backupDefaultPath":
+                        backup_name = f"{config_file_default_path}.orig_{randstr()}"
+                        action_taken = "backing_up_source"
+                        details = f"Backed up default path to {backup_name}"
+                        console.print(Panel(f"📦 BACKUP DEFAULT | Moving {config_file_default_path} to {backup_name}, creating symlink to {self_managed_config_file_path}", title="Backup Default", expand=False))
+                        config_file_default_path.move(path=backup_name)
         else:
-            # to_this doesn't exist
-            if this.is_symlink():
-                # Case: this exists AND to_this doesn't exist AND this is a symlink (pointing anywhere)
+            # self_managed_config_file_path doesn't exist
+            if config_file_default_path.is_symlink():
+                # Case: config_file_default_path exists AND self_managed_config_file_path doesn't exist AND config_file_default_path is a symlink (pointing anywhere)
                 action_taken = "relinking_to_new_target"
                 details = "Removed existing symlink, will create target and new symlink"
-                console.print(Panel(f"🔄 RELINKING | Updating symlink from {this} ➡️  {to_this}", title="Relinking", expand=False))
-                this.delete(sure=True)
-                # Create to_this
-                to_this.parent.mkdir(parents=True, exist_ok=True)
-                to_this.touch()
+                console.print(Panel(f"🔄 RELINKING | Updating symlink from {config_file_default_path} ➡️  {self_managed_config_file_path}", title="Relinking", expand=False))
+                config_file_default_path.delete(sure=True)
+                # Create self_managed_config_file_path
+                self_managed_config_file_path.parent.mkdir(parents=True, exist_ok=True)
+                self_managed_config_file_path.touch()
             else:
-                # Case: this exists AND to_this doesn't exist AND this is a concrete path
+                # Case: config_file_default_path exists AND self_managed_config_file_path doesn't exist AND config_file_default_path is a concrete path
                 action_taken = "moving_to_target"
                 details = "Moved source to target location, will create symlink"
-                console.print(Panel(f"📁 MOVING | Moving {this} to {to_this}, then creating symlink", title="Moving", expand=False))
-                this.move(path=to_this)
+                console.print(Panel(f"📁 MOVING | Moving {config_file_default_path} to {self_managed_config_file_path}, then creating symlink", title="Moving", expand=False))
+                config_file_default_path.move(path=self_managed_config_file_path)
     else:
-        # this doesn't exist
-        if to_this.exists():
-            # Case: this doesn't exist AND to_this exists
+        # config_file_default_path doesn't exist
+        if self_managed_config_file_path.exists():
+            # Case: config_file_default_path doesn't exist AND self_managed_config_file_path exists
             action_taken = "new_link"
             details = "Creating new symlink to existing target"
-            console.print(Panel(f"🆕 NEW LINK | Creating new symlink from {this} ➡️  {to_this}", title="New Link", expand=False))
+            console.print(Panel(f"🆕 NEW LINK | Creating new symlink from {config_file_default_path} ➡️  {self_managed_config_file_path}", title="New Link", expand=False))
         else:
-            # Case: this doesn't exist AND to_this doesn't exist
+            # Case: config_file_default_path doesn't exist AND self_managed_config_file_path doesn't exist
             action_taken = "new_link_and_target"
             details = "Creating target file and new symlink"
-            console.print(Panel(f"🆕 NEW LINK & TARGET | Creating {to_this} and symlink from {this} ➡️  {to_this}", title="New Link & Target", expand=False))
-            to_this.parent.mkdir(parents=True, exist_ok=True)
-            to_this.touch()
+            console.print(Panel(f"🆕 NEW LINK & TARGET | Creating {self_managed_config_file_path} and symlink from {config_file_default_path} ➡️  {self_managed_config_file_path}", title="New Link & Target", expand=False))
+            self_managed_config_file_path.parent.mkdir(parents=True, exist_ok=True)
+            self_managed_config_file_path.touch()
     
     # Create the symlink
     try:
         action_taken = action_taken or "linking"
         details = details or "Creating symlink"
-        console.print(Panel(f"🔗 LINKING | Creating symlink from {this} ➡️  {to_this}", title="Linking", expand=False))
-        PathExtended(this).symlink_to(target=to_this, verbose=True, overwrite=True)
+        console.print(Panel(f"🔗 LINKING | Creating symlink from {config_file_default_path} ➡️  {self_managed_config_file_path}", title="Linking", expand=False))
+        PathExtended(config_file_default_path).symlink_to(target=self_managed_config_file_path, verbose=True, overwrite=True)
         return {"action": action_taken, "details": details}
     except Exception as ex:
         action_taken = "error"
         details = f"Failed to create symlink: {str(ex)}"
-        console.print(Panel(f"❌ ERROR | Failed at linking {this} ➡️  {to_this}. Reason: {ex}", title="Error", expand=False))
+        console.print(Panel(f"❌ ERROR | Failed at linking {config_file_default_path} ➡️  {self_managed_config_file_path}. Reason: {ex}", title="Error", expand=False))
         return {"action": action_taken, "details": details}
 
 
-def symlink_copy(this: PathExtended, to_this: PathExtended, prioritize_to_this: bool) -> CopyResult:
-    this = PathExtended(this).expanduser().absolute()
-    to_this = PathExtended(to_this).expanduser().absolute()
+def symlink_copy(config_file_default_path: PathExtended, self_managed_config_file_path: PathExtended, on_conflict: Literal["throwError", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"]) -> CopyResult:
+    config_file_default_path = PathExtended(config_file_default_path).expanduser().absolute()
+    self_managed_config_file_path = PathExtended(self_managed_config_file_path).expanduser().absolute()
     action_taken = ""
     details = ""
     
-    if this.exists():
-        if to_this.exists():
-            if this.is_symlink():
+    if config_file_default_path.exists():
+        if self_managed_config_file_path.exists():
+            if config_file_default_path.is_symlink():
                 try:
-                    if this.readlink().resolve() == to_this.resolve():
+                    if config_file_default_path.readlink().resolve() == self_managed_config_file_path.resolve():
                         action_taken = "already_linked"
                         details = "Symlink already correctly points to target"
-                        console.print(Panel(f"✅ ALREADY LINKED | {this} ➡️  {to_this}", title="Already Linked", expand=False))
+                        console.print(Panel(f"✅ ALREADY LINKED | {config_file_default_path} ➡️  {self_managed_config_file_path}", title="Already Linked", expand=False))
                         return {"action": action_taken, "details": details}
                     else:
                         action_taken = "relinking"
                         details = "Updated existing symlink to point to new target"
-                        console.print(Panel(f"🔄 RELINKING | Updating symlink from {this} ➡️  {to_this}", title="Relinking", expand=False))
-                        this.delete(sure=True)
+                        console.print(Panel(f"🔄 RELINKING | Updating symlink from {config_file_default_path} ➡️  {self_managed_config_file_path}", title="Relinking", expand=False))
+                        config_file_default_path.delete(sure=True)
                 except OSError:
                     action_taken = "fixing_broken_link"
                     details = "Removed broken symlink and will create new one"
-                    console.print(Panel(f"🔄 FIXING BROKEN LINK | Fixing broken symlink from {this} ➡️  {to_this}", title="Fixing Broken Link", expand=False))
-                    this.delete(sure=True)
+                    console.print(Panel(f"🔄 FIXING BROKEN LINK | Fixing broken symlink from {config_file_default_path} ➡️  {self_managed_config_file_path}", title="Fixing Broken Link", expand=False))
+                    config_file_default_path.delete(sure=True)
             else:
-                if prioritize_to_this:
-                    backup_name = f"{this}.orig_{randstr()}"
-                    action_taken = "backing_up_source"
-                    details = f"Backed up source to {backup_name}, prioritizing target"
-                    console.print(Panel(f"📦 BACKING UP | Moving {this} to {backup_name}, prioritizing {to_this}", title="Backing Up", expand=False))
-                    this.move(path=backup_name)
-                else:
-                    backup_name = f"{to_this}.orig_{randstr()}"
+                if on_conflict == "throwError":
+                    raise RuntimeError(f"Conflict detected: {config_file_default_path} and {self_managed_config_file_path} both exist with different content")
+                elif on_conflict == "overwriteSelfManaged":
                     action_taken = "backing_up_target"
-                    details = f"Backed up target to {backup_name}, prioritizing source"
-                    console.print(Panel(f"📦 BACKING UP | Moving {to_this} to {backup_name}, prioritizing {this}", title="Backing Up", expand=False))
-                    to_this.move(path=backup_name)
-                    this.move(path=to_this)
+                    details = "Overwriting self-managed config, moving default path to self-managed location"
+                    console.print(Panel(f"📦 OVERWRITE SELF-MANAGED | Deleting {self_managed_config_file_path}, moving {config_file_default_path} to {self_managed_config_file_path}", title="Overwrite Self-Managed", expand=False))
+                    self_managed_config_file_path.delete(sure=True)
+                    config_file_default_path.move(path=self_managed_config_file_path)
+                elif on_conflict == "backupSelfManaged":
+                    backup_name = f"{self_managed_config_file_path}.orig_{randstr()}"
+                    action_taken = "backing_up_target"
+                    details = f"Backed up self-managed config to {backup_name}"
+                    console.print(Panel(f"📦 BACKUP SELF-MANAGED | Moving {self_managed_config_file_path} to {backup_name}, moving {config_file_default_path} to {self_managed_config_file_path}", title="Backup Self-Managed", expand=False))
+                    self_managed_config_file_path.move(path=backup_name)
+                    config_file_default_path.move(path=self_managed_config_file_path)
+                elif on_conflict == "overwriteDefaultPath":
+                    action_taken = "backing_up_source"
+                    details = "Overwriting default path, creating symlink to self-managed config"
+                    console.print(Panel(f"📦 OVERWRITE DEFAULT | Deleting {config_file_default_path}, copying {self_managed_config_file_path}", title="Overwrite Default", expand=False))
+                    config_file_default_path.delete(sure=True)
+                elif on_conflict == "backupDefaultPath":
+                    backup_name = f"{config_file_default_path}.orig_{randstr()}"
+                    action_taken = "backing_up_source"
+                    details = f"Backed up default path to {backup_name}"
+                    console.print(Panel(f"📦 BACKUP DEFAULT | Moving {config_file_default_path} to {backup_name}, copying {self_managed_config_file_path}", title="Backup Default", expand=False))
+                    config_file_default_path.move(path=backup_name)
         else:
-            if this.is_symlink():
+            if config_file_default_path.is_symlink():
                 action_taken = "relinking_to_new_target"
                 details = "Removed existing symlink, will create target and new symlink"
-                console.print(Panel(f"🔄 RELINKING | Updating symlink from {this} ➡️  {to_this}", title="Relinking", expand=False))
-                this.delete(sure=True)
-                to_this.parent.mkdir(parents=True, exist_ok=True)
-                to_this.touch()
+                console.print(Panel(f"🔄 RELINKING | Updating symlink from {config_file_default_path} ➡️  {self_managed_config_file_path}", title="Relinking", expand=False))
+                config_file_default_path.delete(sure=True)
+                self_managed_config_file_path.parent.mkdir(parents=True, exist_ok=True)
+                self_managed_config_file_path.touch()
             else:
                 action_taken = "moving_to_target"
                 details = "Moved source to target location, will copy"
-                console.print(Panel(f"📁 MOVING | Moving {this} to {to_this}, then copying", title="Moving", expand=False))
-                this.move(path=to_this)
+                console.print(Panel(f"📁 MOVING | Moving {config_file_default_path} to {self_managed_config_file_path}, then copying", title="Moving", expand=False))
+                config_file_default_path.move(path=self_managed_config_file_path)
     else:
-        if to_this.exists():
+        if self_managed_config_file_path.exists():
             action_taken = "new_link"
             details = "Copying existing target to source location"
-            console.print(Panel(f"🆕 NEW LINK | Copying {to_this} to {this}", title="New Link", expand=False))
+            console.print(Panel(f"🆕 NEW LINK | Copying {self_managed_config_file_path} to {config_file_default_path}", title="New Link", expand=False))
         else:
             action_taken = "new_link_and_target"
             details = "Creating target file and copying to source"
-            console.print(Panel(f"🆕 NEW LINK & TARGET | Creating {to_this} and copying to {this}", title="New Link & Target", expand=False))
-            to_this.parent.mkdir(parents=True, exist_ok=True)
-            to_this.touch()
+            console.print(Panel(f"🆕 NEW LINK & TARGET | Creating {self_managed_config_file_path} and copying to {config_file_default_path}", title="New Link & Target", expand=False))
+            self_managed_config_file_path.parent.mkdir(parents=True, exist_ok=True)
+            self_managed_config_file_path.touch()
     
     try:
         action_taken = action_taken or "copying"
         details = details or "Copying file"
-        console.print(Panel(f"📋 COPYING | Copying {to_this} to {this}", title="Copying", expand=False))
-        to_this.copy(path=this, overwrite=True, verbose=True)
+        console.print(Panel(f"📋 COPYING | Copying {self_managed_config_file_path} to {config_file_default_path}", title="Copying", expand=False))
+        self_managed_config_file_path.copy(path=config_file_default_path, overwrite=True, verbose=True)
         return {"action": action_taken, "details": details}
     except Exception as ex:
         action_taken = "error"
         details = f"Failed to copy file: {str(ex)}"
-        console.print(Panel(f"❌ ERROR | Failed at copying {to_this} to {this}. Reason: {ex}", title="Error", expand=False))
+        console.print(Panel(f"❌ ERROR | Failed at copying {self_managed_config_file_path} to {config_file_default_path}. Reason: {ex}", title="Error", expand=False))
         return {"action": action_taken, "details": details}

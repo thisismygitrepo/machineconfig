@@ -13,6 +13,7 @@ sudo chmod 700 ~/.ssh
 echo "✅ FINISHED modifying .ssh folder attributes."
 
 # 🔄 Clean install OpenSSH server
+sudo nala install openssh-server -y || true  # try to install first
 sudo nala purge openssh-server -y
 sudo nala install openssh-server -y
 echo "✅ FINISHED installing openssh-server."
