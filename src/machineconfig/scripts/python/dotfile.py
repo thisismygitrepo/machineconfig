@@ -3,15 +3,13 @@
 from typing import Annotated
 
 import typer
-from rich.console import Console
-from rich.panel import Panel
-
-from machineconfig.utils.links import symlink_func
-from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT
 
 
-console = Console()
+# @app.command()
+# def symlinks_new():
+#     """🆕 SYMLINKS new. consider moving to the new config command, then may be merge it with the dotfile subcommand"""
+#     import machineconfig.jobs.python.python_ve_symlink as helper
+#     helper.main()
 
 
 def main(
@@ -19,6 +17,14 @@ def main(
     overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="Overwrite.")] = False,
     dest: Annotated[str, typer.Option("--dest", "-d", help="destination folder")] = "",
 ) -> None:
+
+    from rich.console import Console
+    from rich.panel import Panel
+
+    from machineconfig.utils.links import symlink_func
+    from machineconfig.utils.path_extended import PathExtended
+    from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT
+    console = Console()
     orig_path = PathExtended(file).expanduser().absolute()
     if dest == "":
         if "Local" in str(orig_path):

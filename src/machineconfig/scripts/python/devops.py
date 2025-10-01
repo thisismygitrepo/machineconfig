@@ -1,10 +1,11 @@
 """devops with emojis"""
 
-import machineconfig.profile.creator_frontend
 import machineconfig.utils.installer_utils.installer as installer_entry_point
 import machineconfig.scripts.python.share_terminal as share_terminal
 import machineconfig.scripts.python.repos as repos
-import machineconfig.profile.creator_frontend as config_frontend
+
+import machineconfig.profile.creator_frontend as creator_frontend
+from machineconfig.scripts.python import dotfile
 
 from machineconfig.utils.installer import get_machineconfig_version
 import typer
@@ -37,50 +38,27 @@ def update():
     """🔄 UPDATE essential repos"""
     import machineconfig.scripts.python.devops_update_repos as helper
     helper.main()
-
-
 @self_app.command()
 def interactive():
     """🤖 INTERACTIVE configuration of machine."""
     from machineconfig.scripts.python.interactive import main
     main()
+@self_app.command()
+def status():
+    """📊 STATUS of machine, shell profile, apps, symlinks, dotfiles, etc."""
+    pass
 
 
-# @config_apps.command()
-# def private():
-#     """🔗 Manage private configuration files."""
-#     import machineconfig.profile.creator_frontend as helper
-#     machineconfig.profile.creator_frontend.mail_private_from_parser()
+config_apps.command(name="private", help="🔗 Manage private configuration files.")(creator_frontend.mail_private_from_parser)
+config_apps.command(name="public", help="🔗 Manage public configuration files.")(creator_frontend.mail_public_from_parser)
+config_apps.command(name="dotfile", help="🔗 Manage dotfiles.")(dotfile.main)
 
-# @config_apps.command()
-# def public():
-#     """🔗 Manage public configuration files."""
-#     import machineconfig.profile.create as helper
-#     machineconfig.profile.creator_frontend.mail_public_from_parser()
-config_apps.command(name="private", help="🔗 Manage private configuration files.")(machineconfig.profile.creator_frontend.mail_private_from_parser)
-config_apps.command(name="public", help="🔗 Manage public configuration files.")(machineconfig.profile.creator_frontend.mail_public_from_parser)
-
-"""    has two subommands: private and public. both offer a mandatory --if-target-exists option in which user chooses one of the following strategies: 
-    throwError (force the program to stop when this is encountered and ask the user to resolve conflict manually),
-    overrideTarget,
-    in public, theres is no option to override the source, only target because source is machoinecopnfig repo,  )
-    also, in both commands, there is a mandatory field called --method symlink or copy. In private don't offer copy, because that's evil, two sources of truth for credentials file.
-    in public, copy is allowed, but if symlink is chosen,  thrown an error if machineconfig library is not cloned locally in the machine.
-    in both commands there is --which, which is by default, all, but can be interactive or set of choices staticlly passed with comma separation.
-"""
 
 @config_apps.command()
 def shell():
     """🔗 Configure your shell profile."""
     import machineconfig.profile.create as helper
     helper.main_profile()
-
-
-# @app.command()
-# def symlinks_new():
-#     """🆕 SYMLINKS new. consider moving to the new config command, then may be merge it with the dotfile subcommand"""
-#     import machineconfig.jobs.python.python_ve_symlink as helper
-#     helper.main()
 
 
 @nw_apps.command()
