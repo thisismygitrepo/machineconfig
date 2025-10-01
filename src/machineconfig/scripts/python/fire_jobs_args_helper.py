@@ -96,6 +96,10 @@ def _convert_value_type(value: str) -> object:
     elif value.lower() in ('false', '0', 'no', 'off'):
         return False
     
+    # Try to convert None
+    if value.lower() == 'none':
+        return None
+    
     # Try to parse as list (comma-separated values)
     if ',' in value:
         items = [_convert_value_type(item.strip()) for item in value.split(',')]
