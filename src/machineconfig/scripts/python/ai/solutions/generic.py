@@ -6,9 +6,19 @@ from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 def create_dot_scripts(repo_root: Path) -> None:
     scripts_dir = LIBRARY_ROOT.joinpath("scripts/python/ai/scripts")
     target_dir = repo_root.joinpath(".scripts")
+    import shutil
+    shutil.rmtree(target_dir, ignore_errors=True)
     target_dir.mkdir(parents=True, exist_ok=True)
-    for script_path in scripts_dir.iterdir():
-        target_dir.joinpath(script_path.name).write_text(data=script_path.read_text(encoding="utf-8"), encoding="utf-8")
+    # for script_path in scripts_dir.iterdir():
+    #     target_dir.joinpath(script_path.name).write_text(data=script_path.read_text(encoding="utf-8"), encoding="utf-8")
+    import platform
+    if platform.system() == "Windows":
+        script_path = scripts_dir.joinpath("lint_and_type_check.ps1")
+    elif platform.system() in ["Linux", "Darwin"]:
+        script_path = scripts_dir.joinpath("lint_and_type_check.sh")
+    else:
+        raise NotImplementedError(f"Platform {platform.system()} is not supported.")
+    target_dir.joinpath(script_path.name).write_text(data=script_path.read_text(encoding="utf-8"), encoding="utf-8")
 
 
 def adjust_gitignore(repo_root: Path) -> None:
