@@ -56,9 +56,7 @@ def cleanup(directory: DirectoryArgument = None, recursive: RecursiveOption = Fa
 @sync_app.command(no_args_is_help=True)
 def capture(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """📝 Record repositories into a repos.json specification."""
-    from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner, resolve_directory
-
-    print_banner()
+    from machineconfig.scripts.python.repos_helpers.repos_helper import resolve_directory
     repos_root = resolve_directory(directory)
     from machineconfig.scripts.python.repos_helpers.repos_helper_record import main as record_repos
 
@@ -72,36 +70,31 @@ def capture(directory: DirectoryArgument = None, cloud: CloudOption = None) -> N
 @sync_app.command(no_args_is_help=True)
 def clone(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """📥 Clone repositories described by a repos.json specification."""
-    from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner, clone_from_specs
+    from machineconfig.scripts.python.repos_helpers.repos_helper import clone_from_specs
 
-    print_banner()
+    
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=False)
 
 
 @sync_app.command(name="checkout-to-commit", no_args_is_help=True)
 def checkout_command(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """🔀 Check out specific commits listed in the specification."""
-    from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner, clone_from_specs
+    from machineconfig.scripts.python.repos_helpers.repos_helper import clone_from_specs
 
-    print_banner()
+    
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=True)
 
 
 @sync_app.command(name="checkout-to-branch", no_args_is_help=True)
 def checkout_to_branch_command(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """🔀 Check out to the main branch defined in the specification."""
-    from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner, clone_from_specs
-
-    print_banner()
+    from machineconfig.scripts.python.repos_helpers.repos_helper import clone_from_specs
     clone_from_specs(directory, cloud, checkout_branch_flag=True, checkout_commit_flag=False)
 
 
 @app.command(no_args_is_help=True)
 def analyze(directory: DirectoryArgument = None) -> None:
     """📊 Analyze repository development over time."""
-    from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner
-
-    print_banner()
     repo_path = directory if directory is not None else "."
     from machineconfig.scripts.python.repos_helpers.count_lines_frontend import analyze_repo_development
 
@@ -109,12 +102,8 @@ def analyze(directory: DirectoryArgument = None) -> None:
 
 
 @app.command(no_args_is_help=True)
-def viz(repo_path: Optional[str] = typer.Option(Path.cwd().__str__(), "--repo-path", "-r", help="Path to git repository to visualize"), seconds_per_day: float = typer.Option(0.1, "--seconds-per-day", "-spd", help="Speed of simulation (lower = faster)")) -> None:
+def viz(repo: Optional[str] = typer.Option(Path.cwd().__str__(), "--repo-path", "-r", help="Path to git repository to visualize"), seconds_per_day: float = typer.Option(0.1, "--seconds-per-day", "-spd", help="Speed of simulation (lower = faster)")) -> None:
     """🎬 Visualize repository activity using Gource."""
-    from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner
-
-    print_banner()
-    repo_path = repo_path if repo_path is not None else "."
+    repo_path = repo if repo is not None else "."
     from machineconfig.scripts.python.helpers_repos.grource import visualize
-
-    visualize(repo_path=repo_path, seconds_per_day=seconds_per_day)
+    visualize(repo=repo_path, seconds_per_day=seconds_per_day)

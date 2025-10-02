@@ -100,7 +100,7 @@ def install_gource_windows(version: Optional[str] = None) -> None:
 
 
 def visualize(
-    repo_path: str = typer.Option(Path.cwd().__str__(), "--repo-path", "-r", help="Path to git repository to visualize"),
+    repo: str = typer.Option(Path.cwd().__str__(), "--repo-path", "-r", help="Path to git repository to visualize"),
     output_file: Optional[Path] = typer.Option(None, "--output", "-o", help="Output video file (e.g., output.mp4). If specified, gource will render to video."),
     resolution: str = typer.Option("1920x1080", "--resolution", "-res", help="Video resolution (e.g., 1920x1080, 1280x720)"),
     seconds_per_day: float = typer.Option(0.1, "--seconds-per-day", "-spd", help="Speed of simulation (lower = faster)"),
@@ -146,7 +146,7 @@ def visualize(
     print("\n" + "=" * 80)
     print("🎬 GOURCE VISUALIZATION 🎬")
     print("=" * 80 + "\n")
-    repo_path = Path(repo_path).expanduser().resolve()
+    repo_path = Path(repo).expanduser().resolve()
     if not repo_path.exists():
         print(f"❌ Error: Repository path does not exist: {repo_path}")
         raise typer.Exit(1)
