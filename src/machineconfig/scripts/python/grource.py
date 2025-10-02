@@ -4,11 +4,42 @@ from pathlib import Path
 from typing import Optional
 import subprocess
 import platform
+import zipfile
 import typer
 
 
+def get_gource_install_dir() -> Path:
+    """Get the installation directory for portable Gource."""
+    if platform.system() == "Windows":
+        appdata = Path.home() / "AppData" / "Local"
+        return appdata / "gource"
+    else:
+        return Path.home() / ".local" / "bin" / "gource"
+
+
+def get_gource_executable() -> Path:
+    """Get the path to the gource executable (inside the extracted directory with DLLs)."""
+    install_dir = get_gource_install_dir()
+    if platform.system() == "Windows":
+        possible_paths = [
+            install_dir / "gource.exe",
+            install_dir / f"gource-{get_default_version()}.win64" / "gource.exe",
+        ]
+        for path in possible_paths:
+            if path.exists():
+                return path
+        return install_dir / f"gource-{get_default_version()}.win64" / "gource.exe"
+    else:
+        return install_dir / "gource"
+
+
+def get_default_version() -> str:
+    """Get the default gource version."""
+    return "0.53"
+
+
 def install_gource_windows(version: Optional[str] = None) -> None:
-    """Install Gource on Windows by downloading and running the official installer."""
+    """Install portable Gource on Windows by downloading and extracting the zip archive."""
     if platform.system() != "Windows":
         raise OSError(f"This installer is for Windows only. Current OS: {platform.system()}")
 
@@ -16,46 +47,56 @@ def install_gource_windows(version: Optional[str] = None) -> None:
     from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR
 
     print("\n" + "=" * 80)
-    print("🚀 GOURCE WINDOWS INSTALLATION 🚀")
+    print("🚀 GOURCE PORTABLE INSTALLATION 🚀")
     print("=" * 80 + "\n")
 
-    version_str = version or "0.53"
-    installer_url = f"https://github.com/acaudwell/Gource/releases/download/gource-{version_str}/gource-{version_str}.win64-setup.exe"
+    version_str = version or get_default_version()
+    portable_url = f"https://github.com/acaudwell/Gource/releases/download/gource-{version_str}/gource-{version_str}.win64.zip"
+    install_dir = get_gource_install_dir()
 
-    print(f"📥 Downloading Gource installer from: {installer_url}")
-    downloaded_installer = PathExtended(installer_url).download(folder=INSTALL_TMP_DIR)
-    print(f"✅ Downloaded to: {downloaded_installer}")
+    print(f"📥 Downloading portable Gource from: {portable_url}")
+    downloaded_zip = PathExtended(portable_url).download(folder=INSTALL_TMP_DIR)
+    print(f"✅ Downloaded to: {downloaded_zip}")
 
-    print("\n🔧 Running Gource installer...")
-    print("⚠️  Note: The installer will launch in GUI mode. Please follow the installation wizard.")
+    print(f"\n� Extracting to: {install_dir}")
+    install_dir.mkdir(parents=True, exist_ok=True)
 
     try:
-        result = subprocess.run([str(downloaded_installer), "/SILENT"], capture_output=True, text=True, check=False)
-        if result.returncode == 0:
-            print("✅ Gource installed successfully (silent mode)")
-        else:
-            print("⚠️  Silent installation not supported, launching interactive installer...")
-            subprocess.run([str(downloaded_installer)], check=True)
-            print("✅ Gource installer launched. Please complete the installation manually.")
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Installation failed with error: {e}")
-        raise
+        with zipfile.ZipFile(downloaded_zip, 'r') as zip_ref:
+            zip_ref.extractall(install_dir)
+        print(f"✅ Extracted successfully to: {install_dir}")
+        print(f"   (The zip contains gource-{version_str}.win64/ directory with exe and DLL dependencies)")
     except Exception as e:
-        print(f"❌ Unexpected error during installation: {e}")
+        print(f"❌ Extraction failed with error: {e}")
         raise
 
-    print("\n🗑️  Cleaning up installer file...")
+    print("\n🗑️  Cleaning up zip file...")
     try:
-        downloaded_installer.delete(sure=True)
-        print(f"✅ Removed installer: {downloaded_installer}")
+        downloaded_zip.unlink()
+        print(f"✅ Removed zip file: {downloaded_zip}")
     except Exception as e:
-        print(f"⚠️  Warning: Could not remove installer file: {e}")
+        print(f"⚠️  Warning: Could not remove zip file: {e}")
+
+    gource_exe = get_gource_executable()
+    if gource_exe.exists():
+        print(f"\n✅ Gource executable found at: {gource_exe}")
+        dll_dir = gource_exe.parent
+        dll_count = len(list(dll_dir.glob("*.dll")))
+        print(f"   Found {dll_count} DLL dependencies in: {dll_dir}")
+    else:
+        print(f"\n⚠️  Warning: Expected executable not found at: {gource_exe}")
+        print(f"   Contents of {install_dir}:")
+        for item in install_dir.rglob("*"):
+            if item.is_file():
+                print(f"     - {item.relative_to(install_dir)}")
 
     print("\n" + "=" * 80)
-    print("✅ GOURCE INSTALLATION COMPLETED")
+    print("✅ GOURCE PORTABLE INSTALLATION COMPLETED")
     print("=" * 80)
-    print("\n📌 Gource should now be available in your PATH.")
-    print("   You can verify by running: gource --version")
+    print(f"\n📌 Gource installed to: {install_dir}")
+    print(f"   Executable: {gource_exe}")
+    print("   All DLL dependencies are kept together in the same directory.")
+    print("   This script will automatically use the portable version.")
 
 
 def visualize(
@@ -123,7 +164,14 @@ def visualize(
         print(f"   - Output: {output_file}")
     print()
 
-    cmd = ["gource", str(repo_path)]
+    gource_exe = get_gource_executable()
+    if gource_exe.exists():
+        gource_cmd = str(gource_exe)
+    else:
+        gource_cmd = "gource"
+        print(f"⚠️  Portable gource not found at {gource_exe}, using system gource")
+
+    cmd = [gource_cmd, str(repo_path)]
 
     cmd.extend(["--seconds-per-day", str(seconds_per_day)])
     cmd.extend(["--auto-skip-seconds", str(auto_skip_seconds)])
@@ -247,7 +295,12 @@ def visualize(
         except FileNotFoundError:
             print("❌ Error: gource not found. Please install gource first.")
             if platform.system() == "Windows":
-                print("   Run: python grource.py install")
+                print("   Run: uv run python src/machineconfig/scripts/python/grource.py install")
+            else:
+                print("   For Linux/Mac, use your package manager:")
+                print("     - Ubuntu/Debian: sudo apt install gource")
+                print("     - macOS: brew install gource")
+                print("     - Fedora: sudo dnf install gource")
             raise typer.Exit(1)
 
     print("\n" + "=" * 80)
@@ -258,11 +311,11 @@ def visualize(
 def install(
     version: Optional[str] = typer.Option("0.53", "--version", "-v", help="Gource version to install"),
 ) -> None:
-    """Install Gource on Windows."""
+    """Install portable Gource on Windows (no admin privileges required)."""
     if platform.system() == "Windows":
         install_gource_windows(version=version)
     else:
-        print(f"❌ This installer currently supports Windows only. Current OS: {platform.system()}")
+        print(f"❌ Portable installer currently supports Windows only. Current OS: {platform.system()}")
         print("For Linux/Mac, please use your package manager:")
         print("  - Ubuntu/Debian: sudo apt install gource")
         print("  - macOS: brew install gource")
