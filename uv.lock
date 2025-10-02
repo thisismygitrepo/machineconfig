@@ -1513,6 +1513,7 @@ docs = [
 plot = [
     { name = "duckdb-engine" },
     { name = "ipykernel" },
+    { name = "ipython" },
     { name = "jupyterlab" },
     { name = "kaleido" },
     { name = "matplotlib" },
@@ -1580,6 +1581,7 @@ docs = [{ name = "pdoc", specifier = ">=15.0.2" }]
 plot = [
     { name = "duckdb-engine", specifier = ">=0.17.0" },
     { name = "ipykernel", specifier = ">=6.30.1" },
+    { name = "ipython", specifier = ">=9.5.0" },
     { name = "jupyterlab", specifier = ">=4.4.9" },
     { name = "kaleido", specifier = ">=1.1.0" },
     { name = "matplotlib", specifier = ">=3.10.6" },

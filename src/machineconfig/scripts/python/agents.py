@@ -5,7 +5,7 @@
 from pathlib import Path
 from typing import cast, Iterable, Optional, get_args
 import typer
-from machineconfig.scripts.python.fire_agents_helper_types import AGENTS
+from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS
 
 
 def _write_list_file(target: Path, files: Iterable[Path]) -> None:
@@ -28,9 +28,9 @@ def create(
     agents_dir: Optional[Path] = typer.Option(None, help="Directory to store agent files. If not provided, will be constructed automatically."),
 ):
 
-    from machineconfig.scripts.python.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout
-    from machineconfig.scripts.python.fire_agents_help_search import search_files_by_pattern, search_python_files
-    from machineconfig.scripts.python.fire_agents_load_balancer import chunk_prompts
+    from machineconfig.scripts.python.helpers_fire.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout
+    from machineconfig.scripts.python.helpers_fire.fire_agents_help_search import search_files_by_pattern, search_python_files
+    from machineconfig.scripts.python.helpers_fire.fire_agents_load_balancer import chunk_prompts
     from machineconfig.utils.accessories import get_repo_root, randstr
     import json
 

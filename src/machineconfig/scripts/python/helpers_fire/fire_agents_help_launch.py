@@ -2,7 +2,7 @@
 import random
 import shlex
 from pathlib import Path
-from machineconfig.scripts.python.fire_agents_helper_types import AGENTS, AGENT_NAME_FORMATTER
+from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, AGENT_NAME_FORMATTER
 
 
 def get_gemini_api_keys() -> list[str]:
