@@ -26,7 +26,7 @@ DEFAULT_LAYOUT_TEMPLATE = """layout {
 """
 
 
-def create_zellij_layout(layout_config: LayoutConfig, session_name: str, layout_template: str = DEFAULT_LAYOUT_TEMPLATE) -> str:
+def create_zellij_layout(layout_config: LayoutConfig, layout_template: str) -> str:
     """Standalone function to create Zellij layout content from config."""
     validate_layout_config(layout_config)
     # Enhanced Rich logging
@@ -37,7 +37,8 @@ def create_zellij_layout(layout_config: LayoutConfig, session_name: str, layout_
     # Display tab summary with emojis and colors
     for tab in layout_config["layoutTabs"]:
         console.print(f"  [yellow]→[/yellow] [bold]{tab['tabName']}[/bold] [dim]in[/dim] [blue]{tab['startDir']}[/blue]")
-
+    from copy import deepcopy
+    layout_config = deepcopy(layout_config)  # Avoid mutating the original
     layout_content = layout_template
     for tab in layout_config["layoutTabs"]:
         layout_content += "\n" + create_tab_section(tab)
@@ -52,15 +53,14 @@ class ZellijLayoutGenerator:
         self.session_name: str = session_name
         self.layout_config: LayoutConfig = layout_config.copy()
         self.layout_path: Optional[str] = None
-
     def create_layout_file(self) -> bool:
         """Create zellij layout file and return the path."""
-        layout_content = create_zellij_layout(self.layout_config, self.session_name)
-
+        layout_content = create_zellij_layout(self.layout_config, layout_template=DEFAULT_LAYOUT_TEMPLATE)
         # Write to file
-        tmp_dir = Path.home() / "tmp_results" / "zellij_layouts"
+        tmp_dir = Path.home() / "tmp_results" / "sessions" / "zellij_layouts"
         tmp_dir.mkdir(parents=True, exist_ok=True)
-        layout_file = tmp_dir / f"{self.session_name}_layout.kdl"
+        import tempfile
+        layout_file = Path(tempfile.mkstemp(suffix="_layout.kdl", dir=tmp_dir)[1])
         layout_file.write_text(layout_content, encoding="utf-8")
         self.layout_path = str(layout_file.absolute())
 
@@ -164,7 +164,7 @@ def run_zellij_layout(layout_config: LayoutConfig) -> None:
     session_name = layout_config["layoutName"]
     generator = ZellijLayoutGenerator(layout_config, session_name)
     generator.create_layout_file()
-
+    generator.run()
 
 
 def run_command_in_zellij_tab(command: str, tab_name: str, cwd: Optional[str]) -> str:
@@ -194,12 +194,12 @@ if __name__ == "__main__":
         "layoutName": "SampleBots",
         "layoutTabs": [{"tabName": "Explorer", "startDir": "~/code", "command": "lf"}, {"tabName": "🤖Bot2", "startDir": "~", "command": "cmatrix"}, {"tabName": "📊Monitor", "startDir": "~", "command": "htop"}, {"tabName": "📝Logs", "startDir": "/var/log", "command": "tail -f /var/log/app.log"}],
     }
-
     try:
         # Create layout using the generator with new design
-        generator = ZellijLayoutGenerator(sample_layout, "test_session")
+        generator = ZellijLayoutGenerator(layout_config=sample_layout, session_name="test_session")
         generator.create_layout_file()
 
+        generator.run()
         # Demonstrate status checking
         print("\n🔍 Checking command status (this is just a demo - commands aren't actually running):")
         generator.print_status_report()

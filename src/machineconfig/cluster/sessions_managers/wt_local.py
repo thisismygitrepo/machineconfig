@@ -13,10 +13,13 @@ import random
 import string
 import json
 import platform
-from typing import Dict, List, Optional, Any
+from typing import Optional, Any
 from pathlib import Path
 import logging
+
 from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
 
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 
@@ -42,7 +45,7 @@ class WTLayoutGenerator:
         return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
     @staticmethod
-    def _parse_command(command: str) -> tuple[str, List[str]]:
+    def _parse_command(command: str) -> tuple[str, list[str]]:
         try:
             parts = shlex.split(command)
             if not parts:
@@ -79,7 +82,12 @@ class WTLayoutGenerator:
 
     def create_wt_layout(self, layout_config: LayoutConfig) -> str:
         WTLayoutGenerator._validate_layout_config(layout_config)
-        logger.info(f"Creating Windows Terminal layout '{layout_config['layoutName']}' with {len(layout_config['layoutTabs'])} tabs")
+        tab_count = len(layout_config['layoutTabs'])
+        layout_name = layout_config['layoutName']
+        console.print(f"[bold cyan]📋 Creating Windows Terminal layout[/bold cyan] [bright_green]'{layout_name}' with {tab_count} tabs[/bright_green]")
+        
+        for tab in layout_config['layoutTabs']:
+            console.print(f"  [yellow]→[/yellow] [bold]{tab['tabName']}[/bold] [dim]in[/dim] [blue]{tab['startDir']}[/blue]")
 
         # Store session name and layout config for status checking
         self.session_name = layout_config["layoutName"]
@@ -94,7 +102,7 @@ class WTLayoutGenerator:
 # Generated with random suffix: {random_suffix}
 {wt_command}
 """
-        logger.info("Windows Terminal PowerShell script content generated")
+        console.print("[bold green]✅ Windows Terminal PowerShell script content generated[/bold green]")
         return script_content
 
     def _generate_wt_command_string(self, layout_config: LayoutConfig, window_name: str) -> str:
@@ -138,7 +146,7 @@ class WTLayoutGenerator:
         WTLayoutGenerator._validate_layout_config(layout_config)
         return self._generate_wt_command_string(layout_config, "preview")
 
-    def check_all_commands_status(self) -> Dict[str, Dict[str, Any]]:
+    def check_all_commands_status(self) -> dict[str, dict[str, Any]]:
         if not self.layout_config:
             logger.warning("No layout config tracked. Make sure to create a layout first.")
             return {}
@@ -151,7 +159,7 @@ class WTLayoutGenerator:
         return status_report
 
     @staticmethod
-    def check_wt_session_status(session_name: str) -> Dict[str, Any]:
+    def check_wt_session_status(session_name: str) -> dict[str, Any]:
         try:
             # Simplified Windows Terminal process check
             ps_script = """
@@ -207,7 +215,7 @@ try {
             return {"wt_running": False, "error": str(e), "session_name": session_name}
 
     @staticmethod
-    def check_command_status(tab_name: str, layout_config: LayoutConfig) -> Dict[str, Any]:
+    def check_command_status(tab_name: str, layout_config: LayoutConfig) -> dict[str, Any]:
         """Check if a command is running by looking for processes."""
         # Find the tab with the given name
         tab_config = None
@@ -274,7 +282,7 @@ try {{
             logger.error(f"Error checking command status for tab '{tab_name}': {e}")
             return {"status": "error", "error": str(e), "running": False, "command": command, "tab_name": tab_name}
 
-    def get_status_report(self) -> Dict[str, Any]:
+    def get_status_report(self) -> dict[str, Any]:
         """Get status report for this layout including Windows Terminal and commands."""
         wt_status = WTLayoutGenerator.check_wt_session_status(self.session_name or "default")
         commands_status = self.check_all_commands_status()
@@ -295,45 +303,61 @@ try {{
         commands = status["commands"]
         summary = status["summary"]
 
-        print("=" * 80)
-        print("🖥️  WINDOWS TERMINAL LAYOUT STATUS REPORT")
-        print("=" * 80)
+        console.print()
+        console.print(Panel.fit("� WINDOWS TERMINAL LAYOUT STATUS REPORT", style="bold cyan"))
 
         # Windows Terminal session status
-        print(f"🪟 Session: {self.session_name}")
         if wt_session.get("wt_running", False):
             if wt_session.get("session_exists", False):
                 session_windows = wt_session.get("session_windows", [])
                 all_windows = wt_session.get("all_windows", [])
-                print("✅ Windows Terminal is running")
-                print(f"   Session windows: {len(session_windows)}")
-                print(f"   Total WT windows: {len(all_windows)}")
+                console.print(f"[bold green]✅ Windows Terminal session[/bold green] [yellow]'{self.session_name}'[/yellow] [green]is running[/green]")
+                console.print(f"   Session windows: {len(session_windows)}")
+                console.print(f"   Total WT windows: {len(all_windows)}")
             else:
-                print("⚠️  Windows Terminal is running but no session windows found")
+                console.print(f"[bold yellow]⚠️  Windows Terminal is running but session[/bold yellow] [yellow]'{self.session_name}'[/yellow] [yellow]not found[/yellow]")
         else:
             error_msg = wt_session.get("error", "Unknown error")
-            print(f"❌ Windows Terminal session issue: {error_msg}")
+            console.print(f"[bold red]❌ Windows Terminal session issue:[/bold red] [red]{error_msg}[/red]")
 
-        print()
+        console.print()
 
-        # Commands in this layout
-        print(f"📋 COMMANDS ({summary['running_commands']}/{summary['total_commands']} running):")
+        # Commands status table
+        table = Table(title="📋 COMMAND STATUS", show_header=True, header_style="bold magenta")
+        table.add_column("Tab", style="cyan", no_wrap=True)
+        table.add_column("Status", justify="center")
+        table.add_column("PID", justify="center", style="dim")
+        table.add_column("Command", style="green", max_width=40)
+
         for tab_name, cmd_status in commands.items():
-            status_icon = "✅" if cmd_status.get("running", False) else "❌"
-            cmd_text = cmd_status.get("command", "Unknown")[:50]
-            if len(cmd_status.get("command", "")) > 50:
-                cmd_text += "..."
+            if cmd_status.get("running", False):
+                status_text = "[bold green]✅ Running[/bold green]"
+                processes = cmd_status.get("processes", [])
+                if processes:
+                    proc = processes[0]
+                    pid = str(proc.get("pid", "N/A"))
+                else:
+                    pid = "N/A"
+            else:
+                status_text = "[bold red]❌ Stopped[/bold red]"
+                pid = "N/A"
 
-            print(f"   {status_icon} {tab_name}: {cmd_text}")
+            command = cmd_status.get("command", "Unknown")
+            if len(command) > 35:
+                command = command[:32] + "..."
 
-            if cmd_status.get("processes"):
-                for proc in cmd_status["processes"][:2]:  # Show first 2 processes
-                    pid = proc.get("pid", "Unknown")
-                    name = proc.get("name", "Unknown")
-                    console.print(f"      [dim]└─[/dim] PID {pid}: {name}")
-        print()
+            table.add_row(tab_name, status_text, pid, command)
 
-        print("=" * 80)
+        console.print(table)
+        console.print()
+
+        # Summary panel
+        summary_text = f"""[bold]Total commands:[/bold] {summary['total_commands']}
+[green]Running:[/green] {summary['running_commands']}
+[red]Stopped:[/red] {summary['stopped_commands']}
+[yellow]Session healthy:[/yellow] {"✅" if summary['session_healthy'] else "❌"}"""
+
+        console.print(Panel(summary_text, title="📊 Summary", style="blue"))
 
 
 def create_wt_layout(layout_config: LayoutConfig, output_path: str) -> str:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from typing import Dict, Optional, List, Union, Any
+from typing import Optional, Any
 from pathlib import Path
 import logging
 import json
@@ -55,10 +55,10 @@ class ZellijRemoteLayoutGenerator:
         executor = RemoteExecutor(remote_name)
         return executor.run_command(command, timeout)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {"remote_name": self.remote_name, "session_name": self.session_name, "layout_config": self.layout_config, "layout_path": self.layout_path, "created_at": datetime.now().isoformat(), "class_name": self.__class__.__name__}
 
-    def to_json(self, file_path: Optional[Union[str, Path]]) -> str:
+    def to_json(self, file_path: Optional[str | Path]) -> str:
         # Generate file path if not provided
         if file_path is None:
             random_id = str(uuid.uuid4())[:8]
@@ -85,7 +85,7 @@ class ZellijRemoteLayoutGenerator:
         return str(file_path_obj)
 
     @classmethod
-    def from_json(cls, file_path: Union[str, Path]) -> "ZellijRemoteLayoutGenerator":
+    def from_json(cls, file_path: str | Path) -> "ZellijRemoteLayoutGenerator":
         file_path = Path(file_path)
 
         # Ensure .json extension
@@ -122,7 +122,7 @@ class ZellijRemoteLayoutGenerator:
         return instance
 
     @staticmethod
-    def list_saved_sessions(directory_path: Optional[Union[str, Path]]) -> List[str]:
+    def list_saved_sessions(directory_path: Optional[str | Path]) -> list[str]:
         if directory_path is None:
             directory_path = Path.home() / "tmp_results" / "zellij_sessions" / "serialized"
         else:

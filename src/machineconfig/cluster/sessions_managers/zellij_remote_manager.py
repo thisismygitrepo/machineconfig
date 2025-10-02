@@ -3,7 +3,7 @@ import json
 import uuid
 import tempfile
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Optional
 from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.zellij_local import run_command_in_zellij_tab
 from machineconfig.cluster.sessions_managers.zellij_remote import ZellijRemoteLayoutGenerator
@@ -16,7 +16,7 @@ TMP_SERIALIAZATION_DIR = Path.home() / "tmp_results" / "zellij_sessions" / "seri
 
 
 class ZellijSessionManager:
-    def __init__(self, machine_layouts: Dict[str, LayoutConfig], session_name_prefix: str):
+    def __init__(self, machine_layouts: dict[str, LayoutConfig], session_name_prefix: str):
         self.session_name_prefix = session_name_prefix
         self.machine_layouts = machine_layouts  # Store the original config
         self.managers: list[ZellijRemoteLayoutGenerator] = []

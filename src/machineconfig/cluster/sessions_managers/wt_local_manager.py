@@ -5,8 +5,10 @@ import uuid
 import logging
 import subprocess
 from pathlib import Path
-from typing import TypedDict, Optional, Dict, List, Any
+from typing import Optional, Any
 from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
 from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import WTLayoutGenerator
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
@@ -15,10 +17,7 @@ from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types impor
 )
 
 
-class WTSessionReport(TypedDict):
-    session_status: Dict[str, Any]  # WT-specific session status
-    commands_status: Dict[str, CommandStatus]
-    summary: CommandSummary
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -41,7 +40,7 @@ class WTLocalManager:
         """
         self.session_name_prefix = session_name_prefix
         self.session_layouts = session_layouts  # Store the original config
-        self.managers: List[WTLayoutGenerator] = []
+        self.managers: list[WTLayoutGenerator] = []
 
         # Create a WTLayoutGenerator for each session
         for layout_config in session_layouts:
@@ -60,11 +59,11 @@ class WTLocalManager:
 
         logger.info(f"Initialized WTLocalManager with {len(self.managers)} sessions")
 
-    def get_all_session_names(self) -> List[str]:
+    def get_all_session_names(self) -> list[str]:
         """Get all managed session names."""
         return [manager.session_name for manager in self.managers if manager.session_name is not None]
 
-    def start_all_sessions(self) -> Dict[str, StartResult]:
+    def start_all_sessions(self) -> dict[str, StartResult]:
         """Start all Windows Terminal sessions with their layouts."""
         results = {}
         for manager in self.managers:
@@ -95,7 +94,7 @@ class WTLocalManager:
 
         return results
 
-    def kill_all_sessions(self) -> Dict[str, StartResult]:
+    def kill_all_sessions(self) -> dict[str, StartResult]:
         """Kill all managed Windows Terminal sessions."""
         results = {}
         for manager in self.managers:
@@ -139,7 +138,7 @@ class WTLocalManager:
                 commands.append("")
             return "\n".join(commands)
 
-    def check_all_sessions_status(self) -> Dict[str, WTSessionReport]:
+    def check_all_sessions_status(self) -> dict[str, dict[str, Any]]:
         """Check the status of all sessions and their commands."""
         status_report = {}
 
@@ -384,7 +383,7 @@ class WTLocalManager:
         return instance
 
     @staticmethod
-    def list_saved_sessions() -> List[str]:
+    def list_saved_sessions() -> list[str]:
         """List all saved session IDs."""
         if not TMP_SERIALIZATION_DIR.exists():
             return []
@@ -415,7 +414,7 @@ class WTLocalManager:
             logger.error(f"Failed to delete session {session_id}: {e}")
             return False
 
-    def list_active_sessions(self) -> List[ActiveSessionInfo]:
+    def list_active_sessions(self) -> list[ActiveSessionInfo]:
         """List currently active Windows Terminal sessions managed by this instance."""
         active_sessions = []
 
@@ -457,7 +456,7 @@ class WTLocalManager:
 
         return active_sessions
 
-    def get_wt_overview(self) -> Dict[str, Any]:
+    def get_wt_overview(self) -> dict[str, Any]:
         """Get overview of all Windows Terminal windows and processes."""
         try:
             result = subprocess.run(

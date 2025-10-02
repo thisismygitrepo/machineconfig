@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from typing import Dict, Optional, List, Any
+from typing import Optional, Any
 from pathlib import Path
 import logging
 import json
@@ -22,7 +22,7 @@ class WTRemoteLayoutGenerator:
     def __init__(self, remote_name: str, session_name_prefix: str):
         self.remote_name = remote_name
         self.session_name = session_name_prefix + "_" + WTLayoutGenerator.generate_random_suffix()
-        self.tabs: List[TabConfig] = []
+        self.tabs: list[TabConfig] = []
         self.script_path: Optional[str] = None
 
         # Initialize modular components
@@ -34,7 +34,7 @@ class WTRemoteLayoutGenerator:
 
     # Tabs are stored and used as List[TabConfig]; no legacy dict compatibility
 
-    def create_wt_layout(self, tabs: List[TabConfig]) -> str:
+    def create_wt_layout(self, tabs: list[TabConfig]) -> str:
         logger.info(f"Creating Windows Terminal layout with {len(tabs)} tabs for remote '{self.remote_name}'")
         self.tabs = tabs
         script_content = self.layout_generator.create_wt_script(self.tabs, self.session_name, window_name=None)
@@ -42,7 +42,7 @@ class WTRemoteLayoutGenerator:
 
     # Legacy methods for backward compatibility
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {"remote_name": self.remote_name, "session_name": self.session_name, "tabs": self.tabs, "script_path": self.script_path, "created_at": datetime.now().isoformat(), "class_name": self.__class__.__name__}
 
     def to_json(self, file_path: Optional[str]) -> str:
@@ -113,7 +113,7 @@ class WTRemoteLayoutGenerator:
         return instance
 
     @staticmethod
-    def list_saved_sessions(directory_path: Optional[str]) -> List[str]:
+    def list_saved_sessions(directory_path: Optional[str]) -> list[str]:
         if directory_path is None:
             dir_path = Path.home() / "tmp_results" / "wt_sessions" / "serialized"
         else:
@@ -128,7 +128,7 @@ class WTRemoteLayoutGenerator:
 
 if __name__ == "__main__":
     # Example usage
-    sample_tabs: List[TabConfig] = [
+    sample_tabs: list[TabConfig] = [
         {"tabName": "🤖Bot1", "startDir": "~/code/bytesense/bithence", "command": "python bot1.py --create_new_bot True"},
         {"tabName": "🤖Bot2", "startDir": "~/code/bytesense/bithence", "command": "python bot2.py --create_new_bot True"},
         {"tabName": "📊Monitor", "startDir": "~", "command": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10"},

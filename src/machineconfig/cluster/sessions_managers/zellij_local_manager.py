@@ -7,7 +7,7 @@ import subprocess
 import time
 import tempfile
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional
 
 from rich.console import Console
 
@@ -30,7 +30,7 @@ class ZellijLocalManager:
     def __init__(self, session_layouts: list[LayoutConfig]):
         self.session_name_prefix = "LocalJobMgr"
         self.session_layouts = session_layouts  # Store the original config
-        self.managers: List[ZellijLayoutGenerator] = []
+        self.managers: list[ZellijLayoutGenerator] = []
 
         # Create a ZellijLayoutGenerator for each session
         for layout_config in session_layouts:
@@ -50,7 +50,7 @@ class ZellijLocalManager:
         # Enhanced Rich logging for initialization
         console.print(f"[bold green]🔧 Initialized ZellijLocalManager[/bold green] [dim]with[/dim] [bright_green]{len(self.managers)} sessions[/bright_green]")
 
-    def get_all_session_names(self) -> List[str]:
+    def get_all_session_names(self) -> list[str]:
         """Get all managed session names."""
         return [manager.session_name for manager in self.managers if manager.session_name is not None]
 
@@ -399,7 +399,7 @@ class ZellijLocalManager:
         return instance
 
     @staticmethod
-    def list_saved_sessions() -> List[str]:
+    def list_saved_sessions() -> list[str]:
         """List all saved session IDs."""
         if not TMP_SERIALIZATION_DIR.exists():
             return []
