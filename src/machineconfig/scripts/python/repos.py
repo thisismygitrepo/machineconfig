@@ -102,7 +102,8 @@ def analyze(directory: DirectoryArgument = None) -> None:
 
 
 @app.command(no_args_is_help=True)
-def viz(repo: Optional[str] = typer.Option(Path.cwd().__str__(), "--repo-path", "-r", help="Path to git repository to visualize"), seconds_per_day: float = typer.Option(0.1, "--seconds-per-day", "-spd", help="Speed of simulation (lower = faster)")) -> None:
+def viz(repo: Optional[str] = typer.Option(Path.cwd().__str__(), "--repo", "-r", help="Path to git repository to visualize"),
+        seconds_per_day: float = typer.Option(0.1, "--seconds-per-day", "-spd", help="Speed of simulation (lower = faster)")) -> None:
     """🎬 Visualize repository activity using Gource."""
     repo_path = repo if repo is not None else "."
     from machineconfig.scripts.python.helpers_repos.grource import visualize
