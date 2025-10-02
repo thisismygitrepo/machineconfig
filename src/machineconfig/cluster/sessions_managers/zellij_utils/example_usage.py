@@ -30,15 +30,8 @@ def example_usage():
 
     try:
         # Create layout using the remote generator
-        generator = ZellijRemoteLayoutGenerator(remote_name=remote_name, session_name_prefix=session_name)
-
-        # Create layout file
-        import tempfile
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".kdl", delete=False, prefix="zellij_example_") as tmp_file:
-            output_path = tmp_file.name
-        layout_path = generator.create_zellij_layout(sample_layout, output_path)
-        print(f"✅ Remote layout created successfully: {layout_path}")
-
+        generator = ZellijRemoteLayoutGenerator(remote_name=remote_name, session_name=session_name, layout_config=sample_layout)
+        generator.create_layout_file()
         # Preview the layout content
         preview = generator.layout_generator.generate_layout_content(sample_layout)
         print(f"📄 Layout preview:\n{preview}")
