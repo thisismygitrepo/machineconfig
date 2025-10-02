@@ -77,7 +77,7 @@ def main(version: Optional[str], install_lib: bool = False):
     print(f"   ✨ Cleaned '{runtime_path}' and '{contrib_path}'.")
 
     print("\n📦 [Step 4/5] Installing Helix components...")
-    target_config_dir = PathExtended("~/.config/helix").expanduser()
+    target_config_dir = PathExtended.home().joinpath(".config/helix").expanduser()
     target_config_dir.mkdir(parents=True, exist_ok=True)
 
     if platform.system() in ["Linux", "Darwin"]:

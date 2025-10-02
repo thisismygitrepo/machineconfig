@@ -26,11 +26,13 @@ Additionally, files that contain data, sensitive information that should not be 
 
 
 # Windows:
+
 ```powershell
 iex (iwr bit.ly/cfgiawindows).Content
 ```
 
 # Linux and MacOS
+
 ```bash
 . <(curl -sL bit.ly/cfgialinux)
 ```

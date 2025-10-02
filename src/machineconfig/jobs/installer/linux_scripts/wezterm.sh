@@ -36,5 +36,5 @@ echo """#=======================================================================
 #=======================================================================
 """
 echo "🚀 You can now launch WezTerm from your applications menu or by typing 'wezterm' in terminal"
-echo "💡 Configure WezTerm by editing ~/.config/wezterm/wezterm.lua"
+echo "💡 Configure WezTerm by editing $HOME/.config/wezterm/wezterm.lua"
 echo "🔗 For more information and configuration options, visit: https://wezfurlong.org/wezterm/"

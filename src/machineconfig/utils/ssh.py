@@ -165,7 +165,6 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         if self._local_distro is None:
             command = """uv run --with distro python -c "import distro; print(distro.name(pretty=True))" """
             import subprocess
-
             res = subprocess.run(command, shell=True, capture_output=True, text=True).stdout.strip()
             self._local_distro = res
             return res
@@ -173,7 +172,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
 
     def get_remote_distro(self):
         if self._remote_distro is None:
-            res = self.run("""~/.local/bin/uv run --with distro python -c "import distro; print(distro.name(pretty=True))" """)
+            res = self.run("""$HOME/.local/bin/uv run --with distro python -c "import distro; print(distro.name(pretty=True))" """)
             self._remote_distro = res.op_if_successfull_or_default() or ""
         return self._remote_distro
 
@@ -225,7 +224,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         assert '"' not in cmd, 'Avoid using `"` in your command. I dont know how to handle this when passing is as command to python in pwsh command.'
         if not return_obj:
             return self.run(
-                cmd=f"""uv run --no-dev --project $HOME/code/machineconfig -c "{get_header(wdir=None)}{cmd}\n""" + '"',
+                cmd=f"""$HOME/.local/bin/uv run --no-dev --project $HOME/code/machineconfig -c "{get_header(wdir=None)}{cmd}\n""" + '"',
                 desc=desc or f"run_py on {self.get_remote_repr()}",
                 verbose=verbose,
                 strict_err=strict_err,

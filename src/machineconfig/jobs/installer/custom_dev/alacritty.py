@@ -30,8 +30,8 @@ def main(installer_data: InstallerData, version: Optional[str]) -> None:
         program = """
 
 cargo install alacritty
-mkdir -p ~/.config/alacritty/themes
-git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/themes
+mkdir -p $HOME/.config/alacritty/themes
+git clone https://github.com/alacritty/alacritty-theme $HOME/.config/alacritty/themes
 
 """
     elif platform.system() in ["Linux", "Darwin"]:
@@ -41,8 +41,8 @@ git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/theme
 
 
 cargo install alacritty
-mkdir -p ~/.config/alacritty/themes
-git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/themes
+mkdir -p $HOME/.config/alacritty/themes
+git clone https://github.com/alacritty/alacritty-theme $HOME/.config/alacritty/themes
 
 """
     else:
