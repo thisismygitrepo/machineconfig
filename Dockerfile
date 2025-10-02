@@ -10,37 +10,18 @@ FROM debian:bookworm-slim
 # as per https://github.com/moby/moby/issues/7281
 SHELL ["/bin/bash", "-c"]
 ENV SHELL=/bin/bash
+RUN apt-get update && apt-get install -y bash sudo xz-utils curl
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
-RUN apt-get update && apt-get install -y bash sudo xz-utils
-
-WORKDIR /app
-
-COPY ./src/machineconfig/setup_linux /app/setup_linux
-RUN chmod +x /app/setup_linux/*
-
-ENV package_manager="nala"
-RUN /app/setup_linux/apps.sh
-
-
-# # =================== INSTALL DOCKER SO WE RUN DATABASES IN CONTAINERS ===================
-# RUN chmod +x $HOME/code/machineconfig/src/machineconfig/jobs/python_custom_installers/scripts/linux/docker.sh
-# RUN bash     $HOME/code/machineconfig/src/machineconfig/jobs/python_custom_installers/scripts/linux/docker.sh
-
-RUN nala install -y redis-tools
-# this gives redis-cli, which is needed to talk to the redis-server that is running in the docker container.
-# same for pgsq, when the server runs, we will need the client to talk to it.
-RUN nala install -y postgresql-client
 
 WORKDIR /root/code/machineconfig
 COPY . .
-COPY ./src/machineconfig/settings/shells/ipy/profiles/default/startup/playext.py /root/.ipython/profile_default/startup/playext.py
 
 RUN /root/.local/bin/uv sync --no-dev
-RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops config public --method symlink --which all
-RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops config shell --method reference
-
 RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops install --group ESSENTIAL_SYSTEM
 RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops install --group ESSENTIAL
+RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops config public --method symlink --which all
+RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops config shell --method reference
 
 RUN touch /root/.bash_history
 # McFly complains about missing history file

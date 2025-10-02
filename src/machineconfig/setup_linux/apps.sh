@@ -48,6 +48,7 @@ sudo nala install samba
 sudo nala install fuse3 -y || true
 sudo nala install nfs-common -y || true
 
+
 # --GROUP:DEV_SYSTEM: graphviz,make,rust,libssl-dev,sqlite3,postgresql-client,redis-tools
 echo "📥 Installing Graphviz - graph visualization software..."
 echo "📥 Installing make - build automation tool..."
@@ -67,3 +68,8 @@ echo "📥 Installing Redis command-line tools..."
 sudo nala install sqlite3 -y || true
 sudo nala install postgresql-client -y || true
 sudo nala install redis-tools -y || true
+# # =================== INSTALL DOCKER SO WE RUN DATABASES IN CONTAINERS ===================
+# RUN chmod +x $HOME/code/machineconfig/src/machineconfig/jobs/python_custom_installers/scripts/linux/docker.sh
+# RUN bash     $HOME/code/machineconfig/src/machineconfig/jobs/python_custom_installers/scripts/linux/docker.sh
+# this gives redis-cli, which is needed to talk to the redis-server that is running in the docker container.
+# same for pgsq, when the server runs, we will need the client to talk to it.
