@@ -182,7 +182,7 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
         console.print(Panel("💾 [bold bright_cyan]DATA RETRIEVAL[/bold bright_cyan]\n[italic]Backup restoration[/italic]", border_style="bright_cyan"))
         console.print("🔧 Retrieving backup data", style="bold cyan")
         try:
-            from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve
+            from machineconfig.scripts.python.devops_helpers.devops_backup_retrieve import main_backup_retrieve
             main_backup_retrieve(direction="RETRIEVE")
             console.print("✅ Backup data retrieved successfully", style="bold green")
         except Exception as e:

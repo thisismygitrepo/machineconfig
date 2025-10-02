@@ -41,7 +41,7 @@ def create_from_function(
 
     # =========================  choosing function to run
     if function is None or function.strip() == "":
-        from machineconfig.scripts.python.fire_jobs_route_helper import choose_function_or_lines
+        from machineconfig.scripts.python.helpers_fire_command.fire_jobs_route_helper import choose_function_or_lines
         choice_function, choice_file, _kwargs_dict = choose_function_or_lines(choice_file, kwargs_dict={})
     else:
         choice_function = function

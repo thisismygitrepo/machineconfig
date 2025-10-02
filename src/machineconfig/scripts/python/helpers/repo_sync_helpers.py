@@ -1,12 +1,25 @@
 from machineconfig.utils.path_extended import PathExtended
-from machineconfig.scripts.python.get_zellij_cmd import get_zellij_cmd
 from machineconfig.utils.code import write_shell_script_to_file
 import platform
+from pathlib import Path
 from rich.console import Console
 from rich.panel import Panel
 
 console = Console()
 
+
+def get_zellij_cmd(wd1: Path, wd2: Path) -> str:
+    _ = wd1, wd2
+    lines = [
+        """ zellij action new-tab --name gitdiff""",
+        """zellij action new-pane --direction down --name local --cwd ./data """,
+        """zellij action write-chars "cd '{wd1}'; git status" """,
+        """zellij action move-focus up; zellij action close-pane """,
+        """zellij action new-pane --direction down --name remote --cwd code """,
+        """zellij action write-chars "cd '{wd2}' """,
+        """git status" """,
+    ]
+    return "; ".join(lines)
 
 def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cloud: str):
     console.print(Panel("🗑️  Deleting remote repo copy and pushing local copy", title="[bold blue]Repo Sync[/bold blue]", border_style="blue"))

@@ -34,7 +34,7 @@ app.add_typer(self_app, name="self")
 @self_app.command()
 def update():
     """🔄 UPDATE essential repos"""
-    import machineconfig.scripts.python.devops_update_repos as helper
+    import machineconfig.scripts.python.devops_helpers.devops_update_repos as helper
     helper.main()
 @self_app.command()
 def interactive():
@@ -44,7 +44,7 @@ def interactive():
 @self_app.command()
 def status():
     """📊 STATUS of machine, shell profile, apps, symlinks, dotfiles, etc."""
-    import machineconfig.scripts.python.devops_status as helper
+    import machineconfig.scripts.python.devops_helpers.devops_status as helper
     helper.main()
 @self_app.command()
 def clone():
@@ -100,12 +100,12 @@ def shell(method: Annotated[Literal["copy", "reference"], typer.Argument(help="C
 @nw_apps.command()
 def add_key():
     """🔑 SSH add pub key to this machine"""
-    import machineconfig.scripts.python.devops_add_ssh_key as helper
+    import machineconfig.scripts.python.devops_helpers.devops_add_ssh_key as helper
     helper.main()
 @nw_apps.command()
 def add_identity():
     """🗝️ SSH add identity (private key) to this machine"""
-    import machineconfig.scripts.python.devops_add_identity as helper
+    import machineconfig.scripts.python.devops_helpers.devops_add_identity as helper
     helper.main()
 @nw_apps.command()
 def connect():
@@ -131,14 +131,14 @@ def setup():
 @app_data.command()
 def backup():
     """💾 BACKUP"""
-    from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve
+    from machineconfig.scripts.python.devops_helpers.devops_backup_retrieve import main_backup_retrieve
     main_backup_retrieve(direction="BACKUP")
 
 
 @app_data.command()
 def retrieve():
     """📥 RETRIEVE"""
-    from machineconfig.scripts.python.devops_backup_retrieve import main_backup_retrieve
+    from machineconfig.scripts.python.devops_helpers.devops_backup_retrieve import main_backup_retrieve
     main_backup_retrieve(direction="RETRIEVE")
 
 

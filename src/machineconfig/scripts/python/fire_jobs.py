@@ -12,7 +12,7 @@ from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.path_helper import match_file_name, sanitize_path
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.accessories import get_repo_root, randstr
-from machineconfig.scripts.python.fire_jobs_args_helper import FireJobArgs, extract_kwargs, parse_fire_args_from_context
+from machineconfig.scripts.python.helpers_fire_command.fire_jobs_args_helper import FireJobArgs, extract_kwargs, parse_fire_args_from_context
 
 import platform
 from typing import Optional, Annotated
@@ -55,13 +55,13 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
     # =========================  choosing function to run
     choice_function: Optional[str] = None  # Initialize to avoid unbound variable
     if args.choose_function:
-        from machineconfig.scripts.python.fire_jobs_route_helper import choose_function_or_lines
+        from machineconfig.scripts.python.helpers_fire_command.fire_jobs_route_helper import choose_function_or_lines
         choice_function, choice_file, kwargs_dict = choose_function_or_lines(choice_file, kwargs_dict)
     else:
         choice_function = args.function
 
     if choice_file.suffix == ".py":
-        from machineconfig.scripts.python.fire_jobs_route_helper import get_command_streamlit
+        from machineconfig.scripts.python.helpers_fire_command.fire_jobs_route_helper import get_command_streamlit
         if args.streamlit:  exe = get_command_streamlit(choice_file, args.environment, repo_root)
         elif args.interactive is False: exe = "python"
         elif args.jupyter: exe = "jupyter-lab"

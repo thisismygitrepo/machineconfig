@@ -41,7 +41,7 @@ def push(directory: DirectoryArgument = None,
     no_sync: NoSyncOption = False,
 ) -> None:
     """🚀 Push changes across repositories."""
-    from machineconfig.scripts.python.repos_helper import git_operations
+    from machineconfig.scripts.python.repos_helpers.repos_helper import git_operations
     git_operations(directory, pull=False, commit=False, push=True, recursive=recursive, no_sync=no_sync)
 @app.command(no_args_is_help=True)
 def pull(
@@ -50,7 +50,7 @@ def pull(
     no_sync: NoSyncOption = False,
 ) -> None:
     """⬇️ Pull changes across repositories."""
-    from machineconfig.scripts.python.repos_helper import git_operations
+    from machineconfig.scripts.python.repos_helpers.repos_helper import git_operations
     git_operations(directory, pull=True, commit=False, push=False, recursive=recursive, no_sync=no_sync)
 @app.command(no_args_is_help=True)
 def commit(
@@ -59,7 +59,7 @@ def commit(
     no_sync: NoSyncOption = False,
 ) -> None:
     """💾 Commit changes across repositories."""
-    from machineconfig.scripts.python.repos_helper import git_operations
+    from machineconfig.scripts.python.repos_helpers.repos_helper import git_operations
     git_operations(directory, pull=False, commit=True, push=False, recursive=recursive, no_sync=no_sync)
 @app.command(no_args_is_help=True)
 def cleanup(
@@ -68,7 +68,7 @@ def cleanup(
     no_sync: NoSyncOption = False,
 ) -> None:
     """🔄 Pull, commit, and push changes across repositories."""
-    from machineconfig.scripts.python.repos_helper import git_operations
+    from machineconfig.scripts.python.repos_helpers.repos_helper import git_operations
     git_operations(directory, pull=True, commit=True, push=True, recursive=recursive, no_sync=no_sync)
 
 
@@ -78,10 +78,10 @@ def capture(
     cloud: CloudOption = None,
 ) -> None:
     """📝 Record repositories into a repos.json specification."""
-    from machineconfig.scripts.python.repos_helper import print_banner, resolve_directory
+    from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner, resolve_directory
     print_banner()
     repos_root = resolve_directory(directory)
-    from machineconfig.scripts.python.repos_helper_record import main as record_repos
+    from machineconfig.scripts.python.repos_helpers.repos_helper_record import main as record_repos
     save_path = record_repos(repos_root=repos_root)
     from machineconfig.utils.path_extended import PathExtended
     if cloud is not None:
@@ -92,7 +92,7 @@ def clone(
     cloud: CloudOption = None,
 ) -> None:
     """📥 Clone repositories described by a repos.json specification."""
-    from machineconfig.scripts.python.repos_helper import print_banner, clone_from_specs
+    from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner, clone_from_specs
     print_banner()
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=False)
 
@@ -103,7 +103,7 @@ def checkout_command(
     cloud: CloudOption = None,
 ) -> None:
     """🔀 Check out specific commits listed in the specification."""
-    from machineconfig.scripts.python.repos_helper import print_banner, clone_from_specs
+    from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner, clone_from_specs
     print_banner()
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=True)
 
@@ -114,7 +114,7 @@ def checkout_to_branch_command(
     cloud: CloudOption = None,
 ) -> None:
     """🔀 Check out to the main branch defined in the specification."""
-    from machineconfig.scripts.python.repos_helper import print_banner, clone_from_specs
+    from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner, clone_from_specs
     print_banner()
     clone_from_specs(directory, cloud, checkout_branch_flag=True, checkout_commit_flag=False)
 
@@ -124,9 +124,9 @@ def analyze(
     directory: DirectoryArgument = None,
 ) -> None:
     """📊 Analyze repository development over time."""
-    from machineconfig.scripts.python.repos_helper import print_banner
+    from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner
     print_banner()
     repo_path = directory if directory is not None else "."
-    from machineconfig.scripts.python.count_lines_frontend import analyze_repo_development
+    from machineconfig.scripts.python.repos_helpers.count_lines_frontend import analyze_repo_development
     analyze_repo_development(repo_path=repo_path)
 
