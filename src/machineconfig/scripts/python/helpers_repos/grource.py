@@ -146,7 +146,7 @@ def visualize(
     print("\n" + "=" * 80)
     print("🎬 GOURCE VISUALIZATION 🎬")
     print("=" * 80 + "\n")
-
+    repo_path = Path(repo_path).expanduser().resolve()
     if not repo_path.exists():
         print(f"❌ Error: Repository path does not exist: {repo_path}")
         raise typer.Exit(1)

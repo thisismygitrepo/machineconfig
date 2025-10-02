@@ -17,7 +17,6 @@ INSTALL_VERSION_ROOT = CONFIG_PATH.joinpath("cli_tools_installers/versions")
 INSTALL_TMP_DIR = Path.home().joinpath("tmp_results", "tmp_installers")
 
 # LINUX_INSTALL_PATH = '/usr/local/bin'
-# LINUX_INSTALL_PATH = '~/.local/bin'
 LINUX_INSTALL_PATH = Path.home().joinpath(".local/bin").__str__()
 WINDOWS_INSTALL_PATH = Path.home().joinpath("AppData/Local/Microsoft/WindowsApps").__str__()
 
