@@ -100,7 +100,7 @@ def install_gource_windows(version: Optional[str] = None) -> None:
 
 
 def visualize(
-    repo_path: Path = typer.Option(Path.cwd(), "--repo-path", "-r", help="Path to git repository to visualize"),
+    repo_path: str = typer.Option(Path.cwd().__str__(), "--repo-path", "-r", help="Path to git repository to visualize"),
     output_file: Optional[Path] = typer.Option(None, "--output", "-o", help="Output video file (e.g., output.mp4). If specified, gource will render to video."),
     resolution: str = typer.Option("1920x1080", "--resolution", "-res", help="Video resolution (e.g., 1920x1080, 1280x720)"),
     seconds_per_day: float = typer.Option(0.1, "--seconds-per-day", "-spd", help="Speed of simulation (lower = faster)"),
@@ -165,11 +165,22 @@ def visualize(
     print()
 
     gource_exe = get_gource_executable()
-    if gource_exe.exists():
-        gource_cmd = str(gource_exe)
+    if not gource_exe.exists():
+        if platform.system() == "Windows":
+            print(f"⚠️  Portable gource not found at {gource_exe}, installing...")
+            install_gource_windows()
+            # Check again after installation
+            if gource_exe.exists():
+                print(f"✅ Gource installed successfully at: {gource_exe}")
+                gource_cmd = str(gource_exe)
+            else:
+                print("❌ Installation failed, falling back to system gource")
+                gource_cmd = "gource"
+        else:
+            gource_cmd = "gource"
+            print(f"⚠️  Portable gource not found at {gource_exe}, using system gource")
     else:
-        gource_cmd = "gource"
-        print(f"⚠️  Portable gource not found at {gource_exe}, using system gource")
+        gource_cmd = str(gource_exe)
 
     cmd = [gource_cmd, str(repo_path)]
 

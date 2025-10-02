@@ -8,14 +8,6 @@ from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
 import typer
 
 
-
-def print_banner() -> None:
-    typer.echo("\n" + "=" * 50)
-    typer.echo("📂 Welcome to the Repository Manager")
-    typer.echo("=" * 50 + "\n")
-
-
-
 def resolve_directory(directory: Optional[str]) -> Path:
     if directory is None:
         directory = Path.cwd().as_posix()
@@ -30,7 +22,7 @@ def git_operations(
     recursive: bool,
     no_sync: bool,
 ) -> None:
-    print_banner()
+    
     repos_root = resolve_directory(directory)
     auto_sync = not no_sync
     from machineconfig.scripts.python.repos_helpers.repos_helper_action import perform_git_operations
@@ -73,7 +65,7 @@ def clone_from_specs(
     checkout_branch_flag: bool,
     checkout_commit_flag: bool,
 ) -> None:
-    print_banner()
+    
     typer.echo("\n📥 Cloning or checking out repositories...")
     spec_path = resolve_spec_path(directory, cloud)
     from machineconfig.scripts.python.repos_helpers.repos_helper_clone import clone_repos

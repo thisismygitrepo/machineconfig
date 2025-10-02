@@ -5,10 +5,9 @@ in the event that username@github.com is not mentioned in the remote url.
 
 """
 
-
+from pathlib import Path
 from typing import Annotated, Optional
 import typer
-
 
 
 app = typer.Typer(help="� Manage development repositories", no_args_is_help=True)
@@ -16,117 +15,106 @@ sync_app = typer.Typer(help="� Manage repository specifications and syncing", 
 app.add_typer(sync_app, name="sync", help="� Sync repositories using saved specs")
 
 
-DirectoryArgument = Annotated[
-    Optional[str],
-    typer.Argument(help="📁 Folder containing repos or the specs JSON file to use."),
-]
-RecursiveOption = Annotated[
-    bool,
-    typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories."),
-]
-NoSyncOption = Annotated[
-    bool,
-    typer.Option("--no-sync", help="🚫 Disable automatic uv sync after pulls."),
-]
-CloudOption = Annotated[
-    Optional[str],
-    typer.Option("--cloud", "-c", help="☁️ Upload to or download from this cloud remote."),
-]
-
+DirectoryArgument = Annotated[Optional[str], typer.Argument(help="📁 Folder containing repos or the specs JSON file to use.")]
+RecursiveOption = Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")]
+NoSyncOption = Annotated[bool, typer.Option("--no-sync", help="🚫 Disable automatic uv sync after pulls.")]
+CloudOption = Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁️ Upload to or download from this cloud remote.")]
 
 
 @app.command(no_args_is_help=True)
-def push(directory: DirectoryArgument = None,
-    recursive: RecursiveOption = False,
-    no_sync: NoSyncOption = False,
-) -> None:
+def push(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
     """🚀 Push changes across repositories."""
     from machineconfig.scripts.python.repos_helpers.repos_helper import git_operations
+
     git_operations(directory, pull=False, commit=False, push=True, recursive=recursive, no_sync=no_sync)
+
+
 @app.command(no_args_is_help=True)
-def pull(
-    directory: DirectoryArgument = None,
-    recursive: RecursiveOption = False,
-    no_sync: NoSyncOption = False,
-) -> None:
+def pull(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
     """⬇️ Pull changes across repositories."""
     from machineconfig.scripts.python.repos_helpers.repos_helper import git_operations
+
     git_operations(directory, pull=True, commit=False, push=False, recursive=recursive, no_sync=no_sync)
+
+
 @app.command(no_args_is_help=True)
-def commit(
-    directory: DirectoryArgument = None,
-    recursive: RecursiveOption = False,
-    no_sync: NoSyncOption = False,
-) -> None:
+def commit(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
     """💾 Commit changes across repositories."""
     from machineconfig.scripts.python.repos_helpers.repos_helper import git_operations
+
     git_operations(directory, pull=False, commit=True, push=False, recursive=recursive, no_sync=no_sync)
+
+
 @app.command(no_args_is_help=True)
-def cleanup(
-    directory: DirectoryArgument = None,
-    recursive: RecursiveOption = False,
-    no_sync: NoSyncOption = False,
-) -> None:
+def cleanup(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
     """🔄 Pull, commit, and push changes across repositories."""
     from machineconfig.scripts.python.repos_helpers.repos_helper import git_operations
+
     git_operations(directory, pull=True, commit=True, push=True, recursive=recursive, no_sync=no_sync)
 
 
 @sync_app.command(no_args_is_help=True)
-def capture(
-    directory: DirectoryArgument = None,
-    cloud: CloudOption = None,
-) -> None:
+def capture(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """📝 Record repositories into a repos.json specification."""
     from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner, resolve_directory
+
     print_banner()
     repos_root = resolve_directory(directory)
     from machineconfig.scripts.python.repos_helpers.repos_helper_record import main as record_repos
+
     save_path = record_repos(repos_root=repos_root)
     from machineconfig.utils.path_extended import PathExtended
+
     if cloud is not None:
         PathExtended(save_path).to_cloud(rel2home=True, cloud=cloud)
+
+
 @sync_app.command(no_args_is_help=True)
-def clone(
-    directory: DirectoryArgument = None,
-    cloud: CloudOption = None,
-) -> None:
+def clone(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """📥 Clone repositories described by a repos.json specification."""
     from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner, clone_from_specs
+
     print_banner()
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=False)
 
 
 @sync_app.command(name="checkout-to-commit", no_args_is_help=True)
-def checkout_command(
-    directory: DirectoryArgument = None,
-    cloud: CloudOption = None,
-) -> None:
+def checkout_command(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """🔀 Check out specific commits listed in the specification."""
     from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner, clone_from_specs
+
     print_banner()
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=True)
 
 
 @sync_app.command(name="checkout-to-branch", no_args_is_help=True)
-def checkout_to_branch_command(
-    directory: DirectoryArgument = None,
-    cloud: CloudOption = None,
-) -> None:
+def checkout_to_branch_command(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """🔀 Check out to the main branch defined in the specification."""
     from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner, clone_from_specs
+
     print_banner()
     clone_from_specs(directory, cloud, checkout_branch_flag=True, checkout_commit_flag=False)
 
 
 @app.command(no_args_is_help=True)
-def analyze(
-    directory: DirectoryArgument = None,
-) -> None:
+def analyze(directory: DirectoryArgument = None) -> None:
     """📊 Analyze repository development over time."""
     from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner
+
     print_banner()
     repo_path = directory if directory is not None else "."
     from machineconfig.scripts.python.repos_helpers.count_lines_frontend import analyze_repo_development
+
     analyze_repo_development(repo_path=repo_path)
 
+
+@app.command(no_args_is_help=True)
+def viz(repo_path: Optional[str] = typer.Option(Path.cwd().__str__(), "--repo-path", "-r", help="Path to git repository to visualize"), seconds_per_day: float = typer.Option(0.1, "--seconds-per-day", "-spd", help="Speed of simulation (lower = faster)")) -> None:
+    """🎬 Visualize repository activity using Gource."""
+    from machineconfig.scripts.python.repos_helpers.repos_helper import print_banner
+
+    print_banner()
+    repo_path = repo_path if repo_path is not None else "."
+    from machineconfig.scripts.python.helpers_repos.grource import visualize
+
+    visualize(repo_path=repo_path, seconds_per_day=seconds_per_day)
