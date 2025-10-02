@@ -130,34 +130,21 @@ class WTLayoutGenerator:
 
         return " ".join(wt_parts)
 
-    def create_wt_script(self, tabs: List[TabConfig], output_dir: Path, session_name: str, window_name: str | None = None) -> str:
-        """Create a Windows Terminal PowerShell script and return its absolute path."""
+    def create_wt_script(self, tabs: List[TabConfig], session_name: str, window_name: str | None = None) -> str:
+        """Create a Windows Terminal PowerShell script content and return it as string."""
         self.validate_tab_config(tabs)
 
         # Generate unique suffix for this script
         random_suffix = self.generate_random_suffix()
         wt_command = self.generate_wt_command(tabs, window_name or session_name)
 
-        try:
-            # Create output directory if it doesn't exist
-            output_dir.mkdir(parents=True, exist_ok=True)
-
-            # Create PowerShell script
-            ps1_file = output_dir / f"wt_layout_{session_name}_{random_suffix}.ps1"
-
-            # Create PowerShell script content
-            text = f"""# Windows Terminal layout for {session_name}
+        # Create PowerShell script content
+        script_content = f"""# Windows Terminal layout for {session_name}
 # Generated on {random_suffix}
 {wt_command}
 """
-            ps1_file.write_text(text, encoding="utf-8")
-
-            logger.info(f"Windows Terminal PowerShell script created: {ps1_file.absolute()}")
-            return str(ps1_file.absolute())
-
-        except OSError as e:
-            logger.error(f"Failed to create PowerShell script: {e}")
-            raise
+        logger.info("Windows Terminal PowerShell script content generated")
+        return script_content
 
     def generate_split_pane_command(self, tabs: List[TabConfig], window_name: str | None = None) -> str:
         """Generate Windows Terminal command with split panes instead of separate tabs."""

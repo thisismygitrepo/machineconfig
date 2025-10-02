@@ -8,7 +8,7 @@ from rich.console import Console
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import ComprehensiveStatus, CommandStatus
 from machineconfig.cluster.sessions_managers.helpers.zellij_local_helper import (
-    generate_random_suffix, validate_layout_config, create_tab_section,
+    validate_layout_config, create_tab_section,
     check_command_status, check_zellij_session_status
 )
 
@@ -16,7 +16,6 @@ from machineconfig.cluster.sessions_managers.helpers.zellij_local_helper import 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 console = Console()
-TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "session_manager", "zellij", "layout_manager")
 
 
 class ZellijLayoutGenerator:
@@ -36,9 +35,8 @@ class ZellijLayoutGenerator:
 
 
 
-    def create_zellij_layout(self, layout_config: LayoutConfig, output_path: str, session_name: Optional[str]) -> str:
+    def create_zellij_layout(self, layout_config: LayoutConfig, session_name: Optional[str]) -> str:
         validate_layout_config(layout_config)
-
         # Enhanced Rich logging
         tab_count = len(layout_config["layoutTabs"])
         layout_name = layout_config["layoutName"]
@@ -57,24 +55,8 @@ class ZellijLayoutGenerator:
             layout_content += "\n" + create_tab_section(tab)
         layout_content += "\n}\n"
 
-        try:
-            random_suffix = generate_random_suffix(8)
-            path_obj = Path(output_path)
-            if path_obj.suffix == ".kdl":
-                layout_file = path_obj
-                layout_file.parent.mkdir(parents=True, exist_ok=True)
-            else:
-                path_obj.mkdir(parents=True, exist_ok=True)
-                layout_file = path_obj / f"zellij_layout_{self.session_name or 'default'}_{random_suffix}.kdl"
-            layout_file.write_text(layout_content, encoding="utf-8")
-            self.layout_path = str(layout_file.absolute())
-
-            # Enhanced Rich logging for file creation
-            console.print(f"[bold green]✅ Zellij layout file created:[/bold green] [cyan]{self.layout_path}[/cyan]")
-            return self.layout_path
-        except OSError as e:
-            logger.error(f"Failed to create layout file: {e}")
-            raise
+        console.print("[bold green]✅ Zellij layout content generated[/bold green]")
+        return layout_content
 
 
 
@@ -177,15 +159,38 @@ class ZellijLayoutGenerator:
 
 def created_zellij_layout(layout_config: LayoutConfig, output_path: str) -> str:
     generator = ZellijLayoutGenerator()
-    return generator.create_zellij_layout(layout_config, output_path, None)
-
+    layout_content = generator.create_zellij_layout(layout_config, None)
+    
+    path_obj = Path(output_path)
+    if path_obj.is_dir():
+        raise ValueError("Output path must be a file path ending with .kdl, not a directory")
+    if path_obj.suffix == ".kdl":
+        layout_file = path_obj
+        layout_file.parent.mkdir(parents=True, exist_ok=True)
+    else:
+        raise ValueError("Output path must end with .kdl")
+    
+    layout_file.write_text(layout_content, encoding="utf-8")
+    generator.layout_path = str(layout_file.absolute())
+    console.print(f"[bold green]✅ Zellij layout file created:[/bold green] [cyan]{generator.layout_path}[/cyan]")
+    return generator.layout_path
 
 def run_zellij_layout(layout_config: LayoutConfig):
-    layout_path = created_zellij_layout(layout_config=layout_config, output_path=str(TMP_LAYOUT_DIR))
+    import tempfile
+    tmp_dir = Path.home().joinpath("tmp_results", "session_manager", "zellij", "layout_manager")
+    tmp_dir.mkdir(parents=True, exist_ok=True)
+    __, layout_path_str = tempfile.mkstemp(suffix=".kdl", prefix=f"zellij_layout_{layout_config['layoutName']}_", dir=str(tmp_dir))
+    layout_path = Path(layout_path_str)
+    
+    generator = ZellijLayoutGenerator()
+    layout_content = generator.create_zellij_layout(layout_config, None)
+    layout_path.write_text(layout_content, encoding="utf-8")
+    generator.layout_path = str(layout_path.absolute())
+    
     session_name = layout_config["layoutName"]
     try:
         from machineconfig.cluster.sessions_managers.utils.enhanced_command_runner import enhanced_zellij_session_start
-        enhanced_zellij_session_start(session_name, layout_path)
+        enhanced_zellij_session_start(session_name, str(layout_path))
     except ImportError:
         # Fallback to original implementation
         cmd = f"zellij delete-session --force {session_name}; zellij --layout {layout_path} a -b {session_name}"
@@ -220,8 +225,8 @@ if __name__ == "__main__":
     sample_layout: LayoutConfig = {
         "layoutName": "SampleBots",
         "layoutTabs": [
-            {"tabName": "🤖Bot1", "startDir": "~/code/bytesense/bithence", "command": "~/scripts/fire -mO go1.py bot1 -- --create_new_bot=True"},
-            {"tabName": "🤖Bot2", "startDir": "~/code/bytesense/bithence", "command": "~/scripts/fire -mO go2.py bot2 -- --create_new_bot=True"},
+            {"tabName": "Explorer", "startDir": "~/code", "command": "lf"},
+            {"tabName": "🤖Bot2", "startDir": "~", "command": "cmatrix"},
             {"tabName": "📊Monitor", "startDir": "~", "command": "htop"},
             {"tabName": "📝Logs", "startDir": "/var/log", "command": "tail -f /var/log/app.log"},
         ],
@@ -230,8 +235,16 @@ if __name__ == "__main__":
     try:
         # Create layout using the generator directly to access status methods
         generator = ZellijLayoutGenerator()
-        layout_path = generator.create_zellij_layout(sample_layout, str(TMP_LAYOUT_DIR), "test_session")
-        print(f"✅ Layout created successfully: {layout_path}")
+        layout_content = generator.create_zellij_layout(sample_layout, "test_session")
+        
+        # Write to file
+        tmp_dir = Path.home() / "tmp_results" / "zellij_layouts"
+        tmp_dir.mkdir(parents=True, exist_ok=True)
+        layout_file = tmp_dir / "test_layout.kdl"
+        layout_file.write_text(layout_content, encoding="utf-8")
+        generator.layout_path = str(layout_file.absolute())
+        
+        print(f"✅ Layout created successfully: {generator.layout_path}")
 
         # Demonstrate status checking
         print("\n🔍 Checking command status (this is just a demo - commands aren't actually running):")

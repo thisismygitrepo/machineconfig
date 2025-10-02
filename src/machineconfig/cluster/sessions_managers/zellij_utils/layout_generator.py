@@ -7,7 +7,6 @@ import shlex
 import random
 import string
 from typing import List, Tuple
-from pathlib import Path
 import logging
 
 from rich.console import Console
@@ -116,26 +115,12 @@ class LayoutGenerator:
 
         return layout_content
 
-    def create_layout_file(self, layout_config: LayoutConfig, output_dir: Path, session_name: str) -> str:
-        """Create a layout file and return its absolute path."""
+    def create_layout_file(self, layout_config: LayoutConfig, session_name: str) -> str:
+        """Create layout content and return it as string."""
         self.validate_tab_config(layout_config)
 
-        # Generate unique suffix for this layout
-        random_suffix = self.generate_random_suffix(8)
         layout_content = self.generate_layout_content(layout_config)
 
-        try:
-            # Create output directory if it doesn't exist
-            output_dir.mkdir(parents=True, exist_ok=True)
-            layout_file = output_dir / f"zellij_layout_{session_name}_{random_suffix}.kdl"
-
-            # Write layout file
-            layout_file.write_text(layout_content, encoding="utf-8")
-
-            # Enhanced Rich logging
-            console.print(f"[bold green]✅ Zellij layout file created:[/bold green] [cyan]{layout_file.absolute()}[/cyan]")
-            return str(layout_file.absolute())
-
-        except OSError as e:
-            logger.error(f"Failed to create layout file: {e}")
-            raise
+        # Enhanced Rich logging
+        console.print("[bold green]✅ Zellij layout content generated[/bold green]")
+        return layout_content

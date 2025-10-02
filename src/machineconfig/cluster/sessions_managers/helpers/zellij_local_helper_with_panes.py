@@ -185,15 +185,14 @@ def create_zellij_layout_with_panes(
         layout_content += "\n" + create_tab_with_panes(group, tab_name, common_cwd, split_direction)
     layout_content += "\n}\n"
     try:
-        random_suffix = generate_random_suffix(8)
         path_obj = Path(output_path)
+        if path_obj.is_dir():
+            raise ValueError("Output path must be a file path ending with .kdl, not a directory")
         if path_obj.suffix == ".kdl":
             layout_file = path_obj
             layout_file.parent.mkdir(parents=True, exist_ok=True)
         else:
-            path_obj.mkdir(parents=True, exist_ok=True)
-            session_name = layout_config["layoutName"]
-            layout_file = path_obj / f"zellij_layout_{session_name}_{random_suffix}.kdl"
+            raise ValueError("Output path must end with .kdl")
         layout_file.write_text(layout_content, encoding="utf-8")
         logger.info(f"Created Zellij layout file: {layout_file.absolute()}")
         return str(layout_file.absolute())
@@ -217,21 +216,21 @@ if __name__ == "__main__":
     print("=" * 80)
     print("DEMO 1: panes_per_tab=1 (same as original behavior)")
     print("=" * 80)
-    layout_path_1 = create_zellij_layout_with_panes(sample_layout, "/tmp/zellij_test", panes_per_tab=1)
+    layout_path_1 = create_zellij_layout_with_panes(sample_layout, "/tmp/zellij_test_123.kdl", panes_per_tab=1)
     print(f"✅ Layout created: {layout_path_1}")
     print("\nContent preview:")
     print(Path(layout_path_1).read_text())
     print("\n" + "=" * 80)
     print("DEMO 2: panes_per_tab=2 (two panes per tab)")
     print("=" * 80)
-    layout_path_2 = create_zellij_layout_with_panes(sample_layout, "/tmp/zellij_test", panes_per_tab=2, split_direction="vertical")
+    layout_path_2 = create_zellij_layout_with_panes(layout_config=sample_layout, output_path="/tmp/zellij_test_1234.kdl", panes_per_tab=2, split_direction="vertical")
     print(f"✅ Layout created: {layout_path_2}")
     print("\nContent preview:")
     print(Path(layout_path_2).read_text())
     print("\n" + "=" * 80)
     print("DEMO 3: panes_per_tab=3 (three panes per tab, horizontal split)")
     print("=" * 80)
-    layout_path_3 = create_zellij_layout_with_panes(sample_layout, "/tmp/zellij_test", panes_per_tab=3, split_direction="horizontal")
+    layout_path_3 = create_zellij_layout_with_panes(layout_config=sample_layout, output_path="/tmp/zellij_test_12345.kdl", panes_per_tab=3, split_direction="horizontal")
     print(f"✅ Layout created: {layout_path_3}")
     print("\nContent preview:")
     print(Path(layout_path_3).read_text())

@@ -5,6 +5,7 @@ import uuid
 import logging
 import subprocess
 import time
+import tempfile
 from pathlib import Path
 from typing import Optional, List
 
@@ -19,8 +20,8 @@ from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 console = Console()
+TMP_SERIALIZATION_DIR = Path.home() / "tmp_results" / "zellij_sessions" / "serialized"
 
-TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "zellij", "local_manager")
 
 
 class ZellijLocalManager:
@@ -36,7 +37,14 @@ class ZellijLocalManager:
             session_name = layout_config["layoutName"].replace(" ", "_")
             manager = ZellijLayoutGenerator()
             full_session_name = f"{self.session_name_prefix}_{session_name}"
-            manager.create_zellij_layout(layout_config=layout_config, output_dir=None, session_name=full_session_name)
+            
+            layout_content = manager.create_zellij_layout(layout_config=layout_config, session_name=full_session_name)
+            
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".kdl", delete=False, prefix=f"zellij_layout_{full_session_name}_") as tmp_file:
+                tmp_file.write(layout_content)
+                layout_path = tmp_file.name
+            
+            manager.layout_path = layout_path
             self.managers.append(manager)
 
         # Enhanced Rich logging for initialization
@@ -166,8 +174,9 @@ class ZellijLocalManager:
             if session_name is None:
                 continue  # Skip managers without a session name
 
-            # Get session status
-            session_status = ZellijLayoutGenerator.check_zellij_session_status(session_name)
+            # Get session status using the helper function
+            from machineconfig.cluster.sessions_managers.helpers.zellij_local_helper import check_zellij_session_status
+            session_status = check_zellij_session_status(session_name)
 
             # Get commands status for this session
             commands_status = manager.check_all_commands_status()

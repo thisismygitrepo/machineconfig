@@ -1,6 +1,7 @@
 from datetime import datetime
 import json
 import uuid
+import tempfile
 from pathlib import Path
 from typing import Optional, Dict
 from machineconfig.utils.scheduler import Scheduler
@@ -10,8 +11,8 @@ from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 from machineconfig.logger import get_logger
 
 
-TMP_SERIALIAZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "zellij", "remote_manager")
 logger = get_logger("cluster.sessions_managers.zellij_remote_manager")
+TMP_SERIALIAZATION_DIR = Path.home() / "tmp_results" / "zellij_sessions" / "serialized"
 
 
 class ZellijSessionManager:
@@ -21,7 +22,14 @@ class ZellijSessionManager:
         self.managers: list[ZellijRemoteLayoutGenerator] = []
         for machine, layout_config in machine_layouts.items():
             an_m = ZellijRemoteLayoutGenerator(remote_name=machine, session_name_prefix=self.session_name_prefix)
-            an_m.create_zellij_layout(layout_config=layout_config, output_dir=None)
+            
+            layout_content = an_m.create_zellij_layout(layout_config=layout_config)
+            
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".kdl", delete=False, prefix=f"zellij_layout_{machine}_") as tmp_file:
+                tmp_file.write(layout_content)
+                layout_path = tmp_file.name
+            
+            an_m.layout_path = layout_path
             self.managers.append(an_m)
 
     def ssh_to_all_machines(self) -> str:

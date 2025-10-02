@@ -15,7 +15,7 @@ from machineconfig.utils.schemas.layouts.layout_types import TabConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "wt_layouts", "layout_manager")
+TMP_LAYOUT_DIR = Path.home() / "tmp_results" / "wt_layouts"
 
 
 class WTRemoteLayoutGenerator:
@@ -34,12 +34,11 @@ class WTRemoteLayoutGenerator:
 
     # Tabs are stored and used as List[TabConfig]; no legacy dict compatibility
 
-    def create_wt_layout(self, tabs: List[TabConfig], output_path: str) -> str:
+    def create_wt_layout(self, tabs: List[TabConfig]) -> str:
         logger.info(f"Creating Windows Terminal layout with {len(tabs)} tabs for remote '{self.remote_name}'")
         self.tabs = tabs
-        path_obj = Path(output_path)
-        self.script_path = self.layout_generator.create_wt_script(self.tabs, path_obj, self.session_name)
-        return self.script_path
+        script_content = self.layout_generator.create_wt_script(self.tabs, self.session_name, window_name=None)
+        return script_content
 
     # Legacy methods for backward compatibility
 
@@ -143,8 +142,17 @@ if __name__ == "__main__":
     try:
         # Create layout using the remote generator
         generator = WTRemoteLayoutGenerator(remote_name=remote_name, session_name_prefix=session_name)
-        script_path = generator.create_wt_layout(sample_tabs, str(TMP_LAYOUT_DIR))
-        print(f"✅ Remote layout created successfully: {script_path}")
+        script_content = generator.create_wt_layout(sample_tabs)
+        
+        # Write to file
+        TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
+        from machineconfig.cluster.sessions_managers.wt_utils.layout_generator import WTLayoutGenerator as WTGen
+        random_suffix = WTGen.generate_random_suffix()
+        script_file = TMP_LAYOUT_DIR / f"wt_layout_{generator.session_name}_{random_suffix}.ps1"
+        script_file.write_text(script_content, encoding="utf-8")
+        generator.script_path = str(script_file.absolute())
+        
+        print(f"✅ Remote layout created successfully: {generator.script_path}")
 
         # Check if Windows Terminal is available on remote
         wt_available = generator.remote_executor.check_wt_available()

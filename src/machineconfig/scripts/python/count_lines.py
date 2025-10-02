@@ -18,12 +18,12 @@ app = typer.Typer()
 
 
 def count_lines_in_commit(commit: "Any") -> int:
-    total_lines = 0
-    for file in commit.stats.files:
-        if str(file).endswith(".py"):
-            blob = commit.tree / file
-            total_lines += len(blob.data_stream.read().decode("utf-8").splitlines())
-    return total_lines
+    _total_lines = 0
+    for _file in commit.stats.files:
+        if str(_file).endswith(".py"):
+            _blob = commit.tree / _file
+            _total_lines += len(_blob.data_stream.read().decode("utf-8").splitlines())
+    return _total_lines
 
 
 def count_historical_loc(repo_path: str) -> int:

@@ -1,18 +1,20 @@
-import sys
 import git
-from machineconfig.utils.io import read_ini
-from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.terminal import Response
-
-from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
-from machineconfig.utils.options import choose_from_options
-from machineconfig.utils.code import get_shell_file_executing_python_script, write_shell_script_to_file
-import platform
-import subprocess
-from typing import Optional, Literal
 from rich.console import Console
 from rich.panel import Panel
 import typer
+
+from machineconfig.utils.io import read_ini
+from machineconfig.utils.path_extended import PathExtended
+from machineconfig.utils.terminal import Response
+from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
+from machineconfig.utils.options import choose_from_options
+from machineconfig.utils.code import get_shell_file_executing_python_script, write_shell_script_to_file
+
+import platform
+import subprocess
+from typing import Optional, Literal
+from pathlib import Path
+import sys
 
 console = Console()
 

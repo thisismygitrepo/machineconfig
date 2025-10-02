@@ -23,8 +23,8 @@ class WTSessionReport(TypedDict):
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 console = Console()
+TMP_SERIALIZATION_DIR = Path.home() / "tmp_results" / "wt_sessions" / "serialized"
 
-TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "wt", "local_manager")
 
 
 class WTLocalManager:
@@ -46,8 +46,16 @@ class WTLocalManager:
         # Create a WTLayoutGenerator for each session
         for layout_config in session_layouts:
             manager = WTLayoutGenerator()
+            script_content = manager.create_wt_layout(layout_config=layout_config)
+            
+            from machineconfig.cluster.sessions_managers.wt_utils.layout_generator import WTLayoutGenerator as WTGen
             tmp_layout_dir = Path.home().joinpath("tmp_results", "session_manager", "wt", "layout_manager")
-            manager.create_wt_layout(layout_config=layout_config, output_path=str(tmp_layout_dir))
+            tmp_layout_dir.mkdir(parents=True, exist_ok=True)
+            random_suffix = WTGen.generate_random_suffix(8)
+            script_file = tmp_layout_dir / f"wt_layout_{manager.session_name}_{random_suffix}.ps1"
+            script_file.write_text(script_content, encoding="utf-8")
+            manager.script_path = str(script_file.absolute())
+            
             self.managers.append(manager)
 
         logger.info(f"Initialized WTLocalManager with {len(self.managers)} sessions")

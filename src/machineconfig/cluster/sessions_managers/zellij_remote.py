@@ -35,7 +35,7 @@ class ZellijRemoteLayoutGenerator:
         self.session_manager = SessionManager(self.remote_executor, self.session_name, TMP_LAYOUT_DIR)
         self.status_reporter = StatusReporter(self.process_monitor, self.session_manager)
 
-    def create_zellij_layout(self, layout_config: LayoutConfig, output_path: str) -> str:
+    def create_zellij_layout(self, layout_config: LayoutConfig) -> str:
         # Enhanced Rich logging for remote layout creation
         tab_count = len(layout_config["layoutTabs"])
         layout_name = layout_config["layoutName"]
@@ -46,9 +46,8 @@ class ZellijRemoteLayoutGenerator:
             console.print(f"  [yellow]→[/yellow] [bold]{tab['tabName']}[/bold] [dim]in[/dim] [blue]{tab['startDir']}[/blue] [dim]on[/dim] [yellow]{self.remote_name}[/yellow]")
 
         self.layout_config = layout_config.copy()
-        path_obj = Path(output_path)
-        self.layout_path = self.layout_generator.create_layout_file(layout_config, path_obj, self.session_name)
-        return self.layout_path
+        layout_content = self.layout_generator.create_layout_file(layout_config, session_name=self.session_name)
+        return layout_content
 
     # Static methods for backward compatibility
     @staticmethod
@@ -155,8 +154,15 @@ if __name__ == "__main__":
     try:
         # Create layout using the remote generator
         generator = ZellijRemoteLayoutGenerator(remote_name=remote_name, session_name_prefix=session_name)
-        layout_path = generator.create_zellij_layout(sample_layout, str(TMP_LAYOUT_DIR))
-        print(f"✅ Remote layout created successfully: {layout_path}")
+        layout_content = generator.create_zellij_layout(sample_layout)
+        
+        # Write to file
+        TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
+        layout_file = TMP_LAYOUT_DIR / f"zellij_layout_{generator.session_name}.kdl"
+        layout_file.write_text(layout_content, encoding="utf-8")
+        generator.layout_path = str(layout_file.absolute())
+        
+        print(f"✅ Remote layout created successfully: {generator.layout_path}")
 
         # Demonstrate serialization
         print("\n💾 Demonstrating serialization...")

@@ -8,13 +8,14 @@ from rich.console import Console
 from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import run_command_in_wt_tab
 from machineconfig.cluster.sessions_managers.wt_remote import WTRemoteLayoutGenerator
+from machineconfig.cluster.sessions_managers.wt_utils.layout_generator import WTLayoutGenerator
 from machineconfig.utils.schemas.layouts.layout_types import TabConfig
 
-TMP_SERIALIZATION_DIR = Path.home().joinpath("tmp_results", "session_manager", "wt", "remote_manager")
 
 # Module-level logger to be used throughout this module
 logger = logging.getLogger(__name__)
 console = Console()
+TMP_SERIALIZATION_DIR = Path.home() / "tmp_results" / "wt_sessions" / "serialized"
 
 
 class WTSessionManager:
@@ -26,8 +27,15 @@ class WTSessionManager:
             an_m = WTRemoteLayoutGenerator(remote_name=machine, session_name_prefix=self.session_name_prefix)
             # Convert legacy dict[str, tuple[str,str]] to List[TabConfig]
             tabs: list[TabConfig] = [{"tabName": name, "startDir": cwd, "command": cmd} for name, (cwd, cmd) in tab_config.items()]
+            script_content = an_m.create_wt_layout(tabs=tabs)
+            
             tmp_layout_dir = Path.home().joinpath("tmp_results", "wt_layouts", "layout_manager")
-            an_m.create_wt_layout(tabs=tabs, output_path=str(tmp_layout_dir))
+            tmp_layout_dir.mkdir(parents=True, exist_ok=True)
+            random_suffix = WTLayoutGenerator.generate_random_suffix(8)
+            script_file = tmp_layout_dir / f"wt_layout_{an_m.session_name}_{random_suffix}.ps1"
+            script_file.write_text(script_content, encoding="utf-8")
+            an_m.script_path = str(script_file.absolute())
+            
             self.managers.append(an_m)
 
     def ssh_to_all_machines(self) -> str:
