@@ -29,9 +29,6 @@ def delete_remote_repo_copy_and_push_local(remote_repo: str, local_repo: str, cl
     console.print(Panel("✅ Repository successfully pushed to cloud", title="[bold green]Repo Sync[/bold green]", border_style="green"))
 
 
-# import sys
-# import subprocess
-
 
 def get_wt_cmd(wd1: PathExtended, wd2: PathExtended) -> str:
     lines = [

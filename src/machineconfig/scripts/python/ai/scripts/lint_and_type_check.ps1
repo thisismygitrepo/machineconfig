@@ -68,7 +68,7 @@ uv run -m ruff clean
 uv run -m ruff check . --fix
 uv run --no-dev --project $HOME/code/machineconfig -m machineconfig.scripts.python.ai.generate_files
 
-New-Item -ItemType Directory -Force -Path .linters | Out-Null
+New-Item -ItemType Directory -Force -Path .ai/linters | Out-Null
 
 Write-Host "${GREEN}🧹 Code cleanup complete!${NC}"
 Write-Host
@@ -78,38 +78,38 @@ Draw-Box "🔍 TYPE CHECKERS & LINTERS 🔍" "${BOLD}${PURPLE}"
 $CURRENT_STEP++
 Draw-Progress $CURRENT_STEP $TOTAL_STEPS "Pyright Type Checker"
 Write-Host "${BLUE}📋 Analyzing types with Pyright...${NC}"
-Remove-Item ./.linters/pyright_result.md -ErrorAction SilentlyContinue
-uv run pyright . | Out-File -FilePath ./.linters/pyright_result.md
-Write-Host "${GREEN}✅ Results saved to ${UNDERLINE}./.linters/pyright_result.md${NC}"
+Remove-Item ./.ai/linters/issues_pyright.md -ErrorAction SilentlyContinue
+uv run pyright . | Out-File -FilePath ./.ai/linters/issues_pyright.md
+Write-Host "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pyright.md${NC}"
 
 $CURRENT_STEP++
 Draw-Progress $CURRENT_STEP $TOTAL_STEPS "MyPy Type Checker"
 Write-Host "${BLUE}📋 Analyzing types with MyPy...${NC}"
-Remove-Item ./.linters/mypy_result.md -ErrorAction SilentlyContinue
-uv run mypy . | Out-File -FilePath ./.linters/mypy_result.md
-Write-Host "${GREEN}✅ Results saved to ${UNDERLINE}./.linters/mypy_result.md${NC}"
+Remove-Item ./.ai/linters/issues_mypy.md -ErrorAction SilentlyContinue
+uv run mypy . | Out-File -FilePath ./.ai/linters/issues_mypy.md
+Write-Host "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_mypy.md${NC}"
 
 $CURRENT_STEP++
 Draw-Progress $CURRENT_STEP $TOTAL_STEPS "Pylint Code Analysis"
 Write-Host "${BLUE}📋 Analyzing code quality with Pylint...${NC}"
-Remove-Item ./.linters/pylint_result.md -ErrorAction SilentlyContinue
-uv run pylint ./src/ | Out-File -FilePath ./.linters/pylint_result.md
-Write-Host "${GREEN}✅ Results saved to ${UNDERLINE}./.linters/pylint_result.md${NC}"
+Remove-Item ./.ai/linters/issues_pylint.md -ErrorAction SilentlyContinue
+uv run pylint ./src/ | Out-File -FilePath ./.ai/linters/issues_pylint.md
+Write-Host "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pylint.md${NC}"
 
 $CURRENT_STEP++
 Draw-Progress $CURRENT_STEP $TOTAL_STEPS "Pyrefly Type Checker"
 Write-Host "${BLUE}📋 Analyzing types with Pyrefly...${NC}"
-Remove-Item ./.linters/pyrefly_result.md -ErrorAction SilentlyContinue
-uv run pyrefly check . | Out-File -FilePath ./.linters/pyrefly_result.md
-Write-Host "${GREEN}✅ Results saved to ${UNDERLINE}./.linters/pyrefly_result.md${NC}"
+Remove-Item ./.ai/linters/issues_pyrefly.md -ErrorAction SilentlyContinue
+uv run pyrefly check . | Out-File -FilePath ./.ai/linters/issues_pyrefly.md
+Write-Host "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pyrefly.md${NC}"
 
 $CURRENT_STEP++
 Draw-Progress $CURRENT_STEP $TOTAL_STEPS "Ruff Linter"
 Write-Host "${BLUE}📋 Checking code style with Ruff...${NC}"
-Remove-Item ./.linters/ruff_result.md -ErrorAction SilentlyContinue
-uv run ruff check . | Out-File -FilePath ./.linters/ruff_result.md
-Write-Host "${GREEN}✅ Results saved to ${UNDERLINE}./.linters/ruff_result.md${NC}"
+Remove-Item ./.ai/linters/issues_ruff.md -ErrorAction SilentlyContinue
+uv run ruff check . | Out-File -FilePath ./.ai/linters/issues_ruff.md
+Write-Host "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_ruff.md${NC}"
 
 Write-Host
 Draw-Box "🎉 ALL CHECKS COMPLETED! 🎉" "${BOLD}${GREEN}"
-Write-Host "${BOLD}${GREEN}📁 Check the ${UNDERLINE}.linters${NC}${BOLD}${GREEN} directory for detailed results.${NC}"
+Write-Host "${BOLD}${GREEN}📁 Check the ${UNDERLINE}.ai/linters${NC}${BOLD}${GREEN} directory for detailed results.${NC}"

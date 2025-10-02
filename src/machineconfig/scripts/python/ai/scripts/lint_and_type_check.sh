@@ -72,7 +72,7 @@ uv run -m ruff clean
 uv run -m ruff check . --fix
 uv run --no-dev --project $HOME/code/machineconfig -m machineconfig.scripts.python.ai.generate_files
 
-mkdir .linters
+mkdir .ai/linters
 
 echo -e "${GREEN}🧹 Code cleanup complete!${NC}"
 echo
@@ -82,38 +82,38 @@ draw_box "🔍 TYPE CHECKERS & LINTERS 🔍" "${BOLD}${PURPLE}"
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Pyright Type Checker"
 echo -e "${BLUE}📋 Analyzing types with Pyright...${NC}"
-rm ./.linters/pyright_result.md || true
-uv run pyright . > ./.linters/pyright_result.md
-echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.linters/pyright_result.md${NC}"
+rm ./.ai/linters/issues_pyright.md || true
+uv run pyright . > ./.ai/linters/issues_pyright.md
+echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pyright.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "MyPy Type Checker"
 echo -e "${BLUE}📋 Analyzing types with MyPy...${NC}"
-rm ./.linters/mypy_result.md || true
-uv run mypy . > ./.linters/mypy_result.md
-echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.linters/mypy_result.md${NC}"
+rm ./.ai/linters/issues_mypy.md || true
+uv run mypy . > ./.ai/linters/issues_mypy.md
+echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_mypy.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Pylint Code Analysis"
 echo -e "${BLUE}📋 Analyzing code quality with Pylint...${NC}"
-rm ./.linters/pylint_result.md || true
-uv run pylint ./src/ > ./.linters/pylint_result.md
-echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.linters/pylint_result.md${NC}"
+rm ./.ai/linters/issues_pylint.md || true
+uv run pylint ./src/ > ./.ai/linters/issues_pylint.md
+echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pylint.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Pyrefly Type Checker"
 echo -e "${BLUE}📋 Analyzing types with Pyrefly...${NC}"
-rm ./.linters/pyrefly_result.md || true
-uv run pyrefly check . > ./.linters/pyrefly_result.md
-echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.linters/pyrefly_result.md${NC}"
+rm ./.ai/linters/issues_pyrefly.md || true
+uv run pyrefly check . > ./.ai/linters/issues_pyrefly.md
+echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pyrefly.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Ruff Linter"
 echo -e "${BLUE}📋 Checking code style with Ruff...${NC}"
-rm ./.linters/ruff_result.md || true
-uv run ruff check . > ./.linters/ruff_result.md
-echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.linters/ruff_result.md${NC}"
+rm ./.ai/linters/issues_ruff.md || true
+uv run ruff check . > ./.ai/linters/issues_ruff.md
+echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_ruff.md${NC}"
 
 echo
 draw_box "🎉 ALL CHECKS COMPLETED! 🎉" "${BOLD}${GREEN}"
-echo -e "${BOLD}${GREEN}📁 Check the ${UNDERLINE}.linters${NC}${BOLD}${GREEN} directory for detailed results.${NC}"
+echo -e "${BOLD}${GREEN}📁 Check the ${UNDERLINE}.ai/linters${NC}${BOLD}${GREEN} directory for detailed results.${NC}"

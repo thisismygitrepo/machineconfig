@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 from datetime import datetime
-import json
-import uuid
 import logging
 import subprocess
 import time
-from pathlib import Path
 from typing import Optional
 
 from rich.console import Console
@@ -14,12 +11,12 @@ from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types impor
 from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.zellij_local import ZellijLayoutGenerator
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
+from machineconfig.cluster.sessions_managers.helpers import zellij_local_manager_helper as helper
 
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 console = Console()
-TMP_SERIALIZATION_DIR = Path.home() / "tmp_results" / "zellij_sessions" / "serialized"
 
 
 
@@ -45,7 +42,7 @@ class ZellijLocalManager:
 
     def get_all_session_names(self) -> list[str]:
         """Get all managed session names."""
-        return [manager.session_name for manager in self.managers]
+        return helper.get_all_session_names(self.managers)
 
     def start_all_sessions(self, poll_seconds: float, poll_interval: float) -> dict[str, StartResult]:
         """Start all zellij sessions with their layouts without blocking on the interactive TUI.
@@ -113,21 +110,7 @@ class ZellijLocalManager:
 
     def kill_all_sessions(self) -> dict[str, StartResult]:
         """Kill all managed zellij sessions."""
-        results: dict[str, StartResult] = {}
-        for manager in self.managers:
-            try:
-                session_name = manager.session_name
-                cmd = f"zellij delete-session --force {session_name}"
-                logger.info(f"Killing session '{session_name}'")
-                result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
-                results[session_name] = {"success": result.returncode == 0, "message": "Session killed" if result.returncode == 0 else result.stderr}
-
-            except Exception as e:
-                # Use a fallback key since session_name might not be defined here
-                key = getattr(manager, "session_name", None) or f"manager_{self.managers.index(manager)}"
-                results[key] = {"success": False, "error": str(e)}
-
-        return results
+        return helper.kill_all_sessions(self.managers)
 
     def attach_to_session(self, session_name: Optional[str]) -> str:
         """
@@ -139,20 +122,7 @@ class ZellijLocalManager:
         Returns:
             Command string to attach to session(s)
         """
-        if session_name:
-            # Find the specific session
-            for manager in self.managers:
-                if manager.session_name == session_name:
-                    return f"zellij attach {session_name}"
-            raise ValueError(f"Session '{session_name}' not found")
-        else:
-            # Return commands for all sessions
-            commands: list[str] = []
-            for manager in self.managers:
-                commands.append(f"# Attach to session '{manager.session_name}':")
-                commands.append(f"zellij attach {manager.session_name}")
-                commands.append("")
-            return "\n".join(commands)
+        return helper.attach_to_session(self.managers, session_name)
 
     def check_all_sessions_status(self) -> dict[str, SessionReport]:
         """Check the status of all sessions and their commands."""
@@ -310,142 +280,29 @@ class ZellijLocalManager:
 
     def save(self, session_id: Optional[str]) -> str:
         """Save the manager state to disk."""
-        if session_id is None:
-            session_id = str(uuid.uuid4())[:8]
-
-        # Create session directory
-        session_dir = TMP_SERIALIZATION_DIR / session_id
-        session_dir.mkdir(parents=True, exist_ok=True)
-
-        # Save the session_layouts configuration
-        config_file = session_dir / "session_layouts.json"
-        text = json.dumps(self.session_layouts, indent=2, ensure_ascii=False)
-        config_file.write_text(text, encoding="utf-8")
-
-        # Save metadata
-        metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "sessions": [item["layoutName"] for item in self.session_layouts], "manager_type": "ZellijLocalManager"}
-        metadata_file = session_dir / "metadata.json"
-        text = json.dumps(metadata, indent=2, ensure_ascii=False)
-        metadata_file.write_text(text, encoding="utf-8")
-
-        # Save each manager's state
-        managers_dir = session_dir / "managers"
-        managers_dir.mkdir(exist_ok=True)
-
-        for i, manager in enumerate(self.managers):
-            manager_data = {"session_name": manager.session_name, "layout_config": manager.layout_config, "layout_path": manager.layout_path}
-            manager_file = managers_dir / f"manager_{i}_{manager.session_name}.json"
-            text = json.dumps(manager_data, indent=2, ensure_ascii=False)
-            manager_file.write_text(text, encoding="utf-8")
-
-        logger.info(f"✅ Saved ZellijLocalManager session to: {session_dir}")
-        return session_id
+        return helper.save_manager(self.session_layouts, self.managers, self.session_name_prefix, session_id)
 
     @classmethod
     def load(cls, session_id: str) -> "ZellijLocalManager":
         """Load a saved manager state from disk."""
-        session_dir = TMP_SERIALIZATION_DIR / session_id
-
-        if not session_dir.exists():
-            raise FileNotFoundError(f"Session directory not found: {session_dir}")
-
-        # Load configuration
-        config_file = session_dir / "session_layouts.json"
-        if not config_file.exists():
-            raise FileNotFoundError(f"Configuration file not found: {config_file}")
-
-        text = config_file.read_text(encoding="utf-8")
-        session_layouts = json.loads(text)
-
-        # Create new instance
+        session_layouts, managers = helper.load_manager(session_id)
         instance = cls(session_layouts=session_layouts)
-
-        # Load saved manager states
-        managers_dir = session_dir / "managers"
-        if managers_dir.exists():
-            instance.managers = []
-            manager_files = sorted(managers_dir.glob("manager_*.json"))
-
-            for manager_file in manager_files:
-                try:
-                    text = manager_file.read_text(encoding="utf-8")
-                    manager_data = json.loads(text)
-
-                    # Recreate the manager
-                    manager = ZellijLayoutGenerator(
-                        layout_config=manager_data["layout_config"],
-                        session_name=manager_data["session_name"]
-                    )
-                    manager.layout_path = manager_data["layout_path"]
-
-                    instance.managers.append(manager)
-
-                except Exception as e:
-                    logger.warning(f"Failed to load manager from {manager_file}: {e}")
-
-        logger.info(f"✅ Loaded ZellijLocalManager session from: {session_dir}")
+        instance.managers = managers
         return instance
 
     @staticmethod
     def list_saved_sessions() -> list[str]:
         """List all saved session IDs."""
-        if not TMP_SERIALIZATION_DIR.exists():
-            return []
-
-        sessions = []
-        for item in TMP_SERIALIZATION_DIR.iterdir():
-            if item.is_dir() and (item / "metadata.json").exists():
-                sessions.append(item.name)
-
-        return sorted(sessions)
+        return helper.list_saved_sessions()
 
     @staticmethod
     def delete_session(session_id: str) -> bool:
         """Delete a saved session."""
-        session_dir = TMP_SERIALIZATION_DIR / session_id
-
-        if not session_dir.exists():
-            logger.warning(f"Session directory not found: {session_dir}")
-            return False
-
-        try:
-            import shutil
-
-            shutil.rmtree(session_dir)
-            logger.info(f"✅ Deleted session: {session_id}")
-            return True
-        except Exception as e:
-            logger.error(f"Failed to delete session {session_id}: {e}")
-            return False
+        return helper.delete_session(session_id)
 
     def list_active_sessions(self) -> list[ActiveSessionInfo]:
         """List currently active zellij sessions managed by this instance."""
-        active_sessions: list[ActiveSessionInfo] = []
-
-        try:
-            # Get all running zellij sessions
-            result = subprocess.run(["zellij", "list-sessions"], capture_output=True, text=True, timeout=10)
-
-            if result.returncode == 0:
-                all_sessions = result.stdout.strip().split("\n") if result.stdout.strip() else []
-
-                # Filter to only our managed sessions
-                for manager in self.managers:
-                    session_name = manager.session_name
-                    is_active = any(session_name in session for session in all_sessions)
-
-                    tab_info = []
-                    tab_count = 0
-                    if manager.layout_config:
-                        tab_count = len(manager.layout_config["layoutTabs"])
-                        tab_info = [tab["tabName"] for tab in manager.layout_config["layoutTabs"]]
-
-                    active_sessions.append({"session_name": session_name, "is_active": is_active, "tab_count": tab_count, "tabs": tab_info})
-
-        except Exception as e:
-            logger.error(f"Error listing active sessions: {e}")
-
-        return active_sessions
+        return helper.list_active_sessions(self.managers)
 
 
 if __name__ == "__main__":

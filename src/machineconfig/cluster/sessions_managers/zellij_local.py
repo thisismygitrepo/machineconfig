@@ -8,6 +8,7 @@ from rich.console import Console
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import ComprehensiveStatus, CommandStatus
 from machineconfig.cluster.sessions_managers.helpers.zellij_local_helper import validate_layout_config, create_tab_section, check_command_status, check_zellij_session_status
+from machineconfig.cluster.sessions_managers.helpers.zellij_local_helper_restart import restart_tab_process
 
 
 logging.basicConfig(level=logging.INFO)
@@ -154,6 +155,19 @@ class ZellijLayoutGenerator:
 [yellow]Session healthy:[/yellow] {"✅" if summary["session_healthy"] else "❌"}"""
 
         console.print(Panel(summary_text, title="📊 Summary", style="blue"))
+
+    def restart_tab(self, tab_name: str) -> bool:
+        """Restart the process running in a specific tab without changing the layout.
+        
+        This method will:
+        1. Navigate to the specified tab
+        2. Send Ctrl+C to stop the running process
+        3. Clear the screen
+        4. Re-execute the original command
+        
+        The tab layout and configuration remain unchanged - only the process is restarted.
+        """
+        return restart_tab_process(tab_name=tab_name, layout_config=self.layout_config, session_name=self.session_name)
 
     def run(self):
         from machineconfig.cluster.sessions_managers.utils.enhanced_command_runner import enhanced_zellij_session_start
