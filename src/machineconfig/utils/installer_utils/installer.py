@@ -57,12 +57,13 @@ def main_with_parser():
 
 def main(
     which: Optional[str] = typer.Option(None, "--which", "-w", help="Comma-separated list of program names to install."),
-    group: Optional[PACKAGE_GROUPS] = typer.Option(None, "--group", "-g", help=f"Group name (one of {list(get_args(PACKAGE_GROUPS))})"),
+    group: Optional[str] = typer.Option(None, "--group", "-g", help="Groups names. A group is bundle of apps. See available groups when running interactively."),
     interactive: bool = typer.Option(False, "--interactive", "-ia", help="Interactive selection of programs to install."),
 ) -> None:
     if which is not None:
         return install_clis(clis_names=[x.strip() for x in which.split(",") if x.strip() != ""])
     if group is not None:
+        # for a_group in group
         return install_group(package_group=group)
     if interactive:
         return install_interactively()
@@ -82,13 +83,11 @@ def install_interactively():
     installer_options = []
     for x in installers:
         installer_options.append(Installer(installer_data=x).get_description())
-    
     # Build category options and maintain a mapping from display text to actual category name
     category_display_to_name: dict[str, str] = {}
     for group_name, group_values in PACKAGE_GROUP2NAMES.items():
         display = f"📦 {group_name:<20}" + "   --   " + f"{'|'.join(group_values):<60}"
         category_display_to_name[display] = group_name
-    
     options_system = get_installers_system_groups()
     for item in options_system:
         display = f"📦 {item['appName']:<20}   --   {item['doc']:<60}"
@@ -114,7 +113,7 @@ def install_interactively():
         console.print(panel)
 
 
-def install_group(package_group: PACKAGE_GROUPS):
+def install_group(package_group: str):
     panel = Panel(f"[bold yellow]Installing programs from category: [green]{package_group}[/green][/bold yellow]", title="[bold blue]📦 Category Installation[/bold blue]", border_style="blue", padding=(1, 2))
     console.print(panel)
     from machineconfig.utils.installer import get_installers, install_bulk

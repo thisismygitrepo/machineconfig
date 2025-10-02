@@ -21,7 +21,7 @@ class Read:
             if "type object 'Read' has no attribute" not in str(err): raise AttributeError(err) from err
             if suffix in ('eps', 'jpg', 'jpeg', 'pdf', 'pgf', 'png', 'ps', 'raw', 'rgba', 'svg', 'svgz', 'tif', 'tiff'):
                 import matplotlib.pyplot as pyplot
-                return pyplot.imread(path, **kwargs)  # from: plt.gcf().canvas.get_supported_filetypes().keys():
+                return pyplot.imread(str(path), **kwargs)  # from: plt.gcf().canvas.get_supported_filetypes().keys():
             if suffix == "parquet":
                 import polars as pl
                 return pl.read_parquet(path, **kwargs)
