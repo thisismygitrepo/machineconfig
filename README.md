@@ -10,10 +10,6 @@
 
 # Welcome to machineconfig
 
-# Shortcuts
-* `bit.ly/cfgroot` is a shortcut to this repo.
-* `glow https://bit.ly/cfgread` OR `curl bit.ly/cfgread -L | bat -l md --style="header"` to get the readme file.
-
 Machineconfig is a package for managing configuration files (aka dotfiles). The idea is to collect those critical, time-consuming-files-to-setup in one directory and reference them via symbolic links from their original locations. Thus, when a new machine is to be setup, all that is required is to clone the repo in that machine and create the symbolic links.
 Dotfiles include, but are not limited to:
 * `~/.gitconfig`
