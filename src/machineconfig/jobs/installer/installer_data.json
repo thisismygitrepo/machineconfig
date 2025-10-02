@@ -2,6 +2,23 @@
   "version": "1",
   "installers": [
     {
+      "appName": "jq",
+      "repoURL": "https://github.com/jqlang/jq",
+      "doc": "🧙‍♂️ Command-line JSON processor",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "jq-linux-amd64",
+          "windows": null,
+          "macos": null
+        },
+        "arm64": {
+          "linux": "jq-linux-arm64",
+          "windows": null,
+          "macos": null
+        }
+      }
+    },
+    {
       "appName": "speedtest",
       "repoURL": "CMD",
       "doc": "🚀 Test your internet connection speed and ping using speedtest.net from the CLI",

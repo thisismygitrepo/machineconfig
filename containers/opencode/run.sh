@@ -6,4 +6,4 @@ docker run -it --rm \
   -v "/home/alex/code/machineconfig:/workspace/machineconfig" \
   -w "/workspace/machineconfig" \
   opencode:latest \
-  opencode run "$PATH_PROMPT"
+  opencode --model "openrouter/z-ai/glm-4.6" run "$PATH_PROMPT"

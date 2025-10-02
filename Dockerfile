@@ -31,22 +31,16 @@ RUN nala install -y redis-tools
 # same for pgsq, when the server runs, we will need the client to talk to it.
 RUN nala install -y postgresql-client
 
-# RUN cd $HOME && \
-#     mkdir code && \
-#     cd $HOME/code && \
-#     git clone https://github.com/thisismygitrepo/machineconfig --depth 4 && \
-#     cd $HOME/code/machineconfig && \
-    # /root/.local/bin/uv pip install -e . && \
-
-
 WORKDIR /root/code/machineconfig
 COPY . .
 COPY ./src/machineconfig/settings/shells/ipy/profiles/default/startup/playext.py /root/.ipython/profile_default/startup/playext.py
 
 RUN /root/.local/bin/uv sync --no-dev
-RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig python -m fire machineconfig.profile.create main
-RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig install essentials
+RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops config public --method symlink --which all
+RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops config shell --method reference
 
+RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops install --group ESSENTIAL_SYSTEM
+RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops install --group ESSENTIAL
 
 RUN touch /root/.bash_history
 # McFly complains about missing history file
