@@ -102,9 +102,33 @@ def analyze(directory: DirectoryArgument = None) -> None:
 
 
 @app.command(no_args_is_help=True)
-def viz(repo: Optional[str] = typer.Option(Path.cwd().__str__(), "--repo", "-r", help="Path to git repository to visualize"),
-        seconds_per_day: float = typer.Option(0.1, "--seconds-per-day", "-spd", help="Speed of simulation (lower = faster)")) -> None:
+def viz(
+    repo: str = typer.Option(Path.cwd().__str__(), "--repo", "-r", help="Path to git repository to visualize"),
+    output_file: Optional[Path] = typer.Option(None, "--output", "-o", help="Output video file (e.g., output.mp4). If specified, gource will render to video."),
+    resolution: str = typer.Option("1920x1080", "--resolution", "-res", help="Video resolution (e.g., 1920x1080, 1280x720)"),
+    seconds_per_day: float = typer.Option(0.1, "--seconds-per-day", "-spd", help="Speed of simulation (lower = faster)"),
+    auto_skip_seconds: float = typer.Option(1.0, "--auto-skip-seconds", "-as", help="Skip to next entry if nothing happens for X seconds"),
+    title: Optional[str] = typer.Option(None, "--title", "-t", help="Title for the visualization"),
+    hide_items: list[str] = typer.Option([], "--hide", "-h", help="Items to hide: bloom, date, dirnames, files, filenames, mouse, progress, root, tree, users, usernames"),
+    key_items: bool = typer.Option(False, "--key", "-k", help="Show file extension key"),
+    fullscreen: bool = typer.Option(False, "--fullscreen", "-f", help="Run in fullscreen mode"),
+    viewport: Optional[str] = typer.Option(None, "--viewport", "-v", help="Camera viewport (e.g., '1000x1000')"),
+    start_date: Optional[str] = typer.Option(None, "--start-date", help="Start date (YYYY-MM-DD)"),
+    stop_date: Optional[str] = typer.Option(None, "--stop-date", help="Stop date (YYYY-MM-DD)"),
+    user_image_dir: Optional[Path] = typer.Option(None, "--user-image-dir", help="Directory with user avatar images"),
+    max_files: int = typer.Option(0, "--max-files", help="Maximum number of files to show (0 = no limit)"),
+    max_file_lag: float = typer.Option(5.0, "--max-file-lag", help="Max time files remain on screen after last change"),
+    file_idle_time: int = typer.Option(0, "--file-idle-time", help="Time in seconds files remain idle before being removed"),
+    framerate: int = typer.Option(60, "--framerate", help="Frames per second for video output"),
+    background_color: str = typer.Option("000000", "--background-color", help="Background color in hex (e.g., 000000 for black)"),
+    font_size: int = typer.Option(22, "--font-size", help="Font size"),
+    camera_mode: str = typer.Option("overview", "--camera-mode", help="Camera mode: overview or track"),
+        ) -> None:
     """🎬 Visualize repository activity using Gource."""
-    repo_path = repo if repo is not None else "."
     from machineconfig.scripts.python.helpers_repos.grource import visualize
-    visualize(repo=repo_path, seconds_per_day=seconds_per_day)
+    visualize(repo=repo, output_file=output_file, resolution=resolution, seconds_per_day=seconds_per_day,
+              auto_skip_seconds=auto_skip_seconds, title=title, hide_items=hide_items, key_items=key_items,
+              fullscreen=fullscreen, viewport=viewport, start_date=start_date, stop_date=stop_date,
+              user_image_dir=user_image_dir, max_files=max_files, max_file_lag=max_file_lag,
+              file_idle_time=file_idle_time, framerate=framerate, background_color=background_color,
+              font_size=font_size, camera_mode=camera_mode)

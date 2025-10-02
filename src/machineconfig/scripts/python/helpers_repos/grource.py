@@ -1,7 +1,7 @@
 """Gource visualization tool for git repositories."""
 
 from pathlib import Path
-from typing import Optional
+from typing import Annotated, Optional
 import subprocess
 import platform
 import zipfile
@@ -100,26 +100,26 @@ def install_gource_windows(version: Optional[str] = None) -> None:
 
 
 def visualize(
-    repo: str = typer.Option(Path.cwd().__str__(), "--repo", "-r", help="Path to git repository to visualize"),
-    output_file: Optional[Path] = typer.Option(None, "--output", "-o", help="Output video file (e.g., output.mp4). If specified, gource will render to video."),
-    resolution: str = typer.Option("1920x1080", "--resolution", "-res", help="Video resolution (e.g., 1920x1080, 1280x720)"),
-    seconds_per_day: float = typer.Option(0.1, "--seconds-per-day", "-spd", help="Speed of simulation (lower = faster)"),
-    auto_skip_seconds: float = typer.Option(1.0, "--auto-skip-seconds", "-as", help="Skip to next entry if nothing happens for X seconds"),
-    title: Optional[str] = typer.Option(None, "--title", "-t", help="Title for the visualization"),
-    hide_items: list[str] = typer.Option([], "--hide", "-h", help="Items to hide: bloom, date, dirnames, files, filenames, mouse, progress, root, tree, users, usernames"),
-    key_items: bool = typer.Option(False, "--key", "-k", help="Show file extension key"),
-    fullscreen: bool = typer.Option(False, "--fullscreen", "-f", help="Run in fullscreen mode"),
-    viewport: Optional[str] = typer.Option(None, "--viewport", "-v", help="Camera viewport (e.g., '1000x1000')"),
-    start_date: Optional[str] = typer.Option(None, "--start-date", help="Start date (YYYY-MM-DD)"),
-    stop_date: Optional[str] = typer.Option(None, "--stop-date", help="Stop date (YYYY-MM-DD)"),
-    user_image_dir: Optional[Path] = typer.Option(None, "--user-image-dir", help="Directory with user avatar images"),
-    max_files: int = typer.Option(0, "--max-files", help="Maximum number of files to show (0 = no limit)"),
-    max_file_lag: float = typer.Option(5.0, "--max-file-lag", help="Max time files remain on screen after last change"),
-    file_idle_time: int = typer.Option(0, "--file-idle-time", help="Time in seconds files remain idle before being removed"),
-    framerate: int = typer.Option(60, "--framerate", help="Frames per second for video output"),
-    background_color: str = typer.Option("000000", "--background-color", help="Background color in hex (e.g., 000000 for black)"),
-    font_size: int = typer.Option(22, "--font-size", help="Font size"),
-    camera_mode: str = typer.Option("overview", "--camera-mode", help="Camera mode: overview or track"),
+    repo: Annotated[str, typer.Option("--repo", "-r", help="Path to git repository to visualize")] = Path.cwd().__str__(),
+    output_file: Annotated[Optional[Path], typer.Option("--output", "-o", help="Output video file (e.g., output.mp4). If specified, gource will render to video.")] = None,
+    resolution: Annotated[str, typer.Option("--resolution", "-res", help="Video resolution (e.g., 1920x1080, 1280x720)")] = "1920x1080",
+    seconds_per_day: Annotated[float, typer.Option("--seconds-per-day", "-spd", help="Speed of simulation (lower = faster)")] = 0.1,
+    auto_skip_seconds: Annotated[float, typer.Option("--auto-skip-seconds", "-as", help="Skip to next entry if nothing happens for X seconds")] = 1.0,
+    title: Annotated[Optional[str], typer.Option("--title", "-t", help="Title for the visualization")] = None,
+    hide_items: Annotated[list[str], typer.Option("--hide", "-h", help="Items to hide: bloom, date, dirnames, files, filenames, mouse, progress, root, tree, users, usernames")] = [],
+    key_items: Annotated[bool, typer.Option("--key", "-k", help="Show file extension key")] = False,
+    fullscreen: Annotated[bool, typer.Option("--fullscreen", "-f", help="Run in fullscreen mode")] = False,
+    viewport: Annotated[Optional[str], typer.Option("--viewport", "-v", help="Camera viewport (e.g., '1000x1000')")] = None,
+    start_date: Annotated[Optional[str], typer.Option("--start-date", help="Start date (YYYY-MM-DD)")] = None,
+    stop_date: Annotated[Optional[str], typer.Option("--stop-date", help="Stop date (YYYY-MM-DD)")] = None,
+    user_image_dir: Annotated[Optional[Path], typer.Option("--user-image-dir", help="Directory with user avatar images")] = None,
+    max_files: Annotated[int, typer.Option("--max-files", help="Maximum number of files to show (0 = no limit)")] = 0,
+    max_file_lag: Annotated[float, typer.Option("--max-file-lag", help="Max time files remain on screen after last change")] = 5.0,
+    file_idle_time: Annotated[int, typer.Option("--file-idle-time", help="Time in seconds files remain idle before being removed")] = 0,
+    framerate: Annotated[int, typer.Option("--framerate", help="Frames per second for video output")] = 60,
+    background_color: Annotated[str, typer.Option("--background-color", help="Background color in hex (e.g., 000000 for black)")] = "000000",
+    font_size: Annotated[int, typer.Option("--font-size", help="Font size")] = 22,
+    camera_mode: Annotated[str, typer.Option("--camera-mode", help="Camera mode: overview or track")] = "overview",
 ) -> None:
     """
     Visualize git repository history using Gource with reasonable defaults.
@@ -146,7 +146,7 @@ def visualize(
     print("\n" + "=" * 80)
     print("🎬 GOURCE VISUALIZATION 🎬")
     print("=" * 80 + "\n")
-    repo_path = Path(repo).expanduser().resolve()
+    repo_path: Path = Path(repo).expanduser().resolve()
     if not repo_path.exists():
         print(f"❌ Error: Repository path does not exist: {repo_path}")
         raise typer.Exit(1)
@@ -164,7 +164,7 @@ def visualize(
         print(f"   - Output: {output_file}")
     print()
 
-    gource_exe = get_gource_executable()
+    gource_exe: Path = get_gource_executable()
     if not gource_exe.exists():
         if platform.system() == "Windows":
             print(f"⚠️  Portable gource not found at {gource_exe}, installing...")
@@ -172,7 +172,7 @@ def visualize(
             # Check again after installation
             if gource_exe.exists():
                 print(f"✅ Gource installed successfully at: {gource_exe}")
-                gource_cmd = str(gource_exe)
+                gource_cmd: str = str(gource_exe)
             else:
                 print("❌ Installation failed, falling back to system gource")
                 gource_cmd = "gource"
@@ -182,7 +182,7 @@ def visualize(
     else:
         gource_cmd = str(gource_exe)
 
-    cmd = [gource_cmd, str(repo_path)]
+    cmd: list[str] = [gource_cmd, str(repo_path)]
 
     cmd.extend(["--seconds-per-day", str(seconds_per_day)])
     cmd.extend(["--auto-skip-seconds", str(auto_skip_seconds)])
@@ -233,7 +233,7 @@ def visualize(
         cmd.extend(["-r", str(framerate)])
         if platform.system() == "Windows":
             cmd.extend(["-o", "-"])
-            ffmpeg_cmd = [
+            ffmpeg_cmd: list[str] = [
                 "ffmpeg",
                 "-y",
                 "-r", str(framerate),
@@ -250,8 +250,8 @@ def visualize(
             print(f"   Command: {' '.join(cmd)} | {' '.join(ffmpeg_cmd)}")
             print()
             try:
-                gource_proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-                ffmpeg_proc = subprocess.Popen(ffmpeg_cmd, stdin=gource_proc.stdout)
+                gource_proc: subprocess.Popen[bytes] = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+                ffmpeg_proc: subprocess.Popen[bytes] = subprocess.Popen(ffmpeg_cmd, stdin=gource_proc.stdout)
                 if gource_proc.stdout:
                     gource_proc.stdout.close()
                 ffmpeg_proc.communicate()
