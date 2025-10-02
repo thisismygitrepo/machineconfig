@@ -1,0 +1,33 @@
+
+# docker build -f containers/gemini-cli-container -t gemini-cli:latest .
+
+FROM debian:bookworm-slim
+# Set bash as default shell
+# as per https://github.com/moby/moby/issues/7281
+SHELL ["/bin/bash", "-c"]
+
+# Update package list and install necessary packages
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    gnupg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js (using NodeSource repository for latest version)
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
+    && apt-get install -y nodejs
+
+# Install Opencode AI CLI globally
+RUN npm install -g opencode-ai
+
+# Create a non-root user for running the CLI
+RUN useradd -m -s /bin/bash opencode
+
+# Set working directory
+WORKDIR /home/opencode
+
+# Switch to non-root user
+USER opencode
+
+# Set the default command to run gemini CLI
+CMD ["opencode"]
