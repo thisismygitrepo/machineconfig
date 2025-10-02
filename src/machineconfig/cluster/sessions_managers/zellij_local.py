@@ -7,10 +7,7 @@ from rich.console import Console
 
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import ComprehensiveStatus, CommandStatus
-from machineconfig.cluster.sessions_managers.helpers.zellij_local_helper import (
-    validate_layout_config, create_tab_section,
-    check_command_status, check_zellij_session_status
-)
+from machineconfig.cluster.sessions_managers.helpers.zellij_local_helper import validate_layout_config, create_tab_section, check_command_status, check_zellij_session_status
 
 
 logging.basicConfig(level=logging.INFO)
@@ -18,12 +15,7 @@ logger = logging.getLogger(__name__)
 console = Console()
 
 
-class ZellijLayoutGenerator:
-    def __init__(self):
-        self.session_name: Optional[str] = None
-        self.layout_config: Optional[LayoutConfig] = None  # Store the complete layout config
-        self.layout_path: Optional[str] = None  # Store the full path to the layout file
-        self.layout_template = """layout {
+DEFAULT_LAYOUT_TEMPLATE = """layout {
     default_tab_template {
         // the default zellij tab-bar and status bar plugins
         pane size=1 borderless=true {
@@ -34,33 +26,46 @@ class ZellijLayoutGenerator:
 """
 
 
+def create_zellij_layout(layout_config: LayoutConfig, session_name: str, layout_template: str = DEFAULT_LAYOUT_TEMPLATE) -> str:
+    """Standalone function to create Zellij layout content from config."""
+    validate_layout_config(layout_config)
+    # Enhanced Rich logging
+    tab_count = len(layout_config["layoutTabs"])
+    layout_name = layout_config["layoutName"]
+    console.print(f"[bold cyan]📋 Creating Zellij layout[/bold cyan] [bright_green]'{layout_name}' with {tab_count} tabs[/bright_green]")
 
-    def create_zellij_layout(self, layout_config: LayoutConfig, session_name: Optional[str]) -> str:
-        validate_layout_config(layout_config)
-        # Enhanced Rich logging
-        tab_count = len(layout_config["layoutTabs"])
-        layout_name = layout_config["layoutName"]
-        console.print(f"[bold cyan]📋 Creating Zellij layout[/bold cyan] [bright_green]'{layout_name}' with {tab_count} tabs[/bright_green]")
+    # Display tab summary with emojis and colors
+    for tab in layout_config["layoutTabs"]:
+        console.print(f"  [yellow]→[/yellow] [bold]{tab['tabName']}[/bold] [dim]in[/dim] [blue]{tab['startDir']}[/blue]")
 
-        # Display tab summary with emojis and colors
-        for tab in layout_config["layoutTabs"]:
-            console.print(f"  [yellow]→[/yellow] [bold]{tab['tabName']}[/bold] [dim]in[/dim] [blue]{tab['startDir']}[/blue]")
+    layout_content = layout_template
+    for tab in layout_config["layoutTabs"]:
+        layout_content += "\n" + create_tab_section(tab)
+    layout_content += "\n}\n"
 
-        # Store session name and layout config for status checking
-        self.session_name = session_name or layout_name
-        self.layout_config = layout_config.copy()
-
-        layout_content = self.layout_template
-        for tab in layout_config["layoutTabs"]:
-            layout_content += "\n" + create_tab_section(tab)
-        layout_content += "\n}\n"
-
-        console.print("[bold green]✅ Zellij layout content generated[/bold green]")
-        return layout_content
+    console.print("[bold green]✅ Zellij layout content generated[/bold green]")
+    return layout_content
 
 
+class ZellijLayoutGenerator:
+    def __init__(self, layout_config: LayoutConfig, session_name: str):
+        self.session_name: str = session_name
+        self.layout_config: LayoutConfig = layout_config.copy()
+        self.layout_path: Optional[str] = None
 
+    def create_layout_file(self) -> bool:
+        """Create zellij layout file and return the path."""
+        layout_content = create_zellij_layout(self.layout_config, self.session_name)
 
+        # Write to file
+        tmp_dir = Path.home() / "tmp_results" / "zellij_layouts"
+        tmp_dir.mkdir(parents=True, exist_ok=True)
+        layout_file = tmp_dir / f"{self.session_name}_layout.kdl"
+        layout_file.write_text(layout_content, encoding="utf-8")
+        self.layout_path = str(layout_file.absolute())
+
+        console.print(f"[bold green]✅ Layout created successfully:[/bold green] [cyan]{self.layout_path}[/cyan]")
+        return True
 
     def check_all_commands_status(self) -> dict[str, CommandStatus]:
         if not self.layout_config:
@@ -74,18 +79,12 @@ class ZellijLayoutGenerator:
 
         return status_report
 
-
-
     def get_comprehensive_status(self) -> ComprehensiveStatus:
         zellij_status = check_zellij_session_status(self.session_name or "default")
         commands_status = self.check_all_commands_status()
         running_count = sum(1 for status in commands_status.values() if status.get("running", False))
         total_count = len(commands_status)
-        return {
-            "zellij_session": zellij_status,
-            "commands": commands_status,
-            "summary": {"total_commands": total_count, "running_commands": running_count, "stopped_commands": total_count - running_count, "session_healthy": zellij_status.get("session_exists", False)},
-        }
+        return {"zellij_session": zellij_status, "commands": commands_status, "summary": {"total_commands": total_count, "running_commands": running_count, "stopped_commands": total_count - running_count, "session_healthy": zellij_status.get("session_exists", False)}}
 
     def print_status_report(self) -> None:
         from rich.panel import Panel
@@ -156,47 +155,16 @@ class ZellijLayoutGenerator:
 
         console.print(Panel(summary_text, title="📊 Summary", style="blue"))
 
-
-def created_zellij_layout(layout_config: LayoutConfig, output_path: str) -> str:
-    generator = ZellijLayoutGenerator()
-    layout_content = generator.create_zellij_layout(layout_config, None)
-    
-    path_obj = Path(output_path)
-    if path_obj.is_dir():
-        raise ValueError("Output path must be a file path ending with .kdl, not a directory")
-    if path_obj.suffix == ".kdl":
-        layout_file = path_obj
-        layout_file.parent.mkdir(parents=True, exist_ok=True)
-    else:
-        raise ValueError("Output path must end with .kdl")
-    
-    layout_file.write_text(layout_content, encoding="utf-8")
-    generator.layout_path = str(layout_file.absolute())
-    console.print(f"[bold green]✅ Zellij layout file created:[/bold green] [cyan]{generator.layout_path}[/cyan]")
-    return generator.layout_path
-
-def run_zellij_layout(layout_config: LayoutConfig):
-    import tempfile
-    tmp_dir = Path.home().joinpath("tmp_results", "session_manager", "zellij", "layout_manager")
-    tmp_dir.mkdir(parents=True, exist_ok=True)
-    __, layout_path_str = tempfile.mkstemp(suffix=".kdl", prefix=f"zellij_layout_{layout_config['layoutName']}_", dir=str(tmp_dir))
-    layout_path = Path(layout_path_str)
-    
-    generator = ZellijLayoutGenerator()
-    layout_content = generator.create_zellij_layout(layout_config, None)
-    layout_path.write_text(layout_content, encoding="utf-8")
-    generator.layout_path = str(layout_path.absolute())
-    
-    session_name = layout_config["layoutName"]
-    try:
+    def run(self):
         from machineconfig.cluster.sessions_managers.utils.enhanced_command_runner import enhanced_zellij_session_start
-        enhanced_zellij_session_start(session_name, str(layout_path))
-    except ImportError:
-        # Fallback to original implementation
-        cmd = f"zellij delete-session --force {session_name}; zellij --layout {layout_path} a -b {session_name}"
-        import subprocess
-        subprocess.run(cmd, shell=True, check=True)
-        console.print(f"[bold green]🚀 Zellij layout is running[/bold green] [yellow]@[/yellow] [bold cyan]{session_name}[/bold cyan]")
+        enhanced_zellij_session_start(session_name=self.session_name, layout_path=str(self.layout_path))
+
+
+def run_zellij_layout(layout_config: LayoutConfig) -> None:
+    session_name = layout_config["layoutName"]
+    generator = ZellijLayoutGenerator(layout_config, session_name)
+    generator.create_layout_file()
+
 
 
 def run_command_in_zellij_tab(command: str, tab_name: str, cwd: Optional[str]) -> str:
@@ -224,38 +192,23 @@ if __name__ == "__main__":
     # Example usage with new schema
     sample_layout: LayoutConfig = {
         "layoutName": "SampleBots",
-        "layoutTabs": [
-            {"tabName": "Explorer", "startDir": "~/code", "command": "lf"},
-            {"tabName": "🤖Bot2", "startDir": "~", "command": "cmatrix"},
-            {"tabName": "📊Monitor", "startDir": "~", "command": "htop"},
-            {"tabName": "📝Logs", "startDir": "/var/log", "command": "tail -f /var/log/app.log"},
-        ],
+        "layoutTabs": [{"tabName": "Explorer", "startDir": "~/code", "command": "lf"}, {"tabName": "🤖Bot2", "startDir": "~", "command": "cmatrix"}, {"tabName": "📊Monitor", "startDir": "~", "command": "htop"}, {"tabName": "📝Logs", "startDir": "/var/log", "command": "tail -f /var/log/app.log"}],
     }
 
     try:
-        # Create layout using the generator directly to access status methods
-        generator = ZellijLayoutGenerator()
-        layout_content = generator.create_zellij_layout(sample_layout, "test_session")
-        
-        # Write to file
-        tmp_dir = Path.home() / "tmp_results" / "zellij_layouts"
-        tmp_dir.mkdir(parents=True, exist_ok=True)
-        layout_file = tmp_dir / "test_layout.kdl"
-        layout_file.write_text(layout_content, encoding="utf-8")
-        generator.layout_path = str(layout_file.absolute())
-        
-        print(f"✅ Layout created successfully: {generator.layout_path}")
+        # Create layout using the generator with new design
+        generator = ZellijLayoutGenerator(sample_layout, "test_session")
+        generator.create_layout_file()
 
         # Demonstrate status checking
         print("\n🔍 Checking command status (this is just a demo - commands aren't actually running):")
         generator.print_status_report()
 
         # Individual command status check
-        print("\n🔎 Individual command status for Bot1:")
-        if generator.layout_config:
-            bot1_status = check_command_status("🤖Bot1", generator.layout_config)
-            print(f"Status: {bot1_status['status']}")
-            print(f"Running: {bot1_status['running']}")
+        print("\n🔎 Individual command status for 🤖Bot2:")
+        bot2_status = check_command_status("🤖Bot2", generator.layout_config)
+        print(f"Status: {bot2_status['status']}")
+        print(f"Running: {bot2_status['running']}")
 
     except Exception as e:
         print(f"❌ Error: {e}")
