@@ -9,7 +9,7 @@ from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import run_command_in_wt_tab
 from machineconfig.cluster.sessions_managers.wt_remote import WTRemoteLayoutGenerator
 from machineconfig.cluster.sessions_managers.wt_utils.layout_generator import WTLayoutGenerator
-from machineconfig.utils.schemas.layouts.layout_types import TabConfig
+from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig
 
 
 # Module-level logger to be used throughout this module
@@ -24,18 +24,15 @@ class WTSessionManager:
         self.machine2wt_tabs = machine2wt_tabs  # Store the original config
         self.managers: list[WTRemoteLayoutGenerator] = []
         for machine, tab_config in machine2wt_tabs.items():
-            an_m = WTRemoteLayoutGenerator(remote_name=machine, session_name_prefix=self.session_name_prefix)
-            # Convert legacy dict[str, tuple[str,str]] to List[TabConfig]
+            # Convert legacy dict[str, tuple[str,str]] to LayoutConfig
             tabs: list[TabConfig] = [{"tabName": name, "startDir": cwd, "command": cmd} for name, (cwd, cmd) in tab_config.items()]
-            script_content = an_m.create_wt_layout(tabs=tabs)
-            
-            tmp_layout_dir = Path.home().joinpath("tmp_results", "wt_layouts", "layout_manager")
-            tmp_layout_dir.mkdir(parents=True, exist_ok=True)
-            random_suffix = WTLayoutGenerator.generate_random_suffix(8)
-            script_file = tmp_layout_dir / f"wt_layout_{an_m.session_name}_{random_suffix}.ps1"
-            script_file.write_text(script_content, encoding="utf-8")
-            an_m.script_path = str(script_file.absolute())
-            
+            layout_config: LayoutConfig = {
+                "layoutName": f"{session_name_prefix}_{machine}",
+                "layoutTabs": tabs
+            }
+            session_name = f"{session_name_prefix}_{WTLayoutGenerator.generate_random_suffix(8)}"
+            an_m = WTRemoteLayoutGenerator(layout_config=layout_config, remote_name=machine, session_name=session_name)
+            an_m.create_layout_file()
             self.managers.append(an_m)
 
     def ssh_to_all_machines(self) -> str:
@@ -61,7 +58,8 @@ class WTSessionManager:
             if scheduler.cycle % 2 == 0:
                 statuses = []
                 for _idx, an_m in enumerate(self.managers):
-                    a_status = an_m.process_monitor.check_all_commands_status(an_m.tabs)
+                    tabs = an_m.layout_config["layoutTabs"]
+                    a_status = an_m.process_monitor.check_all_commands_status(tabs)
                     statuses.append(a_status)
                 keys = []
                 for item in statuses:
@@ -229,7 +227,8 @@ class WTSessionManager:
                 wt_status = manager.session_manager.check_wt_session_status()
 
                 # Get commands status for this session
-                commands_status = manager.process_monitor.check_all_commands_status(manager.tabs)
+                tabs = manager.layout_config["layoutTabs"]
+                commands_status = manager.process_monitor.check_all_commands_status(tabs)
 
                 # Calculate summary for this session
                 running_count = sum(1 for status in commands_status.values() if status.get("running", False))
@@ -352,7 +351,7 @@ class WTSessionManager:
                 # Get Windows Terminal version
                 wt_version = manager.session_manager.get_wt_version()
 
-                overview[remote_name] = {"windows_info": windows_info, "wt_processes": wt_processes, "wt_version": wt_version, "session_name": manager.session_name, "tab_count": len(manager.tabs)}
+                overview[remote_name] = {"windows_info": windows_info, "wt_processes": wt_processes, "wt_version": wt_version, "session_name": manager.session_name, "tab_count": len(manager.layout_config["layoutTabs"])}
 
             except Exception as e:
                 overview[manager.remote_name] = {"error": str(e), "session_name": manager.session_name}

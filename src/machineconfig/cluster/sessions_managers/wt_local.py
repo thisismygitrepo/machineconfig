@@ -34,9 +34,9 @@ TMP_LAYOUT_DIR = Path.home() / "tmp_results" / "wt_layouts"
 
 
 class WTLayoutGenerator:
-    def __init__(self):
-        self.session_name: Optional[str] = None
-        self.layout_config: Optional[LayoutConfig] = None  # Store the complete layout config
+    def __init__(self, layout_config: LayoutConfig, session_name: str):
+        self.session_name: str = session_name
+        self.layout_config: LayoutConfig = layout_config.copy()
         self.script_path: Optional[str] = None  # Store the full path to the PowerShell script
 
     @staticmethod
@@ -80,21 +80,18 @@ class WTLayoutGenerator:
             if not tab["startDir"].strip():
                 raise ValueError(f"Invalid startDir for tab '{tab['tabName']}': {tab['startDir']}")
 
-    def create_wt_layout(self, layout_config: LayoutConfig) -> str:
-        WTLayoutGenerator._validate_layout_config(layout_config)
-        tab_count = len(layout_config['layoutTabs'])
-        layout_name = layout_config['layoutName']
+    def create_layout_file(self) -> bool:
+        """Create Windows Terminal layout file and return success status."""
+        WTLayoutGenerator._validate_layout_config(self.layout_config)
+        tab_count = len(self.layout_config['layoutTabs'])
+        layout_name = self.layout_config['layoutName']
         console.print(f"[bold cyan]📋 Creating Windows Terminal layout[/bold cyan] [bright_green]'{layout_name}' with {tab_count} tabs[/bright_green]")
         
-        for tab in layout_config['layoutTabs']:
+        for tab in self.layout_config['layoutTabs']:
             console.print(f"  [yellow]→[/yellow] [bold]{tab['tabName']}[/bold] [dim]in[/dim] [blue]{tab['startDir']}[/blue]")
 
-        # Store session name and layout config for status checking
-        self.session_name = layout_config["layoutName"]
-        self.layout_config = layout_config.copy()
-
         # Generate Windows Terminal command
-        wt_command = self._generate_wt_command_string(layout_config, self.session_name)
+        wt_command = self._generate_wt_command_string(self.layout_config, self.session_name)
 
         random_suffix = WTLayoutGenerator._generate_random_suffix(8)
         # Create PowerShell script content
@@ -102,8 +99,16 @@ class WTLayoutGenerator:
 # Generated with random suffix: {random_suffix}
 {wt_command}
 """
-        console.print("[bold green]✅ Windows Terminal PowerShell script content generated[/bold green]")
-        return script_content
+        # Write to file
+        random_suffix = WTLayoutGenerator._generate_random_suffix(8)
+        tmp_dir = Path(TMP_LAYOUT_DIR)
+        tmp_dir.mkdir(parents=True, exist_ok=True)
+        script_file = tmp_dir / f"wt_layout_{self.session_name}_{random_suffix}.ps1"
+        script_file.write_text(script_content, encoding="utf-8")
+        self.script_path = str(script_file.absolute())
+
+        console.print(f"[bold green]✅ Layout created successfully:[/bold green] [cyan]{self.script_path}[/cyan]")
+        return True
 
     def _generate_wt_command_string(self, layout_config: LayoutConfig, window_name: str) -> str:
         """Generate complete Windows Terminal command string."""
@@ -361,37 +366,25 @@ try {{
 
 
 def create_wt_layout(layout_config: LayoutConfig, output_path: str) -> str:
-    from machineconfig.cluster.sessions_managers.wt_utils.layout_generator import WTLayoutGenerator as WTGen
-    generator = WTLayoutGenerator()
-    script_content = generator.create_wt_layout(layout_config)
+    session_name = layout_config["layoutName"]
+    generator = WTLayoutGenerator(layout_config=layout_config, session_name=session_name)
+    generator.create_layout_file()
     
-    random_suffix = WTGen.generate_random_suffix(8)
-    path_obj = Path(output_path)
-    if path_obj.suffix == ".ps1":
-        script_file = path_obj
-        script_file.parent.mkdir(parents=True, exist_ok=True)
-    else:
-        path_obj.mkdir(parents=True, exist_ok=True)
-        script_file = path_obj / f"wt_layout_{generator.session_name}_{random_suffix}.ps1"
+    if generator.script_path is None:
+        raise RuntimeError("Script path was not set after creating layout file")
     
-    script_file.write_text(script_content, encoding="utf-8")
-    generator.script_path = str(script_file.absolute())
     logger.info(f"Windows Terminal PowerShell script created: {generator.script_path}")
     return generator.script_path
 
 
-def run_wt_layout(layout_config: LayoutConfig) -> str:
+def run_wt_layout(layout_config: LayoutConfig) -> None:
     """Create and run a Windows Terminal layout."""
-    from machineconfig.cluster.sessions_managers.wt_utils.layout_generator import WTLayoutGenerator as WTGen
-    generator = WTLayoutGenerator()
-    script_content = generator.create_wt_layout(layout_config)
+    session_name = layout_config["layoutName"]
+    generator = WTLayoutGenerator(layout_config=layout_config, session_name=session_name)
+    generator.create_layout_file()
     
-    random_suffix = WTGen.generate_random_suffix(8)
-    tmp_dir = Path(TMP_LAYOUT_DIR)
-    tmp_dir.mkdir(parents=True, exist_ok=True)
-    script_file = tmp_dir / f"wt_layout_{generator.session_name}_{random_suffix}.ps1"
-    script_file.write_text(script_content, encoding="utf-8")
-    generator.script_path = str(script_file.absolute())
+    if generator.script_path is None:
+        raise RuntimeError("Script path was not set after creating layout file")
 
     # Execute the script
     cmd = f'powershell -ExecutionPolicy Bypass -File "{generator.script_path}"'
@@ -399,7 +392,6 @@ def run_wt_layout(layout_config: LayoutConfig) -> str:
 
     if result.returncode == 0:
         print(f"Windows Terminal layout is running @ {layout_config['layoutName']}")
-        return generator.script_path
     else:
         logger.error(f"Failed to run Windows Terminal layout: {result.stderr}")
         raise RuntimeError(f"Failed to run layout: {result.stderr}")
@@ -422,19 +414,12 @@ if __name__ == "__main__":
             {"tabName": "Monitor", "startDir": "~", "command": "lf"}
             ]}
     try:
-        generator = WTLayoutGenerator()
-        script_content = generator.create_wt_layout(layout_config=sample_layout)
-        
-        # Write to file
-        from machineconfig.cluster.sessions_managers.wt_utils.layout_generator import WTLayoutGenerator as WTGen
-        TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
-        random_suffix = WTGen.generate_random_suffix(8)
-        script_file = TMP_LAYOUT_DIR / f"wt_layout_{generator.session_name}_{random_suffix}.ps1"
-        script_file.write_text(script_content, encoding="utf-8")
-        generator.script_path = str(script_file.absolute())
+        session_name = sample_layout["layoutName"]
+        generator = WTLayoutGenerator(layout_config=sample_layout, session_name=session_name)
+        generator.create_layout_file()
         
         print(f"✅ Windows Terminal layout created: {generator.script_path}")
-        preview = generator.get_wt_layout_preview(layout_config=sample_layout)
+        preview = generator.get_wt_layout_preview(generator.layout_config)
         print(f"📋 Command Preview:\n{preview}")
         print("🔍 Current status:")
         generator.print_status_report()

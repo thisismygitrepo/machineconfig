@@ -5,7 +5,6 @@ import uuid
 import logging
 import subprocess
 import time
-import tempfile
 from pathlib import Path
 from typing import Optional
 
@@ -35,16 +34,10 @@ class ZellijLocalManager:
         # Create a ZellijLayoutGenerator for each session
         for layout_config in session_layouts:
             session_name = layout_config["layoutName"].replace(" ", "_")
-            manager = ZellijLayoutGenerator()
             full_session_name = f"{self.session_name_prefix}_{session_name}"
+            manager = ZellijLayoutGenerator(layout_config=layout_config, session_name=full_session_name)
+            manager.create_layout_file()
             
-            layout_content = manager.create_zellij_layout(layout_config=layout_config, session_name=full_session_name)
-            
-            with tempfile.NamedTemporaryFile(mode="w", suffix=".kdl", delete=False, prefix=f"zellij_layout_{full_session_name}_") as tmp_file:
-                tmp_file.write(layout_content)
-                layout_path = tmp_file.name
-            
-            manager.layout_path = layout_path
             self.managers.append(manager)
 
         # Enhanced Rich logging for initialization
@@ -52,7 +45,7 @@ class ZellijLocalManager:
 
     def get_all_session_names(self) -> list[str]:
         """Get all managed session names."""
-        return [manager.session_name for manager in self.managers if manager.session_name is not None]
+        return [manager.session_name for manager in self.managers]
 
     def start_all_sessions(self, poll_seconds: float, poll_interval: float) -> dict[str, StartResult]:
         """Start all zellij sessions with their layouts without blocking on the interactive TUI.
@@ -74,8 +67,6 @@ class ZellijLocalManager:
         for manager in self.managers:
             session_name = manager.session_name
             try:
-                if session_name is None:
-                    continue
                 layout_path = manager.layout_path
                 if not layout_path:
                     results[session_name] = {"success": False, "error": "No layout file path available"}
@@ -126,8 +117,6 @@ class ZellijLocalManager:
         for manager in self.managers:
             try:
                 session_name = manager.session_name
-                if session_name is None:
-                    continue  # Skip managers without a session name
                 cmd = f"zellij delete-session --force {session_name}"
                 logger.info(f"Killing session '{session_name}'")
                 result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
@@ -171,8 +160,6 @@ class ZellijLocalManager:
 
         for manager in self.managers:
             session_name = manager.session_name
-            if session_name is None:
-                continue  # Skip managers without a session name
 
             # Get session status using the helper function
             from machineconfig.cluster.sessions_managers.helpers.zellij_local_helper import check_zellij_session_status
@@ -385,9 +372,10 @@ class ZellijLocalManager:
                     manager_data = json.loads(text)
 
                     # Recreate the manager
-                    manager = ZellijLayoutGenerator()
-                    manager.session_name = manager_data["session_name"]
-                    manager.layout_config = manager_data["layout_config"]
+                    manager = ZellijLayoutGenerator(
+                        layout_config=manager_data["layout_config"],
+                        session_name=manager_data["session_name"]
+                    )
                     manager.layout_path = manager_data["layout_path"]
 
                     instance.managers.append(manager)
@@ -444,8 +432,6 @@ class ZellijLocalManager:
                 # Filter to only our managed sessions
                 for manager in self.managers:
                     session_name = manager.session_name
-                    if session_name is None:
-                        continue  # Skip managers without a session name
                     is_active = any(session_name in session for session in all_sessions)
 
                     tab_info = []

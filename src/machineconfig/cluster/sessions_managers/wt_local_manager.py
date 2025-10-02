@@ -7,13 +7,11 @@ import subprocess
 from pathlib import Path
 from typing import Optional, Any
 from rich.console import Console
-from rich.panel import Panel
-from rich.table import Table
 from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import WTLayoutGenerator
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import (
-    StartResult, GlobalSummary, ActiveSessionInfo, CommandStatus, CommandSummary
+    StartResult, GlobalSummary, ActiveSessionInfo
 )
 
 
@@ -44,24 +42,16 @@ class WTLocalManager:
 
         # Create a WTLayoutGenerator for each session
         for layout_config in session_layouts:
-            manager = WTLayoutGenerator()
-            script_content = manager.create_wt_layout(layout_config=layout_config)
-            
-            from machineconfig.cluster.sessions_managers.wt_utils.layout_generator import WTLayoutGenerator as WTGen
-            tmp_layout_dir = Path.home().joinpath("tmp_results", "session_manager", "wt", "layout_manager")
-            tmp_layout_dir.mkdir(parents=True, exist_ok=True)
-            random_suffix = WTGen.generate_random_suffix(8)
-            script_file = tmp_layout_dir / f"wt_layout_{manager.session_name}_{random_suffix}.ps1"
-            script_file.write_text(script_content, encoding="utf-8")
-            manager.script_path = str(script_file.absolute())
-            
+            session_name = layout_config["layoutName"]
+            manager = WTLayoutGenerator(layout_config=layout_config, session_name=session_name)
+            manager.create_layout_file()
             self.managers.append(manager)
 
         logger.info(f"Initialized WTLocalManager with {len(self.managers)} sessions")
 
     def get_all_session_names(self) -> list[str]:
         """Get all managed session names."""
-        return [manager.session_name for manager in self.managers if manager.session_name is not None]
+        return [manager.session_name for manager in self.managers]
 
     def start_all_sessions(self) -> dict[str, StartResult]:
         """Start all Windows Terminal sessions with their layouts."""
@@ -369,9 +359,7 @@ class WTLocalManager:
                     manager_data = json.loads(text)
 
                     # Recreate the manager
-                    manager = WTLayoutGenerator()
-                    manager.session_name = manager_data["session_name"]
-                    manager.layout_config = manager_data["layout_config"]
+                    manager = WTLayoutGenerator(layout_config=manager_data["layout_config"], session_name=manager_data["session_name"])
                     manager.script_path = manager_data["script_path"]
 
                     instance.managers.append(manager)

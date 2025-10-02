@@ -11,7 +11,7 @@ from machineconfig.cluster.sessions_managers.wt_utils.layout_generator import WT
 from machineconfig.cluster.sessions_managers.wt_utils.process_monitor import WTProcessMonitor
 from machineconfig.cluster.sessions_managers.wt_utils.session_manager import WTSessionManager
 from machineconfig.cluster.sessions_managers.wt_utils.status_reporter import WTStatusReporter
-from machineconfig.utils.schemas.layouts.layout_types import TabConfig
+from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -19,10 +19,10 @@ TMP_LAYOUT_DIR = Path.home() / "tmp_results" / "wt_layouts"
 
 
 class WTRemoteLayoutGenerator:
-    def __init__(self, remote_name: str, session_name_prefix: str):
-        self.remote_name = remote_name
-        self.session_name = session_name_prefix + "_" + WTLayoutGenerator.generate_random_suffix()
-        self.tabs: list[TabConfig] = []
+    def __init__(self, layout_config: LayoutConfig, remote_name: str, session_name: str):
+        self.remote_name: str = remote_name
+        self.session_name: str = session_name
+        self.layout_config: LayoutConfig = layout_config.copy()
         self.script_path: Optional[str] = None
 
         # Initialize modular components
@@ -32,18 +32,30 @@ class WTRemoteLayoutGenerator:
         self.session_manager = WTSessionManager(self.remote_executor, self.session_name, TMP_LAYOUT_DIR)
         self.status_reporter = WTStatusReporter(self.process_monitor, self.session_manager)
 
-    # Tabs are stored and used as List[TabConfig]; no legacy dict compatibility
-
-    def create_wt_layout(self, tabs: list[TabConfig]) -> str:
-        logger.info(f"Creating Windows Terminal layout with {len(tabs)} tabs for remote '{self.remote_name}'")
-        self.tabs = tabs
-        script_content = self.layout_generator.create_wt_script(self.tabs, self.session_name, window_name=None)
-        return script_content
+    def create_layout_file(self) -> bool:
+        """Create Windows Terminal layout file and return success status."""
+        tab_count = len(self.layout_config["layoutTabs"])
+        logger.info(f"Creating Windows Terminal layout with {tab_count} tabs for remote '{self.remote_name}'")
+        
+        # Extract tabs from layout_config
+        tabs: list[TabConfig] = self.layout_config["layoutTabs"]
+        script_content = self.layout_generator.create_wt_script(tabs, self.session_name, window_name=None)
+        
+        # Write to file
+        tmp_layout_dir = Path.home() / "tmp_results" / "wt_layouts" / "remote"
+        tmp_layout_dir.mkdir(parents=True, exist_ok=True)
+        random_suffix = WTLayoutGenerator.generate_random_suffix(8)
+        script_file = tmp_layout_dir / f"wt_layout_{self.session_name}_{random_suffix}.ps1"
+        script_file.write_text(script_content, encoding="utf-8")
+        self.script_path = str(script_file.absolute())
+        
+        logger.info(f"✅ Remote layout created: {self.script_path}")
+        return True
 
     # Legacy methods for backward compatibility
 
     def to_dict(self) -> dict[str, Any]:
-        return {"remote_name": self.remote_name, "session_name": self.session_name, "tabs": self.tabs, "script_path": self.script_path, "created_at": datetime.now().isoformat(), "class_name": self.__class__.__name__}
+        return {"remote_name": self.remote_name, "session_name": self.session_name, "layout_config": self.layout_config, "script_path": self.script_path, "created_at": datetime.now().isoformat(), "class_name": self.__class__.__name__}
 
     def to_json(self, file_path: Optional[str]) -> str:
         # Generate file path if not provided
@@ -91,22 +103,11 @@ class WTRemoteLayoutGenerator:
             logger.warning(f"Class name mismatch: expected {cls.__name__}, got {data.get('class_name')}")
 
         # Create new instance
-        # Extract session name prefix by removing the suffix
-        session_name = data["session_name"]
-        if "_" in session_name:
-            session_name_prefix = "_".join(session_name.split("_")[:-1])
-        else:
-            session_name_prefix = session_name
-
-        instance = cls(remote_name=data["remote_name"], session_name_prefix=session_name_prefix)
-
-        # Restore state
-        instance.session_name = data["session_name"]
-        # New schema only
-        if "tabs" in data:
-            instance.tabs = data["tabs"]
-        else:
-            instance.tabs = []
+        instance = cls(
+            layout_config=data["layout_config"],
+            remote_name=data["remote_name"],
+            session_name=data["session_name"]
+        )
         instance.script_path = data["script_path"]
 
         logger.info(f"✅ Loaded WTRemoteLayoutGenerator from: {file_path}")
@@ -140,17 +141,19 @@ if __name__ == "__main__":
     session_name = "test_remote_session"
 
     try:
-        # Create layout using the remote generator
-        generator = WTRemoteLayoutGenerator(remote_name=remote_name, session_name_prefix=session_name)
-        script_content = generator.create_wt_layout(sample_tabs)
+        # Create layout config from tabs
+        sample_layout: LayoutConfig = {
+            "layoutName": "RemoteBots",
+            "layoutTabs": sample_tabs
+        }
         
-        # Write to file
-        TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
-        from machineconfig.cluster.sessions_managers.wt_utils.layout_generator import WTLayoutGenerator as WTGen
-        random_suffix = WTGen.generate_random_suffix()
-        script_file = TMP_LAYOUT_DIR / f"wt_layout_{generator.session_name}_{random_suffix}.ps1"
-        script_file.write_text(script_content, encoding="utf-8")
-        generator.script_path = str(script_file.absolute())
+        # Create layout using the remote generator
+        generator = WTRemoteLayoutGenerator(
+            layout_config=sample_layout,
+            remote_name=remote_name,
+            session_name=session_name
+        )
+        generator.create_layout_file()
         
         print(f"✅ Remote layout created successfully: {generator.script_path}")
 
@@ -175,7 +178,7 @@ if __name__ == "__main__":
         # Demonstrate loading (using the full path)
         loaded_generator = WTRemoteLayoutGenerator.from_json(saved_path)
         print(f"✅ Session loaded successfully: {loaded_generator.session_name}")
-        print(f"📊 Loaded tabs: {[tab['tabName'] for tab in loaded_generator.tabs]}")
+        print(f"📊 Loaded tabs: {[tab['tabName'] for tab in loaded_generator.layout_config['layoutTabs']]}")
 
         # Show command preview
         preview = generator.layout_generator.generate_wt_command(sample_tabs)
@@ -183,7 +186,7 @@ if __name__ == "__main__":
 
         # Demonstrate status checking
         print(f"\n🔍 Checking command status on remote '{remote_name}':")
-        generator.status_reporter.print_status_report(generator.tabs)
+        generator.status_reporter.print_status_report(sample_tabs)
 
         # Show Windows Terminal overview
         print("\n🖥️  Windows Terminal Overview:")

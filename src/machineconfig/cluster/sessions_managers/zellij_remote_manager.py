@@ -1,7 +1,6 @@
 from datetime import datetime
 import json
 import uuid
-import tempfile
 from pathlib import Path
 from typing import Optional
 from machineconfig.utils.scheduler import Scheduler
@@ -21,15 +20,14 @@ class ZellijSessionManager:
         self.machine_layouts = machine_layouts  # Store the original config
         self.managers: list[ZellijRemoteLayoutGenerator] = []
         for machine, layout_config in machine_layouts.items():
-            an_m = ZellijRemoteLayoutGenerator(remote_name=machine, session_name_prefix=self.session_name_prefix)
-            
-            layout_content = an_m.create_zellij_layout(layout_config=layout_config)
-            
-            with tempfile.NamedTemporaryFile(mode="w", suffix=".kdl", delete=False, prefix=f"zellij_layout_{machine}_") as tmp_file:
-                tmp_file.write(layout_content)
-                layout_path = tmp_file.name
-            
-            an_m.layout_path = layout_path
+            from machineconfig.cluster.sessions_managers.zellij_utils.layout_generator import LayoutGenerator
+            session_name = f"{self.session_name_prefix}_{LayoutGenerator.generate_random_suffix(8)}"
+            an_m = ZellijRemoteLayoutGenerator(
+                layout_config=layout_config,
+                remote_name=machine,
+                session_name=session_name
+            )
+            an_m.create_layout_file()
             self.managers.append(an_m)
 
     def ssh_to_all_machines(self) -> str:
@@ -59,10 +57,7 @@ class ZellijSessionManager:
             if scheduler.cycle % 2 == 0:
                 statuses = []
                 for _idx, an_m in enumerate(self.managers):
-                    if not an_m.layout_config:
-                        a_status = {}
-                    else:
-                        a_status = an_m.process_monitor.check_all_commands_status(an_m.layout_config)
+                    a_status = an_m.process_monitor.check_all_commands_status(an_m.layout_config)
                     statuses.append(a_status)
                 keys = []
                 for item in statuses:
@@ -79,7 +74,7 @@ class ZellijSessionManager:
                 # Check if all stopped
                 running_count = sum(1 for item in status_data if item.get("status", {}).get("running", False))
                 if running_count == 0:  # they all stopped
-                    sched.max_cycles = sched.cycle  # stop the scheduler from calling this routine again
+                    scheduler.max_cycles = scheduler.cycle  # stop the scheduler from calling this routine again
 
                 # Print status
                 for item in status_data:

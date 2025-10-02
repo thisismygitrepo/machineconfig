@@ -22,10 +22,10 @@ TMP_LAYOUT_DIR = Path.home().joinpath("tmp_results", "zellij_layouts", "layout_m
 
 
 class ZellijRemoteLayoutGenerator:
-    def __init__(self, remote_name: str, session_name_prefix: str):
-        self.remote_name = remote_name
-        self.session_name = session_name_prefix + "_" + LayoutGenerator.generate_random_suffix(8)
-        self.layout_config: Optional[LayoutConfig] = None
+    def __init__(self, layout_config: LayoutConfig, remote_name: str, session_name: str):
+        self.remote_name: str = remote_name
+        self.session_name: str = session_name
+        self.layout_config: LayoutConfig = layout_config.copy()
         self.layout_path: Optional[str] = None
 
         # Initialize modular components
@@ -35,19 +35,27 @@ class ZellijRemoteLayoutGenerator:
         self.session_manager = SessionManager(self.remote_executor, self.session_name, TMP_LAYOUT_DIR)
         self.status_reporter = StatusReporter(self.process_monitor, self.session_manager)
 
-    def create_zellij_layout(self, layout_config: LayoutConfig) -> str:
+    def create_layout_file(self) -> bool:
+        """Create Zellij layout file and return success status."""
         # Enhanced Rich logging for remote layout creation
-        tab_count = len(layout_config["layoutTabs"])
-        layout_name = layout_config["layoutName"]
+        tab_count = len(self.layout_config["layoutTabs"])
+        layout_name = self.layout_config["layoutName"]
         console.print(f"[bold cyan]📋 Creating Zellij layout[/bold cyan] [bright_green]'{layout_name}' with {tab_count} tabs[/bright_green] [magenta]for remote[/magenta] [bold yellow]'{self.remote_name}'[/bold yellow]")
 
         # Display tab summary for remote
-        for tab in layout_config["layoutTabs"]:
+        for tab in self.layout_config["layoutTabs"]:
             console.print(f"  [yellow]→[/yellow] [bold]{tab['tabName']}[/bold] [dim]in[/dim] [blue]{tab['startDir']}[/blue] [dim]on[/dim] [yellow]{self.remote_name}[/yellow]")
 
-        self.layout_config = layout_config.copy()
-        layout_content = self.layout_generator.create_layout_file(layout_config, session_name=self.session_name)
-        return layout_content
+        layout_content = self.layout_generator.create_layout_file(self.layout_config, session_name=self.session_name)
+        
+        # Write to file
+        TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
+        layout_file = TMP_LAYOUT_DIR / f"zellij_layout_{self.session_name}.kdl"
+        layout_file.write_text(layout_content, encoding="utf-8")
+        self.layout_path = str(layout_file.absolute())
+        
+        console.print(f"[bold green]✅ Remote layout created:[/bold green] [cyan]{self.layout_path}[/cyan]")
+        return True
 
     # Static methods for backward compatibility
     @staticmethod
@@ -104,18 +112,11 @@ class ZellijRemoteLayoutGenerator:
             logger.warning(f"Class name mismatch: expected {cls.__name__}, got {data.get('class_name')}")
 
         # Create new instance
-        # Extract session name prefix by removing the suffix
-        session_name = data["session_name"]
-        if "_" in session_name:
-            session_name_prefix = "_".join(session_name.split("_")[:-1])
-        else:
-            session_name_prefix = session_name
-
-        instance = cls(remote_name=data["remote_name"], session_name_prefix=session_name_prefix)
-
-        # Restore state
-        instance.session_name = data["session_name"]
-        instance.layout_config = data["layout_config"]
+        instance = cls(
+            layout_config=data["layout_config"],
+            remote_name=data["remote_name"],
+            session_name=data["session_name"]
+        )
         instance.layout_path = data["layout_path"]
 
         logger.info(f"✅ Loaded ZellijRemoteLayoutGenerator from: {file_path}")
@@ -153,14 +154,12 @@ if __name__ == "__main__":
 
     try:
         # Create layout using the remote generator
-        generator = ZellijRemoteLayoutGenerator(remote_name=remote_name, session_name_prefix=session_name)
-        layout_content = generator.create_zellij_layout(sample_layout)
-        
-        # Write to file
-        TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
-        layout_file = TMP_LAYOUT_DIR / f"zellij_layout_{generator.session_name}.kdl"
-        layout_file.write_text(layout_content, encoding="utf-8")
-        generator.layout_path = str(layout_file.absolute())
+        generator = ZellijRemoteLayoutGenerator(
+            layout_config=sample_layout,
+            remote_name=remote_name,
+            session_name=session_name
+        )
+        generator.create_layout_file()
         
         print(f"✅ Remote layout created successfully: {generator.layout_path}")
 
@@ -182,10 +181,7 @@ if __name__ == "__main__":
 
         # Demonstrate status checking
         print(f"\n🔍 Checking command status on remote '{remote_name}':")
-        if not generator.layout_config:
-            console.print("[bold red]❌ No layout config available[/bold red]")
-        else:
-            generator.status_reporter.print_status_report(generator.layout_config)
+        generator.status_reporter.print_status_report(generator.layout_config)
 
         # Start the session (uncomment to actually start)
         # start_result = generator.start_zellij_session()
