@@ -8,12 +8,7 @@ from machineconfig.utils.accessories import pprint
 # from machineconfig.utils.ve import get_ve_activate_line
 
 
-def get_header(wdir: OPLike):
-    return f"""
-# >> Code prepended
-{'''sys.path.insert(0, r'{wdir}') ''' if wdir is not None else "# No path insertion."}
-# >> End of header, start of script passed
-"""
+def get_header(wdir: str): return f"""import sys; sys.path.insert(0, r'{wdir}')"""
 
 
 @dataclass
@@ -224,17 +219,22 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         assert '"' not in cmd, 'Avoid using `"` in your command. I dont know how to handle this when passing is as command to python in pwsh command.'
         if not return_obj:
             return self.run(
-                cmd=f"""$HOME/.local/bin/uv run --no-dev --project $HOME/code/machineconfig -c "{get_header(wdir=None)}{cmd}\n""" + '"',
+                cmd=f"""$HOME/.local/bin/uv run --no-dev --project $HOME/code/machineconfig python -c "{cmd}\n""" + '"',
                 desc=desc or f"run_py on {self.get_remote_repr()}",
                 verbose=verbose,
                 strict_err=strict_err,
                 strict_returncode=strict_returncode,
             )
         assert "obj=" in cmd, "The command sent to run_py must have `obj=` statement if return_obj is set to True"
-        source_file = self.run_py(f"""{cmd}\npath = Save.pickle(obj=obj, path=P.tmpfile(suffix='.pkl'))\nprint(path)""", desc=desc, verbose=verbose, strict_err=True, strict_returncode=True).op.split("\n")[-1]
+        source_file = self.run_py(f"""{cmd}
+import pickle
+import tempfile
+from pathlib import Path
+path = tempfile.emkstemp(suffix=".pkl")[1]
+Path(path).write_bytes(pickle.dumps(obj))
+print(path)""", desc=desc, verbose=verbose, strict_err=True, strict_returncode=True).op.split("\n")[-1]
         res = self.copy_to_here(source=source_file, target=PathExtended.tmpfile(suffix=".pkl"))
         import pickle
-
         return pickle.loads(res.read_bytes())
 
     def copy_from_here(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False, overwrite: bool = False, init: bool = True) -> Union[PathExtended, list[PathExtended]]:
@@ -254,7 +254,11 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             source_list: list[PathExtended] = source_obj.search("*", folders=False, files=True, r=True)
             remote_root = (
                 self.run_py(
-                    f"path=P(r'{PathExtended(target).as_posix()}').expanduser()\n{'path.delete(sure=True)' if overwrite else ''}\nprint(path.create())",
+                    f"""
+from machineconfig.utils.path_extended import PathExtended as P
+path=P(r'{PathExtended(target).as_posix()}').expanduser()
+{'path.delete(sure=True)' if overwrite else ''}
+print(path.create())""",
                     desc=f"Creating Target directory `{PathExtended(target).as_posix()}` @ {self.get_remote_repr()}",
                     verbose=False,
                 ).op
@@ -271,7 +275,10 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             source_obj = PathExtended(source_obj).expanduser().zip(content=True)  # .append(f"_{randstr()}", inplace=True)  # eventually, unzip will raise content flag, so this name doesn't matter.
         remotepath = (
             self.run_py(
-                f"path=P(r'{PathExtended(target).as_posix()}').expanduser()\n{'path.delete(sure=True)' if overwrite else ''}\nprint(path.parent.create())",
+                f"""
+path=P(r'{PathExtended(target).as_posix()}').expanduser()
+{'path.delete(sure=True)' if overwrite else ''}
+print(path.parent.create())""",
                 desc=f"Creating Target directory `{PathExtended(target).parent.as_posix()}` @ {self.get_remote_repr()}",
                 verbose=False,
             ).op
@@ -282,7 +289,9 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
             self.sftp.put(localpath=PathExtended(source_obj).expanduser(), remotepath=remotepath.as_posix(), callback=pbar.view_bar)  # type: ignore # pylint: disable=E1129
         if z:
-            _resp = self.run_py(f"""P(r'{remotepath.as_posix()}').expanduser().unzip(content=False, inplace=True, overwrite={overwrite})""", desc=f"UNZIPPING {remotepath.as_posix()}", verbose=False, strict_err=True, strict_returncode=True)
+            _resp = self.run_py(f"""
+from machineconfig.utils.path_extended import PathExtended as P;
+P(r'{remotepath.as_posix()}').expanduser().unzip(content=False, inplace=True, overwrite={overwrite})""", desc=f"UNZIPPING {remotepath.as_posix()}", verbose=False, strict_err=True, strict_returncode=True)
             source_obj.delete(sure=True)
             print("\n")
         return source_obj
@@ -290,15 +299,20 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
     def copy_to_here(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False, init: bool = True) -> PathExtended:
         if init:
             print(f"{'⬇️' * 5} SFTP DOWNLOADING FROM `{source}` TO `{target}`")
-        if not z and self.run_py(f"print(P(r'{source}').expanduser().absolute().is_dir())", desc=f"Check if source `{source}` is a dir", verbose=False, strict_returncode=True, strict_err=True).op.split("\n")[-1] == "True":
+        if not z and self.run_py(f"""
+from machineconfig.utils.path_extended import PathExtended as P
+print(P(r'{source}').expanduser().absolute().is_dir())""", desc=f"Check if source `{source}` is a dir", verbose=False, strict_returncode=True, strict_err=True).op.split("\n")[-1] == "True":
             if r is False:
                 raise RuntimeError(f"source `{source}` is a directory! either set r=True for recursive sending or raise zip_first flag.")
-            source_list = self.run_py(f"obj=P(r'{source}').search(folders=False, r=True).collapseuser(strict=False)", desc="Searching for files in source", return_obj=True, verbose=False)
+            source_list = self.run_py(f"""
+from machineconfig.utils.path_extended import PathExtended as P
+obj=P(r'{source}').search(folders=False, r=True).collapseuser(strict=False)
+""", desc="Searching for files in source", return_obj=True, verbose=False)
             assert isinstance(source_list, List), f"Could not resolve source path {source} due to error"
             for file in source_list:
                 self.copy_to_here(source=file.as_posix(), target=PathExtended(target).joinpath(PathExtended(file).relative_to(source)) if target else None, r=False)
         if z:
-            tmp: Response = self.run_py(f"print(P(r'{source}').expanduser().zip(inplace=False, verbose=False))", desc=f"Zipping source file {source}", verbose=False)
+            tmp: Response = self.run_py(f"from machineconfig.utils.path_extended import PathExtended as P; print(P(r'{source}').expanduser().zip(inplace=False, verbose=False))", desc=f"Zipping source file {source}", verbose=False)
             tmp2 = tmp.op2path(strict_returncode=True, strict_err=True)
             if not isinstance(tmp2, PathExtended):
                 raise RuntimeError(f"Could not zip {source} due to {tmp.err}")
@@ -329,7 +343,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             self.sftp.get(remotepath=source.as_posix(), localpath=str(target_obj), callback=pbar.view_bar)  # type: ignore
         if z:
             target_obj = target_obj.unzip(inplace=True, content=True)
-            self.run_py(f"P(r'{source.as_posix()}').delete(sure=True)", desc="Cleaning temp zip files @ remote.", strict_returncode=True, strict_err=True, verbose=False)
+            self.run_py(f"from machineconfig.utils.path_extended import PathExtended as P; P(r'{source.as_posix()}').delete(sure=True)", desc="Cleaning temp zip files @ remote.", strict_returncode=True, strict_err=True, verbose=False)
         print("\n")
         return target_obj
 
@@ -354,6 +368,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             self.sftp.get(remotepath=source.as_posix(), localpath=target.as_posix(), callback=pbar.view_bar)  # type: ignore # pylint: disable=E1129
         if z:
             target = target.unzip(inplace=True, content=True)
-            self.run_py(f"P(r'{source.as_posix()}').delete(sure=True)", desc="Cleaning temp zip files @ remote.", strict_returncode=True, strict_err=True)
+            self.run_py(f"""
+            from machineconfig.utils.path_extended import PathExtended as P; P(r'{source.as_posix()}').delete(sure=True)""", desc="Cleaning temp zip files @ remote.", strict_returncode=True, strict_err=True)
         print("\n")
         return target
