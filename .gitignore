@@ -124,7 +124,6 @@ env/
 ENV/
 env.bak/
 pythonenv*
-myresources/crocodile/__pychache__/
 
 # Spyder project settings
 .spyderproject

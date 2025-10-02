@@ -8,20 +8,9 @@ from machineconfig.utils.accessories import pprint
 # from machineconfig.utils.ve import get_ve_activate_line
 
 
-def get_header(wdir: OPLike, toolbox: bool):
-    if toolbox:
-        toobox_code = """
-try:
-from crocodile.toolbox import *
-except ImportError:
-print("Crocodile not found, skipping import.")
-pass
-"""
-    else:
-        toobox_code = "# No toolbox import."
+def get_header(wdir: OPLike):
     return f"""
 # >> Code prepended
-{toobox_code}
 {'''sys.path.insert(0, r'{wdir}') ''' if wdir is not None else "# No path insertion."}
 # >> End of header, start of script passed
 """
@@ -236,7 +225,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         assert '"' not in cmd, 'Avoid using `"` in your command. I dont know how to handle this when passing is as command to python in pwsh command.'
         if not return_obj:
             return self.run(
-                cmd=f"""uv run --no-dev --project $HOME/code/machineconfig -c "{get_header(wdir=None, toolbox=True)}{cmd}\n""" + '"',
+                cmd=f"""uv run --no-dev --project $HOME/code/machineconfig -c "{get_header(wdir=None)}{cmd}\n""" + '"',
                 desc=desc or f"run_py on {self.get_remote_repr()}",
                 verbose=verbose,
                 strict_err=strict_err,

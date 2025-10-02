@@ -12,12 +12,10 @@ class Read:
         suffix = Path(path).suffix[1:]
         if suffix == "": raise ValueError(f"File type could not be inferred from suffix. Suffix is empty. Path: {path}")
         if suffix in ("sqlite", "sqlite3", "db", "duckdb"):
-            # from crocodile.database import DBMS
-            # if suffix == "duckdb": pass
-            # res = DBMS.from_local_db(path=path)
-            # print(res.describe_db())
-            # return res
-            raise NotImplementedError("Reading database files is not implemented yet. Use `crocodile.database.DBMS` to connect to the database file.")
+            from machineconfig.utils.files.dbms import DBMS
+            res = DBMS.from_local_db(path=path)
+            print(res.describe_db())
+            return res
         try: return getattr(Read, suffix)(str(path), **kwargs)
         except AttributeError as err:
             if "type object 'Read' has no attribute" not in str(err): raise AttributeError(err) from err

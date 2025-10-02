@@ -110,7 +110,7 @@ encryption = ssl
 
     def send_message(self, to: str, subject: str, body: str, txt_to_html: bool = True, attachments: Optional[list[Any]] = None):
         _ = attachments
-        body += "\n\nThis is an automated email sent via crocodile.comms script."
+        body += "\n\nThis is an automated email sent via machineconfig.comms script."
         # msg = message.EmailMessage()
         msg = MIMEMultipart("alternative")
         msg["subject"] = subject

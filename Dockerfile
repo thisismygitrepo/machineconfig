@@ -34,7 +34,6 @@ RUN nala install -y postgresql-client
 # RUN cd $HOME && \
 #     mkdir code && \
 #     cd $HOME/code && \
-#     git clone https://github.com/thisismygitrepo/crocodile.git --depth 4 && \
 #     git clone https://github.com/thisismygitrepo/machineconfig --depth 4 && \
 #     cd $HOME/code/machineconfig && \
     # /root/.local/bin/uv pip install -e . && \

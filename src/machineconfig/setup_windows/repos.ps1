@@ -9,18 +9,6 @@ if (-not (Get-Command git.exe -ErrorAction SilentlyContinue)) {
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 }
 
-# Setup crocodile repository
-if (Test-Path "crocodile") {
-    Write-Host "🔄 crocodile directory exists, updating..."
-    Set-Location crocodile
-    git reset --hard
-    git pull
-    Set-Location ..
-} else {
-    Write-Host "⏳ Cloning crocodile repository..."
-    git clone https://github.com/thisismygitrepo/crocodile.git --depth 4
-}
-
 # Setup machineconfig repository
 if (Test-Path "machineconfig") {
     Write-Host "🔄 machineconfig directory exists, updating..."

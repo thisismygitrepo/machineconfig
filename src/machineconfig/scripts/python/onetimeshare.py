@@ -6,7 +6,6 @@
 # # or use ots executable to do this job
 
 # import requests
-# import crocodile.file_management as fm
 # import base64
 # from typing import Optional
 
