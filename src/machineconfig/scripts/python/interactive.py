@@ -35,9 +35,45 @@ console = Console()
 
 def display_header() -> None:
     from machineconfig.utils.installer import get_machineconfig_version
-    header_text = Text(f"MACHINE CONFIGURATION {get_machineconfig_version()}", style="bold magenta")
-    subtitle_text = Text("Interactive Installation Script", style="italic cyan")
-    console.print(Panel(f"📦 {header_text}\n{subtitle_text}", border_style="blue", padding=(1, 2)))
+    from rich.align import Align
+    from rich.padding import Padding
+
+    # Fancy ASCII art header
+    ascii_art = """
+    ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+    ║                                                                                                             ║
+    ║   ███╗   ███╗ █████╗  ██████╗██╗  ██╗██╗███╗   ██╗███████╗ ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗    ║
+    ║   ████╗ ████║██╔══██╗██╔════╝██║  ██║██║████╗  ██║██╔════╝██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝    ║
+    ║   ██╔████╔██║███████║██║     ███████║██║██╔██╗ ██║█████╗  ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗   ║
+    ║   ██║╚██╔╝██║██╔══██║██║     ██╔══██║██║██║╚██╗██║██╔══╝  ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║   ║
+    ║   ██║ ╚═╝ ██║██║  ██║╚██████╗██║  ██║██║██║ ╚████║███████╗╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝   ║
+    ║   ╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝    ║
+    ║                                                                                                             ║
+    ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+    """
+
+    version = get_machineconfig_version()
+    title = f"✨ MACHINE CONFIGURATION v{version} ✨"
+    subtitle = "🎯 Your digital life manager. Dotfiles, data, code and more."
+    bug_report = "🐛 Please report bugs to Alex Al-Saffar @ https://github.com/thisismygitrepo/machineconfig"
+
+    # Create styled texts
+    ascii_text = Text(ascii_art, style="bold cyan")
+    title_text = Text(title, style="bold bright_magenta")
+    subtitle_text = Text(subtitle, style="italic bright_blue")
+    bug_text = Text(bug_report, style="dim white")
+
+    # Create panel content with proper alignment
+    with console.capture() as capture:
+        console.print(ascii_text)
+        console.print()
+        console.print(Align.center(title_text))
+        console.print(Align.center(subtitle_text))
+        console.print()
+        console.print(Align.center(bug_text))
+
+    panel_content = capture.get()
+    console.print(Panel(Padding(panel_content, (1, 2)), border_style="bright_cyan", padding=(1, 2)))
 def display_completion_message() -> None:
     completion_text = Text("INSTALLATION COMPLETE", style="bold green")
     subtitle_text = Text("System setup finished successfully", style="italic green")
