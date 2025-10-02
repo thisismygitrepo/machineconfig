@@ -46,7 +46,8 @@ class WTLocalManager:
         # Create a WTLayoutGenerator for each session
         for layout_config in session_layouts:
             manager = WTLayoutGenerator()
-            manager.create_wt_layout(layout_config=layout_config, output_dir=None)
+            tmp_layout_dir = Path.home().joinpath("tmp_results", "session_manager", "wt", "layout_manager")
+            manager.create_wt_layout(layout_config=layout_config, output_path=str(tmp_layout_dir))
             self.managers.append(manager)
 
         logger.info(f"Initialized WTLocalManager with {len(self.managers)} sessions")

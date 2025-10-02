@@ -26,7 +26,8 @@ class WTSessionManager:
             an_m = WTRemoteLayoutGenerator(remote_name=machine, session_name_prefix=self.session_name_prefix)
             # Convert legacy dict[str, tuple[str,str]] to List[TabConfig]
             tabs: list[TabConfig] = [{"tabName": name, "startDir": cwd, "command": cmd} for name, (cwd, cmd) in tab_config.items()]
-            an_m.create_wt_layout(tabs=tabs, output_dir=None)
+            tmp_layout_dir = Path.home().joinpath("tmp_results", "wt_layouts", "layout_manager")
+            an_m.create_wt_layout(tabs=tabs, output_path=str(tmp_layout_dir))
             self.managers.append(an_m)
 
     def ssh_to_all_machines(self) -> str:

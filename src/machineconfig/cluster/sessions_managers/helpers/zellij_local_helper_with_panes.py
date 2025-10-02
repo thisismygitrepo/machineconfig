@@ -8,7 +8,7 @@ import random
 import string
 import logging
 from pathlib import Path
-from typing import Optional, Literal
+from typing import Literal
 
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, TabConfig
 
@@ -140,9 +140,9 @@ def determine_common_cwd(tab_configs: list[TabConfig]) -> str:
 
 def create_zellij_layout_with_panes(
     layout_config: LayoutConfig,
+    output_path: str,
     panes_per_tab: int = 1,
     split_direction: Literal["vertical", "horizontal"] = "vertical",
-    output_dir: Optional[str] = None,
 ) -> str:
     """
     Create a Zellij KDL layout file with support for multiple panes per tab.
@@ -151,14 +151,14 @@ def create_zellij_layout_with_panes(
         layout_config: The LayoutConfig object containing all tabs/commands
         panes_per_tab: Number of panes to group into each tab (default: 1 = same as original behavior)
         split_direction: Direction to split panes within a tab ('vertical' or 'horizontal')
-        output_dir: Optional directory to save the layout file; if None, uses temp directory
+        output_path: Path to save the layout file (directory or full file path)
     
     Returns:
         Absolute path to the created layout file
     
     Example:
         >>> layout = {"layoutName": "MyLayout", "layoutTabs": [...]}
-        >>> path = create_zellij_layout_with_panes(layout, panes_per_tab=2, split_direction="vertical")
+        >>> path = create_zellij_layout_with_panes(layout, panes_per_tab=2, split_direction="vertical", output_path="/tmp/layout.kdl")
     """
     if panes_per_tab < 1:
         raise ValueError("panes_per_tab must be at least 1")
@@ -186,15 +186,14 @@ def create_zellij_layout_with_panes(
     layout_content += "\n}\n"
     try:
         random_suffix = generate_random_suffix(8)
-        if output_dir:
-            output_path = Path(output_dir)
-            output_path.mkdir(parents=True, exist_ok=True)
-            layout_file = output_path / f"zellij_layout_{random_suffix}.kdl"
+        path_obj = Path(output_path)
+        if path_obj.suffix == ".kdl":
+            layout_file = path_obj
+            layout_file.parent.mkdir(parents=True, exist_ok=True)
         else:
-            tmp_layout_dir = Path.home().joinpath("tmp_results", "session_manager", "zellij", "layout_manager")
-            tmp_layout_dir.mkdir(parents=True, exist_ok=True)
+            path_obj.mkdir(parents=True, exist_ok=True)
             session_name = layout_config["layoutName"]
-            layout_file = tmp_layout_dir / f"zellij_layout_{session_name}_{random_suffix}.kdl"
+            layout_file = path_obj / f"zellij_layout_{session_name}_{random_suffix}.kdl"
         layout_file.write_text(layout_content, encoding="utf-8")
         logger.info(f"Created Zellij layout file: {layout_file.absolute()}")
         return str(layout_file.absolute())
@@ -218,21 +217,21 @@ if __name__ == "__main__":
     print("=" * 80)
     print("DEMO 1: panes_per_tab=1 (same as original behavior)")
     print("=" * 80)
-    layout_path_1 = create_zellij_layout_with_panes(sample_layout, panes_per_tab=1, output_dir="/tmp/zellij_test")
+    layout_path_1 = create_zellij_layout_with_panes(sample_layout, "/tmp/zellij_test", panes_per_tab=1)
     print(f"✅ Layout created: {layout_path_1}")
     print("\nContent preview:")
     print(Path(layout_path_1).read_text())
     print("\n" + "=" * 80)
     print("DEMO 2: panes_per_tab=2 (two panes per tab)")
     print("=" * 80)
-    layout_path_2 = create_zellij_layout_with_panes(sample_layout, panes_per_tab=2, split_direction="vertical", output_dir="/tmp/zellij_test")
+    layout_path_2 = create_zellij_layout_with_panes(sample_layout, "/tmp/zellij_test", panes_per_tab=2, split_direction="vertical")
     print(f"✅ Layout created: {layout_path_2}")
     print("\nContent preview:")
     print(Path(layout_path_2).read_text())
     print("\n" + "=" * 80)
     print("DEMO 3: panes_per_tab=3 (three panes per tab, horizontal split)")
     print("=" * 80)
-    layout_path_3 = create_zellij_layout_with_panes(sample_layout, panes_per_tab=3, split_direction="horizontal", output_dir="/tmp/zellij_test")
+    layout_path_3 = create_zellij_layout_with_panes(sample_layout, "/tmp/zellij_test", panes_per_tab=3, split_direction="horizontal")
     print(f"✅ Layout created: {layout_path_3}")
     print("\nContent preview:")
     print(Path(layout_path_3).read_text())

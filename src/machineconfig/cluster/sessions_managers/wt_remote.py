@@ -34,14 +34,11 @@ class WTRemoteLayoutGenerator:
 
     # Tabs are stored and used as List[TabConfig]; no legacy dict compatibility
 
-    def create_wt_layout(self, tabs: List[TabConfig], output_dir: Optional[str]) -> str:
+    def create_wt_layout(self, tabs: List[TabConfig], output_path: str) -> str:
         logger.info(f"Creating Windows Terminal layout with {len(tabs)} tabs for remote '{self.remote_name}'")
         self.tabs = tabs
-        if output_dir:
-            output_path = Path(output_dir)
-        else:
-            output_path = TMP_LAYOUT_DIR
-        self.script_path = self.layout_generator.create_wt_script(self.tabs, output_path, self.session_name)
+        path_obj = Path(output_path)
+        self.script_path = self.layout_generator.create_wt_script(self.tabs, path_obj, self.session_name)
         return self.script_path
 
     # Legacy methods for backward compatibility
@@ -146,7 +143,7 @@ if __name__ == "__main__":
     try:
         # Create layout using the remote generator
         generator = WTRemoteLayoutGenerator(remote_name=remote_name, session_name_prefix=session_name)
-        script_path = generator.create_wt_layout(sample_tabs, None)
+        script_path = generator.create_wt_layout(sample_tabs, str(TMP_LAYOUT_DIR))
         print(f"✅ Remote layout created successfully: {script_path}")
 
         # Check if Windows Terminal is available on remote

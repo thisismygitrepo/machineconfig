@@ -36,7 +36,7 @@ class ZellijLayoutGenerator:
 
 
 
-    def create_zellij_layout(self, layout_config: LayoutConfig, output_dir: Optional[str], session_name: Optional[str]) -> str:
+    def create_zellij_layout(self, layout_config: LayoutConfig, output_path: str, session_name: Optional[str]) -> str:
         validate_layout_config(layout_config)
 
         # Enhanced Rich logging
@@ -59,18 +59,15 @@ class ZellijLayoutGenerator:
 
         try:
             random_suffix = generate_random_suffix(8)
-            if output_dir:
-                output_path = Path(output_dir)
-                output_path.mkdir(parents=True, exist_ok=True)
-                layout_file = output_path / f"zellij_layout_{random_suffix}.kdl"
-                layout_file.write_text(layout_content, encoding="utf-8")
-                self.layout_path = str(layout_file.absolute())
+            path_obj = Path(output_path)
+            if path_obj.suffix == ".kdl":
+                layout_file = path_obj
+                layout_file.parent.mkdir(parents=True, exist_ok=True)
             else:
-                # Use the predefined TMP_LAYOUT_DIR for temporary files
-                TMP_LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
-                layout_file = TMP_LAYOUT_DIR / f"zellij_layout_{self.session_name or 'default'}_{random_suffix}.kdl"
-                layout_file.write_text(layout_content, encoding="utf-8")
-                self.layout_path = str(layout_file.absolute())
+                path_obj.mkdir(parents=True, exist_ok=True)
+                layout_file = path_obj / f"zellij_layout_{self.session_name or 'default'}_{random_suffix}.kdl"
+            layout_file.write_text(layout_content, encoding="utf-8")
+            self.layout_path = str(layout_file.absolute())
 
             # Enhanced Rich logging for file creation
             console.print(f"[bold green]✅ Zellij layout file created:[/bold green] [cyan]{self.layout_path}[/cyan]")
@@ -178,13 +175,13 @@ class ZellijLayoutGenerator:
         console.print(Panel(summary_text, title="📊 Summary", style="blue"))
 
 
-def created_zellij_layout(layout_config: LayoutConfig, output_dir: Optional[str]) -> str:
+def created_zellij_layout(layout_config: LayoutConfig, output_path: str) -> str:
     generator = ZellijLayoutGenerator()
-    return generator.create_zellij_layout(layout_config, output_dir, None)
+    return generator.create_zellij_layout(layout_config, output_path, None)
 
 
 def run_zellij_layout(layout_config: LayoutConfig):
-    layout_path = created_zellij_layout(layout_config=layout_config, output_dir=None)
+    layout_path = created_zellij_layout(layout_config=layout_config, output_path=str(TMP_LAYOUT_DIR))
     session_name = layout_config["layoutName"]
     try:
         from machineconfig.cluster.sessions_managers.utils.enhanced_command_runner import enhanced_zellij_session_start
@@ -233,7 +230,7 @@ if __name__ == "__main__":
     try:
         # Create layout using the generator directly to access status methods
         generator = ZellijLayoutGenerator()
-        layout_path = generator.create_zellij_layout(sample_layout, None, "test_session")
+        layout_path = generator.create_zellij_layout(sample_layout, str(TMP_LAYOUT_DIR), "test_session")
         print(f"✅ Layout created successfully: {layout_path}")
 
         # Demonstrate status checking
