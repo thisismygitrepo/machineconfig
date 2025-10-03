@@ -95,13 +95,7 @@ def display_dotfiles_instructions() -> None:
 
 def get_installation_choices() -> list[str]:
     """Get user choices for installation options."""
-    if platform.system() == "Windows":
-        choices = []
-    else:
-        choices = [
-        Choice(value="upgrade_system", title="🔄 Upgrade System Package Manager", checked=False),
-    ]
-    choices += [
+    choices = [
         Choice(value="install_repos", title="🐍 Install machineconfig.", checked=False),
         Choice(value="ESSENTIAL_SYSTEM", title="📥 Install Essential System Packages.", checked=False),
         Choice(value="ESSENTIAL", title="⚡ Install CLI apps essentials", checked=False),
@@ -139,14 +133,6 @@ def execute_installations(selected_options: list[str]) -> None:
                 console.print(f"❌ Error installing CLI applications: {e}", style="bold red")
             run_shell_script(". $HOME/.bashrc")
 
-    if "upgrade_system" in selected_options:
-        if platform.system() == "Windows":
-            console.print("❌ System upgrade is not applicable on Windows via this script.", style="bold red")
-        elif platform.system() == "Linux":
-            console.print(Panel("🔄 [bold magenta]SYSTEM UPDATE[/bold magenta]\n[italic]Package management[/italic]", border_style="magenta"))
-            run_shell_script("sudo nala upgrade -y")
-        else:
-            console.print(f"❌ System upgrade not supported on {platform.system()}.", style="bold red")
     if "install_repos" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
         if platform.system() == "Windows":
