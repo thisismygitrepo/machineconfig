@@ -22,8 +22,8 @@ def create(
 
     agent: AGENTS = typer.Option(..., help=f"Agent type. One of {', '.join(get_args(AGENTS))}"),
     machine: MATCHNE = typer.Option(..., help=f"Machine to run agents on. One of {', '.join(get_args(MATCHNE))}"),
-    model: MODEL = typer.Option("zai/glm-4.6", help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL))}"),
-    provider: PROVIDER = typer.Option("openrouter", help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER))}"),
+    model: MODEL = typer.Option(..., help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL))}"),
+    provider: PROVIDER = typer.Option(..., help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER))}"),
 
     prompt: Optional[str] = typer.Option(None, help="Prompt prefix as string"),
     prompt_path: Optional[Path] = typer.Option(None, help="Path to prompt file"),

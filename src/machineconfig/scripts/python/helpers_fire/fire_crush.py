@@ -2,11 +2,10 @@
 from pathlib import Path
 # import shlex
 from typing import Optional
-from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import MATCHNE
+from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import MATCHNE, PROVIDER, MODEL
 
 
-def fire_crush(api_key: Optional[str], model: str, provider: str,
-               prompt_path: Path, machine: MATCHNE, repo_root: Path) -> str:
+def fire_crush(api_key: Optional[str], model: MODEL, provider: PROVIDER, machine: MATCHNE, prompt_path: Path, repo_root: Path) -> str:
     match machine:
         case "local":
             cmd = f"""

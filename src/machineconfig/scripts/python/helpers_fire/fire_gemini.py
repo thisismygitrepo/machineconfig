@@ -19,8 +19,12 @@ def fire_gemini(api_key: Optional[str], prompt_path: Path, machine: MATCHNE) -> 
     match machine:
         case "local":
             # Export the environment variable so it's available to subshells
+            if api_key is not None:
+                add = f"""export GEMINI_API_KEY="{shlex.quote(api_key)}" """
+            else:
+                add = "echo 'Warning: No GEMINI_API_KEY provided, hoping it is set in the environment.'"
             cmd = f"""
-export GEMINI_API_KEY={shlex.quote(api_key)}
+{add}
 echo "Using Gemini API key $GEMINI_API_KEY"
 gemini {model_arg} --yolo --prompt {safe_path}
     """
