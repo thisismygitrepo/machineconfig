@@ -11,6 +11,15 @@ echo """🏗️ BUILD | Creating new docker image"""
 docker build --no-cache --file ./Dockerfile --progress=plain -t "statistician/$IMAGE_NAME:latest" .
 # building with no cache since docker is unaware of changes in code due to dynamic code like curl URL | bash etc.
 
+
+echo """✨ FINISHED | Try it out using: docker run --rm -it statistician/$IMAGE_NAME:latest
+🧰 HELPFUL CLEANUP COMMANDS:
+Use this to clean instances: docker ps --all -q | xargs docker rm
+Delete images: docker rmi -f $(docker images -q)
+docker ps --all -q | xargs docker rm; docker rmi -f $(docker images -q)
+docker run --rm -it statistician/$IMAGE_NAME:latest /bin/bash hollywood
+"""
+
 echo """📝 STATUS | Current docker images"""
 docker images
 
@@ -35,10 +44,3 @@ case "$answer" in
         ;;
 esac
 
-echo """✨ FINISHED | Try it out using: docker run --rm -it statistician/$IMAGE_NAME:latest
-🧰 HELPFUL CLEANUP COMMANDS:
-Use this to clean instances: docker ps --all -q | xargs docker rm
-Delete images: docker rmi -f $(docker images -q)
-docker ps --all -q | xargs docker rm; docker rmi -f $(docker images -q)
-docker run --rm -it statistician/alim-slim:latest /bin/bash hollywood
-"""

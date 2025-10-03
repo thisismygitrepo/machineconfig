@@ -1,12 +1,8 @@
 #!/bin/bash
-#=======================================================================
 # 🌐 MICROSOFT EDGE INSTALLATION SCRIPT 🌐
-#=======================================================================
 # This script installs Microsoft Edge browser on Linux systems
 
-echo """#=======================================================================
-🔑 ADDING REPOSITORY KEYS | Setting up Microsoft repository
-#=======================================================================
+echo """🔑 ADDING REPOSITORY KEYS | Setting up Microsoft repository
 """
 
 # Download and install Microsoft's GPG key
@@ -23,9 +19,7 @@ sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge sta
 echo "🧹 Cleaning up temporary files..."
 sudo rm microsoft.gpg
 
-echo """#=======================================================================
-📦 INSTALLING MICROSOFT EDGE | Updating and installing packages
-#=======================================================================
+echo """📦 INSTALLING MICROSOFT EDGE | Updating and installing packages
 """
 
 # Update package lists
@@ -36,9 +30,7 @@ sudo nala update
 echo "📥 Installing Microsoft Edge..."
 sudo nala install microsoft-edge-stable
 
-echo """#=======================================================================
-✅ INSTALLATION COMPLETE | Microsoft Edge has been installed successfully
-#=======================================================================
+echo """✅ INSTALLATION COMPLETE | Microsoft Edge has been installed successfully
 """
 echo "🌐 You can now launch Microsoft Edge from your applications menu or by typing 'microsoft-edge' in terminal"
 

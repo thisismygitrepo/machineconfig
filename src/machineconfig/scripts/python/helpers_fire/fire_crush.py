@@ -30,7 +30,7 @@ docker run -it --rm \
   -v "{repo_root}:/workspace/{repo_root.name}" \
   -v "{temp_config_file_local}:/root/.local/share/crush/crush.json" \
   -w "/workspace/{repo_root.name}" \
-  statistician/alim-slim:latest \
+  statistician/machineconfig:latest \
   crush run {prompt_path.relative_to(repo_root)}
 
 """

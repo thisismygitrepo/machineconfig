@@ -1,7 +1,5 @@
 #!/bin/bash
-#=======================================================================
 # 💻 VS CODE INSTALLATION SCRIPT 💻
-#=======================================================================
 # This script installs Visual Studio Code on Ubuntu/Debian-based Linux distributions
 # Reference: https://code.visualstudio.com/docs/setup/linux
 
@@ -15,9 +13,7 @@ handle_error() {
 
 # Function to install via direct .deb download (fallback method)
 install_vscode_direct() {
-    echo """#=======================================================================
-📦 FALLBACK INSTALLATION | Installing VS Code via direct download
-#=======================================================================
+    echo """📦 FALLBACK INSTALLATION | Installing VS Code via direct download
 """
     
     echo "⬇️ Downloading VS Code .deb package..."
@@ -37,9 +33,7 @@ install_vscode_direct() {
 
 
 
-echo """#=======================================================================
-� INSTALLING VS CODE | Using direct download method
-#=======================================================================
+echo """� INSTALLING VS CODE | Using direct download method
 """
 
 # Try direct download method first (more reliable)
@@ -50,9 +44,7 @@ install_vscode_direct
 if ! command -v code >/dev/null 2>&1; then
     echo "⚠️ Direct download failed, trying repository method..."
     
-    echo """#=======================================================================
-🔑 SETTING UP MICROSOFT REPOSITORY | Fallback method
-#=======================================================================
+    echo """🔑 SETTING UP MICROSOFT REPOSITORY | Fallback method
 """
     
     # Clean up any existing conflicting configurations
@@ -105,9 +97,7 @@ if ! command -v code >/dev/null 2>&1; then
     fi
 fi
 
-echo """#=======================================================================
-🔄 CHECKING FOR VS CODE INSIDERS | Updating if installed
-#=======================================================================
+echo """🔄 CHECKING FOR VS CODE INSIDERS | Updating if installed
 """
 
 # Check if VS Code Insiders is installed and update if found
@@ -118,9 +108,7 @@ else
     echo "ℹ️ VS Code Insiders not installed, skipping"
 fi
 
-echo """#=======================================================================
-✅ INSTALLATION COMPLETE | VS Code has been installed successfully
-#=======================================================================
+echo """✅ INSTALLATION COMPLETE | VS Code has been installed successfully
 """
 
 # Verify installation

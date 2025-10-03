@@ -1,15 +1,11 @@
 #!/bin/bash
-#=======================================================================
 # 🐳 DOCKER INSTALLATION SCRIPT 🐳
-#=======================================================================
 # This script installs Docker on Debian/Ubuntu-based Linux distributions
 
 #-----------------------------------------------------------------------
 # 🔍 SYSTEM DETECTION | Identify OS distribution and version
 #-----------------------------------------------------------------------
-echo """#=======================================================================
-🔍 DETECTING SYSTEM | Identifying OS distribution and version
-#=======================================================================
+echo """🔍 DETECTING SYSTEM | Identifying OS distribution and version
 """
 
 get_os_type() {
@@ -54,9 +50,7 @@ echo "📋 Distribution version: $DISTRO_VERSION"
 #-----------------------------------------------------------------------
 # 🔑 REPOSITORY SETUP | Adding Docker's official repository
 #-----------------------------------------------------------------------
-echo """#=======================================================================
-🔑 REPOSITORY SETUP | Adding Docker's official repository
-#=======================================================================
+echo """🔑 REPOSITORY SETUP | Adding Docker's official repository
 """
 
 # Install prerequisites
@@ -79,9 +73,7 @@ echo \
 #-----------------------------------------------------------------------
 # 📦 INSTALLATION | Installing Docker packages
 #-----------------------------------------------------------------------
-echo """#=======================================================================
-📦 INSTALLATION | Installing Docker packages
-#=======================================================================
+echo """📦 INSTALLATION | Installing Docker packages
 """
 
 echo "🔄 Updating package lists..."
@@ -92,9 +84,7 @@ sudo nala install docker-ce docker-ce-cli containerd.io docker-buildx-plugin doc
 #-----------------------------------------------------------------------
 # 🚀 CONFIGURATION | Setting up Docker service and permissions
 #-----------------------------------------------------------------------
-echo """#=======================================================================
-🚀 CONFIGURATION | Setting up Docker service and permissions
-#=======================================================================
+echo """🚀 CONFIGURATION | Setting up Docker service and permissions
 """
 
 echo "⚙️ Enabling Docker system service..."
@@ -107,9 +97,7 @@ echo "👥 Adding current user to docker group..."
 sudo groupadd docker 2>/dev/null || echo "ℹ️ Docker group already exists"
 sudo usermod -aG docker $(whoami) || echo "⚠️ Failed to add user to docker group"
 
-echo """#=======================================================================
-✅ INSTALLATION COMPLETE | Docker has been installed successfully
-#=======================================================================
+echo """✅ INSTALLATION COMPLETE | Docker has been installed successfully
 
 ℹ️ NOTES:
 - You may need to log out and log back in for group changes to take effect

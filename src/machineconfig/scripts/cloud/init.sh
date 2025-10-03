@@ -1,12 +1,8 @@
 #!/bin/bash
-#=======================================================================
 # ☁️ CLOUD CONFIGURATION INITIALIZATION SCRIPT ☁️
-#=======================================================================
 # This script initializes cloud configuration settings and sets up the environment
 
-echo """#=======================================================================
-🔑 COLLECTING CONFIGURATION PARAMETERS | Setting up cloud environment
-#=======================================================================
+echo """🔑 COLLECTING CONFIGURATION PARAMETERS | Setting up cloud environment
 """
 
 # Check for required environment variables and prompt if not set
@@ -41,9 +37,7 @@ if [ -z "$DECRYPTION_PASSWORD" ]; then
     echo ""
 fi
 
-echo """#=======================================================================
-📦 INSTALLING ESSENTIALS | Setting up core dependencies
-#=======================================================================
+echo """📦 INSTALLING ESSENTIALS | Setting up core dependencies
 """
 
 # Set up package manager
@@ -65,9 +59,7 @@ echo "🚀 Activating Python virtual environment..."
 echo "📋 Setting up code repositories..."
 curl bit.ly/cfgreposlinux -L | bash
 
-echo """#=======================================================================
-⚙️ CONFIGURING ENVIRONMENT | Setting up dotfiles
-#=======================================================================
+echo """⚙️ CONFIGURING ENVIRONMENT | Setting up dotfiles
 """
 
 # Link configuration files
@@ -87,9 +79,7 @@ source ~/code/machineconfig/src/machineconfig/setup_linux/symlinks.sh
 echo "🔄 Reloading shell configuration..."
 . ~/.bashrc
 
-echo """#=======================================================================
-📦 INSTALLING DEVELOPMENT TOOLS | Setting up development environment
-#=======================================================================
+echo """📦 INSTALLING DEVELOPMENT TOOLS | Setting up development environment
 """
 
 # Activate virtual environment
@@ -104,16 +94,12 @@ python -m fire machineconfig.scripts.python.devops_devapps_install main --which=
 echo "🔄 Reloading shell configuration..."
 . ~/.bashrc
 
-echo """#=======================================================================
-✅ FINALIZING CONFIGURATION | Running cloud-specific initialization
-#=======================================================================
+echo """✅ FINALIZING CONFIGURATION | Running cloud-specific initialization
 """
 
 # Run cloud-specific initialization script
 echo "⚙️ Running cloud-specific configuration: $CLOUD_CONFIG_NAME"
 . $HOME/dotfiles/config/cloud/$CLOUD_CONFIG_NAME/init.sh
 
-echo """#=======================================================================
-✅ INITIALIZATION COMPLETE | Cloud environment has been set up successfully
-#=======================================================================
+echo """✅ INITIALIZATION COMPLETE | Cloud environment has been set up successfully
 """

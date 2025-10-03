@@ -1,12 +1,8 @@
 #!/bin/bash
-#=======================================================================
 # 📦 NIX CLI TOOLS INSTALLATION SCRIPT
-#=======================================================================
 # This script installs various command-line utilities using the Nix package manager
 
-echo """#=======================================================================
-🔄 SYSTEM UTILITIES | Installing system management tools
-#=======================================================================
+echo """🔄 SYSTEM UTILITIES | Installing system management tools
 """
 
 # System upgrade tool
@@ -21,9 +17,7 @@ nix-env -iA nixpkgs.procs || true
 echo "📥 Installing watchexec - executes commands when files change..."
 nix-env -iA nixpkgs.watchexec || true
 
-echo """#=======================================================================
-📂 FILE MANAGEMENT | Installing file browsers and utilities
-#=======================================================================
+echo """📂 FILE MANAGEMENT | Installing file browsers and utilities
 """
 
 # Terminal file managers
@@ -56,9 +50,7 @@ nix-env -iA nixpkgs.diskonaut || true
 echo "📥 Installing kondo - cleanup tool for dev projects..."
 nix-env -iA nixpkgs.kondo || true
 
-echo """#=======================================================================
-🖼️ VISUAL TOOLS | Installing terminal visualization tools
-#=======================================================================
+echo """🖼️ VISUAL TOOLS | Installing terminal visualization tools
 """
 
 # Terminal visualization
@@ -71,9 +63,7 @@ nix-env -iA nixpkgs.bottom || true
 echo "📥 Installing delta - syntax-highlighting pager for git..."
 nix-env -iA nixpkgs.delta || true
 
-echo """#=======================================================================
-🔧 DEVELOPMENT TOOLS | Installing programming utilities
-#=======================================================================
+echo """🔧 DEVELOPMENT TOOLS | Installing programming utilities
 """
 
 # Code editors
@@ -95,9 +85,7 @@ nix-env -iA nixpkgs.tokei || true
 echo "📥 Installing gitui - terminal UI for git..."
 nix-env -iA nixpkgs.gitui || true
 
-echo """#=======================================================================
-🔎 SEARCH TOOLS | Installing fuzzy finders and search utilities
-#=======================================================================
+echo """🔎 SEARCH TOOLS | Installing fuzzy finders and search utilities
 """
 
 # Search history
@@ -108,9 +96,7 @@ nix-env -iA nixpkgs.mcfly || true
 echo "📥 Installing skim - fuzzy finder in Rust..."
 nix-env -iA nixpkgs.skim || true
 
-echo """#=======================================================================
-🌐 NETWORK & CLOUD TOOLS | Installing file transfer and cloud utilities
-#=======================================================================
+echo """🌐 NETWORK & CLOUD TOOLS | Installing file transfer and cloud utilities
 """
 
 # File transfer
@@ -121,18 +107,14 @@ nix-env -iA nixpkgs.termscp || true
 echo "📥 Installing rclone - rsync for cloud storage..."
 nix-env -iA nixpkgs.rclone || true
 
-echo """#=======================================================================
-🛡️ SECURITY TOOLS | Installing password management utilities
-#=======================================================================
+echo """🛡️ SECURITY TOOLS | Installing password management utilities
 """
 
 # Password management
 echo "📥 Installing gopass - team password manager with git..."
 nix-env -iA nixpkgs.gopass || true
 
-echo """#=======================================================================
-📚 DOCUMENTATION | Installing help and reference tools
-#=======================================================================
+echo """📚 DOCUMENTATION | Installing help and reference tools
 """
 
 # Command reference
@@ -143,9 +125,7 @@ nix-env -iA nixpkgs.tldr || true
 echo "📥 Installing nushell - modern shell alternative..."
 nix-env -iA nixpkgs.nushell || true
 
-echo """#=======================================================================
-✅ INSTALLATION COMPLETE | All Nix CLI tools have been installed
-#=======================================================================
+echo """✅ INSTALLATION COMPLETE | All Nix CLI tools have been installed
 """
 
 # Commented out tools

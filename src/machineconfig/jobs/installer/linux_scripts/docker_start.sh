@@ -1,7 +1,5 @@
 #!/bin/sh
-#=======================================================================
 # 🐳 DOCKER DAEMON INIT SCRIPT 🐳
-#=======================================================================
 # This script should be placed at /etc/init.d/docker
 # It manages Docker daemon startup/shutdown for systems without systemd
 
@@ -17,24 +15,18 @@
 
 case "$1" in
   start)
-    echo """    #=======================================================================
-    🚀 STARTING | Launching Docker daemon
-    #=======================================================================
-    """
+    echo """        🚀 STARTING | Launching Docker daemon
+        """
     /usr/bin/dockerd &
     ;;
   stop)
-    echo """    #=======================================================================
-    🛑 STOPPING | Terminating Docker daemon
-    #=======================================================================
-    """
+    echo """        🛑 STOPPING | Terminating Docker daemon
+        """
     killall dockerd
     ;;
   *)
-    echo """    #=======================================================================
-    ❓ USAGE | Command not recognized
-    #=======================================================================
-    
+    echo """        ❓ USAGE | Command not recognized
+        
     📋 Valid commands: /etc/init.d/docker {start|stop}
     """
     exit 1

@@ -1,12 +1,8 @@
 #!/bin/bash
-#=======================================================================
 # 🖥️ GUI APPLICATIONS AND DESKTOP ENVIRONMENT SETUP SCRIPT
-#=======================================================================
 # This script installs graphical user interfaces and desktop environments
 
-echo """#=======================================================================
-📦 INSTALLING GUI COMPONENTS | Setting up desktop environment
-#=======================================================================
+echo """📦 INSTALLING GUI COMPONENTS | Setting up desktop environment
 """
 
 # echo "📥 Installing Nautilus file manager..."
@@ -27,9 +23,7 @@ sudo nala install xfce4 -y  # 🏠 xfce4 desktop environment
 echo "📥 Installing XFCE4 additional components..."
 sudo nala install xfce4-goodies -y  # ✨ xfce4 desktop environment extras
 
-echo """#=======================================================================
-🔧 CONFIGURING XRDP | Setting up Remote Desktop service
-#=======================================================================
+echo """🔧 CONFIGURING XRDP | Setting up Remote Desktop service
 """
 
 # Back up original configuration
@@ -55,17 +49,13 @@ sudo sed -i 's/test/#test/g' /etc/xrdp/startwm.sh
 sudo sed -i 's/exec/#exec/g' /etc/xrdp/startwm.sh
 echo "startxfce4" | sudo tee -a /etc/xrdp/startwm.sh
 
-echo """#=======================================================================
-🚀 STARTING SERVICES | Initializing XRDP service
-#=======================================================================
+echo """🚀 STARTING SERVICES | Initializing XRDP service
 """
 
 echo "🔄 Starting XRDP service..."
 sudo /etc/init.d/xrdp start
 
-echo """#=======================================================================
-✅ SETUP COMPLETE | GUI environment has been configured
-#=======================================================================
+echo """✅ SETUP COMPLETE | GUI environment has been configured
 """
 echo "ℹ️ Connect to this machine via Remote Desktop using port 3391"
 # Alternative commands:
