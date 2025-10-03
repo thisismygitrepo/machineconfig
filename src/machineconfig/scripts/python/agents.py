@@ -5,7 +5,7 @@
 from pathlib import Path
 from typing import cast, Iterable, Optional, get_args
 import typer
-from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS
+from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, MATCHNE
 
 
 def _write_list_file(target: Path, files: Iterable[Path]) -> None:
@@ -20,6 +20,7 @@ def create(
     separator: str = typer.Option("\n", help="Separator for context"),
     tasks_per_prompt: int = typer.Option(13, help="Number of tasks per prompt"),
     agent: AGENTS = typer.Option(..., help=f"Agent type. One of {', '.join(get_args(AGENTS))}"),
+    platform: MATCHNE = typer.Option(..., help=f"Platform to run agents on. One of {', '.join(get_args(MATCHNE))}"),
     prompt: Optional[str] = typer.Option(None, help="Prompt prefix as string"),
     prompt_path: Optional[Path] = typer.Option(None, help="Path to prompt file"),
     job_name: str = typer.Option("AI_Agents", help="Job name"),
@@ -91,7 +92,9 @@ def create(
         import shutil
         if agents_dir.exists():
             shutil.rmtree(agents_dir)
-    prep_agent_launch(agents_dir=agents_dir, prompts_material=prompt_material_re_splitted, keep_material_in_separate_file=keep_material_in_separate_file_input, prompt_prefix=prompt_prefix, agent=agent_selected, job_name=job_name)
+    prep_agent_launch(agents_dir=agents_dir, prompts_material=prompt_material_re_splitted,
+                      keep_material_in_separate_file=keep_material_in_separate_file_input,
+                      prompt_prefix=prompt_prefix, machine=platform, agent=agent_selected, job_name=job_name)
     layoutfile = get_agents_launch_layout(session_root=agents_dir)    
     regenerate_py_code = f"""
 #!/usr/bin/env uv run --python 3.13 --with machineconfig

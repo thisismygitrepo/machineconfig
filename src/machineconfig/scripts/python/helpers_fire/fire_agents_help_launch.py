@@ -2,7 +2,7 @@
 import random
 import shlex
 from pathlib import Path
-from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, AGENT_NAME_FORMATTER
+from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, AGENT_NAME_FORMATTER, MATCHNE
 
 
 def get_gemini_api_keys() -> list[str]:
@@ -20,7 +20,7 @@ def get_gemini_api_keys() -> list[str]:
     return res
 
 
-def prep_agent_launch(agents_dir: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool, agent: AGENTS, *, job_name: str) -> None:
+def prep_agent_launch(agents_dir: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool, machine: MATCHNE, agent: AGENTS, *, job_name: str) -> None:
     agents_dir.mkdir(parents=True, exist_ok=True)
     prompt_folder = agents_dir / "prompts"
     prompt_folder.mkdir(parents=True, exist_ok=True)
@@ -64,40 +64,19 @@ sleep 0.1
 """
         match agent:
             case "gemini":
-                model = "gemini-2.5-pro"
-                # model = "gemini-2.5-flash-lite"
-                # model = None  # auto-select
-                # if model is None:
-                #     model_arg = ""
-                # else:
-                model_arg = f"--model {shlex.quote(model)}"
-                # Need a real shell for the pipeline; otherwise '| gemini ...' is passed as args to 'cat'
-                safe_path = shlex.quote(str(prompt_path))
                 api_keys = get_gemini_api_keys()
                 api_key = api_keys[idx % len(api_keys)] if api_keys else ""
-                # Export the environment variable so it's available to subshells
-                cmd = f"""
-
-export GEMINI_API_KEY={shlex.quote(api_key)}
-echo "Using Gemini API key $GEMINI_API_KEY"
-
-gemini {model_arg} --yolo --prompt {safe_path}
-"""
+                from machineconfig.scripts.python.helpers_fire.fire_gemini import fire_gemini
+                cmd = fire_gemini(api_key=api_key, prompt_path=prompt_path, machine=machine)
             case "cursor-agent":
-                # As originally implemented
-                cmd = f"""
-
-cursor-agent --print --output-format text {prompt_path}
-
-"""
+                from machineconfig.scripts.python.helpers_fire.fire_cursor_agents import fire_cursor
+                cmd = fire_cursor(prompt_path=prompt_path, machine=machine, api_key="")
             case "crush":
-                cmd = f"""
-crush run {prompt_path}
-"""
+                from machineconfig.scripts.python.helpers_fire.fire_crush import fire_crush
+                cmd = fire_crush(api_key="", prompt_path=prompt_path, machine=machine)
             case "q":
-                cmd = f"""
-q chat --no-interactive --trust-all-tools {prompt_path}
-"""
+                from machineconfig.scripts.python.helpers_fire.fire_q import fire_q
+                cmd = fire_q(api_key="", prompt_path=prompt_path, machine=machine)
             case _:
                 raise ValueError(f"Unsupported agent type: {agent}")
         cmd_postfix = """
@@ -105,7 +84,6 @@ sleep 0.1
 echo "---------END OF AGENT OUTPUT---------"
 """
         agent_cmd_launch_path.write_text(cmd_prefix + cmd + cmd_postfix, encoding="utf-8")
-
     return None
 
 
