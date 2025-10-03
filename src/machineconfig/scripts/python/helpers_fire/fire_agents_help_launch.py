@@ -40,6 +40,11 @@ def prep_agent_launch(repo_root: Path, agents_dir: Path, prompts_material: list[
         agent_cmd_launch_path = prompt_root / AGENT_NAME_FORMATTER.format(idx=idx)  # e.g., agent_0_cmd.sh
         random_sleep_time = random.uniform(0, 5)
         cmd_prefix = f"""#!/usr/bin/env bash
+
+echo "Using machine: {machine}, model: {model}, provider: {provider}, and agent: {agent}"
+echo "{job_name}-{idx} CMD {agent_cmd_launch_path}"
+echo "{job_name}-{idx} PROMPT {prompt_path}"
+echo "{job_name}-{idx} CONTEXT {prompt_material_path}"
 echo "Starting agent {agent} in 5 seconds... Press Ctrl+C to cancel."
 sleep 5
 timeout 3 copilot --banner
@@ -52,11 +57,6 @@ export FIRE_AGENTS_AGENT_LAUNCHER="{agent_cmd_launch_path}"
 
 echo "Sleeping for {random_sleep_time:.2f} seconds to stagger agent startups..."
 sleep {random_sleep_time:.2f}
-echo "Using machine: {machine}, model: {model}, provider: {provider}, and agent: {agent}"
-echo "Launching agent {job_name}-{idx} with command from {agent_cmd_launch_path}"
-echo "Launching agent {job_name}-{idx} with prompt from {prompt_path}"
-echo "Launching agent {job_name}-{idx} with material from {prompt_material_path}"
-
 echo "--------START OF AGENT OUTPUT--------"
 sleep 0.1
 
