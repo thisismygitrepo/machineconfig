@@ -46,8 +46,8 @@ echo "{job_name}-{idx} CMD {agent_cmd_launch_path}"
 echo "{job_name}-{idx} PROMPT {prompt_path}"
 echo "{job_name}-{idx} CONTEXT {prompt_material_path}"
 echo "Starting agent {agent} in 5 seconds... Press Ctrl+C to cancel."
-sleep 5
-timeout 3 copilot --banner
+# sleep 5
+# timeout 3 copilot --banner
 
 export FIRE_AGENTS_AGENT_NAME="{agent}"
 export FIRE_AGENTS_JOB_NAME="{job_name}"
