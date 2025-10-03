@@ -28,7 +28,7 @@ def create(
     prompt: Optional[str] = typer.Option(None, help="Prompt prefix as string"),
     prompt_path: Optional[Path] = typer.Option(None, help="Path to prompt file"),
     job_name: str = typer.Option("AI_Agents", help="Job name"),
-    keep_separate: bool = typer.Option(True, help="Keep prompt material in separate file to the context."),
+    separate_prompt_from_context: bool = typer.Option(True, help="Keep prompt material in separate file to the context."),
     output_path: Optional[Path] = typer.Option(None, help="Path to write the layout.json file"),
     agents_dir: Optional[Path] = typer.Option(None, help="Directory to store agent files. If not provided, will be constructed automatically."),
 ):
@@ -89,7 +89,7 @@ def create(
     else:
         prompt_prefix = cast(str, prompt)
     agent_selected = agent
-    keep_material_in_separate_file_input = keep_separate
+    keep_material_in_separate_file_input = separate_prompt_from_context
     prompt_material_re_splitted = chunk_prompts(prompt_material_path, tasks_per_prompt=tasks_per_prompt, joiner=separator)
     if agents_dir is None: agents_dir = repo_root / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
     else:
@@ -112,7 +112,7 @@ fire_agents create --context-path "{prompt_material_path}" \\
     --job-name "{job_name}" \\
     --tasks-per-prompt {tasks_per_prompt} \\
     --separator "{separator}" \\
-    {"--keep-separate" if keep_material_in_separate_file_input else ""}
+    {"--separate-prompt-from-context" if keep_material_in_separate_file_input else ""}
 """
     (agents_dir / "aa_agents_relaunch.py").write_text(data=regenerate_py_code, encoding="utf-8")
     layout_output_path = output_path if output_path is not None else agents_dir / "layout.json"
@@ -165,20 +165,37 @@ def collect(
 
 def template():
     template_bash = """#!/bin/bash
+#!/bin/bash
+# set -e # Exit immediately if a command exits with a non-zero status.
+
 JOB_NAME="outpatient_mapping"
-REPO_ROOT="$HOME/code/work/winter_planning/"
-CONTEXT_PATH="$REPO_ROOT/data/outpatient_mapping/op_services_collected.csv"
-PROMPT_PATH="$REPO_ROOT/data/outpatient_mapping/prompt"
+REPO_ROOT="$HOME/code/machineconfig/"
+CONTEXT_PATH="$REPO_ROOT/src/machineconfig/scripts/python/fire_jobs.py"
+PROMPT_PATH="$REPO_ROOT/.ai/prompt.txt"
 
 AGENTS_DIR="$REPO_ROOT/.ai/agents/$JOB_NAME"
-LAYOUT_PATH="$REPO_ROOT/.ai/agents/$JOB_NAME/layout_unbalanced.json"
-LAYOUT_BALANCED_PATH="$REPO_ROOT/.ai/agents/$JOB_NAME/layout_balanced.json"
+LAYOUT_PATH_UNBALANCED="$REPO_ROOT/.ai/agents/$JOB_NAME/layout_unbalanced.json"
 
-agents create --context-path $CONTEXT_PATH --tasks-per-prompt 10 --agent crush --prompt-path $PROMPT_PATH --keep-separate --output-path $LAYOUT_PATH --agents-dir $AGENTS_DIR
-sessions balance-load $LAYOUT_PATH --max-thresh 6 --breaking-method moreLayouts --thresh-type number  --output-path $LAYOUT_BALANCED_PATH
+agents create \
+  --context-path "$CONTEXT_PATH" \
+  --tasks-per-prompt 1 \
+  --machine docker \
+  --agent crush \
+  --model "zai/glm-4.6" \
+  --provider openrouter \
+  --separator 'def ' \
+  --prompt-path "$LAYOUT_PATH_UNBALANCED" \
+  --output-path "$LAYOUT_PATH" \
+  --agents-dir "$AGENTS_DIR"
 
-sessions run $LAYOUT_BALANCED_PATH --kill-upon-completion
-agents collect $AGENTS_DIR "$REPO_ROOT/.ai/agents/$JOB_NAME/collected.txt"
+# LAYOUT_BALANCED_PATH="$REPO_ROOT/.ai/agents/$JOB_NAME/layout_balanced.json"
+# sessions balance-load $LAYOUT_PATH --max-thresh 6 --breaking-method moreLayouts --thresh-type number  --output-path $LAYOUT_BALANCED_PATH
+# sessions run $LAYOUT_BALANCED_PATH --kill-upon-completion
+
+sessions run $LAYOUT_PATH_UNBALANCED
+
+# agents collect $AGENTS_DIR "$REPO_ROOT/.ai/agents/$JOB_NAME/collected.txt"
+
 """
     template_powershell = """
 
@@ -205,9 +222,9 @@ agents collect $AGENTS_DIR "$REPO_ROOT/.ai/agents/$JOB_NAME/collected.txt"
 def main_from_parser():
     import sys
     agents_app = typer.Typer(help="🤖 AI Agents management subcommands")
-    agents_app.command("create")(create)
-    agents_app.command("collect")(collect)
-    agents_app.command("template")(template)
+    agents_app.command("create", no_args_is_help=True)(create)
+    agents_app.command("collect", no_args_is_help=True)(collect)
+    agents_app.command("template", no_args_is_help=True)(template)
     if len(sys.argv) == 1:
         agents_app(["--help"])
     else:
