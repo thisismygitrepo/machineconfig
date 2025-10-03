@@ -6,7 +6,6 @@ from typing import Literal, Annotated, Optional
 import machineconfig.scripts.python.repos as repos
 import machineconfig.scripts.python.share_terminal as share_terminal
 
-
 app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True)
 @app.command(no_args_is_help=True)
 def install(    which: Optional[str] = typer.Option(None, "--which", "-w", help="Comma-separated list of program names to install."),
@@ -28,7 +27,6 @@ nw_apps.command(name="share-terminal", help="📡 Share terminal via web browser
 app.add_typer(nw_apps, name="network")
 self_app = typer.Typer(help="🔄 SELF operations subcommands", no_args_is_help=True)
 app.add_typer(self_app, name="self")
-
 
 @self_app.command()
 def update():

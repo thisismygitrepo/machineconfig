@@ -8,12 +8,12 @@ in the event that username@github.com is not mentioned in the remote url.
 from pathlib import Path
 from typing import Annotated, Optional
 import typer
+from machineconfig.scripts.python.secure_repo import main as secure_repo_main
 
 
 app = typer.Typer(help="� Manage development repositories", no_args_is_help=True)
 sync_app = typer.Typer(help="� Manage repository specifications and syncing", no_args_is_help=True)
 app.add_typer(sync_app, name="sync", help="� Sync repositories using saved specs")
-
 
 DirectoryArgument = Annotated[Optional[str], typer.Argument(help="📁 Folder containing repos or the specs JSON file to use.")]
 RecursiveOption = Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")]
@@ -99,6 +99,9 @@ def analyze(directory: DirectoryArgument = None) -> None:
     from machineconfig.scripts.python.repos_helpers.count_lines_frontend import analyze_repo_development
 
     analyze_repo_development(repo_path=repo_path)
+
+
+app.command(name="secure", no_args_is_help=True, help="🔐 Securely sync git repository to/from cloud with encryption")(secure_repo_main)
 
 
 @app.command(no_args_is_help=True)

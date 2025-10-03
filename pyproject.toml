@@ -61,7 +61,6 @@ sessions = "machineconfig.scripts.python.sessions:main_from_parser"
 choose_wezterm_theme = "machineconfig.scripts.python.choose_wezterm_theme:main"
 cloud_copy = "machineconfig.scripts.python.cloud_copy:arg_parser"
 cloud_mount = "machineconfig.scripts.python.cloud_mount:arg_parser"
-cloud_repo_sync = "machineconfig.scripts.python.cloud_repo_sync:args_parser"
 cloud_sync = "machineconfig.scripts.python.cloud_sync:arg_parser"
 ftpx = "machineconfig.scripts.python.ftpx:main_from_parser"
 

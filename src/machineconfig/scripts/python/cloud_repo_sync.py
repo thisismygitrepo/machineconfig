@@ -12,7 +12,7 @@ import platform
 import subprocess
 from typing import Optional, Literal
 from pathlib import Path
-import sys
+
 
 console = Console()
 
@@ -174,19 +174,3 @@ git commit -am "finished merging"
 
     return program_content
 
-
-def args_parser():
-    # Check if no arguments provided (excluding the script name)
-    if len(sys.argv) == 1:
-        app = typer.Typer(add_completion=False, help="Sync a local git repository with a remote encrypted cloud copy.")
-        app.command()(main)
-        app(["--help"])
-        return
-
-    app = typer.Typer(add_completion=False, no_args_is_help=True, help="Sync a local git repository with a remote encrypted cloud copy.")
-    app.command()(main)
-    app()
-
-
-if __name__ == "__main__":
-    args_parser()
