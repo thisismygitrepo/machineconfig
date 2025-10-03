@@ -3,11 +3,9 @@ from rich.console import Console
 from rich.panel import Panel
 import typer
 
-from machineconfig.utils.io import read_ini
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.terminal import Response
 from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
-from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.code import get_shell_file_executing_python_script, write_shell_script_to_file
 
 import platform
@@ -21,13 +19,15 @@ console = Console()
 
 def main(
     cloud: Optional[str] = typer.Option(None, "--cloud", "-c", help="Cloud storage profile name. If not provided, uses default from config."),
-    path: Optional[str] = typer.Option(None, "--path", "-p", help="Path to the local repository. Defaults to current working directory."),
+    repo: Optional[str] = typer.Option(None, "--repo", "-r", help="Path to the local repository. Defaults to current working directory."),
     message: Optional[str] = typer.Option(None, "--message", "-m", help="Commit message for local changes."),
     on_conflict: Literal["ask", "pushLocalMerge", "overwriteLocal", "InspectRepos", "RemoveLocalRclone"] = typer.Option("ask", "--on-conflict", "-oc", help="Action to take on merge conflict. Default is 'ask'."),
     pwd: Optional[str] = typer.Option(None, "--password", help="Password for encryption/decryption of the remote repository."),
 ):
     if cloud is None:
         try:
+            from machineconfig.utils.io import read_ini
+
             cloud_resolved = read_ini(DEFAULTS_PATH)["general"]["rclone_config_name"]
             console.print(Panel(f"⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}", title="Default Cloud", border_style="yellow"))
         except FileNotFoundError:
@@ -35,7 +35,7 @@ def main(
             return ""
     else:
         cloud_resolved = cloud
-    repo_local_root = PathExtended.cwd() if path is None else PathExtended(path).expanduser().absolute()
+    repo_local_root = PathExtended.cwd() if repo is None else PathExtended(repo).expanduser().absolute()
     repo_local_obj = git.Repo(repo_local_root, search_parent_directories=True)
     repo_local_root = PathExtended(repo_local_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
     PathExtended(CONFIG_PATH).joinpath("remote").mkdir(parents=True, exist_ok=True)
@@ -139,15 +139,16 @@ git commit -am "finished merging"
 
         console.print(Panel("🔄 RESOLVE MERGE CONFLICT\nChoose an option to resolve the conflict:", title_align="left", border_style="blue"))
 
-        print(f"• 1️⃣  {option1:75} 👉 {shell_file_1}")
-        print(f"• 2️⃣  {option2:75} 👉 {shell_file_2}")
-        print(f"• 3️⃣  {option3:75} 👉 {shell_file_3}")
-        print(f"• 4️⃣  {option4:75} 👉 {shell_file_4}")
-
+        print(f"• {option1:75} 👉 {shell_file_1}")
+        print(f"• {option2:75} 👉 {shell_file_2}")
+        print(f"• {option3:75} 👉 {shell_file_3}")
+        print(f"• {option4:75} 👉 {shell_file_4}")
         program_content = None
         match on_conflict:
             case "ask":
-                choice = choose_from_options(multi=False, msg="Choose one option", options=[option1, option2, option3, option4], fzf=False)
+                # choice = choose_from_options(multi=False, msg="Choose one option", options=[option1, option2, option3, option4], fzf=False)
+                import questionary
+                choice = questionary.select("Choose one option:", choices=[option1, option2, option3, option4]).ask()
                 if choice == option1:
                     program_content = shell_file_1.read_text(encoding="utf-8")
                 elif choice == option2:

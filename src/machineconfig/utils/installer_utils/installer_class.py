@@ -34,41 +34,6 @@ class Installer:
         """Derive executable name from app name by converting to lowercase and removing spaces."""
         return self.installer_data["appName"].lower().replace(" ", "").replace("-", "")
 
-    @staticmethod
-    def choose_app_and_install():
-        print(f"🔍 SELECT APPLICATION TO INSTALL 🔍")
-        from machineconfig.utils.options import choose_from_options
-
-        print("📂 Searching for configuration files...")
-        jobs_dir = Path(LIBRARY_ROOT.joinpath("jobs"))
-        config_paths = [Path(p) for p in jobs_dir.rglob("config.json")]
-        path = choose_from_options(multi=False, options=config_paths, msg="Choose one option")
-        print(f"📄 Loading configuration from: {path}")
-        config_data = read_json(path)
-        installer_data_files = InstallerDataFiles(config_data)
-
-        # Extract app names from the installers
-        app_names = [installer["appName"] for installer in installer_data_files["installers"]]
-        print("🔍 Select an application to install:")
-        app_name = choose_from_options(multi=False, options=app_names, fzf=True, msg="Choose one option")
-
-        # Find the selected installer data
-        selected_installer_data = None
-        for installer_data in installer_data_files["installers"]:
-            if installer_data["appName"] == app_name:
-                selected_installer_data = installer_data
-                break
-
-        if selected_installer_data is None:
-            raise ValueError(f"Could not find installer data for {app_name}")
-
-        installer = Installer(installer_data=selected_installer_data)
-        exe_name = installer._get_exe_name()
-        print(f"📦 Selected application: {exe_name}")
-        version = input(f"📝 Enter version to install for {exe_name} [latest]: ") or None
-        print(f"🚀 INSTALLING {exe_name.upper()} 🚀")
-        installer.install(version=version)
-
     def install_robust(self, version: Optional[str]) -> str:
         try:
             exe_name = self._get_exe_name()
@@ -142,19 +107,19 @@ class Installer:
                     print(f"🚀 Running shell script: {installer_path}")
                     subprocess.run(f"bash {installer_path}", shell=True, check=True)
                     version_to_be_installed = "scripted_installation"
-                    print(f"✅ Shell script installation completed")
+                    print("✅ Shell script installation completed")
                 elif installer_arch_os.endswith(".ps1"):
                     if platform.system() != "Windows":
                         raise NotImplementedError(f"PowerShell script installation not supported on {platform.system()}")
                     print(f"🚀 Running PowerShell script: {installer_path}")
                     subprocess.run(f"powershell -ExecutionPolicy Bypass -File {installer_path}", shell=True, check=True)
                     version_to_be_installed = "scripted_installation"
-                    print(f"✅ PowerShell script installation completed")
+                    print("✅ PowerShell script installation completed")
                 elif installer_arch_os.endswith(".py"):
                     import runpy
                     runpy.run_path(str(installer_path), run_name=None)["main"](self.installer_data, version=version)
                     version_to_be_installed = str(version)
-                    print(f"✅ Custom installation completed")
+                    print("✅ Custom installation completed")
             elif installer_arch_os.startswith("https://"):  # its a url to be downloaded
                 print(f"📥 Downloading object from URL: {installer_arch_os}")
                 downloaded_object = PathExtended(installer_arch_os).download(folder=INSTALL_TMP_DIR)
@@ -186,7 +151,7 @@ class Installer:
                         print(f"🔄 Renaming to correct name: {new_exe_name}")
                         exe.with_name(name=new_exe_name, inplace=True, overwrite=True)
                     version_to_be_installed = "downloaded_binary"
-                    print(f"✅ Downloaded binary installation completed")
+                    print("✅ Downloaded binary installation completed")
             else:
                 raise NotImplementedError(f"CMD installation method not implemented for: {installer_arch_os}")
         else:
@@ -208,7 +173,7 @@ class Installer:
                     print(f"Return code: {result.returncode}")
                 print("🗑️  Cleaning up .deb package...")
                 downloaded.delete(sure=True)
-                print(f"✅ DEB package installation completed")
+                print("✅ DEB package installation completed")
             else:
                 if platform.system() == "Windows":
                     print("🪟 Installing on Windows...")
@@ -236,7 +201,7 @@ class Installer:
         print(f"💾 Saving version information to: {INSTALL_VERSION_ROOT.joinpath(exe_name)}")
         INSTALL_VERSION_ROOT.joinpath(exe_name).parent.mkdir(parents=True, exist_ok=True)
         INSTALL_VERSION_ROOT.joinpath(exe_name).write_text(version_to_be_installed or "unknown", encoding="utf-8")
-        print(f"✅ Installation completed successfully!")
+        print("✅ Installation completed successfully!")
 
     def download(self, version: Optional[str]) -> tuple[PathExtended, str]:
         exe_name = self._get_exe_name()
