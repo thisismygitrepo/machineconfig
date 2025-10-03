@@ -36,7 +36,7 @@ class Installer:
 
     @staticmethod
     def choose_app_and_install():
-        print(f"\n{'=' * 80}\n🔍 SELECT APPLICATION TO INSTALL 🔍\n{'=' * 80}")
+        print(f"🔍 SELECT APPLICATION TO INSTALL 🔍")
         from machineconfig.utils.options import choose_from_options
 
         print("📂 Searching for configuration files...")
@@ -66,13 +66,13 @@ class Installer:
         exe_name = installer._get_exe_name()
         print(f"📦 Selected application: {exe_name}")
         version = input(f"📝 Enter version to install for {exe_name} [latest]: ") or None
-        print(f"\n{'=' * 80}\n🚀 INSTALLING {exe_name.upper()} 🚀\n{'=' * 80}")
+        print(f"🚀 INSTALLING {exe_name.upper()} 🚀")
         installer.install(version=version)
 
     def install_robust(self, version: Optional[str]) -> str:
         try:
             exe_name = self._get_exe_name()
-            print(f"\n{'=' * 80}\n🚀 INSTALLING {exe_name.upper()} 🚀\n{'=' * 80}")
+            print(f"🚀 INSTALLING {exe_name.upper()} 🚀")
             result_old = subprocess.run(f"{exe_name} --version", shell=True, capture_output=True, text=True)
             old_version_cli = result_old.stdout.strip()
             print(f"📊 Current version: {old_version_cli or 'Not installed'}")
@@ -105,7 +105,7 @@ class Installer:
         if installer_arch_os is None:
             raise ValueError(f"No installation pattern for {exe_name} on {os_name} {arch}")
 
-        print(f"\n{'=' * 80}\n🔧 INSTALLATION PROCESS: {exe_name} 🔧\n{'=' * 80}")
+        print(f"🔧 INSTALLATION PROCESS: {exe_name} 🔧")
         version_to_be_installed: str = "unknown"  # Initialize to ensure it's always bound
         if repo_url == "CMD":
             if "npm " in installer_arch_os or "pip " in installer_arch_os or "winget " in installer_arch_os:
@@ -123,7 +123,7 @@ class Installer:
                     if result.stderr:
                         print(f"STDERR: {result.stderr}")
                     print(f"Return code: {result.returncode}")
-                print(f"✅ Package manager installation completed\n{'=' * 80}")
+                print(f"✅ Package manager installation completed")
             elif installer_arch_os.endswith((".sh", ".py", ".ps1")):
                 # search for the script, see which path ends with the script name
                 import machineconfig.jobs.installer as module
@@ -142,19 +142,19 @@ class Installer:
                     print(f"🚀 Running shell script: {installer_path}")
                     subprocess.run(f"bash {installer_path}", shell=True, check=True)
                     version_to_be_installed = "scripted_installation"
-                    print(f"✅ Shell script installation completed\n{'=' * 80}")
+                    print(f"✅ Shell script installation completed")
                 elif installer_arch_os.endswith(".ps1"):
                     if platform.system() != "Windows":
                         raise NotImplementedError(f"PowerShell script installation not supported on {platform.system()}")
                     print(f"🚀 Running PowerShell script: {installer_path}")
                     subprocess.run(f"powershell -ExecutionPolicy Bypass -File {installer_path}", shell=True, check=True)
                     version_to_be_installed = "scripted_installation"
-                    print(f"✅ PowerShell script installation completed\n{'=' * 80}")
+                    print(f"✅ PowerShell script installation completed")
                 elif installer_arch_os.endswith(".py"):
                     import runpy
                     runpy.run_path(str(installer_path), run_name=None)["main"](self.installer_data, version=version)
                     version_to_be_installed = str(version)
-                    print(f"✅ Custom installation completed\n{'=' * 80}")
+                    print(f"✅ Custom installation completed")
             elif installer_arch_os.startswith("https://"):  # its a url to be downloaded
                 print(f"📥 Downloading object from URL: {installer_arch_os}")
                 downloaded_object = PathExtended(installer_arch_os).download(folder=INSTALL_TMP_DIR)
@@ -186,7 +186,7 @@ class Installer:
                         print(f"🔄 Renaming to correct name: {new_exe_name}")
                         exe.with_name(name=new_exe_name, inplace=True, overwrite=True)
                     version_to_be_installed = "downloaded_binary"
-                    print(f"✅ Downloaded binary installation completed\n{'=' * 80}")
+                    print(f"✅ Downloaded binary installation completed")
             else:
                 raise NotImplementedError(f"CMD installation method not implemented for: {installer_arch_os}")
         else:
@@ -208,7 +208,7 @@ class Installer:
                     print(f"Return code: {result.returncode}")
                 print("🗑️  Cleaning up .deb package...")
                 downloaded.delete(sure=True)
-                print(f"✅ DEB package installation completed\n{'=' * 80}")
+                print(f"✅ DEB package installation completed")
             else:
                 if platform.system() == "Windows":
                     print("🪟 Installing on Windows...")
@@ -236,13 +236,13 @@ class Installer:
         print(f"💾 Saving version information to: {INSTALL_VERSION_ROOT.joinpath(exe_name)}")
         INSTALL_VERSION_ROOT.joinpath(exe_name).parent.mkdir(parents=True, exist_ok=True)
         INSTALL_VERSION_ROOT.joinpath(exe_name).write_text(version_to_be_installed or "unknown", encoding="utf-8")
-        print(f"✅ Installation completed successfully!\n{'=' * 80}")
+        print(f"✅ Installation completed successfully!")
 
     def download(self, version: Optional[str]) -> tuple[PathExtended, str]:
         exe_name = self._get_exe_name()
         repo_url = self.installer_data["repoURL"]
         app_name = self.installer_data["appName"]
-        print(f"\n{'=' * 80}\n📥 DOWNLOADING: {exe_name} 📥\n{'=' * 80}")
+        print(f"📥 DOWNLOADING: {exe_name} 📥")
         
         download_link: Optional[str] = None
         version_to_be_installed: Optional[str] = None
@@ -273,7 +273,7 @@ class Installer:
         assert version_to_be_installed is not None, "version_to_be_installed must be set"
         print(f"📥 Downloading {app_name} from: {download_link}")
         downloaded = PathExtended(download_link).download(folder=INSTALL_TMP_DIR).decompress()
-        print(f"✅ Download and extraction completed to: {downloaded}\n{'=' * 80}")
+        print(f"✅ Download and extraction completed to: {downloaded}")
         return downloaded, version_to_be_installed
 
     # --------------------------- Arch / template helpers ---------------------------

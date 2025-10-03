@@ -31,7 +31,7 @@ docker run -it --rm \
   -v "{temp_config_file_local}:/root/.local/share/crush/crush.json" \
   -w "/workspace/{repo_root.name}" \
   statistician/machineconfig:latest \
-  crush run {prompt_path.relative_to(repo_root)}
+  bash -i -c "source ~/.bashrc && cd /workspace/{repo_root.name} && cat /root/.local/share/crush/crush.json && crush run {prompt_path.relative_to(repo_root)}"
 
 """
     return cmd

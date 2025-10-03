@@ -9,7 +9,7 @@ import platform
 
 
 def find_move_delete_windows(downloaded_file_path: PathExtended, exe_name: Optional[str] = None, delete: bool = True, rename_to: Optional[str] = None):
-    print(f"\n{'=' * 80}\n🔍 PROCESSING WINDOWS EXECUTABLE 🔍\n{'=' * 80}")
+    print(f"🔍 PROCESSING WINDOWS EXECUTABLE 🔍")
     if exe_name is not None and ".exe" in exe_name:
         exe_name = exe_name.replace(".exe", "")
     if downloaded_file_path.is_file():
@@ -54,7 +54,7 @@ def find_move_delete_windows(downloaded_file_path: PathExtended, exe_name: Optio
 
 
 def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: Optional[bool] = True, rename_to: Optional[str] = None):
-    print(f"\n{'=' * 80}\n🔍 PROCESSING LINUX EXECUTABLE 🔍\n{'=' * 80}")
+    print(f"🔍 PROCESSING LINUX EXECUTABLE 🔍")
     if downloaded.is_file():
         exe = downloaded
         print(f"📄 Found direct executable file: {exe}")
@@ -108,7 +108,7 @@ def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: Opt
         print("✅ Temporary files removed")
 
     exe_new_location = PathExtended(LINUX_INSTALL_PATH).joinpath(exe.name)
-    print(f"✅ Executable installed at: {exe_new_location}\n{'=' * 80}")
+    print(f"✅ Executable installed at: {exe_new_location}")
     return exe_new_location
 
 
@@ -134,7 +134,7 @@ def is_executable_in_path(executable_name: str) -> bool:
 
 
 def check_if_installed_already(exe_name: str, version: Optional[str], use_cache: bool) -> tuple[str, str, str]:
-    print(f"\n{'=' * 80}\n🔍 CHECKING INSTALLATION STATUS: {exe_name} 🔍\n{'=' * 80}")
+    print(f"🔍 CHECKING INSTALLATION STATUS: {exe_name} 🔍")
     INSTALL_VERSION_ROOT.joinpath(exe_name).parent.mkdir(parents=True, exist_ok=True)
     tmp_path = INSTALL_VERSION_ROOT.joinpath(exe_name)
 

@@ -1,17 +1,15 @@
 """package manager"""
 
 from machineconfig.utils.installer_utils.installer_abc import check_if_installed_already, parse_apps_installer_linux, parse_apps_installer_windows
-
 from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import InstallerData, InstallerDataFiles, get_normalized_arch, get_os_name, OPERATING_SYSTEMS, CPU_ARCHITECTURES
 from machineconfig.jobs.installer.package_groups import PACKAGE_GROUPS, PACKAGE_GROUP2NAMES
-from rich.console import Console
-from rich.panel import Panel
-
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT, LINUX_INSTALL_PATH, LIBRARY_ROOT
 from machineconfig.utils.io import read_json
 
+from rich.console import Console
+from rich.panel import Panel
 from typing import Any, Optional
 import platform
 from joblib import Parallel, delayed
@@ -74,7 +72,7 @@ def check_latest():
 
 
 def get_installed_cli_apps():
-    print(f"\n{'=' * 80}\n🔍 LISTING INSTALLED CLI APPS 🔍\n{'=' * 80}")
+    print("🔍 LISTING INSTALLED CLI APPS 🔍")
     if platform.system() == "Windows":
         print("🪟 Searching for Windows executables...")
         apps = PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad"])
@@ -89,12 +87,12 @@ def get_installed_cli_apps():
         print(error_msg)
         raise NotImplementedError(error_msg)
     apps = [app for app in apps if app.size("kb") > 0.1 and not app.is_symlink()]  # no symlinks like paint and wsl and bash
-    print(f"✅ Found {len(apps)} installed applications\n{'=' * 80}")
+    print(f"✅ Found {len(apps)} installed applications")
     return apps
 
 
 def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: Optional[list[PACKAGE_GROUPS]]) -> list[InstallerData]:
-    print(f"\n{'=' * 80}\n🔍 LOADING INSTALLER CONFIGURATIONS 🔍\n{'=' * 80}")
+    print("🔍 LOADING INSTALLER CONFIGURATIONS 🔍")
     res_all = get_all_installer_data_files()
     acceptable_apps_names: list[str] | None = None
     if which_cats is not None:
@@ -111,14 +109,15 @@ def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: O
         if installer_data["fileNamePattern"][arch][os] is None:
             continue
         all_installers.append(installer_data)
-    print(f"✅ Loaded {len(all_installers)} installer configurations\n{'=' * 80}")
+    print(f"✅ Loaded {len(all_installers)} installer configurations")
     return all_installers
 
 
 def get_all_installer_data_files() -> list[InstallerData]:
-    print(f"\n{'=' * 80}\n📂 LOADING CONFIGURATION FILES 📂\n{'=' * 80}")
+    print("📂 LOADING CONFIGURATION FILES 📂")
     import machineconfig.jobs.installer as module
     from pathlib import Path
+
     print("📂 Loading configuration files...")
     res_raw: InstallerDataFiles = read_json(Path(module.__file__).parent.joinpath("installer_data.json"))
     res_final: list[InstallerData] = res_raw["installers"]
@@ -129,6 +128,7 @@ def get_all_installer_data_files() -> list[InstallerData]:
 def get_installers_system_groups():
     res_final: list[InstallerData] = []
     from platform import system
+
     if system() == "Windows":
         options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text(encoding="utf-8"))
     elif system() == "Linux" or system() == "Darwin":
@@ -137,19 +137,13 @@ def get_installers_system_groups():
         raise NotImplementedError(f"❌ System {system()} not supported")
     os_name = get_os_name()
     for group_name, (docs, script) in options_system.items():
-        item: InstallerData = {
-            "appName": group_name,
-            "doc": docs,
-            "repoURL": "CMD",
-            "fileNamePattern": {
-                "amd64": {os_name: script,},
-                "arm64": {os_name: script,},}}
-        res_final.append(item)  
+        item: InstallerData = {"appName": group_name, "doc": docs, "repoURL": "CMD", "fileNamePattern": {"amd64": {os_name: script}, "arm64": {os_name: script}}}
+        res_final.append(item)
     return res_final
 
 
 def install_bulk(installers_data: list[InstallerData], safe: bool = False, jobs: int = 10, fresh: bool = False):
-    print(f"\n{'=' * 80}\n🚀 BULK INSTALLATION PROCESS 🚀\n{'=' * 80}")
+    print("🚀 BULK INSTALLATION PROCESS 🚀")
     if fresh:
         print("🧹 Fresh install requested - clearing version cache...")
         PathExtended(INSTALL_VERSION_ROOT).delete(sure=True)
@@ -182,10 +176,10 @@ def install_bulk(installers_data: list[InstallerData], safe: bool = False, jobs:
         # return None
 
     print(f"🚀 Starting installation of {len(installers_data)} packages...")
-    print(f"\n{'=' * 80}\n📦 INSTALLING FIRST PACKAGE 📦\n{'=' * 80}")
+    print("📦 INSTALLING FIRST PACKAGE 📦")
     Installer(installers_data[0]).install(version=None)
     installers_remaining = installers_data[1:]
-    print(f"\n{'=' * 80}\n📦 INSTALLING REMAINING PACKAGES 📦\n{'=' * 80}")
+    print("📦 INSTALLING REMAINING PACKAGES 📦")
 
     # Use joblib for parallel processing of remaining installers
     res = Parallel(n_jobs=jobs)(delayed(lambda x: Installer(x).install_robust(version=None))(installer) for installer in installers_remaining)
@@ -218,11 +212,11 @@ def install_bulk(installers_data: list[InstallerData], safe: bool = False, jobs:
     print("\n" * 2)
 
 
-
 def get_machineconfig_version() -> str:
     from importlib.metadata import PackageNotFoundError, version as _pkg_version
     from pathlib import Path
     import tomllib
+
     name: str = "machineconfig"
     try:
         return _pkg_version(name)

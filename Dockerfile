@@ -19,8 +19,10 @@ COPY . .
 
 RUN /root/.local/bin/uv sync --no-dev
 RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops install --group ESSENTIAL_SYSTEM
-RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops install --group ESSENTIAL
+# RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops install --group ESSENTIAL
+RUN source /root/.bashrc && /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops install --group ESSENTIAL
 RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops config public --method symlink --which all
+RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops install -w crush
 RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops config shell reference
 
 RUN touch /root/.bash_history
