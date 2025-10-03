@@ -114,20 +114,13 @@ def get_installation_choices() -> list[str]:
 
 
 def execute_installations(selected_options: list[str]) -> None:
-    if platform.system() == "Windows":
-        from machineconfig import setup_windows as module
-        run_shell_script(module.UV.read_text(encoding="utf-8"))
-    else:
-        from machineconfig import setup_linux as module
-        run_shell_script(module.UV.read_text(encoding="utf-8"))
-
     for maybe_a_group in selected_options:
         if maybe_a_group in ("ESSENTIAL", "DEV", "ESSENTIAL_SYSTEM", "DEV_SYSTEM", "TerminalEyeCandy"):
             console.print(Panel("⚡ [bold bright_yellow]CLI APPLICATIONS[/bold bright_yellow]\n[italic]Command-line tools installation[/italic]", border_style="bright_yellow"))
             console.print("🔧 Installing CLI applications", style="bold cyan")
             try:
                 from machineconfig.utils.installer_utils.installer import main as devops_devapps_install_main
-                devops_devapps_install_main(group=maybe_a_group)  # type: ignore
+                devops_devapps_install_main(group=maybe_a_group, which=None, interactive=False)
                 console.print("✅ CLI applications installed successfully", style="bold green")
             except Exception as e:
                 console.print(f"❌ Error installing CLI applications: {e}", style="bold red")
@@ -195,7 +188,7 @@ def main() -> None:
     if not proceed:
         console.print("❌ Installation cancelled.", style="bold red")
         sys.exit(0)
-    execute_installations(selected_options)
+    execute_installations(selected_options=selected_options)
     display_completion_message()
 
 
