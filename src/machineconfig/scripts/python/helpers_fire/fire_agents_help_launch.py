@@ -32,7 +32,7 @@ def prep_agent_launch(repo_root: Path, agents_dir: Path, prompts_material: list[
         if keep_material_in_separate_file:
             prompt_material_path = prompt_root / f"agent_{idx}_material.txt"
             prompt_material_path.write_text(a_prompt_material, encoding="utf-8")
-            prompt_path.write_text(prompt_prefix + f"""\nPlease only look @ {prompt_material_path}. You don't need to do any other work beside the content of this material file.""", encoding="utf-8")
+            prompt_path.write_text(prompt_prefix + f"""\nPlease only look @ {prompt_material_path.relative_to(repo_root)}. You don't need to do any other work beside the content of this material file.""", encoding="utf-8")
         else:
             prompt_material_path = prompt_path
             prompt_path.write_text(prompt_prefix + """\nPlease only look @ the following:\n""" + a_prompt_material, encoding="utf-8")
