@@ -98,7 +98,7 @@ def print_code(code: str, lexer: str, desc: str, subtitle: str = ""):
     console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}", subtitle=subtitle), style="bold red")
 
 
-def run_shell_script(program: str, display_script: bool = True):
+def run_shell_script(script: str, display_script: bool = True):
     import tempfile
     if platform.system() == "Windows":
         suffix = ".ps1"
@@ -107,12 +107,12 @@ def run_shell_script(program: str, display_script: bool = True):
         suffix = ".sh"
         lexer = "bash"
     with tempfile.NamedTemporaryFile(mode='w', suffix=suffix, delete=False, encoding='utf-8') as temp_file:
-        temp_file.write(program)
+        temp_file.write(script)
         temp_script_path = PathExtended(temp_file.name)
     console = Console()
     if display_script:
         from rich.syntax import Syntax
-        console.print(Panel(Syntax(code=program, lexer=lexer), title=f"📄 shell script @ {temp_script_path}", subtitle="shell script being executed"), style="bold red")
+        console.print(Panel(Syntax(code=script, lexer=lexer), title=f"📄 shell script @ {temp_script_path}", subtitle="shell script being executed"), style="bold red")
 
     if platform.system() == "Windows":
         import subprocess

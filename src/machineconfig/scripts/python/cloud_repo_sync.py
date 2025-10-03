@@ -143,10 +143,11 @@ git commit -am "finished merging"
         print(f"• {option2:75} 👉 {shell_file_2}")
         print(f"• {option3:75} 👉 {shell_file_3}")
         print(f"• {option4:75} 👉 {shell_file_4}")
+        print("\n\n")
+
         program_content = None
         match on_conflict:
             case "ask":
-                # choice = choose_from_options(multi=False, msg="Choose one option", options=[option1, option2, option3, option4], fzf=False)
                 import questionary
                 choice = questionary.select("Choose one option:", choices=[option1, option2, option3, option4]).ask()
                 if choice == option1:
@@ -169,8 +170,7 @@ git commit -am "finished merging"
                 program_content = program_4
             case _:
                 raise ValueError(f"Unknown action: {on_conflict}")
-        # PROGRAM_PATH.write_text(program_content, encoding="utf-8")
-        subprocess.run(program_content, shell=True, check=True)
-
+        from machineconfig.utils.code import run_shell_script
+        run_shell_script(script=program_content)
     return program_content
 

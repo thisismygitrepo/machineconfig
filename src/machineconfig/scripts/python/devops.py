@@ -122,7 +122,7 @@ def setup():
     else:
         raise NotImplementedError(f"Platform {platform.system()} is not supported.")
     from machineconfig.utils.code import run_shell_script
-    run_shell_script(program=program)
+    run_shell_script(script=program)
 
 
 @app_data.command()
