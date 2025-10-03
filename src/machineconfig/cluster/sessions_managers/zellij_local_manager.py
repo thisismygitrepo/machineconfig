@@ -84,6 +84,7 @@ class ZellijLocalManager:
                 # ZELLIJ_AUTO_ATTACH=0 prevents auto-attach if compiled with that feature; harmless otherwise.
                 start_cmd = ["bash", "-lc", f"ZELLIJ_AUTO_ATTACH=0 zellij --layout {layout_path} attach {session_name} --create >/dev/null 2>&1 &"]
                 console.print(f"[bold cyan]🚀 Starting session[/bold cyan] [yellow]'{session_name}'[/yellow] with layout [blue]{layout_path}[/blue] (non-blocking)...")
+                console.print(f"[dim]   Command: {' '.join(start_cmd)}[/dim]")
                 subprocess.Popen(start_cmd)
 
                 # 3. Poll for presence
