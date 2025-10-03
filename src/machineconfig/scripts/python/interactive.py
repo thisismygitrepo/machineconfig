@@ -210,7 +210,6 @@ def main() -> None:
         console.print("❌ Installation cancelled.", style="bold red")
         sys.exit(0)
     execute_installations(selected_options)
-    display_dotfiles_instructions()
     display_completion_message()
 
 
