@@ -5,7 +5,7 @@
 from pathlib import Path
 from typing import cast, Iterable, Optional, get_args
 import typer
-from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, MATCHNE
+from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, MATCHNE, MODEL, PROVIDER
 
 
 def _write_list_file(target: Path, files: Iterable[Path]) -> None:
@@ -19,8 +19,12 @@ def create(
     filename_pattern: Optional[str] = typer.Option(None, help="Filename pattern to match"),
     separator: str = typer.Option("\n", help="Separator for context"),
     tasks_per_prompt: int = typer.Option(13, help="Number of tasks per prompt"),
+
     agent: AGENTS = typer.Option(..., help=f"Agent type. One of {', '.join(get_args(AGENTS))}"),
     machine: MATCHNE = typer.Option(..., help=f"Machine to run agents on. One of {', '.join(get_args(MATCHNE))}"),
+    model: MODEL = typer.Option("zai/glm-4.6", help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL))}"),
+    provider: PROVIDER = typer.Option("openrouter", help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER))}"),
+
     prompt: Optional[str] = typer.Option(None, help="Prompt prefix as string"),
     prompt_path: Optional[Path] = typer.Option(None, help="Path to prompt file"),
     job_name: str = typer.Option("AI_Agents", help="Job name"),
@@ -94,7 +98,8 @@ def create(
             shutil.rmtree(agents_dir)
     prep_agent_launch(repo_root=repo_root, agents_dir=agents_dir, prompts_material=prompt_material_re_splitted,
                       keep_material_in_separate_file=keep_material_in_separate_file_input,
-                      prompt_prefix=prompt_prefix, machine=machine, agent=agent_selected, job_name=job_name)
+                      prompt_prefix=prompt_prefix, machine=machine, agent=agent_selected, model=model, provider=provider,
+                      job_name=job_name)
     layoutfile = get_agents_launch_layout(session_root=agents_dir)    
     regenerate_py_code = f"""
 #!/usr/bin/env uv run --python 3.13 --with machineconfig

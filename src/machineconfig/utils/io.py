@@ -69,7 +69,6 @@ def read_ini(path: "Path", encoding: Optional[str] = None):
     if not Path(path).exists() or Path(path).is_dir():
         raise FileNotFoundError(f"File not found or is a directory: {path}")
     import configparser
-
     res = configparser.ConfigParser()
     res.read(filenames=[str(path)], encoding=encoding)
     return res

@@ -2,13 +2,12 @@
 import random
 import shlex
 from pathlib import Path
-from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, AGENT_NAME_FORMATTER, MATCHNE
+from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, AGENT_NAME_FORMATTER, MATCHNE, PROVIDER, MODEL
 
 
-def get_gemini_api_keys() -> list[str]:
+def get_api_keys(provider: PROVIDER) -> list[str]:
     from machineconfig.utils.io import read_ini
-
-    config = read_ini(Path.home().joinpath("dotfiles/creds/llm/gemini/api_keys.ini"))
+    config = read_ini(Path.home().joinpath(f"dotfiles/creds/llm/{provider}/api_keys.ini"))
     res: list[str] = []
     for a_section_name in list(config.sections()):
         a_section = config[a_section_name]
@@ -16,11 +15,12 @@ def get_gemini_api_keys() -> list[str]:
             api_key = a_section["api_key"].strip()
             if api_key:
                 res.append(api_key)
-    print(f"Found {len(res)} Gemini API keys configured.")
+    print(f"Found {len(res)} {provider} API keys configured.")
     return res
 
 
-def prep_agent_launch(repo_root: Path, agents_dir: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool, machine: MATCHNE, agent: AGENTS, *, job_name: str) -> None:
+def prep_agent_launch(repo_root: Path, agents_dir: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool,
+                      machine: MATCHNE, model: MODEL, provider: PROVIDER, agent: AGENTS, *, job_name: str) -> None:
     agents_dir.mkdir(parents=True, exist_ok=True)
     prompt_folder = agents_dir / "prompts"
     prompt_folder.mkdir(parents=True, exist_ok=True)
@@ -64,21 +64,26 @@ sleep 0.1
 """
         match agent:
             case "gemini":
-                api_keys = get_gemini_api_keys()
-                api_key = api_keys[idx % len(api_keys)] if api_keys else ""
+                assert provider == "google", "Gemini agent only works with google provider."
+                api_keys = get_api_keys(provider="google")
+                api_key = api_keys[idx % len(api_keys)] if len(api_keys) > 0 else None
                 from machineconfig.scripts.python.helpers_fire.fire_gemini import fire_gemini
                 cmd = fire_gemini(api_key=api_key, prompt_path=prompt_path, machine=machine)
             case "cursor-agent":
                 from machineconfig.scripts.python.helpers_fire.fire_cursor_agents import fire_cursor
-                cmd = fire_cursor(prompt_path=prompt_path, machine=machine, api_key="")
+                cmd = fire_cursor(prompt_path=prompt_path, machine=machine, api_key=None)
+                raise NotImplementedError("Cursor agent is not implemented yet, api key missing")
             case "crush":
                 from machineconfig.scripts.python.helpers_fire.fire_crush import fire_crush
-                cmd = fire_crush(api_key="", prompt_path=prompt_path, machine=machine, repo_root=repo_root)
+                api_keys = get_api_keys(provider=provider)
+                api_key = api_keys[idx % len(api_keys)] if len(api_keys) > 0 else None
+                cmd = fire_crush(api_key=api_key, prompt_path=prompt_path, machine=machine, repo_root=repo_root, model=model, provider=provider)
             case "q":
                 from machineconfig.scripts.python.helpers_fire.fire_q import fire_q
                 cmd = fire_q(api_key="", prompt_path=prompt_path, machine=machine)
             case _:
                 raise ValueError(f"Unsupported agent type: {agent}")
+
         cmd_postfix = """
 sleep 0.1
 echo "---------END OF AGENT OUTPUT---------"
