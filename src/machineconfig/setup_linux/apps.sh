@@ -17,6 +17,12 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 echo "📥 Installing latest Node.js..."
 nvm install node || true
+echo "📥 Installing SQLite - lightweight SQL database..."
+echo "📥 Installing PostgreSQL client..."
+echo "📥 Installing Redis command-line tools..."
+sudo nala install sqlite3 -y || true
+sudo nala install postgresql-client -y || true  # # same for pgsq, when the server runs, we will need the client to talk to it.
+sudo nala install redis-tools -y || true  # this gives redis-cli, which is needed to talk to the redis-server that is running in the docker container.
 
 # --GROUP:TerminalEyeCandy:fortune,toilet,sl,aafire,cmatrix,hollywood,chafa
 echo "📥 Installing fortune - random wisdom generator..."
@@ -59,17 +65,3 @@ sudo nala install ffmpeg -y || true  # Required by some dev tools
 sudo nala install make -y || true  # Required by LunarVim and SpaceVim
 (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
 sudo nala install libssl-dev -y
-
-
-# --GROUP:DATABASES: sqlite3,postgresql-client,redis-tools
-echo "📥 Installing SQLite - lightweight SQL database..."
-echo "📥 Installing PostgreSQL client..."
-echo "📥 Installing Redis command-line tools..."
-sudo nala install sqlite3 -y || true
-sudo nala install postgresql-client -y || true
-sudo nala install redis-tools -y || true
-# # =================== INSTALL DOCKER SO WE RUN DATABASES IN CONTAINERS ===================
-# RUN chmod +x $HOME/code/machineconfig/src/machineconfig/jobs/python_custom_installers/scripts/linux/docker.sh
-# RUN bash     $HOME/code/machineconfig/src/machineconfig/jobs/python_custom_installers/scripts/linux/docker.sh
-# this gives redis-cli, which is needed to talk to the redis-server that is running in the docker container.
-# same for pgsq, when the server runs, we will need the client to talk to it.

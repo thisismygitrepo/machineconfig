@@ -1,17 +1,16 @@
 """devops with emojis"""
 
 import typer
-from typing import Literal, Annotated, Optional, get_args
+from typing import Literal, Annotated, Optional
 
-import machineconfig.scripts.python.share_terminal as share_terminal
 import machineconfig.scripts.python.repos as repos
-from machineconfig.jobs.installer.package_groups import PACKAGE_GROUPS
+import machineconfig.scripts.python.share_terminal as share_terminal
 
 
 app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True)
 @app.command(no_args_is_help=True)
 def install(    which: Optional[str] = typer.Option(None, "--which", "-w", help="Comma-separated list of program names to install."),
-    group: Optional[PACKAGE_GROUPS] = typer.Option(None, "--group", "-g", help=f"Group name (one of {list(get_args(PACKAGE_GROUPS))})"),
+    group: Optional[str] = typer.Option(None, "--group", "-g", help="Groups names. A group is bundle of apps. See available groups when running interactively."),
     interactive: bool = typer.Option(False, "--interactive", "-ia", help="Interactive selection of programs to install."),
 ) -> None:
     """📦 Install essential packages"""
