@@ -50,12 +50,12 @@ def clone():
     from machineconfig.utils.code import run_shell_script
     from machineconfig.profile.shell import create_default_shell_profile
     if platform.system() == "Windows":
-        from machineconfig.setup_windows import REPOS
+        from machineconfig.setup_windows import MACHINECONFIG
         create_default_shell_profile(method="copy")
     else:
-        from machineconfig.setup_linux import REPOS
+        from machineconfig.setup_linux import MACHINECONFIG
         create_default_shell_profile(method="reference")
-    run_shell_script(REPOS.read_text(encoding="utf-8"))
+    run_shell_script(MACHINECONFIG.read_text(encoding="utf-8"))
 
 
 

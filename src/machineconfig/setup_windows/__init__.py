@@ -2,8 +2,8 @@
 from pathlib import Path
 
 APPS = Path(__file__).parent.joinpath("apps.ps1")
-REPOS = Path(__file__).parent.joinpath("repos.ps1")
-VE = Path(__file__).parent.joinpath("ve.ps1")
+MACHINECONFIG = Path(__file__).parent.joinpath("machineconfig.ps1")
+UV = Path(__file__).parent.joinpath("uv.ps1")
 
 DOCKER = Path(__file__).parent.joinpath("others/docker.ps1")
 OBS = Path(__file__).parent.joinpath("others/obs.ps1")

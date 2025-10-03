@@ -95,17 +95,22 @@ def display_dotfiles_instructions() -> None:
 
 def get_installation_choices() -> list[str]:
     """Get user choices for installation options."""
-    choices = [
-        Choice(value="upgrade_system", title="🔄 Upgrade System Packages        - Update all system packages", checked=False),
-        Choice(value="ESSENTIAL_SYSTEM", title="📥 Install Apps                    - Install base system applications", checked=False),
-        Choice(value="ESSENTIAL", title="⚡ Install CLI Apps               - Command-line tools installation", checked=False),
-        Choice(value="DEV_SYSTEM", title="🛠️  Install Development Tools      - rust, libssl-dev, ffmpeg, wezterm, brave, code", checked=False),
-        Choice(value="TerminalEyeCandy", title="🎨 Install ASCII Art Libraries    - Terminal visualization tools", checked=False),
-        Choice(value="install_repos", title="🐍 Install Repos                - Set up Python environment and repositories permanently.", checked=False),
-        Choice(value="install_ssh_server", title="🔒 Install SSH Server             - Set up remote access", checked=False),
-        Choice(value="install_shell_profile", title="🐚 Configure Shell Profile         - Source machineconfig shell initialization", checked=False),
-        Choice(value="retrieve_repositories", title="📚 Retrieve Repositories          - Clone repositories to ~/code", checked=False),
-        Choice(value="retrieve_data", title="💾 Retrieve Data                  - Backup restoration", checked=False),
+    if platform.system() == "Windows":
+        choices = []
+    else:
+        choices = [
+        Choice(value="upgrade_system", title="🔄 Upgrade System Package Manager", checked=False),
+    ]
+    choices += [
+        Choice(value="install_repos", title="🐍 Install machineconfig.", checked=False),
+        Choice(value="ESSENTIAL_SYSTEM", title="📥 Install Essential System Packages.", checked=False),
+        Choice(value="ESSENTIAL", title="⚡ Install CLI apps essentials", checked=False),
+        Choice(value="DEV_SYSTEM", title="🛠️  Install CLI apps development.", checked=False),
+        Choice(value="TerminalEyeCandy", title="🎨 Install CLI apps terminal eye candy.", checked=False),
+        Choice(value="install_ssh_server", title="🔒 Install SSH Server", checked=False),
+        Choice(value="install_shell_profile", title="🐚 Configure Shell Profile.", checked=False),
+        Choice(value="retrieve_repositories", title="📚 Retrieve Repositories", checked=False),
+        Choice(value="retrieve_data", title="💾 Retrieve Data.", checked=False),
     ]
     # Add Windows-specific options
     if platform.system() == "Windows":
@@ -117,12 +122,10 @@ def get_installation_choices() -> list[str]:
 def execute_installations(selected_options: list[str]) -> None:
     if platform.system() == "Windows":
         from machineconfig import setup_windows as module
-        script_path = Path(module.__file__).parent / "ve.ps1"
-        run_shell_script(script_path.read_text(encoding="utf-8"))
+        run_shell_script(module.UV.read_text(encoding="utf-8"))
     else:
         from machineconfig import setup_linux as module
-        script_path = Path(module.__file__).parent / "ve.sh"
-        run_shell_script(script_path.read_text(encoding="utf-8"))
+        run_shell_script(module.UV.read_text(encoding="utf-8"))
 
     for maybe_a_group in selected_options:
         if maybe_a_group in ("ESSENTIAL", "DEV", "ESSENTIAL_SYSTEM", "DEV_SYSTEM", "TerminalEyeCandy"):
@@ -147,10 +150,10 @@ def execute_installations(selected_options: list[str]) -> None:
     if "install_repos" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
         if platform.system() == "Windows":
-            from machineconfig.setup_windows import REPOS
+            from machineconfig.setup_windows import MACHINECONFIG
         else:
-            from machineconfig.setup_linux import REPOS
-        run_shell_script(REPOS.read_text(encoding="utf-8"))
+            from machineconfig.setup_linux import MACHINECONFIG
+        run_shell_script(MACHINECONFIG.read_text(encoding="utf-8"))
 
     if "install_ssh_server" in selected_options:
         console.print(Panel("🔒 [bold red]SSH SERVER[/bold red]\n[italic]Remote access setup[/italic]", border_style="red"))
