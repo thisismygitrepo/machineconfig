@@ -5,7 +5,7 @@
 from pathlib import Path
 from typing import cast, Iterable, Optional, get_args
 import typer
-from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, MATCHNE, MODEL, PROVIDER
+from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, MATCHINE, MODEL, PROVIDER
 
 
 def _write_list_file(target: Path, files: Iterable[Path]) -> None:
@@ -21,7 +21,7 @@ def create(
     tasks_per_prompt: int = typer.Option(13, help="Number of tasks per prompt"),
 
     agent: AGENTS = typer.Option(..., help=f"Agent type. One of {', '.join(get_args(AGENTS))}"),
-    machine: MATCHNE = typer.Option(..., help=f"Machine to run agents on. One of {', '.join(get_args(MATCHNE))}"),
+    machine: MATCHINE = typer.Option(..., help=f"Machine to run agents on. One of {', '.join(get_args(MATCHINE))}"),
     model: MODEL = typer.Option(..., help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL))}"),
     provider: PROVIDER = typer.Option(..., help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER))}"),
 

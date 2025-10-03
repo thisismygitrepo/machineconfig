@@ -1,11 +1,11 @@
 
 from pathlib import Path
 import shlex
-from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import MATCHNE
+from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import MATCHINE
 from typing import Optional
 
 
-def fire_gemini(api_key: Optional[str], prompt_path: Path, machine: MATCHNE) -> str:
+def fire_gemini(api_key: Optional[str], prompt_path: Path, machine: MATCHINE) -> str:
     model = "gemini-2.5-pro"
     # model = "gemini-2.5-flash-lite"
     # model = None  # auto-select
