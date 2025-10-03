@@ -164,47 +164,12 @@ def collect(
 
 
 def template():
-    template_bash = """#!/bin/bash
-#!/bin/bash
-# set -e # Exit immediately if a command exits with a non-zero status.
-
-JOB_NAME="outpatient_mapping"
-REPO_ROOT="$HOME/code/machineconfig/"
-CONTEXT_PATH="$REPO_ROOT/src/machineconfig/scripts/python/fire_jobs.py"
-PROMPT_PATH="$REPO_ROOT/.ai/prompt.txt"
-
-AGENTS_DIR="$REPO_ROOT/.ai/agents/$JOB_NAME"
-LAYOUT_PATH_UNBALANCED="$REPO_ROOT/.ai/agents/$JOB_NAME/layout_unbalanced.json"
-
-agents create \
-  --context-path "$CONTEXT_PATH" \
-  --tasks-per-prompt 1 \
-  --machine docker \
-  --agent crush \
-  --model "zai/glm-4.6" \
-  --provider openrouter \
-  --separator 'def ' \
-  --prompt-path "$LAYOUT_PATH_UNBALANCED" \
-  --output-path "$LAYOUT_PATH" \
-  --agents-dir "$AGENTS_DIR"
-
-# LAYOUT_BALANCED_PATH="$REPO_ROOT/.ai/agents/$JOB_NAME/layout_balanced.json"
-# sessions balance-load $LAYOUT_PATH --max-thresh 6 --breaking-method moreLayouts --thresh-type number  --output-path $LAYOUT_BALANCED_PATH
-# sessions run $LAYOUT_BALANCED_PATH --kill-upon-completion
-
-sessions run $LAYOUT_PATH_UNBALANCED
-
-# agents collect $AGENTS_DIR "$REPO_ROOT/.ai/agents/$JOB_NAME/collected.txt"
-
-"""
-    template_powershell = """
-
-"""
     from platform import system
-    if system() == "Linux":
-        template = template_bash
+    import machineconfig.scripts.python.helpers_fire as module
+    if system() == "Linux" or system() == "Darwin":
+        template_path = Path(module.__file__).parent / "template.sh"
     elif system() == "Windows":
-        template = template_powershell
+        template_path = Path(module.__file__).parent / "template.ps1"
     else:
         raise typer.BadParameter(f"Unsupported OS: {system()}")
 
@@ -215,7 +180,7 @@ sessions run $LAYOUT_PATH_UNBALANCED
         raise typer.Exit(1)
     save_path = repo_root / ".ai" / "agents" / "template_fire_agents.sh"
     save_path.parent.mkdir(parents=True, exist_ok=True)
-    save_path.write_text(template, encoding="utf-8")
+    save_path.write_text(template_path.read_text(encoding="utf-8"), encoding="utf-8")
     typer.echo(f"Template bash script written to {save_path}")
 
 
@@ -224,7 +189,7 @@ def main_from_parser():
     agents_app = typer.Typer(help="🤖 AI Agents management subcommands")
     agents_app.command("create", no_args_is_help=True)(create)
     agents_app.command("collect", no_args_is_help=True)(collect)
-    agents_app.command("template", no_args_is_help=True)(template)
+    agents_app.command("create-template", no_args_is_help=False, help="Create a template for fire agents")(template)
     if len(sys.argv) == 1:
         agents_app(["--help"])
     else:
