@@ -20,7 +20,7 @@ def get_gemini_api_keys() -> list[str]:
     return res
 
 
-def prep_agent_launch(agents_dir: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool, machine: MATCHNE, agent: AGENTS, *, job_name: str) -> None:
+def prep_agent_launch(repo_root: Path, agents_dir: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool, machine: MATCHNE, agent: AGENTS, *, job_name: str) -> None:
     agents_dir.mkdir(parents=True, exist_ok=True)
     prompt_folder = agents_dir / "prompts"
     prompt_folder.mkdir(parents=True, exist_ok=True)
@@ -73,7 +73,7 @@ sleep 0.1
                 cmd = fire_cursor(prompt_path=prompt_path, machine=machine, api_key="")
             case "crush":
                 from machineconfig.scripts.python.helpers_fire.fire_crush import fire_crush
-                cmd = fire_crush(api_key="", prompt_path=prompt_path, machine=machine)
+                cmd = fire_crush(api_key="", prompt_path=prompt_path, machine=machine, repo_root=repo_root)
             case "q":
                 from machineconfig.scripts.python.helpers_fire.fire_q import fire_q
                 cmd = fire_q(api_key="", prompt_path=prompt_path, machine=machine)

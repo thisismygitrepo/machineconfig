@@ -1,0 +1,19 @@
+{
+    "models": {
+        "large": {
+            "model": "{model}",
+            "provider": "{provider}",
+            "max_tokens": 100000
+        },
+        "small": {
+            "model": "{model}",
+            "provider": "{provider}",
+            "max_tokens": 100000
+        }
+    },
+    "providers": {
+        "openrouter": {
+            "api_key": "{api_key}"
+        }
+    }
+}
