@@ -8,14 +8,15 @@ in the event that username@github.com is not mentioned in the remote url.
 from pathlib import Path
 from typing import Annotated, Optional
 import typer
+from git import Repo, InvalidGitRepositoryError
 from machineconfig.scripts.python.secure_repo import main as secure_repo_main
 
 
-app = typer.Typer(help="� Manage development repositories", no_args_is_help=True)
-sync_app = typer.Typer(help="� Manage repository specifications and syncing", no_args_is_help=True)
-app.add_typer(sync_app, name="sync", help="� Sync repositories using saved specs")
+app = typer.Typer(help="📁 Manage development repositories", no_args_is_help=True)
+sync_app = typer.Typer(help="🔄 Manage repository specifications and syncing", no_args_is_help=True)
+app.add_typer(sync_app, name="mirror", help="🔄 mirror repositories using saved specs")
 
-DirectoryArgument = Annotated[Optional[str], typer.Argument(help="📁 Folder containing repos or the specs JSON file to use.")]
+DirectoryArgument = Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")]
 RecursiveOption = Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")]
 NoSyncOption = Annotated[bool, typer.Option("--no-sync", help="🚫 Disable automatic uv sync after pulls.")]
 CloudOption = Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁️ Upload to or download from this cloud remote.")]
@@ -46,10 +47,9 @@ def commit(directory: DirectoryArgument = None, recursive: RecursiveOption = Fal
 
 
 @app.command(no_args_is_help=True)
-def cleanup(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
+def sync(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
     """🔄 Pull, commit, and push changes across repositories."""
     from machineconfig.scripts.python.repos_helpers.repos_helper import git_operations
-
     git_operations(directory, pull=True, commit=True, push=True, recursive=recursive, no_sync=no_sync)
 
 
@@ -135,3 +135,39 @@ def viz(
               user_image_dir=user_image_dir, max_files=max_files, max_file_lag=max_file_lag,
               file_idle_time=file_idle_time, framerate=framerate, background_color=background_color,
               font_size=font_size, camera_mode=camera_mode)
+
+@app.command(no_args_is_help=True)
+def cleanup(repo: DirectoryArgument = None, recursive: RecursiveOption = False) -> None:
+    """🧹 Clean repository directories from cache files."""
+    if repo is None:
+        repo = Path.cwd().as_posix()
+    
+    arg_path = Path(repo).expanduser().absolute()
+    
+    if not recursive:
+        # Check if the directory is a git repo
+        try:
+            Repo(str(arg_path), search_parent_directories=False)
+        except InvalidGitRepositoryError:
+            typer.echo(f"❌ {arg_path} is not a git repository. Use -r flag for recursive cleanup.")
+            return
+        # Run cleanup on this repo
+        repos_to_clean = [arg_path]
+    else:
+        # Find all git repos recursively under the directory
+        git_dirs = list(arg_path.rglob('.git'))
+        repos_to_clean = [git_dir.parent for git_dir in git_dirs if git_dir.is_dir()]
+        if not repos_to_clean:
+            typer.echo(f"❌ No git repositories found under {arg_path}")
+            return
+    
+    for repo_path in repos_to_clean:
+        typer.echo(f"🧹 Cleaning {repo_path}")
+        script = fr"""
+cd "{repo_path}"
+uv run --with cleanpy cleanpy .
+# mcinit .
+# find "." -type f \( -name "*.py" -o -name "*.md" -o -name "*.json" \) -not -path "*/\.*" -not -path "*/__pycache__/*" -print0 | xargs -0 sed -i 's/[[:space:]]*$//'
+"""
+        from machineconfig.utils.code import run_shell_script
+        run_shell_script(script)
