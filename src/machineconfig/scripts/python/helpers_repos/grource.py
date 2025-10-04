@@ -175,10 +175,9 @@ def visualize(
                 gource_cmd: str = str(gource_exe)
             else:
                 print("❌ Installation failed, falling back to system gource")
-                gource_cmd = "gource"
+                raise typer.Exit(1)
         else:
-            gource_cmd = "gource"
-            print(f"⚠️  Portable gource not found at {gource_exe}, using system gource")
+            raise FileNotFoundError(f"Gource executable not found at {gource_exe}. Please install gource using your package manager.")
     else:
         gource_cmd = str(gource_exe)
 
