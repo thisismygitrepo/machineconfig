@@ -36,6 +36,7 @@ dependencies = [
     "typer-slim>=0.19.2",
     "questionary>=2.1.1",
     "typer>=0.19.2",
+    "textual>=6.1.0",
 ]
 
 [project.optional-dependencies]
@@ -57,6 +58,7 @@ fire = "machineconfig.scripts.python.fire_jobs:main_from_parser"
 initai = "machineconfig.scripts.python.ai.initai:main"
 agents = "machineconfig.scripts.python.agents:main_from_parser"
 sessions = "machineconfig.scripts.python.sessions:main_from_parser"
+commands = "machineconfig.scripts.python.command_navigator:main_from_parser"
 
 choose_wezterm_theme = "machineconfig.scripts.python.choose_wezterm_theme:main"
 cloud_copy = "machineconfig.scripts.python.cloud_copy:arg_parser"

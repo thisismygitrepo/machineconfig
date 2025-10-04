@@ -6,7 +6,7 @@ from typing import Literal, Annotated, Optional
 import machineconfig.scripts.python.repos as repos
 import machineconfig.scripts.python.share_terminal as share_terminal
 
-app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True)
+app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True, add_completion=True)
 @app.command(no_args_is_help=True)
 def install(    which: Optional[str] = typer.Option(None, "--which", "-w", help="Comma-separated list of program names to install."),
     group: Optional[str] = typer.Option(None, "--group", "-g", help="Groups names. A group is bundle of apps. See available groups when running interactively."),
@@ -56,6 +56,12 @@ def clone():
         from machineconfig.setup_linux import MACHINECONFIG
         create_default_shell_profile(method="reference")
     run_shell_script(MACHINECONFIG.read_text(encoding="utf-8"))
+
+@self_app.command()
+def navigate():
+    """📚 NAVIGATE command structure with TUI"""
+    from machineconfig.scripts.python.command_navigator import main
+    main()
 
 
 
