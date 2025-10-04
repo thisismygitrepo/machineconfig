@@ -40,9 +40,10 @@ def _check_shell_profile_status() -> dict[str, Any]:
 
     try:
         profile_path = get_shell_profile_path()
-        profile_exists = profile_path.exists()
-        profile_content = profile_path.read_text(encoding="utf-8") if profile_exists else ""
-
+        if not profile_path.exists():
+            profile_path.parent.mkdir(parents=True, exist_ok=True)
+            profile_path.touch()
+        profile_content = profile_path.read_text(encoding="utf-8")
         system_name = platform.system()
         if system_name == "Windows":
             init_script = PathExtended(LIBRARY_ROOT).joinpath("settings/shells/pwsh/init.ps1")
@@ -60,14 +61,22 @@ def _check_shell_profile_status() -> dict[str, Any]:
 
         return {
             "profile_path": str(profile_path),
-            "exists": profile_exists,
+            "exists": True,
             "configured": configured,
             "method": method,
             "init_script_exists": init_script.exists(),
             "init_script_copy_exists": init_script_copy.exists(),
         }
     except Exception as ex:
-        return {"profile_path": "Error", "exists": False, "configured": False, "method": "error", "error": str(ex), "init_script_exists": False, "init_script_copy_exists": False}
+        return {
+            "profile_path": "Error",
+            "exists": False,
+            "configured": False,
+            "method": "error",
+            "error": str(ex),
+            "init_script_exists": False,
+            "init_script_copy_exists": False,
+        }
 
 
 def _check_machineconfig_repo() -> dict[str, Any]:
@@ -116,7 +125,16 @@ def _check_repos_status() -> dict[str, Any]:
                 import git
 
                 repo = git.Repo(str(repo_path))
-                repos_info.append({"path": str(repo_path), "name": repo_path.name, "exists": True, "is_repo": True, "clean": not repo.is_dirty(untracked_files=True), "branch": repo.active_branch.name if not repo.head.is_detached else "DETACHED"})
+                repos_info.append(
+                    {
+                        "path": str(repo_path),
+                        "name": repo_path.name,
+                        "exists": True,
+                        "is_repo": True,
+                        "clean": not repo.is_dirty(untracked_files=True),
+                        "branch": repo.active_branch.name if not repo.head.is_detached else "DETACHED",
+                    }
+                )
             except Exception:
                 repos_info.append({"path": str(repo_path), "name": repo_path.name, "exists": True, "is_repo": False})
 
@@ -134,7 +152,15 @@ def _check_ssh_status() -> dict[str, Any]:
     keys = []
     for pub_key in ssh_dir.glob("*.pub"):
         private_key = pub_key.with_suffix("")
-        keys.append({"name": pub_key.stem, "public_exists": True, "private_exists": private_key.exists(), "public_path": str(pub_key), "private_path": str(private_key)})
+        keys.append(
+            {
+                "name": pub_key.stem,
+                "public_exists": True,
+                "private_exists": private_key.exists(),
+                "public_path": str(pub_key),
+                "private_path": str(private_key),
+            }
+        )
 
     config_file = ssh_dir.joinpath("config")
     authorized_keys = ssh_dir.joinpath("authorized_keys")
@@ -187,13 +213,21 @@ def _check_config_files_status() -> dict[str, Any]:
             "private_configs": private_configs,
         }
     except Exception as ex:
-        return {"public_count": 0, "public_linked": 0, "private_count": 0, "private_linked": 0, "error": str(ex), "public_configs": [], "private_configs": []}
+        return {
+            "public_count": 0,
+            "public_linked": 0,
+            "private_count": 0,
+            "private_linked": 0,
+            "error": str(ex),
+            "public_configs": [],
+            "private_configs": [],
+        }
 
 
 def _check_important_tools() -> dict[str, dict[str, bool]]:
     """Check if important CLI tools are installed, organized by groups."""
     from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
-    
+
     group_status = {}
     for group_name, tools in PACKAGE_GROUP2NAMES.items():
         tool_status = {}
@@ -257,25 +291,33 @@ def _display_shell_status(status: dict[str, Any]) -> None:
         return
 
     from rich.columns import Columns
-    
+
     left_table = Table(show_header=False, box=None, padding=(0, 1))
     left_table.add_column("Item", style="cyan", no_wrap=True)
     left_table.add_column("Status")
-    
-    left_table.add_row("📄 Profile", status['profile_path'])
-    left_table.add_row(f"{'✅' if status['exists'] else '❌'} Exists", str(status['exists']))
-    left_table.add_row(f"{'✅' if status['configured'] else '❌'} Configured", str(status['configured']))
-    
+
+    left_table.add_row("📄 Profile", status["profile_path"])
+    left_table.add_row(f"{'✅' if status['exists'] else '❌'} Exists", str(status["exists"]))
+    left_table.add_row(f"{'✅' if status['configured'] else '❌'} Configured", str(status["configured"]))
+
     right_table = Table(show_header=False, box=None, padding=(0, 1))
     right_table.add_column("Item", style="cyan", no_wrap=True)
     right_table.add_column("Status")
-    
-    right_table.add_row("🔧 Method", status['method'])
-    right_table.add_row(f"{'✅' if status['init_script_exists'] else '❌'} Init (source)", str(status['init_script_exists']))
-    right_table.add_row(f"{'✅' if status['init_script_copy_exists'] else '❌'} Init (copy)", str(status['init_script_copy_exists']))
+
+    right_table.add_row("🔧 Method", status["method"])
+    right_table.add_row(f"{'✅' if status['init_script_exists'] else '❌'} Init (source)", str(status["init_script_exists"]))
+    right_table.add_row(f"{'✅' if status['init_script_copy_exists'] else '❌'} Init (copy)", str(status["init_script_copy_exists"]))
 
     border_style = "green" if status["configured"] else "yellow"
-    console.print(Panel(Columns([left_table, right_table], equal=True, expand=True), title="Shell Profile", border_style=border_style, padding=(1, 2), expand=False))
+    console.print(
+        Panel(
+            Columns([left_table, right_table], equal=True, expand=True),
+            title="Shell Profile",
+            border_style=border_style,
+            padding=(1, 2),
+            expand=False,
+        )
+    )
 
 
 def _display_machineconfig_repo(info: dict[str, Any]) -> None:
@@ -283,22 +325,38 @@ def _display_machineconfig_repo(info: dict[str, Any]) -> None:
     console.rule("[bold magenta]📦 Machineconfig Repository[/bold magenta]")
 
     if not info["exists"]:
-        console.print(Panel("❌ Machineconfig repository not found at ~/code/machineconfig", title="Repository Status", border_style="red", padding=(1, 2), expand=False))
+        console.print(
+            Panel(
+                "❌ Machineconfig repository not found at ~/code/machineconfig",
+                title="Repository Status",
+                border_style="red",
+                padding=(1, 2),
+                expand=False,
+            )
+        )
         return
 
     if not info["is_repo"]:
-        console.print(Panel(f"❌ Directory exists but is not a git repository\n{info.get('error', 'Unknown error')}", title="Repository Status", border_style="red", padding=(1, 2), expand=False))
+        console.print(
+            Panel(
+                f"❌ Directory exists but is not a git repository\n{info.get('error', 'Unknown error')}",
+                title="Repository Status",
+                border_style="red",
+                padding=(1, 2),
+                expand=False,
+            )
+        )
         return
 
     table = Table(show_header=False, box=None, padding=(0, 1), expand=False)
     table.add_column("Property", style="cyan", no_wrap=True)
     table.add_column("Value", style="white")
-    
-    table.add_row("📁 Path", info['path'])
-    table.add_row("🌿 Branch", info['branch'])
-    table.add_row("🔖 Commit", info['commit'])
-    table.add_row(f"{'✅' if info['clean'] else '⚠️'} Status", 'Clean' if info['clean'] else 'Uncommitted changes')
-    table.add_row("📡 Remotes", ', '.join(info['remotes']) if info['remotes'] else 'None')
+
+    table.add_row("📁 Path", info["path"])
+    table.add_row("🌿 Branch", info["branch"])
+    table.add_row("🔖 Commit", info["commit"])
+    table.add_row(f"{'✅' if info['clean'] else '⚠️'} Status", "Clean" if info["clean"] else "Uncommitted changes")
+    table.add_row("📡 Remotes", ", ".join(info["remotes"]) if info["remotes"] else "None")
 
     border_style = "green" if info["clean"] else "yellow"
     console.print(Panel(table, title="Machineconfig Repository", border_style=border_style, padding=(1, 2), expand=False))
@@ -344,15 +402,15 @@ def _display_ssh_status(status: dict[str, Any]) -> None:
         return
 
     from rich.columns import Columns
-    
+
     config_table = Table(show_header=False, box=None, padding=(0, 1))
     config_table.add_column("Item", style="cyan", no_wrap=True)
     config_table.add_column("Status")
-    
-    config_table.add_row("📁 Directory", status['ssh_dir_path'])
-    config_table.add_row(f"{'✅' if status['config_exists'] else '❌'} Config", str(status['config_exists']))
-    config_table.add_row(f"{'✅' if status['authorized_keys_exists'] else '❌'} Auth Keys", str(status['authorized_keys_exists']))
-    config_table.add_row(f"{'✅' if status['known_hosts_exists'] else '❌'} Known Hosts", str(status['known_hosts_exists']))
+
+    config_table.add_row("📁 Directory", status["ssh_dir_path"])
+    config_table.add_row(f"{'✅' if status['config_exists'] else '❌'} Config", str(status["config_exists"]))
+    config_table.add_row(f"{'✅' if status['authorized_keys_exists'] else '❌'} Auth Keys", str(status["authorized_keys_exists"]))
+    config_table.add_row(f"{'✅' if status['known_hosts_exists'] else '❌'} Known Hosts", str(status["known_hosts_exists"]))
 
     config_panel = Panel(config_table, title="SSH Config", border_style="yellow", padding=(1, 2), expand=False)
 
@@ -368,7 +426,7 @@ def _display_ssh_status(status: dict[str, Any]) -> None:
             keys_table.add_row(key["name"], pub_status, priv_status)
 
         keys_panel = Panel(keys_table, title=f"SSH Keys ({len(status['keys'])})", border_style="yellow", padding=(1, 2), expand=False)
-        
+
         console.print(Columns([config_panel, keys_panel], equal=False, expand=True))
     else:
         console.print(config_panel)
@@ -379,7 +437,9 @@ def _display_config_files_status(status: dict[str, Any]) -> None:
     console.rule("[bold bright_blue]⚙️  Configuration Files[/bold bright_blue]")
 
     if "error" in status:
-        console.print(Panel(f"❌ Error reading configuration: {status['error']}", title="Configuration Files", border_style="red", padding=(1, 2), expand=False))
+        console.print(
+            Panel(f"❌ Error reading configuration: {status['error']}", title="Configuration Files", border_style="red", padding=(1, 2), expand=False)
+        )
         return
 
     public_percentage = (status["public_linked"] / status["public_count"] * 100) if status["public_count"] > 0 else 0
@@ -390,9 +450,9 @@ def _display_config_files_status(status: dict[str, Any]) -> None:
     table.add_column("Linked", justify="right")
     table.add_column("Total", justify="right")
     table.add_column("Progress", justify="right")
-    
-    table.add_row("📂 Public", str(status['public_linked']), str(status['public_count']), f"{public_percentage:.0f}%")
-    table.add_row("🔒 Private", str(status['private_linked']), str(status['private_count']), f"{private_percentage:.0f}%")
+
+    table.add_row("📂 Public", str(status["public_linked"]), str(status["public_count"]), f"{public_percentage:.0f}%")
+    table.add_row("🔒 Private", str(status["private_linked"]), str(status["private_count"]), f"{private_percentage:.0f}%")
 
     overall_linked = status["public_linked"] + status["private_linked"]
     overall_total = status["public_count"] + status["private_count"]
@@ -400,7 +460,9 @@ def _display_config_files_status(status: dict[str, Any]) -> None:
 
     border_style = "green" if overall_percentage > 80 else ("yellow" if overall_percentage > 50 else "red")
 
-    console.print(Panel(table, title=f"Configuration Files ({overall_percentage:.0f}% configured)", border_style=border_style, padding=(1, 2), expand=False))
+    console.print(
+        Panel(table, title=f"Configuration Files ({overall_percentage:.0f}% configured)", border_style=border_style, padding=(1, 2), expand=False)
+    )
 
 
 def _display_tools_status(grouped_tools: dict[str, dict[str, bool]]) -> None:
@@ -408,60 +470,61 @@ def _display_tools_status(grouped_tools: dict[str, dict[str, bool]]) -> None:
     console.rule("[bold bright_magenta]🛠️  Important Tools[/bold bright_magenta]")
 
     from rich.columns import Columns
-    
+
     all_group_panels = []
     total_installed = 0
     total_tools = 0
-    
+
     for group_name, tools in grouped_tools.items():
         sorted_tools = sorted(tools.keys())
         installed = [tool for tool, status in tools.items() if status]
         total_installed += len(installed)
         total_tools += len(tools)
-        
+
         num_columns = 8
         tools_per_column = (len(sorted_tools) + num_columns - 1) // num_columns
-        
+
         tables = []
         for col_idx in range(num_columns):
             table = Table(show_header=False, box=None, padding=(0, 0), collapse_padding=True)
             table.add_column("Tool", style="cyan", no_wrap=True, width=None)
             table.add_column("", justify="center", width=2, no_wrap=True)
-            
+
             start_idx = col_idx * tools_per_column
             end_idx = min(start_idx + tools_per_column, len(sorted_tools))
-            
+
             for i in range(start_idx, end_idx):
                 tool = sorted_tools[i]
                 status_icon = "✅" if tools[tool] else "❌"
                 table.add_row(tool, status_icon)
-            
+
             if start_idx < len(sorted_tools):
                 tables.append(table)
 
         installed_percentage = (len(installed) / len(tools) * 100) if tools else 0
         border_style = "green" if installed_percentage > 80 else ("yellow" if installed_percentage > 50 else "red")
-        
+
         group_display_name = group_name.replace("_", " ").title()
         group_panel = Panel(
             Columns(tables, equal=False, expand=False, padding=(0, 1)),
             title=f"{group_display_name} ({len(installed)}/{len(tools)})",
             border_style=border_style,
             padding=(0, 1),
-            expand=False
+            expand=False,
         )
         all_group_panels.append(group_panel)
-    
+
     overall_percentage = (total_installed / total_tools * 100) if total_tools else 0
     master_border_style = "green" if overall_percentage > 80 else ("yellow" if overall_percentage > 50 else "red")
-    
+
     from rich.console import Group
+
     master_panel = Panel(
         Group(*all_group_panels),
         title=f"🛠️  Tools Overview ({total_installed}/{total_tools} installed - {overall_percentage:.0f}%)",
         border_style=master_border_style,
         padding=(1, 2),
-        expand=False
+        expand=False,
     )
     console.print(master_panel)
 
@@ -473,9 +536,9 @@ def _display_backup_status(status: dict[str, Any]) -> None:
     table = Table(show_header=False, box=None, padding=(0, 1), expand=False)
     table.add_column("Property", style="cyan", no_wrap=True)
     table.add_column("Value", style="white")
-    
-    table.add_row("🌥️  Cloud Config", status['cloud_config'])
-    table.add_row("📦 Backup Items", str(status['backup_items_count']))
+
+    table.add_row("🌥️  Cloud Config", status["cloud_config"])
+    table.add_row("📦 Backup Items", str(status["backup_items_count"]))
 
     border_style = "green" if status["cloud_config"] != "Not configured" else "yellow"
 

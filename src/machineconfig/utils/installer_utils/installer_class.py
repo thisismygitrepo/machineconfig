@@ -1,15 +1,13 @@
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.installer_utils.installer_abc import find_move_delete_linux, find_move_delete_windows
-from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT, LIBRARY_ROOT
+from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT
 from machineconfig.utils.installer_utils.installer_abc import check_tool_exists
-from machineconfig.utils.io import read_json
-from machineconfig.utils.schemas.installer.installer_types import InstallerData, InstallerDataFiles, get_os_name, get_normalized_arch
+from machineconfig.utils.schemas.installer.installer_types import InstallerData, get_os_name, get_normalized_arch
 
 import platform
 import subprocess
 import json
 from typing import Optional, Any
-from pathlib import Path
 from urllib.parse import urlparse
 
 
@@ -88,7 +86,7 @@ class Installer:
                     if result.stderr:
                         print(f"STDERR: {result.stderr}")
                     print(f"Return code: {result.returncode}")
-                print(f"✅ Package manager installation completed")
+                print("✅ Package manager installation completed")
             elif installer_arch_os.endswith((".sh", ".py", ".ps1")):
                 # search for the script, see which path ends with the script name
                 import machineconfig.jobs.installer as module
