@@ -102,9 +102,11 @@ dev = [
     "types-urllib3>=1.26.25.14",
     "vt-py>=0.21.0",
 ]
+
 docs = [
     "pdoc>=15.0.2",
 ]
+
 plot = [
     "duckdb-engine>=0.17.0",
     "ipykernel>=6.30.1",
