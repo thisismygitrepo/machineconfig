@@ -98,7 +98,7 @@ def print_code(code: str, lexer: str, desc: str, subtitle: str = ""):
     console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}", subtitle=subtitle), style="bold red")
 
 
-def run_shell_script(script: str, display_script: bool = True):
+def run_shell_script(script: str, display_script: bool = True, clean_env: bool = False):
     import tempfile
     if platform.system() == "Windows":
         suffix = ".ps1"
@@ -114,12 +114,14 @@ def run_shell_script(script: str, display_script: bool = True):
         from rich.syntax import Syntax
         console.print(Panel(Syntax(code=script, lexer=lexer), title=f"📄 shell script @ {temp_script_path}", subtitle="shell script being executed"), style="bold red")
 
+    env = {} if clean_env else None
+
     if platform.system() == "Windows":
         import subprocess
-        proc = subprocess.run(f'powershell -ExecutionPolicy Bypass -File "{temp_script_path}"', check=True, shell=True)
+        proc = subprocess.run(f'powershell -ExecutionPolicy Bypass -File "{temp_script_path}"', check=True, shell=True, env=env)
     elif platform.system() == "Linux" or platform.system() == "Darwin":
         import subprocess
-        proc = subprocess.run(f"bash {str(temp_script_path)}", check=True, shell=True)
+        proc = subprocess.run(f"bash {str(temp_script_path)}", check=True, shell=True, env=env)
     else:
         raise NotImplementedError(f"Platform {platform.system()} not supported.")
     # console.print(f"✅  [green]Script executed successfully:[/green] [blue]{temp_script_path}[/blue]")

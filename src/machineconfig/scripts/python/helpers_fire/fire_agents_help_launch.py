@@ -77,9 +77,9 @@ sleep 0.1
                 api_keys = get_api_keys(provider=provider)
                 api_key = api_keys[idx % len(api_keys)] if len(api_keys) > 0 else None
                 cmd = fire_crush(api_key=api_key, prompt_path=prompt_path, machine=machine, repo_root=repo_root, model=model, provider=provider)
-            case "q":
-                from machineconfig.scripts.python.helpers_fire.fire_q import fire_q
-                cmd = fire_q(api_key="", prompt_path=prompt_path, machine=machine)
+            # case "q":
+            #     from machineconfig.scripts.python.helpers_fire.fire_q import fire_q
+            #     cmd = fire_q(api_key="", prompt_path=prompt_path, machine=machine)
             case _:
                 raise ValueError(f"Unsupported agent type: {agent}")
 
