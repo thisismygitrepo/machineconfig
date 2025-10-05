@@ -3,11 +3,11 @@
 import typer
 from typing import Optional
 
-import machineconfig.scripts.python.cli_repos as cli_repos
-import machineconfig.scripts.python.cli_config as cli_config
-from machineconfig.scripts.python.cli_self import self_app
-import machineconfig.scripts.python.cli_data as cli_data
-import machineconfig.scripts.python.cli_nw as cli_network
+import machineconfig.scripts.python.devops_helpers.cli_repos as cli_repos
+import machineconfig.scripts.python.devops_helpers.cli_config as cli_config
+from machineconfig.scripts.python.devops_helpers.cli_self import self_app
+import machineconfig.scripts.python.devops_helpers.cli_data as cli_data
+import machineconfig.scripts.python.devops_helpers.cli_nw as cli_network
 
 
 app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True, add_completion=True)

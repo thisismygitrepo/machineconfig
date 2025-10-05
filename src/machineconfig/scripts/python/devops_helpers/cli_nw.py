@@ -1,5 +1,5 @@
 
-import machineconfig.scripts.python.cli_terminal as cli_terminal
+import machineconfig.scripts.python.devops_helpers.cli_terminal as cli_terminal
 import typer
 nw_apps = typer.Typer(help="🔐 Network subcommands", no_args_is_help=True)
 

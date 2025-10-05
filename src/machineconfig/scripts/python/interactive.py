@@ -157,7 +157,7 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
 
     if "retrieve_repositories" in selected_options:
         console.print(Panel("📚 [bold bright_magenta]REPOSITORIES[/bold bright_magenta]\n[italic]Project code retrieval[/italic]", border_style="bright_magenta"))
-        from machineconfig.scripts.python import cli_repos
+        from machineconfig.scripts.python.devops_helpers import cli_repos
         cli_repos.clone(directory=str(Path.home() / "code"), cloud="odg1")
 
     if "retrieve_data" in selected_options:
