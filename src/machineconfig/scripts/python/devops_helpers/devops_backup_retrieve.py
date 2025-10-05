@@ -6,7 +6,7 @@ from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT, DEFAULTS_PATH
 from machineconfig.utils.code import print_code
 from machineconfig.utils.options import choose_cloud_interactively, choose_from_options
-from machineconfig.scripts.python.helpers.helpers2 import ES
+from machineconfig.scripts.python.cloud_helpers.helpers2 import ES
 from platform import system
 from typing import Any, Literal, Optional
 from rich.console import Console

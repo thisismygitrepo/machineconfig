@@ -10,8 +10,8 @@ from typing import Optional, Annotated
 
 import typer
 
-from machineconfig.scripts.python.helpers.helpers2 import parse_cloud_source_target
-from machineconfig.scripts.python.helpers.cloud_helpers import ArgsDefaults, Args
+from machineconfig.scripts.python.cloud_helpers.helpers2 import parse_cloud_source_target
+from machineconfig.scripts.python.cloud_helpers.cloud_helpers import ArgsDefaults, Args
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress
@@ -76,8 +76,8 @@ def main(
     os_specific: Annotated[bool, typer.Option(help="💻 choose path specific for this OS.")] = ArgsDefaults.os_specific,
     config: Annotated[Optional[str], typer.Option(help="⚙️ path to cloud.json file.")] = None,
 ) -> None:
+    """📤 Upload or 📥 Download files/folders to/from cloud storage services like Google Drive, Dropbox, OneDrive, etc."""
     console.print(Panel("☁️  Cloud Copy Utility", title="[bold blue]Cloud Copy[/bold blue]", border_style="blue", width=152))
-
     args_obj = Args(
         overwrite=overwrite,
         share=share,

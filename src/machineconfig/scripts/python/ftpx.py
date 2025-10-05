@@ -13,7 +13,7 @@ from rich.panel import Panel
 
 from machineconfig.utils.ssh import SSH
 from machineconfig.utils.path_extended import PathExtended
-from machineconfig.scripts.python.helpers.helpers2 import ES
+from machineconfig.scripts.python.cloud_helpers.helpers2 import ES
 from machineconfig.utils.accessories import pprint
 
 
