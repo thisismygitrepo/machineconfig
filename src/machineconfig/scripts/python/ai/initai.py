@@ -47,12 +47,3 @@ uv add --upgrade-package pytest --dev
     crush.build_configuration(repo_root=repo_root)
     cline.build_configuration(repo_root=repo_root)
 
-
-
-def main() -> None:
-    repo_root = Path.cwd()
-    add_ai_configs(repo_root=repo_root)
-
-
-if __name__ == "__main__":
-    add_ai_configs(repo_root=Path.cwd())

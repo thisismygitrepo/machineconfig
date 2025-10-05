@@ -25,7 +25,7 @@ CloudOption = Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁�
 @app.command(no_args_is_help=True)
 def push(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
     """🚀 Push changes across repositories."""
-    from machineconfig.scripts.python.repos_helpers.repos_helper import git_operations
+    from machineconfig.scripts.python.repos_helpers.entrypoint import git_operations
 
     git_operations(directory, pull=False, commit=False, push=True, recursive=recursive, no_sync=no_sync)
 
@@ -33,7 +33,7 @@ def push(directory: DirectoryArgument = None, recursive: RecursiveOption = False
 @app.command(no_args_is_help=True)
 def pull(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
     """⬇️ Pull changes across repositories."""
-    from machineconfig.scripts.python.repos_helpers.repos_helper import git_operations
+    from machineconfig.scripts.python.repos_helpers.entrypoint import git_operations
 
     git_operations(directory, pull=True, commit=False, push=False, recursive=recursive, no_sync=no_sync)
 
@@ -41,7 +41,7 @@ def pull(directory: DirectoryArgument = None, recursive: RecursiveOption = False
 @app.command(no_args_is_help=True)
 def commit(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
     """💾 Commit changes across repositories."""
-    from machineconfig.scripts.python.repos_helpers.repos_helper import git_operations
+    from machineconfig.scripts.python.repos_helpers.entrypoint import git_operations
 
     git_operations(directory, pull=False, commit=True, push=False, recursive=recursive, no_sync=no_sync)
 
@@ -49,16 +49,16 @@ def commit(directory: DirectoryArgument = None, recursive: RecursiveOption = Fal
 @app.command(no_args_is_help=True)
 def sync(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
     """🔄 Pull, commit, and push changes across repositories."""
-    from machineconfig.scripts.python.repos_helpers.repos_helper import git_operations
+    from machineconfig.scripts.python.repos_helpers.entrypoint import git_operations
     git_operations(directory, pull=True, commit=True, push=True, recursive=recursive, no_sync=no_sync)
 
 
 @sync_app.command(no_args_is_help=True)
 def capture(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """📝 Record repositories into a repos.json specification."""
-    from machineconfig.scripts.python.repos_helpers.repos_helper import resolve_directory
+    from machineconfig.scripts.python.repos_helpers.entrypoint import resolve_directory
     repos_root = resolve_directory(directory)
-    from machineconfig.scripts.python.repos_helpers.repos_helper_record import main as record_repos
+    from machineconfig.scripts.python.repos_helpers.record import main as record_repos
 
     save_path = record_repos(repos_root=repos_root)
     from machineconfig.utils.path_extended import PathExtended
@@ -70,7 +70,7 @@ def capture(directory: DirectoryArgument = None, cloud: CloudOption = None) -> N
 @sync_app.command(no_args_is_help=True)
 def clone(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """📥 Clone repositories described by a repos.json specification."""
-    from machineconfig.scripts.python.repos_helpers.repos_helper import clone_from_specs
+    from machineconfig.scripts.python.repos_helpers.entrypoint import clone_from_specs
 
     
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=False)
@@ -79,7 +79,7 @@ def clone(directory: DirectoryArgument = None, cloud: CloudOption = None) -> Non
 @sync_app.command(name="checkout-to-commit", no_args_is_help=True)
 def checkout_command(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """🔀 Check out specific commits listed in the specification."""
-    from machineconfig.scripts.python.repos_helpers.repos_helper import clone_from_specs
+    from machineconfig.scripts.python.repos_helpers.entrypoint import clone_from_specs
 
     
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=True)
@@ -88,7 +88,7 @@ def checkout_command(directory: DirectoryArgument = None, cloud: CloudOption = N
 @sync_app.command(name="checkout-to-branch", no_args_is_help=True)
 def checkout_to_branch_command(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """🔀 Check out to the main branch defined in the specification."""
-    from machineconfig.scripts.python.repos_helpers.repos_helper import clone_from_specs
+    from machineconfig.scripts.python.repos_helpers.entrypoint import clone_from_specs
     clone_from_specs(directory, cloud, checkout_branch_flag=True, checkout_commit_flag=False)
 
 

@@ -184,12 +184,18 @@ def template():
     typer.echo(f"Template bash script written to {save_path}")
 
 
+def init_config():
+    from machineconfig.scripts.python.ai.initai import add_ai_configs
+    add_ai_configs(repo_root=Path.cwd())
+
+
 def main_from_parser():
     import sys
     agents_app = typer.Typer(help="🤖 AI Agents management subcommands")
     agents_app.command("create", no_args_is_help=True)(create)
     agents_app.command("collect", no_args_is_help=True)(collect)
     agents_app.command("create-template", no_args_is_help=False, help="Create a template for fire agents")(template)
+    agents_app.command("init-config", no_args_is_help=False, help="Initialize AI configurations in the current repository")(init_config)
     if len(sys.argv) == 1:
         agents_app(["--help"])
     else:

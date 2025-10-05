@@ -1,6 +1,6 @@
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.accessories import randstr
-from machineconfig.scripts.python.repos_helpers.repos_helper_update import update_repository
+from machineconfig.scripts.python.repos_helpers.update import update_repository
 
 from typing import Optional
 from dataclasses import dataclass

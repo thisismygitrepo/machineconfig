@@ -64,23 +64,3 @@ def inspect_repos(repo_local_root: str, repo_remote_root: str):
         return None
     else:
         raise NotImplementedError(f"Platform {platform.system()} not implemented.")
-
-
-def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool) -> bool:
-    dotfiles_path = str(PathExtended.home().joinpath("dotfiles"))
-    from git import Repo
-
-    repo = Repo(path=dotfiles_path)
-    last_commit = repo.head.commit
-    dtm = last_commit.committed_datetime
-    from datetime import datetime  # make it tz unaware
-
-    dtm = datetime(dtm.year, dtm.month, dtm.day, dtm.hour, dtm.minute, dtm.second)
-    res = dtm > datetime.fromisoformat(commit_dtm)
-    if res is False and update is True:
-        console = Console()
-        console.print(Panel(f"🔄 UPDATE REQUIRED | Updating dotfiles because {dtm} < {datetime.fromisoformat(commit_dtm)}", border_style="bold blue", expand=False))
-        from machineconfig.scripts.python.helpers_repos.cloud_repo_sync import main
-
-        main(cloud=None, repo=dotfiles_path)
-    return res

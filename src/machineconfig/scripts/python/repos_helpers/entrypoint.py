@@ -25,7 +25,7 @@ def git_operations(
     
     repos_root = resolve_directory(directory)
     auto_sync = not no_sync
-    from machineconfig.scripts.python.repos_helpers.repos_helper_action import perform_git_operations
+    from machineconfig.scripts.python.repos_helpers.action import perform_git_operations
     from machineconfig.utils.path_extended import PathExtended
     perform_git_operations(
         repos_root=PathExtended(repos_root),
@@ -68,7 +68,7 @@ def clone_from_specs(
     
     typer.echo("\n📥 Cloning or checking out repositories...")
     spec_path = resolve_spec_path(directory, cloud)
-    from machineconfig.scripts.python.repos_helpers.repos_helper_clone import clone_repos
+    from machineconfig.scripts.python.repos_helpers.clone import clone_repos
     clone_repos(
         spec_path=spec_path,
         preferred_remote=None,
