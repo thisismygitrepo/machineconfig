@@ -80,7 +80,7 @@ def check_dotfiles_version_is_beyond(commit_dtm: str, update: bool) -> bool:
     if res is False and update is True:
         console = Console()
         console.print(Panel(f"🔄 UPDATE REQUIRED | Updating dotfiles because {dtm} < {datetime.fromisoformat(commit_dtm)}", border_style="bold blue", expand=False))
-        from machineconfig.scripts.python.cloud_repo_sync import main
+        from machineconfig.scripts.python.helpers_repos.cloud_repo_sync import main
 
         main(cloud=None, repo=dotfiles_path)
     return res

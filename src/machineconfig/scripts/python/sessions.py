@@ -2,7 +2,7 @@
 from pathlib import Path
 from typing import Optional, Literal
 import typer
-from machineconfig.scripts.python.sessions_multiprocess import create_from_function
+from machineconfig.scripts.python.sessions_helpers.sessions_multiprocess import create_from_function
 
 def balance_load(layout_path: Path = typer.Argument(..., help="Path to the layout.json file"),
            max_thresh: int = typer.Option(..., help="Maximum tabs per layout"),

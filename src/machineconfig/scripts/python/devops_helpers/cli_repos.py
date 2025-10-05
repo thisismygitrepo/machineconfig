@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Annotated, Optional
 import typer
 from git import Repo, InvalidGitRepositoryError
-from machineconfig.scripts.python.secure_repo import main as secure_repo_main
+from machineconfig.scripts.python.helpers_repos.secure_repo import main as secure_repo_main
 
 
 app = typer.Typer(help="📁 Manage development repositories", no_args_is_help=True)
