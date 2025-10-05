@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "5.33"
+version = "5.34"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -45,6 +45,20 @@ windows = [
 # docs extra for documentation generation
 docs = [
     "pdoc>=15.0.2"
+]
+plot = [
+    "duckdb-engine>=0.17.0",
+    "sqlalchemy>=2.0.43",
+    "ipykernel>=6.30.1",
+    "ipython>=9.5.0",
+    "jupyterlab>=4.4.9",
+    "kaleido>=1.1.0",
+    "matplotlib>=3.10.6",
+    "nbformat>=5.10.4",
+    "numpy>=2.3.3",
+    "plotly>=6.3.0",
+    "polars>=1.33.1",
+    "python-magic>=0.4.27",
 ]
 
 [project.urls]
@@ -107,17 +121,3 @@ docs = [
     "pdoc>=15.0.2",
 ]
 
-plot = [
-    "duckdb-engine>=0.17.0",
-    "ipykernel>=6.30.1",
-    "ipython>=9.5.0",
-    "jupyterlab>=4.4.9",
-    "kaleido>=1.1.0",
-    "matplotlib>=3.10.6",
-    "nbformat>=5.10.4",
-    "numpy>=2.3.3",
-    "plotly>=6.3.0",
-    "polars>=1.33.1",
-    "python-magic>=0.4.27",
-    "sqlalchemy>=2.0.43",
-]

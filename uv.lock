@@ -1449,7 +1449,7 @@ wheels = [
 
 [[package]]
 name = "machineconfig"
-version = "5.32"
+version = "5.33"
 source = { editable = "." }
 dependencies = [
     { name = "cryptography" },
@@ -1473,6 +1473,20 @@ dependencies = [
 [package.optional-dependencies]
 docs = [
     { name = "pdoc" },
+]
+plot = [
+    { name = "duckdb-engine" },
+    { name = "ipykernel" },
+    { name = "ipython" },
+    { name = "jupyterlab" },
+    { name = "kaleido" },
+    { name = "matplotlib" },
+    { name = "nbformat" },
+    { name = "numpy" },
+    { name = "plotly" },
+    { name = "polars" },
+    { name = "python-magic" },
+    { name = "sqlalchemy" },
 ]
 windows = [
     { name = "pywin32" },
@@ -1511,43 +1525,41 @@ dev = [
 docs = [
     { name = "pdoc" },
 ]
-plot = [
-    { name = "duckdb-engine" },
-    { name = "ipykernel" },
-    { name = "ipython" },
-    { name = "jupyterlab" },
-    { name = "kaleido" },
-    { name = "matplotlib" },
-    { name = "nbformat" },
-    { name = "numpy" },
-    { name = "plotly" },
-    { name = "polars" },
-    { name = "python-magic" },
-    { name = "sqlalchemy" },
-]
 
 [package.metadata]
 requires-dist = [
     { name = "cryptography", specifier = ">=44.0.2" },
+    { name = "duckdb-engine", marker = "extra == 'plot'", specifier = ">=0.17.0" },
     { name = "fire", specifier = ">=0.7.0" },
     { name = "gitpython", specifier = ">=3.1.44" },
+    { name = "ipykernel", marker = "extra == 'plot'", specifier = ">=6.30.1" },
+    { name = "ipython", marker = "extra == 'plot'", specifier = ">=9.5.0" },
     { name = "joblib", specifier = ">=1.5.2" },
+    { name = "jupyterlab", marker = "extra == 'plot'", specifier = ">=4.4.9" },
+    { name = "kaleido", marker = "extra == 'plot'", specifier = ">=1.1.0" },
+    { name = "matplotlib", marker = "extra == 'plot'", specifier = ">=3.10.6" },
+    { name = "nbformat", marker = "extra == 'plot'", specifier = ">=5.10.4" },
+    { name = "numpy", marker = "extra == 'plot'", specifier = ">=2.3.3" },
     { name = "paramiko", specifier = ">=3.5.1" },
     { name = "pdoc", marker = "extra == 'docs'", specifier = ">=15.0.2" },
+    { name = "plotly", marker = "extra == 'plot'", specifier = ">=6.3.0" },
+    { name = "polars", marker = "extra == 'plot'", specifier = ">=1.33.1" },
     { name = "psutil", specifier = ">=7.0.0" },
     { name = "pyfzf", specifier = ">=0.3.1" },
     { name = "pyjson5", specifier = ">=1.6.9" },
+    { name = "python-magic", marker = "extra == 'plot'", specifier = ">=0.4.27" },
     { name = "pywin32", marker = "extra == 'windows'" },
     { name = "questionary", specifier = ">=2.1.1" },
     { name = "randomname", specifier = ">=0.2.1" },
     { name = "rclone-python", specifier = ">=0.1.23" },
     { name = "requests", specifier = ">=2.32.5" },
     { name = "rich", specifier = ">=14.0.0" },
+    { name = "sqlalchemy", marker = "extra == 'plot'", specifier = ">=2.0.43" },
     { name = "tenacity", specifier = ">=9.1.2" },
     { name = "typer", specifier = ">=0.19.2" },
     { name = "typer-slim", specifier = ">=0.19.2" },
 ]
-provides-extras = ["windows", "docs"]
+provides-extras = ["windows", "docs", "plot"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1580,20 +1592,6 @@ dev = [
     { name = "vt-py", specifier = ">=0.21.0" },
 ]
 docs = [{ name = "pdoc", specifier = ">=15.0.2" }]
-plot = [
-    { name = "duckdb-engine", specifier = ">=0.17.0" },
-    { name = "ipykernel", specifier = ">=6.30.1" },
-    { name = "ipython", specifier = ">=9.5.0" },
-    { name = "jupyterlab", specifier = ">=4.4.9" },
-    { name = "kaleido", specifier = ">=1.1.0" },
-    { name = "matplotlib", specifier = ">=3.10.6" },
-    { name = "nbformat", specifier = ">=5.10.4" },
-    { name = "numpy", specifier = ">=2.3.3" },
-    { name = "plotly", specifier = ">=6.3.0" },
-    { name = "polars", specifier = ">=1.33.1" },
-    { name = "python-magic", specifier = ">=0.4.27" },
-    { name = "sqlalchemy", specifier = ">=2.0.43" },
-]
 
 [[package]]
 name = "markdown-it-py"
