@@ -108,7 +108,7 @@ def get_installation_choices() -> list[str]:
     ]
     # Add Windows-specific options
     if platform.system() == "Windows":
-        choices.append(Choice(value="install_windows_desktop", title="💻 Install Windows Desktop Apps   - Brave, Windows Terminal, PowerShell, VSCode (Windows only)", checked=False))
+        choices.append(Choice(value="install_windows_desktop", title="💻 Install Windows Desktop Apps   - Install nerd fonts and set WT config.", checked=False))
     selected = questionary.checkbox("Select the installation options you want to execute:", choices=choices, show_description=True).ask()
     return selected or []
 

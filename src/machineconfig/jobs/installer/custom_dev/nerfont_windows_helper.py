@@ -25,14 +25,14 @@ nerd_fonts: InstallerData = {
     "doc": "Nerd Fonts is a project that patches developer targeted fonts with a high number of glyphs (icons)",
     "fileNamePattern": {
         "amd64": {
-            "windows": "CaskaydiaCoveNerdFontWindows.zip",
-            "linux": "CaskaydiaCoveNerdFontLinux.zip",
-            "macos": "CaskaydiaCoveNerdFontMac.zip",
+            "windows": "CascadiaCode.zip",
+            "linux": "CascadiaCode.zip",
+            "macos": "CascadiaCode.zip",
         },
         "arm64": {
-            "windows": "CaskaydiaCoveNerdFontWindows.zip",
-            "linux": "CaskaydiaCoveNerdFontLinux.zip",
-            "macos": "CaskaydiaCoveNerdFontMac.zip",
+            "windows": "CascadiaCode.zip",
+            "linux": "CascadiaCode.zip",
+            "macos": "CascadiaCode.zip",
         }
     }
 }
@@ -40,10 +40,10 @@ nerd_fonts: InstallerData = {
 
 # Patterns to match any installed variant (NF, Nerd Font, Mono, Propo, style weights) of Cascadia/Caskaydia
 # We'll compile them at runtime for flexibility. Keep them simple to avoid false positives.
-REQUIRED_FONT_PATTERNS: tuple[str, ...] = (
-    r"caskaydiacove.*(nf|nerd ?font)",
-    r"cascadiacode.*(nf|nerd ?font)"
-)
+# REQUIRED_FONT_PATTERNS: tuple[str, ...] = (
+#     r"caskaydiacove.*(nf|nerd ?font)",
+#     r"cascadiacode.*(nf|nerd ?font)"
+# )
 
 
 console = Console()
@@ -92,7 +92,7 @@ def _missing_required_fonts(installed_fonts: Iterable[str]) -> list[str]:
 
     installed_norm = [f.lower().replace(" ", "") for f in installed_fonts]
     missing: list[str] = []
-    for pattern in REQUIRED_FONT_PATTERNS:
+    for pattern in ["cascadiacode*"]:
         regex = re.compile(pattern)
         if not any(regex.search(f) for f in installed_norm):
             missing.append(pattern)
@@ -136,7 +136,7 @@ def install_nerd_fonts() -> None:
     file = PathExtended.tmpfile(suffix=".ps1")
     file.parent.mkdir(parents=True, exist_ok=True)
     
-    raw_content = LIBRARY_ROOT.joinpath("setup_windows/wt_and_pwsh/install_fonts.ps1").read_text(encoding="utf-8").replace(r".\fonts-to-be-installed", str(folder))
+    raw_content = LIBRARY_ROOT.joinpath("jobs/installer/pwsh_scripts/install_fonts.ps1").read_text(encoding="utf-8").replace(r".\fonts-to-be-installed", str(folder))
     # PowerShell 5.1 can choke on certain unicode chars in some locales; keep ASCII only.
     content = "".join(ch for ch in raw_content if ord(ch) < 128)
     file.write_text(content, encoding="utf-8")
