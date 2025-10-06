@@ -2,7 +2,6 @@
 
 from platform import system
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT
-from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.path_extended import PathExtended
 from rich.console import Console
 from rich.panel import Panel
