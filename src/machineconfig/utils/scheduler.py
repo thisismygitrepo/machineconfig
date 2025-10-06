@@ -1,6 +1,6 @@
 
 from pathlib import Path
-from typing import Callable, Optional, Union, Any, TypeVar, Protocol, List, Generic
+from typing import Callable, Optional, Union, Any, Protocol, List, TypeVar
 import logging
 import time
 from datetime import datetime, timezone, timedelta
@@ -144,18 +144,17 @@ class Scheduler:
         raise ex
 
 
-T = TypeVar("T")
+# T = TypeVar("T")
 T2 = TypeVar("T2")
 
 
 def to_pickle(obj: Any, path: Path) -> None:
     import pickle
-
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(pickle.dumps(obj))
 
 
-class Cache(Generic[T]):  # This class helps to accelrate access to latest data coming from expensive function. The class has two flavours, memory-based and disk-based variants."""
+class Cache[T]():  # This class helps to accelrate access to latest data coming from expensive function. The class has two flavours, memory-based and disk-based variants."""
     def __init__(
         self, source_func: Callable[[], T], expire: timedelta, logger: LoggerTemplate, path: Optional[Path] = None, saver: Callable[[T, Path], Any] = to_pickle, reader: Callable[[Path], T] = from_pickle, name: Optional[str] = None
     ) -> None:

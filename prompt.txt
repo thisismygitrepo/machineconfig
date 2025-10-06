@@ -1,1 +1,0 @@
-describe files at repo root and put it in REPOROOT/description.md
