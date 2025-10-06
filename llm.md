@@ -37,7 +37,11 @@
 * https://github.com/hacksider/Deep-Live-Cam
 * https://github.com/black-forest-labs/flux
 * https://github.com/n8n-io/n8n `Auto workflow`
-
+* https://github.com/campfirein/cipher
+* https://github.com/circlemind-ai/fast-graphrag
+* https://github.com/topoteretes/cognee?tab=readme-ov-file
+* https://github.com/ag-ui-protocol/ag-ui 
+* https://github.com/bmad-code-org/BMAD-METHOD
 
 # Parsing Text
 

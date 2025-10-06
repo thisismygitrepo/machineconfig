@@ -2060,6 +2060,23 @@
       }
     },
     {
+      "appName": "qwen-code",
+      "repoURL": "CMD",
+      "doc": "Terminal-based CLI agents and tools for productivity and coding.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "npm install -g @qwen-code/qwen-code@latest",
+          "windows": "npm install -g @qwen-code/qwen-code@latest",
+          "macos": "npm install -g @qwen-code/qwen-code@latest"
+        },
+        "arm64": {
+          "linux": "npm install -g @qwen-code/qwen-code@latest",
+          "windows": "npm install -g @qwen-code/qwen-code@latest",
+          "macos": "npm install -g @qwen-code/qwen-code@latest"
+        }
+      }
+    },
+    {
       "appName": "github-copilot-cli",
       "repoURL": "CMD",
       "doc": "Terminal-based CLI agents and tools for productivity and coding.",

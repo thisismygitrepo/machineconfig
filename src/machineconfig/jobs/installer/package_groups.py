@@ -11,6 +11,7 @@ PACKAGES_AI_TOOLS = [
     "chatgpt",
     "mods",
     "q",
+    "qwen-code",
     "cursor-cli",
     "droid",
     "auggie",
