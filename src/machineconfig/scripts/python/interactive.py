@@ -19,7 +19,7 @@ for better user experience with checkbox selections.
 
 import sys
 from pathlib import Path
-from typing import cast
+# from typing import cast
 import platform
 
 import questionary
@@ -29,7 +29,7 @@ from rich.panel import Panel
 from rich.text import Text
 from machineconfig.utils.code import run_shell_script
 
-_ = cast
+# _ = cast
 console = Console()
 
 

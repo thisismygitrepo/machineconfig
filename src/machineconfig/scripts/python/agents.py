@@ -188,6 +188,9 @@ def init_config():
     from machineconfig.scripts.python.ai.initai import add_ai_configs
     add_ai_configs(repo_root=Path.cwd())
 
+def generate_files():
+    from machineconfig.scripts.python.ai.generate_files import main
+    main()
 
 def main_from_parser():
     import sys
@@ -196,6 +199,7 @@ def main_from_parser():
     agents_app.command("collect", no_args_is_help=True)(collect)
     agents_app.command("create-template", no_args_is_help=False, help="Create a template for fire agents")(template)
     agents_app.command("init-config", no_args_is_help=False, help="Initialize AI configurations in the current repository")(init_config)
+    agents_app.command("generate-files", no_args_is_help=False, help="Generate a markdown file listing all Python files in the repo")(generate_files)
     if len(sys.argv) == 1:
         agents_app(["--help"])
     else:

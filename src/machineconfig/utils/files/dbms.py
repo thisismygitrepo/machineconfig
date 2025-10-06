@@ -190,7 +190,6 @@ def to_db(table: str, idx: int, idx_max: int, data: Any):
             text(insert_row),
             {'time': time_now, 'idx': idx, 'idx_max': idx_max, 'data': data_blob}
         )
-        # conn.commit()
     db.close()
 
 

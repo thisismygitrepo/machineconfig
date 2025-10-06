@@ -20,9 +20,7 @@ Add-WindowsCapability -Online -Name OpenSSH.Client
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 Set-Service -Name sshd -StartupType Automatic
-
 #Get-Service -Name ssh-agent | Set-Service -StartupType Automatic
-
 #Set-Service -Name ssh-agent -StartupType Automatic
 #Start-Service ssh-agent
 # Starting the service for the first time will populate the directory with config files.
