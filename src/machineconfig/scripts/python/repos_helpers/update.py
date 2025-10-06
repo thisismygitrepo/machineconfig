@@ -45,7 +45,7 @@ def run_uv_sync(repo_path: Path) -> bool:
     try:
         print(f"🔄 Running uv sync in {repo_path}")
         # Run uv sync with output directly to terminal (no capture)
-        subprocess.run(["uv", "sync"], cwd=repo_path, check=True)
+        subprocess.run(["uv", "sync", "--no-dev"], cwd=repo_path, check=True)
         print("✅ uv sync completed successfully")
         return True
     except subprocess.CalledProcessError as e:
