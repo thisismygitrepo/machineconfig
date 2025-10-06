@@ -3,11 +3,9 @@ from typing import Optional, Any, Callable
 
 import polars as pl
 
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy import text, inspect as inspect__
-from sqlalchemy.engine import Engine, Connection, create_engine
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.engine import Inspector
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, text, inspect as inspect__
+from sqlalchemy.engine import Engine
 from sqlalchemy.sql.schema import MetaData
 from pathlib import Path as P
 
@@ -15,158 +13,29 @@ OPLike = Optional[P] | str | None
 
 
 class DBMS:
-    def __init__(self, engine: Engine, sch: Optional[str] = None, vws: bool = False):
+    def __init__(self, engine: Engine):
         self.eng: Engine = engine
-        self.con: Optional[Connection] = None
-        self.ses: Optional[Session] = None
-        self.insp: Optional[Inspector] = None
-        self.meta: Optional[MetaData] = None
-        db_path = P(self.eng.url.database) if self.eng.url.database else None
-        if db_path and db_path.exists():
-            self.path: Optional[P] = db_path
-        else: self.path = None
 
-        # self.db = db
-        self.sch = sch
-        self.vws: bool = vws
-        self.schema: list[str] = []
-
-        self.sch_tab: dict[str, list[str]]
-        self.sch_vws: dict[str, list[str]]
-        self.description: Optional[pl.DataFrame] = None
-        # self.tables = None
-        # self.views = None
-        # self.sch_tab: Optional[Struct] = None
-        # self.sch_vws: Optional[Struct] = None
-        # if inspect: self.refresh()
-        # self.ip_formatter: Optional[Any] = None
-        # self.db_specs: Optional[Any] = None
-        if self.path is not None:
-            if self.path.is_file():
-                path_repr = self.path.as_uri()
-            else:
-                path_repr = self.path
-            print(f"Database at {path_repr} is ready.")
-
-    def refresh(self, sch: Optional[str] = None) -> 'DBMS':  # fails if multiple schemas are there and None is specified
-        self.con = self.eng.connect()
-        self.ses = sessionmaker()(bind=self.eng)  # ORM style
-        self.meta = MetaData()
-        self.meta.reflect(bind=self.eng, schema=sch or self.sch)
-        insp = inspect__(subject=self.eng)
-        self.insp = insp
-        assert self.insp is not None
-        self.schema = self.insp.get_schema_names()
-        print(f"Inspecting tables of schema `{self.schema}` {self.eng}")
-        self.sch_tab = {k: v for k, v in zip(self.schema, [insp.get_table_names(schema=x) for x in self.schema])}  # dict(zip(self.schema, self.schema.apply(lambda x: self.insp.get_table_names(schema=x))))  #
-        print(f"Inspecting views of schema `{self.schema}` {self.eng}")
-        self.sch_vws = {k: v for k, v in zip(self.schema, [insp.get_view_names(schema=x) for x in self.schema])}
-        return self
-
-    @classmethod
-    def from_local_db(cls, path: OPLike = None, echo: bool = False, share_across_threads: bool = False, pool_size: int = 5, **kwargs: Any):
-        return cls(engine=cls.make_sql_engine(path=path, echo=echo, share_across_threads=share_across_threads, pool_size=pool_size, **kwargs))
+    @staticmethod
+    def from_local_db(path: OPLike = None, echo: bool = False, share_across_threads: bool = False, pool_size: int = 5, **kwargs: Any):
+        return DBMS(engine=DBMS.make_sql_engine(path=path, echo=echo, share_across_threads=share_across_threads, pool_size=pool_size, **kwargs))
 
     def __repr__(self): return f"DataBase @ {self.eng}"
-    def get_columns(self, table: str, sch: Optional[str] = None):
-        assert self.meta is not None
-        return self.meta.tables[self._get_table_identifier(table=table, sch=sch)].exported_columns.keys()
     def close(self, sleep: int = 2):
-        if self.path:
-            print(f"Terminating database `{self.path.as_uri() if self.path.is_file() and 'memory' not in str(self.path) else self.path}`")
-        if self.con: self.con.close()
-        if self.ses: self.ses.close()
         self.eng.pool.dispose()
         self.eng.dispose()
         time.sleep(sleep)
-    def _get_table_identifier(self, table: str, sch: Optional[str]):
-        if sch is None: sch = self.sch
+    @staticmethod
+    def _get_table_identifier(engine: Engine, table: str, sch: Optional[str]):
         if sch is not None:
             # Handle DuckDB schema names that contain dots (e.g., "klines.main")
-            if self.eng.url.drivername == 'duckdb' and '.' in sch and sch.endswith('.main'):
+            if engine.url.drivername == 'duckdb' and '.' in sch and sch.endswith('.main'):
                 # For DuckDB schemas like "klines.main", just use the table name without schema
                 return f'"{table}"'
             else:
                 return f'"{sch}"."{table}"'
         else:
             return f'"{table}"'
-
-    @staticmethod
-    def make_sql_engine(path: OPLike = None, echo: bool = False, dialect: str = "sqlite", driver: str = ["pysqlite", "DBAPI"][0], pool_size: int = 5, share_across_threads: bool = True, **kwargs: Any):
-        """Establish lazy initialization with database"""
-        from sqlalchemy.pool import StaticPool, NullPool
-        _ = NullPool
-        _ = driver
-        if str(path) == "memory":
-            print("Linking to in-memory database.")
-            if share_across_threads:
-                # see: https://docs.sqlalchemy.org/en/14/dialects/sqlite.html#using-a-memory-database-in-multiple-threads
-                return create_engine(url=f"{dialect}+{driver}:///:memory:", echo=echo, future=True, poolclass=StaticPool, connect_args={"check_same_thread": False})
-            else:
-                return create_engine(url=f"{dialect}+{driver}:///:memory:", echo=echo, future=True, pool_size=pool_size, **kwargs)
-        if path is None:
-            tmp_dir = P.home().joinpath(".tmp").joinpath("tmp_dbs")
-            tmp_dir.mkdir(parents=True, exist_ok=True)
-            import tempfile
-            with tempfile.NamedTemporaryFile(suffix=".sqlite", dir=str(tmp_dir), delete=False) as tmp_file:
-                path = P(tmp_file.name)
-        else:
-            path = P(path).expanduser().resolve()
-            path.parent.mkdir(parents=True, exist_ok=True)
-        path_repr = path.as_uri() if path.is_file() else path
-        dialect = path.suffix.removeprefix('.')
-        print(f"Linking to database at {path_repr}")
-        connect_args = kwargs.pop("connect_args", {}) or {}
-        try:
-            if path.suffix == ".duckdb":  # only apply for duckdb files
-                # don't overwrite user's explicit setting if already provided
-                connect_args.setdefault("read_only", True)
-                print(" - Opening DuckDB in read-only mode.")
-        except Exception:
-            pass
-        if pool_size == 0:
-            res = create_engine(url=f"{dialect}:///{path}", echo=echo, future=True, poolclass=NullPool, connect_args=connect_args, **kwargs)  # echo flag is just a short for the more formal way of logging sql commands.
-        else:
-            res = create_engine(url=f"{dialect}:///{path}", echo=echo, future=True, pool_size=pool_size, connect_args=connect_args, **kwargs)  # echo flag is just a short for the more formal way of logging sql commands.
-        return res
-    @staticmethod
-    def make_sql_async_engine(path: OPLike = None, echo: bool = False, dialect: str = "sqlite", driver: str = "aiosqlite", pool_size: int = 5, share_across_threads: bool = True, **kwargs: Any):
-        """Establish lazy initialization with database"""
-        from sqlalchemy.pool import StaticPool, NullPool
-        _ = NullPool
-        if str(path) == "memory":
-            print("Linking to in-memory database.")
-            if share_across_threads:
-                # see: https://docs.sqlalchemy.org/en/14/dialects/sqlite.html#using-a-memory-database-in-multiple-threads
-                return create_async_engine(url=f"{dialect}+{driver}://", echo=echo, future=True, poolclass=StaticPool, connect_args={"mode": "memory", "cache": "shared"})
-            else:
-                return create_async_engine(url=f"{dialect}+{driver}:///:memory:", echo=echo, future=True, pool_size=pool_size, **kwargs)
-        if path is None:
-            tmp_dir = P.home().joinpath(".tmp").joinpath("tmp_dbs")
-            tmp_dir.mkdir(parents=True, exist_ok=True)
-            import tempfile
-            with tempfile.NamedTemporaryFile(suffix=".sqlite", dir=str(tmp_dir), delete=False) as tmp_file:
-                path = P(tmp_file.name)
-        else:
-            path = P(path).expanduser().resolve()
-            path.parent.mkdir(parents=True, exist_ok=True)
-        path_repr = path.as_uri() if path.is_file() else path
-        dialect = path.suffix.removeprefix('.')
-        print(f"Linking to database at {path_repr}")
-        # Add DuckDB-specific read-only flag automatically when pointing to an existing .duckdb file
-        connect_args = kwargs.pop("connect_args", {}) or {}
-        try:
-            if path.suffix == ".duckdb":  # only apply for duckdb files
-                # don't overwrite user's explicit setting if already provided
-                connect_args.setdefault("read_only", True)
-                print(" - Opening DuckDB in read-only mode.")
-        except Exception:
-            pass
-        if pool_size == 0:
-            res = create_async_engine(url=f"{dialect}+{driver}:///{path}", echo=echo, future=True, poolclass=NullPool, connect_args=connect_args, **kwargs)  # echo flag is just a short for the more formal way of logging sql commands.
-        else:
-            res = create_async_engine(url=f"{dialect}+{driver}:///{path}", echo=echo, future=True, pool_size=pool_size, connect_args=connect_args, **kwargs)  # echo flag is just a short for the more formal way of logging sql commands.
-        return res
 
     # ==================== QUERIES =====================================
     def execute_as_you_go(self, *commands: str, res_func: Callable[[Any], Any] = lambda x: x.all(), df: bool = False):
@@ -194,17 +63,41 @@ class DBMS:
     #     return result if not df else pl.DataFrame(result)
 
     # ========================== TABLES =====================================
-    def read_table(self, table: Optional[str] = None, sch: Optional[str] = None, size: int = 5):
+    def insert_dicts(self, table: str, *mydicts: dict[str, Any]) -> None:
+        cmd = f"""INSERT INTO {table} VALUES """
+        for mydict in mydicts: cmd += f"""({tuple(mydict)}), """
+        self.execute_begin_once(cmd)
+
+    def refresh(self, sch: Optional[str] = None) -> dict[str, Any]:
+        con = self.eng.connect()
+        ses = sessionmaker()(bind=self.eng)
+        meta = MetaData()
+        meta.reflect(bind=self.eng, schema=sch)
+        insp = inspect__(subject=self.eng)
+        schema = insp.get_schema_names()
+        sch_tab = {k: v for k, v in zip(schema, [insp.get_table_names(schema=x) for x in schema])}
+        sch_vws = {k: v for k, v in zip(schema, [insp.get_view_names(schema=x) for x in schema])}
+        return {'con': con, 'ses': ses, 'meta': meta, 'insp': insp, 'schema': schema, 'sch_tab': sch_tab, 'sch_vws': sch_vws}
+
+    def get_columns(self, table: str, sch: Optional[str] = None) -> list[str]:
+        meta = MetaData()
+        meta.reflect(bind=self.eng, schema=sch)
+        return list(meta.tables[self._get_table_identifier(self.eng, table, sch)].exported_columns.keys())
+
+    def read_table(self, table: Optional[str] = None, sch: Optional[str] = None, size: int = 5) -> pl.DataFrame:
+        insp = inspect__(self.eng)
+        schema = insp.get_schema_names()
+        sch_tab = {k: v for k, v in zip(schema, [insp.get_table_names(schema=x) for x in schema])}
         if sch is None:
             # First try to find schemas that have tables (excluding system schemas)
             schemas_with_tables = []
-            for schema_name in self.schema:
+            for schema_name in schema:
                 if schema_name not in ["information_schema", "pg_catalog", "system"]:
-                    if schema_name in self.sch_tab and len(self.sch_tab[schema_name]) > 0:
+                    if schema_name in sch_tab and len(sch_tab[schema_name]) > 0:
                         schemas_with_tables.append(schema_name)
 
             if len(schemas_with_tables) == 0:
-                raise ValueError(f"No schemas with tables found. Available schemas: {self.schema}")
+                raise ValueError(f"No schemas with tables found. Available schemas: {schema}")
 
             # Prefer non-"main" schemas if available, otherwise use main
             if len(schemas_with_tables) > 1 and "main" in schemas_with_tables:
@@ -214,64 +107,71 @@ class DBMS:
             print(f"Auto-selected schema: `{sch}` from available schemas: {schemas_with_tables}")
 
         if table is None:
-            if sch not in self.sch_tab:
-                raise ValueError(f"Schema `{sch}` not found. Available schemas: {list(self.sch_tab.keys())}")
-            tables = self.sch_tab[sch]
+            if sch not in sch_tab:
+                raise ValueError(f"Schema `{sch}` not found. Available schemas: {list(sch_tab.keys())}")
+            tables = sch_tab[sch]
             assert len(tables) > 0, f"No tables found in schema `{sch}`"
             import random
             table = random.choice(tables)
             print(f"Reading table `{table}` from schema `{sch}`")
-        if self.con:
+        with self.eng.connect() as conn:
             try:
-                res = self.con.execute(text(f'''SELECT * FROM {self._get_table_identifier(table, sch)} '''))
+                res = conn.execute(text(f'''SELECT * FROM {self._get_table_identifier(self.eng, table, sch)} '''))
                 return pl.DataFrame(res.fetchmany(size))
             except Exception:
                 print(f"Error executing query for table `{table}` in schema `{sch}`")
-                print(f"Available schemas and tables: {self.sch_tab}")
+                print(f"Available schemas and tables: {sch_tab}")
                 raise
 
-    def insert_dicts(self, table: str, *mydicts: dict[str, Any]) -> None:
-        cmd = f"""INSERT INTO {table} VALUES """
-        for mydict in mydicts: cmd += f"""({tuple(mydict)}), """
-        self.execute_begin_once(cmd)
-
-    def describe_db(self):
-        self.refresh()
-        assert self.meta is not None
+    def describe_db(self, sch: Optional[str] = None) -> pl.DataFrame:
+        meta = MetaData()
+        meta.reflect(bind=self.eng, schema=sch)
+        ses = sessionmaker()(bind=self.eng)
         res_all = []
-        assert self.ses is not None
         from rich.progress import Progress
         with Progress() as progress:
-            task = progress.add_task("Inspecting tables", total=len(self.meta.sorted_tables))
-            for tbl in self.meta.sorted_tables:
+            task = progress.add_task("Inspecting tables", total=len(meta.sorted_tables))
+            for tbl in meta.sorted_tables:
                 table = tbl.name
-                if self.sch is not None:
-                    table = f"{self.sch}.{table}"
-                count = self.ses.query(tbl).count()
+                if sch is not None:
+                    table = f"{sch}.{table}"
+                count = ses.query(tbl).count()
                 res = dict(table=table, count=count, size_mb=count * len(tbl.exported_columns) * 10 / 1e6,
-                           columns=len(tbl.exported_columns), schema=self.sch)
+                           columns=len(tbl.exported_columns), schema=sch)
                 res_all.append(res)
                 progress.update(task, advance=1)
-        self.description = pl.DataFrame(res_all)
-        return self.description
+        return pl.DataFrame(res_all)
 
     def describe_table(self, table: str, sch: Optional[str] = None, dtype: bool = True) -> None:
         print(table.center(100, "="))
-        self.refresh()
-        assert self.meta is not None
-        tbl = self.meta.tables[table]
-        assert self.ses is not None
-        count = self.ses.query(tbl).count()
+        meta = MetaData()
+        meta.reflect(bind=self.eng, schema=sch)
+        tbl = meta.tables[self._get_table_identifier(self.eng, table, sch)]
+        ses = sessionmaker()(bind=self.eng)
+        count = ses.query(tbl).count()
         res = dict(name=table, count=count, size_mb=count * len(tbl.exported_columns) * 10 / 1e6)
         from machineconfig.utils.accessories import pprint
         pprint(res, title="TABLE DETAILS")
         dat = self.read_table(table=table, sch=sch, size=2)
-        df = dat  # dat is already a polars DataFrame
+        df = dat
         print("SAMPLE:\n", df)
-        assert self.insp is not None
-        if dtype: print("\nDETAILED COLUMNS:\n", pl.DataFrame(self.insp.get_columns(table)))
+        insp = inspect__(self.eng)
+        if dtype: print("\nDETAILED COLUMNS:\n", pl.DataFrame(insp.get_columns(self._get_table_identifier(self.eng, table, sch))))
         print("\n" * 3)
 
+    @staticmethod
+    def make_sql_engine(path: OPLike = None, echo: bool = False, share_across_threads: bool = False, pool_size: int = 5, **kwargs: Any) -> Engine:
+        if path is None:
+            url = 'sqlite:///:memory:'
+        elif isinstance(path, str) and path.startswith(('sqlite://', 'postgresql://', 'mysql://', 'duckdb://')):
+            url = path
+        else:
+            path_str = str(P(path))
+            url = f'sqlite:///{path_str}'
+        connect_args = {}
+        if share_across_threads and 'sqlite' in url:
+            connect_args['check_same_thread'] = False
+        return create_engine(url, echo=echo, pool_size=pool_size, connect_args=connect_args, **kwargs)
 
 DB_TMP_PATH = P.home().joinpath(".tmp").joinpath("tmp_dbs").joinpath("results").joinpath("data.sqlite")
 
