@@ -37,8 +37,44 @@ if ($selectedThemeName) {
     oh-my-posh init pwsh --config $selectedThemeName | Invoke-Expression
     
     Write-Host "`nTheme applied to current session!" -ForegroundColor Green
-    Write-Host "To make this permanent, add this line to your PowerShell profile:" -ForegroundColor Cyan
-    Write-Host "oh-my-posh init pwsh --config '$selectedThemeName' | Invoke-Expression" -ForegroundColor Yellow
+    
+    # Safely update the PowerShell profile
+    $profilePath = $PROFILE
+    $ompLine = "oh-my-posh init pwsh --config '$selectedThemeName' | Invoke-Expression"
+    
+    # Create profile directory if it doesn't exist
+    $profileDir = Split-Path $profilePath -Parent
+    if (-not (Test-Path $profileDir)) {
+        New-Item -ItemType Directory -Path $profileDir -Force | Out-Null
+    }
+    
+    # Read existing profile content or create empty array
+    $profileContent = @()
+    if (Test-Path $profilePath) {
+        $profileContent = Get-Content $profilePath
+    }
+    
+    # Check if oh-my-posh line already exists and replace it, or add it
+    $found = $false
+    for ($i = 0; $i -lt $profileContent.Count; $i++) {
+        if ($profileContent[$i] -match "oh-my-posh init pwsh") {
+            $profileContent[$i] = $ompLine
+            $found = $true
+            break
+        }
+    }
+    
+    if (-not $found) {
+        # Add the line at the end with a blank line before it
+        $profileContent += ""
+        $profileContent += $ompLine
+    }
+    
+    # Write back to profile
+    $profileContent | Set-Content $profilePath -Encoding UTF8
+    
+    Write-Host "Profile updated successfully!" -ForegroundColor Green
+    Write-Host "The theme will be applied automatically in future PowerShell sessions." -ForegroundColor Cyan
 } else {
     Write-Host "`nNo theme selected." -ForegroundColor DarkGray
 }

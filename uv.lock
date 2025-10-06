@@ -1525,20 +1525,6 @@ dev = [
     { name = "types-urllib3" },
     { name = "vt-py" },
 ]
-plot = [
-    { name = "duckdb-engine" },
-    { name = "ipykernel" },
-    { name = "ipython" },
-    { name = "jupyterlab" },
-    { name = "kaleido" },
-    { name = "matplotlib" },
-    { name = "nbformat" },
-    { name = "numpy" },
-    { name = "plotly" },
-    { name = "polars" },
-    { name = "python-magic" },
-    { name = "sqlalchemy" },
-]
 
 [package.metadata]
 requires-dist = [
@@ -1609,20 +1595,6 @@ dev = [
     { name = "types-toml", specifier = ">=0.10.8.20240310" },
     { name = "types-urllib3", specifier = ">=1.26.25.14" },
     { name = "vt-py", specifier = ">=0.21.0" },
-]
-plot = [
-    { name = "duckdb-engine", specifier = ">=0.17.0" },
-    { name = "ipykernel", specifier = ">=6.30.1" },
-    { name = "ipython", specifier = ">=9.5.0" },
-    { name = "jupyterlab", specifier = ">=4.4.9" },
-    { name = "kaleido", specifier = ">=1.1.0" },
-    { name = "matplotlib", specifier = ">=3.10.6" },
-    { name = "nbformat", specifier = ">=5.10.4" },
-    { name = "numpy", specifier = ">=2.3.3" },
-    { name = "plotly", specifier = ">=6.3.0" },
-    { name = "polars", specifier = ">=1.33.1" },
-    { name = "python-magic", specifier = ">=0.4.27" },
-    { name = "sqlalchemy", specifier = ">=2.0.43" },
 ]
 
 [[package]]

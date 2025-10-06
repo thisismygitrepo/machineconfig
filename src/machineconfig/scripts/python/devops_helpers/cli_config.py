@@ -1,7 +1,7 @@
 
 
 from typing import Literal, Annotated, Optional
-
+from pathlib import Path
 import typer
 
 config_apps = typer.Typer(help="⚙️ Configuration subcommands", no_args_is_help=True)
@@ -41,3 +41,12 @@ def shell(method: Annotated[Literal["copy", "reference"], typer.Argument(help="C
     from machineconfig.profile.shell import create_default_shell_profile
     create_default_shell_profile(method=method)
 
+
+@config_apps.command(no_args_is_help=False)
+def pwsh_theme():
+    """🔗 Configure your shell profile."""
+    import machineconfig.scripts.python.devops_helpers.themes as themes
+    file = Path(themes.__file__).parent / "choose_pwsh_theme.ps1"
+    import subprocess
+    # subprocess.run(["pwsh", "-File", str(file)])
+    subprocess.run(["pwsh", "-File", str(file)])
