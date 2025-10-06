@@ -167,7 +167,10 @@ class DBMS:
             url = path
         else:
             path_str = str(P(path))
-            url = f'sqlite:///{path_str}'
+            if path_str.endswith('.duckdb'):
+                url = f'duckdb:///{path_str}'
+            else:
+                url = f'sqlite:///{path_str}'
         connect_args = {}
         if share_across_threads and 'sqlite' in url:
             connect_args['check_same_thread'] = False

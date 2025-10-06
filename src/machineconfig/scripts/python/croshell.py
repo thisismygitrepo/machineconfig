@@ -46,6 +46,7 @@ console = Console()
 p = PathExtended(r'{path}').absolute()
 try:
     from machineconfig.utils.files.read import Read
+    from machineconfig.utils.accessories import pprint
     dat = Read.read(p)
     if isinstance(dat, dict):
         panel_title = f"📄 File Data: {{p.name}}"
@@ -64,12 +65,12 @@ except Exception as e:
 def main(
     python: Annotated[bool, typer.Option("--python", "-p", help="flag to use python over IPython.")] = False,
     fzf: Annotated[bool, typer.Option("--fzf", "-F", help="search with fuzzy finder for python scripts and run them")] = False,
-    ve: Annotated[Optional[str], typer.Option("--ve", "-v", help="virtual enviroment to use, defaults to activated ve, if existed, else ve.")] = None,
     profile: Annotated[Optional[str], typer.Option("--profile", "-P", help="ipython profile to use, defaults to default profile.")] = None,
     read: Annotated[str, typer.Option("--read", "-r", help="read a binary file.")] = "",
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="run in jupyter interactive console")] = False,
     streamlit_viewer: Annotated[bool, typer.Option("--stViewer", "-s", help="view in streamlit app")] = False,
     visidata: Annotated[bool, typer.Option("--visidata", "-V", help="open data file in visidata")] = False,
+    local: Annotated[bool, typer.Option("--local", "-l", help="run in local mode, not in virtual env.")]= False,
 ) -> None:
     # ==================================================================================
     # flags processing
@@ -141,7 +142,9 @@ from pathlib import Path
     else:
         if interpreter == "ipython": profile = f" --profile {ipython_profile} --no-banner"
         else: profile = ""
-        fire_line = f"uv run --python 3.13 --with machineconfig[plot] {interpreter} {interactivity} {profile} {str(pyfile)}"
+        if local: ve_line = "--project $HOME/code/machineconfig"
+        else: ve_line = "--with machineconfig[plot]"
+        fire_line = f"uv run --python 3.13 {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
 
     from machineconfig.utils.code import run_shell_script
     run_shell_script(fire_line, clean_env=False)
