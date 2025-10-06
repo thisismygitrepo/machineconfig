@@ -46,4 +46,4 @@ app.add_typer(cli_network.nw_apps, name="network")
 
 
 if __name__ == "__main__":
-    pass
+    app()

@@ -1,1 +1,1 @@
-uv run --python 3.13 --no-dev --project $HOME/code/machineconfig  kill_process $args
+uv run --python 3.13 --no-dev --project $HOME/code/machineconfig kill_process $args
