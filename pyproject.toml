@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "5.30"
+version = "5.34"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -42,10 +42,21 @@ dependencies = [
 windows = [
     "pywin32"
 ]
-# docs extra for documentation generation
-docs = [
-    "pdoc>=15.0.2"
+plot = [
+    "duckdb-engine>=0.17.0",
+    "sqlalchemy>=2.0.43",
+    "ipykernel>=6.30.1",
+    "ipython>=9.5.0",
+    "jupyterlab>=4.4.9",
+    "kaleido>=1.1.0",
+    "matplotlib>=3.10.6",
+    "nbformat>=5.10.4",
+    "numpy>=2.3.3",
+    "plotly>=6.3.0",
+    "polars>=1.33.1",
+    "python-magic>=0.4.27",
 ]
+
 
 [project.urls]
 "Homepage" = "https://github.com/thisismygitrepo/machineconfig"
@@ -54,24 +65,15 @@ docs = [
 [project.scripts]
 devops = "machineconfig.scripts.python.devops:app"
 fire = "machineconfig.scripts.python.fire_jobs:main_from_parser"
-initai = "machineconfig.scripts.python.ai.initai:main"
 agents = "machineconfig.scripts.python.agents:main_from_parser"
 sessions = "machineconfig.scripts.python.sessions:main_from_parser"
-
-choose_wezterm_theme = "machineconfig.scripts.python.choose_wezterm_theme:main"
-cloud_copy = "machineconfig.scripts.python.cloud_copy:arg_parser"
-cloud_mount = "machineconfig.scripts.python.cloud_mount:arg_parser"
-cloud_sync = "machineconfig.scripts.python.cloud_sync:arg_parser"
+croshell = "machineconfig.scripts.python.croshell:arg_parser"
+cloud = "machineconfig.scripts.python.cloud:app"
 ftpx = "machineconfig.scripts.python.ftpx:main_from_parser"
 
-start_slidev = "machineconfig.scripts.python.start_slidev:arg_parser"
+# commands = "machineconfig.scripts.python.command_navigator:main_from_parser"
 kill_process = "machineconfig.utils.procs:main"
 
-wifi_conn = "machineconfig.scripts.python.wifi_conn:arg_parser"
-mount_nfs = "machineconfig.scripts.python.mount_nfs:main"
-mount_nw_drive = "machineconfig.scripts.python.mount_nw_drive:main"
-
-croshell = "machineconfig.scripts.python.croshell:arg_parser"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -87,16 +89,23 @@ dev = [
     "build>=1.3.0",
     "cleanpy>=0.5.1",
     "cowsay>=6.1",
+    "duckdb-engine>=0.17.0",
     "ipdb>=0.13.13",
     "ipykernel>=6.30.1",
     "ipython>=9.5.0",
+    "matplotlib>=3.10.6",
     "mypy>=1.18.2",
+    "numpy>=2.3.3",
+    "plotly>=6.3.0",
+    "polars>=1.33.1",
     "pre-commit>=4.3.0",
     "pudb>=2025.1",
     "pylint>=3.3.8",
     "pyrefly>=0.33.1",
     "pyright>=1.1.405",
     "ruff>=0.13.1",
+    "sqlalchemy>=2.0.43",
+    "textual>=6.1.0",
     "trogon>=0.6.0",
     "twine>=6.2.0",
     "ty>=0.0.1a21",
@@ -109,21 +118,4 @@ dev = [
     "types-toml>=0.10.8.20240310",
     "types-urllib3>=1.26.25.14",
     "vt-py>=0.21.0",
-]
-docs = [
-    "pdoc>=15.0.2",
-]
-plot = [
-    "duckdb-engine>=0.17.0",
-    "ipykernel>=6.30.1",
-    "ipython>=9.5.0",
-    "jupyterlab>=4.4.9",
-    "kaleido>=1.1.0",
-    "matplotlib>=3.10.6",
-    "nbformat>=5.10.4",
-    "numpy>=2.3.3",
-    "plotly>=6.3.0",
-    "polars>=1.33.1",
-    "python-magic>=0.4.27",
-    "sqlalchemy>=2.0.43",
 ]

@@ -1,4 +1,4 @@
-from machineconfig.scripts.python.helpers.cloud_helpers import Args, ArgsDefaults, absolute, find_cloud_config, get_secure_share_cloud_config
+from machineconfig.scripts.python.cloud_helpers.cloud_helpers import Args, ArgsDefaults, absolute, find_cloud_config, get_secure_share_cloud_config
 from machineconfig.utils.io import read_ini
 from machineconfig.utils.source_of_truth import DEFAULTS_PATH
 from machineconfig.utils.accessories import pprint

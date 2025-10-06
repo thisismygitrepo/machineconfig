@@ -2,7 +2,7 @@
 from pathlib import Path
 from typing import Optional, Literal
 import typer
-from machineconfig.scripts.python.sessions_multiprocess import create_from_function
+from machineconfig.scripts.python.sessions_helpers.sessions_multiprocess import create_from_function
 
 def balance_load(layout_path: Path = typer.Argument(..., help="Path to the layout.json file"),
            max_thresh: int = typer.Option(..., help="Maximum tabs per layout"),
@@ -52,7 +52,7 @@ def select_layout(layouts_json_file: Path, selected_layouts_names: Optional[list
 
 def find_layout_file(layout_path: str, ) -> Path:
     from machineconfig.utils.path_extended import PathExtended
-    from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_interest
+    from machineconfig.scripts.python.helpers_fire.helpers4 import search_for_files_of_interest
     from machineconfig.utils.options import choose_from_options
     from machineconfig.utils.path_helper import match_file_name, sanitize_path
     path_obj = sanitize_path(layout_path)

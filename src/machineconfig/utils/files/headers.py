@@ -55,9 +55,11 @@ def print_logo(logo: str):
         avail_boxes = is_executable_in_path("boxes")
         avail_figlet = is_executable_in_path("figlet")
         if avail_cowsay and avail_lolcat and avail_boxes and avail_figlet:
-            _dynamic_art = random.choice([True, True, True, True, False])
-            if _dynamic_art: character_or_box_color(logo=logo)
-            else: print(Path(random.choice(glob.glob(str(Path(__file__).parent.joinpath("art", "*"))))).read_text())
+            # _dynamic_art = random.choice([True, True, True, True, False])
+            # if _dynamic_art: character_or_box_color(logo=logo)
+            # else:
+            #     print(Path(random.choice(glob.glob(str(Path(__file__).parent.joinpath("art", "*"))))).read_text())
+            character_or_box_color(logo=logo)
         else:
             print("\n" + "🚫 " + "-" * 70 + " 🚫")
             install_cmd = "devops install --group TerminalEyeCandy" if platform.system() == "Linux" else "brew install cowsay lolcat boxes figlet"

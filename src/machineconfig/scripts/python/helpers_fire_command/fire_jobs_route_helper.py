@@ -22,7 +22,7 @@ def choose_function_or_lines(choice_file: PathExtended, kwargs_dict: dict[str, o
     choice_function: Optional[str] = None
     
     if choice_file.suffix == ".py":
-        from machineconfig.scripts.python.helpers.helpers4 import parse_pyfile
+        from machineconfig.scripts.python.helpers_fire.helpers4 import parse_pyfile
         options, func_args = parse_pyfile(file_path=str(choice_file))
         choice_function_tmp = choose_from_options(msg="Choose a function to run", options=options, fzf=True, multi=False)
         assert isinstance(choice_function_tmp, str), f"choice_function must be a string. Got {type(choice_function_tmp)}"

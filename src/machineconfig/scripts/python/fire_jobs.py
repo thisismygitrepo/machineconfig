@@ -26,7 +26,7 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
         suffixes = {".py", ".sh", ".ps1"}
         choice_file = match_file_name(sub_string=args.path, search_root=PathExtended.cwd(), suffixes=suffixes)
     elif path_obj.is_dir():
-        from machineconfig.scripts.python.helpers.helpers4 import search_for_files_of_interest
+        from machineconfig.scripts.python.helpers_fire.helpers4 import search_for_files_of_interest
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
         files = search_for_files_of_interest(path_obj)
         print(f"🔍 Got #{len(files)} results.")
@@ -72,7 +72,7 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
 
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file}"
-        from machineconfig.scripts.python.helpers.helpers4 import get_import_module_code
+        from machineconfig.scripts.python.helpers_fire.helpers4 import get_import_module_code
         import_line = get_import_module_code(str(choice_file))
         if repo_root is not None:
             repo_root_add = f"""sys.path.append(r'{repo_root}')"""
