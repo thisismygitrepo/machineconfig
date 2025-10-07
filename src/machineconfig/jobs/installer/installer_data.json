@@ -189,6 +189,23 @@
       }
     },
     {
+      "appName": "croc",
+      "repoURL": "https://github.com/schollz/croc",
+      "doc": "🦎 Easily and securely send things from one computer to another",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "croc_{version}_Linux-64bit.tar.gz",
+          "windows": "croc_{version}_Windows-64bit.zip",
+          "macos": "croc_{version}_macOS-64bit.tar.gz"
+        },
+        "arm64": {
+          "linux": "croc_{version}_Linux-ARM64.tar.gz",
+          "windows": null,
+          "macos": "croc_{version}_macOS-ARM64.tar.gz"
+        }
+      }
+    },
+    {
       "appName": "easy-sharing",
       "repoURL": "CMD",
       "doc": "🔗 Easy file sharing from command line",
@@ -1816,7 +1833,7 @@
         "arm64": {
           "linux": null,
           "macos": null,
-          "windows": null
+                   "windows": null
         }
       }
     },
