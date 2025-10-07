@@ -66,14 +66,14 @@ sleep 0.1
                 assert provider == "google", "Gemini agent only works with google provider."
                 api_keys = get_api_keys(provider="google")
                 api_key = api_keys[idx % len(api_keys)] if len(api_keys) > 0 else None
-                from machineconfig.scripts.python.helpers_fire.fire_gemini import fire_gemini
-                cmd = fire_gemini(api_key=api_key, prompt_path=prompt_path, machine=machine)
+                from machineconfig.scripts.python.helpers_fire.agentic_frameworks.fire_gemini import fire_gemini
+                cmd = fire_gemini(api_key=api_key, prompt_path=prompt_path, machine=machine, model="gemini-2.5-pro", provider="google", repo_root=repo_root)
             case "cursor-agent":
-                from machineconfig.scripts.python.helpers_fire.fire_cursor_agents import fire_cursor
+                from machineconfig.scripts.python.helpers_fire.agentic_frameworks.fire_cursor_agents import fire_cursor
                 cmd = fire_cursor(prompt_path=prompt_path, machine=machine, api_key=None)
                 raise NotImplementedError("Cursor agent is not implemented yet, api key missing")
             case "crush":
-                from machineconfig.scripts.python.helpers_fire.fire_crush import fire_crush
+                from machineconfig.scripts.python.helpers_fire.agentic_frameworks.fire_crush import fire_crush
                 api_keys = get_api_keys(provider=provider)
                 api_key = api_keys[idx % len(api_keys)] if len(api_keys) > 0 else None
                 cmd = fire_crush(api_key=api_key, prompt_path=prompt_path, machine=machine, repo_root=repo_root, model=model, provider=provider)
