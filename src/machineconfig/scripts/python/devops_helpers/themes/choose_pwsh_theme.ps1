@@ -49,29 +49,30 @@ if ($selectedThemeName) {
     }
     
     # Read existing profile content or create empty array
-    $profileContent = @()
     if (Test-Path $profilePath) {
-        $profileContent = Get-Content $profilePath
+        $profileContent = Get-Content $profilePath -Raw
+    } else {
+        $profileContent = ""
     }
     
-    # Check if oh-my-posh line already exists and replace it, or add it
-    $found = $false
-    for ($i = 0; $i -lt $profileContent.Count; $i++) {
-        if ($profileContent[$i] -match "oh-my-posh init pwsh") {
-            $profileContent[$i] = $ompLine
-            $found = $true
-            break
+    # Check if oh-my-posh line already exists and replace it
+    if ($profileContent -match "oh-my-posh init pwsh[^\r\n]*") {
+        # Replace existing oh-my-posh line
+        $profileContent = $profileContent -replace "oh-my-posh init pwsh[^\r\n]*", $ompLine
+    } else {
+        # Add the oh-my-posh line with proper newlines
+        if ($profileContent.Length -gt 0 -and -not $profileContent.EndsWith("`n")) {
+            $profileContent += "`n"
         }
-    }
-    
-    if (-not $found) {
-        # Add the line at the end with a blank line before it
-        $profileContent += ""
+        if ($profileContent.Length -gt 0) {
+            $profileContent += "`n"
+        }
         $profileContent += $ompLine
+        $profileContent += "`n"
     }
     
     # Write back to profile
-    $profileContent | Set-Content $profilePath -Encoding UTF8
+    $profileContent | Set-Content $profilePath -Encoding UTF8 -NoNewline
     
     Write-Host "Profile updated successfully!" -ForegroundColor Green
     Write-Host "The theme will be applied automatically in future PowerShell sessions." -ForegroundColor Cyan
