@@ -206,6 +206,23 @@
       }
     },
     {
+      "appName": "magic-wormhole",
+      "repoURL": "https://github.com/magic-wormhole/magic-wormhole.rs",
+      "doc": "🐛 Get things from one computer to another, safely (Rust implementation)",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "magic-wormhole-cli-aarch64-apple-darwin.tgz",
+          "windows": "magic-wormhole-cli-x86_64-pc-windows-gnu.tgz",
+          "macos": "magic-wormhole-cli-x86_64-unknown-linux-gnu.tgz"
+        },
+        "arm64": {
+          "linux": null,
+          "windows": null,
+          "macos": null
+        }
+      }
+    },
+    {
       "appName": "easy-sharing",
       "repoURL": "CMD",
       "doc": "🔗 Easy file sharing from command line",
@@ -1833,7 +1850,7 @@
         "arm64": {
           "linux": null,
           "macos": null,
-                   "windows": null
+          "windows": null
         }
       }
     },

@@ -41,7 +41,7 @@ def main(
     port: Annotated[Optional[int], typer.Option("--port", "-p", help="Port to run the share server on (default: 8080)")] = None,
     username: Annotated[Optional[str], typer.Option("--username", "-u", help="Username for share access (default: current user)")] = None,
     password: Annotated[Optional[str], typer.Option("--password", "-w", help="Password for share access (default: from ~/dotfiles/creds/passwords/quick_password)")] = None,
-    over_internet: Annotated[bool, typer.Option("--over-internet", help="Expose the share server over the internet using ngrok")] = False
+    over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Expose the share server over the internet using ngrok")] = False
 ) -> None:
     from machineconfig.utils.installer_utils.installer import install_if_missing
     install_if_missing("ezshare")
