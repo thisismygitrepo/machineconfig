@@ -10,7 +10,7 @@ FROM debian:bookworm-slim
 # as per https://github.com/moby/moby/issues/7281
 SHELL ["/bin/bash", "-c"]
 ENV SHELL=/bin/bash
-RUN apt-get update && apt-get install -y bash sudo xz-utils curl
+RUN apt-get update && apt-get install -y bash sudo xz-utils curl git
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 
