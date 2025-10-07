@@ -37,9 +37,7 @@
 # Files
 * https://github.com/root-gg/plik?tab=readme-ov-file#cli-client
 * https://github.com/dutchcoders/transfer.sh/
-
 * https://github.com/magic-wormhole/magic-wormhole
-
 * https://github.com/nextcloud/server
 * https://github.com/IceWhaleTech/CasaOS
 * https://github.com/syncthing/syncthing
@@ -62,10 +60,8 @@
 
 # Cli helper
 * https://github.com/BuilderIO/ai-shell
-* https://github.com/paul-gauthier/aider
 
 * https://github.com/datafolklabs/cement
-* https://github.com/pallets/click fire alternative
 * https://github.com/JaidedAI/EasyOCR
 * https://github.com/nektos/act
 
@@ -83,8 +79,8 @@
 
 # terminal emulators
 * https://github.com/cmderdev/cmder
-* https://www.warp.dev/
 * https://github.com/wavetermdev/waveterm
+* ghostty
 
 # Terminal Sharing:
 * Comparison: https://gist.github.com/miguelmota/04245255f9dc9a862ac2bd682bdbab06

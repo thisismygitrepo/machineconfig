@@ -1,4 +1,5 @@
 #!/bin/bash
+# https://temp.sh/
 # 📤 CLOUD FILE SHARING SCRIPT 📤
 # This script uploads files or directories to transfer.sh for easy sharing
 # Usage: share_cloud <file|directory> or command | share_cloud <file_name>
@@ -13,6 +14,8 @@ if [ $# -eq 0 ]; then
     """>&2
     return 1
 fi
+
+# https://temp.sh/
 
 # Process the input
 if tty -s; then
