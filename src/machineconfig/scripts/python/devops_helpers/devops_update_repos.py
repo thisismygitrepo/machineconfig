@@ -17,6 +17,55 @@ from machineconfig.utils.source_of_truth import DEFAULTS_PATH
 console = Console()
 
 
+def _process_single_repo(expanded_path: Path, allow_password_prompt: bool) -> tuple[RepositoryUpdateResult, Path | None]:
+    """Process a single repository and return the result."""
+    try:
+        repo = git.Repo(str(expanded_path), search_parent_directories=True)
+        # Update repository and get detailed results
+        result = update_repository(repo, allow_password_prompt=allow_password_prompt, auto_sync=True)
+        
+        # Keep track of repos with dependency changes for additional uv sync
+        repo_path = None
+        if result["dependencies_changed"] and not result["uv_sync_ran"]:
+            repo_path = Path(repo.working_dir)
+        
+        return result, repo_path
+
+    except Exception as ex:
+        # Create a result for failed repos
+        error_result: RepositoryUpdateResult = {
+            "repo_path": str(expanded_path),
+            "status": "error",
+            "had_uncommitted_changes": False,
+            "uncommitted_files": [],
+            "commit_before": "",
+            "commit_after": "",
+            "commits_changed": False,
+            "pyproject_changed": False,
+            "dependencies_changed": False,
+            "uv_sync_ran": False,
+            "uv_sync_success": False,
+            "remotes_processed": [],
+            "remotes_skipped": [],
+            "error_message": str(ex),
+            "is_machineconfig_repo": False,
+            "permissions_updated": False,
+        }
+        console.print(
+            Panel(
+                "\n".join(
+                    [
+                        f"❌ Repository error: {expanded_path}",
+                        f"Exception: {ex}",
+                    ]
+                ),
+                border_style="red",
+                padding=(1, 2),
+            )
+        )
+        return error_result, None
+
+
 def _display_summary(results: list[RepositoryUpdateResult]) -> None:
     """Display a comprehensive summary of all repository update operations."""
 
@@ -190,54 +239,23 @@ def main(verbose: bool = True, allow_password_prompt: bool = False) -> None:
             )
         )
 
-    # Process repositories
+    # Process repositories in parallel
     results: list[RepositoryUpdateResult] = []
     repos_with_changes = []
 
-    for expanded_path in repos:
-        try:
-            repo = git.Repo(str(expanded_path), search_parent_directories=True)
-            # Update repository and get detailed results
-            result = update_repository(repo, allow_password_prompt=allow_password_prompt, auto_sync=True)
+    with ThreadPoolExecutor(max_workers=min(len(repos), 8)) as executor:
+        # Submit all tasks
+        future_to_repo = {
+            executor.submit(_process_single_repo, expanded_path, allow_password_prompt): expanded_path 
+            for expanded_path in repos
+        }
+        
+        # Collect results as they complete
+        for future in as_completed(future_to_repo):
+            result, repo_path = future.result()
             results.append(result)
-
-            # Keep track of repos with dependency changes for additional uv sync
-            if result["dependencies_changed"] and not result["uv_sync_ran"]:
-                repos_with_changes.append(Path(repo.working_dir))
-
-        except Exception as ex:
-            # Create a result for failed repos
-            error_result: RepositoryUpdateResult = {
-                "repo_path": str(expanded_path),
-                "status": "error",
-                "had_uncommitted_changes": False,
-                "uncommitted_files": [],
-                "commit_before": "",
-                "commit_after": "",
-                "commits_changed": False,
-                "pyproject_changed": False,
-                "dependencies_changed": False,
-                "uv_sync_ran": False,
-                "uv_sync_success": False,
-                "remotes_processed": [],
-                "remotes_skipped": [],
-                "error_message": str(ex),
-                "is_machineconfig_repo": False,
-                "permissions_updated": False,
-            }
-            results.append(error_result)
-            console.print(
-                Panel(
-                    "\n".join(
-                        [
-                            f"❌ Repository error: {expanded_path}",
-                            f"Exception: {ex}",
-                        ]
-                    ),
-                    border_style="red",
-                    padding=(1, 2),
-                )
-            )
+            if repo_path is not None:
+                repos_with_changes.append(repo_path)
     # Run uv sync for repositories where pyproject.toml changed but sync wasn't run yet
     for repo_path in repos_with_changes:
         run_uv_sync(repo_path)
