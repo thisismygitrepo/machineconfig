@@ -2,11 +2,11 @@
 from pathlib import Path
 import shlex
 from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import MATCHINE
-from typing import Optional
+from typing import Optional, Literal
 
 
-def fire_gemini(api_key: Optional[str], prompt_path: Path, machine: MATCHINE) -> str:
-    model = "gemini-2.5-pro"
+def fire_gemini(api_key: Optional[str], model: Literal["gemini-2.5-pro"], provider: Literal["google"], machine: MATCHINE, prompt_path: Path, repo_root: Path) -> str:
+    _ = provider
     # model = "gemini-2.5-flash-lite"
     # model = None  # auto-select
     # if model is None:
@@ -27,14 +27,17 @@ def fire_gemini(api_key: Optional[str], prompt_path: Path, machine: MATCHINE) ->
 {define_api_key}
 echo "Using Gemini API key $GEMINI_API_KEY"
 gemini {model_arg} --yolo --prompt {safe_path}
-    """
+"""
+            
+
         case "docker":
-            cmd = """
+            assert api_key is not None, "When using docker, api_key must be provided."
+            cmd = f"""
 docker run -it --rm \
-  -e GEMINI_API_KEY="$GEMINI_API_KEY" \
-  -v "/home/alex/code/machineconfig:/workspace/machineconfig" \
-  -w "/workspace/machineconfig" \
-  gemini-cli:latest \
+  -e GEMINI_API_KEY="{api_key}" \
+  -v "{repo_root}:/workspace/{repo_root.name}" \
+  -w "/workspace/{repo_root.name}" \
+  statistician/machineconfig:latest  \
   gemini --prompt "$PATH_PROMPT"
 """
     return cmd

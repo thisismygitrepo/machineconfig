@@ -1787,6 +1787,23 @@
       }
     },
     {
+      "appName": "docker",
+      "repoURL": "CMD",
+      "doc": "🐳 Docker is an open platform for developing, shipping, and running applications.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "docker.sh",
+          "macos": "docker.sh",
+          "windows": null
+        },
+        "arm64": {
+          "linux": "docker.sh",
+          "macos": "docker.sh",
+          "windows": null
+        }
+      }
+    },
+    {
       "appName": "lazydocker",
       "repoURL": "https://github.com/jesseduffield/lazydocker",
       "doc": "🐋 A simple terminal UI for both docker and docker-compose",
