@@ -8,7 +8,6 @@ in the event that username@github.com is not mentioned in the remote url.
 from pathlib import Path
 from typing import Annotated, Optional
 import typer
-from git import Repo, InvalidGitRepositoryError
 from machineconfig.scripts.python.helpers_repos.secure_repo import main as secure_repo_main
 
 
@@ -143,7 +142,7 @@ def cleanup(repo: DirectoryArgument = None, recursive: RecursiveOption = False) 
         repo = Path.cwd().as_posix()
     
     arg_path = Path(repo).expanduser().absolute()
-    
+    from git import Repo, InvalidGitRepositoryError
     if not recursive:
         # Check if the directory is a git repo
         try:
