@@ -1,8 +1,8 @@
-
-
 from pathlib import Path
 from typing import Optional, Annotated
 import typer
+import subprocess
+import time
 
 
 
@@ -49,19 +49,6 @@ def display_terminal_url(local_ip_v4: str, port: int, protocol: str = "http") ->
     # console.print("🔥" * 60 + "\n", style="bright_red bold")
 
 
-def install_ttyd():
-    # uv run --python 3.13 --with machineconfig devops install ttyd
-    from machineconfig.utils.installer_utils.installer_abc import check_tool_exists
-    exists = check_tool_exists("ttyd")
-    if exists:
-        print("✅ ttyd is already installed.")
-        return
-    print("⏳ ttyd not found. Installing...")
-    from machineconfig.utils.installer_utils.installer import main
-    main(which="ttyd")
-
-
-
 def main(
     port: Annotated[Optional[int], typer.Option("--port", "-p", help="Port to run the terminal server on (default: 7681)")] = None,
     username: Annotated[Optional[str], typer.Option("--username", "-u", help="Username for terminal access (default: current user)")] = None,
@@ -70,9 +57,13 @@ def main(
     ssl: Annotated[bool, typer.Option("--ssl", "-S", help="Enable SSL")] = False,
     ssl_cert: Annotated[Optional[str], typer.Option("--ssl-cert", "-C", help="SSL certificate file path")] = None,
     ssl_key: Annotated[Optional[str], typer.Option("--ssl-key", "-K", help="SSL key file path")] = None,
-    ssl_ca: Annotated[Optional[str], typer.Option("--ssl-ca", "-A", help="SSL CA file path for client certificate verification")] = None
+    ssl_ca: Annotated[Optional[str], typer.Option("--ssl-ca", "-A", help="SSL CA file path for client certificate verification")] = None,
+    over_internet: Annotated[bool, typer.Option("--over-internet", help="Expose the terminal over the internet using ngrok")] = False
 ) -> None:
-    install_ttyd()
+    from machineconfig.utils.installer_utils.installer import install_if_missing
+    install_if_missing("ttyd")
+    if over_internet: install_if_missing("ngrok")
+
     if username is None:
         import getpass
         username = getpass.getuser()
@@ -128,12 +119,33 @@ def main(
             start_command = "powershell"
         else:
             start_command = "bash"
-    code = f"""
-#!/bin/bash
-ttyd --writable -t enableSixel=true {ssl_args} --port {port} --credential "{username}:{password}" -t 'theme={{"background": "black"}}' {start_command}
-"""
-    from machineconfig.utils.code import run_shell_script
-    run_shell_script(code, display_script=False)
+    
+    ttyd_cmd = f"ttyd --writable -t enableSixel=true {ssl_args} --port {port} --credential \"{username}:{password}\" -t 'theme={{\"background\": \"black\"}}' {start_command}"
+    ttyd_process = subprocess.Popen(ttyd_cmd, shell=True)
+    processes = [ttyd_process]
+    
+    if over_internet:
+        ngrok_process = subprocess.Popen(f"ngrok http {port}", shell=True)
+        processes.append(ngrok_process)
+        time.sleep(3)
+        try:
+            import requests
+            response = requests.get("http://localhost:4040/api/tunnels")
+            data = response.json()
+            public_url = data['tunnels'][0]['public_url']
+            print(f"🌐 Ngrok tunnel ready: {public_url}")
+        except Exception as e:
+            print(f"Could not retrieve ngrok URL: {e}")
+    
+    try:
+        while True:
+            print("Terminal server is running. Press Ctrl+C to stop.")
+            time.sleep(2)
+    except KeyboardInterrupt:
+        print("\nTerminating processes...")
+        for p in processes:
+            p.terminate()
+            p.wait()
 
 
 def main_with_parser():

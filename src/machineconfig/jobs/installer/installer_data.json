@@ -1328,9 +1328,9 @@
       }
     },
     {
-      "appName": "bitwarden",
+      "appName": "bw",
       "repoURL": "CMD",
-      "doc": "🔐 bw is a password manager.",
+      "doc": "🔐 bitwarden is a password manager.",
       "fileNamePattern": {
         "amd64": {
           "linux": "npm install -g @bitwarden/cli",

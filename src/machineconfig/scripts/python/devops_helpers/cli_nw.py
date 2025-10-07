@@ -1,5 +1,6 @@
 
 import machineconfig.scripts.python.devops_helpers.cli_terminal as cli_terminal
+import machineconfig.scripts.python.devops_helpers.cli_share_server as cli_share_server
 import typer
 from typing import Optional
 
@@ -7,7 +8,7 @@ nw_apps = typer.Typer(help="🔐 Network subcommands", no_args_is_help=True)
 
 
 nw_apps.command(name="share-terminal", help="📡 Share terminal via web browser")(cli_terminal.main)
-
+nw_apps.command(name="share-server", help="🌐 Start local/global server to share files/folders via web browser", no_args_is_help=True)(cli_share_server.main)
 
 @nw_apps.command()
 def install_ssh_server():

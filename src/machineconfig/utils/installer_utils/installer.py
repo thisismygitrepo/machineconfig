@@ -180,6 +180,18 @@ def install_clis(clis_names: list[str]):
     return None
 
 
+def install_if_missing(which: str):
+    # uv run --python 3.13 --with machineconfig devops install ttyd
+    from machineconfig.utils.installer_utils.installer_abc import check_tool_exists
+    exists = check_tool_exists(which)
+    if exists:
+        print(f"✅ {which} is already installed.")
+        return
+    print(f"⏳ {which} not found. Installing...")
+    from machineconfig.utils.installer_utils.installer import main
+    main(which=which)
+
+
 if __name__ == "__main__":
     from machineconfig.utils.schemas.installer.installer_types import InstallerData
     from machineconfig.utils.installer_utils.installer_class import Installer
