@@ -1,4 +1,3 @@
-
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.source_of_truth import WINDOWS_INSTALL_PATH, LINUX_INSTALL_PATH, INSTALL_VERSION_ROOT
 
@@ -9,7 +8,7 @@ import platform
 
 
 def find_move_delete_windows(downloaded_file_path: PathExtended, exe_name: Optional[str] = None, delete: bool = True, rename_to: Optional[str] = None):
-    print(f"🔍 PROCESSING WINDOWS EXECUTABLE 🔍")
+    print("🔍 PROCESSING WINDOWS EXECUTABLE 🔍")
     if exe_name is not None and ".exe" in exe_name:
         exe_name = exe_name.replace(".exe", "")
     if downloaded_file_path.is_file():
@@ -54,7 +53,7 @@ def find_move_delete_windows(downloaded_file_path: PathExtended, exe_name: Optio
 
 
 def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: Optional[bool] = True, rename_to: Optional[str] = None):
-    print(f"🔍 PROCESSING LINUX EXECUTABLE 🔍")
+    print("🔍 PROCESSING LINUX EXECUTABLE 🔍")
     if downloaded.is_file():
         exe = downloaded
         print(f"📄 Found direct executable file: {exe}")
@@ -114,14 +113,32 @@ def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: Opt
 
 def check_tool_exists(tool_name: str) -> bool:
     if platform.system() == "Windows":
-        tool_name = tool_name.replace(".exe", "") + ".exe"
-        res1 = any([Path(WINDOWS_INSTALL_PATH).joinpath(tool_name).is_file(), Path.home().joinpath("AppData/Roaming/npm").joinpath(tool_name).is_file()])
-        tool_name = tool_name.replace(".exe", "") + ".exe"
-        res2 = any([Path(WINDOWS_INSTALL_PATH).joinpath(tool_name).is_file(), Path.home().joinpath("AppData/Roaming/npm").joinpath(tool_name).is_file()])
-        return res1 or res2
+        tool_name_exe = tool_name.replace(".exe", "") + ".exe"
+        res1 = any([Path(WINDOWS_INSTALL_PATH).joinpath(tool_name_exe).is_file(), Path.home().joinpath("AppData/Roaming/npm").joinpath(tool_name_exe).is_file()])
+        if res1:
+            return True
+        tool_name_no_exe = tool_name.replace(".exe", "")
+        res2 = any([Path(WINDOWS_INSTALL_PATH).joinpath(tool_name_no_exe).is_file(), Path.home().joinpath("AppData/Roaming/npm").joinpath(tool_name_no_exe).is_file()])
+        return res2
     elif platform.system() in ["Linux", "Darwin"]:
         root_path = Path(LINUX_INSTALL_PATH)
-        return any([Path("/usr/local/bin").joinpath(tool_name).is_file(), Path("/usr/bin").joinpath(tool_name).is_file(), root_path.joinpath(tool_name).is_file()])
+        standard_checks = [
+            Path("/usr/local/bin").joinpath(tool_name).is_file(),
+            Path("/usr/bin").joinpath(tool_name).is_file(),
+            root_path.joinpath(tool_name).is_file()
+        ]
+        if any(standard_checks):
+            return True
+        # Check for npm packages via nvm
+        npm_check = False
+        try:
+            result = subprocess.run(["node", "--version"], capture_output=True, text=True, check=True)
+            version = result.stdout.strip().lstrip('v')
+            nvm_bin_path = Path.home() / ".nvm" / "versions" / "node" / f"v{version}" / "bin" / tool_name
+            npm_check = nvm_bin_path.is_file()
+        except subprocess.CalledProcessError:
+            pass
+        return npm_check
     else:
         raise NotImplementedError(f"platform {platform.system()} not implemented")
 def is_executable_in_path(executable_name: str) -> bool:
