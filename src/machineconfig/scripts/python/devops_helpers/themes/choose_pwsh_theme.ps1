@@ -65,9 +65,14 @@ if ($selectedThemeName) {
     }
     
     if (-not $found) {
-        # Add the line at the end with a blank line before it
-        $profileContent += ""
+        # Add blank line before if profile has content and doesn't end with blank line
+        if ($profileContent.Count -gt 0 -and $profileContent[-1] -ne "") {
+            $profileContent += ""
+        }
+        # Add the oh-my-posh line
         $profileContent += $ompLine
+        # Add blank line after
+        $profileContent += ""
     }
     
     # Write back to profile
