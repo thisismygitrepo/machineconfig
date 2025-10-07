@@ -25,7 +25,6 @@ CloudOption = Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁�
 def push(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
     """🚀 Push changes across repositories."""
     from machineconfig.scripts.python.repos_helpers.entrypoint import git_operations
-
     git_operations(directory, pull=False, commit=False, push=True, recursive=recursive, no_sync=no_sync)
 
 

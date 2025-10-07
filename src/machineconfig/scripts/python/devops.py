@@ -5,7 +5,7 @@ from typing import Optional
 
 import machineconfig.scripts.python.devops_helpers.cli_repos as cli_repos
 import machineconfig.scripts.python.devops_helpers.cli_config as cli_config
-from machineconfig.scripts.python.devops_helpers.cli_self import self_app
+from machineconfig.scripts.python.devops_helpers.cli_self import cli_app as cli_app
 import machineconfig.scripts.python.devops_helpers.cli_data as cli_data
 import machineconfig.scripts.python.devops_helpers.cli_nw as cli_network
 
@@ -21,28 +21,11 @@ def install( which: Optional[str] = typer.Option(None, "--which", "-w", help="Co
     installer_entry_point.main(which=which, group=group, interactive=interactive)
 
 
-app.add_typer(cli_repos.app, name="repos", help="📁 Manage git repositories")
+app.add_typer(cli_repos.app, name="repos")
 app.add_typer(cli_config.config_apps, name="config")
 app.add_typer(cli_data.app_data, name="data")
-app.add_typer(self_app, name="self")
+app.add_typer(cli_app, name="self")
 app.add_typer(cli_network.nw_apps, name="network")
-
-
-
-
-# @app.command()
-# def scheduler():
-#     """⏰ SCHEDULER"""
-#     # from machineconfig.scripts.python.scheduler import main as helper
-#     # helper()
-
-
-
-# @app.command()
-# def scheduler():
-#     """⏰ SCHEDULER"""
-#     # from machineconfig.scripts.python.scheduler import main as helper
-#     # helper()
 
 
 if __name__ == "__main__":
