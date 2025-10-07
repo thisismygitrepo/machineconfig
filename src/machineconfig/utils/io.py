@@ -35,24 +35,6 @@ def save_json(obj: Any, path: PathLike, indent: Optional[int] = None, verbose: b
     return Path(path_obj)
 
 
-# def save_toml(obj: Mapping[str, Any], path: PathLike, verbose: bool = False) -> Path:
-#     path_obj = _ensure_parent(path)
-#     with open(path_obj, "w", encoding="utf-8") as fh:
-#         toml.dump(obj, fh)
-#     if verbose:
-#         print(f"Saved toml -> {path_obj}")
-#     return Path(path_obj)
-
-
-# def save_yaml(obj: Any, path: PathLike, verbose: bool = False) -> Path:
-#     path_obj = _ensure_parent(path)
-#     with open(path_obj, "w", encoding="utf-8") as fh:
-#         yaml.safe_dump(obj, fh, sort_keys=False)
-#     if verbose:
-#         print(f"Saved yaml -> {path_obj}")
-#     return Path(path_obj)
-
-
 def save_ini(path: PathLike, obj: Mapping[str, Mapping[str, Any]], verbose: bool = False) -> Path:
     cp = configparser.ConfigParser()
     for section, values in obj.items():

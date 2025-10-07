@@ -30,7 +30,7 @@ class Installer:
     
     def _get_exe_name(self) -> str:
         """Derive executable name from app name by converting to lowercase and removing spaces."""
-        return self.installer_data["appName"].lower().replace(" ", "").replace("-", "")
+        return self.installer_data["appName"].lower().replace(" ", "")  # .replace("-", "")
 
     def install_robust(self, version: Optional[str]) -> str:
         try:
