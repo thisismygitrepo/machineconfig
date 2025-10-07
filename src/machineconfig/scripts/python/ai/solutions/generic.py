@@ -46,6 +46,7 @@ def adjust_gitignore(repo_root: Path) -> None:
         ".ai",
         "GEMINI.md",
         "CLAUDE.md",
+        "CRUSH.md",
         ".cursor",
         ".github/instructions",
         ".github/chatmodes",
