@@ -1,9 +1,6 @@
 #!/bin/bash
 # 🛠️ Bash Shell Configuration and Initialization
 
-
-# export PATH="~/.local/bin:~/code/machineconfig/src/machineconfig/scripts/linux:~/dotfiles/scripts/linux:~/.nix-profile/bin:/usr/games:$PATH"
-
 add_to_path_if_not_already() {
     for dir in "$@"; do
         if [[ ! $PATH =~ (^|:)"${dir}"(:|$) ]]; then
@@ -26,14 +23,13 @@ add_to_path_if_not_already \
 
 
 # echo "Sourcing scripts ..."
-machineconfig_path=$HOME/code/machineconfig/src/machineconfig
-. $machineconfig_path/settings/broot/br.sh
-. $machineconfig_path/settings/lf/linux/exe/lfcd.sh
-. $machineconfig_path/settings/tere/terecd.sh
+machineconfig_path=$HOME/code/machineconfig
+. $machineconfig_path/src/machineconfig/settings/broot/br.sh
+. $machineconfig_path/src/machineconfig/settings/lf/linux/exe/lfcd.sh
+. $machineconfig_path/src/machineconfig/settings/tere/terecd.sh
 
-# Check if $HOME/code/machineconfig directory exists and source commands.sh
-if [ -d "$HOME/code/machineconfig" ]; then
-    source $HOME/code/machineconfig/src/machineconfig/settings/shells/bash/commands.sh
+if [ -d $machineconfig_path ]; then
+    source $machineconfig_path/src/machineconfig/settings/shells/bash/commands.sh
 fi
 
 # set alias l to lsd -la

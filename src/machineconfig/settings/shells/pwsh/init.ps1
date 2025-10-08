@@ -1,5 +1,7 @@
 
 
+$MAC_ROOT = "$HOME\code\machineconfig"
+
 function Add-ToPathIfNotAlready {
     param (
         [Parameter(Mandatory=$true)]
@@ -14,7 +16,7 @@ function Add-ToPathIfNotAlready {
 }
 
 Add-ToPathIfNotAlready -Directories @(
-    "$HOME\code\machineconfig\src\machineconfig\scripts\windows",
+    "$MAC_ROOT\src\machineconfig\scripts\windows",
     "$HOME\dotfiles\scripts\windows",
     "C:\Program Files (x86)\GnuWin32\bin",
     "C:\Program Files\CodeBlocks\MinGW\bin",
@@ -27,12 +29,12 @@ Add-ToPathIfNotAlready -Directories @(
 
 
 # sources  ================================================================
-. $HOME/code/machineconfig/src/machineconfig/settings/broot/brootcd.ps1
-. $HOME/code/machineconfig/src/machineconfig/settings/lf/windows/lfcd.ps1
-. $HOME/code/machineconfig/src/machineconfig/settings/tere/terecd.ps1
+. $MAC_ROOT\src\machineconfig\settings\broot\brootcd.ps1
+. $MAC_ROOT\src\machineconfig\settings\lf\windows\lfcd.ps1
+. $MAC_ROOT\src\machineconfig\settings\tere\terecd.ps1
 
-if (Test-Path "$HOME/code/machineconfig" -PathType Container) {
-    . "$HOME/code/machineconfig/src/machineconfig/settings/shells/pwsh/commands.ps1"
+if (Test-Path "$MAC_ROOT" -PathType Container) {
+    . "$MAC_ROOT\src\machineconfig\settings\shells\pwsh\commands.ps1"
 }
 
 function lsdla { lsd -la }
