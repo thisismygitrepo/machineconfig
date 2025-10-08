@@ -167,10 +167,10 @@ config = {this = '~/.config/pudb/pudb.cfg', to_this = 'CONFIG_ROOT/settings/pudb
 # AllUsersAllHosts = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/AllUsersAllHosts/profile.ps1'}
 
 [pwsh_windows]
-CurrentUserCurrentHost = {this = '~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
-CurrentUserAllHosts = {this = '~/Documents/PowerShell/profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/profile.ps1'}
-AllUsersCurrentHost = {this = 'C:\Program Files\PowerShell\7\Microsoft.PowerShell_profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
-AllUsersAllHosts = {this = 'C:\Program Files\PowerShell\7\profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
+# CurrentUserCurrentHost = {this = '~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
+# CurrentUserAllHosts = {this = '~/Documents/PowerShell/profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/profile.ps1'}
+# AllUsersCurrentHost = {this = 'C:\Program Files\PowerShell\7\Microsoft.PowerShell_profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
+# AllUsersAllHosts = {this = 'C:\Program Files\PowerShell\7\profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
 
 [nushell_windows]
 config = {this = '~/AppData/Roaming/nushell/config.nu', to_this = 'CONFIG_ROOT/settings/shells/nushell/config.nu'}

@@ -28,14 +28,6 @@ SYSTEM = system.lower()
 console = Console()
 
 
-def get_other_systems(current_system: str) -> list[str]:
-    all_systems = ["linux", "windows", "darwin"]
-    return [s for s in all_systems if s != current_system.lower()]
-
-
-OTHER_SYSTEMS = get_other_systems(SYSTEM)
-
-
 class Base(TypedDict):
     this: str
     to_this: str
@@ -54,7 +46,19 @@ def read_mapper() -> MapperFileData:
     mapper_data: dict[str, dict[str, Base]] = tomllib.loads(LIBRARY_ROOT.joinpath("profile/mapper.toml").read_text(encoding="utf-8"))
     public: dict[str, list[ConfigMapper]] = {}
     private: dict[str, list[ConfigMapper]] = {}
+    # def get_other_systems(current_system: str) -> list[str]:
+    #     all_systems = ["linux", "windows", "darwin"]
+    #     return [s for s in all_systems if s != current_system.lower()]
+    # OTHER_SYSTEMS = get_other_systems(SYSTEM)
     for program_key, program_map in mapper_data.items():
+        parts = program_key.split("_")
+        if len(parts) > 1:
+            if parts[-1].lower() == "windows" and SYSTEM != "windows":
+                # console.print(f"Skipping Windows-only program mapping: {program_key}")
+                continue
+            elif parts[-1].lower() == "linux" and SYSTEM == "windows":
+                # console.print(f"Skipping Linux-only program mapping: {program_key}")
+                continue
         for file_name, file_base in program_map.items():
             file_map: ConfigMapper = {
                 "file_name": file_name,
@@ -79,7 +83,9 @@ def apply_mapper(mapper_data: dict[str, list[ConfigMapper]],
                  method: Literal["symlink", "copy"]
                  ):
     operation_records: list[OperationRecord] = []
-
+    print(f"Working with {len(mapper_data)} programs from mapper data.")
+    if len(mapper_data) == 1:
+        print(mapper_data)
     import os
     if os.name == "nt":
         import ctypes
@@ -102,17 +108,14 @@ def apply_mapper(mapper_data: dict[str, list[ConfigMapper]],
                 )
             )
             raise RuntimeError("Run terminal as admin and try again, otherwise, there will be too many popups for admin requests and no chance to terminate the program.")
-
     for program_name, program_files in mapper_data.items():
         console.rule(f"🔄 Processing [bold]{program_name}[/] symlinks", style="cyan")
         for a_mapper in program_files:
             config_file_default_path = PathExtended(a_mapper["config_file_default_path"])
             self_managed_config_file_path = PathExtended(a_mapper["self_managed_config_file_path"].replace("CONFIG_ROOT", CONFIG_ROOT.as_posix()))
-            
             # Determine whether to use copy or symlink
             use_copy = method == "copy" or a_mapper.get("copy", False)
-            
-            if "contents" in a_mapper:
+            if "contents" in a_mapper and a_mapper["contents"]:
                 targets = list(self_managed_config_file_path.expanduser().search("*"))
                 for a_target in targets:
                     operation_type = "contents_copy" if use_copy else "contents_symlink"

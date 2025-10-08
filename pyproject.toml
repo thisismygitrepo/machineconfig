@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "5.48"
+version = "5.50"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -36,6 +36,7 @@ dependencies = [
     "questionary>=2.1.1",
     "typer-slim>=0.19.2",
     "euporie>=2.8.14",
+    "typer>=0.19.2",
 ]
 
 [project.optional-dependencies]
