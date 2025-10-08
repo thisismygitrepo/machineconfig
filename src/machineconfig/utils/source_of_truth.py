@@ -10,9 +10,7 @@ EXCLUDE_DIRS = [".links", ".ai", ".venv", ".git", ".idea", ".vscode", "node_modu
 tmp = Path(machineconfig.__file__).resolve().parent
 if not tmp.exists():
     tmp = Path.home().joinpath(".config/machineconfig")
-
 LIBRARY_ROOT = tmp
-REPO_ROOT = LIBRARY_ROOT.parent.parent
 
 CONFIG_PATH = Path.home().joinpath(".config/machineconfig")
 DEFAULTS_PATH = Path.home().joinpath("dotfiles/machineconfig/defaults.ini")

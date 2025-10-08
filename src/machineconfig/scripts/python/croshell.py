@@ -143,9 +143,10 @@ from pathlib import Path
         if interpreter == "ipython": profile = f" --profile {ipython_profile} --no-banner"
         else: profile = ""
         if local:
-            from machineconfig.utils.source_of_truth import REPO_ROOT
-            if REPO_ROOT.parent.name == "code" and REPO_ROOT.name == "machineconfig" and REPO_ROOT.exists() and REPO_ROOT.is_dir():
-                ve_line = f"--project {str(REPO_ROOT)}"
+            from machineconfig.utils.source_of_truth import LIBRARY_ROOT
+            repo_root = LIBRARY_ROOT.parent.parent
+            if repo_root.parent.name == "code" and repo_root.name == "machineconfig" and repo_root.exists() and repo_root.is_dir():
+                ve_line = f"--project {str(repo_root)}"
             else:
                 console.print(Panel("❌ Could not determine the local machineconfig repo root. Please ensure the `REPO_ROOT` in `source_of_truth.py` is correctly set to the local path of the machineconfig repo, or do not use the `--local` flag.", title="Error", border_style="red"))
                 return

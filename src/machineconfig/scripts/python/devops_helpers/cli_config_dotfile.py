@@ -23,7 +23,7 @@ def main(
 
     from machineconfig.utils.links import symlink_map
     from machineconfig.utils.path_extended import PathExtended
-    from machineconfig.utils.source_of_truth import LIBRARY_ROOT, REPO_ROOT
+    from machineconfig.utils.source_of_truth import LIBRARY_ROOT
     console = Console()
     orig_path = PathExtended(file).expanduser().absolute()
     if dest == "":
@@ -35,7 +35,7 @@ def main(
             junction = orig_path.split(at=".config", sep=-1)[1]
         else:
             junction = orig_path.rel2home()
-        new_path = PathExtended(REPO_ROOT).joinpath(junction)
+        new_path = PathExtended(LIBRARY_ROOT).parent.parent.joinpath(junction)
     else:
         dest_path = PathExtended(dest).expanduser().absolute()
         dest_path.mkdir(parents=True, exist_ok=True)
