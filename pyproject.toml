@@ -98,6 +98,7 @@ dev = [
     "mypy>=1.18.2",
     "nuitka>=2.7.16",
     "numpy>=2.3.3",
+    "pandas>=2.3.3",
     "plotly>=6.3.0",
     "polars>=1.33.1",
     "pre-commit>=4.3.0",

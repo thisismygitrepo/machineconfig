@@ -1,0 +1,1 @@
+uv add --dev duckdb-engine sqlalchemy ipykernel ipython jupyterlab kaleido matplotlib nbformat numpy plotly polars python-magic

@@ -23,12 +23,11 @@ uv init --python 3.13
 uv venv
 uv add --upgrade-package pylint pyright mypy pyrefly ty --dev  # linters and type checkers
 uv add --upgrade-package pytest --dev
-# uv add typer --dev
+uv add typer --dev
 
 """
-            import subprocess
-
-            subprocess.run(command_to_run, shell=True, check=True)
+            from machineconfig.utils.code import run_shell_script
+            run_shell_script(command_to_run)
         else:
             print("Terminating initai ...")
             return
