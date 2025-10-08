@@ -31,9 +31,3 @@ require('dap').configurations.python = { {
 
 
 local dap = require('dap')
-dap.adapters.python = {
-  type = 'executable';
-  command = "C:/Users/alex/code/machineconfig/.venv/Scripts/python.exe";
-  args = {"-i" };
-}
-

@@ -17,10 +17,8 @@ $sharePath=''
 $driveLetter=''
 $options = "rw,sec=sys,no_subtree_check"
 
-# . activate_ve
-. $HOME/code/machineconfig/.venv/Scripts/activate.ps1
 
-python -m machineconfig.scripts.python.mount_nfs
+uv run python -m machineconfig.scripts.python.mount_nfs
 . $HOME/tmp_results/shells/python_return_command.ps1
 
 # Configure NFS server

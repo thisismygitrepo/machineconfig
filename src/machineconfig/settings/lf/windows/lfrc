@@ -117,13 +117,9 @@ map md $~/code/machineconfig/src/machineconfig/settings/lf/windows/mkdir.ps1
 map mf $~/code/machineconfig/src/machineconfig/settings/lf/windows/mkfile.ps1
 
 # =================== JUNK ======================
-# Find and Jump
-#cmd fzfg $~/scripts/fzfg.ps1 $args[0]
 map J push :$~/scripts/fzfg<space>
 map F $~/code/machineconfig/src/machineconfig/settings/lf/windows/fzf_edit.ps1
 map S cd $~/code/machineconfig/src/machineconfig/settings/lf/windows/tst.ps1
 map T $~/code/machineconfig/src/machineconfig/settings/lf/windows/cd_tere.ps1
 map Z $~/code/machineconfig/src/machineconfig/settings/lf/windows/cd_zoxide2.ps1
-
 cmd doc $lf -doc | bat
-

@@ -103,7 +103,6 @@ def create(
     layoutfile = get_agents_launch_layout(session_root=agents_dir)    
     regenerate_py_code = f"""
 #!/usr/bin/env uv run --python 3.13 --with machineconfig
-#!/usr/bin/env uv run --no-dev --project $HOME/code/machineconfig
 fire_agents create --context-path "{prompt_material_path}" \\
     --{search_strategy} "{context_path or keyword_search or filename_pattern}" \\
     --prompt-path "{prompt_path or ''}" \\

@@ -36,10 +36,6 @@ default_position = 'top'
 default_height = 30
 
 [[layers]]
-  name = "lang#python"
-  python_interpreter = 'C:/Users/alex/code/machineconfig/.venv/Scripts/python.exe'
-
-[[layers]]
   name = "colorscheme"
 
 [[layers]]
