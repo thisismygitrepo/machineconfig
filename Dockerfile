@@ -16,7 +16,7 @@ RUN /root/.local/bin/uv tool install --python 3.14 machineconfig
 RUN /root/.local/bin/devops install --group ESSENTIAL_SYSTEM
 RUN /root/.local/bin/devops install --group ESSENTIAL
 RUN /root/.local/bin/devops config public --method symlink --which all
-RUN /root/.local/bin/devops config shell reference
+RUN /root/.local/bin/devops config shell
 
 RUN touch /root/.bash_history
 # McFly complains about missing history file
