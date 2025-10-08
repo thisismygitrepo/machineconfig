@@ -38,9 +38,11 @@ def install():
 @cli_app.command(no_args_is_help=False)
 def navigate():
     """📚 NAVIGATE command structure with TUI"""
-    from machineconfig.scripts.python.devops_navigator import CommandNavigatorApp
-    app = CommandNavigatorApp()
-    app.run()
+    import machineconfig.scripts.python as navigator
+    from pathlib import Path
+    path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(f"uv run --with machineconfig {path}")
 
 
 @cli_app.command(no_args_is_help=True)
