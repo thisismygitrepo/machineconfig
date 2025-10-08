@@ -21,18 +21,18 @@ def status():
     import machineconfig.scripts.python.devops_helpers.devops_status as helper
     helper.main()
 @cli_app.command()
-def clone():
+def install():
     """📋 CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates."""
-    import platform
     from machineconfig.utils.code import run_shell_script
     from machineconfig.profile.create_shell_profile import create_default_shell_profile
+    # from machineconfig.profile.create_links_export import main_public_from_parser
+    create_default_shell_profile()
+    # main_public_from_parser()
+    import platform
     if platform.system() == "Windows":
-        from machineconfig.setup_windows import MACHINECONFIG
-        create_default_shell_profile()
+        run_shell_script(r"""$HOME\.local\bin\uv.exe tool install machineconfig""")
     else:
-        from machineconfig.setup_linux import MACHINECONFIG
-        create_default_shell_profile()
-    run_shell_script(MACHINECONFIG.read_text(encoding="utf-8"))
+        run_shell_script("""$HOME/.local/bin/uv tool install machineconfig""")
 
 @cli_app.command(no_args_is_help=False)
 def navigate():

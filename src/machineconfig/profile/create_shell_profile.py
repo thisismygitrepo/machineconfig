@@ -45,10 +45,10 @@ def create_default_shell_profile() -> None:
 
     if system == "Windows":
         init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/pwsh/init.ps1")
-        source_line = f""". {str(init_script.collapseuser()).replace("~", "$HOME")}"""
+        source_line = f""". {str(init_script.collapseuser(placeholder="$HOME"))}"""
     else:
         init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/bash/init.sh")
-        source_line = f"""source {str(init_script).replace("~", "$HOME")}"""
+        source_line = f"""source {str(init_script.collapseuser(placeholder="$HOME"))}"""
 
     was_shell_updated = False
     if source_line in shell_profile:

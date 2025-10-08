@@ -2,7 +2,6 @@
 from pathlib import Path
 
 APPS = Path(__file__).parent.joinpath("apps.sh")
-MACHINECONFIG = Path(__file__).parent.joinpath("machineconfig.sh")
 UV = Path(__file__).parent.joinpath("uv.sh")
 
 APPS_DESKTOP = Path(__file__).parent.joinpath("apps_desktop.sh")

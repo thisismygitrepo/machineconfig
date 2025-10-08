@@ -49,3 +49,13 @@ def pwsh_theme():
     file = Path(themes.__file__).parent / "choose_pwsh_theme.ps1"
     import subprocess
     subprocess.run(["pwsh", "-File", str(file)])
+
+@config_apps.command(no_args_is_help=False)
+def copy_assets(which: Literal["scripts", "settings", "both"] = typer.Option(..., "--which", "-w", help="Which assets to copy")):
+    """🔗 Copy asset files from library to machine."""
+    import machineconfig.profile.create_helper as create_helper
+    if which == "both":
+        create_helper.copy_assets_to_machine(which="scripts")
+        create_helper.copy_assets_to_machine(which="settings")
+    else:
+        create_helper.copy_assets_to_machine(which=which)
