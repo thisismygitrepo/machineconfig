@@ -39,7 +39,7 @@ def get_shell_profile_path() -> PathExtended:
 def create_default_shell_profile(method: Literal["copy", "reference"]) -> None:
     if method == "reference":
         machineconfig_repo_path = LIBRARY_ROOT.parent.parent
-        if not machineconfig_repo_path.exists() or not machineconfig_repo_path.is_dir():
+        if not machineconfig_repo_path.exists() or not machineconfig_repo_path.is_dir() and machineconfig_repo_path.name != "machineconfig" and not machineconfig_repo_path.parent.name != "code":
             raise FileNotFoundError(f"machineconfig repo not found at {machineconfig_repo_path}. Cannot create symlinks to non-existing source files.")
 
     shell_profile_path = get_shell_profile_path()
