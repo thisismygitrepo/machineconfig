@@ -113,9 +113,7 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
     if display_script:
         from rich.syntax import Syntax
         console.print(Panel(Syntax(code=script, lexer=lexer), title=f"📄 shell script @ {temp_script_path}", subtitle="shell script being executed"), style="bold red")
-
     env = {} if clean_env else None
-
     if platform.system() == "Windows":
         import subprocess
         proc = subprocess.run(f'powershell -ExecutionPolicy Bypass -File "{temp_script_path}"', check=True, shell=True, env=env)
@@ -133,6 +131,7 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
         console.print(f"⚠️  [yellow]Script executed with warnings (return code {proc.returncode}):[/yellow] [blue]{temp_script_path}[/blue]")    
     temp_script_path.unlink(missing_ok=True)
     console.print(f"🗑️  [blue]Temporary script deleted:[/blue] [green]{temp_script_path}[/green]")
+    return proc
 
 
 # def run_command(command: str, description: str) -> bool:

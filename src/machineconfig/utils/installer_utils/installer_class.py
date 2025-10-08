@@ -39,9 +39,7 @@ class Installer:
             result_old = subprocess.run(f"{exe_name} --version", shell=True, capture_output=True, text=True)
             old_version_cli = result_old.stdout.strip()
             print(f"📊 Current version: {old_version_cli or 'Not installed'}")
-
             self.install(version=version)
-
             result_new = subprocess.run(f"{exe_name} --version", shell=True, capture_output=True, text=True)
             new_version_cli = result_new.stdout.strip()
             print(f"📊 New version: {new_version_cli}")
@@ -77,8 +75,10 @@ class Installer:
                 desc = package_manager + " installation"
                 version_to_be_installed = package_manager + "Latest"
                 print(f"🚀 Running: {installer_arch_os}")
-                result = subprocess.run(installer_arch_os, shell=True, capture_output=True, text=True)
-                success = result.returncode == 0 and result.stderr == ""
+                # result = subprocess.run(installer_arch_os, shell=True, capture_output=True, text=True)
+                from machineconfig.utils.code import run_shell_script
+                result = run_shell_script(installer_arch_os)
+                success = result.returncode == 0 and result.stderr == "".encode()
                 if not success:
                     print(f"❌ {desc} failed")
                     if result.stdout:
