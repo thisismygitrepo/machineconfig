@@ -31,6 +31,11 @@ machineconfig_path=$HOME/code/machineconfig/src/machineconfig
 . $machineconfig_path/settings/lf/linux/exe/lfcd.sh
 . $machineconfig_path/settings/tere/terecd.sh
 
+# Check if $HOME/code/machineconfig directory exists and source commands.sh
+if [ -d "$HOME/code/machineconfig" ]; then
+    source $HOME/code/machineconfig/src/machineconfig/settings/shells/bash/commands.sh
+fi
+
 # set alias l to lsd -la
 alias l='lsd -la'
 alias gcs='gh copilot suggest -t shell'

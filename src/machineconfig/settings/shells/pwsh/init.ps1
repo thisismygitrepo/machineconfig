@@ -31,6 +31,10 @@ Add-ToPathIfNotAlready -Directories @(
 . $HOME/code/machineconfig/src/machineconfig/settings/lf/windows/lfcd.ps1
 . $HOME/code/machineconfig/src/machineconfig/settings/tere/terecd.ps1
 
+if (Test-Path "$HOME/code/machineconfig" -PathType Container) {
+    . "$HOME/code/machineconfig/src/machineconfig/settings/shells/pwsh/commands.ps1"
+}
+
 function lsdla { lsd -la }
 Set-Alias -Name l -Value lsdla -Option AllScope
 
