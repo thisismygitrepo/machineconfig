@@ -215,24 +215,36 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         self.terminal_responses.append(res)
         return res
     def run_py(self, cmd: str, desc: str = "", return_obj: bool = False, verbose: bool = True, strict_err: bool = False, strict_returncode: bool = False) -> Union[Any, Response]:
-        assert '"' not in cmd, 'Avoid using `"` in your command. I dont know how to handle this when passing is as command to python in pwsh command.'
+        from machineconfig.utils.accessories import randstr
+        from pathlib import Path
+        cmd_path = Path.home().joinpath(f"tmp_results/tmp_scripts/ssh/runpy_{randstr()}.py")
+        cmd_path.parent.mkdir(parents=True, exist_ok=True)
         if not return_obj:
+            cmd_path.write_text(cmd, encoding="utf-8")
+            self.copy_from_here(source=cmd_path, target=None)
             return self.run(
-                cmd=f"""$HOME/.local/bin/uv run --with machineconfig python -c "{cmd}\n""" + '"',
+                cmd=f"""$HOME/.local/bin/uv run --with machineconfig python {cmd_path.relative_to(Path.home())}""" + '"',
                 desc=desc or f"run_py on {self.get_remote_repr()}",
                 verbose=verbose,
                 strict_err=strict_err,
                 strict_returncode=strict_returncode,
             )
         assert "obj=" in cmd, "The command sent to run_py must have `obj=` statement if return_obj is set to True"
-        source_file = self.run_py(f"""{cmd}
-import pickle
-import tempfile
-from pathlib import Path
-path = tempfile.emkstemp(suffix=".pkl")[1]
-Path(path).write_bytes(pickle.dumps(obj))
-print(path)""", desc=desc, verbose=verbose, strict_err=True, strict_returncode=True).op.split("\n")[-1]
-        res = self.copy_to_here(source=source_file, target=PathExtended.tmpfile(suffix=".pkl"))
+        return_path = cmd_path.parent.joinpath(f"return_obj_{randstr()}.pkl")
+        def func(pkl_path_rel2_home: str) -> None:
+            pickle_path_obj = Path.home().joinpath(pkl_path_rel2_home).expanduser().absolute()
+            import pickle
+            obj = globals().get("obj", None)
+            pickle_path_obj.write_bytes(pickle.dumps(obj))
+        from machineconfig.utils.meta import function_to_script
+        cmd_complement = function_to_script(func=func, call_with_kwargs={"pkl_path_rel2_home": return_path.relative_to(Path.home()).as_posix()})
+        cmd_total = f"""{cmd}
+{cmd_complement}
+"""
+        cmd_path.write_text(cmd_total, encoding="utf-8")
+        self.copy_from_here(source=cmd_path, target=None)
+        _resp = self.run(f"""$HOME/.local/bin/uv run --with machineconfig python {cmd_path}""", desc=desc, verbose=verbose, strict_err=True, strict_returncode=True).op.split("\n")[-1]
+        res = self.copy_to_here(source=None, target=return_path)
         import pickle
         return pickle.loads(res.read_bytes())
 
@@ -344,28 +356,30 @@ obj=P(r'{source}').search(folders=False, r=True).collapseuser(strict=False)
         print("\n")
         return target_obj
 
-    def receieve(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False) -> PathExtended:
-        scout = self.run_py(cmd=f"obj=scout(r'{source}', z={z}, r={r})", desc=f"Scouting source `{source}` path on remote", return_obj=True, verbose=False)
-        assert isinstance(scout, Scout)
-        if not z and scout.is_dir and scout.files is not None:
-            if r:
-                tmp: list[PathExtended] = [self.receieve(source=file.as_posix(), target=PathExtended(target).joinpath(PathExtended(file).relative_to(source)) if target else None, r=False) for file in scout.files]
-                return tmp[0]
-            else:
-                print("Source is a directory! either set `r=True` for recursive sending or raise `zip_first=True` flag.")
-        if target:
-            target = PathExtended(target).expanduser().absolute()
-        else:
-            target = scout.source_rel2home.expanduser().absolute()
-        target.parent.mkdir(parents=True, exist_ok=True)
-        if z and ".zip" not in target.suffix:
-            target += ".zip"
-        source = scout.source_full
-        with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
-            self.sftp.get(remotepath=source.as_posix(), localpath=target.as_posix(), callback=pbar.view_bar)  # type: ignore # pylint: disable=E1129
-        if z:
-            target = target.unzip(inplace=True, content=True)
-            self.run_py(f"""
-            from machineconfig.utils.path_extended import PathExtended as P; P(r'{source.as_posix()}').delete(sure=True)""", desc="Cleaning temp zip files @ remote.", strict_returncode=True, strict_err=True)
-        print("\n")
-        return target
+#     def receieve(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False) -> PathExtended:
+#         scout = self.run_py(cmd=f"obj=scout(r'{source}', z={z}, r={r})", desc=f"Scouting source `{source}` path on remote", return_obj=True, verbose=False)
+#         assert isinstance(scout, Scout)
+#         if not z and scout.is_dir and scout.files is not None:
+#             if r:
+#                 tmp: list[PathExtended] = [self.receieve(source=file.as_posix(), target=PathExtended(target).joinpath(PathExtended(file).relative_to(source)) if target else None, r=False) for file in scout.files]
+#                 return tmp[0]
+#             else:
+#                 print("Source is a directory! either set `r=True` for recursive sending or raise `zip_first=True` flag.")
+#         if target:
+#             target = PathExtended(target).expanduser().absolute()
+#         else:
+#             target = scout.source_rel2home.expanduser().absolute()
+#         target.parent.mkdir(parents=True, exist_ok=True)
+#         if z and ".zip" not in target.suffix:
+#             target += ".zip"
+#         source = scout.source_full
+#         with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
+#             self.sftp.get(remotepath=source.as_posix(), localpath=target.as_posix(), callback=pbar.view_bar)  # type: ignore # pylint: disable=E1129
+#         if z:
+#             target = target.unzip(inplace=True, content=True)
+#             self.run_py(f"""
+# from machineconfig.utils.path_extended import PathExtended as P;
+# P(r'{source.as_posix()}').delete(sure=True)
+# """, desc="Cleaning temp zip files @ remote.", strict_returncode=True, strict_err=True)
+#         print("\n")
+#         return target
