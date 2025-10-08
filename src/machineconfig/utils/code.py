@@ -10,14 +10,16 @@ from machineconfig.utils.ve import get_ve_activate_line
 from machineconfig.utils.path_extended import PathExtended
 
 
-def get_shell_script_executing_python_file(python_file: str, func: Optional[str], ve_path: str, strict_execution: bool = True):
-    if func is None:
-        exec_line = f"""python {python_file}"""
-    else:
-        exec_line = f"""python -m fire {python_file} {func}"""
+def get_shell_script_executing_python_file(python_file: str, func: Optional[str], ve_path: Optional[str], executable: Optional[str], strict_execution: bool = True):
+    if executable is None: exe_resolved = "python"
+    else: exe_resolved = executable
+    if func is None: exec_line = f"""{exe_resolved} {python_file}"""
+    else: exec_line = f"""{exe_resolved} -m fire {python_file} {func}"""
+    if ve_path is None: ve_activate_line = ""
+    else: ve_activate_line = get_ve_activate_line(ve_path)
     shell_script = f"""
 echo "Executing `{exec_line}`"
-{get_ve_activate_line(ve_path)}
+{ve_activate_line}
 {exec_line}
 deactivate || true
 """
@@ -31,7 +33,7 @@ deactivate || true
     return shell_script
 
 
-def get_shell_file_executing_python_script(python_script: str, ve_path: str, verbose: bool = True):
+def get_shell_file_executing_python_script(python_script: str, ve_path: Optional[str], executable: Optional[str], verbose: bool = True):
     if verbose:
         python_script = f"""
 code = r'''{python_script}'''
@@ -47,7 +49,7 @@ except ImportError:
     python_file = PathExtended.tmp().joinpath("tmp_scripts", "python", randstr() + ".py")
     python_file.parent.mkdir(parents=True, exist_ok=True)
     python_file.write_text(python_script, encoding="utf-8")
-    shell_script = get_shell_script_executing_python_file(python_file=str(python_file), func=None, ve_path=ve_path)
+    shell_script = get_shell_script_executing_python_file(python_file=str(python_file), func=None, ve_path=ve_path, executable=executable)
     shell_file = write_shell_script_to_file(shell_script)
     return shell_file
 
@@ -132,14 +134,3 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
     temp_script_path.unlink(missing_ok=True)
     console.print(f"🗑️  [blue]Temporary script deleted:[/blue] [green]{temp_script_path}[/green]")
     return proc
-
-
-# def run_command(command: str, description: str) -> bool:
-#     """Execute a shell command and return success status."""
-#     console.print(f"\n🔧 {description}", style="bold cyan")
-#     try:
-#         result = subprocess.run(command, shell=True, check=True, capture_output=False)
-#         return result.returncode == 0
-#     except subprocess.CalledProcessError as e:
-#         console.print(f"❌ Error executing command: {e}", style="bold red")
-#         return False

@@ -214,12 +214,11 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             res.print()
         self.terminal_responses.append(res)
         return res
-
     def run_py(self, cmd: str, desc: str = "", return_obj: bool = False, verbose: bool = True, strict_err: bool = False, strict_returncode: bool = False) -> Union[Any, Response]:
         assert '"' not in cmd, 'Avoid using `"` in your command. I dont know how to handle this when passing is as command to python in pwsh command.'
         if not return_obj:
             return self.run(
-                cmd=f"""$HOME/.local/bin/devops self run-python -c "{cmd}\n""" + '"',
+                cmd=f"""$HOME/.local/bin/uv run --with machineconfig python -c "{cmd}\n""" + '"',
                 desc=desc or f"run_py on {self.get_remote_repr()}",
                 verbose=verbose,
                 strict_err=strict_err,
@@ -252,18 +251,16 @@ print(path)""", desc=desc, verbose=verbose, strict_err=True, strict_returncode=T
             if r is False:
                 raise RuntimeError(f"Meta.SSH Error: source `{source_obj}` is a directory! either set `r=True` for recursive sending or raise `z=True` flag to zip it first.")
             source_list: list[PathExtended] = source_obj.search("*", folders=False, files=True, r=True)
-            remote_root = (
-                self.run_py(
-                    f"""
-from machineconfig.utils.path_extended import PathExtended as P
-path=P(r'{PathExtended(target).as_posix()}').expanduser()
-{'path.delete(sure=True)' if overwrite else ''}
-print(path.create())""",
+            def func(item: PathExtended, overwrite: bool) -> None:
+                from machineconfig.utils.path_extended import PathExtended as P
+                path=P(r'{PathExtended(target).as_posix()}').expanduser()
+                if overwrite: path.delete(sure=True)
+                path.parent.mkdir(parents=True, exist_ok=True)
+            from machineconfig.utils.meta import function_to_script
+            command = function_to_script(func=func, call_with_kwargs={"item": PathExtended(target).as_posix(), "overwrite": overwrite})
+            remote_root = (self.run_py(command,
                     desc=f"Creating Target directory `{PathExtended(target).as_posix()}` @ {self.get_remote_repr()}",
-                    verbose=False,
-                ).op
-                or ""
-            )
+                    verbose=False,).op or "")
             for idx, item in enumerate(source_list):
                 print(f"   {idx + 1:03d}. {item}")
             for item in source_list:
