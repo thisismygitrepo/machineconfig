@@ -51,9 +51,8 @@ def display_header() -> None:
     ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
     """
 
-    import machineconfig
     version = get_machineconfig_version()
-    title = f"✨ MACHINE CONFIGURATION v{version}, @ {machineconfig.__file__} ✨"
+    title = f"✨ MACHINE CONFIGURATION v{version} ✨"
     subtitle = "🎯 Your digital life manager. Dotfiles, data, code and more."
     bug_report = "🐛 Please report bugs to Alex Al-Saffar @ https://github.com/thisismygitrepo/machineconfig"
 
