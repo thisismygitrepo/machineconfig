@@ -43,6 +43,7 @@
 * https://github.com/topoteretes/cognee?tab=readme-ov-file
 * https://github.com/ag-ui-protocol/ag-ui 
 * https://github.com/bmad-code-org/BMAD-METHOD
+* https://github.com/github/spec-kit
 
 # Parsing Text
 

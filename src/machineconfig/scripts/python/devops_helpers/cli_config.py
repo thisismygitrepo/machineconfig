@@ -41,6 +41,14 @@ def shell():
     from machineconfig.profile.create_shell_profile import create_default_shell_profile
     create_default_shell_profile()
 
+@config_apps.command(no_args_is_help=False)
+def path():
+    """📚 NAVIGATE PATH variable with TUI"""
+    from machineconfig.scripts.python import env_manager as navigator
+    from pathlib import Path
+    path = Path(navigator.__file__).resolve().parent.joinpath("path_manager_tui.py")
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(f"uv run --no-dev --with machineconfig,textual {path}")
 
 @config_apps.command(no_args_is_help=False)
 def pwsh_theme():
