@@ -35,6 +35,7 @@ dependencies = [
     "pyjson5>=1.6.9",
     "questionary>=2.1.1",
     "typer-slim>=0.19.2",
+    "euporie>=2.8.14",
 ]
 
 [project.optional-dependencies]
@@ -92,6 +93,7 @@ dev = [
     "ipdb>=0.13.13",
     "ipykernel>=6.30.1",
     "ipython>=9.5.0",
+    "marimo>=0.16.5",
     "matplotlib>=3.10.6",
     "mypy>=1.18.2",
     "nuitka>=2.7.16",
