@@ -258,11 +258,3 @@ notepadpp = {this = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', to_th
 # tesseract = {this = '~/AppData/Local/Microsoft/WindowsApps/tesseract.exe', to_this = '~/AppData/Local/Tesseract-OCR/tesseract.exe'}  # doesn't work without whole installation dir is on PATH.
 
 
-[scripts_linux]
-public = {this = '~/scripts', to_this = 'CONFIG_ROOT/scripts/linux'}
-
-[scripts_windows]
-public = {this = '~/scripts', to_this = 'CONFIG_ROOT/scripts/windows'}
-
-
-

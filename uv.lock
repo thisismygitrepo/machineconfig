@@ -1609,7 +1609,6 @@ version = "5.52"
 source = { editable = "." }
 dependencies = [
     { name = "cryptography" },
-    { name = "euporie" },
     { name = "fire" },
     { name = "gitpython" },
     { name = "joblib" },
@@ -1653,6 +1652,7 @@ dev = [
     { name = "cleanpy" },
     { name = "cowsay" },
     { name = "duckdb-engine" },
+    { name = "euporie" },
     { name = "ipdb" },
     { name = "ipykernel" },
     { name = "ipython" },
@@ -1690,7 +1690,6 @@ dev = [
 requires-dist = [
     { name = "cryptography", specifier = ">=44.0.2" },
     { name = "duckdb-engine", marker = "extra == 'plot'", specifier = ">=0.17.0" },
-    { name = "euporie", specifier = ">=2.8.14" },
     { name = "fire", specifier = ">=0.7.0" },
     { name = "gitpython", specifier = ">=3.1.44" },
     { name = "ipykernel", marker = "extra == 'plot'", specifier = ">=6.30.1" },
@@ -1728,6 +1727,7 @@ dev = [
     { name = "cleanpy", specifier = ">=0.5.1" },
     { name = "cowsay", specifier = ">=6.1" },
     { name = "duckdb-engine", specifier = ">=0.17.0" },
+    { name = "euporie", specifier = ">=2.8.14" },
     { name = "ipdb", specifier = ">=0.13.13" },
     { name = "ipykernel", specifier = ">=6.30.1" },
     { name = "ipython", specifier = ">=9.5.0" },
