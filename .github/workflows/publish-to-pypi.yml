@@ -62,7 +62,6 @@ jobs:
         enable-cache: true
 
     # - name: Set up Python
-    #   run: uv python install 3.13
 
     - name: Clean previous build artifacts
       run: |
