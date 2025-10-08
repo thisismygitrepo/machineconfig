@@ -28,10 +28,6 @@ add_to_path_if_not_already \
 . $CONFIG_ROOT/settings/lf/linux/exe/lfcd.sh
 . $CONFIG_ROOT/settings/tere/terecd.sh
 
-if [ -d $CONFIG_ROOT ]; then
-    source $CONFIG_ROOT/settings/shells/bash/commands.sh
-fi
-
 # set alias l to lsd -la
 alias l='lsd -la'
 alias gcs='gh copilot suggest -t shell'

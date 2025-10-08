@@ -33,9 +33,6 @@ Add-ToPathIfNotAlready -Directories @(
 . $MAC_ROOT\src\machineconfig\settings\lf\windows\lfcd.ps1
 . $MAC_ROOT\src\machineconfig\settings\tere\terecd.ps1
 
-if (Test-Path "$MAC_ROOT" -PathType Container) {
-    . "$MAC_ROOT\src\machineconfig\settings\shells\pwsh\commands.ps1"
-}
 
 function lsdla { lsd -la }
 Set-Alias -Name l -Value lsdla -Option AllScope
