@@ -20,7 +20,7 @@ def copy_assets_to_machine(which: Literal["scripts", "settings"]):
             source = LIBRARY_ROOT.joinpath("settings", system)
             target = CONFIG_ROOT.joinpath("settings", system)
     from machineconfig.utils.path_extended import PathExtended
-    PathExtended(source).copy(folder=target.parent)
-    PathExtended(source).copy(folder=target.parent)
+    PathExtended(source).copy(folder=target.parent, overwrite=True)
+    PathExtended(source).copy(folder=target.parent, overwrite=True)
 
 

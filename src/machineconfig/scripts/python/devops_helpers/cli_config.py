@@ -44,9 +44,8 @@ def shell():
 
 @config_apps.command(no_args_is_help=False)
 def pwsh_theme():
-    """🔗 Configure your shell profile."""
+    """🔗 Select powershell prompt theme."""
     import machineconfig.scripts.python.devops_helpers.themes as themes
     file = Path(themes.__file__).parent / "choose_pwsh_theme.ps1"
     import subprocess
-    # subprocess.run(["pwsh", "-File", str(file)])
     subprocess.run(["pwsh", "-File", str(file)])
