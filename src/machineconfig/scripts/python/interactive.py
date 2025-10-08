@@ -150,7 +150,7 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
         console.print(Panel("🐚 [bold green]SHELL PROFILE[/bold green]\n[italic]Shell configuration setup[/italic]", border_style="green"))
         console.print("🔧 Configuring shell profile", style="bold cyan")
         try:
-            from machineconfig.profile.shell import create_default_shell_profile
+            from machineconfig.profile.create_shell_profile import create_default_shell_profile
             create_default_shell_profile()
             console.print("✅ Shell profile configured successfully", style="bold green")
         except Exception as e:

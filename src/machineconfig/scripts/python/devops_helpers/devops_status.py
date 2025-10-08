@@ -36,7 +36,7 @@ def _check_system_info() -> dict[str, str]:
 
 def _check_shell_profile_status() -> dict[str, Any]:
     """Check shell profile configuration status."""
-    from machineconfig.profile.shell import get_shell_profile_path
+    from machineconfig.profile.create_shell_profile import get_shell_profile_path
 
     try:
         profile_path = get_shell_profile_path()
@@ -150,7 +150,7 @@ def _check_ssh_status() -> dict[str, Any]:
 
 def _check_config_files_status() -> dict[str, Any]:
     """Check public and private configuration files status."""
-    from machineconfig.profile.create import read_mapper
+    from machineconfig.profile.create_links import read_mapper
 
     try:
         mapper = read_mapper()

@@ -19,22 +19,5 @@ LINUX_INSTALL_PATH = Path.home().joinpath(".local/bin").__str__()
 WINDOWS_INSTALL_PATH = Path.home().joinpath("AppData/Local/Microsoft/WindowsApps").__str__()
 
 
-def copy_assets_to_machine():
-    import platform
-    if platform.system().lower() == "windows":
-        system = "windows"
-    elif platform.system().lower() == "linux" or platform.system().lower() == "darwin":
-        system = "linux"
-    else:
-        raise NotImplementedError(f"System {platform.system().lower()} not supported")
-    scripts_dir_source = LIBRARY_ROOT.joinpath("scripts", system)
-    settings_dir_source = LIBRARY_ROOT.joinpath("settings")
-    scripts_dir_target = CONFIG_ROOT.joinpath("scripts", system)
-    settings_dir_target = CONFIG_ROOT.joinpath("settings")
-    from machineconfig.utils.path_extended import PathExtended
-    PathExtended(scripts_dir_source).copy(folder=scripts_dir_target.parent)
-    PathExtended(settings_dir_source).copy(folder=settings_dir_target.parent)
-
-
 if __name__ == "__main__":
     pass

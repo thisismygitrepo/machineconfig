@@ -38,6 +38,11 @@ def get_shell_profile_path() -> PathExtended:
 def create_default_shell_profile() -> None:
     shell_profile_path = get_shell_profile_path()
     shell_profile = shell_profile_path.read_text(encoding="utf-8")
+
+    from machineconfig.profile.create_helper import copy_assets_to_machine
+    copy_assets_to_machine("settings")  # init.ps1 or init.sh live here
+    copy_assets_to_machine("scripts")  # init scripts are going to reference those scripts.
+
     if system == "Windows":
         init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/pwsh/init.ps1")
         source_line = f""". {str(init_script.collapseuser()).replace("~", "$HOME")}"""

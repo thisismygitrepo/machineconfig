@@ -13,8 +13,8 @@ def private(method: Literal["symlink", "copy"] = typer.Option(..., "--method", "
                              which: Optional[str] = typer.Option(None, "--which", "-w", help="Specific items to process"),
                              interactive: bool = typer.Option(False, "--interactive", "-ia", help="Run in interactive mode")):
     """🔗 Manage private configuration files."""
-    import machineconfig.profile.create_frontend as create_frontend
-    create_frontend.main_private_from_parser(method=method, on_conflict=on_conflict, which=which, interactive=interactive)
+    import machineconfig.profile.create_links_export as create_links_export
+    create_links_export.main_private_from_parser(method=method, on_conflict=on_conflict, which=which, interactive=interactive)
 
 @config_apps.command(no_args_is_help=True)
 def public(method: Literal["symlink", "copy"] = typer.Option(..., "--method", "-m", help="Method to use for setting up the config file."),
@@ -22,8 +22,8 @@ def public(method: Literal["symlink", "copy"] = typer.Option(..., "--method", "-
                             which: Optional[str] = typer.Option(None, "--which", "-w", help="Specific items to process"),
                             interactive: bool = typer.Option(False, "--interactive", "-ia", help="Run in interactive mode")):
     """🔗 Manage public configuration files."""
-    import machineconfig.profile.create_frontend as create_frontend
-    create_frontend.main_public_from_parser(method=method, on_conflict=on_conflict, which=which, interactive=interactive)
+    import machineconfig.profile.create_links_export as create_links_export
+    create_links_export.main_public_from_parser(method=method, on_conflict=on_conflict, which=which, interactive=interactive)
 
 @config_apps.command(no_args_is_help=True)
 def dotfile(file: Annotated[str, typer.Argument(help="file/folder path.")],
@@ -38,7 +38,7 @@ def dotfile(file: Annotated[str, typer.Argument(help="file/folder path.")],
 @config_apps.command(no_args_is_help=False)
 def shell():
     """🔗 Configure your shell profile."""
-    from machineconfig.profile.shell import create_default_shell_profile
+    from machineconfig.profile.create_shell_profile import create_default_shell_profile
     create_default_shell_profile()
 
 
