@@ -219,7 +219,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         assert '"' not in cmd, 'Avoid using `"` in your command. I dont know how to handle this when passing is as command to python in pwsh command.'
         if not return_obj:
             return self.run(
-                cmd=f"""$HOME/.local/bin/uv run --no-dev --project $HOME/code/machineconfig python -c "{cmd}\n""" + '"',
+                cmd=f"""$HOME/.local/bin/devops self run-python -c "{cmd}\n""" + '"',
                 desc=desc or f"run_py on {self.get_remote_repr()}",
                 verbose=verbose,
                 strict_err=strict_err,
