@@ -169,7 +169,6 @@
 # if params.session_name != "":
 #     if platform.system() in ["Linux", "Darwin"]:
 #         Terminal().run(f"""zellij --session {params.session_name} action new-tab --name results  """)
-#         # --layout ~/code/machineconfig/src/machineconfig/settings/zellij/layouts/d.kdl --cwd {res_folder.as_posix()}
 #         Terminal().run(f"""zellij --session {params.session_name} action write-chars "cd {res_folder.as_posix()};lf" """)
 #     elif platform.system() == "Windows":
 #         Terminal().run(f"""wt --window {params.session_name} new-tab --title results -startingDirectory {res_folder.as_posix()} lf """)

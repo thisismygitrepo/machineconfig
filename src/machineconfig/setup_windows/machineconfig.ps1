@@ -25,3 +25,5 @@ if (Test-Path "machineconfig") {
 cd $HOME\code\machineconfig
 & "$HOME\.local\bin\uv.exe" sync --no-dev
 echo "Finished setting up repos"
+
+# uv tool install machineconfig

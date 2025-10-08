@@ -12,17 +12,11 @@ SHELL ["/bin/bash", "-c"]
 ENV SHELL=/bin/bash
 RUN apt-get update && apt-get install -y bash sudo xz-utils curl git
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-
-
-WORKDIR /root/code/machineconfig
-COPY . .
-
-RUN /root/.local/bin/uv sync --no-dev
-RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops install --group ESSENTIAL_SYSTEM
-# RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops install --group ESSENTIAL
-RUN source /root/.bashrc && /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops install --group ESSENTIAL
-RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops config public --method symlink --which all
-RUN /root/.local/bin/uv run --no-dev --project $HOME/code/machineconfig devops config shell reference
+RUN /root/.local/bin/uv tool install machineconfig
+RUN /root/.local/devops install --group ESSENTIAL_SYSTEM
+RUN /root/.local/devops install --group ESSENTIAL
+RUN /root/.local/devops config public --method symlink --which all
+RUN /root/.local/devops config shell reference
 
 RUN touch /root/.bash_history
 # McFly complains about missing history file

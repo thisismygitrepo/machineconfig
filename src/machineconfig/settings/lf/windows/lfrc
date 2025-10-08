@@ -127,7 +127,3 @@ map Z $~/code/machineconfig/src/machineconfig/settings/lf/windows/cd_zoxide2.ps1
 
 cmd doc $lf -doc | bat
 
-# cmd pre-cd $~/code/machineconfig/src/machineconfig/settings/lf/windows/precd.ps1
-# cmd on-cd $~/code/machineconfig/src/machineconfig/settings/lf/windows/oncd.ps1
-# cmd on-quit ~/code/machineconfig/src/machineconfig/settings/lf/windows/onquit.ps1
-

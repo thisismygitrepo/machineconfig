@@ -17,8 +17,7 @@ drive_location=''
 mount_point=''
 username=''
 password=''
-
-uv run --PYTHON 3.13 --no-dev --project $HOME/code/machineconfig python -m machineconfig.scripts.python.mount_nw_drive
+machineconfig.scripts.python.mount_nw_drive
 
 # Check if mount point directory exists, create if not
 if [ ! -d "$mount_point" ]; then

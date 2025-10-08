@@ -45,8 +45,8 @@
 				"ms-vscode-remote.vscode-remote-extensionpack"
 			],
 			"settings": {
-				"python.pythonPath": "/root/code/machineconfig/.venv/python",
-				"python.defaultInterpreterPath": "/root/code/machineconfig/.venv/python"
+				"python.pythonPath": "/root",
+				"python.defaultInterpreterPath": ""
 			}
 		}
 	},

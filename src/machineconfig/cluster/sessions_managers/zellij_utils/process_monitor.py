@@ -51,12 +51,10 @@ class ProcessMonitor:
             return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "command": "", "tab_name": tab_name, "processes": [], "remote": self.remote_executor.remote_name}
 
         command = tab_config["command"]
-
         try:
             check_script = self._create_process_check_script(command)
             remote_cmd = f"$HOME/code/machineconfig/.venv/bin/python -c {shlex.quote(check_script)}"
             result = self.remote_executor.run_command(remote_cmd, timeout=15)
-
             if result.returncode == 0:
                 try:
                     matching_processes = json.loads(result.stdout.strip())
