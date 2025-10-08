@@ -151,7 +151,7 @@ from pathlib import Path
                 console.print(Panel("❌ Could not determine the local machineconfig repo root. Please ensure the `REPO_ROOT` in `source_of_truth.py` is correctly set to the local path of the machineconfig repo, or do not use the `--local` flag.", title="Error", border_style="red"))
                 return
         else: ve_line = "--with machineconfig[plot]"
-        fire_line = f"uv run --python 3.13 {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
+        fire_line = f"uv run --python 3.14 {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
 
     from machineconfig.utils.code import run_shell_script
     run_shell_script(fire_line, clean_env=False)

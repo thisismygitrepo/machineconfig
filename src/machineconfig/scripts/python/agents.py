@@ -102,8 +102,8 @@ def create(
                       job_name=job_name)
     layoutfile = get_agents_launch_layout(session_root=agents_dir)    
     regenerate_py_code = f"""
-#!/usr/bin/env uv run --python 3.13 --with machineconfig
-fire_agents create --context-path "{prompt_material_path}" \\
+#!/usr/bin/env uv run --python 3.14 --with machineconfig
+agents create --context-path "{prompt_material_path}" \\
     --{search_strategy} "{context_path or keyword_search or filename_pattern}" \\
     --prompt-path "{prompt_path or ''}" \\
     --agent "{agent_selected}" \\
