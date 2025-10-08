@@ -1,5 +1,40 @@
 
 
 iex (iwr "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/uv.ps1").Content
-function devops {& "$HOME\.local\bin\uv.exe" run --python 3.13 --with machineconfig devops $args}
-echo "devops command is now defined in this shell session."
+function devops {
+    & "$HOME\.local\bin\uv.exe" run --python 3.13 --with machineconfig devops $args
+}
+
+function cloud {
+    & "$HOME\.local\bin\uv.exe" run --python 3.13 --with machineconfig cloud $args
+}
+
+function croshell {
+    & "$HOME\.local\bin\uv.exe" run --python 3.13 --with machineconfig croshell $args
+}
+
+function agents {
+    & "$HOME\.local\bin\uv.exe" run --python 3.13 --with machineconfig agents $args
+}
+
+function fire {
+    & "$HOME\.local\bin\uv.exe" run --python 3.13 --with machineconfig fire $args
+}
+
+function ftpx {
+    & "$HOME\.local\bin\uv.exe" run --python 3.13 --with machineconfig ftpx $args
+}
+
+function sessions {
+    & "$HOME\.local\bin\uv.exe" run --python 3.13 --with machineconfig sessions $args
+}
+
+function kill_process {
+    & "$HOME\.local\bin\uv.exe" run --python 3.13 --with machineconfig kill_process $args
+}
+
+
+# DONT use this line in combination with activated virtual enviroment.
+# $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+# uv run --python 3.13 --no-dev --with machineconfig start_slidev $args
+# uv run --python 3.13 --no-dev --with machineconfig pomodoro $args

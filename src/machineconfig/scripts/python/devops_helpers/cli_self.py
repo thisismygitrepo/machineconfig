@@ -28,10 +28,10 @@ def clone():
     from machineconfig.profile.shell import create_default_shell_profile
     if platform.system() == "Windows":
         from machineconfig.setup_windows import MACHINECONFIG
-        create_default_shell_profile(method="copy")
+        create_default_shell_profile()
     else:
         from machineconfig.setup_linux import MACHINECONFIG
-        create_default_shell_profile(method="reference")
+        create_default_shell_profile()
     run_shell_script(MACHINECONFIG.read_text(encoding="utf-8"))
 
 @cli_app.command(no_args_is_help=False)

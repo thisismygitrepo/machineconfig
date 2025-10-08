@@ -3,7 +3,7 @@
 
 from typing import Optional
 from pathlib import Path
-from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH
+from machineconfig.utils.source_of_truth import CONFIG_ROOT, DEFAULTS_PATH
 
 import typer
 
@@ -39,7 +39,7 @@ def resolve_spec_path(directory: Optional[str], cloud: Optional[str]) -> Path:
     repos_root = resolve_directory(directory)
     from machineconfig.utils.path_extended import PathExtended
     if not repos_root.exists() or repos_root.name != "repos.json":
-        candidate = Path(CONFIG_PATH).joinpath("repos").joinpath(PathExtended(repos_root).rel2home()).joinpath("repos.json")
+        candidate = Path(CONFIG_ROOT).joinpath("repos").joinpath(PathExtended(repos_root).rel2home()).joinpath("repos.json")
         repos_root = candidate
         if not repos_root.exists():
             cloud_name: Optional[str]

@@ -23,7 +23,7 @@ def main(
 
     from machineconfig.utils.links import symlink_map
     from machineconfig.utils.path_extended import PathExtended
-    from machineconfig.utils.source_of_truth import LIBRARY_ROOT
+    from machineconfig.utils.source_of_truth import CONFIG_ROOT
     console = Console()
     orig_path = PathExtended(file).expanduser().absolute()
     if dest == "":
@@ -35,7 +35,7 @@ def main(
             junction = orig_path.split(at=".config", sep=-1)[1]
         else:
             junction = orig_path.rel2home()
-        new_path = PathExtended(LIBRARY_ROOT).parent.parent.joinpath(junction)
+        new_path = PathExtended(CONFIG_ROOT).parent.parent.joinpath(junction)
     else:
         dest_path = PathExtended(dest).expanduser().absolute()
         dest_path.mkdir(parents=True, exist_ok=True)
@@ -59,7 +59,7 @@ def main(
 
     mapper_snippet = "\n".join(
         [
-            f"[bold]📝 Edit configuration file:[/] [cyan]nano {PathExtended(LIBRARY_ROOT)}/symlinks/mapper.toml[/cyan]",
+            f"[bold]📝 Edit configuration file:[/] [cyan]nano {PathExtended(CONFIG_ROOT)}/symlinks/mapper.toml[/cyan]",
             "",
             f"[{new_path.parent.name}]",
             f"{orig_path.name.split('.')[0]} = {{ this = '{orig_path.collapseuser().as_posix()}', to_this = '{new_path.collapseuser().as_posix()}' }}",

@@ -11,7 +11,7 @@ from rich.table import Table
 from rich.text import Text
 
 from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.source_of_truth import CONFIG_PATH, DEFAULTS_PATH, LIBRARY_ROOT
+from machineconfig.utils.source_of_truth import CONFIG_ROOT, DEFAULTS_PATH, LIBRARY_ROOT
 
 
 console = Console()
@@ -46,13 +46,13 @@ def _check_shell_profile_status() -> dict[str, Any]:
         profile_content = profile_path.read_text(encoding="utf-8")
         system_name = platform.system()
         if system_name == "Windows":
-            init_script = PathExtended(LIBRARY_ROOT).joinpath("settings/shells/pwsh/init.ps1")
-            init_script_copy = PathExtended(CONFIG_PATH).joinpath("profile/init.ps1").collapseuser()
+            init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/pwsh/init.ps1")
+            init_script_copy = PathExtended(CONFIG_ROOT).joinpath("profile/init.ps1").collapseuser()
             source_reference = f". {str(init_script.collapseuser()).replace('~', '$HOME')}"
             source_copy = f". {str(init_script_copy).replace('~', '$HOME')}"
         else:
-            init_script = PathExtended(LIBRARY_ROOT).joinpath("settings/shells/bash/init.sh")
-            init_script_copy = PathExtended(CONFIG_PATH).joinpath("profile/init.sh").collapseuser()
+            init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/bash/init.sh")
+            init_script_copy = PathExtended(CONFIG_ROOT).joinpath("profile/init.sh").collapseuser()
             source_reference = f"source {str(init_script.collapseuser()).replace('~', '$HOME')}"
             source_copy = f"source {str(init_script_copy).replace('~', '$HOME')}"
 
@@ -77,34 +77,6 @@ def _check_shell_profile_status() -> dict[str, Any]:
             "init_script_exists": False,
             "init_script_copy_exists": False,
         }
-
-
-def _check_machineconfig_repo() -> dict[str, Any]:
-    """Check machineconfig repository status."""
-    repo_path = Path.home().joinpath("code/machineconfig")
-    if not repo_path.exists():
-        return {"exists": False, "is_repo": False, "clean": False, "branch": "N/A", "commit": "N/A", "remotes": []}
-
-    try:
-        import git
-
-        repo = git.Repo(str(repo_path))
-        is_dirty = repo.is_dirty(untracked_files=True)
-        current_branch = repo.active_branch.name if not repo.head.is_detached else "DETACHED"
-        current_commit = repo.head.commit.hexsha[:8]
-        remotes = [remote.name for remote in repo.remotes]
-
-        return {
-            "exists": True,
-            "is_repo": True,
-            "clean": not is_dirty,
-            "branch": current_branch,
-            "commit": current_commit,
-            "remotes": remotes,
-            "path": str(repo_path),
-        }
-    except Exception as ex:
-        return {"exists": True, "is_repo": False, "clean": False, "branch": "Error", "commit": "N/A", "remotes": [], "error": str(ex)}
 
 
 def _check_repos_status() -> dict[str, Any]:
@@ -320,47 +292,6 @@ def _display_shell_status(status: dict[str, Any]) -> None:
     )
 
 
-def _display_machineconfig_repo(info: dict[str, Any]) -> None:
-    """Display machineconfig repository status."""
-    console.rule("[bold magenta]📦 Machineconfig Repository[/bold magenta]")
-    if not info["exists"]:
-        console.print(
-            Panel(
-                "❌ Machineconfig repository not found at its supposed location.",
-                title="Repository Status",
-                border_style="red",
-                padding=(1, 2),
-                expand=False,
-            )
-        )
-        return
-
-    if not info["is_repo"]:
-        console.print(
-            Panel(
-                f"❌ Directory exists but is not a git repository\n{info.get('error', 'Unknown error')}",
-                title="Repository Status",
-                border_style="red",
-                padding=(1, 2),
-                expand=False,
-            )
-        )
-        return
-
-    table = Table(show_header=False, box=None, padding=(0, 1), expand=False)
-    table.add_column("Property", style="cyan", no_wrap=True)
-    table.add_column("Value", style="white")
-
-    table.add_row("📁 Path", info["path"])
-    table.add_row("🌿 Branch", info["branch"])
-    table.add_row("🔖 Commit", info["commit"])
-    table.add_row(f"{'✅' if info['clean'] else '⚠️'} Status", "Clean" if info["clean"] else "Uncommitted changes")
-    table.add_row("📡 Remotes", ", ".join(info["remotes"]) if info["remotes"] else "None")
-
-    border_style = "green" if info["clean"] else "yellow"
-    console.print(Panel(table, title="Machineconfig Repository", border_style=border_style, padding=(1, 2), expand=False))
-
-
 def _display_repos_status(status: dict[str, Any]) -> None:
     """Display configured repositories status."""
     console.rule("[bold cyan]📚 Configured Repositories[/bold cyan]")
@@ -555,9 +486,6 @@ def main() -> None:
 
     shell_status = _check_shell_profile_status()
     _display_shell_status(shell_status)
-
-    machineconfig_repo = _check_machineconfig_repo()
-    _display_machineconfig_repo(machineconfig_repo)
 
     repos_status = _check_repos_status()
     _display_repos_status(repos_status)

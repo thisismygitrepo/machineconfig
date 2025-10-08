@@ -2,7 +2,7 @@
 slidev
 """
 
-from machineconfig.utils.source_of_truth import CONFIG_PATH
+from machineconfig.utils.source_of_truth import CONFIG_ROOT
 from machineconfig.utils.code import print_code
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.terminal import Response
@@ -13,7 +13,7 @@ import platform
 
 PORT_DEFAULT = 3030
 
-SLIDEV_REPO = PathExtended(CONFIG_PATH).joinpath(".cache/slidev")
+SLIDEV_REPO = PathExtended(CONFIG_ROOT).joinpath(".cache/slidev")
 if not SLIDEV_REPO.joinpath("components").exists():
     print("📦 Initializing Slidev repository...")
     subprocess.run(f"cd {SLIDEV_REPO.parent};npm init slidev@latest", check=False, shell=True, text=True)

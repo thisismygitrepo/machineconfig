@@ -73,7 +73,7 @@ map ww $powershell
 map wp $pwsh
 map wc $~/scripts/croshell.ps1
 map wm $cmd
-map i $~/code/machineconfig/src/machineconfig/settings/lf/windows/previewer.ps1 $env:f
+map i $~/.config/machineconfig/settings/lf/windows/previewer.ps1 $env:f
 map R $powershell $env:USERPROFILE/scripts/croshell.ps1 -r $env:f
 
 # o file/folder Operations
@@ -104,12 +104,12 @@ map jx cd ~/dotfiles
 map jh cd ~
 map ja cd $env:LOCALAPPDATA
 map jA cd $env:APPDATA
-map jj $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- $env:USERPROFILE/code/machineconfig/src/machineconfig/settings/lf/windows/lfrc
+map jj $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- $HOME/.config/machineconfig/settings/lf/windows/lfrc
 
 
 
 # m make
 map m
-map md $~/code/machineconfig/src/machineconfig/settings/lf/windows/mkdir.ps1
-map mf $~/code/machineconfig/src/machineconfig/settings/lf/windows/mkfile.ps1
+map md $~/.config/machineconfig/settings/lf/windows/mkdir.ps1
+map mf $~/.config/machineconfig/settings/lf/windows/mkfile.ps1
 

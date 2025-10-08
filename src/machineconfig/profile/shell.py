@@ -1,8 +1,7 @@
 """shell"""
 
-from typing import Literal
 from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.source_of_truth import LIBRARY_ROOT, CONFIG_PATH
+from machineconfig.utils.source_of_truth import CONFIG_ROOT
 
 import platform
 import os
@@ -36,51 +35,22 @@ def get_shell_profile_path() -> PathExtended:
     return profile_path
 
 
-def create_default_shell_profile(method: Literal["copy", "reference"]) -> None:
-    if method == "reference":
-        machineconfig_repo_path = LIBRARY_ROOT.parent.parent
-        if not machineconfig_repo_path.exists() or not machineconfig_repo_path.is_dir() and machineconfig_repo_path.name != "machineconfig" and not machineconfig_repo_path.parent.name != "code":
-            raise FileNotFoundError(f"machineconfig repo not found at {machineconfig_repo_path}. Cannot create symlinks to non-existing source files.")
-
+def create_default_shell_profile() -> None:
     shell_profile_path = get_shell_profile_path()
     shell_profile = shell_profile_path.read_text(encoding="utf-8")
-
     if system == "Windows":
-        init_script = PathExtended(LIBRARY_ROOT).joinpath("settings/shells/pwsh/init.ps1")
-
-        init_script_copy_path = PathExtended(CONFIG_PATH).joinpath("profile/init.ps1").collapseuser()
-        init_script_copy_path.parent.mkdir(parents=True, exist_ok=True)
-        init_script.copy(path=init_script_copy_path, overwrite=True)
-
-        source_using_copy = f""". {str(init_script_copy_path).replace("~", "$HOME")}"""
-        source_using_reference = f""". {str(init_script.collapseuser()).replace("~", "$HOME")}"""
+        init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/pwsh/init.ps1")
+        source_line = f""". {str(init_script.collapseuser()).replace("~", "$HOME")}"""
     else:
-        init_script = PathExtended(LIBRARY_ROOT).joinpath("settings/shells/bash/init.sh")
-        init_script_copy_path = PathExtended(CONFIG_PATH).joinpath("profile/init.sh").collapseuser()
-        init_script_copy_path.parent.mkdir(parents=True, exist_ok=True)
-        init_script.copy(path=init_script_copy_path, overwrite=True)
-
-        source_using_reference = f"""source {str(init_script.collapseuser()).replace("~", "$HOME")}"""
-        source_using_copy = f"""source {str(init_script_copy_path).replace("~", "$HOME")}"""
-
-    match method:
-        case "copy":
-            line_of_interest = source_using_copy
-            line_other = source_using_reference
-        case "reference":
-            line_of_interest = source_using_reference
-            line_other = source_using_copy
+        init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/bash/init.sh")
+        source_line = f"""source {str(init_script).replace("~", "$HOME")}"""
 
     was_shell_updated = False
-    if line_other in shell_profile:  # always remove this irrelevant line
-        shell_profile = shell_profile.replace(line_other, "")
-        was_shell_updated = True
-
-    if line_of_interest in shell_profile:
+    if source_line in shell_profile:
         console.print(Panel("🔄 PROFILE | Skipping init script sourcing - already present in profile", title="[bold blue]Profile[/bold blue]", border_style="blue"))        
     else:
         console.print(Panel("📝 PROFILE | Adding init script sourcing to profile", title="[bold blue]Profile[/bold blue]", border_style="blue"))
-        shell_profile += "\n" + line_of_interest + "\n"
+        shell_profile += "\n" + source_line + "\n"
         if system == "Linux":
             result = subprocess.run(["cat", "/proc/version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False)
             if result.returncode == 0 and result.stdout:

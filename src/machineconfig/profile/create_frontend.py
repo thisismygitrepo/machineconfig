@@ -1,7 +1,6 @@
 
 import typer
 from typing import Optional, Literal
-from pathlib import Path
 
 
 def main_public_from_parser(method: Literal["symlink", "copy"] = typer.Option(..., help="Method to use for setting up the config file."),
@@ -13,11 +12,6 @@ def main_public_from_parser(method: Literal["symlink", "copy"] = typer.Option(..
     TARGET = Config-File-Default-Path
     For public config files, the source always exists, because we know it comes from machineconfig repo."""
     from machineconfig.profile.create import ConfigMapper, read_mapper
-    if method == "symlink":
-        machineconfig_repo_path = Path.home().joinpath("code/machineconfig")
-        if not machineconfig_repo_path.exists() or not machineconfig_repo_path.is_dir():
-            raise FileNotFoundError(f"machineconfig repo not found at {machineconfig_repo_path}. Cannot create symlinks to non-existing source files.")
-
     mapper_full = read_mapper()["public"]
     if which is None:
         assert interactive is True

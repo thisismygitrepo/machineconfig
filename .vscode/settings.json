@@ -1,4 +1,4 @@
 {
-    "python.defaultInterpreterPath": "/home/alex/code/machineconfig/.venv/bin/python",
+    "python.defaultInterpreterPath": "$HOME/code/machineconfig/.venv/bin/python",
     "python-envs.pythonProjects": []
 }

@@ -13,7 +13,7 @@ from rich.table import Table
 
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.links import symlink_map, copy_map
-from machineconfig.utils.source_of_truth import LIBRARY_ROOT, CONFIG_PATH
+from machineconfig.utils.source_of_truth import LIBRARY_ROOT, CONFIG_ROOT
 
 import platform
 import subprocess
@@ -63,7 +63,7 @@ def read_mapper() -> MapperFileData:
                 "contents": file_base.get("contents"),
                 "copy": file_base.get("copy"),
             }
-            if "LIBRARY_ROOT" in file_map["self_managed_config_file_path"]:
+            if "CONFIG_ROOT" in file_map["self_managed_config_file_path"]:
                 if program_key not in public:
                     public[program_key] = []
                 public[program_key].append(file_map)
@@ -107,7 +107,7 @@ def apply_mapper(mapper_data: dict[str, list[ConfigMapper]],
         console.rule(f"🔄 Processing [bold]{program_name}[/] symlinks", style="cyan")
         for a_mapper in program_files:
             config_file_default_path = PathExtended(a_mapper["config_file_default_path"])
-            self_managed_config_file_path = PathExtended(a_mapper["self_managed_config_file_path"].replace("LIBRARY_ROOT", LIBRARY_ROOT.as_posix()))
+            self_managed_config_file_path = PathExtended(a_mapper["self_managed_config_file_path"].replace("CONFIG_ROOT", CONFIG_ROOT.as_posix()))
             
             # Determine whether to use copy or symlink
             use_copy = method == "copy" or a_mapper.get("copy", False)
@@ -215,7 +215,7 @@ def apply_mapper(mapper_data: dict[str, list[ConfigMapper]],
 
     if system == "Linux":
         console.print("\n[bold]📜 Setting executable permissions for scripts...[/bold]")
-        subprocess.run(f"chmod +x {LIBRARY_ROOT.joinpath(f'scripts/{system.lower()}')} -R", shell=True, capture_output=True, text=True)
+        subprocess.run(f"chmod +x {CONFIG_ROOT.joinpath(f'scripts/{system.lower()}')} -R", shell=True, capture_output=True, text=True)
         console.print("[green]✅ Script permissions updated[/green]")
 
     # Display operation summary table
@@ -250,8 +250,8 @@ def apply_mapper(mapper_data: dict[str, list[ConfigMapper]],
         # Export operation records to CSV
         import csv
         from datetime import datetime
-        
-        csv_dir = PathExtended(CONFIG_PATH).joinpath("symlink_operations")
+
+        csv_dir = PathExtended(CONFIG_ROOT).joinpath("symlink_operations")
         csv_dir.mkdir(parents=True, exist_ok=True)
         
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

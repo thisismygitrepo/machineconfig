@@ -35,11 +35,11 @@ def dotfile(file: Annotated[str, typer.Argument(help="file/folder path.")],
     dotfile_module.main(file=file, overwrite=overwrite, dest=dest)
 
 
-@config_apps.command(no_args_is_help=True)
-def shell(method: Annotated[Literal["copy", "reference"], typer.Argument(help="Choose the method to configure the shell profile: 'copy' copies the init script directly, 'reference' references machineconfig for dynamic updates.")]):
+@config_apps.command(no_args_is_help=False)
+def shell():
     """🔗 Configure your shell profile."""
     from machineconfig.profile.shell import create_default_shell_profile
-    create_default_shell_profile(method=method)
+    create_default_shell_profile()
 
 
 @config_apps.command(no_args_is_help=False)

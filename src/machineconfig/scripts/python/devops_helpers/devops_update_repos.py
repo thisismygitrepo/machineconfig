@@ -198,7 +198,7 @@ def _display_summary(results: list[RepositoryUpdateResult]) -> None:
 def main(verbose: bool = True, allow_password_prompt: bool = False) -> None:
     """Main function to update all configured repositories."""
     _ = verbose
-    repos: list[Path] = [Path.home() / "code/machineconfig"]
+    repos: list[Path] = []
     try:
         tmp = read_ini(DEFAULTS_PATH)["general"]["repos"].split(",")
         if tmp[-1] == "":

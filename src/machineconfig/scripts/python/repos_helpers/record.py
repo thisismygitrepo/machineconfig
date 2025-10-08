@@ -3,7 +3,7 @@ from pathlib import Path
 from machineconfig.utils.schemas.repos.repos_types import GitVersionInfo, RepoRecordDict, RepoRemote
 
 from machineconfig.utils.schemas.repos.repos_types import RepoRecordFile
-from machineconfig.utils.source_of_truth import CONFIG_PATH
+from machineconfig.utils.source_of_truth import CONFIG_ROOT
 from machineconfig.utils.io import save_json
 
 from typing import Optional
@@ -242,7 +242,7 @@ def main(repos_root: Path):
     tree_structure = build_tree_structure(repo_records, repos_root)
     print(tree_structure)
 
-    save_path = CONFIG_PATH.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
+    save_path = CONFIG_ROOT.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
     save_json(obj=res, path=save_path, indent=4)
     pprint(f"📁 Result saved at {PathExtended(save_path)}")
     print(">>>>>>>>> Finished Recording")

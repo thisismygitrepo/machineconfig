@@ -1,9 +1,9 @@
 
 import platform
-from machineconfig.utils.source_of_truth import LIBRARY_ROOT
+from machineconfig.utils.source_of_truth import CONFIG_ROOT
 
 
-APP_SUMMARY_PATH = LIBRARY_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
+APP_SUMMARY_PATH = CONFIG_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
 # CLOUD: str = "gdw"  # Read.ini(DEFAULTS_PATH)['general']['rclone_config_name']
 # # my onedrive doesn't allow sharing.
 

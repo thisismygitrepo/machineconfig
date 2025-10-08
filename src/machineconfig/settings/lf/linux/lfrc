@@ -14,8 +14,8 @@ set number true  # show line numbers
 
 set preview true        # preview file on the right pane
 # set previewer chafa --format sixel --work 9 --optimize 9 --stretch --zoom --size 140x80
-set previewer ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh
-set cleaner ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/cleaner.sh
+set previewer $HOME/.config/machineconfig/settings/lf/linux/exe/previewer.sh
+set cleaner $HOME/.config/machineconfig/settings/lf/linux/exe/cleaner.sh
 # set previewer pistol
 
 # set sixels true
@@ -48,7 +48,7 @@ set ratios '1:2:3'  # ratio of pane widths
 
 
 # test image viewer
-map Q !~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh "$f"
+map Q !$HOME/.config/machineconfig/settings/lf/linux/exe/previewer.sh "$f"
 
 # key bindings
 map vmap v  # default is invert
@@ -85,7 +85,7 @@ map ww bash
 # map wp $powershell
 map wr $~/scripts/croshell
 # map wm $cmd
-map i !~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh $f
+map i !~/.config/machineconfig/settings/lf/linux/exe/previewer.sh $f
 map I !cat $f | gum pager
 map R $~/scripts/croshell -r $f
 map O $~/scripts/croshell -rj $f

@@ -8,13 +8,13 @@ add_to_path_if_not_already() {
         fi
     done
 }
-machineconfig_path="$HOME/code/machineconfig"
+CONFIG_ROOT="$HOME/.config/machineconfig"
 
 # 📂 Add directories to PATH
 add_to_path_if_not_already \
     "$HOME/.local/bin" \
     "$HOME/.cargo/bin" \
-    "$machineconfig_path/src/machineconfig/scripts/linux" \
+    "$CONFIG_ROOT/scripts/linux" \
     "$HOME/dotfiles/scripts/linux" \
     "$HOME/.nix-profile/bin" \
     "/home/linuxbrew/.linuxbrew/bin" \
@@ -24,12 +24,12 @@ add_to_path_if_not_already \
 
 
 # echo "Sourcing scripts ..."
-. $machineconfig_path/src/machineconfig/settings/broot/br.sh
-. $machineconfig_path/src/machineconfig/settings/lf/linux/exe/lfcd.sh
-. $machineconfig_path/src/machineconfig/settings/tere/terecd.sh
+. $CONFIG_ROOT/settings/broot/br.sh
+. $CONFIG_ROOT/settings/lf/linux/exe/lfcd.sh
+. $CONFIG_ROOT/settings/tere/terecd.sh
 
-if [ -d $machineconfig_path ]; then
-    source $machineconfig_path/src/machineconfig/settings/shells/bash/commands.sh
+if [ -d $CONFIG_ROOT ]; then
+    source $CONFIG_ROOT/settings/shells/bash/commands.sh
 fi
 
 # set alias l to lsd -la
