@@ -46,7 +46,10 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
     # =========================  preparing kwargs_dict
     if choice_file.suffix == ".py":
         kwargs_dict = extract_kwargs(args)  # This now returns empty dict, but kept for compatibility
-        activate_ve_line = get_ve_activate_line(ve_root=args.ve or ve_root_from_file or "$HOME/code/machineconfig/.venv")
+        ve_root = args.ve or ve_root_from_file
+        if ve_root is None:
+            raise ValueError(f"Could not determine virtual environment for file {choice_file}. Please ensure it is within a recognized project structure or specify the `--ve` option.")
+        activate_ve_line = get_ve_activate_line(ve_root=ve_root)
     else:
         activate_ve_line = ""
         kwargs_dict = {}

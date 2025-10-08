@@ -34,5 +34,5 @@ function devops {
 
 # DONT use this line in combination with activated virtual enviroment.
 # $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
-# uv run --python 3.13 --no-dev --project $HOME/code/machineconfig start_slidev $args
-# uv run --python 3.13 --no-dev --project $HOME/code/machineconfig pomodoro $args
+# uv run --python 3.13 --no-dev --with machineconfig start_slidev $args
+# uv run --python 3.13 --no-dev --with machineconfig pomodoro $args

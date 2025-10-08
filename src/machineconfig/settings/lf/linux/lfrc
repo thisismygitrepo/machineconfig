@@ -70,7 +70,6 @@ map <c-u>  # half-up
 # e edit
 map e  # edit modal key.
 map eh $hx $f
-map eH !source ~/code/machineconfig/.venv/bin/activate;hx $f
 map en $nano $f
 map el $lvim $f
 map ev $nvim $f

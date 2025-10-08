@@ -66,7 +66,6 @@ uv run -m cleanpy .
 uv run -m ruff clean
 # uv run -m ruff format .
 uv run -m ruff check . --fix
-uv run --no-dev --project $HOME/code/machineconfig -m machineconfig.scripts.python.ai.generate_files
 
 New-Item -ItemType Directory -Force -Path .ai/linters | Out-Null
 

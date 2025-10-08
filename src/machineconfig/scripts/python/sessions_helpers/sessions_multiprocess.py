@@ -36,8 +36,10 @@ def create_from_function(
     ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
     if ipy_profile is None:
         ipy_profile = "default"
+    if ve_root_from_file is None:
+        raise ValueError(f"Could not determine virtual environment for file {choice_file}. Please ensure it is within a recognized project structure.")
 
-    _activate_ve_line = get_ve_activate_line(ve_root=ve_root_from_file or "$HOME/code/machineconfig/.venv")
+    _activate_ve_line = get_ve_activate_line(ve_root=ve_root_from_file)
 
     # =========================  choosing function to run
     if function is None or function.strip() == "":

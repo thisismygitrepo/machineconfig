@@ -323,11 +323,10 @@ def _display_shell_status(status: dict[str, Any]) -> None:
 def _display_machineconfig_repo(info: dict[str, Any]) -> None:
     """Display machineconfig repository status."""
     console.rule("[bold magenta]📦 Machineconfig Repository[/bold magenta]")
-
     if not info["exists"]:
         console.print(
             Panel(
-                "❌ Machineconfig repository not found at ~/code/machineconfig",
+                "❌ Machineconfig repository not found at its supposed location.",
                 title="Repository Status",
                 border_style="red",
                 padding=(1, 2),

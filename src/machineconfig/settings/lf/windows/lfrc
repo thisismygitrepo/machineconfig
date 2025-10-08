@@ -24,8 +24,6 @@ set ifs "\n"
 # see this: https://github.com/ahrm/dotfiles/tree/main/lf-windows/lf_scripts
 # https://github.com/NikitaIvanovV/ctpv
 
-# set previewer ~/code/machineconfig/src/machineconfig/settings/lf/leftpane_previewer.ps1
-# set previewer ~\AppData\Local\Microsoft\WindowsApps\bat.exe  --color=always --theme=base16
 # also see pistol file previewer.
 # set shell pwsh  # too slow.
 # set ignorecase true
@@ -103,7 +101,6 @@ map jc cd ~/code
 map jd cd ~/data
 map jD cd ~/Downloads
 map jx cd ~/dotfiles
-map jm cd ~/code/machineconfig/src/machineconfig
 map jh cd ~
 map ja cd $env:LOCALAPPDATA
 map jA cd $env:APPDATA

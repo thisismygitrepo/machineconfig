@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 
 $JOB_NAME = "outpatient_mapping"
-$REPO_ROOT = "$HOME/code/machineconfig"
+$REPO_ROOT = "$HOME/code/ machineconfig"
 $CONTEXT_PATH = "$REPO_ROOT/src/machineconfig/scripts/python/fire_jobs.py"
 $PROMPT_PATH = "$REPO_ROOT/src/machineconfig/scripts/python/helpers_fire/prompt.txt"
 
