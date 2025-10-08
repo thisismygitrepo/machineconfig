@@ -8,12 +8,13 @@ add_to_path_if_not_already() {
         fi
     done
 }
+machineconfig_path="$HOME/code/machineconfig"
 
 # 📂 Add directories to PATH
 add_to_path_if_not_already \
     "$HOME/.local/bin" \
     "$HOME/.cargo/bin" \
-    "$HOME/code/machineconfig/src/machineconfig/scripts/linux" \
+    "$machineconfig_path/src/machineconfig/scripts/linux" \
     "$HOME/dotfiles/scripts/linux" \
     "$HOME/.nix-profile/bin" \
     "/home/linuxbrew/.linuxbrew/bin" \
@@ -23,7 +24,6 @@ add_to_path_if_not_already \
 
 
 # echo "Sourcing scripts ..."
-machineconfig_path=$HOME/code/machineconfig
 . $machineconfig_path/src/machineconfig/settings/broot/br.sh
 . $machineconfig_path/src/machineconfig/settings/lf/linux/exe/lfcd.sh
 . $machineconfig_path/src/machineconfig/settings/tere/terecd.sh
