@@ -15,6 +15,7 @@ def interactive():
     """🤖 INTERACTIVE configuration of machine."""
     from machineconfig.scripts.python.interactive import main
     main()
+
 @cli_app.command()
 def status():
     """📊 STATUS of machine, shell profile, apps, symlinks, dotfiles, etc."""
@@ -37,8 +38,9 @@ def install():
 @cli_app.command(no_args_is_help=False)
 def navigate():
     """📚 NAVIGATE command structure with TUI"""
-    from machineconfig.scripts.python.devops_navigator import main
-    main()
+    from machineconfig.scripts.python.devops_navigator import CommandNavigatorApp
+    app = CommandNavigatorApp()
+    app.run()
 
 
 @cli_app.command(no_args_is_help=True)

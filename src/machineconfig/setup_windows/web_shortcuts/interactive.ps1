@@ -29,6 +29,3 @@ function sessions {
     & "$HOME\.local\bin\uv.exe" run --python 3.13 --with machineconfig sessions $args
 }
 
-function kill_process {
-    & "$HOME\.local\bin\uv.exe" run --python 3.13 --with machineconfig kill_process $args
-}

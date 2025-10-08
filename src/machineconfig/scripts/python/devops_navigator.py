@@ -894,16 +894,3 @@ class CommandNavigatorApp(App[None]):
         self.notify(help_text, severity="information", timeout=10)
 
 
-def main() -> None:
-    """Run the command navigator TUI."""
-    app = CommandNavigatorApp()
-    app.run()
-
-
-def main_from_parser() -> None:
-    """Entry point for CLI."""
-    main()
-
-
-if __name__ == "__main__":
-    main()

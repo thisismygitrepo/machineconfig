@@ -18,9 +18,6 @@ fire() {
 ftpx() {
     "$HOME/.local/bin/uv" run --python 3.14 --with machineconfig ftpx "$@"
 }
-kill_process() {
-    "$HOME/.local/bin/uv" run --python 3.14 --with machineconfig kill_process "$@"
-}
 sessions() {
     "$HOME/.local/bin/uv" run --python 3.14 --with machineconfig sessions "$@"
 }
