@@ -121,6 +121,13 @@ def symlink_map(config_file_default_path: PathExtended, self_managed_config_file
     action_taken = ""
     details = ""
     
+    # Handle broken symlinks first - they exist as symlinks but point to non-existent targets
+    if config_file_default_path.is_symlink() and not config_file_default_path.exists():
+        action_taken = "fixing_broken_link"
+        details = "Removed broken symlink and will create new one"
+        console.print(Panel(f"🔄 FIXING BROKEN LINK | Removing broken symlink {config_file_default_path}, will create link to {self_managed_config_file_path}", title="Fixing Broken Link", expand=False))
+        config_file_default_path.unlink()
+    
     # Case analysis based on docstring
     if config_file_default_path.exists():
         if self_managed_config_file_path.exists():
@@ -237,6 +244,13 @@ def copy_map(config_file_default_path: PathExtended, self_managed_config_file_pa
     
     action_taken = ""
     details = ""
+    
+    # Handle broken symlinks first - they exist as symlinks but point to non-existent targets
+    if config_file_default_path.is_symlink() and not config_file_default_path.exists():
+        action_taken = "fixing_broken_link"
+        details = "Removed broken symlink and will copy new file"
+        console.print(Panel(f"🔄 FIXING BROKEN LINK | Removing broken symlink {config_file_default_path}, will copy from {self_managed_config_file_path}", title="Fixing Broken Link", expand=False))
+        config_file_default_path.unlink()
     
     match (config_file_default_path.exists(), self_managed_config_file_path.exists()):
         case (True, True):
