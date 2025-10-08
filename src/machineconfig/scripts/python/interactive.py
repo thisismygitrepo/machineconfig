@@ -129,14 +129,14 @@ def execute_installations(selected_options: list[str]) -> None:
 
     if "install_repos" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
+        import platform
         if platform.system() == "Windows":
-            from machineconfig.setup_windows import MACHINECONFIG
+            run_shell_script(r"""$HOME\.local\bin\uv.exe tool install machineconfig""")
         else:
-            from machineconfig.setup_linux import MACHINECONFIG
-        run_shell_script(MACHINECONFIG.read_text(encoding="utf-8"))
-
+            run_shell_script("""$HOME/.local/bin/uv tool install machineconfig""")
     if "install_ssh_server" in selected_options:
         console.print(Panel("🔒 [bold red]SSH SERVER[/bold red]\n[italic]Remote access setup[/italic]", border_style="red"))
+        import platform
         if platform.system() == "Windows":
             powershell_script = """Write-Host "🔧 Installing and configuring SSH server..."
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
