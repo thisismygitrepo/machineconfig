@@ -213,11 +213,6 @@ def apply_mapper(mapper_data: dict[str, list[ConfigMapper]],
                     ERROR_LIST.append(e)
                     console.print(f"❌ [red]Error setting SSH permissions[/red]: {e}")
 
-    if system == "Linux":
-        console.print("\n[bold]📜 Setting executable permissions for scripts...[/bold]")
-        subprocess.run(f"chmod +x {CONFIG_ROOT.joinpath(f'scripts/{system.lower()}')} -R", shell=True, capture_output=True, text=True)
-        console.print("[green]✅ Script permissions updated[/green]")
-
     # Display operation summary table
     if operation_records:
         table = Table(title="🔗 Symlink Operations Summary", show_header=True, header_style="bold magenta")
