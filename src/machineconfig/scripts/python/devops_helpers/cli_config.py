@@ -63,7 +63,7 @@ def copy_assets(which: Literal["scripts", "settings", "both"] = typer.Option(...
 
 
 def get_app():
-    config_apps = typer.Typer(help="⚙️  [c] configuration subcommands", no_args_is_help=True)
+    config_apps = typer.Typer(help="⚙️ [c] configuration subcommands", no_args_is_help=True)
     config_apps.command("private", no_args_is_help=True, help="🔗  [p] Manage private configuration files.")(private)
     config_apps.command("p", no_args_is_help=True, help="Manage private configuration files.", hidden=True)(private)
     config_apps.command("public", no_args_is_help=True, help="🔗  [u] Manage public configuration files.")(public)

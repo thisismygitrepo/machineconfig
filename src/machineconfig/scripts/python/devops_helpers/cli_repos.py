@@ -162,7 +162,7 @@ def get_app():
 
     repos_apps.command(name="push", help="🚀  [p] Push changes across repositories")(push)
     repos_apps.command(name="p", help="Push changes across repositories", hidden=True)(push)
-    repos_apps.command(name="pull", help="⬇️   [P] Pull changes across repositories")(pull)
+    repos_apps.command(name="pull", help="⬇️  [P] Pull changes across repositories")(pull)
     repos_apps.command(name="P", help="Pull changes across repositories", hidden=True)(pull)
     repos_apps.command(name="commit", help="💾  [c] Commit changes across repositories")(commit)
     repos_apps.command(name="c", help="Commit changes across repositories", hidden=True)(commit)

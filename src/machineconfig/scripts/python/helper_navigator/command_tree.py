@@ -314,14 +314,21 @@ class CommandTree(Tree[CommandInfo]):
             help_text="devops self navigate"
         ))
 
-        # fire command
-        self.root.add("🔥 fire - Fire jobs execution", data=CommandInfo(
+        # fire command - now a typer sub-app
+        fire_node = self.root.add("🔥 fire - Fire jobs execution", data=CommandInfo(
             name="fire",
-            description="Execute Python scripts with Fire",
+            description="Fire and manage jobs",
             command="fire",
-            is_group=False,
-            module_path="machineconfig.scripts.python.fire_jobs",
-            help_text="fire <path> [function] --ve <env> --interactive --jupyter --streamlit --debug --loop --remote --zellij_tab <name>"
+            is_group=True,
+            module_path="machineconfig.scripts.python.fire_jobs"
+        ))
+
+        fire_node.add("🔥 fire - Execute Python/Shell scripts", data=CommandInfo(
+            name="fire",
+            description="Execute Python scripts, shell scripts, or PowerShell scripts with Fire",
+            command="fire",
+            parent="fire",
+            help_text="fire <path> [function] --ve <env> --cmd --interactive --debug --choose_function --loop --jupyter --submit_to_cloud --remote --module --streamlit --environment <env> --holdDirectory --PathExport --git_pull --optimized --zellij_tab <name> --watch"
         ))
 
         # agents command
@@ -373,6 +380,14 @@ class CommandTree(Tree[CommandInfo]):
             help_text="agents make-todo"
         ))
 
+        agents_node.add("🔗 make-symlinks - Create repo symlinks", data=CommandInfo(
+            name="make-symlinks",
+            description="Create symlinks to the current repo in ~/code_copies/",
+            command="agents make-symlinks",
+            parent="agents",
+            help_text="agents make-symlinks"
+        ))
+
         # sessions command
         sessions_node = self.root.add("🖥️  sessions - Session layouts management", data=CommandInfo(
             name="sessions",
@@ -404,6 +419,14 @@ class CommandTree(Tree[CommandInfo]):
             command="sessions balance-load",
             parent="sessions",
             help_text="sessions balance-load --layout-path <file> --max-thresh <num> --thresh-type <number|weight> --breaking-method <moreLayouts|combineTabs> --output-path <file>"
+        ))
+
+        sessions_node.add("💀 kill-process - Kill processes", data=CommandInfo(
+            name="kill-process",
+            description="Choose a process to kill interactively",
+            command="sessions kill-process",
+            parent="sessions",
+            help_text="sessions kill-process"
         ))
 
         # cloud command
@@ -457,14 +480,4 @@ class CommandTree(Tree[CommandInfo]):
             is_group=False,
             module_path="machineconfig.scripts.python.ftpx",
             help_text="ftpx <source> <target> --recursive --zipFirst --cloud"
-        ))
-
-        # kill_process command
-        self.root.add("💀 kill_process - Kill processes", data=CommandInfo(
-            name="kill_process",
-            description="Kill running processes",
-            command="kill_process",
-            is_group=False,
-            module_path="machineconfig.utils.procs",
-            help_text="kill_process"
         ))

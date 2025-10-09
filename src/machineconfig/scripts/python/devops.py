@@ -20,7 +20,7 @@ def get_app():
         import machineconfig.utils.installer_utils.installer as installer_entry_point
         installer_entry_point.main(which=which, group=group, interactive=interactive)
     _ = install
-    app.command("install", no_args_is_help=True, help="🛠️  [i] Install essential packages")(install)
+    app.command("install", no_args_is_help=True, help="🛠️ [i] Install essential packages")(install)
     app.command("i", no_args_is_help=True, help="Install essential packages", hidden=True)(install)
     app.add_typer(cli_repos.get_app(), name="repos")
     app.add_typer(cli_repos.get_app(), name="r", hidden=True)
