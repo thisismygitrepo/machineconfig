@@ -19,7 +19,7 @@ def main():
         tmp = choose_ssh_host(multi=False)
         assert isinstance(tmp, str)
         ssh = SSH(host=tmp)
-        share_info = f"{ssh.username}@{ssh.hostname}:{ssh.run('echo $HOME').op}/data/share_ssh"
+        share_info = f"{ssh.username}@{ssh.hostname}:{ssh.run_shell('echo $HOME').op}/data/share_ssh"
     else:
         ssh = SSH(share_info.split(":")[0])
 

@@ -133,7 +133,7 @@ def ftpx(
                 border_style="cyan",
             )
         )
-        ssh.run(f"cloud_copy {resolved_source} :^", desc="Uploading from remote to the cloud.").print()
+        ssh.run_shell(f"cloud_copy {resolved_source} :^", desc="Uploading from remote to the cloud.").print()
         console.print(
             Panel.fit(
                 "⬇️  Cloud transfer mode — downloading from cloud to local...",
