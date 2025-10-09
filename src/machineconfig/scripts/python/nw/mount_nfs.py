@@ -19,9 +19,9 @@ def main():
         print("\n🔍 Interactive mode selected for choosing share path.")
         tmp = choose_ssh_host(multi=False)
         assert isinstance(tmp, str)
-        ssh = SSH(tmp)
-        default = f"{ssh.hostname}:{ssh.run_shell('echo $HOME').op}/data/share_nfs"
-        share_info = choose_from_options(msg="📂 Choose a share path:", options=[f"{ssh.hostname}:{item.split(' ')[0]}" for item in ssh.run_shell("cat /etc/exports").op.split("\n") if not item.startswith("#")] + [default], default=default, multi=False)
+        ssh = SSH(host=tmp, username=None, hostname=None, ssh_key_path=None, password=None, port=22, enable_compression=False)
+        default = f"{ssh.hostname}:{ssh.run_shell(command='echo $HOME', verbose_output=False, description='Get home directory', strict_stderr=False, strict_return_code=True).op}/data/share_nfs"
+        share_info = choose_from_options(msg="📂 Choose a share path:", options=[f"{ssh.hostname}:{item.split(' ')[0]}" for item in ssh.run_shell(command="cat /etc/exports", verbose_output=False, description='Get NFS exports', strict_stderr=False, strict_return_code=False).op.split("\n") if not item.startswith("#")] + [default], default=default, multi=False)
         assert isinstance(share_info, str), f"❌ share_info must be a string. Got {type(share_info)}"
 
     remote_server = share_info.split(":")[0]

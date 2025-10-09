@@ -12,8 +12,8 @@ import machineconfig.scripts.python.devops_helpers.cli_nw as cli_network
 
 def get_app():
     app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True, add_completion=True)
-    @app.command(no_args_is_help=True)
-    def install( which: Optional[str] = typer.Option(None, "--which", "-w", help="Comma-separated list of program names to install."),
+    # @app.command(no_args_is_help=True)
+    def install(which: Optional[str] = typer.Option(None, "--which", "-w", help="Comma-separated list of program names to install."),
         group: Optional[str] = typer.Option(None, "--group", "-g", help="Groups names. A group is bundle of apps. See available groups when running interactively."),
         interactive: bool = typer.Option(False, "--interactive", "-ia", help="Interactive selection of programs to install."),
     ) -> None:
@@ -21,11 +21,18 @@ def get_app():
         import machineconfig.utils.installer_utils.installer as installer_entry_point
         installer_entry_point.main(which=which, group=group, interactive=interactive)
     _ = install
+    app.command("install", no_args_is_help=True, help="[i] Install essential packages")(install)
+    app.command("i", no_args_is_help=True, help="Install essential packages", hidden=True)(install)
     app.add_typer(cli_repos.app, name="repos")
+    app.add_typer(cli_repos.app, name="r", hidden=True)
     app.add_typer(cli_config.config_apps, name="config")
+    app.add_typer(cli_config.config_apps, name="c", hidden=True)
     app.add_typer(cli_data.app_data, name="data")
+    app.add_typer(cli_data.app_data, name="d", hidden=True)
     app.add_typer(cli_self.cli_app, name="self")
+    app.add_typer(cli_self.cli_app, name="s", hidden=True)
     app.add_typer(cli_network.nw_apps, name="network")
+    app.add_typer(cli_network.nw_apps, name="n", hidden=True)
     return app
 
 def main():

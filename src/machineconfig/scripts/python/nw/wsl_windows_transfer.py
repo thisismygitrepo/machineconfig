@@ -52,9 +52,9 @@ def main(
         port_int = int(port) if port else (2222 if system == "Windows" else 22)
         username = UserName
         hostname = platform.node()
-        ssh = SSH(hostname=hostname, username=username, port=port_int, sshkey=sshkey)
+        ssh = SSH(host=None, username=username, hostname=hostname, ssh_key_path=sshkey, password=pwd, port=port_int, enable_compression=False)
         print("🌐 Initiating SSH transfer...")
-        ssh.copy_from_here(source=path_obj, target=destination, z=zip_first)
+        ssh.copy_from_here(source_path=path_obj, target_path=Path(destination) if destination else None, compress_with_zip=zip_first, recursive=False, overwrite_existing=False)
         print("✅ SSH transfer completed successfully!\n")
 
 

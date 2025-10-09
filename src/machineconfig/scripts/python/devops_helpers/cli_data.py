@@ -1,7 +1,7 @@
 
 import typer
 
-app_data = typer.Typer(help="💾 Data subcommands", no_args_is_help=True)
+app_data = typer.Typer(help="💾 [d] data subcommands", no_args_is_help=True)
 
 @app_data.command()
 def backup():

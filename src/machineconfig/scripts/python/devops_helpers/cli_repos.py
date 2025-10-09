@@ -11,7 +11,7 @@ import typer
 from machineconfig.scripts.python.helpers_repos.secure_repo import main as secure_repo_main
 
 
-app = typer.Typer(help="📁 Manage development repositories", no_args_is_help=True)
+app = typer.Typer(help="📁 [r] Manage development repositories", no_args_is_help=True)
 sync_app = typer.Typer(help="🔄 Manage repository specifications and syncing", no_args_is_help=True)
 app.add_typer(sync_app, name="mirror", help="🔄 mirror repositories using saved specs")
 

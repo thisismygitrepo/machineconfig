@@ -9,19 +9,19 @@ from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import A
 
 
 def create(
-    agent: AGENTS = typer.Option(default=..., help=f"Agent type. One of {', '.join(get_args(AGENTS)[:3])}"),
-    machine: MATCHINE = typer.Option(default=..., help=f"Machine to run agents on. One of {', '.join(get_args(MATCHINE))}"),
-    model: MODEL = typer.Option(default=..., help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL)[:3])}"),
-    provider: PROVIDER = typer.Option(default=..., help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER)[:3])}"),
-    context_path: Optional[Path] = typer.Option(None, help="Path to the context file/folder, defaults to .ai/todo/"),
-    separator: str = typer.Option("\n", help="Separator for context"),
-    agent_load: int = typer.Option(13, help="Number of tasks per prompt"),
-    prompt: Optional[str] = typer.Option(None, help="Prompt prefix as string"),
-    prompt_path: Optional[Path] = typer.Option(None, help="Path to prompt file"),
-    job_name: str = typer.Option("AI_Agents", help="Job name"),
-    separate: bool = typer.Option(True, help="Keep prompt material in separate file to the context."),
-    output_path: Optional[Path] = typer.Option(None, help="Path to write the layout.json file"),
-    agents_dir: Optional[Path] = typer.Option(None, help="Directory to store agent files. If not provided, will be constructed automatically."),
+    agent: AGENTS = typer.Option(..., "--agents", "-a", help=f"Agent type. One of {', '.join(get_args(AGENTS)[:3])}"),
+    machine: MATCHINE = typer.Option(..., "--machine", "-m", help=f"Machine to run agents on. One of {', '.join(get_args(MATCHINE))}"),
+    model: MODEL = typer.Option(..., "--model", "-M", help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL)[:3])}"),
+    provider: PROVIDER = typer.Option(..., "--provider", "-p", help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER)[:3])}"),
+    context_path: Optional[Path] = typer.Option(None, "--context-path", "-c", help="Path to the context file/folder, defaults to .ai/todo/"),
+    separator: str = typer.Option("\n", "--separator", "-s", help="Separator for context"),
+    agent_load: int = typer.Option(13, "--agent-load", "-al", help="Number of tasks per prompt"),
+    prompt: Optional[str] = typer.Option(None, "--prompt", "-p", help="Prompt prefix as string"),
+    prompt_path: Optional[Path] = typer.Option(None, "--prompt-path", "-pp", help="Path to prompt file"),
+    job_name: str = typer.Option("AI_Agents", "--job-name", "-j", help="Job name"),
+    separate: bool = typer.Option(True, "--separate", "-sep", help="Keep prompt material in separate file to the context."),
+    output_path: Optional[Path] = typer.Option(None, "--output-path", "-o", help="Path to write the layout.json file"),
+    agents_dir: Optional[Path] = typer.Option(None, "--agents-dir", "-ad", help="Directory to store agent files. If not provided, will be constructed automatically."),
 ):
 
     from machineconfig.scripts.python.helpers_fire.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout
@@ -172,11 +172,15 @@ AGENT options: {', '.join(get_args(AGENTS))}
 MODEL options: {sep.join(get_args(MODEL))}
 """
     agents_app.command("create", no_args_is_help=True, help=agents_full_help)(create)
-    agents_app.command("collect", no_args_is_help=True, help="Collect all agent materials into a single file.")(collect)
-    agents_app.command("make-template", no_args_is_help=False, help="Create a template for fire agents")(template)
-    agents_app.command("make-config", no_args_is_help=False, help="Initialize AI configurations in the current repository")(init_config)
+    agents_app.command("collect", no_args_is_help=True, help="[c] Collect all agent materials into a single file.")(collect)
+    agents_app.command("c", no_args_is_help=True, help="Collect all agent materials into a single file.", hidden=True)(collect)
+    agents_app.command("make-template", no_args_is_help=False, help="[mt] Create a template for fire agents")(template)
+    agents_app.command("mt", no_args_is_help=False, help="Create a template for fire agents", hidden=True)(template)
+    agents_app.command("make-config", no_args_is_help=False, help="[mc] Initialize AI configurations in the current repository")(init_config)
+    agents_app.command("mc", no_args_is_help=False, help="Initialize AI configurations in the current repository", hidden=True)(init_config)
     from machineconfig.scripts.python.ai.generate_files import main
-    agents_app.command("make-todo", no_args_is_help=True, help="Generate a markdown file listing all Python files in the repo")(main)
+    agents_app.command("make-todo", no_args_is_help=True, help="[mt] Generate a markdown file listing all Python files in the repo")(main)
+    agents_app.command("mt", no_args_is_help=True, help="Generate a markdown file listing all Python files in the repo", hidden=True)(main)
     from machineconfig.scripts.python.ai.generate_files import create_symlink_command
     agents_app.command(name="make-symlinks", no_args_is_help=True, help="Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
     return agents_app

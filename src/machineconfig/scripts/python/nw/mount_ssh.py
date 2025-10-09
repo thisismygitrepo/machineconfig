@@ -18,10 +18,10 @@ def main():
         print("\n🔍 Interactive mode selected for choosing share path.")
         tmp = choose_ssh_host(multi=False)
         assert isinstance(tmp, str)
-        ssh = SSH(host=tmp)
-        share_info = f"{ssh.username}@{ssh.hostname}:{ssh.run_shell('echo $HOME').op}/data/share_ssh"
+        ssh = SSH(host=tmp, username=None, hostname=None, ssh_key_path=None, password=None, port=22, enable_compression=False)
+        share_info = f"{ssh.username}@{ssh.hostname}:{ssh.run_shell(command='echo $HOME', verbose_output=False, description='Get home directory', strict_stderr=False, strict_return_code=True).op}/data/share_ssh"
     else:
-        ssh = SSH(share_info.split(":")[0])
+        ssh = SSH(host=share_info.split(":")[0], username=None, hostname=None, ssh_key_path=None, password=None, port=22, enable_compression=False)
 
     print(f"\n🌐 Share Info: {share_info}")
 

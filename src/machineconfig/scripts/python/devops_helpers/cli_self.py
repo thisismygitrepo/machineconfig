@@ -2,7 +2,7 @@
 import typer
 from typing import Optional
 
-cli_app = typer.Typer(help="🔄 SELF operations subcommands", no_args_is_help=True)
+cli_app = typer.Typer(help="🔄 [s] self operations subcommands", no_args_is_help=True)
 
 
 @cli_app.command()

@@ -163,7 +163,7 @@ def ftpx(
                     padding=(1, 2),
                 )
             )
-            received_file = ssh.copy_to_here(source=resolved_source, target=resolved_target, z=zipFirst, r=recursive, init=True)
+            received_file = ssh.copy_to_here(source=resolved_source, target=resolved_target, compress_with_zip=zipFirst, recursive=recursive)
         else:
             assert resolved_source is not None, """
 ❌ Path Error: Target must be a remote path (machine:path)"""

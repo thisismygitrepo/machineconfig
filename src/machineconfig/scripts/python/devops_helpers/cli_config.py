@@ -4,7 +4,7 @@ from typing import Literal, Annotated, Optional
 from pathlib import Path
 import typer
 
-config_apps = typer.Typer(help="⚙️ Configuration subcommands", no_args_is_help=True)
+config_apps = typer.Typer(help="⚙️ [c] configuration subcommands", no_args_is_help=True)
 
 
 @config_apps.command(no_args_is_help=True)

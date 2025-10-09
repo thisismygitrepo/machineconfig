@@ -4,7 +4,7 @@ import machineconfig.scripts.python.devops_helpers.cli_share_server as cli_share
 import typer
 from typing import Optional
 
-nw_apps = typer.Typer(help="🔐 Network subcommands", no_args_is_help=True)
+nw_apps = typer.Typer(help="🔐 [n] Network subcommands", no_args_is_help=True)
 
 
 nw_apps.command(name="share-terminal", help="📡 Share terminal via web browser")(cli_terminal.main)
