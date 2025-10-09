@@ -32,7 +32,7 @@ RUN rm -rfd /root/tmp_results
 
 RUN /root/.local/bin/uv clean && \
     rm -rfd /root/.cache/pip && \
-    npm cache clean --force
+    bash -c "source $NVM_DIR/nvm.sh 2>/dev/null && npm cache clean --force || true"
 
 
 WORKDIR /root
