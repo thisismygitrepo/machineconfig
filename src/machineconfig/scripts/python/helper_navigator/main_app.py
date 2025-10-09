@@ -21,12 +21,16 @@ class CommandNavigatorApp(App[None]):
         layout: grid;
         grid-size: 2 3;
         grid-rows: auto 1fr auto;
+        grid-columns: 1fr 1fr;
+        height: 100%;
+        width: 100%;
     }
 
     Header {
         column-span: 2;
         background: $boost;
         color: $text;
+        width: 100%;
     }
 
     #search-bar {
@@ -34,6 +38,7 @@ class CommandNavigatorApp(App[None]):
         padding: 1;
         background: $surface;
         height: auto;
+        width: 100%;
     }
 
     .search-label {
@@ -49,17 +54,22 @@ class CommandNavigatorApp(App[None]):
         row-span: 1;
         border: solid $primary;
         padding: 1;
+        width: 100%;
+        height: 100%;
     }
 
     #command-detail {
         row-span: 1;
         border: solid $primary;
         padding: 1;
+        width: 100%;
+        height: 100%;
     }
 
     Footer {
         column-span: 2;
         background: $boost;
+        width: 100%;
     }
 
     Button {
