@@ -66,12 +66,12 @@ plot = [
 [project.scripts]
 devops = "machineconfig.scripts.python.devops:main"
 cloud = "machineconfig.scripts.python.cloud:main"
-fire = "machineconfig.scripts.python.fire_jobs:main_from_parser"
-agents = "machineconfig.scripts.python.agents:main_from_parser"
-sessions = "machineconfig.scripts.python.sessions:main_from_parser"
-croshell = "machineconfig.scripts.python.croshell:arg_parser"
-ftpx = "machineconfig.scripts.python.ftpx:main_from_parser"
-mcfg = "machineconfig.scripts.python.entry:app"
+fire = "machineconfig.scripts.python.fire_jobs:main"
+agents = "machineconfig.scripts.python.agents:main"
+sessions = "machineconfig.scripts.python.sessions:main"
+croshell = "machineconfig.scripts.python.croshell:main"
+ftpx = "machineconfig.scripts.python.ftpx:main"
+mcfg = "machineconfig.scripts.python.entry:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

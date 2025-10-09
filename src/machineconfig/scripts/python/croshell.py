@@ -62,7 +62,7 @@ except Exception as e:
 
 
 
-def main(
+def croshell(
     python: Annotated[bool, typer.Option("--python", "-p", help="flag to use python over IPython.")] = False,
     fzf: Annotated[bool, typer.Option("--fzf", "-F", help="search with fuzzy finder for python scripts and run them")] = False,
     profile: Annotated[Optional[str], typer.Option("--profile", "-P", help="ipython profile to use, defaults to default profile.")] = None,
@@ -157,9 +157,9 @@ from pathlib import Path
     run_shell_script(fire_line, clean_env=False)
 
 
-def arg_parser() -> None:
-    typer.run(main)
+def main() -> None:
+    typer.run(croshell)
 
 
 if __name__ == "__main__":
-    arg_parser()
+    main()

@@ -196,7 +196,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
     run_shell_script(command)
 
 
-def main(
+def fire(
     ctx: typer.Context,
     path: Annotated[str, typer.Argument(help="Path to the Python file to run")] = ".",
     function: Annotated[Optional[str], typer.Argument(help="Function to run")] = None,
@@ -262,13 +262,13 @@ def main(
 def get_app():
     from typer import Typer
     app = Typer(add_completion=False)
-    app.command(context_settings={"allow_extra_args": True, "allow_interspersed_args": False})(main)
+    app.command(context_settings={"allow_extra_args": True, "allow_interspersed_args": False})(fire)
     return app
 
-def main_from_parser():
+def main():
     app = get_app()
     app()
 
 
 if __name__ == "__main__":
-    main_from_parser()
+    pass

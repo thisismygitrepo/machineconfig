@@ -200,7 +200,7 @@ def get_app():
     agents_app.command("make-todo", no_args_is_help=False, help="Generate a markdown file listing all Python files in the repo")(generate_files)
     return agents_app
 
-def main_from_parser():
+def main():
     agents_app = get_app()
     import sys
     if len(sys.argv) == 1:

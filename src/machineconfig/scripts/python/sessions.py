@@ -145,7 +145,7 @@ def get_app():
     return layouts_app
 
 
-def main_from_parser():
+def main():
     layouts_app = get_app()
     layouts_app()
 
