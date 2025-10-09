@@ -2,7 +2,7 @@
 from machineconfig.scripts.python.devops import app as devops_app
 from machineconfig.scripts.python.cloud import app as cloud_app
 
-from machineconfig.scripts.python.ftpx import main_from_parser as ftpx_app
+from machineconfig.scripts.python.ftpx import main as ftpx_app
 from machineconfig.scripts.python.agents import main_from_parser as agents_app
 from machineconfig.scripts.python.croshell import main as croshell_app
 from machineconfig.scripts.python.fire_jobs import main_from_parser as fire_jobs_app

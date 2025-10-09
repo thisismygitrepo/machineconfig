@@ -5,8 +5,8 @@ build-backend = "setuptools.build_meta"
 # build-backend = "hatchling.build"
 
 [project]
-name = "mcfg"
-version = "5.62"
+name = "machineconfig"
+version = "5.63"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
