@@ -2,10 +2,11 @@
 """Script to generate a markdown table with checkboxes for all Python and shell files in the repo."""
 
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 from rich.console import Console
 from rich.panel import Panel
 import typer
+import subprocess
 
 
 def get_python_files(repo_root: Path, exclude_init: bool = False) -> list[str]:
@@ -75,6 +76,42 @@ def count_lines(file_path: Path) -> int:
         return 0
 
 
+def is_git_repository(path: Path) -> bool:
+    """Check if the given path is part of a git repository."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--git-dir"],
+            cwd=path,
+            capture_output=True,
+            text=True,
+            check=False
+        )
+        return result.returncode == 0
+    except (subprocess.SubprocessError, FileNotFoundError):
+        return False
+
+
+def filter_files_by_name(files: list[str], pattern: str) -> list[str]:
+    """Filter files by filename containing the pattern."""
+    return [f for f in files if pattern in f]
+
+
+def filter_files_by_content(repo_root: Path, files: list[str], keyword: str) -> list[str]:
+    """Filter files by content containing the keyword."""
+    filtered_files = []
+    for file_path in files:
+        full_path = repo_root / file_path
+        try:
+            with open(full_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+                if keyword in content:
+                    filtered_files.append(file_path)
+        except (IOError, UnicodeDecodeError):
+            # Skip files that can't be read
+            continue
+    return filtered_files
+
+
 def generate_markdown_table(python_files: list[str], shell_files: list[str], repo_root: Path, include_line_count: bool = False) -> str:
     """Generate markdown table with checkboxes."""
     header = "# File Checklist\n\n"
@@ -135,32 +172,45 @@ def create_repo_symlinks(repo_root: Path) -> None:
 
 
 def main(
-    repo: Annotated[str, typer.Argument(help="Repository root path. Defaults to current working directory.")] = str(Path.cwd()),
+    pattern: Annotated[str, typer.Argument(help="Pattern or keyword to match files by")],
+    repo: Annotated[str, typer.Argument(help="Repository path. Can be any directory within a git repository.")] = str(Path.cwd()),
+    strategy: Annotated[Literal["name", "keywords"], typer.Option("--strategy", help="Strategy to filter files: 'name' for filename matching, 'keywords' for content matching")] = "name",
     exclude_init: Annotated[bool, typer.Option("--exclude-init", help="Exclude __init__.py files from the checklist")] = False,
     include_line_count: Annotated[bool, typer.Option("--line-count", help="Include line count column in the markdown table")] = False,
+    output_path: Annotated[str, typer.Option("--output-path", help="Path to output the markdown file relative to repo root")] = ".ai/todo/all_files_with_index.md",
 ) -> None:
-    """Generate markdown checklist with all Python and shell script files in the repository."""
-    repo_root = Path(repo).expanduser().absolute()
-    if not repo_root.joinpath("pyproject.toml").exists():
+    """Generate markdown checklist with Python and shell script files in the repository filtered by pattern."""
+    repo_path = Path(repo).expanduser().absolute()
+    if not is_git_repository(repo_path):
         console = Console()
-        console.print(Panel(f"❌ ERROR | Not a repository root: {repo_root}", border_style="bold red", expand=False))
+        console.print(Panel(f"❌ ERROR | Not a git repository or not in a git repository: {repo_path}", border_style="bold red", expand=False))
         raise typer.Exit(code=1)
 
-    output_file = repo_root / ".ai" / "all_files_with_index.md"
+    output_file = repo_path / output_path
 
     # Ensure output directory exists
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
     # Get Python and shell files
-    python_files = get_python_files(repo_root, exclude_init=exclude_init)
-    shell_files = get_shell_files(repo_root)
+    python_files = get_python_files(repo_path, exclude_init=exclude_init)
+    shell_files = get_shell_files(repo_path)
 
-    print(f"Repo root: {repo_root}")
+    # Apply filtering based on strategy
+    if strategy == "name":
+        python_files = filter_files_by_name(python_files, pattern)
+        shell_files = filter_files_by_name(shell_files, pattern)
+    elif strategy == "keywords":
+        python_files = filter_files_by_content(repo_path, python_files, pattern)
+        shell_files = filter_files_by_content(repo_path, shell_files, pattern)
+
+    print(f"Repo path: {repo_path}")
+    print(f"Strategy: {strategy}")
+    print(f"Pattern: {pattern}")
     print(f"Found {len(python_files)} Python files")
     print(f"Found {len(shell_files)} Shell script files")
 
     # Generate markdown
-    markdown_content = generate_markdown_table(python_files, shell_files, repo_root, include_line_count)
+    markdown_content = generate_markdown_table(python_files, shell_files, repo_path, include_line_count)
 
     # Write to file
     output_file.write_text(markdown_content)

@@ -10,6 +10,7 @@ PROMPT_PATH="$REPO_ROOT/src/machineconfig/scripts/python/helpers_fire/prompt.txt
 AGENTS_DIR="$REPO_ROOT/.ai/agents/$JOB_NAME"
 LAYOUT_PATH_UNBALANCED="$REPO_ROOT/.ai/agents/$JOB_NAME/layout_unbalanced.json"
 
+# agents make-todo --output-path $CONTEXT_PATH
 agents create \
   --context-path "$CONTEXT_PATH" \
   --tasks-per-prompt 1 \

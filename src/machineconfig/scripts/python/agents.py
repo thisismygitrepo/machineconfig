@@ -3,20 +3,13 @@
 """
 
 from pathlib import Path
-from typing import cast, Iterable, Optional, get_args
+from typing import cast, Optional, get_args
 import typer
 from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, MATCHINE, MODEL, PROVIDER
 
 
-def _write_list_file(target: Path, files: Iterable[Path]) -> None:
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text("\n".join(str(f) for f in files), encoding="utf-8")
-
-
 def create(
-    context_path: Optional[Path] = typer.Option(None, help="Path to the context file"),
-    keyword_search: Optional[str] = typer.Option(None, help="Keyword to search in Python files"),
-    filename_pattern: Optional[str] = typer.Option(None, help="Filename pattern to match"),
+    context_path: Path = typer.Argument(..., help="Path to the context file"),
     separator: str = typer.Option("\n", help="Separator for context"),
     tasks_per_prompt: int = typer.Option(13, help="Number of tasks per prompt"),
 
@@ -34,17 +27,11 @@ def create(
 ):
 
     from machineconfig.scripts.python.helpers_fire.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout
-    from machineconfig.scripts.python.helpers_fire.fire_agents_help_search import search_files_by_pattern, search_python_files
     from machineconfig.scripts.python.helpers_fire.fire_agents_load_balancer import chunk_prompts
     from machineconfig.utils.accessories import get_repo_root, randstr
     import json
 
     # validate mutual exclusive
-    context_options = [context_path, keyword_search, filename_pattern]
-    provided_context = [opt for opt in context_options if opt is not None]
-    if len(provided_context) != 1:
-        raise typer.BadParameter("Exactly one of --context-path, --keyword-search, --filename-pattern must be provided")
-    
     prompt_options = [prompt, prompt_path]
     provided_prompt = [opt for opt in prompt_options if opt is not None]
     if len(provided_prompt) != 1:
@@ -56,33 +43,12 @@ def create(
         raise typer.Exit(1)
     typer.echo(f"Operating @ {repo_root}")
     
-    search_strategy = ""
     prompt_material_path = Path("")
     
-    if context_path is not None:
-        search_strategy = "file_path"
-        target_file_path = context_path.expanduser().resolve()
-        if not target_file_path.exists() or not target_file_path.is_file():
-            raise typer.BadParameter(f"Invalid file path: {target_file_path}")
-        prompt_material_path = target_file_path
-    elif keyword_search is not None:
-        search_strategy = "keyword_search"
-        matching_files = search_python_files(repo_root, keyword_search)
-        if not matching_files:
-            typer.echo(f"💥 No .py files found containing keyword: {keyword_search}")
-            raise typer.Exit(1)
-        target_file_path = repo_root / ".ai" / "target_file.txt"
-        _write_list_file(target_file_path, matching_files)
-        prompt_material_path = target_file_path
-    elif filename_pattern is not None:
-        search_strategy = "filename_pattern"
-        matching_files = search_files_by_pattern(repo_root, filename_pattern)
-        if not matching_files:
-            typer.echo(f"💥 No files found matching pattern: {filename_pattern}")
-            raise typer.Exit(1)
-        target_file_path = repo_root / ".ai" / "target_file.txt"
-        _write_list_file(target_file_path, matching_files)
-        prompt_material_path = target_file_path
+    target_file_path = context_path.expanduser().resolve()
+    if not target_file_path.exists() or not target_file_path.is_file():
+        raise typer.BadParameter(f"Invalid file path: {target_file_path}")
+    prompt_material_path = target_file_path
     
     if prompt_path is not None:
         prompt_prefix = prompt_path.read_text(encoding="utf-8")
@@ -103,8 +69,7 @@ def create(
     layoutfile = get_agents_launch_layout(session_root=agents_dir)    
     regenerate_py_code = f"""
 #!/usr/bin/env uv run --python 3.14 --with machineconfig
-agents create --context-path "{prompt_material_path}" \\
-    --{search_strategy} "{context_path or keyword_search or filename_pattern}" \\
+agents create "{prompt_material_path}" \\
     --prompt-path "{prompt_path or ''}" \\
     --agent "{agent_selected}" \\
     --machine "{machine}" \\
@@ -194,9 +159,9 @@ def get_app():
     agents_app.command("make-template", no_args_is_help=False, help="Create a template for fire agents")(template)
     agents_app.command("make-config", no_args_is_help=False, help="Initialize AI configurations in the current repository")(init_config)
     from machineconfig.scripts.python.ai.generate_files import main
-    agents_app.command("make-todo", no_args_is_help=False, help="Generate a markdown file listing all Python files in the repo")(main)
+    agents_app.command("make-todo", no_args_is_help=True, help="Generate a markdown file listing all Python files in the repo")(main)
     from machineconfig.scripts.python.ai.generate_files import create_symlink_command
-    agents_app.command(name="make-symlinks", no_args_is_help=False, help="Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
+    agents_app.command(name="make-symlinks", no_args_is_help=True, help="Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
     return agents_app
 
 def main():
