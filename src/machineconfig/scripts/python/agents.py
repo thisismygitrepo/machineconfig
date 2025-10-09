@@ -163,7 +163,7 @@ def get_app():
     agents_app = typer.Typer(help="🤖 AI Agents management subcommands", no_args_is_help=True)
     sep = "\n"
     agents_full_help = f"""
-Create agents layout file, ready to run.
+[cr] Create agents layout file, ready to run.
 {sep}
 PROVIDER options: {', '.join(get_args(PROVIDER))}
 {sep}
@@ -172,7 +172,8 @@ AGENT options: {', '.join(get_args(AGENTS))}
 MODEL options: {sep.join(get_args(MODEL))}
 """
     agents_app.command("create", no_args_is_help=True, help=agents_full_help)(create)
-    agents_app.command("collect", no_args_is_help=True, help="[c] Collect all agent materials into a single file.")(collect)
+    agents_app.command("cr", no_args_is_help=True, help="Create agents layout file, ready to run.", hidden=True)(create)
+    agents_app.command("collect", no_args_is_help=True, help="[cl] Collect all agent materials into a single file.")(collect)
     agents_app.command("c", no_args_is_help=True, help="Collect all agent materials into a single file.", hidden=True)(collect)
     agents_app.command("make-template", no_args_is_help=False, help="[mt] Create a template for fire agents")(template)
     agents_app.command("mt", no_args_is_help=False, help="Create a template for fire agents", hidden=True)(template)
@@ -182,7 +183,8 @@ MODEL options: {sep.join(get_args(MODEL))}
     agents_app.command("make-todo", no_args_is_help=True, help="[mt] Generate a markdown file listing all Python files in the repo")(main)
     agents_app.command("mt", no_args_is_help=True, help="Generate a markdown file listing all Python files in the repo", hidden=True)(main)
     from machineconfig.scripts.python.ai.generate_files import create_symlink_command
-    agents_app.command(name="make-symlinks", no_args_is_help=True, help="Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
+    agents_app.command(name="make-symlinks", no_args_is_help=True, help="[ms] Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
+    agents_app.command(name="ms", no_args_is_help=True, help="Create symlinks to the current repo in ~/code_copies/", hidden=True)(create_symlink_command)
     return agents_app
 
 

@@ -12,16 +12,15 @@ import machineconfig.scripts.python.devops_helpers.cli_nw as cli_network
 
 def get_app():
     app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True, add_completion=True)
-    # @app.command(no_args_is_help=True)
-    def install(which: Optional[str] = typer.Option(None, "--which", "-w", help="Comma-separated list of program names to install."),
-        group: Optional[str] = typer.Option(None, "--group", "-g", help="Groups names. A group is bundle of apps. See available groups when running interactively."),
+    def install(which: Optional[str] = typer.Argument(None, help="Comma-separated list of program names to install, or group name if --group flag is set."),
+        group: bool = typer.Option(False, "--group", "-g", help="Treat 'which' as a group name. A group is bundle of apps."),
         interactive: bool = typer.Option(False, "--interactive", "-ia", help="Interactive selection of programs to install."),
     ) -> None:
         """📦 Install essential packages"""
         import machineconfig.utils.installer_utils.installer as installer_entry_point
         installer_entry_point.main(which=which, group=group, interactive=interactive)
     _ = install
-    app.command("install", no_args_is_help=True, help="[i] Install essential packages")(install)
+    app.command("install", no_args_is_help=True, help="🛠️ [i] Install essential packages")(install)
     app.command("i", no_args_is_help=True, help="Install essential packages", hidden=True)(install)
     app.add_typer(cli_repos.app, name="repos")
     app.add_typer(cli_repos.app, name="r", hidden=True)
