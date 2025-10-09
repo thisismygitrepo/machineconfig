@@ -66,7 +66,16 @@ def get_shell_files(repo_root: Path) -> list[str]:
     return sorted(filtered_files)
 
 
-def generate_markdown_table(python_files: list[str], shell_files: list[str]) -> str:
+def count_lines(file_path: Path) -> int:
+    """Count the number of lines in a file."""
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return sum(1 for _ in f)
+    except (IOError, UnicodeDecodeError):
+        return 0
+
+
+def generate_markdown_table(python_files: list[str], shell_files: list[str], repo_root: Path, include_line_count: bool = False) -> str:
     """Generate markdown table with checkboxes."""
     header = "# File Checklist\n\n"
 
@@ -74,17 +83,41 @@ def generate_markdown_table(python_files: list[str], shell_files: list[str]) -> 
 
     if python_files:
         content += "## Python Files\n\n"
-        content += "| Index | File Path | Status |\n|-------|-----------|--------|\n"
+        if include_line_count:
+            # Calculate line counts and sort by descending line count
+            python_with_counts = [(file, count_lines(repo_root / file)) for file in python_files]
+            python_with_counts.sort(key=lambda x: x[1], reverse=True)
+            python_files = [file for file, _ in python_with_counts]
+            
+            content += "| Index | File Path | Line Count | Status |\n|-------|-----------|------------|--------|\n"
+        else:
+            content += "| Index | File Path | Status |\n|-------|-----------|--------|\n"
         for index, file_path in enumerate(python_files, start=1):
             clean_path = file_path.lstrip("./")
-            content += f"| {index} | {clean_path} | - [ ] |\n"
+            if include_line_count:
+                line_count = count_lines(repo_root / file_path)
+                content += f"| {index} | {clean_path} | {line_count} | - [ ] |\n"
+            else:
+                content += f"| {index} | {clean_path} | - [ ] |\n"
 
     if shell_files:
         content += "\n## Shell Script Files\n\n"
-        content += "| Index | File Path | Status |\n|-------|-----------|--------|\n"
+        if include_line_count:
+            # Calculate line counts and sort by descending line count
+            shell_with_counts = [(file, count_lines(repo_root / file)) for file in shell_files]
+            shell_with_counts.sort(key=lambda x: x[1], reverse=True)
+            shell_files = [file for file, _ in shell_with_counts]
+            
+            content += "| Index | File Path | Line Count | Status |\n|-------|-----------|------------|--------|\n"
+        else:
+            content += "| Index | File Path | Status |\n|-------|-----------|--------|\n"
         for index, file_path in enumerate(shell_files, start=1):
             clean_path = file_path.lstrip("./")
-            content += f"| {index} | {clean_path} | - [ ] |\n"
+            if include_line_count:
+                line_count = count_lines(repo_root / file_path)
+                content += f"| {index} | {clean_path} | {line_count} | - [ ] |\n"
+            else:
+                content += f"| {index} | {clean_path} | - [ ] |\n"
 
     return header + content
 
@@ -104,11 +137,10 @@ def create_repo_symlinks(repo_root: Path) -> None:
 def main(
     repo: Annotated[str, typer.Argument(help="Repository root path. Defaults to current working directory.")] = str(Path.cwd()),
     exclude_init: Annotated[bool, typer.Option("--exclude-init", help="Exclude __init__.py files from the checklist")] = False,
-    create_symlinks: Annotated[bool, typer.Option("--symlinks", help="Create 5 symlinks to repo in ~/code_copies/")] = False,
+    include_line_count: Annotated[bool, typer.Option("--line-count", help="Include line count column in the markdown table")] = False,
 ) -> None:
     """Generate markdown checklist with all Python and shell script files in the repository."""
     repo_root = Path(repo).expanduser().absolute()
-
     if not repo_root.joinpath("pyproject.toml").exists():
         console = Console()
         console.print(Panel(f"❌ ERROR | Not a repository root: {repo_root}", border_style="bold red", expand=False))
@@ -128,15 +160,10 @@ def main(
     print(f"Found {len(shell_files)} Shell script files")
 
     # Generate markdown
-    markdown_content = generate_markdown_table(python_files, shell_files)
+    markdown_content = generate_markdown_table(python_files, shell_files, repo_root, include_line_count)
 
     # Write to file
     output_file.write_text(markdown_content)
-
-    # Create symlinks if requested
-    if create_symlinks:
-        create_repo_symlinks(repo_root)
-        print("✅ Created 5 symlinks in ~/code_copies/")
 
     console = Console()
     console.print(Panel(f"""✅ SUCCESS | Markdown checklist generated successfully!
@@ -145,5 +172,17 @@ def main(
 🔧 Shell files: {len(shell_files)}""", border_style="bold blue", expand=False))
 
 
+def create_symlink_command(num: Annotated[int, typer.Argument(help="Number of symlinks to create (1-5).")] = 5) -> None:
+    """Create 5 symlinks to repo_root at ~/code_copies/${repo_name}_copy_{i}."""
+    if num < 1 or num > 5:
+        console = Console()
+        console.print(Panel("❌ ERROR | Number of symlinks must be between 1 and 5.", border_style="bold red", expand=False))
+        raise typer.Exit(code=1)
+    repo_root = Path.cwd().absolute()
+    create_repo_symlinks(repo_root)
+    console = Console()
+    console.print(Panel(f"✅ SUCCESS | Created {num} symlinks to {repo_root} in ~/code_copies/", border_style="bold green", expand=False))
+
 if __name__ == "__main__":
     typer.run(main)
+    # typer.run(create_symlink_command)

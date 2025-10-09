@@ -1,0 +1,470 @@
+"""
+Command tree widget for displaying command hierarchy.
+"""
+
+from textual.widgets import Tree
+from machineconfig.scripts.python.helper_navigator.data_models import CommandInfo
+
+
+class CommandTree(Tree[CommandInfo]):
+    """Tree widget for displaying command hierarchy."""
+
+    def on_mount(self) -> None:
+        """Build the command tree when mounted."""
+        self.show_root = False
+        self.guide_depth = 2
+        self._build_command_tree()
+
+    def _build_command_tree(self) -> None:
+        """Build the hierarchical command structure."""
+
+        # Main entry points
+        devops_node = self.root.add("🛠️  devops - DevOps operations", data=CommandInfo(
+            name="devops",
+            description="DevOps operations",
+            command="devops",
+            is_group=True,
+            module_path="machineconfig.scripts.python.devops"
+        ))
+
+        # devops subcommands
+        devops_node.add("📦 install - Install essential packages", data=CommandInfo(
+            name="install",
+            description="Install essential packages",
+            command="devops install",
+            parent="devops",
+            help_text="devops install --which <packages> --group <group> --interactive"
+        ))
+
+        repos_node = devops_node.add("📁 repos - Manage git repositories", data=CommandInfo(
+            name="repos",
+            description="Manage git repositories",
+            command="devops repos",
+            parent="devops",
+            is_group=True,
+            module_path="machineconfig.scripts.python.devops_helpers.cli_repos"
+        ))
+
+        # repos subcommands
+        repos_node.add("🚀 push - Push changes across repositories", data=CommandInfo(
+            name="push",
+            description="Push changes across repositories",
+            command="devops repos push",
+            parent="repos",
+            help_text="devops repos push --directory <dir> --recursive --no-sync"
+        ))
+
+        repos_node.add("⬇️ pull - Pull changes across repositories", data=CommandInfo(
+            name="pull",
+            description="Pull changes across repositories",
+            command="devops repos pull",
+            parent="repos",
+            help_text="devops repos pull --directory <dir> --recursive --no-sync"
+        ))
+
+        repos_node.add("💾 commit - Commit changes across repositories", data=CommandInfo(
+            name="commit",
+            description="Commit changes across repositories",
+            command="devops repos commit",
+            parent="repos",
+            help_text="devops repos commit --directory <dir> --recursive --no-sync"
+        ))
+
+        repos_node.add("🔄 sync - Sync changes across repositories", data=CommandInfo(
+            name="sync",
+            description="Pull, commit, and push changes across repositories",
+            command="devops repos sync",
+            parent="repos",
+            help_text="devops repos sync --directory <dir> --recursive --no-sync"
+        ))
+
+        mirror_node = repos_node.add("🔄 mirror - Manage repository specifications", data=CommandInfo(
+            name="mirror",
+            description="Manage repository specifications and syncing",
+            command="devops repos mirror",
+            parent="repos",
+            is_group=True
+        ))
+
+        mirror_node.add("📝 capture - Record repositories into repos.json", data=CommandInfo(
+            name="capture",
+            description="Record repositories into a repos.json specification",
+            command="devops repos mirror capture",
+            parent="mirror",
+            help_text="devops repos mirror capture --directory <dir> --cloud <cloud>"
+        ))
+
+        mirror_node.add("📥 clone - Clone repositories from repos.json", data=CommandInfo(
+            name="clone",
+            description="Clone repositories described by repos.json",
+            command="devops repos mirror clone",
+            parent="mirror",
+            help_text="devops repos mirror clone --directory <dir> --cloud <cloud>"
+        ))
+
+        mirror_node.add("🔀 checkout-to-commit - Check out specific commits", data=CommandInfo(
+            name="checkout-to-commit",
+            description="Check out specific commits listed in specification",
+            command="devops repos mirror checkout-to-commit",
+            parent="mirror",
+            help_text="devops repos mirror checkout-to-commit --directory <dir> --cloud <cloud>"
+        ))
+
+        mirror_node.add("🔀 checkout-to-branch - Check out to main branch", data=CommandInfo(
+            name="checkout-to-branch",
+            description="Check out to the main branch defined in specification",
+            command="devops repos mirror checkout-to-branch",
+            parent="mirror",
+            help_text="devops repos mirror checkout-to-branch --directory <dir> --cloud <cloud>"
+        ))
+
+        repos_node.add("🔍 analyze - Analyze repositories", data=CommandInfo(
+            name="analyze",
+            description="Analyze repositories in directory",
+            command="devops repos analyze",
+            parent="repos",
+            help_text="devops repos analyze --directory <dir>"
+        ))
+
+        repos_node.add("🔐 secure - Securely sync git repository", data=CommandInfo(
+            name="secure",
+            description="Securely sync git repository to/from cloud with encryption",
+            command="devops repos secure",
+            parent="repos",
+            help_text="devops repos secure <path> --cloud <cloud> --encrypt --decrypt"
+        ))
+
+        repos_node.add("🎬 viz - Visualize repository activity", data=CommandInfo(
+            name="viz",
+            description="Visualize repository activity using Gource",
+            command="devops repos viz",
+            parent="repos",
+            help_text="devops repos viz --repo <path> --output <file> --resolution <res> --seconds-per-day <spd>"
+        ))
+
+        repos_node.add("🧹 cleanup - Clean repository directories", data=CommandInfo(
+            name="cleanup",
+            description="Clean repository directories from cache files",
+            command="devops repos cleanup",
+            parent="repos",
+            help_text="devops repos cleanup --repo <path> --recursive"
+        ))
+
+        # config subcommands
+        config_node = devops_node.add("⚙️  config - Configuration management", data=CommandInfo(
+            name="config",
+            description="Configuration subcommands",
+            command="devops config",
+            parent="devops",
+            is_group=True
+        ))
+
+        config_node.add("🔗 private - Manage private configuration files", data=CommandInfo(
+            name="private",
+            description="Manage private configuration files",
+            command="devops config private",
+            parent="config",
+            help_text="devops config private --method <symlink|copy> --on-conflict <action> --which <items> --interactive"
+        ))
+
+        config_node.add("🔗 public - Manage public configuration files", data=CommandInfo(
+            name="public",
+            description="Manage public configuration files",
+            command="devops config public",
+            parent="config",
+            help_text="devops config public --method <symlink|copy> --on-conflict <action> --which <items> --interactive"
+        ))
+
+        config_node.add("🔗 dotfile - Manage dotfiles", data=CommandInfo(
+            name="dotfile",
+            description="Manage dotfiles",
+            command="devops config dotfile",
+            parent="config",
+            help_text="devops config dotfile <file> --overwrite --dest <destination>"
+        ))
+
+        config_node.add("🔗 shell - Configure shell profile", data=CommandInfo(
+            name="shell",
+            description="Configure your shell profile",
+            command="devops config shell",
+            parent="config",
+            help_text="devops config shell <copy|reference>"
+        ))
+
+        config_node.add("🔗 pwsh_theme - Configure PowerShell theme", data=CommandInfo(
+            name="pwsh_theme",
+            description="Configure your PowerShell theme",
+            command="devops config pwsh_theme",
+            parent="config",
+            help_text="devops config pwsh_theme"
+        ))
+
+        # data subcommands
+        data_node = devops_node.add("💾 data - Data operations", data=CommandInfo(
+            name="data",
+            description="Data subcommands",
+            command="devops data",
+            parent="devops",
+            is_group=True
+        ))
+
+        data_node.add("💾 backup - Backup data", data=CommandInfo(
+            name="backup",
+            description="Backup data",
+            command="devops data backup",
+            parent="data",
+            help_text="devops data backup"
+        ))
+
+        data_node.add("📥 retrieve - Retrieve data", data=CommandInfo(
+            name="retrieve",
+            description="Retrieve data from backup",
+            command="devops data retrieve",
+            parent="data",
+            help_text="devops data retrieve"
+        ))
+
+        # network subcommands
+        network_node = devops_node.add("🔐 network - Network operations", data=CommandInfo(
+            name="network",
+            description="Network subcommands",
+            command="devops network",
+            parent="devops",
+            is_group=True
+        ))
+
+        network_node.add("📡 share-terminal - Share terminal via web", data=CommandInfo(
+            name="share-terminal",
+            description="Share terminal via web browser",
+            command="devops network share-terminal",
+            parent="network",
+            help_text="devops network share-terminal"
+        ))
+
+        network_node.add("� install_ssh_server - Install SSH server", data=CommandInfo(
+            name="install_ssh_server",
+            description="Install SSH server",
+            command="devops network install_ssh_server",
+            parent="network",
+            help_text="devops network install_ssh_server"
+        ))
+
+        network_node.add("� add_ssh_key - Add SSH public key", data=CommandInfo(
+            name="add_ssh_key",
+            description="Add SSH public key to this machine",
+            command="devops network add_ssh_key",
+            parent="network",
+            help_text="devops network add_ssh_key --path <file> --choose --value --github <username>"
+        ))
+
+        network_node.add("�️  add_ssh_identity - Add SSH identity", data=CommandInfo(
+            name="add_ssh_identity",
+            description="Add SSH identity (private key) to this machine",
+            command="devops network add_ssh_identity",
+            parent="network",
+            help_text="devops network add_ssh_identity"
+        ))
+
+        # self subcommands
+        self_node = devops_node.add("🔄 self - SELF operations", data=CommandInfo(
+            name="self",
+            description="SELF operations subcommands",
+            command="devops self",
+            parent="devops",
+            is_group=True
+        ))
+
+        self_node.add("🔄 update - Update essential repos", data=CommandInfo(
+            name="update",
+            description="Update essential repos",
+            command="devops self update",
+            parent="self",
+            help_text="devops self update"
+        ))
+
+        self_node.add("🤖 interactive - Interactive configuration", data=CommandInfo(
+            name="interactive",
+            description="Interactive configuration of machine",
+            command="devops self interactive",
+            parent="self",
+            help_text="devops self interactive"
+        ))
+
+        self_node.add("📊 status - Machine status", data=CommandInfo(
+            name="status",
+            description="Status of machine, shell profile, apps, symlinks, dotfiles, etc.",
+            command="devops self status",
+            parent="self",
+            help_text="devops self status"
+        ))
+
+        self_node.add("📋 clone - Clone machineconfig", data=CommandInfo(
+            name="clone",
+            description="Clone machineconfig locally and incorporate to shell profile",
+            command="devops self clone",
+            parent="self",
+            help_text="devops self clone"
+        ))
+
+        self_node.add("📚 navigate - Navigate command structure", data=CommandInfo(
+            name="navigate",
+            description="Navigate command structure with TUI",
+            command="devops self navigate",
+            parent="self",
+            help_text="devops self navigate"
+        ))
+
+        # fire command
+        self.root.add("🔥 fire - Fire jobs execution", data=CommandInfo(
+            name="fire",
+            description="Execute Python scripts with Fire",
+            command="fire",
+            is_group=False,
+            module_path="machineconfig.scripts.python.fire_jobs",
+            help_text="fire <path> [function] --ve <env> --interactive --jupyter --streamlit --debug --loop --remote --zellij_tab <name>"
+        ))
+
+        # agents command
+        agents_node = self.root.add("🤖 agents - AI Agents management", data=CommandInfo(
+            name="agents",
+            description="AI Agents management subcommands",
+            command="agents",
+            is_group=True,
+            module_path="machineconfig.scripts.python.agents"
+        ))
+
+        agents_node.add("✨ create - Create AI agent", data=CommandInfo(
+            name="create",
+            description="Create a new AI agent",
+            command="agents create",
+            parent="agents",
+            help_text="agents create --context-path <file> --keyword-search <term> --filename-pattern <pattern> --agent <type> --machine <target> --model <model> --provider <provider> --prompt <text> --prompt-path <file> --job-name <name> --tasks-per-prompt <num> --separate-prompt-from-context --output-path <file> --agents-dir <dir>"
+        ))
+
+        agents_node.add("📦 collect - Collect agent data", data=CommandInfo(
+            name="collect",
+            description="Collect agent data",
+            command="agents collect",
+            parent="agents",
+            help_text="agents collect --agent-dir <dir> --output-path <file> --separator <sep>"
+        ))
+
+        agents_node.add("📝 make-template - Create agent template", data=CommandInfo(
+            name="make-template",
+            description="Create a template for fire agents",
+            command="agents make-template",
+            parent="agents",
+            help_text="agents make-template"
+        ))
+
+        agents_node.add("⚙️  make-config - Initialize AI configurations", data=CommandInfo(
+            name="make-config",
+            description="Initialize AI configurations in the current repository",
+            command="agents make-config",
+            parent="agents",
+            help_text="agents make-config"
+        ))
+
+        agents_node.add("📝 make-todo - Generate todo markdown", data=CommandInfo(
+            name="make-todo",
+            description="Generate a markdown file listing all Python files in the repo",
+            command="agents make-todo",
+            parent="agents",
+            help_text="agents make-todo"
+        ))
+
+        # sessions command
+        sessions_node = self.root.add("🖥️  sessions - Session layouts management", data=CommandInfo(
+            name="sessions",
+            description="Layouts management subcommands",
+            command="sessions",
+            is_group=True,
+            module_path="machineconfig.scripts.python.sessions"
+        ))
+
+        sessions_node.add("✨ create-from-function - Create layout from function", data=CommandInfo(
+            name="create-from-function",
+            description="Create layout from function",
+            command="sessions create-from-function",
+            parent="sessions",
+            help_text="sessions create-from-function"
+        ))
+
+        sessions_node.add("▶️  run - Run session layout", data=CommandInfo(
+            name="run",
+            description="Run session layout",
+            command="sessions run",
+            parent="sessions",
+            help_text="sessions run --layout-path <file> --max-tabs <num> --max-layouts <num> --sleep-inbetween <sec> --monitor --parallel --kill-upon-completion --choose <names> --choose-interactively"
+        ))
+
+        sessions_node.add("⚖️  balance-load - Balance load", data=CommandInfo(
+            name="balance-load",
+            description="Balance load across sessions",
+            command="sessions balance-load",
+            parent="sessions",
+            help_text="sessions balance-load --layout-path <file> --max-thresh <num> --thresh-type <number|weight> --breaking-method <moreLayouts|combineTabs> --output-path <file>"
+        ))
+
+        # cloud command
+        cloud_node = self.root.add("☁️  cloud - Cloud storage operations", data=CommandInfo(
+            name="cloud",
+            description="Cloud storage operations",
+            command="cloud",
+            is_group=True,
+            module_path="machineconfig.scripts.python.cloud"
+        ))
+
+        cloud_node.add("🔄 sync - Synchronize with cloud", data=CommandInfo(
+            name="sync",
+            description="Synchronize files/folders between local and cloud storage",
+            command="cloud sync",
+            parent="cloud",
+            help_text="cloud sync <source> <target> --cloud <provider> --recursive --exclude <patterns>"
+        ))
+
+        cloud_node.add("📤 copy - Copy to/from cloud", data=CommandInfo(
+            name="copy",
+            description="Copy files/folders to/from cloud storage",
+            command="cloud copy",
+            parent="cloud",
+            help_text="cloud copy <source> <target> --cloud <provider> --recursive --exclude <patterns>"
+        ))
+
+        cloud_node.add("🔗 mount - Mount cloud storage", data=CommandInfo(
+            name="mount",
+            description="Mount cloud storage as local drive",
+            command="cloud mount",
+            parent="cloud",
+            help_text="cloud mount <remote> <mount_point> --cloud <provider> --daemon --allow-other"
+        ))
+
+        # croshell command
+        self.root.add("� croshell - Interactive shell", data=CommandInfo(
+            name="croshell",
+            description="Interactive shell with various options",
+            command="croshell",
+            is_group=False,
+            module_path="machineconfig.scripts.python.croshell",
+            help_text="croshell --python --fzf --ve <env> --profile <profile> --read <file> --jupyter --streamlit --visidata"
+        ))
+
+        # ftpx command
+        self.root.add("📡 ftpx - File transfer", data=CommandInfo(
+            name="ftpx",
+            description="File transfer between machines",
+            command="ftpx",
+            is_group=False,
+            module_path="machineconfig.scripts.python.ftpx",
+            help_text="ftpx <source> <target> --recursive --zipFirst --cloud"
+        ))
+
+        # kill_process command
+        self.root.add("💀 kill_process - Kill processes", data=CommandInfo(
+            name="kill_process",
+            description="Kill running processes",
+            command="kill_process",
+            is_group=False,
+            module_path="machineconfig.utils.procs",
+            help_text="kill_process"
+        ))

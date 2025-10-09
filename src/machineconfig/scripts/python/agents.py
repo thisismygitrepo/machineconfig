@@ -187,17 +187,16 @@ def init_config():
     from machineconfig.scripts.python.ai.initai import add_ai_configs
     add_ai_configs(repo_root=Path.cwd())
 
-def generate_files():
-    from machineconfig.scripts.python.ai.generate_files import main
-    main()
-
 def get_app():
     agents_app = typer.Typer(help="🤖 AI Agents management subcommands")
     agents_app.command("create", no_args_is_help=True, help="Create agents layout file, ready to run.")(create)
     agents_app.command("collect", no_args_is_help=True, help="Collect all agent materials into a single file.")(collect)
     agents_app.command("make-template", no_args_is_help=False, help="Create a template for fire agents")(template)
     agents_app.command("make-config", no_args_is_help=False, help="Initialize AI configurations in the current repository")(init_config)
-    agents_app.command("make-todo", no_args_is_help=False, help="Generate a markdown file listing all Python files in the repo")(generate_files)
+    from machineconfig.scripts.python.ai.generate_files import main
+    agents_app.command("make-todo", no_args_is_help=False, help="Generate a markdown file listing all Python files in the repo")(main)
+    from machineconfig.scripts.python.ai.generate_files import create_symlink_command
+    agents_app.command(name="make-symlinks", no_args_is_help=False, help="Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
     return agents_app
 
 def main():
