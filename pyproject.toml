@@ -107,6 +107,7 @@ dev = [
     "pylint>=3.3.8",
     "pyrefly>=0.33.1",
     "pyright>=1.1.405",
+    "pytest>=8.4.2",
     "ruff>=0.13.1",
     "sqlalchemy>=2.0.43",
     "textual>=6.1.0",

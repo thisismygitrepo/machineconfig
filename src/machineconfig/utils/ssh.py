@@ -1,50 +1,20 @@
-from typing import Optional, Any, Union, List
+from typing import Optional, Any, Union
 import os
-from dataclasses import dataclass
+from pathlib import Path
 import rich.console
 from machineconfig.utils.terminal import Response, MACHINE
-from machineconfig.utils.path_extended import PathExtended, PLike, OPLike
 from machineconfig.utils.accessories import pprint
-# from machineconfig.utils.ve import get_ve_activate_line
+
+UV_RUN_CMD = "$HOME/.local/bin/uv run"
+MACHINECONFIG_VERSION = "machineconfig>=5.67"
+DEFAULT_PICKLE_SUBDIR = "tmp_results/tmp_scripts/ssh"
 
 
-def get_header(wdir: str): return f"""import sys; sys.path.insert(0, r'{wdir}')"""
-
-
-@dataclass
-class Scout:
-    source_full: PathExtended
-    source_rel2home: PathExtended
-    exists: bool
-    is_dir: bool
-    files: Optional[List[PathExtended]]
-
-
-def scout(source: PLike, z: bool = False, r: bool = False) -> Scout:
-    source_full = PathExtended(source).expanduser().absolute()
-    source_rel2home = source_full.collapseuser()
-    exists = source_full.exists()
-    is_dir = source_full.is_dir() if exists else False
-    if z and exists:
-        try:
-            source_full = source_full.zip()
-        except Exception as ex:
-            raise Exception(f"Could not zip {source_full} due to {ex}") from ex  # type: ignore # pylint: disable=W0719
-        source_rel2home = source_full.zip()
-    if r and exists and is_dir:
-        files = [item.collapseuser() for item in source_full.search(folders=False, r=True)]
-    else:
-        files = None
-    return Scout(source_full=source_full, source_rel2home=source_rel2home, exists=exists, is_dir=is_dir, files=files)
-
-
-class SSH:  # inferior alternative: https://github.com/fabric/fabric
+class SSH:
     def __init__(
-        self, host: Optional[str] = None, username: Optional[str] = None, hostname: Optional[str] = None, sshkey: Optional[str] = None, pwd: Optional[str] = None, port: int = 22, ve: Optional[str] = ".venv", compress: bool = False
-    ):  # https://stackoverflow.com/questions/51027192/execute-command-script-using-different-shell-in-ssh-paramiko
-        self.pwd = pwd
-        self.ve = ve
-        self.compress = compress  # Defaults: (1) use localhost if nothing provided.
+        self, host: Optional[str], username: Optional[str], hostname: Optional[str], ssh_key_path: Optional[str], password: Optional[str], port: int, enable_compression: bool):
+        self.password = password
+        self.enable_compression = enable_compression
 
         self.host: Optional[str] = None
         self.hostname: str
@@ -59,7 +29,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             try:
                 import paramiko.config as pconfig
 
-                config = pconfig.SSHConfig.from_path(str(PathExtended.home().joinpath(".ssh/config")))
+                config = pconfig.SSHConfig.from_path(str(Path.home().joinpath(".ssh/config")))
                 config_dict = config.lookup(host)
                 self.hostname = config_dict["hostname"]
                 self.username = config_dict["user"]
@@ -94,11 +64,11 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             print(f"Provided values: host={host}, username={username}, hostname={hostname}")
             raise ValueError("Either host or username and hostname must be provided.")
 
-        self.sshkey = str(PathExtended(sshkey).expanduser().absolute()) if sshkey is not None else None  # no need to pass sshkey if it was configured properly already
+        self.sshkey = str(Path(sshkey).expanduser().absolute()) if sshkey is not None else None  # no need to pass sshkey if it was configured properly already
         self.ssh = paramiko.SSHClient()
         self.ssh.load_system_host_keys()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        pprint(dict(host=self.host, hostname=self.hostname, username=self.username, password="***", port=self.port, key_filename=self.sshkey, ve=self.ve), title="SSHing To")
+        pprint(dict(host=self.host, hostname=self.hostname, username=self.username, password="***", port=self.port, key_filename=self.sshkey), title="SSHing To")
         sock = paramiko.ProxyCommand(self.proxycommand) if self.proxycommand is not None else None
         try:
             if pwd is None:
@@ -116,9 +86,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             self.sftp: Optional[paramiko.SFTPClient] = self.ssh.open_sftp()
         except Exception as err:
             self.sftp = None
-            print(f"""⚠️  WARNING: Failed to open SFTP connection to {hostname}.
-   Error Details: {err}\nData transfer may be affected!""")
-
+            print(f"""⚠️  WARNING: Failed to open SFTP connection to {self.hostname}. Error Details: {err}\nData transfer may be affected!""")
         from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, FileSizeColumn, TransferSpeedColumn
 
         class RichProgressWrapper:
@@ -148,13 +116,27 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
         self.terminal_responses: list[Response] = []
         self.platform = platform
 
+    def __enter__(self) -> "SSH":
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        self.close()
+
+    def close(self) -> None:
+        if self.sftp is not None:
+            self.sftp.close()
+            self.sftp = None
+        self.ssh.close()
+
     def get_remote_machine(self) -> MACHINE:
         if self._remote_machine is None:
-            if self.run("$env:OS", verbose=False, desc="Testing Remote OS Type").op == "Windows_NT" or self.run("echo %OS%", verbose=False, desc="Testing Remote OS Type Again").op == "Windows_NT":
+            windows_test1 = self.run("$env:OS", verbose=False, desc="Testing Remote OS Type").op
+            windows_test2 = self.run("echo %OS%", verbose=False, desc="Testing Remote OS Type Again").op
+            if windows_test1 == "Windows_NT" or windows_test2 == "Windows_NT":
                 self._remote_machine = "Windows"
             else:
                 self._remote_machine = "Linux"
-        return self._remote_machine  # echo %OS% TODO: uname on linux
+        return self._remote_machine
 
     def get_local_distro(self) -> str:
         if self._local_distro is None:
@@ -165,25 +147,33 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             return res
         return self._local_distro
 
-    def get_remote_distro(self):
+    def get_remote_distro(self) -> str:
         if self._remote_distro is None:
-            res = self.run("""$HOME/.local/bin/uv run --with distro python -c "import distro; print(distro.name(pretty=True))" """)
+            cmd = f"""{UV_RUN_CMD} --with distro python -c "import distro; print(distro.name(pretty=True))" """
+            res = self.run(cmd)
             self._remote_distro = res.op_if_successfull_or_default() or ""
         return self._remote_distro
 
-    def restart_computer(self):
-        self.run("Restart-Computer -Force" if self.get_remote_machine() == "Windows" else "sudo reboot")
+    def restart_computer(self) -> Response:
+        return self.run("Restart-Computer -Force" if self.get_remote_machine() == "Windows" else "sudo reboot")
 
-    def send_ssh_key(self):
-        self.copy_from_here("~/.ssh/id_rsa.pub")
-        assert self.get_remote_machine() == "Windows"
+    def send_ssh_key(self) -> Response:
+        self.copy_from_here(source=Path("~/.ssh/id_rsa.pub"), target=None)
+        if self.get_remote_machine() != "Windows":
+            raise RuntimeError("send_ssh_key is only supported for Windows remote machines")
         code_url = "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/refs/heads/main/src/machineconfig/setup_windows/openssh-server_add-sshkey.ps1"
-        code = PathExtended(code_url).download().read_text(encoding="utf-8")
-        self.run(code)
+        import urllib.request
+        with urllib.request.urlopen(code_url) as response:
+            code = response.read().decode("utf-8")
+        return self.run(cmd=code)
 
-    def copy_env_var(self, name: str):
-        assert self.get_remote_machine() == "Linux"
-        return self.run(f"{name} = {os.environ[name]}; export {name}")
+    def copy_env_var(self, name: str) -> Response:
+        if self.get_remote_machine() != "Linux":
+            raise RuntimeError("copy_env_var is only supported for Linux remote machines")
+        env_value = os.environ.get(name)
+        if env_value is None:
+            raise RuntimeError(f"Environment variable {name} not found in local environment")
+        return self.run(cmd=f"{name}={env_value}; export {name}")
 
     def get_remote_repr(self, add_machine: bool = False) -> str:
         return f"{self.username}@{self.hostname}:{self.port}" + (f" [{self.get_remote_machine()}][{self.get_remote_distro()}]" if add_machine else "")
@@ -193,49 +183,69 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
 
         return f"{getpass.getuser()}@{self.platform.node()}" + (f" [{self.platform.system()}][{self.get_local_distro()}]" if add_machine else "")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"local {self.get_local_repr(add_machine=True)} >>> SSH TO >>> remote {self.get_remote_repr(add_machine=True)}"
 
-    def run_locally(self, command: str):
+    def run_locally(self, command: str) -> Response:
         print(f"""💻 [LOCAL EXECUTION] Running command on node: {self.platform.node()} Command: {command}""")
         res = Response(cmd=command)
         res.output.returncode = os.system(command)
         return res
 
-    def get_ssh_conn_str(self, cmd: str = ""):
+    def get_ssh_conn_str(self, cmd: str = "") -> str:
         return "ssh " + (f" -i {self.sshkey}" if self.sshkey else "") + self.get_remote_repr().replace(":", " -p ") + (f" -t {cmd} " if cmd != "" else " ")
 
     def run(self, cmd: str, verbose: bool = True, desc: str = "", strict_err: bool = False, strict_returncode: bool = False) -> Response:
         raw = self.ssh.exec_command(cmd)
         res = Response(stdin=raw[0], stdout=raw[1], stderr=raw[2], cmd=cmd, desc=desc)  # type: ignore
-        if not verbose:
-            res.capture().print_if_unsuccessful(desc=desc, strict_err=strict_err, strict_returncode=strict_returncode, assert_success=False)
-        else:
+        if verbose:
             res.print()
+        else:
+            res.capture().print_if_unsuccessful(desc=desc, strict_err=strict_err, strict_returncode=strict_returncode, assert_success=False)
         self.terminal_responses.append(res)
         return res
+    def _create_remote_target_dir(self, target_path: Union[str, Path], overwrite: bool) -> str:
+        """Helper to create a directory on remote machine and return its path."""
+        def create_target_dir(item: str, overwrite: bool) -> str:
+            from pathlib import Path
+            import shutil
+            path = Path(item).expanduser()
+            if overwrite and path.exists():
+                if path.is_dir():
+                    shutil.rmtree(path)
+                else:
+                    path.unlink()
+            path.parent.mkdir(parents=True, exist_ok=True)
+            obj = path.as_posix()
+            return obj
+        
+        from machineconfig.utils.meta import function_to_script
+        command = function_to_script(func=create_target_dir, call_with_kwargs={"item": Path(target_path).as_posix(), "overwrite": overwrite})
+        result = self.run_py(command, desc=f"Creating target directory `{Path(target_path).parent.as_posix()}` @ {self.get_remote_repr()}", return_obj=True, verbose=False)
+        assert isinstance(result, str), f"Failed to create target directory {target_path} on remote"
+        return result
+
     def run_py(self, cmd: str, desc: str = "", return_obj: bool = False, verbose: bool = True, strict_err: bool = False, strict_returncode: bool = False) -> Union[Any, Response]:
         from machineconfig.utils.accessories import randstr
-        from pathlib import Path
-        cmd_path = Path.home().joinpath(f"tmp_results/tmp_scripts/ssh/runpy_{randstr()}.py")
+        cmd_path = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/runpy_{randstr()}.py")
         cmd_path.parent.mkdir(parents=True, exist_ok=True)
+        
         if not return_obj:
             cmd_path.write_text(cmd, encoding="utf-8")
             self.copy_from_here(source=cmd_path, target=None)
-            return self.run(
-                cmd=f"""$HOME/.local/bin/uv run --with machineconfig>=5.67python {cmd_path.relative_to(Path.home())}""" + '"',
-                desc=desc or f"run_py on {self.get_remote_repr()}",
-                verbose=verbose,
-                strict_err=strict_err,
-                strict_returncode=strict_returncode,
-            )
+            uv_cmd = f"""{UV_RUN_CMD} --with {MACHINECONFIG_VERSION} python {cmd_path.relative_to(Path.home())}"""
+            return self.run(cmd=uv_cmd, desc=desc or f"run_py on {self.get_remote_repr()}", verbose=verbose, strict_err=strict_err, strict_returncode=strict_returncode)
+        
         assert "obj=" in cmd, "The command sent to run_py must have `obj=` statement if return_obj is set to True"
         return_path = cmd_path.parent.joinpath(f"return_obj_{randstr()}.pkl")
+        
         def func(pkl_path_rel2_home: str) -> None:
-            pickle_path_obj = Path.home().joinpath(pkl_path_rel2_home).expanduser().absolute()
+            from pathlib import Path
             import pickle
+            pickle_path_obj = Path.home().joinpath(pkl_path_rel2_home).expanduser().absolute()
             obj = globals().get("obj", None)
             pickle_path_obj.write_bytes(pickle.dumps(obj))
+        
         from machineconfig.utils.meta import function_to_script
         cmd_complement = function_to_script(func=func, call_with_kwargs={"pkl_path_rel2_home": return_path.relative_to(Path.home()).as_posix()})
         cmd_total = f"""{cmd}
@@ -243,143 +253,225 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
 """
         cmd_path.write_text(cmd_total, encoding="utf-8")
         self.copy_from_here(source=cmd_path, target=None)
-        _resp = self.run(f"""$HOME/.local/bin/uv run --with machineconfig>=5.67python {cmd_path}""", desc=desc, verbose=verbose, strict_err=True, strict_returncode=True).op.split("\n")[-1]
-        res = self.copy_to_here(source=None, target=return_path)
+        uv_cmd = f"""{UV_RUN_CMD} --with {MACHINECONFIG_VERSION} python {cmd_path.relative_to(Path.home())}"""
+        _resp = self.run(uv_cmd, desc=desc, verbose=verbose, strict_err=True, strict_returncode=True).op.split("\n")[-1]
+        res = self.copy_to_here(source=return_path, target=return_path)
+        
         import pickle
+        if isinstance(res, list):
+            return pickle.loads(res[0].read_bytes())
         return pickle.loads(res.read_bytes())
 
-    def copy_from_here(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False, overwrite: bool = False, init: bool = True) -> Union[PathExtended, list[PathExtended]]:
-        if init:
-            print(f"{'⬆️' * 5} [SFTP UPLOAD] FROM `{source}` TO `{target}`")  # TODO: using return_obj do all tests required in one go.
-        source_obj = PathExtended(source).expanduser().absolute()
+    def copy_from_here(self, source: Union[str, Path], target: Optional[Union[str, Path]], z: bool = False, r: bool = False, overwrite: bool = False) -> Union[Path, list[Path]]:
+        if self.sftp is None:
+            raise RuntimeError(f"SFTP connection not available for {self.hostname}. Cannot transfer files.")
+        
+        source_obj = Path(source).expanduser().absolute()
         if not source_obj.exists():
-            raise RuntimeError(f"Meta.SSH Error: source `{source_obj}` does not exist!")
+            raise RuntimeError(f"SSH Error: source `{source_obj}` does not exist!")
+        
         if target is None:
-            target = PathExtended(source_obj).expanduser().absolute().collapseuser(strict=True)
-            assert target.is_relative_to("~"), "If target is not specified, source must be relative to home."
+            try:
+                target_path = source_obj.relative_to(Path.home())
+                target = Path("~") / target_path
+            except ValueError:
+                raise RuntimeError(f"If target is not specified, source must be relative to home directory, but got: {source_obj}")
             if z:
-                target += ".zip"
+                target = Path(str(target) + ".zip")
+        
         if not z and source_obj.is_dir():
-            if r is False:
-                raise RuntimeError(f"Meta.SSH Error: source `{source_obj}` is a directory! either set `r=True` for recursive sending or raise `z=True` flag to zip it first.")
-            source_list: list[PathExtended] = source_obj.search("*", folders=False, files=True, r=True)
-            def func(item: PathExtended, overwrite: bool) -> None:
-                from machineconfig.utils.path_extended import PathExtended as P
-                path=P(r'{PathExtended(target).as_posix()}').expanduser()
-                if overwrite: path.delete(sure=True)
-                path.parent.mkdir(parents=True, exist_ok=True)
-            from machineconfig.utils.meta import function_to_script
-            command = function_to_script(func=func, call_with_kwargs={"item": PathExtended(target).as_posix(), "overwrite": overwrite})
-            remote_root = (self.run_py(command,
-                    desc=f"Creating Target directory `{PathExtended(target).as_posix()}` @ {self.get_remote_repr()}",
-                    verbose=False,).op or "")
+            if not r:
+                raise RuntimeError(f"SSH Error: source `{source_obj}` is a directory! Set `r=True` for recursive sending or `z=True` to zip it first.")
+            
+            source_list: list[Path] = [p for p in source_obj.rglob("*") if p.is_file()]
+            remote_root = self._create_remote_target_dir(target_path=target, overwrite=overwrite)
+            
             for idx, item in enumerate(source_list):
                 print(f"   {idx + 1:03d}. {item}")
             for item in source_list:
-                a__target = PathExtended(remote_root).joinpath(item.relative_to(source_obj))
-                self.copy_from_here(source=item, target=a__target)
-            return list(source_list)
+                item_target = Path(remote_root).joinpath(item.relative_to(source_obj))
+                self.copy_from_here(source=item, target=item_target, z=False, r=False, overwrite=overwrite)
+            return source_list
+        
         if z:
             print("🗜️ ZIPPING ...")
-            source_obj = PathExtended(source_obj).expanduser().zip(content=True)  # .append(f"_{randstr()}", inplace=True)  # eventually, unzip will raise content flag, so this name doesn't matter.
-        remotepath = (
-            self.run_py(
-                f"""
-path=P(r'{PathExtended(target).as_posix()}').expanduser()
-{'path.delete(sure=True)' if overwrite else ''}
-print(path.parent.create())""",
-                desc=f"Creating Target directory `{PathExtended(target).parent.as_posix()}` @ {self.get_remote_repr()}",
-                verbose=False,
-            ).op
-            or ""
-        )
-        remotepath = PathExtended(remotepath.split("\n")[-1]).joinpath(PathExtended(target).name)
-        print(f"""📤 [SFTP UPLOAD] Sending file: {repr(PathExtended(source_obj))}  ==>  Remote Path: {remotepath.as_posix()}""")
+            import shutil
+            zip_path = Path(str(source_obj) + "_archive")
+            if source_obj.is_dir():
+                shutil.make_archive(str(zip_path), "zip", source_obj)
+            else:
+                shutil.make_archive(str(zip_path), "zip", source_obj.parent, source_obj.name)
+            source_obj = Path(str(zip_path) + ".zip")
+        
+        remotepath_str = self._create_remote_target_dir(target_path=target, overwrite=overwrite)
+        remotepath = Path(remotepath_str)
+        
+        print(f"""📤 [SFTP UPLOAD] Sending file: {repr(source_obj)}  ==>  Remote Path: {remotepath.as_posix()}""")
         with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
-            self.sftp.put(localpath=PathExtended(source_obj).expanduser(), remotepath=remotepath.as_posix(), callback=pbar.view_bar)  # type: ignore # pylint: disable=E1129
+            if self.sftp is None:  # type: ignore[unreachable]
+                raise RuntimeError(f"SFTP connection lost for {self.hostname}")
+            self.sftp.put(localpath=str(source_obj), remotepath=remotepath.as_posix(), callback=pbar.view_bar)  # type: ignore
+        
         if z:
-            _resp = self.run_py(f"""
-from machineconfig.utils.path_extended import PathExtended as P;
-P(r'{remotepath.as_posix()}').expanduser().unzip(content=False, inplace=True, overwrite={overwrite})""", desc=f"UNZIPPING {remotepath.as_posix()}", verbose=False, strict_err=True, strict_returncode=True)
-            source_obj.delete(sure=True)
+            def func_unzip(item: str, overwrite: bool) -> None:
+                from pathlib import Path
+                import shutil
+                import zipfile
+                zip_path = Path(item).expanduser()
+                extract_to = zip_path.parent / zip_path.stem
+                if overwrite and extract_to.exists():
+                    shutil.rmtree(extract_to)
+                with zipfile.ZipFile(zip_path, "r") as zip_ref:
+                    zip_ref.extractall(extract_to)
+                zip_path.unlink()
+            
+            from machineconfig.utils.meta import function_to_script
+            command = function_to_script(func=func_unzip, call_with_kwargs={"item": remotepath.as_posix(), "overwrite": overwrite})
+            _resp = self.run_py(command, desc=f"UNZIPPING {remotepath.as_posix()}", return_obj=False, verbose=False, strict_err=True, strict_returncode=True)
+            source_obj.unlink()
             print("\n")
+        
         return source_obj
 
-    def copy_to_here(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False, init: bool = True) -> PathExtended:
+    def _check_remote_is_dir(self, source_path: Union[str, Path]) -> bool:
+        """Helper to check if a remote path is a directory."""
+        def check_is_dir(source_path: str) -> bool:
+            from pathlib import Path
+            return Path(source_path).expanduser().absolute().is_dir()
+        
+        from machineconfig.utils.meta import function_to_script
+        command = function_to_script(func=check_is_dir, call_with_kwargs={"source_path": str(source_path)})
+        result = self.run_py(cmd=command, desc=f"Check if source `{source_path}` is a dir", return_obj=True, verbose=False)
+        assert isinstance(result, bool), f"Failed to check if {source_path} is directory"
+        return result
+
+    def _expand_remote_path(self, source_path: Union[str, Path]) -> str:
+        """Helper to expand a path on the remote machine."""
+        def expand_source(source_path: str) -> str:
+            from pathlib import Path
+            obj = Path(source_path).expanduser().absolute().as_posix()
+            return obj
+        
+        from machineconfig.utils.meta import function_to_script
+        command = function_to_script(func=expand_source, call_with_kwargs={"source_path": str(source_path)})
+        result = self.run_py(cmd=command, desc="Resolving source path by expanding user", return_obj=True, verbose=False)
+        assert isinstance(result, str), f"Could not resolve source path {source_path}"
+        return result
+
+    def copy_to_here(self, source: Union[str, Path], target: Optional[Union[str, Path]], z: bool = False, r: bool = False, init: bool = True) -> Union[Path, list[Path]]:
+        if self.sftp is None:
+            raise RuntimeError(f"SFTP connection not available for {self.hostname}. Cannot transfer files.")
+        
         if init:
             print(f"{'⬇️' * 5} SFTP DOWNLOADING FROM `{source}` TO `{target}`")
-        if not z and self.run_py(f"""
-from machineconfig.utils.path_extended import PathExtended as P
-print(P(r'{source}').expanduser().absolute().is_dir())""", desc=f"Check if source `{source}` is a dir", verbose=False, strict_returncode=True, strict_err=True).op.split("\n")[-1] == "True":
-            if r is False:
-                raise RuntimeError(f"source `{source}` is a directory! either set r=True for recursive sending or raise zip_first flag.")
-            source_list = self.run_py(f"""
-from machineconfig.utils.path_extended import PathExtended as P
-obj=P(r'{source}').search(folders=False, r=True).collapseuser(strict=False)
-""", desc="Searching for files in source", return_obj=True, verbose=False)
-            assert isinstance(source_list, List), f"Could not resolve source path {source} due to error"
-            for file in source_list:
-                self.copy_to_here(source=file.as_posix(), target=PathExtended(target).joinpath(PathExtended(file).relative_to(source)) if target else None, r=False)
+        
+        source_obj = Path(source)
+        
+        if not z:
+            is_dir = self._check_remote_is_dir(source_path=source_obj)
+            
+            if is_dir:
+                if not r:
+                    raise RuntimeError(f"SSH Error: source `{source_obj}` is a directory! Set r=True for recursive transfer or z=True to zip it.")
+                
+                def search_files(source_path: str) -> list[str]:
+                    from pathlib import Path
+                    obj = [item.as_posix() for item in Path(source_path).expanduser().absolute().rglob("*") if item.is_file()]
+                    return obj
+                
+                from machineconfig.utils.meta import function_to_script
+                command = function_to_script(func=search_files, call_with_kwargs={"source_path": source_obj.as_posix()})
+                source_list_str = self.run_py(cmd=command, desc="Searching for files in source", return_obj=True, verbose=False)
+                assert isinstance(source_list_str, list), f"Could not resolve source path {source}"
+                source_list = [Path(item) for item in source_list_str]
+                
+                for idx, item in enumerate(source_list):
+                    print(f"   {idx + 1:03d}. {item}")
+                
+                results: list[Path] = []
+                for item in source_list:
+                    item_target = Path(target).joinpath(item.relative_to(source_obj)) if target else None
+                    result = self.copy_to_here(source=item, target=item_target, z=False, r=False, init=False)
+                    if isinstance(result, Path):
+                        results.append(result)
+                    else:
+                        results.extend(result)
+                return results
+        
         if z:
-            tmp: Response = self.run_py(f"from machineconfig.utils.path_extended import PathExtended as P; print(P(r'{source}').expanduser().zip(inplace=False, verbose=False))", desc=f"Zipping source file {source}", verbose=False)
-            tmp2 = tmp.op2path(strict_returncode=True, strict_err=True)
-            if not isinstance(tmp2, PathExtended):
-                raise RuntimeError(f"Could not zip {source} due to {tmp.err}")
-            else:
-                source = tmp2
+            print("🗜️ ZIPPING ...")
+            def zip_source(source_path: str) -> str:
+                from pathlib import Path
+                import shutil
+                src = Path(source_path).expanduser().absolute()
+                zip_base = src.parent / (src.name + "_archive")
+                if src.is_dir():
+                    shutil.make_archive(str(zip_base), "zip", src)
+                else:
+                    shutil.make_archive(str(zip_base), "zip", src.parent, src.name)
+                obj = str(zip_base) + ".zip"
+                return obj
+            
+            from machineconfig.utils.meta import function_to_script
+            command = function_to_script(func=zip_source, call_with_kwargs={"source_path": source_obj.as_posix()})
+            zipped_path = self.run_py(cmd=command, desc=f"Zipping source file {source}", return_obj=True, verbose=False)
+            assert isinstance(zipped_path, str), f"Could not zip {source}"
+            source_obj = Path(zipped_path)
+        
         if target is None:
-            tmpx = self.run_py(f"print(P(r'{PathExtended(source).as_posix()}').collapseuser(strict=False).as_posix())", desc="Finding default target via relative source path", strict_returncode=True, strict_err=True, verbose=False).op2path()
-            if isinstance(tmpx, PathExtended):
-                target = tmpx
-            else:
-                raise RuntimeError(f"Could not resolve target path {target} due to error")
-            assert target.is_relative_to("~"), f"If target is not specified, source must be relative to home.\n{target=}"
-        target_obj = PathExtended(target).expanduser().absolute()
+            def collapse_to_home(source_path: str) -> str:
+                from pathlib import Path
+                src = Path(source_path).expanduser().absolute()
+                try:
+                    rel = src.relative_to(Path.home())
+                    obj = (Path("~") / rel).as_posix()
+                    return obj
+                except ValueError:
+                    raise RuntimeError(f"Source path must be relative to home directory: {src}")
+            
+            from machineconfig.utils.meta import function_to_script
+            command = function_to_script(func=collapse_to_home, call_with_kwargs={"source_path": source_obj.as_posix()})
+            target_str = self.run_py(cmd=command, desc="Finding default target via relative source path", return_obj=True, verbose=False)
+            assert isinstance(target_str, str), "Could not resolve target path"
+            target = Path(target_str)
+            assert str(target).startswith("~"), f"If target is not specified, source must be relative to home.\n{target=}"
+        
+        target_obj = Path(target).expanduser().absolute()
         target_obj.parent.mkdir(parents=True, exist_ok=True)
+        
         if z and ".zip" not in target_obj.suffix:
-            target_obj += ".zip"
-        if "~" in str(source):
-            tmp3 = self.run_py(f"print(P(r'{source}').expanduser())", desc="# Resolving source path address by expanding user", strict_returncode=True, strict_err=True, verbose=False).op2path()
-            if isinstance(tmp3, PathExtended):
-                source = tmp3
-            else:
-                raise RuntimeError(f"Could not resolve source path {source} due to")
-        else:
-            source = PathExtended(source)
-        print(f"""📥 [DOWNLOAD] Receiving: {source}  ==>  Local Path: {target_obj}""")
-        with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:  # type: ignore # pylint: disable=E1129
-            assert self.sftp is not None, f"Could not establish SFTP connection to {self.hostname}."
-            self.sftp.get(remotepath=source.as_posix(), localpath=str(target_obj), callback=pbar.view_bar)  # type: ignore
+            target_obj = target_obj.with_suffix(target_obj.suffix + ".zip")
+        
+        remote_source = self._expand_remote_path(source_path=source_obj)
+        
+        print(f"""📥 [DOWNLOAD] Receiving: {remote_source}  ==>  Local Path: {target_obj}""")
+        with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
+            if self.sftp is None:  # type: ignore[unreachable]
+                raise RuntimeError(f"SFTP connection lost for {self.hostname}")
+            self.sftp.get(remotepath=remote_source, localpath=str(target_obj), callback=pbar.view_bar)  # type: ignore
+        
         if z:
-            target_obj = target_obj.unzip(inplace=True, content=True)
-            self.run_py(f"from machineconfig.utils.path_extended import PathExtended as P; P(r'{source.as_posix()}').delete(sure=True)", desc="Cleaning temp zip files @ remote.", strict_returncode=True, strict_err=True, verbose=False)
+            import zipfile
+            extract_to = target_obj.parent / target_obj.stem
+            with zipfile.ZipFile(target_obj, "r") as zip_ref:
+                zip_ref.extractall(extract_to)
+            target_obj.unlink()
+            target_obj = extract_to
+            
+            def delete_temp_zip(source_path: str) -> None:
+                from pathlib import Path
+                import shutil
+                path = Path(source_path)
+                if path.exists():
+                    if path.is_dir():
+                        shutil.rmtree(path)
+                    else:
+                        path.unlink()
+            
+            from machineconfig.utils.meta import function_to_script
+            command = function_to_script(func=delete_temp_zip, call_with_kwargs={"source_path": remote_source})
+            self.run_py(cmd=command, desc="Cleaning temp zip files @ remote.", return_obj=False, verbose=False, strict_returncode=True, strict_err=True)
+        
         print("\n")
         return target_obj
 
-#     def receieve(self, source: PLike, target: OPLike = None, z: bool = False, r: bool = False) -> PathExtended:
-#         scout = self.run_py(cmd=f"obj=scout(r'{source}', z={z}, r={r})", desc=f"Scouting source `{source}` path on remote", return_obj=True, verbose=False)
-#         assert isinstance(scout, Scout)
-#         if not z and scout.is_dir and scout.files is not None:
-#             if r:
-#                 tmp: list[PathExtended] = [self.receieve(source=file.as_posix(), target=PathExtended(target).joinpath(PathExtended(file).relative_to(source)) if target else None, r=False) for file in scout.files]
-#                 return tmp[0]
-#             else:
-#                 print("Source is a directory! either set `r=True` for recursive sending or raise `zip_first=True` flag.")
-#         if target:
-#             target = PathExtended(target).expanduser().absolute()
-#         else:
-#             target = scout.source_rel2home.expanduser().absolute()
-#         target.parent.mkdir(parents=True, exist_ok=True)
-#         if z and ".zip" not in target.suffix:
-#             target += ".zip"
-#         source = scout.source_full
-#         with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
-#             self.sftp.get(remotepath=source.as_posix(), localpath=target.as_posix(), callback=pbar.view_bar)  # type: ignore # pylint: disable=E1129
-#         if z:
-#             target = target.unzip(inplace=True, content=True)
-#             self.run_py(f"""
-# from machineconfig.utils.path_extended import PathExtended as P;
-# P(r'{source.as_posix()}').delete(sure=True)
-# """, desc="Cleaning temp zip files @ remote.", strict_returncode=True, strict_err=True)
-#         print("\n")
-#         return target
