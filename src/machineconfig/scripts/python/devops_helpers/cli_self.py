@@ -31,9 +31,9 @@ def install():
     # main_public_from_parser()
     import platform
     if platform.system() == "Windows":
-        run_shell_script(r"""$HOME\.local\bin\uv.exe tool install machineconfig>=5.65""")
+        run_shell_script(r"""$HOME\.local\bin\uv.exe tool install machineconfig>=5.67""")
     else:
-        run_shell_script("""$HOME/.local/bin/uv tool install machineconfig>=5.65""")
+        run_shell_script("""$HOME/.local/bin/uv tool install machineconfig>=5.67""")
 
 @cli_app.command(no_args_is_help=False)
 def navigate():
@@ -42,7 +42,7 @@ def navigate():
     from pathlib import Path
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import run_shell_script
-    run_shell_script(f"uv run --with machineconfig>=5.65,textual {path}")
+    run_shell_script(f"uv run --with machineconfig>=5.67,textual {path}")
 
 
 @cli_app.command(no_args_is_help=True)

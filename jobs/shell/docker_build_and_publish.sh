@@ -2,6 +2,9 @@
 IMAGE_NAME="machineconfig"
 DATE=$(date +%y-%m)
 
+# curl -s -I https://api.github.com/repos/jqlang/jq/releases/latest | grep -E "(status|x-ratelimit)"
+
+
 echo """🚀 STARTING DOCKER BUILD | Building image ${IMAGE_NAME}:${DATE} """
 echo """🧹 CLEANUP | Removing old docker images"""
 docker rmi "statistician/$IMAGE_NAME:latest" --force

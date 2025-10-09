@@ -8,13 +8,13 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "jq-linux-amd64",
-          "windows": null,
-          "macos": null
+          "windows": "jq-windows-amd64.exe",
+          "macos": "jq-macos-amd64"
         },
         "arm64": {
           "linux": "jq-linux-arm64",
           "windows": null,
-          "macos": null
+          "macos": "jq-macos-arm64"
         }
       }
     },

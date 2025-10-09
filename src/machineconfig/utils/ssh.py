@@ -223,7 +223,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
             cmd_path.write_text(cmd, encoding="utf-8")
             self.copy_from_here(source=cmd_path, target=None)
             return self.run(
-                cmd=f"""$HOME/.local/bin/uv run --with machineconfig>=5.65python {cmd_path.relative_to(Path.home())}""" + '"',
+                cmd=f"""$HOME/.local/bin/uv run --with machineconfig>=5.67python {cmd_path.relative_to(Path.home())}""" + '"',
                 desc=desc or f"run_py on {self.get_remote_repr()}",
                 verbose=verbose,
                 strict_err=strict_err,
@@ -243,7 +243,7 @@ class SSH:  # inferior alternative: https://github.com/fabric/fabric
 """
         cmd_path.write_text(cmd_total, encoding="utf-8")
         self.copy_from_here(source=cmd_path, target=None)
-        _resp = self.run(f"""$HOME/.local/bin/uv run --with machineconfig>=5.65python {cmd_path}""", desc=desc, verbose=verbose, strict_err=True, strict_returncode=True).op.split("\n")[-1]
+        _resp = self.run(f"""$HOME/.local/bin/uv run --with machineconfig>=5.67python {cmd_path}""", desc=desc, verbose=verbose, strict_err=True, strict_returncode=True).op.split("\n")[-1]
         res = self.copy_to_here(source=None, target=return_path)
         import pickle
         return pickle.loads(res.read_bytes())

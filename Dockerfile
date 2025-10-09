@@ -15,9 +15,11 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 # WORKDIR /app
 # COPY . /app
 # RUN /root/.local/bin/uv tool install --python 3.14 --editable .
-RUN /root/.local/bin/uv tool install --python 3.14 machineconfig>=5.65
+RUN /root/.local/bin/uv tool install --python 3.14 machineconfig>=5.67
 RUN /root/.local/bin/devops install --group ESSENTIAL_SYSTEM
-RUN /root/.local/bin/devops install --group ESSENTIAL
+ENV NVM_DIR=/root/.nvm
+RUN bash -c "source $NVM_DIR/nvm.sh 2>/dev/null || true" && \
+    /root/.local/bin/devops install --group ESSENTIAL
 RUN /root/.local/bin/devops config public --method symlink --which all
 RUN /root/.local/bin/devops config shell
 
@@ -30,8 +32,7 @@ RUN rm -rfd /root/tmp_results
 
 RUN /root/.local/bin/uv clean && \
     rm -rfd /root/.cache/pip && \
-    rm -rfd /app
-# This saves 200MB
+    npm cache clean --force
 
 
 WORKDIR /root
