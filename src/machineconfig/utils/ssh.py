@@ -35,18 +35,18 @@ class SSH:
                 self.username = config_dict["user"]
                 self.host = host
                 self.port = int(config_dict.get("port", port))
-                tmp = config_dict.get("identityfile", ssh_key_path)
-                if isinstance(tmp, list):
-                    ssh_key_path = tmp[0]
+                identity_file_value = config_dict.get("identityfile", ssh_key_path)
+                if isinstance(identity_file_value, list):
+                    ssh_key_path = identity_file_value[0]
                 else:
-                    ssh_key_path = tmp
+                    ssh_key_path = identity_file_value
                 self.proxycommand = config_dict.get("proxycommand", None)
                 if ssh_key_path is not None:
-                    tmp = config.lookup("*").get("identityfile", ssh_key_path)
-                    if isinstance(tmp, list):
-                        ssh_key_path = tmp[0]
+                    wildcard_identity_file = config.lookup("*").get("identityfile", ssh_key_path)
+                    if isinstance(wildcard_identity_file, list):
+                        ssh_key_path = wildcard_identity_file[0]
                     else:
-                        ssh_key_path = tmp
+                        ssh_key_path = wildcard_identity_file
             except (FileNotFoundError, KeyError):
                 assert "@" in host or ":" in host, f"Host must be in the form of `username@hostname:port` or `username@hostname` or `hostname:port`, but it is: {host}"
                 if "@" in host:
@@ -195,33 +195,51 @@ class SSH:
         uv_cmd = f"""{UV_RUN_CMD} --with {MACHINECONFIG_VERSION} python {cmd_path.relative_to(Path.home())}"""
         return self.run_shell(command=uv_cmd, verbose_output=verbose_output, description=description or f"run_py on {self.get_remote_repr(add_machine=False)}", strict_stderr=strict_stderr, strict_return_code=strict_return_code)
 
+    def _simple_sftp_get(self, remote_path: str, local_path: Path) -> None:
+        """Simple SFTP get without any recursion or path expansion - for internal use only."""
+        if self.sftp is None:
+            raise RuntimeError(f"SFTP connection not available for {self.hostname}")
+        local_path.parent.mkdir(parents=True, exist_ok=True)
+        self.sftp.get(remotepath=remote_path, localpath=str(local_path))
+
     def _create_remote_target_dir(self, target_path: Union[str, Path], overwrite_existing: bool) -> str:
         """Helper to create a directory on remote machine and return its path."""
-        def create_target_dir(item: str, overwrite: bool) -> str:
+        def create_target_dir(target_dir_path: str, overwrite: bool, json_output_path: str) -> str:
             from pathlib import Path
             import shutil
             import json
-            from machineconfig.utils.accessories import randstr
-            path = Path(item).expanduser()
-            if overwrite and path.exists():
-                if path.is_dir():
-                    shutil.rmtree(path)
+            directory_path = Path(target_dir_path).expanduser()
+            if overwrite and directory_path.exists():
+                if directory_path.is_dir():
+                    shutil.rmtree(directory_path)
                 else:
-                    path.unlink()
-            path.parent.mkdir(parents=True, exist_ok=True)
-            obj = path.as_posix()
-            json_path = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json")
-            json_path.parent.mkdir(parents=True, exist_ok=True)
-            json_path.write_text(json.dumps(obj, indent=2), encoding="utf-8")
-            print(json_path.as_posix())
-            return obj
+                    directory_path.unlink()
+            directory_path.parent.mkdir(parents=True, exist_ok=True)
+            result_path_posix = directory_path.as_posix()
+            json_result_path = Path(json_output_path)
+            json_result_path.parent.mkdir(parents=True, exist_ok=True)
+            json_result_path.write_text(json.dumps(result_path_posix, indent=2), encoding="utf-8")
+            print(json_result_path.as_posix())
+            return result_path_posix
         from machineconfig.utils.meta import function_to_script
-        command = function_to_script(func=create_target_dir, call_with_kwargs={"item": Path(target_path).as_posix(), "overwrite": overwrite_existing})
+        from machineconfig.utils.accessories import randstr
+        remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
+        command = function_to_script(func=create_target_dir, call_with_kwargs={"target_dir_path": Path(target_path).as_posix(), "overwrite": overwrite_existing, "json_output_path": remote_json_output})
         response = self.run_py(python_code=command, description=f"Creating target directory `{Path(target_path).parent.as_posix()}` @ {self.get_remote_repr(add_machine=False)}", verbose_output=False, strict_stderr=False, strict_return_code=False)
         remote_json_path = response.op.strip()
-        local_json = self.copy_to_here(source=remote_json_path, target=None, z=False, r=False, init=False)
+        if not remote_json_path:
+            raise RuntimeError(f"Failed to create target directory {target_path} - no response from remote")
+        from machineconfig.utils.accessories import randstr
+        local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
+        self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
         import json
-        result = json.loads(local_json.read_text(encoding="utf-8"))
+        try:
+            result = json.loads(local_json.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, FileNotFoundError) as err:
+            raise RuntimeError(f"Failed to create target directory {target_path} - invalid JSON response: {err}") from err
+        finally:
+            if local_json.exists():
+                local_json.unlink()
         assert isinstance(result, str), f"Failed to create target directory {target_path} on remote"
         return result
 
@@ -240,18 +258,17 @@ class SSH:
                 target_path = Path("~") / target_path_relative
             except ValueError:
                 raise RuntimeError(f"If target is not specified, source must be relative to home directory, but got: {source_obj}")
-            if compress_with_zip:
-                target_path = Path(str(target_path) + ".zip")
+        
         if not compress_with_zip and source_obj.is_dir():
             if not recursive:
                 raise RuntimeError(f"SSH Error: source `{source_obj}` is a directory! Set `recursive=True` for recursive sending or `compress_with_zip=True` to zip it first.")            
-            source_list: list[Path] = [p for p in source_obj.rglob("*") if p.is_file()]
+            file_paths_to_upload: list[Path] = [file_path for file_path in source_obj.rglob("*") if file_path.is_file()]
             remote_root = self._create_remote_target_dir(target_path=target_path, overwrite_existing=overwrite_existing)
-            for idx, item in enumerate(source_list):
-                print(f"   {idx + 1:03d}. {item}")
-            for item in source_list:
-                item_target = Path(remote_root).joinpath(item.relative_to(source_obj))
-                self.copy_from_here(source_path=item, target_path=item_target, compress_with_zip=False, recursive=False, overwrite_existing=overwrite_existing)
+            for idx, file_path in enumerate(file_paths_to_upload):
+                print(f"   {idx + 1:03d}. {file_path}")
+            for file_path in file_paths_to_upload:
+                remote_file_target = Path(remote_root).joinpath(file_path.relative_to(source_obj))
+                self.copy_from_here(source_path=file_path, target_path=remote_file_target, compress_with_zip=False, recursive=False, overwrite_existing=overwrite_existing)
             return Path(remote_root)
         if compress_with_zip:
             print("🗜️ ZIPPING ...")
@@ -262,28 +279,35 @@ class SSH:
             else:
                 shutil.make_archive(str(zip_path), "zip", source_obj.parent, source_obj.name)
             source_obj = Path(str(zip_path) + ".zip")
+            if not str(target_path).endswith(".zip"):
+                target_path = Path(str(target_path) + ".zip")
         remotepath_str = self._create_remote_target_dir(target_path=target_path, overwrite_existing=overwrite_existing)
         remotepath = Path(remotepath_str)        
         print(f"""📤 [SFTP UPLOAD] Sending file: {repr(source_obj)}  ==>  Remote Path: {remotepath.as_posix()}""")
-        with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
-            if self.sftp is None:  # type: ignore[unreachable]
-                raise RuntimeError(f"SFTP connection lost for {self.hostname}")
-            self.sftp.put(localpath=str(source_obj), remotepath=remotepath.as_posix(), callback=pbar.view_bar)  # type: ignore
+        try:
+            with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
+                if self.sftp is None:  # type: ignore[unreachable]
+                    raise RuntimeError(f"SFTP connection lost for {self.hostname}")
+                self.sftp.put(localpath=str(source_obj), remotepath=remotepath.as_posix(), callback=pbar.view_bar)  # type: ignore
+        except Exception:
+            if compress_with_zip and source_obj.exists() and str(source_obj).endswith("_archive.zip"):
+                source_obj.unlink()
+            raise
         
         if compress_with_zip:
-            def func_unzip(item: str, overwrite_flag: bool) -> None:
+            def unzip_archive(zip_file_path: str, overwrite_flag: bool) -> None:
                 from pathlib import Path
                 import shutil
                 import zipfile
-                zip_path = Path(item).expanduser()
-                extract_to = zip_path.parent / zip_path.stem
-                if overwrite_flag and extract_to.exists():
-                    shutil.rmtree(extract_to)
-                with zipfile.ZipFile(zip_path, "r") as zip_ref:
-                    zip_ref.extractall(extract_to)
-                zip_path.unlink()
+                archive_path = Path(zip_file_path).expanduser()
+                extraction_directory = archive_path.parent / archive_path.stem
+                if overwrite_flag and extraction_directory.exists():
+                    shutil.rmtree(extraction_directory)
+                with zipfile.ZipFile(archive_path, "r") as archive_handle:
+                    archive_handle.extractall(extraction_directory)
+                archive_path.unlink()
             from machineconfig.utils.meta import function_to_script
-            command = function_to_script(func=func_unzip, call_with_kwargs={"item": remotepath.as_posix(), "overwrite_flag": overwrite_existing})
+            command = function_to_script(func=unzip_archive, call_with_kwargs={"zip_file_path": remotepath.as_posix(), "overwrite_flag": overwrite_existing})
             _resp = self.run_py(python_code=command, description=f"UNZIPPING {remotepath.as_posix()}", verbose_output=False, strict_stderr=True, strict_return_code=True)
             source_obj.unlink()
             print("\n")        
@@ -291,179 +315,247 @@ class SSH:
 
     def _check_remote_is_dir(self, source_path: Union[str, Path]) -> bool:
         """Helper to check if a remote path is a directory."""
-        def check_is_dir(source_path: str) -> bool:
+        def check_is_dir(path_to_check: str, json_output_path: str) -> bool:
             from pathlib import Path
             import json
-            from machineconfig.utils.accessories import randstr
-            obj = Path(source_path).expanduser().absolute().is_dir()
-            json_path = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json")
-            json_path.parent.mkdir(parents=True, exist_ok=True)
-            json_path.write_text(json.dumps(obj, indent=2), encoding="utf-8")
-            print(json_path.as_posix())
-            return obj
+            is_directory = Path(path_to_check).expanduser().absolute().is_dir()
+            json_result_path = Path(json_output_path)
+            json_result_path.parent.mkdir(parents=True, exist_ok=True)
+            json_result_path.write_text(json.dumps(is_directory, indent=2), encoding="utf-8")
+            print(json_result_path.as_posix())
+            return is_directory
         
         from machineconfig.utils.meta import function_to_script
-        command = function_to_script(func=check_is_dir, call_with_kwargs={"source_path": str(source_path)})
+        from machineconfig.utils.accessories import randstr
+        remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
+        command = function_to_script(func=check_is_dir, call_with_kwargs={"path_to_check": str(source_path), "json_output_path": remote_json_output})
         response = self.run_py(python_code=command, description=f"Check if source `{source_path}` is a dir", verbose_output=False, strict_stderr=False, strict_return_code=False)
         remote_json_path = response.op.strip()
-        local_json = self.copy_to_here(source=remote_json_path, target=None, z=False, r=False, init=False)
+        if not remote_json_path:
+            raise RuntimeError(f"Failed to check if {source_path} is directory - no response from remote")
+        from machineconfig.utils.accessories import randstr
+        local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
+        self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
         import json
-        result = json.loads(local_json.read_text(encoding="utf-8"))
+        try:
+            result = json.loads(local_json.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, FileNotFoundError) as err:
+            raise RuntimeError(f"Failed to check if {source_path} is directory - invalid JSON response: {err}") from err
+        finally:
+            if local_json.exists():
+                local_json.unlink()
         assert isinstance(result, bool), f"Failed to check if {source_path} is directory"
         return result
 
     def _expand_remote_path(self, source_path: Union[str, Path]) -> str:
         """Helper to expand a path on the remote machine."""
-        def expand_source(source_path: str) -> str:
+        def expand_source(path_to_expand: str, json_output_path: str) -> str:
             from pathlib import Path
             import json
-            from machineconfig.utils.accessories import randstr
-            obj = Path(source_path).expanduser().absolute().as_posix()
-            json_path = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json")
-            json_path.parent.mkdir(parents=True, exist_ok=True)
-            json_path.write_text(json.dumps(obj, indent=2), encoding="utf-8")
-            print(json_path.as_posix())
-            return obj
+            expanded_path_posix = Path(path_to_expand).expanduser().absolute().as_posix()
+            json_result_path = Path(json_output_path)
+            json_result_path.parent.mkdir(parents=True, exist_ok=True)
+            json_result_path.write_text(json.dumps(expanded_path_posix, indent=2), encoding="utf-8")
+            print(json_result_path.as_posix())
+            return expanded_path_posix
         
         from machineconfig.utils.meta import function_to_script
-        command = function_to_script(func=expand_source, call_with_kwargs={"source_path": str(source_path)})
+        from machineconfig.utils.accessories import randstr
+        remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
+        command = function_to_script(func=expand_source, call_with_kwargs={"path_to_expand": str(source_path), "json_output_path": remote_json_output})
         response = self.run_py(python_code=command, description="Resolving source path by expanding user", verbose_output=False, strict_stderr=False, strict_return_code=False)
         remote_json_path = response.op.strip()
-        local_json = self.copy_to_here(source=remote_json_path, target=None, z=False, r=False, init=False)
+        if not remote_json_path:
+            raise RuntimeError(f"Could not resolve source path {source_path} - no response from remote")
+        from machineconfig.utils.accessories import randstr
+        local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
+        self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
         import json
-        result = json.loads(local_json.read_text(encoding="utf-8"))
+        try:
+            result = json.loads(local_json.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, FileNotFoundError) as err:
+            raise RuntimeError(f"Could not resolve source path {source_path} - invalid JSON response: {err}") from err
+        finally:
+            if local_json.exists():
+                local_json.unlink()
         assert isinstance(result, str), f"Could not resolve source path {source_path}"
         return result
 
-    def copy_to_here(self, source: Union[str, Path], target: Optional[Union[str, Path]], z: bool = False, r: bool = False, init: bool = True) -> Path:
+    def copy_to_here(self, source: Union[str, Path], target: Optional[Union[str, Path]], compress_with_zip: bool = False, recursive: bool = False, internal_call: bool = False) -> Path:
         if self.sftp is None:
             raise RuntimeError(f"SFTP connection not available for {self.hostname}. Cannot transfer files.")
         
-        if init:
+        if not internal_call:
             print(f"{'⬇️' * 5} SFTP DOWNLOADING FROM `{source}` TO `{target}`")
         
         source_obj = Path(source)
+        expanded_source = self._expand_remote_path(source_path=source_obj)
         
-        if not z:
-            is_dir = self._check_remote_is_dir(source_path=source_obj)
+        if not compress_with_zip:
+            is_dir = self._check_remote_is_dir(source_path=expanded_source)
             
             if is_dir:
-                if not r:
-                    raise RuntimeError(f"SSH Error: source `{source_obj}` is a directory! Set r=True for recursive transfer or z=True to zip it.")
+                if not recursive:
+                    raise RuntimeError(f"SSH Error: source `{source_obj}` is a directory! Set recursive=True for recursive transfer or compress_with_zip=True to zip it.")
                 
-                def search_files(source_path: str) -> list[str]:
+                def search_files(directory_path: str, json_output_path: str) -> list[str]:
                     from pathlib import Path
                     import json
-                    from machineconfig.utils.accessories import randstr
-                    obj = [item.as_posix() for item in Path(source_path).expanduser().absolute().rglob("*") if item.is_file()]
-                    json_path = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json")
-                    json_path.parent.mkdir(parents=True, exist_ok=True)
-                    json_path.write_text(json.dumps(obj, indent=2), encoding="utf-8")
-                    print(json_path.as_posix())
-                    return obj
+                    file_paths_list = [file_path.as_posix() for file_path in Path(directory_path).expanduser().absolute().rglob("*") if file_path.is_file()]
+                    json_result_path = Path(json_output_path)
+                    json_result_path.parent.mkdir(parents=True, exist_ok=True)
+                    json_result_path.write_text(json.dumps(file_paths_list, indent=2), encoding="utf-8")
+                    print(json_result_path.as_posix())
+                    return file_paths_list
                 
                 from machineconfig.utils.meta import function_to_script
-                command = function_to_script(func=search_files, call_with_kwargs={"source_path": source_obj.as_posix()})
+                from machineconfig.utils.accessories import randstr
+                remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
+                command = function_to_script(func=search_files, call_with_kwargs={"directory_path": expanded_source, "json_output_path": remote_json_output})
                 response = self.run_py(python_code=command, description="Searching for files in source", verbose_output=False, strict_stderr=False, strict_return_code=False)
                 remote_json_path = response.op.strip()
-                local_json = self.copy_to_here(source=remote_json_path, target=None, z=False, r=False, init=False)
+                if not remote_json_path:
+                    raise RuntimeError(f"Could not resolve source path {source} - no response from remote")
+                from machineconfig.utils.accessories import randstr
+                local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
+                self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
                 import json
-                source_list_str = json.loads(local_json.read_text(encoding="utf-8"))
+                try:
+                    source_list_str = json.loads(local_json.read_text(encoding="utf-8"))
+                except (json.JSONDecodeError, FileNotFoundError) as err:
+                    raise RuntimeError(f"Could not resolve source path {source} - invalid JSON response: {err}") from err
+                finally:
+                    if local_json.exists():
+                        local_json.unlink()
                 assert isinstance(source_list_str, list), f"Could not resolve source path {source}"
-                source_list = [Path(item) for item in source_list_str]
+                file_paths_to_download = [Path(file_path_str) for file_path_str in source_list_str]
                 
                 if target is None:
-                    def collapse_to_home_dir(source_path: str) -> str:
+                    def collapse_to_home_dir(absolute_path: str, json_output_path: str) -> str:
                         from pathlib import Path
                         import json
-                        from machineconfig.utils.accessories import randstr
-                        src = Path(source_path).expanduser().absolute()
+                        source_absolute_path = Path(absolute_path).expanduser().absolute()
                         try:
-                            rel = src.relative_to(Path.home())
-                            obj = (Path("~") / rel).as_posix()
-                            json_path = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json")
-                            json_path.parent.mkdir(parents=True, exist_ok=True)
-                            json_path.write_text(json.dumps(obj, indent=2), encoding="utf-8")
-                            print(json_path.as_posix())
-                            return obj
+                            relative_to_home = source_absolute_path.relative_to(Path.home())
+                            collapsed_path_posix = (Path("~") / relative_to_home).as_posix()
+                            json_result_path = Path(json_output_path)
+                            json_result_path.parent.mkdir(parents=True, exist_ok=True)
+                            json_result_path.write_text(json.dumps(collapsed_path_posix, indent=2), encoding="utf-8")
+                            print(json_result_path.as_posix())
+                            return collapsed_path_posix
                         except ValueError:
-                            raise RuntimeError(f"Source path must be relative to home directory: {src}")
+                            raise RuntimeError(f"Source path must be relative to home directory: {source_absolute_path}")
                     
                     from machineconfig.utils.meta import function_to_script
-                    command = function_to_script(func=collapse_to_home_dir, call_with_kwargs={"source_path": source_obj.as_posix()})
+                    from machineconfig.utils.accessories import randstr
+                    remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
+                    command = function_to_script(func=collapse_to_home_dir, call_with_kwargs={"absolute_path": expanded_source, "json_output_path": remote_json_output})
                     response = self.run_py(python_code=command, description="Finding default target via relative source path", verbose_output=False, strict_stderr=False, strict_return_code=False)
                     remote_json_path_dir = response.op.strip()
-                    local_json_dir = self.copy_to_here(source=remote_json_path_dir, target=None, z=False, r=False, init=False)
+                    if not remote_json_path_dir:
+                        raise RuntimeError("Could not resolve target path - no response from remote")
+                    from machineconfig.utils.accessories import randstr
+                    local_json_dir = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
+                    self._simple_sftp_get(remote_path=remote_json_path_dir, local_path=local_json_dir)
                     import json
-                    target_dir_str = json.loads(local_json_dir.read_text(encoding="utf-8"))
+                    try:
+                        target_dir_str = json.loads(local_json_dir.read_text(encoding="utf-8"))
+                    except (json.JSONDecodeError, FileNotFoundError) as err:
+                        raise RuntimeError(f"Could not resolve target path - invalid JSON response: {err}") from err
+                    finally:
+                        if local_json_dir.exists():
+                            local_json_dir.unlink()
                     assert isinstance(target_dir_str, str), "Could not resolve target path"
                     target = Path(target_dir_str)
                 
                 target_dir = Path(target).expanduser().absolute()
                 
-                for idx, item in enumerate(source_list):
-                    print(f"   {idx + 1:03d}. {item}")
+                for idx, file_path in enumerate(file_paths_to_download):
+                    print(f"   {idx + 1:03d}. {file_path}")
                 
-                for item in source_list:
-                    item_target = target_dir.joinpath(item.relative_to(source_obj))
-                    self.copy_to_here(source=item, target=item_target, z=False, r=False, init=False)
+                for file_path in file_paths_to_download:
+                    local_file_target = target_dir.joinpath(Path(file_path).relative_to(expanded_source))
+                    self.copy_to_here(source=file_path, target=local_file_target, compress_with_zip=False, recursive=False, internal_call=True)
                 
                 return target_dir
         
-        if z:
+        if compress_with_zip:
             print("🗜️ ZIPPING ...")
-            def zip_source(source_path: str) -> str:
+            def zip_source(path_to_zip: str, json_output_path: str) -> str:
                 from pathlib import Path
                 import shutil
                 import json
-                from machineconfig.utils.accessories import randstr
-                src = Path(source_path).expanduser().absolute()
-                zip_base = src.parent / (src.name + "_archive")
-                if src.is_dir():
-                    shutil.make_archive(str(zip_base), "zip", src)
+                source_to_compress = Path(path_to_zip).expanduser().absolute()
+                archive_base_path = source_to_compress.parent / (source_to_compress.name + "_archive")
+                if source_to_compress.is_dir():
+                    shutil.make_archive(str(archive_base_path), "zip", source_to_compress)
                 else:
-                    shutil.make_archive(str(zip_base), "zip", src.parent, src.name)
-                obj = str(zip_base) + ".zip"
-                json_path = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json")
-                json_path.parent.mkdir(parents=True, exist_ok=True)
-                json_path.write_text(json.dumps(obj, indent=2), encoding="utf-8")
-                print(json_path.as_posix())
-                return obj
+                    shutil.make_archive(str(archive_base_path), "zip", source_to_compress.parent, source_to_compress.name)
+                zip_file_path = str(archive_base_path) + ".zip"
+                json_result_path = Path(json_output_path)
+                json_result_path.parent.mkdir(parents=True, exist_ok=True)
+                json_result_path.write_text(json.dumps(zip_file_path, indent=2), encoding="utf-8")
+                print(json_result_path.as_posix())
+                return zip_file_path
             
             from machineconfig.utils.meta import function_to_script
-            command = function_to_script(func=zip_source, call_with_kwargs={"source_path": source_obj.as_posix()})
+            from machineconfig.utils.accessories import randstr
+            remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
+            command = function_to_script(func=zip_source, call_with_kwargs={"path_to_zip": expanded_source, "json_output_path": remote_json_output})
             response = self.run_py(python_code=command, description=f"Zipping source file {source}", verbose_output=False, strict_stderr=False, strict_return_code=False)
             remote_json_path = response.op.strip()
-            local_json = self.copy_to_here(source=remote_json_path, target=None, z=False, r=False, init=False)
+            if not remote_json_path:
+                raise RuntimeError(f"Could not zip {source} - no response from remote")
+            from machineconfig.utils.accessories import randstr
+            local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
+            self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
             import json
-            zipped_path = json.loads(local_json.read_text(encoding="utf-8"))
+            try:
+                zipped_path = json.loads(local_json.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, FileNotFoundError) as err:
+                raise RuntimeError(f"Could not zip {source} - invalid JSON response: {err}") from err
+            finally:
+                if local_json.exists():
+                    local_json.unlink()
             assert isinstance(zipped_path, str), f"Could not zip {source}"
             source_obj = Path(zipped_path)
+            expanded_source = zipped_path
         
         if target is None:
-            def collapse_to_home(source_path: str) -> str:
+            def collapse_to_home(absolute_path: str, json_output_path: str) -> str:
                 from pathlib import Path
                 import json
-                from machineconfig.utils.accessories import randstr
-                src = Path(source_path).expanduser().absolute()
+                source_absolute_path = Path(absolute_path).expanduser().absolute()
                 try:
-                    rel = src.relative_to(Path.home())
-                    obj = (Path("~") / rel).as_posix()
-                    json_path = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json")
-                    json_path.parent.mkdir(parents=True, exist_ok=True)
-                    json_path.write_text(json.dumps(obj, indent=2), encoding="utf-8")
-                    print(json_path.as_posix())
-                    return obj
+                    relative_to_home = source_absolute_path.relative_to(Path.home())
+                    collapsed_path_posix = (Path("~") / relative_to_home).as_posix()
+                    json_result_path = Path(json_output_path)
+                    json_result_path.parent.mkdir(parents=True, exist_ok=True)
+                    json_result_path.write_text(json.dumps(collapsed_path_posix, indent=2), encoding="utf-8")
+                    print(json_result_path.as_posix())
+                    return collapsed_path_posix
                 except ValueError:
-                    raise RuntimeError(f"Source path must be relative to home directory: {src}")
+                    raise RuntimeError(f"Source path must be relative to home directory: {source_absolute_path}")
             
             from machineconfig.utils.meta import function_to_script
-            command = function_to_script(func=collapse_to_home, call_with_kwargs={"source_path": source_obj.as_posix()})
+            from machineconfig.utils.accessories import randstr
+            remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
+            command = function_to_script(func=collapse_to_home, call_with_kwargs={"absolute_path": expanded_source, "json_output_path": remote_json_output})
             response = self.run_py(python_code=command, description="Finding default target via relative source path", verbose_output=False, strict_stderr=False, strict_return_code=False)
             remote_json_path = response.op.strip()
-            local_json = self.copy_to_here(source=remote_json_path, target=None, z=False, r=False, init=False)
+            if not remote_json_path:
+                raise RuntimeError("Could not resolve target path - no response from remote")
+            from machineconfig.utils.accessories import randstr
+            local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
+            self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
             import json
-            target_str = json.loads(local_json.read_text(encoding="utf-8"))
+            try:
+                target_str = json.loads(local_json.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, FileNotFoundError) as err:
+                raise RuntimeError(f"Could not resolve target path - invalid JSON response: {err}") from err
+            finally:
+                if local_json.exists():
+                    local_json.unlink()
             assert isinstance(target_str, str), "Could not resolve target path"
             target = Path(target_str)
             assert str(target).startswith("~"), f"If target is not specified, source must be relative to home.\n{target=}"
@@ -471,18 +563,21 @@ class SSH:
         target_obj = Path(target).expanduser().absolute()
         target_obj.parent.mkdir(parents=True, exist_ok=True)
         
-        if z and ".zip" not in target_obj.suffix:
+        if compress_with_zip and target_obj.suffix != ".zip":
             target_obj = target_obj.with_suffix(target_obj.suffix + ".zip")
         
-        remote_source = self._expand_remote_path(source_path=source_obj)
+        print(f"""📥 [DOWNLOAD] Receiving: {expanded_source}  ==>  Local Path: {target_obj}""")
+        try:
+            with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
+                if self.sftp is None:  # type: ignore[unreachable]
+                    raise RuntimeError(f"SFTP connection lost for {self.hostname}")
+                self.sftp.get(remotepath=expanded_source, localpath=str(target_obj), callback=pbar.view_bar)  # type: ignore
+        except Exception:
+            if target_obj.exists():
+                target_obj.unlink()
+            raise
         
-        print(f"""📥 [DOWNLOAD] Receiving: {remote_source}  ==>  Local Path: {target_obj}""")
-        with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
-            if self.sftp is None:  # type: ignore[unreachable]
-                raise RuntimeError(f"SFTP connection lost for {self.hostname}")
-            self.sftp.get(remotepath=remote_source, localpath=str(target_obj), callback=pbar.view_bar)  # type: ignore
-        
-        if z:
+        if compress_with_zip:
             import zipfile
             extract_to = target_obj.parent / target_obj.stem
             with zipfile.ZipFile(target_obj, "r") as zip_ref:
@@ -490,18 +585,18 @@ class SSH:
             target_obj.unlink()
             target_obj = extract_to
             
-            def delete_temp_zip(source_path: str) -> None:
+            def delete_temp_zip(path_to_delete: str) -> None:
                 from pathlib import Path
                 import shutil
-                path = Path(source_path)
-                if path.exists():
-                    if path.is_dir():
-                        shutil.rmtree(path)
+                file_or_dir_path = Path(path_to_delete)
+                if file_or_dir_path.exists():
+                    if file_or_dir_path.is_dir():
+                        shutil.rmtree(file_or_dir_path)
                     else:
-                        path.unlink()
+                        file_or_dir_path.unlink()
             
             from machineconfig.utils.meta import function_to_script
-            command = function_to_script(func=delete_temp_zip, call_with_kwargs={"source_path": remote_source})
+            command = function_to_script(func=delete_temp_zip, call_with_kwargs={"path_to_delete": expanded_source})
             self.run_py(python_code=command, description="Cleaning temp zip files @ remote.", verbose_output=False, strict_stderr=True, strict_return_code=True)
         
         print("\n")

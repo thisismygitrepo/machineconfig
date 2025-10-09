@@ -141,7 +141,7 @@ def get_app():
     layouts_app.command("create-from-function", no_args_is_help=True, help="Create a layout from a function")(create_from_function)
     layouts_app.command("run", no_args_is_help=True, help="Run the selected layout(s)")(run)
     layouts_app.command("balance-load", no_args_is_help=True, help="Balance the load across sessions")(balance_load)
-    layouts_app.command("kill-process", no_args_is_help=True, help="Choose a process to kill")(kill_process)
+    layouts_app.command("kill-process", no_args_is_help=False, help="Choose a process to kill")(kill_process)
     return layouts_app
 
 

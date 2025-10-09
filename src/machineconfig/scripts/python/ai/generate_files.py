@@ -12,7 +12,7 @@ import shutil
 
 def get_python_files(repo_root: Path, exclude_init: bool = False) -> list[str]:
     """Get all Python files relative to repo root."""
-    excluded_parts = {".venv", "__pycache__", ".git", "build", "dist"}
+    excluded_parts = {".venv", "__pycache__", ".git", "build", "dist", ".ai"}
     excluded_patterns = {"*.egg-info"}
 
     # Get all .py files recursively
@@ -251,12 +251,12 @@ def main(
     pattern: Annotated[str, typer.Argument(help="Pattern or keyword to match files by")],
     repo: Annotated[str, typer.Argument(help="Repository path. Can be any directory within a git repository.")] = str(Path.cwd()),
     strategy: Annotated[Literal["name", "keywords"], typer.Option("-s", "--strategy", help="Strategy to filter files: 'name' for filename matching, 'keywords' for content matching")] = "name",
-    exclude_init: Annotated[bool, typer.Option("-e", "--exclude-init", help="Exclude __init__.py files from the checklist")] = False,
+    exclude_init: Annotated[bool, typer.Option("-x", "--exclude-init", help="Exclude __init__.py files from the checklist")] = True,
     include_line_count: Annotated[bool, typer.Option("-l", "--line-count", help="Include line count column in the output")] = False,
     output_path: Annotated[str, typer.Option("-o", "--output-path", help="Base path for output files relative to repo root")] = ".ai/todo/files",
     format_type: Annotated[Literal["csv", "md", "txt"], typer.Option("-f", "--format", help="Output format: csv, md (markdown), or txt")] = "md",
-    split_every: Annotated[Optional[int], typer.Option("--split-every", help="Split output into multiple files, each containing at most this many results")] = None,
-    split_to: Annotated[Optional[int], typer.Option("--split-to", help="Split output into exactly this many files")] = None,
+    split_every: Annotated[Optional[int], typer.Option("--split-every", "-e", help="Split output into multiple files, each containing at most this many results")] = None,
+    split_to: Annotated[Optional[int], typer.Option("--split-to", "-t", help="Split output into exactly this many files")] = None,
 ) -> None:
     """Generate checklist with Python and shell script files in the repository filtered by pattern."""
     repo_path = Path(repo).expanduser().absolute()

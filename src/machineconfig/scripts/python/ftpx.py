@@ -105,7 +105,7 @@ def ftpx(
     from paramiko.ssh_exception import AuthenticationException  # type: ignore
 
     try:
-        ssh = SSH(rf"{machine}")
+        ssh = SSH(host=rf"{machine}", username=None, hostname=None, ssh_key_path=None, password=None, port=22, enable_compression=True)
     except AuthenticationException:
         console.print(
             Panel(
@@ -123,7 +123,7 @@ def ftpx(
         import getpass
 
         pwd = getpass.getpass()
-        ssh = SSH(rf"{machine}", pwd=pwd)
+        ssh = SSH(host=rf"{machine}", username=None, hostname=None, ssh_key_path=None, password=pwd, port=22, enable_compression=True)
 
     if cloud:
         console.print(
@@ -133,7 +133,7 @@ def ftpx(
                 border_style="cyan",
             )
         )
-        ssh.run_shell(f"cloud_copy {resolved_source} :^", desc="Uploading from remote to the cloud.").print()
+        ssh.run_shell(command=f"cloud_copy {resolved_source} :^", verbose_output=True, description="Uploading from remote to the cloud.", strict_stderr=False, strict_return_code=False)
         console.print(
             Panel.fit(
                 "⬇️  Cloud transfer mode — downloading from cloud to local...",
@@ -141,7 +141,7 @@ def ftpx(
                 border_style="cyan",
             )
         )
-        ssh.run_locally(f"cloud_copy :^ {resolved_target}").print()
+        ssh.run_locally(command=f"cloud_copy :^ {resolved_target}")
         received_file = PathExtended(resolved_target)  # type: ignore
     else:
         if source_is_remote:
@@ -163,7 +163,7 @@ def ftpx(
                     padding=(1, 2),
                 )
             )
-            received_file = ssh.copy_to_here(source=resolved_source, target=resolved_target, z=zipFirst, r=recursive)
+            received_file = ssh.copy_to_here(source=resolved_source, target=resolved_target, z=zipFirst, r=recursive, init=True)
         else:
             assert resolved_source is not None, """
 ❌ Path Error: Target must be a remote path (machine:path)"""
@@ -183,7 +183,7 @@ def ftpx(
                     padding=(1, 2),
                 )
             )
-            received_file = ssh.copy_from_here(source=resolved_source, target=resolved_target, z=zipFirst, r=recursive)
+            received_file = ssh.copy_from_here(source_path=resolved_source, target_path=resolved_target, compress_with_zip=zipFirst, recursive=recursive, overwrite_existing=False)
 
     if source_is_remote and isinstance(received_file, PathExtended):
         console.print(
