@@ -212,7 +212,6 @@ def main(
 
 def main_from_parser() -> None:
     """Entry point function that uses typer to parse arguments and call main."""
-    # typer.run(main)
     app = typer.Typer()
     app.command(no_args_is_help=True, help="File transfer utility though SSH.")(main)
     app()

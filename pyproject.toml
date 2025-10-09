@@ -5,8 +5,8 @@ build-backend = "setuptools.build_meta"
 # build-backend = "hatchling.build"
 
 [project]
-name = "machineconfig"
-version = "5.61"
+name = "mcfg"
+version = "5.62"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -71,6 +71,7 @@ sessions = "machineconfig.scripts.python.sessions:main_from_parser"
 croshell = "machineconfig.scripts.python.croshell:arg_parser"
 cloud = "machineconfig.scripts.python.cloud:app"
 ftpx = "machineconfig.scripts.python.ftpx:main_from_parser"
+mcfg = "machineconfig.scripts.python.entry:app"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
