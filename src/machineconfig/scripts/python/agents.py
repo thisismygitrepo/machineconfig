@@ -15,11 +15,11 @@ def create(
     provider: PROVIDER = typer.Option(default=..., help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER)[:3])}"),
     context_path: Optional[Path] = typer.Option(None, help="Path to the context file/folder, defaults to .ai/todo/"),
     separator: str = typer.Option("\n", help="Separator for context"),
-    tasks_per_prompt: int = typer.Option(13, help="Number of tasks per prompt"),
+    agent_load: int = typer.Option(13, help="Number of tasks per prompt"),
     prompt: Optional[str] = typer.Option(None, help="Prompt prefix as string"),
     prompt_path: Optional[Path] = typer.Option(None, help="Path to prompt file"),
     job_name: str = typer.Option("AI_Agents", help="Job name"),
-    separate_prompt_from_context: bool = typer.Option(True, help="Keep prompt material in separate file to the context."),
+    separate: bool = typer.Option(True, help="Keep prompt material in separate file to the context."),
     output_path: Optional[Path] = typer.Option(None, help="Path to write the layout.json file"),
     agents_dir: Optional[Path] = typer.Option(None, help="Directory to store agent files. If not provided, will be constructed automatically."),
 ):
@@ -49,7 +49,7 @@ def create(
         raise typer.BadParameter(f"Path does not exist: {context_path_resolved}")
     
     if context_path_resolved.is_file():
-        prompt_material_re_splitted = chunk_prompts(context_path_resolved, tasks_per_prompt=tasks_per_prompt, joiner=separator)
+        prompt_material_re_splitted = chunk_prompts(context_path_resolved, tasks_per_prompt=agent_load, joiner=separator)
     elif context_path_resolved.is_dir():
         files = [f for f in context_path_resolved.rglob("*") if f.is_file()]
         if not files:
@@ -64,14 +64,13 @@ def create(
     else:
         prompt_prefix = cast(str, prompt)
     agent_selected = agent
-    keep_material_in_separate_file_input = separate_prompt_from_context
     if agents_dir is None: agents_dir = repo_root / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
     else:
         import shutil
         if agents_dir.exists():
             shutil.rmtree(agents_dir)
     prep_agent_launch(repo_root=repo_root, agents_dir=agents_dir, prompts_material=prompt_material_re_splitted,
-                      keep_material_in_separate_file=keep_material_in_separate_file_input,
+                      keep_material_in_separate_file=separate,
                       prompt_prefix=prompt_prefix, machine=machine, agent=agent_selected, model=model, provider=provider,
                       job_name=job_name)
     layoutfile = get_agents_launch_layout(session_root=agents_dir)    
@@ -82,9 +81,9 @@ agents create "{context_path_resolved}" \\
     --agent "{agent_selected}" \\
     --machine "{machine}" \\
     --job-name "{job_name}" \\
-    --tasks-per-prompt {tasks_per_prompt} \\
+    --agent_load {agent_load} \\
     --separator "{separator}" \\
-    {"--separate-prompt-from-context" if keep_material_in_separate_file_input else ""}
+    {"--separate" if separate else ""}
 """
     (agents_dir / "aa_agents_relaunch.py").write_text(data=regenerate_py_code, encoding="utf-8")
     layout_output_path = output_path if output_path is not None else agents_dir / "layout.json"
