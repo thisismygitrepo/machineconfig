@@ -25,7 +25,7 @@ def balance_load(layout_path: Path = typer.Argument(..., help="Path to the layou
 def select_layout(layouts_json_file: Path, selected_layouts_names: Optional[list[str]], select_interactively: bool) -> list["LayoutConfig"]:
     import json
     from machineconfig.utils.options import choose_from_options
-    from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, LayoutsFile
+    from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
     layout_file: LayoutsFile = json.loads(layouts_json_file.read_text(encoding="utf-8"))
     if len(layout_file["layouts"]) == 0:
         raise ValueError(f"No layouts found in {layouts_json_file}")

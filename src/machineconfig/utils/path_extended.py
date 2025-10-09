@@ -167,7 +167,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             print(f"🗑️ ❌ DELETED {repr(self)}.")
         return self
 
-    def move(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, rel2it: bool = False, overwrite: bool = False, verbose: bool = True, parents: bool = True, content: bool = False) -> "PathExtended":
+    def move(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, rel2it: bool = False, overwrite: bool = False, verbose: bool = True, parents: bool = True, content: bool = False) -> "PathExtended":  # type: ignore
         path = self._resolve_path(folder=folder, name=name, path=path, default_name=self.absolute().name, rel2it=rel2it)
         if parents:
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -193,9 +193,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             print(f"🚚 MOVED {repr(self)} ==> {repr(path)}`")
         return path
 
-    def copy(
-        self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, content: bool = False, verbose: bool = True, append: Optional[str] = None, overwrite: bool = False, orig: bool = False
-    ) -> "PathExtended":  # tested %100  # TODO: replace `content` flag with ability to interpret "*" in resolve method.
+    def copy(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, content: bool = False, verbose: bool = True, append: Optional[str] = None, overwrite: bool = False, orig: bool = False) -> "PathExtended":  # type: ignore
         dest = self._resolve_path(folder=folder, name=name, path=path, default_name=self.name, rel2it=False)
         dest = dest.expanduser().resolve()
         dest.parent.mkdir(parents=True, exist_ok=True)
