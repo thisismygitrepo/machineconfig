@@ -11,24 +11,18 @@ import typer
 from machineconfig.scripts.python.helpers_repos.secure_repo import main as secure_repo_main
 
 
-app = typer.Typer(help="📁 [r] Manage development repositories", no_args_is_help=True)
-sync_app = typer.Typer(help="🔄 Manage repository specifications and syncing", no_args_is_help=True)
-app.add_typer(sync_app, name="mirror", help="🔄 mirror repositories using saved specs")
-
 DirectoryArgument = Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")]
 RecursiveOption = Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")]
 NoSyncOption = Annotated[bool, typer.Option("--no-sync", help="🚫 Disable automatic uv sync after pulls.")]
 CloudOption = Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁️ Upload to or download from this cloud remote.")]
 
 
-@app.command(no_args_is_help=True)
 def push(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
     """🚀 Push changes across repositories."""
     from machineconfig.scripts.python.repos_helpers.entrypoint import git_operations
     git_operations(directory, pull=False, commit=False, push=True, recursive=recursive, no_sync=no_sync)
 
 
-@app.command(no_args_is_help=True)
 def pull(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
     """⬇️ Pull changes across repositories."""
     from machineconfig.scripts.python.repos_helpers.entrypoint import git_operations
@@ -36,7 +30,6 @@ def pull(directory: DirectoryArgument = None, recursive: RecursiveOption = False
     git_operations(directory, pull=True, commit=False, push=False, recursive=recursive, no_sync=no_sync)
 
 
-@app.command(no_args_is_help=True)
 def commit(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
     """💾 Commit changes across repositories."""
     from machineconfig.scripts.python.repos_helpers.entrypoint import git_operations
@@ -44,14 +37,12 @@ def commit(directory: DirectoryArgument = None, recursive: RecursiveOption = Fal
     git_operations(directory, pull=False, commit=True, push=False, recursive=recursive, no_sync=no_sync)
 
 
-@app.command(no_args_is_help=True)
 def sync(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_sync: NoSyncOption = False) -> None:
     """🔄 Pull, commit, and push changes across repositories."""
     from machineconfig.scripts.python.repos_helpers.entrypoint import git_operations
     git_operations(directory, pull=True, commit=True, push=True, recursive=recursive, no_sync=no_sync)
 
 
-@sync_app.command(no_args_is_help=True)
 def capture(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """📝 Record repositories into a repos.json specification."""
     from machineconfig.scripts.python.repos_helpers.entrypoint import resolve_directory
@@ -65,7 +56,6 @@ def capture(directory: DirectoryArgument = None, cloud: CloudOption = None) -> N
         PathExtended(save_path).to_cloud(rel2home=True, cloud=cloud)
 
 
-@sync_app.command(no_args_is_help=True)
 def clone(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """📥 Clone repositories described by a repos.json specification."""
     from machineconfig.scripts.python.repos_helpers.entrypoint import clone_from_specs
@@ -74,7 +64,6 @@ def clone(directory: DirectoryArgument = None, cloud: CloudOption = None) -> Non
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=False)
 
 
-@sync_app.command(name="checkout-to-commit", no_args_is_help=True)
 def checkout_command(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """🔀 Check out specific commits listed in the specification."""
     from machineconfig.scripts.python.repos_helpers.entrypoint import clone_from_specs
@@ -83,14 +72,12 @@ def checkout_command(directory: DirectoryArgument = None, cloud: CloudOption = N
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=True)
 
 
-@sync_app.command(name="checkout-to-branch", no_args_is_help=True)
 def checkout_to_branch_command(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """🔀 Check out to the main branch defined in the specification."""
     from machineconfig.scripts.python.repos_helpers.entrypoint import clone_from_specs
     clone_from_specs(directory, cloud, checkout_branch_flag=True, checkout_commit_flag=False)
 
 
-@app.command(no_args_is_help=True)
 def analyze(directory: DirectoryArgument = None) -> None:
     """📊 Analyze repository development over time."""
     repo_path = directory if directory is not None else "."
@@ -99,10 +86,6 @@ def analyze(directory: DirectoryArgument = None) -> None:
     analyze_repo_development(repo_path=repo_path)
 
 
-app.command(name="secure", no_args_is_help=True, help="🔐 Securely sync git repository to/from cloud with encryption")(secure_repo_main)
-
-
-@app.command(no_args_is_help=True)
 def viz(
     repo: str = typer.Option(Path.cwd().__str__(), "--repo", "-r", help="Path to git repository to visualize"),
     output_file: Optional[Path] = typer.Option(None, "--output", "-o", help="Output video file (e.g., output.mp4). If specified, gource will render to video."),
@@ -134,7 +117,7 @@ def viz(
               file_idle_time=file_idle_time, framerate=framerate, background_color=background_color,
               font_size=font_size, camera_mode=camera_mode)
 
-@app.command(no_args_is_help=True)
+
 def cleanup(repo: DirectoryArgument = None, recursive: RecursiveOption = False) -> None:
     """🧹 Clean repository directories from cache files."""
     if repo is None:
@@ -169,3 +152,38 @@ uv run --with cleanpy cleanpy .
 """
         from machineconfig.utils.code import run_shell_script
         run_shell_script(script)
+
+
+def get_app():
+    repos_apps = typer.Typer(help="📁 [r] Manage development repositories", no_args_is_help=True)
+    mirror_app = typer.Typer(help="🔄 [m] Manage repository specifications and syncing", no_args_is_help=True)
+    repos_apps.add_typer(mirror_app, name="mirror", help="🔄  [m] mirror repositories using saved specs")
+    repos_apps.add_typer(mirror_app, name="m", help="mirror repositories using saved specs", hidden=True)
+
+    repos_apps.command(name="push", help="🚀  [p] Push changes across repositories")(push)
+    repos_apps.command(name="p", help="Push changes across repositories", hidden=True)(push)
+    repos_apps.command(name="pull", help="⬇️   [P] Pull changes across repositories")(pull)
+    repos_apps.command(name="P", help="Pull changes across repositories", hidden=True)(pull)
+    repos_apps.command(name="commit", help="💾  [c] Commit changes across repositories")(commit)
+    repos_apps.command(name="c", help="Commit changes across repositories", hidden=True)(commit)
+    repos_apps.command(name="sync", help="🔄  [s] Pull, commit, and push changes across repositories")(sync)
+    repos_apps.command(name="s", help="Pull, commit, and push changes across repositories", hidden=True)(sync)
+    repos_apps.command(name="analyze", help="📊  [a] Analyze repository development over time")(analyze)
+    repos_apps.command(name="a", help="Analyze repository development over time", hidden=True)(analyze)
+    repos_apps.command(name="secure", help="🔐  [s] Securely sync git repository to/from cloud with encryption")(secure_repo_main)
+    repos_apps.command(name="s", help="Securely sync git repository to/from cloud with encryption", hidden=True)(secure_repo_main)
+    repos_apps.command(name="viz", help="🎬  [v] Visualize repository activity using Gource")(viz)
+    repos_apps.command(name="v", help="Visualize repository activity using Gource", hidden=True)(viz)
+    repos_apps.command(name="cleanup", help="🧹  [n] Clean repository directories from cache files")(cleanup)
+    repos_apps.command(name="n", help="Clean repository directories from cache files", hidden=True)(cleanup)
+
+    mirror_app.command(name="capture", help="📝  [cap] Record repositories into a repos.json specification")(capture)
+    mirror_app.command(name="cap", help="Record repositories into a repos.json specification", hidden=True)(capture)
+    mirror_app.command(name="clone", help="📥  [clo] Clone repositories described by a repos.json specification")(clone)
+    mirror_app.command(name="clo", help="Clone repositories described by a repos.json specification", hidden=True)(clone)
+    mirror_app.command(name="checkout-to-commit", help="🔀  [ctc] Check out specific commits listed in the specification")(checkout_command)
+    mirror_app.command(name="ctc", help="Check out specific commits listed in the specification", hidden=True)(checkout_command)
+    mirror_app.command(name="checkout-to-branch", help="🔀  [ctb] Check out to the main branch defined in the specification")(checkout_to_branch_command)
+    mirror_app.command(name="ctb", help="Check out to the main branch defined in the specification", hidden=True)(checkout_to_branch_command)
+
+    return repos_apps

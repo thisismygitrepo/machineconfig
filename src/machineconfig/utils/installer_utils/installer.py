@@ -56,7 +56,7 @@ def main_with_parser():
 
 
 def main(
-    which: Optional[str] = typer.Argument(None, help="Comma-separated list of program names to install, or group name if --group flag is set."),
+    which: Optional[str] = typer.Argument(None, help="Comma-separated list of program/groups names to install (if --group flag is set)."),
     group: bool = typer.Option(False, "--group", "-g", help="Treat 'which' as a group name. A group is bundle of apps."),
     interactive: bool = typer.Option(False, "--interactive", "-ia", help="Interactive selection of programs to install."),
 ) -> None:
@@ -64,7 +64,8 @@ def main(
         return install_interactively()
     if which is not None:
         if group:
-            return install_group(package_group=which)
+            for a_group in [x.strip() for x in which.split(",") if x.strip() != ""]:
+                return install_group(package_group=a_group)
         else:
             return install_clis(clis_names=[x.strip() for x in which.split(",") if x.strip() != ""])
     typer.echo("❌ You must provide either a program name/group name, or use --interactive/-ia option.")

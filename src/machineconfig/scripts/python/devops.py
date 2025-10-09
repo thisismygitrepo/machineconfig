@@ -20,18 +20,18 @@ def get_app():
         import machineconfig.utils.installer_utils.installer as installer_entry_point
         installer_entry_point.main(which=which, group=group, interactive=interactive)
     _ = install
-    app.command("install", no_args_is_help=True, help="🛠️ [i] Install essential packages")(install)
+    app.command("install", no_args_is_help=True, help="🛠️  [i] Install essential packages")(install)
     app.command("i", no_args_is_help=True, help="Install essential packages", hidden=True)(install)
-    app.add_typer(cli_repos.app, name="repos")
-    app.add_typer(cli_repos.app, name="r", hidden=True)
-    app.add_typer(cli_config.config_apps, name="config")
-    app.add_typer(cli_config.config_apps, name="c", hidden=True)
+    app.add_typer(cli_repos.get_app(), name="repos")
+    app.add_typer(cli_repos.get_app(), name="r", hidden=True)
+    app.add_typer(cli_config.get_app(), name="config")
+    app.add_typer(cli_config.get_app(), name="c", hidden=True)
     app.add_typer(cli_data.app_data, name="data")
     app.add_typer(cli_data.app_data, name="d", hidden=True)
-    app.add_typer(cli_self.cli_app, name="self")
-    app.add_typer(cli_self.cli_app, name="s", hidden=True)
-    app.add_typer(cli_network.nw_apps, name="network")
-    app.add_typer(cli_network.nw_apps, name="n", hidden=True)
+    app.add_typer(cli_self.get_app(), name="self")
+    app.add_typer(cli_self.get_app(), name="s", hidden=True)
+    app.add_typer(cli_network.get_app(), name="network")
+    app.add_typer(cli_network.get_app(), name="n", hidden=True)
     return app
 
 def main():

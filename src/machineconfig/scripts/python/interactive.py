@@ -120,7 +120,7 @@ def execute_installations(selected_options: list[str]) -> None:
             console.print("🔧 Installing CLI applications", style="bold cyan")
             try:
                 from machineconfig.utils.installer_utils.installer import main as devops_devapps_install_main
-                devops_devapps_install_main(group=maybe_a_group, which=None, interactive=False)
+                devops_devapps_install_main(group=True, which=maybe_a_group, interactive=False)
                 console.print("✅ CLI applications installed successfully", style="bold green")
             except Exception as e:
                 console.print(f"❌ Error installing CLI applications: {e}", style="bold red")
