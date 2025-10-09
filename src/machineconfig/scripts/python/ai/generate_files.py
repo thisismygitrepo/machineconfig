@@ -2,11 +2,12 @@
 """Script to generate a markdown table with checkboxes for all Python and shell files in the repo."""
 
 from pathlib import Path
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Optional
 from rich.console import Console
 from rich.panel import Panel
 import typer
 import subprocess
+import shutil
 
 
 def get_python_files(repo_root: Path, exclude_init: bool = False) -> list[str]:
@@ -112,6 +113,47 @@ def filter_files_by_content(repo_root: Path, files: list[str], keyword: str) -> 
     return filtered_files
 
 
+def generate_csv_content(python_files: list[str], shell_files: list[str], repo_root: Path, include_line_count: bool = False) -> str:
+    """Generate CSV content with file information."""
+    import csv
+    import io
+    
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    # Write header
+    if include_line_count:
+        writer.writerow(["Type", "Index", "File Path", "Line Count", "Status"])
+    else:
+        writer.writerow(["Type", "Index", "File Path", "Status"])
+    
+    # Write Python files
+    for index, file_path in enumerate(python_files, start=1):
+        clean_path = file_path.lstrip("./")
+        if include_line_count:
+            line_count = count_lines(repo_root / file_path)
+            writer.writerow(["Python", index, clean_path, line_count, "[ ]"])
+        else:
+            writer.writerow(["Python", index, clean_path, "[ ]"])
+    
+    # Write shell files
+    for index, file_path in enumerate(shell_files, start=1):
+        clean_path = file_path.lstrip("./")
+        if include_line_count:
+            line_count = count_lines(repo_root / file_path)
+            writer.writerow(["Shell", index, clean_path, line_count, "[ ]"])
+        else:
+            writer.writerow(["Shell", index, clean_path, "[ ]"])
+    
+    return output.getvalue()
+
+
+def generate_txt_content(python_files: list[str], shell_files: list[str]) -> str:
+    """Generate plain text content with file paths."""
+    all_files = python_files + shell_files
+    return "\n".join(file.lstrip("./") for file in all_files)
+
+
 def generate_markdown_table(python_files: list[str], shell_files: list[str], repo_root: Path, include_line_count: bool = False) -> str:
     """Generate markdown table with checkboxes."""
     header = "# File Checklist\n\n"
@@ -159,6 +201,40 @@ def generate_markdown_table(python_files: list[str], shell_files: list[str], rep
     return header + content
 
 
+def split_files_into_chunks(all_files: list[str], split_every: Optional[int] = None, split_to: Optional[int] = None) -> list[list[str]]:
+    """Split files into chunks based on split_every or split_to."""
+    if split_every is not None:
+        # Split into chunks of split_every files each
+        return [all_files[i:i + split_every] for i in range(0, len(all_files), split_every)]
+    elif split_to is not None:
+        # Split into exactly split_to chunks
+        if split_to <= 0:
+            return [all_files]
+        chunk_size = max(1, len(all_files) // split_to)
+        chunks = []
+        for i in range(split_to):
+            start = i * chunk_size
+            end = start + chunk_size if i < split_to - 1 else len(all_files)
+            chunks.append(all_files[start:end])
+        return chunks
+    else:
+        # No splitting
+        return [all_files]
+
+
+def generate_content(python_files: list[str], shell_files: list[str], repo_root: Path, 
+                    format_type: str, include_line_count: bool) -> str:
+    """Generate content based on format type."""
+    if format_type == "csv":
+        return generate_csv_content(python_files, shell_files, repo_root, include_line_count)
+    elif format_type == "md":
+        return generate_markdown_table(python_files, shell_files, repo_root, include_line_count)
+    elif format_type == "txt":
+        return generate_txt_content(python_files, shell_files)
+    else:
+        raise ValueError(f"Unsupported format: {format_type}")
+
+
 def create_repo_symlinks(repo_root: Path) -> None:
     """Create 5 symlinks to repo_root at ~/code_copies/${repo_name}_copy_{i}."""
     repo_name: str = repo_root.name
@@ -174,22 +250,30 @@ def create_repo_symlinks(repo_root: Path) -> None:
 def main(
     pattern: Annotated[str, typer.Argument(help="Pattern or keyword to match files by")],
     repo: Annotated[str, typer.Argument(help="Repository path. Can be any directory within a git repository.")] = str(Path.cwd()),
-    strategy: Annotated[Literal["name", "keywords"], typer.Option("--strategy", help="Strategy to filter files: 'name' for filename matching, 'keywords' for content matching")] = "name",
-    exclude_init: Annotated[bool, typer.Option("--exclude-init", help="Exclude __init__.py files from the checklist")] = False,
-    include_line_count: Annotated[bool, typer.Option("--line-count", help="Include line count column in the markdown table")] = False,
-    output_path: Annotated[str, typer.Option("--output-path", help="Path to output the markdown file relative to repo root")] = ".ai/todo/all_files_with_index.md",
+    strategy: Annotated[Literal["name", "keywords"], typer.Option("-s", "--strategy", help="Strategy to filter files: 'name' for filename matching, 'keywords' for content matching")] = "name",
+    exclude_init: Annotated[bool, typer.Option("-e", "--exclude-init", help="Exclude __init__.py files from the checklist")] = False,
+    include_line_count: Annotated[bool, typer.Option("-l", "--line-count", help="Include line count column in the output")] = False,
+    output_path: Annotated[str, typer.Option("-o", "--output-path", help="Base path for output files relative to repo root")] = ".ai/todo/files",
+    format_type: Annotated[Literal["csv", "md", "txt"], typer.Option("-f", "--format", help="Output format: csv, md (markdown), or txt")] = "md",
+    split_every: Annotated[Optional[int], typer.Option("--split-every", help="Split output into multiple files, each containing at most this many results")] = None,
+    split_to: Annotated[Optional[int], typer.Option("--split-to", help="Split output into exactly this many files")] = None,
 ) -> None:
-    """Generate markdown checklist with Python and shell script files in the repository filtered by pattern."""
+    """Generate checklist with Python and shell script files in the repository filtered by pattern."""
     repo_path = Path(repo).expanduser().absolute()
     if not is_git_repository(repo_path):
         console = Console()
         console.print(Panel(f"❌ ERROR | Not a git repository or not in a git repository: {repo_path}", border_style="bold red", expand=False))
         raise typer.Exit(code=1)
 
-    output_file = repo_path / output_path
+    # Delete .ai/todo directory at the start
+    todo_dir = repo_path / ".ai" / "todo"
+    if todo_dir.exists():
+        shutil.rmtree(todo_dir)
+
+    output_base = repo_path / output_path
 
     # Ensure output directory exists
-    output_file.parent.mkdir(parents=True, exist_ok=True)
+    output_base.parent.mkdir(parents=True, exist_ok=True)
 
     # Get Python and shell files
     python_files = get_python_files(repo_path, exclude_init=exclude_init)
@@ -206,20 +290,46 @@ def main(
     print(f"Repo path: {repo_path}")
     print(f"Strategy: {strategy}")
     print(f"Pattern: {pattern}")
+    print(f"Format: {format_type}")
     print(f"Found {len(python_files)} Python files")
     print(f"Found {len(shell_files)} Shell script files")
 
-    # Generate markdown
-    markdown_content = generate_markdown_table(python_files, shell_files, repo_path, include_line_count)
-
-    # Write to file
-    output_file.write_text(markdown_content)
+    # Combine all files for splitting
+    all_files = python_files + shell_files
+    
+    # Split files into chunks
+    file_chunks = split_files_into_chunks(all_files, split_every, split_to)
+    
+    # Determine file extension based on format
+    extension = {"csv": ".csv", "md": ".md", "txt": ".txt"}[format_type]
+    
+    output_files = []
+    for i, chunk in enumerate(file_chunks):
+        # Split chunk back into python and shell files
+        chunk_python = [f for f in chunk if f in python_files]
+        chunk_shell = [f for f in chunk if f in shell_files]
+        
+        # Generate content for this chunk
+        content = generate_content(chunk_python, chunk_shell, repo_path, format_type, include_line_count)
+        
+        # Determine output file path
+        if len(file_chunks) == 1:
+            output_file = output_base.with_suffix(extension)
+        else:
+            output_file = output_base.parent / f"{output_base.name}_{i+1}{extension}"
+        
+        # Write to file
+        output_file.write_text(content)
+        output_files.append(output_file)
 
     console = Console()
-    console.print(Panel(f"""✅ SUCCESS | Markdown checklist generated successfully!
-📄 File Location: {output_file}
+    success_msg = f"""✅ SUCCESS | Files generated successfully!
+📄 Output files: {', '.join(str(f.relative_to(repo_path)) for f in output_files)}
 🐍 Python files: {len(python_files)}
-🔧 Shell files: {len(shell_files)}""", border_style="bold blue", expand=False))
+🔧 Shell files: {len(shell_files)}
+📊 Total chunks: {len(file_chunks)}"""
+    
+    console.print(Panel(success_msg, border_style="bold blue", expand=False))
 
 
 def create_symlink_command(num: Annotated[int, typer.Argument(help="Number of symlinks to create (1-5).")] = 5) -> None:

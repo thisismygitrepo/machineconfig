@@ -3,27 +3,25 @@
 """
 
 from pathlib import Path
-from typing import cast, Optional, get_args
+from typing import cast, Optional, get_args, Annotated
 import typer
 from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, MATCHINE, MODEL, PROVIDER
 
 
 def create(
-    context_path: Path = typer.Argument(..., help="Path to the context file"),
-    separator: str = typer.Option("\n", help="Separator for context"),
-    tasks_per_prompt: int = typer.Option(13, help="Number of tasks per prompt"),
-
-    agent: AGENTS = typer.Option(..., help=f"Agent type. One of {', '.join(get_args(AGENTS))}"),
-    machine: MATCHINE = typer.Option(..., help=f"Machine to run agents on. One of {', '.join(get_args(MATCHINE))}"),
-    model: MODEL = typer.Option(..., help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL))}"),
-    provider: PROVIDER = typer.Option(..., help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER))}"),
-
-    prompt: Optional[str] = typer.Option(None, help="Prompt prefix as string"),
-    prompt_path: Optional[Path] = typer.Option(None, help="Path to prompt file"),
-    job_name: str = typer.Option("AI_Agents", help="Job name"),
-    separate_prompt_from_context: bool = typer.Option(True, help="Keep prompt material in separate file to the context."),
-    output_path: Optional[Path] = typer.Option(None, help="Path to write the layout.json file"),
-    agents_dir: Optional[Path] = typer.Option(None, help="Directory to store agent files. If not provided, will be constructed automatically."),
+    agent: Annotated[AGENTS, typer.Option(..., help=f"Agent type. One of {', '.join(get_args(AGENTS))}")],
+    machine: Annotated[MATCHINE, typer.Option(..., help=f"Machine to run agents on. One of {', '.join(get_args(MATCHINE))}")],
+    model: Annotated[MODEL, typer.Option(..., help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL))}")],
+    provider: Annotated[PROVIDER, typer.Option(..., help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER))}")],
+    context_path: Annotated[Optional[Path], typer.Option(None, help="Path to the context file/folder, defaults to .ai/todo/")],
+    separator: Annotated[str, typer.Option("\n", help="Separator for context")],
+    tasks_per_prompt: Annotated[int, typer.Option(13, help="Number of tasks per prompt")],
+    prompt: Annotated[Optional[str], typer.Option(None, help="Prompt prefix as string")],
+    prompt_path: Annotated[Optional[Path], typer.Option(None, help="Path to prompt file")],
+    job_name: Annotated[str, typer.Option("AI_Agents", help="Job name")],
+    separate_prompt_from_context: Annotated[bool, typer.Option(True, help="Keep prompt material in separate file to the context.")],
+    output_path: Annotated[Optional[Path], typer.Option(None, help="Path to write the layout.json file")],
+    agents_dir: Annotated[Optional[Path], typer.Option(None, help="Directory to store agent files. If not provided, will be constructed automatically.")],
 ):
 
     from machineconfig.scripts.python.helpers_fire.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout
@@ -43,12 +41,23 @@ def create(
         raise typer.Exit(1)
     typer.echo(f"Operating @ {repo_root}")
     
-    prompt_material_path = Path("")
+    if context_path is None:
+        context_path = repo_root / ".ai" / "todo"
+        
+    context_path_resolved = context_path.expanduser().resolve()
+    if not context_path_resolved.exists():
+        raise typer.BadParameter(f"Path does not exist: {context_path_resolved}")
     
-    target_file_path = context_path.expanduser().resolve()
-    if not target_file_path.exists() or not target_file_path.is_file():
-        raise typer.BadParameter(f"Invalid file path: {target_file_path}")
-    prompt_material_path = target_file_path
+    if context_path_resolved.is_file():
+        prompt_material_re_splitted = chunk_prompts(context_path_resolved, tasks_per_prompt=tasks_per_prompt, joiner=separator)
+    elif context_path_resolved.is_dir():
+        files = [f for f in context_path_resolved.rglob("*") if f.is_file()]
+        if not files:
+            raise typer.BadParameter(f"No files found in directory: {context_path_resolved}")
+        concatenated = separator.join(f.read_text(encoding="utf-8") for f in files)
+        prompt_material_re_splitted = [concatenated]
+    else:
+        raise typer.BadParameter(f"Path is neither file nor directory: {context_path_resolved}")
     
     if prompt_path is not None:
         prompt_prefix = prompt_path.read_text(encoding="utf-8")
@@ -56,7 +65,6 @@ def create(
         prompt_prefix = cast(str, prompt)
     agent_selected = agent
     keep_material_in_separate_file_input = separate_prompt_from_context
-    prompt_material_re_splitted = chunk_prompts(prompt_material_path, tasks_per_prompt=tasks_per_prompt, joiner=separator)
     if agents_dir is None: agents_dir = repo_root / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
     else:
         import shutil
@@ -69,7 +77,7 @@ def create(
     layoutfile = get_agents_launch_layout(session_root=agents_dir)    
     regenerate_py_code = f"""
 #!/usr/bin/env uv run --python 3.14 --with machineconfig
-agents create "{prompt_material_path}" \\
+agents create "{context_path_resolved}" \\
     --prompt-path "{prompt_path or ''}" \\
     --agent "{agent_selected}" \\
     --machine "{machine}" \\
@@ -153,7 +161,7 @@ def init_config():
     add_ai_configs(repo_root=Path.cwd())
 
 def get_app():
-    agents_app = typer.Typer(help="🤖 AI Agents management subcommands")
+    agents_app = typer.Typer(help="🤖 AI Agents management subcommands", no_args_is_help=True)
     agents_app.command("create", no_args_is_help=True, help="Create agents layout file, ready to run.")(create)
     agents_app.command("collect", no_args_is_help=True, help="Collect all agent materials into a single file.")(collect)
     agents_app.command("make-template", no_args_is_help=False, help="Create a template for fire agents")(template)
@@ -164,14 +172,10 @@ def get_app():
     agents_app.command(name="make-symlinks", no_args_is_help=True, help="Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
     return agents_app
 
+
 def main():
     agents_app = get_app()
-    import sys
-    if len(sys.argv) == 1:
-        agents_app(["--help"])
-    else:
-        agents_app()
-
+    agents_app()
 
 if __name__ == "__main__":  # pragma: no cover
     pass
