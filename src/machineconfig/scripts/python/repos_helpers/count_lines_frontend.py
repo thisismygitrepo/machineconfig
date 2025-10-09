@@ -7,7 +7,7 @@ def analyze_repo_development(repo_path: str = typer.Argument(..., help="Path to 
     from pathlib import Path
     count_lines_path = Path(count_lines.__file__)
     # --project $HOME/code/ machineconfig --group plot
-    cmd = f"""uv run --python 3.14 --with machineconfig[plot]>=5.67 {count_lines_path} analyze-over-time {repo_path}"""
+    cmd = f"""uv run --python 3.14 --with "machineconfig[plot]>=5.71" {count_lines_path} analyze-over-time {repo_path}"""
     from machineconfig.utils.code import run_shell_script
     run_shell_script(cmd)
 

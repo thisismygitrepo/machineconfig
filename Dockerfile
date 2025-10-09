@@ -15,7 +15,7 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 # WORKDIR /app
 # COPY . /app
 # RUN /root/.local/bin/uv tool install --python 3.14 --editable .
-RUN /root/.local/bin/uv tool install --python 3.14 machineconfig>=5.67
+RUN /root/.local/bin/uv tool install --python 3.14 machineconfig>=5.71
 RUN /root/.local/bin/devops install --group ESSENTIAL_SYSTEM
 ENV NVM_DIR=/root/.nvm
 RUN bash -c "source $NVM_DIR/nvm.sh 2>/dev/null || true" && \
