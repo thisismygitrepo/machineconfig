@@ -11,7 +11,7 @@ from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import A
 def create(
     agent: AGENTS = typer.Option(..., "--agents", "-a", help=f"Agent type. One of {', '.join(get_args(AGENTS)[:3])}"),
     host: HOST = typer.Option(..., "--host", "-h", help=f"Machine to run agents on. One of {', '.join(get_args(HOST))}"),
-    model: MODEL = typer.Option(..., "--model", "-M", help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL)[:3])}"),
+    model: MODEL = typer.Option(..., "--model", "-m", help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL)[:3])}"),
     provider: PROVIDER = typer.Option(..., "--provider", "-p", help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER)[:3])}"),
     context_path: Optional[Path] = typer.Option(None, "--context-path", "-c", help="Path to the context file/folder, defaults to .ai/todo/"),
     separator: str = typer.Option("\n", "--separator", "-s", help="Separator for context"),
