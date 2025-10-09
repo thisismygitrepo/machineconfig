@@ -1,11 +1,11 @@
 
 from pathlib import Path
 import shlex
-from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import MATCHINE
+from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import HOST
 from typing import Optional, Literal
 
 
-def fire_qwen(config_dir: Optional[str], model: Literal["qwen"], provider: Literal["qwen"], machine: MATCHINE, prompt_path: Path, repo_root: Path) -> str:
+def fire_qwen(config_dir: Optional[str], model: Literal["qwen"], provider: Literal["qwen"], machine: HOST, prompt_path: Path, repo_root: Path) -> str:
     # assert model == "qwen", "Only qwen is supported currently."
     # assert provider == "qwen", "Only qwen is supported currently."
     # model = "qwen"

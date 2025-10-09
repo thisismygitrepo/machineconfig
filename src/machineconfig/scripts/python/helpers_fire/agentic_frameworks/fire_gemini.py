@@ -1,11 +1,11 @@
 
 from pathlib import Path
 import shlex
-from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import MATCHINE
+from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import HOST
 from typing import Optional, Literal
 
 
-def fire_gemini(api_key: Optional[str], model: Literal["gemini-2.5-pro"], provider: Literal["google"], machine: MATCHINE, prompt_path: Path, repo_root: Path) -> str:
+def fire_gemini(api_key: Optional[str], model: Literal["gemini-2.5-pro"], provider: Literal["google"], machine: HOST, prompt_path: Path, repo_root: Path) -> str:
     _ = provider
     # model = "gemini-2.5-flash-lite"
     # model = None  # auto-select

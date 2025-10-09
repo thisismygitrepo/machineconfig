@@ -2,7 +2,7 @@
 import random
 import shlex
 from pathlib import Path
-from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, AGENT_NAME_FORMATTER, MATCHINE, PROVIDER, MODEL
+from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, AGENT_NAME_FORMATTER, HOST, PROVIDER, MODEL
 
 
 def get_api_keys(provider: PROVIDER) -> list[str]:
@@ -20,7 +20,7 @@ def get_api_keys(provider: PROVIDER) -> list[str]:
 
 
 def prep_agent_launch(repo_root: Path, agents_dir: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool,
-                      machine: MATCHINE, model: MODEL, provider: PROVIDER, agent: AGENTS, *, job_name: str) -> None:
+                      machine: HOST, model: MODEL, provider: PROVIDER, agent: AGENTS, *, job_name: str) -> None:
     agents_dir.mkdir(parents=True, exist_ok=True)
     prompt_folder = agents_dir / "prompts"
     prompt_folder.mkdir(parents=True, exist_ok=True)

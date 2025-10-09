@@ -5,12 +5,12 @@
 from pathlib import Path
 from typing import cast, Optional, get_args
 import typer
-from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, MATCHINE, MODEL, PROVIDER
+from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, HOST, MODEL, PROVIDER
 
 
 def create(
     agent: AGENTS = typer.Option(..., "--agents", "-a", help=f"Agent type. One of {', '.join(get_args(AGENTS)[:3])}"),
-    machine: MATCHINE = typer.Option(..., "--machine", "-m", help=f"Machine to run agents on. One of {', '.join(get_args(MATCHINE))}"),
+    host: HOST = typer.Option(..., "--host", "-h", help=f"Machine to run agents on. One of {', '.join(get_args(HOST))}"),
     model: MODEL = typer.Option(..., "--model", "-M", help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL)[:3])}"),
     provider: PROVIDER = typer.Option(..., "--provider", "-p", help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER)[:3])}"),
     context_path: Optional[Path] = typer.Option(None, "--context-path", "-c", help="Path to the context file/folder, defaults to .ai/todo/"),
@@ -71,7 +71,7 @@ def create(
             shutil.rmtree(agents_dir)
     prep_agent_launch(repo_root=repo_root, agents_dir=agents_dir, prompts_material=prompt_material_re_splitted,
                       keep_material_in_separate_file=separate,
-                      prompt_prefix=prompt_prefix, machine=machine, agent=agent_selected, model=model, provider=provider,
+                      prompt_prefix=prompt_prefix, machine=host, agent=agent_selected, model=model, provider=provider,
                       job_name=job_name)
     layoutfile = get_agents_launch_layout(session_root=agents_dir)    
     regenerate_py_code = f"""
@@ -79,7 +79,7 @@ def create(
 agents create "{context_path_resolved}" \\
     --prompt-path "{prompt_path or ''}" \\
     --agent "{agent_selected}" \\
-    --machine "{machine}" \\
+    --host "{host}" \\
     --job-name "{job_name}" \\
     --agent_load {agent_load} \\
     --separator "{separator}" \\
@@ -94,15 +94,15 @@ agents create "{context_path_resolved}" \\
 
 
 def collect(
-    agent_dir: Path = typer.Argument(..., help="Path to the agent directory containing the prompts folder"),
-    output_path: Path = typer.Argument(..., help="Path to write the concatenated material files"),
+    agent_dir: str = typer.Argument(..., help="Path to the agent directory containing the prompts folder"),
+    output_path: str = typer.Argument(..., help="Path to write the concatenated material files"),
     separator: str = typer.Option("\n", help="Separator to use when concatenating material files"),
 ) -> None:
     """Collect all material files from an agent directory and concatenate them."""
-    if not agent_dir.exists() or not agent_dir.is_dir():
+    if not Path(agent_dir).exists() or not Path(agent_dir).is_dir():
         raise typer.BadParameter(f"Agent directory does not exist or is not a directory: {agent_dir}")
     
-    prompts_dir = agent_dir / "prompts"
+    prompts_dir = Path(agent_dir) / "prompts"
     if not prompts_dir.exists():
         raise typer.BadParameter(f"Prompts directory not found: {prompts_dir}")
     
@@ -129,8 +129,8 @@ def collect(
     result = separator.join(concatenated_content)
     
     # Write to output file
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(result, encoding="utf-8")
+    Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+    Path(output_path).write_text(result, encoding="utf-8")
     typer.echo(f"Concatenated material written to {output_path}")
 
 
