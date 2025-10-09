@@ -63,10 +63,9 @@ except Exception as e:
 
 
 def croshell(
+    path: Annotated[Optional[str], typer.Argument(help="read a file.")] = "",
     python: Annotated[bool, typer.Option("--python", "-p", help="flag to use python over IPython.")] = False,
-    fzf: Annotated[bool, typer.Option("--fzf", "-F", help="search with fuzzy finder for python scripts and run them")] = False,
     profile: Annotated[Optional[str], typer.Option("--profile", "-P", help="ipython profile to use, defaults to default profile.")] = None,
-    read: Annotated[str, typer.Option("--read", "-r", help="read a binary file.")] = "",
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="run in jupyter interactive console")] = False,
     streamlit_viewer: Annotated[bool, typer.Option("--stViewer", "-s", help="view in streamlit app")] = False,
     visidata: Annotated[bool, typer.Option("--visidata", "-V", help="open data file in visidata")] = False,
@@ -79,7 +78,7 @@ def croshell(
     ipython_profile: Optional[str] = profile
     file_obj = PathExtended.cwd()  # initialization value, could be modified according to args.
 
-    if fzf:
+    if path == ".":
         text = "🔍 Searching for Python files..."
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
         options = [str(item) for item in PathExtended.cwd().search("*.py", r=True)]
@@ -89,7 +88,7 @@ def croshell(
         text = f"📄 Selected file: {PathExtended(file_selected).name}"
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
 
-    elif read != "":
+    elif path != "" and path is not None:
         if streamlit_viewer:
             #             text = "📊 STARTING STREAMLIT VIEWER"
             #             console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
@@ -101,7 +100,7 @@ def croshell(
             # """
             #             PROGRAM_PATH.write_text(data=final_program, encoding="utf-8")
             return None
-        file_obj = PathExtended(str(read).lstrip()).expanduser().absolute()
+        file_obj = PathExtended(str(path).lstrip()).expanduser().absolute()
         program = get_read_data_pycode(str(file_obj))
         text = f"📄 Reading data from: {file_obj.name}"
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))

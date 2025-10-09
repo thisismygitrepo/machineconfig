@@ -35,10 +35,9 @@ class Installer:
     def install_robust(self, version: Optional[str]) -> str:
         try:
             exe_name = self._get_exe_name()
-            print(f"🚀 INSTALLING {exe_name.upper()} 🚀")
             result_old = subprocess.run(f"{exe_name} --version", shell=True, capture_output=True, text=True)
             old_version_cli = result_old.stdout.strip()
-            print(f"📊 Current version: {old_version_cli or 'Not installed'}")
+            print(f"🚀 INSTALLING {exe_name.upper()} 🚀. 📊 Current version: {old_version_cli or 'Not installed'}")
             self.install(version=version)
             result_new = subprocess.run(f"{exe_name} --version", shell=True, capture_output=True, text=True)
             new_version_cli = result_new.stdout.strip()
@@ -69,15 +68,15 @@ class Installer:
         print(f"🔧 INSTALLATION PROCESS: {exe_name} 🔧")
         version_to_be_installed: str = "unknown"  # Initialize to ensure it's always bound
         if repo_url == "CMD":
-            if "npm " in installer_arch_os or "pip " in installer_arch_os or "winget " in installer_arch_os:
+            if any(pm in installer_arch_os for pm in ["npm ", "pip ", "winget ", "brew ", "curl "]):
                 package_manager = installer_arch_os.split(" ", maxsplit=1)[0]
                 print(f"📦 Using package manager: {package_manager}")
                 desc = package_manager + " installation"
                 version_to_be_installed = package_manager + "Latest"
                 print(f"🚀 Running: {installer_arch_os}")
-                # result = subprocess.run(installer_arch_os, shell=True, capture_output=True, text=True)
-                from machineconfig.utils.code import run_shell_script
-                result = run_shell_script(installer_arch_os)
+                result = subprocess.run(installer_arch_os, shell=True, capture_output=True, text=False)
+                # from machineconfig.utils.code import run_shell_script
+                # result = run_shell_script(installer_arch_os)
                 success = result.returncode == 0 and result.stderr == "".encode()
                 if not success:
                     print(f"❌ {desc} failed")

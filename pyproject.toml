@@ -97,7 +97,6 @@ dev = [
     "marimo>=0.16.5",
     "matplotlib>=3.10.6",
     "mypy>=1.18.2",
-    "nuitka>=2.7.16",
     "numpy>=2.3.3",
     "pandas>=2.3.3",
     "plotly>=6.3.0",

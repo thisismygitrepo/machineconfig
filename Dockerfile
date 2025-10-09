@@ -8,20 +8,20 @@ FROM debian:bookworm-slim
 
 # Set bash as default shell
 # as per https://github.com/moby/moby/issues/7281
-SHELL ["/bin/bash", "-c"]
-ENV SHELL=/bin/bash
+# SHELL ["/bin/bash", "-c"]
+SHELL ["/bin/bash", "-lc"]
+# ENV SHELL=/bin/bash
 RUN apt-get update && apt-get install -y bash sudo xz-utils curl
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-# WORKDIR /app
-# COPY . /app
-# RUN /root/.local/bin/uv tool install --python 3.14 --editable .
-RUN /root/.local/bin/uv tool install --python 3.14 machineconfig>=5.71
+WORKDIR /app
+COPY . /app
+RUN /root/.local/bin/uv tool install --python 3.14 --editable .
+# RUN /root/.local/bin/uv tool install --python 3.14 machineconfig>=5.71
 RUN /root/.local/bin/devops install --group ESSENTIAL_SYSTEM
-ENV NVM_DIR=/root/.nvm
-RUN bash -c "source $NVM_DIR/nvm.sh 2>/dev/null || true" && \
-    /root/.local/bin/devops install --group ESSENTIAL
-RUN /root/.local/bin/devops config public --method symlink --which all
-RUN /root/.local/bin/devops config shell
+# ENV NVM_DIR=/root/.nvm
+RUN /root/.local/bin/devops install --group AI_TOOLS
+#RUN /root/.local/bin/devops config public --method symlink --which all
+#RUN /root/.local/bin/devops config shell
 
 RUN touch /root/.bash_history
 # McFly complains about missing history file
