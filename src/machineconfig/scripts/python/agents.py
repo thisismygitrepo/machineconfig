@@ -9,10 +9,10 @@ from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import A
 
 
 def create(
-    agent: AGENTS = typer.Option(default=..., help=f"Agent type. One of {', '.join(get_args(AGENTS))}"),
+    agent: AGENTS = typer.Option(default=..., help=f"Agent type. One of {', '.join(get_args(AGENTS)[:3])}"),
     machine: MATCHINE = typer.Option(default=..., help=f"Machine to run agents on. One of {', '.join(get_args(MATCHINE))}"),
-    model: MODEL = typer.Option(default=..., help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL))}"),
-    provider: PROVIDER = typer.Option(default=..., help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER))}"),
+    model: MODEL = typer.Option(default=..., help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL)[:3])}"),
+    provider: PROVIDER = typer.Option(default=..., help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER)[:3])}"),
     context_path: Optional[Path] = typer.Option(None, help="Path to the context file/folder, defaults to .ai/todo/"),
     separator: str = typer.Option("\n", help="Separator for context"),
     tasks_per_prompt: int = typer.Option(13, help="Number of tasks per prompt"),
@@ -162,7 +162,17 @@ def init_config():
 
 def get_app():
     agents_app = typer.Typer(help="🤖 AI Agents management subcommands", no_args_is_help=True)
-    agents_app.command("create", help="Create agents layout file, ready to run.")(create)
+    sep = "\n"
+    agents_full_help = f"""
+Create agents layout file, ready to run.
+{sep}
+PROVIDER options: {', '.join(get_args(PROVIDER))}
+{sep}
+AGENT options: {', '.join(get_args(AGENTS))}
+{sep}
+MODEL options: {sep.join(get_args(MODEL))}
+"""
+    agents_app.command("create", no_args_is_help=True, help=agents_full_help)(create)
     agents_app.command("collect", no_args_is_help=True, help="Collect all agent materials into a single file.")(collect)
     agents_app.command("make-template", no_args_is_help=False, help="Create a template for fire agents")(template)
     agents_app.command("make-config", no_args_is_help=False, help="Initialize AI configurations in the current repository")(init_config)
