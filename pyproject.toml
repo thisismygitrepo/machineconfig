@@ -5,8 +5,8 @@ build-backend = "setuptools.build_meta"
 # build-backend = "hatchling.build"
 
 [project]
-name = "mcfg"
-version = "5.62"
+name = "machineconfig"
+version = "5.65"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -36,7 +36,6 @@ dependencies = [
     "questionary>=2.1.1",
     "typer-slim>=0.19.2",
     "typer>=0.19.2",
-    "textual>=6.2.1",
 ]
 
 [project.optional-dependencies]
@@ -64,14 +63,14 @@ plot = [
 "Bug Tracker" = "https://github.com/thisismygitrepo/machineconfig/issues"
 
 [project.scripts]
-devops = "machineconfig.scripts.python.devops:app"
-fire = "machineconfig.scripts.python.fire_jobs:main_from_parser"
-agents = "machineconfig.scripts.python.agents:main_from_parser"
-sessions = "machineconfig.scripts.python.sessions:main_from_parser"
-croshell = "machineconfig.scripts.python.croshell:arg_parser"
-cloud = "machineconfig.scripts.python.cloud:app"
-ftpx = "machineconfig.scripts.python.ftpx:main_from_parser"
-mcfg = "machineconfig.scripts.python.entry:app"
+devops = "machineconfig.scripts.python.devops:main"
+cloud = "machineconfig.scripts.python.cloud:main"
+fire = "machineconfig.scripts.python.fire_jobs:main"
+agents = "machineconfig.scripts.python.agents:main"
+sessions = "machineconfig.scripts.python.sessions:main"
+croshell = "machineconfig.scripts.python.croshell:main"
+ftpx = "machineconfig.scripts.python.ftpx:main"
+mcfg = "machineconfig.scripts.python.entry:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

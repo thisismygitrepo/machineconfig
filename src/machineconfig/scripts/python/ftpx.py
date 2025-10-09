@@ -19,7 +19,7 @@ from machineconfig.utils.accessories import pprint
 console = Console()
 
 
-def main(
+def ftpx(
     source: Annotated[str, typer.Argument(help="Source path (machine:path)")],
     target: Annotated[str, typer.Argument(help="Target path (machine:path)")],
     recursive: Annotated[bool, typer.Option("--recursive", "-r", help="Send recursively.")] = False,
@@ -210,12 +210,12 @@ def main(
     )
 
 
-def main_from_parser() -> None:
+def main() -> None:
     """Entry point function that uses typer to parse arguments and call main."""
     app = typer.Typer()
-    app.command(no_args_is_help=True, help="File transfer utility though SSH.")(main)
+    app.command(no_args_is_help=True, help="File transfer utility though SSH.")(ftpx)
     app()
 
 
 if __name__ == "__main__":
-    main_from_parser()
+    main()

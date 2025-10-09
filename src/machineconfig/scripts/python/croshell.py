@@ -62,7 +62,7 @@ except Exception as e:
 
 
 
-def main(
+def croshell(
     python: Annotated[bool, typer.Option("--python", "-p", help="flag to use python over IPython.")] = False,
     fzf: Annotated[bool, typer.Option("--fzf", "-F", help="search with fuzzy finder for python scripts and run them")] = False,
     profile: Annotated[Optional[str], typer.Option("--profile", "-P", help="ipython profile to use, defaults to default profile.")] = None,
@@ -150,16 +150,16 @@ from pathlib import Path
             else:
                 console.print(Panel("❌ Could not determine the local machineconfig repo root. Please ensure the `REPO_ROOT` in `source_of_truth.py` is correctly set to the local path of the machineconfig repo, or do not use the `--local` flag.", title="Error", border_style="red"))
                 return
-        else: ve_line = "--with machineconfig[plot]>=5.6"
+        else: ve_line = "--with machineconfig[plot]>=5.65"
         fire_line = f"uv run --python 3.14 {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
 
     from machineconfig.utils.code import run_shell_script
     run_shell_script(fire_line, clean_env=False)
 
 
-def arg_parser() -> None:
-    typer.run(main)
+def main() -> None:
+    typer.run(croshell)
 
 
 if __name__ == "__main__":
-    arg_parser()
+    main()

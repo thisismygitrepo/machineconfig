@@ -130,9 +130,9 @@ def execute_installations(selected_options: list[str]) -> None:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
         import platform
         if platform.system() == "Windows":
-            run_shell_script(r"""$HOME\.local\bin\uv.exe tool install machineconfig""")
+            run_shell_script(r"""$HOME\.local\bin\uv.exe tool install machineconfig>=5.65""")
         else:
-            run_shell_script("""$HOME/.local/bin/uv tool install machineconfig""")
+            run_shell_script("""$HOME/.local/bin/uv tool install machineconfig>=5.65""")
     if "install_ssh_server" in selected_options:
         console.print(Panel("🔒 [bold red]SSH SERVER[/bold red]\n[italic]Remote access setup[/italic]", border_style="red"))
         import platform
