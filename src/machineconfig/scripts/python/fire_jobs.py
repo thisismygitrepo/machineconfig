@@ -259,15 +259,14 @@ def main(
         sys.exit(1)
 
 
-def main_from_parser():
-    # from trogon.typer import init_tui
-    # from trogon.typer import init_tui
+def get_app():
     from typer import Typer
-
     app = Typer(add_completion=False)
     app.command(context_settings={"allow_extra_args": True, "allow_interspersed_args": False})(main)
-    # typer.run(main)
-    # init_tui(app)
+    return app
+
+def main_from_parser():
+    app = get_app()
     app()
 
 

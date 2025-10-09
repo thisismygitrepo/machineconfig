@@ -2,7 +2,6 @@
 from pathlib import Path
 from typing import Optional, Literal
 import typer
-from machineconfig.scripts.python.sessions_helpers.sessions_multiprocess import create_from_function
 
 def balance_load(layout_path: Path = typer.Argument(..., help="Path to the layout.json file"),
            max_thresh: int = typer.Option(..., help="Maximum tabs per layout"),
@@ -136,12 +135,18 @@ def kill_process():
     from machineconfig.utils.procs import main
     main()
 
-def main_from_parser():
+def get_app():
     layouts_app = typer.Typer(help="Layouts management subcommands", no_args_is_help=True)
+    from machineconfig.scripts.python.sessions_helpers.sessions_multiprocess import create_from_function
     layouts_app.command("create-from-function", no_args_is_help=True, help="Create a layout from a function")(create_from_function)
     layouts_app.command("run", no_args_is_help=True, help="Run the selected layout(s)")(run)
     layouts_app.command("balance-load", no_args_is_help=True, help="Balance the load across sessions")(balance_load)
     layouts_app.command("kill-process", no_args_is_help=True, help="Choose a process to kill")(kill_process)
+    return layouts_app
+
+
+def main_from_parser():
+    layouts_app = get_app()
     layouts_app()
 
 
