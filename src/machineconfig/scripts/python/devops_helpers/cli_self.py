@@ -42,7 +42,7 @@ def navigate():
     from pathlib import Path
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import run_shell_script
-    run_shell_script(f"uv run --no-dev --with machineconfig,textual {path}")
+    run_shell_script(f"uv run --no-dev --with machineconfig>=5.6,textual {path}")
 
 
 @cli_app.command(no_args_is_help=True)
