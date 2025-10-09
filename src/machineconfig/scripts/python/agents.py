@@ -16,10 +16,10 @@ def create(
     context_path: Optional[Path] = typer.Option(None, "--context-path", "-c", help="Path to the context file/folder, defaults to .ai/todo/"),
     separator: str = typer.Option("\n", "--separator", "-s", help="Separator for context"),
     agent_load: int = typer.Option(13, "--agent-load", "-al", help="Number of tasks per prompt"),
-    prompt: Optional[str] = typer.Option(None, "--prompt", "-p", help="Prompt prefix as string"),
+    prompt: Optional[str] = typer.Option(None, "--prompt", "-P", help="Prompt prefix as string"),
     prompt_path: Optional[Path] = typer.Option(None, "--prompt-path", "-pp", help="Path to prompt file"),
     job_name: str = typer.Option("AI_Agents", "--job-name", "-j", help="Job name"),
-    separate: bool = typer.Option(True, "--separate", "-sep", help="Keep prompt material in separate file to the context."),
+    separate: bool = typer.Option(True, "--separate", "-S", help="Keep prompt material in separate file to the context."),
     output_path: Optional[Path] = typer.Option(None, "--output-path", "-o", help="Path to write the layout.json file"),
     agents_dir: Optional[Path] = typer.Option(None, "--agents-dir", "-ad", help="Directory to store agent files. If not provided, will be constructed automatically."),
 ):
