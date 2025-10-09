@@ -1809,14 +1809,14 @@
       "doc": "🐋 A simple terminal UI for both docker and docker-compose",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "lazydocker_{version}_Linux_x86_64.tar.gz",
+          "macos": "lazydocker_{version}_Darwin_x86_64.tar.gz",
+          "windows": "lazydocker_{version}_Windows_x86_64.zip"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "lazydocker_{version}_Linux_arm64.tar.gz",
+          "macos": "lazydocker_{version}_Darwin_arm64.tar.gz",
+          "windows": "lazydocker_{version}_Windows_arm64.zip"
         }
       }
     },
