@@ -48,7 +48,7 @@ def path():
     from pathlib import Path
     path = Path(navigator.__file__).resolve().parent.joinpath("path_manager_tui.py")
     from machineconfig.utils.code import run_shell_script
-    run_shell_script(f"uv run --no-dev --with machineconfig>=5.6,textual {path}")
+    run_shell_script(f"uv run --no-dev --with machineconfig>=5.65,textual {path}")
 
 @config_apps.command(no_args_is_help=False)
 def pwsh_theme():

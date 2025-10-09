@@ -1605,7 +1605,7 @@ wheels = [
 
 [[package]]
 name = "machineconfig"
-version = "5.59"
+version = "5.64"
 source = { editable = "." }
 dependencies = [
     { name = "cryptography" },
@@ -1622,7 +1622,6 @@ dependencies = [
     { name = "requests" },
     { name = "rich" },
     { name = "tenacity" },
-    { name = "textual" },
     { name = "typer" },
     { name = "typer-slim" },
 ]
@@ -1716,7 +1715,6 @@ requires-dist = [
     { name = "rich", specifier = ">=14.0.0" },
     { name = "sqlalchemy", marker = "extra == 'plot'", specifier = ">=2.0.43" },
     { name = "tenacity", specifier = ">=9.1.2" },
-    { name = "textual", specifier = ">=6.2.1" },
     { name = "typer", specifier = ">=0.19.2" },
     { name = "typer-slim", specifier = ">=0.19.2" },
 ]
