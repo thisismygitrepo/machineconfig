@@ -3,25 +3,25 @@
 """
 
 from pathlib import Path
-from typing import cast, Optional, get_args, Annotated
+from typing import cast, Optional, get_args
 import typer
 from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, MATCHINE, MODEL, PROVIDER
 
 
 def create(
-    agent: Annotated[AGENTS, typer.Option(..., help=f"Agent type. One of {', '.join(get_args(AGENTS))}")],
-    machine: Annotated[MATCHINE, typer.Option(..., help=f"Machine to run agents on. One of {', '.join(get_args(MATCHINE))}")],
-    model: Annotated[MODEL, typer.Option(..., help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL))}")],
-    provider: Annotated[PROVIDER, typer.Option(..., help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER))}")],
-    context_path: Annotated[Optional[Path], typer.Option(None, help="Path to the context file/folder, defaults to .ai/todo/")],
-    separator: Annotated[str, typer.Option("\n", help="Separator for context")],
-    tasks_per_prompt: Annotated[int, typer.Option(13, help="Number of tasks per prompt")],
-    prompt: Annotated[Optional[str], typer.Option(None, help="Prompt prefix as string")],
-    prompt_path: Annotated[Optional[Path], typer.Option(None, help="Path to prompt file")],
-    job_name: Annotated[str, typer.Option("AI_Agents", help="Job name")],
-    separate_prompt_from_context: Annotated[bool, typer.Option(True, help="Keep prompt material in separate file to the context.")],
-    output_path: Annotated[Optional[Path], typer.Option(None, help="Path to write the layout.json file")],
-    agents_dir: Annotated[Optional[Path], typer.Option(None, help="Directory to store agent files. If not provided, will be constructed automatically.")],
+    agent: AGENTS = typer.Option(default=..., help=f"Agent type. One of {', '.join(get_args(AGENTS))}"),
+    machine: MATCHINE = typer.Option(default=..., help=f"Machine to run agents on. One of {', '.join(get_args(MATCHINE))}"),
+    model: MODEL = typer.Option(default=..., help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL))}"),
+    provider: PROVIDER = typer.Option(default=..., help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER))}"),
+    context_path: Optional[Path] = typer.Option(None, help="Path to the context file/folder, defaults to .ai/todo/"),
+    separator: str = typer.Option("\n", help="Separator for context"),
+    tasks_per_prompt: int = typer.Option(13, help="Number of tasks per prompt"),
+    prompt: Optional[str] = typer.Option(None, help="Prompt prefix as string"),
+    prompt_path: Optional[Path] = typer.Option(None, help="Path to prompt file"),
+    job_name: str = typer.Option("AI_Agents", help="Job name"),
+    separate_prompt_from_context: bool = typer.Option(True, help="Keep prompt material in separate file to the context."),
+    output_path: Optional[Path] = typer.Option(None, help="Path to write the layout.json file"),
+    agents_dir: Optional[Path] = typer.Option(None, help="Directory to store agent files. If not provided, will be constructed automatically."),
 ):
 
     from machineconfig.scripts.python.helpers_fire.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout
@@ -162,7 +162,7 @@ def init_config():
 
 def get_app():
     agents_app = typer.Typer(help="🤖 AI Agents management subcommands", no_args_is_help=True)
-    agents_app.command("create", no_args_is_help=True, help="Create agents layout file, ready to run.")(create)
+    agents_app.command("create", help="Create agents layout file, ready to run.")(create)
     agents_app.command("collect", no_args_is_help=True, help="Collect all agent materials into a single file.")(collect)
     agents_app.command("make-template", no_args_is_help=False, help="Create a template for fire agents")(template)
     agents_app.command("make-config", no_args_is_help=False, help="Initialize AI configurations in the current repository")(init_config)
