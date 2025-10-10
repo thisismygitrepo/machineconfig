@@ -50,14 +50,6 @@ brave = {this = '~/.local/share/applications', to_this = '~/dotfiles/config/weba
 [wt_windows]
 settings = { this = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', to_this = 'CONFIG_ROOT/settings/shells/wt/settings.json' }
 
-# [wsl_windows]
-# home = {this = '~/wsl', to_this = '\\wsl.localhost\Ubuntu-22.04\home\username'}
-# see \\wsl$ and ~\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState
-# config = {this = '~/.wslconfig', to_this = 'CONFIG_ROOT/settings/wsl/.wslconfig'}
-
-# [wsl_linux]
-# home = {this = '~/win', to_this = '/mnt/c/Users/username'}
-
 
 # =================== LLMs ============================
 

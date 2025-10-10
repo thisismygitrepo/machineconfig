@@ -1,0 +1,9 @@
+
+I have started a watch-exec server in my terminal and its working now.
+I have set it up to re-run thi script `.ai/terminal/debug/command_runner.sh` automatically.
+A re-run is triggered upon any change of any python file in the repo, or, any change in the make_output.sh script itself.
+The script redirects the output from terminal to the file ./.ai/debug/terminal_output.txt
+Run takes 50 ms only. So by the time you finish editing any python file or the command runner script, the new output is ready for you to read in that text file,
+this makes it much faster for you to iterate because pulling the terminal and closing it every time is a bit slow.
+Please use the terminal_output.txt as your main iteration driver.
+please fix the mistakes that you can see in terminal output.
