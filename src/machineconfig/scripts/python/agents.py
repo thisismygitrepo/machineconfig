@@ -190,7 +190,10 @@ MODEL options: {sep.join(get_args(MODEL))}
 
 def main():
     agents_app = get_app()
+    # from trogon.typer import init_tui
+    # agents_app_tui = init_tui(agents_app)
     agents_app()
+    # agents_app_tui()
 
 
 if __name__ == "__main__":  # pragma: no cover
