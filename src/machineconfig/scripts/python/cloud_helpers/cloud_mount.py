@@ -52,7 +52,12 @@ mprocs "echo 'see {DEFAULT_MOUNT}/{cloud} for the mounted cloud'; rclone about {
     return txt
 
 
-def mount(cloud: Optional[str], network: Optional[str], destination: Optional[str]) -> None:
+def mount(
+    cloud: Annotated[Optional[str], typer.Option(help="cloud to mount")] = None,
+    destination: Annotated[Optional[str], typer.Option(help="destination to mount")] = None,
+    network: Annotated[Optional[str], typer.Option(help="mount network drive")] = None,
+) -> None:
+
     # draw header box dynamically
     title = "☁️  Cloud Mount Utility"
     console.print(Panel(title, title_align="left", border_style="blue"))
@@ -153,21 +158,8 @@ zellij action move-focus up
     console.print(Panel(f"{title1}\n{title2}", title="Success", border_style="green"))
 
 
-def main(
-    cloud: Annotated[Optional[str], typer.Option(help="cloud to mount")] = None,
-    destination: Annotated[Optional[str], typer.Option(help="destination to mount")] = None,
-    network: Annotated[Optional[str], typer.Option(help="mount network drive")] = None,
-) -> None:
-    # draw main title box dynamically
-    main_title = "☁️  RCLONE CLOUD MOUNT"
-    console.print(Panel(main_title, title_align="left", border_style="blue"))
 
-    mount(cloud=cloud, network=network, destination=destination)
-
-
-def arg_parser() -> None:
-    typer.run(main)
-
-
-if __name__ == "__main__":
-    arg_parser()
+def get_app():
+    app = typer.Typer(name="cloud-mount", help="Cloud mount utility")
+    app.command(name="mount", no_args_is_help=True)(mount)
+    return app
