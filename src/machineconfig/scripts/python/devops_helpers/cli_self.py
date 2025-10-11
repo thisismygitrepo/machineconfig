@@ -75,8 +75,8 @@ def readme():
 
 def get_app():
     cli_app = typer.Typer(help="🔄 [s] self operations subcommands", no_args_is_help=True)
-    cli_app.command("update", no_args_is_help=False, help="🔄  [u] UPDATE essential repos")(update)
-    cli_app.command("u", no_args_is_help=False, help="UPDATE essential repos", hidden=True)(update)
+    cli_app.command("update", no_args_is_help=False, help="🔄  [u] UPDATE machineconfig")(update)
+    cli_app.command("u", no_args_is_help=False, hidden=True)(update)
     cli_app.command("interactive", no_args_is_help=False, help="🤖  [i] INTERACTIVE configuration of machine.")(interactive)
     cli_app.command("i", no_args_is_help=False, help="INTERACTIVE configuration of machine.", hidden=True)(interactive)
     cli_app.command("status", no_args_is_help=False, help="📊  [s] STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.")(status)
