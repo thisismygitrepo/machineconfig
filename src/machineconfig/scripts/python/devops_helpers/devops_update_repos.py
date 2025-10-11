@@ -238,11 +238,13 @@ def main(verbose: bool = True, allow_password_prompt: bool = False) -> None:
                 padding=(1, 2),
             )
         )
+    update_repos(repos, allow_password_prompt)
 
+
+def update_repos(repos: list[Path], allow_password_prompt: bool) -> None:
     # Process repositories in parallel
     results: list[RepositoryUpdateResult] = []
     repos_with_changes = []
-
     with ThreadPoolExecutor(max_workers=min(len(repos), 8)) as executor:
         # Submit all tasks
         future_to_repo = {

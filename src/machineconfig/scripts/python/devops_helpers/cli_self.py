@@ -4,9 +4,14 @@ from typing import Optional
 
 
 def update():
-    """🔄 UPDATE essential repos"""
-    import machineconfig.scripts.python.devops_helpers.devops_update_repos as helper
-    helper.main()
+    """🔄 UPDATE uv and machineconfig"""
+    code = """
+    uv self update
+    uv tool install --upgrade machineconfig
+    """
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(code)
+
 def interactive():
     """🤖 INTERACTIVE configuration of machine."""
     from machineconfig.scripts.python.interactive import main
