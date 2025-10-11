@@ -86,6 +86,7 @@ def main(pub_path: Optional[str] = typer.Argument(None, help="Path to the public
     
     if pub_path:
         key_path = PathExtended(pub_path).expanduser().absolute()
+        key_path.parent.mkdir(parents=True, exist_ok=True)
         if not key_path.exists():
             console.print(Panel(f"❌ ERROR: Provided key path does not exist\nPath: {key_path}", title="[bold red]Error[/bold red]"))
             raise FileNotFoundError(f"Provided key path does not exist: {key_path}")
@@ -111,6 +112,7 @@ def main(pub_path: Optional[str] = typer.Argument(None, help="Path to the public
         console.print(Panel("📋 Please provide a filename and paste the public key content", title="[bold blue]Input Required[/bold blue]", border_style="blue"))
         key_filename = input("📝 File name (default: my_pasted_key.pub): ") or "my_pasted_key.pub"
         key_path = PathExtended.home().joinpath(f".ssh/{key_filename}")
+        key_path.parent.mkdir(parents=True, exist_ok=True)
         key_path.write_text(input("🔑 Paste the public key here: "), encoding="utf-8")
         console.print(Panel(f"💾 Key saved to: {key_path}", title="[bold green]Success[/bold green]", border_style="green"))
         program = get_add_ssh_key_script(key_path)
@@ -127,6 +129,7 @@ def main(pub_path: Optional[str] = typer.Argument(None, help="Path to the public
             return
         console.print(Panel(f"✅ Found {len(keys)} public key(s) for user: {from_github}", title="[bold green]Success[/bold green]", border_style="green"))
         key_path = PathExtended.home().joinpath(f".ssh/{from_github}_github_keys.pub")
+        key_path.parent.mkdir(parents=True, exist_ok=True)
         key_path.write_text("\n".join([key["key"] for key in keys]), encoding="utf-8")
         console.print(Panel(f"💾 Keys saved to: {key_path}", title="[bold green]Success[/bold green]", border_style="green"))
         program = get_add_ssh_key_script(key_path)

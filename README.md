@@ -11,29 +11,19 @@
 # Welcome to machineconfig
 
 Machineconfig is a package for managing configuration files (aka dotfiles). The idea is to collect those critical, time-consuming-files-to-setup in one directory and reference them via symbolic links from their original locations. Thus, when a new machine is to be setup, all that is required is to clone the repo in that machine and create the symbolic links.
-Dotfiles include, but are not limited to:
-* `~/.gitconfig`
-* `~/.ssh`
-* `~/.aws`
-* `~/.bash_profile`
-* `~/.bashrc`
-* `~/.config`
-* `$profile` in Windows Powershell
-* etc
+Dotfiles are divided into private and public. Examples of private ones are, `~/.gitconfig`, `~/.ssh`, etc. Whereas public config files are ones like `lfrc`. The private dotfiles are placed @ `~/dotfiles`. The files therein are encrypted before backedup.
 
-
-Additionally, files that contain data, sensitive information that should not be pushed to a repository are contained in a directory `~/dotfiles`. The files therein are encrypted before backedup.
-
-
-# Windows:
+# Install On Windows:
 
 ```powershell
+
 iex (iwr bit.ly/cfgwindows).Content
 ```
 
-# Linux and MacOS
+# Install On Linux and MacOS
 
 ```bash
+
 . <(curl -sL bit.ly/cfglinux)
 ```
 
