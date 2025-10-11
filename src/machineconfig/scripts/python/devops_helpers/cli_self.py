@@ -53,6 +53,25 @@ def run_python(ip: str = typer.Argument(..., help="Python command to run in the 
     import subprocess
     import sys
     subprocess.run([sys.executable, ip], cwd=machineconfig.__path__[0])
+def readme():
+    from rich.console import Console
+    from rich.markdown import Markdown
+    import requests
+
+    # URL of the raw README.md file
+    url_readme = "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/refs/heads/main/README.md"
+
+    # Fetch the content
+    response = requests.get(url_readme)
+    response.raise_for_status()  # Raise an error for bad responses
+
+    # Parse markdown
+    md = Markdown(response.text)
+
+    # Render in terminal
+    console = Console()
+    console.print(md)
+
 
 def get_app():
     cli_app = typer.Typer(help="🔄 [s] self operations subcommands", no_args_is_help=True)
@@ -68,4 +87,6 @@ def get_app():
     cli_app.command("n", no_args_is_help=False, help="NAVIGATE command structure with TUI", hidden=True)(navigate)
     cli_app.command("python", no_args_is_help=False, help="🐍  [c] python command/file in the machineconfig environment")(run_python)
     cli_app.command("c", no_args_is_help=False, help="RUN python command/file in the machineconfig environment", hidden=True)(run_python)
+    cli_app.command("readme", no_args_is_help=False, help="📚  [r] render readme markdown in terminal.")(readme)
+    cli_app.command("r", no_args_is_help=False, hidden=True)(readme)
     return cli_app
