@@ -101,7 +101,7 @@ git pull originEnc master
             return "done"
         from machineconfig.utils.meta import function_to_script
         program_1_py = function_to_script(func=func2, call_with_args=None, call_with_kwargs={"remote_repo": str(repo_remote_root), "local_repo": str(repo_local_root), "cloud": cloud_resolved})
-        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, ve_path=None, executable="uv run --with machineconfig")
+        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, ve_path=None, executable="""uv run --with "machineconfig>=5.74" """)
         # ================================================================================
         option2 = "Delete local repo and replace it with remote copy:"
         program_2 = f"""
@@ -122,7 +122,7 @@ sudo chmod +x $HOME/dotfiles/scripts/linux -R
             inspect_repos(repo_local_root=repo_local_root, repo_remote_root=repo_remote_root)
             return "done"
         program_3_py = function_to_script(func=func, call_with_args=None, call_with_kwargs={"repo_local_root": str(repo_local_root), "repo_remote_root": str(repo_remote_root)})
-        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_path=None, executable="uv run --with machineconfig")
+        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_path=None, executable="""uv run --with "machineconfig>=5.74" """)
         # ================================================================================
 
         option4 = "Remove problematic rclone file from repo and replace with remote:"
