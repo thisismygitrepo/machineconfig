@@ -6,7 +6,7 @@ from machineconfig.utils.terminal import Response, MACHINE
 from machineconfig.utils.accessories import pprint
 
 UV_RUN_CMD = "$HOME/.local/bin/uv run"
-MACHINECONFIG_VERSION = "machineconfig>=5.74"
+MACHINECONFIG_VERSION = "machineconfig>=5.84"
 DEFAULT_PICKLE_SUBDIR = "tmp_results/tmp_scripts/ssh"
 
 
@@ -200,10 +200,10 @@ class SSH:
         uv_cmd = f"""{UV_RUN_CMD} {with_clause} python {cmd_path.relative_to(Path.home())}"""
         if venv_path is not None:
             if self.get_remote_machine() == "Windows":
-                venv_export = f"$env:UV_PROJECT_ENVIRONMENT='{venv_path}';"
+                venv_export = f"$env:VIRTUAL_ENV='{venv_path}';"
                 uv_cmd = venv_export + uv_cmd
             else:
-                venv_export = f"UV_PROJECT_ENVIRONMENT={venv_path}"
+                venv_export = f"VIRTUAL_ENV={venv_path}"
                 uv_cmd = venv_export + " " + uv_cmd
         return self.run_shell(command=uv_cmd, verbose_output=verbose_output, description=description or f"run_py on {self.get_remote_repr(add_machine=False)}", strict_stderr=strict_stderr, strict_return_code=strict_return_code)
 

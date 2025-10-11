@@ -30,9 +30,9 @@ def install():
     # main_public_from_parser()
     import platform
     if platform.system() == "Windows":
-        run_shell_script(r"""$HOME\.local\bin\uv.exe tool install machineconfig>=5.74""")
+        run_shell_script(r"""$HOME\.local\bin\uv.exe tool install machineconfig>=5.84""")
     else:
-        run_shell_script("""$HOME/.local/bin/uv tool install machineconfig>=5.74""")
+        run_shell_script("""$HOME/.local/bin/uv tool install machineconfig>=5.84""")
 
 def navigate():
     """📚 NAVIGATE command structure with TUI"""
@@ -40,7 +40,7 @@ def navigate():
     from pathlib import Path
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import run_shell_script
-    run_shell_script(f"""uv run --with "machineconfig>=5.74,textual" {path}""")
+    run_shell_script(f"""uv run --with "machineconfig>=5.84,textual" {path}""")
 
 
 def run_python(ip: str = typer.Argument(..., help="Python command to run in the machineconfig environment"),
