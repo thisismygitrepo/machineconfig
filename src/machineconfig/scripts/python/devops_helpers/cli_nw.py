@@ -18,6 +18,7 @@ def install_ssh_server():
     from machineconfig.utils.code import run_shell_script
     run_shell_script(script=SSH_SERVER.read_text(encoding="utf-8"))
 
+
 def add_ssh_key(path: Optional[str] = typer.Option(None, help="Path to the public key file"),
          choose: bool = typer.Option(False, "--choose", "-c", help="Choose from available public keys in ~/.ssh/*.pub"),
          value: bool = typer.Option(False, "--value", "-v", help="Paste the public key content manually"),
