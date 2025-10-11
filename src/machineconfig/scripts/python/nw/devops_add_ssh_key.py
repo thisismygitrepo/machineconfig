@@ -5,7 +5,7 @@ from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 from machineconfig.utils.path_extended import PathExtended
 from rich.console import Console
 from rich.panel import Panel
-from rich import box  # Import box
+from rich import box
 from typing import Optional
 import typer
 

@@ -25,11 +25,11 @@ def add_ssh_key(path: Optional[str] = typer.Option(None, help="Path to the publi
          github: Optional[str] = typer.Option(None, "--github", "-g", help="Fetch public keys from a GitHub username")
 ):
     """🔑 SSH add pub key to this machine so its accessible by owner of corresponding private key."""
-    import machineconfig.scripts.python.devops_helpers.devops_add_ssh_key as helper
+    import machineconfig.scripts.python.nw.devops_add_ssh_key as helper
     helper.main(pub_path=path, pub_choose=choose, pub_val=value, from_github=github)
 def add_ssh_identity():
     """🗝️ SSH add identity (private key) to this machine"""
-    import machineconfig.scripts.python.devops_helpers.devops_add_identity as helper
+    import machineconfig.scripts.python.nw.devops_add_identity as helper
     helper.main()
 
 
@@ -42,6 +42,16 @@ def show_address():
     print(f"This computer is @ {local_ip_v4}")
 
 
+def debug_ssh():
+    """🐛 SSH debug"""
+    from platform import system
+    if system() == "Linux" or system() == "Darwin":
+        import machineconfig.scripts.python.nw.ssh_debug_linux as helper
+        helper.ssh_debug_linux()
+    elif system() == "Windows":
+        raise NotImplementedError("SSH debug for Windows is not implemented yet.")
+    else:
+        raise NotImplementedError(f"Platform {system()} is not supported.")
 
 def get_app():
     nw_apps = typer.Typer(help="🔐 [n] Network subcommands", no_args_is_help=True)
