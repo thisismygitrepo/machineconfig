@@ -83,6 +83,27 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
         results["ssh_service"] = {"status": "warning", "message": "systemctl not found, cannot check service status", "action": "Check SSH service manually"}
         console.print(Panel("⚠️  systemctl not found\n💡 Check SSH service status manually", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
     
+    console.print(Panel("🌐 Checking network interfaces and IP addresses...", title="[bold blue]Network Interfaces[/bold blue]", border_style="blue"))
+    
+    try:
+        ip_addr_check = subprocess.run(["ip", "addr", "show"], capture_output=True, text=True, check=False)
+        if ip_addr_check.returncode == 0:
+            ip_output = ip_addr_check.stdout
+            import re
+            inet_pattern = re.compile(r'inet\s+(\d+\.\d+\.\d+\.\d+)/\d+.*scope\s+global')
+            ip_addresses = inet_pattern.findall(ip_output)
+            
+            if ip_addresses:
+                results["network_interfaces"] = {"status": "ok", "message": f"Found {len(ip_addresses)} network interface(s)", "action": ""}
+                console.print(Panel("✅ Network interfaces found:\n" + "\n".join([f"  • {ip}" for ip in ip_addresses]), title="[bold green]IP Addresses[/bold green]", border_style="green"))
+            else:
+                results["network_interfaces"] = {"status": "warning", "message": "No global IP addresses found", "action": "Check network configuration"}
+                issues_found.append("No network IP addresses")
+                console.print(Panel("⚠️  No global IP addresses found\n💡 This machine may not be reachable on the network\n💡 Check: ip addr show", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
+    except FileNotFoundError:
+        results["network_interfaces"] = {"status": "warning", "message": "ip command not found", "action": "Check network manually"}
+        console.print(Panel("⚠️  'ip' command not found\n💡 Try: ifconfig", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
+    
     console.print(Panel("🔌 Checking SSH port and listening status...", title="[bold blue]Network Status[/bold blue]", border_style="blue"))
     
     sshd_config_paths = [PathExtended("/etc/ssh/sshd_config"), PathExtended("/etc/sshd_config")]
@@ -129,8 +150,20 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
         if listening_check.returncode == 0:
             listening_output = listening_check.stdout
             if f":{ssh_port}" in listening_output:
-                results["ssh_listening"] = {"status": "ok", "message": f"SSH is listening on port {ssh_port}", "action": ""}
-                console.print(Panel(f"✅ SSH is listening on port {ssh_port}", title="[bold green]OK[/bold green]", border_style="green"))
+                ssh_lines = [line for line in listening_output.split("\n") if f":{ssh_port}" in line]
+                listening_on_all = any("0.0.0.0" in line or "[::]" in line for line in ssh_lines)
+                listening_on_localhost_only = all("127.0.0.1" in line or "[::1]" in line for line in ssh_lines)
+                
+                if listening_on_localhost_only:
+                    results["ssh_listening"] = {"status": "error", "message": f"SSH is listening ONLY on localhost (127.0.0.1:{ssh_port}), not accessible from network", "action": "Edit /etc/ssh/sshd_config, check ListenAddress, restart SSH"}
+                    issues_found.append("SSH listening only on localhost")
+                    console.print(Panel(f"❌ SSH is listening ONLY on localhost (127.0.0.1:{ssh_port})\n💡 This prevents external connections!\n💡 Check /etc/ssh/sshd_config for 'ListenAddress'\n💡 Remove or comment out 'ListenAddress 127.0.0.1'\n💡 Or change to 'ListenAddress 0.0.0.0'\n💡 Then: sudo systemctl restart ssh", title="[bold red]Critical Issue[/bold red]", border_style="red"))
+                elif listening_on_all:
+                    results["ssh_listening"] = {"status": "ok", "message": f"SSH is listening on all interfaces (0.0.0.0:{ssh_port})", "action": ""}
+                    console.print(Panel(f"✅ SSH is listening on all interfaces (0.0.0.0:{ssh_port})\n✅ Should be accessible from network", title="[bold green]OK[/bold green]", border_style="green"))
+                else:
+                    results["ssh_listening"] = {"status": "ok", "message": f"SSH is listening on port {ssh_port}", "action": ""}
+                    console.print(Panel(f"✅ SSH is listening on port {ssh_port}\n\nListening on:\n" + "\n".join([f"  {line.strip()}" for line in ssh_lines[:3]]), title="[bold green]OK[/bold green]", border_style="green"))
             else:
                 results["ssh_listening"] = {"status": "error", "message": f"SSH is NOT listening on port {ssh_port}", "action": "Check if SSH service is running and configured correctly"}
                 issues_found.append(f"SSH not listening on port {ssh_port}")
@@ -206,7 +239,9 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
     hosts_deny = PathExtended("/etc/hosts.deny")
     if hosts_deny.exists():
         hosts_deny_content = hosts_deny.read_text(encoding="utf-8")
-        if "sshd" in hosts_deny_content.lower() or "all" in hosts_deny_content.lower():
+        active_lines = [line.strip() for line in hosts_deny_content.splitlines() if line.strip() and not line.strip().startswith("#")]
+        active_content_lower = " ".join(active_lines).lower()
+        if "sshd" in active_content_lower or "all" in active_content_lower:
             results["hosts_deny"] = {"status": "error", "message": "/etc/hosts.deny may be blocking SSH connections", "action": "Review /etc/hosts.deny and remove SSH blocks"}
             issues_found.append("/etc/hosts.deny blocking SSH")
             console.print(Panel("❌ /etc/hosts.deny may be blocking SSH\n💡 Check: cat /etc/hosts.deny\n💡 Remove any lines blocking 'sshd' or 'ALL'", title="[bold red]Critical Issue[/bold red]", border_style="red"))
@@ -285,12 +320,69 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
         results["ssh_logs"] = {"status": "warning", "message": "SSH log files not found", "action": "Check journalctl: sudo journalctl -u ssh"}
         console.print(Panel("⚠️  SSH log files not found\n💡 Check: sudo journalctl -u ssh -n 50", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
     
+    console.print(Panel("🧪 Testing local SSH connection...", title="[bold blue]Connection Test[/bold blue]", border_style="blue"))
+    
+    try:
+        local_user = os.environ.get("USER", os.environ.get("USERNAME", "unknown"))
+        ssh_test = subprocess.run(["ssh", "-o", "ConnectTimeout=5", "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", f"{local_user}@localhost", "echo", "test"], capture_output=True, text=True, check=False, timeout=10)
+        
+        if ssh_test.returncode == 0:
+            results["local_ssh_test"] = {"status": "ok", "message": "Local SSH connection successful", "action": ""}
+            console.print(Panel("✅ Local SSH connection works\n✅ SSH server is functional", title="[bold green]OK[/bold green]", border_style="green"))
+        else:
+            error_output = ssh_test.stderr
+            results["local_ssh_test"] = {"status": "warning", "message": f"Local SSH test failed: {error_output[:100]}", "action": "Check SSH keys and configuration"}
+            console.print(Panel(f"⚠️  Local SSH test failed\n💡 Error: {error_output[:200]}\n💡 This may be normal if key authentication is not set up for localhost", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
+    except subprocess.TimeoutExpired:
+        results["local_ssh_test"] = {"status": "error", "message": "Local SSH connection timed out", "action": "SSH may be hanging or not responding"}
+        issues_found.append("SSH connection timeout")
+        console.print(Panel("❌ Local SSH connection timed out\n💡 SSH server may not be responding\n💡 Check: sudo systemctl status ssh", title="[bold red]Critical Issue[/bold red]", border_style="red"))
+    except FileNotFoundError:
+        results["local_ssh_test"] = {"status": "warning", "message": "ssh client not found", "action": "Install SSH client"}
+        console.print(Panel("⚠️  SSH client not installed\n💡 Install: sudo apt install openssh-client", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
+    except Exception as test_error:
+        results["local_ssh_test"] = {"status": "warning", "message": f"Could not test SSH: {str(test_error)}", "action": ""}
+        console.print(Panel(f"⚠️  Could not test SSH connection: {str(test_error)}", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
+    
     console.print(Panel("📊 DIAGNOSTIC SUMMARY", box=box.DOUBLE_EDGE, title_align="left"))
     
     if issues_found:
         console.print(Panel(f"⚠️  Found {len(issues_found)} issue(s):\n\n" + "\n".join([f"• {issue}" for issue in issues_found]), title="[bold yellow]Issues Found[/bold yellow]", border_style="yellow"))
     else:
         console.print(Panel("✅ No critical issues detected\n\nIf you still cannot connect:\n• Check client-side configuration\n• Verify network connectivity\n• Ensure correct username and hostname\n• Check if public key is correctly added to authorized_keys", title="[bold green]All Checks Passed[/bold green]", border_style="green"))
+    
+    console.print(Panel("🔗 CONNECTION INFORMATION", box=box.DOUBLE_EDGE, title_align="left"))
+    
+    try:
+        current_user = os.environ.get("USER", os.environ.get("USERNAME", "unknown"))
+        hostname_result = subprocess.run(["hostname"], capture_output=True, text=True, check=False)
+        hostname = hostname_result.stdout.strip() if hostname_result.returncode == 0 else "unknown"
+        
+        ip_addr_result = subprocess.run(["ip", "addr", "show"], capture_output=True, text=True, check=False)
+        connection_ips: list[str] = []
+        if ip_addr_result.returncode == 0:
+            import re
+            inet_pattern = re.compile(r'inet\s+(\d+\.\d+\.\d+\.\d+)/\d+.*scope\s+global')
+            connection_ips = inet_pattern.findall(ip_addr_result.stdout)
+        
+        connection_info = f"👤 Username: {current_user}\n🖥️  Hostname: {hostname}\n🔌 SSH Port: {ssh_port}\n"
+        
+        if connection_ips:
+            connection_info += "\n🌐 This machine can be accessed via SSH from other machines on the same network using:\n\n"
+            for ip in connection_ips:
+                connection_info += f"   ssh {current_user}@{ip}\n"
+            if ssh_port != "22":
+                connection_info += f"\n   (Port {ssh_port} should be used: ssh -p {ssh_port} {current_user}@<IP>)\n"
+        else:
+            connection_info += "\n⚠️  No network IP addresses found - this machine may not be reachable from the network"
+        
+        connection_info += "\n\n💡 From another machine on the same network, use one of the commands above"
+        connection_info += "\n💡 Ensure your public key is in ~/.ssh/authorized_keys on this machine"
+        connection_info += "\n💡 Or use password authentication if enabled in sshd_config"
+        
+        console.print(Panel(connection_info, title="[bold cyan]SSH Connection Details[/bold cyan]", border_style="cyan"))
+    except Exception as conn_error:
+        console.print(Panel(f"⚠️  Could not gather connection information: {str(conn_error)}", title="[bold yellow]Connection Info[/bold yellow]", border_style="yellow"))
     
     return results
 
