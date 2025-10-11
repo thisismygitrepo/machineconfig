@@ -31,6 +31,17 @@ def add_ssh_identity():
     import machineconfig.scripts.python.devops_helpers.devops_add_identity as helper
     helper.main()
 
+
+def show_address():
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('8.8.8.8',80))
+    local_ip_v4 = s.getsockname()[0]
+    s.close()
+    print(f"This computer is @ {local_ip_v4}")
+
+
+
 def get_app():
     nw_apps = typer.Typer(help="🔐 [n] Network subcommands", no_args_is_help=True)
     nw_apps.command(name="share-terminal", help="📡  [t] Share terminal via web browser")(cli_terminal.main)
@@ -43,4 +54,6 @@ def get_app():
     nw_apps.command(name="k", help="Add SSH public key to this machine", hidden=True)(add_ssh_key)
     nw_apps.command(name="add-ssh-identity", help="🗝️  [a] Add SSH identity (private key) to this machine")(add_ssh_identity)
     nw_apps.command(name="a", help="Add SSH identity (private key) to this machine", hidden=True)(add_ssh_identity)
+    nw_apps.command(name="show-address", help="Show this computer addresses on network")(show_address)
+    nw_apps.command(name="a", help="Show this computer addresses on network", hidden=True)(show_address)
     return nw_apps

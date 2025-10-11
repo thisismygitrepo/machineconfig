@@ -7,4 +7,4 @@ if (-not (Test-Path -Path "$HOME\.local\bin\uv.exe")) {
     Write-Output "uv binary found, updating..."
     & "$HOME\.local\bin\uv.exe" self update
 }
-& "$HOME\.local\bin\uv.exe" python install 3.13
+& "$HOME\.local\bin\uv.exe" python install 3.14

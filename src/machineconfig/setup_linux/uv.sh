@@ -12,4 +12,4 @@ if ! command -v uv &> /dev/null; then
     echo """🔍 uv command not found in PATH ➕ Adding uv to system PATH..."""
     export PATH="$HOME/.local/bin:$PATH"
 fi
-$HOME/.local/bin/uv python install 3.13
+$HOME/.local/bin/uv python install 3.14
