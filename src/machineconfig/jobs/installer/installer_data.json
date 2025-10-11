@@ -1469,14 +1469,14 @@
       "doc": "🌐 cli to get info of ips",
       "fileNamePattern": {
         "amd64": {
-          "linux": "ipinfo_{version}_linux_amd64.tar.gz",
-          "windows": "ipinfo_{version}_windows_amd64.zip",
-          "macos": "ipinfo_{version}_darwin_amd64.tar.gz"
+          "linux": "{version}_linux_amd64.tar.gz",
+          "windows": "{version}_windows_amd64.zip",
+          "macos": "{version}_darwin_amd64.tar.gz"
         },
         "arm64": {
-          "linux": "ipinfo_{version}_linux_arm64.tar.gz",
-          "windows": "ipinfo_{version}_windows_arm64.zip",
-          "macos": "ipinfo_{version}_darwin_arm64.tar.gz"
+          "linux": "{version}_linux_arm64.tar.gz",
+          "windows": "{version}_windows_arm64.zip",
+          "macos": "{version}_darwin_arm64.tar.gz"
         }
       }
     },

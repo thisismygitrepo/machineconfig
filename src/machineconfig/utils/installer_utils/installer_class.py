@@ -276,9 +276,23 @@ class Installer:
             an_dl = asset.get("browser_download_url", "NA")
             available_filenames.append(an_dl.split("/")[-1])
         if filename not in available_filenames:
-            filename = filename_pattern.format(version=actual_version.replace("v", ""))
-            if filename not in available_filenames:
-                print(f"❌ Filename {filename} not found in assets: {available_filenames}")
+            candidates = [
+                filename,
+                filename_pattern.format(version=actual_version),
+                filename_pattern.format(version=actual_version.replace("v", "")),
+            ]
+
+            # Include hyphen/underscore variants
+            variants = []
+            for f in candidates:
+                variants += [f, f.replace("-", "_"), f.replace("_", "-")]
+
+            for f in variants:
+                if f in available_filenames:
+                    filename = f
+                    break
+            else:
+                print(f"❌ Filename not found in assets. Tried: {variants}\nAvailable: {available_filenames}")
                 return None, None
         browser_download_url = f"{repo_url}/releases/download/{actual_version}/{filename}"
         return browser_download_url, actual_version
