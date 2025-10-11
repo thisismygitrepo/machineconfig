@@ -2,7 +2,8 @@
 # 🔍 File Preview Script for LF File Manager
 # Uses: 
 # 🖼️ chafa, viu - Image preview
-# 📝 pistol - General file preview
+# 📝 bat - Syntax-highlighted text/code preview
+# 📄 pistol - General file preview
 
 file=$1
 width="$2"
@@ -29,6 +30,10 @@ case "$file" in
         viu "$file"
     fi
     exit 0
+    ;;
+  # 📝 Text/Code Files - Use bat for syntax highlighting
+  *.py|*.json|*.js|*.ts|*.html|*.css|*.scss|*.less|*.xml|*.yml|*.yaml|*.toml|*.ini|*.cfg|*.conf|*.sh|*.bash|*.zsh|*.fish|*.ps1|*.rs|*.go|*.java|*.cpp|*.c|*.h|*.hpp|*.cs|*.php|*.rb|*.pl|*.pm|*.lua|*.vim|*.sql|*.md|*.txt|*.log|*.csv|*.tsv)
+    bat --color=always --style=plain --paging=never "$file"
     ;;
   *)
     # 📄 Default file preview
