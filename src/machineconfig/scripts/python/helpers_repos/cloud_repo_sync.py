@@ -20,7 +20,7 @@ def main(
     cloud: Optional[str] = typer.Option(None, "--cloud", "-c", help="Cloud storage profile name. If not provided, uses default from config."),
     repo: Optional[str] = typer.Option(None, "--repo", "-r", help="Path to the local repository. Defaults to current working directory."),
     message: Optional[str] = typer.Option(None, "--message", "-m", help="Commit message for local changes."),
-    on_conflict: Literal["ask", "pushLocalMerge", "overwriteLocal", "InspectRepos", "RemoveLocalRclone"] = typer.Option("ask", "--on-conflict", "-oc", help="Action to take on merge conflict. Default is 'ask'."),
+    on_conflict: Literal["ask", "push-local-merge", "overwrite-local", "stop-on-conflict", "remove-rclone-conflict"] = typer.Option("ask", "--on-conflict", "-oc", help="Action to take on merge conflict. Default is 'ask'."),
     pwd: Optional[str] = typer.Option(None, "--password", help="Password for encryption/decryption of the remote repository."),
 ):
     if cloud is None:
@@ -159,13 +159,13 @@ git commit -am "finished merging"
                     program_content = program_4
                 else:
                     raise NotImplementedError(f"Choice {choice} not implemented.")
-            case "pushLocalMerge":
+            case "push-local-merge":
                 program_content = shell_file_1.read_text(encoding="utf-8")
-            case "overwriteLocal":
+            case "overwrite-local":
                 program_content = program_2
-            case "InspectRepos":
+            case "stop-on-conflict":
                 program_content = shell_file_3.read_text(encoding="utf-8")
-            case "RemoveLocalRclone":
+            case "remove-rclone-conflict":
                 program_content = program_4
             case _:
                 raise ValueError(f"Unknown action: {on_conflict}")
