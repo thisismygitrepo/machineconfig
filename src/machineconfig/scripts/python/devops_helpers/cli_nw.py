@@ -67,4 +67,6 @@ def get_app():
     nw_apps.command(name="a", help="Add SSH identity (private key) to this machine", hidden=True)(add_ssh_identity)
     nw_apps.command(name="show-address", help="[A] Show this computer addresses on network")(show_address)
     nw_apps.command(name="a", help="Show this computer addresses on network", hidden=True)(show_address)
+    nw_apps.command(name="debug-ssh", help="🐛  [d] Debug SSH connection")(debug_ssh)
+    nw_apps.command(name="d", help="Debug SSH connection", hidden=True)(debug_ssh)
     return nw_apps
