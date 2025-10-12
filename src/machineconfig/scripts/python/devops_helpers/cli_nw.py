@@ -49,7 +49,8 @@ def debug_ssh():
         import machineconfig.scripts.python.nw.ssh_debug_linux as helper
         helper.ssh_debug_linux()
     elif system() == "Windows":
-        raise NotImplementedError("SSH debug for Windows is not implemented yet.")
+        import machineconfig.scripts.python.nw.ssh_debug_windows as helper
+        helper.ssh_debug_windows()
     else:
         raise NotImplementedError(f"Platform {system()} is not supported.")
 
