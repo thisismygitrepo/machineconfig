@@ -22,7 +22,7 @@ def _process_single_repo(expanded_path: Path, allow_password_prompt: bool) -> tu
     try:
         repo = git.Repo(str(expanded_path), search_parent_directories=True)
         # Update repository and get detailed results
-        result = update_repository(repo, allow_password_prompt=allow_password_prompt, auto_sync=True)
+        result = update_repository(repo, allow_password_prompt=allow_password_prompt, auto_uv_sync=True)
         
         # Keep track of repos with dependency changes for additional uv sync
         repo_path = None

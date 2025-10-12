@@ -24,7 +24,7 @@ def git_operations(
 ) -> None:
     
     repos_root = resolve_directory(directory)
-    auto_sync = not no_sync
+    auto_uv_sync = not no_sync
     from machineconfig.scripts.python.repos_helpers.action import perform_git_operations
     from machineconfig.utils.path_extended import PathExtended
     perform_git_operations(
@@ -33,7 +33,7 @@ def git_operations(
         commit=commit,
         push=push,
         recursive=recursive,
-        auto_sync=auto_sync,
+        auto_uv_sync=auto_uv_sync,
     )
 def resolve_spec_path(directory: Optional[str], cloud: Optional[str]) -> Path:
     repos_root = resolve_directory(directory)

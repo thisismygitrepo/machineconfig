@@ -11,7 +11,7 @@ AGENTS_DIR="$REPO_ROOT/.ai/agents/$JOB_NAME"
 LAYOUT_PATH_UNBALANCED="$REPO_ROOT/.ai/agents/$JOB_NAME/layout_unbalanced.json"
 
 # agents make-todo --output-path $CONTEXT_PATH
-agents create \
+ag create \
   --context-path "$CONTEXT_PATH" \
   --tasks-per-prompt 1 \
   --machine docker \
@@ -27,6 +27,6 @@ agents create \
 # sessions balance-load $LAYOUT_PATH --max-thresh 6 --breaking-method moreLayouts --thresh-type number  --output-path $LAYOUT_BALANCED_PATH
 # sessions run $LAYOUT_BALANCED_PATH --kill-upon-completion
 
-sessions run $LAYOUT_PATH_UNBALANCED
+ses run $LAYOUT_PATH_UNBALANCED
 
 # agents collect $AGENTS_DIR "$REPO_ROOT/.ai/agents/$JOB_NAME/collected.txt"

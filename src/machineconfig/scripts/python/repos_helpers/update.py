@@ -65,7 +65,7 @@ def get_file_hash(file_path: Path) -> str | None:
     return hashlib.sha256(file_path.read_bytes()).hexdigest()
 
 
-def update_repository(repo: git.Repo, auto_sync: bool, allow_password_prompt: bool) -> RepositoryUpdateResult:
+def update_repository(repo: git.Repo, auto_uv_sync: bool, allow_password_prompt: bool) -> RepositoryUpdateResult:
     """Update a single repository and return detailed information about what happened."""
     repo_path = Path(repo.working_dir)
     print(f"🔄 {'Updating ' + str(repo_path):.^80}")
@@ -253,7 +253,7 @@ def update_repository(repo: git.Repo, auto_sync: bool, allow_password_prompt: bo
                 print(f"✅ Set permissions for {lf_exe_path}")
 
         # Run uv sync if dependencies changed and auto_sync is enabled
-        if result["dependencies_changed"] and auto_sync:
+        if result["dependencies_changed"] and auto_uv_sync:
             result["uv_sync_ran"] = True
             result["uv_sync_success"] = run_uv_sync(repo_path)
 

@@ -1,31 +1,7 @@
 
 
 iex (iwr "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/uv.ps1").Content
-function devops {
-    & "$HOME\.local\bin\uv.exe" run --python 3.14 --with "machineconfig>=5.84" devops $args
+function mcfg {
+    & "$HOME\.local\bin\uv.exe" run --python 3.14 --with "machineconfig>=5.84" mcfg $args
 }
-
-function cloud {
-    & "$HOME\.local\bin\uv.exe" run --python 3.14 --with "machineconfig>=5.84" cloud $args
-}
-
-function croshell {
-    & "$HOME\.local\bin\uv.exe" run --python 3.14 --with "machineconfig>=5.84" croshell $args
-}
-
-function agents {
-    & "$HOME\.local\bin\uv.exe" run --python 3.14 --with "machineconfig>=5.84" agents $args
-}
-
-function fire {
-    & "$HOME\.local\bin\uv.exe" run --python 3.14 --with "machineconfig>=5.84" fire $args
-}
-
-function ftpx {
-    & "$HOME\.local\bin\uv.exe" run --python 3.14 --with "machineconfig>=5.84" ftpx $args
-}
-
-function sessions {
-    & "$HOME\.local\bin\uv.exe" run --python 3.14 --with "machineconfig>=5.84" sessions $args
-}
-
+echo "Function 'mcfg' has been defined. You can now use it to run machineconfig commands."
