@@ -33,8 +33,9 @@ config2 = {this = '~/.cli-m365-all-connections.json', to_this = '~/dotfiles/cred
 config3 = {this = '~/.cli-m365-connection.json',      to_this = '~/dotfiles/creds/tokens/.cli-m365-connection.json'}
 # config2 = {this = '~/.cli-m365-tokens.json',        to_this = '~/dotfiles/creds/tokens/.cli-m365-tokens.json'}
 
-[bash_linux]
-bashrc = {this = '~/.inputrc', to_this = '~/dotfiles/shells/bash/.inputrc'}
+# [bash_linux]
+# bashrc = {this = '~/.inputrc', to_this = '~/dotfiles/shells/bash/.inputrc'}
+
 [remmina]
 data = {this = '~/.var/app/org.remmina.Remmina/data/remmina', to_this = '~/dotfiles/creds/RDP/remmina/data/remmina'}
 

@@ -4,436 +4,7 @@ set icons true          # show icons next to files
 set period 1          # interval to check for directory updates
 set hidden true         # show hidden files by default
 set incsearch true       # jump to first match after each keystroke in search
-# LF Configuration File - Updated for latest version
-# Based on lf documentation: https://github.com/gokcehan/lf/blob/master/doc.md
-
-# ============================ OPTIONS ============================================
-
-# Navigation and display
-set scrolloff 10          # space on top and bottom of screen
-set relativenumber false  # show relative line numbers (complements number)
-set number true           # show absolute line numbers
-set wrapscroll false      # scrolling wraps around the file list
-set wrapscan true         # searching wraps around the file list
-
-# File display
-set hidden true           # show hidden files by default
-set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"  # additional hidden patterns
-set dirfirst true         # show directories first
-set dironly false         # show only directories
-set info "size:time"      # show file size and modification time
-set dircounts false       # don't show item counts in directories (performance)
-set sizeunits binary      # use binary units (1024) instead of decimal (1000)
-
-# Icons and colors
-set icons true            # show icons next to files
-set drawbox false         # don't draw borders around panes
-set roundbox false        # rounded corners for borders (when drawbox enabled)
-
-# Search and filtering
-set ignorecase true       # ignore case in sorting and search
-set smartcase true        # override ignorecase when pattern has uppercase
-set ignoredia true        # ignore diacritics in sorting and search
-set smartdia false        # override ignoredia when pattern has diacritics
-set incsearch true        # jump to first match after each keystroke in search
-set incfilter false       # don't apply filter after each keystroke
-set filtermethod text     # filter method: text, glob, or regex
-set searchmethod text     # search method: text, glob, or regex
-set anchorfind true       # find command starts matching from beginning
-set findlen 1             # number of characters for find command
-
-# File operations
-set preserve "mode"       # preserve file attributes when copying
-set dupfilefmt "%f.~%n~"  # format for duplicate files
-set selmode all           # selection mode: all or dir
-
-# Preview
-set preview true          # preview files on the right pane
-set previewer ~/.config/machineconfig/settings/lf/linux/exe/previewer.sh
-set cleaner ~/.config/machineconfig/settings/lf/linux/exe/cleaner.sh
-set dirpreviews false     # don't preview directories by default
-
-# Performance and monitoring
-set period 0              # disable periodic directory updates (0 = disabled)
-set watch false           # don't watch filesystem for changes (can be slow)
-
-# Mouse and interaction
-set mouse false           # disable mouse support
-set showbinds true        # show key bindings
-
-# UI layout
-set ratios "1:2:3"        # ratio of pane widths
-
-# Truncation
-set truncatechar "~"      # character to show when filename is truncated
-set truncatepct 100       # percentage of space for filename before extension
-
-# History and persistence
-set history true          # save command history
-
-# Special files and behavior
-set ifs "\n"              # internal field separator for shell commands
-set shell sh              # shell to use
-set shellflag -c          # shell flag
-set shellopts ""          # shell options
-set waitmsg "Press any key to continue"
-
-# Formatting (colors and styles)
-set promptfmt "\033[32;1m%u@%h\033[0m:\033[34;1m%d\033[0m\033[1m%f\033[0m"
-set cursoractivefmt "\033[7m"
-set cursorparentfmt "\033[7m"
-set cursorpreviewfmt "\033[4m"
-set numberfmt "\033[33m"
-set copyfmt "\033[7;33m"
-set cutfmt "\033[7;31m"
-set selectfmt "\033[7;35m"
-set visualfmt "\033[7;36m"
-set errorfmt "\033[7;31;47m"
-set borderfmt "\033[0m"
-set menufmt "\033[0m"
-set menuheaderfmt "\033[1m"
-set menuselectfmt "\033[7m"
-
-# Ruler and status
-set rulerfmt "  %a|  %p|  \033[7;31m %m \033[0m|  \033[7;33m %c \033[0m|  \033[7;35m %s \033[0m|  \033[7;36m %v \033[0m|  \033[7;34m %f \033[0m|  %i/%t"
-set statfmt "\033[36m%p\033[0m| %c| %u| %g| %S| %t| -> %l"
-
-# Sorting
-set sortby natural        # sort by: natural, name, ext, size, time, atime, btime, ctime
-set reverse false         # don't reverse sort order
-
-# Tabstops and display
-set tabstop 8             # number of spaces for tab character
-
-# User options (can be accessed in scripts)
-# set user_option value
-
-# ============================ KEY BINDINGS ============================================
-
-# Clear default mappings that might conflict
-clearmaps
-
-# Navigation (vim-like)
-map <up> up
-map <down> down
-map <left> updir
-map <right> open
-map k up
-map j down
-map h updir
-map l open
-map gg top
-map G bottom
-map H high
-map M middle
-map L low
-
-# Scrolling
-map <c-u> half-up
-map <c-d> half-down
-map <c-b> page-up
-# map <c-f> page-down  # disabled - used for fzf-jump instead
-map <c-y> scroll-up
-map <c-e> scroll-down
-
-# Jumping
-map ] jump-next
-map [ jump-prev
-
-# File operations
-map y copy
-map d cut
-map p paste
-map c clear
-map x delete
-map r rename
-
-# Selection and marking
-map v invert
-map u unselect
-map t tag-toggle
-map <space> :toggle; down
-
-# Search and find
-map / search
-map ? search-back
-map n search-next
-map N search-prev
-map f find
-map F find-back
-map ; find-next
-map , find-prev
-
-# Filter
-map f filter
-
-# Marks
-map m mark-save
-map ' mark-load
-map " mark-remove
-
-# Commands
-map : read
-map $ shell
-map % shell-pipe
-map ! shell-wait
-map & shell-async
-
-# Special
-map . set hidden!
-map zh set hidden!
-map zr set reverse!
-map zn set info
-map zs set info size
-map zt set info time
-map za set info size:time
-
-# Sorting shortcuts
-map sn :set sortby natural; set info
-map ss :set sortby size; set info size
-map st :set sortby time; set info time
-map sa :set sortby atime; set info atime
-map sb :set sortby btime; set info btime
-map sc :set sortby ctime; set info ctime
-map se :set sortby ext; set info
-
-# UI
-map <c-l> redraw
-map <c-r> reload
-
-# Quit
-map q quit
-map ZZ quit
-map ZQ quit!
-
-# Help
-map <f-1> help
-
-# ============================ CUSTOM COMMANDS =====================================
-
-# Open files with appropriate applications
-cmd open ${{
-    case $(file --mime-type -Lb "$f") in
-        text/*) $EDITOR "$f" ;;
-        image/*) imv "$f" ;;
-        video/*) mpv "$f" ;;
-        audio/*) mpv "$f" ;;
-        application/pdf) zathura "$f" ;;
-        *) xdg-open "$f" ;;
-    esac
-}}
-
-# Enhanced paste with progress
-cmd paste ${{
-    # Use lf's built-in paste but with custom handling if needed
-    # This is a fallback - lf handles paste internally by default
-    lf -remote "send $id paste"
-}}
-
-# Enhanced delete with trash
-cmd delete ${{
-    printf "Delete %d files? [y/N] " $(echo "$fx" | wc -l)
-    read -r ans
-    [ "$ans" = "y" ] || [ "$ans" = "Y" ] || exit 1
-
-    # Move to trash instead of permanent deletion
-    mkdir -p ~/.trash
-    mv "$fx" ~/.trash/
-}}
-
-# Bulk rename with vidir
-cmd rename %vidir
-
-# Create directories
-cmd mkdir ${{
-    printf "Directory name: "
-    read -r dirname
-    mkdir -p "$dirname"
-}}
-
-# Create files
-cmd mkfile ${{
-    printf "File name: "
-    read -r filename
-    $EDITOR "$filename"
-}}
-
-# Change permissions
-cmd chmod ${{
-    printf "Mode bits: "
-    read -r mode
-    chmod "$mode" "$fx"
-    lf -remote "send $id reload"
-}}
-
-# Directory size calculation
-cmd calcdirsize ${{
-    for dir in "$fx"; do
-        if [ -d "$dir" ]; then
-            size=$(du -sh "$dir" | cut -f1)
-            lf -remote "send $id addcustominfo \"$dir\" \"$size\""
-        fi
-    done
-}}
-
-# Git status indicators
-cmd git-status ${{
-    if git rev-parse --git-dir >/dev/null 2>&1; then
-        for file in "$@"; do
-            if [ -e "$file" ]; then
-                status=$(git status --porcelain "$file" 2>/dev/null | head -n1 | cut -c1-2)
-                [ -n "$status" ] && lf -remote "send $id addcustominfo \"$file\" \"$status\""
-            fi
-        done
-    fi
-}}
-
-# Fuzzy jump with fzf
-cmd fzf_jump ${{
-    res="$(find . -maxdepth 100 | fzf --reverse --header='Jump to location' | sed 's/\\/\\\\/g;s/"/\\"/g')"
-    if [ -d "$res" ] ; then
-        cmd="cd"
-    elif [ -f "$res" ] ; then
-        cmd="select"
-    else
-        exit 0
-    fi
-    lf -remote "send $id $cmd \"$res\""
-}}
-
-# Fuzzy search with ripgrep and fzf
-cmd fzf_search ${{
-    res="$( \
-        RG_PREFIX="rg --column --line-number --no-heading --color=always \
-            --smart-case "
-        FZF_DEFAULT_COMMAND="$RG_PREFIX ''" \
-            fzf --bind "change:reload:$RG_PREFIX {q} || true" \
-            --ansi --layout=reverse --header 'Search in files' \
-            | cut -d':' -f1
-    )"
-    [ ! -z "$res" ] && lf -remote "send $id select \"$res\""
-}}
-
-# Zoxide integration  
-cmd zi ${{
-    result="$(zoxide query -i -- "$@")"
-    lf -remote "send ${id} cd '${result}'"
-}}
-
-# Tere integration (if available)
-cmd ter ${{
-    result="$(tere)"
-    [ -n "$result" ] && lf -remote "send $id cd \"$result\""
-}}
-
-# Bulk operations
-cmd bulk-rename ${{
-    vidir "$@"
-}}
-
-cmd bulk-chmod ${{
-    printf "New permissions: "
-    read -r perms
-    chmod -R "$perms" "$@"
-    lf -remote "send $id reload"
-}}
-
-# Archive operations
-cmd extract ${{
-    for file in "$@"; do
-        case "$file" in
-            *.tar.bz2|*.tbz2) tar xjf "$file" ;;
-            *.tar.gz|*.tgz) tar xzf "$file" ;;
-            *.tar.xz|*.txz) tar xJf "$file" ;;
-            *.tar.zst) tar --zstd -xf "$file" ;;
-            *.tar) tar xf "$file" ;;
-            *.bz2) bunzip2 "$file" ;;
-            *.gz) gunzip "$file" ;;
-            *.xz) unxz "$file" ;;
-            *.zip) unzip "$file" ;;
-            *.7z) 7z x "$file" ;;
-            *.rar) unrar x "$file" ;;
-            *) echo "Unsupported archive: $file" ;;
-        esac
-    done
-    lf -remote "send $id reload"
-}}
-
-cmd compress ${{
-    printf "Archive name (without extension): "
-    read -r name
-    printf "Format (tar.gz/zip/7z): "
-    read -r format
-
-    case "$format" in
-        tar.gz) tar czf "$name.tar.gz" "$@" ;;
-        zip) zip -r "$name.zip" "$@" ;;
-        7z) 7z a "$name.7z" "$@" ;;
-        *) echo "Unsupported format" ;;
-    esac
-    lf -remote "send $id reload"
-}}
-
-# ============================ SPECIAL COMMANDS ===================================
-
-# Directory change hooks
-cmd on-cd ${{
-    # Update terminal title
-    lf -remote "send $id tty-write \"\033]0;lf: $PWD\007\""
-}}
-
-cmd on-load $git-status
-
-# ============================ LEGACY/COMPATIBILITY ==============================
-
-# Old mappings (kept for compatibility but prefer new ones above)
-# map Q !~/.config/machineconfig/settings/lf/linux/exe/previewer.sh "$f"
-# map I !cat $f | gum pager
-# map R $~/scripts/croshell -r $f
-# map O $~/scripts/croshell -rj $f
-
-# Old jump mappings
-# map jc cd ~/code
-# map jd cd ~/data
-# map jD cd ~/Downloads
-# map jx cd ~/dotfiles
-# map jh cd ~
-# map jj $~/scripts/croshell -j --read $f
-
-# Old operation mappings
-# map od cut
-# map op paste
-# map oy copy
-# map oc $echo $f | xclip
-# map or rename
-# map of reload
-# map os mark-save
-# map ol mark-load
-# map oR mark-remove
-# map oD $ouch d $f
-# map oC $ouch c $f "$f.zip"
-# map oL $ln -s $f ~/tmp_results/tmp_links/$(basename "$f")
-
-# Old make mappings
-# map md mkdir
-# map mf mkfile
-# map mF sudomkfile
-# map mp chmod
-
-# Old junk mappings
-# map <c-f> :fzf_jump
-# map gs :fzf_search
-# map J broot_jump
-# map F fzf_jump
-
-# Old command definitions (replaced with modern equivalents above)
-# cmd fzf_jump ${{ ... }}
-# cmd fzf_search ${{ ... }}
-# cmd broot_jump ${{ ... }}
-# cmd mkdir ${{ ... }}
-# cmd mkfile ${{ ... }}
-# cmd sudomkfile ${{ ... }}
-# cmd chmod ${{ ... }}
+set dircounts true      # show number of items in directory instead of sie
 set info "size"       # list directory information on the right
 set sortby "natural"  # don't sort files in any special way
 # set drawbox true        # draw a border around all panes
@@ -443,8 +14,8 @@ set number true  # show line numbers
 
 set preview true        # preview file on the right pane
 # set previewer chafa --format sixel --work 9 --optimize 9 --stretch --zoom --size 140x80
-set previewer ~/.config/machineconfig/settings/lf/linux/exe/previewer.sh
-set cleaner ~/.config/machineconfig/settings/lf/linux/exe/cleaner.sh
+set previewer ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh
+set cleaner ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/cleaner.sh
 # set previewer pistol
 
 # set sixels true
@@ -477,10 +48,16 @@ set ratios '1:2:3'  # ratio of pane widths
 
 
 # test image viewer
-map Q !~/.config/machineconfig/settings/lf/linux/exe/previewer.sh "$f"
+map Q !~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh "$f"
 
 # key bindings
+map vmap v  # default is invert
 map V invert
+map p
+map x
+map c
+map v
+# map D
 map D $diskonaut
 map K $kondo $f
 
@@ -493,6 +70,7 @@ map <c-u>  # half-up
 # e edit
 map e  # edit modal key.
 map eh $hx $f
+map eH !source ~/code/machineconfig/.venv/bin/activate;hx $f
 map en $nano $f
 map el $lvim $f
 map ev $nvim $f
@@ -503,11 +81,12 @@ map <enter> open
 
 
 # w shells
+map w
 map ww bash
 # map wp $powershell
 map wr $~/scripts/croshell
 # map wm $cmd
-map i !~/.config/machineconfig/settings/lf/linux/exe/previewer.sh $f
+map i !~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh $f
 map I !cat $f | gum pager
 map R $~/scripts/croshell -r $f
 map O $~/scripts/croshell -rj $f
@@ -517,6 +96,7 @@ map O $~/scripts/croshell -rj $f
 map c clear
 map <delete> delete
 
+map o
 map od cut
 map op paste
 map oy copy
@@ -528,34 +108,78 @@ map ol mark-load
 map oR mark-remove
 map oD $ouch d $f
 map oC $ouch c $f "$f.zip"
-map oL $ln -s $f ~/tmp_results/tmp_links/$(basename "$f")
+map oL $ln -s $f $HOME/tmp_results/tmp_links/$(basename "$f")
 
 # j jump
+map j
 map jc cd ~/code
 map jd cd ~/data
 map jD cd ~/Downloads
 map jx cd ~/dotfiles
+# map jm cd ~/code/machineconfig/src/machineconfig
 map jh cd ~
 map jj $~/scripts/croshell -j --read $f
+# map jj $lvim ~/code/machineconfig/src/machineconfig/settings/lf/linux/lfrc
 
-# Zoxide and Tere integration
+# from https://github.com/gokcehan/lf/wiki/Integrations#zoxide
+cmd zi ${{
+    result="$(zoxide query -i -- "$@")"
+    lf -remote "send ${id} cd '${result}'"
+}}
 map Z zi
-map T ter
+
+cmd ter ${{
+    result="$(tere query -i -- "$@")"
+    lf -remote "send ${id} cd '${result}'"
+}}
+map T ter #!tere
 
 # m make
+map m
 map md mkdir
 map mf mkfile
 map mF sudomkfile
 map mp chmod
 
 
-# =============== Additional integrations =================
+# =============== JUNK =================
 map <c-f> :fzf_jump
 map gs :fzf_search
 map J broot_jump
 map F fzf_jump
 
-# Broot integration
+
+# from https://github.com/gokcehan/lf/wiki/Integrations#fzf
+cmd fzf_jump ${{
+    res="$(find . -maxdepth 100 | fzf --reverse --header='Jump to location' | sed 's/\\/\\\\/g;s/"/\\"/g')"
+    if [ -d "$res" ] ; then
+        cmd="cd"
+    elif [ -f "$res" ] ; then
+        cmd="select"
+    else
+        exit 0
+    fi
+    lf -remote "send $id $cmd \"$res\""
+}}
+
+
+cmd fzf2g $(~/scripts/fzf2g.sh $args[1])
+# map F $nano fzf2g $args[1]
+
+
+cmd fzf_search ${{
+    res="$( \
+        RG_PREFIX="rg --column --line-number --no-heading --color=always \
+            --smart-case "
+        FZF_DEFAULT_COMMAND="$RG_PREFIX ''" \
+            fzf --bind "change:reload:$RG_PREFIX {q} || true" \
+            --ansi --layout=reverse --header 'Search in files' \
+            | cut -d':' -f1
+    )"
+    [ ! -z "$res" ] && lf -remote "send $id select \"$res\""
+}}
+
+
 cmd broot_jump ${{
   f=$(mktemp)
   res="$(broot --outcmd $f && cat $f | sed 's/cd //')"
@@ -568,10 +192,35 @@ cmd broot_jump ${{
   lf -remote "send $id $cmd \"$res\""
 }}
 
-# Additional file creation commands
+
+# cmd % echo "hi from bottom line of lf"  # this function acts in the bottom line, unlike this full-blown acting in its own screen:
+cmd mkdir ${{
+  printf "Directory Name: "
+  read ans
+  mkdir $ans
+}}
+
+cmd mkfile ${{
+  printf "File Name: "
+  read ans
+  $EDITOR $ans
+}}
+
 cmd sudomkfile ${{
   printf "File Name: "
   read ans
   sudo $EDITOR $ans
 }}
 
+
+cmd chmod ${{
+  printf "Mode Bits: "
+  read ans
+
+  for file in "$fx"
+  do
+    chmod $ans $file
+  done
+
+  lf -remote 'send reload'
+}}
