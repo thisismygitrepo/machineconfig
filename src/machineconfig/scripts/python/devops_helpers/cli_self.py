@@ -5,7 +5,18 @@ from typing import Optional
 
 def update():
     """🔄 UPDATE uv and machineconfig"""
-    code = """
+    # from machineconfig.utils.source_of_truth import LIBRARY_ROOT
+    # repo_root = LIBRARY_ROOT.parent.parent
+    from pathlib import Path
+    if Path.home().joinpath("code", "machineconfig").exists():
+        code = """
+    uv self update
+    cd ~/code/machineconfig
+    git pull
+    uv tool install --upgrade --editable $HOME/code/machineconfig
+    """
+    else:
+        code = """
     uv self update
     uv tool install --upgrade machineconfig
     """
@@ -85,7 +96,7 @@ def get_app():
     cli_app.command("I", no_args_is_help=False, help="CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.", hidden=True)(install)
     cli_app.command("navigate", no_args_is_help=False, help="📚  [n] NAVIGATE command structure with TUI")(navigate)
     cli_app.command("n", no_args_is_help=False, help="NAVIGATE command structure with TUI", hidden=True)(navigate)
-    cli_app.command("python", no_args_is_help=False, help="🐍  [c] python command/file in the machineconfig environment")(run_python)
+    cli_app.command("python", no_args_is_help=False, help="🐍  [c] python command/file in the machineconfig environment", context_settings={"show_help_on_error": True})(run_python)
     cli_app.command("c", no_args_is_help=False, help="RUN python command/file in the machineconfig environment", hidden=True)(run_python)
     cli_app.command("readme", no_args_is_help=False, help="📚  [r] render readme markdown in terminal.")(readme)
     cli_app.command("r", no_args_is_help=False, hidden=True)(readme)

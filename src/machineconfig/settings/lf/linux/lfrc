@@ -132,7 +132,7 @@ map L low
 map <c-u> half-up
 map <c-d> half-down
 map <c-b> page-up
-map <c-f> page-down
+# map <c-f> page-down  # disabled - used for fzf-jump instead
 map <c-y> scroll-up
 map <c-e> scroll-down
 
@@ -212,7 +212,7 @@ map <f-1> help
 # ============================ CUSTOM COMMANDS =====================================
 
 # Open files with appropriate applications
-cmd open &{{
+cmd open ${{
     case $(file --mime-type -Lb "$f") in
         text/*) $EDITOR "$f" ;;
         image/*) imv "$f" ;;
@@ -224,14 +224,14 @@ cmd open &{{
 }}
 
 # Enhanced paste with progress
-cmd paste &{{
+cmd paste ${{
     # Use lf's built-in paste but with custom handling if needed
     # This is a fallback - lf handles paste internally by default
     lf -remote "send $id paste"
 }}
 
 # Enhanced delete with trash
-cmd delete &{{
+cmd delete ${{
     printf "Delete %d files? [y/N] " $(echo "$fx" | wc -l)
     read -r ans
     [ "$ans" = "y" ] || [ "$ans" = "Y" ] || exit 1
@@ -245,21 +245,21 @@ cmd delete &{{
 cmd rename %vidir
 
 # Create directories
-cmd mkdir &{{
+cmd mkdir ${{
     printf "Directory name: "
     read -r dirname
     mkdir -p "$dirname"
 }}
 
 # Create files
-cmd mkfile &{{
+cmd mkfile ${{
     printf "File name: "
     read -r filename
     $EDITOR "$filename"
 }}
 
 # Change permissions
-cmd chmod %{{
+cmd chmod ${{
     printf "Mode bits: "
     read -r mode
     chmod "$mode" "$fx"
@@ -267,7 +267,7 @@ cmd chmod %{{
 }}
 
 # Directory size calculation
-cmd calcdirsize &{{
+cmd calcdirsize ${{
     for dir in "$fx"; do
         if [ -d "$dir" ]; then
             size=$(du -sh "$dir" | cut -f1)
@@ -277,7 +277,7 @@ cmd calcdirsize &{{
 }}
 
 # Git status indicators
-cmd git-status &{{
+cmd git-status ${{
     if git rev-parse --git-dir >/dev/null 2>&1; then
         for file in "$@"; do
             if [ -e "$file" ]; then
@@ -289,41 +289,49 @@ cmd git-status &{{
 }}
 
 # Fuzzy jump with fzf
-cmd fzf-jump &{{
-    dest=$(find . -type d | fzf --height 40% --reverse --header="Jump to directory")
-    [ -n "$dest" ] && lf -remote "send $id cd \"$dest\""
+cmd fzf_jump ${{
+    res="$(find . -maxdepth 100 | fzf --reverse --header='Jump to location' | sed 's/\\/\\\\/g;s/"/\\"/g')"
+    if [ -d "$res" ] ; then
+        cmd="cd"
+    elif [ -f "$res" ] ; then
+        cmd="select"
+    else
+        exit 0
+    fi
+    lf -remote "send $id $cmd \"$res\""
 }}
 
 # Fuzzy search with ripgrep and fzf
-cmd fzf-search &{{
-    RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case"
-    result=$(
+cmd fzf_search ${{
+    res="$( \
+        RG_PREFIX="rg --column --line-number --no-heading --color=always \
+            --smart-case "
         FZF_DEFAULT_COMMAND="$RG_PREFIX ''" \
-        fzf --bind "change:reload:$RG_PREFIX {q} || true" \
+            fzf --bind "change:reload:$RG_PREFIX {q} || true" \
             --ansi --layout=reverse --header 'Search in files' \
-            --disabled
-    )
-    [ -n "$result" ] && file=$(echo "$result" | cut -d: -f1) && lf -remote "send $id select \"$file\""
+            | cut -d':' -f1
+    )"
+    [ ! -z "$res" ] && lf -remote "send $id select \"$res\""
 }}
 
-# Zoxide integration
-cmd zi &{{
-    result="$(zoxide query -i)"
-    [ -n "$result" ] && lf -remote "send $id cd \"$result\""
+# Zoxide integration  
+cmd zi ${{
+    result="$(zoxide query -i -- "$@")"
+    lf -remote "send ${id} cd '${result}'"
 }}
 
 # Tere integration (if available)
-cmd tere &{{
+cmd ter ${{
     result="$(tere)"
     [ -n "$result" ] && lf -remote "send $id cd \"$result\""
 }}
 
 # Bulk operations
-cmd bulk-rename %{{
+cmd bulk-rename ${{
     vidir "$@"
 }}
 
-cmd bulk-chmod %{{
+cmd bulk-chmod ${{
     printf "New permissions: "
     read -r perms
     chmod -R "$perms" "$@"
@@ -331,7 +339,7 @@ cmd bulk-chmod %{{
 }}
 
 # Archive operations
-cmd extract &{{
+cmd extract ${{
     for file in "$@"; do
         case "$file" in
             *.tar.bz2|*.tbz2) tar xjf "$file" ;;
@@ -351,7 +359,7 @@ cmd extract &{{
     lf -remote "send $id reload"
 }}
 
-cmd compress &{{
+cmd compress ${{
     printf "Archive name (without extension): "
     read -r name
     printf "Format (tar.gz/zip/7z): "
@@ -369,12 +377,12 @@ cmd compress &{{
 # ============================ SPECIAL COMMANDS ===================================
 
 # Directory change hooks
-cmd on-cd &{{
+cmd on-cd ${{
     # Update terminal title
     lf -remote "send $id tty-write \"\033]0;lf: $PWD\007\""
 }}
 
-cmd on-load &git-status
+cmd on-load $git-status
 
 # ============================ LEGACY/COMPATIBILITY ==============================
 
@@ -530,18 +538,9 @@ map jx cd ~/dotfiles
 map jh cd ~
 map jj $~/scripts/croshell -j --read $f
 
-# from https://github.com/gokcehan/lf/wiki/Integrations#zoxide
-cmd zi ${{
-    result="$(zoxide query -i -- "$@")"
-    lf -remote "send ${id} cd '${result}'"
-}}
+# Zoxide and Tere integration
 map Z zi
-
-cmd ter ${{
-    result="$(tere query -i -- "$@")"
-    lf -remote "send ${id} cd '${result}'"
-}}
-map T ter #!tere
+map T ter
 
 # m make
 map md mkdir
@@ -550,40 +549,13 @@ map mF sudomkfile
 map mp chmod
 
 
-# =============== JUNK =================
+# =============== Additional integrations =================
 map <c-f> :fzf_jump
 map gs :fzf_search
 map J broot_jump
 map F fzf_jump
 
-
-# from https://github.com/gokcehan/lf/wiki/Integrations#fzf
-cmd fzf_jump ${{
-    res="$(find . -maxdepth 100 | fzf --reverse --header='Jump to location' | sed 's/\\/\\\\/g;s/"/\\"/g')"
-    if [ -d "$res" ] ; then
-        cmd="cd"
-    elif [ -f "$res" ] ; then
-        cmd="select"
-    else
-        exit 0
-    fi
-    lf -remote "send $id $cmd \"$res\""
-}}
-
-
-cmd fzf_search ${{
-    res="$( \
-        RG_PREFIX="rg --column --line-number --no-heading --color=always \
-            --smart-case "
-        FZF_DEFAULT_COMMAND="$RG_PREFIX ''" \
-            fzf --bind "change:reload:$RG_PREFIX {q} || true" \
-            --ansi --layout=reverse --header 'Search in files' \
-            | cut -d':' -f1
-    )"
-    [ ! -z "$res" ] && lf -remote "send $id select \"$res\""
-}}
-
-
+# Broot integration
 cmd broot_jump ${{
   f=$(mktemp)
   res="$(broot --outcmd $f && cat $f | sed 's/cd //')"
@@ -596,36 +568,10 @@ cmd broot_jump ${{
   lf -remote "send $id $cmd \"$res\""
 }}
 
-
-# cmd % echo "hi from bottom line of lf"  # this function acts in the bottom line, unlike this full-blown acting in its own screen:
-cmd mkdir ${{
-  printf "Directory Name: "
-  read ans
-  mkdir $ans
-}}
-
-cmd mkfile ${{
-  printf "File Name: "
-  read ans
-  $EDITOR $ans
-}}
-
+# Additional file creation commands
 cmd sudomkfile ${{
   printf "File Name: "
   read ans
   sudo $EDITOR $ans
-}}
-
-
-cmd chmod ${{
-  printf "Mode Bits: "
-  read ans
-
-  for file in "$fx"
-  do
-    chmod $ans $file
-  done
-
-  lf -remote 'send reload'
 }}
 
