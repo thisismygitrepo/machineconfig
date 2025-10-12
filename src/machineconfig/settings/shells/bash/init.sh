@@ -30,23 +30,31 @@ add_to_path_if_not_already \
 
 # set alias l to lsd -la
 alias l='lsd -la'
-alias gcs='gh copilot suggest -t shell'
-alias gcg='gh copilot suggest -t git'
-alias gce='gh copilot explain'
+
+alias d=devops
+alias c=cloud
+alias a=agents
+alias s=sessions
+alias ff=ftpx
+alias f=fire
+alias cs=croshell
+
+# alias gcs='gh copilot suggest -t shell'
+# alias gcg='gh copilot suggest -t git'
+# alias gce='gh copilot explain'
 # Check uniqueness of aliases
 # type gcs
 # type gcg
 # type gce
-
-gcd() {
-  x=$(history -p '!!')
-  y=$(eval "$x" 2>&1)
-  gh copilot explain "Input command is: $x The output is this: $y"
-}
+# gcd() {
+#   x=$(history -p '!!')
+#   y=$(eval "$x" 2>&1)
+#   gh copilot explain "Input command is: $x The output is this: $y"
+# }
 
 # 📦 Node Version Manager
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 

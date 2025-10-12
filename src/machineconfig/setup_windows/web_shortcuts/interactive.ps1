@@ -4,4 +4,11 @@ iex (iwr "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/s
 function mcfg {
     & "$HOME\.local\bin\uv.exe" run --python 3.14 --with "machineconfig>=5.84" mcfg $args
 }
-echo "Function 'mcfg' has been defined. You can now use it to run machineconfig commands."
+function d { mcfg devops @args }
+function c { mcfg cloud @args }
+function a { mcfg agents @args }
+function s { mcfg sessions @args }
+function ff { mcfg ftpx @args }
+function f { mcfg fire @args }
+function cs { mcfg croshell @args }
+Write-Host "mcfg command aliases are now defined in this PowerShell session."

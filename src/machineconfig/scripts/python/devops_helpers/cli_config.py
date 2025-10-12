@@ -51,7 +51,7 @@ def pwsh_theme():
     import subprocess
     subprocess.run(["pwsh", "-File", str(file)])
 
-def copy_assets(which: Literal["scripts", "settings", "both"] = typer.Option(..., "--which", "-w", help="Which assets to copy")):
+def copy_assets(which: Literal["scripts", "settings", "both"] = typer.Argument(..., help="Which assets to copy")):
     """🔗 Copy asset files from library to machine."""
     import machineconfig.profile.create_helper as create_helper
     match which:

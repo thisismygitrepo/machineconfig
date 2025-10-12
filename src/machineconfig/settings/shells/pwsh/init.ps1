@@ -37,6 +37,15 @@ Add-ToPathIfNotAlready -Directories @(
 function lsdla { lsd -la }
 Set-Alias -Name l -Value lsdla -Option AllScope
 
+function d { mcfg devops @args }
+function c { mcfg cloud @args }
+function a { mcfg agents @args }
+function s { mcfg sessions @args }
+function ff { mcfg ftpx @args }
+function f { mcfg fire @args }
+function cs { mcfg croshell @args }
+
+
 try {
     Set-Alias -Name gcs -Value {gh copilot suggest -t shell}
     Set-Alias -Name gcg -Value {gh copilot suggest -t git}
