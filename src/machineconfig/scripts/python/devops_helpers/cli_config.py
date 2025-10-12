@@ -6,18 +6,18 @@ import typer
 
 
 
-def private(method: Literal["symlink", "copy"] = typer.Option(..., "--method", "-m", help="Method to use for linking files"),
-                             on_conflict: Literal["throwError", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"] = typer.Option("throwError", "--on-conflict", "-o", help="Action to take on conflict"),
-                             which: Optional[str] = typer.Option(None, "--which", "-w", help="Specific items to process"),
-                             interactive: bool = typer.Option(False, "--interactive", "-ia", help="Run in interactive mode")):
+def private(method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--method", "-m", help="Method to use for linking files")],
+                             on_conflict: Annotated[Literal["throwError", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"], typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throwError",
+                             which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = None,
+                             interactive: Annotated[bool, typer.Option(..., "--interactive", "-ia", help="Run in interactive mode")] = False):
     """🔗 Manage private configuration files."""
     import machineconfig.profile.create_links_export as create_links_export
     create_links_export.main_private_from_parser(method=method, on_conflict=on_conflict, which=which, interactive=interactive)
 
-def public(method: Literal["symlink", "copy"] = typer.Option(..., "--method", "-m", help="Method to use for setting up the config file."),
-                            on_conflict: Literal["throwError", "overwriteDefaultPath", "backupDefaultPath"] = typer.Option("throwError", "--on-conflict", "-o", help="Action to take on conflict"),
-                            which: Optional[str] = typer.Option(None, "--which", "-w", help="Specific items to process"),
-                            interactive: bool = typer.Option(False, "--interactive", "-ia", help="Run in interactive mode")):
+def public(method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--method", "-m", help="Method to use for setting up the config file.")],
+                            on_conflict: Annotated[Literal["throwError", "overwriteDefaultPath", "backupDefaultPath"], typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throwError",
+                            which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = None,
+                            interactive: Annotated[bool, typer.Option(..., "--interactive", "-ia", help="Run in interactive mode")] = False):
     """🔗 Manage public configuration files."""
     import machineconfig.profile.create_links_export as create_links_export
     create_links_export.main_public_from_parser(method=method, on_conflict=on_conflict, which=which, interactive=interactive)
@@ -42,7 +42,7 @@ def path():
     from pathlib import Path
     path = Path(navigator.__file__).resolve().parent.joinpath("path_manager_tui.py")
     from machineconfig.utils.code import run_shell_script
-    run_shell_script(f"""uv run --with "machineconfig>=5.84,textual" {path}""")
+    run_shell_script(f"""uv run --with "machineconfig>=5.87,textual" {path}""")
 
 def pwsh_theme():
     """🔗 Select powershell prompt theme."""
@@ -51,7 +51,7 @@ def pwsh_theme():
     import subprocess
     subprocess.run(["pwsh", "-File", str(file)])
 
-def copy_assets(which: Literal["scripts", "settings", "both"] = typer.Argument(..., help="Which assets to copy")):
+def copy_assets(which: Annotated[Literal["scripts", "settings", "both"], typer.Argument(..., help="Which assets to copy")]):
     """🔗 Copy asset files from library to machine."""
     import machineconfig.profile.create_helper as create_helper
     match which:

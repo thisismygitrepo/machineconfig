@@ -14,7 +14,7 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 WORKDIR /app
 COPY . /app
 RUN /root/.local/bin/uv tool install --python 3.14 --editable .
-# RUN /root/.local/bin/uv tool install --python 3.14 machineconfig>=5.84
+# RUN /root/.local/bin/uv tool install --python 3.14 machineconfig>=5.87
 
 RUN /root/.local/bin/devops install --group ESSENTIAL_SYSTEM
 RUN /root/.local/bin/devops install --group ESSENTIAL

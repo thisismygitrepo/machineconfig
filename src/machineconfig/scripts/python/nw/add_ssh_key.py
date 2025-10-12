@@ -6,7 +6,7 @@ from machineconfig.utils.path_extended import PathExtended
 from rich.console import Console
 from rich.panel import Panel
 from rich import box  # Import box
-from typing import Optional
+from typing import Optional, Annotated
 import typer
 
 
@@ -77,10 +77,10 @@ sudo service ssh --full-restart
 """
 
 
-def main(pub_path: Optional[str] = typer.Argument(None, help="Path to the public key file"),
-         pub_choose: bool = typer.Option(False, "--choose", "-c", help="Choose from available public keys in ~/.ssh"),
-         pub_val: bool = typer.Option(False, "--paste", "-p", help="Paste the public key content manually"),
-         from_github: Optional[str] = typer.Option(None, "--from-github", "-g", help="Fetch public keys from a GitHub username")
+def main(pub_path: Annotated[Optional[str], typer.Argument(..., help="Path to the public key file")] = None,
+         pub_choose: Annotated[bool, typer.Option(..., "--choose", "-c", help="Choose from available public keys in ~/.ssh")] = False,
+         pub_val: Annotated[bool, typer.Option(..., "--paste", "-p", help="Paste the public key content manually")] = False,
+         from_github: Annotated[Optional[str], typer.Option(..., "--from-github", "-g", help="Fetch public keys from a GitHub username")] = None
          ) -> None:
     if pub_path:
         key_path = PathExtended(pub_path).expanduser().absolute()

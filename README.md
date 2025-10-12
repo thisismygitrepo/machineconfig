@@ -24,7 +24,7 @@ iex (iwr bit.ly/cfgwindows).Content
 
 ```bash
 
-. <(curl -sL bit.ly/cfglinux)
+. <(curl -L bit.ly/cfglinux)
 ```
 
 

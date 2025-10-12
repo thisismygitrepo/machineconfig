@@ -1,5 +1,5 @@
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated
 from git import Repo
 from collections import defaultdict
 from datetime import datetime
@@ -82,7 +82,7 @@ def get_default_branch(repo: Repo) -> str:
 
 
 @app.command()
-def count_historical(repo_path: str = typer.Argument(..., help="Path to the git repository")):
+def count_historical(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
     """Count total historical lines of Python code in the repository."""
     print(f"Analyzing repository: {repo_path}")
     total_loc: int = count_historical_loc(repo_path)
@@ -90,7 +90,7 @@ def count_historical(repo_path: str = typer.Argument(..., help="Path to the git 
 
 
 @app.command()
-def analyze_over_time(repo_path: str = typer.Argument(..., help="Path to the git repository")):
+def analyze_over_time(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
     """Analyze a git repository to track Python code size over time with visualization."""
     repo: Repo = Repo(repo_path)
     branch_name: str = get_default_branch(repo)
@@ -336,7 +336,7 @@ def _print_python_files_by_size_impl(repo_path: str) -> "Union[pl.DataFrame, Exc
 
 
 @app.command()
-def print_python_files_by_size(repo_path: str = typer.Argument(..., help="Path to the git repository")):
+def print_python_files_by_size(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
     """Print Python files sorted by size with visualizations."""
     result = _print_python_files_by_size_impl(repo_path)
     if isinstance(result, Exception):

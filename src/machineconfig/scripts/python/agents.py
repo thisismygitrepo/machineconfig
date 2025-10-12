@@ -3,25 +3,25 @@
 """
 
 from pathlib import Path
-from typing import cast, Optional, get_args
+from typing import cast, Optional, get_args, Annotated
 import typer
 from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, HOST, MODEL, PROVIDER
 
 
 def create(
-    agent: AGENTS = typer.Option(..., "--agents", "-a", help=f"Agent type. One of {', '.join(get_args(AGENTS)[:3])}"),
-    host: HOST = typer.Option(..., "--host", "-h", help=f"Machine to run agents on. One of {', '.join(get_args(HOST))}"),
-    model: MODEL = typer.Option(..., "--model", "-m", help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL)[:3])}"),
-    provider: PROVIDER = typer.Option(..., "--provider", "-p", help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER)[:3])}"),
-    context_path: Optional[Path] = typer.Option(None, "--context-path", "-c", help="Path to the context file/folder, defaults to .ai/todo/"),
-    separator: str = typer.Option("\n", "--separator", "-s", help="Separator for context"),
-    agent_load: int = typer.Option(13, "--agent-load", "-al", help="Number of tasks per prompt"),
-    prompt: Optional[str] = typer.Option(None, "--prompt", "-P", help="Prompt prefix as string"),
-    prompt_path: Optional[Path] = typer.Option(None, "--prompt-path", "-pp", help="Path to prompt file"),
-    job_name: str = typer.Option("AI_Agents", "--job-name", "-j", help="Job name"),
-    separate: bool = typer.Option(True, "--separate", "-S", help="Keep prompt material in separate file to the context."),
-    output_path: Optional[Path] = typer.Option(None, "--output-path", "-o", help="Path to write the layout.json file"),
-    agents_dir: Optional[Path] = typer.Option(None, "--agents-dir", "-ad", help="Directory to store agent files. If not provided, will be constructed automatically."),
+    agent: Annotated[AGENTS, typer.Option(..., "--agents", "-a", help=f"Agent type. One of {', '.join(get_args(AGENTS)[:3])}")],
+    host: Annotated[HOST, typer.Option(..., "--host", "-h", help=f"Machine to run agents on. One of {', '.join(get_args(HOST))}")],
+    model: Annotated[MODEL, typer.Option(..., "--model", "-m", help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL)[:3])}")],
+    provider: Annotated[PROVIDER, typer.Option(..., "--provider", "-p", help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER)[:3])}")],
+    context_path: Annotated[Optional[Path], typer.Option(..., "--context-path", "-c", help="Path to the context file/folder, defaults to .ai/todo/")] = None,
+    separator: Annotated[str, typer.Option(..., "--separator", "-s", help="Separator for context")] = "\n",
+    agent_load: Annotated[int, typer.Option(..., "--agent-load", "-al", help="Number of tasks per prompt")] = 13,
+    prompt: Annotated[Optional[str], typer.Option(..., "--prompt", "-P", help="Prompt prefix as string")] = None,
+    prompt_path: Annotated[Optional[Path], typer.Option(..., "--prompt-path", "-pp", help="Path to prompt file")] = None,
+    job_name: Annotated[str, typer.Option(..., "--job-name", "-j", help="Job name")] = "AI_Agents",
+    separate: Annotated[bool, typer.Option(..., "--separate", "-S", help="Keep prompt material in separate file to the context.")] = True,
+    output_path: Annotated[Optional[Path], typer.Option(..., "--output-path", "-o", help="Path to write the layout.json file")] = None,
+    agents_dir: Annotated[Optional[Path], typer.Option(..., "--agents-dir", "-ad", help="Directory to store agent files. If not provided, will be constructed automatically.")] = None,
 ):
 
     from machineconfig.scripts.python.helpers_fire.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout
@@ -94,9 +94,9 @@ agents create "{context_path_resolved}" \\
 
 
 def collect(
-    agent_dir: str = typer.Argument(..., help="Path to the agent directory containing the prompts folder"),
-    output_path: str = typer.Argument(..., help="Path to write the concatenated material files"),
-    separator: str = typer.Option("\n", help="Separator to use when concatenating material files"),
+    agent_dir: Annotated[str, typer.Argument(..., help="Path to the agent directory containing the prompts folder")],
+    output_path: Annotated[str, typer.Argument(..., help="Path to write the concatenated material files")],
+    separator: Annotated[str, typer.Option(..., help="Separator to use when concatenating material files")] = "\n",
 ) -> None:
     """Collect all material files from an agent directory and concatenate them."""
     if not Path(agent_dir).exists() or not Path(agent_dir).is_dir():

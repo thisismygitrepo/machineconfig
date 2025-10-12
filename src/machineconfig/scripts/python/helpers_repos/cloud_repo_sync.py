@@ -10,18 +10,18 @@ from machineconfig.utils.code import get_shell_file_executing_python_script, wri
 
 import platform
 import subprocess
-from typing import Optional, Literal
+from typing import Optional, Literal, Annotated
 
 
 console = Console()
 
 
 def main(
-    cloud: Optional[str] = typer.Option(None, "--cloud", "-c", help="Cloud storage profile name. If not provided, uses default from config."),
-    repo: Optional[str] = typer.Option(None, "--repo", "-r", help="Path to the local repository. Defaults to current working directory."),
-    message: Optional[str] = typer.Option(None, "--message", "-m", help="Commit message for local changes."),
-    on_conflict: Literal["ask", "push-local-merge", "overwrite-local", "stop-on-conflict", "remove-rclone-conflict"] = typer.Option("ask", "--on-conflict", "-oc", help="Action to take on merge conflict. Default is 'ask'."),
-    pwd: Optional[str] = typer.Option(None, "--password", help="Password for encryption/decryption of the remote repository."),
+    cloud: Annotated[Optional[str], typer.Option(..., "--cloud", "-c", help="Cloud storage profile name. If not provided, uses default from config.")] = None,
+    repo: Annotated[Optional[str], typer.Option(..., "--repo", "-r", help="Path to the local repository. Defaults to current working directory.")] = None,
+    message: Annotated[Optional[str], typer.Option(..., "--message", "-m", help="Commit message for local changes.")] = None,
+    on_conflict: Annotated[Literal["ask", "push-local-merge", "overwrite-local", "stop-on-conflict", "remove-rclone-conflict"], typer.Option(..., "--on-conflict", "-oc", help="Action to take on merge conflict. Default is 'ask'.")] = "ask",
+    pwd: Annotated[Optional[str], typer.Option(..., "--password", help="Password for encryption/decryption of the remote repository.")] = None,
 ):
     if cloud is None:
         try:
@@ -101,7 +101,7 @@ git pull originEnc master
             return "done"
         from machineconfig.utils.meta import function_to_script
         program_1_py = function_to_script(func=func2, call_with_args=None, call_with_kwargs={"remote_repo": str(repo_remote_root), "local_repo": str(repo_local_root), "cloud": cloud_resolved})
-        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, ve_path=None, executable="""uv run --with "machineconfig>=5.84" """)
+        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, ve_path=None, executable="""uv run --with "machineconfig>=5.87" """)
         # ================================================================================
         option2 = "Delete local repo and replace it with remote copy:"
         program_2 = f"""
@@ -122,7 +122,7 @@ sudo chmod +x $HOME/dotfiles/scripts/linux -R
             inspect_repos(repo_local_root=repo_local_root, repo_remote_root=repo_remote_root)
             return "done"
         program_3_py = function_to_script(func=func, call_with_args=None, call_with_kwargs={"repo_local_root": str(repo_local_root), "repo_remote_root": str(repo_remote_root)})
-        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_path=None, executable="""uv run --with "machineconfig>=5.84" """)
+        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_path=None, executable="""uv run --with "machineconfig>=5.87" """)
         # ================================================================================
 
         option4 = "Remove problematic rclone file from repo and replace with remote:"

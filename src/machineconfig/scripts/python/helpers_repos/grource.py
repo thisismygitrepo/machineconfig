@@ -319,7 +319,7 @@ def visualize(
 
 
 def install(
-    version: Optional[str] = typer.Option("0.53", "--version", "-v", help="Gource version to install"),
+    version: Annotated[Optional[str], typer.Option(..., "--version", "-v", help="Gource version to install")] = "0.53",
 ) -> None:
     """Install portable Gource on Windows (no admin privileges required)."""
     if platform.system() == "Windows":

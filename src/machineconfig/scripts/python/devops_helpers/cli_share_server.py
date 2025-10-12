@@ -1,19 +1,15 @@
 from pathlib import Path
 from typing import Optional, Annotated
 import typer
-# import typer
-
 
 
 def display_share_url(local_ip_v4: str, port: int, protocol: str = "http") -> None:
     """Display a flashy, unmissable share URL announcement."""
-
     from rich.console import Console
     from rich.panel import Panel
     from rich.text import Text
     from rich.align import Align
     console = Console()
-    
     # Create the main message with styling
     url_text = Text(f"{protocol}://{local_ip_v4}:{port}", style="bold bright_cyan underline")
     message = Text.assemble(
@@ -22,7 +18,6 @@ def display_share_url(local_ip_v4: str, port: int, protocol: str = "http") -> No
         url_text,
         (" 🚀", "bright_red")
     )
-    
     # Create a fancy panel with borders and styling
     panel = Panel(
         Align.center(message),
@@ -32,7 +27,6 @@ def display_share_url(local_ip_v4: str, port: int, protocol: str = "http") -> No
         padding=(1, 2),
         expand=False
     )
-    
     # Print with extra spacing and attention-grabbing elements
     console.print(panel)
 
@@ -45,9 +39,8 @@ def main(
     over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Expose the share server over the internet using ngrok")] = False
 ) -> None:
     from machineconfig.utils.installer_utils.installer import install_if_missing
-    install_if_missing("ezshare")
-    if over_internet: install_if_missing("ngrok")
-
+    install_if_missing(which="ezshare")
+    if over_internet: install_if_missing(which="ngrok", )
     if username is None:
         import getpass
         username = getpass.getuser()

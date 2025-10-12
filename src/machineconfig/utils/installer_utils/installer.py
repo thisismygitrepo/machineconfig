@@ -5,7 +5,7 @@ import typer
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from typing import Optional, cast, get_args
+from typing import Optional, cast, get_args, Annotated
 from machineconfig.jobs.installer.package_groups import PACKAGE_GROUPS, PACKAGE_GROUP2NAMES
 
 console = Console()
@@ -56,9 +56,9 @@ def main_with_parser():
 
 
 def main(
-    which: Optional[str] = typer.Argument(None, help="Comma-separated list of program/groups names to install (if --group flag is set)."),
-    group: bool = typer.Option(False, "--group", "-g", help="Treat 'which' as a group name. A group is bundle of apps."),
-    interactive: bool = typer.Option(False, "--interactive", "-ia", help="Interactive selection of programs to install."),
+    which: Annotated[Optional[str], typer.Argument(..., help="Comma-separated list of program/groups names to install (if --group flag is set).")] = None,
+    group: Annotated[bool, typer.Option(..., "--group", "-g", help="Treat 'which' as a group name. A group is bundle of apps.")] = False,
+    interactive: Annotated[bool, typer.Option(..., "--interactive", "-ia", help="Interactive selection of programs to install.")] = False,
 ) -> None:
     if interactive:
         return install_interactively()
@@ -189,7 +189,7 @@ def install_if_missing(which: str):
         return
     print(f"⏳ {which} not found. Installing...")
     from machineconfig.utils.installer_utils.installer import main
-    main(which=which)
+    main(which=which, interactive=False)
 
 
 if __name__ == "__main__":

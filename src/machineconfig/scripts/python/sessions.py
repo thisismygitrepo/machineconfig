@@ -1,13 +1,13 @@
 
 from pathlib import Path
-from typing import Optional, Literal
+from typing import Optional, Literal, Annotated
 import typer
 
-def balance_load(layout_path: Path = typer.Argument(..., help="Path to the layout.json file"),
-           max_thresh: int = typer.Option(..., help="Maximum tabs per layout"),
-           thresh_type: Literal['number', 'weight'] = typer.Option(..., help="Threshold type"),
-           breaking_method: Literal['moreLayouts', 'combineTabs'] = typer.Option(..., help="Breaking method"),
-           output_path: Optional[Path] = typer.Option(None, help="Path to write the adjusted layout.json file")):
+def balance_load(layout_path: Annotated[Path, typer.Argument(..., help="Path to the layout.json file")],
+           max_thresh: Annotated[int, typer.Option(..., help="Maximum tabs per layout")],
+           thresh_type: Annotated[Literal['number', 'weight'], typer.Option(..., help="Threshold type")],
+           breaking_method: Annotated[Literal['moreLayouts', 'combineTabs'], typer.Option(..., help="Breaking method")],
+           output_path: Annotated[Optional[Path], typer.Option(..., help="Path to write the adjusted layout.json file")] = None):
     """Adjust layout file to limit max tabs per layout, etc."""
     from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
     import json
@@ -69,15 +69,15 @@ def find_layout_file(layout_path: str, ) -> Path:
 
 
 def run(ctx: typer.Context,
-           layout_path: Optional[str] = typer.Argument(None, help="Path to the layout.json file"),
-        max_tabs: int = typer.Option(10, help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch."),
-        max_layouts: int = typer.Option(10, help="A Sanity checker that throws an error if the total number of layouts exceeds this number."),
-        sleep_inbetween: float = typer.Option(1.0, help="Sleep time in seconds between launching layouts"),
-        monitor: bool = typer.Option(False, "--monitor", "-m", help="Monitor the layout sessions for completion"),
-        parallel: bool = typer.Option(False, "--parallel", "-p", help="Launch multiple layouts in parallel"),
-        kill_upon_completion: bool = typer.Option(False, "--kill-upon-completion", "-k", help="Kill session(s) upon completion (only relevant if monitor flag is set)"),
-        choose: Optional[str] = typer.Option(None, "--choose", "-c", help="Comma separated names of layouts to be selected from the layout file passed"),
-        choose_interactively: bool = typer.Option(False, "--choose-interactively", "-ia", help="Select layouts interactively")
+           layout_path: Annotated[Optional[str], typer.Argument(..., help="Path to the layout.json file")] = None,
+        max_tabs: Annotated[int, typer.Option(..., help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch.")] = 10,
+        max_layouts: Annotated[int, typer.Option(..., help="A Sanity checker that throws an error if the total number of layouts exceeds this number.")] = 10,
+        sleep_inbetween: Annotated[float, typer.Option(..., help="Sleep time in seconds between launching layouts")] = 1.0,
+        monitor: Annotated[bool, typer.Option(..., "--monitor", "-m", help="Monitor the layout sessions for completion")] = False,
+        parallel: Annotated[bool, typer.Option(..., "--parallel", "-p", help="Launch multiple layouts in parallel")] = False,
+        kill_upon_completion: Annotated[bool, typer.Option(..., "--kill-upon-completion", "-k", help="Kill session(s) upon completion (only relevant if monitor flag is set)")] = False,
+        choose: Annotated[Optional[str], typer.Option(..., "--choose", "-c", help="Comma separated names of layouts to be selected from the layout file passed")] = None,
+        choose_interactively: Annotated[bool, typer.Option(..., "--choose-interactively", "-ia", help="Select layouts interactively")] = False
         ):
     """
     Launch terminal sessions based on a layout configuration file.

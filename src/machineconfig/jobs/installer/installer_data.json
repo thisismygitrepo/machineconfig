@@ -245,14 +245,14 @@
       "doc": "🔗 Easy file sharing tool",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g ezshare",
-          "windows": "npm install -g ezshare",
-          "macos": "npm install -g ezshare"
+          "linux": "npm i -g @ezshare/cli",
+          "windows": "npm i -g @ezshare/cli",
+          "macos": "npm i -g @ezshare/cli"
         },
         "arm64": {
-          "linux": "npm install -g ezshare",
-          "windows": "npm install -g ezshare",
-          "macos": "npm install -g ezshare"
+          "linux": "npm i -g @ezshare/cli",
+          "windows": "npm i -g @ezshare/cli",
+          "macos": "npm i -g @ezshare/cli"
         }
       }
     },

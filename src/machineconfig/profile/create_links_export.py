@@ -1,12 +1,12 @@
 
 import typer
-from typing import Optional, Literal
+from typing import Optional, Literal, Annotated
 
 
-def main_public_from_parser(method: Literal["symlink", "copy"] = typer.Option(..., help="Method to use for setting up the config file."),
-                            on_conflict: Literal["throwError", "overwriteDefaultPath", "backupDefaultPath"] = typer.Option(..., help="Action to take on conflict"),
-                            which: Optional[str] = typer.Option(None, help="Specific items to process"),
-                            interactive: bool = typer.Option(False, help="Run in interactive mode")):
+def main_public_from_parser(method: Annotated[Literal["symlink", "copy"], typer.Option(..., help="Method to use for setting up the config file.")],
+                            on_conflict: Annotated[Literal["throwError", "overwriteDefaultPath", "backupDefaultPath"], typer.Option(..., help="Action to take on conflict")],
+                            which: Annotated[Optional[str], typer.Option(..., help="Specific items to process")] = None,
+                            interactive: Annotated[bool, typer.Option(..., help="Run in interactive mode")] = False):
     """Terminology:
     SOURCE = Self-Managed-Config-File-Path
     TARGET = Config-File-Default-Path
@@ -31,10 +31,10 @@ def main_public_from_parser(method: Literal["symlink", "copy"] = typer.Option(..
     apply_mapper(mapper_data=items_objections, on_conflict=on_conflict, method=method)
 
 
-def main_private_from_parser(method: Literal["symlink", "copy"] = typer.Option(..., help="Method to use for linking files"),
-                             on_conflict: Literal["throwError", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"] = typer.Option("throwError", help="Action to take on conflict"),
-                             which: Optional[str] = typer.Option(None, help="Specific items to process"),
-                             interactive: bool = typer.Option(False, help="Run in interactive mode")):
+def main_private_from_parser(method: Annotated[Literal["symlink", "copy"], typer.Option(..., help="Method to use for linking files")],
+                             on_conflict: Annotated[Literal["throwError", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"], typer.Option(..., help="Action to take on conflict")] = "throwError",
+                             which: Annotated[Optional[str], typer.Option(..., help="Specific items to process")] = None,
+                             interactive: Annotated[bool, typer.Option(..., help="Run in interactive mode")] = False):
     from machineconfig.profile.create_links import ConfigMapper, read_mapper
 
     mapper_full = read_mapper()["private"]

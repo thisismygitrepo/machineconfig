@@ -2,7 +2,7 @@
 import machineconfig.scripts.python.devops_helpers.cli_terminal as cli_terminal
 import machineconfig.scripts.python.devops_helpers.cli_share_server as cli_share_server
 import typer
-from typing import Optional
+from typing import Optional, Annotated
 
 
 
@@ -19,10 +19,10 @@ def install_ssh_server():
     run_shell_script(script=SSH_SERVER.read_text(encoding="utf-8"))
 
 
-def add_ssh_key(path: Optional[str] = typer.Option(None, help="Path to the public key file"),
-         choose: bool = typer.Option(False, "--choose", "-c", help="Choose from available public keys in ~/.ssh/*.pub"),
-         value: bool = typer.Option(False, "--value", "-v", help="Paste the public key content manually"),
-         github: Optional[str] = typer.Option(None, "--github", "-g", help="Fetch public keys from a GitHub username")
+def add_ssh_key(path: Annotated[Optional[str], typer.Option(..., help="Path to the public key file")] = None,
+         choose: Annotated[bool, typer.Option(..., "--choose", "-c", help="Choose from available public keys in ~/.ssh/*.pub")] = False,
+         value: Annotated[bool, typer.Option(..., "--value", "-v", help="Paste the public key content manually")] = False,
+         github: Annotated[Optional[str], typer.Option(..., "--github", "-g", help="Fetch public keys from a GitHub username")] = None
 ):
     """🔑 SSH add pub key to this machine so its accessible by owner of corresponding private key."""
     import machineconfig.scripts.python.nw.devops_add_ssh_key as helper

@@ -1,6 +1,6 @@
 
 import typer
-from typing import Optional
+from typing import Optional, Annotated
 
 
 def update():
@@ -41,9 +41,9 @@ def install():
     # main_public_from_parser()
     import platform
     if platform.system() == "Windows":
-        run_shell_script(r"""$HOME\.local\bin\uv.exe tool install machineconfig>=5.84""")
+        run_shell_script(r"""$HOME\.local\bin\uv.exe tool install machineconfig>=5.87""")
     else:
-        run_shell_script("""$HOME/.local/bin/uv tool install machineconfig>=5.84""")
+        run_shell_script("""$HOME/.local/bin/uv tool install machineconfig>=5.87""")
 
 def navigate():
     """📚 NAVIGATE command structure with TUI"""
@@ -51,11 +51,11 @@ def navigate():
     from pathlib import Path
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import run_shell_script
-    run_shell_script(f"""uv run --with "machineconfig>=5.84,textual" {path}""")
+    run_shell_script(f"""uv run --with "machineconfig>=5.87,textual" {path}""")
 
 
-def run_python(ip: str = typer.Argument(..., help="Python command to run in the machineconfig environment"),
-               command: Optional[bool] = typer.Option(False, "--command", "-c", help="Run as command")):
+def run_python(ip: Annotated[str, typer.Argument(..., help="Python command to run in the machineconfig environment")],
+               command: Annotated[Optional[bool], typer.Option(..., "--command", "-c", help="Run as command")] = False):
     """🐍 RUN python command/file in the machineconfig environment"""
     if command:
         exec(ip)
