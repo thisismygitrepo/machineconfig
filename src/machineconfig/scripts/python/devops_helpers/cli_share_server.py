@@ -39,7 +39,7 @@ def main(
     over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Expose the share server over the internet using ngrok")] = False
 ) -> None:
     from machineconfig.utils.installer_utils.installer import install_if_missing
-    install_if_missing(which="ezshare")
+    install_if_missing(which="easy-sharing")
     if over_internet: install_if_missing(which="ngrok", )
     if username is None:
         import getpass
@@ -49,7 +49,9 @@ def main(
         if pwd_path.exists():
             password = pwd_path.read_text(encoding="utf-8").strip()
         else:
-            raise ValueError("Password not provided and default password file does not exist.")
+            # raise ValueError("Password not provided and default password file does not exist.")
+            typer.echo(f"⚠️  WARNING: Password not provided and default password file does not exist.\nPath: {pwd_path}\nUsing default password: 'quick_password' (insecure!)", err=True)
+            typer.Exit(code=1)
 
     if port is None:
         port = 8080  # Default port for ezshare
@@ -66,7 +68,7 @@ def main(
     import subprocess
     import time
     # Build ezshare command
-    ezshare_cmd = f"ezshare --port {port} --username {username} --password {password} {path}"
+    ezshare_cmd = f"""easy-sharing --port {port} --username {username} --password "{password}" {path}"""
     ezshare_process = subprocess.Popen(ezshare_cmd, shell=True)
     processes = [ezshare_process]
     
