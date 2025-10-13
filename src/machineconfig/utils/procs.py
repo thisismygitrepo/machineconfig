@@ -2,12 +2,11 @@
 
 import psutil
 from rich.progress import Progress, SpinnerColumn, TextColumn
-from zoneinfo import ZoneInfo
 from machineconfig.utils.options import choose_from_options
-from typing import Optional, Any
+from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
-from datetime import datetime, timezone
+from datetime import datetime
 from machineconfig.utils.accessories import pprint
 
 console = Console()
@@ -63,9 +62,7 @@ class ProcessManager:
             for proc in psutil.process_iter():
                 try:
                     mem_usage_mb = proc.memory_info().rss / (1024 * 1024)
-                    # Convert create_time to local timezone
-                    create_time_utc = datetime.fromtimestamp(proc.create_time(), tz=timezone.utc)
-                    create_time_local = create_time_utc.astimezone(ZoneInfo("Australia/Adelaide"))
+                    create_time = datetime.fromtimestamp(proc.create_time(), tz=None)
 
                     process_info.append(
                         {
@@ -75,7 +72,7 @@ class ProcessManager:
                             "cpu_percent": proc.cpu_percent(),
                             "memory_usage_mb": mem_usage_mb,
                             "status": proc.status(),
-                            "create_time": create_time_local,
+                            "create_time": create_time,
                             "command": " ".join(proc.cmdline()),
                         }
                     )
@@ -208,32 +205,11 @@ class ProcessManager:
         console.print(Panel(f"✅ Termination complete: {killed_count} processes terminated", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
 
-def get_age(create_time: Any) -> str:
-    """Calculate age from create_time which can be either float timestamp or datetime object."""
-    try:
-        if isinstance(create_time, (int, float)):
-            # Handle timestampz
-            create_time_utc = datetime.fromtimestamp(create_time, tz=timezone.utc)
-            create_time_local = create_time_utc.astimezone(ZoneInfo("Australia/Adelaide"))
-        else:
-            # Already a datetime object
-            create_time_local = create_time
-
-        now_local = datetime.now(tz=ZoneInfo("Australia/Adelaide"))
-        age = now_local - create_time_local
-        return str(age)
-    except Exception as e:
-        try:
-            # Fallback without timezone
-            if isinstance(create_time, (int, float)):
-                create_time_dt = datetime.fromtimestamp(create_time)
-            else:
-                create_time_dt = create_time.replace(tzinfo=None) if create_time.tzinfo else create_time
-            now_dt = datetime.now()
-            age = now_dt - create_time_dt
-            return str(age)
-        except Exception as ee:
-            return f"unknown due to {ee} and {e}"
+def get_age(create_time: int) -> str:
+    dtm_now = datetime.now()
+    dtm_create = datetime.fromtimestamp(create_time, tz=None)
+    delta = dtm_now - dtm_create
+    return str(delta).split(".")[0]  # remove microseconds
 
 
 def main():
