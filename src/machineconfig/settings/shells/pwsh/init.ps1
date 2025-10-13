@@ -1,6 +1,6 @@
 
 
-$MAC_ROOT = "$HOME\.config\machineconfig"
+$CONFIG_ROOT = "$HOME\.config\machineconfig"
 
 function Add-ToPathIfNotAlready {
     param (
@@ -16,7 +16,7 @@ function Add-ToPathIfNotAlready {
 }
 
 Add-ToPathIfNotAlready -Directories @(
-    "$MAC_ROOT\src\machineconfig\scripts\windows",
+    "$CONFIG_ROOT\src\machineconfig\scripts\windows",
     "$HOME\dotfiles\scripts\windows",
     "C:\Program Files (x86)\GnuWin32\bin",
     "C:\Program Files\CodeBlocks\MinGW\bin",
@@ -29,9 +29,9 @@ Add-ToPathIfNotAlready -Directories @(
 
 
 # sources  ================================================================
-. $MAC_ROOT\src\machineconfig\settings\broot\brootcd.ps1
-. $MAC_ROOT\src\machineconfig\settings\lf\windows\lfcd.ps1
-. $MAC_ROOT\src\machineconfig\settings\tere\terecd.ps1
+. $CONFIG_ROOT\settings\broot\brootcd.ps1
+. $CONFIG_ROOT\settings\lf\windows\lfcd.ps1
+. $CONFIG_ROOT\settings\tere\terecd.ps1
 
 
 function lsdla { lsd -la }
