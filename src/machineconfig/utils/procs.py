@@ -185,7 +185,7 @@ class ProcessManager:
             try:
                 proc = psutil.Process(pid)
                 proc_name = proc.name()
-                proc_lifetime = get_age(proc.create_time())
+                proc_lifetime = get_age(int(proc.create_time()))
                 proc.kill()
                 print(f'💀 Killed process with PID {pid} and name "{proc_name}". It lived {proc_lifetime}. RIP 🪦💐')
                 killed_count += 1
