@@ -1,6 +1,6 @@
 
 
-$MAC_ROOT = "$HOME\code\machineconfig"
+$MAC_ROOT = "$HOME\.config\machineconfig
 
 function Add-ToPathIfNotAlready {
     param (
