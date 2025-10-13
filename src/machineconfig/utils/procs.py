@@ -3,7 +3,7 @@
 import psutil
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from machineconfig.utils.options import choose_from_options
-from typing import Optional
+from typing import Optional, TypedDict, List, Dict
 from rich.console import Console
 from rich.panel import Panel
 from datetime import datetime
@@ -14,11 +14,29 @@ console = Console()
 BOX_WIDTH = 78  # width for box drawing
 
 
-def get_processes_accessing_file(path: str):
+class ProcessInfo(TypedDict):
+    """TypedDict for process information."""
+    command: str
+    pid: int
+    name: str
+    username: str
+    cpu_percent: float
+    memory_usage_mb: float
+    status: str
+    create_time: datetime
+
+
+class FileAccessInfo(TypedDict):
+    """TypedDict for file access information."""
+    pid: int
+    files: List[str]
+
+
+def get_processes_accessing_file(path: str) -> List[FileAccessInfo]:
     # header for searching processes
     title = "🔍  SEARCHING FOR PROCESSES ACCESSING FILE"
     console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
-    res: dict[int, list[str]] = {}
+    res: Dict[int, List[str]] = {}
 
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
         progress.add_task("🔎 Scanning processes...", total=None)
@@ -33,7 +51,7 @@ def get_processes_accessing_file(path: str):
                 res[proc.pid] = tmp
 
     # Convert to list of dictionaries for consistent data structure
-    result_data = [{"pid": pid, "files": files} for pid, files in res.items()]
+    result_data: List[FileAccessInfo] = [{"pid": pid, "files": files} for pid, files in res.items()]
     console.print(Panel(f"✅ Found {len(res)} processes accessing the specified file", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
     return result_data
 
@@ -56,7 +74,7 @@ class ProcessManager:
         # header for initializing process manager
         title = "📊  INITIALIZING PROCESS MANAGER"
         console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
-        process_info = []
+        process_info: List[ProcessInfo] = []
         with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
             progress.add_task("🔍 Reading system processes...", total=None)
             for proc in psutil.process_iter():
@@ -90,8 +108,8 @@ class ProcessManager:
             return ""
 
         # Create header
-        _headers = ["PID", "Name", "Username", "CPU%", "Memory(MB)", "Status", "Create Time", "Command"]
-        header_line = f"{'PID':<8} {'Name':<20} {'Username':<12} {'CPU%':<8} {'Memory(MB)':<12} {'Status':<12} {'Create Time':<20} {'Command':<50}"
+        _headers = ["Command", "PID", "Name", "Username", "CPU%", "Memory(MB)", "Status", "Create Time"]
+        header_line = f"{'Command':<50} {'PID':<8} {'Name':<20} {'Username':<12} {'CPU%':<8} {'Memory(MB)':<12} {'Status':<12} {'Create Time':<20}"
         separator = "-" * len(header_line)
 
         lines = [header_line, separator]
@@ -102,7 +120,7 @@ class ProcessManager:
             # Truncate command if too long
             command = process["command"][:47] + "..." if len(process["command"]) > 50 else process["command"]
 
-            line = f"{process['pid']:<8} {process['name'][:19]:<20} {process['username'][:11]:<12} {process['cpu_percent']:<8.1f} {process['memory_usage_mb']:<12.2f} {process['status'][:11]:<12} {create_time_str:<20} {command:<50}"
+            line = f"{command:<50} {process['pid']:<8} {process['name'][:19]:<20} {process['username'][:11]:<12} {process['cpu_percent']:<8.1f} {process['memory_usage_mb']:<12.2f} {process['status'][:11]:<12} {create_time_str:<20}"
             lines.append(line)
 
         return "\n".join(lines)
@@ -126,7 +144,7 @@ class ProcessManager:
             print(f"PID: {process['pid']}, Name: {process['name']}, Memory: {process['memory_usage_mb']:.2f}MB")
 
         for idx, process in enumerate(selected_processes):
-            pprint(process, f"📌 Process {idx}")
+            pprint(dict(process), f"📌 Process {idx}")
 
         kill_all = input("\n⚠️  Confirm killing ALL selected processes? y/[n] ").lower() == "y"
         if kill_all:
@@ -138,7 +156,7 @@ class ProcessManager:
             indices = [int(val) for val in kill_by_index.split(" ")]
             target_processes = [selected_processes[i] for i in indices]
             for idx2, process in enumerate(target_processes):
-                pprint(process, f"🎯 Target Process {idx2}")
+                pprint(dict(process), f"🎯 Target Process {idx2}")
             _ = self.kill(pids=[p["pid"] for p in target_processes]) if input("\n⚠️  Confirm termination? y/[n] ").lower() == "y" else None
         console.print(Panel("🔔 No processes were terminated.", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
@@ -185,7 +203,7 @@ class ProcessManager:
             try:
                 proc = psutil.Process(pid)
                 proc_name = proc.name()
-                proc_lifetime = get_age(int(proc.create_time()))
+                proc_lifetime = get_age(datetime.fromtimestamp(proc.create_time(), tz=None))
                 proc.kill()
                 print(f'💀 Killed process with PID {pid} and name "{proc_name}". It lived {proc_lifetime}. RIP 🪦💐')
                 killed_count += 1
@@ -205,10 +223,9 @@ class ProcessManager:
         console.print(Panel(f"✅ Termination complete: {killed_count} processes terminated", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
 
-def get_age(create_time: int) -> str:
+def get_age(create_time: datetime) -> str:
     dtm_now = datetime.now()
-    dtm_create = datetime.fromtimestamp(create_time, tz=None)
-    delta = dtm_now - dtm_create
+    delta = dtm_now - create_time
     return str(delta).split(".")[0]  # remove microseconds
 
 
