@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "5.94"
+version = "5.97"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -101,6 +101,7 @@ dev = [
     "plotly>=6.3.0",
     "pre-commit>=4.3.0",
     "pudb>=2025.1",
+    "pycrucible>=0.3.0",
     "pylint>=3.3.8",
     "pyrefly>=0.33.1",
     "pyright>=1.1.405",
@@ -121,3 +122,23 @@ dev = [
     "types-urllib3>=1.26.25.14",
     "vt-py>=0.21.0",
 ]
+
+[tool.pycrucible]
+entry = "src/machineconfig/scripts/python/devops.py"
+[tool.pycrucible.options]
+debug = false
+extract_to_temp = false
+delete_after_run = false
+offline_mode = false
+
+[tool.pycrucible.patterns]
+include = [
+    "**/*.py",
+    "**/*.ps1",
+    "**/*.sh",
+    "**/*.md",
+]
+exclude = [
+    "**/__pycache__/**",
+]
+

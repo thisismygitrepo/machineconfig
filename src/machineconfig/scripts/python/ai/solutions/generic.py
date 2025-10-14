@@ -48,7 +48,7 @@ def adjust_gitignore(repo_root: Path) -> None:
         "CLAUDE.md",
         "CRUSH.md",
         ".cursor",
-        ".clinerules"
+        ".clinerules",
         ".github/instructions",
         ".github/chatmodes",
         ".github/prompts",
