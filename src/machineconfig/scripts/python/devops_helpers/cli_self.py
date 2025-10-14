@@ -20,8 +20,13 @@ def update():
     uv self update
     uv tool install --upgrade machineconfig
     """
-    from machineconfig.utils.code import run_shell_script
-    run_shell_script(code)
+    import platform
+    if platform.system() == "Windows":
+        from machineconfig.utils.code import run_shell_script_after_exit
+        run_shell_script_after_exit(code)
+    else:
+        from machineconfig.utils.code import run_shell_script
+        run_shell_script(code)
 
 def interactive():
     """🤖 INTERACTIVE configuration of machine."""
@@ -101,3 +106,4 @@ def get_app():
     cli_app.command("readme", no_args_is_help=False, help="📚  [r] render readme markdown in terminal.")(readme)
     cli_app.command("r", no_args_is_help=False, hidden=True)(readme)
     return cli_app
+

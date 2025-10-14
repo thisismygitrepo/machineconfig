@@ -1,6 +1,8 @@
 import platform
 from typing import Optional
 import subprocess
+import os
+import time
 from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
@@ -134,3 +136,74 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
     temp_script_path.unlink(missing_ok=True)
     console.print(f"🗑️  [blue]Temporary script deleted:[/blue] [green]{temp_script_path}[/green]")
     return proc
+
+
+def run_shell_script_after_exit(script: str, check_interval: float = 0.1, display_script: bool = True) -> subprocess.Popen[bytes]:
+    current_pid = os.getpid()
+    console = Console()
+    
+    if platform.system() == "Windows":
+        monitor_script = f"""$ErrorActionPreference = "Stop"
+$targetPid = {current_pid}
+$checkInterval = {check_interval}
+
+Write-Host "🔍 Monitoring process PID: $targetPid"
+
+while ($true) {{
+    $process = Get-Process -Id $targetPid -ErrorAction SilentlyContinue
+    if (-not $process) {{
+        Write-Host "✅ Process $targetPid has exited. Running script..."
+        break
+    }}
+    Start-Sleep -Seconds $checkInterval
+}}
+
+# Execute the provided script
+{script}
+"""
+        suffix = ".ps1"
+        cmd = ["powershell", "-ExecutionPolicy", "Bypass", "-NoProfile", "-WindowStyle", "Hidden", "-File"]
+    else:
+        monitor_script = f"""#!/bin/bash
+target_pid={current_pid}
+check_interval={check_interval}
+
+echo "🔍 Monitoring process PID: $target_pid"
+
+while kill -0 $target_pid 2>/dev/null; do
+    sleep $check_interval
+done
+
+echo "✅ Process $target_pid has exited. Running script..."
+
+# Execute the provided script
+{script}
+"""
+        suffix = ".sh"
+        cmd = ["bash"]
+    
+    monitor_script_path = PathExtended.tmp().joinpath("tmp_scripts", "monitor", randstr() + suffix)
+    monitor_script_path.parent.mkdir(parents=True, exist_ok=True)
+    monitor_script_path.write_text(monitor_script, encoding="utf-8")
+    
+    if display_script:
+        lexer = "powershell" if platform.system() == "Windows" else "bash"
+        console.print(Panel(Syntax(code=monitor_script, lexer=lexer), title=f"📄 Monitor script @ {monitor_script_path}", subtitle="Will run after current process exits"), style="bold yellow")
+    
+    if platform.system() != "Windows":
+        monitor_script_path.chmod(0o755)
+    
+    cmd.append(str(monitor_script_path))
+    
+    if platform.system() == "Windows":
+        creation_flags = subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS
+        process = subprocess.Popen(cmd, creationflags=creation_flags, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
+    else:
+        process = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL, start_new_session=True)
+    
+    if display_script:
+        console.print(f"🚀 [green]Monitor process started with PID:[/green] [blue]{process.pid}[/blue]")
+        console.print(f"📍 [yellow]Watching PID:[/yellow] [blue]{current_pid}[/blue]")
+    
+    return process
+
