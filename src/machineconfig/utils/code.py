@@ -2,7 +2,7 @@ import platform
 from typing import Optional
 import subprocess
 import os
-import time
+# import time
 from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
