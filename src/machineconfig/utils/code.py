@@ -196,11 +196,10 @@ echo "✅ Process $target_pid has exited. Running script..."
     cmd.append(str(monitor_script_path))
     
     if platform.system() == "Windows":
-        creation_flags = subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS
+        creation_flags = subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS  # type: ignore
         process = subprocess.Popen(cmd, creationflags=creation_flags, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
     else:
         process = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL, start_new_session=True)
-    
     if display_script:
         console.print(f"🚀 [green]Monitor process started with PID:[/green] [blue]{process.pid}[/blue]")
         console.print(f"📍 [yellow]Watching PID:[/yellow] [blue]{current_pid}[/blue]")
