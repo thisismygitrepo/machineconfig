@@ -3,7 +3,7 @@ import typer
 from typing import Optional, Annotated
 
 
-def update():
+def update(copy_assets: Annotated[bool, typer.Option(..., "--copy-assets", "-c", help="Copy assets to the machine after the update. Default is True.")] = False):
     """🔄 UPDATE uv and machineconfig"""
     # from machineconfig.utils.source_of_truth import LIBRARY_ROOT
     # repo_root = LIBRARY_ROOT.parent.parent
@@ -23,10 +23,19 @@ def update():
     import platform
     if platform.system() == "Windows":
         from machineconfig.utils.code import run_shell_script_after_exit
+        if copy_assets:
+            code += """
+devops self copy-assets both
+"""
         run_shell_script_after_exit(code)
     else:
         from machineconfig.utils.code import run_shell_script
         run_shell_script(code)
+        if copy_assets:
+            import machineconfig.profile.create_helper as create_helper
+            create_helper.copy_assets_to_machine(which="scripts")
+            create_helper.copy_assets_to_machine(which="settings")
+
 
 def interactive():
     """🤖 INTERACTIVE configuration of machine."""

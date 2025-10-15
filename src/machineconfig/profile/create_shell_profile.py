@@ -37,13 +37,14 @@ def get_shell_profile_path() -> PathExtended:
 
 def create_default_shell_profile() -> None:
     shell_profile_path = get_shell_profile_path()
-    shell_profile_path.parent.mkdir(parents=True, exist_ok=True)
+    if not shell_profile_path.exists():
+        console.print(Panel(f"""🆕 PROFILE | Profile does not exist at `{shell_profile_path}`. Creating a new one.""", title="[bold blue]Profile[/bold blue]", border_style="blue"))
+        shell_profile_path.parent.mkdir(parents=True, exist_ok=True)
+        shell_profile_path.write_text("", encoding="utf-8")
     shell_profile = shell_profile_path.read_text(encoding="utf-8")
-
     from machineconfig.profile.create_helper import copy_assets_to_machine
     copy_assets_to_machine("settings")  # init.ps1 or init.sh live here
     copy_assets_to_machine("scripts")  # init scripts are going to reference those scripts.
-
     if system == "Windows":
         init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/pwsh/init.ps1")
         source_line = f""". {str(init_script.collapseuser(placeholder="$HOME"))}"""
