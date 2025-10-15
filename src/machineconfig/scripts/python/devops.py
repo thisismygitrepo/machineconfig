@@ -10,7 +10,7 @@ import machineconfig.scripts.python.devops_helpers.cli_data as cli_data
 import machineconfig.scripts.python.devops_helpers.cli_nw as cli_network
 
 
-def install(which: Annotated[Optional[str], typer.Argument(..., help="Comma-separated list of program names to install, or group name if --group flag is set.")],
+def install(which: Annotated[Optional[str], typer.Argument(..., help="Comma-separated list of program names to install, or group name if --group flag is set.")] = None,
         group: Annotated[bool, typer.Option(..., "--group", "-g", help="Treat 'which' as a group name. A group is bundle of apps.")] = False,
         interactive: Annotated[bool, typer.Option(..., "--interactive", "-ia", help="Interactive selection of programs to install.")] = False,
     ) -> None:

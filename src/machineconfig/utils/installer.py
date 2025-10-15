@@ -125,10 +125,9 @@ def get_all_installer_data_files() -> list[InstallerData]:
     return res_final
 
 
-def get_installers_system_groups():
+def dynamically_extract_installers_system_groups_from_scripts():
     res_final: list[InstallerData] = []
     from platform import system
-
     if system() == "Windows":
         options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text(encoding="utf-8"))
     elif system() == "Linux" or system() == "Darwin":

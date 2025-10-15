@@ -1,6 +1,6 @@
 """Devops Devapps Install"""
 
-from machineconfig.utils.installer import get_installers_system_groups
+from machineconfig.utils.installer import dynamically_extract_installers_system_groups_from_scripts
 import typer
 from rich.console import Console
 from rich.panel import Panel
@@ -68,11 +68,44 @@ def main(
                 return install_group(package_group=a_group)
         else:
             return install_clis(clis_names=[x.strip() for x in which.split(",") if x.strip() != ""])
+    else:
+        if group:
+            typer.echo("❌ You must provide a group name when using the --group/-g option.")
+            res = get_static_groups_combined_with_dynamic_groups_extracted()
+            console.print("[bold blue]Here are the available groups:[/bold blue]")
+            table = Table(show_header=True, header_style="bold magenta")
+            table.add_column("Group", style="cyan", no_wrap=True)
+            table.add_column("AppsBundled", style="green", overflow="fold")
+            for display, group_name in res.items():
+                # Parse display
+                if "   --   " in display:
+                    group_part, items_part = display.split("   --   ", 1)
+                    group_name_parsed = group_part.replace("📦 ", "").strip()
+                    items_str = items_part.strip()
+                else:
+                    group_name_parsed = display
+                    items_str = group_name
+                table.add_row(group_name_parsed, items_str)
+            console.print(table)
+            raise typer.Exit(1)
     typer.echo("❌ You must provide either a program name/group name, or use --interactive/-ia option.")
     import click
     ctx = click.get_current_context()
     typer.echo(ctx.get_help())
     raise typer.Exit(1)
+
+
+def get_static_groups_combined_with_dynamic_groups_extracted():
+    # Build category options and maintain a mapping from display text to actual category name
+    category_display_to_name: dict[str, str] = {}
+    for group_name, group_values in PACKAGE_GROUP2NAMES.items():
+        display = f"📦 {group_name:<20}" + "   --   " + f"{'|'.join(group_values):<60}"
+        category_display_to_name[display] = group_name
+    options_system = dynamically_extract_installers_system_groups_from_scripts()
+    for item in options_system:
+        display = f"📦 {item['appName']:<20}   --   {item['doc']:<60}"
+        category_display_to_name[display] = item['appName']
+    return category_display_to_name
 
 
 def install_interactively():
@@ -84,16 +117,8 @@ def install_interactively():
     installer_options = []
     for x in installers:
         installer_options.append(Installer(installer_data=x).get_description())
-    # Build category options and maintain a mapping from display text to actual category name
-    category_display_to_name: dict[str, str] = {}
-    for group_name, group_values in PACKAGE_GROUP2NAMES.items():
-        display = f"📦 {group_name:<20}" + "   --   " + f"{'|'.join(group_values):<60}"
-        category_display_to_name[display] = group_name
-    options_system = get_installers_system_groups()
-    for item in options_system:
-        display = f"📦 {item['appName']:<20}   --   {item['doc']:<60}"
-        category_display_to_name[display] = item['appName']
-    
+
+    category_display_to_name = get_static_groups_combined_with_dynamic_groups_extracted()
     options = list(category_display_to_name.keys()) + ["─" * 50] + installer_options
     program_names = choose_from_options(multi=True, msg="Categories are prefixed with 📦", options=options, header="🚀 CHOOSE DEV APP OR CATEGORY", default="📦 essentials", fzf=True)
     installation_messages: list[str] = []
@@ -123,7 +148,7 @@ def install_group(package_group: str):
         installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=[package_group])
         install_bulk(installers_data=installers_)
     else:
-        options_system = get_installers_system_groups()
+        options_system = dynamically_extract_installers_system_groups_from_scripts()
         from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
         from machineconfig.utils.code import run_shell_script
         for an_item in options_system:
