@@ -59,16 +59,12 @@ def capture(directory: DirectoryArgument = None, cloud: CloudOption = None) -> N
 def clone(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """📥 Clone repositories described by a repos.json specification."""
     from machineconfig.scripts.python.repos_helpers.entrypoint import clone_from_specs
-
-    
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=False)
 
 
 def checkout_command(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """🔀 Check out specific commits listed in the specification."""
-    from machineconfig.scripts.python.repos_helpers.entrypoint import clone_from_specs
-
-    
+    from machineconfig.scripts.python.repos_helpers.entrypoint import clone_from_specs    
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=True)
 
 
@@ -82,7 +78,6 @@ def analyze(directory: DirectoryArgument = None) -> None:
     """📊 Analyze repository development over time."""
     repo_path = directory if directory is not None else "."
     from machineconfig.scripts.python.repos_helpers.count_lines_frontend import analyze_repo_development
-
     analyze_repo_development(repo_path=repo_path)
 
 
