@@ -71,7 +71,7 @@ def find_layout_file(layout_path: str, ) -> Path:
 def run(ctx: typer.Context,
            layout_path: Annotated[Optional[str], typer.Argument(..., help="Path to the layout.json file")] = None,
         max_tabs: Annotated[int, typer.Option(..., help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch.")] = 10,
-        max_layouts: Annotated[int, typer.Option(..., help="A Sanity checker that throws an error if the total number of layouts exceeds this number.")] = 10,
+        max_layouts: Annotated[int, typer.Option(..., help="A Sanity checker that throws an error if the total number of *parallel layouts exceeds this number.")] = 10,
         sleep_inbetween: Annotated[float, typer.Option(..., help="Sleep time in seconds between launching layouts")] = 1.0,
         monitor: Annotated[bool, typer.Option(..., "--monitor", "-m", help="Monitor the layout sessions for completion")] = False,
         parallel: Annotated[bool, typer.Option(..., "--parallel", "-p", help="Launch multiple layouts in parallel")] = False,
@@ -89,7 +89,7 @@ def run(ctx: typer.Context,
     layouts_selected = select_layout(layouts_json_file=layout_path_resolved, selected_layouts_names=choose.split(",") if choose else None, select_interactively=choose_interactively)
 
     # ============= Basic sanity checks =============
-    if len(layouts_selected) > max_layouts:
+    if parallel and len(layouts_selected) > max_layouts:
         raise ValueError(f"Number of layouts {len(layouts_selected)} exceeds the maximum allowed {max_layouts}. Please adjust your layout file.")
     for a_layout in layouts_selected:
         if len(a_layout["layoutTabs"]) > max_tabs:
@@ -98,7 +98,6 @@ def run(ctx: typer.Context,
             if not confirm:
                 typer.echo("Aborting launch.")
                 raise typer.Exit(0)
-
     import time
     import platform
     if platform.system() == "Linux" or platform.system() == "Darwin":
