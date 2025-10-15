@@ -37,6 +37,7 @@ def get_shell_profile_path() -> PathExtended:
 
 def create_default_shell_profile() -> None:
     shell_profile_path = get_shell_profile_path()
+    shell_profile_path.parent.mkdir(parents=True, exist_ok=True)
     shell_profile = shell_profile_path.read_text(encoding="utf-8")
 
     from machineconfig.profile.create_helper import copy_assets_to_machine
