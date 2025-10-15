@@ -65,16 +65,16 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
 def main(
     source: Annotated[str, typer.Argument(help="📂 file/folder path to be taken from here.")],
     target: Annotated[str, typer.Argument(help="🎯 file/folder path to be be sent to here.")],
-    overwrite: Annotated[bool, typer.Option(help="✍️ Overwrite existing file.")] = ArgsDefaults.overwrite,
-    share: Annotated[bool, typer.Option(help="🔗 Share file / directory")] = ArgsDefaults.share,
-    rel2home: Annotated[bool, typer.Option(help="🏠 Relative to `myhome` folder")] = ArgsDefaults.rel2home,
-    root: Annotated[Optional[str], typer.Option(help="🌳 Remote root. None is the default, unless rel2home is raied, making the default `myhome`.")] = ArgsDefaults.root,
-    key: Annotated[Optional[str], typer.Option(help="🔑 Key for encryption")] = ArgsDefaults.key,
-    pwd: Annotated[Optional[str], typer.Option(help="🔒 Password for encryption")] = ArgsDefaults.pwd,
-    encrypt: Annotated[bool, typer.Option(help="🔐 Encrypt before sending.")] = ArgsDefaults.encrypt,
+    overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="✍️ Overwrite existing file.")] = ArgsDefaults.overwrite,
+    share: Annotated[bool, typer.Option("--share", "-s", help="🔗 Share file / directory")] = ArgsDefaults.share,
+    rel2home: Annotated[bool, typer.Option("--relative2home", "-r", help="🏠 Relative to `myhome` folder")] = ArgsDefaults.rel2home,
+    root: Annotated[Optional[str], typer.Option("--root", "-R", help="🌳 Remote root. None is the default, unless rel2home is raied, making the default `myhome`.")] = ArgsDefaults.root,
+    key: Annotated[Optional[str], typer.Option("--key", "-k", help="🔑 Key for encryption")] = ArgsDefaults.key,
+    pwd: Annotated[Optional[str], typer.Option("--password", "-p", help="🔒 Password for encryption")] = ArgsDefaults.pwd,
+    encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="🔐 Encrypt before sending.")] = ArgsDefaults.encrypt,
     zip_: Annotated[bool, typer.Option("--zip", "-z", help="📦 unzip after receiving.")] = ArgsDefaults.zip_,
-    os_specific: Annotated[bool, typer.Option(help="💻 choose path specific for this OS.")] = ArgsDefaults.os_specific,
-    config: Annotated[Optional[str], typer.Option(help="⚙️ path to cloud.json file.")] = None,
+    os_specific: Annotated[bool, typer.Option("--os-specific", "-O", help="💻 choose path specific for this OS.")] = ArgsDefaults.os_specific,
+    config: Annotated[Optional[str], typer.Option("--config", "-c", help="⚙️ path to cloud.json file.")] = None,
 ) -> None:
     """📤 Upload or 📥 Download files/folders to/from cloud storage services like Google Drive, Dropbox, OneDrive, etc."""
     console.print(Panel("☁️  Cloud Copy Utility", title="[bold blue]Cloud Copy[/bold blue]", border_style="blue", width=152))

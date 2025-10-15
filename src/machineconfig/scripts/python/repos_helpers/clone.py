@@ -8,7 +8,7 @@ from git.exc import GitCommandError
 from rich import print as pprint
 from rich.progress import BarColumn, MofNCompleteColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 
-from machineconfig.utils.schemas.repos.repos_types import RepoRecordDict, RepoRecordFile, RepoRemote
+from machineconfig.utils.schemas.repos.repos_types import RepoRecordDict, RepoRemote
 from machineconfig.utils.io import read_json
 
 
@@ -95,8 +95,7 @@ def clone_single_repo(repo_spec: RepoRecordDict, preferred_remote: Optional[str]
 
 
 def clone_repos(spec_path: Path, preferred_remote: Optional[str], checkout_branch_flag: bool, checkout_commit_flag: bool) -> list[tuple[CloneStatus, str]]:
-    data = cast(RepoRecordFile, read_json(path=spec_path))
-    repos = data["repos"]
+    repos = cast(list[RepoRecordDict], read_json(path=spec_path))
     results: list[tuple[CloneStatus, str]] = []
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), BarColumn(), MofNCompleteColumn(), TimeElapsedColumn()) as progress:
         task_id = progress.add_task("Processing repositories...", total=len(repos))
