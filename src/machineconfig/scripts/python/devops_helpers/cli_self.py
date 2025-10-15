@@ -23,11 +23,10 @@ def update(copy_assets: Annotated[bool, typer.Option(..., "--copy-assets", "-c",
     import platform
     if platform.system() == "Windows":
         from machineconfig.utils.code import run_shell_script_after_exit
-        if copy_assets:
-            code += """
-devops self copy-assets both
-"""
         run_shell_script_after_exit(code)
+        from machineconfig.profile.create_helper import copy_assets_to_machine
+        copy_assets_to_machine(which="scripts")
+        copy_assets_to_machine(which="settings")
     else:
         from machineconfig.utils.code import run_shell_script
         run_shell_script(code)
