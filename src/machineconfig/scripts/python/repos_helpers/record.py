@@ -186,7 +186,7 @@ def record_repos_recursively(repos_root: str, r: bool, progress: Progress | None
     return res
 
 
-def main(repos_root: Path):
+def main_record(repos_root: Path):
     print("\n📝 Recording repositories...")
     repos_root = PathExtended(repos_root).expanduser().absolute()
 

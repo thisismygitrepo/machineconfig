@@ -909,9 +909,10 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             rp = localpath.get_remote_path(root=root, os_specific=os_specific, rel2home=rel2home, strict=strict)  # if rel2home else (P(root) / localpath if root is not None else localpath)
         else:
             rp = PathExtended(remotepath)
-
         from rclone_python import rclone
+        print(f"⬆️ UPLOADING {repr(localpath)} TO {cloud}:{rp.as_posix()}`") if verbose else None
         rclone.copyto(in_path=localpath.as_posix(), out_path=f"{cloud}:{rp.as_posix()}", )
+
         _ = [item.delete(sure=True) for item in to_del]
         if verbose:
             print(f"{'⬆️' * 5} UPLOAD COMPLETED.")
@@ -922,7 +923,6 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             command = f"rclone link '{cloud}:{rp.as_posix()}'"
             completed = _run_shell_command(command, shell_to_use)
             from machineconfig.utils.terminal import Response
-
             res = Response.from_completed_process(completed).capture()
             tmp = res.op2path(strict_err=False, strict_returncode=False)
             if tmp is None:

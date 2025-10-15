@@ -47,11 +47,9 @@ def capture(directory: DirectoryArgument = None, cloud: CloudOption = None) -> N
     """📝 Record repositories into a repos.json specification."""
     from machineconfig.scripts.python.repos_helpers.entrypoint import resolve_directory
     repos_root = resolve_directory(directory)
-    from machineconfig.scripts.python.repos_helpers.record import main as record_repos
-
+    from machineconfig.scripts.python.repos_helpers.record import main_record as record_repos
     save_path = record_repos(repos_root=repos_root)
     from machineconfig.utils.path_extended import PathExtended
-
     if cloud is not None:
         PathExtended(save_path).to_cloud(rel2home=True, cloud=cloud)
 

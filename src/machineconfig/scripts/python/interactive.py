@@ -165,7 +165,7 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
         console.print("🔧 Retrieving backup data", style="bold cyan")
         try:
             from machineconfig.scripts.python.devops_helpers.devops_backup_retrieve import main_backup_retrieve
-            main_backup_retrieve(direction="RETRIEVE")
+            main_backup_retrieve(direction="RETRIEVE", cloud=None, which=None)
             console.print("✅ Backup data retrieved successfully", style="bold green")
         except Exception as e:
             console.print(f"❌ Error retrieving backup data: {e}", style="bold red")

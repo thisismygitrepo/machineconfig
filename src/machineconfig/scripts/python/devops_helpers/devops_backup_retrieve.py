@@ -17,18 +17,15 @@ import tomllib
 OPTIONS = Literal["BACKUP", "RETRIEVE"]
 
 
-def main_backup_retrieve(direction: OPTIONS, which: Optional[str] = None) -> None:
+def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Optional[str]) -> None:
     console = Console()
-
     try:
-        cloud: str = read_ini(DEFAULTS_PATH)["general"]["rclone_config_name"]
+        cloud = read_ini(DEFAULTS_PATH)["general"]["rclone_config_name"]
         console.print(Panel(f"⚠️  DEFAULT CLOUD CONFIGURATION\n🌥️  Using default cloud: {cloud}", title="[bold blue]Cloud Configuration[/bold blue]", border_style="blue"))
     except (FileNotFoundError, KeyError, IndexError):
         console.print(Panel("🔍 DEFAULT CLOUD NOT FOUND\n🔄 Please select a cloud configuration from the options below", title="[bold red]Error: Cloud Not Found[/bold red]", border_style="red"))
         cloud = choose_cloud_interactively()
-
     bu_file: dict[str, Any] = tomllib.loads(LIBRARY_ROOT.joinpath("profile/backup.toml").read_text(encoding="utf-8"))
-
     console.print(Panel(f"🧰 LOADING BACKUP CONFIGURATION\n📄 File: {LIBRARY_ROOT.joinpath('profile/backup.toml')}", title="[bold blue]Backup Configuration[/bold blue]", border_style="blue"))
 
     if system() == "Linux":
