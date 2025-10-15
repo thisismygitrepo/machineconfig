@@ -614,6 +614,23 @@
       }
     },
     {
+      "appName": "clifm",
+      "repoURL": "https://github.com/leo-arch/clifm",
+      "doc": "📂 A terminal file manager with vim-like keybindings.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "clifm-{version}-linux-x86_64.tar.gz",
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
+    },
+    {
       "appName": "lsd",
       "repoURL": "https://github.com/lsd-rs/lsd",
       "doc": "📂 A modern replacement for ls written in Rust.",

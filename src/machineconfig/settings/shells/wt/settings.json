@@ -6,19 +6,19 @@
     "copyOnSelect": true,
     "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
     "focusFollowMouse": true,
-    "keybindings":
+    "keybindings": 
     [
         {
-            "id": "Terminal.TogglePaneZoom",
-            "keys": "ctrl+shift+z"
+            "id": "Terminal.FindText",
+            "keys": "ctrl+shift+f"
         },
         {
             "id": "Terminal.PasteFromClipboard",
             "keys": "ctrl+v"
         },
         {
-            "id": "Terminal.FindText",
-            "keys": "ctrl+shift+f"
+            "id": "Terminal.TogglePaneZoom",
+            "keys": "ctrl+shift+z"
         },
         {
             "id": "Terminal.DuplicatePaneAuto",
@@ -38,27 +38,27 @@
         }
     ],
     "launchMode": "fullscreen",
-    "newTabMenu":
+    "newTabMenu": 
     [
         {
             "type": "remainingProfiles"
         }
     ],
-    "profiles":
+    "profiles": 
     {
-        "defaults":
+        "defaults": 
         {
             "colorScheme": "Campbell (modified)",
             "padding": "0",
             "useAcrylic": false
         },
-        "list":
+        "list": 
         [
             {
                 "commandline": "pwsh",
                 "cursorColor": "#D4D8E1",
                 "cursorShape": "filledBox",
-                "font":
+                "font": 
                 {
                     "face": "CaskaydiaCove Nerd Font"
                 },
@@ -84,7 +84,7 @@
             },
             {
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-                "font":
+                "font": 
                 {
                     "face": "CaskaydiaCove Nerd Font"
                 },
@@ -139,10 +139,16 @@
                 "hidden": false,
                 "name": "Ubuntu 22.04.3 LTS",
                 "source": "CanonicalGroupLimited.Ubuntu22.04LTS_79rhkp1fndgsc"
+            },
+            {
+                "guid": "{988a16a9-2179-5ba2-8367-4854ea3de17d}",
+                "hidden": false,
+                "name": "Ubuntu-24.04",
+                "source": "Microsoft.WSL"
             }
         ]
     },
-    "schemes":
+    "schemes": 
     [
         {
             "background": "#000000",
