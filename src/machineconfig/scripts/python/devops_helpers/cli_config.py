@@ -42,7 +42,7 @@ def path():
     from pathlib import Path
     path = Path(navigator.__file__).resolve().parent.joinpath("path_manager_tui.py")
     from machineconfig.utils.code import run_shell_script
-    run_shell_script(f"""uv run --with "machineconfig>=6.34,textual" {path}""")
+    run_shell_script(f"""uv run --with "machineconfig>=6.36,textual" {path}""")
 
 def pwsh_theme():
     """🔗 Select powershell prompt theme."""

@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "6.35"
+version = "6.36"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -107,7 +107,6 @@ dev = [
     "sqlalchemy>=2.0.43",
     "textual>=6.1.0",
     "trogon>=0.6.0",
-    "twine>=6.2.0",
     "ty>=0.0.1a21",
     "types-mysqlclient>=2.2.0.20250915",
     "types-paramiko>=4.0.0.20250822",
@@ -117,12 +116,12 @@ dev = [
     "types-sqlalchemy>=1.4.53.38",
     "types-toml>=0.10.8.20240310",
     "types-urllib3>=1.26.25.14",
-    "vt-py>=0.21.0",
 ]
 
 other = [
     "duckdb-engine>=0.17.0",
         "pycrucible>=0.3.0",
+    "vt-py>=0.21.0",
 ]
 
 [tool.pycrucible]
