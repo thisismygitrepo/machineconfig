@@ -61,9 +61,14 @@ def read_json(path: "Path", r: bool = False, **kwargs: Any) -> Any:  # return co
     try:
         mydict = json.loads(Path(path).read_text(encoding="utf-8"), **kwargs)
     except Exception:
-        import pyjson5
-
-        mydict = pyjson5.loads(Path(path).read_text(encoding="utf-8"), **kwargs)  # file has C-style comments.
+        import re
+        def remove_comments(text: str) -> str:
+            # remove all // single-line comments
+            text = re.sub(r'//.*', '', text)
+            # remove all /* … */ block comments (non-greedy)
+            text = re.sub(r'/\*.*?\*/', '', text, flags=re.DOTALL)
+            return text
+        mydict = json.loads(remove_comments(Path(path).read_text(encoding="utf-8")), **kwargs)
     _ = r
     return mydict
 
