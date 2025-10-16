@@ -125,16 +125,12 @@ if __name__ == "__main__":
 
     def force_fresh_process_check(self, tab_name: str, layout_config: LayoutConfig) -> CommandStatus:
         """Force a fresh process check with additional validation."""
-        # Find the tab with the given name
-        tab_config = None
         for tab in layout_config["layoutTabs"]:
             if tab["tabName"] == tab_name:
                 tab_config = tab
                 break
-
-        if tab_config is None:
+        else:
             return {"status": "unknown", "error": f"Tab '{tab_name}' not found in layout config", "running": False, "command": "", "tab_name": tab_name, "processes": [], "remote": self.remote_executor.remote_name}
-
         command = tab_config["command"]
 
         try:
