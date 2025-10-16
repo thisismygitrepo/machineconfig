@@ -29,26 +29,18 @@ def get_fire_command_and_artifact_files_v2(func: FunctionType):
     return tab_config
 
 
-def make_layout_from_functions(functions: list[FunctionType | TabConfig], layout_name: str, method: Literal["script", "fire"]="fire") -> LayoutConfig:
-    tabs2artifacts: dict[TabConfig, list[Path]] = {}
+def make_layout_from_functions(functions: list[FunctionType], tab_configs: list[TabConfig], layout_name: str, method: Literal["script", "fire"]="fire") -> LayoutConfig:
+    tabs2artifacts: list[tuple[TabConfig, list[Path]]] = []
     for a_func in functions:
         match method:
             case "script":
-                if isinstance(a_func, dict):
-                    tab_config = a_func
-                    artifact_files = []
-                else:
-                    tab_config, artifact_files_1 = get_fire_command_and_artifact_files(a_func)
-                    artifact_files = [artifact_files_1]
+                tab_config, artifact_files_1 = get_fire_command_and_artifact_files(a_func)
+                artifact_files = [artifact_files_1]
             case "fire":
-                if isinstance(a_func, dict):
-                    tab_config = a_func
-                    artifact_files = []
-                else:
-                    tab_config = get_fire_command_and_artifact_files_v2(a_func)
-                    artifact_files = []
-        tabs2artifacts[tab_config] = artifact_files
-    list_of_tabs = list(tabs2artifacts.keys())
+                tab_config = get_fire_command_and_artifact_files_v2(a_func)
+                artifact_files = []
+        tabs2artifacts.append((tab_config, artifact_files))
+    list_of_tabs = [tab for tab, _ in tabs2artifacts] + tab_configs
     layout_config: LayoutConfig = {
         "layoutName": layout_name,
         "layoutTabs": list_of_tabs,
