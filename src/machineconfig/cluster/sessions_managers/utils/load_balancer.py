@@ -2,7 +2,7 @@
 from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig
 # from machineconfig.utils.accessories import split_list
 from typing import Literal, Protocol
-from machineconfig.cluster.sessions_managers.utils.load_balancer_helper import restrict_num_tabs_helper1, restrict_num_tabs_helper2, restrict_num_tabs_helper3, restrict_num_tabs_helper4
+from machineconfig.cluster.sessions_managers.helpers.load_balancer_helper import restrict_num_tabs_helper1, restrict_num_tabs_helper2, restrict_num_tabs_helper3, restrict_num_tabs_helper4
 
 class COMMAND_SPLITTER(Protocol):
     def __call__(self, command: str, to: int) -> list[str]: ...

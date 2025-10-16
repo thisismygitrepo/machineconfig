@@ -7,8 +7,8 @@ from rich.console import Console
 
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import ComprehensiveStatus, CommandStatus
-from machineconfig.cluster.sessions_managers.helpers.zellij_local_helper import validate_layout_config, create_tab_section, check_command_status, check_zellij_session_status
-from machineconfig.cluster.sessions_managers.helpers.zellij_local_helper_restart import restart_tab_process
+from machineconfig.cluster.sessions_managers.zellij_utils.zellij_local_helper import validate_layout_config, create_tab_section, check_command_status, check_zellij_session_status
+from machineconfig.cluster.sessions_managers.zellij_utils.zellij_local_helper_restart import restart_tab_process
 
 
 logging.basicConfig(level=logging.INFO)
@@ -170,7 +170,7 @@ class ZellijLayoutGenerator:
         return restart_tab_process(tab_name=tab_name, layout_config=self.layout_config, session_name=self.session_name)
 
     def run(self):
-        from machineconfig.cluster.sessions_managers.utils.enhanced_command_runner import enhanced_zellij_session_start
+        from machineconfig.cluster.sessions_managers.helpers.enhanced_command_runner import enhanced_zellij_session_start
         enhanced_zellij_session_start(session_name=self.session_name, layout_path=str(self.layout_path))
 
 

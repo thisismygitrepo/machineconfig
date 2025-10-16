@@ -224,5 +224,5 @@ if __name__ == "__main__":
     layout_path_3 = create_zellij_layout_with_panes(layout_config=sample_layout, output_path="/tmp/zellij_test_12345.kdl", panes_per_tab=3, split_direction="horizontal")
     print(f"✅ Layout created: {layout_path_3}")
 
-    from machineconfig.cluster.sessions_managers.utils.enhanced_command_runner import enhanced_zellij_session_start
+    from machineconfig.cluster.sessions_managers.helpers.enhanced_command_runner import enhanced_zellij_session_start
     enhanced_zellij_session_start(session_name="tmp", layout_path=layout_path_3)
