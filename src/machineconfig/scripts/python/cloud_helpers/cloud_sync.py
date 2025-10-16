@@ -73,8 +73,8 @@ def main(
     cmd_line = f"{rclone_cmd[:65]}..."
     console.print(Panel(f"{title}\n{cmd_line}", title="[bold blue]Command[/bold blue]", expand=False))
 
-    # PROGRAM_PATH.write_text(txt, encoding="utf-8")
-    import subprocess
-
-    subprocess.run(txt, shell=True, check=True)
+    # import subprocess
+    # subprocess.run(txt, shell=True, check=True)
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(txt)
 
