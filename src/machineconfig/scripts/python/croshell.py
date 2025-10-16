@@ -10,9 +10,10 @@ from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.accessories import randstr
 
 from machineconfig.utils.options import choose_from_options
-# from machineconfig.utils.ve import get_ve_activate_line
 from rich.console import Console
 from rich.panel import Panel
+# from machineconfig.utils.ve import get_ve_path_and_ipython_profile
+# from pathlib import Path
 # from rich.text import Text
 
 console = Console()
@@ -63,7 +64,7 @@ except Exception as e:
 
 
 def croshell(
-    path: Annotated[Optional[str], typer.Argument(help="read a file.")] = "",
+    path: Annotated[Optional[str], typer.Argument(help="path of file to read.")] = "",
     python: Annotated[bool, typer.Option("--python", "-p", help="flag to use python over IPython.")] = False,
     profile: Annotated[Optional[str], typer.Option("--profile", "-P", help="ipython profile to use, defaults to default profile.")] = None,
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="run in jupyter interactive console")] = False,
@@ -150,7 +151,10 @@ from pathlib import Path
                 console.print(Panel("❌ Could not determine the local machineconfig repo root. Please ensure the `REPO_ROOT` in `source_of_truth.py` is correctly set to the local path of the machineconfig repo, or do not use the `--local` flag.", title="Error", border_style="red"))
                 return
         else: ve_line = """--with "machineconfig[plot]>=6.36" """
-        fire_line = f"uv run --python 3.14 {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
+
+        # ve_path_maybe, ipython_profile_maybe = get_ve_path_and_ipython_profile(Path.cwd())
+        # --python 3.14
+        fire_line = f"uv run  {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
 
     from machineconfig.utils.code import run_shell_script
     run_shell_script(fire_line, clean_env=False)

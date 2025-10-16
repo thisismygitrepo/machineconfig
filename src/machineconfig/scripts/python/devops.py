@@ -8,6 +8,7 @@ import machineconfig.scripts.python.devops_helpers.cli_config as cli_config
 import machineconfig.scripts.python.devops_helpers.cli_self as cli_self
 import machineconfig.scripts.python.devops_helpers.cli_data as cli_data
 import machineconfig.scripts.python.devops_helpers.cli_nw as cli_network
+from machineconfig.scripts.python.devops_helpers.cli_utils import get_app as get_app_utils
 
 
 def install(which: Annotated[Optional[str], typer.Argument(..., help="Comma-separated list of program names to install, or group name if --group flag is set.")] = None,
@@ -39,6 +40,9 @@ def get_app():
     app_nw = cli_network.get_app()
     app.add_typer(app_nw, name="network")
     app.add_typer(app_nw, name="n", hidden=True)
+    app_utils = get_app_utils()
+    app.add_typer(app_utils, name="utils")
+    app.add_typer(app_utils, name="u", hidden=True)
     return app
 
 def main():
