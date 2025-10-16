@@ -57,7 +57,7 @@ class GitOperationSummary:
         self.repos_without_remotes: list[PathExtended] = []
 
 
-def git_action(path: PathExtended, action: GitAction, mess: Optional[str] = None, r: bool = False, auto_sync: bool = True) -> GitOperationResult:
+def git_action(path: PathExtended, action: GitAction, mess: Optional[str], r: bool, auto_uv_sync: bool) -> GitOperationResult:
     """Perform git actions using Python instead of shell scripts. Returns detailed operation result."""
     from git.exc import InvalidGitRepositoryError
     from git.repo import Repo
@@ -67,7 +67,7 @@ def git_action(path: PathExtended, action: GitAction, mess: Optional[str] = None
     except InvalidGitRepositoryError:
         pprint(f"⚠️ Skipping {path} because it is not a git repository.")
         if r:
-            results = [git_action(path=sub_path, action=action, mess=mess, r=r, auto_sync=auto_sync) for sub_path in path.search()]
+            results = [git_action(path=sub_path, action=action, mess=mess, r=r, auto_uv_sync=auto_uv_sync) for sub_path in path.search()]
             # For recursive calls, we need to aggregate results somehow
             # For now, return success if all recursive operations succeeded
             all_successful = all(result.success for result in results)
@@ -154,7 +154,7 @@ def git_action(path: PathExtended, action: GitAction, mess: Optional[str] = None
         elif action == GitAction.pull:
             # Use the enhanced update function with uv sync support
             try:
-                update_repository(repo, auto_uv_sync=auto_sync, allow_password_prompt=False)
+                update_repository(repo, auto_uv_sync=auto_uv_sync, allow_password_prompt=False)
                 print("✅ Pull completed")
                 return GitOperationResult(
                     repo_path=path,
@@ -341,7 +341,7 @@ def perform_git_operations(repos_root: PathExtended, pull: bool, commit: bool, p
                 
             # Now perform the actual operations
             if pull:
-                result = git_action(path=a_path, action=GitAction.pull, r=recursive, auto_sync=auto_uv_sync)
+                result = git_action(path=a_path, action=GitAction.pull, mess=None, r=recursive, auto_uv_sync=auto_uv_sync)
                 summary.pulls_attempted += 1
                 if result.success:
                     summary.pulls_successful += 1
@@ -350,7 +350,7 @@ def perform_git_operations(repos_root: PathExtended, pull: bool, commit: bool, p
                     summary.failed_operations.append(result)
                     
             if commit:
-                result = git_action(a_path, action=GitAction.commit, r=recursive, auto_sync=auto_uv_sync)
+                result = git_action(a_path, action=GitAction.commit, mess=None, r=recursive, auto_uv_sync=auto_uv_sync)
                 summary.commits_attempted += 1
                 if result.success:
                     if result.had_changes:
@@ -362,7 +362,7 @@ def perform_git_operations(repos_root: PathExtended, pull: bool, commit: bool, p
                     summary.failed_operations.append(result)
                     
             if push:
-                result = git_action(a_path, action=GitAction.push, r=recursive, auto_sync=auto_uv_sync)
+                result = git_action(a_path, action=GitAction.push, mess=None, r=recursive, auto_uv_sync=auto_uv_sync)
                 summary.pushes_attempted += 1
                 if result.success:
                     summary.pushes_successful += 1

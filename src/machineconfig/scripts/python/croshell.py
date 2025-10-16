@@ -68,6 +68,7 @@ def croshell(
     python: Annotated[bool, typer.Option("--python", "-p", help="flag to use python over IPython.")] = False,
     profile: Annotated[Optional[str], typer.Option("--profile", "-P", help="ipython profile to use, defaults to default profile.")] = None,
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="run in jupyter interactive console")] = False,
+    vscode: Annotated[bool, typer.Option("--vscode", "-c", help="open the script in vscode")] = False,
     streamlit_viewer: Annotated[bool, typer.Option("--stViewer", "-s", help="view in streamlit app")] = False,
     visidata: Annotated[bool, typer.Option("--visidata", "-V", help="open data file in visidata")] = False,
     local: Annotated[bool, typer.Option("--local", "-l", help="run in local mode, not in virtual env.")]= False,
@@ -105,7 +106,6 @@ def croshell(
         program = get_read_data_pycode(str(file_obj))
         text = f"📄 Reading data from: {file_obj.name}"
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
-
     else:  # if nothing is specified, then run in interactive mode.
         text = "⌨️  Entering interactive mode"
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
@@ -125,7 +125,7 @@ from pathlib import Path
 
 """
 
-    pyfile = PathExtended.tmp().joinpath(f"tmp_scripts/python/croshell/{randstr()}.py")
+    pyfile = PathExtended.tmp().joinpath(f"tmp_scripts/python/croshell/{randstr()}/script.py")
     pyfile.parent.mkdir(parents=True, exist_ok=True)
 
     title = "Reading Data"
@@ -138,7 +138,16 @@ from pathlib import Path
     if visidata:
         fire_line = f"uv run --with visidata,pyarrow vd {str(file_obj)}"
     elif jupyter:
-        fire_line = f"code --new-window {str(pyfile)}"
+        fire_line = f"uv run --with 'machineconfig[plot]>=6.36' jupyter-lab {str(pyfile)}"
+    elif vscode:
+        fire_line = f"""
+cd {str(pyfile.parent)}
+uv init --python 3.14
+uv venv
+uv add "machineconfig[plot]>=6.36"
+# code serve-web
+code --new-window {str(pyfile)}
+"""
     else:
         if interpreter == "ipython": profile = f" --profile {ipython_profile} --no-banner"
         else: profile = ""
@@ -151,10 +160,9 @@ from pathlib import Path
                 console.print(Panel("❌ Could not determine the local machineconfig repo root. Please ensure the `REPO_ROOT` in `source_of_truth.py` is correctly set to the local path of the machineconfig repo, or do not use the `--local` flag.", title="Error", border_style="red"))
                 return
         else: ve_line = """--with "machineconfig[plot]>=6.36" """
-
         # ve_path_maybe, ipython_profile_maybe = get_ve_path_and_ipython_profile(Path.cwd())
         # --python 3.14
-        fire_line = f"uv run  {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
+        fire_line = f"uv run {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
 
     from machineconfig.utils.code import run_shell_script
     run_shell_script(fire_line, clean_env=False)

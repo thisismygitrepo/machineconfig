@@ -6,7 +6,6 @@ import random
 from pathlib import Path
 from rich import pretty
 from rich.console import Console
-from typing import Optional
 
 
 def print_header():
@@ -38,18 +37,13 @@ def print_logo(logo: str):
             if random.choice([True, True, False]): font_box_color(logo)
             else: character_color(logo)
         else:
-            print("\n" + "🚫 " + "-" * 70 + " 🚫")
-            print("🔍 Missing ASCII art dependencies. Install with: iwr bit.ly/cfgasciiartwindows | iex")
-            print("🚫 " + "-" * 70 + " 🚫\n")
+            # print("\n" + "🚫 " + "-" * 70 + " 🚫")
+            # print("🔍 Missing ASCII art dependencies. Install with: iwr bit.ly/cfgasciiartwindows | iex")
+            # print("🚫 " + "-" * 70 + " 🚫\n")
             _default_art = Path(random.choice(glob.glob(str(Path(__file__).parent.joinpath("art", "*")))))
             print(_default_art.read_text())
     elif platform.system() in ["Linux", "Darwin"]:  # Explicitly handle both Linux and macOS
-        def is_executable_in_path(executable_name: str) -> Optional[str]:
-            path_dirs = os.environ['PATH'].split(os.pathsep)
-            for path_dir in path_dirs:
-                path_to_executable = os.path.join(path_dir, executable_name)
-                if os.path.isfile(path_to_executable) and os.access(path_to_executable, os.X_OK): return path_to_executable
-            return None
+        from machineconfig.utils.installer_utils.installer_abc import is_executable_in_path
         avail_cowsay = is_executable_in_path("cowsay")
         avail_lolcat = is_executable_in_path("lolcat")
         avail_boxes = is_executable_in_path("boxes")

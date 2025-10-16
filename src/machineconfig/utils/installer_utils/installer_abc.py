@@ -141,11 +141,12 @@ def check_tool_exists(tool_name: str) -> bool:
         return npm_check
     else:
         raise NotImplementedError(f"platform {platform.system()} not implemented")
-def is_executable_in_path(executable_name: str) -> bool:
+
+def is_executable_in_path(name: str) -> bool:
     import os
     path_dirs = os.environ['PATH'].split(os.pathsep)
     for path_dir in path_dirs:
-        path_to_executable = os.path.join(path_dir, executable_name)
+        path_to_executable = os.path.join(path_dir, name)
         if os.path.isfile(path_to_executable) and os.access(path_to_executable, os.X_OK): return True
     return False
 

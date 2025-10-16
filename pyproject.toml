@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "6.37"
+version = "6.38"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -79,7 +79,7 @@ license-files = []
 where = ["src"]
 
 [tool.setuptools.package-data]
-machineconfig = ["**/*.toml", "**/*.md", "**/*.sh", "**/*.ps1"]
+machineconfig = ["**/*.toml", "**/*.md", "**/*.sh", "**/*.ps1", "**/*.txt"]
 
 [dependency-groups]
 dev = [

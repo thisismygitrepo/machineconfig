@@ -20,11 +20,10 @@ def git_operations(
     commit: bool,
     push: bool,
     recursive: bool,
-    no_sync: bool,
+    auto_uv_sync: bool,
 ) -> None:
     
     repos_root = resolve_directory(directory)
-    auto_uv_sync = not no_sync
     from machineconfig.scripts.python.repos_helpers.action import perform_git_operations
     from machineconfig.utils.path_extended import PathExtended
     perform_git_operations(
