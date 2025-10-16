@@ -8,6 +8,8 @@ from typing import Annotated, Optional
 import typer
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.accessories import randstr
+import json
+import shutil
 
 from machineconfig.utils.options import choose_from_options
 from rich.console import Console
@@ -62,7 +64,6 @@ except Exception as e:
 """
 
 
-
 def croshell(
     path: Annotated[Optional[str], typer.Argument(help="path of file to read.")] = "",
     python: Annotated[bool, typer.Option("--python", "-p", help="flag to use python over IPython.")] = False,
@@ -71,6 +72,7 @@ def croshell(
     vscode: Annotated[bool, typer.Option("--vscode", "-c", help="open the script in vscode")] = False,
     streamlit_viewer: Annotated[bool, typer.Option("--stViewer", "-s", help="view in streamlit app")] = False,
     visidata: Annotated[bool, typer.Option("--visidata", "-V", help="open data file in visidata")] = False,
+    marimo: Annotated[bool, typer.Option("--marimo", "-m", help="open the notebook using marimo if available")] = False,
     local: Annotated[bool, typer.Option("--local", "-l", help="run in local mode, not in virtual env.")]= False,
 ) -> None:
     # ==================================================================================
@@ -135,10 +137,40 @@ from pathlib import Path
     ipython_profile = ipython_profile if ipython_profile is not None else "default"
     # ve_activateion_line = get_ve_activate_line(ve_name=args.ve or ve_profile_suggested, a_path=str(PathExtended.cwd()))
 
+    # prepare notebook target path (avoid relying on locals())
+    nb_target = pyfile.with_suffix(".ipynb")
+    if jupyter:
+        try:
+            nb_path = pyfile.with_suffix(".ipynb")
+            nb_content = {
+                "cells": [
+                    {
+                        "cell_type": "code",
+                        "metadata": {"language": "python"},
+                        "source": [python_program],
+                        "outputs": [],
+                        "execution_count": None,
+                    }
+                ],
+                "metadata": {},
+                "nbformat": 4,
+                "nbformat_minor": 5,
+            }
+            nb_path.write_text(json.dumps(nb_content), encoding="utf-8")
+            nb_target = nb_path
+        except Exception:
+            # if writing fails, fall back to the default nb_target already set
+            pass
     if visidata:
         fire_line = f"uv run --with visidata,pyarrow vd {str(file_obj)}"
+    elif marimo:
+        fire_line = f"""
+cd {str(pyfile.parent)}
+uv run --with marimo marimo convert {pyfile.name} -o marimo_nb.py 
+uv run --with "marimo,machineconfig[plot]>=6.36" marimo edit marimo_nb.py
+"""
     elif jupyter:
-        fire_line = f"uv run --with 'machineconfig[plot]>=6.36' jupyter-lab {str(pyfile)}"
+        fire_line = f"uv run --with 'machineconfig[plot]>=6.36' jupyter-lab {str(nb_target)}"
     elif vscode:
         fire_line = f"""
 cd {str(pyfile.parent)}

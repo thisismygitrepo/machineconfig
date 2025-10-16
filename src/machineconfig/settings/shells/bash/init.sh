@@ -40,7 +40,7 @@ alias a=agents
 alias s=sessions
 alias ff=ftpx
 alias f=fire
-alias cs=croshell
+alias r=croshell
 
 # alias gcs='gh copilot suggest -t shell'
 # alias gcg='gh copilot suggest -t git'

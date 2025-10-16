@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "6.38"
+version = "6.39"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -88,7 +88,6 @@ dev = [
     "cleanpy>=0.5.1",
     "cowsay>=6.1",
     # "duckdb-engine>=0.17.0",
-    "euporie>=2.8.14",
     "ipdb>=0.13.13",
     "ipykernel>=6.30.1",
     "ipython>=9.5.0",
@@ -123,6 +122,8 @@ other = [
         "pycrucible>=0.3.0",
     "vt-py>=0.21.0",
 ]
+#     "euporie>=2.8.14",
+
 
 [tool.pycrucible]
 entry = "src/machineconfig/scripts/python/devops.py"

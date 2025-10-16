@@ -65,7 +65,7 @@ class Installer:
         if repo_url == "CMD":
             if any(pm in installer_arch_os for pm in ["npm ", "pip ", "winget ", "brew ", "curl "]):
                 package_manager = installer_arch_os.split(" ", maxsplit=1)[0]
-                print(f"📦 Using package manager: {package_manager}")
+                print(f"📦 Using package manager: {installer_arch_os}")
                 desc = package_manager + " installation"
                 version_to_be_installed = package_manager + "Latest"
                 result = subprocess.run(installer_arch_os, shell=True, capture_output=True, text=False)

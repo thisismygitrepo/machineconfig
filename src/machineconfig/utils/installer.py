@@ -92,7 +92,6 @@ def get_installed_cli_apps():
 
 
 def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: Optional[list[PACKAGE_GROUPS]]) -> list[InstallerData]:
-    print("🔍 LOADING INSTALLER CONFIGURATIONS 🔍")
     res_all = get_all_installer_data_files()
     acceptable_apps_names: list[str] | None = None
     if which_cats is not None:
@@ -109,19 +108,14 @@ def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: O
         if installer_data["fileNamePattern"][arch][os] is None:
             continue
         all_installers.append(installer_data)
-    print(f"✅ Loaded {len(all_installers)} installer configurations")
     return all_installers
 
 
 def get_all_installer_data_files() -> list[InstallerData]:
-    print("📂 LOADING CONFIGURATION FILES 📂")
     import machineconfig.jobs.installer as module
     from pathlib import Path
-
-    print("📂 Loading configuration files...")
     res_raw: InstallerDataFiles = read_json(Path(module.__file__).parent.joinpath("installer_data.json"))
     res_final: list[InstallerData] = res_raw["installers"]
-    print(f"Loaded: {len(res_final)} installer categories")
     return res_final
 
 
