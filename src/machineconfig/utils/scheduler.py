@@ -249,20 +249,20 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
 
         return decorator
 
-    def from_cloud(self, cloud: str, rel2home: bool = True, root: Optional[str] = None):
-        assert self.path is not None
-        exists = self.path.exists()
-        exists_but_old = exists and ((datetime.now() - datetime.fromtimestamp(self.path.stat().st_mtime)) > self.expire)
-        if not exists or exists_but_old:
-            returned_path = self.path.from_cloud(cloud=cloud, rel2home=rel2home, root=root)
-            if returned_path is None and not exists:
-                raise FileNotFoundError(f"❌ Failed to get @ {self.path}. Build the cache first with signed API.")
-            elif returned_path is None and exists:
-                self.logger.warning(f"""
-⚠️ ════════════════════ CLOUD FETCH WARNING ════════════════════
-🔄 Failed to get fresh data from cloud
-📦 Using old cache @ {self.path}
-════════════════════════════════════════════════════════════════""")
-        else:
-            pass  # maybe we don't need to fetch it from cloud, if its too hot
-        return self.reader(self.path)
+#     def from_cloud(self, cloud: str, rel2home: bool = True, root: Optional[str] = None):
+#         assert self.path is not None
+#         exists = self.path.exists()
+#         exists_but_old = exists and ((datetime.now() - datetime.fromtimestamp(self.path.stat().st_mtime)) > self.expire)
+#         if not exists or exists_but_old:
+#             returned_path = self.path.from_cloud(cloud=cloud, rel2home=rel2home, root=root)
+#             if returned_path is None and not exists:
+#                 raise FileNotFoundError(f"❌ Failed to get @ {self.path}. Build the cache first with signed API.")
+#             elif returned_path is None and exists:
+#                 self.logger.warning(f"""
+# ⚠️ ════════════════════ CLOUD FETCH WARNING ════════════════════
+# 🔄 Failed to get fresh data from cloud
+# 📦 Using old cache @ {self.path}
+# ════════════════════════════════════════════════════════════════""")
+#         else:
+#             pass  # maybe we don't need to fetch it from cloud, if its too hot
+#         return self.reader(self.path)

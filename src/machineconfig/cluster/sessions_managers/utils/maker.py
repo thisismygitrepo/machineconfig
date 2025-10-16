@@ -20,11 +20,12 @@ def get_fire_command_and_artifact_files(func: FunctionType):
     }
     return tab_config, py_script_path
 def get_fire_command_and_artifact_files_v2(func: FunctionType):
-    import os
-    command_to_run = f"""$HOME/.local/bin/fire {func.__module__.replace(".", os.sep)} {func.__name__} """
+    import inspect
+    path = inspect.getfile(func)
+    command_to_run = f"""$HOME/.local/bin/fire {path} {func.__name__} """
     tab_config: TabConfig = {
         "command": command_to_run,
-        "startDir": str(Path(func.__module__).parent),
+        "startDir": "$HOME",
         "tabName": func.__name__
     }
     return tab_config
