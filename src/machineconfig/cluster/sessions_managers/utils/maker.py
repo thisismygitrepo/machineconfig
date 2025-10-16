@@ -12,7 +12,7 @@ def get_fire_command_and_artifact_files(func: FunctionType):
     py_script_path = Path.home().joinpath("tmp_results", "tmp_py_scripts", f"tmp_{randstr(10)}.py")
     py_script_path.parent.mkdir(parents=True, exist_ok=True)
     py_script_path.write_text(py_script, encoding="utf-8")
-    command_to_run = f"uv run --project $HOME/code/bitsense {py_script_path}"
+    command_to_run = f"uv run --project $HOME/ {py_script_path}"
     tab_config: TabConfig = {
         "command": command_to_run,
         "startDir": "$HOME",
@@ -29,16 +29,24 @@ def get_fire_command_and_artifact_files_v2(func: FunctionType):
     return tab_config
 
 
-def make_layout_from_functions(functions: list[FunctionType], layout_name: str, method: Literal["script", "fire"]="fire") -> LayoutConfig:
+def make_layout_from_functions(functions: list[FunctionType | TabConfig], layout_name: str, method: Literal["script", "fire"]="fire") -> LayoutConfig:
     tabs2artifacts: dict[TabConfig, list[Path]] = {}
     for a_func in functions:
         match method:
             case "script":
-                tab_config, artifact_files_1 = get_fire_command_and_artifact_files(a_func)
-                artifact_files = [artifact_files_1]
+                if isinstance(a_func, dict):
+                    tab_config = a_func
+                    artifact_files = []
+                else:
+                    tab_config, artifact_files_1 = get_fire_command_and_artifact_files(a_func)
+                    artifact_files = [artifact_files_1]
             case "fire":
-                tab_config = get_fire_command_and_artifact_files_v2(a_func)
-                artifact_files = []
+                if isinstance(a_func, dict):
+                    tab_config = a_func
+                    artifact_files = []
+                else:
+                    tab_config = get_fire_command_and_artifact_files_v2(a_func)
+                    artifact_files = []
         tabs2artifacts[tab_config] = artifact_files
     list_of_tabs = list(tabs2artifacts.keys())
     layout_config: LayoutConfig = {
