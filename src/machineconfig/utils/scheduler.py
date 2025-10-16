@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from typing import Callable, Optional, Union, Any, Protocol, List, TypeVar
 import logging
@@ -152,6 +151,64 @@ def to_pickle(obj: Any, path: Path) -> None:
     path.write_bytes(pickle.dumps(obj))
 
 
+class CacheMemory[T]():
+    def __init__(
+        self, source_func: Callable[[], T], expire: timedelta, logger: LoggerTemplate, name: Optional[str] = None
+    ) -> None:
+        self.cache: T
+        self.source_func = source_func
+        self.time_produced = datetime.now()
+        self.logger = logger
+        self.expire = expire
+        self.name = name if isinstance(name, str) else str(self.source_func)
+        self.last_call_is_fresh = False
+
+    @property
+    def age(self) -> timedelta:
+        return datetime.now() - self.time_produced
+
+    def __call__(self, fresh: bool = False) -> T:
+        self.last_call_is_fresh = False
+        if fresh or not hasattr(self, "cache"):
+            if self.logger:
+                why = "There was an explicit fresh order." if fresh else "Previous cache never existed."
+                self.logger.warning(f"""
+🆕 ════════════════════ NEW CACHE ════════════════════
+🔄 {self.name} cache: Populating fresh cache from source func
+ℹ️  Reason: {why}
+════════════════════════════════════════════════════════""")
+            self.cache = self.source_func()
+            self.last_call_is_fresh = True
+            self.time_produced = datetime.now()
+        else:
+            age = self.age
+            if age > self.expire:
+                if self.logger:
+                    self.logger.warning(f"""
+🔄 ════════════════════ CACHE UPDATE ════════════════════
+⚠️  {self.name} cache: Updating cache from source func
+⏱️  Age = {age} > {self.expire}
+════════════════════════════════════════════════════════""")
+                self.cache = self.source_func()
+                self.last_call_is_fresh = True
+                self.time_produced = datetime.now()
+            else:
+                if self.logger:
+                    self.logger.warning(f"""
+✅ ════════════════════ USING CACHE ════════════════════
+📦 {self.name} cache: Using cached values
+⏱️  Lag = {age}
+════════════════════════════════════════════════════════""")
+        return self.cache
+
+    @staticmethod
+    def as_decorator(expire: timedelta, logger: LoggerTemplate, name: Optional[str] = None):
+        def decorator(source_func: Callable[[], T2]) -> CacheMemory["T2"]:
+            res = CacheMemory(source_func=source_func, expire=expire, logger=logger, name=name)
+            return res
+        return decorator
+
+
 class Cache[T]():  # This class helps to accelrate access to latest data coming from expensive function. The class has two flavours, memory-based and disk-based variants."""
     def __init__(
         self, source_func: Callable[[], T], expire: timedelta, logger: LoggerTemplate, path: Path, saver: Callable[[T, Path], Any] = to_pickle, reader: Callable[[Path], T] = from_pickle, name: Optional[str] = None
@@ -180,8 +237,7 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
 📦 ════════════════════ CACHE OPERATION ════════════════════
 🔄 {self.name} cache: Reading cached values from `{self.path}`
 ⏱️  Lag = {age}
-════════════════════════════════════════════════════════════
-"""
+════════════════════════════════════════════════════════════"""
                 try:
                     self.cache = self.reader(self.path)
                 except Exception as ex:
@@ -190,8 +246,7 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
 ❌ ════════════════════ CACHE ERROR ════════════════════
 ⚠️  {self.name} cache: Cache file is corrupted
 🔍 Error: {ex}
-════════════════════════════════════════════════════════
-"""
+════════════════════════════════════════════════════════"""
                         self.logger.warning(msg1 + msg2)
                     self.cache = self.source_func()
                     self.last_call_is_fresh = True
@@ -208,8 +263,7 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
 🆕 ════════════════════ NEW CACHE ════════════════════
 🔄 {self.name} cache: Populating fresh cache from source func
 ℹ️  Reason: {why}
-════════════════════════════════════════════════════════
-""")
+════════════════════════════════════════════════════════""")
                 self.cache = self.source_func()  # fresh data.
                 self.last_call_is_fresh = True
                 self.time_produced = datetime.now()
@@ -248,21 +302,3 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
             return res
 
         return decorator
-
-#     def from_cloud(self, cloud: str, rel2home: bool = True, root: Optional[str] = None):
-#         assert self.path is not None
-#         exists = self.path.exists()
-#         exists_but_old = exists and ((datetime.now() - datetime.fromtimestamp(self.path.stat().st_mtime)) > self.expire)
-#         if not exists or exists_but_old:
-#             returned_path = self.path.from_cloud(cloud=cloud, rel2home=rel2home, root=root)
-#             if returned_path is None and not exists:
-#                 raise FileNotFoundError(f"❌ Failed to get @ {self.path}. Build the cache first with signed API.")
-#             elif returned_path is None and exists:
-#                 self.logger.warning(f"""
-# ⚠️ ════════════════════ CLOUD FETCH WARNING ════════════════════
-# 🔄 Failed to get fresh data from cloud
-# 📦 Using old cache @ {self.path}
-# ════════════════════════════════════════════════════════════════""")
-#         else:
-#             pass  # maybe we don't need to fetch it from cloud, if its too hot
-#         return self.reader(self.path)
