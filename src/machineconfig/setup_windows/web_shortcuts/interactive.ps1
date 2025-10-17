@@ -10,5 +10,5 @@ function a { mcfg agents @args }
 function s { mcfg sessions @args }
 function ff { mcfg ftpx @args }
 function f { mcfg fire @args }
-function cs { mcfg croshell @args }
+function r { mcfg croshell @args }
 Write-Host "mcfg command aliases are now defined in this PowerShell session."
