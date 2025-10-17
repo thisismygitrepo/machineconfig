@@ -38,12 +38,14 @@ def main(
     repo_local_obj = git.Repo(repo_local_root, search_parent_directories=True)
     repo_local_root = PathExtended(repo_local_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
     PathExtended(CONFIG_ROOT).joinpath("remote").mkdir(parents=True, exist_ok=True)
-    repo_remote_root = PathExtended(CONFIG_ROOT).joinpath("remote", repo_local_root.rel2home())  # .delete(sure=True)
-
+    repo_remote_root = PathExtended(CONFIG_ROOT).joinpath("remote", repo_local_root.rel2home())
+    repo_remote_root.delete(sure=True)
     try:
         console.print(Panel("📥 DOWNLOADING REMOTE REPOSITORY", title_align="left", border_style="blue"))
         remote_path = repo_local_root.get_remote_path(rel2home=True, os_specific=False, root="myhome") + ".zip.enc"
-        repo_remote_root.from_cloud(remotepath=remote_path, cloud=cloud_resolved, unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=pwd)
+        res = repo_remote_root.from_cloud(remotepath=remote_path, cloud=cloud_resolved, unzip=True, decrypt=True, rel2home=True, os_specific=False, pwd=pwd)
+        if res is None:
+            raise AssertionError("Remote repo does not exist.")
     except AssertionError:
         console.print(Panel("🆕 Remote repository doesn't exist\n📤 Creating new remote and exiting...", title_align="left", border_style="green"))
         repo_local_root.to_cloud(cloud=cloud_resolved, zip=True, encrypt=True, rel2home=True, pwd=pwd, os_specific=False)

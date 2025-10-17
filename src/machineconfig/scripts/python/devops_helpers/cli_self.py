@@ -3,7 +3,7 @@ import typer
 from typing import Optional, Annotated
 
 
-def update(copy_assets: Annotated[bool, typer.Option(..., "--copy-assets", "-c", help="Copy assets to the machine after the update. Default is True.")] = False):
+def update(copy_assets: Annotated[bool, typer.Option("--copy-assets/-nc", help="Copy assets to the machine after the update")] = True):
     """🔄 UPDATE uv and machineconfig"""
     # from machineconfig.utils.source_of_truth import LIBRARY_ROOT
     # repo_root = LIBRARY_ROOT.parent.parent
