@@ -160,7 +160,7 @@ def init_config():
     add_ai_configs(repo_root=Path.cwd())
 
 def get_app():
-    agents_app = typer.Typer(help="🤖 AI Agents management subcommands", no_args_is_help=True)
+    agents_app = typer.Typer(help="🤖 AI Agents management subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
     sep = "\n"
     agents_full_help = f"""
 [c] Create agents layout file, ready to run.

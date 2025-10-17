@@ -334,7 +334,7 @@ def install(
 
 
 if __name__ == "__main__":
-    app = typer.Typer(help="Gource visualization tool for git repositories")
+    app = typer.Typer(help="Gource visualization tool for git repositories", add_help_option=False, add_completion=False)
     app.command()(install)
     app.command()(visualize)
     app()

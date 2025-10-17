@@ -5,63 +5,19 @@ croshell
 """
 
 from typing import Annotated, Optional
+from machineconfig.scripts.python.croshell_helpers.crosh import add_print_header_pycode
+from machineconfig.scripts.python.croshell_helpers.crosh import get_read_data_pycode
 import typer
 from machineconfig.utils.path_extended import PathExtended
+from pathlib import Path
 from machineconfig.utils.accessories import randstr
 import json
-# import shutil
-
 from machineconfig.utils.options import choose_from_options
 from rich.console import Console
 from rich.panel import Panel
-# from machineconfig.utils.ve import get_ve_path_and_ipython_profile
-# from pathlib import Path
-# from rich.text import Text
+
 
 console = Console()
-
-
-def add_print_header_pycode(path: str, title: str):
-    return f"""
-
-from machineconfig.utils.path_extended import PathExtended
-pycode = PathExtended(r'{path}').read_text(encoding="utf-8")
-pycode = pycode.split("except Exception: print(pycode)")[2]
-
-try:
-    from rich.text import Text
-    from rich.panel import Panel
-    from rich.console import Console
-    from rich.syntax import Syntax
-    console = Console()
-    if pycode.strip() != "":
-        console.print(Panel(Syntax(pycode, lexer="python"), title='{title}'), style="bold red")
-except Exception: print(pycode)
-"""
-
-
-def get_read_data_pycode(path: str):
-    return f"""
-from rich.panel import Panel
-from rich.text import Text
-from rich.console import Console
-console = Console()
-p = PathExtended(r'{path}').absolute()
-try:
-    from machineconfig.utils.files.read import Read
-    from machineconfig.utils.accessories import pprint
-    dat = Read.read(p)
-    if isinstance(dat, dict):
-        panel_title = f"📄 File Data: {{p.name}}"
-        console.print(Panel(Text(str(dat), justify="left"), title=panel_title, expand=False))
-        pprint(dat, PathExtended.name)
-    else:
-        panel_title = f"📄 Successfully read the file: {{p.name}}"
-        console.print(Panel(Text(str(dat), justify="left"), title=panel_title, expand=False))
-except Exception as e:
-    error_message = f'''❌ ERROR READING FILE\nFile: {{p.name}}\nError: {{e}}'''
-    console.print(Panel(Text(error_message, justify="left"), title="Error", expand=False, border_style="red"))
-"""
 
 
 def croshell(
@@ -164,10 +120,12 @@ from pathlib import Path
     if visidata:
         fire_line = f"uv run --with visidata,pyarrow vd {str(file_obj)}"
     elif marimo:
+        if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" """
+        else: requirements = """--with "marimo,machineconfig[plot]>=6.43" """
         fire_line = f"""
 cd {str(pyfile.parent)}
-uv run --with marimo marimo convert {pyfile.name} -o marimo_nb.py
-uv run --with "marimo,machineconfig[plot]>=6.43" marimo edit --host 0.0.0.0 marimo_nb.py
+uv run --with "marimo" marimo convert {pyfile.name} -o marimo_nb.py
+uv run  {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
 """
     elif jupyter:
         fire_line = f"uv run --with 'machineconfig[plot]>=6.43' jupyter-lab {str(nb_target)}"

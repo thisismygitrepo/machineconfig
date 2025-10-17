@@ -11,7 +11,7 @@ from machineconfig.scripts.python.croshell import croshell as croshell_func
 
 def get_app():
     import typer
-    app = typer.Typer(help="MachineConfig CLI - Manage your machine configurations and workflows", no_args_is_help=True)
+    app = typer.Typer(help="MachineConfig CLI - Manage your machine configurations and workflows", no_args_is_help=True, add_help_option=False, add_completion=False)
     devops_app = get_devops_app()
     app.add_typer(devops_app, name="devops", help="[d] DevOps related commands", no_args_is_help=True)
     app.add_typer(devops_app, name="d", hidden=True)  # short alias
