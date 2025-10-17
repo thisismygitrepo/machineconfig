@@ -58,7 +58,7 @@ map r reload
 
 # e edit
 map e  # edit modal key.
-map en $~/scripts/nano $env:f
+map en $nano $env:f
 map el $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- $env:f
 map ev $nvim $env:f
 map ec $code $env:f
@@ -71,7 +71,7 @@ map <enter> open
 map w
 map ww $powershell
 map wp $pwsh
-map wc $~/scripts/croshell.ps1
+map wc $croshell.ps1
 map wm $cmd
 map i $~/.config/machineconfig/settings/lf/windows/previewer.ps1 $env:f
 map R $powershell $env:USERPROFILE/scripts/croshell.ps1 -r $env:f

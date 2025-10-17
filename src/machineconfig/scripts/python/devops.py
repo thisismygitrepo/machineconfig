@@ -45,6 +45,7 @@ def get_app():
     app.add_typer(app_utils, name="u", hidden=True)
     return app
 
+
 def main():
     app = get_app()
     app()

@@ -14,8 +14,8 @@ set number true  # show line numbers
 
 set preview true        # preview file on the right pane
 # set previewer chafa --format sixel --work 9 --optimize 9 --stretch --zoom --size 140x80
-set previewer ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh
-set cleaner ~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/cleaner.sh
+set previewer ~/.config/machineconfig/settings/lf/linux/exe/previewer.sh
+set cleaner ~/.config/machineconfig/settings/lf/linux/exe/cleaner.sh
 # set previewer pistol
 
 # set sixels true
@@ -48,7 +48,7 @@ set ratios '1:2:3'  # ratio of pane widths
 
 
 # test image viewer
-map Q !~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh "$f"
+map Q !~/.config/machineconfig/settings/lf/linux/exe/previewer.sh "$f"
 
 # key bindings
 map vmap v  # default is invert
@@ -70,7 +70,6 @@ map <c-u>  # half-up
 # e edit
 map e  # edit modal key.
 map eh $hx $f
-map eH !source ~/code/machineconfig/.venv/bin/activate;hx $f
 map en $nano $f
 map el $lvim $f
 map ev $nvim $f
@@ -84,12 +83,12 @@ map <enter> open
 map w
 map ww bash
 # map wp $powershell
-map wr $~/scripts/croshell
+map wr $croshell
 # map wm $cmd
-map i !~/code/machineconfig/src/machineconfig/settings/lf/linux/exe/previewer.sh $f
+map i !~/.config/machineconfig/settings/lf/linux/exe/previewer.sh $f
 map I !cat $f | gum pager
-map R $~/scripts/croshell -r $f
-map O $~/scripts/croshell -rj $f
+map R $croshell $f
+map O $croshell -j $f
 
 
 # o file/folder Operations
@@ -118,8 +117,8 @@ map jD cd ~/Downloads
 map jx cd ~/dotfiles
 # map jm cd ~/code/machineconfig/src/machineconfig
 map jh cd ~
-map jj $~/scripts/croshell -j --read $f
-# map jj $lvim ~/code/machineconfig/src/machineconfig/settings/lf/linux/lfrc
+map jj $croshell -j --read $f
+# map jj $lvim ~/.config/machineconfig/settings/lf/linux/lfrc
 
 # from https://github.com/gokcehan/lf/wiki/Integrations#zoxide
 cmd zi ${{
@@ -163,7 +162,7 @@ cmd fzf_jump ${{
 }}
 
 
-cmd fzf2g $(~/scripts/fzf2g.sh $args[1])
+cmd fzf2g $(fzf2g.sh $args[1])
 # map F $nano fzf2g $args[1]
 
 

@@ -2,7 +2,7 @@
 # /// script
 # requires-python = ">=3.13"
 # dependencies = [
-#     "machineconfig>=6.42",
+#     "machineconfig>=6.43",
 #     "textual",
 #     "pyperclip",
 # ]

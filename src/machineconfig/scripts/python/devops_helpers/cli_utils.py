@@ -6,15 +6,16 @@ from pathlib import Path
 import subprocess
 import requests
 
-def download(url: Annotated[Optional[str], typer.Argument(..., help="The URL to download the file from." )] = None,
-             decompress: Annotated[bool, typer.Option("--decompress", "-d", help="Decompress the file if it's an archive.")] = False,
-             output: Annotated[Optional[str], typer.Option("--output", "-o", help="The output file path.")] = None) -> None:
+
+def download(
+    url: Annotated[Optional[str], typer.Argument(..., help="The URL to download the file from.")] = None,
+    decompress: Annotated[bool, typer.Option("--decompress", "-d", help="Decompress the file if it's an archive.")] = False,
+    output: Annotated[Optional[str], typer.Option("--output", "-o", help="The output file path.")] = None,
+) -> None:
     if url is None:
         typer.echo("❌ Error: URL is required.", err=True)
         raise typer.Exit(code=1)
-    
-    typer.echo(f"📥 Downloading from: {url}")
-    
+    typer.echo(f"📥 Downloading from: {url}")    
     download_path = Path(output) if output else Path(url.split("/")[-1])
     
     try:
@@ -48,16 +49,21 @@ def download(url: Annotated[Optional[str], typer.Argument(..., help="The URL to 
     if decompress:
         typer.echo(f"📦 Decompressing: {download_path}")
         
-        output_dir = download_path.parent if output else Path.cwd()
+        base_name = download_path.name
+        parts = base_name.split('.')
+        base_name = parts[0] if parts else download_path.stem
+        
+        extract_dir = download_path.parent / base_name
+        extract_dir.mkdir(parents=True, exist_ok=True)
         
         try:
-            _result = subprocess.run(
-                ["ouch", "decompress", str(download_path), "--dir", str(output_dir)],
+            subprocess.run(
+                ["ouch", "decompress", str(download_path), "--dir", str(extract_dir)],
                 check=True,
                 capture_output=True,
                 text=True
             )
-            typer.echo(f"✅ Decompressed to: {output_dir}")
+            typer.echo(f"✅ Decompressed to: {extract_dir}")
             
             if download_path.exists():
                 download_path.unlink()

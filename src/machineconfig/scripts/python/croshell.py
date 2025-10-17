@@ -167,16 +167,16 @@ from pathlib import Path
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv run --with marimo marimo convert {pyfile.name} -o marimo_nb.py
-uv run --with "marimo,machineconfig[plot]>=6.42" marimo edit --host 0.0.0.0 marimo_nb.py
+uv run --with "marimo,machineconfig[plot]>=6.43" marimo edit --host 0.0.0.0 marimo_nb.py
 """
     elif jupyter:
-        fire_line = f"uv run --with 'machineconfig[plot]>=6.42' jupyter-lab {str(nb_target)}"
+        fire_line = f"uv run --with 'machineconfig[plot]>=6.43' jupyter-lab {str(nb_target)}"
     elif vscode:
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv init --python 3.14
 uv venv
-uv add "machineconfig[plot]>=6.42"
+uv add "machineconfig[plot]>=6.43"
 # code serve-web
 code --new-window {str(pyfile)}
 """
@@ -191,7 +191,7 @@ code --new-window {str(pyfile)}
             else:
                 console.print(Panel("❌ Could not determine the local machineconfig repo root. Please ensure the `REPO_ROOT` in `source_of_truth.py` is correctly set to the local path of the machineconfig repo, or do not use the `--local` flag.", title="Error", border_style="red"))
                 return
-        else: ve_line = """--with "machineconfig[plot]>=6.42" """
+        else: ve_line = """--with "machineconfig[plot]>=6.43" """
         # ve_path_maybe, ipython_profile_maybe = get_ve_path_and_ipython_profile(Path.cwd())
         # --python 3.14
         fire_line = f"uv run {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
