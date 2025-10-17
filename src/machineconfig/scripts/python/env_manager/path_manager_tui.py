@@ -1,3 +1,13 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.13"
+# dependencies = [
+#     "machineconfig>=6.36",
+#     "textual",
+#     "pyperclip",
+# ]
+# ///
+
 """Cross-platform PATH explorer with Textual TUI."""
 
 from pathlib import Path

@@ -1,5 +1,18 @@
 """
+
 Generate uv add commands from pyproject.toml dependency groups.
+
+#!/bin/bash
+# rm ./pyproject.toml
+rm ./uv.lock
+rm -rfd .venv
+uv venv --python 3.13
+uv init
+# Install main dependencies
+uv add aiohttp aiosqlite asyncpg authlib binance-connector binance-futures-connector boto3 ccxt crocodile dataclasses-json exchanges httpx ipykernel ipython lightgbm machineconfig matplotlib mypy nbformat numba numpy objgraph onnx onnxruntime onnxscript orjson pandas "pandera[mypy]" plotext plotly polars prophet psycopg2-binary pybit pyright pyyaml "redis[hiredis]" requests rich ruff scikit-learn scipy shap skforecast sqlalchemy sqlmodel streamlit streamlit-option-menu ta tenacity tqdm visidata websockets wrapt-timeout-decorator
+# Install dev dependencies
+uv add --dev kaleido torch torchaudio torchinfo torchview torchvision types-python-dateutil types-pyyaml types-requests types-tqdm
+
 """
 
 from pathlib import Path
