@@ -96,7 +96,7 @@ def display_dotfiles_instructions() -> None:
 def get_installation_choices() -> list[str]:
     """Get user choices for installation options."""
     choices = [
-        Choice(value="install_repos", title="🐍 Install machineconfig.", checked=False),
+        Choice(value="install_machineconfig", title="🐍 Install machineconfig.", checked=False),
         Choice(value="ESSENTIAL_SYSTEM", title="📥 Install Essential System Packages.", checked=False),
         Choice(value="ESSENTIAL", title="⚡ Install CLI apps essentials", checked=False),
         Choice(value="DEV_SYSTEM", title="🛠️  Install CLI apps development.", checked=False),
@@ -126,13 +126,11 @@ def execute_installations(selected_options: list[str]) -> None:
                 console.print(f"❌ Error installing CLI applications: {e}", style="bold red")
             run_shell_script(". $HOME/.bashrc")
 
-    if "install_repos" in selected_options:
+    if "install_machineconfig" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
-        import platform
-        if platform.system() == "Windows":
-            run_shell_script(r"""$HOME\.local\bin\uv.exe tool install "machineconfig>=6.43" """)
-        else:
-            run_shell_script("""$HOME/.local/bin/uv tool install "machineconfig>=6.43" """)
+        from machineconfig.scripts.python.devops_helpers.cli_self import install
+        install()
+
     if "install_ssh_server" in selected_options:
         console.print(Panel("🔒 [bold red]SSH SERVER[/bold red]\n[italic]Remote access setup[/italic]", border_style="red"))
         import platform

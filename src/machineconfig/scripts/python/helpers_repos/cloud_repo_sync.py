@@ -7,7 +7,7 @@ from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.terminal import Response
 from machineconfig.utils.source_of_truth import CONFIG_ROOT, DEFAULTS_PATH
 from machineconfig.utils.code import get_shell_file_executing_python_script, write_shell_script_to_file
-
+from pathlib import Path
 import platform
 import subprocess
 from typing import Optional, Literal, Annotated
@@ -76,6 +76,9 @@ git pull originEnc master
 
 """
 
+    if Path.home().joinpath("code/machineconfig").exists(): executable = f"""uv run --project "{str(Path.home().joinpath("code/machineconfig"))}" """
+    else: executable = """uv run --with "machineconfig>=6.44" """
+
     shell_path = write_shell_script_to_file(shell_script=script)
     command = f". {shell_path}"
     if platform.system() == "Windows":
@@ -103,7 +106,9 @@ git pull originEnc master
             return "done"
         from machineconfig.utils.meta import function_to_script
         program_1_py = function_to_script(func=func2, call_with_args=None, call_with_kwargs={"remote_repo": str(repo_remote_root), "local_repo": str(repo_local_root), "cloud": cloud_resolved})
-        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, ve_path=None, executable="""uv run --with "machineconfig>=6.43" """)
+
+
+        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, ve_path=None, executable=executable)
         # ================================================================================
         option2 = "Delete local repo and replace it with remote copy:"
         program_2 = f"""
@@ -124,7 +129,7 @@ sudo chmod +x $HOME/dotfiles/scripts/linux -R
             inspect_repos(repo_local_root=repo_local_root, repo_remote_root=repo_remote_root)
             return "done"
         program_3_py = function_to_script(func=func, call_with_args=None, call_with_kwargs={"repo_local_root": str(repo_local_root), "repo_remote_root": str(repo_remote_root)})
-        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_path=None, executable="""uv run --with "machineconfig>=6.43" """)
+        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_path=None, executable=executable)
         # ================================================================================
 
         option4 = "Remove problematic rclone file from repo and replace with remote:"

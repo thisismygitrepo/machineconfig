@@ -32,10 +32,10 @@ def get_app():
     app.add_typer(agents_app, name="agents", help="[a] 🤖 AI Agents management commands", no_args_is_help=True)
     app.add_typer(agents_app, name="a", hidden=True)  # short alias
 
-    app.command("ftpx", no_args_is_help=True, help="[f] File transfer utility though SSH")(ftpx_func)
-    app.command("f", no_args_is_help=True, hidden=True)(ftpx_func)  # short alias
-    app.command("croshell", no_args_is_help=False, help="[cs] Cross-shell command execution")(croshell_func)
-    app.command("cs", no_args_is_help=False, hidden=True)(croshell_func)  # short alias
+    app.command("ftpx", no_args_is_help=True, help="[ff] File transfer utility though SSH")(ftpx_func)
+    app.command("ff", no_args_is_help=True, hidden=True)(ftpx_func)  # short alias
+    app.command("croshell", no_args_is_help=False, help="[r] Cross-shell command execution")(croshell_func)
+    app.command("r", no_args_is_help=False, hidden=True)(croshell_func)  # short alias
 
     return app
 

@@ -3,7 +3,7 @@ import typer
 from typing import Optional, Annotated
 
 
-def update(copy_assets: Annotated[bool, typer.Option("--copy-assets/-nc", help="Copy assets to the machine after the update")] = True):
+def update(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-na", help="Copy (overwrite) assets to the machine after the update")] = False):
     """🔄 UPDATE uv and machineconfig"""
     # from machineconfig.utils.source_of_truth import LIBRARY_ROOT
     # repo_root = LIBRARY_ROOT.parent.parent
@@ -24,16 +24,29 @@ def update(copy_assets: Annotated[bool, typer.Option("--copy-assets/-nc", help="
     if platform.system() == "Windows":
         from machineconfig.utils.code import run_shell_script_after_exit
         run_shell_script_after_exit(code)
-        from machineconfig.profile.create_helper import copy_assets_to_machine
-        copy_assets_to_machine(which="scripts")
-        copy_assets_to_machine(which="settings")
     else:
         from machineconfig.utils.code import run_shell_script
         run_shell_script(code)
-        if copy_assets:
-            import machineconfig.profile.create_helper as create_helper
-            create_helper.copy_assets_to_machine(which="scripts")
-            create_helper.copy_assets_to_machine(which="settings")
+    if not no_copy_assets:
+        import machineconfig.profile.create_helper as create_helper
+        create_helper.copy_assets_to_machine(which="scripts")
+        create_helper.copy_assets_to_machine(which="settings")
+def install(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-na", help="Copy (overwrite) assets to the machine after the update")] = False)
+    """📋 CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates."""
+    from machineconfig.utils.code import run_shell_script
+    from pathlib import Path
+    if Path.home().joinpath("code/machineconfig").exists():
+        run_shell_script(f"""$HOME/.local/bin/uv tool install --upgrade --editable "{str(Path.home().joinpath("code/machineconfig"))}" """)
+    else:
+        import platform
+        if platform.system() == "Windows":
+            run_shell_script(r"""$HOME\.local\bin\uv.exe tool install --upgrade "machineconfig>=6.44" """)
+        else:
+            run_shell_script("""$HOME/.local/bin/uv tool install --upgrade "machineconfig>=6.44" """)
+    from machineconfig.profile.create_shell_profile import create_default_shell_profile
+    if not no_copy_assets:
+        create_default_shell_profile()   # involves copying assets too
+
 
 
 def interactive():
@@ -45,18 +58,7 @@ def status():
     """📊 STATUS of machine, shell profile, apps, symlinks, dotfiles, etc."""
     import machineconfig.scripts.python.devops_helpers.devops_status as helper
     helper.main()
-def install():
-    """📋 CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates."""
-    from machineconfig.utils.code import run_shell_script
-    from machineconfig.profile.create_shell_profile import create_default_shell_profile
-    # from machineconfig.profile.create_links_export import main_public_from_parser
-    create_default_shell_profile()
-    # main_public_from_parser()
-    import platform
-    if platform.system() == "Windows":
-        run_shell_script(r"""$HOME\.local\bin\uv.exe tool install "machineconfig>=6.43" """)
-    else:
-        run_shell_script("""$HOME/.local/bin/uv tool install "machineconfig>=6.43" """)
+
 
 def navigate():
     """📚 NAVIGATE command structure with TUI"""
@@ -64,7 +66,9 @@ def navigate():
     from pathlib import Path
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import run_shell_script
-    run_shell_script(f"""uv run --with "machineconfig>=6.43,textual" {path}""")
+    if Path.home().joinpath("code/machineconfig").exists(): executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
+    else: executable = """--with "machineconfig>=6.44,textual" """
+    run_shell_script(f"""uv run {executable} {path}""")
 
 
 def run_python(ip: Annotated[str, typer.Argument(..., help="Python command to run in the machineconfig environment")],
