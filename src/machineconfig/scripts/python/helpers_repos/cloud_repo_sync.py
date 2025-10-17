@@ -77,7 +77,7 @@ git pull originEnc master
 """
 
     if Path.home().joinpath("code/machineconfig").exists(): executable = f"""uv run --project "{str(Path.home().joinpath("code/machineconfig"))}" """
-    else: executable = """uv run --with "machineconfig>=6.44" """
+    else: executable = """uv run --with "machineconfig>=6.45" """
 
     shell_path = write_shell_script_to_file(shell_script=script)
     command = f". {shell_path}"

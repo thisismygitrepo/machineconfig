@@ -6,7 +6,7 @@ from machineconfig.utils.terminal import Response, MACHINE
 from machineconfig.utils.accessories import pprint
 
 UV_RUN_CMD = "$HOME/.local/bin/uv run"
-MACHINECONFIG_VERSION = "machineconfig>=6.44"
+MACHINECONFIG_VERSION = "machineconfig>=6.45"
 DEFAULT_PICKLE_SUBDIR = "tmp_results/tmp_scripts/ssh"
 
 

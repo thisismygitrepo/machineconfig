@@ -121,20 +121,20 @@ from pathlib import Path
         fire_line = f"uv run --with visidata,pyarrow vd {str(file_obj)}"
     elif marimo:
         if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: requirements = """--with "marimo,machineconfig[plot]>=6.44" """
+        else: requirements = """--with "marimo,machineconfig[plot]>=6.45" """
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv run --with "marimo" marimo convert {pyfile.name} -o marimo_nb.py
 uv run  {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
 """
     elif jupyter:
-        fire_line = f"uv run --with 'machineconfig[plot]>=6.44' jupyter-lab {str(nb_target)}"
+        fire_line = f"uv run --with 'machineconfig[plot]>=6.45' jupyter-lab {str(nb_target)}"
     elif vscode:
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv init --python 3.14
 uv venv
-uv add "machineconfig[plot]>=6.44"
+uv add "machineconfig[plot]>=6.45"
 # code serve-web
 code --new-window {str(pyfile)}
 """
@@ -149,7 +149,7 @@ code --new-window {str(pyfile)}
             else:
                 console.print(Panel("❌ Could not determine the local machineconfig repo root. Please ensure the `REPO_ROOT` in `source_of_truth.py` is correctly set to the local path of the machineconfig repo, or do not use the `--local` flag.", title="Error", border_style="red"))
                 return
-        else: ve_line = """--with "machineconfig[plot]>=6.44" """
+        else: ve_line = """--with "machineconfig[plot]>=6.45" """
         # ve_path_maybe, ipython_profile_maybe = get_ve_path_and_ipython_profile(Path.cwd())
         # --python 3.14
         fire_line = f"uv run {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"

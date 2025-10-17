@@ -31,7 +31,7 @@ def update(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-na
         import machineconfig.profile.create_helper as create_helper
         create_helper.copy_assets_to_machine(which="scripts")
         create_helper.copy_assets_to_machine(which="settings")
-def install(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-na", help="Copy (overwrite) assets to the machine after the update")] = False)
+def install(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-na", help="Copy (overwrite) assets to the machine after the update")] = False):
     """📋 CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates."""
     from machineconfig.utils.code import run_shell_script
     from pathlib import Path
@@ -40,9 +40,9 @@ def install(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-n
     else:
         import platform
         if platform.system() == "Windows":
-            run_shell_script(r"""$HOME\.local\bin\uv.exe tool install --upgrade "machineconfig>=6.44" """)
+            run_shell_script(r"""$HOME\.local\bin\uv.exe tool install --upgrade "machineconfig>=6.45" """)
         else:
-            run_shell_script("""$HOME/.local/bin/uv tool install --upgrade "machineconfig>=6.44" """)
+            run_shell_script("""$HOME/.local/bin/uv tool install --upgrade "machineconfig>=6.45" """)
     from machineconfig.profile.create_shell_profile import create_default_shell_profile
     if not no_copy_assets:
         create_default_shell_profile()   # involves copying assets too
@@ -67,7 +67,7 @@ def navigate():
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import run_shell_script
     if Path.home().joinpath("code/machineconfig").exists(): executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
-    else: executable = """--with "machineconfig>=6.44,textual" """
+    else: executable = """--with "machineconfig>=6.45,textual" """
     run_shell_script(f"""uv run {executable} {path}""")
 
 

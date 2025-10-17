@@ -42,7 +42,7 @@ def path():
     from pathlib import Path
     path = Path(navigator.__file__).resolve().parent.joinpath("path_manager_tui.py")
     from machineconfig.utils.code import run_shell_script
-    if not Path.home().joinpath("code/machineconfig").exists(): executable = """--with "machineconfig>=6.44,textual" """
+    if not Path.home().joinpath("code/machineconfig").exists(): executable = """--with "machineconfig>=6.45,textual" """
     else: executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
     run_shell_script(f"""uv run {executable} {path}""")
 

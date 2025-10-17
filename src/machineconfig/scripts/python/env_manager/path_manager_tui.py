@@ -2,7 +2,7 @@
 # /// script
 # requires-python = ">=3.13"
 # dependencies = [
-#     "machineconfig>=6.44",
+#     "machineconfig>=6.45",
 #     "textual",
 #     "pyperclip",
 # ]
@@ -208,15 +208,14 @@ class PathExplorerApp(App[None]):
         """Copy selected path to clipboard."""
         if not self.selected_path:
             self.query_one("#status", StatusBar).show_message("No PATH entry selected", "warning")
-            return
-        
-        # Try to copy to clipboard
-        try:
-            import pyperclip
-            pyperclip.copy(self.selected_path)
-            self.query_one("#status", StatusBar).show_message(f"Copied to clipboard: {self.selected_path}", "success")
-        except ImportError:
-            self.query_one("#status", StatusBar).show_message("pyperclip not available. Install it to enable clipboard support.", "warning")
+            return        
+        # # Try to copy to clipboard
+        # try:
+        #     import pyperclip
+        #     pyperclip.copy(self.selected_path)
+        #     self.query_one("#status", StatusBar).show_message(f"Copied to clipboard: {self.selected_path}", "success")
+        # except ImportError:
+        #     self.query_one("#status", StatusBar).show_message("pyperclip not available. Install it to enable clipboard support.", "warning")
 
 
 def main() -> None:
