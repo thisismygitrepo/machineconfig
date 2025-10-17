@@ -73,7 +73,7 @@ def download(url: Annotated[Optional[str], typer.Argument(..., help="The URL to 
 
 
 def get_app() -> typer.Typer:
-    app = typer.Typer(help="🛠️  [u]  utilities operations", no_args_is_help=True, add_completion=True)
+    app = typer.Typer(help="🛠️ [u]  utilities operations", no_args_is_help=True, add_completion=True)
     app.command(name="download", no_args_is_help=True, help="[d] Download a file from a URL and optionally decompress it.")(download)
     app.command(name="d", no_args_is_help=True, hidden=True)(download)
     return app

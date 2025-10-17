@@ -76,6 +76,9 @@ config = {this = '~/.docker/config.json', to_this = '~/dotfiles/creds/docker/con
 
 # =========================== PUBLIC ======================================
 
+[marimo]
+config = {this = '~/.config/marimo/marimo.toml', to_this = 'CONFIG_ROOT/settings/marimo/marimo.toml'}
+
 [presenterm]
 config = {this = '~/.config/presenterm/config.yaml', to_this = 'CONFIG_ROOT/settings/presenterm/config.yaml'}
 

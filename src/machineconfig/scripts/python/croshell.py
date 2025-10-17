@@ -9,7 +9,7 @@ import typer
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.accessories import randstr
 import json
-import shutil
+# import shutil
 
 from machineconfig.utils.options import choose_from_options
 from rich.console import Console
@@ -166,8 +166,8 @@ from pathlib import Path
     elif marimo:
         fire_line = f"""
 cd {str(pyfile.parent)}
-uv run --with marimo marimo convert {pyfile.name} -o marimo_nb.py 
-uv run --with "marimo,machineconfig[plot]>=6.36" marimo edit marimo_nb.py
+uv run --with marimo marimo convert {pyfile.name} -o marimo_nb.py
+uv run --with "marimo,machineconfig[plot]>=6.36" marimo edit --host 0.0.0.0 marimo_nb.py
 """
     elif jupyter:
         fire_line = f"uv run --with 'machineconfig[plot]>=6.36' jupyter-lab {str(nb_target)}"
@@ -205,4 +205,9 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    # def func(flag: Annotated[bool, typer.Option("--flag/-nf", help="dummy flag for debugging", flag_value=False, is_flag=True)]=True):
+    #     console.print(f"flag: {flag}")
+    # app = typer.Typer()
+    # app.command()(func)
+    # app()
     main()
