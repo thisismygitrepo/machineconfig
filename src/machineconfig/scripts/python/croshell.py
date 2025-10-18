@@ -120,7 +120,7 @@ from pathlib import Path
     if visidata:
         fire_line = f"uv run --with visidata,pyarrow vd {str(file_obj)}"
     elif marimo:
-        if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" """
+        if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--with marimo --project "{str(Path.home().joinpath("code/machineconfig"))}" """
         else: requirements = """--with "marimo,machineconfig[plot]>=6.49" """
         fire_line = f"""
 cd {str(pyfile.parent)}
