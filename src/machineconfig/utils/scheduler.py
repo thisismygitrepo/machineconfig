@@ -170,35 +170,32 @@ class CacheMemory[T]():
     def __call__(self, fresh: bool = False) -> T:
         self.last_call_is_fresh = False
         if fresh or not hasattr(self, "cache"):
-            if self.logger:
-                why = "There was an explicit fresh order." if fresh else "Previous cache never existed."
-                self.logger.warning(f"""
-🆕 ════════════════════ NEW CACHE ════════════════════
-🔄 {self.name} cache: Populating fresh cache from source func
-ℹ️  Reason: {why}
-════════════════════════════════════════════════════════""")
+            why = "There was an explicit fresh order." if fresh else "Previous cache never existed."
+            t0 = time.time()
+            self.logger.warning(f"""
+🆕 ════════════════════ NEW {self.name} CACHE ════════════════════
+ℹ️ Reason: {why}""")
             self.cache = self.source_func()
+            self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
             self.last_call_is_fresh = True
             self.time_produced = datetime.now()
         else:
             age = self.age
             if age > self.expire:
-                if self.logger:
-                    self.logger.warning(f"""
+                self.logger.warning(f"""
 🔄 ════════════════════ CACHE UPDATE ════════════════════
 ⚠️  {self.name} cache: Updating cache from source func
-⏱️  Age = {age} > {self.expire}
-════════════════════════════════════════════════════════""")
+⏱️  Age = {age} > {self.expire}""")
+                t0 = time.time()
                 self.cache = self.source_func()
+                self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
                 self.last_call_is_fresh = True
                 self.time_produced = datetime.now()
             else:
-                if self.logger:
-                    self.logger.warning(f"""
+                self.logger.warning(f"""
 ✅ ════════════════════ USING CACHE ════════════════════
 📦 {self.name} cache: Using cached values
-⏱️  Lag = {age}
-════════════════════════════════════════════════════════""")
+⏱️  Lag = {age}""")
         return self.cache
 
     @staticmethod
@@ -236,19 +233,18 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
                 msg1 = f"""
 📦 ════════════════════ CACHE OPERATION ════════════════════
 🔄 {self.name} cache: Reading cached values from `{self.path}`
-⏱️  Lag = {age}
-════════════════════════════════════════════════════════════"""
+⏱️  Lag = {age}"""
                 try:
                     self.cache = self.reader(self.path)
                 except Exception as ex:
-                    if self.logger:
-                        msg2 = f"""
+                    msg2 = f"""
 ❌ ════════════════════ CACHE ERROR ════════════════════
 ⚠️  {self.name} cache: Cache file is corrupted
-🔍 Error: {ex}
-════════════════════════════════════════════════════════"""
-                        self.logger.warning(msg1 + msg2)
+🔍 Error: {ex}"""
+                    self.logger.warning(msg1 + msg2)
+                    t0 = time.time()
                     self.cache = self.source_func()
+                    self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
                     self.last_call_is_fresh = True
                     self.time_produced = datetime.now()
                     # if self.path is not None:
@@ -256,15 +252,15 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
                     return self.cache
                 return self(fresh=False)  # may be the cache is old ==> check that by passing it through the logic again.
             else:
-                if self.logger:
-                    # Previous cache never existed or there was an explicit fresh order.
-                    why = "There was an explicit fresh order." if fresh else "Previous cache never existed or is corrupted."
-                    self.logger.warning(f"""
+                # Previous cache never existed or there was an explicit fresh order.
+                why = "There was an explicit fresh order." if fresh else "Previous cache never existed or is corrupted."
+                self.logger.warning(f"""
 🆕 ════════════════════ NEW CACHE ════════════════════
 🔄 {self.name} cache: Populating fresh cache from source func
-ℹ️  Reason: {why}
-════════════════════════════════════════════════════════""")
+ℹ️  Reason: {why}""")
+                t0 = time.time()
                 self.cache = self.source_func()  # fresh data.
+                self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
                 self.last_call_is_fresh = True
                 self.time_produced = datetime.now()
                 self.save(self.cache, self.path)
@@ -274,23 +270,21 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
             except AttributeError:  # path doesn't exist (may be deleted) ==> need to repopulate cache form source_func.
                 return self(fresh=True)
             if age > self.expire:
-                if self.logger:
-                    self.logger.warning(f"""
+                self.logger.warning(f"""
 🔄 ════════════════════ CACHE UPDATE ════════════════════
 ⚠️  {self.name} cache: Updating cache from source func
-⏱️  Age = {age} > {self.expire}
-════════════════════════════════════════════════════════""")
+⏱️  Age = {age} > {self.expire}""")
+                t0 = time.time()
                 self.cache = self.source_func()
+                self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
                 self.last_call_is_fresh = True
                 self.time_produced = datetime.now()
                 self.save(self.cache, self.path)
             else:
-                if self.logger:
-                    self.logger.warning(f"""
+                self.logger.warning(f"""
 ✅ ════════════════════ USING CACHE ════════════════════
 📦 {self.name} cache: Using cached values
-⏱️  Lag = {age}
-════════════════════════════════════════════════════════""")
+⏱️  Lag = {age}""")
         return self.cache
 
     @staticmethod
