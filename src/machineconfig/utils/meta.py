@@ -3,11 +3,14 @@
 import ast
 import inspect
 import textwrap
+from collections.abc import Callable, Mapping
 from types import FunctionType, ModuleType
-from typing import Any
+from typing import ParamSpec
+
+P = ParamSpec("P")
 
 
-def function_to_script(func: FunctionType, call_with_args: tuple[Any, ...] | None = None, call_with_kwargs: dict[str, Any] | None = None) -> str:
+def function_to_script(func: Callable[P, object], call_with_kwargs: Mapping[str, object] | None) -> str:
     """Convert a function to a standalone executable Python script.
     
     This function analyzes a given function and generates a complete Python script
@@ -16,7 +19,6 @@ def function_to_script(func: FunctionType, call_with_args: tuple[Any, ...] | Non
     
     Args:
         func: The function to convert to a script
-        call_with_args: Optional tuple of positional arguments to call the function with
         call_with_kwargs: Optional dict of keyword arguments to call the function with
     
     Returns:
@@ -25,35 +27,37 @@ def function_to_script(func: FunctionType, call_with_args: tuple[Any, ...] | Non
     Raises:
         ValueError: If the function cannot be inspected or analyzed
     """
-    if not callable(func) or not hasattr(func, '__code__'):
-        raise ValueError(f"Expected a function, got {type(func)}")
-    
-    call_with_args = call_with_args or ()
-    call_with_kwargs = call_with_kwargs or {}
-    
-    imports = _extract_imports(func)
-    globals_needed = _extract_globals(func)
-    source_code = _get_function_source(func)
-    call_statement = _generate_call_statement(func, call_with_args, call_with_kwargs)
-    
+    if not isinstance(func, FunctionType):
+        raise ValueError(f"""Expected a Python function, got {type(func)}""")
+
+    python_func = func
+
+    imports = _extract_imports(python_func)
+    globals_needed = _extract_globals(python_func)
+    source_code = _get_function_source(python_func).rstrip()
+    validated_kwargs = _prepare_call_kwargs(python_func, call_with_kwargs)
+    call_statement = _generate_call_statement(python_func, validated_kwargs) if validated_kwargs is not None else None
+
     script_parts: list[str] = []
-    
+
     if imports:
         script_parts.append(imports)
-        script_parts.append("")
-    
+
     if globals_needed:
+        if script_parts:
+            script_parts.append("")
         script_parts.append(globals_needed)
+
+    if script_parts:
         script_parts.append("")
-    
+
     script_parts.append(source_code)
-    script_parts.append("")
-    
-    if call_statement:
+
+    if call_statement is not None:
         script_parts.append("")
         script_parts.append("if __name__ == '__main__':")
         script_parts.append(f"    {call_statement}")
-    
+
     return "\n".join(script_parts)
 
 
@@ -149,27 +153,47 @@ def _extract_globals(func: FunctionType) -> str:
     return "\n".join(global_assignments)
 
 
-def _generate_call_statement(func: FunctionType, args: tuple[Any, ...], kwargs: dict[str, Any]) -> str:
-    """Generate a function call statement with the given arguments."""
-    if not args and not kwargs:
+def _prepare_call_kwargs(func: FunctionType, call_with_kwargs: Mapping[str, object] | None) -> dict[str, object] | None:
+    if call_with_kwargs is None:
+        return None
+
+    normalized_kwargs = dict(call_with_kwargs)
+
+    if not normalized_kwargs:
+        return {}
+
+    signature = inspect.signature(func)
+    positional_only = [parameter.name for parameter in signature.parameters.values() if parameter.kind is inspect.Parameter.POSITIONAL_ONLY]
+
+    if positional_only:
+        joined = ", ".join(positional_only)
+        raise ValueError(f"""Cannot call {func.__name__} with positional-only parameters: {joined}""")
+
+    try:
+        signature.bind(**normalized_kwargs)
+    except TypeError as error:
+        raise ValueError(f"""Invalid call_with_kwargs for {func.__name__}: {error}""") from error
+
+    return normalized_kwargs
+
+
+def _generate_call_statement(func: FunctionType, kwargs: dict[str, object]) -> str:
+    """Generate a function call statement with the given keyword arguments."""
+    if not kwargs:
         return f"{func.__name__}()"
-    
-    arg_parts: list[str] = []
-    
-    for arg in args:
-        arg_parts.append(repr(arg))
-    
-    for key, value in kwargs.items():
-        arg_parts.append(f"{key}={repr(value)}")
-    
+
+    arg_parts: list[str] = [f"{key}={repr(value)}" for key, value in kwargs.items()]
     args_str = ", ".join(arg_parts)
     return f"{func.__name__}({args_str})"
 
 
 if __name__ == "__main__":
     # Example usage
-    # def func():
-    #     from machineconfig.scripts.python.devops_helpers.cli_self import update
-    #     script = function_to_script(lambda: update(no_copy_assets=True),)
-    # print(script)
+    a = True
+    b = 3
+    def func(no_copy_assets: bool = a):
+        from machineconfig.scripts.python.helpers_devops.cli_self import update
+        update(no_copy_assets=no_copy_assets)
+    script = function_to_script(func, call_with_kwargs=None)
+    print(script)
     pass
