@@ -1,8 +1,8 @@
 
 import typer
-from machineconfig.scripts.python.cloud_helpers.cloud_sync import main as sync_main
-from machineconfig.scripts.python.cloud_helpers.cloud_copy import main as copy_main
-from machineconfig.scripts.python.cloud_helpers.cloud_mount import mount as mount_main
+from machineconfig.scripts.python.helpers_cloud.cloud_sync import main as sync_main
+from machineconfig.scripts.python.helpers_cloud.cloud_copy import main as copy_main
+from machineconfig.scripts.python.helpers_cloud.cloud_mount import mount as mount_main
 
 def get_app():
     app = typer.Typer(add_completion=False, no_args_is_help=True)

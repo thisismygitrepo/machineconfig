@@ -5,8 +5,8 @@ croshell
 """
 
 from typing import Annotated, Optional
-from machineconfig.scripts.python.croshell_helpers.crosh import add_print_header_pycode
-from machineconfig.scripts.python.croshell_helpers.crosh import get_read_data_pycode
+from machineconfig.scripts.python.helpers_croshell.crosh import add_print_header_pycode
+from machineconfig.scripts.python.helpers_croshell.crosh import get_read_data_pycode
 import typer
 from machineconfig.utils.path_extended import PathExtended
 from pathlib import Path

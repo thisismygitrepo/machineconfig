@@ -3,7 +3,7 @@ Command tree widget for displaying command hierarchy.
 """
 
 from textual.widgets import Tree
-from machineconfig.scripts.python.helper_navigator.data_models import CommandInfo
+from machineconfig.scripts.python.helpers_navigator.data_models import CommandInfo
 
 
 class CommandTree(Tree[CommandInfo]):

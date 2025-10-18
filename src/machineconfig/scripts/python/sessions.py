@@ -136,7 +136,7 @@ def kill_process():
 
 def get_app():
     layouts_app = typer.Typer(help="Layouts management subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
-    from machineconfig.scripts.python.sessions_helpers.sessions_multiprocess import create_from_function
+    from machineconfig.scripts.python.helpers_sessions.sessions_multiprocess import create_from_function
     layouts_app.command("create-from-function", no_args_is_help=True, help="[c] Create a layout from a function")(create_from_function)
     layouts_app.command("c", no_args_is_help=True, help="Create a layout from a function", hidden=True)(create_from_function)
     layouts_app.command("run", no_args_is_help=True, help="[r] Run the selected layout(s)")(run)

@@ -1,6 +1,6 @@
 
-import machineconfig.scripts.python.devops_helpers.cli_terminal as cli_terminal
-import machineconfig.scripts.python.devops_helpers.cli_share_server as cli_share_server
+import machineconfig.scripts.python.helpers_devops.cli_terminal as cli_terminal
+import machineconfig.scripts.python.helpers_devops.cli_share_server as cli_share_server
 import typer
 from typing import Optional, Annotated
 

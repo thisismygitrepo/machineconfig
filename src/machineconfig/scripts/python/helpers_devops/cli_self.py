@@ -56,7 +56,7 @@ def interactive():
 
 def status():
     """📊 STATUS of machine, shell profile, apps, symlinks, dotfiles, etc."""
-    import machineconfig.scripts.python.devops_helpers.devops_status as helper
+    import machineconfig.scripts.python.helpers_devops.devops_status as helper
     helper.main()
 
 

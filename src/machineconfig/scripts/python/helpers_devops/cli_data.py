@@ -5,14 +5,14 @@ from typing import Annotated, Optional
 def backup(cloud: Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁️  Cloud configuration name (rclone config name)")] = None,
            which: Annotated[Optional[str], typer.Option("--which", "-w", help="📝 Comma-separated list of items to BACKUP (from backup.toml), or 'all' for all items")] = None):
     """💾 BACKUP"""
-    from machineconfig.scripts.python.devops_helpers.devops_backup_retrieve import main_backup_retrieve
+    from machineconfig.scripts.python.helpers_devops.devops_backup_retrieve import main_backup_retrieve
     main_backup_retrieve(direction="BACKUP", which=which, cloud=cloud)
 
 
 def retrieve(cloud: Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁️  Cloud configuration name (rclone config name)")] = None,
              which: Annotated[Optional[str], typer.Option("--which", "-w", help="📝 Comma-separated list of items to RETRIEVE (from backup.toml), or 'all' for all items")] = None):
     """📥 RETRIEVE"""
-    from machineconfig.scripts.python.devops_helpers.devops_backup_retrieve import main_backup_retrieve
+    from machineconfig.scripts.python.helpers_devops.devops_backup_retrieve import main_backup_retrieve
     main_backup_retrieve(direction="RETRIEVE", which=which, cloud=cloud)
 
 

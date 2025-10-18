@@ -3,12 +3,12 @@
 import typer
 from typing import Optional, Annotated
 
-import machineconfig.scripts.python.devops_helpers.cli_repos as cli_repos
-import machineconfig.scripts.python.devops_helpers.cli_config as cli_config
-import machineconfig.scripts.python.devops_helpers.cli_self as cli_self
-import machineconfig.scripts.python.devops_helpers.cli_data as cli_data
-import machineconfig.scripts.python.devops_helpers.cli_nw as cli_network
-from machineconfig.scripts.python.devops_helpers.cli_utils import get_app as get_app_utils
+import machineconfig.scripts.python.helpers_devops.cli_repos as cli_repos
+import machineconfig.scripts.python.helpers_devops.cli_config as cli_config
+import machineconfig.scripts.python.helpers_devops.cli_self as cli_self
+import machineconfig.scripts.python.helpers_devops.cli_data as cli_data
+import machineconfig.scripts.python.helpers_devops.cli_nw as cli_network
+from machineconfig.scripts.python.helpers_devops.cli_utils import get_app as get_app_utils
 
 
 def install(which: Annotated[Optional[str], typer.Argument(..., help="Comma-separated list of program names to install, or group name if --group flag is set.")] = None,

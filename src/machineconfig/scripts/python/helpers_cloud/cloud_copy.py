@@ -10,8 +10,8 @@ from typing import Optional, Annotated
 
 import typer
 
-from machineconfig.scripts.python.cloud_helpers.helpers2 import parse_cloud_source_target
-from machineconfig.scripts.python.cloud_helpers.cloud_helpers import ArgsDefaults, Args
+from machineconfig.scripts.python.helpers_cloud.helpers2 import parse_cloud_source_target
+from machineconfig.scripts.python.helpers_cloud.cloud_helpers import ArgsDefaults, Args
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress

@@ -164,3 +164,12 @@ def _generate_call_statement(func: FunctionType, args: tuple[Any, ...], kwargs: 
     
     args_str = ", ".join(arg_parts)
     return f"{func.__name__}({args_str})"
+
+
+if __name__ == "__main__":
+    # Example usage
+    # def func():
+    #     from machineconfig.scripts.python.devops_helpers.cli_self import update
+    #     script = function_to_script(lambda: update(no_copy_assets=True),)
+    # print(script)
+    pass

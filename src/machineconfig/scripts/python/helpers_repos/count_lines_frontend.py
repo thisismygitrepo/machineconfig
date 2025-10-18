@@ -4,7 +4,7 @@ from typing import Annotated
 
 
 def analyze_repo_development(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
-    from machineconfig.scripts.python.repos_helpers import count_lines
+    from machineconfig.scripts.python.helpers_repos import count_lines
     from pathlib import Path
     count_lines_path = Path(count_lines.__file__)
     # --project $HOME/code/ machineconfig --group plot

@@ -101,7 +101,7 @@ git pull originEnc master
         # ================================================================================
         option1 = "Delete remote copy and push local:"
         def func2(remote_repo: str, local_repo: str, cloud: str):
-            from machineconfig.scripts.python.repos_helpers.sync import delete_remote_repo_copy_and_push_local
+            from machineconfig.scripts.python.helpers_repos.sync import delete_remote_repo_copy_and_push_local
             delete_remote_repo_copy_and_push_local(remote_repo=remote_repo, local_repo=local_repo, cloud=cloud)
             return "done"
         from machineconfig.utils.meta import function_to_script
@@ -125,7 +125,7 @@ sudo chmod +x $HOME/dotfiles/scripts/linux -R
         # ================================================================================
         option3 = "Inspect repos:"
         def func(repo_local_root: str, repo_remote_root: str):
-            from machineconfig.scripts.python.repos_helpers.sync import inspect_repos
+            from machineconfig.scripts.python.helpers_repos.sync import inspect_repos
             inspect_repos(repo_local_root=repo_local_root, repo_remote_root=repo_remote_root)
             return "done"
         program_3_py = function_to_script(func=func, call_with_args=None, call_with_kwargs={"repo_local_root": str(repo_local_root), "repo_remote_root": str(repo_remote_root)})

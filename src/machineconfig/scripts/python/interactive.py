@@ -128,7 +128,7 @@ def execute_installations(selected_options: list[str]) -> None:
 
     if "install_machineconfig" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
-        from machineconfig.scripts.python.devops_helpers.cli_self import install
+        from machineconfig.scripts.python.helpers_devops.cli_self import install
         install()
 
     if "install_ssh_server" in selected_options:
@@ -155,14 +155,14 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
 
     if "retrieve_repositories" in selected_options:
         console.print(Panel("📚 [bold bright_magenta]REPOSITORIES[/bold bright_magenta]\n[italic]Project code retrieval[/italic]", border_style="bright_magenta"))
-        from machineconfig.scripts.python.devops_helpers import cli_repos
+        from machineconfig.scripts.python.helpers_devops import cli_repos
         cli_repos.clone(directory=str(Path.home() / "code"), cloud="odg1")
 
     if "retrieve_data" in selected_options:
         console.print(Panel("💾 [bold bright_cyan]DATA RETRIEVAL[/bold bright_cyan]\n[italic]Backup restoration[/italic]", border_style="bright_cyan"))
         console.print("🔧 Retrieving backup data", style="bold cyan")
         try:
-            from machineconfig.scripts.python.devops_helpers.devops_backup_retrieve import main_backup_retrieve
+            from machineconfig.scripts.python.helpers_devops.devops_backup_retrieve import main_backup_retrieve
             main_backup_retrieve(direction="RETRIEVE", cloud=None, which=None)
             console.print("✅ Backup data retrieved successfully", style="bold green")
         except Exception as e:

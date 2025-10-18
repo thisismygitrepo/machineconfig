@@ -2,7 +2,7 @@
 TUI for navigating through machineconfig command structure using Textual.
 """
 
-from machineconfig.scripts.python.helper_navigator import CommandNavigatorApp
+from machineconfig.scripts.python.helpers_navigator import CommandNavigatorApp
 
 
 if __name__ == "__main__":

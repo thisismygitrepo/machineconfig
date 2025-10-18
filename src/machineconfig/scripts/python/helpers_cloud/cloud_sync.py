@@ -2,9 +2,9 @@
 TODO: use typer or typed-argument-parser to parse args
 """
 
-from machineconfig.scripts.python.cloud_helpers.helpers2 import parse_cloud_source_target
-from machineconfig.scripts.python.cloud_helpers.cloud_helpers import Args
-from machineconfig.scripts.python.cloud_helpers.cloud_mount import get_mprocs_mount_txt
+from machineconfig.scripts.python.helpers_cloud.helpers2 import parse_cloud_source_target
+from machineconfig.scripts.python.helpers_cloud.cloud_helpers import Args
+from machineconfig.scripts.python.helpers_cloud.cloud_mount import get_mprocs_mount_txt
 
 from typing import Annotated, Optional
 import typer

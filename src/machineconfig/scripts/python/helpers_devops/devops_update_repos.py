@@ -9,7 +9,7 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
-from machineconfig.scripts.python.repos_helpers.update import RepositoryUpdateResult, run_uv_sync, update_repository
+from machineconfig.scripts.python.helpers_repos.update import RepositoryUpdateResult, run_uv_sync, update_repository
 from machineconfig.utils.io import read_ini
 from machineconfig.utils.source_of_truth import DEFAULTS_PATH
 

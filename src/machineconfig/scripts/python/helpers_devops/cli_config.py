@@ -27,7 +27,7 @@ def dotfile(file: Annotated[str, typer.Argument(help="file/folder path.")],
     dest: Annotated[str, typer.Option("--dest", "-d", help="destination folder")] = "",
     ):
     """🔗 Manage dotfiles."""
-    import machineconfig.scripts.python.devops_helpers.cli_config_dotfile as dotfile_module
+    import machineconfig.scripts.python.helpers_devops.cli_config_dotfile as dotfile_module
     dotfile_module.main(file=file, overwrite=overwrite, dest=dest)
 
 
@@ -49,7 +49,7 @@ def path():
 
 def pwsh_theme():
     """🔗 Select powershell prompt theme."""
-    import machineconfig.scripts.python.devops_helpers.themes as themes
+    import machineconfig.scripts.python.helpers_devops.themes as themes
     file = Path(themes.__file__).parent / "choose_pwsh_theme.ps1"
     import subprocess
     subprocess.run(["pwsh", "-File", str(file)])

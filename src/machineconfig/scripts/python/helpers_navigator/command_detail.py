@@ -6,7 +6,7 @@ from typing import Optional
 from textual.widgets import Static
 from rich.panel import Panel
 from rich.text import Text
-from machineconfig.scripts.python.helper_navigator.data_models import CommandInfo
+from machineconfig.scripts.python.helpers_navigator.data_models import CommandInfo
 
 
 class CommandDetail(Static):

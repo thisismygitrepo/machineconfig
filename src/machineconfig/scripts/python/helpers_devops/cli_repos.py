@@ -19,34 +19,34 @@ CloudOption = Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁�
 
 def push(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_uv_sync: NO_UVsyncOption = False) -> None:
     """🚀 Push changes across repositories."""
-    from machineconfig.scripts.python.repos_helpers.entrypoint import git_operations
+    from machineconfig.scripts.python.helpers_repos.entrypoint import git_operations
     git_operations(directory, pull=False, commit=False, push=True, recursive=recursive, auto_uv_sync=not no_uv_sync)
 
 
 def pull(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_uv_sync: NO_UVsyncOption = False) -> None:
     """⬇️ Pull changes across repositories."""
-    from machineconfig.scripts.python.repos_helpers.entrypoint import git_operations
+    from machineconfig.scripts.python.helpers_repos.entrypoint import git_operations
 
     git_operations(directory, pull=True, commit=False, push=False, recursive=recursive, auto_uv_sync=not no_uv_sync)
 
 
 def commit(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_uv_sync: NO_UVsyncOption = False) -> None:
     """💾 Commit changes across repositories."""
-    from machineconfig.scripts.python.repos_helpers.entrypoint import git_operations
+    from machineconfig.scripts.python.helpers_repos.entrypoint import git_operations
     git_operations(directory, pull=False, commit=True, push=False, recursive=recursive, auto_uv_sync=not no_uv_sync)
 
 
 def sync(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_uv_sync: NO_UVsyncOption = False) -> None:
     """🔄 Pull, commit, and push changes across repositories."""
-    from machineconfig.scripts.python.repos_helpers.entrypoint import git_operations
+    from machineconfig.scripts.python.helpers_repos.entrypoint import git_operations
     git_operations(directory, pull=True, commit=True, push=True, recursive=recursive, auto_uv_sync=not no_uv_sync)
 
 
 def capture(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """📝 Record repositories into a repos.json specification."""
-    from machineconfig.scripts.python.repos_helpers.entrypoint import resolve_directory
+    from machineconfig.scripts.python.helpers_repos.entrypoint import resolve_directory
     repos_root = resolve_directory(directory)
-    from machineconfig.scripts.python.repos_helpers.record import main_record as record_repos
+    from machineconfig.scripts.python.helpers_repos.record import main_record as record_repos
     save_path = record_repos(repos_root=repos_root)
     from machineconfig.utils.path_extended import PathExtended
     if cloud is not None:
@@ -55,26 +55,26 @@ def capture(directory: DirectoryArgument = None, cloud: CloudOption = None) -> N
 
 def clone(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """📥 Clone repositories described by a repos.json specification."""
-    from machineconfig.scripts.python.repos_helpers.entrypoint import clone_from_specs
+    from machineconfig.scripts.python.helpers_repos.entrypoint import clone_from_specs
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=False)
 
 
 def checkout_command(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """🔀 Check out specific commits listed in the specification."""
-    from machineconfig.scripts.python.repos_helpers.entrypoint import clone_from_specs    
+    from machineconfig.scripts.python.helpers_repos.entrypoint import clone_from_specs    
     clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=True)
 
 
 def checkout_to_branch_command(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
     """🔀 Check out to the main branch defined in the specification."""
-    from machineconfig.scripts.python.repos_helpers.entrypoint import clone_from_specs
+    from machineconfig.scripts.python.helpers_repos.entrypoint import clone_from_specs
     clone_from_specs(directory, cloud, checkout_branch_flag=True, checkout_commit_flag=False)
 
 
 def analyze(directory: DirectoryArgument = None) -> None:
     """📊 Analyze repository development over time."""
     repo_path = directory if directory is not None else "."
-    from machineconfig.scripts.python.repos_helpers.count_lines_frontend import analyze_repo_development
+    from machineconfig.scripts.python.helpers_repos.count_lines_frontend import analyze_repo_development
     analyze_repo_development(repo_path=repo_path)
 
 
