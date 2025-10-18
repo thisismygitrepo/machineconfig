@@ -61,7 +61,7 @@ def croshell(
             print("Streamlit viewer is not yet implemented in this version.")
             return None
         file_obj = PathExtended(str(path).lstrip()).expanduser().absolute()
-        program = lambda_to_defstring(lambda: get_read_data_pycode(path=str(file_obj)))
+        program = lambda_to_defstring(lambda: get_read_data_pycode(path=str(file_obj)), in_global=True)
         text = f"📄 Reading data from: {file_obj.name}"
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
     else:  # if nothing is specified, then run in interactive mode.
@@ -127,7 +127,7 @@ def croshell(
         fire_line = f"uv run --with visidata,pyarrow vd {str(file_obj)}"
     elif marimo:
         if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--with marimo --project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: requirements = """--with "marimo,machineconfig[plot]>=6.49" """
+        else: requirements = """--with "marimo,machineconfig[plot]>=6.51" """
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv run --with "marimo" marimo convert {pyfile.name} -o marimo_nb.py
@@ -135,14 +135,14 @@ uv run  {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
 """
     elif jupyter:
         if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with jupyterlab """
-        else: requirements = """--with "machineconfig[plot]>=6.49" """
+        else: requirements = """--with "machineconfig[plot]>=6.51" """
         fire_line = f"uv run {requirements} jupyter-lab {str(nb_target)}"
     elif vscode:
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv init --python 3.14
 uv venv
-uv add "machineconfig[plot]>=6.49"
+uv add "machineconfig[plot]>=6.51"
 # code serve-web
 code --new-window {str(pyfile)}
 """
@@ -150,7 +150,7 @@ code --new-window {str(pyfile)}
         if interpreter == "ipython": profile = f" --profile {ipython_profile} --no-banner"
         else: profile = ""
         if Path.home().joinpath("code/machineconfig").exists(): ve_line = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: ve_line = """--with "machineconfig[plot]>=6.49" """
+        else: ve_line = """--with "machineconfig[plot]>=6.51" """
         # ve_path_maybe, ipython_profile_maybe = get_ve_path_and_ipython_profile(Path.cwd())
         # --python 3.14
         fire_line = f"uv run {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"

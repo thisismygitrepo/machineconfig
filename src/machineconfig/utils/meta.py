@@ -245,7 +245,7 @@ def _generate_call_statement(func: FunctionType, kwargs: dict[str, object]) -> s
     return f"{func.__name__}({args_str})"
 
 
-def lambda_to_defstring(lmb: Callable[[], Any]) -> str:
+def lambda_to_defstring(lmb: Callable[[], Any], in_global: bool = False) -> str:
     """
     Given a no-arg lambda like `lambda: func(a=var1, b=var2)`,
     return a string containing the full function definition of `func`
@@ -253,6 +253,11 @@ def lambda_to_defstring(lmb: Callable[[], Any]) -> str:
     by the *actual* values (repr) taken from the lambda's globals.
 
     All imports are local to this function.
+    
+    Args:
+        lmb: A lambda function with no arguments
+        in_global: If True, return kwargs as global variable assignments followed by dedented body.
+                   If False (default), return the full function definition with updated defaults.
     """
     # local imports
     import inspect as _inspect
@@ -373,6 +378,43 @@ def lambda_to_defstring(lmb: Callable[[], Any]) -> str:
         new_params.append(new_param)
 
     new_sig = _inspect.Signature(parameters=new_params, return_annotation=sig.return_annotation)
+
+    # If in_global mode, return kwargs as global assignments + dedented body
+    if in_global:
+        global_assignments: list[str] = []
+        for name, param in sig.parameters.items():
+            # Get the value from call_kwargs if provided, else use original default
+            if name in call_kwargs:
+                value = call_kwargs[name]
+            elif param.default is not _inspect.Parameter.empty:
+                value = param.default
+            else:
+                # No value provided and no default - skip this parameter
+                continue
+            
+            # Build type annotation string if available
+            if param.annotation is not _inspect.Parameter.empty:
+                # Try to get a nice string representation of the annotation
+                try:
+                    if hasattr(param.annotation, "__name__"):
+                        type_str = param.annotation.__name__
+                    else:
+                        type_str = str(param.annotation)
+                except Exception:
+                    type_str = str(param.annotation)
+                global_assignments.append(f"{name}: {type_str} = {repr(value)}")
+            else:
+                global_assignments.append(f"{name} = {repr(value)}")
+        
+        # Dedent the body text to remove function indentation
+        dedented_body = _textwrap.dedent(body_text).rstrip()
+        
+        # Combine global assignments and body
+        if global_assignments:
+            result_parts = ["\n".join(global_assignments), "", dedented_body]
+            return "\n".join(result_parts)
+        else:
+            return dedented_body
 
     # Compose final function definition text
     header = f"def {func_name}{new_sig}:\n"

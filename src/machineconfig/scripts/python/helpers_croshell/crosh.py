@@ -2,6 +2,7 @@
 
 def code(path: str, title: str):
     from pathlib import Path
+    print("Reading code from path:", path)
     pycode = Path(path).read_text(encoding="utf-8")
     pycode = pycode.split("except Exception: print(pycode)")[2]
     try:
