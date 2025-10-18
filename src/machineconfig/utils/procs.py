@@ -106,51 +106,45 @@ class ProcessManager:
         """Format process data as table string for display."""
         if not self.data:
             return ""
-
         # Create header
         _headers = ["Command", "PID", "Name", "Username", "CPU%", "Memory(MB)", "Status", "Create Time"]
         header_line = f"{'Command':<50} {'PID':<8} {'Name':<20} {'Username':<12} {'CPU%':<8} {'Memory(MB)':<12} {'Status':<12} {'Create Time':<20}"
         separator = "-" * len(header_line)
-
         lines = [header_line, separator]
-
         for process in self.data:
             # Format create_time as string
             create_time_str = process["create_time"].strftime("%Y-%m-%d %H:%M:%S")
             # Truncate command if too long
             command = process["command"][:47] + "..." if len(process["command"]) > 50 else process["command"]
-
             line = f"{command:<50} {process['pid']:<8} {process['name'][:19]:<20} {process['username'][:11]:<12} {process['cpu_percent']:<8.1f} {process['memory_usage_mb']:<12.2f} {process['status'][:11]:<12} {create_time_str:<20}"
             lines.append(line)
-
         return "\n".join(lines)
 
     def choose_and_kill(self):
         # header for interactive process selection
         title = "🎯  INTERACTIVE PROCESS SELECTION AND TERMINATION"
         console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
-
         # Format data as table for display
         formatted_data = self._format_process_table()
-        options = formatted_data.split("\n")[1:]  # Skip header
-        res = choose_from_options(options=formatted_data.split("\n"), msg="📋 Select processes to manage:", fzf=True, multi=True)
-        indices = [options.index(val) for val in res]
+        all_lines = formatted_data.split("\n")
+        header_and_separator = all_lines[:2]  # First two lines: header and separator
+        options = all_lines[2:]  # Skip header and separator, only process lines
+        res = choose_from_options(options=all_lines, msg="📋 Select processes to manage:", fzf=True, multi=True)
+        # Filter out header and separator if they were selected
+        selected_lines = [line for line in res if line not in header_and_separator]
+        indices = [options.index(val) for val in selected_lines]
         selected_processes = [self.data[i] for i in indices]
-
         print("\n📊 All Processes:")
         print(formatted_data)
         print("\n🎯 Selected Processes:")
         for process in selected_processes:
             print(f"PID: {process['pid']}, Name: {process['name']}, Memory: {process['memory_usage_mb']:.2f}MB")
-
         for idx, process in enumerate(selected_processes):
             pprint(dict(process), f"📌 Process {idx}")
-
         kill_all = input("\n⚠️  Confirm killing ALL selected processes? y/[n] ").lower() == "y"
         if kill_all:
             self.kill(pids=[p["pid"] for p in selected_processes])
             return
-
         kill_by_index = input("\n🔫 Kill by index? (enter numbers separated by spaces, e.g. '1 4') or [n] to cancel: ")
         if kill_by_index != "" and kill_by_index != "n":
             indices = [int(val) for val in kill_by_index.split(" ")]
@@ -164,12 +158,10 @@ class ProcessManager:
         # header for filtering processes by name
         title = "🔍  FILTERING AND TERMINATING PROCESSES BY NAME"
         console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
-
         # Filter processes by name
         filtered_processes = [p for p in self.data if p["name"] == name]
         # Sort by create_time (ascending)
         filtered_processes.sort(key=lambda x: x["create_time"])
-
         print(f"🎯 Found {len(filtered_processes)} processes matching name: '{name}'")
         self.kill(pids=[p["pid"] for p in filtered_processes])
         console.print(Panel("", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
@@ -186,40 +178,35 @@ class ProcessManager:
             pids = []
         if commands is None:
             commands = []
-
         killed_count = 0
-
         for name in names:
             matching_processes = [p for p in self.data if p["name"] == name]
             if len(matching_processes) > 0:
                 for process in matching_processes:
                     psutil.Process(process["pid"]).kill()
-                    print(f"💀 Killed process {name} with PID {process['pid']}. It lived {get_age(process['create_time'])}. RIP 🪦💐")
+                    print(f"💀 Killed process {name} with PID {process['pid']}. It lived {get_age(process['create_time'])}. RIP 💐")
                     killed_count += 1
             else:
                 print(f'❓ No process named "{name}" found')
-
         for pid in pids:
             try:
                 proc = psutil.Process(pid)
                 proc_name = proc.name()
                 proc_lifetime = get_age(datetime.fromtimestamp(proc.create_time(), tz=None))
                 proc.kill()
-                print(f'💀 Killed process with PID {pid} and name "{proc_name}". It lived {proc_lifetime}. RIP 🪦💐')
+                print(f'💀 Killed process with PID {pid} and name "{proc_name}". It lived {proc_lifetime}. RIP 💐')
                 killed_count += 1
             except psutil.NoSuchProcess:
                 print(f"❓ No process with PID {pid} found")
-
         for command in commands:
             matching_processes = [p for p in self.data if command in p["command"]]
             if len(matching_processes) > 0:
                 for process in matching_processes:
                     psutil.Process(process["pid"]).kill()
-                    print(f'💀 Killed process with "{command}" in its command & PID {process["pid"]}. It lived {get_age(process["create_time"])}. RIP 🪦💐')
+                    print(f'💀 Killed process with "{command}" in its command & PID {process["pid"]}. It lived {get_age(process["create_time"])}. RIP 💐')
                     killed_count += 1
             else:
                 print(f'❓ No process has "{command}" in its command.')
-
         console.print(Panel(f"✅ Termination complete: {killed_count} processes terminated", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
 
