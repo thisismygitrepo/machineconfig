@@ -77,7 +77,7 @@ git pull originEnc master
 """
 
     if Path.home().joinpath("code/machineconfig").exists(): executable = f"""uv run --project "{str(Path.home().joinpath("code/machineconfig"))}" """
-    else: executable = """uv run --with "machineconfig>=6.48" """
+    else: executable = """uv run --with "machineconfig>=6.49" """
 
     shell_path = write_shell_script_to_file(shell_script=script)
     command = f". {shell_path}"
@@ -100,12 +100,17 @@ git pull originEnc master
 
         # ================================================================================
         option1 = "Delete remote copy and push local:"
+        from machineconfig.utils.meta import function_to_script
         def func2(remote_repo: str, local_repo: str, cloud: str):
             from machineconfig.scripts.python.helpers_repos.sync import delete_remote_repo_copy_and_push_local
             delete_remote_repo_copy_and_push_local(remote_repo=remote_repo, local_repo=local_repo, cloud=cloud)
             return "done"
-        from machineconfig.utils.meta import function_to_script
-        program_1_py = function_to_script(func=func2, call_with_args=None, call_with_kwargs={"remote_repo": str(repo_remote_root), "local_repo": str(repo_local_root), "cloud": cloud_resolved})
+        # def func2(remote_repo: str=str(repo_remote_root), local_repo: str=str(repo_local_root), cloud: str=str(cloud_resolved)):
+        #     from machineconfig.scripts.python.helpers_repos.sync import delete_remote_repo_copy_and_push_local
+        #     delete_remote_repo_copy_and_push_local(remote_repo=remote_repo, local_repo=local_repo, cloud=cloud)
+        #     return "done"
+        # program_1_py = function_to_script(func=func2, call_with_kwargs=None)
+        program_1_py = function_to_script(func=func2, call_with_kwargs={"remote_repo": str(repo_remote_root), "local_repo": str(repo_local_root), "cloud": cloud_resolved})
 
 
         shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, ve_path=None, executable=executable)
@@ -128,7 +133,7 @@ sudo chmod +x $HOME/dotfiles/scripts/linux -R
             from machineconfig.scripts.python.helpers_repos.sync import inspect_repos
             inspect_repos(repo_local_root=repo_local_root, repo_remote_root=repo_remote_root)
             return "done"
-        program_3_py = function_to_script(func=func, call_with_args=None, call_with_kwargs={"repo_local_root": str(repo_local_root), "repo_remote_root": str(repo_remote_root)})
+        program_3_py = function_to_script(func=func, call_with_kwargs={"repo_local_root": str(repo_local_root), "repo_remote_root": str(repo_remote_root)})
         shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_path=None, executable=executable)
         # ================================================================================
 

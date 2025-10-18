@@ -1,10 +1,10 @@
+
 from pathlib import Path
 from typing import Callable, Optional, Union, Any, Protocol, List, TypeVar
 import logging
 import time
 from datetime import datetime, timezone, timedelta
 from machineconfig.utils.io import from_pickle
-from machineconfig.utils.path_extended import PathExtended
 
 
 class LoggerTemplate(Protocol):
@@ -147,7 +147,6 @@ class Scheduler:
 T2 = TypeVar("T2")
 def to_pickle(obj: Any, path: Path) -> None:
     import pickle
-    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(pickle.dumps(obj))
 
 
@@ -160,15 +159,12 @@ class CacheMemory[T]():
         self.time_produced = datetime.now()
         self.logger = logger
         self.expire = expire
-        self.name = name if isinstance(name, str) else str(self.source_func)
-        self.last_call_is_fresh = False
-
+        self.name = name if isinstance(name, str) else self.source_func.__name__
     @property
     def age(self) -> timedelta:
         return datetime.now() - self.time_produced
 
     def __call__(self, fresh: bool = False) -> T:
-        self.last_call_is_fresh = False
         if fresh or not hasattr(self, "cache"):
             why = "There was an explicit fresh order." if fresh else "Previous cache never existed."
             t0 = time.time()
@@ -177,7 +173,6 @@ class CacheMemory[T]():
 ℹ️ Reason: {why}""")
             self.cache = self.source_func()
             self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
-            self.last_call_is_fresh = True
             self.time_produced = datetime.now()
         else:
             age = self.age
@@ -189,7 +184,6 @@ class CacheMemory[T]():
                 t0 = time.time()
                 self.cache = self.source_func()
                 self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
-                self.last_call_is_fresh = True
                 self.time_produced = datetime.now()
             else:
                 self.logger.warning(f"""
@@ -212,21 +206,19 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
     ) -> None:
         self.cache: T
         self.source_func = source_func  # function which when called returns a fresh object to be frozen.
-        self.path: PathExtended = PathExtended(path)
+        self.path: Path = path
+        _ = self.path.parent.mkdir(parents=True, exist_ok=True)
         self.time_produced = datetime.now()  # if path is None else
         self.save = saver
         self.reader = reader
         self.logger = logger
         self.expire = expire
-        self.name = name if isinstance(name, str) else str(self.source_func)
-        self.last_call_is_fresh = False
-
+        self.name = name if isinstance(name, str) else self.source_func.__name__
     @property
     def age(self):
         """Throws AttributeError if called before cache is populated and path doesn't exists"""
         return datetime.now() - self.time_produced
     def __call__(self, fresh: bool = False) -> T:
-        self.last_call_is_fresh = False
         if fresh or not hasattr(self, "cache"):  # populate cache for the first time
             if not fresh and self.path.exists():
                 age = datetime.now() - datetime.fromtimestamp(self.path.stat().st_mtime)
@@ -245,10 +237,8 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
                     t0 = time.time()
                     self.cache = self.source_func()
                     self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
-                    self.last_call_is_fresh = True
                     self.time_produced = datetime.now()
-                    # if self.path is not None:
-                    #     self.save(self.cache, self.path)
+                    self.save(self.cache, self.path)
                     return self.cache
                 return self(fresh=False)  # may be the cache is old ==> check that by passing it through the logic again.
             else:
@@ -261,7 +251,6 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
                 t0 = time.time()
                 self.cache = self.source_func()  # fresh data.
                 self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
-                self.last_call_is_fresh = True
                 self.time_produced = datetime.now()
                 self.save(self.cache, self.path)
         else:  # cache exists
@@ -277,7 +266,6 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
                 t0 = time.time()
                 self.cache = self.source_func()
                 self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
-                self.last_call_is_fresh = True
                 self.time_produced = datetime.now()
                 self.save(self.cache, self.path)
             else:
@@ -294,5 +282,4 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
         def decorator(source_func: Callable[[], T2]) -> Cache["T2"]:
             res = Cache(source_func=source_func, expire=expire, logger=logger, path=path, name=name, reader=reader, saver=saver)
             return res
-
         return decorator

@@ -90,6 +90,17 @@ def _extract_imports(func: FunctionType) -> str:
             if isinstance(node.value, ast.Name):
                 used_names.add(node.value.id)
     
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef):
+            for default in node.args.defaults + node.args.kw_defaults:
+                if default is not None:
+                    for subnode in ast.walk(default):
+                        if isinstance(subnode, ast.Name):
+                            used_names.add(subnode.id)
+                        elif isinstance(subnode, ast.Attribute):
+                            if isinstance(subnode.value, ast.Name):
+                                used_names.add(subnode.value.id)
+    
     for name in used_names:
         if name in func_globals:
             obj = func_globals[name]
@@ -101,7 +112,20 @@ def _extract_imports(func: FunctionType) -> str:
                 else:
                     import_statements.add(f"import {module_name} as {name}")
             
-            elif hasattr(obj, '__module__') and obj.__module__ != '__main__':
+            elif isinstance(obj, type) and hasattr(obj, '__module__') and obj.__module__ != '__main__':
+                try:
+                    module_name = obj.__module__
+                    obj_name = obj.__name__ if hasattr(obj, '__name__') else name
+                    
+                    if module_name and module_name != 'builtins':
+                        if obj_name == name:
+                            import_statements.add(f"from {module_name} import {obj_name}")
+                        else:
+                            import_statements.add(f"from {module_name} import {obj_name} as {name}")
+                except AttributeError:
+                    pass
+            
+            elif callable(obj) and not isinstance(obj, type) and hasattr(obj, '__module__') and obj.__module__ != '__main__':
                 try:
                     module_name = obj.__module__
                     obj_name = obj.__name__ if hasattr(obj, '__name__') else name
@@ -120,6 +144,7 @@ def _extract_imports(func: FunctionType) -> str:
 def _extract_globals(func: FunctionType) -> str:
     """Extract global variables needed by the function."""
     global_assignments: list[str] = []
+    needed_types: set[type] = set()
     
     source = _get_function_source(func)
     func_globals = func.__globals__
@@ -137,6 +162,17 @@ def _extract_globals(func: FunctionType) -> str:
             if isinstance(node.value, ast.Name):
                 used_names.add(node.value.id)
     
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef):
+            for default in node.args.defaults + node.args.kw_defaults:
+                if default is not None:
+                    for subnode in ast.walk(default):
+                        if isinstance(subnode, ast.Name):
+                            used_names.add(subnode.id)
+                        elif isinstance(subnode, ast.Attribute):
+                            if isinstance(subnode.value, ast.Name):
+                                used_names.add(subnode.value.id)
+    
     for name in used_names:
         if name in func_globals:
             obj = func_globals[name]
@@ -144,13 +180,35 @@ def _extract_globals(func: FunctionType) -> str:
             if not isinstance(obj, (ModuleType, FunctionType, type)):
                 if not (hasattr(obj, '__module__') and hasattr(obj, '__name__')):
                     try:
-                        repr_str = repr(obj)
-                        if len(repr_str) < 1000 and '\n' not in repr_str:
-                            global_assignments.append(f"{name} = {repr_str}")
-                    except Exception:
-                        global_assignments.append(f"# Warning: Could not serialize global variable '{name}'")
+                        obj_type = type(obj)
+                        
+                        if obj_type.__name__ == 'PathExtended' and obj_type.__module__ == 'machineconfig.utils.path_extended':
+                            global_assignments.append(f"{name} = PathExtended('{str(obj)}')")
+                            if obj_type.__module__ not in ['builtins', '__main__']:
+                                needed_types.add(obj_type)
+                        else:
+                            repr_str = repr(obj)
+                            if len(repr_str) < 1000 and '\n' not in repr_str and all(ord(c) < 128 or c in [' ', '\n', '\t'] for c in repr_str):
+                                global_assignments.append(f"{name} = {repr_str}")
+                                if obj_type.__module__ not in ['builtins', '__main__']:
+                                    needed_types.add(obj_type)
+                            else:
+                                global_assignments.append(f"# Warning: Could not serialize global variable '{name}' (repr too complex or contains non-ASCII)")
+                    except Exception as e:
+                        global_assignments.append(f"# Warning: Could not serialize global variable '{name}': {e}")
     
-    return "\n".join(global_assignments)
+    result_parts: list[str] = []
+    
+    if needed_types:
+        for obj_type in sorted(needed_types, key=lambda t: (t.__module__, t.__name__)):
+            module_name = obj_type.__module__
+            type_name = obj_type.__name__
+            result_parts.append(f"from {module_name} import {type_name}")
+        result_parts.append("")
+    
+    result_parts.extend(global_assignments)
+    
+    return "\n".join(result_parts)
 
 
 def _prepare_call_kwargs(func: FunctionType, call_with_kwargs: Mapping[str, object] | None) -> dict[str, object] | None:

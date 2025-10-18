@@ -6,7 +6,7 @@ from pathlib import Path
 
 def get_fire_command_and_artifact_files(func: FunctionType):
     from machineconfig.utils.meta import function_to_script
-    py_script =  function_to_script(func)
+    py_script =  function_to_script(func, call_with_kwargs=None)
     from machineconfig.utils.accessories import randstr
     py_script_path = Path.home().joinpath("tmp_results", "tmp_py_scripts", f"tmp_{randstr(10)}.py")
     py_script_path.parent.mkdir(parents=True, exist_ok=True)

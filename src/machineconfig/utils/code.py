@@ -19,7 +19,7 @@ def get_shell_script_executing_python_file(python_file: str, func: Optional[str]
     if ve_path is None: ve_activate_line = ""
     else: ve_activate_line = get_ve_activate_line(ve_path)
     shell_script = f"""
-echo "Executing `{exec_line}`"
+echo "Executing {exec_line}"
 {ve_activate_line}
 {exec_line}
 deactivate || true
