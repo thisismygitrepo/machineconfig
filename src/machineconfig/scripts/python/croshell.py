@@ -5,8 +5,8 @@ croshell
 """
 
 from typing import Annotated, Optional
-from machineconfig.scripts.python.helpers_croshell.crosh import add_print_header_pycode
-from machineconfig.scripts.python.helpers_croshell.crosh import get_read_data_pycode
+from machineconfig.scripts.python.helpers_croshell.crosh import code, get_read_data_pycode
+from machineconfig.utils.meta import lambda_to_defstring
 import typer
 from machineconfig.utils.path_extended import PathExtended
 from pathlib import Path
@@ -26,8 +26,8 @@ def croshell(
     profile: Annotated[Optional[str], typer.Option("--profile", "-P", help="ipython profile to use, defaults to default profile.")] = None,
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="run in jupyter interactive console")] = False,
     vscode: Annotated[bool, typer.Option("--vscode", "-c", help="open the script in vscode")] = False,
-    streamlit_viewer: Annotated[bool, typer.Option("--stViewer", "-s", help="view in streamlit app")] = False,
-    visidata: Annotated[bool, typer.Option("--visidata", "-V", help="open data file in visidata")] = False,
+    streamlit_viewer: Annotated[bool, typer.Option("--streamlit", "-s", help="view in streamlit app")] = False,
+    visidata: Annotated[bool, typer.Option("--visidata", "-v", help="open data file in visidata")] = False,
     marimo: Annotated[bool, typer.Option("--marimo", "-m", help="open the notebook using marimo if available")] = False,
 ) -> None:
     # ==================================================================================
@@ -58,9 +58,10 @@ def croshell(
             # streamlit run {py_file_path}
             # """
             #             PROGRAM_PATH.write_text(data=final_program, encoding="utf-8")
+            print("Streamlit viewer is not yet implemented in this version.")
             return None
         file_obj = PathExtended(str(path).lstrip()).expanduser().absolute()
-        program = get_read_data_pycode(str(file_obj))
+        program = lambda_to_defstring(lambda: get_read_data_pycode(path=str(file_obj)))
         text = f"📄 Reading data from: {file_obj.name}"
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
     else:  # if nothing is specified, then run in interactive mode.
@@ -70,23 +71,29 @@ def croshell(
         # InteractiveShell().run()
         # return None
         program = ""
-
     preprogram = """
-
 #%%
-
-from machineconfig.utils.files.headers import print_header, print_logo
-print_header()
-print_logo("CROCODILE")
-from pathlib import Path
-
 """
+    def preprogram_func():
+        from machineconfig.utils.files.headers import print_header, print_logo
+        print_header()
+        print_logo("CROCODILE")
+        from pathlib import Path
+        from machineconfig.utils.path_extended import PathExtended
+        _ = Path, PathExtended  # avoid unused import warnings
+    import inspect, textwrap
+    from types import FunctionType
+    def get_body_simple_function_no_args(f: FunctionType):
+        return textwrap.dedent("\n".join(inspect.getsource(f).splitlines()[1:]))
+    preprogram += get_body_simple_function_no_args(preprogram_func)
 
     pyfile = PathExtended.tmp().joinpath(f"tmp_scripts/python/croshell/{randstr()}/script.py")
     pyfile.parent.mkdir(parents=True, exist_ok=True)
 
     title = "Reading Data"
-    python_program = preprogram + add_print_header_pycode(str(pyfile), title=title) + program
+    def_code = lambda_to_defstring(lambda: code(path=str(pyfile), title=title))
+    # print(def_code)
+    python_program = preprogram + "\n\n" + def_code + program
     pyfile.write_text(python_program, encoding="utf-8")
     # ve_root_from_file, ipython_profile = get_ve_path_and_ipython_profile(PathExtended(file))
     ipython_profile = ipython_profile if ipython_profile is not None else "default"
