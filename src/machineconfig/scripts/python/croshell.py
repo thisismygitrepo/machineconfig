@@ -29,7 +29,6 @@ def croshell(
     streamlit_viewer: Annotated[bool, typer.Option("--stViewer", "-s", help="view in streamlit app")] = False,
     visidata: Annotated[bool, typer.Option("--visidata", "-V", help="open data file in visidata")] = False,
     marimo: Annotated[bool, typer.Option("--marimo", "-m", help="open the notebook using marimo if available")] = False,
-    local: Annotated[bool, typer.Option("--local", "-l", help="run in local mode, not in virtual env.")]= False,
 ) -> None:
     # ==================================================================================
     # flags processing
@@ -128,7 +127,7 @@ uv run --with "marimo" marimo convert {pyfile.name} -o marimo_nb.py
 uv run  {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
 """
     elif jupyter:
-        if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" """
+        if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with jupyterlab """
         else: requirements = """--with "machineconfig[plot]>=6.49" """
         fire_line = f"uv run {requirements} jupyter-lab {str(nb_target)}"
     elif vscode:
@@ -143,14 +142,7 @@ code --new-window {str(pyfile)}
     else:
         if interpreter == "ipython": profile = f" --profile {ipython_profile} --no-banner"
         else: profile = ""
-        if local:
-            from machineconfig.utils.source_of_truth import LIBRARY_ROOT
-            repo_root = LIBRARY_ROOT.parent.parent
-            if repo_root.parent.name == "code" and repo_root.name == "machineconfig" and repo_root.exists() and repo_root.is_dir():
-                ve_line = f"--project {str(repo_root)}"
-            else:
-                console.print(Panel("❌ Could not determine the local machineconfig repo root. Please ensure the `REPO_ROOT` in `source_of_truth.py` is correctly set to the local path of the machineconfig repo, or do not use the `--local` flag.", title="Error", border_style="red"))
-                return
+        if Path.home().joinpath("code/machineconfig").exists(): ve_line = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" """
         else: ve_line = """--with "machineconfig[plot]>=6.49" """
         # ve_path_maybe, ipython_profile_maybe = get_ve_path_and_ipython_profile(Path.cwd())
         # --python 3.14
