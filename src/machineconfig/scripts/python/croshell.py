@@ -6,7 +6,7 @@ croshell
 
 from typing import Annotated, Optional
 from machineconfig.scripts.python.helpers_croshell.crosh import code, get_read_data_pycode
-from machineconfig.utils.meta import lambda_to_defstring
+from machineconfig.utils.meta import lambda_to_python_script
 import typer
 from machineconfig.utils.path_extended import PathExtended
 from pathlib import Path
@@ -61,7 +61,7 @@ def croshell(
             print("Streamlit viewer is not yet implemented in this version.")
             return None
         file_obj = PathExtended(str(path).lstrip()).expanduser().absolute()
-        program = lambda_to_defstring(lambda: get_read_data_pycode(path=str(file_obj)), in_global=True)
+        program = lambda_to_python_script(lambda: get_read_data_pycode(path=str(file_obj)), in_global=True)
         text = f"📄 Reading data from: {file_obj.name}"
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
     else:  # if nothing is specified, then run in interactive mode.
@@ -91,7 +91,7 @@ def croshell(
     pyfile.parent.mkdir(parents=True, exist_ok=True)
 
     title = "Reading Data"
-    def_code = lambda_to_defstring(lambda: code(path=str(pyfile), title=title))
+    def_code = lambda_to_python_script(lambda: code(path=str(pyfile), title=title), in_global=False)
     # print(def_code)
     python_program = preprogram + "\n\n" + def_code + program
     pyfile.write_text(python_program, encoding="utf-8")
