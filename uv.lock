@@ -1399,7 +1399,7 @@ wheels = [
 
 [[package]]
 name = "machineconfig"
-version = "6.51"
+version = "6.53"
 source = { editable = "." }
 dependencies = [
     { name = "cryptography" },
@@ -1454,6 +1454,7 @@ dev = [
     { name = "pre-commit" },
     { name = "pudb" },
     { name = "pylint" },
+    { name = "pypdf" },
     { name = "pyrefly" },
     { name = "pyright" },
     { name = "pytest" },
@@ -1526,6 +1527,7 @@ dev = [
     { name = "pre-commit", specifier = ">=4.3.0" },
     { name = "pudb", specifier = ">=2025.1" },
     { name = "pylint", specifier = ">=3.3.8" },
+    { name = "pypdf", specifier = ">=6.1.1" },
     { name = "pyrefly", specifier = ">=0.33.1" },
     { name = "pyright", specifier = ">=1.1.405" },
     { name = "pytest", specifier = ">=8.4.2" },
@@ -2486,6 +2488,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f2/a5/181488fc2b9d093e3972d2a472855aae8a03f000592dbfce716a512b3359/pyparsing-3.2.5.tar.gz", hash = "sha256:2df8d5b7b2802ef88e8d016a2eb9c7aeaa923529cd251ed0fe4608275d4105b6", size = 1099274, upload-time = "2025-09-21T04:11:06.277Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/10/5e/1aa9a93198c6b64513c9d7752de7422c06402de6600a8767da1524f9570b/pyparsing-3.2.5-py3-none-any.whl", hash = "sha256:e38a4f02064cf41fe6593d328d0512495ad1f3d8a91c4f73fc401b3079a59a5e", size = 113890, upload-time = "2025-09-21T04:11:04.117Z" },
+]
+
+[[package]]
+name = "pypdf"
+version = "6.1.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a6/85/4c0f12616db83c2e3ef580c3cfa98bd082e88fc8d02e136bad3bede1e3fa/pypdf-6.1.1.tar.gz", hash = "sha256:10f44d49bf2a82e54c3c5ba3cdcbb118f2a44fc57df8ce51d6fb9b1ed9bfbe8b", size = 5074507, upload-time = "2025-09-28T13:29:16.165Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/07/ed/adae13756d9dabdddee483fc7712905bb5585fbf6e922b1a19aca3a29cd1/pypdf-6.1.1-py3-none-any.whl", hash = "sha256:7781f99493208a37a7d4275601d883e19af24e62a525c25844d22157c2e4cde7", size = 323455, upload-time = "2025-09-28T13:29:14.392Z" },
 ]
 
 [[package]]

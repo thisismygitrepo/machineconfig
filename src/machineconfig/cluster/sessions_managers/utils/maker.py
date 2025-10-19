@@ -5,13 +5,13 @@ from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutCo
 from pathlib import Path
 
 def get_fire_command_and_artifact_files(func: FunctionType):
-    from machineconfig.utils.meta import function_to_script
-    py_script =  function_to_script(func, call_with_kwargs=None)
+    from machineconfig.utils.meta import lambda_to_defstring
+    py_script =  lambda_to_defstring(lmb=lambda: func, in_global=True)
     from machineconfig.utils.accessories import randstr
     py_script_path = Path.home().joinpath("tmp_results", "tmp_py_scripts", f"tmp_{randstr(10)}.py")
     py_script_path.parent.mkdir(parents=True, exist_ok=True)
     py_script_path.write_text(py_script, encoding="utf-8")
-    command_to_run = f"uv run --project $HOME/ {py_script_path}"
+    command_to_run = f"uv run {py_script_path}"
     tab_config: TabConfig = {
         "command": command_to_run,
         "startDir": "$HOME",

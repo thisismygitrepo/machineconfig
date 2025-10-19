@@ -6,7 +6,7 @@ import typer
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.terminal import Response
 from machineconfig.utils.source_of_truth import CONFIG_ROOT, DEFAULTS_PATH
-from machineconfig.utils.code import get_shell_file_executing_python_script, write_shell_script_to_file
+from machineconfig.utils.code import get_shell_file_executing_python_script
 from pathlib import Path
 import platform
 import subprocess
@@ -76,10 +76,17 @@ git pull originEnc master
 
 """
 
-    if Path.home().joinpath("code/machineconfig").exists(): executable = f"""uv run --project "{str(Path.home().joinpath("code/machineconfig"))}" """
-    else: executable = """uv run --with "machineconfig>=6.52" """
+    if Path.home().joinpath("code/machineconfig").exists():
+        uv_project_dir = f"""{str(Path.home().joinpath("code/machineconfig"))}"""
+        uv_with = None
+    else:
+        uv_with = ["machineconfig>=6.52"]
+        uv_project_dir = None
 
-    shell_path = write_shell_script_to_file(shell_script=script)
+    import tempfile
+    shell_path = Path(tempfile.mkstemp(suffix=".ps1" if platform.system() == "Windows" else ".sh")[1])
+    shell_path.write_text(script, encoding="utf-8")
+
     command = f". {shell_path}"
     if platform.system() == "Windows":
         completed = subprocess.run(["powershell", "-Command", command], capture_output=True, check=False, text=True)
@@ -100,20 +107,12 @@ git pull originEnc master
 
         # ================================================================================
         option1 = "Delete remote copy and push local:"
-        from machineconfig.utils.meta import function_to_script
+        from machineconfig.utils.meta import lambda_to_defstring
         def func2(remote_repo: str, local_repo: str, cloud: str):
             from machineconfig.scripts.python.helpers_repos.sync import delete_remote_repo_copy_and_push_local
             delete_remote_repo_copy_and_push_local(remote_repo=remote_repo, local_repo=local_repo, cloud=cloud)
-            return "done"
-        # def func2(remote_repo: str=str(repo_remote_root), local_repo: str=str(repo_local_root), cloud: str=str(cloud_resolved)):
-        #     from machineconfig.scripts.python.helpers_repos.sync import delete_remote_repo_copy_and_push_local
-        #     delete_remote_repo_copy_and_push_local(remote_repo=remote_repo, local_repo=local_repo, cloud=cloud)
-        #     return "done"
-        # program_1_py = function_to_script(func=func2, call_with_kwargs=None)
-        program_1_py = function_to_script(func=func2, call_with_kwargs={"remote_repo": str(repo_remote_root), "local_repo": str(repo_local_root), "cloud": cloud_resolved})
-
-
-        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, ve_path=None, executable=executable)
+        program_1_py = lambda_to_defstring(lambda: func2(remote_repo=str(repo_remote_root), local_repo=str(repo_local_root), cloud=str(cloud_resolved)), in_global=True)
+        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, uv_with=uv_with, uv_project_dir=uv_project_dir)
         # ================================================================================
         option2 = "Delete local repo and replace it with remote copy:"
         program_2 = f"""
@@ -126,15 +125,19 @@ sudo chmod 600 $HOME/.ssh/*
 sudo chmod 700 $HOME/.ssh
 sudo chmod +x $HOME/dotfiles/scripts/linux -R
 """
-        shell_file_2 = write_shell_script_to_file(shell_script=program_2)
+        import tempfile
+        shell_file_2 = Path(tempfile.mkstemp(suffix=".ps1" if platform.system() == "Windows" else ".sh")[1])
+        shell_file_2.write_text(program_2, encoding="utf-8")
+
         # ================================================================================
         option3 = "Inspect repos:"
         def func(repo_local_root: str, repo_remote_root: str):
             from machineconfig.scripts.python.helpers_repos.sync import inspect_repos
             inspect_repos(repo_local_root=repo_local_root, repo_remote_root=repo_remote_root)
-            return "done"
-        program_3_py = function_to_script(func=func, call_with_kwargs={"repo_local_root": str(repo_local_root), "repo_remote_root": str(repo_remote_root)})
-        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_path=None, executable=executable)
+        # program_3_py = function_to_script(func=func, call_with_kwargs={"repo_local_root": str(repo_local_root), "repo_remote_root": str(repo_remote_root)})
+        # shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_path=None, executable=executable)
+        program_3_py = lambda_to_defstring(lambda: func(repo_local_root=str(repo_local_root), repo_remote_root=str(repo_remote_root)), in_global=True)
+        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, uv_with=uv_with, uv_project_dir=uv_project_dir)
         # ================================================================================
 
         option4 = "Remove problematic rclone file from repo and replace with remote:"
@@ -145,7 +148,8 @@ cd $HOME/dotfiles
 git commit -am "finished merging"
 . {shell_file_1}
 """
-        shell_file_4 = write_shell_script_to_file(shell_script=program_4)
+        shell_file_4 = Path(tempfile.mkstemp(suffix=".ps1" if platform.system() == "Windows" else ".sh")[1])
+        shell_file_4.write_text(program_4, encoding="utf-8")
         # ================================================================================
 
         console.print(Panel("🔄 RESOLVE MERGE CONFLICT\nChoose an option to resolve the conflict:", title_align="left", border_style="blue"))

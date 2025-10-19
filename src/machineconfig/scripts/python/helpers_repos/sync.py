@@ -1,5 +1,4 @@
 from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.code import write_shell_script_to_file
 import platform
 from pathlib import Path
 from rich.console import Console
@@ -56,11 +55,12 @@ def inspect_repos(repo_local_root: str, repo_remote_root: str):
 
     if platform.system() == "Windows":
         program = get_wt_cmd(wd1=PathExtended(repo_local_root), wd2=PathExtended(repo_local_root))
-        write_shell_script_to_file(shell_script=program)
-        return None
     elif platform.system() in ["Linux", "Darwin"]:
         program = get_zellij_cmd(wd1=PathExtended(repo_local_root), wd2=PathExtended(repo_remote_root))
-        write_shell_script_to_file(shell_script=program)
-        return None
     else:
         raise NotImplementedError(f"Platform {platform.system()} not implemented.")
+    import tempfile
+    with tempfile.NamedTemporaryFile(mode='w', suffix=".sh" if platform.system() != "Windows" else ".ps1", delete=False, encoding='utf-8') as temp_file:
+        temp_file.write(program)
+        temp_script_path = PathExtended(temp_file.name)
+    console.print(Panel(f"🚀 Launching repo inspection tool...\n\n[blue]{temp_script_path}[/blue]", border_style="blue"))

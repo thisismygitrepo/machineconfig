@@ -2,94 +2,16 @@ import atexit
 import platform
 from typing import Optional
 import subprocess
-from rich.console import Console
-from rich.panel import Panel
-from rich.syntax import Syntax
-
 from machineconfig.utils.accessories import randstr
-from machineconfig.utils.ve import get_ve_activate_line
-from machineconfig.utils.path_extended import PathExtended  # type: ignore[import-not-found]
-
-
-def get_shell_script_executing_python_file(python_file: str, func: Optional[str], ve_path: Optional[str], executable: Optional[str], strict_execution: bool = True):
-    if executable is None: exe_resolved = "python"
-    else: exe_resolved = executable
-    if func is None: exec_line = f"""{exe_resolved} {python_file}"""
-    else: exec_line = f"""{exe_resolved} -m fire {python_file} {func}"""
-    if ve_path is None: ve_activate_line = ""
-    else: ve_activate_line = get_ve_activate_line(ve_path)
-    shell_script = f"""
-echo "Executing {exec_line}"
-{ve_activate_line}
-{exec_line}
-deactivate || true
-"""
-    if strict_execution:
-        if platform.system() == "Windows":
-            shell_script = """$ErrorActionPreference = "Stop" """ + "\n" + shell_script
-        if platform.system() in ["Linux", "Darwin"]:
-            shell_script = "set -e" + "\n" + shell_script
-    if platform.system() in ["Linux", "Darwin"]:
-        shell_script = "#!/bin/bash" + "\n" + shell_script  # vs #!/usr/bin/env bash
-    return shell_script
-
-
-def get_shell_file_executing_python_script(python_script: str, ve_path: Optional[str], executable: Optional[str], verbose: bool = True):
-    if verbose:
-        python_script = f"""
-code = r'''{python_script}'''
-try:
-    from machineconfig.utils.utils import print_code
-    print_code(code=code, lexer="python", desc="Python Script")
-except ImportError:
-    from rich.console import Console
-    from rich.panel import Panel
-    console = Console()
-    console.print(Panel(f'''📜 PYTHON SCRIPT:\n\n{{code}}''', title="Python Script", expand=False))
-""" + python_script
-    python_file = PathExtended.tmp().joinpath("tmp_scripts", "python", randstr() + ".py")
-    python_file.parent.mkdir(parents=True, exist_ok=True)
-    python_file.write_text(python_script, encoding="utf-8")
-    shell_script = get_shell_script_executing_python_file(python_file=str(python_file), func=None, ve_path=ve_path, executable=executable)
-    shell_file = write_shell_script_to_file(shell_script)
-    return shell_file
-
-
-def write_shell_script_to_file(shell_script: str):
-    if platform.system() in ["Linux", "Darwin"]:
-        suffix = ".sh"
-    elif platform.system() == "Windows":
-        suffix = ".ps1"
-    else:
-        raise NotImplementedError(f"Platform {platform.system()} not implemented.")
-    shell_file = PathExtended.tmp().joinpath("tmp_scripts", "shell", randstr() + suffix)
-    shell_file.parent.mkdir(parents=True, exist_ok=True)
-    shell_file.write_text(shell_script, encoding="utf-8")
-    return shell_file
-
-
-def write_shell_script_to_default_program_path(program: str, desc: str, preserve_cwd: bool, display: bool, execute: bool):
-    if preserve_cwd:
-        if platform.system() == "Windows":
-            program = "$orig_path = $pwd\n" + program + "\ncd $orig_path"
-        else:
-            program = 'orig_path=$(cd -- "." && pwd)\n' + program + '\ncd "$orig_path" || exit'
-    if display:
-        print_code(code=program, lexer="shell", desc=desc, subtitle="PROGRAM")
-    if execute:
-        result = subprocess.run(program, shell=True, capture_output=True, text=True)
-        success = result.returncode == 0 and result.stderr == ""
-        if not success:
-            print("❌ 🛠️  EXECUTION | Shell script running failed")
-            if result.stdout:
-                print(f"STDOUT: {result.stdout}")
-            if result.stderr:
-                print(f"STDERR: {result.stderr}")
-            print(f"Return code: {result.returncode}")
-    return None
+from machineconfig.utils.path_extended import PathExtended
+from pathlib import Path
 
 
 def print_code(code: str, lexer: str, desc: str, subtitle: str = ""):
+    import platform
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.syntax import Syntax
     if lexer == "shell":
         if platform.system() == "Windows":
             lexer = "powershell"
@@ -101,8 +23,43 @@ def print_code(code: str, lexer: str, desc: str, subtitle: str = ""):
     console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}", subtitle=subtitle), style="bold red")
 
 
+def get_shell_file_executing_python_script(python_script: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> Path:
+    python_file = PathExtended.tmp().joinpath("tmp_scripts", "python", randstr() + ".py")
+    python_file.parent.mkdir(parents=True, exist_ok=True)
+    python_file.write_text(python_script, encoding="utf-8")
+    if uv_with is not None and len(uv_with) > 0:
+        uv_with_arg = "--with " + '"' + ",".join(uv_with) + '"'
+    else:
+        uv_with_arg = ""
+    if uv_project_dir is not None:
+        uv_project_dir_arg = "--project" + f' "{uv_project_dir}"'
+    else:
+        uv_project_dir_arg = ""
+    
+    from machineconfig.utils.meta import lambda_to_defstring
+    print_code_string = lambda_to_defstring(lambda: print_code(code=python_script, lexer="python", desc="Temporary Python Script", subtitle="Executing via shell script"), in_global=True)
+    python_file_tmp = PathExtended.tmp().joinpath("tmp_scripts", "python", randstr() + ".py")
+    python_file_tmp.parent.mkdir(parents=True, exist_ok=True)
+    python_file_tmp.write_text(print_code_string, encoding="utf-8")
+
+    shell_script = f"""
+uv run --with rich {python_file_tmp}
+uv run {uv_with_arg} {uv_project_dir_arg}  {str(python_file)} 
+"""
+    
+    shell_path = PathExtended.tmp().joinpath("tmp_scripts", "shell", randstr() + (".ps1" if platform.system() == "Windows" else ".sh"))
+    shell_path.parent.mkdir(parents=True, exist_ok=True)
+    shell_path.write_text(shell_script, encoding="utf-8")    
+    return shell_path
+
+
 def run_shell_script(script: str, display_script: bool = True, clean_env: bool = False):
     import tempfile
+    import platform
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.syntax import Syntax
+
     if platform.system() == "Windows":
         suffix = ".ps1"
         lexer = "powershell"
@@ -112,6 +69,7 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
     with tempfile.NamedTemporaryFile(mode='w', suffix=suffix, delete=False, encoding='utf-8') as temp_file:
         temp_file.write(script)
         temp_script_path = PathExtended(temp_file.name)
+
     console = Console()
     if display_script:
         from rich.syntax import Syntax
@@ -138,8 +96,12 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
 
 
 def run_shell_script_after_exit(script: str, display_script: bool = True) -> None:
+    import platform
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.syntax import Syntax
+
     console = Console()
-    
     def execute_script_at_exit() -> None:
         if platform.system() == "Windows":
             suffix = ".ps1"

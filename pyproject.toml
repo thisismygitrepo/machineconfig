@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "6.52"
+version = "6.53"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -99,6 +99,7 @@ dev = [
     "pre-commit>=4.3.0",
     "pudb>=2025.1",
     "pylint>=3.3.8",
+    "pypdf>=6.1.1",
     "pyrefly>=0.33.1",
     "pyright>=1.1.405",
     "pytest>=8.4.2",
