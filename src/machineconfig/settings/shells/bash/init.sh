@@ -41,6 +41,7 @@ alias s=sessions
 alias ff=ftpx
 alias f=fire
 alias r=croshell
+alias u=utils
 
 # alias gcs='gh copilot suggest -t shell'
 # alias gcg='gh copilot suggest -t git'

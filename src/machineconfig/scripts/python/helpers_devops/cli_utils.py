@@ -115,12 +115,3 @@ def merge_pdfs(
     from machineconfig.utils.code import run_shell_script, get_uv_command_executing_python_script
     uv_command, _py_file = get_uv_command_executing_python_script(python_script=code, uv_with=["pypdf"], uv_project_dir=None)
     run_shell_script(uv_command)
-
-
-def get_app() -> typer.Typer:
-    app = typer.Typer(help="🛠️ [u]  utilities operations", no_args_is_help=True, add_help_option=False, add_completion=False)
-    app.command(name="download", no_args_is_help=True, help="[d] Download a file from a URL and optionally decompress it.")(download)
-    app.command(name="d", no_args_is_help=True, hidden=True)(download)
-    app.command(name="merge-pdfs", no_args_is_help=True, help="[m] Merge two PDF files into one.")(merge_pdfs)
-    app.command(name="m", no_args_is_help=True, hidden=True)(merge_pdfs)
-    return app
