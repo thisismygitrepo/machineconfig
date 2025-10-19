@@ -4,6 +4,7 @@ from machineconfig.scripts.python.cloud import get_app as get_cloud_app
 from machineconfig.scripts.python.agents import get_app as get_agents_app
 from machineconfig.scripts.python.fire_jobs import get_app as get_fire_jobs_app
 from machineconfig.scripts.python.sessions import get_app as get_sessions_app
+from machineconfig.scripts.python.utils import get_app as get_utils_app
 
 from machineconfig.scripts.python.ftpx import ftpx as ftpx_func
 from machineconfig.scripts.python.croshell import croshell as croshell_func
@@ -37,7 +38,12 @@ def get_app():
     app.command("croshell", no_args_is_help=False, help="[r] Cross-shell command execution")(croshell_func)
     app.command("r", no_args_is_help=False, hidden=True)(croshell_func)  # short alias
 
+    utils_app = get_utils_app()
+    app.add_typer(utils_app, name="utils", help="[u] Utility commands", no_args_is_help=True)
+    app.add_typer(utils_app, name="u", hidden=True)  # short alias
+
     return app
+
 
 def main():
     app = get_app()
