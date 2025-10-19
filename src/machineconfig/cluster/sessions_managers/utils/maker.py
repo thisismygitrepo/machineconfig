@@ -1,24 +1,21 @@
 
 from types import FunctionType
-from typing import Literal
+from typing import Optional, Literal
 from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig
 from pathlib import Path
 
-def get_fire_command_and_artifact_files(func: FunctionType):
+def get_fire_tab_using_uv(func: FunctionType, uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> tuple[TabConfig, Path]:
     from machineconfig.utils.meta import lambda_to_defstring
     py_script =  lambda_to_defstring(lmb=lambda: func, in_global=True)
-    from machineconfig.utils.accessories import randstr
-    py_script_path = Path.home().joinpath("tmp_results", "tmp_py_scripts", f"tmp_{randstr(10)}.py")
-    py_script_path.parent.mkdir(parents=True, exist_ok=True)
-    py_script_path.write_text(py_script, encoding="utf-8")
-    command_to_run = f"uv run {py_script_path}"
+    from machineconfig.utils.code import get_uv_command_executing_python_script
+    command_to_run, py_script_path = get_uv_command_executing_python_script(python_script=py_script, uv_with=uv_with, uv_project_dir=uv_project_dir)
     tab_config: TabConfig = {
         "command": command_to_run,
         "startDir": "$HOME",
         "tabName": func.__name__
     }
     return tab_config, py_script_path
-def get_fire_command_and_artifact_files_v2(func: FunctionType):
+def get_fire_tab_using_fire(func: FunctionType):
     import inspect
     path = Path(inspect.getfile(func))
     path_relative = path.relative_to(Path.home())
@@ -36,10 +33,10 @@ def make_layout_from_functions(functions: list[FunctionType], tab_configs: list[
     for a_func in functions:
         match method:
             case "script":
-                tab_config, artifact_files_1 = get_fire_command_and_artifact_files(a_func)
+                tab_config, artifact_files_1 = get_fire_tab_using_uv(a_func, uv_with=None, uv_project_dir=None)
                 artifact_files = [artifact_files_1]
             case "fire":
-                tab_config = get_fire_command_and_artifact_files_v2(a_func)
+                tab_config = get_fire_tab_using_fire(a_func)
                 artifact_files = []
         tabs2artifacts.append((tab_config, artifact_files))
     list_of_tabs = [tab for tab, _ in tabs2artifacts] + tab_configs

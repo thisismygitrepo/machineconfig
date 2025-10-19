@@ -1,5 +1,6 @@
+
 import atexit
-import platform
+# import platform
 from typing import Optional
 import subprocess
 from machineconfig.utils.accessories import randstr
@@ -23,34 +24,23 @@ def print_code(code: str, lexer: str, desc: str, subtitle: str = ""):
     console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}", subtitle=subtitle), style="bold red")
 
 
-def get_shell_file_executing_python_script(python_script: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> Path:
+def get_uv_command_executing_python_script(python_script: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> tuple[str, Path]:
     python_file = PathExtended.tmp().joinpath("tmp_scripts", "python", randstr() + ".py")
     python_file.parent.mkdir(parents=True, exist_ok=True)
-    python_file.write_text(python_script, encoding="utf-8")
     if uv_with is not None and len(uv_with) > 0:
+        uv_with.append("rich")
         uv_with_arg = "--with " + '"' + ",".join(uv_with) + '"'
     else:
-        uv_with_arg = ""
+        uv_with_arg = "--with rich"
     if uv_project_dir is not None:
         uv_project_dir_arg = "--project" + f' "{uv_project_dir}"'
     else:
         uv_project_dir_arg = ""
-    
     from machineconfig.utils.meta import lambda_to_defstring
     print_code_string = lambda_to_defstring(lambda: print_code(code=python_script, lexer="python", desc="Temporary Python Script", subtitle="Executing via shell script"), in_global=True)
-    python_file_tmp = PathExtended.tmp().joinpath("tmp_scripts", "python", randstr() + ".py")
-    python_file_tmp.parent.mkdir(parents=True, exist_ok=True)
-    python_file_tmp.write_text(print_code_string, encoding="utf-8")
-
-    shell_script = f"""
-uv run --with rich {python_file_tmp}
-uv run {uv_with_arg} {uv_project_dir_arg}  {str(python_file)} 
-"""
-    
-    shell_path = PathExtended.tmp().joinpath("tmp_scripts", "shell", randstr() + (".ps1" if platform.system() == "Windows" else ".sh"))
-    shell_path.parent.mkdir(parents=True, exist_ok=True)
-    shell_path.write_text(shell_script, encoding="utf-8")    
-    return shell_path
+    python_file.write_text(print_code_string + "\n" + python_script, encoding="utf-8")
+    shell_script = f"""uv run {uv_with_arg} {uv_project_dir_arg}  {str(python_file)} """
+    return shell_script, python_file
 
 
 def run_shell_script(script: str, display_script: bool = True, clean_env: bool = False):

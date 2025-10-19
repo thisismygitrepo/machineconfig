@@ -6,7 +6,7 @@ import typer
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.terminal import Response
 from machineconfig.utils.source_of_truth import CONFIG_ROOT, DEFAULTS_PATH
-from machineconfig.utils.code import get_shell_file_executing_python_script
+from machineconfig.utils.code import get_uv_command_executing_python_script
 from pathlib import Path
 import platform
 import subprocess
@@ -112,7 +112,7 @@ git pull originEnc master
             from machineconfig.scripts.python.helpers_repos.sync import delete_remote_repo_copy_and_push_local
             delete_remote_repo_copy_and_push_local(remote_repo=remote_repo, local_repo=local_repo, cloud=cloud)
         program_1_py = lambda_to_defstring(lambda: func2(remote_repo=str(repo_remote_root), local_repo=str(repo_local_root), cloud=str(cloud_resolved)), in_global=True)
-        shell_file_1 = get_shell_file_executing_python_script(python_script=program_1_py, uv_with=uv_with, uv_project_dir=uv_project_dir)
+        uv_command_1, _pyfile1 = get_uv_command_executing_python_script(python_script=program_1_py, uv_with=uv_with, uv_project_dir=uv_project_dir)
         # ================================================================================
         option2 = "Delete local repo and replace it with remote copy:"
         program_2 = f"""
@@ -137,7 +137,7 @@ sudo chmod +x $HOME/dotfiles/scripts/linux -R
         # program_3_py = function_to_script(func=func, call_with_kwargs={"repo_local_root": str(repo_local_root), "repo_remote_root": str(repo_remote_root)})
         # shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, ve_path=None, executable=executable)
         program_3_py = lambda_to_defstring(lambda: func(repo_local_root=str(repo_local_root), repo_remote_root=str(repo_remote_root)), in_global=True)
-        shell_file_3 = get_shell_file_executing_python_script(python_script=program_3_py, uv_with=uv_with, uv_project_dir=uv_project_dir)
+        uv_command_3, _pyfile3 = get_uv_command_executing_python_script(python_script=program_3_py, uv_with=uv_with, uv_project_dir=uv_project_dir)
         # ================================================================================
 
         option4 = "Remove problematic rclone file from repo and replace with remote:"
@@ -146,7 +146,7 @@ rm $HOME/dotfiles/creds/rclone/rclone.conf
 cp $HOME/.config/machineconfig/remote/dotfiles/creds/rclone/rclone.conf $HOME/dotfiles/creds/rclone
 cd $HOME/dotfiles
 git commit -am "finished merging"
-. {shell_file_1}
+{uv_command_1}
 """
         shell_file_4 = Path(tempfile.mkstemp(suffix=".ps1" if platform.system() == "Windows" else ".sh")[1])
         shell_file_4.write_text(program_4, encoding="utf-8")
@@ -154,9 +154,9 @@ git commit -am "finished merging"
 
         console.print(Panel("🔄 RESOLVE MERGE CONFLICT\nChoose an option to resolve the conflict:", title_align="left", border_style="blue"))
 
-        print(f"• {option1:75} 👉 {shell_file_1}")
+        print(f"• {option1:75} 👉 {uv_command_1}")
         print(f"• {option2:75} 👉 {shell_file_2}")
-        print(f"• {option3:75} 👉 {shell_file_3}")
+        print(f"• {option3:75} 👉 {uv_command_3}")
         print(f"• {option4:75} 👉 {shell_file_4}")
         print("\n\n")
 
@@ -166,21 +166,21 @@ git commit -am "finished merging"
                 import questionary
                 choice = questionary.select("Choose one option:", choices=[option1, option2, option3, option4]).ask()
                 if choice == option1:
-                    program_content = shell_file_1.read_text(encoding="utf-8")
+                    program_content = uv_command_1
                 elif choice == option2:
                     program_content = program_2
                 elif choice == option3:
-                    program_content = shell_file_3.read_text(encoding="utf-8")
+                    program_content = uv_command_3
                 elif choice == option4:
                     program_content = program_4
                 else:
                     raise NotImplementedError(f"Choice {choice} not implemented.")
             case "push-local-merge":
-                program_content = shell_file_1.read_text(encoding="utf-8")
+                program_content = uv_command_1
             case "overwrite-local":
                 program_content = program_2
             case "stop-on-conflict":
-                program_content = shell_file_3.read_text(encoding="utf-8")
+                program_content = uv_command_3
             case "remove-rclone-conflict":
                 program_content = program_4
             case _:

@@ -189,10 +189,10 @@ class SSH:
     def run_py(self, python_code: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str],
                description: str, verbose_output: bool, strict_stderr: bool, strict_return_code: bool) -> Response:
         from machineconfig.utils.accessories import randstr
-        cmd_path = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/runpy_{randstr()}.py")
-        cmd_path.parent.mkdir(parents=True, exist_ok=True)
-        cmd_path.write_text(python_code, encoding="utf-8")
-        self.copy_from_here(source_path=cmd_path, target_path=None, compress_with_zip=False, recursive=False, overwrite_existing=False)
+        py_path = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/runpy_{randstr()}.py")
+        py_path.parent.mkdir(parents=True, exist_ok=True)
+        py_path.write_text(python_code, encoding="utf-8")
+        self.copy_from_here(source_path=py_path, target_path=None, compress_with_zip=False, recursive=False, overwrite_existing=False)
         if uv_with is not None and len(uv_with) > 0:
             with_clause = " --with " + '"' + ",".join(uv_with) + '"'
         else:
@@ -201,7 +201,7 @@ class SSH:
             with_clause += f" --project {uv_project_dir}"
         else:
             with_clause += ""
-        uv_cmd = f"""{UV_RUN_CMD} {with_clause} python {cmd_path.relative_to(Path.home())}"""
+        uv_cmd = f"""{UV_RUN_CMD} {with_clause} python {py_path.relative_to(Path.home())}"""
         return self.run_shell(command=uv_cmd, verbose_output=verbose_output, description=description or f"run_py on {self.get_remote_repr(add_machine=False)}", strict_stderr=strict_stderr, strict_return_code=strict_return_code)
 
     def run_py_func(self, func: Callable[..., Any], uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> Response:
