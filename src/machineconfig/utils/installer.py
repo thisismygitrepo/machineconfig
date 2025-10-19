@@ -123,9 +123,14 @@ def dynamically_extract_installers_system_groups_from_scripts():
     res_final: list[InstallerData] = []
     from platform import system
     if system() == "Windows":
-        options_system = parse_apps_installer_windows(LIBRARY_ROOT.joinpath("setup_windows/apps.ps1").read_text(encoding="utf-8"))
+        from machineconfig.setup_windows import APPS
+        options_system = parse_apps_installer_windows(APPS.read_text(encoding="utf-8"))
     elif system() == "Linux" or system() == "Darwin":
-        options_system = parse_apps_installer_linux(LIBRARY_ROOT.joinpath("setup_linux/apps.sh").read_text(encoding="utf-8"))
+        from machineconfig.setup_linux import APPS
+        options_system = parse_apps_installer_linux(APPS.read_text(encoding="utf-8"))
+    elif system() == "Darwin":
+        from machineconfig.setup_macos import APPS
+        options_system = parse_apps_installer_linux(APPS.read_text(encoding="utf-8"))
     else:
         raise NotImplementedError(f"❌ System {system()} not supported")
     os_name = get_os_name()

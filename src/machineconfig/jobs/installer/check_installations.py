@@ -221,7 +221,6 @@ APP_SUMMARY_PATH = CONFIG_ROOT.joinpath(f"profile/records/{platform.system().low
 #         #     cli_installers = get_cli_py_installers()
 #         # else: raise NotImplementedError(f"Platform {platform.system().lower()} is not supported yet.")
 
-#         if name == "essentials":
 #             print(f"""
 # {'=' * 150}
 # 📥 DOWNLOAD | Downloading {len(self.data)} apps...

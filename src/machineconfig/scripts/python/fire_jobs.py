@@ -204,19 +204,22 @@ def fire(
     cmd: Annotated[bool, typer.Option("--cmd", "-B", help="Create a cmd fire command to launch the job asynchronously")] = False,
     interactive: Annotated[bool, typer.Option("--interactive", "-i", help="Whether to run the job interactively using IPython")] = False,
     debug: Annotated[bool, typer.Option("--debug", "-d", help="Enable debug mode")] = False,
-    choose_function: Annotated[bool, typer.Option("--choose_function", "-c", help="Choose function interactively")] = False,
+    choose_function: Annotated[bool, typer.Option("--choose-function", "-c", help="Choose function interactively")] = False,
     loop: Annotated[bool, typer.Option("--loop", "-l", help="Infinite recursion (runs again after completion/interruption)")] = False,
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="Open in a jupyter notebook")] = False,
-    submit_to_cloud: Annotated[bool, typer.Option("--submit_to_cloud", "-C", help="Submit to cloud compute")] = False,
-    remote: Annotated[bool, typer.Option("--remote", "-r", help="Launch on a remote machine")] = False,
     module: Annotated[bool, typer.Option("--module", "-m", help="Launch the main file")] = False,
+    optimized: Annotated[bool, typer.Option("--optimized", "-O", help="Run the optimized version of the function")] = False,
+    zellij_tab: Annotated[Optional[str], typer.Option("--zellij-tab", "-z", help="Open in a new zellij tab")] = None,
+    
+    submit_to_cloud: Annotated[bool, typer.Option("--submit-to-cloud", "-C", help="Submit to cloud compute")] = False,
+    remote: Annotated[bool, typer.Option("--remote", "-r", help="Launch on a remote machine")] = False,
+
     streamlit: Annotated[bool, typer.Option("--streamlit", "-S", help="Run as streamlit app")] = False,
     environment: Annotated[str, typer.Option("--environment", "-E", help="Choose ip, localhost, hostname or arbitrary url")] = "",
     holdDirectory: Annotated[bool, typer.Option("--holdDirectory", "-D", help="Hold current directory and avoid cd'ing to the script directory")] = False,
     PathExport: Annotated[bool, typer.Option("--PathExport", "-P", help="Augment the PYTHONPATH with repo root")] = False,
-    git_pull: Annotated[bool, typer.Option("--git_pull", "-g", help="Start by pulling the git repo")] = False,
-    optimized: Annotated[bool, typer.Option("--optimized", "-O", help="Run the optimized version of the function")] = False,
-    zellij_tab: Annotated[Optional[str], typer.Option("--zellij_tab", "-z", help="Open in a new zellij tab")] = None,
+
+    git_pull: Annotated[bool, typer.Option("--git-pull", "-g", help="Start by pulling the git repo")] = False,
     watch: Annotated[bool, typer.Option("--watch", "-w", help="Watch the file for changes")] = False,
 ) -> None:
     """Main function to process fire jobs arguments."""
@@ -254,7 +257,6 @@ def fire(
     except Exception as e:
         # For other exceptions, print clean error message and exit
         import sys
-
         print(f"❌ Error: {e}", file=sys.stderr)
         sys.exit(1)
 

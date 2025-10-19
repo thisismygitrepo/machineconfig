@@ -40,7 +40,7 @@ def install(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-n
     else:
         import platform
         if platform.system() == "Windows":
-            run_shell_script(r"""$HOME\.local\bin\uv.exe tool install --upgrade "machineconfig>=6.51" """)
+            run_shell_script(r"""& "$HOME\.local\bin\uv.exe" tool install --upgrade "machineconfig>=6.51" """)
         else:
             run_shell_script("""$HOME/.local/bin/uv tool install --upgrade "machineconfig>=6.51" """)
     from machineconfig.profile.create_shell_profile import create_default_shell_profile

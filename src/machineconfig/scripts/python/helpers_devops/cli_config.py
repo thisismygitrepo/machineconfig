@@ -36,6 +36,7 @@ def shell():
     from machineconfig.profile.create_shell_profile import create_default_shell_profile
     create_default_shell_profile()
 
+
 def path():
     """📚 NAVIGATE PATH variable with TUI"""
     from machineconfig.scripts.python import env_manager as navigator
@@ -78,7 +79,7 @@ def get_app():
     config_apps.command("path", no_args_is_help=False, help="📚  [p] NAVIGATE PATH variable with TUI")(path)
     config_apps.command("p", no_args_is_help=False, help="NAVIGATE PATH variable with TUI", hidden=True)(path)
     config_apps.command("pwsh-theme", no_args_is_help=False, help="🔗  [t] Select powershell prompt theme.")(pwsh_theme)
-    config_apps.command("t", no_args_is_help=True, help="Select powershell prompt theme.", hidden=True)(pwsh_theme)
+    config_apps.command("t", no_args_is_help=False, help="Select powershell prompt theme.", hidden=True)(pwsh_theme)
     config_apps.command("copy-assets", no_args_is_help=True, help="🔗  [c] Copy asset files from library to machine.", hidden=False)(copy_assets)
     config_apps.command("c", no_args_is_help=True, help="Copy asset files from library to machine.", hidden=True)(copy_assets)
     return config_apps

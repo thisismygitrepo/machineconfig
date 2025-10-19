@@ -2145,6 +2145,23 @@
       }
     },
     {
+      "appName": "cline",
+      "repoURL": "CMD",
+      "doc": "Cline agent extension in the terminal",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "npm install -g cline",
+          "windows": "npm install -g cline",
+          "macos": "npm install -g cline"
+        },
+        "arm64": {
+          "linux": "npm install -g cline",
+          "windows": "npm install -g cline",
+          "macos": "npm install -g cline"
+        }
+      }
+    },
+    {
       "appName": "copilot",
       "repoURL": "CMD",
       "doc": "Terminal-based CLI agents and tools for productivity and coding.",
