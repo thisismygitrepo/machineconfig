@@ -1,4 +1,15 @@
 #!/bin/bash
+# Record script start time for runtime measurement
+_START_TIME_NS=$(date +%s%N)
+_show_elapsed() {
+    local _end_ns _elapsed_ns _secs _ms
+    _end_ns=$(date +%s%N)
+    _elapsed_ns=$((_end_ns - _START_TIME_NS))
+    _secs=$((_elapsed_ns / 1000000000))
+    _ms=$((_elapsed_ns / 1000000 % 1000))
+    printf "Script runtime: %d.%03d seconds\n" "$_secs" "$_ms"
+}
+
 # 🛠️ Bash Shell Configuration and Initialization
 
 add_to_path_if_not_already() {
@@ -73,4 +84,7 @@ eval "$(starship init bash)"
 # LEVE THIS IN THE END TO AVOID EXECUTION FAILURE OF THE REST OF THE SCRIPT
 # from https://github.com/cantino/mcfly
 eval "$(mcfly init bash)"
+
+# Show elapsed runtime
+_show_elapsed
 
