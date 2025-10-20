@@ -2,7 +2,7 @@
 
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.source_of_truth import CONFIG_ROOT
-
+from pathlib import Path
 import platform
 import os
 import subprocess
@@ -28,7 +28,9 @@ def get_shell_profile_path() -> PathExtended:
             print(f"stderr: {result.stderr}")
             raise ValueError(f"""Could not get profile path for Windows. Got stdout: {result.stdout}, stderr: {result.stderr}""")
     elif system == "Linux":
-        profile_path = PathExtended("~/.bashrc").expanduser()
+        profile_path = Path.home().joinpath(".bashrc")
+    elif system == "Darwin":
+        profile_path = Path.home().joinpath(".zshrc")
     else:
         raise ValueError(f"""Not implemented for this system {system}""")
     console.print(Panel(f"""🐚 SHELL PROFILE | Working with path: `{profile_path}`""", title="[bold blue]Shell Profile[/bold blue]", border_style="blue"))
