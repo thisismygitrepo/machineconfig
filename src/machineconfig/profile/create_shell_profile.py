@@ -48,9 +48,14 @@ def create_default_shell_profile() -> None:
     if system == "Windows":
         init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/pwsh/init.ps1")
         source_line = f""". {str(init_script.collapseuser(placeholder="$HOME"))}"""
-    else:
+    elif system == "Linux":
         init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/bash/init.sh")
         source_line = f"""source {str(init_script.collapseuser(placeholder="$HOME"))}"""
+    elif system == "Darwin":
+        init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/zsh/init.sh")
+        source_line = f"""source {str(init_script.collapseuser(placeholder="$HOME"))}"""
+    else:
+        raise ValueError(f"""Not implemented for this system {system}""")
 
     was_shell_updated = False
     if source_line in shell_profile:

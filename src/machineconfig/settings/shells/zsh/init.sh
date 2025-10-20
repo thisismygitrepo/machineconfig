@@ -79,12 +79,12 @@ alias u=utils
 # source /home/alex/.config/broot/launcher/bash/br
 # eval "$(thefuck --alias)"
 # from https://github.com/ajeetdsouza/zoxide
-eval "$(zoxide init bash)"
+eval "$(zoxide init zsh)"
 # from https://github.com/starship/starship
-eval "$(starship init bash)"
+eval "$(starship init zsh)"
 # LEVE THIS IN THE END TO AVOID EXECUTION FAILURE OF THE REST OF THE SCRIPT
 # from https://github.com/cantino/mcfly
-eval "$(mcfly init bash)"
+eval "$(mcfly init zsh)"
 
 # Show elapsed runtime
 # _show_elapsed
