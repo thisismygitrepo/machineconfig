@@ -17,11 +17,11 @@ console = Console()
 BOX_WIDTH = 100  # Define BOX_WIDTH or get it from a config
 
 
-def get_shell_profile_path() -> PathExtended:
+def get_shell_profile_path() -> Path:
     if system == "Windows":
         result = subprocess.run(["pwsh", "-Command", "$PROFILE"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False)
         if result.returncode == 0 and result.stdout.strip():
-            profile_path = PathExtended(result.stdout.strip())
+            profile_path = Path(result.stdout.strip())
         else:
             print(f"Command failed with return code {result.returncode}")
             print(f"stdout: {result.stdout}")

@@ -65,8 +65,8 @@ def croshell(
         text = f"📄 Reading data from: {file_obj.name}"
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
     else:  # if nothing is specified, then run in interactive mode.
-        text = "⌨️  Entering interactive mode"
-        console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
+        # text = "⌨️  Entering interactive mode"
+        # console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
         # from machineconfig.scripts.python.croshell import InteractiveShell
         # InteractiveShell().run()
         # return None
