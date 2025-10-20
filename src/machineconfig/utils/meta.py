@@ -4,10 +4,11 @@ from collections.abc import Callable
 from typing import Any
 
 
-def lambda_to_defstring(lmb: Callable[[], Any], in_global: bool = False) -> str:
+def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool) -> str:
     """
     caveats: always use keyword arguments in the lambda call for best results.
     return statement not allowed in the wrapped function (otherwise it can be put in the global space)
+    type hint in kwargs has nothing that is not built in, e.g. Optional will not work as it requires an import.
 
     Given a no-arg lambda like `lambda: func(a=var1, b=var2)`,
     return a string containing the full function definition of `func`

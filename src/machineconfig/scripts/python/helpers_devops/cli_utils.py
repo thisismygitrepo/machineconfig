@@ -84,7 +84,7 @@ def merge_pdfs(
         output: Annotated[Optional[str], typer.Option("--output", "-o", help="Output merged PDF file path.")] = None,
         compress: Annotated[bool, typer.Option("--compress", "-c", help="Compress the output PDF.")] = False,
     ) -> None:
-    def merge_pdfs_internal(pdf1: str, pdf2: str, output: Optional[str], compress: bool) -> None:
+    def merge_pdfs_internal(pdf1: str, pdf2: str, output: str | None, compress: bool) -> None:
         from pypdf import PdfReader, PdfWriter
         writer = PdfWriter()
         for pdf_path in [pdf1, pdf2]:
@@ -110,19 +110,8 @@ def merge_pdfs(
                 pass
         writer.write(output_path)
         print(f"✅ Merged PDF saved to: {output_path}")
-    from machineconfig.utils.meta import lambda_to_defstring
-    code = lambda_to_defstring(lambda : merge_pdfs_internal(pdf1=pdf1, pdf2=pdf2, output=output, compress=compress), in_global=True)
-    import tempfile
-    tmp_py_file = Path(tempfile.mkstemp(suffix=".py")[1])
-    tmp_py_file.write_text(code, encoding="utf-8")
-    from machineconfig.utils.code import run_shell_script
-    run_shell_script(f"""uv run --with pypdf {tmp_py_file} """)
-
-
-def get_app() -> typer.Typer:
-    app = typer.Typer(help="🛠️ [u]  utilities operations", no_args_is_help=True, add_help_option=False, add_completion=False)
-    app.command(name="download", no_args_is_help=True, help="[d] Download a file from a URL and optionally decompress it.")(download)
-    app.command(name="d", no_args_is_help=True, hidden=True)(download)
-    app.command(name="merge-pdfs", no_args_is_help=True, help="[m] Merge two PDF files into one.")(merge_pdfs)
-    app.command(name="m", no_args_is_help=True, hidden=True)(merge_pdfs)
-    return app
+    from machineconfig.utils.meta import lambda_to_python_script
+    code = lambda_to_python_script(lambda : merge_pdfs_internal(pdf1=pdf1, pdf2=pdf2, output=output, compress=compress), in_global=True)
+    from machineconfig.utils.code import run_shell_script, get_uv_command_executing_python_script
+    uv_command, _py_file = get_uv_command_executing_python_script(python_script=code, uv_with=["pypdf"], uv_project_dir=None)
+    run_shell_script(uv_command)

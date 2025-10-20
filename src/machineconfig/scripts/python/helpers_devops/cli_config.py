@@ -42,10 +42,14 @@ def path():
     from machineconfig.scripts.python import env_manager as navigator
     from pathlib import Path
     path = Path(navigator.__file__).resolve().parent.joinpath("path_manager_tui.py")
-    from machineconfig.utils.code import run_shell_script
-    if not Path.home().joinpath("code/machineconfig").exists(): executable = """--with "machineconfig>=6.52,textual" """
-    else: executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
-    run_shell_script(f"""uv run {executable} {path}""")
+    from machineconfig.utils.code import run_shell_script, get_uv_command_executing_python_script
+    uv_with = ["textual"]
+    uv_project_dir = None
+    if not Path.home().joinpath("code/machineconfig").exists():
+        uv_with.append("machineconfig>=6.57")
+    else:
+        uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
+    run_shell_script(get_uv_command_executing_python_script(python_script=path.read_text(encoding="utf-8"), uv_with=uv_with, uv_project_dir=uv_project_dir)[0])
 
 
 def pwsh_theme():
