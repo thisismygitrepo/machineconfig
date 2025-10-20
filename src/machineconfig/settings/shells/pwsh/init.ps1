@@ -34,10 +34,10 @@ Set-Alias -Name l -Value lsdla -Option AllScope
 function d { devops @args }
 function c { cloud @args }
 function a { agents @args }
-function s { sessions @args }
+function ss { sessions @args }
 function ff { ftpx @args }
 function f { fire @args }
-function r { croshell @args }
+function rr { croshell @args }
 function u { utils @args }
 
 # try {

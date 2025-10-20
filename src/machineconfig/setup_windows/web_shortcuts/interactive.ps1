@@ -7,9 +7,9 @@ function mcfg {
 function d { mcfg devops @args }
 function c { mcfg cloud @args }
 function a { mcfg agents @args }
-function s { mcfg sessions @args }
+function ss { mcfg sessions @args }
 function ff { mcfg ftpx @args }
 function f { mcfg fire @args }
-function r { mcfg croshell @args }
+function rr { mcfg croshell @args }
 function u { mcfg utils @args }
 Write-Host "mcfg command aliases are now defined in this PowerShell session."
