@@ -4,7 +4,32 @@ from collections.abc import Callable
 from typing import Any
 
 
-def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool) -> str:
+def get_import_module_string(py_file: str):
+    from machineconfig.scripts.python.helpers_fire.helpers4 import get_import_module_code
+    from machineconfig.utils.accessories import get_repo_root
+    from pathlib import Path
+    repo_root = get_repo_root(Path(py_file))
+    import_line = get_import_module_code(py_file)
+    if repo_root is not None:
+        repo_root_add = f"""sys.path.append(r'{repo_root}')"""
+    else:
+        repo_root_add = ""
+    txt: str = f"""
+try:
+    {import_line}
+except (ImportError, ModuleNotFoundError) as ex:
+    print(fr"❌ Failed to import `{py_file}` as a module: {{ex}} ")
+    print(fr"⚠️ Attempting import with ad-hoc `$PATH` manipulation. DO NOT pickle any objects in this session as correct deserialization cannot be guaranteed.")
+    import sys
+    sys.path.append(r'{Path(py_file).parent}')
+    {repo_root_add}
+    from {Path(py_file).stem} import *
+    print(fr"✅ Successfully imported `{py_file}`")
+"""
+    return txt
+
+
+def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_module: bool = False) -> str:
     """
     caveats: always use keyword arguments in the lambda call for best results.
     return statement not allowed in the wrapped function (otherwise it can be put in the global space)
@@ -20,13 +45,15 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool) -> str:
     Args:
         lmb: A lambda function with no arguments
         in_global: If True, return kwargs as global variable assignments followed by dedented body.
-                   If False (default), return the full function definition with updated defaults.
+                   If False, return the full function definition with updated defaults.
+        import_module: When True, prepend module import bootstrap code for the function's source file.
     """
     # local imports
     import inspect as _inspect
     import ast as _ast
     import textwrap as _textwrap
     import types as _types
+    from pathlib import Path as _Path
 
     # sanity checks
     if not (callable(lmb) and isinstance(lmb, _types.LambdaType)):
@@ -76,6 +103,14 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool) -> str:
         raise TypeError("Resolved object is not callable")
 
     func_name = getattr(func_obj, "__name__", "<unknown>")
+
+    import_prefix: str = ""
+    if import_module:
+        module_file = _inspect.getsourcefile(func_obj)
+        module_path_candidate: str | None = module_file if module_file is not None else _inspect.getfile(func_obj)
+        if module_path_candidate is None:
+            raise RuntimeError("Could not determine source file for function module inspection.")
+        import_prefix = get_import_module_string(str(_Path(module_path_candidate)))
 
     # Evaluate each keyword argument value in the lambda's globals to get real Python objects
     call_kwargs = {}
@@ -174,15 +209,17 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool) -> str:
         
         # Combine global assignments and body
         if global_assignments:
-            result_parts = ["\n".join(global_assignments), "", dedented_body]
-            return "\n".join(result_parts)
+            result_parts: list[str] = ["\n".join(global_assignments), "", dedented_body]
+            result_text = "\n".join(result_parts)
         else:
-            return dedented_body
+            result_text = dedented_body
+    else:
+        header = f"def {func_name}{new_sig}:\n"
+        result_text = header + body_text
 
-    # Compose final function definition text
-    header = f"def {func_name}{new_sig}:\n"
-    final_src = header + body_text
-    return final_src
+    if import_prefix:
+        return f"{import_prefix}{result_text}"
+    return result_text
 
 
 if __name__ == "__main__":

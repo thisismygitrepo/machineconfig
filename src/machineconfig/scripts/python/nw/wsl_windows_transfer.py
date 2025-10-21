@@ -54,7 +54,7 @@ def main(
         hostname = platform.node()
         ssh = SSH(host=None, username=username, hostname=hostname, ssh_key_path=sshkey, password=pwd, port=port_int, enable_compression=False)
         print("🌐 Initiating SSH transfer...")
-        ssh.copy_from_here(source_path=path_obj, target_path=Path(destination) if destination else None, compress_with_zip=zip_first, recursive=False, overwrite_existing=False)
+        ssh.copy_from_here(source_path=str(path_obj), target_rel2home=destination, compress_with_zip=zip_first, recursive=False, overwrite_existing=False)
         print("✅ SSH transfer completed successfully!\n")
 
 
