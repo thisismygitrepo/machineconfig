@@ -1399,7 +1399,7 @@ wheels = [
 
 [[package]]
 name = "machineconfig"
-version = "6.65"
+version = "6.66"
 source = { editable = "." }
 dependencies = [
     { name = "cryptography" },

@@ -8,10 +8,14 @@ from machineconfig.utils.terminal import Response
 from machineconfig.utils.accessories import pprint, randstr
 from machineconfig.utils.meta import lambda_to_python_script
 UV_RUN_CMD = "$HOME/.local/bin/uv run" if platform.system() != "Windows" else """& "$env:USERPROFILE/.local/bin/uv" run"""
-MACHINECONFIG_VERSION = "machineconfig>=6.65"
+MACHINECONFIG_VERSION = "machineconfig>=6.66"
 DEFAULT_PICKLE_SUBDIR = "tmp_results/tmp_scripts/ssh"
 
 class SSH:
+    @staticmethod
+    def from_config_file(host: str) -> "SSH":
+        """Create SSH instance from SSH config file entry."""
+        return SSH(host=host, username=None, hostname=None, ssh_key_path=None, password=None, port=22, enable_compression=False)
     def __init__(
         self, host: Optional[str], username: Optional[str], hostname: Optional[str], ssh_key_path: Optional[str], password: Optional[str], port: int, enable_compression: bool):
         self.password = password
@@ -112,12 +116,36 @@ class SSH:
         from machineconfig.scripts.python.helpers_devops.cli_utils import get_machine_specs
         self.local_specs: MachineSpecs = get_machine_specs()
         resp = self.run_shell(command=f"""~/.local/bin/utils get-machine-specs """, verbose_output=False, description="Getting remote machine specs", strict_stderr=False, strict_return_code=False)
-        # import json
         json_str = resp.op
-        print(f"Remote machine specs JSON: {resp.op}")
         import ast
         self.remote_specs: MachineSpecs = cast(MachineSpecs, ast.literal_eval(json_str))
         self.terminal_responses: list[Response] = []
+        
+        from rich import inspect
+        
+        local_info = dict(distro=self.local_specs.get("distro"), system=self.local_specs.get("system"), home_dir=self.local_specs.get("home_dir"))
+        remote_info = dict(distro=self.remote_specs.get("distro"), system=self.remote_specs.get("system"), home_dir=self.remote_specs.get("home_dir"))
+        
+        console = rich.console.Console()
+        
+        from io import StringIO
+        local_buffer = StringIO()
+        remote_buffer = StringIO()
+        
+        local_console = rich.console.Console(file=local_buffer, width=40)
+        remote_console = rich.console.Console(file=remote_buffer, width=40)
+        
+        inspect(type("LocalInfo", (object,), local_info)(), value=False, title="SSHing From", docs=False, dunder=False, sort=False, console=local_console)
+        inspect(type("RemoteInfo", (object,), remote_info)(), value=False, title="SSHing To", docs=False, dunder=False, sort=False, console=remote_console)
+        
+        local_lines = local_buffer.getvalue().split("\n")
+        remote_lines = remote_buffer.getvalue().split("\n")
+        
+        max_lines = max(len(local_lines), len(remote_lines))
+        for i in range(max_lines):
+            left = local_lines[i] if i < len(local_lines) else ""
+            right = remote_lines[i] if i < len(remote_lines) else ""
+            console.print(f"{left:<42} {right}")
 
     def __enter__(self) -> "SSH":
         return self
@@ -165,8 +193,8 @@ class SSH:
             res.capture().print_if_unsuccessful(desc=description, strict_err=strict_stderr, strict_returncode=strict_return_code, assert_success=False)
         # self.terminal_responses.append(res)
         return res
-    def run_py(self, python_code: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str],
-               description: str, verbose_output: bool, strict_stderr: bool, strict_return_code: bool) -> Response:
+
+    def _run_py_prep(self, python_code: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str],) -> str:
         py_path = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/runpy_{randstr()}.py")
         py_path.parent.mkdir(parents=True, exist_ok=True)
         py_path.write_text(python_code, encoding="utf-8")
@@ -180,13 +208,29 @@ class SSH:
         else:
             with_clause += ""
         uv_cmd = f"""{UV_RUN_CMD} {with_clause} python {py_path.relative_to(Path.home())}"""
+        return uv_cmd
+
+    def run_py(self, python_code: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str],
+               description: str, verbose_output: bool, strict_stderr: bool, strict_return_code: bool) -> Response:
+        uv_cmd = self._run_py_prep(python_code=python_code, uv_with=uv_with, uv_project_dir=uv_project_dir)
         return self.run_shell(command=uv_cmd, verbose_output=verbose_output, description=description or f"run_py on {self.get_remote_repr(add_machine=False)}", strict_stderr=strict_stderr, strict_return_code=strict_return_code)
 
-    def run_lambda_function(self, func: Callable[..., Any], import_module: bool, uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> Response:
+    def run_lambda_function(self, func: Callable[..., Any], import_module: bool, uv_with: Optional[list[str]], uv_project_dir: Optional[str]):
         command = lambda_to_python_script(lmb=func, in_global=True, import_module=import_module)
-        return self.run_py(python_code=command, uv_with=uv_with, uv_project_dir=uv_project_dir,
-                           description=f"run_py_func {func.__name__} on {self.get_remote_repr(add_machine=False)}",
-                           verbose_output=True, strict_stderr=True, strict_return_code=True)
+        # turns ou that the code below for some reason runs but zellij doesn't start, looks like things are assigned to different user.
+        # return self.run_py(python_code=command, uv_with=uv_with, uv_project_dir=uv_project_dir,
+        #                    description=f"run_py_func {func.__name__} on {self.get_remote_repr(add_machine=False)}",
+        #                    verbose_output=True, strict_stderr=True, strict_return_code=True)
+        uv_cmd = self._run_py_prep(python_code=command, uv_with=uv_with, uv_project_dir=uv_project_dir)
+        if self.remote_specs["system"] == "Linux":
+            uv_cmd_modified = f'bash -l -c "{uv_cmd}"'
+        else: uv_cmd_modified = uv_cmd
+        # This works even withou the modified uv cmd:
+        # from machineconfig.utils.code import run_shell_script
+        # assert self.host is not None, "SSH host must be specified to run remote commands"
+        # process = run_shell_script(f"ssh {self.host} -n '. ~/.profile; . ~/.bashrc; {uv_cmd}'")
+        # return process
+        return self.run_shell(command=uv_cmd_modified, verbose_output=True, description=f"run_py_func {func.__name__} on {self.get_remote_repr(add_machine=False)}", strict_stderr=True, strict_return_code=True)
 
     def _simple_sftp_get(self, remote_path: str, local_path: Path) -> None:
         """Simple SFTP get without any recursion or path expansion - for internal use only."""
