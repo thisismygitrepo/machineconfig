@@ -35,7 +35,8 @@ class Response:
     def __call__(self, *args: Any, **kwargs: Any) -> Optional[str]:
         _ = args, kwargs
         return self.op.rstrip() if type(self.op) is str else None
-
+    def __repr__(self) -> str:
+        return f"Response({self.input=}, {self.output=}, {self.desc=}, {self.op=}, {self.ip=}, {self.err=}, {self.returncode=})"
     @property
     def op(self) -> str:
         return self.output.stdout

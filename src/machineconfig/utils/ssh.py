@@ -111,9 +111,11 @@ class SSH:
         self.tqdm_wrap = RichProgressWrapper
         from machineconfig.scripts.python.helpers_devops.cli_utils import get_machine_specs
         self.local_specs: MachineSpecs = get_machine_specs()
-        resp = self.run_shell(command=f"""utils get-machine-specs """, verbose_output=False, description="Getting remote machine specs", strict_stderr=False, strict_return_code=False)
+        resp = self.run_shell(command=f"""~/.local/bin/utils get-machine-specs """, verbose_output=False, description="Getting remote machine specs", strict_stderr=False, strict_return_code=False)
         import json
-        self.remote_specs: MachineSpecs = cast(MachineSpecs, json.loads(resp.capture().op))
+        json_str = resp.op
+        print(f"Remote machine specs JSON: {resp}")
+        self.remote_specs: MachineSpecs = cast(MachineSpecs, json.loads(json_str))
         self.terminal_responses: list[Response] = []
 
     def __enter__(self) -> "SSH":
@@ -160,7 +162,7 @@ class SSH:
             res.print()
         else:
             res.capture().print_if_unsuccessful(desc=description, strict_err=strict_stderr, strict_returncode=strict_return_code, assert_success=False)
-        self.terminal_responses.append(res)
+        # self.terminal_responses.append(res)
         return res
     def run_py(self, python_code: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str],
                description: str, verbose_output: bool, strict_stderr: bool, strict_return_code: bool) -> Response:
@@ -247,7 +249,7 @@ class SSH:
             with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
                 if self.sftp is None:  # type: ignore[unreachable]
                     raise RuntimeError(f"SFTP connection lost for {self.hostname}")
-                self.sftp.put(localpath=str(source_obj), remotepath=target_rel2home, callback=pbar.view_bar)  # type: ignore
+                self.sftp.put(localpath=str(source_obj), remotepath=str(Path(self.remote_specs["home_dir"]).joinpath(target_rel2home)), callback=pbar.view_bar)
         except Exception:
             if compress_with_zip and source_obj.exists() and str(source_obj).endswith("_archive.zip"):
                 source_obj.unlink()
@@ -265,12 +267,12 @@ class SSH:
                 with zipfile.ZipFile(archive_path, "r") as archive_handle:
                     archive_handle.extractall(extraction_directory)
                 archive_path.unlink()
-            command = lambda_to_python_script(lmb=lambda: unzip_archive(zip_file_path=target_rel2home, overwrite_flag=overwrite_existing), in_global=True)
+            command = lambda_to_python_script(lmb=lambda: unzip_archive(zip_file_path=str(Path(self.remote_specs["home_dir"]).joinpath(target_rel2home)), overwrite_flag=overwrite_existing), in_global=True)
             tmp_py_file = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/create_target_dir_{randstr()}.py")
             tmp_py_file.parent.mkdir(parents=True, exist_ok=True)
             tmp_py_file.write_text(command, encoding="utf-8")
             transferred_py_file = self.copy_from_here(source_path=str(tmp_py_file), target_rel2home=None, compress_with_zip=True, recursive=False, overwrite_existing=True)
-            self.run_shell(command=f"""{UV_RUN_CMD} python {transferred_py_file}""", verbose_output=False, description=f"UNZIPPING {remotepath.as_posix()}", strict_stderr=True, strict_return_code=True)
+            self.run_shell(command=f"""{UV_RUN_CMD} python {transferred_py_file}""", verbose_output=False, description=f"UNZIPPING {target_rel2home}", strict_stderr=True, strict_return_code=True)
             source_obj.unlink()
         return None
 
@@ -560,3 +562,5 @@ class SSH:
         print("\n")
         return target_obj
 
+if __name__ == "__main__":
+    ssh = SSH(host="p51s", username=None, hostname=None, ssh_key_path=None, password=None, port=22, enable_compression=False)
