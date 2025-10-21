@@ -8,7 +8,7 @@ from machineconfig.utils.terminal import Response
 from machineconfig.utils.accessories import pprint, randstr
 from machineconfig.utils.meta import lambda_to_python_script
 UV_RUN_CMD = "$HOME/.local/bin/uv run" if platform.system() != "Windows" else """& "$env:USERPROFILE/.local/bin/uv" run"""
-MACHINECONFIG_VERSION = "machineconfig>=6.64"
+MACHINECONFIG_VERSION = "machineconfig>=6.65"
 DEFAULT_PICKLE_SUBDIR = "tmp_results/tmp_scripts/ssh"
 
 class SSH:
@@ -182,8 +182,8 @@ class SSH:
         uv_cmd = f"""{UV_RUN_CMD} {with_clause} python {py_path.relative_to(Path.home())}"""
         return self.run_shell(command=uv_cmd, verbose_output=verbose_output, description=description or f"run_py on {self.get_remote_repr(add_machine=False)}", strict_stderr=strict_stderr, strict_return_code=strict_return_code)
 
-    def run_lambda_function(self, func: Callable[..., Any], uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> Response:
-        command = lambda_to_python_script(lmb=func, in_global=True)
+    def run_lambda_function(self, func: Callable[..., Any], import_module: bool, uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> Response:
+        command = lambda_to_python_script(lmb=func, in_global=True, import_module=import_module)
         return self.run_py(python_code=command, uv_with=uv_with, uv_project_dir=uv_project_dir,
                            description=f"run_py_func {func.__name__} on {self.get_remote_repr(add_machine=False)}",
                            verbose_output=True, strict_stderr=True, strict_return_code=True)
@@ -207,7 +207,7 @@ class SSH:
                 else:
                     directory_path.unlink()
             directory_path.parent.mkdir(parents=True, exist_ok=True)
-        command = lambda_to_python_script(lmb=lambda: create_target_dir(target_rel2home=path_rel2home, overwrite=overwrite_existing), in_global=True)
+        command = lambda_to_python_script(lmb=lambda: create_target_dir(target_rel2home=path_rel2home, overwrite=overwrite_existing), in_global=True, import_module=False)
         tmp_py_file = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/create_target_dir_{randstr()}.py")
         tmp_py_file.parent.mkdir(parents=True, exist_ok=True)
         tmp_py_file.write_text(command, encoding="utf-8")
@@ -270,7 +270,7 @@ class SSH:
                 with zipfile.ZipFile(archive_path, "r") as archive_handle:
                     archive_handle.extractall(extraction_directory)
                 archive_path.unlink()
-            command = lambda_to_python_script(lmb=lambda: unzip_archive(zip_file_path=str(Path(self.remote_specs["home_dir"]).joinpath(target_rel2home)), overwrite_flag=overwrite_existing), in_global=True)
+            command = lambda_to_python_script(lmb=lambda: unzip_archive(zip_file_path=str(Path(self.remote_specs["home_dir"]).joinpath(target_rel2home)), overwrite_flag=overwrite_existing), in_global=True, import_module=False)
             tmp_py_file = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/create_target_dir_{randstr()}.py")
             tmp_py_file.parent.mkdir(parents=True, exist_ok=True)
             tmp_py_file.write_text(command, encoding="utf-8")
@@ -291,7 +291,7 @@ class SSH:
             print(json_result_path.as_posix())
             return is_directory
         remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
-        command = lambda_to_python_script(lmb=lambda: check_is_dir(path_to_check=str(source_path), json_output_path=remote_json_output), in_global=True)
+        command = lambda_to_python_script(lmb=lambda: check_is_dir(path_to_check=str(source_path), json_output_path=remote_json_output), in_global=True, import_module=False)
         response = self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description=f"Check if source `{source_path}` is a dir", verbose_output=False, strict_stderr=False, strict_return_code=False)
         remote_json_path = response.op.strip()
         if not remote_json_path:
@@ -325,7 +325,7 @@ class SSH:
         
         
         remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
-        command = lambda_to_python_script(lmb=lambda: expand_source(path_to_expand=str(source_path), json_output_path=remote_json_output), in_global=True)
+        command = lambda_to_python_script(lmb=lambda: expand_source(path_to_expand=str(source_path), json_output_path=remote_json_output), in_global=True, import_module=False)
         response = self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description="Resolving source path by expanding user", verbose_output=False, strict_stderr=False, strict_return_code=False)
         remote_json_path = response.op.strip()
         if not remote_json_path:
@@ -374,7 +374,7 @@ class SSH:
                 
                 
                 remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
-                command = lambda_to_python_script(lmb=lambda: search_files(directory_path=expanded_source, json_output_path=remote_json_output), in_global=True)
+                command = lambda_to_python_script(lmb=lambda: search_files(directory_path=expanded_source, json_output_path=remote_json_output), in_global=True, import_module=False)
                 response = self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description="Searching for files in source", verbose_output=False, strict_stderr=False, strict_return_code=False)
                 remote_json_path = response.op.strip()
                 if not remote_json_path:
@@ -412,7 +412,7 @@ class SSH:
                     
                     
                     remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
-                    command = lambda_to_python_script(lmb=lambda: collapse_to_home_dir(absolute_path=expanded_source, json_output_path=remote_json_output), in_global=True)
+                    command = lambda_to_python_script(lmb=lambda: collapse_to_home_dir(absolute_path=expanded_source, json_output_path=remote_json_output), in_global=True, import_module=False)
                     response = self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description="Finding default target via relative source path", verbose_output=False, strict_stderr=False, strict_return_code=False)
                     remote_json_path_dir = response.op.strip()
                     if not remote_json_path_dir:
@@ -464,7 +464,7 @@ class SSH:
             
             
             remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
-            command = lambda_to_python_script(lmb=lambda: zip_source(path_to_zip=expanded_source, json_output_path=remote_json_output), in_global=True)
+            command = lambda_to_python_script(lmb=lambda: zip_source(path_to_zip=expanded_source, json_output_path=remote_json_output), in_global=True, import_module=False)
             response = self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description=f"Zipping source file {source}", verbose_output=False, strict_stderr=False, strict_return_code=False)
             remote_json_path = response.op.strip()
             if not remote_json_path:
@@ -503,7 +503,7 @@ class SSH:
             
             
             remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
-            command = lambda_to_python_script(lmb=lambda: collapse_to_home(absolute_path=expanded_source, json_output_path=remote_json_output), in_global=True)
+            command = lambda_to_python_script(lmb=lambda: collapse_to_home(absolute_path=expanded_source, json_output_path=remote_json_output), in_global=True, import_module=False)
             response = self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description="Finding default target via relative source path", verbose_output=False, strict_stderr=False, strict_return_code=False)
             remote_json_path = response.op.strip()
             if not remote_json_path:
@@ -559,7 +559,7 @@ class SSH:
                         file_or_dir_path.unlink()
             
             
-            command = lambda_to_python_script(lmb=lambda: delete_temp_zip(path_to_delete=expanded_source), in_global=True)
+            command = lambda_to_python_script(lmb=lambda: delete_temp_zip(path_to_delete=expanded_source), in_global=True, import_module=False)
             self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description="Cleaning temp zip files @ remote.", verbose_output=False, strict_stderr=True, strict_return_code=True)
         
         print("\n")

@@ -29,7 +29,7 @@ except (ImportError, ModuleNotFoundError) as ex:
     return txt
 
 
-def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_module: bool = False) -> str:
+def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_module: bool) -> str:
     """
     caveats: always use keyword arguments in the lambda call for best results.
     return statement not allowed in the wrapped function (otherwise it can be put in the global space)
@@ -107,9 +107,7 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
     import_prefix: str = ""
     if import_module:
         module_file = _inspect.getsourcefile(func_obj)
-        module_path_candidate: str | None = module_file if module_file is not None else _inspect.getfile(func_obj)
-        if module_path_candidate is None:
-            raise RuntimeError("Could not determine source file for function module inspection.")
+        module_path_candidate: str = module_file if module_file is not None else _inspect.getfile(func_obj)
         import_prefix = get_import_module_string(str(_Path(module_path_candidate)))
 
     # Evaluate each keyword argument value in the lambda's globals to get real Python objects

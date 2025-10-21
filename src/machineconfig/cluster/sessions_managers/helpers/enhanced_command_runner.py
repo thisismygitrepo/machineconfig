@@ -95,17 +95,15 @@ def enhanced_zellij_session_start(session_name: str, layout_path: str) -> Dict[s
     # Start new session (use -b for background to avoid hanging)
     start_cmd = f"zellij --layout {layout_path} a -b {session_name}"
     start_result = run_enhanced_command(
-        start_cmd,
-        f"Starting session '{session_name}' with layout",
-        False,
-        10,  # Add timeout to prevent hanging
+        command=start_cmd, description=f"Starting session '{session_name}' with layout", show_progress=False,
+        timeout=10,  # Add timeout to prevent hanging
     )
-
     if start_result["success"]:
         console.print(Panel(f"[bold green]✅ Session '{session_name}' is now running![/bold green]\n[dim]Layout: {layout_path}[/dim]", style="green", title="🎉 Success"))
     else:
         console.print(Panel(f"[bold red]❌ Failed to start session '{session_name}'[/bold red]\n[red]{start_result.get('stderr', 'Unknown error')}[/red]", style="red", title="💥 Error"))
-
+    # print("Sleeping for 3 seconds to allow zellij to initialize...")
+    # time.sleep(3)  # Brief pause for readability
     return start_result
 
 
