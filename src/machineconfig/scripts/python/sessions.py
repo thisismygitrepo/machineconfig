@@ -130,10 +130,6 @@ def run(ctx: typer.Context,
         print(f"❌ Unsupported platform: {platform.system()}")
 
 
-def kill_process():
-    from machineconfig.utils.procs import main
-    main()
-
 def get_app():
     layouts_app = typer.Typer(help="Layouts management subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
     from machineconfig.scripts.python.helpers_sessions.sessions_multiprocess import create_from_function
@@ -143,8 +139,6 @@ def get_app():
     layouts_app.command("r", no_args_is_help=True, help="Run the selected layout(s)", hidden=True)(run)
     layouts_app.command("balance-load", no_args_is_help=True, help="[b] Balance the load across sessions")(balance_load)
     layouts_app.command("b", no_args_is_help=True, help="Balance the load across sessions", hidden=True)(balance_load)
-    layouts_app.command("kill-process", no_args_is_help=False, help="[k] Choose a process to kill")(kill_process)
-    layouts_app.command("k", no_args_is_help=False, help="Choose a process to kill", hidden=True)(kill_process)
 
     return layouts_app
 
