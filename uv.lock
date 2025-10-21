@@ -1399,7 +1399,7 @@ wheels = [
 
 [[package]]
 name = "machineconfig"
-version = "6.61"
+version = "6.63"
 source = { editable = "." }
 dependencies = [
     { name = "cryptography" },
@@ -1407,6 +1407,7 @@ dependencies = [
     { name = "gitpython" },
     { name = "joblib" },
     { name = "paramiko" },
+    { name = "polars" },
     { name = "psutil" },
     { name = "pyfzf" },
     { name = "questionary" },
@@ -1493,6 +1494,7 @@ requires-dist = [
     { name = "numpy", marker = "extra == 'plot'", specifier = ">=2.3.3" },
     { name = "paramiko", specifier = ">=3.5.1" },
     { name = "plotly", marker = "extra == 'plot'", specifier = ">=6.3.0" },
+    { name = "polars", specifier = ">=1.34.0" },
     { name = "polars", marker = "extra == 'plot'", specifier = ">=1.33.1" },
     { name = "psutil", specifier = ">=7.0.0" },
     { name = "pyfzf", specifier = ">=0.3.1" },
