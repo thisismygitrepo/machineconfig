@@ -1,15 +1,15 @@
-from typing import Callable, Optional, Any, Union
+from typing import Callable, Optional, Any, Union, cast
 import os
 from pathlib import Path
 import platform
+from machineconfig.scripts.python.helpers_devops.cli_utils import MachineSpecs
 import rich.console
-from machineconfig.utils.terminal import Response, MACHINE
-from machineconfig.utils.accessories import pprint
-
+from machineconfig.utils.terminal import Response
+from machineconfig.utils.accessories import pprint, randstr
+from machineconfig.utils.meta import lambda_to_python_script
 UV_RUN_CMD = "$HOME/.local/bin/uv run" if platform.system() != "Windows" else """& "$env:USERPROFILE/.local/bin/uv" run"""
 MACHINECONFIG_VERSION = "machineconfig>=6.61"
 DEFAULT_PICKLE_SUBDIR = "tmp_results/tmp_scripts/ssh"
-
 
 class SSH:
     def __init__(
@@ -22,7 +22,6 @@ class SSH:
         self.username: str
         self.port: int = port
         self.proxycommand: Optional[str] = None
-        import platform
         import paramiko  # type: ignore
         import getpass
 
@@ -109,13 +108,13 @@ class SSH:
             def view_bar(self, transferred: int, total: int) -> None:
                 if self.progress and self.task is not None:
                     self.progress.update(self.task, completed=transferred, total=total)
-
         self.tqdm_wrap = RichProgressWrapper
-        self._local_distro: Optional[str] = None
-        self._remote_distro: Optional[str] = None
-        self._remote_machine: Optional[MACHINE] = None
+        from machineconfig.scripts.python.helpers_devops.cli_utils import get_machine_specs
+        self.local_specs: MachineSpecs = get_machine_specs()
+        resp = self.run_shell(command=f"""utils get-machine-specs """, verbose_output=False, description="Getting remote machine specs", strict_stderr=False, strict_return_code=False)
+        import json
+        self.remote_specs: MachineSpecs = cast(MachineSpecs, json.loads(resp.capture().op))
         self.terminal_responses: list[Response] = []
-        self.platform = platform
 
     def __enter__(self) -> "SSH":
         return self
@@ -126,34 +125,11 @@ class SSH:
             self.sftp.close()
             self.sftp = None
         self.ssh.close()
-    def get_remote_machine(self) -> MACHINE:
-        if self._remote_machine is None:
-            windows_test1 = self.run_shell(command="$env:OS", verbose_output=False, description="Testing Remote OS Type", strict_stderr=False, strict_return_code=False).op
-            windows_test2 = self.run_shell(command="echo %OS%", verbose_output=False, description="Testing Remote OS Type Again", strict_stderr=False, strict_return_code=False).op
-            if windows_test1 == "Windows_NT" or windows_test2 == "Windows_NT":
-                self._remote_machine = "Windows"
-            else:
-                self._remote_machine = "Linux"
-        return self._remote_machine
-    def get_local_distro(self) -> str:
-        if self._local_distro is None:
-            command = f"""{UV_RUN_CMD} --with distro python -c "import distro; print(distro.name(pretty=True))" """
-            import subprocess
-            res = subprocess.run(command, shell=True, capture_output=True, text=True).stdout.strip()
-            self._local_distro = res
-            return res
-        return self._local_distro
-    def get_remote_distro(self) -> str:
-        if self._remote_distro is None:
-            command_str = f"""{UV_RUN_CMD} --with distro python -c "import distro; print(distro.name(pretty=True))" """
-            res = self.run_shell(command=command_str, verbose_output=True, description="", strict_stderr=False, strict_return_code=False)
-            self._remote_distro = res.op_if_successfull_or_default() or ""
-        return self._remote_distro
     def restart_computer(self) -> Response:
-        return self.run_shell(command="Restart-Computer -Force" if self.get_remote_machine() == "Windows" else "sudo reboot", verbose_output=True, description="", strict_stderr=False, strict_return_code=False)
+        return self.run_shell(command="Restart-Computer -Force" if self.remote_specs["system"] == "Windows" else "sudo reboot", verbose_output=True, description="", strict_stderr=False, strict_return_code=False)
     def send_ssh_key(self) -> Response:
-        self.copy_from_here(source_path=Path("~/.ssh/id_rsa.pub"), target_path=None, compress_with_zip=False, recursive=False, overwrite_existing=False)
-        if self.get_remote_machine() != "Windows":
+        self.copy_from_here(source_path="~/.ssh/id_rsa.pub", target_rel2home=None, compress_with_zip=False, recursive=False, overwrite_existing=False)
+        if self.remote_specs["system"] != "Windows":
             raise RuntimeError("send_ssh_key is only supported for Windows remote machines")
         code_url = "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/refs/heads/main/src/machineconfig/setup_windows/openssh-server_add-sshkey.ps1"
         import urllib.request
@@ -162,17 +138,17 @@ class SSH:
         return self.run_shell(command=code, verbose_output=True, description="", strict_stderr=False, strict_return_code=False)
 
     def get_remote_repr(self, add_machine: bool = False) -> str:
-        return f"{self.username}@{self.hostname}:{self.port}" + (f" [{self.get_remote_machine()}][{self.get_remote_distro()}]" if add_machine else "")
+        return f"{self.username}@{self.hostname}:{self.port}" + (f" [{self.remote_specs['system']}][{self.remote_specs['distro']}]" if add_machine else "")
     def get_local_repr(self, add_machine: bool = False) -> str:
         import getpass
-        return f"{getpass.getuser()}@{self.platform.node()}" + (f" [{self.platform.system()}][{self.get_local_distro()}]" if add_machine else "")
+        return f"{getpass.getuser()}@{platform.node()}" + (f" [{platform.system()}][{self.local_specs['distro']}]" if add_machine else "")
     def get_ssh_conn_str(self, command: str) -> str:
         return "ssh " + (f" -i {self.ssh_key_path}" if self.ssh_key_path else "") + self.get_remote_repr(add_machine=False).replace(":", " -p ") + (f" -t {command} " if command != "" else " ")
     def __repr__(self) -> str:
         return f"local {self.get_local_repr(add_machine=True)} >>> SSH TO >>> remote {self.get_remote_repr(add_machine=True)}"
 
     def run_locally(self, command: str) -> Response:
-        print(f"""💻 [LOCAL EXECUTION] Running command on node: {self.platform.node()} Command: {command}""")
+        print(f"""💻 [LOCAL EXECUTION] Running command on node: {self.local_specs['system']} Command: {command}""")
         res = Response(cmd=command)
         res.output.returncode = os.system(command)
         return res
@@ -188,11 +164,10 @@ class SSH:
         return res
     def run_py(self, python_code: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str],
                description: str, verbose_output: bool, strict_stderr: bool, strict_return_code: bool) -> Response:
-        from machineconfig.utils.accessories import randstr
         py_path = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/runpy_{randstr()}.py")
         py_path.parent.mkdir(parents=True, exist_ok=True)
         py_path.write_text(python_code, encoding="utf-8")
-        self.copy_from_here(source_path=py_path, target_path=None, compress_with_zip=False, recursive=False, overwrite_existing=False)
+        self.copy_from_here(source_path=str(py_path), target_rel2home=None, compress_with_zip=False, recursive=False, overwrite_existing=False)
         if uv_with is not None and len(uv_with) > 0:
             with_clause = " --with " + '"' + ",".join(uv_with) + '"'
         else:
@@ -205,7 +180,6 @@ class SSH:
         return self.run_shell(command=uv_cmd, verbose_output=verbose_output, description=description or f"run_py on {self.get_remote_repr(add_machine=False)}", strict_stderr=strict_stderr, strict_return_code=strict_return_code)
 
     def run_py_func(self, func: Callable[..., Any], uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> Response:
-        from machineconfig.utils.meta import lambda_to_python_script
         command = lambda_to_python_script(lmb=func, in_global=True)
         return self.run_py(python_code=command, uv_with=uv_with, uv_project_dir=uv_project_dir,
                            description=f"run_py_func {func.__name__} on {self.get_remote_repr(add_machine=False)}",
@@ -218,77 +192,45 @@ class SSH:
         local_path.parent.mkdir(parents=True, exist_ok=True)
         self.sftp.get(remotepath=remote_path, localpath=str(local_path))
 
-    def _create_remote_target_dir(self, target_path: Union[str, Path], overwrite_existing: bool) -> str:
+    def create_dir(self, path_rel2home: str, overwrite_existing: bool) -> None:
         """Helper to create a directory on remote machine and return its path."""
-        def create_target_dir(target_dir_path: str, overwrite: bool, json_output_path: str) -> str:
+        def create_target_dir(target_rel2home: str, overwrite: bool) -> None:
             from pathlib import Path
             import shutil
-            import json
-            directory_path = Path(target_dir_path).expanduser()
+            directory_path = Path(target_rel2home).expanduser()
             if overwrite and directory_path.exists():
                 if directory_path.is_dir():
                     shutil.rmtree(directory_path)
                 else:
                     directory_path.unlink()
             directory_path.parent.mkdir(parents=True, exist_ok=True)
-            result_path_posix = directory_path.as_posix()
-            json_result_path = Path(json_output_path)
-            json_result_path.parent.mkdir(parents=True, exist_ok=True)
-            json_result_path.write_text(json.dumps(result_path_posix, indent=2), encoding="utf-8")
-            print(json_result_path.as_posix())
-            return result_path_posix
-        from machineconfig.utils.meta import lambda_to_python_script
-        from machineconfig.utils.accessories import randstr
-        remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
-        # command = function_to_script(func=create_target_dir, call_with_kwargs={"target_dir_path": Path(target_path).as_posix(), "overwrite": overwrite_existing, "json_output_path": remote_json_output})
-        command = lambda_to_python_script(lmb=lambda: create_target_dir(target_dir_path=str(target_path), overwrite=overwrite_existing, json_output_path=remote_json_output), in_global=True)
-        response = self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,
-                               description=f"Creating target directory `{Path(target_path).parent.as_posix()}` @ {self.get_remote_repr(add_machine=False)}",
-                               verbose_output=False, strict_stderr=False, strict_return_code=False)
-        remote_json_path = response.op.strip()
-        if not remote_json_path:
-            raise RuntimeError(f"Failed to create target directory {target_path} - no response from remote")
-        from machineconfig.utils.accessories import randstr
-        local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
-        self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
-        import json
-        try:
-            result = json.loads(local_json.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, FileNotFoundError) as err:
-            raise RuntimeError(f"Failed to create target directory {target_path} - invalid JSON response: {err}") from err
-        finally:
-            if local_json.exists():
-                local_json.unlink()
-        assert isinstance(result, str), f"Failed to create target directory {target_path} on remote"
-        return result
+            return
+        command = lambda_to_python_script(lmb=lambda: create_target_dir(target_rel2home=path_rel2home, overwrite=overwrite_existing), in_global=True)
+        tmp_py_file = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/create_target_dir_{randstr()}.py")
+        tmp_py_file.parent.mkdir(parents=True, exist_ok=True)
+        tmp_py_file.write_text(command, encoding="utf-8")
+        self.copy_from_here(source_path=str(tmp_py_file), target_rel2home=None, compress_with_zip=False, recursive=False, overwrite_existing=True)
+        self.run_shell(command=f"""{UV_RUN_CMD} python {tmp_py_file.as_posix()}""", verbose_output=False, description=f"Creating target dir {path_rel2home}", strict_stderr=True, strict_return_code=True)
 
-
-    def copy_from_here(self, source_path: Union[str, Path], target_path: Optional[Union[str, Path]], compress_with_zip: bool, recursive: bool, overwrite_existing: bool) -> Path:
-        if self.sftp is None:
-            raise RuntimeError(f"SFTP connection not available for {self.hostname}. Cannot transfer files.")
-        
+    def copy_from_here(self, source_path: str, target_rel2home: Optional[str], compress_with_zip: bool, recursive: bool, overwrite_existing: bool) -> None:
+        if self.sftp is None: raise RuntimeError(f"SFTP connection not available for {self.hostname}. Cannot transfer files.")
         source_obj = Path(source_path).expanduser().absolute()
-        if not source_obj.exists():
-            raise RuntimeError(f"SSH Error: source `{source_obj}` does not exist!")
-        
-        if target_path is None:
-            try:
-                target_path_relative = source_obj.relative_to(Path.home())
-                target_path = Path("~") / target_path_relative
+        if not source_obj.exists(): raise RuntimeError(f"SSH Error: source `{source_obj}` does not exist!")
+        if target_rel2home is None:
+            try: target_rel2home = str(source_obj.relative_to(Path.home()))
             except ValueError:
                 raise RuntimeError(f"If target is not specified, source must be relative to home directory, but got: {source_obj}")
-        
         if not compress_with_zip and source_obj.is_dir():
             if not recursive:
                 raise RuntimeError(f"SSH Error: source `{source_obj}` is a directory! Set `recursive=True` for recursive sending or `compress_with_zip=True` to zip it first.")            
             file_paths_to_upload: list[Path] = [file_path for file_path in source_obj.rglob("*") if file_path.is_file()]
-            remote_root = self._create_remote_target_dir(target_path=target_path, overwrite_existing=overwrite_existing)
+            # self.create_dir(path_rel2home=target_rel2home, overwrite_existing=overwrite_existing)
             for idx, file_path in enumerate(file_paths_to_upload):
                 print(f"   {idx + 1:03d}. {file_path}")
             for file_path in file_paths_to_upload:
-                remote_file_target = Path(remote_root).joinpath(file_path.relative_to(source_obj))
-                self.copy_from_here(source_path=file_path, target_path=remote_file_target, compress_with_zip=False, recursive=False, overwrite_existing=overwrite_existing)
-            return Path(remote_root)
+                remote_file_target = Path(target_rel2home).joinpath(file_path.relative_to(source_obj))
+                self.copy_from_here(source_path=str(file_path), target_rel2home=str(remote_file_target), compress_with_zip=False, recursive=False, overwrite_existing=overwrite_existing)
+            return None
         if compress_with_zip:
             print("🗜️ ZIPPING ...")
             import shutil
@@ -298,16 +240,14 @@ class SSH:
             else:
                 shutil.make_archive(str(zip_path), "zip", source_obj.parent, source_obj.name)
             source_obj = Path(str(zip_path) + ".zip")
-            if not str(target_path).endswith(".zip"):
-                target_path = Path(str(target_path) + ".zip")
-        remotepath_str = self._create_remote_target_dir(target_path=target_path, overwrite_existing=overwrite_existing)
-        remotepath = Path(remotepath_str)        
-        print(f"""📤 [SFTP UPLOAD] Sending file: {repr(source_obj)}  ==>  Remote Path: {remotepath.as_posix()}""")
+            if not target_rel2home.endswith(".zip"): target_rel2home = target_rel2home + ".zip"
+        # remotepath_str = self.create_dir(target_path=target_path, overwrite_existing=overwrite_existing)
+        print(f"""📤 [SFTP UPLOAD] Sending file: {repr(source_obj)}  ==>  Remote Path: {target_rel2home}""")
         try:
             with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
                 if self.sftp is None:  # type: ignore[unreachable]
                     raise RuntimeError(f"SFTP connection lost for {self.hostname}")
-                self.sftp.put(localpath=str(source_obj), remotepath=remotepath.as_posix(), callback=pbar.view_bar)  # type: ignore
+                self.sftp.put(localpath=str(source_obj), remotepath=target_rel2home, callback=pbar.view_bar)  # type: ignore
         except Exception:
             if compress_with_zip and source_obj.exists() and str(source_obj).endswith("_archive.zip"):
                 source_obj.unlink()
@@ -325,11 +265,14 @@ class SSH:
                 with zipfile.ZipFile(archive_path, "r") as archive_handle:
                     archive_handle.extractall(extraction_directory)
                 archive_path.unlink()
-            from machineconfig.utils.meta import lambda_to_python_script
-            command = lambda_to_python_script(lmb=lambda: unzip_archive(zip_file_path=remotepath.as_posix(), overwrite_flag=overwrite_existing), in_global=True)
-            _resp = self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description=f"UNZIPPING {remotepath.as_posix()}", verbose_output=False, strict_stderr=True, strict_return_code=True)
+            command = lambda_to_python_script(lmb=lambda: unzip_archive(zip_file_path=target_rel2home, overwrite_flag=overwrite_existing), in_global=True)
+            tmp_py_file = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/create_target_dir_{randstr()}.py")
+            tmp_py_file.parent.mkdir(parents=True, exist_ok=True)
+            tmp_py_file.write_text(command, encoding="utf-8")
+            transferred_py_file = self.copy_from_here(source_path=str(tmp_py_file), target_rel2home=None, compress_with_zip=True, recursive=False, overwrite_existing=True)
+            self.run_shell(command=f"""{UV_RUN_CMD} python {transferred_py_file}""", verbose_output=False, description=f"UNZIPPING {remotepath.as_posix()}", strict_stderr=True, strict_return_code=True)
             source_obj.unlink()
-        return source_obj
+        return None
 
     def _check_remote_is_dir(self, source_path: Union[str, Path]) -> bool:
         """Helper to check if a remote path is a directory."""
@@ -342,16 +285,13 @@ class SSH:
             json_result_path.write_text(json.dumps(is_directory, indent=2), encoding="utf-8")
             print(json_result_path.as_posix())
             return is_directory
-        
-        from machineconfig.utils.meta import lambda_to_python_script
-        from machineconfig.utils.accessories import randstr
         remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
         command = lambda_to_python_script(lmb=lambda: check_is_dir(path_to_check=str(source_path), json_output_path=remote_json_output), in_global=True)
         response = self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description=f"Check if source `{source_path}` is a dir", verbose_output=False, strict_stderr=False, strict_return_code=False)
         remote_json_path = response.op.strip()
         if not remote_json_path:
             raise RuntimeError(f"Failed to check if {source_path} is directory - no response from remote")
-        from machineconfig.utils.accessories import randstr
+        
         local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
         self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
         import json
@@ -377,15 +317,15 @@ class SSH:
             print(json_result_path.as_posix())
             return expanded_path_posix
         
-        from machineconfig.utils.meta import lambda_to_python_script
-        from machineconfig.utils.accessories import randstr
+        
+        
         remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
         command = lambda_to_python_script(lmb=lambda: expand_source(path_to_expand=str(source_path), json_output_path=remote_json_output), in_global=True)
         response = self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description="Resolving source path by expanding user", verbose_output=False, strict_stderr=False, strict_return_code=False)
         remote_json_path = response.op.strip()
         if not remote_json_path:
             raise RuntimeError(f"Could not resolve source path {source_path} - no response from remote")
-        from machineconfig.utils.accessories import randstr
+        
         local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
         self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
         import json
@@ -426,15 +366,15 @@ class SSH:
                     print(json_result_path.as_posix())
                     return file_paths_list
                 
-                from machineconfig.utils.meta import lambda_to_python_script
-                from machineconfig.utils.accessories import randstr
+                
+                
                 remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
                 command = lambda_to_python_script(lmb=lambda: search_files(directory_path=expanded_source, json_output_path=remote_json_output), in_global=True)
                 response = self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description="Searching for files in source", verbose_output=False, strict_stderr=False, strict_return_code=False)
                 remote_json_path = response.op.strip()
                 if not remote_json_path:
                     raise RuntimeError(f"Could not resolve source path {source} - no response from remote")
-                from machineconfig.utils.accessories import randstr
+                
                 local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
                 self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
                 import json
@@ -464,15 +404,15 @@ class SSH:
                         except ValueError:
                             raise RuntimeError(f"Source path must be relative to home directory: {source_absolute_path}")
                     
-                    from machineconfig.utils.meta import lambda_to_python_script
-                    from machineconfig.utils.accessories import randstr
+                    
+                    
                     remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
                     command = lambda_to_python_script(lmb=lambda: collapse_to_home_dir(absolute_path=expanded_source, json_output_path=remote_json_output), in_global=True)
                     response = self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description="Finding default target via relative source path", verbose_output=False, strict_stderr=False, strict_return_code=False)
                     remote_json_path_dir = response.op.strip()
                     if not remote_json_path_dir:
                         raise RuntimeError("Could not resolve target path - no response from remote")
-                    from machineconfig.utils.accessories import randstr
+                    
                     local_json_dir = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
                     self._simple_sftp_get(remote_path=remote_json_path_dir, local_path=local_json_dir)
                     import json
@@ -516,15 +456,15 @@ class SSH:
                 print(json_result_path.as_posix())
                 return zip_file_path
             
-            from machineconfig.utils.meta import lambda_to_python_script
-            from machineconfig.utils.accessories import randstr
+            
+            
             remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
             command = lambda_to_python_script(lmb=lambda: zip_source(path_to_zip=expanded_source, json_output_path=remote_json_output), in_global=True)
             response = self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description=f"Zipping source file {source}", verbose_output=False, strict_stderr=False, strict_return_code=False)
             remote_json_path = response.op.strip()
             if not remote_json_path:
                 raise RuntimeError(f"Could not zip {source} - no response from remote")
-            from machineconfig.utils.accessories import randstr
+            
             local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
             self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
             import json
@@ -555,15 +495,15 @@ class SSH:
                 except ValueError:
                     raise RuntimeError(f"Source path must be relative to home directory: {source_absolute_path}")
             
-            from machineconfig.utils.meta import lambda_to_python_script
-            from machineconfig.utils.accessories import randstr
+            
+            
             remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
             command = lambda_to_python_script(lmb=lambda: collapse_to_home(absolute_path=expanded_source, json_output_path=remote_json_output), in_global=True)
             response = self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description="Finding default target via relative source path", verbose_output=False, strict_stderr=False, strict_return_code=False)
             remote_json_path = response.op.strip()
             if not remote_json_path:
                 raise RuntimeError("Could not resolve target path - no response from remote")
-            from machineconfig.utils.accessories import randstr
+            
             local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
             self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
             import json
@@ -613,7 +553,7 @@ class SSH:
                     else:
                         file_or_dir_path.unlink()
             
-            from machineconfig.utils.meta import lambda_to_python_script
+            
             command = lambda_to_python_script(lmb=lambda: delete_temp_zip(path_to_delete=expanded_source), in_global=True)
             self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description="Cleaning temp zip files @ remote.", verbose_output=False, strict_stderr=True, strict_return_code=True)
         

@@ -1,6 +1,6 @@
 
 
-from machineconfig.scripts.python.helpers_devops.cli_utils import download, merge_pdfs
+from machineconfig.scripts.python.helpers_devops.cli_utils import download, merge_pdfs, get_machine_specs
 import typer
 
 
@@ -11,6 +11,8 @@ def get_app() -> typer.Typer:
     app.command(name="d", no_args_is_help=True, hidden=True)(download)
     app.command(name="merge-pdfs", no_args_is_help=True, help="[m] Merge two PDF files into one.")(merge_pdfs)
     app.command(name="m", no_args_is_help=True, hidden=True)(merge_pdfs)
+    app.command(name="get-machine-specs", no_args_is_help=False, help="[g] Get machine specifications.")(get_machine_specs)
+    app.command(name="g", no_args_is_help=False, hidden=True)(get_machine_specs)
     return app
 
 

@@ -1,7 +1,7 @@
 
 
 import typer
-from typing import Annotated, Optional
+from typing import Annotated, Optional, TypedDict
 from pathlib import Path
 import subprocess
 import requests
@@ -115,3 +115,28 @@ def merge_pdfs(
     from machineconfig.utils.code import run_shell_script, get_uv_command_executing_python_script
     uv_command, _py_file = get_uv_command_executing_python_script(python_script=code, uv_with=["pypdf"], uv_project_dir=None)
     run_shell_script(uv_command)
+
+
+class MachineSpecs(TypedDict):
+    system: str
+    distro: str
+    home_dir: str
+def get_machine_specs() -> MachineSpecs:
+    """Write print and return the local machine specs."""
+    import platform
+    UV_RUN_CMD = "$HOME/.local/bin/uv run" if platform.system() != "Windows" else """& "$env:USERPROFILE/.local/bin/uv" run"""
+    command = f"""{UV_RUN_CMD} --with distro python -c "import distro; print(distro.name(pretty=True))" """
+    import subprocess
+    distro = subprocess.run(command, shell=True, capture_output=True, text=True).stdout.strip()
+    specs: MachineSpecs = {
+        "system": platform.system(),
+        "distro": distro,
+        "home_dir": str(Path.home()),
+    }
+    print(specs)
+    from machineconfig.utils.source_of_truth import CONFIG_ROOT
+    path = CONFIG_ROOT.joinpath("machine_specs.json")
+    CONFIG_ROOT.mkdir(parents=True, exist_ok=True)
+    import json
+    path.write_text(json.dumps(specs, indent=4), encoding="utf-8")
+    return specs

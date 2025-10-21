@@ -183,7 +183,7 @@ def ftpx(
                     padding=(1, 2),
                 )
             )
-            received_file = ssh.copy_from_here(source_path=resolved_source, target_path=resolved_target, compress_with_zip=zipFirst, recursive=recursive, overwrite_existing=False)
+            received_file = ssh.copy_from_here(source_path=resolved_source, target_rel2home=resolved_target, compress_with_zip=zipFirst, recursive=recursive, overwrite_existing=False)
 
     if source_is_remote and isinstance(received_file, PathExtended):
         console.print(
