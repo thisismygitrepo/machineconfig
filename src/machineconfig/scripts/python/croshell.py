@@ -61,12 +61,12 @@ def croshell(
             print("Streamlit viewer is not yet implemented in this version.")
             return None
         file_obj = PathExtended(str(path).lstrip()).expanduser().absolute()
-        program = lambda_to_python_script(lambda: get_read_data_pycode(path=str(file_obj)), in_global=True)
+        program = lambda_to_python_script(lambda: get_read_data_pycode(path=str(file_obj)), in_global=True, import_module=False)
         text = f"📄 Reading data from: {file_obj.name}"
         console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
     else:  # if nothing is specified, then run in interactive mode.
-        text = "⌨️  Entering interactive mode"
-        console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
+        # text = "⌨️  Entering interactive mode"
+        # console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
         # from machineconfig.scripts.python.croshell import InteractiveShell
         # InteractiveShell().run()
         # return None
@@ -91,7 +91,7 @@ def croshell(
     pyfile.parent.mkdir(parents=True, exist_ok=True)
 
     title = "Reading Data"
-    def_code = lambda_to_python_script(lambda: code(path=str(pyfile), title=title), in_global=False)
+    def_code = lambda_to_python_script(lambda: code(path=str(pyfile), title=title), in_global=False, import_module=False)
     # print(def_code)
     python_program = preprogram + "\n\n" + def_code + program
     pyfile.write_text(python_program, encoding="utf-8")
@@ -124,7 +124,10 @@ def croshell(
             # if writing fails, fall back to the default nb_target already set
             pass
     if visidata:
-        fire_line = f"uv run --with visidata,pyarrow vd {str(file_obj)}"
+        if file_obj.suffix == ".json":
+            fire_line = f"uv run --with visidata vd {str(file_obj)}"
+        else:
+            fire_line = f"uv run --with visidata,pyarrow vd {str(file_obj)}"
     elif marimo:
         if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--with marimo --project "{str(Path.home().joinpath("code/machineconfig"))}" """
         else: requirements = """--with "marimo,machineconfig[plot]>=6.57" """

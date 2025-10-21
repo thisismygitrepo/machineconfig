@@ -46,7 +46,7 @@ def path():
     uv_with = ["textual"]
     uv_project_dir = None
     if not Path.home().joinpath("code/machineconfig").exists():
-        uv_with.append("machineconfig>=6.57")
+        uv_with.append("machineconfig>=6.66")
     else:
         uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
     run_shell_script(get_uv_command_executing_python_script(python_script=path.read_text(encoding="utf-8"), uv_with=uv_with, uv_project_dir=uv_project_dir)[0])
@@ -58,6 +58,34 @@ def pwsh_theme():
     file = Path(themes.__file__).parent / "choose_pwsh_theme.ps1"
     import subprocess
     subprocess.run(["pwsh", "-File", str(file)])
+
+def starship_theme():
+    """🔗 Select starship prompt theme."""
+    import subprocess
+    from machineconfig.utils.code import run_shell_script
+    
+    presets: list[str] = ["catppuccin-powerline", "pastel-powerline", "tokyo-night", "gruvbox-rainbow", "jetpack"]
+    config_path: Path = Path.home() / ".config" / "starship.toml"
+    
+    typer.echo("\n🚀 Starship Theme Selector\n")
+    for idx, preset in enumerate(presets, start=1):
+        typer.echo(f"{idx}. {preset}")
+    
+    choice: str = typer.prompt("Select a preset")
+    
+    try:
+        choice_idx: int = int(choice)
+        if 1 <= choice_idx <= len(presets):
+            selected_preset: str = presets[choice_idx - 1]
+            typer.echo(f"\n✨ Applying {selected_preset}...")
+            run_shell_script(f"""starship preset {selected_preset} -o {config_path}""")
+            typer.echo("\n📋 Preview:")
+            subprocess.run(["starship", "module", "all"], check=False)
+            typer.echo(f"\n✅ {selected_preset} applied!")
+        else:
+            typer.echo("❌ Invalid selection")
+    except ValueError:
+        typer.echo("❌ Please enter a valid number")
 
 def copy_assets(which: Annotated[Literal["scripts", "settings", "both"], typer.Argument(..., help="Which assets to copy")]):
     """🔗 Copy asset files from library to machine."""
@@ -82,8 +110,11 @@ def get_app():
     config_apps.command("s", no_args_is_help=False, help="Configure your shell profile.", hidden=True)(shell)
     config_apps.command("path", no_args_is_help=False, help="📚  [p] NAVIGATE PATH variable with TUI")(path)
     config_apps.command("p", no_args_is_help=False, help="NAVIGATE PATH variable with TUI", hidden=True)(path)
-    config_apps.command("pwsh-theme", no_args_is_help=False, help="🔗  [t] Select powershell prompt theme.")(pwsh_theme)
-    config_apps.command("t", no_args_is_help=False, help="Select powershell prompt theme.", hidden=True)(pwsh_theme)
+    config_apps.command("starship-theme", no_args_is_help=False, help="🔗  [t] Select starship prompt theme.")(starship_theme)
+    config_apps.command("t", no_args_is_help=False, help="Select starship prompt theme.", hidden=True)(starship_theme)
+    config_apps.command("pwsh-theme", no_args_is_help=False, help="🔗  [T] Select powershell prompt theme.")(pwsh_theme)
+    config_apps.command("T", no_args_is_help=False, help="Select powershell prompt theme.", hidden=True)(pwsh_theme)
+
     config_apps.command("copy-assets", no_args_is_help=True, help="🔗  [c] Copy asset files from library to machine.", hidden=False)(copy_assets)
     config_apps.command("c", no_args_is_help=True, help="Copy asset files from library to machine.", hidden=True)(copy_assets)
     return config_apps

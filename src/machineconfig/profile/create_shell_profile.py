@@ -2,7 +2,7 @@
 
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.source_of_truth import CONFIG_ROOT
-
+from pathlib import Path
 import platform
 import os
 import subprocess
@@ -17,18 +17,20 @@ console = Console()
 BOX_WIDTH = 100  # Define BOX_WIDTH or get it from a config
 
 
-def get_shell_profile_path() -> PathExtended:
+def get_shell_profile_path() -> Path:
     if system == "Windows":
         result = subprocess.run(["pwsh", "-Command", "$PROFILE"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False)
         if result.returncode == 0 and result.stdout.strip():
-            profile_path = PathExtended(result.stdout.strip())
+            profile_path = Path(result.stdout.strip())
         else:
             print(f"Command failed with return code {result.returncode}")
             print(f"stdout: {result.stdout}")
             print(f"stderr: {result.stderr}")
             raise ValueError(f"""Could not get profile path for Windows. Got stdout: {result.stdout}, stderr: {result.stderr}""")
     elif system == "Linux":
-        profile_path = PathExtended("~/.bashrc").expanduser()
+        profile_path = Path.home().joinpath(".bashrc")
+    elif system == "Darwin":
+        profile_path = Path.home().joinpath(".zshrc")
     else:
         raise ValueError(f"""Not implemented for this system {system}""")
     console.print(Panel(f"""🐚 SHELL PROFILE | Working with path: `{profile_path}`""", title="[bold blue]Shell Profile[/bold blue]", border_style="blue"))
@@ -48,9 +50,14 @@ def create_default_shell_profile() -> None:
     if system == "Windows":
         init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/pwsh/init.ps1")
         source_line = f""". {str(init_script.collapseuser(placeholder="$HOME"))}"""
-    else:
+    elif system == "Linux":
         init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/bash/init.sh")
         source_line = f"""source {str(init_script.collapseuser(placeholder="$HOME"))}"""
+    elif system == "Darwin":
+        init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/zsh/init.sh")
+        source_line = f"""source {str(init_script.collapseuser(placeholder="$HOME"))}"""
+    else:
+        raise ValueError(f"""Not implemented for this system {system}""")
 
     was_shell_updated = False
     if source_line in shell_profile:

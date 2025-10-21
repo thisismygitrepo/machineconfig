@@ -34,24 +34,24 @@ Set-Alias -Name l -Value lsdla -Option AllScope
 function d { devops @args }
 function c { cloud @args }
 function a { agents @args }
-function s { sessions @args }
+function ss { sessions @args }
 function ff { ftpx @args }
 function f { fire @args }
-function r { croshell @args }
+function rr { croshell @args }
 function u { utils @args }
 
-try {
-    Set-Alias -Name gcs -Value {gh copilot suggest -t shell}
-    Set-Alias -Name gcg -Value {gh copilot suggest -t git}
-    Set-Alias -Name gce -Value {gh copilot explain}
-    # Check for conflicts
-    # Get-Command gcs -ErrorAction SilentlyContinue
-    # Get-Command gcg -ErrorAction SilentlyContinue
-    # Get-Command gce -ErrorAction SilentlyContinue
-}
-catch {
-    # Do nothing
-}
+# try {
+#     Set-Alias -Name gcs -Value {gh copilot suggest -t shell}
+#     Set-Alias -Name gcg -Value {gh copilot suggest -t git}
+#     Set-Alias -Name gce -Value {gh copilot explain}
+#     # Check for conflicts
+#     # Get-Command gcs -ErrorAction SilentlyContinue
+#     # Get-Command gcg -ErrorAction SilentlyContinue
+#     # Get-Command gce -ErrorAction SilentlyContinue
+# }
+# catch {
+#     # Do nothing
+# }
 
 
 # patches ===========================================================
@@ -62,6 +62,14 @@ try {
         $hook = if ($PSVersionTable.PSVersion.Major -lt 6) { 'prompt' } else { 'pwd' }
         (zoxide init --hook $hook powershell | Out-String)
     })
+}
+catch {
+    # Do nothing
+}
+
+try {
+    # Initialize Starship prompt
+    Invoke-Expression (&starship init powershell)
 }
 catch {
     # Do nothing

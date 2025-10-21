@@ -85,7 +85,6 @@
 #                 self.execution_log_dir.expanduser().joinpath("status.txt").write_text(status)
 #                 return status
 #             pid: int = int(pid_path.read_text(encoding="utf-8").rstrip())
-#             import psutil
 #             try: proc = psutil.Process(pid=pid)
 #             except psutil.NoSuchProcess:
 #                 print(f"Something wrong happened to job `{self.job_id}`.. Its status log file says `{status}`, but its declared `{pid=}` is dead. Moving to failed.")
@@ -142,7 +141,6 @@
 #                 break
 
 #             # --------------- Clearning up queue_file from dead processes -----------------
-#             import psutil
 #             next_job_in_queue = queue_file[0]  # only consider the first job in the queue
 #             try: _ = psutil.Process(next_job_in_queue.pid)
 #             except psutil.NoSuchProcess:

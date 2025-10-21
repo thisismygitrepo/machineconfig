@@ -10,20 +10,21 @@ def update(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-na
     from pathlib import Path
     if Path.home().joinpath("code", "machineconfig").exists():
         code = """
-    uv self update
-    cd ~/code/machineconfig
-    git pull
-    uv tool install --upgrade --editable $HOME/code/machineconfig
+uv self update
+cd ~/code/machineconfig
+git pull
+uv tool install --upgrade --editable $HOME/code/machineconfig
     """
     else:
         code = """
-    uv self update
-    uv tool install --upgrade machineconfig
+uv self update
+uv tool install --upgrade machineconfig
     """
     import platform
     if platform.system() == "Windows":
-        from machineconfig.utils.code import run_shell_script_after_exit
-        run_shell_script_after_exit(code)
+        # from machineconfig.utils.code import run_shell_script_after_exit
+        # run_shell_script_after_exit(code)
+        print(f'please run {code} in powershell to update machineconfig')
     else:
         from machineconfig.utils.code import run_shell_script
         run_shell_script(code)
@@ -40,9 +41,9 @@ def install(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-n
     else:
         import platform
         if platform.system() == "Windows":
-            run_shell_script(r"""& "$HOME\.local\bin\uv.exe" tool install --upgrade "machineconfig>=6.57" """)
+            run_shell_script(r"""& "$HOME\.local\bin\uv.exe" tool install --upgrade "machineconfig>=6.66" """)
         else:
-            run_shell_script("""$HOME/.local/bin/uv tool install --upgrade "machineconfig>=6.57" """)
+            run_shell_script("""$HOME/.local/bin/uv tool install --upgrade "machineconfig>=6.66" """)
     from machineconfig.profile.create_shell_profile import create_default_shell_profile
     if not no_copy_assets:
         create_default_shell_profile()   # involves copying assets too
@@ -67,7 +68,7 @@ def navigate():
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import run_shell_script
     if Path.home().joinpath("code/machineconfig").exists(): executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
-    else: executable = """--with "machineconfig>=6.57,textual" """
+    else: executable = """--with "machineconfig>=6.66,textual" """
     run_shell_script(f"""uv run {executable} {path}""")
 
 
