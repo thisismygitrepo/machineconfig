@@ -2162,6 +2162,23 @@
       }
     },
     {
+      "appName": "kilocode",
+      "repoURL": "CMD",
+      "doc": "Kilocode agent extension in the terminal",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "npm install -g @kilocode/cli@alpha",
+          "windows": "npm install -g @kilocode/cli@alpha",
+          "macos": "npm install -g @kilocode/cli@alpha"
+        },
+        "arm64": {
+          "linux": "npm install -g @kilocode/cli@alpha",
+          "windows": "npm install -g @kilocode/cli@alpha",
+          "macos": "npm install -g @kilocode/cli@alpha"
+        }
+      }
+    },
+    {
       "appName": "copilot",
       "repoURL": "CMD",
       "doc": "Terminal-based CLI agents and tools for productivity and coding.",
