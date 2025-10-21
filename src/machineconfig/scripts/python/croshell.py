@@ -124,7 +124,10 @@ def croshell(
             # if writing fails, fall back to the default nb_target already set
             pass
     if visidata:
-        fire_line = f"uv run --with visidata,pyarrow vd {str(file_obj)}"
+        if file_obj.suffix == ".json":
+            fire_line = f"uv run --with visidata vd {str(file_obj)}"
+        else:
+            fire_line = f"uv run --with visidata,pyarrow vd {str(file_obj)}"
     elif marimo:
         if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--with marimo --project "{str(Path.home().joinpath("code/machineconfig"))}" """
         else: requirements = """--with "marimo,machineconfig[plot]>=6.57" """
