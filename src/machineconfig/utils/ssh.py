@@ -112,10 +112,11 @@ class SSH:
         from machineconfig.scripts.python.helpers_devops.cli_utils import get_machine_specs
         self.local_specs: MachineSpecs = get_machine_specs()
         resp = self.run_shell(command=f"""~/.local/bin/utils get-machine-specs """, verbose_output=False, description="Getting remote machine specs", strict_stderr=False, strict_return_code=False)
-        import json
+        # import json
         json_str = resp.op
-        print(f"Remote machine specs JSON: {resp}")
-        self.remote_specs: MachineSpecs = cast(MachineSpecs, json.loads(json_str))
+        print(f"Remote machine specs JSON: {resp.op}")
+        import ast
+        self.remote_specs: MachineSpecs = cast(MachineSpecs, ast.literal_eval(json_str))
         self.terminal_responses: list[Response] = []
 
     def __enter__(self) -> "SSH":
@@ -181,7 +182,7 @@ class SSH:
         uv_cmd = f"""{UV_RUN_CMD} {with_clause} python {py_path.relative_to(Path.home())}"""
         return self.run_shell(command=uv_cmd, verbose_output=verbose_output, description=description or f"run_py on {self.get_remote_repr(add_machine=False)}", strict_stderr=strict_stderr, strict_return_code=strict_return_code)
 
-    def run_py_func(self, func: Callable[..., Any], uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> Response:
+    def run_lambda_function(self, func: Callable[..., Any], uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> Response:
         command = lambda_to_python_script(lmb=func, in_global=True)
         return self.run_py(python_code=command, uv_with=uv_with, uv_project_dir=uv_project_dir,
                            description=f"run_py_func {func.__name__} on {self.get_remote_repr(add_machine=False)}",
@@ -196,7 +197,7 @@ class SSH:
 
     def create_dir(self, path_rel2home: str, overwrite_existing: bool) -> None:
         """Helper to create a directory on remote machine and return its path."""
-        def create_target_dir(target_rel2home: str, overwrite: bool) -> None:
+        def create_target_dir(target_rel2home: str, overwrite: bool):
             from pathlib import Path
             import shutil
             directory_path = Path(target_rel2home).expanduser()
@@ -206,13 +207,15 @@ class SSH:
                 else:
                     directory_path.unlink()
             directory_path.parent.mkdir(parents=True, exist_ok=True)
-            return
         command = lambda_to_python_script(lmb=lambda: create_target_dir(target_rel2home=path_rel2home, overwrite=overwrite_existing), in_global=True)
         tmp_py_file = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/create_target_dir_{randstr()}.py")
         tmp_py_file.parent.mkdir(parents=True, exist_ok=True)
         tmp_py_file.write_text(command, encoding="utf-8")
-        self.copy_from_here(source_path=str(tmp_py_file), target_rel2home=None, compress_with_zip=False, recursive=False, overwrite_existing=True)
-        self.run_shell(command=f"""{UV_RUN_CMD} python {tmp_py_file.as_posix()}""", verbose_output=False, description=f"Creating target dir {path_rel2home}", strict_stderr=True, strict_return_code=True)
+        # self.copy_from_here(source_path=str(tmp_py_file), target_rel2home=".tmp_file.py", compress_with_zip=False, recursive=False, overwrite_existing=True)
+        assert self.sftp is not None
+        tmp_remote_path = ".tmp_pyfile.py"
+        self.sftp.put(localpath=str(tmp_py_file), remotepath=str(Path(self.remote_specs["home_dir"]).joinpath(tmp_remote_path)))
+        self.run_shell(command=f"""{UV_RUN_CMD} python {tmp_remote_path}""", verbose_output=False, description=f"Creating target dir {path_rel2home}", strict_stderr=True, strict_return_code=True)
 
     def copy_from_here(self, source_path: str, target_rel2home: Optional[str], compress_with_zip: bool, recursive: bool, overwrite_existing: bool) -> None:
         if self.sftp is None: raise RuntimeError(f"SFTP connection not available for {self.hostname}. Cannot transfer files.")
@@ -226,7 +229,7 @@ class SSH:
             if not recursive:
                 raise RuntimeError(f"SSH Error: source `{source_obj}` is a directory! Set `recursive=True` for recursive sending or `compress_with_zip=True` to zip it first.")            
             file_paths_to_upload: list[Path] = [file_path for file_path in source_obj.rglob("*") if file_path.is_file()]
-            # self.create_dir(path_rel2home=target_rel2home, overwrite_existing=overwrite_existing)
+            self.create_dir(path_rel2home=target_rel2home, overwrite_existing=overwrite_existing)
             for idx, file_path in enumerate(file_paths_to_upload):
                 print(f"   {idx + 1:03d}. {file_path}")
             for file_path in file_paths_to_upload:
@@ -243,7 +246,7 @@ class SSH:
                 shutil.make_archive(str(zip_path), "zip", source_obj.parent, source_obj.name)
             source_obj = Path(str(zip_path) + ".zip")
             if not target_rel2home.endswith(".zip"): target_rel2home = target_rel2home + ".zip"
-        # remotepath_str = self.create_dir(target_path=target_path, overwrite_existing=overwrite_existing)
+        self.create_dir(path_rel2home=target_rel2home, overwrite_existing=overwrite_existing)
         print(f"""📤 [SFTP UPLOAD] Sending file: {repr(source_obj)}  ==>  Remote Path: {target_rel2home}""")
         try:
             with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
