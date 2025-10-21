@@ -7,7 +7,7 @@ from machineconfig.utils.terminal import Response, MACHINE
 from machineconfig.utils.accessories import pprint
 
 UV_RUN_CMD = "$HOME/.local/bin/uv run" if platform.system() != "Windows" else """& "$env:USERPROFILE/.local/bin/uv" run"""
-MACHINECONFIG_VERSION = "machineconfig>=6.59"
+MACHINECONFIG_VERSION = "machineconfig>=6.61"
 DEFAULT_PICKLE_SUBDIR = "tmp_results/tmp_scripts/ssh"
 
 
@@ -206,7 +206,7 @@ class SSH:
 
     def run_py_func(self, func: Callable[..., Any], uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> Response:
         from machineconfig.utils.meta import lambda_to_python_script
-        command = lambda_to_python_script(lmb=lambda: func, in_global=True)
+        command = lambda_to_python_script(lmb=func, in_global=True)
         return self.run_py(python_code=command, uv_with=uv_with, uv_project_dir=uv_project_dir,
                            description=f"run_py_func {func.__name__} on {self.get_remote_repr(add_machine=False)}",
                            verbose_output=True, strict_stderr=True, strict_return_code=True)
