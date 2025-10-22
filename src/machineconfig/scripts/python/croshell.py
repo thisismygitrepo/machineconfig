@@ -158,8 +158,15 @@ code --new-window {str(pyfile)}
         # --python 3.14
         fire_line = f"uv run {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
 
-    from machineconfig.utils.code import run_shell_script
-    run_shell_script(fire_line, clean_env=False)
+    import os
+    program_path_maybe = os.environ.get("OP_PROGRAM_PATH", None)
+    if program_path_maybe is not None:
+        program_path_obj = PathExtended(program_path_maybe)
+        program_path_obj.parent.mkdir(parents=True, exist_ok=True)
+        program_path_obj.write_text(data=fire_line, encoding="utf-8")
+    else:
+        from machineconfig.utils.code import run_shell_script
+        run_shell_script(fire_line, clean_env=False)
 
 
 def main() -> None:

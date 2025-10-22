@@ -192,8 +192,15 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
             command = "$ErrorActionPreference = 'SilentlyContinue';\n" + command + "\nStart-Sleep -Seconds 0.5"
         else:
             raise NotImplementedError(f"Platform {platform.system()} not supported.")
-    from machineconfig.utils.code import run_shell_script
-    run_shell_script(command)
+    import os
+    op_program_path = os.environ.get("OP_PROGRAM_PATH", None)
+    if op_program_path is not None:
+        op_program_path = PathExtended(op_program_path)
+        op_program_path.parent.mkdir(parents=True, exist_ok=True)
+        op_program_path.write_text(command, encoding="utf-8")
+    else:
+        from machineconfig.utils.code import run_shell_script
+        run_shell_script(command)
 
 
 def fire(
@@ -266,6 +273,7 @@ def get_app():
     app = Typer(add_completion=False)
     app.command(context_settings={"allow_extra_args": True, "allow_interspersed_args": False})(fire)
     return app
+
 
 def main():
     app = get_app()

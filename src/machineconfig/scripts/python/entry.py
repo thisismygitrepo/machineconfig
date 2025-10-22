@@ -2,13 +2,12 @@
 from machineconfig.scripts.python.devops import get_app as get_devops_app
 from machineconfig.scripts.python.cloud import get_app as get_cloud_app
 from machineconfig.scripts.python.agents import get_app as get_agents_app
-from machineconfig.scripts.python.fire_jobs import get_app as get_fire_jobs_app
 from machineconfig.scripts.python.sessions import get_app as get_sessions_app
 from machineconfig.scripts.python.utils import get_app as get_utils_app
 
 from machineconfig.scripts.python.ftpx import ftpx as ftpx_func
 from machineconfig.scripts.python.croshell import croshell as croshell_func
-
+from machineconfig.scripts.python.fire_jobs import fire as get_fire_jobs_app
 
 def get_app():
     import typer
@@ -25,14 +24,13 @@ def get_app():
     app.add_typer(sessions_app, name="sessions", help="[s] Session and layout management", no_args_is_help=True)
     app.add_typer(sessions_app, name="s", hidden=True)  # short alias
 
-    fire_jobs_app = get_fire_jobs_app()
-    app.add_typer(fire_jobs_app, name="fire", help="[f] Fire and manage jobs", no_args_is_help=True)
-    app.add_typer(fire_jobs_app, name="f", hidden=True)  # short alias
 
     agents_app = get_agents_app()
     app.add_typer(agents_app, name="agents", help="[a] 🤖 AI Agents management commands", no_args_is_help=True)
     app.add_typer(agents_app, name="a", hidden=True)  # short alias
 
+    app.command(name="fire", help="[f] Fire and manage jobs", no_args_is_help=False)(get_fire_jobs_app)
+    app.command(name="f", hidden=True, no_args_is_help=False)(get_fire_jobs_app)
     app.command("ftpx", no_args_is_help=True, help="[ff] File transfer utility though SSH")(ftpx_func)
     app.command("ff", no_args_is_help=True, hidden=True)(ftpx_func)  # short alias
     app.command("croshell", no_args_is_help=False, help="[r] Cross-shell command execution")(croshell_func)

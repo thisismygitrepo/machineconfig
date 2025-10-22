@@ -191,12 +191,36 @@ class CommandTree(Tree[CommandInfo]):
             help_text="devops config shell <copy|reference>"
         ))
 
-        config_node.add("🔗 pwsh_theme - Configure PowerShell theme", data=CommandInfo(
-            name="pwsh_theme",
-            description="Configure your PowerShell theme",
-            command="devops config pwsh_theme",
+        config_node.add("🔗 path - Navigate PATH variable", data=CommandInfo(
+            name="path",
+            description="Navigate PATH variable with TUI",
+            command="devops config path",
             parent="config",
-            help_text="devops config pwsh_theme"
+            help_text="devops config path"
+        ))
+
+        config_node.add("🔗 starship-theme - Select starship theme", data=CommandInfo(
+            name="starship-theme",
+            description="Select starship prompt theme",
+            command="devops config starship-theme",
+            parent="config",
+            help_text="devops config starship-theme"
+        ))
+
+        config_node.add("🔗 pwsh-theme - Configure PowerShell theme", data=CommandInfo(
+            name="pwsh-theme",
+            description="Select powershell prompt theme",
+            command="devops config pwsh-theme",
+            parent="config",
+            help_text="devops config pwsh-theme"
+        ))
+
+        config_node.add("🔗 copy-assets - Copy asset files", data=CommandInfo(
+            name="copy-assets",
+            description="Copy asset files from library to machine",
+            command="devops config copy-assets",
+            parent="config",
+            help_text="devops config copy-assets <scripts|settings|both>"
         ))
 
         # data subcommands
@@ -241,28 +265,52 @@ class CommandTree(Tree[CommandInfo]):
             help_text="devops network share-terminal"
         ))
 
-        network_node.add("� install_ssh_server - Install SSH server", data=CommandInfo(
-            name="install_ssh_server",
+        network_node.add("🌐 share-server - Start local/global server", data=CommandInfo(
+            name="share-server",
+            description="Start local/global server to share files/folders via web browser",
+            command="devops network share-server",
+            parent="network",
+            help_text="devops network share-server"
+        ))
+
+        network_node.add("📡 install-ssh-server - Install SSH server", data=CommandInfo(
+            name="install-ssh-server",
             description="Install SSH server",
-            command="devops network install_ssh_server",
+            command="devops network install-ssh-server",
             parent="network",
-            help_text="devops network install_ssh_server"
+            help_text="devops network install-ssh-server"
         ))
 
-        network_node.add("� add_ssh_key - Add SSH public key", data=CommandInfo(
-            name="add_ssh_key",
+        network_node.add("🔑 add-ssh-key - Add SSH public key", data=CommandInfo(
+            name="add-ssh-key",
             description="Add SSH public key to this machine",
-            command="devops network add_ssh_key",
+            command="devops network add-ssh-key",
             parent="network",
-            help_text="devops network add_ssh_key --path <file> --choose --value --github <username>"
+            help_text="devops network add-ssh-key --path <file> --choose --value --github <username>"
         ))
 
-        network_node.add("�️  add_ssh_identity - Add SSH identity", data=CommandInfo(
-            name="add_ssh_identity",
+        network_node.add("🗝️ add-ssh-identity - Add SSH identity", data=CommandInfo(
+            name="add-ssh-identity",
             description="Add SSH identity (private key) to this machine",
-            command="devops network add_ssh_identity",
+            command="devops network add-ssh-identity",
             parent="network",
-            help_text="devops network add_ssh_identity"
+            help_text="devops network add-ssh-identity"
+        ))
+
+        network_node.add("📌 show-address - Show computer addresses", data=CommandInfo(
+            name="show-address",
+            description="Show this computer addresses on network",
+            command="devops network show-address",
+            parent="network",
+            help_text="devops network show-address"
+        ))
+
+        network_node.add("🐛 debug-ssh - Debug SSH connection", data=CommandInfo(
+            name="debug-ssh",
+            description="Debug SSH connection",
+            command="devops network debug-ssh",
+            parent="network",
+            help_text="devops network debug-ssh"
         ))
 
         # self subcommands
@@ -312,6 +360,22 @@ class CommandTree(Tree[CommandInfo]):
             command="devops self navigate",
             parent="self",
             help_text="devops self navigate"
+        ))
+
+        self_node.add("📚 readme - Render README markdown", data=CommandInfo(
+            name="readme",
+            description="Render readme markdown in terminal",
+            command="devops self readme",
+            parent="self",
+            help_text="devops self readme"
+        ))
+
+        self_node.add("🐍 python - Run Python command/file", data=CommandInfo(
+            name="python",
+            description="Run python command/file in the machineconfig environment",
+            command="devops self python",
+            parent="self",
+            help_text="devops self python <path> --command"
         ))
 
         # fire command - now a typer sub-app
@@ -463,9 +527,9 @@ class CommandTree(Tree[CommandInfo]):
         ))
 
         # croshell command
-        self.root.add("� croshell - Interactive shell", data=CommandInfo(
+        self.root.add("🔄 croshell - Cross-shell command execution", data=CommandInfo(
             name="croshell",
-            description="Interactive shell with various options",
+            description="Cross-shell command execution",
             command="croshell",
             is_group=False,
             module_path="machineconfig.scripts.python.croshell",
@@ -473,11 +537,52 @@ class CommandTree(Tree[CommandInfo]):
         ))
 
         # ftpx command
-        self.root.add("📡 ftpx - File transfer", data=CommandInfo(
+        self.root.add("📡 ftpx - File transfer utility", data=CommandInfo(
             name="ftpx",
-            description="File transfer between machines",
+            description="File transfer utility through SSH",
             command="ftpx",
             is_group=False,
             module_path="machineconfig.scripts.python.ftpx",
             help_text="ftpx <source> <target> --recursive --zipFirst --cloud"
+        ))
+
+        # utils command
+        utils_node = self.root.add("🛠️ utils - Utility commands", data=CommandInfo(
+            name="utils",
+            description="Utility commands",
+            command="utils",
+            is_group=True,
+            module_path="machineconfig.scripts.python.utils"
+        ))
+
+        utils_node.add("💀 kill-process - Kill processes", data=CommandInfo(
+            name="kill-process",
+            description="Choose a process to kill interactively",
+            command="utils kill-process",
+            parent="utils",
+            help_text="utils kill-process"
+        ))
+
+        utils_node.add("⬇️ download - Download file", data=CommandInfo(
+            name="download",
+            description="Download a file from a URL and optionally decompress it",
+            command="utils download",
+            parent="utils",
+            help_text="utils download <url> --destination <path> --decompress"
+        ))
+
+        utils_node.add("📄 merge-pdfs - Merge PDF files", data=CommandInfo(
+            name="merge-pdfs",
+            description="Merge two PDF files into one",
+            command="utils merge-pdfs",
+            parent="utils",
+            help_text="utils merge-pdfs <file1> <file2> --output <file>"
+        ))
+
+        utils_node.add("🖥️ get-machine-specs - Get machine specifications", data=CommandInfo(
+            name="get-machine-specs",
+            description="Get machine specifications",
+            command="utils get-machine-specs",
+            parent="utils",
+            help_text="utils get-machine-specs"
         ))

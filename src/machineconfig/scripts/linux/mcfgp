@@ -1,0 +1,14 @@
+
+
+
+RANDOM_NAME=$(date +%s%N | sha256sum | head -c 16)
+export OP_PROGRAM_PATH="$HOME/tmp_results/tmp_scripts/machineconfig/${RANDOM_NAME}.sh"
+
+mcfg "$@"
+
+if [[ -f "$OP_PROGRAM_PATH" ]]; then
+  echo "Found op program at: $OP_PROGRAM_PATH"
+  bash "$OP_PROGRAM_PATH"
+else
+  echo "no op program found"
+fi
