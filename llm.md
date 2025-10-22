@@ -120,6 +120,8 @@
 
 # Other
 * https://github.com/microsoft/NLWeb
+* https://github.com/eyaltoledano/claude-task-master
+* https://github.com/sparckles/Robyn `web framework in rust`
 
 # Deprecated
 * https://github.com/chenfei-wu/TaskMatrix
