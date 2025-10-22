@@ -4,7 +4,7 @@ from collections.abc import Callable
 from typing import Any
 
 
-def get_import_module_string(py_file: str):
+def get_import_module_string(py_file: str) -> str:
     from machineconfig.scripts.python.helpers_fire.helpers4 import get_import_module_code
     from machineconfig.utils.accessories import get_repo_root
     from pathlib import Path
@@ -111,7 +111,7 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
         import_prefix = get_import_module_string(str(_Path(module_path_candidate)))
 
     # Evaluate each keyword argument value in the lambda's globals to get real Python objects
-    call_kwargs = {}
+    call_kwargs: dict[str, Any] = {}
     for kw in body.keywords:
         if kw.arg is None:
             # **kwargs in call — evaluate to dict and merge
@@ -135,7 +135,6 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
         orig_src = _inspect.getsource(func_obj)
         ded = _textwrap.dedent(orig_src)
         lines = ded.splitlines()
-        # find the line that starts with def <name>(
         def_index = None
         for i, ln in enumerate(lines):
             if ln.lstrip().startswith(f"def {func_name}("):
@@ -144,19 +143,30 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
         if def_index is None:
             body_lines = ded.splitlines()
         else:
-            body_lines = lines[def_index + 1 :]
+            signature_end_index = None
+            for i in range(def_index, len(lines)):
+                line_no_comment = lines[i].split("#", 1)[0].rstrip()
+                if line_no_comment.endswith(":"):
+                    signature_end_index = i
+                    break
+            if signature_end_index is None:
+                body_lines = lines[def_index + 1 :]
+            else:
+                body_lines = lines[signature_end_index + 1 :]
         # ensure we have a body, otherwise use pass
         if not any(line.strip() for line in body_lines):
             body_text = "    pass\n"
         else:
-            # keep the dedented body lines exactly as-is (they should be indented)
-            body_text = "\n".join(body_lines) + ("\n" if not body_lines[-1].endswith("\n") else "")
+            joined_body = "\n".join(body_lines)
+            if not joined_body.endswith("\n"):
+                joined_body = f"{joined_body}\n"
+            body_text = joined_body
     except (OSError, IOError, TypeError):
         body_text = "    pass\n"
 
     # Build a replaced signature using inspect.signature
     sig = _inspect.signature(func_obj)
-    new_params = []
+    new_params: list[_inspect.Parameter] = []
     for name, param in sig.parameters.items():
         # If the call provided a value for this parameter, replace default
         if name in call_kwargs:
@@ -217,7 +227,7 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
 
     if import_prefix:
         return f"{import_prefix}{result_text}"
-    return result_text
+    return f"""from typing import Optional, Any, Literal""" + "\n" + result_text
 
 
 if __name__ == "__main__":
