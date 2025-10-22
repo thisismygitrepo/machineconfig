@@ -160,10 +160,6 @@ class CacheMemory[T]():
         self.logger = logger
         self.expire = expire
         self.name = name if isinstance(name, str) else self.source_func.__name__
-    @property
-    def age(self) -> timedelta:
-        return datetime.now() - self.time_produced
-
     def __call__(self, fresh: bool = False, tolerance_seconds: int = 1000000000000) -> T:
         if fresh or not hasattr(self, "cache"):
             why = "There was an explicit fresh order." if fresh else "Previous cache never existed."
@@ -175,7 +171,7 @@ class CacheMemory[T]():
             self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
             self.time_produced = datetime.now()
         else:
-            age = self.age
+            age = datetime.now() - self.time_produced
             if (age > self.expire) or (fresh and (age.total_seconds() > tolerance_seconds)):
                 self.logger.warning(f"""
 🔄 ════════════════════ CACHE UPDATE ════════════════════
@@ -214,8 +210,6 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
         self.logger = logger
         self.expire = expire
         self.name = name if isinstance(name, str) else self.source_func.__name__
-    def get_age(self):
-        return datetime.now() - self.time_produced
     def __call__(self, fresh: bool = False, tolerance_seconds: int = 1000000000000) -> T:
         if not hasattr(self, "cache"):  # populate cache for the first time: we have two options, populate from disk or from source func.
             if self.path.exists():  # prefer to read from disk over source func as a default source of cache.
@@ -262,7 +256,7 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
                 self.time_produced = datetime.now()
                 self.save(self.cache, self.path)
         else:  # memory cache exists
-            age = self.get_age()
+            age = datetime.now() - self.time_produced
             if (age > self.expire) or (fresh and (age.total_seconds() > tolerance_seconds)):  # cache is old or if fresh flag is raised
                 self.logger.warning(f"""
 🔄 ════════════════════ CACHE UPDATE ════════════════════
