@@ -1,10 +1,8 @@
 
 
 import typer
-from typing import Annotated, Optional, TypedDict
+from typing import Annotated, Literal, Optional, TypedDict
 from pathlib import Path
-import subprocess
-import requests
 
 
 def download(
@@ -17,7 +15,8 @@ def download(
         raise typer.Exit(code=1)
     typer.echo(f"📥 Downloading from: {url}")    
     download_path = Path(output) if output else Path(url.split("/")[-1])
-    
+    import requests
+    import subprocess
     try:
         response = requests.get(url, allow_redirects=True, stream=True, timeout=60)
         response.raise_for_status()
@@ -140,3 +139,32 @@ def get_machine_specs() -> MachineSpecs:
     import json
     path.write_text(json.dumps(specs, indent=4), encoding="utf-8")
     return specs
+
+
+def init_project(python: Annotated[Literal["3.13", "3.14"], typer.Option("--python", "-p", help="Python version for the uv virtual environment.")]= "3.13") -> None:
+    _ = python
+    repo_root = Path.cwd()
+    if not (repo_root / "pyproject.toml").exists():
+        typer.echo("❌ Error: pyproject.toml not found.", err=True)
+        raise typer.Exit(code=1)
+    print(f"Adding group `plot` with common data science and plotting packages...")
+    script = """
+uv add --group plot \
+    # Data & computation
+    numpy pandas polars duckdb-engine python-magic \
+    # Plotting / visualization
+    matplotlib plotly kaleido \
+    # Notebooks / interactive
+    ipython ipykernel jupyterlab nbformat marimo \
+    # Code analysis / type checking / linting
+    mypy pyright ruff pylint pyrefly \
+    # Packaging / build / dev
+    cleanpy \
+    # CLI / debugging / utilities
+    ipdb pudb \
+    # Type hints for packages
+    types-python-dateutil types-pyyaml types-requests types-tqdm \
+    types-mysqlclient types-paramiko types-pytz types-sqlalchemy types-toml types-urllib3 \
+"""
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(script)

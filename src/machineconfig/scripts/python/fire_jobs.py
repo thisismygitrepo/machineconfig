@@ -129,7 +129,7 @@ except ImportError as _ex:
     elif args.module:
         # both selected function and kwargs are mentioned in the made up script, therefore no need for fire module.
         command = f"{exe} {choice_file} "
-    elif choice_function is not None:
+    elif choice_function is not None and choice_file.suffix == ".py":
         command = f"{exe} -m fire {choice_file} {choice_function} {fire_args}"
     elif args.streamlit:
         # for .streamlit config to work, it needs to be in the current directory.

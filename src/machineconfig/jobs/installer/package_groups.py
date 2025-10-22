@@ -1,9 +1,9 @@
 from typing import Literal, TypeAlias, Union
 
 # AI/LLM Tools - AI-powered coding and chat assistants
-BUNDLE_AI = [
+AGENTS = [
     "aider",
-    "github-copilot-cli",
+    "copilot",
     "gemini",
     "crush",
     "opencode-ai",
@@ -14,6 +14,8 @@ BUNDLE_AI = [
     "qwen-code",
     "cursor-cli",
     "droid",
+    "kilocode",
+    "cline",
     "auggie",
 ]
 
@@ -217,7 +219,7 @@ PACKAGES_TERMINAL_SHELL = [
 PACKAGE_GROUPS: TypeAlias = Literal[
     "ESSENTIAL",
     "DEV",
-    "AI_TOOLS",
+    "AGENTS",
     "TUNNELING",
     "TERMINAL_EMULATORS",
     "BROWSERS",
@@ -249,7 +251,6 @@ ESSENTIAL = [
     *PACKAGES_SYSTEM_MONITORS,
     *PACKAGES_TERMINAL_SHELL,
     *PACKAGES_FILE,
-    *BUNDLE_AI,
 ]
 DEV = [
     *PACKAGES_TERMINAL_EMULATORS,
@@ -267,7 +268,7 @@ DEV = [
 PACKAGE_GROUP2NAMES: dict[PACKAGE_GROUPS, list[str]] = {
     "ESSENTIAL": ESSENTIAL,
     "DEV": DEV,
-    "AI_TOOLS": BUNDLE_AI,
+    "AGENTS": AGENTS,
     "TERMINAL_EMULATORS": PACKAGES_TERMINAL_EMULATORS,
     "BROWSERS": PACKAGES_BROWSERS,
     "CODE_EDITORS": PACKAGES_CODE_EDITORS,

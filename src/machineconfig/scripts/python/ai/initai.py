@@ -15,24 +15,6 @@ def add_ai_configs(repo_root: Path) -> None:
     repo_root_resolved = get_repo_root(repo_root)
     if repo_root_resolved is not None:
         repo_root = repo_root_resolved  # this means you can run the command from any subdirectory of the repo.
-
-#     if repo_root.joinpath("pyproject.toml").exists() is False:
-#         uv_init = input(f"{repo_root} does not seem to be a python project (no pyproject.toml found), would you like to initialize one? (y/n) ")
-#         if uv_init.strip().lower() == "y":
-#             command_to_run = """
-# uv init --python 3.13
-# uv venv
-# uv add --upgrade-package pylint pyright mypy pyrefly ty --dev  # linters and type checkers
-# uv add --upgrade-package pytest --dev
-# uv add typer --dev
-
-# """
-#             from machineconfig.utils.code import run_shell_script
-#             run_shell_script(command_to_run)
-#         else:
-#             print("Terminating initai ...")
-#             return
-
     dot_ai_dir = repo_root.joinpath(".ai")
     dot_ai_dir.mkdir(parents=True, exist_ok=True)
     dot_scripts_dir = repo_root.joinpath(".scripts")
