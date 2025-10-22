@@ -53,13 +53,18 @@
 * https://github.com/guardrails-ai/guardrails `unstructured -> structured`
 * https://github.com/jackmpcollins/magentic `unstructured -> structured`
 * https://github.com/bespokelabsai/curator `Make data`.
+* https://github.com/567-labs/instructor 
 
 
 # Web
 * https://github.com/browser-use/browser-use
-* https://github.com/mannaandpoem/OpenManus
+* https://www.youtube.com/watch?v=E1oDoBv68Us Google's MCP server of chrome for devs.
+* Playright MCP.
+
+* https://github.com/FoundationAgents/OpenManus
 * https://github.com/mendableai/firecrawl `Website html -> markdown.`
 * https://github.com/apify/crawlee-python `Website html -> markdown.`
+* https://github.com/microsoft/markitdown
 * https://github.com/McGill-NLP/webllama `Browse internet with agents`
 * https://github.com/nilsherzig/LLocalSearch `locally running search aggregator using LLM Agents.`
 * https://github.com/LearningCircuit/local-deep-research

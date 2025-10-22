@@ -225,6 +225,11 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
         header = f"def {func_name}{new_sig}:\n"
         result_text = header + body_text
 
+    if in_global:
+        lines = result_text.splitlines()
+        if lines[-1].startswith("return "):
+            lines[-1] = lines[-1].replace("return ", "# return ", 1)
+            result_text = "\n".join(lines)
     if import_prefix:
         return f"{import_prefix}{result_text}"
     return f"""from typing import Optional, Any, Literal""" + "\n" + result_text

@@ -43,7 +43,7 @@ def run_lambda_function(lmb: Callable[[], Any], uv_with: Optional[list[str]], uv
     code = lambda_to_python_script(lmb, in_global=True, import_module=False)
     uv_command, _py_file = get_uv_command_executing_python_script(python_script=code, uv_with=uv_with, uv_project_dir=uv_project_dir)
     run_shell_script(uv_command)
-def run_python_script_in_marino(py_script: str, uv_project_with: Optional[str]):
+def run_python_script_in_marimo(py_script: str, uv_project_with: Optional[str]):
     tmp_dir = Path.home().joinpath("tmp_results", "tmp_scripts", "marimo", randstr())
     tmp_dir.mkdir(parents=True, exist_ok=True)
     pyfile = tmp_dir / "marimo_db_explore.py"
