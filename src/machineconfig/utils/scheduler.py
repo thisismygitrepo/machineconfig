@@ -164,7 +164,7 @@ class CacheMemory[T]():
     def age(self) -> timedelta:
         return datetime.now() - self.time_produced
 
-    def __call__(self, fresh: bool = False) -> T:
+    def __call__(self, fresh: bool = False, tolerance_seconds: int = 1000000000000) -> T:
         if fresh or not hasattr(self, "cache"):
             why = "There was an explicit fresh order." if fresh else "Previous cache never existed."
             t0 = time.time()
@@ -176,7 +176,7 @@ class CacheMemory[T]():
             self.time_produced = datetime.now()
         else:
             age = self.age
-            if age > self.expire:
+            if (age > self.expire) or (fresh and (age.total_seconds() > tolerance_seconds)):
                 self.logger.warning(f"""
 🔄 ════════════════════ CACHE UPDATE ════════════════════
 ⚠️  {self.name} cache: Updating cache from source func
@@ -214,14 +214,24 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
         self.logger = logger
         self.expire = expire
         self.name = name if isinstance(name, str) else self.source_func.__name__
-    @property
-    def age(self):
-        """Throws AttributeError if called before cache is populated and path doesn't exists"""
+    def get_age(self):
         return datetime.now() - self.time_produced
-    def __call__(self, fresh: bool = False) -> T:
-        if fresh or not hasattr(self, "cache"):  # populate cache for the first time
-            if not fresh and self.path.exists():
+    def __call__(self, fresh: bool = False, tolerance_seconds: int = 1000000000000) -> T:
+        if not hasattr(self, "cache"):  # populate cache for the first time: we have two options, populate from disk or from source func.
+            if self.path.exists():  # prefer to read from disk over source func as a default source of cache.
                 age = datetime.now() - datetime.fromtimestamp(self.path.stat().st_mtime)
+                if (age > self.expire) or (fresh and (age.total_seconds() > tolerance_seconds)):  # cache is old or if fresh flag is raised
+                    self.logger.warning(f"""
+🔄 ════════════════════ CACHE STALE ════════════════════
+📦 {self.name} cache: Populating fresh cache from source func
+⏱️  Lag = {age}""")
+                    t0 = time.time()
+                    self.cache = self.source_func()  # fresh data.
+                    self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
+                    self.time_produced = datetime.now()
+                    self.save(self.cache, self.path)
+                    return self.cache
+
                 msg1 = f"""
 📦 ════════════════════ CACHE OPERATION ════════════════════
 🔄 {self.name} cache: Reading cached values from `{self.path}`
@@ -240,10 +250,8 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
                     self.time_produced = datetime.now()
                     self.save(self.cache, self.path)
                     return self.cache
-                return self(fresh=False)  # may be the cache is old ==> check that by passing it through the logic again.
-            else:
-                # Previous cache never existed or there was an explicit fresh order.
-                why = "There was an explicit fresh order." if fresh else "Previous cache never existed or is corrupted."
+            else:  # disk cache does not exist, populate from source func.
+                why = "Previous cache never existed."
                 self.logger.warning(f"""
 🆕 ════════════════════ NEW CACHE ════════════════════
 🔄 {self.name} cache: Populating fresh cache from source func
@@ -253,12 +261,9 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
                 self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
                 self.time_produced = datetime.now()
                 self.save(self.cache, self.path)
-        else:  # cache exists
-            try:
-                age = self.age
-            except AttributeError:  # path doesn't exist (may be deleted) ==> need to repopulate cache form source_func.
-                return self(fresh=True)
-            if age > self.expire:
+        else:  # memory cache exists
+            age = self.get_age()
+            if (age > self.expire) or (fresh and (age.total_seconds() > tolerance_seconds)):  # cache is old or if fresh flag is raised
                 self.logger.warning(f"""
 🔄 ════════════════════ CACHE UPDATE ════════════════════
 ⚠️  {self.name} cache: Updating cache from source func
