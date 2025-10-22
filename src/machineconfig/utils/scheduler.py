@@ -160,7 +160,7 @@ class CacheMemory[T]():
         self.logger = logger
         self.expire = expire
         self.name = name if isinstance(name, str) else self.source_func.__name__
-    def __call__(self, fresh: bool, tolerance_seconds: int) -> T:
+    def __call__(self, fresh: bool, tolerance_seconds: float | int) -> T:
         if fresh or not hasattr(self, "cache"):
             why = "There was an explicit fresh order." if fresh else "Previous cache never existed."
             t0 = time.time()
@@ -210,7 +210,7 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
         self.logger = logger
         self.expire = expire
         self.name = name if isinstance(name, str) else self.source_func.__name__
-    def __call__(self, fresh: bool, tolerance_seconds: int) -> T:
+    def __call__(self, fresh: bool, tolerance_seconds: float | int) -> T:
         if not hasattr(self, "cache"):  # populate cache for the first time: we have two options, populate from disk or from source func.
             if self.path.exists():  # prefer to read from disk over source func as a default source of cache.
                 age = datetime.now() - datetime.fromtimestamp(self.path.stat().st_mtime)
