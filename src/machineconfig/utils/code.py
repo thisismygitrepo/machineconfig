@@ -1,7 +1,7 @@
 
 from typing import Any, Optional, Callable
 from machineconfig.utils.accessories import randstr
-from machineconfig.utils.path_extended import PathExtended
+from machineconfig.utils.meta import lambda_to_python_script
 from pathlib import Path
 
 
@@ -22,7 +22,7 @@ def print_code(code: str, lexer: str, desc: str, subtitle: str = ""):
 
 
 def get_uv_command_executing_python_script(python_script: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> tuple[str, Path]:
-    python_file = PathExtended.tmp().joinpath("tmp_scripts", "python", randstr() + ".py")
+    python_file = Path.home().joinpath("tmp_results", "tmp_scripts", "python", randstr() + ".py")
     python_file.parent.mkdir(parents=True, exist_ok=True)
     if uv_with is not None and len(uv_with) > 0:
         uv_with.append("rich")
@@ -33,7 +33,6 @@ def get_uv_command_executing_python_script(python_script: str, uv_with: Optional
         uv_project_dir_arg = "--project" + f' "{uv_project_dir}"'
     else:
         uv_project_dir_arg = ""
-    from machineconfig.utils.meta import lambda_to_python_script
     print_code_string = lambda_to_python_script(lambda: print_code(code=python_script, lexer="python", desc="Temporary Python Script", subtitle="Executing via shell script"), in_global=True, import_module=False)
     python_file.write_text(print_code_string + "\n" + python_script, encoding="utf-8")
     shell_script = f"""uv run {uv_with_arg} {uv_project_dir_arg}  {str(python_file)} """
@@ -41,10 +40,26 @@ def get_uv_command_executing_python_script(python_script: str, uv_with: Optional
 
 
 def run_lambda_function(lmb: Callable[[], Any], uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> None:
-    from machineconfig.utils.meta import lambda_to_python_script
     code = lambda_to_python_script(lmb, in_global=True, import_module=False)
     uv_command, _py_file = get_uv_command_executing_python_script(python_script=code, uv_with=uv_with, uv_project_dir=uv_project_dir)
     run_shell_script(uv_command)
+def run_python_script_in_marino(py_script: str, uv_project_with: Optional[str]):
+    import tempfile
+    tmp_dir = tempfile.TemporaryDirectory()
+    pyfile = Path(tmp_dir.name) / "marimo_db_explore.py"
+    pyfile.write_text(py_script, encoding="utf-8")
+    if uv_project_with is not None:
+        requirements = f"""--with "marimo" --project {uv_project_with} """
+    else:
+        requirements = f"""--with "marimo" """
+    fire_line = f"""
+cd {str(pyfile.parent)}
+uv run {requirements} marimo convert {pyfile.name} -o marimo_nb.py
+bat marimo_nb.py
+uv run  {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
+"""
+    print_code(code=py_script, desc="Generated Marimo DB Explore Script", lexer="python")
+    exit_then_run_shell_script(fire_line)
 
 
 def run_shell_script(script: str, display_script: bool = True, clean_env: bool = False):
@@ -62,7 +77,7 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
         lexer = "bash"
     with tempfile.NamedTemporaryFile(mode='w', suffix=suffix, delete=False, encoding='utf-8') as temp_file:
         temp_file.write(script)
-        temp_script_path = PathExtended(temp_file.name)
+        temp_script_path = Path(temp_file.name)
     console = Console()
     if display_script:
         from rich.syntax import Syntax
@@ -92,7 +107,7 @@ def exit_then_run_shell_script(command: str):
     import os
     op_program_path = os.environ.get("OP_PROGRAM_PATH", None)
     if op_program_path is not None:
-        op_program_path = PathExtended(op_program_path)
+        op_program_path = Path(op_program_path)
         op_program_path.parent.mkdir(parents=True, exist_ok=True)
         op_program_path.write_text(command, encoding="utf-8")
     else:
