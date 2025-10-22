@@ -44,16 +44,16 @@ def run_lambda_function(lmb: Callable[[], Any], uv_with: Optional[list[str]], uv
     uv_command, _py_file = get_uv_command_executing_python_script(python_script=code, uv_with=uv_with, uv_project_dir=uv_project_dir)
     run_shell_script(uv_command)
 def run_python_script_in_marino(py_script: str, uv_project_with: Optional[str]):
-    import tempfile
-    tmp_dir = tempfile.TemporaryDirectory()
-    pyfile = Path(tmp_dir.name) / "marimo_db_explore.py"
+    tmp_dir = Path.home().joinpath("tmp_results", "tmp_scripts", "marimo", randstr())
+    tmp_dir.mkdir(parents=True, exist_ok=True)
+    pyfile = tmp_dir / "marimo_db_explore.py"
     pyfile.write_text(py_script, encoding="utf-8")
     if uv_project_with is not None:
         requirements = f"""--with "marimo" --project {uv_project_with} """
     else:
         requirements = f"""--with "marimo" """
     fire_line = f"""
-cd {str(pyfile.parent)}
+cd {tmp_dir}
 uv run {requirements} marimo convert {pyfile.name} -o marimo_nb.py
 bat marimo_nb.py
 uv run  {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
@@ -103,12 +103,12 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
     return proc
 
 
-def exit_then_run_shell_script(command: str):
+def exit_then_run_shell_script(script: str):
     import os
     op_program_path = os.environ.get("OP_PROGRAM_PATH", None)
     if op_program_path is not None:
         op_program_path = Path(op_program_path)
         op_program_path.parent.mkdir(parents=True, exist_ok=True)
-        op_program_path.write_text(command, encoding="utf-8")
+        op_program_path.write_text(script, encoding="utf-8")
     else:
-        run_shell_script(command)
+        run_shell_script(script)
