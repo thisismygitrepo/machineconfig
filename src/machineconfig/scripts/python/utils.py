@@ -1,6 +1,6 @@
 
 
-from machineconfig.scripts.python.helpers_devops.cli_utils import download, merge_pdfs, get_machine_specs, init_project
+from machineconfig.scripts.python.helpers_devops.cli_utils import download, merge_pdfs, get_machine_specs, init_project, compress_pdf
 import typer
 from typing import Annotated, Optional
 from pathlib import Path
@@ -53,6 +53,8 @@ def get_app() -> typer.Typer:
     app.command(name="g", no_args_is_help=False, hidden=True)(get_machine_specs)
     app.command(name="init-project", no_args_is_help=False, help="[i] Initialize a project with a uv virtual environment and install dev packages.")(init_project)
     app.command(name="i", no_args_is_help=False, hidden=True)(init_project)
+    app.command(name="compress-pdf", no_args_is_help=False, help="[c] Compress a PDF file.")(compress_pdf)
+    app.command(name="c", no_args_is_help=False, hidden=True)(compress_pdf)
     return app
 
 
