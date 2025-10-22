@@ -2,7 +2,7 @@
 from typing import Literal, TypeAlias, TypedDict
 
 
-AGENTS: TypeAlias = Literal["cursor-agent", "gemini", "crush", "q", "opencode"]
+AGENTS: TypeAlias = Literal["cursor-agent", "gemini", "qwen-code", "copilot", "crush", "q", "opencode", "kilocode", "cline", "auggie", "warp", "droid"]
 HOST: TypeAlias = Literal["local", "docker"]
 PROVIDER: TypeAlias = Literal["azure", "google", "aws", "openai", "anthropic", "openrouter", "xai"]
 MODEL: TypeAlias = Literal["zai/glm-4.6", "anthropic/sonnet-4.5", "google/gemini-2.5-pro", "openai/gpt-5-codex",

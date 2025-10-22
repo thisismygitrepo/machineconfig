@@ -2184,14 +2184,14 @@
       "doc": "Kilocode agent extension in the terminal",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g @kilocode/cli@alpha",
-          "windows": "npm install -g @kilocode/cli@alpha",
-          "macos": "npm install -g @kilocode/cli@alpha"
+          "linux": "npm install -g @kilocode/cli",
+          "windows": "npm install -g @kilocode/cli",
+          "macos": "npm install -g @kilocode/cli"
         },
         "arm64": {
-          "linux": "npm install -g @kilocode/cli@alpha",
-          "windows": "npm install -g @kilocode/cli@alpha",
-          "macos": "npm install -g @kilocode/cli@alpha"
+          "linux": "npm install -g @kilocode/cli",
+          "windows": "npm install -g @kilocode/cli",
+          "macos": "npm install -g @kilocode/cli"
         }
       }
     },
@@ -2247,7 +2247,7 @@
       }
     },
     {
-      "appName": "opencode-ai",
+      "appName": "opencode",
       "repoURL": "CMD",
       "doc": "Terminal-based CLI agents and tools for productivity and coding.",
       "fileNamePattern": {
