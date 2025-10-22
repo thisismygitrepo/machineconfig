@@ -17,15 +17,25 @@ def get_fire_tab_using_uv(func: FunctionType, import_module: bool, uv_with: Opti
     return tab_config, py_script_path
 def get_fire_tab_using_fire(func: FunctionType):
     import inspect
+    from machineconfig.utils.source_of_truth import CONFIG_ROOT
+    import platform
+    if platform.system().lower() == "windows":
+        mcfgs = CONFIG_ROOT / "scripts/windows/mcfgs.ps1"
+        mcfgs = f'& "{mcfgs}"'
+    elif platform.system().lower() == "linux" or platform.system().lower() == "darwin":
+        mcfgs = CONFIG_ROOT / "scripts/linux/mcfgs"
+    else:
+        raise ValueError(f"Unsupported platform: {platform.system()}")
     path = Path(inspect.getfile(func))
     path_relative = path.relative_to(Path.home())
-    command_to_run = f"""$HOME/.local/bin/fire {path_relative} {func.__name__} """
+    command_to_run = f"""{mcfgs} fire {path_relative} {func.__name__} """
     tab_config: TabConfig = {
         "command": command_to_run,
         "startDir": "$HOME",
         "tabName": func.__name__
     }
     return tab_config
+
 
 
 def make_layout_from_functions(functions: list[FunctionType], import_module: bool, tab_configs: list[TabConfig], layout_name: str, method: Literal["script", "fire"]="fire") -> LayoutConfig:
