@@ -1,8 +1,5 @@
 
-import atexit
-# import platform
 from typing import Any, Optional, Callable
-import subprocess
 from machineconfig.utils.accessories import randstr
 from machineconfig.utils.path_extended import PathExtended
 from pathlib import Path
@@ -66,7 +63,6 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
     with tempfile.NamedTemporaryFile(mode='w', suffix=suffix, delete=False, encoding='utf-8') as temp_file:
         temp_file.write(script)
         temp_script_path = PathExtended(temp_file.name)
-
     console = Console()
     if display_script:
         from rich.syntax import Syntax
@@ -92,37 +88,12 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
     return proc
 
 
-def run_shell_script_after_exit(script: str, display_script: bool = True) -> None:
-    import platform
-    from rich.console import Console
-    from rich.panel import Panel
-    from rich.syntax import Syntax
-
-    console = Console()
-    def execute_script_at_exit() -> None:
-        if platform.system() == "Windows":
-            suffix = ".ps1"
-            lexer = "powershell"
-        else:
-            suffix = ".sh"
-            lexer = "bash"
-        
-        script_path = PathExtended.tmp().joinpath("tmp_scripts", "exit", randstr() + suffix)
-        script_path.parent.mkdir(parents=True, exist_ok=True)
-        script_path.write_text(script, encoding="utf-8")
-        
-        if display_script:
-            console.print(Panel(Syntax(code=script, lexer=lexer), title=f"📄 Exit script @ {script_path}", subtitle="Running at exit"), style="bold yellow")
-        
-        if platform.system() != "Windows":
-            script_path.chmod(0o755)
-        
-        if platform.system() == "Windows":
-            subprocess.run(["powershell", "-ExecutionPolicy", "Bypass", "-NoProfile", "-File", str(script_path)], check=False)
-        else:
-            subprocess.run(["bash", str(script_path)], check=False)
-        
-        script_path.unlink(missing_ok=True)
-    
-    atexit.register(execute_script_at_exit)
-
+def exit_then_run_shell_script(command: str):
+    import os
+    op_program_path = os.environ.get("OP_PROGRAM_PATH", None)
+    if op_program_path is not None:
+        op_program_path = PathExtended(op_program_path)
+        op_program_path.parent.mkdir(parents=True, exist_ok=True)
+        op_program_path.write_text(command, encoding="utf-8")
+    else:
+        run_shell_script(command)
