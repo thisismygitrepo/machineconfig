@@ -4,7 +4,14 @@ from rich.text import Text
 from rich.panel import Panel
 from rich.console import Console
 import subprocess
-from typing import Optional, Union, Iterable, overload, Literal
+from typing import Optional, Union, Iterable, overload, Literal, cast
+
+
+# def strip_ansi_codes(text: str) -> str:
+#     """Remove ANSI color codes from text."""
+#     import re
+#     return re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
+
 
 @overload
 def choose_from_options[T](msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = False, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False) -> T: ...
@@ -22,17 +29,20 @@ def choose_from_options[T](msg: str, options: Iterable[T], multi: bool, custom_i
         from pyfzf.pyfzf import FzfPrompt
         fzf_prompt = FzfPrompt()
         nl = "\n"
-        choice_string_multi: list[str] = fzf_prompt.prompt(choices=options_strings, fzf_options=("--multi" if multi else "") + f' --prompt "{prompt.replace(nl, " ")}" ')  # --border-label={msg.replace(nl, ' ')}")
+        choice_string_multi: list[str] = fzf_prompt.prompt(choices=options_strings, fzf_options=("--multi" if multi else "") + f' --prompt "{prompt.replace(nl, " ")}" --ansi')  # --border-label={msg.replace(nl, ' ')}")
         # --border=rounded doens't work on older versions of fzf installed at Ubuntu 20.04
         if not multi:
             try:
                 choice_one_string = choice_string_multi[0]
+                if isinstance(list(options)[0], str): return cast(T, choice_one_string)
                 choice_idx = options_strings.index(choice_one_string)
                 return list(options)[choice_idx]
             except IndexError as ie:
                 print(f"❌ Error: {options=}, {choice_string_multi=}")
                 print(f"🔍 Available choices: {choice_string_multi}")
                 raise ie
+        if isinstance(list(options)[0], str):
+            return cast(list[T], choice_string_multi)
         choice_idx_s = [options_strings.index(x) for x in choice_string_multi]
         return [list(options)[x] for x in choice_idx_s]
     else:

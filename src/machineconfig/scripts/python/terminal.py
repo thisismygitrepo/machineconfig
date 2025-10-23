@@ -1,29 +1,25 @@
 
-import re
 import typer
 from typing import Annotated
-
-
-def strip_ansi_codes(text: str) -> str:
-    """Remove ANSI color codes from text."""
-    return re.sub(r'\x1b\[[0-9;]*m', '', text)
 
 
 def choose_zellij_session():
     cmd = "zellij list-sessions"
     import subprocess
     sessions: list[str] = subprocess.check_output(cmd, shell=True).decode().strip().split("\n")
-    sessions = [strip_ansi_codes(s.split()[0]) for s in sessions if s]
+    sessions.sort(key=lambda s: "EXITED" in s)
     if "current" in sessions:
         print("Already in a Zellij session, avoiding nesting and exiting.")
         raise typer.Exit()
     if len(sessions) == 0:
         print("No Zellij sessions found, creating a new one.")
         result = """zellij --layout st2"""
+    elif len(sessions) == 1:
+        session = sessions[0].split(" [Created")[0]
+        print(f"Only one Zellij session found: {session}, attaching to it.")
+        result = f"zellij attach {session}"
     else:
         from machineconfig.utils.options import choose_from_options
-        print(sessions)
-        typer.Exit()
         session = choose_from_options(msg="Choose a Zellij session to attach to:", multi=False, options=sessions, fzf=True)
         session = session.split(" [Created")[0]
         result = f"zellij attach {session}"
@@ -118,7 +114,6 @@ else # ==> we are not in a zellijsession
       if [ "${NO_SESSIONS}" -eq 1 ] && $attach; then
         chosen_session=$(echo -e "${ZJ_SESSIONS}" | cut -d' ' -f1)
         # remove the ansi colors from chosen_session
-        chosen_session=$(echo $chosen_session | sed 's/\x1b\[[0-9;]*m//g')
         # echo "attaching to $chosen_session exclusively."
         zellij attach "$chosen_session"
         exit 0
