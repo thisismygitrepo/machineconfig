@@ -364,7 +364,3 @@ def create_new_connection(name: str, ssid: str, password: str):
     except Exception as e:
         console.print(f"[red]❌ Unexpected error: {e}[/red]")
         raise
-
-
-if __name__ == "__main__":
-    arg_parser()
