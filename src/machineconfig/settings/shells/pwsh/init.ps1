@@ -39,6 +39,7 @@ function ff { ftpx @args }
 function f { fire @args }
 function rr { croshell @args }
 function u { utils @args }
+function t { terminal @args }
 
 # try {
 #     Set-Alias -Name gcs -Value {gh copilot suggest -t shell}
