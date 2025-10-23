@@ -25,6 +25,7 @@ mcfg "$@"
 
 if [[ -f "$OP_PROGRAM_PATH" ]]; then
   printf "%b\n" "${GREEN}✅ Found op program:${RESET} ${OP_PROGRAM_PATH}"
+  bat "$OP_PROGRAM_PATH"
   printf "%b\n" "${GREEN}▶ Running...${RESET}"
   . "$OP_PROGRAM_PATH"
   status=$?
