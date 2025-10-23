@@ -20,9 +20,6 @@ printf "%b\n" "${BOLD}${BLUE}🛠️  machineconfig — running mcfg${RESET}"
 printf "%b\n" "${BLUE}Timestamp:${RESET} ${timestamp}"
 printf "%b\n" "${BLUE}Op program path:${RESET} ${OP_PROGRAM_PATH}"
 
-# Ensure directory exists so generated scripts have a place to land
-mkdir -p "$OP_DIR"
-
 # Forward arguments to the mcfg command
 mcfg "$@"
 
