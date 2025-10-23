@@ -28,8 +28,6 @@ Usage examples:
 
 """
 
-from typing import Annotated
-import typer
 import configparser
 from pathlib import Path
 import os
@@ -38,8 +36,7 @@ import subprocess
 import getpass
 from typing import List, Dict, Optional
 from rich.console import Console
-from rich.panel import Panel
-from rich.prompt import Prompt, Confirm
+from rich.prompt import Prompt
 from rich.table import Table
 
 console = Console()
@@ -261,51 +258,6 @@ def manual_network_selection() -> bool:
         return True
     except Exception:
         return False
-
-
-def main(
-    ssid: Annotated[str, typer.Option("-n", "--ssid", help="🔗 SSID of WiFi (from config)")] = "MyPhoneHotSpot",
-    manual: Annotated[bool, typer.Option("-m", "--manual", help="🔍 Manual network selection mode")] = False,
-    list_: Annotated[bool, typer.Option("-l", "--list", help="📡 List available networks only")] = False,
-) -> None:
-    """Main function with fallback network selection"""
-    console.print(Panel("📶 Welcome to the WiFi Connector Tool", title="[bold blue]WiFi Connection[/bold blue]", border_style="blue"))
-
-    # If user just wants to list networks
-    if list_:
-        display_available_networks()
-        return
-
-    # If user wants manual mode, skip config and go straight to selection
-    if manual:
-        console.print("[blue]🔍 Manual network selection mode[/blue]")
-        if manual_network_selection():
-            console.print("[green]🎉 Successfully connected![/green]")
-        else:
-            console.print("[red]❌ Failed to connect[/red]")
-        return
-
-    # Try to connect using configuration first
-    console.print(f"[blue]🔍 Attempting to connect to configured network: {ssid}[/blue]")
-
-    if try_config_connection(ssid):
-        console.print("[green]🎉 Successfully connected using configuration![/green]")
-        return
-
-    # Configuration failed, offer fallback options
-    console.print("\n[yellow]⚠️  Configuration connection failed or not available[/yellow]")
-
-    if Confirm.ask("[blue]Would you like to manually select a network?[/blue]", default=True):
-        if manual_network_selection():
-            console.print("[green]🎉 Successfully connected![/green]")
-        else:
-            console.print("[red]❌ Failed to connect[/red]")
-    else:
-        console.print("[blue]👋 Goodbye![/blue]")
-
-
-def arg_parser() -> None:
-    typer.run(main)
 
 
 def get_current_wifi_name() -> str:

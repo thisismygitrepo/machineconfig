@@ -198,7 +198,7 @@ def init_project(python: Annotated[Literal["3.13", "3.14"], typer.Option("--pyth
     if not (repo_root / "pyproject.toml").exists():
         typer.echo("❌ Error: pyproject.toml not found.", err=True)
         raise typer.Exit(code=1)
-    print(f"Adding group `plot` with common data science and plotting packages...")
+    print("Adding group `plot` with common data science and plotting packages...")
     script = """
 uv add --group plot \
     # Data & computation

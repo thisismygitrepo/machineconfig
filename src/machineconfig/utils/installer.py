@@ -214,7 +214,6 @@ def get_machineconfig_version() -> str:
     from importlib.metadata import PackageNotFoundError, version as _pkg_version
     from pathlib import Path
     import tomllib
-
     name: str = "machineconfig"
     try:
         return _pkg_version(name)
