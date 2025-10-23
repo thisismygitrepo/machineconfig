@@ -45,8 +45,14 @@ def main(installer_data: InstallerData, version: Optional[str] = None) -> None:
     from pathlib import Path
     for item in decomp_path.rglob("*"):
         if "boxes.exe" in item.name:
-            item.rename(Path(WINDOWS_INSTALL_PATH) / "boxes.exe")
+            dest_exe = Path(WINDOWS_INSTALL_PATH) / "boxes.exe"
+            if dest_exe.exists():
+                dest_exe.unlink()
+            item.rename(dest_exe)
         if "boxes.cfg" in item.name:
-            item.rename(Path(WINDOWS_INSTALL_PATH) / "boxes.cfg")
+            dest_cfg = Path(WINDOWS_INSTALL_PATH) / "boxes.cfg"
+            if dest_cfg.exists():
+                dest_cfg.unlink()
+            item.rename(dest_cfg)
     console.print("📦 Boxes downloaded and decompressed.", style="bold green")
   
