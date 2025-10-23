@@ -8,7 +8,7 @@ from machineconfig.utils.terminal import Response
 from machineconfig.utils.accessories import pprint, randstr
 from machineconfig.utils.meta import lambda_to_python_script
 UV_RUN_CMD = "$HOME/.local/bin/uv run" if platform.system() != "Windows" else """& "$env:USERPROFILE/.local/bin/uv" run"""
-MACHINECONFIG_VERSION = "machineconfig>=6.79"
+MACHINECONFIG_VERSION = "machineconfig>=6.81"
 DEFAULT_PICKLE_SUBDIR = "tmp_results/tmp_scripts/ssh"
 
 class SSH:
@@ -290,7 +290,7 @@ class SSH:
                 shutil.make_archive(str(zip_path), "zip", source_obj.parent, source_obj.name)
             source_obj = Path(str(zip_path) + ".zip")
             if not target_rel2home.endswith(".zip"): target_rel2home = target_rel2home + ".zip"
-        self.create_dir(path_rel2home=target_rel2home, overwrite_existing=overwrite_existing)
+        self.create_dir(path_rel2home=str(Path(target_rel2home).parent), overwrite_existing=overwrite_existing)
         print(f"""📤 [SFTP UPLOAD] Sending file: {repr(source_obj)}  ==>  Remote Path: {target_rel2home}""")
         try:
             with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
