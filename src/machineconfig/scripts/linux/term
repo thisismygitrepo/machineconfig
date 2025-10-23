@@ -17,7 +17,7 @@ RED="\033[31m"
 
 timestamp=$(date -u +"%Y-%m-%d %H:%M:%SZ")
 
-printf "%b\n" "${BOLD}${BLUE}🛠️  machineconfig — running mcfg${RESET}"
+printf "%b\n" "${BOLD}${BLUE}🛠️  terminal — running term${RESET}"
 printf "%b\n" "${BLUE}Timestamp:${RESET} ${timestamp}"
 printf "%b\n" "${BLUE}Op program path:${RESET} ${OP_PROGRAM_PATH}"
 

@@ -53,6 +53,8 @@ alias ff=ftpx
 alias f=fire
 alias r=croshell
 alias u=utils
+alias t=term
+
 
 # alias gcs='gh copilot suggest -t shell'
 # alias gcg='gh copilot suggest -t git'

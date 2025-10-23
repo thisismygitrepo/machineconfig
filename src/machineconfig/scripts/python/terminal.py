@@ -1,7 +1,7 @@
 
 import re
 import typer
-from typing import Optional, Annotated
+from typing import Annotated
 
 
 def strip_ansi_codes(text: str) -> str:
