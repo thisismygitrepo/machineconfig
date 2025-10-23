@@ -47,14 +47,15 @@ def get_app() -> typer.Typer:
     app.command(name="k", no_args_is_help=False, help="Choose a process to kill", hidden=True)(kill_process)
     app.command(name="download", no_args_is_help=True, help="[d] Download a file from a URL and optionally decompress it.")(download)
     app.command(name="d", no_args_is_help=True, hidden=True)(download)
-    app.command(name="merge-pdfs", no_args_is_help=True, help="[m] Merge two PDF files into one.")(merge_pdfs)
-    app.command(name="m", no_args_is_help=True, hidden=True)(merge_pdfs)
     app.command(name="get-machine-specs", no_args_is_help=False, help="[g] Get machine specifications.")(get_machine_specs)
     app.command(name="g", no_args_is_help=False, hidden=True)(get_machine_specs)
     app.command(name="init-project", no_args_is_help=False, help="[i] Initialize a project with a uv virtual environment and install dev packages.")(init_project)
     app.command(name="i", no_args_is_help=False, hidden=True)(init_project)
-    app.command(name="compress-pdf", no_args_is_help=False, help="[c] Compress a PDF file.")(compress_pdf)
-    app.command(name="c", no_args_is_help=False, hidden=True)(compress_pdf)
+
+    app.command(name="pdf-merge", no_args_is_help=True, help="[pm] Merge two PDF files into one.")(merge_pdfs)
+    app.command(name="pm", no_args_is_help=True, hidden=True)(merge_pdfs)
+    app.command(name="pdf-compress", no_args_is_help=False, help="[pc] Compress a PDF file.")(compress_pdf)
+    app.command(name="pc", no_args_is_help=False, hidden=True)(compress_pdf)
     return app
 
 
