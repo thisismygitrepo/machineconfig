@@ -8,7 +8,7 @@ from machineconfig.utils.terminal import Response
 from machineconfig.utils.accessories import pprint, randstr
 from machineconfig.utils.meta import lambda_to_python_script
 UV_RUN_CMD = "$HOME/.local/bin/uv run" if platform.system() != "Windows" else """& "$env:USERPROFILE/.local/bin/uv" run"""
-MACHINECONFIG_VERSION = "machineconfig>=6.78"
+MACHINECONFIG_VERSION = "machineconfig>=6.79"
 DEFAULT_PICKLE_SUBDIR = "tmp_results/tmp_scripts/ssh"
 
 class SSH:
