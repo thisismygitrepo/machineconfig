@@ -70,6 +70,7 @@ croshell = "machineconfig.scripts.python.croshell:main"
 ftpx = "machineconfig.scripts.python.ftpx:main"
 utils = "machineconfig.scripts.python.utils:main"
 mcfg = "machineconfig.scripts.python.mcfg:main"
+terminal = "machineconfig.scripts.python.terminal:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

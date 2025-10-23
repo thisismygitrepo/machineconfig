@@ -1,14 +1,62 @@
-#!/usr/bin/env bash
 
-# if variable zellij is not set, then set it to /$HOME/.local/bin/zellij
-if [ -z "$zellij" ]; then
-  # zellij="$HOME/.local/bin/zellij"
-  PATH="$HOME/.local/bin:$PATH"
-fi
+import re
+import typer
+from typing import Optional, Annotated
 
+
+def strip_ansi_codes(text: str) -> str:
+    """Remove ANSI color codes from text."""
+    return re.sub(r'\x1b\[[0-9;]*m', '', text)
+
+
+def choose_zellij_session():
+    cmd = "zellij list-sessions"
+    import subprocess
+    sessions: list[str] = subprocess.check_output(cmd, shell=True).decode().strip().split("\n")
+    sessions = [strip_ansi_codes(s.split()[0]) for s in sessions if s]
+    if "current" in sessions:
+        print("Already in a Zellij session, avoiding nesting and exiting.")
+        raise typer.Exit()
+    if len(sessions) == 0:
+        print("No Zellij sessions found, creating a new one.")
+        result = """zellij --layout st2"""
+    else:
+        from machineconfig.utils.options import choose_from_options
+        print(sessions)
+        typer.Exit()
+        session = choose_from_options(msg="Choose a Zellij session to attach to:", multi=False, options=sessions, fzf=True)
+        session = session.split(" [Created")[0]
+        result = f"zellij attach {session}"
+    from machineconfig.utils.code import exit_then_run_shell_script
+    exit_then_run_shell_script(result, strict=True)
+
+
+def new_zellij_session(kill_all: Annotated[bool, typer.Option("--kill-all", "-k", help="Kill all existing Zellij sessions before creating a new one.", show_default=True)] = False):
+    cmd = """
+zellij --layout st2
+"""
+    if kill_all:
+        cmd = f"""zellij kill-sessions
+{cmd}"""
+    from machineconfig.utils.code import exit_then_run_shell_script
+    exit_then_run_shell_script(cmd, strict=True)
+
+
+def main():
+    app = typer.Typer(help="🖥️ Terminal utilities", no_args_is_help=True, add_help_option=False)
+    app.command(name="choose-zellij-session", no_args_is_help=False, help="[c] Choose a Zellij session to attach to")(choose_zellij_session)
+    app.command(name="c", hidden=True, no_args_is_help=False, help="[c] Choose a Zellij session to attach to")(choose_zellij_session)
+    app.command(name="new-zellij-session", no_args_is_help=False, help="[n] new zellij session.")(new_zellij_session)
+    app.command(name="n", hidden=True, no_args_is_help=False, help="[n] new zellij session.")(new_zellij_session)
+    app()
+
+
+if __name__ == "__main__":
+    main()
+
+"""
 # adopted from https://zellij.dev/documentation/integration.html
 ZJ_SESSIONS=$(zellij list-sessions)
-# echo "$ZJ_SESSIONS"
 
 
 attach=false
@@ -102,3 +150,5 @@ else # ==> we are not in a zellijsession
   fi
 
 fi
+
+"""

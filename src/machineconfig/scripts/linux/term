@@ -1,3 +1,4 @@
+
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -20,8 +21,7 @@ printf "%b\n" "${BOLD}${BLUE}🛠️  machineconfig — running mcfg${RESET}"
 printf "%b\n" "${BLUE}Timestamp:${RESET} ${timestamp}"
 printf "%b\n" "${BLUE}Op program path:${RESET} ${OP_PROGRAM_PATH}"
 
-# Forward arguments to the mcfg command
-mcfg "$@"
+terminal "$@"
 
 if [[ -f "$OP_PROGRAM_PATH" ]]; then
   printf "%b\n" "${GREEN}✅ Found op program:${RESET} ${OP_PROGRAM_PATH}"

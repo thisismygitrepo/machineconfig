@@ -103,9 +103,11 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
     return proc
 
 
-def exit_then_run_shell_script(script: str):
+def exit_then_run_shell_script(script: str, strict: bool = False):
     import os
     op_program_path = os.environ.get("OP_PROGRAM_PATH", None)
+    if strict and op_program_path is None:
+        raise ValueError("OP_PROGRAM_PATH environment variable is not set in strict mode.")
     if op_program_path is not None:
         op_program_path = Path(op_program_path)
         op_program_path.parent.mkdir(parents=True, exist_ok=True)
