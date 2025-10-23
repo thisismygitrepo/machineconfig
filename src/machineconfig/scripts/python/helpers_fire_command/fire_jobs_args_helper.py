@@ -15,6 +15,7 @@ class FireJobArgs:
     choose_function: bool = False
     loop: bool = False
     jupyter: bool = False
+    marimo: bool = False
     submit_to_cloud: bool = False
     remote: bool = False
     module: bool = False

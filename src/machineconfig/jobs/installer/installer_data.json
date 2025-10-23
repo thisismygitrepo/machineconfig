@@ -173,11 +173,11 @@
     },
     {
       "appName": "boxes",
-      "repoURL": "https://github.com/ascii-boxes/boxes",
+      "repoURL": "CMD",
       "doc": "📦 ASCI draws boxes around text.",
       "fileNamePattern": {
         "amd64": {
-          "windows": "boxes-{version}-intel-win32.zip",
+          "windows": "boxes.py",
           "linux": null,
           "macos": null
         },

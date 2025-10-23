@@ -42,6 +42,18 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
     if ipy_profile is None:
         ipy_profile = "default"
 
+    if args.marimo:
+        tmp_dir = PathExtended.tmp().joinpath(f"tmp_scripts/marimo/{choice_file.stem}_{randstr()}")
+        tmp_dir.mkdir(parents=True, exist_ok=True)
+        script = f"""
+cd {tmp_dir}
+uv run --python 3.14 --with marimo marimo convert {choice_file} -o marimo_nb.py
+uv run --project {repo_root} --with marimo marimo edit marimo_nb.py
+"""
+        from machineconfig.utils.code import exit_then_run_shell_script
+        print(f"🚀 Launching Marimo notebook for `{choice_file}`...")
+        exit_then_run_shell_script(script)
+        return
 
     # =========================  preparing kwargs_dict
     if choice_file.suffix == ".py":
@@ -214,6 +226,7 @@ def fire(
     choose_function: Annotated[bool, typer.Option("--choose-function", "-c", help="Choose function interactively")] = False,
     loop: Annotated[bool, typer.Option("--loop", "-l", help="Infinite recursion (runs again after completion/interruption)")] = False,
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="Open in a jupyter notebook")] = False,
+    marimo: Annotated[bool, typer.Option("--marimo", "-M", help="Open in a marimo notebook")] = False,
     module: Annotated[bool, typer.Option("--module", "-m", help="Launch the main file")] = False,
     optimized: Annotated[bool, typer.Option("--optimized", "-O", help="Run the optimized version of the function")] = False,
     zellij_tab: Annotated[Optional[str], typer.Option("--zellij-tab", "-z", help="Open in a new zellij tab")] = None,
@@ -244,6 +257,7 @@ def fire(
         choose_function=choose_function,
         loop=loop,
         jupyter=jupyter,
+        marimo=marimo,
         submit_to_cloud=submit_to_cloud,
         remote=remote,
         module=module,

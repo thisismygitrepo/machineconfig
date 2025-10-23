@@ -5,13 +5,6 @@ from typing import Annotated
 import typer
 
 
-# @app.command()
-# def symlinks_new():
-#     """🆕 SYMLINKS new. consider moving to the new config command, then may be merge it with the dotfile subcommand"""
-#     import machineconfig.jobs.python.python_ve_symlink as helper
-#     helper.main()
-
-
 def main(
     file: Annotated[str, typer.Argument(help="file/folder path.")],
     overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="Overwrite.")] = False,
