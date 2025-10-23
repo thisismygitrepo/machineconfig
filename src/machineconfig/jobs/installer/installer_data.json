@@ -1209,6 +1209,40 @@
       }
     },
     {
+      "appName": "pgweb",
+      "repoURL": "https://github.com/sosedoff/pgweb/",
+      "doc": "🗃️ Web-based PostgreSQL database browser written in Go",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "pgweb-linux-amd64.zip",
+          "macos": "pgweb_darwin_amd64.zip",
+          "windows": "pgweb_windows_amd64.zip"
+        },
+        "arm64": {
+          "linux": "pgweb-linux-arm64.zip",
+          "macos": "pgweb_darwin_arm64.zip",
+          "windows": "pgweb_windows_arm64.zip"
+        }
+      }
+    },
+    {
+      "appName": "dbgate",
+      "repoURL": "https://github.com/dbgate/dbgate",
+      "doc": "🗃️ Cross-platform database manager for developers and database administrators",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "dbgate-{version}-linux_x64.tar.gz",
+          "macos": "dbgate-{version}-mac_x64.zip",
+          "windows": "dbgate-windows-latest.zip"
+        },
+        "arm64": {
+          "linux": "dbgate-{version}-linux_arm64.tar.gz",
+          "macos": "dbgate-{version}-mac_arm64.zip",
+          "windows": "dbgate-windows-latest-arm64.exe"
+        }
+      }
+    },
+    {
       "appName": "duckdb",
       "repoURL": "https://github.com/duckdb/duckdb",
       "doc": "🗃️ An in-process SQL OLAP database management system",

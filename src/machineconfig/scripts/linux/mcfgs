@@ -1,6 +1,5 @@
-
-
-
+#!/bin/bash
+# script variant of mcfg.
 RANDOM_NAME=$(date +%s%N | sha256sum | head -c 16)
 export OP_PROGRAM_PATH="$HOME/tmp_results/tmp_scripts/machineconfig/${RANDOM_NAME}.sh"
 

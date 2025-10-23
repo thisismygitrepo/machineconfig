@@ -55,4 +55,7 @@ def main(installer_data: InstallerData, version: Optional[str] = None) -> None:
                 dest_cfg.unlink()
             item.rename(dest_cfg)
     console.print("📦 Boxes downloaded and decompressed.", style="bold green")
-  
+
+
+if __name__ == "__main__":
+    pass

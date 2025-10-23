@@ -48,7 +48,7 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
         script = f"""
 cd {tmp_dir}
 uv run --python 3.14 --with marimo marimo convert {choice_file} -o marimo_nb.py
-uv run --project {repo_root} --with marimo marimo edit marimo_nb.py
+uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.py
 """
         from machineconfig.utils.code import exit_then_run_shell_script
         print(f"🚀 Launching Marimo notebook for `{choice_file}`...")
