@@ -127,6 +127,7 @@ def compress_pdf(
     ) -> None:
     def compress_pdf_internal(pdf_input: str, output: str | None, quality: int, image_dpi: int, remove_images: bool, compress_streams: bool, use_objstms: bool) -> None:
         import pymupdf
+        from pathlib import Path
         output_path = output if output else pdf_input.replace(".pdf", "_compressed.pdf")
         doc = pymupdf.open(pdf_input)
         try:
