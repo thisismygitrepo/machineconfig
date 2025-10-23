@@ -119,15 +119,29 @@ def merge_pdfs(
 def compress_pdf(
         pdf_input: Annotated[str, typer.Argument(..., help="Path to the input PDF file to compress.")],
         output: Annotated[Optional[str], typer.Option("--output", "-o", help="Output compressed PDF file path.")] = None,
+        flate_level: Annotated[int, typer.Option("--flate-level", "-f", help="Flate compression level (0-9, default 9).")] = 9,
+        recompress: Annotated[bool, typer.Option("--recompress", "-r", help="Recompress already compressed streams.")] = True,
+        linearize: Annotated[bool, typer.Option("--linearize", "-l", help="Linearize PDF for faster web viewing.")] = False,
     ) -> None:
-    def compress_pdf_internal(pdf_input: str, output: str | None) -> None:
-        import pikepdf
+    def compress_pdf_internal(pdf_input: str, output: str | None, flate_level: int, recompress: bool, linearize: bool) -> None:
+        from pikepdf import Pdf, ObjectStreamMode, settings
+        settings.set_flate_compression_level(flate_level)
         output_path = output if output else pdf_input.replace(".pdf", "_compressed.pdf")
-        with pikepdf.open(pdf_input) as pdf:
-            pdf.save(output_path, compress_streams=True, remove_duplication=True, garbage=2)
+        with Pdf.open(pdf_input) as pdf:
+            pdf.save(
+                output_path,
+                compress_streams=True,
+                recompress_flate=recompress,
+                object_stream_mode=ObjectStreamMode.generate,
+                linearize=linearize,
+            )
         print(f"✅ Compressed PDF saved to: {output_path}")
     from machineconfig.utils.meta import lambda_to_python_script
-    code = lambda_to_python_script(lambda : compress_pdf_internal(pdf_input=pdf_input, output=output), in_global=True, import_module=False)
+    code = lambda_to_python_script(
+        lambda: compress_pdf_internal(pdf_input=pdf_input, output=output, flate_level=flate_level, recompress=recompress, linearize=linearize),
+        in_global=True,
+        import_module=False,
+    )
     from machineconfig.utils.code import run_shell_script, get_uv_command_executing_python_script
     uv_command, _py_file = get_uv_command_executing_python_script(python_script=code, uv_with=["pikepdf"], uv_project_dir=None)
     run_shell_script(uv_command)

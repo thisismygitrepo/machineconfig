@@ -5,7 +5,7 @@
 # mkdir ~/data/local
 # sudo mount -o nolock,noatime,nodiratime,proto=tcp,timeo=600,retrans=2,noac alex-p51s-5:/home/alex/data/local ./data/local
 
-uv run --python 3.14 --with "machineconfig>=6.77" python -m machineconfig.scripts.python.mount_nfs
+uv run --python 3.14 --with "machineconfig>=6.78" python -m machineconfig.scripts.python.mount_nfs
 # Check if remote server is reachable and share folder exists
 if ! ping -c 1 "$remote_server" &> /dev/null; then
   echo "💥 Error: Remote server $remote_server is not reachable."
