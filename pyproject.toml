@@ -123,10 +123,10 @@ dev = [
 
 other = [
     "duckdb-engine>=0.17.0",
-        "pycrucible>=0.3.0",
+    "pycrucible>=0.3.0",
     "vt-py>=0.21.0",
-]
 #     "euporie>=2.8.14",
+]
 
 
 [tool.pycrucible]

@@ -54,11 +54,12 @@ def get_app() -> typer.Typer:
 
     app.command(name="pdf-merge", no_args_is_help=True, help="[pm] Merge two PDF files into one.")(merge_pdfs)
     app.command(name="pm", no_args_is_help=True, hidden=True)(merge_pdfs)
-    app.command(name="pdf-compress", no_args_is_help=False, help="[pc] Compress a PDF file.")(compress_pdf)
-    app.command(name="pc", no_args_is_help=False, hidden=True)(compress_pdf)
+    app.command(name="pdf-compress", no_args_is_help=True, help="[pc] Compress a PDF file.")(compress_pdf)
+    app.command(name="pc", no_args_is_help=True, hidden=True)(compress_pdf)
     return app
 
-
+# def func():
+#     import pycr
 
 def main():
     app = get_app()

@@ -78,15 +78,14 @@ def download(
 
 
 def merge_pdfs(
-        pdf1: Annotated[str, typer.Argument(..., help="Path to the first PDF file.")],
-        pdf2: Annotated[str, typer.Argument(..., help="Path to the second PDF file.")],
+        pdfs: Annotated[list[str], typer.Argument(..., help="Paths to the PDF files to merge.")],
         output: Annotated[Optional[str], typer.Option("--output", "-o", help="Output merged PDF file path.")] = None,
         compress: Annotated[bool, typer.Option("--compress", "-c", help="Compress the output PDF.")] = False,
     ) -> None:
-    def merge_pdfs_internal(pdf1: str, pdf2: str, output: str | None, compress: bool) -> None:
+    def merge_pdfs_internal(pdfs: list[str], output: str | None, compress: bool) -> None:
         from pypdf import PdfReader, PdfWriter
         writer = PdfWriter()
-        for pdf_path in [pdf1, pdf2]:
+        for pdf_path in pdfs:
             reader = PdfReader(pdf_path)
             for page in reader.pages:
                 writer.add_page(page)
@@ -110,7 +109,7 @@ def merge_pdfs(
         writer.write(output_path)
         print(f"✅ Merged PDF saved to: {output_path}")
     from machineconfig.utils.meta import lambda_to_python_script
-    code = lambda_to_python_script(lambda : merge_pdfs_internal(pdf1=pdf1, pdf2=pdf2, output=output, compress=compress), in_global=True, import_module=False)
+    code = lambda_to_python_script(lambda : merge_pdfs_internal(pdfs=pdfs, output=output, compress=compress), in_global=True, import_module=False)
     from machineconfig.utils.code import run_shell_script, get_uv_command_executing_python_script
     uv_command, _py_file = get_uv_command_executing_python_script(python_script=code, uv_with=["pypdf"], uv_project_dir=None)
     run_shell_script(uv_command)
