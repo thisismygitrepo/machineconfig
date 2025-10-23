@@ -124,7 +124,7 @@ def compress_pdf(
         import pikepdf
         output_path = output if output else pdf_input.replace(".pdf", "_compressed.pdf")
         with pikepdf.open(pdf_input) as pdf:
-            pdf.save(output_path, compress_streams=True)
+            pdf.save(output_path, compress_streams=True, remove_duplication=True, garbage=2)
         print(f"✅ Compressed PDF saved to: {output_path}")
     from machineconfig.utils.meta import lambda_to_python_script
     code = lambda_to_python_script(lambda : compress_pdf_internal(pdf_input=pdf_input, output=output), in_global=True, import_module=False)
