@@ -10,7 +10,7 @@ from machineconfig.utils.installer_utils.installer_abc import WINDOWS_INSTALL_PA
 from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
-installer_data: InstallerData = {
+installer_data_modified: InstallerData = {
       "appName": "boxes",
       "repoURL": "https://github.com/ascii-boxes/boxes",
       "doc": "📦 ASCI draws boxes around text.",
@@ -39,7 +39,7 @@ def main(installer_data: InstallerData, version: Optional[str] = None) -> None:
         )
     )
 
-    installer = Installer(installer_data=installer_data)
+    installer = Installer(installer_data=installer_data_modified)
     downloaded, _version_to_be_installed = installer.download(version=version)
     decomp_path = downloaded.decompress()
     from pathlib import Path
