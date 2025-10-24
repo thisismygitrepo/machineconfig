@@ -295,7 +295,6 @@ class WTLocalManager:
                             "is_active": len(session_windows) > 0,
                             "tab_count": len(manager.layout_config["layoutTabs"]) if manager.layout_config else 0,
                             "tabs": [tab["tabName"] for tab in manager.layout_config["layoutTabs"]] if manager.layout_config else [],
-                            "windows": session_windows,
                         }
                     )
 

@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from typing import Any
 
 
 def add_lint_and_type_check_task(repo_root: Path) -> None:
@@ -18,8 +19,12 @@ def add_lint_and_type_check_task(repo_root: Path) -> None:
     }
 
     if tasks_json_path.exists():
-        with tasks_json_path.open("r") as f:
-            tasks_config = json.load(f)
+        json_data = tasks_json_path.read_text(encoding="utf-8")
+        if not json_data.strip():
+            tasks_config: dict[str, Any] = {"version": "2.0.0", "tasks": []}
+        else:
+            tasks_config = json.loads(json_data)
+            assert isinstance(tasks_config, dict)
         if "tasks" not in tasks_config:
             tasks_config["tasks"] = []
         existing_labels = {task.get("label") for task in tasks_config.get("tasks", [])}

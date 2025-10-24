@@ -139,8 +139,6 @@
 #     start: datetime
 #     end: datetime
 #     status: str
-
-#     @classmethod
 #     def from_path(cls, path: PathExtended, return_default_if_not_found: bool=False):
 #         if not path.exists():
 #             if return_default_if_not_found:

@@ -115,7 +115,7 @@ class SSH:
         self.tqdm_wrap = RichProgressWrapper
         from machineconfig.scripts.python.helpers_devops.cli_utils import get_machine_specs
         self.local_specs: MachineSpecs = get_machine_specs()
-        resp = self.run_shell(command=f"""~/.local/bin/utils get-machine-specs """, verbose_output=False, description="Getting remote machine specs", strict_stderr=False, strict_return_code=False)
+        resp = self.run_shell(command="""~/.local/bin/utils get-machine-specs """, verbose_output=False, description="Getting remote machine specs", strict_stderr=False, strict_return_code=False)
         json_str = resp.op
         import ast
         self.remote_specs: MachineSpecs = cast(MachineSpecs, ast.literal_eval(json_str))

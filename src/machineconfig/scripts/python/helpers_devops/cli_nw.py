@@ -54,6 +54,52 @@ def debug_ssh():
     else:
         raise NotImplementedError(f"Platform {system()} is not supported.")
 
+def wifi_select(
+    ssid: Annotated[str, typer.Option("-n", "--ssid", help="🔗 SSID of WiFi (from config)")] = "MyPhoneHotSpot",
+    manual: Annotated[bool, typer.Option("-m", "--manual", help="🔍 Manual network selection mode")] = False,
+    list_: Annotated[bool, typer.Option("-l", "--list", help="📡 List available networks only")] = False,
+) -> None:
+    """Main function with fallback network selection"""
+    from rich.panel import Panel
+    from rich.prompt import Confirm
+    from rich.console import Console
+    from machineconfig.scripts.python.nw.wifi_conn import try_config_connection, manual_network_selection, display_available_networks
+    console = Console()
+    console.print(Panel("📶 Welcome to the WiFi Connector Tool", title="[bold blue]WiFi Connection[/bold blue]", border_style="blue"))
+
+    # If user just wants to list networks
+    if list_:
+        display_available_networks()
+        return
+
+    # If user wants manual mode, skip config and go straight to selection
+    if manual:
+        console.print("[blue]🔍 Manual network selection mode[/blue]")
+        if manual_network_selection():
+            console.print("[green]🎉 Successfully connected![/green]")
+        else:
+            console.print("[red]❌ Failed to connect[/red]")
+        return
+
+    # Try to connect using configuration first
+    console.print(f"[blue]🔍 Attempting to connect to configured network: {ssid}[/blue]")
+
+    if try_config_connection(ssid):
+        console.print("[green]🎉 Successfully connected using configuration![/green]")
+        return
+
+    # Configuration failed, offer fallback options
+    console.print("\n[yellow]⚠️  Configuration connection failed or not available[/yellow]")
+
+    if Confirm.ask("[blue]Would you like to manually select a network?[/blue]", default=True):
+        if manual_network_selection():
+            console.print("[green]🎉 Successfully connected![/green]")
+        else:
+            console.print("[red]❌ Failed to connect[/red]")
+    else:
+        console.print("[blue]👋 Goodbye![/blue]")
+
+
 def get_app():
     nw_apps = typer.Typer(help="🔐 [n] Network subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
     nw_apps.command(name="share-terminal", help="📡  [t] Share terminal via web browser")(cli_terminal.main)
@@ -70,4 +116,8 @@ def get_app():
     nw_apps.command(name="a", help="Show this computer addresses on network", hidden=True)(show_address)
     nw_apps.command(name="debug-ssh", help="🐛  [d] Debug SSH connection")(debug_ssh)
     nw_apps.command(name="d", help="Debug SSH connection", hidden=True)(debug_ssh)
+
+    nw_apps.command(name="wifi-select", no_args_is_help=True, help="[w] WiFi connection utility.")(wifi_select)
+    nw_apps.command(name="w", no_args_is_help=True, hidden=True)(wifi_select)
+
     return nw_apps

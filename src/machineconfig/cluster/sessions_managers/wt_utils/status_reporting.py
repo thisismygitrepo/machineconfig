@@ -59,7 +59,7 @@ def calculate_global_summary_from_status(all_status: dict[str, dict[str, Any]], 
     total_commands = sum(status.get("summary", {}).get("total_commands", 0) for status in all_status.values())
     total_running = sum(status.get("summary", {}).get("running_commands", 0) for status in all_status.values())
     
-    result = {
+    result: dict[str, Any] = {
         "total_sessions": total_sessions,
         "healthy_sessions": healthy_sessions,
         "unhealthy_sessions": total_sessions - healthy_sessions,

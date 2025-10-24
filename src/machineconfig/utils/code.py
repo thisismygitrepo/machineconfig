@@ -56,7 +56,7 @@ def run_python_script_in_marimo(py_script: str, uv_project_with: Optional[str]):
     if uv_project_with is not None:
         requirements = f"""--with "marimo" --project {uv_project_with} """
     else:
-        requirements = f"""--with "marimo" """
+        requirements = """--with "marimo" """
     fire_line = f"""
 cd {tmp_dir}
 uv run {requirements} marimo convert {pyfile.name} -o marimo_nb.py
