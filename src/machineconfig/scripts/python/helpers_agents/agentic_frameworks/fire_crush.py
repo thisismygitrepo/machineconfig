@@ -30,7 +30,7 @@ docker run -it --rm \
   -v "{repo_root}:/workspace/{repo_root.name}" \
   -v "{temp_config_file_local}:/root/.local/share/crush/crush.json" \
   -w "/workspace/{repo_root.name}" \
-  statistician/machineconfig:latest \
+  statistician/machineconfig-ai:latest \
   bash -i -c "source ~/.bashrc && cd /workspace/{repo_root.name} && cat /root/.local/share/crush/crush.json && crush run 'Please act on contents of this prompt ./{prompt_path.relative_to(repo_root)}'"
 
 """

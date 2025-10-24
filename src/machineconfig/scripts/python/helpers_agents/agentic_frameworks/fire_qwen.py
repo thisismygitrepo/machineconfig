@@ -37,7 +37,7 @@ docker run -it --rm \
   -v {shlex.quote(str(oauth_creds))}:/root/.qwen/oauth_creds.json \
   -v {shlex.quote(str(settings))}:/root/.qwen/settings.json \
   -w "/workspace/{repo_root.name}" \
-  statistician/machineconfig:latest \
+  statistician/machineconfig-ai:latest \
   qwen --prompt "$PATH_PROMPT"
 """
     return cmd

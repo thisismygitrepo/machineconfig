@@ -37,8 +37,7 @@ docker run -it --rm \
   -e GEMINI_API_KEY="{api_key}" \
   -v "{repo_root}:/workspace/{repo_root.name}" \
   -w "/workspace/{repo_root.name}" \
-  statistician/machineconfig:latest  \
+  statistician/machineconfig-ai:latest  \
   gemini --prompt "$PATH_PROMPT"
 """
     return cmd
-            
