@@ -98,11 +98,11 @@ def main():
     app.command(name="attach-to-zellij", no_args_is_help=False, help="[z] Choose a Zellij session to attach to")(choose_zellij_session)
     app.command(name="z", hidden=True, no_args_is_help=False, help="[z] Choose a Zellij session to attach to")(choose_zellij_session)
 
-    app.command(name="start-wt", no_args_is_help=False, help="[w] Start a Windows Terminal layout by name.")(start_wt)
-    app.command(name="w", hidden=True, no_args_is_help=False, help="[w] Start a Windows Terminal layout by name.")(start_wt)
+    app.command(name="start-wt", no_args_is_help=True, help="[w] Start a Windows Terminal layout by name.")(start_wt)
+    app.command(name="w", hidden=True, no_args_is_help=True, help="[w] Start a Windows Terminal layout by name.")(start_wt)
 
-    app.command(name="get-session-tabs", no_args_is_help=False, help="Get all Zellij session tabs.")(get_session_tabs)
-    app.command(name="gst", hidden=True, no_args_is_help=False, help="Get all Zellij session tabs.")(get_session_tabs)
+    app.command(name="get-session-tabs", no_args_is_help=False, help="[zt] Get all Zellij session tabs.")(get_session_tabs)
+    app.command(name="zt", hidden=True, no_args_is_help=False, help="[zt] Get all Zellij session tabs.")(get_session_tabs)
     app()
 
 
