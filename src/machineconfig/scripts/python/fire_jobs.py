@@ -7,7 +7,7 @@ fire
 
 """
 
-from machineconfig.utils.ve import get_ve_activate_line, get_ve_path_and_ipython_profile
+from machineconfig.utils.ve import get_ve_path_and_ipython_profile
 from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.path_helper import match_file_name, sanitize_path
 from machineconfig.utils.path_extended import PathExtended
@@ -38,10 +38,6 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
 
     repo_root = get_repo_root(Path(choice_file))
     print(f"💾 Selected file: {choice_file}.\nRepo root: {repo_root}")
-    ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
-    if ipy_profile is None:
-        ipy_profile = "default"
-
     if args.marimo:
         tmp_dir = PathExtended.tmp().joinpath(f"tmp_scripts/marimo/{choice_file.stem}_{randstr()}")
         tmp_dir.mkdir(parents=True, exist_ok=True)
@@ -58,14 +54,8 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
     # =========================  preparing kwargs_dict
     if choice_file.suffix == ".py":
         kwargs_dict = extract_kwargs(args)  # This now returns empty dict, but kept for compatibility
-        ve_root = args.ve or ve_root_from_file
-        if ve_root is None:
-            raise ValueError(f"Could not determine virtual environment for file {choice_file}. Please ensure it is within a recognized project structure or specify the `--ve` option.")
-        activate_ve_line = get_ve_activate_line(ve_root=ve_root)
     else:
-        activate_ve_line = ""
         kwargs_dict = {}
-
 
     # =========================  choosing function to run
     choice_function: Optional[str] = None  # Initialize to avoid unbound variable
@@ -77,58 +67,35 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
 
     if choice_file.suffix == ".py":
         from machineconfig.scripts.python.helpers_fire_command.fire_jobs_route_helper import get_command_streamlit
-        if args.streamlit:  exe = get_command_streamlit(choice_file, args.environment, repo_root)
-        elif args.interactive is False: exe = "python"
-        elif args.jupyter: exe = "jupyter-lab"
-        else: exe = f"ipython -i --no-banner --profile {ipy_profile} "
+        if args.streamlit:
+            exe = get_command_streamlit(choice_file=choice_file, environment=args.environment, repo_root=repo_root)
+            exe = f"uv run {exe} "
+        elif args.jupyter: exe = "uv run jupyter-lab"
+        else:
+            if args.interactive:
+                _ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
+                if ipy_profile is None:
+                    ipy_profile = "default"
+                exe = f"uv run ipython -i --no-banner --profile {ipy_profile} "
+            else:
+                exe = "uv run python "
     elif choice_file.suffix == ".ps1" or choice_file.suffix == ".sh": exe = "."
     elif choice_file.suffix == "": exe = ""
     else: raise NotImplementedError(f"File type {choice_file.suffix} not supported, in the sense that I don't know how to fire it.")
 
     if args.module or (args.debug and args.choose_function):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file}"
-        from machineconfig.scripts.python.helpers_fire.helpers4 import get_import_module_code
-        import_line = get_import_module_code(str(choice_file))
-        if repo_root is not None:
-            repo_root_add = f"""sys.path.append(r'{repo_root}')"""
-        else:
-            repo_root_add = ""
-        txt: str = f"""
-try:
-    {import_line}
-except (ImportError, ModuleNotFoundError) as ex:
-    print(fr"❌ Failed to import `{choice_file}` as a module: {{ex}} ")
-    print(fr"⚠️ Attempting import with ad-hoc `$PATH` manipulation. DO NOT pickle any objects in this session as correct deserialization cannot be guaranteed.")
-    import sys
-    sys.path.append(r'{PathExtended(choice_file).parent}')
-    {repo_root_add}
-    from {PathExtended(choice_file).stem} import *
-    print(fr"✅ Successfully imported `{choice_file}`")
-"""
-        if choice_function is not None:
-            txt = (
-                txt
-                + f"""
-res = {choice_function}({("**" + str(kwargs_dict)) if kwargs_dict else ""})
-"""
-            )
-
-        txt = (
-            f"""
-try:
-    from rich.panel import Panel
-    from rich.console import Console
-    from rich.syntax import Syntax
-    console = Console()
-    console.print(Panel(Syntax(code=r'''{txt}''', lexer='python'), title='Import Script'), style="bold red")
-except ImportError as _ex:
-    print(r'''{txt}''')
-"""
-            + txt
-        )
-        choice_file = PathExtended.tmp().joinpath(f"tmp_scripts/python/{PathExtended(choice_file).parent.name}_{PathExtended(choice_file).stem}_{randstr()}.py")
+        from machineconfig.scripts.python.helpers_fire.helpers4 import get_import_module_code, wrap_import_in_try_except
+        from machineconfig.utils.meta import lambda_to_python_script
+        from machineconfig.utils.code import print_code
+        import_code = get_import_module_code(str(choice_file))
+        import_code_robust = lambda_to_python_script(lambda: wrap_import_in_try_except(import_line=import_code, pyfile=str(choice_file), repo_root=str(repo_root) if repo_root is not None else None), in_global=True, import_module=False)
+        code_printing = lambda_to_python_script(lambda: print_code(code=import_code_robust, lexer="python", desc="import code"), in_global=True, import_module=False)
+        if choice_function is not None: calling = f"""res = {choice_function}({("**" + str(kwargs_dict)) if kwargs_dict else ""})"""
+        else: calling = """# No function selected to call. You can add your code here."""
+        choice_file = PathExtended.tmp().joinpath(f"tmp_scripts/python/{Path(choice_file).parent.name}_{Path(choice_file).stem}_{randstr()}.py")
         choice_file.parent.mkdir(parents=True, exist_ok=True)
-        choice_file.write_text(txt, encoding="utf-8")
+        choice_file.write_text(import_code_robust + "\n" + code_printing + "\n" + calling, encoding="utf-8")
 
     # =========================  determining basic command structure: putting together exe & choice_file & choice_function & pdb
     if args.debug:
@@ -149,26 +116,24 @@ except ImportError as _ex:
             command = f"{exe} {choice_file}"
         else:
             command = f"cd {choice_file.parent}\n{exe} {choice_file.name}\ncd {PathExtended.cwd()}"
-
     elif args.cmd:
         command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
     else:
         if choice_file.suffix == "": command = f"{exe} {choice_file} {fire_args}"
         else: command = f"{exe} {choice_file} "
 
-    if not args.cmd: command = f"{activate_ve_line}\n{command}"
+
+    if not args.cmd: pass
     else:
         new_line = "\n"
-        command = rf"""start cmd -Argument "/k {activate_ve_line.replace(".ps1", ".bat").replace(". ", "")} & {command.replace(new_line, " & ")} " """  # this works from powershell
+        command = rf"""start cmd -Argument "/k {command.replace(new_line, " & ")} " """  # this works from powershell
     if args.submit_to_cloud:
-        command = f"""
-{activate_ve_line}
-python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
+        command = f"""uv run python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
         if choice_function is not None:
             command += f"--function {choice_function} "
 
-    if args.optimized:
-        command = command.replace("python ", "python -OO ")
+    if args.optimized: command = command.replace("python ", "python -OO ")
+
     from rich.panel import Panel
     from rich.console import Console
     from rich.syntax import Syntax
@@ -207,7 +172,7 @@ python -m machineconfig.cluster.templates.cli_click --file {choice_file} """
     import os
     op_program_path = os.environ.get("OP_PROGRAM_PATH", None)
     if op_program_path is not None:
-        op_program_path = PathExtended(op_program_path)
+        op_program_path = Path(op_program_path)
         op_program_path.parent.mkdir(parents=True, exist_ok=True)
         op_program_path.write_text(command, encoding="utf-8")
     else:

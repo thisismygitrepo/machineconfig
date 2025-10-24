@@ -110,3 +110,18 @@ def get_import_module_code(module_path: str):
         module_name = "IncorrectModuleName"
     # TODO: use py_compile to check if the statement is valid code to avoid syntax errors that can't be caught.
     return f"from {module_name} import *"
+
+
+def wrap_import_in_try_except(import_line: str, pyfile: str, repo_root: Optional[str] = None) -> None:
+    try:
+        exec(import_line)  # type: ignore
+    except (ImportError, ModuleNotFoundError) as ex:
+        print(fr"❌ Failed to import `{pyfile}` as a module: {ex} ")
+        print("⚠️ Attempting import with ad-hoc `$PATH` manipulation. DO NOT pickle any objects in this session as correct deserialization cannot be guaranteed.")
+        import sys
+        from pathlib import Path
+        sys.path.append(str(Path(pyfile).parent))
+        if repo_root is not None:
+            sys.path.append(repo_root)
+        exec(f"from {Path(pyfile).stem} import *")
+        print(fr"✅ Successfully imported `{pyfile}`")

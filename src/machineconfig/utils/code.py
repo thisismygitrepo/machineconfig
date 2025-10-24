@@ -7,18 +7,23 @@ from pathlib import Path
 
 def print_code(code: str, lexer: str, desc: str, subtitle: str = ""):
     import platform
-    from rich.console import Console
-    from rich.panel import Panel
-    from rich.syntax import Syntax
-    if lexer == "shell":
-        if platform.system() == "Windows":
-            lexer = "powershell"
-        elif platform.system() in ["Linux", "Darwin"]:
-            lexer = "sh"
-        else:
-            raise NotImplementedError(f"Platform {platform.system()} not supported for lexer {lexer}")
-    console = Console()
-    console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}", subtitle=subtitle), style="bold red")
+    try:
+        from rich.console import Console
+        from rich.panel import Panel
+        from rich.syntax import Syntax
+        if lexer == "shell":
+            if platform.system() == "Windows":
+                lexer = "powershell"
+            elif platform.system() in ["Linux", "Darwin"]:
+                lexer = "sh"
+            else:
+                raise NotImplementedError(f"Platform {platform.system()} not supported for lexer {lexer}")
+        console = Console()
+        console.print(Panel(Syntax(code=code, lexer=lexer), title=f"📄 {desc}", subtitle=subtitle), style="bold red")
+    except ImportError:
+        print(f"--- {desc} ---")
+        print(code)
+        print(f"--- End of {desc} ---")
 
 
 def get_uv_command_executing_python_script(python_script: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> tuple[str, Path]:
