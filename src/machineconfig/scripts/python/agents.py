@@ -5,7 +5,7 @@
 from pathlib import Path
 from typing import cast, Optional, get_args, Annotated
 import typer
-from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import AGENTS, HOST, MODEL, PROVIDER
+from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import AGENTS, HOST, MODEL, PROVIDER
 
 
 def create(
@@ -24,8 +24,8 @@ def create(
     agents_dir: Annotated[Optional[Path], typer.Option(..., "--agents-dir", "-ad", help="Directory to store agent files. If not provided, will be constructed automatically.")] = None,
 ):
 
-    from machineconfig.scripts.python.helpers_fire.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout
-    from machineconfig.scripts.python.helpers_fire.fire_agents_load_balancer import chunk_prompts
+    from machineconfig.scripts.python.helpers_agents.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout
+    from machineconfig.scripts.python.helpers_agents.fire_agents_load_balancer import chunk_prompts
     from machineconfig.utils.accessories import get_repo_root, randstr
     import json
 
@@ -136,7 +136,7 @@ def collect(
 
 def template():
     from platform import system
-    import machineconfig.scripts.python.helpers_fire as module
+    import machineconfig.scripts.python.helpers_agents as module
     if system() == "Linux" or system() == "Darwin":
         template_path = Path(module.__file__).parent / "template.sh"
     elif system() == "Windows":

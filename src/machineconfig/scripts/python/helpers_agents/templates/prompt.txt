@@ -1,0 +1,6 @@
+
+please look if it is possible to easily relpace PathExtended with normal Path from pathlib
+if its one or two lines of code, then go ahead and make it standard and stop using the extended library
+you focus ont he methods used, 
+
+only look at the files below

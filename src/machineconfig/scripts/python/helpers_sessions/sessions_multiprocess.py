@@ -21,7 +21,7 @@ def create_from_function(
         suffixes = {".py"}
         choice_file = match_file_name(sub_string=path, search_root=PathExtended.cwd(), suffixes=suffixes)
     elif path_obj.is_dir():
-        from machineconfig.scripts.python.helpers_fire.helpers4 import search_for_files_of_interest
+        from machineconfig.scripts.python.helpers_fire_command.file_wrangler import search_for_files_of_interest
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
         files = search_for_files_of_interest(path_obj)
         print(f"🔍 Got #{len(files)} results.")

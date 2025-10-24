@@ -2,7 +2,7 @@
 
 from pathlib import Path
 # import shlex
-from machineconfig.scripts.python.helpers_fire.fire_agents_helper_types import HOST
+from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import HOST
 from typing import Optional
 
 def fire_cursor(api_key: Optional[str], prompt_path: Path, machine: HOST) -> str:

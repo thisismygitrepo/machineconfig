@@ -6,7 +6,7 @@ capturing all user inputs collected during interactive execution.
 
 from pathlib import Path
 from typing import TypedDict, Literal, NotRequired
-from machineconfig.scripts.python.helpers_fire.fire_agents_help_launch import AGENTS
+from machineconfig.scripts.python.helpers_agents.fire_agents_help_launch import AGENTS
 
 SEARCH_STRATEGIES = Literal["file_path", "keyword_search", "filename_pattern"]
 

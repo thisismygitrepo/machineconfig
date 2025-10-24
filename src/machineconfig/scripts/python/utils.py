@@ -22,7 +22,7 @@ def kill_process(
 def upgrade_packages():
     from machineconfig.utils.upgrade_packages import generate_uv_add_commands
     from pathlib import Path
-    generate_uv_add_commands(pyproject_path=Path.cwd() / "pyproject.toml", output_path=Path.cwd() / "pyproject_init.sh")
+generate_uv_add_commands(pyproject_path=Path.cwd() / "pyproject.toml", output_path=Path.cwd() / "pyproject_init.sh")
 
 
 def get_app() -> typer.Typer:
