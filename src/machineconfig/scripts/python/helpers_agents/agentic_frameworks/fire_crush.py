@@ -16,14 +16,15 @@ crush run {prompt_path}
             json_path = Path(__file__).parent / "fire_crush.json"
             json_template = json_path.read_text(encoding="utf-8")
             json_filled = json_template.replace("{api_key}", api_key).replace("{model}", model).replace("{provider}", provider)
-            import tempfile
-            temp_config_file_local = tempfile.mkstemp(suffix=".json")[1]
+            from machineconfig.utils.accessories import randstr
+            temp_config_file_local = Path.home().joinpath("tmp_results/tmp_files/crush_" + randstr(8) + ".json")
+            temp_config_file_local.parent.mkdir(parents=True, exist_ok=True)
             Path(temp_config_file_local).write_text(json_filled, encoding="utf-8")            
             cmd = f"""
 
 #   -e "PATH_PROMPT=$PATH_PROMPT"
 #   opencode --model "{provider}/{model}" run {prompt_path}
-
+  
 
 echo "Running prompt @ {prompt_path.relative_to(repo_root)} using Docker with Crush..."
 docker run -it --rm \

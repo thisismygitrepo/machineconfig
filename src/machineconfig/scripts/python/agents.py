@@ -26,8 +26,19 @@ def create(
 
     from machineconfig.scripts.python.helpers_agents.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout
     from machineconfig.scripts.python.helpers_agents.fire_agents_load_balancer import chunk_prompts
+    from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import PROVIDER2MODEL
     from machineconfig.utils.accessories import get_repo_root, randstr
     import json
+
+    # validate model is valid for the provider
+    valid_models_for_provider = PROVIDER2MODEL.get(provider, [])
+    if model not in valid_models_for_provider:
+        available_models = "\n  ".join(valid_models_for_provider) if valid_models_for_provider else "(none configured)"
+        raise typer.BadParameter(
+            f"Model '{model}' is not valid for provider '{provider}'.\n"
+            f"Valid models for '{provider}':\n  {available_models}\n"
+            f"All available models: {', '.join(get_args(MODEL))}"
+        )
 
     # validate mutual exclusive
     prompt_options = [prompt, prompt_path]
@@ -85,7 +96,7 @@ agents create "{context_path_resolved}" \\
     --separator "{separator}" \\
     {"--separate" if separate else ""}
 """
-    (agents_dir / "aa_agents_relaunch.py").write_text(data=regenerate_py_code, encoding="utf-8")
+    (agents_dir / "aa_agents_relaunch.sh").write_text(data=regenerate_py_code, encoding="utf-8")
     layout_output_path = output_path if output_path is not None else agents_dir / "layout.json"
     layout_output_path.parent.mkdir(parents=True, exist_ok=True)
     layout_output_path.write_text(data=json.dumps(layoutfile, indent=4), encoding="utf-8")
@@ -138,9 +149,9 @@ def template():
     from platform import system
     import machineconfig.scripts.python.helpers_agents as module
     if system() == "Linux" or system() == "Darwin":
-        template_path = Path(module.__file__).parent / "template.sh"
+        template_path = Path(module.__file__).parent / "templates/template.sh"
     elif system() == "Windows":
-        template_path = Path(module.__file__).parent / "template.ps1"
+        template_path = Path(module.__file__).parent / "templates/template.ps1"
     else:
         raise typer.BadParameter(f"Unsupported OS: {system()}")
 

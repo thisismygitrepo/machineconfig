@@ -230,8 +230,9 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
         if lines[-1].startswith("return "):
             lines[-1] = lines[-1].replace("return ", "# return ", 1)
             result_text = "\n".join(lines)
-    if "Optional[" in result_text or "Any" in result_text or "Union[" in result_text or "Literal[" in result_text:
-        result_text = "from typing import *\n\n" + result_text
+
+    if "Optional" in result_text or "Any" in result_text or "Union" in result_text or "Literal" in result_text:
+        result_text = "from typing import Optional, Any, Union, Literal\n\n" + result_text
 
     if import_prefix:
         result_text = f"{import_prefix}{result_text}"

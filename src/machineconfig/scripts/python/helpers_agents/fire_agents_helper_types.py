@@ -20,7 +20,7 @@ AGENTS: TypeAlias = Literal["cursor-agent", "gemini", "qwen-code", "copilot", "c
 HOST: TypeAlias = Literal["local", "docker"]
 PROVIDER: TypeAlias = Literal["azure", "google", "aws", "openai", "anthropic", "openrouter", "xai"]
 MODEL: TypeAlias = Literal["zai/glm-4.6", "anthropic/sonnet-4.5", "google/gemini-2.5-pro", "openai/gpt-5-codex",
-                           "openrouter/supernova", "x-ai/grok-4-fast:free",
+                           "openrouter/supernova", "openrouter/andromeda-alpha", "x-ai/grok-4-fast:free",
                            ]
 PROVIDER2MODEL: dict[PROVIDER, list[MODEL]] = {
     "azure": ["zai/glm-4.6"],
@@ -28,7 +28,7 @@ PROVIDER2MODEL: dict[PROVIDER, list[MODEL]] = {
     "aws": [],
     "openai": ["openai/gpt-5-codex"],
     "anthropic": ["anthropic/sonnet-4.5"],
-    "openrouter": ["openrouter/supernova"],
+    "openrouter": ["openrouter/supernova", "openrouter/andromeda-alpha"],
     "xai": ["x-ai/grok-4-fast:free"]
 }
 
