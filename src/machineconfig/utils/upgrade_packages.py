@@ -25,44 +25,48 @@ def generate_uv_add_commands(pyproject_path: Path, output_path: Path) -> None:
         pyproject_path: Path to the pyproject.toml file
         output_path: Path where to write the uv add commands
     """
-    # Read pyproject.toml
     with open(pyproject_path, "rb") as f:
         pyproject_data: dict[str, Any] = tomllib.load(f)
 
     commands: list[str] = []
 
-    # Handle main dependencies (no group)
     if "project" in pyproject_data and "dependencies" in pyproject_data["project"]:
-        main_deps = pyproject_data["project"]["dependencies"]
+        main_deps: list[str] = pyproject_data["project"]["dependencies"]
         if main_deps:
-            # Extract package names without version constraints
-            package_names = [extract_package_name(dep) for dep in main_deps]
-            commands.append(f"uv add {' '.join(package_names)}")
+            package_names: list[str] = [extract_package_name(dep) for dep in main_deps]
+            commands.append(f"uv add --no-cache {' '.join(package_names)}")
 
-    # Handle optional dependencies as groups
     if "project" in pyproject_data and "optional-dependencies" in pyproject_data["project"]:
-        optional_deps = pyproject_data["project"]["optional-dependencies"]
+        optional_deps: dict[str, list[str]] = pyproject_data["project"]["optional-dependencies"]
         for group_name, deps in optional_deps.items():
             if deps:
                 package_names = [extract_package_name(dep) for dep in deps]
-                commands.append(f"uv add {' '.join(package_names)} --group {group_name}")
+                commands.append(f"uv add --no-cache --group {group_name} {' '.join(package_names)}")
 
-    # Handle dependency-groups (like dev)
     if "dependency-groups" in pyproject_data:
-        dep_groups = pyproject_data["dependency-groups"]
+        dep_groups: dict[str, list[str]] = pyproject_data["dependency-groups"]
         for group_name, deps in dep_groups.items():
             if deps:
                 package_names = [extract_package_name(dep) for dep in deps]
                 if group_name == "dev":
-                    commands.append(f"uv add {' '.join(package_names)} --dev")
+                    commands.append(f"uv add --no-cache --dev {' '.join(package_names)}")
                 else:
-                    commands.append(f"uv add {' '.join(package_names)} --group {group_name}")
+                    commands.append(f"uv add --no-cache --group {group_name} {' '.join(package_names)}")
 
-    # Write commands to output file
-    with open(output_path, "w") as f:
-        for command in commands:
-            f.write(command + "\n")
-
+    # with open(output_path, "w") as f:
+    #     f.write("#!/bin/bash\n")
+    #     f.write("set -e\n\n")
+    #     f.write("uv cache clean --force\n\n")
+    #     for command in commands:
+    #         f.write(command + "\n")
+    script = f"""
+#!/bin/bash
+set -e
+uv cache clean --force
+rm -rfd .venv
+{"".join(f"{command}\n" for command in commands)}
+"""
+    output_path.write_text(script.strip() + "\n", encoding="utf-8")
     print(f"Generated {len(commands)} uv add commands in {output_path}")
 
 
@@ -90,12 +94,12 @@ def extract_package_name(dependency_spec: str) -> str:
 
 
 if __name__ == "__main__":
-    # Example usage
-    current_dir = Path.cwd()
-    pyproject_file = current_dir / "pyproject.toml"
-    output_file = current_dir / "uv_add_commands.txt"
-
+    current_dir: Path = Path.cwd()
+    pyproject_file: Path = current_dir / "pyproject.toml"
+    output_file: Path = current_dir / "pyproject_init.sh"
     if pyproject_file.exists():
         generate_uv_add_commands(pyproject_file, output_file)
+        output_file.chmod(0o755)
+        print(f"Script is executable and ready to run: {output_file}")
     else:
         print(f"pyproject.toml not found at {pyproject_file}")
