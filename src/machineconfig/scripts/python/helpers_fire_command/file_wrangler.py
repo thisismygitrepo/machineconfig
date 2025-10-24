@@ -1,7 +1,7 @@
-
 from typing import Optional
 import os
 from machineconfig.utils.path_extended import PathExtended
+import platform
 
 
 def search_for_files_of_interest(path_obj: PathExtended):
@@ -125,3 +125,42 @@ def wrap_import_in_try_except(import_line: str, pyfile: str, repo_root: Optional
             sys.path.append(repo_root)
         exec(f"from {Path(pyfile).stem} import *")
         print(fr"✅ Successfully imported `{pyfile}`")
+
+
+def add_to_path(path_variable: str, directory: str) -> str:
+    """
+    Generate shell script to add directory to path_variable.
+    Handles both Windows (cmd) and Unix-like systems (bash/zsh).
+    Checks if variable exists before appending, otherwise creates it.
+    """
+    system = platform.system()
+    
+    if system == "Windows":
+        script = f"""# Check if {path_variable} is defined
+if (Test-Path env:{path_variable}) {{
+    Write-Host "Adding {directory} to existing {path_variable}"
+    $currentValue = [Environment]::GetEnvironmentVariable("{path_variable}", "User")
+    $newValue = "$currentValue;{directory}"
+    [Environment]::SetEnvironmentVariable("{path_variable}", $newValue, "User")
+    $env:{path_variable} = $newValue
+}} else {{
+    Write-Host "Creating new {path_variable} variable"
+    [Environment]::SetEnvironmentVariable("{path_variable}", "{directory}", "User")
+    $env:{path_variable} = "{directory}"
+}}
+Write-Host "{path_variable} is now: $env:{path_variable}\""""
+        return script
+    else:
+        script = f"""#!/bin/bash
+# Check if {path_variable} is defined and not empty
+if [ -z "${{{path_variable}}}" ]; then
+    echo "Creating new {path_variable} variable"
+    export {path_variable}="{directory}"
+else
+    echo "Adding {directory} to existing {path_variable}"
+    export {path_variable}="${{{path_variable}}}:{directory}"
+fi
+echo "{path_variable} is now: ${{{path_variable}}}"
+"""
+        return script
+

@@ -155,12 +155,8 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
     if args.git_pull:
         command = f"\ngit -C {choice_file.parent} pull\n" + command
     if args.PathExport:
-        if platform.system() in ["Linux", "Darwin"]:
-            export_line = f"""export PYTHONPATH="{repo_root}""" + """:${PYTHONPATH}" """
-        elif platform.system() == "Windows":
-            export_line = f"""$env:PYTHONPATH="{repo_root}""" + """:$env:PYTHONPATH" """
-        else:
-            raise NotImplementedError(f"Platform {platform.system()} not supported.")
+        from machineconfig.scripts.python.helpers_fire_command.file_wrangler import add_to_path
+        export_line = add_to_path(path_variable="PYTHONPATH", directory=str(repo_root))
         command = export_line + "\n" + command
     if args.loop:
         if platform.system() in ["Linux", "Darwin"]:
