@@ -93,7 +93,7 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
         code_printing = lambda_to_python_script(lambda: print_code(code=import_code_robust, lexer="python", desc="import code"), in_global=True, import_module=False)
         if choice_function is not None: calling = f"""res = {choice_function}({("**" + str(kwargs_dict)) if kwargs_dict else ""})"""
         else: calling = """# No function selected to call. You can add your code here."""
-        choice_file = PathExtended.tmp().joinpath(f"tmp_scripts/python/{Path(choice_file).parent.name}_{Path(choice_file).stem}_{randstr()}.py")
+        choice_file = Path.home().joinpath(f"tmp_results/tmp_scripts/python/{Path(choice_file).parent.name}_{Path(choice_file).stem}_{randstr()}.py")
         choice_file.parent.mkdir(parents=True, exist_ok=True)
         choice_file.write_text(import_code_robust + "\n" + code_printing + "\n" + calling, encoding="utf-8")
 
