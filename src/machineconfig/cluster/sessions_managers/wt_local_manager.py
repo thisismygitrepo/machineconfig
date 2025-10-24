@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 from datetime import datetime
-import json
-import uuid
 import logging
 import subprocess
 from pathlib import Path
@@ -9,9 +7,14 @@ from typing import Optional, Any
 from rich.console import Console
 from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import WTLayoutGenerator
+from machineconfig.cluster.sessions_managers.wt_utils.wt_helpers import check_wt_session_status
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
-from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import (
-    StartResult, GlobalSummary, ActiveSessionInfo
+from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import StartResult, ActiveSessionInfo
+from machineconfig.cluster.sessions_managers.wt_utils.manager_persistence import (
+    generate_session_id, save_json_file, load_json_file, list_saved_sessions_in_dir, delete_session_dir, ensure_session_dir_exists
+)
+from machineconfig.cluster.sessions_managers.wt_utils.status_reporting import (
+    print_global_summary, print_session_health_status, print_commands_status, calculate_session_summary, calculate_global_summary_from_status
 )
 
 
@@ -129,104 +132,29 @@ class WTLocalManager:
             return "\n".join(commands)
 
     def check_all_sessions_status(self) -> dict[str, dict[str, Any]]:
-        """Check the status of all sessions and their commands."""
         status_report = {}
-
         for manager in self.managers:
             session_name = manager.session_name or "default"
-
-            # Get session status
-            session_status = WTLayoutGenerator.check_wt_session_status(session_name)
-
-            # Get commands status for this session
+            session_status = check_wt_session_status(session_name)
             commands_status = manager.check_all_commands_status()
-
-            # Calculate summary for this session
-            running_count = sum(1 for status in commands_status.values() if status.get("running", False))
-            total_count = len(commands_status)
-
-            status_report[session_name] = {
-                "session_status": session_status,
-                "commands_status": commands_status,
-                "summary": {"total_commands": total_count, "running_commands": running_count, "stopped_commands": total_count - running_count, "session_healthy": session_status.get("session_exists", False)},
-            }
-
+            summary = calculate_session_summary(commands_status, session_status.get("session_exists", False))
+            status_report[session_name] = {"session_status": session_status, "commands_status": commands_status, "summary": summary}
         return status_report
 
-    def get_global_summary(self) -> GlobalSummary:
-        """Get a global summary across all sessions."""
+    def get_global_summary(self) -> dict[str, Any]:
         all_status = self.check_all_sessions_status()
-
-        total_sessions = len(all_status)
-        healthy_sessions = sum(1 for status in all_status.values() if status["summary"]["session_healthy"])
-        total_commands = sum(status["summary"]["total_commands"] for status in all_status.values())
-        total_running = sum(status["summary"]["running_commands"] for status in all_status.values())
-
-        return {
-            "total_sessions": total_sessions,
-            "healthy_sessions": healthy_sessions,
-            "unhealthy_sessions": total_sessions - healthy_sessions,
-            "total_commands": total_commands,
-            "running_commands": total_running,
-            "stopped_commands": total_commands - total_running,
-            "all_sessions_healthy": healthy_sessions == total_sessions,
-            "all_commands_running": total_running == total_commands,
-        }
+        return calculate_global_summary_from_status(all_status, include_remote_machines=False)
 
     def print_status_report(self) -> None:
-        """Print a comprehensive status report for all sessions."""
         all_status = self.check_all_sessions_status()
         global_summary = self.get_global_summary()
-
-        print("=" * 80)
-        print("🖥️  WINDOWS TERMINAL LOCAL MANAGER STATUS REPORT")
-        print("=" * 80)
-
-        # Global summary
-        print("🌐 GLOBAL SUMMARY:")
-        print(f"   Total sessions: {global_summary['total_sessions']}")
-        print(f"   Healthy sessions: {global_summary['healthy_sessions']}")
-        print(f"   Total commands: {global_summary['total_commands']}")
-        print(f"   Running commands: {global_summary['running_commands']}")
-        print(f"   All healthy: {'✅' if global_summary['all_sessions_healthy'] else '❌'}")
-        print()
-
-        # Per-session details
+        print_global_summary(global_summary, "WINDOWS TERMINAL LOCAL MANAGER STATUS REPORT")
         for session_name, status in all_status.items():
-            session_status = status["session_status"]
-            commands_status = status["commands_status"]
-            summary = status["summary"]
-
             print(f"🪟 SESSION: {session_name}")
             print("-" * 60)
-
-            # Session health
-            if session_status.get("wt_running", False):
-                if session_status.get("session_exists", False):
-                    session_windows = session_status.get("session_windows", [])
-                    all_windows = session_status.get("all_windows", [])
-                    print("✅ Windows Terminal is running")
-                    print(f"   Session windows: {len(session_windows)}")
-                    print(f"   Total WT windows: {len(all_windows)}")
-                else:
-                    print("⚠️  Windows Terminal is running but no session windows found")
-            else:
-                print(f"❌ Windows Terminal session issue: {session_status.get('error', 'Unknown error')}")
-
-            # Commands in this session
-            print(f"   Commands ({summary['running_commands']}/{summary['total_commands']} running):")
-            for tab_name, cmd_status in commands_status.items():
-                status_icon = "✅" if cmd_status.get("running", False) else "❌"
-                cmd_text = cmd_status.get("command", "Unknown")[:50]
-                if len(cmd_status.get("command", "")) > 50:
-                    cmd_text += "..."
-                console.print(f"     {status_icon} {tab_name}: {cmd_text}")
-
-                if cmd_status.get("processes"):
-                    for proc in cmd_status["processes"][:2]:  # Show first 2 processes
-                        console.print(f"        [dim]└─[/dim] PID {proc['pid']}: {proc['name']}")
+            print_session_health_status(status["session_status"], remote_name=None)
+            print_commands_status(status["commands_status"], status["summary"])
             print()
-
         print("=" * 80)
 
     def run_monitoring_routine(self, wait_ms: int = 30000) -> None:
@@ -288,126 +216,59 @@ class WTLocalManager:
         sched.run(max_cycles=None)
 
     def save(self, session_id: Optional[str] = None) -> str:
-        """Save the manager state to disk."""
         if session_id is None:
-            session_id = str(uuid.uuid4())[:8]
-
-        # Create session directory
+            session_id = generate_session_id()
         session_dir = TMP_SERIALIZATION_DIR / session_id
-        session_dir.mkdir(parents=True, exist_ok=True)
-
-        # Save the session2wt_tabs configuration
-        config_file = session_dir / "session_layouts.json"
-        text = json.dumps(self.session_layouts, indent=2, ensure_ascii=False)
-        config_file.write_text(text, encoding="utf-8")
-
-        # Save metadata
+        ensure_session_dir_exists(session_dir)
+        save_json_file(session_dir / "session_layouts.json", self.session_layouts, "session layouts")
         metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "sessions": [item["layoutName"] for item in self.session_layouts], "manager_type": "WTLocalManager"}
-        metadata_file = session_dir / "metadata.json"
-        text = json.dumps(metadata, indent=2, ensure_ascii=False)
-        metadata_file.write_text(text, encoding="utf-8")
-
-        # Save each manager's state
+        save_json_file(session_dir / "metadata.json", metadata, "metadata")
         managers_dir = session_dir / "managers"
         managers_dir.mkdir(exist_ok=True)
-
         for i, manager in enumerate(self.managers):
             manager_data = {"session_name": manager.session_name, "layout_config": manager.layout_config, "script_path": manager.script_path}
-            manager_file = managers_dir / f"manager_{i}_{manager.session_name}.json"
-            text = json.dumps(manager_data, indent=2, ensure_ascii=False)
-            manager_file.write_text(text, encoding="utf-8")
-
+            save_json_file(managers_dir / f"manager_{i}_{manager.session_name}.json", manager_data, f"manager {i}")
         logger.info(f"✅ Saved WTLocalManager session to: {session_dir}")
         return session_id
 
     @classmethod
     def load(cls, session_id: str) -> "WTLocalManager":
-        """Load a saved manager state from disk."""
         session_dir = TMP_SERIALIZATION_DIR / session_id
-
         if not session_dir.exists():
             raise FileNotFoundError(f"Session directory not found: {session_dir}")
-
-        # Load configuration
-        config_file = session_dir / "session_layouts.json"
-        if not config_file.exists():
-            raise FileNotFoundError(f"Configuration file not found: {config_file}")
-
-        text = config_file.read_text(encoding="utf-8")
-        session_layouts = json.loads(text)
-
-        # Load metadata
-        metadata_file = session_dir / "metadata.json"
-        session_name_prefix = "LocalWTMgr"  # default fallback
-        if metadata_file.exists():
-            text = metadata_file.read_text(encoding="utf-8")
-            metadata = json.loads(text)
-            session_name_prefix = metadata.get("session_name_prefix", "LocalWTMgr")
-
-        # Create new instance
+        loaded_data = load_json_file(session_dir / "session_layouts.json", "Configuration file")
+        session_layouts = loaded_data if isinstance(loaded_data, list) else []  # type: ignore[arg-type]
+        metadata_data = load_json_file(session_dir / "metadata.json", "Metadata file") if (session_dir / "metadata.json").exists() else {}
+        metadata = metadata_data if isinstance(metadata_data, dict) else {}  # type: ignore[arg-type]
+        session_name_prefix = metadata.get("session_name_prefix", "LocalWTMgr")  # type: ignore[union-attr]
         instance = cls(session_layouts=session_layouts, session_name_prefix=session_name_prefix)
-
-        # Load saved manager states
         managers_dir = session_dir / "managers"
         if managers_dir.exists():
             instance.managers = []
-            manager_files = sorted(managers_dir.glob("manager_*.json"))
-
-            for manager_file in manager_files:
+            for manager_file in sorted(managers_dir.glob("manager_*.json")):
                 try:
-                    text = manager_file.read_text(encoding="utf-8")
-                    manager_data = json.loads(text)
-
-                    # Recreate the manager
-                    manager = WTLayoutGenerator(layout_config=manager_data["layout_config"], session_name=manager_data["session_name"])
-                    manager.script_path = manager_data["script_path"]
-
+                    loaded_manager_data = load_json_file(manager_file, "Manager data")
+                    manager_data = loaded_manager_data if isinstance(loaded_manager_data, dict) else {}  # type: ignore[arg-type]
+                    manager = WTLayoutGenerator(layout_config=manager_data["layout_config"], session_name=manager_data["session_name"])  # type: ignore[typeddict-item]
+                    manager.script_path = manager_data["script_path"]  # type: ignore[typeddict-item]
                     instance.managers.append(manager)
-
                 except Exception as e:
                     logger.warning(f"Failed to load manager from {manager_file}: {e}")
-
         logger.info(f"✅ Loaded WTLocalManager session from: {session_dir}")
         return instance
 
     @staticmethod
     def list_saved_sessions() -> list[str]:
-        """List all saved session IDs."""
-        if not TMP_SERIALIZATION_DIR.exists():
-            return []
-
-        sessions = []
-        for item in TMP_SERIALIZATION_DIR.iterdir():
-            if item.is_dir() and (item / "metadata.json").exists():
-                sessions.append(item.name)
-
-        return sorted(sessions)
+        return list_saved_sessions_in_dir(TMP_SERIALIZATION_DIR)
 
     @staticmethod
     def delete_session(session_id: str) -> bool:
-        """Delete a saved session."""
-        session_dir = TMP_SERIALIZATION_DIR / session_id
-
-        if not session_dir.exists():
-            logger.warning(f"Session directory not found: {session_dir}")
-            return False
-
-        try:
-            import shutil
-
-            shutil.rmtree(session_dir)
-            logger.info(f"✅ Deleted session: {session_id}")
-            return True
-        except Exception as e:
-            logger.error(f"Failed to delete session {session_id}: {e}")
-            return False
+        return delete_session_dir(TMP_SERIALIZATION_DIR / session_id, session_id)
 
     def list_active_sessions(self) -> list[ActiveSessionInfo]:
-        """List currently active Windows Terminal sessions managed by this instance."""
-        active_sessions = []
+        active_sessions: list[ActiveSessionInfo] = []
 
         try:
-            # Get all running Windows Terminal processes
             result = subprocess.run(
                 ["powershell", "-Command", 'Get-Process -Name "WindowsTerminal" -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, StartTime, MainWindowTitle | ConvertTo-Json -Depth 2'], capture_output=True, text=True, timeout=10
             )
@@ -419,7 +280,6 @@ class WTLocalManager:
                 if not isinstance(all_processes, list):
                     all_processes = [all_processes]
 
-                # Filter to only our managed sessions
                 for manager in self.managers:
                     session_name = manager.session_name
                     session_windows = []

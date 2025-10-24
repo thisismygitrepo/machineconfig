@@ -1,0 +1,35 @@
+{
+    "$schema": "https://bit.ly/cfglayout",
+    "version": "0.1",
+    "layouts": [
+        {
+            "layoutName": "g1",
+            "layoutTabs": [
+                {
+                    "command": "ssh p51s",
+                    "startDir": "$HOME",
+                    "tabName": "p51s",
+                    "tabWeight": 0
+                },
+                {
+                    "command": "ssh p16s",
+                    "startDir": "$HOME",
+                    "tabName": "p16s",
+                    "tabWeight": 0
+                },
+                {
+                    "command": "wsl",
+                    "startDir": "$HOME",
+                    "tabName": "wsl",
+                    "tabWeight": 0
+                },
+                {
+                    "command": "pwsh",
+                    "startDir": "$HOME",
+                    "tabName": "windows",
+                    "tabWeight": 0
+                }
+            ]
+        }
+    ]
+}

@@ -1,4 +1,5 @@
 import subprocess
+from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 import typer
 from typing import Annotated
 
@@ -9,7 +10,21 @@ def strip_ansi_codes(text: str) -> str:
     return re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
 
 
-def choose_zellij_session():
+def choose_zellij_session(
+        new_session: Annotated[bool, typer.Option("--new-session", "-n", help="Create a new Zellij session instead of attaching to an existing one.", show_default=True)] = False,
+        kill_all: Annotated[bool, typer.Option("--kill-all", "-k", help="Kill all existing Zellij sessions before creating a new one.", show_default=True)] = False):
+
+    if new_session:
+        cmd = """
+    zellij --layout st2
+    """
+        if kill_all:
+            cmd = f"""zellij kill-sessions
+    {cmd}"""
+        from machineconfig.utils.code import exit_then_run_shell_script
+        exit_then_run_shell_script(cmd, strict=True)
+        typer.Exit()
+        return
     cmd = "zellij list-sessions"
     sessions: list[str] = subprocess.check_output(cmd, shell=True).decode().strip().split("\n")
     sessions.sort(key=lambda s: "EXITED" in s)
@@ -31,16 +46,6 @@ def choose_zellij_session():
     from machineconfig.utils.code import exit_then_run_shell_script
     exit_then_run_shell_script(result, strict=True)
 
-
-def new_zellij_session(kill_all: Annotated[bool, typer.Option("--kill-all", "-k", help="Kill all existing Zellij sessions before creating a new one.", show_default=True)] = False):
-    cmd = """
-zellij --layout st2
-"""
-    if kill_all:
-        cmd = f"""zellij kill-sessions
-{cmd}"""
-    from machineconfig.utils.code import exit_then_run_shell_script
-    exit_then_run_shell_script(cmd, strict=True)
 
 
 def get_session_tabs() -> list[tuple[str, str]]:
@@ -64,13 +69,37 @@ def get_session_tabs() -> list[tuple[str, str]]:
     print(result)
     return result
 
+def start_wt(layout_name: Annotated[str, typer.Argument(help="Layout name to start.")]):
+    from pathlib import Path
+    layouts_file = Path.home().joinpath("dotfiles/machineconfig/layouts.json")
+    if not layouts_file.exists():
+        typer.echo(f"❌ Layouts file not found: {layouts_file}")
+        # available
+        raise typer.Exit(code=1)
+    import json
+    from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
+    layouts_data: LayoutsFile = json.loads(layouts_file.read_text(encoding="utf-8"))
+    chosen_layout = next((a_layout for a_layout in layouts_data["layouts"] if a_layout["layoutName"] == layout_name), None)
+    if not chosen_layout:
+        typer.echo(f"❌ Layout '{layout_name}' not found in layouts file.")
+        available_layouts = [a_layout["layoutName"] for a_layout in layouts_data["layouts"]]
+        typer.echo(f"Available layouts: {', '.join(available_layouts)}")
+        raise typer.Exit(code=1)
+    from machineconfig.cluster.sessions_managers.wt_local import run_wt_layout
+    run_wt_layout(layout_config=chosen_layout)
+
+    # cmd = f'powershell -ExecutionPolicy Bypass -File "./{layout_name}_layout.ps1"'
+    # from machineconfig.utils.code import exit_then_run_shell_script
+    # exit_then_run_shell_script(cmd, strict=True)
+
 
 def main():
     app = typer.Typer(help="🖥️ Terminal utilities", no_args_is_help=True, add_help_option=False)
-    app.command(name="choose-zellij-session", no_args_is_help=False, help="[c] Choose a Zellij session to attach to")(choose_zellij_session)
-    app.command(name="c", hidden=True, no_args_is_help=False, help="[c] Choose a Zellij session to attach to")(choose_zellij_session)
-    app.command(name="new-zellij-session", no_args_is_help=False, help="[n] new zellij session.")(new_zellij_session)
-    app.command(name="n", hidden=True, no_args_is_help=False, help="[n] new zellij session.")(new_zellij_session)
+    app.command(name="attach-to-zellij", no_args_is_help=False, help="[z] Choose a Zellij session to attach to")(choose_zellij_session)
+    app.command(name="z", hidden=True, no_args_is_help=False, help="[z] Choose a Zellij session to attach to")(choose_zellij_session)
+
+    app.command(name="start-wt", no_args_is_help=False, help="[w] Start a Windows Terminal layout by name.")(start_wt)
+    app.command(name="w", hidden=True, no_args_is_help=False, help="[w] Start a Windows Terminal layout by name.")(start_wt)
 
     app.command(name="get-session-tabs", no_args_is_help=False, help="Get all Zellij session tabs.")(get_session_tabs)
     app.command(name="gst", hidden=True, no_args_is_help=False, help="Get all Zellij session tabs.")(get_session_tabs)
