@@ -77,7 +77,7 @@ def match_file_name(sub_string: str, search_root: PathExtended, suffixes: set[st
     if len(filename_matches) < 20:
         print("\n".join([a_potential_match.as_posix() for a_potential_match in filename_matches]))
     if len(filename_matches) > 1:
-        print("Try to narrow down filename_matches search by case-sensitivity.")
+        print(f"Try to narrow down filename_matches search by case-sensitivity, found {len(filename_matches)} results. First @ {filename_matches[0].as_posix()}")
         # let's see if avoiding .lower() helps narrowing down to one result
         reduced_scripts = [a_potential_match for a_potential_match in filename_matches if sub_string in a_potential_match.name]
         if len(reduced_scripts) == 1:

@@ -1,6 +1,4 @@
 from datetime import datetime
-import json
-import uuid
 import logging
 from pathlib import Path
 from typing import Optional, Any
@@ -8,8 +6,17 @@ from rich.console import Console
 from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import run_command_in_wt_tab
 from machineconfig.cluster.sessions_managers.wt_remote import WTRemoteLayoutGenerator
-from machineconfig.cluster.sessions_managers.wt_utils.layout_generator import WTLayoutGenerator
+from machineconfig.cluster.sessions_managers.wt_utils.wt_helpers import generate_random_suffix
 from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig
+from machineconfig.cluster.sessions_managers.wt_utils.manager_persistence import (
+    generate_session_id, save_json_file, load_json_file, list_saved_sessions_in_dir, delete_session_dir, ensure_session_dir_exists
+)
+from machineconfig.cluster.sessions_managers.wt_utils.status_reporting import (
+    print_global_summary, print_session_health_status, print_commands_status, calculate_session_summary, calculate_global_summary_from_status
+)
+from machineconfig.cluster.sessions_managers.wt_utils.monitoring_helpers import (
+    collect_status_data_from_managers, flatten_status_data, check_if_all_stopped, print_status_table, collect_session_statuses, print_session_statuses
+)
 
 
 # Module-level logger to be used throughout this module
@@ -26,11 +33,8 @@ class WTSessionManager:
         for machine, tab_config in machine2wt_tabs.items():
             # Convert legacy dict[str, tuple[str,str]] to LayoutConfig
             tabs: list[TabConfig] = [{"tabName": name, "startDir": cwd, "command": cmd} for name, (cwd, cmd) in tab_config.items()]
-            layout_config: LayoutConfig = {
-                "layoutName": f"{session_name_prefix}_{machine}",
-                "layoutTabs": tabs
-            }
-            session_name = f"{session_name_prefix}_{WTLayoutGenerator.generate_random_suffix(8)}"
+            layout_config: LayoutConfig = {"layoutName": f"{session_name_prefix}_{machine}", "layoutTabs": tabs}
+            session_name = f"{session_name_prefix}_{generate_random_suffix(8)}"
             an_m = WTRemoteLayoutGenerator(layout_config=layout_config, remote_name=machine, session_name=session_name)
             an_m.create_layout_file()
             self.managers.append(an_m)
@@ -56,103 +60,47 @@ class WTSessionManager:
     def run_monitoring_routine(self, wait_ms: int = 60000) -> None:
         def routine(scheduler: Scheduler):
             if scheduler.cycle % 2 == 0:
-                statuses = []
-                for _idx, an_m in enumerate(self.managers):
-                    tabs = an_m.layout_config["layoutTabs"]
-                    a_status = an_m.process_monitor.check_all_commands_status(tabs)
-                    statuses.append(a_status)
-                keys = []
-                for item in statuses:
-                    keys.extend(item.keys())
-                values = []
-                for item in statuses:
-                    values.extend(item.values())
-                # Create list of dictionaries instead of DataFrame
-                status_data = []
-                for i, key in enumerate(keys):
-                    if i < len(values):
-                        status_data.append({"tabName": key, "status": values[i]})
-
-                # Check if all stopped
-                running_count = sum(1 for item in status_data if item.get("status", {}).get("running", False))
-                if running_count == 0:  # they all stopped
-                    scheduler.max_cycles = scheduler.cycle  # stop the scheduler from calling this routine again
-
-                # Print status
-                for item in status_data:
-                    print(f"Tab: {item['tabName']}, Status: {item['status']}")
+                statuses = collect_status_data_from_managers(self.managers)
+                status_data = flatten_status_data(statuses)
+                if check_if_all_stopped(status_data):
+                    scheduler.max_cycles = scheduler.cycle
+                print_status_table(status_data)
             else:
-                statuses = []
-                for _idx, an_m in enumerate(self.managers):
-                    a_status = an_m.session_manager.check_wt_session_status()
-                    statuses.append(a_status)
-
-                # Print statuses
-                for i, status in enumerate(statuses):
-                    print(f"Manager {i}: {status}")
-
+                statuses = collect_session_statuses(self.managers)
+                print_session_statuses(statuses)
         sched = Scheduler(routine=routine, wait_ms=wait_ms, logger=logger)
         sched.run()
 
     def save(self, session_id: Optional[str] = None) -> str:
         if session_id is None:
-            session_id = str(uuid.uuid4())[:8]
-
-        # Create session directory
+            session_id = generate_session_id()
         session_dir = TMP_SERIALIZATION_DIR / session_id
-        session_dir.mkdir(parents=True, exist_ok=True)
-
-        # Save the machine2wt_tabs configuration
-        config_file = session_dir / "machine2wt_tabs.json"
-        text = json.dumps(self.machine2wt_tabs, indent=2, ensure_ascii=False)
-        config_file.write_text(text, encoding="utf-8")
-
-        # Save session metadata
+        ensure_session_dir_exists(session_dir)
+        save_json_file(session_dir / "machine2wt_tabs.json", self.machine2wt_tabs, "machine2wt_tabs")
         metadata = {"session_name_prefix": self.session_name_prefix, "created_at": str(datetime.now()), "num_managers": len(self.managers), "machines": list(self.machine2wt_tabs.keys()), "manager_type": "WTSessionManager"}
-        metadata_file = session_dir / "metadata.json"
-        text = json.dumps(metadata, indent=2, ensure_ascii=False)
-        metadata_file.write_text(text, encoding="utf-8")
-
-        # Save each WTRemoteLayoutGenerator
+        save_json_file(session_dir / "metadata.json", metadata, "metadata")
         managers_dir = session_dir / "managers"
         managers_dir.mkdir(exist_ok=True)
-
         for i, manager in enumerate(self.managers):
-            manager_file = managers_dir / f"manager_{i}_{manager.remote_name}.json"
-            manager.to_json(str(manager_file))
-
+            manager.to_json(str(managers_dir / f"manager_{i}_{manager.remote_name}.json"))
         logger.info(f"✅ Saved WTSessionManager session to: {session_dir}")
         return session_id
 
     @classmethod
     def load(cls, session_id: str) -> "WTSessionManager":
         session_dir = TMP_SERIALIZATION_DIR / session_id
-
         if not session_dir.exists():
             raise FileNotFoundError(f"Session directory not found: {session_dir}")
-        config_file = session_dir / "machine2wt_tabs.json"
-        if not config_file.exists():
-            raise FileNotFoundError(f"Configuration file not found: {config_file}")
-        text = config_file.read_text(encoding="utf-8")
-        machine2wt_tabs = json.loads(text)
-
-        # Load metadata
-        metadata_file = session_dir / "metadata.json"
-        session_name_prefix = "WTJobMgr"  # default fallback
-        if metadata_file.exists():
-            text = metadata_file.read_text(encoding="utf-8")
-            metadata = json.loads(text)
-            session_name_prefix = metadata.get("session_name_prefix", "WTJobMgr")
-        # Create new instance (this will create new managers)
+        loaded_data = load_json_file(session_dir / "machine2wt_tabs.json", "Configuration file")
+        machine2wt_tabs = loaded_data if isinstance(loaded_data, dict) else {}  # type: ignore[arg-type]
+        metadata_data = load_json_file(session_dir / "metadata.json", "Metadata file") if (session_dir / "metadata.json").exists() else {}
+        metadata = metadata_data if isinstance(metadata_data, dict) else {}  # type: ignore[arg-type]
+        session_name_prefix = metadata.get("session_name_prefix", "WTJobMgr")  # type: ignore[union-attr]
         instance = cls(machine2wt_tabs=machine2wt_tabs, session_name_prefix=session_name_prefix)
-        # Load saved managers to restore their states
         managers_dir = session_dir / "managers"
         if managers_dir.exists():
-            # Clear the auto-created managers and load the saved ones
             instance.managers = []
-            # Get all manager files and sort them
-            manager_files = sorted(managers_dir.glob("manager_*.json"))
-            for manager_file in manager_files:
+            for manager_file in sorted(managers_dir.glob("manager_*.json")):
                 try:
                     loaded_manager = WTRemoteLayoutGenerator.from_json(str(manager_file))
                     instance.managers.append(loaded_manager)
@@ -163,33 +111,11 @@ class WTSessionManager:
 
     @staticmethod
     def list_saved_sessions() -> list[str]:
-        if not TMP_SERIALIZATION_DIR.exists():
-            return []
-
-        sessions = []
-        for item in TMP_SERIALIZATION_DIR.iterdir():
-            if item.is_dir() and (item / "metadata.json").exists():
-                sessions.append(item.name)
-
-        return sorted(sessions)
+        return list_saved_sessions_in_dir(TMP_SERIALIZATION_DIR)
 
     @staticmethod
     def delete_session(session_id: str) -> bool:
-        session_dir = TMP_SERIALIZATION_DIR / session_id
-
-        if not session_dir.exists():
-            logger.warning(f"Session directory not found: {session_dir}")
-            return False
-
-        try:
-            import shutil
-
-            shutil.rmtree(session_dir)
-            logger.info(f"✅ Deleted session: {session_id}")
-            return True
-        except Exception as e:
-            logger.error(f"Failed to delete session {session_id}: {e}")
-            return False
+        return delete_session_dir(TMP_SERIALIZATION_DIR / session_id, session_id)
 
     def start_all_sessions(self) -> dict[str, Any]:
         """Start all Windows Terminal sessions on their respective remote machines."""
@@ -216,122 +142,38 @@ class WTSessionManager:
         return results
 
     def check_all_sessions_status(self) -> dict[str, dict[str, Any]]:
-        """Check the status of all remote sessions and their commands."""
         status_report = {}
-
         for manager in self.managers:
             session_key = f"{manager.remote_name}:{manager.session_name}"
-
             try:
-                # Get Windows Terminal session status
                 wt_status = manager.session_manager.check_wt_session_status()
-
-                # Get commands status for this session
                 tabs = manager.layout_config["layoutTabs"]
                 commands_status = manager.process_monitor.check_all_commands_status(tabs)
-
-                # Calculate summary for this session
-                running_count = sum(1 for status in commands_status.values() if status.get("running", False))
-                total_count = len(commands_status)
-
-                status_report[session_key] = {
-                    "remote_name": manager.remote_name,
-                    "session_name": manager.session_name,
-                    "wt_status": wt_status,
-                    "commands_status": commands_status,
-                    "summary": {"total_commands": total_count, "running_commands": running_count, "stopped_commands": total_count - running_count, "session_healthy": wt_status.get("wt_running", False)},
-                }
-
+                summary = calculate_session_summary(commands_status, wt_status.get("wt_running", False))
+                status_report[session_key] = {"remote_name": manager.remote_name, "session_name": manager.session_name, "wt_status": wt_status, "commands_status": commands_status, "summary": summary}
             except Exception as e:
                 status_report[session_key] = {"remote_name": manager.remote_name, "session_name": manager.session_name, "error": str(e), "summary": {"total_commands": 0, "running_commands": 0, "stopped_commands": 0, "session_healthy": False}}
                 logger.error(f"Error checking status for {session_key}: {e}")
-
         return status_report
 
     def get_global_summary(self) -> dict[str, Any]:
-        """Get a global summary across all remote sessions."""
         all_status = self.check_all_sessions_status()
-
-        total_sessions = len(all_status)
-        healthy_sessions = sum(1 for status in all_status.values() if status["summary"]["session_healthy"])
-        total_commands = sum(status["summary"]["total_commands"] for status in all_status.values())
-        total_running = sum(status["summary"]["running_commands"] for status in all_status.values())
-
-        return {
-            "total_sessions": total_sessions,
-            "healthy_sessions": healthy_sessions,
-            "unhealthy_sessions": total_sessions - healthy_sessions,
-            "total_commands": total_commands,
-            "running_commands": total_running,
-            "stopped_commands": total_commands - total_running,
-            "all_sessions_healthy": healthy_sessions == total_sessions,
-            "all_commands_running": total_running == total_commands,
-            "remote_machines": list(set(status["remote_name"] for status in all_status.values())),
-        }
+        return calculate_global_summary_from_status(all_status, include_remote_machines=True)
 
     def print_status_report(self) -> None:
-        """Print a comprehensive status report for all remote sessions."""
         all_status = self.check_all_sessions_status()
         global_summary = self.get_global_summary()
-
-        print("=" * 80)
-        print("🖥️  WINDOWS TERMINAL REMOTE MANAGER STATUS REPORT")
-        print("=" * 80)
-
-        # Global summary
-        print("🌐 GLOBAL SUMMARY:")
-        print(f"   Total sessions: {global_summary['total_sessions']}")
-        print(f"   Healthy sessions: {global_summary['healthy_sessions']}")
-        print(f"   Total commands: {global_summary['total_commands']}")
-        print(f"   Running commands: {global_summary['running_commands']}")
-        print(f"   Remote machines: {len(global_summary['remote_machines'])}")
-        print(f"   All healthy: {'✅' if global_summary['all_sessions_healthy'] else '❌'}")
-        print()
-
-        # Per-session details
+        print_global_summary(global_summary, "WINDOWS TERMINAL REMOTE MANAGER STATUS REPORT")
         for _, status in all_status.items():
-            remote_name = status["remote_name"]
-            session_name = status["session_name"]
-
-            print(f"🖥️  REMOTE: {remote_name} | SESSION: {session_name}")
+            print(f"🖥️  REMOTE: {status['remote_name']} | SESSION: {status['session_name']}")
             print("-" * 60)
-
             if "error" in status:
                 print(f"❌ Error: {status['error']}")
                 print()
                 continue
-
-            wt_status = status["wt_status"]
-            commands_status = status["commands_status"]
-            summary = status["summary"]
-
-            # Windows Terminal session health
-            if wt_status.get("wt_running", False):
-                if wt_status.get("session_exists", False):
-                    session_windows = wt_status.get("session_windows", [])
-                    all_windows = wt_status.get("all_windows", [])
-                    print(f"✅ Windows Terminal is running on {remote_name}")
-                    print(f"   Session windows: {len(session_windows)}")
-                    print(f"   Total WT windows: {len(all_windows)}")
-                else:
-                    print(f"⚠️  Windows Terminal is running but no session windows found on {remote_name}")
-            else:
-                print(f"❌ Windows Terminal issue on {remote_name}: {wt_status.get('error', 'Unknown error')}")
-
-            # Commands in this session
-            print(f"   Commands ({summary['running_commands']}/{summary['total_commands']} running):")
-            for tab_name, cmd_status in commands_status.items():
-                status_icon = "✅" if cmd_status.get("running", False) else "❌"
-                cmd_text = cmd_status.get("command", "Unknown")[:50]
-                if len(cmd_status.get("command", "")) > 50:
-                    cmd_text += "..."
-                console.print(f"     {status_icon} {tab_name}: {cmd_text}")
-
-                if cmd_status.get("processes"):
-                    for proc in cmd_status["processes"][:2]:  # Show first 2 processes
-                        console.print(f"        [dim]└─[/dim] PID {proc.get('pid', 'Unknown')}: {proc.get('name', 'Unknown')}")
+            print_session_health_status(status["wt_status"], remote_name=status["remote_name"])
+            print_commands_status(status["commands_status"], status["summary"])
             print()
-
         print("=" * 80)
 
     def get_remote_overview(self) -> dict[str, Any]:

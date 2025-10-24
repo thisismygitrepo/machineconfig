@@ -1,4 +1,5 @@
 import subprocess
+from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 import typer
 from typing import Annotated
 
@@ -63,6 +64,29 @@ def get_session_tabs() -> list[tuple[str, str]]:
             continue
     print(result)
     return result
+
+def start_wt(layout_name: Annotated[str, typer.Argument(help="Layout name to start.")]):
+    from pathlib import Path
+    layouts_file = Path.home().joinpath("dotfiles/machineconfig/layouts.json")
+    if not layouts_file.exists():
+        typer.echo(f"❌ Layouts file not found: {layouts_file}")
+        # available
+        raise typer.Exit(code=1)
+    import json
+    from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
+    layouts_data: LayoutsFile = json.loads(layouts_file.read_text(encoding="utf-8"))
+    chosen_layout = next((a_layout for a_layout in layouts_data["layouts"] if a_layout["layoutName"] == layout_name), None)
+    if not chosen_layout:
+        typer.echo(f"❌ Layout '{layout_name}' not found in layouts file.")
+        available_layouts = [a_layout["layoutName"] for a_layout in layouts_data["layouts"]]
+        typer.echo(f"Available layouts: {', '.join(available_layouts)}")
+        raise typer.Exit(code=1)
+    from machineconfig.cluster.sessions_managers.wt_local import run_wt_layout
+    run_wt_layout(layout_config=chosen_layout)
+
+    # cmd = f'powershell -ExecutionPolicy Bypass -File "./{layout_name}_layout.ps1"'
+    # from machineconfig.utils.code import exit_then_run_shell_script
+    # exit_then_run_shell_script(cmd, strict=True)
 
 
 def main():
