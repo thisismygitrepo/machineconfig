@@ -75,7 +75,11 @@ def generate_wt_command_string(layout_config: LayoutConfig, window_name: str) ->
         
         tab_parts.extend(["-d", escape_for_wt(cwd)])
         tab_parts.extend(["--title", escape_for_wt(tab_name)])
-        tab_parts.append(escape_for_wt(command))
+        tab_parts.append("--")
+        
+        # Split the command into arguments
+        command_args = shlex.split(command)
+        tab_parts.extend(command_args)
         
         command_parts.append(" ".join(tab_parts))
     
