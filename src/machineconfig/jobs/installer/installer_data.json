@@ -208,7 +208,7 @@
     {
       "appName": "croc",
       "repoURL": "https://github.com/schollz/croc",
-      "doc": "🦎 Easily and securely send things from one computer to another",
+      "doc": "🦎 Easily and securely send and share things from one computer to another",
       "fileNamePattern": {
         "amd64": {
           "linux": "croc_{version}_Linux-64bit.tar.gz",
@@ -270,6 +270,23 @@
           "linux": "npm i -g @ezshare/cli",
           "windows": "npm i -g @ezshare/cli",
           "macos": "npm i -g @ezshare/cli"
+        }
+      }
+    },
+    {
+      "appName": "asciinema",
+      "repoURL": "https://github.com/asciinema/asciinema",
+      "doc": "🎥 Terminal session recorder",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "asciinema-x86_64-unknown-linux-gnu",
+          "windows": null,
+          "macos": "asciinema-x86_64-apple-darwin"
+        },
+        "arm64": {
+          "linux": null,
+          "windows": null,
+          "macos": null
         }
       }
     },
