@@ -67,18 +67,19 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
 
     if choice_file.suffix == ".py":
         from machineconfig.scripts.python.helpers_fire_command.fire_jobs_route_helper import get_command_streamlit
+        with_project = f"--project {repo_root} " if repo_root is not None else ""
         if args.streamlit:
             exe = get_command_streamlit(choice_file=choice_file, environment=args.environment, repo_root=repo_root)
-            exe = f"uv run {exe} "
-        elif args.jupyter: exe = "uv run jupyter-lab"
+            exe = f"uv run {with_project} {exe} "
+        elif args.jupyter: exe = f"uv run {with_project} jupyter-lab"
         else:
             if args.interactive:
                 _ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
                 if ipy_profile is None:
                     ipy_profile = "default"
-                exe = f"uv run ipython -i --no-banner --profile {ipy_profile} "
+                exe = f"uv run {with_project} ipython -i --no-banner --profile {ipy_profile} "
             else:
-                exe = "uv run python "
+                exe = f"uv run {with_project} python "
     elif choice_file.suffix == ".ps1" or choice_file.suffix == ".sh": exe = "."
     elif choice_file.suffix == "": exe = ""
     else: raise NotImplementedError(f"File type {choice_file.suffix} not supported, in the sense that I don't know how to fire it.")
