@@ -51,19 +51,19 @@ map x
 map c
 map v
 map r
-map D $diskonaut $env:f
-map K $kondo $env:f
+map D $diskonaut $f
+map K $kondo $f
 map r reload
 
 
 # e edit
 map e  # edit modal key.
-map en $nano $env:f
-map el $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- $env:f
-map ev $nvim $env:f
-map ec $code $env:f
+map en $nano $f
+map el $pwsh -File $env:USERPROFILE/.local/bin/lvim.ps1 -- $f
+map ev $nvim $f
+map ec $code $f
 map ep $& 'C:\Program Files (x86)\JetBrains\PyCharm Community Edition 2022.2\bin\pycharm.exe' $f
-map o  $start $env:f
+map o  $start $f
 map <enter> open
 
 
@@ -73,27 +73,25 @@ map ww $powershell
 map wp $pwsh
 map wc $croshell.ps1
 map wm $cmd
-map i $~/.config/machineconfig/settings/lf/windows/previewer.ps1 $env:f
-map R $powershell $env:USERPROFILE/scripts/croshell.ps1 -r $env:f
+map i $~/.config/machineconfig/settings/lf/windows/previewer.ps1 $f
+map R $powershell $env:USERPROFILE/scripts/croshell.ps1 -r $f
 
 # o file/folder Operations
 map o
 map od cut
 map op paste
 map oy copy
-map oc $Set-Clipboard -Value $env:f
+map oc $Set-Clipboard -Value $f
 map c clear
 map or rename
-map <delete> :{{
-	delete
-	echo 'FINISHED DELETEING'
-}}
+map <delete> delete
+map <del> delete
 map of reload
 map os mark-save
 map ol mark-load
 map oR mark-remove
-map oD !ouch d $env:f
-map oC !ouch c $env:f '$env:f'.zip
+map oD !ouch d $f
+map oC !ouch c $f '$f'.zip
 
 # j jump
 map j

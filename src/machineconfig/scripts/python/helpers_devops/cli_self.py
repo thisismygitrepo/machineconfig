@@ -22,9 +22,8 @@ uv tool install --upgrade machineconfig
     """
     import platform
     if platform.system() == "Windows":
-        # from machineconfig.utils.code import run_shell_script_after_exit
-        # run_shell_script_after_exit(code)
-        print(f'please run {code} in powershell to update machineconfig')
+        from machineconfig.utils.code import exit_then_run_shell_script
+        exit_then_run_shell_script(code, strict=True)
     else:
         from machineconfig.utils.code import run_shell_script
         run_shell_script(code)

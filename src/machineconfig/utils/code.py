@@ -102,7 +102,7 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
     elif proc.returncode == 0:
         console.print(f"✅  [green]Script executed successfully:[/green] [blue]{temp_script_path}[/blue]")
     else:
-        console.print(f"⚠️  [yellow]Script executed with warnings (return code {proc.returncode}):[/yellow] [blue]{temp_script_path}[/blue]")    
+        console.print(f"⚠️  [yellow]Script executed with warnings (return code {proc.returncode}):[/yellow] [blue]{temp_script_path}[/blue]")
     temp_script_path.unlink(missing_ok=True)
     console.print(f"🗑️  [blue]Temporary script deleted:[/blue] [green]{temp_script_path}[/green]")
     return proc
@@ -112,10 +112,18 @@ def exit_then_run_shell_script(script: str, strict: bool = False):
     import os
     op_program_path = os.environ.get("OP_PROGRAM_PATH", None)
     if strict and op_program_path is None:
+        op_program_path = Path.home().joinpath("tmp_results", "tmp_scripts", "manual_run", f"manual_script_{randstr()}.ps1")
+        op_program_path.parent.mkdir(parents=True, exist_ok=True)
+        op_program_path.write_text(script, encoding="utf-8")
+        print_code(script, lexer="powershell", desc="script to run manually")
+        print(f"Please run the script manually via your PowerShell by executing the script @:\n{str(op_program_path)}")
         raise ValueError("OP_PROGRAM_PATH environment variable is not set in strict mode.")
     if op_program_path is not None:
         op_program_path = Path(op_program_path)
         op_program_path.parent.mkdir(parents=True, exist_ok=True)
         op_program_path.write_text(script, encoding="utf-8")
+        print("Handing over to powshell script runner via OP_PROGRAM_PATH...")
     else:
         run_shell_script(script)
+    import sys
+    sys.exit(0)
