@@ -37,23 +37,24 @@ add_to_path_if_not_already \
 . $CONFIG_ROOT/settings/broot/br.sh
 . $CONFIG_ROOT/settings/lf/linux/exe/lfcd.sh
 . $CONFIG_ROOT/settings/tere/terecd.sh
+. $CONFIG_ROOT/scripts/linux/mcfgs
+
 # check if file in ~/dotfiles/machineconfig/init_linux.sh exists and source it
 if [ -f "$HOME/dotfiles/machineconfig/init_linux.sh" ]; then
     # echo "Sourcing $HOME/dotfiles/machineconfig/init_linux.sh"
     source "$HOME/dotfiles/machineconfig/init_linux.sh"
 fi
 
-# set alias l to lsd -la
 alias l='lsd -la'
-alias d=devops
-alias c=cloud
-alias a=agents
-alias s=sessions
-alias ff=ftpx
-alias f=fire
-alias r=croshell
-alias u=utils
-alias t=term
+alias d='wrap_in_op_program devops'
+alias c='wrap_in_op_program cloud'
+alias a='wrap_in_op_program agents'
+alias s='wrap_in_op_program sessions'
+alias ff='wrap_in_op_program ftpx'
+alias f='wrap_in_op_program fire'
+alias r='wrap_in_op_program croshell'
+alias u='wrap_in_op_program utils'
+alias t='wrap_in_op_program term'
 
 
 # alias gcs='gh copilot suggest -t shell'
