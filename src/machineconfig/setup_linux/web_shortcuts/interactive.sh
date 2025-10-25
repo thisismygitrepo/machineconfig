@@ -1,7 +1,7 @@
 #!/bin/bash
 . <( curl -sSL "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/uv.sh")
 mcfg() {
-    "$HOME/.local/bin/uv" run --python 3.14 --with "machineconfig>=6.87" mcfg "$@"
+    "$HOME/.local/bin/uv" run --python 3.14 --with "machineconfig>=6.88" mcfg "$@"
 }
 alias d="mcfg devops"
 alias c="mcfg cloud"

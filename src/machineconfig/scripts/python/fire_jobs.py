@@ -35,7 +35,6 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
     else:
         choice_file = path_obj
 
-
     repo_root = get_repo_root(Path(choice_file))
     print(f"💾 Selected file: {choice_file}.\nRepo root: {repo_root}")
     if args.marimo:
