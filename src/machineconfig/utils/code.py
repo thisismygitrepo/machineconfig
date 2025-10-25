@@ -82,29 +82,29 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
         lexer = "bash"
     with tempfile.NamedTemporaryFile(mode='w', suffix=suffix, delete=False, encoding='utf-8') as temp_file:
         temp_file.write(script)
-        temp_script_path = Path(temp_file.name)
+        temp_shell_script_path = Path(temp_file.name)
     console = Console()
     if display_script:
         from rich.syntax import Syntax
-        console.print(Panel(Syntax(code=script, lexer=lexer), title=f"📄 shell script @ {temp_script_path}", subtitle="shell script being executed"), style="bold red")
+        console.print(Panel(Syntax(code=script, lexer=lexer), title=f"📄 shell script @ {temp_shell_script_path}", subtitle="shell script being executed"), style="bold red")
     env = {} if clean_env else None
     if platform.system() == "Windows":
         import subprocess
-        proc = subprocess.run(f'powershell -ExecutionPolicy Bypass -File "{temp_script_path}"', check=True, shell=True, env=env)
+        proc = subprocess.run(f'powershell -ExecutionPolicy Bypass -File "{temp_shell_script_path}"', check=True, shell=True, env=env)
     elif platform.system() == "Linux" or platform.system() == "Darwin":
         import subprocess
-        proc = subprocess.run(f"bash {str(temp_script_path)}", check=True, shell=True, env=env)
+        proc = subprocess.run(f"bash {str(temp_shell_script_path)}", check=True, shell=True, env=env)
     else:
         raise NotImplementedError(f"Platform {platform.system()} not supported.")
     # console.print(f"✅  [green]Script executed successfully:[/green] [blue]{temp_script_path}[/blue]")
     if proc.returncode != 0:
-        console.print(f"❌  [red]Script execution failed with return code {proc.returncode}:[/red] [blue]{temp_script_path}[/blue]")
+        console.print(f"❌  [red]Script execution failed with return code {proc.returncode}:[/red] [blue]{temp_shell_script_path}[/blue]")
     elif proc.returncode == 0:
-        console.print(f"✅  [green]Script executed successfully:[/green] [blue]{temp_script_path}[/blue]")
+        console.print(f"✅  [green]Script executed successfully:[/green] [blue]{temp_shell_script_path}[/blue]")
     else:
-        console.print(f"⚠️  [yellow]Script executed with warnings (return code {proc.returncode}):[/yellow] [blue]{temp_script_path}[/blue]")
-    temp_script_path.unlink(missing_ok=True)
-    console.print(f"🗑️  [blue]Temporary script deleted:[/blue] [green]{temp_script_path}[/green]")
+        console.print(f"⚠️  [yellow]Script executed with warnings (return code {proc.returncode}):[/yellow] [blue]{temp_shell_script_path}[/blue]")
+    temp_shell_script_path.unlink(missing_ok=True)
+    console.print(f"🗑️  [blue]Temporary script deleted:[/blue] [green]{temp_shell_script_path}[/green]")
     return proc
 
 
@@ -117,12 +117,12 @@ def exit_then_run_shell_script(script: str, strict: bool = False):
         op_program_path.write_text(script, encoding="utf-8")
         print_code(script, lexer="powershell", desc="script to run manually")
         print(f"Please run the script manually via your PowerShell by executing the script @:\n{str(op_program_path)}")
-        raise ValueError("OP_PROGRAM_PATH environment variable is not set in strict mode.")
+        print("OP_PROGRAM_PATH environment variable is not set in strict mode.")
     if op_program_path is not None:
         op_program_path = Path(op_program_path)
         op_program_path.parent.mkdir(parents=True, exist_ok=True)
         op_program_path.write_text(script, encoding="utf-8")
-        print("Handing over to powshell script runner via OP_PROGRAM_PATH...")
+        print(f"Handing over to powershell script runner via OP_PROGRAM_PATH @\n{str(op_program_path)}...")
     else:
         run_shell_script(script)
     import sys
