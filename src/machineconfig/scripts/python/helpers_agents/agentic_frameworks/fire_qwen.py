@@ -1,11 +1,10 @@
 
 from pathlib import Path
 import shlex
-from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import HOST
-from typing import Optional, Literal
+from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import AI_SPEC
 
 
-def fire_qwen(config_dir: Optional[str], model: Literal["qwen"], provider: Literal["qwen"], machine: HOST, prompt_path: Path, repo_root: Path) -> str:
+def fire_qwen(ai_spec: AI_SPEC, prompt_path: Path, repo_root: Path, config_dir: str | None) -> str:
     # assert model == "qwen", "Only qwen is supported currently."
     # assert provider == "qwen", "Only qwen is supported currently."
     # model = "qwen"
@@ -14,12 +13,12 @@ def fire_qwen(config_dir: Optional[str], model: Literal["qwen"], provider: Liter
     # if model is None:
     #     model_arg = ""
     # else:
-    _ = provider
+    _ = ai_spec["provider"]
     # model_arg = f"--model {shlex.quote(model)}"
     # Need a real shell for the pipeline; otherwise '| gemini ...' is passed as args to 'cat'
     safe_path = shlex.quote(str(prompt_path))
 
-    match machine:
+    match ai_spec["machine"]:
         case "local":
             # Export the environment variable so it's available to subshells
             cmd = f"""

@@ -5,13 +5,13 @@
 from pathlib import Path
 from typing import cast, Optional, get_args, Annotated
 import typer
-from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import AGENTS, HOST, MODEL, PROVIDER
+from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import AGENTS, HOST, PROVIDER
 
 
 def create(
     agent: Annotated[AGENTS, typer.Option(..., "--agents", "-a", help=f"Agent type. One of {', '.join(get_args(AGENTS)[:3])}")],
     host: Annotated[HOST, typer.Option(..., "--host", "-h", help=f"Machine to run agents on. One of {', '.join(get_args(HOST))}")],
-    model: Annotated[MODEL, typer.Option(..., "--model", "-m", help=f"Model to use (for crush agent). One of {', '.join(get_args(MODEL)[:3])}")],
+    model: Annotated[str, typer.Option(..., "--model", "-m", help="Model to use (for crush agent).")],
     provider: Annotated[PROVIDER, typer.Option(..., "--provider", "-p", help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER)[:3])}")],
     context_path: Annotated[Optional[Path], typer.Option(..., "--context-path", "-c", help="Path to the context file/folder, defaults to .ai/todo/")] = None,
     separator: Annotated[str, typer.Option(..., "--separator", "-s", help="Separator for context")] = "\n",
@@ -26,19 +26,8 @@ def create(
 
     from machineconfig.scripts.python.helpers_agents.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout
     from machineconfig.scripts.python.helpers_agents.fire_agents_load_balancer import chunk_prompts
-    from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import PROVIDER2MODEL
     from machineconfig.utils.accessories import get_repo_root, randstr
     import json
-
-    # validate model is valid for the provider
-    valid_models_for_provider = PROVIDER2MODEL.get(provider, [])
-    if model not in valid_models_for_provider:
-        available_models = "\n  ".join(valid_models_for_provider) if valid_models_for_provider else "(none configured)"
-        raise typer.BadParameter(
-            f"Model '{model}' is not valid for provider '{provider}'.\n"
-            f"Valid models for '{provider}':\n  {available_models}\n"
-            f"All available models: {', '.join(get_args(MODEL))}"
-        )
 
     # validate mutual exclusive
     prompt_options = [prompt, prompt_path]
@@ -179,8 +168,6 @@ def get_app():
 PROVIDER options: {', '.join(get_args(PROVIDER))}
 {sep}
 AGENT options: {', '.join(get_args(AGENTS))}
-{sep}
-MODEL options: {sep.join(get_args(MODEL))}
 """
     agents_app.command("create", no_args_is_help=True, help=agents_full_help)(create)
     agents_app.command("c", no_args_is_help=True, help="Create agents layout file, ready to run.", hidden=True)(create)

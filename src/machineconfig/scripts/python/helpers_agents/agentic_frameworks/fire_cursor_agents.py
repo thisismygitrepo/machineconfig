@@ -2,11 +2,10 @@
 
 from pathlib import Path
 # import shlex
-from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import HOST
-from typing import Optional
+from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import AI_SPEC
 
-def fire_cursor(api_key: Optional[str], prompt_path: Path, machine: HOST) -> str:
-    match machine:
+def fire_cursor(ai_spec: AI_SPEC, prompt_path: Path) -> str:
+    match ai_spec["machine"]:
         case "local":
             # Export the environment variable so it's available to subshells
             cmd = f"""
