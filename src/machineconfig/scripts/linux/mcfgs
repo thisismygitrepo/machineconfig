@@ -42,3 +42,7 @@ wrap_in_op_program() {
   fi
 }
 
+if [[ $# -gt 0 ]]; then
+  wrap_in_op_program "$@"
+fi
+
