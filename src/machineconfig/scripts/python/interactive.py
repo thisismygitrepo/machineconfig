@@ -124,7 +124,9 @@ def execute_installations(selected_options: list[str]) -> None:
                 console.print("✅ CLI applications installed successfully", style="bold green")
             except Exception as e:
                 console.print(f"❌ Error installing CLI applications: {e}", style="bold red")
-            run_shell_script(". $HOME/.bashrc")
+            import platform
+            if platform.system() != "Windows":
+                run_shell_script(". $HOME/.bashrc")
 
     if "install_machineconfig" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
