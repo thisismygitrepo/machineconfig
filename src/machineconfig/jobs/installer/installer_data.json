@@ -1129,13 +1129,13 @@
       "doc": "🌐 browser in the shell",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
+          "linux": "browsh-v{version}-linux-amd64",
+          "macos": "browsh-v{version}-darwin-amd64",
           "windows": null
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
+          "linux": "browsh-v{version}-linux-arm64",
+          "macos": "browsh-v{version}-darwin-arm64",
           "windows": null
         }
       }
@@ -1656,9 +1656,9 @@
       "doc": "📷 qr code scanner",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "qrscan-{version}-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "qrscan-{version}-x86_64-apple-darwin.tar.gz",
+          "windows": "qrscan-{version}-i686-pc-windows-msvc.zip"
         },
         "arm64": {
           "linux": null,
@@ -1673,13 +1673,13 @@
       "doc": "📂 A TUI like winscp",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
+          "linux": "termscp-{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "termscp-{version}-x86_64-apple-darwin.tar.gz",
           "windows": null
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
+          "linux": "termscp-{version}-aarch64-unknown-linux-musl.tar.gz",
+          "macos": "termscp-{version}-aarch64-apple-darwin.tar.gz",
           "windows": null
         }
       }
@@ -1707,14 +1707,14 @@
       "doc": "🗂️ filebrowser provides a file managing interface within a specified directory",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "linux-amd64-filebrowser.tar.gz",
+          "macos": "darwin-amd64-filebrowser.tar.gz",
+          "windows": "windows-amd64-filebrowser.zip"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "linux-arm64-filebrowser.tar.gz",
+          "macos": "darwin-arm64-filebrowser.tar.gz",
+          "windows": "windows-arm64-filebrowser.zip"
         }
       }
     },
@@ -1724,13 +1724,13 @@
       "doc": "☁️ Self-hosted file management system with muilt-cloud support.",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
+          "linux": "cloudreve_{version}_linux_amd64.tar.gz",
+          "macos": "cloudreve_{version}_darwin_amd64.tar.gz",
           "windows": null
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
+          "linux": "cloudreve_{version}_linux_arm64.tar.gz",
+          "macos": "cloudreve_{version}_darwin_arm64.tar.gz",
           "windows": null
         }
       }
@@ -1741,13 +1741,13 @@
       "doc": "💾 backup program that is fast, efficient and secure. It supports the three major operating systems",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "restic_{version}_linux_amd64.bz2",
+          "macos": "restic_{version}_darwin_amd64.bz2",
+          "windows": "restic_{version}_windows_amd64.zip"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
+          "linux": "restic_{version}_linux_arm64.bz2",
+          "macos": "restic_{version}_darwin_arm64.bz2",
           "windows": null
         }
       }
@@ -1758,13 +1758,13 @@
       "doc": "🔄 Syncthing is a continuous file synchronization program. It synchronizes files between two or more computers.",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "syncthing-linux-amd64-v{version}.tar.gz",
+          "macos": "syncthing-osx-amd64-v{version}.tar.gz",
+          "windows": "syncthing-windows-amd64-v{version}.zip"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
+          "linux": "syncthing-linux-arm64-v{version}.tar.gz",
+          "macos": "syncthing-osx-arm64-v{version}.tar.gz",
           "windows": null
         }
       }
@@ -1775,13 +1775,13 @@
       "doc": "🌐 Istio is an open source service mesh that layers transparently onto existing distributed applications",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
+          "linux": "istio-{version}-linux-amd64.tar.gz",
+          "macos": "istio-{version}-osx-amd64.tar.gz",
           "windows": null
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
+          "linux": "istio-{version}-linux-arm64.tar.gz",
+          "macos": "istio-{version}-osx-arm64.tar.gz",
           "windows": null
         }
       }
@@ -1792,13 +1792,13 @@
       "doc": "⏲️ Pomodoro timer for the command-line",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "openpomodoro-cli_{version}_linux_x86_64.tar.gz",
+          "macos": "openpomodoro-cli_{version}_darwin_x86_64.tar.gz",
+          "windows": "openpomodoro-cli_{version}_windows_x86_64.zip"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
+          "linux": "openpomodoro-cli_{version}_linux_aarch64.tar.gz",
+          "macos": "openpomodoro-cli_{version}_darwin_aarch64.tar.gz",
           "windows": null
         }
       }
@@ -1809,14 +1809,14 @@
       "doc": "🦀 Rust Language Server (LSP)",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "rust-analyzer-x86_64-unknown-linux-gnu.gz",
+          "macos": "rust-analyzer-x86_64-apple-darwin.gz",
+          "windows": "rust-analyzer-x86_64-pc-windows-msvc.zip"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "rust-analyzer-aarch64-unknown-linux-gnu.gz",
+          "macos": "rust-analyzer-aarch64-apple-darwin.gz",
+          "windows": "rust-analyzer-aarch64-pc-windows-msvc.zip"
         }
       }
     },
@@ -1826,13 +1826,13 @@
       "doc": "🧹 cleans projects from litter files.",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "kondo-linux-x86_64.tar.gz",
+          "macos": "kondo-macos-x86_64.tar.gz",
+          "windows": "kondo-windows-x86_64.zip"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
+          "linux": "kondo-linux-aarch64.tar.gz",
+          "macos": "kondo-macos-aarch64.tar.gz",
           "windows": null
         }
       }
@@ -1843,13 +1843,13 @@
       "doc": "📊 Counts the number of lines of code, comments, and blanks in a project.",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "tokei-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "tokei-x86_64-apple-darwin.tar.gz",
+          "windows": "tokei-x86_64-pc-windows-msvc.zip"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
+          "linux": "tokei-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "tokei-aarch64-apple-darwin.tar.gz",
           "windows": null
         }
       }
@@ -1860,13 +1860,13 @@
       "doc": "🐙 A simple terminal UI for git commands",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "lazygit_{version}_linux_x86_64.tar.gz",
+          "macos": "lazygit_{version}_darwin_x86_64.tar.gz",
+          "windows": "lazygit_{version}_windows_x86_64.zip"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
+          "linux": "lazygit_{version}_linux_arm64.tar.gz",
+          "macos": "lazygit_{version}_darwin_arm64.tar.gz",
           "windows": null
         }
       }
@@ -1911,13 +1911,13 @@
       "doc": "📊 Git repository summary on your terminal",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "onefetch-{version}-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "onefetch-{version}-x86_64-apple-darwin.tar.gz",
+          "windows": "onefetch-{version}-x86_64-pc-windows-msvc.zip"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
+          "linux": "onefetch-{version}-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "onefetch-{version}-aarch64-apple-darwin.tar.gz",
           "windows": null
         }
       }
@@ -1945,9 +1945,9 @@
       "doc": "🎯 A command runner",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "gitcs_linux_amd64",
+          "macos": "gitcs_darwin_amd64",
+          "windows": "gitcs_windows_amd64.exe"
         },
         "arm64": {
           "linux": null,
