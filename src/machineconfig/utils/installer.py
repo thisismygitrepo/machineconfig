@@ -146,7 +146,6 @@ def install_bulk(installers_data: list[InstallerData], safe: bool = False, jobs:
         print("🧹 Fresh install requested - clearing version cache...")
         PathExtended(INSTALL_VERSION_ROOT).delete(sure=True)
         print("✅ Version cache cleared")
-
     if safe:
         pass
         # print("⚠️  Safe installation mode activated...")

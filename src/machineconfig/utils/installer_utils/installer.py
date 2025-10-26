@@ -11,17 +11,11 @@ from machineconfig.jobs.installer.package_groups import PACKAGE_GROUPS, PACKAGE_
 console = Console()
 
 
-def _handle_installer_not_found(search_term: str, all_installers: list["InstallerData"]) -> None:  # type: ignore
+def _handle_installer_not_found(search_term: str, all_names: list[str]) -> None:  # type: ignore
     """Handle installer not found with friendly suggestions using fuzzy matching."""
     from difflib import get_close_matches
-
-    all_names = []
-    for inst in all_installers:
-        exe_name = inst["appName"]
-        all_names.append(exe_name)
     close_matches = get_close_matches(search_term, all_names, n=5, cutoff=0.4)
     console.print(f"\n❌ '[red]{search_term}[/red]' was not found.", style="bold")
-
     if close_matches:
         console.print("🤔 Did you mean one of these?", style="yellow")
         table = Table(show_header=False, box=None, pad_edge=False)
@@ -31,18 +25,16 @@ def _handle_installer_not_found(search_term: str, all_installers: list["Installe
     else:
         console.print("📋 Here are some available options:", style="blue")
         # Show first 10 installers as examples
-        sample_names = []
-        for inst in all_installers[:10]:
-            exe_name = inst["appName"]
-            sample_names.append(exe_name)
-
+        if len(all_names) > 10:
+            sample_names = all_names[:10]
+        else:
+            sample_names = all_names
         table = Table(show_header=False, box=None, pad_edge=False)
         for i, name in enumerate(sample_names, 1):
             table.add_row(f"[cyan]{i}.[/cyan]", f"[green]{name}[/green]")
         console.print(table)
-
-        if len(all_installers) > 10:
-            console.print(f"   [dim]... and {len(all_installers) - 10} more[/dim]")
+        if len(all_names) > 10:
+            console.print(f"   [dim]... and {len(all_names) - 10} more[/dim]")
 
     panel = Panel(f"[bold blue]💡 Use 'ia' to interactively browse all available installers.[/bold blue]\n[bold blue]💡 Use one of the categories: {list(get_args(PACKAGE_GROUPS))}[/bold blue]", title="[yellow]Helpful Tips[/yellow]", border_style="yellow")
     console.print(panel)
@@ -140,23 +132,28 @@ def install_interactively():
 
 
 def install_group(package_group: str):
-    panel = Panel(f"[bold yellow]Installing programs from category: [green]{package_group}[/green][/bold yellow]", title="[bold blue]📦 Category Installation[/bold blue]", border_style="blue", padding=(1, 2))
-    console.print(panel)
     from machineconfig.utils.installer import get_installers, install_bulk
     from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
     if package_group in PACKAGE_GROUP2NAMES:
+        panel = Panel(f"[bold yellow]Installing programs from category: [green]{package_group}[/green][/bold yellow]", title="[bold blue]📦 Category Installation[/bold blue]", border_style="blue", padding=(1, 2))
+        console.print(panel)
         installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=[package_group])
         install_bulk(installers_data=installers_)
+        return
+    options_system = dynamically_extract_installers_system_groups_from_scripts()
+    from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
+    from machineconfig.utils.code import run_shell_script
+    for an_item in options_system:
+        if an_item["appName"] == package_group:
+            panel = Panel(f"[bold yellow]Installing programs from category: [green]{package_group}[/green][/bold yellow]", title="[bold blue]📦 Category Installation[/bold blue]", border_style="blue", padding=(1, 2))
+            console.print(panel)
+            program = an_item["fileNamePattern"][get_normalized_arch()][get_os_name()]
+            if program is not None:
+                run_shell_script(program)
+                break
     else:
-        options_system = dynamically_extract_installers_system_groups_from_scripts()
-        from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
-        from machineconfig.utils.code import run_shell_script
-        for an_item in options_system:
-            if an_item["appName"] == package_group:
-                program = an_item["fileNamePattern"][get_normalized_arch()][get_os_name()]
-                if program is not None:
-                    run_shell_script(program)
-                    break
+        console.print(f"❌ [red]Group '{package_group}' not found.[/red]", style="bold")
+        _handle_installer_not_found(package_group, all_names=list(PACKAGE_GROUP2NAMES.keys()) + [item['appName'] for item in options_system])
 
 
 def choose_from_system_package_groups(options_system: dict[str, tuple[str, str]]) -> str:
@@ -184,7 +181,6 @@ def install_clis(clis_names: list[str]):
     from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
     from machineconfig.utils.installer import get_installers
     from machineconfig.utils.installer_utils.installer_class import Installer
-
     total_messages: list[str] = []
     for a_which in clis_names:
         all_installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=None)
@@ -195,7 +191,7 @@ def install_clis(clis_names: list[str]):
                 selected_installer = installer
                 break
         if selected_installer is None:
-            _handle_installer_not_found(a_which, all_installers)
+            _handle_installer_not_found(a_which, all_names=[inst["appName"] for inst in all_installers])
             return None
         message = Installer(selected_installer).install_robust(version=None)  # finish the task
         total_messages.append(message)
