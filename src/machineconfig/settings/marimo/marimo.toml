@@ -64,7 +64,7 @@ presets = []
 [experimental]
 
 [snippets]
-custom_paths = []
+custom_paths = [/home/alex/code/machineconfig/src/machineconfig/settings/marimo/snippets]
 include_default_snippets = true
 
 [save]
