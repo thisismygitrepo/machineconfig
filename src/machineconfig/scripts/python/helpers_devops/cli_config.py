@@ -7,7 +7,7 @@ import typer
 
 
 def private(method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--method", "-m", help="Method to use for linking files")],
-                             on_conflict: Annotated[Literal["throwError", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"], typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throwError",
+                             on_conflict: Annotated[Literal["throw-error", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"], typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
                              which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = None,
                              interactive: Annotated[bool, typer.Option(..., "--interactive", "-ia", help="Run in interactive mode")] = False):
     """🔗 Manage private configuration files."""
@@ -15,7 +15,7 @@ def private(method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--m
     create_links_export.main_private_from_parser(method=method, on_conflict=on_conflict, which=which, interactive=interactive)
 
 def public(method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--method", "-m", help="Method to use for setting up the config file.")],
-                            on_conflict: Annotated[Literal["throwError", "overwriteDefaultPath", "backupDefaultPath"], typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throwError",
+                            on_conflict: Annotated[Literal["throw-error", "overwriteDefaultPath", "backupDefaultPath"], typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
                             which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = None,
                             interactive: Annotated[bool, typer.Option(..., "--interactive", "-ia", help="Run in interactive mode")] = False):
     """🔗 Manage public configuration files."""
@@ -46,7 +46,7 @@ def path():
     uv_with = ["textual"]
     uv_project_dir = None
     if not Path.home().joinpath("code/machineconfig").exists():
-        uv_with.append("machineconfig>=6.89")
+        uv_with.append("machineconfig>=6.91")
     else:
         uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
     run_shell_script(get_uv_command_executing_python_script(python_script=path.read_text(encoding="utf-8"), uv_with=uv_with, uv_project_dir=uv_project_dir)[0])

@@ -96,14 +96,14 @@ def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
 
 
 def symlink_map(config_file_default_path: PathExtended, self_managed_config_file_path: PathExtended,
-                 on_conflict: Literal["throwError", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"]
+                 on_conflict: Literal["throw-error", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"]
                  ) -> OperationResult:
     """helper function. creates a symlink from `config_file_default_path` to `self_managed_config_file_path`.
 
     Returns a dict with 'action' and 'details' keys describing what was done.
 
     on_conflict strategies:
-    - throwError: Raise exception when files differ
+    - throw-error: Raise exception when files differ
     - overwriteSelfManaged: Delete self_managed_config_file_path (self-managed), move config_file_default_path to self_managed_config_file_path, create symlink
     - backupSelfManaged: Backup self_managed_config_file_path (self-managed), move config_file_default_path to self_managed_config_file_path, create symlink
     - overwriteDefaultPath: Delete config_file_default_path (default path), create symlink to self_managed_config_file_path
@@ -162,7 +162,14 @@ def symlink_map(config_file_default_path: PathExtended, self_managed_config_file
                     config_file_default_path.delete(sure=True)
                 else:
                     # Files are different, use on_conflict strategy
-                    if on_conflict == "throwError":
+                    if on_conflict == "throw-error":
+                        import subprocess
+                        command = f"""delta --side-by-side "{config_file_default_path}" "{self_managed_config_file_path}" """
+                        try:
+                            console.print(Panel(f"🆘 CONFLICT DETECTED | Showing diff between {config_file_default_path} and {self_managed_config_file_path}", title="Conflict Detected", expand=False))
+                            subprocess.run(command, shell=True, check=True)
+                        except Exception:
+                            console.print(Panel("⚠️ Could not show diff using 'delta'. Please install 'delta' for better diff visualization.", title="Delta Not Found", expand=False))
                         raise RuntimeError(f"Conflict detected: {config_file_default_path} and {self_managed_config_file_path} both exist with different content")
                     elif on_conflict == "overwriteSelfManaged":
                         action_taken = "backing_up_target"
@@ -235,7 +242,7 @@ def symlink_map(config_file_default_path: PathExtended, self_managed_config_file
         return {"action": action_taken, "details": details}
 
 
-def copy_map(config_file_default_path: PathExtended, self_managed_config_file_path: PathExtended, on_conflict: Literal["throwError", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"]) -> OperationResult:
+def copy_map(config_file_default_path: PathExtended, self_managed_config_file_path: PathExtended, on_conflict: Literal["throw-error", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"]) -> OperationResult:
     config_file_default_path = PathExtended(config_file_default_path).expanduser().absolute()
     self_managed_config_file_path = PathExtended(self_managed_config_file_path).expanduser().absolute()
     
@@ -283,7 +290,7 @@ def copy_map(config_file_default_path: PathExtended, self_managed_config_file_pa
                 else:
                     # Files are different, use on_conflict strategy
                     match on_conflict:
-                        case "throwError":
+                        case "throw-error":
                             raise RuntimeError(f"Conflict detected: {config_file_default_path} and {self_managed_config_file_path} both exist with different content")
                         case "overwriteSelfManaged":
                             action_taken = "backing_up_target"

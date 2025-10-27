@@ -32,30 +32,30 @@ if (Test-Path "$CONFIG_ROOT\scripts\windows\mcfgs.ps1") {
 
     function lsdla { lsd -la }
     Set-Alias -Name l -Value lsdla -Option AllScope
-    function d { warp_in_op_code devops @args }
-    function c { warp_in_op_code cloud @args }
-    function a { warp_in_op_code agents @args }
-    function ss { warp_in_op_code sessions @args }
-    function ff { warp_in_op_code ftpx @args }
-    function f { warp_in_op_code fire @args }
-    function rr { warp_in_op_code croshell @args }
-    function u { warp_in_op_code utils @args }
-    function t { warp_in_op_code terminal @args }
+    function d { warp_in_op_code devops $args }
+    function c { warp_in_op_code cloud $args }
+    function a { warp_in_op_code agents $args }
+    function ss { warp_in_op_code sessions $args }
+    function ff { warp_in_op_code ftpx $args }
+    function f { warp_in_op_code fire $args }
+    function rr { warp_in_op_code croshell $args }
+    function u { warp_in_op_code utils $args }
+    function t { warp_in_op_code terminal $args }
 
 }
 else {
     Write-Host "Missing config files: $CONFIG_ROOT"
     function lsdla { lsd -la }
     Set-Alias -Name l -Value lsdla -Option AllScope
-    function d { devops @args }
-    function c { cloud @args }
-    function a { agents @args }
-    function ss { sessions @args }
-    function ff { ftpx @args }
-    function f { fire @args }
-    function rr { croshell @args }
-    function u { utils @args }
-    function t { terminal @args }
+    function d { devops $args }
+    function c { cloud $args }
+    function a { agents $args }
+    function ss { sessions $args }
+    function ff { ftpx $args }
+    function f { fire $args }
+    function rr { croshell $args }
+    function u { utils $args }
+    function t { terminal $args }
 
 }
 

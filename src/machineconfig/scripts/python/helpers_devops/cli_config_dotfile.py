@@ -34,7 +34,7 @@ def main(
         dest_path.mkdir(parents=True, exist_ok=True)
         new_path = dest_path.joinpath(orig_path.name)
 
-    symlink_map(config_file_default_path=orig_path, self_managed_config_file_path=new_path, on_conflict="throwError")
+    symlink_map(config_file_default_path=orig_path, self_managed_config_file_path=new_path, on_conflict="throw-error")
 
     console.print(
         Panel(
