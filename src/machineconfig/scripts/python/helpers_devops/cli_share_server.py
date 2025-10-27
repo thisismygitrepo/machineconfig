@@ -96,15 +96,11 @@ def main(
             p.wait()
 
 
-def share_file_send(
-    path: Annotated[str, typer.Argument(help="Path to the file or directory to send")]
-) -> None:
+def share_file_send(path: Annotated[str, typer.Argument(help="Path to the file or directory to send")]) -> None:
     """Send a file using croc with relay server."""
     from machineconfig.utils.installer_utils.installer import install_if_missing
     install_if_missing(which="croc")
-    
     # Get relay server IP from environment or use default
-
     import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(('8.8.8.8',80))
@@ -117,23 +113,72 @@ def share_file_send(
     subprocess.run(cmd, shell=True)
 
 
-def share_file_receive(
-    code: Annotated[str, typer.Argument(help="Receive code (format: '7121-donor-olympic-bicycle' or full relay string)")]
-) -> None:
-    """Receive a file using croc with relay server."""
+def share_file_receive(code: Annotated[str, typer.Argument(help="Receive code (format: '7121-donor-olympic-bicycle' or full relay string)")]) -> None:
+    """Receive a file using croc with relay server.
+On the other computer run:
+(For Windows)
+    croc --relay 10.17.62.206:443 0782-paris-pencil-torso
+(For Linux/macOS)
+    CROC_SECRET="0782-paris-pencil-torso" croc --relay 10.17.62.206:443 """
     from machineconfig.utils.installer_utils.installer import install_if_missing
     install_if_missing(which="croc")
     import subprocess
     import os
-    # Extract the code (last part after the last space or just the code itself)
+    import platform
+    import re
+    
     env = os.environ.copy()
-    # env["CROC_SECRET"] = code
-    if " --yes" not in code:
-        code += " --yes"
-    if "croc " not in code:
-        code = "croc " + code
-    subprocess.run(code, shell=True, env=env)
+    is_windows = platform.system() == "Windows"
+    
+    # Parse input to extract components
+    secret_code: str | None = None
+    relay_server: str | None = None
+    
+    # Check if it's Linux/macOS format with CROC_SECRET
+    linux_match = re.match(r'CROC_SECRET\s*=\s*["\']?([^"\']+)["\']?\s+croc\s+--relay\s+(\S+)(?:\s+--yes)?', code)
+    if linux_match:
+        secret_code = linux_match.group(1)
+        relay_server = linux_match.group(2)
+    else:
+        # Check if it's Windows format or partial command
+        windows_match = re.match(r'(?:croc\s+)?(?:--relay\s+(\S+)\s+)?([a-z0-9-]+(?:-[a-z0-9-]+){3})(?:\s+--yes)?', code, re.IGNORECASE)
+        if windows_match:
+            relay_server = windows_match.group(1)
+            secret_code = windows_match.group(2)
+        else:
+            # Fallback: treat entire code as secret if it looks like a code
+            code_pattern = r'^[a-z0-9-]+(?:-[a-z0-9-]+){3}$'
+            if re.match(code_pattern, code.strip(), re.IGNORECASE):
+                secret_code = code.strip()
+    
+    if not secret_code:
+        raise ValueError(f"Could not parse croc code from input: {code}")
+    
+    # Build the appropriate command for current OS
+    if is_windows:
+        # Windows format: croc --relay server:port secret-code --yes
+        cmd = "croc"
+        if relay_server:
+            cmd += f" --relay {relay_server}"
+        cmd += f" {secret_code} --yes"
+    else:
+        # Linux/macOS format: CROC_SECRET="secret-code" croc --relay server:port --yes
+        env["CROC_SECRET"] = secret_code
+        cmd = "croc"
+        if relay_server:
+            cmd += f" --relay {relay_server}"
+        cmd += " --yes"
+    
+    subprocess.run(cmd, shell=True, env=env)
 
+
+def get_share_file_app():
+    app = typer.Typer(name="share-file", help="Send or receive files using croc with relay server.")
+    app.command(name="send", no_args_is_help=True, hidden=False, help="[s] send files from here.")(share_file_send)
+    app.command(name="s", no_args_is_help=True, hidden=True, help="[s] send files from here.")(share_file_send)
+    app.command(name="receive", no_args_is_help=True, hidden=False, help="[r] receive files to here.")(share_file_receive)
+    app.command(name="r", no_args_is_help=True, hidden=True, help="[r] receive files to here.")(share_file_receive)
+    return app
 
 def main_with_parser():
     typer.run(main)

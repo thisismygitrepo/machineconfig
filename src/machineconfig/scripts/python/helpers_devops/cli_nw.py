@@ -108,8 +108,13 @@ def get_app():
     nw_apps.command(name="share-server", help="🌐  [s] Start local/global server to share files/folders via web browser", no_args_is_help=True)(cli_share_server.main)
     nw_apps.command(name="s", help="Start local/global server to share files/folders via web browser", hidden=True, no_args_is_help=True)(cli_share_server.main)
 
-    nw_apps.command(name="share-file", no_args_is_help=True, help="📁  [f] Share a file via croc")(cli_share_server.share_file_send)
-    nw_apps.command(name="f", help="Share a file via croc", no_args_is_help=True, hidden=True)(cli_share_server.share_file_send)
+    # app = cli_share_server.get_share_file_app()
+    # nw_apps.add_typer(app, name="share-file", help="📁  [f] Share a file via relay server", no_args_is_help=True)
+    # nw_apps.add_typer(app, name="f", help="Share a file via relay server", hidden=True, no_args_is_help=True)
+    nw_apps.command(name="send", no_args_is_help=True, hidden=False, help="📁 [sx] send files from here.")(cli_share_server.share_file_send)
+    nw_apps.command(name="sx", no_args_is_help=True, hidden=True, help="📁 [sx] send files from here.")(cli_share_server.share_file_send)
+    nw_apps.command(name="receive", no_args_is_help=True, hidden=False, help="📁 [rx] receive files to here.")(cli_share_server.share_file_receive)
+    nw_apps.command(name="rx", no_args_is_help=True, hidden=True, help="📁 [rx] receive files to here.")(cli_share_server.share_file_receive)
 
     nw_apps.command(name="install-ssh-server", help="📡  [i] Install SSH server")(install_ssh_server)
     nw_apps.command(name="i", help="Install SSH server", hidden=True)(install_ssh_server)
@@ -122,7 +127,7 @@ def get_app():
     nw_apps.command(name="debug-ssh", help="🐛  [d] Debug SSH connection")(debug_ssh)
     nw_apps.command(name="d", help="Debug SSH connection", hidden=True)(debug_ssh)
 
-    nw_apps.command(name="wifi-select", no_args_is_help=True, help="[w] WiFi connection utility.")(wifi_select)
+    nw_apps.command(name="wifi-select", no_args_is_help=True, help="📶 WiFi connection utility.")(wifi_select)
     nw_apps.command(name="w", no_args_is_help=True, hidden=True)(wifi_select)
 
     return nw_apps
