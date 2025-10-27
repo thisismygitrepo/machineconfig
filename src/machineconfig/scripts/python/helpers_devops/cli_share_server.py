@@ -114,14 +114,14 @@ def share_file_send(path: Annotated[str, typer.Argument(help="Path to the file o
     s.close()
     relay_port = "443"
     is_windows = platform.system() == "Windows"
-    
+
     # Build command parts
     relay_arg = f"--relay {local_ip_v4}:{relay_port} --ip {local_ip_v4}:{relay_port}"
     zip_arg = "--zip" if zip_folder else ""
     text_arg = f"--text '{text}'" if text else ""
     qrcode_arg = "--qrcode" if qrcode else ""
     path_arg = f"{path}" if not text else ""
-    
+
     if is_windows:
         # Windows PowerShell format
         code_arg = f"--code {code}" if code else ""
@@ -136,7 +136,7 @@ croc {relay_arg} send {zip_arg} {qrcode_arg} {text_arg} {path_arg}"""
     
     typer.echo(f"🚀 Sending file: {path}. Use: devops network receive")
     from machineconfig.utils.code import exit_then_run_shell_script, print_code
-    print_code(code=script, desc="🚀 Receiving file with croc", lexer="bash" if platform.system() != "Windows" else "powershell")
+    print_code(code=script, desc="🚀 sending file with croc", lexer="bash" if platform.system() != "Windows" else "powershell")
     exit_then_run_shell_script(script=script, strict=False)
 
 
@@ -150,37 +150,26 @@ Usage examples:
     from machineconfig.utils.installer_utils.installer import install_if_missing
     install_if_missing(which="croc")
     import platform
-    import re
     
     is_windows = platform.system() == "Windows"
     
-    # Join all arguments back into a single string
-    code = " ".join(code_args)
+    # Join all arguments back into a single string and split into tokens
+    tokens = " ".join(code_args).split()
     
-    # Parse input to extract components
-    secret_code: str | None = None
+    # Parse input: either [code] or [--relay, server:port, code]
     relay_server: str | None = None
+    secret_code: str | None = None
     
-    # Check if it's Linux/macOS format with CROC_SECRET
-    linux_match = re.match(r'CROC_SECRET\s*=\s*["\']?([^"\']+)["\']?\s+croc\s+--relay\s+(\S+)(?:\s+--yes)?', code)
-    if linux_match:
-        secret_code = linux_match.group(1)
-        relay_server = linux_match.group(2)
+    if len(tokens) == 1:
+        # Just the code
+        secret_code = tokens[0]
+    elif len(tokens) >= 3 and tokens[0] == "--relay":
+        # Format: --relay server:port code [...]
+        relay_server = tokens[1]
+        secret_code = tokens[2]
     else:
-        # Check if it's Windows format or partial command
-        windows_match = re.match(r'(?:croc\s+)?(?:--relay\s+(\S+)\s+)?([a-z0-9-]+(?:-[a-z0-9-]+){3})(?:\s+--yes)?', code, re.IGNORECASE)
-        if windows_match:
-            relay_server = windows_match.group(1)
-            secret_code = windows_match.group(2)
-        else:
-            # Fallback: treat entire code as secret if it looks like a code
-            code_pattern = r'^[a-z0-9-]+(?:-[a-z0-9-]+){3}$'
-            if re.match(code_pattern, code.strip(), re.IGNORECASE):
-                secret_code = code.strip()
-    
-    if not secret_code:
-        raise ValueError(f"Could not parse croc code from input: {code}")
-    
+        raise ValueError(f"Could not parse croc code from input: {' '.join(code_args)}")
+        
     # Build the appropriate script for current OS
     if is_windows:
         # Windows PowerShell format: croc --relay server:port secret-code --yes

@@ -112,17 +112,24 @@ def exit_then_run_shell_script(script: str, strict: bool = False):
     import os
     op_program_path = os.environ.get("OP_PROGRAM_PATH", None)
     if strict and op_program_path is None:
-        op_program_path = Path.home().joinpath("tmp_results", "tmp_scripts", "manual_run", f"manual_script_{randstr()}.ps1")
+        import platform
+        if platform.system() == "Windows":
+            suffix = ".ps1"
+            lexer = "powershell"
+        else:
+            suffix = ".sh"
+            lexer = "bash"
+        op_program_path = Path.home().joinpath("tmp_results", "tmp_scripts", "manual_run", f"manual_script_{randstr()}.{suffix}")
         op_program_path.parent.mkdir(parents=True, exist_ok=True)
         op_program_path.write_text(script, encoding="utf-8")
-        print_code(script, lexer="powershell", desc="script to run manually")
-        print(f"Please run the script manually via your PowerShell by executing the script @:\n{str(op_program_path)}")
+        print_code(script, lexer=lexer, desc="script to run manually")
+        print(f"Please run the script manually via your shell by executing the script @:\n{str(op_program_path)}")
         print("OP_PROGRAM_PATH environment variable is not set in strict mode.")
     if op_program_path is not None:
         op_program_path = Path(op_program_path)
         op_program_path.parent.mkdir(parents=True, exist_ok=True)
         op_program_path.write_text(script, encoding="utf-8")
-        print(f"Handing over to powershell script runner via OP_PROGRAM_PATH @\n{str(op_program_path)}...")
+        print(f"Handing over to shell script runner via OP_PROGRAM_PATH @\n{str(op_program_path)}...")
     else:
         run_shell_script(script)
     import sys
