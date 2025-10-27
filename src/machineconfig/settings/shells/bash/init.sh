@@ -46,15 +46,15 @@ if [ -f "$HOME/dotfiles/machineconfig/init_linux.sh" ]; then
 fi
 
 alias l='lsd -la'
-alias d='wrap_in_op_program devops'
-alias c='wrap_in_op_program cloud'
-alias a='wrap_in_op_program agents'
-alias s='wrap_in_op_program sessions'
-alias ff='wrap_in_op_program ftpx'
-alias f='wrap_in_op_program fire'
-alias r='wrap_in_op_program croshell'
-alias u='wrap_in_op_program utils'
-alias t='wrap_in_op_program term'
+alias d='wrap_in_shell_script devops'
+alias c='wrap_in_shell_script cloud'
+alias a='wrap_in_shell_script agents'
+alias s='wrap_in_shell_script sessions'
+alias ff='wrap_in_shell_script ftpx'
+alias f='wrap_in_shell_script fire'
+alias r='wrap_in_shell_script croshell'
+alias u='wrap_in_shell_script utils'
+alias t='wrap_in_shell_script term'
 
 
 # alias gcs='gh copilot suggest -t shell'

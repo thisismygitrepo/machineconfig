@@ -32,15 +32,15 @@ if (Test-Path "$CONFIG_ROOT\scripts\windows\mcfgs.ps1") {
 
     function lsdla { lsd -la }
     Set-Alias -Name l -Value lsdla -Option AllScope
-    function d { wrap_in_op_code devops $args }
-    function c { wrap_in_op_code cloud $args }
-    function a { wrap_in_op_code agents $args }
-    function ss { wrap_in_op_code sessions $args }
-    function ff { wrap_in_op_code ftpx $args }
-    function f { wrap_in_op_code fire $args }
-    function rr { wrap_in_op_code croshell $args }
-    function u { wrap_in_op_code utils $args }
-    function t { wrap_in_op_code terminal $args }
+    function d { wrap_in_shell_script devops $args }
+    function c { wrap_in_shell_script cloud $args }
+    function a { wrap_in_shell_script agents $args }
+    function ss { wrap_in_shell_script sessions $args }
+    function ff { wrap_in_shell_script ftpx $args }
+    function f { wrap_in_shell_script fire $args }
+    function rr { wrap_in_shell_script croshell $args }
+    function u { wrap_in_shell_script utils $args }
+    function t { wrap_in_shell_script terminal $args }
 
 }
 else {

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-wrap_in_op_program() {
+wrap_in_shell_script() {
   # set -euo pipefail
 
   # ANSI color/style codes
@@ -43,6 +43,6 @@ wrap_in_op_program() {
 }
 
 if [[ $# -gt 0 ]]; then
-  wrap_in_op_program "$@"
+  wrap_in_shell_script "$@"
 fi
 
