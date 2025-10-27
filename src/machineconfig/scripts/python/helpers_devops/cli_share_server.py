@@ -107,32 +107,36 @@ def share_file_send(path: Annotated[str, typer.Argument(help="Path to the file o
     install_if_missing(which="croc")
     # Get relay server IP from environment or use default
     import socket
-    import subprocess
-    import os
     import platform
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(('8.8.8.8',80))
     local_ip_v4 = s.getsockname()[0]
     s.close()
     relay_port = "443"
-    env = os.environ.copy()
     is_windows = platform.system() == "Windows"
-    cmd = f"croc --relay {local_ip_v4}:{relay_port} --ip {local_ip_v4}:{relay_port} send"
-    if zip_folder:
-        cmd += " --zip"
-    if code:
-        if is_windows:
-            cmd += f" --code {code}"
+    
+    # Build command parts
+    relay_arg = f"--relay {local_ip_v4}:{relay_port} --ip {local_ip_v4}:{relay_port}"
+    zip_arg = "--zip" if zip_folder else ""
+    text_arg = f"--text '{text}'" if text else ""
+    qrcode_arg = "--qrcode" if qrcode else ""
+    path_arg = f"{path}" if not text else ""
+    
+    if is_windows:
+        # Windows PowerShell format
+        code_arg = f"--code {code}" if code else ""
+        script = f"""croc {relay_arg} send {zip_arg} {code_arg} {qrcode_arg} {text_arg} {path_arg}"""
+    else:
+        # Linux/macOS Bash format
+        if code:
+            script = f"""export CROC_SECRET="{code}"
+croc {relay_arg} send {zip_arg} {qrcode_arg} {text_arg} {path_arg}"""
         else:
-            env["CROC_SECRET"] = code
-    if text:
-        cmd += f" --text '{text}'"
-    if qrcode:
-        cmd += " --qrcode"
-    if not text:
-        cmd += f" {path}"
-    typer.echo(f"🚀 Sending file: {path}. Use: devops network f")
-    subprocess.run(cmd, shell=True, env=env)
+            script = f"""croc {relay_arg} send {zip_arg} {qrcode_arg} {text_arg} {path_arg}"""
+    
+    typer.echo(f"🚀 Sending file: {path}. Use: devops network receive")
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(script=script, display_script=True, clean_env=False)
 
 
 def share_file_receive(code_args: Annotated[list[str], typer.Argument(help="Receive code or full relay command. Examples: '7121-donor-olympic-bicycle' or '--relay 10.17.62.206:443 0782-paris-pencil-torso'")],) -> None:
@@ -144,12 +148,9 @@ Usage examples:
 """
     from machineconfig.utils.installer_utils.installer import install_if_missing
     install_if_missing(which="croc")
-    import subprocess
-    import os
     import platform
     import re
     
-    env = os.environ.copy()
     is_windows = platform.system() == "Windows"
     
     # Join all arguments back into a single string
@@ -179,22 +180,19 @@ Usage examples:
     if not secret_code:
         raise ValueError(f"Could not parse croc code from input: {code}")
     
-    # Build the appropriate command for current OS
+    # Build the appropriate script for current OS
     if is_windows:
-        # Windows format: croc --relay server:port secret-code --yes
-        cmd = "croc"
-        if relay_server:
-            cmd += f" --relay {relay_server}"
-        cmd += f" {secret_code} --yes"
+        # Windows PowerShell format: croc --relay server:port secret-code --yes
+        relay_arg = f"--relay {relay_server}" if relay_server else ""
+        script = f"""croc {relay_arg} {secret_code} --yes"""
     else:
-        # Linux/macOS format: CROC_SECRET="secret-code" croc --relay server:port --yes
-        env["CROC_SECRET"] = secret_code
-        cmd = "croc"
-        if relay_server:
-            cmd += f" --relay {relay_server}"
-        cmd += " --yes"
+        # Linux/macOS Bash format: CROC_SECRET="secret-code" croc --relay server:port --yes
+        relay_arg = f"--relay {relay_server}" if relay_server else ""
+        script = f"""export CROC_SECRET="{secret_code}"
+croc {relay_arg} --yes"""
     
-    subprocess.run(cmd, shell=True, env=env)
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(script=script, display_script=True, clean_env=False)
 
 
 def get_share_file_app():
