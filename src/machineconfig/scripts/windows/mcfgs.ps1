@@ -1,4 +1,4 @@
-function warp_in_op_code {
+function wrap_in_op_code {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Command,
@@ -49,6 +49,6 @@ function warp_in_op_code {
 
 # Call the function with any arguments passed to the script
 if ($args.Count -gt 0) {
-    warp_in_op_code @args
+    wrap_in_op_code @args
 }
 
