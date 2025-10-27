@@ -135,8 +135,9 @@ croc {relay_arg} send {zip_arg} {qrcode_arg} {text_arg} {path_arg}"""
             script = f"""croc {relay_arg} send {zip_arg} {qrcode_arg} {text_arg} {path_arg}"""
     
     typer.echo(f"🚀 Sending file: {path}. Use: devops network receive")
-    from machineconfig.utils.code import run_shell_script
-    run_shell_script(script=script, display_script=True, clean_env=False)
+    from machineconfig.utils.code import exit_then_run_shell_script, print_code
+    print_code(code=script, desc="🚀 Receiving file with croc", lexer="bash" if platform.system() != "Windows" else "powershell")
+    exit_then_run_shell_script(script=script, strict=False)
 
 
 def share_file_receive(code_args: Annotated[list[str], typer.Argument(help="Receive code or full relay command. Examples: '7121-donor-olympic-bicycle' or '--relay 10.17.62.206:443 0782-paris-pencil-torso'")],) -> None:
@@ -191,8 +192,9 @@ Usage examples:
         script = f"""export CROC_SECRET="{secret_code}"
 croc {relay_arg} --yes"""
     
-    from machineconfig.utils.code import run_shell_script
-    run_shell_script(script=script, display_script=True, clean_env=False)
+    from machineconfig.utils.code import exit_then_run_shell_script, print_code
+    print_code(code=script, desc="🚀 Receiving file with croc", lexer="bash" if platform.system() != "Windows" else "powershell")
+    exit_then_run_shell_script(script=script, strict=False)
 
 
 def get_share_file_app():
