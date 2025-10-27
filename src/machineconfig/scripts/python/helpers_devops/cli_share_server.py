@@ -96,6 +96,45 @@ def main(
             p.wait()
 
 
+def share_file_send(
+    path: Annotated[str, typer.Argument(help="Path to the file or directory to send")]
+) -> None:
+    """Send a file using croc with relay server."""
+    from machineconfig.utils.installer_utils.installer import install_if_missing
+    install_if_missing(which="croc")
+    
+    # Get relay server IP from environment or use default
+
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('8.8.8.8',80))
+    local_ip_v4 = s.getsockname()[0]
+    s.close()
+    relay_port = "443"
+    import subprocess
+    cmd = f"croc --relay {local_ip_v4}:{relay_port} send {path}"
+    typer.echo(f"🚀 Sending file: {path}. Use: devops network f")
+    subprocess.run(cmd, shell=True)
+
+
+def share_file_receive(
+    code: Annotated[str, typer.Argument(help="Receive code (format: '7121-donor-olympic-bicycle' or full relay string)")]
+) -> None:
+    """Receive a file using croc with relay server."""
+    from machineconfig.utils.installer_utils.installer import install_if_missing
+    install_if_missing(which="croc")
+    import subprocess
+    import os
+    # Extract the code (last part after the last space or just the code itself)
+    env = os.environ.copy()
+    # env["CROC_SECRET"] = code
+    if " --yes" not in code:
+        code += " --yes"
+    if "croc " not in code:
+        code = "croc " + code
+    subprocess.run(code, shell=True, env=env)
+
+
 def main_with_parser():
     typer.run(main)
 

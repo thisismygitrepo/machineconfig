@@ -20,20 +20,21 @@ config_dict: InstallerData = {
     "doc": "Helix is a post-modern modal text editor.",
     "fileNamePattern": {
         "amd64": {
-            "linux": "hx-linux-amd64.tar.xz",
-            "macos": "hx-macos-amd64.tar.xz",
-            "windows": "hx-windows-amd64.zip",
+            "linux": "helix-{version}-x86_64-linux.tar.xz",
+            "macos": "helix-{version}-x86_64-macos.tar.xz",
+            "windows": "helix-{version}-x86_64-windows.zip",
         },
         "arm64": {
-            "linux": "hx-linux-arm64.tar.xz",
-            "macos": "hx-macos-arm64.tar.xz",
-            "windows": "hx-windows-arm64.zip",
+            "linux": "helix-{version}-arm64-linux.tar.xz",
+            "macos": "helix-{version}-arm64-macos.tar.xz",
+            "windows": "helix-{version}-arm64-windows.zip",
         },
     },
 }
 
 
-def main(version: Optional[str], install_lib: bool = False):
+def main(installer_data: InstallerData, version: Optional[str], install_lib: bool = False):
+    _ = installer_data
     console = Console()
 
     console.print(Panel(f"HELIX EDITOR INSTALLER 🧬\nPlatform: {platform.system()}\nVersion:  {'latest' if version is None else version}", title="Installer", expand=False))
@@ -137,4 +138,4 @@ def main(version: Optional[str], install_lib: bool = False):
 
 
 if __name__ == "__main__":
-    main(version=None)
+    pass

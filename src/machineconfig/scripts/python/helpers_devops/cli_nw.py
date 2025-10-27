@@ -104,8 +104,13 @@ def get_app():
     nw_apps = typer.Typer(help="🔐 [n] Network subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
     nw_apps.command(name="share-terminal", help="📡  [t] Share terminal via web browser")(cli_terminal.main)
     nw_apps.command(name="t", help="Share terminal via web browser", hidden=True)(cli_terminal.main)
+
     nw_apps.command(name="share-server", help="🌐  [s] Start local/global server to share files/folders via web browser", no_args_is_help=True)(cli_share_server.main)
     nw_apps.command(name="s", help="Start local/global server to share files/folders via web browser", hidden=True, no_args_is_help=True)(cli_share_server.main)
+
+    nw_apps.command(name="share-file", no_args_is_help=True, help="📁  [f] Share a file via croc")(cli_share_server.share_file_send)
+    nw_apps.command(name="f", help="Share a file via croc", no_args_is_help=True, hidden=True)(cli_share_server.share_file_send)
+
     nw_apps.command(name="install-ssh-server", help="📡  [i] Install SSH server")(install_ssh_server)
     nw_apps.command(name="i", help="Install SSH server", hidden=True)(install_ssh_server)
     nw_apps.command(name="add-ssh-key", help="🔑  [k] Add SSH public key to this machine", no_args_is_help=True)(add_ssh_key)
