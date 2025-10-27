@@ -96,30 +96,52 @@ def main(
             p.wait()
 
 
-def share_file_send(path: Annotated[str, typer.Argument(help="Path to the file or directory to send")]) -> None:
+def share_file_send(path: Annotated[str, typer.Argument(help="Path to the file or directory to send")],
+                    zip_folder: Annotated[bool, typer.Option("--zip", help="Zip folder before sending")] = False,
+                    code: Annotated[str | None, typer.Option("--code", "-c", help="Codephrase used to connect to relay")] = None,
+                    text: Annotated[str | None, typer.Option("--text", "-t", help="Send some text")] = None,
+                    qrcode: Annotated[bool, typer.Option("--qrcode", "--qr", help="Show receive code as a qrcode")] = False,
+                    ) -> None:
     """Send a file using croc with relay server."""
     from machineconfig.utils.installer_utils.installer import install_if_missing
     install_if_missing(which="croc")
     # Get relay server IP from environment or use default
     import socket
+    import subprocess
+    import os
+    import platform
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(('8.8.8.8',80))
     local_ip_v4 = s.getsockname()[0]
     s.close()
     relay_port = "443"
-    import subprocess
-    cmd = f"croc --relay {local_ip_v4}:{relay_port} send {path}"
+    env = os.environ.copy()
+    is_windows = platform.system() == "Windows"
+    cmd = f"croc --relay {local_ip_v4}:{relay_port} --ip {local_ip_v4}:{relay_port} send"
+    if zip_folder:
+        cmd += " --zip"
+    if code:
+        if is_windows:
+            cmd += f" --code {code}"
+        else:
+            env["CROC_SECRET"] = code
+    if text:
+        cmd += f" --text '{text}'"
+    if qrcode:
+        cmd += " --qrcode"
+    if not text:
+        cmd += f" {path}"
     typer.echo(f"🚀 Sending file: {path}. Use: devops network f")
-    subprocess.run(cmd, shell=True)
+    subprocess.run(cmd, shell=True, env=env)
 
 
-def share_file_receive(code: Annotated[str, typer.Argument(help="Receive code (format: '7121-donor-olympic-bicycle' or full relay string)")]) -> None:
+def share_file_receive(code_args: Annotated[list[str], typer.Argument(help="Receive code or full relay command. Examples: '7121-donor-olympic-bicycle' or '--relay 10.17.62.206:443 0782-paris-pencil-torso'")],) -> None:
     """Receive a file using croc with relay server.
-On the other computer run:
-(For Windows)
-    croc --relay 10.17.62.206:443 0782-paris-pencil-torso
-(For Linux/macOS)
-    CROC_SECRET="0782-paris-pencil-torso" croc --relay 10.17.62.206:443 """
+Usage examples:
+    devops network receive 7121-donor-olympic-bicycle
+    devops network receive --relay 10.17.62.206:443 0782-paris-pencil-torso
+    devops network receive -- --relay 10.17.62.206:443 0782-paris-pencil-torso
+"""
     from machineconfig.utils.installer_utils.installer import install_if_missing
     install_if_missing(which="croc")
     import subprocess
@@ -129,6 +151,9 @@ On the other computer run:
     
     env = os.environ.copy()
     is_windows = platform.system() == "Windows"
+    
+    # Join all arguments back into a single string
+    code = " ".join(code_args)
     
     # Parse input to extract components
     secret_code: str | None = None

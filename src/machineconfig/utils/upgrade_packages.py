@@ -93,13 +93,59 @@ def extract_package_name(dependency_spec: str) -> str:
     return dependency_spec.strip()
 
 
-if __name__ == "__main__":
+def upgrade_machine_config_version() -> None:
+    """
+    Upgrade machineconfig version in pyproject.toml and all source files.
+    
+    Reads current version from pyproject.toml, bumps it by 0.01, and replaces
+    all occurrences of machineconfig>={old_version} with the new version in
+    Python (.py), shell (.sh), and PowerShell (.ps1) files.
+    """
     current_dir: Path = Path.cwd()
     pyproject_file: Path = current_dir / "pyproject.toml"
-    output_file: Path = current_dir / "pyproject_init.sh"
-    if pyproject_file.exists():
-        generate_uv_add_commands(pyproject_file, output_file)
-        output_file.chmod(0o755)
-        print(f"Script is executable and ready to run: {output_file}")
-    else:
-        print(f"pyproject.toml not found at {pyproject_file}")
+    
+    # Read current version from pyproject.toml
+    with open(pyproject_file, "rb") as f:
+        pyproject_data: dict[str, Any] = tomllib.load(f)
+    
+    current_version_str: str = pyproject_data["project"]["version"]
+    version_parts: list[str] = current_version_str.split(".")
+    major: int = int(version_parts[0])
+    minor: int = int(version_parts[1])
+    
+    # Bump minor version by 1
+    new_minor: int = minor + 1
+    new_version: str = f"{major}.{new_minor}"
+    
+    old_version_constraint: str = f"machineconfig>={current_version_str}"
+    new_version_constraint: str = f"machineconfig>={new_version}"
+    
+    print(f"Upgrading from {current_version_str} to {new_version}")
+    
+    # Update pyproject.toml
+    content: str = pyproject_file.read_text(encoding="utf-8")
+    updated_content: str = content.replace(f'version = "{current_version_str}"', f'version = "{new_version}"')
+    pyproject_file.write_text(updated_content, encoding="utf-8")
+    print(f"Updated pyproject.toml: {current_version_str} -> {new_version}")
+    
+    # Find all Python files and replace version constraints
+    py_files: list[Path] = list(current_dir.glob("**/*.py")) + list(current_dir.glob("**/*.sh")) + list(current_dir.glob("**/*.ps1"))
+    
+    files_updated: int = 0
+    for file_path in py_files:
+        try:
+            file_content: str = file_path.read_text(encoding="utf-8")
+            if old_version_constraint in file_content:
+                updated_file_content: str = file_content.replace(old_version_constraint, new_version_constraint)
+                file_path.write_text(updated_file_content, encoding="utf-8")
+                files_updated += 1
+                print(f"Updated {file_path.relative_to(current_dir)}")
+        except (UnicodeDecodeError, PermissionError):
+            # Skip files that can't be read as text
+            pass
+    
+    print(f"Updated {files_updated} files with version constraint")
+
+
+if __name__ == "__main__":
+    upgrade_machine_config_version()
