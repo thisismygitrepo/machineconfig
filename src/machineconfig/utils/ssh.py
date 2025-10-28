@@ -245,6 +245,8 @@ class SSH:
             from pathlib import Path
             import shutil
             directory_path = Path(target_rel2home).expanduser()
+            if not directory_path.is_absolute():
+                directory_path = Path.home().joinpath(directory_path)
             if overwrite and directory_path.exists():
                 if directory_path.is_dir():
                     shutil.rmtree(directory_path)
@@ -318,9 +320,11 @@ class SSH:
             tmp_py_file = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/create_target_dir_{randstr()}.py")
             tmp_py_file.parent.mkdir(parents=True, exist_ok=True)
             tmp_py_file.write_text(command, encoding="utf-8")
-            transferred_py_file = self.copy_from_here(source_path=str(tmp_py_file), target_rel2home=None, compress_with_zip=True, recursive=False, overwrite_existing=True)
-            self.run_shell(command=f"""{UV_RUN_CMD} python {transferred_py_file}""", verbose_output=False, description=f"UNZIPPING {target_rel2home}", strict_stderr=True, strict_return_code=True)
+            remote_tmp_py = tmp_py_file.relative_to(Path.home()).as_posix()
+            self.copy_from_here(source_path=str(tmp_py_file), target_rel2home=None, compress_with_zip=False, recursive=False, overwrite_existing=True)
+            self.run_shell(command=f"""{UV_RUN_CMD} python {remote_tmp_py}""", verbose_output=False, description=f"UNZIPPING {target_rel2home}", strict_stderr=True, strict_return_code=True)
             source_obj.unlink()
+            tmp_py_file.unlink(missing_ok=True)
         return None
 
     def _check_remote_is_dir(self, source_path: Union[str, Path]) -> bool:
