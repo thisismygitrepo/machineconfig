@@ -8,7 +8,7 @@ from machineconfig.utils.terminal import Response
 from machineconfig.utils.accessories import pprint, randstr
 from machineconfig.utils.meta import lambda_to_python_script
 UV_RUN_CMD = "$HOME/.local/bin/uv run" if platform.system() != "Windows" else """& "$env:USERPROFILE/.local/bin/uv" run"""
-MACHINECONFIG_VERSION = "machineconfig>=7.33"
+MACHINECONFIG_VERSION = "machineconfig>=7.34"
 DEFAULT_PICKLE_SUBDIR = "tmp_results/tmp_scripts/ssh"
 
 class SSH:
@@ -392,7 +392,7 @@ class SSH:
         assert isinstance(result, str), f"Could not resolve source path {source_path}"
         return result
 
-    def copy_to_here(self, source: Union[str, Path], target: Optional[Union[str, Path]], compress_with_zip: bool = False, recursive: bool = False, internal_call: bool = False) -> Path:
+    def copy_to_here(self, source: Union[str, Path], target: Optional[Union[str, Path]], compress_with_zip: bool = False, recursive: bool = False, internal_call: bool = False) -> None:
         if self.sftp is None:
             raise RuntimeError(f"SFTP connection not available for {self.hostname}. Cannot transfer files.")
         
@@ -488,7 +488,7 @@ class SSH:
                     local_file_target = target_dir.joinpath(Path(file_path).relative_to(expanded_source))
                     self.copy_to_here(source=file_path, target=local_file_target, compress_with_zip=False, recursive=False, internal_call=True)
                 
-                return target_dir
+                return None
         
         if compress_with_zip:
             print("🗜️ ZIPPING ...")
@@ -611,7 +611,7 @@ class SSH:
             self.run_py(python_code=command, uv_with=[MACHINECONFIG_VERSION], uv_project_dir=None,  description="Cleaning temp zip files @ remote.", verbose_output=False, strict_stderr=True, strict_return_code=True)
         
         print("\n")
-        return target_obj
+        return None
 
 if __name__ == "__main__":
     ssh = SSH(host="p51s", username=None, hostname=None, ssh_key_path=None, password=None, port=22, enable_compression=False)
