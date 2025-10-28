@@ -1,5 +1,5 @@
-"""Like yadm and dotter.
-"""
+
+"""Like yadm and dotter."""
 
 from typing import Annotated, Literal
 import typer
@@ -34,21 +34,22 @@ def main(
         new_path = dest_path.joinpath(orig_path.name)
 
     from machineconfig.utils.path_extended import PathExtended
-    if method == "copy":
-        try:
-            copy_map(config_file_default_path=PathExtended(orig_path), self_managed_config_file_path=PathExtended(new_path), on_conflict=on_conflict)
-        except Exception as e:
-            typer.echo(f"[red]Error:[/] {e}")
-            typer.Exit(code=1)
-            return
-    elif method == "symlink":
-        try:
-            symlink_map(config_file_default_path=PathExtended(orig_path), self_managed_config_file_path=PathExtended(new_path), on_conflict=on_conflict)
-        except Exception as e:
-            typer.echo(f"[red]Error:[/] {e}")
-            typer.Exit(code=1)
-    else:
-        raise ValueError(f"Unknown method: {method}")
+    match method:
+        case "copy":
+            try:
+                copy_map(config_file_default_path=PathExtended(orig_path), self_managed_config_file_path=PathExtended(new_path), on_conflict=on_conflict)
+            except Exception as e:
+                typer.echo(f"[red]Error:[/] {e}")
+                typer.Exit(code=1)
+                return
+        case "symlink":
+            try:
+                symlink_map(config_file_default_path=PathExtended(orig_path), self_managed_config_file_path=PathExtended(new_path), on_conflict=on_conflict)
+            except Exception as e:
+                typer.echo(f"[red]Error:[/] {e}")
+                typer.Exit(code=1)
+        case _:
+            raise ValueError(f"Unknown method: {method}")
     console.print(Panel("\n".join(["✅ Symbolic link created successfully!", "🔄 Add the following snippet to mapper.toml to persist this mapping:",]), title="Symlink Created", border_style="green", padding=(1, 2),))
 
     # mapper_snippet = "\n".join(
