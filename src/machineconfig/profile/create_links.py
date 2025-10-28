@@ -79,7 +79,7 @@ def read_mapper() -> MapperFileData:
 
 
 def apply_mapper(mapper_data: dict[str, list[ConfigMapper]],
-                 on_conflict: Literal["throw-error", "overwriteSelfManaged", "backupSelfManaged", "overwriteDefaultPath", "backupDefaultPath"],
+                 on_conflict: Literal["throw-error", "overwrite-self-managed", "backup-self-managed", "overwrite-default-path", "backup-default-path"],
                  method: Literal["symlink", "copy"]
                  ):
     operation_records: list[OperationRecord] = []
