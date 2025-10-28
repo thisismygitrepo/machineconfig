@@ -30,10 +30,11 @@ function wrap_in_shell_script {
 
     # Check if the file exists
     if (Test-Path $env:OP_PROGRAM_PATH) {
-        Write-Host "Found op program at: $env:OP_PROGRAM_PATH"
+        Write-Host "🚀 Taking over from python script @ $env:OP_PROGRAM_PATH"
         & $env:OP_PROGRAM_PATH
+        Write-Host "✅ '$Command' execution completed."
     } else {
-        Write-Host "no op program found"
+        Write-Host "✅ '$Command' execution completed."
     }
 
     # Clean up the temporary environment variable so it doesn't leak to other processes/sessions

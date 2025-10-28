@@ -2,15 +2,15 @@
 . <( curl -sSL "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/uv.sh")
 . <( curl -sSL "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/scripts/linux/mcfgs")
 
-alias devops='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=6.99" devops'
-alias cloud='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=6.99" cloud'
-alias agents='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=6.99" agents'
-alias sessions='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=6.99" sessions'
-alias ftpx='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=6.99" ftpx'
-alias fire='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=6.99" fire'
-alias croshell='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=6.99" croshell'
-alias utils='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=6.99" utils'
-alias terminal='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=6.99" terminal'
+alias devops='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=7.32" devops'
+alias cloud='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=7.32" cloud'
+alias agents='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=7.32" agents'
+alias sessions='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=7.32" sessions'
+alias ftpx='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=7.32" ftpx'
+alias fire='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=7.32" fire'
+alias croshell='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=7.32" croshell'
+alias utils='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=7.32" utils'
+alias terminal='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=7.32" terminal'
 
 alias d='wrap_in_shell_script devops'
 alias c='wrap_in_shell_script cloud'

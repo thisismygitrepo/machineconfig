@@ -27,18 +27,18 @@ wrap_in_shell_script() {
   "$command" "$@"
 
   if [[ -f "$OP_PROGRAM_PATH" ]]; then
-    printf "%b\n" "${GREEN}✅ Found op program:${RESET} ${OP_PROGRAM_PATH}"
+    printf "%b\n" "${GREEN}🚀 Taking over from python script @ ${OP_PROGRAM_PATH}${RESET}"
     bat --style=plain --paging=never "$OP_PROGRAM_PATH"
     printf "%b\n" "${GREEN}▶ Running...${RESET}"
     . "$OP_PROGRAM_PATH"
     status=$?
     if [[ $status -eq 0 ]]; then
-      printf "%b\n" "${GREEN}✅ Completed successfully (exit ${status})${RESET}"
+      printf "%b\n" "${GREEN}✅ '${command}' execution completed.${RESET}"
     else
       printf "%b\n" "${YELLOW}⚠️  Program exited with status ${status}${RESET}"
     fi
   else
-    printf "%b\n" "${YELLOW}⚠️  No op program found at: ${OP_PROGRAM_PATH}${RESET}"
+    printf "%b\n" "${GREEN}✅ '${command}' execution completed.${RESET}"
   fi
 }
 
