@@ -69,6 +69,7 @@ def get_session_tabs() -> list[tuple[str, str]]:
     print(result)
     return result
 
+
 def start_wt(layout_name: Annotated[str, typer.Argument(help="Layout name to start.")]):
     from pathlib import Path
     layouts_file = Path.home().joinpath("dotfiles/machineconfig/layouts.json")
@@ -87,7 +88,6 @@ def start_wt(layout_name: Annotated[str, typer.Argument(help="Layout name to sta
         raise typer.Exit(code=1)
     from machineconfig.cluster.sessions_managers.wt_local import run_wt_layout
     run_wt_layout(layout_config=chosen_layout)
-
     # cmd = f'powershell -ExecutionPolicy Bypass -File "./{layout_name}_layout.ps1"'
     # from machineconfig.utils.code import exit_then_run_shell_script
     # exit_then_run_shell_script(cmd, strict=True)
