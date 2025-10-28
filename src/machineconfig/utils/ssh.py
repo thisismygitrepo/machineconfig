@@ -253,6 +253,7 @@ class SSH:
                 else:
                     directory_path.unlink()
             directory_path.parent.mkdir(parents=True, exist_ok=True)
+            directory_path.mkdir(parents=True, exist_ok=True)
         command = lambda_to_python_script(lmb=lambda: create_target_dir(target_rel2home=path_rel2home, overwrite=overwrite_existing), in_global=True, import_module=False)
         tmp_py_file = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/create_target_dir_{randstr()}.py")
         tmp_py_file.parent.mkdir(parents=True, exist_ok=True)
