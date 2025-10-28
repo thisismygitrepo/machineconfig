@@ -21,7 +21,7 @@ iex (iwr bit.ly/cfgwindows).Content
 # Or, if UV is installed:
 iex (uvx machineconfig define)
 # Permanent install:
-curl -LsSf https://astral.sh/uv/install.sh | sh  # Skip if UV is already installed
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"  # Skip if UV is already installed
 uvx install --upgrade machineconfig
 ```
 
@@ -33,7 +33,7 @@ uvx install --upgrade machineconfig
 # Or, if UV is installed:
 . <(uvx machineconfig define)
 # Permanent install:
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"  # Skip if UV is already installed
+curl -LsSf https://astral.sh/uv/install.sh | sh  # Skip if UV is already installed
 uvx install --upgrade machineconfig
 ```
 
