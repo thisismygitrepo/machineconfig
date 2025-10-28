@@ -3,7 +3,7 @@
 from typing import Literal, Annotated, Optional
 from pathlib import Path
 import typer
-
+import machineconfig.scripts.python.helpers_devops.cli_config_dotfile as dotfile_module
 
 
 def private(method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--method", "-m", help="Method to use for linking files")],
@@ -21,15 +21,6 @@ def public(method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--me
     """🔗 Manage public configuration files."""
     import machineconfig.profile.create_links_export as create_links_export
     create_links_export.main_public_from_parser(method=method, on_conflict=on_conflict, which=which, interactive=interactive)
-
-def dotfile(file: Annotated[str, typer.Argument(help="file/folder path.")],
-    overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="Overwrite.")] = False,
-    dest: Annotated[str, typer.Option("--dest", "-d", help="destination folder")] = "",
-    ):
-    """🔗 Manage dotfiles."""
-    import machineconfig.scripts.python.helpers_devops.cli_config_dotfile as dotfile_module
-    dotfile_module.main(file=file, overwrite=overwrite, dest=dest)
-
 
 def shell():
     """🔗 Configure your shell profile."""
@@ -104,8 +95,8 @@ def get_app():
     config_apps.command("v", no_args_is_help=True, hidden=True)(private)
     config_apps.command("public", no_args_is_help=True, help="🔗  [b] Manage public configuration files.")(public)
     config_apps.command("b", no_args_is_help=True, help="Manage public configuration files.", hidden=True)(public)
-    config_apps.command("dotfile", no_args_is_help=True, help="🔗  [d] Manage dotfiles.")(dotfile)
-    config_apps.command("d", no_args_is_help=True,  hidden=True)(dotfile)
+    config_apps.command("dotfile", no_args_is_help=True, help="🔗  [d] Manage dotfiles.")(dotfile_module.main)
+    config_apps.command("d", no_args_is_help=True,  hidden=True)(dotfile_module.main)
     config_apps.command("shell", no_args_is_help=False, help="🔗  [s] Configure your shell profile.")(shell)
     config_apps.command("s", no_args_is_help=False, help="Configure your shell profile.", hidden=True)(shell)
     config_apps.command("path", no_args_is_help=False, help="📚  [p] NAVIGATE PATH variable with TUI")(path)

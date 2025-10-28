@@ -113,9 +113,11 @@ def upgrade_machine_config_version() -> None:
     major: int = int(version_parts[0])
     minor: int = int(version_parts[1])
     
-    # Bump minor version by 1
+    # Bump minor version by 1, preserving zero-padding
     new_minor: int = minor + 1
-    new_version: str = f"{major}.{new_minor}"
+    # Preserve the same number of digits as the original minor version
+    minor_width: int = len(version_parts[1])
+    new_version: str = f"{major}.{new_minor:0{minor_width}d}"
     
     old_version_constraint: str = f"machineconfig>={current_version_str}"
     new_version_constraint: str = f"machineconfig>={new_version}"

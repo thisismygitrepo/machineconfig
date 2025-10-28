@@ -162,14 +162,15 @@ def symlink_map(config_file_default_path: PathExtended, self_managed_config_file
                     config_file_default_path.delete(sure=True)
                 else:
                     # Files are different, use on_conflict strategy
+                    import subprocess
+                    command = f"""delta --side-by-side "{config_file_default_path}" "{self_managed_config_file_path}" """
+                    try:
+                        console.print(Panel(f"🆘 CONFLICT DETECTED | Showing diff between {config_file_default_path} and {self_managed_config_file_path}", title="Conflict Detected", expand=False))
+                        subprocess.run(command, shell=True, check=True)
+                    except Exception:
+                        console.print(Panel("⚠️ Could not show diff using 'delta'. Please install 'delta' for better diff visualization.", title="Delta Not Found", expand=False))
+
                     if on_conflict == "throw-error":
-                        import subprocess
-                        command = f"""delta --side-by-side "{config_file_default_path}" "{self_managed_config_file_path}" """
-                        try:
-                            console.print(Panel(f"🆘 CONFLICT DETECTED | Showing diff between {config_file_default_path} and {self_managed_config_file_path}", title="Conflict Detected", expand=False))
-                            subprocess.run(command, shell=True, check=True)
-                        except Exception:
-                            console.print(Panel("⚠️ Could not show diff using 'delta'. Please install 'delta' for better diff visualization.", title="Delta Not Found", expand=False))
                         raise RuntimeError(f"Conflict detected: {config_file_default_path} and {self_managed_config_file_path} both exist with different content")
                     elif on_conflict == "overwriteSelfManaged":
                         action_taken = "backing_up_target"
@@ -289,6 +290,14 @@ def copy_map(config_file_default_path: PathExtended, self_managed_config_file_pa
                     config_file_default_path.delete(sure=True)
                 else:
                     # Files are different, use on_conflict strategy
+                    import subprocess
+                    command = f"""delta --side-by-side "{config_file_default_path}" "{self_managed_config_file_path}" """
+                    try:
+                        console.print(Panel(f"🆘 CONFLICT DETECTED | Showing diff between {config_file_default_path} and {self_managed_config_file_path}", title="Conflict Detected", expand=False))
+                        subprocess.run(command, shell=True, check=True)
+                    except Exception:
+                        console.print(Panel("⚠️ Could not show diff using 'delta'. Please install 'delta' for better diff visualization.", title="Delta Not Found", expand=False))
+
                     match on_conflict:
                         case "throw-error":
                             raise RuntimeError(f"Conflict detected: {config_file_default_path} and {self_managed_config_file_path} both exist with different content")
