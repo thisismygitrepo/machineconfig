@@ -140,7 +140,8 @@ croc {relay_arg} send {zip_arg} {qrcode_arg} {text_arg} {path_arg}"""
     exit_then_run_shell_script(script=script, strict=False)
 
 
-def share_file_receive(code_args: Annotated[list[str], typer.Argument(help="Receive code or relay command. Examples: '7121-donor-olympic-bicycle' or '--relay 10.17.62.206:443 7121-donor-olympic-bicycle'")],) -> None:
+def share_file_receive(code_args: Annotated[list[str], typer.Argument(help="Receive code or relay command. Examples: '7121-donor-olympic-bicycle' or '--relay 10.17.62.206:443 7121-donor-olympic-bicycle'")],
+) -> None:
     """Receive a file using croc with relay server.
 Usage examples:
     devops network receive 7121-donor-olympic-bicycle
@@ -150,8 +151,21 @@ Usage examples:
     from machineconfig.utils.installer_utils.installer import install_if_missing
     install_if_missing(which="croc")
     import platform
+    import sys
     
     is_windows = platform.system() == "Windows"
+    
+    # If no args passed via typer, try to get them from sys.argv directly
+    # This handles the case where -- was used and arguments weren't parsed by typer
+    if not code_args or (len(code_args) == 1 and code_args[0] in ['--relay', 'croc']):
+        # Find the index of 'rx' or 'receive' in sys.argv and get everything after it
+        try:
+            for i, arg in enumerate(sys.argv):
+                if arg in ['rx', 'receive', 'r'] and i + 1 < len(sys.argv):
+                    code_args = sys.argv[i + 1:]
+                    break
+        except Exception:
+            pass
     
     # Join all arguments
     input_str = " ".join(code_args)
@@ -161,25 +175,30 @@ Usage examples:
     relay_server: str | None = None
     secret_code: str | None = None
     
-    # Remove 'croc' from tokens if present
-    tokens = [t for t in tokens if t != 'croc']
+    # Remove 'croc' and 'export' from tokens if present
+    tokens = [t for t in tokens if t not in ['croc', 'export']]
     
     # Look for --relay flag and capture next token
-    if '--relay' in tokens:
-        relay_idx = tokens.index('--relay')
-        if relay_idx + 1 < len(tokens):
-            relay_server = tokens[relay_idx + 1]
+    relay_idx = -1
+    for i, token in enumerate(tokens):
+        if token == '--relay' and i + 1 < len(tokens):
+            relay_server = tokens[i + 1]
+            relay_idx = i
+            break
     
     # Look for CROC_SECRET= prefix in any token
     for token in tokens:
         if token.startswith('CROC_SECRET='):
-            secret_code = token.split('=', 1)[1].strip('"')
+            secret_code = token.split('=', 1)[1].strip('"').strip("'")
             break
     
     # If no secret code found yet, look for tokens with dashes (typical pattern: number-word-word-word)
+    # Skip relay server and relay flag
     if not secret_code:
-        for token in tokens:
-            if '-' in token and not token.startswith('-') and token not in [relay_server, 'export']:
+        for i, token in enumerate(tokens):
+            if '-' in token and not token.startswith('-') and token != relay_server:
+                if relay_idx >= 0 and (i == relay_idx or i == relay_idx + 1):
+                    continue  # Skip relay server parts
                 secret_code = token
                 break
     
