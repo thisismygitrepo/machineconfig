@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "7.32"
+version = "7.33"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -69,8 +69,8 @@ sessions = "machineconfig.scripts.python.sessions:main"
 croshell = "machineconfig.scripts.python.croshell:main"
 ftpx = "machineconfig.scripts.python.ftpx:main"
 utils = "machineconfig.scripts.python.utils:main"
-mcfg = "machineconfig.scripts.python.mcfg:main"
-machineconfig = "machineconfig.scripts.python.mcfg:main"
+mcfg = "machineconfig.scripts.python.machineconfig:main"
+machineconfig = "machineconfig.scripts.python.machineconfig:main"
 terminal = "machineconfig.scripts.python.terminal:main"
 define = "machineconfig.scripts.python.define:main"
 

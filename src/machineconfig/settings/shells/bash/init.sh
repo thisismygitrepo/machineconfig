@@ -37,7 +37,7 @@ add_to_path_if_not_already \
 . $CONFIG_ROOT/settings/broot/br.sh
 . $CONFIG_ROOT/settings/lf/linux/exe/lfcd.sh
 . $CONFIG_ROOT/settings/tere/terecd.sh
-. $CONFIG_ROOT/scripts/linux/mcfgs
+. $CONFIG_ROOT/scripts/linux/wrap_mcfg
 
 # check if file in ~/dotfiles/machineconfig/init_linux.sh exists and source it
 if [ -f "$HOME/dotfiles/machineconfig/init_linux.sh" ]; then

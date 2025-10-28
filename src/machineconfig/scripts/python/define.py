@@ -16,10 +16,10 @@ def define_scripts():
     print(script)
 
 
-def main():
+def get_app():
     app = typer.Typer(add_completion=False, no_args_is_help=True)
     app.command(name="scripts", help="define all scripts", no_args_is_help=False)(define_scripts)
-    app()
+    return app
 
 
 # if __name__ == "__main__":

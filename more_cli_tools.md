@@ -122,7 +122,6 @@
 
 # data
 * https://github.com/visible-cx/databroker_remover
-* https://github.com/AnalogJ/justvanish
 
 # Self-hosted:
 * https://github.com/awesome-selfhosted/awesome-selfhosted
