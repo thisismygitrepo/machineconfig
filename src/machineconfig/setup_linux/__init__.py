@@ -1,6 +1,7 @@
 
 from pathlib import Path
 
+INTERACTIVE = Path(__file__).parent.joinpath("web_shortcuts/interactive.sh")
 APPS = Path(__file__).parent.joinpath("apps.sh")
 UV = Path(__file__).parent.joinpath("uv.sh")
 
