@@ -10,8 +10,7 @@ def main(
     method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--method", "-m", help="Method to use for linking files")] = "copy",
     on_conflict: Annotated[Literal["throw-error", "overwrite-self-managed", "backup-self-managed", "overwrite-default-path", "backup-default-path"], typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
     sensitivity: Annotated[Literal["private", "public"], typer.Option(..., "--sensitivity", "-s", help="Sensitivity of the config file.")] = "private",
-    destination: Annotated[str, typer.Option("--destination", "-d", help="destination folder (override the default, use at your own risk)")] = "",
-) -> None:
+    destination: Annotated[str, typer.Option("--destination", "-d", help="destination folder (override the default, use at your own risk)")] = "",) -> None:
     from rich.console import Console
     from rich.panel import Panel
     from machineconfig.utils.links import symlink_map, copy_map

@@ -14,6 +14,7 @@ def private(method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--m
     import machineconfig.profile.create_links_export as create_links_export
     create_links_export.main_private_from_parser(method=method, on_conflict=on_conflict, which=which, interactive=interactive)
 
+
 def public(method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--method", "-m", help="Method to use for setting up the config file.")],
                             on_conflict: Annotated[Literal["throw-error", "overwrite-default-path", "backup-default-path"], typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
                             which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = None,
@@ -21,6 +22,7 @@ def public(method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--me
     """🔗 Manage public configuration files."""
     import machineconfig.profile.create_links_export as create_links_export
     create_links_export.main_public_from_parser(method=method, on_conflict=on_conflict, which=which, interactive=interactive)
+
 
 def shell():
     """🔗 Configure your shell profile."""
@@ -50,6 +52,7 @@ def pwsh_theme():
     import subprocess
     subprocess.run(["pwsh", "-File", str(file)])
 
+
 def starship_theme():
     """🔗 Select starship prompt theme."""
     import subprocess
@@ -77,6 +80,7 @@ def starship_theme():
             typer.echo("❌ Invalid selection")
     except ValueError:
         typer.echo("❌ Please enter a valid number")
+
 
 def copy_assets(which: Annotated[Literal["scripts", "settings", "both"], typer.Argument(..., help="Which assets to copy")]):
     """🔗 Copy asset files from library to machine."""
