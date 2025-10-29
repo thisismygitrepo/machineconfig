@@ -20,15 +20,15 @@ def get_fire_tab_using_fire(func: FunctionType):
     from machineconfig.utils.source_of_truth import CONFIG_ROOT
     import platform
     if platform.system().lower() == "windows":
-        mcfgs = CONFIG_ROOT / "scripts/windows/mcfgs.ps1"
-        mcfgs = f'& "{mcfgs}"'
+        wrap_mcfg = CONFIG_ROOT / "scripts/windows/wrap_mcfg.ps1"
+        wrap_mcfg = f'& "{wrap_mcfg}"'
     elif platform.system().lower() == "linux" or platform.system().lower() == "darwin":
-        mcfgs = CONFIG_ROOT / "scripts/linux/mcfgs"
+        wrap_mcfg = CONFIG_ROOT / "scripts/linux/wrap_mcfg"
     else:
         raise ValueError(f"Unsupported platform: {platform.system()}")
     path = Path(inspect.getfile(func))
     path_relative = path.relative_to(Path.home())
-    command_to_run = f"""{mcfgs} fire {path_relative} {func.__name__} """
+    command_to_run = f"""{wrap_mcfg} fire {path_relative} {func.__name__} """
     tab_config: TabConfig = {
         "command": command_to_run,
         "startDir": "$HOME",
