@@ -1107,6 +1107,23 @@
       }
     },
     {
+      "appName": "Clipboard",
+      "repoURL": "https://github.com/Slackadays/Clipboard",
+      "doc": "🔍 Inspecting the memory usage of a running process",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "bytehound-x86_64-unknown-linux-gnu.tgz",
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
+    },
+    {
       "appName": "atuin",
       "repoURL": "https://github.com/atuinsh/atuin",
       "doc": "🔍 Shell history search tool. Mcfly alternative",

@@ -109,6 +109,7 @@ dev = [
     "pylint>=3.3.8",
     "pymupdf>=1.26.5",
     "pypdf>=6.1.1",
+    "pyperclip>=1.11.0",
     "pyrefly>=0.33.1",
     "pyright>=1.1.405",
     "pytest>=8.4.2",

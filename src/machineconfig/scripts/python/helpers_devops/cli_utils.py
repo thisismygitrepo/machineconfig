@@ -5,6 +5,18 @@ from typing import Annotated, Literal, Optional, TypedDict
 from pathlib import Path
 
 
+def copy(path: Annotated[str, typer.Argument(..., help="Path of the file to copy to clipboard")]):
+    def copy_internal(path: str):
+        import pyperclip
+        from pathlib import Path
+        pyperclip.copy(Path(path).read_text(encoding="utf-8"))
+    from machineconfig.utils.meta import lambda_to_python_script
+    from machineconfig.utils.code import exit_then_run_shell_script, get_uv_command_executing_python_script
+    py_script = lambda_to_python_script(lambda: copy_internal(path=str(path)), in_global=True, import_module=False)
+    shell_script, _python_file = get_uv_command_executing_python_script(python_script=py_script, uv_with=["pyperclip"], uv_project_dir=None)
+    exit_then_run_shell_script(shell_script, strict=True)
+
+
 def download(
     url: Annotated[Optional[str], typer.Argument(..., help="The URL to download the file from.")] = None,
     decompress: Annotated[bool, typer.Option("--decompress", "-d", help="Decompress the file if it's an archive.")] = False,
