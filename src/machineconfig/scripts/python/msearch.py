@@ -2,9 +2,7 @@
 import typer
 
 
-def machineconfig_find(
-        
-):
+def machineconfig_find():
     from machineconfig.scripts.python.helpers_msearch import FZFG_LINUX_PATH, FZFG_WINDOWS_PATH
     import platform
     if platform.system() == "Linux":
@@ -13,7 +11,6 @@ def machineconfig_find(
         script_path = FZFG_WINDOWS_PATH
     else:
         raise RuntimeError("Unsupported platform")
-    
     import os
     op_program_path = os.getenv("OP_PROGRAM_PATH")
     if op_program_path is None:
