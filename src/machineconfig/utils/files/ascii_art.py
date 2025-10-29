@@ -62,7 +62,7 @@ def get_art(comment: Optional[str] = None, artlib: Optional[BOX_OR_CHAR] = None,
         try:
             comment = subprocess.run("fortune", shell=True, capture_output=True, text=True, check=True).stdout
         except Exception:
-            comment = "crocodile"
+            comment = "machineconfig"
     if artlib is None: artlib = random.choice(['boxes', 'cowsay'])
     to_file = '' if not file else f'> {file}'
     if artlib == 'boxes':

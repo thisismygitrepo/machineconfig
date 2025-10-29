@@ -25,8 +25,9 @@ def print_header():
     table.add_row("Virtual Environment", os.getenv('VIRTUAL_ENV', 'None'))
     table.add_row("Running @", str(Path.cwd()))
 
+    from machineconfig.utils.installer import get_machineconfig_version
 
-    console.print(Panel(table, title="[bold blue]✨ 🐊 Crocodile Shell 14.5 ✨ Made with 🐍 | Built with ❤️[/bold blue]", border_style="blue"))
+    console.print(Panel(table, title=f"[bold blue]✨ 🐊 Machineconfig Shell {get_machineconfig_version()} ✨ Made with 🐍 | Built with ❤️[/bold blue]", border_style="blue"))
 def print_logo(logo: str):
     from machineconfig.utils.files.ascii_art import font_box_color, character_color, character_or_box_color
     if platform.system() == "Windows":

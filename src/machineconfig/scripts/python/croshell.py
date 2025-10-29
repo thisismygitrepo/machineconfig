@@ -77,7 +77,7 @@ def croshell(
     def preprogram_func():
         from machineconfig.utils.files.headers import print_header, print_logo
         print_header()
-        print_logo("CROCODILE")
+        print_logo("Machineconfig")
         from pathlib import Path
         from machineconfig.utils.path_extended import PathExtended
         _ = Path, PathExtended  # avoid unused import warnings
