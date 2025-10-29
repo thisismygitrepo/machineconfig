@@ -11,6 +11,7 @@ alias fire='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=7.35" fire
 alias croshell='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=7.35" croshell'
 alias utils='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=7.35" utils'
 alias terminal='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=7.35" terminal'
+alias msearch='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=7.35" msearch'
 
 alias d='wrap_in_shell_script devops'
 alias c='wrap_in_shell_script cloud'
@@ -21,5 +22,6 @@ alias f='wrap_in_shell_script fire'
 alias rr='wrap_in_shell_script croshell'
 alias u='wrap_in_shell_script utils'
 alias t='wrap_in_shell_script terminal'
+alias ms='wrap_in_shell_script msearch'
 
 echo "mcfg command aliases are now defined in this shell session."

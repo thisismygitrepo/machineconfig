@@ -12,6 +12,7 @@ function fire     { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineco
 function croshell { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.35" croshell $args }
 function utils    { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.35" utils $args }
 function terminal { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.35" terminal $args }
+function msearch    { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.35" msearch $args }
 
 function d { wrap_in_shell_script devops @args }
 function c { wrap_in_shell_script cloud @args }
@@ -22,5 +23,6 @@ function f { wrap_in_shell_script fire @args }
 function rr { wrap_in_shell_script croshell @args }
 function u { wrap_in_shell_script utils @args }
 function t { wrap_in_shell_script terminal @args }
+function ms { wrap_in_shell_script msearch @args }
 
 Write-Host "mcfg command aliases are now defined in this PowerShell session."

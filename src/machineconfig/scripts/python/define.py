@@ -21,6 +21,11 @@ def get_app():
     app.command(name="scripts", help="define all scripts", no_args_is_help=False)(define_scripts)
     return app
 
+def main():
+    # return app
+    app = get_app()
+    app()
+
 
 # if __name__ == "__main__":
 #     main()

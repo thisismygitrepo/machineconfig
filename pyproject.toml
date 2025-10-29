@@ -73,6 +73,8 @@ mcfg = "machineconfig.scripts.python.machineconfig:main"
 machineconfig = "machineconfig.scripts.python.machineconfig:main"
 terminal = "machineconfig.scripts.python.terminal:main"
 define = "machineconfig.scripts.python.define:main"
+msearch = "machineconfig.scripts.python.msearch:main"
+
 
 [tool.setuptools]
 package-dir = {"" = "src"}

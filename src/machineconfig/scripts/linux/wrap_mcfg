@@ -3,7 +3,6 @@
 
 wrap_in_shell_script() {
   # set -euo pipefail
-
   # ANSI color/style codes
   BOLD="\033[1m"
   RESET="\033[0m"
