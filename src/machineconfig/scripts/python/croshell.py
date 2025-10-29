@@ -5,23 +5,12 @@ croshell
 """
 
 from typing import Annotated, Optional
-from machineconfig.scripts.python.helpers_croshell.crosh import code, get_read_data_pycode
-from machineconfig.utils.meta import lambda_to_python_script
 import typer
-from machineconfig.utils.path_extended import PathExtended
-from pathlib import Path
-from machineconfig.utils.accessories import randstr
-import json
-from machineconfig.utils.options import choose_from_options
-from rich.console import Console
-from rich.panel import Panel
 
-
-console = Console()
 
 
 def croshell(
-    path: Annotated[Optional[str], typer.Argument(help="path of file to read.")] = "",
+    path: Annotated[Optional[str], typer.Argument(help="path of file to read.")] = None,
     python: Annotated[bool, typer.Option("--python", "-p", help="flag to use python over IPython.")] = False,
     profile: Annotated[Optional[str], typer.Option("--profile", "-P", help="ipython profile to use, defaults to default profile.")] = None,
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="run in jupyter interactive console")] = False,
@@ -30,6 +19,17 @@ def croshell(
     visidata: Annotated[bool, typer.Option("--visidata", "-v", help="open data file in visidata")] = False,
     marimo: Annotated[bool, typer.Option("--marimo", "-m", help="open the notebook using marimo if available")] = False,
 ) -> None:
+    from machineconfig.scripts.python.helpers_croshell.crosh import code, get_read_data_pycode
+    from machineconfig.utils.meta import lambda_to_python_script
+    from machineconfig.utils.path_extended import PathExtended
+    from pathlib import Path
+    from machineconfig.utils.accessories import randstr
+    import json
+    from machineconfig.utils.options import choose_from_options
+    from rich.console import Console
+    from rich.panel import Panel
+    console = Console()
+
     # ==================================================================================
     # flags processing
     interactivity = "-i"
@@ -130,7 +130,7 @@ def croshell(
             fire_line = f"uv run --python 3.14 --with visidata,pyarrow vd {str(file_obj)}"
     elif marimo:
         if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--with marimo --project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: requirements = """--python 3.14 --with "marimo,machineconfig[plot]>=6.57" """
+        else: requirements = """--python 3.14 --with "marimo,machineconfig[plot]>=7.34" """
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv run --python 3.14 --with "marimo" marimo convert {pyfile.name} -o marimo_nb.py
@@ -138,14 +138,14 @@ uv run {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
 """
     elif jupyter:
         if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with jupyterlab """
-        else: requirements = """--with "machineconfig[plot]>=6.57" """
+        else: requirements = """--with "machineconfig[plot]>=7.34" """
         fire_line = f"uv run {requirements} jupyter-lab {str(nb_target)}"
     elif vscode:
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv init --python 3.14
 uv venv
-uv add "machineconfig[plot]>=6.57"
+uv add "machineconfig[plot]>=7.34"
 # code serve-web
 code --new-window {str(pyfile)}
 """
@@ -153,7 +153,7 @@ code --new-window {str(pyfile)}
         if interpreter == "ipython": profile = f" --profile {ipython_profile} --no-banner"
         else: profile = ""
         if Path.home().joinpath("code/machineconfig").exists(): ve_line = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: ve_line = """--python 3.14 --with "machineconfig[plot]>=6.57" """
+        else: ve_line = """--python 3.14 --with "machineconfig[plot]>=7.34" """
         # ve_path_maybe, ipython_profile_maybe = get_ve_path_and_ipython_profile(Path.cwd())
         # --python 3.14
         fire_line = f"uv run {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"

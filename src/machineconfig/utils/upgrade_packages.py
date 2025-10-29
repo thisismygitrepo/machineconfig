@@ -98,8 +98,8 @@ def upgrade_machine_config_version() -> None:
     Upgrade machineconfig version in pyproject.toml and all source files.
     
     Reads current version from pyproject.toml, bumps it by 0.01, and replaces
-    all occurrences of machineconfig>={old_version} with the new version in
-    Python (.py), shell (.sh), and PowerShell (.ps1) files.
+    all occurrences of machineconfig>={old_version} and machineconfig[group]>={old_version}
+    with the new version in Python (.py), shell (.sh), and PowerShell (.ps1) files.
     """
     current_dir: Path = Path.cwd()
     pyproject_file: Path = current_dir / "pyproject.toml"
@@ -119,10 +119,15 @@ def upgrade_machine_config_version() -> None:
     minor_width: int = len(version_parts[1])
     new_version: str = f"{major}.{new_minor:0{minor_width}d}"
     
-    old_version_constraint: str = f"machineconfig>={current_version_str}"
-    new_version_constraint: str = f"machineconfig>={new_version}"
+    # Collect all optional dependency groups
+    optional_groups: set[str] = set()
+    if "project" in pyproject_data and "optional-dependencies" in pyproject_data["project"]:
+        optional_groups.update(pyproject_data["project"]["optional-dependencies"].keys())
+    if "dependency-groups" in pyproject_data:
+        optional_groups.update(pyproject_data["dependency-groups"].keys())
     
     print(f"Upgrading from {current_version_str} to {new_version}")
+    print(f"Found optional groups: {', '.join(sorted(optional_groups))}")
     
     # Update pyproject.toml
     content: str = pyproject_file.read_text(encoding="utf-8")
@@ -137,8 +142,22 @@ def upgrade_machine_config_version() -> None:
     for file_path in py_files:
         try:
             file_content: str = file_path.read_text(encoding="utf-8")
-            if old_version_constraint in file_content:
-                updated_file_content: str = file_content.replace(old_version_constraint, new_version_constraint)
+            updated_file_content: str = file_content
+            
+            # Replace base constraint (without group)
+            old_constraint: str = f"machineconfig>={current_version_str}"
+            new_constraint: str = f"machineconfig>={new_version}"
+            if old_constraint in updated_file_content:
+                updated_file_content = updated_file_content.replace(old_constraint, new_constraint)
+            
+            # Replace constraints with optional groups
+            for group in optional_groups:
+                old_group_constraint: str = f"machineconfig[{group}]>={current_version_str}"
+                new_group_constraint: str = f"machineconfig[{group}]>={new_version}"
+                if old_group_constraint in updated_file_content:
+                    updated_file_content = updated_file_content.replace(old_group_constraint, new_group_constraint)
+            
+            if updated_file_content != file_content:
                 file_path.write_text(updated_file_content, encoding="utf-8")
                 files_updated += 1
                 print(f"Updated {file_path.relative_to(current_dir)}")
