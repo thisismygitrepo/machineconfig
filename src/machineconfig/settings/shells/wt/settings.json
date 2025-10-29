@@ -70,7 +70,7 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "powershell.exe -Command \"$HOME/scripts/croshell.ps1\"",
+                "commandline": "powershell.exe -Command \"rr\"",
                 "guid": "{1e951406-6597-48c7-8137-b967bed19572}",
                 "name": "croshell",
                 "startingDirectory": "%USERPROFILE%"
@@ -101,8 +101,9 @@
             {
                 "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
                 "hidden": false,
-                "name": "Azure Cloud Shell",
-                "source": "Windows.Terminal.Azure"
+                "commandline": "nu.exe",
+                "name": "nushell"
+                // "source": "Windows.Terminal.Azure"
             },
             {
                 "guid": "{2ddc9f1a-8263-557a-8652-3db9e80a7164}",
