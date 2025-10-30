@@ -38,6 +38,7 @@ def route(args: FireJobArgs, fire_args: str = "") -> None:
     repo_root = get_repo_root(Path(choice_file))
     print(f"💾 Selected file: {choice_file}.\nRepo root: {repo_root}")
     if args.marimo:
+        print(f"🧽 Preparing to launch Marimo notebook for `{choice_file}`...")
         tmp_dir = PathExtended.tmp().joinpath(f"tmp_scripts/marimo/{choice_file.stem}_{randstr()}")
         tmp_dir.mkdir(parents=True, exist_ok=True)
         script = f"""
@@ -52,6 +53,7 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
 
     # =========================  preparing kwargs_dict
     if choice_file.suffix == ".py":
+        
         kwargs_dict = extract_kwargs(args)  # This now returns empty dict, but kept for compatibility
     else:
         kwargs_dict = {}
@@ -165,15 +167,9 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
             command = "$ErrorActionPreference = 'SilentlyContinue';\n" + command + "\nStart-Sleep -Seconds 0.5"
         else:
             raise NotImplementedError(f"Platform {platform.system()} not supported.")
-    import os
-    op_program_path = os.environ.get("OP_PROGRAM_PATH", None)
-    if op_program_path is not None:
-        op_program_path = Path(op_program_path)
-        op_program_path.parent.mkdir(parents=True, exist_ok=True)
-        op_program_path.write_text(command, encoding="utf-8")
-    else:
-        from machineconfig.utils.code import run_shell_script
-        run_shell_script(command)
+
+    from machineconfig.utils.code import exit_then_run_shell_script
+    exit_then_run_shell_script(script=command, strict=False)
 
 
 def fire(

@@ -35,8 +35,8 @@ if (Test-Path "$CONFIG_ROOT\scripts\windows\wrap_mcfg.ps1") {
     function d { wrap_in_shell_script devops $args }
     function c { wrap_in_shell_script cloud $args }
     function a { wrap_in_shell_script agents $args }
-    function ss { wrap_in_shell_script sessions $args }
-    function ff { wrap_in_shell_script ftpx $args }
+    function sx { wrap_in_shell_script sessions $args }
+    function fx { wrap_in_shell_script ftpx $args }
     function f { wrap_in_shell_script fire $args }
     function rr { wrap_in_shell_script croshell $args }
     function u { wrap_in_shell_script utils $args }
@@ -51,8 +51,8 @@ else {
     function d { devops $args }
     function c { cloud $args }
     function a { agents $args }
-    function ss { sessions $args }
-    function ff { ftpx $args }
+    function sx { sessions $args }
+    function fx { ftpx $args }
     function f { fire $args }
     function rr { croshell $args }
     function u { utils $args }

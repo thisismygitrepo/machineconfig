@@ -110,27 +110,47 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
 
 def exit_then_run_shell_script(script: str, strict: bool = False):
     import os
+    from rich.console import Console
+    
+    console = Console()
     op_program_path = os.environ.get("OP_PROGRAM_PATH", None)
-    if strict and op_program_path is None:
-        import platform
-        if platform.system() == "Windows":
-            suffix = ".ps1"
-            lexer = "powershell"
-        else:
-            suffix = ".sh"
-            lexer = "bash"
-        op_program_path = Path.home().joinpath("tmp_results", "tmp_scripts", "manual_run", f"manual_script_{randstr()}.{suffix}")
-        op_program_path.parent.mkdir(parents=True, exist_ok=True)
-        op_program_path.write_text(script, encoding="utf-8")
-        print_code(script, lexer=lexer, desc="script to run manually")
-        print(f"Please run the script manually via your shell by executing the script @:\n{str(op_program_path)}")
-        print("OP_PROGRAM_PATH environment variable is not set in strict mode.")
     if op_program_path is not None:
+        exists = Path(op_program_path).exists()
+    else:
+        exists = False
+    # three cases: (op_program_path is None, exists=False), (op_program_path is set, exists=False), (op_program_path is set, exists=True)
+
+    if strict:  # we want to assert op_program_path is set and is not an already existing file
+        if (op_program_path is None or exists):
+            import platform
+            if platform.system() == "Windows":
+                suffix = ".ps1"
+                lexer = "powershell"
+            else:
+                suffix = ".sh"
+                lexer = "bash"
+            op_program_path = Path.home().joinpath("tmp_results", "tmp_scripts", "manual_run", f"manual_script_{randstr()}.{suffix}")
+            op_program_path.parent.mkdir(parents=True, exist_ok=True)
+            op_program_path.write_text(script, encoding="utf-8")
+            print_code(script, lexer=lexer, desc="script to run manually")
+            console.print("[bold yellow]⚠️  STRICT MODE:[/bold yellow] [cyan]Please run the script manually via your shell by executing:[/cyan]")
+            console.print(f"[green]{str(op_program_path)}[/green]")
+            console.print("[red]❌ OP_PROGRAM_PATH environment variable is not set in strict mode.[/red]")
+            import sys
+            sys.exit(1)
+
+    if op_program_path is not None and not exists:
         op_program_path = Path(op_program_path)
         op_program_path.parent.mkdir(parents=True, exist_ok=True)
         op_program_path.write_text(script, encoding="utf-8")
-        print(f"Handing over to shell script runner via OP_PROGRAM_PATH @\n{str(op_program_path)}...")
+        console.print("[cyan]🚀 Handing over to shell script runner via OP_PROGRAM_PATH:[/cyan]")
+        console.print(f"[bold green]{str(op_program_path)}[/bold green]")
+        print_code(script, lexer="shell", desc="script to run via OP_PROGRAM_PATH")
     else:
+        if op_program_path is not None and exists:
+            console.print(f"[yellow]⚠️  OP_PROGRAM_PATH @ {str(op_program_path)} already exists.[/yellow] [cyan]Falling back to direct execution.[/cyan]")
+        elif op_program_path is None:
+            console.print("[cyan]ℹ️  OP_PROGRAM_PATH is not set.[/cyan] [yellow]Falling back to direct execution.[/yellow]")
         run_shell_script(script)
     import sys
     sys.exit(0)

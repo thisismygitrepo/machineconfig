@@ -130,7 +130,7 @@ def croshell(
             fire_line = f"uv run --python 3.14 --with visidata,pyarrow vd {str(file_obj)}"
     elif marimo:
         if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--with marimo --project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: requirements = """--python 3.14 --with "marimo,machineconfig[plot]>=7.36" """
+        else: requirements = """--python 3.14 --with "marimo,machineconfig[plot]>=7.37" """
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv run --python 3.14 --with "marimo" marimo convert {pyfile.name} -o marimo_nb.py
@@ -138,14 +138,14 @@ uv run {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
 """
     elif jupyter:
         if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with jupyterlab """
-        else: requirements = """--with "machineconfig[plot]>=7.36" """
+        else: requirements = """--with "machineconfig[plot]>=7.37" """
         fire_line = f"uv run {requirements} jupyter-lab {str(nb_target)}"
     elif vscode:
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv init --python 3.14
 uv venv
-uv add "machineconfig[plot]>=7.36"
+uv add "machineconfig[plot]>=7.37"
 # code serve-web
 code --new-window {str(pyfile)}
 """
@@ -153,20 +153,13 @@ code --new-window {str(pyfile)}
         if interpreter == "ipython": profile = f" --profile {ipython_profile} --no-banner"
         else: profile = ""
         if Path.home().joinpath("code/machineconfig").exists(): ve_line = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: ve_line = """--python 3.14 --with "machineconfig[plot]>=7.36" """
+        else: ve_line = """--python 3.14 --with "machineconfig[plot]>=7.37" """
         # ve_path_maybe, ipython_profile_maybe = get_ve_path_and_ipython_profile(Path.cwd())
         # --python 3.14
         fire_line = f"uv run {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
 
-    import os
-    program_path_maybe = os.environ.get("OP_PROGRAM_PATH", None)
-    if program_path_maybe is not None:
-        program_path_obj = PathExtended(program_path_maybe)
-        program_path_obj.parent.mkdir(parents=True, exist_ok=True)
-        program_path_obj.write_text(data=fire_line, encoding="utf-8")
-    else:
-        from machineconfig.utils.code import run_shell_script
-        run_shell_script(fire_line, clean_env=False)
+    from machineconfig.utils.code import exit_then_run_shell_script
+    exit_then_run_shell_script(fire_line, strict=False)
 
 
 def main() -> None:
