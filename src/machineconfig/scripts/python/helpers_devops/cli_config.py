@@ -27,7 +27,7 @@ def public(method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--me
 
 def shell(which: Annotated[Literal["default", "nushell"], typer.Option(..., "--which", "-w", help="Which shell profile to create/configure")]="default"):
     """🔗 Configure your shell profile."""
-    from machineconfig.profile.create_shell_profile import create_default_shell_profile, get_nu_shell_profile_path
+    from machineconfig.profile.create_shell_profile import create_default_shell_profile
     match which:
         case "nushell":
             create_nu_shell_profile()
