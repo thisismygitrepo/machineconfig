@@ -99,14 +99,22 @@
                 "name": "Command Prompt"
             },
             {
-                "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
+                "guid": "{b1bc5929-2f8d-5b56-8c51-3e83379a5b63}",
                 "hidden": false,
                 "commandline": "nu.exe",
                 "name": "nushell"
                 // "source": "Windows.Terminal.Azure"
             },
             {
-                "guid": "{2ddc9f1a-8263-557a-8652-3db9e80a7164}",
+                "guid": "{4b9d9cef-cb7d-4a8c-8b08-0de52621c3ff}",
+                "hidden": false,
+                "commandline": "nu.exe",
+                "name": "nushell2",
+                "font": {
+                    "face": "CaskaydiaCove Nerd Font"
+                }
+            },
+            {
                 "hidden": false,
                 "name": "Developer Command Prompt for VS 2022",
                 "source": "Windows.Terminal.VisualStudio"

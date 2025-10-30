@@ -2,6 +2,7 @@
 
 from typing import Literal, Annotated, Optional
 from pathlib import Path
+from machineconfig.profile.create_shell_profile import create_nu_shell_profile
 import typer
 import machineconfig.scripts.python.helpers_devops.cli_config_dotfile as dotfile_module
 
@@ -24,10 +25,14 @@ def public(method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--me
     create_links_export.main_public_from_parser(method=method, on_conflict=on_conflict, which=which, interactive=interactive)
 
 
-def shell():
+def shell(which: Annotated[Literal["default", "nushell"], typer.Option(..., "--which", "-w", help="Which shell profile to create/configure")]="default"):
     """🔗 Configure your shell profile."""
-    from machineconfig.profile.create_shell_profile import create_default_shell_profile
-    create_default_shell_profile()
+    from machineconfig.profile.create_shell_profile import create_default_shell_profile, get_nu_shell_profile_path
+    match which:
+        case "nushell":
+            create_nu_shell_profile()
+        case _:
+            create_default_shell_profile()
 
 
 def path():

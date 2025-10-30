@@ -5,10 +5,10 @@ Minimalist programs that only print scripts without frills so it can be sourced 
 
 
 import typer
-import platform
 
 
 def define_scripts():
+    import platform
     if platform.system() != "Linux":
         raise RuntimeError("This command is only supported on Linux systems.")
     from machineconfig.setup_linux import INTERACTIVE as script_path
