@@ -129,7 +129,7 @@ def exit_then_run_shell_script(script: str, strict: bool = False):
             else:
                 suffix = ".sh"
                 lexer = "bash"
-            op_program_path = Path.home().joinpath("tmp_results", "tmp_scripts", "manual_run", f"manual_script_{randstr()}.{suffix}")
+            op_program_path = Path.home().joinpath("tmp_results", "tmp_scripts", "manual_run", f"manual_script_{randstr()}{suffix}")
             op_program_path.parent.mkdir(parents=True, exist_ok=True)
             op_program_path.write_text(script, encoding="utf-8")
             print_code(script, lexer=lexer, desc="script to run manually")
