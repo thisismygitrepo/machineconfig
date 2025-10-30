@@ -13,33 +13,33 @@ from machineconfig.scripts.python.helpers_repos.secure_repo import main as secur
 
 DirectoryArgument = Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")]
 RecursiveOption = Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")]
-NO_UVsyncOption = Annotated[bool, typer.Option("--no-uv-sync", "-ns", help="🚫 Disable automatic uv sync after pulls.")]
+UVsyncOption = Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")]
 CloudOption = Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁️ Upload to or download from this cloud remote.")]
 
 
-def push(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_uv_sync: NO_UVsyncOption = False) -> None:
+def push(directory: DirectoryArgument = None, recursive: RecursiveOption = False, auto_uv_sync: UVsyncOption = False) -> None:
     """🚀 Push changes across repositories."""
     from machineconfig.scripts.python.helpers_repos.entrypoint import git_operations
-    git_operations(directory, pull=False, commit=False, push=True, recursive=recursive, auto_uv_sync=not no_uv_sync)
+    git_operations(directory, pull=False, commit=False, push=True, recursive=recursive, auto_uv_sync=auto_uv_sync)
 
 
-def pull(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_uv_sync: NO_UVsyncOption = False) -> None:
+def pull(directory: DirectoryArgument = None, recursive: RecursiveOption = False, auto_uv_sync: UVsyncOption = False) -> None:
     """⬇️ Pull changes across repositories."""
     from machineconfig.scripts.python.helpers_repos.entrypoint import git_operations
 
-    git_operations(directory, pull=True, commit=False, push=False, recursive=recursive, auto_uv_sync=not no_uv_sync)
+    git_operations(directory, pull=True, commit=False, push=False, recursive=recursive, auto_uv_sync=auto_uv_sync)
 
 
-def commit(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_uv_sync: NO_UVsyncOption = False) -> None:
+def commit(directory: DirectoryArgument = None, recursive: RecursiveOption = False, auto_uv_sync: UVsyncOption = False) -> None:
     """💾 Commit changes across repositories."""
     from machineconfig.scripts.python.helpers_repos.entrypoint import git_operations
-    git_operations(directory, pull=False, commit=True, push=False, recursive=recursive, auto_uv_sync=not no_uv_sync)
+    git_operations(directory, pull=False, commit=True, push=False, recursive=recursive, auto_uv_sync=auto_uv_sync)
 
 
-def sync(directory: DirectoryArgument = None, recursive: RecursiveOption = False, no_uv_sync: NO_UVsyncOption = False) -> None:
+def sync(directory: DirectoryArgument = None, recursive: RecursiveOption = False, auto_uv_sync: UVsyncOption = False) -> None:
     """🔄 Pull, commit, and push changes across repositories."""
     from machineconfig.scripts.python.helpers_repos.entrypoint import git_operations
-    git_operations(directory, pull=True, commit=True, push=True, recursive=recursive, auto_uv_sync=not no_uv_sync)
+    git_operations(directory, pull=True, commit=True, push=True, recursive=recursive, auto_uv_sync=auto_uv_sync)
 
 
 def capture(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
@@ -179,3 +179,14 @@ def get_app():
     mirror_app.command(name="ctb", help="Check out to the main branch defined in the specification", hidden=True)(checkout_to_branch_command)
 
     return repos_apps
+
+
+def func(uv_sync: NO_UVsyncOption = False) -> None:
+    """Entry point for Repos CLI."""
+    print("Value of NO_UVsyncOption:", uv_sync)
+
+
+if __name__ == "__main__":
+    app = typer.Typer(help="📁 Manage development repositories", no_args_is_help=True)
+    app.command()(func)
+    app()
