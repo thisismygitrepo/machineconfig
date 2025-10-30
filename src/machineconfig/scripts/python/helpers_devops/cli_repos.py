@@ -8,7 +8,7 @@ in the event that username@github.com is not mentioned in the remote url.
 from pathlib import Path
 from typing import Annotated, Optional
 import typer
-from machineconfig.scripts.python.helpers_repos.secure_repo import main as secure_repo_main
+from machineconfig.scripts.python.helpers_repos.cloud_repo_sync import main as secure_repo_main
 
 
 DirectoryArgument = Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")]

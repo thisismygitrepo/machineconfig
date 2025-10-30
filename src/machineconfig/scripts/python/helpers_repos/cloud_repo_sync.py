@@ -1,28 +1,47 @@
-import git
-from rich.console import Console
-from rich.panel import Panel
-import typer
 
-from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.terminal import Response
-from machineconfig.utils.source_of_truth import CONFIG_ROOT, DEFAULTS_PATH
-from machineconfig.utils.code import get_uv_command_executing_python_script
-from pathlib import Path
-import platform
-import subprocess
 from typing import Optional, Literal, Annotated
 
-
-console = Console()
+import typer
 
 
 def main(
     cloud: Annotated[Optional[str], typer.Option(..., "--cloud", "-c", help="Cloud storage profile name. If not provided, uses default from config.")] = None,
     repo: Annotated[Optional[str], typer.Option(..., "--repo", "-r", help="Path to the local repository. Defaults to current working directory.")] = None,
     message: Annotated[Optional[str], typer.Option(..., "--message", "-m", help="Commit message for local changes.")] = None,
-    on_conflict: Annotated[Literal["ask", "push-local-merge", "overwrite-local", "stop-on-conflict", "remove-rclone-conflict"], typer.Option(..., "--on-conflict", "-oc", help="Action to take on merge conflict. Default is 'ask'.")] = "ask",
+    on_conflict: Annotated[Literal["ask", "a",
+                                   "push-local-merge", "p",
+                                   "overwrite-local", "o",
+                                   "stop-on-conflict", "s",
+                                   "remove-rclone-conflict", "r"
+                                   ], typer.Option(..., "--on-conflict", "-o", help="Action to take on merge conflict. Default is 'ask'.")] = "ask",
     pwd: Annotated[Optional[str], typer.Option(..., "--password", help="Password for encryption/decryption of the remote repository.")] = None,
 ):
+    on_conflict_mapper: dict[str, Literal["ask", "push-local-merge", "overwrite-local", "stop-on-conflict", "remove-rclone-conflict"]] = {
+        "a": "ask",
+        "ask": "ask",
+        "p": "push-local-merge",
+        "push-local-merge": "push-local-merge",
+        "o": "overwrite-local",
+        "overwrite-local": "overwrite-local",
+        "s": "stop-on-conflict",
+        "stop-on-conflict": "stop-on-conflict",
+        "r": "remove-rclone-conflict",
+        "remove-rclone-conflict": "remove-rclone-conflict",
+    }
+    on_conflict = on_conflict_mapper[on_conflict]
+    import git
+    from rich.console import Console
+    from rich.panel import Panel
+
+    from machineconfig.utils.path_extended import PathExtended
+    from machineconfig.utils.terminal import Response
+    from machineconfig.utils.source_of_truth import CONFIG_ROOT, DEFAULTS_PATH
+    from machineconfig.utils.code import get_uv_command_executing_python_script
+    from pathlib import Path
+    import platform
+    import subprocess
+    console = Console()
+
     if cloud is None:
         try:
             from machineconfig.utils.io import read_ini
@@ -80,7 +99,7 @@ git pull originEnc master
         uv_project_dir = f"""{str(Path.home().joinpath("code/machineconfig"))}"""
         uv_with = None
     else:
-        uv_with = ["machineconfig>=7.38"]
+        uv_with = ["machineconfig>=7.39"]
         uv_project_dir = None
 
     import tempfile
