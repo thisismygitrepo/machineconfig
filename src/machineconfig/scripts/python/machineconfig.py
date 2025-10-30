@@ -9,6 +9,7 @@ from machineconfig.scripts.python.ftpx import ftpx as ftpx_func
 from machineconfig.scripts.python.croshell import croshell as croshell_func
 from machineconfig.scripts.python.fire_jobs import fire as get_fire_jobs_app
 from machineconfig.scripts.python.define import get_app as get_define_app
+from machineconfig.scripts.python.terminal import get_app as get_terminal_app
 
 def get_app():
     import typer
@@ -44,6 +45,12 @@ def get_app():
     define_app = get_define_app()
     app.add_typer(define_app, name="define", help="[df] Define and manage configurations", no_args_is_help=True)
     app.add_typer(define_app, name="df", hidden=True)  # short alias
+
+
+    terminal_app = get_terminal_app()
+    app.add_typer(terminal_app, name="terminal", help="[t] Terminal management commands", no_args_is_help=True)
+    app.add_typer(terminal_app, name="t", hidden=True)  # short alias
+
     return app
 
 

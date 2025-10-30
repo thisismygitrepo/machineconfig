@@ -22,11 +22,13 @@ def choose_zellij_session(
             cmd = f"""zellij kill-sessions
     {cmd}"""
         from machineconfig.utils.code import exit_then_run_shell_script
-        exit_then_run_shell_script(cmd, strict=True)
+        exit_then_run_shell_script(script=cmd, strict=True)
         typer.Exit()
         return
     cmd = "zellij list-sessions"
     sessions: list[str] = subprocess.check_output(cmd, shell=True).decode().strip().split("\n")
+    # filter out empty lines and keep raw lines (they contain creation info)
+    sessions = [s for s in sessions if s.strip()]
     sessions.sort(key=lambda s: "EXITED" in s)
     if "current" in sessions:
         print("Already in a Zellij session, avoiding nesting and exiting.")
@@ -40,7 +42,18 @@ def choose_zellij_session(
         result = f"zellij attach {session}"
     else:
         from machineconfig.utils.options import choose_from_options
-        session = choose_from_options(msg="Choose a Zellij session to attach to:", multi=False, options=sessions, fzf=True)
+        # Artificially inject a "NEW SESSION" option so the user can create one from the list
+        NEW_SESSION_LABEL = "NEW SESSION"
+        options = [NEW_SESSION_LABEL] + sessions
+        session = choose_from_options(msg="Choose a Zellij session to attach to:", multi=False, options=options, fzf=True)
+        # If the user chose the artificial option, start a new session (same as --new-session)
+        if session == NEW_SESSION_LABEL:
+            cmd = "zellij --layout st2"
+            if kill_all:
+                cmd = f"zellij kill-sessions\n{cmd}"
+            from machineconfig.utils.code import exit_then_run_shell_script
+            exit_then_run_shell_script(cmd, strict=True)
+            raise typer.Exit()
         session = session.split(" [Created")[0]
         result = f"zellij attach {session}"
     from machineconfig.utils.code import exit_then_run_shell_script
@@ -93,7 +106,7 @@ def start_wt(layout_name: Annotated[str, typer.Argument(help="Layout name to sta
     # exit_then_run_shell_script(cmd, strict=True)
 
 
-def main():
+def get_app():
     app = typer.Typer(help="🖥️ Terminal utilities", no_args_is_help=True, add_help_option=False)
     app.command(name="attach-to-zellij", no_args_is_help=False, help="[z] Choose a Zellij session to attach to")(choose_zellij_session)
     app.command(name="z", hidden=True, no_args_is_help=False, help="[z] Choose a Zellij session to attach to")(choose_zellij_session)
@@ -103,6 +116,10 @@ def main():
 
     app.command(name="get-session-tabs", no_args_is_help=False, help="[zt] Get all Zellij session tabs.")(get_session_tabs)
     app.command(name="zt", hidden=True, no_args_is_help=False, help="[zt] Get all Zellij session tabs.")(get_session_tabs)
+    return app
+
+def main():
+    app = get_app()
     app()
 
 
