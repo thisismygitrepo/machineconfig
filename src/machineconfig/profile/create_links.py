@@ -12,7 +12,8 @@ from rich.text import Text
 from rich.table import Table
 
 from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.links import symlink_map, copy_map, ON_CONFLICT
+from machineconfig.utils.links import symlink_map, copy_map
+from machineconfig.profile.create_links_export import ON_CONFLICT_STRICT
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT, CONFIG_ROOT
 
 import platform
@@ -79,8 +80,8 @@ def read_mapper() -> MapperFileData:
 
 
 def apply_mapper(mapper_data: dict[str, list[ConfigMapper]],
-                 on_conflict: ON_CONFLICT,
-                 method: Literal["symlink", "s", "copy", "c"]
+                 on_conflict: ON_CONFLICT_STRICT,
+                 method: Literal["symlink", "copy"]
                  ):
     operation_records: list[OperationRecord] = []
     print(f"Working with {len(mapper_data)} programs from mapper data.")

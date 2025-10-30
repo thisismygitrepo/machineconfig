@@ -1,17 +1,10 @@
 
 """Like yadm and dotter."""
 
-from typing import Annotated, Literal, TypeAlias
+from machineconfig.profile.create_links_export import ON_CONFLICT
+from typing import Annotated, Literal
 import typer
 
-
-ON_CONFLICT: TypeAlias = Literal[
-    "throw-error", "t",
-    "overwrite-self-managed", "os",
-    "backup-self-managed", "bs",
-    "overwrite-default-path", "od",
-    "backup-default-path", "bd"
-    ]
 
 
 def main(
