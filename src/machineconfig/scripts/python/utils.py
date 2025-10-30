@@ -1,6 +1,6 @@
 
 
-from machineconfig.scripts.python.helpers_devops.cli_utils import download, merge_pdfs, get_machine_specs, init_project, compress_pdf, copy
+from machineconfig.scripts.python.helpers_devops.cli_utils import download, merge_pdfs, get_machine_specs, init_project, compress_pdf
 import typer
 from typing import Annotated
 
@@ -45,8 +45,8 @@ def get_app() -> typer.Typer:
     app.command(name="pdf-compress", no_args_is_help=True, help="[pc] Compress a PDF file.")(compress_pdf)
     app.command(name="pc", no_args_is_help=True, hidden=True)(compress_pdf)
 
-    app.command(name="copy", no_args_is_help=True, help="[c] Copy files or directories.")(copy)
-    app.command(name="c", no_args_is_help=True, hidden=True)(copy)
+    # app.command(name="copy", no_args_is_help=True, help="[c] Copy files or directories.")(copy)
+    # app.command(name="c", no_args_is_help=True, hidden=True)(copy)
 
     return app
 

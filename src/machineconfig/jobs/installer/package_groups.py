@@ -210,6 +210,7 @@ PACKAGES_TERMINAL_SHELL = [
     "gotty",
     "ttyd",
     "rclone",
+    "cb"
 ]
 
 
