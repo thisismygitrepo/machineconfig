@@ -180,13 +180,3 @@ def get_app():
 
     return repos_apps
 
-
-def func(uv_sync: NO_UVsyncOption = False) -> None:
-    """Entry point for Repos CLI."""
-    print("Value of NO_UVsyncOption:", uv_sync)
-
-
-if __name__ == "__main__":
-    app = typer.Typer(help="📁 Manage development repositories", no_args_is_help=True)
-    app.command()(func)
-    app()

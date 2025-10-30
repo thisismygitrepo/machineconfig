@@ -3,10 +3,17 @@ from machineconfig.utils.accessories import randstr
 from rich.console import Console
 from rich.panel import Panel
 import hashlib
-from typing import TypedDict, Literal
+from typing import TypedDict, Literal, TypeAlias
 
 console = Console()
 
+ON_CONFLICT: TypeAlias = Literal[
+    "throw-error", "t",
+    "overwrite-self-managed", "os",
+    "backup-self-managed", "bs",
+    "overwrite-default-path", "od",
+    "backup-default-path", "bd"
+    ]
 
 ActionType = Literal[
     "already_linked",
@@ -96,7 +103,7 @@ def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
 
 
 def symlink_map(config_file_default_path: PathExtended, self_managed_config_file_path: PathExtended,
-                 on_conflict: Literal["throw-error", "overwrite-self-managed", "backup-self-managed", "overwrite-default-path", "backup-default-path"]
+                 on_conflict: ON_CONFLICT
                  ) -> OperationResult:
     """helper function. creates a symlink from `config_file_default_path` to `self_managed_config_file_path`.
 
@@ -171,27 +178,27 @@ def symlink_map(config_file_default_path: PathExtended, self_managed_config_file
                         console.print(Panel("⚠️ Could not show diff using 'delta'. Please install 'delta' for better diff visualization.", title="Delta Not Found", expand=False))
 
                     match on_conflict:
-                        case "throw-error":
+                        case "throw-error" | "t":
                             raise RuntimeError(f"Conflict detected: {config_file_default_path} and {self_managed_config_file_path} both exist with different content")
-                        case "overwrite-self-managed":
+                        case "overwrite-self-managed" | "os":
                             action_taken = "backing_up_target"
                             details = "Overwriting self-managed config, moving default path to self-managed location"
                             console.print(Panel(f"📦 OVERWRITE SELF-MANAGED | Deleting {self_managed_config_file_path}, moving {config_file_default_path} to {self_managed_config_file_path}", title="Overwrite Self-Managed", expand=False))
                             self_managed_config_file_path.delete(sure=True)
                             config_file_default_path.move(path=self_managed_config_file_path)
-                        case "backup-self-managed":
+                        case "backup-self-managed" | "bs":
                             backup_name = f"{self_managed_config_file_path}.orig_{randstr()}"
                             action_taken = "backing_up_target"
                             details = f"Backed up self-managed config to {backup_name}"
                             console.print(Panel(f"📦 BACKUP SELF-MANAGED | Moving {self_managed_config_file_path} to {backup_name}, moving {config_file_default_path} to {self_managed_config_file_path}", title="Backup Self-Managed", expand=False))
                             self_managed_config_file_path.move(path=backup_name)
                             config_file_default_path.move(path=self_managed_config_file_path)
-                        case "overwrite-default-path":
+                        case "overwrite-default-path" | "od":
                             action_taken = "backupConfigDefaultPath"
                             details = "Overwriting default path, creating symlink to self-managed config"
                             console.print(Panel(f"📦 OVERWRITE DEFAULT | Deleting {config_file_default_path}, creating symlink to {self_managed_config_file_path}", title="Overwrite Default", expand=False))
                             config_file_default_path.delete(sure=True)
-                        case "backup-default-path":
+                        case "backup-default-path" | "bd":
                             backup_name = f"{config_file_default_path}.orig_{randstr()}"
                             action_taken = "backupConfigDefaultPath"
                             details = f"Backed up default path to {backup_name}"
@@ -244,7 +251,7 @@ def symlink_map(config_file_default_path: PathExtended, self_managed_config_file
         return {"action": action_taken, "details": details}
 
 
-def copy_map(config_file_default_path: PathExtended, self_managed_config_file_path: PathExtended, on_conflict: Literal["throw-error", "overwrite-self-managed", "backup-self-managed", "overwrite-default-path", "backup-default-path"]) -> OperationResult:
+def copy_map(config_file_default_path: PathExtended, self_managed_config_file_path: PathExtended, on_conflict: ON_CONFLICT) -> OperationResult:
     config_file_default_path = PathExtended(config_file_default_path).expanduser().absolute()
     self_managed_config_file_path = PathExtended(self_managed_config_file_path).expanduser().absolute()
     
@@ -300,27 +307,27 @@ def copy_map(config_file_default_path: PathExtended, self_managed_config_file_pa
                         console.print(Panel("⚠️ Could not show diff using 'delta'. Please install 'delta' for better diff visualization.", title="Delta Not Found", expand=False))
 
                     match on_conflict:
-                        case "throw-error":
+                        case "throw-error" | "t":
                             raise RuntimeError(f"Conflict detected: {config_file_default_path} and {self_managed_config_file_path} both exist with different content")
-                        case "overwrite-self-managed":
+                        case "overwrite-self-managed" | "os":
                             action_taken = "backing_up_target"
                             details = "Overwriting self-managed config with default path content"
                             console.print(Panel(f"📦 OVERWRITE SELF-MANAGED | Deleting {self_managed_config_file_path}, moving {config_file_default_path} to {self_managed_config_file_path}", title="Overwrite Self-Managed", expand=False))
                             self_managed_config_file_path.delete(sure=True)
                             config_file_default_path.move(path=self_managed_config_file_path)
-                        case "backup-self-managed":
+                        case "backup-self-managed" | "bs":
                             backup_name = f"{self_managed_config_file_path}.orig_{randstr()}"
                             action_taken = "backing_up_target"
                             details = f"Backed up self-managed config to {backup_name}"
                             console.print(Panel(f"📦 BACKUP SELF-MANAGED | Moving {self_managed_config_file_path} to {backup_name}, moving {config_file_default_path} to {self_managed_config_file_path}", title="Backup Self-Managed", expand=False))
                             self_managed_config_file_path.move(path=backup_name)
                             config_file_default_path.move(path=self_managed_config_file_path)
-                        case "overwrite-default-path":
+                        case "overwrite-default-path" | "od":
                             action_taken = "backupConfigDefaultPath"
                             details = "Overwriting default path with self-managed config"
                             console.print(Panel(f"📦 OVERWRITE DEFAULT | Deleting {config_file_default_path}, will copy from {self_managed_config_file_path}", title="Overwrite Default", expand=False))
                             config_file_default_path.delete(sure=True)
-                        case "backup-default-path":
+                        case "backup-default-path" | "bd":
                             backup_name = f"{config_file_default_path}.orig_{randstr()}"
                             action_taken = "backupConfigDefaultPath"
                             details = f"Backed up default path to {backup_name}"

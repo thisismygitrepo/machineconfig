@@ -1,48 +1,10 @@
 
 
-from typing import Literal, Annotated, Optional, TypeAlias
+from typing import Literal, Annotated
 from pathlib import Path
 import typer
 import machineconfig.scripts.python.helpers_devops.cli_config_dotfile as dotfile_module
-
-ON_CONFLICT_STRICT: TypeAlias = Literal["throw-error", "overwrite-self-managed", "backup-self-managed", "overwrite-default-path", "backup-default-path"]
-ON_CONFLICT_WITH_SHORTS: TypeAlias = Literal["throw-error", "t",
-                                 "overwrite-self-managed", "o",
-                                 "backup-self-managed", "b",
-                                 "overwrite-default-path", "O",
-                                 "backup-default-path", "B"]
-SHORTS_TO_FULL: dict[ON_CONFLICT_WITH_SHORTS, ON_CONFLICT_STRICT] = {
-    "t": "throw-error",
-    "o": "overwrite-self-managed",
-    "b": "backup-self-managed",
-    "O": "overwrite-default-path",
-    "B": "backup-default-path",
-}
-
-def private(method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for linking files")],
-                             on_conflict: Annotated[ON_CONFLICT_WITH_SHORTS, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
-                             which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = None,
-                             interactive: Annotated[bool, typer.Option(..., "--interactive", "-ia", help="Run in interactive mode")] = False):
-    """🔗 Manage private configuration files."""
-    import machineconfig.profile.create_links_export as create_links_export
-    match method:
-        case "symlink" | "s":
-            create_links_export.main_private_from_parser(method="symlink", on_conflict=SHORTS_TO_FULL[on_conflict], which=which, interactive=interactive)
-        case "copy" | "c":
-            create_links_export.main_private_from_parser(method="copy", on_conflict=SHORTS_TO_FULL[on_conflict], which=which, interactive=interactive)
-
-def public(method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for setting up the config file.")],
-                            on_conflict: Annotated[Literal["throw-error", "overwrite-default-path", "backup-default-path"], typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
-                            which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = None,
-                            interactive: Annotated[bool, typer.Option(..., "--interactive", "-ia", help="Run in interactive mode")] = False):
-    """🔗 Manage public configuration files."""
-    import machineconfig.profile.create_links_export as create_links_export
-    match method:
-        case "symlink" | "s":
-            create_links_export.main_public_from_parser(method="symlink", on_conflict=on_conflict, which=which, interactive=interactive)
-        case "copy" | "c":
-            create_links_export.main_public_from_parser(method="copy", on_conflict=on_conflict, which=which, interactive=interactive)
-
+import machineconfig.profile.create_links_export as create_links_export
 
 def shell(which: Annotated[Literal["default", "d", "nushell", "n"], typer.Option(..., "--which", "-w", help="Which shell profile to create/configure")]="default"):
     """🔗 Configure your shell profile."""
@@ -128,10 +90,10 @@ def copy_assets(which: Annotated[Literal["scripts", "s", "settings", "t", "both"
 
 def get_app():
     config_apps = typer.Typer(help="⚙️ [c] configuration subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
-    config_apps.command("private", no_args_is_help=True, help="🔗  [v] Manage private configuration files.")(private)
-    config_apps.command("v", no_args_is_help=True, hidden=True)(private)
-    config_apps.command("public", no_args_is_help=True, help="🔗  [b] Manage public configuration files.")(public)
-    config_apps.command("b", no_args_is_help=True, help="Manage public configuration files.", hidden=True)(public)
+    config_apps.command("private", no_args_is_help=True, help="🔗  [v] Manage private configuration files.")(create_links_export.main_private_from_parser)
+    config_apps.command("v", no_args_is_help=True, hidden=True)(create_links_export.main_private_from_parser)
+    config_apps.command("public", no_args_is_help=True, help="🔗  [b] Manage public configuration files.")(create_links_export.main_public_from_parser)
+    config_apps.command("b", no_args_is_help=True, help="Manage public configuration files.", hidden=True)(create_links_export.main_public_from_parser)
     config_apps.command("dotfile", no_args_is_help=True, help="🔗  [d] Manage dotfiles.")(dotfile_module.main)
     config_apps.command("d", no_args_is_help=True,  hidden=True)(dotfile_module.main)
     config_apps.command("shell", no_args_is_help=False, help="🔗  [s] Configure your shell profile.")(shell)

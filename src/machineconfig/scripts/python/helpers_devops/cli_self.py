@@ -9,10 +9,8 @@ def copy_both_assets():
     create_helper.copy_assets_to_machine(which="settings")
 
 
-def update(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-na", help="Copy (overwrite) assets to the machine after the update")] = False):
+def update(copy_assets: Annotated[bool, typer.Option("--assets-copy/--no-assets-copy", "-a/-na", help="Copy (overwrite) assets to the machine after the update")] = True):
     """🔄 UPDATE uv and machineconfig"""
-    # from machineconfig.utils.source_of_truth import LIBRARY_ROOT
-    # repo_root = LIBRARY_ROOT.parent.parent
     from pathlib import Path
     if Path.home().joinpath("code", "machineconfig").exists():
         shell_script = """
@@ -36,7 +34,7 @@ uv tool install --upgrade machineconfig
     else:
         from machineconfig.utils.code import run_shell_script
         run_shell_script(shell_script)
-    if not no_copy_assets:
+    if copy_assets:
         copy_both_assets()
 
 def install(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-na", help="Copy (overwrite) assets to the machine after the update")] = False):

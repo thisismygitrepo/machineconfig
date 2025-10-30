@@ -1,10 +1,17 @@
 
 import typer
-from typing import Optional, Literal, Annotated
+from typing import Optional, Literal, Annotated, TypeAlias
 
+ON_CONFLICT: TypeAlias = Literal[
+    "throw-error", "t",
+    "overwrite-self-managed", "os",
+    "backup-self-managed", "bs",
+    "overwrite-default-path", "od",
+    "backup-default-path", "bd"
+    ]
 
-def main_public_from_parser(method: Annotated[Literal["symlink", "copy"], typer.Option(..., help="Method to use for setting up the config file.")],
-                            on_conflict: Annotated[Literal["throw-error", "overwrite-default-path", "backup-default-path"], typer.Option(..., help="Action to take on conflict")],
+def main_public_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., help="Method to use for setting up the config file.")],
+                            on_conflict: Annotated[ON_CONFLICT, typer.Option(..., help="Action to take on conflict")],
                             which: Annotated[Optional[str], typer.Option(..., help="Specific items to process")] = None,
                             interactive: Annotated[bool, typer.Option(..., help="Run in interactive mode")] = False):
     """Terminology:
@@ -31,8 +38,8 @@ def main_public_from_parser(method: Annotated[Literal["symlink", "copy"], typer.
     apply_mapper(mapper_data=items_objections, on_conflict=on_conflict, method=method)
 
 
-def main_private_from_parser(method: Annotated[Literal["symlink", "copy"], typer.Option(..., help="Method to use for linking files")],
-                             on_conflict: Annotated[Literal["throw-error", "overwrite-self-managed", "backup-self-managed", "overwrite-default-path", "backup-default-path"], typer.Option(..., help="Action to take on conflict")] = "throw-error",
+def main_private_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., help="Method to use for linking files")],
+                             on_conflict: Annotated[ON_CONFLICT, typer.Option(..., help="Action to take on conflict")] = "throw-error",
                              which: Annotated[Optional[str], typer.Option(..., help="Specific items to process")] = None,
                              interactive: Annotated[bool, typer.Option(..., help="Run in interactive mode")] = False):
     from machineconfig.profile.create_links import ConfigMapper, read_mapper
