@@ -1,24 +1,39 @@
 
 """Like yadm and dotter."""
 
-from typing import Annotated, Literal
+from typing import Annotated, Literal, TypeAlias
 import typer
+
+
+ON_CONFLICT_STRICT: TypeAlias = Literal["throw-error", "overwrite-self-managed", "backup-self-managed", "overwrite-default-path", "backup-default-path"]
+ON_CONFLICT_WITH_SHORTS: TypeAlias = Literal["throw-error", "t",
+                                 "overwrite-self-managed", "o",
+                                 "backup-self-managed", "b",
+                                 "overwrite-default-path", "O",
+                                 "backup-default-path", "B"]
+SHORTS_TO_FULL: dict[ON_CONFLICT_WITH_SHORTS, ON_CONFLICT_STRICT] = {
+    "t": "throw-error",
+    "o": "overwrite-self-managed",
+    "b": "backup-self-managed",
+    "O": "overwrite-default-path",
+    "B": "backup-default-path",
+}
 
 
 def main(
     file: Annotated[str, typer.Argument(help="file/folder path.")],
-    method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--method", "-m", help="Method to use for linking files")] = "copy",
-    on_conflict: Annotated[Literal["throw-error", "overwrite-self-managed", "backup-self-managed", "overwrite-default-path", "backup-default-path"], typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
-    sensitivity: Annotated[Literal["private", "public"], typer.Option(..., "--sensitivity", "-s", help="Sensitivity of the config file.")] = "private",
+    method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for linking files")] = "copy",
+    on_conflict: Annotated[ON_CONFLICT_WITH_SHORTS, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
+    sensitivity: Annotated[Literal["private", "v", "public", "b"], typer.Option(..., "--sensitivity", "-s", help="Sensitivity of the config file.")] = "private",
     destination: Annotated[str, typer.Option("--destination", "-d", help="destination folder (override the default, use at your own risk)")] = "",) -> None:
     from rich.console import Console
     from rich.panel import Panel
     from machineconfig.utils.links import symlink_map, copy_map
     from pathlib import Path
     match sensitivity:
-        case "private":
+        case "private" | "v":
             backup_root = Path.home().joinpath("dotfiles/mapper")
-        case "public":
+        case "public" | "b":
             from machineconfig.utils.source_of_truth import CONFIG_ROOT
             backup_root = Path(CONFIG_ROOT).joinpath("dotfiles/mapper")
 
@@ -32,18 +47,19 @@ def main(
         dest_path.mkdir(parents=True, exist_ok=True)
         new_path = dest_path.joinpath(orig_path.name)
 
+
     from machineconfig.utils.path_extended import PathExtended
     match method:
-        case "copy":
+        case "copy" | "c":
             try:
-                copy_map(config_file_default_path=PathExtended(orig_path), self_managed_config_file_path=PathExtended(new_path), on_conflict=on_conflict)
+                copy_map(config_file_default_path=PathExtended(orig_path), self_managed_config_file_path=PathExtended(new_path), on_conflict=SHORTS_TO_FULL[on_conflict])
             except Exception as e:
                 typer.echo(f"[red]Error:[/] {e}")
                 typer.Exit(code=1)
                 return
-        case "symlink":
+        case "symlink" | "s":
             try:
-                symlink_map(config_file_default_path=PathExtended(orig_path), self_managed_config_file_path=PathExtended(new_path), on_conflict=on_conflict)
+                symlink_map(config_file_default_path=PathExtended(orig_path), self_managed_config_file_path=PathExtended(new_path), on_conflict=SHORTS_TO_FULL[on_conflict])
             except Exception as e:
                 typer.echo(f"[red]Error:[/] {e}")
                 typer.Exit(code=1)

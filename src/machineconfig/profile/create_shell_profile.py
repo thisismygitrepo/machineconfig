@@ -1,23 +1,16 @@
 """shell"""
 
-from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.source_of_truth import CONFIG_ROOT
 from pathlib import Path
-import platform
-import os
-import subprocess
-from rich.console import Console
-from rich.panel import Panel
 
-
-system = platform.system()
-sep = ";" if system == "Windows" else ":"  # PATH separator, this is special for PATH object, not to be confused with PathExtended.sep (normal paths), usually / or \
-PATH = os.environ["PATH"].split(sep)
-console = Console()
-BOX_WIDTH = 100  # Define BOX_WIDTH or get it from a config
 
 
 def get_shell_profile_path() -> Path:
+    import platform
+    import subprocess
+    from rich.console import Console
+    from rich.panel import Panel
+    system = platform.system()
+    console = Console()
     if system == "Windows":
         result = subprocess.run(["pwsh", "-Command", "$PROFILE"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False)
         if result.returncode == 0 and result.stdout.strip():
@@ -38,6 +31,11 @@ def get_shell_profile_path() -> Path:
 
 
 def get_nu_shell_profile_path() -> Path:
+    import platform
+    from rich.console import Console
+    from rich.panel import Panel
+    system = platform.system()
+    console = Console()
     if system == "Windows":
         profile_path = Path.home().joinpath(r"AppData\Roaming\nushell")
     elif system == "Linux":
@@ -52,6 +50,14 @@ def get_nu_shell_profile_path() -> Path:
 
 def create_default_shell_profile() -> None:
     shell_profile_path = get_shell_profile_path()
+    import platform
+    import subprocess
+    from rich.console import Console
+    from rich.panel import Panel
+    from machineconfig.utils.source_of_truth import CONFIG_ROOT
+    from machineconfig.utils.path_extended import PathExtended
+    system = platform.system()
+    console = Console()
     if not shell_profile_path.exists():
         console.print(Panel(f"""🆕 PROFILE | Profile does not exist at `{shell_profile_path}`. Creating a new one.""", title="[bold blue]Profile[/bold blue]", border_style="blue"))
         shell_profile_path.parent.mkdir(parents=True, exist_ok=True)
@@ -93,6 +99,11 @@ def create_default_shell_profile() -> None:
 
 
 def create_nu_shell_profile() -> None:
+    from rich.console import Console
+    from rich.panel import Panel
+    from machineconfig.utils.source_of_truth import CONFIG_ROOT
+    from machineconfig.utils.path_extended import PathExtended
+    console = Console()
     nu_profile_path = get_nu_shell_profile_path()
     config_dir = nu_profile_path
     config_file = config_dir.joinpath("config.nu")

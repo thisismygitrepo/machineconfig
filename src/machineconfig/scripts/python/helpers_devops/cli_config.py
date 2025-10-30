@@ -1,38 +1,60 @@
 
 
-from typing import Literal, Annotated, Optional
+from typing import Literal, Annotated, Optional, TypeAlias
 from pathlib import Path
-from machineconfig.profile.create_shell_profile import create_nu_shell_profile
 import typer
 import machineconfig.scripts.python.helpers_devops.cli_config_dotfile as dotfile_module
 
+ON_CONFLICT_STRICT: TypeAlias = Literal["throw-error", "overwrite-self-managed", "backup-self-managed", "overwrite-default-path", "backup-default-path"]
+ON_CONFLICT_WITH_SHORTS: TypeAlias = Literal["throw-error", "t",
+                                 "overwrite-self-managed", "o",
+                                 "backup-self-managed", "b",
+                                 "overwrite-default-path", "O",
+                                 "backup-default-path", "B"]
+SHORTS_TO_FULL: dict[ON_CONFLICT_WITH_SHORTS, ON_CONFLICT_STRICT] = {
+    "t": "throw-error",
+    "o": "overwrite-self-managed",
+    "b": "backup-self-managed",
+    "O": "overwrite-default-path",
+    "B": "backup-default-path",
+}
 
-def private(method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--method", "-m", help="Method to use for linking files")],
-                             on_conflict: Annotated[Literal["throw-error", "overwrite-self-managed", "backup-self-managed", "overwrite-default-path", "backup-default-path"], typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
+def private(method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for linking files")],
+                             on_conflict: Annotated[ON_CONFLICT_WITH_SHORTS, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
                              which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = None,
                              interactive: Annotated[bool, typer.Option(..., "--interactive", "-ia", help="Run in interactive mode")] = False):
     """🔗 Manage private configuration files."""
     import machineconfig.profile.create_links_export as create_links_export
-    create_links_export.main_private_from_parser(method=method, on_conflict=on_conflict, which=which, interactive=interactive)
+    match method:
+        case "symlink" | "s":
+            create_links_export.main_private_from_parser(method="symlink", on_conflict=SHORTS_TO_FULL[on_conflict], which=which, interactive=interactive)
+        case "copy" | "c":
+            create_links_export.main_private_from_parser(method="copy", on_conflict=SHORTS_TO_FULL[on_conflict], which=which, interactive=interactive)
 
-
-def public(method: Annotated[Literal["symlink", "copy"], typer.Option(..., "--method", "-m", help="Method to use for setting up the config file.")],
+def public(method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for setting up the config file.")],
                             on_conflict: Annotated[Literal["throw-error", "overwrite-default-path", "backup-default-path"], typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
                             which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = None,
                             interactive: Annotated[bool, typer.Option(..., "--interactive", "-ia", help="Run in interactive mode")] = False):
     """🔗 Manage public configuration files."""
     import machineconfig.profile.create_links_export as create_links_export
-    create_links_export.main_public_from_parser(method=method, on_conflict=on_conflict, which=which, interactive=interactive)
+    match method:
+        case "symlink" | "s":
+            create_links_export.main_public_from_parser(method="symlink", on_conflict=on_conflict, which=which, interactive=interactive)
+        case "copy" | "c":
+            create_links_export.main_public_from_parser(method="copy", on_conflict=on_conflict, which=which, interactive=interactive)
 
 
-def shell(which: Annotated[Literal["default", "nushell"], typer.Option(..., "--which", "-w", help="Which shell profile to create/configure")]="default"):
+def shell(which: Annotated[Literal["default", "d", "nushell", "n"], typer.Option(..., "--which", "-w", help="Which shell profile to create/configure")]="default"):
     """🔗 Configure your shell profile."""
-    from machineconfig.profile.create_shell_profile import create_default_shell_profile
+    from machineconfig.profile.create_shell_profile import create_default_shell_profile,  create_nu_shell_profile
     match which:
-        case "nushell":
+        case "nushell" | "n":
             create_nu_shell_profile()
-        case _:
+            return
+        case "default" | "d":
             create_default_shell_profile()
+            return
+    typer.echo(f"[red]Error:[/] Unknown shell profile type: {which}")
 
 
 def path():
@@ -87,15 +109,21 @@ def starship_theme():
         typer.echo("❌ Please enter a valid number")
 
 
-def copy_assets(which: Annotated[Literal["scripts", "settings", "both"], typer.Argument(..., help="Which assets to copy")]):
+def copy_assets(which: Annotated[Literal["scripts", "s", "settings", "t", "both", "b"], typer.Argument(..., help="Which assets to copy")]):
     """🔗 Copy asset files from library to machine."""
     import machineconfig.profile.create_helper as create_helper
     match which:
-        case "both":
+        case "both" | "b":
             create_helper.copy_assets_to_machine(which="scripts")
             create_helper.copy_assets_to_machine(which="settings")
-        case _:
-            create_helper.copy_assets_to_machine(which=which)
+            return
+        case "scripts" | "s":
+            create_helper.copy_assets_to_machine(which="scripts")
+            return
+        case "settings" | "t":
+            create_helper.copy_assets_to_machine(which="settings")
+            return
+    typer.echo(f"[red]Error:[/] Unknown asset type: {which}")
 
 
 def get_app():
