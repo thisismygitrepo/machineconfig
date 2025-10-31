@@ -6,6 +6,7 @@ import typer
 import machineconfig.scripts.python.helpers_devops.cli_config_dotfile as dotfile_module
 import machineconfig.profile.create_links_export as create_links_export
 
+
 def shell(which: Annotated[Literal["default", "d", "nushell", "n"], typer.Option(..., "--which", "-w", help="Which shell profile to create/configure")]="default"):
     """🔗 Configure your shell profile."""
     from machineconfig.profile.create_shell_profile import create_default_shell_profile,  create_nu_shell_profile

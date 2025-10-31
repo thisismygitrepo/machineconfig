@@ -1753,6 +1753,23 @@
       }
     },
     {
+      "appName": "miniserve",
+      "repoURL": "https://github.com/svenstaro/miniserve",
+      "doc": "📂 A small, self-contained file server with directory listings",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "miniserve-{version}-x86_64-unknown-linux-musl",
+          "darwin": "miniserve-{version}-x86_64-apple-darwin",
+          "windows": "miniserve-{version}-x86_64-pc-windows-msvc.exe"
+        },
+        "arm64": {
+          "linux": "miniserve-{version}-aarch64-unknown-linux-musl",
+          "darwin": "miniserve-{version}-aarch64-apple-darwin",
+          "windows": "miniserve-{version}-aarch64-pc-windows-msvc.exe"
+        }
+      }
+    },
+    {
       "appName": "cloudreve",
       "repoURL": "https://github.com/cloudreve/Cloudreve",
       "doc": "☁️ Self-hosted file management system with muilt-cloud support.",

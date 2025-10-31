@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Optional, Annotated
+from machineconfig.scripts.python.helpers_devops.cli_share_file import share_file_receive, share_file_send
 import typer
 
 
@@ -31,46 +32,71 @@ def display_share_url(local_ip_v4: str, port: int, protocol: str = "http") -> No
     console.print(panel)
 
 
-def main(
+def web_file_explorer(
     path: Annotated[str, typer.Argument(help="Path to the file or directory to share")],
     port: Annotated[Optional[int], typer.Option("--port", "-p", help="Port to run the share server on (default: 8080)")] = None,
     username: Annotated[Optional[str], typer.Option("--username", "-u", help="Username for share access (default: current user)")] = None,
     password: Annotated[Optional[str], typer.Option("--password", "-w", help="Password for share access (default: from ~/dotfiles/creds/passwords/quick_password)")] = None,
-    over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Expose the share server over the internet using ngrok")] = False
+    over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Expose the share server over the internet using ngrok")] = False,
+    backend: Annotated[str, typer.Option("--backend", "-b", help="Backend to use: filebrowser (default), miniserve, or easy-sharing")] = "filebrowser"
 ) -> None:
     from machineconfig.utils.installer_utils.installer import install_if_missing
-    install_if_missing(which="easy-sharing")
-    if over_internet: install_if_missing(which="ngrok", )
+    
+    if backend not in ["filebrowser", "miniserve", "easy-sharing"]:
+        typer.echo(f"❌ ERROR: Invalid backend '{backend}'. Must be one of: filebrowser, miniserve, easy-sharing", err=True)
+        raise typer.Exit(code=1)
+    
+    install_if_missing(which=backend)
+    if over_internet:
+        install_if_missing(which="ngrok")
+    
     if username is None:
         import getpass
         username = getpass.getuser()
+    
     if password is None:
         pwd_path = Path.home().joinpath("dotfiles/creds/passwords/quick_password")
         if pwd_path.exists():
             password = pwd_path.read_text(encoding="utf-8").strip()
         else:
-            # raise ValueError("Password not provided and default password file does not exist.")
             typer.echo(f"⚠️  WARNING: Password not provided and default password file does not exist.\nPath: {pwd_path}\nUsing default password: 'quick_password' (insecure!)", err=True)
-            typer.Exit(code=1)
+            raise typer.Exit(code=1)
 
     if port is None:
-        port = 8080  # Default port for ezshare
+        port = 8080
 
     import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('8.8.8.8',80))
+    s.connect(('8.8.8.8', 80))
     local_ip_v4 = s.getsockname()[0]
     s.close()
 
-    # Display the flashy share announcement  
     protocol = "http"
     display_share_url(local_ip_v4, port, protocol)
+    
     import subprocess
     import time
-    # Build ezshare command
-    ezshare_cmd = f"""easy-sharing --port {port} --username {username} --password "{password}" {path}"""
-    ezshare_process = subprocess.Popen(ezshare_cmd, shell=True)
-    processes = [ezshare_process]
+    
+    path_obj = Path(path).resolve()
+    if not path_obj.exists():
+        typer.echo(f"❌ ERROR: Path does not exist: {path}", err=True)
+        raise typer.Exit(code=1)
+    
+    server_process: subprocess.Popen[bytes]
+    if backend == "filebrowser":
+        fb_cmd = f"""filebrowser --address 0.0.0.0 --port {port} --username {username} --password "{password}" --root "{path_obj}" """
+        server_process = subprocess.Popen(fb_cmd, shell=True)
+    elif backend == "miniserve":
+        miniserve_cmd = f"""miniserve --port {port} --interfaces 0.0.0.0 --auth {username}:{password} --upload-files --mkdir --enable-tar --enable-tar-gz --enable-zip --qrcode "{path_obj}" """
+        server_process = subprocess.Popen(miniserve_cmd, shell=True)
+    elif backend == "easy-sharing":
+        ezshare_cmd = f"""easy-sharing --port {port} --username {username} --password "{password}" "{path_obj}" """
+        server_process = subprocess.Popen(ezshare_cmd, shell=True)
+    else:
+        typer.echo(f"❌ ERROR: Unknown backend '{backend}'", err=True)
+        raise typer.Exit(code=1)
+    
+    processes = [server_process]
     
     if over_internet:
         ngrok_process = subprocess.Popen(f"ngrok http {port}", shell=True)
@@ -87,146 +113,13 @@ def main(
     
     try:
         while True:
-            print("Share server is running. Press Ctrl+C to stop.")
+            print(f"Share server ({backend}) is running. Press Ctrl+C to stop.")
             time.sleep(2)
     except KeyboardInterrupt:
         print("\nTerminating processes...")
         for p in processes:
             p.terminate()
             p.wait()
-
-
-def share_file_send(path: Annotated[str, typer.Argument(help="Path to the file or directory to send")],
-                    zip_folder: Annotated[bool, typer.Option("--zip", help="Zip folder before sending")] = False,
-                    code: Annotated[str | None, typer.Option("--code", "-c", help="Codephrase used to connect to relay")] = None,
-                    text: Annotated[str | None, typer.Option("--text", "-t", help="Send some text")] = None,
-                    qrcode: Annotated[bool, typer.Option("--qrcode", "--qr", help="Show receive code as a qrcode")] = False,
-                    ) -> None:
-    """Send a file using croc with relay server."""
-    from machineconfig.utils.installer_utils.installer import install_if_missing
-    install_if_missing(which="croc")
-    # Get relay server IP from environment or use default
-    import socket
-    import platform
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('8.8.8.8',80))
-    local_ip_v4 = s.getsockname()[0]
-    s.close()
-    relay_port = "443"
-    is_windows = platform.system() == "Windows"
-
-    # Build command parts
-    relay_arg = f"--relay {local_ip_v4}:{relay_port} --ip {local_ip_v4}:{relay_port}"
-    zip_arg = "--zip" if zip_folder else ""
-    text_arg = f"--text '{text}'" if text else ""
-    qrcode_arg = "--qrcode" if qrcode else ""
-    path_arg = f"{path}" if not text else ""
-
-    if is_windows:
-        # Windows PowerShell format
-        code_arg = f"--code {code}" if code else ""
-        script = f"""croc {relay_arg} send {zip_arg} {code_arg} {qrcode_arg} {text_arg} {path_arg}"""
-    else:
-        # Linux/macOS Bash format
-        if code:
-            script = f"""export CROC_SECRET="{code}"
-croc {relay_arg} send {zip_arg} {qrcode_arg} {text_arg} {path_arg}"""
-        else:
-            script = f"""croc {relay_arg} send {zip_arg} {qrcode_arg} {text_arg} {path_arg}"""
-    
-    typer.echo(f"🚀 Sending file: {path}. Use: devops network receive")
-    from machineconfig.utils.code import exit_then_run_shell_script, print_code
-    print_code(code=script, desc="🚀 sending file with croc", lexer="bash" if platform.system() != "Windows" else "powershell")
-    exit_then_run_shell_script(script=script, strict=False)
-
-
-def share_file_receive(code_args: Annotated[list[str], typer.Argument(help="Receive code or relay command. Examples: '7121-donor-olympic-bicycle' or '--relay 10.17.62.206:443 7121-donor-olympic-bicycle'")],
-) -> None:
-    """Receive a file using croc with relay server.
-Usage examples:
-    devops network receive 7121-donor-olympic-bicycle
-    devops network receive -- --relay 10.17.62.206:443 7121-donor-olympic-bicycle
-    devops network receive -- croc --relay 10.17.62.206:443 7121-donor-olympic-bicycle
-"""
-    from machineconfig.utils.installer_utils.installer import install_if_missing
-    install_if_missing(which="croc")
-    import platform
-    import sys
-    
-    is_windows = platform.system() == "Windows"
-    
-    # If no args passed via typer, try to get them from sys.argv directly
-    # This handles the case where -- was used and arguments weren't parsed by typer
-    if not code_args or (len(code_args) == 1 and code_args[0] in ['--relay', 'croc']):
-        # Find the index of 'rx' or 'receive' in sys.argv and get everything after it
-        try:
-            for i, arg in enumerate(sys.argv):
-                if arg in ['rx', 'receive', 'r'] and i + 1 < len(sys.argv):
-                    code_args = sys.argv[i + 1:]
-                    break
-        except Exception:
-            pass
-    
-    # Join all arguments
-    input_str = " ".join(code_args)
-    tokens = input_str.split()
-    
-    # Parse input to extract relay server and secret code
-    relay_server: str | None = None
-    secret_code: str | None = None
-    
-    # Remove 'croc' and 'export' from tokens if present
-    tokens = [t for t in tokens if t not in ['croc', 'export']]
-    
-    # Look for --relay flag and capture next token
-    relay_idx = -1
-    for i, token in enumerate(tokens):
-        if token == '--relay' and i + 1 < len(tokens):
-            relay_server = tokens[i + 1]
-            relay_idx = i
-            break
-    
-    # Look for CROC_SECRET= prefix in any token
-    for token in tokens:
-        if token.startswith('CROC_SECRET='):
-            secret_code = token.split('=', 1)[1].strip('"').strip("'")
-            break
-    
-    # If no secret code found yet, look for tokens with dashes (typical pattern: number-word-word-word)
-    # Skip relay server and relay flag
-    if not secret_code:
-        for i, token in enumerate(tokens):
-            if '-' in token and not token.startswith('-') and token != relay_server:
-                if relay_idx >= 0 and (i == relay_idx or i == relay_idx + 1):
-                    continue  # Skip relay server parts
-                secret_code = token
-                break
-    
-    if not secret_code and not relay_server:
-        typer.echo(f"❌ Error: Could not parse croc receive code from input: {input_str}", err=True)
-        typer.echo("Usage:", err=True)
-        typer.echo("  devops network receive 7121-donor-olympic-bicycle", err=True)
-        typer.echo("  devops network receive -- --relay 10.17.62.206:443 7121-donor-olympic-bicycle", err=True)
-        raise typer.Exit(code=1)
-
-    # Build the appropriate script for current OS
-    if is_windows:
-        # Windows PowerShell format: croc --relay server:port secret-code --yes
-        relay_arg = f"--relay {relay_server}" if relay_server else ""
-        code_arg = f"{secret_code}" if secret_code else ""
-        script = f"""croc {relay_arg} {code_arg} --yes""".strip()
-    else:
-        # Linux/macOS Bash format: CROC_SECRET="secret-code" croc --relay server:port --yes
-        relay_arg = f"--relay {relay_server}" if relay_server else ""
-        if secret_code:
-            script = f"""export CROC_SECRET="{secret_code}"
-croc {relay_arg} --yes""".strip()
-        else:
-            script = f"""croc {relay_arg} --yes""".strip()
-    
-    from machineconfig.utils.code import exit_then_run_shell_script, print_code
-    print_code(code=script, desc="🚀 Receiving file with croc", lexer="bash" if platform.system() != "Windows" else "powershell")
-    exit_then_run_shell_script(script=script, strict=False)
 
 
 def get_share_file_app():
@@ -238,7 +131,7 @@ def get_share_file_app():
     return app
 
 def main_with_parser():
-    typer.run(main)
+    typer.run(web_file_explorer)
 
 
 if __name__ == "__main__":
