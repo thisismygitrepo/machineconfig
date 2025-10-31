@@ -13,6 +13,7 @@
 #     bind '"\C-o":"lfcd\C-m"'  # bash
 #     bindkey -s '^o' 'lfcd\n'  # zsh
 #
+
 lfcd () {
     # 🔄 Create temporary file for directory tracking
     tmp="$(mktemp)"

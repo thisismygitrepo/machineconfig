@@ -20,8 +20,9 @@ case "$file" in
     echo "x: $x, y: $y, width: $width, height: $height"
     
     if [ -n "$x" ]; then
-        echo "📐 Dimensions provided by caller, passing to viu"
-        viu "$file" -x "$x" -y "$y" -w "$width" -h "$height"
+        # echo "📐 Dimensions provided by caller, passing to viu"
+        # viu "$file" -x "$x" -y "$y" -w "$width" -h "$height"
+        # chafa --fit-width -f sixel "$file"
         echo "✅ Finished viu"
         chafa "$file"
         echo "✅ Finished chafa"

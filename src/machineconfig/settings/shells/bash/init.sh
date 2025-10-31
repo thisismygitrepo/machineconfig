@@ -56,7 +56,7 @@ alias r='wrap_in_shell_script croshell'
 alias u='wrap_in_shell_script utils'
 alias t='wrap_in_shell_script terminal'
 alias ms='wrap_in_shell_script msearch'
-
+alias x='. $CONFIG_ROOT/scripts/linux/wrap_mcfg explore'
 
 # alias gcs='gh copilot suggest -t shell'
 # alias gcg='gh copilot suggest -t git'
