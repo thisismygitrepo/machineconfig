@@ -1,0 +1,47 @@
+
+[[mgr.prepend_keymap]]
+on   = "!"
+for  = "unix"
+run  = 'shell "$SHELL" --block'
+desc = "Open $SHELL here"
+
+# If you also using Yazi on Windows:
+[[mgr.prepend_keymap]]
+on   = "!"
+for  = "windows"
+run  = 'shell "powershell.exe" --block'
+desc = "Open PowerShell here"
+
+
+# FROM https://github.com/yazi-rs/plugins/tree/main/toggle-pane.yazi
+# keymap.toml
+[[mgr.prepend_keymap]]
+on   = "T"
+run  = "plugin toggle-pane min-preview"
+desc = "Show or hide the preview pane"
+# keymap.toml
+[[mgr.prepend_keymap]]
+on   = "T"
+run  = "plugin toggle-pane max-preview"
+desc = "Maximize or restore the preview pane"
+
+[[mgr.prepend_keymap]]
+on = "M"            # whatever key you choose
+run = "plugin toggle-pane"
+desc = "Toggle preview pane / maximize pane"
+
+
+# https://yazi-rs.github.io/docs/tips#macos-quick-look
+[[mgr.prepend_keymap]]
+on   = "<C-p>"
+run  = 'shell -- qlmanage -p "$@"'
+
+[[mgr.prepend_keymap]]
+on   = "F"
+run  = 'shell -- ~/.config/machineconfig/scripts/linux/wrap_mcfg fire "$0"'
+desc = "Run wrap_mcfg fire on hovered file"
+
+
+[[mgr.prepend_keymap]]
+on = [ "g", "r" ]
+run = 'shell -- ya emit cd "$(git rev-parse --show-toplevel)"'

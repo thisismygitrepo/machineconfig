@@ -1,4 +1,12 @@
 
 [mgr]
 show_hidden = true
-ratio = [1, 3, 5]
+ratio = [1, 2, 5]
+
+[plugin]
+dir = "~/.config/yazi/plugins"
+
+[[plugin.load]]
+name = "toggle-pane"
+path = "toggle-pane.yazi"
+
