@@ -70,6 +70,23 @@
       }
     },
     {
+      "appName": "timg",
+      "repoURL": "CMD",
+      "doc": "👁️ terminal image previewer.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "sudo apt install timg",
+          "windows": null,
+          "macos": "brew install timg"
+        },
+        "arm64": {
+          "linux": "sudo apt install timg",
+          "windows": null,
+          "macos": "brew install timg"
+        }
+      }
+    },
+    {
       "appName": "diskonaut",
       "repoURL": "https://github.com/imsnif/diskonaut",
       "doc": "💾 like dua, diskonaut is a terminal disk space navigator.",
