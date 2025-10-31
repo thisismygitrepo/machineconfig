@@ -100,11 +100,15 @@ config = {this = '~/.config/rofi/config.rasi', to_this = 'CONFIG_ROOT/settings/r
 yazi = {this = '~/AppData/Roaming/yazi/config/yazi.toml', to_this = 'CONFIG_ROOT/settings/yazi/yazi.toml'}
 keymap = {this = '~/AppData/Roaming/yazi/config/keymap.toml', to_this = 'CONFIG_ROOT/settings/yazi/keymap.toml'}
 theme = {this = '~/AppData/Roaming/yazi/config/theme.toml', to_this = 'CONFIG_ROOT/settings/yazi/theme.toml'}
+init = {this = '~/AppData/Roaming/yazi/config/init.lua', to_this = 'CONFIG_ROOT/settings/yazi/init.lua'}
+
+
 
 [yazi_linux]
 yazi = {this = '~/.config/yazi/yazi.toml', to_this = 'CONFIG_ROOT/settings/yazi/yazi.toml'}
 keymap = {this = '~/.config/yazi/keymap.toml', to_this = 'CONFIG_ROOT/settings/yazi/keymap.toml'}
 theme = {this = '~/.config/yazi/theme.toml', to_this = 'CONFIG_ROOT/settings/yazi/theme.toml'}
+init = {this = '~/.config/yazi/init.lua', to_this = 'CONFIG_ROOT/settings/yazi/init.lua'}
 
 [lf_windows]
 config = {this = '~/AppData/Local/lf/lfrc', to_this = 'CONFIG_ROOT/settings/lf/windows/lfrc'}

@@ -19,10 +19,10 @@ ON_CONFLICT_MAPPER: dict[str, ON_CONFLICT_STRICT] = {
     }
 
 
-def main_public_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., help="Method to use for setting up the config file.")],
-                            on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., help="Action to take on conflict")],
-                            which: Annotated[Optional[str], typer.Option(..., help="Specific items to process")] = None,
-                            interactive: Annotated[bool, typer.Option(..., help="Run in interactive mode")] = False):
+def main_public_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for setting up the config file.")],
+                            on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
+                            which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process (default: all)")] = None,
+                            interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Run in interactive mode")] = False):
     """Terminology:
     SOURCE = Self-Managed-Config-File-Path
     TARGET = Config-File-Default-Path
@@ -40,7 +40,10 @@ def main_public_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c
         else:
             items_chosen = which.split(",")
     items_objections: dict[str, list[ConfigMapper]] = {item: mapper_full[item] for item in items_chosen if item in mapper_full}
-
+    if len(items_objections) == 0:
+        typer.echo("[red]Error:[/] No valid items selected.")
+        typer.Exit(code=1)
+        return
     from machineconfig.profile.create_links import apply_mapper
     from machineconfig.profile.create_helper import copy_assets_to_machine
     copy_assets_to_machine(which="settings")  # config files live here and will be linked to.
