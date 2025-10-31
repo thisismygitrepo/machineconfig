@@ -74,52 +74,55 @@ def web_file_explorer(
     protocol = "http"
     display_share_url(local_ip_v4, port, protocol)
     
-    import subprocess
-    import time
-    
     path_obj = Path(path).resolve()
     if not path_obj.exists():
         typer.echo(f"❌ ERROR: Path does not exist: {path}", err=True)
         raise typer.Exit(code=1)
     
-    server_process: subprocess.Popen[bytes]
     if backend == "filebrowser":
-        fb_cmd = f"""filebrowser --address 0.0.0.0 --port {port} --username {username} --password "{password}" --root "{path_obj}" """
-        server_process = subprocess.Popen(fb_cmd, shell=True)
+        db_path = Path.home().joinpath(".config/filebrowser/filebrowser.db")
+        db_path.parent.mkdir(parents=True, exist_ok=True)
+        command = f"""
+filebrowser users add {username} "{password}" --database {db_path}
+filebrowser --address 0.0.0.0 --port {port} --root "{path_obj}" --database {db_path}
+"""
     elif backend == "miniserve":
-        miniserve_cmd = f"""miniserve --port {port} --interfaces 0.0.0.0 --auth {username}:{password} --upload-files --mkdir --enable-tar --enable-tar-gz --enable-zip --qrcode "{path_obj}" """
-        server_process = subprocess.Popen(miniserve_cmd, shell=True)
+        command = f"""miniserve --port {port} --interfaces 0.0.0.0 --auth {username}:{password} --upload-files --mkdir --enable-tar --enable-tar-gz --enable-zip --qrcode "{path_obj}" """
     elif backend == "easy-sharing":
-        ezshare_cmd = f"""easy-sharing --port {port} --username {username} --password "{password}" "{path_obj}" """
-        server_process = subprocess.Popen(ezshare_cmd, shell=True)
+        command = f"""easy-sharing --port {port} --username {username} --password "{password}" "{path_obj}" """
     else:
         typer.echo(f"❌ ERROR: Unknown backend '{backend}'", err=True)
         raise typer.Exit(code=1)
+
+    from machineconfig.utils.code import exit_then_run_shell_script
+    exit_then_run_shell_script(script=command, strict=False)
+    # import subprocess
+    # import time
+    # server_process: subprocess.Popen[bytes]
+    # server_process = subprocess.Popen(command, shell=True)
+    # processes = [server_process]
+    # if over_internet:
+    #     ngrok_process = subprocess.Popen(f"ngrok http {port}", shell=True)
+    #     processes.append(ngrok_process)
+    #     time.sleep(3)
+    #     try:
+    #         import requests
+    #         response = requests.get("http://localhost:4040/api/tunnels")
+    #         data = response.json()
+    #         public_url = data['tunnels'][0]['public_url']
+    #         print(f"🌐 Ngrok tunnel ready: {public_url}")
+    #     except Exception as e:
+    #         print(f"Could not retrieve ngrok URL: {e}")
     
-    processes = [server_process]
-    
-    if over_internet:
-        ngrok_process = subprocess.Popen(f"ngrok http {port}", shell=True)
-        processes.append(ngrok_process)
-        time.sleep(3)
-        try:
-            import requests
-            response = requests.get("http://localhost:4040/api/tunnels")
-            data = response.json()
-            public_url = data['tunnels'][0]['public_url']
-            print(f"🌐 Ngrok tunnel ready: {public_url}")
-        except Exception as e:
-            print(f"Could not retrieve ngrok URL: {e}")
-    
-    try:
-        while True:
-            print(f"Share server ({backend}) is running. Press Ctrl+C to stop.")
-            time.sleep(2)
-    except KeyboardInterrupt:
-        print("\nTerminating processes...")
-        for p in processes:
-            p.terminate()
-            p.wait()
+    # try:
+    #     while True:
+    #         print(f"Share server ({backend}) is running. Press Ctrl+C to stop.")
+    #         time.sleep(2)
+    # except KeyboardInterrupt:
+    #     print("\nTerminating processes...")
+    #     for p in processes:
+    #         p.terminate()
+    #         p.wait()
 
 
 def get_share_file_app():

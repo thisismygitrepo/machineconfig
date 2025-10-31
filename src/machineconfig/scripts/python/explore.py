@@ -3,7 +3,7 @@ import typer
 
 
 def machineconfig_lf():
-    from machineconfig.scripts.python.helpers_msearch import FZFG_LINUX_PATH, FZFG_WINDOWS_PATH
+    # from machineconfig.scripts.python.helpers_msearch import FZFG_LINUX_PATH, FZFG_WINDOWS_PATH
     import platform
     if platform.system() == "Linux":
         script = """
