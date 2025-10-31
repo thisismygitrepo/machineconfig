@@ -4,19 +4,6 @@ import typer
 from typing import Annotated, Literal, Optional, TypedDict
 from pathlib import Path
 
-
-# def copy(path: Annotated[str, typer.Argument(..., help="Path of the file to copy to clipboard")]):
-#     def copy_internal(path: str):
-#         import pyperclip
-#         from pathlib import Path
-#         pyperclip.copy(Path(path).read_text(encoding="utf-8"))
-#     from machineconfig.utils.meta import lambda_to_python_script
-#     from machineconfig.utils.code import exit_then_run_shell_script, get_uv_command_executing_python_script
-#     py_script = lambda_to_python_script(lambda: copy_internal(path=str(path)), in_global=True, import_module=False)
-#     shell_script, _python_file = get_uv_command_executing_python_script(python_script=py_script, uv_with=["pyperclip"], uv_project_dir=None)
-#     exit_then_run_shell_script(shell_script, strict=True)
-
-
 def download(
     url: Annotated[Optional[str], typer.Argument(..., help="The URL to download the file from.")] = None,
     decompress: Annotated[bool, typer.Option("--decompress", "-d", help="Decompress the file if it's an archive.")] = False,
@@ -229,24 +216,31 @@ uv add --group plot \
     types-python-dateutil types-pyyaml types-requests types-tqdm \
     types-mysqlclient types-paramiko types-pytz types-sqlalchemy types-toml types-urllib3 \
 
-uv add --dev pylsp-mypy python-lsp-server[all] pyright ruff-lsp  # for helix editor.
 """
     from machineconfig.utils.code import run_shell_script
     run_shell_script(script)
-# def add_dev_packages(repo_dir: Annotated[Optional[str], typer.Option(..., "--repo-dir", "-r", help="Path to the repository root directory")] = None):
-#     if repo_dir is None:
-#         r_dir = Path.cwd()
-#     else:
-#         r_dir = Path(repo_dir).resolve()
-#     if not r_dir.exists() or not r_dir.is_dir() or not (r_dir / "pyproject.toml").exists():
-#         typer.echo(f"❌ The provided repo directory `{r_dir}` is not valid or does not contain a `pyproject.toml` file.")
-#         raise typer.Exit(code=1)
-#     command = f"""
-# cd "{r_dir}" || exit 1
-# uv add nbformat ipdb ipykernel ipython pylint pyright mypy pyrefly ty pytest
-# """
-#     from machineconfig.utils.code import run_shell_script
-#     typer.echo(f"➡️  Installing dev packages in repo at `{r_dir}`...")
-#     run_shell_script(command)
-#     typer.echo(f"✅ Dev packages installed successfully in repo at `{r_dir}`.")
-#     # TODO: see upgrade packages.
+
+
+def edit(path: Annotated[Optional[str], typer.Argument(..., help="The root directory of the project to edit, or a file path.")] = None) -> None:
+    if path is None:
+        root_path = Path.cwd()
+        print(f"No path provided. Using current working directory: {root_path}")
+    else:
+        root_path = Path(path).expanduser().resolve()
+        print(f"Using provided path: {root_path}")
+    from machineconfig.utils.accessories import get_repo_root
+    repo_root = get_repo_root(root_path)
+    if repo_root is not None and repo_root.joinpath("pyproject.toml").exists():
+        code = f"""
+cd {repo_root}
+uv add --dev pylsp-mypy python-lsp-server[all] pyright ruff-lsp  # for helix editor.
+source ./.venv/bin/activate
+"""
+    else:
+        code = ""
+    if root_path.is_file():
+        code += f"hx {root_path}"
+    else:
+        code += "hx"
+    from machineconfig.utils.code import exit_then_run_shell_script
+    exit_then_run_shell_script(code)

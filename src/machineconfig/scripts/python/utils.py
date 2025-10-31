@@ -1,6 +1,6 @@
 
 
-from machineconfig.scripts.python.helpers_devops.cli_utils import download, merge_pdfs, get_machine_specs, init_project, compress_pdf
+from machineconfig.scripts.python.helpers_devops.cli_utils import download, merge_pdfs, get_machine_specs, init_project, compress_pdf, edit
 import typer
 from typing import Annotated
 
@@ -39,6 +39,8 @@ def get_app() -> typer.Typer:
     app.command(name="g", no_args_is_help=False, hidden=True)(get_machine_specs)
     app.command(name="init-project", no_args_is_help=False, help="[i] Initialize a project with a uv virtual environment and install dev packages.")(init_project)
     app.command(name="i", no_args_is_help=False, hidden=True)(init_project)
+    app.command(name="edit", no_args_is_help=False, help="[e] Open a file in the default editor.")(edit)
+    app.command(name="e", no_args_is_help=False, hidden=True)(edit)
 
     app.command(name="pdf-merge", no_args_is_help=True, help="[pm] Merge two PDF files into one.")(merge_pdfs)
     app.command(name="pm", no_args_is_help=True, hidden=True)(merge_pdfs)

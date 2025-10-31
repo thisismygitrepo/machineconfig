@@ -55,7 +55,7 @@ desc = "Read with vscode"
 
 [[mgr.prepend_keymap]]
 on   = ["R", "h"]
-run  = 'shell --block -- hx "$0"'
+run  = 'shell --block -- ~/.config/machineconfig/scripts/linux/wrap_mcfg utils edit "$0"'
 desc = "Read with helix"
 
 [[mgr.prepend_keymap]]
