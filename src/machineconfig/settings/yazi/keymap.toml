@@ -39,7 +39,12 @@ run  = 'shell -- qlmanage -p "$@"'
 [[mgr.prepend_keymap]]
 on   = "F"
 run  = 'shell -- ~/.config/machineconfig/scripts/linux/wrap_mcfg fire "$0"'
-desc = "Run wrap_mcfg fire on hovered file"
+desc = "Run fire on hovered file"
+
+[[mgr.prepend_keymap]]
+on   = "R"
+run  = 'shell -- ~/.config/machineconfig/scripts/linux/wrap_mcfg croshell "$0"'
+desc = "Run croshell on hovered file"
 
 
 [[mgr.prepend_keymap]]
