@@ -28,6 +28,7 @@ if (Test-Path "$CONFIG_ROOT\scripts\windows\wrap_mcfg.ps1") {
     . $CONFIG_ROOT\settings\broot\brootcd.ps1
     . $CONFIG_ROOT\settings\lf\windows\lfcd.ps1
     . $CONFIG_ROOT\settings\tere\terecd.ps1
+    . $CONFIG_ROOT\settings\yazi\scripts\yazi_cd.ps1
     . $CONFIG_ROOT\scripts\windows\wrap_mcfg.ps1
 
     function lsdla { lsd -la }
