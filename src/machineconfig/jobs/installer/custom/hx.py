@@ -33,7 +33,7 @@ config_dict: InstallerData = {
 }
 
 
-def main(installer_data: InstallerData, version: Optional[str], install_lib: bool = False):
+def main(installer_data: InstallerData, version: Optional[str], install_lib: bool = True):
     _ = installer_data
     console = Console()
 
@@ -73,9 +73,6 @@ def main(installer_data: InstallerData, version: Optional[str], install_lib: boo
     print("\n🗑️  [Step 3/5] Cleaning up previous installation (if any)...")
     runtime_path = PathExtended.home().joinpath(".config/helix/runtime")
     contrib_path = PathExtended.home().joinpath(".config/helix/contrib")
-    runtime_path.delete(sure=True, verbose=False)
-    contrib_path.delete(sure=True, verbose=False)
-    print(f"   ✨ Cleaned '{runtime_path}' and '{contrib_path}'.")
 
     print("\n📦 [Step 4/5] Installing Helix components...")
     target_config_dir = PathExtended.home().joinpath(".config/helix").expanduser()
@@ -85,9 +82,40 @@ def main(installer_data: InstallerData, version: Optional[str], install_lib: boo
         target_bin_path = PathExtended(LINUX_INSTALL_PATH) if platform.system() == "Linux" else PathExtended("/usr/local/bin")
         exe_name = "hx"
         hx_file.move(folder=target_bin_path, overwrite=True)
+
+        # Always install contrib (regardless of install_lib flag) — treat it like the executable.
+        contrib_path.delete(sure=True, verbose=False)
+        contrib.move(folder=target_config_dir, overwrite=True)
+
+        # Install runtime only if install_lib is True. When copying runtime, copy all subfolders
+        # except 'grammars' (for which we only copy the specific python.so file if present).
         if install_lib:
-            contrib.move(folder=target_config_dir, overwrite=True)
-            runtime.move(folder=target_config_dir, overwrite=True)
+            runtime_path.delete(sure=True, verbose=False)
+            print(f"   ✨ Cleaned '{runtime_path}' and '{contrib_path}'.")
+            target_runtime = target_config_dir.joinpath("runtime")
+            target_runtime.mkdir(parents=True, exist_ok=True)
+
+            # iterate runtime children and copy selectively
+            for child in runtime.iterdir():
+                # skip non-existent or weird entries
+                if not child.exists():
+                    continue
+                if child.name == "grammars":
+                    # copy only the python.so file from runtime/grammars if it exists
+                    python_so = child.joinpath("python.so")
+                    if python_so.exists() and python_so.is_file():
+                        dest = target_runtime.joinpath("grammars")
+                        python_so.copy(folder=dest, overwrite=True)
+                else:
+                    # copy the whole child (file or directory) into target_runtime
+                    # for directories, copy will create target_runtime/<child.name>
+                    try:
+                        child.copy(folder=target_runtime, overwrite=True)
+                    except Exception:
+                        # fallback: try copying contents if it's a directory
+                        if child.is_dir():
+                            for sub in child.iterdir():
+                                sub.copy(folder=target_runtime.joinpath(child.name), overwrite=True)
         system_name = "Linux" if platform.system() == "Linux" else "macOS"
         console.print(
             Panel(
@@ -103,9 +131,33 @@ def main(installer_data: InstallerData, version: Optional[str], install_lib: boo
         target_bin_path = PathExtended(WINDOWS_INSTALL_PATH)
         exe_name = "hx.exe"
         hx_file.move(folder=target_bin_path, overwrite=True)
+
+        # Always install contrib (regardless of install_lib flag)
+        contrib_path.delete(sure=True, verbose=False)
+        contrib.move(folder=target_config_dir, overwrite=True)
+
+        # Install runtime only if install_lib is True. Copy selectively as on POSIX.
         if install_lib:
-            contrib.move(folder=target_config_dir, overwrite=True)
-            runtime.move(folder=target_config_dir, overwrite=True)
+            runtime_path.delete(sure=True, verbose=False)
+            print(f"   ✨ Cleaned '{runtime_path}' and '{contrib_path}'.")
+            target_runtime = target_config_dir.joinpath("runtime")
+            target_runtime.mkdir(parents=True, exist_ok=True)
+
+            for child in runtime.iterdir():
+                if not child.exists():
+                    continue
+                if child.name == "grammars":
+                    python_so = child.joinpath("python.so")
+                    if python_so.exists() and python_so.is_file():
+                        dest = target_runtime.joinpath("grammars")
+                        python_so.copy(folder=dest, overwrite=True)
+                else:
+                    try:
+                        child.copy(folder=target_runtime, overwrite=True)
+                    except Exception:
+                        if child.is_dir():
+                            for sub in child.iterdir():
+                                sub.copy(folder=target_runtime.joinpath(child.name), overwrite=True)
         console.print(
             Panel(
                 f"""✅ SUCCESS | Helix editor installed successfully on Windows!

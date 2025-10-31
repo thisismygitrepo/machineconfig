@@ -15,6 +15,7 @@ desc = "Open PowerShell here"
 
 # FROM https://github.com/yazi-rs/plugins/tree/main/toggle-pane.yazi
 # keymap.toml
+# parent, current, preview
 [[mgr.prepend_keymap]]
 on   = "T"
 run  = "plugin toggle-pane min-preview"
@@ -38,15 +39,37 @@ run  = 'shell -- qlmanage -p "$@"'
 
 [[mgr.prepend_keymap]]
 on   = "F"
-run  = 'shell -- ~/.config/machineconfig/scripts/linux/wrap_mcfg fire "$0"'
+run  = 'shell --block -- ~/.config/machineconfig/scripts/linux/wrap_mcfg fire "$0"'
 desc = "Run fire on hovered file"
-
-[[mgr.prepend_keymap]]
-on   = "R"
-run  = 'shell -- ~/.config/machineconfig/scripts/linux/wrap_mcfg croshell "$0"'
-desc = "Run croshell on hovered file"
 
 
 [[mgr.prepend_keymap]]
 on = [ "g", "r" ]
 run = 'shell -- ya emit cd "$(git rev-parse --show-toplevel)"'
+desc = "go to repo root"
+
+[[mgr.prepend_keymap]]
+on   = ["R", "v"]
+run  = 'shell -- code "$0"'
+desc = "Read with vscode"
+
+[[mgr.prepend_keymap]]
+on   = ["R", "h"]
+run  = 'shell --block -- hx "$0"'
+desc = "Read with helix"
+
+[[mgr.prepend_keymap]]
+on   = ["R", "c"]
+run  = 'shell --block -- ~/.config/machineconfig/scripts/linux/wrap_mcfg croshell "$0"'
+desc = "Read with croshell"
+
+
+[[mgr.prepend_keymap]]
+on   = ["R", "f"]
+run  = 'shell --block -- ~/.config/machineconfig/scripts/linux/wrap_mcfg fire "$0"'
+desc = "Read with fire"
+
+[[mgr.prepend_keymap]]
+on   = ["R", "F"]
+run  = 'shell --block -- ~/.config/machineconfig/scripts/linux/wrap_mcfg fire -i "$0"'
+desc = "Read with fire interactively"

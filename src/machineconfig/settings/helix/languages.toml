@@ -1,13 +1,22 @@
-# adopted from https://github.com/helix-editor/helix/wiki/How-to-install-the-default-language-servers#python---pyright--ruff--black
+# adopted from https://github.com/helix-editor/helix/wiki/Language-Server-Configurations
 # adopted from https://github.com/helix-editor/helix/discussions/6623
-# You will need: npm install pyright -g; pip install ruff-lsp; pip install black
+# You will need: uv add --dev pylsp-mypy python-lsp-server[all] pyright ruff-lsp
 
 [[language]]
 name = "python"
-language-servers = [ "pyright", "ruff" ]
+language-servers = ["pylsp", "pyright", "ruff", "pyrefly"]
+
+[language-server.pyrefly]
+command = "pyrefly"
+args = [ "lsp" ]
+
+[language-server.pylsp.config.pylsp]
+plugins.pylsp_mypy.enabled = true
+plugins.pylsp_mypy.live_mode = true
+
 
 [language-server.pyright.config.python.analysis]
-typeCheckingMode = "basic"
+typeCheckingMode = "strict"
 
 [language-server.ruff]
 command = "ruff-lsp"

@@ -2,4 +2,4 @@
 
 terminal_title = "{file} 🐄"
 
-capture_mouse: false
+capture_mouse = false

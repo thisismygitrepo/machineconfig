@@ -10,3 +10,8 @@ dir = "~/.config/yazi/plugins"
 name = "toggle-pane"
 path = "toggle-pane.yazi"
 
+
+[preview]
+# Change them to your desired values
+max_width  = 1000
+max_height = 1000

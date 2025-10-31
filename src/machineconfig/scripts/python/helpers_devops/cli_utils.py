@@ -228,6 +228,8 @@ uv add --group plot \
     # Type hints for packages
     types-python-dateutil types-pyyaml types-requests types-tqdm \
     types-mysqlclient types-paramiko types-pytz types-sqlalchemy types-toml types-urllib3 \
+
+uv add --dev pylsp-mypy python-lsp-server[all] pyright ruff-lsp  # for helix editor.
 """
     from machineconfig.utils.code import run_shell_script
     run_shell_script(script)
