@@ -31,11 +31,11 @@ export-env {
     let config_root = $"($env.HOME)/.config/machineconfig"
     load-env { CONFIG_ROOT: $config_root }
 
-    let new_path = (add_to_path_if_not_already $"($config_root)/scripts/linux" $"($env.HOME)/dotfiles/scripts/linux" "/usr/local/bin")
+    let new_path = (add_to_path_if_not_already $"($config_root)/scripts" $"($env.HOME)/dotfiles/scripts/linux" "/usr/local/bin")
     load-env { PATH: $new_path }
 
     # Source external scripts and define aliases
-    if ($"($config_root)/scripts/linux" | path exists) {
+    if ($"($config_root)/scripts" | path exists) {
         # Source helper scripts
     # let broot_script = ($config_root | path join "settings" "broot" "brootcd.nu")
     # let lf_script = ($config_root | path join "settings" "lf" "linux" "lfcd.nu")

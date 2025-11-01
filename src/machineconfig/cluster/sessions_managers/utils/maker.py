@@ -20,10 +20,10 @@ def get_fire_tab_using_fire(func: FunctionType):
     from machineconfig.utils.source_of_truth import CONFIG_ROOT
     import platform
     if platform.system().lower() == "windows":
-        wrap_mcfg = CONFIG_ROOT / "scripts/windows/wrap_mcfg.ps1"
+        wrap_mcfg = CONFIG_ROOT / "scripts/wrap_mcfg.ps1"
         wrap_mcfg = f'& "{wrap_mcfg}"'
     elif platform.system().lower() == "linux" or platform.system().lower() == "darwin":
-        wrap_mcfg = CONFIG_ROOT / "scripts/linux/wrap_mcfg"
+        wrap_mcfg = CONFIG_ROOT / "scripts/wrap_mcfg"
     else:
         raise ValueError(f"Unsupported platform: {platform.system()}")
     path = Path(inspect.getfile(func))
