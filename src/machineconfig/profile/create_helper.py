@@ -57,7 +57,7 @@ def copy_assets_to_machine(which: Literal["scripts", "settings"]) -> None:
         from rich.console import Console
         console = Console()
         console.print("\n[bold]📜 Setting executable permissions for scripts...[/bold]")
-        scripts_path = CONFIG_ROOT.joinpath(f"scripts/{system_name}")
+        scripts_path = CONFIG_ROOT.joinpath("scripts")
         subprocess.run(f"chmod +x {scripts_path} -R", shell=True, capture_output=True, text=True, check=False)
         console.print("[green]✅ Script permissions updated[/green]")
 
