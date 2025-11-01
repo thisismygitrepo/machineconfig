@@ -17,7 +17,7 @@ def copy_assets_to_machine(which: Literal["scripts", "settings"]):
     match which:
         case "scripts":
             source = LIBRARY_ROOT.joinpath("scripts", system)
-            target = CONFIG_ROOT.joinpath("scripts", system)
+            target = CONFIG_ROOT.joinpath("scripts")
             PathExtended(LIBRARY_ROOT.joinpath("scripts", "nu", "wrap_mcfg.nu")).copy(folder=CONFIG_ROOT.joinpath("scripts"), overwrite=True)
         case "settings":
             source = LIBRARY_ROOT.joinpath("settings")

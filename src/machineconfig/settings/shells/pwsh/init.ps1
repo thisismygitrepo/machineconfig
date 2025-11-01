@@ -15,7 +15,7 @@ function Add-ToPathIfNotAlready {
 }
 
 Add-ToPathIfNotAlready -Directories @(
-    "$CONFIG_ROOT\scripts\windows",
+    "$CONFIG_ROOT\scripts",
     "$HOME\dotfiles\scripts\windows",
     "C:\Program Files (x86)\GnuWin32\bin",
     "C:\Program Files\CodeBlocks\MinGW\bin",
@@ -24,12 +24,12 @@ Add-ToPathIfNotAlready -Directories @(
 )
 
 # sources  ================================================================
-if (Test-Path "$CONFIG_ROOT\scripts\windows\wrap_mcfg.ps1") {
+if (Test-Path "$CONFIG_ROOT\scripts\wrap_mcfg.ps1") {
     . $CONFIG_ROOT\settings\broot\brootcd.ps1
     . $CONFIG_ROOT\settings\lf\windows\lfcd.ps1
     . $CONFIG_ROOT\settings\tere\terecd.ps1
     . $CONFIG_ROOT\settings\yazi\shell\yazi_cd.ps1
-    . $CONFIG_ROOT\scripts\windows\wrap_mcfg.ps1
+    . $CONFIG_ROOT\scripts\wrap_mcfg.ps1
 
     function lsdla { lsd -la }
     Set-Alias -Name l -Value lsdla -Option AllScope

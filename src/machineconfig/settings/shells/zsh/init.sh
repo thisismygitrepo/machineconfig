@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 # Record script start time for runtime measurement
 # _START_TIME_NS=$(date +%s%N)
 # _show_elapsed() {
@@ -10,7 +10,7 @@
 #     printf "Script runtime: %d.%03d seconds\n" "$_secs" "$_ms"
 # }
 
-# 🛠️ Bash Shell Configuration and Initialization
+# 🛠️ Zsh Shell Configuration and Initialization
 
 add_to_path_if_not_already() {
     for dir in "$@"; do
@@ -23,7 +23,7 @@ CONFIG_ROOT="$HOME/.config/machineconfig"
 
 # 📂 Add directories to PATH
 add_to_path_if_not_already \
-    "$CONFIG_ROOT/scripts/linux" \
+    "$CONFIG_ROOT/scripts" \
     "$HOME/dotfiles/scripts/linux" \
     "$HOME/.local/bin" \
     "$HOME/.cargo/bin" \
@@ -37,23 +37,27 @@ add_to_path_if_not_already \
 . $CONFIG_ROOT/settings/broot/br.sh
 . $CONFIG_ROOT/settings/lf/linux/exe/lfcd.sh
 . $CONFIG_ROOT/settings/tere/terecd.sh
-. $CONFIG_ROOT/settings/yazi/scripts/yazi_cd.sh
+. $CONFIG_ROOT/settings/yazi/shell/yazi_cd.sh
+. $CONFIG_ROOT/scripts/wrap_mcfg
+
 # check if file in ~/dotfiles/machineconfig/init_linux.sh exists and source it
 if [ -f "$HOME/dotfiles/machineconfig/init_linux.sh" ]; then
     # echo "Sourcing $HOME/dotfiles/machineconfig/init_linux.sh"
     source "$HOME/dotfiles/machineconfig/init_linux.sh"
 fi
 
-# set alias l to lsd -la
 alias l='lsd -la'
-alias d=devops
-alias c=cloud
-alias a=agents
-alias s=sessions
-alias ff=ftpx
-alias f=fire
-alias r=croshell
-alias u=utils
+alias d='wrap_in_shell_script devops'
+alias c='wrap_in_shell_script cloud'
+alias a='wrap_in_shell_script agents'
+alias s='wrap_in_shell_script sessions'
+alias fx='wrap_in_shell_script ftpx'
+alias f='wrap_in_shell_script fire'
+alias r='wrap_in_shell_script croshell'
+alias u='wrap_in_shell_script utils'
+alias t='wrap_in_shell_script terminal'
+alias ms='wrap_in_shell_script msearch'
+alias x='. $CONFIG_ROOT/scripts/linux/wrap_mcfg explore'
 
 # alias gcs='gh copilot suggest -t shell'
 # alias gcg='gh copilot suggest -t git'

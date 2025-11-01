@@ -23,7 +23,7 @@ CONFIG_ROOT="$HOME/.config/machineconfig"
 
 # 📂 Add directories to PATH
 add_to_path_if_not_already \
-    "$CONFIG_ROOT/scripts/linux" \
+    "$CONFIG_ROOT/scripts" \
     "$HOME/dotfiles/scripts/linux" \
     "$HOME/.local/bin" \
     "$HOME/.cargo/bin" \
@@ -38,7 +38,7 @@ add_to_path_if_not_already \
 . $CONFIG_ROOT/settings/lf/linux/exe/lfcd.sh
 . $CONFIG_ROOT/settings/tere/terecd.sh
 . $CONFIG_ROOT/settings/yazi/shell/yazi_cd.sh
-. $CONFIG_ROOT/scripts/linux/wrap_mcfg
+. $CONFIG_ROOT/scripts/wrap_mcfg
 
 # check if file in ~/dotfiles/machineconfig/init_linux.sh exists and source it
 if [ -f "$HOME/dotfiles/machineconfig/init_linux.sh" ]; then
