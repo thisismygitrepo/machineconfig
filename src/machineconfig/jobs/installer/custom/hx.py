@@ -58,6 +58,7 @@ def main(installer_data: InstallerData, version: Optional[str], install_lib: boo
         raise FileNotFoundError(f"Could not find 'hx' executable in {downloaded.name}")
 
     assert len(hx_file_search) == 1, f"Expected 1 'hx' executable, found {len(hx_file_search)}"
+
     hx_file = hx_file_search[0]
     contrib = hx_file.parent / "contrib"
     runtime = contrib.parent / "runtime"

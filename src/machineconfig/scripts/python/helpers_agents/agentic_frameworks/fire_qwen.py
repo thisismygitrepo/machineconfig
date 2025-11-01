@@ -5,22 +5,10 @@ from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import
 
 
 def fire_qwen(ai_spec: AI_SPEC, prompt_path: Path, repo_root: Path, config_dir: str | None) -> str:
-    # assert model == "qwen", "Only qwen is supported currently."
-    # assert provider == "qwen", "Only qwen is supported currently."
-    # model = "qwen"
-    # model = "gemini-2.5-flash-lite"
-    # model = None  # auto-select
-    # if model is None:
-    #     model_arg = ""
-    # else:
     _ = ai_spec["provider"]
-    # model_arg = f"--model {shlex.quote(model)}"
-    # Need a real shell for the pipeline; otherwise '| gemini ...' is passed as args to 'cat'
     safe_path = shlex.quote(str(prompt_path))
-
     match ai_spec["machine"]:
         case "local":
-            # Export the environment variable so it's available to subshells
             cmd = f"""
 qwen --yolo --prompt {safe_path}
     """

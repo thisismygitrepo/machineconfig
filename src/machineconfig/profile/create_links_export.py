@@ -59,22 +59,31 @@ def main_public_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c
 
 def main_private_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., help="Method to use for linking files")],
                              on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., help="Action to take on conflict")] = "throw-error",
-                             which: Annotated[Optional[str], typer.Option(..., help="Specific items to process")] = None,
-                             interactive: Annotated[bool, typer.Option(..., help="Run in interactive mode")] = False):
+                             which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = None,
+                             interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Run in interactive mode")] = False):
     from machineconfig.profile.create_links import ConfigMapper, read_mapper
     mapper_full = read_mapper()["private"]
     if which is None:
-        assert interactive is True
+        if interactive is False:
+            typer.echo("[red]Error:[/] --which must be provided when not running in interactive mode.")
+            typer.Exit(code=1)
+            return
         from machineconfig.utils.options import choose_from_options
         items_chosen = choose_from_options(msg="Which symlink to create?", options=list(mapper_full.keys()), fzf=True, multi=True)
     else:
-        assert interactive is False
+        if interactive is True:
+            typer.echo("[yellow]Warning:[/] --which is provided, but its not allowed to be used together with --interactive. Ignoring --interactive flag.")
+            typer.Exit(code=0)
+            return
         if which == "all":
             items_chosen = list(mapper_full.keys())
         else:
             items_chosen = which.split(",")
     items_objections: dict[str, list[ConfigMapper]] = {item: mapper_full[item] for item in items_chosen if item in mapper_full}
-
+    if len(items_objections) == 0:
+        typer.echo("[red]Error:[/] No valid items selected.")
+        typer.Exit(code=1)
+        return
     from machineconfig.profile.create_links import apply_mapper
     method_map: dict[str, Literal["symlink", "copy"]] = {
         "s": "symlink",

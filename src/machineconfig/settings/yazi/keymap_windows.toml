@@ -12,7 +12,6 @@ for  = "windows"
 run  = 'shell "powershell.exe" --block'
 desc = "Open PowerShell here"
 
-
 # FROM https://github.com/yazi-rs/plugins/tree/main/toggle-pane.yazi
 # keymap.toml
 # parent, current, preview

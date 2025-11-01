@@ -145,8 +145,10 @@ def ftpx(
         received_file = PathExtended(resolved_target)  # type: ignore
     else:
         if source_is_remote:
-            assert resolved_source is not None, """
-❌ Path Error: Source must be a remote path (machine:path)"""
+            if resolved_source is None:
+                typer.echo("""❌ Path Error: Source must be a remote path (machine:path)""")
+                typer.Exit(code=1)
+                return                
             target_display = resolved_target or "<auto>"
             console.print(
                 Panel(
