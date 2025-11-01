@@ -229,7 +229,7 @@ config = { this = '~/AppData/Roaming/helix/config.toml', to_this = 'CONFIG_ROOT/
 [helix_linux]
 languages = { this = '~/.config/helix/languages.toml', to_this = 'CONFIG_ROOT/settings/helix/languages.toml' }
 config = { this = '~/.config/helix/config.toml', to_this = 'CONFIG_ROOT/settings/helix/config.toml' }
-yazi_picker = { this = '~/.config/helix/yazi_picker.sh', to_this = 'CONFIG_ROOT/settings/helix/yazi_picker.sh' }
+yazi_picker = { this = '~/.config/helix/yazi-picker.sh', to_this = 'CONFIG_ROOT/settings/helix/yazi-picker.sh' }
 
 [lvim_windows]
 config = { this = '~/AppData/Local/lvim/config.lua', to_this = 'CONFIG_ROOT/settings/lvim/windows/config.lua' }

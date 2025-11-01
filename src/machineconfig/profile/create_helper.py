@@ -12,19 +12,18 @@ def copy_assets_to_machine(which: Literal["scripts", "settings"]):
         system = "linux"
     else:
         raise NotImplementedError(f"System {platform.system().lower()} not supported")
+
     from machineconfig.utils.path_extended import PathExtended
     match which:
         case "scripts":
             source = LIBRARY_ROOT.joinpath("scripts", system)
             target = CONFIG_ROOT.joinpath("scripts", system)
-
             PathExtended(LIBRARY_ROOT.joinpath("scripts", "nu", "wrap_mcfg.nu")).copy(folder=CONFIG_ROOT.joinpath("scripts"), overwrite=True)
         case "settings":
             source = LIBRARY_ROOT.joinpath("settings")
             target = CONFIG_ROOT.joinpath("settings")
 
     PathExtended(source).copy(folder=target.parent, overwrite=True)
-
     import platform
     system = platform.system().lower()
     if system == "linux" and which == "scripts":
@@ -35,4 +34,13 @@ def copy_assets_to_machine(which: Literal["scripts", "settings"]):
         subprocess.run(f"chmod +x {CONFIG_ROOT.joinpath(f'scripts/{system.lower()}')} -R", shell=True, capture_output=True, text=True)
         console.print("[green]✅ Script permissions updated[/green]")
 
-
+    yazi_plugins_dir = PathExtended.home().joinpath(".config", "yazi")
+    if not yazi_plugins_dir.joinpath("plugins").exists():
+        # git clone from https://github.com/yazi-rs/plugins
+        import git
+        git.Repo.clone_from("https://github.com/yazi-rs/plugins", yazi_plugins_dir.joinpath("plugins"))
+    else:
+        # import git
+        # yazi_plugins_repo = git.Repo(yazi_plugins_dir.joinpath("plugins"))
+        # yazi_plugins_repo.remotes.origin.pull()
+        pass

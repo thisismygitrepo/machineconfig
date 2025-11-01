@@ -73,3 +73,7 @@ desc = "Read with fire"
 on   = ["R", "F"]
 run  = 'shell --block -- ~/.config/machineconfig/scripts/linux/wrap_mcfg fire -i "$0"'
 desc = "Read with fire interactively"
+
+[[mgr.prepend_keymap]]
+on  = "y"
+run = [ 'shell -- echo "$@" | cb cp0', "yank" ]

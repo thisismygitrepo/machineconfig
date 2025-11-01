@@ -3,6 +3,7 @@ from typing import Literal, TypeAlias, Union
 # AI/LLM Tools - AI-powered coding and chat assistants
 AGENTS = [
     "aider",
+    "aichat",
     "copilot",
     "gemini",
     "crush",
