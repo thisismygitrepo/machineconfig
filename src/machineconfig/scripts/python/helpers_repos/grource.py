@@ -100,7 +100,7 @@ def install_gource_windows(version: Optional[str] = None) -> None:
 
 
 def visualize(
-    repo: Annotated[str, typer.Option("--repo", "-r", help="Path to git repository to visualize")] = Path.cwd().__str__(),
+    repo: Annotated[str, typer.Option("--repo", "-r", help="Path to git repository to visualize")] = ".",
     output_file: Annotated[Optional[Path], typer.Option("--output", "-o", help="Output video file (e.g., output.mp4). If specified, gource will render to video.")] = None,
     resolution: Annotated[str, typer.Option("--resolution", "-res", help="Video resolution (e.g., 1920x1080, 1280x720)")] = "1920x1080",
     seconds_per_day: Annotated[float, typer.Option("--seconds-per-day", "-spd", help="Speed of simulation (lower = faster)")] = 0.1,

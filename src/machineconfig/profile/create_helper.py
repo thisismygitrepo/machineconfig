@@ -1,49 +1,74 @@
 
 from typing import Literal
+from pathlib import Path
+import shutil
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT, CONFIG_ROOT
 
 
-def copy_assets_to_machine(which: Literal["scripts", "settings"]):
-    # callers, symlink public, shell profile adder (requires init.ps1 and scripts dir to be present on machine)
+def _copy_path(source: Path, target: Path, overwrite: bool = False) -> None:
+    source = source.expanduser().resolve()
+    target = target.expanduser().resolve()
+    if not source.exists():
+        raise FileNotFoundError(f"Source path does not exist: {source}")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if target.exists() and not overwrite:
+        raise FileExistsError(f"Target already exists and overwrite=False: {target}")
+    if target.exists() and overwrite:
+        if target.is_dir():
+            shutil.rmtree(target)
+        else:
+            target.unlink()
+    if source.is_file():
+        shutil.copy2(source, target)
+    elif source.is_dir():
+        shutil.copytree(source, target, dirs_exist_ok=overwrite)
+    else:
+        raise ValueError(f"Source is neither file nor directory: {source}")
+
+
+def copy_assets_to_machine(which: Literal["scripts", "settings"]) -> None:
     import platform
-    if platform.system().lower() == "windows":
+    import subprocess
+    
+    system_name = platform.system().lower()
+    if system_name == "windows":
         system = "windows"
-    elif platform.system().lower() == "linux" or platform.system().lower() == "darwin":
+    elif system_name in {"linux", "darwin"}:
         system = "linux"
     else:
-        raise NotImplementedError(f"System {platform.system().lower()} not supported")
+        raise NotImplementedError(f"System {system_name} not supported")
 
-    from machineconfig.utils.path_extended import PathExtended
     match which:
         case "scripts":
             source = LIBRARY_ROOT.joinpath("scripts", system)
             target = CONFIG_ROOT.joinpath("scripts")
-            PathExtended(LIBRARY_ROOT.joinpath("scripts", "nu", "wrap_mcfg.nu")).copy(folder=CONFIG_ROOT.joinpath("scripts"), overwrite=True)
+            
+            wrap_mcfg_source = LIBRARY_ROOT.joinpath("scripts", "nu", "wrap_mcfg.nu")
+            wrap_mcfg_target = CONFIG_ROOT.joinpath("scripts", "wrap_mcfg.nu")
+            wrap_mcfg_target.parent.mkdir(parents=True, exist_ok=True)
+            _copy_path(source=wrap_mcfg_source, target=wrap_mcfg_target, overwrite=True)
         case "settings":
             source = LIBRARY_ROOT.joinpath("settings")
             target = CONFIG_ROOT.joinpath("settings")
 
-    PathExtended(source).copy(folder=target.parent, overwrite=True)
-    import platform
-    system = platform.system().lower()
-    if system == "linux" and which == "scripts":
-        import subprocess
+    _copy_path(source=source, target=target, overwrite=True)
+    
+    if system_name == "linux" and which == "scripts":
         from rich.console import Console
         console = Console()
         console.print("\n[bold]📜 Setting executable permissions for scripts...[/bold]")
-        subprocess.run(f"chmod +x {CONFIG_ROOT.joinpath(f'scripts/{system.lower()}')} -R", shell=True, capture_output=True, text=True)
+        scripts_path = CONFIG_ROOT.joinpath(f"scripts/{system_name}")
+        subprocess.run(f"chmod +x {scripts_path} -R", shell=True, capture_output=True, text=True, check=False)
         console.print("[green]✅ Script permissions updated[/green]")
 
-    if platform.system().lower() == "windows":
-        yazi_plugins_dir = PathExtended.home().joinpath("AppData", "Roaming", "yazi", "config")
+    home_dir = Path.home()
+    if system_name == "windows":
+        yazi_plugins_dir = home_dir.joinpath("AppData", "Roaming", "yazi", "config")
     else:
-        yazi_plugins_dir = PathExtended.home().joinpath(".config", "yazi")
-    if not yazi_plugins_dir.joinpath("plugins").exists():
-        # git clone from https://github.com/yazi-rs/plugins
+        yazi_plugins_dir = home_dir.joinpath(".config", "yazi")
+    
+    yazi_plugins_path = yazi_plugins_dir.joinpath("plugins")
+    if not yazi_plugins_path.exists():
+        yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
         import git
-        git.Repo.clone_from("https://github.com/yazi-rs/plugins", yazi_plugins_dir.joinpath("plugins"))
-    else:
-        # import git
-        # yazi_plugins_repo = git.Repo(yazi_plugins_dir.joinpath("plugins"))
-        # yazi_plugins_repo.remotes.origin.pull()
-        pass
+        git.Repo.clone_from("https://github.com/yazi-rs/plugins", yazi_plugins_path)
