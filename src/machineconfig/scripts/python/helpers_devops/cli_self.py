@@ -9,7 +9,9 @@ def copy_both_assets():
     create_helper.copy_assets_to_machine(which="settings")
 
 
-def update(copy_assets: Annotated[bool, typer.Option("--assets-copy/--no-assets-copy", "-a/-na", help="Copy (overwrite) assets to the machine after the update")] = True):
+def update(copy_assets: Annotated[bool, typer.Option("--assets-copy/--no-assets-copy", "-a/-na", help="Copy (overwrite) assets to the machine after the update")] = True,
+           link_public_configs: Annotated[bool, typer.Option("--link-public-configs/--no-link-public-configs", "-b/-nb", help="Link public configs after update (overwrites your configs!)")] = False,
+           ):
     """🔄 UPDATE uv and machineconfig"""
     from pathlib import Path
     if Path.home().joinpath("code", "machineconfig").exists():
@@ -34,8 +36,12 @@ uv tool install --upgrade machineconfig
     else:
         from machineconfig.utils.code import run_shell_script
         run_shell_script(shell_script)
-    if copy_assets:
-        copy_both_assets()
+        if copy_assets:
+            copy_both_assets()
+        if link_public_configs:
+            import machineconfig.profile.create_links_export as create_links_export
+            create_links_export.main_public_from_parser(method="copy", on_conflict="overwrite-default-path", which="all", interactive=False)
+
 
 def install(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-na", help="Copy (overwrite) assets to the machine after the update")] = False):
     """📋 CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates."""

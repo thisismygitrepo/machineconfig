@@ -7,7 +7,7 @@ import machineconfig.scripts.python.helpers_devops.cli_config_dotfile as dotfile
 import machineconfig.profile.create_links_export as create_links_export
 
 
-def shell(which: Annotated[Literal["default", "d", "nushell", "n"], typer.Option(..., "--which", "-w", help="Which shell profile to create/configure")]="default"):
+def configure_shell_profile(which: Annotated[Literal["default", "d", "nushell", "n"], typer.Option(..., "--which", "-w", help="Which shell profile to create/configure")]="default"):
     """🔗 Configure your shell profile."""
     from machineconfig.profile.create_shell_profile import create_default_shell_profile,  create_nu_shell_profile
     match which:
@@ -97,8 +97,8 @@ def get_app():
     config_apps.command("b", no_args_is_help=True, help="Manage public configuration files.", hidden=True)(create_links_export.main_public_from_parser)
     config_apps.command("dotfile", no_args_is_help=True, help="🔗  [d] Manage dotfiles.")(dotfile_module.main)
     config_apps.command("d", no_args_is_help=True,  hidden=True)(dotfile_module.main)
-    config_apps.command("shell", no_args_is_help=False, help="🔗  [s] Configure your shell profile.")(shell)
-    config_apps.command("s", no_args_is_help=False, help="Configure your shell profile.", hidden=True)(shell)
+    config_apps.command("shell", no_args_is_help=False, help="🔗  [s] Configure your shell profile.")(configure_shell_profile)
+    config_apps.command("s", no_args_is_help=False, help="Configure your shell profile.", hidden=True)(configure_shell_profile)
     config_apps.command("path", no_args_is_help=False, help="📚  [p] NAVIGATE PATH variable with TUI")(path)
     config_apps.command("p", no_args_is_help=False, help="NAVIGATE PATH variable with TUI", hidden=True)(path)
     config_apps.command("starship-theme", no_args_is_help=False, help="🔗  [t] Select starship prompt theme.")(starship_theme)
