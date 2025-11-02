@@ -3,11 +3,13 @@
 # --GROUP:ESSENTIAL_SYSTEM:WT+Brave+VSCode+WezTerm+OhMyPosh+Powershell+Starship+Git+Neovim+GNU Nano+Terminal-Icons+PSFzf
 winget install --no-upgrade --name "Powershell"                   --Id "Microsoft.PowerShell"       --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
 winget install --no-upgrade --name "Windows Terminal"             --Id "Microsoft.WindowsTerminal"  --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W 11
+winget install --no-upgrade --name "GNU Nano"                     --Id "GNU.Nano"                   --source winget --scope user --accept-package-agreements --accept-source-agreements
+
+# --GROUP:GUI:Brave+VSCode+Git+WezTerm+GNU Nano
 winget install --no-upgrade --name "Brave"                        --Id "Brave.Brave"                --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "WezTerm"                      --Id "wez.wezterm"                --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Git"                          --Id "Git.Git"                    --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "GNU Nano"                     --Id "GNU.Nano"                   --source winget --scope user --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "WezTerm"                      --Id "wez.wezterm"                --source winget --accept-package-agreements --accept-source-agreements
 # winget install --no-upgrade --name "File"                         --Id "GnuWin32.File"              --source winget --accept-package-agreements --accept-source-agreements
 # winget install --no-upgrade --name "Neovim"                       --Id "Neovim.Neovim"              --source winget --scope user --accept-package-agreements --accept-source-agreements
 # winget install --no-upgrade --name "Oh My Posh"                   --Id "JanDeDobbeleer.OhMyPosh"    --source winget --scope user --accept-package-agreements --accept-source-agreements
@@ -43,7 +45,7 @@ winget install --no-upgrade --name "StreamlabsOBS"                      --Id "St
 winget install --no-upgrade --name "OBSStudio"                          --Id "OBSProject.OBSStudio"              --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "MiKTeX"                             --Id "MiKTeX.MiKTeX"                     --source winget   --scope user  # library / lanugage
 winget install --no-upgrade --name "TexMaker"                           --Id "Texmaker.Texmaker"                 --source winget --scope user  # IDE better than simple TexWorks shipped with MikTex. IDE is basically GUI for cmd interface of Tex
-winget install --no-upgrade --name "notepad++"                          --Id "Notepad++.Notepad++"               --source winget --scope user --accept-package-agreements --accept-source-agreements
+#winget install --no-upgrade --name "notepad++"                          --Id "Notepad++.Notepad++"               --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Lapce"                              --Id "Lapce.Lapce"                       --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "TesseractOCR"                       --Id "UB-Mannheim.TesseractOCR"          --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "perl"                               --Id "StrawbgnogerryPerl.StrawberryPerl"     --source winget --scope user --accept-package-agreements --accept-source-agreements
@@ -53,7 +55,4 @@ winget install --no-upgrade --name "Adobe Acrobat Reader DC"            --Id "Ad
 winget install --no-upgrade --name "julia"                               --Id "Julialang.Julia" --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Chafa"                               --Id "hpjansson.Chafa" --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "bottom"                              --Id "Clement.bottom" --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "onefetch"                            --Id "o2sh.onefetch" --source winget --scope user  # repo-version of system fastfetch, see also tokei
-winget install --no-upgrade --name "Just"                               --Id "Casey.Just" --source winget --scope user  # commandline runner
-winget install --no-upgrade --name "hyperfine"                          --Id "sharkdp.hyperfine" --source winget --scope user  # benchmarking tool
 winget install --no-upgrade --name "AWS Command Line Interface"         --Id "Amazon.AWSCLI" --source winget --scope user --accept-package-agreements --accept-source-agreements

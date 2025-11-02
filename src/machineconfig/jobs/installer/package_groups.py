@@ -151,7 +151,6 @@ PACKAGES_MISC_DEV = [
     "obsidian",
     "istio",
     "cointop",
-    "nnn",
 ]
 
 
@@ -190,6 +189,7 @@ PACKAGES_FILE = [
     # "xplr",
     # "joshuto",
     # "lf",
+    # "nnn",
     "yazi",
     "tere",
     # "exa",

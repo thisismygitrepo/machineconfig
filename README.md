@@ -22,7 +22,8 @@ iex (iwr bit.ly/cfgwindows).Content
 iex (uvx machineconfig define)
 # Permanent install:
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"  # Skip if UV is already installed
-uvx install --upgrade machineconfig
+uv tool install --upgrade machineconfig both
+devops config copy-assets
 ```
 
 # Install On Linux and MacOS
@@ -34,7 +35,7 @@ uvx install --upgrade machineconfig
 . <(uvx machineconfig define)
 # Permanent install:
 curl -LsSf https://astral.sh/uv/install.sh | sh  # Skip if UV is already installed
-uvx install --upgrade machineconfig
+uv tool install --upgrade machineconfig
 ```
 
 
