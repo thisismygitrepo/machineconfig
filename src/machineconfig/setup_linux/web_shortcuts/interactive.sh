@@ -24,4 +24,5 @@ alias u='wrap_in_shell_script utils'
 alias t='wrap_in_shell_script terminal'
 alias ms='wrap_in_shell_script msearch'
 
+devops self
 echo "mcfg command aliases are now defined in this shell session."

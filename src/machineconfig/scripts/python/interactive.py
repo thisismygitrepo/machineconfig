@@ -97,12 +97,14 @@ def get_installation_choices() -> list[str]:
     """Get user choices for installation options."""
     choices = [
         Choice(value="install_machineconfig", title="🐍 Install machineconfig.", checked=False),
+
+        Choice(value="install_shell_profile", title="🐚 Configure Shell Profile.", checked=False),
+
         Choice(value="ESSENTIAL_SYSTEM", title="📥 Install Essential System Packages.", checked=False),
         Choice(value="ESSENTIAL", title="⚡ Install CLI apps essentials", checked=False),
         Choice(value="DEV_SYSTEM", title="🛠️  Install CLI apps development.", checked=False),
         Choice(value="TerminalEyeCandy", title="🎨 Install CLI apps terminal eye candy.", checked=False),
         Choice(value="install_ssh_server", title="🔒 Install SSH Server", checked=False),
-        Choice(value="install_shell_profile", title="🐚 Configure Shell Profile.", checked=False),
         Choice(value="retrieve_repositories", title="📚 Retrieve Repositories", checked=False),
         Choice(value="retrieve_data", title="💾 Retrieve Data.", checked=False),
     ]

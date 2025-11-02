@@ -18,7 +18,6 @@ from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-# Nerd Fonts installer configuration data
 nerd_fonts: InstallerData = {
     "appName": "Cascadia Code Nerd Font",
     "repoURL": "https://github.com/ryanoasis/nerd-fonts",
@@ -36,14 +35,6 @@ nerd_fonts: InstallerData = {
         }
     }
 }
-
-
-# Patterns to match any installed variant (NF, Nerd Font, Mono, Propo, style weights) of Cascadia/Caskaydia
-# We'll compile them at runtime for flexibility. Keep them simple to avoid false positives.
-# REQUIRED_FONT_PATTERNS: tuple[str, ...] = (
-#     r"caskaydiacove.*(nf|nerd ?font)",
-#     r"cascadiacode.*(nf|nerd ?font)"
-# )
 
 
 console = Console()

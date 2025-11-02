@@ -1,11 +1,11 @@
 
 
-# --GROUP:ESSENTIAL_SYSTEM:WT+Brave+VSCode+WezTerm+OhMyPosh+Powershell+Starship+Git+Neovim+GNU Nano+Terminal-Icons+PSFzf
+# --GROUP:ESSENTIAL_SYSTEM:WT+Powershell+GNU Nano
 winget install --no-upgrade --name "Powershell"                   --Id "Microsoft.PowerShell"       --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
 winget install --no-upgrade --name "Windows Terminal"             --Id "Microsoft.WindowsTerminal"  --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W 11
 winget install --no-upgrade --name "GNU Nano"                     --Id "GNU.Nano"                   --source winget --scope user --accept-package-agreements --accept-source-agreements
 
-# --GROUP:GUI:Brave+VSCode+Git+WezTerm+GNU Nano
+# --GROUP:GUI:Brave+VSCode+Git+WezTerm
 winget install --no-upgrade --name "Brave"                        --Id "Brave.Brave"                --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Git"                          --Id "Git.Git"                    --source winget --scope user --accept-package-agreements --accept-source-agreements
