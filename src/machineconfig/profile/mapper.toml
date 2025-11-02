@@ -33,9 +33,6 @@ config2 = {this = '~/.cli-m365-all-connections.json', to_this = '~/dotfiles/cred
 config3 = {this = '~/.cli-m365-connection.json',      to_this = '~/dotfiles/creds/tokens/.cli-m365-connection.json'}
 # config2 = {this = '~/.cli-m365-tokens.json',        to_this = '~/dotfiles/creds/tokens/.cli-m365-tokens.json'}
 
-# [bash_linux]
-# bashrc = {this = '~/.inputrc', to_this = '~/dotfiles/shells/bash/.inputrc'}
-
 [remmina]
 data = {this = '~/.var/app/org.remmina.Remmina/data/remmina', to_this = '~/dotfiles/creds/RDP/remmina/data/remmina'}
 
@@ -166,7 +163,7 @@ config = {this = '~/.config/pudb/pudb.cfg', to_this = 'CONFIG_ROOT/settings/pudb
 # AllUsersCurrentHost = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersCurrentHost/Microsoft.PowerShell_profile.ps1'}
 # AllUsersAllHosts = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/AllUsersAllHosts/profile.ps1'}
 
-[pwsh_windows]
+# [pwsh_windows]
 # CurrentUserCurrentHost = {this = '~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
 # CurrentUserAllHosts = {this = '~/Documents/PowerShell/profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/profile.ps1'}
 # AllUsersCurrentHost = {this = 'C:\Program Files\PowerShell\7\Microsoft.PowerShell_profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}

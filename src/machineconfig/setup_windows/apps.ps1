@@ -1,21 +1,18 @@
 
-# to get exact version of an app in winget, head to: https://winget.run
 
 # --GROUP:ESSENTIAL_SYSTEM:WT+Brave+VSCode+WezTerm+OhMyPosh+Powershell+Starship+Git+Neovim+GNU Nano+Terminal-Icons+PSFzf
+winget install --no-upgrade --name "Powershell"                   --Id "Microsoft.PowerShell"       --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
 winget install --no-upgrade --name "Windows Terminal"             --Id "Microsoft.WindowsTerminal"  --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W 11
 winget install --no-upgrade --name "Brave"                        --Id "Brave.Brave"                --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "WezTerm"                      --Id "wez.wezterm"                --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "Oh My Posh"                   --Id "JanDeDobbeleer.OhMyPosh"    --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "Powershell"                   --Id "Microsoft.PowerShell"       --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
 winget install --no-upgrade --name "Git"                          --Id "Git.Git"                    --source winget --scope user --accept-package-agreements --accept-source-agreements
-winget install --no-upgrade --name "Neovim"                       --Id "Neovim.Neovim"              --source winget --scope user --accept-package-agreements --accept-source-agreements
 winget install --no-upgrade --name "GNU Nano"                     --Id "GNU.Nano"                   --source winget --scope user --accept-package-agreements --accept-source-agreements
 # winget install --no-upgrade --name "File"                         --Id "GnuWin32.File"              --source winget --accept-package-agreements --accept-source-agreements
-
-Install-Module -Name Terminal-Icons -Repository PSGallery -Force -AcceptLicense -PassThru -Confirm  # -RequiredVersion 2.5.10
-Install-Module -Name PSFzf  -SkipPublisherCheck  # -AcceptLicense -PassThru -Confirm  #  -RequiredVersion 2.5.10
-
+# winget install --no-upgrade --name "Neovim"                       --Id "Neovim.Neovim"              --source winget --scope user --accept-package-agreements --accept-source-agreements
+# winget install --no-upgrade --name "Oh My Posh"                   --Id "JanDeDobbeleer.OhMyPosh"    --source winget --scope user --accept-package-agreements --accept-source-agreements
+# Install-Module -Name Terminal-Icons -Repository PSGallery -Force -AcceptLicense -PassThru -Confirm  # -RequiredVersion 2.5.10
+# Install-Module -Name PSFzf  -SkipPublisherCheck  # -AcceptLicense -PassThru -Confirm  #  -RequiredVersion 2.5.10
 
 # --GROUP:DEV_SYSTEM:VSRedistrib+VSBuildTools+Codeblocks+GnuWin32: Make+GnuPG+graphviz+WinFsp+SSHFS-win+xming+Node.js+Rustup+Cloudflare+Cloudflare WARP+Microsoft Garage Mouse without Borders
 winget install --no-upgrade --name "VSRedistrib"                   --Id "Microsoft.VC++2015-2022Redist-x64"      --source winget --scope user --accept-package-agreements --accept-source-agreements

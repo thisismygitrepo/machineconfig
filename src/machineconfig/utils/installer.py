@@ -105,8 +105,13 @@ def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: O
         if acceptable_apps_names is not None:
             if installer_data["appName"] not in acceptable_apps_names:
                 continue
-        if installer_data["fileNamePattern"][arch][os] is None:
-            continue
+        try:
+            if installer_data["fileNamePattern"][arch][os] is None:
+                continue
+        except KeyError as ke:
+            print(f"❌ ERROR: Missing key in installer data: {ke}")
+            print(f"Installer data: {installer_data}")
+            raise KeyError(f"Missing key in installer data: {ke}")
         all_installers.append(installer_data)
     return all_installers
 
