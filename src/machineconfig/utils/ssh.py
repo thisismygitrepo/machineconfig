@@ -2,7 +2,7 @@ from typing import Callable, Optional, Any, Union, cast
 import os
 from pathlib import Path
 import platform
-from machineconfig.scripts.python.helpers_devops.cli_utils import MachineSpecs
+from machineconfig.scripts.python.helpers_utils.path import MachineSpecs
 import rich.console
 from machineconfig.utils.terminal import Response
 from machineconfig.utils.accessories import pprint, randstr
@@ -113,7 +113,7 @@ class SSH:
                 if self.progress and self.task is not None:
                     self.progress.update(self.task, completed=transferred, total=total)
         self.tqdm_wrap = RichProgressWrapper
-        from machineconfig.scripts.python.helpers_devops.cli_utils import get_machine_specs
+        from machineconfig.scripts.python.helpers_utils.path import get_machine_specs
         self.local_specs: MachineSpecs = get_machine_specs()
         resp = self.run_shell(command="""~/.local/bin/utils get-machine-specs """, verbose_output=False, description="Getting remote machine specs", strict_stderr=False, strict_return_code=False)
         json_str = resp.op

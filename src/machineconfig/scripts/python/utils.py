@@ -1,6 +1,7 @@
 
 
-from machineconfig.scripts.python.helpers_devops.cli_utils import download, merge_pdfs, get_machine_specs, init_project, compress_pdf, edit
+from machineconfig.scripts.python.helpers_devops.cli_utils import download, merge_pdfs, compress_pdf
+from machineconfig.scripts.python.helpers_utils.path import edit_file_with_hx, get_machine_specs, init_project, path
 import typer
 from typing import Annotated
 
@@ -30,6 +31,9 @@ def get_app() -> typer.Typer:
     app.command(name="kill-process", no_args_is_help=False, help="[k] Choose a process to kill")(kill_process)
     app.command(name="k", no_args_is_help=False, help="Choose a process to kill", hidden=True)(kill_process)
 
+    app.command("path", no_args_is_help=False, help="📚  [p] NAVIGATE PATH variable with TUI")(path)
+    app.command("p", no_args_is_help=False, help="NAVIGATE PATH variable with TUI", hidden=True)(path)
+
     app.command(name="upgrade-packages", no_args_is_help=False, help="[up] Upgrade project dependencies.")(upgrade_packages)
     app.command(name="up", no_args_is_help=False, hidden=True)(upgrade_packages)
 
@@ -39,8 +43,8 @@ def get_app() -> typer.Typer:
     app.command(name="g", no_args_is_help=False, hidden=True)(get_machine_specs)
     app.command(name="init-project", no_args_is_help=False, help="[i] Initialize a project with a uv virtual environment and install dev packages.")(init_project)
     app.command(name="i", no_args_is_help=False, hidden=True)(init_project)
-    app.command(name="edit", no_args_is_help=False, help="[e] Open a file in the default editor.")(edit)
-    app.command(name="e", no_args_is_help=False, hidden=True)(edit)
+    app.command(name="edit", no_args_is_help=False, help="[e] Open a file in the default editor.")(edit_file_with_hx)
+    app.command(name="e", no_args_is_help=False, hidden=True)(edit_file_with_hx)
 
     app.command(name="pdf-merge", no_args_is_help=True, help="[pm] Merge two PDF files into one.")(merge_pdfs)
     app.command(name="pm", no_args_is_help=True, hidden=True)(merge_pdfs)

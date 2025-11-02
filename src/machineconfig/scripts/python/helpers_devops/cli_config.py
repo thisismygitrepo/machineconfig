@@ -20,20 +20,6 @@ def configure_shell_profile(which: Annotated[Literal["default", "d", "nushell", 
     typer.echo(f"[red]Error:[/] Unknown shell profile type: {which}")
 
 
-def path():
-    """📚 NAVIGATE PATH variable with TUI"""
-    from machineconfig.scripts.python import env_manager as navigator
-    from pathlib import Path
-    path = Path(navigator.__file__).resolve().parent.joinpath("path_manager_tui.py")
-    from machineconfig.utils.code import run_shell_script, get_uv_command_executing_python_script
-    uv_with = ["textual"]
-    uv_project_dir = None
-    if not Path.home().joinpath("code/machineconfig").exists():
-        uv_with.append("machineconfig>=7.51")
-    else:
-        uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
-    run_shell_script(get_uv_command_executing_python_script(python_script=path.read_text(encoding="utf-8"), uv_with=uv_with, uv_project_dir=uv_project_dir)[0])
-
 
 def pwsh_theme():
     """🔗 Select powershell prompt theme."""
@@ -99,8 +85,6 @@ def get_app():
     config_apps.command("d", no_args_is_help=True,  hidden=True)(dotfile_module.main)
     config_apps.command("shell", no_args_is_help=False, help="🔗  [s] Configure your shell profile.")(configure_shell_profile)
     config_apps.command("s", no_args_is_help=False, help="Configure your shell profile.", hidden=True)(configure_shell_profile)
-    config_apps.command("path", no_args_is_help=False, help="📚  [p] NAVIGATE PATH variable with TUI")(path)
-    config_apps.command("p", no_args_is_help=False, help="NAVIGATE PATH variable with TUI", hidden=True)(path)
     config_apps.command("starship-theme", no_args_is_help=False, help="🔗  [t] Select starship prompt theme.")(starship_theme)
     config_apps.command("t", no_args_is_help=False, help="Select starship prompt theme.", hidden=True)(starship_theme)
     config_apps.command("pwsh-theme", no_args_is_help=False, help="🔗  [T] Select powershell prompt theme.")(pwsh_theme)
