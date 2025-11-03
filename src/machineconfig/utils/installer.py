@@ -3,7 +3,7 @@
 from machineconfig.utils.installer_utils.installer_abc import check_if_installed_already, parse_apps_installer_linux, parse_apps_installer_windows
 from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import InstallerData, InstallerDataFiles, get_normalized_arch, get_os_name, OPERATING_SYSTEMS, CPU_ARCHITECTURES
-from machineconfig.jobs.installer.package_groups import PACKAGE_GROUPS, PACKAGE_GROUP2NAMES
+from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT, LINUX_INSTALL_PATH
 from machineconfig.utils.io import read_json

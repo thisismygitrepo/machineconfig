@@ -2704,6 +2704,601 @@
           "macos": "hx.py"
         }
       }
+    },
+    {
+      "appName": "file",
+      "repoURL": "CMD",
+      "doc": "🔍 File type identification utility",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"File\" --Id \"GnuWin32.File\" --source winget --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"File\" --Id \"GnuWin32.File\" --source winget --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "oh-my-posh",
+      "repoURL": "CMD",
+      "doc": "✨ Prompt theme engine for any shell",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Oh My Posh\" --Id \"JanDeDobbeleer.OhMyPosh\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Oh My Posh\" --Id \"JanDeDobbeleer.OhMyPosh\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "vsredistrib",
+      "repoURL": "CMD",
+      "doc": "📦 Microsoft Visual C++ Redistributable",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"VSRedistrib\" --Id \"Microsoft.VC++2015-2022Redist-x64\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"VSRedistrib\" --Id \"Microsoft.VC++2015-2022Redist-x64\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "vsbuildtools",
+      "repoURL": "CMD",
+      "doc": "🔨 Visual Studio Build Tools",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"VSBuildTools\" --Id \"Microsoft.VisualStudio.2022.BuildTools\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"VSBuildTools\" --Id \"Microsoft.VisualStudio.2022.BuildTools\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "codeblocks",
+      "repoURL": "CMD",
+      "doc": "💻 IDE for C/C++",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Codeblocks\" --Id \"Codeblocks.Codeblocks\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Codeblocks\" --Id \"Codeblocks.Codeblocks\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "make",
+      "repoURL": "CMD",
+      "doc": "🔧 GNU Make utility for building projects",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"GnuWin32: Make\" --Id \"GnuWin32.Make\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"GnuWin32: Make\" --Id \"GnuWin32.Make\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "gnupg",
+      "repoURL": "CMD",
+      "doc": "🔐 GNU Privacy Guard encryption tool",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"GnuPG\" --Id \"GnuPG.GnuPG\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"GnuPG\" --Id \"GnuPG.GnuPG\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "graphviz",
+      "repoURL": "CMD",
+      "doc": "📊 Graph visualization software",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"graphviz\" --Id \"Graphviz.Graphviz\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"graphviz\" --Id \"Graphviz.Graphviz\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "winfsp",
+      "repoURL": "CMD",
+      "doc": "💾 Windows File System Proxy",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"WinFsp\" --Id \"WinFsp.WinFsp\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"WinFsp\" --Id \"WinFsp.WinFsp\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "sshfs-win",
+      "repoURL": "CMD",
+      "doc": "🌐 Mount remote filesystems over SSH",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"SSHFS-win\" --Id \"SSHFS-Win.SSHFS-Win\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"SSHFS-win\" --Id \"SSHFS-Win.SSHFS-Win\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "xming",
+      "repoURL": "CMD",
+      "doc": "🖥️ X11 server for Windows",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"xming\" --Id \"xming.xming\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"xming\" --Id \"xming.xming\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "nodejs",
+      "repoURL": "CMD",
+      "doc": "🟢 JavaScript runtime environment",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Node.js\" --Id \"OpenJS.NodeJS\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Node.js\" --Id \"OpenJS.NodeJS\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "rustup",
+      "repoURL": "CMD",
+      "doc": "🦀 Rust toolchain installer",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Rustup\" --Id \"Rustlang.Rustup\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Rustup\" --Id \"Rustlang.Rustup\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "cloudflare-warp",
+      "repoURL": "CMD",
+      "doc": "🌐 Cloudflare WARP VPN client",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Cloudflare WARP\" --Id \"Cloudflare.Warp\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Cloudflare WARP\" --Id \"Cloudflare.Warp\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "mouse-without-borders",
+      "repoURL": "CMD",
+      "doc": "🖱️ Control multiple computers with one mouse",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Microsoft Garage Mouse without Borders\" --Id \"Microsoft.MouseWithoutBorders\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Microsoft Garage Mouse without Borders\" --Id \"Microsoft.MouseWithoutBorders\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "chrome",
+      "repoURL": "CMD",
+      "doc": "🌐 Google Chrome web browser",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Google Chrome\" --Id \"Google.Chrome\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Google Chrome\" --Id \"Google.Chrome\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "chrome-remote-desktop",
+      "repoURL": "CMD",
+      "doc": "🖥️ Chrome Remote Desktop Host",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Chrome Remote Desktop Host\" --Id \"Google.ChromeRemoteDesktop\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Chrome Remote Desktop Host\" --Id \"Google.ChromeRemoteDesktop\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "zoom",
+      "repoURL": "CMD",
+      "doc": "📹 Video conferencing software",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Zoom\" --Id \"Zoom.Zoom\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Zoom\" --Id \"Zoom.Zoom\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "7zip",
+      "repoURL": "CMD",
+      "doc": "📦 File archiver with high compression ratio",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"7-zip\" --Id \"7zip.7zip\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"7-zip\" --Id \"7zip.7zip\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "firefox",
+      "repoURL": "CMD",
+      "doc": "🦊 Mozilla Firefox web browser",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Mozilla Firefox\" --Id \"Mozilla.Firefox\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Mozilla Firefox\" --Id \"Mozilla.Firefox\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "thunderbird",
+      "repoURL": "CMD",
+      "doc": "📧 Mozilla Thunderbird email client",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Mozilla Thunderbird (en-US)\" --Id \"Mozilla.Thunderbird\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Mozilla Thunderbird (en-US)\" --Id \"Mozilla.Thunderbird\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "streamlabs-obs",
+      "repoURL": "CMD",
+      "doc": "🎥 Streamlabs OBS streaming software",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"StreamlabsOBS\" --Id \"Streamlabs.StreamlabsOBS\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"StreamlabsOBS\" --Id \"Streamlabs.StreamlabsOBS\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "obs-studio",
+      "repoURL": "CMD",
+      "doc": "🎬 OBS Studio streaming and recording software",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"OBSStudio\" --Id \"OBSProject.OBSStudio\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"OBSStudio\" --Id \"OBSProject.OBSStudio\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "miktex",
+      "repoURL": "CMD",
+      "doc": "📝 LaTeX distribution for Windows",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"MiKTeX\" --Id \"MiKTeX.MiKTeX\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"MiKTeX\" --Id \"MiKTeX.MiKTeX\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "texmaker",
+      "repoURL": "CMD",
+      "doc": "📄 LaTeX editor",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"TexMaker\" --Id \"Texmaker.Texmaker\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"TexMaker\" --Id \"Texmaker.Texmaker\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "lapce",
+      "repoURL": "CMD",
+      "doc": "⚡ Lightning-fast code editor written in Rust",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Lapce\" --Id \"Lapce.Lapce\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Lapce\" --Id \"Lapce.Lapce\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "tesseract",
+      "repoURL": "CMD",
+      "doc": "🔤 OCR engine for text recognition",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"TesseractOCR\" --Id \"UB-Mannheim.TesseractOCR\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"TesseractOCR\" --Id \"UB-Mannheim.TesseractOCR\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "perl",
+      "repoURL": "CMD",
+      "doc": "🍓 Strawberry Perl programming language",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"perl\" --Id \"StrawberryPerl.StrawberryPerl\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"perl\" --Id \"StrawberryPerl.StrawberryPerl\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "db-browser-sqlite",
+      "repoURL": "CMD",
+      "doc": "🗄️ DB Browser for SQLite database tool",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"DB Browser for SQLite\" --Id \"DBBrowserForSQLite.DBBrowserForSQLite\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"DB Browser for SQLite\" --Id \"DBBrowserForSQLite.DBBrowserForSQLite\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "ssms",
+      "repoURL": "CMD",
+      "doc": "🗄️ SQL Server Management Studio",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"sql server management studio\" --Id \"Microsoft.SQLServerManagementStudio\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"sql server management studio\" --Id \"Microsoft.SQLServerManagementStudio\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "adobe-reader",
+      "repoURL": "CMD",
+      "doc": "📄 Adobe Acrobat Reader DC",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Adobe Acrobat Reader DC\" --Id \"Adobe.Acrobat.Reader.64-bit\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Adobe Acrobat Reader DC\" --Id \"Adobe.Acrobat.Reader.64-bit\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "julia",
+      "repoURL": "CMD",
+      "doc": "📊 Julia programming language",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"julia\" --Id \"Julialang.Julia\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"julia\" --Id \"Julialang.Julia\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "chafa",
+      "repoURL": "CMD",
+      "doc": "🖼️ Terminal graphics and image viewer",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Chafa\" --Id \"hpjansson.Chafa\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Chafa\" --Id \"hpjansson.Chafa\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "awscli",
+      "repoURL": "CMD",
+      "doc": "☁️ AWS Command Line Interface",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"AWS Command Line Interface\" --Id \"Amazon.AWSCLI\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"AWS Command Line Interface\" --Id \"Amazon.AWSCLI\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "notepadplusplus",
+      "repoURL": "CMD",
+      "doc": "📝 Notepad++ text editor",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"notepad++\" --Id \"Notepad++.Notepad++\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"notepad++\" --Id \"Notepad++.Notepad++\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
     }
   ]
 }
