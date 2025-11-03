@@ -19,6 +19,23 @@
       }
     },    
     {
+      "appName": "git",
+      "repoURL": "CMD",
+      "doc": "🧙‍♂️ Distributed version control system",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "sudo nala install git",
+          "windows": "winget install --no-upgrade --name \"Git\"                          --Id \"Git.Git\"                    --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": "brew install git"
+        },
+        "arm64": {
+          "linux": "sudo nala install git",
+          "windows": "winget install --no-upgrade --name \"Git\"                          --Id \"Git.Git\"                    --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": "brew install git"
+        }
+      }
+    },
+    {
       "appName": "jq",
       "repoURL": "https://github.com/jqlang/jq",
       "doc": "🧙‍♂️ Command-line JSON processor",
@@ -2166,8 +2183,8 @@
       "doc": "🐚 Nushell, a cross-platform shell in Rust.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "nu-0.108.0-x86_64-unknown-linux-gnu.tar.gz",
-          "macos": "nu-0.108.0-x86_64-apple-darwin.tar.gz",
+          "linux": "nu-{version}-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "nu-{version}-x86_64-apple-darwin.tar.gz",
           "windows": "nu-{version}-x86_64-pc-windows-msvc.zip"
         },
         "arm64": {

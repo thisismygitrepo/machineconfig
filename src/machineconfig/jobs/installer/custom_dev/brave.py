@@ -27,7 +27,7 @@ def main(installer_data: InstallerData, version: Optional[str]) -> None:
         console.print("🪟 Installing Brave Browser on Windows using winget...", style="bold")
         program = """
 
-winget install --Name "Brave Browser" --Id Brave.Brave --source winget --accept-package-agreements --accept-source-agreements
+winget install --no-upgrade --name "Brave"                        --Id "Brave.Brave"                --source winget --scope user --accept-package-agreements --accept-source-agreements
 
 """
     elif platform.system() in ["Linux", "Darwin"]:

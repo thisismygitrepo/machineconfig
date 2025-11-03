@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-
-# --GROUP:ESSENTIAL_SYSTEM:git,nano,net-utils,wget,curl,nala,nvm,nodejs
 echo "🔄 Updating apt package lists..."
 echo "📥 Installing nala package manager..."
 echo "📥 Installing essential network tools..."
@@ -45,7 +43,7 @@ echo 'keyboard-configuration keyboard-configuration/layoutcode string us' | sudo
 sudo DEBIAN_FRONTEND=noninteractive nala install -y cmatrix
 sudo nala install hollywood -y || true
 
-# --GROUP:NetworkTools: sshfs,samba,fuse3,nfs-common
+# --GROUP:net: sshfs,samba,fuse3,nfs-common
 echo "📥 Installing sshfs - mount remote filesystems over SSH..."
 echo "📥 Installing Samba - LAN-based file sharing..."
 sudo nala install sshfs
@@ -54,7 +52,7 @@ sudo nala install fuse3 -y || true
 sudo nala install nfs-common -y || true
 
 
-# --GROUP:DEV_SYSTEM: graphviz,make,rust,libssl-dev,sqlite3,postgresql-client,redis-tools
+# --GROUP:dev: graphviz,make,rust,libssl-dev,sqlite3,postgresql-client,redis-tools
 echo "📥 Installing Graphviz - graph visualization software..."
 echo "📥 Installing make - build automation tool..."
 echo "📥 Installing SSL development libraries for Rust..."

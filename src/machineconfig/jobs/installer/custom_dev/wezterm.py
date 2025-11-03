@@ -35,21 +35,8 @@ def main(installer_data: InstallerData, version: Optional[str]):
 
     _ = version
     if platform.system() == "Windows":
-        error_msg = "WezTerm installation not supported on Windows through this installer"
-        console.print(
-            Panel.fit(
-                "\n".join(
-                    [
-                        f"❌ ERROR | {error_msg}",
-                        "💡 TIP: Please download and install manually from the WezTerm website",
-                    ]
-                ),
-                title="Unsupported Platform",
-                border_style="red",
-                padding=(1, 2),
-            )
-        )
-        raise NotImplementedError(error_msg)
+        program = """winget install --no-upgrade --name "WezTerm"                      --Id "wez.wezterm"                --source winget --accept-package-agreements --accept-source-agreements
+"""
     elif platform.system() in ["Linux", "Darwin"]:
         system_name = "LINUX" if platform.system() == "Linux" else "MACOS"
         console.print(

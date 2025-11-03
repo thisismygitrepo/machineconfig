@@ -5,8 +5,8 @@ import typer
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from typing import Optional, cast, get_args, Annotated
-from machineconfig.jobs.installer.package_groups import PACKAGE_GROUPS, PACKAGE_GROUP2NAMES
+from typing import Optional, Annotated
+from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
 
 console = Console()
 
@@ -36,7 +36,7 @@ def _handle_installer_not_found(search_term: str, all_names: list[str]) -> None:
         if len(all_names) > 10:
             console.print(f"   [dim]... and {len(all_names) - 10} more[/dim]")
 
-    panel = Panel(f"[bold blue]💡 Use 'ia' to interactively browse all available installers.[/bold blue]\n[bold blue]💡 Use one of the categories: {list(get_args(PACKAGE_GROUPS))}[/bold blue]", title="[yellow]Helpful Tips[/yellow]", border_style="yellow")
+    panel = Panel(f"[bold blue]💡 Use 'ia' to interactively browse all available installers.[/bold blue]\n[bold blue]💡 Use one of the categories: {list(PACKAGE_GROUP2NAMES.keys())}[/bold blue]", title="[yellow]Helpful Tips[/yellow]", border_style="yellow")
     console.print(panel)
 
 
@@ -120,7 +120,7 @@ def install_interactively():
         if a_program_name.startswith("📦 "):
             category_name = category_display_to_name.get(a_program_name)
             if category_name:
-                install_group(package_group=cast(PACKAGE_GROUPS, category_name))
+                install_group(package_group=category_name)
         else:
             installer_idx = installer_options.index(a_program_name)
             an_installer_data = installers[installer_idx]

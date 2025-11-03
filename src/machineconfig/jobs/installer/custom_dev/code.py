@@ -32,7 +32,10 @@ def main(installer_data: InstallerData, version: Optional[str] = None) -> None:
         install_script = """brew install --cask visual-studio-code"""
     elif platform.system() == "Windows":
         console.print("🪟 Installing VS Code on Windows using winget...", style="bold")
-        install_script = """winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements"""
+        install_script = """
+winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsoft.VisualStudioCode" --source winget --scope user --accept-package-agreements --accept-source-agreements
+
+"""
     else:
         error_msg = f"Unsupported platform: {platform.system()}"
         console.print(

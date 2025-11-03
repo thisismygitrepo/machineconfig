@@ -108,14 +108,16 @@ def match_file_name(sub_string: str, search_root: PathExtended, suffixes: set[st
             fzf_cmd = f"cd '{search_root_obj}'; fd --type file --strip-cwd-prefix | fzf --ignore-case --exact --query={sub_string}"
         console.print(Panel(f"🔍 Second attempt: SEARCH STRATEGY | Using fd to search for '{sub_string}' in '{search_root_obj}' ...\n{fzf_cmd}", title="Search Strategy", expand=False))
         search_res_raw = subprocess.run(fzf_cmd, stdout=subprocess.PIPE, text=True, check=True, shell=True).stdout
-        search_res = search_res_raw.strip().split("\\n")[:-1]
+        search_res = search_res_raw.strip().split("\n")
     except subprocess.CalledProcessError as cpe:
         console.print(Panel(f"❌ ERROR | FZF search failed with '{sub_string}' in '{search_root_obj}'.\n{cpe}", title="Error", expand=False))
         import sys
-
         sys.exit(f"💥 FILE NOT FOUND | Path {sub_string} does not exist @ root {search_root_obj}. No search results.")
     if len(search_res) == 1:
         return search_root_obj.joinpath(search_res_raw)
+    elif len(search_res) == 0:
+        msg = Panel(f"💥 FILE NOT FOUND | Path {sub_string} does not exist @ root {search_root_obj}. No search results", title="File Not Found", expand=False)
+        raise FileNotFoundError(msg)
 
     print(f"⚠️ WARNING | Multiple search results found for `{sub_string}`:\n'{search_res}'")
     cmd = f"cd '{search_root_obj}'; fd --type file | fzf --select-1 --query={sub_string}"
