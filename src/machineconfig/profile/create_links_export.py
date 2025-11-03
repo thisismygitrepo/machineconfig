@@ -15,7 +15,12 @@ ON_CONFLICT_MAPPER: dict[str, ON_CONFLICT_STRICT] = {
     "os": "overwrite-self-managed",
     "bs": "backup-self-managed",
     "od": "overwrite-default-path",
-    "bd": "backup-default-path"
+    "bd": "backup-default-path",
+    "throw-error": "throw-error",
+    "overwrite-self-managed": "overwrite-self-managed",
+    "backup-self-managed": "backup-self-managed",
+    "overwrite-default-path": "overwrite-default-path",
+    "backup-default-path": "backup-default-path",
     }
 
 
