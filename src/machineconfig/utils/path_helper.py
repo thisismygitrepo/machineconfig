@@ -5,7 +5,7 @@ from rich.panel import Panel
 import platform
 import subprocess
 from pathlib import Path
-
+from typing import Optional
 
 console = Console()
 
@@ -97,9 +97,15 @@ def match_file_name(sub_string: str, search_root: PathExtended, suffixes: set[st
         reduced_scripts = [a_potential_match for a_potential_match in partial_path_matches if sub_string in a_potential_match.as_posix()]
         if len(reduced_scripts) == 1:
             return PathExtended(reduced_scripts[0])
-        print(f"Result: This still generated {len(reduced_scripts)} results.")
+        print(f"Result: This still generated {len(reduced_scripts)} results.")        
+
     try:
-        fzf_cmd = f"cd '{search_root_obj}'; fd --type file --strip-cwd-prefix | fzf --ignore-case --exact --query={sub_string}"
+
+        if len(partial_path_matches) == 0:
+            print("No partial path matches found, trying to do fd with --no-ignore ...")
+            fzf_cmd = f"cd '{search_root_obj}'; fd --no-ignore --type file --strip-cwd-prefix | fzf --ignore-case --exact --query={sub_string}"
+        else:
+            fzf_cmd = f"cd '{search_root_obj}'; fd --type file --strip-cwd-prefix | fzf --ignore-case --exact --query={sub_string}"
         console.print(Panel(f"🔍 Second attempt: SEARCH STRATEGY | Using fd to search for '{sub_string}' in '{search_root_obj}' ...\n{fzf_cmd}", title="Search Strategy", expand=False))
         search_res_raw = subprocess.run(fzf_cmd, stdout=subprocess.PIPE, text=True, check=True, shell=True).stdout
         search_res = search_res_raw.strip().split("\\n")[:-1]
@@ -141,10 +147,18 @@ def search_for_files_of_interest(path_obj: PathExtended, suffixes: set[str]):
     return files
 
 
-def get_choice_file(path: str):
+def get_choice_file(path: str, suffixes: Optional[set[str]]):
     path_obj = sanitize_path(path)
-    suffixes = {".py", ".sh", ".ps1"}
+    if suffixes is None:
+        import platform
+        if platform.system() == "Windows":
+            suffixes = {".py", ".ps1", ".sh"}
+        elif platform.system() in ["Linux", "Darwin"]:
+            suffixes = {".py", ".sh"}
+        else:
+            suffixes = {".py"}
     if not path_obj.exists():
+        print(f"🔍 Searching for file matching `{path}` under `{PathExtended.cwd()}`, but only if suffix matches {suffixes}")
         choice_file = match_file_name(sub_string=path, search_root=PathExtended.cwd(), suffixes=suffixes)
     elif path_obj.is_dir():
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")

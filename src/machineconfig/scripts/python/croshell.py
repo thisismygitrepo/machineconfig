@@ -37,7 +37,7 @@ def croshell(
     ipython_profile: Optional[str] = profile
     file_obj = Path.cwd()  # initialization value, could be modified according to args.
     if path is not None:
-        choice_file = get_choice_file(path=path)
+        choice_file = get_choice_file(path=path, suffixes={".*"})
         if choice_file.suffix == ".py":
             program = choice_file.read_text(encoding="utf-8")
             text = f"📄 Selected file: {choice_file.name}"

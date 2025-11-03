@@ -19,7 +19,7 @@ import typer
 
 
 def route(args: FireJobArgs, fire_args: str = "") -> None:
-    choice_file = get_choice_file(args.path)
+    choice_file = get_choice_file(args.path, suffixes=None)
     repo_root = get_repo_root(Path(choice_file))
     print(f"💾 Selected file: {choice_file}.\nRepo root: {repo_root}")
     if args.marimo:
