@@ -1,0 +1,140 @@
+
+
+import platform
+from typing import Optional
+from rich import box
+from rich.console import Console
+from rich.panel import Panel
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
+
+
+ps1 = """
+winget install --no-upgrade --name "Powershell"                   --Id "Microsoft.PowerShell"       --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
+winget install --no-upgrade --name "Windows Terminal"             --Id "Microsoft.WindowsTerminal"  --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W 11
+winget install --no-upgrade --name "GNU Nano"                     --Id "GNU.Nano"                   --source winget --scope user --accept-package-agreements --accept-source-agreements
+# --GROUP:gui:Brave+VSCode+Git+WezTerm
+# --GROUP:dev2:VSRedistrib+VSBuildTools+Codeblocks+GnuWin32: Make+GnuPG+graphviz+WinFsp+SSHFS-win+xming+Node.js+Rustup+Cloudflare+Cloudflare WARP+Microsoft Garage Mouse without Borders
+# --GROUP:user:nu+Chrome+ChromeRemoteDesktop+Zoom+7zip+Firefox+Thunderbird+StreamlabsOBS+OBSStudio+MiKTeX+TexMaker+notepad+++Lapce+TesseractOCR+perl+DB Browser for SQLite+sql server management studio+Adobe Acrobat Reader DC+julia+Chafa+bottom+onefetch+Just+hyperfine+AWS CLI
+# Install-Module -Name Terminal-Icons -Repository PSGallery -Force -AcceptLicense -PassThru -Confirm  # -RequiredVersion 2.5.10
+# Install-Module -Name PSFzf  -SkipPublisherCheck  # -AcceptLicense -PassThru -Confirm  #  -RequiredVersion 2.5.10
+
+"""
+
+zsh = """
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+echo "🔄 Updating Homebrew..."
+brew update || true
+echo "📥 Installing essential tools..."
+echo "📥 Installing Git version control..."
+echo "📥 Installing Nano text editor..."
+echo "📥 Installing Node Version Manager (NVM)..."
+# Note: git and nano are pre-installed on macOS, but we install via Homebrew to ensure latest versions
+# brew install git || true
+# brew install nano || true
+# brew install curl || true
+# Install NVM
+if [ ! -s "$HOME/.nvm/nvm.sh" ]; then
+    echo "📥 Installing NVM (Node Version Manager)..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+fi
+echo "🔧 Configuring NVM environment..."
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+echo "📥 Installing latest Node.js..."
+nvm install node || true
+# brew install make
+# brew install ffmpeg
+# brew install openssl
+echo "✅ Essential tools installation complete."
+"""
+
+bash = """
+echo "🔄 Updating apt package lists..."
+echo "📥 Installing nala package manager..."
+echo "📥 Installing essential network tools..."
+echo "📥 Installing Node Version Manager (NVM)..."
+sudo apt update -y || true
+sudo apt install nala -y || true
+sudo nala install curl wget gpg lsb-release apt-transport-https -y || true
+sudo nala install git net-tools htop nano -y || true
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+echo "🔧 Configuring NVM environment..."
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+echo "📥 Installing latest Node.js..."
+nvm install node || true
+
+# --GROUP:TerminalEyeCandy:fortune,toilet,sl,aafire,cmatrix,hollywood,chafa
+# echo "📥 Installing fortune - random wisdom generator..."
+# echo "📥 Installing toilet - large ASCII text generator..."
+# echo "📥 Installing sl - steam locomotive animation..."
+# echo "📥 Installing aafire - ASCII art fire animation..."
+# echo "📥 Installing cmatrix - Matrix-style terminal animation..."
+# echo "📥 Installing hollywood - Hollywood hacker terminal effect..."
+# echo "📥 Installing chafa - terminal image viewer..."
+# sudo nala install cowsay -y || true
+# sudo nala install lolcat -y || true
+# sudo nala install boxes -y || true
+# sudo nala install figlet -y || true
+# sudo nala install fortune -y || true
+# sudo nala install toilet -y || true
+# sudo nala install chafa -y
+# sudo nala install sl -y || true
+# sudo nala install libaa-bin -y
+# echo 'keyboard-configuration keyboard-configuration/layout select US English' | sudo debconf-set-selections
+# echo 'keyboard-configuration keyboard-configuration/layoutcode string us' | sudo debconf-set-selections
+# sudo DEBIAN_FRONTEND=noninteractive nala install -y cmatrix
+# sudo nala install hollywood -y || true
+
+# --GROUP:net: sshfs,samba,fuse3,nfs-common
+echo "📥 Installing sshfs - mount remote filesystems over SSH..."
+echo "📥 Installing Samba - LAN-based file sharing..."
+sudo nala install samba
+sudo nala install fuse3 -y || true
+sudo nala install nfs-common -y || true
+
+# --GROUP:dev: graphviz,make,rust,libssl-dev,sqlite3,postgresql-client,redis-tools
+# sudo nala install ffmpeg -y || true  # Required by some dev tools
+# sudo nala install make -y || true  # Required by LunarVim and SpaceVim
+# (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
+# sudo nala install libssl-dev -y
+"""
+
+
+def main(installer_data: InstallerData, version: Optional[str]) -> None:
+    console = Console()
+    _ = installer_data
+    console.print(
+        Panel.fit(
+            "\n".join([f"💻 Platform: {platform.system()}", f"🔄 Version: {'latest' if version is None else version}"]),
+            title="🔧 ABC Installer",
+            border_style="blue",
+            box=box.ROUNDED,
+        )
+    )
+
+    _ = version
+    if platform.system() == "Windows":
+        console.print("🪟 Installing ABC on Windows using winget...", style="bold")
+        program = ps1
+    elif platform.system() == "Linux":
+        console.print("🐧 Installing ABC on Linux...", style="bold")
+        program = bash
+    elif platform.system() == "Darwin":
+        console.print("🍎 Installing ABC on macOS...", style="bold")
+        program = zsh
+    else:
+        error_msg = f"Unsupported platform: {platform.system()}"
+        console.print(
+            Panel.fit(
+                "\n".join([error_msg]),
+                title="❌ Error",
+                subtitle="⚠️ Unsupported platform",
+                border_style="red",
+                box=box.ROUNDED,
+            )
+        )
+        raise NotImplementedError(error_msg)
+    from machineconfig.utils.code import print_code, run_shell_script
+    print_code(program, lexer="shell", desc="Installation Script Preview")
+    run_shell_script(program)

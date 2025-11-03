@@ -1,6 +1,6 @@
 """package manager"""
 
-from machineconfig.utils.installer_utils.installer_abc import check_if_installed_already, parse_apps_installer_linux, parse_apps_installer_windows
+from machineconfig.utils.installer_utils.installer_abc import check_if_installed_already
 from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import InstallerData, InstallerDataFiles, get_normalized_arch, get_os_name, OPERATING_SYSTEMS, CPU_ARCHITECTURES
 from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
@@ -18,7 +18,7 @@ from joblib import Parallel, delayed
 def check_latest():
     console = Console()  # Added console initialization
     console.print(Panel("🔍  CHECKING FOR LATEST VERSIONS", title="Status", expand=False))  # Replaced print with Panel
-    installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["ESSENTIAL"])
+    installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=["termabc"])
     installers_github = []
     for inst__ in installers:
         app_name = inst__["appName"]
@@ -91,7 +91,7 @@ def get_installed_cli_apps():
     return apps
 
 
-def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: Optional[list[PACKAGE_GROUPS]]) -> list[InstallerData]:
+def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: Optional[list[str]]) -> list[InstallerData]:
     res_all = get_all_installer_data_files()
     acceptable_apps_names: list[str] | None = None
     if which_cats is not None:
@@ -121,27 +121,6 @@ def get_all_installer_data_files() -> list[InstallerData]:
     from pathlib import Path
     res_raw: InstallerDataFiles = read_json(Path(module.__file__).parent.joinpath("installer_data.json"))
     res_final: list[InstallerData] = res_raw["installers"]
-    return res_final
-
-
-def dynamically_extract_installers_system_groups_from_scripts():
-    res_final: list[InstallerData] = []
-    from platform import system
-    if system() == "Windows":
-        from machineconfig.setup_windows import APPS
-        options_system = parse_apps_installer_windows(APPS.read_text(encoding="utf-8"))
-    elif system() == "Linux":
-        from machineconfig.setup_linux import APPS
-        options_system = parse_apps_installer_linux(APPS.read_text(encoding="utf-8"))
-    elif system() == "Darwin":
-        from machineconfig.setup_mac import APPS
-        options_system = parse_apps_installer_linux(APPS.read_text(encoding="utf-8"))
-    else:
-        raise NotImplementedError(f"❌ System {system()} not supported")
-    os_name = get_os_name()
-    for group_name, (docs, script) in options_system.items():
-        item: InstallerData = {"appName": group_name, "doc": docs, "repoURL": "CMD", "fileNamePattern": {"amd64": {os_name: script}, "arm64": {os_name: script}}}
-        res_final.append(item)
     return res_final
 
 

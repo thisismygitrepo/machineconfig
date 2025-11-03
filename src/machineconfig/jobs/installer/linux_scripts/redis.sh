@@ -45,6 +45,7 @@ sudo nala update
 # Install Redis
 echo "📥 Installing Redis..."
 sudo nala install redis -y
+sudo nala install redis-tools -y
 
 echo """✅ INSTALLATION COMPLETE | Redis has been installed successfully
 

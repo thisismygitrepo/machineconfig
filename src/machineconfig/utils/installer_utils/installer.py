@@ -1,6 +1,5 @@
 """Devops Devapps Install"""
 
-from machineconfig.utils.installer import dynamically_extract_installers_system_groups_from_scripts
 import typer
 from rich.console import Console
 from rich.panel import Panel
@@ -63,7 +62,7 @@ def main(
     else:
         if group:
             typer.echo("❌ You must provide a group name when using the --group/-g option.")
-            res = get_static_groups_combined_with_dynamic_groups_extracted()
+            res = get_group_name_to_repr()
             console.print("[bold blue]Here are the available groups:[/bold blue]")
             table = Table(show_header=True, header_style="bold magenta")
             table.add_column("Group", style="cyan", no_wrap=True)
@@ -87,16 +86,12 @@ def main(
     raise typer.Exit(1)
 
 
-def get_static_groups_combined_with_dynamic_groups_extracted():
+def get_group_name_to_repr() -> dict[str, str]:
     # Build category options and maintain a mapping from display text to actual category name
     category_display_to_name: dict[str, str] = {}
     for group_name, group_values in PACKAGE_GROUP2NAMES.items():
         display = f"📦 {group_name:<20}" + "   --   " + f"{'|'.join(group_values):<60}"
         category_display_to_name[display] = group_name
-    options_system = dynamically_extract_installers_system_groups_from_scripts()
-    for item in options_system:
-        display = f"📦 {item['appName']:<20}   --   {item['doc']:<60}"
-        category_display_to_name[display] = item['appName']
     return category_display_to_name
 
 
@@ -110,9 +105,9 @@ def install_interactively():
     for x in installers:
         installer_options.append(Installer(installer_data=x).get_description())
 
-    category_display_to_name = get_static_groups_combined_with_dynamic_groups_extracted()
+    category_display_to_name = get_group_name_to_repr()
     options = list(category_display_to_name.keys()) + ["─" * 50] + installer_options
-    program_names = choose_from_options(multi=True, msg="Categories are prefixed with 📦", options=options, header="🚀 CHOOSE DEV APP OR CATEGORY", default="📦 essentials", fzf=True)
+    program_names = choose_from_options(multi=True, msg="Categories are prefixed with 📦", options=options, header="🚀 CHOOSE DEV APP OR CATEGORY", default="📦 termabc", fzf=True)
     installation_messages: list[str] = []
     for _an_idx, a_program_name in enumerate(program_names):
         if a_program_name.startswith("─"):  # 50 dashes separator
@@ -140,43 +135,7 @@ def install_group(package_group: str):
         installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=[package_group])
         install_bulk(installers_data=installers_)
         return
-    options_system = dynamically_extract_installers_system_groups_from_scripts()
-    from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
-    from machineconfig.utils.code import run_shell_script
-    for an_item in options_system:
-        if an_item["appName"] == package_group:
-            panel = Panel(f"[bold yellow]Installing programs from category: [green]{package_group}[/green][/bold yellow]", title="[bold blue]📦 Category Installation[/bold blue]", border_style="blue", padding=(1, 2))
-            console.print(panel)
-            program = an_item["fileNamePattern"][get_normalized_arch()][get_os_name()]
-            if program is not None:
-                run_shell_script(program)
-                break
-    else:
-        console.print(f"❌ [red]Group '{package_group}' not found.[/red]", style="bold")
-        _handle_installer_not_found(package_group, all_names=list(PACKAGE_GROUP2NAMES.keys()) + [item['appName'] for item in options_system])
-
-
-def choose_from_system_package_groups(options_system: dict[str, tuple[str, str]]) -> str:
-    from machineconfig.utils.options import choose_from_options
-    display_options = []
-    for group_name, (description, _) in options_system.items():
-        if description:
-            display_options.append(f"{group_name:<20} - {description}")
-        else:
-            display_options.append(group_name)
-    program_names = choose_from_options(multi=True, msg="", options=sorted(display_options), header="🚀 CHOOSE DEV APP", fzf=True)
-    program = ""
-    for display_name in program_names:
-        # Extract the actual group name (everything before " - " if present)
-        group_name = display_name.split(" - ")[0].strip() if " - " in display_name else display_name.strip()
-        console.print(f"\n[bold cyan]⚙️  Installing: [yellow]{group_name}[/yellow][/bold cyan]", style="bold")
-        _, sub_program = options_system[group_name]  # Extract content from tuple
-        if sub_program.startswith("#winget"):
-            sub_program = sub_program[1:]
-        program += "\n" + sub_program
-    return program
-
-
+    print(f"❌ ERROR: Unknown package group: {package_group}. Available groups are: {list(PACKAGE_GROUP2NAMES.keys())}")
 def install_clis(clis_names: list[str]):
     from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
     from machineconfig.utils.installer import get_installers

@@ -97,27 +97,20 @@ def get_installation_choices() -> list[str]:
     """Get user choices for installation options."""
     choices = [
         Choice(value="install_machineconfig", title="🐍 Install machineconfig.", checked=False),
-
+        Choice(value="sysabc", title="📥 Install Essential System Packages.", checked=False),
+        Choice(value="termabc", title="⚡ Install Terminal CLI apps essentials", checked=False),
         Choice(value="install_shell_profile", title="🐚 Configure Shell Profile.", checked=False),
-
-        Choice(value="ESSENTIAL_SYSTEM", title="📥 Install Essential System Packages.", checked=False),
-        Choice(value="ESSENTIAL", title="⚡ Install CLI apps essentials", checked=False),
-        Choice(value="DEV_SYSTEM", title="🛠️  Install CLI apps development.", checked=False),
-        Choice(value="TerminalEyeCandy", title="🎨 Install CLI apps terminal eye candy.", checked=False),
         Choice(value="install_ssh_server", title="🔒 Install SSH Server", checked=False),
         Choice(value="retrieve_repositories", title="📚 Retrieve Repositories", checked=False),
         Choice(value="retrieve_data", title="💾 Retrieve Data.", checked=False),
     ]
-    # Add Windows-specific options
-    if platform.system() == "Windows":
-        choices.append(Choice(value="install_windows_desktop", title="💻 Install Windows Desktop Apps   - Install nerd fonts and set WT config.", checked=False))
     selected = questionary.checkbox("Select the installation options you want to execute:", choices=choices, show_description=True).ask()
     return selected or []
 
 
 def execute_installations(selected_options: list[str]) -> None:
     for maybe_a_group in selected_options:
-        if maybe_a_group in ("ESSENTIAL", "DEV", "ESSENTIAL_SYSTEM", "DEV_SYSTEM", "TerminalEyeCandy"):
+        if maybe_a_group in ("termabc", "sysabc"):
             console.print(Panel("⚡ [bold bright_yellow]CLI APPLICATIONS[/bold bright_yellow]\n[italic]Command-line tools installation[/italic]", border_style="bright_yellow"))
             console.print("🔧 Installing CLI applications", style="bold cyan")
             try:
@@ -154,6 +147,11 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             from machineconfig.profile.create_shell_profile import create_default_shell_profile
             create_default_shell_profile()
             console.print("✅ Shell profile configured successfully", style="bold green")
+            if platform.system() == "Windows":
+                from machineconfig.jobs.installer.custom_dev.nerfont_windows_helper import install_nerd_fonts
+                install_nerd_fonts()
+                from machineconfig.setup_windows.wt_and_pwsh.set_wt_settings import main as set_wt_settings_main
+                set_wt_settings_main()
         except Exception as e:
             console.print(f"❌ Error configuring shell profile: {e}", style="bold red")
 
@@ -171,12 +169,6 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             console.print("✅ Backup data retrieved successfully", style="bold green")
         except Exception as e:
             console.print(f"❌ Error retrieving backup data: {e}", style="bold red")
-
-    if "install_windows_desktop" in selected_options:
-        from machineconfig.jobs.installer.custom_dev.nerfont_windows_helper import install_nerd_fonts
-        install_nerd_fonts()
-        from machineconfig.setup_windows.wt_and_pwsh.set_wt_settings import main as set_wt_settings_main
-        set_wt_settings_main()
 
 
 def main() -> None:

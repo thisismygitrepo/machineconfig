@@ -14,7 +14,7 @@ def install(which: Annotated[Optional[str], typer.Argument(..., help="Comma-sepa
         group: Annotated[bool, typer.Option(..., "--group", "-g", help="Treat 'which' as a group name. A group is bundle of apps.")] = False,
         interactive: Annotated[bool, typer.Option(..., "--interactive", "-ia", help="Interactive selection of programs to install.")] = False,
     ) -> None:
-        """📦 Install essential packages"""
+        """📦 Install packages"""
         import machineconfig.utils.installer_utils.installer as installer_entry_point
         installer_entry_point.main(which=which, group=group, interactive=interactive)
 

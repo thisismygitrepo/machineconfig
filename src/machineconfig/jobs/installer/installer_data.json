@@ -2,6 +2,23 @@
   "version": "1",
   "installers": [
     {
+      "appName": "sysabc",
+      "repoURL": "CMD",
+      "doc": "ABC programs (package managers and other system essential tools)",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "sysabc.py",
+          "windows": "sysabc.py",
+          "macos": "sysabc.py"
+        },
+        "arm64": {
+          "linux": "sysabc.py",
+          "windows": "sysabc.py",
+          "macos": "sysabc.py"
+        }
+      }
+    },
+    {
       "appName": "fx",
       "repoURL": "https://github.com/antonmedv/fx",
       "doc": "🧙‍♂️ Command-line JSON viewer",
@@ -1232,6 +1249,57 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "DB.Browser.for.SQLite-v{version}-x86.64-v2.AppImage",
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
+    },
+    {
+      "appName": "sqlite3",
+      "repoURL": "CMD",
+      "doc": "A cli for sqlite",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "sudo nala install sqlite3 -y",
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
+    },
+    {
+      "appName": "postgresql-client",
+      "repoURL": "CMD",
+      "doc": "A cli for postgresql",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "sudo nala install postgresql-client -y",
+          "macos": null,
+          "windows": null
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": null
+        }
+      }
+    },
+    {
+      "appName": "redis-cli",
+      "repoURL": "CMD",
+      "doc": "A cli for redis",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "sudo nala install redis-tools -y",
           "macos": null,
           "windows": null
         },
@@ -2830,14 +2898,14 @@
       "doc": "📊 Graph visualization software",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
+          "linux": "sudo nala install graphviz -y",
           "windows": "winget install --no-upgrade --name \"graphviz\" --Id \"Graphviz.Graphviz\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
-          "macos": null
+          "macos": "brew install graphviz"
         },
         "arm64": {
-          "linux": null,
+          "linux": "sudo nala install graphviz -y",
           "windows": "winget install --no-upgrade --name \"graphviz\" --Id \"Graphviz.Graphviz\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
-          "macos": null
+          "macos": "brew install graphviz"
         }
       }
     },
@@ -2859,19 +2927,19 @@
       }
     },
     {
-      "appName": "sshfs-win",
+      "appName": "sshfs",
       "repoURL": "CMD",
       "doc": "🌐 Mount remote filesystems over SSH",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
+          "linux": "sudo nala install sshfs",
           "windows": "winget install --no-upgrade --name \"SSHFS-win\" --Id \"SSHFS-Win.SSHFS-Win\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
-          "macos": null
+          "macos": "brew install sshfs"
         },
         "arm64": {
-          "linux": null,
+          "linux": "sudo nala install sshfs",
           "windows": "winget install --no-upgrade --name \"SSHFS-win\" --Id \"SSHFS-Win.SSHFS-Win\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
-          "macos": null
+          "macos": "brew install sshfs"
         }
       }
     },
@@ -3257,12 +3325,12 @@
         "amd64": {
           "linux": null,
           "windows": "winget install --no-upgrade --name \"Chafa\" --Id \"hpjansson.Chafa\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
-          "macos": null
+          "macos": "brew install chafa"
         },
         "arm64": {
           "linux": null,
           "windows": "winget install --no-upgrade --name \"Chafa\" --Id \"hpjansson.Chafa\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
-          "macos": null
+          "macos": "brew install chafa"
         }
       }
     },
