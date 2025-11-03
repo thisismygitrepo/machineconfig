@@ -1890,18 +1890,18 @@
     },
     {
       "appName": "tokei",
-      "repoURL": "https://github.com/XAMPPRocky/tokei",
+      "repoURL": "CMD",
       "doc": "📊 Counts the number of lines of code, comments, and blanks in a project.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "tokei-x86_64-unknown-linux-gnu.tar.gz",
-          "macos": "tokei-x86_64-apple-darwin.tar.gz",
-          "windows": "tokei-x86_64-pc-windows-msvc.zip"
+          "linux": "cargo install tokei",
+          "macos": "brew install tokei",
+          "windows": "winget install XAMPPRocky.tokei"
         },
         "arm64": {
-          "linux": "tokei-aarch64-unknown-linux-gnu.tar.gz",
-          "macos": "tokei-aarch64-apple-darwin.tar.gz",
-          "windows": null
+          "linux": "cargo install tokei",
+          "macos": "brew install tokei",
+          "windows": "winget install XAMPPRocky.tokei"
         }
       }
     },
