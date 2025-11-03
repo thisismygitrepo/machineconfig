@@ -1,5 +1,4 @@
 from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.options import choose_from_options
 from machineconfig.utils.source_of_truth import EXCLUDE_DIRS
 from rich.console import Console
 from rich.panel import Panel
@@ -83,6 +82,7 @@ def match_file_name(sub_string: str, search_root: PathExtended, suffixes: set[st
         if len(reduced_scripts) == 1:
             return PathExtended(reduced_scripts[0])
         elif len(reduced_scripts) > 1:
+            from machineconfig.utils.options import choose_from_options
             choice = choose_from_options(multi=False, msg="Multiple matches found", options=reduced_scripts, fzf=True)
             return PathExtended(choice)
         print(f"Result: This still generated {len(reduced_scripts)} results.")
@@ -121,3 +121,38 @@ def match_file_name(sub_string: str, search_root: PathExtended, suffixes: set[st
         msg = Panel(f"💥 FILE NOT FOUND | Path {sub_string} does not exist @ root {search_root_obj}. No search results", title="File Not Found", expand=False)
         raise FileNotFoundError(msg) from cpe
     return search_root_obj.joinpath(res)
+
+
+def search_for_files_of_interest(path_obj: PathExtended, suffixes: set[str]):
+    if path_obj.joinpath(".venv").exists():
+        path_objects = path_obj.search("*", not_in=[".venv"])
+        files: list[PathExtended] = []
+        for a_path_obj in path_objects:
+            files += search_for_files_of_interest(path_obj=a_path_obj, suffixes=suffixes)
+        return files
+    if path_obj.is_file():
+        return [path_obj]
+    files: list[PathExtended] = []
+    for a_suffix in suffixes:
+        if a_suffix == ".py":
+            files += path_obj.search(pattern="*.py", r=True, not_in=["__init__.py"])
+        else:
+            files += path_obj.search(pattern=f"*{a_suffix}", r=True)
+    return files
+
+
+def get_choice_file(path: str):
+    path_obj = sanitize_path(path)
+    suffixes = {".py", ".sh", ".ps1"}
+    if not path_obj.exists():
+        choice_file = match_file_name(sub_string=path, search_root=PathExtended.cwd(), suffixes=suffixes)
+    elif path_obj.is_dir():
+        print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
+        files = search_for_files_of_interest(path_obj, suffixes=suffixes)
+        print(f"🔍 Got #{len(files)} results.")
+        from machineconfig.utils.options import choose_from_options
+        choice_file = choose_from_options(multi=False, options=files, fzf=True, msg="Choose one option")
+        choice_file = PathExtended(choice_file)
+    else:
+        choice_file = path_obj
+    return choice_file

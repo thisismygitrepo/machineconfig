@@ -1,6 +1,6 @@
 
 
-def code(path: str, title: str):
+def get_read_python_file_pycode(path: str, title: str):
     from pathlib import Path
     print("Reading code from path:", path)
     pycode = Path(path).read_text(encoding="utf-8")

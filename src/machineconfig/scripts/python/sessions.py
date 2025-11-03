@@ -51,7 +51,7 @@ def select_layout(layouts_json_file: Path, selected_layouts_names: Optional[list
 
 def find_layout_file(layout_path: str, ) -> Path:
     from machineconfig.utils.path_extended import PathExtended
-    from machineconfig.scripts.python.helpers_fire_command.file_wrangler import search_for_files_of_interest
+    from machineconfig.utils.path_helper import search_for_files_of_interest
     from machineconfig.utils.options import choose_from_options
     from machineconfig.utils.path_helper import match_file_name, sanitize_path
     path_obj = sanitize_path(layout_path)
@@ -59,7 +59,7 @@ def find_layout_file(layout_path: str, ) -> Path:
         choice_file = match_file_name(sub_string=layout_path, search_root=PathExtended.cwd(), suffixes={".json"})
     elif path_obj.is_dir():
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
-        files = search_for_files_of_interest(path_obj)
+        files = search_for_files_of_interest(path_obj, suffixes={".py", ".sh", ".ps1"})
         print(f"🔍 Got #{len(files)} results.")
         choice_file = choose_from_options(multi=False, options=files, fzf=True, msg="Choose one option")
         choice_file = PathExtended(choice_file)

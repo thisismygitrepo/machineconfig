@@ -15,17 +15,17 @@ def croshell(
     profile: Annotated[Optional[str], typer.Option("--profile", "-P", help="ipython profile to use, defaults to default profile.")] = None,
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="run in jupyter interactive console")] = False,
     vscode: Annotated[bool, typer.Option("--vscode", "-c", help="open the script in vscode")] = False,
-    streamlit_viewer: Annotated[bool, typer.Option("--streamlit", "-s", help="view in streamlit app")] = False,
+    # streamlit_viewer: Annotated[bool, typer.Option("--streamlit", "-s", help="view in streamlit app")] = False,
     visidata: Annotated[bool, typer.Option("--visidata", "-v", help="open data file in visidata")] = False,
     marimo: Annotated[bool, typer.Option("--marimo", "-m", help="open the notebook using marimo if available")] = False,
 ) -> None:
-    from machineconfig.scripts.python.helpers_croshell.crosh import code, get_read_data_pycode
+    from machineconfig.scripts.python.helpers_croshell.crosh import get_read_python_file_pycode, get_read_data_pycode
     from machineconfig.utils.meta import lambda_to_python_script
+    from machineconfig.utils.path_helper import get_choice_file
     from machineconfig.utils.path_extended import PathExtended
     from pathlib import Path
     from machineconfig.utils.accessories import randstr
     import json
-    from machineconfig.utils.options import choose_from_options
     from rich.console import Console
     from rich.panel import Panel
     console = Console()
@@ -35,41 +35,18 @@ def croshell(
     interactivity = "-i"
     interpreter = "python" if python else "ipython"
     ipython_profile: Optional[str] = profile
-    file_obj = PathExtended.cwd()  # initialization value, could be modified according to args.
-
-    if path == ".":
-        text = "🔍 Searching for Python files..."
-        console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
-        options = [str(item) for item in PathExtended.cwd().search("*.py", r=True)]
-        file_selected = choose_from_options(msg="Choose a python file to run", options=options, fzf=True, multi=False)
-        assert isinstance(file_selected, str)
-        program = PathExtended(file_selected).read_text(encoding="utf-8")
-        text = f"📄 Selected file: {PathExtended(file_selected).name}"
-        console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
-
-    elif path != "" and path is not None:
-        if streamlit_viewer:
-            #             text = "📊 STARTING STREAMLIT VIEWER"
-            #             console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
-            #             from machineconfig.scripts.python.viewer import run
-            #             py_file_path = run(data_path=args.read, data=None, get_figure=None)
-            #             final_program = f"""
-            # #!/bin/bash
-            # streamlit run {py_file_path}
-            # """
-            #             PROGRAM_PATH.write_text(data=final_program, encoding="utf-8")
-            print("Streamlit viewer is not yet implemented in this version.")
-            return None
-        file_obj = PathExtended(str(path).lstrip()).expanduser().absolute()
-        program = lambda_to_python_script(lambda: get_read_data_pycode(path=str(file_obj)), in_global=True, import_module=False)
-        text = f"📄 Reading data from: {file_obj.name}"
-        console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
+    file_obj = Path.cwd()  # initialization value, could be modified according to args.
+    if path is not None:
+        choice_file = get_choice_file(path=path)
+        if choice_file.suffix == ".py":
+            program = choice_file.read_text(encoding="utf-8")
+            text = f"📄 Selected file: {choice_file.name}"
+            console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
+        else:
+            program = lambda_to_python_script(lambda: get_read_data_pycode(path=str(choice_file)), in_global=True, import_module=False)
+            text = f"📄 Reading data from: {file_obj.name}"
+            console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
     else:  # if nothing is specified, then run in interactive mode.
-        # text = "⌨️  Entering interactive mode"
-        # console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
-        # from machineconfig.scripts.python.croshell import InteractiveShell
-        # InteractiveShell().run()
-        # return None
         program = ""
     preprogram = """
 #%%
@@ -91,7 +68,7 @@ def croshell(
     pyfile.parent.mkdir(parents=True, exist_ok=True)
 
     title = "Reading Data"
-    def_code = lambda_to_python_script(lambda: code(path=str(pyfile), title=title), in_global=False, import_module=False)
+    def_code = lambda_to_python_script(lambda: get_read_python_file_pycode(path=str(pyfile), title=title), in_global=False, import_module=False)
     # print(def_code)
     python_program = preprogram + "\n\n" + def_code + program
     pyfile.write_text(python_program, encoding="utf-8")
