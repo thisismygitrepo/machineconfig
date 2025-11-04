@@ -13,7 +13,7 @@ wrap_in_shell_script() {
 
   local command="$1"
   shift  
-  local RANDOM_NAME=$(date +%s%N | sha256sum | head -c 16)
+  local RANDOM_NAME=$(uuidgen | tr -d '-' | head -c 16)
   local OP_DIR="$HOME/tmp_results/tmp_scripts/machineconfig"
   local OP_PROGRAM_PATH="$OP_DIR/${RANDOM_NAME}.sh"
   export OP_PROGRAM_PATH
