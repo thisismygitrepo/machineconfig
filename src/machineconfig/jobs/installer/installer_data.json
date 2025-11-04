@@ -2638,7 +2638,7 @@
       }
     },
     {
-      "appName": "Gorilla",
+      "appName": "gorilla",
       "repoURL": "https://github.com/ShishirPatil/gorilla",
       "doc": "natural language to API",
       "fileNamePattern": {
@@ -2689,7 +2689,7 @@
       }
     },
     {
-      "appName": "Redis",
+      "appName": "redis",
       "repoURL": "CMD",
       "doc": "submillisecond fast key-value db",
       "fileNamePattern": {
@@ -3323,12 +3323,12 @@
       "doc": "🖼️ Terminal graphics and image viewer",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
+          "linux": "sudo nala install chafa -y",
           "windows": "winget install --no-upgrade --name \"Chafa\" --Id \"hpjansson.Chafa\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": "brew install chafa"
         },
         "arm64": {
-          "linux": null,
+          "linux": "sudo nala install chafa -y",
           "windows": "winget install --no-upgrade --name \"Chafa\" --Id \"hpjansson.Chafa\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": "brew install chafa"
         }

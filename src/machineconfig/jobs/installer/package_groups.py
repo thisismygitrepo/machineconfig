@@ -24,6 +24,7 @@ AGENTS = [
     "kilocode",
     "cline",
     "auggie",
+    # "gorilla",
 ]
 
 
@@ -62,11 +63,13 @@ PACKAGES_CODE_EDITORS = [
 PACKAGES_DATABASE = [
     "SqliteBrowser",
     "sqlite3",
+    "redis",
     "redis-cli",
     "postgresql-client",
     "duckdb",
     "DBeaver",
     "rainfrog",
+
 ]
 
 
@@ -146,20 +149,23 @@ PACKAGES_PRODUCTIVITY = [
     "hx",
 ]
 
-# Miscellaneous Tools - Other tools
-PACKAGES_MISC_DEV = [
+
+# sudo nala install cowsay -y || true
+# sudo nala install lolcat -y || true
+# sudo nala install boxes -y || true
+# sudo nala install figlet -y || true
+# sudo nala install fortune -y || true
+# sudo nala install toilet -y || true
+TERMINAL_EYE_CANDY = [
     "lolcatjs",
     "figlet-cli",
     "boxes",
-    "Gorilla",
-    "Redis",
-    "transmission",
-    "bytehound",
-    "atuin",
-    "xcrawl3r",
-    "obsidian",
-    "istio",
-    "cointop",
+    # "transmission",
+    # "bytehound",
+    # "xcrawl3r",
+    # "obsidian",
+    # "istio",
+    # "cointop",
 ]
 
 
@@ -216,6 +222,7 @@ PACKAGES_TERMINAL_SHELL = [
     "zellij",
     "mprocs",
     "mcfly",
+    "atuin",
     "starship",
     "gotty",
     "ttyd",
@@ -229,9 +236,9 @@ PACKAGE_GROUP2NAMES: dict[str, list[str]] = {
     "sysabc": ["sysabc"],
     "termabc": [*PACKAGES_CODE_ANALYSIS, *PACKAGES_SYSTEM_MONITORS, *PACKAGES_TERMINAL_SHELL, *PACKAGES_FILE,],
     "gui": GUI,
-    "dev": [*PACKAGES_TERMINAL_EMULATORS, *PACKAGES_BROWSERS, *PACKAGES_CODE_EDITORS, *PACKAGES_DATABASE, *PACKAGES_MEDIA, *PACKAGES_FILE_SHARING, *PACKAGES_DEV_UTILS, *PACKAGES_CODE_ANALYSIS, *PACKAGES_PRODUCTIVITY, *PACKAGES_MISC_DEV,],
+    "dev": [*PACKAGES_TERMINAL_EMULATORS, *PACKAGES_BROWSERS, *PACKAGES_CODE_EDITORS, *PACKAGES_DATABASE, *PACKAGES_MEDIA, *PACKAGES_FILE_SHARING, *PACKAGES_DEV_UTILS, *PACKAGES_CODE_ANALYSIS, *PACKAGES_PRODUCTIVITY, *TERMINAL_EYE_CANDY,],
     "dev-utils": PACKAGES_DEV_UTILS,
-    "dev-msc": PACKAGES_MISC_DEV,
+    "term-eye-candy": TERMINAL_EYE_CANDY,
     "agents": AGENTS,
     "terminal-emulator": PACKAGES_TERMINAL_EMULATORS,
     "shell": PACKAGES_TERMINAL_SHELL,

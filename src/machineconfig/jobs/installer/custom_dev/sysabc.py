@@ -64,37 +64,18 @@ export NVM_DIR="$HOME/.nvm"
 echo "📥 Installing latest Node.js..."
 nvm install node || true
 
-# --GROUP:TerminalEyeCandy:fortune,toilet,sl,aafire,cmatrix,hollywood,chafa
-# echo "📥 Installing fortune - random wisdom generator..."
-# echo "📥 Installing toilet - large ASCII text generator..."
-# echo "📥 Installing sl - steam locomotive animation..."
-# echo "📥 Installing aafire - ASCII art fire animation..."
-# echo "📥 Installing cmatrix - Matrix-style terminal animation..."
-# echo "📥 Installing hollywood - Hollywood hacker terminal effect..."
-# echo "📥 Installing chafa - terminal image viewer..."
-# sudo nala install cowsay -y || true
-# sudo nala install lolcat -y || true
-# sudo nala install boxes -y || true
-# sudo nala install figlet -y || true
-# sudo nala install fortune -y || true
-# sudo nala install toilet -y || true
-# sudo nala install chafa -y
-# sudo nala install sl -y || true
-# sudo nala install libaa-bin -y
 # echo 'keyboard-configuration keyboard-configuration/layout select US English' | sudo debconf-set-selections
 # echo 'keyboard-configuration keyboard-configuration/layoutcode string us' | sudo debconf-set-selections
 # sudo DEBIAN_FRONTEND=noninteractive nala install -y cmatrix
 # sudo nala install hollywood -y || true
-
-# --GROUP:net: sshfs,samba,fuse3,nfs-common
 sudo nala install samba
 sudo nala install fuse3 -y || true
 sudo nala install nfs-common -y || true
-# --GROUP:dev: graphviz,make,rust,libssl-dev,sqlite3,postgresql-client,redis-tools
 # sudo nala install ffmpeg -y || true  # Required by some dev tools
 # sudo nala install make -y || true  # Required by LunarVim and SpaceVim
 # (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
 # sudo nala install libssl-dev -y
+# sudo nala install libaa-bin -y
 """
 
 
