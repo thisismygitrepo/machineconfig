@@ -2200,14 +2200,14 @@
       "doc": "🖥️ Text-based desktop environment inside your terminal",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "vtm_linux_x86_64.tar.7z",
+          "macos": "vtm_macos_any.tar.7z",
+          "windows": "vtm_windows_x86_64.7z"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "vtm_linux_arm64.tar.7z",
+          "macos": "vtm_macos_any.tar.7z",
+          "windows": "vtm_windows_arm64.7z"
         }
       }
     },

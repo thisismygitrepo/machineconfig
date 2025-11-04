@@ -200,6 +200,10 @@ class Installer:
         assert download_link is not None, "download_link must be set"
         assert version_to_be_installed is not None, "version_to_be_installed must be set"
         downloaded = PathExtended(download_link).download(folder=INSTALL_TMP_DIR).decompress()
+        if downloaded.is_dir() and len(downloaded.search("*", r=True)) == 1:
+            only_file_in = next(downloaded.glob("*"))
+            if only_file_in.is_file() and only_file_in.suffix in [".7z", ".zip", ".tar.gz", ".tar"]:  # further decompress
+                downloaded = only_file_in.decompress()
         return downloaded, version_to_be_installed
 
     # --------------------------- Arch / template helpers ---------------------------

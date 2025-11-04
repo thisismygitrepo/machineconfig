@@ -95,7 +95,7 @@ def get_installation_choices() -> list[str]:
     choices = [
         Choice(value="install_machineconfig", title="🐍 Install machineconfig cli.", checked=False),
         Choice(value="sysabc", title="📥 Install System Package Manager (Needed for other apps to be installed).", checked=False),
-        Choice(value="termabc", title="⚡ Install Terminal CLI apps essentials", checked=False),
+        Choice(value="termabc", title="⚡ Install Terminal CLI apps essentials (group `termabc`)", checked=False),
         Choice(value="install_shell_profile", title="🐚 Configure Shell Profile And Map Other Configs.", checked=False),
         Choice(value="install_ssh_server", title="🔒 [ADVANCED] Configure SSH Server", checked=False),
         Choice(value="retrieve_repositories", title="📚 [ADVANCED] Retrieve Repositories", checked=False),

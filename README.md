@@ -28,7 +28,7 @@ iex (iwr bit.ly/cfgwq).Content
 # Install On Linux and MacOS
 
 ```bash
-# install tool the tool only:
+# install the tool only:
 curl -LsSf https://astral.sh/uv/install.sh | sh  # Skip if UV is already installed
 uv tool install --upgrade --python 3.14 machineconfig
 # interactive install of machineconfig and following on to run it and make basic machine configuration (RECOMMENDED):

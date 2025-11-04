@@ -480,9 +480,6 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         **kwargs: Any,
     ) -> "PathExtended":
         path_resolved, slf = self._resolve_path(folder, name, path, self.name).expanduser().resolve(), self.expanduser().resolve()
-        # if use_7z:  # benefits over regular zip and encrypt: can handle very large files with low memory footprint
-        #     path_resolved = path_resolved + '.7z' if not path_resolved.suffix == '.7z' else path_resolved
-        #     with install_n_import("py7zr").SevenZipFile(file=path_resolved, mode=mode, password=pwd) as archive: archive.writeall(path=str(slf), arcname=None)
         arcname_obj = PathExtended(arcname or slf.name)
         if arcname_obj.name != slf.name:
             arcname_obj /= slf.name  # arcname has to start from somewhere and end with filename
@@ -555,15 +552,6 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         folder = folder if not content else folder.parent
         if slf.suffix == ".7z":
             raise NotImplementedError("I have not implemented this yet")
-            # if overwrite: P(folder).delete(sure=True)
-            # result = folder
-            # import py7zr
-            # with py7zr.SevenZipFile(file=slf, mode='r', password=pwd) as archive:
-            #     if pattern is not None:
-            #         import re
-            #         pat = re.compile(pattern)
-            #         archive.extract(path=folder, targets=[f for f in archive.getnames() if pat.match(f)])
-            #     else: archive.extractall(path=folder)
         else:
             if overwrite:
                 if not content:
@@ -698,19 +686,52 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         return ret
 
     def decompress(self, folder: OPLike = None, name: Optional[str] = None, path: OPLike = None, inplace: bool = False, orig: bool = False, verbose: bool = True) -> "PathExtended":
-        if ".tar.gz" in str(self) or ".tgz" in str(self):
+        if str(self).endswith(".tar.gz") or str(self).endswith(".tgz"):
             # res = self.ungz_untar(folder=folder, path=path, name=name, inplace=inplace, verbose=verbose, orig=orig)
             return self.ungz(name=f"tmp_{randstr()}.tar", inplace=inplace).untar(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)  # this works for .tgz suffix as well as .tar.gz
-        elif ".gz" in str(self):
+        elif str(self).endswith(".tar"):
+            res = self.untar(folder=folder, name=name, path=path, inplace=inplace, orig=orig, verbose=verbose)
+        elif str(self).endswith(".gz"):
             res = self.ungz(folder=folder, path=path, name=name, inplace=inplace, verbose=verbose, orig=orig)
-        elif ".tar.bz" in str(self) or "tbz" in str(self):
+        elif str(self).endswith(".tar.bz") or str(self).endswith(".tbz"):
             res = self.unbz(name=f"tmp_{randstr()}.tar", inplace=inplace)
             return res.untar(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)
-        elif ".tar.xz" in str(self):
+        elif str(self).endswith(".tar.xz"):
             # res = self.unxz_untar(folder=folder, path=path, name=name, inplace=inplace, verbose=verbose, orig=orig)
             res = self.unxz(inplace=inplace).untar(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)
-        elif ".zip" in str(self):
+        elif str(self).endswith(".zip"):
             res = self.unzip(folder=folder, path=path, name=name, inplace=inplace, verbose=verbose, orig=orig)
+        elif str(self).endswith(".7z"):
+            def unzip_7z(archive_path: str, dest_dir: Optional[str] = None) -> Path:
+                """
+                Uncompresses a .7z archive to a directory and returns the Path to the extraction directory.
+
+                :param archive_path: path to the .7z archive file
+                :param dest_dir: optional path to directory to extract into; if None a temporary dir will be created
+                :return: pathlib.Path pointing to the destination directory where contents were extracted
+                :raises: FileNotFoundError if archive does not exist; py7zr.Bad7zFile or other error if extraction fails
+                """
+                import py7zr
+                import tempfile
+                from pathlib import Path
+                archive_path_obj = Path(archive_path)
+                if not archive_path_obj.is_file():
+                    raise FileNotFoundError(f"Archive file not found: {archive_path_obj!r}")
+                if dest_dir is None:
+                    # create a temporary directory
+                    dest = Path(tempfile.mkdtemp(prefix=f"unzip7z_{archive_path_obj.stem}_"))
+                else:
+                    dest = Path(dest_dir)
+                    dest.mkdir(parents=True, exist_ok=True)
+                # Perform extraction
+                with py7zr.SevenZipFile(str(archive_path_obj), mode='r') as archive:
+                    archive.extractall(path=str(dest))
+                # Return the extraction directory path
+                return dest
+            from machineconfig.utils.code import run_lambda_function
+            destination_dir = str(self.expanduser().resolve()).replace(".7z", "")
+            run_lambda_function(lambda: unzip_7z(archive_path=str(self), dest_dir=destination_dir), uv_project_dir=None, uv_with=["py7zr"])
+            res = PathExtended(destination_dir)
         else:
             res = self
         return res
