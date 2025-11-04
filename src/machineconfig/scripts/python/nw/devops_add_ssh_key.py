@@ -35,7 +35,7 @@ def get_add_ssh_key_script(path_to_key: PathExtended) -> str:
             program = ""
         else:
             console.print(Panel(f"➕ Adding new SSH key to authorized keys\n🔑 Key file: {path_to_key.name}", title="[bold blue]Action[/bold blue]"))
-            if system() == "Linux":
+            if system() == "Linux" or system() == "Darwin":
                 program = f"cat {path_to_key} >> ~/.ssh/authorized_keys"
             elif system() == "Windows":
                 program_path = LIBRARY_ROOT.joinpath("setup_windows/add-sshkey.ps1")
@@ -48,7 +48,7 @@ def get_add_ssh_key_script(path_to_key: PathExtended) -> str:
                 raise NotImplementedError
     else:
         console.print(Panel(f"📝 Creating new authorized_keys file\n🔑 Using key: {path_to_key.name}", title="[bold blue]Action[/bold blue]"))
-        if system() == "Linux":
+        if system() == "Linux" or system() == "Darwin":
             program = f"cat {path_to_key} > ~/.ssh/authorized_keys"
         else:
             program_path = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add-sshkey.ps1")
