@@ -12,7 +12,9 @@ def main(
     method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for linking files")] = "copy",
     on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
     sensitivity: Annotated[Literal["private", "v", "public", "b"], typer.Option(..., "--sensitivity", "-s", help="Sensitivity of the config file.")] = "private",
-    destination: Annotated[str, typer.Option("--destination", "-d", help="destination folder (override the default, use at your own risk)")] = "",) -> None:
+    destination: Annotated[str, typer.Option("--destination", "-d", help="destination folder (override the default, use at your own risk)")] = "",
+    shared: Annotated[bool, typer.Option("--shared", "-sh", help="Whether the config file is shared across destinations directory.")] = False,
+    ) -> None:
     from rich.console import Console
     from rich.panel import Panel
     from machineconfig.utils.links import symlink_map, copy_map
@@ -27,14 +29,22 @@ def main(
     console = Console()
     orig_path = Path(file).expanduser().absolute()
     if destination == "":
-        new_path = backup_root.joinpath(orig_path.relative_to(Path.home()))
-        new_path.parent.mkdir(parents=True, exist_ok=True)
+        if shared:
+            new_path = backup_root.joinpath("shared").joinpath(orig_path.name)
+            new_path.parent.mkdir(parents=True, exist_ok=True)
+        else:
+            new_path = backup_root.joinpath(orig_path.relative_to(Path.home()))
+            new_path.parent.mkdir(parents=True, exist_ok=True)
     else:
-        dest_path = Path(destination).expanduser().absolute()
-        dest_path.mkdir(parents=True, exist_ok=True)
-        new_path = dest_path.joinpath(orig_path.name)
-
-
+        if shared:
+            dest_path = Path(destination).expanduser().absolute()
+            dest_path.mkdir(parents=True, exist_ok=True)
+            new_path = dest_path.joinpath("shared").joinpath(orig_path.name)
+            new_path.parent.mkdir(parents=True, exist_ok=True)
+        else:
+            dest_path = Path(destination).expanduser().absolute()
+            dest_path.mkdir(parents=True, exist_ok=True)
+            new_path = dest_path.joinpath(orig_path.name)
     from machineconfig.utils.path_extended import PathExtended
     match method:
         case "copy" | "c":

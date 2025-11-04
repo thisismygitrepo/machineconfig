@@ -54,7 +54,12 @@ def main(
     else:
         cloud_resolved = cloud
     repo_local_root = PathExtended.cwd() if repo is None else PathExtended(repo).expanduser().absolute()
-    repo_local_obj = git.Repo(repo_local_root, search_parent_directories=True)
+    try:
+        repo_local_obj = git.Repo(repo_local_root, search_parent_directories=True)
+    except git.InvalidGitRepositoryError:
+        typer.echo(f"[red]Error:[/] The specified path '{repo_local_root}' is not a valid git repository.")
+        typer.Exit(code=1)
+        return ""
     repo_local_root = PathExtended(repo_local_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
     PathExtended(CONFIG_ROOT).joinpath("remote").mkdir(parents=True, exist_ok=True)
     repo_remote_root = PathExtended(CONFIG_ROOT).joinpath("remote", repo_local_root.rel2home())

@@ -15,7 +15,7 @@
 
 ## 💡 Motivation
 
-But why do we need such a tool to combine all those functionalities??
+But why do we need such a tool to combine all those functionalities?? Because you need one tool to manager your stack and dev-environment, put it together and maintain it.
 Consider this concrete scenario: When setting up a new machine, VM, or Docker container, you often face dependency chains like this:
 
 ```mermaid
