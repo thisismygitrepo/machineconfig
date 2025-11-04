@@ -10,7 +10,7 @@
 
 # 🧠 Welcome to **Machineconfig**
 
-**Machineconfig** is a **Digital Life Manager** — It's called so because no existing category of software fully captures its scope.
+**Machineconfig** is a cli-based **Digital Life Manager** — It's called so because no existing category of software fully captures its scope. At the same time, it is a *Package Manager*, *Configuration Manager*, *Automation Tool*, *Dotfiles Manager*, *Data Solution*, and *Code Manager*, among other functionalities covered, all rolled into one seamless experience.
 
 
 ## 💡 Motivation
@@ -20,16 +20,16 @@ Consider this concrete scenario: When setting up a new machine, VM, or Docker co
 
 ```mermaid
 flowchart TD
-    A["Need to setup my [dev] environment"] --> B["Install dotfile manager: yadm"]
+    A["Need to setup my [dev] environment"] --> B["need my tool x, e.g.: yadm"]
     B --> C["Requires git"]
     C --> D["Requires package manager, e.g. brew"]
     D --> E["Requires curl"]
     E --> F["Requires network setup / system update"]
     F --> G["Requires system configuration access"]
-    G --> H["Finally ready to start setup"]
+    G --> H["Finally ready to start setup the tool x."]
 ```
 
-Machineconfig builds on shoulder of giants. A suite of best-in-class stack of projects on github are used, the most starred, active and written in Rust tools are used when possible. The goal is to provide a seamless experience that abstracts away the complexity of setting up and maintaining your digital environment.
+Machineconfig builds on shoulder of giants. A suite of best-in-class stack of projects on github are used, the most starred, active and written in Rust tools are used when possible. The goal is to provide a seamless experience that abstracts away the complexity of setting up and maintaining your digital environment. The goal of machineconfig is to replicate your setup, config, code, data and secrets on any machine, any os, in 5 minutes, using minimal user input. Then, from that point, machineconfig will help you maintain, update, backup and sync your digital life across all your devices, automatically.
 
 
 ## ⚙️ Functional Overview
