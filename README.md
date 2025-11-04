@@ -8,10 +8,39 @@
 </p>
 
 
-# Welcome to machineconfig
+# 🧠 Welcome to **Machineconfig**
 
-Machineconfig is a package for managing configuration files (aka dotfiles). The idea is to collect those critical, time-consuming-files-to-setup in one directory and reference them via symbolic links from their original locations. Thus, when a new machine is to be setup, all that is required is to clone the repo in that machine and create the symbolic links.
-Dotfiles are divided into private and public. Examples of private ones are, `~/.gitconfig`, `~/.ssh`, etc. Whereas public config files are ones like `lfrc`. The private dotfiles are placed @ `~/dotfiles`. The files therein are encrypted before backedup.
+**Machineconfig** is a **Digital Life Manager** — It's called so because no existing category of software fully captures its scope.
+
+
+## 💡 Motivation
+
+When setting up a new machine, VM, or Docker container, you often face dependency chains like this:
+
+```mermaid
+flowchart TD
+    A["Need to setup environment"] --> B["Install dotfile manager: yadm"]
+    B --> C["Requires git"]
+    C --> D["Requires package manager: brew"]
+    D --> E["Requires curl"]
+    E --> F["Requires network setup / system update"]
+    F --> G["Requires system configuration access"]
+    G --> H["Finally ready to start setup"]
+
+
+## ⚙️ Functional Overview
+
+| Category               | Comparable Tools                              | Description                                               |
+|------------------------|----------------------------------------------|-----------------------------------------------------------|
+| **Package Manager**     | `winget`, `apt`, `brew`, `nix`               | Installs and manages software packages across systems.    |
+| **Configuration Manager** | `Ansible`, `Chef`, `Puppet`                | Configures and maintains system‐level preferences.        |
+| **Automation Tool**     | `Airflow`, `Prefect`, `Dagster`, `Celery`    | Automates repetitive tasks, pipelines, orchestration.     |
+| **Dotfiles Manager**    | `chezmoi`, `yadm`, `rcm`, `GNU Stow`        | Synchronises dotfiles & personal configs across systems.  |
+| **Data Solution**       | `rclone`, `rsync`                            | Handles backups, mirroring and secure file sync.          |
+| **Code Manager**        | `strong‐box`, `Vault`                        | Manages and protects code snippets, secrets and creds.    |
+
+---
+
 
 # Install On Windows:
 
@@ -24,6 +53,7 @@ iex (iwr bit.ly/cfgwindows).Content  # Or, if UV is installed: iex (uvx machinec
 # Quick install and configure (optionals are accepted by default):
 iex (iwr bit.ly/cfgwq).Content
 ```
+
 
 # Install On Linux and MacOS
 
