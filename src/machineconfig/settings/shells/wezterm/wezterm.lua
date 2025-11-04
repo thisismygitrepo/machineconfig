@@ -190,4 +190,6 @@ end
 
 
 -- and finally, return the configuration to wezterm
+config.enable_osc133 = false  -- to silence: P>|WezTerm 20240203-110809-5046fc22\
+
 return config
