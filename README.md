@@ -15,17 +15,21 @@
 
 ## 💡 Motivation
 
-When setting up a new machine, VM, or Docker container, you often face dependency chains like this:
+But why do we need such a tool to combine all those functionalities??
+Consider this concrete scenario: When setting up a new machine, VM, or Docker container, you often face dependency chains like this:
 
 ```mermaid
 flowchart TD
-    A["Need to setup environment"] --> B["Install dotfile manager: yadm"]
+    A["Need to setup my [dev] environment"] --> B["Install dotfile manager: yadm"]
     B --> C["Requires git"]
-    C --> D["Requires package manager: brew"]
+    C --> D["Requires package manager, e.g. brew"]
     D --> E["Requires curl"]
     E --> F["Requires network setup / system update"]
     F --> G["Requires system configuration access"]
     G --> H["Finally ready to start setup"]
+```
+
+Machineconfig builds on shoulder of giants. A suite of best-in-class stack of projects on github are used, the most starred, active and written in Rust tools are used when possible. The goal is to provide a seamless experience that abstracts away the complexity of setting up and maintaining your digital environment.
 
 
 ## ⚙️ Functional Overview
