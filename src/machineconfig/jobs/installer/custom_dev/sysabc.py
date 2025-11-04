@@ -8,7 +8,7 @@ from rich.panel import Panel
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-ps1 = """
+ps1 = r"""
 winget install --no-upgrade --name "Powershell"                   --Id "Microsoft.PowerShell"       --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
 winget install --no-upgrade --name "Windows Terminal"             --Id "Microsoft.WindowsTerminal"  --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W 11
 winget install --no-upgrade --name "GNU Nano"                     --Id "GNU.Nano"                   --source winget --scope user --accept-package-agreements --accept-source-agreements
@@ -20,7 +20,7 @@ winget install --no-upgrade --name "GNU Nano"                     --Id "GNU.Nano
 
 """
 
-zsh = """
+zsh = r"""
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 echo "🔄 Updating Homebrew..."
 brew update || true
@@ -48,7 +48,7 @@ nvm install node || true
 echo "✅ Essential tools installation complete."
 """
 
-bash = """
+bash = r"""
 echo "🔄 Updating apt package lists..."
 echo "📥 Installing nala package manager..."
 echo "📥 Installing essential network tools..."
@@ -87,12 +87,9 @@ nvm install node || true
 # sudo nala install hollywood -y || true
 
 # --GROUP:net: sshfs,samba,fuse3,nfs-common
-echo "📥 Installing sshfs - mount remote filesystems over SSH..."
-echo "📥 Installing Samba - LAN-based file sharing..."
 sudo nala install samba
 sudo nala install fuse3 -y || true
 sudo nala install nfs-common -y || true
-
 # --GROUP:dev: graphviz,make,rust,libssl-dev,sqlite3,postgresql-client,redis-tools
 # sudo nala install ffmpeg -y || true  # Required by some dev tools
 # sudo nala install make -y || true  # Required by LunarVim and SpaceVim

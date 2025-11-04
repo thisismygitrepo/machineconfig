@@ -16,27 +16,23 @@ Dotfiles are divided into private and public. Examples of private ones are, `~/.
 # Install On Windows:
 
 ```powershell
-# Temporary install:
-iex (iwr bit.ly/cfgwindows).Content
-# Or, if UV is installed:
-iex (uvx machineconfig define)
-# Permanent install:
+# install tool the tool only:
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"  # Skip if UV is already installed
-uv tool install --upgrade  --python 3.14 machineconfig both
-devops config copy-assets
-
+uv tool install --upgrade --python 3.14 machineconfig
+# interactive install of machineconfig and following on to run it and make basic machine configuration (RECOMMENDED):
+iex (iwr bit.ly/cfgwindows).Content  # Or, if UV is installed: iex (uvx machineconfig define)
+# Quick install and configure (optionals are accepted by default):
+iex (iwr bit.ly/cfgwq).Content
 ```
 
 # Install On Linux and MacOS
 
 ```bash
-# Temporary install:
-. <(curl -L bit.ly/cfglinux)
-# Or, if UV is installed:
-. <(uvx machineconfig define)
-# Permanent install:
+# install tool the tool only:
 curl -LsSf https://astral.sh/uv/install.sh | sh  # Skip if UV is already installed
-uv tool install --upgrade --upgrade 3.14 machineconfig
+uv tool install --upgrade --python 3.14 machineconfig
+# interactive install of machineconfig and following on to run it and make basic machine configuration (RECOMMENDED):
+. <(curl -L bit.ly/cfglinux) # Or, if UV is installed: . <(uvx machineconfig define)
 ```
 
 

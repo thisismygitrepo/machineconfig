@@ -2570,7 +2570,7 @@
       }
     },
     {
-      "appName": "Brave",
+      "appName": "brave",
       "repoURL": "CMD",
       "doc": "Privacy-focused web browser with built-in ad blocking",
       "fileNamePattern": {
@@ -2706,7 +2706,7 @@
       }
     },
     {
-      "appName": "Wezterm",
+      "appName": "wezterm",
       "repoURL": "CMD",
       "doc": "Modern, GPU-accelerated terminal emulator",
       "fileNamePattern": {

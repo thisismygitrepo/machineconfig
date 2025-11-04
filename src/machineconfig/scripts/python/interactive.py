@@ -19,9 +19,7 @@ for better user experience with checkbox selections.
 
 import sys
 from pathlib import Path
-# from typing import cast
 import platform
-
 import questionary
 from questionary import Choice
 from rich.console import Console
@@ -29,7 +27,6 @@ from rich.panel import Panel
 from rich.text import Text
 from machineconfig.utils.code import run_shell_script
 
-# _ = cast
 console = Console()
 
 
@@ -96,13 +93,13 @@ def display_dotfiles_instructions() -> None:
 def get_installation_choices() -> list[str]:
     """Get user choices for installation options."""
     choices = [
-        Choice(value="install_machineconfig", title="🐍 Install machineconfig.", checked=False),
-        Choice(value="sysabc", title="📥 Install Essential System Packages.", checked=False),
+        Choice(value="install_machineconfig", title="🐍 Install machineconfig cli.", checked=False),
+        Choice(value="sysabc", title="📥 Install System Package Manager (Needed for other apps to be installed).", checked=False),
         Choice(value="termabc", title="⚡ Install Terminal CLI apps essentials", checked=False),
-        Choice(value="install_shell_profile", title="🐚 Configure Shell Profile.", checked=False),
-        Choice(value="install_ssh_server", title="🔒 Install SSH Server", checked=False),
-        Choice(value="retrieve_repositories", title="📚 Retrieve Repositories", checked=False),
-        Choice(value="retrieve_data", title="💾 Retrieve Data.", checked=False),
+        Choice(value="install_shell_profile", title="🐚 Configure Shell Profile And Map Other Configs.", checked=False),
+        Choice(value="install_ssh_server", title="🔒 [ADVANCED] Configure SSH Server", checked=False),
+        Choice(value="retrieve_repositories", title="📚 [ADVANCED] Retrieve Repositories", checked=False),
+        Choice(value="retrieve_data", title="💾 [ADVANCED] Retrieve Data.", checked=False),
     ]
     selected = questionary.checkbox("Select the installation options you want to execute:", choices=choices, show_description=True).ask()
     return selected or []
@@ -119,7 +116,6 @@ def execute_installations(selected_options: list[str]) -> None:
                 console.print("✅ CLI applications installed successfully", style="bold green")
             except Exception as e:
                 console.print(f"❌ Error installing CLI applications: {e}", style="bold red")
-            import platform
             if platform.system() != "Windows":
                 run_shell_script(". $HOME/.bashrc")
 
@@ -130,7 +126,6 @@ def execute_installations(selected_options: list[str]) -> None:
 
     if "install_ssh_server" in selected_options:
         console.print(Panel("🔒 [bold red]SSH SERVER[/bold red]\n[italic]Remote access setup[/italic]", border_style="red"))
-        import platform
         if platform.system() == "Windows":
             powershell_script = """Write-Host "🔧 Installing and configuring SSH server..."
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
@@ -147,6 +142,8 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             from machineconfig.profile.create_shell_profile import create_default_shell_profile
             create_default_shell_profile()
             console.print("✅ Shell profile configured successfully", style="bold green")
+            from machineconfig.profile.create_links_export import main_public_from_parser
+            main_public_from_parser(method="copy", on_conflict="overwrite-default-path", which="all", interactive=False)
             if platform.system() == "Windows":
                 from machineconfig.jobs.installer.custom_dev.nerfont_windows_helper import install_nerd_fonts
                 install_nerd_fonts()

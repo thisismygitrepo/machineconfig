@@ -3,16 +3,16 @@
 iex (iwr "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/uv.ps1").Content
 iex (iwr "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/scripts/windows/wrap_mcfg.ps1").Content
 
-function devops   { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.54" devops $args }
-function cloud    { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.54" cloud $args }
-function agents   { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.54" agents $args }
-function sessions { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.54" sessions $args }
-function ftpx     { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.54" ftpx $args }
-function fire     { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.54" fire $args }
-function croshell { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.54" croshell $args }
-function utils    { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.54" utils $args }
-function terminal { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.54" terminal $args }
-function msearch  { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.54" msearch $args }
+function devops   { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.55" devops $args }
+function cloud    { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.55" cloud $args }
+function agents   { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.55" agents $args }
+function sessions { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.55" sessions $args }
+function ftpx     { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.55" ftpx $args }
+function fire     { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.55" fire $args }
+function croshell { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.55" croshell $args }
+function utils    { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.55" utils $args }
+function terminal { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.55" terminal $args }
+function msearch  { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=7.55" msearch $args }
 
 function d { wrap_in_shell_script devops @args }
 function c { wrap_in_shell_script cloud @args }
@@ -25,5 +25,6 @@ function u { wrap_in_shell_script utils @args }
 function t { wrap_in_shell_script terminal @args }
 function ms { wrap_in_shell_script msearch @args }
 
-devops self
 Write-Host "mcfg command aliases are now defined in this PowerShell session."
+
+devops self interactive

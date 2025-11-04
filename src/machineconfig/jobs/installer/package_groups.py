@@ -1,4 +1,11 @@
 
+GUI = [
+    "brave",
+    "code",
+    "git",
+    "wezterm",
+]
+
 # AI/LLM Tools - AI-powered coding and chat assistants
 AGENTS = [
     "aider",
@@ -221,6 +228,7 @@ PACKAGES_TERMINAL_SHELL = [
 PACKAGE_GROUP2NAMES: dict[str, list[str]] = {
     "sysabc": ["sysabc"],
     "termabc": [*PACKAGES_CODE_ANALYSIS, *PACKAGES_SYSTEM_MONITORS, *PACKAGES_TERMINAL_SHELL, *PACKAGES_FILE,],
+    "gui": GUI,
     "dev": [*PACKAGES_TERMINAL_EMULATORS, *PACKAGES_BROWSERS, *PACKAGES_CODE_EDITORS, *PACKAGES_DATABASE, *PACKAGES_MEDIA, *PACKAGES_FILE_SHARING, *PACKAGES_DEV_UTILS, *PACKAGES_CODE_ANALYSIS, *PACKAGES_PRODUCTIVITY, *PACKAGES_MISC_DEV,],
     "dev-utils": PACKAGES_DEV_UTILS,
     "dev-msc": PACKAGES_MISC_DEV,

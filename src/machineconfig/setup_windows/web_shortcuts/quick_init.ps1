@@ -13,3 +13,4 @@ devops config shell --which nushell
 
 wt  # start Windows Terminal to pick up config changes
 devops install --group termabc
+devops install --group gui
