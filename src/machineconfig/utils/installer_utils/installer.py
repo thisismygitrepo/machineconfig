@@ -101,13 +101,10 @@ def install_interactively():
     from machineconfig.utils.installer import get_installers
     from machineconfig.utils.installer_utils.installer_class import Installer
     installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=None)
-    installer_options = []
-    for x in installers:
-        installer_options.append(Installer(installer_data=x).get_description())
-
+    installer_options = [Installer(installer_data=x).get_description() for x in installers]
     category_display_to_name = get_group_name_to_repr()
     options = list(category_display_to_name.keys()) + ["─" * 50] + installer_options
-    program_names = choose_from_options(multi=True, msg="Categories are prefixed with 📦", options=options, header="🚀 CHOOSE DEV APP OR CATEGORY", default="📦 termabc", fzf=True)
+    program_names = choose_from_options(multi=True, msg="Categories are prefixed with 📦", options=options, header="🚀 CHOOSE DEV APP OR CATEGORY", fzf=True)
     installation_messages: list[str] = []
     for _an_idx, a_program_name in enumerate(program_names):
         if a_program_name.startswith("─"):  # 50 dashes separator

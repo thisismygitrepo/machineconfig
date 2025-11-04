@@ -529,6 +529,40 @@
       }
     },
     {
+      "appName": "cloudflare-warp",
+      "repoURL": "CMD",
+      "doc": "🌐 Cloudflare WARP VPN client",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Cloudflare WARP\" --Id \"Cloudflare.Warp\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"Cloudflare WARP\" --Id \"Cloudflare.Warp\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
+      "appName": "cloudflare-warp-cli",
+      "repoURL": "CMD",
+      "doc": "🌐 Cloudflare WARP VPN client in the terminal",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "cloudflare_warp_cli.py",
+          "windows": "cloudflare_warp_cli.py",
+          "macos": "cloudflare_warp_cli.py"
+        },
+        "arm64": {
+          "linux": "cloudflare_warp_cli.py",
+          "windows": "cloudflare_warp_cli.py",
+          "macos": "cloudflare_warp_cli.py"
+      }
+    }
+    },
+    {
       "appName": "cpufetch",
       "repoURL": "https://github.com/Dr-Noob/cpufetch",
       "doc": "💻 cpufetch is a small yet fancy CPU architecture fetching tool, like fastfetch but for CPUs.",
@@ -2990,23 +3024,6 @@
         "arm64": {
           "linux": null,
           "windows": "winget install --no-upgrade --name \"Rustup\" --Id \"Rustlang.Rustup\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
-          "macos": null
-        }
-      }
-    },
-    {
-      "appName": "cloudflare-warp",
-      "repoURL": "CMD",
-      "doc": "🌐 Cloudflare WARP VPN client",
-      "fileNamePattern": {
-        "amd64": {
-          "linux": null,
-          "windows": "winget install --no-upgrade --name \"Cloudflare WARP\" --Id \"Cloudflare.Warp\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
-          "macos": null
-        },
-        "arm64": {
-          "linux": null,
-          "windows": "winget install --no-upgrade --name \"Cloudflare WARP\" --Id \"Cloudflare.Warp\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": null
         }
       }

@@ -9,10 +9,6 @@ from rich.panel import Panel
 
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
-
-# config_dict: InstallerData = {"appName": "Wezterm", "repoURL": "CMD", "doc": "Modern, GPU-accelerated terminal emulator"}
-
-
 console = Console()
 
 
