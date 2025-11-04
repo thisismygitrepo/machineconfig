@@ -14,6 +14,7 @@ from rich.panel import Panel
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
+LANGUAGES_SUPPORTED_GRAMMER = ["python.so", "nu.so", "bash.so", "lua.so", "powershell.so"]
 config_dict: InstallerData = {
     "appName": "hx",
     "repoURL": "CMD",
@@ -102,11 +103,12 @@ def main(installer_data: InstallerData, version: Optional[str], install_lib: boo
                 if not child.exists():
                     continue
                 if child.name == "grammars":
-                    # copy only the python.so file from runtime/grammars if it exists
-                    python_so = child.joinpath("python.so")
-                    if python_so.exists() and python_so.is_file():
-                        dest = target_runtime.joinpath("grammars")
-                        python_so.copy(folder=dest, overwrite=True)
+                    # copy only the specific language files from runtime/grammars if they exist
+                    for a_language in LANGUAGES_SUPPORTED_GRAMMER:
+                        lang_file = child.joinpath(a_language)
+                        if lang_file.exists() and lang_file.is_file():
+                            dest = target_runtime.joinpath("grammars")
+                            lang_file.copy(folder=dest, overwrite=True)
                 else:
                     # copy the whole child (file or directory) into target_runtime
                     # for directories, copy will create target_runtime/<child.name>
@@ -148,10 +150,11 @@ def main(installer_data: InstallerData, version: Optional[str], install_lib: boo
                 if not child.exists():
                     continue
                 if child.name == "grammars":
-                    python_so = child.joinpath("python.so")
-                    if python_so.exists() and python_so.is_file():
-                        dest = target_runtime.joinpath("grammars")
-                        python_so.copy(folder=dest, overwrite=True)
+                    for a_language in LANGUAGES_SUPPORTED_GRAMMER:
+                        lang_file = child.joinpath(a_language)
+                        if lang_file.exists() and lang_file.is_file():
+                            dest = target_runtime.joinpath("grammars")
+                            lang_file.copy(folder=dest, overwrite=True)
                 else:
                     try:
                         child.copy(folder=target_runtime, overwrite=True)
