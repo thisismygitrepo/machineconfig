@@ -1844,12 +1844,12 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "miniserve-{version}-x86_64-unknown-linux-musl",
-          "darwin": "miniserve-{version}-x86_64-apple-darwin",
+          "macos": "miniserve-{version}-x86_64-apple-darwin",
           "windows": "miniserve-{version}-x86_64-pc-windows-msvc.exe"
         },
         "arm64": {
           "linux": "miniserve-{version}-aarch64-unknown-linux-musl",
-          "darwin": "miniserve-{version}-aarch64-apple-darwin",
+          "macos": "miniserve-{version}-aarch64-apple-darwin",
           "windows": "miniserve-{version}-aarch64-pc-windows-msvc.exe"
         }
       }

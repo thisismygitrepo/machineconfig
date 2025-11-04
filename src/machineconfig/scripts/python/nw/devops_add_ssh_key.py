@@ -13,9 +13,9 @@ import typer
 console = Console()
 
 
-def get_add_ssh_key_script(path_to_key: PathExtended):
+def get_add_ssh_key_script(path_to_key: PathExtended) -> str:
     console.print(Panel("🔑 SSH KEY CONFIGURATION", title="[bold blue]SSH Setup[/bold blue]"))
-    if system() == "Linux":
+    if system() == "Linux" or system() == "Darwin":
         authorized_keys = PathExtended.home().joinpath(".ssh/authorized_keys")
         console.print(Panel(f"🐧 Linux SSH configuration\n📄 Authorized keys file: {authorized_keys}", title="[bold blue]System Info[/bold blue]"))
     elif system() == "Windows":
@@ -55,7 +55,7 @@ def get_add_ssh_key_script(path_to_key: PathExtended):
             program = PathExtended(program_path).expanduser().read_text(encoding="utf-8").replace('$sshfile=""', f'$sshfile="{path_to_key}"')
             console.print(Panel("🔧 Configured PowerShell script for Windows\n📝 Set key path in script", title="[bold blue]Configuration[/bold blue]"))
 
-    if system() == "Linux":
+    if system() == "Linux" or system() == "Darwin":
         program += """
 sudo chmod 700 ~/.ssh
 sudo chmod 644 ~/.ssh/authorized_keys
@@ -64,6 +64,16 @@ sudo service ssh --full-restart
 # from superuser.com/questions/215504/permissions-on-private-key-in-ssh-folder
 """
     return program
+
+
+"""
+Common pitfalls: 
+🚫 Wrong line endings (LF/CRLF) in config files
+🌐 Network port conflicts (try 2222 -> 2223) between WSL and Windows
+sudo service ssh restart
+sudo service ssh status
+sudo nano /etc/ssh/sshd_config
+"""
 
 
 def main(pub_path: Annotated[Optional[str], typer.Argument(..., help="Path to the public key file")] = None,
@@ -127,6 +137,12 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(..., help="Path to th
     console.print(Panel("🚀 SSH KEY AUTHORIZATION READY\nRun the generated script to apply changes", box=box.DOUBLE_EDGE, title_align="left"))
     from machineconfig.utils.code import run_shell_script
     run_shell_script(script=program)
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('8.8.8.8', 80))
+    local_ip_v4 = s.getsockname()[0]
+    s.close()
+    console.print(Panel(f"🌐 This computer is accessible at: {local_ip_v4}", title="[bold green]Network Info[/bold green]", border_style="green"))
     console.print(Panel("✅ SSH KEY AUTHORIZATION COMPLETED", box=box.DOUBLE_EDGE, title_align="left"))
 
 
