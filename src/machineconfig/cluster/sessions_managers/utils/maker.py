@@ -4,7 +4,7 @@ from typing import Optional, Literal
 from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig
 from pathlib import Path
 
-def get_fire_tab_using_uv(func: FunctionType, import_module: bool, uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> tuple[TabConfig, Path]:
+def get_fire_tab_using_uv(func: FunctionType, tab_weight: int, import_module: bool, uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> tuple[TabConfig, Path]:
     from machineconfig.utils.meta import lambda_to_python_script
     py_script =  lambda_to_python_script(lmb=lambda: func, in_global=True, import_module=import_module)
     from machineconfig.utils.code import get_uv_command_executing_python_script
@@ -12,7 +12,8 @@ def get_fire_tab_using_uv(func: FunctionType, import_module: bool, uv_with: Opti
     tab_config: TabConfig = {
         "command": command_to_run,
         "startDir": "$HOME",
-        "tabName": func.__name__
+        "tabName": func.__name__,
+        "tabWeight": tab_weight
     }
     return tab_config, py_script_path
 def get_fire_tab_using_fire(func: FunctionType):
@@ -38,12 +39,13 @@ def get_fire_tab_using_fire(func: FunctionType):
 
 
 
-def make_layout_from_functions(functions: list[FunctionType], import_module: bool, tab_configs: list[TabConfig], layout_name: str, method: Literal["script", "fire"]="fire") -> LayoutConfig:
+def make_layout_from_functions(functions: list[FunctionType], functions_weights: Optional[list[int]], import_module: bool, tab_configs: list[TabConfig],
+                               layout_name: str, method: Literal["script", "fire"]="fire") -> LayoutConfig:
     tabs2artifacts: list[tuple[TabConfig, list[Path]]] = []
-    for a_func in functions:
+    for a_func, tab_weight in zip(functions, functions_weights or [1]*len(functions)):
         match method:
             case "script":
-                tab_config, artifact_files_1 = get_fire_tab_using_uv(a_func, import_module=import_module, uv_with=None, uv_project_dir=None)
+                tab_config, artifact_files_1 = get_fire_tab_using_uv(a_func, tab_weight=tab_weight, import_module=import_module, uv_with=None, uv_project_dir=None)
                 artifact_files = [artifact_files_1]
             case "fire":
                 tab_config = get_fire_tab_using_fire(a_func)

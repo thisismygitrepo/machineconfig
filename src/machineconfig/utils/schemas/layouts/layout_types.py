@@ -13,7 +13,7 @@ class TabConfig(TypedDict):
     tabName: str
     startDir: str
     command: str
-    tabWeight: NotRequired[int]  # Optional, defaults to 1 if not provided
+    tabWeight: NotRequired[int]
 
 
 class LayoutConfig(TypedDict):
