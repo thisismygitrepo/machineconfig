@@ -30,7 +30,8 @@ uv tool install --upgrade machineconfig
     if platform.system() == "Windows":
         from machineconfig.utils.code import exit_then_run_shell_script, get_uv_command_executing_python_script
         from machineconfig.utils.meta import lambda_to_python_script
-        python_script = lambda_to_python_script(lambda: copy_both_assets(), in_global=True, import_module=False)
+        python_script = lambda_to_python_script(lambda: copy_both_assets(),
+                                                in_global=True, import_module=False)
         uv_command, _py_file = get_uv_command_executing_python_script(python_script=python_script, uv_with=["machineconfig"], uv_project_dir=None)
         exit_then_run_shell_script(shell_script + "\n" + uv_command, strict=True)
     else:

@@ -7,9 +7,11 @@ from pathlib import Path
 def get_fire_tab_using_uv(func: FunctionType, tab_weight: int, import_module: bool, uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> tuple[TabConfig, Path]:
     from machineconfig.utils.meta import lambda_to_python_script
     if func.__name__ == "<lambda>":
-        py_script =  lambda_to_python_script(lmb=func, in_global=True, import_module=import_module)
+        py_script =  lambda_to_python_script(lmb=func,
+                                             in_global=True, import_module=import_module)
     else:
-        py_script =  lambda_to_python_script(lmb=lambda: func(), in_global=True, import_module=import_module)
+        py_script =  lambda_to_python_script(lmb=lambda: func(),
+                                             in_global=True, import_module=import_module)
     from machineconfig.utils.code import get_uv_command_executing_python_script
     command_to_run, py_script_path = get_uv_command_executing_python_script(python_script=py_script, uv_with=uv_with, uv_project_dir=uv_project_dir)
     tab_config: TabConfig = {

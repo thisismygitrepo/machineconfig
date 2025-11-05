@@ -38,14 +38,16 @@ def get_uv_command_executing_python_script(python_script: str, uv_with: Optional
         uv_project_dir_arg = "--project" + f' "{uv_project_dir}"'
     else:
         uv_project_dir_arg = ""
-    print_code_string = lambda_to_python_script(lambda: print_code(code=python_script, lexer="python", desc="Temporary Python Script", subtitle="Executing via shell script"), in_global=True, import_module=False)
+    print_code_string = lambda_to_python_script(lambda: print_code(code=python_script, lexer="python", desc="Temporary Python Script", subtitle="Executing via shell script"),
+                                                in_global=True, import_module=False)
     python_file.write_text(print_code_string + "\n" + python_script, encoding="utf-8")
     shell_script = f"""uv run {uv_with_arg} {uv_project_dir_arg}  {str(python_file)} """
     return shell_script, python_file
 
 
 def run_lambda_function(lmb: Callable[[], Any], uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> None:
-    code = lambda_to_python_script(lmb, in_global=True, import_module=False)
+    code = lambda_to_python_script(lmb,
+in_global=True, import_module=False)
     uv_command, _py_file = get_uv_command_executing_python_script(python_script=code, uv_with=uv_with, uv_project_dir=uv_project_dir)
     run_shell_script(uv_command)
 def run_python_script_in_marimo(py_script: str, uv_project_with: Optional[str]):
