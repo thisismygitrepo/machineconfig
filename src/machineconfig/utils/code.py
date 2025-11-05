@@ -132,7 +132,7 @@ def exit_then_run_shell_script(script: str, strict: bool = False):
             op_program_path = Path.home().joinpath("tmp_results", "tmp_scripts", "manual_run", f"manual_script_{randstr()}{suffix}")
             op_program_path.parent.mkdir(parents=True, exist_ok=True)
             op_program_path.write_text(script, encoding="utf-8")
-            print_code(script, lexer=lexer, desc="script to run manually")
+            print_code(code=script, lexer=lexer, desc="script to run manually")
             console.print("[bold yellow]⚠️  STRICT MODE:[/bold yellow] [cyan]Please run the script manually via your shell by executing:[/cyan]")
             console.print(f"[green]{str(op_program_path)}[/green]")
             console.print("[red]❌ OP_PROGRAM_PATH environment variable is not set in strict mode.[/red]")
@@ -145,7 +145,7 @@ def exit_then_run_shell_script(script: str, strict: bool = False):
         op_program_path.write_text(script, encoding="utf-8")
         console.print("[cyan]🚀 Handing over to shell script runner via OP_PROGRAM_PATH:[/cyan]")
         console.print(f"[bold green]{str(op_program_path)}[/bold green]")
-        print_code(script, lexer="shell", desc="script to run via OP_PROGRAM_PATH")
+        print_code(code=script, lexer="shell", desc="script to run via OP_PROGRAM_PATH")
     else:
         if op_program_path is not None and exists:
             console.print(f"[yellow]⚠️  OP_PROGRAM_PATH @ {str(op_program_path)} already exists.[/yellow] [cyan]Falling back to direct execution.[/cyan]")

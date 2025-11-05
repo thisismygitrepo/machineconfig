@@ -32,7 +32,6 @@ uv run --python 3.14 --with marimo marimo convert {choice_file} -o marimo_nb.py
 uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.py
 """
         from machineconfig.utils.code import exit_then_run_shell_script
-
         print(f"🚀 Launching Marimo notebook for `{choice_file}`...")
         exit_then_run_shell_script(script)
         return
@@ -76,9 +75,8 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
     else:
         raise NotImplementedError(f"File type {choice_file.suffix} not supported, in the sense that I don't know how to fire it.")
 
-    if (
-        args.module or (args.debug and args.choose_function)
-    ):  # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
+    if args.module or (args.debug and args.choose_function):
+        # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file}"
         from machineconfig.scripts.python.helpers_fire_command.file_wrangler import get_import_module_code, wrap_import_in_try_except
         from machineconfig.utils.meta import lambda_to_python_script
@@ -92,9 +90,11 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
             in_global=True,
             import_module=False,
         )
+        # print(f"🧩 Preparing import code for module import:\n{import_code}")
         code_printing = lambda_to_python_script(
             lambda: print_code(code=import_code_robust, lexer="python", desc="import code"), in_global=True, import_module=False
         )
+        print(f"🧩 Preparing import code for module import:\n{import_code}")
         if choice_function is not None:
             calling = f"""res = {choice_function}({("**" + str(kwargs_dict)) if kwargs_dict else ""})"""
         else:
