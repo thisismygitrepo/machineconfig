@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Optional, Any
 
 from datetime import datetime, timezone, timedelta
@@ -96,14 +95,18 @@ def human_friendly_dict(d: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
-def get_repo_root(path: Path) -> Optional[Path]:
+def get_repo_root(path: "Path") -> Optional["Path"]:
     from git import Repo, InvalidGitRepositoryError
-
     try:
-        repo = Repo(str(path), search_parent_directories=True)
+        repo = Repo(path, search_parent_directories=True)
         root = repo.working_tree_dir
         if root is not None:
+            from pathlib import Path
             return Path(root)
     except InvalidGitRepositoryError:
         pass
     return None
+
+
+if __name__ == "__main__":
+    from pathlib import Path

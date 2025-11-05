@@ -2,16 +2,9 @@
 TODO: use typer or typed-argument-parser to parse args
 """
 
-from machineconfig.scripts.python.helpers_cloud.helpers2 import parse_cloud_source_target
-from machineconfig.scripts.python.helpers_cloud.cloud_helpers import Args
-from machineconfig.scripts.python.helpers_cloud.cloud_mount import get_mprocs_mount_txt
 
 from typing import Annotated, Optional
 import typer
-from rich.console import Console
-from rich.panel import Panel
-
-console = Console()
 
 
 def main(
@@ -27,6 +20,14 @@ def main(
     delete: Annotated[bool, typer.Option("--delete", "-D", help="Delete files in remote that are not in local.")] = False,
     verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.")] = False,
 ) -> None:
+
+    from machineconfig.scripts.python.helpers_cloud.helpers2 import parse_cloud_source_target
+    from machineconfig.scripts.python.helpers_cloud.cloud_helpers import Args
+    from machineconfig.scripts.python.helpers_cloud.cloud_mount import get_mprocs_mount_txt
+    from rich.console import Console
+    from rich.panel import Panel
+    console = Console()
+
     title = "☁️  Cloud Sync Utility"
     console.print(Panel(title, title_align="left", border_style="blue"))
 

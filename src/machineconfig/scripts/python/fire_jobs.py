@@ -7,20 +7,16 @@ fire
 
 """
 
-from machineconfig.utils.ve import get_ve_path_and_ipython_profile
-from machineconfig.utils.accessories import get_repo_root, randstr
-from machineconfig.scripts.python.helpers_fire_command.fire_jobs_args_helper import FireJobArgs, extract_kwargs, parse_fire_args_from_context
-from machineconfig.utils.path_helper import get_choice_file
-
-import platform
 from typing import Optional, Annotated
-from pathlib import Path
 import typer
 
 
-def route(args: FireJobArgs, fire_args: str = "") -> None:
+def route(args: "FireJobArgs", fire_args: str = "") -> None:
+    from pathlib import Path
+    from machineconfig.utils.path_helper import get_choice_file
+    from machineconfig.utils.accessories import get_repo_root, randstr
     choice_file = get_choice_file(args.path, suffixes=None)
-    repo_root = get_repo_root(Path(choice_file))
+    repo_root = get_repo_root(choice_file)
     print(f"💾 Selected file: {choice_file}.\nRepo root: {repo_root}")
     if args.marimo:
         print(f"🧽 Preparing to launch Marimo notebook for `{choice_file}`...")
@@ -38,6 +34,7 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
 
     # =========================  preparing kwargs_dict
     if choice_file.suffix == ".py":
+        from machineconfig.scripts.python.helpers_fire_command.fire_jobs_args_helper import extract_kwargs
         kwargs_dict = extract_kwargs(args)  # This now returns empty dict, but kept for compatibility
     else:
         kwargs_dict = {}
@@ -62,6 +59,7 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
             exe = f"uv run {with_project} jupyter-lab"
         else:
             if args.interactive:
+                from machineconfig.utils.ve import get_ve_path_and_ipython_profile
                 _ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
                 if ipy_profile is None:
                     ipy_profile = "default"
@@ -106,6 +104,7 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
 
     # =========================  determining basic command structure: putting together exe & choice_file & choice_function & pdb
     if args.debug:
+        import platform
         if platform.system() == "Windows":
             command = f"{exe} -m ipdb {choice_file} "  # pudb is not available on windows machines, use poor man's debugger instead.
         elif platform.system() in ["Linux", "Darwin"]:
@@ -173,6 +172,7 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
         export_line = add_to_path(path_variable="PYTHONPATH", directory=str(repo_root))
         command = export_line + "\n" + command
     if args.loop:
+        import platform
         if platform.system() in ["Linux", "Darwin"]:
             command = command + "\nsleep 0.5"
         elif platform.system() == "Windows":
@@ -214,6 +214,7 @@ def fire(
     """Main function to process fire jobs arguments."""
 
     # Get Fire arguments from context
+    from machineconfig.scripts.python.helpers_fire_command.fire_jobs_args_helper import FireJobArgs, parse_fire_args_from_context
     fire_args = parse_fire_args_from_context(ctx)
 
     args = FireJobArgs(
@@ -266,4 +267,4 @@ def main():
 
 
 if __name__ == "__main__":
-    pass
+    from machineconfig.scripts.python.helpers_fire_command.fire_jobs_args_helper import FireJobArgs

@@ -6,17 +6,7 @@ Currently, the only way to work around this is to predifine the host in ~/.ssh/c
 """
 
 import typer
-from typing_extensions import Annotated
-from rich.console import Console
-from rich.panel import Panel
-
-from machineconfig.utils.ssh import SSH
-from machineconfig.utils.path_extended import PathExtended
-from machineconfig.scripts.python.helpers_cloud.helpers2 import ES
-from machineconfig.utils.accessories import pprint
-
-
-console = Console()
+from typing import Annotated
 
 
 def ftpx(
@@ -26,6 +16,18 @@ def ftpx(
     zipFirst: Annotated[bool, typer.Option("--zipFirst", "-z", help="Zip before sending.")] = False,
     cloud: Annotated[bool, typer.Option("--cloud", "-c", help="Transfer through the cloud.")] = False,
 ) -> None:
+
+    from rich.console import Console
+    from rich.panel import Panel
+
+    from machineconfig.utils.ssh import SSH
+    from machineconfig.utils.path_extended import PathExtended
+    from machineconfig.scripts.python.helpers_cloud.helpers2 import ES
+    from machineconfig.utils.accessories import pprint
+
+
+    console = Console()
+
     console.print(
         Panel(
             "\n".join(

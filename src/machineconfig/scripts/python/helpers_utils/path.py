@@ -4,7 +4,6 @@
 import typer
 
 from typing import Optional
-from pathlib import Path
 from typing import Annotated, Literal, TypedDict
 
 
@@ -25,6 +24,7 @@ def path():
 
 def init_project(python: Annotated[Literal["3.13", "3.14"], typer.Option("--python", "-p", help="Python version for the uv virtual environment.")]= "3.13") -> None:
     _ = python
+    from pathlib import Path
     repo_root = Path.cwd()
     if not (repo_root / "pyproject.toml").exists():
         typer.echo("❌ Error: pyproject.toml not found.", err=True)
@@ -54,6 +54,7 @@ uv add --group plot \
 
 
 def edit_file_with_hx(path: Annotated[Optional[str], typer.Argument(..., help="The root directory of the project to edit, or a file path.")] = None) -> None:
+    from pathlib import Path
     if path is None:
         root_path = Path.cwd()
         print(f"No path provided. Using current working directory: {root_path}")
@@ -90,6 +91,7 @@ def get_machine_specs() -> MachineSpecs:
     UV_RUN_CMD = "$HOME/.local/bin/uv run" if platform.system() != "Windows" else """& "$env:USERPROFILE/.local/bin/uv" run"""
     command = f"""{UV_RUN_CMD} --with distro python -c "import distro; print(distro.name(pretty=True))" """
     import subprocess
+    from pathlib import Path
     distro = subprocess.run(command, shell=True, capture_output=True, text=True).stdout.strip()
     specs: MachineSpecs = {
         "system": platform.system(),

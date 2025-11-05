@@ -1,5 +1,3 @@
-import subprocess
-# from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 import typer
 from typing import Annotated
 
@@ -26,6 +24,7 @@ def choose_zellij_session(
         typer.Exit()
         return
     cmd = "zellij list-sessions"
+    import subprocess
     sessions: list[str] = subprocess.check_output(cmd, shell=True).decode().strip().split("\n")
     # filter out empty lines and keep raw lines (they contain creation info)
     sessions = [s for s in sessions if s.strip()]
@@ -63,6 +62,7 @@ def choose_zellij_session(
 
 def get_session_tabs() -> list[tuple[str, str]]:
     cmd = "zellij list-sessions"
+    import subprocess
     sessions: list[str] = subprocess.check_output(cmd, shell=True).decode().strip().split("\n")
     sessions = [strip_ansi_codes(s) for s in sessions]
     active_sessions = [s for s in sessions if "EXITED" not in s]

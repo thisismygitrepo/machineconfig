@@ -2,26 +2,24 @@
 CC
 """
 
-from machineconfig.utils.path_extended import PathExtended
-from tenacity import retry, stop_after_attempt, wait_chain, wait_fixed
-import getpass
-import os
 from typing import Optional, Annotated
-
 import typer
 
-from machineconfig.scripts.python.helpers_cloud.helpers2 import parse_cloud_source_target
-from machineconfig.scripts.python.helpers_cloud.cloud_helpers import ArgsDefaults, Args
-from rich.console import Console
-from rich.panel import Panel
-from rich.progress import Progress
-from machineconfig.utils.accessories import pprint
+from tenacity import retry, stop_after_attempt, wait_chain, wait_fixed
 
-console = Console()
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_chain(wait_fixed(1), wait_fixed(4), wait_fixed(9)))
 def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.progress import Progress
+    import getpass
+    import os
+    from machineconfig.utils.path_extended import PathExtended
+
+    console = Console()
+
     console.print(Panel("🚀 Secure File Downloader", title="[bold blue]Downloader[/bold blue]", border_style="blue"))
 
     folder_obj = PathExtended.cwd() if folder is None else PathExtended(folder)
@@ -62,21 +60,30 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
                 tmp_folder.delete()
 
 
+
 def main(
     source: Annotated[str, typer.Argument(help="📂 file/folder path to be taken from here.")],
     target: Annotated[str, typer.Argument(help="🎯 file/folder path to be be sent to here.")],
-    overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="✍️ Overwrite existing file.")] = ArgsDefaults.overwrite,
-    share: Annotated[bool, typer.Option("--share", "-s", help="🔗 Share file / directory")] = ArgsDefaults.share,
-    rel2home: Annotated[bool, typer.Option("--relative2home", "-r", help="🏠 Relative to `myhome` folder")] = ArgsDefaults.rel2home,
-    root: Annotated[Optional[str], typer.Option("--root", "-R", help="🌳 Remote root. None is the default, unless rel2home is raied, making the default `myhome`.")] = ArgsDefaults.root,
-    key: Annotated[Optional[str], typer.Option("--key", "-k", help="🔑 Key for encryption")] = ArgsDefaults.key,
-    pwd: Annotated[Optional[str], typer.Option("--password", "-p", help="🔒 Password for encryption")] = ArgsDefaults.pwd,
-    encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="🔐 Encrypt before sending.")] = ArgsDefaults.encrypt,
-    zip_: Annotated[bool, typer.Option("--zip", "-z", help="📦 unzip after receiving.")] = ArgsDefaults.zip_,
-    os_specific: Annotated[bool, typer.Option("--os-specific", "-O", help="💻 choose path specific for this OS.")] = ArgsDefaults.os_specific,
+    overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="✍️ Overwrite existing file.")] = False,
+    share: Annotated[bool, typer.Option("--share", "-s", help="🔗 Share file / directory")] = False,
+    rel2home: Annotated[bool, typer.Option("--relative2home", "-r", help="🏠 Relative to `myhome` folder")] = False,
+    root: Annotated[Optional[str], typer.Option("--root", "-R", help="🌳 Remote root. None is the default, unless rel2home is raied, making the default `myhome`.")] = None,
+    key: Annotated[Optional[str], typer.Option("--key", "-k", help="🔑 Key for encryption")] = None,
+    pwd: Annotated[Optional[str], typer.Option("--password", "-p", help="🔒 Password for encryption")] = None,
+    encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="🔐 Encrypt before sending.")] = False,
+    zip_: Annotated[bool, typer.Option("--zip", "-z", help="📦 unzip after receiving.")] = False,
+    os_specific: Annotated[bool, typer.Option("--os-specific", "-O", help="💻 choose path specific for this OS.")] = False,
     config: Annotated[Optional[str], typer.Option("--config", "-c", help="⚙️ path to cloud.json file.")] = None,
 ) -> None:
     """📤 Upload or 📥 Download files/folders to/from cloud storage services like Google Drive, Dropbox, OneDrive, etc."""
+    from rich.console import Console
+    from rich.panel import Panel
+    from machineconfig.utils.path_extended import PathExtended
+    from machineconfig.scripts.python.helpers_cloud.helpers2 import parse_cloud_source_target
+    from machineconfig.scripts.python.helpers_cloud.cloud_helpers import Args
+    from machineconfig.utils.accessories import pprint
+
+    console = Console()
     console.print(Panel("☁️  Cloud Copy Utility", title="[bold blue]Cloud Copy[/bold blue]", border_style="blue", width=152))
     args_obj = Args(
         overwrite=overwrite,

@@ -1,14 +1,15 @@
-from machineconfig.utils.io import read_ini
-import platform
+
 from typing import Optional
-from pathlib import Path
 
 
-def get_ve_path_and_ipython_profile(init_path: Path) -> tuple[Optional[str], Optional[str]]:
+def get_ve_path_and_ipython_profile(init_path: "Path") -> tuple[Optional[str], Optional[str]]:
     """Works with .ve.ini .venv and .ve_path"""
     ve_path: Optional[str] = None
     ipy_profile: Optional[str] = None
     tmp = init_path
+
+    from machineconfig.utils.io import read_ini
+
     for _ in init_path.parents:
         if tmp.joinpath(".ve.ini").exists():
             ini = read_ini(tmp.joinpath(".ve.ini"))
@@ -39,6 +40,8 @@ def get_ve_path_and_ipython_profile(init_path: Path) -> tuple[Optional[str], Opt
 
 
 def get_ve_activate_line(ve_root: str):
+    import platform
+    from pathlib import Path
     if platform.system() == "Windows":
         q = Path(ve_root).expanduser().relative_to(Path.home()).as_posix()
         activate_ve_line = f". $HOME/{q}/Scripts/activate.ps1"
@@ -47,3 +50,7 @@ def get_ve_activate_line(ve_root: str):
     else:
         raise NotImplementedError(f"Platform {platform.system()} not supported.")
     return activate_ve_line
+
+
+if __name__ == "__main__":
+    from pathlib import Path

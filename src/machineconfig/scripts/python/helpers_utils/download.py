@@ -146,5 +146,6 @@ def download(
 
     return result_path.resolve()
 
+
 if __name__ == "__main__":
     from pathlib import Path
