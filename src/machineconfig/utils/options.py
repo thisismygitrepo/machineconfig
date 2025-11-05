@@ -14,10 +14,10 @@ from typing import Optional, Union, Iterable, overload, Literal, cast
 
 
 @overload
-def choose_from_options[T](msg: str, options: Iterable[T], multi: Literal[False], custom_input: bool = False, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False) -> T: ...
+def choose_from_options[T](options: Iterable[T], msg: str, multi: Literal[False], custom_input: bool = False, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False) -> T: ...
 @overload
-def choose_from_options[T](msg: str, options: Iterable[T], multi: Literal[True], custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False, ) -> list[T]: ...
-def choose_from_options[T](msg: str, options: Iterable[T], multi: bool, custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False, ) -> Union[T, list[T]]:
+def choose_from_options[T](options: Iterable[T], msg: str, multi: Literal[True], custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False, ) -> list[T]: ...
+def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False, ) -> Union[T, list[T]]:
     # TODO: replace with https://github.com/tmbo/questionary
     # # also see https://github.com/charmbracelet/gum
     options_strings: list[str] = [str(x) for x in options]
