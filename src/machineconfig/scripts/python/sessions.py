@@ -69,14 +69,14 @@ def find_layout_file(layout_path: str, ) -> Path:
 
 def run(ctx: typer.Context,
            layout_path: Annotated[Optional[str], typer.Argument(..., help="Path to the layout.json file")] = None,
-        max_tabs: Annotated[int, typer.Option(..., help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch.")] = 10,
-        max_layouts: Annotated[int, typer.Option(..., help="A Sanity checker that throws an error if the total number of *parallel layouts exceeds this number.")] = 10,
-        sleep_inbetween: Annotated[float, typer.Option(..., help="Sleep time in seconds between launching layouts")] = 1.0,
+        max_tabs: Annotated[int, typer.Option(..., "--max-tabs", "-mt", help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch.")] = 10,
+        max_layouts: Annotated[int, typer.Option(..., "--max-layouts", "-ml", help="A Sanity checker that throws an error if the total number of *parallel layouts exceeds this number.")] = 10,
+        sleep_inbetween: Annotated[float, typer.Option(..., "--sleep-inbetween", "-si", help="Sleep time in seconds between launching layouts")] = 1.0,
         monitor: Annotated[bool, typer.Option(..., "--monitor", "-m", help="Monitor the layout sessions for completion")] = False,
         parallel: Annotated[bool, typer.Option(..., "--parallel", "-p", help="Launch multiple layouts in parallel")] = False,
         kill_upon_completion: Annotated[bool, typer.Option(..., "--kill-upon-completion", "-k", help="Kill session(s) upon completion (only relevant if monitor flag is set)")] = False,
         choose: Annotated[Optional[str], typer.Option(..., "--choose", "-c", help="Comma separated names of layouts to be selected from the layout file passed")] = None,
-        choose_interactively: Annotated[bool, typer.Option(..., "--choose-interactively", "-ia", help="Select layouts interactively")] = False
+        choose_interactively: Annotated[bool, typer.Option(..., "--choose-interactively", "-i", help="Select layouts interactively")] = False
         ):
     """
     Launch terminal sessions based on a layout configuration file.

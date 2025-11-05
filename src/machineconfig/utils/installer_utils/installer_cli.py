@@ -5,52 +5,10 @@ from typing import Optional, Annotated
 from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
 
 
-
-def _handle_installer_not_found(search_term: str, all_names: list[str]) -> None:  # type: ignore
-    """Handle installer not found with friendly suggestions using fuzzy matching."""
-    from difflib import get_close_matches
-    from rich.console import Console
-    from rich.panel import Panel
-    from rich.table import Table
-    close_matches = get_close_matches(search_term, all_names, n=5, cutoff=0.4)
-    console = Console()
-
-    console.print(f"\n❌ '[red]{search_term}[/red]' was not found.", style="bold")
-    if close_matches:
-        console.print("🤔 Did you mean one of these?", style="yellow")
-        table = Table(show_header=False, box=None, pad_edge=False)
-        for i, match in enumerate(close_matches, 1):
-            table.add_row(f"[cyan]{i}.[/cyan]", f"[green]{match}[/green]")
-        console.print(table)
-    else:
-        console.print("📋 Here are some available options:", style="blue")
-        # Show first 10 installers as examples
-        if len(all_names) > 10:
-            sample_names = all_names[:10]
-        else:
-            sample_names = all_names
-        table = Table(show_header=False, box=None, pad_edge=False)
-        for i, name in enumerate(sample_names, 1):
-            table.add_row(f"[cyan]{i}.[/cyan]", f"[green]{name}[/green]")
-        console.print(table)
-        if len(all_names) > 10:
-            console.print(f"   [dim]... and {len(all_names) - 10} more[/dim]")
-
-    panel = Panel(f"[bold blue]💡 Use 'ia' to interactively browse all available installers.[/bold blue]\n[bold blue]💡 Use one of the categories: {list(PACKAGE_GROUP2NAMES.keys())}[/bold blue]", title="[yellow]Helpful Tips[/yellow]", border_style="yellow")
-    console.print(panel)
-
-
-def main_with_parser():
-    import typer
-    app = typer.Typer()
-    app.command()(main)
-    app()
-
-
 def main(
     which: Annotated[Optional[str], typer.Argument(..., help="Comma-separated list of program/groups names to install (if --group flag is set).")] = None,
     group: Annotated[bool, typer.Option(..., "--group", "-g", help="Treat 'which' as a group name. A group is bundle of apps.")] = False,
-    interactive: Annotated[bool, typer.Option(..., "--interactive", "-ia", help="Interactive selection of programs to install.")] = False,
+    interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Interactive selection of programs to install.")] = False,
 ) -> None:
     if interactive:
         return install_interactively()
@@ -111,12 +69,10 @@ def install_interactively():
     installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=None)
     installer_options = [Installer(installer_data=x).get_description() for x in installers]
     category_display_to_name = get_group_name_to_repr()
-    options = list(category_display_to_name.keys()) + ["─" * 50] + installer_options
+    options = list(category_display_to_name.keys()) + installer_options
     program_names = choose_from_options(multi=True, msg="Categories are prefixed with 📦", options=options, header="🚀 CHOOSE DEV APP OR CATEGORY", fzf=True)
     installation_messages: list[str] = []
     for _an_idx, a_program_name in enumerate(program_names):
-        if a_program_name.startswith("─"):  # 50 dashes separator
-            continue
         if a_program_name.startswith("📦 "):
             category_name = category_display_to_name.get(a_program_name)
             if category_name:
@@ -148,6 +104,39 @@ def install_group(package_group: str):
         return
     console = Console()
     console.print(f"❌ ERROR: Unknown package group: {package_group}. Available groups are: {list(PACKAGE_GROUP2NAMES.keys())}")
+def _handle_installer_not_found(search_term: str, all_names: list[str]) -> None:  # type: ignore
+    """Handle installer not found with friendly suggestions using fuzzy matching."""
+    from difflib import get_close_matches
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.table import Table
+    close_matches = get_close_matches(search_term, all_names, n=5, cutoff=0.4)
+    console = Console()
+
+    console.print(f"\n❌ '[red]{search_term}[/red]' was not found.", style="bold")
+    if close_matches:
+        console.print("🤔 Did you mean one of these?", style="yellow")
+        table = Table(show_header=False, box=None, pad_edge=False)
+        for i, match in enumerate(close_matches, 1):
+            table.add_row(f"[cyan]{i}.[/cyan]", f"[green]{match}[/green]")
+        console.print(table)
+    else:
+        console.print("📋 Here are some available options:", style="blue")
+        # Show first 10 installers as examples
+        if len(all_names) > 10:
+            sample_names = all_names[:10]
+        else:
+            sample_names = all_names
+        table = Table(show_header=False, box=None, pad_edge=False)
+        for i, name in enumerate(sample_names, 1):
+            table.add_row(f"[cyan]{i}.[/cyan]", f"[green]{name}[/green]")
+        console.print(table)
+        if len(all_names) > 10:
+            console.print(f"   [dim]... and {len(all_names) - 10} more[/dim]")
+
+    panel = Panel(f"[bold blue]💡 Use 'ia' to interactively browse all available installers.[/bold blue]\n[bold blue]💡 Use one of the categories: {list(PACKAGE_GROUP2NAMES.keys())}[/bold blue]", title="[yellow]Helpful Tips[/yellow]", border_style="yellow")
+    console.print(panel)
+
 def install_clis(clis_names: list[str]):
     from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
     from machineconfig.utils.installer_utils.installer_runner import get_installers
@@ -173,8 +162,6 @@ def install_clis(clis_names: list[str]):
         for a_message in total_messages:
             console.print(f"[blue]• {a_message}[/blue]")
     return None
-
-
 def install_if_missing(which: str):
     from machineconfig.utils.installer_utils.installer_locator_utils import check_tool_exists
     exists = check_tool_exists(which)

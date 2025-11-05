@@ -1,7 +1,6 @@
 from machineconfig.utils.path_extended import PathExtended, DECOMPRESS_SUPPORTED_FORMATS
-from machineconfig.utils.installer_utils.installer_locator_utils import find_move_delete_linux, find_move_delete_windows
 from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT
-from machineconfig.utils.installer_utils.installer_locator_utils import check_tool_exists
+from machineconfig.utils.installer_utils.installer_locator_utils import find_move_delete_linux, find_move_delete_windows, check_tool_exists
 from machineconfig.utils.schemas.installer.installer_types import InstallerData, get_os_name, get_normalized_arch
 
 import platform
@@ -60,10 +59,8 @@ class Installer:
             result_new = subprocess.run(f"{exe_name} --version", shell=True, capture_output=True, text=True)
             new_version_cli = result_new.stdout.strip()
             if old_version_cli == new_version_cli:
-                # print(f"ℹ️  Same version detected: {old_version_cli}")
                 return f"""📦️ 😑 {exe_name}, same version: {old_version_cli}"""
             else:
-                # print(f"🚀 Update successful: {old_version_cli} ➡️ {new_version_cli}")
                 return f"""📦️ 🤩 {exe_name} updated from {old_version_cli} ➡️ TO ➡️  {new_version_cli}"""
         except Exception as ex:
             exe_name = self._get_exe_name()
@@ -87,8 +84,6 @@ class Installer:
                 desc = package_manager + " installation"
                 version_to_be_installed = package_manager + "Latest"
                 result = subprocess.run(installer_arch_os, shell=True, capture_output=True, text=False)
-                # from machineconfig.utils.code import run_shell_script
-                # result = run_shell_script(installer_arch_os)
                 success = result.returncode == 0 and result.stderr == "".encode()
                 if not success:
                     print(f"❌ {desc} failed")
@@ -98,7 +93,6 @@ class Installer:
                         print(f"STDERR: {result.stderr}")
                     print(f"Return code: {result.returncode}")
             elif installer_arch_os.endswith((".sh", ".py", ".ps1")):
-                # search for the script, see which path ends with the script name
                 import machineconfig.jobs.installer as module
                 from pathlib import Path
                 search_root = Path(module.__file__).parent
@@ -219,9 +213,6 @@ class Installer:
             if only_file_in.is_file() and only_file_in.suffix in DECOMPRESS_SUPPORTED_FORMATS:  # further decompress
                 downloaded = only_file_in.decompress()
         return downloaded, version_to_be_installed
-
-    # --------------------------- Arch / template helpers ---------------------------
-
     @staticmethod
     def _get_repo_name_from_url(repo_url: str) -> str:
         """Extract owner/repo from GitHub URL."""
@@ -236,23 +227,16 @@ class Installer:
     def _fetch_github_release_data(repo_name: str, version: Optional[str] = None) -> Optional[dict[str, Any]]:
         """Fetch release data from GitHub API using requests."""
         import requests
-        
         try:
-            if version and version.lower() != "latest":
-                # Fetch specific version
+            if version and version.lower() != "latest":  # Fetch specific version
                 url = f"https://api.github.com/repos/{repo_name}/releases/tags/{version}"
-            else:
-                # Fetch latest release
+            else:   # Fetch latest release
                 url = f"https://api.github.com/repos/{repo_name}/releases/latest"
-            
             response = requests.get(url, timeout=30)
-            
             if response.status_code != 200:
                 print(f"❌ Failed to fetch data for {repo_name}: HTTP {response.status_code}")
                 return None
-                
             response_data = response.json()
-            
             # Check if API returned an error
             if "message" in response_data:
                 if "API rate limit exceeded" in response_data.get("message", ""):

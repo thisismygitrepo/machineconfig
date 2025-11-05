@@ -12,7 +12,7 @@ import machineconfig.scripts.python.helpers_devops.cli_nw as cli_network
 
 def install(which: Annotated[Optional[str], typer.Argument(..., help="Comma-separated list of program names to install, or group name if --group flag is set.")] = None,
         group: Annotated[bool, typer.Option(..., "--group", "-g", help="Treat 'which' as a group name. A group is bundle of apps.")] = False,
-        interactive: Annotated[bool, typer.Option(..., "--interactive", "-ia", help="Interactive selection of programs to install.")] = False,
+        interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Interactive selection of programs to install.")] = False,
     ) -> None:
         """📦 Install packages"""
         import machineconfig.utils.installer_utils.installer_cli as installer_entry_point
@@ -22,7 +22,6 @@ def install(which: Annotated[Optional[str], typer.Argument(..., help="Comma-sepa
 def get_app():
     app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True, add_help_option=False,
                       add_completion=False)
-    _ = install
     app.command("install", no_args_is_help=True, help="🛠️ [i] Install essential packages")(install)
     app.command("i", no_args_is_help=True, help="Install essential packages", hidden=True)(install)
     app_repos = cli_repos.get_app()
