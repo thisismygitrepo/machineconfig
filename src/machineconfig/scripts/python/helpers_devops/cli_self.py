@@ -53,9 +53,9 @@ def install(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-n
     else:
         import platform
         if platform.system() == "Windows":
-            run_shell_script(r"""& "$HOME\.local\bin\uv.exe" tool install --upgrade "machineconfig>=7.65" """)
+            run_shell_script(r"""& "$HOME\.local\bin\uv.exe" tool install --upgrade "machineconfig>=7.66" """)
         else:
-            run_shell_script("""$HOME/.local/bin/uv tool install --upgrade "machineconfig>=7.65" """)
+            run_shell_script("""$HOME/.local/bin/uv tool install --upgrade "machineconfig>=7.66" """)
     from machineconfig.profile.create_shell_profile import create_default_shell_profile
     if not no_copy_assets:
         create_default_shell_profile()   # involves copying assets too
@@ -80,7 +80,7 @@ def navigate():
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import run_shell_script
     if Path.home().joinpath("code/machineconfig").exists(): executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
-    else: executable = """--with "machineconfig>=7.65,textual" """
+    else: executable = """--with "machineconfig>=7.66,textual" """
     run_shell_script(f"""uv run {executable} {path}""")
 
 

@@ -2,6 +2,7 @@
 
 from typing import Annotated, Optional
 import typer
+from pathlib import Path
 
 
 def download(
@@ -12,10 +13,10 @@ def download(
 ) -> Optional["Path"]:
 
     import subprocess
-    from pathlib import Path
     from urllib.parse import parse_qs, unquote, urlparse
     from requests import Response
     import requests
+    from pathlib import Path
     if url is None:
         typer.echo("❌ Error: URL is required.", err=True)
         return None
@@ -148,4 +149,4 @@ def download(
 
 
 if __name__ == "__main__":
-    from pathlib import Path
+    pass
