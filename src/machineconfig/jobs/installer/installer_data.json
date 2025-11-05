@@ -2524,14 +2524,31 @@
       "doc": "Modern terminal with AI-powered features",
       "fileNamePattern": {
         "amd64": {
+          "linux": "https://app.warp.dev/get_warp?package=deb",
+          "windows": "winget install Warp.Warp",
+          "macos": "brew install --cask warp"
+        },
+        "arm64": {
+          "linux": "https://app.warp.dev/get_warp?package=deb_arm64",
+          "windows": "winget install Warp.Warp",
+          "macos": "brew install --cask warp"
+        }
+      }
+    },
+    {
+      "appName": "warp-terminal-cli",
+      "repoURL": "CMD",
+      "doc": "Modern terminal cli with AI-powered features",
+      "fileNamePattern": {
+        "amd64": {
           "linux": "https://app.warp.dev/download/cli?os=linux&package=deb&arch=x86_64",
           "windows": null,
-          "macos": null
+          "macos": " brew tap warpdotdev/warp; brew update; brew install --cask warp-cli"
         },
         "arm64": {
           "linux": "https://app.warp.dev/download/cli?os=linux&package=deb&arch=aarch64",
           "windows": null,
-          "macos": null
+          "macos": " brew tap warpdotdev/warp; brew update; brew install --cask warp-cli"
         }
       }
     },

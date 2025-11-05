@@ -1,6 +1,6 @@
 """package manager"""
 
-from machineconfig.utils.installer_utils.installer_abc import check_if_installed_already
+from machineconfig.utils.installer_utils.installer_locator_utils import check_if_installed_already
 from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import InstallerData, InstallerDataFiles, get_normalized_arch, get_os_name, OPERATING_SYSTEMS, CPU_ARCHITECTURES
 from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
@@ -132,30 +132,6 @@ def install_bulk(installers_data: list[InstallerData], safe: bool = False, jobs:
         print("✅ Version cache cleared")
     if safe:
         pass
-        # print("⚠️  Safe installation mode activated...")
-        # from machineconfig.jobs.python.check_installations import APP_SUMMARY_PATH
-        # if platform.system().lower() == "windows":
-        #     print("🪟 Moving applications to Windows Apps folder...")
-        #     # PathExtended.get_env().WindowsPaths().WindowsApps)
-        #     folder = PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps")
-        #     apps_dir.search("*").apply(lambda app: app.move(folder=folder))
-        # elif platform.system().lower() in ["linux", "darwin"]:
-        #     system_name = "Linux" if platform.system().lower() == "linux" else "macOS"
-        #     print(f"🐧 Moving applications to {system_name} bin folder...")
-        #     if platform.system().lower() == "linux":
-        #         install_path = LINUX_INSTALL_PATH
-        #     else:  # Darwin/macOS
-        #         install_path = "/usr/local/bin"
-        #     Terminal().run(f"sudo mv {apps_dir.as_posix()}/* {install_path}/").capture().print_if_unsuccessful(desc=f"MOVING executable to {install_path}", strict_err=True, strict_returncode=True)
-        # else:
-        #     error_msg = f"❌ ERROR: System {platform.system()} not supported"
-        #     print(error_msg)
-        #     raise NotImplementedError(error_msg)
-
-        # apps_dir.delete(sure=True)
-        # print(f"✅ Safe installation completed\n{'='*80}")
-        # return None
-
     print(f"🚀 Starting installation of {len(installers_data)} packages...")
     print("📦 INSTALLING FIRST PACKAGE 📦")
     Installer(installers_data[0]).install(version=None)

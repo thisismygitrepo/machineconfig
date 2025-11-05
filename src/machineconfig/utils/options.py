@@ -1,5 +1,5 @@
 from pathlib import Path
-from machineconfig.utils.installer_utils.installer_abc import check_tool_exists
+from machineconfig.utils.installer_utils.installer_locator_utils import check_tool_exists
 from rich.text import Text
 from rich.panel import Panel
 from rich.console import Console

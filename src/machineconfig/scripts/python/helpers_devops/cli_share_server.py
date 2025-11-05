@@ -40,7 +40,7 @@ def web_file_explorer(
     over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Expose the share server over the internet using ngrok")] = False,
     backend: Annotated[str, typer.Option("--backend", "-b", help="Backend to use: filebrowser (default), miniserve, or easy-sharing")] = "filebrowser"
 ) -> None:
-    from machineconfig.utils.installer_utils.installer import install_if_missing
+    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
     
     if backend not in ["filebrowser", "miniserve", "easy-sharing"]:
         typer.echo(f"❌ ERROR: Invalid backend '{backend}'. Must be one of: filebrowser, miniserve, easy-sharing", err=True)

@@ -12,7 +12,7 @@ Usage examples:
     devops network receive -- --relay 10.17.62.206:443 7121-donor-olympic-bicycle
     devops network receive -- croc --relay 10.17.62.206:443 7121-donor-olympic-bicycle
 """
-    from machineconfig.utils.installer_utils.installer import install_if_missing
+    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
     install_if_missing(which="croc")
     import platform
     import sys
@@ -100,7 +100,7 @@ def share_file_send(path: Annotated[str, typer.Argument(help="Path to the file o
                     qrcode: Annotated[bool, typer.Option("--qrcode", "--qr", help="Show receive code as a qrcode")] = False,
                     ) -> None:
     """Send a file using croc with relay server."""
-    from machineconfig.utils.installer_utils.installer import install_if_missing
+    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
     install_if_missing(which="croc")
     # Get relay server IP from environment or use default
     import socket

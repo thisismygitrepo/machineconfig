@@ -116,7 +116,7 @@ def install_nerd_fonts() -> None:
     console.print(f"🔍 Missing fonts detected: {', '.join(missing)}. Proceeding with installation...")
     console.print("🔍 Downloading Nerd Fonts package...")
     
-    folder, _version_to_be_installed = Installer(installer_data=nerd_fonts).download(version=None)
+    folder, _version_to_be_installed = Installer(installer_data=nerd_fonts).binary_download(version=None)
 
     console.print("🧹 Cleaning up unnecessary files...")
     [p.delete(sure=True) for p in folder.search("*Windows*")]

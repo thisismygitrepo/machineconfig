@@ -5,7 +5,7 @@ from typing import Optional
 
 from rich.console import Console
 from rich.panel import Panel
-from machineconfig.utils.installer_utils.installer_abc import WINDOWS_INSTALL_PATH
+from machineconfig.utils.installer_utils.installer_locator_utils import WINDOWS_INSTALL_PATH
 
 from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
@@ -40,7 +40,7 @@ def main(installer_data: InstallerData, version: Optional[str] = None) -> None:
     )
 
     installer = Installer(installer_data=installer_data_modified)
-    downloaded, _version_to_be_installed = installer.download(version=version)
+    downloaded, _version_to_be_installed = installer.binary_download(version=version)
     decomp_path = downloaded.decompress()
     from pathlib import Path
     for item in decomp_path.rglob("*"):

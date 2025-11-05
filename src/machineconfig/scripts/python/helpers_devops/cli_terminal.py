@@ -60,7 +60,7 @@ def main(
     ssl_ca: Annotated[Optional[str], typer.Option("--ssl-ca", "-A", help="SSL CA file path for client certificate verification")] = None,
     over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Expose the terminal over the internet using ngrok")] = False
 ) -> None:
-    from machineconfig.utils.installer_utils.installer import install_if_missing
+    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
     install_if_missing("ttyd")
     if over_internet: install_if_missing("ngrok")
 

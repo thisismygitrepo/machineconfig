@@ -3,11 +3,11 @@ Installers do not add runtime files to the machine, hence this script.
 """
 
 from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.installer_utils.installer_abc import WINDOWS_INSTALL_PATH
+from machineconfig.utils.installer_utils.installer_locator_utils import WINDOWS_INSTALL_PATH
 from typing import Optional
 import platform
 
-from machineconfig.utils.installer_utils.installer_abc import LINUX_INSTALL_PATH
+from machineconfig.utils.installer_utils.installer_locator_utils import LINUX_INSTALL_PATH
 from machineconfig.utils.installer_utils.installer_class import Installer
 from rich.console import Console
 from rich.panel import Panel
@@ -45,7 +45,7 @@ def main(installer_data: InstallerData, version: Optional[str], install_lib: boo
     inst = Installer(installer_data=config_dict_copy)
 
     print("\n📥 [Step 1/5] Downloading Helix editor...")
-    downloaded, _version_to_be_installed = inst.download(version=version)
+    downloaded, _version_to_be_installed = inst.binary_download(version=version)
     print("   ✨ Download complete.")
 
     print("\n🔍 [Step 2/5] Locating executable and components...")

@@ -1,7 +1,7 @@
 from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.installer_utils.installer_abc import find_move_delete_linux, find_move_delete_windows
+from machineconfig.utils.installer_utils.installer_locator_utils import find_move_delete_linux, find_move_delete_windows
 from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT
-from machineconfig.utils.installer_utils.installer_abc import check_tool_exists
+from machineconfig.utils.installer_utils.installer_locator_utils import check_tool_exists
 from machineconfig.utils.schemas.installer.installer_types import InstallerData, get_os_name, get_normalized_arch
 
 import platform
@@ -107,6 +107,8 @@ class Installer:
                     version_to_be_installed = str(version)
             elif installer_arch_os.startswith("https://"):  # its a url to be downloaded
                 downloaded_object = PathExtended(installer_arch_os).download(folder=INSTALL_TMP_DIR)
+                from machineconfig.scripts.python.helpers_utils.download import download
+                
                 # object is either a zip containing a binary or a straight out binary.
                 if downloaded_object.suffix in [".zip", ".tar.gz"]:
                     downloaded_object = downloaded_object.decompress()
@@ -135,7 +137,7 @@ class Installer:
                 raise NotImplementedError(f"CMD installation method not implemented for: {installer_arch_os}")
         else:
             assert repo_url.startswith("https://github.com/"), f"repoURL must be a GitHub URL, got {repo_url}"
-            downloaded, version_to_be_installed = self.download(version=version)
+            downloaded, version_to_be_installed = self.binary_download(version=version)
             if str(downloaded).endswith(".deb"):
                 print(f"📦 Installing .deb package: {downloaded}")
                 assert platform.system() == "Linux"
@@ -173,7 +175,7 @@ class Installer:
                     exe.with_name(name=new_exe_name, inplace=True, overwrite=True)
         INSTALL_VERSION_ROOT.joinpath(exe_name).parent.mkdir(parents=True, exist_ok=True)
         INSTALL_VERSION_ROOT.joinpath(exe_name).write_text(version_to_be_installed or "unknown", encoding="utf-8")
-    def download(self, version: Optional[str]) -> tuple[PathExtended, str]:
+    def binary_download(self, version: Optional[str]) -> tuple[PathExtended, str]:
         exe_name = self._get_exe_name()
         repo_url = self.installer_data["repoURL"]
         # app_name = self.installer_data["appName"]

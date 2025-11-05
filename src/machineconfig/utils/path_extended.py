@@ -152,7 +152,6 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
     # ======================================= File Editing / Reading ===================================
     def download(self, folder: OPLike = None, name: Optional[str] = None, allow_redirects: bool = True, timeout: Optional[int] = None, params: Any = None) -> "PathExtended":
         import requests
-
         response = requests.get(self.as_url_str(), allow_redirects=allow_redirects, timeout=timeout, params=params)  # Alternative: from urllib import request; request.urlopen(url).read().decode('utf-8').
         assert response.status_code == 200, f"Download failed with status code {response.status_code}\n{response.text}"
         if name is not None:

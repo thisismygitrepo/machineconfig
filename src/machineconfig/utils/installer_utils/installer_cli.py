@@ -1,19 +1,20 @@
 """Devops Devapps Install"""
 
 import typer
-from rich.console import Console
-from rich.panel import Panel
-from rich.table import Table
 from typing import Optional, Annotated
 from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
 
-console = Console()
 
 
 def _handle_installer_not_found(search_term: str, all_names: list[str]) -> None:  # type: ignore
     """Handle installer not found with friendly suggestions using fuzzy matching."""
     from difflib import get_close_matches
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.table import Table
     close_matches = get_close_matches(search_term, all_names, n=5, cutoff=0.4)
+    console = Console()
+
     console.print(f"\n❌ '[red]{search_term}[/red]' was not found.", style="bold")
     if close_matches:
         console.print("🤔 Did you mean one of these?", style="yellow")
@@ -61,6 +62,10 @@ def main(
             return install_clis(clis_names=[x.strip() for x in which.split(",") if x.strip() != ""])
     else:
         if group:
+            from rich.console import Console
+            from rich.table import Table
+            console = Console()
+
             typer.echo("❌ You must provide a group name when using the --group/-g option.")
             res = get_group_name_to_repr()
             console.print("[bold blue]Here are the available groups:[/bold blue]")
@@ -98,8 +103,11 @@ def get_group_name_to_repr() -> dict[str, str]:
 def install_interactively():
     from machineconfig.utils.options import choose_from_options
     from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
-    from machineconfig.utils.installer import get_installers
+    from machineconfig.utils.installer_utils.installer_runner import get_installers
     from machineconfig.utils.installer_utils.installer_class import Installer
+    from rich.console import Console
+    from rich.panel import Panel
+    # from rich.table import Table
     installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=None)
     installer_options = [Installer(installer_data=x).get_description() for x in installers]
     category_display_to_name = get_group_name_to_repr()
@@ -119,24 +127,32 @@ def install_interactively():
             status_message = Installer(an_installer_data).install_robust(version=None)  # finish the task - this returns a status message, not a command
             installation_messages.append(status_message)
     if installation_messages:
+        console = Console()
+
         panel = Panel("\n".join([f"[blue]• {message}[/blue]" for message in installation_messages]), title="[bold green]📊 Installation Summary[/bold green]", border_style="green", padding=(1, 2))
         console.print(panel)
 
 
 def install_group(package_group: str):
-    from machineconfig.utils.installer import get_installers, install_bulk
+    from machineconfig.utils.installer_utils.installer_runner import get_installers, install_bulk
     from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
+    from rich.console import Console
+    from rich.panel import Panel
+    # from rich.table import Table
     if package_group in PACKAGE_GROUP2NAMES:
         panel = Panel(f"[bold yellow]Installing programs from category: [green]{package_group}[/green][/bold yellow]", title="[bold blue]📦 Category Installation[/bold blue]", border_style="blue", padding=(1, 2))
+        console = Console()
         console.print(panel)
         installers_ = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=[package_group])
         install_bulk(installers_data=installers_)
         return
-    print(f"❌ ERROR: Unknown package group: {package_group}. Available groups are: {list(PACKAGE_GROUP2NAMES.keys())}")
+    console = Console()
+    console.print(f"❌ ERROR: Unknown package group: {package_group}. Available groups are: {list(PACKAGE_GROUP2NAMES.keys())}")
 def install_clis(clis_names: list[str]):
     from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
-    from machineconfig.utils.installer import get_installers
+    from machineconfig.utils.installer_utils.installer_runner import get_installers
     from machineconfig.utils.installer_utils.installer_class import Installer
+    from rich.console import Console
     total_messages: list[str] = []
     for a_which in clis_names:
         all_installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=None)
@@ -152,6 +168,7 @@ def install_clis(clis_names: list[str]):
         message = Installer(selected_installer).install_robust(version=None)  # finish the task
         total_messages.append(message)
     if total_messages:
+        console = Console()
         console.print("\n[bold green]📊 Installation Results:[/bold green]")
         for a_message in total_messages:
             console.print(f"[blue]• {a_message}[/blue]")
@@ -159,13 +176,13 @@ def install_clis(clis_names: list[str]):
 
 
 def install_if_missing(which: str):
-    from machineconfig.utils.installer_utils.installer_abc import check_tool_exists
+    from machineconfig.utils.installer_utils.installer_locator_utils import check_tool_exists
     exists = check_tool_exists(which)
     if exists:
         print(f"✅ {which} is already installed.")
         return
     print(f"⏳ {which} not found. Installing...")
-    from machineconfig.utils.installer_utils.installer import main
+    from machineconfig.utils.installer_utils.installer_cli import main
     main(which=which, interactive=False)
 
 

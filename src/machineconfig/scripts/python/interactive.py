@@ -31,7 +31,7 @@ console = Console()
 
 
 def display_header() -> None:
-    from machineconfig.utils.installer import get_machineconfig_version
+    from machineconfig.utils.installer_utils.installer_runner import get_machineconfig_version
     from rich.align import Align
 
     # Fancy ASCII art header
@@ -111,7 +111,7 @@ def execute_installations(selected_options: list[str]) -> None:
             console.print(Panel("⚡ [bold bright_yellow]CLI APPLICATIONS[/bold bright_yellow]\n[italic]Command-line tools installation[/italic]", border_style="bright_yellow"))
             console.print("🔧 Installing CLI applications", style="bold cyan")
             try:
-                from machineconfig.utils.installer_utils.installer import main as devops_devapps_install_main
+                from machineconfig.utils.installer_utils.installer_cli import main as devops_devapps_install_main
                 devops_devapps_install_main(group=True, which=maybe_a_group, interactive=False)
                 console.print("✅ CLI applications installed successfully", style="bold green")
             except Exception as e:

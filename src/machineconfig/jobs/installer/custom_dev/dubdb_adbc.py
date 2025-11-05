@@ -25,6 +25,6 @@ installer_data: InstallerData = {
 
 def main(installer_data: InstallerData, version: Optional[str]) -> None:
     _ = version
-    from machineconfig.utils.installer import Installer
+    from machineconfig.utils.installer_utils.installer_runner import Installer
     installer = Installer(installer_data)
     installer.install(version=None)
