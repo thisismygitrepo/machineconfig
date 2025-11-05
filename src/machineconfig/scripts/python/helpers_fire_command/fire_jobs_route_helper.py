@@ -5,11 +5,10 @@ from typing import Optional
 import tomllib
 from pathlib import Path
 from machineconfig.utils.accessories import randstr
-from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.options import choose_from_options
 
 
-def choose_function_or_lines(choice_file: PathExtended, kwargs_dict: dict[str, object]) -> tuple[Optional[str], PathExtended, dict[str, object]]:
+def choose_function_or_lines(choice_file: Path, kwargs_dict: dict[str, object]) -> tuple[Optional[str], Path, dict[str, object]]:
     """
     Choose a function to run from a Python file or lines from a shell script.
     
@@ -46,7 +45,7 @@ def choose_function_or_lines(choice_file: PathExtended, kwargs_dict: dict[str, o
                 continue
             options.append(line)
         chosen_lines = choose_from_options(msg="Choose a line to run", options=options, fzf=True, multi=True)
-        choice_file = PathExtended.tmpfile(suffix=".sh")
+        choice_file = Path.home().joinpath(f"tmp_results/tmp_scripts/shell/{randstr(10)}.sh")
         choice_file.parent.mkdir(parents=True, exist_ok=True)
         choice_file.write_text("\n".join(chosen_lines), encoding="utf-8")
         choice_function = None
@@ -82,7 +81,7 @@ def get_command_streamlit(choice_file: Path, environment: str, repo_root: Option
                 port = config["server"]["port"]
         secrets_path = toml_path.with_name("secrets.toml")
         if repo_root is not None:
-            secrets_template_path = Path.home().joinpath(f"dotfiles/creds/streamlit/{PathExtended(repo_root).name}/{choice_file.name}/secrets.toml")
+            secrets_template_path = Path.home().joinpath(f"dotfiles/creds/streamlit/{Path(repo_root).name}/{choice_file.name}/secrets.toml")
             if environment != "" and not secrets_path.exists() and secrets_template_path.exists():
                 secrets_template = tomllib.loads(secrets_template_path.read_text(encoding="utf-8"))
                 if environment == "ip":

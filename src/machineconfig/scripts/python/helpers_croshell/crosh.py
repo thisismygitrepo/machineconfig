@@ -20,9 +20,9 @@ def get_read_data_pycode(path: str):
     from rich.panel import Panel
     from rich.text import Text
     from rich.console import Console
-    from machineconfig.utils.path_extended import PathExtended
+    from pathlib import Path
     console = Console()
-    p = PathExtended(path).absolute()
+    p = Path(path).absolute()
     try:
         from machineconfig.utils.files.read import Read
         from machineconfig.utils.accessories import pprint

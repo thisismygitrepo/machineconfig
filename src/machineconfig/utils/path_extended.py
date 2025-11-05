@@ -16,6 +16,7 @@ OPLike: TypeAlias = Union[str, "PathExtended", Path, None]
 PLike: TypeAlias = Union[str, "PathExtended", Path]
 FILE_MODE: TypeAlias = Literal["r", "w", "x", "a"]
 SHUTIL_FORMATS: TypeAlias = Literal["zip", "tar", "gztar", "bztar", "xztar"]
+DECOMPRESS_SUPPORTED_FORMATS = [".tar.gz", ".tgz", ".tar", ".gz", ".tar.bz", ".tbz", ".tar.xz", ".zip", ".7z"]
 
 
 def _is_user_admin() -> bool:
@@ -808,7 +809,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             path = self
         else:
             try:
-                path = self.rel2home()
+                path = PathExtended(self.expanduser().absolute().relative_to(Path.home()))
             except ValueError as ve:
                 if strict:
                     raise ve

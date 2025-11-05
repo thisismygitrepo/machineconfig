@@ -1,4 +1,4 @@
-from machineconfig.utils.path_extended import PathExtended
+from machineconfig.utils.path_extended import PathExtended, DECOMPRESS_SUPPORTED_FORMATS
 from machineconfig.utils.installer_utils.installer_locator_utils import find_move_delete_linux, find_move_delete_windows
 from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT
 from machineconfig.utils.installer_utils.installer_locator_utils import check_tool_exists
@@ -9,6 +9,24 @@ import subprocess
 import json
 from typing import Optional, Any
 from urllib.parse import urlparse
+
+
+
+def install_deb_package(downloaded: PathExtended) -> None:
+    print(f"📦 Installing .deb package: {downloaded}")
+    assert platform.system() == "Linux"
+    result = subprocess.run(f"sudo nala install -y {downloaded}", shell=True, capture_output=True, text=True)
+    success = result.returncode == 0 and result.stderr == ""
+    if not success:
+        desc = "Installing .deb"
+        print(f"❌ {desc} failed")
+        if result.stdout:
+            print(f"STDOUT: {result.stdout}")
+        if result.stderr:
+            print(f"STDERR: {result.stderr}")
+        print(f"Return code: {result.returncode}")
+    print("🗑️  Cleaning up .deb package...")
+    downloaded.delete(sure=True)
 
 
 class Installer:
@@ -106,11 +124,14 @@ class Installer:
                     runpy.run_path(str(installer_path), run_name=None)["main"](self.installer_data, version=version)
                     version_to_be_installed = str(version)
             elif installer_arch_os.startswith("https://"):  # its a url to be downloaded
-                downloaded_object = PathExtended(installer_arch_os).download(folder=INSTALL_TMP_DIR)
+                # downloaded_object = PathExtended(installer_arch_os).download(folder=INSTALL_TMP_DIR)
                 from machineconfig.scripts.python.helpers_utils.download import download
-                
+                downloaded_object = download(installer_arch_os, output_dir=str(INSTALL_TMP_DIR))
+                if downloaded_object is None:
+                    raise ValueError(f"Failed to download from URL: {installer_arch_os}")
                 # object is either a zip containing a binary or a straight out binary.
-                if downloaded_object.suffix in [".zip", ".tar.gz"]:
+                downloaded_object = PathExtended(downloaded_object)
+                if downloaded_object.suffix in DECOMPRESS_SUPPORTED_FORMATS:
                     downloaded_object = downloaded_object.decompress()
                 if downloaded_object.suffix in [".exe", ""]:  # likely an executable
                     if platform.system() == "Windows":
@@ -133,26 +154,17 @@ class Installer:
                         print(f"🔄 Renaming to correct name: {new_exe_name}")
                         exe.with_name(name=new_exe_name, inplace=True, overwrite=True)
                     version_to_be_installed = "downloaded_binary"
+                elif downloaded_object.suffix in [".deb"]:
+                    install_deb_package(downloaded_object)
+                    version_to_be_installed = "downloaded_deb"
+                else:
+                    raise ValueError(f"Downloaded file is not an executable: {downloaded_object}")
             else:
                 raise NotImplementedError(f"CMD installation method not implemented for: {installer_arch_os}")
         else:
             assert repo_url.startswith("https://github.com/"), f"repoURL must be a GitHub URL, got {repo_url}"
             downloaded, version_to_be_installed = self.binary_download(version=version)
-            if str(downloaded).endswith(".deb"):
-                print(f"📦 Installing .deb package: {downloaded}")
-                assert platform.system() == "Linux"
-                result = subprocess.run(f"sudo nala install -y {downloaded}", shell=True, capture_output=True, text=True)
-                success = result.returncode == 0 and result.stderr == ""
-                if not success:
-                    desc = "Installing .deb"
-                    print(f"❌ {desc} failed")
-                    if result.stdout:
-                        print(f"STDOUT: {result.stdout}")
-                    if result.stderr:
-                        print(f"STDERR: {result.stderr}")
-                    print(f"Return code: {result.returncode}")
-                print("🗑️  Cleaning up .deb package...")
-                downloaded.delete(sure=True)
+            if str(downloaded).endswith(".deb"): install_deb_package(downloaded)
             else:
                 if platform.system() == "Windows":
                     exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=exe_name, delete=True, rename_to=exe_name.replace(".exe", "") + ".exe")
@@ -181,7 +193,7 @@ class Installer:
         # app_name = self.installer_data["appName"]
         download_link: Optional[str] = None
         version_to_be_installed: Optional[str] = None
-        if "github" not in repo_url or ".zip" in repo_url or ".tar.gz" in repo_url:
+        if "github" not in repo_url or (any(ext in repo_url for ext in DECOMPRESS_SUPPORTED_FORMATS)):
             # Direct download URL
             download_link = repo_url
             version_to_be_installed = "predefined_url"
@@ -204,7 +216,7 @@ class Installer:
         downloaded = PathExtended(download_link).download(folder=INSTALL_TMP_DIR).decompress()
         if downloaded.is_dir() and len(downloaded.search("*", r=True)) == 1:
             only_file_in = next(downloaded.glob("*"))
-            if only_file_in.is_file() and only_file_in.suffix in [".7z", ".zip", ".tar.gz", ".tar"]:  # further decompress
+            if only_file_in.is_file() and only_file_in.suffix in DECOMPRESS_SUPPORTED_FORMATS:  # further decompress
                 downloaded = only_file_in.decompress()
         return downloaded, version_to_be_installed
 

@@ -1,6 +1,6 @@
 from typing import Optional
 import os
-from machineconfig.utils.path_extended import PathExtended
+from pathlib import Path
 import platform
 
 
@@ -12,7 +12,7 @@ def parse_pyfile(file_path: str):
     func_args: list[list[args_spec]] = [[]]  # this firt prepopulated dict is for the option 'RUN AS MAIN' which has no args
     import ast
 
-    parsed_ast = ast.parse(PathExtended(file_path).read_text(encoding="utf-8"))
+    parsed_ast = ast.parse(Path(file_path).read_text(encoding="utf-8"))
     functions = [node for node in ast.walk(parsed_ast) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))]
     module__doc__ = ast.get_docstring(parsed_ast)
     main_option = f"RUN AS MAIN -- {module__doc__ if module__doc__ is not None else 'NoDocs'}"
@@ -102,7 +102,6 @@ def wrap_import_in_try_except(import_line: str, pyfile: str, repo_root: Optional
         print(fr"❌ Failed to import `{pyfile}` as a module: {ex} ")
         print("⚠️ Attempting import with ad-hoc `$PATH` manipulation. DO NOT pickle any objects in this session as correct deserialization cannot be guaranteed.")
         import sys
-        from pathlib import Path
         sys.path.append(str(Path(pyfile).parent))
         if repo_root is not None:
             sys.path.append(repo_root)

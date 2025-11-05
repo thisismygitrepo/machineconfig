@@ -45,18 +45,17 @@ def main(
             dest_path = Path(destination).expanduser().absolute()
             dest_path.mkdir(parents=True, exist_ok=True)
             new_path = dest_path.joinpath(orig_path.name)
-    from machineconfig.utils.path_extended import PathExtended
     match method:
         case "copy" | "c":
             try:
-                copy_map(config_file_default_path=PathExtended(orig_path), self_managed_config_file_path=PathExtended(new_path), on_conflict=ON_CONFLICT_MAPPER[on_conflict])
+                copy_map(config_file_default_path=orig_path, self_managed_config_file_path=new_path, on_conflict=ON_CONFLICT_MAPPER[on_conflict])  # type: ignore[arg-type]
             except Exception as e:
                 typer.echo(f"[red]Error:[/] {e}")
                 typer.Exit(code=1)
                 return
         case "symlink" | "s":
             try:
-                symlink_map(config_file_default_path=PathExtended(orig_path), self_managed_config_file_path=PathExtended(new_path), on_conflict=ON_CONFLICT_MAPPER[on_conflict])
+                symlink_map(config_file_default_path=orig_path, self_managed_config_file_path=new_path, on_conflict=ON_CONFLICT_MAPPER[on_conflict])  # type: ignore[arg-type]
             except Exception as e:
                 typer.echo(f"[red]Error:[/] {e}")
                 typer.Exit(code=1)
@@ -66,10 +65,10 @@ def main(
 
     # mapper_snippet = "\n".join(
     #     [
-    #         f"[bold]📝 Edit configuration file:[/] [cyan]nano {PathExtended(CONFIG_ROOT)}/symlinks/mapper.toml[/cyan]",
+    #         f"[bold]📝 Edit configuration file:[/] [cyan]nano {Path(CONFIG_ROOT)}/symlinks/mapper.toml[/cyan]",
     #         "",
     #         f"[{new_path.parent.name}]",
-    #         f"{orig_path.name.split('.')[0]} = {{ this = '{orig_path.collapseuser().as_posix()}', to_this = '{new_path.collapseuser().as_posix()}' }}",
+    #         f"{orig_path.name.split('.')[0]} = {{ this = '{orig_path.as_posix()}', to_this = '{new_path.as_posix()}' }}",
     #     ]
     # )
     # console.print(

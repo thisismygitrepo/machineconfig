@@ -1,7 +1,7 @@
 
 
 from platform import system
-from machineconfig.utils.path_extended import PathExtended
+from pathlib import Path
 from rich.console import Console
 from rich.panel import Panel
 from rich import box
@@ -26,7 +26,7 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
     results: dict[str, dict[str, str | bool]] = {}
     issues_found: list[str] = []
     
-    ssh_dir = PathExtended.home().joinpath(".ssh")
+    ssh_dir = Path.home().joinpath(".ssh")
     authorized_keys = ssh_dir.joinpath("authorized_keys")
     
     console.print(Panel("🔐 Checking SSH directory and authorized_keys...", title="[bold blue]File Permissions[/bold blue]", border_style="blue"))
@@ -124,7 +124,7 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
     
     console.print(Panel("🔌 Checking SSH port and listening status...", title="[bold blue]Network Status[/bold blue]", border_style="blue"))
     
-    sshd_config_paths = [PathExtended("C:\\ProgramData\\ssh\\sshd_config"), PathExtended(os.environ.get("PROGRAMDATA", "C:\\ProgramData")).joinpath("ssh", "sshd_config")]
+    sshd_config_paths = [Path("C:\\ProgramData\\ssh\\sshd_config"), Path(os.environ.get("PROGRAMDATA", "C:\\ProgramData")).joinpath("ssh", "sshd_config")]
     sshd_config = None
     for config_path in sshd_config_paths:
         if config_path.exists():
@@ -168,7 +168,7 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
             if admin_authorized_keys_lines:
                 console.print(Panel("⚠️  IMPORTANT: Administrators group uses different authorized_keys location\n💡 For admin users, keys should be in: C:\\ProgramData\\ssh\\administrators_authorized_keys\n💡 Not in user's .ssh/authorized_keys!", title="[bold yellow]Admin Users[/bold yellow]", border_style="yellow"))
                 
-                programdata_auth_keys = PathExtended(os.environ.get("PROGRAMDATA", "C:\\ProgramData")).joinpath("ssh", "administrators_authorized_keys")
+                programdata_auth_keys = Path(os.environ.get("PROGRAMDATA", "C:\\ProgramData")).joinpath("ssh", "administrators_authorized_keys")
                 if programdata_auth_keys.exists():
                     console.print(Panel("✅ administrators_authorized_keys file exists", title="[bold green]OK[/bold green]", border_style="green"))
                 else:

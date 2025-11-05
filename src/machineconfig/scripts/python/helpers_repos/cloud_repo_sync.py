@@ -61,8 +61,9 @@ def main(
         typer.Exit(code=1)
         return ""
     repo_local_root = PathExtended(repo_local_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.
+    local_relative_home = PathExtended(repo_local_root.expanduser().absolute().relative_to(Path.home()))
     PathExtended(CONFIG_ROOT).joinpath("remote").mkdir(parents=True, exist_ok=True)
-    repo_remote_root = PathExtended(CONFIG_ROOT).joinpath("remote", repo_local_root.rel2home())
+    repo_remote_root = PathExtended(CONFIG_ROOT).joinpath("remote", local_relative_home)
     repo_remote_root.delete(sure=True)
     try:
         console.print(Panel("📥 DOWNLOADING REMOTE REPOSITORY", title_align="left", border_style="blue"))
@@ -104,7 +105,7 @@ git pull originEnc master
         uv_project_dir = f"""{str(Path.home().joinpath("code/machineconfig"))}"""
         uv_with = None
     else:
-        uv_with = ["machineconfig>=7.58"]
+        uv_with = ["machineconfig>=7.59"]
         uv_project_dir = None
 
     import tempfile

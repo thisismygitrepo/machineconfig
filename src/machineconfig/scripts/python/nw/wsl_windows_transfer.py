@@ -35,15 +35,16 @@ def main(
     print("=" * 50 + "\n")
 
     path_obj = PathExtended(path).expanduser().absolute()
+    relative_home = PathExtended(path_obj.expanduser().absolute().relative_to(Path.home()))
 
     if same_file_system:
         print("⚠️ Using a not recommended transfer method! Copying files across the same file system.")
         if system == "Windows":  # move files over to WSL
             print("📤 Transferring files from Windows to WSL...")
-            path_obj.copy(folder=WSL_FROM_WIN.joinpath(UserName).joinpath(path_obj.rel2home().parent), overwrite=True)  # the following works for files and folders alike.
+            path_obj.copy(folder=WSL_FROM_WIN.joinpath(UserName).joinpath(relative_home.parent), overwrite=True)  # the following works for files and folders alike.
         else:  # move files from WSL to win
             print("📤 Transferring files from WSL to Windows...")
-            path_obj.copy(folder=WIN_FROM_WSL.joinpath(UserName).joinpath(path_obj.rel2home().parent), overwrite=True)
+            path_obj.copy(folder=WIN_FROM_WSL.joinpath(UserName).joinpath(relative_home.parent), overwrite=True)
         print("✅ Transfer completed successfully!\n")
     else:
         from machineconfig.utils.ssh import SSH

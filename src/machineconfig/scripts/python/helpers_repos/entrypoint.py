@@ -38,7 +38,8 @@ def resolve_spec_path(directory: Optional[str], cloud: Optional[str]) -> Path:
     repos_root = resolve_directory(directory)
     from machineconfig.utils.path_extended import PathExtended
     if not repos_root.exists() or repos_root.name != "repos.json":
-        candidate = Path(CONFIG_ROOT).joinpath("repos").joinpath(PathExtended(repos_root).rel2home()).joinpath("repos.json")
+        relative_repos_root = PathExtended(repos_root).expanduser().absolute().relative_to(Path.home())
+        candidate = Path(CONFIG_ROOT).joinpath("repos").joinpath(relative_repos_root).joinpath("repos.json")
         repos_root = candidate
         if not repos_root.exists():
             cloud_name: Optional[str]

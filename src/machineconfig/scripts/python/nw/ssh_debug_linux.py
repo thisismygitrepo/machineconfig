@@ -1,7 +1,7 @@
 
 
 from platform import system
-from machineconfig.utils.path_extended import PathExtended
+from pathlib import Path
 from rich.console import Console
 from rich.panel import Panel
 from rich import box
@@ -26,7 +26,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
     results: dict[str, dict[str, str | bool]] = {}
     issues_found: list[str] = []
     
-    ssh_dir = PathExtended.home().joinpath(".ssh")
+    ssh_dir = Path.home().joinpath(".ssh")
     authorized_keys = ssh_dir.joinpath("authorized_keys")
     
     console.print(Panel("🔐 Checking SSH directory and authorized_keys...", title="[bold blue]File Permissions[/bold blue]", border_style="blue"))
@@ -106,7 +106,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
     
     console.print(Panel("🔌 Checking SSH port and listening status...", title="[bold blue]Network Status[/bold blue]", border_style="blue"))
     
-    sshd_config_paths = [PathExtended("/etc/ssh/sshd_config"), PathExtended("/etc/sshd_config")]
+    sshd_config_paths = [Path("/etc/ssh/sshd_config"), Path("/etc/sshd_config")]
     sshd_config = None
     for config_path in sshd_config_paths:
         if config_path.exists():
@@ -236,7 +236,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
     
     console.print(Panel("🗂️  Checking for problematic files in /etc/...", title="[bold blue]System Files[/bold blue]", border_style="blue"))
     
-    hosts_deny = PathExtended("/etc/hosts.deny")
+    hosts_deny = Path("/etc/hosts.deny")
     if hosts_deny.exists():
         hosts_deny_content = hosts_deny.read_text(encoding="utf-8")
         active_lines = [line.strip() for line in hosts_deny_content.splitlines() if line.strip() and not line.strip().startswith("#")]
@@ -252,14 +252,14 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
         results["hosts_deny"] = {"status": "ok", "message": "/etc/hosts.deny does not exist", "action": ""}
         console.print(Panel("✅ /etc/hosts.deny not present", title="[bold green]OK[/bold green]", border_style="green"))
     
-    hosts_allow = PathExtended("/etc/hosts.allow")
+    hosts_allow = Path("/etc/hosts.allow")
     if hosts_allow.exists():
         results["hosts_allow"] = {"status": "ok", "message": "/etc/hosts.allow exists (check if needed)", "action": ""}
         console.print(Panel("ℹ️  /etc/hosts.allow exists\n💡 Ensure it allows SSH if using TCP wrappers", title="[bold blue]Info[/bold blue]", border_style="blue"))
     
     console.print(Panel("👤 Checking home directory permissions...", title="[bold blue]User Permissions[/bold blue]", border_style="blue"))
     
-    home_dir = PathExtended.home()
+    home_dir = Path.home()
     home_stat = os.stat(home_dir)
     home_perms = oct(home_stat.st_mode)[-3:]
     
@@ -294,7 +294,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
     
     console.print(Panel("📋 Checking SSH logs for errors...", title="[bold blue]Logs[/bold blue]", border_style="blue"))
     
-    log_files = [PathExtended("/var/log/auth.log"), PathExtended("/var/log/secure")]
+    log_files = [Path("/var/log/auth.log"), Path("/var/log/secure")]
     log_found = False
     for log_file in log_files:
         if log_file.exists():

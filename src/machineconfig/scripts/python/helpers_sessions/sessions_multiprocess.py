@@ -1,7 +1,6 @@
 
 
 from typing import Optional, Annotated
-from pathlib import Path
 import typer
 
 
@@ -13,20 +12,21 @@ def create_from_function(
     from machineconfig.utils.ve import get_ve_activate_line, get_ve_path_and_ipython_profile
     from machineconfig.utils.options import choose_from_options
     from machineconfig.utils.path_helper import match_file_name, sanitize_path
-    from machineconfig.utils.path_extended import PathExtended
     from machineconfig.utils.accessories import get_repo_root
+    from pathlib import Path
+
 
     path_obj = sanitize_path(path)
     if not path_obj.exists():
         suffixes = {".py"}
-        choice_file = match_file_name(sub_string=path, search_root=PathExtended.cwd(), suffixes=suffixes)
+        choice_file = match_file_name(sub_string=path, search_root=Path.cwd(), suffixes=suffixes)
     elif path_obj.is_dir():
         from machineconfig.utils.path_helper import search_for_files_of_interest
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
         files = search_for_files_of_interest(path_obj, suffixes={".py", ".sh", ".ps1"})
         print(f"🔍 Got #{len(files)} results.")
         choice_file = choose_from_options(multi=False, options=files, fzf=True, msg="Choose one option")
-        choice_file = PathExtended(choice_file)
+        choice_file = Path(choice_file)
     else:
         choice_file = path_obj
 
@@ -52,7 +52,7 @@ def create_from_function(
     from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
     layout: LayoutConfig = {"layoutName": "fireNprocess", "layoutTabs": []}
     for an_arg in range(num_process):
-        layout["layoutTabs"].append({"tabName": f"tab{an_arg}", "startDir": str(PathExtended.cwd()), "command": f"uv run -m fire {choice_file} {choice_function} --idx={an_arg} --idx_max={num_process}"})
+        layout["layoutTabs"].append({"tabName": f"tab{an_arg}", "startDir": str(Path.cwd()), "command": f"uv run -m fire {choice_file} {choice_function} --idx={an_arg} --idx_max={num_process}"})
     print(layout)
     run_zellij_layout(layout_config=layout)
 

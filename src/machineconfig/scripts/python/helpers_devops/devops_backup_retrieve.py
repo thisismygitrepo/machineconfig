@@ -2,7 +2,6 @@
 
 # import subprocess
 from machineconfig.utils.io import read_ini
-from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT, DEFAULTS_PATH
 from machineconfig.utils.code import print_code
 from machineconfig.utils.options import choose_cloud_interactively, choose_from_options
@@ -11,6 +10,7 @@ from platform import system
 from typing import Any, Literal, Optional
 from rich.console import Console
 from rich.panel import Panel
+from pathlib import Path
 import tomllib
 
 
@@ -56,13 +56,13 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Option
         flags += "e" if item["encrypt"] == "True" else ""
         flags += "r" if item["rel2home"] == "True" else ""
         flags += "o" if system().lower() in item_name else ""
-        console.print(Panel(f"📦 PROCESSING: {item_name}\n📂 Path: {PathExtended(item['path']).as_posix()}\n🏳️  Flags: {flags or 'None'}", title=f"[bold blue]Processing Item: {item_name}[/bold blue]", border_style="blue"))
+        console.print(Panel(f"📦 PROCESSING: {item_name}\n📂 Path: {Path(item['path']).as_posix()}\n🏳️  Flags: {flags or 'None'}", title=f"[bold blue]Processing Item: {item_name}[/bold blue]", border_style="blue"))
         if flags:
             flags = "-" + flags
         if direction == "BACKUP":
-            program += f"""\ncloud_copy "{PathExtended(item["path"]).as_posix()}" $cloud {flags}\n"""
+            program += f"""\ncloud_copy "{Path(item["path"]).as_posix()}" $cloud {flags}\n"""
         elif direction == "RETRIEVE":
-            program += f"""\ncloud_copy $cloud "{PathExtended(item["path"]).as_posix()}" {flags}\n"""
+            program += f"""\ncloud_copy $cloud "{Path(item["path"]).as_posix()}" {flags}\n"""
         else:
             console.print(Panel('❌ ERROR: INVALID DIRECTION\n⚠️  Direction must be either "BACKUP" or "RETRIEVE"', title="[bold red]Error: Invalid Direction[/bold red]", border_style="red"))
             raise RuntimeError(f"Unknown direction: {direction}")

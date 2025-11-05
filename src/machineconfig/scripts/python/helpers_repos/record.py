@@ -242,7 +242,8 @@ def main_record(repos_root: Path):
     tree_structure = build_tree_structure(repo_records, repos_root)
     print(tree_structure)
 
-    save_path = CONFIG_ROOT.joinpath("repos").joinpath(repos_root.rel2home()).joinpath("repos.json")
+    relative_repos_root = PathExtended(repos_root).expanduser().absolute().relative_to(Path.home())
+    save_path = CONFIG_ROOT.joinpath("repos").joinpath(relative_repos_root).joinpath("repos.json")
     save_json(obj=res, path=save_path, indent=4)
     pprint(f"📁 Result saved at {PathExtended(save_path)}")
     print(">>>>>>>>> Finished Recording")
