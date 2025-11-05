@@ -1,32 +1,47 @@
 
-from pathlib import Path
 from typing import Optional, Literal, Annotated
 import typer
 
-def balance_load(layout_path: Annotated[Path, typer.Argument(..., help="Path to the layout.json file")],
-           max_thresh: Annotated[int, typer.Option(..., help="Maximum tabs per layout")],
-           thresh_type: Annotated[Literal['number', 'weight'], typer.Option(..., help="Threshold type")],
-           breaking_method: Annotated[Literal['moreLayouts', 'combineTabs'], typer.Option(..., help="Breaking method")],
-           output_path: Annotated[Optional[Path], typer.Option(..., help="Path to write the adjusted layout.json file")] = None):
+def balance_load(layout_path: Annotated[str, typer.Argument(..., help="Path to the layout.json file")],
+           max_thresh: Annotated[int, typer.Option(..., "--max-threshold", "-m", help="Maximum tabs per layout")],
+           thresh_type: Annotated[Literal['number', 'n', 'weight', 'w'], typer.Option(..., "--threshold-type", "-t", help="Threshold type")],
+           breaking_method: Annotated[Literal['moreLayouts', 'ml', 'combineTabs', 'ct'], typer.Option(..., "--breaking-method", "-b", help="Breaking method")],
+           output_path: Annotated[Optional[str], typer.Option(..., "--output-path", "-o", help="Path to write the adjusted layout.json file")] = None):
     """Adjust layout file to limit max tabs per layout, etc."""
+    thresh_type_resolved: dict[str, Literal['number', 'weight']] = {
+        'number': 'number',
+        'n': 'number',
+        'weight': 'weight',
+        'w': 'weight'
+    }
+    breaking_method_resolved: dict[str, Literal['moreLayouts', 'combineTabs']] = {
+        'moreLayouts': 'moreLayouts',
+        'ml': 'moreLayouts',
+        'combineTabs': 'combineTabs',
+        'ct': 'combineTabs'
+    }
+    from pathlib import Path
+    layout_path_obj = Path(layout_path).expanduser().absolute()
+
     from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
     import json
-    layoutfile: LayoutsFile = json.loads(layout_path.read_text())
+    layoutfile: LayoutsFile = json.loads(layout_path_obj.read_text())
     layout_configs = layoutfile["layouts"]
     from machineconfig.cluster.sessions_managers.utils.load_balancer import limit_tab_num
-    new_layouts = limit_tab_num(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type=thresh_type, breaking_method=breaking_method)
+    new_layouts = limit_tab_num(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type=thresh_type_resolved[thresh_type], breaking_method=breaking_method_resolved[breaking_method])
     layoutfile["layouts"] = new_layouts
-    target_file = output_path if output_path is not None else layout_path.parent / f'{layout_path.stem}_adjusted_{max_thresh}_{thresh_type}_{breaking_method}.json'
+    target_file = Path(output_path) if output_path is not None else layout_path_obj.parent / f'{layout_path_obj.stem}_adjusted_{max_thresh}_{thresh_type}_{breaking_method}.json'
     target_file.parent.mkdir(parents=True, exist_ok=True)
     target_file.write_text(data=json.dumps(layoutfile, indent=4), encoding="utf-8")
     typer.echo(f"Adjusted layout saved to {target_file}")
 
 
-def select_layout(layouts_json_file: Path, selected_layouts_names: Optional[list[str]], select_interactively: bool) -> list["LayoutConfig"]:
+def select_layout(layouts_json_file: str, selected_layouts_names: Optional[list[str]], select_interactively: bool) -> list["LayoutConfig"]:
     import json
     from machineconfig.utils.options import choose_from_options
     from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
-    layout_file: LayoutsFile = json.loads(layouts_json_file.read_text(encoding="utf-8"))
+    from pathlib import Path
+    layout_file: LayoutsFile = json.loads(Path(layouts_json_file).read_text(encoding="utf-8"))
     if len(layout_file["layouts"]) == 0:
         raise ValueError(f"No layouts found in {layouts_json_file}")
     if selected_layouts_names is None:  # choose all, or interactively
@@ -49,10 +64,11 @@ def select_layout(layouts_json_file: Path, selected_layouts_names: Optional[list
     return layouts_chosen
 
 
-def find_layout_file(layout_path: str, ) -> Path:
+def find_layout_file(layout_path: str, ) -> str:
     from machineconfig.utils.path_helper import search_for_files_of_interest
     from machineconfig.utils.options import choose_from_options
     from machineconfig.utils.path_helper import match_file_name, sanitize_path
+    from pathlib import Path
     path_obj = sanitize_path(layout_path)
     if not path_obj.exists():
         choice_file = match_file_name(sub_string=layout_path, search_root=Path.cwd(), suffixes={".json"})
@@ -64,7 +80,7 @@ def find_layout_file(layout_path: str, ) -> Path:
         choice_file = Path(choice_file).expanduser().absolute()
     else:
         choice_file = path_obj
-    return choice_file
+    return str(choice_file)
 
 
 def run(ctx: typer.Context,
