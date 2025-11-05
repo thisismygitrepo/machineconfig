@@ -44,12 +44,16 @@ def get_fire_tab_using_fire(func: FunctionType, tab_weight: int) -> TabConfig:
 
 
 def make_layout_from_functions(functions: list[FunctionType], functions_weights: Optional[list[int]], import_module: bool, tab_configs: list[TabConfig],
-                               layout_name: str, method: Literal["script", "fire"]="fire") -> LayoutConfig:
+                               layout_name: str, method: Literal["script", "fire"],
+                               uv_with: Optional[list[str]] = None, uv_project_dir: Optional[str] = None
+                               ) -> LayoutConfig:
     tabs2artifacts: list[tuple[TabConfig, list[Path]]] = []
     for a_func, tab_weight in zip(functions, functions_weights or [1]*len(functions)):
         match method:
             case "script":
-                tab_config, artifact_files_1 = get_fire_tab_using_uv(a_func, tab_weight=tab_weight, import_module=import_module, uv_with=None, uv_project_dir=None)
+                tab_config, artifact_files_1 = get_fire_tab_using_uv(a_func, tab_weight=tab_weight, import_module=import_module,
+                                                                     uv_with=uv_with, uv_project_dir=uv_project_dir
+                                                                     )
                 artifact_files = [artifact_files_1]
             case "fire":
                 tab_config = get_fire_tab_using_fire(a_func, tab_weight=tab_weight)

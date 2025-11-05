@@ -55,6 +55,16 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
     import types as _types
     from pathlib import Path as _Path
 
+    def _stringify_annotation(annotation: Any) -> Any:
+        if annotation is _inspect.Signature.empty or annotation is _inspect.Parameter.empty:
+            return annotation
+        if isinstance(annotation, str):
+            return annotation
+        try:
+            return _inspect.formatannotation(annotation)
+        except Exception:
+            return str(annotation)
+
     # sanity checks
     if not (callable(lmb) and isinstance(lmb, _types.LambdaType)):
         raise TypeError("Expected a lambda function object")
@@ -174,16 +184,18 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
         else:
             new_default = param.default
 
-        # Recreate the Parameter (keeping annotation and kind)
+        normalized_annotation = _stringify_annotation(param.annotation)
+
         if new_default is _inspect.Parameter.empty:
-            new_param = _inspect.Parameter(name, param.kind, annotation=param.annotation)
+            new_param = _inspect.Parameter(name, param.kind, annotation=normalized_annotation)
         else:
             new_param = _inspect.Parameter(
-                name, param.kind, default=new_default, annotation=param.annotation
+                name, param.kind, default=new_default, annotation=normalized_annotation
             )
         new_params.append(new_param)
 
-    new_sig = _inspect.Signature(parameters=new_params, return_annotation=sig.return_annotation)
+    return_annotation = _stringify_annotation(sig.return_annotation)
+    new_sig = _inspect.Signature(parameters=new_params, return_annotation=return_annotation)
 
     # If in_global mode, return kwargs as global assignments + dedented body
     if in_global:
@@ -200,15 +212,11 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
             
             # Build type annotation string if available
             if param.annotation is not _inspect.Parameter.empty:
-                # Try to get a nice string representation of the annotation
-                try:
-                    if hasattr(param.annotation, "__name__"):
-                        type_str = param.annotation.__name__
-                    else:
-                        type_str = str(param.annotation)
-                except Exception:
-                    type_str = str(param.annotation)
-                global_assignments.append(f"{name}: {type_str} = {repr(value)}")
+                annotation_literal = _stringify_annotation(param.annotation)
+                if isinstance(annotation_literal, str):
+                    global_assignments.append(f"{name}: {repr(annotation_literal)} = {repr(value)}")
+                else:
+                    global_assignments.append(f"{name} = {repr(value)}")
             else:
                 global_assignments.append(f"{name} = {repr(value)}")
         
@@ -233,7 +241,6 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
 
     if "Optional" in result_text or "Any" in result_text or "Union" in result_text or "Literal" in result_text:
         result_text = "from typing import Optional, Any, Union, Literal\n\n" + result_text
-
     if import_prefix:
         result_text = f"{import_prefix}{result_text}"
     return result_text
