@@ -886,6 +886,23 @@
       }
     },
     {
+      "appName": "ast-grep",
+      "repoURL": "https://github.com/ast-grep/ast-grep",
+      "doc": "🔍 grep for code - search and rewrite code with ASTs",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "app-x86_64-unknown-linux-gnu.zip",
+          "macos": "app-x86_64-apple-darwin.zip",
+          "windows": "app-x86_64-pc-windows-msvc.zip"
+        },
+        "arm64": {
+          "linux": "app-aarch64-unknown-linux-gnu.zip",
+          "macos": "app-aarch64-apple-darwin.zip",
+          "windows": "app-aarch64-pc-windows-msvc.zip"
+        }
+      }
+    },
+    {
       "appName": "rg",
       "repoURL": "https://github.com/BurntSushi/ripgrep",
       "doc": "🔍 recursively searches directories for a regex pattern while respecting your gitignore rules",
