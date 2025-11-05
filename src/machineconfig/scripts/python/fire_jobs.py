@@ -92,7 +92,8 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
         )
         # print(f"🧩 Preparing import code for module import:\n{import_code}")
         code_printing = lambda_to_python_script(
-            lambda: print_code(code=import_code_robust, lexer="python", desc="import as module code"), in_global=True, import_module=False
+            lambda: print_code(code=import_code_robust, lexer="python", desc="import as module code"),
+            in_global=True, import_module=False
         )
         print(f"🧩 Preparing import code for module import:\n{import_code}")
         if choice_function is not None:

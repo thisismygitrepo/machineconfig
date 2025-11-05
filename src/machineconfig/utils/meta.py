@@ -246,4 +246,11 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
     return result_text
 
 if __name__ == "__main__":
-    pass
+    from machineconfig.utils.code import print_code
+    import_code_robust = "<import_code_robust>"
+    res = lambda_to_python_script(
+            lambda: print_code(code=import_code_robust, lexer="python", desc="import as module code"),
+            # in_global=True, import_module=False
+            in_global=True, import_module=False
+        )
+    print(res)
