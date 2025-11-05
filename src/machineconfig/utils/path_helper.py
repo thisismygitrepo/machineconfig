@@ -1,4 +1,3 @@
-# from machineconfig.utils.path_extended import Path
 from machineconfig.utils.source_of_truth import EXCLUDE_DIRS
 from rich.console import Console
 from rich.panel import Panel

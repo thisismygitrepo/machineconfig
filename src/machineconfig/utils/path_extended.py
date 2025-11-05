@@ -711,7 +711,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                 :return: pathlib.Path pointing to the destination directory where contents were extracted
                 :raises: FileNotFoundError if archive does not exist; py7zr.Bad7zFile or other error if extraction fails
                 """
-                import py7zr
+                import py7zr  # type: ignore
                 import tempfile
                 from pathlib import Path
                 archive_path_obj = Path(archive_path)

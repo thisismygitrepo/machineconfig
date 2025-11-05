@@ -16,7 +16,6 @@ def download(
     from urllib.parse import parse_qs, unquote, urlparse
     from requests import Response
     import requests
-
     if url is None:
         typer.echo("❌ Error: URL is required.", err=True)
         return None
