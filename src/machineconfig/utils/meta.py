@@ -122,7 +122,6 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
 
     # Evaluate each keyword argument value in the lambda's globals to get real Python objects
     call_kwargs: dict[str, Any] = {}
-    call_kw_expr: dict[str, str] = {}
     for kw in body.keywords:
         if kw.arg is None:
             # **kwargs in call — evaluate to dict and merge
@@ -135,16 +134,9 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
             except Exception as e:
                 raise RuntimeError(f"Failed to evaluate **kwargs expression: {e}")
         else:
-            expr_src: str | None
-            try:
-                expr_src = _ast.unparse(kw.value)
-            except AttributeError:
-                expr_src = _ast.get_source_segment(src, kw.value)
             try:
                 val = eval(compile(_ast.Expression(kw.value), "<lambda_eval>", "eval"), eval_namespace)
                 call_kwargs[kw.arg] = val
-                if expr_src:
-                    call_kw_expr[kw.arg] = expr_src
             except Exception as e:
                 raise RuntimeError(f"Failed to evaluate value for kw '{kw.arg}': {e}")
 
@@ -218,19 +210,15 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
                 # No value provided and no default - skip this parameter
                 continue
             
-            assignment_name = call_kw_expr.get(name, name)
-            if not assignment_name.isidentifier():
-                assignment_name = name
-
             # Build type annotation string if available
             if param.annotation is not _inspect.Parameter.empty:
                 annotation_literal = _stringify_annotation(param.annotation)
                 if isinstance(annotation_literal, str):
-                    global_assignments.append(f"{assignment_name}: {repr(annotation_literal)} = {repr(value)}")
+                    global_assignments.append(f"{name}: {repr(annotation_literal)} = {repr(value)}")
                 else:
-                    global_assignments.append(f"{assignment_name} = {repr(value)}")
+                    global_assignments.append(f"{name} = {repr(value)}")
             else:
-                global_assignments.append(f"{assignment_name} = {repr(value)}")
+                global_assignments.append(f"{name} = {repr(value)}")
         
         # Dedent the body text to remove function indentation
         dedented_body = _textwrap.dedent(body_text).rstrip()
@@ -258,10 +246,4 @@ def lambda_to_python_script(lmb: Callable[[], Any], in_global: bool, import_modu
     return result_text
 
 if __name__ == "__main__":
-    a = 1
-    b = 2
-    def func(c: int = a, d: int = b) -> int:
-        print(f"c: {c}, d: {d}")
-        return c + d
-    py_script = lambda_to_python_script(lmb=lambda: func(), in_global=False, import_module=False)
-    print(py_script)
+    pass
