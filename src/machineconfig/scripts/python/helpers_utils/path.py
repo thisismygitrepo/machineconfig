@@ -26,6 +26,7 @@ def init_project(
                  name: Annotated[Optional[str], typer.Option("--name", "-n", help="Name of the project.")]= None,
                  tmp_directory: Annotated[bool, typer.Option("--tmp-directory/--no-tmp-directory", "-t/-nt", help="Use a temporary directory for the project initialization.")]= False,
                  python: Annotated[Literal["3.13", "3.14"], typer.Option("--python", "-p", help="Python version for the uv virtual environment.")]= "3.13",
+                 packages: Annotated[Optional[str], typer.Option("--packages", "-p", help="Additional packages to include in the uv virtual environment.")]= None,
                  group: Annotated[Optional[str], typer.Option("--group", "-g", help="Group name for the packages.")]= "plot",
                  types_packages: Annotated[bool, typer.Option("--types-packages/--no-types-packages", "-T/-NT", help="Include types packages for better type hinting.")]= True,
                     linting_debug_packages: Annotated[bool, typer.Option("--linting-debug-packages/--no-linting-debug-packages", "-L/-NL", help="Include linting and debugging packages.")]= True,
@@ -33,6 +34,10 @@ def init_project(
                     plot_packages: Annotated[bool, typer.Option("--plot-packages/--no-plot-packages", "-P/-NP", help="Include plotting packages.")]= True,
                     data_packages: Annotated[bool, typer.Option("--data-packages/--no-data-packages", "-D/-ND", help="Include data manipulation packages.")]= True,
                  ) -> None:
+    if packages is not None:
+        packages_add_line = f"uv add {packages}"
+    else:
+        packages_add_line = ""
     from pathlib import Path
     if not tmp_directory:
         repo_root = Path.cwd()
@@ -69,6 +74,7 @@ uv venv
         total_packages.append("numpy pandas polars duckdb-engine sqlalchemy  psycopg2-binary pyarrow tqdm openpyxl")
     script = f"""
 {starting_code}
+{packages_add_line}
 uv add --group {group} {" ".join(total_packages)}
 """
     from machineconfig.utils.code import exit_then_run_shell_script
