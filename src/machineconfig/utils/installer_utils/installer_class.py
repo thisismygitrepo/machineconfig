@@ -12,18 +12,22 @@ from urllib.parse import urlparse
 
 
 def install_deb_package(downloaded: PathExtended) -> None:
+    from rich import print as rprint
+    from rich.panel import Panel
     print(f"📦 Installing .deb package: {downloaded}")
     assert platform.system() == "Linux"
     result = subprocess.run(f"sudo nala install -y {downloaded}", shell=True, capture_output=True, text=True)
     success = result.returncode == 0 and result.stderr == ""
     if not success:
+        from rich.console import Group
         desc = "Installing .deb"
-        print(f"❌ {desc} failed")
+        sub_panels = []
         if result.stdout:
-            print(f"STDOUT: {result.stdout}")
+            sub_panels.append(Panel(result.stdout, title="STDOUT", style="blue"))
         if result.stderr:
-            print(f"STDERR: {result.stderr}")
-        print(f"Return code: {result.returncode}")
+            sub_panels.append(Panel(result.stderr, title="STDERR", style="red"))
+        group_content = Group(f"❌ {desc} failed\nReturn code: {result.returncode}", *sub_panels)
+        rprint(Panel(group_content, title=desc, style="red"))
     print("🗑️  Cleaning up .deb package...")
     downloaded.delete(sure=True)
 
@@ -79,19 +83,23 @@ class Installer:
         version_to_be_installed: str = "unknown"  # Initialize to ensure it's always bound
         if repo_url == "CMD":
             if any(pm in installer_arch_os for pm in ["npm ", "pip ", "winget ", "brew ", "curl "]):
+                from rich import print as rprint
+                from rich.panel import Panel
+                from rich.console import Group
                 package_manager = installer_arch_os.split(" ", maxsplit=1)[0]
                 print(f"📦 Using package manager: {installer_arch_os}")
                 desc = package_manager + " installation"
                 version_to_be_installed = package_manager + "Latest"
-                result = subprocess.run(installer_arch_os, shell=True, capture_output=True, text=False)
-                success = result.returncode == 0 and result.stderr == "".encode()
+                result = subprocess.run(installer_arch_os, shell=True, capture_output=False, text=True)
+                success = result.returncode == 0 and result.stderr == ""
                 if not success:
-                    print(f"❌ {desc} failed")
+                    sub_panels = []
                     if result.stdout:
-                        print(f"STDOUT: {result.stdout}")
+                        sub_panels.append(Panel(result.stdout, title="STDOUT", style="blue"))
                     if result.stderr:
-                        print(f"STDERR: {result.stderr}")
-                    print(f"Return code: {result.returncode}")
+                        sub_panels.append(Panel(result.stderr, title="STDERR", style="red"))
+                    group_content = Group(f"❌ {desc} failed\nReturn code: {result.returncode}", *sub_panels)
+                    rprint(Panel(group_content, title=desc, style="red"))
             elif installer_arch_os.endswith((".sh", ".py", ".ps1")):
                 import machineconfig.jobs.installer as module
                 from pathlib import Path
