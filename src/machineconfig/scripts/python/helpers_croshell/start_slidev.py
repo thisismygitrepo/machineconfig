@@ -95,13 +95,12 @@ def main(
     if md_file.name != "slides.md":
         SLIDEV_REPO.joinpath(md_file.name).with_name(name="slides.md", inplace=True, overwrite=True)
 
-    import socket
-
-    try:
-        local_ip_v4 = socket.gethostbyname(socket.gethostname() + ".local")
-    except Exception:
-        print("⚠️ Warning: Could not get local_ip_v4. This might be due to running in a WSL instance.")
-        local_ip_v4 = socket.gethostbyname(socket.gethostname())
+    import machineconfig.scripts.python.nw.address as helper
+    res = helper.select_lan_ipv4(prefer_vpn=False)
+    if res is None:
+        print("❌ Error: Could not determine local LAN IPv4 address for presentation.")
+        raise typer.Exit(code=1)
+    local_ip_v4 = res
 
     print("🌐 Presentation will be served at:")
     print(f"   - http://{platform.node()}:{port}")

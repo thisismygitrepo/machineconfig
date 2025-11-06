@@ -17,22 +17,6 @@ from machineconfig.utils.source_of_truth import CONFIG_ROOT, DEFAULTS_PATH, LIBR
 console = Console()
 
 
-def _check_system_info() -> dict[str, str]:
-    """Gather basic system information."""
-    import socket
-    import os
-
-    return {
-        "hostname": socket.gethostname(),
-        "system": platform.system(),
-        "release": platform.release(),
-        "version": platform.version(),
-        "machine": platform.machine(),
-        "processor": platform.processor() or "Unknown",
-        "python_version": platform.python_version(),
-        "user": os.getenv("USER") or os.getenv("USERNAME") or "Unknown",
-    }
-
 
 def _check_shell_profile_status() -> dict[str, Any]:
     """Check shell profile configuration status."""
@@ -480,10 +464,14 @@ def main() -> None:
     console.print("\n")
     console.print(Panel(Text("📊 Machine Status Report", justify="center", style="bold white"), style="bold blue", padding=(1, 2)))
     console.print("\n")
-
-    system_info = _check_system_info()
+    
+    # system_info = _check_system_info()
+    # from machineconfig.scripts.python.helpers_devops.devops_system_info import _check_system_info
+    from machineconfig.scripts.python.helpers_utils.path import get_machine_specs
+    system_info = get_machine_specs()
+    from typing import cast
+    system_info = cast(dict[str, str], system_info)
     _display_system_info(system_info)
-
     shell_status = _check_shell_profile_status()
     _display_shell_status(shell_status)
 

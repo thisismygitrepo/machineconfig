@@ -137,11 +137,14 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(..., help="Path to th
     console.print(Panel("🚀 SSH KEY AUTHORIZATION READY\nRun the generated script to apply changes", box=box.DOUBLE_EDGE, title_align="left"))
     from machineconfig.utils.code import run_shell_script
     run_shell_script(script=program)
-    import socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('8.8.8.8', 80))
-    local_ip_v4 = s.getsockname()[0]
-    s.close()
+
+    import machineconfig.scripts.python.nw.address as helper
+    res = helper.select_lan_ipv4(prefer_vpn=False)
+    if res is None:
+        console.print(Panel("❌ ERROR: Could not determine local LAN IPv4 address", title="[bold red]Error[/bold red]", border_style="red"))
+        raise typer.Exit(code=1)
+    local_ip_v4 = res
+
     console.print(Panel(f"🌐 This computer is accessible at: {local_ip_v4}", title="[bold green]Network Info[/bold green]", border_style="green"))
     console.print(Panel("✅ SSH KEY AUTHORIZATION COMPLETED", box=box.DOUBLE_EDGE, title_align="left"))
 

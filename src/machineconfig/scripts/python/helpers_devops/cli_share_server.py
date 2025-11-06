@@ -63,11 +63,12 @@ def web_file_explorer(
     if port is None:
         port = 8080
 
-    import socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('8.8.8.8', 80))
-    local_ip_v4 = s.getsockname()[0]
-    s.close()
+    import machineconfig.scripts.python.nw.address as helper
+    res = helper.select_lan_ipv4(prefer_vpn=False)
+    if res is None:
+        typer.echo("❌ ERROR: Could not determine local LAN IPv4 address for share server.", err=True)
+        raise typer.Exit(code=1)
+    local_ip_v4 = res
 
     protocol = "http"
     display_share_url(local_ip_v4, port, protocol)

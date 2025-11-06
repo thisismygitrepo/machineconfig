@@ -54,15 +54,8 @@ def choose_function_or_lines(choice_file: Path, kwargs_dict: dict[str, object]) 
 
 
 def get_command_streamlit(choice_file: Path, environment: str, repo_root: Optional[Path]) -> str:
-    import socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        s.connect(("8.8.8.8", 1))
-        local_ip_v4 = s.getsockname()[0]
-    except Exception:
-        local_ip_v4 = socket.gethostbyname(socket.gethostname())
-    finally:
-        s.close()
+    from machineconfig.scripts.python.helpers_utils.path import get_machine_specs
+
     computer_name = platform.node()
     port = 8501
     toml_path: Optional[Path] = None

@@ -1,6 +1,5 @@
+
 import typer
-# import platform
-# import sys
 from typing import Annotated
 
 
@@ -103,12 +102,13 @@ def share_file_send(path: Annotated[str, typer.Argument(help="Path to the file o
     from machineconfig.utils.installer_utils.installer_cli import install_if_missing
     install_if_missing(which="croc")
     # Get relay server IP from environment or use default
-    import socket
+    import machineconfig.scripts.python.nw.address as helper
+    res = helper.select_lan_ipv4(prefer_vpn=False)
+    if res is None:
+        typer.echo("❌ Error: Could not determine local LAN IPv4 address for relay.", err=True)
+        raise typer.Exit(code=1)
+    local_ip_v4 = res
     import platform
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('8.8.8.8',80))
-    local_ip_v4 = s.getsockname()[0]
-    s.close()
     relay_port = "443"
     is_windows = platform.system() == "Windows"
 

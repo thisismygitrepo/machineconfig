@@ -96,11 +96,12 @@ def main(
         if ssl_ca and not Path(ssl_ca).exists():
             raise FileNotFoundError(f"SSL CA file not found: {ssl_ca}")
 
-    import socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('8.8.8.8',80))
-    local_ip_v4 = s.getsockname()[0]
-    s.close()
+    import machineconfig.scripts.python.nw.address as helper
+    res = helper.select_lan_ipv4(prefer_vpn=False)
+    if res is None:
+        print("❌ Error: Could not determine local LAN IPv4 address for terminal.")
+        raise typer.Exit(code=1)
+    local_ip_v4 = res
 
     # Display the flashy terminal announcement  
     protocol = "https" if ssl else "http"

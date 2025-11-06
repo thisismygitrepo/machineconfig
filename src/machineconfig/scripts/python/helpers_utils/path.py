@@ -16,7 +16,7 @@ def path():
     uv_with = ["textual"]
     uv_project_dir = None
     if not Path.home().joinpath("code/machineconfig").exists():
-        uv_with.append("machineconfig>=7.72")
+        uv_with.append("machineconfig>=7.73")
     else:
         uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
     run_shell_script(get_uv_command_executing_python_script(python_script=path.read_text(encoding="utf-8"), uv_with=uv_with, uv_project_dir=uv_project_dir)[0])
@@ -114,6 +114,13 @@ class MachineSpecs(TypedDict):
     system: str
     distro: str
     home_dir: str
+    hostname: str
+    release: str
+    version: str
+    machine: str
+    processor: str
+    python_version: str
+    user: str
 
 
 def get_machine_specs() -> MachineSpecs:
@@ -123,11 +130,20 @@ def get_machine_specs() -> MachineSpecs:
     command = f"""{UV_RUN_CMD} --with distro python -c "import distro; print(distro.name(pretty=True))" """
     import subprocess
     from pathlib import Path
+    import socket
+    import os
     distro = subprocess.run(command, shell=True, capture_output=True, text=True).stdout.strip()
     specs: MachineSpecs = {
         "system": platform.system(),
         "distro": distro,
         "home_dir": str(Path.home()),
+        "hostname": socket.gethostname(),
+        "release": platform.release(),
+        "version": platform.version(),
+        "machine": platform.machine(),
+        "processor": platform.processor() or "Unknown",
+        "python_version": platform.python_version(),
+        "user": os.getenv("USER") or os.getenv("USERNAME") or "Unknown",
     }
     print(specs)
     from machineconfig.utils.source_of_truth import CONFIG_ROOT
@@ -137,3 +153,5 @@ def get_machine_specs() -> MachineSpecs:
     path.write_text(json.dumps(specs, indent=4), encoding="utf-8")
     return specs
 
+if __name__ == "__main__":
+    get_machine_specs()

@@ -35,12 +35,30 @@ def add_ssh_identity():
 
 
 def show_address():
-    import socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('8.8.8.8',80))
-    local_ip_v4 = s.getsockname()[0]
-    s.close()
-    print(f"This computer is @ {local_ip_v4}")
+    """📌 Show this computer addresses on network"""
+    import machineconfig.scripts.python.nw.address as helper
+    from rich.table import Table
+    from rich.console import Console
+    res = helper.get_all_ipv4_addresses()
+    
+    table = Table(title="Network Interfaces")
+    table.add_column("Interface", style="cyan")
+    table.add_column("IP Address", style="green")
+    
+    for iface, ip in res:
+        table.add_row(iface, ip)
+    
+    console = Console()
+    console.print(table)
+    
+    res = helper.select_lan_ipv4(prefer_vpn=False)
+    if res is not None:
+        # ip, iface = res
+        # print(f"Selected IP: {ip} on interface: {iface}")
+        print(f"LAN IPv4: {res}")
+    else:
+        print("No network interfaces found.")
+
 
 
 def debug_ssh():
