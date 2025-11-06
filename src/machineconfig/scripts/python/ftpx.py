@@ -15,6 +15,7 @@ def ftpx(
     recursive: Annotated[bool, typer.Option("--recursive", "-r", help="Send recursively.")] = False,
     zipFirst: Annotated[bool, typer.Option("--zipFirst", "-z", help="Zip before sending.")] = False,
     cloud: Annotated[bool, typer.Option("--cloud", "-c", help="Transfer through the cloud.")] = False,
+    overwrite_existing: Annotated[bool, typer.Option("--overwrite-existing", "-o", help="Overwrite existing files on remote when sending from local to remote.")] = False,
 ) -> None:
 
     from rich.console import Console
@@ -187,7 +188,7 @@ def ftpx(
                     padding=(1, 2),
                 )
             )
-            received_file = ssh.copy_from_here(source_path=resolved_source, target_rel2home=resolved_target, compress_with_zip=zipFirst, recursive=recursive, overwrite_existing=False)
+            received_file = ssh.copy_from_here(source_path=resolved_source, target_rel2home=resolved_target, compress_with_zip=zipFirst, recursive=recursive, overwrite_existing=overwrite_existing)
 
     if source_is_remote and isinstance(received_file, PathExtended):
         console.print(

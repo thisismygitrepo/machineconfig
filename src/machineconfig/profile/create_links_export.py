@@ -62,8 +62,8 @@ def main_public_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c
     apply_mapper(mapper_data=items_objections, on_conflict=ON_CONFLICT_MAPPER[on_conflict], method=method)
 
 
-def main_private_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., help="Method to use for linking files")],
-                             on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., help="Action to take on conflict")] = "throw-error",
+def main_private_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for linking files")],
+                             on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
                              which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = "all",
                              interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Run in interactive mode")] = False):
     from machineconfig.profile.create_links import ConfigMapper, read_mapper
