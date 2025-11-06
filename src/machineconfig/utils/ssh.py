@@ -318,22 +318,22 @@ class SSH:
             strict_return_code=True,
         )
 
-    def _simple_sftp_get(self, remote_path: str, local_path: Path) -> None:
+    def simple_sftp_get(self, remote_path: str, local_path: Path) -> None:
         """Simple SFTP get without any recursion or path expansion - for internal use only."""
         if self.sftp is None:
             raise RuntimeError(f"SFTP connection not available for {self.hostname}")
         local_path.parent.mkdir(parents=True, exist_ok=True)
         self.sftp.get(remotepath=remote_path, localpath=str(local_path))
 
-    def create_dir(self, path_rel2home: str, overwrite_existing: bool) -> None:
-        from machineconfig.utils.ssh_utils.utils import create_dir
-        return create_dir(self, path_rel2home=path_rel2home, overwrite_existing=overwrite_existing)
+    def create_dir_and_check_if_exists(self, path_rel2home: str, overwrite_existing: bool) -> None:
+        from machineconfig.utils.ssh_utils.utils import create_dir_and_check_if_exists
+        return create_dir_and_check_if_exists(self, path_rel2home=path_rel2home, overwrite_existing=overwrite_existing)
 
-    def _check_remote_is_dir(self, source_path: Union[str, Path]) -> bool:
+    def check_remote_is_dir(self, source_path: Union[str, Path]) -> bool:
         from machineconfig.utils.ssh_utils.utils import check_remote_is_dir
         return check_remote_is_dir(self, source_path=source_path)
 
-    def _expand_remote_path(self, source_path: Union[str, Path]) -> str:
+    def expand_remote_path(self, source_path: Union[str, Path]) -> str:
         from machineconfig.utils.ssh_utils.utils import expand_remote_path
         return expand_remote_path(self, source_path=source_path)
 
@@ -341,7 +341,7 @@ class SSH:
         from machineconfig.utils.ssh_utils.copy_from_here import copy_from_here
         return copy_from_here(self, source_path=source_path, target_rel2home=target_rel2home, compress_with_zip=compress_with_zip, recursive=recursive, overwrite_existing=overwrite_existing)
 
-    def copy_to_here(self, source: Union[str, Path], target: Optional[Union[str, Path]], compress_with_zip: bool, recursive: bool, internal_call: bool) -> None:
+    def copy_to_here(self, source: Union[str, Path], target: Optional[Union[str, Path]], compress_with_zip: bool, recursive: bool, internal_call: bool = False) -> None:
         from machineconfig.utils.ssh_utils.copy_to_here import copy_to_here
         return copy_to_here(self, source=source, target=target, compress_with_zip=compress_with_zip, recursive=recursive, internal_call=internal_call)
 

@@ -22,10 +22,10 @@ def copy_to_here(
         print(f"{'⬇️' * 5} SFTP DOWNLOADING FROM `{source}` TO `{target}`")
 
     source_obj = Path(source)
-    expanded_source = self._expand_remote_path(source_path=source_obj)
+    expanded_source = self.expand_remote_path(source_path=source_obj)
 
     if not compress_with_zip:
-        is_dir = self._check_remote_is_dir(source_path=expanded_source)
+        is_dir = self.check_remote_is_dir(source_path=expanded_source)
 
         if is_dir:
             if not recursive:
@@ -65,7 +65,7 @@ def copy_to_here(
                 raise RuntimeError(f"Could not resolve source path {source} - no response from remote")
 
             local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
-            self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
+            self.simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
             import json
 
             try:
@@ -116,7 +116,7 @@ def copy_to_here(
                     raise RuntimeError("Could not resolve target path - no response from remote")
 
                 local_json_dir = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
-                self._simple_sftp_get(remote_path=remote_json_path_dir, local_path=local_json_dir)
+                self.simple_sftp_get(remote_path=remote_json_path_dir, local_path=local_json_dir)
                 import json
 
                 try:
@@ -180,7 +180,7 @@ def copy_to_here(
             raise RuntimeError(f"Could not zip {source} - no response from remote")
 
         local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
-        self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
+        self.simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
         import json
 
         try:
@@ -231,7 +231,7 @@ def copy_to_here(
             raise RuntimeError("Could not resolve target path - no response from remote")
 
         local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
-        self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
+        self.simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
         import json
 
         try:

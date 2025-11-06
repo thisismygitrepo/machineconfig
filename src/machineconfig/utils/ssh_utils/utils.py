@@ -6,23 +6,23 @@ from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION, UV_RUN_CMD,
 from typing import Union
 
 
-def create_dir(self: SSH, path_rel2home: str, overwrite_existing: bool) -> None:
+def create_dir_and_check_if_exists(self: SSH, path_rel2home: str, overwrite_existing: bool) -> None:
     """Helper to create a directory on remote machine and return its path."""
 
     def create_target_dir(target_rel2home: str, overwrite: bool):
         from pathlib import Path
         import shutil
-        directory_path = Path(target_rel2home).expanduser()
-        if not directory_path.is_absolute():
-            directory_path = Path.home().joinpath(directory_path)
-        if overwrite and directory_path.exists():
-            if directory_path.is_dir():
-                shutil.rmtree(directory_path)
+        target_path_abs = Path(target_rel2home).expanduser()
+        if not target_path_abs.is_absolute():
+            target_path_abs = Path.home().joinpath(target_path_abs)
+        if overwrite and target_path_abs.exists():
+            if str(target_path_abs) == str(Path.home()):
+                raise RuntimeError("Refusing to overwrite home directory!")
+            if target_path_abs.is_dir():
+                shutil.rmtree(target_path_abs)
             else:
-                directory_path.unlink()
-        directory_path.parent.mkdir(parents=True, exist_ok=True)
-        directory_path.mkdir(parents=True, exist_ok=True)
-
+                target_path_abs.unlink()
+        target_path_abs.parent.mkdir(parents=True, exist_ok=True)
     command = lambda_to_python_script(
         lambda: create_target_dir(target_rel2home=path_rel2home, overwrite=overwrite_existing),
         in_global=True, import_module=False
@@ -75,7 +75,7 @@ def check_remote_is_dir(self: SSH, source_path: Union[str, Path]) -> bool:
         raise RuntimeError(f"Failed to check if {source_path} is directory - no response from remote")
 
     local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
-    self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
+    self.simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
     import json
 
     try:
@@ -121,7 +121,7 @@ def expand_remote_path(self: SSH, source_path: Union[str, Path]) -> str:
         raise RuntimeError(f"Could not resolve source path {source_path} - no response from remote")
 
     local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
-    self._simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
+    self.simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
     import json
 
     try:
