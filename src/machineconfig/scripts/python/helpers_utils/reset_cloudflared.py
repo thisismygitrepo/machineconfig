@@ -24,4 +24,36 @@ sudo systemctl restart cloudflared
 # confirm it's running again
 sudo systemctl status cloudflared --no-pager -l
 
+
+# WARP and tunnel don't work nicely, to solve:
+
+option A: Completely disconnect WARP on that machine when running cloudflared.
+
+Stop WARP: warp-cli disconnect (or via GUI)
+
+Then start the tunnel and verify it works.
+
+option b: Use split-tunnel or route exclusions in WARP so that cloudflared traffic is not routed through WARP.
+
+In the WARP configuration (or via the Zero-Trust dashboard if managed) exclude the cloudflared process or the QUIC/UDP port range (default UDP 7844) from WARP.
+
+See Cloudflare docs: in the “Unable to connect WARP” section, they note a third-party VPN interfering with WARP is a common cause. 
+Cloudflare Docs
++1
+
+On Reddit: user “traffic behaviour … shows no UDP 7844 traffic … seems like WARP is redirecting tunnel traffic through itself.” 
+Reddit
+
+option c: Force cloudflared to use HTTP/2 (TCP) fallback, which avoids UDP/QUIC and may work while WARP is connected:
+
+In cloudflared config:
+
+protocol: http2
+
+
+Or via CLI: cloudflared tunnel run --protocol http2 …
+
+This won’t use the UDP path so it may bypass the WARP conflict, albeit with potentially different performance.
+
+
 """
