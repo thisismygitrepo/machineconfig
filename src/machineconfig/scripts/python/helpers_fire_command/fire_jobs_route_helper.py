@@ -108,8 +108,11 @@ echo "http://{local_ip_v4}:{port}"
 qrterminal "http://{computer_name}:{port}"
 echo "http://{computer_name}:{port}"
 """
-    from machineconfig.utils.code import run_shell_script
-    run_shell_script(script)
+    # from machineconfig.utils.code import run_shell_script
+    # run_shell_script(script)
+    from machineconfig.utils.code import print_code
+    print_code(code=script, lexer="shell", desc="Streamlit QR Codes and URLs")
+
     message = f"🚀 Streamlit app is running @:\n1- http://{local_ip_v4}:{port}\n2- http://{computer_name}:{port}\n3- http://localhost:{port}"
     from rich.panel import Panel
     from rich import print as rprint
