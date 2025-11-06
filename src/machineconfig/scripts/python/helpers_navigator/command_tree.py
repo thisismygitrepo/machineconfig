@@ -188,15 +188,7 @@ class CommandTree(Tree[CommandInfo]):
             description="Configure your shell profile",
             command="devops config shell",
             parent="config",
-            help_text="devops config shell <copy|reference>"
-        ))
-
-        config_node.add("🔗 path - Navigate PATH variable", data=CommandInfo(
-            name="path",
-            description="Navigate PATH variable with TUI",
-            command="devops config path",
-            parent="config",
-            help_text="devops config path"
+            help_text="devops config shell --which <default|nushell>"
         ))
 
         config_node.add("🔗 starship-theme - Select starship theme", data=CommandInfo(
@@ -560,7 +552,23 @@ class CommandTree(Tree[CommandInfo]):
             description="Choose a process to kill interactively",
             command="utils kill-process",
             parent="utils",
-            help_text="utils kill-process"
+            help_text="utils kill-process --interactive"
+        ))
+
+        utils_node.add("📚 path - Navigate PATH variable", data=CommandInfo(
+            name="path",
+            description="Navigate PATH variable with TUI",
+            command="utils path",
+            parent="utils",
+            help_text="utils path"
+        ))
+
+        utils_node.add("⬆️ upgrade-packages - Upgrade dependencies", data=CommandInfo(
+            name="upgrade-packages",
+            description="Upgrade project dependencies",
+            command="utils upgrade-packages",
+            parent="utils",
+            help_text="utils upgrade-packages"
         ))
 
         utils_node.add("⬇️ download - Download file", data=CommandInfo(
@@ -571,18 +579,42 @@ class CommandTree(Tree[CommandInfo]):
             help_text="utils download <url> --destination <path> --decompress"
         ))
 
-        utils_node.add("📄 merge-pdfs - Merge PDF files", data=CommandInfo(
-            name="merge-pdfs",
-            description="Merge two PDF files into one",
-            command="utils merge-pdfs",
-            parent="utils",
-            help_text="utils merge-pdfs <file1> <file2> --output <file>"
-        ))
-
         utils_node.add("🖥️ get-machine-specs - Get machine specifications", data=CommandInfo(
             name="get-machine-specs",
             description="Get machine specifications",
             command="utils get-machine-specs",
             parent="utils",
             help_text="utils get-machine-specs"
+        ))
+
+        utils_node.add("🚀 init-project - Initialize project", data=CommandInfo(
+            name="init-project",
+            description="Initialize a project with a uv virtual environment and install dev packages",
+            command="utils init-project",
+            parent="utils",
+            help_text="utils init-project"
+        ))
+
+        utils_node.add("✏️ edit - Open file in editor", data=CommandInfo(
+            name="edit",
+            description="Open a file in the default editor",
+            command="utils edit",
+            parent="utils",
+            help_text="utils edit <file>"
+        ))
+
+        utils_node.add("📄 pdf-merge - Merge PDF files", data=CommandInfo(
+            name="pdf-merge",
+            description="Merge two PDF files into one",
+            command="utils pdf-merge",
+            parent="utils",
+            help_text="utils pdf-merge <file1> <file2> --output <file>"
+        ))
+
+        utils_node.add("� pdf-compress - Compress PDF file", data=CommandInfo(
+            name="pdf-compress",
+            description="Compress a PDF file",
+            command="utils pdf-compress",
+            parent="utils",
+            help_text="utils pdf-compress <file> --output <file>"
         ))

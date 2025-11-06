@@ -43,3 +43,6 @@ applyTo: "**/*.py"
 * Please avoid writing README files and avoid docstring and comments in code unless absolutely necessary. Use clear naming conventions instead of documenting.
 * Always prefer to functional style of programming over OOP.
 * When passing arguments or constructing dicts or lists or tuples, avoid breaking lines too much, try to use ~ 150 characters per line before breaking to new one.
+
+# Privacy:
+* No matter what, never ever open/read/write/list anything under ~/dotfiles

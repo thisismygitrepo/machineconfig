@@ -30,27 +30,27 @@ def upgrade_packages():
 
 def get_app() -> typer.Typer:
     app = typer.Typer(help="🛠️ utilities operations", no_args_is_help=True, add_help_option=False, add_completion=False)
-    app.command(name="kill-process", no_args_is_help=False, help="[k] Choose a process to kill")(kill_process)
+    app.command(name="kill-process", no_args_is_help=False, help="⚔️ [k] Choose a process to kill")(kill_process)
     app.command(name="k", no_args_is_help=False, help="Choose a process to kill", hidden=True)(kill_process)
 
-    app.command("path", no_args_is_help=False, help="📚  [p] NAVIGATE PATH variable with TUI")(path)
+    app.command("path", no_args_is_help=False, help="📚 [p] NAVIGATE PATH variable with TUI")(path)
     app.command("p", no_args_is_help=False, help="NAVIGATE PATH variable with TUI", hidden=True)(path)
 
-    app.command(name="upgrade-packages", no_args_is_help=False, help="[up] Upgrade project dependencies.")(upgrade_packages)
+    app.command(name="upgrade-packages", no_args_is_help=False, help="⬆️ [up] Upgrade project dependencies.")(upgrade_packages)
     app.command(name="up", no_args_is_help=False, hidden=True)(upgrade_packages)
 
-    app.command(name="download", no_args_is_help=True, help="[d] Download a file from a URL and optionally decompress it.")(download)
+    app.command(name="download", no_args_is_help=True, help="⬇️ [d] Download a file from a URL and optionally decompress it.")(download)
     app.command(name="d", no_args_is_help=True, hidden=True)(download)
-    app.command(name="get-machine-specs", no_args_is_help=False, help="[g] Get machine specifications.")(get_machine_specs)
+    app.command(name="get-machine-specs", no_args_is_help=False, help="💻 [g] Get machine specifications.")(get_machine_specs)
     app.command(name="g", no_args_is_help=False, hidden=True)(get_machine_specs)
-    app.command(name="init-project", no_args_is_help=False, help="[i] Initialize a project with a uv virtual environment and install dev packages.")(init_project)
+    app.command(name="init-project", no_args_is_help=False, help="🚀 [i] Initialize a project with a uv virtual environment and install dev packages.")(init_project)
     app.command(name="i", no_args_is_help=False, hidden=True)(init_project)
-    app.command(name="edit", no_args_is_help=False, help="[e] Open a file in the default editor.")(edit_file_with_hx)
+    app.command(name="edit", no_args_is_help=False, help="✏️ [e] Open a file in the default editor.")(edit_file_with_hx)
     app.command(name="e", no_args_is_help=False, hidden=True)(edit_file_with_hx)
 
-    app.command(name="pdf-merge", no_args_is_help=True, help="[pm] Merge two PDF files into one.")(merge_pdfs)
+    app.command(name="pdf-merge", no_args_is_help=True, help="📄 [pm] Merge two PDF files into one.")(merge_pdfs)
     app.command(name="pm", no_args_is_help=True, hidden=True)(merge_pdfs)
-    app.command(name="pdf-compress", no_args_is_help=True, help="[pc] Compress a PDF file.")(compress_pdf)
+    app.command(name="pdf-compress", no_args_is_help=True, help="📦 [pc] Compress a PDF file.")(compress_pdf)
     app.command(name="pc", no_args_is_help=True, hidden=True)(compress_pdf)
 
     # app.command(name="copy", no_args_is_help=True, help="[c] Copy files or directories.")(copy)

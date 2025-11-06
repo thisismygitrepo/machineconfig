@@ -1,7 +1,3 @@
-"""
-TUI for navigating through machineconfig command structure using Textual.
-"""
-
 from machineconfig.scripts.python.helpers_navigator import CommandNavigatorApp
 
 

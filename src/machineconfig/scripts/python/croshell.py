@@ -109,7 +109,7 @@ def croshell(
             fire_line = f"uv run --python 3.14 --with visidata,pyarrow vd {str(file_obj)}"
     elif marimo:
         if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--with marimo --project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: requirements = """--python 3.14 --with "marimo,cowsay,machineconfig[plot]>=7.66" """
+        else: requirements = """--python 3.14 --with "marimo,cowsay,machineconfig[plot]>=7.67" """
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv run --python 3.14 --with "marimo" marimo convert {pyfile.name} -o marimo_nb.py
@@ -117,14 +117,14 @@ uv run {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
 """
     elif jupyter:
         if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with jupyterlab """
-        else: requirements = """--with "cowsay,machineconfig[plot]>=7.66" """
+        else: requirements = """--with "cowsay,machineconfig[plot]>=7.67" """
         fire_line = f"uv run {requirements} jupyter-lab {str(nb_target)}"
     elif vscode:
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv init --python 3.14
 uv venv
-uv add "cowsay,machineconfig[plot]>=7.66"
+uv add "cowsay,machineconfig[plot]>=7.67"
 # code serve-web
 code --new-window {str(pyfile)}
 """
@@ -132,7 +132,7 @@ code --new-window {str(pyfile)}
         if interpreter == "ipython": profile = f" --profile {ipython_profile} --no-banner"
         else: profile = ""
         if Path.home().joinpath("code/machineconfig").exists(): ve_line = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: ve_line = """--python 3.14 --with "cowsay,machineconfig[plot]>=7.66" """
+        else: ve_line = """--python 3.14 --with "cowsay,machineconfig[plot]>=7.67" """
         # ve_path_maybe, ipython_profile_maybe = get_ve_path_and_ipython_profile(Path.cwd())
         # --python 3.14
         fire_line = f"uv run {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
