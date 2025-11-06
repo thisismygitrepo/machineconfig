@@ -164,7 +164,7 @@ def symlink_map(config_file_default_path: PathExtended, self_managed_config_file
                 else:
                     # Files are different, use on_conflict strategy
                     import subprocess
-                    command = f"""delta --side-by-side "{config_file_default_path}" "{self_managed_config_file_path}" """
+                    command = f"""delta  --paging never --side-by-side "{config_file_default_path}" "{self_managed_config_file_path}" """
                     try:
                         console.print(Panel(f"🆘 CONFLICT DETECTED | Showing diff between {config_file_default_path} and {self_managed_config_file_path}", title="Conflict Detected", expand=False))
                         subprocess.run(command, shell=True, check=True)
@@ -293,7 +293,7 @@ def copy_map(config_file_default_path: PathExtended, self_managed_config_file_pa
                 else:
                     # Files are different, use on_conflict strategy
                     import subprocess
-                    command = f"""delta --side-by-side "{config_file_default_path}" "{self_managed_config_file_path}" """
+                    command = f"""delta  --paging never --side-by-side "{config_file_default_path}" "{self_managed_config_file_path}" """
                     try:
                         console.print(Panel(f"🆘 CONFLICT DETECTED | Showing diff between {config_file_default_path} and {self_managed_config_file_path}", title="Conflict Detected", expand=False))
                         subprocess.run(command, shell=True, check=True)

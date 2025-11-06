@@ -5,6 +5,7 @@ Currently, the only way to work around this is to predifine the host in ~/.ssh/c
 
 """
 
+from pathlib import Path
 import typer
 from typing import Annotated
 
@@ -17,6 +18,27 @@ def ftpx(
     cloud: Annotated[bool, typer.Option("--cloud", "-c", help="Transfer through the cloud.")] = False,
     overwrite_existing: Annotated[bool, typer.Option("--overwrite-existing", "-o", help="Overwrite existing files on remote when sending from local to remote.")] = False,
 ) -> None:
+    from pathlib import Path
+    if target == "wsl" or source == "wsl":
+        from machineconfig.utils.ssh_utils.wsl import copy_when_inside_windows
+        if target == "wsl":
+            target_obj = Path(source).expanduser().absolute().relative_to(Path.home())
+            source_obj = target_obj
+        else:
+            source_obj = Path(target).expanduser().absolute().relative_to(Path.home())
+            target_obj = source_obj
+        copy_when_inside_windows(source_obj, target_obj, overwrite_existing)
+        return
+    elif source == "win" or target == "win":
+        if source == "win":
+            source_obj = Path(target).expanduser().absolute().relative_to(Path.home())
+            target_obj = source_obj
+        else:
+            target_obj = Path(source).expanduser().absolute().relative_to(Path.home())
+            source_obj = target_obj
+        from machineconfig.utils.ssh_utils.wsl import copy_when_inside_wsl
+        copy_when_inside_wsl(source_obj, target_obj, overwrite_existing)
+        return
 
     from rich.console import Console
     from rich.panel import Panel
