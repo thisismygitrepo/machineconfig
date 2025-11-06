@@ -1,5 +1,5 @@
 
-from typing import Optional
+from typing import cast, Optional
 
 
 def get_all_ipv4_addresses() -> list[tuple[str, str]]:
@@ -71,7 +71,7 @@ def select_lan_ipv4(prefer_vpn: bool) -> Optional[str]:
 
             ip_str = a.address
             try:
-                ip = ipaddress.ip_address(ip_str)
+                ip = cast(ipaddress.IPv4Address, ipaddress.ip_address(ip_str))
             except ValueError:
                 continue
 
