@@ -16,7 +16,7 @@ def install(which: Annotated[Optional[str], typer.Argument(..., help="Comma-sepa
     ) -> None:
         """📦 Install packages"""
         import machineconfig.utils.installer_utils.installer_cli as installer_entry_point
-        installer_entry_point.main(which=which, group=group, interactive=interactive)
+        installer_entry_point.main_installer_cli(which=which, group=group, interactive=interactive)
 
 
 def get_app():

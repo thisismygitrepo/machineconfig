@@ -5,7 +5,7 @@ from typing import Optional, Annotated
 from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
 
 
-def main(
+def main_installer_cli(
     which: Annotated[Optional[str], typer.Argument(..., help="Comma-separated list of program/groups names to install (if --group flag is set).")] = None,
     group: Annotated[bool, typer.Option(..., "--group", "-g", help="Treat 'which' as a group name. A group is bundle of apps.")] = False,
     interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Interactive selection of programs to install.")] = False,
@@ -142,9 +142,9 @@ def install_clis(clis_names: list[str]):
     from machineconfig.utils.installer_utils.installer_runner import get_installers
     from machineconfig.utils.installer_utils.installer_class import Installer
     from rich.console import Console
+    all_installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=None)
     total_messages: list[str] = []
     for a_which in clis_names:
-        all_installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=None)
         selected_installer = None
         for installer in all_installers:
             app_name = installer["appName"]
@@ -169,13 +169,12 @@ def install_if_missing(which: str):
         print(f"✅ {which} is already installed.")
         return
     print(f"⏳ {which} not found. Installing...")
-    from machineconfig.utils.installer_utils.installer_cli import main
-    main(which=which, interactive=False)
+    from machineconfig.utils.installer_utils.installer_cli import main_installer_cli
+    main_installer_cli(which=which, interactive=False)
 
 
 if __name__ == "__main__":
     from machineconfig.utils.schemas.installer.installer_types import InstallerData
     from machineconfig.utils.installer_utils.installer_class import Installer
-
     _ = InstallerData, Installer
     pass
