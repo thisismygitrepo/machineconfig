@@ -8,7 +8,33 @@ from rich.panel import Panel
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
+"""
+    {
+      "appName": "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle",
+      "repoURL": "https://github.com/microsoft/winget-cli",
+      "doc": "📦 Windows Package Manager CLI",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle",
+          "macos": null
+        }
+      }
+
+"""
+
 ps1 = r"""
+
+# if windows is missing
+# download latest from cd $HOME/Downloads; d u "https://github.com/microsoft/winget-cli/releases/download/v1.12.170-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+# this must be run in windows powershell, not in pwsh
+# Add-AppxPackage .\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+
 winget install --no-upgrade --name "Powershell"                   --Id "Microsoft.PowerShell"       --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
 winget install --no-upgrade --name "Windows Terminal"             --Id "Microsoft.WindowsTerminal"  --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W 11
 winget install --no-upgrade --name "GNU Nano"                     --Id "GNU.Nano"                   --source winget --scope user --accept-package-agreements --accept-source-agreements

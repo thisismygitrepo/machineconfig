@@ -15,6 +15,7 @@ function Add-ToPathIfNotAlready {
 }
 
 Add-ToPathIfNotAlready -Directories @(
+    "$HOME\.local\bin",
     "$CONFIG_ROOT\scripts",
     "$HOME\dotfiles\scripts\windows",
     "C:\Program Files (x86)\GnuWin32\bin",
