@@ -306,7 +306,8 @@ class SSH:
         )
 
     def run_lambda_function(self, func: Callable[..., Any], import_module: bool, uv_with: Optional[list[str]], uv_project_dir: Optional[str]):
-        command = lambda_to_python_script(lmb=func, in_global=True, import_module=import_module)
+        command = lambda_to_python_script(func,
+            in_global=True, import_module=import_module)
         # turns ou that the code below for some reason runs but zellij doesn't start, looks like things are assigned to different user.
         # return self.run_py(python_code=command, uv_with=uv_with, uv_project_dir=uv_project_dir,
         #                    description=f"run_py_func {func.__name__} on {self.get_remote_repr(add_machine=False)}",
@@ -355,7 +356,8 @@ class SSH:
             directory_path.mkdir(parents=True, exist_ok=True)
 
         command = lambda_to_python_script(
-            lmb=lambda: create_target_dir(target_rel2home=path_rel2home, overwrite=overwrite_existing), in_global=True, import_module=False
+            lambda: create_target_dir(target_rel2home=path_rel2home, overwrite=overwrite_existing),
+            in_global=True, import_module=False
         )
         tmp_py_file = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/create_target_dir_{randstr()}.py")
         tmp_py_file.parent.mkdir(parents=True, exist_ok=True)
@@ -446,7 +448,7 @@ class SSH:
                 archive_path.unlink()
 
             command = lambda_to_python_script(
-                lmb=lambda: unzip_archive(
+                lambda: unzip_archive(
                     zip_file_path=str(Path(self.remote_specs["home_dir"]).joinpath(target_rel2home)), overwrite_flag=overwrite_existing
                 ),
                 in_global=True,
@@ -484,7 +486,8 @@ class SSH:
 
         remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
         command = lambda_to_python_script(
-            lmb=lambda: check_is_dir(path_to_check=str(source_path), json_output_path=remote_json_output), in_global=True, import_module=False
+            lambda: check_is_dir(path_to_check=str(source_path), json_output_path=remote_json_output),
+            in_global=True, import_module=False
         )
         response = self.run_py(
             python_code=command,
@@ -529,7 +532,8 @@ class SSH:
 
         remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
         command = lambda_to_python_script(
-            lmb=lambda: expand_source(path_to_expand=str(source_path), json_output_path=remote_json_output), in_global=True, import_module=False
+            lambda: expand_source(path_to_expand=str(source_path), json_output_path=remote_json_output),
+            in_global=True, import_module=False
         )
         response = self.run_py(
             python_code=command,
@@ -599,7 +603,8 @@ class SSH:
 
                 remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
                 command = lambda_to_python_script(
-                    lmb=lambda: search_files(directory_path=expanded_source, json_output_path=remote_json_output), in_global=True, import_module=False
+                    lambda: search_files(directory_path=expanded_source, json_output_path=remote_json_output),
+            in_global=True, import_module=False
                 )
                 response = self.run_py(
                     python_code=command,
@@ -648,7 +653,7 @@ class SSH:
 
                     remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
                     command = lambda_to_python_script(
-                        lmb=lambda: collapse_to_home_dir(absolute_path=expanded_source, json_output_path=remote_json_output),
+                        lambda: collapse_to_home_dir(absolute_path=expanded_source, json_output_path=remote_json_output),
                         in_global=True,
                         import_module=False,
                     )
@@ -713,7 +718,8 @@ class SSH:
 
             remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
             command = lambda_to_python_script(
-                lmb=lambda: zip_source(path_to_zip=expanded_source, json_output_path=remote_json_output), in_global=True, import_module=False
+                lambda: zip_source(path_to_zip=expanded_source, json_output_path=remote_json_output),
+            in_global=True, import_module=False
             )
             response = self.run_py(
                 python_code=command,
@@ -763,7 +769,8 @@ class SSH:
 
             remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
             command = lambda_to_python_script(
-                lmb=lambda: collapse_to_home(absolute_path=expanded_source, json_output_path=remote_json_output), in_global=True, import_module=False
+                lambda: collapse_to_home(absolute_path=expanded_source, json_output_path=remote_json_output),
+            in_global=True, import_module=False
             )
             response = self.run_py(
                 python_code=command,
@@ -830,7 +837,8 @@ class SSH:
                     else:
                         file_or_dir_path.unlink()
 
-            command = lambda_to_python_script(lmb=lambda: delete_temp_zip(path_to_delete=expanded_source), in_global=True, import_module=False)
+            command = lambda_to_python_script(lambda: delete_temp_zip(path_to_delete=expanded_source),
+                                    in_global=True, import_module=False)
             self.run_py(
                 python_code=command,
                 uv_with=[MACHINECONFIG_VERSION],
