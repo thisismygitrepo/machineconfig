@@ -16,13 +16,15 @@ def croshell(
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="run in jupyter interactive console")] = False,
     vscode: Annotated[bool, typer.Option("--vscode", "-c", help="open the script in vscode")] = False,
     # streamlit_viewer: Annotated[bool, typer.Option("--streamlit", "-s", help="view in streamlit app")] = False,
+    uv_with: Annotated[Optional[str], typer.Option("--uv-with", "-w", help="specify uv with packages to use")] = None,
     visidata: Annotated[bool, typer.Option("--visidata", "-v", help="open data file in visidata")] = False,
     marimo: Annotated[bool, typer.Option("--marimo", "-m", help="open the notebook using marimo if available")] = False,
 ) -> None:
+    if uv_with is not None: user_uv_with_line = f"--with {uv_with} "
+    else: user_uv_with_line = ""
+
     from machineconfig.scripts.python.helpers_croshell.crosh import get_read_python_file_pycode, get_read_data_pycode
     from machineconfig.utils.meta import lambda_to_python_script
-    from machineconfig.utils.path_helper import get_choice_file
-    from machineconfig.utils.path_extended import PathExtended
     from pathlib import Path
     from machineconfig.utils.accessories import randstr
     import json
@@ -37,6 +39,7 @@ def croshell(
     ipython_profile: Optional[str] = profile
     file_obj = Path.cwd()  # initialization value, could be modified according to args.
     if path is not None:
+        from machineconfig.utils.path_helper import get_choice_file
         choice_file = get_choice_file(path=path, suffixes={".*"})
         if choice_file.suffix == ".py":
             program = choice_file.read_text(encoding="utf-8")
@@ -65,9 +68,9 @@ def croshell(
         return textwrap.dedent("\n".join(inspect.getsource(f).splitlines()[1:]))
     preprogram += get_body_simple_function_no_args(preprogram_func)
 
-    pyfile = PathExtended.tmp().joinpath(f"tmp_scripts/python/croshell/{randstr()}/script.py")
+    from pathlib import Path
+    pyfile = Path.home().joinpath(f"tmp_results/tmp_scripts/python/croshell/{randstr()}/script.py")
     pyfile.parent.mkdir(parents=True, exist_ok=True)
-
     title = "Reading Data"
     def_code = lambda_to_python_script(lambda: get_read_python_file_pycode(path=str(pyfile), title=title),
                                        in_global=False, import_module=False)
@@ -104,37 +107,37 @@ def croshell(
             pass
     if visidata:
         if file_obj.suffix == ".json":
-            fire_line = f"uv run --python 3.14 --with visidata vd {str(file_obj)}"
+            fire_line = f"uv run --python 3.14 {user_uv_with_line} --with visidata vd {str(file_obj)}"
         else:
-            fire_line = f"uv run --python 3.14 --with visidata,pyarrow vd {str(file_obj)}"
+            fire_line = f"uv run --python 3.14 {user_uv_with_line}--with visidata,pyarrow vd {str(file_obj)}"
     elif marimo:
-        if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--with marimo --project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: requirements = """--python 3.14 --with "marimo,cowsay,machineconfig[plot]>=7.68" """
+        if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""{user_uv_with_line} --with marimo --project "{str(Path.home().joinpath("code/machineconfig"))}" """
+        else: requirements = f"""--python 3.14 {user_uv_with_line} user_uv_with_line--with "marimo,cowsay,machineconfig[plot]>=7.69" """
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv run --python 3.14 --with "marimo" marimo convert {pyfile.name} -o marimo_nb.py
 uv run {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
 """
     elif jupyter:
-        if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with jupyterlab """
-        else: requirements = """--with "cowsay,machineconfig[plot]>=7.68" """
+        if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""{user_uv_with_line}  --with jupyterlab --project "{str(Path.home().joinpath("code/machineconfig"))}" """
+        else: requirements = f"""{user_uv_with_line} --with "cowsay,machineconfig[plot]>=7.69" """
         fire_line = f"uv run {requirements} jupyter-lab {str(nb_target)}"
     elif vscode:
+        user_uv_add = f"uv add {uv_with}" if uv_with is not None else ""
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv init --python 3.14
 uv venv
-uv add "cowsay,machineconfig[plot]>=7.68"
+uv add "cowsay,machineconfig[plot]>=7.69"
+uv add {user_uv_add}
 # code serve-web
 code --new-window {str(pyfile)}
 """
     else:
         if interpreter == "ipython": profile = f" --profile {ipython_profile} --no-banner"
         else: profile = ""
-        if Path.home().joinpath("code/machineconfig").exists(): ve_line = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: ve_line = """--python 3.14 --with "cowsay,machineconfig[plot]>=7.68" """
-        # ve_path_maybe, ipython_profile_maybe = get_ve_path_and_ipython_profile(Path.cwd())
-        # --python 3.14
+        if Path.home().joinpath("code/machineconfig").exists(): ve_line = f"""{user_uv_with_line} --project "{str(Path.home().joinpath("code/machineconfig"))}" """
+        else: ve_line = f"""--python 3.14 {user_uv_with_line} --with "cowsay,machineconfig[plot]>=7.69" """
         fire_line = f"uv run {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
 
     from machineconfig.utils.code import exit_then_run_shell_script
