@@ -6,7 +6,7 @@ cloudflared login  # creates new cert.pem @ $home_dir/.cloudflared/cert.pem
 cloudflared tunnel create nw-tunnel  # creates a UUID.json credentials file @ $home_dir/.cloudflared/
 hx ~/.cloudflared/config.yml
 
-cloudflared tunnel route dns glenn
+cloudflared tunnel route dns glenn  # creates CNAMES in Cloudflare dashboard
 
 # test: cloudflared tunnel run glenn
 home_dir=$HOME
@@ -14,6 +14,15 @@ cloudflared_path="$home_dir/.local/bin/cloudflared"
 sudo $cloudflared_path service uninstall
 sudo rm /etc/cloudflared/config.yml || true
 sudo $cloudflared_path --config $home_dir/.cloudflared/config.yml service install
+
+sudo cp $home_dir/.cloudflared/config.yml /etc/cloudflared/config.yml
+# verify service is running
+sudo systemctl status cloudflared --no-pager -l
+sudo chown -R alex:alex /home/alex/.cloudflared/
+sudo chmod 600 /home/alex/.cloudflared/*.json
+sudo chmod 600 /home/alex/.cloudflared/cert.pem
+sudo chmod 600 /home/alex/.cloudflared/config.yml
+
 
 
 # upon making changes to config.yml,
