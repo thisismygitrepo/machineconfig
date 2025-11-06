@@ -100,6 +100,16 @@ def get_command_streamlit(choice_file: Path, environment: str, repo_root: Option
                 except Exception as ex:
                     print(ex)
                     raise ex
+    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+    install_if_missing("qrterminal")
+    script = f"""
+qrterminal "http://{local_ip_v4}:{port}"
+echo "http://{local_ip_v4}:{port}"
+qrterminal "http://{computer_name}:{port}"
+echo "http://{computer_name}:{port}"
+"""
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(script)
     message = f"🚀 Streamlit app is running @:\n1- http://{local_ip_v4}:{port}\n2- http://{computer_name}:{port}\n3- http://localhost:{port}"
     from rich.panel import Panel
     from rich import print as rprint

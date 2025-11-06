@@ -38,18 +38,16 @@ def web_file_explorer(
     username: Annotated[Optional[str], typer.Option("--username", "-u", help="Username for share access (default: current user)")] = None,
     password: Annotated[Optional[str], typer.Option("--password", "-w", help="Password for share access (default: from ~/dotfiles/creds/passwords/quick_password)")] = None,
     over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Expose the share server over the internet using ngrok")] = False,
-    backend: Annotated[str, typer.Option("--backend", "-b", help="Backend to use: filebrowser (default), miniserve, or easy-sharing")] = "filebrowser"
+    backend: Annotated[str, typer.Option("--backend", "-b", help="Backend to use: filebrowser (default), miniserve, qrcp, or easy-sharing")] = "miniserve",
 ) -> None:
     from machineconfig.utils.installer_utils.installer_cli import install_if_missing
-    
-    if backend not in ["filebrowser", "miniserve", "easy-sharing"]:
-        typer.echo(f"❌ ERROR: Invalid backend '{backend}'. Must be one of: filebrowser, miniserve, easy-sharing", err=True)
+
+    if backend not in ["filebrowser", "miniserve", "qrcp", "easy-sharing"]:
+        typer.echo(f"❌ ERROR: Invalid backend '{backend}'. Must be one of: filebrowser, miniserve, qrcp, easy-sharing", err=True)
         raise typer.Exit(code=1)
-    
     install_if_missing(which=backend)
     if over_internet:
         install_if_missing(which="ngrok")
-    
     if username is None:
         import getpass
         username = getpass.getuser()
@@ -90,6 +88,8 @@ filebrowser --address 0.0.0.0 --port {port} --root "{path_obj}" --database {db_p
         command = f"""miniserve --port {port} --interfaces 0.0.0.0 --auth {username}:{password} --upload-files --mkdir --enable-tar --enable-tar-gz --enable-zip --qrcode "{path_obj}" """
     elif backend == "easy-sharing":
         command = f"""easy-sharing --port {port} --username {username} --password "{password}" "{path_obj}" """
+    elif backend == "qrcp":
+        command = f"""qrcp "{path_obj}" """
     else:
         typer.echo(f"❌ ERROR: Unknown backend '{backend}'", err=True)
         raise typer.Exit(code=1)

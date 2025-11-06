@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "7.70"
+version = "7.71"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -114,6 +114,7 @@ dev = [
     "pyright>=1.1.405",
     "pytest>=8.4.2",
     "python-lsp-server[all]>=1.13.1",
+    "qrcode>=8.2",
     "ruff>=0.13.1",
     "ruff-lsp>=0.0.62",
     "sqlalchemy>=2.0.43",

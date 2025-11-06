@@ -49,10 +49,9 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
         choice_function = args.function
 
     if choice_file.suffix == ".py":
-        from machineconfig.scripts.python.helpers_fire_command.fire_jobs_route_helper import get_command_streamlit
-
         with_project = f"--project {repo_root} " if repo_root is not None else ""
         if args.streamlit:
+            from machineconfig.scripts.python.helpers_fire_command.fire_jobs_route_helper import get_command_streamlit
             exe = get_command_streamlit(choice_file=choice_file, environment=args.environment, repo_root=repo_root)
             exe = f"uv run {with_project} {exe} "
         elif args.jupyter:
@@ -60,7 +59,7 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
         else:
             if args.interactive:
                 from machineconfig.utils.ve import get_ve_path_and_ipython_profile
-                _ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(choice_file)
+                _ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(init_path=choice_file)
                 if ipy_profile is None:
                     ipy_profile = "default"
                 exe = f"uv run {with_project} ipython -i --no-banner --profile {ipy_profile} "
