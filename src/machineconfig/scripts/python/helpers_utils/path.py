@@ -16,41 +16,63 @@ def path():
     uv_with = ["textual"]
     uv_project_dir = None
     if not Path.home().joinpath("code/machineconfig").exists():
-        uv_with.append("machineconfig>=7.69")
+        uv_with.append("machineconfig>=7.70")
     else:
         uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
     run_shell_script(get_uv_command_executing_python_script(python_script=path.read_text(encoding="utf-8"), uv_with=uv_with, uv_project_dir=uv_project_dir)[0])
 
 
-def init_project(python: Annotated[Literal["3.13", "3.14"], typer.Option("--python", "-p", help="Python version for the uv virtual environment.")]= "3.13") -> None:
-    _ = python
+def init_project(
+                 name: Annotated[Optional[str], typer.Option("--name", "-n", help="Name of the project.")]= None,
+                 tmp_directory: Annotated[bool, typer.Option("--tmp-directory/--no-tmp-directory", "-t/-nt", help="Use a temporary directory for the project initialization.")]= False,
+                 python: Annotated[Literal["3.13", "3.14"], typer.Option("--python", "-p", help="Python version for the uv virtual environment.")]= "3.13",
+                 group: Annotated[Optional[str], typer.Option("--group", "-g", help="Group name for the packages.")]= "plot",
+                 types_packages: Annotated[bool, typer.Option("--types-packages/--no-types-packages", "-T/-NT", help="Include types packages for better type hinting.")]= True,
+                    linting_debug_packages: Annotated[bool, typer.Option("--linting-debug-packages/--no-linting-debug-packages", "-L/-NL", help="Include linting and debugging packages.")]= True,
+                    ia_packages: Annotated[bool, typer.Option("--ia-packages/--no-ia-packages", "-I/-NI", help="Include interactive and IA packages.")]= True,
+                    plot_packages: Annotated[bool, typer.Option("--plot-packages/--no-plot-packages", "-P/-NP", help="Include plotting packages.")]= True,
+                    data_packages: Annotated[bool, typer.Option("--data-packages/--no-data-packages", "-D/-ND", help="Include data manipulation packages.")]= True,
+                 ) -> None:
     from pathlib import Path
-    repo_root = Path.cwd()
-    if not (repo_root / "pyproject.toml").exists():
-        typer.echo("❌ Error: pyproject.toml not found.", err=True)
-        raise typer.Exit(code=1)
-    print("Adding group `plot` with common data science and plotting packages...")
-    script = """
-uv add --group plot \
-    # Data & computation
-    numpy pandas polars duckdb-engine python-magic \
-    # Plotting / visualization
-    matplotlib plotly kaleido \
-    # Notebooks / interactive
-    ipython ipykernel jupyterlab nbformat marimo \
-    # Code analysis / type checking / linting
-    mypy pyright ruff pylint pyrefly \
-    # Packaging / build / dev
-    cleanpy \
-    # CLI / debugging / utilities
-    ipdb pudb \
-    # Type hints for packages
-    types-python-dateutil types-pyyaml types-requests types-tqdm \
-    types-mysqlclient types-paramiko types-pytz types-sqlalchemy types-toml types-urllib3 \
-
+    if not tmp_directory:
+        repo_root = Path.cwd()
+        if not (repo_root / "pyproject.toml").exists():
+            typer.echo("❌ Error: pyproject.toml not found.", err=True)
+            raise typer.Exit(code=1)
+        starting_code = ""
+    else:
+        if name is not None:
+            from machineconfig.utils.accessories import randstr
+            repo_root = Path.home().joinpath(f"tmp_results/tmp_projects/{name}")
+        else:
+            from machineconfig.utils.accessories import randstr
+            repo_root = Path.home().joinpath(f"tmp_results/tmp_projects/{randstr(6)}")
+        repo_root.mkdir(parents=True, exist_ok=True)
+        print(f"Using temporary directory for project initialization: {repo_root}")
+        starting_code = f"""
+cd {repo_root}
+uv init --python {python}
+uv venv
 """
-    from machineconfig.utils.code import run_shell_script
-    run_shell_script(script)
+    print(f"Adding group `{group}` with common data science and plotting packages...")
+    total_packages: list[str] = []
+
+    if types_packages:
+        total_packages.append("types-python-dateutil types-pyyaml types-requests types-tqdm types-mysqlclient types-paramiko types-pytz types-sqlalchemy types-toml types-urllib3")
+    if linting_debug_packages:
+        total_packages.append("mypy pyright ruff pylint pyrefly cleanpy ipdb pudb")
+    if ia_packages:
+        total_packages.append("ipython ipykernel jupyterlab nbformat marimo")
+    if plot_packages:
+        total_packages.append("python-magic matplotlib plotly kaleido")
+    if data_packages:
+        total_packages.append("numpy pandas polars duckdb-engine sqlalchemy  psycopg2-binary pyarrow tqdm openpyxl")
+    script = f"""
+{starting_code}
+uv add --group {group} {" ".join(total_packages)}
+"""
+    from machineconfig.utils.code import exit_then_run_shell_script
+    exit_then_run_shell_script(script)
 
 
 def edit_file_with_hx(path: Annotated[Optional[str], typer.Argument(..., help="The root directory of the project to edit, or a file path.")] = None) -> None:
