@@ -1,7 +1,6 @@
 
 import ast
 import os
-import json
 from typing import TypedDict
 
 
@@ -73,11 +72,3 @@ def get_repo_symbols(repo_path: str) -> list[SymbolInfo]:
             counter += 1
 
     return results
-
-
-if __name__ == "__main__":
-    repo = "/path/to/your/repo"
-    symbols = get_repo_symbols(repo)
-
-    # Pretty-print as JSON
-    print(json.dumps(symbols, indent=2, ensure_ascii=False))

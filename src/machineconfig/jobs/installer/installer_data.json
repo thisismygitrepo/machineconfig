@@ -886,6 +886,23 @@
       }
     },
     {
+      "appName": "meilisearch",
+      "repoURL": "https://github.com/meilisearch/meilisearch",
+      "doc": "🔍 symantic search at lightening speed",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "meilisearch-linux-amd64",
+          "macos": "meilisearch-macos-amd64",
+          "windows": "meilisearch-windows-amd64.exe"
+        },
+        "arm64": {
+          "linux": "meilisearch-linux-aarch64",
+          "macos": "meilisearch-macos-aarch64",
+          "windows": "meilisearch-windows-aarch64.exe"
+        }
+      }
+    },
+    {
       "appName": "ast-grep",
       "repoURL": "https://github.com/ast-grep/ast-grep",
       "doc": "🔍 grep for code - search and rewrite code with ASTs",
