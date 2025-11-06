@@ -72,10 +72,13 @@ uv venv
         total_packages.append("python-magic matplotlib plotly kaleido")
     if data_packages:
         total_packages.append("numpy pandas polars duckdb-engine sqlalchemy  psycopg2-binary pyarrow tqdm openpyxl")
+    from machineconfig.utils.ve import get_ve_activate_line
     script = f"""
 {starting_code}
 {packages_add_line}
 uv add --group {group} {" ".join(total_packages)}
+{get_ve_activate_line(ve_root=str(repo_root.joinpath(".venv")))}
+ls
 """
     from machineconfig.utils.code import exit_then_run_shell_script
     exit_then_run_shell_script(script)
