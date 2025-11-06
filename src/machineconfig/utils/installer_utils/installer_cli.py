@@ -1,8 +1,10 @@
 """Devops Devapps Install"""
 
 import typer
-from typing import Optional, Annotated
+from typing import Annotated, Optional
 from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
+from machineconfig.utils.installer_utils.installer_class import Installer
+
 
 
 def main_installer_cli(
@@ -144,15 +146,19 @@ def install_clis(clis_names: list[str]):
     from rich.console import Console
     all_installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=None)
     total_messages: list[str] = []
-    for a_which in clis_names:
+    for a_cli_name in clis_names:
+        if "github.com" in a_cli_name.lower():
+            from machineconfig.utils.installer_utils.install_from_url import install_from_github_url
+            install_from_github_url(github_url=a_cli_name)
+            continue
         selected_installer = None
         for installer in all_installers:
             app_name = installer["appName"]
-            if app_name.lower() == a_which.lower():
+            if app_name.lower() == a_cli_name.lower():
                 selected_installer = installer
                 break
         if selected_installer is None:
-            _handle_installer_not_found(a_which, all_names=[inst["appName"] for inst in all_installers])
+            _handle_installer_not_found(a_cli_name, all_names=[inst["appName"] for inst in all_installers])
             return None
         message = Installer(selected_installer).install_robust(version=None)  # finish the task
         total_messages.append(message)
