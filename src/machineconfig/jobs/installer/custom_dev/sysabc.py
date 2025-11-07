@@ -50,10 +50,6 @@ zsh = r"""
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 echo "🔄 Updating Homebrew..."
 brew update || true
-echo "📥 Installing essential tools..."
-echo "📥 Installing Git version control..."
-echo "📥 Installing Nano text editor..."
-echo "📥 Installing Node Version Manager (NVM)..."
 # Note: git and nano are pre-installed on macOS, but we install via Homebrew to ensure latest versions
 # brew install git || true
 # brew install nano || true
