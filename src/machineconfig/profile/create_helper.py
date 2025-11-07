@@ -60,20 +60,3 @@ def copy_assets_to_machine(which: Literal["scripts", "settings"]) -> None:
         scripts_path = CONFIG_ROOT.joinpath("scripts")
         subprocess.run(f"chmod +x {scripts_path} -R", shell=True, capture_output=True, text=True, check=False)
         console.print("[green]✅ Script permissions updated[/green]")
-
-    home_dir = Path.home()
-    if system_name == "windows":
-        yazi_plugins_dir = home_dir.joinpath("AppData", "Roaming", "yazi", "config")
-    else:
-        yazi_plugins_dir = home_dir.joinpath(".config", "yazi")
-    
-    yazi_plugins_path = yazi_plugins_dir.joinpath("plugins")
-    yazi_flavours_path = yazi_plugins_dir.joinpath("flavors")
-    if not yazi_plugins_path.exists():
-        yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
-        import git
-        git.Repo.clone_from("https://github.com/yazi-rs/plugins", yazi_plugins_path)
-    if not yazi_flavours_path.exists():
-        yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
-        import git
-        git.Repo.clone_from("https://github.com/yazi-rs/flavors", yazi_flavours_path)

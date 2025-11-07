@@ -1074,18 +1074,18 @@
     },
     {
       "appName": "yazi",
-      "repoURL": "https://github.com/sxyazi/yazi",
+      "repoURL": "CMD",
       "doc": "⚡ Blazing Fast Terminal File Manager.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "yazi-x86_64-unknown-linux-musl.zip",
-          "macos": "yazi-x86_64-apple-darwin.zip",
-          "windows": "yazi-x86_64-pc-windows-msvc.zip"
+          "linux": "yazi.py",
+          "macos": "yazi.py",
+          "windows": "yazi.py"
         },
         "arm64": {
-          "linux": "yazi-aarch64-unknown-linux-musl.zip",
-          "macos": "yazi-aarch64-apple-darwin.zip",
-          "windows": "yazi-aarch64-pc-windows-msvc.zip"
+          "linux": "yazi.py",
+          "macos": "yazi.py",
+          "windows": "yazi.py"
         }
       }
     },
