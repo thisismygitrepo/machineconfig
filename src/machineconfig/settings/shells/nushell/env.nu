@@ -1,13 +1,26 @@
+# machineconfig Nushell environment setup
 
+let config_root = (
+	$env.CONFIG_ROOT?
+	| default ($env.HOME | path join ".config" "machineconfig")
+)
 
-# as per https://github.com/starship/starship?tab=readme-ov-file#step-1-install-starship
-mkdir ~/.cache/starship
-starship init nu | save -f ~/.cache/starship/init.nu
+load-env {
+	CONFIG_ROOT: $config_root
+}
 
+let path_entries = [
+	($config_root | path join "scripts")
+	($env.HOME | path join "dotfiles" "scripts" "linux")
+	($env.HOME | path join ".local" "bin")
+	($env.HOME | path join ".cargo" "bin")
+	"/usr/games"
+]
 
-
-# echo $nu.env-path
-# as per https://github.com/ajeetdsouza/zoxide?tab=readme-ov-file#installation
-zoxide init nushell | save -f ~/.zoxide.nu
+for entry in $path_entries {
+	if ($entry | path exists) {
+		path add $entry
+	}
+}
 
 
