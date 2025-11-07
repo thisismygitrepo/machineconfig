@@ -19,6 +19,23 @@
       }
     },
     {
+      "appName": "scrcpy",
+      "repoURL": "https://github.com/Genymobile/scrcpy",
+      "doc": "This application mirrors Android devices",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "scrcpy-linux-x86_64-v3.3.3.tar.gz",
+          "windows": "scrcpy-win64-v3.3.3.zip",
+          "macos": "scrcpy-macos-x86_64-v3.3.3.tar.gz"
+        },
+        "arm64": {
+          "linux": null,
+          "windows": null,
+          "macos": "scrcpy-macos-aarch64-v3.3.3.tar.gz"
+        }
+      }
+    },
+    {
       "appName": "fx",
       "repoURL": "https://github.com/antonmedv/fx",
       "doc": "🧙‍♂️ Command-line JSON viewer",
@@ -2570,7 +2587,7 @@
       }
     },
     {
-      "appName": "warp",
+      "appName": "warp-terminal",
       "repoURL": "CMD",
       "doc": "Modern terminal with AI-powered features",
       "fileNamePattern": {

@@ -36,11 +36,33 @@ def add_ssh_identity():
 
 def show_address():
     """📌 Show this computer addresses on network"""
+    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+    from pathlib import Path
+    from machineconfig.utils.accessories import randstr
+    tmp_file = Path.home().joinpath("tmp_results/tmp_files/ipinfo_result_" + randstr(8) + ".json")
+    tmp_file.parent.mkdir(parents=True, exist_ok=True)
+    install_if_missing("ipinfo")
+    script = f"""
+ipinfo myip --json > "{tmp_file.as_posix()}"
+"""
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(script=script)
+    import json
+    loaded_json = json.loads(tmp_file.read_text(encoding="utf-8"))
+    from rich import print_json
+    print_json(data=loaded_json)
+
     import machineconfig.scripts.python.nw.address as helper
     from rich.table import Table
     from rich.console import Console
     res = helper.get_all_ipv4_addresses()
+    res.append( ("Public IP", loaded_json.get("ip", "N/A")))
     
+    # loc = loaded_json["loc"]
+    # cmd = f"""curl "https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=600&height=300&center=lonlat:{loc}&zoom=6&marker=lonlat:{loc};color:%23ff0000;size:medium&apiKey=$GEOAPIFY_API_KEY" -o map.png && chafa map.png"""
+    # from machineconfig.utils.code import run_shell_script
+    # run_shell_script(script=cmd)
+
     table = Table(title="Network Interfaces")
     table.add_column("Interface", style="cyan")
     table.add_column("IP Address", style="green")
@@ -59,6 +81,17 @@ def show_address():
     else:
         print("No network interfaces found.")
 
+
+
+def bind_wsl_port(port: Annotated[int, typer.Option(..., "--port", "-p", help="Port number to bind")]):
+    code = f"""
+
+$wsl_ip = (wsl.exe hostname -I).Trim().Split(' ')[0]
+netsh interface portproxy add v4tov4 listenport={port} listenaddress=0.0.0.0 connectport={port} connectaddress=$wsl_ip
+
+"""
+    from machineconfig.utils.code import exit_then_run_shell_script
+    exit_then_run_shell_script(code)
 
 
 def debug_ssh():
@@ -119,6 +152,28 @@ def wifi_select(
         console.print("[blue]👋 Goodbye![/blue]")
 
 
+
+def reset_cloudflare_tunnel():
+    code = """
+# cloudflared tunnel route dns glenn  # creates CNAMES in Cloudflare dashboard
+# sudo systemctl stop cloudflared
+# test: cloudflared tunnel run glenn
+home_dir=$HOME
+cloudflared_path="$home_dir/.local/bin/cloudflared"
+sudo $cloudflared_path service uninstall
+sudo rm /etc/cloudflared/config.yml || true
+sudo $cloudflared_path --config $home_dir/.cloudflared/config.yml service install
+"""
+    print(code)
+def add_ip_exclusion_to_warp(ip: Annotated[str, typer.Option(..., "--ip", help="IP address to exclude from WARP")]):
+    code = f"""
+sudo warp-cli tunnel ip add {ip}
+sudo warp-cli disconnect
+sudo warp-cli connect
+"""
+    print(code)
+
+
 def get_app():
     nw_apps = typer.Typer(help="🔐 [n] Network subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
     nw_apps.command(name="share-terminal", help="📡  [t] Share terminal via web browser")(cli_terminal.main)
@@ -146,7 +201,15 @@ def get_app():
     nw_apps.command(name="debug-ssh", help="🐛  [d] Debug SSH connection")(debug_ssh)
     nw_apps.command(name="d", help="Debug SSH connection", hidden=True)(debug_ssh)
 
-    nw_apps.command(name="wifi-select", no_args_is_help=True, help="📶 WiFi connection utility.")(wifi_select)
+    nw_apps.command(name="wifi-select", no_args_is_help=True, help="📶 [w] WiFi connection utility.")(wifi_select)
     nw_apps.command(name="w", no_args_is_help=True, hidden=True)(wifi_select)
+
+    nw_apps.command(name="bind-wsl-port", help="🔌  [b] Bind WSL port to Windows host", no_args_is_help=True)(bind_wsl_port)
+    nw_apps.command(name="b", help="Bind WSL port to Windows host", hidden=True, no_args_is_help=True)(bind_wsl_port)
+
+    nw_apps.command(name="reset-cloudflare-tunnel", help="☁️ [r] Reset Cloudflare tunnel service")(reset_cloudflare_tunnel)
+    nw_apps.command(name="r", help="Reset Cloudflare tunnel service", hidden=True)(reset_cloudflare_tunnel)
+    nw_apps.command(name="add-ip-exclusion-to-warp", help="🚫 [p] Add IP exclusion to WARP")(add_ip_exclusion_to_warp)
+    nw_apps.command(name="p", help="Add IP exclusion to WARP", hidden=True)(add_ip_exclusion_to_warp)
 
     return nw_apps
