@@ -71,22 +71,28 @@ def _list_installed_fonts() -> list[str]:
 
 
 def _missing_required_fonts(installed_fonts: Iterable[str]) -> list[str]:
-    """Check which required font patterns are missing from installed fonts.
-    
+    """Check which feature fonts are missing from installed fonts.
+
     Args:
         installed_fonts: List of installed font names
-        
-    Returns:
-        List of missing font patterns
-    """
-    import re
 
-    installed_norm = [f.lower().replace(" ", "") for f in installed_fonts]
+    Returns:
+        List of descriptions for missing font groups
+    """
+
+    def _normalize(name: str) -> str:
+        return name.lower().replace(" ", "").replace("_", "")
+
+    installed_norm = [_normalize(font) for font in installed_fonts]
+    requirements: list[tuple[str, str]] = [
+        ("cascadiacode", "Cascadia Code family"),
+        ("caskaydiacove", "Caskaydia Cove Nerd Font family"),
+    ]
+
     missing: list[str] = []
-    for pattern in ["cascadiacode*"]:
-        regex = re.compile(pattern)
-        if not any(regex.search(f) for f in installed_norm):
-            missing.append(pattern)
+    for needle, label in requirements:
+        if not any(needle in font for font in installed_norm):
+            missing.append(label)
     return missing
 
 
@@ -123,11 +129,15 @@ def install_nerd_fonts() -> None:
     [p.delete(sure=True) for p in folder.search("*readme*")]
     [p.delete(sure=True) for p in folder.search("*LICENSE*")]
 
+    print("Fonts to be installed:")
+    for font in (folder.search("*.ttf") + folder.search("*.otf")):
+        print(f" - {font}")
+
     console.print("⚙️  Installing fonts via PowerShell...")
     file = PathExtended.tmpfile(suffix=".ps1")
     file.parent.mkdir(parents=True, exist_ok=True)
-    
-    raw_content = LIBRARY_ROOT.joinpath("jobs/installer/pwsh_scripts/install_fonts.ps1").read_text(encoding="utf-8").replace(r".\fonts-to-be-installed", str(folder))
+
+    raw_content = LIBRARY_ROOT.joinpath("jobs/installer/powershell_scripts/install_fonts.ps1").read_text(encoding="utf-8").replace(r".\fonts-to-be-installed", str(folder))
     # PowerShell 5.1 can choke on certain unicode chars in some locales; keep ASCII only.
     content = "".join(ch for ch in raw_content if ord(ch) < 128)
     file.write_text(content, encoding="utf-8")
@@ -147,3 +157,7 @@ def install_nerd_fonts() -> None:
     console.print()
     render_banner("✅ Nerd Fonts installation complete! ✅", "Nerd Fonts Installer", "green", box.DOUBLE)
     console.print()
+
+
+if __name__ == "__main__":
+    install_nerd_fonts()

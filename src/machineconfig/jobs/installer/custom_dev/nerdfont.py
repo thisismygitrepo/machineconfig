@@ -108,4 +108,4 @@ def main(installer_data: InstallerData, version: Optional[str]) -> None:
 
 
 if __name__ == "__main__":
-    pass
+    main(1, None)  # type: ignore

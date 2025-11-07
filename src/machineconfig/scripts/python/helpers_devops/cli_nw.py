@@ -201,15 +201,15 @@ def get_app():
     nw_apps.command(name="debug-ssh", help="🐛  [d] Debug SSH connection")(debug_ssh)
     nw_apps.command(name="d", help="Debug SSH connection", hidden=True)(debug_ssh)
 
-    nw_apps.command(name="wifi-select", no_args_is_help=True, help="📶 [w] WiFi connection utility.")(wifi_select)
+    nw_apps.command(name="wifi-select", no_args_is_help=True, help="📶  [w] WiFi connection utility.")(wifi_select)
     nw_apps.command(name="w", no_args_is_help=True, hidden=True)(wifi_select)
 
     nw_apps.command(name="bind-wsl-port", help="🔌  [b] Bind WSL port to Windows host", no_args_is_help=True)(bind_wsl_port)
     nw_apps.command(name="b", help="Bind WSL port to Windows host", hidden=True, no_args_is_help=True)(bind_wsl_port)
 
-    nw_apps.command(name="reset-cloudflare-tunnel", help="☁️ [r] Reset Cloudflare tunnel service")(reset_cloudflare_tunnel)
+    nw_apps.command(name="reset-cloudflare-tunnel", help="☁️  [r] Reset Cloudflare tunnel service")(reset_cloudflare_tunnel)
     nw_apps.command(name="r", help="Reset Cloudflare tunnel service", hidden=True)(reset_cloudflare_tunnel)
-    nw_apps.command(name="add-ip-exclusion-to-warp", help="🚫 [p] Add IP exclusion to WARP")(add_ip_exclusion_to_warp)
+    nw_apps.command(name="add-ip-exclusion-to-warp", help="🚫  [p] Add IP exclusion to WARP")(add_ip_exclusion_to_warp)
     nw_apps.command(name="p", help="Add IP exclusion to WARP", hidden=True)(add_ip_exclusion_to_warp)
 
     return nw_apps
