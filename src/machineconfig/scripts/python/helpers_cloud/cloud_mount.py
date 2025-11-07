@@ -1,32 +1,27 @@
 """Cloud mount script"""
 
-from machineconfig.utils.options import choose_from_options
-from machineconfig.utils.io import read_ini
-from machineconfig.utils.path_extended import PathExtended
-
-import platform
-from typing import Optional, Annotated
 import typer
-from rich.console import Console
-from rich.panel import Panel
-
-console = Console()
-
-
-DEFAULT_MOUNT = "~/data/rclone"
+from typing import Optional, Annotated
 
 
 def get_rclone_config():
+    from machineconfig.utils.io import read_ini
+    from pathlib import Path
+    import platform
     if platform.system() == "Windows":
-        config = read_ini(PathExtended.home().joinpath("AppData/Roaming/rclone/rclone.conf"))
+        config = read_ini(Path.home().joinpath("AppData/Roaming/rclone/rclone.conf"))
     elif platform.system() in ["Linux", "Darwin"]:
-        config = read_ini(PathExtended.home().joinpath(".config/rclone/rclone.conf"))
+        config = read_ini(Path.home().joinpath(".config/rclone/rclone.conf"))
     else:
         raise ValueError("unsupported platform")
     return config
 
 
 def get_mprocs_mount_txt(cloud: str, rclone_cmd: str, cloud_brand: str):  # cloud_brand = config[cloud]["type"]
+    from machineconfig.utils.path_extended import PathExtended
+    import platform
+    DEFAULT_MOUNT = "~/data/rclone"
+
     header = f"{' ' + cloud + ' | ' + cloud_brand + ' '}".center(50, "=")
     if platform.system() == "Windows":
         sub_text_path = PathExtended.tmpfile(suffix=".ps1")
@@ -57,6 +52,13 @@ def mount(
     destination: Annotated[Optional[str], typer.Option(help="destination to mount")] = None,
     network: Annotated[Optional[str], typer.Option(help="mount network drive")] = None,
 ) -> None:
+    from machineconfig.utils.options import choose_from_options
+    from pathlib import Path
+    import platform
+    from rich.console import Console
+    from rich.panel import Panel
+    console = Console()
+    DEFAULT_MOUNT = "~/data/rclone"
 
     # draw header box dynamically
     title = "☁️  Cloud Mount Utility"
@@ -73,9 +75,9 @@ def mount(
 
     if network is None:
         if destination is None:
-            mount_loc = PathExtended(DEFAULT_MOUNT).expanduser().joinpath(cloud)
+            mount_loc = Path(DEFAULT_MOUNT).expanduser().joinpath(cloud)
         else:
-            mount_loc = PathExtended(destination)
+            mount_loc = Path(destination)
 
         mount_info = f"📂 Mount location: {mount_loc}"
         console.print(Panel(mount_info, border_style="blue"))

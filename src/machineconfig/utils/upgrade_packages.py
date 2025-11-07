@@ -164,8 +164,9 @@ def upgrade_machine_config_version() -> None:
         except (UnicodeDecodeError, PermissionError):
             # Skip files that can't be read as text
             pass
-    
     print(f"Updated {files_updated} files with version constraint")
+    from machineconfig.utils.code import exit_then_run_shell_script
+    exit_then_run_shell_script(f"cd current_dir; uv sync")
 
 
 if __name__ == "__main__":

@@ -325,7 +325,7 @@ class SSH:
         local_path.parent.mkdir(parents=True, exist_ok=True)
         self.sftp.get(remotepath=remote_path, localpath=str(local_path))
 
-    def create_dir_and_check_if_exists(self, path_rel2home: str, overwrite_existing: bool) -> None:
+    def create_parent_dir_and_check_if_exists(self, path_rel2home: str, overwrite_existing: bool) -> None:
         from machineconfig.utils.ssh_utils.utils import create_dir_and_check_if_exists
         return create_dir_and_check_if_exists(self, path_rel2home=path_rel2home, overwrite_existing=overwrite_existing)
 

@@ -22,6 +22,7 @@ def create_dir_and_check_if_exists(self: SSH, path_rel2home: str, overwrite_exis
                 shutil.rmtree(target_path_abs)
             else:
                 target_path_abs.unlink()
+        print(f"Creating directory for path: {target_path_abs}")
         target_path_abs.parent.mkdir(parents=True, exist_ok=True)
     command = lambda_to_python_script(
         lambda: create_target_dir(target_rel2home=path_rel2home, overwrite=overwrite_existing),
@@ -33,13 +34,14 @@ def create_dir_and_check_if_exists(self: SSH, path_rel2home: str, overwrite_exis
     assert self.sftp is not None
     tmp_remote_path = ".tmp_pyfile.py"
     self.sftp.put(localpath=str(tmp_py_file), remotepath=str(Path(self.remote_specs["home_dir"]).joinpath(tmp_remote_path)))
-    self.run_shell(
+    resp = self.run_shell(
         command=f"""{UV_RUN_CMD} python {tmp_remote_path}""",
         verbose_output=False,
         description=f"Creating target dir {path_rel2home}",
         strict_stderr=True,
         strict_return_code=True,
     )
+    resp.print(desc=f"Created target dir {path_rel2home}")
 
 
 def check_remote_is_dir(self: SSH, source_path: Union[str, Path]) -> bool:

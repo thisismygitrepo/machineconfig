@@ -26,7 +26,7 @@ def copy_from_here(
                 f"SSH Error: source `{source_obj}` is a directory! Set `recursive=True` for recursive sending or `compress_with_zip=True` to zip it first."
             )
         file_paths_to_upload: list[Path] = [file_path for file_path in source_obj.rglob("*") if file_path.is_file()]
-        self.create_dir_and_check_if_exists(path_rel2home=target_rel2home, overwrite_existing=overwrite_existing)
+        self.create_parent_dir_and_check_if_exists(path_rel2home=target_rel2home, overwrite_existing=overwrite_existing)
         for idx, file_path in enumerate(file_paths_to_upload):
             print(f"   {idx + 1:03d}. {file_path}")
         for file_path in file_paths_to_upload:
@@ -51,14 +51,14 @@ def copy_from_here(
         source_obj = Path(str(zip_path) + ".zip")
         if not target_rel2home.endswith(".zip"):
             target_rel2home = target_rel2home + ".zip"
-    parent_rel2home = Path(target_rel2home).parent.as_posix()
-    if parent_rel2home not in {"", "."}:
-        self.create_dir_and_check_if_exists(path_rel2home=parent_rel2home, overwrite_existing=overwrite_existing)
+    if Path(target_rel2home).parent.as_posix() not in {"", "."}:
+        self.create_parent_dir_and_check_if_exists(path_rel2home=target_rel2home, overwrite_existing=overwrite_existing)
     print(f"""📤 [SFTP UPLOAD] Sending file: {repr(source_obj)}  ==>  Remote Path: {target_rel2home}""")
     try:
         with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
             if self.sftp is None:  # type: ignore[unreachable]
                 raise RuntimeError(f"SFTP connection lost for {self.hostname}")
+            print(f"Uploading {source_obj} to\n{Path(self.remote_specs['home_dir']).joinpath(target_rel2home)}")
             self.sftp.put(
                 localpath=str(source_obj), remotepath=str(Path(self.remote_specs["home_dir"]).joinpath(target_rel2home)), callback=pbar.view_bar
             )

@@ -2,7 +2,6 @@
 
 """
 
-from pathlib import Path
 from typing import cast, Optional, get_args, Annotated
 import typer
 from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import AGENTS, HOST, PROVIDER
@@ -13,22 +12,22 @@ def create(
     host: Annotated[HOST, typer.Option(..., "--host", "-h", help=f"Machine to run agents on. One of {', '.join(get_args(HOST))}")],
     model: Annotated[str, typer.Option(..., "--model", "-m", help="Model to use (for crush agent).")],
     provider: Annotated[PROVIDER, typer.Option(..., "--provider", "-p", help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER)[:3])}")],
-    context_path: Annotated[Optional[Path], typer.Option(..., "--context-path", "-c", help="Path to the context file/folder, defaults to .ai/todo/")] = None,
+    context_path: Annotated[Optional[str], typer.Option(..., "--context-path", "-c", help="Path to the context file/folder, defaults to .ai/todo/")] = None,
     separator: Annotated[str, typer.Option(..., "--separator", "-s", help="Separator for context")] = "\n",
     agent_load: Annotated[int, typer.Option(..., "--agent-load", "-al", help="Number of tasks per prompt")] = 13,
     prompt: Annotated[Optional[str], typer.Option(..., "--prompt", "-P", help="Prompt prefix as string")] = None,
-    prompt_path: Annotated[Optional[Path], typer.Option(..., "--prompt-path", "-pp", help="Path to prompt file")] = None,
+    prompt_path: Annotated[Optional[str], typer.Option(..., "--prompt-path", "-pp", help="Path to prompt file")] = None,
     job_name: Annotated[str, typer.Option(..., "--job-name", "-j", help="Job name")] = "AI_Agents",
     separate: Annotated[bool, typer.Option(..., "--separate", "-S", help="Keep prompt material in separate file to the context.")] = True,
-    output_path: Annotated[Optional[Path], typer.Option(..., "--output-path", "-o", help="Path to write the layout.json file")] = None,
-    agents_dir: Annotated[Optional[Path], typer.Option(..., "--agents-dir", "-ad", help="Directory to store agent files. If not provided, will be constructed automatically.")] = None,
+    output_path: Annotated[Optional[str], typer.Option(..., "--output-path", "-o", help="Path to write the layout.json file")] = None,
+    agents_dir: Annotated[Optional[str], typer.Option(..., "--agents-dir", "-ad", help="Directory to store agent files. If not provided, will be constructed automatically.")] = None,
 ):
 
     from machineconfig.scripts.python.helpers_agents.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout
     from machineconfig.scripts.python.helpers_agents.fire_agents_load_balancer import chunk_prompts
     from machineconfig.utils.accessories import get_repo_root, randstr
     import json
-
+    from pathlib import Path
     # validate mutual exclusive
     prompt_options = [prompt, prompt_path]
     provided_prompt = [opt for opt in prompt_options if opt is not None]
@@ -39,12 +38,13 @@ def create(
     if repo_root is None:
         typer.echo("💥 Could not determine the repository root. Please run this script from within a git repository.")
         raise typer.Exit(1)
+        return
     typer.echo(f"Operating @ {repo_root}")
     
     if context_path is None:
-        context_path = repo_root / ".ai" / "todo"
-        
-    context_path_resolved = context_path.expanduser().resolve()
+        context_path_resolved = Path(repo_root) / ".ai" / "todo"
+    else: context_path_resolved = Path(context_path).expanduser().resolve()
+
     if not context_path_resolved.exists():
         raise typer.BadParameter(f"Path does not exist: {context_path_resolved}")
     
@@ -60,20 +60,21 @@ def create(
         raise typer.BadParameter(f"Path is neither file nor directory: {context_path_resolved}")
     
     if prompt_path is not None:
-        prompt_prefix = prompt_path.read_text(encoding="utf-8")
+        prompt_prefix = Path(prompt_path).read_text(encoding="utf-8")
     else:
         prompt_prefix = cast(str, prompt)
     agent_selected = agent
-    if agents_dir is None: agents_dir = repo_root / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
+    if agents_dir is None: agents_dir_obj = Path(repo_root) / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
     else:
         import shutil
-        if agents_dir.exists():
+        if Path(agents_dir).exists():
             shutil.rmtree(agents_dir)
-    prep_agent_launch(repo_root=repo_root, agents_dir=agents_dir, prompts_material=prompt_material_re_splitted,
+        agents_dir_obj = Path(agents_dir)
+    prep_agent_launch(repo_root=repo_root, agents_dir=agents_dir_obj, prompts_material=prompt_material_re_splitted,
                       keep_material_in_separate_file=separate,
                       prompt_prefix=prompt_prefix, machine=host, agent=agent_selected, model=model, provider=provider,
                       job_name=job_name)
-    layoutfile = get_agents_launch_layout(session_root=agents_dir)    
+    layoutfile = get_agents_launch_layout(session_root=agents_dir_obj)
     regenerate_py_code = f"""
 #!/usr/bin/env uv run --python 3.14 --with machineconfig
 agents create "{context_path_resolved}" \\
@@ -85,11 +86,11 @@ agents create "{context_path_resolved}" \\
     --separator "{separator}" \\
     {"--separate" if separate else ""}
 """
-    (agents_dir / "aa_agents_relaunch.sh").write_text(data=regenerate_py_code, encoding="utf-8")
-    layout_output_path = output_path if output_path is not None else agents_dir / "layout.json"
+    (agents_dir_obj / "aa_agents_relaunch.sh").write_text(data=regenerate_py_code, encoding="utf-8")
+    layout_output_path = Path(output_path) if output_path is not None else agents_dir_obj / "layout.json"
     layout_output_path.parent.mkdir(parents=True, exist_ok=True)
     layout_output_path.write_text(data=json.dumps(layoutfile, indent=4), encoding="utf-8")
-    typer.echo(f"Created agents in {agents_dir}")
+    typer.echo(f"Created agents in {agents_dir_obj}")
     typer.echo(f"Ceated layout in {layout_output_path}")
 
 
@@ -99,6 +100,7 @@ def collect(
     separator: Annotated[str, typer.Option(..., help="Separator to use when concatenating material files")] = "\n",
 ) -> None:
     """Collect all material files from an agent directory and concatenate them."""
+    from pathlib import Path
     if not Path(agent_dir).exists() or not Path(agent_dir).is_dir():
         raise typer.BadParameter(f"Agent directory does not exist or is not a directory: {agent_dir}")
     
@@ -137,6 +139,7 @@ def collect(
 def template():
     from platform import system
     import machineconfig.scripts.python.helpers_agents as module
+    from pathlib import Path
     if system() == "Linux" or system() == "Darwin":
         template_path = Path(module.__file__).parent / "templates/template.sh"
     elif system() == "Windows":
@@ -157,7 +160,9 @@ def template():
 
 def init_config():
     from machineconfig.scripts.python.ai.initai import add_ai_configs
+    from pathlib import Path
     add_ai_configs(repo_root=Path.cwd())
+
 
 def get_app():
     agents_app = typer.Typer(help="🤖 AI Agents management subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)

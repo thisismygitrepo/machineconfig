@@ -5,7 +5,6 @@ Currently, the only way to work around this is to predifine the host in ~/.ssh/c
 
 """
 
-from pathlib import Path
 import typer
 from typing import Annotated
 
