@@ -68,7 +68,12 @@ def copy_assets_to_machine(which: Literal["scripts", "settings"]) -> None:
         yazi_plugins_dir = home_dir.joinpath(".config", "yazi")
     
     yazi_plugins_path = yazi_plugins_dir.joinpath("plugins")
+    yazi_flavours_path = yazi_plugins_dir.joinpath("flavors")
     if not yazi_plugins_path.exists():
         yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
         import git
         git.Repo.clone_from("https://github.com/yazi-rs/plugins", yazi_plugins_path)
+    if not yazi_flavours_path.exists():
+        yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
+        import git
+        git.Repo.clone_from("https://github.com/yazi-rs/flavors", yazi_flavours_path)
