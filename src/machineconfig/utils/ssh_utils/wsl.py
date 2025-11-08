@@ -128,6 +128,20 @@ def _run_windows_copy_command(source_path: Path, target_path: Path) -> None:
     )
 
 
+def _ensure_symlink(link_path: Path, target_path: Path) -> None:
+    if not target_path.exists():
+        raise FileNotFoundError(target_path)
+    if link_path.is_symlink():
+        existing_target = Path(os.path.realpath(link_path))
+        desired_target = Path(os.path.realpath(target_path))
+        if os.path.normcase(str(existing_target)) == os.path.normcase(str(desired_target)):
+            return
+        link_path.unlink()
+    elif link_path.exists():
+        raise FileExistsError(link_path)
+    link_path.symlink_to(target_path, target_is_directory=True)
+
+
 def copy_when_inside_wsl(source: Path | str, target: Path | str, overwrite: bool) -> None:
     _ensure_wsl_environment()
     source_relative = _ensure_relative_path(source)
@@ -161,6 +175,26 @@ def copy_when_inside_windows(source: Path | str, target: Path | str, overwrite: 
             raise FileExistsError(target_path)
         _remove_path(target_path)
     _run_windows_copy_command(source_path, target_path)
+
+
+def link_wsl_and_windows() -> None:
+    system = platform.system()
+    if system == "Darwin":
+        raise RuntimeError("link_wsl_and_windows is not designed for macOS")
+    try:
+        _ensure_wsl_environment()
+    except RuntimeError:
+        try:
+            _ensure_windows_environment()
+        except RuntimeError as exc:
+            raise RuntimeError("link_wsl_and_windows must run inside Windows or WSL") from exc
+        target_path = _resolve_wsl_home_on_windows()
+        link_path = Path.home() / "wsl"
+        _ensure_symlink(link_path, target_path)
+        return
+    target_path = _resolve_windows_home_from_wsl()
+    link_path = Path.home() / "win"
+    _ensure_symlink(link_path, target_path)
 
 
 if __name__ == "__main__":

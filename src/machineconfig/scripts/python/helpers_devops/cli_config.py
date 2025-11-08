@@ -75,6 +75,12 @@ def copy_assets(which: Annotated[Literal["scripts", "s", "settings", "t", "both"
     typer.echo(f"[red]Error:[/] Unknown asset type: {which}")
 
 
+def link_wsl_and_windows_home():
+    """🔗 Link WSL home and Windows home directories."""
+    import machineconfig.utils.ssh_utils.wsl as wsl_utils
+    wsl_utils.link_wsl_and_windows()
+
+
 def get_app():
     config_apps = typer.Typer(help="⚙️ [c] configuration subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
     config_apps.command("private", no_args_is_help=True, help="🔗  [v] Manage private configuration files.")(create_links_export.main_private_from_parser)
@@ -92,4 +98,8 @@ def get_app():
 
     config_apps.command("copy-assets", no_args_is_help=True, help="🔗  [c] Copy asset files from library to machine.", hidden=False)(copy_assets)
     config_apps.command("c", no_args_is_help=True, help="Copy asset files from library to machine.", hidden=True)(copy_assets)
+
+    config_apps.command("link-wsl-windows", no_args_is_help=False, help="🔗  [l] Link WSL home and Windows home directories.", hidden=False)(link_wsl_and_windows_home)
+    config_apps.command("l", no_args_is_help=False, help="Link WSL home and Windows home directories.", hidden=True)(link_wsl_and_windows_home)
+
     return config_apps
