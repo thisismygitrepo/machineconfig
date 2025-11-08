@@ -75,10 +75,18 @@ def _resolve_windows_home_from_wsl() -> Path:
     return _infer_windows_home_from_permissions()
 
 
+def _decode_wsl_output(raw_bytes: bytes) -> str:
+    try:
+        return raw_bytes.decode("utf-16-le")
+    except UnicodeDecodeError:
+        return raw_bytes.decode()
+
+
 def _get_single_wsl_distribution() -> str:
-    process = subprocess.run(["wsl.exe", "-l"], capture_output=True, text=True, check=True)
+    process = subprocess.run(["wsl.exe", "-l"], capture_output=True, text=False, check=True)
+    stdout = _decode_wsl_output(process.stdout).replace("\ufeff", "")
     distributions: list[str] = []
-    for raw_line in process.stdout.replace("\ufeff", "").splitlines():
+    for raw_line in stdout.splitlines():
         line = raw_line.strip()
         if not line or line.lower().startswith("windows subsystem for linux"):
             continue
