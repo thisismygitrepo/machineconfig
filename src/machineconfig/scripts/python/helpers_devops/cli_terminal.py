@@ -17,13 +17,11 @@ reference:
 
 def display_terminal_url(local_ip_v4: str, port: int, protocol: str = "http") -> None:
     """Display a flashy, unmissable terminal URL announcement."""
-
     from rich.console import Console
     from rich.panel import Panel
     from rich.text import Text
     from rich.align import Align
     console = Console()
-    
     # Create the main message with styling
     url_text = Text(f"{protocol}://{local_ip_v4}:{port}", style="bold bright_cyan underline")
     message = Text.assemble(
@@ -42,14 +40,13 @@ def display_terminal_url(local_ip_v4: str, port: int, protocol: str = "http") ->
         padding=(1, 2),
         expand=False
     )
-    
     # Print with extra spacing and attention-grabbing elements
     # console.print("\n" + "🔥" * 60 + "\n", style="bright_red bold")
     console.print(panel)
     # console.print("🔥" * 60 + "\n", style="bright_red bold")
 
 
-def main(
+def share_terminal(
     port: Annotated[Optional[int], typer.Option("--port", "-p", help="Port to run the terminal server on (default: 7681)")] = None,
     username: Annotated[Optional[str], typer.Option("--username", "-u", help="Username for terminal access (default: current user)")] = None,
     password: Annotated[Optional[str], typer.Option("--password", "-w", help="Password for terminal access (default: from ~/dotfiles/creds/passwords/quick_password)")] = None,
@@ -150,7 +147,7 @@ def main(
 
 
 def main_with_parser():
-    typer.run(main)
+    typer.run(share_terminal)
 
 
 if __name__ == "__main__":

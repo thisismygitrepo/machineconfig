@@ -151,6 +151,11 @@ def install_clis(clis_names: list[str]):
             from machineconfig.utils.installer_utils.install_from_url import install_from_github_url
             install_from_github_url(github_url=a_cli_name)
             continue
+        elif a_cli_name.startswith("https://"):
+            print(f"⏳ Installing from binary URL: {a_cli_name} ...")
+            from machineconfig.utils.installer_utils.install_from_url import install_from_binary_url
+            install_from_binary_url(a_cli_name)
+            continue
         selected_installer = None
         for installer in all_installers:
             app_name = installer["appName"]

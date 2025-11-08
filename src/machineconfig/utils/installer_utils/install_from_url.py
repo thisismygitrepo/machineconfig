@@ -4,12 +4,15 @@ import platform
 from urllib.parse import urlparse
 
 import typer
-from typing import Optional, TypeAlias, cast
+from typing import TYPE_CHECKING, Optional, TypeAlias, cast
 
 from machineconfig.utils.installer_utils.installer_class import install_deb_package
 from machineconfig.utils.installer_utils.installer_locator_utils import find_move_delete_linux, find_move_delete_windows
 from machineconfig.utils.path_extended import DECOMPRESS_SUPPORTED_FORMATS, PathExtended
 from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT
+
+if TYPE_CHECKING:
+    from rich.console import Console
 
 SUPPORTED_GITHUB_HOSTS = {"github.com", "www.github.com"}
 
@@ -69,6 +72,55 @@ def _derive_tool_name(repo_name: str, asset_name: str) -> str:
     if asset_filtered:
         return asset_filtered
     return "githubapp"
+
+
+def _download_and_prepare(download_url: str) -> PathExtended:
+    archive_path = PathExtended(download_url).download(folder=INSTALL_TMP_DIR)
+    extracted_path = archive_path
+    if extracted_path.suffix in DECOMPRESS_SUPPORTED_FORMATS:
+        extracted_path = archive_path.decompress()
+        archive_path.delete(sure=True)
+        if extracted_path.is_dir():
+            nested_items = list(extracted_path.glob("*"))
+            if len(nested_items) == 1:
+                nested_path = PathExtended(nested_items[0])
+                if nested_path.suffix in DECOMPRESS_SUPPORTED_FORMATS:
+                    extracted_path = nested_path.decompress()
+                    nested_path.delete(sure=True)
+    return extracted_path
+
+
+def _finalize_install(repo_name: str, asset_name: str, version: str, extracted_path: PathExtended, console: "Console") -> None:
+    from rich.panel import Panel
+
+    if extracted_path.suffix == ".deb":
+        install_deb_package(extracted_path)
+        tool_name_deb = _derive_tool_name(repo_name, asset_name)
+        INSTALL_VERSION_ROOT.joinpath(tool_name_deb).parent.mkdir(parents=True, exist_ok=True)
+        INSTALL_VERSION_ROOT.joinpath(tool_name_deb).write_text(version, encoding="utf-8")
+        console.print(Panel(f"Installed Debian package for [green]{tool_name_deb}[/green]", title="✅ Complete", border_style="green"))
+        return
+    system_name = platform.system()
+    tool_name = _derive_tool_name(repo_name, asset_name)
+    rename_target = f"{tool_name}.exe" if system_name == "Windows" else tool_name
+    try:
+        if system_name == "Windows":
+            installed_path = find_move_delete_windows(downloaded_file_path=extracted_path, exe_name=tool_name, delete=True, rename_to=rename_target)
+        elif system_name in {"Linux", "Darwin"}:
+            installed_path = find_move_delete_linux(downloaded=extracted_path, tool_name=tool_name, delete=True, rename_to=rename_target)
+        else:
+            console.print(Panel(f"Unsupported operating system: {system_name}", title="❌ Error", border_style="red"))
+            raise typer.Exit(1)
+    except IndexError:
+        if system_name == "Windows":
+            installed_path = find_move_delete_windows(downloaded_file_path=extracted_path, exe_name=None, delete=True, rename_to=rename_target)
+        elif system_name in {"Linux", "Darwin"}:
+            installed_path = find_move_delete_linux(downloaded=extracted_path, tool_name="", delete=True, rename_to=rename_target)
+        else:
+            raise
+    INSTALL_VERSION_ROOT.joinpath(tool_name).parent.mkdir(parents=True, exist_ok=True)
+    INSTALL_VERSION_ROOT.joinpath(tool_name).write_text(version, encoding="utf-8")
+    console.print(Panel(f"Installed [green]{tool_name}[/green] to {installed_path}\nVersion: {version}", title="✅ Complete", border_style="green"))
 
 
 def install_from_github_url(github_url: str) -> None:
@@ -138,43 +190,19 @@ def install_from_github_url(github_url: str) -> None:
     version_value = release.get("tag_name")
     version = version_value if isinstance(version_value, str) and version_value != "" else "latest"
     console.print(Panel(f"Downloading [cyan]{asset_name}[/cyan]", title="⬇️ Download", border_style="magenta"))
-    archive_path = PathExtended(download_url_value).download(folder=INSTALL_TMP_DIR)
-    extracted_path = archive_path
-    if extracted_path.suffix in DECOMPRESS_SUPPORTED_FORMATS:
-        extracted_path = archive_path.decompress()
-        archive_path.delete(sure=True)
-        if extracted_path.is_dir():
-            nested_items = list(extracted_path.glob("*"))
-            if len(nested_items) == 1:
-                nested_path = PathExtended(nested_items[0])
-                if nested_path.suffix in DECOMPRESS_SUPPORTED_FORMATS:
-                    extracted_path = nested_path.decompress()
-                    nested_path.delete(sure=True)
-    if extracted_path.suffix == ".deb":
-        install_deb_package(extracted_path)
-        tool_name_deb = _derive_tool_name(repo_name, asset_name)
-        INSTALL_VERSION_ROOT.joinpath(tool_name_deb).parent.mkdir(parents=True, exist_ok=True)
-        INSTALL_VERSION_ROOT.joinpath(tool_name_deb).write_text(version, encoding="utf-8")
-        console.print(Panel(f"Installed Debian package for [green]{tool_name_deb}[/green]", title="✅ Complete", border_style="green"))
-        return
-    system_name = platform.system()
-    tool_name = _derive_tool_name(repo_name, asset_name)
-    rename_target = f"{tool_name}.exe" if system_name == "Windows" else tool_name
-    try:
-        if system_name == "Windows":
-            installed_path = find_move_delete_windows(downloaded_file_path=extracted_path, exe_name=tool_name, delete=True, rename_to=rename_target)
-        elif system_name in {"Linux", "Darwin"}:
-            installed_path = find_move_delete_linux(downloaded=extracted_path, tool_name=tool_name, delete=True, rename_to=rename_target)
-        else:
-            console.print(Panel(f"Unsupported operating system: {system_name}", title="❌ Error", border_style="red"))
-            raise typer.Exit(1)
-    except IndexError:
-        if system_name == "Windows":
-            installed_path = find_move_delete_windows(downloaded_file_path=extracted_path, exe_name=None, delete=True, rename_to=rename_target)
-        elif system_name in {"Linux", "Darwin"}:
-            installed_path = find_move_delete_linux(downloaded=extracted_path, tool_name="", delete=True, rename_to=rename_target)
-        else:
-            raise
-    INSTALL_VERSION_ROOT.joinpath(tool_name).parent.mkdir(parents=True, exist_ok=True)
-    INSTALL_VERSION_ROOT.joinpath(tool_name).write_text(version, encoding="utf-8")
-    console.print(Panel(f"Installed [green]{tool_name}[/green] to {installed_path}\nVersion: {version}", title="✅ Complete", border_style="green"))
+    extracted_path = _download_and_prepare(download_url_value)
+    _finalize_install(repo_name=repo_name, asset_name=asset_name, version=version, extracted_path=extracted_path, console=console)
+
+
+def install_from_binary_url(binary_url: str) -> None:
+    from rich.console import Console
+    from rich.panel import Panel
+
+    console = Console()
+    parsed = urlparse(binary_url)
+    asset_candidate = parsed.path.split("/")[-1] if parsed.path else ""
+    asset_name = asset_candidate if asset_candidate != "" else "binary_asset"
+    host = parsed.netloc if parsed.netloc != "" else "remote host"
+    console.print(Panel(f"Downloading [cyan]{asset_name}[/cyan] from [green]{host}[/green]", title="⬇️ Download", border_style="magenta"))
+    extracted_path = _download_and_prepare(binary_url)
+    _finalize_install(repo_name="", asset_name=asset_name, version="latest", extracted_path=extracted_path, console=console)

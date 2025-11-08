@@ -1039,6 +1039,23 @@
       }
     },
     {
+      "appName": "upterm",
+      "repoURL": "https://github.com/owenthereal/upterm",
+      "doc": "🌐 upterm is a terminal multiplexer that allows you to share your terminal session over the web.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "uptermd_linux_amd64.tar.gz",
+          "macos": "upterm_darwin_amd64.tar.gz",
+          "windows": null
+        },
+        "arm64": {
+          "linux": "uptermd_linux_arm64.tar.gz",
+          "macos": "upterm_darwin_arm64.tar.gz",
+          "windows": null
+        }
+      }
+    },
+    {
       "appName": "viu",
       "repoURL": "https://github.com/atanunq/viu",
       "doc": "🖼️ A cli image viewer for the terminal (like chafa but in Rust)",
