@@ -1,3 +1,9 @@
+[manager]
+# from https://github.com/Tyarel8/goto-drives.yazi
+prepend_keymap = [
+  { on = [ "g", ":" ], run  = "plugin goto-drives", desc = "Go to drives" },
+]
+
 
 [[mgr.prepend_keymap]]
 on   = "!"

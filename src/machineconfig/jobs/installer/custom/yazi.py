@@ -28,6 +28,15 @@ def main(installer_data: InstallerData, version: Optional[str]):
     inst = Installer(installer_data=installer_standard)
     inst.install(version=version)
 
+    print("\n" * 5)
+    print("Installing Yazi plugins and flavors...")
+    installer_standard["appName"] = "ya"
+    inst = Installer(installer_data=installer_standard)
+    inst.install(version=version)
+
+    print("\n" * 5)
+    print("Cloning Yazi plugins and flavors repositories...")
+
     from pathlib import Path
     system_name = platform.system().lower()
     home_dir = Path.home()
@@ -38,14 +47,24 @@ def main(installer_data: InstallerData, version: Optional[str]):
     
     yazi_plugins_path = yazi_plugins_dir.joinpath("plugins")
     yazi_flavours_path = yazi_plugins_dir.joinpath("flavors")
-    if not yazi_plugins_path.exists():
-        yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
-        import git
-        git.Repo.clone_from("https://github.com/yazi-rs/plugins", yazi_plugins_path)
-    if not yazi_flavours_path.exists():
-        yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
-        import git
-        git.Repo.clone_from("https://github.com/yazi-rs/flavors", yazi_flavours_path)
+    if yazi_plugins_path.exists():
+        if yazi_plugins_path.is_file():
+            yazi_plugins_path.unlink()
+        elif yazi_plugins_path.is_dir():
+            import shutil
+            shutil.rmtree(yazi_plugins_path)
+    yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
+    import git
+    git.Repo.clone_from("https://github.com/yazi-rs/plugins", yazi_plugins_path)
+    if yazi_flavours_path.exists():
+        if yazi_flavours_path.is_file():
+            yazi_flavours_path.unlink()
+        elif yazi_flavours_path.is_dir():
+            import shutil
+            shutil.rmtree(yazi_flavours_path)
+    yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
+    import git
+    git.Repo.clone_from("https://github.com/yazi-rs/flavors", yazi_flavours_path)
 
     # previewers:
     if platform.system() == "Linux":
@@ -80,6 +99,22 @@ brew install --upgrade poppler || true  # For PDF preview, needed by yazi.
         }
         inst_poppler = Installer(installer_data=popler_installer)
         inst_poppler.install(version=None)
+    
+    # assuming ouch is already installed
+    script = """
+ya pkg add ndtoan96/ouch  # make ouch default previewer in yazi for compressed files
+ya pkg add AnirudhG07/rich-preview  # rich-cli based previewer for yazi
+ya pack -a stelcodes/bunny
+ya pkg add 'Tyarel8/goto-drives'
+ya pkg add uhs-robert/sshfs
+ya pkg add boydaihungst/file-extra-metadata
+ya pkg add wylie102/duckdb
+
+
+"""
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(script)
+
 
 if __name__ == "__main__":
     pass

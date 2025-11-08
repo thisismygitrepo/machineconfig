@@ -1,6 +1,10 @@
+-- DuckDB plugin configuration
+-- require("duckdb"):setup()
+
 -- https://yazi-rs.github.io/docs/tips#symlink-in-status
 -- https://yazi-rs.github.io/docs/tips#user-group-in-status
 -- https://yazi-rs.github.io/docs/tips#username-hostname-in-header
+
 
 -- Load Status component
 function Status:render(area)

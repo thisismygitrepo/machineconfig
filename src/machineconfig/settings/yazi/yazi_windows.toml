@@ -33,7 +33,7 @@ rules = [
 
 
 [plugin]
-dir = "~/.config/yazi/plugins"
+# dir = "~/AppData/Roaming/yazi/config/plugins"
 
 [[plugin.load]]
 name = "toggle-pane"
