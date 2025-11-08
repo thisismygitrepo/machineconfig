@@ -1924,18 +1924,18 @@
     },
     {
       "appName": "qr",
-      "repoURL": "pip install qrcode",
+      "repoURL": "CMD",
       "doc": "🔲 qr code generator. String to qr code.",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "uv tool install qrcode",
+          "macos": "uv tool install qrcode",
+          "windows": "uv tool install qrcode"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "uv tool install qrcode",
+          "macos": "uv tool install qrcode",
+          "windows": "uv tool install qrcode"
         }
       }
     },
@@ -2217,12 +2217,12 @@
       "doc": "📚 An interactive cheatsheet tool for the command-line",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
+          "linux": "navi-v{version}-x86_64-unknown-linux-musl.tar.gz",
           "macos": null,
-          "windows": null
+          "windows": "navi-v{version}-x86_64-pc-windows-gnu.zip"
         },
         "arm64": {
-          "linux": null,
+          "linux": "navi-v{version}-aarch64-unknown-linux-gnu.tar.gz",
           "macos": null,
           "windows": null
         }
@@ -2234,13 +2234,13 @@
       "doc": "⚡ A very fast implementation of tldr in Rust",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "tealdeer-linux-x86_64-musl",
+          "macos": "tealdeer-macos-x86_64",
+          "windows": "tealdeer-windows-x86_64-msvc.exe"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
+          "linux": "tealdeer-linux-aarch64-musl",
+          "macos": "tealdeer-macos-aarch64",
           "windows": null
         }
       }
@@ -2251,14 +2251,14 @@
       "doc": "🔍 A simple network sniffer in Rust",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "Sniffnet_LinuxAppImage_amd64.AppImage",
+          "macos": "Sniffnet_macOS_Intel.dmg",
+          "windows": "Sniffnet_Windows_x64.msi"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "Sniffnet_LinuxAppImage_arm64.AppImage",
+          "macos": "Sniffnet_macOS_AppleSilicon.dmg",
+          "windows": "Sniffnet_Windows_arm64.msi"
         }
       }
     },
@@ -2268,13 +2268,13 @@
       "doc": "⚡ A command-line benchmarking tool",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "hyperfine-v{version}-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "hyperfine-v{version}-x86_64-apple-darwin.tar.gz",
+          "windows": "hyperfine-v{version}-x86_64-pc-windows-msvc.zip"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
+          "linux": "hyperfine-v{version}-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "hyperfine-v{version}-aarch64-apple-darwin.tar.gz",
           "windows": null
         }
       }
@@ -2285,14 +2285,14 @@
       "doc": "🤖 Get up and running with large language models locally.",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "ollama-linux-amd64.tgz",
+          "macos": "Ollama.dmg",
+          "windows": "OllamaSetup.exe"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "ollama-linux-arm64.tgz",
+          "macos": "Ollama.dmg",
+          "windows": "ollama-windows-arm64.zip"
         }
       }
     },
@@ -2302,8 +2302,8 @@
       "doc": "💰 Cointop is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
+          "linux": "cointop_{version}_linux_amd64.tar.gz",
+          "macos": "cointop_{version}_darwin_amd64.tar.gz",
           "windows": null
         },
         "arm64": {
@@ -2336,12 +2336,12 @@
       "doc": "🚀 fullscreen, cross-platform terminal emulator and system monitor that looks and feels like a sci-fi computer interface",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "eDEX-UI-Linux-x86_64.AppImage",
+          "macos": "eDEX-UI-macOS-x64.dmg",
+          "windows": "eDEX-UI-Windows-x64.exe"
         },
         "arm64": {
-          "linux": null,
+          "linux": "eDEX-UI-Linux-arm64.AppImage",
           "macos": null,
           "windows": null
         }
@@ -2353,9 +2353,9 @@
       "doc": "💻 Terminal emulator",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "ExtratermQt-{version}.glibc2.34-x86_64.AppImage",
+          "macos": "ExtratermQt_{version}.dmg",
+          "windows": "extratermqt-setup-{version}.exe"
         },
         "arm64": {
           "linux": null,
@@ -2387,14 +2387,14 @@
       "doc": "🦊 WebDriver for Firefox.",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "geckodriver-v{version}-linux64.tar.gz",
+          "macos": "geckodriver-v{version}-macos.tar.gz",
+          "windows": "geckodriver-v{version}-win64.zip"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "geckodriver-v{version}-linux-aarch64.tar.gz",
+          "macos": "geckodriver-v{version}-macos-aarch64.tar.gz",
+          "windows": "geckodriver-v{version}-win-aarch64.zip"
         }
       }
     },

@@ -5,16 +5,15 @@ from collections import defaultdict
 from datetime import datetime
 
 from pathlib import Path
+from rich.console import Console
 from rich.progress import track
+from rich.table import Table
 import typer
 
 
 if TYPE_CHECKING:
     from typing import Any, Dict, List, Optional, Union
     import polars as pl
-
-
-app = typer.Typer()
 
 
 def count_lines_in_commit(commit: "Any") -> int:
@@ -81,7 +80,10 @@ def get_default_branch(repo: Repo) -> str:
             return repo.head.reference.name  # If neither exists, get the branch the HEAD is pointing to
 
 
-@app.command()
+
+console = Console()
+
+
 def count_historical(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
     """Count total historical lines of Python code in the repository."""
     print(f"Analyzing repository: {repo_path}")
@@ -89,7 +91,7 @@ def count_historical(repo_path: Annotated[str, typer.Argument(..., help="Path to
     print(f"\nTotal historical lines of Python code: {total_loc}")
 
 
-@app.command()
+
 def analyze_over_time(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
     """Analyze a git repository to track Python code size over time with visualization."""
     repo: Repo = Repo(repo_path)
@@ -170,8 +172,14 @@ def analyze_over_time(repo_path: Annotated[str, typer.Argument(..., help="Path t
     html_path = plot_dir.joinpath("code_size_evolution.html")
     png_path = plot_dir.joinpath("code_size_evolution.png")
 
-    fig.write_html(html_path, include_plotlyjs="cdn")
-    fig.write_image(png_path, width=1200, height=700, scale=2)
+    try:
+        fig.write_html(html_path, include_plotlyjs="cdn")
+    except Exception as e:
+        print(f"❌ Error saving HTML plot: {str(e)}")
+    try:
+        fig.write_image(png_path, width=1200, height=700, scale=2)
+    except Exception as e:
+        print(f"❌ Error saving PNG plot: {str(e)}")
 
     print(f"🖼️ Interactive plot saved as {html_path}")
     print(f"🖼️ Static image saved as {png_path}")
@@ -232,8 +240,17 @@ def _print_python_files_by_size_impl(repo_path: str) -> "Union[pl.DataFrame, Exc
         file_count: int = len(df)
 
         # Print the DataFrame
-        print("\n📊 Python Files Line Count (sorted max to min):")
-        print(df)
+        console.print("\n📊 Python Files Line Count (sorted max to min):")
+
+        table = Table(show_header=True, header_style="bold cyan")
+        table.add_column("#", justify="right")
+        table.add_column("File", overflow="fold")
+        table.add_column("Lines", justify="right")
+
+        for idx, row in enumerate(df.iter_rows(named=True), 1):
+            table.add_row(str(idx), row["filename"], f"{row['lines']:,}")
+
+        console.print(table)
         print(f"\n📁 Total Python files: {file_count}")
         print(f"📝 Total lines of Python code: {total_lines:,}")
 
@@ -335,7 +352,7 @@ def _print_python_files_by_size_impl(repo_path: str) -> "Union[pl.DataFrame, Exc
         return Exception(f"❌ Error analyzing repository: {str(e)}")
 
 
-@app.command()
+
 def print_python_files_by_size(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
     """Print Python files sorted by size with visualizations."""
     result = _print_python_files_by_size_impl(repo_path)
@@ -344,5 +361,17 @@ def print_python_files_by_size(repo_path: Annotated[str, typer.Argument(..., hel
         return
 
 
+def get_app():
+    app = typer.Typer()
+    app.command(name="count-historical", no_args_is_help=True, help="[c] Count lines of code in a git repository")(count_historical)
+    app.command(name="c", hidden=True, no_args_is_help=True, help="Alias for count-historical")(count_historical)
+    app.command(name="analyze-over-time", no_args_is_help=True, help="[a] Analyze code size over time in a git repository")(analyze_over_time)
+    app.command(name="a", hidden=True, no_args_is_help=True, help="Alias for analyze-over-time")(analyze_over_time)
+    app.command(name="print-python-files-by-size", no_args_is_help=True, help="[p] Print Python files by size in a git repository")(print_python_files_by_size)
+    app.command(name="p", hidden=True, no_args_is_help=True, help="Alias for print-python-files-by-size")(print_python_files_by_size)
+    return app
+
+
 if __name__ == "__main__":
-    app()
+    get_app()()
+
