@@ -151,7 +151,7 @@ def install_clis(clis_names: list[str]):
             from machineconfig.utils.installer_utils.install_from_url import install_from_github_url
             install_from_github_url(github_url=a_cli_name)
             continue
-        elif a_cli_name.startswith("https://"):
+        elif a_cli_name.startswith("https://") or a_cli_name.startswith("http://"):
             print(f"⏳ Installing from binary URL: {a_cli_name} ...")
             from machineconfig.utils.installer_utils.install_from_url import install_from_binary_url
             install_from_binary_url(a_cli_name)

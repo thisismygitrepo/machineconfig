@@ -125,7 +125,7 @@ class Installer:
                     import runpy
                     runpy.run_path(str(installer_path), run_name=None)["main"](self.installer_data, version=version)
                     version_to_be_installed = str(version)
-            elif installer_arch_os.startswith("https://"):  # its a url to be downloaded
+            elif installer_arch_os.startswith("https://") or installer_arch_os.startswith("http://"):
                 # downloaded_object = PathExtended(installer_arch_os).download(folder=INSTALL_TMP_DIR)
                 from machineconfig.scripts.python.helpers_utils.download import download
                 downloaded_object = download(installer_arch_os, output_dir=str(INSTALL_TMP_DIR))
