@@ -7,7 +7,15 @@ ratio = [1, 3, 5]
 system_default = [
   { run = "xdg-open \"$1\"", desc = "System Default", block = false, orphan = false, for = "unix" }
 ]
-
+edit = [
+  { run = "code \"$@\"", desc = "VSCode (Editor)", block = true, orphan = false, for = "unix" }
+]
+play = [
+  { run = "mpv \"$@\"", desc = "MPV (Media)", block = false, orphan = false, for = "unix" }
+]
+open = [
+  { run = "xdg-open \"$1\"", desc = "System Default Open", block = false, orphan = false, for = "unix" }
+]
 
 [open]
 rules = [

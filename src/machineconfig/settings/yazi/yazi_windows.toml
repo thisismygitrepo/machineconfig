@@ -3,6 +3,35 @@
 show_hidden = true
 ratio = [1, 3, 5]
 
+[opener]
+system_default = [
+  { run = "cmd /C start \"\" \"%1\"", desc = "System Default (Windows)", for = "windows", block = false, orphan = false }
+]
+# Edit files in your editor (replace “code” with your editor if you like)
+edit = [
+  { run = "code \"%*\"", desc = "VS Code (Editor)", block = true, orphan = false, for = "windows" }
+]
+
+# Play media files
+play = [
+  { run = "start \"\" \"%*\"", desc = "System Default (Media)", block = false, orphan = false, for = "windows" }
+]
+
+# Open files/folders with system default program/explorer
+open = [
+  { run = "start \"\" \"%1\"", desc = "System Default (Open)", block = false, orphan = false, for = "windows" }
+]
+
+
+[open]
+rules = [
+  { mime = "text/*", use = "edit" },
+  { mime = "video/*", use = "play" },
+  { name = "*.html", use = [ "open", "edit" ] },
+]
+
+
+
 [plugin]
 dir = "~/.config/yazi/plugins"
 
@@ -16,8 +45,4 @@ path = "toggle-pane.yazi"
 max_width  = 1000
 max_height = 1000
 
-previewers = [
-   # PDF
-   { mime = "application/pdf", run = "pdf" },
-]
 
