@@ -94,7 +94,7 @@ config_again = {this = '~/.config/procs/config.toml', to_this = 'CONFIG_ROOT/set
 config = {this = '~/.config/rofi/config.rasi', to_this = 'CONFIG_ROOT/settings/rofi/config.rasi'}
 
 [yazi_windows]
-yazi = {this = '~/AppData/Roaming/yazi/config/yazi.toml', to_this = 'CONFIG_ROOT/settings/yazi/yazi.toml'}
+yazi = {this = '~/AppData/Roaming/yazi/config/yazi.toml', to_this = 'CONFIG_ROOT/settings/yazi/yazi_windows.toml'}
 keymap = {this = '~/AppData/Roaming/yazi/config/keymap.toml', to_this = 'CONFIG_ROOT/settings/yazi/keymap_windows.toml'}
 theme = {this = '~/AppData/Roaming/yazi/config/theme.toml', to_this = 'CONFIG_ROOT/settings/yazi/theme.toml'}
 init = {this = '~/AppData/Roaming/yazi/config/init.lua', to_this = 'CONFIG_ROOT/settings/yazi/init.lua'}
@@ -102,7 +102,7 @@ init = {this = '~/AppData/Roaming/yazi/config/init.lua', to_this = 'CONFIG_ROOT/
 
 
 [yazi_linux]
-yazi = {this = '~/.config/yazi/yazi.toml', to_this = 'CONFIG_ROOT/settings/yazi/yazi.toml'}
+yazi = {this = '~/.config/yazi/yazi.toml', to_this = 'CONFIG_ROOT/settings/yazi/yazi_linux.toml'}
 keymap = {this = '~/.config/yazi/keymap.toml', to_this = 'CONFIG_ROOT/settings/yazi/keymap_linux.toml'}
 theme = {this = '~/.config/yazi/theme.toml', to_this = 'CONFIG_ROOT/settings/yazi/theme.toml'}
 init = {this = '~/.config/yazi/init.lua', to_this = 'CONFIG_ROOT/settings/yazi/init.lua'}

@@ -1,0 +1,38 @@
+
+[mgr]
+show_hidden = true
+ratio = [1, 3, 5]
+
+[opener]
+system_default = [
+  { run = "xdg-open \"$1\"", desc = "System Default", block = false, orphan = false, for = "unix" }
+]
+
+
+[open]
+rules = [
+  { mime = "application/pdf", use = ["system_default"] },
+  { mime = "image/*",     use = ["system_default"] },
+  { mime = "{audio,video}/*", use = ["system_default"] },
+  { name = "*",           use = ["system_default"] }
+]
+
+
+[plugin]
+dir = "~/.config/yazi/plugins"
+
+[[plugin.load]]
+name = "toggle-pane"
+path = "toggle-pane.yazi"
+
+
+[preview]
+# Change them to your desired values
+max_width  = 1000
+max_height = 1000
+
+previewers = [
+   # PDF
+   { mime = "application/pdf", run = "pdf" },
+]
+
