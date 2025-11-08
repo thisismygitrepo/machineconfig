@@ -13,9 +13,9 @@ IFS=: read -ra selected < <(
       --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
       --bind "ctrl-f:unbind(change,ctrl-f)+change-prompt(2. fzf> )+enable-search+clear-query+rebind(ctrl-r)" \
       --bind "ctrl-r:unbind(ctrl-r)+change-prompt(1. ripgrep> )+disable-search+reload($RG_PREFIX {q} || true)+rebind(change,ctrl-f)" \
-      --prompt '1. Ripgrep> ' \
+      --prompt '1. ripgrep> ' \
       --delimiter : \
-      --header '╱ CTRL-R (Ripgrep mode) ╱ CTRL-F (fzf mode) ╱' \
+      --header '╱ CTRL-R (ripgrep mode) ╱ CTRL-F (fzf mode) ╱' \
       --preview 'bat --color=always {1} --highlight-line {2}' \
       --preview-window 'up,60%,border-bottom,+{2}+3/3,~3'
 )

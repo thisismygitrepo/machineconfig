@@ -13,17 +13,17 @@ $initialQuery = if ($QueryTokens.Count -gt 0) { [string]::Join(' ', $QueryTokens
 $rgPrefix = 'rg --column --line-number --no-heading --color=always --smart-case '
 
 $escapedDefault = if ($initialQuery.Length -gt 0) {
-    $rgPrefix + '"' + $initialQuery.Replace('"', '""') + '"'
+    $rgPrefix + '"' + $initialQuery.Replace('"', '""') + '" || type nul'
 } else {
-    $rgPrefix
+    'type nul'
 }
 
 $previousDefault = $env:FZF_DEFAULT_COMMAND
 $env:FZF_DEFAULT_COMMAND = $escapedDefault
 
-$reloadBinding = "change:reload:$rgPrefix{q}; $null"
+$reloadBinding = "change:reload:$rgPrefix{q} || type nul"
 $ctrlFBinding = 'ctrl-f:unbind(change,ctrl-f)+change-prompt(2. fzf> )+enable-search+clear-query+rebind(ctrl-r)'
-$ctrlRBinding = "ctrl-r:unbind(ctrl-r)+change-prompt(1. ripgrep> )+disable-search+reload($rgPrefix{q}; $null)+rebind(change,ctrl-f)"
+$ctrlRBinding = "ctrl-r:unbind(ctrl-r)+change-prompt(1. ripgrep> )+disable-search+reload($rgPrefix{q} || type nul)+rebind(change,ctrl-f)"
 
 try {
     $selectionRaw = & fzf --ansi `
@@ -33,9 +33,9 @@ try {
         --bind $reloadBinding `
         --bind $ctrlFBinding `
         --bind $ctrlRBinding `
-        --prompt '1. Ripgrep> ' `
+        --prompt '1. ripgrep> ' `
         --delimiter ':' `
-        --header 'CTRL-R (Ripgrep mode) | CTRL-F (fzf mode)' `
+        --header 'CTRL-R (ripgrep mode) | CTRL-F (fzf mode)' `
         --preview 'bat --color=always {1} --highlight-line {2}' `
         --preview-window 'up,60%,border-bottom,+{2}+3/3,~3'
 }
@@ -55,5 +55,5 @@ if ($selectionRaw -match '^(?<path>.+?):(?<line>\d+):(?<column>\d+):') {
     $path = $Matches['path']
     $line = [int]$Matches['line']
     $column = [int]$Matches['column']
-    & hx "$path:$line:$column"
+    & hx ("{0}:{1}:{2}" -f $path,$line,$column)
 }
