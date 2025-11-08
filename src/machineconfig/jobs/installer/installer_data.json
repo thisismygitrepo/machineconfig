@@ -121,23 +121,6 @@
       }
     },
     {
-      "appName": "timg",
-      "repoURL": "CMD",
-      "doc": "👁️ terminal image previewer.",
-      "fileNamePattern": {
-        "amd64": {
-          "linux": "sudo apt install timg",
-          "windows": null,
-          "macos": "brew install timg"
-        },
-        "arm64": {
-          "linux": "sudo apt install timg",
-          "windows": null,
-          "macos": "brew install timg"
-        }
-      }
-    },
-    {
       "appName": "diskonaut",
       "repoURL": "https://github.com/imsnif/diskonaut",
       "doc": "💾 like dua, diskonaut is a terminal disk space navigator.",
@@ -971,6 +954,23 @@
       }
     },
     {
+      "appName": "parse",
+      "repoURL": "CMD",
+      "doc": "🔍 ripgrep + semantic search from https://github.com/run-llama/semtools",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "npm i -g @llamaindex/semtools",
+          "macos": "npm i -g @llamaindex/semtools",
+          "windows": "npm i -g @llamaindex/semtools"
+        },
+        "arm64": {
+          "linux": "npm i -g @llamaindex/semtools",
+          "macos": "npm i -g @llamaindex/semtools",
+          "windows": "npm i -g @llamaindex/semtools"
+        }
+      }
+    },
+    {
       "appName": "starship",
       "repoURL": "https://github.com/starship/starship",
       "doc": "⭐ The minimal, blazing-fast, and infinitely customizable prompt for any shell!",
@@ -1058,7 +1058,7 @@
     {
       "appName": "viu",
       "repoURL": "https://github.com/atanunq/viu",
-      "doc": "🖼️ A cli image viewer for the terminal (like chafa but in Rust)",
+      "doc": "🖼️ A cli image viewer for the terminal (like chafa & ueberzugpp but in Rust)",
       "fileNamePattern": {
         "amd64": {
           "linux": "viu-x86_64-unknown-linux-musl",
@@ -1069,6 +1069,40 @@
           "linux": "viu-aarch64-unknown-linux-musl",
           "macos": "viu-x86_64-apple-darwin",
           "windows": "viu-x86_64-pc-windows-msvc.exe"
+        }
+      }
+    },
+    {
+      "appName": "timg",
+      "repoURL": "CMD",
+      "doc": "👁️ terminal image previewer.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "sudo apt install timg",
+          "windows": null,
+          "macos": "brew install timg"
+        },
+        "arm64": {
+          "linux": "sudo apt install timg",
+          "windows": null,
+          "macos": "brew install timg"
+        }
+      }
+    },
+    {
+      "appName": "chafa",
+      "repoURL": "CMD",
+      "doc": "🖼️ Terminal graphics and image viewer",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "sudo nala install chafa -y",
+          "windows": "winget install --no-upgrade --name \"Chafa\" --Id \"hpjansson.Chafa\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": "brew install chafa"
+        },
+        "arm64": {
+          "linux": "sudo nala install chafa -y",
+          "windows": "winget install --no-upgrade --name \"Chafa\" --Id \"hpjansson.Chafa\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": "brew install chafa"
         }
       }
     },
@@ -1154,6 +1188,40 @@
           "linux": null,
           "macos": null,
           "windows": null
+        }
+      }
+    },
+    {
+      "appName": "youtube-dl",
+      "repoURL": "CMD",
+      "doc": "📥 Command-line program to download videos from YouTube and other sites. By https://github.com/ytdl-org/youtube-dl",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "https://yt-dl.org/downloads/latest/youtube-dl",
+          "macos": "https://yt-dl.org/downloads/latest/youtube-dl",
+          "windows": "https://yt-dl.org/latest/youtube-dl.exe"
+        },
+        "arm64": {
+          "linux": "https://yt-dl.org/downloads/latest/youtube-dl",
+          "macos": "https://yt-dl.org/downloads/latest/youtube-dl",
+          "windows": "https://yt-dl.org/latest/youtube-dl.exe"
+          }
+      }
+    },
+    {
+      "appName": "yt-dlp",
+      "repoURL": "CMD",
+      "doc": "📥 A youtube-dl fork with additional features and fixes, by https://github.com/yt-dlp/yt-dlp",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp",
+          "macos": "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos",
+          "windows": "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
+        },
+        "arm64": {
+          "linux": "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_musllinux_aarch64",
+          "macos": null,
+          "windows": "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_arm64.exe"
         }
       }
     },
@@ -3433,23 +3501,6 @@
           "linux": null,
           "windows": "winget install --no-upgrade --name \"julia\" --Id \"Julialang.Julia\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": null
-        }
-      }
-    },
-    {
-      "appName": "chafa",
-      "repoURL": "CMD",
-      "doc": "🖼️ Terminal graphics and image viewer",
-      "fileNamePattern": {
-        "amd64": {
-          "linux": "sudo nala install chafa -y",
-          "windows": "winget install --no-upgrade --name \"Chafa\" --Id \"hpjansson.Chafa\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
-          "macos": "brew install chafa"
-        },
-        "arm64": {
-          "linux": "sudo nala install chafa -y",
-          "windows": "winget install --no-upgrade --name \"Chafa\" --Id \"hpjansson.Chafa\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
-          "macos": "brew install chafa"
         }
       }
     },

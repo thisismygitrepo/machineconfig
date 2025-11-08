@@ -85,6 +85,7 @@
 # Terminal Sharing:
 * Comparison: https://gist.github.com/miguelmota/04245255f9dc9a862ac2bd682bdbab06
 * https://github.com/zhaojh329/rtty
+* * https://github.com/ekzhang/sshx/issues (virus seen here)
 
 # Networking
 * https://github.com/gravitational/teleport
@@ -94,6 +95,7 @@
 * parsec rdp
 * https://github.com/prometheus/prometheus
 * https://github.com/v2ray/v2ray-core?tab=readme-ov-file
+* https://github.com/tailscale/tailscale
 
 # recorder
 * Linux:
