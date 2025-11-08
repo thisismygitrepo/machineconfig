@@ -22,16 +22,18 @@ def machineconfig_search(
             print(f"❌ Error during selection: {e}")
             return None
 
-    from machineconfig.scripts.python.helpers_msearch import FZFG_LINUX_PATH, FZFG_WINDOWS_PATH
+    from machineconfig.scripts.python.helpers_msearch import FZFG_LINUX_PATH
     import platform
     if platform.system() == "Linux":
-        script_path = FZFG_LINUX_PATH
+        script = FZFG_LINUX_PATH.read_text(encoding="utf-8")
     elif platform.system() == "Windows":
-        script_path = FZFG_WINDOWS_PATH
+        script = """
+Invoke-PsFzfRipgrep $args
+"""
     else:
         raise RuntimeError("Unsupported platform")
     from machineconfig.utils.code import exit_then_run_shell_script
-    exit_then_run_shell_script(script=script_path.read_text(encoding="utf-8"), strict=False)
+    exit_then_run_shell_script(script=script, strict=False)
 
 
 def main():
