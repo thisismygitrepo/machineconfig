@@ -2183,14 +2183,14 @@
       "doc": "📈 analyze Git repositories and generate a visual contributions graph",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "gitcs_linux_amd64",
+          "macos": "gitcs_darwin_amd64",
+          "windows": "gitcs_windows_amd64.exe"
         },
         "arm64": {
-          "linux": null,
+          "linux": "gitcs_linux_386",
           "macos": null,
-          "windows": null
+          "windows": "gitcs_windows_386.exe"
         }
       }
     },
