@@ -10,7 +10,7 @@
 
 # 🧠 Welcome to **Machineconfig**
 
-**Machineconfig** is a cli-based **Digital Life Manager** — It's called so because no existing category of software fully captures its scope. At the same time, it is a *Package Manager*, *Configuration Manager*, *Automation Tool*, *Dotfiles Manager*, *Data Solution*, and *Code Manager*, among other functionalities covered, all rolled into one seamless experience.
+**Machineconfig** is a cli-based **Stack Manager** — It is a *Package Manager*, *Configuration Manager*, *Automation Tool*, *Dotfiles Manager*, *Data Solution*, and *Code Manager*, among other functionalities covered, all rolled into one seamless experience, that is consistent across different platforms.
 
 
 ## 💡 Motivation
