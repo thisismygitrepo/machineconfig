@@ -9,7 +9,7 @@ def machineconfig_search(
         symantic: Annotated[bool, typer.Option(..., "--symantic", "-s", help="The symantic search of symbols")] = False,
         extension: Annotated[str, typer.Option(..., "--extension", "-e", help="File extension to filter by (e.g., .py, .js)")] = "",
         file: Annotated[bool, typer.Option(..., "--file", "-f", help="File search using fzf")] = False,
-        no_dotfiles: Annotated[bool, typer.Option(..., "--no-dotfiles", "-n", help="Exclude dotfiles from search")] = False,
+        no_dotfiles: Annotated[bool, typer.Option(..., "--no-dotfiles", "-d", help="Exclude dotfiles from search")] = False,
         rga: Annotated[bool, typer.Option(..., "--rga", "-a", help="Use ripgrep-all for searching instead of ripgrep")] = False,
         install_dependencies: Annotated[bool, typer.Option(..., "--install-dependencies", "-p", help="Install required dependencies if missing")] = False
         ):
@@ -20,7 +20,7 @@ def machineconfig_search(
         install_if_missing("fd")
         install_if_missing("rg")  # ripgrep
         install_if_missing("rga")  # ripgrep-all
-        install_if_missing("tree-sitter-cli")
+        # install_if_missing("tree-sitter-cli")
         return
     if symantic:
         script = ""
