@@ -48,11 +48,11 @@ prepend_previewers = [
   # { name = "*.csv", run = "duckdb" },  
   # { name = "*.tsv", run = "duckdb" },  
   # { name = "*.json", run = "duckdb" },  
-  { name = "*.parquet", run = "duckdb" },  
+  # { name = "*.parquet", run = "duckdb" },  
   # { name = "*.txt", run = "duckdb" },  
   # { name = "*.xlsx", run = "duckdb" },  
-  { name = "*.db", run = "duckdb" },
-  { name = "*.duckdb", run = "duckdb" }
+  # { name = "*.db", run = "duckdb" },
+  # { name = "*.duckdb", run = "duckdb" }
 ]
 
 # prepend_preloaders = [   { name = "*.csv", run = "duckdb", multi = false },  
