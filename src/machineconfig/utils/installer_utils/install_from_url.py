@@ -4,10 +4,16 @@ import platform
 from urllib.parse import urlparse
 
 import typer
-from typing import TYPE_CHECKING, Optional, TypeAlias, cast
+from typing import TYPE_CHECKING
 
 from machineconfig.utils.installer_utils.installer_class import install_deb_package
 from machineconfig.utils.installer_utils.installer_locator_utils import find_move_delete_linux, find_move_delete_windows
+from machineconfig.utils.installer_utils.github_release_bulk import (
+    get_repo_name_from_url,
+    fetch_github_release_data,
+    extract_release_info,
+    AssetInfo,
+)
 from machineconfig.utils.path_extended import DECOMPRESS_SUPPORTED_FORMATS, PathExtended
 from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT
 
@@ -15,38 +21,6 @@ if TYPE_CHECKING:
     from rich.console import Console
 
 SUPPORTED_GITHUB_HOSTS = {"github.com", "www.github.com"}
-
-GitHubAsset: TypeAlias = dict[str, object]
-GitHubRelease: TypeAlias = dict[str, object]
-
-
-def _extract_repo_name(github_url: str) -> str:
-    parsed = urlparse(github_url)
-    parts = [part for part in parsed.path.strip("/").split("/") if part]
-    if len(parts) < 2:
-        return ""
-    owner, repo = parts[0], parts[1]
-    if repo == "":
-        return ""
-    return f"{owner}/{repo}"
-
-
-def _fetch_latest_release(repo_name: str) -> Optional[GitHubRelease]:
-    import json
-    import requests
-    try:
-        response = requests.get(f"https://api.github.com/repos/{repo_name}/releases/latest", timeout=30)
-    except requests.RequestException:
-        return None
-    if response.status_code != 200:
-        return None
-    try:
-        data = response.json()
-    except json.JSONDecodeError:
-        return None
-    if not isinstance(data, dict):
-        return None
-    return cast(GitHubRelease, data)
 
 
 def _format_size(size_bytes: int) -> str:
@@ -129,35 +103,24 @@ def install_from_github_url(github_url: str) -> None:
     from rich.panel import Panel
 
     console = Console()
-    repo_name = _extract_repo_name(github_url)
-    if repo_name == "":
+    repo_info = get_repo_name_from_url(github_url)
+    if repo_info is None:
         console.print(Panel(f"Invalid GitHub URL: {github_url}", title="❌ Error", border_style="red"))
         raise typer.Exit(1)
+    owner, repo = repo_info
+    repo_name = f"{owner}/{repo}"
     console.print(Panel(f"Fetching latest release for [green]{repo_name}[/green]", title="🌐 GitHub", border_style="blue"))
-    release_raw = _fetch_latest_release(repo_name)
+    release_raw = fetch_github_release_data(owner, repo)
     if not release_raw:
         console.print(Panel("No releases available for this repository.", title="❌ Error", border_style="red"))
         raise typer.Exit(1)
-    release = release_raw
-    assets_value = release.get("assets", [])
-    assets: list[GitHubAsset] = []
-    if isinstance(assets_value, list):
-        for asset in assets_value:
-            if isinstance(asset, dict):
-                typed_asset: GitHubAsset = {}
-                name_value = asset.get("name")
-                url_value = asset.get("browser_download_url")
-                size_value = asset.get("size")
-                content_value = asset.get("content_type")
-                if isinstance(name_value, str):
-                    typed_asset["name"] = name_value
-                if isinstance(url_value, str):
-                    typed_asset["browser_download_url"] = url_value
-                if isinstance(size_value, int):
-                    typed_asset["size"] = size_value
-                if isinstance(content_value, str):
-                    typed_asset["content_type"] = content_value
-                assets.append(typed_asset)
+    
+    release_info = extract_release_info(release_raw)
+    if not release_info:
+        console.print(Panel("Failed to parse release information.", title="❌ Error", border_style="red"))
+        raise typer.Exit(1)
+    
+    assets = release_info["assets"]
     if not assets:
         console.print(Panel("No downloadable assets found in the latest release.", title="❌ Error", border_style="red"))
         raise typer.Exit(1)
@@ -166,29 +129,58 @@ def install_from_github_url(github_url: str) -> None:
     if not selection_pool:
         console.print(Panel("No assets available for installation.", title="❌ Error", border_style="red"))
         raise typer.Exit(1)
-    options_map: dict[str, GitHubAsset] = {}
+    
+    # First pass: collect all formatted data and calculate column widths
+    asset_data = []
     for asset in selection_pool:
-        name = asset.get("name")
-        download_url = asset.get("browser_download_url")
-        if not isinstance(name, str) or not isinstance(download_url, str) or name == "" or download_url == "":
+        name = asset["name"]
+        download_url = asset["browser_download_url"]
+        if name == "" or download_url == "":
             continue
-        size_value = asset.get("size")
-        size = size_value if isinstance(size_value, int) else 0
-        label = f"{name} [{_format_size(size)}]"
-        options_map[label] = asset
+        size = asset["size"]
+        download_count = asset.get("download_count", 0)
+        created_at = asset.get("created_at", "")
+        
+        # Format each field
+        size_str = f"[{_format_size(size)}]"
+        downloads_str = f"{download_count:,}"
+        date_str = created_at.split("T")[0] if created_at else "N/A"
+        
+        asset_data.append({
+            "name": name,
+            "size_str": size_str,
+            "downloads_str": downloads_str,
+            "date_str": date_str,
+            "asset": asset
+        })
+    
+    # Calculate maximum widths for alignment
+    max_name_len = max(len(item["name"]) for item in asset_data) if asset_data else 0
+    max_size_len = max(len(item["size_str"]) for item in asset_data) if asset_data else 0
+    max_downloads_len = max(len(item["downloads_str"]) for item in asset_data) if asset_data else 0
+    
+    # Second pass: build aligned labels
+    options_map: dict[str, AssetInfo] = {}
+    for item in asset_data:
+        name_padded = item["name"].ljust(max_name_len)
+        size_padded = item["size_str"].ljust(max_size_len)
+        downloads_padded = item["downloads_str"].rjust(max_downloads_len)
+        
+        label = f"{name_padded} {size_padded} | ⬇ {downloads_padded} | 📅 {item['date_str']}"
+        options_map[label] = item["asset"]
+    
     if not options_map:
         console.print(Panel("Release assets lack download URLs.", title="❌ Error", border_style="red"))
         raise typer.Exit(1)
     selection_label = choose_from_options(options=list(options_map.keys()), msg="Select a release asset", multi=False, header="📦 GitHub Release Assets", fzf=True)
     selected_asset = options_map[selection_label]
-    download_url_value = selected_asset.get("browser_download_url")
-    asset_name_value = selected_asset.get("name")
-    if not isinstance(download_url_value, str) or download_url_value == "":
+    download_url_value = selected_asset["browser_download_url"]
+    asset_name_value = selected_asset["name"]
+    if download_url_value == "":
         console.print(Panel("Selected asset lacks a download URL.", title="❌ Error", border_style="red"))
         raise typer.Exit(1)
-    asset_name = asset_name_value if isinstance(asset_name_value, str) else "github_binary"
-    version_value = release.get("tag_name")
-    version = version_value if isinstance(version_value, str) and version_value != "" else "latest"
+    asset_name = asset_name_value if asset_name_value != "" else "github_binary"
+    version = release_info["tag_name"] if release_info["tag_name"] != "" else "latest"
     console.print(Panel(f"Downloading [cyan]{asset_name}[/cyan]", title="⬇️ Download", border_style="magenta"))
     extracted_path = _download_and_prepare(download_url_value)
     _finalize_install(repo_name=repo_name, asset_name=asset_name, version=version, extracted_path=extracted_path, console=console)

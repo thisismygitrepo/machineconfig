@@ -92,7 +92,11 @@ def get_installed_cli_apps():
 
 
 def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: Optional[list[str]]) -> list[InstallerData]:
-    res_all = get_all_installer_data_files()
+    import machineconfig.jobs.installer as module
+    from pathlib import Path
+    res_raw: InstallerDataFiles = read_json(Path(module.__file__).parent.joinpath("installer_data.json"))
+    res_all: list[InstallerData] = res_raw["installers"]
+
     acceptable_apps_names: list[str] | None = None
     if which_cats is not None:
         acceptable_apps_names = []
@@ -115,13 +119,6 @@ def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: O
         all_installers.append(installer_data)
     return all_installers
 
-
-def get_all_installer_data_files() -> list[InstallerData]:
-    import machineconfig.jobs.installer as module
-    from pathlib import Path
-    res_raw: InstallerDataFiles = read_json(Path(module.__file__).parent.joinpath("installer_data.json"))
-    res_final: list[InstallerData] = res_raw["installers"]
-    return res_final
 
 
 def install_bulk(installers_data: list[InstallerData], safe: bool = False, jobs: int = 10, fresh: bool = False):

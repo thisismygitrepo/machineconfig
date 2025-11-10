@@ -6,10 +6,38 @@ Extracts GitHub repository URLs and fetches latest release data with rate limiti
 
 import json
 import time
-import subprocess
+import requests
 from pathlib import Path
-from typing import Any, Dict, Optional, Set
+from typing import Any, Dict, Optional, Set, TypedDict
 from urllib.parse import urlparse
+
+
+class AssetInfo(TypedDict):
+    """Type definition for GitHub release asset information."""
+    name: str
+    size: int
+    download_count: int
+    content_type: str
+    created_at: str
+    updated_at: str
+    browser_download_url: str
+
+
+class ReleaseInfo(TypedDict):
+    """Type definition for GitHub release information."""
+    tag_name: str
+    name: str
+    published_at: str
+    assets: list[AssetInfo]
+    assets_count: int
+
+
+class OutputData(TypedDict):
+    """Type definition for the output JSON data structure."""
+    generated_at: str
+    total_repositories: int
+    successful_fetches: int
+    releases: Dict[str, Optional[ReleaseInfo]]
 
 
 def is_github_repo(url: str) -> bool:
@@ -19,87 +47,63 @@ def is_github_repo(url: str) -> bool:
         return parsed.netloc == "github.com" and len(parsed.path.split("/")) >= 3
     except Exception:
         return False
-
-
 def extract_github_repos_from_json(json_file_path: Path) -> Set[str]:
     """Extract GitHub repository URLs from installer JSON file."""
     github_repos: Set[str] = set()
-    
     try:
         with open(json_file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
-            
         for installer in data.get("installers", []):
             repo_url = installer.get("repoURL", "")
             if is_github_repo(repo_url):
                 github_repos.add(repo_url)
-                
     except (json.JSONDecodeError, FileNotFoundError) as e:
         print(f"Error reading {json_file_path}: {e}")
-        
     return github_repos
-
-
-def get_repo_name_from_url(repo_url: str) -> str:
-    """Extract owner/repo from GitHub URL."""
+def get_repo_name_from_url(repo_url: str) -> Optional[tuple[str, str]]:
+    """Extract owner/repo from GitHub URL as a tuple (username, repo_name)."""
     try:
         parsed = urlparse(repo_url)
         path_parts = parsed.path.strip("/").split("/")
-        return f"{path_parts[0]}/{path_parts[1]}"
+        return (path_parts[0], path_parts[1])
     except (IndexError, AttributeError):
-        return ""
-
-
-def fetch_github_release_data(repo_name: str) -> Optional[Dict[str, Any]]:
-    """Fetch latest release data from GitHub API using curl."""
-    try:
-        cmd = [
-            "curl", "-s",
-            f"https://api.github.com/repos/{repo_name}/releases/latest"
-        ]
-        
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=30
-        )
-        
-        if result.returncode != 0:
-            print(f"❌ Failed to fetch data for {repo_name}: {result.stderr}")
-            return None
-            
-        response_data = json.loads(result.stdout)
-        
-        # Check if API returned an error
-        if "message" in response_data:
-            if "API rate limit exceeded" in response_data.get("message", ""):
-                print(f"🚫 Rate limit exceeded for {repo_name}")
-                return None
-            elif "Not Found" in response_data.get("message", ""):
-                print(f"🔍 No releases found for {repo_name}")
-                return None
-                
-        return response_data
-        
-    except (subprocess.TimeoutExpired, json.JSONDecodeError, subprocess.SubprocessError) as e:
-        print(f"❌ Error fetching {repo_name}: {e}")
         return None
 
 
-def extract_release_info(release_data: Dict[str, Any]) -> Dict[str, Any]:
+def fetch_github_release_data(username: str, repo_name: str) -> Optional[Dict[str, Any]]:
+    """Fetch latest release data from GitHub API using requests."""
+    try:
+        url = f"https://api.github.com/repos/{username}/{repo_name}/releases/latest"
+        response = requests.get(url, timeout=30)
+        if response.status_code != 200:
+            return None
+        return response.json()
+    except (requests.RequestException, json.JSONDecodeError) as _e:
+        return None
+
+
+def extract_release_info(release_data: Dict[str, Any]) -> Optional[ReleaseInfo]:
     """Extract relevant information from GitHub release data."""
     if not release_data:
-        return {}
-        
-    asset_names = [asset["name"] for asset in release_data.get("assets", [])]
-    
+        return None
+    assets: list[AssetInfo] = []
+    for asset in release_data.get("assets", []):
+        asset_info: AssetInfo = {
+            "name": asset.get("name", ""),
+            "size": asset.get("size", 0),
+            "download_count": asset.get("download_count", 0),
+            "content_type": asset.get("content_type", ""),
+            "created_at": asset.get("created_at", ""),
+            "updated_at": asset.get("updated_at", ""),
+            "browser_download_url": asset.get("browser_download_url", "")
+        }
+        assets.append(asset_info)
     return {
         "tag_name": release_data.get("tag_name", ""),
         "name": release_data.get("name", ""),
         "published_at": release_data.get("published_at", ""),
-        "assets": asset_names,
-        "assets_count": len(asset_names)
+        "assets": assets,
+        "assets_count": len(assets)
     }
 
 
@@ -132,7 +136,7 @@ def main() -> None:
         return
     
     # Fetch release data with rate limiting
-    release_mapping: Dict[str, Any] = {}
+    release_mapping: Dict[str, Optional[ReleaseInfo]] = {}
     total_repos = len(all_github_repos)
     
     print(f"\n🚀 Fetching release data for {total_repos} repositories...")
@@ -140,24 +144,31 @@ def main() -> None:
     print("-" * 60)
     
     for i, repo_url in enumerate(sorted(all_github_repos), 1):
-        repo_name = get_repo_name_from_url(repo_url)
+        repo_info = get_repo_name_from_url(repo_url)
         
-        if not repo_name:
+        if not repo_info:
             print(f"⚠️  [{i:3d}/{total_repos}] Invalid repo URL: {repo_url}")
             continue
-            
-        print(f"📡 [{i:3d}/{total_repos}] Fetching: {repo_name}", end=" ... ")
         
-        release_data = fetch_github_release_data(repo_name)
+        username, repo_name = repo_info
+        repo_full_name = f"{username}/{repo_name}"
+            
+        print(f"📡 [{i:3d}/{total_repos}] Fetching: {repo_full_name}", end=" ... ")
+        
+        release_data = fetch_github_release_data(username, repo_name)
         
         if release_data:
             release_info = extract_release_info(release_data)
-            release_mapping[repo_url] = release_info
-            assets_count = release_info.get("assets_count", 0)
-            tag = release_info.get("tag_name", "unknown")
-            print(f"✅ {tag} ({assets_count} assets)")
+            if release_info:
+                release_mapping[repo_url] = release_info
+                assets_count = release_info["assets_count"]
+                tag = release_info["tag_name"]
+                print(f"✅ {tag} ({assets_count} assets)")
+            else:
+                release_mapping[repo_url] = None
+                print("❌ No data")
         else:
-            release_mapping[repo_url] = {}
+            release_mapping[repo_url] = None
             print("❌ No data")
         
         # Rate limiting - wait 5 seconds between requests (except for the last one)
@@ -165,7 +176,7 @@ def main() -> None:
             time.sleep(5)
     
     # Save results
-    output_data = {
+    output_data: OutputData = {
         "generated_at": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
         "total_repositories": len(all_github_repos),
         "successful_fetches": len([v for v in release_mapping.values() if v]),
