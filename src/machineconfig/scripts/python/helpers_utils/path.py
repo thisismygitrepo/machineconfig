@@ -2,15 +2,18 @@
 
 
 import typer
-
 from typing import Optional, Annotated, Literal, TypedDict
 
 
-def path():
+def tui_env(which: Annotated[Literal["PATH", "p", "ENV", "e"], typer.Argument(help="Which environment variable to display.")] = "ENV") -> None:
     """📚 NAVIGATE PATH variable with TUI"""
     from machineconfig.scripts.python import env_manager as navigator
     from pathlib import Path
-    path = Path(navigator.__file__).resolve().parent.joinpath("path_manager_tui.py")
+    match which:
+        case "PATH" | "p":
+            path = Path(navigator.__file__).resolve().parent.joinpath("path_manager_tui.py")
+        case "ENV" | "e":
+            path = Path(navigator.__file__).resolve().parent.joinpath("env_manager_tui.py")
     from machineconfig.utils.code import run_shell_script, get_uv_command_executing_python_script
     uv_with = ["textual"]
     uv_project_dir = None

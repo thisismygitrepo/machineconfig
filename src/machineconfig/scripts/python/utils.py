@@ -1,7 +1,7 @@
 
 
 from machineconfig.scripts.python.helpers_devops.cli_utils import merge_pdfs, compress_pdf
-from machineconfig.scripts.python.helpers_utils.path import edit_file_with_hx, get_machine_specs, init_project, path
+from machineconfig.scripts.python.helpers_utils.path import edit_file_with_hx, get_machine_specs, init_project, tui_env
 from machineconfig.scripts.python.helpers_utils.download import download
 import typer
 from typing import Annotated
@@ -33,8 +33,8 @@ def get_app() -> typer.Typer:
     app.command(name="kill-process", no_args_is_help=False, help="⚔️ [k] Choose a process to kill")(kill_process)
     app.command(name="k", no_args_is_help=False, help="Choose a process to kill", hidden=True)(kill_process)
 
-    app.command("path", no_args_is_help=False, help="📚 [p] NAVIGATE PATH variable with TUI")(path)
-    app.command("p", no_args_is_help=False, help="NAVIGATE PATH variable with TUI", hidden=True)(path)
+    app.command("ENV", no_args_is_help=False, help="📚 [v] NAVIGATE ENV/PATH variable with TUI")(tui_env)
+    app.command("v", no_args_is_help=False, help="NAVIGATE ENV/PATH variable with TUI", hidden=True)(tui_env)
 
     app.command(name="upgrade-packages", no_args_is_help=False, help="⬆️ [up] Upgrade project dependencies.")(upgrade_packages)
     app.command(name="up", no_args_is_help=False, hidden=True)(upgrade_packages)
