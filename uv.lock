@@ -1598,7 +1598,7 @@ wheels = [
 
 [[package]]
 name = "machineconfig"
-version = "7.80"
+version = "7.81"
 source = { editable = "." }
 dependencies = [
     { name = "cryptography" },
@@ -2688,6 +2688,7 @@ version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/1d/65/82b6a3e3d892ee821df3d5f252714589e61acdbfd21f16c76e4a88e6bedb/pycrucible-0.3.0-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:31ebe993145bff3f4d99db4542a1546f90b4f3579793321b7ab936c6a62078e4", size = 2416443, upload-time = "2025-07-26T07:32:42.536Z" },
+    { url = "https://files.pythonhosted.org/packages/96/b8/772a8367f01e3fbe4de7c5f7c84523ecdd61c2eb6f81c57ad3e82de775d6/pycrucible-0.3.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:849f5e8304805d159bc550f929fd3e6e7eab474c7d3c0240480ff460734102af", size = 2247940, upload-time = "2025-11-09T04:55:51.854Z" },
     { url = "https://files.pythonhosted.org/packages/ae/3a/2b019100acce54149a2fa296de91930dd9e6af3c373f9cecc3555fb5a812/pycrucible-0.3.0-py3-none-manylinux_2_39_x86_64.whl", hash = "sha256:14c4ddd1df7872af55e50bb1411c0323f6f4d61600f118378723a5e1adabaa1e", size = 2706557, upload-time = "2025-07-26T07:32:44.768Z" },
     { url = "https://files.pythonhosted.org/packages/f7/11/b567431241933968076126590df1f9458b9ae751d011bf7746b209965a58/pycrucible-0.3.0-py3-none-win_amd64.whl", hash = "sha256:700830b0619e34482e7179e905fc92ec22af92ea97ee5d438cc276705f4bfc35", size = 2596143, upload-time = "2025-07-26T07:32:46.346Z" },
 ]
