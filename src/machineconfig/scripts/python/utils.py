@@ -33,7 +33,7 @@ def get_app() -> typer.Typer:
     app.command(name="kill-process", no_args_is_help=False, help="⚔️ [k] Choose a process to kill")(kill_process)
     app.command(name="k", no_args_is_help=False, help="Choose a process to kill", hidden=True)(kill_process)
 
-    app.command("ENV", no_args_is_help=False, help="📚 [v] NAVIGATE ENV/PATH variable with TUI")(tui_env)
+    app.command("environment", no_args_is_help=False, help="📚 [v] NAVIGATE ENV/PATH variable with TUI")(tui_env)
     app.command("v", no_args_is_help=False, help="NAVIGATE ENV/PATH variable with TUI", hidden=True)(tui_env)
 
     app.command(name="upgrade-packages", no_args_is_help=False, help="⬆️ [up] Upgrade project dependencies.")(upgrade_packages)
