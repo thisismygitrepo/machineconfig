@@ -34,21 +34,20 @@ def add_ssh_identity():
     helper.main()
 
 
-def show_address():
+def show_address() -> None:
     """📌 Show this computer addresses on network"""
     from machineconfig.utils.installer_utils.installer_cli import install_if_missing
-    from pathlib import Path
-    from machineconfig.utils.accessories import randstr
-    tmp_file = Path.home().joinpath("tmp_results/tmp_files/ipinfo_result_" + randstr(8) + ".json")
-    tmp_file.parent.mkdir(parents=True, exist_ok=True)
+    import subprocess
     install_if_missing("ipinfo")
-    script = f"""
-ipinfo myip --json > "{tmp_file.as_posix()}"
-"""
-    from machineconfig.utils.code import run_shell_script
-    run_shell_script(script=script)
+    result = subprocess.run(
+        ["ipinfo", "myip", "--json"],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
     import json
-    loaded_json = json.loads(tmp_file.read_text(encoding="utf-8"))
+    loaded_json = json.loads(result.stdout)
     from rich import print_json
     print_json(data=loaded_json)
 

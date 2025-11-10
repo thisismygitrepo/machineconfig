@@ -28,9 +28,10 @@ RUN rm -rfd /root/tmp_results
 # RUN apt-get clean && \
 #     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/cache/apt/archives/* /var/log/* /usr/share/doc /usr/share/man /usr/share/info /usr/share/locale
 
-RUN /root/.local/bin/uv clean && \
-    rm -rfd /root/.cache/pip && \
-    npm cache clean --force
+RUN /root/.local/bin/uv cache clean --force && \
+    rm -rfd /root/.cache/pip
+
+#    npm cache clean --force
 
 WORKDIR /root
 CMD ["/usr/bin/bash"]
