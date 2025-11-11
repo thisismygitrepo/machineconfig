@@ -4,7 +4,8 @@ from typing import Optional
 from pathlib import Path
 from machineconfig.utils.accessories import randstr
 from machineconfig.utils.meta import lambda_to_python_script
-from machineconfig.utils.ssh_utils.abc import get_uv_run_command, DEFAULT_PICKLE_SUBDIR
+from machineconfig.utils.ssh_utils.abc import DEFAULT_PICKLE_SUBDIR
+from machineconfig.utils.code import get_uv_run_command
 
 
 def copy_from_here(

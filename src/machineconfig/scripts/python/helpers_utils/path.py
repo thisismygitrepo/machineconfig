@@ -128,8 +128,9 @@ class MachineSpecs(TypedDict):
 def get_machine_specs() -> MachineSpecs:
     """Write print and return the local machine specs."""
     import platform
-    UV_RUN_CMD = "$HOME/.local/bin/uv run" if platform.system() != "Windows" else """& "$env:USERPROFILE/.local/bin/uv" run"""
-    command = f"""{UV_RUN_CMD} --with distro python -c "import distro; print(distro.name(pretty=True))" """
+    from machineconfig.utils.code import get_uv_run_command
+    uv_run_cmd = get_uv_run_command(platform=platform.system())  # type: ignore
+    command = f"""{uv_run_cmd} --with distro python -c "import distro; print(distro.name(pretty=True))" """
     import subprocess
     from pathlib import Path
     import socket

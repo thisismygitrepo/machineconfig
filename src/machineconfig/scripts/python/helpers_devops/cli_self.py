@@ -46,16 +46,14 @@ uv tool install --upgrade machineconfig
 
 def install(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-na", help="Copy (overwrite) assets to the machine after the update")] = False):
     """📋 CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates."""
-    from machineconfig.utils.code import run_shell_script
+    from machineconfig.utils.code import run_shell_script, get_uv_run_command
     from pathlib import Path
+    import platform
+    uv_run_command = get_uv_run_command(platform=platform.system())  # type: ignore
     if Path.home().joinpath("code/machineconfig").exists():
-        run_shell_script(f""" "$HOME/.local/bin/uv" tool install --upgrade --editable "{str(Path.home().joinpath("code/machineconfig"))}" """)
+        run_shell_script(f""" {uv_run_command}tool install --upgrade --editable "{str(Path.home().joinpath("code/machineconfig"))}" """)
     else:
-        import platform
-        if platform.system() == "Windows":
-            run_shell_script(r"""& "$HOME\.local\bin\uv.exe" tool install --upgrade "machineconfig>=7.85" """)
-        else:
-            run_shell_script("""$HOME/.local/bin/uv tool install --upgrade "machineconfig>=7.85" """)
+        run_shell_script(rf"""{uv_run_command} tool install --upgrade "machineconfig>=7.85" """)
     from machineconfig.profile.create_shell_profile import create_default_shell_profile
     if not no_copy_assets:
         create_default_shell_profile()   # involves copying assets too

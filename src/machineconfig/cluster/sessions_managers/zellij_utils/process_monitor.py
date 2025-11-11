@@ -53,7 +53,7 @@ class ProcessMonitor:
         command = tab_config["command"]
         try:
             check_script = self._create_process_check_script(command)
-            remote_cmd = f"$HOME/.local/bin devops self run-python -c {shlex.quote(check_script)}"
+            remote_cmd = f"$HOME/.local/bin devops self python -c {shlex.quote(check_script)}"
             result = self.remote_executor.run_command(remote_cmd, timeout=15)
             if result.returncode == 0:
                 try:
@@ -139,7 +139,7 @@ if __name__ == "__main__":
             check_timestamp = timestamp_result.stdout.strip() if timestamp_result.returncode == 0 else "unknown"
 
             check_script = self._create_fresh_check_script(command)
-            remote_cmd = f"$HOME/.local/bin/devops self run-python -c {shlex.quote(check_script)}"
+            remote_cmd = f"$HOME/.local/bin/devops self python -c {shlex.quote(check_script)}"
             result = self.remote_executor.run_command(remote_cmd, timeout=15)
 
             if result.returncode == 0:

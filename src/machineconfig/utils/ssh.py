@@ -3,11 +3,12 @@ import os
 from pathlib import Path
 import platform
 from machineconfig.scripts.python.helpers_utils.path import MachineSpecs
+from machineconfig.utils.code import get_uv_run_command
 import rich.console
 from machineconfig.utils.terminal import Response
 from machineconfig.utils.accessories import pprint, randstr
 from machineconfig.utils.meta import lambda_to_python_script
-from machineconfig.utils.ssh_utils.abc import get_uv_run_command, DEFAULT_PICKLE_SUBDIR
+from machineconfig.utils.ssh_utils.abc import DEFAULT_PICKLE_SUBDIR
 
 
 class SSH:

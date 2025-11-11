@@ -2,7 +2,8 @@
 from pathlib import Path
 from machineconfig.utils.accessories import randstr
 from machineconfig.utils.meta import lambda_to_python_script
-from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION, DEFAULT_PICKLE_SUBDIR, get_uv_run_command
+from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION, DEFAULT_PICKLE_SUBDIR
+from machineconfig.utils.code import get_uv_run_command
 from typing import Union
 
 
