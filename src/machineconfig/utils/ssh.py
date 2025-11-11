@@ -1,4 +1,4 @@
-from typing import Callable, Optional, Any, cast, Union
+from typing import Callable, Optional, Any, cast, Union, Literal
 import os
 from pathlib import Path
 import platform
@@ -7,7 +7,7 @@ import rich.console
 from machineconfig.utils.terminal import Response
 from machineconfig.utils.accessories import pprint, randstr
 from machineconfig.utils.meta import lambda_to_python_script
-from machineconfig.utils.ssh_utils.abc import UV_RUN_CMD, DEFAULT_PICKLE_SUBDIR
+from machineconfig.utils.ssh_utils.abc import get_uv_run_command, DEFAULT_PICKLE_SUBDIR
 
 
 class SSH:
@@ -150,7 +150,7 @@ class SSH:
         self.tqdm_wrap = RichProgressWrapper
         from machineconfig.scripts.python.helpers_utils.path import get_machine_specs
         self.local_specs: MachineSpecs = get_machine_specs()
-        resp = self.run_shell(
+        resp = self.run_shell_cmd_on_remote(
             command="""~/.local/bin/utils get-machine-specs """,
             verbose_output=False,
             description="Getting remote machine specs",
@@ -202,7 +202,7 @@ class SSH:
         self.ssh.close()
 
     def restart_computer(self) -> Response:
-        return self.run_shell(
+        return self.run_shell_cmd_on_remote(
             command="Restart-Computer -Force" if self.remote_specs["system"] == "Windows" else "sudo reboot",
             verbose_output=True,
             description="",
@@ -219,7 +219,7 @@ class SSH:
 
         with urllib.request.urlopen(code_url) as response:
             code = response.read().decode("utf-8")
-        return self.run_shell(command=code, verbose_output=True, description="", strict_stderr=False, strict_return_code=False)
+        return self.run_shell_cmd_on_remote(command=code, verbose_output=True, description="", strict_stderr=False, strict_return_code=False)
 
     def get_remote_repr(self, add_machine: bool = False) -> str:
         return f"{self.username}@{self.hostname}:{self.port}" + (
@@ -240,13 +240,13 @@ class SSH:
     def __repr__(self) -> str:
         return f"local {self.get_local_repr(add_machine=True)} >>> SSH TO >>> remote {self.get_remote_repr(add_machine=True)}"
 
-    def run_locally(self, command: str) -> Response:
+    def run_shell_cmd_on_local(self, command: str) -> Response:
         print(f"""💻 [LOCAL EXECUTION] Running command on node: {self.local_specs["system"]} Command: {command}""")
         res = Response(cmd=command)
         res.output.returncode = os.system(command)
         return res
 
-    def run_shell(self, command: str, verbose_output: bool, description: str, strict_stderr: bool, strict_return_code: bool) -> Response:
+    def run_shell_cmd_on_remote(self, command: str, verbose_output: bool, description: str, strict_stderr: bool, strict_return_code: bool) -> Response:
         raw = self.ssh.exec_command(command)
         res = Response(stdin=raw[0], stdout=raw[1], stderr=raw[2], cmd=command, desc=description)  # type: ignore
         if verbose_output:
@@ -258,7 +258,7 @@ class SSH:
         # self.terminal_responses.append(res)
         return res
 
-    def _run_py_prep(self, python_code: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> str:
+    def _run_py_prep(self, python_code: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str], on: Literal["local", "remote"]) -> str:
         py_path = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/runpy_{randstr()}.py")
         py_path.parent.mkdir(parents=True, exist_ok=True)
         py_path.write_text(python_code, encoding="utf-8")
@@ -271,10 +271,17 @@ class SSH:
             with_clause += f" --project {uv_project_dir}"
         else:
             with_clause += ""
-        uv_cmd = f"""{UV_RUN_CMD} {with_clause} python {py_path.relative_to(Path.home())}"""
+        match on:
+            case "local":
+                uv_run_cmd = get_uv_run_command(platform=self.local_specs["system"])
+            case "remote":
+                uv_run_cmd = get_uv_run_command(platform=self.remote_specs["system"])
+            case _:
+                raise ValueError(f"Invalid value for 'on': {on}. Must be 'local' or 'remote'")
+        uv_cmd = f"""{uv_run_cmd} {with_clause} python {py_path.relative_to(Path.home())}"""
         return uv_cmd
 
-    def run_py(
+    def run_py_remotely(
         self,
         python_code: str,
         uv_with: Optional[list[str]],
@@ -284,8 +291,8 @@ class SSH:
         strict_stderr: bool,
         strict_return_code: bool,
     ) -> Response:
-        uv_cmd = self._run_py_prep(python_code=python_code, uv_with=uv_with, uv_project_dir=uv_project_dir)
-        return self.run_shell(
+        uv_cmd = self._run_py_prep(python_code=python_code, uv_with=uv_with, uv_project_dir=uv_project_dir, on="remote")
+        return self.run_shell_cmd_on_remote(
             command=uv_cmd,
             verbose_output=verbose_output,
             description=description or f"run_py on {self.get_remote_repr(add_machine=False)}",
@@ -300,7 +307,7 @@ class SSH:
         # return self.run_py(python_code=command, uv_with=uv_with, uv_project_dir=uv_project_dir,
         #                    description=f"run_py_func {func.__name__} on {self.get_remote_repr(add_machine=False)}",
         #                    verbose_output=True, strict_stderr=True, strict_return_code=True)
-        uv_cmd = self._run_py_prep(python_code=command, uv_with=uv_with, uv_project_dir=uv_project_dir)
+        uv_cmd = self._run_py_prep(python_code=command, uv_with=uv_with, uv_project_dir=uv_project_dir, on="remote")
         if self.remote_specs["system"] == "Linux":
             uv_cmd_modified = f'bash -l -c "{uv_cmd}"'
         else:
@@ -310,7 +317,7 @@ class SSH:
         # assert self.host is not None, "SSH host must be specified to run remote commands"
         # process = run_shell_script(f"ssh {self.host} -n '. ~/.profile; . ~/.bashrc; {uv_cmd}'")
         # return process
-        return self.run_shell(
+        return self.run_shell_cmd_on_remote(
             command=uv_cmd_modified,
             verbose_output=True,
             description=f"run_py_func {func.__name__} on {self.get_remote_repr(add_machine=False)}",

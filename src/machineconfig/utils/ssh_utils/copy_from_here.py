@@ -4,11 +4,11 @@ from typing import Optional
 from pathlib import Path
 from machineconfig.utils.accessories import randstr
 from machineconfig.utils.meta import lambda_to_python_script
-from machineconfig.utils.ssh_utils.abc import UV_RUN_CMD, DEFAULT_PICKLE_SUBDIR
+from machineconfig.utils.ssh_utils.abc import get_uv_run_command, DEFAULT_PICKLE_SUBDIR
 
 
 def copy_from_here(
-    self: SSH, source_path: str, target_rel2home: Optional[str], compress_with_zip: bool, recursive: bool, overwrite_existing: bool
+    self: "SSH", source_path: str, target_rel2home: Optional[str], compress_with_zip: bool, recursive: bool, overwrite_existing: bool
 ) -> None:
     if self.sftp is None:
         raise RuntimeError(f"SFTP connection not available for {self.hostname}. Cannot transfer files.")
@@ -94,8 +94,8 @@ def copy_from_here(
         tmp_py_file.write_text(command, encoding="utf-8")
         remote_tmp_py = tmp_py_file.relative_to(Path.home()).as_posix()
         self.copy_from_here(source_path=str(tmp_py_file), target_rel2home=None, compress_with_zip=False, recursive=False, overwrite_existing=True)
-        self.run_shell(
-            command=f"""{UV_RUN_CMD} python {remote_tmp_py}""",
+        self.run_shell_cmd_on_remote(
+            command=f"""{get_uv_run_command(platform=self.remote_specs['system'])} python {remote_tmp_py}""",
             verbose_output=False,
             description=f"UNZIPPING {target_rel2home}",
             strict_stderr=True,

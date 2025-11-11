@@ -2,7 +2,7 @@
 
 
 import typer
-from typing import Optional, Annotated, Literal, TypedDict
+from typing import Optional, Annotated, Literal, TypedDict, cast
 
 
 def tui_env(which: Annotated[Literal["PATH", "p", "ENV", "e"], typer.Argument(help="Which environment variable to display.")] = "ENV") -> None:
@@ -18,7 +18,7 @@ def tui_env(which: Annotated[Literal["PATH", "p", "ENV", "e"], typer.Argument(he
     uv_with = ["textual"]
     uv_project_dir = None
     if not Path.home().joinpath("code/machineconfig").exists():
-        uv_with.append("machineconfig>=7.84")
+        uv_with.append("machineconfig>=7.85")
     else:
         uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
     run_shell_script(get_uv_command_executing_python_script(python_script=path.read_text(encoding="utf-8"), uv_with=uv_with, uv_project_dir=uv_project_dir)[0])
@@ -113,7 +113,7 @@ source ./.venv/bin/activate
 
 
 class MachineSpecs(TypedDict):
-    system: str
+    system: Literal["Windows", "Linux", "Darwin"]
     distro: str
     home_dir: str
     hostname: str
@@ -135,8 +135,11 @@ def get_machine_specs() -> MachineSpecs:
     import socket
     import os
     distro = subprocess.run(command, shell=True, capture_output=True, text=True).stdout.strip()
+    system = platform.system()
+    if system not in {"Windows", "Linux", "Darwin"}:
+        system = "Linux"
     specs: MachineSpecs = {
-        "system": platform.system(),
+        "system": cast(Literal["Windows", "Linux", "Darwin"], system),
         "distro": distro,
         "home_dir": str(Path.home()),
         "hostname": socket.gethostname(),

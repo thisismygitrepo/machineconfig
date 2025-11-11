@@ -2,7 +2,7 @@
 from pathlib import Path
 from machineconfig.utils.accessories import randstr
 from machineconfig.utils.meta import lambda_to_python_script
-from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION, UV_RUN_CMD, DEFAULT_PICKLE_SUBDIR
+from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION, DEFAULT_PICKLE_SUBDIR, get_uv_run_command
 from typing import Union
 
 
@@ -34,8 +34,8 @@ def create_dir_and_check_if_exists(self: "SSH", path_rel2home: str, overwrite_ex
     assert self.sftp is not None
     tmp_remote_path = ".tmp_pyfile.py"
     self.sftp.put(localpath=str(tmp_py_file), remotepath=str(Path(self.remote_specs["home_dir"]).joinpath(tmp_remote_path)))
-    resp = self.run_shell(
-        command=f"""{UV_RUN_CMD} python {tmp_remote_path}""",
+    resp = self.run_shell_cmd_on_remote(
+        command=f"""{get_uv_run_command(platform=self.remote_specs['system'])} python {tmp_remote_path}""",
         verbose_output=False,
         description=f"Creating target dir {path_rel2home}",
         strict_stderr=True,
@@ -63,7 +63,7 @@ def check_remote_is_dir(self: "SSH", source_path: Union[str, Path]) -> bool:
         lambda: check_is_dir(path_to_check=str(source_path), json_output_path=remote_json_output),
         in_global=True, import_module=False
     )
-    response = self.run_py(
+    response = self.run_py_remotely(
         python_code=command,
         uv_with=[MACHINECONFIG_VERSION],
         uv_project_dir=None,
@@ -109,7 +109,7 @@ def expand_remote_path(self: "SSH", source_path: Union[str, Path]) -> str:
         lambda: expand_source(path_to_expand=str(source_path), json_output_path=remote_json_output),
         in_global=True, import_module=False
     )
-    response = self.run_py(
+    response = self.run_py_remotely(
         python_code=command,
         uv_with=[MACHINECONFIG_VERSION],
         uv_project_dir=None,

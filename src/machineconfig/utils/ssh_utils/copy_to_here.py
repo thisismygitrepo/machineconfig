@@ -51,7 +51,7 @@ def copy_to_here(
                 lambda: search_files(directory_path=expanded_source, json_output_path=remote_json_output),
         in_global=True, import_module=False
             )
-            response = self.run_py(
+            response = self.run_py_remotely(
                 python_code=command,
                 uv_with=[MACHINECONFIG_VERSION],
                 uv_project_dir=None,
@@ -102,7 +102,7 @@ def copy_to_here(
                     in_global=True,
                     import_module=False,
                 )
-                response = self.run_py(
+                response = self.run_py_remotely(
                     python_code=command,
                     uv_with=[MACHINECONFIG_VERSION],
                     uv_project_dir=None,
@@ -166,7 +166,7 @@ def copy_to_here(
             lambda: zip_source(path_to_zip=expanded_source, json_output_path=remote_json_output),
         in_global=True, import_module=False
         )
-        response = self.run_py(
+        response = self.run_py_remotely(
             python_code=command,
             uv_with=[MACHINECONFIG_VERSION],
             uv_project_dir=None,
@@ -217,7 +217,7 @@ def copy_to_here(
             lambda: collapse_to_home(absolute_path=expanded_source, json_output_path=remote_json_output),
         in_global=True, import_module=False
         )
-        response = self.run_py(
+        response = self.run_py_remotely(
             python_code=command,
             uv_with=[MACHINECONFIG_VERSION],
             uv_project_dir=None,
@@ -284,7 +284,7 @@ def copy_to_here(
 
         command = lambda_to_python_script(lambda: delete_temp_zip(path_to_delete=expanded_source),
                                 in_global=True, import_module=False)
-        self.run_py(
+        self.run_py_remotely(
             python_code=command,
             uv_with=[MACHINECONFIG_VERSION],
             uv_project_dir=None,

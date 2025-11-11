@@ -157,7 +157,7 @@ def ftpx(
                 border_style="cyan",
             )
         )
-        ssh.run_shell(command=f"cloud_copy {resolved_source} :^", verbose_output=True, description="Uploading from remote to the cloud.", strict_stderr=False, strict_return_code=False)
+        ssh.run_shell_cmd_on_remote(command=f"cloud_copy {resolved_source} :^", verbose_output=True, description="Uploading from remote to the cloud.", strict_stderr=False, strict_return_code=False)
         console.print(
             Panel.fit(
                 "⬇️  Cloud transfer mode — downloading from cloud to local...",
@@ -165,7 +165,7 @@ def ftpx(
                 border_style="cyan",
             )
         )
-        ssh.run_locally(command=f"cloud_copy :^ {resolved_target}")
+        ssh.run_shell_cmd_on_local(command=f"cloud_copy :^ {resolved_target}")
         received_file = PathExtended(resolved_target)  # type: ignore
     else:
         if source_is_remote:
