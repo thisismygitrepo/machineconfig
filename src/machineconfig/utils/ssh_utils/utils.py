@@ -6,7 +6,7 @@ from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION, UV_RUN_CMD,
 from typing import Union
 
 
-def create_dir_and_check_if_exists(self: SSH, path_rel2home: str, overwrite_existing: bool) -> None:
+def create_dir_and_check_if_exists(self: "SSH", path_rel2home: str, overwrite_existing: bool) -> None:
     """Helper to create a directory on remote machine and return its path."""
 
     def create_target_dir(target_rel2home: str, overwrite: bool):
@@ -44,7 +44,7 @@ def create_dir_and_check_if_exists(self: SSH, path_rel2home: str, overwrite_exis
     resp.print(desc=f"Created target dir {path_rel2home}")
 
 
-def check_remote_is_dir(self: SSH, source_path: Union[str, Path]) -> bool:
+def check_remote_is_dir(self: "SSH", source_path: Union[str, Path]) -> bool:
     """Helper to check if a remote path is a directory."""
 
     def check_is_dir(path_to_check: str, json_output_path: str) -> bool:
@@ -90,7 +90,7 @@ def check_remote_is_dir(self: SSH, source_path: Union[str, Path]) -> bool:
     assert isinstance(result, bool), f"Failed to check if {source_path} is directory"
     return result
 
-def expand_remote_path(self: SSH, source_path: Union[str, Path]) -> str:
+def expand_remote_path(self: "SSH", source_path: Union[str, Path]) -> str:
     """Helper to expand a path on the remote machine."""
 
     def expand_source(path_to_expand: str, json_output_path: str) -> str:
