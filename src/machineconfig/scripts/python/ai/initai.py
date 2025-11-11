@@ -7,7 +7,7 @@ from machineconfig.scripts.python.ai.solutions.copilot import github_copilot
 from machineconfig.scripts.python.ai.solutions.crush import crush
 from machineconfig.scripts.python.ai.solutions.cursor import cursors
 from machineconfig.scripts.python.ai.solutions.gemini import gemini
-from machineconfig.scripts.python.ai.vscode_tasks import add_lint_and_type_check_task
+from machineconfig.scripts.python.ai.utils.vscode_tasks import add_lint_and_type_check_task
 from machineconfig.utils.accessories import get_repo_root
 
 

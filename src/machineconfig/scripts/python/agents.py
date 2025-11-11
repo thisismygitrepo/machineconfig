@@ -182,10 +182,10 @@ AGENT options: {', '.join(get_args(AGENTS))}
     agents_app.command("t", no_args_is_help=False, help="Create a template for fire agents", hidden=True)(template)
     agents_app.command("make-config", no_args_is_help=False, help="[g] Initialize AI configurations in the current repository")(init_config)
     agents_app.command("g", no_args_is_help=False, help="Initialize AI configurations in the current repository", hidden=True)(init_config)
-    from machineconfig.scripts.python.ai.generate_files import main
+    from machineconfig.scripts.python.ai.utils.generate_files import main
     agents_app.command("make-todo", no_args_is_help=True, help="[d] Generate a markdown file listing all Python files in the repo")(main)
     agents_app.command("d", no_args_is_help=True, help="Generate a markdown file listing all Python files in the repo", hidden=True)(main)
-    from machineconfig.scripts.python.ai.generate_files import create_symlink_command
+    from machineconfig.scripts.python.ai.utils.generate_files import create_symlink_command
     agents_app.command(name="make-symlinks", no_args_is_help=True, help="[s] Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
     agents_app.command(name="s", no_args_is_help=True, help="Create symlinks to the current repo in ~/code_copies/", hidden=True)(create_symlink_command)
     return agents_app

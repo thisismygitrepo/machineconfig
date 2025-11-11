@@ -51,9 +51,9 @@ def install(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-n
     import platform
     uv_run_command = get_uv_run_command(platform=platform.system())  # type: ignore
     if Path.home().joinpath("code/machineconfig").exists():
-        run_shell_script(f""" {uv_run_command}tool install --upgrade --editable "{str(Path.home().joinpath("code/machineconfig"))}" """)
+        run_shell_script(f""" {uv_run_command} tool install --upgrade --editable "{str(Path.home().joinpath("code/machineconfig"))}" """)
     else:
-        run_shell_script(rf"""{uv_run_command} tool install --upgrade "machineconfig>=7.85" """)
+        run_shell_script(rf""" {uv_run_command} tool install --upgrade "machineconfig>=7.85" """)
     from machineconfig.profile.create_shell_profile import create_default_shell_profile
     if not no_copy_assets:
         create_default_shell_profile()   # involves copying assets too
@@ -114,14 +114,14 @@ def readme():
 
 def get_app():
     cli_app = typer.Typer(help="🔄 [s] self operations subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
-    cli_app.command("update", no_args_is_help=False, help="🔄  [u] UPDATE machineconfig")(update)
-    cli_app.command("u", no_args_is_help=False, hidden=True)(update)
+    cli_app.command("update",      no_args_is_help=False, help="🔄  [u] UPDATE machineconfig")(update)
+    cli_app.command("u",           no_args_is_help=False, hidden=True)(update)
     cli_app.command("interactive", no_args_is_help=False, help="🤖  [i] INTERACTIVE configuration of machine.")(interactive)
-    cli_app.command("i", no_args_is_help=False, help="INTERACTIVE configuration of machine.", hidden=True)(interactive)
-    cli_app.command("status", no_args_is_help=False, help="📊  [s] STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.")(status)
-    cli_app.command("s", no_args_is_help=False, help="STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.", hidden=True)(status)
-    cli_app.command("install", no_args_is_help=False, help="📋  [I] CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.")(install)
-    cli_app.command("I", no_args_is_help=False, help="CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.", hidden=True)(install)
+    cli_app.command("i",           no_args_is_help=False, help="INTERACTIVE configuration of machine.", hidden=True)(interactive)
+    cli_app.command("status",      no_args_is_help=False, help="📊  [s] STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.")(status)
+    cli_app.command("s",           no_args_is_help=False, help="STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.", hidden=True)(status)
+    cli_app.command("install",     no_args_is_help=False, help="📋  [I] CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.")(install)
+    cli_app.command("I",           no_args_is_help=False, help="CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.", hidden=True)(install)
     cli_app.command("navigate", no_args_is_help=False, help="📚  [n] NAVIGATE command structure with TUI")(navigate)
     cli_app.command("n", no_args_is_help=False, help="NAVIGATE command structure with TUI", hidden=True)(navigate)
     cli_app.command("python", no_args_is_help=False, help="🐍  [c] python command/file in the machineconfig environment", context_settings={"show_help_on_error": True})(run_python)

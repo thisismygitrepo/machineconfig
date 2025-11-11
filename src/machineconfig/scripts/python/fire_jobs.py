@@ -178,9 +178,7 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
             command = "$ErrorActionPreference = 'SilentlyContinue';\n" + command + "\nStart-Sleep -Seconds 0.5"
         else:
             raise NotImplementedError(f"Platform {platform.system()} not supported.")
-
     from machineconfig.utils.code import exit_then_run_shell_script
-
     exit_then_run_shell_script(script=command, strict=False)
 
 
