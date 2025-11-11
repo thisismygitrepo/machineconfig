@@ -15,10 +15,9 @@ sudo apt update && sudo apt install -y \
 
 """
 
+from machineconfig.utils.installer_utils.installer_helper import get_group_name_to_repr
 import typer
 from typing import Annotated, Optional
-from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
-from machineconfig.utils.installer_utils.installer_class import Installer
 
 
 
@@ -42,6 +41,7 @@ def main_installer_cli(
             console = Console()
 
             typer.echo("❌ You must provide a group name when using the --group/-g option.")
+            from machineconfig.utils.installer_utils.installer_helper import get_group_name_to_repr
             res = get_group_name_to_repr()
             console.print("[bold blue]Here are the available groups:[/bold blue]")
             table = Table(show_header=True, header_style="bold magenta")
@@ -66,13 +66,7 @@ def main_installer_cli(
     raise typer.Exit(1)
 
 
-def get_group_name_to_repr() -> dict[str, str]:
-    # Build category options and maintain a mapping from display text to actual category name
-    category_display_to_name: dict[str, str] = {}
-    for group_name, group_values in PACKAGE_GROUP2NAMES.items():
-        display = f"📦 {group_name:<20}" + "   --   " + f"{'|'.join(group_values):<60}"
-        category_display_to_name[display] = group_name
-    return category_display_to_name
+
 
 
 def install_interactively():
@@ -112,6 +106,7 @@ def install_group(package_group: str):
     from rich.console import Console
     from rich.panel import Panel
     # from rich.table import Table
+    from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
     if package_group in PACKAGE_GROUP2NAMES:
         panel = Panel(f"[bold yellow]Installing programs from category: [green]{package_group}[/green][/bold yellow]", title="[bold blue]📦 Category Installation[/bold blue]", border_style="blue", padding=(1, 2))
         console = Console()
@@ -121,45 +116,14 @@ def install_group(package_group: str):
         return
     console = Console()
     console.print(f"❌ ERROR: Unknown package group: {package_group}. Available groups are: {list(PACKAGE_GROUP2NAMES.keys())}")
-def _handle_installer_not_found(search_term: str, all_names: list[str]) -> None:  # type: ignore
-    """Handle installer not found with friendly suggestions using fuzzy matching."""
-    from difflib import get_close_matches
-    from rich.console import Console
-    from rich.panel import Panel
-    from rich.table import Table
-    close_matches = get_close_matches(search_term, all_names, n=5, cutoff=0.4)
-    console = Console()
 
-    console.print(f"\n❌ '[red]{search_term}[/red]' was not found.", style="bold")
-    if close_matches:
-        console.print("🤔 Did you mean one of these?", style="yellow")
-        table = Table(show_header=False, box=None, pad_edge=False)
-        for i, match in enumerate(close_matches, 1):
-            table.add_row(f"[cyan]{i}.[/cyan]", f"[green]{match}[/green]")
-        console.print(table)
-    else:
-        console.print("📋 Here are some available options:", style="blue")
-        # Show first 10 installers as examples
-        if len(all_names) > 10:
-            sample_names = all_names[:10]
-        else:
-            sample_names = all_names
-        table = Table(show_header=False, box=None, pad_edge=False)
-        for i, name in enumerate(sample_names, 1):
-            table.add_row(f"[cyan]{i}.[/cyan]", f"[green]{name}[/green]")
-        console.print(table)
-        if len(all_names) > 10:
-            console.print(f"   [dim]... and {len(all_names) - 10} more[/dim]")
-
-    panel = Panel(f"[bold blue]💡 Use 'ia' to interactively browse all available installers.[/bold blue]\n[bold blue]💡 Use one of the categories: {list(PACKAGE_GROUP2NAMES.keys())}[/bold blue]", title="[yellow]Helpful Tips[/yellow]", border_style="yellow")
-    console.print(panel)
 
 def install_clis(clis_names: list[str]):
     from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
     from machineconfig.utils.installer_utils.installer_runner import get_installers
     from machineconfig.utils.installer_utils.installer_class import Installer
     from rich.console import Console
-    all_installers = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=None)
+    all_installers_data = get_installers(os=get_os_name(), arch=get_normalized_arch(), which_cats=None)
     total_messages: list[str] = []
     for a_cli_name in clis_names:
         if "github.com" in a_cli_name.lower():
@@ -172,13 +136,14 @@ def install_clis(clis_names: list[str]):
             install_from_binary_url(a_cli_name)
             continue
         selected_installer = None
-        for installer in all_installers:
+        for installer in all_installers_data:
             app_name = installer["appName"]
             if app_name.lower() == a_cli_name.lower():
                 selected_installer = installer
                 break
         if selected_installer is None:
-            _handle_installer_not_found(a_cli_name, all_names=[inst["appName"] for inst in all_installers])
+            from machineconfig.utils.installer_utils.installer_helper import handle_installer_not_found
+            handle_installer_not_found(a_cli_name, all_installers_data)
             return None
         message = Installer(selected_installer).install_robust(version=None)  # finish the task
         total_messages.append(message)

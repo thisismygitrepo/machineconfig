@@ -70,16 +70,52 @@ def get_repo_name_from_url(repo_url: str) -> Optional[tuple[str, str]]:
         return None
 
 
-def fetch_github_release_data(username: str, repo_name: str) -> Optional[Dict[str, Any]]:
-    """Fetch latest release data from GitHub API using requests."""
+def fetch_github_release_data(
+    username: str,
+    repo_name: str,
+    version: Optional[str] = None,
+) -> Optional[Dict[str, Any]]:
+    """Fetch GitHub release data for the latest or a specific tag."""
+
     try:
-        url = f"https://api.github.com/repos/{username}/{repo_name}/releases/latest"
+        requested_version = (version or "").strip()
+        if requested_version and requested_version.lower() != "latest":
+            url = f"https://api.github.com/repos/{username}/{repo_name}/releases/tags/{requested_version}"
+        else:
+            url = f"https://api.github.com/repos/{username}/{repo_name}/releases/latest"
+
         response = requests.get(url, timeout=30)
         if response.status_code != 200:
+            print(f"❌ Failed to fetch data for {username}/{repo_name}: HTTP {response.status_code}")
             return None
-        return response.json()
-    except (requests.RequestException, json.JSONDecodeError) as _e:
+
+        response_data = response.json()
+        message = response_data.get("message")
+        if isinstance(message, str):
+            if "API rate limit exceeded" in message:
+                print(f"🚫 Rate limit exceeded for {username}/{repo_name}")
+                return None
+            if "Not Found" in message:
+                print(f"🔍 No releases found for {username}/{repo_name}")
+                return None
+
+        return response_data
+
+    except (requests.RequestException, requests.Timeout, json.JSONDecodeError) as error:
+        print(f"❌ Error fetching {username}/{repo_name}: {error}")
         return None
+
+
+def get_release_info(
+    username: str,
+    repo_name: str,
+    version: Optional[str] = None,
+) -> Optional[ReleaseInfo]:
+    """Return sanitized release information for the requested repository."""
+    release_data = fetch_github_release_data(username, repo_name, version)
+    if not release_data:
+        return None
+    return extract_release_info(release_data)
 
 
 def extract_release_info(release_data: Dict[str, Any]) -> Optional[ReleaseInfo]:
@@ -155,18 +191,13 @@ def main() -> None:
             
         print(f"📡 [{i:3d}/{total_repos}] Fetching: {repo_full_name}", end=" ... ")
         
-        release_data = fetch_github_release_data(username, repo_name)
-        
-        if release_data:
-            release_info = extract_release_info(release_data)
-            if release_info:
-                release_mapping[repo_url] = release_info
-                assets_count = release_info["assets_count"]
-                tag = release_info["tag_name"]
-                print(f"✅ {tag} ({assets_count} assets)")
-            else:
-                release_mapping[repo_url] = None
-                print("❌ No data")
+        release_info = get_release_info(username, repo_name)
+
+        if release_info:
+            release_mapping[repo_url] = release_info
+            assets_count = release_info["assets_count"]
+            tag = release_info["tag_name"]
+            print(f"✅ {tag} ({assets_count} assets)")
         else:
             release_mapping[repo_url] = None
             print("❌ No data")

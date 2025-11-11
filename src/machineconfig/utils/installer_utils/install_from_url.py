@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 import typer
 from typing import TYPE_CHECKING
 
-from machineconfig.utils.installer_utils.installer_class import install_deb_package
+from machineconfig.utils.installer_utils.installer_helper import install_deb_package
 from machineconfig.utils.installer_utils.installer_locator_utils import find_move_delete_linux, find_move_delete_windows
 from machineconfig.utils.installer_utils.github_release_bulk import (
     get_repo_name_from_url,

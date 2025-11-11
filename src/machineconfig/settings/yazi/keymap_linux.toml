@@ -65,20 +65,21 @@ run  = 'shell --block -- $HOME/.config/machineconfig/scripts/wrap_mcfg utils edi
 desc = "Read with helix"
 
 [[mgr.prepend_keymap]]
-on   = ["R", "c"]
+on   = ["R", "s"]
 run  = 'shell --block -- $HOME/.config/machineconfig/scripts/wrap_mcfg croshell "$0"'
 desc = "Read with croshell"
-
-
 [[mgr.prepend_keymap]]
 on   = ["R", "f"]
 run  = 'shell --block -- $HOME/.config/machineconfig/scripts/wrap_mcfg fire "$0"'
 desc = "Read with fire"
-
 [[mgr.prepend_keymap]]
 on   = ["R", "F"]
 run  = 'shell --block -- $HOME/.config/machineconfig/scripts/wrap_mcfg fire -i "$0"'
 desc = "Read with fire interactively"
+[[mgr.prepend_keymap]]
+on   = ["R", "c"]
+run  = 'shell --block -- code "$0"'
+desc = "Read with code"
 
 [[mgr.prepend_keymap]]
 on  = "y"

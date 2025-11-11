@@ -1,35 +1,16 @@
+from machineconfig.utils.installer_utils.installer_helper import install_deb_package
 from machineconfig.utils.path_extended import PathExtended, DECOMPRESS_SUPPORTED_FORMATS
 from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT
 from machineconfig.utils.installer_utils.installer_locator_utils import find_move_delete_linux, find_move_delete_windows, check_tool_exists
 from machineconfig.utils.schemas.installer.installer_types import InstallerData, get_os_name, get_normalized_arch
+from machineconfig.utils.installer_utils.github_release_bulk import (
+    get_repo_name_from_url,
+    get_release_info,
+)
 
 import platform
 import subprocess
-import json
-from typing import Optional, Any
-from urllib.parse import urlparse
-
-
-
-def install_deb_package(downloaded: PathExtended) -> None:
-    from rich import print as rprint
-    from rich.panel import Panel
-    print(f"📦 Installing .deb package: {downloaded}")
-    assert platform.system() == "Linux"
-    result = subprocess.run(f"sudo nala install -y {downloaded}", shell=True, capture_output=True, text=True)
-    success = result.returncode == 0 and result.stderr == ""
-    if not success:
-        from rich.console import Group
-        desc = "Installing .deb"
-        sub_panels = []
-        if result.stdout:
-            sub_panels.append(Panel(result.stdout, title="STDOUT", style="blue"))
-        if result.stderr:
-            sub_panels.append(Panel(result.stderr, title="STDERR", style="red"))
-        group_content = Group(f"❌ {desc} failed\nReturn code: {result.returncode}", *sub_panels)
-        rprint(Panel(group_content, title=desc, style="red"))
-    print("🗑️  Cleaning up .deb package...")
-    downloaded.delete(sure=True)
+from typing import Optional
 
 
 class Installer:
@@ -221,44 +202,6 @@ class Installer:
             if only_file_in.is_file() and only_file_in.suffix in DECOMPRESS_SUPPORTED_FORMATS:  # further decompress
                 downloaded = only_file_in.decompress()
         return downloaded, version_to_be_installed
-    @staticmethod
-    def _get_repo_name_from_url(repo_url: str) -> str:
-        """Extract owner/repo from GitHub URL."""
-        try:
-            parsed = urlparse(repo_url)
-            path_parts = parsed.path.strip("/").split("/")
-            return f"{path_parts[0]}/{path_parts[1]}"
-        except (IndexError, AttributeError):
-            return ""
-
-    @staticmethod
-    def _fetch_github_release_data(repo_name: str, version: Optional[str] = None) -> Optional[dict[str, Any]]:
-        """Fetch release data from GitHub API using requests."""
-        import requests
-        try:
-            if version and version.lower() != "latest":  # Fetch specific version
-                url = f"https://api.github.com/repos/{repo_name}/releases/tags/{version}"
-            else:   # Fetch latest release
-                url = f"https://api.github.com/repos/{repo_name}/releases/latest"
-            response = requests.get(url, timeout=30)
-            if response.status_code != 200:
-                print(f"❌ Failed to fetch data for {repo_name}: HTTP {response.status_code}")
-                return None
-            response_data = response.json()
-            # Check if API returned an error
-            if "message" in response_data:
-                if "API rate limit exceeded" in response_data.get("message", ""):
-                    print(f"🚫 Rate limit exceeded for {repo_name}")
-                    return None
-                elif "Not Found" in response_data.get("message", ""):
-                    print(f"🔍 No releases found for {repo_name}")
-                    return None
-                    
-            return response_data
-            
-        except (requests.RequestException, requests.Timeout, json.JSONDecodeError) as e:
-            print(f"❌ Error fetching {repo_name}: {e}")
-            return None
 
     def get_github_release(self, repo_url: str, version: Optional[str]) -> tuple[Optional[str], Optional[str]]:
         """
@@ -270,20 +213,20 @@ class Installer:
         filename_pattern = self.installer_data["fileNamePattern"][arch][os_name]
         if filename_pattern is None:
             raise ValueError(f"No fileNamePattern for {self._get_exe_name()} on {os_name} {arch}")
-        repo_name = self._get_repo_name_from_url(repo_url)
-        if not repo_name:
+        repo_info = get_repo_name_from_url(repo_url)
+        if not repo_info:
             print(f"❌ Invalid repository URL: {repo_url}")
             return None, None
-        release_data = self._fetch_github_release_data(repo_name, version)
-        if not release_data:
+        username, repository = repo_info
+        release_info = get_release_info(username, repository, version)
+        if not release_info:
             return None, None        
-        # print(release_data)
-        actual_version = release_data.get("tag_name", "unknown")
+        actual_version = release_info.get("tag_name", "unknown") or "unknown"
         filename = filename_pattern.format(version=actual_version)
 
         available_filenames: list[str] = []
-        for asset in release_data.get("assets", []):
-            an_dl = asset.get("browser_download_url", "NA")
+        for asset in release_info["assets"]:
+            an_dl = asset["browser_download_url"]
             available_filenames.append(an_dl.split("/")[-1])
         if filename not in available_filenames:
             candidates = [

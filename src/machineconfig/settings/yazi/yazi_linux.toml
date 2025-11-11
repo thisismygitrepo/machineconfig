@@ -8,6 +8,9 @@ system_default = [
   { run = "xdg-open \"$1\"", desc = "System Default", block = false, orphan = false, for = "unix" }
 ]
 edit = [
+  { run = 'hx "$@"', desc = "Helix (Editor)", block = true, orphan = false, for = "unix" }
+]
+vscode = [
   { run = "code \"$@\"", desc = "VSCode (Editor)", block = true, orphan = false, for = "unix" }
 ]
 play = [
@@ -18,6 +21,12 @@ open = [
 ]
 
 [open]
+prepend_rules = [
+  # Text/Code files - open with Helix by default
+  { name = "*.py", use = ["edit", "vscode"] },
+  { name = "*.{rs,toml,yaml,yml,json,js,ts,tsx,jsx,html,css,md,txt,sh,bash,zsh,ps1}", use = ["edit", "vscode"] },
+  { mime = "text/*", use = ["edit", "vscode"] },
+]
 rules = [
   { mime = "application/pdf", use = ["system_default"] },
   { mime = "image/*",     use = ["system_default"] },
