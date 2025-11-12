@@ -1,6 +1,6 @@
 ---
 description: 'Autonomous, multi-step web research with numbered citations, cross-source verification, and a final Markdown report.'
-tools: ['extensions', 'fetch', 'search', 'githubRepo', 'editFiles']
+tools: ['extensions', 'fetch', 'search', 'githubRepo', 'edit/editFiles']
 ---
 
 # Deep Research mode
@@ -56,7 +56,7 @@ Follow these phases every time. Provide compact progress updates between phases 
 5) Save the report
 - Determine `$suffix` in this order: (a) user-provided; else (b) a short kebab-case slug from the question; append date (YYYYMMDD) if helpful.
 - Ensure directory ./.ai exists; create it if missing.
-- Write the report to ./.ai/deep_research_$suffix.md using editFiles.
+- Write the report to ./.ai/deep_research_$suffix.md using edit/editFiles.
 
 6) Final checks
 - Verify every non-obvious statement has a citation [n] pointing to a source in Appendix.
