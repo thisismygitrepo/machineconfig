@@ -7,28 +7,28 @@ import subprocess
 import platform
 
 
-def find_move_delete_windows(downloaded_file_path: PathExtended, exe_name: Optional[str] = None, delete: bool = True, rename_to: Optional[str] = None):
-    print("🔍 PROCESSING WINDOWS EXECUTABLE 🔍")
-    if exe_name is not None and len(exe_name.split("+")) > 1:
-        last_result = None
-        for a_binary in [x.strip() for x in exe_name.split("+") if x.strip() != ""]:
-            last_result = find_move_delete_windows(downloaded_file_path=downloaded_file_path, exe_name=a_binary, delete=delete, rename_to=rename_to)
-        return last_result
-    if exe_name is not None and ".exe" in exe_name:
-        exe_name = exe_name.replace(".exe", "")
+def find_move_delete_windows(downloaded_file_path: PathExtended, tool_name: Optional[str], delete: bool, rename_to: Optional[str]):
+    # print("🔍 PROCESSING WINDOWS EXECUTABLE 🔍")
+    # if exe_name is not None and len(exe_name.split("+")) > 1:
+    #     last_result = None
+    #     for a_binary in [x.strip() for x in exe_name.split("+") if x.strip() != ""]:
+    #         last_result = find_move_delete_windows(downloaded_file_path=downloaded_file_path, exe_name=a_binary, delete=delete, rename_to=rename_to)
+    #     return last_result
+    if tool_name is not None and ".exe" in tool_name:
+        tool_name = tool_name.replace(".exe", "")
     if downloaded_file_path.is_file():
         exe = downloaded_file_path
         print(f"📄 Found direct executable file: {exe}")
     else:
         print(f"🔎 Searching for executable in: {downloaded_file_path}")
-        if exe_name is None:
+        if tool_name is None:
             exe = downloaded_file_path.search("*.exe", r=True)[0]
             print(f"✅ Found executable: {exe}")
         else:
-            tmp = downloaded_file_path.search(f"{exe_name}.exe", r=True)
+            tmp = downloaded_file_path.search(f"{tool_name}.exe", r=True)
             if len(tmp) == 1:
                 exe = tmp[0]
-                print(f"✅ Found exact match for {exe_name}.exe: {exe}")
+                print(f"✅ Found exact match for {tool_name}.exe: {exe}")
             else:
                 search_res = downloaded_file_path.search("*.exe", r=True)
                 if len(search_res) == 0:
@@ -57,12 +57,12 @@ def find_move_delete_windows(downloaded_file_path: PathExtended, exe_name: Optio
     return exe_new_location
 
 
-def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: Optional[bool] = True, rename_to: Optional[str] = None):
-    if len(tool_name.split("+")) > 1:
-        last_result = None
-        for a_binary in [x.strip() for x in tool_name.split("+") if x.strip() != ""]:
-            last_result = find_move_delete_linux(downloaded=downloaded, tool_name=a_binary, delete=False, rename_to=rename_to)
-        return last_result
+def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: bool, rename_to: Optional[str]):
+    # if len(tool_name.split("+")) > 1:
+    #     last_result = None
+    #     for a_binary in [x.strip() for x in tool_name.split("+") if x.strip() != ""]:
+    #         last_result = find_move_delete_linux(downloaded=downloaded, tool_name=a_binary, delete=False, rename_to=rename_to)
+    #     return last_result
 
     print("🔍 PROCESSING LINUX EXECUTABLE 🔍")
     if downloaded.is_file():

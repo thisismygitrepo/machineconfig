@@ -11,6 +11,9 @@
 * stress-ng & sysbench
 
 # Sources:
+* https://github.com/rothgar/awesome-tuis
+* https://github.com/ratatui/awesome-ratatui?tab=readme-ov-file
+* https://github.com/toolleeo/awesome-cli-apps-in-a-csv
 * https://github.com/catppuccin/
 * https://github.com/jsonresume/resume-cli
 * https://www.bashbunni.dev/
