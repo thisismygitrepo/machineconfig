@@ -1532,6 +1532,23 @@
       }
     },
     {
+      "appName": "lazysql",
+      "repoURL": "https://github.com/jorgerojas26/lazysql",
+      "doc": "🗃️ TUI DB Visualizer",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "lazysql_Linux_x86_64.tar.gz",
+          "macos": "lazysql_Darwin_x86_64.tar.gz",
+          "windows": "lazysql_Windows_x86_64.zip"
+        },
+        "arm64": {
+          "linux": "lazysql_Linux_arm64.tar.gz",
+          "macos": "lazysql_Darwin_arm64.tar.gz",
+          "windows": "lazysql_Windows_arm64.zip"
+        }
+      }
+    },
+    {
       "appName": "pgweb",
       "repoURL": "https://github.com/sosedoff/pgweb/",
       "doc": "🗃️ Web-based PostgreSQL database browser written in Go",

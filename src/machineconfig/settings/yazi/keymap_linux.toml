@@ -4,6 +4,14 @@ prepend_keymap = [
   { on = [ "g", ":" ], run  = "plugin goto-drives", desc = "Go to drives" },
 ]
 
+[[mgr.prepend_keymap]]
+on   = "v"
+run  = """
+shell '''
+SEL=$(tv "$0")
+''' --block
+"""
+desc = "Run tv on hovered file and jump to selected result"
 
 [[mgr.prepend_keymap]]
 on   = "!"
