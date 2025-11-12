@@ -99,6 +99,11 @@ keymap = {this = '~/AppData/Roaming/yazi/config/keymap.toml', to_this = 'CONFIG_
 theme = {this = '~/AppData/Roaming/yazi/config/theme.toml', to_this = 'CONFIG_ROOT/settings/yazi/theme.toml'}
 init = {this = '~/AppData/Roaming/yazi/config/init.lua', to_this = 'CONFIG_ROOT/settings/yazi/init.lua'}
 
+[television_linux]
+cable = {this = '~/.config/television/cable', to_this = 'CONFIG_ROOT/settings/television/cable_unix'}
+
+[television_windows]
+cable = {this = '~/.config/television/cable', to_this = 'CONFIG_ROOT/settings/television/cable_windows'}
 
 
 [yazi_linux]

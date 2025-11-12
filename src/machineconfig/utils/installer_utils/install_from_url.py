@@ -79,7 +79,7 @@ def _finalize_install(repo_name: str, asset_name: str, version: str, extracted_p
     rename_target = f"{tool_name}.exe" if system_name == "Windows" else tool_name
     try:
         if system_name == "Windows":
-            installed_path = find_move_delete_windows(downloaded_file_path=extracted_path, exe_name=tool_name, delete=True, rename_to=rename_target)
+            installed_path = find_move_delete_windows(downloaded_file_path=extracted_path, tool_name=tool_name, delete=True, rename_to=rename_target)
         elif system_name in {"Linux", "Darwin"}:
             installed_path = find_move_delete_linux(downloaded=extracted_path, tool_name=tool_name, delete=True, rename_to=rename_target)
         else:
@@ -87,7 +87,7 @@ def _finalize_install(repo_name: str, asset_name: str, version: str, extracted_p
             raise typer.Exit(1)
     except IndexError:
         if system_name == "Windows":
-            installed_path = find_move_delete_windows(downloaded_file_path=extracted_path, exe_name=None, delete=True, rename_to=rename_target)
+            installed_path = find_move_delete_windows(downloaded_file_path=extracted_path, tool_name=None, delete=True, rename_to=rename_target)
         elif system_name in {"Linux", "Darwin"}:
             installed_path = find_move_delete_linux(downloaded=extracted_path, tool_name="", delete=True, rename_to=rename_target)
         else:

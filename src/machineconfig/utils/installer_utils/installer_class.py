@@ -118,7 +118,7 @@ class Installer:
                     downloaded_object = downloaded_object.decompress()
                 if downloaded_object.suffix in [".exe", ""]:  # likely an executable
                     if platform.system() == "Windows":
-                        exe = find_move_delete_windows(downloaded_file_path=downloaded_object, exe_name=exe_name, delete=True, rename_to=exe_name.replace(".exe", "") + ".exe")
+                        exe = find_move_delete_windows(downloaded_file_path=downloaded_object, tool_name=exe_name, delete=True, rename_to=exe_name.replace(".exe", "") + ".exe")
                     elif platform.system() in ["Linux", "Darwin"]:
                         system_name = "Linux" if platform.system() == "Linux" else "macOS"
                         print(f"🐧 Installing on {system_name}...")
@@ -150,7 +150,7 @@ class Installer:
             if str(downloaded).endswith(".deb"): install_deb_package(downloaded)
             else:
                 if platform.system() == "Windows":
-                    exe = find_move_delete_windows(downloaded_file_path=downloaded, exe_name=exe_name, delete=True, rename_to=exe_name.replace(".exe", "") + ".exe")
+                    exe = find_move_delete_windows(downloaded_file_path=downloaded, tool_name=exe_name, delete=True, rename_to=exe_name.replace(".exe", "") + ".exe")
                 elif platform.system() in ["Linux", "Darwin"]:
                     system_name = "Linux" if platform.system() == "Linux" else "macOS"
                     print(f"🐧 Installing on {system_name}...")
