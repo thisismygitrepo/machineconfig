@@ -1,36 +1,51 @@
 from pathlib import Path
-from machineconfig.utils.installer_utils.installer_locator_utils import check_tool_exists
 from rich.text import Text
 from rich.panel import Panel
 from rich.console import Console
 import subprocess
 from typing import Optional, Union, Iterable, overload, Literal, cast
 
-
-# def strip_ansi_codes(text: str) -> str:
-#     """Remove ANSI color codes from text."""
-#     import re
-#     return re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
-
-
 @overload
-def choose_from_options[T](options: Iterable[T], msg: str, multi: Literal[False], custom_input: bool = False, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False) -> T: ...
+def choose_from_options[T](options: Iterable[T], msg: str, multi: Literal[False], custom_input: bool = False, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, tv: bool = False) -> T: ...
 @overload
-def choose_from_options[T](options: Iterable[T], msg: str, multi: Literal[True], custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False, ) -> list[T]: ...
-def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, fzf: bool = False, ) -> Union[T, list[T]]:
+def choose_from_options[T](options: Iterable[T], msg: str, multi: Literal[True], custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, tv: bool = False, ) -> list[T]: ...
+def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, tv: bool = False, ) -> Union[T, list[T]]:
     # TODO: replace with https://github.com/tmbo/questionary
     # # also see https://github.com/charmbracelet/gum
     options_strings: list[str] = [str(x) for x in options]
     default_string = str(default) if default is not None else None
     console = Console()
-    fzf_exists = check_tool_exists("fzf")
-    # print("\n" * 10, f"{fzf=}, {fzf_exists=}", "\n" * 10)
-    if fzf and fzf_exists:
-        from pyfzf.pyfzf import FzfPrompt
-        fzf_prompt = FzfPrompt()
-        nl = "\n"
-        choice_string_multi: list[str] = fzf_prompt.prompt(choices=options_strings, fzf_options=("--multi" if multi else "") + f' --prompt "{prompt.replace(nl, " ")}" --ansi')  # --border-label={msg.replace(nl, ' ')}")
-        # --border=rounded doens't work on older versions of fzf installed at Ubuntu 20.04
+    # from machineconfig.utils.installer_utils.installer_locator_utils import check_tool_exists
+    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+    if tv and install_if_missing("tv"):
+        # from pyfzf.pyfzf import FzfPrompt
+        # fzf_prompt = FzfPrompt()
+        # nl = "\n"
+        # choice_string_multi: list[str] = fzf_prompt.prompt(choices=options_strings, fzf_options=("--multi" if multi else "") + f' --prompt "{prompt.replace(nl, " ")}" --ansi')  # --border-label={msg.replace(nl, ' ')}")
+        from machineconfig.utils.accessories import randstr
+        options_txt_path = Path.home().joinpath("tmp_results/tmp_files/choices_" + randstr(6) + ".txt")
+        options_txt_path.parent.mkdir(parents=True, exist_ok=True)
+        options_txt_path.write_text("\n".join(options_strings), encoding="utf-8")
+
+        # Run `tv` interactively so the user can make selections. We redirect tv's
+        # stdout to a temporary output file so we can read the chosen lines after
+        # the interactive session completes. Do not capture_output or redirect
+        # stdin/stderr here so `tv` stays attached to the terminal.
+        tv_out_path = options_txt_path.with_name(options_txt_path.stem + "_out.txt")
+        tv_cmd = f"cat {options_txt_path} | tv > {tv_out_path}"
+        res = subprocess.run(tv_cmd, shell=True)
+
+        # If tv returned a non-zero code and there is no output file, treat it as an error.
+        if res.returncode != 0 and not tv_out_path.exists():
+            raise RuntimeError(f"Got error running tv command: {tv_cmd}\nreturncode: {res.returncode}")
+
+        # Read selections (if any) from the output file created by tv.
+        out_text = tv_out_path.read_text(encoding="utf-8") if tv_out_path.exists() else ""
+        choice_string_multi = [x for x in out_text.splitlines() if x.strip() != ""]
+
+        # Cleanup temporary files
+        options_txt_path.unlink(missing_ok=True)
+        tv_out_path.unlink(missing_ok=True)
         if not multi:
             try:
                 choice_one_string = choice_string_multi[0]
@@ -65,7 +80,7 @@ def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_i
         if choice_string == "":
             if default_string is None:
                 console.print(Panel("🧨 Default option not available!", title="Error", expand=False))
-                return choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
+                return choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, tv=tv, multi=multi, custom_input=custom_input)
             choice_idx = options_strings.index(default_string)
             assert default is not None, "🧨 Default option not available!"
             choice_one: T = default
@@ -83,7 +98,7 @@ def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_i
                     _ = ie
                     # raise ValueError(f"Unknown choice. {choice_string}") from ie
                     console.print(Panel(f"❓ Unknown choice: '{choice_string}'", title="Error", expand=False))
-                    return choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
+                    return choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, tv=tv, multi=multi, custom_input=custom_input)
             except (TypeError, ValueError) as te:  # int(choice_string) failed due to # either the number is invalid, or the input is custom.
                 if choice_string in options_strings:  # string input
                     choice_idx = options_strings.index(choice_one)  # type: ignore
@@ -94,7 +109,7 @@ def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_i
                     _ = te
                     # raise ValueError(f"Unknown choice. {choice_string}") from te
                     console.print(Panel(f"❓ Unknown choice: '{choice_string}'", title="Error", expand=False))
-                    return choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, fzf=fzf, multi=multi, custom_input=custom_input)
+                    return choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, tv=tv, multi=multi, custom_input=custom_input)
         console.print(Panel(f"✅ Selected option {choice_idx}: {choice_one}", title="Selected", expand=False))
         if multi:
             return [choice_one]
@@ -113,7 +128,7 @@ def choose_cloud_interactively() -> str:
         raise ValueError(f"Got {tmp} from rclone listremotes")
     if len(remotes) == 0:
         raise RuntimeError("You don't have remotes. Configure your rclone first to get cloud services access.")
-    cloud: str = choose_from_options(msg="WHICH CLOUD?", multi=False, options=list(remotes), default=remotes[0], fzf=True)
+    cloud: str = choose_from_options(msg="WHICH CLOUD?", multi=False, options=list(remotes), default=remotes[0], tv=True)
     console.print(Panel(f"✅ SELECTED CLOUD | {cloud}", border_style="bold blue", expand=False))
     return cloud
 
@@ -131,4 +146,4 @@ def choose_ssh_host(multi: Literal[False]) -> str: ...
 @overload
 def choose_ssh_host(multi: Literal[True]) -> list[str]: ...
 def choose_ssh_host(multi: bool):
-    return choose_from_options(msg="", options=get_ssh_hosts(), multi=multi, fzf=True)
+    return choose_from_options(msg="", options=get_ssh_hosts(), multi=multi, tv=True)

@@ -27,7 +27,7 @@
 # def print_code_interactive(_):
 #     res = get_names()
 #     from machineconfig.utils.utils import choose_from_options
-#     choice = choose_from_options(multi=False, options=res["<class 'function'>"], msg="Choose a type to inspect", fzf=True)
+#     choice = choose_from_options(multi=False, options=res["<class 'function'>"], msg="Choose a type to inspect", tv=True)
 #     obj = eval(choice, globals(), locals())  # type: ignore  # pylint: disable=eval-used
 #     from rich.syntax import Syntax
 #     import inspect

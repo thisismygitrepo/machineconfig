@@ -82,7 +82,7 @@ def match_file_name(sub_string: str, search_root: Path, suffixes: set[str]) -> P
             return Path(reduced_scripts[0])
         elif len(reduced_scripts) > 1:
             from machineconfig.utils.options import choose_from_options
-            choice = choose_from_options(multi=False, msg="Multiple matches found", options=reduced_scripts, fzf=True)
+            choice = choose_from_options(multi=False, msg="Multiple matches found", options=reduced_scripts, tv=True)
             return Path(choice)
         print(f"Result: This still generated {len(reduced_scripts)} results.")
         if len(reduced_scripts) < 10:
@@ -169,7 +169,7 @@ def get_choice_file(path: str, suffixes: Optional[set[str]]):
         files = search_for_files_of_interest(path_obj, suffixes=suffixes)
         print(f"🔍 Got #{len(files)} results.")
         from machineconfig.utils.options import choose_from_options
-        choice_file = choose_from_options(multi=False, options=files, fzf=True, msg="Choose one option")
+        choice_file = choose_from_options(multi=False, options=files, tv=True, msg="Choose one option")
         choice_file = Path(choice_file)
     else:
         choice_file = path_obj

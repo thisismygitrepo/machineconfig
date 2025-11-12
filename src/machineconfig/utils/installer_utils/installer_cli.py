@@ -81,7 +81,7 @@ def install_interactively():
     installer_options = [Installer(installer_data=x).get_description() for x in installers]
     category_display_to_name = get_group_name_to_repr()
     options = list(category_display_to_name.keys()) + installer_options
-    program_names = choose_from_options(multi=True, msg="Categories are prefixed with 📦", options=options, header="🚀 CHOOSE DEV APP OR CATEGORY", fzf=True)
+    program_names = choose_from_options(multi=True, msg="Categories are prefixed with 📦", options=options, header="🚀 CHOOSE DEV APP OR CATEGORY", tv=True)
     installation_messages: list[str] = []
     for _an_idx, a_program_name in enumerate(program_names):
         if a_program_name.startswith("📦 "):
@@ -153,16 +153,20 @@ def install_clis(clis_names: list[str]):
         for a_message in total_messages:
             console.print(f"[blue]• {a_message}[/blue]")
     return None
-def install_if_missing(which: str):
+def install_if_missing(which: str) -> bool:
     from machineconfig.utils.installer_utils.installer_locator_utils import check_tool_exists
     exists = check_tool_exists(which)
     if exists:
         print(f"✅ {which} is already installed.")
-        return
+        return True
     print(f"⏳ {which} not found. Installing...")
     from machineconfig.utils.installer_utils.installer_cli import main_installer_cli
-    main_installer_cli(which=which, interactive=False)
-
+    try:
+        main_installer_cli(which=which, interactive=False)
+        return True
+    except Exception as e:
+        print(f"❌ Error installing {which}: {e}")
+    return False
 
 if __name__ == "__main__":
     from machineconfig.utils.schemas.installer.installer_types import InstallerData

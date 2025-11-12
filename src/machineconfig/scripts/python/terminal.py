@@ -44,7 +44,7 @@ def choose_zellij_session(
         # Artificially inject a "NEW SESSION" option so the user can create one from the list
         NEW_SESSION_LABEL = "NEW SESSION"
         options = [NEW_SESSION_LABEL] + sessions
-        session = choose_from_options(msg="Choose a Zellij session to attach to:", multi=False, options=options, fzf=True)
+        session = choose_from_options(msg="Choose a Zellij session to attach to:", multi=False, options=options, tv=True)
         # If the user chose the artificial option, start a new session (same as --new-session)
         if session == NEW_SESSION_LABEL:
             cmd = "zellij --layout st2"

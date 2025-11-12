@@ -45,7 +45,7 @@ schemes_list = [
 
 def main2():
     console.print(Panel("🎨 WezTerm Theme Selector", title_align="left", border_style="green"))
-    option = choose_from_options(multi=False, options=schemes_list, header="Choose a theme for Wezterm", fzf=True, msg="Use arrow keys to navigate, Enter to select a theme")
+    option = choose_from_options(multi=False, options=schemes_list, header="Choose a theme for Wezterm", tv=True, msg="Use arrow keys to navigate, Enter to select a theme")
     set_theme(option)
     print(f"✅ Theme set to: {option}")
 

@@ -25,7 +25,7 @@ def create_from_function(
         print(f"🔍 Searching recursively for Python, PowerShell and Shell scripts in directory `{path_obj}`")
         files = search_for_files_of_interest(path_obj, suffixes={".py", ".sh", ".ps1"})
         print(f"🔍 Got #{len(files)} results.")
-        choice_file = choose_from_options(multi=False, options=files, fzf=True, msg="Choose one option")
+        choice_file = choose_from_options(multi=False, options=files, tv=True, msg="Choose one option")
         choice_file = Path(choice_file)
     else:
         choice_file = path_obj
