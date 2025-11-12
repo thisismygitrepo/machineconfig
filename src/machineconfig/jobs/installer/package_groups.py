@@ -193,6 +193,7 @@ PACKAGES_FILE = [
     "winget",
     "fd",
     "fzf",
+    "tv",
     "broot",
     "rg",
     "rga",

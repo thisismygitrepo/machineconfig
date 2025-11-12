@@ -40,6 +40,10 @@ applyTo: "**/*.py"
 * Make sure all the code is rigorous, no lazy stuff.
     * For example, always avoid default values in arguments of functions. Those are evil and cause confusion. Always be explicit in parameter passing.
     * Please never ever attempt to change code files by writing meta code to do string manipulation on files, e.g. with `sed` command with terminal. Please do change the files one by one, no matter how many there is. Don't worry about time, nor context window size, its okay, take your time and do the legwork. You can stop in the middle and we will have another LLM to help with the rest.
+* Your code is minimal, no unrequested features, no bloat.
 * Please avoid writing README files and avoid docstring and comments in code unless absolutely necessary. Use clear naming conventions instead of documenting.
 * Always prefer to functional style of programming over OOP.
 * When passing arguments or constructing dicts or lists or tuples, avoid breaking lines too much, try to use ~ 150 characters per line before breaking to new one.
+
+# Privacy:
+* No matter what, never ever open/read/write/list anything under ~/dotfiles

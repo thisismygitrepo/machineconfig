@@ -665,6 +665,23 @@
       }
     },
     {
+      "appName": "tv",
+      "repoURL": "https://github.com/alexpasmantier/television",
+      "doc": "🔍 A fast and hackable fuzzy finder for the terminal.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "tv-{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "tv-{version}-x86_64-apple-darwin.tar.gz",
+          "windows": "tv-{version}-x86_64-pc-windows-msvc.zip"
+        },
+        "arm64": {
+          "linux": "tv-{version}-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "tv-{version}-aarch64-apple-darwin.tar.gz",
+          "windows": null
+        }
+      }
+    },
+    {
       "appName": "gitui",
       "repoURL": "https://github.com/gitui-org/gitui",
       "doc": "🐙 gitui is a terminal ui for git written in rust.",
