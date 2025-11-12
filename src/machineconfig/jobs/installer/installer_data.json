@@ -206,6 +206,40 @@
       }
     },
     {
+      "appName": "mprocs",
+      "repoURL": "https://github.com/pvolok/mprocs",
+      "doc": "🖥️ Windows/Linux/macOS poorman's zellij",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "mprocs-{version}-linux-x86_64-musl.tar.gz",
+          "macos": "mprocs-{version}-darwin-x86_64.tar.gz",
+          "windows": "mprocs-{version}-windows-x86_64.zip"
+        },
+        "arm64": {
+          "linux": "mprocs-{version}-linux-aarch64-musl.tar.gz",
+          "macos": "mprocs-{version}-darwin-aarch64.tar.gz",
+          "windows": "mprocs-{version}-windows-x86_64.zip"
+        }
+      }
+    },
+    {
+      "appName": "process-compose",
+      "repoURL": "https://github.com/F1bonacc1/process-compose",
+      "doc": "Process Compose is a simple and flexible scheduler and orchestrator to manage non-containerized applications.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "process-compose_linux_amd64.tar.gz",
+          "macos": "process-compose_darwin_amd64.tar.gz",
+          "windows": "process-compose_windows_amd64.zip"
+        },
+        "arm64": {
+          "linux": "process-compose_linux_arm.tar.gz",
+          "macos": "process-compose_darwin_arm64.tar.gz",
+          "windows": "process-compose_windows_arm64.zip"
+        }
+      }
+    },
+    {
       "appName": "zellij",
       "repoURL": "https://github.com/zellij-org/zellij",
       "doc": "🖥️ Zellij is a terminal workspace with support for multiple plugins, such as a terminal, status bar, tabs, splits, etc.",
@@ -814,40 +848,6 @@
           "linux": "mcfly-{version}-aarch64-unknown-linux-musl.tar.gz",
           "macos": "mcfly-{version}-aarch64-apple-darwin.tar.gz",
           "windows": "mcfly-{version}-aarch64-pc-windows-msvc.zip"
-        }
-      }
-    },
-    {
-      "appName": "mods",
-      "repoURL": "https://github.com/charmbracelet/mods/",
-      "doc": "🤖 AI for the command line, built for pipelines",
-      "fileNamePattern": {
-        "amd64": {
-          "linux": "mods_{version}_Linux_x86_64.tar.gz",
-          "macos": "mods_{version}_Darwin_x86_64.tar.gz",
-          "windows": "mods_{version}_Windows_x86_64.zip"
-        },
-        "arm64": {
-          "linux": "mods_{version}_Linux_arm64.tar.gz",
-          "macos": "mods_{version}_Darwin_arm64.tar.gz",
-          "windows": "mods_{version}_Windows_arm64.zip"
-        }
-      }
-    },
-    {
-      "appName": "mprocs",
-      "repoURL": "https://github.com/pvolok/mprocs",
-      "doc": "🖥️ Windows/Linux/macOS poorman's zellij",
-      "fileNamePattern": {
-        "amd64": {
-          "linux": "mprocs-{version}-linux-x86_64-musl.tar.gz",
-          "macos": "mprocs-{version}-darwin-x86_64.tar.gz",
-          "windows": "mprocs-{version}-windows-x86_64.zip"
-        },
-        "arm64": {
-          "linux": "mprocs-{version}-linux-aarch64-musl.tar.gz",
-          "macos": "mprocs-{version}-darwin-aarch64.tar.gz",
-          "windows": "mprocs-{version}-windows-x86_64.zip"
         }
       }
     },
@@ -2532,6 +2532,23 @@
           "linux": "uv tool install --force --python python3.13 aider-chat@latest",
           "windows": "uv tool install --force --python python3.13 aider-chat@latest",
           "macos": "uv tool install --force --python python3.13 aider-chat@latest"
+        }
+      }
+    },
+    {
+      "appName": "mods",
+      "repoURL": "https://github.com/charmbracelet/mods/",
+      "doc": "🤖 AI for the command line, built for pipelines",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "mods_{version}_Linux_x86_64.tar.gz",
+          "macos": "mods_{version}_Darwin_x86_64.tar.gz",
+          "windows": "mods_{version}_Windows_x86_64.zip"
+        },
+        "arm64": {
+          "linux": "mods_{version}_Linux_arm64.tar.gz",
+          "macos": "mods_{version}_Darwin_arm64.tar.gz",
+          "windows": "mods_{version}_Windows_arm64.zip"
         }
       }
     },

@@ -117,10 +117,9 @@ def download(
 
     typer.echo(f"✅ Downloaded to: {download_path}")
     result_path: Path = download_path
-
     if decompress:
         typer.echo(f"📦 Decompressing: {download_path}")
-        base_name = download_path.stem
+        base_name = download_path.name.split(".", maxsplit=1)[0]  # ouch decompresses all (e.g. .tar.gz) in one go.
         if base_name in {"", ".", ".."}:
             base_name = "extracted"
         extract_dir = download_path.parent / base_name
