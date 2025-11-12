@@ -1583,6 +1583,23 @@
       }
     },
     {
+      "appName": "gonzo",
+      "repoURL": "https://github.com/control-theory/gonzo",
+      "doc": "🕶️ Gonzo is a Go-based TUI for real-time log analysis, like nerdlog, caps-log and lnav.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "gonzo-{version}-linux-amd64.tar.gz",
+          "macos": "gonzo-{version}-darwin-amd64.tar.gz",
+          "windows": "gonzo-{version}-windows-amd64.zip"
+        },
+        "arm64": {
+          "linux": "gonzo-{version}-linux-arm64.tar.gz",
+          "macos": "gonzo-{version}-darwin-arm64.tar.gz",
+          "windows": "gonzo-{version}-windows-arm64.zip"
+        }
+      }
+    },
+    {
       "appName": "cpz",
       "repoURL": "https://github.com/SUPERCILEX/fuc",
       "doc": "📋 Fast copy",

@@ -1676,6 +1676,7 @@ dev = [
     { name = "types-sqlalchemy" },
     { name = "types-toml" },
     { name = "types-urllib3" },
+    { name = "yapf" },
 ]
 other = [
     { name = "duckdb-engine" },
@@ -1755,6 +1756,7 @@ dev = [
     { name = "types-sqlalchemy", specifier = ">=1.4.53.38" },
     { name = "types-toml", specifier = ">=0.10.8.20240310" },
     { name = "types-urllib3", specifier = ">=1.26.25.14" },
+    { name = "yapf", specifier = ">=0.43.0" },
 ]
 other = [
     { name = "duckdb-engine", specifier = ">=0.17.0" },
