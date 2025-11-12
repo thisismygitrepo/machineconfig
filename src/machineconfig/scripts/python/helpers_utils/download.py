@@ -98,7 +98,7 @@ def download(
                     file_handle.write(response.content)
             else:
                 downloaded = 0
-                chunk_size = 8192 * 4
+                chunk_size = 8192 * 40
                 with open(download_path, "wb") as file_handle:
                     for chunk in response.iter_content(chunk_size=chunk_size):
                         if not chunk:

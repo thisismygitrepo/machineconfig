@@ -9,6 +9,11 @@ import platform
 
 def find_move_delete_windows(downloaded_file_path: PathExtended, exe_name: Optional[str] = None, delete: bool = True, rename_to: Optional[str] = None):
     print("🔍 PROCESSING WINDOWS EXECUTABLE 🔍")
+    if exe_name is not None and len(exe_name.split("+")) > 1:
+        last_result = None
+        for a_binary in [x.strip() for x in exe_name.split("+") if x.strip() != ""]:
+            last_result = find_move_delete_windows(downloaded_file_path=downloaded_file_path, exe_name=a_binary, delete=delete, rename_to=rename_to)
+        return last_result
     if exe_name is not None and ".exe" in exe_name:
         exe_name = exe_name.replace(".exe", "")
     if downloaded_file_path.is_file():
@@ -53,6 +58,12 @@ def find_move_delete_windows(downloaded_file_path: PathExtended, exe_name: Optio
 
 
 def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: Optional[bool] = True, rename_to: Optional[str] = None):
+    if len(tool_name.split("+")) > 1:
+        last_result = None
+        for a_binary in [x.strip() for x in tool_name.split("+") if x.strip() != ""]:
+            last_result = find_move_delete_linux(downloaded=downloaded, tool_name=a_binary, delete=False, rename_to=rename_to)
+        return last_result
+
     print("🔍 PROCESSING LINUX EXECUTABLE 🔍")
     if downloaded.is_file():
         exe = downloaded

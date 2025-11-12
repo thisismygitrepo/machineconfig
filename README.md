@@ -10,12 +10,21 @@
 
 # 🧠 Welcome to **Machineconfig**
 
-**Machineconfig** is a cli-based **Stack Manager** — It is a *Package Manager*, *Configuration Manager*, *Automation Tool*, *Dotfiles Manager*, *Data Solution*, and *Code Manager*, among other functionalities covered, all rolled into one seamless experience, that is consistent across different platforms.
+**Machineconfig** is a cli-based cross-platform **Stack Manager** — It is a *Package Manager*, *Configuration Manager*, *Automation Tool*, *Dotfiles Manager*, *Data Solution*, and *Code Manager*, among other functionalities covered, all rolled into one seamless experience, that is consistent across different platforms.
 
 
 ## 💡 Motivation
+Your stack is awessome, but you need stack a manager for it, to put it together and maintain it.
+What is your stack? Say you have a new computer/ VM, how to set it?
+* A bunch of CLI tools.
+* [Optional] A bunch of softwares (GUIs for desktop environment)
+* [Public] A bunch of configuration files for your tools.
+* [Private] A bunch of config files that are secrets, passowords, tokens, credentials etc, etc.
+* Data (Both highly sensitive and encrypted and less serious unencrypted data)
+* Code (your repositories).
 
-But why do we need such a tool to combine all those functionalities?? Because you need one tool to manager your stack and dev-environment, put it together and maintain it.
+Wouldn't be nice if you can set it all up in 2 minutes? This is a hackable tool to get it done.
+
 Consider this concrete scenario: When setting up a new machine, VM, or Docker container, you often face dependency chains like this:
 
 ```mermaid
