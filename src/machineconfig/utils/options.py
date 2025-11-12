@@ -32,9 +32,9 @@ def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_i
         # the interactive session completes. Do not capture_output or redirect
         # stdin/stderr here so `tv` stays attached to the terminal.
         tv_out_path = options_txt_path.with_name(options_txt_path.stem + "_out.txt")
-        tv_cmd = f"cat {options_txt_path} | tv > {tv_out_path}"
+        tv_cmd = f"""cat {options_txt_path} | tv  --ansi true --source-output "{{strip_ansi}}" > {tv_out_path}"""
         res = subprocess.run(tv_cmd, shell=True)
-
+    
         # If tv returned a non-zero code and there is no output file, treat it as an error.
         if res.returncode != 0 and not tv_out_path.exists():
             raise RuntimeError(f"Got error running tv command: {tv_cmd}\nreturncode: {res.returncode}")

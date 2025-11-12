@@ -1607,7 +1607,6 @@ dependencies = [
     { name = "joblib" },
     { name = "paramiko" },
     { name = "psutil" },
-    { name = "pyfzf" },
     { name = "questionary" },
     { name = "randomname" },
     { name = "rclone-python" },
@@ -1701,7 +1700,6 @@ requires-dist = [
     { name = "plotly", marker = "extra == 'plot'", specifier = ">=6.3.0" },
     { name = "polars", marker = "extra == 'plot'", specifier = ">=1.33.1" },
     { name = "psutil", specifier = ">=7.0.0" },
-    { name = "pyfzf", specifier = ">=0.3.1" },
     { name = "python-magic", marker = "extra == 'plot'", specifier = ">=0.4.27" },
     { name = "pywin32", marker = "extra == 'windows'" },
     { name = "questionary", specifier = ">=2.1.1" },
@@ -2712,15 +2710,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/57/f9/669d8c9c86613c9d568757c7f5824bd3197d7b1c6c27553bc5618a27cce2/pyflakes-3.2.0.tar.gz", hash = "sha256:1c61603ff154621fb2a9172037d84dca3500def8c8b630657d1701f026f8af3f", size = 63788, upload-time = "2024-01-05T00:28:47.703Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d4/d7/f1b7db88d8e4417c5d47adad627a93547f44bdc9028372dbd2313f34a855/pyflakes-3.2.0-py2.py3-none-any.whl", hash = "sha256:84b5be138a2dfbb40689ca07e2152deb896a65c3a3e24c251c5c62489568074a", size = 62725, upload-time = "2024-01-05T00:28:45.903Z" },
-]
-
-[[package]]
-name = "pyfzf"
-version = "0.3.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d4/4c/c0c658a1e1e9f0e01932990d7947579515fe048d0a515f07458ecd992b8f/pyfzf-0.3.1.tar.gz", hash = "sha256:dd902e34cffeca9c3082f96131593dd20b4b3a9bba5b9dde1b0688e424b46bd2", size = 3652, upload-time = "2022-03-01T11:43:51.248Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/99/35/6a6c7b95390ec58904646a04f54e1b56fd57d7a247588b791c6331697797/pyfzf-0.3.1-py3-none-any.whl", hash = "sha256:736f71563461b75f6f85b55345bdc638fa0dc14c32c857c59e8b1ca1cfa3cf4a", size = 4315, upload-time = "2022-03-01T11:43:49.754Z" },
 ]
 
 [[package]]
