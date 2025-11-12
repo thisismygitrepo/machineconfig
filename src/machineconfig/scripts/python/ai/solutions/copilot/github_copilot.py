@@ -7,20 +7,20 @@ from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 
 def build_configuration(repo_root: Path) -> None:
     instructions_repository_dir = LIBRARY_ROOT.joinpath("scripts/python/ai/solutions/copilot/instructions")
-    chatmodes_dir = LIBRARY_ROOT.joinpath("scripts/python/ai/solutions/copilot/chatmodes")
+    agents_dir = LIBRARY_ROOT.joinpath("scripts/python/ai/solutions/copilot/agents")
     prompts_dir = LIBRARY_ROOT.joinpath("scripts/python/ai/solutions/copilot/prompts")
 
     github_dir = repo_root.joinpath(".github")
-    chatmodes_target_dir = github_dir.joinpath("chatmodes")
+    agents_target_dir = github_dir.joinpath("agents")
     prompts_target_dir = github_dir.joinpath("prompts")
     instructions_target_dir = github_dir.joinpath("instructions")
 
-    chatmodes_target_dir.mkdir(parents=True, exist_ok=True)
+    agents_target_dir.mkdir(parents=True, exist_ok=True)
     prompts_target_dir.mkdir(parents=True, exist_ok=True)
     instructions_target_dir.mkdir(parents=True, exist_ok=True)
 
-    for chatmode in chatmodes_dir.iterdir():
-        chatmode_target = chatmodes_target_dir.joinpath(f"{chatmode.name.split('.')[0]}.chatmode.md")
+    for chatmode in agents_dir.iterdir():
+        chatmode_target = agents_target_dir.joinpath(f"{chatmode.name.split('.')[0]}.chatmode.md")
         chatmode_target.write_text(data=chatmode.read_text(encoding="utf-8"), encoding="utf-8")
 
     for prompt in prompts_dir.iterdir():

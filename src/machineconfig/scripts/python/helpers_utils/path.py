@@ -17,7 +17,7 @@ def tui_env(which: Annotated[Literal["PATH", "p", "ENV", "e"], typer.Argument(he
     uv_with = ["textual"]
     uv_project_dir = None
     if not Path.home().joinpath("code/machineconfig").exists():
-        uv_with.append("machineconfig>=7.86")
+        uv_with.append("machineconfig>=7.87")
     else:
         uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
     run_shell_script(
@@ -27,42 +27,40 @@ def tui_env(which: Annotated[Literal["PATH", "p", "ENV", "e"], typer.Argument(he
 
 def init_project(
     name: Annotated[Optional[str], typer.Option("--name", "-n", help="Name of the project.")] = None,
-    tmp_directory: Annotated[
-        bool, typer.Option("--tmp-directory/--no-tmp-directory", "-t/-nt", help="Use a temporary directory for the project initialization.")
+    tmp_dir: Annotated[
+        bool, typer.Option("--tmp-dir", "-t", help="Use a temporary directory for the project initialization.")
     ] = False,
     python: Annotated[Literal["3.13", "3.14"], typer.Option("--python", "-p", help="Python version for the uv virtual environment.")] = "3.13",
     libraries: Annotated[Optional[str], typer.Option("--libraries", "-l", help="Additional packages to include in the uv virtual environment.")] = None,
-    group: Annotated[Optional[str], typer.Option("--group", "-g", help="Group name for the packages.")] = "plot",
-    types_packages: Annotated[
-        bool, typer.Option("--types-packages/--no-types-packages", "-T/-NT", help="Include types packages for better type hinting.")
-    ] = True,
-    linting_debug_packages: Annotated[
-        bool, typer.Option("--linting-debug-packages/--no-linting-debug-packages", "-L/-NL", help="Include linting and debugging packages.")
-    ] = True,
-    ia_packages: Annotated[bool, typer.Option("--ia-packages/--no-ia-packages", "-I/-NI", help="Include interactive and IA packages.")] = True,
-    plot_packages: Annotated[bool, typer.Option("--plot-packages/--no-plot-packages", "-P/-NP", help="Include plotting packages.")] = True,
-    data_packages: Annotated[bool, typer.Option("--data-packages/--no-data-packages", "-D/-ND", help="Include data manipulation packages.")] = True,
+    group: Annotated[Optional[str], typer.Option("--group", "-g", help="group of packages names (no separation) p:plot, t:types, l:linting, i:interactive, d:data")] = "ptlid",
+    # types_packages: Annotated[
+    #     bool, typer.Option("--types-packages/--no-types-packages", "-T/-NT", help="Include types packages for better type hinting.")
+    # ] = True,
+    # linting_debug_packages: Annotated[
+    #     bool, typer.Option("--linting-debug-packages/--no-linting-debug-packages", "-L/-NL", help="Include linting and debugging packages.")
+    # ] = True,
+    # ia_packages: Annotated[bool, typer.Option("--ia-packages/--no-ia-packages", "-I/-NI", help="Include interactive and IA packages.")] = True,
+    # plot_packages: Annotated[bool, typer.Option("--plot-packages/--no-plot-packages", "-P/-NP", help="Include plotting packages.")] = True,
+    # data_packages: Annotated[bool, typer.Option("--data-packages/--no-data-packages", "-D/-ND", help="Include data manipulation packages.")] = True,
+
 ) -> None:
     if libraries is not None:
         packages_add_line = f"uv add {libraries}"
     else:
         packages_add_line = ""
     from pathlib import Path
-
-    if not tmp_directory:
+    if not tmp_dir:
         repo_root = Path.cwd()
         if not (repo_root / "pyproject.toml").exists():
-            typer.echo("❌ Error: pyproject.toml not found.", err=True)
+            typer.echo(f"❌ Error: pyproject.toml not found in {repo_root}", err=True)
             raise typer.Exit(code=1)
         starting_code = ""
     else:
         if name is not None:
             from machineconfig.utils.accessories import randstr
-
             repo_root = Path.home().joinpath(f"tmp_results/tmp_projects/{name}")
         else:
             from machineconfig.utils.accessories import randstr
-
             repo_root = Path.home().joinpath(f"tmp_results/tmp_projects/{randstr(6)}")
         repo_root.mkdir(parents=True, exist_ok=True)
         print(f"Using temporary directory for project initialization: {repo_root}")
@@ -73,19 +71,19 @@ uv venv
 """
     print(f"Adding group `{group}` with common data science and plotting packages...")
     total_packages: list[str] = []
-
-    if types_packages:
-        total_packages.append(
-            "types-python-dateutil types-pyyaml types-requests types-tqdm types-mysqlclient types-paramiko types-pytz types-sqlalchemy types-toml types-urllib3"
-        )
-    if linting_debug_packages:
-        total_packages.append("mypy pyright ruff pylint pyrefly cleanpy ipdb pudb")
-    if ia_packages:
-        total_packages.append("ipython ipykernel jupyterlab nbformat marimo")
-    if plot_packages:
-        total_packages.append("python-magic matplotlib plotly kaleido")
-    if data_packages:
-        total_packages.append("numpy pandas polars duckdb-engine sqlalchemy  psycopg2-binary pyarrow tqdm openpyxl")
+    if group is not None:
+        if "t" in group:
+            total_packages.append(
+                "types-python-dateutil types-pyyaml types-requests types-tqdm types-mysqlclient types-paramiko types-pytz types-sqlalchemy types-toml types-urllib3"
+            )
+        if "l" in group:
+            total_packages.append("mypy pyright ruff pylint pyrefly cleanpy ipdb pudb")
+        if "i" in group:
+            total_packages.append("ipython ipykernel jupyterlab nbformat marimo")
+        if "p" in group:
+            total_packages.append("python-magic matplotlib plotly kaleido")
+        if "d" in group:
+            total_packages.append("numpy pandas polars duckdb-engine sqlalchemy  psycopg2-binary pyarrow tqdm openpyxl")
     from machineconfig.utils.ve import get_ve_activate_line
 
     script = f"""

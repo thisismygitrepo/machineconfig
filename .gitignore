@@ -163,7 +163,7 @@ CLAUDE.md
 .cursor
 # scripts
 .github/instructions
-.github/chatmodes
+.github/agents
 .github/prompts
 
 

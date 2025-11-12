@@ -50,7 +50,7 @@ def adjust_gitignore(repo_root: Path) -> None:
         ".cursor",
         ".clinerules",
         ".github/instructions",
-        ".github/chatmodes",
+        ".github/agents",
         ".github/prompts",
     ]
 
