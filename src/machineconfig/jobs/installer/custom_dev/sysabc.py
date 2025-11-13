@@ -35,6 +35,10 @@ ps1 = r"""
 # this must be run in windows powershell, not in pwsh
 # Add-AppxPackage .\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
 
+# [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'User')
+# [System.Environment]::SetEnvironmentVariable('PYTHONIOENCODING', 'utf-8', 'User')
+
+
 winget install --no-upgrade --name "Powershell"                   --Id "Microsoft.PowerShell"       --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
 winget install --no-upgrade --name "Windows Terminal"             --Id "Microsoft.WindowsTerminal"  --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W 11
 winget install --no-upgrade --name "GNU Nano"                     --Id "GNU.Nano"                   --source winget --scope user --accept-package-agreements --accept-source-agreements

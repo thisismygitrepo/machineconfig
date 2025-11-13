@@ -1,31 +1,27 @@
 
 from pathlib import Path
 from typing import Callable, Optional, Union, Any, Protocol, List, TypeVar
-import logging
+# import logging
 import time
 from datetime import datetime, timezone, timedelta
 from machineconfig.utils.io import from_pickle
 
 
 class LoggerTemplate(Protocol):
-    handlers: List[logging.Handler]
+    # def trace(self, /, msg: str) -> None:
+    #     pass  # 5
+    # def success(self, /, msg: str) -> None:
+    #     pass  # 25
 
-    def debug(self, msg: str) -> None:
+    def debug(self, /, msg: str) -> None:
         pass  # 10
-
-    def info(self, msg: str) -> None:
+    def info(self, /, msg: str) -> None:
         pass  # 20
-
-    def warning(self, msg: str) -> None:
+    def warning(self, /, msg: str) -> None:
         pass  # 30
-
-    def error(self, msg: str) -> None:
+    def error(self, /, msg: str) -> None:
         pass  # 40
-
-    def critical(self, msg: str) -> None:
-        pass  # 50
-
-    def fatal(self, msg: str) -> None:
+    def critical(self, /, msg: str) -> None:
         pass  # 50
 
 
@@ -139,7 +135,7 @@ class Scheduler:
     def default_exception_handler(self, ex: Union[Exception, KeyboardInterrupt], during: str, sched: "Scheduler") -> None:  # user decides on handling and continue, terminate, save checkpoint, etc.  # Use signal library.
         print(sched)
         self.record_session_end(reason=f"during {during}, " + str(ex))
-        self.logger.fatal(str(ex))
+        self.logger.critical(str(ex))
         raise ex
 
 

@@ -4,7 +4,7 @@ import logging
 import subprocess
 from pathlib import Path
 from typing import Optional, Any
-from rich.console import Console
+# from rich.console import Console
 from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.wt_local import WTLayoutGenerator
 from machineconfig.cluster.sessions_managers.wt_utils.wt_helpers import check_wt_session_status
@@ -20,9 +20,6 @@ from machineconfig.cluster.sessions_managers.wt_utils.status_reporting import (
 
 
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-console = Console()
 TMP_SERIALIZATION_DIR = Path.home() / "tmp_results" / "wt_sessions" / "serialized"
 
 
@@ -50,8 +47,12 @@ class WTLocalManager:
             manager.create_layout_file()
             self.managers.append(manager)
 
-        logger.info(f"Initialized WTLocalManager with {len(self.managers)} sessions")
 
+        logging.basicConfig(level=logging.INFO)
+        logger = logging.getLogger(__name__)
+        # console = Console()
+        self.logger = logger
+        self.logger.info(f"Initialized WTLocalManager with {len(self.managers)} sessions")
     def get_all_session_names(self) -> list[str]:
         """Get all managed session names."""
         return [manager.session_name for manager in self.managers]
@@ -71,19 +72,19 @@ class WTLocalManager:
                 # Execute the PowerShell script to start Windows Terminal
                 cmd = f'powershell -ExecutionPolicy Bypass -File "{script_path}"'
 
-                logger.info(f"Starting session '{session_name}' with script: {script_path}")
+                self.logger.info(f"Starting session '{session_name}' with script: {script_path}")
                 result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
 
                 if result.returncode == 0:
                     results[session_name] = {"success": True, "message": f"Session '{session_name}' started successfully"}
-                    logger.info(f"✅ Session '{session_name}' started successfully")
+                    self.logger.info(f"✅ Session '{session_name}' started successfully")
                 else:
                     results[session_name] = {"success": False, "error": result.stderr or result.stdout}
-                    logger.error(f"❌ Failed to start session '{session_name}': {result.stderr}")
+                    self.logger.error(f"❌ Failed to start session '{session_name}': {result.stderr}")
 
             except Exception as e:
                 results[session_name] = {"success": False, "error": str(e)}
-                logger.error(f"❌ Exception starting session '{session_name}': {e}")
+                self.logger.error(f"❌ Exception starting session '{session_name}': {e}")
 
         return results
 
@@ -96,7 +97,7 @@ class WTLocalManager:
                 # Kill all Windows Terminal processes (Windows Terminal doesn't have session-specific killing)
                 cmd = "powershell -Command \"Get-Process -Name 'WindowsTerminal' -ErrorAction SilentlyContinue | Stop-Process -Force\""
 
-                logger.info(f"Killing Windows Terminal processes for session '{session_name}'")
+                self.logger.info(f"Killing Windows Terminal processes for session '{session_name}'")
                 result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
 
                 results[session_name] = {"success": result.returncode == 0, "message": "Windows Terminal processes killed" if result.returncode == 0 else result.stderr}
@@ -211,8 +212,8 @@ class WTLocalManager:
                 global_summary = self.get_global_summary()
                 print(f"📊 Quick Summary: {global_summary['running_commands']}/{global_summary['total_commands']} commands running across {global_summary['healthy_sessions']}/{global_summary['total_sessions']} sessions")
 
-        logger.info(f"Starting monitoring routine with {wait_ms}ms intervals")
-        sched = Scheduler(routine=routine, wait_ms=wait_ms, logger=logger)
+        self.logger.info(f"Starting monitoring routine with {wait_ms}ms intervals")
+        sched = Scheduler(routine=routine, wait_ms=wait_ms, logger=self.logger)
         sched.run(max_cycles=None)
 
     def save(self, session_id: Optional[str] = None) -> str:
@@ -228,11 +229,11 @@ class WTLocalManager:
         for i, manager in enumerate(self.managers):
             manager_data = {"session_name": manager.session_name, "layout_config": manager.layout_config, "script_path": manager.script_path}
             save_json_file(managers_dir / f"manager_{i}_{manager.session_name}.json", manager_data, f"manager {i}")
-        logger.info(f"✅ Saved WTLocalManager session to: {session_dir}")
+        self.logger.info(f"✅ Saved WTLocalManager session to: {session_dir}")
         return session_id
 
-    @classmethod
-    def load(cls, session_id: str) -> "WTLocalManager":
+    @staticmethod
+    def load(session_id: str) -> "WTLocalManager":
         session_dir = TMP_SERIALIZATION_DIR / session_id
         if not session_dir.exists():
             raise FileNotFoundError(f"Session directory not found: {session_dir}")
@@ -241,7 +242,7 @@ class WTLocalManager:
         metadata_data = load_json_file(session_dir / "metadata.json", "Metadata file") if (session_dir / "metadata.json").exists() else {}
         metadata = metadata_data if isinstance(metadata_data, dict) else {}  # type: ignore[arg-type]
         session_name_prefix = metadata.get("session_name_prefix", "LocalWTMgr")  # type: ignore[union-attr]
-        instance = cls(session_layouts=session_layouts, session_name_prefix=session_name_prefix)
+        instance = WTLocalManager(session_layouts=session_layouts, session_name_prefix=session_name_prefix)
         managers_dir = session_dir / "managers"
         if managers_dir.exists():
             instance.managers = []
@@ -253,8 +254,8 @@ class WTLocalManager:
                     manager.script_path = manager_data["script_path"]  # type: ignore[typeddict-item]
                     instance.managers.append(manager)
                 except Exception as e:
-                    logger.warning(f"Failed to load manager from {manager_file}: {e}")
-        logger.info(f"✅ Loaded WTLocalManager session from: {session_dir}")
+                    instance.logger.warning(f"Failed to load manager from {manager_file}: {e}")
+        instance.logger.info(f"✅ Loaded WTLocalManager session from: {session_dir}")
         return instance
 
     @staticmethod
@@ -299,7 +300,7 @@ class WTLocalManager:
                     )
 
         except Exception as e:
-            logger.error(f"Error listing active sessions: {e}")
+            self.logger.error(f"Error listing active sessions: {e}")
 
         return active_sessions
 

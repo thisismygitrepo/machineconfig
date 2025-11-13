@@ -14,6 +14,7 @@ def get_ve_path_and_ipython_profile(init_path: "Path") -> tuple[Optional[str], O
         if tmp.joinpath(".ve.ini").exists():
             ini = read_ini(tmp.joinpath(".ve.ini"))
             if ve_path is None:
+                
                 try:
                     ve_path = ini["specs"]["ve_path"]
                 except KeyError:
