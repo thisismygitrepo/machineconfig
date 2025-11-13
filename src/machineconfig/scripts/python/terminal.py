@@ -1,5 +1,5 @@
 import typer
-from typing import Annotated
+from typing import Annotated, Optional
 
 
 def strip_ansi_codes(text: str) -> str:
@@ -9,8 +9,13 @@ def strip_ansi_codes(text: str) -> str:
 
 
 def choose_zellij_session(
+        name: Annotated[Optional[str], typer.Argument(hidden=True)] = None,
         new_session: Annotated[bool, typer.Option("--new-session", "-n", help="Create a new Zellij session instead of attaching to an existing one.", show_default=True)] = False,
         kill_all: Annotated[bool, typer.Option("--kill-all", "-k", help="Kill all existing Zellij sessions before creating a new one.", show_default=True)] = False):
+    if name is not None:
+        result = f"zellij attach {name}"
+        from machineconfig.utils.code import exit_then_run_shell_script
+        exit_then_run_shell_script(result, strict=True)
 
     if new_session:
         cmd = """
@@ -29,6 +34,7 @@ def choose_zellij_session(
     # filter out empty lines and keep raw lines (they contain creation info)
     sessions = [s for s in sessions if s.strip()]
     sessions.sort(key=lambda s: "EXITED" in s)
+
     if "current" in sessions:
         print("Already in a Zellij session, avoiding nesting and exiting.")
         raise typer.Exit()
@@ -36,25 +42,25 @@ def choose_zellij_session(
         print("No Zellij sessions found, creating a new one.")
         result = """zellij --layout st2"""
     elif len(sessions) == 1:
-        session = sessions[0].split(" [Created")[0]
-        print(f"Only one Zellij session found: {session}, attaching to it.")
-        result = f"zellij attach {session}"
+        session_name = sessions[0].split(" [Created")[0]
+        print(f"Only one Zellij session found: {session_name}, attaching to it.")
+        result = f"zellij attach {session_name}"
     else:
         from machineconfig.utils.options import choose_from_options
         # Artificially inject a "NEW SESSION" option so the user can create one from the list
         NEW_SESSION_LABEL = "NEW SESSION"
         options = [NEW_SESSION_LABEL] + sessions
-        session = choose_from_options(msg="Choose a Zellij session to attach to:", multi=False, options=options, tv=True)
+        session_name = choose_from_options(msg="Choose a Zellij session to attach to:", multi=False, options=options, tv=True)
         # If the user chose the artificial option, start a new session (same as --new-session)
-        if session == NEW_SESSION_LABEL:
+        if session_name == NEW_SESSION_LABEL:
             cmd = "zellij --layout st2"
             if kill_all:
                 cmd = f"zellij kill-sessions\n{cmd}"
             from machineconfig.utils.code import exit_then_run_shell_script
             exit_then_run_shell_script(cmd, strict=True)
             raise typer.Exit()
-        session = session.split(" [Created")[0]
-        result = f"zellij attach {session}"
+        session_name = session_name.split(" [Created")[0]
+        result = f"zellij attach {session_name}"
     from machineconfig.utils.code import exit_then_run_shell_script
     exit_then_run_shell_script(result, strict=True)
 

@@ -164,28 +164,20 @@ class CacheMemory[T]():
         if fresh or not hasattr(self, "cache"):
             why = "There was an explicit fresh order." if fresh else "Previous cache never existed."
             t0 = time.time()
-            self.logger.warning(f"""
-🆕 ════════════════════ NEW {self.name} CACHE ════════════════════
-ℹ️ Reason: {why}""")
+            self.logger.warning(f"""🆕  NEW CACHE 🔄 {self.name} CACHE ℹ️ Reason: {why}""")
             self.cache = self.source_func()
             self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
             self.time_produced = datetime.now()
         else:
             age = datetime.now() - self.time_produced
             if (age > self.expire) or (fresh and (age.total_seconds() > tolerance_seconds)):
-                self.logger.warning(f"""
-🔄 ════════════════════ CACHE UPDATE ════════════════════
-⚠️  {self.name} cache: Updating cache from source func
-⏱️  Age = {age} > {self.expire}""")
+                self.logger.warning(f"""🔄 CACHE UPDATE ⚠️  {self.name} cache: Updating cache from source func. """ + f""" ⏱️  Age = {age} > {self.expire}""" if not fresh else f""" ⏱️  Age = {age}. Fresh flag raised.""")
                 t0 = time.time()
                 self.cache = self.source_func()
                 self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
                 self.time_produced = datetime.now()
             else:
-                self.logger.warning(f"""
-✅ ════════════════════ USING CACHE ════════════════════
-📦 {self.name} cache: Using cached values
-⏱️  Lag = {age}""")
+                self.logger.warning(f"""✅ USING CACHE 📦 {self.name} cache: Using cached values ⏱️  Lag = {age} < {self.expire} < {tolerance_seconds} seconds.""")
         return self.cache
 
     @staticmethod
@@ -215,28 +207,18 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
             if self.path.exists():  # prefer to read from disk over source func as a default source of cache.
                 age = datetime.now() - datetime.fromtimestamp(self.path.stat().st_mtime)
                 if (age > self.expire) or (fresh and (age.total_seconds() > tolerance_seconds)):  # cache is old or if fresh flag is raised
-                    self.logger.warning(f"""
-🔄 ════════════════════ CACHE STALE ════════════════════
-📦 {self.name} cache: Populating fresh cache from source func
-⏱️  Lag = {age}""")
+                    self.logger.warning(f"""🔄 CACHE STALE 📦 {self.name} cache: Populating fresh cache from source func. """ + f"""⏱️  Age = {age} > Expiry {self.expire} """ if not fresh else """⚠️  Fresh flag raised.""")
                     t0 = time.time()
                     self.cache = self.source_func()  # fresh data.
                     self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
                     self.time_produced = datetime.now()
                     self.save(self.cache, self.path)
                     return self.cache
-
-                msg1 = f"""
-📦 ════════════════════ CACHE OPERATION ════════════════════
-🔄 {self.name} cache: Reading cached values from `{self.path}`
-⏱️  Lag = {age}"""
+                msg1 = f"""📦 CACHE OPERATION 🔄 {self.name} cache: Reading cached values from `{self.path}` ⏱️  Lag = {age}"""
                 try:
                     self.cache = self.reader(self.path)
                 except Exception as ex:
-                    msg2 = f"""
-❌ ════════════════════ CACHE ERROR ════════════════════
-⚠️  {self.name} cache: Cache file is corrupted
-🔍 Error: {ex}"""
+                    msg2 = f"""❌ CACHE ERROR ⚠️  {self.name} cache: Cache file is corrupted 🔍 Error: {ex}"""
                     self.logger.warning(msg1 + msg2)
                     t0 = time.time()
                     self.cache = self.source_func()
@@ -245,11 +227,7 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
                     self.save(self.cache, self.path)
                     return self.cache
             else:  # disk cache does not exist, populate from source func.
-                why = "Previous cache never existed."
-                self.logger.warning(f"""
-🆕 ════════════════════ NEW CACHE ════════════════════
-🔄 {self.name} cache: Populating fresh cache from source func
-ℹ️  Reason: {why}""")
+                self.logger.warning(f"""🆕  NEW CACHE 🔄 {self.name} cache: Populating fresh cache from source func ℹ️  Reason: Previous cache never existed.""")
                 t0 = time.time()
                 self.cache = self.source_func()  # fresh data.
                 self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
@@ -258,20 +236,14 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
         else:  # memory cache exists
             age = datetime.now() - self.time_produced
             if (age > self.expire) or (fresh and (age.total_seconds() > tolerance_seconds)):  # cache is old or if fresh flag is raised
-                self.logger.warning(f"""
-🔄 ════════════════════ CACHE UPDATE ════════════════════
-⚠️  {self.name} cache: Updating cache from source func
-⏱️  Age = {age} > {self.expire}""")
+                self.logger.warning(f"""🔄 CACHE UPDATE ⚠️  {self.name} cache: Updating cache from source func. ⏱️  Age = {age} > {self.expire}""")
                 t0 = time.time()
                 self.cache = self.source_func()
                 self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
                 self.time_produced = datetime.now()
                 self.save(self.cache, self.path)
             else:
-                self.logger.warning(f"""
-✅ ════════════════════ USING CACHE ════════════════════
-📦 {self.name} cache: Using cached values
-⏱️  Lag = {age}""")
+                self.logger.warning(f"""✅ USING CACHE 📦 {self.name} cache: Using cached values ⏱️  Lag = {age} < {self.expire} < {tolerance_seconds} seconds.""")
         return self.cache
 
     @staticmethod
