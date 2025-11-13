@@ -16,7 +16,8 @@ OPLike: TypeAlias = Union[str, "PathExtended", Path, None]
 PLike: TypeAlias = Union[str, "PathExtended", Path]
 FILE_MODE: TypeAlias = Literal["r", "w", "x", "a"]
 SHUTIL_FORMATS: TypeAlias = Literal["zip", "tar", "gztar", "bztar", "xztar"]
-DECOMPRESS_SUPPORTED_FORMATS = [".tar.gz", ".tgz", ".tar", ".gz", ".tar.bz", ".tbz", ".tar.xz", ".zip", ".7z"]
+DECOMPRESS_SUPPORTED_FORMATS = [".tar.gz", ".tgz", ".tar", ".gz", ".tar.bz", ".tbz", ".tar.xz", ".zip", ".7z",
+                                ".tar.bz2", ".tbz2", ".xz"]
 
 
 def _is_user_admin() -> bool:
