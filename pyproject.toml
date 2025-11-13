@@ -72,7 +72,6 @@ mcfg = "machineconfig.scripts.python.mcfg_entry:main"
 machineconfig = "machineconfig.scripts.python.mcfg_entry:main"
 terminal = "machineconfig.scripts.python.terminal:main"
 msearch = "machineconfig.scripts.python.msearch:main"
-explore = "machineconfig.scripts.python.explore:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

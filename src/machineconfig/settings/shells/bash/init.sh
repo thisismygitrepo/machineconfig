@@ -57,7 +57,7 @@ alias r='wrap_in_shell_script croshell'
 alias u='wrap_in_shell_script utils'
 alias t='wrap_in_shell_script terminal'
 alias ms='wrap_in_shell_script msearch'
-alias x='. $CONFIG_ROOT/scripts/linux/wrap_mcfg explore'
+alias x='wrap_in_shell_script explore'
 
 # alias gcs='gh copilot suggest -t shell'
 # alias gcg='gh copilot suggest -t git'
@@ -89,37 +89,33 @@ eval "$(zoxide init bash)"
 eval "$(starship init bash)"
 # LEVE THIS IN THE END TO AVOID EXECUTION FAILURE OF THE REST OF THE SCRIPT
 # from https://github.com/cantino/mcfly
-# eval "$(mcfly init bash)"
+if command -v mcfly &> /dev/null; then
+    eval "$(mcfly init bash)"
+else
+    # eval "$(tv init bash)"
+    tv_shell_history() {
+        _disable_bracketed_paste
+        local current_prompt="${READLINE_LINE:0:$READLINE_POINT}"
+        local output
+        # move to the next line so that the prompt is not overwritten
+        printf "\n"
+        # Get history using tv with the same arguments as zsh version
+        output=$(tv bash-history --input "$current_prompt" --inline)
 
-# eval "$(tv init bash)"
-# tv_shell_history() {
-#     _disable_bracketed_paste
-
-#     local current_prompt="${READLINE_LINE:0:$READLINE_POINT}"
-#     local output
-
-#     # move to the next line so that the prompt is not overwritten
-#     printf "\n"
-
-#     # Get history using tv with the same arguments as zsh version
-#     output=$(tv bash-history --input "$current_prompt" --inline)
-
-#     if [[ -n "$output" ]]; then
-#         # Clear the right side of cursor and set new line
-#         READLINE_LINE="$output"
-#         READLINE_POINT=${#READLINE_LINE}
-
-#         # Uncomment this to automatically accept the line
-#         # (i.e. run the command without having to press enter twice)
-#         # accept-line() { echo; }; accept-line
-#     fi
-
-#     # move the cursor back to the previous line
-#     printf "\033[A"
-
-#     _enable_bracketed_paste
-# }
-# bind -x '"\C-r": tv_shell_history'
+        if [[ -n "$output" ]]; then
+            # Clear the right side of cursor and set new line
+            READLINE_LINE="$output"
+            READLINE_POINT=${#READLINE_LINE}
+            # Uncomment this to automatically accept the line
+            # (i.e. run the command without having to press enter twice)
+            # accept-line() { echo; }; accept-line
+        fi
+        # move the cursor back to the previous line
+        printf "\033[A"
+        _enable_bracketed_paste
+    }
+    bind -x '"\C-r": tv_shell_history'
+fi
 
 
 # Show elapsed runtime
