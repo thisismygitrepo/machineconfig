@@ -88,8 +88,9 @@ class ZellijSessionManager:
                 # Print statuses
                 for i, status in enumerate(statuses):
                     print(f"Manager {i}: {status}")
-
-        sched = Scheduler(routine=routine, wait_ms=60_000, logger=logger)
+        from machineconfig.utils.scheduler import LoggerTemplate
+        from typing import cast
+        sched = Scheduler(routine=routine, wait_ms=60_000, logger=cast(LoggerTemplate, logger))
         sched.run()
 
     def save(self, session_id: Optional[str]) -> str:

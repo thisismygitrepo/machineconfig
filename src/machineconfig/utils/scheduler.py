@@ -8,20 +8,19 @@ from machineconfig.utils.io import from_pickle
 
 
 class LoggerTemplate(Protocol):
-    # def trace(self, /, msg: str) -> None:
-    #     pass  # 5
-    # def success(self, /, msg: str) -> None:
-    #     pass  # 25
-
-    def debug(self, /, msg: str) -> None:
+    def trace(self,  __message: str, *args: Any, **kwargs: Any) -> None:
+        pass  # 5
+    def success(self,  __message: str, *args: Any, **kwargs: Any) -> None:
+        pass  # 25
+    def debug(self,  __message: str, *args: Any, **kwargs: Any) -> None:
         pass  # 10
-    def info(self, /, msg: str) -> None:
+    def info(self,  __message: str, *args: Any, **kwargs: Any) -> None:
         pass  # 20
-    def warning(self, /, msg: str) -> None:
+    def warning(self,  __message: str, *args: Any, **kwargs: Any) -> None:
         pass  # 30
-    def error(self, /, msg: str) -> None:
+    def error(self,  __message: str, *args: Any, **kwargs: Any) -> None:
         pass  # 40
-    def critical(self, /, msg: str) -> None:
+    def critical(self,  __message: str, *args: Any, **kwargs: Any) -> None:
         pass  # 50
 
 

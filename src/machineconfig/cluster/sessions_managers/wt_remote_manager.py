@@ -68,7 +68,9 @@ class WTSessionManager:
             else:
                 statuses = collect_session_statuses(self.managers)
                 print_session_statuses(statuses)
-        sched = Scheduler(routine=routine, wait_ms=wait_ms, logger=logger)
+        from machineconfig.utils.scheduler import LoggerTemplate
+        from typing import cast
+        sched = Scheduler(routine=routine, wait_ms=wait_ms, logger=cast(LoggerTemplate, logger))
         sched.run()
 
     def save(self, session_id: Optional[str] = None) -> str:

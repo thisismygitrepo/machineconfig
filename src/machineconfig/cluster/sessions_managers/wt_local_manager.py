@@ -213,7 +213,9 @@ class WTLocalManager:
                 print(f"📊 Quick Summary: {global_summary['running_commands']}/{global_summary['total_commands']} commands running across {global_summary['healthy_sessions']}/{global_summary['total_sessions']} sessions")
 
         self.logger.info(f"Starting monitoring routine with {wait_ms}ms intervals")
-        sched = Scheduler(routine=routine, wait_ms=wait_ms, logger=self.logger)
+        from machineconfig.utils.scheduler import LoggerTemplate
+        from typing import cast
+        sched = Scheduler(routine=routine, wait_ms=wait_ms, logger=cast(LoggerTemplate, self.logger))
         sched.run(max_cycles=None)
 
     def save(self, session_id: Optional[str] = None) -> str:
