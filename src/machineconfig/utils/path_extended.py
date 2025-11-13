@@ -694,7 +694,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             res = self.untar(folder=folder, name=name, path=path, inplace=inplace, orig=orig, verbose=verbose)
         elif str(self).endswith(".gz"):
             res = self.ungz(folder=folder, path=path, name=name, inplace=inplace, verbose=verbose, orig=orig)
-        elif str(self).endswith(".tar.bz") or str(self).endswith(".tbz"):
+        elif str(self).endswith(".tar.bz") or str(self).endswith(".tbz") or str(self).endswith(".tar.bz2"):
             res = self.unbz(name=f"tmp_{randstr()}.tar", inplace=inplace)
             return res.untar(folder=folder, name=name, path=path, inplace=True, orig=orig, verbose=verbose)
         elif str(self).endswith(".tar.xz"):
@@ -734,7 +734,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             run_lambda_function(lambda: unzip_7z(archive_path=str(self), dest_dir=destination_dir), uv_project_dir=None, uv_with=["py7zr"])
             res = PathExtended(destination_dir)
         else:
-            res = self
+            raise ValueError(f"Cannot decompress file with unknown extension: {self}")
         return res
 
     def encrypt(

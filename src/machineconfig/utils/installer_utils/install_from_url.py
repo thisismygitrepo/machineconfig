@@ -53,6 +53,7 @@ def _download_and_prepare(download_url: str) -> PathExtended:
     extracted_path = archive_path
     if any(ext in archive_path.suffixes for ext in DECOMPRESS_SUPPORTED_FORMATS):
         extracted_path = archive_path.decompress()
+        # print(f"Decompressed {archive_path} to {extracted_path}")
         archive_path.delete(sure=True)
         if extracted_path.is_dir():
             nested_items = list(extracted_path.glob("*"))
@@ -60,6 +61,7 @@ def _download_and_prepare(download_url: str) -> PathExtended:
                 nested_path = PathExtended(nested_items[0])
                 if nested_path.is_file() and any(ex in nested_path.suffixes for ex in DECOMPRESS_SUPPORTED_FORMATS):
                     extracted_path = nested_path.decompress()
+                    # print(f"Further decompressed {nested_path} to {extracted_path}")
                     nested_path.delete(sure=True)
     return extracted_path
 

@@ -18,13 +18,13 @@ def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_i
     console = Console()
     from machineconfig.utils.installer_utils.installer_locator_utils import check_tool_exists
     # from machineconfig.utils.installer_utils.installer_cli import check_tool_exists
-    print("ch1")
+    # print("ch1")
     if tv and check_tool_exists("tv"):
         # from pyfzf.pyfzf import FzfPrompt
         # fzf_prompt = FzfPrompt()
         # nl = "\n"
         # choice_string_multi: list[str] = fzf_prompt.prompt(choices=options_strings, fzf_options=("--multi" if multi else "") + f' --prompt "{prompt.replace(nl, " ")}" --ansi')  # --border-label={msg.replace(nl, ' ')}")
-        print("ch2")
+        # print("ch2")
         from machineconfig.utils.accessories import randstr
         options_txt_path = Path.home().joinpath("tmp_results/tmp_files/choices_" + randstr(6) + ".txt")
         options_txt_path.parent.mkdir(parents=True, exist_ok=True)
