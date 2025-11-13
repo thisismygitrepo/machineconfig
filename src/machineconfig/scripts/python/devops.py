@@ -100,8 +100,8 @@ def get_app():
     app.add_typer(app_nw, name="network")
     app.add_typer(app_nw, name="n", hidden=True)
 
-    app.command(name="init", help="🦐 [I] Define and manage configurations", no_args_is_help=False)(init)
-    app.command(name="I", hidden=True)(init)
+    app.command(name="init", help="🦐 [t] Define and manage configurations", no_args_is_help=False)(init)
+    app.command(name="t", hidden=True)(init)
 
     return app
 

@@ -100,10 +100,10 @@ theme = {this = '~/AppData/Roaming/yazi/config/theme.toml', to_this = 'CONFIG_RO
 init = {this = '~/AppData/Roaming/yazi/config/init.lua', to_this = 'CONFIG_ROOT/settings/yazi/init.lua'}
 
 [television_linux]
-cable = {this = '~/.config/television/cable', to_this = 'CONFIG_ROOT/settings/television/cable_unix'}
+cable = {this = '~/.config/television/cable', to_this = 'CONFIG_ROOT/settings/television/cable_unix', contents = true}
 
 [television_windows]
-cable = {this = '~/.config/television/cable', to_this = 'CONFIG_ROOT/settings/television/cable_windows'}
+cable = {this = '~/AppData/Local/television/config/cable', to_this = 'CONFIG_ROOT/settings/television/cable_windows', contents = true}
 
 
 [yazi_linux]
