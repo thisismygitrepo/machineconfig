@@ -199,7 +199,7 @@ class Installer:
         downloaded = PathExtended(download_link).download(folder=INSTALL_TMP_DIR).decompress()
         if downloaded.is_dir() and len(downloaded.search("*", r=True)) == 1:
             only_file_in = next(downloaded.glob("*"))
-            if only_file_in.is_file() and "".join(only_file_in.suffixes) in DECOMPRESS_SUPPORTED_FORMATS:  # further decompress
+            if only_file_in.is_file() and any(ext in only_file_in.suffixes for ext in DECOMPRESS_SUPPORTED_FORMATS):  # further decompress
                 downloaded = only_file_in.decompress()
         return downloaded, version_to_be_installed
 

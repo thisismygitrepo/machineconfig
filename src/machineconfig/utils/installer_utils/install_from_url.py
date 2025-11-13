@@ -51,14 +51,14 @@ def _derive_tool_name(repo_name: str, asset_name: str) -> str:
 def _download_and_prepare(download_url: str) -> PathExtended:
     archive_path = PathExtended(download_url).download(folder=INSTALL_TMP_DIR)
     extracted_path = archive_path
-    if "".join(extracted_path.suffixes) in DECOMPRESS_SUPPORTED_FORMATS:
+    if any(ext in archive_path.suffixes for ext in DECOMPRESS_SUPPORTED_FORMATS):
         extracted_path = archive_path.decompress()
         archive_path.delete(sure=True)
         if extracted_path.is_dir():
             nested_items = list(extracted_path.glob("*"))
             if len(nested_items) == 1:
                 nested_path = PathExtended(nested_items[0])
-                if nested_path.suffix in DECOMPRESS_SUPPORTED_FORMATS:
+                if nested_path.is_file() and any(ex in nested_path.suffixes for ex in DECOMPRESS_SUPPORTED_FORMATS):
                     extracted_path = nested_path.decompress()
                     nested_path.delete(sure=True)
     return extracted_path
