@@ -176,7 +176,7 @@ class Installer:
         # app_name = self.installer_data["appName"]
         download_link: Optional[str] = None
         version_to_be_installed: Optional[str] = None
-        if "github" not in repo_url or (any(ext in repo_url for ext in DECOMPRESS_SUPPORTED_FORMATS)):
+        if "github" not in repo_url or (any(an_extension in repo_url for an_extension in DECOMPRESS_SUPPORTED_FORMATS)):
             # Direct download URL
             download_link = repo_url
             version_to_be_installed = "predefined_url"
@@ -199,7 +199,7 @@ class Installer:
         downloaded = PathExtended(download_link).download(folder=INSTALL_TMP_DIR).decompress()
         if downloaded.is_dir() and len(downloaded.search("*", r=True)) == 1:
             only_file_in = next(downloaded.glob("*"))
-            if only_file_in.is_file() and only_file_in.suffix in DECOMPRESS_SUPPORTED_FORMATS:  # further decompress
+            if only_file_in.is_file() and "".join(only_file_in.suffixes) in DECOMPRESS_SUPPORTED_FORMATS:  # further decompress
                 downloaded = only_file_in.decompress()
         return downloaded, version_to_be_installed
 
