@@ -95,7 +95,7 @@ def main(
     if md_file.name != "slides.md":
         SLIDEV_REPO.joinpath(md_file.name).with_name(name="slides.md", inplace=True, overwrite=True)
 
-    import machineconfig.scripts.python.nw.address as helper
+    import machineconfig.scripts.python.helpers_network.address as helper
     res = helper.select_lan_ipv4(prefer_vpn=False)
     if res is None:
         print("❌ Error: Could not determine local LAN IPv4 address for presentation.")

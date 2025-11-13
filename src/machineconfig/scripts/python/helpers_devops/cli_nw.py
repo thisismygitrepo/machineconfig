@@ -26,11 +26,11 @@ def add_ssh_key(path: Annotated[Optional[str], typer.Option(..., help="Path to t
          github: Annotated[Optional[str], typer.Option(..., "--github", "-g", help="Fetch public keys from a GitHub username")] = None
 ):
     """🔑 SSH add pub key to this machine so its accessible by owner of corresponding private key."""
-    import machineconfig.scripts.python.nw.devops_add_ssh_key as helper
+    import machineconfig.scripts.python.helpers_network.devops_add_ssh_key as helper
     helper.main(pub_path=path, pub_choose=choose, pub_val=value, from_github=github)
 def add_ssh_identity():
     """🗝️ SSH add identity (private key) to this machine"""
-    import machineconfig.scripts.python.nw.devops_add_identity as helper
+    import machineconfig.scripts.python.helpers_network.devops_add_identity as helper
     helper.main()
 
 
@@ -51,7 +51,7 @@ def show_address() -> None:
     from rich import print_json
     print_json(data=loaded_json)
 
-    import machineconfig.scripts.python.nw.address as helper
+    import machineconfig.scripts.python.helpers_network.address as helper
     from rich.table import Table
     from rich.console import Console
     res = helper.get_all_ipv4_addresses()
@@ -97,10 +97,10 @@ def debug_ssh():
     """🐛 SSH debug"""
     from platform import system
     if system() == "Linux" or system() == "Darwin":
-        import machineconfig.scripts.python.nw.ssh_debug_linux as helper
+        import machineconfig.scripts.python.helpers_network.ssh_debug_linux as helper
         helper.ssh_debug_linux()
     elif system() == "Windows":
-        import machineconfig.scripts.python.nw.ssh_debug_windows as helper
+        import machineconfig.scripts.python.helpers_network.ssh_debug_windows as helper
         helper.ssh_debug_windows()
     else:
         raise NotImplementedError(f"Platform {system()} is not supported.")
@@ -114,7 +114,7 @@ def wifi_select(
     from rich.panel import Panel
     from rich.prompt import Confirm
     from rich.console import Console
-    from machineconfig.scripts.python.nw.wifi_conn import try_config_connection, manual_network_selection, display_available_networks
+    from machineconfig.scripts.python.helpers_network.wifi_conn import try_config_connection, manual_network_selection, display_available_networks
     console = Console()
     console.print(Panel("📶 Welcome to the WiFi Connector Tool", title="[bold blue]WiFi Connection[/bold blue]", border_style="blue"))
 

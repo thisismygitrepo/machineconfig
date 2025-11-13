@@ -63,7 +63,7 @@ def web_file_explorer(
     if port is None:
         port = 8080
 
-    import machineconfig.scripts.python.nw.address as helper
+    import machineconfig.scripts.python.helpers_network.address as helper
     res = helper.select_lan_ipv4(prefer_vpn=False)
     if res is None:
         typer.echo("❌ ERROR: Could not determine local LAN IPv4 address for share server.", err=True)

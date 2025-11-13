@@ -93,7 +93,7 @@ def share_terminal(
         if ssl_ca and not Path(ssl_ca).exists():
             raise FileNotFoundError(f"SSL CA file not found: {ssl_ca}")
 
-    import machineconfig.scripts.python.nw.address as helper
+    import machineconfig.scripts.python.helpers_network.address as helper
     res = helper.select_lan_ipv4(prefer_vpn=False)
     if res is None:
         print("❌ Error: Could not determine local LAN IPv4 address for terminal.")

@@ -138,7 +138,7 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(..., help="Path to th
     from machineconfig.utils.code import run_shell_script
     run_shell_script(script=program)
 
-    import machineconfig.scripts.python.nw.address as helper
+    import machineconfig.scripts.python.helpers_network.address as helper
     res = helper.select_lan_ipv4(prefer_vpn=False)
     if res is None:
         console.print(Panel("❌ ERROR: Could not determine local LAN IPv4 address", title="[bold red]Error[/bold red]", border_style="red"))

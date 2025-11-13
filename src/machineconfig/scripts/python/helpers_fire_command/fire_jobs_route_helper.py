@@ -55,7 +55,7 @@ def choose_function_or_lines(choice_file: Path, kwargs_dict: dict[str, object]) 
 
 def get_command_streamlit(choice_file: Path, environment: str, repo_root: Optional[Path]) -> str:
     # from machineconfig.scripts.python.helpers_utils.path import get_machine_specs
-    from machineconfig.scripts.python.nw.address import select_lan_ipv4
+    from machineconfig.scripts.python.helpers_network.address import select_lan_ipv4
     res = select_lan_ipv4(prefer_vpn=False)
     if res is None:
         raise RuntimeError("Could not determine local LAN IPv4 address for streamlit app.")

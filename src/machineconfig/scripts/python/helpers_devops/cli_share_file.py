@@ -102,7 +102,7 @@ def share_file_send(path: Annotated[str, typer.Argument(help="Path to the file o
     from machineconfig.utils.installer_utils.installer_cli import install_if_missing
     install_if_missing(which="croc")
     # Get relay server IP from environment or use default
-    import machineconfig.scripts.python.nw.address as helper
+    import machineconfig.scripts.python.helpers_network.address as helper
     res = helper.select_lan_ipv4(prefer_vpn=False)
     if res is None:
         typer.echo("❌ Error: Could not determine local LAN IPv4 address for relay.", err=True)
