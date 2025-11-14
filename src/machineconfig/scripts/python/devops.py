@@ -39,9 +39,6 @@ def get_app():
     cli_app.command("install", no_args_is_help=True, help="🛠️ [i] Install essential packages")(install)
     cli_app.command("i", no_args_is_help=True, help="Install essential packages", hidden=True)(install)
 
-    cli_app.command("python", no_args_is_help=True, help="🐍  [p] python command/file in the machineconfig environment", context_settings={"show_help_on_error": True})(run_py_script_module.run_py_script)
-    cli_app.command("p", no_args_is_help=True, help="RUN python command/file in the machineconfig environment", hidden=True)(run_py_script_module.run_py_script)
-
     app_repos = cli_repos.get_app()
     cli_app.add_typer(app_repos, name="repos")
     cli_app.add_typer(app_repos, name="r", hidden=True)
@@ -57,6 +54,9 @@ def get_app():
     app_nw = cli_network.get_app()
     cli_app.add_typer(app_nw, name="network")
     cli_app.add_typer(app_nw, name="n", hidden=True)
+
+    cli_app.command("python", no_args_is_help=True, help="🐍 [p] python scripts or command/file in the machineconfig environment", context_settings={"show_help_on_error": True})(run_py_script_module.run_py_script)
+    cli_app.command("p", no_args_is_help=True, help="RUN python scripts or command/file in the machineconfig environment", hidden=True)(run_py_script_module.run_py_script)
 
     return cli_app
 
