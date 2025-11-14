@@ -3,6 +3,7 @@ import requests
 import tempfile
 from pathlib import Path
 from typing import Optional
+from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
 """
@@ -114,7 +115,7 @@ def install_msix_package(package_path: Path) -> bool:
         return False
 
 
-def main() -> bool:
+def main(installer_data: InstallerData, version: Optional[str]) -> bool:
     """
     Ensure winget is available on the system. If not available, download and install it.
 
