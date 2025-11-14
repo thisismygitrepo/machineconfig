@@ -6,7 +6,7 @@ from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-"""
+r"""
 # download latest from
 cd $HOME/Downloads
 d u "https://github.com/microsoft/winget-cli/releases/download/v1.12.170-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
@@ -123,6 +123,7 @@ def main(installer_data: InstallerData, version: Optional[str]) -> bool:
         bool: True if winget is available (either was already installed or successfully installed),
               False if installation failed
     """
+    _ = installer_data
     # First check if winget is already available
     if is_winget_available():
         print("Winget is already available on the system.")
@@ -169,13 +170,3 @@ def main(installer_data: InstallerData, version: Optional[str]) -> bool:
     else:
         print("Installation completed but winget is still not available. You may need to restart your terminal or add it to PATH.")
         return False
-
-
-if __name__ == "__main__":
-    # Example usage
-    print("=== Winget Installation ===\n")
-
-    if main():
-        print("Winget is ready to use!")
-    else:
-        print("Failed to ensure winget availability.")
