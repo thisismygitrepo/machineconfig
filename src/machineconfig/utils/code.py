@@ -1,11 +1,12 @@
 
-from typing import Any, Literal, Optional, Callable
+from typing import Any, Literal, Optional, Callable, cast
 from machineconfig.utils.accessories import randstr
 from pathlib import Path
 
 
-def get_uv_run_command(platform: Literal["Windows", "windows", "nt", "Linux", "linux", "Darwin", "darwin", "macos"]) -> str:
-    match platform:
+def get_uv_run_command(platform: str) -> str:
+    res = cast(Literal["Windows", "windows", "nt", "Linux", "linux", "Darwin", "darwin", "macos"], platform)
+    match res:
         case "Windows" | "windows" | "nt":
             return """& "$env:USERPROFILE/.local/bin/uv" run"""
         case "Linux" | "linux" | "Darwin" | "darwin" | "macos":
@@ -50,7 +51,9 @@ def get_uv_command_executing_python_script(python_script: str, uv_with: Optional
     print_code_string = lambda_to_python_script(lambda: print_code(code=python_script, lexer="python", desc="Temporary Python Script", subtitle="Executing via shell script"),
                                                 in_global=True, import_module=False)
     python_file.write_text(print_code_string + "\n" + python_script, encoding="utf-8")
-    shell_script = f"""uv run {uv_with_arg} {uv_project_dir_arg}  {str(python_file)} """
+    import platform
+    uv_run = get_uv_run_command(platform=platform.system())
+    shell_script = f"""{uv_run} {uv_with_arg} {uv_project_dir_arg}  {str(python_file)} """
     return shell_script, python_file
 
 
