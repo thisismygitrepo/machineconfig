@@ -2,6 +2,7 @@
 from typing import Optional, Literal, Annotated
 import typer
 
+
 def balance_load(layout_path: Annotated[str, typer.Argument(..., help="Path to the layout.json file")],
            max_thresh: Annotated[int, typer.Option(..., "--max-threshold", "-m", help="Maximum tabs per layout")],
            thresh_type: Annotated[Literal['number', 'n', 'weight', 'w'], typer.Option(..., "--threshold-type", "-t", help="Threshold type")],
@@ -36,12 +37,19 @@ def balance_load(layout_path: Annotated[str, typer.Argument(..., help="Path to t
     typer.echo(f"Adjusted layout saved to {target_file}")
 
 
-def select_layout(layouts_json_file: str, selected_layouts_names: Optional[list[str]], select_interactively: bool) -> list["LayoutConfig"]:
+def select_layout(layouts_json_file: str, selected_layouts_names: Optional[list[str]], select_interactively: bool,
+                  subsitute_home: bool
+                  ) -> list["LayoutConfig"]:
     import json
     from machineconfig.utils.options import choose_from_options
     from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
     from pathlib import Path
-    layout_file: LayoutsFile = json.loads(Path(layouts_json_file).read_text(encoding="utf-8"))
+    json_str = Path(layouts_json_file).read_text(encoding="utf-8")
+    if subsitute_home:
+        json_str = json_str.replace("~", str(Path.home())).replace("$HOME", str(Path.home()))
+        json_str = json_str.replace("""Command": "f  """, """Command": "~/.config/machineconfig/scripts/wrap_mcfg """)
+
+    layout_file: LayoutsFile = json.loads(json_str)
     if len(layout_file["layouts"]) == 0:
         raise ValueError(f"No layouts found in {layouts_json_file}")
     if selected_layouts_names is None:  # choose all, or interactively
@@ -92,7 +100,8 @@ def run(ctx: typer.Context,
         parallel: Annotated[bool, typer.Option(..., "--parallel", "-p", help="Launch multiple layouts in parallel")] = False,
         kill_upon_completion: Annotated[bool, typer.Option(..., "--kill-upon-completion", "-k", help="Kill session(s) upon completion (only relevant if monitor flag is set)")] = False,
         choose: Annotated[Optional[str], typer.Option(..., "--choose", "-c", help="Comma separated names of layouts to be selected from the layout file passed")] = None,
-        choose_interactively: Annotated[bool, typer.Option(..., "--choose-interactively", "-i", help="Select layouts interactively")] = False
+        choose_interactively: Annotated[bool, typer.Option(..., "--choose-interactively", "-i", help="Select layouts interactively")] = False,
+        subsitute_home: Annotated[bool, typer.Option(..., "--substitute-home", "-sh", help="Substitute ~ and $HOME in layout file with actual home directory path")] = False,
         ):
     """
     Launch terminal sessions based on a layout configuration file.
@@ -101,7 +110,7 @@ def run(ctx: typer.Context,
         typer.echo(ctx.get_help())
         raise typer.Exit()
     layout_path_resolved = find_layout_file(layout_path=layout_path)
-    layouts_selected = select_layout(layouts_json_file=layout_path_resolved, selected_layouts_names=choose.split(",") if choose else None, select_interactively=choose_interactively)
+    layouts_selected = select_layout(layouts_json_file=layout_path_resolved, selected_layouts_names=choose.split(",") if choose else None, select_interactively=choose_interactively, subsitute_home=subsitute_home)
 
     # ============= Basic sanity checks =============
     if parallel and len(layouts_selected) > max_layouts:
@@ -145,16 +154,60 @@ def run(ctx: typer.Context,
         print(f"❌ Unsupported platform: {platform.system()}")
 
 
+def create_template(name: Annotated[Optional[str], typer.Argument(..., help="Name of the layout template to create")] = None,
+                    num_tabs: Annotated[int, typer.Option(..., "--num-tabs", "-t", help="Number of tabs to include in the template")] = 3,
+                    ):
+    """Create a layout template file."""
+    from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile, TabConfig
+    from pathlib import Path
+    tabs: list[TabConfig] = []
+    for i in range(1, num_tabs + 1):
+        tab: TabConfig = {
+            "tabName": f"Tab{i}",
+            "startDir": "~/" + str(Path.cwd().relative_to(Path.home())),
+            "command": "bash",
+        }
+        tabs.append(tab)
+    layouts: list[LayoutConfig] = [
+        {
+            "layoutName": f"{Path.cwd().name}Layout",
+            "layoutTabs": tabs,
+        }
+    ]
+    file: LayoutsFile = {
+        "$schema": "https://bit.ly/cfglayout",  # type: ignore
+        "version": "0.1",
+        "layouts": layouts
+    }
+    import json
+    json_string = json.dumps(file, indent=4)
+    if name is None:
+        layout_path = Path.cwd() / "layout.json"
+    else:
+        layout_path = Path.cwd() / (name.replace(".json", "") + ".json")
+    layout_path.parent.mkdir(parents=True, exist_ok=True)
+    if layout_path.exists():
+        print(f"❌ File {layout_path} already exists. Aborting to avoid overwriting.")
+        return
+    layout_path.write_text(json_string, encoding="utf-8")
+    print(f"✅ Created layout template at {layout_path}")
+
+
 def get_app():
     layouts_app = typer.Typer(help="Layouts management subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
     from machineconfig.scripts.python.helpers_sessions.sessions_multiprocess import create_from_function
+
     layouts_app.command("create-from-function", no_args_is_help=True, help="[c] Create a layout from a function")(create_from_function)
     layouts_app.command("c", no_args_is_help=True, help="Create a layout from a function", hidden=True)(create_from_function)
+
     layouts_app.command("run", no_args_is_help=True, help="[r] Run the selected layout(s)")(run)
     layouts_app.command("r", no_args_is_help=True, help="Run the selected layout(s)", hidden=True)(run)
+
     layouts_app.command("balance-load", no_args_is_help=True, help="[b] Balance the load across sessions")(balance_load)
     layouts_app.command("b", no_args_is_help=True, help="Balance the load across sessions", hidden=True)(balance_load)
 
+    layouts_app.command("create-template", no_args_is_help=False, help="[t] Create a layout template file")(create_template)
+    layouts_app.command("t", no_args_is_help=False, help="Create a layout template file", hidden=True)(create_template)
     return layouts_app
 
 
