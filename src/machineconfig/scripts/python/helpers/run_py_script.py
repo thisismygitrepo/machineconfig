@@ -35,6 +35,7 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of the python s
             target_py_file = result
     if target_py_file is None and where in ["all", "tmp"]:
         url = f"""https://raw.githubusercontent.com/thisismygitrepo/machineconfig/refs/heads/main/src/machineconfig/scripts/python/helpers/tmp_py_scripts/{name}.py"""
+        print(f"Fetching temporary script from {url} ...")
         import requests
         response = requests.get(url)
         if response.status_code != 200:
