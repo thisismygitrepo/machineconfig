@@ -35,22 +35,30 @@ def print_code(code: str, lexer: str, desc: str, subtitle: str = ""):
         print(f"--- End of {desc} ---")
 
 
-def get_uv_command_executing_python_script(python_script: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> tuple[str, Path]:
+def get_uv_command_executing_python_script(python_script: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str],
+                                           prepend_print: bool = True) -> tuple[str, Path]:
     python_file = Path.home().joinpath("tmp_results", "tmp_scripts", "python", randstr() + ".py")
     python_file.parent.mkdir(parents=True, exist_ok=True)
     if uv_with is not None and len(uv_with) > 0:
-        uv_with.append("rich")
+        if prepend_print: uv_with.append("rich")
         uv_with_arg = "--with " + '"' + ",".join(uv_with) + '"'
     else:
-        uv_with_arg = "--with rich"
+        if prepend_print:
+            uv_with_arg = "--with rich"
+        else:
+            uv_with_arg = ""
     if uv_project_dir is not None:
         uv_project_dir_arg = "--project" + f' "{uv_project_dir}"'
     else:
         uv_project_dir_arg = ""
-    from machineconfig.utils.meta import lambda_to_python_script
-    print_code_string = lambda_to_python_script(lambda: print_code(code=python_script, lexer="python", desc="Temporary Python Script", subtitle="Executing via shell script"),
-                                                in_global=True, import_module=False)
-    python_file.write_text(print_code_string + "\n" + python_script, encoding="utf-8")
+    
+    if prepend_print:
+        from machineconfig.utils.meta import lambda_to_python_script
+        print_code_string = lambda_to_python_script(lambda: print_code(code=python_script, lexer="python", desc="Temporary Python Script", subtitle="Executing via shell script"),
+                                                    in_global=True, import_module=False)
+        python_file.write_text(print_code_string + "\n" + python_script, encoding="utf-8")
+    else:
+        python_file.write_text(python_script, encoding="utf-8")
     import platform
     uv_run = get_uv_run_command(platform=platform.system())
     shell_script = f"""{uv_run} {uv_with_arg} {uv_project_dir_arg}  {str(python_file)} """

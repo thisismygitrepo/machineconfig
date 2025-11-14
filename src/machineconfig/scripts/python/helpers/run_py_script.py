@@ -43,7 +43,7 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of the python s
             raise RuntimeError(f"Could not fetch script '{name}.py' from repository.")
         script_content = response.text
         from machineconfig.utils.code import get_uv_command_executing_python_script, exit_then_run_shell_script
-        shell_script, _shell_script_path = get_uv_command_executing_python_script(python_script=script_content, uv_project_dir=None, uv_with=None)
+        shell_script, _shell_script_path = get_uv_command_executing_python_script(python_script=script_content, uv_project_dir=None, uv_with=None, prepend_print=False)
         exit_then_run_shell_script(script=shell_script)
 
 

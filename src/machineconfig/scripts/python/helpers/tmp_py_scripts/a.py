@@ -8,6 +8,7 @@
 #   "polars",
 #   "typer>=0.12",
 #   "loguru",
+#   "numpy",
 # ]
 # ///
 
