@@ -5,7 +5,7 @@ from typing import Annotated, Optional, Literal
 
 
 def run_py_script(name: Annotated[str, typer.Argument(help="Name of the python script to run, e.g., 'a' for a.py")],
-                  where: Annotated[Literal["all", "private", "public", "tmp"], typer.Option("--where", "-w", help="Where to run the script: all, private, public, tmp")] = "all",
+                  where: Annotated[Literal["all", "private", "public", "tmp"], typer.Option("--where", "-w", help="Where to look for the script: any, private, public, tmp")] = "all",
                   command: Annotated[Optional[bool], typer.Option(..., "--command", "-c", help="Run as command")] = False,
                 #   use_machineconfig_env: Annotated[bool, typer.Option(..., "--use-machineconfig-env/--no-use-machineconfig-env", "-m/-nm", help="Whether to use the machineconfig python environment")] = False
                 ) -> None:
