@@ -30,10 +30,33 @@ from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 ps1 = r"""
 
-# if windows is missing
-# download latest from cd $HOME/Downloads; d u "https://github.com/microsoft/winget-cli/releases/download/v1.12.170-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
-# this must be run in windows powershell, not in pwsh
-# Add-AppxPackage .\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+
+
+$winget = Get-Command winget -ErrorAction SilentlyContinue
+
+if (-not $winget) {
+    Write-Host "winget not found. Installing..."
+
+    $downloadDir = Join-Path $HOME "Downloads"
+    Set-Location $downloadDir
+
+    $url = "https://github.com/microsoft/winget-cli/releases/download/v1.12.170-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+    $file = Split-Path $url -Leaf
+
+    # download using your alias 'd u'
+    d u $url
+
+    Write-Host "Downloaded: $file"
+
+    # We MUST run Add-AppxPackage in Windows PowerShell
+    Write-Host "Installing package via Windows PowerShell..."
+    powershell.exe -NoLogo -NoProfile -Command "Add-AppxPackage -Path `"$downloadDir\$file`""
+
+    Write-Host "Installation complete."
+}
+else {
+    Write-Host "winget already available. Skipping installation."
+}
 
 # [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'User')
 # [System.Environment]::SetEnvironmentVariable('PYTHONIOENCODING', 'utf-8', 'User')

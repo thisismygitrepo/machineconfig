@@ -5,9 +5,13 @@ from pathlib import Path
 from typing import Optional
 
 
-# config_dict: InstallerData = {"appName": "winget", "repoURL": "CMD", "doc": "winget installer"}
-# on older windows, use this to get winget for first time: Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe as per https://learn.microsoft.com/en-us/windows/package-manager/winget/
-
+"""
+# download latest from
+cd $HOME/Downloads
+d u "https://github.com/microsoft/winget-cli/releases/download/v1.12.170-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+# this must be run in windows powershell, not in pwsh
+Add-AppxPackage .\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+"""
 
 def is_winget_available() -> bool:
     """
@@ -110,7 +114,7 @@ def install_msix_package(package_path: Path) -> bool:
         return False
 
 
-def ensure_winget_available() -> bool:
+def main() -> bool:
     """
     Ensure winget is available on the system. If not available, download and install it.
 
@@ -170,7 +174,7 @@ if __name__ == "__main__":
     # Example usage
     print("=== Winget Installation ===\n")
 
-    if ensure_winget_available():
+    if main():
         print("Winget is ready to use!")
     else:
         print("Failed to ensure winget availability.")

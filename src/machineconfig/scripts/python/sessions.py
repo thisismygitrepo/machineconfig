@@ -47,7 +47,8 @@ def select_layout(layouts_json_file: str, selected_layouts_names: Optional[list[
     json_str = Path(layouts_json_file).read_text(encoding="utf-8")
     if subsitute_home:
         json_str = json_str.replace("~", str(Path.home())).replace("$HOME", str(Path.home()))
-        json_str = json_str.replace("""Command": "f  """, """Command": "~/.config/machineconfig/scripts/wrap_mcfg """)
+        json_str = json_str.replace("""Command": "f """, """Command": "~/.config/machineconfig/scripts/wrap_mcfg fire """)
+        json_str = json_str.replace("""Command": "s """, """Command": "~/.config/machineconfig/scripts/wrap_mcfg sessions """)
 
     layout_file: LayoutsFile = json.loads(json_str)
     if len(layout_file["layouts"]) == 0:
