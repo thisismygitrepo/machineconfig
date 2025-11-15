@@ -1,10 +1,6 @@
-from pathlib import Path
+
 from typing import Optional, Annotated
 import typer
-import subprocess
-import time
-
-
 
 """
 reference:
@@ -61,6 +57,7 @@ def share_terminal(
     install_if_missing("ttyd")
     if over_internet: install_if_missing("ngrok")
 
+    from pathlib import Path
     if username is None:
         import getpass
         username = getpass.getuser()
@@ -117,7 +114,10 @@ def share_terminal(
             start_command = "powershell"
         else:
             start_command = "bash"
-    
+
+    import subprocess
+    import time
+
     ttyd_cmd = f"ttyd --writable -t enableSixel=true {ssl_args} --port {port} --credential \"{username}:{password}\" -t 'theme={{\"background\": \"black\"}}' {start_command}"
     ttyd_process = subprocess.Popen(ttyd_cmd, shell=True)
     processes = [ttyd_process]

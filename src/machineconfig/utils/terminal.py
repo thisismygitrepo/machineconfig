@@ -4,6 +4,7 @@ from typing import Any, BinaryIO, Optional, Union
 from typing import Literal, TypeAlias
 from dataclasses import dataclass
 
+
 SHELLS: TypeAlias = Literal["default", "cmd", "powershell", "pwsh", "bash"]  # pwsh.exe is PowerShell (community) and powershell.exe is Windows Powershell (msft)
 CONSOLE: TypeAlias = Literal["wt", "cmd"]
 MACHINE: TypeAlias = Literal["Windows", "Linux", "Darwin"]

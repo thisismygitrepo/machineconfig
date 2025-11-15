@@ -1,6 +1,6 @@
 
 import machineconfig.scripts.python.helpers_devops.cli_share_file
-import machineconfig.scripts.python.helpers_devops.cli_terminal as cli_terminal
+import machineconfig.scripts.python.helpers_devops.cli_share_terminal as cli_share_terminal
 import machineconfig.scripts.python.helpers_devops.cli_share_server as cli_share_server
 import typer
 from typing import Optional, Annotated
@@ -175,8 +175,8 @@ sudo warp-cli connect
 
 def get_app():
     nw_apps = typer.Typer(help="🔐 [n] Network subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
-    nw_apps.command(name="share-terminal", help="📡  [t] Share terminal via web browser")(cli_terminal.share_terminal)
-    nw_apps.command(name="t", help="Share terminal via web browser", hidden=True)(cli_terminal.share_terminal)
+    nw_apps.command(name="share-terminal", help="📡  [t] Share terminal via web browser")(cli_share_terminal.share_terminal)
+    nw_apps.command(name="t", help="Share terminal via web browser", hidden=True)(cli_share_terminal.share_terminal)
 
     nw_apps.command(name="share-server", help="🌐  [s] Start local/global server to share files/folders via web browser", no_args_is_help=True)(cli_share_server.web_file_explorer)
     nw_apps.command(name="s", help="Start local/global server to share files/folders via web browser", hidden=True, no_args_is_help=True)(cli_share_server.web_file_explorer)

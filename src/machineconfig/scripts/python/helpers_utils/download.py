@@ -11,7 +11,6 @@ def download(
     output: Annotated[Optional[str], typer.Option("--output", "-o", help="The output file path.")] = None,
     output_dir: Annotated[Optional[str], typer.Option("--output-dir", help="Directory to place the downloaded file in.")] = None,
 ) -> Optional["Path"]:
-
     import subprocess
     from urllib.parse import parse_qs, unquote, urlparse
     from requests import Response
