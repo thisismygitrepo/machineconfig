@@ -1,10 +1,7 @@
 
 
 import platform
-from urllib.parse import urlparse
-
-import typer
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from machineconfig.utils.installer_utils.installer_helper import install_deb_package, download_and_prepare
 from machineconfig.utils.installer_utils.installer_locator_utils import find_move_delete_linux, find_move_delete_windows
@@ -35,27 +32,29 @@ def _format_size(size_bytes: int) -> str:
     return f"{value:.1f} {units[index]}"
 
 
-def _derive_tool_name(repo_name: str, asset_name: str) -> str:
+def _derive_tool_name(repo_name: str, asset_name: Optional[str]) -> Optional[str]:
     repo_segment = repo_name.split("/", maxsplit=1)[-1]
     repo_clean = repo_segment.replace(".git", "").lower()
     repo_filtered = "".join(char for char in repo_clean if char.isalnum())
     if repo_filtered:
         return repo_filtered
+    if asset_name is None:
+        return None
     asset_clean = asset_name.lower()
     asset_filtered = "".join(char for char in asset_clean if char.isalnum())
     if asset_filtered:
         return asset_filtered
-    return "githubapp"
+    return None
 
 
-def _finalize_install(repo_name: str, asset_name: str, version: str, extracted_path: PathExtended, console: "Console") -> None:
+def _finalize_install(repo_name: str, asset_name: Optional[str], version: str, extracted_path: PathExtended, console: "Console") -> None:
     from rich.panel import Panel
-
     if extracted_path.suffix == ".deb":
         install_deb_package(extracted_path)
         tool_name_deb = _derive_tool_name(repo_name, asset_name)
-        INSTALL_VERSION_ROOT.joinpath(tool_name_deb).parent.mkdir(parents=True, exist_ok=True)
-        INSTALL_VERSION_ROOT.joinpath(tool_name_deb).write_text(version, encoding="utf-8")
+        if tool_name_deb is not None:
+            INSTALL_VERSION_ROOT.joinpath(tool_name_deb).parent.mkdir(parents=True, exist_ok=True)
+            INSTALL_VERSION_ROOT.joinpath(tool_name_deb).write_text(version, encoding="utf-8")
         console.print(Panel(f"Installed Debian package for [green]{tool_name_deb}[/green]", title="✅ Complete", border_style="green"))
         return
     system_name = platform.system()
@@ -68,7 +67,7 @@ def _finalize_install(repo_name: str, asset_name: str, version: str, extracted_p
             installed_path = find_move_delete_linux(downloaded=extracted_path, tool_name=tool_name, delete=True, rename_to=rename_target)
         else:
             console.print(Panel(f"Unsupported operating system: {system_name}", title="❌ Error", border_style="red"))
-            raise typer.Exit(1)
+            return None
     except IndexError:
         if system_name == "Windows":
             installed_path = find_move_delete_windows(downloaded_file_path=extracted_path, tool_name=None, delete=True, rename_to=rename_target)
@@ -76,8 +75,9 @@ def _finalize_install(repo_name: str, asset_name: str, version: str, extracted_p
             installed_path = find_move_delete_linux(downloaded=extracted_path, tool_name="", delete=True, rename_to=rename_target)
         else:
             raise
-    INSTALL_VERSION_ROOT.joinpath(tool_name).parent.mkdir(parents=True, exist_ok=True)
-    INSTALL_VERSION_ROOT.joinpath(tool_name).write_text(version, encoding="utf-8")
+    if tool_name is not None:
+        INSTALL_VERSION_ROOT.joinpath(tool_name).parent.mkdir(parents=True, exist_ok=True)
+        INSTALL_VERSION_ROOT.joinpath(tool_name).write_text(version, encoding="utf-8")
     console.print(Panel(f"Installed [green]{tool_name}[/green] to {installed_path}\nVersion: {version}", title="✅ Complete", border_style="green"))
 
 
@@ -90,29 +90,29 @@ def install_from_github_url(github_url: str) -> None:
     repo_info = get_repo_name_from_url(github_url)
     if repo_info is None:
         console.print(Panel(f"Invalid GitHub URL: {github_url}", title="❌ Error", border_style="red"))
-        raise typer.Exit(1)
+        return None
     owner, repo = repo_info
     repo_name = f"{owner}/{repo}"
     console.print(Panel(f"Fetching latest release for [green]{repo_name}[/green]", title="🌐 GitHub", border_style="blue"))
     release_raw = fetch_github_release_data(owner, repo)
     if not release_raw:
         console.print(Panel("No releases available for this repository.", title="❌ Error", border_style="red"))
-        raise typer.Exit(1)
+        return None
     
     release_info = extract_release_info(release_raw)
     if not release_info:
         console.print(Panel("Failed to parse release information.", title="❌ Error", border_style="red"))
-        raise typer.Exit(1)
+        return None
     
     assets = release_info["assets"]
     if not assets:
         console.print(Panel("No downloadable assets found in the latest release.", title="❌ Error", border_style="red"))
-        raise typer.Exit(1)
+        return None
     binary_assets = assets
     selection_pool = binary_assets if binary_assets else assets
     if not selection_pool:
         console.print(Panel("No assets available for installation.", title="❌ Error", border_style="red"))
-        raise typer.Exit(1)
+        return None
     
     # First pass: collect all formatted data and calculate column widths
     asset_data = []
@@ -155,14 +155,14 @@ def install_from_github_url(github_url: str) -> None:
     
     if not options_map:
         console.print(Panel("Release assets lack download URLs.", title="❌ Error", border_style="red"))
-        raise typer.Exit(1)
+        return None
     selection_label = choose_from_options(options=list(options_map.keys()), msg="Select a release asset", multi=False, header="📦 GitHub Release Assets", tv=True)
     selected_asset = options_map[selection_label]
     download_url_value = selected_asset["browser_download_url"]
     asset_name_value = selected_asset["name"]
     if download_url_value == "":
         console.print(Panel("Selected asset lacks a download URL.", title="❌ Error", border_style="red"))
-        raise typer.Exit(1)
+        return None
     asset_name = asset_name_value if asset_name_value != "" else "github_binary"
     version = release_info["tag_name"] if release_info["tag_name"] != "" else "latest"
     console.print(Panel(f"Downloading [cyan]{asset_name}[/cyan]", title="⬇️ Download", border_style="magenta"))
@@ -172,13 +172,12 @@ def install_from_github_url(github_url: str) -> None:
 
 def install_from_binary_url(binary_url: str) -> None:
     from rich.console import Console
-    from rich.panel import Panel
-
+    # from rich.panel import Panel
     console = Console()
-    parsed = urlparse(binary_url)
-    asset_candidate = parsed.path.split("/")[-1] if parsed.path else ""
-    asset_name = asset_candidate if asset_candidate != "" else "binary_asset"
-    host = parsed.netloc if parsed.netloc != "" else "remote host"
-    console.print(Panel(f"Downloading [cyan]{asset_name}[/cyan] from [green]{host}[/green]", title="⬇️ Download", border_style="magenta"))
+    # parsed = urlparse(binary_url)
+    # asset_candidate = parsed.path.split("/")[-1] if parsed.path else ""
+    # asset_name = asset_candidate if asset_candidate != "" else "binary_asset"
+    # host = parsed.netloc if parsed.netloc != "" else "remote host"
+    # console.print(Panel(f"Downloading from [green]{binary_url}[/green]", title="⬇️ Download", border_style="magenta"))
     extracted_path = download_and_prepare(binary_url)
-    _finalize_install(repo_name="", asset_name=asset_name, version="latest", extracted_path=extracted_path, console=console)
+    _finalize_install(repo_name="", asset_name=None, version="latest", extracted_path=extracted_path, console=console)

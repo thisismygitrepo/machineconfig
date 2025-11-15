@@ -133,7 +133,7 @@ def install_clis(clis_names: list[str]):
         elif a_cli_name.startswith("https://") or a_cli_name.startswith("http://"):
             print(f"⏳ Installing from binary URL: {a_cli_name} ...")
             from machineconfig.utils.installer_utils.install_from_url import install_from_binary_url
-            install_from_binary_url(a_cli_name)
+            install_from_binary_url(binary_url=a_cli_name)
             continue
         selected_installer = None
         for installer in all_installers_data:

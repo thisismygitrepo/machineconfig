@@ -57,7 +57,7 @@ def find_move_delete_windows(downloaded_file_path: PathExtended, tool_name: Opti
     return exe_new_location
 
 
-def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: bool, rename_to: Optional[str]):
+def find_move_delete_linux(downloaded: PathExtended, tool_name: Optional[str], delete: bool, rename_to: Optional[str]):
     # if len(tool_name.split("+")) > 1:
     #     last_result = None
     #     for a_binary in [x.strip() for x in tool_name.split("+") if x.strip() != ""]:
@@ -75,16 +75,24 @@ def find_move_delete_linux(downloaded: PathExtended, tool_name: str, delete: boo
             exe = res[0]
             print(f"✅ Found match for pattern '*{tool_name}*': {exe}")
         else:
-            exe_search_res = downloaded.search(tool_name, folders=False, r=True)
-            if len(exe_search_res) == 0:
-                print(f"❌ ERROR: No search results for `{tool_name}` in `{downloaded}`")
-                raise IndexError(f"No executable found in {downloaded}")
-            elif len(exe_search_res) == 1:
-                exe = exe_search_res[0]
-                print(f"✅ Found exact match for '{tool_name}': {exe}")
-            else:
-                exe = max(exe_search_res, key=lambda x: x.size("kb"))
+            if tool_name is None:  # no tool name provided, get the largest executable
+                search_res = downloaded.search("*", folders=False, files=True, r=True)
+                if len(search_res) == 0:
+                    print(f"❌ ERROR: No search results in `{downloaded}`")
+                    raise IndexError(f"No executable found in {downloaded}")
+                exe = max(search_res, key=lambda x: x.size("kb"))
                 print(f"✅ Selected largest executable ({exe.size('kb')} KB): {exe}")
+            else:
+                exe_search_res = downloaded.search(tool_name, folders=False, r=True)
+                if len(exe_search_res) == 0:
+                    print(f"❌ ERROR: No search results for `{tool_name}` in `{downloaded}`")
+                    raise IndexError(f"No executable found in {downloaded}")
+                elif len(exe_search_res) == 1:
+                    exe = exe_search_res[0]
+                    print(f"✅ Found exact match for '{tool_name}': {exe}")
+                else:
+                    exe = max(exe_search_res, key=lambda x: x.size("kb"))
+                    print(f"✅ Selected largest executable ({exe.size('kb')} KB): {exe}")
 
     if rename_to and exe.name != rename_to:
         print(f"🏷️  Renaming '{exe.name}' to '{rename_to}'")
