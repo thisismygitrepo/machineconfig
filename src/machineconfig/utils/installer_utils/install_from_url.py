@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 import typer
 from typing import TYPE_CHECKING
 
-from machineconfig.utils.installer_utils.installer_helper import install_deb_package
+from machineconfig.utils.installer_utils.installer_helper import install_deb_package, download_and_prepare
 from machineconfig.utils.installer_utils.installer_locator_utils import find_move_delete_linux, find_move_delete_windows
 from machineconfig.utils.installer_utils.github_release_bulk import (
     get_repo_name_from_url,
@@ -14,8 +14,8 @@ from machineconfig.utils.installer_utils.github_release_bulk import (
     extract_release_info,
     AssetInfo,
 )
-from machineconfig.utils.path_extended import DECOMPRESS_SUPPORTED_FORMATS, PathExtended
-from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT
+from machineconfig.utils.path_extended import PathExtended
+from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT
 
 if TYPE_CHECKING:
     from rich.console import Console
@@ -46,24 +46,6 @@ def _derive_tool_name(repo_name: str, asset_name: str) -> str:
     if asset_filtered:
         return asset_filtered
     return "githubapp"
-
-
-def _download_and_prepare(download_url: str) -> PathExtended:
-    archive_path = PathExtended(download_url).download(folder=INSTALL_TMP_DIR)
-    extracted_path = archive_path
-    if any(ext in archive_path.suffixes for ext in DECOMPRESS_SUPPORTED_FORMATS):
-        extracted_path = archive_path.decompress()
-        # print(f"Decompressed {archive_path} to {extracted_path}")
-        archive_path.delete(sure=True)
-        if extracted_path.is_dir():
-            nested_items = list(extracted_path.glob("*"))
-            if len(nested_items) == 1:
-                nested_path = PathExtended(nested_items[0])
-                if nested_path.is_file() and any(ex in nested_path.suffixes for ex in DECOMPRESS_SUPPORTED_FORMATS):
-                    extracted_path = nested_path.decompress()
-                    # print(f"Further decompressed {nested_path} to {extracted_path}")
-                    nested_path.delete(sure=True)
-    return extracted_path
 
 
 def _finalize_install(repo_name: str, asset_name: str, version: str, extracted_path: PathExtended, console: "Console") -> None:
@@ -184,7 +166,7 @@ def install_from_github_url(github_url: str) -> None:
     asset_name = asset_name_value if asset_name_value != "" else "github_binary"
     version = release_info["tag_name"] if release_info["tag_name"] != "" else "latest"
     console.print(Panel(f"Downloading [cyan]{asset_name}[/cyan]", title="⬇️ Download", border_style="magenta"))
-    extracted_path = _download_and_prepare(download_url_value)
+    extracted_path = download_and_prepare(download_url_value)
     _finalize_install(repo_name=repo_name, asset_name=asset_name, version=version, extracted_path=extracted_path, console=console)
 
 
@@ -198,5 +180,5 @@ def install_from_binary_url(binary_url: str) -> None:
     asset_name = asset_candidate if asset_candidate != "" else "binary_asset"
     host = parsed.netloc if parsed.netloc != "" else "remote host"
     console.print(Panel(f"Downloading [cyan]{asset_name}[/cyan] from [green]{host}[/green]", title="⬇️ Download", border_style="magenta"))
-    extracted_path = _download_and_prepare(binary_url)
+    extracted_path = download_and_prepare(binary_url)
     _finalize_install(repo_name="", asset_name=asset_name, version="latest", extracted_path=extracted_path, console=console)

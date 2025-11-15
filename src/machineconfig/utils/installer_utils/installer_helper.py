@@ -1,6 +1,8 @@
 from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 from pathlib import Path
+from machineconfig.utils.path_extended import DECOMPRESS_SUPPORTED_FORMATS, PathExtended
+from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR
 
 
 def get_group_name_to_repr() -> dict[str, str]:
@@ -98,3 +100,30 @@ def install_deb_package(downloaded: Path) -> None:
     elif downloaded.is_dir():
         import shutil
         shutil.rmtree(downloaded, ignore_errors=True)
+
+
+def download_and_prepare(download_url: str) -> PathExtended:
+    # archive_path = PathExtended(download_url).download(folder=INSTALL_TMP_DIR)
+    from machineconfig.scripts.python.helpers_utils.download import download
+    downloaded_object = download(download_url, output_dir=str(INSTALL_TMP_DIR))
+    if downloaded_object is None:
+        raise ValueError(f"Failed to download from URL: {download_url}")
+    archive_path = PathExtended(downloaded_object)
+    extracted_path = archive_path
+    if extracted_path.is_file() and any(ext in archive_path.suffixes for ext in DECOMPRESS_SUPPORTED_FORMATS):
+        extracted_path = archive_path.decompress()
+        # print(f"Decompressed {archive_path} to {extracted_path}")
+        archive_path.delete(sure=True)
+        if extracted_path.is_dir():
+            nested_items = list(extracted_path.glob("*"))
+            if len(nested_items) == 1:
+                nested_path = PathExtended(nested_items[0])
+                if nested_path.is_file() and any(ex in nested_path.suffixes for ex in DECOMPRESS_SUPPORTED_FORMATS):
+                    extracted_path = nested_path.decompress()
+                    nested_path.delete(sure=True)
+    elif extracted_path.is_dir() and len(extracted_path.search("*", r=True)) == 1:
+        only_file_in = next(extracted_path.glob("*"))
+        if only_file_in.is_file() and any(ext in str(only_file_in) for ext in DECOMPRESS_SUPPORTED_FORMATS):  # further decompress
+            extracted_path = only_file_in.decompress()
+            only_file_in.delete(sure=True)
+    return extracted_path

@@ -1,6 +1,6 @@
-from machineconfig.utils.installer_utils.installer_helper import install_deb_package
-from machineconfig.utils.path_extended import PathExtended, DECOMPRESS_SUPPORTED_FORMATS
-from machineconfig.utils.source_of_truth import INSTALL_TMP_DIR, INSTALL_VERSION_ROOT
+from machineconfig.utils.installer_utils.installer_helper import install_deb_package, download_and_prepare
+from machineconfig.utils.path_extended import PathExtended
+from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT
 from machineconfig.utils.installer_utils.installer_locator_utils import find_move_delete_linux, find_move_delete_windows, check_tool_exists
 from machineconfig.utils.schemas.installer.installer_types import InstallerData, get_os_name, get_normalized_arch
 from machineconfig.utils.installer_utils.github_release_bulk import (
@@ -107,15 +107,7 @@ class Installer:
                     runpy.run_path(str(installer_path), run_name=None)["main"](self.installer_data, version=version)
                     version_to_be_installed = str(version)
             elif installer_arch_os.startswith("https://") or installer_arch_os.startswith("http://"):
-                # downloaded_object = PathExtended(installer_arch_os).download(folder=INSTALL_TMP_DIR)
-                from machineconfig.scripts.python.helpers_utils.download import download
-                downloaded_object = download(installer_arch_os, output_dir=str(INSTALL_TMP_DIR))
-                if downloaded_object is None:
-                    raise ValueError(f"Failed to download from URL: {installer_arch_os}")
-                # object is either a zip containing a binary or a straight out binary.
-                downloaded_object = PathExtended(downloaded_object)
-                if downloaded_object.suffix in DECOMPRESS_SUPPORTED_FORMATS:
-                    downloaded_object = downloaded_object.decompress()
+                downloaded_object = download_and_prepare(installer_arch_os)
                 if downloaded_object.suffix in [".exe", ""]:  # likely an executable
                     if platform.system() == "Windows":
                         exe = find_move_delete_windows(downloaded_file_path=downloaded_object, tool_name=exe_name, delete=True, rename_to=exe_name.replace(".exe", "") + ".exe")
@@ -176,7 +168,7 @@ class Installer:
         # app_name = self.installer_data["appName"]
         download_link: Optional[str] = None
         version_to_be_installed: Optional[str] = None
-        if "github" not in repo_url or (any(an_extension in repo_url for an_extension in DECOMPRESS_SUPPORTED_FORMATS)):
+        if "github" not in repo_url:
             # Direct download URL
             download_link = repo_url
             version_to_be_installed = "predefined_url"
@@ -190,17 +182,15 @@ class Installer:
             print(f"🧭 Detected system={os_name} arch={arch}")
             # Use existing get_github_release method to get download link and version
             download_link, version_to_be_installed = self.get_github_release(repo_url, version)
+            # print(f"🌟 Retrieved download link from GitHub: {download_link}")
+            # print(f"📦 Version to be installed: {version_to_be_installed}")
             if download_link is None:
                 raise ValueError(f"Could not retrieve download link for {exe_name} version {version or 'latest'}")
             print(f"📦 Version to be installed: {version_to_be_installed}")
             print(f"🔗 Download URL: {download_link}")
         assert download_link is not None, "download_link must be set"
         assert version_to_be_installed is not None, "version_to_be_installed must be set"
-        downloaded = PathExtended(download_link).download(folder=INSTALL_TMP_DIR).decompress()
-        if downloaded.is_dir() and len(downloaded.search("*", r=True)) == 1:
-            only_file_in = next(downloaded.glob("*"))
-            if only_file_in.is_file() and any(ext in only_file_in.suffixes for ext in DECOMPRESS_SUPPORTED_FORMATS):  # further decompress
-                downloaded = only_file_in.decompress()
+        downloaded = download_and_prepare(download_link)
         return downloaded, version_to_be_installed
 
     def get_github_release(self, repo_url: str, version: Optional[str]) -> tuple[Optional[str], Optional[str]]:
