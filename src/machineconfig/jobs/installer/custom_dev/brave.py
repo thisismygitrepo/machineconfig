@@ -70,9 +70,11 @@ winget install --no-upgrade --name "Brave"                        --Id "Brave.Br
     )
 
     console.print("🔄 EXECUTING | Running Brave Browser installation...", style="bold yellow")
+    from machineconfig.utils.code import print_code, run_shell_script
     try:
-        subprocess.run(program, shell=True, text=True, check=True)
-        console.print("✅ Brave Browser installation completed successfully", style="bold green")
+        print_code(code=program, lexer="shell", desc="Installation Script Preview")
+        run_shell_script(program)
+        console.print("✅ Installation completed successfully!", style="bold green")
     except subprocess.CalledProcessError as e:
         console.print(f"❌ Installation failed with exit code {e.returncode}", style="bold red")
         raise

@@ -12,6 +12,6 @@ devops config public --method copy --on-conflict overwrite-default-path --which 
 devops config shell
 devops config shell --which nushell
 
-wt  # start Windows Terminal to pick up config changes
 devops install --group termabc 
+wt  # start Windows Terminal to pick up config changes
 devops install --group gui

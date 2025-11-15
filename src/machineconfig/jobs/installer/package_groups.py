@@ -3,7 +3,7 @@ GUI = [
     "brave",
     "code",
     "git",
-    "wezterm",
+    # "wezterm",  # needs admin
 ]
 
 # AI/LLM Tools - AI-powered coding and chat assistants
