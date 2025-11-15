@@ -83,23 +83,23 @@ def link_wsl_and_windows_home():
 
 def get_app():
     config_apps = typer.Typer(help="⚙️ [c] configuration subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
-    config_apps.command("private", no_args_is_help=True, help="🔗  [v] Manage private configuration files.")(create_links_export.main_private_from_parser)
+    config_apps.command("private", no_args_is_help=True, help="🔗 [v] Manage private configuration files.")(create_links_export.main_private_from_parser)
     config_apps.command("v", no_args_is_help=True, hidden=True)(create_links_export.main_private_from_parser)
-    config_apps.command("public", no_args_is_help=True, help="🔗  [b] Manage public configuration files.")(create_links_export.main_public_from_parser)
+    config_apps.command("public", no_args_is_help=True, help="🔗 [b] Manage public configuration files.")(create_links_export.main_public_from_parser)
     config_apps.command("b", no_args_is_help=True, help="Manage public configuration files.", hidden=True)(create_links_export.main_public_from_parser)
-    config_apps.command("dotfile", no_args_is_help=True, help="🔗  [d] Manage dotfiles.")(dotfile_module.main)
+    config_apps.command("dotfile", no_args_is_help=True, help="🔗 [d] Manage dotfiles.")(dotfile_module.main)
     config_apps.command("d", no_args_is_help=True,  hidden=True)(dotfile_module.main)
-    config_apps.command("shell", no_args_is_help=False, help="🔗  [s] Configure your shell profile.")(configure_shell_profile)
+    config_apps.command("shell", no_args_is_help=False, help="🔗 [s] Configure your shell profile.")(configure_shell_profile)
     config_apps.command("s", no_args_is_help=False, help="Configure your shell profile.", hidden=True)(configure_shell_profile)
-    config_apps.command("starship-theme", no_args_is_help=False, help="🔗  [t] Select starship prompt theme.")(starship_theme)
+    config_apps.command("starship-theme", no_args_is_help=False, help="🔗 [t] Select starship prompt theme.")(starship_theme)
     config_apps.command("t", no_args_is_help=False, help="Select starship prompt theme.", hidden=True)(starship_theme)
-    config_apps.command("pwsh-theme", no_args_is_help=False, help="🔗  [T] Select powershell prompt theme.")(pwsh_theme)
+    config_apps.command("pwsh-theme", no_args_is_help=False, help="🔗 [T] Select powershell prompt theme.")(pwsh_theme)
     config_apps.command("T", no_args_is_help=False, help="Select powershell prompt theme.", hidden=True)(pwsh_theme)
 
-    config_apps.command("copy-assets", no_args_is_help=True, help="🔗  [c] Copy asset files from library to machine.", hidden=False)(copy_assets)
+    config_apps.command("copy-assets", no_args_is_help=True, help="🔗 [c] Copy asset files from library to machine.", hidden=False)(copy_assets)
     config_apps.command("c", no_args_is_help=True, help="Copy asset files from library to machine.", hidden=True)(copy_assets)
 
-    config_apps.command("link-wsl-windows", no_args_is_help=False, help="🔗  [l] Link WSL home and Windows home directories.", hidden=False)(link_wsl_and_windows_home)
+    config_apps.command("link-wsl-windows", no_args_is_help=False, help="🔗 [l] Link WSL home and Windows home directories.", hidden=False)(link_wsl_and_windows_home)
     config_apps.command("l", no_args_is_help=False, help="Link WSL home and Windows home directories.", hidden=True)(link_wsl_and_windows_home)
 
     return config_apps
