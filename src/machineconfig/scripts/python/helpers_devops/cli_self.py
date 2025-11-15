@@ -8,7 +8,8 @@ def copy_both_assets():
     create_helper.copy_assets_to_machine(which="scripts")
     create_helper.copy_assets_to_machine(which="settings")
 
-def init(which: Annotated[str, typer.Argument(..., help="Comma-separated list of script names to run, [init,ia,wrap] to run all initialization scripts.")] = "init") -> None:
+
+def init(which: Annotated[str, typer.Argument(..., help="Comma-separated list of script names to run, [init,ia,live,wrap] to run all initialization scripts.")] = "init") -> None:
     import platform
     if platform.system() == "Linux":
         if which == "init":
@@ -18,6 +19,9 @@ def init(which: Annotated[str, typer.Argument(..., help="Comma-separated list of
             script = init_path.read_text(encoding="utf-8")
         elif which == "ia":
             from machineconfig.setup_linux import INTERACTIVE as script_path
+            script = script_path.read_text(encoding="utf-8")
+        elif which == "live":
+            from machineconfig.setup_linux import LIVE as script_path
             script = script_path.read_text(encoding="utf-8")
         else:
             typer.echo("Unsupported shell script for Linux.")
@@ -32,6 +36,9 @@ def init(which: Annotated[str, typer.Argument(..., help="Comma-separated list of
         elif which == "ia":
             from machineconfig.setup_linux import INTERACTIVE as script_path
             script = script_path.read_text(encoding="utf-8")
+        elif which == "live":
+            from machineconfig.setup_linux import LIVE as script_path
+            script = script_path.read_text(encoding="utf-8")
         else:
             typer.echo("Unsupported shell script for macOS.")
             raise typer.Exit(code=1)
@@ -44,6 +51,9 @@ def init(which: Annotated[str, typer.Argument(..., help="Comma-separated list of
             script = init_path.read_text(encoding="utf-8")
         elif which == "ia":
             from machineconfig.setup_windows import INTERACTIVE as script_path
+            script = script_path.read_text(encoding="utf-8")
+        elif which == "interactive":
+            from machineconfig.setup_windows import LIVE as script_path
             script = script_path.read_text(encoding="utf-8")
         else:
             typer.echo("Unsupported shell script for Windows.")
@@ -99,7 +109,7 @@ def install(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-n
     if Path.home().joinpath("code/machineconfig").exists():
         run_shell_script(f""" {uv_run_command} tool install --upgrade --editable "{str(Path.home().joinpath("code/machineconfig"))}" """)
     else:
-        run_shell_script(rf""" {uv_run_command} tool install --upgrade "machineconfig>=7.90" """)
+        run_shell_script(rf""" {uv_run_command} tool install --upgrade "machineconfig>=7.91" """)
     from machineconfig.profile.create_shell_profile import create_default_shell_profile
     if not no_copy_assets:
         create_default_shell_profile()   # involves copying assets too
@@ -124,7 +134,7 @@ def navigate():
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import exit_then_run_shell_script
     if Path.home().joinpath("code/machineconfig").exists(): executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
-    else: executable = """--with "machineconfig>=7.90,textual" """
+    else: executable = """--with "machineconfig>=7.91,textual" """
     exit_then_run_shell_script(f"""uv run {executable} {path}""")
 
 def readme():
@@ -153,8 +163,8 @@ def get_app():
     cli_app.command("u",           no_args_is_help=False, hidden=True)(update)
     cli_app.command("interactive", no_args_is_help=False, help="🤖  [i] INTERACTIVE configuration of machine.")(interactive)
     cli_app.command("i",           no_args_is_help=False, help="INTERACTIVE configuration of machine.", hidden=True)(interactive)
-    cli_app.command(name="init", help="🦐 [t] Define and manage configurations", no_args_is_help=False)(init)
-    cli_app.command(name="t", hidden=True)(init)
+    cli_app.command(name="init",         no_args_is_help=False, help="🦐 [t] Define and manage configurations")(init)
+    cli_app.command(name="t",            no_args_is_help=False, hidden=True)(init)
     cli_app.command("status",      no_args_is_help=False, help="📊  [s] STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.")(status)
     cli_app.command("s",           no_args_is_help=False, help="STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.", hidden=True)(status)
     cli_app.command("install",     no_args_is_help=False, help="📋  [I] CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.")(install)

@@ -34,8 +34,8 @@ def install(which: Annotated[Optional[str], typer.Argument(..., help="Comma-sepa
 
 
 def get_app():
-    cli_app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True, add_help_option=False,
-                      add_completion=False)
+
+    cli_app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True, add_help_option=False, add_completion=False)
     cli_app.command("install", no_args_is_help=True, help="🛠️ [i] Install essential packages")(install)
     cli_app.command("i", no_args_is_help=True, help="Install essential packages", hidden=True)(install)
 

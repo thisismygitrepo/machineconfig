@@ -7,8 +7,6 @@ from rich.console import Console
 from rich.panel import Panel
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
-
-
 ps1 = r"""
 $winget = Get-Command winget -ErrorAction SilentlyContinue
 if (-not $winget) {
