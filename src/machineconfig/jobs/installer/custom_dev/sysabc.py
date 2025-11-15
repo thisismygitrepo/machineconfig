@@ -64,7 +64,7 @@ else {
 
 winget install --no-upgrade --name "Powershell"                   --Id "Microsoft.PowerShell"       --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
 winget install --no-upgrade --name "Windows Terminal"             --Id "Microsoft.WindowsTerminal"  --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W 11
-winget install --no-upgrade --name "GNU Nano"                     --Id "GNU.Nano"                   --source winget --scope user --accept-package-agreements --accept-source-agreements
+# winget install --no-upgrade --name "GNU Nano"                     --Id "GNU.Nano"                   --source winget --scope user --accept-package-agreements --accept-source-agreements
 # --GROUP:gui:Brave+VSCode+Git+WezTerm
 # --GROUP:dev2:VSRedistrib+VSBuildTools+Codeblocks+GnuWin32: Make+GnuPG+graphviz+WinFsp+SSHFS-win+xming+Node.js+Rustup+Cloudflare+Cloudflare WARP+Microsoft Garage Mouse without Borders
 # --GROUP:user:nu+Chrome+ChromeRemoteDesktop+Zoom+7zip+Firefox+Thunderbird+StreamlabsOBS+OBSStudio+MiKTeX+TexMaker+notepad+++Lapce+TesseractOCR+perl+DB Browser for SQLite+sql server management studio+Adobe Acrobat Reader DC+julia+Chafa+bottom+onefetch+Just+hyperfine+AWS CLI
