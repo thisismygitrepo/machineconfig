@@ -8,52 +8,29 @@ from rich.panel import Panel
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-"""
-    {
-      "appName": "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle",
-      "repoURL": "https://github.com/microsoft/winget-cli",
-      "doc": "📦 Windows Package Manager CLI",
-      "fileNamePattern": {
-        "amd64": {
-          "linux": null,
-          "windows": "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle",
-          "macos": null
-        },
-        "arm64": {
-          "linux": null,
-          "windows": "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle",
-          "macos": null
-        }
-      }
-
-"""
 
 ps1 = r"""
-
-
-
 $winget = Get-Command winget -ErrorAction SilentlyContinue
-
 if (-not $winget) {
     Write-Host "winget not found. Installing..."
-
-    $downloadDir = Join-Path $HOME "Downloads"
-    Set-Location $downloadDir
-
-    $url = "https://github.com/microsoft/winget-cli/releases/download/v1.12.170-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
-    $file = Split-Path $url -Leaf
-
-    # download using your alias 'd u'
-    d u $url
-
-    Write-Host "Downloaded: $file"
-
+    $finalUrl = (Invoke-WebRequest 'https://github.com/microsoft/winget-cli/releases/latest' -UseBasicParsing).BaseResponse.ResponseUri.AbsoluteUri
+    $releaseTag = $finalUrl.Split('/')[-1]
+    $DownloadUrl = "https://github.com/microsoft/winget-cli/releases/download/$releaseTag/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+    $DestDir     = Join-Path $HOME "Downloads"
+    $DestFile    = Join-Path $DestDir "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+    # Create folder if it doesn't exist
+    if (-not (Test-Path $DestDir)) {
+        New-Item -ItemType Directory -Path $DestDir | Out-Null
+    }
+    Write-Host "Downloading winget installer..."
+    # Invoke-WebRequest -Uri $DownloadUrl -OutFile $DestFile
+    Start-BitsTransfer -Source $DownloadUrl -Destination $DestFile
+    Write-Host "Saved to: $DestFile"
     # We MUST run Add-AppxPackage in Windows PowerShell
     Write-Host "Installing package via Windows PowerShell..."
-    powershell.exe -NoLogo -NoProfile -Command "Add-AppxPackage -Path `"$downloadDir\$file`""
-
+    powershell.exe -NoLogo -NoProfile -Command "Add-AppxPackage -Path `"$DestFile`" "
     Write-Host "Installation complete."
-}
+    }
 else {
     Write-Host "winget already available. Skipping installation."
 }
