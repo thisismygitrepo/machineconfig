@@ -2382,6 +2382,74 @@
       }
     },
     {
+      "appName": "trippy",
+      "repoURL": "https://github.com/fujiapple852/trippy",
+      "doc": "🧭 A network diagnostic tool combining traceroute and ping)",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "trippy-{version}-x86_64-unknown-linux-musl.tar.gz",
+          "macos": "trippy-{version}-x86_64-apple-darwin.tar.gz",
+          "windows": "trippy-{version}-x86_64-pc-windows-msvc.zip"
+        },
+        "arm64": {
+          "linux": "trippy-{version}-aarch64-unknown-linux-musl.tar.gz",
+          "macos": "trippy-{version}-aarch64-apple-darwin.tar.gz",
+          "windows": "trippy-{version}-aarch64-pc-windows-msvc.zip"
+        }
+      }
+    },    
+    {
+      "appName": "oryx",
+      "repoURL": "https://github.com/pythops/oryx",
+      "doc": "🕵️‍♂️ TUI for sniffing network traffic using eBPF on Linux",  
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "oryx-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "",
+          "windows": ""
+        },
+        "arm64": {
+          "linux": "oryx-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "",
+          "windows": ""
+        }
+      }
+    },
+    {
+      "appName": "tufw",
+      "repoURL": "https://github.com/peltho/tufw",
+      "doc": "📋 Terminal UI for UFW (Uncomplicated Firewall) on Linux",  
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "tufw_{version}_linux_amd64.tar.gz",
+          "macos": "",
+          "windows": ""
+        },
+        "arm64": {
+          "linux": "tufw_{version}_linux_arm64.tar.gz",
+          "macos": "",
+          "windows": ""
+        }
+      }
+    },
+    {
+      "appName": "netscanner",
+      "repoURL": "https://github.com/Chleba/netscanner",
+      "doc": "📡 Terminal network scanner & diagnostic tool with TUI (v0.6.3)",  
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "netscanner-{version}-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "netscanner-{version}-x86_64-apple-darwin.tar.gz",
+          "windows": "netscanner-{version}-x86_64-pc-windows-msvc.zip"
+        },
+        "arm64": {
+          "linux": "netscanner-{version}-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "netscanner-{version}-aarch64-apple-darwin.tar.gz",
+          "windows": "netscanner-{version}-aarch64-pc-windows-msvc.zip"
+        }
+      }
+    },
+    {
       "appName": "hyperfine",
       "repoURL": "https://github.com/sharkdp/hyperfine",
       "doc": "⚡ A command-line benchmarking tool",
