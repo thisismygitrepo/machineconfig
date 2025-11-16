@@ -26,8 +26,10 @@ def croshell(
 
     if project_path is not None:
         uv_project_line = f'--project "{project_path}"'
+        uv_python_line = ""
     else:
         uv_project_line = ""
+        uv_python_line = "--python 3.14"
 
     from machineconfig.scripts.python.helpers_croshell.crosh import get_read_python_file_pycode, get_read_data_pycode
     from machineconfig.utils.meta import lambda_to_python_script
@@ -53,7 +55,7 @@ def croshell(
             ve_path, _ = get_ve_path_and_ipython_profile(choice_file)
             if ve_path is not None:
                 ve_path_obj = Path(ve_path)
-                uv_project_line = f'--project "{ve_path_obj.parent}"'
+                uv_project_line = f'--project {ve_path_obj.parent}'
         if choice_file.suffix == ".py":
             program = choice_file.read_text(encoding="utf-8")
             text = f"📄 Selected file: {choice_file.name}"
@@ -122,15 +124,15 @@ def croshell(
             pass
     if visidata:
         if file_obj.suffix == ".json":
-            fire_line = f"uv run --python 3.14 {user_uv_with_line} {uv_project_line} --with visidata vd {str(file_obj)}"
+            fire_line = f"uv run {uv_python_line} {user_uv_with_line} {uv_project_line} --with visidata vd {str(file_obj)}"
         else:
-            fire_line = f"uv run --python 3.14 {user_uv_with_line} {uv_project_line} --with visidata,pyarrow vd {str(file_obj)}"
+            fire_line = f"uv run {uv_python_line} {user_uv_with_line} {uv_project_line} --with visidata,pyarrow vd {str(file_obj)}"
     elif marimo:
         if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""{user_uv_with_line} {uv_project_line} --with marimo --project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: requirements = f"""--python 3.14 {user_uv_with_line} {uv_project_line} --with "marimo,cowsay,machineconfig[plot]>=7.93" """
+        else: requirements = f"""{uv_python_line} {user_uv_with_line} {uv_project_line} --with "marimo,cowsay,machineconfig[plot]>=7.93" """
         fire_line = f"""
 cd {str(pyfile.parent)}
-uv run --python 3.14 --with "marimo" marimo convert {pyfile.name} -o marimo_nb.py
+uv run {uv_python_line} --with "marimo" marimo convert {pyfile.name} -o marimo_nb.py
 uv run {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
 """
     elif jupyter:
@@ -141,7 +143,7 @@ uv run {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
         user_uv_add = f"uv add {uv_with}" if uv_with is not None else ""
         fire_line = f"""
 cd {str(pyfile.parent)}
-uv init --python 3.14
+uv init {uv_python_line}
 uv venv
 uv add "cowsay,machineconfig[plot]>=7.93"
 uv add {user_uv_add}
@@ -152,7 +154,7 @@ code --new-window {str(pyfile)}
         if interpreter == "ipython": profile = f" --profile {ipython_profile} --no-banner"
         else: profile = ""
         if Path.home().joinpath("code/machineconfig").exists(): ve_line = f"""{user_uv_with_line}  {uv_project_line} --project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: ve_line = f"""--python 3.14 {user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=7.93" """
+        else: ve_line = f"""{uv_python_line} {user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=7.93" """
         fire_line = f"uv run {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
 
     from machineconfig.utils.code import exit_then_run_shell_script
