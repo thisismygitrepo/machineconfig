@@ -10,7 +10,7 @@ PROMPT_PATH="$REPO_ROOT/.ai/agents/prompt.txt"
 AGENTS_DIR="$REPO_ROOT/.ai/agents/$JOB_NAME"
 
 agents create \
-    --agents gemini \
+    --agents crush \
     --host docker \
     --model gemini-2.5-pro \
     --provider google \

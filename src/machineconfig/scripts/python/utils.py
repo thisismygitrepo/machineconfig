@@ -1,8 +1,7 @@
-
-
 from machineconfig.scripts.python.helpers_devops.cli_utils import merge_pdfs, compress_pdf
 from machineconfig.scripts.python.helpers_utils.path import edit_file_with_hx, get_machine_specs, init_project, tui_env
 from machineconfig.scripts.python.helpers_utils.download import download
+from machineconfig.utils.converters import to_toml
 import typer
 from typing import Annotated
 
@@ -52,6 +51,9 @@ def get_app() -> typer.Typer:
     app.command(name="pm", no_args_is_help=True, hidden=True)(merge_pdfs)
     app.command(name="pdf-compress", no_args_is_help=True, help="📦 [pc] Compress a PDF file.")(compress_pdf)
     app.command(name="pc", no_args_is_help=True, hidden=True)(compress_pdf)
+
+    app.command(name="to-toml", no_args_is_help=True, help="🔄 [tt] Convert a JSON or YAML file to TOML.")(to_toml)
+    app.command(name="tt", no_args_is_help=True, hidden=True)(to_toml)
 
     # app.command(name="copy", no_args_is_help=True, help="[c] Copy files or directories.")(copy)
     # app.command(name="c", no_args_is_help=True, hidden=True)(copy)

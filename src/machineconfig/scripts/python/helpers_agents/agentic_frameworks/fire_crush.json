@@ -7,7 +7,7 @@
         }
     },
     "providers": {
-        "openrouter": {
+        "{provider}": {
             "api_key": "{api_key}"
         }
     }
