@@ -4,40 +4,39 @@
 wrap_in_shell_script() {
   # set -euo pipefail
   # ANSI color/style codes
-  BOLD="\033[1m"
-  RESET="\033[0m"
-  GREEN="\033[32m"
-  YELLOW="\033[33m"
-  BLUE="\033[34m"
-  RED="\033[31m"
+  # BOLD="\033[1m"
+  # RESET="\033[0m"
+  # GREEN="\033[32m"
+  # YELLOW="\033[33m"
+  # BLUE="\033[34m"
+  # RED="\033[31m"
 
   local command="$1"
   shift  
-  local RANDOM_NAME=$(uuidgen | tr -d '-' | head -c 16)
+  local RANDOM_NAME=$(LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 12)
   local OP_DIR="$HOME/tmp_results/tmp_scripts/machineconfig"
   local OP_PROGRAM_PATH="$OP_DIR/${RANDOM_NAME}.sh"
   export OP_PROGRAM_PATH
-  local timestamp=$(date -u +"%Y-%m-%d %H:%M:%SZ")
-  printf "%b\n" "${BOLD}${BLUE}🛠️  machineconfig — running ${command}${RESET}"
-  printf "%b\n" "${BLUE}Timestamp:${RESET} ${timestamp}"
-  printf "%b\n" "${BLUE}Op program path:${RESET} ${OP_PROGRAM_PATH}"
-
+  # local timestamp=$(date -u +"%Y-%m-%d %H:%M:%SZ")
+  # printf "%b\n" "${BOLD}${BLUE}🛠️  machineconfig — running ${command}${RESET}"
+  # printf "%b\n" "${BLUE}Timestamp:${RESET} ${timestamp}"
+  # printf "%b\n" "${BLUE}Op program path:${RESET} ${OP_PROGRAM_PATH}"
   # Forward arguments to the command
   "$command" "$@"
-
   if [[ -f "$OP_PROGRAM_PATH" ]]; then
-    printf "%b\n" "${GREEN}🚀 Taking over from python script @ ${OP_PROGRAM_PATH}${RESET}"
+    printf "%b\n" "🚀 Taking over from python script @ ${OP_PROGRAM_PATH}${RESET}"
     bat --style=full --theme=OneHalfDark --paging=never "$OP_PROGRAM_PATH"
-    printf "%b\n" "${GREEN}▶ Running...${RESET}"
+    # printf "%b\n" "${GREEN}▶ Running...${RESET}"
     . "$OP_PROGRAM_PATH"
     status=$?
-    if [[ $status -eq 0 ]]; then
-      printf "%b\n" "${GREEN}✅ '${command}' execution completed.${RESET}"
-    else
-      printf "%b\n" "${YELLOW}⚠️  Program exited with status ${status}${RESET}"
-    fi
+    # if [[ $status -eq 0 ]]; then
+      # printf "%b\n" "${GREEN}✅ '${command}' execution completed.${RESET}"
+    # else
+      # printf "%b\n" "${YELLOW}⚠️  Program exited with status ${status}${RESET}"
+    # fi
   else
-    printf "%b\n" "${GREEN}✅ '${command}' execution completed.${RESET}"
+    echo " "
+    # printf "%b\n" "${GREEN}✅ '${command}' execution completed.${RESET}"
   fi
 }
 

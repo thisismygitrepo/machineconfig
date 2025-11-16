@@ -136,10 +136,11 @@ def collect(
     typer.echo(f"Concatenated material written to {output_path}")
 
 
-def template():
+def make_agents_command_template():
     from platform import system
     import machineconfig.scripts.python.helpers_agents as module
     from pathlib import Path
+
     if system() == "Linux" or system() == "Darwin":
         template_path = Path(module.__file__).parent / "templates/template.sh"
     elif system() == "Windows":
@@ -152,10 +153,21 @@ def template():
     if repo_root is None:
         typer.echo("💥 Could not determine the repository root. Please run this script from within a git repository.")
         raise typer.Exit(1)
-    save_path = repo_root / ".ai" / "agents" / "template_fire_agents.sh"
-    save_path.parent.mkdir(parents=True, exist_ok=True)
-    save_path.write_text(template_path.read_text(encoding="utf-8"), encoding="utf-8")
-    typer.echo(f"Template bash script written to {save_path}")
+
+    save_path_root = repo_root / ".ai" / "agents"
+
+    save_path_root.mkdir(parents=True, exist_ok=True)
+    save_path_root.joinpath("template_fire_agents.sh").write_text(template_path.read_text(encoding="utf-8"), encoding="utf-8")
+    typer.echo(f"Template bash script written to {save_path_root}")
+
+    from machineconfig.scripts.python.ai.utils.generate_files import make_todo_files
+    make_todo_files(
+        pattern=".py", repo=str(repo_root), strategy="name", output_path=str(save_path_root / "files.md"), split_every=None, split_to=None
+    )
+
+    prompt_path = Path(module.__file__).parent / "templates/prompt.txt"
+    save_path_root.joinpath("prompt.txt").write_text(prompt_path.read_text(encoding="utf-8"), encoding="utf-8")
+    typer.echo(f"Prompt template written to {save_path_root}")
 
 
 def init_config():
@@ -178,13 +190,13 @@ AGENT options: {', '.join(get_args(AGENTS))}
     agents_app.command("c", no_args_is_help=True, help="Create agents layout file, ready to run.", hidden=True)(create)
     agents_app.command("collect", no_args_is_help=True, help="[T] Collect all agent materials into a single file.")(collect)
     agents_app.command("T", no_args_is_help=True, help="Collect all agent materials into a single file.", hidden=True)(collect)
-    agents_app.command("make-template", no_args_is_help=False, help="[t] Create a template for fire agents")(template)
-    agents_app.command("t", no_args_is_help=False, help="Create a template for fire agents", hidden=True)(template)
+    agents_app.command("make-template", no_args_is_help=False, help="[t] Create a template for fire agents")(make_agents_command_template)
+    agents_app.command("t", no_args_is_help=False, help="Create a template for fire agents", hidden=True)(make_agents_command_template)
     agents_app.command("make-config", no_args_is_help=False, help="[g] Initialize AI configurations in the current repository")(init_config)
     agents_app.command("g", no_args_is_help=False, help="Initialize AI configurations in the current repository", hidden=True)(init_config)
-    from machineconfig.scripts.python.ai.utils.generate_files import main
-    agents_app.command("make-todo", no_args_is_help=True, help="[d] Generate a markdown file listing all Python files in the repo")(main)
-    agents_app.command("d", no_args_is_help=True, help="Generate a markdown file listing all Python files in the repo", hidden=True)(main)
+    from machineconfig.scripts.python.ai.utils.generate_files import make_todo_files
+    agents_app.command("make-todo", no_args_is_help=True, help="[d] Generate a markdown file listing all Python files in the repo")(make_todo_files)
+    agents_app.command("d", no_args_is_help=True, help="Generate a markdown file listing all Python files in the repo", hidden=True)(make_todo_files)
     from machineconfig.scripts.python.ai.utils.generate_files import create_symlink_command
     agents_app.command(name="make-symlinks", no_args_is_help=True, help="[s] Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
     agents_app.command(name="s", no_args_is_help=True, help="Create symlinks to the current repo in ~/code_copies/", hidden=True)(create_symlink_command)

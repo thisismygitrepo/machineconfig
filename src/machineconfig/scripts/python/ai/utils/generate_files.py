@@ -247,7 +247,7 @@ def create_repo_symlinks(repo_root: Path) -> None:
         symlink_path.symlink_to(repo_root, target_is_directory=True)
 
 
-def main(
+def make_todo_files(
     pattern: Annotated[str, typer.Argument(help="Pattern or keyword to match files by")],
     repo: Annotated[str, typer.Argument(help="Repository path. Can be any directory within a git repository.")] = str(Path.cwd()),
     strategy: Annotated[Literal["name", "keywords"], typer.Option("-s", "--strategy", help="Strategy to filter files: 'name' for filename matching, 'keywords' for content matching")] = "name",
@@ -344,5 +344,5 @@ def create_symlink_command(num: Annotated[int, typer.Argument(help="Number of sy
     console.print(Panel(f"✅ SUCCESS | Created {num} symlinks to {repo_root} in ~/code_copies/", border_style="bold green", expand=False))
 
 if __name__ == "__main__":
-    typer.run(main)
+    typer.run(make_todo_files)
     # typer.run(create_symlink_command)

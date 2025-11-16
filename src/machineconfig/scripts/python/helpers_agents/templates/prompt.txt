@@ -1,6 +1,10 @@
 
-please look if it is possible to easily relpace PathExtended with normal Path from pathlib
-if its one or two lines of code, then go ahead and make it standard and stop using the extended library
-you focus ont he methods used, 
+Please inspect the following python files, and document which methods of PathExtended class have been used (if the class is used at all)
+please create a file next to this file on same dir called result.md and put your results in it.
+Like this:
+* File_NAME
+    * method1
+    * method2
 
-only look at the files below
+* File_NAME
+    * method x

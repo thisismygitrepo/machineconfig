@@ -1,17 +1,17 @@
 
-FROM statistician:machineconfig-slim
+FROM statistician/machineconfig-slim:latest
 
 
 # Set bash as default shell
 SHELL ["/bin/bash", "-lc"]
 
-RUN /root/.local/bin/devops install --group agents
+RUN source /root/.nvm/nvm.sh && /root/.local/bin/devops install --group agents
 
 # Clean up of installer files.
 RUN rm -rfd /root/tmp_results
 RUN /root/.local/bin/uv clean && \
-    rm -rfd /root/.cache/pip && \
-    npm cache clean --force
+    rm -rfd /root/.cache/pip
+    # npm cache clean --force
 
 WORKDIR /root
 CMD ["/usr/bin/bash"]

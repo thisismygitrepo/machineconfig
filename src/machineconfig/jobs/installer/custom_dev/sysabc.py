@@ -81,13 +81,10 @@ sudo nala install build-essential python3-dev -y || true  # C build toolchain: W
 # sudo nala install libaa-bin -y
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-echo "🔧 Configuring NVM environment..."
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-echo "📥 Installing latest Node.js..."
+source ~/.bashrc || true
 nvm install node || true
 
-sudo nala install samba
+sudo nala install samba -y || true
 sudo nala install fuse3 -y || true
 sudo nala install nfs-common -y || true
 

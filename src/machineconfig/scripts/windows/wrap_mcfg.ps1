@@ -34,12 +34,15 @@ function wrap_in_shell_script {
         try {
             bat --style=full --theme=OneHalfDark --paging=never "$env:OP_PROGRAM_PATH"
         } catch {
-            Write-Host "⚠️ Warning: Failed to display script content with 'bat'. Proceeding to execute the script."
+            # Write-Host "⚠️ Warning: Failed to display script content with 'bat'. Proceeding to execute the script."
+            Write-Host " "
         }
         & $env:OP_PROGRAM_PATH
-        Write-Host "✅ '$Command' execution completed."
+        # Write-Host "✅ '$Command' execution completed."
+
     } else {
-        Write-Host "✅ '$Command' execution completed."
+        # Write-Host "✅ '$Command' execution completed."
+        Write-Host " "
     }
 
     # Clean up the temporary environment variable so it doesn't leak to other processes/sessions
