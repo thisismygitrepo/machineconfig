@@ -138,6 +138,10 @@ def upgrade_machine_config_version() -> None:
     # Find all Python files and replace version constraints
     py_files: list[Path] = list(current_dir.glob("**/*.py")) + list(current_dir.glob("**/*.sh")) + list(current_dir.glob("**/*.ps1"))
     
+    # Also include Dockerfile files
+    dockerfile_files: list[Path] = [f for f in current_dir.glob("**/Dockerfile*") if f.is_file()]
+    py_files.extend(dockerfile_files)
+    
     files_updated: int = 0
     for file_path in py_files:
         try:
