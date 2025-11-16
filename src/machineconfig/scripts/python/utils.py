@@ -52,9 +52,6 @@ def get_app() -> typer.Typer:
     app.command(name="pdf-compress", no_args_is_help=True, help="📦 [pc] Compress a PDF file.")(compress_pdf)
     app.command(name="pc", no_args_is_help=True, hidden=True)(compress_pdf)
 
-    app.command(name="to-toml", no_args_is_help=True, help="🔄 [tt] Convert a JSON or YAML file to TOML.")(to_toml)
-    app.command(name="tt", no_args_is_help=True, hidden=True)(to_toml)
-
     # app.command(name="copy", no_args_is_help=True, help="[c] Copy files or directories.")(copy)
     # app.command(name="c", no_args_is_help=True, hidden=True)(copy)
 
