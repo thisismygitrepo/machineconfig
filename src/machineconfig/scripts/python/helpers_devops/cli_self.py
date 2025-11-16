@@ -1,6 +1,6 @@
 
 import typer
-from typing import Annotated
+from typing import Annotated, Literal
 
 
 def copy_both_assets():
@@ -9,60 +9,54 @@ def copy_both_assets():
     create_helper.copy_assets_to_machine(which="settings")
 
 
-def init(which: Annotated[str, typer.Argument(..., help="Comma-separated list of script names to run, [init,ia,live,wrap] to run all initialization scripts.")] = "init") -> None:
+def init(which: Annotated[Literal["init", "ia", "live", "wrap"], typer.Argument(..., help="Comma-separated list of script names to run all initialization scripts.")] = "init",
+         run: Annotated[bool, typer.Option("--run/--no-run", "-r/-nr", help="Run the script after displaying it.")] = False,
+                        ) -> None:
     import platform
-    if platform.system() == "Linux":
-        if which == "init":
-            import machineconfig.settings as module
-            from pathlib import Path
-            init_path = Path(module.__file__).parent.joinpath("shells", "bash", "init.sh")
-            script = init_path.read_text(encoding="utf-8")
-        elif which == "ia":
-            from machineconfig.setup_linux import INTERACTIVE as script_path
-            script = script_path.read_text(encoding="utf-8")
-        elif which == "live":
-            from machineconfig.setup_linux import LIVE as script_path
-            script = script_path.read_text(encoding="utf-8")
-        else:
-            typer.echo("Unsupported shell script for Linux.")
-            raise typer.Exit(code=1)
-
-    elif platform.system() == "Darwin":
-        if which == "init":
-            import machineconfig.settings as module
-            from pathlib import Path
-            init_path = Path(module.__file__).parent.joinpath("shells", "zsh", "init.sh")
-            script = init_path.read_text(encoding="utf-8")
-        elif which == "ia":
-            from machineconfig.setup_linux import INTERACTIVE as script_path
-            script = script_path.read_text(encoding="utf-8")
-        elif which == "live":
-            from machineconfig.setup_linux import LIVE as script_path
-            script = script_path.read_text(encoding="utf-8")
-        else:
-            typer.echo("Unsupported shell script for macOS.")
-            raise typer.Exit(code=1)
+    if platform.system() == "Linux" or platform.system() == "Darwin":
+        match which:
+            case "init":
+                import machineconfig.settings as module
+                from pathlib import Path
+                if platform.system() == "Darwin":
+                    init_path = Path(module.__file__).parent.joinpath("shells", "zsh", "init.sh")
+                else: init_path = Path(module.__file__).parent.joinpath("shells", "bash", "init.sh")
+                script = init_path.read_text(encoding="utf-8")
+            case "ia":
+                from machineconfig.setup_linux import INTERACTIVE as script_path
+                script = script_path.read_text(encoding="utf-8")
+            case "live":
+                from machineconfig.setup_linux import LIVE as script_path
+                script = script_path.read_text(encoding="utf-8")
+            case _:
+                typer.echo("Unsupported shell script for Linux.")
+                raise typer.Exit(code=1)
 
     elif platform.system() == "Windows":
-        if which == "init":
-            import machineconfig.settings as module
-            from pathlib import Path
-            init_path = Path(module.__file__).parent.joinpath("shells", "powershell", "init.ps1")
-            script = init_path.read_text(encoding="utf-8")
-        elif which == "ia":
-            from machineconfig.setup_windows import INTERACTIVE as script_path
-            script = script_path.read_text(encoding="utf-8")
-        elif which == "interactive":
-            from machineconfig.setup_windows import LIVE as script_path
-            script = script_path.read_text(encoding="utf-8")
-        else:
-            typer.echo("Unsupported shell script for Windows.")
-            raise typer.Exit(code=1)
+        match which:
+            case "init":
+                import machineconfig.settings as module
+                from pathlib import Path
+                init_path = Path(module.__file__).parent.joinpath("shells", "powershell", "init.ps1")
+                script = init_path.read_text(encoding="utf-8")
+            case "ia":
+                from machineconfig.setup_windows import INTERACTIVE as script_path
+                script = script_path.read_text(encoding="utf-8")
+            case "live":
+                from machineconfig.setup_windows import LIVE as script_path
+                script = script_path.read_text(encoding="utf-8")
+            case _:
+                typer.echo("Unsupported shell script for Windows.")
+                raise typer.Exit(code=1)
     else:
         # raise NotImplementedError("Unsupported platform")
         typer.echo("Unsupported platform for init scripts.")
         raise typer.Exit(code=1)
-    print(script)
+    if run:
+        from machineconfig.utils.code import exit_then_run_shell_script
+        exit_then_run_shell_script(script, strict=True)
+    else:
+        print(script)
 
 
 def update(copy_assets: Annotated[bool, typer.Option("--assets-copy/--no-assets-copy", "-a/-na", help="Copy (overwrite) assets to the machine after the update")] = True,
