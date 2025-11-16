@@ -11,10 +11,11 @@ import typer
 
 def croshell(
     path: Annotated[Optional[str], typer.Argument(help="path of file to read.")] = None,
-    python: Annotated[bool, typer.Option("--python", "-p", help="flag to use python over IPython.")] = False,
-    profile: Annotated[Optional[str], typer.Option("--profile", "-P", help="ipython profile to use, defaults to default profile.")] = None,
+    python: Annotated[bool, typer.Option("--python", "-P", help="flag to use python over IPython.")] = False,
+    profile: Annotated[Optional[str], typer.Option("--profile", "-r", help="ipython profile to use, defaults to default profile.")] = None,
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="run in jupyter interactive console")] = False,
     vscode: Annotated[bool, typer.Option("--vscode", "-c", help="open the script in vscode")] = False,
+    project_path: Annotated[Optional[str], typer.Option("--project", "-p", help="specify uv project to use")] = None,
     # streamlit_viewer: Annotated[bool, typer.Option("--streamlit", "-s", help="view in streamlit app")] = False,
     uv_with: Annotated[Optional[str], typer.Option("--uv-with", "-w", help="specify uv with packages to use")] = None,
     visidata: Annotated[bool, typer.Option("--visidata", "-v", help="open data file in visidata")] = False,
@@ -22,6 +23,11 @@ def croshell(
 ) -> None:
     if uv_with is not None: user_uv_with_line = f"--with {uv_with} "
     else: user_uv_with_line = ""
+
+    if project_path is not None:
+        uv_project_line = f'--project "{project_path}"'
+    else:
+        uv_project_line = ""
 
     from machineconfig.scripts.python.helpers_croshell.crosh import get_read_python_file_pycode, get_read_data_pycode
     from machineconfig.utils.meta import lambda_to_python_script
@@ -33,6 +39,7 @@ def croshell(
     from rich.panel import Panel
     console = Console()
 
+
     # ==================================================================================
     # flags processing
     interactivity = "-i"
@@ -42,7 +49,11 @@ def croshell(
     if path is not None:
         from machineconfig.utils.path_helper import get_choice_file
         choice_file = get_choice_file(path=path, suffixes={".*"})
-        ve_path, _ = get_ve_path_and_ipython_profile(choice_file)
+        if project_path is None:
+            ve_path, _ = get_ve_path_and_ipython_profile(choice_file)
+            if ve_path is not None:
+                ve_path_obj = Path(ve_path)
+                uv_project_line = f'--project "{ve_path_obj.parent}"'
         if choice_file.suffix == ".py":
             program = choice_file.read_text(encoding="utf-8")
             text = f"📄 Selected file: {choice_file.name}"
@@ -53,13 +64,7 @@ def croshell(
             text = f"📄 Reading data from: {file_obj.name}"
             console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
     else:  # if nothing is specified, then run in interactive mode.
-        ve_path = None
         program = ""
-
-    if ve_path is not None:
-        uv_project_line = f'--project "{ve_path}"'
-    else:
-        uv_project_line = ""
 
 
     preprogram = """
