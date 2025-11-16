@@ -27,6 +27,7 @@ def croshell(
     from machineconfig.utils.meta import lambda_to_python_script
     from pathlib import Path
     from machineconfig.utils.accessories import randstr
+    from machineconfig.utils.ve import get_ve_path_and_ipython_profile
     import json
     from rich.console import Console
     from rich.panel import Panel
@@ -41,6 +42,7 @@ def croshell(
     if path is not None:
         from machineconfig.utils.path_helper import get_choice_file
         choice_file = get_choice_file(path=path, suffixes={".*"})
+        ve_path, _ = get_ve_path_and_ipython_profile(choice_file)
         if choice_file.suffix == ".py":
             program = choice_file.read_text(encoding="utf-8")
             text = f"📄 Selected file: {choice_file.name}"
@@ -51,7 +53,15 @@ def croshell(
             text = f"📄 Reading data from: {file_obj.name}"
             console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
     else:  # if nothing is specified, then run in interactive mode.
+        ve_path = None
         program = ""
+
+    if ve_path is not None:
+        uv_project_line = f'--project "{ve_path}"'
+    else:
+        uv_project_line = ""
+
+
     preprogram = """
 #%%
 """
@@ -107,21 +117,21 @@ def croshell(
             pass
     if visidata:
         if file_obj.suffix == ".json":
-            fire_line = f"uv run --python 3.14 {user_uv_with_line} --with visidata vd {str(file_obj)}"
+            fire_line = f"uv run --python 3.14 {user_uv_with_line} {uv_project_line} --with visidata vd {str(file_obj)}"
         else:
-            fire_line = f"uv run --python 3.14 {user_uv_with_line}--with visidata,pyarrow vd {str(file_obj)}"
+            fire_line = f"uv run --python 3.14 {user_uv_with_line} {uv_project_line} --with visidata,pyarrow vd {str(file_obj)}"
     elif marimo:
-        if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""{user_uv_with_line} --with marimo --project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: requirements = f"""--python 3.14 {user_uv_with_line} user_uv_with_line--with "marimo,cowsay,machineconfig[plot]>=7.92" """
+        if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""{user_uv_with_line} {uv_project_line} --with marimo --project "{str(Path.home().joinpath("code/machineconfig"))}" """
+        else: requirements = f"""--python 3.14 {user_uv_with_line} {uv_project_line} --with "marimo,cowsay,machineconfig[plot]>=7.92" """
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv run --python 3.14 --with "marimo" marimo convert {pyfile.name} -o marimo_nb.py
 uv run {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
 """
     elif jupyter:
-        if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""{user_uv_with_line}  --with jupyterlab --project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: requirements = f"""{user_uv_with_line} --with "cowsay,machineconfig[plot]>=7.92" """
-        fire_line = f"uv run {requirements} jupyter-lab {str(nb_target)}"
+        if Path.home().joinpath("code/machineconfig").exists(): requirements = f"""{user_uv_with_line}  {uv_project_line}  --with jupyterlab --project "{str(Path.home().joinpath("code/machineconfig"))}" """
+        else: requirements = f"""{user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=7.92" """
+        fire_line = f"uv run {requirements} {uv_project_line}  jupyter-lab {str(nb_target)}"
     elif vscode:
         user_uv_add = f"uv add {uv_with}" if uv_with is not None else ""
         fire_line = f"""
@@ -136,8 +146,8 @@ code --new-window {str(pyfile)}
     else:
         if interpreter == "ipython": profile = f" --profile {ipython_profile} --no-banner"
         else: profile = ""
-        if Path.home().joinpath("code/machineconfig").exists(): ve_line = f"""{user_uv_with_line} --project "{str(Path.home().joinpath("code/machineconfig"))}" """
-        else: ve_line = f"""--python 3.14 {user_uv_with_line} --with "cowsay,machineconfig[plot]>=7.92" """
+        if Path.home().joinpath("code/machineconfig").exists(): ve_line = f"""{user_uv_with_line}  {uv_project_line} --project "{str(Path.home().joinpath("code/machineconfig"))}" """
+        else: ve_line = f"""--python 3.14 {user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=7.92" """
         fire_line = f"uv run {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
 
     from machineconfig.utils.code import exit_then_run_shell_script
