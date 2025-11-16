@@ -10,7 +10,7 @@ def strip_ansi_codes(text: str) -> str:
 
 
 def choose_zellij_session(
-        name: Annotated[Optional[str], typer.Argument(hidden=True)] = None,
+        name: Annotated[Optional[str], typer.Argument(help="Name of the Zellij session to attach to. If not provided, a list will be shown to choose from.")] = None,
         new_session: Annotated[bool, typer.Option("--new-session", "-n", help="Create a new Zellij session instead of attaching to an existing one.", show_default=True)] = False,
         kill_all: Annotated[bool, typer.Option("--kill-all", "-k", help="Kill all existing Zellij sessions before creating a new one.", show_default=True)] = False):
     if name is not None:
@@ -52,7 +52,6 @@ def choose_zellij_session(
         NEW_SESSION_LABEL = "NEW SESSION"
         options = [NEW_SESSION_LABEL] + sessions
         session_name = choose_from_options(msg="Choose a Zellij session to attach to:", multi=False, options=options, tv=True)
-        # If the user chose the artificial option, start a new session (same as --new-session)
         if session_name == NEW_SESSION_LABEL:
             cmd = "zellij --layout st2"
             if kill_all:
