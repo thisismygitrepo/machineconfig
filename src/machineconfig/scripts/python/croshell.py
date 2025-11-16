@@ -56,6 +56,7 @@ def croshell(
             if ve_path is not None:
                 ve_path_obj = Path(ve_path)
                 uv_project_line = f'--project {ve_path_obj.parent}'
+                uv_python_line = ""
         if choice_file.suffix == ".py":
             program = choice_file.read_text(encoding="utf-8")
             text = f"📄 Selected file: {choice_file.name}"

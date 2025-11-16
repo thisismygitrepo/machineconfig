@@ -29,4 +29,3 @@ alias msearch='mcfg msearch'
 
 echo "mcfg command aliases are now defined in this shell session."
 
-devops self interactive
