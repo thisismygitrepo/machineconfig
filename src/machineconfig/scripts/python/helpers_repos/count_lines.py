@@ -1,5 +1,6 @@
 
-from typing import TYPE_CHECKING, Annotated
+from typing import Any, Dict, List, Optional, Union, Annotated, TYPE_CHECKING
+
 from git import Repo
 from collections import defaultdict
 from datetime import datetime
@@ -12,7 +13,6 @@ import typer
 
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, List, Optional, Union
     import polars as pl
 
 
@@ -51,7 +51,10 @@ def count_historical_loc(repo_path: str) -> int:
             continue
 
     print(f"\nProcessed files: {len(file_line_counts)}")
-    return sum(file_line_counts.values())
+    res = sum(file_line_counts.values())
+    print(f"Total historical lines of Python code: {res}")
+    return res
+
 
 def count_python_lines(commit: "Any") -> int:
     """Count total lines in Python files for a specific commit"""
@@ -365,8 +368,10 @@ def get_app():
     app = typer.Typer()
     app.command(name="count-historical", no_args_is_help=True, help="[c] Count lines of code in a git repository")(count_historical)
     app.command(name="c", hidden=True, no_args_is_help=True, help="Alias for count-historical")(count_historical)
+
     app.command(name="analyze-over-time", no_args_is_help=True, help="[a] Analyze code size over time in a git repository")(analyze_over_time)
     app.command(name="a", hidden=True, no_args_is_help=True, help="Alias for analyze-over-time")(analyze_over_time)
+
     app.command(name="print-python-files-by-size", no_args_is_help=True, help="[p] Print Python files by size in a git repository")(print_python_files_by_size)
     app.command(name="p", hidden=True, no_args_is_help=True, help="Alias for print-python-files-by-size")(print_python_files_by_size)
     return app
