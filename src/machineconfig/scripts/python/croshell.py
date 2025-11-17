@@ -11,15 +11,16 @@ import typer
 
 def croshell(
     path: Annotated[Optional[str], typer.Argument(help="path of file to read.")] = None,
-    python: Annotated[bool, typer.Option("--python", "-P", help="flag to use python over IPython.")] = False,
-    profile: Annotated[Optional[str], typer.Option("--profile", "-r", help="ipython profile to use, defaults to default profile.")] = None,
+    project_path: Annotated[Optional[str], typer.Option("--project", "-p", help="specify uv project to use")] = None,
+    uv_with: Annotated[Optional[str], typer.Option("--uv-with", "-w", help="specify uv with packages to use")] = None,
+    marimo: Annotated[bool, typer.Option("--marimo", "-m", help="open the notebook using marimo if available")] = False,
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="run in jupyter interactive console")] = False,
     vscode: Annotated[bool, typer.Option("--vscode", "-c", help="open the script in vscode")] = False,
-    project_path: Annotated[Optional[str], typer.Option("--project", "-p", help="specify uv project to use")] = None,
-    # streamlit_viewer: Annotated[bool, typer.Option("--streamlit", "-s", help="view in streamlit app")] = False,
-    uv_with: Annotated[Optional[str], typer.Option("--uv-with", "-w", help="specify uv with packages to use")] = None,
     visidata: Annotated[bool, typer.Option("--visidata", "-v", help="open data file in visidata")] = False,
-    marimo: Annotated[bool, typer.Option("--marimo", "-m", help="open the notebook using marimo if available")] = False,
+    # streamlit_viewer: Annotated[bool, typer.Option("--streamlit", "-s", help="view in streamlit app")] = False,
+    python: Annotated[bool, typer.Option("--python", "-P", help="flag to use python over IPython.")] = False,
+    profile: Annotated[Optional[str], typer.Option("--profile", "-r", help="ipython profile to use, defaults to default profile.")] = None,
+
 ) -> None:
     if uv_with is not None: user_uv_with_line = f"--with {uv_with} "
     else: user_uv_with_line = ""
@@ -133,7 +134,7 @@ def croshell(
     elif marimo:
         if Path.home().joinpath("code/machineconfig").exists():
             requirements = f"""{user_uv_with_line} {uv_project_line} --with marimo  """
-        else: requirements = f"""{uv_python_line} {user_uv_with_line} {uv_project_line} --with "marimo,cowsay,machineconfig[plot]>=7.95" """
+        else: requirements = f"""{uv_python_line} {user_uv_with_line} {uv_project_line} --with "marimo,cowsay,machineconfig[plot]>=7.96" """
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv run {uv_python_line} --with "marimo" marimo convert {pyfile.name} -o marimo_nb.py
@@ -142,7 +143,7 @@ uv run {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
     elif jupyter:
         if Path.home().joinpath("code/machineconfig").exists():
             requirements = f"""{user_uv_with_line}  {uv_project_line}  --with jupyterlab """
-        else: requirements = f"""{user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=7.95" """
+        else: requirements = f"""{user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=7.96" """
         fire_line = f"uv run {requirements} {uv_project_line}  jupyter-lab {str(nb_target)}"
     elif vscode:
         user_uv_add = f"uv add {uv_with}" if uv_with is not None else ""
@@ -150,7 +151,7 @@ uv run {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
 cd {str(pyfile.parent)}
 uv init {uv_python_line}
 uv venv
-uv add "cowsay,machineconfig[plot]>=7.95"
+uv add "cowsay,machineconfig[plot]>=7.96"
 uv add {user_uv_add}
 # code serve-web
 code --new-window {str(pyfile)}
@@ -160,7 +161,7 @@ code --new-window {str(pyfile)}
         else: profile = ""
         if Path.home().joinpath("code/machineconfig").exists():
             ve_line = f"""{user_uv_with_line}  {uv_project_line} """
-        else: ve_line = f"""{uv_python_line} {user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=7.95" """
+        else: ve_line = f"""{uv_python_line} {user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=7.96" """
         fire_line = f"uv run {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
 
     from machineconfig.utils.code import exit_then_run_shell_script
