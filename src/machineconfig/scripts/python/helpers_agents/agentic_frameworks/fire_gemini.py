@@ -50,6 +50,6 @@ docker run -it --rm \
   -v "{repo_root}:/workspace/{repo_root.name}" \
   -w "/workspace/{repo_root.name}" \
   statistician/machineconfig-ai:latest  \
-  bash -c '. ~/.bashrc; export GEMINI_API_KEY="{api_key}"; gemini --model {shlex.quote(ai_spec['model'])} --yolo --prompt {prompt_path.relative_to(repo_root)}'
+  bash -c '. ~/.bashrc; export GEMINI_API_KEY="{api_key}"; gemini --model {shlex.quote(ai_spec['model'])} --yolo {prompt_path.relative_to(repo_root)}'
   """
     return cmd

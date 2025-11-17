@@ -66,13 +66,17 @@ def create_default_shell_profile() -> None:
     from machineconfig.profile.create_helper import copy_assets_to_machine
     copy_assets_to_machine("settings")  # init.ps1 or init.sh live here
     copy_assets_to_machine("scripts")  # init scripts are going to reference those scripts.
+    shell_name = ""
     if system == "Windows":
+        shell_name = "pwsh"
         init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/pwsh/init.ps1")
         source_line = f""". {str(init_script.collapseuser(placeholder="$HOME"))}"""
     elif system == "Linux":
+        shell_name = "bash"
         init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/bash/init.sh")
         source_line = f"""source {str(init_script.collapseuser(placeholder="$HOME"))}"""
     elif system == "Darwin":
+        shell_name = "zsh"
         init_script = PathExtended(CONFIG_ROOT).joinpath("settings/shells/zsh/init.sh")
         source_line = f"""source {str(init_script.collapseuser(placeholder="$HOME"))}"""
     else:
@@ -80,17 +84,24 @@ def create_default_shell_profile() -> None:
 
     was_shell_updated = False
     if source_line in shell_profile:
-        console.print(Panel("🔄 PROFILE | Skipping init script sourcing - already present in profile", title="[bold blue]Profile[/bold blue]", border_style="blue"))        
+        console.print(Panel("🔄 PROFILE | Skipping init script sourcing - already present in profile", title="[bold blue]Profile[/bold blue]", border_style="blue"))
     else:
         console.print(Panel("📝 PROFILE | Adding init script sourcing to profile", title="[bold blue]Profile[/bold blue]", border_style="blue"))
         shell_profile += "\n" + source_line + "\n"
-        if system == "Linux":
+        if shell_name == "bash":
             result = subprocess.run(["cat", "/proc/version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False)
             if result.returncode == 0 and result.stdout:
                 version_info = result.stdout.lower()
-                if "microsoft" in version_info or "wsl" in version_info:
+                is_wsl = "microsoft" in version_info or "wsl" in version_info
+                if is_wsl:
                     shell_profile += "\ncd $HOME"
                     console.print("📌 WSL detected - adding 'cd $HOME' to profile to avoid Windows filesystem")
+                    # Sync shell history between Windows and WSL
+                    # https://www.hanselman.com/blog/sharing-powershell-history-between-windows-and-wsl
+                    shell_profile += """
+# Sync shell history between Windows and WSL
+export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\\n'}history -a; history -c; history -r"
+"""
         was_shell_updated = True
     if was_shell_updated:
         shell_profile_path.parent.mkdir(parents=True, exist_ok=True)
