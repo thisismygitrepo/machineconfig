@@ -2,19 +2,24 @@
 import random
 import shlex
 from pathlib import Path
-from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import AGENTS, AGENT_NAME_FORMATTER, HOST, PROVIDER, AI_SPEC
+from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import AGENTS, AGENT_NAME_FORMATTER, HOST, PROVIDER, AI_SPEC, API_SPEC
 
 
-def get_api_keys(provider: PROVIDER) -> list[str]:
+def get_api_keys(provider: PROVIDER) -> list[API_SPEC]:
     from machineconfig.utils.io import read_ini
     config = read_ini(Path.home().joinpath(f"dotfiles/creds/llm/{provider}/api_keys.ini"))
-    res: list[str] = []
+    res: list[API_SPEC] = []
     for a_section_name in list(config.sections()):
         a_section = config[a_section_name]
         if "api_key" in a_section:
             api_key = a_section["api_key"].strip()
             if api_key:
-                res.append(api_key)
+                res.append(API_SPEC(
+                    api_key=api_key,
+                    api_name=a_section.get("api_name", ""),
+                    api_label=a_section_name,
+                    api_account=a_section.get("email", "")
+                ))
     print(f"Found {len(res)} {provider} API keys configured.")
     return res
 
@@ -65,19 +70,19 @@ sleep 0.1
             case "gemini":
                 assert provider == "google", "Gemini agent only works with google provider."
                 api_keys = get_api_keys(provider="google")
-                api_key = api_keys[idx % len(api_keys)] if len(api_keys) > 0 else None
-                ai_spec: AI_SPEC = AI_SPEC(provider=provider, model="gemini-2.5-pro", agent=agent, machine=machine, api_key=api_key, api_name="gemini")
+                api_spec = api_keys[idx % len(api_keys)] if len(api_keys) > 0 else None
+                ai_spec: AI_SPEC = AI_SPEC(provider=provider, model="gemini-2.5-pro", agent=agent, machine=machine, api_spec=api_spec)
                 from machineconfig.scripts.python.helpers_agents.agentic_frameworks.fire_gemini import fire_gemini
                 cmd = fire_gemini(ai_spec=ai_spec, prompt_path=prompt_path, repo_root=repo_root)
             case "cursor-agent":
-                ai_spec: AI_SPEC = AI_SPEC(provider=provider, model=model, agent=agent, machine=machine, api_key=None, api_name="cursor")
+                ai_spec: AI_SPEC = AI_SPEC(provider=provider, model=model, agent=agent, machine=machine, api_spec=None)
                 from machineconfig.scripts.python.helpers_agents.agentic_frameworks.fire_cursor_agents import fire_cursor
                 cmd = fire_cursor(ai_spec=ai_spec, prompt_path=prompt_path)
                 raise NotImplementedError("Cursor agent is not implemented yet, api key missing")
             case "crush":
                 api_keys = get_api_keys(provider=provider)
-                api_key = api_keys[idx % len(api_keys)] if len(api_keys) > 0 else None
-                ai_spec: AI_SPEC = AI_SPEC(provider=provider, model=model, agent=agent, machine=machine, api_key=api_key, api_name="crush")
+                api_spec = api_keys[idx % len(api_keys)] if len(api_keys) > 0 else None
+                ai_spec: AI_SPEC = AI_SPEC(provider=provider, model=model, agent=agent, machine=machine, api_spec=api_spec)
                 from machineconfig.scripts.python.helpers_agents.agentic_frameworks.fire_crush import fire_crush
                 cmd = fire_crush(ai_spec=ai_spec, prompt_path=prompt_path, repo_root=repo_root)
             # case "q":

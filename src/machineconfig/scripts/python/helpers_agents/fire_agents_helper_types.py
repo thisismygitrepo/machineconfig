@@ -1,5 +1,5 @@
 
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, Optional, TypeAlias, TypedDict
 
 
 # Vscode extensions for AI-assisted coding.
@@ -20,13 +20,20 @@ AGENTS: TypeAlias = Literal["cursor-agent", "gemini", "qwen-code", "copilot", "c
 HOST: TypeAlias = Literal["local", "docker"]
 PROVIDER: TypeAlias = Literal["azure", "google", "aws", "openai", "anthropic", "openrouter", "xai"]
 
+
+class API_SPEC(TypedDict):
+    api_key: str | None
+    api_name: str
+    api_label: str
+    api_account: str
+
+
 class AI_SPEC(TypedDict):
     provider: PROVIDER
     model: str
     agent: AGENTS
     machine: HOST
-    api_key: str | None
-    api_name: str
+    api_spec: Optional[API_SPEC]
 
 
 AGENT_NAME_FORMATTER = "agent_{idx}_cmd.sh"  # e.g., agent_0_cmd.sh

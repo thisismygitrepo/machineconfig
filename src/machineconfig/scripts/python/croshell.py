@@ -20,7 +20,7 @@ def croshell(
     # streamlit_viewer: Annotated[bool, typer.Option("--streamlit", "-s", help="view in streamlit app")] = False,
     python: Annotated[bool, typer.Option("--python", "-P", help="flag to use python over IPython.")] = False,
     profile: Annotated[Optional[str], typer.Option("--profile", "-r", help="ipython profile to use, defaults to default profile.")] = None,
-
+    
 ) -> None:
     if uv_with is not None: user_uv_with_line = f"--with {uv_with} "
     else: user_uv_with_line = ""

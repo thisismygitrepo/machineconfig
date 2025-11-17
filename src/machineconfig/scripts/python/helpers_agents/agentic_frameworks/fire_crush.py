@@ -11,7 +11,7 @@ def fire_crush(ai_spec: AI_SPEC, prompt_path: Path, repo_root: Path) -> str:
 crush run {prompt_path}
 """
         case "docker":
-            assert ai_spec["api_key"] is not None, "API key is required for Crush agent in docker mode."
+            assert ai_spec["api_spec"]["api_key"] is not None, "API key is required for Crush agent in docker mode."
             json_path = Path(__file__).parent / "fire_crush.json"
             json_template = json_path.read_text(encoding="utf-8")
             json_filled = json_template.replace("{api_key}", ai_spec["api_key"])
