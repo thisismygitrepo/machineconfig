@@ -71,23 +71,28 @@ def checkout_to_branch_command(directory: DirectoryArgument = None, cloud: Cloud
     clone_from_specs(directory, cloud, checkout_branch_flag=True, checkout_commit_flag=False)
 
 
-def analyze_repo_development(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
-    from machineconfig.scripts.python.helpers_repos import count_lines
-    from pathlib import Path
-
-    count_lines_path = Path(count_lines.__file__)
-    # --project $HOME/code/ machineconfig --group plot
-    cmd = f"""uv run --python 3.14 --with "machineconfig[plot]>=7.96" {count_lines_path} analyze-over-time {repo_path}"""
-    from machineconfig.utils.code import run_shell_script
-    run_shell_script(cmd)
-
-
 def count_lines_in_repo(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
     def func(repo_path: str):
         from machineconfig.scripts.python.helpers_repos import count_lines
         count_lines.count_historical_loc(repo_path=repo_path)
     from machineconfig.utils.code import run_lambda_function
     run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig>=7.96"])
+
+
+def analyze_repo_development(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
+    # from machineconfig.scripts.python.helpers_repos import count_lines
+    # from pathlib import Path
+
+    # count_lines_path = Path(count_lines.__file__)
+    # # --project $HOME/code/ machineconfig --group plot
+    # cmd = f"""uv run --python 3.14 --with "machineconfig[plot]>=7.96" {count_lines_path} analyze-over-time {repo_path}"""
+    # from machineconfig.utils.code import run_shell_script
+    # run_shell_script(cmd)
+    def func(repo_path: str):
+        from machineconfig.scripts.python.helpers_repos.count_lines import analyze_over_time
+        analyze_over_time(repo_path=repo_path)
+    from machineconfig.utils.code import run_lambda_function
+    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=7.96"])
 
 
 def gource_viz(
