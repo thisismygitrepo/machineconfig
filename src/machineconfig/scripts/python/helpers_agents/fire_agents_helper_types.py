@@ -1,5 +1,5 @@
 
-from typing import Literal, Optional, TypeAlias, TypedDict
+from typing import Literal, TypeAlias, TypedDict
 
 
 # Vscode extensions for AI-assisted coding.
@@ -33,7 +33,7 @@ class AI_SPEC(TypedDict):
     model: str
     agent: AGENTS
     machine: HOST
-    api_spec: Optional[API_SPEC]
+    api_spec: API_SPEC
 
 
 AGENT_NAME_FORMATTER = "agent_{idx}_cmd.sh"  # e.g., agent_0_cmd.sh

@@ -30,8 +30,9 @@ def fire_gemini(ai_spec: AI_SPEC, prompt_path: Path, repo_root: Path) -> str:
     match ai_spec["machine"]:
         case "local":
             # Export the environment variable so it's available to subshells
-            if ai_spec["api_key"] is not None:
-                define_api_key = f"""export GEMINI_API_KEY="{shlex.quote(ai_spec['api_key'])}" """
+            api_key = ai_spec["api_spec"]["api_key"]
+            if api_key is not None:
+                define_api_key = f"""export GEMINI_API_KEY="{shlex.quote(api_key)}" """
             else:
                 define_api_key = "echo 'Warning: No GEMINI_API_KEY provided, hoping it is set in the environment.'"
             cmd = f"""
@@ -41,13 +42,14 @@ gemini {model_arg} --yolo --prompt {safe_path}
 """
 
         case "docker":
-            assert ai_spec["api_key"] is not None, "When using docker, api_key must be provided."
+            api_key = ai_spec["api_spec"]["api_key"]
+            assert api_key is not None, "When using docker, api_key must be provided."
             cmd = f"""
 docker run -it --rm \
   -v {settings_tmp_path}:/root/.gemini/settings.json \
   -v "{repo_root}:/workspace/{repo_root.name}" \
   -w "/workspace/{repo_root.name}" \
   statistician/machineconfig-ai:latest  \
-  bash -c '. ~/.bashrc; export GEMINI_API_KEY="{ai_spec['api_key']}"; gemini --model {shlex.quote(ai_spec['model'])} --yolo --prompt {prompt_path.relative_to(repo_root)}'
+  bash -c '. ~/.bashrc; export GEMINI_API_KEY="{api_key}"; gemini --model {shlex.quote(ai_spec['model'])} --yolo --prompt {prompt_path.relative_to(repo_root)}'
   """
     return cmd

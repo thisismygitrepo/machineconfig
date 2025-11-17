@@ -60,6 +60,7 @@ export FIRE_AGENTS_PROMPT_FILE="{prompt_path}"
 export FIRE_AGENTS_MATERIAL_FILE="{prompt_material_path}"
 export FIRE_AGENTS_AGENT_LAUNCHER="{agent_cmd_launch_path}"
 
+
 echo "Sleeping for {random_sleep_time:.2f} seconds to stagger agent startups..."
 sleep {random_sleep_time:.2f}
 echo "--------START OF AGENT OUTPUT--------"
@@ -71,17 +72,22 @@ sleep 0.1
                 assert provider == "google", "Gemini agent only works with google provider."
                 api_keys = get_api_keys(provider="google")
                 api_spec = api_keys[idx % len(api_keys)] if len(api_keys) > 0 else None
+                if api_spec is None:
+                    raise ValueError("No API keys found for Google Gemini. Please configure them in dotfiles/creds/llm/google/api_keys.ini")
                 ai_spec: AI_SPEC = AI_SPEC(provider=provider, model="gemini-2.5-pro", agent=agent, machine=machine, api_spec=api_spec)
                 from machineconfig.scripts.python.helpers_agents.agentic_frameworks.fire_gemini import fire_gemini
                 cmd = fire_gemini(ai_spec=ai_spec, prompt_path=prompt_path, repo_root=repo_root)
             case "cursor-agent":
-                ai_spec: AI_SPEC = AI_SPEC(provider=provider, model=model, agent=agent, machine=machine, api_spec=None)
+                api_spec = API_SPEC(api_key=None, api_name="", api_label="", api_account="")
+                ai_spec: AI_SPEC = AI_SPEC(provider=provider, model=model, agent=agent, machine=machine, api_spec=api_spec)
                 from machineconfig.scripts.python.helpers_agents.agentic_frameworks.fire_cursor_agents import fire_cursor
                 cmd = fire_cursor(ai_spec=ai_spec, prompt_path=prompt_path)
                 raise NotImplementedError("Cursor agent is not implemented yet, api key missing")
             case "crush":
                 api_keys = get_api_keys(provider=provider)
                 api_spec = api_keys[idx % len(api_keys)] if len(api_keys) > 0 else None
+                if api_spec is None:
+                    raise ValueError("No API keys found for Crush. Please configure them in dotfiles/creds/llm/crush/api_keys.ini")
                 ai_spec: AI_SPEC = AI_SPEC(provider=provider, model=model, agent=agent, machine=machine, api_spec=api_spec)
                 from machineconfig.scripts.python.helpers_agents.agentic_frameworks.fire_crush import fire_crush
                 cmd = fire_crush(ai_spec=ai_spec, prompt_path=prompt_path, repo_root=repo_root)
@@ -90,7 +96,12 @@ sleep 0.1
             #     cmd = fire_q(api_key="", prompt_path=prompt_path, machine=machine)
             case _:
                 raise ValueError(f"Unsupported agent type: {agent}")
+        cmd_prefix += f"""
+echo "Running with api label:   {ai_spec['api_spec']['api_label']}"
+echo "Running with api acount:  {ai_spec['api_spec']['api_account']}"
+echo "Running with api name:    {ai_spec['api_spec']['api_name']}"
 
+"""
         cmd_postfix = """
 sleep 0.1
 echo "---------END OF AGENT OUTPUT---------"

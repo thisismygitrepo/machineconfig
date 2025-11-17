@@ -14,7 +14,8 @@ crush run {prompt_path}
             assert ai_spec["api_spec"]["api_key"] is not None, "API key is required for Crush agent in docker mode."
             json_path = Path(__file__).parent / "fire_crush.json"
             json_template = json_path.read_text(encoding="utf-8")
-            json_filled = json_template.replace("{api_key}", ai_spec["api_key"])
+            api_key = ai_spec["api_spec"]["api_key"]
+            json_filled = json_template.replace("{api_key}", api_key)
             json_filled = json_filled.replace("{model}", ai_spec["model"])
             if ai_spec["provider"] == "google":
                 provider = "gemini"  # weird crush way of naming.
@@ -26,10 +27,7 @@ crush run {prompt_path}
             temp_config_file_local.parent.mkdir(parents=True, exist_ok=True)
             Path(temp_config_file_local).write_text(json_filled, encoding="utf-8")            
             cmd = f"""
-# -e "PATH_PROMPT=$PATH_PROMPT"
-# opencode --model "{ai_spec["provider"]}/{ai_spec["model"]}" run {prompt_path}
 
-echo "Running prompt @ {prompt_path.relative_to(repo_root)} using Docker with Crush..."
 docker run -it --rm \
   -v "{repo_root}:/workspace/{repo_root.name}" \
   -v "{temp_config_file_local}:/root/.local/share/crush/crush.json" \
