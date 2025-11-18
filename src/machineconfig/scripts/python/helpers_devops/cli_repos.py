@@ -88,14 +88,6 @@ def print_python_files_by_size(repo_path: Annotated[str, typer.Argument(..., hel
 
 
 def analyze_repo_development(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
-    # from machineconfig.scripts.python.helpers_repos import count_lines
-    # from pathlib import Path
-
-    # count_lines_path = Path(count_lines.__file__)
-    # # --project $HOME/code/ machineconfig --group plot
-    # cmd = f"""uv run --python 3.14 --with "machineconfig[plot]>=7.98" {count_lines_path} analyze-over-time {repo_path}"""
-    # from machineconfig.utils.code import run_shell_script
-    # run_shell_script(cmd)
     def func(repo_path: str):
         from machineconfig.scripts.python.helpers_repos.repo_analyzer_2 import analyze_over_time
         analyze_over_time(repo_path=repo_path)
@@ -185,8 +177,8 @@ def get_app():
     repos_apps.command(name="c", help="Commit changes across repositories", hidden=True)(commit)
     repos_apps.command(name="sync", help="🔄  [y] Pull, commit, and push changes across repositories")(sync)
     repos_apps.command(name="y", help="Pull, commit, and push changes across repositories", hidden=True)(sync)
-    repos_apps.command(name="analyze", help="📊  [a] Analyze repository development over time")(analyze)
-    repos_apps.command(name="a", help="Analyze repository development over time", hidden=True)(analyze)
+    repos_apps.command(name="analyze", help="📊  [a] Analyze repository development over time")(analyze_repo_development)
+    repos_apps.command(name="a", help="Analyze repository development over time", hidden=True)(analyze_repo_development)
 
     repos_apps.command(name="secure", help="🔐  [s] Securely sync git repository to/from cloud with encryption")(secure_repo_main)
     repos_apps.command(name="s", help="Securely sync git repository to/from cloud with encryption", hidden=True)(secure_repo_main)
