@@ -15,7 +15,6 @@ def create_from_function(
     from machineconfig.utils.accessories import get_repo_root
     from pathlib import Path
 
-
     path_obj = sanitize_path(path)
     if not path_obj.exists():
         suffixes = {".py"}
