@@ -5,7 +5,6 @@ Extracts GitHub repository URLs and fetches latest release data with rate limiti
 """
 
 import json
-import time
 import requests
 from pathlib import Path
 from typing import Any, Dict, Optional, Set, TypedDict
@@ -143,88 +142,84 @@ def extract_release_info(release_data: Dict[str, Any]) -> Optional[ReleaseInfo]:
     }
 
 
-def main() -> None:
-    """Main function to process installer JSON files and fetch GitHub release data."""
-    # Define paths
-    current_dir = Path(__file__).parent
-    installer_dir = current_dir.parent.parent / "jobs" / "installer"
+# def main() -> None:
+#     """Main function to process installer JSON files and fetch GitHub release data."""
+#     # Define paths
+#     current_dir = Path(__file__).parent
+#     installer_dir = current_dir.parent.parent / "jobs" / "installer"
     
-    standard_json = installer_dir / "installer_data.json"
-    output_json = current_dir / "github_releases.json"
+#     standard_json = installer_dir / "installer_data.json"
+#     output_json = current_dir / "github_releases.json"
     
-    print("🔍 Starting GitHub release data extraction...")
-    print(f"📁 Processing files from: {installer_dir}")
+#     print("🔍 Starting GitHub release data extraction...")
+#     print(f"📁 Processing files from: {installer_dir}")
     
-    # Extract GitHub repositories from both files
-    all_github_repos: Set[str] = set()
+#     # Extract GitHub repositories from both files
+#     all_github_repos: Set[str] = set()
     
-    if standard_json.exists():
-        print(f"📄 Reading {standard_json.name}...")
-        repos = extract_github_repos_from_json(standard_json)
-        all_github_repos.update(repos)
-        print(f"   Found {len(repos)} GitHub repos")
-    else:
-        print(f"⚠️  File not found: {standard_json}")    
-    print(f"🎯 Total unique GitHub repositories found: {len(all_github_repos)}")
+#     if standard_json.exists():
+#         print(f"📄 Reading {standard_json.name}...")
+#         repos = extract_github_repos_from_json(standard_json)
+#         all_github_repos.update(repos)
+#         print(f"   Found {len(repos)} GitHub repos")
+#     else:
+#         print(f"⚠️  File not found: {standard_json}")    
+#     print(f"🎯 Total unique GitHub repositories found: {len(all_github_repos)}")
     
-    if not all_github_repos:
-        print("❌ No GitHub repositories found. Exiting.")
-        return
+#     if not all_github_repos:
+#         print("❌ No GitHub repositories found. Exiting.")
+#         return
     
-    # Fetch release data with rate limiting
-    release_mapping: Dict[str, Optional[ReleaseInfo]] = {}
-    total_repos = len(all_github_repos)
+#     # Fetch release data with rate limiting
+#     release_mapping: Dict[str, Optional[ReleaseInfo]] = {}
+#     total_repos = len(all_github_repos)
     
-    print(f"\n🚀 Fetching release data for {total_repos} repositories...")
-    print("⏰ Rate limiting: 5 seconds between requests")
-    print("-" * 60)
+#     print(f"\n🚀 Fetching release data for {total_repos} repositories...")
+#     print("⏰ Rate limiting: 5 seconds between requests")
+#     print("-" * 60)
     
-    for i, repo_url in enumerate(sorted(all_github_repos), 1):
-        repo_info = get_repo_name_from_url(repo_url)
+#     for i, repo_url in enumerate(sorted(all_github_repos), 1):
+#         repo_info = get_repo_name_from_url(repo_url)
         
-        if not repo_info:
-            print(f"⚠️  [{i:3d}/{total_repos}] Invalid repo URL: {repo_url}")
-            continue
+#         if not repo_info:
+#             print(f"⚠️  [{i:3d}/{total_repos}] Invalid repo URL: {repo_url}")
+#             continue
         
-        username, repo_name = repo_info
-        repo_full_name = f"{username}/{repo_name}"
+#         username, repo_name = repo_info
+#         repo_full_name = f"{username}/{repo_name}"
             
-        print(f"📡 [{i:3d}/{total_repos}] Fetching: {repo_full_name}", end=" ... ")
+#         print(f"📡 [{i:3d}/{total_repos}] Fetching: {repo_full_name}", end=" ... ")
         
-        release_info = get_release_info(username, repo_name)
+#         release_info = get_release_info(username, repo_name)
 
-        if release_info:
-            release_mapping[repo_url] = release_info
-            assets_count = release_info["assets_count"]
-            tag = release_info["tag_name"]
-            print(f"✅ {tag} ({assets_count} assets)")
-        else:
-            release_mapping[repo_url] = None
-            print("❌ No data")
+#         if release_info:
+#             release_mapping[repo_url] = release_info
+#             assets_count = release_info["assets_count"]
+#             tag = release_info["tag_name"]
+#             print(f"✅ {tag} ({assets_count} assets)")
+#         else:
+#             release_mapping[repo_url] = None
+#             print("❌ No data")
         
-        # Rate limiting - wait 5 seconds between requests (except for the last one)
-        if i < total_repos:
-            time.sleep(5)
+#         # Rate limiting - wait 5 seconds between requests (except for the last one)
+#         if i < total_repos:
+#             time.sleep(5)
     
-    # Save results
-    output_data: OutputData = {
-        "generated_at": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
-        "total_repositories": len(all_github_repos),
-        "successful_fetches": len([v for v in release_mapping.values() if v]),
-        "releases": release_mapping
-    }
+#     # Save results
+#     output_data: OutputData = {
+#         "generated_at": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+#         "total_repositories": len(all_github_repos),
+#         "successful_fetches": len([v for v in release_mapping.values() if v]),
+#         "releases": release_mapping
+#     }
     
-    with open(output_json, 'w', encoding='utf-8') as f:
-        json.dump(output_data, f, indent=2, ensure_ascii=False)
+#     with open(output_json, 'w', encoding='utf-8') as f:
+#         json.dump(output_data, f, indent=2, ensure_ascii=False)
     
-    successful = len([v for v in release_mapping.values() if v])
-    print("\n📊 Summary:")
-    print(f"   Total repositories processed: {len(all_github_repos)}")
-    print(f"   Successful fetches: {successful}")
-    print(f"   Failed fetches: {len(all_github_repos) - successful}")
-    print(f"   Output saved to: {output_json}")
-    print("✅ Done!")
-
-
-if __name__ == "__main__":
-    main()
+#     successful = len([v for v in release_mapping.values() if v])
+#     print("\n📊 Summary:")
+#     print(f"   Total repositories processed: {len(all_github_repos)}")
+#     print(f"   Successful fetches: {successful}")
+#     print(f"   Failed fetches: {len(all_github_repos) - successful}")
+#     print(f"   Output saved to: {output_json}")
+#     print("✅ Done!")
