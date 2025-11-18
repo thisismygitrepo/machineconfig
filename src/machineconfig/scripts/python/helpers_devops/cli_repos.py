@@ -76,7 +76,7 @@ def count_lines_in_repo(repo_path: Annotated[str, typer.Argument(..., help="Path
         from machineconfig.scripts.python.helpers_repos import repo_analyzer_1
         repo_analyzer_1.count_historical_line_edits(repo_path=repo_path)
     from machineconfig.utils.code import run_lambda_function
-    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig>=7.97"])
+    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig>=7.98"])
 
 
 def print_python_files_by_size(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
@@ -84,7 +84,7 @@ def print_python_files_by_size(repo_path: Annotated[str, typer.Argument(..., hel
         from machineconfig.scripts.python.helpers_repos.repo_analyzer_2 import print_python_files_by_size_impl
         print_python_files_by_size_impl(repo_path=repo_path)
     from machineconfig.utils.code import run_lambda_function
-    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=7.97"])
+    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=7.98"])
 
 
 def analyze_repo_development(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
@@ -93,14 +93,14 @@ def analyze_repo_development(repo_path: Annotated[str, typer.Argument(..., help=
 
     # count_lines_path = Path(count_lines.__file__)
     # # --project $HOME/code/ machineconfig --group plot
-    # cmd = f"""uv run --python 3.14 --with "machineconfig[plot]>=7.97" {count_lines_path} analyze-over-time {repo_path}"""
+    # cmd = f"""uv run --python 3.14 --with "machineconfig[plot]>=7.98" {count_lines_path} analyze-over-time {repo_path}"""
     # from machineconfig.utils.code import run_shell_script
     # run_shell_script(cmd)
     def func(repo_path: str):
         from machineconfig.scripts.python.helpers_repos.repo_analyzer_2 import analyze_over_time
         analyze_over_time(repo_path=repo_path)
     from machineconfig.utils.code import run_lambda_function
-    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=7.97"])
+    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=7.98"])
 
 
 def gource_viz(
