@@ -71,14 +71,39 @@ def checkout_to_branch_command(directory: DirectoryArgument = None, cloud: Cloud
     clone_from_specs(directory, cloud, checkout_branch_flag=True, checkout_commit_flag=False)
 
 
-def analyze(directory: DirectoryArgument = None) -> None:
-    """📊 Analyze repository development over time."""
-    repo_path = directory if directory is not None else "."
-    from machineconfig.scripts.python.helpers_repos.count_lines_frontend import analyze_repo_development
-    analyze_repo_development(repo_path=repo_path)
+def count_lines_in_repo(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
+    def func(repo_path: str):
+        from machineconfig.scripts.python.helpers_repos import repo_analyzer_1
+        repo_analyzer_1.count_historical_line_edits(repo_path=repo_path)
+    from machineconfig.utils.code import run_lambda_function
+    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig>=7.98"])
 
 
-def viz(
+def print_python_files_by_size(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
+    def func(repo_path: str):
+        from machineconfig.scripts.python.helpers_repos.repo_analyzer_2 import print_python_files_by_size_impl
+        print_python_files_by_size_impl(repo_path=repo_path)
+    from machineconfig.utils.code import run_lambda_function
+    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=7.98"])
+
+
+def analyze_repo_development(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
+    # from machineconfig.scripts.python.helpers_repos import count_lines
+    # from pathlib import Path
+
+    # count_lines_path = Path(count_lines.__file__)
+    # # --project $HOME/code/ machineconfig --group plot
+    # cmd = f"""uv run --python 3.14 --with "machineconfig[plot]>=7.98" {count_lines_path} analyze-over-time {repo_path}"""
+    # from machineconfig.utils.code import run_shell_script
+    # run_shell_script(cmd)
+    def func(repo_path: str):
+        from machineconfig.scripts.python.helpers_repos.repo_analyzer_2 import analyze_over_time
+        analyze_over_time(repo_path=repo_path)
+    from machineconfig.utils.code import run_lambda_function
+    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=7.98"])
+
+
+def gource_viz(
     repo: Annotated[str, typer.Option(..., "--repo", "-r", help="Path to git repository to visualize")] = ".",
     output_file: Annotated[Optional[Path], typer.Option(..., "--output", "-o", help="Output video file (e.g., output.mp4). If specified, gource will render to video.")] = None,
     resolution: Annotated[str, typer.Option(..., "--resolution", "-res", help="Video resolution (e.g., 1920x1080, 1280x720)")] = "1920x1080",
@@ -162,19 +187,28 @@ def get_app():
     repos_apps.command(name="y", help="Pull, commit, and push changes across repositories", hidden=True)(sync)
     repos_apps.command(name="analyze", help="📊  [a] Analyze repository development over time")(analyze)
     repos_apps.command(name="a", help="Analyze repository development over time", hidden=True)(analyze)
+
     repos_apps.command(name="secure", help="🔐  [s] Securely sync git repository to/from cloud with encryption")(secure_repo_main)
     repos_apps.command(name="s", help="Securely sync git repository to/from cloud with encryption", hidden=True)(secure_repo_main)
-    repos_apps.command(name="viz", help="🎬  [v] Visualize repository activity using Gource")(viz)
-    repos_apps.command(name="v", help="Visualize repository activity using Gource", hidden=True)(viz)
+
+    repos_apps.command(name="viz", help="🎬  [v] Visualize repository activity using Gource")(gource_viz)
+    repos_apps.command(name="v", help="Visualize repository activity using Gource", hidden=True)(gource_viz)
+
+    repos_apps.command(name="count-lines", help="📄  [l] Count python lines of code in current repo + historical edits.")(count_lines_in_repo)
+    repos_apps.command(name="l", help="Count python lines of code in current repo + historical edits.", hidden=True)(count_lines_in_repo)
+
     repos_apps.command(name="cleanup", help="🧹  [n] Clean repository directories from cache files")(cleanup)
     repos_apps.command(name="n", help="Clean repository directories from cache files", hidden=True)(cleanup)
 
     mirror_app.command(name="capture", help="📝  [cap] Record repositories into a repos.json specification")(capture)
     mirror_app.command(name="cap", help="Record repositories into a repos.json specification", hidden=True)(capture)
+
     mirror_app.command(name="clone", help="📥  [clo] Clone repositories described by a repos.json specification")(clone)
     mirror_app.command(name="clo", help="Clone repositories described by a repos.json specification", hidden=True)(clone)
+
     mirror_app.command(name="checkout-to-commit", help="🔀  [ctc] Check out specific commits listed in the specification")(checkout_command)
     mirror_app.command(name="ctc", help="Check out specific commits listed in the specification", hidden=True)(checkout_command)
+
     mirror_app.command(name="checkout-to-branch", help="🔀  [ctb] Check out to the main branch defined in the specification")(checkout_to_branch_command)
     mirror_app.command(name="ctb", help="Check out to the main branch defined in the specification", hidden=True)(checkout_to_branch_command)
 

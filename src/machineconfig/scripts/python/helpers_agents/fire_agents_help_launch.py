@@ -100,7 +100,7 @@ sleep 0.1
 echo "Running with api label:   {ai_spec['api_spec']['api_label']}"
 echo "Running with api acount:  {ai_spec['api_spec']['api_account']}"
 echo "Running with api name:    {ai_spec['api_spec']['api_name']}"
-
+echo "Running with api key:     {ai_spec['api_spec']['api_key']}"
 """
         cmd_postfix = """
 sleep 0.1
@@ -112,10 +112,13 @@ echo "---------END OF AGENT OUTPUT---------"
 
 def get_agents_launch_layout(session_root: Path):
     from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig, LayoutsFile
-
     tab_config: list[TabConfig] = []
     prompt_root = session_root / "prompts"
     all_dirs_under_prompts = [d for d in prompt_root.iterdir() if d.is_dir()]
+
+    import re
+    all_dirs_under_prompts = sorted(all_dirs_under_prompts, key=lambda path: [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', path.name)])
+    print(all_dirs_under_prompts)
     for a_prompt_dir in all_dirs_under_prompts:
         idx = a_prompt_dir.name.split("_")[-1]  # e.g., agent_0 -> 0
         agent_cmd_path = a_prompt_dir / AGENT_NAME_FORMATTER.format(idx=idx)

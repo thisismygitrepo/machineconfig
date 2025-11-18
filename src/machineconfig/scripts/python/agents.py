@@ -75,18 +75,18 @@ def create(
                       prompt_prefix=prompt_prefix, machine=host, agent=agent_selected, model=model, provider=provider,
                       job_name=job_name)
     layoutfile = get_agents_launch_layout(session_root=agents_dir_obj)
-    regenerate_py_code = f"""
-#!/usr/bin/env uv run --python 3.14 --with machineconfig
-agents create "{context_path_resolved}" \\
-    --prompt-path "{prompt_path or ''}" \\
-    --agent "{agent_selected}" \\
-    --host "{host}" \\
-    --job-name "{job_name}" \\
-    --agent_load {agent_load} \\
-    --separator "{separator}" \\
-    {"--separate" if separate else ""}
-"""
-    (agents_dir_obj / "aa_agents_relaunch.sh").write_text(data=regenerate_py_code, encoding="utf-8")
+#     regenerate_py_code = f"""
+# #!/usr/bin/env uv run --python 3.14 --with machineconfig
+# agents create "{context_path_resolved}" \\
+#     --prompt-path "{prompt_path or ''}" \\
+#     --agent "{agent_selected}" \\
+#     --host "{host}" \\
+#     --job-name "{job_name}" \\
+#     --agent_load {agent_load} \\
+#     --separator "{separator}" \\
+#     {"--separate" if separate else ""}
+# """
+#     (agents_dir_obj / "aa_agents_relaunch.sh").write_text(data=regenerate_py_code, encoding="utf-8")
     layout_output_path = Path(output_path) if output_path is not None else agents_dir_obj / "layout.json"
     layout_output_path.parent.mkdir(parents=True, exist_ok=True)
     layout_output_path.write_text(data=json.dumps(layoutfile, indent=4), encoding="utf-8")

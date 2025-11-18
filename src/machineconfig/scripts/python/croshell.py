@@ -83,7 +83,8 @@ def croshell(
         from pathlib import Path
         from machineconfig.utils.path_extended import PathExtended
         _ = Path, PathExtended  # avoid unused import warnings
-    import inspect, textwrap
+    import inspect
+    import textwrap
     from types import FunctionType
     def get_body_simple_function_no_args(f: FunctionType):
         return textwrap.dedent("\n".join(inspect.getsource(f).splitlines()[1:]))
@@ -134,7 +135,7 @@ def croshell(
     elif marimo:
         if Path.home().joinpath("code/machineconfig").exists():
             requirements = f"""{user_uv_with_line} {uv_project_line} --with marimo  """
-        else: requirements = f"""{uv_python_line} {user_uv_with_line} {uv_project_line} --with "marimo,cowsay,machineconfig[plot]>=7.96" """
+        else: requirements = f"""{uv_python_line} {user_uv_with_line} {uv_project_line} --with "marimo,cowsay,machineconfig[plot]>=7.98" """
         fire_line = f"""
 cd {str(pyfile.parent)}
 uv run {uv_python_line} --with "marimo" marimo convert {pyfile.name} -o marimo_nb.py
@@ -143,7 +144,7 @@ uv run {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
     elif jupyter:
         if Path.home().joinpath("code/machineconfig").exists():
             requirements = f"""{user_uv_with_line}  {uv_project_line}  --with jupyterlab """
-        else: requirements = f"""{user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=7.96" """
+        else: requirements = f"""{user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=7.98" """
         fire_line = f"uv run {requirements} {uv_project_line}  jupyter-lab {str(nb_target)}"
     elif vscode:
         user_uv_add = f"uv add {uv_with}" if uv_with is not None else ""
@@ -151,7 +152,7 @@ uv run {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
 cd {str(pyfile.parent)}
 uv init {uv_python_line}
 uv venv
-uv add "cowsay,machineconfig[plot]>=7.96"
+uv add "cowsay,machineconfig[plot]>=7.98"
 uv add {user_uv_add}
 # code serve-web
 code --new-window {str(pyfile)}
@@ -161,7 +162,7 @@ code --new-window {str(pyfile)}
         else: profile = ""
         if Path.home().joinpath("code/machineconfig").exists():
             ve_line = f"""{user_uv_with_line}  {uv_project_line} """
-        else: ve_line = f"""{uv_python_line} {user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=7.96" """
+        else: ve_line = f"""{uv_python_line} {user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=7.98" """
         fire_line = f"uv run {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
 
     from machineconfig.utils.code import exit_then_run_shell_script
