@@ -87,15 +87,7 @@ def get_default_branch(repo: Repo) -> str:
 console = Console()
 
 
-def count_historical(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
-    """Count total historical lines of Python code in the repository."""
-    print(f"Analyzing repository: {repo_path}")
-    total_loc: int = count_historical_loc(repo_path)
-    print(f"\nTotal historical lines of Python code: {total_loc}")
-
-
-
-def analyze_over_time(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
+def analyze_over_time(repo_path: str):
     """Analyze a git repository to track Python code size over time with visualization."""
     repo: Repo = Repo(repo_path)
     branch_name: str = get_default_branch(repo)
@@ -366,11 +358,6 @@ def print_python_files_by_size(repo_path: Annotated[str, typer.Argument(..., hel
 
 def get_app():
     app = typer.Typer()
-    app.command(name="count-historical", no_args_is_help=True, help="[c] Count lines of code in a git repository")(count_historical)
-    app.command(name="c", hidden=True, no_args_is_help=True, help="Alias for count-historical")(count_historical)
-
-    app.command(name="analyze-over-time", no_args_is_help=True, help="[a] Analyze code size over time in a git repository")(analyze_over_time)
-    app.command(name="a", hidden=True, no_args_is_help=True, help="Alias for analyze-over-time")(analyze_over_time)
 
     app.command(name="print-python-files-by-size", no_args_is_help=True, help="[p] Print Python files by size in a git repository")(print_python_files_by_size)
     app.command(name="p", hidden=True, no_args_is_help=True, help="Alias for print-python-files-by-size")(print_python_files_by_size)

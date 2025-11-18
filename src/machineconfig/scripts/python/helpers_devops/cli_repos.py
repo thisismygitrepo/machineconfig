@@ -185,8 +185,8 @@ def get_app():
     repos_apps.command(name="viz", help="🎬  [v] Visualize repository activity using Gource")(gource_viz)
     repos_apps.command(name="v", help="Visualize repository activity using Gource", hidden=True)(gource_viz)
 
-    repos_apps.command(name="count-lines", help="📄  [l] Count lines of code in a repository")(count_lines_in_repo)
-    repos_apps.command(name="l", help="Count lines of code in a repository", hidden=True)(count_lines_in_repo)
+    repos_apps.command(name="count-lines", help="📄  [l] Count python lines of code in current repo + historical edits.")(count_lines_in_repo)
+    repos_apps.command(name="l", help="Count python lines of code in current repo + historical edits.", hidden=True)(count_lines_in_repo)
 
     repos_apps.command(name="cleanup", help="🧹  [n] Clean repository directories from cache files")(cleanup)
     repos_apps.command(name="n", help="Clean repository directories from cache files", hidden=True)(cleanup)
