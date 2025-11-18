@@ -19,6 +19,7 @@ class FireJobArgs:
     submit_to_cloud: bool = False
     remote: bool = False
     module: bool = False
+    script: bool = False
     streamlit: bool = False
     environment: str = ""
     holdDirectory: bool = False

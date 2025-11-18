@@ -49,32 +49,47 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
         choice_function = args.function
 
     if choice_file.suffix == ".py":
+        module_line = "-m" if args.module else ""
         with_project = f"--project {repo_root} " if repo_root is not None else ""
+        interactive_line = "-i" if args.interactive else ""
+        if args.interactive:
+            from machineconfig.utils.ve import get_ve_path_and_ipython_profile
+            _ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(init_path=choice_file)
+            if ipy_profile is None:
+                ipy_profile = "default"
+            ipython_line = f"--no-banner --profile {ipy_profile} "
+        else:
+            ipython_line = ""
+
         if args.streamlit:
             from machineconfig.scripts.python.helpers_fire_command.fire_jobs_route_helper import get_command_streamlit
-            exe = get_command_streamlit(choice_file=choice_file, environment=args.environment, repo_root=repo_root)
-            exe = f"uv run {with_project} {exe} "
+            interpreter_line = get_command_streamlit(choice_file=choice_file, environment=args.environment, repo_root=repo_root)
         elif args.jupyter:
-            exe = f"uv run {with_project} jupyter-lab"
+            interpreter_line = "jupyter-lab"
         else:
-            if args.interactive:
-                from machineconfig.utils.ve import get_ve_path_and_ipython_profile
-                _ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(init_path=choice_file)
-                if ipy_profile is None:
-                    ipy_profile = "default"
-                exe = f"uv run {with_project} ipython -i --no-banner --profile {ipy_profile} "
-            else:
-                exe = f"uv run {with_project} python "
+            interpreter_line = "python" if not args.interactive else "ipython"
+
+        exe_line = f"uv run {with_project} {interpreter_line} {interactive_line} {module_line} {ipython_line}"
+
+
     elif choice_file.suffix == ".ps1" or choice_file.suffix == ".sh":
-        exe = "."
+        exe_line = "."
     elif choice_file.suffix == "":
-        exe = ""
+        exe_line = ""
     else:
         raise NotImplementedError(f"File type {choice_file.suffix} not supported, in the sense that I don't know how to fire it.")
 
-    if args.module or (args.debug and args.choose_function):
+    if args.module and choice_file.suffix == ".py":
+        if repo_root is not None:
+            choice_file_adjusted = ".".join(Path(choice_file).relative_to(repo_root).parts).replace(".py", "")
+        else:
+            choice_file_adjusted = ".".join(Path(choice_file).relative_to(Path.cwd()).parts).replace(".py", "")
+    else:
+        choice_file_adjusted = str(choice_file)
+
+    if args.script or (args.debug and args.choose_function):
         # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
-        assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file}"
+        assert choice_file == ".py", f"File must be a python file to be imported as a module. Got {choice_file}"
         from machineconfig.scripts.python.helpers_fire_command.file_wrangler import get_import_module_code, wrap_import_in_try_except
         from machineconfig.utils.meta import lambda_to_python_script
         from machineconfig.utils.code import print_code
@@ -101,33 +116,32 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
         choice_file.parent.mkdir(parents=True, exist_ok=True)
         choice_file.write_text(import_code_robust + "\n" + code_printing + "\n" + calling, encoding="utf-8")
 
-    # =========================  determining basic command structure: putting together exe & choice_file & choice_function & pdb
     if args.debug:
         import platform
         if platform.system() == "Windows":
-            command = f"{exe} -m ipdb {choice_file} "  # pudb is not available on windows machines, use poor man's debugger instead.
+            command = f"{exe_line} -m ipdb {choice_file_adjusted} "  # pudb is not available on windows machines, use poor man's debugger instead.
         elif platform.system() in ["Linux", "Darwin"]:
-            command = f"{exe} -m pudb {choice_file} "  # TODO: functions not supported yet in debug mode.
+            command = f"{exe_line} -m pudb {choice_file_adjusted} "  # TODO: functions not supported yet in debug mode.
         else:
             raise NotImplementedError(f"Platform {platform.system()} not supported.")
     elif args.module:
         # both selected function and kwargs are mentioned in the made up script, therefore no need for fire module.
-        command = f"{exe} {choice_file} "
+        command = f"{exe_line} {choice_file_adjusted} "
     elif choice_function is not None and choice_file.suffix == ".py":
-        command = f"{exe} -m fire {choice_file} {choice_function} {fire_args}"
+        command = f"{exe_line} -m fire {choice_file_adjusted} {choice_function} {fire_args}"
     elif args.streamlit:
         # for .streamlit config to work, it needs to be in the current directory.
         if args.holdDirectory:
-            command = f"{exe} {choice_file}"
+            command = f"{exe_line} {choice_file}"
         else:
-            command = f"cd {choice_file.parent}\n{exe} {choice_file.name}\ncd {Path.cwd()}"
+            command = f"cd {choice_file.parent}\n{exe_line} {choice_file.name}\ncd {Path.cwd()}"
     elif args.cmd:
-        command = rf""" cd /d {choice_file.parent} & {exe} {choice_file.name} """
+        command = rf""" cd /d {choice_file.parent} & {exe_line} {choice_file.name} """
     else:
         if choice_file.suffix == "":
-            command = f"{exe} {choice_file} {fire_args}"
+            command = f"{exe_line} {choice_file} {fire_args}"
         else:
-            command = f"{exe} {choice_file} "
+            command = f"{exe_line} {choice_file} "
 
     if not args.cmd:
         pass
@@ -195,6 +209,7 @@ def fire(
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="Open in a jupyter notebook")] = False,
     marimo: Annotated[bool, typer.Option("--marimo", "-M", help="Open in a marimo notebook")] = False,
     module: Annotated[bool, typer.Option("--module", "-m", help="Launch the main file")] = False,
+    script: Annotated[bool, typer.Option("--script", "-s", help="Launch as a script without fire")] = False,
     optimized: Annotated[bool, typer.Option("--optimized", "-O", help="Run the optimized version of the function")] = False,
     zellij_tab: Annotated[Optional[str], typer.Option("--zellij-tab", "-z", help="Open in a new zellij tab")] = None,
     submit_to_cloud: Annotated[bool, typer.Option("--submit-to-cloud", "-C", help="Submit to cloud compute")] = False,
@@ -228,6 +243,7 @@ def fire(
         submit_to_cloud=submit_to_cloud,
         remote=remote,
         module=module,
+        script=script,
         streamlit=streamlit,
         environment=environment,
         holdDirectory=holdDirectory,
