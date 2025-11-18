@@ -83,7 +83,8 @@ def croshell(
         from pathlib import Path
         from machineconfig.utils.path_extended import PathExtended
         _ = Path, PathExtended  # avoid unused import warnings
-    import inspect, textwrap
+    import inspect
+    import textwrap
     from types import FunctionType
     def get_body_simple_function_no_args(f: FunctionType):
         return textwrap.dedent("\n".join(inspect.getsource(f).splitlines()[1:]))

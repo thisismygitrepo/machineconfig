@@ -1,21 +1,52 @@
 
 layout {
     default_tab_template {
-        // the default zellij tab-bar and status bar plugins
+        // show compact status bar and leave room for panes
         pane size=1 borderless=true {
             plugin location="zellij:compact-bar"
         }
         children
-}
+    }
+
     tab name="📂" focus=false {
         pane name="lfpane" {
-        command "lf"
+            command "lf"
         }
-}
-    tab name="🔍" focus=false { // the default_tab_template with three vertical panes between the plugins
-        pane name="tpane" {
-        }
-}
+    }
 
-    tab name="🖥️" focus=true // the default_tab_template
+    tab name="🔍" focus=false {
+        pane name="tpane"
+    }
+
+    tab name="🖥️" focus=true template="default_tab_template" {
+        pane name="shell"
+    }
+
+    swap_tiled_layout name="vertical" {
+        tab name="🖥️" template="default_tab_template" {
+            pane split_direction="vertical" {
+                pane
+                pane
+            }
+        }
+    }
+
+    swap_tiled_layout name="horizontal" {
+        tab name="🖥️" template="default_tab_template" {
+            pane split_direction="horizontal" {
+                pane
+                pane
+            }
+        }
+    }
+
+    swap_tiled_layout name="stacked" {
+        tab name="🖥️" template="default_tab_template" {
+            pane split_direction="vertical" {
+                pane
+                pane
+                pane
+            }
+        }
+    }
 }

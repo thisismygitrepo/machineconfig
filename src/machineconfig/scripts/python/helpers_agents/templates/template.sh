@@ -2,15 +2,17 @@
 #!/bin/bash
 # set -e # Exit immediately if a command exits with a non-zero status.
 
+
 REPO_ROOT="$HOME/code/machineconfig"
 
 JOB_NAME="agentsTrial"
 CONTEXT_PATH="$REPO_ROOT/.ai/agents/files.md"
 PROMPT_PATH="$REPO_ROOT/.ai/agents/prompt.txt"
 AGENTS_DIR="$REPO_ROOT/.ai/agents/$JOB_NAME"
+rm -rfd "$AGENTS_DIR" || true
 
 agents create \
-    --agents crush \
+    --agents gemini \
     --host docker \
     --model gemini-2.5-pro \
     --provider google \
