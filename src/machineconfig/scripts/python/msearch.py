@@ -10,8 +10,8 @@ def machineconfig_search(
         extension: Annotated[str, typer.Option(..., "--extension", "-e", help="File extension to filter by (e.g., .py, .js)")] = "",
         file: Annotated[bool, typer.Option(..., "--file", "-f", help="File search using fzf")] = False,
         no_dotfiles: Annotated[bool, typer.Option(..., "--no-dotfiles", "-D", help="Exclude dotfiles from search")] = False,
-        rga: Annotated[bool, typer.Option(..., "--rga", "-a", help="Use ripgrep-all for searching instead of ripgrep")] = False,
-        install_dependencies: Annotated[bool, typer.Option(..., "--install-dependencies", "-p", help="Install required dependencies if missing")] = False
+        rga: Annotated[bool, typer.Option(..., "--rga", "-A", help="Use ripgrep-all for searching all (non text files) instead of ripgrep")] = False,
+        install_dependencies: Annotated[bool, typer.Option(..., "--install-req", "-p", help="Install required dependencies if missing")] = False
         ):
     if install_dependencies:
         from machineconfig.utils.installer_utils.installer_cli import install_if_missing

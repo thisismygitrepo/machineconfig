@@ -159,7 +159,7 @@ def get_app():
     repos_apps.command(name="commit", help="💾  [c] Commit changes across repositories")(commit)
     repos_apps.command(name="c", help="Commit changes across repositories", hidden=True)(commit)
     repos_apps.command(name="sync", help="🔄  [y] Pull, commit, and push changes across repositories")(sync)
-    repos_apps.command(name="s", help="Pull, commit, and push changes across repositories", hidden=True)(sync)
+    repos_apps.command(name="y", help="Pull, commit, and push changes across repositories", hidden=True)(sync)
     repos_apps.command(name="analyze", help="📊  [a] Analyze repository development over time")(analyze)
     repos_apps.command(name="a", help="Analyze repository development over time", hidden=True)(analyze)
     repos_apps.command(name="secure", help="🔐  [s] Securely sync git repository to/from cloud with encryption")(secure_repo_main)
