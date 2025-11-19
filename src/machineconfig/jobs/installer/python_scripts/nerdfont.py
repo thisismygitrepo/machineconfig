@@ -32,7 +32,7 @@ def main(installer_data: InstallerData, version: Optional[str]) -> None:
 
     if current_platform == "Windows":
         console.print("🪟 Installing Nerd Fonts on Windows...", style="bold")
-        from machineconfig.jobs.installer.custom_dev.nerfont_windows_helper import install_nerd_fonts
+        from machineconfig.jobs.installer.python_scripts.nerfont_windows_helper import install_nerd_fonts
 
         try:
             install_nerd_fonts()

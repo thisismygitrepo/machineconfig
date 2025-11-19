@@ -145,9 +145,9 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             from machineconfig.profile.create_links_export import main_public_from_parser
             main_public_from_parser(method="copy", on_conflict="overwrite-default-path", which="all", interactive=False)
             if platform.system() == "Windows":
-                from machineconfig.jobs.installer.custom_dev.nerfont_windows_helper import install_nerd_fonts
+                from machineconfig.jobs.installer.python_scripts.nerfont_windows_helper import install_nerd_fonts
                 install_nerd_fonts()
-                from machineconfig.setup_windows.wt_and_pwsh.set_wt_settings import main as set_wt_settings_main
+                from machineconfig.settings.wt.set_wt_settings import main as set_wt_settings_main
                 set_wt_settings_main()
         except Exception as e:
             console.print(f"❌ Error configuring shell profile: {e}", style="bold red")
