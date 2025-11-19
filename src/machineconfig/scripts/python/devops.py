@@ -8,7 +8,7 @@ import machineconfig.scripts.python.helpers_devops.cli_config as cli_config
 import machineconfig.scripts.python.helpers_devops.cli_self as cli_self
 import machineconfig.scripts.python.helpers_devops.cli_data as cli_data
 import machineconfig.scripts.python.helpers_devops.cli_nw as cli_network
-import machineconfig.scripts.python.helpers.run_py_script as run_py_script_module
+import machineconfig.scripts.python.helpers.run_script as run_py_script_module
 
 def install(which: Annotated[Optional[str], typer.Argument(..., help="Comma-separated list of program names to install, or group name if --group flag is set.")] = None,
         group: Annotated[bool, typer.Option(..., "--group", "-g", help="Treat 'which' as a group name. A group is bundle of apps.")] = False,
@@ -55,9 +55,8 @@ def get_app():
     cli_app.add_typer(app_nw, name="network")
     cli_app.add_typer(app_nw, name="n", hidden=True)
 
-    cli_app.command("python", no_args_is_help=True, help="🐍 [p] python scripts or command/file in the machineconfig environment", context_settings={"show_help_on_error": True})(run_py_script_module.run_py_script)
+    cli_app.command("python", no_args_is_help=True, help="🐍 [p] python/shell scripts or command/file in the machineconfig environment", context_settings={"show_help_on_error": True})(run_py_script_module.run_py_script)
     cli_app.command("p", no_args_is_help=True, help="RUN python scripts or command/file in the machineconfig environment", hidden=True)(run_py_script_module.run_py_script)
-
 
     return cli_app
 
