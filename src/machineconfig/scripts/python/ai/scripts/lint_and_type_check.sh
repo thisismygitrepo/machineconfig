@@ -96,7 +96,7 @@ echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_mypy.md${
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Pylint Code Analysis"
 echo -e "${BLUE}📋 Analyzing code quality with Pylint...${NC}"
 rm ./.ai/linters/issues_pylint.md || true
-uv run pylint ./src/ > ./.ai/linters/issues_pylint.md
+uv run pylint --recursive=y . > ./.ai/linters/issues_pylint.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pylint.md${NC}"
 
 ((CURRENT_STEP++))
