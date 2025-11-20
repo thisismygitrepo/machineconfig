@@ -1,0 +1,10 @@
+{
+  "options": {
+    "disable_metrics": true,
+    "disable_provider_auto_update": true,
+    "attribution": {
+      "trailer_style": "none",
+      "generated_with": false
+    }
+  }
+}

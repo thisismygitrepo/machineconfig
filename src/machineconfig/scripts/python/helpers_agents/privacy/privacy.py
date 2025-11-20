@@ -12,21 +12,21 @@ remember that other cli's have different names and configs and locations etc, re
 
 in the following cli how to set it for maximal prviacy *turn off any telemetry, reject any use of data, etc etc, please think of everything and read all theird docs and fine print
     "aider",
-    "aichat",
-    "copilot",
-    "gemini",
-    "crush",
+    "aichat",  # rust cli
+    "copilot",  # cli from github copilot extension
+    "gemini",  # gemini cli 
+    "crush",  # cli from charm team
+    "mods",  # cli from same people as crush (not agent) @ https://github.com/charmbracelet/mods
     "opencode-ai",
     "chatgpt",
-    "mods",
-    "q",
-    "qwen-code",
+    "q",  # from aws
+    "qwen-code",  # fork of gemini cli
     "cursor-cli",
     "droid",
     "kilocode",
-    "cline",
+    "cline",  # cli from cline ai extension
     "auggie",
-    "codex",
+    "codex",  # from openai
 
 """
 
@@ -75,6 +75,32 @@ def apply_max_privacy_and_security_rules_and_configs(overwrite: bool, repo_root:
         if not aichat_settings_target_repo.exists() or overwrite:
             aichat_settings_target_repo.parent.mkdir(parents=True, exist_ok=True)
             aichat_settings_target_repo.write_text(aichat_settings_source.read_text())
+
+    # Copilot privacy settings
+    copilot_settings_source = root.joinpath("copilot/config.yml")
+    copilot_settings_target_global = Path.home().joinpath(".config/gh-copilot/config.yml")
+    if not copilot_settings_target_global.exists() or overwrite:
+        copilot_settings_target_global.parent.mkdir(parents=True, exist_ok=True)
+        copilot_settings_target_global.write_text(copilot_settings_source.read_text())
+
+    if repo_root:
+        copilot_settings_target_repo = Path(repo_root).joinpath(".config/gh-copilot/config.yml")
+        if not copilot_settings_target_repo.exists() or overwrite:
+            copilot_settings_target_repo.parent.mkdir(parents=True, exist_ok=True)
+            copilot_settings_target_repo.write_text(copilot_settings_source.read_text())
+
+    # Crush privacy settings
+    crush_settings_source = root.joinpath("crush/crush.json")
+    crush_settings_target_global = Path.home().joinpath(".config/crush/crush.json")
+    if not crush_settings_target_global.exists() or overwrite:
+        crush_settings_target_global.parent.mkdir(parents=True, exist_ok=True)
+        crush_settings_target_global.write_text(crush_settings_source.read_text())
+
+    if repo_root:
+        crush_settings_target_repo = Path(repo_root).joinpath(".crush.json")
+        if not crush_settings_target_repo.exists() or overwrite:
+            crush_settings_target_repo.parent.mkdir(parents=True, exist_ok=True)
+            crush_settings_target_repo.write_text(crush_settings_source.read_text())
 
     # next, cursh cli
 
