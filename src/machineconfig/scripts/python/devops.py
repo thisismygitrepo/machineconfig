@@ -56,7 +56,7 @@ def get_app():
     cli_app.add_typer(app_nw, name="n", hidden=True)
 
     cli_app.command("execute", no_args_is_help=True, help=run_py_script_module.__doc__,
-                    short_help="▶ [e] Execute python/shell scripts from pre-defined directories or as command",
+                    short_help="▶️ [e] Execute python/shell scripts from pre-defined directories or as command",
                     context_settings={"show_help_on_error": True})(run_py_script_module.run_py_script)
     cli_app.command("e", no_args_is_help=True, help=run_py_script_module.__doc__, hidden=True)(run_py_script_module.run_py_script)
 

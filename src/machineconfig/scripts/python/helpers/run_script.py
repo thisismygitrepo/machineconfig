@@ -21,11 +21,16 @@ from typing import Annotated, Optional, Literal
 
 
 
-def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to run, e.g., 'a' for a.py, or command to execute")],
+def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to run, e.g., 'a' for a.py, or command to execute")] = "",
                   where: Annotated[Literal["all", "a", "private", "p", "public", "b", "library", "l", "dynamic", "d"], typer.Option("--where", "-w", help="Where to look for the script")] = "all",
+                  interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Interactive selection of scripts to run")] = False,
                   command: Annotated[Optional[bool], typer.Option(..., "--command", "-c", help="Run as command")] = False,
                 #   use_machineconfig_env: Annotated[bool, typer.Option(..., "--use-machineconfig-env/--no-use-machineconfig-env", "-m/-nm", help="Whether to use the machineconfig python environment")] = False
                 ) -> None:
+    if not interactive and not name:
+        typer.echo("❌ ERROR: You must provide a script name or use --interactive option to select a script.")
+        raise typer.Exit(code=1)
+
     from pathlib import Path
     if command:
         exec(name)
@@ -74,16 +79,20 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
         for a_suffix in suffixes:
             candidates = [a_root.joinpath(name), a_root.joinpath(f"{name}{a_suffix}")]
             for result in candidates:
-                if result.exists():
+                if result.exists() and result.is_file():
                     target_file = result
                     break
-            candidates = [a_file for a_file in a_root.rglob(f"*{name}*") if a_file.is_file()] + [a_file for a_file in a_root.rglob(f"*{name}{a_suffix}") if a_file.is_file()]
-            if len(candidates) == 1:
+            candidates = [a_file for a_file in a_root.rglob(f"*{name}{a_suffix}") if a_file.is_file()]
+            if name != "":
+                candidates += [a_file for a_file in a_root.rglob(f"*{name}*") if a_file.is_file()]
+            # print(candidates)
+            if len(candidates) == 1 and candidates[0].stem == name.split(".")[0]:  # perfect match with name at least.
                 target_file = candidates[0]
             else:
                 potential_matches += candidates
+    # print(target_file)
 
-    if target_file is None and where in ["all", "dynamic"]:
+    if target_file is None and where in ["all", "dynamic"] and not interactive:
         # src/machineconfig/jobs/scripts/python_scripts/a.py
         if "." in name:
             resolved_names: list[str] = [name]
@@ -118,11 +127,14 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
         target_file = Path(target_file)
 
     print(f"✅ Found script at: {target_file}")
-    from machineconfig.utils.code import get_uv_command_executing_python_script, exit_then_run_shell_script
-    script_content = target_file.read_text(encoding="utf-8")
-    shell_script, _shell_script_path = get_uv_command_executing_python_script(python_script=script_content, uv_project_dir=None, uv_with=None, prepend_print=False)
-    exit_then_run_shell_script(script=shell_script)
-
+    if target_file.suffix == ".py":
+        from machineconfig.utils.code import get_uv_command_executing_python_script, exit_then_run_shell_script
+        script_content = target_file.read_text(encoding="utf-8")
+        shell_script, _shell_script_path = get_uv_command_executing_python_script(python_script=script_content, uv_project_dir=None, uv_with=None, prepend_print=False)
+        exit_then_run_shell_script(script=shell_script)
+    else:
+        from machineconfig.utils.code import run_shell_script
+        run_shell_script(target_file.read_text(encoding="utf-8")) 
 
 
 def copy_script_to_local(name: Annotated[str, typer.Argument(help="Name of the temporary python script to copy, e.g., 'a' for a.py")],
