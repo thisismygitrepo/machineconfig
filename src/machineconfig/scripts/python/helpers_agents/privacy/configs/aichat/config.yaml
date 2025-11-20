@@ -1,0 +1,5 @@
+save: false
+save_session: false
+save_shell_history: false
+user_agent: "Mozilla/5.0"
+sync_models_url: ""

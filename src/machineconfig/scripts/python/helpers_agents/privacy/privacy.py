@@ -1,6 +1,3 @@
-
-
-
 """
 
 create 18 tasks one per cli
@@ -11,7 +8,7 @@ so please search for latest and don't be complacent with the work done so far.
 do it one by one, don't research and implement next before finishing the task before it.
 
 I provided gemini cli solution as a reference (feel free to make it more flexible if you need mroe room to implement something more complex than what I did, its just a guide)
-
+remember that other cli's have different names and configs and locations etc, read official docs
 
 in the following cli how to set it for maximal prviacy *turn off any telemetry, reject any use of data, etc etc, please think of everything and read all theird docs and fine print
     "aider",
@@ -52,6 +49,32 @@ def apply_max_privacy_and_security_rules_and_configs(overwrite: bool, repo_root:
         if not gemini_settings_target_repo.exists() or overwrite:
             gemini_settings_target_repo.parent.mkdir(parents=True, exist_ok=True)
             gemini_settings_target_repo.write_text(gemini_settings_source.read_text())
+
+    # Aider privacy settings
+    aider_settings_source = root.joinpath("aider/.aider.conf.yml")
+    aider_settings_target_global = Path.home().joinpath(".aider.conf.yml")
+    if not aider_settings_target_global.exists() or overwrite:
+        aider_settings_target_global.parent.mkdir(parents=True, exist_ok=True)
+        aider_settings_target_global.write_text(aider_settings_source.read_text())
+
+    if repo_root:
+        aider_settings_target_repo = Path(repo_root).joinpath(".aider.conf.yml")
+        if not aider_settings_target_repo.exists() or overwrite:
+            aider_settings_target_repo.parent.mkdir(parents=True, exist_ok=True)
+            aider_settings_target_repo.write_text(aider_settings_source.read_text())
+
+    # Aichat privacy settings
+    aichat_settings_source = root.joinpath("aichat/config.yaml")
+    aichat_settings_target_global = Path.home().joinpath(".config/aichat/config.yaml")
+    if not aichat_settings_target_global.exists() or overwrite:
+        aichat_settings_target_global.parent.mkdir(parents=True, exist_ok=True)
+        aichat_settings_target_global.write_text(aichat_settings_source.read_text())
+
+    if repo_root:
+        aichat_settings_target_repo = Path(repo_root).joinpath(".config/aichat/config.yaml")
+        if not aichat_settings_target_repo.exists() or overwrite:
+            aichat_settings_target_repo.parent.mkdir(parents=True, exist_ok=True)
+            aichat_settings_target_repo.write_text(aichat_settings_source.read_text())
 
     # next, cursh cli
 
