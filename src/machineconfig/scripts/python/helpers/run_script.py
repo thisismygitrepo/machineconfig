@@ -5,14 +5,10 @@ from typing import Annotated, Optional, Literal
 
 
 def run_py_script(name: Annotated[str, typer.Argument(help="Name of the python script to run, e.g., 'a' for a.py")],
-                  where: Annotated[Literal["all", "private", "public", "tmp"], typer.Option("--where", "-w", help="Where to look for the script: any, private, public, tmp")] = "all",
+                  where: Annotated[Literal["all", "a", "private", "p", "public", "b", "library", "l", "dynamic", "d"], typer.Option("--where", "-w", help="Where to look for the script: any, private, public, tmp")] = "all",
                   command: Annotated[Optional[bool], typer.Option(..., "--command", "-c", help="Run as command")] = False,
                 #   use_machineconfig_env: Annotated[bool, typer.Option(..., "--use-machineconfig-env/--no-use-machineconfig-env", "-m/-nm", help="Whether to use the machineconfig python environment")] = False
                 ) -> None:
-    """
-    Run a temporary python script stored in machineconfig/scripts/python/helpers/tmp_py_scripts.
-    """
-    from machineconfig.utils.source_of_truth import CONFIG_ROOT
     from pathlib import Path
     if command:
         exec(name)
@@ -27,64 +23,84 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of the python s
         else:
             raise RuntimeError(f"File '{name}' is not a python (.py) file.")
 
-    private_python_root = Path.home().joinpath("dotfiles/scripts/python")
-    public_python_root = CONFIG_ROOT.joinpath("scripts_python")
+    from machineconfig.utils.source_of_truth import CONFIG_ROOT, LIBRARY_ROOT
+    private_root = Path.home().joinpath("dotfiles/scripts/python")  # local directory
+    public_root = CONFIG_ROOT.joinpath("scripts")  # local machineconfig directory
+    library_root = LIBRARY_ROOT.joinpath("jobs", "scripts")
 
-    from machineconfig.utils.source_of_truth import LIBRARY_ROOT
-    repo_python_root = LIBRARY_ROOT.joinpath("jobs", "scripts", "python_scripts")
+    roots: list[Path] = []
+    match where:
+        case "all" | "a":
+            roots = [private_root, public_root, library_root]
+        case "private" | "p":
+            roots = [private_root]
+        case "public" | "b":
+            roots = [public_root]
+        case "library" | "l":
+            roots = [library_root]
+        case "dynamic" | "d":
+            roots = []
 
+    suffixes: list[str]
     import platform
     if platform.system() == "Windows":
-        private_shell_root = Path.home().joinpath("dotfiles/scripts/windows")
-        public_shell_root = CONFIG_ROOT.joinpath("scripts_powershell")
-        repo_shell_root = LIBRARY_ROOT.joinpath("jobs", "scripts", "powershell_scripts")
+        suffixes = [".py", ".bat", ".cmd", ".ps1"]
     elif platform.system() == "Darwin" or platform.system() == "Linux":
-        private_shell_root = Path.home().joinpath("dotfiles/scripts/linux")
-        public_shell_root = CONFIG_ROOT.joinpath("scripts_bash")
-        repo_shell_root = LIBRARY_ROOT.joinpath("jobs", "scripts", "bash_scripts")
+        suffixes = [".py", ".sh"]
     else:
-        raise NotImplementedError(f"Platform {platform.system()} not supported for shell scripts.")
+        suffixes = [".py"]
 
-    _ = private_shell_root, public_shell_root, repo_shell_root
-
+    # Finding target file
     target_file: Optional[Path] = None
-    candidates: list[Path] = []
-    if where in ["all", "private"]:
-        result = private_python_root.joinpath(f"{name}.py")
-        if result.exists():
-            target_file = result
+    potential_matches: list[Path] = []
+    for a_root in roots:
+        for a_suffix in suffixes:
+            candidates = [a_root.joinpath(name), a_root.joinpath(f"{name}{a_suffix}")]
+            for result in candidates:
+                if result.exists():
+                    target_file = result
+                    break
+            candidates = [a_file for a_file in a_root.rglob(f"*{name}*") if a_file.is_file()] + [a_file for a_file in a_root.rglob(f"*{name}{a_suffix}") if a_file.is_file()]
+            if len(candidates) == 1:
+                target_file = candidates[0]
+            else:
+                potential_matches += candidates
+
+    if target_file is None and where in ["all", "dynamic"]:
+        # src/machineconfig/jobs/scripts/python_scripts/a.py
+        if "." in name:
+            resolved_names: list[str] = [name]
         else:
-            candidates.extend(private_python_root.rglob("*.py"))
-    if target_file is None and where in ["all", "public"]:
-        result = public_python_root.joinpath(f"{name}.py")
-        if result.exists():
-            target_file = result
-        else:
-            candidates.extend(public_python_root.rglob("*.py"))
-    if target_file is None and where in ["all", "tmp"]:
-        try:
-            # src/machineconfig/jobs/scripts/python_scripts/a.py
-            url = f"""https://raw.githubusercontent.com/thisismygitrepo/machineconfig/refs/heads/main/src/machineconfig/jobs/scripts/python_scripts/{name}.py"""
-            print(f"Fetching temporary script from {url} ...")
-            import requests
-            response = requests.get(url)
-            if response.status_code != 200:
-                print(f"❌ ERROR: Could not fetch script '{name}.py' from repository. Status Code: {response.status_code}")
-                raise RuntimeError(f"Could not fetch script '{name}.py' from repository.")
-            script_content = response.text
-            target_file = Path.home().joinpath("tmp_results", "tmp_scripts", "python", f"{name}.py")
-            target_file.parent.mkdir(parents=True, exist_ok=True)
-            target_file.write_text(script_content, encoding="utf-8")
-        except Exception as e:
-            print(f"❌ ERROR: Could not fetch script '{name}.py' from repository due to error: {e}")
-            candidates += repo_python_root.rglob("*.py")
+            resolved_names = [f"{name}{a_suffix}" for a_suffix in suffixes]
+        for a_resolved_name in resolved_names:
+            try:
+                url = f"""https://raw.githubusercontent.com/thisismygitrepo/machineconfig/refs/heads/main/src/machineconfig/jobs/scripts_dynamic/{a_resolved_name}"""
+                print(f"Fetching temporary script from {url} ...")
+                import requests
+                response = requests.get(url)
+                if response.status_code != 200:
+                    print(f"❌ ERROR: Could not fetch script '{name}.py' from repository. Status Code: {response.status_code}")
+                    raise RuntimeError(f"Could not fetch script '{name}.py' from repository.")
+                script_content = response.text
+                target_file = Path.home().joinpath("tmp_results", "tmp_scripts", "python", f"{name}.py")
+                target_file.parent.mkdir(parents=True, exist_ok=True)
+                target_file.write_text(script_content, encoding="utf-8")
+            except Exception as _e:
+                pass
 
     if target_file is None:
-        print(f"❌ ERROR: Could not find script '{name}.py'. Checked {len(candidates)} candidate files, trying interactively:")
+        print(f"❌ ERROR: Could not find script '{name}.py'. Checked {len(potential_matches)} candidate files, trying interactively:")
         from machineconfig.utils.options import choose_from_options
-        chosen_file = choose_from_options([str(p) for p in candidates], multi=False, msg="Select the script to run:")
-        target_file = Path(chosen_file)
+        options = ["/".join(p.parts[-3:]) for p in potential_matches]
+        chosen_file_part = choose_from_options(options, multi=False, msg="Select the script to run:", tv=True)
+        for an_option, a_path in zip(options, potential_matches):
+            if chosen_file_part == an_option:
+                target_file = a_path
+                break
+        assert target_file is not None, "No script selected."
+        target_file = Path(target_file)
 
+    print(f"✅ Found script at: {target_file}")
     from machineconfig.utils.code import get_uv_command_executing_python_script, exit_then_run_shell_script
     script_content = target_file.read_text(encoding="utf-8")
     shell_script, _shell_script_path = get_uv_command_executing_python_script(python_script=script_content, uv_project_dir=None, uv_with=None, prepend_print=False)
@@ -118,6 +134,6 @@ def get_app():
         help="Helper to run temporary python scripts stored in machineconfig/scripts/python/helpers/tmp_py_scripts",
         no_args_is_help=True,
     )
-    from machineconfig.jobs.scripts.python_scripts import a
+    from machineconfig.jobs.scripts_dynamic import a
     app.command()(a.main)
     return app
