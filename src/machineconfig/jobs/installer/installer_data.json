@@ -2791,6 +2791,23 @@
       }
     },
     {
+      "appName": "codex",
+      "repoURL": "CMD",
+      "doc": "Terminal-based CLI agents from openai designed specifically for openai models.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "npm i -g @openai/codex",
+          "windows": "npm install -g @openai/codex",
+          "macos": "npm install -g @openai/codex"
+        },
+        "arm64": {
+          "linux": "npm install -g @openai/codex",
+          "windows": "npm install -g @openai/codex",
+          "macos": "npm install -g @openai/codex"
+        }
+      }
+    },
+    {
       "appName": "auggie",
       "repoURL": "CMD",
       "doc": "Terminal-based CLI agents and tools for productivity and coding.",
