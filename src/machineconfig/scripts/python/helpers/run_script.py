@@ -1,11 +1,28 @@
 
 
+"""run python/shell scripts from pre-defined directorys, or, run command/file in the machineconfig environment
+
+Recursively Searched Predefined Directories:
+
+
+*  'private' : $HOME/dotfiles/scripts
+
+*  'public'  : $HOME/.config/machineconfig/scripts
+
+*  'library' : $MACHINECONFIG_LIBRARY_ROOT/jobs/scripts
+
+*  'dynamic' : fetched from GitHub repository on the fly (relies on latest commit, rather than the version currently installed)
+
+"""
+
+
 import typer
 from typing import Annotated, Optional, Literal
 
 
-def run_py_script(name: Annotated[str, typer.Argument(help="Name of the python script to run, e.g., 'a' for a.py")],
-                  where: Annotated[Literal["all", "a", "private", "p", "public", "b", "library", "l", "dynamic", "d"], typer.Option("--where", "-w", help="Where to look for the script: any, private, public, tmp")] = "all",
+
+def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to run, e.g., 'a' for a.py, or command to execute")],
+                  where: Annotated[Literal["all", "a", "private", "p", "public", "b", "library", "l", "dynamic", "d"], typer.Option("--where", "-w", help="Where to look for the script")] = "all",
                   command: Annotated[Optional[bool], typer.Option(..., "--command", "-c", help="Run as command")] = False,
                 #   use_machineconfig_env: Annotated[bool, typer.Option(..., "--use-machineconfig-env/--no-use-machineconfig-env", "-m/-nm", help="Whether to use the machineconfig python environment")] = False
                 ) -> None:
@@ -24,7 +41,7 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of the python s
             raise RuntimeError(f"File '{name}' is not a python (.py) file.")
 
     from machineconfig.utils.source_of_truth import CONFIG_ROOT, LIBRARY_ROOT
-    private_root = Path.home().joinpath("dotfiles/scripts/python")  # local directory
+    private_root = Path.home().joinpath("dotfiles/scripts")  # local directory
     public_root = CONFIG_ROOT.joinpath("scripts")  # local machineconfig directory
     library_root = LIBRARY_ROOT.joinpath("jobs", "scripts")
 

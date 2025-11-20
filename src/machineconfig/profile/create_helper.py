@@ -5,7 +5,7 @@ import shutil
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT, CONFIG_ROOT
 
 
-def _copy_path(source: Path, target: Path, overwrite: bool = False) -> None:
+def _copy_path(source: Path, target: Path, overwrite: bool) -> None:
     source = source.expanduser().resolve()
     target = target.expanduser().resolve()
     if not source.exists():
@@ -46,17 +46,19 @@ def copy_assets_to_machine(which: Literal["scripts", "settings"]) -> None:
             wrap_mcfg_source = LIBRARY_ROOT.joinpath("scripts", "nu", "wrap_mcfg.nu")
             wrap_mcfg_target = CONFIG_ROOT.joinpath("scripts", "wrap_mcfg.nu")
             wrap_mcfg_target.parent.mkdir(parents=True, exist_ok=True)
+            if system_name == "linux":
+                from rich.console import Console
+                console = Console()
+                console.print("\n[bold]📜 Setting executable permissions for scripts...[/bold]")
+                scripts_path = CONFIG_ROOT.joinpath("scripts")
+                subprocess.run(f"chmod +x {scripts_path} -R", shell=True, capture_output=True, text=True, check=False)
+                console.print("[green]✅ Script permissions updated[/green]")
+            _copy_path(source=source, target=target, overwrite=True)
             _copy_path(source=wrap_mcfg_source, target=wrap_mcfg_target, overwrite=True)
+            return
         case "settings":
             source = LIBRARY_ROOT.joinpath("settings")
             target = CONFIG_ROOT.joinpath("settings")
 
     _copy_path(source=source, target=target, overwrite=True)
     
-    if system_name == "linux" and which == "scripts":
-        from rich.console import Console
-        console = Console()
-        console.print("\n[bold]📜 Setting executable permissions for scripts...[/bold]")
-        scripts_path = CONFIG_ROOT.joinpath("scripts")
-        subprocess.run(f"chmod +x {scripts_path} -R", shell=True, capture_output=True, text=True, check=False)
-        console.print("[green]✅ Script permissions updated[/green]")
