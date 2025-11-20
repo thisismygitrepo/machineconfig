@@ -198,17 +198,17 @@ def get_app():
     layouts_app = typer.Typer(help="Layouts management subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
     from machineconfig.scripts.python.helpers_sessions.sessions_multiprocess import create_from_function
 
-    layouts_app.command("create-from-function", no_args_is_help=True, help="[c] Create a layout from a function")(create_from_function)
-    layouts_app.command("c", no_args_is_help=True, help="Create a layout from a function", hidden=True)(create_from_function)
+    layouts_app.command("create-from-function", no_args_is_help=True, help=create_from_function.__doc__, short_help="[c] Create a layout from a function")(create_from_function)
+    layouts_app.command("c", no_args_is_help=True, help=create_from_function.__doc__, hidden=True)(create_from_function)
 
-    layouts_app.command("run", no_args_is_help=True, help="[r] Run the selected layout(s)")(run)
-    layouts_app.command("r", no_args_is_help=True, help="Run the selected layout(s)", hidden=True)(run)
+    layouts_app.command("run", no_args_is_help=True, help=run.__doc__, short_help="[r] Run the selected layout(s)")(run)
+    layouts_app.command("r", no_args_is_help=True, help=run.__doc__, hidden=True)(run)
 
-    layouts_app.command("balance-load", no_args_is_help=True, help="[b] Balance the load across sessions")(balance_load)
-    layouts_app.command("b", no_args_is_help=True, help="Balance the load across sessions", hidden=True)(balance_load)
+    layouts_app.command("balance-load", no_args_is_help=True, help=balance_load.__doc__, short_help="[b] Balance the load across sessions")(balance_load)
+    layouts_app.command("b", no_args_is_help=True, help=balance_load.__doc__, hidden=True)(balance_load)
 
-    layouts_app.command("create-template", no_args_is_help=False, help="[t] Create a layout template file")(create_template)
-    layouts_app.command("t", no_args_is_help=False, help="Create a layout template file", hidden=True)(create_template)
+    layouts_app.command("create-template", no_args_is_help=False, help=create_template.__doc__, short_help="[t] Create a layout template file")(create_template)
+    layouts_app.command("t", no_args_is_help=False, help=create_template.__doc__, hidden=True)(create_template)
     return layouts_app
 
 

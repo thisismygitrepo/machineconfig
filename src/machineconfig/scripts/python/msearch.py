@@ -13,6 +13,7 @@ def machineconfig_search(
         rga: Annotated[bool, typer.Option(..., "--rga", "-A", help="Use ripgrep-all for searching all (non text files) instead of ripgrep")] = False,
         install_dependencies: Annotated[bool, typer.Option(..., "--install-req", "-p", help="Install required dependencies if missing")] = False
         ):
+    """machineconfig search helper"""
     if install_dependencies:
         from machineconfig.utils.installer_utils.installer_cli import install_if_missing
         install_if_missing("fzf")
@@ -67,5 +68,5 @@ def machineconfig_search(
 
 def main():
     app = typer.Typer(add_completion=False, no_args_is_help=True)
-    app.command(name="msearch", help="machineconfig search helper", no_args_is_help=False)(machineconfig_search)
+    app.command(name="msearch", help=machineconfig_search.__doc__, short_help="machineconfig search helper", no_args_is_help=False)(machineconfig_search)
     app()

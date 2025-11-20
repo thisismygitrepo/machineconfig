@@ -7,14 +7,14 @@ from machineconfig.scripts.python.helpers_cloud.cloud_mount import mount as moun
 def get_app():
     app = typer.Typer(add_completion=False, no_args_is_help=True)
 
-    app.command(name="sync", no_args_is_help=True, help="""🔄 [s] Synchronize files/folders between local and cloud storage.""")(sync_main)
-    app.command(name="s", no_args_is_help=True, hidden=True)(sync_main)  # short alias
+    app.command(name="sync", no_args_is_help=True, help=sync_main.__doc__, short_help="""🔄 [s] Synchronize files/folders between local and cloud storage.""")(sync_main)
+    app.command(name="s", no_args_is_help=True, help=sync_main.__doc__, hidden=True)(sync_main)  # short alias
 
-    app.command(name="copy", no_args_is_help=True, short_help="""📤 [c] Upload or 📥 Download files/folders to/from cloud storage services like Google Drive, Dropbox, OneDrive, etc.""")(copy_main)
-    app.command(name="c", no_args_is_help=True, hidden=True)(copy_main)  # short alias
+    app.command(name="copy", no_args_is_help=True, help=copy_main.__doc__, short_help="""📤 [c] Upload or 📥 Download files/folders to/from cloud storage services like Google Drive, Dropbox, OneDrive, etc.""")(copy_main)
+    app.command(name="c", no_args_is_help=True, help=copy_main.__doc__, hidden=True)(copy_main)  # short alias
 
-    app.command(name="mount", no_args_is_help=True, short_help="""🔗 [m] Mount cloud storage services like Google Drive, Dropbox, OneDrive, etc. as local drives.""")(mount_main)
-    app.command(name="m", no_args_is_help=True, hidden=True)(mount_main)  # short alias
+    app.command(name="mount", no_args_is_help=True, help=mount_main.__doc__, short_help="""🔗 [m] Mount cloud storage services like Google Drive, Dropbox, OneDrive, etc. as local drives.""")(mount_main)
+    app.command(name="m", no_args_is_help=True, help=mount_main.__doc__, hidden=True)(mount_main)  # short alias
 
     return app
 

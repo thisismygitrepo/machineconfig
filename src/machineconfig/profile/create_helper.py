@@ -29,7 +29,6 @@ def _copy_path(source: Path, target: Path, overwrite: bool) -> None:
 def copy_assets_to_machine(which: Literal["scripts", "settings"]) -> None:
     import platform
     import subprocess
-    
     system_name = platform.system().lower()
     if system_name == "windows":
         system = "windows"

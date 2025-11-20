@@ -17,6 +17,7 @@ def ftpx(
     cloud: Annotated[bool, typer.Option("--cloud", "-c", help="Transfer through the cloud.")] = False,
     overwrite_existing: Annotated[bool, typer.Option("--overwrite-existing", "-o", help="Overwrite existing files on remote when sending from local to remote.")] = False,
 ) -> None:
+    """File transfer utility though SSH."""
     from pathlib import Path
     if target == "wsl" or source == "wsl":
         from machineconfig.utils.ssh_utils.wsl import copy_when_inside_windows
@@ -239,7 +240,7 @@ def ftpx(
 def main() -> None:
     """Entry point function that uses typer to parse arguments and call main."""
     app = typer.Typer()
-    app.command(no_args_is_help=True, help="File transfer utility though SSH.")(ftpx)
+    app.command(no_args_is_help=True, help=ftpx.__doc__, short_help="File transfer utility though SSH.")(ftpx)
     app()
 
 

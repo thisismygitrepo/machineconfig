@@ -8,7 +8,7 @@ from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION, DEFAULT_PIC
 
 
 def copy_to_here(
-    self: SSH,
+    self: "SSH",
     source: Union[str, Path],
     target: Optional[Union[str, Path]],
     compress_with_zip: bool = False,
@@ -300,3 +300,4 @@ def copy_to_here(
 
 if __name__ == "__main__":
     from machineconfig.utils.ssh import SSH
+
