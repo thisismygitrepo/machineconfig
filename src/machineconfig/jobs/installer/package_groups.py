@@ -14,7 +14,6 @@ AGENTS = [
     "gemini",
     "crush",
     "opencode-ai",
-    # "ollama",
     "chatgpt",
     "mods",
     "q",
@@ -24,7 +23,9 @@ AGENTS = [
     "kilocode",
     "cline",
     "auggie",
+    # "codex",
     # "gorilla",
+    # "ollama",
 ]
 
 

@@ -1,0 +1,12 @@
+{
+  "telemetry": {
+    "enabled": false,
+    "logPrompts": false,
+    "useCollector": false,
+    "target": "local",
+    "outfile": null
+  },
+  "advanced": {
+    "bugCommand": null
+  }
+}
