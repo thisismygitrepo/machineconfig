@@ -1,43 +1,24 @@
 #!/usr/bin/bash
-# 🖥️ DESKTOP APPLICATIONS INSTALLATION SCRIPT
-# This script installs desktop applications for a Linux workstation
 
-echo """🌐 WEB BROWSERS | Installing browser applications
-"""
-# Google Chrome installation (commented reference)
-# echo "📥 Installing Google Chrome..."
-# wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-# sudo dpkg -i google-chrome-stable_current_amd64.deb
+echo """🌐 WEB BROWSERS | Installing browser applications"""
+echo "📥 Installing Google Chrome..."
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome-stable_current_amd64.deb
 
-echo """📝 TEXT EDITORS | Installing Neovim editor
-"""
-echo "📥 Installing Neovim via Homebrew..."
-/home/linuxbrew/.linuxbrew/bin/brew install neovim
-
-echo """📧 EMAIL CLIENT | Installing Thunderbird
-"""
+echo """📧 EMAIL CLIENT | Installing Thunderbird"""
 echo "📥 Installing Thunderbird via Flatpak..."
 flatpak install flathub org.mozilla.Thunderbird
 
-echo """🖲️ TERMINAL EMULATOR | Installing WezTerm
-"""
-echo "📥 Installing WezTerm via Flatpak..."
-flatpak install flathub org.wezfurlong.wezterm
-echo "🚀 Launching WezTerm..."
-flatpak run org.wezfurlong.wezterm
 
-echo """✏️ SCREEN ANNOTATION | Installing Gromit-MPX
-"""
+echo """✏️ SCREEN ANNOTATION | Installing Gromit-MPX"""
 echo "📥 Installing Gromit-MPX via Flatpak..."
 flatpak install net.christianbeier.Gromit-MPX
 
-echo """📋 CLIPBOARD MANAGERS | Installing CopyQ
-"""
+echo """📋 CLIPBOARD MANAGERS | Installing CopyQ"""
 echo "📥 Installing CopyQ via Flatpak..."
 flatpak install flathub com.github.hluk.copyq --noninteractive
 
-echo """🔗 REMOTE DESKTOP | Installing Remmina
-"""
+echo """🔗 REMOTE DESKTOP | Installing Remmina"""
 echo "📥 Installing Remmina and RDP plugin..."
 sudo nala install remmina remmina-plugin-rdp -y
 

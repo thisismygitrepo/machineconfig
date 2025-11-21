@@ -8,16 +8,21 @@ from typing import Optional, Annotated
 
 
 def install_ssh_server():
-    """📡 SSH install server"""
+    """📡 SSH install server"""  # VRPR66JD$X3FQ3
     import platform
     if platform.system() == "Windows":
         from machineconfig.setup_windows import SSH_SERVER
+        script = SSH_SERVER.read_text(encoding="utf-8")
     elif platform.system() == "Linux" or platform.system() == "Darwin":
-        from machineconfig.setup_linux import SSH_SERVER
+        script = """
+sudo nala install openssh-server -y || true  # try to install first
+# sudo nala purge openssh-server -y
+# sudo nala install openssh-server -y
+echo "✅ FINISHED installing openssh-server."""
     else:
         raise NotImplementedError(f"Platform {platform.system()} is not supported.")
     from machineconfig.utils.code import run_shell_script
-    run_shell_script(script=SSH_SERVER.read_text(encoding="utf-8"))
+    run_shell_script(script=script)
 
 
 def add_ssh_key(path: Annotated[Optional[str], typer.Option(..., help="Path to the public key file")] = None,
@@ -26,32 +31,21 @@ def add_ssh_key(path: Annotated[Optional[str], typer.Option(..., help="Path to t
          github: Annotated[Optional[str], typer.Option(..., "--github", "-g", help="Fetch public keys from a GitHub username")] = None
 ):
     """🔑 SSH add pub key to this machine so its accessible by owner of corresponding private key."""
-    import machineconfig.scripts.python.helpers_network.devops_add_ssh_key as helper
+    import machineconfig.scripts.python.helpers_network.ssh_add_ssh_key as helper
     helper.main(pub_path=path, pub_choose=choose, pub_val=value, from_github=github)
 def add_ssh_identity():
     """🗝️ SSH add identity (private key) to this machine"""
-    import machineconfig.scripts.python.helpers_network.devops_add_identity as helper
+    import machineconfig.scripts.python.helpers_network.ssh_add_identity as helper
     helper.main()
 
 
 def show_address() -> None:
     """📌 Show this computer addresses on network"""
-    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
-    import subprocess
-    install_if_missing("ipinfo")
-    result = subprocess.run(
-        ["ipinfo", "myip", "--json"],
-        check=True,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-    )
-    import json
-    loaded_json = json.loads(result.stdout)
+    import machineconfig.scripts.python.helpers_network.address as helper
+    loaded_json = helper.get_public_ip_address()
     from rich import print_json
     print_json(data=loaded_json)
 
-    import machineconfig.scripts.python.helpers_network.address as helper
     from rich.table import Table
     from rich.console import Console
     res = helper.get_all_ipv4_addresses()

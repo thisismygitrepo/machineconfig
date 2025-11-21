@@ -38,7 +38,7 @@ def get_add_ssh_key_script(path_to_key: PathExtended) -> str:
             if system() == "Linux" or system() == "Darwin":
                 program = f"cat {path_to_key} >> ~/.ssh/authorized_keys"
             elif system() == "Windows":
-                program_path = LIBRARY_ROOT.joinpath("setup_windows/add-sshkey.ps1")
+                program_path = LIBRARY_ROOT.joinpath("setup_windows/ssh/add-sshkey.ps1")
                 program = program_path.expanduser().read_text(encoding="utf-8")
                 place_holder = r'$sshfile = "$env:USERPROFILE\.ssh\pubkey.pub"'
                 assert place_holder in program, f"This section performs string manipulation on the script {program_path} to add the key to the authorized_keys file. The script has changed and the string {place_holder} is not found."
@@ -51,7 +51,7 @@ def get_add_ssh_key_script(path_to_key: PathExtended) -> str:
         if system() == "Linux" or system() == "Darwin":
             program = f"cat {path_to_key} > ~/.ssh/authorized_keys"
         else:
-            program_path = LIBRARY_ROOT.joinpath("setup_windows/openssh-server_add-sshkey.ps1")
+            program_path = LIBRARY_ROOT.joinpath("setup_windows/ssh/openssh-server_add-sshkey.ps1")
             program = PathExtended(program_path).expanduser().read_text(encoding="utf-8").replace('$sshfile=""', f'$sshfile="{path_to_key}"')
             console.print(Panel("🔧 Configured PowerShell script for Windows\n📝 Set key path in script", title="[bold blue]Configuration[/bold blue]"))
 

@@ -1,6 +1,21 @@
 
 from typing import cast, Optional
 
+def get_public_ip_address():
+    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+    import subprocess
+    install_if_missing("ipinfo")
+    result = subprocess.run(
+        ["ipinfo", "myip", "--json"],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    import json
+    loaded_json = json.loads(result.stdout)
+    return loaded_json
+
 
 def get_all_ipv4_addresses() -> list[tuple[str, str]]:
     import psutil
