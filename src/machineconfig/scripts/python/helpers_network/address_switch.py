@@ -4,7 +4,7 @@ import time
 from machineconfig.scripts.python.helpers_network.address import get_public_ip_address
 
 
-def switch_public_ip_address(max_trials: int = 10) -> None:
+def switch_public_ip_address(max_trials: int = 10, wait_seconds: float = 4.0) -> None:
     print("🔁 Switching IP ... ")
     from machineconfig.utils.installer_utils.installer_cli import install_if_missing
     install_if_missing("warp-cli")
@@ -25,8 +25,8 @@ def switch_public_ip_address(max_trials: int = 10) -> None:
         # We use check=False because if it's already deleted it might return non-zero
         subprocess.run(["warp-cli", "registration", "delete"], check=False)
 
-        print("😴 Sleeping for 2 seconds ... ")
-        time.sleep(2)
+        print(f"😴 Sleeping for {wait_seconds} seconds ... ")
+        time.sleep(wait_seconds)
 
         print("🔼 Registering new connection ... ")
         res_reg = subprocess.run(["warp-cli", "registration", "new"], check=False)
@@ -37,8 +37,8 @@ def switch_public_ip_address(max_trials: int = 10) -> None:
         print("🔗 Connecting ... ")
         subprocess.run(["warp-cli", "connect"], check=False)
 
-        print("😴 Sleeping for 2 seconds ... ")
-        time.sleep(2)
+        print(f"😴 Sleeping for {wait_seconds} seconds ... ")
+        time.sleep(wait_seconds)
 
         print("🔍 Checking status of warp ... ")
         subprocess.run(["warp-cli", "status"], check=False)
@@ -54,7 +54,7 @@ def switch_public_ip_address(max_trials: int = 10) -> None:
                     break
             except Exception as e:
                 print(f"⚠️ Error checking new IP (attempt {ip_check_attempt+1}/5): {e}")
-                time.sleep(2)
+                time.sleep(wait_seconds)
 
         if new_ip:
             print(f"New IP: {new_ip}")

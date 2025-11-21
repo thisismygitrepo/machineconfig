@@ -6,10 +6,13 @@ import typer
 from typing import Optional, Annotated
 
 
-def switch_public_ip_address():
+def switch_public_ip_address(
+    wait_seconds: Annotated[float, typer.Option(..., "--wait", "-w", help="Seconds to wait between steps")] = 2.0,
+    max_trials: Annotated[int, typer.Option(..., "--max-trials", "-m", help="Max number of switch attempts")] = 10,
+) -> None:
     """🔁 Switch public IP address (Cloudflare WARP)"""
     import machineconfig.scripts.python.helpers_network.address_switch as helper
-    helper.switch_public_ip_address()
+    helper.switch_public_ip_address(max_trials=max_trials, wait_seconds=wait_seconds)
 
 
 def install_ssh_server():
