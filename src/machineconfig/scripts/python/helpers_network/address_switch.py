@@ -7,7 +7,7 @@ from machineconfig.scripts.python.helpers_network.address import get_public_ip_a
 def switch_public_ip_address(max_trials: int = 10) -> None:
     print("🔁 Switching IP ... ")
     from machineconfig.utils.installer_utils.installer_cli import install_if_missing
-    install_if_missing("cloudflare-warp-cli")
+    install_if_missing("warp-cli")
 
     current_ip: str | None = None
     try:

@@ -580,7 +580,7 @@
       }
     },
     {
-      "appName": "cloudflare-warp-cli",
+      "appName": "warp-cli",
       "repoURL": "CMD",
       "doc": "🌐 Cloudflare WARP VPN client in the terminal",
       "fileNamePattern": {
