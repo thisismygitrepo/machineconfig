@@ -1,6 +1,5 @@
 import subprocess
 import time
-from typing import Any
 
 from machineconfig.scripts.python.helpers_network.address import get_public_ip_address
 
@@ -10,7 +9,7 @@ def switch_public_ip_address(max_trials: int = 10) -> None:
 
     current_ip: str | None = None
     try:
-        current_data: dict[str, Any] = get_public_ip_address()
+        current_data = get_public_ip_address()
         current_ip = current_data.get("ip")
     except Exception as e:
         print(f"⚠️ Could not get current IP: {e}")
@@ -44,7 +43,7 @@ def switch_public_ip_address(max_trials: int = 10) -> None:
 
         print("🔍 Checking new IP ... ")
         try:
-            new_data: dict[str, Any] = get_public_ip_address()
+            new_data = get_public_ip_address()
             new_ip = new_data.get("ip")
             print(f"New IP: {new_ip}")
 

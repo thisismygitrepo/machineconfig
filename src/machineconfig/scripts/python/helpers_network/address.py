@@ -1,7 +1,36 @@
 
-from typing import cast, Optional
+from typing import Optional, TypedDict, cast
 
-def get_public_ip_address():
+class CountryFlag(TypedDict, total=False):
+    emoji: str
+    unicode: str
+
+class CountryCurrency(TypedDict, total=False):
+    code: str
+    symbol: str
+
+class Continent(TypedDict, total=False):
+    code: str
+    name: str
+
+class PublicIpInfo(TypedDict, total=False):
+    ip: str
+    hostname: str
+    city: str
+    region: str
+    country: str
+    country_name: str
+    country_flag: CountryFlag
+    country_flag_url: str
+    country_currency: CountryCurrency
+    continent: Continent
+    loc: str
+    org: str
+    postal: str
+    timezone: str
+
+
+def get_public_ip_address() -> PublicIpInfo:
     from machineconfig.utils.installer_utils.installer_cli import install_if_missing
     import subprocess
     install_if_missing("ipinfo")
@@ -13,7 +42,7 @@ def get_public_ip_address():
         encoding="utf-8",
     )
     import json
-    loaded_json = json.loads(result.stdout)
+    loaded_json: PublicIpInfo = json.loads(result.stdout)
     return loaded_json
 
 

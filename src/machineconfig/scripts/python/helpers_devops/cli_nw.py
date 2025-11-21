@@ -6,6 +6,11 @@ import typer
 from typing import Optional, Annotated
 
 
+def switch_public_ip_address():
+    """🔁 Switch public IP address (Cloudflare WARP)"""
+    import machineconfig.scripts.python.helpers_network.address_switch as helper
+    helper.switch_public_ip_address()
+
 
 def install_ssh_server():
     """📡 SSH install server"""  # VRPR66JD$X3FQ3
@@ -169,40 +174,45 @@ sudo warp-cli connect
 
 def get_app():
     nw_apps = typer.Typer(help="🔐 [n] Network subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
-    nw_apps.command(name="share-terminal", help="📡  [t] Share terminal via web browser")(cli_share_terminal.share_terminal)
+    nw_apps.command(name="share-terminal", help="📡 [t] Share terminal via web browser")(cli_share_terminal.share_terminal)
     nw_apps.command(name="t", help="Share terminal via web browser", hidden=True)(cli_share_terminal.share_terminal)
 
-    nw_apps.command(name="share-server", help="🌐  [s] Start local/global server to share files/folders via web browser", no_args_is_help=True)(cli_share_server.web_file_explorer)
+    nw_apps.command(name="share-server", help="🌐 [s] Start local/global server to share files/folders via web browser", no_args_is_help=True)(cli_share_server.web_file_explorer)
     nw_apps.command(name="s", help="Start local/global server to share files/folders via web browser", hidden=True, no_args_is_help=True)(cli_share_server.web_file_explorer)
 
     # app = cli_share_server.get_share_file_app()
-    # nw_apps.add_typer(app, name="share-file", help="📁  [f] Share a file via relay server", no_args_is_help=True)
+    # nw_apps.add_typer(app, name="share-file", help="📁 [f] Share a file via relay server", no_args_is_help=True)
     # nw_apps.add_typer(app, name="f", help="Share a file via relay server", hidden=True, no_args_is_help=True)
     nw_apps.command(name="send", no_args_is_help=True, hidden=False, help="📁 [sx] send files from here.")(machineconfig.scripts.python.helpers_devops.cli_share_file.share_file_send)
     nw_apps.command(name="sx", no_args_is_help=True, hidden=True, help="📁 [sx] send files from here.")(machineconfig.scripts.python.helpers_devops.cli_share_file.share_file_send)
     nw_apps.command(name="receive", no_args_is_help=True, hidden=False, help="📁 [rx] receive files to here.")(machineconfig.scripts.python.helpers_devops.cli_share_file.share_file_receive)
     nw_apps.command(name="rx", no_args_is_help=True, hidden=True, help="📁 [rx] receive files to here.")(machineconfig.scripts.python.helpers_devops.cli_share_file.share_file_receive)
 
-    nw_apps.command(name="install-ssh-server", help="📡  [i] Install SSH server")(install_ssh_server)
+    nw_apps.command(name="install-ssh-server", help="📡 [i] Install SSH server")(install_ssh_server)
     nw_apps.command(name="i", help="Install SSH server", hidden=True)(install_ssh_server)
-    nw_apps.command(name="add-ssh-key", help="🔑  [k] Add SSH public key to this machine", no_args_is_help=True)(add_ssh_key)
+    nw_apps.command(name="add-ssh-key", help="🔑 [k] Add SSH public key to this machine", no_args_is_help=True)(add_ssh_key)
     nw_apps.command(name="k", help="Add SSH public key to this machine", hidden=True, no_args_is_help=True)(add_ssh_key)
-    nw_apps.command(name="add-ssh-identity", help="🗝️  [A] Add SSH identity (private key) to this machine")(add_ssh_identity)
+    nw_apps.command(name="add-ssh-identity", help="🗝️ [A] Add SSH identity (private key) to this machine")(add_ssh_identity)
     nw_apps.command(name="A", help="Add SSH identity (private key) to this machine", hidden=True)(add_ssh_identity)
-    nw_apps.command(name="show-address", help="📌  [a] Show this computer addresses on network")(show_address)
+
+    nw_apps.command(name="show-address", help="📌 [a] Show this computer addresses on network")(show_address)
     nw_apps.command(name="a", help="Show this computer addresses on network", hidden=True)(show_address)
-    nw_apps.command(name="debug-ssh", help="🐛  [d] Debug SSH connection")(debug_ssh)
+
+    nw_apps.command(name="switch-public-ip", help="🔁 [c] Switch public IP address (Cloudflare WARP)")(switch_public_ip_address)
+    nw_apps.command(name="c", help="Switch public IP address (Cloudflare WARP)", hidden=True)(switch_public_ip_address)
+
+    nw_apps.command(name="debug-ssh", help="🐛 [d] Debug SSH connection")(debug_ssh)
     nw_apps.command(name="d", help="Debug SSH connection", hidden=True)(debug_ssh)
 
-    nw_apps.command(name="wifi-select", no_args_is_help=True, help="📶  [w] WiFi connection utility.")(wifi_select)
+    nw_apps.command(name="wifi-select", no_args_is_help=True, help="📶 [w] WiFi connection utility.")(wifi_select)
     nw_apps.command(name="w", no_args_is_help=True, hidden=True)(wifi_select)
 
-    nw_apps.command(name="bind-wsl-port", help="🔌  [b] Bind WSL port to Windows host", no_args_is_help=True)(bind_wsl_port)
+    nw_apps.command(name="bind-wsl-port", help="🔌 [b] Bind WSL port to Windows host", no_args_is_help=True)(bind_wsl_port)
     nw_apps.command(name="b", help="Bind WSL port to Windows host", hidden=True, no_args_is_help=True)(bind_wsl_port)
 
-    nw_apps.command(name="reset-cloudflare-tunnel", help="☁️  [r] Reset Cloudflare tunnel service")(reset_cloudflare_tunnel)
+    nw_apps.command(name="reset-cloudflare-tunnel", help="☁️ [r] Reset Cloudflare tunnel service")(reset_cloudflare_tunnel)
     nw_apps.command(name="r", help="Reset Cloudflare tunnel service", hidden=True)(reset_cloudflare_tunnel)
-    nw_apps.command(name="add-ip-exclusion-to-warp", help="🚫  [p] Add IP exclusion to WARP")(add_ip_exclusion_to_warp)
+    nw_apps.command(name="add-ip-exclusion-to-warp", help="🚫 [p] Add IP exclusion to WARP")(add_ip_exclusion_to_warp)
     nw_apps.command(name="p", help="Add IP exclusion to WARP", hidden=True)(add_ip_exclusion_to_warp)
 
     return nw_apps
