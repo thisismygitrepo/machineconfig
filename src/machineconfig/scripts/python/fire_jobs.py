@@ -89,7 +89,7 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
 
     if args.script or (args.debug and args.choose_function):
         # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
-        assert choice_file == ".py", f"File must be a python file to be imported as a module. Got {choice_file}"
+        assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file}"
         from machineconfig.scripts.python.helpers_fire_command.file_wrangler import get_import_module_code, wrap_import_in_try_except
         from machineconfig.utils.meta import lambda_to_python_script
         from machineconfig.utils.code import print_code
