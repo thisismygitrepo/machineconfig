@@ -6,6 +6,8 @@ from machineconfig.scripts.python.helpers_network.address import get_public_ip_a
 
 def switch_public_ip_address(max_trials: int = 10) -> None:
     print("🔁 Switching IP ... ")
+    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+    install_if_missing("cloudflare-warp-cli")
 
     current_ip: str | None = None
     try:
@@ -42,21 +44,31 @@ def switch_public_ip_address(max_trials: int = 10) -> None:
         subprocess.run(["warp-cli", "status"], check=False)
 
         print("🔍 Checking new IP ... ")
-        try:
-            new_data = get_public_ip_address()
-            new_ip = new_data.get("ip")
+        new_ip: str | None = None
+        # Retry getting IP a few times before giving up on this connection attempt
+        for ip_check_attempt in range(5):
+            try:
+                new_data = get_public_ip_address()
+                new_ip = new_data["ip"]
+                if new_ip:
+                    break
+            except Exception as e:
+                print(f"⚠️ Error checking new IP (attempt {ip_check_attempt+1}/5): {e}")
+                time.sleep(2)
+
+        if new_ip:
             print(f"New IP: {new_ip}")
 
             if current_ip and new_ip != current_ip:
                 print("✅ Done ... IP Changed.")
                 return
-            elif current_ip is None and new_ip:
+            elif current_ip is None:
                 print("✅ Done ... IP obtained (was unknown).")
                 return
             else:
                 print("❌ IP did not change.")
-        except Exception as e:
-            print(f"⚠️ Error checking new IP: {e}")
+        else:
+            print("⚠️ Could not retrieve new IP after multiple attempts.")
 
     print("❌ Failed to switch IP after max trials.")
 

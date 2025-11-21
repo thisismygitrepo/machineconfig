@@ -13,7 +13,7 @@ class Continent(TypedDict, total=False):
     code: str
     name: str
 
-class PublicIpInfo(TypedDict, total=False):
+class PublicIpInfo(TypedDict, total=True):
     ip: str
     hostname: str
     city: str
