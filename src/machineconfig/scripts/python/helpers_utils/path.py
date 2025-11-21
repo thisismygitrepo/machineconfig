@@ -30,7 +30,7 @@ def init_project(
     tmp_dir: Annotated[
         bool, typer.Option("--tmp-dir", "-t", help="Use a temporary directory for the project initialization.")
     ] = False,
-    python: Annotated[Literal["3.13", "3.14"], typer.Option("--python", "-p", help="Python version for the uv virtual environment.")] = "3.13",
+    python: Annotated[Literal["11", "12", "13", "14"], typer.Option("--python", "-p", help="Python sub version for the uv virtual environment.")] = "13",
     libraries: Annotated[Optional[str], typer.Option("--libraries", "-l", help="Additional packages to include in the uv virtual environment.")] = None,
     group: Annotated[Optional[str], typer.Option("--group", "-g", help="group of packages names (no separation) p:plot, t:types, l:linting, i:interactive, d:data")] = "ptlid",
     # types_packages: Annotated[
@@ -66,7 +66,7 @@ def init_project(
         print(f"Using temporary directory for project initialization: {repo_root}")
         starting_code = f"""
 cd {repo_root}
-uv init --python {python}
+uv init --python 3.{python}
 uv venv
 """
     print(f"Adding group `{group}` with common data science and plotting packages...")
