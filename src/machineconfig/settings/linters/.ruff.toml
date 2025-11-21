@@ -63,7 +63,7 @@ exclude = ["*.ipynb"]
 # exclude = ["generated"]
 
 docstring-code-format = false
-docstring-code-line-length = 150
+docstring-code-line-length = 200
 # Use `\n` line endings for all files
 line-ending = "lf"
 skip-magic-trailing-comma = true
