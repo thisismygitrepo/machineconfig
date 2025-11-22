@@ -393,6 +393,23 @@
       }
     },
     {
+      "appName": "rusty-rain",
+      "repoURL": "https://github.com/cowboy8625/rusty-rain",
+      "doc": "🌧️ cross-platform cmatrix-like terminal rain animation",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "x86_64-unknown-linux-musl-rusty-rain-{version}",
+          "macos": "x86_64-apple-darwin-rusty-rain-{version}",
+          "windows": "x86_64-pc-windows-gnu-rusty-rain-{version}.exe"
+        },
+        "arm64": {
+          "linux": "aarch64-unknown-linux-musl-rusty-rain-{version}",
+          "macos": "aarch64-apple-darwin-rusty-rain-{version}",
+          "windows": "x86_64-pc-windows-gnu-rusty-rain-{version}.exe"
+        }
+      }
+    },
+    {
       "appName": "figlet-cli",
       "repoURL": "CMD",
       "doc": "📝 ASCII art text generator for terminal",
