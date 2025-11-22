@@ -80,6 +80,8 @@ brew install --upgrade poppler || true  # For PDF preview, needed by yazi.
         from machineconfig.utils.code import run_shell_script
         run_shell_script(script)
     elif platform.system() == "Windows":
+        from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+        install_if_missing("git")
         popler_installer: InstallerData = {
             "appName": "poppler",
             "repoURL": "https://github.com/oschwartz10612/poppler-windows",

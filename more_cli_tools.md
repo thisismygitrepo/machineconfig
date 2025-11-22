@@ -1,6 +1,7 @@
 
 # Dotfiles manager:
 * https://github.com/webpro/awesome-dotfiles
+* https://github.com/sts10/rust-command-line-utilities
 
 # Profilers
 * https://github.com/analysis-tools-dev/static-analysis
