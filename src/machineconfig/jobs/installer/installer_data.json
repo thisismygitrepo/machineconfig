@@ -59,12 +59,12 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "sudo nala install git",
-          "windows": "winget install --no-upgrade --name \"Git\"                          --Id \"Git.Git\"                    --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "windows": "winget install --no-upgrade --name \"Git\" --Id \"Git.Git\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": "brew install git"
         },
         "arm64": {
           "linux": "sudo nala install git",
-          "windows": "winget install --no-upgrade --name \"Git\"                          --Id \"Git.Git\"                    --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "windows": "winget install --no-upgrade --name \"Git\" --Id \"Git.Git\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": "brew install git"
         }
       }
@@ -483,14 +483,14 @@
       "doc": "🔄 devtunnel secure introspectable tunnels to localhost",
       "fileNamePattern": {
         "amd64": {
-          "windows": "winget install --Id Microsoft.devtunnel --scope user",
+          "windows": "winget install --Id Microsoft.devtunnel --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "linux": "curl -sL https://aka.ms/DevTunnelCliInstall | bash",
           "macos": null
         },
         "arm64": {
           "linux": "curl -sL https://aka.ms/DevTunnelCliInstall | bash",
           "macos": null,
-          "windows": "winget install --Id Microsoft.devtunnel --scope user"
+          "windows": "winget install --Id Microsoft.devtunnel --source winget --scope user --accept-package-agreements --accept-source-agreements"
         }
       }
     },
@@ -1369,12 +1369,12 @@
         "amd64": {
           "linux": "curl -sSL https://github.com/Slackadays/Clipboard/raw/main/install.sh | sh",
           "macos": "curl -sSL https://github.com/Slackadays/Clipboard/raw/main/install.sh | sh",
-          "windows": "winget install -e --id Slackadays.Clipboard"
+          "windows": "winget install -e --id Slackadays.Clipboard --source winget --scope user --accept-package-agreements --accept-source-agreements"
         },
         "arm64": {
           "linux": "curl -sSL https://github.com/Slackadays/Clipboard/raw/main/install.sh | sh",
           "macos": "curl -sSL https://github.com/Slackadays/Clipboard/raw/main/install.sh | sh",
-          "windows": "winget install -e --id Slackadays.Clipboard"
+          "windows": "winget install -e --id Slackadays.Clipboard --source winget --scope user --accept-package-agreements --accept-source-agreements"
         }
       }
     },
@@ -2236,12 +2236,12 @@
         "amd64": {
           "linux": "cargo install tokei",
           "macos": "brew install tokei",
-          "windows": "winget install XAMPPRocky.tokei"
+          "windows": "winget install XAMPPRocky.tokei --source winget --scope user --accept-package-agreements --accept-source-agreements"
         },
         "arm64": {
           "linux": "cargo install tokei",
           "macos": "brew install tokei",
-          "windows": "winget install XAMPPRocky.tokei"
+          "windows": "winget install XAMPPRocky.tokei --source winget --scope user --accept-package-agreements --accept-source-agreements"
         }
       }
     },
@@ -2609,12 +2609,12 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "ngrok.sh",
-          "windows": "winget install ngrok -s msstore",
+          "windows": "winget install ngrok --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": "brew install ngrok"
         },
         "arm64": {
           "linux": "ngrok.sh",
-          "windows": "winget install ngrok -s msstore",
+          "windows": "winget install ngrok --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": "brew install ngrok"
         }
       }
@@ -2848,12 +2848,12 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "https://app.warp.dev/get_warp?package=deb",
-          "windows": "winget install Warp.Warp",
+          "windows": "winget install Warp.Warp --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": "brew install --cask warp"
         },
         "arm64": {
           "linux": "https://app.warp.dev/get_warp?package=deb_arm64",
-          "windows": "winget install Warp.Warp",
+          "windows": "winget install Warp.Warp --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": "brew install --cask warp"
         }
       }
@@ -3154,12 +3154,12 @@
       "fileNamePattern": {
         "amd64": {
           "linux": null,
-          "windows": "winget install --no-upgrade --name \"File\" --Id \"GnuWin32.File\" --source winget --accept-package-agreements --accept-source-agreements",
+          "windows": "winget install --no-upgrade --name \"File\" --Id \"GnuWin32.File\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": null
         },
         "arm64": {
           "linux": null,
-          "windows": "winget install --no-upgrade --name \"File\" --Id \"GnuWin32.File\" --source winget --accept-package-agreements --accept-source-agreements",
+          "windows": "winget install --no-upgrade --name \"File\" --Id \"GnuWin32.File\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": null
         }
       }

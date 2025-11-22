@@ -1,6 +1,6 @@
 
 
-winget install WinFsp.WinFsp; winget install SSHFS-Win.SSHFS-Win
+winget install WinFsp.WinFsp --source winget --scope user --accept-package-agreements --accept-source-agreements; winget install SSHFS-Win.SSHFS-Win --source winget --scope user --accept-package-agreements --accept-source-agreements
 
 $host = ''
 $user = ''

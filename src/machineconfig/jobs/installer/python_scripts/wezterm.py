@@ -31,7 +31,7 @@ def main(installer_data: InstallerData, version: Optional[str]):
 
     _ = version
     if platform.system() == "Windows":
-        program = """winget install --no-upgrade --name "WezTerm"                      --Id "wez.wezterm"                --source winget --accept-package-agreements --accept-source-agreements
+        program = """winget install --no-upgrade --name "WezTerm" --Id "wez.wezterm" --source winget --accept-package-agreements --accept-source-agreements
 """
     elif platform.system() in ["Linux", "Darwin"]:
         system_name = "LINUX" if platform.system() == "Linux" else "MACOS"
