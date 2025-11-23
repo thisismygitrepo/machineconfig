@@ -38,7 +38,7 @@ def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_i
         if preview is None:
             preview_line = ""
         elif preview == "bat":
-            preview_line = """--preview-command "bat -n --color=always '{{}}'" --preview-size 30"""
+            preview_line = """--preview-command "bat -n --color=always '{}'" --preview-size 30 """
         tv_cmd = f"""cat {options_txt_path} | tv  {preview_line} --ansi true --source-output "{{strip_ansi}}" > {tv_out_path} """
         # res = subprocess.run(tv_cmd, shell=True)
         from machineconfig.utils.code import run_shell_script
