@@ -132,15 +132,13 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
             print(f"Warning: Could not find script '{name}'. Checked {len(potential_matches)} candidate files, trying interactively:")
             from machineconfig.utils.options import choose_from_options
             # options = ["/".join(p.parts[-3:]) for p in potential_matches]
-            options = potential_matches
+            options = [str(p) for p in potential_matches]
             chosen_file_part = choose_from_options(options, multi=False, msg="Select the script to run:", tv=True, preview="bat")
-            for an_option, a_path in zip(options, potential_matches):
-                if chosen_file_part == an_option:
-                    target_file = a_path
-                    break
-            assert target_file is not None, "No script selected."
-            target_file = Path(target_file)
-
+            # for an_option, a_path in zip(options, potential_matches):
+            #     if chosen_file_part == an_option:
+            #         target_file = a_path
+            #         break
+            target_file = Path(chosen_file_part)
     print(f"✅ Found script at: {target_file}")
     if target_file.suffix == ".py":
         from machineconfig.utils.code import get_uv_command_executing_python_file, exit_then_run_shell_script
