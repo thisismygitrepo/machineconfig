@@ -133,7 +133,7 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
             from machineconfig.utils.options import choose_from_options
             # options = ["/".join(p.parts[-3:]) for p in potential_matches]
             options = potential_matches
-            chosen_file_part = choose_from_options(options, multi=False, msg="Select the script to run:", tv=True)
+            chosen_file_part = choose_from_options(options, multi=False, msg="Select the script to run:", tv=True, preview="bat")
             for an_option, a_path in zip(options, potential_matches):
                 if chosen_file_part == an_option:
                     target_file = a_path

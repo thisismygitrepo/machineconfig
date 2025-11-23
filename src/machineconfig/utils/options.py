@@ -7,10 +7,10 @@ import subprocess
 from typing import Optional, Union, Iterable, overload, Literal, cast
 
 @overload
-def choose_from_options[T](options: Iterable[T], msg: str, multi: Literal[False], custom_input: bool = False, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, tv: bool = False) -> T: ...
+def choose_from_options[T](options: Iterable[T], msg: str, multi: Literal[False], custom_input: bool = False, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, tv: bool = False, preview: Optional[Literal["bat"]]=None) -> T: ...
 @overload
-def choose_from_options[T](options: Iterable[T], msg: str, multi: Literal[True], custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, tv: bool = False, ) -> list[T]: ...
-def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, tv: bool = False, ) -> Union[T, list[T]]:
+def choose_from_options[T](options: Iterable[T], msg: str, multi: Literal[True], custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, tv: bool = False, preview: Optional[Literal["bat"]]=None) -> list[T]: ...
+def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_input: bool = True, header: str = "", tail: str = "", prompt: str = "", default: Optional[T] = None, tv: bool = False, preview: Optional[Literal["bat"]]=None, ) -> Union[T, list[T]]:
     # TODO: replace with https://github.com/tmbo/questionary
     # # also see https://github.com/charmbracelet/gum
     options_strings: list[str] = [str(x) for x in options]
@@ -40,9 +40,15 @@ def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_i
             cat_command = "Get-Content"
         else:
             cat_command = "cat"
-        tv_cmd = f"""{cat_command} {options_txt_path} | tv  --preview-command "bat -n --color=always '{{}}'" --preview-size 30 --ansi true --source-output "{{strip_ansi}}" > {tv_out_path} """
-        res = subprocess.run(tv_cmd, shell=True)
-    
+        if preview is None:
+            preview_line = ""
+        elif preview == "bat":
+            preview_line = """--preview-command "bat -n --color=always '{{}}'" --preview-size 30"""
+        tv_cmd = f"""{cat_command} {options_txt_path} | tv  {preview_line} --ansi true --source-output "{{strip_ansi}}" > {tv_out_path} """
+        # res = subprocess.run(tv_cmd, shell=True)
+        from machineconfig.utils.code import run_shell_script
+        res = run_shell_script(tv_cmd, display_script=False, clean_env=False)
+        
         # If tv returned a non-zero code and there is no output file, treat it as an error.
         if res.returncode != 0 and not tv_out_path.exists():
             raise RuntimeError(f"Got error running tv command: {tv_cmd}\nreturncode: {res.returncode}")

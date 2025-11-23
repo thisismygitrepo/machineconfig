@@ -111,10 +111,7 @@ def run_shell_file(script_path: str, clean_env: bool):
     else:
         raise NotImplementedError(f"Platform {platform.system()} not supported.")
     return proc
-
-
-def run_shell_script(script: str, display_script: bool = True, clean_env: bool = False) -> Any:
-
+def run_shell_script(script: str, display_script: bool = True, clean_env: bool = False):
     import platform
     if platform.system() == "Windows":
         suffix = ".ps1"
@@ -122,12 +119,10 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
     else:
         suffix = ".sh"
         lexer = "bash"
-
     import tempfile
     with tempfile.NamedTemporaryFile(mode='w', suffix=suffix, delete=False, encoding='utf-8') as temp_file:
         temp_file.write(script)
         temp_shell_script_path = Path(temp_file.name)
-
     from rich.panel import Panel
     from rich.syntax import Syntax
     from rich.console import Console
@@ -135,7 +130,6 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
     if display_script:
         from rich.syntax import Syntax
         console.print(Panel(Syntax(code=script, lexer=lexer), title=f"📄 shell script @ {temp_shell_script_path}", subtitle="shell script being executed"), style="bold red")
-
     proc = run_shell_file(script_path=str(temp_shell_script_path), clean_env=clean_env)
     # console.print(f"✅  [green]Script executed successfully:[/green] [blue]{temp_script_path}[/blue]")
     if proc.returncode != 0:
@@ -144,7 +138,6 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
         console.print(f"✅  [green]Script executed successfully:[/green] [blue]{temp_shell_script_path}[/blue]")
     else:
         console.print(f"⚠️  [yellow]Script executed with warnings (return code {proc.returncode}):[/yellow] [blue]{temp_shell_script_path}[/blue]")
-
     temp_shell_script_path.unlink(missing_ok=True)
     console.print(f"🗑️  [blue]Temporary script deleted:[/blue] [green]{temp_shell_script_path}[/green]")
     return proc
