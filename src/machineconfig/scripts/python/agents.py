@@ -7,7 +7,7 @@ import typer
 from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import AGENTS, HOST, PROVIDER
 
 
-def create(
+def agents_create(
     agent: Annotated[AGENTS, typer.Option(..., "--agents", "-a", help=f"Agent type. One of {', '.join(get_args(AGENTS)[:3])}")],
     host: Annotated[HOST, typer.Option(..., "--host", "-h", help=f"Machine to run agents on. One of {', '.join(get_args(HOST))}")],
     model: Annotated[str, typer.Option(..., "--model", "-m", help="Model to use (for crush agent).")],
@@ -171,11 +171,15 @@ def make_agents_command_template():
     typer.echo(f"Prompt template written to {save_path_root}")
 
 
-def init_config():
+def init_config(root: Annotated[Optional[str], typer.Option(..., "--root", "-r", help="Root directory of the repository to initialize AI configs in. Defaults to current directory.")] = None):
     """Initialize AI configurations in the current repository"""
     from machineconfig.scripts.python.ai.initai import add_ai_configs
     from pathlib import Path
-    add_ai_configs(repo_root=Path.cwd())
+    if root is None:
+        repo_root = Path.cwd()
+    else:
+        repo_root = Path(root).expanduser().resolve()
+    add_ai_configs(repo_root=repo_root)
 
 
 def get_app():
@@ -188,9 +192,9 @@ PROVIDER options: {', '.join(get_args(PROVIDER))}
 {sep}
 AGENT options: {', '.join(get_args(AGENTS))}
 """
-    create.__doc__ = agents_full_help
-    agents_app.command("create", no_args_is_help=True, help=create.__doc__, short_help="[c] Create agents layout file, ready to run.")(create)
-    agents_app.command("c", no_args_is_help=True, help=create.__doc__, hidden=True)(create)
+    agents_create.__doc__ = agents_full_help
+    agents_app.command("create", no_args_is_help=True, help=agents_create.__doc__, short_help="[c] Create agents layout file, ready to run.")(agents_create)
+    agents_app.command("c", no_args_is_help=True, help=agents_create.__doc__, hidden=True)(agents_create)
     agents_app.command("collect", no_args_is_help=True, help=collect.__doc__, short_help="[T] Collect all agent materials into a single file.")(collect)
     agents_app.command("T", no_args_is_help=True, help=collect.__doc__, hidden=True)(collect)
     agents_app.command("make-template", no_args_is_help=False, help=make_agents_command_template.__doc__, short_help="[t] Create a template for fire agents")(make_agents_command_template)

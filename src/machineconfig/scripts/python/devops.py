@@ -8,7 +8,7 @@ import machineconfig.scripts.python.helpers_devops.cli_config as cli_config
 import machineconfig.scripts.python.helpers_devops.cli_self as cli_self
 import machineconfig.scripts.python.helpers_devops.cli_data as cli_data
 import machineconfig.scripts.python.helpers_devops.cli_nw as cli_network
-import machineconfig.scripts.python.helpers.run_script as run_py_script_module
+import machineconfig.scripts.python.helpers_devops.run_script as run_py_script_module
 
 def install(which: Annotated[Optional[str], typer.Argument(..., help="Comma-separated list of program names to install, or group name if --group flag is set.")] = None,
         group: Annotated[bool, typer.Option(..., "--group", "-g", help="Treat 'which' as a group name. A group is bundle of apps.")] = False,

@@ -1,5 +1,5 @@
-from machineconfig.scripts.python.helpers_devops.cli_utils import merge_pdfs, compress_pdf
-from machineconfig.scripts.python.helpers_utils.path import edit_file_with_hx, get_machine_specs, init_project, tui_env
+from machineconfig.scripts.python.helpers_utils.pdf import merge_pdfs, compress_pdf
+from machineconfig.scripts.python.helpers_utils.python import edit_file_with_hx, get_machine_specs, init_project, tui_env
 from machineconfig.scripts.python.helpers_utils.download import download
 import typer
 from typing import Annotated
@@ -56,8 +56,6 @@ def get_app() -> typer.Typer:
 
     return app
 
-# def func():
-#     import pycr
 
 def main():
     app = get_app()

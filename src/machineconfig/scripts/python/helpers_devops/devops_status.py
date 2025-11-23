@@ -467,7 +467,7 @@ def main() -> None:
     
     # system_info = _check_system_info()
     # from machineconfig.scripts.python.helpers_devops.devops_system_info import _check_system_info
-    from machineconfig.scripts.python.helpers_utils.path import get_machine_specs
+    from machineconfig.scripts.python.helpers_utils.python import get_machine_specs
     system_info = get_machine_specs()
     from typing import cast
     system_info = cast(dict[str, str], system_info)

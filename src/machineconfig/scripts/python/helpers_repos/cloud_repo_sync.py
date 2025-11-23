@@ -105,7 +105,7 @@ git pull originEnc master
         uv_project_dir = f"""{str(Path.home().joinpath("code/machineconfig"))}"""
         uv_with = None
     else:
-        uv_with = ["machineconfig>=8.11"]
+        uv_with = ["machineconfig>=8.12"]
         uv_project_dir = None
 
     import tempfile

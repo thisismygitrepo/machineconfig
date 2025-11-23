@@ -1,3 +1,4 @@
+from tempfile import tempdir
 import typer
 from typing import Optional, Annotated, Literal, TypedDict, cast
 
@@ -17,7 +18,7 @@ def tui_env(which: Annotated[Literal["PATH", "p", "ENV", "e"], typer.Argument(he
     uv_with = ["textual"]
     uv_project_dir = None
     if not Path.home().joinpath("code/machineconfig").exists():
-        uv_with.append("machineconfig>=8.11")
+        uv_with.append("machineconfig>=8.12")
     else:
         uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
     run_shell_script(
@@ -90,9 +91,13 @@ uv add --group {group} {" ".join(total_packages)}
 {get_ve_activate_line(ve_root=str(repo_root.joinpath(".venv")))}
 ls
 """
-    from machineconfig.utils.code import exit_then_run_shell_script
-
-    exit_then_run_shell_script(script)
+    from machineconfig.utils.code import exit_then_run_shell_script, run_shell_script
+    # exit_then_run_shell_script(script)
+    _ = exit_then_run_shell_script
+    run_shell_script(script)
+    if tempdir:
+        from machineconfig.scripts.python.ai.initai import add_ai_configs
+        add_ai_configs(repo_root=repo_root)
 
 
 def edit_file_with_hx(
