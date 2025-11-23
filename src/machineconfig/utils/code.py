@@ -35,19 +35,8 @@ def print_code(code: str, lexer: str, desc: str, subtitle: str = ""):
         print(f"--- End of {desc} ---")
 
 
-def get_uv_command_executing_python_script(python_script: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str],
-                                           prepend_print: bool = True) -> tuple[str, Path]:
-    # python file
-    python_file = Path.home().joinpath("tmp_results", "tmp_scripts", "python", randstr() + ".py")
-    python_file.parent.mkdir(parents=True, exist_ok=True)
-    if prepend_print:
-        from machineconfig.utils.meta import lambda_to_python_script
-        print_code_string = lambda_to_python_script(lambda: print_code(code=python_script, lexer="python", desc="Temporary Python Script", subtitle="Executing via shell script"),
-                                                    in_global=True, import_module=False)
-        python_file.write_text(print_code_string + "\n" + python_script, encoding="utf-8")
-    else:
-        python_file.write_text(python_script, encoding="utf-8")
-
+def get_uv_command_executing_python_file(python_file: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str], 
+                                        prepend_print: bool = True, ) -> str:
     # shell script
     if uv_with is not None and len(uv_with) > 0:
         if prepend_print: uv_with.append("rich")
@@ -62,9 +51,24 @@ def get_uv_command_executing_python_script(python_script: str, uv_with: Optional
     else:
         uv_project_dir_arg = ""
     import platform
+
     uv_command = get_uv_command(platform=platform.system())
     shell_script = f"""{uv_command} run {uv_with_arg} {uv_project_dir_arg}  {str(python_file)} """
+    return shell_script
 
+
+def get_uv_command_executing_python_script(python_script: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str],
+                                           prepend_print: bool = True, ) -> tuple[str, Path]:
+    python_file = Path.home().joinpath("tmp_results", "tmp_scripts", "python", randstr() + ".py")
+    python_file.parent.mkdir(parents=True, exist_ok=True)
+    if prepend_print:
+        from machineconfig.utils.meta import lambda_to_python_script
+        print_code_string = lambda_to_python_script(lambda: print_code(code=python_script, lexer="python", desc="Temporary Python Script", subtitle="Executing via shell script"),
+                                                    in_global=True, import_module=False)
+        python_file.write_text(print_code_string + "\n" + python_script, encoding="utf-8")
+    else:
+        python_file.write_text(python_script, encoding="utf-8")
+    shell_script = get_uv_command_executing_python_file(python_file=str(python_file), uv_with=uv_with, uv_project_dir=uv_project_dir, prepend_print=prepend_print)
     return shell_script, python_file
 
 
@@ -95,35 +99,44 @@ uv run  {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
     exit_then_run_shell_script(fire_line)
 
 
-def run_shell_script(script: str, display_script: bool = True, clean_env: bool = False):
-    import tempfile
+def run_shell_file(script_path: str, clean_env: bool):
     import platform
-    from rich.console import Console
-    from rich.panel import Panel
-    from rich.syntax import Syntax
+    env = {} if clean_env else None
+    if platform.system() == "Windows":
+        import subprocess
+        proc = subprocess.run(f'powershell -ExecutionPolicy Bypass -File "{script_path}"', check=True, shell=True, env=env)
+    elif platform.system() == "Linux" or platform.system() == "Darwin":
+        import subprocess
+        proc = subprocess.run(f"bash {str(script_path)}", check=True, shell=True, env=env)
+    else:
+        raise NotImplementedError(f"Platform {platform.system()} not supported.")
+    return proc
 
+
+def run_shell_script(script: str, display_script: bool = True, clean_env: bool = False) -> Any:
+
+    import platform
     if platform.system() == "Windows":
         suffix = ".ps1"
         lexer = "powershell"
     else:
         suffix = ".sh"
         lexer = "bash"
+
+    import tempfile
     with tempfile.NamedTemporaryFile(mode='w', suffix=suffix, delete=False, encoding='utf-8') as temp_file:
         temp_file.write(script)
         temp_shell_script_path = Path(temp_file.name)
+
+    from rich.panel import Panel
+    from rich.syntax import Syntax
+    from rich.console import Console
     console = Console()
     if display_script:
         from rich.syntax import Syntax
         console.print(Panel(Syntax(code=script, lexer=lexer), title=f"📄 shell script @ {temp_shell_script_path}", subtitle="shell script being executed"), style="bold red")
-    env = {} if clean_env else None
-    if platform.system() == "Windows":
-        import subprocess
-        proc = subprocess.run(f'powershell -ExecutionPolicy Bypass -File "{temp_shell_script_path}"', check=True, shell=True, env=env)
-    elif platform.system() == "Linux" or platform.system() == "Darwin":
-        import subprocess
-        proc = subprocess.run(f"bash {str(temp_shell_script_path)}", check=True, shell=True, env=env)
-    else:
-        raise NotImplementedError(f"Platform {platform.system()} not supported.")
+
+    proc = run_shell_file(script_path=str(temp_shell_script_path), clean_env=clean_env)
     # console.print(f"✅  [green]Script executed successfully:[/green] [blue]{temp_script_path}[/blue]")
     if proc.returncode != 0:
         console.print(f"❌  [red]Script execution failed with return code {proc.returncode}:[/red] [blue]{temp_shell_script_path}[/blue]")
@@ -131,6 +144,7 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
         console.print(f"✅  [green]Script executed successfully:[/green] [blue]{temp_shell_script_path}[/blue]")
     else:
         console.print(f"⚠️  [yellow]Script executed with warnings (return code {proc.returncode}):[/yellow] [blue]{temp_shell_script_path}[/blue]")
+
     temp_shell_script_path.unlink(missing_ok=True)
     console.print(f"🗑️  [blue]Temporary script deleted:[/blue] [green]{temp_shell_script_path}[/green]")
     return proc
