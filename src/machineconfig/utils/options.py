@@ -39,7 +39,13 @@ def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_i
             preview_line = ""
         elif preview == "bat":
             preview_line = r"""--preview-command "bat -n --color=always {}" --preview-size 70 """
-        tv_cmd = f"""cat {options_txt_path} | tv  {preview_line} --ansi true --source-output "{{strip_ansi}}" > {tv_out_path} """
+        
+        import platform
+        if platform.system() == "Windows":
+            tv_cmd = f"""cat {options_txt_path} | tv  {preview_line} --ansi true --source-output "{{strip_ansi}}" | Out-File -Encoding utf8 -FilePath {tv_out_path} """
+        else:
+            tv_cmd = f"""cat {options_txt_path} | tv  {preview_line} --ansi true --source-output "{{strip_ansi}}" > {tv_out_path} """
+
         print(f"Running tv command: {tv_cmd}")
         # res = subprocess.run(tv_cmd, shell=True)
         from machineconfig.utils.code import run_shell_script
@@ -51,7 +57,7 @@ def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_i
 
         # Read selections (if any) from the output file created by tv.
         print(f"Reading tv output from: {tv_out_path}")
-        out_text = tv_out_path.read_text(encoding="utf-8")
+        out_text = tv_out_path.read_text(encoding="utf-8-sig")
         choice_string_multi = [x for x in out_text.splitlines() if x.strip() != ""]
 
         # Cleanup temporary files
