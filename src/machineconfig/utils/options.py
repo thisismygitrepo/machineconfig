@@ -35,16 +35,11 @@ def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_i
         # the interactive session completes. Do not capture_output or redirect
         # stdin/stderr here so `tv` stays attached to the terminal.
         tv_out_path = options_txt_path.with_name(options_txt_path.stem + "_out.txt")
-        import platform
-        if platform.system() == "Windows":
-            cat_command = "Get-Content"
-        else:
-            cat_command = "cat"
         if preview is None:
             preview_line = ""
         elif preview == "bat":
             preview_line = """--preview-command "bat -n --color=always '{{}}'" --preview-size 30"""
-        tv_cmd = f"""{cat_command} {options_txt_path} | tv  {preview_line} --ansi true --source-output "{{strip_ansi}}" > {tv_out_path} """
+        tv_cmd = f"""cat {options_txt_path} | tv  {preview_line} --ansi true --source-output "{{strip_ansi}}" > {tv_out_path} """
         # res = subprocess.run(tv_cmd, shell=True)
         from machineconfig.utils.code import run_shell_script
         res = run_shell_script(tv_cmd, display_script=False, clean_env=False)
