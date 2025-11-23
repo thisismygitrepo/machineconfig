@@ -50,7 +50,8 @@ def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_i
             raise RuntimeError(f"Got error running tv command: {tv_cmd}\nreturncode: {res.returncode}")
 
         # Read selections (if any) from the output file created by tv.
-        out_text = tv_out_path.read_text(encoding="utf-8") if tv_out_path.exists() else ""
+        print(f"Reading tv output from: {tv_out_path}")
+        out_text = tv_out_path.read_text(encoding="utf-8")
         choice_string_multi = [x for x in out_text.splitlines() if x.strip() != ""]
 
         # Cleanup temporary files
