@@ -69,12 +69,12 @@ def update(copy_assets: Annotated[bool, typer.Option("--assets-copy/--no-assets-
 uv self update
 cd ~/code/machineconfig
 git pull
-uv tool install --upgrade --editable $HOME/code/machineconfig
+uv tool install --no-cache --upgrade --editable $HOME/code/machineconfig
     """
     else:
         shell_script = """
 uv self update
-uv tool install --upgrade machineconfig
+uv tool install --no-cache --upgrade machineconfig
     """
     import platform
     if platform.system() == "Windows":
@@ -111,7 +111,7 @@ def install(copy_assets: Annotated[bool, typer.Option("--copy-assets/--no-assets
     if Path.home().joinpath("code/machineconfig").exists():
         run_shell_script(f""" {uv_command} tool install --upgrade --editable "{str(Path.home().joinpath("code/machineconfig"))}" """)
     else:
-        run_shell_script(rf""" {uv_command} tool install --upgrade "machineconfig>=8.14" """)
+        run_shell_script(rf""" {uv_command} tool install --upgrade "machineconfig>=8.15" """)
     if copy_assets:
         from machineconfig.profile.create_shell_profile import create_default_shell_profile
         create_default_shell_profile()   # involves copying assets too
@@ -136,7 +136,7 @@ def navigate():
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import exit_then_run_shell_script
     if Path.home().joinpath("code/machineconfig").exists(): executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
-    else: executable = """--with "machineconfig>=8.14,textual" """
+    else: executable = """--with "machineconfig>=8.15,textual" """
     exit_then_run_shell_script(f"""uv run {executable} {path}""")
 
 def readme():
